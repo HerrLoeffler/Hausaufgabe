@@ -1,0 +1,9320 @@
+let cocoLastError = {uid:"",text:"",at:0};
+let cocoFocusedQuestion = {quizId:"",id:""};
+const APP_VERSION = "2.3.1-gc39";
+const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
+console.info(`${BRAND.name} v${APP_VERSION}`);
+
+import { initializeApp } from "./firebase-local.mjs";
+import {
+  getAuth,
+  createUserWithEmailAndPassword as firebaseCreateUser,
+  signInWithEmailAndPassword as firebaseSignIn,
+  sendPasswordResetEmail as firebaseSendPasswordReset,
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  updateProfile as firebaseUpdateProfile
+} from "./firebase-local.mjs";
+import {
+  getFirestore,
+  doc,
+  getDoc as firestoreGetDoc,
+  setDoc as firestoreSetDoc,
+  addDoc as firestoreAddDoc,
+  updateDoc as firestoreUpdateDoc,
+  writeBatch as firestoreWriteBatch,
+  deleteDoc as firestoreDeleteDoc,
+  collection,
+  getDocs as firestoreGetDocs,
+  query,
+  where,
+  orderBy,
+  limit,
+  startAfter,
+  onSnapshot as firestoreOnSnapshot,
+  serverTimestamp,
+  getCountFromServer,
+  collectionGroup,
+  Timestamp
+} from "./firebase-local.mjs";
+import { getFunctions, httpsCallable } from "./firebase-local.mjs";
+import { createAccountController } from "./admin-account-actions.mjs?v=1";
+import * as firebaseModule from "./firebase-config.js?v=2.3.0";
+import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
+import { createAiClient } from "./ai-client.js?v=2.3.1-gc39";
+import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc39";
+import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc39";
+import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
+import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
+import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";
+import { scrollBehavior, selectTab, bindTabs, focusView, setSaveState, installWorkspaceInteractions } from "./interface.js?v=2.3.1-gc2";
+import { createDiagnostics, installDiagnostics, redactTechnicalText, diagnosticSeverity } from "./diagnostics.mjs";
+import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
+import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
+import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js";
+import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
+import { formatMathText } from "./shared/math-display.mjs?v=1";
+import { createPracticePublisher } from "./practice-solution-publication.mjs";
+import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
+import { dashboardPublicationAction, secureAudioPublicationBlocked as isSecureAudioPublicationBlocked } from "./secure-audio-publication.mjs?v=1";
+import { installReviewMode } from "./review-mode.mjs";
+import { DEMO_TEST as REVIEW_DEMO_TEST } from "./gradecrew-tour-v8.js";
+import { createLocalTourRepository } from "./guest-tour-port.mjs";
+import { installCrewTour } from "./gradecrew-tour.js?v=2.3.1-gc21";
+const diagnostics = createDiagnostics();
+installDiagnostics(diagnostics);
+fetch("./release.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(r => r && diagnostics.setRelease(r)).catch(() => {});
+let adminAuditCursor = null;
+let adminFeedbackCursor = null;
+let adminFeedbackHasMore = false;
+const firebaseConfig = firebaseModule.firebaseConfig;
+const appEnvironment = firebaseModule.appEnvironment || "production";
+// Staging rules verified to deny authored/private reads and forged writes on 2026-10-09.
+const SECURE_AUDIO_PUBLICATION_ENABLED = firebaseConfig.projectId === "hausaufgabe-staging";
+const secureAudioPublicationBlocked = (quiz, questions = []) =>
+  isSecureAudioPublicationBlocked(quiz, questions, SECURE_AUDIO_PUBLICATION_ENABLED);
+const secureAudioPublicationMessage = "Dieser Test enthält Audioantworten oder Nur-Hören-Aufgaben. Die sichere Schülerfreigabe ist noch nicht geprüft. Verwende vorerst ergänzendes Audio mit sichtbarem Fragetext.";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const aiApi = new Proxy(createAiClient(app, () => state.user?.uid || auth.currentUser?.uid || ""), {
+  get(target, key) {
+    const value = target[key];
+    if (typeof value !== "function") return value;
+    return (...args) => {
+      if (guestTourRepo) throw new Error("Im lokalen Tutorial sind KI- und Billing-Aufrufe gesperrt.");
+      return value.apply(target, args);
+    };
+  }
+});
+const quickRemyBridge = createQuickRemyBridge({ auth, api: aiApi, storage: window.localStorage });
+if (window.GradeCrewNative && window.top === window.self) {
+  Object.defineProperty(window, "GradeCrewQuickRemy", { configurable: false, writable: false, value: quickRemyBridge });
+}
+
+const $ = (id) => document.getElementById(id);
+let crewTour = null;
+let tutorialDraft = null;
+let guestTourRepo = null;
+let reviewController = null;
+let reviewBuild = "";
+let reviewScene = "welcome";
+const tourUid = () => guestTourRepo ? 'local-tour' : state.user?.uid || '';
+const guestCopy = (key, fallback, values = {}) => window.GradeCrewI18n?.t?.(`guest.${key}`, values, fallback) || fallback;
+function requireProductionData() {
+  if (guestTourRepo) throw new Error('Im lokalen Tutorial sind Firebase-Aufrufe gesperrt.');
+}
+const getDoc = (...args) => { requireProductionData(); return firestoreGetDoc(...args); };
+const getDocs = (...args) => { requireProductionData(); return firestoreGetDocs(...args); };
+const onSnapshot = (...args) => { requireProductionData(); return firestoreOnSnapshot(...args); };
+const setDoc = (...args) => { requireProductionData(); return firestoreSetDoc(...args); };
+const addDoc = (...args) => { requireProductionData(); return firestoreAddDoc(...args); };
+const updateDoc = (...args) => { requireProductionData(); return firestoreUpdateDoc(...args); };
+const deleteDoc = (...args) => { requireProductionData(); return firestoreDeleteDoc(...args); };
+const writeBatch = (...args) => { requireProductionData(); return firestoreWriteBatch(...args); };
+const createUserWithEmailAndPassword = (...args) => { requireProductionData(); return firebaseCreateUser(...args); };
+const signInWithEmailAndPassword = (...args) => { requireProductionData(); return firebaseSignIn(...args); };
+const sendPasswordResetEmail = (...args) => { requireProductionData(); return firebaseSendPasswordReset(...args); };
+const signOut = (...args) => { requireProductionData(); return firebaseSignOut(...args); };
+const updateProfile = (...args) => { requireProductionData(); return firebaseUpdateProfile(...args); };
+let practicePublisher;
+function getPracticePublisher() {
+  return practicePublisher ||= createPracticePublisher({
+  call: async data => {
+    requireProductionData();
+    return (await httpsCallable(getFunctions(app, "europe-west1"), "configurePracticeSolutionRelease")(data)).data;
+  }
+  });
+}
+async function publishPracticeQuiz(quiz) {
+  const uid = state.user?.uid;
+  const revision = draftRevision;
+  return getPracticePublisher().publish(quiz, {
+    unchanged: () => state.user?.uid === uid && draftRevision === revision,
+    onChange: async () => {
+      await openEditor(quiz.id);
+      const field = $("quizSolutionReleaseMode");
+      if (field) { const section = field.closest("details"); if (section) section.open = true; field.focus(); }
+    }
+  });
+}
+
+const studentSubmissionBusy = new Set();
+const studentConfirmationPending = new Map();
+const completedStudentSubmissions = new Set();
+installWorkspaceInteractions();
+const views = [
+  "authView",
+  "dashboardView",
+  "createView",
+  "trashView",
+  "adminView",
+  "settingsView",
+  "aiView",
+  "editorView",
+  "publishView",
+  "resultsView",
+  "templateView",
+  "studentView"
+];
+
+const DEFAULT_SCALE = {
+  id: "standard",
+  name: "Standard",
+  thresholds: [91, 77, 57, 39, 25, 0]
+};
+
+const DEFAULT_SETTINGS = {
+  defaultSubject: "",
+  defaultGrade: "",
+  defaultDescription: "Viel Erfolg beim Test!",
+  defaultGradeScaleId: "standard",
+  defaultResultMode: "points_grade",
+  defaultShowSolutions: true
+};
+
+const QUESTION_TYPES = [
+  ["single", "Single Choice"],
+  ["multi", "Multiple Choice"],
+  ["text", "Freitext"],
+  ["dropdown", "Dropdown"],
+  ["truefalse", "Richtig / Falsch"],
+  ["gapfill", "Lückentext"],
+  ["matching", "Zuordnen"],
+  ["ordering", "Sortieren / Reihenfolge"],
+  ["grouping", "Gruppieren / Kategorien"],
+  ["markwords", "Wörter markieren"],
+  ["number", "Zahl / Rechenergebnis"]
+];
+
+const state = {
+  user: null,
+  profile: null,
+  quizzes: [],
+  currentQuiz: null,
+  newManualQuiz: false,
+  questions: [],
+  loadedQuestionIds: new Set(),
+  currentResultsQuiz: null,
+  resultQuestions: [],
+  submissions: [],
+  settingsDraft: null,
+  gradeScalesDraft: null,
+  isDirty: false,
+  currentSharedTemplate: null,
+  studentTimerInterval: null,
+  studentAttempt: null,
+  publishUnsubs: [],
+  publishClockInterval: null,
+  studentQuizUnsub: null,
+  studentProgressObserver: null,
+  adminUsers: [],
+  adminQuizzes: [],
+  adminFeedback: [],
+  adminAnnouncements: [],
+  adminAudit: [],
+  shownThisLogin: new Set(),
+  activeAnnouncementDialogId: null,
+  adminOverviewPeriod: "7d",
+  pendingImportReport: null,
+  aiMaterials: [],
+  aiJobs: [],
+  aiJobsUnsub: null,
+  aiStarting: false,
+  aiVariantsRunning: false,
+  emmiRevisionRunning: false,
+  emmiRevisionUndo: null,
+  draftCheckpointSaved: true,
+  draftBaseUpdatedAt: 0,
+  teacherTourConfig: null
+};
+
+
+const DEFAULT_TEACHER_TOUR_CONFIG = Object.freeze({
+  enabled: true,
+  version: "ai-beta-tour-v3",
+  steps: [
+    {
+      icon: "👋",
+      title: "Schön, dass du da bist!",
+      text: "Deine Crew hilft dir beim Erstellen, Verbessern und Prüfen. In vier Schritten bist du startklar.",
+      bullets: ["KI-Tests bleiben Entwürfe, bis du sie geprüft und veröffentlicht hast."]
+    },
+    {
+      icon: "✨",
+      title: "Test mit Remy erstellen",
+      text: "Unter „+ Neuer Test“ kannst du Remy deinen Test beschreiben. Anschließend passt du die Aufgaben im Editor an.",
+      bullets: ["Gib Fach, Klasse und Thema vor. Alles Weitere ist anpassbar.", "⚠ KI-Erstellungen kosten Geld – auch Bilder, Änderungen und Varianten. Bitte gezielt nutzen."]
+    },
+    {
+      icon: "☺",
+      title: "KI-Aufgaben kurz bewerten",
+      text: "Mit ☺ oder ☹ meldest du, was passt und was wir verbessern müssen.",
+      bullets: ["☺ Gut: Aufgabe kann so bleiben.", "☹ Problem: Grund auswählen und Aufgabe behalten, ersetzen oder entfernen."]
+    },
+    {
+      icon: "↻",
+      title: "Aufgaben gezielt verändern",
+      text: "„KI bearbeiten“ verbessert eine Aufgabe nach deinem Hinweis. „Variante hinzufügen“ erstellt eine gleichwertige neue Aufgabe.",
+      bullets: ["Neue oder veränderte Aufgaben bitte kurz prüfen und bewerten.", "Fehler oder Wünsche? Unten findest du „Feedback geben“."]
+    }
+  ]
+});
+
+function normalizeTeacherTourConfig(raw = {}) {
+  const sourceSteps = Array.isArray(raw.steps) ? raw.steps : DEFAULT_TEACHER_TOUR_CONFIG.steps;
+  const steps = sourceSteps
+    .slice(0, 10)
+    .map((step, index) => ({
+      icon: String(step?.icon || "•").trim().slice(0, 8) || "•",
+      title: String(step?.title || `Schritt ${index + 1}`).trim().slice(0, 120),
+      text: String(step?.text || "").trim().slice(0, 1200),
+      bullets: (Array.isArray(step?.bullets) ? step.bullets : String(step?.bullets || "").split("\n"))
+        .map(value => String(value || "").trim().slice(0, 500))
+        .filter(Boolean)
+        .slice(0, 8)
+    }))
+    .filter(step => step.title || step.text || step.bullets.length);
+  return {
+    enabled: raw.enabled !== false,
+    version: String(raw.version || DEFAULT_TEACHER_TOUR_CONFIG.version).trim().slice(0, 120) || DEFAULT_TEACHER_TOUR_CONFIG.version,
+    steps: steps.length ? steps : deepClone(DEFAULT_TEACHER_TOUR_CONFIG.steps)
+  };
+}
+
+async function loadTeacherTourConfig({ force = false } = {}) {
+  if (state.teacherTourConfig && !force) return state.teacherTourConfig;
+  try {
+    const snap = await getDoc(doc(db, "appConfig", "teacherTour"));
+    state.teacherTourConfig = normalizeTeacherTourConfig(snap.exists() ? snap.data() : DEFAULT_TEACHER_TOUR_CONFIG);
+  } catch (err) {
+    console.warn("Tutorial-Konfiguration konnte nicht geladen werden:", err);
+    state.teacherTourConfig = normalizeTeacherTourConfig(DEFAULT_TEACHER_TOUR_CONFIG);
+  }
+  return state.teacherTourConfig;
+}
+
+function currentTeacherTourConfig() {
+  return state.teacherTourConfig || normalizeTeacherTourConfig(DEFAULT_TEACHER_TOUR_CONFIG);
+}
+
+const FIRST_AI_GUIDE_VERSION = "first-ai-test-v1";
+let firstAiGuideStep = "";
+let firstAiGuideTarget = null;
+let firstAiGuideResizeHandler = null;
+let firstAiGuideOfferTimer = null;
+let firstAiGuideForceConsumed = false;
+
+function firstAiGuideForcePreview() {
+  return new URLSearchParams(location.search).get("firstGuide") === "1" && !firstAiGuideForceConsumed;
+}
+
+function firstTestGuideKey() {
+  return state.user ? `firstAiGuide:${state.user.uid}:${FIRST_AI_GUIDE_VERSION}` : "";
+}
+
+function firstAiGuideDone() {
+  try { return localStorage.getItem(firstTestGuideKey()) === "done"; } catch (_) { return false; }
+}
+
+function firstAiGuideSkippedThisSession() {
+  try { return sessionStorage.getItem(`${firstTestGuideKey()}:skip`) === "1"; } catch (_) { return false; }
+}
+
+function firstAiGuideEligible() {
+  if (window.gradecrewPracticeReady) return false;
+  const forced = firstAiGuideForcePreview();
+  if (!state.user || isSuspended()) return false;
+  if (forced) return true;
+  if (firstAiGuideDone() || firstAiGuideSkippedThisSession()) return false;
+  const quizzes = activeQuizzes().filter(q => q.generationStatus !== "running");
+  const hasAiWork = state.aiJobs.some(job => ["queued", "running", "ready"].includes(job.status));
+  return quizzes.length === 0 && !hasAiWork;
+}
+
+function ensureFirstAiGuideUi() {
+  let backdrop = $("firstAiGuideBackdrop");
+  let card = $("firstAiGuideCard");
+  if (!backdrop) {
+    backdrop = document.createElement("div");
+    backdrop.id = "firstAiGuideBackdrop";
+    backdrop.className = "firstAiGuideBackdrop hidden";
+    document.body.appendChild(backdrop);
+  }
+  if (!card) {
+    card = document.createElement("section");
+    card.id = "firstAiGuideCard";
+    card.className = "firstAiGuideCard hidden";
+    card.setAttribute("role", "region");
+    card.setAttribute("aria-label", "Starthilfe für deinen ersten Test");
+    card.setAttribute("aria-live", "polite");
+    document.body.appendChild(card);
+  }
+  return { backdrop, card };
+}
+
+function clearFirstAiGuideTarget() {
+  firstAiGuideTarget?.classList.remove("firstAiGuideSpotlight");
+  firstAiGuideTarget = null;
+  if (firstAiGuideResizeHandler) {
+    window.removeEventListener("resize", firstAiGuideResizeHandler);
+    window.removeEventListener("scroll", firstAiGuideResizeHandler, true);
+    firstAiGuideResizeHandler = null;
+  }
+}
+
+function hideFirstAiGuide() {
+  clearFirstAiGuideTarget();
+  const { backdrop, card } = ensureFirstAiGuideUi();
+  backdrop.classList.add("hidden");
+  card.classList.add("hidden");
+  card.classList.remove("centered");
+}
+
+function skipFirstAiGuideForSession() {
+  try { sessionStorage.setItem(`${firstTestGuideKey()}:skip`, "1"); } catch (_) {}
+  firstAiGuideStep = "";
+  hideFirstAiGuide();
+}
+
+function markFirstAiGuideDone() {
+  try { localStorage.setItem(firstTestGuideKey(), "done"); } catch (_) {}
+  firstAiGuideStep = "";
+  hideFirstAiGuide();
+}
+
+function firstAiGuideTargetFor(step) {
+  if (step === "new") return $("newQuizBtn");
+  if (step === "ai") return $("createAiBtn");
+  if (step === "details") return $("aiTopic")?.closest("article.card") || $("aiTopic");
+  if (step === "generate") return $("generateAiTestBtn");
+  if (step === "running") return $("aiJobsList");
+  return null;
+}
+
+function positionFirstAiGuideCard() {
+  const card = $("firstAiGuideCard");
+  if (!card || card.classList.contains("hidden") || !firstAiGuideTarget) return;
+  const rect = firstAiGuideTarget.getBoundingClientRect();
+  const gap = 14;
+  const margin = 12;
+  const cardRect = card.getBoundingClientRect();
+  const width = Math.min(cardRect.width || 360, window.innerWidth - margin * 2);
+  let left = Math.max(margin, Math.min(rect.left, window.innerWidth - width - margin));
+  let top = rect.bottom + gap;
+  if (top + cardRect.height > window.innerHeight - margin) top = Math.max(margin, rect.top - cardRect.height - gap);
+  card.style.left = `${Math.round(left)}px`;
+  card.style.top = `${Math.round(top)}px`;
+}
+
+function firstAiGuideCardHtml({ eyebrow, title, text, extra = "", action = "", showLater = true }) {
+  return `<div class="gradecrewGuideHeader"><img src="/assets/gradecrew/penguin-guide.svg" width="44" height="44" alt=""><span>Deine Starthilfe</span></div><div class="firstAiGuideHead"><span class="eyebrow">${escapeHtml(eyebrow)}</span><button class="firstAiGuideClose" type="button" aria-label="Für jetzt schließen">×</button></div>
+    <h2>${escapeHtml(title)}</h2><p>${escapeHtml(text)}</p>${extra}
+    <div class="firstAiGuideActions">${showLater ? '<button class="button ghost firstAiGuideLater" type="button">Später</button>' : ""}${action}</div>`;
+}
+
+function bindFirstAiGuideCommon(card) {
+  card.querySelector(".firstAiGuideClose")?.addEventListener("click", skipFirstAiGuideForSession);
+  card.querySelector(".firstAiGuideLater")?.addEventListener("click", skipFirstAiGuideForSession);
+}
+
+function renderFirstAiGuideStep(step) {
+  const { backdrop, card } = ensureFirstAiGuideUi();
+  clearFirstAiGuideTarget();
+  firstAiGuideStep = step;
+  backdrop.classList.remove("hidden");
+  card.classList.remove("hidden", "centered");
+
+  if (step === "intro") {
+    card.classList.add("centered");
+    card.style.left = "";
+    card.style.top = "";
+    card.innerHTML = firstAiGuideCardHtml({
+      eyebrow: "Dein erster Test",
+      title: "Erstelle deinen ersten Test mit KI",
+      text: "Ich führe dich direkt durch die echte Erstellung. Du klickst und füllst die markierten Bereiche selbst aus – in vier kurzen Schritten.",
+      extra: '<div class="firstAiGuideMiniFlow"><span>+ Neuer Test</span><b>→</b><span>Mit KI</span><b>→</b><span>Angaben</span><b>→</b><span>Erstellen</span></div>',
+      action: '<button class="button primary firstAiGuideStart" type="button">Los geht’s</button>'
+    });
+    bindFirstAiGuideCommon(card);
+    card.querySelector(".firstAiGuideStart")?.addEventListener("click", () => renderFirstAiGuideStep("new"));
+    return;
+  }
+
+  firstAiGuideTarget = firstAiGuideTargetFor(step);
+  if (!firstAiGuideTarget || firstAiGuideTarget.classList.contains("hidden")) {
+    hideFirstAiGuide();
+    return;
+  }
+  firstAiGuideTarget.classList.add("firstAiGuideSpotlight");
+  firstAiGuideTarget.scrollIntoView({ behavior: scrollBehavior(), block: "center" });
+
+  if (step === "new") {
+    card.innerHTML = firstAiGuideCardHtml({
+      eyebrow: "Schritt 1 von 4",
+      title: "Starte einen neuen Test",
+      text: "Klicke jetzt auf den markierten Button „+ Neuer Test“.",
+      extra: '<div class="firstAiGuidePointer">Klicke auf den hervorgehobenen Bereich.</div>'
+    });
+  } else if (step === "ai") {
+    card.innerHTML = firstAiGuideCardHtml({
+      eyebrow: "Schritt 2 von 4",
+      title: "Wähle „Test mit Remy erstellen“",
+      text: "So erstellt GradeCrew den ersten Entwurf für dich. Danach kannst du jede Aufgabe normal bearbeiten.",
+      extra: '<div class="firstAiGuidePointer">Klicke auf „Test mit Remy erstellen“.</div>'
+    });
+  } else if (step === "details") {
+    card.innerHTML = firstAiGuideCardHtml({
+      eyebrow: "Schritt 3 von 4",
+      title: "Beschreibe deinen Test",
+      text: "Trage Fach, Klasse und vor allem das Thema ein. Aufgabenanzahl, Schwierigkeit und Punkte kannst du direkt anpassen.",
+      extra: '<div id="firstAiGuideValidation" class="firstAiGuideValidation hidden"></div>',
+      action: '<button class="button primary firstAiGuideNext" type="button">Weiter</button>'
+    });
+  } else if (step === "generate") {
+    card.innerHTML = firstAiGuideCardHtml({
+      eyebrow: "Schritt 4 von 4",
+      title: "Test mit Remy erstellen",
+      text: "Klicke auf „Test erstellen“. GradeCrew erzeugt den Entwurf im Hintergrund und prüft ihn anschließend automatisch.",
+      extra: '<div class="firstAiGuideCost"><strong>⚠ Kostenhinweis</strong><span>Jede KI-Generierung verursacht Kosten. Bitte KI-Funktionen gezielt und sparsam nutzen.</span></div><div class="firstAiGuidePointer">Zum Starten den markierten Button anklicken.</div>'
+    });
+  } else if (step === "running") {
+    card.innerHTML = firstAiGuideCardHtml({
+      eyebrow: "Geschafft",
+      title: "Dein Test wird erstellt",
+      text: "Die Erstellung läuft im Hintergrund. Du kannst weiterarbeiten oder die Seite verlassen. Sobald der Test fertig ist, öffnest du hier „Entwurf prüfen“.",
+      action: '<button class="button primary firstAiGuideFinish" type="button">Verstanden</button>',
+      showLater: false
+    });
+    card.querySelector(".firstAiGuideFinish")?.addEventListener("click", hideFirstAiGuide);
+  }
+
+  bindFirstAiGuideCommon(card);
+  card.querySelector(".firstAiGuideNext")?.addEventListener("click", () => {
+    const subject = $("aiSubject")?.value.trim();
+    const grade = $("aiGrade")?.value.trim();
+    const topic = $("aiTopic")?.value.trim();
+    if (!subject || !grade || !topic) {
+      const validation = $("firstAiGuideValidation");
+      if (validation) {
+        validation.textContent = "Bitte zuerst Fach, Klasse und Thema eintragen.";
+        validation.classList.remove("hidden");
+      }
+      (!subject ? $("aiSubject") : !grade ? $("aiGrade") : $("aiTopic"))?.focus();
+      return;
+    }
+    renderFirstAiGuideStep("generate");
+  });
+
+  requestAnimationFrame(() => {
+    positionFirstAiGuideCard();
+    firstAiGuideResizeHandler = positionFirstAiGuideCard;
+    window.addEventListener("resize", firstAiGuideResizeHandler);
+    window.addEventListener("scroll", firstAiGuideResizeHandler, true);
+  });
+}
+
+function scheduleFirstAiGuideOffer(attempt = 0) {
+  clearTimeout(firstAiGuideOfferTimer);
+  if (!firstAiGuideEligible() || $("dashboardView")?.classList.contains("hidden")) return;
+  firstAiGuideOfferTimer = setTimeout(() => {
+    if (!firstAiGuideEligible()) return;
+    if (document.querySelector("dialog[open]")) {
+      if (attempt < 40) scheduleFirstAiGuideOffer(attempt + 1);
+      return;
+    }
+    if (firstAiGuideForcePreview()) firstAiGuideForceConsumed = true;
+    renderFirstAiGuideStep("intro");
+  }, attempt ? 500 : 650);
+}
+
+function renderFirstTestGuide() {
+  if (firstAiGuideStep) requestAnimationFrame(positionFirstAiGuideCard);
+}
+
+let teacherTourIndex = 0;
+
+function teacherTourStorageKey() {
+  const config = currentTeacherTourConfig();
+  return state.user ? `teacherTour:${state.user.uid}:${config.version}` : "";
+}
+
+function renderTeacherTourStep() {
+  const config = currentTeacherTourConfig();
+  const steps = config.steps || [];
+  const step = steps[teacherTourIndex] || steps[0];
+  if (!step) return;
+  $("teacherTourStepLabel").textContent = `${teacherTourIndex + 1} von ${steps.length}`;
+  const tourIcon = $("teacherTourIcon");
+  const crew = { "👋": "penguin-guide", "✨": "falcon-create", "☺": "owl-grade", "↻": "fox-improve" };
+  tourIcon.classList.toggle("gradecrewTourMascot", Boolean(crew[step.icon]));
+  if (crew[step.icon]) tourIcon.innerHTML = `<img src="/assets/gradecrew/${crew[step.icon]}.svg" width="96" height="96" alt="" />`;
+  else tourIcon.textContent = step.icon;
+  $("teacherTourTitle").textContent = step.title;
+  $("teacherTourText").textContent = step.text;
+  $("teacherTourBullets").innerHTML = step.bullets.map(item => {
+    const warning = item.trim().startsWith("⚠");
+    return `<div class="teacherTourBullet${warning ? " warning" : ""}"><span>${warning ? "⚠" : "✓"}</span><p>${escapeHtml(warning ? item.replace(/^⚠\\s*/, "") : item)}</p></div>`;
+  }).join("");
+  $("teacherTourDots").innerHTML = steps.map((_, index) => `<span class="teacherTourDot${index === teacherTourIndex ? " active" : ""}"></span>`).join("");
+  $("teacherTourBack").disabled = teacherTourIndex === 0;
+  $("teacherTourNext").textContent = teacherTourIndex === steps.length - 1 ? "Los geht’s" : "Weiter";
+}
+
+function maybeShowTeacherTour() {
+  if (window.gradecrewPracticeReady) return false;
+  if (!state.user || isSuspended()) return false;
+  const config = currentTeacherTourConfig();
+  if (!config.enabled || !config.steps?.length) return false;
+  const key = teacherTourStorageKey();
+  try { if (key && localStorage.getItem(key) === "done") return false; } catch (_) {}
+  teacherTourIndex = 0;
+  renderTeacherTourStep();
+  safeDialogOpen($("teacherTourDialog"));
+  return true;
+}
+
+async function finishTeacherTour() {
+  const key = teacherTourStorageKey();
+  try { if (key) localStorage.setItem(key, "done"); } catch (_) {}
+  safeDialogClose($("teacherTourDialog"));
+  await loadAnnouncements();
+}
+
+function showView(id) {
+  diagnostics.record("view", { view: id });
+  if (id === "authView") document.dispatchEvent(new Event("gradecrew:signed-out"));
+  if (id !== "publishView") clearPublishSubscriptions();
+  if (id !== "studentView") clearStudentSubscriptions();
+  const changed = $(id)?.classList.contains("hidden");
+  views.forEach((v) => $(v).classList.toggle("hidden", v !== id));
+  if (changed) requestAnimationFrame(() => focusView($(id)));
+  window.scrollTo({ top: 0, behavior: scrollBehavior() });
+  if (typeof crewTour !== "undefined") crewTour?.notify("view", {id});
+}
+
+function toast(message, type = "success") {
+  if(type==="error") cocoLastError={uid:state.user?.uid||"",text:String(message||"").slice(0,300),at:Date.now()};
+  const el = $("toast");
+  el.textContent = message;
+  el.className = `toast show ${type}`;
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => (el.className = "toast"), 3200);
+}
+
+const REPORTABLE_ERROR_CODES = Object.freeze({
+  aiCreate: "AI-CREATE-001",
+  aiSimilar: "AI-SIMILAR-001",
+  aiEdit: "AI-EDIT-001",
+  aiVariant: "AI-VARIANT-001",
+  dataLoad: "APP-DATA-001",
+  unexpected: "APP-UNEXPECTED-001"
+});
+
+function currentViewId() {
+  return views.find((id) => !$(id)?.classList.contains("hidden")) || "unknown";
+}
+
+function shortErrorFingerprint(value) {
+  let hash = 2166136261;
+  for (const char of String(value || "")) {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(36).toUpperCase().padStart(7, "0").slice(-7);
+}
+
+function cleanTechnicalDetails(details = {}) {
+  const out = {};
+  for (const [key, value] of Object.entries(details || {})) {
+    if (value == null) out[key] = null;
+    else if (typeof value === "boolean" || typeof value === "number") out[key] = value;
+    else out[key] = String(value).slice(0, 1000);
+  }
+  return out;
+}
+
+function serializeAiDiagnostic(value) {
+  if (!value || typeof value !== "object") return "";
+  try {
+    const json = JSON.stringify(value, null, 2);
+    return json.length <= 60000 ? json : JSON.stringify({ truncated: true, excerpt: json.slice(0, 58000) });
+  } catch (_) { return "Diagnosedaten konnten nicht serialisiert werden."; }
+}
+
+function ensureReportableErrorHost() {
+  let host = $("reportableErrorHost");
+  if (host) return host;
+  host = document.createElement("div");
+  host.id = "reportableErrorHost";
+  host.className = "reportableErrorHost";
+  host.setAttribute("aria-live", "assertive");
+  document.body.appendChild(host);
+  return host;
+}
+
+function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message = "Etwas hat nicht funktioniert.", error = null, action = "unknown", details = {} } = {}) {
+  const host = ensureReportableErrorHost();
+  const rawMessage = redactTechnicalText(error?.message || error || "", 1800);
+  const providerCode = String(error?.code || error?.status || "").slice(0, 160);
+  const stack = redactTechnicalText(error?.stack || "", 7000);
+  const cleanedDetails = cleanTechnicalDetails(details);
+  const fingerprint = shortErrorFingerprint([code, action, cleanedDetails.stage || "", providerCode, rawMessage, stack.split("\n").slice(0, 3).join("|")].join("|"));
+  const existing = host.querySelector(`[data-error-fingerprint="${fingerprint}"]`);
+  if (existing) {
+    existing.__reportPayload.occurrences += 1;
+    const count = existing.querySelector(".reportableErrorOccurrences");
+    if (count) count.textContent = ` · ${existing.__reportPayload.occurrences}× aufgetreten`;
+    existing.scrollIntoView({ block: "nearest", behavior: scrollBehavior() });
+    return existing.__reportPayload;
+  }
+
+  const quiz = state.currentQuiz || state.currentResultsQuiz || null;
+  diagnostics.record("error", { code, action, stage: cleanedDetails.stage });
+  const payload = {
+    diagnostics: diagnostics.snapshot(),
+    severity: diagnosticSeverity(providerCode || code),
+    errorCode: code,
+    fingerprint,
+    action: String(action || "unknown").slice(0, 120),
+    userMessage: String(message || "Etwas hat nicht funktioniert.").slice(0, 800),
+    errorName: String(error?.name || "Error").slice(0, 120),
+    providerCode,
+    serverReference: String(error?.details?.reference || "").replace(/[^a-zA-Z0-9-]/g, "").slice(0, 40),
+    serverPhase: String(error?.details?.phase || "").slice(0, 100),
+    serverReason: String(error?.details?.reason || "").slice(0, 1200),
+    aiDiagnostic: serializeAiDiagnostic(error?.details?.diagnostic),
+    validationErrors: Array.isArray(error?.details?.errors)
+      ? error.details.errors.slice(0, 10).map(value => String(value).slice(0, 240)).join("\n") : "",
+    rawMessage,
+    stack,
+    view: currentViewId(),
+    pageUrl: location.origin + location.pathname,
+    testCode: String(quiz?.id || "").slice(0, 80),
+    questionCount: Array.isArray(state.questions) ? state.questions.length : 0,
+    appVersion: APP_VERSION,
+    environment: appEnvironment || "production",
+    userAgent: navigator.userAgent.slice(0, 1200),
+    language: String(navigator.language || "").slice(0, 40),
+    online: navigator.onLine,
+    viewport: `${window.innerWidth}x${window.innerHeight}`,
+    screen: `${window.screen?.width || 0}x${window.screen?.height || 0}`,
+    occurredAtClient: new Date().toISOString(),
+    occurrences: 1,
+    details: cleanedDetails
+  };
+
+  const card = document.createElement("section");
+  card.className = "reportableErrorCard";
+  card.dataset.errorFingerprint = fingerprint;
+  card.__reportPayload = payload;
+  card.innerHTML = `<div class="reportableErrorHead"><div><strong>Das hat leider nicht funktioniert.</strong><span class="reportableErrorCode">${escapeHtml(code)}</span><span class="reportableErrorOccurrences"></span></div><button type="button" class="reportableErrorClose" aria-label="Fehlermeldung schließen">×</button></div><p>${escapeHtml(payload.userMessage)}</p><small class="reportableErrorHint">Die Meldung bleibt sichtbar. Mit „Problem melden“ werden technische Informationen sowie die betroffene KI-Aufgabe, Bildbeschreibungen und Prüfgründe an GradeCrew gesendet – keine Schülerantworten oder hochgeladenen Dateien.</small><div class="reportableErrorActions"><button type="button" class="button primary reportableErrorSend">Problem melden</button><span class="reportableErrorStatus"></span></div>`;
+  card.querySelector(".reportableErrorClose").addEventListener("click", () => card.remove());
+  card.querySelector(".reportableErrorSend").addEventListener("click", () => submitTechnicalErrorReport(card));
+  host.prepend(card);
+  return payload;
+}
+
+async function submitTechnicalErrorReport(card) {
+  const payload = card?.__reportPayload;
+  const button = card?.querySelector(".reportableErrorSend");
+  const status = card?.querySelector(".reportableErrorStatus");
+  if (!payload || !button) return;
+  if (!state.user) {
+    if (status) status.textContent = "Bitte als Lehrkraft anmelden, um den Fehler zu melden.";
+    return;
+  }
+  const uid = state.user.uid;
+  const jobId = payload.details?.jobId;
+  const jobNotice = jobId && state.aiJobs.some(job => job.id === jobId && job.status === "failed")
+    ? { reason: "reported", at: Date.now() } : null;
+  button.disabled = true;
+  button.textContent = "Wird gemeldet …";
+  const reportId = `RPT-${Date.now().toString(36).toUpperCase()}-${crypto.randomUUID().replace(/-/g, "").slice(0, 5).toUpperCase()}`;
+  try {
+    const batch = writeBatch(db);
+    batch.set(doc(db, "feedback", `err-${reportId.toLowerCase()}`), {
+      userId: state.user.uid,
+      displayName: state.profile?.displayName || state.user.displayName || "",
+      email: state.user.email || state.profile?.email || "",
+      category: "app_error",
+      message: `Technischer Fehler ${payload.errorCode}: ${payload.userMessage}`,
+      errorCode: payload.errorCode,
+      reportId,
+      fingerprint: payload.fingerprint,
+      action: payload.action,
+      testCode: payload.testCode || null,
+      feedbackSchemaVersion: 5,
+      severity: payload.severity,
+      appVersion: payload.appVersion,
+      environment: payload.environment,
+      userAgent: payload.userAgent,
+      pageUrl: payload.pageUrl,
+      technicalDetails: {
+        diagnostics: payload.diagnostics,
+        errorName: payload.errorName,
+        providerCode: payload.providerCode,
+        serverReference: payload.serverReference,
+        serverPhase: payload.serverPhase,
+        serverReason: payload.serverReason,
+        aiDiagnostic: payload.aiDiagnostic,
+        validationErrors: payload.validationErrors,
+        rawMessage: payload.rawMessage,
+        stack: payload.stack,
+        view: payload.view,
+        questionCount: payload.questionCount,
+        language: payload.language,
+        online: payload.online,
+        viewport: payload.viewport,
+        screen: payload.screen,
+        occurredAtClient: payload.occurredAtClient,
+        occurrences: payload.occurrences,
+        ...payload.details
+      },
+      status: "new",
+      createdAt: serverTimestamp()
+    });
+    if (jobNotice) {
+      jobNotice.reportId = reportId;
+      batch.set(doc(db, "users", uid), { aiJobNotices: { [jobId]: jobNotice } }, { merge: true });
+    }
+    await batch.commit();
+    if (state.user?.uid !== uid) { card.remove(); return; }
+    if (jobNotice) {
+      state.profile = { ...state.profile, aiJobNotices: { ...state.profile?.aiJobNotices, [jobId]: jobNotice } };
+      renderAiJobs();
+      card.remove();
+      toast(`Problem gemeldet · ${reportId}`);
+      return;
+    }
+    card.classList.add("reported");
+    button.textContent = "Gemeldet ✓";
+    if (status) status.textContent = `Report ${reportId}`;
+  } catch (reportError) {
+    console.error("Technischer Fehler konnte nicht gemeldet werden:", reportError);
+    button.disabled = false;
+    button.textContent = "Problem melden";
+    if (status) status.textContent = "Melden fehlgeschlagen – bitte erneut versuchen.";
+  }
+}
+
+window.addEventListener("error", (event) => {
+  if (!event.error) return;
+  if (event.filename && !event.filename.startsWith(location.origin)) return;
+  showReportableError({
+    code: REPORTABLE_ERROR_CODES.unexpected,
+    message: "In GradeCrew ist ein unerwarteter Fehler aufgetreten.",
+    error: event.error,
+    action: "window_error",
+    details: { file: event.filename || "", line: event.lineno || 0, column: event.colno || 0 }
+  });
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+  const reason = event.reason instanceof Error ? event.reason : new Error(String(event.reason || "Unbekannter Promise-Fehler"));
+  showReportableError({
+    code: REPORTABLE_ERROR_CODES.unexpected,
+    message: "Eine Aktion konnte nicht vollständig abgeschlossen werden.",
+    error: reason,
+    action: "unhandled_promise"
+  });
+});
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[c]));
+}
+
+
+function normalize(value) {
+  return String(value ?? "").trim().toLowerCase();
+}
+
+function normalizeWord(value) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "");
+}
+
+function toMillis(value) {
+  if (value?.toMillis) return value.toMillis();
+  if (value?.seconds) return value.seconds * 1000;
+  if (typeof value === "string") return Date.parse(value) || 0;
+  return 0;
+}
+
+function fmtDate(value) {
+  const ms = toMillis(value);
+  return ms ? new Date(ms).toLocaleString("de-DE") : "–";
+}
+
+function formatDuration(seconds) {
+  const total = Number(seconds);
+  if (!Number.isFinite(total) || total < 0) return "–";
+  const min = Math.floor(total / 60);
+  const sec = Math.round(total % 60);
+  return `${min}:${String(sec).padStart(2, "0")} min`;
+}
+
+function baseStudentUrl(code, preview = false) {
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("test", code);
+  if (preview) url.searchParams.set("preview", "1");
+  return url.toString();
+}
+
+function baseTemplateUrl(code) {
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.hash = "";
+  url.searchParams.set("template", code);
+  return url.toString();
+}
+
+function randomCode(length = 8) {
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let out = "";
+  crypto.getRandomValues(new Uint32Array(length)).forEach((n) => {
+    out += alphabet[n % alphabet.length];
+  });
+  return out;
+}
+
+function randomId(prefix = "id") {
+  return `${prefix}_${crypto.randomUUID?.() || `${Date.now()}_${Math.random().toString(36).slice(2)}`}`;
+}
+
+function deepClone(value) {
+  return typeof structuredClone === "function" ? structuredClone(value) : JSON.parse(JSON.stringify(value));
+}
+
+function clamp(n, min, max) {
+  return Math.min(max, Math.max(min, n));
+}
+
+const PENDING_TEMPLATE_KEY = "lernplattformPendingTemplate";
+
+function normalizeTemplateCode(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  try {
+    const url = new URL(raw, location.href);
+    const fromUrl = url.searchParams.get("template");
+    if (fromUrl) return String(fromUrl).toUpperCase().replace(/[^A-Z0-9]/g, "");
+  } catch {}
+  return raw.toUpperCase().replace(/^V[\s-]*/, "").replace(/[^A-Z0-9]/g, "");
+}
+
+function rememberPendingTemplate(code) {
+  if (code) sessionStorage.setItem(PENDING_TEMPLATE_KEY, code);
+}
+
+function clearPendingTemplate() {
+  sessionStorage.removeItem(PENDING_TEMPLATE_KEY);
+}
+
+function clearPublishSubscriptions() {
+  state.publishUnsubs.forEach((fn) => {
+    try { fn?.(); } catch {}
+  });
+  state.publishUnsubs = [];
+  if (state.publishClockInterval) clearInterval(state.publishClockInterval);
+  state.publishClockInterval = null;
+}
+
+function clearStudentSubscriptions() {
+  try { state.studentQuizUnsub?.(); } catch {}
+  state.studentQuizUnsub = null;
+  try { state.studentProgressObserver?.disconnect?.(); } catch {}
+  state.studentProgressObserver = null;
+}
+
+function round1(n) {
+  return Math.round(Number(n || 0) * 2) / 2;
+}
+
+function getSettings(profile = state.profile) {
+  const settings = { ...DEFAULT_SETTINGS, ...(profile?.settings || {}) };
+  if (!settings.defaultDescription || settings.defaultDescription === "Bearbeite alle Aufgaben sorgfältig.") {
+    settings.defaultDescription = DEFAULT_SETTINGS.defaultDescription;
+  }
+  return settings;
+}
+
+function getGradeScales(profile = state.profile) {
+  const raw = Array.isArray(profile?.gradeScales) ? profile.gradeScales : [];
+  const cleaned = raw
+    .filter((s) => s && s.id && s.name && Array.isArray(s.thresholds) && s.thresholds.length === 6)
+    .map((s) => ({ id: String(s.id), name: String(s.name), thresholds: s.thresholds.map(Number) }));
+  return cleaned.length ? cleaned : [deepClone(DEFAULT_SCALE)];
+}
+
+function getScaleById(id, profile = state.profile) {
+  const scales = getGradeScales(profile);
+  return deepClone(scales.find((s) => s.id === id) || scales[0] || DEFAULT_SCALE);
+}
+
+function getQuizScale(quiz) {
+  if (quiz?.gradeScaleSnapshot?.thresholds?.length === 6) return quiz.gradeScaleSnapshot;
+  if (quiz?.gradeScaleId) return getScaleById(quiz.gradeScaleId);
+  return deepClone(DEFAULT_SCALE);
+}
+
+function gradeFromPercent(percent, scale = DEFAULT_SCALE) {
+  const thresholds = Array.isArray(scale?.thresholds) && scale.thresholds.length === 6
+    ? scale.thresholds.map(Number)
+    : DEFAULT_SCALE.thresholds;
+  const p = Number(percent) || 0;
+  for (let i = 0; i < 6; i += 1) {
+    if (p >= thresholds[i]) return i + 1;
+  }
+  return 6;
+}
+
+function scaleRangeText(scale) {
+  const t = scale.thresholds.map(Number);
+  return t.map((min, i) => {
+    const max = i === 0 ? 100 : t[i - 1] - 1;
+    return `${i + 1}: ${min}–${max}%`;
+  }).join(" · ");
+}
+
+function isAdmin() {
+  return state.profile?.role === "admin";
+}
+
+function isSuspended(profile = state.profile) {
+  return profile?.status === "suspended";
+}
+
+function activeQuizzes(list = state.quizzes) {
+  return list.filter((q) => !q.isDeleted);
+}
+
+function deletedQuizzes(list = state.quizzes) {
+  return list.filter((q) => Boolean(q.isDeleted));
+}
+
+function startOfDaysAgo(days) {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - Number(days || 0));
+  return d;
+}
+
+function safeDialogOpen(dialog) {
+  if (!dialog) return;
+  try { dialog.showModal(); } catch { dialog.setAttribute("open", ""); }
+}
+
+function safeDialogClose(dialog) {
+  if (!dialog) return;
+  try { dialog.close(); } catch { dialog.removeAttribute("open"); }
+}
+
+function setTeacherBar() {
+  const loggedIn = Boolean(state.user) && !new URLSearchParams(location.search).has("test");
+  const hostname = String(location.hostname || "").replace(/^\[|\]$/g, "").toLowerCase();
+  const localWorkbenchHost = ["localhost", "127.0.0.1", "::1"].includes(hostname);
+  $("userBar").classList.toggle("hidden", !loggedIn);
+  $("userLabel").textContent = state.profile?.displayName || state.user?.displayName || state.user?.email || "";
+  $("adminTopBtn")?.classList.toggle("hidden", !loggedIn || !isAdmin());
+  $("gradecrewEtLauncher")?.classList.toggle("hidden", !loggedIn || !isAdmin() || localWorkbenchHost);
+  $("appFooter")?.classList.toggle("hidden", !loggedIn);
+}
+
+function renderBugOpsAttentionBadge(summary = state.bugOpsSummary) {
+  const button = $("adminTopBtn");
+  if (!button) return;
+  button.querySelector(".bugOpsAttentionBadge")?.remove();
+  const count = Math.max(0, Number(summary?.needsAttention) || 0);
+  button.removeAttribute("title");
+  if (!count) return;
+  const badge = document.createElement("span");
+  badge.className = "bugOpsAttentionBadge";
+  badge.textContent = count > 99 ? "99+" : String(count);
+  badge.setAttribute("aria-hidden", "true");
+  button.appendChild(badge);
+  button.title = "BugOps: Vorgänge brauchen Aufmerksamkeit.";
+}
+
+async function refreshBugOpsAttention({ notify = false } = {}) {
+  if (!state.user || !isAdmin() || typeof aiApi.getBugOpsSummary !== "function") {
+    state.bugOpsSummary = null;
+    if (appEnvironment === "staging") void reviewController?.setSession(null);
+    renderBugOpsAttentionBadge(null);
+    return null;
+  }
+  const uid = state.user.uid;
+  try {
+    const summary = await aiApi.getBugOpsSummary({});
+    if (state.user?.uid !== uid || !isAdmin()) return null;
+    state.bugOpsSummary = summary || null;
+    renderBugOpsAttentionBadge(summary);
+    if (notify && Number(summary?.needsAttention || 0) > 0 && !state.shownThisLogin.has("bugops-attention")) {
+      state.shownThisLogin.add("bugops-attention");
+      const message = "BugOps: wichtige Fehler brauchen deine Aufmerksamkeit.";
+      if (Number(summary?.p0 || 0) > 0) toast(message, "error");
+      else toast(message);
+    }
+    return summary;
+  } catch (error) {
+    console.warn("BugOps-Zusammenfassung konnte nicht geladen werden:", error);
+    return null;
+  }
+}
+
+async function ensureProfileDefaults(user, profile) {
+  if (!user) return profile;
+  const ref = doc(db, "users", user.uid);
+  const current = profile || {};
+  const patch = {};
+  if (!current.settings) patch.settings = deepClone(DEFAULT_SETTINGS);
+  if (!Array.isArray(current.gradeScales) || !current.gradeScales.length) patch.gradeScales = [deepClone(DEFAULT_SCALE)];
+  if (!current.role) patch.role = "teacher";
+  if (!current.status) patch.status = "active";
+  if (Object.keys(patch).length) {
+    await setDoc(ref, patch, { merge: true });
+    return { ...current, ...patch };
+  }
+  return current;
+}
+
+async function touchLastActive(user, profile) {
+  if (!user || isSuspended(profile)) return;
+  const key = `lastActive:${user.uid}`;
+  const previous = Number(localStorage.getItem(key) || 0);
+  if (Date.now() - previous < 15 * 60 * 1000) return;
+  try {
+    await updateDoc(doc(db, "users", user.uid), { lastActiveAt: serverTimestamp(), appVersion: APP_VERSION });
+    localStorage.setItem(key, String(Date.now()));
+  } catch (err) {
+    console.warn("Letzte Aktivität konnte nicht aktualisiert werden:", err);
+  }
+}
+
+// ---------- Auth / Landing ----------
+bindTabs(document.querySelector("#authView [role=tablist]"));
+
+$("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    await signInWithEmailAndPassword(auth, $("loginEmail").value.trim(), $("loginPassword").value);
+    toast("Erfolgreich angemeldet.");
+  } catch (err) {
+    toast(authMessage(err), "error");
+  }
+});
+
+$("registerForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = $("registerName").value.trim();
+  const email = $("registerEmail").value.trim();
+  const password = $("registerPassword").value;
+  if (password !== $("registerPassword2").value) {
+    toast("Die Passwörter stimmen nicht überein.", "error");
+    return;
+  }
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(cred.user, { displayName: name });
+    await setDoc(doc(db, "users", cred.user.uid), {
+      displayName: name,
+      email,
+      role: "teacher",
+      status: "active",
+      lastActiveAt: serverTimestamp(),
+      appVersion: APP_VERSION,
+      settings: deepClone(DEFAULT_SETTINGS),
+      gradeScales: [deepClone(DEFAULT_SCALE)],
+      createdAt: serverTimestamp()
+    });
+    toast("Account erstellt.");
+  } catch (err) {
+    toast(authMessage(err), "error");
+  }
+});
+
+let passwordResetPending = false;
+$("resetForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (passwordResetPending) return;
+  const email = $("resetEmail").value.trim();
+  if (!email || !$("resetForm").reportValidity()) return;
+  const generation = authStateGeneration;
+  const revision = $("authView")?.dataset.entryRevision;
+  const status = $("resetStatus");
+  const button = $("resetSubmit");
+  const isCurrent = () => generation === authStateGeneration && $("authView")?.dataset.entryState === "reset"
+    && $("authView")?.dataset.entryRevision === revision && !$("authView").classList.contains("hidden");
+  const sentMessage = "Falls ein Konto mit dieser E-Mail-Adresse besteht, erhältst du einen Link. Schau auch im Spam-Ordner nach.";
+  passwordResetPending = true;
+  button.disabled = true;
+  status.textContent = "Link wird angefordert …";
+  try {
+    await sendPasswordResetEmail(auth, email);
+    if (isCurrent()) status.textContent = sentMessage;
+  } catch (err) {
+    if (isCurrent()) status.textContent = err?.code === "auth/user-not-found"
+      ? sentMessage : "Der Link konnte gerade nicht angefordert werden. Prüfe deine E-Mail-Adresse und versuche es erneut.";
+  } finally {
+    passwordResetPending = false;
+    button.disabled = false;
+  }
+});
+
+$("logoutBtn").addEventListener("click", async () => {
+  await Promise.race([
+    Promise.allSettled(state.aiMaterials.map(m => aiApi.removeMaterial(m))),
+    new Promise(resolve => setTimeout(resolve, 2000))
+  ]);
+  state.aiMaterials = [];
+  await signOut(auth);
+});
+
+$("joinForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const code = $("joinCode").value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (!code) {
+    toast("Bitte einen Testcode eingeben.", "error");
+    return;
+  }
+  if (code.length < 4 || code.length > 16) {
+    toast("Der Testcode ist ungültig.", "error");
+    return;
+  }
+  const url = new URL(location.href);
+  url.search = "";
+  url.searchParams.set("test", code);
+  location.href = url.toString();
+});
+
+$("brandBtn").addEventListener("click", () => {
+  clearPendingTemplate();
+  const url = new URL(location.href);
+  url.search = "";
+  url.hash = "";
+  location.href = url.toString();
+});
+
+function authMessage(err) {
+  const map = {
+    "auth/invalid-credential": "E-Mail oder Passwort ist falsch.",
+    "auth/email-already-in-use": "Für diese E-Mail existiert bereits ein Account.",
+    "auth/weak-password": "Das Passwort ist zu schwach.",
+    "auth/invalid-email": "Die E-Mail-Adresse ist ungültig.",
+    "auth/too-many-requests": "Zu viele Versuche. Bitte später erneut versuchen."
+  };
+  return map[err?.code] || `Fehler: ${err?.message || "unbekannt"}`;
+}
+
+let authStateGeneration = 0;
+onAuthStateChanged(auth, async (user) => {
+  const generation = ++authStateGeneration;
+  quickRemyBridge.authChanged(user);
+  if (guestTourRepo && !user) return;
+  if (guestTourRepo && user) exitGuestTour();
+  const accountChanged = state.user?.uid !== user?.uid;
+  if (accountChanged) {
+    window.GradeCrewNative?.setAuthState?.({ state: "checking" })?.catch(() => {});
+    document.dispatchEvent(new CustomEvent("gradecrew:account-changed"));
+    adminAuditCursor = null;
+    state.adminAudit = [];
+    state.adminFeedback = [];
+    state.bugOpsSummary = null;
+    if (appEnvironment === "staging") void reviewController?.setSession(null);
+    renderBugOpsAttentionBadge(null);
+    $("adminAuditList")?.replaceChildren();
+    $("adminFeedbackList")?.replaceChildren();
+    state.variantTask = null;
+    state.aiVariantsRunning = false;
+    state.aiMaterials = [];
+    state.aiJobsUnsub?.();
+    state.aiJobsUnsub = null;
+    state.aiJobs = [];
+    $("reportableErrorHost")?.replaceChildren();
+    $("variantBackgroundProgress")?.replaceChildren();
+  }
+  state.user = user;
+  state.profile = null;
+  if (user) {
+    try {
+      let profile = await publishAuthProfileForGeneration({
+        readProfile: async () => {
+          const snapshot = await getDoc(doc(db, "users", user.uid));
+          return snapshot.exists() ? snapshot.data() : { displayName: user.displayName || user.email };
+        },
+        isCurrent: () => generation === authStateGeneration,
+        publishProfile: value => { state.profile = value; }
+      });
+      if (!profile) return;
+      profile = await ensureProfileDefaults(user, profile);
+      if (generation !== authStateGeneration) return;
+      state.profile = profile;
+      if (isSuspended(profile)) {
+        toast("Dieser Account wurde vorübergehend gesperrt. Bitte wende dich an den Administrator.", "error");
+        if (generation === authStateGeneration) await signOut(auth);
+        return;
+      }
+      state.shownThisLogin = new Set();
+      await touchLastActive(user, profile);
+      if (generation !== authStateGeneration) return;
+    } catch (err) {
+      if (generation !== authStateGeneration) return;
+      console.error(err);
+    }
+  } else {
+    state.shownThisLogin = new Set();
+  }
+  if (generation !== authStateGeneration) return;
+  const nativeAuthState = user
+    ? { state: "signedIn", accountLabel: String(state.profile?.displayName || user.displayName || user.email || "Angemeldet").trim().slice(0, 160), accountChanged }
+    : { state: "signedOut" };
+  window.GradeCrewNative?.setAuthState?.(nativeAuthState)?.catch(() => {});
+  setTeacherBar();
+  if (appEnvironment === "staging") void reviewController?.setSession(user ? { uid: user.uid } : null);
+  if (user && isAdmin()) void refreshBugOpsAttention({ notify: true });
+
+  const params = new URLSearchParams(location.search);
+  const rawTemplateCode = params.get("template");
+  const templateCodeFromUrl = normalizeTemplateCode(rawTemplateCode);
+  if (templateCodeFromUrl) rememberPendingTemplate(templateCodeFromUrl);
+  const pendingTemplateCode = templateCodeFromUrl || normalizeTemplateCode(sessionStorage.getItem(PENDING_TEMPLATE_KEY));
+  if ($("sharedLoginNotice")) $("sharedLoginNotice").classList.add("hidden");
+  if (pendingTemplateCode) {
+    if (!user) {
+      showView("authView");
+      $("sharedLoginNotice")?.classList.remove("hidden");
+      return;
+    }
+    if (!templateCodeFromUrl) {
+      const url = new URL(location.href);
+      url.searchParams.set("template", pendingTemplateCode);
+      history.replaceState({}, "", url.pathname + url.search);
+    }
+    await loadSharedTemplate(pendingTemplateCode);
+    return;
+  }
+
+  const rawStudentCode = params.get("test");
+  const studentCode = rawStudentCode ? rawStudentCode.toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
+  if (studentCode) {
+    if (studentCode.length < 4 || studentCode.length > 16) {
+      showView("studentView");
+      $("studentQuizCard").innerHTML = `<h1>Test nicht verfügbar</h1><p>Der Testcode ist ungültig.</p><a class="button primary" href="${escapeHtml(location.pathname)}">Zur Startseite</a>`;
+      return;
+    }
+    await loadStudentQuiz(studentCode);
+    return;
+  }
+
+  if (user) await loadDashboard();
+  else showView("authView");
+});
+
+// ---------- Dashboard ----------
+function makeTourApi() {
+  return {
+    uid: tourUid,
+    reviewPreviewAllowed: () => appEnvironment === "local-review" && Boolean(guestTourRepo),
+    reviewControlsAllowed: () => Boolean(document.querySelector("[data-review-toggle]")),
+    isDashboard: () => !$("dashboardView").classList.contains("hidden"),
+    beginRun: () => { tutorialDraft = null; },
+    prefill: prefillTutorialRequest,
+    createDemo: payload => guestTourRepo ? guestTourRepo.create({ ...quizDefaults(), ...payload }) : createTutorialQuiz(payload),
+    isGuest: () => Boolean(guestTourRepo),
+    openEditor,
+    isEditor: code => state.currentQuiz?.id === code && !$("editorView").classList.contains("hidden"),
+    questionId: index => state.questions[index]?.id || "",
+    focusQuestion: id => focusEditorQuestion(state.questions.findIndex(q => q.id === id)),
+    showSettings: () => { const section = document.querySelector(".editorSettingsDisclosure"); if (section) section.open = true; },
+    checkDemo: () => state.questions.length !== 10 ? "Für die Tour brauchen wir genau zehn Aufgaben. Entferne die ursprüngliche Aufgabe nach dem Übernehmen der Variante."
+      : (!$("quizUseTimeLimit").checked || Number($("quizTimeLimitMinutes").value) !== 1 || $("quizStartMode").value !== "student") ? "Bitte eine Minute Zeitlimit und Start durch Schüler einstellen." : null,
+    focusReviewQuestion: id => { const input = document.querySelector(`#reviewQuestions .manualPoints[data-qid="${CSS.escape(id)}"]`); input?.scrollIntoView({block:"center"}); input?.focus(); },
+    startNewTest: () => guestTourRepo ? exitGuestTour() : openCreateView(),
+    exitTour: () => guestTourRepo ? exitGuestTour() : loadDashboard(),
+    completeTour: async () => {
+      if (guestTourRepo) return;
+      const uid=state.user?.uid;if(!uid)throw new Error("Bitte anmelden.");
+      await updateDoc(doc(db,"users",uid),{crewTourCompletedAt:serverTimestamp()});
+      if(state.user?.uid===uid)state.profile={...state.profile,crewTourCompletedAt:true};
+    },
+    handleTourOffer: async (choice = "later") => {
+      if (guestTourRepo) return;
+      const uid=state.user?.uid;if(!uid)return;
+      const normalized=choice === "start" ? "started" : "later";
+      await updateDoc(doc(db,"users",uid),{crewTourOfferHandledAt:serverTimestamp(),crewTourOfferChoice:normalized});
+      if(state.user?.uid===uid)state.profile={...state.profile,crewTourOfferHandledAt:true,crewTourOfferChoice:normalized};
+    }
+  };
+}
+
+function exitGuestTour() {
+  crewTour?.stop();
+  stopStudentTimer();
+  clearPublishSubscriptions();
+  clearStudentSubscriptions();
+  clearTimeout(draftTimer);
+  draftTimer = null;
+  studentConfirmationPending.forEach(controller => controller.abort());
+  studentConfirmationPending.clear();
+  studentSubmissionBusy.clear();
+  completedStudentSubmissions.clear();
+  document.querySelectorAll('dialog.variantRequestDialog').forEach(dialog => dialog.remove());
+  for (const id of ['studentQuizCard', 'resultsTableWrap', 'reviewPanel', 'questionList', 'questionOutline', 'publishedCode', 'qrcode', 'teacherLivePanel', 'variantBackgroundProgress', 'similarTestProgress', 'importReviewBanner']) {
+    $(id)?.replaceChildren();
+  }
+  for (const id of ['quizTitle', 'quizSubject', 'quizGrade', 'quizDescription', 'publishedLink']) {
+    if ($(id)) $(id).value = '';
+  }
+  $('editorHeading').textContent = 'Test bearbeiten';
+  $('resultsHeading').textContent = 'Test';
+  $('resultsMeta').textContent = '';
+  $('editorView').removeAttribute('data-quiz-id');
+  $('editorView').removeAttribute('data-owner-id');
+  $('reviewPanel').classList.add('hidden');
+  guestTourRepo?.clear();
+  guestTourRepo = null;
+  state.isDirty = false;
+  state.draftCheckpointSaved = false;
+  state.guestTourUid = null;
+  state.currentQuiz = null;
+  state.questions = [];
+  state.loadedQuestionIds = new Set();
+  state.pendingImportReport = null;
+  state.currentResultsQuiz = null;
+  state.resultQuestions = [];
+  state.submissions = [];
+  state.studentAttempt = null;
+  state.variantTask = null;
+  state.aiVariantsRunning = false;
+  document.dispatchEvent(new Event('gradecrew:guest-tour-exited'));
+  showView('authView');
+  document.getElementById('gcEntryLoginOpen')?.click();
+}
+
+document.addEventListener('gradecrew:start-guest-tour', () => {
+  if (state.user || guestTourRepo) return;
+  guestTourRepo = createLocalTourRepository();
+  state.guestTourUid = 'local-tour';
+  state.quizzes = [];
+  state.aiJobs = [];
+  safeDialogClose($('announcementDialog'));
+  state.activeAnnouncementDialogId = null;
+  for (const id of ['announcementDialogTitle', 'announcementDialogText']) $(id).textContent = '';
+  for (const id of ['quizList', 'aiJobsList', 'localDraftList', 'announcementHost', 'firstTestDashboard']) {
+    $(id)?.replaceChildren();
+  }
+  for (const id of ['aiJobsList', 'localDraftList', 'firstTestDashboard', 'emptyQuizState', 'noFilterState']) {
+    $(id)?.classList.add('hidden');
+  }
+  for (const id of ['publishedQuizCount', 'draftQuizCount', 'endedQuizCount']) $(id).textContent = '0';
+  $('quizResultsCount').textContent = '';
+  $('quizSearch').value = '';
+  $('quizFilter').value = 'all';
+  $('quizSort').value = 'updated';
+  showView('dashboardView');
+  if (!crewTour) crewTour = installCrewTour(makeTourApi());
+  crewTour.start();
+});
+
+function installAiInfoDismissal() {
+  document.querySelectorAll(".aiFieldInfo").forEach(details => {
+    if (details.dataset.escapeDismissBound) return;
+    details.dataset.escapeDismissBound = "true";
+    const summary = details.querySelector("summary");
+    const reopen = () => details.classList.remove("aiInfoDismissed");
+    summary?.addEventListener("click", reopen);
+    details.addEventListener("pointerenter", () => {
+      reopen();
+      details.classList.add("aiInfoHovered");
+    });
+    details.addEventListener("pointerleave", () => details.classList.remove("aiInfoHovered"));
+    details.addEventListener("focusout", event => {
+      if (!details.contains(event.relatedTarget)) reopen();
+    });
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape") return;
+    const visibleTips = Array.from(document.querySelectorAll(".aiFieldInfo")).filter(details =>
+      details.open || details.matches(":focus-within") || details.matches(":hover") || details.classList.contains("aiInfoHovered")
+    );
+    if (!visibleTips.length) return;
+    event.preventDefault();
+    visibleTips.forEach(details => {
+      details.open = false;
+      details.classList.add("aiInfoDismissed");
+    });
+  });
+}
+installAiInfoDismissal();
+
+$("newQuizBtn").addEventListener("click", openCreateView);
+$("emptyNewQuizBtn").addEventListener("click", openCreateView);
+$("backFromCreate")?.addEventListener("click", loadDashboard);
+$("createManualBtn")?.addEventListener("click", createQuiz);
+$("createAiBtn")?.addEventListener("click", openAiView);
+$("templateImportForm")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  openTemplateFromInput($("templateImportInput")?.value || "");
+});
+$("quizSearch").addEventListener("input", renderQuizList);
+$("quizFilter").addEventListener("change", renderQuizList);
+$("quizSort")?.addEventListener("change", renderQuizList);
+$("dashboardOverview")?.addEventListener("click", event => {
+  const metric = event.target.closest(".dashboardMetric");
+  if (!metric) return;
+  $("quizSearch").value = "";
+  $("quizFilter").value = $("quizFilter").value === metric.dataset.filter ? "all" : metric.dataset.filter;
+  renderQuizList();
+});
+$("clearQuizFiltersBtn")?.addEventListener("click", () => {
+  $("quizSearch").value = "";
+  $("quizFilter").value = "all";
+  renderQuizList();
+  $("quizSearch").focus();
+});
+$("backFromEditor").addEventListener("click", leaveEditorToDashboard);
+$("backFromResults").addEventListener("click", loadDashboard);
+$("settingsBtn")?.addEventListener("click", openSettings);
+$("settingsTopBtn").addEventListener("click", openSettings);
+$("trashBtn")?.addEventListener("click", openTrash);
+$("backFromTrash")?.addEventListener("click", loadDashboard);
+$("adminTopBtn")?.addEventListener("click", openAdmin);
+$("backFromAdmin")?.addEventListener("click", loadDashboard);
+$("refreshAdminBtn")?.addEventListener("click", () => loadAdminData(true));
+
+function openCreateView() {
+  if (!state.user && !guestTourRepo) {
+    showView("authView");
+    return;
+  }
+  if ($("templateImportInput")) $("templateImportInput").value = "";
+  showView("createView");
+  if (firstAiGuideStep === "new") setTimeout(() => renderFirstAiGuideStep("ai"), 80);
+}
+
+function openTemplateFromInput(value) {
+  const code = normalizeTemplateCode(value);
+  if (!code || code.length < 4 || code.length > 16) {
+    toast("Bitte einen gültigen Freigabelink oder Vorlagencode eingeben.", "error");
+    return;
+  }
+  rememberPendingTemplate(code);
+  const url = new URL(location.href);
+  url.search = "";
+  url.searchParams.set("template", code);
+  history.replaceState({}, "", url.pathname + url.search);
+  loadSharedTemplate(code);
+}
+
+async function loadDashboard() {
+  if (!state.user) return;
+  const dashboardUid = state.user.uid;
+  clearPublishSubscriptions();
+  clearStudentSubscriptions();
+  state.pendingImportReport = null;
+  showView("dashboardView");
+  watchAiJobs();
+  await renderLocalDraftList();
+  if (state.user?.uid !== dashboardUid || guestTourRepo) return;
+  $("quizList").innerHTML = `<div class="card">Tests werden geladen …</div>`;
+  try {
+    const snap = await getDocs(query(collection(db, "quizzes"), where("ownerId", "==", dashboardUid)));
+    if (state.user?.uid !== dashboardUid || guestTourRepo) return;
+    state.quizzes = snap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => toMillis(b.updatedAt || b.createdAt) - toMillis(a.updatedAt || a.createdAt));
+    renderQuizList();
+    renderAiJobs();
+    await renderLocalDraftList();
+    await loadTeacherTourConfig();
+    try {
+      const module = await import("./gradecrew-tour.js?v=2.3.1-gc21");
+      if (state.user?.uid !== dashboardUid || $("dashboardView").classList.contains("hidden")) return;
+      if (!crewTour) crewTour = module.installCrewTour(makeTourApi());
+      window.gradecrewPracticeReady = true;
+      crewTour.dashboard({uid: state.user.uid, firstVisit: true, completed: Boolean(state.profile?.crewTourCompletedAt), offerHandled: Boolean(state.profile?.crewTourOfferHandledAt), isAdmin: isAdmin()});
+    } catch (error) { console.warn("GradeCrew-Tutorial nicht verfügbar", error); }
+    const tourOpened = crewTour?.active || maybeShowTeacherTour();
+    if (!tourOpened) await loadAnnouncements();
+    scheduleFirstAiGuideOffer();
+  } catch (err) {
+    if (state.user?.uid !== dashboardUid || guestTourRepo) return;
+    console.error(err);
+    $("quizList").innerHTML = "";
+    showReportableError({
+      code: REPORTABLE_ERROR_CODES.dataLoad,
+      message: "Tests konnten nicht geladen werden.",
+      error: err,
+      action: "load_dashboard"
+    });
+  }
+}
+
+function watchAiJobs() {
+  if (!state.user || state.aiJobsUnsub) return;
+  const uid = state.user.uid;
+  state.aiJobsUnsub = onSnapshot(query(collection(db, "aiJobs"), where("ownerId", "==", uid)), async snapshot => {
+    if (state.user?.uid !== uid) return;
+    state.aiJobs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+    renderAiJobs();
+    for (const job of state.aiJobs) {
+      if (!["ready", "failed"].includes(job.status) || !job.quizId ||
+          state.quizzes.some(quiz => quiz.id === job.quizId && quiz.generationStatus === job.status)) continue;
+      try {
+        const snap = await getDoc(doc(db, "quizzes", job.quizId));
+        if (state.user?.uid !== uid || !snap.exists() || snap.data().ownerId !== uid) continue;
+        state.quizzes = [{ id: snap.id, ...snap.data() }, ...state.quizzes.filter(quiz => quiz.id !== snap.id)];
+        renderQuizList();
+        renderAiJobs();
+      } catch (err) { console.warn("Fertiger KI-Test konnte noch nicht geladen werden:", err); }
+    }
+  }, err => {
+    console.error("KI-Aufträge konnten nicht geladen werden:", err);
+    $("aiJobsList").classList.remove("hidden");
+    $("aiJobsList").textContent = "Der Fortschritt der KI-Erstellung konnte nicht geladen werden. Bitte aktualisiere die Seite.";
+    state.aiJobsUnsub = null;
+  });
+}
+
+async function dismissAiJob(job, button) {
+  if (!state.user || job.status !== "failed") return;
+  const uid = state.user.uid;
+  const notice = { reason: "dismissed", at: Date.now() };
+  button.disabled = true;
+  try {
+    await setDoc(doc(db, "users", uid), { aiJobNotices: { [job.id]: notice } }, { merge: true });
+    if (state.user?.uid !== uid) return;
+    state.profile = { ...state.profile, aiJobNotices: { ...state.profile?.aiJobNotices, [job.id]: notice } };
+    renderAiJobs();
+    toast("Hinweis ausgeblendet. Gespeicherte Teilentwürfe bleiben unter Meine Tests erhalten.");
+  } catch (err) {
+    console.error("KI-Hinweis konnte nicht ausgeblendet werden:", err);
+    if (state.user?.uid !== uid) return;
+    button.disabled = false;
+    toast("Ausblenden konnte nicht gespeichert werden. Bitte erneut versuchen.", "error");
+  }
+}
+
+function aiJobTitle(job) {
+  if (job.generationMode === "variant") return "Emmi-Variante";
+  return job.sourceQuizId ? "Ähnlicher Test" : "Test";
+}
+
+function renderAiJobs() {
+  const host = $("aiJobsList");
+  const recent = state.aiJobs.filter(job => {
+    if (["queued", "running"].includes(job.status)) return true;
+    if (Date.now() - toMillis(job.updatedAt || job.createdAt) >= 7 * 24 * 60 * 60 * 1000) return false;
+    const quiz = state.quizzes.find(item => item.id === job.quizId);
+    return shouldShowAiJob(job, quiz, state.profile?.aiJobNotices?.[job.id]);
+  }).slice(0, 8);
+  host.replaceChildren();
+  host.classList.toggle("hidden", !recent.length);
+  if (recent.some(job => ["queued", "running"].includes(job.status))) $("emptyQuizState").classList.add("hidden");
+  for (const job of recent) {
+    const card = document.createElement("article");
+    const finished = job.status === "ready";
+    const failed = job.status === "failed";
+    const percentage = Math.max(0, Math.min(100, Number(job.percent) || 0));
+    card.className = `card aiJobCard${failed ? " aiJobFailed" : ""}${finished ? " aiJobReady" : ""}`;
+    card.innerHTML = `<div class="aiJobStatusIcon" aria-hidden="true">${failed ? "!" : finished ? "✓" : "⋯"}</div>
+      <div class="aiJobBody"><strong>${escapeHtml(aiJobTitle(job))} · ${escapeHtml(job.topic || job.subject || "Neuer Test")}</strong><p>${finished ? "Entwurf erstellt. Prüfe die Aufgaben und schließe die Prüfung anschließend ab." : escapeHtml(job.progressMessage || "Erstellung wird gestartet …")}</p>
+      <small>${failed ? `Fehler${job.errorReference ? ` · Referenz ${escapeHtml(job.errorReference)}` : ""}` : finished ? "Prüfung offen" : `${Number(job.completedCount || 0)} von ${Number(job.requestedCount || 0)} Aufgaben gespeichert${job.imageTotal ? ` · ${Number(job.imageCompleted || 0)} von ${Number(job.imageTotal)} Bildern` : ""}${job.audioTotal ? ` · ${Number(job.audioCompleted || 0)} von ${Number(job.audioTotal)} Höraudios` : ""}${job.answerAudioTotal ? ` · ${Number(job.answerAudioCompleted || 0)} von ${Number(job.answerAudioTotal)} Audioantwort-Aufgaben` : ""}${job.solutionAudioTotal ? ` · ${Number(job.solutionAudioCompleted || 0)} von ${Number(job.solutionAudioTotal)} Audio-Lösungen` : ""}`}</small></div>
+      ${!finished && !failed ? `<div class="aiProgressTrack" role="progressbar" aria-label="KI-Erstellung" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percentage}"><div class="aiProgressFill" style="width:${percentage}%"></div></div><small>Ungefähr ${percentage} % · Du kannst die Seite verlassen.</small>` : ""}
+      <div class="aiJobActions">${job.quizId && (finished || failed) ? `<button class="button ${failed ? "secondary" : "primary"} openAiJob" type="button">${failed ? "Teilentwurf öffnen" : "Entwurf prüfen"}</button>` : ""}
+      ${finished && job.quizId ? '<button class="button ghost completeAiReview" type="button">Prüfung abgeschlossen</button>' : ""}
+      ${failed ? '<button class="button ghost reportAiJob" type="button">Problem melden</button><button class="button ghost dismissAiJob" type="button">Ausblenden</button>' : ""}</div>`;
+    card.querySelector(".dismissAiJob")?.addEventListener("click", event => dismissAiJob(job, event.currentTarget));
+    card.querySelector(".openAiJob")?.addEventListener("click", () => openEditor(job.quizId));
+    card.querySelector(".completeAiReview")?.addEventListener("click", () => completeAiReview(job.quizId));
+    card.querySelector(".reportAiJob")?.addEventListener("click", () => showReportableError({
+      code: job.sourceQuizId ? REPORTABLE_ERROR_CODES.aiSimilar : REPORTABLE_ERROR_CODES.aiCreate,
+      message: job.progressMessage || "KI-Erstellung fehlgeschlagen.",
+      error: { code: job.errorCode || "failed-precondition", message: job.progressMessage,
+        details: { ...job.errorDetails, reference: job.errorReference, phase: job.errorDetails?.phase || job.stage } },
+      action: job.sourceQuizId ? "background_similar_test" : "background_ai_test",
+      details: { jobId: job.id, requestId: job.requestId, quizId: job.quizId || "",
+        requestedCount: job.requestedCount, completedCount: job.completedCount,
+        imageTotal: job.imageTotal, imageCompleted: job.imageCompleted, audioTotal: job.audioTotal, audioCompleted: job.audioCompleted, answerAudioTotal: job.answerAudioTotal, answerAudioCompleted: job.answerAudioCompleted, solutionAudioTotal: job.solutionAudioTotal, solutionAudioCompleted: job.solutionAudioCompleted }
+    }));
+    host.appendChild(card);
+  }
+  const activeCount = state.aiJobs.filter(job => ["queued", "running"].includes(job.status)).length;
+  if ($("generateAiTestBtn")) {
+    $("generateAiTestBtn").disabled = activeCount >= 2 || state.aiStarting;
+    $("generateAiTestBtn").textContent = state.aiStarting ? "✨ Wird gestartet …"
+      : activeCount >= 2 ? "Zwei Tests werden erstellt" : activeCount === 1 ? "✨ Zweiten Test erstellen" : "✨ Test erstellen";
+  }
+  const notice = $("aiActiveJobsNotice");
+  if (notice) {
+    notice.classList.toggle("hidden", activeCount === 0);
+    notice.textContent = activeCount >= 2
+      ? "Zwei Tests laufen im Hintergrund. Sobald einer fertig ist, kannst du den nächsten starten. Den Fortschritt findest du unter „Meine Tests“."
+      : "Ein Test läuft im Hintergrund. Du kannst einen zweiten Test starten. Den Fortschritt findest du unter „Meine Tests“.";
+  }
+  updateEditorPublishControls();
+  renderVariantProgress();
+}
+
+async function renderLocalDraftList() {
+  const host = $("localDraftList");
+  const uid = state.user?.uid;
+  if (!uid) { host.replaceChildren(); host.classList.add("hidden"); return; }
+  try {
+    const drafts = await listEditorDrafts(uid);
+    if (state.user?.uid !== uid) return;
+    host.replaceChildren();
+    const visible = drafts.filter(draft => draft.newManualQuiz
+      || state.quizzes.some(quiz => quiz.id === draft.quizId && !quiz.isDeleted));
+    host.classList.toggle("hidden", !visible.length);
+    if (visible.length && !activeQuizzes().length) $("emptyQuizState").classList.add("hidden");
+    for (const draft of visible) {
+      const card = document.createElement("article");
+      card.className = "card aiJobCard";
+      card.innerHTML = `<div><strong>Lokaler Bearbeitungsstand · ${escapeHtml(draft.quiz?.title || "Neuer Test")}</strong>
+        <p>${Number(draft.questions?.length || 0)} Aufgaben · zuletzt lokal gesichert ${escapeHtml(new Date(draft.savedAt).toLocaleString("de-DE"))}</p>
+        <small>Nur in diesem Browser verfügbar. Zum Übertragen auf andere Geräte im Editor „Speichern“ wählen.</small></div>
+        <div class="quizActions"><button class="button secondary resumeDraft" type="button">Bearbeitung fortsetzen</button>
+        <button class="button ghost discardDraft" type="button">Lokalen Stand verwerfen</button></div>`;
+      card.querySelector(".resumeDraft").addEventListener("click", () => draft.newManualQuiz ? resumeManualDraft(draft) : openEditor(draft.quizId));
+      card.querySelector(".discardDraft").addEventListener("click", async () => {
+        if (!confirm("Diesen lokalen Bearbeitungsstand wirklich verwerfen? Bereits auf dem Server gespeicherte Tests bleiben erhalten.")) return;
+        try {
+          await removeEditorDraft(uid, draft.quizId);
+          await renderLocalDraftList();
+          renderQuizList();
+        } catch (err) { console.error(err); toast("Lokaler Bearbeitungsstand konnte nicht entfernt werden.", "error"); }
+      });
+      host.appendChild(card);
+    }
+  } catch (err) { console.warn("Lokale Entwürfe konnten nicht gelesen werden:", err); }
+}
+
+function filteredQuizzes() {
+  const term = normalize($("quizSearch")?.value || "");
+  const status = $("quizFilter")?.value || "all";
+  const sort = $("quizSort")?.value || "updated";
+  const list = state.quizzes.filter((q) => {
+    if (q.isDeleted) return false;
+    if (q.generationStatus === "running") return false;
+    const isEnded = Boolean(q.ended);
+    const isPublished = Boolean(q.published) && !isEnded && !q.rightsHold;
+    if (status === "published" && !isPublished) return false;
+    if (status === "ended" && !isEnded) return false;
+    if (status === "draft" && (q.published || isEnded)) return false;
+    if (!term) return true;
+    const hay = normalize([q.title, q.subject, q.grade, q.id, q.description].join(" "));
+    return hay.includes(term);
+  });
+  const collator = new Intl.Collator("de", { numeric: true, sensitivity: "base" });
+  list.sort((a, b) => {
+    if (sort === "title") return collator.compare(a.title || "", b.title || "");
+    if (sort === "subject") return collator.compare(a.subject || "", b.subject || "") || collator.compare(a.title || "", b.title || "");
+    if (sort === "grade") return collator.compare(a.grade || "", b.grade || "") || collator.compare(a.title || "", b.title || "");
+    return toMillis(b.updatedAt || b.createdAt) - toMillis(a.updatedAt || a.createdAt);
+  });
+  return list;
+}
+
+function quizStatusMeta(q) {
+  if (q.generationStatus === "failed") return { label: "KI-Teilentwurf", cls: "incomplete" };
+  if (q.rightsHold) return { label: "Zugang gesperrt", cls: "rightsHold" };
+  if (q.ended) return { label: "Beendet", cls: "ended" };
+  if (q.published && secureAudioPublicationBlocked(q)) return { label: "Audiofreigabe ausstehend", cls: "incomplete" };
+  if (q.published && q.startMode === "teacher" && q.sessionState === "waiting") return { label: "Wartet auf Start", cls: "waiting" };
+  if (q.published && q.startMode === "teacher" && q.sessionState === "running") return { label: "Läuft", cls: "running" };
+  if (q.published) return { label: "Veröffentlicht", cls: "published" };
+  if (Number(q.questionCount || 0) === 0) return { label: "Unvollständig", cls: "incomplete" };
+  return { label: "Entwurf", cls: "draft" };
+}
+
+function renderQuizList() {
+  const list = $("quizList");
+  list.innerHTML = "";
+  const filtered = filteredQuizzes();
+  const active = activeQuizzes().filter(q => q.generationStatus !== "running");
+  const counts = {
+    published: active.filter(q => q.published && !q.ended && !q.rightsHold).length,
+    draft: active.filter(q => !q.published && !q.ended).length,
+    ended: active.filter(q => q.ended).length
+  };
+  $("publishedQuizCount").textContent = counts.published;
+  $("draftQuizCount").textContent = counts.draft;
+  $("endedQuizCount").textContent = counts.ended;
+  $("dashboardOverview").querySelectorAll(".dashboardMetric").forEach(metric => {
+    metric.setAttribute("aria-pressed", String($("quizFilter").value === metric.dataset.filter));
+  });
+  $("quizResultsCount").textContent = active.length
+    ? `${filtered.length} von ${active.length} ${active.length === 1 ? "Test" : "Tests"} angezeigt`
+    : "";
+  const hasPendingWork = state.aiJobs.some(job => ["queued", "running"].includes(job.status))
+    || $("localDraftList").childElementCount > 0;
+  renderFirstTestGuide();
+  $("emptyQuizState").classList.toggle("hidden", active.length !== 0 || hasPendingWork);
+  $("noFilterState").classList.toggle("hidden", active.length === 0 || filtered.length !== 0);
+  if (!filtered.length) return;
+
+  filtered.forEach((q) => {
+    const status = quizStatusMeta(q);
+    const card = document.createElement("article");
+    card.className = "card quizCard";
+    card.dataset.quizId = q.id;
+    card.innerHTML = `
+      <div class="quizCardTop">
+        <div>
+          <h3>${escapeHtml(q.title || "Unbenannter Test")}</h3>
+          <div class="meta">${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · Code ${q.id}</div>
+        </div>
+        <div class="quizCardStatusGroup">
+          <span class="status ${status.cls}">${status.label}</span>
+          <label class="dashboardPublishControl" title="Test veröffentlichen oder sicher beenden">
+            <span>Veröffentlicht</span>
+            <input class="dashboardPublishToggle" type="checkbox" ${q.published && !q.ended && !q.rightsHold ? "checked" : ""} ${q.rightsHold ? "disabled" : ""} aria-label="Veröffentlichung umschalten">
+            <span class="dashboardSwitch" aria-hidden="true"></span>
+          </label>
+        </div>
+      </div>
+      <div class="quizStats">
+        <div><strong>${Number(q.questionCount || 0)}</strong><span>Aufgaben</span></div>
+        <div><strong>${Number(q.totalPoints || 0)}</strong><span>Punkte</span></div>
+        ${Number(q.timeLimitMinutes) > 0 ? `<div><strong>${Number(q.timeLimitMinutes)}</strong><span>Minuten</span></div>` : ""}
+        ${q.startMode === "teacher" ? `<div><strong>Gemeinsam</strong><span>Start</span></div>` : ""}
+      </div>
+      <div class="quizActions primaryQuizActions">
+        <button class="button ${q.published ? "secondary" : "primary"} edit">Bearbeiten</button>
+        <button class="button ${q.published ? "primary" : "secondary"} results">Ergebnisse</button>
+        ${q.published && !q.ended && !q.rightsHold && !secureAudioPublicationBlocked(q) ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
+      </div>
+      <details class="quizMore"><summary>Weitere Aktionen</summary>
+        <div class="quizActions secondaryQuizActions">
+          ${q.rightsHold ? "" : '<button class="button ghost duplicate">Duplizieren</button><button class="button ghost teacherShare">Mit Kollegen teilen</button>'}
+          ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost end">Beenden</button>` : ""}
+          ${q.ended && !q.rightsHold ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
+          <button class="button danger remove">Löschen</button>
+        </div>
+      </details>`;
+    card.querySelector(".dashboardPublishToggle")?.addEventListener("change", event => toggleDashboardPublished(q, event.currentTarget));
+    card.querySelector(".edit").addEventListener("click", () => openEditor(q.id));
+    card.querySelector(".results").addEventListener("click", () => openResults(q.id));
+    card.querySelector(".duplicate")?.addEventListener("click", event => openQuizDuplicateChoiceDialog(
+      event.currentTarget,
+      () => duplicateQuiz(q.id, "exact"),
+      ({ close }) => duplicateQuiz(q.id, "emmi-variant", close)
+    ));
+    card.querySelector(".studentShare")?.addEventListener("click", () => showPublish(q.id));
+    card.querySelector(".teacherShare")?.addEventListener("click", () => shareQuizTemplate(q.id));
+    card.querySelector(".end")?.addEventListener("click", () => endQuiz(q.id));
+    card.querySelector(".reopen")?.addEventListener("click", () => reopenQuiz(q.id));
+    card.querySelector(".remove").addEventListener("click", () => deleteQuiz(q.id));
+    list.appendChild(card);
+  });
+}
+
+async function checkQuizAudioPublication(q) {
+  if (secureAudioPublicationBlocked(q)) {
+    toast(secureAudioPublicationMessage, "error");
+    return false;
+  }
+  try {
+    const snapshot = await firestoreGetDocs(collection(db, "quizzes", q.id, "questions"));
+    const questions = snapshot.docs.map(question => question.data());
+    if (secureAudioPublicationBlocked(q, questions)) {
+      toast(secureAudioPublicationMessage, "error");
+      return false;
+    }
+    return true;
+  } catch (error) {
+    showReportableError({ code: REPORTABLE_ERROR_CODES.dataLoad, message: "Der Testinhalt konnte nicht auf gesperrte Audioaufgaben geprüft werden. Die Veröffentlichung wurde nicht geändert.", error, action: "dashboard_audio_release_preflight", details: { quizId: q.id } });
+    return false;
+  }
+}
+
+async function toggleDashboardPublished(q, toggle) {
+  if (toggle?.disabled) return;
+  if (toggle) toggle.disabled = true;
+  try {
+    return await applyDashboardPublication(q, toggle);
+  } finally {
+    if (toggle?.isConnected) toggle.disabled = false;
+  }
+}
+
+async function applyDashboardPublication(q, toggle) {
+  const wantsPublished = Boolean(toggle?.checked);
+  const action = dashboardPublicationAction(q, wantsPublished);
+  if (q.rightsHold) {
+    if (toggle) toggle.checked = false;
+    return toast("Dieser Test ist wegen eines Rechtehinweises gesperrt.", "error");
+  }
+  if (action === "end") {
+    if (toggle) toggle.checked = true;
+    return endQuiz(q.id);
+  }
+  if (action === "noop") {
+    if (toggle) toggle.checked = false;
+    return;
+  }
+  if (wantsPublished && !await checkQuizAudioPublication(q)) {
+    if (toggle) toggle.checked = false;
+    return;
+  }
+  if (wantsPublished && q.audioReady === false) {
+    if (toggle) toggle.checked = false;
+    return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Öffne den Test und erzeuge es neu.", "error");
+  }
+  if (wantsPublished && q.showSolutions && q.solutionAudioReady === false) {
+    if (toggle) toggle.checked = false;
+    return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Öffne den Test und erzeuge sie neu oder entferne sie.", "error");
+  }
+  if (wantsPublished && Number(q.questionCount || 0) < 1) {
+    if (toggle) toggle.checked = false;
+    return toast("Füge zuerst mindestens eine Aufgabe hinzu.", "error");
+  }
+  if (wantsPublished && isAiReviewPending(q) && !confirm("Die KI-Prüfung dieses Entwurfs ist noch nicht abgeschlossen. Trotzdem veröffentlichen?")) {
+    if (toggle) toggle.checked = false;
+    return;
+  }
+  try {
+    if (wantsPublished) {
+      const practice = await publishPracticeQuiz(q);
+      if (practice === null) { if (toggle) toggle.checked = false; return; }
+      if (practice) {
+        Object.assign(q, practice, { published: true, ended: false });
+        toast("Test veröffentlicht."); renderQuizList(); renderAiJobs(); return;
+      }
+      const teacherMode = q.startMode === "teacher";
+      const runId = teacherMode ? randomId("run") : null;
+      const contentLocale = q.contentLocale || "de-DE";
+      const gradingLocale = q.gradingLocale || contentLocale;
+      const localeContractVersion = Number(q.localeContractVersion) || 1;
+      await updateDoc(doc(db, "quizzes", q.id), {
+        published: true, ended: false,
+        contentLocale, gradingLocale, localeContractVersion,
+        sessionState: teacherMode ? "waiting" : "open",
+        sessionRunId: runId, sessionStartedAt: null,
+        publishedAt: serverTimestamp(), updatedAt: serverTimestamp()
+      });
+      Object.assign(q, {
+        published: true, ended: false,
+        contentLocale, gradingLocale, localeContractVersion,
+        sessionState: teacherMode ? "waiting" : "open",
+        sessionRunId: runId, sessionStartedAt: null
+      });
+      toast("Test veröffentlicht.");
+    }
+    renderQuizList();
+    renderAiJobs();
+  } catch (err) {
+    console.error(err);
+    if (toggle) toggle.checked = !wantsPublished;
+    showReportableError({ code: REPORTABLE_ERROR_CODES.dataLoad, message: "Veröffentlichungsstatus konnte nicht geändert werden.", error: err, action: "dashboard_publish_toggle", details: { quizId: q.id, wantsPublished } });
+  }
+}
+
+function quizDefaults() {
+  const settings = getSettings();
+  const scale = getScaleById(settings.defaultGradeScaleId);
+  const contentLocale = window.GradeCrewAssessmentLocale?.getContentLocale?.() || "de-DE";
+  return {
+    title: "Neuer Test",
+    subject: settings.defaultSubject || "",
+    grade: settings.defaultGrade || "",
+    description: settings.defaultDescription || "Viel Erfolg beim Test!",
+    contentLocale,
+    gradingLocale: contentLocale,
+    localeContractVersion: 1,
+    gradeScaleId: scale.id,
+    gradeScaleSnapshot: deepClone(scale),
+    resultMode: settings.defaultResultMode || "points_grade",
+    showSolutions: Boolean(settings.defaultShowSolutions),
+    timeLimitMinutes: null,
+    startMode: "student",
+    shuffleQuestions: false,
+    shuffleAnswers: false,
+    sessionState: "open",
+    sessionRunId: null,
+    sessionStartedAt: null,
+    ownerId: tourUid(),
+    published: false,
+    ended: false,
+    isDeleted: false,
+    rightsHold: false,
+    shareEnabled: false,
+    questionCount: 0,
+    totalPoints: 0
+  };
+}
+
+async function createQuizDocument(base = {}) {
+  if (!state.user) throw new Error("Nicht angemeldet");
+  for (let attempt = 1; attempt <= 6; attempt += 1) {
+    const code = randomCode();
+    if (state.quizzes.some((q) => q.id === code)) continue;
+    const quiz = {
+      ...quizDefaults(),
+      ...base,
+      ownerId: state.user.uid,
+      accessCode: code,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+    try {
+      await setDoc(doc(db, "quizzes", code), quiz);
+      return { code, quiz };
+    } catch (err) {
+      if (err?.code === "permission-denied" && attempt < 6) continue;
+      throw err;
+    }
+  }
+  throw new Error("Testcode konnte nicht erzeugt werden.");
+}
+
+async function createQuiz() {
+  if (!state.user) {
+    toast("Bitte zuerst anmelden.", "error");
+    return;
+  }
+  const code = randomCode();
+  state.newManualQuiz = true;
+  state.currentQuiz = { ...quizDefaults(), id: code };
+  state.draftBaseUpdatedAt = 0;
+  state.questions = [];
+  state.loadedQuestionIds = new Set();
+  state.pendingImportReport = null;
+  renderEditorState(state.currentQuiz);
+}
+
+function openQuizDuplicateChoiceDialog(trigger, onExactCopy, onEmmiVariant) {
+  const dialog = document.createElement("dialog");
+  dialog.className = "shareDialog quizDuplicateDialog";
+  dialog.setAttribute("aria-labelledby", "quizDuplicateChoiceTitle");
+  dialog.setAttribute("aria-describedby", "quizDuplicateChoiceDescription");
+  dialog.innerHTML = `
+    <div class="shareDialogHead">
+      <div><span class="eyebrow">Test duplizieren</span><h2 id="quizDuplicateChoiceTitle">Wie möchtest du weiterarbeiten?</h2></div>
+      <button class="iconButton quizDuplicateDismiss" type="button" aria-label="Auswahl schließen">×</button>
+    </div>
+    <p id="quizDuplicateChoiceDescription">Wähle, wie der neue Entwurf entstehen soll.</p>
+    <div class="quizDuplicateChoices" role="group" aria-label="Art der Kopie">
+      <button class="button secondary quizDuplicateChoice" type="button" data-choice="exact" aria-describedby="quizDuplicateExactDescription">
+        <span><strong>Exakte Kopie</strong><small id="quizDuplicateExactDescription">Gleiche Aufgaben, Reihenfolge, Punkte und Einstellungen in einem neuen Entwurf.</small></span>
+      </button>
+      <button class="button secondary quizDuplicateChoice" type="button" data-choice="emmi" aria-describedby="quizDuplicateEmmiDescription">
+        <span><strong>Emmi-Variante</strong><small id="quizDuplicateEmmiDescription">Ähnliche, anders formulierte Aufgaben mit denselben Lernzielen und Vorgaben.</small></span>
+      </button>
+    </div>
+    <p class="quizDuplicateStatus" role="status" aria-live="polite"></p>
+    <div class="shareDialogFoot quizDuplicateFoot"><button class="button ghost quizDuplicateCancel" type="button">Abbrechen</button></div>`;
+
+  const exactButton = dialog.querySelector('[data-choice="exact"]');
+  const emmiButton = dialog.querySelector('[data-choice="emmi"]');
+  const closeButton = dialog.querySelector(".quizDuplicateDismiss");
+  const cancelButton = dialog.querySelector(".quizDuplicateCancel");
+  const status = dialog.querySelector(".quizDuplicateStatus");
+  const choiceButtons = [exactButton, emmiButton];
+  const dismissButtons = [closeButton, cancelButton];
+  let running = false;
+
+  const close = (restoreFocus = true) => {
+    if (!dialog.isConnected) return;
+    try { if (dialog.open) dialog.close(); } catch { dialog.removeAttribute("open"); }
+    dialog.remove();
+    const heading = document.querySelector("#editorView:not(.hidden) #editorHeading");
+    if (restoreFocus && trigger?.isConnected) trigger.focus();
+    else if (heading) heading.focus({ preventScroll: true });
+    else if (trigger?.isConnected) trigger.focus();
+  };
+
+  const dismiss = () => { if (!running) close(true); };
+  dismissButtons.forEach(button => button.addEventListener("click", dismiss));
+  dialog.addEventListener("cancel", event => {
+    event.preventDefault();
+    dismiss();
+  });
+
+  const run = async (button, action) => {
+    if (running) return;
+    running = true;
+    [...choiceButtons, ...dismissButtons].forEach(control => { control.disabled = true; });
+    status.setAttribute("role", "status");
+    status.textContent = button.dataset.choice === "emmi" ? "Emmi startet die neue Variante …" : "Kopie wird erstellt …";
+    try {
+      const result = await action({ close: () => close(false) });
+      if (result === false) throw new Error("copy failed");
+      close(false);
+    } catch (error) {
+      if (!dialog.isConnected) return;
+      running = false;
+      [...choiceButtons, ...dismissButtons].forEach(control => { control.disabled = false; });
+      status.setAttribute("role", "alert");
+      status.setAttribute("aria-live", "assertive");
+      const actionLabel = button.dataset.choice === "emmi" ? "Die Variante konnte nicht gestartet werden." : "Die Kopie konnte nicht erstellt werden.";
+      const reason = error?.userMessage || "Du kannst es erneut versuchen oder abbrechen.";
+      status.textContent = `${actionLabel} ${reason}`;
+      button.focus();
+    }
+  };
+
+  exactButton.addEventListener("click", () => { void run(exactButton, onExactCopy); });
+  emmiButton.addEventListener("click", () => { void run(emmiButton, onEmmiVariant); });
+  document.body.appendChild(dialog);
+  try { dialog.showModal(); } catch { dialog.setAttribute("open", ""); }
+  exactButton.focus();
+  return dialog;
+}
+
+async function duplicateQuiz(code, mode = "exact", closeDialog = null) {
+  const source = state.quizzes.find((q) => q.id === code);
+  if (!source) return false;
+  if (source.rightsHold) {
+    toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
+    return false;
+  }
+  if (mode === "emmi-variant") return startAiVariantQueueJob(source);
+  let draftCreated = false;
+  try {
+    const [qSnap, audioDraftResult] = await Promise.all([
+      getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position"))),
+      aiApi.getQuestionAudioDrafts({ quizId: code })
+    ]);
+    const audioScripts = new Map(Object.entries(audioDraftResult?.drafts || {}));
+    const solutionScripts = new Map(Object.entries(audioDraftResult?.solutionDrafts || {}));
+    const questions = qSnap.docs.map((d) => ({
+      id: d.id,
+      ...d.data(),
+      audioScript: String(audioScripts.get(d.id) || ""),
+      solutionAudioScript: String(solutionScripts.get(d.id) || "")
+    }));
+    const base = {
+      title: `${source.title || "Test"} – Kopie`,
+      subject: source.subject || "",
+      grade: source.grade || "",
+      description: source.description || "",
+      contentLocale: source.contentLocale || "de-DE",
+      gradingLocale: source.gradingLocale || source.contentLocale || "de-DE",
+      localeContractVersion: Number(source.localeContractVersion) || 1,
+      gradeScaleId: source.gradeScaleId || getSettings().defaultGradeScaleId,
+      gradeScaleSnapshot: deepClone(getQuizScale(source)),
+      resultMode: source.resultMode || getSettings().defaultResultMode,
+      showSolutions: source.showSolutions ?? getSettings().defaultShowSolutions,
+      solutionReleaseMode: source.solutionReleaseMode || "exam_after_end",
+      timeLimitMinutes: Number(source.timeLimitMinutes) > 0 ? Number(source.timeLimitMinutes) : null,
+      startMode: source.startMode === "teacher" ? "teacher" : "student",
+      shuffleQuestions: Boolean(source.shuffleQuestions),
+      shuffleAnswers: Boolean(source.shuffleAnswers),
+      sessionState: "open",
+      sessionRunId: null,
+      sessionStartedAt: null,
+      published: false,
+      ended: false,
+      shareEnabled: false,
+      questionCount: questions.length,
+      totalPoints: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
+      audioQuestionCount: questions.filter(q => Boolean(q.audioScript || getQuestionAudioSrc(q))).length,
+      audioAnswerQuestionCount: questions.filter(q => q.audioAnswerMode === "audio-only").length,
+      listeningOnlyQuestionCount: questions.filter(q => q.audioPresentation === "listening-only").length,
+      requiresSecureAssessmentRules: questions.some(q => q.audioAnswerMode === "audio-only" || q.audioPresentation === "listening-only"),
+      audioReady: questions.every(questionAllAudioReady),
+      solutionAudioQuestionCount: questions.filter(q => Boolean(q.solutionAudioScript)).length,
+      solutionAudioReady: !questions.some(q => Boolean(q.solutionAudioScript))
+    };
+    const { code: newCode } = await createQuizDocument(base);
+    draftCreated = true;
+    const copiedAudioDrafts = [];
+    const copiedSolutionAudioDrafts = [];
+    for (let i = 0; i < questions.length; i += 1) {
+      const sourceQuestion = questions[i];
+      const ref = doc(collection(db, "quizzes", newCode, "questions"));
+      const copy = sanitizeQuestionForSave({ ...deepClone(sourceQuestion), id: ref.id, position: i + 1 });
+      await setDoc(ref, { ...copy, position: i + 1, updatedAt: serverTimestamp() });
+      const script = String(sourceQuestion.audioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
+      if (script) copiedAudioDrafts.push({ questionId: ref.id, script });
+      const solutionScript = String(sourceQuestion.solutionAudioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
+      if (solutionScript) copiedSolutionAudioDrafts.push({ questionId: ref.id, script: solutionScript });
+    }
+    await aiApi.syncQuestionAudioDrafts({ quizId: newCode, drafts: copiedAudioDrafts, solutionDrafts: copiedSolutionAudioDrafts });
+    toast("Test dupliziert.");
+    await openEditor(newCode);
+    return true;
+  } catch (err) {
+    console.error(err);
+    toast(draftCreated ? "Der neue Entwurf konnte nicht vollständig kopiert werden. Prüfe ihn unter „Meine Tests“, bevor du es erneut versuchst." : "Test konnte nicht dupliziert werden.", "error");
+    return draftCreated;
+  }
+}
+
+async function startAiVariantQueueJob(sourceQuiz) {
+  if (!sourceQuiz?.id) return false;
+  if (state.aiStarting) return false;
+  if (state.aiJobs.filter(job => ["queued", "running"].includes(job.status)).length >= 2) {
+    throw Object.assign(new Error("Es laufen bereits zwei Tests. Bitte warte, bis einer fertig ist."), { userMessage: "Es laufen bereits zwei Tests. Bitte warte, bis einer fertig ist." });
+  }
+  state.pendingVariantRequests ||= new Map();
+  const clientRequestId = state.pendingVariantRequests.get(sourceQuiz.id)
+    || `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+  state.pendingVariantRequests.set(sourceQuiz.id, clientRequestId);
+  state.aiStarting = true;
+  try {
+    let response;
+    try {
+      response = await aiApi.startAiTestVariantJob({ sourceQuizId: sourceQuiz.id, clientRequestId });
+    } catch (error) {
+      if (["functions/not-found", "not-found", "functions/unimplemented", "unimplemented"].includes(String(error?.code || ""))) {
+        throw Object.assign(new Error("Die Variantenfunktion ist auf diesem Server noch nicht verfügbar."), {
+          userMessage: "Die Variantenfunktion ist auf diesem Server noch nicht verfügbar. Bitte versuche es später erneut."
+        });
+      }
+      throw error;
+    }
+    const validVariantAck = response?.generationMode === "variant" && response?.contractVersion === 1
+      && /^[a-f0-9]{40}$/i.test(String(response?.jobId || ""));
+    if (!validVariantAck) {
+      throw Object.assign(new Error("Die Serverantwort hat die Varianten-Erstellung nicht bestätigt."), {
+        userMessage: "Die Varianten-Erstellung wurde nicht bestätigt. Bitte versuche es erneut."
+      });
+    }
+    state.pendingVariantRequests.delete(sourceQuiz.id);
+    if (!state.aiJobs.some(job => job.id === response.jobId)) state.aiJobs.push({
+      id: response.jobId, status: "queued", generationMode: "variant", sourceQuizId: sourceQuiz.id,
+      topic: sourceQuiz.title || "Ausgangstest", subject: sourceQuiz.subject || "", grade: sourceQuiz.grade || "",
+      requestedCount: Number(sourceQuiz.questionCount) || 0, createdAt: Date.now()
+    });
+    toast(response.resumed ? "Deine Varianten-Erstellung läuft bereits. Den Fortschritt findest du unter „Meine Tests“." : "Emmi erstellt eine neue Variante. Den Fortschritt findest du unter „Meine Tests“.");
+    try { await loadDashboard(); }
+    catch (refreshError) { console.warn("Variantenauftrag wurde gestartet, Dashboard konnte noch nicht aktualisiert werden:", refreshError); }
+    return true;
+  } catch (error) {
+    const userMessage = error?.userMessage || aiFriendlyError(error);
+    throw Object.assign(new Error(userMessage || "Bitte versuche es erneut."), { userMessage: userMessage || "Bitte versuche es erneut." });
+  } finally {
+    state.aiStarting = false;
+    renderAiJobs();
+  }
+}
+
+async function deleteQuiz(code) {
+  const q = state.quizzes.find((x) => x.id === code);
+  if (!confirm(`Test „${q?.title || code}“ in den Papierkorb verschieben? Aufgaben und Ergebnisse bleiben erhalten.`)) return;
+  try {
+    await updateDoc(doc(db, "quizzes", code), {
+      isDeleted: true,
+      deletedAt: serverTimestamp(),
+      deletedBy: state.user.uid,
+      published: false,
+      ended: true,
+      updatedAt: serverTimestamp()
+    });
+    toast("Test in den Papierkorb verschoben.");
+    await loadDashboard();
+  } catch (err) {
+    console.error(err);
+    toast("Test konnte nicht in den Papierkorb verschoben werden.", "error");
+  }
+}
+
+async function restoreQuiz(code, { admin = false } = {}) {
+  try {
+    await updateDoc(doc(db, "quizzes", code), {
+      isDeleted: false,
+      deletedAt: null,
+      deletedBy: null,
+      published: false,
+      ended: false,
+      updatedAt: serverTimestamp()
+    });
+    if (admin) await writeAdminAudit("quiz_restored", { quizId: code });
+    const localQuiz = state.quizzes.find((x) => x.id === code);
+    if (localQuiz) Object.assign(localQuiz, { isDeleted: false, deletedAt: null, deletedBy: null, published: false, ended: false });
+    toast("Test als Entwurf wiederhergestellt.");
+    if (admin) await loadAdminData(true); else await openTrash();
+  } catch (err) {
+    console.error(err);
+    toast("Test konnte nicht wiederhergestellt werden.", "error");
+  }
+}
+
+function confirmPermanentDelete(quizTitle) {
+  const dialog = $("dangerConfirmDialog");
+  const title = $("dangerConfirmTitle");
+  const text = $("dangerConfirmText");
+  const cancelBtn = $("dangerConfirmCancel");
+  const confirmBtn = $("dangerConfirmOk");
+  if (!dialog || !title || !text || !cancelBtn || !confirmBtn) {
+    return Promise.resolve(confirm(`Test „${quizTitle}“ endgültig löschen? Test, Aufgaben und Ergebnisse werden unwiderruflich gelöscht.`));
+  }
+  title.textContent = "Test endgültig löschen?";
+  text.textContent = `„${quizTitle}“ sowie alle Aufgaben und Ergebnisse werden unwiderruflich gelöscht. Dieser Schritt kann nicht rückgängig gemacht werden.`;
+  confirmBtn.textContent = "Endgültig löschen";
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (value) => {
+      if (settled) return;
+      settled = true;
+      dialog.close();
+      cleanup();
+      resolve(value);
+    };
+    const onCancel = (event) => { event?.preventDefault?.(); finish(false); };
+    const onConfirm = () => finish(true);
+    const onBackdrop = (event) => { if (event.target === dialog) finish(false); };
+    const cleanup = () => {
+      cancelBtn.removeEventListener("click", onCancel);
+      confirmBtn.removeEventListener("click", onConfirm);
+      dialog.removeEventListener("cancel", onCancel);
+      dialog.removeEventListener("click", onBackdrop);
+    };
+    cancelBtn.addEventListener("click", onCancel);
+    confirmBtn.addEventListener("click", onConfirm);
+    dialog.addEventListener("cancel", onCancel);
+    dialog.addEventListener("click", onBackdrop);
+    dialog.showModal();
+  });
+}
+
+async function permanentlyDeleteQuiz(code, { admin = false } = {}) {
+  const q = (admin ? state.adminQuizzes : state.quizzes).find((x) => x.id === code);
+  const approved = await confirmPermanentDelete(q?.title || code);
+  if (!approved) return;
+  try {
+    const qSnap = await getDocs(collection(db, "quizzes", code, "questions"));
+    for (const d of qSnap.docs) await deleteDoc(d.ref);
+    const sSnap = await getDocs(collection(db, "quizzes", code, "submissions"));
+    for (const d of sSnap.docs) await deleteDoc(d.ref);
+    const aSnap = await getDocs(collection(db, "quizzes", code, "attempts"));
+    for (const d of aSnap.docs) await deleteDoc(d.ref);
+    await aiApi.syncQuestionAudioDrafts({ quizId: code, drafts: [] });
+    await deleteDoc(doc(db, "quizzes", code));
+    if (admin) await writeAdminAudit("quiz_deleted_permanently", { quizId: code, title: q?.title || "" });
+    state.quizzes = state.quizzes.filter((x) => x.id !== code);
+    toast("Test endgültig gelöscht.");
+    if (admin) await loadAdminData(true); else await openTrash();
+  } catch (err) {
+    console.error(err);
+    toast("Test konnte nicht vollständig gelöscht werden.", "error");
+  }
+}
+
+async function openTrash() {
+  if (!state.user) return;
+  showView("trashView");
+  const root = $("trashList");
+  root.innerHTML = "";
+  const items = deletedQuizzes().sort((a, b) => toMillis(b.deletedAt) - toMillis(a.deletedAt));
+  $("emptyTrashState")?.classList.toggle("hidden", items.length > 0);
+  items.forEach((q) => {
+    const card = document.createElement("article");
+    card.className = "card quizCard trashCard";
+    card.innerHTML = `<div class="trashCardContent"><h3>${escapeHtml(q.title || "Unbenannter Test")}</h3><div class="meta">${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · Code ${escapeHtml(q.id)}</div><p class="trashDeletedAt">Gelöscht: ${escapeHtml(fmtDate(q.deletedAt))}</p></div><div class="quizActions trashActions"><button class="button primary restore">Wiederherstellen</button><button class="button danger purge">Endgültig löschen</button></div>`;
+    card.querySelector(".restore").addEventListener("click", () => restoreQuiz(q.id));
+    card.querySelector(".purge").addEventListener("click", () => permanentlyDeleteQuiz(q.id));
+    root.appendChild(card);
+  });
+}
+
+
+// ---------- Teststatus + Teilen mit Kollegen ----------
+async function endQuiz(code, { returnToEditor = false } = {}) {
+  const quiz = state.quizzes.find((q) => q.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null);
+  if (!quiz) return;
+  if (returnToEditor && state.currentQuiz?.id === code && state.isDirty) {
+    const saved = await saveCurrentQuiz(false);
+    if (!saved) return;
+  }
+  if (!confirm(`Test „${quiz.title || code}“ jetzt beenden? Schüler können ihn danach nicht mehr öffnen oder neu abgeben. Ergebnisse bleiben erhalten.`)) return;
+  try {
+    await updateDoc(doc(db, "quizzes", code), {
+      published: false,
+      ended: true,
+      sessionState: "ended",
+      endedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    if (state.currentQuiz?.id === code) state.currentQuiz = { ...state.currentQuiz, published: false, ended: true, sessionState: "ended" };
+    toast("Test beendet.");
+    if (returnToEditor) {
+      updateSummary();
+      updateEditorPublishControls();
+    } else {
+      await loadDashboard();
+    }
+  } catch (err) {
+    console.error(err);
+    toast("Test konnte nicht beendet werden.", "error");
+  }
+}
+
+async function reopenQuiz(code, { returnToEditor = false } = {}) {
+  try {
+    const current = state.quizzes.find((q) => q.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null) || {};
+    if (current.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
+    if (!await checkQuizAudioPublication({ ...current, id: code })) return;
+    if (current.audioReady === false) return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Öffne den Test und erzeuge es neu.", "error");
+    if (current.showSolutions && current.solutionAudioReady === false) return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Öffne den Test und erzeuge sie neu oder entferne sie.", "error");
+    if (current.solutionReleaseMode === "practice_after_submit") {
+      const practice = await publishPracticeQuiz({ ...current, id: code });
+      if (!practice) return;
+      if (state.currentQuiz?.id === code) Object.assign(state.currentQuiz, practice, { published: true, ended: false });
+      toast("Test wieder geöffnet.");
+      if (returnToEditor) { updateSummary(); updateEditorPublishControls(); showPublish(code); }
+      else await loadDashboard();
+      return;
+    }
+    const teacherMode = current.startMode === "teacher";
+    const runId = teacherMode ? randomId("run") : null;
+    await updateDoc(doc(db, "quizzes", code), {
+      published: true,
+      ended: false,
+      sessionState: teacherMode ? "waiting" : "open",
+      sessionRunId: runId,
+      sessionStartedAt: null,
+      reopenedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    if (state.currentQuiz?.id === code) state.currentQuiz = { ...state.currentQuiz, published: true, ended: false, sessionState: teacherMode ? "waiting" : "open", sessionRunId: runId, sessionStartedAt: null };
+    toast("Test wieder geöffnet.");
+    if (returnToEditor) {
+      updateSummary();
+      updateEditorPublishControls();
+      showPublish(code);
+    } else {
+      await loadDashboard();
+    }
+  } catch (err) {
+    console.error(err);
+    toast("Test konnte nicht wieder geöffnet werden.", "error");
+  }
+}
+
+async function shareQuizTemplate(code) {
+  if (!state.user) return;
+  if (state.quizzes.find(q => q.id === code)?.rightsHold || (state.currentQuiz?.id === code && state.currentQuiz.rightsHold)) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
+  try {
+    if (state.currentQuiz?.id === code && state.isDirty) {
+      const saved = await saveCurrentQuiz(false);
+      if (!saved) return;
+    }
+    await updateDoc(doc(db, "quizzes", code), {
+      shareEnabled: true,
+      sharedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    if (state.currentQuiz?.id === code) state.currentQuiz.shareEnabled = true;
+    openShareDialog(code);
+  } catch (err) {
+    console.error(err);
+    toast("Vorlage konnte nicht freigegeben werden. Prüfe nach dem Deploy die Firestore-Regeln.", "error");
+  }
+}
+
+function openShareDialog(code) {
+  const dialog = $("shareDialog");
+  if (!dialog) return;
+  $("shareDialogLink").value = baseTemplateUrl(code);  $("shareDialogCode").value = `V-${code}`;
+  if (typeof dialog.showModal === "function") dialog.showModal();
+  else dialog.setAttribute("open", "");
+}
+
+function closeShareDialog() {
+  const dialog = $("shareDialog");
+  if (!dialog) return;
+  if (typeof dialog.close === "function") dialog.close();
+  else dialog.removeAttribute("open");
+}
+
+$("closeShareDialog")?.addEventListener("click", closeShareDialog);
+$("doneShareDialog")?.addEventListener("click", closeShareDialog);
+$("copyShareLinkBtn")?.addEventListener("click", () => copyText($("shareDialogLink")?.value || "", "Vorlagen-Link kopiert."));
+$("copyShareCodeBtn")?.addEventListener("click", () => copyText($("shareDialogCode")?.value || "", "Vorlagencode kopiert."));
+$("shareDialog")?.addEventListener("click", (e) => {
+  if (e.target === $("shareDialog")) closeShareDialog();
+});
+
+async function loadSharedTemplate(code) {
+  showView("templateView");
+  $("templateCard").innerHTML = `<div>Vorlage wird geladen …</div>`;
+  try {
+    const snap = await getDoc(doc(db, "quizzes", code));
+    if (!snap.exists()) throw new Error("Diese Vorlage existiert nicht mehr.");
+    const quiz = { id: code, ...snap.data() };
+    if (!quiz.shareEnabled && quiz.ownerId !== state.user?.uid) throw new Error("Die Freigabe dieser Vorlage wurde deaktiviert.");
+    const qs = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
+    const questions = qs.docs.map((d) => ({ id: d.id, ...d.data() }));
+    state.currentSharedTemplate = { quiz, questions };
+    const timeInfo = Number(quiz.timeLimitMinutes) > 0 ? ` · ${Number(quiz.timeLimitMinutes)} Min. Zeitlimit` : "";
+    $("templateCard").innerHTML = `
+      <button id="backTemplateDashboard" class="linkButton left" type="button">← Zu meinen Tests</button>
+      <span class="eyebrow">Von einer Lehrkraft geteilt</span>
+      <h1>${escapeHtml(quiz.title || "Geteilter Test")}</h1>
+      <p>${escapeHtml(quiz.description || "")}</p>
+      <div class="templateMeta">${escapeHtml(quiz.subject || "–")} · Klasse ${escapeHtml(quiz.grade || "–")} · ${questions.length} Aufgaben · ${Number(quiz.totalPoints || 0)} Punkte${timeInfo}</div>
+      <div class="shareInfoBox">Du erhältst eine unabhängige Kopie. Schülernamen, Abgaben und Ergebnisse des Kollegen werden nicht übernommen.</div>
+      <div class="actions templateActions">
+        <button id="importTemplateCopy" class="button primary" type="button">Als Kopie zu meinen Tests hinzufügen</button>
+        <button id="cancelTemplateCopy" class="button ghost" type="button">Abbrechen</button>
+      </div>`;
+    $("backTemplateDashboard").addEventListener("click", clearTemplateUrlAndDashboard);
+    $("cancelTemplateCopy").addEventListener("click", clearTemplateUrlAndDashboard);
+    $("importTemplateCopy").addEventListener("click", importSharedTemplate);
+  } catch (err) {
+    console.error(err);
+    $("templateCard").innerHTML = `<h1>Vorlage nicht verfügbar</h1><p>${escapeHtml(err.message || "Die Vorlage konnte nicht geladen werden.")}</p><button id="templateErrorBack" class="button primary" type="button">Zu meinen Tests</button>`;
+    $("templateErrorBack")?.addEventListener("click", clearTemplateUrlAndDashboard);
+  }
+}
+
+function clearTemplateUrlAndDashboard() {
+  const url = new URL(location.href);
+  url.searchParams.delete("template");
+  history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+  state.currentSharedTemplate = null;
+  clearPendingTemplate();
+  loadDashboard();
+}
+
+async function importSharedTemplate() {
+  const source = state.currentSharedTemplate;
+  if (!source?.quiz || !state.user) return;
+  const btn = $("importTemplateCopy");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Wird kopiert …";
+  }
+  try {
+    const quiz = source.quiz;
+    const base = {
+      title: `${quiz.title || "Geteilter Test"} – Kopie`,
+      subject: quiz.subject || "",
+      grade: quiz.grade || "",
+      description: quiz.description || "",
+      contentLocale: quiz.contentLocale || "de-DE",
+      gradingLocale: quiz.gradingLocale || quiz.contentLocale || "de-DE",
+      localeContractVersion: Number(quiz.localeContractVersion) || 1,
+      gradeScaleId: quiz.gradeScaleId || "shared-scale",
+      gradeScaleSnapshot: quiz.gradeScaleSnapshot?.thresholds?.length === 6
+        ? deepClone(quiz.gradeScaleSnapshot)
+        : deepClone(getScaleById(getSettings().defaultGradeScaleId)),
+      resultMode: quiz.resultMode || getSettings().defaultResultMode,
+      showSolutions: quiz.showSolutions ?? getSettings().defaultShowSolutions,
+      solutionReleaseMode: quiz.solutionReleaseMode || "exam_after_end",
+      timeLimitMinutes: Number(quiz.timeLimitMinutes) > 0 ? Number(quiz.timeLimitMinutes) : null,
+      startMode: quiz.startMode === "teacher" ? "teacher" : "student",
+      shuffleQuestions: Boolean(quiz.shuffleQuestions),
+      shuffleAnswers: Boolean(quiz.shuffleAnswers),
+      sessionState: "open",
+      sessionRunId: null,
+      sessionStartedAt: null,
+      published: false,
+      ended: false,
+      shareEnabled: false,
+      questionCount: source.questions.length,
+      totalPoints: round1(source.questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
+      audioQuestionCount: source.questions.filter(q => Boolean(q.audioDataUrl)).length,
+      audioAnswerQuestionCount: source.questions.filter(q => q.audioAnswerMode === "audio-only").length,
+      listeningOnlyQuestionCount: source.questions.filter(q => q.audioPresentation === "listening-only").length,
+      requiresSecureAssessmentRules: source.questions.some(q => q.audioAnswerMode === "audio-only" || q.audioPresentation === "listening-only"),
+      audioReady: source.questions.every(q => !Boolean(q.audioDataUrl) && questionAudioReady(q) && questionAnswerAudioReady(q))
+    };
+    const { code: newCode } = await createQuizDocument(base);
+    for (let i = 0; i < source.questions.length; i += 1) {
+      const original = source.questions[i];
+      const ref = doc(collection(db, "quizzes", newCode, "questions"));
+      const copy = sanitizeQuestionForSave({ ...deepClone(original), id: ref.id, position: i + 1 });
+      await setDoc(ref, { ...copy, position: i + 1, updatedAt: serverTimestamp() });
+    }
+    const url = new URL(location.href);
+    url.searchParams.delete("template");
+    history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+    state.currentSharedTemplate = null;
+    clearPendingTemplate();
+    toast("Vorlage als eigene Kopie hinzugefügt.");
+    await openEditor(newCode);
+  } catch (err) {
+    console.error(err);
+    toast("Vorlage konnte nicht kopiert werden.", "error");
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Als Kopie zu meinen Tests hinzufügen";
+    }
+  }
+}
+
+// ---------- Einstellungen ----------
+$("backFromSettings").addEventListener("click", loadDashboard);
+$("saveSettingsBtn").addEventListener("click", saveSettings);
+$("addGradeScaleBtn").addEventListener("click", () => {
+  state.gradeScalesDraft.push({
+    id: randomId("scale"),
+    name: `Notenschlüssel ${state.gradeScalesDraft.length + 1}`,
+    thresholds: [91, 77, 57, 39, 25, 0]
+  });
+  renderGradeScaleSettings();
+});
+
+function openSettings() {
+  if (state.isDirty && !confirm("Es gibt ungespeicherte Änderungen im Test. Wirklich ohne Speichern zu den Einstellungen wechseln?")) return;
+  state.isDirty = false;
+  state.settingsDraft = deepClone(getSettings());
+  state.gradeScalesDraft = deepClone(getGradeScales());
+  $("defaultSubject").value = state.settingsDraft.defaultSubject || "";
+  $("defaultGrade").value = state.settingsDraft.defaultGrade || "";
+  $("defaultDescription").value = state.settingsDraft.defaultDescription || "";
+  $("defaultResultMode").value = state.settingsDraft.defaultResultMode || "points_grade";
+  $("defaultShowSolutions").checked = Boolean(state.settingsDraft.defaultShowSolutions);
+  renderGradeScaleSettings();
+  showView("settingsView");
+}
+
+function renderGradeScaleSettings() {
+  const root = $("gradeScaleList");
+  root.innerHTML = "";
+  const defaultId = state.settingsDraft?.defaultGradeScaleId || state.gradeScalesDraft[0]?.id;
+  state.gradeScalesDraft.forEach((scale, index) => {
+    const card = document.createElement("div");
+    card.className = "gradeScaleCard";
+    card.innerHTML = `
+      <div class="gradeScaleTop">
+        <label class="growField">Name<input class="scaleName" type="text" value="${escapeHtml(scale.name)}"></label>
+        <label class="defaultScaleRadio"><input type="radio" name="defaultScale" value="${escapeHtml(scale.id)}" ${scale.id === defaultId ? "checked" : ""}> Standard</label>
+        <button class="iconButton danger deleteScale" type="button" title="Notenschlüssel löschen">×</button>
+      </div>
+      <div class="thresholdGrid">
+        ${scale.thresholds.map((t, i) => `<label>Note ${i + 1} ab<input class="thresholdInput" data-index="${i}" type="number" min="0" max="100" step="1" value="${Number(t)}" ${i === 5 ? "readonly" : ""}></label>`).join("")}
+      </div>
+      <div class="scalePreview">${escapeHtml(scaleRangeText(scale))}</div>`;
+
+    card.querySelector(".scaleName").addEventListener("input", (e) => {
+      scale.name = e.target.value;
+    });
+    card.querySelector(".defaultScaleRadio input").addEventListener("change", () => {
+      state.settingsDraft.defaultGradeScaleId = scale.id;
+    });
+    card.querySelectorAll(".thresholdInput").forEach((input) => {
+      input.addEventListener("input", (e) => {
+        const i = Number(e.target.dataset.index);
+        scale.thresholds[i] = i === 5 ? 0 : clamp(Number(e.target.value) || 0, 0, 100);
+        card.querySelector(".scalePreview").textContent = scaleRangeText(scale);
+      });
+    });
+    card.querySelector(".deleteScale").addEventListener("click", () => {
+      if (state.gradeScalesDraft.length <= 1) {
+        toast("Mindestens ein Notenschlüssel muss vorhanden bleiben.", "error");
+        return;
+      }
+      if (!confirm(`Notenschlüssel „${scale.name}“ löschen? Bereits gespeicherte Tests behalten ihre Kopie.`)) return;
+      state.gradeScalesDraft.splice(index, 1);
+      if (!state.gradeScalesDraft.some((s) => s.id === state.settingsDraft.defaultGradeScaleId)) {
+        state.settingsDraft.defaultGradeScaleId = state.gradeScalesDraft[0].id;
+      }
+      renderGradeScaleSettings();
+    });
+    root.appendChild(card);
+  });
+}
+
+function validateGradeScales(scales) {
+  for (const scale of scales) {
+    if (!scale.name.trim()) return "Jeder Notenschlüssel braucht einen Namen.";
+    const t = scale.thresholds.map(Number);
+    if (t.length !== 6) return `Notenschlüssel „${scale.name}“ ist unvollständig.`;
+    if (t[5] !== 0) return `Bei „${scale.name}“ muss Note 6 bei 0 % beginnen.`;
+    for (let i = 0; i < 5; i += 1) {
+      if (!(t[i] > t[i + 1])) return `Bei „${scale.name}“ müssen die Grenzen von Note 1 bis 6 streng absteigend sein.`;
+      if (t[i] < 0 || t[i] > 100) return `Bei „${scale.name}“ liegt eine Grenze außerhalb von 0–100 %.`;
+    }
+  }
+  return "";
+}
+
+async function saveSettings() {
+  const scales = state.gradeScalesDraft.map((s) => ({
+    id: s.id,
+    name: s.name.trim(),
+    thresholds: s.thresholds.map(Number)
+  }));
+  const scaleError = validateGradeScales(scales);
+  if (scaleError) {
+    toast(scaleError, "error");
+    return;
+  }
+  const selectedDefault = document.querySelector('input[name="defaultScale"]:checked')?.value || scales[0].id;
+  const settings = {
+    defaultSubject: $("defaultSubject").value.trim(),
+    defaultGrade: $("defaultGrade").value.trim(),
+    defaultDescription: $("defaultDescription").value.trim() || "Viel Erfolg beim Test!",
+    defaultGradeScaleId: selectedDefault,
+    defaultResultMode: $("defaultResultMode").value,
+    defaultShowSolutions: $("defaultShowSolutions").checked
+  };
+  try {
+    await updateDoc(doc(db, "users", state.user.uid), { settings, gradeScales: scales });
+    state.profile = { ...state.profile, settings, gradeScales: scales };
+    toast("Einstellungen gespeichert.");
+    await loadDashboard();
+  } catch (err) {
+    console.error(err);
+    toast("Einstellungen konnten nicht gespeichert werden.", "error");
+  }
+}
+
+// ---------- KI Prompt + JSON Import ----------
+$("backFromAi").addEventListener("click", loadDashboard);
+$("generatePromptBtn")?.addEventListener("click", generateAiPrompt);
+$("copyPromptBtn")?.addEventListener("click", () => copyText($("aiPromptOutput")?.value || "", "Prompt kopiert."));
+$("importJsonBtn")?.addEventListener("click", importAiJson);
+$("openChatGptBtn")?.addEventListener("click", () => openAiProvider("https://chatgpt.com/", "ChatGPT"));
+$("openClaudeBtn")?.addEventListener("click", () => openAiProvider("https://claude.ai/new", "Claude"));
+$("openGeminiBtn")?.addEventListener("click", () => openAiProvider("https://gemini.google.com/app", "Gemini"));
+$("generateAiTestBtn")?.addEventListener("click", generateAiTestNative);
+$("saveAiPreferencesBtn")?.addEventListener("click", () => saveAiPreferences());
+$("aiMaterialInput")?.addEventListener("change", handleAiMaterialFiles);
+$("aiTypeChecks")?.addEventListener("change", updateAiTypeCount);
+function installAiAnswerAudioField() {
+  if ($("aiAudioAnswerQuestionCount")) return;
+  const anchor = $("aiAudioCountHint");
+  if (!anchor) return;
+  const label = document.createElement("label");
+  label.textContent = "Antwortmöglichkeiten vorlesen (0–5)";
+  const input = document.createElement("input");
+  Object.assign(input, { id: "aiAudioAnswerQuestionCount", type: "number", min: "0", max: "5", step: "1", value: "0" });
+  input.setAttribute("aria-describedby", "aiAudioAnswerCountHint");
+  label.appendChild(input);
+  const hint = document.createElement("p");
+  hint.id = "aiAudioAnswerCountHint";
+  hint.className = "hint";
+  hint.textContent = "Auswahloptionen werden einzeln hörbar und bleiben für Schüler als Text verborgen.";
+  anchor.after(label, hint);
+}
+installAiAnswerAudioField();
+["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiSolutionAudioQuestionCount", "aiCount"].forEach(id => $(id)?.addEventListener("input", () => { updateAiImageControls(); updateAiAudioControls(); }));
+["aiCount", "aiPoints"].forEach(id => $(id)?.addEventListener("input", updateAiPointsControls));
+
+function updateAiTypeCount() {
+  const selected = $("aiTypeChecks")?.querySelectorAll('input[type="checkbox"]:checked').length || 0;
+  if ($("aiTypeCount")) $("aiTypeCount").textContent = `${selected} ausgewählt`;
+}
+
+function resetAiFormForNewTest() {
+  ["aiTopic", "aiCustomNotes"].forEach(id => { if ($(id)) $(id).value = ""; });
+  ["aiCount", "aiPoints", "aiSchoolType", "aiRegion"].forEach(id => { const input = $(id); if (input) input.value = input.defaultValue; });
+  ["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiSolutionAudioQuestionCount"].forEach(id => { if ($(id)) $(id).value = "0"; });
+  const difficulty = $("aiDifficulty");
+  if (difficulty) difficulty.value = [...difficulty.options].find(option => option.defaultSelected)?.value || "mittel";
+  document.dispatchEvent(new CustomEvent("gradecrew:ai-form-reset"));
+}
+
+async function openAiView() {
+  resetAiFormForNewTest();
+  const settings = getSettings();
+  $("aiMaterialConfirmed").checked = false;
+  $("aiSubject").value = settings.defaultSubject || "";
+  $("aiGrade").value = settings.defaultGrade || "";
+  if ($("aiCustomNotes")) $("aiCustomNotes").value = "";
+  if ($("aiPersonalPreferences")) $("aiPersonalPreferences").value = String(state.profile?.aiPreferences || "");
+  $("aiMaterialMode").value = "inspiration";
+  const root = $("aiTypeChecks");
+  root.innerHTML = "";
+  const types = [...QUESTION_TYPES.filter(([value]) => !["text", "number"].includes(value)), ...QUESTION_TYPES.filter(([value]) => ["text", "number"].includes(value))];
+  types.forEach(([value, label]) => {
+    const item = document.createElement("label");
+    item.className = "checkTile";
+    const defaultChecked = !["text", "number"].includes(value);
+    item.innerHTML = `<input type="checkbox" value="${value}" ${defaultChecked ? "checked" : ""}><span>${escapeHtml(label)}</span>`;
+    root.appendChild(item);
+  });
+  updateAiTypeCount();
+  renderAiMaterials();
+  if ($("aiAudioQuestionCount")) $("aiAudioQuestionCount").value = "0";
+  if ($("aiAudioAnswerQuestionCount")) $("aiAudioAnswerQuestionCount").value = "0";
+  if ($("aiSolutionAudioQuestionCount")) $("aiSolutionAudioQuestionCount").value = "0";
+  updateAiImageControls();
+  updateAiAudioControls();
+  updateAiPointsControls();
+  showView("aiView");
+  setAiProgress("");
+  renderAiJobs();
+  if (firstAiGuideStep === "ai") setTimeout(() => renderFirstAiGuideStep("details"), 100);
+  const notice = $("aiBetaNotice");
+  if (crewTour?.creating) { notice.textContent = "Übung: vorbereitete Aufgaben, keine KI-Anfrage."; notice.classList.remove("hidden"); return; }
+  try {
+    notice.className = "aiStatusNotice";
+    notice.textContent = "Verbindung wird geprüft …";
+    notice.classList.remove("hidden");
+    state.aiStatus = await aiApi.status({});
+    notice.textContent = "Erstellung ist bereit.";
+  } catch (err) {
+    console.warn("KI-Status nicht verfügbar:", err);
+    state.aiStatus = null;
+    const denied = String(err?.code || "").includes("permission-denied");
+    notice.className = `aiStatusNotice${denied ? " error" : ""}`;
+    notice.textContent = denied ? "KI-Zugriff nicht möglich. Bitte prüfe, ob dein Lehrkraft-Konto aktiv ist."
+      : "Status gerade nicht verfügbar. Du kannst die Erstellung trotzdem versuchen.";
+  }
+}
+
+function aiFriendlyError(err, fallback = "Die KI-Anfrage ist fehlgeschlagen.") {
+  const code = String(err?.code || "");
+  if (err?.details?.reason === "active-job-limit") return "Es laufen bereits zwei Tests. Sobald einer fertig ist, kannst du den nächsten starten.";
+  const reference = String(err?.details?.reference || "").replace(/[^a-zA-Z0-9-]/g, "").slice(0, 40);
+  const suffix = reference ? ` (Fehlernummer ${reference})` : "";
+  if (code.includes("internal") || String(err?.message || "").trim().toLowerCase() === "internal") {
+    return `Bei der KI-Erstellung ist ein technischer Fehler aufgetreten. Bitte erneut versuchen${suffix}.`;
+  }
+  if (code.includes("permission-denied")) return "KI-Zugriff nicht möglich. Bitte prüfe, ob dein Lehrkraft-Konto aktiv ist.";
+  if (code.includes("resource-exhausted")) return `Das KI-Limit ist gerade erreicht. Bitte später erneut versuchen${suffix}.`;
+  if (code.includes("deadline-exceeded")) return `Die KI braucht gerade zu lange. Bitte erneut versuchen${suffix}.`;
+  if (code.includes("unauthenticated")) return "Bitte neu anmelden und erneut versuchen.";
+  if (code.includes("failed-precondition") && Array.isArray(err?.details?.errors)) return `Die KI konnte noch kein gültiges Ergebnis erstellen: ${err.details.errors.slice(0, 2).join(" ")}`.slice(0, 360);
+  const message = String(err?.message || fallback).replace(/^Firebase:\s*/i, "");
+  return `${message}${suffix}`.slice(0, 300) || fallback;
+}
+
+function setAiProgress(message = "", isError = false, percent = null, hint = "", targetId = "aiProgress") {
+  const box = $(targetId);
+  if (!box) return;
+  if (!message) { box.classList.add("hidden"); box.textContent = ""; return; }
+  box.setAttribute("aria-live", percent === null ? "polite" : "off");
+  if (percent === null) box.textContent = message;
+  else {
+    const value = Math.max(0, Math.min(100, Math.round(percent)));
+    box.innerHTML = `<div class="aiProgressHeading"><strong>${escapeHtml(message)}</strong><span>ca. ${value} %</span></div><div class="aiProgressTrack" role="progressbar" aria-label="Geschätzter Fortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${value}"><div class="aiProgressFill" style="width:${value}%"></div></div><small>${escapeHtml(hint || "Die Erstellung kann mehrere Minuten dauern. Bitte warte, bis der Entwurf geöffnet wird.")}</small>`;
+  }
+  box.classList.toggle("error", isError);
+  box.classList.remove("hidden");
+}
+
+function updateAiImageControls() {
+  const imageInput = $("aiImageQuestionCount");
+  const images = Number(imageInput.value);
+  const count = Number($("aiCount").value);
+  const imageInvalid = !imageInput.value.trim() || !Number.isInteger(images) || images < 0 || images > 5;
+  const combinedInvalid = !imageInvalid && Number.isInteger(count) && count >= 1 && images > count;
+  const hint = $("aiImageCountHint");
+  imageInput.setAttribute("aria-invalid", String(imageInvalid || combinedInvalid));
+  const errors = [];
+  if (imageInvalid) errors.push("Für Aufgaben mit einem Bild bitte eine ganze Zahl von 0 bis 5 eingeben.");
+  if (combinedInvalid) errors.push(`Bei ${count} Aufgaben sind höchstens ${count} Aufgabenbilder möglich.`);
+  if (hint) {
+    hint.textContent = errors.join(" ");
+    hint.classList.toggle("hidden", errors.length === 0);
+    hint.classList.toggle("aiInputError", errors.length > 0);
+  }
+}
+
+function updateAiAudioControls() {
+  const input = $("aiAudioQuestionCount");
+  const answerInput = $("aiAudioAnswerQuestionCount");
+  const solutionInput = $("aiSolutionAudioQuestionCount");
+  if (!input) return;
+  const audio = Number(input.value);
+  const solutionAudio = Number(solutionInput?.value);
+  const count = Number($("aiCount")?.value);
+  const invalid = !input.value.trim() || !Number.isInteger(audio) || audio < 0 || audio > 5;
+  const combinedInvalid = !invalid && Number.isInteger(count) && count >= 1 && audio > count;
+  input.setAttribute("aria-invalid", String(invalid || combinedInvalid));
+  const hint = $("aiAudioCountHint");
+  if (hint) {
+    const errors = [];
+    if (invalid) errors.push("Für Höraufgaben bitte eine ganze Zahl von 0 bis 5 eingeben.");
+    if (combinedInvalid) errors.push(`Bei ${count} Aufgaben sind höchstens ${count} Höraufgaben möglich.`);
+    hint.textContent = errors.length ? errors.join(" ") : "Aufgaben werden vorgelesen · kein Autoplay · im Editor anhörbar.";
+    hint.classList.toggle("aiInputError", errors.length > 0);
+  }
+  if (solutionInput) {
+    const solutionInvalid = !solutionInput.value.trim() || !Number.isInteger(solutionAudio) || solutionAudio < 0 || solutionAudio > 5;
+    const solutionCombinedInvalid = !solutionInvalid && Number.isInteger(count) && count >= 1 && solutionAudio > count;
+    solutionInput.setAttribute("aria-invalid", String(solutionInvalid || solutionCombinedInvalid));
+    const solutionHint = $("aiSolutionAudioCountHint");
+    if (solutionHint) {
+      const errors = [];
+      if (solutionInvalid) errors.push("Für Audio-Lösungen bitte eine ganze Zahl von 0 bis 5 eingeben.");
+      if (solutionCombinedInvalid) errors.push(`Bei ${count} Aufgaben sind höchstens ${count} Audio-Lösungen möglich.`);
+      solutionHint.textContent = errors.length ? errors.join(" ") : "Optional · wird erst nach Testende und Lösungsfreigabe abgespielt.";
+      solutionHint.classList.toggle("aiInputError", errors.length > 0);
+    }
+  }
+  if (answerInput) {
+    const answerCount = Number(answerInput.value);
+    const answerInvalid = !answerInput.value.trim() || !Number.isInteger(answerCount) || answerCount < 0 || answerCount > 5 || answerCount > count;
+    answerInput.setAttribute("aria-invalid", String(answerInvalid));
+    const answerHint = $("aiAudioAnswerCountHint");
+    if (answerHint) {
+      answerHint.textContent = answerInvalid ? "Bitte 0 bis 5 Audioantwort-Aufgaben wählen, höchstens so viele wie Aufgaben." : "Auswahloptionen werden einzeln hörbar und bleiben für Schüler als Text verborgen.";
+      answerHint.classList.toggle("aiInputError", answerInvalid);
+    }
+  }
+}
+
+function updateAiPointsControls() {
+  const input = $("aiPoints");
+  const hint = $("aiPointsHint");
+  const count = Number($("aiCount").value);
+  const points = Number(input.value);
+  const invalid = !input.value.trim() || !Number.isFinite(points) || points < 0.5 || Math.abs(points * 2 - Math.round(points * 2)) > 1e-8 || (Number.isInteger(count) && count > 0 && points < count / 2);
+  input.setAttribute("aria-invalid", String(invalid));
+  if (hint) {
+    hint.textContent = invalid ? `Bitte eine Gesamtpunktzahl in 0,5er-Schritten wählen${Number.isInteger(count) && count > 0 ? `; bei ${count} Aufgaben mindestens ${count / 2} Punkte` : ""}.` : "Jede Aufgabe erhält mindestens 0,5 Punkte.";
+    hint.classList.toggle("aiInputError", invalid);
+  }
+}
+
+function renderAiMaterials() {
+  const root = $("aiMaterialList");
+  if (!root) return;
+  root.innerHTML = "";
+  $("aiMaterialMode").disabled = state.aiMaterials.length === 0;
+  if (!state.aiMaterials.length) $("aiMaterialMode").value = "inspiration";
+  state.aiMaterials.forEach((m) => {
+    const row = document.createElement("div"); row.className = "aiMaterialItem";
+    const size = m.size ? `${Math.max(1, Math.round(m.size / 1024))} KB` : "";
+    row.innerHTML = `<div><strong>${escapeHtml(m.name)}</strong><small>${escapeHtml(m.mimeType)}${size ? ` · ${size}` : ""}</small></div><button type="button" class="miniButton">Entfernen</button>`;
+    row.querySelector("button").addEventListener("click", async () => {
+      row.classList.add("questionAiBusy");
+      try {
+        await aiApi.removeMaterial(m);
+        state.aiMaterials = state.aiMaterials.filter(x => x.id !== m.id);
+        renderAiMaterials();
+      } catch (err) {
+        row.classList.remove("questionAiBusy");
+        toast(aiFriendlyError(err, "Material konnte nicht gelöscht werden. Bitte erneut versuchen."), "error");
+      }
+    });
+    root.appendChild(row);
+  });
+}
+
+async function handleAiMaterialFiles(event) {
+  const files = Array.from(event.target.files || []);
+  event.target.value = "";
+  if (files.length && !$("aiMaterialConfirmed").checked) {
+    toast("Bitte zuerst die Prüfung von Daten und Nutzungsrechten bestätigen.", "error");
+    $("aiMaterialConfirmed").focus();
+    return;
+  }
+  for (const file of files) {
+    if (state.aiMaterials.length >= 10) { toast("Maximal zehn Materialien pro Generierung.", "error"); break; }
+    try {
+      setAiProgress(`${file.name} wird hochgeladen …`);
+      const material = await aiApi.uploadMaterial(file, pct => setAiProgress(`${file.name} wird hochgeladen … ${pct}%`));
+      state.aiMaterials.push(material); renderAiMaterials();
+    } catch (err) { toast(aiFriendlyError(err, "Material konnte nicht hochgeladen werden."), "error"); }
+  }
+  setAiProgress();
+}
+
+function collectAiRequest() {
+  if (state.aiMaterials.length && !$("aiMaterialConfirmed").checked) throw new Error("Bitte die Prüfung der hochgeladenen Materialien bestätigen.");
+  const allowedTypes = Array.from($("aiTypeChecks").querySelectorAll('input[type="checkbox"]:checked')).map(x => x.value);
+  if (!$("aiTopic").value.trim()) throw new Error("Bitte ein Thema eingeben.");
+  if (!allowedTypes.length) throw new Error("Bitte mindestens einen Aufgabentyp auswählen.");
+  if (!$("aiImageQuestionCount").value.trim()) throw new Error("Bitte die Anzahl der Aufgabenbilder angeben (0 ist möglich).");
+  if (!$("aiAudioQuestionCount")?.value.trim()) throw new Error("Bitte die Anzahl der Höraufgaben angeben (0 ist möglich).");
+  if (!$("aiSolutionAudioQuestionCount")?.value.trim()) throw new Error("Bitte die Anzahl der Audio-Lösungen angeben (0 ist möglich).");
+  const count = Number($("aiCount").value);
+  const points = Number($("aiPoints").value);
+  const imageQuestionCount = Number($("aiImageQuestionCount").value);
+  const audioQuestionCount = Number($("aiAudioQuestionCount").value);
+  const solutionAudioQuestionCount = Number($("aiSolutionAudioQuestionCount").value);
+  const answerInput = $("aiAudioAnswerQuestionCount");
+  const audioAnswerQuestionCount = Number(answerInput?.value || 0);
+  if (!Number.isInteger(count) || count < 1 || count > 100) throw new Error("Bitte 1 bis 100 Aufgaben wählen.");
+  if (!$("aiPoints").value.trim() || !Number.isFinite(points) || points < 0.5 || Math.abs(points * 2 - Math.round(points * 2)) > 1e-8) throw new Error("Bitte eine Gesamtpunktzahl in 0,5er-Schritten wählen.");
+  if (points < count / 2) throw new Error(`Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
+  if (!Number.isInteger(imageQuestionCount) || imageQuestionCount < 0 || imageQuestionCount > 5) throw new Error("Bitte 0 bis 5 Aufgaben mit einem Bild wählen.");
+  if (imageQuestionCount > count) throw new Error("Bitte nicht mehr Aufgabenbilder als Aufgaben wählen.");
+  if (!Number.isInteger(audioQuestionCount) || audioQuestionCount < 0 || audioQuestionCount > 5) throw new Error("Bitte 0 bis 5 Höraufgaben wählen.");
+  if (audioQuestionCount > count) throw new Error("Bitte nicht mehr Höraufgaben als Aufgaben wählen.");
+  if (!Number.isInteger(solutionAudioQuestionCount) || solutionAudioQuestionCount < 0 || solutionAudioQuestionCount > 5) throw new Error("Bitte 0 bis 5 Audio-Lösungen wählen.");
+  if (solutionAudioQuestionCount > count) throw new Error("Bitte nicht mehr Audio-Lösungen als Aufgaben wählen.");
+  if (!answerInput?.value.trim() || !Number.isInteger(audioAnswerQuestionCount) || audioAnswerQuestionCount < 0 || audioAnswerQuestionCount > 5 || audioAnswerQuestionCount > count) throw new Error("Bitte 0 bis 5 Aufgaben mit Audioantworten wählen.");
+  if (audioAnswerQuestionCount && !allowedTypes.some(type => ["single", "multi"].includes(type))) throw new Error("Für Audioantworten bitte Einzel- oder Mehrfachauswahl erlauben.");
+  return {
+    subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
+    topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, points,
+    allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
+    imageMode: imageQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount: 0,
+    audioQuestionCount, solutionAudioQuestionCount, audioAnswerQuestionCount
+  };
+}
+
+async function applyGeneratedAudio(rawQuestion, q, code, questionId) {
+  const intent = rawQuestion?.audioIntent;
+  if (!intent || intent.kind !== "ai_generated") return;
+  const script = String(intent.script || "").replace(/\s+/g, " ").trim().slice(0, 500);
+  if (!script) throw new Error("Die KI hat für die Höraufgabe keinen Hörtext geliefert.");
+  const result = await aiApi.generateQuestionAudio({ quizId: code, questionId, script });
+  if (!result?.asset?.audioDataUrl) throw new Error("Die KI hat für die Höraufgabe kein Audio geliefert.");
+  Object.assign(q, result.asset);
+  q.audioScript = script;
+  q.audioPresentation = intent.presentation === "listening-only" ? "listening-only" : "supplement";
+  q.audioInstruction = String(intent.instruction || "").trim().slice(0, 1000);
+  q.audioNeedsRegeneration = false;
+}
+
+async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
+  const intent = rawQuestion?.mediaIntent;
+  if (!intent || intent.kind === "none") return;
+  if (intent.kind === "ai_generated" && intent.prompt && !q.imageDataUrl) {
+    const result = await aiApi.generateQuestionMedia({ quizId: code, questionId, prompt: intent.prompt, expectedScene: intent.prompt, question: rawQuestion, testContext: questionContext(-1), altText: intent.altText || "Abbildung zur Aufgabe" });
+    Object.assign(q, result.asset || {});
+  }
+}
+
+async function generateAiTestNative() {
+  if (crewTour?.active) {
+    if (crewTour.creating) return crewTour.create();
+    return toast("Folge zuerst dem aktuellen Schritt der Einführung.");
+  }
+  try {
+    const request = collectAiRequest();
+    await saveAiPreferences({ silent: true });
+    await startAiCreationJob(request);
+  }
+  catch (err) { setAiProgress(aiFriendlyError(err), true); toast(aiFriendlyError(err), "error"); }
+}
+
+async function saveAiPreferences({ silent = false } = {}) {
+  if (!state.user) throw new Error("Bitte zuerst anmelden.");
+  const preferences = String($("aiPersonalPreferences")?.value || "").trim();
+  if (preferences.length > 1000) throw new Error("Bitte maximal 1000 Zeichen für dauerhafte KI-Vorgaben verwenden.");
+  await updateDoc(doc(db, "users", state.user.uid), { aiPreferences: preferences });
+  state.profile = { ...state.profile, aiPreferences: preferences };
+  if (!silent) toast("Deine KI-Vorgaben wurden gespeichert.");
+}
+
+async function startAiCreationJob(request, { similar = false, sourceQuiz = null } = {}) {
+  if (state.aiStarting) return;
+  if (state.aiJobs.filter(job => ["queued", "running"].includes(job.status)).length >= 2) {
+    return toast("Es laufen bereits zwei Tests. Bitte warte, bis einer fertig ist.", "error");
+  }
+  const button = $(similar ? "createSimilarTestBtn" : "generateAiTestBtn");
+  const targetId = similar ? "similarTestProgress" : "aiProgress";
+  button.disabled = true;
+  state.aiStarting = true;
+  setAiProgress("Der Hintergrundauftrag wird gestartet …", false, 0, "Sobald der Start bestätigt ist, kannst du die Seite verlassen.", targetId);
+  try {
+    const clientRequestId = `AI-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+    const response = await aiApi.startAiTestJob({ ...request, sourceQuizId: sourceQuiz?.id || "", clientRequestId });
+    if (!response?.jobId) throw new Error("Der Hintergrundauftrag wurde nicht bestätigt.");
+    const guidedFirstTest = !similar && firstAiGuideStep === "generate";
+    if (guidedFirstTest) markFirstAiGuideDone();
+    if (!state.aiJobs.some(job => job.id === response.jobId)) state.aiJobs.push({
+      id: response.jobId, status: "queued", topic: request.topic, subject: request.subject,
+      requestedCount: request.count, sourceQuizId: sourceQuiz?.id || "", createdAt: Date.now()
+    });
+    if (!similar) {
+      const submitted = new Set((request.materials || []).map(material => material.id));
+      state.aiMaterials = state.aiMaterials.filter(material => !submitted.has(material.id));
+      renderAiMaterials();
+      resetAiFormForNewTest();
+    }
+    toast(response.resumed ? "Dein laufender KI-Auftrag ist unter „Meine Tests“ sichtbar." : "Erstellung gestartet. Den Fortschritt findest du unter „Meine Tests“.");
+    await loadDashboard();
+    if (guidedFirstTest) setTimeout(() => renderFirstAiGuideStep("running"), 180);
+  } catch (err) {
+    const friendly = aiFriendlyError(err);
+    setAiProgress(friendly, true, null, "", targetId);
+    showReportableError({
+      code: similar ? REPORTABLE_ERROR_CODES.aiSimilar : REPORTABLE_ERROR_CODES.aiCreate,
+      message: friendly, error: err,
+      action: similar ? "start_similar_test" : "start_ai_test"
+    });
+  } finally { state.aiStarting = false; renderAiJobs(); }
+}
+
+function generateAiPrompt() {
+  const types = Array.from($("aiTypeChecks").querySelectorAll('input[type="checkbox"]:checked')).map((x) => x.value);
+  if (!$("aiTopic").value.trim()) {
+    toast("Bitte ein Thema eingeben.", "error");
+    return;
+  }
+  if (!types.length) {
+    toast("Bitte mindestens einen Aufgabentyp auswählen.", "error");
+    return;
+  }
+  const customNotes = $("aiCustomNotes")?.value.trim() || "";
+  const customBlock = customNotes ? `\n\nZusätzliche Wünsche der Lehrkraft:\n${customNotes}` : "";
+  const prompt = `WICHTIG: Antworte ausschließlich mit einem einzigen gültigen JSON-Objekt. Keine Einleitung, keine Erklärung, kein Markdown und keine Markdown-Codeblöcke.\n\nDu erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}${customBlock}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n7. Verwende für JSON-Schlüssel und Textwerte ausschließlich gerade ASCII-Anführungszeichen " (U+0022). Verwende niemals typografische Anführungszeichen wie „ “ ” als JSON-Begrenzungszeichen. Typografische Anführungszeichen dürfen nur innerhalb eines Textwerts als normaler Inhalt vorkommen.\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]." Optional "gapColors": ["blue", "", "orange"] passend zu den Lücken in Reihenfolge; nur wenn Farben didaktisch helfen und keine Lösung verraten.\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren", "targetWords": ["Zielwort1","Zielwort2"] und optional "markGroups": [{"name":"Nomen","color":"blue","words":["Igel"]},{"name":"Adjektive","color":"orange","words":["kleine"]},{"name":"Verben","color":"green","words":["schläft"]}]. Bei Wortarten gern farbig markieren lassen; jedes Zielwort gehört genau zu einer Farbgruppe und kommt als ganzes Wort im Text vor.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.\n\nABSCHLUSSREGEL: Deine gesamte Antwort muss direkt mit { beginnen und mit } enden. Schreibe davor und danach nichts.`;
+  $("aiPromptOutput").value = prompt;
+  toast("Prompt erzeugt.");
+}
+
+function canonicalImportToken(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ß/g, "ss")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function looseField(obj, aliases, fallback = undefined) {
+  if (!obj || typeof obj !== "object" || Array.isArray(obj)) return fallback;
+  const wanted = new Set(aliases.map(canonicalImportToken));
+  for (const [key, value] of Object.entries(obj)) {
+    if (wanted.has(canonicalImportToken(key))) return value;
+  }
+  return fallback;
+}
+
+function numberLoose(value, fallback = NaN) {
+  if (typeof value === "number") return Number.isFinite(value) ? value : fallback;
+  const text = String(value ?? "").trim().replace(/\s/g, "").replace(",", ".");
+  const parsed = Number(text);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function booleanLoose(value, fallback = null) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value !== 0;
+  const token = canonicalImportToken(value);
+  if (["true", "wahr", "richtig", "yes", "ja", "correct", "1"].includes(token)) return true;
+  if (["false", "falsch", "no", "nein", "incorrect", "0"].includes(token)) return false;
+  return fallback;
+}
+
+function pushUnique(list, message) {
+  if (message && !list.includes(message)) list.push(message);
+}
+
+function normalizeQuestionTypeLoose(value) {
+  const token = canonicalImportToken(value);
+  const map = {
+    single: "single", singlechoice: "single", singleanswer: "single", radio: "single", mcq: "single",
+    multi: "multi", multiple: "multi", multiplechoice: "multi", multichoice: "multi", checkbox: "multi", checkboxes: "multi",
+    text: "text", freitext: "text", freetext: "text", shortanswer: "text", openanswer: "text", open: "text",
+    dropdown: "dropdown", select: "dropdown", auswahl: "dropdown",
+    truefalse: "truefalse", boolean: "truefalse", richtigfalsch: "truefalse", wahrfalsch: "truefalse",
+    gapfill: "gapfill", fillblank: "gapfill", fillintheblank: "gapfill", lueckentext: "gapfill", luckentext: "gapfill",
+    matching: "matching", match: "matching", zuordnen: "matching", zuordnung: "matching",
+    ordering: "ordering", order: "ordering", sorting: "ordering", sortieren: "ordering", reihenfolge: "ordering",
+    grouping: "grouping", group: "grouping", categorization: "grouping", kategorisieren: "grouping", gruppieren: "grouping",
+    markwords: "markwords", highlightwords: "markwords", highlight: "markwords", woertermarkieren: "markwords", wortemarkieren: "markwords",
+    number: "number", numeric: "number", zahl: "number", rechenaufgabe: "number", calculation: "number"
+  };
+  return map[token] || null;
+}
+
+function normalizeOptionList(rawOptions) {
+  if (!Array.isArray(rawOptions)) return [];
+  return rawOptions.map((option) => {
+    if (typeof option === "string" || typeof option === "number") return { text: String(option), correct: false };
+    if (!option || typeof option !== "object") return { text: "", correct: false };
+    return {
+      text: String(looseField(option, ["text", "label", "answer", "option", "antwort"], "") || ""),
+      correct: Boolean(booleanLoose(looseField(option, ["correct", "isCorrect", "right", "richtig"], false), false)),
+      imageScene: String(option.imageScene || ""),
+      imageDataUrl: String(option.imageDataUrl || ""),
+      imageAlt: String(option.imageAlt || "")
+    };
+  });
+}
+
+function applyCorrectHint(options, hint, multiple = false) {
+  if (!options.length || hint == null) return false;
+  const hints = Array.isArray(hint) ? hint : [hint];
+  let matched = false;
+  const normalizedHints = new Set(hints.map((x) => canonicalImportToken(x)).filter(Boolean));
+
+  hints.forEach((rawHint) => {
+    const n = numberLoose(rawHint, NaN);
+    if (Number.isInteger(n)) {
+      let idx = -1;
+      if (n === 0) idx = 0;
+      else if (n >= 1 && n <= options.length) idx = n - 1;
+      if (idx >= 0 && idx < options.length) {
+        options[idx].correct = true;
+        matched = true;
+      }
+    }
+  });
+
+  options.forEach((option) => {
+    if (normalizedHints.has(canonicalImportToken(option.text))) {
+      option.correct = true;
+      matched = true;
+    }
+  });
+
+  if (matched && !multiple) {
+    const first = options.findIndex((o) => o.correct);
+    options.forEach((o, i) => { o.correct = i === first; });
+  }
+  return matched;
+}
+
+function normalizeImportedQuestion(rawInput, index, report) {
+  const raw = rawInput && typeof rawInput === "object" && !Array.isArray(rawInput) ? rawInput : { text: String(rawInput ?? "") };
+  const rawType = looseField(raw, ["type", "questionType", "aufgabentyp", "format"], "text");
+  let type = normalizeQuestionTypeLoose(rawType);
+  if (!type) {
+    type = "text";
+    pushUnique(report.warnings, `Aufgabe ${index + 1}: Unbekannter Aufgabentyp „${String(rawType || "–")}“ wurde als Freitext übernommen.`);
+  } else if (canonicalImportToken(rawType) !== type) {
+    pushUnique(report.repairs, `Aufgabe ${index + 1}: Aufgabentyp „${String(rawType)}“ wurde als „${type}“ erkannt.`);
+  }
+
+  const q = newQuestion(type, false);
+  const rawText = looseField(raw, ["text", "question", "prompt", "frage", "instruction", "aufgabe"], "");
+  q.text = String(rawText || "").trim();
+  // Only the explicit public field is imported; never promote a legacy private text.
+  const audioIntent = raw.audioIntent;
+  if (audioIntent?.kind === "ai_generated" || raw.audioPresentation === "listening-only") {
+    q.audioPresentation = (audioIntent?.presentation || raw.audioPresentation) === "listening-only" ? "listening-only" : "supplement";
+    q.audioInstruction = String(raw.audioInstruction ?? audioIntent?.instruction ?? "").trim().slice(0, 1000);
+  }
+  if (!q.text) {
+    q.text = `Aufgabe ${index + 1}`;
+    pushUnique(report.warnings, `Aufgabe ${index + 1}: Fragetext fehlt und muss im Editor ergänzt werden.`);
+  }
+
+  const rawPoints = numberLoose(looseField(raw, ["points", "point", "score", "punkte"], 1), 1);
+  q.points = Math.max(0.5, Math.round(rawPoints * 2) / 2);
+  if (Math.abs(q.points - rawPoints) > 0.001) {
+    pushUnique(report.repairs, `Aufgabe ${index + 1}: Punkte wurden auf ${q.points} (0,5er-Schritt) angepasst.`);
+  }
+
+  if (["single", "multi", "dropdown"].includes(type)) {
+    const rawOptions = looseField(raw, ["options", "answers", "choices", "antworten", "answerOptions"], []);
+    q.options = normalizeOptionList(rawOptions);
+    if (q.options.length < 2) {
+      while (q.options.length < 2) q.options.push({ text: "", correct: false });
+      pushUnique(report.warnings, `Aufgabe ${index + 1}: Es fehlen Antwortmöglichkeiten; bitte im Editor ergänzen.`);
+    }
+
+    const correctHint = looseField(raw, ["correctAnswer", "correctAnswers", "solution", "solutions", "richtigeAntwort", "richtigeAntworten"], null);
+    if (!q.options.some((o) => o.correct) && correctHint != null && applyCorrectHint(q.options, correctHint, type === "multi")) {
+      pushUnique(report.repairs, `Aufgabe ${index + 1}: Richtige Antwort(en) aus dem Lösungsfeld übernommen.`);
+    }
+
+    const correctCount = q.options.filter((o) => o.correct).length;
+    if (type === "multi") {
+      if (!correctCount) pushUnique(report.warnings, `Aufgabe ${index + 1}: Keine richtige Antwort markiert; bitte prüfen.`);
+    } else if (!correctCount) {
+      q.options[0].correct = true;
+      pushUnique(report.warnings, `Aufgabe ${index + 1}: Keine richtige Antwort markiert. Die erste Antwort wurde vorläufig gewählt – bitte prüfen.`);
+    } else if (correctCount > 1) {
+      const first = q.options.findIndex((o) => o.correct);
+      q.options.forEach((o, i) => { o.correct = i === first; });
+      pushUnique(report.warnings, `Aufgabe ${index + 1}: Mehrere Antworten waren als richtig markiert. Nur die erste wurde übernommen – bitte prüfen.`);
+    }
+  }
+
+  if (type === "text") {
+    const answers = looseField(raw, ["acceptedAnswers", "answers", "solutions", "correctAnswers", "musterloesungen", "musterlosungen"], []);
+    q.acceptedAnswers = Array.isArray(answers) ? answers.map(String).map((x) => x.trim()).filter(Boolean) : (answers ? [String(answers).trim()] : []);
+    q.manualReview = Boolean(booleanLoose(looseField(raw, ["manualReview", "manual", "manuellPruefen", "manuellprufen"], null), !q.acceptedAnswers.length));
+    if (!q.acceptedAnswers.length && !q.manualReview) q.manualReview = true;
+    if (!q.acceptedAnswers.length) pushUnique(report.repairs, `Aufgabe ${index + 1}: Freitext ohne Musterlösung wird zur manuellen Prüfung markiert.`);
+  }
+
+  if (type === "truefalse") {
+    const bool = booleanLoose(looseField(raw, ["correctBoolean", "correct", "answer", "solution", "richtig"], null), null);
+    if (bool == null) {
+      q.correctBoolean = true;
+      pushUnique(report.warnings, `Aufgabe ${index + 1}: Lösung für Richtig/Falsch fehlt. „Richtig“ wurde vorläufig gesetzt – bitte prüfen.`);
+    } else q.correctBoolean = bool;
+  }
+
+  if (type === "gapfill") {
+    const gapColors = looseField(raw, ["gapColors", "Lückenfarben"], []);
+    q.gapColors = Array.isArray(gapColors) ? gapColors.map(color => String(color || "")) : [];
+    const hasGap = /\[[^\]]+\]/.test(q.text);
+    if (!hasGap) {
+      const answersRaw = looseField(raw, ["answers", "correctAnswers", "solutions", "acceptedAnswers", "gaps"], []);
+      const answers = Array.isArray(answersRaw) ? answersRaw.map(String).filter(Boolean) : (answersRaw ? [String(answersRaw)] : []);
+      const blanks = q.text.match(/_{2,}|\{\s*blank\s*\}|\[\s*\]/gi) || [];
+      if (answers.length && blanks.length === answers.length) {
+        let cursor = 0;
+        q.text = q.text.replace(/_{2,}|\{\s*blank\s*\}|\[\s*\]/gi, () => `[${answers[cursor++]}]`);
+        pushUnique(report.repairs, `Aufgabe ${index + 1}: Lücken und Lösungen wurden automatisch in GradeCrew-Format umgewandelt.`);
+      } else {
+        pushUnique(report.warnings, `Aufgabe ${index + 1}: Im Lückentext wurde keine eindeutig erkennbare Lösung in [Klammern] gefunden.`);
+      }
+    }
+  }
+
+  if (type === "matching") {
+    const pairsRaw = looseField(raw, ["pairs", "matches", "matching", "zuordnungen"], []);
+    let pairs = [];
+    if (Array.isArray(pairsRaw)) {
+      pairs = pairsRaw.map((p) => {
+        if (Array.isArray(p)) return { left: String(p[0] ?? ""), right: String(p[1] ?? "") };
+        return {
+          left: String(looseField(p, ["left", "term", "from", "begriff"], "") || ""),
+          right: String(looseField(p, ["right", "match", "to", "zuordnung"], "") || "")
+        };
+      });
+    } else if (pairsRaw && typeof pairsRaw === "object") {
+      pairs = Object.entries(pairsRaw).map(([left, right]) => ({ left, right: String(right) }));
+      pushUnique(report.repairs, `Aufgabe ${index + 1}: Zuordnungstabelle wurde in Paare umgewandelt.`);
+    }
+    q.pairs = pairs.length ? pairs : q.pairs;
+    if (q.pairs.length < 2 || q.pairs.some((p) => !p.left.trim() || !p.right.trim())) pushUnique(report.warnings, `Aufgabe ${index + 1}: Zuordnungspaare bitte prüfen bzw. ergänzen.`);
+  }
+
+  if (type === "ordering") {
+    const items = looseField(raw, ["items", "steps", "order", "elements", "reihenfolge"], []);
+    q.items = Array.isArray(items) ? items.map(String).map((x) => x.trim()).filter(Boolean) : q.items;
+    const extraOrders = looseField(raw, ["acceptedOrders", "alternativeOrders"], []);
+    q.acceptedOrders = orderingVariants(extraOrders).filter(order => validOrder(order, q.items.length));
+    q.manualReview = orderingNeedsReview({ ...q, manualReview: raw.manualReview === true });
+    if (q.items.length < 2) pushUnique(report.warnings, `Aufgabe ${index + 1}: Für eine Reihenfolge werden mindestens zwei Elemente benötigt.`);
+    if (q.manualReview) pushUnique(report.warnings, `Aufgabe ${index + 1}: Satzbau kann mehrere richtige Reihenfolgen haben. Ergänze Varianten und prüfe die Antworten manuell.`);
+  }
+
+  if (type === "grouping") {
+    const groupsRaw = looseField(raw, ["groups", "categories", "kategorien", "gruppen"], []);
+    if (Array.isArray(groupsRaw)) {
+      q.groups = groupsRaw.map((g, groupIndex) => ({
+        name: String(looseField(g, ["name", "category", "title", "gruppe"], `Kategorie ${groupIndex + 1}`) || `Kategorie ${groupIndex + 1}`),
+        items: (() => {
+          const items = looseField(g, ["items", "elements", "words", "begriffe"], []);
+          return Array.isArray(items) ? items.map(String).map((x) => x.trim()).filter(Boolean) : [];
+        })()
+      }));
+    } else if (groupsRaw && typeof groupsRaw === "object") {
+      q.groups = Object.entries(groupsRaw).map(([name, items]) => ({ name, items: Array.isArray(items) ? items.map(String) : [String(items)] }));
+      pushUnique(report.repairs, `Aufgabe ${index + 1}: Kategorien wurden in GradeCrew-Gruppen umgewandelt.`);
+    }
+    if (q.groups.length < 2 || q.groups.some((g) => !g.name.trim() || !g.items.length)) pushUnique(report.warnings, `Aufgabe ${index + 1}: Kategorien und Inhalte bitte prüfen.`);
+  }
+
+  if (type === "markwords") {
+    q.passage = String(looseField(raw, ["passage", "sourceText", "markText", "textToMark", "markiertext"], "") || "").trim();
+    const targetWords = looseField(raw, ["targetWords", "words", "correctWords", "targets", "zielwoerter", "zielworter"], []);
+    q.targetWords = Array.isArray(targetWords) ? targetWords.map(String).map((x) => x.trim()).filter(Boolean) : (targetWords ? [String(targetWords)] : []);
+    const groups = looseField(raw, ["markGroups", "colorGroups", "Farbgruppen"], []);
+    q.markGroups = Array.isArray(groups) ? groups.map(group => ({ name: String(group?.name || "").trim(), color: String(group?.color || "").trim(), words: Array.isArray(group?.words) ? group.words.map(String).map(word => word.trim()).filter(Boolean) : [] })).filter(group => group.name && group.words.length) : [];
+    if (q.markGroups.length) q.targetWords = [...new Set(q.markGroups.flatMap(group => group.words))];
+    if (!q.passage) pushUnique(report.warnings, `Aufgabe ${index + 1}: Der Text zum Markieren fehlt.`);
+    if (!q.targetWords.length) pushUnique(report.warnings, `Aufgabe ${index + 1}: Die Zielwörter fehlen.`);
+    else {
+      const hay = normalize(q.passage);
+      const missing = q.targetWords.filter((word) => !hay.includes(normalize(word)));
+      if (missing.length) pushUnique(report.warnings, `Aufgabe ${index + 1}: ${missing.length} Zielwort/Zielwörter kommen im Markiertext nicht eindeutig vor.`);
+    }
+  }
+
+  if (type === "number") {
+    const answer = numberLoose(looseField(raw, ["numericAnswer", "answer", "correctAnswer", "solution", "result", "ergebnis"], NaN), NaN);
+    if (Number.isFinite(answer)) q.numericAnswer = answer;
+    else {
+      q.numericAnswer = 0;
+      pushUnique(report.warnings, `Aufgabe ${index + 1}: Das richtige Rechenergebnis fehlt. 0 wurde vorläufig gesetzt – bitte prüfen.`);
+    }
+    q.tolerance = Math.max(0, numberLoose(looseField(raw, ["tolerance", "tol", "abweichung"], 0), 0));
+    q.unit = String(looseField(raw, ["unit", "einheit"], "") || "");
+  }
+
+  q.position = index + 1;
+  return q;
+}
+
+function normalizeImportedPayload(data, parseInfo = {}) {
+  const report = {
+    repairedSyntax: Boolean(parseInfo.repaired),
+    repairs: [...(parseInfo.changes || [])],
+    warnings: []
+  };
+
+  let root = data;
+  if (Array.isArray(root)) {
+    root = { questions: root };
+    pushUnique(report.repairs, "Aufgabenliste ohne Testhülle wurde automatisch erkannt.");
+  }
+  if (!root || typeof root !== "object") return { ok: false, error: "Die KI-Antwort enthält kein Test-Objekt.", report };
+
+  let questionsRaw = looseField(root, ["questions", "tasks", "aufgaben", "items"], null);
+  if (!Array.isArray(questionsRaw)) {
+    const nested = looseField(root, ["test", "quiz", "assessment"], null);
+    if (nested && typeof nested === "object") {
+      root = nested;
+      questionsRaw = looseField(root, ["questions", "tasks", "aufgaben", "items"], null);
+      if (Array.isArray(questionsRaw)) pushUnique(report.repairs, "Verschachteltes Test-Objekt wurde automatisch erkannt.");
+    }
+  }
+  if (!Array.isArray(questionsRaw) || !questionsRaw.length) return { ok: false, error: "Es wurde keine Aufgabenliste erkannt.", report };
+
+  const questions = questionsRaw.map((raw, index) => normalizeImportedQuestion(raw, index, report));
+  const meta = {
+    title: String(looseField(root, ["title", "name", "testTitle", "titel"], "Test") || "Test").trim(),
+    subject: String(looseField(root, ["subject", "fach"], "") || "").trim(),
+    grade: String(looseField(root, ["grade", "class", "classLevel", "gradeLevel", "klasse", "klassenstufe"], "") || "").trim(),
+    description: String(looseField(root, ["description", "instructions", "instruction", "hinweis", "beschreibung"], "") || "").trim()
+  };
+  return { ok: true, meta, questions, report };
+}
+
+function setAiImportHelp({ title, message, details = [], tone = "error" }) {
+  const help = $("aiJsonHelp");
+  if (!help) return;
+  help.className = `jsonHelp ${tone}`;
+  help.innerHTML = `<strong>${escapeHtml(title)}</strong>${message ? `<span>${escapeHtml(message)}</span>` : ""}${details.length ? `<ul>${details.slice(0, 8).map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul>` : ""}`;
+}
+
+function clearAiImportHelp() {
+  const help = $("aiJsonHelp");
+  if (!help) return;
+  help.className = "jsonHelp hidden";
+  help.innerHTML = "";
+}
+
+function qualityIssueShortLabel(issue) {
+  const labels = {
+    incorrect: "Inhalt prüfen",
+    answer_leak: "Lösungshinweis prüfen",
+    image_mismatch: "Bild prüfen",
+    ambiguous: "Eindeutigkeit prüfen",
+    duplicate: "Ähnliche Aufgabe prüfen",
+    multiple: "Mehrere Punkte prüfen",
+    other: "Aufgabe prüfen"
+  };
+  return labels[issue?.reason] || labels.other;
+}
+
+function activeQualityIssue(index) {
+  const question = state.questions[index];
+  const issue = state.pendingImportReport?.issues?.find(item => item.questionId === question?.id);
+  return issue ? { ...issue, questionPosition: index + 1, changed: Boolean(issue.reviewKey && issue.reviewKey !== questionReviewKey(question)) } : null;
+}
+
+function syncQualityReport() {
+  const report = state.pendingImportReport;
+  if (!report || report.quizId !== state.currentQuiz?.id) return;
+  report.issues = currentQualityIssues(report.issues, state.questions).map(({ changed, ...issue }) => issue);
+  state.currentQuiz.qualityIssues = report.issues;
+  state.currentQuiz.qualityWarnings = [...(report.warnings || []), ...report.issues.map(issue => `Aufgabe ${issue.questionPosition}: ${issue.reason}: ${issue.detail}`)];
+}
+
+function resolveQualityIssues(questionId) {
+  if (!state.pendingImportReport) return;
+  state.pendingImportReport.issues = (state.pendingImportReport.issues || []).filter(issue => issue.questionId !== questionId);
+  syncQualityReport();
+  renderQuestions();
+  markDirty();
+}
+
+function renderQualityIssue(node, q, index) {
+  const issue = activeQualityIssue(index);
+  if (!issue) return;
+  const detail = document.createElement("details");
+  detail.className = "qualityIssueDetail";
+  detail.innerHTML = `<summary>${escapeHtml(issue.changed ? "Aufgabe geändert · nochmals prüfen" : qualityIssueShortLabel(issue))}</summary><p>${escapeHtml(issue.detail)}</p><div class="qualityIssueActions"><button type="button" class="button secondary fixQualityIssue">Mit KI verbessern</button><button type="button" class="button ghost resolveQualityIssue">Geprüft</button><button type="button" class="button ghost rejectQualityIssue">Warnung passt nicht</button></div>`;
+  detail.querySelector(".fixQualityIssue").addEventListener("click", () => regenerateQuestionWithAi(q, state.questions.findIndex(item => item.id === q.id), { instruction: `Prüfe diese Rückmeldung anhand der tatsächlichen Schüleransicht und korrigiere belegbare Fehler: ${issue.detail}. Interne Lösungen sind nicht sichtbar.`, panel: detail }));
+  detail.querySelector(".resolveQualityIssue").addEventListener("click", () => resolveQualityIssues(q.id));
+  detail.querySelector(".rejectQualityIssue").addEventListener("click", async event => {
+    event.currentTarget.disabled = true;
+    const saved = await submitAiQuestionFeedback(q, state.questions.findIndex(item => item.id === q.id), { verdict: "good", reviewOutcome: "false_positive", reviewerReason: issue.reason });
+    if (saved) resolveQualityIssues(q.id);
+    else event.target.disabled = false;
+  });
+  node.querySelector(".questionTop").after(detail);
+}
+
+function renderQuestionOutline() {
+  const host = $("questionOutline");
+  if (!host) return;
+  const lockedByTest = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  const unlocked = !lockedByTest && Boolean(state.currentQuiz?.id) && state.questionOrderUnlockedFor === state.currentQuiz.id;
+  const lock = $("questionOrderLock");
+  if (lock) {
+    lock.textContent = unlocked ? "🔓" : "🔒"; lock.disabled = lockedByTest;
+    lock.setAttribute("aria-pressed", String(unlocked));
+    lock.setAttribute("aria-label", unlocked ? "Reihenfolge sperren" : "Aufgaben verschieben freigeben");
+    lock.title = unlocked ? "Reihenfolge sperren" : "Aufgaben verschieben freigeben";
+    lock.onclick = () => { state.questionOrderUnlockedFor = unlocked ? null : state.currentQuiz.id; state.questionOrderFrom = null; renderQuestionOutline(); };
+  }
+  const hint = $("questionOrderHint");
+  if (hint) hint.textContent = unlocked ? "Zwei Nummern antippen zum Tauschen oder eine Nummer an die gewünschte Stelle ziehen." : "";
+  host.innerHTML = state.questions.map((q, index) => `<button type="button" class="questionOutlineItem${activeQualityIssue(index) ? " hasIssue" : ""}${unlocked && state.questionOrderFrom === q.id ? " selectedForMove" : ""}" draggable="${unlocked}" data-position="${index + 1}" aria-label="Aufgabe ${index + 1}${unlocked ? ", zum Tauschen auswählen" : activeQualityIssue(index) ? ", Hinweis prüfen" : ""}"${unlocked ? ` aria-pressed="${state.questionOrderFrom === q.id}"` : ""}>${index + 1}${activeQualityIssue(index) ? " !" : ""}</button>`).join("");
+  const applyOrder = (from, to, swap) => {
+    if (!unlocked || state.currentQuiz?.published && !state.currentQuiz?.ended || from < 0 || to < 0 || from === to) return;
+    if (swap) [state.questions[from], state.questions[to]] = [state.questions[to], state.questions[from]];
+    else { const [q] = state.questions.splice(from, 1); state.questions.splice(to, 0, q); }
+    state.questionOrderFrom = null; renderQuestions(); markDirty();
+  };
+  host.querySelectorAll("button").forEach(button => {
+    const index = Number(button.dataset.position) - 1;
+    button.addEventListener("click", () => {
+      if (!unlocked) return scrollToQualityIssue(button.dataset.position);
+      const from = state.questions.findIndex(q => q.id === state.questionOrderFrom);
+      if (from < 0) { state.questionOrderFrom = state.questions[index].id; renderQuestionOutline(); }
+      else if (from === index) { state.questionOrderFrom = null; renderQuestionOutline(); }
+      else applyOrder(from, index, true);
+    });
+    button.addEventListener("dragstart", event => { if (!unlocked) return event.preventDefault(); state.questionOrderFrom = state.questions[index].id; event.dataTransfer?.setData("text/plain", state.questionOrderFrom); });
+    button.addEventListener("dragover", event => { if (unlocked) event.preventDefault(); });
+    button.addEventListener("drop", event => { event.preventDefault(); applyOrder(state.questions.findIndex(q => q.id === state.questionOrderFrom), index, false); });
+    button.addEventListener("dragend", () => { state.questionOrderFrom = null; renderQuestionOutline(); });
+  });
+}
+
+function scrollToQualityIssue(position) {
+  const index = Math.max(0, Number(position) - 1);
+  const card = document.querySelector(`.questionCard[data-index="${index}"]`);
+  if (!card) return;
+  card.classList.remove("collapsed");
+  if (state.questions[index]) state.questions[index]._collapsed = false;
+  const detail = card.querySelector(".qualityIssueDetail");
+  if (detail) detail.open = true;
+  card.tabIndex = -1;
+  card.focus({ preventScroll: true });
+  const collapse = card.querySelector(".collapseQuestion");
+  if (collapse) { collapse.textContent = "⌃"; collapse.title = "Aufgabe einklappen"; collapse.setAttribute("aria-label", collapse.title); collapse.setAttribute("aria-expanded", "true"); }
+  card.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+  card.classList.add("qualityIssueFlash");
+  setTimeout(() => card.classList.remove("qualityIssueFlash"), 1800);
+}
+
+function renderImportReviewBanner() {
+  const host = $("importReviewBanner");
+  if (!host) return;
+  if (state.reviewBannerDismissedFor === state.currentQuiz?.id) { host.classList.add("hidden"); return; }
+  const report = state.pendingImportReport;
+  const pendingAiReview = isAiReviewPending(state.currentQuiz);
+  const issues = report?.quizId === state.currentQuiz?.id ? currentQualityIssues(report.issues, state.questions) : [];
+  const generalWarnings = report?.quizId === state.currentQuiz?.id ? (report.warnings || []) : [];
+  const warningCount = issues.length + generalWarnings.length;
+  const hasReport = warningCount > 0 || Boolean(report?.repairs?.length);
+  if (!pendingAiReview && !hasReport) {
+    host.classList.add("hidden");
+    host.innerHTML = "";
+    return;
+  }
+  host.classList.remove("hidden");
+  const heading = pendingAiReview ? "KI-Entwurf prüfen" : state.currentQuiz?.generationJobId ? "KI-Teilentwurf" : "Test importiert";
+  const issueButtons = issues.length ? `<div class="qualityJumpList">${issues.map(issue => `<button class="qualityJump" type="button" data-position="${issue.questionPosition}"><strong>Aufgabe ${issue.questionPosition}</strong><span>${escapeHtml(qualityIssueShortLabel(issue))}</span></button>`).join("")}</div>` : "";
+  const general = generalWarnings.length ? `<details><summary>${generalWarnings.length} weiterer Hinweis${generalWarnings.length === 1 ? "" : "e"}</summary><ul>${generalWarnings.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul></details>` : "";
+  host.innerHTML = `<div class="importReviewIcon">${warningCount ? "⚠️" : "✓"}</div><div class="importReviewText"><strong>${warningCount ? `${heading} · ${warningCount} Hinweis${warningCount === 1 ? "" : "e"}` : heading}</strong><p>${pendingAiReview ? (warningCount ? "GradeCrew hat diese Stellen markiert. Klicke auf eine Aufgabe, um sie zu prüfen." : "Kontrolliere den Test kurz und schließe die Prüfung danach ab.") : "Du kannst den Test jetzt prüfen, bearbeiten und anschließend veröffentlichen."}</p>${issueButtons}${general}</div><div class="importReviewActions">${issues.length ? '<button class="button ghost jumpFirstQualityIssue" type="button">Ersten Hinweis öffnen</button>' : ""}${pendingAiReview ? '<button class="button secondary completeAiReview" type="button">Prüfung abgeschlossen</button>' : ""}<button class="button ghost closeImportReview" type="button">Später</button></div>`;
+  host.querySelectorAll(".qualityJump").forEach(button => button.addEventListener("click", () => scrollToQualityIssue(button.dataset.position)));
+  host.querySelector(".jumpFirstQualityIssue")?.addEventListener("click", () => scrollToQualityIssue(issues[0]?.questionPosition));
+  host.querySelector(".completeAiReview")?.addEventListener("click", () => completeAiReview(state.currentQuiz.id, true));
+  host.querySelector(".closeImportReview")?.addEventListener("click", () => {
+    state.reviewBannerDismissedFor = state.currentQuiz?.id;
+    host.classList.add("hidden");
+  });
+}
+
+async function completeAiReview(code, fromEditor = false) {
+  try {
+    let quiz = state.quizzes.find(item => item.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null);
+    if (!quiz) {
+      const snapshot = await getDoc(doc(db, "quizzes", code));
+      if (snapshot.exists()) quiz = { id: snapshot.id, ...snapshot.data() };
+    }
+    if (!quiz || quiz.ownerId !== state.user?.uid || quiz.generationStatus !== "ready") {
+      toast("Der Entwurf ist noch nicht verfügbar. Bitte aktualisiere die Seite.", "error");
+      return;
+    }
+    if (fromEditor && state.isDirty && !(await saveCurrentQuiz(false))) return;
+    await updateDoc(doc(db, "quizzes", code), { aiReviewAcknowledgedAt: serverTimestamp() });
+    const acknowledgedAt = new Date();
+    if (state.currentQuiz?.id === code) {
+      state.currentQuiz.aiReviewAcknowledgedAt = acknowledgedAt;
+      state.pendingImportReport = null;
+      renderQuestions();
+    }
+    const latestQuiz = state.currentQuiz?.id === code ? state.currentQuiz : quiz;
+    state.quizzes = [{ ...latestQuiz, aiReviewAcknowledgedAt: acknowledgedAt }, ...state.quizzes.filter(item => item.id !== code)];
+    renderAiJobs();
+    renderQuizList();
+    toast("Prüfung abgeschlossen. Der Hinweis wird nicht erneut angezeigt.");
+  } catch (err) {
+    console.error(err);
+    toast("Prüfstatus konnte nicht gespeichert werden. Bitte erneut versuchen.", "error");
+  }
+}
+
+async function openAiProvider(url, label) {
+  const prompt = $("aiPromptOutput")?.value?.trim();
+  if (!prompt) {
+    toast("Bitte zuerst den Prompt erzeugen.", "error");
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(prompt);
+    window.open(url, "_blank", "noopener");
+    toast(`Prompt kopiert – ${label} wurde geöffnet.`);
+  } catch (err) {
+    console.error(err);
+    window.open(url, "_blank", "noopener");
+    toast(`${label} wurde geöffnet. Bitte den Prompt manuell kopieren.`, "error");
+  }
+}
+
+async function importAiJson() {
+  const source = $("aiJsonInput").value;
+  if (!source.trim()) {
+    toast("Bitte zuerst die Antwort deiner KI einfügen.", "error");
+    return;
+  }
+
+  const parsed = parseJsonWithRepair(source);
+  if (!parsed.ok) {
+    setAiImportHelp({
+      title: "Die Antwort konnte noch nicht sicher erkannt werden.",
+      message: "Prüfe, ob du die vollständige Antwort deiner KI kopiert hast, und versuche den Import erneut.",
+      details: [parsed.error?.message || "Unbekannter Formatfehler"],
+      tone: "error"
+    });
+    toast("KI-Antwort konnte nicht importiert werden.", "error");
+    return;
+  }
+
+  const normalized = normalizeImportedPayload(parsed.data, parsed);
+  if (!normalized.ok) {
+    setAiImportHelp({
+      title: "Die Antwort ist lesbar, aber noch kein vollständiger Test.",
+      message: normalized.error,
+      details: normalized.report?.repairs || [],
+      tone: "warning"
+    });
+    toast(normalized.error, "error");
+    return;
+  }
+
+  const { meta, questions, report } = normalized;
+  clearAiImportHelp();
+  try {
+    const base = {
+      ...quizDefaults(),
+      title: meta.title || "Test",
+      subject: meta.subject || $("aiSubject").value || getSettings().defaultSubject || "",
+      grade: meta.grade || $("aiGrade").value || getSettings().defaultGrade || "",
+      description: meta.description || getSettings().defaultDescription,
+      questionCount: questions.length,
+      totalPoints: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0))
+    };
+    const { code } = await createQuizDocument(base);
+    for (let i = 0; i < questions.length; i += 1) {
+      const q = questions[i];
+      q.aiOrigin = { kind: "imported", model: "extern", promptVersion: "" };
+      const ref = doc(collection(db, "quizzes", code, "questions"));
+      await setDoc(ref, { ...sanitizeQuestionForSave(q), position: i + 1, updatedAt: serverTimestamp() });
+    }
+    state.pendingImportReport = { ...report, quizId: code };
+    if (report.warnings.length) toast(`Test importiert – ${report.warnings.length} Hinweis${report.warnings.length === 1 ? "" : "e"} bitte prüfen.`);
+    else if (report.repairs.length) toast("Test importiert.");
+    else toast("Test importiert.");
+    await openEditor(code);
+  } catch (err) {
+    console.error(err);
+    toast("Der Test konnte nicht importiert werden.", "error");
+  }
+}
+
+// ---------- Editor ----------
+$("addQuestionBtn").addEventListener("click", () => {
+  state.questions.push(newQuestion());
+  renderQuestions();
+  markDirty();
+  focusEditorQuestion(state.questions.length - 1, ".qText");
+});
+$("saveQuizBtn").addEventListener("click", () => saveCurrentQuiz(true));
+$("publishBtn").addEventListener("click", publishCurrentQuiz);
+$("createSimilarTestBtn")?.addEventListener("click", createSimilarTest);
+$("shareTemplateBtn")?.addEventListener("click", async () => {
+  if (!state.currentQuiz) return;
+  await shareQuizTemplate(state.currentQuiz.id);
+});
+$("endQuizBtn")?.addEventListener("click", async () => {
+  if (!state.currentQuiz) return;
+  if (state.isDirty && !(await saveCurrentQuiz(false))) return;
+  endQuiz(state.currentQuiz.id, { returnToEditor: true });
+});
+function updateTimeLimitHint() {
+  const teacherMode = $("quizStartMode")?.value === "teacher";
+  const hint = $("timeLimitHint");
+  if (!hint) return;
+  hint.textContent = teacherMode
+    ? "Die Schüler warten zunächst im Warteraum. Der Countdown startet für alle gleichzeitig, wenn du den Test freigibst."
+    : "Der Countdown startet erst, wenn der Schüler auf „Test starten“ klickt. Bei 00:00 werden die aktuellen Antworten automatisch abgegeben.";
+}
+
+$("quizUseTimeLimit")?.addEventListener("change", (e) => {
+  $("quizTimeLimitWrap").classList.toggle("hidden", !e.target.checked);
+  updateTimeLimitHint();
+  markDirty();
+});
+$("quizTimeLimitMinutes")?.addEventListener("input", markDirty);
+$("previewBtn").addEventListener("click", async () => {
+  const button = $("previewBtn");
+  if (!state.currentQuiz || button.disabled) return;
+  // Reserve the tab during the user gesture; a server save can outlive popup activation.
+  const preview = window.open("about:blank", "_blank");
+  if (!preview) {
+    toast("Die Schüleransicht wurde vom Browser blockiert. Erlaube Pop-ups für GradeCrew und klicke erneut auf Schüleransicht.", "error");
+    return;
+  }
+  preview.opener = null;
+  button.disabled = true;
+  const quizId = state.currentQuiz.id;
+  const wasNew = state.newManualQuiz;
+  const uid = state.user?.uid;
+  try {
+    // A saved, unchanged test needs no writes; active audio drafts are immutable.
+    if ((wasNew || state.isDirty) && !(await saveCurrentQuiz(false))) {
+      preview.close();
+      toast("Schüleransicht nicht geöffnet: Speichern fehlgeschlagen. Prüfe die angezeigten Hinweise und versuche es erneut.", "error");
+      return;
+    }
+    if (!state.currentQuiz || (!wasNew && state.currentQuiz.id !== quizId) || state.user?.uid !== uid) { preview.close(); return; }
+    if (!preview.closed) preview.location.replace(baseStudentUrl(state.currentQuiz.id, true));
+    try { localStorage.setItem(`firstTestPreview:${uid}:${state.currentQuiz.id}`, "opened"); } catch (_) {}
+    renderFirstTestGuide();
+  } catch (error) {
+    preview.close();
+    toast("Die Schüleransicht konnte nicht geöffnet werden. Bitte speichere den Test und versuche es erneut.", "error");
+  } finally {
+    button.disabled = false;
+  }
+});
+
+function newQuestion(type = "single", needsFirestoreId = true) {
+  let id;
+  if (needsFirestoreId && state.currentQuiz?.id) id = doc(collection(db, "quizzes", state.currentQuiz.id, "questions")).id;
+  else id = randomId("q");
+  const q = {
+    id,
+    type,
+    text: "",
+    points: type === "multi" ? 2 : 1,
+    position: state.questions.length + 1
+  };
+  initializeTypeData(q, type);
+  return q;
+}
+
+function initializeTypeData(q, type) {
+  q.points = Math.max(0.5, round1(Number(q.points) || (type === "multi" ? 2 : 1)));
+  if (["single", "multi", "dropdown"].includes(type)) {
+    q.options = q.options?.length ? q.options : [{ text: "", correct: true }, { text: "", correct: false }];
+    if (type !== "multi") {
+      const firstCorrect = Math.max(0, q.options.findIndex((o) => o.correct));
+      q.options.forEach((o, i) => (o.correct = i === firstCorrect));
+    }
+  }
+  if (type === "text") {
+    q.acceptedAnswers = q.acceptedAnswers || [];
+    q.manualReview = Boolean(q.manualReview);
+  }
+  if (type === "truefalse") q.correctBoolean = q.correctBoolean ?? true;
+  if (type === "gapfill") q.gapColors = Array.isArray(q.gapColors) ? q.gapColors : [];
+  if (type === "matching") q.pairs = q.pairs?.length ? q.pairs : [{ left: "", right: "" }, { left: "", right: "" }];
+  if (type === "ordering") {
+    q.items = q.items?.length ? q.items : ["", ""];
+    q.acceptedOrders = orderingVariants(q.acceptedOrders);
+  }
+  if (type === "grouping") q.groups = q.groups?.length ? q.groups : [{ name: "Kategorie 1", items: [] }, { name: "Kategorie 2", items: [] }];
+  if (type === "markwords") {
+    q.passage = q.passage || "";
+    q.targetWords = q.targetWords || [];
+    q.markGroups = Array.isArray(q.markGroups) ? q.markGroups : [];
+  }
+  if (type === "number") {
+    q.numericAnswer = Number.isFinite(Number(q.numericAnswer)) ? Number(q.numericAnswer) : 0;
+    q.tolerance = Math.max(0, Number(q.tolerance) || 0);
+    q.unit = q.unit || "";
+  }
+}
+
+async function openEditor(code) {
+  if (guestTourRepo) {
+    const quiz = guestTourRepo.getQuiz(code);
+    if (!quiz) throw new Error('Lokaler Übungstest nicht gefunden.');
+    state.newManualQuiz = false;
+    state.draftBaseUpdatedAt = 0;
+    state.currentQuiz = quiz;
+    state.reviewBannerDismissedFor = null;
+    state.questions = guestTourRepo.getQuestions(code).map(item => {
+      initializeTypeData(item, item.type || 'single');
+      return item;
+    });
+    state.pendingImportReport = buildQualityReviewReport(quiz, code, state.questions);
+    syncQualityReport();
+    state.loadedQuestionIds = new Set(state.questions.map(item => item.id));
+    renderEditorState(quiz);
+    return;
+  }
+  try {
+    const quizSnap = await getDoc(doc(db, "quizzes", code));
+    if (!quizSnap.exists()) throw new Error("Test nicht gefunden");
+    const q = { id: quizSnap.id, ...quizSnap.data() };
+    if (q.ownerId !== state.user.uid) throw new Error("Kein Zugriff");
+    if (q.generationStatus === "running") return toast("Dieser Test wird gerade erstellt. Den Fortschritt siehst du unter „Meine Tests“.");
+    state.newManualQuiz = false;
+    state.draftBaseUpdatedAt = toMillis(q.updatedAt);
+    state.currentQuiz = q;
+    state.reviewBannerDismissedFor = null;
+    const [qs, audioDraftResult] = await Promise.all([
+      getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position"))),
+      aiApi.getQuestionAudioDrafts({ quizId: code })
+    ]);
+    const audioByQuestion = new Map(Object.entries(audioDraftResult?.drafts || {}));
+    const solutionAudioByQuestion = new Map(Object.entries(audioDraftResult?.solutionDrafts || {}));
+    const solutionAssetByQuestion = new Map(Object.entries(audioDraftResult?.solutionAssets || {}));
+    state.questions = qs.docs.map((d) => {
+      const solutionAsset = solutionAssetByQuestion.get(d.id) || {};
+      const item = {
+        id: d.id,
+        ...d.data(),
+        audioScript: audioByQuestion.get(d.id) || "",
+        solutionAudioScript: solutionAudioByQuestion.get(d.id) || "",
+        solutionAudioDataUrl: solutionAsset.audioDataUrl || "",
+        solutionAudioByteSize: Number(solutionAsset.audioByteSize || 0),
+        solutionAudioVoice: solutionAsset.audioVoice || "",
+        solutionAudioModel: solutionAsset.audioModel || "",
+        solutionAudioAiGenerated: solutionAsset.audioAiGenerated !== false,
+        solutionAudioNeedsRegeneration: Boolean(solutionAudioByQuestion.get(d.id)) && !solutionAsset.audioDataUrl
+      };
+      initializeTypeData(item, item.type || "single");
+      return item;
+    });
+    state.pendingImportReport = buildQualityReviewReport(q, code, state.questions);
+    syncQualityReport();
+    state.loadedQuestionIds = new Set(state.questions.map((x) => x.id));
+    renderEditorState(q);
+    const draft = await readEditorDraft(state.user.uid, code).catch(err => { console.warn("Lokaler Entwurf nicht verfügbar:", err); return null; });
+    if (state.currentQuiz?.id !== code || $("editorView").classList.contains("hidden")) return;
+    if (!draft) return;
+    if (toMillis(q.updatedAt) > Number(draft.baseUpdatedAt || 0) + 1500 &&
+        !confirm("Dieser Test wurde seit deiner lokalen Sicherung auf einem anderen Gerät oder in einem anderen Tab gespeichert. Deinen lokalen Bearbeitungsstand trotzdem wiederherstellen?")) {
+      await removeEditorDraft(state.user.uid, code).catch(console.warn);
+      return;
+    }
+    state.draftBaseUpdatedAt = Number(draft.baseUpdatedAt || 0);
+    state.currentQuiz = { ...q, ...draft.quiz };
+    state.questions = (draft.questions || []).map(item => { delete item._typeChanging; initializeTypeData(item, item.type || "single"); return item; });
+    state.pendingImportReport = buildQualityReviewReport(state.currentQuiz, code, state.questions);
+    renderEditorState(state.currentQuiz);
+    markDirty();
+    toast("Lokaler Bearbeitungsstand wiederhergestellt. Bitte nach der Prüfung speichern.");
+  } catch (err) {
+    console.error(err);
+    toast("Test konnte nicht geöffnet werden.", "error");
+  }
+}
+
+function resumeManualDraft(draft) {
+  if (draft.ownerId !== state.user?.uid) return;
+  state.newManualQuiz = true;
+  state.draftBaseUpdatedAt = 0;
+  state.currentQuiz = { ...quizDefaults(), ...draft.quiz, id: draft.quizId };
+  state.questions = (draft.questions || []).map(item => { delete item._typeChanging; initializeTypeData(item, item.type || "single"); return item; });
+  state.loadedQuestionIds = new Set();
+  state.pendingImportReport = null;
+  renderEditorState(state.currentQuiz);
+  markDirty();
+}
+
+function renderEditorState(q) {
+  $("quizTitle").value = q.title || "";
+  $("quizSubject").value = q.subject || "";
+  $("quizGrade").value = q.grade || "";
+  $("quizDescription").value = q.description || "";
+  populateQuizGradeScaleSelect(q.gradeScaleId || getSettings().defaultGradeScaleId, q.gradeScaleSnapshot);
+  $("quizResultMode").value = q.resultMode || "points_grade";
+  $("quizShowSolutions").checked = q.showSolutions ?? true;
+  $("quizSolutionReleaseMode").value = q.solutionReleaseMode === "practice_after_submit" ? "practice_after_submit" : "exam_after_end";
+  $("quizStartMode").value = q.startMode === "teacher" ? "teacher" : "student";
+  $("quizShuffleQuestions").checked = Boolean(q.shuffleQuestions);
+  $("quizShuffleAnswers").checked = Boolean(q.shuffleAnswers);
+  const hasTimeLimit = Number(q.timeLimitMinutes) > 0;
+  $("quizUseTimeLimit").checked = hasTimeLimit;
+  $("quizTimeLimitMinutes").value = hasTimeLimit ? Number(q.timeLimitMinutes) : 10;
+  $("quizTimeLimitWrap").classList.toggle("hidden", !hasTimeLimit);
+  updateTimeLimitHint();
+  $("editorHeading").textContent = q.title || "Test bearbeiten";
+  showView("editorView");
+  renderImportReviewBanner();
+  renderQuestions();
+  if (state.newManualQuiz) {
+    state.isDirty = false;
+    setSaveState($("saveState"), "unsaved", "Noch nicht gespeichert");
+  } else markSaved();
+  updateEditorPublishControls();
+  renderVariantProgress();
+  renderFirstTestGuide();
+}
+
+function populateQuizGradeScaleSelect(selectedId, snapshot = null) {
+  const sel = $("quizGradeScale");
+  const scales = getGradeScales();
+  const options = [...scales];
+  if (selectedId && !options.some((s) => s.id === selectedId) && snapshot?.thresholds?.length === 6) {
+    options.unshift({ id: selectedId, name: `${snapshot.name || "Gespeicherter Schlüssel"} (im Test gespeichert)`, thresholds: snapshot.thresholds });
+  }
+  sel.innerHTML = options.map((s) => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)}</option>`).join("");
+  sel.value = options.some((s) => s.id === selectedId) ? selectedId : options[0].id;
+}
+
+["quizTitle", "quizSubject", "quizGrade", "quizDescription"].forEach((id) => {
+  $(id).addEventListener("input", () => {
+    updateSummary();
+    markDirty();
+  });
+});
+["quizGradeScale", "quizResultMode", "quizShowSolutions", "quizSolutionReleaseMode", "quizShuffleQuestions", "quizShuffleAnswers"].forEach((id) => {
+  $(id).addEventListener("change", () => markDirty());
+});
+$("quizStartMode")?.addEventListener("change", () => {
+  updateTimeLimitHint();
+  markDirty();
+});
+
+function bindQuestionTextEditor(node, q) {
+  const text = node.querySelector(".qText");
+  const listening = q.audioPresentation === "listening-only";
+  node.querySelector(".questionTextCaption").textContent = q.type === "markwords" ? "Arbeitsauftrag" : "Frage";
+  text.placeholder = listening ? "Öffentliche Frage zur Höraufgabe – ohne Hörtext oder Lösung …" : "Frage eingeben …";
+  const typeInstruction = listening && q.type === "truefalse" && questionStudentAudioReady(q) ? assessmentContentLabels(state.currentQuiz?.contentLocale).listeningTrueFalseInstruction : "";
+  text.value = listening ? (String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() || typeInstruction) : String(q.text || "");
+  text.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  if (listening) text.maxLength = 1000;
+  else text.removeAttribute("maxlength");
+  if (q.type === "gapfill") node.querySelector(".questionTextLabel").classList.add("hidden");
+  text.oninput = event => {
+    if (text.disabled) return;
+    if (q.audioPresentation === "listening-only") {
+      q.audioInstruction = String(event.target.value).slice(0, 1000);
+      if (q.audioIntent) q.audioIntent = { ...q.audioIntent, instruction: q.audioInstruction };
+    } else q.text = event.target.value;
+    if (q.audioPresentation === "listening-only" && String(q.audioInstruction || "").trim()) {
+      const warning = node.querySelector(".questionAudioInstructionWarning");
+      if (warning) warning.textContent = "";
+      node.querySelector(".questionAudioLegacyQuestion")?.remove();
+    }
+    markDirty();
+  };
+}
+
+function renderQuestions() {
+  $("editorView").dataset.quizId = state.currentQuiz?.id || "";
+  $("editorView").dataset.ownerId = tourUid();
+  $("editorView").dataset.variantAllowed = String(!state.newManualQuiz && !(state.currentQuiz?.published && !state.currentQuiz?.ended));
+  const root = $("questionList");
+  root.innerHTML = "";
+  state.questions.forEach((q, index) => {
+    q.position = index + 1;
+    const node = $("questionTemplate").content.firstElementChild.cloneNode(true);
+    node.dataset.id = q.id;
+    node.dataset.reviewId = `editor-question-${q.id}`;
+    node.dataset.index = String(index);
+    node.setAttribute("aria-label", `Aufgabe ${index + 1}`);
+    q._collapsed = false;
+    renderQualityIssue(node, q, index);
+    const qualityIssue = activeQualityIssue(index);
+    if (qualityIssue) {
+      node.classList.add("qualityIssueQuestion");
+      const marker = document.createElement("button");
+      marker.type = "button";
+      marker.className = "qualityIssueMarker";
+      marker.title = qualityIssue.detail || qualityIssueShortLabel(qualityIssue);
+      marker.innerHTML = `<span>!</span>${escapeHtml(qualityIssueShortLabel(qualityIssue))}`;
+      marker.addEventListener("click", () => scrollToQualityIssue(index + 1));
+      node.querySelector(".questionNumber").after(marker);
+    }
+    node.querySelector(".questionNumber").textContent = `Aufgabe ${index + 1}`;
+    const type = node.querySelector(".qType");
+    const points = node.querySelector(".qPoints");
+    bindQuestionTextEditor(node, q);
+    type.value = q.type;
+    points.value = Math.max(0.5, round1(q.points || 1));
+
+    type.disabled = Boolean(q._typeChanging || (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(state.currentQuiz?.id)) || state.currentQuiz?.published && !state.currentQuiz?.ended);
+    type.addEventListener("change", e => {
+      const targetType = e.target.value;
+      type.value = q.type;
+      void changeQuestionType(q, index, targetType);
+    });
+    if (q._typeChanging) {
+      const hint = document.createElement("small"); hint.setAttribute("role", "status");
+      hint.textContent = "Emmi erstellt mit KI eine passende Aufgabe für den neuen Typ …";
+      type.after(hint);
+    } else type.title = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(state.currentQuiz?.id)) ? "Die Einführung verwendet vorbereitete Aufgaben. Typwechsel ist in deinen eigenen Tests verfügbar." : "Emmi passt Inhalt und Lösungen mit KI an. Beim Zurückwechseln bleibt deine bisherige Fassung erhalten.";
+    points.addEventListener("input", (e) => {
+      q.points = Math.max(0.5, Number(e.target.value) || 1);
+      updateSummary();
+      markDirty();
+    });
+    points.addEventListener("change", (e) => {
+      q.points = Math.max(0.5, round1(Number(e.target.value) || 1));      e.target.value = q.points;
+      updateSummary();
+    });
+    node.querySelector(".aiEditQuestion")?.addEventListener("click", () => toggleQuestionAiPanel(node, q, index));
+    node.querySelector(".aiVariantQuestion")?.addEventListener("click", () => openQuestionVariantDialog(q, index));
+    const canRate = isAdmin() || Boolean(q.aiOrigin);
+    for (const verdict of ["Good", "Bad"]) node.querySelector(`.aiFeedback${verdict}`)?.classList.toggle("hidden", !canRate);
+    node.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", q._aiFeedbackVerdict === "good");
+    node.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackAccepted", Boolean(q.aiVariantKept && !q._aiFeedbackVerdict));
+    if (q.aiVariantKept && !q._aiFeedbackVerdict) node.querySelector(".aiFeedbackGood")?.setAttribute("title", "Variante behalten · noch nicht ausdrücklich als gut bewertet");
+    node.querySelector(".aiFeedbackBad")?.classList.toggle("aiFeedbackSelected", q._aiFeedbackVerdict === "bad");
+    node.querySelector(".aiFeedbackGood")?.setAttribute("aria-pressed", String(q._aiFeedbackVerdict === "good"));
+    node.querySelector(".aiFeedbackBad")?.setAttribute("aria-pressed", String(q._aiFeedbackVerdict === "bad"));
+    if (canRate) {
+      node.querySelector(".aiFeedbackGood")?.addEventListener("click", () => submitAiQuestionFeedback(q, index, { verdict: "good", action: "keep" }));
+      node.querySelector(".aiFeedbackBad")?.addEventListener("click", () => toggleAiQualityPanel(node, q, index));
+    }
+
+    node.querySelector(".deleteQuestion").disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+    node.querySelector(".deleteQuestion").addEventListener("click", () => {
+      if (state.currentQuiz?.published && !state.currentQuiz?.ended) return;
+      if (confirm("Aufgabe löschen?")) {
+        state.questions.splice(index, 1);
+        renderQuestions();
+        markDirty();
+        focusEditorQuestion(Math.min(index, state.questions.length - 1));
+        if (typeof crewTour !== "undefined") crewTour?.notify("question-deleted", {quizId: state.currentQuiz?.id, questionId: q.id});
+      }
+    });
+
+    const imageEditor = document.createElement("div");
+    imageEditor.className = "questionImageEditor";
+    node.querySelector(".answerEditor").before(imageEditor);
+    renderQuestionImageEditor(imageEditor, q);
+    const audioEditor = document.createElement("div");
+    audioEditor.className = "questionAudioEditor";
+    node.querySelector(".answerEditor").before(audioEditor);
+    renderQuestionAudioEditor(audioEditor, q);
+    const markAudioStaleAfterContentEdit = event => {
+      if (event.target?.closest?.(".questionAudioEditor")) return;
+      let changed = false;
+      const publicInstructionEdit = q.audioPresentation === "listening-only" && event.target?.matches?.(".qText");
+      if (!publicInstructionEdit && getQuestionAudioSrc(q) && q.audioNeedsRegeneration !== true) {
+        q.audioNeedsRegeneration = true;
+        changed = true;
+      }
+      if (getQuestionSolutionAudioSrc(q) && q.solutionAudioNeedsRegeneration !== true) {
+        q.solutionAudioNeedsRegeneration = true;
+        changed = true;
+      }
+      if (changed) window.setTimeout(() => {
+        if (audioEditor.isConnected) renderQuestionAudioEditor(audioEditor, q);
+      }, 0);
+    };
+    node.addEventListener("input", markAudioStaleAfterContentEdit, true);
+    node.addEventListener("change", markAudioStaleAfterContentEdit, true);
+    renderAnswerEditor(node.querySelector(".answerEditor"), q);
+    root.appendChild(node);
+  });
+  updateSummary();
+  syncQualityReport();
+  renderImportReviewBanner();
+  renderQuestionOutline();
+}
+
+function questionContext(index) {
+  const others = state.questions.filter((_, i) => i !== index).slice(0, 100);
+  return {
+    title: state.currentQuiz?.title || $("quizTitle")?.value || "", subject: $("quizSubject")?.value || state.currentQuiz?.subject || "", grade: $("quizGrade")?.value || state.currentQuiz?.grade || "",
+    contentLocale: state.currentQuiz?.contentLocale || "de-DE",
+    existingQuestions: others.map(q => ({ type: q.type, text: String(q.text || "").slice(0, 300), options: (q.options || []).map(o => ({ text: String(o.text || "").slice(0, 100), correct: Boolean(o.correct) })), acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4), numericAnswer: q.numericAnswer, unit: q.unit, mediaIntent: { kind: getQuestionImageSrc(q) ? "ai_generated" : "none" }, audioIntent: { kind: getQuestionAudioSrc(q) || q.audioScript ? "ai_generated" : "none", script: String(q.audioScript || "").slice(0, 500), reason: "" } }))
+  };
+}
+
+function questionForAi(q) {
+  const copy = sanitizeQuestionForSave(q);
+  if (copy.type === "ordering") copy.acceptedOrders = orderingVariants(copy.acceptedOrders);
+  copy.mediaIntent = { kind: getQuestionImageSrc(q) ? "ai_generated" : "none", prompt: String(q.imageAlt || ""), altText: String(q.imageAlt || "") };
+  delete copy.imageDataUrl; delete copy.imageUrl; delete copy.imagePath; delete copy.imageByteSize; delete copy.imageAlt;
+  delete copy.audioDataUrl; delete copy.audioByteSize; delete copy.audioVoice; delete copy.audioModel; delete copy.audioAiGenerated; delete copy.audioNeedsRegeneration;
+  if (q.audioPresentation === "listening-only") copy.text = String(q.audioInstruction ?? q.audioIntent?.instruction ?? "");
+  copy.audioIntent = q.audioScript || getQuestionAudioSrc(q) ? { kind: "ai_generated", script: String(q.audioScript || "").slice(0, 500), presentation: q.audioPresentation === "listening-only" ? "listening-only" : "supplement", instruction: String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim().slice(0, 1000), reason: "Höraufgabe" } : { kind: "none", script: "", reason: "" };
+  delete copy.audioInstruction;
+  delete copy.audioPresentation;
+  delete copy.audioAnswerItems;
+  delete copy.aiOrigin; delete copy.imageChoicesOnly; delete copy.aiVariantKept;
+  if (copy.options) copy.options = copy.options.map(({ imageDataUrl, imageAlt, imageScene, audioDataUrl, audioNeedsRegeneration, ...option }) => option);
+  return copy;
+}
+
+const AI_QUALITY_REASONS = Object.freeze({
+  incorrect: "Antwort stimmt nicht",
+  ambiguous: "Aufgabe ist unklar",
+  answer_leak: "Lösung wird bereits verraten",
+  image_mismatch: "Bild passt nicht",
+  duplicate: "Doppelt oder zu ähnlich",
+  other: "Anderer Grund"
+});
+
+function aiQuestionFeedbackSnapshot(q) {
+  return {
+    type: String(q.type || "").slice(0, 30), text: String(q.text || "").slice(0, 900), points: Number(q.points) || 1,
+    options: (q.options || []).slice(0, 6).map(o => ({ text: String(o.text || "").slice(0, 180), correct: Boolean(o.correct) })),
+    acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4).map(answer => String(answer).slice(0, 120)),
+    correctBoolean: q.type === "truefalse" ? q.correctBoolean : null,
+    pairs: (q.pairs || []).slice(0, 15).map(pair => ({ left: String(pair.left).slice(0, 180), right: String(pair.right).slice(0, 180) })),
+    items: (q.items || []).slice(0, 20).map(item => String(item).slice(0, 180)),
+    acceptedOrders: orderingVariantsForStorage(orderingVariants(q.acceptedOrders).slice(0, 12).map(order => order.slice(0, 20))),
+    groups: (q.groups || []).slice(0, 10).map(group => ({ name: String(group.name).slice(0, 100), items: (group.items || []).slice(0, 20).map(item => String(item).slice(0, 180)) })),
+    targetWords: (q.targetWords || []).slice(0, 30),
+    markGroups: (q.markGroups || []).slice(0, 4),
+    numericAnswer: q.type === "number" && Number.isFinite(Number(q.numericAnswer)) ? Number(q.numericAnswer) : null,
+    passage: String(q.passage || "").slice(0, 600),
+    imageChoices: Boolean(q.imageChoicesOnly), imagePresent: Boolean(getQuestionImageSrc(q) || q.options?.some(o => o.imageDataUrl))
+  };
+}
+
+async function submitTutorialQuestionFeedback(q, { verdict, reason, comment, action }) {
+  const quiz = state.currentQuiz;
+  if ((!state.user && !guestTourRepo) || !quiz?.tutorialVersion || !crewTour?.ownsQuiz(quiz.id) || !state.questions.includes(q)) return false;
+  // Demonstrate the real controls without storing ratings or preferences.
+  q._aiFeedbackVerdict = verdict;
+  if (action === "remove") {
+    state.questions.splice(state.questions.indexOf(q), 1);
+    markDirty();
+  }
+  renderQuestions();
+  toast("Ausprobiert – diese Übungsbewertung wird nicht gespeichert.");
+  crewTour.notify("tutorial-feedback", { quizId: quiz.id, questionId: q.id, verdict, action });
+  return true;
+}
+
+async function submitAiQuestionFeedback(q, index, { verdict, reason = "", comment = "", action = "keep", reviewOutcome = "", reviewerReason = "" }) {
+  if ((!state.user && !guestTourRepo) || !state.currentQuiz?.id) return;
+  if (action !== "keep" && state.currentQuiz.published && !state.currentQuiz.ended) {
+    toast("Während ein Test veröffentlicht ist, kannst du die Aufgabe nur melden. Änderungen bitte nach dem Beenden vornehmen.", "error");
+    return false;
+  }
+  const note = String(comment || "").trim().slice(0, 500);
+  if (verdict === "bad" && (!Object.hasOwn(AI_QUALITY_REASONS, reason) || (reason === "other" && !note))) {
+    toast("Bitte einen Grund wählen und bei „Anderer Grund“ kurz beschreiben, was nicht passt.", "error");
+    return;
+  }
+  if (state.currentQuiz?.tutorialVersion) {
+    return submitTutorialQuestionFeedback(q, { verdict, reason, comment: note, action });
+  }
+  try {
+    const feedbackQuizId = state.currentQuiz.id;
+    const feedbackUid = state.user.uid;
+    const feedbackContext = {
+      subject: String($("quizSubject")?.value || state.currentQuiz.subject || "").trim().slice(0, 120),
+      grade: String($("quizGrade")?.value || state.currentQuiz.grade || "").trim().slice(0, 60)
+    };
+    const snapshot = aiQuestionFeedbackSnapshot(q);
+    const fingerprint = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(snapshot)));
+    const hash = Array.from(new Uint8Array(fingerprint)).slice(0, 10).map(byte => byte.toString(16).padStart(2, "0")).join("");
+    const id = `aiq-${feedbackQuizId}-${q.id}-${feedbackUid}-${hash}${reviewOutcome ? "-review-" + reviewerReason : ""}`;
+    const label = AI_QUALITY_REASONS[reason] || "";
+    const entry = {
+    userId: feedbackUid,
+    category: "ai_question", testCode: feedbackQuizId, questionId: q.id, questionPosition: index + 1,
+    ...feedbackContext,
+    questionType: String(q.type || "").slice(0, 30), feedbackSchemaVersion: 3,
+    message: reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen: " + qualityIssueShortLabel({ reason: reviewerReason }) : verdict === "good" ? "Gute Aufgabe – behalten." : `${label}${note ? `: ${note}` : ""}`,
+    verdict, reason, teacherComment: note, action, questionSnapshot: snapshot,
+    ...(reviewOutcome ? { reviewOutcome, reviewerReason } : {}),
+    model: String(q.aiOrigin?.model || "").slice(0, 60), promptVersion: String(q.aiOrigin?.promptVersion || "").slice(0, 60),
+    appVersion: APP_VERSION, environment: appEnvironment, status: reviewOutcome ? "new" : verdict === "good" ? "done" : "new", createdAt: serverTimestamp()
+    };
+    await setDoc(doc(db, "feedback", id), entry);
+    if (state.currentQuiz?.id !== feedbackQuizId || state.user?.uid !== feedbackUid) return false;
+    index = state.questions.findIndex(item => item.id === q.id);
+    if (index < 0) return false;
+    q._aiFeedbackVerdict = reviewOutcome ? "" : verdict;
+    if (!reviewOutcome && q.aiVariantKept) { q.aiVariantKept = false; markDirty(); }
+    const card = document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
+    card?.querySelector(".aiFeedbackGood")?.classList.remove("aiFeedbackAccepted");
+    card?.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", !reviewOutcome && verdict === "good");
+    card?.querySelector(".aiFeedbackBad")?.classList.toggle("aiFeedbackSelected", !reviewOutcome && verdict === "bad");
+    card?.querySelector(".aiFeedbackGood")?.setAttribute("aria-pressed", String(!reviewOutcome && verdict === "good"));
+    card?.querySelector(".aiFeedbackBad")?.setAttribute("aria-pressed", String(!reviewOutcome && verdict === "bad"));
+    if (action === "remove") {
+      state.questions.splice(index, 1);
+      renderQuestions(); markDirty(); toast("Rückmeldung gespeichert und Aufgabe entfernt. Bitte den Test speichern.");
+    } else if (action === "replace") {
+      toast("Rückmeldung gespeichert. Neue Aufgabe wird erstellt …");
+      const instruction = `Erstelle eine neue, eigenständige Aufgabe. Fehler der bisherigen Aufgabe: ${label}. ${note} Vermeide denselben Fehler und prüfe die Lösung. Antwortoptionen müssen aus eindeutigem Text bestehen; bei Komma-Zählfragen dürfen noch keine Kommas im Beispielsatz stehen.`;
+      await regenerateQuestionWithAi(q, index, { instruction, requireDifferent: true });
+    } else toast(reviewOutcome === "false_positive" ? "Fehlalarm gemeldet. Danke für die Korrektur." : verdict === "good" ? "Gute Aufgabe vermerkt." : "Problem gemeldet. Die Aufgabe bleibt zur Bearbeitung im Entwurf.");
+    return true;
+  } catch (err) {
+    console.error(err);
+    toast("Aufgabenfeedback konnte nicht gespeichert werden.", "error");
+    return false;
+  }
+}
+
+function toggleAiQualityPanel(node, q, index) {
+  const current = node.querySelector(".aiQualityPanel");
+  if (current) { current.remove(); return; }
+  const panel = document.createElement("div");
+  panel.className = "aiQualityPanel";
+  const live = state.currentQuiz?.published && !state.currentQuiz?.ended;
+  const canReplace = !live && !state.currentQuiz?.tutorialVersion;
+  panel.innerHTML = `<strong>🙁 Was stimmt mit dieser Aufgabe nicht?</strong>${live ? "<p>Ein veröffentlichter Test kann hier nur bewertet werden.</p>" : ""}<label>Grund<select class="aiQualityReason"><option value="">Bitte wählen</option><option value="missing_audio">Höraufgabe fehlt</option><option value="wrong_language">Falsche Sprache</option>${Object.entries(AI_QUALITY_REASONS).map(([key, label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join("")}</select></label><label>Hinweis zur Aufgabe <small>(optional, bei „Anderer Grund“ erforderlich)</small><textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}${live ? "" : '<button class="button danger aiQualityRemove" type="button">Melden &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
+  panel.querySelector(".aiQualityCancel").addEventListener("click", () => panel.remove());
+  for (const [selector, action] of [[".aiQualityReport", "keep"], [".aiQualityReplace", "replace"], [".aiQualityRemove", "remove"]]) {
+    panel.querySelector(selector)?.addEventListener("click", async () => {
+      const buttons = panel.querySelectorAll("button");
+      buttons.forEach(button => { button.disabled = true; });
+      try {
+        const selection = panel.querySelector(".aiQualityReason").value;
+        const preset = { missing_audio: "Höraufgabe fehlt", wrong_language: "Falsche Sprache" }[selection];
+        const comment = panel.querySelector(".aiQualityComment").value;
+        const saved = await submitAiQuestionFeedback(q, index, { verdict: "bad", reason: preset ? "other" : selection, comment: preset ? `${preset}${comment ? ": " + comment : ""}` : comment, action });
+        if (saved) panel.remove();
+      } finally { buttons.forEach(button => { button.disabled = false; }); }
+    });
+  }
+  node.querySelector(".questionGrid").after(panel);
+  panel.querySelector(".aiQualityReason").focus();
+}
+
+async function createSimilarTest() {
+  if (!state.currentQuiz || !state.questions.length) return toast("Für einen ähnlichen Test brauchst du mindestens eine Aufgabe.", "error");
+  if (state.currentQuiz.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
+  if (state.isDirty) return toast("Bitte speichere zuerst deine Änderungen am Ausgangstest.", "error");
+  if (!confirm("Für einen ähnlichen Test werden die Texte, Antwortoptionen und Lösungen des Ausgangstests an OpenAI gesendet. Bitte prüfe vorher, dass sie keine personenbezogenen Daten oder nicht für externe KI freigegebenen Materialien enthalten. Test erstellen?")) return;
+  const questions = state.questions;
+  const imageQuestionCount = Math.min(5, questions.filter(q => getQuestionImageSrc(q)).length);
+  const audioQuestionCount = Math.min(5, questions.filter(q => getQuestionAudioSrc(q)).length);
+  const request = {
+    schoolType: "Mittelschule", region: "Bayern", subject: $("quizSubject").value.trim(), grade: $("quizGrade").value.trim(),
+    topic: $("quizTitle").value.trim() || "Ähnlicher Test", difficulty: "gemischt", count: questions.length,
+    points: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
+    allowedTypes: [...new Set(questions.map(q => q.type))], notes: "Erstelle eine eigenständige Variante mit gleicher Kompetenz, ähnlichem Schwierigkeitsgrad und neuen Beispielen. Verwende keine wortgleichen Aufgaben.",
+    materials: [], materialMode: "consider", imageMode: imageQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount: 0, audioQuestionCount,
+    sourceTest: { title: $("quizTitle").value.trim(), questions: questions.map(q => ({ ...questionForAi(q), mediaIntent: { kind: getQuestionImageSrc(q) ? "ai_generated" : "none" } })) }
+  };
+  await startAiCreationJob(request, { similar: true, sourceQuiz: state.currentQuiz });
+}
+
+function toggleQuestionAiPanel(node, q, index) {
+  let panel = node.querySelector(".questionAiPanel");
+  if (panel) { panel.remove(); return; }
+  panel = document.createElement("div"); panel.className = "questionAiPanel";
+  panel.innerHTML = `<strong>✨ Aufgabe mit KI bearbeiten</strong><textarea placeholder="Was soll anders werden? z. B. schwieriger, längere Sätze, andere Zahlen, weniger offensichtliche Antworten …"></textarea><div class="questionAiChips"></div><div class="questionAiActions"><button type="button" class="button primary aiApply">Änderung erstellen</button><button type="button" class="button secondary aiCancel">Abbrechen</button></div>`;
+  const chips = ["Einfacher", "Schwieriger", "Kürzer", "Anderes Beispiel", "Neue Zahlen", "Antwortoptionen verbessern"];
+  const input = panel.querySelector("textarea");
+  chips.forEach(label => { const b = makeMiniButton(label, () => { input.value = label; input.focus(); }); panel.querySelector(".questionAiChips").appendChild(b); });
+  if (q._aiUndo) { const undo = makeMiniButton("↶ Letzte KI-Änderung rückgängig", () => { const old = deepClone(q._aiUndo); old._aiUndo = null; state.questions[index] = old; renderQuestions(); markDirty(); }); panel.querySelector(".questionAiChips").appendChild(undo); }
+  panel.querySelector(".aiCancel").addEventListener("click", () => panel.remove());
+  panel.querySelector(".aiApply").addEventListener("click", () => regenerateQuestionWithAi(q, index, { instruction: input.value.trim(), panel }));
+  node.querySelector(".questionGrid").after(panel); input.focus();
+  if (typeof crewTour !== "undefined") crewTour?.notify("edit-opened", {quizId: state.currentQuiz?.id});
+}
+
+function defaultVariantMediaKind(q) {
+  return getQuestionImageSrc(q) ? "ai_generated" : "none";
+}
+
+function openQuestionVariantDialog(q, index) {
+  if (state.newManualQuiz) return toast("Bitte den Test zuerst speichern. Danach kannst du Varianten hinzufügen.");
+  if (state.aiVariantsRunning || state.variantTask?.questions?.length) return toast("Bitte die laufenden Varianten abwarten oder die fertigen Varianten übernehmen.");
+  const available = Math.min(5, 100 - state.questions.length);
+  if (available < 1) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
+  const dialog = document.createElement("dialog");
+  dialog.className = "shareDialog questionVariantDialog";
+  dialog.setAttribute("aria-label", "Varianten hinzufügen");
+  dialog.innerHTML = `<form class="stack compact"><h2>Varianten hinzufügen</h2>
+    <p>Neue Beispiele für Aufgabe ${index + 1}. Die ursprüngliche Aufgabe bleibt erhalten.</p>
+    <label>Anzahl<select name="count">${Array.from({ length: available }, (_, i) => `<option value="${i + 1}">${i + 1} ${i ? "Varianten" : "Variante"}</option>`).join("")}</select></label>
+    <label>Bilder<select name="mediaKind"><option value="none">Ohne Bild</option><option value="ai_generated">Mit Bild zur Aufgabe</option></select></label>
+    <label class="variantInstructionField">Eigener Wunsch <small>optional</small><textarea name="variantInstruction" rows="2" maxlength="1200" placeholder="z. B. andere Wörter, neuer Kontext, schwieriger …"></textarea></label>
+    <p class="hint">Du kannst weiterarbeiten. Fertige Varianten übernimmst du anschließend mit einem Klick. Diesen Tab geöffnet lassen.</p>
+    <div class="actions"><button type="button" class="button ghost variantCancel">Abbrechen</button><button type="submit" class="button primary">Im Hintergrund erstellen</button></div></form>`;
+  const form = dialog.querySelector("form");
+  form.elements.mediaKind.value = defaultVariantMediaKind(q);
+  dialog.querySelector(".variantCancel").addEventListener("click", () => dialog.close());
+  dialog.addEventListener("close", () => dialog.remove());
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    if (state.aiVariantsRunning) return;
+    const count = Number(form.elements.count.value);
+    const mediaKind = form.elements.mediaKind.value;
+    const instruction = String(form.elements.variantInstruction.value || "").trim().slice(0, 1200);
+    dialog.close();
+    void createQuestionVariants(q, { count, mediaKind, instruction });
+  });
+  document.body.appendChild(dialog);
+  dialog.showModal();
+}
+
+function renderVariantProgress() {
+  const host = $("variantBackgroundProgress");
+  const task = state.variantTask;
+  if (!host) return;
+  if (!task || task.uid !== tourUid()) { host.classList.add("hidden"); host.innerHTML = ""; return; }
+  host.classList.remove("hidden");
+  const ready = task.questions.length;
+  host.dataset.running = String(task.running);
+  host.dataset.ready = String(ready);
+  host.dataset.quizId = task.quizId;
+  host.dataset.ownerId = task.uid;
+  const inSource = state.currentQuiz?.id === task.quizId;
+  host.innerHTML = `<div><strong>${escapeHtml(task.message)}</strong><small>${task.running ? "Du kannst weiterarbeiten. Lass diesen Tab geöffnet." : inSource ? "Fertige Varianten erst bei Bedarf in den Test übernehmen." : "Die Varianten warten im Ausgangstest."}</small></div>${ready && inSource ? `<button type="button" class="button secondary applyVariants">${ready} ${ready === 1 ? "Variante übernehmen" : "Varianten übernehmen"}</button>` : ""}${!task.running ? '<button type="button" class="button ghost discardVariants">Verwerfen</button>' : ""}`;
+  host.querySelector(".applyVariants")?.addEventListener("click", applyPendingVariants);
+  host.querySelector(".discardVariants")?.addEventListener("click", () => {
+    if (ready && !confirm("Die fertigen Varianten verwerfen?")) return;
+    state.variantTask = null;
+    renderVariantProgress();
+  });
+}
+
+function applyPendingVariants() {
+  const task = state.variantTask;
+  if (!task || task.uid !== tourUid() || task.quizId !== state.currentQuiz?.id) return;
+  if (state.currentQuiz.published && !state.currentQuiz.ended) return toast("Bitte den veröffentlichten Test zuerst beenden.", "error");
+  const available = Math.max(0, 100 - state.questions.length);
+  if (!available) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
+  const next = task.questions.splice(0, available);
+  if (!next.length) return;
+  const anchor = state.questions.findIndex(q => q.id === task.anchorId);
+  state.questions.splice(anchor < 0 ? state.questions.length : anchor + 1, 0, ...next);
+  task.anchorId = next.at(-1).id;
+  renderQuestions();
+  markDirty();
+  if (!task.running && !task.questions.length) state.variantTask = null;
+  renderVariantProgress();
+  toast(`${next.length} ${next.length === 1 ? "Variante übernommen" : "Varianten übernommen"}. Bitte speichern.`);
+  if (typeof crewTour !== "undefined") crewTour?.notify("variants-applied", {quizId: task.quizId, questionIds: next.map(question => question.id)});
+}
+
+async function createQuestionVariants(q, { count, mediaKind, instruction = "" }) {
+  if (state.aiVariantsRunning || state.variantTask?.questions?.length) return;
+  if (!Number.isInteger(count) || count < 1 || count > 5 || state.questions.length + count > 100) {
+    return toast("Bitte 1 bis 5 Varianten wählen; insgesamt sind höchstens 100 Aufgaben möglich.", "error");
+  }
+  const quizId = state.currentQuiz?.id;
+  const uid = tourUid();
+  if (!quizId || !uid) return;
+  const source = questionForAi(q);
+  const context = questionContext(state.questions.findIndex(item => item.id === q.id));
+  const task = { quizId, uid, sourceId: q.id, anchorId: q.id, questions: [], running: true, message: "Varianten werden erstellt …" };
+  state.variantTask = task;
+  state.aiVariantsRunning = true;
+  const ensureOwner = () => {
+    if (tourUid() !== uid || state.variantTask !== task) throw new Error("Varianten nach dem Abmelden gestoppt.");
+  };
+  renderVariantProgress();
+  try {
+    for (let i = 0; i < count; i += 1) {
+      ensureOwner();
+      task.message = `Variante ${i + 1} von ${count} wird erstellt …`;
+      renderVariantProgress();
+      const tutorialVariant = typeof crewTour !== "undefined" && crewTour?.ownsQuiz(quizId);
+      const response = tutorialVariant ? crewTour.preparedResponse(q, {variant:true,mediaKind}) : await aiApi.regenerateQuestion({ question: source, variant: true, mediaKind, instruction,
+        testContext: context, allowedTypes: QUESTION_TYPES.map(([v]) => v), allowImages: mediaKind !== "none", allowImageChoices: false, materials: [] });
+      ensureOwner();
+      const rawQuestion = response.question;
+      const preparedImage = tutorialVariant && rawQuestion?.tutorialImageUrl === "/assets/gradecrew/demo-cat.svg";
+      if (!preparedImage && (rawQuestion?.mediaIntent?.kind || "none") !== mediaKind) throw new Error("Die Variante entspricht nicht der gewählten Bildart.");
+      const next = normalizeImportedQuestion(rawQuestion, 0, { warnings: [], repairs: [] });
+      if (preparedImage) {
+        // Persist the fixed tutorial asset through the normal question model.
+        // Editor, student view and assessment all render the same saved image.
+        next.imageUrl = rawQuestion.tutorialImageUrl;
+        next.imageAlt = "Eine freundliche orangefarbene Katze.";
+      }
+      next.aiOrigin = { kind: "variant", model: String(response.meta?.model || ""), promptVersion: String(response.meta?.promptVersion || "") };
+      next.id = guestTourRepo ? `tour-variant-${Date.now()}` : doc(collection(db, "quizzes", quizId, "questions")).id;
+      if (!tutorialVariant && mediaKind !== "none") {
+        task.message = `Bild für Variante ${i + 1} von ${count} wird geprüft …`;
+        renderVariantProgress();
+        await applyGeneratedMedia(rawQuestion, next, quizId, next.id);
+      }
+      ensureOwner();
+      task.questions.push(next);
+      context.existingQuestions.push(questionForAi(next));
+      renderVariantProgress();
+    }
+    task.message = `${count} ${count === 1 ? "Variante ist" : "Varianten sind"} fertig.`;
+  } catch (err) {
+    task.message = `${task.questions.length} von ${count} Varianten bereit. ${aiFriendlyError(err, "Weitere Varianten konnten nicht erstellt werden.")}`;
+    if (guestTourRepo) console.warn('Lokale Tutorial-Variante:', err);
+    else if (tourUid() === uid) showReportableError({ code: REPORTABLE_ERROR_CODES.aiVariant,
+      message: task.message, error: err, action: "add_ai_variants", details: { variantCount: count, variantsCreated: task.questions.length, mediaKind, questionType: q.type }
+    });
+  } finally {
+    task.running = false;
+    if (state.variantTask === task || !state.variantTask) state.aiVariantsRunning = false;
+    if (tourUid() !== uid && state.variantTask === task) state.variantTask = null;
+    renderVariantProgress();
+  }
+  // Notify after the final render; otherwise the coach targets a detached button.
+  if (tourUid() === uid && state.variantTask === task && task.questions.length) {
+    if (typeof crewTour !== "undefined") crewTour?.notify("variants-ready", {quizId});
+  }
+}
+
+// Optional queue UI requests work through the same validated core path as the
+// ordinary dialog. No hidden modal, simulated clicks or global prompt state.
+function handleVariantRequest(event) {
+  const request = event.detail;
+  if (!request || request.quizId !== state.currentQuiz?.id || request.ownerId !== tourUid()) return;
+  if (state.newManualQuiz || state.aiVariantsRunning || state.variantTask?.questions?.length) return;
+  if (state.currentQuiz.published && !state.currentQuiz.ended) return;
+  const question = state.questions.find(item => item.id === request.id);
+  if (!question || !Number.isInteger(request.count) || request.count < 1 || request.count > 5 || state.questions.length + request.count > 100) return;
+  if (!["none", "ai_generated"].includes(request.mediaKind)) return;
+  request.accepted = true;
+  void createQuestionVariants(question, { count: request.count, mediaKind: request.mediaKind,
+    instruction: String(request.instruction || "").trim().slice(0, 1200) });
+}
+
+function handleVariantKept(event) {
+  const request = event.detail;
+  if (!request || request.quizId !== state.currentQuiz?.id || request.ownerId !== tourUid()) return;
+  const question = state.questions.find(item => item.id === request.id);
+  if (!question || (state.currentQuiz.published && !state.currentQuiz.ended)) return;
+  // Acceptance is a local, weaker signal; it is not an explicit quality rating.
+  question.aiVariantKept = true;
+  markDirty();
+  renderQuestions();
+}
+
+async function changeQuestionType(q, index, targetType) {
+  if (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(state.currentQuiz?.id)) return toast("Die Einführung nutzt vorbereitete Aufgaben. In deinen eigenen Tests passt Emmi den Typ mit KI an.");
+  if (q._typeChanging || q.type === targetType || !QUESTION_TYPES.some(([type]) => type === targetType)) return;
+  if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst.", "error");
+  if (!state.questions.includes(q)) return;
+  // Empty manually created questions have no content to transform.
+  if (!String(q.text || "").trim() && !q.aiOrigin) {
+    q.type = targetType; initializeTypeData(q, targetType); renderQuestions(); markDirty(); return;
+  }
+  const snapshot = deepClone(q); delete snapshot._typeVersions; delete snapshot._aiUndo; delete snapshot._typeChanging;
+  const versions = { ...(q._typeVersions || {}), [q.type]: snapshot };
+  if (versions[targetType]) {
+    const restored = deepClone(versions[targetType]);
+    restored.id = q.id; restored.position = q.position; restored._typeVersions = versions;
+    state.questions[state.questions.indexOf(q)] = restored;
+    renderQuestions(); markDirty(); focusEditorQuestion(state.questions.indexOf(restored), ".qType"); return;
+  }
+  q._typeChanging = true; renderQuestions();
+  try {
+    const label = QUESTION_TYPES.find(([type]) => type === targetType)?.[1] || targetType;
+    const next = await regenerateQuestionWithAi(q, index, { targetType, instruction: `Wandle die Aufgabe in ${label} (${targetType}) um. Erhalte Lernziel, Testsprache und fachlichen Inhalt. Formuliere einen vollständigen Arbeitsauftrag, passende Antworten und korrekte Lösungen für den neuen Typ. Passe Bild und Hörtext an; keine Lösungen in sichtbaren Medien verraten.` });
+    if (next && state.questions.includes(next)) { next._typeVersions = versions; markDirty(); }
+  } finally { delete q._typeChanging; renderQuestions(); }
+}
+
+async function regenerateQuestionWithAi(q, index, { instruction = "", variant = false, panel = null, requireDifferent = false, targetType = null } = {}) {
+  if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst.", "error");
+  if (!variant && !instruction) return toast("Bitte kurz beschreiben, was geändert werden soll.", "error");
+  if (variant && state.questions.length >= 100) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
+  if (q.imageChoicesOnly || q.options?.some(option => option.imageDataUrl)) return toast("Aufgaben mit bestehenden Bildantworten bitte manuell bearbeiten. Die KI erzeugt keine neuen Bildantworten.", "error");
+  const target = { quizId: state.currentQuiz?.id, uid: tourUid(), questionId: q.id, reviewKey: questionReviewKey(q) };
+  if (editorQuestionIndex(state, target) < 0) return;
+  const old = deepClone(q); delete old._typeChanging; const card = panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
+  card?.classList.add("questionAiBusy");
+  try {
+    const response = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(target.quizId)) ? crewTour.preparedResponse(q, {variant}) : await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, targetType, testContext: questionContext(index), allowedTypes: targetType ? [targetType] : QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: false, materials: [] });
+    if (editorQuestionIndex(state, target) < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
+    const report = { warnings: [], repairs: [] }; const next = normalizeImportedQuestion(response.question, index, report);
+    if (targetType && next.type !== targetType) throw new Error("Die KI hat den gewünschten Aufgabentyp nicht erzeugt. Die bisherige Aufgabe bleibt erhalten.");
+    next.aiOrigin = { kind: variant ? "variant" : "regenerated", model: String(response?.meta?.model || q.aiOrigin?.model || ""), promptVersion: String(response?.meta?.promptVersion || q.aiOrigin?.promptVersion || "") };
+    next.id = variant ? guestTourRepo ? `tour-edit-variant-${Date.now()}` : doc(collection(db, "quizzes", target.quizId, "questions")).id : q.id;
+    next.position = variant ? index + 2 : q.position;
+    if (!variant) { next._aiUndo = old; if (q._typeVersions) next._typeVersions = q._typeVersions; }
+    if (response.question?.mediaIntent?.kind && response.question.mediaIntent.kind !== "none" && response.question.mediaIntent.kind !== "uploaded_crop") {
+      await applyGeneratedMedia(response.question, next, target.quizId, next.id);
+    } else if (!variant && !targetType && (q.imageDataUrl || q.imageUrl)) { next.imageDataUrl = q.imageDataUrl || ""; next.imageUrl = q.imageUrl || ""; next.imagePath = q.imagePath || ""; next.imageAlt = q.imageAlt || ""; }
+    if (response.question?.audioIntent?.kind === "ai_generated") {
+      await applyGeneratedAudio(response.question, next, target.quizId, next.id);
+    } else if (!variant && !targetType && (q.audioScript || getQuestionAudioSrc(q))) {
+      for (const key of ["audioScript", "audioInstruction", "audioPresentation", "audioDataUrl", "audioByteSize", "audioVoice", "audioModel", "audioAiGenerated", "audioNeedsRegeneration"]) next[key] = q[key];
+    }
+    index = editorQuestionIndex(state, target);
+    if (index < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
+    if (variant) state.questions.splice(index + 1, 0, next);
+    else { state.questions[index] = next; resolveQualityIssues(q.id); }
+    renderQuestions(); markDirty(); toast(variant ? "Zusätzliche Variante hinzugefügt. Bitte speichern." : "Aufgabe überarbeitet.");
+    if (typeof crewTour !== "undefined") crewTour?.notify("edited", {quizId: target.quizId});
+    return next;
+  } catch (err) {
+    console.error(err);
+    const friendly = aiFriendlyError(err, variant ? "Variante konnte nicht erstellt werden." : "Aufgabe konnte nicht überarbeitet werden.");
+    showReportableError({
+      code: variant ? REPORTABLE_ERROR_CODES.aiVariant : REPORTABLE_ERROR_CODES.aiEdit,
+      message: friendly,
+      error: err,
+      action: variant ? "add_ai_variant" : "edit_question_with_ai",
+      details: {
+        questionPosition: index + 1,
+        questionType: String(q?.type || ""),
+        mediaKind: String(q?.mediaIntent?.kind || "none"),
+        audioKind: q?.audioScript || getQuestionAudioSrc(q) ? "ai_generated" : "none",
+        instructionLength: String(instruction || "").length,
+        requireDifferent: Boolean(requireDifferent),
+        testQuestionCount: Array.isArray(state.questions) ? state.questions.length : 0
+      }
+    });
+  }
+  finally { card?.classList.remove("questionAiBusy"); }
+}
+
+function focusEditorQuestion(index, selector = "") {
+  const card = $("questionList").querySelector(`.questionCard[data-index="${index}"]`);
+  const field = selector && card?.querySelector(selector);
+  const target = field && !field.closest(".hidden, .collapsed") ? field : card || $("addQuestionBtn");
+  if (target === card) card.tabIndex = -1;
+  target.focus({ preventScroll: true });
+  target.scrollIntoView({ behavior: scrollBehavior(), block: "nearest" });
+}
+
+function moveQuestion(index, delta) {
+  const next = index + delta;
+  if (next < 0 || next >= state.questions.length) return;
+  [state.questions[index], state.questions[next]] = [state.questions[next], state.questions[index]];
+  renderQuestions();
+  markDirty();
+  focusEditorQuestion(next);
+}
+
+function duplicateQuestion(index) {
+  const source = state.questions[index];
+  const copy = deepClone(source);
+  copy.id = doc(collection(db, "quizzes", state.currentQuiz.id, "questions")).id;
+  copy.text += " (Kopie)";
+  copy._collapsed = false;
+  state.questions.splice(index + 1, 0, copy);
+  renderQuestions();
+  markDirty();
+  focusEditorQuestion(index + 1, ".qText");
+}
+
+function makeMiniButton(text, handler) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "miniButton";
+  btn.textContent = text;
+  btn.addEventListener("click", handler);
+  return btn;
+}
+
+
+async function blobToImage(blob) {
+  if ("createImageBitmap" in window) {
+    try { return await createImageBitmap(blob); } catch (_) {}
+  }
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Bild konnte nicht gelesen werden.")); };
+    img.src = url;
+  });
+}
+
+async function compressQuestionImage(blob) {
+  const image = await blobToImage(blob);
+  const sourceWidth = image.width || image.naturalWidth;
+  const sourceHeight = image.height || image.naturalHeight;
+  const MAX_BYTES = 280 * 1024;
+  const MAX_SIDE = 1400;
+  const MIN_SIDE = 420;
+
+  let scale = Math.min(1, MAX_SIDE / Math.max(sourceWidth, sourceHeight));
+  let best = null;
+
+  const toBlob = (canvas, type, quality) => new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+
+  for (let pass = 0; pass < 6; pass += 1) {
+    const width = Math.max(1, Math.round(sourceWidth * scale));
+    const height = Math.max(1, Math.round(sourceHeight * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(image, 0, 0, width, height);
+
+    for (const quality of [0.82, 0.72, 0.62, 0.52, 0.42]) {
+      const out = (await toBlob(canvas, "image/webp", quality)) || (await toBlob(canvas, "image/jpeg", quality));
+      if (!out) continue;
+      if (!best || out.size < best.size) best = out;
+      if (out.size <= MAX_BYTES) {
+        if (typeof image.close === "function") image.close();
+        return out;
+      }
+    }
+
+    const longest = Math.max(width, height);
+    if (longest <= MIN_SIDE) break;
+    scale *= 0.78;
+  }
+
+  if (typeof image.close === "function") image.close();
+  if (best && best.size <= 360 * 1024) return best;
+  throw new Error("IMAGE_TOO_LARGE_AFTER_COMPRESSION");
+}
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("Bild konnte nicht gelesen werden."));
+    reader.readAsDataURL(blob);
+  });
+}
+
+function getQuestionImageSrc(q) {
+  return String(q?.imageDataUrl || q?.imageUrl || "");
+}
+
+async function uploadQuestionImage(blob, q) {
+  if (!state.user || !state.currentQuiz?.id || !q?.id) {
+    toast("Bild kann diesem Test gerade nicht zugeordnet werden.", "error");
+    return;
+  }
+  if (!blob?.type?.startsWith("image/")) {
+    toast("Bitte eine Bilddatei verwenden.", "error");
+    return;
+  }
+  if (blob.size > 20 * 1024 * 1024) {
+    toast("Das Bild ist zu groß. Maximal 20 MB vor der Komprimierung.", "error");
+    return;
+  }
+  try {
+    toast("Bild wird vorbereitet …");
+    const optimized = await compressQuestionImage(blob);
+    const dataUrl = await blobToDataUrl(optimized);
+    if (dataUrl.length > 500000) throw new Error("IMAGE_DATA_TOO_LARGE");
+    q.imageDataUrl = dataUrl;
+    q.imageByteSize = optimized.size;
+    q.imageAlt = q.imageAlt || "";
+    // Falls ein alter Storage-Link vorhanden war, hat die neue lokale Bildversion Vorrang.
+    q.imageUrl = "";
+    q.imagePath = "";
+    markDirty();
+    renderQuestions();
+    toast("Bild eingefügt. Es wird zusammen mit der Aufgabe gespeichert.");
+  } catch (err) {
+    console.error(err);
+    if (String(err?.message || err).includes("IMAGE_")) {
+      toast("Das Bild ist auch nach der Komprimierung noch zu groß. Bitte einen kleineren Ausschnitt verwenden.", "error");
+    } else {
+      toast("Bild konnte nicht eingefügt werden.", "error");
+    }
+  }
+}
+
+function renderQuestionImageEditor(container, q) {
+  container.innerHTML = "";
+  const title = document.createElement("div");
+  title.className = "imageEditorTitle";
+  title.innerHTML = `<span class="labelLike">Bild zur Aufgabe <small>(optional)</small></span>`;
+  container.appendChild(title);
+
+  if (getQuestionImageSrc(q)) {
+    const preview = document.createElement("div");
+    preview.className = "questionImagePreview";
+    preview.innerHTML = `<img src="${escapeHtml(getQuestionImageSrc(q))}" alt="${escapeHtml(q.imageAlt || "Abbildung zur Aufgabe")}">`;
+    container.appendChild(preview);
+
+    const alt = document.createElement("label");
+    alt.className = "stack compact imageAltField";
+    alt.innerHTML = `<span>Bildbeschreibung <small>(optional)</small></span><input type="text" value="${escapeHtml(q.imageAlt || "")}" placeholder="z. B. Zimmer mit Tisch und Teddy">`;
+    alt.querySelector("input").addEventListener("input", (e) => { q.imageAlt = e.target.value; markDirty(); });
+    container.appendChild(alt);
+
+    const actions = document.createElement("div");
+    actions.className = "imageActions";
+    const file = document.createElement("input");
+    file.type = "file";
+    file.accept = "image/*";
+    file.className = "hidden";
+    file.addEventListener("change", () => file.files?.[0] && uploadQuestionImage(file.files[0], q));
+    const replace = makeMiniButton("Bild ersetzen", () => file.click());
+    const shot = makeMiniButton("Screenshot", () => captureScreenForQuestion(q));
+    const remove = makeMiniButton("Bild entfernen", () => {
+      q.imageDataUrl = "";
+      q.imageByteSize = 0;
+      q.imageUrl = "";
+      q.imagePath = "";
+      q.imageAlt = "";
+      markDirty();
+      renderQuestions();
+    });
+    remove.classList.add("dangerMini");
+    actions.append(replace, shot, remove, file);
+    container.appendChild(actions);
+    return;
+  }
+
+  const open = makeMiniButton("+ Bild hinzufügen", () => {
+    panel.classList.toggle("hidden");
+    if (!panel.classList.contains("hidden")) panel.focus();
+  });
+  open.classList.add("imageAddButton");
+  container.appendChild(open);
+
+  const panel = document.createElement("div");
+  panel.className = "imageDropPanel hidden";
+  panel.tabIndex = 0;
+  panel.innerHTML = `<strong>Bild einfügen</strong><p>Datei hier hineinziehen oder hier klicken und mit <kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>V</kbd> aus der Zwischenablage einfügen.</p><div class="imageActions"></div><div class="aiImageComposer"><div><strong>✨ Oder mit KI erzeugen</strong><small>Kurz beschreiben. Die Beschreibung geht an OpenAI; keine personenbezogenen Angaben. Kostenpflichtig.</small></div><textarea class="aiImagePrompt" rows="2" maxlength="900" placeholder="z. B. Ein Buch unter einem Tisch, ohne Beschriftung"></textarea><button class="button secondary generateAiQuestionImage" type="button">KI-Bild erstellen</button></div>`;
+  const actions = panel.querySelector(".imageActions");
+  const file = document.createElement("input");
+  file.type = "file";
+  file.accept = "image/*";
+  file.className = "hidden";
+  file.addEventListener("change", () => file.files?.[0] && uploadQuestionImage(file.files[0], q));
+  actions.append(makeMiniButton("Datei auswählen", () => file.click()), makeMiniButton("Screenshot aufnehmen", () => captureScreenForQuestion(q)), file);
+  panel.querySelector(".generateAiQuestionImage")?.addEventListener("click", () => generateAiImageForQuestion(q, panel));
+
+  ["dragenter", "dragover"].forEach((name) => panel.addEventListener(name, (e) => {
+    e.preventDefault();
+    panel.classList.add("dragOver");
+  }));
+  ["dragleave", "drop"].forEach((name) => panel.addEventListener(name, (e) => {
+    e.preventDefault();
+    panel.classList.remove("dragOver");
+  }));
+  panel.addEventListener("drop", (e) => {
+    const image = Array.from(e.dataTransfer?.files || []).find((f) => f.type.startsWith("image/"));
+    if (image) uploadQuestionImage(image, q);
+    else toast("In der Ablage wurde kein Bild gefunden.", "error");
+  });
+  panel.addEventListener("paste", (e) => {
+    const item = Array.from(e.clipboardData?.items || []).find((x) => x.type.startsWith("image/"));
+    const image = item?.getAsFile();
+    if (image) {
+      e.preventDefault();
+      uploadQuestionImage(image, q);
+    }
+  });
+  container.appendChild(panel);
+}
+
+async function generateAiImageForQuestion(q, panel) {
+  const promptInput = panel?.querySelector(".aiImagePrompt");
+  const button = panel?.querySelector(".generateAiQuestionImage");
+  const prompt = promptInput?.value.trim() || "";
+  if (!prompt) return toast("Bitte kurz beschreiben, welches Bild erstellt werden soll.", "error");
+  if (!state.currentQuiz?.id || !q?.id) return toast("Bitte den Test zuerst speichern.", "error");
+  const target = { quizId: state.currentQuiz.id, uid: state.user?.uid, questionId: q.id, reviewKey: questionReviewKey(q) };
+  if (editorQuestionIndex(state, target) < 0) return;
+  const previous = button?.textContent || "KI-Bild erstellen";
+  if (button) { button.disabled = true; button.textContent = "Bild wird erstellt …"; }
+  try {
+    const result = await aiApi.generateQuestionMedia({
+      quizId: state.currentQuiz.id,
+      questionId: q.id,
+      prompt,
+      expectedScene: prompt,
+      question: questionForAi(q),
+      testContext: questionContext(state.questions.indexOf(q)),
+      altText: `KI-generierte Abbildung: ${prompt}`.slice(0, 500)
+    });
+    if (!result?.asset?.imageDataUrl) throw new Error("Die KI hat kein Bild zurückgegeben.");
+    if (editorQuestionIndex(state, target) < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Das Bild wurde nicht eingefügt.");
+    Object.assign(q, result.asset);
+    q.imageAlt = result.asset.imageAlt || `KI-generierte Abbildung: ${prompt}`.slice(0, 500);
+    markDirty();
+    const imageEditor = document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"] .questionImageEditor`);
+    if (imageEditor) renderQuestionImageEditor(imageEditor, q);
+    toast("KI-Bild eingefügt. Bitte kurz prüfen und den Test speichern.");
+  } catch (err) {
+    console.error(err);
+    showReportableError({ code: REPORTABLE_ERROR_CODES.aiEdit, message: aiFriendlyError(err, "KI-Bild konnte nicht erstellt werden."), error: err, action: "generate_editor_image", details: { questionType: q.type, promptLength: prompt.length } });
+  } finally {
+    if (button?.isConnected) { button.disabled = false; button.textContent = previous; }
+  }
+}
+
+function getQuestionAudioSrc(q) {
+  const src = String(q?.audioDataUrl || "");
+  return /^data:audio\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/]{4,}={0,2}$/.test(src) ? src : "";
+}
+
+function audioOperations() {
+  if (!audioOperations.records) audioOperations.records = new WeakMap();
+  return audioOperations.records;
+}
+
+function cancelQuestionAudioOperation(q) {
+  const operation = audioOperations().get(q);
+  if (operation) operation.cancelled = true;
+}
+
+function questionStudentAudioReady(q) {
+  return Boolean(getQuestionAudioSrc(q)) && q.audioNeedsRegeneration !== true;
+}
+
+function defaultQuestionAudioScript(q) {
+  return String(q.passage || q.text || "").replace(/\[[^\]]+\]/g, " … ").replace(/\s+/g, " ").trim();
+}
+
+function questionAnswerAudioEntries(q) {
+  let entries = [];
+  if (["single", "multi", "dropdown"].includes(q.type)) entries = (q.options || []).map((option, index) => ({ key: `o${index}`, sourceText: option.text, asset: option, image: option.imageDataUrl || option.imageUrl }));
+  if (q.type === "grouping") entries = (q.groups || []).flatMap((group, gi) => (group.items || []).map((text, ii) => ({ key: `g${gi}_i${ii}`, sourceText: text })));
+  if (q.type === "matching") entries = (q.pairs || []).map((pair, index) => ({ key: `p${index}`, sourceText: pair.right }));
+  if (q.type === "ordering") entries = (q.items || []).map((text, index) => ({ key: `i${index}`, sourceText: text }));
+  return entries.map(entry => ({ ...entry, sourceText: String(entry.sourceText || "").replace(/\s+/g, " ").trim(), asset: entry.asset || (q.audioAnswerItems || []).find(asset => asset.key === entry.key) }));
+}
+
+function questionHasAudioAnswerEntries(q) {
+  const entries = questionAnswerAudioEntries(q);
+  const max = ["single", "multi", "dropdown"].includes(q.type) ? 4 : 12;
+  return entries.length >= 2 && entries.length <= max && entries.every(entry => entry.sourceText && entry.sourceText.length <= 500 && !entry.image);
+}
+
+function questionAudioReady(q) {
+  if (audioOperations().has(q)) return false;
+  if (q?.audioPresentation === "listening-only" && ["gapfill", "markwords"].includes(q.type)) return false;
+  const hasScript = Boolean(String(q?.audioScript || "").trim());
+  const hasAudio = Boolean(getQuestionAudioSrc(q));
+  if (!hasScript && !hasAudio) return q?.audioPresentation !== "listening-only";
+  return hasScript && hasAudio && q.audioNeedsRegeneration !== true;
+}
+
+function questionAllAudioReady(q) {
+  return questionAudioReady(q) && questionAnswerAudioReady(q);
+}
+
+function questionAnswerAudioReady(q) {
+  if (q?.audioAnswerMode !== "audio-only") return true;
+  const entries = questionAnswerAudioEntries(q);
+  return questionHasAudioAnswerEntries(q) && entries.every(entry => /^data:audio\/mpeg;base64,[A-Za-z0-9+/]{4,}={0,2}$/.test(String(entry.asset?.audioDataUrl || "")) && entry.asset.audioNeedsRegeneration !== true && (!entry.asset.sourceText || entry.asset.sourceText === entry.sourceText)) &&
+    entries.reduce((size, entry) => size + String(entry.asset?.audioDataUrl || "").length, String(q.audioDataUrl || "").length) <= 700000;
+}
+
+function clearQuestionAudio(q) {
+  cancelQuestionAudioOperation(q);
+  // Removing audio must not turn a private legacy teacher text into a public question.
+  if (q.audioPresentation === "listening-only") q.text = String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim();
+  q.audioPresentation = "supplement";
+  q.audioScript = "";
+  q.audioDataUrl = "";
+  q.audioByteSize = 0;
+  q.audioVoice = "";
+  q.audioModel = "";
+  q.audioAiGenerated = false;
+  q.audioNeedsRegeneration = false;
+}
+
+function getQuestionSolutionAudioSrc(q) {
+  const src = String(q?.solutionAudioDataUrl || "");
+  return src.startsWith("data:audio/") ? src : "";
+}
+
+function questionSolutionAudioReady(q) {
+  const hasScript = Boolean(String(q?.solutionAudioScript || "").trim());
+  const hasAudio = Boolean(getQuestionSolutionAudioSrc(q));
+  if (!hasScript && !hasAudio) return true;
+  return hasScript && hasAudio && q.solutionAudioNeedsRegeneration !== true;
+}
+
+function clearQuestionSolutionAudio(q) {
+  q.solutionAudioScript = "";
+  q.solutionAudioDataUrl = "";
+  q.solutionAudioByteSize = 0;
+  q.solutionAudioVoice = "";
+  q.solutionAudioModel = "";
+  q.solutionAudioAiGenerated = false;
+  q.solutionAudioNeedsRegeneration = false;
+}
+
+function defaultSolutionAudioScript(q) {
+  const answer = String(correctDisplay(q, state.currentQuiz?.contentLocale) || "").replace(/\s+/g, " ").trim();
+  return (`Die richtige Lösung ist: ${answer || "Diese Aufgabe wird von der Lehrkraft erklärt."}`).slice(0, 500);
+}
+
+function answerAudioClipStatus(entry) {
+  const src = String(entry?.asset?.audioDataUrl || "");
+  if (!src) return "missing";
+  if (!/^data:audio\/mpeg;base64,[A-Za-z0-9+/]{4,}={0,2}$/.test(src)) return "invalid";
+  if (entry.asset.audioNeedsRegeneration || entry.asset.sourceText && entry.asset.sourceText !== entry.sourceText) return "stale";
+  return "ready";
+}
+
+function answerAudioRepairState(q) {
+  if (!answerAudioRepairState.records) answerAudioRepairState.records = new WeakMap();
+  if (!answerAudioRepairState.records.has(q)) answerAudioRepairState.records.set(q, new Map());
+  return answerAudioRepairState.records.get(q);
+}
+
+async function reportMissingAnswerAudio(q, entryKey, reason, record) {
+  if (!state.user || record.reported) return;
+  if (record.reporting) return record.reporting;
+  if (record.uid && (state.user.uid !== record.uid || state.currentQuiz?.id !== record.quizId || !state.questions.includes(q))) return;
+  record.reportId ||= `RPT-${crypto.randomUUID()}`;
+  const reporting = setDoc(doc(db, "feedback", `err-${record.reportId.toLowerCase()}`), {
+    userId: state.user.uid, category: "app_error", status: "new", createdAt: serverTimestamp(),
+    message: "Angeforderte Antwort-Audiospur fehlt oder lässt sich nicht abspielen.",
+    errorCode: "GC-AUDIO-ASSET-UNREADY", reportId: record.reportId,
+    fingerprint: `audio-answer-${q.type}-${reason}`, action: "repair_missing_answer_audio",
+    testCode: state.currentQuiz.id, feedbackSchemaVersion: 5, severity: "error",
+    appVersion: APP_VERSION, environment: appEnvironment || "production",
+    technicalDetails: { source: "audio_editor", taskId: "GC-WEB-REPAIR-20261007",
+      clipType: "answer", questionPosition: state.questions.indexOf(q) + 1, clipKey: entryKey, questionType: q.type,
+      reason, stage: "requested_asset_readiness", requested: true, occurrences: 1,
+      rawMessage: `requested_answer_audio_${reason}`, occurredAtClient: new Date().toISOString() }
+  });
+  record.reporting = reporting;
+  try { await reporting; record.reported = true; record.reportFailed = false; }
+  finally { if (record.reporting === reporting) record.reporting = null; }
+}
+
+async function repairAnswerAudioTrack(q, container, entryKey, action) {
+  if (!state.questions.includes(q) || state.currentQuiz?.published && !state.currentQuiz?.ended) return;
+  if (state.newManualQuiz || !state.currentQuiz?.id || !q?.id) return toast("Bitte den Test zuerst speichern.", "error");
+  const records = answerAudioRepairState(q);
+  if (audioOperations().has(q) || [...records.values()].some(item => item.busy)) return;
+  const entry = questionAnswerAudioEntries(q).find(item => item.key === entryKey);
+  if (!entry) return;
+  let record = records.get(entryKey) || {};
+  records.set(entryKey, record);
+  record.busy = true;
+  const quizId = state.currentQuiz.id;
+  const uid = state.user?.uid;
+  const clipSrc = entry.asset?.audioDataUrl;
+  const operation = { cancelled: false };
+  audioOperations().set(q, operation);
+  record.quizId = quizId; record.uid = uid;
+  renderQuestionAudioEditor(container, q);
+  try {
+    if (action === "missing") {
+      let reason = record.invalid && record.invalidSrc === entry.asset?.audioDataUrl && record.invalidText === entry.sourceText ? "invalid" : answerAudioClipStatus(entry);
+      if (reason === "ready") {
+        try { await verifyGeneratedAudio(entry.asset.audioDataUrl); }
+        catch (_) { reason = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext) ? "invalid" : "unverified"; }
+      }
+      if (["missing", "invalid"].includes(reason)) {
+        const current = questionAnswerAudioEntries(q).find(item => item.key === entryKey);
+        if (operation.cancelled || state.currentQuiz?.id !== quizId || state.user?.uid !== uid || !state.questions.includes(q) || state.currentQuiz?.published && !state.currentQuiz?.ended || current?.sourceText !== entry.sourceText || current?.asset?.audioDataUrl !== clipSrc) return;
+        if (record.recovered) {
+          record = { busy: true, quizId, uid };
+          records.set(entryKey, record);
+        }
+        if (entry.asset) entry.asset.audioNeedsRegeneration = true;
+        markDirty(); record.reason = reason;
+        void reportMissingAnswerAudio(q, entryKey, reason, record).catch(() => {
+          record.reportFailed = true;
+          if (state.user?.uid === uid && state.currentQuiz?.id === quizId && state.questions.includes(q)) {
+            toast("Audiohinweis konnte nicht gemeldet werden. Im Editor erneut melden.", "error");
+            renderQuestionAudioEditor(container, q);
+          }
+        });
+      }
+    }
+    if (operation.cancelled || state.currentQuiz?.id !== quizId || state.user?.uid !== uid || !state.questions.includes(q) || state.currentQuiz?.published && !state.currentQuiz?.ended || questionAnswerAudioEntries(q).find(item => item.key === entryKey)?.sourceText !== entry.sourceText) return;
+    if (audioOperations().get(q) === operation) audioOperations().delete(q);
+    await generateAiAnswerAudioForQuestion(q, container, entryKey);
+    if (answerAudioClipStatus(questionAnswerAudioEntries(q).find(item => item.key === entryKey)) === "ready") { record.invalid = false; record.recovered = true; }
+  } finally {
+    record.busy = false;
+    if (audioOperations().get(q) === operation) audioOperations().delete(q);
+    if (state.currentQuiz?.id === quizId && state.questions.includes(q)) renderQuestionAudioEditor(container, q);
+  }
+}
+
+function createAnswerAudioRepairControl(q, container, entryKey, index) {
+  const records = answerAudioRepairState(q);
+  const record = records.get(entryKey) || {};
+  const busy = audioOperations().has(q) || [...records.values()].some(item => item.busy);
+  const locked = state.currentQuiz?.published && !state.currentQuiz?.ended;
+  const root = document.createElement("div"); root.className = "answerAudioRepair";
+  const toggle = document.createElement("button"); toggle.type = "button";
+  toggle.className = "answerAudioEmmiButton"; toggle.disabled = Boolean(locked || busy);
+  toggle.setAttribute("aria-label", `Emmi: Audio für Antwort ${index + 1} anpassen`);
+  toggle.setAttribute("aria-expanded", "false");
+  const icon = document.createElement("img"); icon.src = "/" + GRADECREW_ASSETS.mascots.emmi.primary; icon.alt = ""; icon.width = 32; icon.height = 32;
+  toggle.append(icon, document.createTextNode(record.busy ? "Wird erzeugt …" : "Emmi"));
+  const choices = document.createElement("div"); choices.className = "answerAudioRepairChoices"; choices.hidden = true;
+  choices.id = `audio-repair-${String(q.id).replace(/[^a-zA-Z0-9_-]/g, "")}-${entryKey}`;
+  toggle.setAttribute("aria-controls", choices.id);
+  for (const [action, text] of [["missing", "Audio fehlt – erzeugen"], ["regenerate", "Audio gefällt mir nicht – neu erzeugen"]]) {
+    const button = document.createElement("button"); button.type = "button"; button.textContent = text; button.disabled = Boolean(locked || busy);
+    button.addEventListener("click", () => { void repairAnswerAudioTrack(q, container, entryKey, action); }); choices.appendChild(button);
+  }
+  toggle.addEventListener("click", () => { choices.hidden = !choices.hidden; toggle.setAttribute("aria-expanded", String(!choices.hidden)); if (!choices.hidden) choices.querySelector("button").focus(); });
+  root.addEventListener("keydown", event => { if (event.key === "Escape") { choices.hidden = true; toggle.setAttribute("aria-expanded", "false"); toggle.focus(); } });
+  root.append(toggle, choices);
+  if (record.reportFailed) {
+    const retry = document.createElement("button"); retry.type = "button"; retry.className = "answerAudioReportRetry"; retry.textContent = "Audiohinweis erneut melden"; retry.disabled = Boolean(busy || locked);
+    retry.addEventListener("click", async () => { retry.disabled = true; try { await reportMissingAnswerAudio(q, entryKey, record.reason, record); retry.textContent = "Audiohinweis gemeldet"; } catch (_) { retry.disabled = false; retry.textContent = "Melden fehlgeschlagen – erneut versuchen"; } }); root.appendChild(retry);
+  }
+  if (record.busy || record.reported) { const status = document.createElement("small"); status.setAttribute("role", "status"); status.textContent = record.busy ? "Diese Audiospur wird erzeugt …" : "Audiohinweis gemeldet"; root.appendChild(status); }
+  return root;
+}
+
+function renderQuestionAudioEditor(container, q) {
+  container.innerHTML = "";
+  const hasAudio = Boolean(getQuestionAudioSrc(q));
+  const hasScript = Boolean(String(q.audioScript || "").trim());
+  const locked = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  const shortcuts = document.createElement("div");
+  shortcuts.className = "questionAudioQuickActions";
+  const speakTask = makeMiniButton("Frage vorlesen", () => generateAiAudioForQuestion(q, container, { fromTask: true }));
+  speakTask.classList.add("generateQuestionAudio");
+  speakTask.disabled = locked;
+  shortcuts.appendChild(speakTask);
+  if (questionHasAudioAnswerEntries(q)) {
+    const speakAnswers = makeMiniButton("Antworten als Höraufgabe", () => generateAiAnswerAudioForQuestion(q, container));
+    speakAnswers.classList.add("generateQuestionAnswerAudio");
+    speakAnswers.disabled = locked;
+    shortcuts.appendChild(speakAnswers);
+  }
+  const details = document.createElement("section");
+  details.className = "questionAudioPanel questionAudioMain";
+  details.setAttribute("aria-label", "Audio zur Aufgabe");
+  details.innerHTML = `<div class="questionAudioHeading"><strong>Audio</strong><span class="questionAudioState">${hasAudio && !q.audioNeedsRegeneration ? "bereit" : hasScript ? "Audio erzeugen" : ""}</span></div>
+    <div class="questionAudioBody">
+      <div class="questionAudioPreview"></div>
+      <small class="questionAudioInstructionWarning" role="status"></small>
+      <details class="questionAudioEdit"><summary>Audio bearbeiten</summary><div class="questionAudioEditBody">
+      <label class="stack compact"><span>Hörtext <small>privat · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="Text oder Dialog für die Aufnahme."></textarea></label>
+      <div class="questionAudioActions"></div>
+      <small class="questionAudioDisclosure">Dieser Text bleibt für Schüler verborgen.</small>
+      </div></details>
+    </div>`;
+  container.appendChild(details);
+  details.querySelector(".questionAudioEditBody").prepend(shortcuts);
+  const input = details.querySelector(".questionAudioScript");
+  const instructionWarning = details.querySelector(".questionAudioInstructionWarning");
+  const missingQuestion = q.audioPresentation === "listening-only" && !String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim();
+  if (missingQuestion) {
+    if (q.type !== "truefalse" || !questionStudentAudioReady(q)) instructionWarning.textContent = "In dieser älteren Aufgabe fehlt die getrennt gespeicherte öffentliche Frage. Prüfe die ältere Fassung unter Audio bearbeiten.";
+    const legacy = document.createElement("div");
+    legacy.className = "questionAudioLegacyQuestion";
+    const label = document.createElement("small");
+    label.textContent = "Ältere Lehrerfassung · vor Übernahme auf Hörtext und Lösungen prüfen";
+    const previous = document.createElement("p");
+    previous.textContent = String(q.text || "");
+    legacy.append(label, previous);
+    const copyInstruction = makeMiniButton("Geprüfte Fassung als Frage übernehmen", () => {
+      if (locked) return;
+      q.audioInstruction = String(q.text || "").trim().slice(0, 1000);
+      const questionNode = container.closest(".questionCard");
+      if (questionNode) bindQuestionTextEditor(questionNode, q);
+      markDirty();
+      renderQuestionAudioEditor(container, q);
+    });
+    copyInstruction.classList.add("copyQuestionAudioInstruction");
+    copyInstruction.disabled = locked || !String(q.text || "").trim();
+    legacy.appendChild(copyInstruction);
+    details.querySelector(".questionAudioEditBody").appendChild(legacy);
+  }
+  input.value = String(q.audioScript || "");
+  input.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  input.addEventListener("input", event => {
+    const next = String(event.target.value || "").slice(0, 500);
+    if (next === String(q.audioScript || "")) return;
+    cancelQuestionAudioOperation(q);
+    q.audioScript = next;
+    q.audioNeedsRegeneration = Boolean(next);
+    markDirty();
+    const stateLabel = details.querySelector(".questionAudioState");
+    if (stateLabel) stateLabel.textContent = next ? "Audio neu erzeugen" : "";
+  });
+
+  const preview = details.querySelector(".questionAudioPreview");
+  if (hasAudio && !hasScript) {
+    const warning = document.createElement("small");
+    warning.className = "aiInputError";
+    warning.textContent = "Hörtext fehlt. Zum Ändern einen Text eintragen und Audio neu erzeugen.";
+    details.querySelector(".questionAudioEditBody").appendChild(warning);
+  }
+  if (hasAudio) {
+    const audio = document.createElement("audio");
+    audio.controls = true;
+    audio.preload = "metadata";
+    audio.src = getQuestionAudioSrc(q);
+    audio.setAttribute("aria-label", "Audio zur Aufgabe anhören");
+    preview.appendChild(audio);
+    if (q.audioNeedsRegeneration) {
+      const warning = document.createElement("small");
+      warning.className = "aiInputError";
+      warning.textContent = "Der Hörtext wurde geändert. Vor dem Veröffentlichen Audio neu erzeugen.";
+      preview.appendChild(warning);
+    }
+  }
+
+  const actions = details.querySelector(".questionAudioActions");
+  const generate = makeMiniButton("Audio erzeugen", () => generateAiAudioForQuestion(q, container));
+  generate.classList.add("generateQuestionAudio");
+  generate.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  actions.appendChild(generate);
+  if (hasAudio || hasScript) {
+    const remove = makeMiniButton("Audio entfernen", () => {
+      if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Audio änderst.", "error");
+      clearQuestionAudio(q);
+      const questionNode = container.closest(".questionCard");
+      if (questionNode) bindQuestionTextEditor(questionNode, q);
+      markDirty();
+      renderQuestionAudioEditor(container, q);
+    });
+    remove.classList.add("dangerMini");
+    actions.appendChild(remove);
+  }
+
+  if (questionHasAudioAnswerEntries(q)) {
+    const answerDetails = document.createElement("details");
+    answerDetails.className = "questionAudioPanel answerAudioPanel";
+    answerDetails.open = q.audioAnswerMode === "audio-only";
+    answerDetails.innerHTML = `<summary><span>🔊 Antwortmöglichkeiten vorlesen <small>(optional)</small></span><span class="questionAudioState">${q.audioAnswerMode === "audio-only" ? questionAnswerAudioReady(q) ? "bereit" : "Audio erzeugen" : ""}</span></summary><div class="questionAudioBody"><small>Die Antworttexte bleiben im Editor bearbeitbar. Schüler hören jede Auswahl einzeln; die richtigen Antworten bleiben verborgen.</small><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
+    container.appendChild(answerDetails);
+    const answerPreview = answerDetails.querySelector(".answerAudioPreview");
+    questionAnswerAudioEntries(q).forEach((entry, index) => {
+      const option = entry.asset || {};
+      const row = document.createElement("div");
+      row.className = "questionAudioPreview";
+      const label = document.createElement("span");
+      label.textContent = `Antwort ${index + 1}: ${entry.sourceText}`;
+      row.appendChild(label);
+      if (String(option.audioDataUrl || "").startsWith("data:audio/")) {
+        const player = document.createElement("audio");
+        player.controls = true;
+        player.preload = "metadata";
+        player.src = option.audioDataUrl;
+        player.setAttribute("aria-label", `Antwort ${index + 1} anhören`);
+        row.appendChild(player);
+      }
+      if (q.audioAnswerMode === "audio-only" && (!option.audioDataUrl || option.audioNeedsRegeneration)) {
+        const warning = document.createElement("small");
+        warning.className = "aiInputError";
+        warning.textContent = "Audio fehlt oder ist nach Textänderung veraltet.";
+        row.appendChild(warning);
+      }
+      if (q.audioAnswerMode === "audio-only") {
+        row.appendChild(createAnswerAudioRepairControl(q, container, entry.key, index));
+        const player = row.querySelector("audio");
+        const markBroken = () => {
+          if (!state.questions.includes(q) || option.audioDataUrl !== player?.getAttribute("src")) return;
+          if (state.currentQuiz?.published && !state.currentQuiz?.ended) return;
+          const record = answerAudioRepairState(q).get(entry.key) || {};
+          record.invalid = true; record.invalidSrc = option.audioDataUrl; record.invalidText = entry.sourceText; answerAudioRepairState(q).set(entry.key, record);
+          option.audioNeedsRegeneration = true; markDirty();
+          if (!row.querySelector(".audioPlaybackError")) {
+            const warning = document.createElement("small"); warning.className = "aiInputError audioPlaybackError";
+            warning.textContent = "Diese Spur lässt sich nicht abspielen. Mit Emmi einzeln neu erzeugen."; row.appendChild(warning);
+          }
+          const status = answerDetails.querySelector(".questionAudioState"); if (status) status.textContent = "Audio prüfen";
+        };
+        player?.addEventListener("error", markBroken);
+        player?.addEventListener("loadedmetadata", () => { if (!Number.isFinite(player.duration) || player.duration <= 0) markBroken(); });
+      }
+      answerPreview.appendChild(row);
+    });
+    const answerActions = answerDetails.querySelector(".answerAudioActions");
+    const generateAnswers = makeMiniButton(q.audioAnswerMode === "audio-only" ? "Antwort-Audios neu erzeugen" : "Antwortmöglichkeiten vorlesen", () => generateAiAnswerAudioForQuestion(q, container));
+    generateAnswers.classList.add("generateQuestionAnswerAudio");
+    generateAnswers.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+    answerActions.appendChild(generateAnswers);
+    if (q.audioAnswerMode === "audio-only") {
+      const removeAnswers = makeMiniButton("Audioantworten entfernen", () => {
+        if (state.currentQuiz?.published && !state.currentQuiz?.ended) return;
+        cancelQuestionAudioOperation(q);
+        q.audioAnswerMode = "none";
+        (q.options || []).forEach(option => { delete option.audioDataUrl; delete option.audioNeedsRegeneration; });
+        delete q.audioAnswerItems;
+        markDirty();
+        renderQuestionAudioEditor(container, q);
+      });
+      answerActions.appendChild(removeAnswers);
+    }
+  }
+
+  const solutionHasAudio = Boolean(getQuestionSolutionAudioSrc(q));
+  const solutionHasScript = Boolean(String(q.solutionAudioScript || "").trim());
+  const solutionDetails = document.createElement("details");
+  solutionDetails.className = "questionAudioPanel solutionAudioPanel";
+  solutionDetails.open = false;
+  solutionDetails.innerHTML = `<summary><span>Vorhandene Erklärung nach Testende</span><span class="questionAudioState">${solutionHasAudio && solutionHasScript && !q.solutionAudioNeedsRegeneration ? "bereit" : solutionHasScript ? "Audio erzeugen" : ""}</span></summary>
+    <div class="questionAudioBody">
+      <label class="stack compact"><span>Lösungstext <small>privat · max. 500 Zeichen</small></span><textarea class="solutionAudioScript" rows="3" maxlength="500" placeholder="Die richtige Lösung ist …"></textarea></label>
+      <div class="questionAudioPreview solutionAudioPreview"></div>
+      <div class="questionAudioActions solutionAudioActions"></div>
+      <small class="questionAudioDisclosure">Dieses Audio wird Schülern erst nach Testende und nur bei freigegebenen Lösungen angezeigt.</small>
+    </div>`;
+  if (solutionHasAudio || solutionHasScript) container.appendChild(solutionDetails);
+  const solutionInput = solutionDetails.querySelector(".solutionAudioScript");
+  solutionInput.value = String(q.solutionAudioScript || "");
+  solutionInput.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  solutionInput.addEventListener("input", event => {
+    const next = String(event.target.value || "").slice(0, 500);
+    if (next === String(q.solutionAudioScript || "")) return;
+    q.solutionAudioScript = next;
+    q.solutionAudioNeedsRegeneration = Boolean(next);
+    q.solutionAudioDataUrl = "";
+    markDirty();
+    const label = solutionDetails.querySelector(".questionAudioState");
+    if (label) label.textContent = next ? "Audio neu erzeugen" : "";
+  });
+
+  const solutionPreview = solutionDetails.querySelector(".solutionAudioPreview");
+  if (solutionHasAudio) {
+    const audio = document.createElement("audio");
+    audio.controls = true;
+    audio.preload = "metadata";
+    audio.src = getQuestionSolutionAudioSrc(q);
+    audio.setAttribute("aria-label", "Audio-Lösung anhören");
+    solutionPreview.appendChild(audio);
+    if (q.solutionAudioNeedsRegeneration) {
+      const warning = document.createElement("small");
+      warning.className = "aiInputError";
+      warning.textContent = "Aufgabe oder Lösung wurde geändert. Audio-Lösung bitte neu erzeugen.";
+      solutionPreview.appendChild(warning);
+    }
+  }
+
+  const solutionActions = solutionDetails.querySelector(".solutionAudioActions");
+  const fill = makeMiniButton("Lösungstext übernehmen", () => {
+    if (state.currentQuiz?.published && !state.currentQuiz?.ended) return;
+    q.solutionAudioScript = defaultSolutionAudioScript(q);
+    q.solutionAudioDataUrl = "";
+    q.solutionAudioNeedsRegeneration = true;
+    markDirty();
+    renderQuestionAudioEditor(container, q);
+  });
+  fill.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  solutionActions.appendChild(fill);
+  const solutionGenerate = makeMiniButton(solutionHasAudio ? "Audio-Lösung neu erzeugen" : "Audio-Lösung erzeugen", () => generateAiSolutionAudioForQuestion(q, container));
+  solutionGenerate.classList.add("generateQuestionSolutionAudio");
+  solutionGenerate.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  solutionActions.appendChild(solutionGenerate);
+  if (solutionHasAudio || solutionHasScript) {
+    const remove = makeMiniButton("Audio-Lösung entfernen", () => {
+      if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Lösungsaudio änderst.", "error");
+      clearQuestionSolutionAudio(q);
+      markDirty();
+      renderQuestionAudioEditor(container, q);
+    });
+    remove.classList.add("dangerMini");
+    solutionActions.appendChild(remove);
+  }
+}
+
+async function generateAiAudioForQuestion(q, container, { fromTask = false } = {}) {
+  if (audioOperations().has(q)) return toast("Audio wird bereits erzeugt.");
+  if (state.newManualQuiz) return toast("Bitte den neuen Test zuerst speichern. Danach kannst du KI-Audio erzeugen.", "error");
+  if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Audio änderst.", "error");
+  const originalPublicQuestion = q.audioPresentation === "listening-only" ? String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() : String(q.text || "").trim();
+  const originalPresentation = q.audioPresentation;
+  const originalPassage = String(q.passage || "");
+  if (fromTask && !originalPublicQuestion) return toast("Die öffentliche Frage fehlt. Prüfe zuerst die ältere Fassung unter Audio bearbeiten.", "error");
+  const originalScript = String(q.audioScript || "").replace(/\s+/g, " ").trim();
+  const usesTaskText = fromTask || !originalScript;
+  const script = fromTask && !q.passage ? originalPublicQuestion.replace(/\s+/g, " ").trim() : usesTaskText ? defaultQuestionAudioScript(q) : originalScript;
+  if (!script) return toast("Die Aufgabe enthält noch keinen Text zum Vorlesen.", "error");
+  if (script.length > 500) return toast("Der Hörtext darf höchstens 500 Zeichen lang sein.", "error");
+  if (!state.currentQuiz?.id || !q?.id) return toast("Audio kann dieser Aufgabe gerade nicht zugeordnet werden.", "error");
+  const quizId = state.currentQuiz.id;
+  const questionType = q.type;
+  const button = container.querySelector(".generateQuestionAudio");
+  const previous = button?.textContent || "KI-Audio erzeugen";
+  if (button) { button.disabled = true; button.textContent = "Audio wird erzeugt …"; }
+  const operation = { cancelled: false };
+  audioOperations().set(q, operation);
+  q.audioNeedsRegeneration = true;
+  markDirty();
+  try {
+    const result = await aiApi.generateQuestionAudio({ quizId: state.currentQuiz.id, questionId: q.id, script });
+    if (!result?.asset?.audioDataUrl) throw new Error("Die KI hat keine Audiodatei zurückgegeben.");
+    if (operation.cancelled || !state.questions.includes(q) || state.currentQuiz?.id !== quizId || state.currentQuiz?.published && !state.currentQuiz?.ended || q.type !== questionType || String(q.audioScript || "").replace(/\s+/g, " ").trim() !== originalScript || q.audioPresentation !== originalPresentation || String(q.passage || "") !== originalPassage || (q.audioPresentation === "listening-only" ? String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() : String(q.text || "").trim()) !== originalPublicQuestion || !fromTask && usesTaskText && defaultQuestionAudioScript(q) !== script) return toast("Die Aufgabe wurde geändert oder geschlossen. Das Audio wurde nicht eingefügt.");
+    Object.assign(q, result.asset);
+    q.audioScript = script;
+    if (fromTask) {
+      q.audioInstruction = originalPublicQuestion.slice(0, 1000);
+      q.audioPresentation = q.passage || originalPublicQuestion.length > 1000 || ["gapfill", "markwords"].includes(q.type) ? "supplement" : "listening-only";
+      const questionNode = container.closest(".questionCard");
+      if (questionNode) bindQuestionTextEditor(questionNode, q);
+    }
+    q.audioNeedsRegeneration = false;
+    markDirty();
+    renderQuestionAudioEditor(container, q);
+    toast("Audio eingefügt. Bitte kurz anhören und den Test speichern.");
+  } catch (err) {
+    console.error(err);
+    showReportableError({ code: REPORTABLE_ERROR_CODES.aiEdit, message: aiFriendlyError(err, "KI-Audio konnte nicht erstellt werden."), error: err, action: "generate_editor_audio", details: { questionType: q.type, scriptLength: script.length } });
+  } finally {
+    if (audioOperations().get(q) === operation) audioOperations().delete(q);
+    if (button?.isConnected) { button.disabled = false; button.textContent = previous; }
+  }
+}
+
+async function verifyGeneratedAudio(dataUrl) {
+  const Context = window.AudioContext || window.webkitAudioContext;
+  if (!Context) throw new Error("Dieser Browser kann die Audiospur nicht prüfen. Bitte verwende einen aktuellen Browser.");
+  const encoded = String(dataUrl || "").split(",")[1] || "";
+  const bytes = Uint8Array.from(atob(encoded), c => c.charCodeAt(0));
+  const context = new Context();
+  try {
+    const decoded = await context.decodeAudioData(bytes.buffer);
+    if (!Number.isFinite(decoded.duration) || decoded.duration <= 0) throw new Error("Die erzeugte Audiospur ist leer.");
+    let audible = false;
+    for (let channel = 0; channel < decoded.numberOfChannels && !audible; channel += 1) {
+      const samples = decoded.getChannelData(channel);
+      for (let i = 0; i < samples.length; i += 1) if (Math.abs(samples[i]) > 0.00001) { audible = true; break; }
+    }
+    if (!audible) throw new Error("Die erzeugte Audiospur ist stumm. Bitte diese Spur erneut erzeugen.");
+  } finally { await context.close(); }
+}
+
+async function generateAiAnswerAudioForQuestion(q, container, entryKey = null) {
+  if (audioOperations().has(q)) return toast("Audio wird bereits erzeugt.");
+  if (state.newManualQuiz) return toast("Bitte den neuen Test zuerst speichern. Danach kannst du Antwortaudios erzeugen.", "error");
+  if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Audio änderst.", "error");
+  const entries = questionAnswerAudioEntries(q);
+  if (!questionHasAudioAnswerEntries(q)) return toast("Für Sprachnotizen fehlen kurze Antwort- oder Zuordnungstexte ohne Antwortbilder.", "error");
+  const selected = entries.map((entry, index) => ({ entry, index })).filter(({entry}) => entryKey === null || entry.key === entryKey);
+  if (!selected.length) return;
+  const button = container.querySelector(".generateQuestionAnswerAudio");
+  const previous = button?.textContent || "Antwortmöglichkeiten vorlesen";
+  const scripts = entries.map(entry => entry.sourceText);
+  if (button) { button.disabled = true; button.textContent = "Antwort-Audios werden erzeugt …"; }
+  q.audioAnswerMode = "audio-only";
+  const operation = { cancelled: false };
+  audioOperations().set(q, operation);
+  const quizId = state.currentQuiz.id;
+  const questionType = q.type;
+  selected.forEach(({entry}) => { if (entry.asset) entry.asset.audioNeedsRegeneration = true; });
+  markDirty();
+  try {
+    const assets = entries.map(entry => ({ ...(entry.asset || {}) }));
+    for (const {index} of selected) {
+      const questionId = `${String(q.id).slice(0, 70)}-a${index + 1}`;
+      const result = await aiApi.generateQuestionAudio({ quizId, questionId, script: scripts[index] });
+      if (!String(result?.asset?.audioDataUrl || "").startsWith("data:audio/mpeg;base64,")) throw new Error(`Audio zu Antwort ${index + 1} fehlt.`);
+      await verifyGeneratedAudio(result.asset.audioDataUrl);
+      assets[index] = result.asset;
+      if (assets.reduce((size, asset) => size + String(asset.audioDataUrl || "").length, String(q.audioDataUrl || "").length) > 700000) throw new Error("Die Audios sind für eine Aufgabe zu groß. Bitte Hör- oder Antworttexte kürzen.");
+    }
+    const current = questionAnswerAudioEntries(q);
+    if (operation.cancelled || q.audioAnswerMode !== "audio-only" || !state.questions.includes(q) || state.currentQuiz?.id !== quizId || state.currentQuiz?.published && !state.currentQuiz?.ended || q.type !== questionType || current.length !== scripts.length || current.some((entry, index) => entry.sourceText !== scripts[index] || entry.key !== entries[index].key)) return toast("Die Antworten wurden geändert oder geschlossen. Die Audios wurden nicht eingefügt.");
+    if (["single", "multi", "dropdown"].includes(q.type)) q.options.forEach((option, index) => {
+      if (!selected.some(item => item.index === index)) return;
+      option.audioDataUrl = assets[index].audioDataUrl;
+      option.audioNeedsRegeneration = false;
+    });
+    else q.audioAnswerItems = entries.map((entry, index) => !selected.some(item => item.index === index) ? entry.asset : ({ key: entry.key, sourceText: entry.sourceText, audioDataUrl: assets[index].audioDataUrl, audioNeedsRegeneration: false })).filter(Boolean);
+    for (const {entry} of selected) {
+      const record = answerAudioRepairState(q).get(entry.key);
+      if (record) { record.invalid = false; record.recovered = true; }
+    }
+    markDirty();
+    toast(entryKey === null ? "Antwort-Audios eingefügt. Bitte alle Optionen anhören und den Test speichern." : "Audiospur erneuert. Bitte kurz anhören und speichern.");
+  } catch (err) {
+    showReportableError({ code: REPORTABLE_ERROR_CODES.aiEdit, message: aiFriendlyError(err, "Antwort-Audios konnten nicht vollständig erstellt werden."), error: err, action: "generate_answer_audio", details: { questionType: q.type, optionCount: scripts.length } });
+  } finally {
+    if (audioOperations().get(q) === operation) audioOperations().delete(q);
+    if (state.questions.includes(q) && state.currentQuiz?.id === quizId) renderQuestionAudioEditor(container, q);
+    if (button?.isConnected) { button.disabled = false; button.textContent = previous; }
+  }
+}
+
+async function generateAiSolutionAudioForQuestion(q, container) {
+  if (state.newManualQuiz) return toast("Bitte den neuen Test zuerst speichern. Danach kannst du Audio-Lösungen erzeugen.", "error");
+  if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Lösungsaudio änderst.", "error");
+  const script = String(q.solutionAudioScript || "").replace(/\s+/g, " ").trim();
+  if (!script) return toast("Bitte zuerst den Lösungstext übernehmen oder eingeben.", "error");
+  if (script.length > 500) return toast("Der Lösungstext darf höchstens 500 Zeichen lang sein.", "error");
+  if (!state.currentQuiz?.id || !q?.id) return toast("Audio-Lösung kann dieser Aufgabe gerade nicht zugeordnet werden.", "error");
+  const button = container.querySelector(".generateQuestionSolutionAudio");
+  const previous = button?.textContent || "Audio-Lösung erzeugen";
+  if (button) { button.disabled = true; button.textContent = "Audio-Lösung wird erzeugt …"; }
+  try {
+    const result = await aiApi.generateQuestionSolutionAudio({ quizId: state.currentQuiz.id, questionId: q.id, script });
+    if (!result?.asset?.audioDataUrl) throw new Error("Die KI hat keine Audiodatei zurückgegeben.");
+    if (!state.questions.includes(q)) return;
+    q.solutionAudioDataUrl = result.asset.audioDataUrl;
+    q.solutionAudioByteSize = Number(result.asset.audioByteSize || 0);
+    q.solutionAudioVoice = String(result.asset.audioVoice || "");
+    q.solutionAudioModel = String(result.asset.audioModel || "");
+    q.solutionAudioAiGenerated = result.asset.audioAiGenerated !== false;
+    q.solutionAudioScript = script;
+    q.solutionAudioNeedsRegeneration = false;
+    markDirty();
+    renderQuestionAudioEditor(container, q);
+    toast("Audio-Lösung erzeugt. Sie bleibt bis zur Lösungsfreigabe geschützt.");
+  } catch (err) {
+    console.error(err);
+    showReportableError({ code: REPORTABLE_ERROR_CODES.aiEdit, message: aiFriendlyError(err, "Audio-Lösung konnte nicht erstellt werden."), error: err, action: "generate_solution_audio", details: { questionType: q.type, scriptLength: script.length } });
+  } finally {
+    if (button?.isConnected) { button.disabled = false; button.textContent = previous; }
+  }
+}
+
+async function captureScreenForQuestion(q) {
+  if (!navigator.mediaDevices?.getDisplayMedia) {
+    toast("Dieser Browser unterstützt direkte Screenshots nicht.", "error");
+    return;
+  }
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+    const video = document.createElement("video");
+    video.srcObject = stream;
+    video.muted = true;
+    await new Promise((resolve, reject) => {
+      video.onloadedmetadata = resolve;
+      video.onerror = reject;
+    });
+    await video.play();
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0);
+    stream.getTracks().forEach((track) => track.stop());
+    stream = null;
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (!blob) throw new Error("Screenshot konnte nicht erzeugt werden.");
+    openScreenshotCropper(blob, q);
+  } catch (err) {
+    stream?.getTracks().forEach((track) => track.stop());
+    if (err?.name !== "NotAllowedError") {
+      console.error(err);
+      toast("Screenshot konnte nicht aufgenommen werden.", "error");
+    }
+  }
+}
+
+function openScreenshotCropper(blob, q) {
+  const url = URL.createObjectURL(blob);
+  const overlay = document.createElement("div");
+  overlay.className = "cropOverlay";
+  overlay.innerHTML = `<div class="cropDialog"><div class="cropHead"><div><h2>Screenshot zuschneiden</h2><p>Ziehe einen Rahmen um den Bereich, den du verwenden möchtest.</p></div><button class="iconButton cropClose" type="button">×</button></div><div class="cropStage"><img alt="Screenshot-Vorschau"><div class="cropSelection hidden"></div></div><div class="cropActions"><button class="button ghost cropCancel" type="button">Abbrechen</button><button class="button secondary cropFull" type="button">Gesamtes Bild</button><button class="button primary cropUse" type="button">Ausschnitt übernehmen</button></div></div>`;
+  document.body.appendChild(overlay);
+  const img = overlay.querySelector("img");
+  const stage = overlay.querySelector(".cropStage");
+  const selection = overlay.querySelector(".cropSelection");
+  img.src = url;
+  let rect = null;
+  let start = null;
+
+  const cleanup = () => {
+    URL.revokeObjectURL(url);
+    overlay.remove();
+  };
+  overlay.querySelector(".cropClose").addEventListener("click", cleanup);
+  overlay.querySelector(".cropCancel").addEventListener("click", cleanup);
+
+  const point = (e) => {
+    const r = stage.getBoundingClientRect();
+    return { x: clamp(e.clientX - r.left, 0, r.width), y: clamp(e.clientY - r.top, 0, r.height), stageRect: r };
+  };
+  stage.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    start = point(e);
+    rect = { x: start.x, y: start.y, w: 0, h: 0 };
+    selection.classList.remove("hidden");
+    stage.setPointerCapture?.(e.pointerId);
+  });
+  stage.addEventListener("pointermove", (e) => {
+    if (!start) return;
+    const p = point(e);
+    rect = { x: Math.min(start.x, p.x), y: Math.min(start.y, p.y), w: Math.abs(p.x - start.x), h: Math.abs(p.y - start.y) };
+    Object.assign(selection.style, { left: `${rect.x}px`, top: `${rect.y}px`, width: `${rect.w}px`, height: `${rect.h}px` });
+  });
+  const endSelection = () => { start = null; };
+  stage.addEventListener("pointerup", endSelection);
+  stage.addEventListener("pointercancel", endSelection);
+
+  const cropAndUpload = async (useFull = false) => {
+    if (!img.naturalWidth || !img.naturalHeight) return;
+    const display = img.getBoundingClientRect();
+    const stageRect = stage.getBoundingClientRect();
+    const imageOffsetX = display.left - stageRect.left;
+    const imageOffsetY = display.top - stageRect.top;
+    const chosen = useFull ? { x: imageOffsetX, y: imageOffsetY, w: display.width, h: display.height } : rect;
+    if (!chosen || chosen.w < 8 || chosen.h < 8) {
+      toast("Bitte zuerst einen Bereich markieren.", "error");
+      return;
+    }
+    const x = clamp(chosen.x - imageOffsetX, 0, display.width);
+    const y = clamp(chosen.y - imageOffsetY, 0, display.height);
+    const w = clamp(chosen.w, 1, display.width - x);
+    const h = clamp(chosen.h, 1, display.height - y);
+    const sx = Math.round((x / display.width) * img.naturalWidth);
+    const sy = Math.round((y / display.height) * img.naturalHeight);
+    const sw = Math.max(1, Math.round((w / display.width) * img.naturalWidth));
+    const sh = Math.max(1, Math.round((h / display.height) * img.naturalHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = sw;
+    canvas.height = sh;
+    canvas.getContext("2d").drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+    const cropped = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    cleanup();
+    if (cropped) await uploadQuestionImage(cropped, q);
+  };
+  overlay.querySelector(".cropFull").addEventListener("click", () => cropAndUpload(true));
+  overlay.querySelector(".cropUse").addEventListener("click", () => cropAndUpload(false));
+}
+
+function serializeGapComposer(root) {
+  const walk = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) return node.textContent || "";
+    if (node.nodeType !== Node.ELEMENT_NODE) return "";
+    const el = node;
+    if (el.classList?.contains("gapChip")) {
+      let answers = [];
+      try { answers = JSON.parse(el.dataset.answers || "[]"); } catch (_) {}
+      return `[${answers.map((x) => String(x).trim()).filter(Boolean).join("|")}]`;
+    }
+    if (el.tagName === "BR") return "\n";
+    const inner = Array.from(el.childNodes).map(walk).join("");
+    return ["DIV", "P"].includes(el.tagName) ? `${inner}\n` : inner;
+  };
+  return Array.from(root.childNodes).map(walk).join("").replace(/\n+$/, "");
+}
+
+function makeGapChip(answers, q, editor) {
+  const initial = answers.map((x) => String(x).trim()).filter(Boolean);
+  const span = document.createElement("span");
+  span.className = "gapChip";
+  span.contentEditable = "false";
+  span.dataset.answers = JSON.stringify(initial);
+  const label = document.createElement("span");
+  label.className = "gapChipLabel";
+  label.textContent = initial[0] || "Lücke";
+  label.title = "Klicken, um alternative richtige Antworten einzutragen";
+  label.addEventListener("click", () => {
+    let current = [];
+    try { current = JSON.parse(span.dataset.answers || "[]"); } catch (_) {}
+    const value = prompt("Akzeptierte Antworten, durch Kommas getrennt:", current.join(", "));
+    if (value === null) return;
+    const next = value.split(",").map((x) => x.trim()).filter(Boolean);
+    if (!next.length) return toast("Mindestens eine richtige Antwort erforderlich.", "error");
+    span.dataset.answers = JSON.stringify(next);
+    label.textContent = next[0];
+    q.text = serializeGapComposer(editor);
+    editor.dispatchEvent(new CustomEvent("gradecrew:gap-editor-changed"));
+    markDirty();
+  });
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "gapChipRemove";
+  remove.textContent = "×";
+  remove.title = "Lücke entfernen";
+  remove.addEventListener("click", () => {
+    const index = Array.from(editor.querySelectorAll(".gapChip")).indexOf(span);
+    if (Array.isArray(q.gapColors) && q.gapColors.length && index >= 0) q.gapColors.splice(index, 1);
+    let current = [];
+    try { current = JSON.parse(span.dataset.answers || "[]"); } catch (_) {}
+    span.replaceWith(document.createTextNode(current[0] || ""));
+    q.text = serializeGapComposer(editor);
+    editor.dispatchEvent(new CustomEvent("gradecrew:gap-editor-changed"));
+    markDirty();
+  });
+  span.append(label, remove);
+  return span;
+}
+
+function fillGapComposer(editor, q) {
+  editor.innerHTML = "";
+  const source = String(q.text || "");
+  const regex = /\[([^\]]+)\]/g;
+  let last = 0;
+  let match;
+  while ((match = regex.exec(source))) {
+    if (match.index > last) editor.appendChild(document.createTextNode(source.slice(last, match.index)));
+    editor.appendChild(makeGapChip(match[1].split("|"), q, editor));
+    last = match.index + match[0].length;
+  }
+  if (last < source.length) editor.appendChild(document.createTextNode(source.slice(last)));
+}
+
+function renderGapfillEditor(container, q) {
+  const info = document.createElement("p");
+  info.className = "hint";
+  info.textContent = "Schreibe deinen Text, markiere anschließend ein Wort oder einen Ausdruck und klicke auf „Als Lücke markieren“.";
+  const editor = document.createElement("div");
+  editor.className = "gapComposer";
+  editor.contentEditable = "true";
+  editor.dataset.placeholder = "z. B. Die Hauptstadt von Bayern ist München.";
+  fillGapComposer(editor, q);
+  const syncTypedText = () => {
+    const before = JSON.stringify(parseGaps(q.text).map(gap => gap.answers));
+    q.text = serializeGapComposer(editor);
+    if (before !== JSON.stringify(parseGaps(q.text).map(gap => gap.answers))) {
+      q.gapColors = [];
+      fillGapComposer(editor, q);
+      renderGapColorEditor(container, q);
+    }
+    markDirty();
+  };
+  editor.addEventListener("input", syncTypedText);
+  editor.addEventListener("gradecrew:gap-editor-changed", () => renderGapColorEditor(container, q));
+  editor.addEventListener("paste", (e) => {
+    e.preventDefault();
+    const text = e.clipboardData?.getData("text/plain") || "";
+    const selection = window.getSelection();
+    if (!selection?.rangeCount) return;
+    const range = selection.getRangeAt(0);
+    range.deleteContents();
+    const node = document.createTextNode(text);
+    range.insertNode(node);
+    range.setStartAfter(node);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    syncTypedText();
+  });
+  const actions = document.createElement("div");
+  actions.className = "gapActions";
+  const mark = makeMiniButton("Als Lücke markieren", () => {
+    const selection = window.getSelection();
+    if (!selection?.rangeCount || selection.isCollapsed) return toast("Markiere zuerst das Wort oder den Ausdruck für die Lücke.", "error");
+    const range = selection.getRangeAt(0);
+    if (!editor.contains(range.commonAncestorContainer)) return toast("Die Markierung muss im Lückentext liegen.", "error");
+    const selected = selection.toString().trim();
+    if (!selected) return toast("Markiere zuerst einen Text für die Lücke.", "error");
+    const colors = new Map(Array.from(editor.querySelectorAll(".gapChip"), (chip, index) => [chip, q.gapColors?.[index] || ""]));
+    const hadColors = Boolean(q.gapColors?.length);
+    range.deleteContents();
+    const chip = makeGapChip([selected], q, editor);
+    range.insertNode(chip);
+    range.setStartAfter(chip);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    q.text = serializeGapComposer(editor);
+    q.gapColors = hadColors ? Array.from(editor.querySelectorAll(".gapChip"), chip => colors.get(chip) || "") : [];
+    renderGapColorEditor(container, q);
+    markDirty();
+  });
+  actions.appendChild(mark);
+  const note = document.createElement("small");
+  note.className = "hint";
+  note.textContent = "Tipp: Klicke auf eine markierte Lücke, um alternative richtige Antworten einzutragen.";
+  container.append(info, editor, actions, note);
+  renderGapColorEditor(container, q);
+}
+
+function renderGapColorEditor(container, q) {
+  container.querySelectorAll(".gapColorEditor").forEach(editor => editor.remove());
+  const gaps = parseGaps(q.text);
+  if (gaps.length) {
+    const colors = document.createElement("div");
+    colors.className = "gapColorEditor";
+    const title = document.createElement("strong");
+    title.textContent = "Farben für Lücken (optional)";
+    colors.appendChild(title);
+    gaps.forEach((gap, index) => {
+      const label = document.createElement("label");
+      label.textContent = `Lücke ${index + 1}: ${gap.answers[0]}`;
+      const select = document.createElement("select");
+      for (const [value, name] of [["", "Ohne Farbe"], ["blue", "Blau"], ["orange", "Orange"], ["green", "Grün"], ["purple", "Lila"]]) {
+        const option = document.createElement("option"); option.value = value; option.textContent = name; select.appendChild(option);
+      }
+      select.value = q.gapColors?.[index] || "";
+      select.addEventListener("change", () => { q.gapColors = gaps.map((_, i) => i === index ? select.value : q.gapColors?.[i] || ""); markDirty(); });
+      label.appendChild(select); colors.appendChild(label);
+    });
+    container.appendChild(colors);
+  }
+}
+
+function renderAnswerEditor(container, q) {
+  container.innerHTML = "";
+
+  if (["single", "multi", "dropdown"].includes(q.type)) {
+    const info = document.createElement("p");
+    info.className = "hint";
+    info.textContent = q.type === "multi" ? "Mehrere richtige Antworten sind möglich." : "Markiere genau eine richtige Antwort.";
+    container.appendChild(info);
+    q.options = q.options || [];
+    q.options.forEach((opt, idx) => {
+      const row = document.createElement("div");
+      row.className = "optionRow";
+      const correct = document.createElement("input");
+      correct.type = q.type === "multi" ? "checkbox" : "radio";
+      correct.name = `correct-${q.id}`;
+      correct.checked = Boolean(opt.correct);
+      correct.addEventListener("change", () => {
+        if (q.type !== "multi") q.options.forEach((o, i) => (o.correct = i === idx));
+        else opt.correct = correct.checked;
+        renderQuestions();
+        markDirty();
+      });
+      const text = document.createElement("input");
+      text.value = opt.text || "";
+      text.placeholder = `Antwort ${idx + 1}`;
+      text.addEventListener("input", (e) => {
+        opt.text = e.target.value;
+        if (q.audioAnswerMode === "audio-only") opt.audioNeedsRegeneration = true;
+        markDirty();
+      });
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "removeOption";
+      remove.textContent = "×";
+      remove.addEventListener("click", () => {
+        if (q.options.length <= 2) {
+          toast("Mindestens zwei Antworten erforderlich.", "error");
+          return;
+        }
+        q.options.splice(idx, 1);
+        renderQuestions();
+        markDirty();
+      });
+      if (opt.imageDataUrl) {
+        const img = document.createElement("img"); img.className = "optionImageThumb"; img.src = opt.imageDataUrl; img.alt = opt.imageAlt || `Abbildung zu Antwort ${idx + 1}`; row.append(correct, img, text, remove);
+      } else row.append(correct, text, remove);
+      container.appendChild(row);
+    });
+    container.appendChild(makeMiniButton("+ Antwortmöglichkeit", () => {
+      q.options.push({ text: "", correct: false });
+      renderQuestions();
+      markDirty();
+    }));
+    return;
+  }
+
+  if (q.type === "text") {
+    const label = document.createElement("label");
+    label.className = "stack compact";
+    label.innerHTML = `<span>Automatisch akzeptierte Antworten <small>(durch Kommas getrennt)</small></span><input type="text" value="${escapeHtml((q.acceptedAnswers || []).join(", "))}" placeholder="z. B. spannend, interessant">`;
+    label.querySelector("input").addEventListener("input", (e) => {
+      q.acceptedAnswers = e.target.value.split(",").map((s) => s.trim()).filter(Boolean);
+      markDirty();
+    });
+    container.appendChild(label);
+    const manual = document.createElement("label");
+    manual.className = "manualRow";
+    manual.innerHTML = `<input type="checkbox" ${q.manualReview ? "checked" : ""}> Antwort grundsätzlich manuell prüfen`;
+    manual.querySelector("input").addEventListener("change", (e) => {
+      q.manualReview = e.target.checked;
+      markDirty();
+    });
+    container.appendChild(manual);
+    return;
+  }
+
+  if (q.type === "truefalse") {
+    const wrap = document.createElement("div");
+    wrap.className = "trueFalseEditor";
+    wrap.innerHTML = `<span class="labelLike">Richtige Antwort</span><label class="choice compactChoice"><input type="radio" name="tf-${q.id}" value="true" ${q.correctBoolean ? "checked" : ""}><span>Richtig</span></label><label class="choice compactChoice"><input type="radio" name="tf-${q.id}" value="false" ${!q.correctBoolean ? "checked" : ""}><span>Falsch</span></label>`;
+    wrap.querySelectorAll("input").forEach((input) => input.addEventListener("change", () => {
+      q.correctBoolean = input.value === "true";
+      markDirty();
+    }));
+    container.appendChild(wrap);
+    return;
+  }
+
+  if (q.type === "gapfill") {
+    renderGapfillEditor(container, q);
+    return;
+  }
+
+  if (q.type === "matching") {
+    const info = document.createElement("p");
+    info.className = "hint";
+    info.textContent = "Erstelle passende Paare. Schüler ziehen die rechten Begriffe zur passenden linken Seite.";
+    container.appendChild(info);
+    q.pairs.forEach((pair, idx) => {
+      const row = document.createElement("div");
+      row.className = "pairRow";
+      row.innerHTML = `<input class="pairLeft" placeholder="Begriff / Frage" value="${escapeHtml(pair.left)}"><span>↔</span><input class="pairRight" placeholder="Zuordnung" value="${escapeHtml(pair.right)}"><button class="removeOption" type="button">×</button>`;
+      row.querySelector(".pairLeft").addEventListener("input", (e) => { pair.left = e.target.value; markDirty(); });
+      row.querySelector(".pairRight").addEventListener("input", (e) => { pair.right = e.target.value; markDirty(); });
+      row.querySelector("button").addEventListener("click", () => {
+        if (q.pairs.length <= 2) return toast("Mindestens zwei Paare erforderlich.", "error");
+        q.pairs.splice(idx, 1);
+        renderQuestions();
+        markDirty();
+      });
+      container.appendChild(row);
+    });
+    container.appendChild(makeMiniButton("+ Paar", () => {
+      q.pairs.push({ left: "", right: "" });
+      renderQuestions();
+      markDirty();
+    }));
+    return;
+  }
+
+  if (q.type === "ordering") {
+    const info = document.createElement("p");
+    info.className = "hint";
+    info.textContent = "Gib eine richtige Reihenfolge ein. Für Schüler werden die Bausteine gemischt. Bei Satzbau weitere gültige Reihenfolgen ergänzen; die Bewertung bleibt zur Kontrolle offen.";
+    container.appendChild(info);
+    q.items.forEach((item, idx) => {
+      const row = document.createElement("div");
+      row.className = "listEditorRow";
+      row.innerHTML = `<span class="orderBadge">${idx + 1}</span><input value="${escapeHtml(item)}" placeholder="Element ${idx + 1}"><button class="removeOption" type="button">×</button>`;
+      row.querySelector("input").addEventListener("input", (e) => { q.items[idx] = e.target.value; markDirty(); });
+      row.querySelector("button").addEventListener("click", () => {
+        if (q.items.length <= 2) return toast("Mindestens zwei Elemente erforderlich.", "error");
+        q.items.splice(idx, 1);
+        renderQuestions();
+        markDirty();
+      });
+      container.appendChild(row);
+    });
+    container.appendChild(makeMiniButton("+ Element", () => {
+      q.items.push("");
+      renderQuestions();
+      markDirty();
+    }));
+    const alternatives = document.createElement("label");
+    alternatives.className = "stack compact orderingAlternatives";
+    alternatives.innerHTML = `<span>Weitere richtige Reihenfolgen <small>(Positionsnummern; eine Variante pro Zeile)</small></span><textarea rows="3" placeholder="z. B. 3, 2, 1, 4">${escapeHtml((q.acceptedOrders || []).map(order => order.map(index => index + 1).join(", ")).join("\n"))}</textarea><small class="hint">Jede Zeile muss jeden Baustein genau einmal enthalten. Satzbauantworten bitte zusätzlich manuell prüfen.</small>`;
+    alternatives.querySelector("textarea").addEventListener("input", (event) => {
+      q.acceptedOrdersInput = event.target.value;
+      markDirty();
+    });
+    container.appendChild(alternatives);
+    return;
+  }
+
+  if (q.type === "grouping") {
+    const info = document.createElement("p");
+    info.className = "hint";
+    info.textContent = "Lege Kategorien an und schreibe pro Zeile ein Element hinein. Schüler ziehen die gemischten Elemente in die passenden Kategorien.";
+    container.appendChild(info);
+    q.groups.forEach((group, idx) => {
+      const card = document.createElement("div");
+      card.className = "groupEditorCard";
+      card.innerHTML = `<div class="groupEditorHead"><input class="groupName" value="${escapeHtml(group.name)}" placeholder="Kategorie ${idx + 1}"><button class="removeOption" type="button">×</button></div><textarea rows="4" placeholder="Ein Element pro Zeile">${escapeHtml((group.items || []).join("\n"))}</textarea>`;
+      card.querySelector(".groupName").addEventListener("input", (e) => { group.name = e.target.value; markDirty(); });
+      card.querySelector("textarea").addEventListener("input", (e) => {
+        group.items = e.target.value.split(/\n/).map((s) => s.trim()).filter(Boolean);
+        markDirty();
+      });
+      card.querySelector("button").addEventListener("click", () => {
+        if (q.groups.length <= 2) return toast("Mindestens zwei Kategorien erforderlich.", "error");
+        q.groups.splice(idx, 1);
+        renderQuestions();
+        markDirty();
+      });
+      container.appendChild(card);
+    });
+    container.appendChild(makeMiniButton("+ Kategorie", () => {
+      q.groups.push({ name: `Kategorie ${q.groups.length + 1}`, items: [] });
+      renderQuestions();
+      markDirty();
+    }));
+    return;
+  }
+
+  if (q.type === "markwords") {
+    const passage = document.createElement("label");
+    passage.className = "stack compact";
+    passage.innerHTML = `<span>Text, in dem markiert wird</span><textarea rows="5" placeholder="Hier den Text einfügen …">${escapeHtml(q.passage || "")}</textarea>`;
+    passage.querySelector("textarea").addEventListener("input", (e) => { q.passage = e.target.value; markDirty(); });
+    container.appendChild(passage);
+    const targets = document.createElement("label");
+    targets.className = "stack compact markTargets";
+    targets.innerHTML = `<span>Zielwörter <small>(durch Kommas getrennt)</small></span><input value="${escapeHtml((q.targetWords || []).join(", "))}" placeholder="z. B. ich, du, wir"><small class="hint">Jedes passende Wort im Text gilt als richtige Markierung.</small>`;
+    targets.querySelector("input").addEventListener("input", (e) => {
+      q.targetWords = e.target.value.split(",").map((s) => s.trim()).filter(Boolean);
+      markDirty();
+    });
+    container.appendChild(targets);
+    const colorToggle = document.createElement("button");
+    colorToggle.type = "button";
+    colorToggle.className = "miniButton";
+    colorToggle.textContent = (q.markGroups || []).length ? "Ohne Farben markieren" : "Mit Farben markieren";
+    colorToggle.addEventListener("click", () => {
+      q.markGroups = (q.markGroups || []).length ? [] : [
+        { name: "Nomen", color: "blue", words: [] },
+        { name: "Adjektive", color: "orange", words: [] },
+        { name: "Verben", color: "green", words: [] }
+      ];
+      q.targetWords = q.markGroups.length ? [] : q.targetWords;
+      renderQuestions(); markDirty();
+    });
+    container.appendChild(colorToggle);
+    if ((q.markGroups || []).length) {
+      targets.hidden = true;
+      const groups = document.createElement("div");
+      groups.className = "markColorEditor";
+      const sync = () => { q.targetWords = [...new Set(q.markGroups.flatMap(group => group.words))]; markDirty(); };
+      q.markGroups.forEach(group => {
+        const row = document.createElement("div");
+        row.className = `markColorEditorRow markColor-${group.color}`;
+        const name = document.createElement("input");
+        name.setAttribute("aria-label", `Name der ${group.color}-Markierung`);
+        name.value = group.name;
+        name.addEventListener("input", () => { group.name = name.value.trim(); markDirty(); });
+        const words = document.createElement("input");
+        words.setAttribute("aria-label", `${group.name}: Wörter durch Kommas trennen`);
+        words.placeholder = "Wörter durch Kommas trennen";
+        words.value = group.words.join(", ");
+        words.addEventListener("input", () => { group.words = words.value.split(",").map(word => word.trim()).filter(Boolean); sync(); });
+        row.append(name, words); groups.appendChild(row);
+      });
+      container.appendChild(groups);
+    }
+    return;
+  }
+
+  if (q.type === "number") {
+    const grid = document.createElement("div");
+    grid.className = "numberEditorGrid";
+    grid.innerHTML = `<label>Richtiges Ergebnis<input class="numAnswer" type="number" step="any" value="${Number(q.numericAnswer)}"></label><label>Toleranz ±<input class="numTolerance" type="number" min="0" step="any" value="${Number(q.tolerance || 0)}"></label><label>Einheit (optional)<input class="numUnit" value="${escapeHtml(q.unit || "")}" placeholder="z. B. €"></label>`;
+    grid.querySelector(".numAnswer").addEventListener("input", (e) => { q.numericAnswer = Number(e.target.value); markDirty(); });
+    grid.querySelector(".numTolerance").addEventListener("input", (e) => { q.tolerance = Math.max(0, Number(e.target.value) || 0); markDirty(); });
+    grid.querySelector(".numUnit").addEventListener("input", (e) => { q.unit = e.target.value; markDirty(); });
+    container.appendChild(grid);
+  }
+}
+
+function updateSummary() {
+  $("questionCount").textContent = state.questions.length;
+  $("totalPoints").textContent = round1(state.questions.reduce((sum, q) => sum + (Number(q.points) || 0), 0));
+  $("publishStatus").textContent = state.currentQuiz?.rightsHold ? "Zugang gesperrt" : state.currentQuiz?.ended ? "Beendet" : state.currentQuiz?.published ? "Veröffentlicht" : "Entwurf";
+  if (!$("editorView").classList.contains("hidden")) renderFirstTestGuide();
+}
+
+function updateEditorPublishControls() {
+  if (!state.currentQuiz) return;
+  const ended = Boolean(state.currentQuiz.ended);
+  const published = Boolean(state.currentQuiz.published) && !ended;
+  const blocked = Boolean(state.currentQuiz.rightsHold);
+  if ($("quizSolutionReleaseMode")) $("quizSolutionReleaseMode").disabled = published || blocked;
+  $("endQuizBtn")?.classList.toggle("hidden", !published || blocked);
+  if ($("shareTemplateBtn")) $("shareTemplateBtn").disabled = state.newManualQuiz || blocked;
+  if ($("createSimilarTestBtn")) $("createSimilarTestBtn").disabled = state.newManualQuiz || blocked || state.aiStarting
+    || state.aiJobs.filter(job => ["queued", "running"].includes(job.status)).length >= 2;
+  if ($("publishBtn")) { $("publishBtn").disabled = blocked; $("publishBtn").textContent = blocked ? "Zugang gesperrt" : ended ? "Erneut öffnen" : published ? "Schülerlink" : "Veröffentlichen"; }
+}
+
+let draftTimer = null;
+let draftRevision = 0;
+
+function editorDraftSnapshot() {
+  const quiz = state.currentQuiz;
+  if (!state.user || !quiz) return null;
+  const scaleId = $("quizGradeScale").value;
+  const scale = scaleId === quiz.gradeScaleId ? getQuizScale(quiz) : getScaleById(scaleId);
+  return {
+    key: draftKey(state.user.uid, quiz.id), ownerId: state.user.uid, quizId: quiz.id,
+    newManualQuiz: state.newManualQuiz, baseUpdatedAt: state.draftBaseUpdatedAt,
+    savedAt: Date.now(),
+    quiz: {
+      title: $("quizTitle").value, subject: $("quizSubject").value, grade: $("quizGrade").value,
+      description: $("quizDescription").value, gradeScaleId: scaleId,
+      gradeScaleSnapshot: deepClone(scale), resultMode: $("quizResultMode").value,
+      showSolutions: $("quizShowSolutions").checked,
+      solutionReleaseMode: $("quizSolutionReleaseMode").value,
+      timeLimitMinutes: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) : null,
+      startMode: $("quizStartMode").value, shuffleQuestions: $("quizShuffleQuestions").checked,
+      shuffleAnswers: $("quizShuffleAnswers").checked,
+      qualityIssues: state.currentQuiz.qualityIssues || [], qualityWarnings: state.currentQuiz.qualityWarnings || []
+    },
+    questions: deepClone(state.questions)
+  };
+}
+
+async function persistEditorDraft() {
+  if (guestTourRepo) return;
+  if (!state.isDirty) return;
+  clearTimeout(draftTimer);
+  draftTimer = null;
+  const revision = draftRevision;
+  let draft;
+  try {
+    draft = editorDraftSnapshot();
+    if (!draft) return;
+    await saveEditorDraft(draft);
+    if (state.isDirty && state.user?.uid === draft.ownerId && state.currentQuiz?.id === draft.quizId && revision === draftRevision) {
+      state.draftCheckpointSaved = true;
+      setSaveState($("saveState"), "local", "Lokal gesichert · noch nicht auf dem Server");
+    }
+  } catch (err) {
+    console.error("Lokaler Bearbeitungsstand konnte nicht gesichert werden:", err);
+    if (state.isDirty && revision === draftRevision) {
+      state.draftCheckpointSaved = false;
+      setSaveState($("saveState"), "error", "Sicherung fehlgeschlagen · bitte speichern");
+    }
+  }
+}
+
+function markDirty() {
+  state.isDirty = true;
+  state.draftCheckpointSaved = false;
+  draftRevision += 1;
+  setSaveState($("saveState"), "saving", "Wird lokal gesichert …");
+  clearTimeout(draftTimer);
+  if (!guestTourRepo) draftTimer = setTimeout(persistEditorDraft, 180);
+  else setSaveState($("saveState"), "local", guestCopy('localQuiz', '✓ Lokaler Übungstest'));
+}
+
+function markSaved() {
+  clearTimeout(draftTimer);
+  draftTimer = null;
+  draftRevision += 1;
+  state.isDirty = false;
+  state.draftCheckpointSaved = true;
+  setSaveState($("saveState"), "saved", guestTourRepo ? guestCopy('localQuiz', '✓ Lokaler Übungstest') : "✓ Auf dem Server gespeichert");
+  updateSummary();
+  updateEditorPublishControls();
+  renderVariantProgress();
+}
+
+async function leaveEditorToDashboard() {
+  if (guestTourRepo) {
+    state.isDirty = false;
+    state.currentQuiz = null;
+    showView('dashboardView');
+    return;
+  }
+  if (state.isDirty && !state.draftCheckpointSaved) {
+    await persistEditorDraft();
+    if (!state.draftCheckpointSaved) return toast("Der Bearbeitungsstand konnte nicht gesichert werden. Bitte auf „Speichern“ klicken.", "error");
+  }
+  state.isDirty = false;
+  state.newManualQuiz = false;
+  state.currentQuiz = null;
+  loadDashboard();
+}
+
+window.addEventListener("beforeunload", (event) => {
+  if (!state.isDirty || state.draftCheckpointSaved) return;
+  event.preventDefault();
+  event.returnValue = "";
+});
+window.addEventListener("pagehide", () => {
+  if (state.isDirty && !state.draftCheckpointSaved) persistEditorDraft();
+});
+
+function gapTextToPlain(text) {
+  return String(text || "").replace(/\[([^\]]+)\]/g, (_, inside) => String(inside).split("|")[0].trim());
+}
+
+function parseGaps(text) {
+  const matches = [];
+  const regex = /\[([^\]]+)\]/g;
+  let match;
+  while ((match = regex.exec(String(text || "")))) {
+    matches.push({ full: match[0], answers: match[1].split("|").map((s) => s.trim()).filter(Boolean), index: match.index });
+  }
+  return matches;
+}
+
+function tokenizeWords(text) {
+  const pieces = String(text || "").match(/[\p{L}\p{N}]+(?:['’\-][\p{L}\p{N}]+)*|[^\p{L}\p{N}]+/gu) || [];
+  let wordIndex = 0;
+  return pieces.map((piece) => {
+    const isWord = /[\p{L}\p{N}]/u.test(piece[0] || "");
+    return { text: piece, isWord, wordIndex: isWord ? wordIndex++ : null };
+  });
+}
+
+function markwordCorrectIndexes(q) {
+  const targets = new Set((q.targetWords || []).map(normalizeWord).filter(Boolean));
+  return tokenizeWords(q.passage).filter((t) => t.isWord && targets.has(normalizeWord(t.text))).map((t) => String(t.wordIndex));
+}
+
+function markwordCorrectColors(q) {
+  const byWord = new Map((q.markGroups || []).flatMap(group => (group.words || []).map(word => [normalizeWord(word), group.color])));
+  return Object.fromEntries(tokenizeWords(q.passage).filter(token => token.isWord && byWord.has(normalizeWord(token.text))).map(token => [String(token.wordIndex), byWord.get(normalizeWord(token.text))]));
+}
+
+function validateQuiz() {
+  if (!$("quizTitle").value.trim()) return "Bitte einen Titel eingeben.";
+  if (!state.questions.length) return "Bitte mindestens eine Aufgabe hinzufügen.";
+  if ($("quizUseTimeLimit")?.checked) {
+    const minutes = Number($("quizTimeLimitMinutes")?.value);
+    if (!Number.isInteger(minutes) || minutes < 1 || minutes > 300) return "Das Zeitlimit muss zwischen 1 und 300 ganzen Minuten liegen.";
+  }
+  for (let i = 0; i < state.questions.length; i += 1) {
+    const q = state.questions[i];
+    const publicQuestion = q.audioPresentation === "listening-only"
+      ? (String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() || (q.type === "truefalse" && questionStudentAudioReady(q) ? assessmentContentLabels(state.currentQuiz?.contentLocale).listeningTrueFalseInstruction : ""))
+      : String(q.text || "");
+    if (!publicQuestion.trim()) return `Aufgabe ${i + 1}: Fragetext fehlt.`;
+    if (!(Number(q.points) > 0)) return `Aufgabe ${i + 1}: Punkte müssen größer als 0 sein.`;
+    if (q.type === "text" && !q.manualReview && !(q.acceptedAnswers || []).length) return `Aufgabe ${i + 1}: Hinterlege mindestens eine akzeptierte Antwort oder aktiviere die manuelle Prüfung.`;
+    if (["single", "multi", "dropdown"].includes(q.type)) {
+      if ((q.options || []).some((o) => !o.text.trim())) return `Aufgabe ${i + 1}: Eine Antwortmöglichkeit ist leer.`;
+      if (!(q.options || []).some((o) => o.correct)) return `Aufgabe ${i + 1}: Markiere mindestens eine richtige Antwort.`;
+      if (q.type !== "multi" && q.options.filter((o) => o.correct).length !== 1) return `Aufgabe ${i + 1}: Genau eine Antwort muss richtig sein.`;
+    }
+    if (q.type === "gapfill") {
+      const gaps = parseGaps(q.text);
+      if (!gaps.length || gaps.some((g) => !g.answers.length)) return `Aufgabe ${i + 1}: Markiere mindestens eine Stelle als Lücke.`;
+      if ((q.gapColors || []).some(color => color && !["blue", "orange", "green", "purple"].includes(color))) return `Aufgabe ${i + 1}: Eine Lückenfarbe ist ungültig.`;
+    }
+    if (q.type === "matching") {
+      if ((q.pairs || []).length < 2 || q.pairs.some((p) => !p.left.trim() || !p.right.trim())) return `Aufgabe ${i + 1}: Mindestens zwei vollständige Zuordnungspaare erforderlich.`;
+    }
+    if (q.type === "ordering") {
+      if ((q.items || []).length < 2 || q.items.some((x) => !String(x).trim())) return `Aufgabe ${i + 1}: Mindestens zwei vollständige Elemente für die Reihenfolge erforderlich.`;
+      const lines = String(q.acceptedOrdersInput ?? (q.acceptedOrders || []).map(order => order.map(index => index + 1).join(", ")).join("\n")).split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+      const orders = lines.map(line => line.split(/[;,\s]+/).map(value => Number(value) - 1));
+      if (orders.some(order => !validOrder(order, q.items.length))) return `Aufgabe ${i + 1}: Jede zusätzliche Reihenfolge muss alle Positionsnummern von 1 bis ${q.items.length} genau einmal enthalten.`;
+      q.acceptedOrders = orders;
+    }
+    if (q.type === "grouping") {
+      if ((q.groups || []).length < 2 || q.groups.some((g) => !g.name.trim() || !(g.items || []).length)) return `Aufgabe ${i + 1}: Jede Kategorie braucht einen Namen und mindestens ein Element.`;
+    }
+    if (q.type === "markwords") {
+      if (!q.passage?.trim()) return `Aufgabe ${i + 1}: Der Text zum Markieren fehlt.`;
+      if (!(q.targetWords || []).length) return `Aufgabe ${i + 1}: Mindestens ein Zielwort fehlt.`;
+      if (!markwordCorrectIndexes(q).length) return `Aufgabe ${i + 1}: Keines der Zielwörter kommt im Text vor.`;
+      if ((q.markGroups || []).length) {
+        if (q.markGroups.length < 2 || q.markGroups.length > 4 || q.markGroups.some(group => !group.name?.trim() || !["blue", "orange", "green", "purple"].includes(group.color) || !group.words?.length)) return `Aufgabe ${i + 1}: Jede Farbgruppe braucht einen Namen und passende Wörter.`;
+        const colors = q.markGroups.map(group => group.color);
+        const words = q.markGroups.flatMap(group => group.words.map(normalizeWord));
+        if (new Set(colors).size !== colors.length || new Set(words).size !== words.length) return `Aufgabe ${i + 1}: Farben und Zielwörter dürfen nicht doppelt vorkommen.`;
+        if (q.markGroups.some(group => group.words.some(word => !tokenizeWords(q.passage).some(token => token.isWord && normalizeWord(token.text) === normalizeWord(word))))) return `Aufgabe ${i + 1}: Jedes Farbwort muss im Text vorkommen.`;
+      }
+    }
+    if (q.type === "number" && !Number.isFinite(Number(q.numericAnswer))) return `Aufgabe ${i + 1}: Das richtige Rechenergebnis fehlt.`;
+  }
+  return "";
+}
+
+function sanitizeQuestionForSave(q) {
+  const base = {
+    type: q.type,
+    text: String(q.text || "").trim(),
+    points: Math.max(0.5, round1(Number(q.points) || 1)),
+    position: Number(q.position || 0)
+  };
+  if (q.aiVariantKept === true) base.aiVariantKept = true;
+  if (q.aiOrigin?.kind) base.aiOrigin = { kind: String(q.aiOrigin.kind).slice(0, 30), model: String(q.aiOrigin.model || "").slice(0, 60), promptVersion: String(q.aiOrigin.promptVersion || "").slice(0, 60) };
+  if (q.imageDataUrl) {
+    base.imageDataUrl = String(q.imageDataUrl);
+    base.imageByteSize = Number(q.imageByteSize || 0);
+    base.imageAlt = String(q.imageAlt || "").trim();
+  } else if (q.imageUrl) {
+    // Abwärtskompatibilität für eventuell bereits vorhandene Storage-Bilder.
+    base.imageUrl = String(q.imageUrl);
+    base.imagePath = String(q.imagePath || "");
+    base.imageAlt = String(q.imageAlt || "").trim();
+  }
+  const audioSrc = getQuestionAudioSrc(q);
+  if (audioSrc) {
+    base.audioDataUrl = audioSrc;
+    base.audioByteSize = Number(q.audioByteSize || 0);
+    base.audioVoice = String(q.audioVoice || "").slice(0, 40);
+    base.audioModel = String(q.audioModel || "").slice(0, 80);
+    base.audioAiGenerated = q.audioAiGenerated !== false;
+  }
+  if (q.audioScript || audioSrc) base.audioNeedsRegeneration = !questionAudioReady(q);
+  if (q.audioPresentation === "listening-only") base.audioPresentation = "listening-only";
+  const publicAudioQuestion = String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim();
+  if (q.audioInstruction != null || q.audioIntent?.instruction != null) base.audioInstruction = publicAudioQuestion.slice(0, 1000);
+  if (q.audioAnswerMode === "audio-only") base.audioAnswerMode = "audio-only";
+  if (q.audioAnswerMode === "audio-only" && !["single", "multi", "dropdown"].includes(q.type)) base.audioAnswerItems = questionAnswerAudioEntries(q).map(entry => ({ key: entry.key, sourceText: entry.sourceText, audioDataUrl: String(entry.asset?.audioDataUrl || ""), audioNeedsRegeneration: !entry.asset || entry.asset.audioNeedsRegeneration === true || entry.asset.sourceText !== entry.sourceText }));
+  if (["single", "multi", "dropdown"].includes(q.type)) {
+    base.options = (q.options || []).map((o) => ({ text: String(o.text || "").trim(), correct: Boolean(o.correct), ...(o.imageDataUrl ? { imageDataUrl: String(o.imageDataUrl), imageAlt: String(o.imageAlt || "").trim() } : {}), ...(q.audioAnswerMode === "audio-only" && String(o.audioDataUrl || "").startsWith("data:audio/mpeg;base64,") ? { audioDataUrl: String(o.audioDataUrl), audioNeedsRegeneration: o.audioNeedsRegeneration === true } : {}) }));
+    if (q.imageChoicesOnly) base.imageChoicesOnly = true;
+  }
+  if (q.type === "text") {
+    base.acceptedAnswers = (q.acceptedAnswers || []).map((x) => String(x).trim()).filter(Boolean);
+    base.manualReview = Boolean(q.manualReview);
+  }
+  if (q.type === "truefalse") base.correctBoolean = Boolean(q.correctBoolean);
+  if (q.type === "matching") base.pairs = (q.pairs || []).map((p) => ({ left: String(p.left || "").trim(), right: String(p.right || "").trim() }));
+  if (q.type === "ordering") {
+    base.items = (q.items || []).map((x) => String(x).trim());
+    base.acceptedOrders = orderingVariantsForStorage(orderingVariants(q.acceptedOrders).filter(order => validOrder(order, base.items.length)));
+    base.manualReview = orderingNeedsReview(q);
+  }
+  if (q.type === "grouping") base.groups = (q.groups || []).map((g) => ({ name: String(g.name || "").trim(), items: (g.items || []).map((x) => String(x).trim()).filter(Boolean) }));
+  if (q.type === "markwords") {
+    base.passage = String(q.passage || "").trim();
+    base.targetWords = (q.targetWords || []).map((x) => String(x).trim()).filter(Boolean);
+    base.markGroups = (q.markGroups || []).map(group => ({ name: String(group.name || "").trim(), color: group.color, words: (group.words || []).map(word => String(word).trim()).filter(Boolean) }));
+  }
+  if (q.type === "gapfill") base.gapColors = (q.gapColors || []).slice(0, parseGaps(q.text).length).map(color => ["blue", "orange", "green", "purple"].includes(color) ? color : "");
+  if (q.type === "number") {
+    base.numericAnswer = Number(q.numericAnswer);
+    base.tolerance = Math.max(0, Number(q.tolerance) || 0);
+    base.unit = String(q.unit || "").trim();
+  }
+  return base;
+}
+
+async function saveCurrentQuiz(showMessage = true) {
+  const error = validateQuiz();
+  if (error) {
+    toast(error, "error");
+    return false;
+  }
+  if (guestTourRepo) {
+    const code = state.currentQuiz?.id;
+    if (!guestTourRepo.getQuiz(code)) return false;
+    const scaleId = $("quizGradeScale").value;
+    const patch = {
+      title: $("quizTitle").value.trim(), subject: $("quizSubject").value.trim(),
+      grade: $("quizGrade").value.trim(), description: $("quizDescription").value.trim(),
+      gradeScaleId: scaleId, gradeScaleSnapshot: getScaleById(scaleId),
+      resultMode: $("quizResultMode").value, showSolutions: $("quizShowSolutions").checked,
+      solutionReleaseMode: $("quizSolutionReleaseMode").value,
+      timeLimitMinutes: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) : null,
+      startMode: $("quizStartMode").value, shuffleQuestions: $("quizShuffleQuestions").checked,
+      shuffleAnswers: $("quizShuffleAnswers").checked, questionCount: state.questions.length,
+      totalPoints: round1(state.questions.reduce((sum, q) => sum + Number(q.points || 0), 0)),
+      audioReady: true, solutionAudioReady: true
+    };
+    guestTourRepo.save(code, patch, state.questions);
+    state.currentQuiz = guestTourRepo.getQuiz(code);
+    state.loadedQuestionIds = new Set(state.questions.map(q => q.id));
+    $("editorHeading").textContent = patch.title;
+    markSaved();
+    if (showMessage) toast(guestCopy('localSaved', 'Übungstest lokal gespeichert.'));
+    return true;
+  }
+  let manualDraftId = null;
+  try {
+    let code = state.currentQuiz.id;
+    const oldDraftId = code;
+    const revisionAtSave = draftRevision;
+    const totalPoints = round1(state.questions.reduce((s, q) => s + (Number(q.points) || 0), 0));
+    const selectedScaleId = $("quizGradeScale").value;
+    const scaleChanged = selectedScaleId !== state.currentQuiz.gradeScaleId;
+    const scaleSnapshot = scaleChanged ? getScaleById(selectedScaleId) : deepClone(getQuizScale(state.currentQuiz));
+    const contentLocale = window.GradeCrewAssessmentLocale?.getContentLocale?.()
+      || state.currentQuiz.contentLocale
+      || "de-DE";
+    const gradingLocale = state.newManualQuiz
+      ? contentLocale
+      : (state.currentQuiz.gradingLocale || contentLocale);
+    syncQualityReport();
+    const patch = {
+      qualityIssues: state.currentQuiz.qualityIssues || [], qualityWarnings: state.currentQuiz.qualityWarnings || [],
+      title: $("quizTitle").value.trim(),
+      subject: $("quizSubject").value.trim(),
+      grade: $("quizGrade").value.trim(),
+      description: $("quizDescription").value.trim(),
+      contentLocale,
+      gradingLocale,
+      localeContractVersion: Number(state.currentQuiz.localeContractVersion) || 1,
+      gradeScaleId: selectedScaleId,
+      gradeScaleSnapshot: scaleSnapshot,
+      resultMode: $("quizResultMode").value,
+      showSolutions: $("quizShowSolutions").checked,
+      solutionReleaseMode: $("quizSolutionReleaseMode").value,
+      timeLimitMinutes: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) : null,
+      startMode: $("quizStartMode").value === "teacher" ? "teacher" : "student",
+      shuffleQuestions: $("quizShuffleQuestions").checked,
+      shuffleAnswers: $("quizShuffleAnswers").checked,
+      questionCount: state.questions.length,
+      totalPoints,
+      audioQuestionCount: state.questions.filter(q => Boolean(q.audioScript || getQuestionAudioSrc(q))).length,
+      audioAnswerQuestionCount: state.questions.filter(q => q.audioAnswerMode === "audio-only").length,
+      listeningOnlyQuestionCount: state.questions.filter(q => q.audioPresentation === "listening-only").length,
+      requiresSecureAssessmentRules: state.questions.some(q => q.audioAnswerMode === "audio-only" || q.audioPresentation === "listening-only"),
+      audioReady: state.questions.every(questionAllAudioReady),
+      solutionAudioQuestionCount: state.questions.filter(q => Boolean(q.solutionAudioScript || getQuestionSolutionAudioSrc(q))).length,
+      solutionAudioReady: state.questions.every(questionSolutionAudioReady),
+      updatedAt: serverTimestamp()
+    };
+    if (!state.newManualQuiz && state.currentQuiz.published && !state.currentQuiz.ended && patch.startMode !== state.currentQuiz.startMode) {
+      patch.sessionState = patch.startMode === "teacher" ? "waiting" : "open";
+      patch.sessionRunId = patch.startMode === "teacher" ? randomId("run") : null;
+      patch.sessionStartedAt = null;
+    }
+    if (state.newManualQuiz) {
+      const created = await createQuizDocument(patch);
+      manualDraftId = oldDraftId;
+      code = created.code;
+      state.currentQuiz = { ...created.quiz, ...patch, id: code };
+      state.newManualQuiz = false;
+    } else await updateDoc(doc(db, "quizzes", code), patch);
+
+    const currentIds = new Set();
+    const audioDrafts = [];
+    const solutionAudioDrafts = [];
+    for (let i = 0; i < state.questions.length; i += 1) {
+      const q = state.questions[i];
+      q.position = i + 1;
+      currentIds.add(q.id);
+      await setDoc(doc(db, "quizzes", code, "questions", q.id), {
+        ...sanitizeQuestionForSave(q),
+        position: q.position,
+        updatedAt: serverTimestamp()
+      });
+      const audioScript = String(q.audioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
+      if (audioScript) audioDrafts.push({ questionId: q.id, script: audioScript });
+      const solutionAudioScript = String(q.solutionAudioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
+      if (solutionAudioScript) solutionAudioDrafts.push({ questionId: q.id, script: solutionAudioScript, stale: q.solutionAudioNeedsRegeneration === true });
+    }
+    for (const oldId of state.loadedQuestionIds) {
+      if (!currentIds.has(oldId)) {
+        await deleteDoc(doc(db, "quizzes", code, "questions", oldId));
+      }
+    }
+    await aiApi.syncQuestionAudioDrafts({ quizId: code, drafts: audioDrafts, solutionDrafts: solutionAudioDrafts });
+    state.loadedQuestionIds = currentIds;
+    state.currentQuiz = { ...state.currentQuiz, ...patch };
+    $("editorHeading").textContent = patch.title;
+    if (draftRevision === revisionAtSave) markSaved();
+    else markDirty();
+    state.draftBaseUpdatedAt = Date.now();
+    if (oldDraftId !== code || !state.isDirty) {
+      await removeEditorDraft(state.user.uid, oldDraftId).catch(err => console.warn("Lokale Sicherung konnte nicht entfernt werden:", err));
+    }
+    if (showMessage) toast("Test gespeichert.");
+    return true;
+  } catch (err) {
+    console.error(err);
+    if (manualDraftId && state.currentQuiz?.id !== manualDraftId) {
+      markDirty();
+      await persistEditorDraft();
+      if (state.draftCheckpointSaved) await removeEditorDraft(state.user.uid, manualDraftId).catch(console.warn);
+    }
+    toast("Speichern fehlgeschlagen.", "error");
+    return false;
+  }
+}
+
+async function publishCurrentQuiz() {
+  if (state.currentQuiz?.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
+  if (!(await saveCurrentQuiz(false))) return;
+  if (guestTourRepo) {
+    guestTourRepo.publish(state.currentQuiz.id);
+    state.currentQuiz = guestTourRepo.getQuiz(state.currentQuiz.id);
+    showPublish(state.currentQuiz.id);
+    return;
+  }
+  if (secureAudioPublicationBlocked(state.currentQuiz)) return toast(secureAudioPublicationMessage, "error");
+  if (state.currentQuiz.audioReady === false) return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Erzeuge es vor dem Veröffentlichen neu.", "error");
+  if (state.currentQuiz.showSolutions && state.currentQuiz.solutionAudioReady === false) return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Erzeuge sie neu oder entferne sie, bevor du veröffentlichst.", "error");
+  if (state.currentQuiz.published && !state.currentQuiz.ended) {
+    showPublish(state.currentQuiz.id);
+    return;
+  }
+  try {
+    const practice = await publishPracticeQuiz(state.currentQuiz);
+    if (practice === null) return;
+    if (practice) {
+      Object.assign(state.currentQuiz, practice, { published: true, ended: false });
+      state.pendingImportReport = null;
+      renderImportReviewBanner(); renderAiJobs(); updateSummary(); updateEditorPublishControls();
+      toast("Test veröffentlicht."); showPublish(state.currentQuiz.id); return;
+    }
+    const teacherMode = state.currentQuiz.startMode === "teacher";
+    const runId = teacherMode ? randomId("run") : null;
+    await updateDoc(doc(db, "quizzes", state.currentQuiz.id), {
+      published: true,
+      ended: false,
+      sessionState: teacherMode ? "waiting" : "open",
+      sessionRunId: runId,
+      sessionStartedAt: null,
+      publishedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    state.currentQuiz.published = true;
+    state.currentQuiz.ended = false;
+    state.currentQuiz.sessionState = teacherMode ? "waiting" : "open";
+    state.currentQuiz.sessionRunId = runId;
+    state.currentQuiz.sessionStartedAt = null;
+    state.pendingImportReport = null;
+    renderImportReviewBanner();
+    state.quizzes = state.quizzes.map(item => item.id === state.currentQuiz.id ? { ...item, published: true } : item);
+    renderAiJobs();
+    updateSummary();
+    updateEditorPublishControls();
+    toast("Test veröffentlicht.");
+    showPublish(state.currentQuiz.id);
+  } catch (err) {
+    console.error(err);
+    toast("Veröffentlichen fehlgeschlagen.", "error");
+  }
+}
+
+// ---------- Teilen / QR ----------
+$("releasePracticeSolutionsBtn")?.addEventListener("click", async () => {
+  const button = $("releasePracticeSolutionsBtn");
+  if (button.disabled) return;
+  button.disabled = true;
+  const quiz = state.currentQuiz;
+  const uid = state.user?.uid;
+  try {
+    const released = await getPracticePublisher().release(quiz, { unchanged: () => state.user?.uid === uid && state.currentQuiz?.id === quiz.id });
+    if (released) toast("Lösungen für diese Übungsrunde freigegeben.");
+  } catch (error) { toast(error.message || "Lösungsfreigabe fehlgeschlagen.", "error"); }
+  finally { button.disabled = false; }
+});
+
+$("backFromPublish").addEventListener("click", () => openEditor(state.currentQuiz?.id || $("publishedCode").textContent));
+$("openPublishedStudentBtn").addEventListener("click", () => loadStudentQuiz($("publishedCode").textContent));
+$("copyCodeBtn").addEventListener("click", () => copyText($("publishedCode").textContent, "Testcode kopiert."));
+$("copyLinkBtn").addEventListener("click", () => copyText($("publishedLink").value, "Link kopiert."));
+
+async function copyText(text, message) {
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    toast(message);
+  } catch {
+    prompt("Kopieren:", text);  }
+}
+
+async function showPublish(code) {
+  if (guestTourRepo) {
+    const quiz = guestTourRepo.getQuiz(code);
+    if (!quiz) return;
+    state.currentQuiz = quiz;
+    $("publishedCode").textContent = code;
+    $("publishedLink").value = guestCopy('localLink', 'Nur lokaler Übungstest – kein öffentlicher Link');
+    $("qrcode").textContent = guestCopy('noQr', 'Lokales Tutorial ohne QR-Zugang');
+    $("teacherLivePanel")?.replaceChildren();
+    showView('publishView');
+    crewTour?.notify('published', { quizId: code });
+    return;
+  }
+  try {
+    clearPublishSubscriptions();
+    const snap = await getDoc(doc(db, "quizzes", code));
+    if (!snap.exists()) return;
+    state.currentQuiz = { id: code, ...snap.data() };
+    const link = baseStudentUrl(code);
+    $("publishedCode").textContent = code;
+    $("publishedLink").value = link;
+    showView("publishView");
+    const qr = $("qrcode");
+    qr.innerHTML = "";
+    if (window.QRCode) new window.QRCode(qr, { text: link, width: 190, height: 190, correctLevel: window.QRCode.CorrectLevel.M });
+    else qr.textContent = "QR-Code-Bibliothek konnte nicht geladen werden.";
+    setupTeacherLivePanel(code);
+    crewTour?.notify("published", {quizId: code});
+  } catch (err) {
+    console.error(err);
+    toast("Freigabe konnte nicht geladen werden.", "error");
+  }
+}
+
+function setupTeacherLivePanel(code) {
+  clearPublishSubscriptions();
+  const panel = $("teacherLivePanel");
+  if (!panel) return;
+  let liveQuiz = state.currentQuiz;
+  let attempts = [];
+  let submissions = [];
+  const render = () => renderTeacherLivePanel(liveQuiz, attempts, submissions);
+
+  state.publishUnsubs.push(onSnapshot(doc(db, "quizzes", code), (snap) => {
+    if (!snap.exists()) return;
+    liveQuiz = { id: code, ...snap.data() };
+    state.currentQuiz = liveQuiz;
+    render();
+  }, (err) => console.warn("Live-Teststatus:", err)));
+
+  state.publishUnsubs.push(onSnapshot(collection(db, "quizzes", code, "attempts"), (snap) => {
+    attempts = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    render();
+  }, (err) => console.warn("Warteraum:", err)));
+
+  state.publishUnsubs.push(onSnapshot(collection(db, "quizzes", code, "submissions"), (snap) => {
+    submissions = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    render();
+  }, (err) => console.warn("Live-Abgaben:", err)));
+  render();
+}
+
+function renderTeacherLivePanel(quiz, attempts, submissions) {
+  const panel = $("teacherLivePanel");
+  if (!panel || !quiz) return;
+  $("releasePracticeSolutionsBtn")?.classList.toggle("hidden", guestTourRepo !== null || quiz.solutionReleaseMode !== "practice_after_submit" || !quiz.practiceSolutionRevision || quiz.practiceSolutionsReleased === true || quiz.rightsHold === true || quiz.isDeleted === true);
+  if (state.publishClockInterval) clearInterval(state.publishClockInterval);
+  state.publishClockInterval = null;
+
+  const runId = quiz.sessionRunId || "";
+  const runAttempts = attempts.filter((a) => !runId || a.sessionRunId === runId);
+  const runSubmissions = submissions.filter((a) => !runId || a.sessionRunId === runId);
+  const startMode = quiz.startMode === "teacher" ? "teacher" : "student";
+  const minutes = Number(quiz.timeLimitMinutes) > 0 ? Number(quiz.timeLimitMinutes) : 0;
+
+  if (quiz.ended) {
+    panel.innerHTML = `<div class="liveStatusRow"><div class="liveIcon muted">■</div><div><span class="eyebrow">Test beendet</span><h3>Der Schülerzugang ist geschlossen</h3><p>Alle bisherigen Ergebnisse bleiben erhalten.</p></div></div>`;
+    return;
+  }
+
+  if (startMode !== "teacher") {
+    panel.innerHTML = `<div class="liveStatusRow"><div class="liveIcon">▶</div><div><span class="eyebrow">Startmodus</span><h3>Schüler starten selbst</h3><p>${minutes ? `Jeder Schüler startet seinen eigenen ${minutes}-Minuten-Countdown.` : "Die Aufgaben sind nach Eingabe des Namens direkt verfügbar."}</p></div></div>`;
+    return;
+  }
+
+  if (quiz.sessionState === "running") {
+    panel.innerHTML = `
+      <div class="liveStatusRow running"><div class="livePulse"></div><div class="liveGrow"><span class="eyebrow">Live im Unterricht</span><h3>Test läuft</h3><p><strong>${runAttempts.length}</strong> beigetreten · <strong>${runSubmissions.length}</strong> abgegeben</p></div>
+      <div class="liveClock"><small>${minutes ? "Verbleibend" : "Läuft seit"}</small><strong id="teacherSessionClock">--:--</strong></div></div>
+      <div class="liveActions"><button id="liveResultsBtn" class="button secondary" type="button">Ergebnisse ansehen</button><button id="liveEndBtn" class="button danger" type="button">Test beenden</button></div>`;
+    $("liveResultsBtn")?.addEventListener("click", () => openResults(quiz.id));
+    $("liveEndBtn")?.addEventListener("click", () => endQuiz(quiz.id));
+    const tick = () => updateTeacherSessionClock(quiz);
+    tick();
+    state.publishClockInterval = setInterval(tick, 1000);
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="liveStatusRow waiting"><div class="liveIcon waiting">⌛</div><div class="liveGrow"><span class="eyebrow">Warteraum</span><h3>${runAttempts.length} ${runAttempts.length === 1 ? "Schüler ist" : "Schüler sind"} bereit</h3><p>Die Aufgaben bleiben verborgen, bis du den Test für alle startest.${minutes ? ` Dann laufen für alle gleichzeitig ${minutes} Minuten.` : ""}</p></div></div>
+    <div class="liveActions"><button id="liveStartBtn" class="button primary bigAction" type="button">Test für alle starten</button><button id="liveRefreshResultsBtn" class="button ghost" type="button">Ergebnisse</button></div>`;
+  $("liveStartBtn")?.addEventListener("click", () => startTeacherSession(quiz.id, runAttempts.length));
+  $("liveRefreshResultsBtn")?.addEventListener("click", () => openResults(quiz.id));
+}
+
+function updateTeacherSessionClock(quiz) {
+  const el = $("teacherSessionClock");
+  if (!el) return;
+  const started = toMillis(quiz.sessionStartedAt);
+  if (!started) {
+    el.textContent = "00:00";
+    return;
+  }
+  const elapsed = Math.max(0, Math.floor((Date.now() - started) / 1000));
+  const minutes = Number(quiz.timeLimitMinutes) > 0 ? Number(quiz.timeLimitMinutes) : 0;
+  const seconds = minutes ? Math.max(0, Math.round(minutes * 60) - elapsed) : elapsed;
+  el.textContent = formatDuration(seconds);
+  el.classList.toggle("clockWarning", Boolean(minutes && seconds <= 60));
+}
+
+async function startTeacherSession(code, readyCount = 0) {
+  const message = readyCount
+    ? `${readyCount} ${readyCount === 1 ? "Schüler ist" : "Schüler sind"} bereit. Test jetzt für alle starten?`
+    : "Noch niemand ist im Warteraum. Test trotzdem starten?";
+  if (!confirm(message)) return;
+  try {
+    await updateDoc(doc(db, "quizzes", code), {
+      sessionState: "running",
+      sessionStartedAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    toast("Test für alle gestartet.");
+  } catch (err) {
+    console.error(err);
+    toast("Der Test konnte nicht gestartet werden.", "error");
+  }
+}
+
+// ---------- Schüleransicht ----------
+async function loadStudentQuiz(code) {
+  clearStudentSubscriptions();
+  showView("studentView");
+  $("studentQuizCard").innerHTML = `<div id="studentLoading" class="studentLoadingCard"><span class="loadingDot"></span><div><strong>Test wird geladen …</strong><small>Einen Moment bitte.</small></div></div>`;
+  if (guestTourRepo) {
+    const quiz = guestTourRepo.getQuiz(code);
+    if (!quiz?.published) throw new Error('Lokaler Übungstest nicht freigegeben.');
+    const questions = prepareStudentQuestions(quiz, guestTourRepo.getQuestions(code), false);
+    renderStudentQuiz(quiz, questions);
+    return;
+  }
+  try {
+    const quizSnap = await getDoc(doc(db, "quizzes", code));
+    if (!quizSnap.exists()) throw new Error("Dieser Test existiert nicht.");
+    const quiz = { id: code, ...quizSnap.data() };
+    const preview = new URLSearchParams(location.search).get("preview") === "1";
+    const ownerPreview = preview && state.user && quiz.ownerId === state.user.uid;
+    if (quiz.ended && !ownerPreview) throw new Error("Dieser Test wurde beendet.");
+    if (!quiz.published && !ownerPreview) throw new Error("Dieser Test ist noch nicht veröffentlicht.");
+    const qs = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
+    const sourceQuestions = qs.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const questions = prepareStudentQuestions(quiz, sourceQuestions, ownerPreview);
+    renderStudentQuiz(quiz, questions, { ownerPreview });
+  } catch (err) {
+    console.error(err);
+    $("studentQuizCard").innerHTML = `<div class="studentUnavailable"><span class="studentUnavailableIcon">!</span><h1>Test nicht verfügbar</h1><p>${escapeHtml(err.message)}</p><a class="button primary" href="${escapeHtml(location.pathname)}">Zur Startseite</a></div>`;
+  }
+}
+
+function hashString(value) {
+  let h = 2166136261;
+  for (const ch of String(value)) {
+    h ^= ch.charCodeAt(0);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function getStudentShuffleSeed(quizId) {
+  const key = `lernplattform_seed_${quizId}`;
+  let seed = sessionStorage.getItem(key);
+  if (!seed) {
+    seed = `${Date.now()}_${Math.random()}_${crypto.randomUUID?.() || ""}`;
+    sessionStorage.setItem(key, seed);
+  }
+  return seed;
+}
+
+function seededShuffle(array, seedText) {
+  const copy = [...array];
+  let seed = hashString(seedText) || 1;
+  const next = () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(next() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function prepareStudentQuestions(quiz, questions, ownerPreview = false) {
+  if (!quiz.shuffleQuestions || ownerPreview) return questions;
+  return seededShuffle(questions, `${getStudentShuffleSeed(quiz.id)}:questions`);
+}
+
+function studentOptionEntries(quiz, q, ownerPreview = false) {
+  const entries = (q.options || []).map((option, originalIndex) => ({ option, originalIndex }));
+  if (!quiz.shuffleAnswers || ownerPreview) return entries;
+  return seededShuffle(entries, `${getStudentShuffleSeed(quiz.id)}:answers:${q.id}`);
+}
+
+function shuffled(array) {
+  const copy = [...array];
+  for (let i = copy.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function renderGapfillStudent(section, q) {
+  const wrap = document.createElement("div");
+  wrap.className = "gapSentence";
+  const appendText = text => {
+    const span = document.createElement("span");
+    span.innerHTML = formatMathText(text);
+    wrap.appendChild(span);
+  };
+  let last = 0;
+  let gapIndex = 0;
+  const regex = /\[([^\]]+)\]/g;
+  let match;
+  while ((match = regex.exec(q.text))) {
+    appendText(q.text.slice(last, match.index));
+    const input = document.createElement("input");
+    const color = q.gapColors?.[gapIndex];
+    input.className = `inlineGap${["blue", "orange", "green", "purple"].includes(color) ? ` gapColor-${color}` : ""}`;
+    input.dataset.gapIndex = String(gapIndex++);
+    input.type = "text";
+    input.placeholder = "…";
+    wrap.appendChild(input);
+    last = match.index + match[0].length;
+  }
+  appendText(q.text.slice(last));
+  section.appendChild(wrap);
+}
+
+function makeDragItem(text, key) {
+  const item = document.createElement("button");
+  item.type = "button";
+  item.className = "dragItem";
+  item.draggable = true;
+  item.dataset.key = String(key);
+  item.textContent = text;
+  item.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("text/plain", String(key));
+    item.classList.add("dragging");
+  });
+  item.addEventListener("dragend", () => item.classList.remove("dragging"));
+  return item;
+}
+
+function setupMoveableBank(container) {
+  let selected = null;
+  const items = () => Array.from(container.querySelectorAll(".dragItem"));
+  const zones = () => Array.from(container.querySelectorAll(".dropZone, .dragBank"));
+
+  items().forEach((item) => {
+    item.addEventListener("click", () => {
+      items().forEach((x) => x.classList.remove("selectedDrag"));
+      if (selected === item) {
+        selected = null;
+        return;
+      }
+      selected = item;
+      item.classList.add("selectedDrag");
+    });
+  });
+
+  zones().forEach((zone) => {
+    zone.addEventListener("dragover", (e) => e.preventDefault());
+    zone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      const key = e.dataTransfer.getData("text/plain");
+      const item = container.querySelector(`.dragItem[data-key="${CSS.escape(key)}"]`);
+      if (item) moveItemToZone(item, zone, container);
+    });
+    zone.addEventListener("click", (e) => {
+      if (e.target.closest(".dragItem")) return;
+      if (selected) {
+        moveItemToZone(selected, zone, container);
+        selected.classList.remove("selectedDrag");
+        selected = null;
+      }
+    });
+  });
+}
+
+function moveItemToZone(item, zone, container) {
+  if (zone.classList.contains("singleDrop") && zone.querySelector(".dragItem")) {
+    const existing = zone.querySelector(".dragItem");
+    container.querySelector(".dragBank")?.appendChild(existing);
+  }
+  zone.appendChild(item);
+}
+
+function renderMatchingStudent(section, q) {
+  const root = document.createElement("div");
+  root.className = "interactionBox matchingBox";
+  const bank = document.createElement("div");
+  bank.className = "dragBank";
+  bank.innerHTML = `<span class="dropHint">Zuordnungen</span>`;
+  const audioItems = new Map(questionAnswerAudioEntries(q).map(entry => [entry.key, entry]));
+  if (q.audioAnswerMode === "audio-only" && !questionAnswerAudioReady(q)) { section.textContent = "Sprachnotizen fehlen oder sind veraltet."; return; }
+  shuffled(q.pairs.map((p, idx) => ({ ...p, idx }))).forEach((p, shownIndex) => bank.appendChild(q.audioAnswerMode === "audio-only" ? makeAudioDragItem(`Sprachnotiz ${shownIndex + 1}`, p.idx, audioItems.get(`p${p.idx}`).asset.audioDataUrl) : makeDragItem(p.right, p.idx)));
+  root.appendChild(bank);
+  q.pairs.forEach((p, idx) => {
+    const row = document.createElement("div");
+    row.className = "matchRow";
+    row.innerHTML = `<div class="matchLeft">${escapeHtml(p.left)}</div><div class="dropZone singleDrop" data-slot="${idx}"><span class="dropHint">hier ablegen</span></div>`;
+    root.appendChild(row);
+  });
+  section.appendChild(root);
+  setupMoveableBank(root);
+}
+
+function renderOrderingStudent(section, q) {
+  const list = document.createElement("div");
+  list.className = "sortableList";
+  const audioItems = new Map(questionAnswerAudioEntries(q).map(entry => [entry.key, entry]));
+  if (q.audioAnswerMode === "audio-only" && !questionAnswerAudioReady(q)) { section.textContent = "Sprachnotizen fehlen oder sind veraltet."; return; }
+  shuffled(q.items.map((text, idx) => ({ text, idx }))).forEach(({ text, idx }, shownIndex) => {
+    const row = document.createElement("div");
+    row.className = "sortItem";
+    row.draggable = true;
+    row.dataset.key = String(idx);
+    row.innerHTML = `<span class="sortGrip">⋮⋮</span><span class="sortText">${escapeHtml(q.audioAnswerMode === "audio-only" ? `Sprachnotiz ${shownIndex + 1}` : text)}</span><div class="sortButtons"><button type="button" class="iconButton up">↑</button><button type="button" class="iconButton down">↓</button></div>`;
+    if (q.audioAnswerMode === "audio-only") row.querySelector(".sortText").replaceChildren(makeAudioDragItem(`Sprachnotiz ${shownIndex + 1}`, String(idx), audioItems.get(`i${idx}`).asset.audioDataUrl));
+    row.querySelector(".up").addEventListener("click", () => {
+      const prev = row.previousElementSibling;
+      if (prev) list.insertBefore(row, prev);
+    });
+    row.querySelector(".down").addEventListener("click", () => {
+      const next = row.nextElementSibling;
+      if (next) list.insertBefore(next, row);
+    });
+    row.addEventListener("dragstart", (e) => {
+      e.dataTransfer.setData("text/plain", row.dataset.key);
+      row.classList.add("dragging");
+    });
+    row.addEventListener("dragend", () => row.classList.remove("dragging"));
+    list.appendChild(row);
+  });
+  list.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    const dragging = list.querySelector(".dragging");
+    if (!dragging) return;
+    const others = [...list.querySelectorAll(".sortItem:not(.dragging)")];
+    const target = others.find((el) => e.clientY <= el.getBoundingClientRect().top + el.offsetHeight / 2);
+    if (target) list.insertBefore(dragging, target);
+    else list.appendChild(dragging);
+  });
+  section.appendChild(list);
+}
+
+function renderGroupingStudent(section, q) {
+  const root = document.createElement("div");
+  root.className = "interactionBox groupingBox";
+  const bank = document.createElement("div");
+  bank.className = "dragBank";
+  bank.innerHTML = `<span class="dropHint">Elemente</span>`;
+  const items = [];
+  q.groups.forEach((g, gi) => (g.items || []).forEach((text, ii) => items.push({ text, key: `g${gi}_i${ii}` })));
+  const audioItems = new Map(questionAnswerAudioEntries(q).map(entry => [entry.key, entry]));
+  if (q.audioAnswerMode === "audio-only" && !questionAnswerAudioReady(q)) {
+    root.textContent = "Sprachnotizen fehlen oder sind veraltet. Bitte vor dem Veröffentlichen neu erzeugen.";
+    section.appendChild(root);
+    return;
+  }
+  shuffled(items).forEach((item, index) => bank.appendChild(q.audioAnswerMode === "audio-only" ? makeAudioDragItem(`Sprachnotiz ${index + 1}`, item.key, audioItems.get(item.key).asset.audioDataUrl) : makeDragItem(item.text, item.key)));
+  root.appendChild(bank);
+  const grid = document.createElement("div");
+  grid.className = "groupDropGrid";
+  q.groups.forEach((g, gi) => {
+    const zone = document.createElement("div");
+    zone.className = "dropZone groupDrop";
+    zone.dataset.group = String(gi);
+    zone.innerHTML = `<strong>${escapeHtml(g.name)}</strong><span class="dropHint">hier ablegen</span>`;
+    grid.appendChild(zone);
+  });
+  root.appendChild(grid);
+  section.appendChild(root);
+  setupMoveableBank(root);
+}
+
+function makeAudioDragItem(label, key, src) {
+  const item = makeDragItem(label, key);
+  item.classList.add("audioDragItem");
+  const player = document.createElement("audio");
+  player.controls = true;
+  player.setAttribute("controlslist", "nodownload noplaybackrate");
+  player.preload = "metadata";
+  player.src = src;
+  player.setAttribute("aria-label", `${label} anhören`);
+  ["click", "pointerdown", "keydown"].forEach(type => player.addEventListener(type, event => event.stopPropagation()));
+  item.appendChild(player);
+  return item;
+}
+
+function renderMarkwordsStudent(section, q) {
+  const wrap = document.createElement("div");
+  wrap.className = "markWordsBox";
+  const groups = (q.markGroups || []).filter(group => group.name && ["blue", "orange", "green", "purple"].includes(group.color));
+  let activeColor = groups[0]?.color || "";
+  if (groups.length) {
+    const palette = document.createElement("div");
+    palette.className = "markColorPalette";
+    groups.forEach(group => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `markColorChoice markColor-${group.color}`;
+      button.textContent = group.name;
+      button.setAttribute("aria-pressed", String(activeColor === group.color));
+      button.addEventListener("click", () => { activeColor = group.color; palette.querySelectorAll("button").forEach(choice => choice.setAttribute("aria-pressed", String(choice === button))); });
+      palette.appendChild(button);
+    });
+    section.appendChild(palette);
+  }
+  tokenizeWords(q.passage).forEach((token) => {
+    if (!token.isWord) {
+      wrap.appendChild(document.createTextNode(token.text));
+      return;
+    }
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "wordToken";
+    btn.dataset.wordIndex = String(token.wordIndex);
+    btn.textContent = token.text;
+    btn.setAttribute("aria-pressed", "false");
+    btn.addEventListener("click", () => {
+      if (groups.length) {
+        btn.dataset.markColor = btn.dataset.markColor === activeColor ? "" : activeColor;
+        btn.classList.toggle("marked", Boolean(btn.dataset.markColor));
+        const name = groups.find(group => group.color === btn.dataset.markColor)?.name;
+        btn.textContent = token.text + (name ? ` (${name})` : "");
+        btn.setAttribute("aria-label", btn.textContent);
+      } else btn.classList.toggle("marked");
+      btn.setAttribute("aria-pressed", String(btn.classList.contains("marked")));
+    });
+    wrap.appendChild(btn);
+  });
+  section.appendChild(wrap);
+}
+
+function studentTimerKey(quizId) {
+  return `lernplattform_timer_${quizId}`;
+}
+
+function readStoredTimer(quizId) {
+  if (guestTourRepo) return state.studentAttempt?.quizId === quizId ? state.studentAttempt : null;
+  try {
+    const value = JSON.parse(localStorage.getItem(studentTimerKey(quizId)) || "null");
+    return value && (value.attemptId || Number(value.startedAt) > 0) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveStoredTimer(quizId, value) {
+  if (guestTourRepo) { state.studentAttempt = { ...value, quizId }; return; }
+  localStorage.setItem(studentTimerKey(quizId), JSON.stringify(value));
+}
+
+async function resolveStudentAttempt(quiz, name) {
+  if (guestTourRepo) {
+    const attempt = { quizId: quiz.id, attemptId: 'local-attempt', startedAt: Date.now(), name,
+      timeLimitMinutes: Number(quiz.timeLimitMinutes), sessionRunId: null, mode: 'student' };
+    state.studentAttempt = attempt;
+    return attempt;
+  }
+  const stored = readStoredTimer(quiz.id);
+  if (stored?.attemptId) {
+    try {
+      const snap = await getDoc(doc(db, "quizzes", quiz.id, "attempts", stored.attemptId));
+      if (snap.exists()) {
+        const data = snap.data();
+        const startedAt = toMillis(data.startedAt) || Number(stored.startedAt) || 0;
+        if (startedAt) {
+          const attempt = {
+            attemptId: stored.attemptId,
+            startedAt,
+            name: data.studentName || stored.name || name,
+            timeLimitMinutes: Number(data.timeLimitMinutes || quiz.timeLimitMinutes),
+            sessionRunId: data.sessionRunId || quiz.sessionRunId || null,
+            mode: data.mode || "student"
+          };
+          saveStoredTimer(quiz.id, attempt);
+          state.studentAttempt = attempt;
+          return attempt;
+        }
+      }
+    } catch (err) {
+      console.warn("Gespeicherter Zeitversuch konnte nicht geladen werden:", err);
+    }
+  }
+
+  if (stored?.startedAt && !stored?.attemptId) {
+    const attempt = {
+      attemptId: null,
+      startedAt: Number(stored.startedAt),
+      name: stored.name || name,
+      timeLimitMinutes: Number(quiz.timeLimitMinutes),
+      sessionRunId: quiz.sessionRunId || null,
+      mode: "student"
+    };
+    state.studentAttempt = attempt;
+    return attempt;
+  }
+
+  const attemptId = randomId("attempt");
+  const ref = doc(db, "quizzes", quiz.id, "attempts", attemptId);
+  await setDoc(ref, {
+    studentName: name,
+    mode: "student",
+    status: "running",
+    timeLimitMinutes: Math.round(Number(quiz.timeLimitMinutes)),
+    sessionRunId: quiz.sessionRunId || null,
+    joinedAt: serverTimestamp(),
+    startedAt: serverTimestamp(),
+    createdAtLocal: new Date().toISOString()
+  });
+  const snap = await getDoc(ref);
+  const startedAt = toMillis(snap.data()?.startedAt) || Date.now();
+  const attempt = {
+    attemptId,
+    startedAt,
+    name,
+    timeLimitMinutes: Math.round(Number(quiz.timeLimitMinutes)),
+    sessionRunId: quiz.sessionRunId || null,
+    mode: "student"
+  };
+  saveStoredTimer(quiz.id, attempt);
+  state.studentAttempt = attempt;
+  return attempt;
+}
+
+async function joinTeacherSession(quiz, name) {
+  const stored = readStoredTimer(quiz.id);
+  if (stored?.attemptId && stored.sessionRunId === quiz.sessionRunId) {
+    try {
+      const snap = await getDoc(doc(db, "quizzes", quiz.id, "attempts", stored.attemptId));
+      if (snap.exists()) {
+        const attempt = {
+          attemptId: stored.attemptId,
+          name: snap.data().studentName || stored.name || name,
+          sessionRunId: quiz.sessionRunId || null,
+          timeLimitMinutes: Number(quiz.timeLimitMinutes) > 0 ? Number(quiz.timeLimitMinutes) : null,
+          mode: "teacher",
+          startedAt: toMillis(quiz.sessionStartedAt) || null
+        };
+        saveStoredTimer(quiz.id, attempt);
+        state.studentAttempt = attempt;
+        return attempt;
+      }
+    } catch (err) {
+      console.warn("Gespeicherter Warteraum-Eintrag konnte nicht geladen werden:", err);
+    }
+  }
+
+  const attemptId = randomId("attempt");
+  const ref = doc(db, "quizzes", quiz.id, "attempts", attemptId);
+  await setDoc(ref, {
+    studentName: name,
+    mode: "teacher",
+    status: quiz.sessionState === "running" ? "running" : "ready",
+    timeLimitMinutes: Number(quiz.timeLimitMinutes) > 0 ? Math.round(Number(quiz.timeLimitMinutes)) : null,
+    sessionRunId: quiz.sessionRunId || null,
+    joinedAt: serverTimestamp(),
+    createdAtLocal: new Date().toISOString()
+  });
+  const attempt = {
+    attemptId,
+    name,
+    sessionRunId: quiz.sessionRunId || null,
+    timeLimitMinutes: Number(quiz.timeLimitMinutes) > 0 ? Number(quiz.timeLimitMinutes) : null,
+    mode: "teacher",
+    startedAt: toMillis(quiz.sessionStartedAt) || null
+  };
+  saveStoredTimer(quiz.id, attempt);
+  state.studentAttempt = attempt;
+  return attempt;
+}
+
+function stopStudentTimer() {
+  if (state.studentTimerInterval) clearInterval(state.studentTimerInterval);
+  state.studentTimerInterval = null;
+}
+
+function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
+  stopStudentTimer();
+  clearStudentSubscriptions();
+  const root = $("studentQuizCard");
+  root.dataset.reviewQuizId = quiz.id;
+  const minutes = Number(quiz.timeLimitMinutes) > 0 ? Math.round(Number(quiz.timeLimitMinutes)) : 0;
+  const timed = minutes > 0 && !ownerPreview;
+  const teacherControlled = quiz.startMode === "teacher" && !ownerPreview;
+  const storedAttempt = !ownerPreview ? readStoredTimer(quiz.id) : null;
+  const storedForRun = storedAttempt && (!teacherControlled || storedAttempt.sessionRunId === quiz.sessionRunId) ? storedAttempt : null;
+  const selfTimedGate = timed && !teacherControlled;
+  const gateRequired = teacherControlled || selfTimedGate;
+  const timerMeta = minutes > 0
+    ? `<span class="studentTimeInfo">⏱ ${minutes} Minuten${ownerPreview ? " · Vorschau ohne laufenden Timer" : teacherControlled ? " · gemeinsamer Start" : ""}</span>`
+    : teacherControlled ? `<span class="studentTimeInfo">👩‍🏫 gemeinsamer Start</span>` : "";
+
+  let gateHtml = "";
+  if (teacherControlled) {
+    const running = quiz.sessionState === "running";
+    gateHtml = `<div id="studentStartGate" class="studentStartGate teacherGate">
+      <div class="studentGateIcon">${running ? "▶" : "⌛"}</div>
+      <div class="studentGateCopy"><strong>${running ? "Der Test läuft bereits" : storedForRun ? "Du bist im Warteraum" : "Gemeinsamer Start durch die Lehrkraft"}</strong>
+      <p>${running ? "Du kannst jetzt noch beitreten. Bei einem Zeitlimit bekommst du nur die verbleibende Zeit." : storedForRun ? "Du bist bereit. Warte, bis deine Lehrkraft den Test für alle startet." : "Gib deinen Namen ein und melde dich als bereit. Die Aufgaben erscheinen erst nach dem Start durch die Lehrkraft."}</p></div>
+      <button id="studentStartBtn" class="button primary" type="button">${running ? "Jetzt beitreten" : storedForRun ? "Bereit ✓" : "Ich bin bereit"}</button>
+    </div>`;
+  } else if (selfTimedGate) {
+    gateHtml = `<div id="studentStartGate" class="studentStartGate"><div class="studentGateIcon">⏱</div><div class="studentGateCopy"><strong>${storedForRun ? "Laufenden Test fortsetzen" : `Zeitlimit: ${minutes} Minuten`}</strong><p>${storedForRun ? "Der Timer läuft seit deinem ersten Start weiter." : "Der Countdown beginnt erst, wenn du auf „Test starten“ klickst. Bei 00:00 werden deine aktuellen Antworten automatisch abgegeben."}</p></div><button id="studentStartBtn" class="button primary" type="button">${storedForRun ? "Test fortsetzen" : "Test starten"}</button></div>`;
+  }
+
+  root.innerHTML = `
+    <div class="studentHead">
+      <div class="studentHeadTop"><span class="eyebrow">${escapeHtml(quiz.subject || "Test")} · Klasse ${escapeHtml(quiz.grade || "–")}</span>${timerMeta}</div>
+      <h1>${escapeHtml(quiz.title)}</h1>
+      <p>${escapeHtml(quiz.description || "")}</p>
+      <div class="studentMetaRow"><span>${questions.length} Aufgaben</span><span>${quiz.totalPoints || round1(questions.reduce((s, q) => s + Number(q.points || 0), 0))} Punkte</span><span>Code ${quiz.id}</span></div>
+    </div>
+    ${ownerPreview ? `<div class="studentPreviewNotice" role="note"><strong>Vorschau als Schüler</strong><span>In dieser Vorschau werden Antworten und Ergebnisse nicht gespeichert.</span></div>` : ""}
+    <form id="studentForm">
+      <div class="studentIdentityCard"><label class="studentNameLabel">Wie dürfen wir dich nennen?<input id="studentName" type="text" required maxlength="120" autocomplete="off" placeholder="Name oder vereinbartes Kürzel" value="${escapeHtml(storedForRun?.name || "")}"></label><small>Du kannst aus Datenschutzgründen ein von deiner Lehrkraft vergebenes Kürzel statt deines Namens verwenden.</small></div>
+      ${gateHtml}
+      <div id="studentTimerBar" class="studentTimerBar hidden"><span>Verbleibende Zeit</span><strong id="studentTimerText">${minutes ? `${String(minutes).padStart(2,"0")}:00` : ""}</strong></div>
+      <div id="studentProgressBar" class="studentProgressWrap ${gateRequired ? "hidden" : ""}">
+        <div class="studentProgressTop"><strong id="studentProgressText">0 von ${questions.length} bearbeitet</strong><span id="studentOpenCount">${questions.length} offen</span></div>
+        <div class="studentProgressTrack"><span id="studentProgressFill"></span></div>
+        <div id="studentQuestionNav" class="studentQuestionNav" aria-label="Aufgabennavigation"></div>
+      </div>
+      <div id="studentQuestions" class="${gateRequired ? "hidden" : ""}"></div>
+      <div id="studentSubmitArea" class="studentSubmitArea ${gateRequired ? "hidden" : ""}"><div><strong>Fertig?</strong><small>${ownerPreview ? "Prüfe deine Antworten und teste anschließend die Auswertung. Es wird keine Abgabe gespeichert." : "Prüfe offene Aufgaben noch einmal, bevor du endgültig abgibst."}</small></div><button id="studentSubmitBtn" class="button primary studentSubmit" type="submit">${ownerPreview ? "Vorschau auswerten" : "Antworten abgeben"}</button></div>
+    </form>
+    <div id="studentResult" class="studentResult hidden"></div>`;
+  const qRoot = $("studentQuestions");
+  const contentLabels = assessmentContentLabels(quiz.contentLocale);
+
+  questions.forEach((q, i) => {
+    const section = document.createElement("section");
+    section.className = "studentQuestion";
+    section.dataset.qid = q.id;
+    section.dataset.reviewId = `student-question-${q.id}`;
+    section.dataset.type = q.type;
+    section.dataset.index = String(i);
+    if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? escapeHtml(String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() || (q.type === "truefalse" ? contentLabels.listeningTrueFalseInstruction : contentLabels.missingListeningInstruction)) : "Audio fehlt" : formatMathText(q.text)}</h3>`;
+    else section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>Lückentext</h3>`;
+
+    if (getQuestionImageSrc(q)) {
+      const figure = document.createElement("figure");
+      figure.className = "studentQuestionImage";
+      figure.innerHTML = `<img src="${escapeHtml(getQuestionImageSrc(q))}" alt="${escapeHtml(q.imageAlt || contentLabels.questionImage)}" data-i18n-content>`;
+      section.appendChild(figure);
+    }
+    const studentAudioSrc = String(q?.audioDataUrl || "");
+    if (studentAudioSrc.startsWith("data:audio/")) {
+      const audioBox = document.createElement("div");
+      audioBox.className = "studentQuestionAudio";
+      const label = document.createElement("strong");
+      label.textContent = "🔊 Höraufgabe";
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.setAttribute("controlslist", "nodownload noplaybackrate");
+      audio.preload = "metadata";
+      audio.src = studentAudioSrc;
+      audio.setAttribute("aria-label", `Audio zu Aufgabe ${i + 1} anhören`);
+      audioBox.append(label, audio);
+      section.appendChild(audioBox);
+    }
+
+    if (q.type === "text") {
+      const inp = document.createElement("input");
+      inp.type = "text";
+      inp.name = q.id;
+      inp.placeholder = "Antwort eingeben";
+      section.appendChild(inp);
+    } else if (q.type === "number") {
+      const row = document.createElement("div");
+      row.className = "numberStudentRow";
+      row.innerHTML = `<input class="numberStudentInput" type="text" inputmode="decimal" placeholder="Ergebnis"><span>${escapeHtml(q.unit || "")}</span>`;
+      section.appendChild(row);
+    } else if (q.type === "dropdown") {
+      const sel = document.createElement("select");
+      sel.name = q.id;
+      const entries = studentOptionEntries(quiz, q, ownerPreview);
+      sel.innerHTML = `<option value="">Bitte auswählen …</option>` + entries.map(({ option, originalIndex }, shownIndex) => `<option value="${originalIndex}">${escapeHtml(q.audioAnswerMode === "audio-only" ? `${contentLabels.answer} ${shownIndex + 1}` : option.text)}</option>`).join("");
+      if (q.audioAnswerMode === "audio-only") entries.forEach(({ option, originalIndex }, shownIndex) => section.appendChild(makeAudioDragItem(`${contentLabels.answer} ${shownIndex + 1}`, String(originalIndex), option.audioDataUrl)));
+      section.appendChild(sel);
+    } else if (q.type === "single" || q.type === "multi") {
+      const imageOnly = q.options?.length >= 2 && q.options.every(o => o.imageDataUrl) &&
+        (q.imageChoicesOnly || q.options.every(o => /^Abbildung:\s*/i.test(o.imageAlt || "")));
+      studentOptionEntries(quiz, q, ownerPreview).forEach(({ option, originalIndex }, shownIndex) => {
+        const label = document.createElement("label");
+        label.className = "choice";
+        const answerAudioOnly = q.audioAnswerMode === "audio-only";
+        const text = answerAudioOnly ? `Antwort ${shownIndex + 1}` : imageOnly ? contentLabels.imageChoice(shownIndex) : option.text;
+        const alt = option.imageAlt || (imageOnly ? "" : contentLabels.answerImage);
+        label.innerHTML = `<input type="${q.type === "multi" ? "checkbox" : "radio"}" name="${q.id}" value="${originalIndex}">${option.imageDataUrl ? `<img class="choiceImage" src="${escapeHtml(option.imageDataUrl)}" alt="${escapeHtml(alt)}">` : ""}<span>${formatMathText(text)}</span>`;
+        if (answerAudioOnly) {
+          label.querySelector("span").hidden = true;
+          label.querySelector("input").setAttribute("aria-label", text);
+        }
+        if (answerAudioOnly && String(option.audioDataUrl || "").startsWith("data:audio/mpeg;base64,") && option.audioNeedsRegeneration !== true) {
+          const player = document.createElement("audio");
+          player.controls = true;
+          player.setAttribute("controlslist", "nodownload noplaybackrate");
+          player.preload = "metadata";
+          player.src = option.audioDataUrl;
+          player.setAttribute("aria-label", `Antwort ${shownIndex + 1} anhören`);
+          player.addEventListener("click", event => event.stopPropagation());
+          label.appendChild(player);
+        } else if (answerAudioOnly) {
+          label.querySelector("input").disabled = true;
+          const warning = document.createElement("small");
+          warning.className = "aiInputError";
+          warning.textContent = "Audio fehlt oder ist veraltet.";
+          label.appendChild(warning);
+        }
+        section.appendChild(label);
+      });
+    } else if (q.type === "truefalse") {
+      [true, false].forEach((value) => {
+        const label = document.createElement("label");
+        label.className = "choice";
+        label.innerHTML = `<input type="radio" name="${q.id}" value="${value}"><span data-i18n-content>${value ? contentLabels.trueLabel : contentLabels.falseLabel}</span>`;
+        section.appendChild(label);
+      });
+    } else if (q.type === "gapfill") {
+      renderGapfillStudent(section, q);
+    } else if (q.type === "matching") {
+      renderMatchingStudent(section, q);
+    } else if (q.type === "ordering") {
+      renderOrderingStudent(section, q);
+    } else if (q.type === "grouping") {
+      renderGroupingStudent(section, q);
+    } else if (q.type === "markwords") {
+      renderMarkwordsStudent(section, q);
+    }
+
+    qRoot.appendChild(section);
+  });
+
+  setupStudentProgress(questions);
+  $("studentForm").addEventListener("submit", (e) => submitStudentQuiz(e, quiz, questions, { ownerPreview }));
+  $("studentName").addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" || e.isComposing) return;
+    e.preventDefault();
+    if (!e.currentTarget.value.trim()) return toast("Bitte zuerst deinen Namen oder dein Kürzel eingeben.", "error");
+    e.currentTarget.blur();
+    const next = $("studentStartBtn") && !$("studentStartBtn").disabled
+      ? $("studentStartBtn") : $("studentQuestions")?.querySelector("input, select, textarea, button");
+    next?.focus();
+    toast("Name übernommen. Abgabe erst über „Antworten abgeben“.");
+  });
+
+  if (teacherControlled) {
+    const btn = $("studentStartBtn");
+    if (storedForRun && quiz.sessionState !== "running") {
+      $("studentName").readOnly = true;
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Bereit ✓";
+      }
+      watchTeacherStart(quiz, questions, storedForRun);
+    } else if (storedForRun && quiz.sessionState === "running") {
+      $("studentName").readOnly = true;
+      activateStudentTest(quiz, questions, storedForRun, { teacherControlled: true });
+      watchTeacherStart(quiz, questions, storedForRun);
+    } else {
+      btn?.addEventListener("click", () => joinTeacherControlledQuiz(quiz, questions));
+    }
+  } else if (selfTimedGate) {
+    $("studentStartBtn")?.addEventListener("click", () => startTimedStudentQuiz(quiz, questions));
+  } else {
+    $("studentTimerBar")?.classList.add("hidden");
+    refreshStudentProgress(questions);
+  }
+  crewTour?.notify("student-ready", {quizId: quiz.id});
+}
+
+async function joinTeacherControlledQuiz(quiz, questions) {
+  const nameInput = $("studentName");
+  const name = nameInput?.value.trim() || "";
+  if (!name) {
+    toast("Bitte zuerst deinen Namen oder dein Kürzel eingeben.", "error");
+    nameInput?.focus();
+    return;
+  }
+  const btn = $("studentStartBtn");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Wird angemeldet …";
+  }
+  try {
+    const latestSnap = await getDoc(doc(db, "quizzes", quiz.id));
+    if (!latestSnap.exists()) throw new Error("Test nicht gefunden");
+    const latestQuiz = { id: quiz.id, ...latestSnap.data() };
+    if (latestQuiz.ended || !latestQuiz.published) throw new Error("Der Test ist nicht mehr geöffnet.");
+    const attempt = await joinTeacherSession(latestQuiz, name);
+    nameInput.value = attempt.name || name;
+    nameInput.readOnly = true;
+    if (latestQuiz.sessionState === "running") {
+      activateStudentTest(latestQuiz, questions, attempt, { teacherControlled: true });
+    } else {
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Bereit ✓";
+      }
+      const copy = $("studentStartGate")?.querySelector(".studentGateCopy");
+      if (copy) copy.innerHTML = `<strong>Du bist bereit</strong><p>Warte, bis deine Lehrkraft den Test für alle startet. Diese Seite aktualisiert sich automatisch.</p>`;
+    }
+    watchTeacherStart(latestQuiz, questions, attempt);
+  } catch (err) {
+    console.error(err);
+    toast(err.message || "Der Warteraum konnte nicht geöffnet werden.", "error");
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Ich bin bereit";
+    }
+  }
+}
+
+function watchTeacherStart(quiz, questions, attempt) {
+  try { state.studentQuizUnsub?.(); } catch {}
+  state.studentQuizUnsub = onSnapshot(doc(db, "quizzes", quiz.id), (snap) => {
+    if (!snap.exists()) return;
+    const liveQuiz = { id: quiz.id, ...snap.data() };
+    if (liveQuiz.ended || !liveQuiz.published) {
+      stopStudentTimer();
+      const gate = $("studentStartGate");
+      if (gate) gate.innerHTML = `<div class="studentGateIcon">■</div><div class="studentGateCopy"><strong>Der Test wurde beendet</strong><p>Bitte wende dich an deine Lehrkraft.</p></div>`;
+      $("studentQuestions")?.classList.add("hidden");
+      $("studentSubmitArea")?.classList.add("hidden");
+      $("studentProgressBar")?.classList.add("hidden");
+      return;
+    }
+    if (attempt.sessionRunId && liveQuiz.sessionRunId && attempt.sessionRunId !== liveQuiz.sessionRunId) {
+      const gate = $("studentStartGate");
+      if (gate) gate.innerHTML = `<div class="studentGateIcon">↻</div><div class="studentGateCopy"><strong>Eine neue Testrunde wurde vorbereitet</strong><p>Lade die Seite neu und melde dich erneut als bereit.</p></div><button class="button primary" type="button" onclick="location.reload()">Neu laden</button>`;
+      return;
+    }
+    if (liveQuiz.sessionState === "running") {
+      activateStudentTest(liveQuiz, questions, { ...attempt, startedAt: toMillis(liveQuiz.sessionStartedAt) || attempt.startedAt }, { teacherControlled: true });
+    }
+  }, (err) => console.warn("Live-Start konnte nicht beobachtet werden:", err));
+}
+
+function activateStudentTest(quiz, questions, attempt, { teacherControlled = false } = {}) {
+  const gate = $("studentStartGate");
+  if (gate?.dataset.activated === "1") return;
+  const startedAt = Number(attempt?.startedAt || toMillis(quiz.sessionStartedAt) || 0);
+  const minutes = Number(attempt?.timeLimitMinutes || quiz.timeLimitMinutes) > 0 ? Number(attempt?.timeLimitMinutes || quiz.timeLimitMinutes) : 0;
+  state.studentAttempt = { ...(attempt || {}), startedAt: startedAt || null, timeLimitMinutes: minutes || null, sessionRunId: attempt?.sessionRunId || quiz.sessionRunId || null };
+  if (state.studentAttempt.attemptId) saveStoredTimer(quiz.id, state.studentAttempt);
+  if (teacherControlled && minutes && startedAt) {
+    const remaining = Math.round(minutes * 60) - Math.floor((Date.now() - startedAt) / 1000);
+    if (remaining <= 0) {
+      if (gate) gate.innerHTML = `<div class="studentGateIcon">⌛</div><div class="studentGateCopy"><strong>Die Bearbeitungszeit ist abgelaufen</strong><p>Bitte wende dich an deine Lehrkraft.</p></div>`;
+      return;
+    }
+  }
+  if (gate) {
+    gate.dataset.activated = "1";
+    gate.classList.add("hidden");
+  }
+  $("studentQuestions")?.classList.remove("hidden");
+  $("studentSubmitArea")?.classList.remove("hidden");
+  $("studentProgressBar")?.classList.remove("hidden");
+  if ($("studentName")) $("studentName").readOnly = true;
+  if (minutes && startedAt) {
+    $("studentTimerBar")?.classList.remove("hidden");
+    runStudentTimer(quiz, questions, startedAt, minutes);
+  } else {
+    $("studentTimerBar")?.classList.add("hidden");
+  }
+  refreshStudentProgress(questions);
+  setTimeout(() => $("studentProgressBar")?.scrollIntoView({ behavior: scrollBehavior(), block: "start" }), 80);
+  crewTour?.notify("student-started", {quizId: quiz.id});
+}
+
+async function startTimedStudentQuiz(quiz, questions) {
+  const nameInput = $("studentName");
+  let name = nameInput.value.trim();
+  if (!name) {
+    toast("Bitte zuerst deinen Namen oder dein Kürzel eingeben.", "error");
+    nameInput.focus();
+    return;
+  }
+  const startBtn = $("studentStartBtn");
+  if (startBtn) {
+    startBtn.disabled = true;
+    startBtn.textContent = "Timer wird gestartet …";
+  }
+  try {
+    const attempt = await resolveStudentAttempt(quiz, name);
+    name = attempt.name || name;
+    nameInput.value = name;
+    nameInput.readOnly = true;
+    activateStudentTest(quiz, questions, attempt);
+  } catch (err) {
+    console.error(err);
+    toast("Der Timer konnte nicht gestartet werden. Bitte Seite neu laden und erneut versuchen.", "error");
+    if (startBtn) {
+      startBtn.disabled = false;
+      startBtn.textContent = readStoredTimer(quiz.id) ? "Test fortsetzen" : "Test starten";
+    }
+  }
+}
+
+function setupStudentProgress(questions) {
+  const nav = $("studentQuestionNav");
+  if (!nav) return;
+  nav.innerHTML = questions.map((q, i) => `<button class="questionNavDot" type="button" data-qid="${escapeHtml(q.id)}" title="Aufgabe ${i + 1}" aria-label="Zu Aufgabe ${i + 1}">${i + 1}</button>`).join("");
+  nav.querySelectorAll(".questionNavDot").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(btn.dataset.qid)}"]`);
+      if (section) { section.tabIndex = -1; section.focus({ preventScroll: true }); section.scrollIntoView({ behavior: scrollBehavior(), block: "start" }); }
+    });
+  });
+  const root = $("studentQuestions");
+  const markTouched = (event) => {
+    const section = event.target.closest?.(".studentQuestion");
+    if (section) section.dataset.touched = "1";
+    setTimeout(() => refreshStudentProgress(questions), 0);
+  };
+  root?.addEventListener("input", markTouched);
+  root?.addEventListener("change", markTouched);
+  root?.addEventListener("click", markTouched);
+  state.studentProgressObserver = new MutationObserver(() => refreshStudentProgress(questions));
+  if (root) state.studentProgressObserver.observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ["class"] });
+}
+
+function studentAnswerIsComplete(q, given) {
+  if (q.type === "text" || q.type === "number" || q.type === "dropdown" || q.type === "single" || q.type === "truefalse") return String(given ?? "").trim() !== "";
+  if (q.type === "multi") return Array.isArray(given) && given.length > 0;
+  if (q.type === "gapfill") return Array.isArray(given) && given.length > 0 && given.every((x) => String(x || "").trim() !== "");
+  if (q.type === "matching") return Object.keys(given || {}).length === (q.pairs || []).length && Object.values(given || {}).every((x) => String(x) !== "");
+  if (q.type === "grouping") {
+    const expected = (q.groups || []).reduce((sum, g) => sum + (g.items || []).length, 0);
+    return Object.keys(given || {}).length === expected;
+  }
+  if (q.type === "ordering") {
+    const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
+    return section?.dataset.touched === "1" && Array.isArray(given) && given.length === (q.items || []).length;
+  }
+  if (q.type === "markwords") return (q.markGroups || []).length
+    ? Boolean(given && typeof given === "object" && !Array.isArray(given) && Object.keys(given).length)
+    : Array.isArray(given) && given.length > 0;
+  return false;
+}
+
+function getUnansweredQuestions(questions) {
+  return questions.filter((q) => !studentAnswerIsComplete(q, readStudentAnswer(q)));
+}
+
+function refreshStudentProgress(questions) {
+  if (!$("studentProgressBar") || $("studentProgressBar").classList.contains("hidden")) return;
+  const unanswered = getUnansweredQuestions(questions);
+  const done = questions.length - unanswered.length;
+  const percent = questions.length ? Math.round((done / questions.length) * 100) : 0;
+  if ($("studentProgressText")) $("studentProgressText").textContent = `${done} von ${questions.length} bearbeitet`;
+  if ($("studentOpenCount")) $("studentOpenCount").textContent = unanswered.length ? `${unanswered.length} offen` : "Alles bearbeitet ✓";
+  if ($("studentProgressFill")) $("studentProgressFill").style.width = `${percent}%`;
+  questions.forEach((q) => {
+    const btn = $("studentQuestionNav")?.querySelector(`[data-qid="${CSS.escape(q.id)}"]`);
+    if (!btn) return;
+    const complete = !unanswered.includes(q);
+    btn.classList.toggle("complete", complete);
+  });
+}
+
+function runStudentTimer(quiz, questions, startedAt, attemptLimitMinutes = null) {
+  stopStudentTimer();
+  const limitMinutes = Number(attemptLimitMinutes) > 0 ? Number(attemptLimitMinutes) : Number(quiz.timeLimitMinutes);
+  const totalSeconds = Math.max(60, Math.round(limitMinutes * 60));
+  let autoSubmitting = false;
+  const tick = () => {
+    const elapsed = Math.floor((Date.now() - Number(startedAt)) / 1000);
+    const remaining = Math.max(0, totalSeconds - elapsed);
+    const min = Math.floor(remaining / 60);
+    const sec = remaining % 60;
+    if ($("studentTimerText")) $("studentTimerText").textContent = `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+    $("studentTimerBar")?.classList.toggle("timerWarning", remaining <= 60);
+    if (remaining <= 0 && !autoSubmitting) {
+      autoSubmitting = true;
+      stopStudentTimer();
+      toast("Zeit abgelaufen – der Test wird automatisch abgegeben.");
+      submitStudentQuiz(null, quiz, questions, { force: true, autoSubmitted: true, startedAt });
+    }
+  };
+  tick();
+  if (!autoSubmitting) state.studentTimerInterval = window.setInterval(tick, 1000);
+}
+
+function readStudentAnswer(q) {
+  const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
+  if (!section) return "";
+  if (q.type === "multi") return Array.from(section.querySelectorAll(`input[name="${CSS.escape(q.id)}"]:checked`)).map((x) => x.value);
+  if (["single", "truefalse"].includes(q.type)) return section.querySelector(`input[name="${CSS.escape(q.id)}"]:checked`)?.value ?? "";
+  if (["text", "dropdown"].includes(q.type)) return section.querySelector(`[name="${CSS.escape(q.id)}"]`)?.value ?? "";
+  if (q.type === "number") return section.querySelector(".numberStudentInput")?.value ?? "";
+  if (q.type === "gapfill") return Array.from(section.querySelectorAll(".inlineGap")).map((x) => x.value);
+  if (q.type === "matching") {
+    const out = {};
+    section.querySelectorAll(".dropZone[data-slot]").forEach((zone) => {
+      out[zone.dataset.slot] = zone.querySelector(".dragItem")?.dataset.key ?? "";
+    });
+    return out;
+  }
+  if (q.type === "ordering") return Array.from(section.querySelectorAll(".sortItem")).map((x) => x.dataset.key);
+  if (q.type === "grouping") {
+    const out = {};
+    section.querySelectorAll(".groupDrop").forEach((zone) => {
+      zone.querySelectorAll(".dragItem").forEach((item) => (out[item.dataset.key] = zone.dataset.group));
+    });
+    return out;
+  }
+  if (q.type === "markwords") {
+    const marked = Array.from(section.querySelectorAll(".wordToken.marked"));
+    return (q.markGroups || []).length ? Object.fromEntries(marked.map(token => [token.dataset.wordIndex, token.dataset.markColor]).filter(([, color]) => color)) : marked.map(token => token.dataset.wordIndex);
+  }
+  return "";
+}
+
+function evaluateAnswer(q, given) {
+  const max = round1(Number(q.points) || 0);
+  if (q.type === "text") {
+    if (q.manualReview) return { awarded: 0, max, needsReview: true, correct: null };
+    const ok = (q.acceptedAnswers || []).map(normalize).includes(normalize(given));
+    return { awarded: ok ? max : 0, max, needsReview: false, correct: ok };
+  }
+  if (q.type === "number") {
+    const value = Number(String(given || "").trim().replace(",", "."));
+    const ok = Number.isFinite(value) && Math.abs(value - Number(q.numericAnswer)) <= Math.max(0, Number(q.tolerance) || 0) + 1e-9;
+    return { awarded: ok ? max : 0, max, needsReview: false, correct: ok };
+  }
+  if (q.type === "truefalse") {
+    const ok = String(given) === String(Boolean(q.correctBoolean));
+    return { awarded: ok ? max : 0, max, needsReview: false, correct: ok };
+  }
+  if (q.type === "gapfill") {
+    const gaps = parseGaps(q.text);
+    const values = Array.isArray(given) ? given : [];
+    let good = 0;
+    gaps.forEach((gap, i) => {
+      if (gap.answers.map(normalize).includes(normalize(values[i]))) good += 1;
+    });
+    const ratio = gaps.length ? good / gaps.length : 0;
+    return { awarded: round1(ratio * max), max, needsReview: false, correct: good === gaps.length };
+  }
+  if (q.type === "matching") {
+    const total = (q.pairs || []).length;
+    let good = 0;
+    for (let i = 0; i < total; i += 1) if (String(given?.[i] ?? "") === String(i)) good += 1;
+    const ratio = total ? good / total : 0;
+    return { awarded: round1(ratio * max), max, needsReview: false, correct: good === total };
+  }
+  if (q.type === "ordering") {
+    const { good, total, correct } = gradeOrdering(q, given);
+    const ratio = total ? good / total : 0;
+    return { awarded: round1(ratio * max), max, needsReview: orderingNeedsReview(q), correct };
+  }
+  if (q.type === "grouping") {
+    let total = 0;
+    let good = 0;
+    (q.groups || []).forEach((g, gi) => (g.items || []).forEach((_, ii) => {
+      total += 1;
+      if (String(given?.[`g${gi}_i${ii}`] ?? "") === String(gi)) good += 1;
+    }));
+    const ratio = total ? good / total : 0;
+    return { awarded: round1(ratio * max), max, needsReview: false, correct: good === total };
+  }
+  if (q.type === "markwords") {
+    if ((q.markGroups || []).length) {
+      const expected = markwordCorrectColors(q);
+      const selected = given && typeof given === "object" && !Array.isArray(given) ? given : {};
+      const good = Object.entries(selected).filter(([index, color]) => expected[index] === color).length;
+      const bad = Object.entries(selected).length - good;
+      const total = Object.keys(expected).length;
+      return { awarded: round1(Math.max(0, Math.min(1, (good - bad) / Math.max(1, total))) * max), max, needsReview: false, correct: good === total && bad === 0 && Object.keys(selected).length === total };
+    }
+    const correctIndexes = markwordCorrectIndexes(q);
+    const selected = Array.isArray(given) ? given.map(String) : [];
+    const good = selected.filter((v) => correctIndexes.includes(v)).length;
+    const bad = selected.filter((v) => !correctIndexes.includes(v)).length;
+    const ratio = Math.max(0, Math.min(1, (good - bad) / Math.max(1, correctIndexes.length)));
+    return {
+      awarded: round1(ratio * max),
+      max,
+      needsReview: false,
+      correct: good === correctIndexes.length && bad === 0 && selected.length === correctIndexes.length
+    };
+  }
+
+  const correctIndexes = (q.options || []).map((o, i) => (o.correct ? String(i) : null)).filter((v) => v !== null);
+  if (q.type === "multi") {
+    const selected = Array.isArray(given) ? given : [];
+    const good = selected.filter((v) => correctIndexes.includes(String(v))).length;
+    const bad = selected.filter((v) => !correctIndexes.includes(String(v))).length;
+    const ratio = Math.max(0, Math.min(1, (good - bad) / Math.max(1, correctIndexes.length)));
+    return { awarded: round1(ratio * max), max, needsReview: false, correct: good === correctIndexes.length && bad === 0 && selected.length === correctIndexes.length };
+  }
+  const ok = correctIndexes.includes(String(given));
+  return { awarded: ok ? max : 0, max, needsReview: false, correct: ok };
+}
+
+async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmitted = false, startedAt = null, ownerPreview = false } = {}) {
+  e?.preventDefault?.();
+  const submissionKey = `${quiz.id}:${state.studentAttempt?.attemptId || "untimed"}`;
+  const studentForm = $("studentForm");
+  if (!studentForm || studentForm.dataset.submitted === "true" || studentSubmissionBusy.has(submissionKey) || completedStudentSubmissions.has(submissionKey)) return;
+  const name = $("studentName")?.value.trim() || readStoredTimer(quiz.id)?.name || "";
+  if (!name) {
+    toast("Bitte deinen Namen eingeben.", "error");
+    return;
+  }
+  if (force) studentConfirmationPending.get(submissionKey)?.abort();
+  if (!force) {
+    if (studentConfirmationPending.has(submissionKey)) return;
+    const unanswered = getUnansweredQuestions(questions);
+    const message = ownerPreview
+      ? unanswered.length
+        ? `${unanswered.length} ${unanswered.length === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Vorschau trotzdem auswerten?`
+        : "Alles bearbeitet. Vorschau jetzt auswerten?"
+      : unanswered.length
+        ? `${unanswered.length} ${unanswered.length === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Trotzdem endgültig abgeben?`
+        : "Alles bearbeitet. Test jetzt endgültig abgeben?";
+    const confirmation = new AbortController();
+    studentConfirmationPending.set(submissionKey, confirmation);
+    let approved;
+    try {
+      approved = await requestStudentSubmitConfirmation(message, { signal: confirmation.signal, preview: ownerPreview });
+    } finally {
+      if (studentConfirmationPending.get(submissionKey) === confirmation) studentConfirmationPending.delete(submissionKey);
+    }
+    if (!approved || !studentForm.isConnected || $("studentForm") !== studentForm || studentForm.dataset.submitted === "true" || studentSubmissionBusy.has(submissionKey) || completedStudentSubmissions.has(submissionKey)) return;
+  }
+
+  const answers = {};
+  const grading = {};
+  let points = 0;
+  let maxPoints = 0;
+  let needsReview = false;
+  for (const q of questions) {
+    const given = readStudentAnswer(q);
+    answers[q.id] = given;
+    const result = evaluateAnswer(q, given);
+    grading[q.id] = {
+      autoPoints: result.awarded,
+      awardedPoints: result.awarded,
+      maxPoints: result.max,
+      needsReview: result.needsReview
+    };    points += result.awarded;
+    maxPoints += result.max;
+    needsReview ||= result.needsReview;
+  }
+  points = round1(points);
+  maxPoints = round1(maxPoints);
+  const percent = maxPoints ? Math.round((points / maxPoints) * 100) : 0;
+  const scale = deepClone(getQuizScale(quiz));
+  const grade = needsReview ? null : gradeFromPercent(percent, scale);
+  const storedTimer = readStoredTimer(quiz.id);
+  const activeAttempt = state.studentAttempt?.startedAt ? state.studentAttempt : storedTimer;
+  const effectiveStart = Number(startedAt || activeAttempt?.startedAt || 0) || null;
+  const elapsedSeconds = effectiveStart ? Math.max(0, Math.round((Date.now() - effectiveStart) / 1000)) : null;
+
+  if (ownerPreview) {
+    stopStudentTimer();
+    renderStudentResult(quiz, questions, answers, grading, points, maxPoints, percent, needsReview, { preview: true });
+    toast("Vorschau ausgewertet – keine Abgabe gespeichert.");
+    return;
+  }
+
+  if (guestTourRepo) {
+    stopStudentTimer();
+    const submissionId = guestTourRepo.submit(quiz.id, {
+      studentName: name, isTutorial: true, answers, grading, autoPoints: points,
+      totalPoints: points, maxPoints, percent, grade, gradeScaleSnapshot: scale,
+      status: needsReview ? 'review' : 'graded', elapsedSeconds,
+      autoSubmitted: Boolean(autoSubmitted)
+    });
+    completedStudentSubmissions.add(submissionKey);
+    studentForm.dataset.submitted = 'true';
+    state.studentAttempt = null;
+    renderStudentResult(quiz, questions, answers, grading, points, maxPoints, percent, needsReview);
+    toast(guestCopy('localSubmission', 'Übungsabgabe nur lokal gespeichert.'));
+    crewTour?.notify('submitted', { quizId: quiz.id, submissionId });
+    return;
+  }
+
+  studentSubmissionBusy.add(submissionKey);
+  try {
+    stopStudentTimer();
+    if ($("studentSubmitBtn")) {
+      $("studentSubmitBtn").disabled = true;
+      $("studentSubmitBtn").textContent = autoSubmitted ? "Zeit abgelaufen – wird gespeichert …" : "Wird gespeichert …";
+    }
+    const submissionRef = await addDoc(collection(db, "quizzes", quiz.id, "submissions"), {
+      studentName: name,
+      isTutorial: Boolean(quiz.tutorialVersion),
+      answers,
+      grading,
+      autoPoints: points,
+      totalPoints: points,
+      maxPoints,
+      percent,
+      grade,
+      gradeScaleSnapshot: scale,
+      status: needsReview ? "review" : "graded",
+      timeLimitMinutes: Number(activeAttempt?.timeLimitMinutes || quiz.timeLimitMinutes) > 0 ? Number(activeAttempt?.timeLimitMinutes || quiz.timeLimitMinutes) : null,
+      attemptId: activeAttempt?.attemptId || null,
+      sessionRunId: activeAttempt?.sessionRunId || quiz.sessionRunId || null,
+      startMode: quiz.startMode === "teacher" ? "teacher" : "student",
+      startedAtServerMillis: effectiveStart,
+      startedAtLocal: effectiveStart ? new Date(effectiveStart).toISOString() : null,
+      elapsedSeconds,
+      autoSubmitted: Boolean(autoSubmitted),
+      submittedAt: serverTimestamp(),
+      submittedAtLocal: new Date().toISOString()
+    });
+    completedStudentSubmissions.add(submissionKey);
+    if ($("studentForm")) $("studentForm").dataset.submitted = "true";
+    try { localStorage.removeItem(studentTimerKey(quiz.id)); } catch (error) { console.warn("Lokaler Timer konnte nicht entfernt werden", error); }
+    state.studentAttempt = null;
+    clearStudentSubscriptions();
+    renderStudentResult(quiz, questions, answers, grading, points, maxPoints, percent, needsReview);
+    toast(autoSubmitted ? "Zeit abgelaufen. Deine Abgabe wurde gespeichert." : "Abgabe erfolgreich gespeichert.");
+    crewTour?.notify("submitted", {quizId: quiz.id, submissionId: submissionRef.id});
+  } catch (err) {
+    console.error(err);
+    toast("Abgabe konnte nicht gespeichert werden.", "error");
+    if ($("studentSubmitBtn")) {
+      $("studentSubmitBtn").disabled = false;
+      $("studentSubmitBtn").textContent = "Antworten abgeben";
+    }
+    if (Number(quiz.timeLimitMinutes) > 0 && effectiveStart && !autoSubmitted) runStudentTimer(quiz, questions, effectiveStart, activeAttempt?.timeLimitMinutes);
+  } finally { studentSubmissionBusy.delete(submissionKey); }
+}
+
+function answerDisplay(q, given, contentLocale) {
+  if (q.type === "text") return String(given || "(leer)");
+  if (q.type === "number") return given === "" ? "(leer)" : `${given}${q.unit ? ` ${q.unit}` : ""}`;
+  if (q.type === "truefalse") {
+    const labels = assessmentContentLabels(contentLocale);
+    return given === "true" ? labels.trueLabel : given === "false" ? labels.falseLabel : "(leer)";
+  }
+  if (q.type === "gapfill") return Array.isArray(given) ? given.map((x, i) => `Lücke ${i + 1}: ${x || "(leer)"}`).join("; ") : "(leer)";
+  if (q.type === "matching") {
+    return (q.pairs || []).map((p, i) => {
+      const selected = q.pairs?.[Number(given?.[i])]?.right || "(leer)";
+      return `${p.left} → ${selected}`;
+    }).join("; ");
+  }
+  if (q.type === "ordering") return (Array.isArray(given) ? given : []).map((v) => q.items?.[Number(v)]).filter(Boolean).join(" → ") || "(leer)";
+  if (q.type === "grouping") {
+    return (q.groups || []).map((g, gi) => {
+      const selected = [];
+      (q.groups || []).forEach((source, sgi) => (source.items || []).forEach((text, ii) => {
+        if (String(given?.[`g${sgi}_i${ii}`] ?? "") === String(gi)) selected.push(text);
+      }));
+      return `${g.name}: ${selected.join(", ") || "–"}`;
+    }).join("; ");
+  }
+  if (q.type === "markwords") {
+    if ((q.markGroups || []).length) {
+      const selected = given && typeof given === "object" && !Array.isArray(given) ? given : {};
+      return tokenizeWords(q.passage).filter(token => token.isWord && selected[String(token.wordIndex)]).map(token => `${token.text} (${q.markGroups.find(group => group.color === selected[String(token.wordIndex)])?.name || selected[String(token.wordIndex)]})`).join(", ") || "(leer)";
+    }
+    const wanted = new Set((given || []).map(String));
+    return tokenizeWords(q.passage).filter((t) => t.isWord && wanted.has(String(t.wordIndex))).map((t) => t.text).join(", ") || "(leer)";
+  }
+  if (q.type === "multi") return (given || []).map((v) => q.options?.[Number(v)]?.text).filter(Boolean).join(", ") || "(leer)";
+  if (given === "" || given === null || given === undefined) return "(leer)";
+  return q.options?.[Number(given)]?.text || "(leer)";
+}
+
+function correctDisplay(q, contentLocale) {
+  if (q.type === "text") return q.manualReview ? "wird von der Lehrkraft geprüft" : (q.acceptedAnswers || []).join(", ");
+  if (q.type === "number") return `${q.numericAnswer}${q.unit ? ` ${q.unit}` : ""}${Number(q.tolerance) ? ` (±${q.tolerance})` : ""}`;
+  if (q.type === "truefalse") {
+    const labels = assessmentContentLabels(contentLocale);
+    return q.correctBoolean ? labels.trueLabel : labels.falseLabel;
+  }
+  if (q.type === "gapfill") return parseGaps(q.text).map((g, i) => `Lücke ${i + 1}: ${g.answers.join(" / ")}`).join("; ");
+  if (q.type === "matching") return (q.pairs || []).map((p) => `${p.left} → ${p.right}`).join("; ");
+  if (q.type === "ordering") return acceptedOrderingOrders(q).map(order => order.map(index => q.items[index]).join(" → ")).join(" / ");
+  if (q.type === "grouping") return (q.groups || []).map((g) => `${g.name}: ${(g.items || []).join(", ")}`).join("; ");
+  if (q.type === "markwords") return (q.markGroups || []).length ? q.markGroups.map(group => `${group.name}: ${(group.words || []).join(", ")}`).join("; ") : tokenizeWords(q.passage).filter((t) => t.isWord && markwordCorrectIndexes(q).includes(String(t.wordIndex))).map((t) => t.text).join(", ");
+  return (q.options || []).filter((o) => o.correct).map((o) => o.text).join(", ");
+}
+
+function renderStudentResult(quiz, questions, answers, grading, points, maxPoints, percent, needsReview, { preview = false } = {}) {
+  $("studentForm").classList.add("hidden");
+  const box = $("studentResult");
+  box.classList.remove("hidden");
+  const mode = quiz.resultMode || "points_grade";
+  const showSolutions = Boolean(quiz.showSolutions);
+  const scale = getQuizScale(quiz);
+
+  let summary = `<h2>${preview ? "Vorschau ausgewertet ✓" : "Abgabe gespeichert ✓"}</h2>`;
+  if (mode === "none") {
+    summary += preview
+      ? `<p>Diese Vorschau speichert keine Abgabe.</p>`
+      : `<p>Deine Antworten wurden erfolgreich gespeichert.</p>`;
+  } else {
+    summary += `<div class="scoreBig">${round1(points)}/${round1(maxPoints)} Punkte</div>`;
+    if (mode === "points_percent" || mode === "points_grade") summary += `<p>${percent}%${needsReview ? " · vorläufiges Ergebnis" : ""}</p>`;
+    if (mode === "points_grade" && !needsReview) summary += `<p class="studentGrade">Note ${gradeFromPercent(percent, scale)}</p>`;
+    if (needsReview) summary += `<p>Mindestens eine Antwort wird noch von der Lehrkraft geprüft.</p>`;
+  }
+  if (showSolutions && mode !== "none") summary += `<div id="studentResultDetails"></div>`;
+  if (state.user?.uid === quiz.ownerId || (guestTourRepo && quiz.ownerId === 'local-tour')) summary += '<button id="studentTeacherResultsBtn" class="button primary" type="button">Zur Lehrkraft-Auswertung</button>';
+  box.innerHTML = summary;
+  $("studentTeacherResultsBtn")?.addEventListener("click", () => openResults(quiz.id));
+
+  const details = $("studentResultDetails");
+  if (!details) return;
+  questions.forEach((q, i) => {
+    const g = grading[q.id];
+    const div = document.createElement("div");
+    div.className = "studentResultDetail";
+    div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div>Deine Antwort: ${escapeHtml(answerDisplay(q, answers[q.id], quiz.contentLocale))}</div><div>Lösung: ${escapeHtml(correctDisplay(q, quiz.contentLocale))}</div><div>Punkte: ${g.awardedPoints}/${g.maxPoints}${g.needsReview ? " · Prüfung ausstehend" : ""}</div>`;
+    details.appendChild(div);
+  });
+}
+
+// ---------- Ergebnisse / manuelle Bewertung ----------
+$("refreshResultsBtn").addEventListener("click", () => state.currentResultsQuiz && openResults(state.currentResultsQuiz.id));
+$("exportResultsBtn").addEventListener("click", exportResultsCsv);
+
+async function openResults(code) {
+  if (guestTourRepo) {
+    const quiz = guestTourRepo.getQuiz(code);
+    if (!quiz) return;
+    state.currentResultsQuiz = quiz;
+    state.resultQuestions = guestTourRepo.getQuestions(code);
+    state.submissions = guestTourRepo.getSubmissions(code);
+    $("resultsHeading").textContent = quiz.title;
+    $("resultsMeta").textContent = guestCopy('resultsMeta', `${state.submissions.length} Übungsabgabe · ${quiz.totalPoints || 0} Punkte maximal · nur lokal`, { count: state.submissions.length, points: quiz.totalPoints || 0 });
+    showView('resultsView');
+    renderResultsTable();
+    $("reviewPanel").classList.add('hidden');
+    crewTour?.notify('results-ready', { quizId: code });
+    return;
+  }
+  try {
+    const quizSnap = await getDoc(doc(db, "quizzes", code));
+    if (!quizSnap.exists()) throw new Error("Test nicht gefunden");
+    const quiz = { id: code, ...quizSnap.data() };
+    if (quiz.ownerId !== state.user.uid) throw new Error("Kein Zugriff");
+    state.currentResultsQuiz = quiz;
+    const qSnap = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
+    state.resultQuestions = qSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const sSnap = await getDocs(collection(db, "quizzes", code, "submissions"));
+    state.submissions = sSnap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => toMillis(b.submittedAt || b.submittedAtLocal) - toMillis(a.submittedAt || a.submittedAtLocal));
+    $("resultsHeading").textContent = quiz.title;
+    const timeMeta = Number(quiz.timeLimitMinutes) > 0 ? ` · Zeitlimit: ${Number(quiz.timeLimitMinutes)} Min.` : "";
+    $("resultsMeta").textContent = `${state.submissions.length} Abgaben · ${quiz.totalPoints || 0} Punkte maximal · Notenschlüssel: ${getQuizScale(quiz).name || "Standard"}${timeMeta}`;
+    showView("resultsView");
+    renderResultsTable();
+    $("reviewPanel").classList.add("hidden");
+    crewTour?.notify("results-ready", {quizId: code});
+  } catch (err) {
+    console.error(err);
+    toast("Ergebnisse konnten nicht geladen werden.", "error");
+  }
+}
+
+function submissionGrade(s) {
+  if (s.status === "review") return "–";
+  if (Number.isFinite(Number(s.grade)) && Number(s.grade) >= 1 && Number(s.grade) <= 6) return Number(s.grade);
+  const scale = s.gradeScaleSnapshot?.thresholds?.length === 6 ? s.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
+  return gradeFromPercent(Number(s.percent || 0), scale);
+}
+
+function renderResultsTable() {
+  const wrap = $("resultsTableWrap");
+  if (!state.submissions.length) {
+    wrap.innerHTML = `<div class="empty"><h2>Noch keine Abgaben</h2><p>Sobald Schüler den Test abgeben, erscheinen die Ergebnisse hier.</p></div>`;
+    return;
+  }
+  let html = `<table class="resultTable"><thead><tr><th scope="col">Kürzel</th><th scope="col">Punkte</th><th scope="col">%</th><th scope="col">Note</th><th scope="col">Status</th><th scope="col">Dauer</th><th scope="col">Abgegeben</th><th scope="col"><span class="visuallyHidden">Aktionen</span></th></tr></thead><tbody>`;
+  state.submissions.forEach((s) => {
+    const duration = formatDuration(s.elapsedSeconds);
+    const autoTag = s.autoSubmitted ? ` <span class="pill timedOut">Auto</span>` : "";
+    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${s.status === "review" ? "review" : "graded"}">${s.status === "review" ? "Prüfen" : "Bewertet"}</span>${autoTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(s.studentName)}">Bewerten</button></td></tr>`;
+  });
+  html += "</tbody></table>";
+  wrap.innerHTML = html;
+  wrap.querySelectorAll(".reviewBtn").forEach((btn) => btn.addEventListener("click", () => openReview(btn.dataset.id)));
+}
+
+function openReview(id) {
+  const s = state.submissions.find((x) => x.id === id);
+  if (!s) return;
+  const panel = $("reviewPanel");
+  const returnFocus = document.activeElement;
+  panel.classList.remove("hidden");
+  panel.setAttribute("aria-labelledby", "reviewHeading");
+  panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2 id="reviewHeading" tabindex="-1">${escapeHtml(s.studentName)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div><div class="reviewHeader"><strong id="reviewTotal"></strong><button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
+  const root = $("reviewQuestions");
+  state.resultQuestions.forEach((q, i) => {
+    const g = s.grading?.[q.id] || { awardedPoints: 0, maxPoints: Number(q.points) || 0 };
+    const div = document.createElement("div");
+    div.className = "reviewQuestion";
+    div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div class="meta">Antwort: ${escapeHtml(answerDisplay(q, s.answers?.[q.id], state.currentResultsQuiz?.contentLocale))}</div><div class="meta">Lösung: ${escapeHtml(correctDisplay(q, state.currentResultsQuiz?.contentLocale))}</div><div class="reviewPoints"><label for="review-points-${i}">Punkte für Aufgabe ${i + 1}</label><input id="review-points-${i}" class="manualPoints" data-qid="${escapeHtml(q.id)}" type="number" min="0" max="${Number(q.points)}" step="0.5" value="${round1(Number(g.awardedPoints ?? g.autoPoints ?? 0))}"><span>/ ${Number(q.points)}</span></div>`;
+    const imageSrc = getQuestionImageSrc(q);
+    if (imageSrc) {
+      const figure = document.createElement("figure");
+      figure.className = "reviewQuestionImage";
+      const img = document.createElement("img");
+      img.src = imageSrc;
+      img.alt = q.imageAlt || `Bild zu Aufgabe ${i + 1}`;
+      img.loading = "lazy";
+      figure.appendChild(img);
+      div.querySelector("strong")?.after(figure);
+    }
+    if (Array.isArray(q.options) && q.options.some(option => option.imageDataUrl)) {
+      const options = document.createElement("div");
+      options.className = "reviewChoiceImages";
+      q.options.forEach((option, index) => {
+        if (!option.imageDataUrl) return;
+        const img = document.createElement("img");
+        img.src = option.imageDataUrl;
+        img.alt = option.imageAlt || `Antwortbild ${index + 1}`;
+        img.loading = "lazy";
+        options.appendChild(img);
+      });
+      div.querySelector("strong")?.after(options);
+    }
+    if (q.type === "ordering" && orderingNeedsReview(q)) {
+      const hint = document.createElement("p");
+      hint.className = "hint";
+      hint.textContent = "Satzbau: Weitere grammatikalisch richtige Reihenfolgen können möglich sein. Bitte die Antwort prüfen und Punkte gegebenenfalls anpassen.";
+      div.querySelector(".reviewPoints")?.before(hint);
+    }
+    root.appendChild(div);
+  });
+
+  const recompute = () => {
+    const pts = Array.from(panel.querySelectorAll(".manualPoints")).reduce((sum, x) => {
+      const q = state.resultQuestions.find((item) => item.id === x.dataset.qid);
+      const max = Number(q?.points || 0);
+      return sum + Math.max(0, Math.min(max, round1(Number(x.value) || 0)));
+    }, 0);
+    const max = state.resultQuestions.reduce((sum, q) => sum + Number(q.points || 0), 0);
+    const pc = max ? Math.round((pts / max) * 100) : 0;
+    const scale = s.gradeScaleSnapshot?.thresholds?.length === 6 ? s.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
+    $("reviewTotal").textContent = `${round1(pts)}/${round1(max)} Punkte · ${pc}% · Note ${gradeFromPercent(pc, scale)}`;
+  };
+  panel.querySelectorAll(".manualPoints").forEach((x) => {
+    x.addEventListener("input", recompute);
+    x.addEventListener("change", () => {
+      const q = state.resultQuestions.find((item) => item.id === x.dataset.qid);
+      const max = round1(Number(q?.points || 0));
+      x.value = Math.max(0, Math.min(max, round1(Number(x.value) || 0)));
+      recompute();
+    });
+  });
+  recompute();
+  $("closeReview").addEventListener("click", () => {
+    panel.classList.add("hidden");
+    const target = returnFocus?.isConnected && !returnFocus.closest(".hidden") && returnFocus !== document.body ? returnFocus : $("resultsHeading");
+    target.tabIndex = target.tabIndex < 0 ? -1 : target.tabIndex;
+    target.focus({ preventScroll: true });
+  });
+  $("saveReview").addEventListener("click", () => saveReview(s.id));
+  $("reviewHeading").focus({ preventScroll: true });
+  panel.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+  if (typeof crewTour !== "undefined") crewTour?.notify("review-opened", {quizId: state.currentResultsQuiz?.id, submissionId:id});
+}
+
+async function saveReview(submissionId) {
+  const panel = $("reviewPanel");
+  const submission = state.submissions.find((x) => x.id === submissionId);
+  if (!submission) return;
+  const grading = { ...(submission.grading || {}) };
+  let total = 0;
+  let max = 0;
+  panel.querySelectorAll(".manualPoints").forEach((inp) => {
+    const q = state.resultQuestions.find((x) => x.id === inp.dataset.qid);
+    const qMax = Number(q?.points || 0);
+    const awarded = Math.max(0, Math.min(qMax, round1(Number(inp.value) || 0)));
+    grading[inp.dataset.qid] = {
+      ...(grading[inp.dataset.qid] || {}),
+      awardedPoints: round1(awarded),
+      maxPoints: qMax,
+      needsReview: false
+    };
+    total += awarded;
+    max += qMax;
+  });
+  total = round1(total);
+  max = round1(max);
+  const percent = max ? Math.round((total / max) * 100) : 0;
+  const scale = submission.gradeScaleSnapshot?.thresholds?.length === 6 ? submission.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
+  const grade = gradeFromPercent(percent, scale);
+  if (guestTourRepo) {
+    guestTourRepo.grade(state.currentResultsQuiz.id, submissionId, {
+      grading, totalPoints: total, maxPoints: max, percent, grade,
+      gradeScaleSnapshot: scale, status: 'graded', reviewedBy: 'local-tour'
+    });
+    await openResults(state.currentResultsQuiz.id);
+    crewTour?.notify('review-saved', { quizId: state.currentResultsQuiz.id, submissionId });
+    return;
+  }
+  try {
+    await updateDoc(doc(db, "quizzes", state.currentResultsQuiz.id, "submissions", submissionId), {
+      grading,
+      totalPoints: total,
+      maxPoints: max,
+      percent,
+      grade,
+      gradeScaleSnapshot: scale,
+      status: "graded",
+      reviewedAt: serverTimestamp(),
+      reviewedBy: state.user.uid
+    });
+    toast("Bewertung gespeichert.");
+    await openResults(state.currentResultsQuiz.id);
+    crewTour?.notify("review-saved", {quizId: state.currentResultsQuiz.id, submissionId});
+  } catch (err) {
+    console.error(err);
+    toast("Bewertung konnte nicht gespeichert werden.", "error");
+  }
+}
+
+function exportResultsCsv() {
+  if (!state.currentResultsQuiz || !state.submissions.length) {
+    toast("Keine Ergebnisse zum Exportieren.", "error");
+    return;
+  }
+  const header = ["Name", ...state.resultQuestions.map((_, i) => `Aufgabe ${i + 1}`), "Punkte", "Max", "Prozent", "Note", "Status", "Bearbeitungszeit", "Auto-Abgabe", "Abgegeben"];
+  const rows = [header];
+  state.submissions.forEach((s) => {
+    const r = [s.studentName];
+    state.resultQuestions.forEach((q) => r.push(answerDisplay(q, s.answers?.[q.id], state.currentResultsQuiz?.contentLocale)));
+    r.push(s.totalPoints, s.maxPoints, s.percent, s.status === "review" ? "" : submissionGrade(s), s.status, formatDuration(s.elapsedSeconds), s.autoSubmitted ? "Ja" : "Nein", fmtDate(s.submittedAt || s.submittedAtLocal));
+    rows.push(r);
+  });
+  const csv = rows.map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(";")).join("\n");
+  const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${(state.currentResultsQuiz.title || "ergebnisse").replace(/[^a-z0-9äöüß_-]+/gi, "_")}.csv`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+
+// ---------- Mitteilungen, Feedback & Administration (V2.2.3) ----------
+$("openRightsReport")?.addEventListener("click", () => {
+  $("rightsReportForm")?.reset();
+  $("rightsReportStatus").textContent = "";
+  const code = new URLSearchParams(location.search).get("test");
+  if (code) $("rightsTarget").value = code;
+  safeDialogOpen($("rightsReportDialog"));
+});
+$("closeRightsReport")?.addEventListener("click", () => safeDialogClose($("rightsReportDialog")));
+$("cancelRightsReport")?.addEventListener("click", () => safeDialogClose($("rightsReportDialog")));
+$("rightsReportForm")?.addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = $("sendRightsReport");
+  button.disabled = true;
+  $("rightsReportStatus").textContent = "Meldung wird übermittelt …";
+  try {
+    const receipt = await aiApi.reportRightsIssue({
+      target: $("rightsTarget").value.trim(), work: $("rightsWork").value.trim(),
+      email: $("rightsEmail").value.trim(), explanation: $("rightsExplanation").value.trim()
+    });
+    safeDialogClose($("rightsReportDialog"));
+    toast(`Ihr Rechtehinweis ist eingegangen${receipt?.reference ? ` (Kennung ${receipt.reference})` : ""}.`);
+  } catch (err) {
+    $("rightsReportStatus").textContent = String(err?.code || "").includes("invalid-argument") || String(err?.code || "").includes("resource-exhausted")
+      ? String(err.message || "Bitte Eingaben prüfen.")
+      : "Der Hinweis konnte gerade nicht zugestellt werden. Bitte später erneut versuchen.";
+  } finally { button.disabled = false; }
+});
+$("footerFeedbackBtn")?.addEventListener("click", openFeedbackDialog);
+$("footerWhatsNewBtn")?.addEventListener("click", () => safeDialogOpen($("whatsNewDialog")));
+$("closeWhatsNewDialog")?.addEventListener("click", () => safeDialogClose($("whatsNewDialog")));
+$("whatsNewOk")?.addEventListener("click", () => safeDialogClose($("whatsNewDialog")));
+$("teacherTourBack")?.addEventListener("click", () => { if (teacherTourIndex > 0) { teacherTourIndex -= 1; renderTeacherTourStep(); } });
+$("teacherTourNext")?.addEventListener("click", async () => {
+  if (teacherTourIndex < currentTeacherTourConfig().steps.length - 1) { teacherTourIndex += 1; renderTeacherTourStep(); return; }
+  await finishTeacherTour();
+});
+$("teacherTourSkip")?.addEventListener("click", finishTeacherTour);
+$("teacherTourClose")?.addEventListener("click", finishTeacherTour);
+$("teacherTourDialog")?.addEventListener("cancel", (event) => { event.preventDefault(); finishTeacherTour(); });
+$("closeFeedbackDialog")?.addEventListener("click", () => safeDialogClose($("feedbackDialog")));
+$("cancelFeedbackBtn")?.addEventListener("click", () => safeDialogClose($("feedbackDialog")));
+$("sendFeedbackBtn")?.addEventListener("click", sendFeedback);
+$("feedbackCategory")?.addEventListener("change", updateFeedbackPrompt);
+$("closeAnnouncementDialog")?.addEventListener("click", dismissCurrentAnnouncement);
+$("announcementDialogOk")?.addEventListener("click", dismissCurrentAnnouncement);
+$("announcementDialog")?.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  dismissCurrentAnnouncement();
+});
+renderAnnouncementPreview();
+
+const FEEDBACK_PROMPTS = {
+  bug: {
+    hint: "Was ist passiert? Beschreibe kurz, was du gemacht hast.",
+    placeholder: "Was ist passiert? Was hast du gemacht, bevor der Fehler auftrat?"
+  },
+  idea: {
+    hint: "Beschreibe kurz deine Idee und wobei sie dir helfen würde.",
+    placeholder: "Was würdest du dir wünschen? Was würde dir den Schulalltag erleichtern?"
+  },
+  question: {
+    hint: "Stell deine Frage so konkret wie möglich.",
+    placeholder: "Was möchtest du wissen?"
+  },
+  other: {
+    hint: "Für alles, was in keine andere Kategorie passt.",
+    placeholder: "Was möchtest du uns mitteilen?"
+  }
+};
+
+// Initialisierung erst nach FEEDBACK_PROMPTS: sonst stoppt das Modul
+// mit einer ReferenceError und nachfolgende Admin-Event-Listener werden nicht registriert.
+updateFeedbackPrompt();
+
+function updateFeedbackPrompt() {
+  const category = $("feedbackCategory")?.value || "other";
+  const prompt = FEEDBACK_PROMPTS[category] || FEEDBACK_PROMPTS.other;
+  if ($("feedbackMessageHint")) $("feedbackMessageHint").textContent = prompt.hint;
+  if ($("feedbackMessage")) $("feedbackMessage").placeholder = prompt.placeholder;
+}
+
+function openFeedbackDialog() {
+  if (!state.user) return;
+  $("feedbackMessage").value = "";
+  $("feedbackTestCode").value = state.currentQuiz?.id || state.currentResultsQuiz?.id || "";
+  $("feedbackCategory").value = "bug";
+  updateFeedbackPrompt();
+  safeDialogOpen($("feedbackDialog"));
+}
+
+async function sendFeedback() {
+  const message = $("feedbackMessage")?.value.trim();
+  if (!message) {
+    toast("Bitte kurz beschreiben, worum es geht.", "error");
+    return;
+  }
+  const btn = $("sendFeedbackBtn");
+  if (btn) btn.disabled = true;
+  try {
+    await addDoc(collection(db, "feedback"), {
+      userId: state.user.uid,
+      displayName: state.profile?.displayName || state.user.displayName || "",
+      email: state.user.email || state.profile?.email || "",
+      category: $("feedbackCategory")?.value || "other",
+      testCode: $("feedbackTestCode")?.value.trim().toUpperCase() || null,
+      message,
+      appVersion: APP_VERSION,
+      environment: appEnvironment || "production",
+      userAgent: navigator.userAgent,
+      pageUrl: location.href,
+      status: "new",
+      createdAt: serverTimestamp()
+    });
+    safeDialogClose($("feedbackDialog"));
+    toast("Danke! Dein Feedback wurde gesendet.");
+  } catch (err) {
+    console.error(err);
+    toast("Feedback konnte nicht gesendet werden.", "error");
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function announcementIsActive(a) {
+  if (a.active === false) return false;
+  const now = Date.now();
+  const start = a.startsAt ? Date.parse(a.startsAt) : 0;
+  const end = a.endsAt ? Date.parse(a.endsAt) : 0;
+  if (start && now < start) return false;
+  if (end && now > end) return false;
+  return true;
+}
+
+function announcementIcon(type) {
+  return ({ welcome: "👋", news: "✨", info: "ℹ️", warning: "⚠️" })[type] || "ℹ️";
+}
+
+async function loadAnnouncements() {
+  if (!state.user || isSuspended()) return;
+  const announcementUid = state.user.uid;
+  const host = $("announcementHost");
+  if (!host) return;
+  host.innerHTML = "";
+  try {
+    const [aSnap, seenSnap] = await Promise.all([
+      getDocs(collection(db, "announcements")),
+      getDocs(collection(db, "users", announcementUid, "announcementViews"))
+    ]);
+    if (state.user?.uid !== announcementUid || guestTourRepo) return;
+    const seen = new Map(seenSnap.docs.map((d) => [d.id, d.data()]));
+    const announcements = aSnap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter(announcementIsActive)
+      .sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+
+    let popup = null;
+    for (const a of announcements) {
+      if (state.user?.uid !== announcementUid || guestTourRepo) return;
+      const view = seen.get(a.id);
+      const frequency = a.frequency || "once";
+      if (frequency === "once" && view?.seenAt) continue;
+      if (frequency === "until_closed" && view?.dismissedAt) continue;
+      if (frequency === "every_login" && state.shownThisLogin.has(a.id)) continue;
+      if (a.display === "popup" && !popup) {
+        popup = a;
+        continue;
+      }
+      renderAnnouncementBanner(a);
+      if (frequency === "once") await markAnnouncementView(a.id, { seenAt: serverTimestamp() });
+      if (frequency === "every_login") state.shownThisLogin.add(a.id);
+    }
+    if (popup && state.user?.uid === announcementUid && !guestTourRepo) await showAnnouncementPopup(popup);
+  } catch (err) {
+    console.warn("Mitteilungen konnten nicht geladen werden:", err);
+  }
+}
+
+function renderAnnouncementBanner(a) {
+  const host = $("announcementHost");
+  const box = document.createElement("article");
+  box.className = `announcementBanner announcement-${a.type || "info"}`;
+  box.innerHTML = `<span class="announcementIcon">${announcementIcon(a.type)}</span><div class="announcementBody"><strong>${escapeHtml(a.title || "Hinweis")}</strong><p>${escapeHtml(a.text || "")}</p></div><button class="announcementClose iconButton" type="button" aria-label="Schließen">×</button>`;
+  box.querySelector(".announcementClose").addEventListener("click", async () => {
+    box.remove();
+    if ((a.frequency || "once") === "until_closed") await markAnnouncementView(a.id, { dismissedAt: serverTimestamp() });
+    else if ((a.frequency || "once") === "once") await markAnnouncementView(a.id, { seenAt: serverTimestamp() });
+  });
+  host.appendChild(box);
+}
+
+async function showAnnouncementPopup(a) {
+  state.activeAnnouncementDialogId = a.id;
+  $("announcementDialogEyebrow").textContent = `${announcementIcon(a.type)} ${announcementTypeLabel(a.type)}`;
+  $("announcementDialogTitle").textContent = a.title || "Hinweis";
+  $("announcementDialogText").textContent = a.text || "";
+  safeDialogOpen($("announcementDialog"));
+  if ((a.frequency || "once") === "once") await markAnnouncementView(a.id, { seenAt: serverTimestamp() });
+  if ((a.frequency || "once") === "every_login") state.shownThisLogin.add(a.id);
+}
+
+async function dismissCurrentAnnouncement() {
+  const id = state.activeAnnouncementDialogId;
+  safeDialogClose($("announcementDialog"));
+  state.activeAnnouncementDialogId = null;
+  if (!id) return;
+  try {
+    const snap = await getDoc(doc(db, "announcements", id));
+    if (snap.exists() && (snap.data().frequency || "once") === "until_closed") {
+      await markAnnouncementView(id, { dismissedAt: serverTimestamp() });
+    }
+  } catch (err) { console.warn(err); }
+}
+
+async function markAnnouncementView(id, patch) {
+  try {
+    await setDoc(doc(db, "users", state.user.uid, "announcementViews", id), {
+      announcementId: id,
+      ...patch,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  } catch (err) { console.warn("Mitteilung konnte nicht als gesehen markiert werden:", err); }
+}
+
+function announcementTypeLabel(type) {
+  return ({ welcome: "Begrüßung", news: "Neuigkeit", info: "Info", warning: "Warnung" })[type] || "Hinweis";
+}
+
+// ----- Admin -----
+bindTabs(document.querySelector(".adminTabs"), tab => switchAdminTab(tab.dataset.adminTab, false));
+document.querySelectorAll(".adminPeriodBtn").forEach((btn) => btn.addEventListener("click", async () => {
+  state.adminOverviewPeriod = btn.dataset.period || "7d";
+  document.querySelectorAll(".adminPeriodBtn").forEach((b) => b.classList.toggle("active", b === btn));
+  await renderAdminOverview();
+}));
+$("adminTeacherSearch")?.addEventListener("input", renderAdminTeachers);
+$("adminTeacherStatusFilter")?.addEventListener("change", renderAdminTeachers);
+$("adminTeacherSort")?.addEventListener("change", renderAdminTeachers);
+$("exportAdminTeachersBtn")?.addEventListener("click", exportAdminTeachersCsv);
+$("adminTestSearch")?.addEventListener("input", renderAdminTests);
+$("adminTestStatusFilter")?.addEventListener("change", renderAdminTests);
+$("adminTestOwnerFilter")?.addEventListener("change", renderAdminTests);
+$("adminTestPeriodFilter")?.addEventListener("change", renderAdminTests);
+$("exportAdminTestsBtn")?.addEventListener("click", exportAdminTestsCsv);
+$("adminFeedbackSearch")?.addEventListener("input", renderAdminFeedback);
+$("adminFeedbackCategory")?.addEventListener("change", renderAdminFeedback);
+$("adminFeedbackFilter")?.addEventListener("change", renderAdminFeedback);
+for (const id of ["adminFeedbackEnvironment", "adminFeedbackSeverity", "adminFeedbackVersion", "adminFeedbackFrom", "adminFeedbackTo", "adminFeedbackSort", "adminFeedbackAction", "adminFeedbackFingerprint"]) {
+  $(id)?.addEventListener("input", renderAdminFeedback);
+}
+for (const id of ["adminAuditSearch", "adminAuditAction", "adminAuditFrom", "adminAuditTo", "adminAuditSort"]) $(id)?.addEventListener("input", renderAdminAudit);
+$("adminAuditMore")?.addEventListener("click", loadMoreAdminAudit);
+$("adminFeedbackMore")?.addEventListener("click", loadMoreAdminFeedback);
+$("adminFeedbackReset")?.addEventListener("click", () => {
+  document.querySelectorAll("#adminFeedbackAdvanced input").forEach(node => { node.value = ""; });
+  document.querySelectorAll("#adminFeedbackAdvanced select").forEach(node => { node.selectedIndex = 0; });
+  renderAdminFeedback();
+});
+
+$("saveAnnouncementBtn")?.addEventListener("click", saveAnnouncement);
+$("resetAnnouncementBtn")?.addEventListener("click", resetAnnouncementForm);
+$("addTeacherTourStepBtn")?.addEventListener("click", () => addAdminTeacherTourStep());
+$("saveTeacherTourBtn")?.addEventListener("click", saveAdminTeacherTour);
+$("showTeacherTourPreviewBtn")?.addEventListener("click", showAdminTeacherTourPreview);
+["announcementType","announcementDisplay","announcementFrequency","announcementTitle","announcementText","announcementActive","announcementStart","announcementEnd"].forEach((id) => {
+  $(id)?.addEventListener("input", renderAnnouncementPreview);
+  $(id)?.addEventListener("change", renderAnnouncementPreview);
+});
+
+async function openAdmin() {
+  if (!state.user || !isAdmin()) {
+    toast("Dieser Bereich ist nur für Administratoren verfügbar.", "error");
+    return;
+  }
+  showView("adminView");
+  switchAdminTab(state.bugOpsSummary?.needsAttention ? "feedback" : "overview", false);
+  await loadAdminData(true);
+}
+
+function switchAdminTab(name, scroll = true) {
+  const list = document.querySelector(".adminTabs");
+  const selected = [...list.querySelectorAll(".adminTab")].find(tab => tab.dataset.adminTab === name) || list.querySelector(".adminTab");
+  selectTab(list, selected);
+  if (scroll) window.scrollTo({ top: 0, behavior: scrollBehavior() });
+}
+
+async function loadAdminData(showToast = false) {
+  if (!isAdmin()) return;
+  const requestingUid = state.user.uid;
+  try { await reviewController?.syncVisualFeedback?.(); } catch (err) { console.error(err); toast("Screenshot-Hinweise konnten noch nicht übertragen werden.", "error"); }
+  const refresh = $("refreshAdminBtn");
+  if (refresh) { refresh.disabled = true; refresh.textContent = "Lädt …"; }
+  try {
+    const [usersSnap, quizzesSnap, announcementsSnap, feedbackSnap, feedbackCountSnap, auditSnap] = await Promise.all([
+      getDocs(collection(db, "users")),
+      getDocs(collection(db, "quizzes")),
+      getDocs(collection(db, "announcements")),
+      getDocs(query(collection(db, "feedback"), orderBy("createdAt", "desc"), limit(200))),
+      getCountFromServer(collection(db, "feedback")),
+      getDocs(query(collection(db, "adminAudit"), orderBy("createdAt", "desc"), limit(200)))
+    ]);
+    if (!isAdmin() || state.user?.uid !== requestingUid) return;
+    state.adminUsers = usersSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    state.adminQuizzes = quizzesSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    state.adminAnnouncements = announcementsSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
+    state.adminFeedback = feedbackSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
+    state.adminFeedbackTotal = feedbackCountSnap.data().count;
+    adminFeedbackCursor = feedbackSnap.docs.at(-1) || null;
+    adminFeedbackHasMore = feedbackSnap.size === 200;
+    if ($("adminFeedbackMore")) $("adminFeedbackMore").disabled = !adminFeedbackHasMore;
+    const openRightsCount = state.adminFeedback.filter(f => f.category === "rights" && f.status !== "done").length;
+    const openErrorCount = state.adminFeedback.filter(f => f.category === "app_error" && f.status !== "done").length;
+    const feedbackTab = document.querySelector('[data-admin-tab="feedback"]');
+    if (feedbackTab) {
+      const parts = [];
+      if (openErrorCount) parts.push(`${openErrorCount} Fehler`);
+      if (openRightsCount) parts.push(`${openRightsCount} Rechtehinweis${openRightsCount === 1 ? "" : "e"}`);
+      feedbackTab.textContent = parts.length ? `Feedback · ${parts.join(" · ")}` : "Feedback";
+    }
+    state.adminAudit = auditSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    adminAuditCursor = auditSnap.docs.at(-1) || null;
+    if ($("adminAuditMore")) $("adminAuditMore").disabled = auditSnap.size < 200;
+    renderAdminFilterOptions();
+    await renderAdminOverview();
+    renderAdminTeachers();
+    renderAdminTests();
+    await loadTeacherTourConfig({ force: true });
+    renderAdminAnnouncements();
+    renderAdminTeacherTour();
+    renderAdminFeedback();
+    renderAdminAudit();
+    await refreshBugOpsAttention({ notify: false });
+    if (showToast) toast("Admin-Daten aktualisiert.");
+  } catch (err) {
+    console.error(err);
+    toast("Admin-Daten konnten nicht geladen werden. Prüfe Rolle und Firestore-Regeln.", "error");
+  } finally {
+    if (refresh) { refresh.disabled = false; refresh.textContent = "Aktualisieren"; }
+  }
+}
+
+async function loadMoreAdminFeedback() {
+  if (!isAdmin() || !adminFeedbackCursor || !adminFeedbackHasMore) return;
+  const requestingUid = state.user.uid;
+  const button = $("adminFeedbackMore");
+  if (button) { button.disabled = true; button.textContent = "Lädt …"; }
+  try {
+    const snapshot = await getDocs(query(collection(db, "feedback"), orderBy("createdAt", "desc"), startAfter(adminFeedbackCursor), limit(200)));
+    if (!isAdmin() || state.user?.uid !== requestingUid) return;
+    const known = new Set(state.adminFeedback.map(row => row.id));
+    state.adminFeedback.push(...snapshot.docs.filter(d => !known.has(d.id)).map(d => ({ id: d.id, ...d.data() })));
+    state.adminFeedback.sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
+    adminFeedbackCursor = snapshot.docs.at(-1) || adminFeedbackCursor;
+    adminFeedbackHasMore = snapshot.size === 200;
+    renderAdminFeedback();
+  } catch (error) {
+    console.error(error);
+    toast("Ältere Feedback-Meldungen konnten nicht geladen werden.", "error");
+  } finally {
+    if (button) { button.disabled = !adminFeedbackHasMore; button.textContent = adminFeedbackHasMore ? "Ältere Meldungen laden" : "Alle geladen"; }
+  }
+}
+
+async function renderAdminOverview() {
+  const period = state.adminOverviewPeriod || "7d";
+  const since = adminPeriodStart(period);
+  const inPeriod = (value) => !since || toMillis(value) >= since.getTime();
+  const activeTests = state.adminQuizzes.filter((q) => !q.isDeleted);
+
+  const activeTeachers = state.adminUsers.filter((u) => inPeriod(u.lastActiveAt || u.createdAt)).length;
+  const newTeachers = state.adminUsers.filter((u) => inPeriod(u.createdAt)).length;
+  const createdTests = state.adminQuizzes.filter((q) => inPeriod(q.createdAt)).length;
+  const publishedTests = state.adminQuizzes.filter((q) => q.publishedAt && inPeriod(q.publishedAt)).length;
+  const endedTests = state.adminQuizzes.filter((q) => q.endedAt && inPeriod(q.endedAt)).length;
+  const submissions = await adminSubmissionCount(since);
+
+  const periodLabels = { today: "heute", "7d": "in den letzten 7 Tagen", "30d": "in den letzten 30 Tagen", all: "seit Start" };
+  const description = $("adminPeriodDescription");
+  if (description) description.textContent = `Aktivität ${periodLabels[period] || periodLabels["7d"]}.`;
+
+  const cards = period === "all" ? [
+    ["Lehrkräfte registriert", state.adminUsers.length, "◎"],
+    ["Tests erstellt", state.adminQuizzes.length, "✎"],
+    ["Jemals veröffentlicht", state.adminQuizzes.filter((q) => q.publishedAt).length, "↗"],
+    ["Tests beendet", state.adminQuizzes.filter((q) => q.endedAt).length, "✓"],
+    ["Abgaben", submissions, "↓"],
+    ["Feedback erhalten", state.adminFeedbackTotal ?? state.adminFeedback.length, "💬"]
+  ] : [
+    ["Aktive Lehrkräfte", activeTeachers, "◎"],
+    ["Neu registriert", newTeachers, "+"],
+    ["Tests erstellt", createdTests, "✎"],
+    ["Veröffentlicht", publishedTests, "↗"],
+    ["Beendet", endedTests, "✓"],
+    ["Abgaben", submissions, "↓"]
+  ];
+  $("adminStats").innerHTML = cards.map(([label, value, icon]) => `<article class="card adminStatCard"><span>${icon}</span><div><strong>${escapeHtml(value)}</strong><small>${escapeHtml(label)}</small></div></article>`).join("");
+
+  const publishedNow = activeTests.filter((q) => q.published && !q.ended).length;
+  const trashCount = state.adminQuizzes.filter((q) => q.isDeleted).length;
+  const inventory = [
+    ["Lehrkräfte gesamt", state.adminUsers.length],
+    ["Tests gesamt", activeTests.length],
+    ["Aktuell veröffentlicht", publishedNow],
+    ["Offenes Feedback", state.adminFeedback.filter((f) => f.status !== "done").length]
+  ];
+  $("adminInventoryStats").innerHTML = `${inventory.map(([label, value]) => `<div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}<div class="inventorySecondary"><span>🗑 Papierkorb</span><strong>${escapeHtml(trashCount)}</strong></div>`;
+
+  $("adminSystemInfo").innerHTML = `<div><span>Marke</span><strong>${escapeHtml(BRAND.name)}</strong></div><div><span>App-Version</span><strong>v${APP_VERSION}</strong></div><div><span>Umgebung</span><strong>${escapeHtml(appEnvironment || "production")}</strong></div><div><span>Firebase-Projekt</span><strong>${escapeHtml(firebaseConfig.projectId)}</strong></div>`;
+  const consoleLink = $("adminFirebaseConsoleLink");
+  if (consoleLink) consoleLink.href = `https://console.firebase.google.com/project/${encodeURIComponent(firebaseConfig.projectId)}/overview`;
+}
+
+function adminPeriodStart(period) {
+  if (period === "all") return null;
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  if (period === "7d") d.setDate(d.getDate() - 6);
+  if (period === "30d") d.setDate(d.getDate() - 29);
+  return d;
+}
+
+async function adminSubmissionCount(since = null) {
+  try {
+    const ref = collectionGroup(db, "submissions");
+    const source = since ? query(ref, where("submittedAt", ">=", Timestamp.fromDate(since))) : ref;
+    const c = await getCountFromServer(source);
+    return c.data().count;
+  } catch (err) {
+    console.warn("Abgaben-Zählung nicht verfügbar:", err);
+    return "–";
+  }
+}
+
+function renderAdminFilterOptions() {
+  const select = $("adminTestOwnerFilter");
+  if (!select) return;
+  const current = select.value || "all";
+  const users = [...state.adminUsers].sort((a, b) => String(a.displayName || a.email || "").localeCompare(String(b.displayName || b.email || ""), "de"));
+  select.innerHTML = `<option value="all">Alle Lehrkräfte</option>${users.map((u) => `<option value="${escapeHtml(u.id)}">${escapeHtml(u.displayName || u.email || "Lehrkraft")}</option>`).join("")}`;
+  select.value = users.some((u) => u.id === current) ? current : "all";
+}
+
+function teacherQuizCount(uid) {
+  return state.adminQuizzes.filter((q) => q.ownerId === uid && !q.isDeleted).length;
+}
+
+function adminUserStatusKey(u) {
+  if (u.status === "suspended") return "suspended";
+  if (u.role === "admin") return "admin";
+  return "active";
+}
+
+let adminAccountController = null;
+function accountController() {
+  if (!adminAccountController && $("adminTeachersTable")) adminAccountController = createAccountController({
+    root: $("adminTeachersTable"), getSession: () => state.user?.uid,
+    call: async (name, data) => (await httpsCallable(getFunctions(app, "europe-west1"), name)(data)).data,
+    refresh: async () => { await loadAdminData(false); document.dispatchEvent(new CustomEvent("gradecrew:admin-accounts-updated")); },
+    open: openAdminTeacher, formatDate: fmtDate
+  });
+  return adminAccountController;
+}
+document.addEventListener("gradecrew:account-changed", () => adminAccountController?.reset());
+document.addEventListener("gradecrew:admin-archived-visibility", renderAdminTeachers);
+document.addEventListener("gradecrew:admin-account-action", event => {
+  if (state.profile?.role !== "admin") return;
+  const { action, targets, value } = event.detail || {};
+  void accountController()?.start(action, targets, value);
+});
+function renderAdminTeachers() {
+  const root = $("adminTeachersTable");
+  if (!root) return;
+  const term = normalize($("adminTeacherSearch")?.value || "");
+  const status = $("adminTeacherStatusFilter")?.value || "all";
+  const sort = $("adminTeacherSort")?.value || "name";
+  const users = state.adminUsers
+    .filter((u) => !u.isTestAccountArchived || root.dataset.gcShowArchived === "1")
+    .filter((u) => !term || normalize(`${u.displayName || ""} ${u.email || ""}`).includes(term))
+    .filter((u) => status === "all" || adminUserStatusKey(u) === status)
+    .sort((a,b)=>{
+      const difference = sort === "registered" ? toMillis(b.createdAt) - toMillis(a.createdAt)
+        : sort === "activity" ? toMillis(b.lastActiveAt) - toMillis(a.lastActiveAt)
+        : sort === "tests" ? teacherQuizCount(b.id) - teacherQuizCount(a.id)
+        : sort === "status" ? adminUserStatusKey(a).localeCompare(adminUserStatusKey(b), "de") : 0;
+      return difference || String(a.displayName||a.email||"").localeCompare(String(b.displayName||b.email||""),"de");
+    });
+  accountController()?.render(users.map(u => ({...u, quizCount: teacherQuizCount(u.id)})), {allUsers: state.adminUsers});
+}
+
+function exportAdminTeachersCsv() {
+  const users = state.adminUsers.map((u) => [
+    u.displayName || "", u.email || "", u.role || "teacher", u.status || "active",
+    fmtDate(u.createdAt), fmtDate(u.lastActiveAt), teacherQuizCount(u.id), u.appVersion || ""
+  ]);
+  downloadAdminCsv("testify_lehrkraefte.csv", [["Name","E-Mail","Rolle","Status","Registriert","Letzte Aktivität","Tests","App-Version"], ...users]);
+}
+
+function openAdminTeacher(uid) {
+  const u = state.adminUsers.find((x)=>x.id===uid);
+  if (!u) return;
+  const tests = state.adminQuizzes.filter((q)=>q.ownerId===uid && !q.isDeleted).sort((a,b)=>toMillis(b.updatedAt)-toMillis(a.updatedAt));
+  const detail = $("adminTeacherDetail");
+  detail.classList.remove("hidden");
+  detail.innerHTML = `<div class="sectionHead"><div><span class="eyebrow">Lehrkraft</span><h2>${escapeHtml(u.displayName || u.email || "Lehrkraft")}</h2><p>${escapeHtml(u.email || "")}</p></div><button class="iconButton closeAdminDetail" type="button">×</button></div><div class="adminDetailMeta"><span>Registriert: <strong>${escapeHtml(fmtDate(u.createdAt))}</strong></span><span>Letzte Aktivität: <strong>${escapeHtml(fmtDate(u.lastActiveAt))}</strong></span><span>Rolle: <strong>${u.role === "admin" ? "Admin" : "Lehrkraft"}</strong></span><span>Status: <strong>${u.status === "suspended" ? "Gesperrt" : "Aktiv"}</strong></span><span>Tests: <strong>${tests.length}</strong></span><span>App-Version: <strong>${escapeHtml(u.appVersion || "–")}</strong></span></div><div class="actions adminDetailActions"><button class="button secondary adminResetPassword" type="button">Reset-Mail senden</button>${u.id !== state.user.uid ? `<button class="button ${u.status === "suspended" ? "primary" : "danger"} adminToggleUser" type="button">${u.status === "suspended" ? "Entsperren" : "Account sperren"}</button>` : ""}</div><h3>Tests</h3><div class="miniTestList">${tests.length ? tests.map((q)=>`<button type="button" class="miniTest adminOpenTestFromTeacher" data-id="${escapeHtml(q.id)}"><span><strong>${escapeHtml(q.title || "Unbenannter Test")}</strong><small>${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · ${escapeHtml(q.id)}</small></span><span>→</span></button>`).join("") : `<p class="hint">Noch keine Tests.</p>`}</div>`;
+  detail.querySelector(".closeAdminDetail").addEventListener("click",()=>detail.classList.add("hidden"));
+  detail.querySelector(".adminResetPassword").addEventListener("click",()=>adminSendPasswordReset(u));
+  detail.querySelector(".adminToggleUser")?.addEventListener("click",()=>toggleUserSuspension(u));
+  detail.querySelectorAll(".adminOpenTestFromTeacher").forEach((btn)=>btn.addEventListener("click",()=>{ switchAdminTab("tests"); openAdminTest(btn.dataset.id); }));
+  detail.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+async function adminSendPasswordReset(user) {
+  if (!user?.email) return;
+  if (!confirm(`Passwort-Reset-Mail an ${user.email} senden?`)) return;
+  try {
+    await sendPasswordResetEmail(auth, user.email);
+    await writeAdminAudit("password_reset_sent", { userId: user.id, email: user.email });
+    toast("Reset-Mail wurde versendet.");
+  } catch (err) { console.error(err); toast("Reset-Mail konnte nicht versendet werden.", "error"); }
+}
+
+async function toggleUserSuspension(user) {
+  if (!user || user.id === state.user.uid) return;
+  const suspend = user.status !== "suspended";
+  void accountController()?.start("status", [user.id], suspend ? "suspended" : "active");
+}
+
+function adminQuizStatus(q) {
+  if (q.isDeleted) return "Papierkorb";
+  if (q.ended) return "Beendet";
+  if (q.published) return "Veröffentlicht";
+  if (Number(q.questionCount || 0) === 0) return "Unvollständig";
+  return "Entwurf";
+}
+
+function ownerLabel(uid) {
+  const u = state.adminUsers.find((x)=>x.id===uid);
+  return u?.displayName || u?.email || uid || "–";
+}
+
+function adminTestMatchesStatus(q, status) {
+  if (status === "all") return true;
+  if (status === "trash") return Boolean(q.isDeleted);
+  if (q.isDeleted) return false;
+  if (status === "ended") return Boolean(q.ended);
+  if (status === "published") return Boolean(q.published && !q.ended);
+  if (status === "draft") return !q.published && !q.ended;
+  return true;
+}
+
+function adminTestPeriodStart(period) {
+  if (!period || period === "all") return null;
+  const days = Number(period.replace("d", ""));
+  if (!Number.isFinite(days)) return null;
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() - Math.max(0, days - 1));
+  return d;
+}
+
+function filteredAdminTests() {
+  const term = normalize($("adminTestSearch")?.value || "");
+  const status = $("adminTestStatusFilter")?.value || "all";
+  const owner = $("adminTestOwnerFilter")?.value || "all";
+  const since = adminTestPeriodStart($("adminTestPeriodFilter")?.value || "all");
+  return state.adminQuizzes
+    .filter((q) => !term || normalize(`${q.title||""} ${q.subject||""} ${q.grade||""} ${q.id} ${ownerLabel(q.ownerId)}`).includes(term))
+    .filter((q) => adminTestMatchesStatus(q, status))
+    .filter((q) => owner === "all" || q.ownerId === owner)
+    .filter((q) => !since || toMillis(q.updatedAt || q.createdAt) >= since.getTime())
+    .sort((a,b)=>toMillis(b.updatedAt||b.createdAt)-toMillis(a.updatedAt||a.createdAt));
+}
+
+function renderAdminTests() {
+  const root = $("adminTestsTable");
+  if (!root) return;
+  const list = filteredAdminTests();
+  if (!list.length) { root.innerHTML = `<div class="emptyInline">Keine Tests für diese Filter gefunden.</div>`; return; }
+  root.innerHTML = `<table><thead><tr><th>Test</th><th>Lehrkraft</th><th>Status</th><th>Aufgaben</th><th>Zuletzt geändert</th><th></th></tr></thead><tbody>${list.map((q)=>`<tr><td><strong>${escapeHtml(q.title || "Unbenannter Test")}</strong><small>${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · ${escapeHtml(q.id)}</small></td><td>${escapeHtml(ownerLabel(q.ownerId))}</td><td><span class="adminStatusPill status-${escapeHtml(adminQuizStatus(q).toLowerCase())}">${escapeHtml(adminQuizStatus(q))}</span></td><td>${Number(q.questionCount||0)}</td><td>${escapeHtml(fmtDate(q.updatedAt||q.createdAt))}</td><td><button class="button ghost adminTestOpen" data-id="${escapeHtml(q.id)}" type="button">Ansehen</button></td></tr>`).join("")}</tbody></table>`;
+  root.querySelectorAll(".adminTestOpen").forEach((btn)=>btn.addEventListener("click",()=>openAdminTest(btn.dataset.id)));
+}
+
+function exportAdminTestsCsv() {
+  const rows = filteredAdminTests().map((q) => [q.id, q.title || "", q.subject || "", q.grade || "", ownerLabel(q.ownerId), adminQuizStatus(q), Number(q.questionCount || 0), fmtDate(q.createdAt), fmtDate(q.updatedAt)]);
+  downloadAdminCsv("testify_tests.csv", [["Testcode","Titel","Fach","Klasse","Lehrkraft","Status","Aufgaben","Erstellt","Zuletzt geändert"], ...rows]);
+}
+
+function downloadAdminCsv(filename, rows) {
+  const safeCell = (value) => {
+    let text = String(value ?? "");
+    if (/^[=+\-@]/.test(text)) text = `'${text}`;
+    return `"${text.replace(/"/g, '""')}"`;
+  };
+  const csv = rows.map((r) => r.map(safeCell).join(";")).join("\n");
+  const blob = new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+async function openAdminTest(code) {
+  const q = state.adminQuizzes.find((x)=>x.id===code);
+  if (!q) return;
+  const detail = $("adminTestDetail");
+  detail.classList.remove("hidden");
+  detail.innerHTML = `<div class="sectionHead"><div><span class="eyebrow">Supportansicht</span><h2>${escapeHtml(q.title || "Unbenannter Test")}</h2><p>${escapeHtml(ownerLabel(q.ownerId))} · Code ${escapeHtml(q.id)}</p></div><button class="iconButton closeAdminTestDetail" type="button">×</button></div><div class="adminDetailMeta"><span>Status: <strong>${escapeHtml(adminQuizStatus(q))}</strong></span><span>Fach: <strong>${escapeHtml(q.subject||"–")}</strong></span><span>Klasse: <strong>${escapeHtml(q.grade||"–")}</strong></span><span>Aufgaben: <strong>${Number(q.questionCount||0)}</strong></span></div><div id="adminQuestionPreview" class="adminQuestionPreview">Aufgaben werden geladen …</div><div class="actions">${q.isDeleted ? `<button class="button primary adminRestoreQuiz" type="button">Wiederherstellen</button><button class="button danger adminPurgeQuiz" type="button">Endgültig löschen</button>` : ""}</div>`;
+  detail.querySelector(".closeAdminTestDetail").addEventListener("click",()=>detail.classList.add("hidden"));
+  detail.querySelector(".adminRestoreQuiz")?.addEventListener("click",()=>restoreQuiz(code,{admin:true}));
+  detail.querySelector(".adminPurgeQuiz")?.addEventListener("click",()=>permanentlyDeleteQuiz(code,{admin:true}));
+  try {
+    const snap = await getDocs(query(collection(db,"quizzes",code,"questions"),orderBy("position")));
+    const qs = snap.docs.map((d)=>({id:d.id,...d.data()}));
+    $("adminQuestionPreview").innerHTML = qs.length ? qs.map((item,i)=>`<div class="adminQuestionRow"><span>${i+1}</span><div><strong>${escapeHtml(item.text||"Ohne Fragetext")}</strong><small>${escapeHtml(QUESTION_TYPES.find(([v])=>v===item.type)?.[1]||item.type||"–")} · ${Number(item.points||0)} P.</small></div></div>`).join("") : `<p class="hint">Keine Aufgaben.</p>`;
+  } catch (err) { console.error(err); $("adminQuestionPreview").textContent="Aufgaben konnten nicht geladen werden."; }
+  detail.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function announcementDisplayLabel(value) {
+  return value === "popup" ? "Popup beim Öffnen" : "Karte im Dashboard";
+}
+
+function announcementFrequencyLabel(value) {
+  return ({ once: "einmal pro Nutzer", every_login: "bei jedem Login", until_closed: "bis zum Schließen" })[value] || "einmal pro Nutzer";
+}
+
+function announcementPreviewFallback(type) {
+  return ({
+    welcome: ["Schön, dass du da bist!", "Viel Spaß beim Erstellen und Ausprobieren."],
+    news: ["Neu in GradeCrew", "Hier kannst du kurz auf eine neue Funktion aufmerksam machen."],
+    info: ["Kurzer Hinweis", "Hier steht eine sachliche Information für die Lehrkräfte."],
+    warning: ["Wichtiger Hinweis", "Hier steht eine wichtige Information, die nicht übersehen werden sollte."]
+  })[type] || ["Hinweis", "Hier erscheint deine Mitteilung."];
+}
+
+function renderAnnouncementPreview() {
+  const root = $("announcementPreview");
+  if (!root) return;
+  const type = $("announcementType")?.value || "info";
+  const display = $("announcementDisplay")?.value || "banner";
+  const frequency = $("announcementFrequency")?.value || "once";
+  const fallback = announcementPreviewFallback(type);
+  const title = $("announcementTitle")?.value.trim() || fallback[0];
+  const text = $("announcementText")?.value.trim() || fallback[1];
+  const active = $("announcementActive")?.checked !== false;
+  const meta = `${announcementDisplayLabel(display)} · ${announcementFrequencyLabel(frequency)}${active ? "" : " · deaktiviert"}`;
+  if ($("announcementPreviewMeta")) $("announcementPreviewMeta").textContent = meta;
+
+  if (display === "popup") {
+    root.innerHTML = `<div class="announcementPreviewBackdrop"><div class="announcementPreviewDialog"><div class="announcementPreviewDialogHead"><div><span class="eyebrow">${announcementIcon(type)} ${escapeHtml(announcementTypeLabel(type))}</span><strong>${escapeHtml(title)}</strong></div><span class="announcementPreviewX">×</span></div><p>${escapeHtml(text)}</p><div class="announcementPreviewDialogFoot"><span>Alles klar</span></div></div></div>`;
+  } else {
+    root.innerHTML = `<div class="announcementBanner announcement-${escapeHtml(type)} announcementPreviewBanner"><span class="announcementIcon">${announcementIcon(type)}</span><div class="announcementBody"><strong>${escapeHtml(title)}</strong><p>${escapeHtml(text)}</p></div><span class="announcementPreviewX">×</span></div>`;
+  }
+  root.classList.toggle("previewInactive", !active);
+}
+
+function resetAnnouncementForm() {
+  $("announcementEditId").value="";
+  $("announcementType").value="welcome";
+  $("announcementDisplay").value="banner";
+  $("announcementFrequency").value="once";
+  $("announcementActive").checked=true;
+  $("announcementTitle").value="";
+  $("announcementText").value="";
+  $("announcementStart").value="";
+  $("announcementEnd").value="";
+  $("saveAnnouncementBtn").textContent="Mitteilung veröffentlichen";
+  renderAnnouncementPreview();
+}
+
+function localDateTimeValue(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const p=(n)=>String(n).padStart(2,"0");
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+function editAnnouncement(id) {
+  const a=state.adminAnnouncements.find((x)=>x.id===id); if(!a)return;
+  $("announcementEditId").value=a.id;
+  $("announcementType").value=a.type||"info";
+  $("announcementDisplay").value=a.display||"banner";
+  $("announcementFrequency").value=a.frequency||"once";
+  $("announcementActive").checked=a.active!==false;
+  $("announcementTitle").value=a.title||"";
+  $("announcementText").value=a.text||"";
+  $("announcementStart").value=localDateTimeValue(a.startsAt);
+  $("announcementEnd").value=localDateTimeValue(a.endsAt);
+  $("saveAnnouncementBtn").textContent="Änderungen speichern";
+  renderAnnouncementPreview();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+async function saveAnnouncement() {
+  if (!isAdmin()) return;
+  const title=$("announcementTitle").value.trim(); const text=$("announcementText").value.trim();
+  if(!title||!text){toast("Titel und Nachricht dürfen nicht leer sein.","error");return;}
+  const startRaw=$("announcementStart").value; const endRaw=$("announcementEnd").value;
+  if(startRaw&&endRaw&&new Date(endRaw)<=new Date(startRaw)){toast("Das Enddatum muss nach dem Start liegen.","error");return;}
+  const id=$("announcementEditId").value.trim();
+  const data={type:$("announcementType").value,display:$("announcementDisplay").value,frequency:$("announcementFrequency").value,active:$("announcementActive").checked,title,text,startsAt:startRaw?new Date(startRaw).toISOString():null,endsAt:endRaw?new Date(endRaw).toISOString():null,updatedAt:serverTimestamp(),updatedBy:state.user.uid};
+  try{
+    if(id){await updateDoc(doc(db,"announcements",id),data);await writeAdminAudit("announcement_updated",{announcementId:id,title});}
+    else{const ref=await addDoc(collection(db,"announcements"),{...data,createdAt:serverTimestamp(),createdBy:state.user.uid});await writeAdminAudit("announcement_created",{announcementId:ref.id,title});}
+    resetAnnouncementForm(); toast(id ? "Änderungen gespeichert." : "Mitteilung veröffentlicht."); await loadAdminData(false);
+  }catch(err){console.error(err);toast("Mitteilung konnte nicht gespeichert werden.","error");}
+}
+
+async function deleteAnnouncement(id) {
+  const a=state.adminAnnouncements.find((x)=>x.id===id); if(!a)return;
+  if(!confirm(`Mitteilung „${a.title||"Hinweis"}“ löschen?`))return;
+  try{await deleteDoc(doc(db,"announcements",id));await writeAdminAudit("announcement_deleted",{announcementId:id,title:a.title||""});toast("Mitteilung gelöscht.");await loadAdminData(false);}catch(err){console.error(err);toast("Mitteilung konnte nicht gelöscht werden.","error");}
+}
+
+function renderAdminAnnouncements() {
+  const root=$("adminAnnouncementList"); if(!root)return;
+  if(!state.adminAnnouncements.length){root.innerHTML=`<p class="hint">Noch keine Mitteilungen.</p>`;return;}
+  root.innerHTML=state.adminAnnouncements.map((a)=>`<article class="adminAnnouncementItem"><div><span class="announcementMiniIcon">${announcementIcon(a.type)}</span><div><strong>${escapeHtml(a.title||"Hinweis")}</strong><small>${escapeHtml(announcementTypeLabel(a.type))} · ${a.display==="popup"?"Popup":"Dashboard"} · ${a.frequency==="every_login"?"jeder Login":a.frequency==="until_closed"?"bis geschlossen":"einmal"}${a.active===false?" · deaktiviert":""}</small></div></div><div class="actions"><button class="button ghost editAnnouncement" data-id="${escapeHtml(a.id)}" type="button">Bearbeiten</button><button class="button danger deleteAnnouncement" data-id="${escapeHtml(a.id)}" type="button">Löschen</button></div></article>`).join("");
+  root.querySelectorAll(".editAnnouncement").forEach((b)=>b.addEventListener("click",()=>editAnnouncement(b.dataset.id)));
+  root.querySelectorAll(".deleteAnnouncement").forEach((b)=>b.addEventListener("click",()=>deleteAnnouncement(b.dataset.id)));
+}
+
+function teacherTourStepEditor(step, index, total) {
+  return `<article class="teacherTourAdminStep" data-index="${index}">
+    <div class="teacherTourAdminStepHead">
+      <strong>Schritt ${index + 1}</strong>
+      <div class="teacherTourAdminStepActions">
+        <button class="button ghost tourMoveUp" type="button" ${index === 0 ? "disabled" : ""}>↑</button>
+        <button class="button ghost tourMoveDown" type="button" ${index === total - 1 ? "disabled" : ""}>↓</button>
+        <button class="button danger tourRemove" type="button" ${total <= 1 ? "disabled" : ""}>Löschen</button>
+      </div>
+    </div>
+    <div class="teacherTourAdminFields">
+      <label>Symbol<input class="tourStepIcon" type="text" maxlength="8" value="${escapeHtml(step.icon || "")}" placeholder="✨" /></label>
+      <label class="tourStepTitleField">Titel<input class="tourStepTitle" type="text" maxlength="120" value="${escapeHtml(step.title || "")}" /></label>
+      <label class="span2">Text<textarea class="tourStepText" rows="3" maxlength="1200">${escapeHtml(step.text || "")}</textarea></label>
+      <label class="span2">Hinweise <small>(eine Zeile pro Punkt)</small><textarea class="tourStepBullets" rows="4" maxlength="3500">${escapeHtml((step.bullets || []).join("\n"))}</textarea></label>
+    </div>
+  </article>`;
+}
+
+function renderAdminTeacherTour() {
+  const root = $("teacherTourAdminList");
+  if (!root) return;
+  const config = currentTeacherTourConfig();
+  if ($("teacherTourAdminEnabled")) $("teacherTourAdminEnabled").checked = config.enabled;
+  if ($("teacherTourAdminVersion")) $("teacherTourAdminVersion").textContent = config.version;
+  root.innerHTML = config.steps.map((step, index) => teacherTourStepEditor(step, index, config.steps.length)).join("");
+  bindAdminTeacherTourStepButtons();
+}
+
+function readAdminTeacherTourSteps() {
+  return Array.from(document.querySelectorAll(".teacherTourAdminStep")).map((card, index) => ({
+    icon: card.querySelector(".tourStepIcon")?.value.trim() || "•",
+    title: card.querySelector(".tourStepTitle")?.value.trim() || `Schritt ${index + 1}`,
+    text: card.querySelector(".tourStepText")?.value.trim() || "",
+    bullets: (card.querySelector(".tourStepBullets")?.value || "").split("\n").map(value => value.trim()).filter(Boolean)
+  }));
+}
+
+function bindAdminTeacherTourStepButtons() {
+  document.querySelectorAll(".teacherTourAdminStep").forEach((card, index, cards) => {
+    card.querySelector(".tourMoveUp")?.addEventListener("click", () => moveAdminTeacherTourStep(index, -1));
+    card.querySelector(".tourMoveDown")?.addEventListener("click", () => moveAdminTeacherTourStep(index, 1));
+    card.querySelector(".tourRemove")?.addEventListener("click", () => removeAdminTeacherTourStep(index));
+  });
+}
+
+function syncAdminTeacherTourDraft(steps) {
+  state.teacherTourConfig = normalizeTeacherTourConfig({
+    ...currentTeacherTourConfig(),
+    enabled: $("teacherTourAdminEnabled")?.checked !== false,
+    steps
+  });
+  renderAdminTeacherTour();
+}
+
+function moveAdminTeacherTourStep(index, delta) {
+  const steps = readAdminTeacherTourSteps();
+  const next = index + delta;
+  if (next < 0 || next >= steps.length) return;
+  [steps[index], steps[next]] = [steps[next], steps[index]];
+  syncAdminTeacherTourDraft(steps);
+}
+
+function removeAdminTeacherTourStep(index) {
+  const steps = readAdminTeacherTourSteps();
+  if (steps.length <= 1) return;
+  steps.splice(index, 1);
+  syncAdminTeacherTourDraft(steps);
+}
+
+function addAdminTeacherTourStep() {
+  const steps = readAdminTeacherTourSteps();
+  steps.push({ icon: "ℹ️", title: "Neue Information", text: "", bullets: [] });
+  syncAdminTeacherTourDraft(steps);
+}
+
+async function saveAdminTeacherTour() {
+  if (!isAdmin()) return;
+  const button = $("saveTeacherTourBtn");
+  if (button) button.disabled = true;
+  try {
+    const previous = currentTeacherTourConfig();
+    const steps = readAdminTeacherTourSteps();
+    if (!steps.length) throw new Error("Mindestens ein Tutorial-Schritt ist erforderlich.");
+    const reshow = $("teacherTourReshow")?.checked !== false;
+    const version = reshow ? `admin-${Date.now()}` : previous.version;
+    const config = normalizeTeacherTourConfig({
+      enabled: $("teacherTourAdminEnabled")?.checked !== false,
+      version,
+      steps
+    });
+    await setDoc(doc(db, "appConfig", "teacherTour"), {
+      ...config,
+      updatedAt: serverTimestamp(),
+      updatedBy: state.user.uid
+    }, { merge: true });
+    state.teacherTourConfig = config;
+    await writeAdminAudit("teacher_tour_updated", { version, steps: config.steps.length, enabled: config.enabled, reshow });
+    renderAdminTeacherTour();
+    toast(reshow ? "Tutorial gespeichert. Es wird Lehrkräften erneut angezeigt." : "Tutorial gespeichert.");
+  } catch (err) {
+    console.error(err);
+    toast(err?.message || "Tutorial konnte nicht gespeichert werden.", "error");
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
+function showAdminTeacherTourPreview() {
+  if (!isAdmin()) return;
+  const steps = readAdminTeacherTourSteps();
+  state.teacherTourConfig = normalizeTeacherTourConfig({
+    ...currentTeacherTourConfig(),
+    enabled: true,
+    steps
+  });
+  teacherTourIndex = 0;
+  renderTeacherTourStep();
+  safeDialogOpen($("teacherTourDialog"));
+}
+
+function feedbackCategoryLabel(v){return({rights:"Rechtehinweis",ai_question:"KI-Aufgabe",app_error:"Technischer Fehler",screenshot_error:"Screenshot-Fehler",bug:"Fehler",idea:"Wunsch / Idee",question:"Frage",other:"Sonstiges"})[v]||v||"Feedback";}
+
+function formatTechnicalErrorReport(report) {
+  const t = report.technicalDetails || {};
+  const fields = [
+    ["Fehlercode", report.errorCode], ["Report-ID", report.reportId], ["Fingerprint", report.fingerprint],
+    ["Meldung", report.message], ["Aktion", report.action], ["Originalfehler", t.rawMessage],
+    ["Validierungsfehler", t.validationErrors], ["Provider-Code", t.providerCode], ["Fehlertyp", t.errorName],
+    ["Server-Referenz", t.serverReference], ["Server-Phase", t.serverPhase],
+    ["Ablehnungsgrund", t.serverReason], ["KI-Diagnose (Aufgabe, Bildversuche und Prüfgründe)", t.aiDiagnostic],
+    ["Hintergrundauftrag", t.jobId], ["Gespeicherte Aufgaben", t.completedCount],
+    ["Geplante Bilder", t.imageTotal], ["Gespeicherte Bilder", t.imageCompleted],
+    ["Geplante Höraudios", t.audioTotal], ["Gespeicherte Höraudios", t.audioCompleted],
+    ["Geplante Audio-Lösungen", t.solutionAudioTotal], ["Gespeicherte Audio-Lösungen", t.solutionAudioCompleted],
+    ["Anfragenkennung", t.clientRequestId], ["Erstellungsdauer (ms)", t.generationDurationMs],
+    ["Ansicht", t.view], ["Client-Phase", t.stage], ["Aufgabe", t.questionPosition],
+    ["Aufgabentyp", t.questionType], ["Bildart", t.mediaKind],
+    ["Gewünschte Aufgaben", t.requestedCount], ["Aufgaben im Editor", t.questionCount],
+    ["Zielpunkte", t.targetPoints], ["Bildmodus", t.imageMode],
+    ["Aufgaben mit Bild", t.imageQuestionCount], ["Aufgaben mit Bildantworten", t.imageAnswerQuestionCount],
+    ["Materialien", t.materialCount], ["Erlaubte Aufgabentypen", t.allowedTypeCount],
+    ["Gewünschte Varianten", t.variantCount], ["Erstellte Varianten", t.variantsCreated],
+    ["Andere Aufgabe verlangt", t.requireDifferent], ["Länge der Anweisung", t.instructionLength],
+    ["Aufgaben im Test", t.testQuestionCount],
+    ["Datei", t.file], ["Zeile", t.line], ["Spalte", t.column],
+    ["Testcode", report.testCode], ["Version", report.appVersion], ["Umgebung", report.environment],
+    ["Gemeldet", fmtDate(report.createdAt)], ["Client-Zeit", t.occurredAtClient],
+    ["Browser", report.userAgent], ["Sprache", t.language], ["Online", t.online],
+    ["Viewport", t.viewport], ["Bildschirm", t.screen], ["Häufigkeit", t.occurrences],
+    ["Code-Commit", t.diagnostics?.release?.commit],
+    ["Technischer Ablauf", JSON.stringify(t.diagnostics?.breadcrumbs || [], null, 2)],
+    ["Ursache", report.resolution?.rootCause], ["Fix-Commit", report.resolution?.fixCommit],
+    ["Prüfnachweis", report.resolution?.verification],
+    ["Stacktrace", t.stack]
+  ];
+  return ["GradeCrew · technischer Fehlerbericht", ...fields
+    .filter(([, value]) => value !== undefined && value !== null && value !== "" && value !== "–")
+    .map(([label, value]) => `${label}: ${String(value)}`)].join("\n");
+}
+
+function bugOpsLifecycleLabel(value) {
+  return {
+    open: "Offen",
+    fix_recorded: "Fix dokumentiert",
+    monitoring: "Beobachtung",
+    regressed: "Erneut aufgetreten",
+    retest_required: "Staging-Fix erneut testen"
+  }[value] || "Offen";
+}
+
+function renderBugOpsSummary() {
+  const incidents = buildBugIncidents(state.adminFeedback);
+  const overview = bugOpsOverview(incidents);
+  if (!incidents.length) return "";
+  const decisionCount = overview.immediate + overview.action_needed + overview.retest_ready;
+  const top = incidents.slice(0, 8);
+  const badge = (incident) => incident.priority === "P0" ? "🔴" : incident.priority === "P1" ? "🟠" : incident.priority === "P2" ? "🟡" : "⚪";
+  const notice = decisionCount
+    ? `<strong>${decisionCount} Vorgang${decisionCount === 1 ? "" : "e"} brauchen Aufmerksamkeit.</strong>`
+    : "<strong>Keine akute Entscheidung nötig.</strong>";
+  const canonical = Array.isArray(state.bugOpsSummary?.incidents) ? state.bugOpsSummary.incidents : [];
+  const canonicalHtml = canonical.length ? `<div class="bugOpsCanonicalList" aria-label="Wichtige BugOps-Vorgänge">
+    ${canonical.map(incident => `<div class="bugOpsCanonicalItem">
+      <strong>${escapeHtml(incident.priority || "P3")}</strong>
+      <span>${escapeHtml(bugOpsLifecycleLabel(incident.lifecycle))}</span>
+      <span><strong>${Number(incident.uniqueReporters || 0)}</strong> <span>Melder</span></span>
+      <span><strong>${Number(incident.occurrences || 0)}</strong> <span>Vorkommen</span></span>
+      ${incident.regressionAfterFix ? "<span>🔁 Erneut aufgetreten</span>" : ""}
+    </div>`).join("")}
+  </div>` : "";
+  return `<section class="card bugOpsBoard">
+    <div class="sectionHead"><div><span class="eyebrow">BugOps · Decision Inbox</span><h2>Fehler statt Meldungen verwalten</h2><p>${notice} ${overview.total} Incident${overview.total === 1 ? "" : "s"} aus den ${state.adminFeedback.length} zuletzt geladenen Meldungen.</p></div></div>
+    <div class="adminStatsGrid">
+      <article class="card adminStatCard"><span>🔴</span><div><strong>${overview.P0 + overview.P1}</strong><small>P0/P1</small></div></article>
+      <article class="card adminStatCard"><span>👥</span><div><strong>${overview.affectedUsers}</strong><small>Betroffene Melder*</small></div></article>
+      <article class="card adminStatCard"><span>⚡</span><div><strong>${overview.immediate}</strong><small>Sofort ansehen</small></div></article>
+      <article class="card adminStatCard"><span>🔁</span><div><strong>${overview.retest_ready}</strong><small>Retest bereit</small></div></article>
+    </div>
+    ${canonicalHtml}\n    <small class="hint">* innerhalb der aktuell geladenen technischen Meldungen; gleiche Lehrkraft wird pro Incident nur einmal gezählt.</small>
+    <div class="bugOpsIncidentList">${top.map(incident => `<button type="button" class="button secondary bugOpsIncidentFilter" data-fingerprint="${escapeHtml(incident.fingerprint)}">${badge(incident)} ${escapeHtml(incident.priority)} · ${incident.uniqueReporters} Nutzer · ${incident.occurrences}× · ${incident.regressionAfterFix ? "Regression · " : ""}${incident.autopilot === "candidate" ? "Autopilot-Kandidat" : "menschliche Prüfung"}</button>`).join("")}</div>
+  </section>`;
+}
+
+function renderAdminFeedback(){
+  const root=$("adminFeedbackList"); if(!root)return;
+  const status=$("adminFeedbackFilter")?.value||"all";
+  const category=$("adminFeedbackCategory")?.value||"all";
+  const term=normalize($("adminFeedbackSearch")?.value||"");
+  const list = filterLogs(state.adminFeedback, {
+    status, category, term, environment: $("adminFeedbackEnvironment")?.value,
+    severity: $("adminFeedbackSeverity")?.value, version: $("adminFeedbackVersion")?.value,
+    action: $("adminFeedbackAction")?.value, fingerprint: $("adminFeedbackFingerprint")?.value,
+    from: $("adminFeedbackFrom")?.value, to: $("adminFeedbackTo")?.value, sort: $("adminFeedbackSort")?.value
+  });
+  if ($("adminFeedbackCount")) $("adminFeedbackCount").textContent = `${list.length} Treffer · ${state.adminFeedback.length} von ${state.adminFeedbackTotal ?? state.adminFeedback.length} Meldungen geladen`;
+  if ($("adminFeedbackExport")) $("adminFeedbackExport").onclick = () => {
+    const blob = new Blob([JSON.stringify(supportExport(list), null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob); const link = document.createElement("a");
+    link.href = url; link.download = `gradecrew-diagnose-${new Date().toISOString().slice(0, 10)}.json`; link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+  const aiReviewFalsePositives = list.filter(f => f.category === "ai_question" && f.reviewOutcome === "false_positive");
+  const aiItems = list.filter(f => f.category === "ai_question" && f.reviewOutcome !== "false_positive");
+  const reasonCounts = Object.entries(AI_QUALITY_REASONS).map(([key, label]) => ({ label, count: aiItems.filter(f => f.reason === key && f.verdict === "bad").length })).filter(item => item.count);
+  const summary = aiItems.length || aiReviewFalsePositives.length ? `<div class="aiFeedbackSummary"><strong>KI-Aufgaben:</strong> ${aiItems.filter(f => f.verdict === "good").length} gut · ${aiItems.filter(f => f.verdict === "bad").length} problematisch · ${aiReviewFalsePositives.length} zurückgewiesene Prüferwarnungen${reasonCounts.length ? `<br>${reasonCounts.map(item => `${escapeHtml(item.label)}: ${item.count}`).join(" · ")}` : ""}</div>` : "";
+  const errorItems = list.filter(f => f.category === "app_error");
+  const errorGroups = [...errorItems.reduce((map, item) => {
+    const key = item.errorCode || "UNBEKANNT";
+    map.set(key, (map.get(key) || 0) + 1);
+    return map;
+  }, new Map()).entries()].sort((a, b) => b[1] - a[1]);
+  const errorSummary = errorItems.length ? `<div class="aiFeedbackSummary errorFeedbackSummary"><strong>Technische Fehler:</strong> ${errorItems.length} Meldung${errorItems.length === 1 ? "" : "en"}${errorGroups.length ? `<br>${errorGroups.map(([key, count]) => `${escapeHtml(key)}: ${count}`).join(" · ")}` : ""}</div>` : "";
+  const openRights = state.adminFeedback.filter(f => f.category === "rights" && f.status !== "done").length;
+  const rightsSummary = openRights ? `<div class="aiFeedbackSummary"><strong>${openRights} offene Rechtehinweis${openRights === 1 ? "" : "e"} – zeitnah prüfen und betroffene Zugänge bei begründetem Verdacht sperren.</strong></div>` : "";
+  const grouped = groupErrors(list);
+  const groupsHtml = grouped.length ? `<details class="card"><summary>Fehlergruppen · ${grouped.length}</summary>${grouped.slice(0, 30).map(g => `<button type="button" class="button secondary errorGroupFilter" data-fingerprint="${escapeHtml(g.fingerprint)}">${escapeHtml(g.fingerprint)} · ${g.reports} Meldungen · ${g.occurrences} Vorkommen · ${g.open} offen</button>`).join("")}</details>` : "";
+  root.innerHTML = renderBugOpsSummary() + rightsSummary + errorSummary + summary + groupsHtml + (list.length ? list.map(f => {
+    const q = f.questionSnapshot;
+    const snapshot = f.category === "ai_question" && q ? `<div class="aiFeedbackSnapshot"><strong>Aufgabe ${Number(f.questionPosition) || "?"} · ${escapeHtml(q.type || "")}</strong><p>${escapeHtml(q.text || "")}</p>${(q.options || []).length ? `<small>Antworten: ${(q.options || []).map(o => `${escapeHtml(o.text || "")}${o.correct ? " ✓" : ""}`).join(" · ")}</small>` : ""}<small>Aktion: ${escapeHtml(({ keep: "behalten", replace: "ersetzen", remove: "entfernen" })[f.action] || "–")}${q.imagePresent ? " · Bild im Test vorhanden oder vorhanden gewesen" : ""}${f.promptVersion ? ` · Prompt ${escapeHtml(f.promptVersion)}` : ""}${f.model ? ` · Modell ${escapeHtml(f.model)}` : ""}</small></div>` : "";
+    const technical = f.category === "app_error" ? (f.technicalDetails || {}) : null;
+    const errorSnapshot = technical ? `<div class="errorReportSnapshot"><div class="errorReportHeadline"><strong>${escapeHtml(f.errorCode || "Technischer Fehler")}</strong>${f.reportId ? `<span>${escapeHtml(f.reportId)}</span>` : ""}</div><p>${escapeHtml(f.action || "Unbekannte Aktion")}</p><small>${escapeHtml(technical.rawMessage || "Keine technische Fehlermeldung gespeichert.")}</small><div class="errorReportMeta"><span>Ansicht: ${escapeHtml(technical.view || "–")}</span><span>Phase: ${escapeHtml(technical.stage || "–")}</span><span>Aufgabe: ${escapeHtml(technical.questionPosition || "–")}</span><span>Fingerprint: ${escapeHtml(f.fingerprint || "–")}</span></div><button type="button" class="button secondary copyErrorReport" data-id="${escapeHtml(f.id)}">Fehlerbericht kopieren</button></div>` : "";
+    const quiz = f.category === "rights" ? state.adminQuizzes.find(q => q.id === f.testCode) : null;
+    const rightsAction = quiz ? `<div class="rightsReportActions"><button class="button ${quiz.rightsHold ? "secondary" : "danger"} rightsHoldToggle" type="button" data-code="${escapeHtml(quiz.id)}" data-hold="${quiz.rightsHold ? "false" : "true"}">${quiz.rightsHold ? "Sperre nach Klärung aufheben" : "Testzugang vorübergehend sperren"}</button></div>` : "";
+    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen" : f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}${errorSnapshot}${technical ? renderErrorResolution(f) : ""}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
+  }).join("") : `<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`);
+  root.querySelectorAll(".errorGroupFilter, .bugOpsIncidentFilter").forEach(button => button.addEventListener("click", () => { $("adminFeedbackFingerprint").value = button.dataset.fingerprint; renderAdminFeedback(); }));
+  root.querySelectorAll(".saveErrorResolution").forEach(button => button.addEventListener("click", () => saveErrorResolution(button)));
+  root.querySelectorAll(".feedbackStatus").forEach((sel)=>sel.addEventListener("change",()=>updateFeedbackStatus(sel.dataset.id,sel.value)));
+  root.querySelectorAll(".copyErrorReport").forEach(button => button.addEventListener("click", () => {
+    if (!isAdmin()) return;
+    const report = state.adminFeedback.find(item => item.id === button.dataset.id && item.category === "app_error");
+    if (report) copyText(formatTechnicalErrorReport(report), "Fehlerbericht kopiert.");
+  }));
+  root.querySelectorAll(".rightsHoldToggle").forEach(button => button.addEventListener("click", () => toggleRightsHold(button.dataset.code, button.dataset.hold === "true")));
+}
+
+async function toggleRightsHold(code, hold) {
+  if (!confirm(hold ? `Test ${code} für Schüler und Freigabelinks vorübergehend sperren?` : `Sperre für Test ${code} nach Klärung aufheben?`)) return;
+  try {
+    await updateDoc(doc(db, "quizzes", code), { rightsHold: hold, rightsHoldAt: hold ? serverTimestamp() : null, rightsHoldBy: hold ? state.user.uid : null });
+    await writeAdminAudit(hold ? "rights_hold_placed" : "rights_hold_released", { quizId: code });
+    const quiz = state.adminQuizzes.find(q => q.id === code);
+    if (quiz) quiz.rightsHold = hold;
+    renderAdminFeedback();
+    toast(hold ? "Testzugang gesperrt. Bitte den Hinweis prüfen und die meldende Person informieren." : "Testzugang wieder freigegeben.");
+  } catch (err) { console.error(err); toast("Testzugang konnte nicht geändert werden.", "error"); }
+}
+
+function renderErrorResolution(report) {
+  const r = report.resolution || {};
+  const trace = report.technicalDetails?.diagnostics;
+  return `<details class="errorResolution" data-report-id="${escapeHtml(report.id)}"><summary>Ursache, Lösung & Prüfnachweis</summary>
+    <p>Code-Stand: <code>${escapeHtml(trace?.release?.commit || "Bei älteren Meldungen nicht erfasst")}</code></p>
+    <pre class="supportStack">${escapeHtml(JSON.stringify(trace?.breadcrumbs || [], null, 2))}</pre>
+    <label>Wie ist der Fehler entstanden?<textarea data-resolution="rootCause" maxlength="2000">${escapeHtml(r.rootCause || "")}</textarea></label>
+    <label>Fix-Commit / Referenz<input data-resolution="fixCommit" maxlength="160" value="${escapeHtml(r.fixCommit || "")}"></label>
+    <label>Wie wurde die Korrektur geprüft?<textarea data-resolution="verification" maxlength="2000">${escapeHtml(r.verification || "")}</textarea></label>
+    <button type="button" class="button secondary saveErrorResolution">Untersuchung speichern</button></details>`;
+}
+async function saveErrorResolution(button) {
+  const host = button.closest("[data-report-id]"); const id = host?.dataset.reportId;
+  if (!id || !isAdmin()) return;
+  const resolution = Object.fromEntries([...host.querySelectorAll("[data-resolution]")].map(input => [input.dataset.resolution, input.value.trim()]));
+  button.disabled = true;
+  try {
+    await updateDoc(doc(db, "feedback", id), { resolution, updatedAt: serverTimestamp(), updatedBy: state.user.uid });
+    const row = state.adminFeedback.find(r => r.id === id); if (row) row.resolution = resolution;
+    await writeAdminAudit("feedback_investigation_saved", { feedbackId: id, fixCommit: resolution.fixCommit });
+    toast("Untersuchung gespeichert.");
+  } catch (error) { toast("Untersuchung konnte nicht gespeichert werden.", "error"); }
+  finally { button.disabled = false; }
+}
+
+async function updateFeedbackStatus(id,status){
+const report=state.adminFeedback.find(row=>row.id===id);
+if(status==="done" && report?.category==="app_error" && (!report.resolution?.rootCause || !report.resolution?.verification)){
+  toast("Bitte zuerst Ursache und Prüfnachweis unter Untersuchung speichern.","error"); renderAdminFeedback(); return;
+}
+try{await updateDoc(doc(db,"feedback",id),{status,updatedAt:serverTimestamp(),updatedBy:state.user.uid});await writeAdminAudit("feedback_status_changed",{feedbackId:id,status});const f=state.adminFeedback.find((x)=>x.id===id);if(f)f.status=status;renderAdminFeedback();const rights=state.adminFeedback.filter(x=>x.category==="rights"&&x.status!=="done").length;const errors=state.adminFeedback.filter(x=>x.category==="app_error"&&x.status!=="done").length;const tab=document.querySelector('[data-admin-tab="feedback"]');if(tab){const parts=[];if(errors)parts.push(`${errors} Fehler`);if(rights)parts.push(`${rights} Rechtehinweis${rights===1?"":"e"}`);tab.textContent=parts.length?`Feedback · ${parts.join(" · ")}`:"Feedback";}toast("Feedbackstatus aktualisiert.");}catch(err){console.error(err);toast("Status konnte nicht geändert werden.","error");}}
+
+function auditActionInfo(action) {
+  return ({
+    announcement_created: ["📣", "Mitteilung veröffentlicht"],
+    announcement_updated: ["✏️", "Mitteilung geändert"],
+    announcement_deleted: ["🗑️", "Mitteilung gelöscht"],
+    teacher_tour_updated: ["🧭", "Lehrer-Tutorial geändert"],
+    feedback_investigation_saved: ["🔎", "Fehleruntersuchung gespeichert"],
+    feedback_status_changed: ["💬", "Feedbackstatus geändert"],
+    password_reset_sent: ["🔑", "Passwort-Reset versendet"],
+    user_suspended: ["⛔", "Lehrkraft gesperrt"],
+    user_unsuspended: ["✅", "Lehrkraft entsperrt"],
+    quiz_restored: ["↩️", "Test wiederhergestellt"],
+    quiz_deleted_permanently: ["🗑️", "Test endgültig gelöscht"]
+  })[action] || ["⚙️", action || "Admin-Aktion"];
+}
+
+function auditStatusLabel(status) {
+  return ({ new: "Neu", working: "In Bearbeitung", done: "Erledigt" })[status] || status || "";
+}
+
+function auditDetailText(entry) {
+  const d = entry.details || {};
+  if (entry.action?.startsWith("announcement_")) return d.title ? `„${d.title}“` : "Mitteilung";
+  if (entry.action === "teacher_tour_updated") return `${d.steps || "?"} Schritte · ${d.enabled === false ? "deaktiviert" : "aktiv"}${d.reshow ? " · erneut anzeigen" : ""}`;
+  if (entry.action === "feedback_status_changed") return `Neuer Status: ${auditStatusLabel(d.status)}`;
+  if (["password_reset_sent","user_suspended","user_unsuspended"].includes(entry.action)) return d.email || "Lehrkraft";
+  if (entry.action === "quiz_restored") return d.quizId ? `Test ${d.quizId}` : "Test";
+  if (entry.action === "quiz_deleted_permanently") return d.title ? `${d.title}${d.quizId ? ` · ${d.quizId}` : ""}` : (d.quizId ? `Test ${d.quizId}` : "Test");
+  return "";
+}
+
+function renderAdminAudit(){
+  const root=$("adminAuditList");
+  if(!root)return;
+  const list = filterLogs(state.adminAudit, { term: $("adminAuditSearch")?.value, action: $("adminAuditAction")?.value, from: $("adminAuditFrom")?.value, to: $("adminAuditTo")?.value, sort: $("adminAuditSort")?.value });
+  if ($("adminAuditCount")) $("adminAuditCount").textContent = `${list.length} Treffer in ${state.adminAudit.length} geladenen Einträgen. Ältere Einträge bei Bedarf nachladen.`;
+  root.innerHTML=list.length?list.map((a)=>{
+    const [icon,label]=auditActionInfo(a.action);
+    const detail=auditDetailText(a);
+    return `<div class="auditItem"><span class="auditIcon">${icon}</span><div class="auditMain"><strong>${escapeHtml(label)}</strong><small>${escapeHtml(a.adminEmail||a.adminUid||"Admin")} · ${escapeHtml(fmtDate(a.createdAt))}</small>${detail?`<p>${escapeHtml(detail)}</p>`:""}</div></div>`;
+  }).join(""):`<p class="hint">Noch keine Admin-Aktionen protokolliert.</p>`;
+}
+
+async function loadMoreAdminAudit() {
+  if (!isAdmin() || !adminAuditCursor) return;
+  const requestingUid = state.user.uid;
+  const button = $("adminAuditMore"); button.disabled = true;
+  try {
+    const snapshot = await getDocs(query(collection(db, "adminAudit"), orderBy("createdAt", "desc"), startAfter(adminAuditCursor), limit(200)));
+    if (!isAdmin() || state.user?.uid !== requestingUid) return;
+    const known = new Set(state.adminAudit.map(row => row.id));
+    state.adminAudit.push(...snapshot.docs.filter(d => !known.has(d.id)).map(d => ({ id: d.id, ...d.data() })));
+    adminAuditCursor = snapshot.docs.at(-1) || adminAuditCursor;
+    button.disabled = snapshot.size < 200; renderAdminAudit();
+  } catch (error) { button.disabled = false; toast("Ältere Protokolle konnten nicht geladen werden.", "error"); }
+}
+
+async function writeAdminAudit(action,details={}){if(!isAdmin())return;try{await addDoc(collection(db,"adminAudit"),{action,details,adminUid:state.user.uid,adminEmail:state.user.email||"",appVersion:APP_VERSION,createdAt:serverTimestamp()});}catch(err){console.warn("Admin-Log konnte nicht geschrieben werden:",err);}}
+
+
+
+function wholeTestRevisionFingerprint() {
+  return state.questions.map(question => `${question.id || ""}:${questionReviewKey(question)}`).join("|");
+}
+
+function wholeTestRevisionLocked(question) {
+  return Boolean(question?.imageChoicesOnly || question?.options?.some(option => option?.imageDataUrl) || question?.audioScript || getQuestionAudioSrc(question));
+}
+
+function wholeTestRevisionSource() {
+  return {
+    title: $("quizTitle")?.value.trim() || state.currentQuiz?.title || "Test",
+    subject: $("quizSubject")?.value.trim() || state.currentQuiz?.subject || "",
+    grade: $("quizGrade")?.value.trim() || state.currentQuiz?.grade || "",
+    description: $("quizDescription")?.value.trim() || state.currentQuiz?.description || "",
+    questions: state.questions.map(question => ({
+      ...questionForAi(question),
+      locked: wholeTestRevisionLocked(question),
+      fixedImage: Boolean(getQuestionImageSrc(question)),
+      fixedImageAlt: String(question.imageAlt || "").slice(0, 500)
+    }))
+  };
+}
+
+function restoreWholeRevisionMedia(sourceQuestion, nextQuestion) {
+  for (const key of ["imageDataUrl", "imageUrl", "imagePath", "imageByteSize", "imageAlt", "audioDataUrl", "audioByteSize", "audioVoice", "audioModel", "audioAiGenerated", "audioNeedsRegeneration", "audioScript"]) {
+    if (sourceQuestion?.[key] !== undefined) nextQuestion[key] = sourceQuestion[key];
+  }
+  return nextQuestion;
+}
+
+async function handleEmmiWholeTestRequest(event) {
+  const request = event.detail;
+  if (!request || typeof request !== "object") return;
+  const instruction = String(request.instruction || "").trim().slice(0, 2400);
+  const quizId = state.currentQuiz?.id;
+  const uid = state.user?.uid;
+  if (!quizId || !uid || instruction.length < 3 || !state.questions.length) return;
+  if (state.emmiRevisionRunning || state.aiVariantsRunning || state.variantTask?.questions?.length) return;
+  if (state.currentQuiz?.published && !state.currentQuiz?.ended) return;
+
+  const fingerprint = wholeTestRevisionFingerprint();
+  const previousQuestions = deepClone(state.questions);
+  const previousReport = state.pendingImportReport ? deepClone(state.pendingImportReport) : null;
+  request.accepted = true;
+  state.emmiRevisionRunning = true;
+
+  try {
+    const response = await aiApi.reviseWholeTest({ instruction, test: wholeTestRevisionSource() });
+    if (state.currentQuiz?.id !== quizId || state.user?.uid !== uid || wholeTestRevisionFingerprint() !== fingerprint) {
+      throw new Error("Der Test wurde während Emmis Überarbeitung verändert. Deshalb wurde die KI-Version nicht eingesetzt.");
+    }
+    const revised = response?.test?.questions;
+    if (!Array.isArray(revised) || revised.length !== state.questions.length) {
+      throw new Error("Emmis Überarbeitung hat nicht dieselbe Aufgabenanzahl und wurde deshalb nicht eingesetzt.");
+    }
+
+    const report = { warnings: [], repairs: [] };
+    const nextQuestions = revised.map((raw, index) => {
+      const sourceQuestion = state.questions[index];
+      if (wholeTestRevisionLocked(sourceQuestion)) return deepClone(sourceQuestion);
+      const next = normalizeImportedQuestion(raw, index, report);
+      next.id = sourceQuestion.id;
+      next.position = sourceQuestion.position || index + 1;
+      next._collapsed = sourceQuestion._collapsed;
+      next._aiUndo = null;
+      next.aiOrigin = {
+        kind: "whole_test_revision",
+        model: String(response?.meta?.model || sourceQuestion.aiOrigin?.model || ""),
+        promptVersion: String(response?.meta?.revisionVersion || "emmi-whole-test-v1")
+      };
+      restoreWholeRevisionMedia(sourceQuestion, next);
+      return next;
+    });
+
+    state.emmiRevisionUndo = { quizId, uid, questions: previousQuestions, pendingImportReport: previousReport };
+    state.questions = nextQuestions;
+    renderQuestions();
+    markDirty();
+    const detail = {
+      changedCount: Array.isArray(response.changedIndices) ? response.changedIndices.length : nextQuestions.length,
+      unchangedCount: Array.isArray(response.unchangedIndices) ? response.unchangedIndices.length : 0,
+      lockedCount: Number(response.lockedCount || 0),
+      invalidCount: Number(response.invalidCount || 0)
+    };
+    document.dispatchEvent(new CustomEvent("gradecrew:emmi-whole-test-result", { detail }));
+    toast(`Emmi hat ${detail.changedCount} Aufgabe${detail.changedCount === 1 ? "" : "n"} überarbeitet. Bitte vor dem Speichern prüfen.`);
+  } catch (err) {
+    console.error(err);
+    const message = aiFriendlyError(err, "Emmi konnte den gesamten Test nicht zuverlässig überarbeiten.");
+    document.dispatchEvent(new CustomEvent("gradecrew:emmi-whole-test-error", { detail: { message } }));
+  } finally {
+    state.emmiRevisionRunning = false;
+  }
+}
+
+function handleEmmiWholeTestUndo() {
+  const undo = state.emmiRevisionUndo;
+  if (!undo || undo.quizId !== state.currentQuiz?.id || undo.uid !== state.user?.uid) return;
+  state.questions = deepClone(undo.questions);
+  state.pendingImportReport = undo.pendingImportReport ? deepClone(undo.pendingImportReport) : null;
+  state.emmiRevisionUndo = null;
+  renderQuestions();
+  markDirty();
+  document.dispatchEvent(new CustomEvent("gradecrew:emmi-whole-test-undone"));
+  toast("Emmis Gesamtüberarbeitung wurde rückgängig gemacht.");
+}
+
+document.addEventListener("gradecrew:variant-request", handleVariantRequest);
+document.addEventListener("gradecrew:variant-kept", handleVariantKept);
+document.addEventListener("gradecrew:emmi-whole-test-request", handleEmmiWholeTestRequest);
+document.addEventListener("gradecrew:emmi-whole-test-undo", handleEmmiWholeTestUndo);
+
+
+// ---------- Guided onboarding: normal quiz data, normal editor, normal submissions ----------
+function prefillTutorialRequest() {
+  const values = {aiSubject:"Englisch",aiGrade:"4",aiSchoolType:"Grundschule",aiRegion:"Bayern",aiTopic:"Colours, animals & school things",aiCount:"10",aiPoints:"10",aiImageQuestionCount:"3",aiCustomNotes:"Vorbereiteter Übungstest mit drei Bildaufgaben. Anschließend eine Minute selbst ausprobieren."};
+  for (const [id,value] of Object.entries(values)) {
+    const input=$(id); if (!input) continue;
+    input.value=value;input.dispatchEvent(new Event("input",{bubbles:true}));input.dispatchEvent(new Event("change",{bubbles:true}));
+  }
+}
+async function createTutorialQuiz(payload) {
+  const uid=state.user?.uid;
+  if (!uid || isSuspended() || !crewTour?.creating) throw new Error("Bitte die Tour im angemeldeten Konto starten.");
+  if (!tutorialDraft || tutorialDraft.uid !== uid) {
+    const created=await createQuizDocument({...quizDefaults(),title:payload.title,subject:payload.subject,grade:payload.grade,
+      description:payload.description,timeLimitMinutes:1,startMode:"student",resultMode:"points_grade",showSolutions:true,
+      tutorialVersion:"gradecrew-live-tour-v8",tutorialReady:false,questionCount:10,totalPoints:10});
+    tutorialDraft={uid,code:created.code};
+  }
+  const {code}=tutorialDraft;
+  if (state.user?.uid !== uid || !crewTour?.creating) throw new Error("Tour beendet. Der begonnene Übungsentwurf bleibt in deiner Übersicht.");
+  const batch=writeBatch(db);
+  payload.questions.forEach((raw,index)=>{
+    const question={...deepClone(raw),position:index+1,aiOrigin:{kind:"tutorial",model:"prepared-tutorial",promptVersion:"gradecrew-live-tour-v8"}};
+    batch.set(doc(db,"quizzes",code,"questions",`tutorial-${index+1}`),{...sanitizeQuestionForSave(question),updatedAt:serverTimestamp()});
+  });
+  batch.update(doc(db,"quizzes",code),{tutorialReady:true,updatedAt:serverTimestamp()});
+  await batch.commit();
+  return code;
+}
+
+
+// Coco can request only named app actions. It cannot execute generated code,
+// submit, publish, delete, or choose arbitrary selectors/URLs.
+function highlightCocoTarget(element) {
+  if (!element) throw new Error("Diese Schaltfläche ist in der aktuellen Ansicht nicht verfügbar.");
+  element.scrollIntoView({behavior:scrollBehavior(),block:"center"});
+  element.classList.add("cocoGuideTarget");
+  element.focus?.({preventScroll:true});
+  setTimeout(() => element.classList.remove("cocoGuideTarget"), 6000);
+}
+function cocoSearchText(value) {
+  return String(value || "").normalize("NFKC").toLowerCase()
+    .replace(/katzen?(?:bild)?|kitten|cats?/g," cat ").replace(/hunde?(?:bild)?|dogs?/g," dog ")
+    .replace(/(?:bild|picture|image)/g," ").replace(/[^\p{L}\p{N}]+/gu," ").trim();
+}
+async function handleCocoGuide(action = {}) {
+  const uid = state.user?.uid;
+  if (!uid || guestTourRepo) throw new Error("Bitte melde dich mit deinem Lehrkraftkonto an.");
+  if(action.requesterUid&&action.requesterUid!==uid)throw new Error("Das Konto wurde gewechselt.");
+  if (crewTour?.active) throw new Error("Beende oder verlasse zuerst die Einführung.");
+  const screen = views.find(id => !$(id)?.classList.contains("hidden"));
+  if (screen === "studentView") throw new Error("Verlasse zuerst die Schüleransicht.");
+  const allowed = ["navigate_create","navigate_tests","navigate_settings","choose_editor","choose_results","show_delete_question","show_delete_test","find_test","show_feedback"];
+  if (!allowed.includes(action.type)) throw new Error("Diese Aktion kann Coco nicht ausführen.");
+  if(action.type==="show_feedback"){openFeedbackDialog();if(typeof action.message==="string") $("feedbackMessage").value=action.message.slice(0,2000);return {message:"Das Rückmeldungsfenster ist geöffnet. Prüfe die Beschreibung und sende sie selbst ab."};}
+  let quizzes = state.quizzes.filter(q => q.ownerId === uid && !q.isDeleted && !q.rightsHold);
+  if (!quizzes.length) {
+    const snap = await getDocs(query(collection(db,"quizzes"),where("ownerId","==",uid)));
+    if (state.user?.uid !== uid) throw new Error("Das Konto wurde gewechselt.");
+    quizzes = snap.docs.map(d => ({id:d.id,...d.data()})).filter(q => !q.isDeleted && !q.rightsHold);
+  }
+  if (state.currentQuiz?.ownerId === uid && !state.currentQuiz.isDeleted && !state.currentQuiz.rightsHold && !quizzes.some(q => q.id === state.currentQuiz.id)) quizzes.push(state.currentQuiz);
+  const choices = list => list.map(q => ({id:q.id,title:q.title || "Unbenannter Test",subject:q.subject || "",grade:q.grade || "",evidence:q.evidence || ""}));
+  if (action.type === "find_test") {
+    const queryText = cocoSearchText(action.query);
+    const stop = new Set("ich suche such den der die das einen eine einem ein test tests mit und oder war drin in auf im dem mich an kann kannst du erinnere erinnern bitte welcher welches welcher es noch nicht mehr von zu für zum nach damals hatten wir finde find the a with remember quiz my me for".split(" "));
+    const terms = queryText.split(/\s+/).filter(t => t.length > 2 && !stop.has(t)).slice(-8);
+    if (!terms.length) return {message:"Woran erinnerst du dich? Du kannst auch direkt einen Test auswählen.",choices:choices(quizzes),nextAction:"choose_editor"};
+    const matches=[]; const checked=quizzes.slice(0,100); let failures=0;
+    for (let start=0;start<checked.length;start+=4) {
+      await Promise.all(checked.slice(start,start+4).map(async quiz => {
+        try {
+          const snap = await getDocs(collection(db,"quizzes",quiz.id,"questions"));
+          if (state.user?.uid !== uid) return;
+          const questions = screen === "editorView" && state.currentQuiz?.id === quiz.id ? state.questions : snap.docs.map(d=>d.data());
+          const title=cocoSearchText([quiz.title,quiz.subject,quiz.grade].join(" "));
+          const question = questions.find(q => terms.every(t => cocoSearchText([q.text,q.passage,q.imageAlt,...(q.options||[]).flatMap(o=>[o.text,o.imageAlt]),...(q.pairs||[]).flatMap(p=>[p.left,p.right]),...(q.items||[])].join(" ")).includes(t)));
+          if (terms.every(t=>title.includes(t)) || question) matches.push({...quiz,evidence:question ? `Gefundene Begriffe: ${terms.join(", ")} · Aufgabe: ${String(question.text || question.passage || "").slice(0,150)}` : "Titel oder Fach passt zu deiner Suche."});
+        } catch (_) { failures++; }
+      }));
+      if (state.user?.uid !== uid) throw new Error("Das Konto wurde gewechselt.");
+    }
+    return {message:matches.length ? `Ich habe ${matches.length} mögliche Treffer in Titeln, Aufgaben und gespeicherten Bildbeschreibungen gefunden. Welchen möchtest du öffnen?` : `Kein eindeutiger Treffer. Ich kann vorhandene Beschreibungen durchsuchen, aber ältere Bilder ohne Beschreibung noch nicht am Motiv erkennen. Wähle einen Test oder nenne mir Fach oder Klasse.${failures ? " Einige Tests konnten gerade nicht gelesen werden." : ""}${quizzes.length>100 ? " Geprüft wurden die ersten 100 Tests." : ""}`,choices:choices(matches.length?matches:quizzes),nextAction:"choose_editor"};
+  }
+  let quizId=action.quizId;
+  if (["choose_editor","choose_results","show_delete_question","show_delete_test"].includes(action.type)) {
+    if (!quizId && screen === "editorView" && action.type !== "show_delete_test") quizId=state.currentQuiz?.id;
+    if (!quizId) return {message:"Um welchen Test geht es?",choices:choices(quizzes),nextAction:action.type};
+    if (!quizzes.some(q=>q.id===quizId)) throw new Error("Dieser Test ist in deinem Konto nicht verfügbar.");
+  }
+  const sameEditor = screen === "editorView" && state.currentQuiz?.id === quizId && ["choose_editor","show_delete_question"].includes(action.type);
+  if (state.isDirty && !sameEditor) throw new Error("Speichere zuerst deine Änderungen. Danach bringe ich dich dorthin.");
+  if (action.type === "navigate_create") { await openAiView(); if (state.user?.uid !== uid || $("aiView").classList.contains("hidden")) throw new Error("Das Formular konnte nicht geöffnet werden."); return {message:"Na klar! Hier ist Remy. Beschreibe, welchen neuen Test du erstellen möchtest.",lastCrew:"remy"}; }
+  if (action.type === "navigate_settings") { openSettings(); return {message:"Hier sind deine Einstellungen."}; }
+  if (action.type === "navigate_tests") { await loadDashboard(); return {message:"Hier findest du deine Tests."}; }
+  if (action.type === "choose_results") { await openResults(quizId); if ($( "resultsView").classList.contains("hidden")) throw new Error("Die Ergebnisse konnten nicht geöffnet werden.");return {message:"Hier sind die Ergebnisse dieses Tests.",lastCrew:"wilma"}; }
+  if (action.type === "show_delete_test") {
+    await loadDashboard(); $("quizSearch").value=quizId; $("quizFilter").value="all";renderQuizList();
+    const button=[...$("quizList").querySelectorAll(".quizCard")].find(card => card.dataset.quizId === quizId)?.querySelector(".remove");
+    if (!button) throw new Error("Die Löschschaltfläche dieses Tests ist gerade nicht sichtbar.");
+    button?.closest("details")?.setAttribute("open","");highlightCocoTarget(button);
+    return {message:"Hier kannst du diesen Test in den Papierkorb verschieben. Ich habe die Schaltfläche markiert; gelöscht wurde nichts."};
+  }
+  if (!sameEditor) await openEditor(quizId);
+  if (state.user?.uid !== uid || state.currentQuiz?.id !== quizId || $("editorView").classList.contains("hidden")) throw new Error("Der Test konnte nicht geöffnet werden.");
+  if (action.type === "show_delete_question") {
+    const selected=document.activeElement?.closest?.(".questionCard");
+    highlightCocoTarget((selected || $("questionList").querySelector(".questionCard"))?.querySelector(".deleteQuestion"));
+    return {message:"Der Papierkorb neben dem roten Smiley löscht die jeweilige Aufgabe nach deiner Bestätigung. Ich habe ihn an einer Aufgabe markiert."};
+  }
+  return {message:"Hier ist dein Test. Emmi hilft dir beim Überarbeiten.",lastCrew:"emmi"};
+}
+document.addEventListener("focusin", event => {
+ const card=event.target?.closest?.(".questionCard[data-id]");if(card&&state.currentQuiz?.ownerId===state.user?.uid)cocoFocusedQuestion={quizId:state.currentQuiz.id,id:card.dataset.id};
+});
+document.addEventListener("gradecrew:coco-context", event => {
+  const q=!$("resultsView")?.classList.contains("hidden")?state.currentResultsQuiz:state.currentQuiz;
+  const focused=!$("editorView")?.classList.contains("hidden")&&q?.id===cocoFocusedQuestion.quizId&&q?.ownerId===state.user?.uid?state.questions.find(item=>item.id===cocoFocusedQuestion.id):null;
+  event.detail?.respond?.({contextUid:state.user?.uid||"",questionContext:focused?{type:focused.type,text:String(focused.text||"").slice(0,1500)}:null,quizId:q?.ownerId===state.user?.uid?q.id:"",isDirty:!$("editorView")?.classList.contains("hidden")&&q?.ownerId===state.user?.uid?state.isDirty:null,lastError:cocoLastError.uid===state.user?.uid&&Date.now()-cocoLastError.at<300000?cocoLastError.text:""});
+});
+
+document.addEventListener("gradecrew:coco-guide", event => {
+  const {action,respond}=event.detail || {};
+  if (typeof respond !== "function") return;
+  handleCocoGuide(action).then(respond).catch(error=>respond({error:String(error.message || "Die Stelle konnte nicht geöffnet werden.")}));
+});
+
+// Review UI uses a separate callable; never the paid AI proxy or public feedback.
+if (["staging", "local-review"].includes(appEnvironment)) {
+  const reviewApi = createAiClient(app, () => state.user?.uid || "");
+  const localReview = appEnvironment === "local-review" && ["localhost", "127.0.0.1"].includes(location.hostname);
+  const openScene = localReview ? scene => new Promise((resolve,reject) => {
+    const done=event=>{if(event.detail?.scene!==scene)return;cleanup();event.detail.error?reject(new Error(event.detail.error)):resolve();};
+    const cleanup=()=>{clearTimeout(timeout);document.removeEventListener("gradecrew:review-scene-ready",done);};
+    const timeout=setTimeout(()=>{cleanup();reject(new Error("Prüfszene konnte nicht geöffnet werden."));},5000);document.addEventListener("gradecrew:review-scene-ready",done);
+    localStorage.setItem("gradecrew-review-scene-v1", JSON.stringify({version:1,scene}));
+    document.dispatchEvent(new CustomEvent("gradecrew:review-scene", {detail:{scene}}));
+  }) : null;
+  const navigateReview = async destination => {
+    if(localReview && destination.scene){await openScene(destination.scene);return;}
+    const current=views.find(id=>!$(id)?.classList.contains("hidden"));
+    if(current===destination.view && (!destination.quizId||destination.quizId===(current==="resultsView"?state.currentResultsQuiz?.id:state.currentQuiz?.id)))return;
+    if(state.isDirty)throw new Error("Bitte zuerst deine Änderungen am Test speichern. Danach die Stelle erneut öffnen.");
+    if(crewTour?.active)throw new Error("Bitte die laufende Tour zuerst beenden. Dein Hinweis bleibt gespeichert.");
+    if(current==="studentView")throw new Error("Bitte den laufenden Schülertest zuerst abschließen oder selbst verlassen.");
+    const quizId=destination.quizId || (destination.check?state.currentQuiz?.id:"");
+    switch(destination.view){
+      case "authView":showView("authView");break;
+      case "dashboardView":await loadDashboard();showView("dashboardView");break;
+      case "aiView":await openAiView();break;
+      case "settingsView":openSettings();break;
+      case "adminView":if(state.profile?.role!=="admin")throw new Error("Diese Prüfung benötigt ein Admin-Konto.");await openAdmin();break;
+      case "editorView":case "resultsView":case "publishView":
+        if(!quizId)throw new Error("Öffne zuerst den Test, den du prüfen möchtest, und wähle den Prüfpunkt erneut.");
+        if(destination.view==="editorView")await openEditor(quizId);
+        else if(destination.view==="resultsView")await openResults(quizId);
+        else await showPublish(quizId);break;
+      default:throw new Error("Öffne die passende Testvorschau manuell. Anschließend kann die markierte Stelle angezeigt werden.");
+    }
+  };
+  reviewController = installReviewMode({
+    document, api: payload => reviewApi.reviewMode(payload), local: localReview, compact: !localReview, openScene, navigate:navigateReview,
+    getContext: () => ({view: views.find(id => !$(id)?.classList.contains("hidden")) || "authView", build: reviewBuild,
+      scene: localReview ? reviewScene : "", locale: document.documentElement.lang.startsWith("en") ? "en" : "de",
+      quizId: localReview ? "" : !$("studentView")?.classList.contains("hidden") ? $("studentQuizCard")?.dataset.reviewQuizId || "" : ["editorView","publishView"].some(id => !$(id)?.classList.contains("hidden")) ? state.currentQuiz?.id || "" : !$("resultsView")?.classList.contains("hidden") ? state.currentResultsQuiz?.id || "" : ""}),
+    runChecks: localReview ? async checkId => {
+      const response = await fetch("/__review/run", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({checkId})});
+      const result = await response.json();if(!response.ok)throw new Error(result.message);return result;
+    } : null
+  });
+  fetch("./release.json", {cache:"no-store"}).then(r => r.json()).then(r => { reviewBuild = r.commit || ""; }).catch(() => {});
+  if (localReview) {
+    let sceneWork = Promise.resolve();
+    document.addEventListener("gradecrew:review-scene", event => {
+      const scene = event.detail?.scene;
+      if (!["welcome","remy","editor","student","submit","results","finish"].includes(scene)) return;
+      sceneWork = sceneWork.catch(() => {}).then(async () => {
+        document.querySelectorAll("dialog.studentSubmitConfirm").forEach(dialog => dialog.dispatchEvent(new Event("cancel", {cancelable:true})));
+        crewTour?.stop(); stopStudentTimer(); clearStudentSubscriptions(); clearPublishSubscriptions();
+        studentConfirmationPending.forEach(controller => controller.abort());studentConfirmationPending.clear();
+        completedStudentSubmissions.clear();studentSubmissionBusy.clear();state.studentAttempt=null;
+        guestTourRepo = createLocalTourRepository();state.guestTourUid="local-tour";state.isDirty=false;reviewScene=scene;
+        const code=guestTourRepo.create({...quizDefaults(),...deepClone(REVIEW_DEMO_TEST)});
+        guestTourRepo.save(code,{timeLimitMinutes:0,tutorialReady:true},guestTourRepo.getQuestions(code));
+        if (scene === "welcome") {showView("authView");return;}
+        if (scene === "remy") {openAiView();prefillTutorialRequest();return;}
+        await openEditor(code);
+        if (scene === "editor") return;
+        guestTourRepo.publish(code);
+        if (["student","submit"].includes(scene)) {
+          await loadStudentQuiz(code);if($("studentName"))$("studentName").value="Beispielkind";
+          if(scene==="submit") void requestStudentSubmitConfirmation("10 Aufgaben sind noch offen. Trotzdem endgültig abgeben?");
+          return;
+        }
+        guestTourRepo.submit(code,{studentName:"Beispielkind",isTutorial:true,answers:{},grading:{},autoPoints:0,totalPoints:0,maxPoints:10,percent:0,grade:6,status:"graded"});
+        await openResults(code);
+        if(scene==="finish") {
+          if(!crewTour)crewTour=installCrewTour(makeTourApi());
+          crewTour.previewScene("finish",{quizId:code});
+        }
+      }).then(()=>document.dispatchEvent(new CustomEvent("gradecrew:review-scene-ready",{detail:{scene}}))).catch(err => {toast(err.message,"error");document.dispatchEvent(new CustomEvent("gradecrew:review-scene-ready",{detail:{scene,error:err.message}}));});
+    });
+    void reviewController.setSession({uid:"local-admin"}).then(() => document.dispatchEvent(new Event("gradecrew:review-ready")));
+  }
+}
+
+window.addEventListener("gradecrew:visual-note-saved",()=>toast("Screenshot-Hinweis in Feedback gespeichert."));

@@ -1,0 +1,43 @@
+// Local tutorial facade: never imports an SDK or performs a network operation.
+export const isolation={denied:[]};
+const deny=name=>{isolation.denied.push(name);throw new Error('Isolated tutorial: backend operation blocked ('+name+').');};
+const app={name:'[DEFAULT]',options:{projectId:'gradecrew-isolated-local'}};
+const auth={currentUser:null};
+export const initializeApp=options=>Object.assign(app,{options});
+export const getApp=()=>app;
+export const getApps=()=>[app];
+export const getAuth=()=>auth;
+export const getFirestore=()=>({isolated:true});
+export const getFunctions=()=>({isolated:true});
+export const getStorage=()=>({isolated:true});
+export function onAuthStateChanged(_auth,callback){let active=true;queueMicrotask(()=>{if(active)callback(null);});return ()=>{active=false;};}
+export const createUserWithEmailAndPassword=()=>deny('createUser');
+export const signInWithEmailAndPassword=()=>deny('signIn');
+export const sendPasswordResetEmail=()=>deny('resetPassword');
+export const updateProfile=()=>deny('updateProfile');
+export const signOut=()=>deny('signOut');
+export const getDoc=()=>deny('getDoc');
+export const getDocs=()=>deny('getDocs');
+export const getCountFromServer=()=>deny('getCount');
+export const setDoc=()=>deny('setDoc');
+export const addDoc=()=>deny('addDoc');
+export const updateDoc=()=>deny('updateDoc');
+export const deleteDoc=()=>deny('deleteDoc');
+export const onSnapshot=()=>deny('onSnapshot');
+export const uploadBytesResumable=()=>deny('upload');
+export const deleteObject=()=>deny('deleteObject');
+export const httpsCallable=(_functions,name)=>async()=>deny('callable:'+name);
+export const writeBatch=()=>({set:()=>deny('batch.set'),update:()=>deny('batch.update'),delete:()=>deny('batch.delete'),commit:async()=>deny('batch.commit')});
+let serial=0;
+const path=parts=>parts.map(p=>typeof p==='string'?p:p?.path||'').filter(Boolean).join('/');
+export const collection=(...parts)=>({path:path(parts)});
+export const collectionGroup=collection;
+export const doc=(...parts)=>({path:path(parts),id:typeof parts.at(-1)==='string'?parts.at(-1):'local-ref-'+(++serial)});
+export const ref=(...parts)=>({fullPath:path(parts)});
+export const query=(...parts)=>({parts});
+export const where=(...parts)=>({parts});
+export const orderBy=(...parts)=>({parts});
+export const limit=(...parts)=>({parts});
+export const startAfter=(...parts)=>({parts});
+export class Timestamp{constructor(seconds,nanoseconds=0){this.seconds=seconds;this.nanoseconds=nanoseconds;}toDate(){return new Date(this.seconds*1000+this.nanoseconds/1e6);}static now(){return Timestamp.fromDate(new Date());}static fromDate(date){return new Timestamp(Math.floor(date.getTime()/1000));}}
+export const serverTimestamp=()=>Timestamp.now();
