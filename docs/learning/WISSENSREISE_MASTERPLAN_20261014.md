@@ -1,3 +1,11 @@
+## Aktualisierung nach echtem Nutzertest: Import und Spieleinstellungen
+
+Der reale eigene Test mit50Aufgaben scheiterte zunächst an einer irrtümlichen40-Fragen-Lerngrenze. Das ist im selben angemeldeten Nutzerworkflow behoben:100-Fragen-Testcontract, individuelle begründete Ausschlüsse statt globalem Medien-/Größenfehler,46von50Aufgaben tatsächlich vorbereitet, vier medienabhängige Aufgaben ausdrücklich ausgeschlossen. Die kompakte Lernkopie bleibt begrenzt; Gesamt-/verwendete-/ausgeschlossene Aufgaben werden sichtbar angezeigt. Die vorhandenen Spieltemplates liefern vier nummerierte Test/Übungsarten/Lernmodus/Dauer-Blöcke, Auswahlkarten, Zusammenfassung und Start. Keine festen Fächer, Noten oder Strafsperren übernommen.
+
+RuntimePR238@ec7512600bf6d48541cb304d746dca96b78358b5 ist auf derselben isolierten Vorschau deployed; CI38600305961 und unabhängiger Code-/Browserreview bestanden. Hosting171Hashes/11betroffeneLearningFunctions, alte43+Cleanup unverändert; kanonischerRelease/Rules/Production unverändert. [Neuer Releasebeleg](wissensreise-evidence-20261014/staging-ec751.json). Ältere7b35Lernkopien können bewusstes Neuvorbereiten brauchen; Originaltests bleiben unverändert. Eine tatsächliche KI-Varianten-/Freigabe-/Cloudspielrunde ist noch keine belegte Nutzerabnahme; keine kostenpflichtige Probe durchgeführt. Der nachfolgende Stand7b35 und die Planhistorie bleiben nachvollziehbar erhalten.
+
+---
+
 # Verbindlicher Umsetzungsstand vom14.10.2026
 
 Der Nutzer hat PlanPR237 genehmigt und den Eingang korrigiert: **immer ein eigener existierender oder mit Remy erzeugter Test, kein festes Thema**. Die folgende ursprüngliche ausführliche Architekturplanung bleibt als Verlauf erhalten. Dieser Absatz und die [Receipts](wissensreise-evidence-20261014/staging-7b35.json) bestimmen den ersten belegten Umsetzungsumfang; direkte Material-/OCR-Pipelines, zusätzliche Medien/Plattformen und weitergehende adaptive Lernpfade sind nicht automatisch fertig.
