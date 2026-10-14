@@ -1,6 +1,6 @@
-#authView .coco-bubble{position:absolute;z-index:4;left:2%;top:22%;max-width:218px;margin:0;padding:12px 16px;border:1px solid #bfd5f0;border-radius:20px 20px 4px 20px;background:#fffffff2;color:#173959;font-size:15px;line-height:1.35;box-shadow:0 5px 20px #14335412;pointer-events:none}
+#authView .coco-bubble{position:absolute;z-index:4;box-sizing:border-box;width:200px;margin:0;padding:13px 17px;border:2px solid #e6caa2;border-radius:32px 29px 34px 26px;background:#fffaf1;color:#173959;font-size:15px;font-weight:650;line-height:1.35;text-align:center;box-shadow:0 5px 15px #7a512a1a;pointer-events:none}
 #authView .gcHeroHit-coco{display:block!important;z-index:2;top:auto;border-radius:45%;background:transparent!important}
 .animal-bear-rain{background:none!important;object-fit:contain}
-@media(max-width:780px){#authView .coco-bubble{left:auto;right:12px;top:8px;max-width:165px;padding:8px 11px;font-size:12px;border-radius:16px 16px 16px 3px}}
-#authView .coco-bubble::after{content:"";position:absolute;right:11px;bottom:-9px;width:16px;height:16px;background:#fffffff2;border-right:1px solid #bfd5f0;border-bottom:1px solid #bfd5f0;transform:skewY(24deg);border-radius:0 0 4px 0}
-@media(max-width:780px){#authView .coco-bubble{top:4px;right:12px;max-width:240px;padding:6px 10px;font-size:11.5px;line-height:1.3}#authView .coco-bubble::after{right:auto;left:12px;bottom:-7px;width:12px;height:12px;transform:skewY(-24deg)}}
+#authView .coco-bubble::before,#authView .coco-bubble::after{content:"";position:absolute;left:calc(100% - 3px);top:57%;width:28px;height:25px;clip-path:polygon(0 0,100% 100%,0 72%);background:#e6caa2}
+#authView .coco-bubble::after{left:calc(100% - 4px);top:calc(57% + 2px);width:26px;height:21px;background:#fffaf1}
+@media(max-width:780px){#authView .coco-bubble{left:24%;top:3px;width:min(240px,calc(76% - 10px));padding:6px 10px;font-size:11.5px;line-height:1.3;border-radius:22px 25px 24px 19px}#authView .coco-bubble::before,#authView .coco-bubble::after{left:15px;top:calc(100% - 3px);width:21px;height:16px;clip-path:polygon(0 0,100% 0,0 100%)}#authView .coco-bubble::after{left:17px;top:calc(100% - 4px);width:17px;height:14px}}

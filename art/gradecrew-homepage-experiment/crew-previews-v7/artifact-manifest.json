@@ -28,8 +28,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 3569,
-      "sha": "3a7233324817a6f74e12a638b11d9a8820801370"
+      "bytes": 4667,
+      "sha": "443d2ba578ece700ede148ea20409a5f1edda7b6"
     },
     {
       "path": "assets/bear-rain-v7.png",
@@ -963,8 +963,8 @@
     },
     {
       "path": "demo-v3.mjs",
-      "bytes": 19848,
-      "sha": "3f0c0e524c41b13a57ac388bf920ecb5aa834f15"
+      "bytes": 20009,
+      "sha": "874136889b126982e65b0800d41469cbd1ccae53"
     },
     {
       "path": "entry-v3.mjs",
@@ -1025,6 +1025,26 @@
       "path": "preview.test.mjs",
       "bytes": 2829,
       "sha": "4a163b65deb8be7a311b8f101d1bdac6a2b0671a"
+    },
+    {
+      "path": "previews/bubble-before-demo.mjs",
+      "bytes": 19848,
+      "sha": "3f0c0e524c41b13a57ac388bf920ecb5aa834f15"
+    },
+    {
+      "path": "previews/bubble-before.css",
+      "bytes": 1113,
+      "sha": "166ebb7e6cdb6c7cb13b2ba46d236bc6c42007e5"
+    },
+    {
+      "path": "previews/coco-bubble-desktop-v7b.jpg",
+      "bytes": 159445,
+      "sha": "15c6735b8c46bba948f573abc08ace12fb23ee41"
+    },
+    {
+      "path": "previews/coco-bubble-iphone-v7b.jpg",
+      "bytes": 55342,
+      "sha": "8f96c146c22dcb3e552b0818005b4a551758c6eb"
     },
     {
       "path": "previews/home-desktop.jpg",
@@ -2243,8 +2263,9 @@
     },
     {
       "path": "v7.css",
-      "bytes": 1113,
-      "sha": "166ebb7e6cdb6c7cb13b2ba46d236bc6c42007e5"
+      "bytes": 1245,
+      "sha": "98f86f39bc44183ec40f91df7a35744b9cfa48c0"
     }
-  ]
+  ],
+  "revision": "V7b-coco-bubble"
 }
