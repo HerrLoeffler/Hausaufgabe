@@ -49,9 +49,32 @@
   }
   return null;
  }
+ // An intentional floating assistant may temporarily pass over scrolling content.
+ // It must stay in the lower-right viewport corner, and every covered control must
+ // actually become hit-testable after scrolling. Never excuse arbitrary overlays.
+ function floatingCorner(overlay){
+  if(overlay.id!=='gcCrewLauncher'||!overlay.hasAttribute('data-gc-native-coco')||overlay.parentElement!==document.body||getComputedStyle(overlay).position!=='fixed')return false;
+  const r=rect(overlay),right=innerWidth-r.right,bottom=innerHeight-r.bottom;
+  return r.width>=44&&r.width<=80&&r.height>=44&&r.height<=80&&right>=7&&right<=64&&bottom>=7&&bottom<=64;
+ }
+ function reachablePastFloatingCoco(overlay,target){
+  if(!floatingCorner(overlay))return false;
+  // Save every actual scroll container; scrollIntoView can move nested SPA panels.
+  const saved=[...document.querySelectorAll('*')].filter(e=>e.scrollHeight>e.clientHeight+1||e.scrollWidth>e.clientWidth+1).map(e=>[e,e.scrollLeft,e.scrollTop]);
+  const page=[scrollX,scrollY];
+  try{
+   target.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
+   const r=rect(target),c=rect(overlay),x=Math.max(0,r.left)+Math.min(r.width,innerWidth-r.left)/2,y=(r.top+r.bottom)/2;
+   if(x<0||x>innerWidth||y<0||y>innerHeight||(x>=c.left-2&&x<=c.right+2&&y>=c.top-2&&y<=c.bottom+2))return false;
+   const hit=document.elementFromPoint(x,y);return hit===target||target.contains(hit);
+  }finally{
+   for(const [e,x,y]of saved)e.scrollTo({left:x,top:y,behavior:'instant'});
+   window.scrollTo({left:page[0],top:page[1],behavior:'instant'});
+  }
+ }
  const center=(r)=>(r.left+r.right)/2;
  window.gcLayoutAudit=()=>{
-  const issues=[],metrics={viewport:{width:innerWidth,height:innerHeight},document:{width:document.documentElement.scrollWidth,height:document.documentElement.scrollHeight},scenario:window.gcLayoutScenario,centers:{},equalGaps:[],questions:[],intendedScroll:[],targets:0,visibleElements:0,selectLabels:[],occludedTargets:[],paintClips:[]};
+  const issues=[],metrics={viewport:{width:innerWidth,height:innerHeight},document:{width:document.documentElement.scrollWidth,height:document.documentElement.scrollHeight},scenario:window.gcLayoutScenario,centers:{},equalGaps:[],questions:[],intendedScroll:[],targets:0,visibleElements:0,selectLabels:[],occludedTargets:[],paintClips:[],reachableFloatingOverlaps:[],coco:null};
   const add=(rule,e,detail)=>issues.push({rule,selector:e?selector(e):'window',detail});
   for(const error of window.gcLayoutErrors||[])add('fixture-error',null,error);
   if(document.documentElement.scrollWidth>innerWidth+epsilon)add('horizontal-overflow',document.documentElement,'Document width '+document.documentElement.scrollWidth+' exceeds viewport '+innerWidth);
@@ -97,6 +120,12 @@
   // The shared floating assistant is painted above the page. Report actual hit-test
   // occlusion of controls, not merely bounding-box intersections at rounded corners.
   const overlays=[...document.querySelectorAll('#gcCrewLauncher,#gcCrewPanel')].filter(visible);
+  const launcher=document.querySelector('#gcCrewLauncher[data-gc-native-coco]');
+  if(launcher){
+   const r=rect(launcher),hit=document.elementFromPoint((r.left+r.right)/2,(r.top+r.bottom)/2);
+   metrics.coco={position:getComputedStyle(launcher).position,left:r.left,top:r.top,right:r.right,bottom:r.bottom,viewportWidth:innerWidth,viewportHeight:innerHeight,bodyChild:launcher.parentElement===document.body,visible:visible(launcher),hitTestable:launcher===hit||launcher.contains(hit)};
+   if(!visible(launcher)||!floatingCorner(launcher)||!metrics.coco.hitTestable)add('coco-not-always-reachable',launcher,'Coco must remain visible and tappable in the bottom-right viewport corner');
+  }
   for(const e of targets)for(const overlay of overlays){
    if(overlay===e||overlay.contains(e)||e.contains(overlay))continue;
    const a=rect(e),b=rect(overlay),left=Math.max(a.left,b.left,0),right=Math.min(a.right,b.right,innerWidth),top=Math.max(a.top,b.top,0),bottom=Math.min(a.bottom,b.bottom,innerHeight);
@@ -111,6 +140,7 @@
     occluded=true;
    }
    for(const clip of clippedBy.values())metrics.paintClips.push({selector:selector(e),by:selector(clip.header),background:clip.background,position:clip.position,top:clip.top,inset:clip.inset,reason:'Control pixels already behind the active sticky header in the actual hit stack'});
+   if(occluded&&reachablePastFloatingCoco(overlay,e)){metrics.reachableFloatingOverlaps.push({selector:selector(e),covering:selector(overlay),reason:'Intentional bottom-right assistant; target center verified hit-testable by scrolling, with all offsets restored'});continue;}
    if(occluded){
     const entry={selector:selector(e),covering:selector(overlay),left,right,top,bottom};metrics.occludedTargets.push(entry);
     add('control-occluded',e,'Covered by '+selector(overlay)+' over '+(right-left).toFixed(1)+'×'+(bottom-top).toFixed(1)+' pt');

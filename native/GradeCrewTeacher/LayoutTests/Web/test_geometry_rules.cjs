@@ -34,3 +34,27 @@ test('44pt check tolerates floating point roundoff while rejecting43.9pt',t=>{
  m.field.getBoundingClientRect=()=>m.box(20,100,43.9,44);
  assert.ok(m.audit().issues.some(x=>x.rule==='touch-target'&&x.selector==='#field'));
 });
+
+function floatingModel(t,canScroll){
+ const m=model(t);m.d.body.append(m.coco);m.coco.style.position='fixed';
+ m.coco.getBoundingClientRect=()=>m.box(244,492,64,64);
+ let moved=false,restored=0;
+ m.field.getBoundingClientRect=()=>m.box(250,moved?200:500,44,44);
+ m.field.scrollIntoView=()=>{if(canScroll)moved=true;};
+ m.w.scrollTo=()=>{moved=false;restored++;};
+ m.d.elementFromPoint=(x,y)=>y>=492&&x>=244?m.coco:m.field;
+ return {...m,restored:()=>restored,moved:()=>moved};
+}
+test('floating Coco remains in viewport and temporary overlaps require an actual reachable control',t=>{
+ const m=floatingModel(t,true),result=m.audit();
+ assert.equal(result.issues.some(x=>x.rule==='control-occluded'),false);
+ assert.equal(result.issues.some(x=>x.rule==='coco-not-always-reachable'),false);
+ assert.equal(result.metrics.reachableFloatingOverlaps.length,1);
+ assert.equal(m.moved(),false);assert.ok(m.restored()>0,'Audit must restore scrolling');
+});
+test('floating Coco still fails if it permanently blocks an unscrollable control',t=>{
+ const m=floatingModel(t,false);assert.ok(m.audit().issues.some(x=>x.rule==='control-occluded'&&x.selector==='#field'));
+});
+test('Coco in a scrolling heading fails the always reachable requirement',t=>{
+ const m=model(t);assert.ok(m.audit().issues.some(x=>x.rule==='coco-not-always-reachable'));
+});

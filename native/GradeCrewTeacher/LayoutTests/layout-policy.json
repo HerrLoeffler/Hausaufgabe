@@ -11,7 +11,9 @@
       "Content grows or stacks for large text; vertical scrolling is allowed.",
       "No hidden overflow, font shrinking or omitted controls to make a test pass.",
       "Images preserve their aspect ratio and remain fully visible.",
-      "Visual appeal still requires reviewing the saved screenshots."
+      "Visual appeal still requires reviewing the saved screenshots.",
+      "Coco stays fixed and hit-testable in the bottom-right viewport corner across scrolling and view changes.",
+      "Intentional floating overlap requires a real scroll and successful target-center hit test, restoring all offsets."
     ]
   },
   "viewports": [

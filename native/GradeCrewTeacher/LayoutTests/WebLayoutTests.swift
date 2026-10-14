@@ -29,6 +29,11 @@ final class WebLayoutTests: XCTestCase {
     func testWebSmallPhone() async throws {
         for s in ["screen=workspace&lang=de&role=admin", "screen=workspace&lang=en&role=teacher", "screen=editor&lang=de&type=single", "screen=editor&lang=de&type=single&variant=media", "screen=editor&lang=de&role=teacher&type=grouping"] { try await check(s, viewport: LayoutViewport.matrix[0]) }
     }
+    func testWebFloatingCoco() async throws {
+        for viewport in [LayoutViewport.matrix[0], LayoutViewport.matrix[5], LayoutViewport.matrix[6], LayoutViewport.matrix[10], LayoutViewport.matrix[11]] {
+            for scenario in ["screen=workspace&lang=de&role=teacher", "screen=settings&lang=de&role=teacher", "screen=editor&lang=de&role=teacher&type=single&variant=media"] { try await check(scenario, viewport: viewport) }
+        }
+    }
     func testWebLargeTabletMedia() async throws {
         for viewport in [LayoutViewport.matrix[7], LayoutViewport.matrix[8], LayoutViewport.matrix[9]] {
             for s in ["screen=workspace&lang=de&role=admin", "screen=workspace&lang=en&role=teacher", "screen=editor&lang=de&role=teacher&type=single&variant=media"] { try await check(s, viewport: viewport) }
@@ -75,12 +80,18 @@ final class WebLayoutTests: XCTestCase {
         }
         var states: [[String: Any]] = []
         var issues: [[String: Any]] = []
+        var cocoOrigin: CGPoint?
         for position in ["top", "answers", "bottom"] {
             _ = try await js(Self.scrollScript(position))
             try await Task.sleep(nanoseconds: 100_000_000)
             let raw = try await js("JSON.stringify(window.gcLayoutAudit())") as? String ?? "{}"
             let audit = try JSONSerialization.jsonObject(with: Data(raw.utf8)) as? [String: Any] ?? [:]
             states.append(["position": position, "audit": audit])
+            if let metrics = audit["metrics"] as? [String: Any], let coco = metrics["coco"] as? [String: Any], let left = coco["left"] as? Double, let top = coco["top"] as? Double {
+                let origin = CGPoint(x: left, y: top)
+                if let previous = cocoOrigin, abs(previous.x - origin.x) > 1.5 || abs(previous.y - origin.y) > 1.5 { issues.append(["rule": "coco-moves-when-scrolling", "position": position]) }
+                cocoOrigin = origin
+            } else { issues.append(["rule": "missing-floating-coco", "position": position]) }
             for var issue in audit["issues"] as? [[String: Any]] ?? [["rule":"missing-audit"]] {
                 issue["position"] = position; issues.append(issue)
             }

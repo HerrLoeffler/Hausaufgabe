@@ -85,7 +85,7 @@ def main():
         if device['state'] != 'Booted':
             command(['xcrun','simctl','boot',device['udid']])
         command(['xcrun','simctl','bootstatus',device['udid'],'-b'], stdout=subprocess.DEVNULL)
-        cmd = ['xcodebuild','-project',ROOT/'GradeCrewLayoutChecks.xcodeproj','-scheme','GradeCrewLayoutChecks','-configuration','Debug','-destination',f'platform=iOS Simulator,id={device["udid"]}','-derivedDataPath',output/'derived','-resultBundlePath',folder/'results.xcresult','-parallel-testing-enabled','NO','-collect-test-diagnostics','never','-skip-testing:GradeCrewLayoutChecks/WebLayoutTests/testWebSmallPhone','CODE_SIGNING_ALLOWED=NO','ONLY_ACTIVE_ARCH=YES','test']
+        cmd = ['xcodebuild','-project',ROOT/'GradeCrewLayoutChecks.xcodeproj','-scheme','GradeCrewLayoutChecks','-configuration','Debug','-destination',f'platform=iOS Simulator,id={device["udid"]}','-derivedDataPath',output/'derived','-resultBundlePath',folder/'results.xcresult','-parallel-testing-enabled','NO','-collect-test-diagnostics','never','-skip-testing:GradeCrewLayoutChecks/WebLayoutTests/testWebSmallPhone','-skip-testing:GradeCrewLayoutChecks/WebLayoutTests/testWebFloatingCoco','CODE_SIGNING_ALLOWED=NO','ONLY_ACTIVE_ARCH=YES','test']
         with (folder / 'xcodebuild.log').open('w') as log:
             try:
                 result = subprocess.run([str(a) for a in cmd], stdout=log, stderr=subprocess.STDOUT, timeout=1200)

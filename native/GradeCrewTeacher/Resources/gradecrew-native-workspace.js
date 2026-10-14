@@ -77,15 +77,17 @@
 #settingsView #gcNativeSettingsTutorialBtn { min-height:44px; }
 #dashboardView[data-gc-native-workspace] .dashboardPublishControl, #settingsView label:has(> input[type="checkbox"]), #settingsView label:has(> input[type="radio"]) { min-width:44px; min-height:44px; box-sizing:border-box; }
 #gcCrewLauncher[data-gc-native-coco] {
-  position:static !important; inset:auto !important; width:44px !important; height:44px !important; min-width:44px !important; min-height:44px !important; max-width:44px !important; max-height:44px !important;
-  flex:0 0 44px; display:flex !important; flex-direction:column; align-items:center; justify-content:center; gap:0; padding:1px !important; margin:0 !important; box-sizing:border-box; border-radius:10px; box-shadow:none !important; z-index:auto !important; justify-self:end;
+  position:fixed !important; inset:auto !important; top:auto !important; left:auto !important;
+  right:max(12px,env(safe-area-inset-right)) !important; bottom:max(12px,env(safe-area-inset-bottom)) !important;
+  width:64px !important; height:64px !important; min-width:64px !important; min-height:64px !important; max-width:64px !important; max-height:64px !important;
+  display:flex !important; align-items:center; justify-content:center; padding:6px !important; margin:0 !important; box-sizing:border-box; border-radius:50%; z-index:1450 !important;
 }
 #gcCrewLauncher[data-gc-native-coco][hidden] { display:none !important; }
-#gcCrewLauncher[data-gc-native-coco] > img { width:30px !important; height:30px !important; object-fit:contain; flex:0 0 30px; }
-#gcCrewLauncher[data-gc-native-coco] > span { display:block !important; font-size:10px; line-height:10px; }
-.gcNativeCocoHeadingRow { display:flex; align-items:center; justify-content:space-between; gap:12px; min-width:0; width:100%; flex:1; }
-.gcNativeCocoHeadingRow > h1 { min-width:0; flex:1; }
-.gcNativeCocoDock { display:flex; justify-content:flex-end; margin:0 0 12px; }
+#gcCrewLauncher[data-gc-native-coco] > img { width:50px !important; height:50px !important; object-fit:contain; }
+#gcCrewLauncher[data-gc-native-coco] > span { display:none !important; }
+html[data-gc-native-floating-coco] #mainContent { padding-bottom:calc(96px + env(safe-area-inset-bottom)) !important; }
+html[data-gc-native-floating-coco] { scroll-padding-bottom:96px; }
+html[data-gc-native-floating-coco] #gcCrewPanel { bottom:calc(88px + env(safe-area-inset-bottom)) !important; max-height:calc(100dvh - 100px - env(safe-area-inset-bottom)); }
 .topbar[data-gc-native-header] > .brand { min-height:44px !important; }
 #dashboardView[data-gc-native-workspace] .dashboardToolbar select, #settingsView select { min-height:44px !important; height:44px !important; }
 .topbar[data-gc-native-header] #gradecrewLanguageControl select { max-width:none !important; min-width:132px !important; min-height:44px !important; height:44px !important; width:auto !important; text-overflow:clip; white-space:nowrap; }
@@ -188,29 +190,12 @@
   function updateCoco() {
     const launcher = document.getElementById('gcCrewLauncher');
     if (!launcher) return;
-    const view = [...document.querySelectorAll('main > .view')].find(section => !section.hidden && !section.classList.contains('hidden'));
-    if (!view) return;
-    let target = view.id === 'dashboardView' ? view.querySelector('.gcNativeWorkspaceTitleRow') : null;
-    if (!target) {
-      const heading = view.querySelector(':scope > .pageHead h1');
-      if (heading) {
-        target = heading.closest('.gcNativeCocoHeadingRow');
-        if (!target) {
-          target = document.createElement('div'); target.className = 'gcNativeCocoHeadingRow';
-          heading.before(target); target.append(heading);
-        }
-      }
-    }
-    if (!target) {
-      target = view.querySelector(':scope > .gcNativeCocoDock');
-      if (!target) { target = document.createElement('div'); target.className = 'gcNativeCocoDock'; view.prepend(target); }
-    }
+    // Keep the original assistant and its handlers in the viewport, independent
+    // of the selected view, its scroll position or sticky-header transforms.
     launcher.setAttribute('data-gc-native-coco', '');
-    if (launcher.parentNode !== target) {
-      const old = launcher.parentElement;
-      target.append(launcher);
-      if (old?.classList.contains('gcNativeCocoDock') && !old.children.length) old.remove();
-    }
+    launcher.setAttribute('aria-label', english() ? 'Coco – Help and guidance' : 'Coco – Hilfe und Orientierung');
+    document.documentElement.setAttribute('data-gc-native-floating-coco', '');
+    if (launcher.parentNode !== document.body) document.body.append(launcher);
   }
 
   const observer = new MutationObserver(() => {

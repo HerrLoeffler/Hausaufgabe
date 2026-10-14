@@ -114,7 +114,7 @@ for(const type of ['single','multi','dropdown'])test(`native choice label activa
  assert.equal(w.gcFixture.dirty(),1);
 });
 
-for(const lang of ['de','en'])for(const role of ['teacher','admin'])test(`original Coco follows active native headings ${lang}/${role}`,async t=>{
+for(const lang of ['de','en'])for(const role of ['teacher','admin'])test(`original Coco stays floating across native views ${lang}/${role}`,async t=>{
  const w=await browser(t,`screen=workspace&lang=${lang}&role=${role}`),d=w.document;
  const original=d.getElementById('gcCrewLauncher');let clicks=0;original.addEventListener('click',()=>clicks++);
  const headings=new Map([...d.querySelectorAll('main > .view h1')].map(h=>[h.closest('.view').id,h]));
@@ -122,14 +122,15 @@ for(const lang of ['de','en'])for(const role of ['teacher','admin'])test(`origin
   for(const view of d.querySelectorAll('main > .view'))view.classList.toggle('hidden',view.id!==id);
   await new Promise(resolve=>setTimeout(resolve,15));
   assert.equal(d.getElementById('gcCrewLauncher'),original);assert.equal(d.querySelectorAll('#gcCrewLauncher').length,1);
-  assert.equal(original.closest('.view').id,id);assert.equal(d.getElementById(id).querySelector('h1'),headings.get(id));
-  assert.ok(original.closest(id==='dashboardView'?'.gcNativeWorkspaceTitleRow':'.gcNativeCocoHeadingRow'));
+  assert.equal(original.parentElement,d.body);assert.equal(d.getElementById(id).querySelector('h1'),headings.get(id));
+  assert.equal(d.querySelector('.gcNativeCocoHeadingRow'),null);
   assert.equal(original.querySelector('span').textContent,'Coco');original.click();
  }
  assert.equal(clicks,4);
  const nativeRule=[...d.getElementById('gcNativeWorkspaceStyle').sheet.cssRules].find(r=>r.selectorText==='#gcCrewLauncher[data-gc-native-coco]');
- assert.equal(nativeRule.style.getPropertyValue('position'),'static');assert.equal(nativeRule.style.getPropertyPriority('position'),'important');
- assert.equal(nativeRule.style.getPropertyValue('width'),'44px');assert.equal(nativeRule.style.getPropertyValue('height'),'44px');
+ assert.equal(nativeRule.style.getPropertyValue('position'),'fixed');assert.equal(nativeRule.style.getPropertyPriority('position'),'important');
+ assert.equal(nativeRule.style.getPropertyValue('width'),'64px');assert.equal(nativeRule.style.getPropertyValue('height'),'64px');
+ assert.ok(nativeRule.style.getPropertyValue('bottom'));assert.ok(nativeRule.style.getPropertyValue('right'));assert.equal(nativeRule.style.getPropertyValue('top'),'auto');
 });
 test('ordinary browsers preserve original floating Coco and receive no native dock',async t=>{
  const w=await browser(t,'screen=workspace',{native:false}),d=w.document,original=d.getElementById('gcCrewLauncher');
