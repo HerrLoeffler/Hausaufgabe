@@ -546,3 +546,8 @@ Durable local evidence: analysis/GC-WEB-REPAIR-20261007-ADMIN/feedback-followup-
 ### GC-PLUGINS-01 — Spielwerkzeuge und unabhängige Reviews (14.10.2026)
 - [x] Ablaufvorschlag gegen bestehenden Spieleworkflow geprüft und durch zwei getrennte KI-Konzeptreviews beurteilt (je8/10). [Vorschlag, Belege und Grenzen](workstreams/plugins-game-tool-review-20261014.md). Kein Godot-/Geräte-/Einzelspieltest oder Installationsauftrag daraus ableiten.
 - [ ] Vorschlag im nächsten autorisierten Spielauftrag konkretisieren: passende Programme nach Rolle, bestehender Build als Ausgangspunkt, bei offener Entscheidung gleicher Referenzabschnitt in2Varianten, zwei blinde Erstbewertungen, echte Geräte-/Lerntests und klares Ende. Noch keine automatische Testpipeline aktiviert.
+
+
+### GC-PLUGINS-01 — Godot-Lernbasis (14.10.2026)
+- [x] Verlinktes18:14-Video technisch vollständig dekodiert (32814Frames),154Zeit-/Szenenbilder auf13Kontaktbögen visuell gesichtet; keinTranskript wegenUntertitel429. OffizielleGrundlagen und passendeGitHubquellen analysiert, Lernroute/GradeCrew-Ableitungen/Versionsfallen dokumentiert; zwei getrennteDokumentationsreviews PASS. [Lernbasis und Beleggrenzen](workstreams/plugins-godot-learning-20261014.md). BestehenderGodot4.7.2 bestätigt, keinezweiteInstallation/MCP-Verbindung/Spielmigration.
+- [ ] OptionalerPraxisfolgepunkt imnächstenkonkretenAuftrag: vorhandenenKochspielstand prüfen, Button→Signal→Portionswert alskleineLernkontrolle, anschließend abgestimmtenZutatenabschnitt mitbestehenderWeblösung vergleichen. KeineEngine-/Geräte-/Lernendenabnahme ausRecherche ableiten; keinDeploy.
