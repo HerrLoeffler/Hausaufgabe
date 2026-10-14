@@ -224,3 +224,11 @@ Der Voice-Agent hat die acht erfolgreichen Einzelclips, das Transkript und das p
 Der Flow meldete insgesamt 640 Credits und einen Rohpreis von 6,40 US-Cent als Schätzung. Diese Summe enthält auch Preisfelder der zwei fehlgeschlagenen Zeilen und ist keine sichere Abrechnung. Die acht von zehn Zeilen wurden nicht als vollständiger Dialog freigegeben; ein Hörtest durch den Nutzer und vollständiger Dialog fehlen. Es gibt weiterhin kein vollständiges Audio, kein Video und keine geänderte PPTX. V5 bleibt unverändert.
 
 **Nächster Schritt:** ElevenLabs-Zugang/Free-Tier-Sperre klären. Erst wenn der Zugriff verfügbar und die Fortsetzung zulässig ist, nur die fehlenden Zeilen 4 und 7 vervollständigen und danach den vollständigen Dialog neu mischen sowie prüfen. Keine Retries oder Upgrades im aktuellen Zustand.
+
+## 14.10.2026 — Audio-Nacharbeit: einheitliche Sprachlautheit (offen)
+
+Der Nutzer meldet, dass die Lautstärke der acht erfolgreichen Stimmclips extrem unterschiedlich ist, und verlangt für den Dialog **ein einheitliches wahrgenommenes Sprachlautheitsniveau**. Beauftragt ist ausschließlich eine lokale Bearbeitung der acht vorhandenen erfolgreichen Clips: Lautheit angleichen und die Teilprobe in gleicher Reihenfolge mit denselben Pausen neu mischen.
+
+Die beiden fehlgeschlagenen Dialogzeilen (4 und 7) bleiben offen und werden nicht ersetzt. Keine neuen ElevenLabs-Aufrufe, keine Retries, keine Käufe/Upgrades. V5/PPTX, Video und GradeCrew-Produkt bleiben unangetastet. Dieser Arbeitsschritt ist angefragt und noch nicht als abgeschlossen bestätigt; Zahlen zu Lautheit/Clipping werden erst nach Messung der neu bearbeiteten Clips dokumentiert.
+
+**Nächster Schritt:** lokalen Audio-Fachagenten die acht Erfolgsclips auf ein gemeinsames wahrgenommenes Sprachlautheitsniveau bringen und den 8/10-Teilmix mit bisheriger Reihenfolge und Pausen neu ausgeben lassen; anschließend Messwerte und Ergebnisdateien entgegennehmen.
