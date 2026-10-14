@@ -161,3 +161,13 @@ Der Nutzer meldet, dass die Lautstärke der acht erfolgreichen Stimmclips extrem
 Die beiden fehlgeschlagenen Dialogzeilen (4 und 7) bleiben offen und werden nicht ersetzt. Keine neuen ElevenLabs-Aufrufe, keine Retries, keine Käufe/Upgrades. V5/PPTX, Video und GradeCrew-Produkt bleiben unangetastet. Dieser Arbeitsschritt ist angefragt und noch nicht als abgeschlossen bestätigt; Zahlen zu Lautheit/Clipping werden erst nach Messung der neu bearbeiteten Clips dokumentiert.
 
 **Nächster Schritt:** lokalen Audio-Fachagenten die acht Erfolgsclips auf ein gemeinsames wahrgenommenes Sprachlautheitsniveau bringen und den 8/10-Teilmix mit bisheriger Reihenfolge und Pausen neu ausgeben lassen; anschließend Messwerte und Ergebnisdateien entgegennehmen.
+
+## 14.10.2026 — Lautheitsangleichung der 8/10-Teilprobe abgeschlossen
+
+Der lokale Audio-Fachagent hat die acht erfolgreichen Clips einzeln mit statischem Gain normalisiert und den Teilmix in unveränderter Reihenfolge und mit denselben Pausen neu erstellt. Messverfahren: 20-ms Active-RMS-Gate, Ziel −24 dBFS, Peak-Obergrenze −3 dBFS.
+
+Vorher lag die gemessene Sprachlautheit zwischen −18,7 und −38,4 dBFS (Streuung 19,6 dB). Nachher liegen alle acht Clips bei −24 dBFS, innerhalb der Messauflösung ohne Streuung. Spitzenwert des neuen Mischsignals: −3,389 dBFS; kein Clipping festgestellt. Dauer und Format blieben exakt 33,133265 s, mono PCM 16-bit, 44,1 kHz.
+
+Neue Datei: `outputs/gradecrew-investment-20261019/animation-v6/audio-elevenlabs/full-dialogue-v1/Dialog_Teilprobe_8von10_Lautstaerke_angeglichen.wav`. Originale sind erhalten; die normalisierten Einzelclips liegen unter `normalized/`. Das Manifest wurde um Algorithmus, Messwerte, angewandte Gains und Zeitablauf ergänzt.
+
+**Grenzen:** Zeilen 4 und 7 sind weiterhin wegen des ElevenLabs-Zugangsblocks nicht vorhanden und wurden nicht neu erzeugt. Dies ist eine 8/10-Teilprobe, kein vollständiger Dialog. Es gibt keine menschliche Hörabnahme der normalisierten Fassung. Kein Video/PPTX- oder Produktänderung; V5 bleibt unverändert. Nächster Schritt: Nutzer hört die normalisierte Teilprobe an; die fehlenden zwei Dialogzeilen erst nach Klärung des Provider-Zugangs. Kein Re-Run oder Tarifwechsel in diesem Checkpoint.
