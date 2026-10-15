@@ -89,7 +89,7 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler {
         case "image-resize":
             _=try await web.evaluateJavaScript("document.querySelectorAll('.secureQuestionNumber')[6].click()")
             try await Task.sleep(nanoseconds:850_000_000)
-            _=try await web.evaluateJavaScript("document.querySelectorAll('.secureQuestion')[5].appendChild(Object.assign(document.createElement('div'),{style:'height:360px'}))")
+            _=try await web.evaluateJavaScript("document.querySelectorAll('.secureQuestion')[5].appendChild(Object.assign(document.createElement('div'),{style:'height:360px'}));void 0")
         case "audio-pause":
             _=try await web.callAsyncJavaScript("const audio=document.querySelector('audio');await Promise.race([audio.play(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Audio playback timeout')),2000))]);return !audio.paused;",arguments:[:],in:nil,contentWorld:.page)
             _=try await web.evaluateJavaScript("document.querySelectorAll('.secureQuestionNumber')[5].click()")
