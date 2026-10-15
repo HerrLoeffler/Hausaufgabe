@@ -468,3 +468,23 @@ GC-FINANCE-BAYSTARTUP-20261008 · V11 Remy-Original geprüft; Flow offen (15.10.
 - Dauerhafte Gate-Regel: jedes Anhängsel zuerst mit dem Original derselben Figur vergleichen; keine Farbe von anderen Figuren/Ohren ableiten. Remy-Original `animation-v6/art/references/image3.png` SHA-256 `3af4ee9699c2e7c17408e51fdc9ef6b31a91c194ccbb98319a7d4ae5204c9777`: blass periwinklefarbener, gerundeter/zulaufender Rüssel, Querfalten, rundes Nasenloch, kein rosa Streifen.
 - Root hat V11-Detailbild `animation-v11-remy-reference-fix/art/remy-trunk-4details-v1.png` (1672×941, SHA-256 `6927754d436c06827a2297cdde455701e0f5a237e56acb51e6013b2d14ef1bc9`) und 12er-Tafel `.../remy-trunk-12frames-v1.png` (1932×814, SHA-256 `6010570392536d7cff50091e09ed8578d3bdb77a2d92a85b85770fc53dada15a`) im Stilabgleich zum Original bestanden. Vergleich `.../remy-trunk-comparison.png`, SHA-256 `27ac77bbce46d53ec9e587fe8668bd7dd733d7cd47eb39921cf189b6c7657845`.
 - Nur Erscheinungsform bestanden: eine Zelle zeigt Telefon außerhalb der Szene/nur Rüsselspitze. Zeitliche Kontinuität und Bewegung offen; kein V11-Film, kein Audio/Voice, keine PPTX-/Produkt-/Deployänderung. Nächster Schritt nur begrenzter Telefon-/Rüssel-Flow-Proof, danach Nutzerprüfung.
+
+
+---
+
+GC-FINANCE-BAYSTARTUP-20261008 · V12 Coco-Produktionsplan, 16.10.2026
+
+Nutzerauftrag: ultradetaillierter schriftlicher Produktionsplan; heute keine Bilder, Modelle, Audios, Videos oder Präsentationsdatei erzeugen/ändern. Das neue Coco-Modell und alle Rigs fehlen. Blender 5.2.2 LTS/bpy ist verbunden, die geprüfte Szene enthält nur Standardobjekte; Generatoren und Assetbibliotheken sind nicht verfügbar.
+
+Verbindlicher Coco-Bildkanon ist das zuletzt bestätigte V8-Storyboard `Coco_Storyboard_20Bilder.png` (SHA-256 `712701d2e34fdd03e73823263424d155379b0fc558e41e81750ee8778acfcba8`). V11 besteht nur den statischen Rüssel-Erscheinungsvergleich mit Remys Original; keine Bewegungsfreigabe. Nutzerakzeptiert ist V7 ausschließlich als Unterkiefermechanik, nicht als V7-Gesicht. Für den Audioabschnitt gilt nur die bereits normalisierte Coco-Datei; keine neue Audioerzeugung.
+
+Der Plan sieht 20 gemeinsame Rig-/Stil-Gatestills und 600 geplante Film-Frame-IDs vor. Sechs begrenzte Bewegungstests decken Gang [60,120), Rüssel [201,231), Sitzen [231,261), Griff [261,291), Rückgabe [318,354) und Sprechen [390,420) ab: zusammen 216 Frames. Diese können nur bei identischen finalen Renderbedingungen wiederverwendet werden; dann bleiben 384 Filmframes zusätzlich. Basisrechnung: 20 + 600 = 620 geplante Frame-/Still-Ausgaben. Null neue KI-Referenzbilder im Basisweg; höchstens vier einzeln begründete Ansichten nur nach separater Root-Freigabe.
+
+Lokale Arbeitsdateien:
+- `outputs/gradecrew-investment-20261019/animation-v12-production-plan/Coco_Produktionsplan_V12.md` (SHA-256 `8543302e958c57ba6fac2d88e1841df6d74b37f8ad09dd9411849d1ddffcdbcf`)
+- `outputs/gradecrew-investment-20261019/animation-v12-production-plan/Coco_Produktionsplan_V12.pdf` (17 Seiten; SHA-256 `54a9c43d33f3d2a50616224737015f8b950c283e5ceb3e32e04737a218fb7270`)
+- `outputs/gradecrew-investment-20261019/animation-v12-production-plan/Coco_Bildliste_600_Frames.csv` (600 Zeilen F000–F599; SHA-256 `ef308abc105043a1e4e3842cbe2d122d8a095f5cc14217cb0fac1629efa9377f`)
+
+Repo-Plan: `docs/superpowers/plans/2026-10-15-coco-animation-production.md`. PDF-Seitenbogen und Zeitplantabelle wurden visuell geprüft. Der Plan ist eine künftige Arbeitsanweisung, keine Produktionsfreigabe und keine Abnahme eines Films. V6/V9 bleiben abgelehnt; V10/V11-Standbilder sind keine Animation. Keine Deckänderung oder Nutzerfreigabe für Körperbewegung.
+
+Nächster Schritt: erst nach separater Produktionsfreigabe einen stilgetreuen Coco-/Telefon-/Rüssel-Blockout und das 20-Still-Stilgate erstellen; bei Stilabweichung nicht in die Bewegung gehen. Vollfilm, weitere Crew-Szenen und PPTX-Einbettung bleiben getrennte spätere Aufgaben.
