@@ -26,7 +26,7 @@ function fn(name) { const start=app.indexOf(`function ${name}(`); assert.ok(star
 async function harness(t) {
   const dom = new JSDOM('<div id="studentQuizCard"></div>', {url:'https://example.test',runScripts:'outside-only'}); const w=dom.window; t.after(()=>w.close());
   w.$=id=>w.document.getElementById(id); w.state={currentQuiz:{},questions:[]};
-  w.assessmentContentLabels=(await import('../../shared/i18n/assessment-locale.mjs')).assessmentContentLabels;
+  Object.assign(w, await import('../../shared/i18n/assessment-locale.mjs'));
   w.formatMathText=(await import('../../shared/math-display.mjs')).formatMathText;
   w.escapeHtml=value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
   w.round1=n=>n; w.getQuestionAudioSrc=q=>q.audioDataUrl||''; w.getQuestionImageSrc=()=>''; w.questionAudioReady=()=>true; w.questionStudentAudioReady=()=>true;
@@ -57,8 +57,10 @@ test('legacy private text is never promoted automatically, editor requires expli
   assert.match(container.textContent,/öffentliche Frage/);assert.ok(container.querySelector('.questionAudioEdit .questionAudioLegacyQuestion'));
   container.querySelector('.copyQuestionAudioInstruction').click();assert.equal(q.audioInstruction,q.text);assert.equal(field.value,q.text);
   field.value=instructions.multi;field.dispatchEvent(new w.Event('input'));assert.equal(q.audioInstruction,instructions.multi);
+  assert.throws(()=>buildPublicQuestion(q,'secret'),/playable audio/);
+  q.audioNeedsRegeneration=false; // Synthetic freshly regenerated clip for the subsequent legacy-projection check.
   delete q.audioInstruction; const paper=buildPublicQuestion(q,'secret');assert.equal(paper.text,'');assert.equal(paper.audioInstruction,undefined);
-  w.renderStudentQuiz({id:'synthetic',title:'Test',contentLocale:'de-DE'},[q],{ownerPreview:true});assert.doesNotMatch(w.document.querySelector('h3').textContent,/PRIVATE_|beantworte die Frage/);assert.match(w.document.querySelector('h3').textContent,/Arbeitsauftrag fehlt/);
+  w.renderStudentQuiz({id:'synthetic',title:'Test',contentLocale:'de-DE'},[q],{ownerPreview:true});assert.doesNotMatch(w.document.querySelector('h3').textContent,/PRIVATE_|beantworte die Frage/);assert.match(w.document.querySelector('h3').textContent,/noch nicht bereit/);
 });
 test('instruction changes invalidate new frozen papers without rewriting old absent-field fingerprints',()=>{
   const q=question('multi');assert.notEqual(authoringFingerprint([q]),authoringFingerprint([{...q,audioInstruction:'Changed instruction'}]));
@@ -68,7 +70,7 @@ test('AI schema, normalization, review and storage preserve explicit public inst
   const raw={type:'multi',text:'PRIVATE_LEGACY_TEXT',points:2,options:[{text:'und',correct:true},{text:'oder',correct:true},{text:'vor',correct:false}],mediaIntent:{kind:'none'},audioIntent:{kind:'ai_generated',presentation:'listening-only',script:'PRIVATE_TRANSCRIPT',instruction:instructions.multi,reason:'Hörverstehen'}};
   assert.ok(questionSchemaForType('multi',{allowAudio:true}).properties.audioIntent.required.includes('instruction'));
   const normalized=normalizeQuestion(raw);assert.equal(normalized.audioIntent.instruction,instructions.multi);assert.equal(questionForReview(normalized,0).studentView.text,instructions.multi);
-  const stored=await storedAiQuestion(normalized,0,{model:'mock',promptVersion:'mock',generateAudio:async()=>({audioDataUrl})});assert.equal(stored.audioInstruction,instructions.multi);assert.equal(stored.audioScript,'PRIVATE_TRANSCRIPT');
+  const stored=await storedAiQuestion(normalized,0,{model:'mock',promptVersion:'mock',generateAudio:async()=>({audioDataUrl})});assert.equal(stored.audioInstruction,instructions.multi);assert.equal(stored.audioScript,`PRIVATE_TRANSCRIPT\n\n${instructions.multi}`);
   assert.match(validateQuestion({...normalized,audioIntent:{...normalized.audioIntent,instruction:''}}).join(' '),/Arbeitsauftrag/);
 });
 
@@ -77,9 +79,9 @@ test('single-question AI revision preserves the public instruction and presentat
   w.eval(fn('questionForAi'));
   const request=w.questionForAi(q);assert.equal(request.audioIntent.instruction,instructions.multi);assert.equal(request.audioIntent.presentation,'listening-only');
   const raw={audioIntent:{kind:'ai_generated',script:'PRIVATE_TRANSCRIPT',presentation:'listening-only',instruction:instructions.multi}};
-  let calls=0;w.aiApi={generateQuestionAudio:async()=>{calls++;return {asset:{audioDataUrl}};}};
+  let calls=0, spoken;w.aiApi={generateQuestionAudio:async input=>{calls++;spoken=input.script;return {asset:{audioDataUrl}};}};
   w.eval('async '+fn('applyGeneratedAudio'));const next={};await w.applyGeneratedAudio(raw,next,'synthetic','q1');
-  assert.equal(calls,1);assert.equal(next.audioInstruction,instructions.multi);assert.equal(next.audioPresentation,'listening-only');
+  assert.equal(calls,1);assert.equal(spoken,`PRIVATE_TRANSCRIPT\n\n${instructions.multi}`);assert.equal(next.audioInstruction,instructions.multi);assert.equal(next.audioPresentation,'listening-only');
 });
 
 test('one public question field replaces audio mode and duplicate field',async t=>{
@@ -163,7 +165,8 @@ test('cleared nested legacy question stays empty through DOM rebind, save, proje
   const oldFingerprint=authoringFingerprint([q]);field.value='';field.dispatchEvent(new w.Event('input'));assert.equal(q.audioInstruction,'');assert.equal(q.text,'PRIVATE_LEGACY_TEXT');
   w.bindQuestionTextEditor(node,q);assert.equal(field.value,'');
   const saved=w.sanitizeQuestionForSave(q);assert.equal(saved.audioInstruction,'');w.bindQuestionTextEditor(node,saved);assert.equal(field.value,'');
-  assert.equal(buildPublicQuestion(q,'secret').audioInstruction,undefined);assert.equal(buildPublicQuestion(saved,'secret').audioInstruction,undefined);
+  assert.throws(()=>buildPublicQuestion(q,'secret'),/playable audio/);
+  assert.equal(buildPublicQuestion({...q,audioNeedsRegeneration:false},'secret').audioInstruction,undefined);assert.equal(buildPublicQuestion({...saved,audioNeedsRegeneration:false},'secret').audioInstruction,undefined);
   assert.notEqual(authoringFingerprint([q]),oldFingerprint);assert.equal(authoringFingerprint([q]),authoringFingerprint([{...q,audioIntent:{instruction:'Ignored superseded source'}}]));
   w.eval(fn('questionForAi'));assert.equal(w.questionForAi(q).audioIntent.instruction,'');
 });
@@ -189,4 +192,62 @@ test('canonical blank true-false legacy question gets safe localized default aft
     const paper=buildPublicQuestion(saved,'secret');assertNoSolutionLeak(paper);assert.doesNotMatch(JSON.stringify(paper),/OLD_PUBLIC_CRITERION|PRIVATE_LEGACY_TEXT|correctBoolean/);
     q.audioNeedsRegeneration=true;w.bindQuestionTextEditor(node,q);assert.equal(field.value,'');assert.match(w.validateQuiz(),/Fragetext fehlt/);
   }
+});
+
+
+test('editor save rejects known placeholder question and stale listening audio',async t=>{
+  const w=await harness(t);w.document.body.insertAdjacentHTML('beforeend','<input id="quizTitle" value="Synthetic"><input id="quizUseTimeLimit" type="checkbox">');w.eval(fn('validateQuiz'));
+  const q=question('multi');w.state.questions=[q];q.audioInstruction='Der genaue Arbeitsauftrag fehlt. Bitte frage deine Lehrkraft.';assert.match(w.validateQuiz(),/Platzhalter/);
+  q.audioInstruction=instructions.multi;w.questionStudentAudioReady=()=>false;assert.match(w.validateQuiz(),/Audio fehlt/);
+});
+
+
+test('missing public listening question renders an unavailable task without answer controls or private fallback',async t=>{
+  const w=await harness(t);const q=question('multi');q.audioInstruction='';q.audioIntent={instruction:'OLD_PRIVATE_CRITERION'};
+  w.renderStudentQuiz({id:'synthetic',title:'Test',contentLocale:'de-DE'},[q],{ownerPreview:true});
+  const section=w.document.querySelector('.studentQuestion');assert.match(section.textContent,/noch nicht bereit/);assert.equal(section.querySelectorAll('input,button,audio').length,0);assert.doesNotMatch(section.innerHTML,/PRIVATE_/);
+  const paper=buildPublicQuestion(w.sanitizeQuestionForSave(q),'secret');
+  const secure=fs.readFileSync(path.join(__dirname,'../../secure-student.js'),'utf8').replace(/^import .*;\n/gm,'').replace('void bootstrap();','');
+  w.initializeApp=()=>({});w.firebaseConfig={};w.createSecureAssessmentClient=()=>({});w.eval(secure+'\nwindow.mount = q => {currentQuiz={contentLocale:"en-GB"};currentPaper=[q];return renderQuestion(q,0);};');
+  const secureSection=w.mount(paper);assert.match(secureSection.textContent,/not ready yet/);assert.equal(secureSection.querySelectorAll('input,button,audio').length,0);assert.doesNotMatch(secureSection.outerHTML,/PRIVATE_|correct/);
+});
+
+test('editing the public listening question invalidates old audio and regenerates the current instruction',async t=>{
+ const w=await harness(t);w.eval(fn('questionStudentAudioReady'));w.eval(fn('validateQuiz'));
+ w.document.body.insertAdjacentHTML('beforeend','<input id="quizTitle" value="Synthetic"><input id="quizUseTimeLimit" type="checkbox">');
+ const old='Welche Farbe hat der Bus?',next='Wie viele Räder hat der Bus?';
+ const q={...question('multi'),audioInstruction:old,audioScript:`PRIVATE_BASE.\n\n${old}`,audioNeedsRegeneration:false};w.state={currentQuiz:{id:'SYNTHETIC'},questions:[q]};
+ const node=w.document.createElement('div');node.innerHTML='<label class="questionTextLabel"><span class="questionTextCaption"></span><textarea class="qText"></textarea></label>';w.bindQuestionTextEditor(node,q);
+ node.querySelector('.qText').value=next;node.querySelector('.qText').dispatchEvent(new w.Event('input'));
+ assert.equal(q.audioNeedsRegeneration,true);assert.equal(w.questionStudentAudioReady(q),false);assert.match(w.validateQuiz(),/Audio fehlt/);
+ let spoken;w.aiApi={generateQuestionAudio:async input=>{spoken=input.script;return {asset:{audioDataUrl}};}};w.toast=()=>{};w.renderQuestionAudioEditor=()=>{};w.eval('async '+fn('generateAiAudioForQuestion'));
+ await w.generateAiAudioForQuestion(q,w.document.createElement('div'));
+ assert.equal(spoken,`PRIVATE_BASE. ${next}`);assert.doesNotMatch(spoken,/Welche Farbe/);assert.equal(q.audioNeedsRegeneration,false);assert.equal(w.validateQuiz(),'');
+ const saved=w.sanitizeQuestionForSave(q);assert.equal(saved.audioInstruction,next);assert.equal(saved.audioScript,undefined);assert.doesNotMatch(JSON.stringify(buildPublicQuestion(saved,'secret')),/PRIVATE_BASE|Welche Farbe/);
+});
+
+
+test('clearing then editing a listening instruction keeps only the known private base and never revives nested text',async t=>{
+ const w=await harness(t);const old='Welche Farbe hat der Bus?';const q={...question('multi'),audioInstruction:old,audioIntent:{instruction:'OLD_NESTED'},audioScript:`PRIVATE_BASE. ${old}`};
+ const node=w.document.createElement('div');node.innerHTML='<label class="questionTextLabel"><span class="questionTextCaption"></span><textarea class="qText"></textarea></label>';w.bindQuestionTextEditor(node,q);const input=node.querySelector('.qText');
+ input.value='';input.dispatchEvent(new w.Event('input'));assert.equal(q.audioInstruction,'');assert.equal(q.audioScript,'PRIVATE_BASE.');w.bindQuestionTextEditor(node,q);assert.equal(input.value,'');
+ input.value='Wie viele Räder hat der Bus?';input.dispatchEvent(new w.Event('input'));assert.equal(q.audioScript,'PRIVATE_BASE.\n\nWie viele Räder hat der Bus?');assert.doesNotMatch(q.audioScript,/Welche Farbe|OLD_NESTED/);
+});
+
+test('unknown legacy audio without private source cannot be regenerated from private teacher text',async t=>{
+ const w=await harness(t);const q={...question('multi'),audioScript:'',audioInstruction:'Welche Farbe hat der Bus?',text:'PRIVATE_LEGACY_ANSWER'};w.state={currentQuiz:{id:'SYNTHETIC'},questions:[q]};let calls=0;w.aiApi={generateQuestionAudio:async()=>{calls++;}};w.toast=()=>{};w.eval('async '+fn('generateAiAudioForQuestion'));await w.generateAiAudioForQuestion(q,w.document.createElement('div'));assert.equal(calls,0);assert.equal(q.audioScript,'');
+});
+
+test('single revision refuses oversized complete spoken task before calling TTS',async t=>{
+ const w=await harness(t);let calls=0;w.aiApi={generateQuestionAudio:async()=>{calls++;}};w.eval('async '+fn('applyGeneratedAudio'));
+ await assert.rejects(w.applyGeneratedAudio({audioIntent:{kind:'ai_generated',presentation:'listening-only',script:'a'.repeat(490),instruction:'Welche Farbe hat der Bus?'}},{},'SYNTHETIC','q1'),/500/);assert.equal(calls,0);
+});
+
+test('repeated regeneration of multiline public instruction speaks exactly one current task',async t=>{
+ const w=await harness(t);const instruction='Welche Farbe\nhat der Bus?';const q={...question('multi'),audioInstruction:instruction,audioScript:`PRIVATE_BASE.\n\n${instruction}`};
+ w.state={currentQuiz:{id:'SYNTHETIC'},questions:[q]};const spoken=[];w.aiApi={generateQuestionAudio:async input=>{spoken.push(input.script);return {asset:{audioDataUrl}};}};w.toast=()=>{};w.renderQuestionAudioEditor=()=>{};w.eval('async '+fn('generateAiAudioForQuestion'));
+ for(let i=0;i<3;i++)await w.generateAiAudioForQuestion(q,w.document.createElement('div'));
+ assert.equal(spoken.length,3);for(const script of spoken){assert.equal((script.match(/Welche Farbe/g)||[]).length,1);assert.equal(script,'PRIVATE_BASE. Welche Farbe hat der Bus?');}
+ const next='Wie viele\nRäder hat der Bus?';const node=w.document.createElement('div');node.innerHTML='<label class="questionTextLabel"><span class="questionTextCaption"></span><textarea class="qText"></textarea></label>';w.bindQuestionTextEditor(node,q);node.querySelector('.qText').value=next;node.querySelector('.qText').dispatchEvent(new w.Event('input'));
+ await w.generateAiAudioForQuestion(q,w.document.createElement('div'));assert.equal(spoken.at(-1),'PRIVATE_BASE. Wie viele Räder hat der Bus?');assert.doesNotMatch(spoken.at(-1),/Welche Farbe/);
 });

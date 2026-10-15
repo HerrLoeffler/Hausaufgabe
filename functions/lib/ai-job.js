@@ -1,5 +1,6 @@
 "use strict";
 
+const { listeningScript } = require("./audio-task-contract");
 const { questionSnapshot } = require("./diagnostics");
 const { extractContentLocale } = require("./content-locale");
 
@@ -95,7 +96,7 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
   }
   const audioIntent = raw.audioIntent || { kind: "none", script: "", reason: "" };
   if (audioIntent.kind === "ai_generated") {
-    q.audioScript = String(audioIntent.script || "").trim();
+    q.audioScript = listeningScript(audioIntent);
     q.audioPresentation = audioIntent.presentation === "listening-only" ? "listening-only" : "supplement";
     if (String(audioIntent.instruction || "").trim()) q.audioInstruction = String(audioIntent.instruction).trim().slice(0, 1000);
     q.audioAiGenerated = true;

@@ -29,7 +29,7 @@ async function render(q, locale = 'en-GB') {
   w.initializeApp = () => ({});
   w.firebaseConfig = {};
   w.createSecureAssessmentClient = () => ({});
-  w.assessmentContentLabels = (await import('../../shared/i18n/assessment-locale.mjs')).assessmentContentLabels;
+  Object.assign(w, await import('../../shared/i18n/assessment-locale.mjs'));
   w.formatMathText = (await import('../../shared/math-display.mjs')).formatMathText;
   w.CSS = { escape: value => value };
   const source = fs.readFileSync(path.join(root, 'secure-student.js'), 'utf8').replace(/^import .*;\n/gm, '').replace('void bootstrap();', '');
@@ -83,9 +83,8 @@ for (const locale of ['de-DE', 'en-GB']) test(`${locale}: listening instructions
   const q={id:'listen',type:'single',text:'PRIVATE_TRANSCRIPT',points:1,audioPresentation:'listening-only',image:{src:'data:image/png;base64,AAAA'},audio:{src:audio(1)},options:[]};
   const h=await render(q,locale);
   try {
-    assert.match(h.section.querySelector('h2').textContent,locale==='de-DE'?/Arbeitsauftrag fehlt/:/instructions are missing/);
+    assert.match(h.section.textContent,locale==='de-DE'?/noch nicht bereit/:/not ready yet/);
     assert.doesNotMatch(h.section.textContent,/PRIVATE_TRANSCRIPT|KI-generierte Stimme/);
-    assert.equal(h.section.querySelector('audio').controls,true);
-    assert.equal(h.section.querySelector('audio').getAttribute('controlslist'),'nodownload noplaybackrate');
+    assert.equal(h.section.querySelectorAll('audio,input,button').length,0);
   } finally {h.close();}
 });

@@ -13,8 +13,8 @@ export function normalizeAssessmentLocale(value, fallback = DEFAULT_CONTENT_LOCA
 
 // These labels belong to the fixed assessment content, never to the UI catalog.
 const CONTENT_LABELS = Object.freeze({
-  "de-DE": Object.freeze({ listeningTrueFalseInstruction: "Höre die Aufnahme. Entscheide: Richtig oder falsch?", missingListeningInstruction: "Der genaue Arbeitsauftrag fehlt. Bitte frage deine Lehrkraft.", listeningInstruction: "Höre dir die Aufnahme an und beantworte die Frage.", listeningImageInstruction: "Höre dir die Aufnahme unter dem Bild an und beantworte die Frage.", trueLabel: "Richtig", falseLabel: "Falsch", questionImage: "Abbildung zur Aufgabe", answerImage: "Antwortabbildung", answer: "Antwort", imageChoice: index => `Bild ${String.fromCharCode(65 + index)}` }),
-  "en-GB": Object.freeze({ listeningTrueFalseInstruction: "Listen to the recording. Decide: true or false?", missingListeningInstruction: "The task instructions are missing. Please ask your teacher.", listeningInstruction: "Listen to the recording and answer the question.", listeningImageInstruction: "Listen to the recording below the picture and answer the question.", trueLabel: "True", falseLabel: "False", questionImage: "Image for the question", answerImage: "Answer image", answer: "Answer", imageChoice: index => `Image ${String.fromCharCode(65 + index)}` }),
+  "de-DE": Object.freeze({ listeningTrueFalseInstruction: "Höre die Aufnahme. Entscheide: Richtig oder falsch?", missingListeningInstruction: "Diese Aufgabe ist noch nicht bereit. Die Lehrkraft muss den Arbeitsauftrag ergänzen.", listeningInstruction: "Höre dir die Aufnahme an und beantworte die Frage.", listeningImageInstruction: "Höre dir die Aufnahme unter dem Bild an und beantworte die Frage.", trueLabel: "Richtig", falseLabel: "Falsch", questionImage: "Abbildung zur Aufgabe", answerImage: "Antwortabbildung", answer: "Antwort", imageChoice: index => `Bild ${String.fromCharCode(65 + index)}` }),
+  "en-GB": Object.freeze({ listeningTrueFalseInstruction: "Listen to the recording. Decide: true or false?", missingListeningInstruction: "This question is not ready yet. The teacher needs to add the task instructions.", listeningInstruction: "Listen to the recording and answer the question.", listeningImageInstruction: "Listen to the recording below the picture and answer the question.", trueLabel: "True", falseLabel: "False", questionImage: "Image for the question", answerImage: "Answer image", answer: "Answer", imageChoice: index => `Image ${String.fromCharCode(65 + index)}` }),
 });
 
 export function assessmentContentLabels(contentLocale) {
@@ -56,4 +56,23 @@ export function assessmentLocaleSnapshot(locale = DEFAULT_CONTENT_LOCALE, gradin
     contentLocale,
     gradingLocale: normalizeAssessmentLocale(gradingLocale, contentLocale),
   });
+}
+
+// Known missing/procedural text is not a concrete question. This is deliberately
+// a bounded check, not a semantic assessment of arbitrary school questions.
+export function missingTaskInstruction(value) {
+  const text = String(value || "").normalize("NFKC").toLocaleLowerCase("de-DE").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  return !text || /^(?:(?:der genaue )?arbeitsauftrag fehlt|(?:the )?task instructions are missing|diese aufgabe ist noch nicht bereit|this question is not ready yet)/u.test(text)
+    || /^(?:bitte )?frage? deine lehrkraft$/u.test(text)
+    || /^(?:please )?ask your teacher$/u.test(text)
+    || ["höre dir die aufnahme an und beantworte die frage", "höre dir die aufnahme unter dem bild an und beantworte die frage", "listen to the recording and answer the question", "listen to the recording below the picture and answer the question"].includes(text);
+}
+
+export function listeningScript(intent = {}) {
+  const script = String(intent.script || "").trim();
+  const instruction = String(intent.instruction || "").trim();
+  const spokenScript = script.replace(/\s+/g, " ");
+  const spokenInstruction = instruction.replace(/\s+/g, " ");
+  if (intent.presentation !== "listening-only" || !instruction || spokenScript.endsWith(spokenInstruction)) return script;
+  return `${script}\n\n${instruction}`;
 }

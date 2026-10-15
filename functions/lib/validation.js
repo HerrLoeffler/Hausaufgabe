@@ -1,5 +1,7 @@
 "use strict";
 
+const { missingTaskInstruction, listeningScript } = require("./audio-task-contract");
+
 const { QUESTION_TYPES, LIMITS } = require("./constants");
 const { hasAudioAnswerEntries } = require("./audio-answers");
 
@@ -98,7 +100,7 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
   const errors = [];
   if (!q || typeof q !== "object" || Array.isArray(q)) return ["Aufgabe fehlt."];
   if (!allowedTypes.includes(q.type)) errors.push(`Nicht erlaubter Aufgabentyp: ${q.type}`);
-  if (!normalizeText(q.text)) errors.push("Fragetext fehlt.");
+  if (missingTaskInstruction(q.text)) errors.push("Fragetext fehlt oder enthält nur einen Platzhalter.");
   if (!Number.isFinite(Number(q.points)) || !(Number(q.points) >= 0.5) || Math.abs(Number(q.points) * 2 - Math.round(Number(q.points) * 2)) > 1e-9) errors.push("Punkte müssen positive 0,5-Schritte sein.");
   if (["single", "dropdown", "multi"].includes(q.type)) {
     const opts = Array.isArray(q.options) ? q.options : [];
@@ -208,7 +210,8 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
     if (!script) errors.push("Hörtext fehlt.");
     if (script.length > LIMITS.maxAudioScriptChars) errors.push(`Hörtext ist zu lang (maximal ${LIMITS.maxAudioScriptChars} Zeichen).`);
     if (/\b(?:lösung|richtige antwort|answer is)\s*:/i.test(script)) errors.push("Der Hörtext darf keine als Lösung markierte Antwort enthalten.");
-    if (audio.presentation === "listening-only" && !normalizeText(audio.instruction)) errors.push("Sichtbarer Arbeitsauftrag für die Höraufgabe fehlt.");
+    if (audio.presentation === "listening-only" && missingTaskInstruction(audio.instruction)) errors.push("Konkreter Arbeitsauftrag für die Höraufgabe fehlt oder enthält nur einen Platzhalter.");
+    if (audio.presentation === "listening-only" && listeningScript(audio).length > LIMITS.maxAudioScriptChars) errors.push(`Hörtext mit gesprochenem Arbeitsauftrag ist zu lang (maximal ${LIMITS.maxAudioScriptChars} Zeichen).`);
     if (normalizeText(audio.instruction).length > 1000) errors.push("Der sichtbare Arbeitsauftrag ist zu lang (maximal 1000 Zeichen).");
     if (audio.presentation === "listening-only" && ["gapfill", "markwords"].includes(q.type)) errors.push("Nur-Hören-Modus ist für Textmarkierungs- und Lückenaufgaben nicht geeignet.");
   }

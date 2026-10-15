@@ -51,7 +51,7 @@ import { createDiagnostics, installDiagnostics, redactTechnicalText, diagnosticS
 import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
 import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
 import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js";
-import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
+import { assessmentContentLabels, missingTaskInstruction, listeningScript } from "./shared/i18n/assessment-locale.mjs?v=3";
 import { formatMathText } from "./shared/math-display.mjs?v=1";
 import { createPracticePublisher } from "./practice-solution-publication.mjs";
 import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
@@ -2950,7 +2950,9 @@ function collectAiRequest() {
 async function applyGeneratedAudio(rawQuestion, q, code, questionId) {
   const intent = rawQuestion?.audioIntent;
   if (!intent || intent.kind !== "ai_generated") return;
-  const script = String(intent.script || "").replace(/\s+/g, " ").trim().slice(0, 500);
+  const script = listeningScript(intent);
+  if (intent.presentation === "listening-only" && missingTaskInstruction(intent.instruction)) throw new Error("Der konkrete Arbeitsauftrag für die Höraufgabe fehlt. Bitte die Aufgabe überarbeiten.");
+  if (script.length > 500) throw new Error("Hörtext mit Arbeitsauftrag ist zu lang (maximal 500 Zeichen).");
   if (!script) throw new Error("Die KI hat für die Höraufgabe keinen Hörtext geliefert.");
   const result = await aiApi.generateQuestionAudio({ quizId: code, questionId, script });
   if (!result?.asset?.audioDataUrl) throw new Error("Die KI hat für die Höraufgabe kein Audio geliefert.");
@@ -3880,19 +3882,37 @@ function bindQuestionTextEditor(node, q) {
   text.placeholder = listening ? "Öffentliche Frage zur Höraufgabe – ohne Hörtext oder Lösung …" : "Frage eingeben …";
   const typeInstruction = listening && q.type === "truefalse" && questionStudentAudioReady(q) ? assessmentContentLabels(state.currentQuiz?.contentLocale).listeningTrueFalseInstruction : "";
   text.value = listening ? (String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() || typeInstruction) : String(q.text || "");
+  text.setAttribute("aria-invalid", String(missingTaskInstruction(text.value)));
   text.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
   if (listening) text.maxLength = 1000;
   else text.removeAttribute("maxlength");
   if (q.type === "gapfill") node.querySelector(".questionTextLabel").classList.add("hidden");
   text.oninput = event => {
     if (text.disabled) return;
+    text.setAttribute("aria-invalid", String(missingTaskInstruction(event.target.value)));
     if (q.audioPresentation === "listening-only") {
-      q.audioInstruction = String(event.target.value).slice(0, 1000);
+      const previousInstruction = String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").replace(/\s+/g, " ").trim();
+      const nextInstruction = String(event.target.value).slice(0, 1000);
+      if (previousInstruction !== nextInstruction.replace(/\s+/g, " ").trim()) {
+        cancelQuestionAudioOperation(q);
+        const source = String(q.audioScript || "").replace(/\s+/g, " ").trim();
+        // Only remove the exact previous public suffix. Never infer a private
+        // transcript or question from the legacy teacher text.
+        if (source) {
+          const base = previousInstruction && source.endsWith(previousInstruction)
+            ? source.slice(0, -previousInstruction.length).trim() : source;
+          q.audioScript = listeningScript({ script: base, instruction: nextInstruction, presentation: "listening-only" });
+        }
+        q.audioNeedsRegeneration = true;
+        const audioState = node.querySelector(".questionAudioMain .questionAudioState");
+        if (audioState) audioState.textContent = "Audio neu erzeugen";
+      }
+      q.audioInstruction = nextInstruction;
       if (q.audioIntent) q.audioIntent = { ...q.audioIntent, instruction: q.audioInstruction };
     } else q.text = event.target.value;
-    if (q.audioPresentation === "listening-only" && String(q.audioInstruction || "").trim()) {
+    if (q.audioPresentation === "listening-only" && !missingTaskInstruction(q.audioInstruction)) {
       const warning = node.querySelector(".questionAudioInstructionWarning");
-      if (warning) warning.textContent = "";
+      if (warning) warning.textContent = q.audioNeedsRegeneration ? "Arbeitsauftrag geändert. Audio vor der Veröffentlichung neu erzeugen." : "";
       node.querySelector(".questionAudioLegacyQuestion")?.remove();
     }
     markDirty();
@@ -4975,9 +4995,9 @@ function renderQuestionAudioEditor(container, q) {
   details.querySelector(".questionAudioEditBody").prepend(shortcuts);
   const input = details.querySelector(".questionAudioScript");
   const instructionWarning = details.querySelector(".questionAudioInstructionWarning");
-  const missingQuestion = q.audioPresentation === "listening-only" && !String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim();
+  const missingQuestion = q.audioPresentation === "listening-only" && missingTaskInstruction(q.audioInstruction ?? q.audioIntent?.instruction);
   if (missingQuestion) {
-    if (q.type !== "truefalse" || !questionStudentAudioReady(q)) instructionWarning.textContent = "In dieser älteren Aufgabe fehlt die getrennt gespeicherte öffentliche Frage. Prüfe die ältere Fassung unter Audio bearbeiten.";
+    if (q.type !== "truefalse" || !questionStudentAudioReady(q) || String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim()) instructionWarning.textContent = "Die konkrete öffentliche Frage fehlt oder ist nur ein Platzhalter. Ergänze die Frage und prüfe die Aufnahme vor der Veröffentlichung. Die ältere Lehrerfassung steht unter Audio bearbeiten.";
     const legacy = document.createElement("div");
     legacy.className = "questionAudioLegacyQuestion";
     const label = document.createElement("small");
@@ -5197,8 +5217,11 @@ async function generateAiAudioForQuestion(q, container, { fromTask = false } = {
   const originalPassage = String(q.passage || "");
   if (fromTask && !originalPublicQuestion) return toast("Die öffentliche Frage fehlt. Prüfe zuerst die ältere Fassung unter Audio bearbeiten.", "error");
   const originalScript = String(q.audioScript || "").replace(/\s+/g, " ").trim();
+  if (!fromTask && q.audioPresentation === "listening-only" && !originalScript) return toast("Der private Hörtext fehlt. Trage ihn unter Audio bearbeiten ein, bevor du die Aufnahme neu erzeugst.", "error");
+  if (q.audioPresentation === "listening-only" && missingTaskInstruction(originalPublicQuestion) && (q.type !== "truefalse" || originalPublicQuestion)) return toast("Der konkrete öffentliche Arbeitsauftrag fehlt. Ergänze zuerst die Frage.", "error");
   const usesTaskText = fromTask || !originalScript;
-  const script = fromTask && !q.passage ? originalPublicQuestion.replace(/\s+/g, " ").trim() : usesTaskText ? defaultQuestionAudioScript(q) : originalScript;
+  const sourceScript = fromTask && !q.passage ? originalPublicQuestion.replace(/\s+/g, " ").trim() : usesTaskText ? defaultQuestionAudioScript(q) : originalScript;
+  const script = !fromTask && q.audioPresentation === "listening-only" ? listeningScript({ script: sourceScript, instruction: originalPublicQuestion, presentation: "listening-only" }) : sourceScript;
   if (!script) return toast("Die Aufgabe enthält noch keinen Text zum Vorlesen.", "error");
   if (script.length > 500) return toast("Der Hörtext darf höchstens 500 Zeichen lang sein.", "error");
   if (!state.currentQuiz?.id || !q?.id) return toast("Audio kann dieser Aufgabe gerade nicht zugeordnet werden.", "error");
@@ -6020,7 +6043,8 @@ function validateQuiz() {
     const publicQuestion = q.audioPresentation === "listening-only"
       ? (String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() || (q.type === "truefalse" && questionStudentAudioReady(q) ? assessmentContentLabels(state.currentQuiz?.contentLocale).listeningTrueFalseInstruction : ""))
       : String(q.text || "");
-    if (!publicQuestion.trim()) return `Aufgabe ${i + 1}: Fragetext fehlt.`;
+    if (missingTaskInstruction(publicQuestion)) return `Aufgabe ${i + 1}: Fragetext fehlt oder ist nur ein Platzhalter. Bitte den konkreten Arbeitsauftrag ergänzen.`;
+    if (q.audioPresentation === "listening-only" && !questionStudentAudioReady(q)) return `Aufgabe ${i + 1}: Audio fehlt oder ist veraltet. Bitte neu erzeugen.`;
     if (!(Number(q.points) > 0)) return `Aufgabe ${i + 1}: Punkte müssen größer als 0 sein.`;
     if (q.type === "text" && !q.manualReview && !(q.acceptedAnswers || []).length) return `Aufgabe ${i + 1}: Hinterlege mindestens eine akzeptierte Antwort oder aktiviere die manuelle Prüfung.`;
     if (["single", "multi", "dropdown"].includes(q.type)) {
@@ -7002,6 +7026,15 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     section.dataset.reviewId = `student-question-${q.id}`;
     section.dataset.type = q.type;
     section.dataset.index = String(i);
+    const instruction = q.audioPresentation === "listening-only"
+      ? String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() || (q.type === "truefalse" && questionStudentAudioReady(q) ? contentLabels.listeningTrueFalseInstruction : "")
+      : String(q.text || "");
+    if (q.type !== "gapfill" && missingTaskInstruction(instruction)) {
+      section.setAttribute("role", "status");
+      section.innerHTML = `<h3>${escapeHtml(contentLabels.missingListeningInstruction)}</h3>`;
+      qRoot.appendChild(section);
+      return;
+    }
     if (q.type !== "gapfill") section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>${q.audioPresentation === "listening-only" ? questionStudentAudioReady(q) ? escapeHtml(String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() || (q.type === "truefalse" ? contentLabels.listeningTrueFalseInstruction : contentLabels.missingListeningInstruction)) : "Audio fehlt" : formatMathText(q.text)}</h3>`;
     else section.innerHTML = `<div class="studentQuestionHead"><span class="studentQuestionNo">Aufgabe ${i + 1}</span><span class="studentPoints">${Number(q.points)} P.</span></div><h3>Lückentext</h3>`;
 

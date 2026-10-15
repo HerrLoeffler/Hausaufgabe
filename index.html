@@ -380,17 +380,25 @@
             <p class="hint">Lege fest, ob Aufgaben oder Antwortoptionen vorgelesen werden. Audio startet nicht automatisch und ist im Editor anhörbar.</p>
             <div class="stack compact">
               <div class="aiAudioOption">
-                <div class="aiAudioOptionLabel"><label for="aiAudioQuestionCount">Aufgaben mit Hörtext (0–5)</label>
-                  <details class="aiFieldInfo"><summary aria-label="Beispiel für Aufgaben mit Hörtext">ⓘ</summary><span>Beispiel: Die Klasse hört eine kurze Durchsage und beantwortet eine Frage. Bei „Nur hören“ ist die Aufgabenfassung nur im Audio; bei „mit sichtbarer Frage“ erscheint zusätzlich ein Fragetext.</span></details>
-                </div>
-                <input id="aiAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioCountHint" />
+                <label for="aiAudioQuestionCount">Aufgabe als Audio (0–5)</label>
+                <p id="aiAudioTaskDescription" class="hint">Die Klasse hört die Aufgabe und beantwortet sie.</p>
+                <figure id="aiAudioTaskExample" class="aiAudioExample" aria-label="Beispiel: Die Aufgabe wird angehört, dann wird eine Antwort gewählt.">
+                  <figcaption>So sieht es für die Klasse aus</figcaption>
+                  <div class="aiAudioExamplePlayer"><span class="aiAudioExamplePlay" aria-hidden="true">▶</span><span>Frage und Auftrag anhören</span><span class="aiAudioExampleWave" aria-hidden="true">▂ ▅ ▃ ▇ ▄ ▂ ▅</span></div>
+                  <div class="aiAudioExampleChoices"><span>○ Blau</span><span>○ Rot</span></div>
+                </figure>
+                <input id="aiAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioTaskDescription aiAudioCountHint aiAudioTaskExample" />
                 <p id="aiAudioCountHint" class="hint">Der Hörtext wird nicht automatisch abgespielt.</p>
               </div>
               <div class="aiAudioOption">
-                <div class="aiAudioOptionLabel"><label for="aiAudioAnswerQuestionCount">Aufgaben mit vorgelesenen Antwortoptionen (0–5)</label>
-                  <details class="aiFieldInfo"><summary aria-label="Beispiel für vorgelesene Antwortoptionen">ⓘ</summary><span>Beispiel: Eine Schülerin kann einzelne Antwortoptionen anhören und auswählen. Die Antworttexte bleiben verborgen; Arbeitsanweisung und Kategorien bleiben sichtbar.</span></details>
-                </div>
-                <input id="aiAudioAnswerQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioAnswerCountHint" />
+                <label for="aiAudioAnswerQuestionCount">Antwortmöglichkeiten als Audio (0–5)</label>
+                <p id="aiAudioAnswerDescription" class="hint">Die Frage bleibt sichtbar. Die Antwortmöglichkeiten werden angehört.</p>
+                <figure id="aiAudioAnswerExample" class="aiAudioExample" aria-label="Beispiel: Die Frage bleibt sichtbar, jede Antwort wird einzeln angehört.">
+                  <figcaption>So sieht es für die Klasse aus</figcaption>
+                  <strong>Welche Farbe hat der Bus?</strong>
+                  <div class="aiAudioExampleChoices"><span>○ <span aria-hidden="true">▶</span> Antwort 1 anhören</span><span>○ <span aria-hidden="true">▶</span> Antwort 2 anhören</span></div>
+                </figure>
+                <input id="aiAudioAnswerQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioAnswerDescription aiAudioAnswerCountHint aiAudioAnswerExample" />
                 <p id="aiAudioAnswerCountHint" class="hint">Antworttexte werden einzeln hörbar und bleiben für Schüler verborgen.</p>
               </div>
             </div>

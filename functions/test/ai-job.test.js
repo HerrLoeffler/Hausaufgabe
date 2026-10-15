@@ -105,3 +105,28 @@ test("programming errors in image handling are still surfaced", async () => {
     model: "model", promptVersion: "v15", generateMedia: async () => { throw new TypeError("kaputte Implementierung"); }
   }), error => error instanceof TypeError && error.diagnostic.questionPosition === 1);
 });
+
+
+test("listening-only TTS includes the explicit task without publishing private transcript", async () => {
+  const instruction = "Welche Farbe hat der Bus? Wähle eine Antwort.";
+  const raw = { type: "truefalse", text: "PRIVATE_TEACHER_TEXT", points: 1, correctBoolean: true, audioIntent: {kind:"ai_generated", presentation:"listening-only", script:"Der Bus ist blau.", instruction} };
+  let spoken;
+  const saved = await storedAiQuestion(raw, 0, {model:"synthetic", promptVersion:"synthetic", generateAudio:async input => { spoken=input.script;return {audioDataUrl:"data:audio/mpeg;base64,QUJD"}; }});
+  assert.equal(spoken, `Der Bus ist blau.\n\n${instruction}`);
+  assert.equal(saved.audioScript, spoken);
+  assert.equal(saved.audioInstruction, instruction);
+  assert.equal(saved.text, raw.text);
+});
+
+
+test("backend and browser listening assembly are idempotent across normalized multiline instructions", async () => {
+  const backend = require("../lib/audio-task-contract");
+  const browser = await import("../../shared/i18n/assessment-locale.mjs");
+  const instruction = "Welche Farbe\nhat der Bus?";
+  for (const contract of [backend, browser]) {
+    let script = "PRIVATE_BASE.";
+    for (let i = 0; i < 3; i += 1) script = contract.listeningScript({script:script.replace(/\s+/g," "),instruction,presentation:"listening-only"});
+    assert.equal(script.replace(/\s+/g," "), "PRIVATE_BASE. Welche Farbe hat der Bus?");
+    assert.equal((script.match(/Welche Farbe/g) || []).length,1);
+  }
+});

@@ -180,3 +180,13 @@ test("string false options are normalized explicitly instead of becoming true", 
   assert.equal(normalizeQuestion(q).options[1].correct, false);
   assert.deepEqual(validateQuestion(normalizeQuestion(q)), []);
 });
+
+
+test("known missing and procedural-only listening instructions enter existing repair validation", () => {
+  const raw = {type:"truefalse", text:"Ist die Aussage richtig?", points:1, correctBoolean:true, mediaIntent:{kind:"none"}, audioIntent:{kind:"ai_generated",presentation:"listening-only",script:"Der Bus ist blau.",instruction:""}};
+  for (const instruction of ["Der genaue Arbeitsauftrag fehlt. Bitte frage deine Lehrkraft.", "Höre dir die Aufnahme an und beantworte die Frage.", "The task instructions are missing. Please ask your teacher.", "Diese Aufgabe ist noch nicht bereit. Die Lehrkraft muss den Arbeitsauftrag ergänzen."]) {
+    assert.match(validateQuestion({...raw,audioIntent:{...raw.audioIntent,instruction}}).join(" "), /Arbeitsauftrag/);
+  }
+  assert.match(validateQuestion({...raw,text:"Bitte frage deine Lehrkraft."}).join(" "), /Fragetext/);
+  assert.match(validateQuestion({...raw,audioIntent:{...raw.audioIntent,script:"a".repeat(490),instruction:"Welche Farbe hat der Bus?"}}).join(" "), /500/);
+});

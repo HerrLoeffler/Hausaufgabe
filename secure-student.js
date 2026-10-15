@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { createSecureAssessmentClient } from "./secure-assessment-client.js";
-import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
+import { assessmentContentLabels, missingTaskInstruction } from "./shared/i18n/assessment-locale.mjs?v=3";
 import { formatMathText } from "./shared/math-display.mjs?v=1";
 
 const app = initializeApp(firebaseConfig, "gradecrew-secure-student");
@@ -489,6 +489,17 @@ function renderMarkwords(section, question) {
 }
 
 function renderQuestion(question, index) {
+  const instruction = question.audioPresentation === "listening-only"
+    ? String(question.audioInstruction || "").trim() || (question.type === "truefalse" ? assessmentContentLabels(currentQuiz?.contentLocale).listeningTrueFalseInstruction : "")
+    : String(question.text || "");
+  if (question.type !== "gapfill" && missingTaskInstruction(instruction)) {
+    const unavailable = document.createElement("section");
+    unavailable.className = "secureQuestion";
+    unavailable.dataset.qid = question.id;
+    unavailable.setAttribute("role", "status");
+    unavailable.textContent = assessmentContentLabels(currentQuiz?.contentLocale).missingListeningInstruction;
+    return unavailable;
+  }
   const section = questionShell(question, index);
   if (question.type === "single") renderOptions(section, question, false);
   else if (question.type === "multi") renderOptions(section, question, true);
