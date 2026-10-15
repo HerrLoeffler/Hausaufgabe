@@ -231,3 +231,10 @@ Nutzerauftrag für denselben Task/Branch: eine Coco-zentrierte Videoprobe mit si
 Motion-/Renderarbeit liegt beim zuständigen Coco-Motion-Agenten; Artassets werden nur gezielt durch den Art-Agenten ergänzt. Vorgesehener Ausgabeordner: `outputs/gradecrew-investment-20261019/animation-v9-coco-video/`. Keine gemeinsame Rendererdatei durch die Doku-Verantwortliche. Kein neues Audio, kein bezahlter Videoanbieter/Kauf, kein PPTX, Produktcode, Main-/STATE-/Deploy oder Kontaktvorgang. Nur tatsächliche gerenderte Belege können alternierende Kontakte, Telefonübergabe und Mundkontinuität bestätigen.
 
 Prework-Statusprüfung: Finance-Branch `b89405ee89826659cf378e87241bdee92f5b12f3`, 59 ahead/137 behind main `8560992c072779814017ebac6e86b65e938bc951`; latest successful Development Status run #38728178408 on main, no open Finance PR. main registry has no Finance entry. GitHub compare zeigt nur die drei betreuten Doku-Dateien als Branchänderungen; Fortsetzung bleibt deshalb auf dem bestehenden Task-Branch, ohne Integration.
+
+
+## V9 Regie-Update: aktive 20-Sekunden-Timeline (15.10.2026)
+
+Die frühere 15-s-V8-Timeline bleibt unverändert im Konzeptarchiv; für V9 gilt: 0–1 Coco späht; 1–3 Remys Rüssel schiebt nur das Telefon von rechts herein; 3–3,6 Rüssel zieht zurück und Coco folgt mit den Augen; 3,6–7,6 Coco mit ungefähr acht alternierenden Schritten; 7,6–8,6 Welle; 8,6–9,6 setzen; 9,6–10,6 greifen; 10,6–11,6 zuhören; 11,6–12,6 zurücklegen; 12,6–16,805714 vorhandene Coco-Stimme; 17–18 Blick nach rechts; bis 20 s halten/blinzeln. V7-Unterkiefer bleibt unverändert und freigegeben.
+
+Motion-Agent wählt artikuliertes 2.5D mit unabhängigen Füßen, um Cocos bekanntes Gesicht zu erhalten. Das ist ein Herstellungsansatz, kein fertiges Rig oder Qualitätsnachweis. Root prüft erst einen Kontakt-Proof, danach kann über Vollrender entschieden werden. Keine Deck-/Produktänderung, kein neuer Voice-Call oder Paid-Video.
