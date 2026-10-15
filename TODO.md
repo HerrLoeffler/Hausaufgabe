@@ -460,3 +460,11 @@ GC-FINANCE-BAYSTARTUP-20261008 · V10 Referenzbilder geprüft, Flow-Proof abgele
 - Der einzelne kurze Bewegungs-Proof scheiterte an verformter Wählscheibe („melty dial“); kein V10-Film, kein Vollrender. Nächster Schritt: nur einen begrenzten korrigierten Flow-Proof prüfen; ohne Bild-/Formpass keinen Vollfilm.
 - Bindend: Coco bleibt in der vom Nutzer beigefügten V8-Bildsprache; Rüssel schiebt das Telefon von links nach rechts und zieht sich nach links zurück. V9 ist visuell abgelehnt und wird nicht als Bildquelle verwendet. V7-Mundfreigabe ist keine Freigabe für V7-Figur/Identität.
 - Nutzerbewegungsabnahme offen. Keine neue Stimme, bezahlte Video-/Audioaufrufe, Käufe/Upgrades, PPTX-/Produkt-/Main-/STATE-/Deployänderungen. Bestehende V6/V7/V8/V9-Historie und Dateien erhalten.
+
+
+GC-FINANCE-BAYSTARTUP-20261008 · V11 Remy-Original geprüft; Flow offen (15.10.2026)
+
+- Korrektur: V10-Rüssel-Farb-/Formannahme falsch; frühere Rüssel-/Gesamtszenenfreigabe zurückgezogen. Root-Briefing hatte eine rosa Unterseite erfunden und die tatsächliche Originalreferenz nicht vorher geprüft.
+- Dauerhafte Gate-Regel: jedes Anhängsel zuerst mit dem Original derselben Figur vergleichen; keine Farbe von anderen Figuren/Ohren ableiten. Remy-Original `animation-v6/art/references/image3.png` SHA-256 `3af4ee9699c2e7c17408e51fdc9ef6b31a91c194ccbb98319a7d4ae5204c9777`: blass periwinklefarbener, gerundeter/zulaufender Rüssel, Querfalten, rundes Nasenloch, kein rosa Streifen.
+- Root hat V11-Detailbild `animation-v11-remy-reference-fix/art/remy-trunk-4details-v1.png` (1672×941, SHA-256 `6927754d436c06827a2297cdde455701e0f5a237e56acb51e6013b2d14ef1bc9`) und 12er-Tafel `.../remy-trunk-12frames-v1.png` (1932×814, SHA-256 `6010570392536d7cff50091e09ed8578d3bdb77a2d92a85b85770fc53dada15a`) im Stilabgleich zum Original bestanden. Vergleich `.../remy-trunk-comparison.png`, SHA-256 `27ac77bbce46d53ec9e587fe8668bd7dd733d7cd47eb39921cf189b6c7657845`.
+- Nur Erscheinungsform bestanden: eine Zelle zeigt Telefon außerhalb der Szene/nur Rüsselspitze. Zeitliche Kontinuität und Bewegung offen; kein V11-Film, kein Audio/Voice, keine PPTX-/Produkt-/Deployänderung. Nächster Schritt nur begrenzter Telefon-/Rüssel-Flow-Proof, danach Nutzerprüfung.
