@@ -197,3 +197,12 @@ Der Nutzer hat den ersten Crewfilm ausdrücklich als „absolute Katastrophe“ 
 Beanstandet wurden wackelige Bewegung durch zu wenige Posen bei 30 fps, ein falsch geformtes Mundloch, fehlende untere Schnabelartikulation und zu wenige glatte/unterscheidbare Körper-/Beinzwischenposen. Zusätzlich wurden auf dem Schlussbild bei Remy, Emmi und Wilma flach wirkende bzw. angeschnittene Köpfe und fremde Fußfragmente unter der gemeinsamen Grundlinie beobachtet; diese Befunde sind für später notiert, werden jetzt nicht alle vier Figuren pauschal neu bearbeitet.
 
 Nächster Schritt ist ausschließlich ein isolierter 10–12-Sekunden-Coco-Qualitätsproof mit verbesserter Mund-/Schnabelbewegung, glatten unterscheidbaren Körper-/Beinposen und sauberer Silhouette. Martins Sichtprüfung ist das Qualitätsgate vor jeder Fortsetzung zur vollständigen Animation oder neuen ersten PowerPointfolie. Keine neue Stimme, keine ElevenLabs-Produktintegration, keine bezahlte Videogeneration, kein vollständiger Film/neues V7-Deck und keine Produkt-/Main-/STATE-/Deployänderung.
+
+
+### GC-FINANCE-BAYSTARTUP-20261008 · V7-Coco-Rig-Checkpoint (15.10.2026)
+
+Der isolierte lokale V7-Coco-Proof hat fünf Unterkiefer- und acht Geh-Keyframes, besteht die Sichtprüfung aber nicht: weißer Spalt/abgesetzter Unterkiefer, angeschnittener Körper und getrennt wirkende Füße. Noch kein V7-MP4. Reviewbilder liegen unter `outputs/gradecrew-investment-20261019/animation-v7-coco-proof/review/`, lokale Rig-Dateien unter `.../animation-v7-coco-proof/rig/`.
+
+Ein gezielter Clean-Plate-Imagegenversuch hat Coco global verändert und vergrößert statt einen registrierten Patch zu liefern; Datei `outputs/gradecrew-investment-20261019/animation-v6/art/v7-coco-rig/coco-cleanplate-attempt1.png` bleibt als verworfener Versuch erhalten. Kein zweiter Imagegenversuch. Ein Geometry-Reviewer prüft nun maskierte Kiefertransformationen im isolierten Ordner `animation-v7-coco-proof/geometry-review/`; der Voice-Actor besitzt Renderer/Timeline/Video. Zuständigkeiten bleiben getrennt.
+
+Vor Fortsetzung des Gesamtfilms: nur kurzen Coco-Proof mit sauberer Kieferbewegung und flüssigem, nicht angeschnittenem Gehzyklus visuell prüfen. V6-Nutzerablehnung bleibt maßgeblich; V5/V6 werden nicht verändert. Keine neue Stimme, ElevenLabs-Produktintegration, bezahlte Videogeneration oder PowerPoint-/Produktänderung. Kein Status als abgeschlossen/akzeptiert.
