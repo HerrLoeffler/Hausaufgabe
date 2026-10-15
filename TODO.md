@@ -452,3 +452,11 @@ GC-FINANCE-BAYSTARTUP-20261008 · V9 visuell abgelehnt; V10 Bild-Gate offen (15.
 - [ ] Zuerst zwölf Szenen-/Einzelbilder im verbindlichen V8-Referenzstil erstellen und Root-Bildprüfung abwarten.
 - [ ] Nur bei bestandenem Bild-Gate kurze Bildbewegungsprobe. Kein Vollclip davor.
 - Rüssel muss von links nach rechts das Telefon schieben und nach links zurück. Keine neue Stimme, kein Paid-Video, Kauf/Upgrade, PPTX/Produkt/Main/STATE/Deploy.
+
+
+GC-FINANCE-BAYSTARTUP-20261008 · V10 Referenzbilder geprüft, Flow-Proof abgelehnt (15.10.2026)
+
+- V8-stilgerechte Bildtafel mit 12 Konzeptposen und 4 generierten Detailbildern erstellt; beide von Root visuell geprüft. Lokal: `outputs/gradecrew-investment-20261019/animation-v10-reference-match/art/coco-phone-push-12frames-v2.png` (1932×814, SHA-256 `cf0b0d1c646e7e4768fb88bebac2e22f91a577c5124c76ad139eb2d677354c23`) und `.../coco-phone-push-4details.png` (1672×941, SHA-256 `fe58e2d3b986b909b7e9f5314ab0e10b8d8a7b96392155aa433ca97495f54c52`). Konzept-/Detailbilder, keine gerenderten Filmframes.
+- Der einzelne kurze Bewegungs-Proof scheiterte an verformter Wählscheibe („melty dial“); kein V10-Film, kein Vollrender. Nächster Schritt: nur einen begrenzten korrigierten Flow-Proof prüfen; ohne Bild-/Formpass keinen Vollfilm.
+- Bindend: Coco bleibt in der vom Nutzer beigefügten V8-Bildsprache; Rüssel schiebt das Telefon von links nach rechts und zieht sich nach links zurück. V9 ist visuell abgelehnt und wird nicht als Bildquelle verwendet. V7-Mundfreigabe ist keine Freigabe für V7-Figur/Identität.
+- Nutzerbewegungsabnahme offen. Keine neue Stimme, bezahlte Video-/Audioaufrufe, Käufe/Upgrades, PPTX-/Produkt-/Main-/STATE-/Deployänderungen. Bestehende V6/V7/V8/V9-Historie und Dateien erhalten.
