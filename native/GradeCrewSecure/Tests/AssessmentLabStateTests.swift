@@ -94,11 +94,7 @@ final class AssessmentLabStateTests: XCTestCase {
     func testSafetyTimerContinuesDuringTrackingRunLoopMode() {
         let tracking = "GradeCrewLabTracking"
         let cfMode = CFStringCreateWithCString(nil, tracking, CFStringBuiltInEncodings.UTF8.rawValue)!
-        #if compiler(>=6.4)
         CFRunLoopAddCommonMode(CFRunLoopGetCurrent(), CFRunLoopMode(rawValue: cfMode))
-        #else
-        CFRunLoopAddCommonMode(CFRunLoopGetCurrent(), cfMode)
-        #endif
         var fired = false
         let timer = AssessmentLabTimer.schedule(every: 0.01) { fired = true }
         defer { timer.invalidate() }
