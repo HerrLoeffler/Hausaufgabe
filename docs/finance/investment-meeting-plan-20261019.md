@@ -333,3 +333,17 @@ Verbindliche Referenz für die nächste Stufe ist jetzt das vom Nutzer beigefüg
 Aktueller Status: V6 abgelehnt, V9 visuell abgelehnt; V7-Mundform bleibt als frühere Freigabe erhalten, aber das hebt die V9/V6-Ablehnung nicht auf. Keine neue Stimme, kein Kauf/Upgrade, kein bezahlter Videoaufruf, kein PPTX/Produkt-/Main-/STATE-/Deploy-Schritt. V9 bleibt lokal erhalten und wird nicht als freigegebene Animation bezeichnet.
 
 Lageprüfung vor dieser Stufe: `main` `8560992c072779814017ebac6e86b65e938bc951`; letzter erfolgreicher „GradeCrew Development Status“-Lauf #38728178408 auf diesem SHA, 15.10.2026 11:33 UTC. Bestehender Finance-Branch `717555f001be6d4c741128eddfa331aee5fa8785`, 71 Commits ahead/137 behind main, diverged; kein offener Finance-PR. GitHub-Compare weist ausschließlich die drei betreuten Doku-Dateien aus. Fortsetzung im bestehenden Task/Branch, keine Main-Integration.
+
+
+## 15.10.2026 — V10 V8-Referenzbilder geprüft; Bewegungsprobe offen
+
+Die V10-Bildtafel und Detailbilder wurden im verbindlichen V8-Coco-Stil erstellt und von Root visuell bestanden:
+
+- `outputs/gradecrew-investment-20261019/animation-v10-reference-match/art/coco-phone-push-12frames-v2.png` — 1932×814, zwölf Konzeptposen; SHA-256 `cf0b0d1c646e7e4768fb88bebac2e22f91a577c5124c76ad139eb2d677354c23`.
+- `outputs/gradecrew-investment-20261019/animation-v10-reference-match/art/coco-phone-push-4details.png` — 1672×941, vier neu generierte Detailbilder; SHA-256 `fe58e2d3b986b909b7e9f5314ab0e10b8d8a7b96392155aa433ca97495f54c52`.
+
+Zusammen sind das 16 Konzept-/Detailbilder zur gewünschten Telefonaktion. Root bestätigte Figurenstil, links-nach-rechts geschobenes Telefon, stabile linke Ablage sowie Handset-/Handkontakt in den gezeigten Details. Sie sind Einzelbilder, keine gerenderten Filmframes. Der kurze Bewegungs-/Flow-Test bestand nicht: die Telefon-/Hörerform verformte sich („melty dial“). Keine Fortsetzung zu einem Film, kein V10-MP4 und keine PowerPoint-Änderung. Das positive Bildurteil gilt nicht als Bewegungsfreigabe.
+
+Verbindliche V10-Gates bleiben: V8-Referenz-Coco (runder Kopf, kurzer Körper, kleine flache Schwimmfüße, passende Wangen-/Schnabel-/Augenproportionen, warmes helles Umfeld); Remys Rüssel schiebt das Telefon kurz von links nach rechts und zieht sich nach links zurück. Frühere V7-Mundfreigabe erlaubt keine Rückkehr zur abgelehnten V7-Figur. V9 bleibt visuell abgelehnt und wird nicht als Vorlage wiederverwendet.
+
+Nächster Schritt: die fehlerhafte kurze Bewegungsprobe prüfen/korrigieren und erneut nur als begrenzten Proof bewerten; vor bestandenem Bewegungs-Gate kein Vollfilm. Nutzerabnahme der Bewegung steht aus. Keine neue Stimme, kein bezahlter Videoaufruf/Upgrade, kein PPTX-/Produkt-/Main-/STATE-/Deploy-Schritt. Drei lokale Imagegen-Aufrufe für V10-Artreferenzen; keine Audio- oder bezahlte Videogenerierung.
