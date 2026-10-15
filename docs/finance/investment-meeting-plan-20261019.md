@@ -322,3 +322,14 @@ Versuchshistorie: zwei eingebaute Imagegen-Aufrufe für transparentes Teileatlas
 ### Encoded-file verification detail (15.10.2026)
 
 The final `Coco_V9_manifest.json` (SHA-256 `786227e019dabbc65139f69133b87d326b6119f595c3c688ee148c00684f9db4`) confirms 600 unique 1280×720 source frames, 600 encoded video samples and one 20 s AAC track. Decoded AAC alignment delta is 0 samples against the unchanged source interval, correlation 0.9993866 and RMS ratio 0.9983283; AAC is lossy, so byte identity applies to the source PCM in the padded WAV only. The encoded 12-frame contact sheet SHA-256 is `0763ccfd96ca0bbdbf121b5432c0f1adb633606de01a87d2e811e80c6582801a`. Encoder history: two restricted sandbox attempts failed with AVFoundation -11834; two native local exports succeeded, with the first pre-peek version preserved. Root’s final 12-frame review passed; full continuous playback and Martin’s motion acceptance remain open.
+
+
+## V9 visuell abgelehnt; V10 Referenz-Gate (15.10.2026)
+
+Nutzerurteil zur V9-Ausgabe: „absolute Kacke“. V9 wird als **visuell abgelehnter Versuch** geführt, trotz technisch gültiger MP4-/Audio-/Rasterprüfungen. Ursache laut Root: die Produktion folgte dem älteren V7-Coco-Quellbild und einem neu aufgebauten 2.5D-Torso/Teileatlas; dadurch wich die Figur deutlich von den schönen V8-Konzeptbildern ab. Zusätzlich lief Remys Rüssel aus der falschen Richtung ins Bild. Die technische Datei, Kontaktübersichten und Versuche bleiben als Historie erhalten; SHA/Codec-Nachweis ist kein Qualitäts- oder Nutzerakzeptanzbeleg.
+
+Verbindliche Referenz für die nächste Stufe ist jetzt das vom Nutzer beigefügte V8-Szenenbild. Gewünschte Bewegung: nur Remys Rüssel kommt von links, schiebt das Telefon kurz sichtbar nach rechts und zieht sich zurück nach links; Coco bleibt im V8-Stil. Zielordner für den begrenzten nächsten Schritt: `outputs/gradecrew-investment-20261019/animation-v10-reference-match/`. Zuerst entsteht eine zwölfteilige Szenen-/Einzelbildtafel im passenden V8-Stil. Root prüft die Bildübereinstimmung; nur nach bestandenem Bild-Gate folgt eine kurze bildbasierte Bewegungsprobe. Vor dieser Prüfung kein neuer Vollclip.
+
+Aktueller Status: V6 abgelehnt, V9 visuell abgelehnt; V7-Mundform bleibt als frühere Freigabe erhalten, aber das hebt die V9/V6-Ablehnung nicht auf. Keine neue Stimme, kein Kauf/Upgrade, kein bezahlter Videoaufruf, kein PPTX/Produkt-/Main-/STATE-/Deploy-Schritt. V9 bleibt lokal erhalten und wird nicht als freigegebene Animation bezeichnet.
+
+Lageprüfung vor dieser Stufe: `main` `8560992c072779814017ebac6e86b65e938bc951`; letzter erfolgreicher „GradeCrew Development Status“-Lauf #38728178408 auf diesem SHA, 15.10.2026 11:33 UTC. Bestehender Finance-Branch `717555f001be6d4c741128eddfa331aee5fa8785`, 71 Commits ahead/137 behind main, diverged; kein offener Finance-PR. GitHub-Compare weist ausschließlich die drei betreuten Doku-Dateien aus. Fortsetzung im bestehenden Task/Branch, keine Main-Integration.
