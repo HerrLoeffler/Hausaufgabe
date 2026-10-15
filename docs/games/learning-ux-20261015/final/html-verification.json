@@ -1,0 +1,8 @@
+{
+  "source_sha256": "f2e67d9fcb260a1d8d3b084c1e1240976d4a3d18806e3afd0035bc62937c5478",
+  "html_sha256": "67e44ce0ed45ee6007fa6ff387f59ff6a204ee03676ad1a12140e03591cb0351",
+  "full_manuscript_contained": true,
+  "embedded_image_count": 13,
+  "all_images_embedded_svg": true,
+  "visual_browser_check": "not_completed: local Chrome launch SIGABRT; PDF render is verified"
+}

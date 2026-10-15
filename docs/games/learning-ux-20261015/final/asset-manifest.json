@@ -1,0 +1,162 @@
+{
+  "task_id": "GC-GAMES-LEARNING-UX-01",
+  "source_sha256": "f2e67d9fcb260a1d8d3b084c1e1240976d4a3d18806e3afd0035bc62937c5478",
+  "pdf_sha256": "150f68ef7d150ac9b0cd90f94f92a05b7924e51740e519e91bcf2b68a0e92664",
+  "files": [
+    {
+      "path": "MASTERPLAN.md",
+      "bytes": 112801,
+      "sha256": "f2e67d9fcb260a1d8d3b084c1e1240976d4a3d18806e3afd0035bc62937c5478"
+    },
+    {
+      "path": "design/assets/brand-icon-v1.svg",
+      "bytes": 9233,
+      "sha256": "2bd42ceaed9fdb17f5d0d6774bd749becba80855ff6ccd384aa01ac916139a8c"
+    },
+    {
+      "path": "design/assets/brand-primary-v1.svg",
+      "bytes": 9291,
+      "sha256": "62c57a0c98c5cf7910ce76d6fbe468e9da62aa8a769607b5266f1093139e132a"
+    },
+    {
+      "path": "design/mockups/01-hub-desktop.svg",
+      "bytes": 14463,
+      "sha256": "b627ec04ba10acbf165eb91c5822f2757089054ad36a878c120a239a8c5c4da6"
+    },
+    {
+      "path": "design/mockups/02-einfachstart-ipad.svg",
+      "bytes": 12907,
+      "sha256": "15ca4cb737be38060458981517acb8574163562ef731d6d0084b998c4aa28672"
+    },
+    {
+      "path": "design/mockups/03-remy-vorschau-desktop.svg",
+      "bytes": 13546,
+      "sha256": "f247be31c54365f71e2f5e86bcc4214b8eddc599e90809b5ab86195717147c96"
+    },
+    {
+      "path": "design/mockups/04-lehrplan-desktop.svg",
+      "bytes": 13381,
+      "sha256": "136297fc158484d0e31f9807752d30678bedb1921d5506176c41694331ad15c7"
+    },
+    {
+      "path": "design/mockups/05-schwierigkeit-ipad.svg",
+      "bytes": 12613,
+      "sha256": "f606e6e803581e7daecedd3a8357325fabd76b2515de3e29c356e1895bf7983c"
+    },
+    {
+      "path": "design/mockups/06-lobby-board-desktop.svg",
+      "bytes": 13433,
+      "sha256": "a2dabd13d90ab9f6c2d17937173d0276caaaab135e3541a6c5d28eb5c1a2c199"
+    },
+    {
+      "path": "design/mockups/07-aufgabe-phone.svg",
+      "bytes": 12267,
+      "sha256": "6b9078529296e25c21c972516b85d311a654afac63227a50df4cd2602616262b"
+    },
+    {
+      "path": "design/mockups/08-abschluss-ipad.svg",
+      "bytes": 12083,
+      "sha256": "6245af045bc6e86b9352e0f30a9ba8a6f4faf395666d07623d0da1afde5d68b5"
+    },
+    {
+      "path": "design/mockups/09-material-zustaende-desktop.svg",
+      "bytes": 14291,
+      "sha256": "b9784f3f35933656a437f7178943f5c61dd1eab0a41f38232c3bfa536cec34b5"
+    },
+    {
+      "path": "design/mockups/10-wissensreise-ipad.svg",
+      "bytes": 12929,
+      "sha256": "d4d0f3f38281cb2150988ea8774c8f7bf06e21e1963d0da9523df5b93270c33f"
+    },
+    {
+      "path": "design/mockups/11-deutsch-aufgabe-ipad.svg",
+      "bytes": 12812,
+      "sha256": "6ddfc11882d37f1724b007f1e33ce75a06766e68fb6768ce146b3ec90fab5cfc"
+    },
+    {
+      "path": "design/mockups/12-vocab-aufgabe-phone.svg",
+      "bytes": 11976,
+      "sha256": "53e9295777fc08654b5b1d78e860b860c8209cb983e028f9c1f50e94045c0f0f"
+    },
+    {
+      "path": "design/mockups/manifest.json",
+      "bytes": 3689,
+      "sha256": "d17de23f9965f50daec4f9394349569cb3cfcd8e9d258123226b6272e3bfb44b"
+    },
+    {
+      "path": "design/index.html",
+      "bytes": 4710,
+      "sha256": "10df4311cf36776ab9f99396b445cfb2fd12e01958ed11e74a30fe15fec9dd53"
+    },
+    {
+      "path": "design/README.md",
+      "bytes": 1966,
+      "sha256": "ab795fa268d4319cb345fb9e1e1b5091613c5275f29dbf71e5f2f8b1fcf9fe71"
+    },
+    {
+      "path": "design/DESIGN_HANDOFF.md",
+      "bytes": 9117,
+      "sha256": "00e678101070914f2cb9b0bf7aea9abdac56bb49fb49997abe54f5c597b00c19"
+    },
+    {
+      "path": "design/build_book.py",
+      "bytes": 15089,
+      "sha256": "875b2fdd9fb649d0dda356faf3cf48f2cf8c15c6af750d523abc24e076585eeb"
+    },
+    {
+      "path": "design/build_print_html.py",
+      "bytes": 5198,
+      "sha256": "c698fe2a52276a73c76491fcdf01e195bf9a2df2928ac86c42206bc122aa6ae0"
+    },
+    {
+      "path": "design/check_contact.py",
+      "bytes": 468,
+      "sha256": "26f51ee3968375da94aadfb8f31d5f7b6026e12b3148cd39b610e7ef6a043de9"
+    },
+    {
+      "path": "design/contact_pdf.py",
+      "bytes": 571,
+      "sha256": "90168a83257b11843a348e7e1d77b32eecf14aae2a18b504df04f6f270818569"
+    },
+    {
+      "path": "design/create_mockups.py",
+      "bytes": 17154,
+      "sha256": "04cc018999728dafd80f93207ec9350a377cddaf9687a18601546623c494583e"
+    },
+    {
+      "path": "design/verify_book.py",
+      "bytes": 1265,
+      "sha256": "4776a9a5f45bbba861861a3b399d9484611d5f111616540eb596418766c05b56"
+    },
+    {
+      "path": "design/render_assets.cjs",
+      "bytes": 524,
+      "sha256": "7114c84ca039d4470b9c478db8500c11c949f833d307c535209bbf2c2190a61e"
+    },
+    {
+      "path": "final/GradeCrew-Spiele-Masterplan-20261015.pdf",
+      "bytes": 2407648,
+      "sha256": "150f68ef7d150ac9b0cd90f94f92a05b7924e51740e519e91bcf2b68a0e92664"
+    },
+    {
+      "path": "final/GradeCrew-Spiele-Masterplan-20261015.html",
+      "bytes": 354678,
+      "sha256": "67e44ce0ed45ee6007fa6ff387f59ff6a204ee03676ad1a12140e03591cb0351"
+    },
+    {
+      "path": "final/layout-verification.json",
+      "bytes": 245,
+      "sha256": "2bd0ee7b1825bc052cd6921885a91e89ef4d9a1ce9e7857254f7d6e73ea177d0"
+    },
+    {
+      "path": "final/verification.json",
+      "bytes": 1480,
+      "sha256": "217580ea291ad9862555e6aad2eb08340e105f52bfaff7e962e6c9a4c704ec3c"
+    },
+    {
+      "path": "final/html-verification.json",
+      "bytes": 372,
+      "sha256": "08a10119731f63bd7478677a6197d939f82e73fe246a287c0cbbb7dc2ba3efac"
+    }
+  ]
+}

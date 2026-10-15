@@ -1,20 +1,73 @@
-# GC-GAMES-LEARNING-UX-01 · gemeinsames Lernspiele-Planbuch
-Stand: 15.10.2026. Fachowner: /root/games_redesign_plan, beauftragt durch bestehende GC · Games-Zentrale. Chatlink unbekannt. Requested Sol/medium laut Auftrag; tatsächliches Runtime-Modell/Effort/Usage unbekannt.
+# GC-GAMES-LEARNING-UX-01 · Gemeinsames Lernspiele-Planbuch
 
-## Auftrag und Grenze
-Nur Planung/Dokumentation: Vocab Rush, Fast Quiz (Mathematik), Fehlerjagd Deutsch, Wissensreise einfacher, einheitlicher; Lehrplan als erweiterte Option, Remy auch für Mathematik/eigene Tests, fortlaufend ähnliche Aufgaben für fünf Minuten, nachvollziehbare feinere Schwierigkeit. Nutzerbericht: Stufe 1/2 spielbar, 3 zu schwer, 4/5 nicht getestet; keine gemessene Kohortenstudie. Keine Runtimeänderungen, Providerstarts, Gamebuilds, Merge oder Deploy.
+Auftrag:15.10.2026. Abschluss dieses Dokumentationsblocks:16.10.2026. Fachowner `/root/games_redesign_plan`, beauftragt durch die bestehende GC · Games-Zentrale. Chatlink unbekannt. Angefordert Sol/medium; tatsächliches Modell, Aufwand und Usage unbekannt. Keine Modellwechsel, keine neue Kostenreservierung.
 
-## Aktueller belegter Ausgang
-main frisch 8560992c072779814017ebac6e86b65e938bc951. START/AGENTS/STATE/TODO/README/Registry/CHAT_CONTRACT/Gamesworkflow/Briefing/Assetguide/Assurance/Skillzuordnung gelesen. Development Status 38809750925, Job116679689447, success; Audit warnt vor147unregistrierten Branches und offenen PRs ohne Zuordnung, u.a.237/238/208/214; Fremdzuordnungen nicht geändert. Bestehende Games Hub/Design/Fastquiz-Tasks bleiben erhalten. Docsbranch docs/games-learning-ux-20261015 ist eigener Planungsbranch von main; kein breites Runtimezusammenführen.
+## Auftrag und Grenzen
 
-Webrelease laut frisch gelesenem STATE GC39/8f869790; Nutzerabnahme offen. WissensreisePR238 Draft unmerged ec751260, DocsPR237 a66fb81b. Aktuelle Übergabe bestätigt isolierte Vorschau ec751, reale private50-Fragen-Vorbereitung46spielbar/4medienabhängig ausgeschlossen; keine realeGen-/Publikations-/Cloudspiel-/Geräteabnahme. PR218/208/214 bleiben offene Drafts, keine fertige Volllehrplananalyse behaupten.
+Nur Planung und Dokumentation für Vocab Rush, Fast Quiz Mathematik, Fehlerjagd Deutsch und Wissensreise. Bestätigter Nutzerfokus: Mittelschule Bayern, Klassen5–10. Einfacher gemeinsamer Einstieg, Lehrplan als erweiterte Option, Remy beziehungsweise eigene Tests als Quelle, fortlaufendes fünfminütiges Üben und kleine fachliche Schwierigkeitsbrücken. Nutzerbericht: Stufe1/2 spielbar,3 zu schwer,4/5 ungetestet; keine Kohortenmessung. Im geprüften Enginebestand sind vier interne Niveaus belegt; der Plan erfindet kein fünftes Bestandsniveau.
 
-## Methoden
-Brainstorming-Skill tatsächlich gelesen; Architektur-/Designauftrag, Nutzerautorisation gilt für Schreiben des Plans jetzt. Keine Umsetzung daraus. img2threejs ungeeignet für reine2D-/Bedien-/Lernlogikplanung; kein künstlicher3D-Schritt. Design/PDF-Fachagent erstellt Layout/Logo/Screenkonzepte, Researchagent prüft Bestands-/Lehrplan-/Schwierigkeitsfakten. Scopebezogene Assurance im Plan: Lösungsschlüssel/Rollen/Idempotenz/Kosten/Datensparsamkeit/faire Bedienung; keine Kontrollfreigabe behauptet.
+Keine Runtimeänderung, kein Providerstart, kein Game-/Appbuild, kein Merge, keine Integration oder Deploymentfreigabe. Production bleibt ausgeschlossen. `sources/**` blieb unverändert. Originalaufträge, Versuche und Budgets wurden erhalten.
 
-## Dateien und Überschneidung
-Eigener Scope docs/games/learning-ux-20261015/**, workstreams/games-learning-ux-20261015.md, ausschließlich eigene TODO-Zeile und Registry-Zuordnung. Keine STATE-Featurestufe ändern. sources/** read-only. Lokale Arbeitsausgaben work/games-redesign-20261015/**; andere Fachagenten nur eigene Research-/Designpfade.
+## Frisch gelesene Ausgangsbelege
 
-## Gesicherter Teilschritt und Fortsetzung
-Erster Checkpoint: Manuskriptstruktur, Taskzuordnung, tatsächliche Ausgangsbelege. Vollausarbeitung/Illustration/Quellenabgleich/Unabhängigkeitsreview noch offen. Keine laufenden Providerrequests/Deploys. Historische Tasks/Budgets/Versuche unverändert; neues Kostenbudget nicht erfunden.
-Genau nächster Schritt: das Gesamtmanuskript abschnittsweise ausarbeiten und frühzeitig an PDF-Fachagent übergeben.
+- main `8560992c072779814017ebac6e86b65e938bc951`: START_HERE, AGENTS, STATE, TODO, Workstream-README, Registry, CHAT_CONTRACT, Gamesworkflow, Spielbriefing, Assetguide, Assurance und Skillzuordnung gelesen.
+- Development Status `38809750925`, Job `116679689447`, erfolgreich;26 aktive Workstreams,22 Überschneidungshinweise,12 ältere kritische Branches,147 unklassifizierte Branches. Warnungen bleiben fremde Koordinationsarbeit; keine Bereinigung.
+- STATE nennt Web GC39/`8f869790…`; Nutzer-/physische Geräteabnahme offen. Keine Produktstufe geändert, deshalb kein STATE-Delta.
+- Wissensreise PR238 Draft, offen/unmerged, `ec751260…`; Docs-PR237 `a66fb81b…`. Isolierte Vorschau und echte private50-Aufgaben-Vorbereitung46 geeignet/4 Medienausschlüsse sind enge Belege; vollständiges Cloudspiel, reale Providersemantik und Geräteabnahme bleiben offen.
+- PR218/208/214 offen; Code/Recherche und neuere lokale Lehrplanarbeit14.10 nicht als integrierte Volllehrplananalyse ausgegeben. Researchdatei dokumentiert die genauen Grenzen.
+
+## Branch, Dateien und Checkpoints
+
+Eigener Docsbranch `docs/games-learning-ux-20261015`, Draft-PR [239](https://github.com/HerrLoeffler/Hausaufgabe/pull/239) gegen main. Isolierte lokale Arbeitsausgaben unter `work/games-redesign-20261015/`. Eigene Repo-Pfade `docs/games/learning-ux-20261015/**`, diese Übergabe sowie ausschließlich die eigene TODO-Zeile und Registry-Zuordnung. Main-TODO und Registry vor Abschluss erneut gelesen: gegenüber Startbasis unverändert. Andere Einträge erhalten.
+
+| Checkpoint | Gesicherter Umfang |
+|---|---|
+| `571e153b` | Struktur, Task-ID, Ausgangsbelege, TODO/Registry/Handoff |
+| `36bcd619` | Erste neun Kapitel |
+| `5ac6e97c` | Vollständiger Haupttext, Beispiele und Anhänge |
+| `cb19edef` | Finales Manuskript, Research/SourceLedger, zwölf SVG-Ansichten, Galerie, Brandreferenzen |
+
+Der vollständige remote MASTERPLAN an `cb19edef` wurde textgleich mit dem lokalen Manuskript verglichen; Remote-Blob `2b0cbc647a7ec42fd7e7d09e0f6bd4bcc186e7de`. Das spätere Abschlussdelta sichert Satzquellen, Prüfbelege und Review; den tatsächlichen neuesten Head vor Weiterarbeit über PR239 lesen.
+
+## Artefakte und unveränderliche Bezugswerte
+
+| Artefakt | Umfang | SHA256 |
+|---|---|---|
+| `MASTERPLAN.md` |19 Hauptkapitel,2 Anhänge,13.483 Wörter | `f2e67d9fcb260a1d8d3b084c1e1240976d4a3d18806e3afd0035bc62937c5478` |
+| End-PDF |61 Seiten,12 Konzeptansichten,2.407.648 Bytes | `150f68ef7d150ac9b0cd90f94f92a05b7924e51740e519e91bcf2b68a0e92664` |
+| Zusätzliches eigenständiges HTML |354.678 Bytes | `67e44ce0ed45ee6007fa6ff387f59ff6a204ee03676ad1a12140e03591cb0351` |
+| `final/asset-manifest.json` |31 Datei-/Größen-/Hashbezüge | `7be3480be2bd28f29151fadca0afac3672e50ccc8cfb913d7f3e9002e9648f9e` |
+| `review/OWNREVIEW.md` | Unabhängiger Spec-/Standardsreview | `579652d0d352b721b3c361ed810ac33bc76bfd155dd2794abfaa30188eee5b84` |
+
+PDF und fertiges HTML werden lokal unter `work/games-redesign-20261015/final/` ausgeliefert. **Diese beiden fertigen Leseartefakte nicht als GitHub-committed behaupten.** Das Repo sichert vollständiges Manuskript, Research, Quellenregister, editierbare SVGs, vorhandene GC-Brandreferenzen mit Provenienz, Galerie, Satz-/HTML-/Prüfskripte, konkrete Wiederholungsanleitung, Manifeste und Review. Keine Fontdateien oder privaten Nutzerscreenshots. Ungenutzte Remy-Assetkopie und Einleseabhängigkeit wurden entfernt.
+
+## Tatsächlich ausgeführte Prüfung
+
+- Manuskript:19 Hauptkapitel,2 Anhänge,12 Ansichten; JSON gültig; keine TBD-/FIXME-Platzhalter; fünf Minuten, private Seedgrenze, Teacherquota und Wissensreise ohne manuelle Antwortbewertung explizit.
+- Designer: alle61 PDF-Seiten gerendert und in Kontaktbögen gesichtet;6 repräsentative Vollseiten zusätzlich. Kein Tabellenabschnitt verloren; Inhaltsverzeichnis vollständig auf Seite2, keine leeren Füllseiten.
+- Textabgleich:932 geparste Inhaltsblöcke,0 fehlend.126 Lesezeicheneinträge,46 interne und26 externe Links.
+- Planowner: alle31 Manifestdateien samt Bytes/Hashes erneut abgeglichen; `verify_book.py` frisch ausgeführt:61 Seiten, exakter End-PDFhash,72 Links,0 Safe-Area-Ausreißer. Deckblatt/TOC/Inhaltskontaktbogen selbst visuell gelesen.
+- Unabhängiger Reviewer, getrennt von Autor/Designer/Research:185 normalisierte längere Prosaabsätze gegen End-PDF,0 fehlend;46 interne Linkziele,0 ungültig. Gezielte Code-/Primärquellenstichproben und ausgewählte volle PDF-Seiten/Ansichten geprüft. Keine eigene Vollbildprüfung aller61 Seiten durch Reviewer behauptet. D01–D05 geschlossen. Spec und Standards sequenziell durch denselben Reviewer PASS im Dokumentumfang; keine zwei unabhängigen Reviewer behauptet.
+- Zusätzliche HTML-Fassung: vollständiger Manuskriptinhalt und13 eingebettete SVGs strukturell geprüft. Chrome-Start in Sandbox endete mit SIGABRT vor einer Seite; keine visuelle Browserprüfung behauptet. Die maßgebliche PDF wurde vollständig gerendert und geprüft.
+
+Remote-Doku-CI an `cb19edef`: Development Status `38815189945` und Project handoff checks `38815189920` erfolgreich. Frühere Checks an `5ac6e97c`: `38814883351`/`38814883365` erfolgreich. Abschlussdeltachecks am aktuellen Head frisch lesen. Der tatsächliche PR-Diff enthält ausschließlich eigene Dokumentation/Design/Research und die eigene Koordinationszeile; keine Runtimepfade.
+
+## Entscheidungen und erhaltene Verträge
+
+„Einfach starten“ ist primär, „Genau auswählen“ optional. Direkte Bedienung bleibt vollständig; Remy ergänzt sie und benötigt kein neues Voice-SDK. Quelle/Lernziel, Spielregel und Antwortformat bleiben getrennt. Eigene Remy-/manuelle Tests behalten ihre Stoffgrenze; keine feste Demoquelle ersetzt Martins Quelle. Konkrete3a/3b-Brücken, Fachbeispiele und Hilfen sind Vorschläge; Jahrgang ist kein Niveau, keine Diagnose und keine100%-Kompetenz aus drei Treffern.
+
+Fünf Minuten bedeuten fortlaufende Versorgung bis zum Zeitende, kein frühes Ende wegen Quellanzahl.50–150 Bearbeitungen sind nur die Planrechnung für angenommene2–6 Sekunden pro Kurzaufgabe. Istgrenze generischer KIvarianten:3×12 plus ehrliche Wiederholung. Kein unbegrenztes Neuheits-/Kostenversprechen. Teacher-/Tenantquoten und idempotente Antwortwirkung bleiben erhalten. MathFamilyKey, Generator-/Profilversion, Seed, Quellrevision und Schlüsselherleitung bleiben privat/serverseitig; öffentlich nur opake Instanz-ID und freigegebene Anzeigeparameter.
+
+Wissensreise erhält keine Noten, Spielpunkte, Strafsperren oder manuelle Antwortbewertung. Im aktuellen Bestand läuft die absolute Serverdeadline bei Pause weiter; vorgeschlagene pausierbare Soloaktivzeit wäre eine ausdrückliche spätere Verhaltensänderung. Klassenfrist und Teacher-Stop dürfen durch individuelle Pause oder Adaptation nicht umgangen werden. Bestehende Boards, QR, Rollen und Backendverträge wiederverwenden, keine konkurrierende Plattform.
+
+## Skills und Versuchshistorie
+
+Autor: Brainstorming gelesen, Architektur-/Designauftrag; Nutzer hat Schreiben dieses Planbuchs ausdrücklich jetzt autorisiert, keine zusätzliche Interviewrunde. verification-before-completion gelesen und an tatsächlichen Dokumentchecks angewendet. Design: frontend-design/PDF-Skill und gebündelte Runtime26.1013.11914 dokumentiert. Research und unabhängiger Review führen eigene gelesene Skills im jeweiligen Receipt. img2threejs ist für reine2D-/Bedien-/Lernlogikplanung ungeeignet; kein künstlicher3D-Schritt.
+
+Ein großer Textpaket-Leseversuch wurde vor Gitmutation wegen Ausgabeabschneidung verworfen. Danach Dateien einzeln mit Trunkierungsprüfung gelesen und gemeinsam gesichert; kein Commit oder Refupdate aus dem Fehlversuch. Keine Credentialwerte gelesen, kein Firebase-Login-JSON. Kein Providerrequest/Deploy läuft aus diesem Auftrag. Bestehende Historien und Budgets wurden nicht zurückgesetzt.
+
+## Status und genau nächster Schritt
+
+Dokumentationsumfang ausgearbeitet, gesichert und unabhängig geprüft; eigener Branch/Draft-PR, keine Integration. Produktcode und Release-/Deploystufen unverändert. Keine App-/Cloud-/Provider-/Lernwirksamkeits-/Geräte-/Productionabnahme aus dem Dokument-PASS ableiten.
+
+**Genau nächster Schritt:** Root prüft finalen Docshead und die Artefakthashes und legt Martin das61seitige Planbuch zur inhaltlichen Entscheidung vor. Umsetzung erst als separat konkret beauftragter Referenzabschnitt nach Kapitel17/18; dieses Artefakt ist keine Bau-, Merge- oder Deployfreigabe.
