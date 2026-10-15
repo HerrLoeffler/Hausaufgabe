@@ -301,3 +301,10 @@ Stand vor der Medienarbeit: V6-Film/PPTX bleibt vom Nutzer abgelehnt; V7-Mundbew
 Keine bezahlte Videogenerierung, kein weiterer Voice-Call und keine neuen Medienkäufe sind umfasst. Die frühere Versuchshistorie und vorhandenen Sprachproben bleiben unberührt. Der Qualitätsgate bleibt echte abwechselnde Fußkontakte ohne Rutschen, kontrollierter Kopf-/Flossenausdruck, physischer Telefonkontakt und unveränderte freigegebene Mundform; erst echte Frames/Video können das belegen.
 
 Aktuelle Arbeitsgrundlage geprüft: main `8560992c072779814017ebac6e86b65e938bc951`; jüngster „GradeCrew Development Status“-Lauf #38728178408 auf diesem SHA war erfolgreich (15.10.2026 11:33 UTC). Finance-Branch vor diesem Checkpoint `b89405ee89826659cf378e87241bdee92f5b12f3`; GitHub-Vergleich meldet 59 Commits ahead und 137 behind main. Kein offener Finance-PR; main-Registry enthält keinen Finance-Eintrag. Der Compare weist in der Branch-Differenz nur die drei betreuten Doku-Dateien aus; keine parallele Finance-Dateiüberschneidung festgestellt. Dieser Auftrag bleibt daher auf dem bestehenden Doku-Branch, ohne Main-Integration.
+
+
+## V9 aktive Szenenzeit — Korrektur nach Prework-Checkpoint (15.10.2026)
+
+Die 15-Sekunden-Choreografie in V8 bleibt dort als frühere Planung erhalten; die aktive V9-Timeline ist jetzt 20 Sekunden: 0–1 Coco späht; 1–3 nur Remys Rüssel schiebt das Telefon von rechts sichtbar ins Bild, 3–3,6 zieht er sich zurück, Coco verfolgt es mit den Augen; 3,6–7,6 Coco läuft mit etwa acht klar alternierenden Schritten; 7,6–8,6 Welle; 8,6–9,6 Hinsetzen; 9,6–10,6 Griff; 10,6–11,6 zuhören; 11,6–12,6 Telefon zurücklegen; 12,6–16,805714 vorhandene freigegebene Coco-Zeile; 17–18 Blick nach rechts; 18–20 halten/blinzeln.
+
+Für V9 ist ein artikuliertes 2.5D-Verfahren mit separat steuerbaren Füßen gewählt, um Cocos bestätigte Gesichtsidentität zu bewahren; ein fertiges 3D-Rig ist damit nicht behauptet. Der freigegebene V7-Unterkiefer bleibt unverändert. Vor dem Vollrender prüft Root einen Kontakt-Proof; diese Timingkorrektur ist Plan, kein Video- oder Qualitätsnachweis.
