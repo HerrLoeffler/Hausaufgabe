@@ -410,3 +410,10 @@ GC-FINANCE-BAYSTARTUP-20261008 · V7-Coco-Eintritt/Sprechen v2 (15.10.2026)
 Korrigierte lokale 10-s-Probe: `outputs/gradecrew-investment-20261019/animation-v7-coco-proof/combined-proof-v2/Coco_V7_Eintritt_und_Sprechen_v2.mp4` (1280×720, 30 fps, H.264/AAC; SHA-256 `02a7ddc2638e859c7af7f3b42c89a32d37690eb1103e786c5e3c64e331834a55`). Root sichtete Eintrittsframes: 0 s offstage, 0,8 s links, 1,6 s mittig. Echter Eintritt korrigiert v1; technischer Kandidat für menschliches Feedback, keine Nutzerfreigabe, kein vollständiger Gehzyklus. Dokumentierter 1,7-s-Kameraschnitt, moderater Watschelgang, hinterer Fuß teilweise verdeckt. v1 und 5,233-s-Kieferstudie bleiben erhalten.
 
 Kein vollständiger Film/keine V7-PPTX; V6 bleibt abgelehnt und alle Decks unverändert. Nächster Schritt: Martins Sicht-/Hörprüfung der Coco-Proofs, erst danach Entscheidung über Fortsetzung. Keine neuen Voice-/ElevenLabs-/bezahlten Videoaufrufe und keine Produkt-/Main-/STATE-/Deployänderung.
+
+
+GC-FINANCE-BAYSTARTUP-20261008 · V8 Coco Planentwurf, 15.10.2026
+
+- [ ] Martins Sichtprüfung des 20-Bilder-Artplaybooks und der Coco-Regie/450-Frame-Planwerte; Konzeptbilder sind keine gerenderten Frames und zeigen den Links-Rechts-Fußwechsel nicht zuverlässig. Nutzerfreigabe betrifft nur V7-Unterkieferbewegung, nicht Körpergang/Konzeptbilder.
+- [ ] Vor weiterem Film: separate Entscheidung und Arbeit am stilgetreuen Coco-Modell/Rig, danach kurzer Eintritts-/Gangtest mit Weltkontakt der Füße und sauberer Form. Noch kein Coco-Rig vorhanden; Blender-Weg ist nur empfohlen.
+- V8-Planmaterial liegt lokal unter `outputs/gradecrew-investment-20261019/animation-v8-coco-plan/`. V6 bleibt abgelehnt/unverändert; kein V8-Film oder PPTX, keine weiteren Voice-/Paid-Videoaufrufe.
