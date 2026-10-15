@@ -15,4 +15,13 @@ for scheme in 'GradeCrew Secure' 'GradeCrew AAC Lab' 'GradeCrew Secure Staging';
     -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
     -derivedDataPath DerivedData CODE_SIGNING_ALLOWED=NO build
 done
+python3 - <<'PY_CHECK'
+import plistlib
+from pathlib import Path
+info = plistlib.loads(Path('DerivedData/Build/Products/SecureStaging-iphonesimulator/GradeCrewSecure.app/Info.plist').read_bytes())
+assert info.get('GradeCrewSecureMode') == 'staging-exam', 'Built app has no Staging mode'
+assert info.get('CFBundleIdentifier') == 'de.gradecrew.secure'
+assert info.get('CFBundleDisplayName') == 'GradeCrew Secure'
+print('Built Staging configuration verified.')
+PY_CHECK
 echo 'Alle drei Simulator-Builds erfolgreich. Der vollständige Staging-Prüfungsablauf muss separat auf dem iPad geprüft werden.'

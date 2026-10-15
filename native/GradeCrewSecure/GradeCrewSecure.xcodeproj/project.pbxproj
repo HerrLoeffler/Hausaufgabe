@@ -418,7 +418,7 @@
 "SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD" = "NO";
 "LD_RUNPATH_SEARCH_PATHS" = "$(inherited) @executable_path/Frameworks";
 "CODE_SIGN_ENTITLEMENTS" = "Config/AACLab.entitlements";
-"INFOPLIST_KEY_GradeCrewSecureMode" = "staging-exam";
+"INFOPLIST_FILE" = "Config/StagingInfo.plist";
 };
 };
 "B4E10CAA9C5E22150B71559C" = {

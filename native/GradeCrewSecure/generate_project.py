@@ -49,7 +49,7 @@ for name in ['Debug','Release','AACLab','AACLabDistribution','SecureStaging']:
         if name=='SecureStaging':
             settings['MARKETING_VERSION']='0.2.1'
             settings['INFOPLIST_KEY_CFBundleDisplayName']='GradeCrew Secure'
-            settings['INFOPLIST_KEY_GradeCrewSecureMode']='staging-exam'
+            settings['INFOPLIST_FILE']='Config/StagingInfo.plist'
     target_configs.append(obj('target-'+name,isa='XCBuildConfiguration',name=name,buildSettings=settings))
 pl=obj('project-configs',isa='XCConfigurationList',buildConfigurations=project_configs,defaultConfigurationIsVisible='0',defaultConfigurationName='Release')
 tl=obj('target-configs',isa='XCConfigurationList',buildConfigurations=target_configs,defaultConfigurationIsVisible='0',defaultConfigurationName='Release')

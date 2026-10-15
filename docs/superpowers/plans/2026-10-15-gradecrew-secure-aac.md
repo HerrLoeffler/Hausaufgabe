@@ -1,5 +1,8 @@
 # GradeCrew Secure AAC Implementation Plan
 
+> Fortschreibung 15.10.2026: Nach der Planung hat der Nutzer Umsetzung und TestFlight ausdrücklich freigegeben. AAC Lab0.2.0(1031) wurde hochgeladen; der Nutzer bestätigt Sperre und Freigabe auf seinem iPad. Anschließend wurde die Anbindung vorhandener Staging-Tests autorisiert und als0.2.1-Pilot implementiert. Der unten beschriebene Gesamtplan ist weiterhin nicht vollständig abgenommen: echte zeitgesteuerte Abgabe, längerer Offline-Ausfall und autorisierte Lehrer-Notfreigabe bleiben eigene Gates. Aktueller Nachweis: [Staging-Pilotstatus](../../secure/evidence/staging-exam-2026-10-15/status.md). Die ursprünglichen Aussagen zum reinen Planungsschritt sind historisch. Production bleibt unverändert.
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Dieser Auftrag endet zunächst mit dem Plan; Implementierung erst nach dessen Besprechung.
 
 **Goal:** Einen echten, auf iPad-Hardware nachgewiesenen AAC-Prüfungsablauf von Codeeingabe bis verifizierter Abgabe und kontrollierter Freigabe bereitstellen.
