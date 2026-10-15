@@ -389,3 +389,12 @@ GC-FINANCE-BAYSTARTUP-20261008 · V6-Crewfilm-Teilprobe eingebettet (14.10.2026)
 Neue lokale Datei `outputs/gradecrew-investment-20261019/files/GradeCrew_Erstgespraech_20261019_v6_animiert_teilprobe.pptx` (13.748.127 Bytes; SHA-256 `9134848d4f0f80719318e96dcd6a2b51ad0071d5099b5246c63872634096893b`). Standalone- und eingebetteter Film `outputs/gradecrew-investment-20261019/animation-v6/film-v6-teilprobe/GradeCrew-Teilprobe.mp4` (8.017.531 Bytes; SHA-256 `f3d9a493f17aa34066aa225ded7b3dfd452164b00abf5c7adee887c1b2f5e0c0`), ca. 38,93 s, 1920×1080 H.264/AAC. Teilprobe: 8/10 Zeilen; 4/7 fehlen weiterhin. Mund cue basiert grob auf Audioaktivität, nicht exaktes Phonem-Lip-Sync.
 
 ZIP/XML valide, 14 Folien/14 Notizen. Nur Folie 1 XML/Relationships und Content Types gegenüber V5 geändert, übrige ursprüngliche Paketbestandteile bytegleich. Autostart/Endbild in nativer PowerPoint-Wiedergabe wegen CUA-Timeout nicht verifiziert. V5 unverändert: SHA-256 `a6703edfb774bc3247619ffbba142b347f7f797f2c6d6913ea5e3673f0b2776a`. Nächster Schritt: V6 lokal in PowerPoint abspielen; 4/7 erst bei verfügbarem Providerzugang ergänzen. Keine neuen Medienaufrufe/Upgrades und keine App-/Main-/STATE-/Deployänderung.
+
+
+GC-FINANCE-BAYSTARTUP-20261008 · V6-Animation abgelehnt; Coco-Qualitätsgate (15.10.2026)
+
+Nutzerfeedback: erster Crewfilm „absolute Katastrophe“. V6-Teilprobe `outputs/gradecrew-investment-20261019/files/GradeCrew_Erstgespraech_20261019_v6_animiert_teilprobe.pptx` (SHA-256 `9134848d4f0f80719318e96dcd6a2b51ad0071d5099b5246c63872634096893b`) ist nur ein erhaltener Versuch, keine akzeptierte Endfassung; V5 und V6-Artefakte nicht überschreiben/löschen. Native PowerPoint-Wiedergabe war nicht geprüft.
+
+Beanstandungen: wenige Posen erzeugen wackelige Bewegung trotz 30 fps; falsche Mundlochform; untere Schnabelartikulation fehlt; Körper-/Beinbewegungen brauchen mehr unterscheidbare glatte Zwischenposen. Schlussbild zeigt außerdem flach/angeschnitten wirkende Köpfe bei Remy, Emmi und Wilma und fremde Fußfragmente unter der Grundlinie. Diese weiteren Figurenbefunde sind notiert und werden jetzt nicht pauschal überarbeitet.
+
+Nächster Schritt ausschließlich isolierter 10–12s-Coco-Proof mit verbessertem Mund/Schnabel, unterscheidbaren flüssigen Körper-/Beinposen und sauberer Silhouette; Martin prüft ihn, bevor weitere Animation oder neue PPT-Folie beginnt. Keine neuen Stimmen, ElevenLabs-Produktintegration, bezahlte Videogeneration, kompletter Film oder V7-Deck in diesem Schritt; keine Produkt-/Main-/STATE-/Deployänderung.
