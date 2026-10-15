@@ -21,6 +21,7 @@ const files = [
   'assets/vendor/qrcodejs-1.0.0.min.js', 'assets/vendor/qrcodejs-LICENSE.txt'
 ];
 files.push(
+  'classroom/app-repository.mjs', 'classroom/controller.mjs', 'classroom/repository.mjs', 'classroom/csv.mjs', 'classroom/i18n.mjs', 'classroom/classroom.css',
   'gradecrew-workspace-upgrade.mjs',
   'gradecrew-workspace-upgrade.css',
   'gradecrew-hero-copy.mjs',

@@ -7,6 +7,7 @@ export function createPreviewServer(){return http.createServer(async(req,res)=>{
   if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405);res.end('Read-only preview');return;}
   if(!/^127\.0\.0\.1(?::\d+)?$/.test(req.headers.host||'')){res.writeHead(403);res.end('Loopback only');return;}
   const u=new URL(req.url,'http://127.0.0.1');
+  if(u.pathname==='/release.json'){res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({version:'2.3.1-gc39-local-classroom',environment:'local-classroom',commit:'8f8697901f8c1aea89897be855ca2872c82d0f2b'}));return;}
   if(u.pathname==='/samples.csv'){const kind=u.searchParams.get('kind')||'pupils';res.writeHead(200,{'Content-Type':'text/csv;charset=utf-8','Content-Disposition':`attachment; filename="gradecrew-synthetisch-${kind.replace(/[^a-z-]/g,'')}.csv"`,'Cache-Control':'no-store'});res.end('\uFEFF'+sampleCsv(kind));return;}
   const relative=decodeURIComponent(u.pathname==='/'?'/index.html':u.pathname);if(relative.split('/').some(p=>p==='..'||p.startsWith('.'))){res.writeHead(404);res.end();return;}
   const target=path.resolve(root,'.'+relative);if(!target.startsWith(root+path.sep)){res.writeHead(404);res.end();return;}

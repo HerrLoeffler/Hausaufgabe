@@ -59,6 +59,7 @@ import { dashboardPublicationAction, secureAudioPublicationBlocked as isSecureAu
 import { installReviewMode } from "./review-mode.mjs";
 import { DEMO_TEST as REVIEW_DEMO_TEST } from "./gradecrew-tour-v8.js";
 import { createLocalTourRepository } from "./guest-tour-port.mjs";
+import { createClassroomAppRepository } from "./classroom/app-repository.mjs";
 import { installCrewTour } from "./gradecrew-tour.js?v=2.3.1-gc21";
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
@@ -583,7 +584,7 @@ async function finishTeacherTour() {
 }
 
 function showView(id) {
-  if (classroomPreview) document.dispatchEvent(new CustomEvent("gradecrew:classroom-view", {detail:{id}}));
+  if (typeof classroomPreview !== "undefined" && classroomPreview) document.dispatchEvent(new CustomEvent("gradecrew:classroom-view", {detail:{id}}));
   diagnostics.record("view", { view: id });
   if (id === "authView") document.dispatchEvent(new Event("gradecrew:signed-out"));
   if (id !== "publishView") clearPublishSubscriptions();
@@ -1519,7 +1520,7 @@ function openTemplateFromInput(value) {
 }
 
 async function loadDashboard() {
-  if (classroomPreview && window.GradeCrewClassroomApp) { window.GradeCrewClassroomApp.showDashboard(); return; }
+  if (typeof classroomPreview !== "undefined" && classroomPreview && window.GradeCrewClassroomApp) { window.GradeCrewClassroomApp.showDashboard(); return; }
   if (!state.user) return;
   const dashboardUid = state.user.uid;
   clearPublishSubscriptions();
@@ -1984,7 +1985,7 @@ async function createQuizDocument(base = {}) {
 }
 
 async function createQuiz() {
-  if (classroomPreview) { document.dispatchEvent(new Event("gradecrew:classroom-create")); return; }
+  if (typeof classroomPreview !== "undefined" && classroomPreview) { await window.GradeCrewClassroomApp.createQuiz(); return; }
   if (!state.user) {
     toast("Bitte zuerst anmelden.", "error");
     return;
@@ -6153,7 +6154,7 @@ async function saveCurrentQuiz(showMessage = true) {
       audioReady: true, solutionAudioReady: true
     };
     guestTourRepo.save(code, patch, state.questions);
-    if (classroomPreview) document.dispatchEvent(new CustomEvent("gradecrew:classroom-quiz-saved",{detail:{quiz:guestTourRepo.getQuiz(code)}}));
+    if (typeof classroomPreview !== "undefined" && classroomPreview) document.dispatchEvent(new CustomEvent("gradecrew:classroom-quiz-saved",{detail:{quiz:guestTourRepo.getQuiz(code)}}));
     state.currentQuiz = guestTourRepo.getQuiz(code);
     state.loadedQuestionIds = new Set(state.questions.map(q => q.id));
     $("editorHeading").textContent = patch.title;
@@ -6266,7 +6267,7 @@ async function saveCurrentQuiz(showMessage = true) {
 }
 
 async function publishCurrentQuiz() {
-  if (classroomPreview) { if(await saveCurrentQuiz(false)) document.dispatchEvent(new CustomEvent("gradecrew:classroom-assign",{detail:{quizId:state.currentQuiz.id}})); return; }
+  if (typeof classroomPreview !== "undefined" && classroomPreview) { if(await saveCurrentQuiz(false)) document.dispatchEvent(new CustomEvent("gradecrew:classroom-assign",{detail:{quizId:state.currentQuiz.id}})); return; }
   if (state.currentQuiz?.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   if (!(await saveCurrentQuiz(false))) return;
   if (guestTourRepo) {
@@ -9327,18 +9328,20 @@ window.addEventListener("gradecrew:visual-note-saved",()=>toast("Screenshot-Hinw
 
 // Local classroom integration keeps the real editor and all normal runtime paths.
 // The explicit loopback server installs the blocked SDK before this module loads.
-if (classroomPreview) {
-  const { createClassroomAppRepository } = await import('./classroom/app-repository.mjs');
+if (typeof classroomPreview !== "undefined" && classroomPreview) {
   guestTourRepo = createClassroomAppRepository();
   state.guestTourUid = 'local-tour';
   let visibleQuizIds = [];
+  let localCreateContext = {};
+  const seedQuestions = subject => subject === 'Englisch' ? deepClone(REVIEW_DEMO_TEST.questions).slice(0,2) : [{id:'synthetic-question-1',position:1,type:'single',text:subject==='Technik'?'Was gehört zur sicheren Arbeit in der Werkstatt?':'Womit beginnt ein vollständiger Satz?',points:1,options:subject==='Technik'?[{text:'Eine passende Schutzbrille tragen',correct:true},{text:'Ohne Einweisung beginnen',correct:false},{text:'Werkzeuge ungesichert liegen lassen',correct:false}]:[{text:'Mit einem Großbuchstaben',correct:true},{text:'Immer mit einem Komma',correct:false},{text:'Mit einem kleinen Buchstaben',correct:false}]}];
   const refresh = () => { state.quizzes = guestTourRepo.list().filter(q => visibleQuizIds.includes(q.id)); renderQuizList(); };
   window.GradeCrewClassroomApp = Object.freeze({
-    seed(quizzes) { for (const quiz of quizzes) if (!guestTourRepo.getQuiz(quiz.id)) guestTourRepo.create({...quizDefaults(), ...quiz, questions:deepClone(REVIEW_DEMO_TEST.questions).slice(0,2)}); },
+    seed(quizzes) { for (const quiz of quizzes) if (!guestTourRepo.getQuiz(quiz.id)) guestTourRepo.create({...quizDefaults(), ...quiz, questions:seedQuestions(quiz.subject),questionCount:seedQuestions(quiz.subject).length,totalPoints:seedQuestions(quiz.subject).reduce((sum,q)=>sum+Number(q.points||0),0)}); },
     listQuizzes: () => guestTourRepo.list(),
     getQuiz: id => guestTourRepo.getQuiz(id),
     openQuiz: id => openEditor(id),
-    async createQuiz(payload) { const id=guestTourRepo.create({...quizDefaults(), ...payload, questions:deepClone(REVIEW_DEMO_TEST.questions).slice(0,2)}); visibleQuizIds.push(id); await openEditor(id); return id; },
+    openCreate(payload) { localCreateContext={...payload}; openCreateView(); },
+    async createQuiz(payload=localCreateContext) { const id=guestTourRepo.create({...quizDefaults(), ...payload, questions:[]}); visibleQuizIds.push(id); await openEditor(id); document.dispatchEvent(new CustomEvent("gradecrew:classroom-quiz-saved",{detail:{quiz:guestTourRepo.getQuiz(id)}})); localCreateContext={};return id; },
     publishQuiz(id) { guestTourRepo.publish(id); refresh(); },
     showDashboard() { refresh(); showView('dashboardView'); },
     showView(id) { if(!views.includes(id))views.push(id); showView(id); },

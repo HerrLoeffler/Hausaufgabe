@@ -4,21 +4,21 @@
 
 **Goal:** In der vollständigen aktuellen GradeCrew-App Klassen, lokale ASV-Beispielimporte und explizite Testzuweisungen mit persönlichen Schüleransichten erproben.
 
-**Architecture:** Originale index.html/startup.js/app.js, bestehende Tokens, Assets, Editor und Übungsport bleiben maßgeblich. Ein ausschließlich expliziter Loopback-Testserver setzt vor Modulinitialisierung eine Importmap auf einen blockierenden Demo-SDK-Adapter und eine restriktive CSP. Neue fachliche Daten leben nur im RAM; die bestehende App bekommt einen kleinen Port für Navigation und echte Editor-Test-IDs. Kein zweiter Editor oder Bewertungsserver.
+**Architecture:** Originale index.html/startup.js/app.js, bestehende Tokens, Assets, Editor und Übungsport bleiben maßgeblich. Ein ausschließlich expliziter lokaler Testserver setzt vor Modulinitialisierung eine Importmap auf einen blockierenden Demo-SDK-Adapter und eine restriktive CSP. Neue fachliche Daten leben nur im RAM; die bestehende App bekommt einen kleinen Port für Navigation und echte Editor-Test-IDs. Kein zweiter Editor oder Bewertungsserver.
 
 **Tech Stack:** Vorhandenes Browser-ESM, CSS, Node24 TestRunner/HTTP, vorhandenes jsdom/Playwright; keine neuen Produktabhängigkeiten.
 
-**Spec:** ../CLASSROOM_TEACHER_UX_V1.md hat Vorrang vor älteren Navigationsteilen in ../CLASSROOM_STUDENT_MASTERPROJECT_V1.md. Identität/ASV: ../privacy/CLASSROOM_IDENTITY_ASV_ROLLOVER.md und CLASSROOM_ASV_IMPORT_PRIVACY.md, Quellhead9b23052e7bb3a8e6009cca64a7498d942cd7bc1d. Nutzerauftrag16.10 ergänzt und autorisiert lokale Umsetzung, keinen Deploy.
+**Spec:** ../CLASSROOM_TEACHER_UX_V1.md hat Vorrang vor älteren Navigationsteilen in ../CLASSROOM_STUDENT_MASTERPROJECT_V1.md. Identität/ASV: ../privacy/CLASSROOM_IDENTITY_ASV_ROLLOVER.md und CLASSROOM_ASV_IMPORT_PRIVACY.md, Quellstand 9b23052e7bb3a8e6009cca64a7498d942cd7bc1d. Nutzerauftrag16.10 ergänzt und autorisiert lokale Umsetzung, keinen Deploy.
 
 ## Global Constraints
 
 - Base8f8697901f8c1aea89897be855ca2872c82d0f2b / gc39, Stage canonical hausaufgabe-staging.web.app. Alter Standalone-Mock17fc427 ist historische Evidenz, keine Codebasis.
 - Eigener Branch feature/classroom-integrated-preview-20261016. Ports8779/8780/8781 fremd; eigener Port8782 nur127.0.0.1.
-- Vollständige Originalapp laden; bestehende Homepage, Animation,29CrewPNGs, Coco,Remy,Mülleimer,ET,Upload10,Audio,Lösungsfreigabe erhalten. Keine fremden Branches cherry-picken.
-- Im Testmodus keine Remoteauth,Firestore,Storage,Functions,AI,Analytics; keine echten Schülerdaten. UI-Rollenwechsel ist Testansichtswechsel, keine Anmeldung/Autorisierung.
-- CSV-Rohdateien,Namen,RohIDs nurBrowserRAM. Kein localStorage/IndexedDB/Log/URL/Server/AI/Analytics. Nur synthetische herunterladbare Beispiele; tatsächliches ASV-Schema unbekannt.
-- Schul-HMAC mit schulischem Schlüssel, Recovery und Codeexchange sind Zielarchitektur, nicht durch fest eingebauten Demoschlüssel simuliert.
-- Kein Merge/Deploy/Production, kein echter Mail-/Provider-/Accountaufruf, keine JDK-Installation. Release bleibt branch_only.
+- Vollständige Original-App laden; bestehende Homepage, Animation,29CrewPNGs, Coco,Remy,Mülleimer,ET,Upload10,Audio,Lösungsfreigabe erhalten. Keine fremden Branches cherry-picken.
+- Im Testmodus keine Remote-Authentifizierung,Firestore,Storage,Functions,AI,Analytics; keine echten Schülerdaten. Wechsel der UI-Testansicht ist Wechsel der Testansicht, keine Anmeldung/Autorisierung.
+- CSV-Rohdateien, Namen und Rohkennungen nurBrowser-Arbeitsspeicher. Kein localStorage/IndexedDB/Log/URL/Server/AI/Analytics. Nur synthetische herunterladbare Beispiele; tatsächliches ASV-Schema unbekannt.
+- schulbezogenes HMAC mit schulischem Schlüssel, Recovery und Codeexchange sind Zielarchitektur, nicht durch fest eingebauten Demoschlüssel simuliert.
+- Kein Merge, Deployment oder Productionzugriff, kein echter Mail-/Provider-/Accountaufruf, keine JDK-Installation. Release bleibt branch_only.
 - Task/Versuche/Budget/Historie erhalten. Codecheckpoint vor langen Tests, HDF/TODO im Aufgabenbranch, keine zentrale Main-Schreibarbeit.
 
 ## Review Focus
@@ -38,34 +38,57 @@
 | classroom/domain.mjs | pure TeacherGrant-,Membership-,Snapshot-,Zeitraum-,Transfer-,RollOver-Verträge |
 | classroom/repository.mjs | synthetischer RAM-Zustand, Klassen/Kurse,Schulpersonal,Identities,Assignments,Importrevisionen |
 | classroom/csv.mjs | Textdecoder,CSVParser,Mapping,Validierung,unveränderteTextIDs |
-| classroom/controller.mjs | Originalapp-Navigation,Klassenansichten,Importdialog,Zuweisungsdialog,MeineTests/Testwerkzeug |
+| classroom/controller.mjs | Original-App-Navigation,Klassenansichten,Importdialog,Zuweisungsdialog,MeineTests/Testwerkzeug |
 | classroom/classroom.css | nur neue Klassenlayoutregeln auf bestehenden --gc-*Tokens/Komponenten |
-| app.js | expliziter lokaler AppPort und Wiederverwendung bestehender Editor-/Publish-/Guestpfade |
+| app.js | expliziter lokaler App-Port und Wiederverwendung bestehender Editor-/Publish-/Guestpfade |
 | guest-tour-port.mjs | vorhandenen Memoryport zu mehreren QuizIDs erweiterbar halten, LegacyTourvertrag unverändert |
 | startup.js | imLoopbackTestmodus DemoController nach echter Appinstallation laden |
 | classroom/*.test.mjs | echte Domain/CSV/Repository-Verhaltenstests, keine bloßen Quelltextspiegel |
 | tools/classroom-preview/browser-check.mjs | echte lokale Browserclicks,Request/Storagebelege,Desktop/MobileScreenshots |
 | workstreams/classroom-student-management-v1.md | bestehende Übergabe,ein Ledger,Quellen,Nachweise,Grenzen |
 
-AppPort: listQuizzes()->Quiz[]; openQuiz(quizId)->Promise<void>; createQuiz({title,subject,grade})->Promise<quizId>; getQuiz(quizId)->Quiz; publishQuiz(quizId)->void; showDashboard()->void. Alle basieren auf bestehendem Appzustand und guestTourRepo, kein Parallelquiz im Controller. Repository: getState(); listClasses(actor,year); listCourses(actor,classId); listStudentTests(studentId,now); assign(actor,{quizId,classId,courseId,startsAt,endsAt,recipientIds}); addRecipient(actor,assignmentId,studentId); canStart(studentId,assignmentId,now); applyImport({kind,headers,rows,mapping,full,schoolId,year}); transferTeachingGrant({grantId,toTeacherId,effectiveAt}); rollover({fromYear,toYear}). PseudonymeIDs sind zufällige interneDemoschlüssel; roheQuellIDs bleiben ausschließlich imRAM-Abgleichindex.
+App-Port: listQuizzes()->Quiz[]; openQuiz(quizId)->Promise<void>; createQuiz({title,subject,grade})->Promise<quizId>; getQuiz(quizId)->Quiz; publishQuiz(quizId)->void; showDashboard()->void. Alle basieren auf bestehendem Appzustand und guestTourRepo, kein Parallelquiz im Controller. Repository: getState(); listClasses(actor,year); listCourses(actor,classId); listStudentTests(studentId,now); assign(actor,{quizId,classId,courseId,startsAt,endsAt,recipientIds}); addRecipient(actor,assignmentId,studentId); canStart(studentId,assignmentId,now); applyImport({kind,headers,rows,mapping,full,schoolId,year}); transferTeachingGrant({grantId,toTeacherId,effectiveAt}); rollover({fromYear,toYear}). PseudonymeIDs sind zufällige interneDemoschlüssel; roheQuellkennungen bleiben ausschließlich imRAM-Abgleichindex.
 
-## Task1: Quellen und Erhaltung (Rootschritt1)
 
-- [x] frische mainRegeln, STATE/TODO/Registry, LiveStatus38809750925 lesen; Primary+1/-134 undDraft141 abgleichen.
+## Verbindliche Präzisierungen nach Quellen- und Vertragsprüfung
+
+Der am 16. Oktober beschriebene Schülerexport wird ausschließlich seiner Struktur nach berücksichtigt. Das synthetische Prüfprofil hat zehn durch Pipe-Zeichen getrennte Spalten und keine Kopfzeile. Die erste Datenzeile bleibt erhalten. Die Zuordnung lautet im Beispielprofil: Spalte 1 Schulkennung, Spalte 2 mögliche Personenkennung, Spalte 3 Nachname, Spalte 4 Vorname, Spalte 8 Klasse. Die übrigen Spalten bleiben unbekannt oder werden nicht benötigt und deshalb nicht übernommen. Aus der Form der zweiten Spalte folgt kein Beleg für ein stabiles ASV-Differenzierungsmerkmal. Namen und reale Kennungen werden weder in Plan, Repository noch Nachweis kopiert.
+
+Die Importoberfläche bietet vor dem Parsen die Einstellung „Datei hat eine Kopfzeile“. Für das zehnspaltige Pipeprofil wird sie ausgeschaltet und das Trennzeichen ausdrücklich auf Pipe gesetzt. Jeder Datensatz muss seine eigenen Zeilenumbrüche besitzen. Zusammengefügte Chatzeilen werden nicht anhand von Leerzeichen rekonstruiert: Mehrwortnamen machen diese Methode unzuverlässig. Leere Felder und zusätzliche Spalten bleiben im Parser erhalten; nur ausdrücklich zugeordnete benötigte Felder gelangen in den lokalen Importplan. Die Beispiele sind vollständig erfunden und enthalten Umlaute, Mehrwortnamen und führende Nullen.
+
+Alle administrativen Mutationen erhalten die aktuell gewählte Identität ausdrücklich als ersten Parameter. Die maßgeblichen Schnittstellen sind `applyImport(actorId, preview)`, `transferTeachingGrant(actorId, transfer)` und `rollover(actorId, schoolYear)`. Die Prüfung verlangt ein verifiziertes Verwaltungskonto derselben Schule. Verwaltungsrechte in Schule Nord erlauben keine Änderungen in Schule Süd. Eine fachliche Lehrkraftzuständigkeit allein genügt nicht. Diese Bedingungen sind lokale Vertragsprüfungen und werden nicht als nachgewiesene Serversicherheit bezeichnet.
+
+Ein Importplan trägt die Revision, aus der seine Vorschau entstanden ist. Hat sich der Bestand danach verändert, wird die Übernahme abgewiesen und eine neue Vorschau verlangt. Die Übernahme ist eine atomare Transaktion im Arbeitsspeicher: scheitert beispielsweise die zweite Unterrichtszeile an einer fehlenden Lehrkraft, werden auch Änderungen aus der ersten Zeile zurückgenommen. Es gibt keine stille Teilübernahme. Ein abweichender Teilplan müsste zuerst ausdrücklich angezeigt und bestätigt werden.
+
+Die Wiedererkennung einer Person ist schul- und quellbezogen. Der Jahreskontext gehört zusätzlich zur Mitgliedschaft. Derselbe synthetische Personenbezug und dasselbe Klassenlabel in einem neuen Schuljahr behalten deshalb dieselbe Identität, erzeugen aber eine neue Jahresmitgliedschaft. Ein Schuljahreswechsel der Verwaltung Nord verändert weder Klassen noch Mitgliedschaften der Schule Süd. Bereits veröffentlichte Empfängersnapshots und historische Testzuweisungen bleiben unverändert.
+
+Die Schülerprojektion enthält ausschließlich die für „Meine Tests“ benötigten eigenen Felder: Zuweisungs-ID, Test-ID, Klassenkontext, Zeitraum, Status sowie getrennte Ergebnis- und Lösungsfreigaben. Testmetadaten beschränken sich auf Titel und Fach. Die vollständige Empfängerliste, fremde Schüler- und Mitgliedschaftskennungen, fremde Aliase und private Autorenfelder werden nicht ausgegeben.
+
+Die Standard-Testansicht „Toni · Technik“ besitzt ausschließlich die Fachzuständigkeit 9b/Technik. „Kim · Englisch“ besitzt ausschließlich 9b/Englisch. Weitere Beispielklassen verwenden eine getrennte, ausdrücklich benannte Lehrkraft. So bleiben der positive Zuweisungsfall und der negative Fall zwischen zwei Fachlehrkräften für Martin leicht überprüfbar.
+
+Der bestehende GradeCrew-Ablauf bleibt auch beim Erstellen neuer Tests erhalten: Klasse und Fach auswählen, die vorhandene Erstellungsansicht öffnen, „Manuell erstellen“ wählen, im vorhandenen Editor eine Aufgabe anlegen, speichern und anschließend ausdrücklich zuweisen. Die neu erzeugte Test-ID muss in Editor, Zuweisung und Schüleransicht identisch bleiben. KI-Schaltflächen erklären im lokalen Modus ihre Sperre und starten keinen Provideraufruf. Ein bereits vorhandenes QTECH-Beispiel allein genügt nicht als Nachweis dieses neuen Erstellungsablaufs.
+
+Die lokale Vorschau enthält die bestehenden Startseiten-, Editor-, Navigations-, Crew- und Designquellen aus gc39. Ein Quellvergleich allein belegt keine identische Darstellung. Deshalb werden zusätzlich die tatsächlich geladene lokale Startseite und der tatsächliche Editor aufgenommen und mit einer anonymen, nur lesend geöffneten kanonischen Staging-Startseite verglichen. Eine durch Anmeldung bedingte Abwesenheit von Coco oder Administration wird als Grenze benannt; es werden keine echten Konten für diesen Vergleich verwendet.
+
+Die UI-Sprachauswahl Deutsch/Englisch wird mit der vorhandenen GradeCrew-Übersetzungsinfrastruktur verwendet. Der neue Katalog deckt die Grundnavigation und zentrale Dialogtexte ab. Fachliche Testinhalte und synthetische Aliase werden nicht durch die UI-Sprache umgeschrieben. Ein begrenzter Englisch-Smoke ist kein Beleg für eine vollständige sprachliche Abnahme aller Fehler- und Sonderzustände.
+
+## Task1: Quellen und Erhaltung (Root-Schritt 1)
+
+- [x] frische mainRegeln, STATE/TODO/Registry, Live Development Status 38809750925 lesen; Primary+1/-134 undDraft141 abgleichen.
 - [x] isolierten8fCheckout erstellen; fremde dirtyWorktrees,Audio/CrewV3 und Ports nicht verändern.
-- [x] fünf bestehende Konzept/HDFDateien mit Quellhead übernehmen, Historie unverändert erhalten;16OctÜbernahme ergänzen.
+- [x] fünf bestehende Konzept/HDFDateien mit Quellstand  übernehmen, Historie unverändert erhalten;16OctÜbernahme ergänzen.
 - [x] Baseline29Tests ausführen; jsdom-Abhängigkeit vorhandenenInstallationspfad nutzen. Existierende Teardown-Konsolenmeldung separat dokumentieren.
 - [ ] Plan/HDF/TODO checkpointen und remote sichern. Bei DNSConnector verwenden; unklarer Schreibausgang zuerst abgleichen.
 
-## Task2: Sichere vollständige lokale App (Rootschritt2)
+## Task2: Sichere vollständige lokale App (Root-Schritt 2)
 
 Files: server.mjs,demo-sdk.mjs,startup.js,app.js.
-- [ ] RED: Server aufLoopback, keineUploadroute; DemoSDKCallable/DB/Authoperationen werfen; fremderHost/Testflag verweigert. Originalindex/startup/app müssen geliefert werden.
-- [ ] GREEN: Server injiziert nur explizitem lokalenTeststart Importmap für exaktFirebase12.4.0-Module vor Modulscript. CSP connect-src self,keinRemoteSDK; AuthState initialnull,keineRemoteSDKinitialisierung.
-- [ ] Originalstartup EntryFlow,Tokens,Brand,app undWorkspace laden; AppPort installieren. Keine globaleFetch-Sperre als einziger Schutz.
-- [ ] Browserrequests und CSP prüfen: kein fremderOrigin, keineSocket-/Firestore-/Functions-/Telemetryaufrufe. Testmodus sichtbarerHinweis mitReset/Testansicht.
+- [ ] RED: Server aufLoopback, keineUploadroute; DemoSDKCallable/DB/Authoperationen werfen; fremderHost/Testflag verweigert. Original-index.html/startup/app müssen geliefert werden.
+- [ ] GREEN: Server injiziert nur explizitem lokalenTeststart Importmap für exaktFirebase12.4.0-Module vor Modulscript. CSP connect-src self,keinRemote-SDK; AuthState initialnull,keineRemote-SDKinitialisierung.
+- [ ] Originalstartup EntryFlow,Tokens,Brand,app undWorkspace laden; App-Port installieren. Keine globaleFetch-Sperre als einziger Schutz.
+- [ ] Browseranfragen und CSP prüfen: kein fremderOrigin, keineSocket-/Firestore-/Functions-/Telemetryaufrufe. Testmodus sichtbarerHinweis mitReset/Testansicht.
 
-## Task3: Navigation und Klassen (Rootschritte3/4)
+## Task3: Navigation und Klassen (Root-Schritt e3/4)
 
 - [ ] RED: Klassen/Kurse nur zu eigenen wirksamenGrants; Adminrolle allein keinFachgrant. EinQuiz mit mehrerenZuweisungen bleibt eineID.
 - [ ] GREEN: Übersicht/Klassen/Tests in Originalshell; Klassenseite Übersicht/Schüler/Tests. BestehendeToolbar/Editor/Backnavigation weiterverwenden.
@@ -73,13 +96,13 @@ Files: server.mjs,demo-sdk.mjs,startup.js,app.js.
 - [ ] Trennung schoolTeacher record,verifiedLoginLink,teachingGrant undclassMembership inRepository sichtbarprüfen.
 - [ ] Prüfung node --test classroom/*.test.mjs; BrowserDashboard/ClassTabs; kurzerCommit.
 
-## Task4: DreiCodearten und Testansichten (Rootschritt5)
+## Task4: DreiCodearten und Testansichten (Root-Schritt 5)
 
 - [ ] UI erklärt persönlicherZugangscode/Klassencode/Testcode getrennt. Demoansichten enthalten nur markierteTestcodes; keineechtenLoginversprechen.
 - [ ] SchülerIdentity ist klassenunabhängig,Alias proMembership; Alias nie HTMLinterpretieren. Testwerkzeug wählt Schüler ohne Authclaim.
 - [ ] RED/GREEN: leererSchüler siehtkeinenDraft/keineAssignments; Schul-/Klassenfremder keinedeniedDaten inListen.
 
-## Task5: BrowserCSVImport (Rootschritte6/8)
+## Task5: BrowserCSVImport (Root-Schritt e6/8)
 
 - [ ] RED: UTF8/BOM,Semikolon/Komma/Tab,quotedSeparator,escapedQuote,quotedNewline,CRLF/Umlaute,führendeNullen,fehlende/duplicateID,kaputteQuotes,ungültigesEncoding,übergroßeDatei mit klarerZeile.
 - [ ] GREEN: echter input[type=file],TextDecoder UTF8 fatal,expliziteWindows1252Option,Delimiterwahl. KeineautoUmdeutungvonIDs zuNumber,keineNameFallbacks.
@@ -87,7 +110,7 @@ Files: server.mjs,demo-sdk.mjs,startup.js,app.js.
 - [ ] Vorschau nennt neu/unverändert/Wechsel/Konflikt und relevanteFehlerzeilen; Apply erst explizitnachVorschau; Cancel/Reset verwirftRAM-Rohdaten.
 - [ ] Keine Dateiinhalte inURL,Console,Serverrequest,Storage. Browserbeleg Network+Storage mitsynthetischemMarkereintrag undReset.
 
-## Task6: Wiederimport und Jahreswechsel (Rootschritt7)
+## Task6: Wiederimport und Jahreswechsel (Root-Schritt 7)
 
 - [ ] RED: gleicherImport zweimal erzeugtkeineIdentities/Membershipsduplikate; andereSchule gleicherRohID bleibt getrennt; KonflikteblockierenbetroffeneApply.
 - [ ] GREEN: matchIndex nurinRAM mitschool/source/kind/rawId-Domäne; vorApplyRevisionprüfen; RohIDsnieautomatischalsstabileASVIDbehaupten.
@@ -95,37 +118,37 @@ Files: server.mjs,demo-sdk.mjs,startup.js,app.js.
 - [ ] RollOvervon2026/27nach2027/28 behältIdentityundhistorischeSnapshots,neueJahresklasse+Membership; alteKlasseArchivkontext.
 - [ ] HMAC/TresorRecovery/offizielleASV-Exportspalten bleibenZiel/offen, kein eingebauterProduktionsschlüssel.
 
-## Task7: EchterEditor und Zuweisung (Rootschritt9)
+## Task7: EchterEditor und Zuweisung (Root-Schritt 9)
 
-- [ ] RED: existingAppPort erstelltQuizID undliefertdieselbeIDnachEdit/Save/Assign. Draft niemalsStudentList,unberechtigterTeacher/anderesFach/SchuleAssignverweigert.
+- [ ] RED: existingApp-Port erstelltQuizID undliefertdieselbeIDnachEdit/Save/Assign. Draft niemalsStudentList,unberechtigterTeacher/anderesFach/SchuleAssignverweigert.
 - [ ] GREEN: OriginalopenCreate/openEditor/Save mitguestTourRepository nutzen; KontextKlasse/FachbeimCreate alsMetadatenübernehmen. KeinzweitesEditorformular.
 - [ ] ZuweisenundVeröffentlichenDialog zeigtTitel,Klasse/Fach,Zeitraum,expliziteEmpfängerliste. Bestätigen speichertAudienceSnapshoterstvollständig,dannaktiv; AbortkeineZuweisung.
 - [ ] ExistingpracticeSolutionPublication imnormalenModus unverändert; Demo assignment istUXVertrag,keinServerpublishnachweis. Testcode/VorlagenkodekeinepersönlicheCredential.
 
-## Task8: Schüleransicht und Zugriff (Rootschritt10)
+## Task8: Schüleransicht und Zugriff (Root-Schritt 10)
 
 - [ ] RED: Anstehend vorStart,Jetzt imZeitfenster,Erledigt nachlokalerMarkierung; richtige9bTechnik siehtTest,9c/Südnicht. NeueMembershipnachSnapshotnichtautomatischberechtigt.
 - [ ] GREEN: MeineTests mitErklärungbeiLeerzustand. StartprüftaktiveIdentity,Membership,School,Snapshot,ZeitraumundAssignmentzustandjedesMal.
 - [ ] Nachzügler nurexplizitesNachtragen. EntfernteMembershipkeinNeustart; existierendeAttempt-/Historie nichtals gelöschtbehaupten.
 - [ ] Ergebnisse/Lösungen getrennteFreigabeschalter; keine automatischeLösungsausgabe. KeinezweiteBewertungimplementieren.
 
-## Task9: Lehrkraftwechsel (Rootschritt11)
+## Task9: Lehrkraftwechsel (Root-Schritt 11)
 
 - [ ] RED:9bEnglisch-TransferabStichtag nimmtaltemTeacherexactGrant,neuerbekommtihn; andereFächerbleiben; privateEntwürfe/HistoricalResultskeinPauschaltransfer.
 - [ ] GREEN: ausgewählterGrant+Nachfolger+Stichtag+Vorschau,Bestätigung; lokaleEveryOperationRightsPrüfungbelegbar,keineServerbehauptung.
 - [ ] SchülerIdentity/Memberships/Codeshistorie unverändert,Adminbenennung/RecoverybleibenorganisatorischeZielvoraussetzung.
 
-## Task10: Getrennte echte Backendfolgephase — NICHT im ersten Lieferblock (Rootschritt12)
+## Task10: Getrennte echte Backendfolgephase — NICHT im ersten Lieferblock (Root-Schritt 12)
 
-- [ ] offen: lokalesJDK/FirebaseAuth+Functions+FirestoreEmulatorqualifizieren; derzeitJavaStub,keinInstallationsauftrag.
+- [ ] offen: lokalesJDK/FirebaseAuth+Functions+Firestore-Emulatorqualifizieren; derzeitJavaStub,keinInstallationsauftrag.
 - [ ] offen: neue serververwalteteSchools/Identities/CodeIndex/TeacherGrant/Assignments; deniesfürdirekteReadsWrites,serverseitigeCallablesundProjektionen.
 - [ ] offen: assessment-functions/main.js→lib/secure-lifecycle.js bewahren. Info/Start/Resume/Submit/Receipt prüfen aktuelleIdentity,Membership,Snapshot,Grant,Run/Zeitraum. runId ausLiveQuiz,keinenblindClienttrustedRun.
 - [ ] offen: persönlicherCodeexchange mitCSPRNG/HMACserversecret/versioniertemIndex,RateLimitvorReads,Revoke/RefreshTokenwiderruf,neutralemFehler. KeineClaimsmitKlasse/Noten.
 - [ ] offen: secure-student benannteFirebaseApp erhältbewussteauthentifizierteSchülersitzung,Logout/Accountwechsel löscht inFlight/Quizcredential; gegenwärtigerquizIdlocalStorageKeykeinIdentitätsschutz.
-- [ ] offen: Browser→Callable→AuthEmulator→RulesE2E nebenvorhandenen Handler.runTests. ZweiAccounts/Schulen,manipulierteUID/Grant/Run/Score,expired/revokedCodes,parallel/idempotentSubmit,privateLösungen.
+- [ ] offen: Browser→Callable→Auth-Emulator→RulesE2E nebenvorhandenen Handler.runTests. ZweiAccounts/Schulen,manipulierteUID/Grant/Run/Score,expired/revokedCodes,parallel/idempotentSubmit,privateLösungen.
 - [ ] ErstmitdiesenBelegenBackendintegration/Sicherheitbewerten. LokaleDemoTests ersetzenkeinedieserGates.
 
-## Task11: Akzeptanzmatrix (Rootschritt13)
+## Task11: Akzeptanzmatrix (Root-Schritt 13)
 
 | Fall | Browseraktion | Erwartete Beobachtung |
 |---|---|---|
@@ -144,7 +167,7 @@ Files: server.mjs,demo-sdk.mjs,startup.js,app.js.
 
 Authorbrowser,unabhängigerReview,menschlicherNutzertestundphysischerGerätetestwerdengetrenntbelegt. Übersetzungsgrenzenoffennennen; keineautomatischevolleEN-Abnahme.
 
-## Task12: Sicherung und Übergabe (Rootschritt14)
+## Task12: Sicherung und Übergabe (Root-Schritt 14)
 
 - [ ] SinnvolleZwischencommits nachBoundary/DomainCSV/UI. PushvorlangenTests; GitDNSFehlernichtmitSecretsprobesumgehen,ConnectorTrees/Commit/RefalsFallbackmitexakterParentprüfung.
 - [ ] TODOfrischmainlesenundnurGC-CLASSROOM-ZeileimBranchfortführen. Statebleibtbranch_only; RegistrykeineSHA-Duplikation,Integrationszielunverändert.
@@ -153,4 +176,4 @@ Authorbrowser,unabhängigerReview,menschlicherNutzertestundphysischerGerätetest
 
 ## Planprüfung
 
-Alle14Rootschritte sindobenTaskszugeordnet;EmulatoristbewusstoffeneFolgephase. GemeinsameSchnittstellen: AppPortliefertQuizID→AssignmentSnapshotreferenziertID→SchülerlisteprüftSnapshot+Membership; CSVliefertnormalisierteTextzeilen→Repositoryimportvergleichtschool/source/rawId→RollOverbehältIdentity. KeineNamezuIDFallbacks,keineProduktkeys,keineautorisierendenUIClaims. KleineImplementierungsdetailsentscheidetalleinigerWriter mitbegründetemEintraginderbestehendenÜbergabe.
+Alle14Root-Schritt e sindobenTaskszugeordnet;EmulatoristbewusstoffeneFolgephase. GemeinsameSchnittstellen: App-PortliefertQuizID→AssignmentSnapshotreferenziertID→SchülerlisteprüftSnapshot+Membership; CSVliefertnormalisierteTextzeilen→Repositoryimportvergleichtschool/source/rawId→RollOverbehältIdentity. KeineNamezuIDFallbacks,keineProduktkeys,keineautorisierendenUIClaims. KleineImplementierungsdetailsentscheidetalleinigerWriter mitbegründetemEintraginderbestehendenÜbergabe.
