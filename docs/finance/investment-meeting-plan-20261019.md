@@ -378,7 +378,7 @@ Der Plan sieht 20 gemeinsame Rig-/Stil-Gatestills und 600 geplante Film-Frame-ID
 Lokale Arbeitsdateien:
 - `outputs/gradecrew-investment-20261019/animation-v12-production-plan/Coco_Produktionsplan_V12.md` (SHA-256 `8543302e958c57ba6fac2d88e1841df6d74b37f8ad09dd9411849d1ddffcdbcf`)
 - `outputs/gradecrew-investment-20261019/animation-v12-production-plan/Coco_Produktionsplan_V12.pdf` (17 Seiten; SHA-256 `54a9c43d33f3d2a50616224737015f8b950c283e5ceb3e32e04737a218fb7270`)
-- `outputs/gradecrew-investment-20261019/animation-v12-production-plan/Coco_Bildliste_600_Frames.csv` (600 Zeilen F000–F599; SHA-256 `ef308abc105043a1e4e3842cbe2d122d8a095f5cc14217cb0fac1629efa9377f`)
+- `outputs/gradecrew-investment-20261019/animation-v12-production-plan/Coco_Bildliste_600_Frames.csv` (600 Zeilen F000–F599; SHA-256 `051fc39a4c3ba96f7453d71c2f7b9a0424f4f0258709e17bce38d7ed76912b25`)
 
 Repo-Plan: `docs/superpowers/plans/2026-10-15-coco-animation-production.md`. PDF-Seitenbogen und Zeitplantabelle wurden visuell geprüft. Der Plan ist eine künftige Arbeitsanweisung, keine Produktionsfreigabe und keine Abnahme eines Films. V6/V9 bleiben abgelehnt; V10/V11-Standbilder sind keine Animation. Keine Deckänderung oder Nutzerfreigabe für Körperbewegung.
 
