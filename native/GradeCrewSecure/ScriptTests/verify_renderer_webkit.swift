@@ -10,8 +10,8 @@ final class Probe: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         guard message.frameInfo.isMainFrame, message.frameInfo.request.url?.standardizedFileURL == pageURL else {
             print("FAIL: bridge origin"); complete=true; return
         }
-        message.webView?.evaluateJavaScript("({count:document.querySelectorAll('.secureQuestion').length,snapshot:window.gcFreezeAnswers()})") { result,error in
-            if let object = result as? [String:Any], (object["count"] as? Int) == 3,
+        message.webView?.evaluateJavaScript("({count:document.querySelectorAll('.secureQuestion').length,nav:document.querySelectorAll('.secureQuestionNumber').length,snapshot:window.gcFreezeAnswers()})") { result,error in
+            if let object = result as? [String:Any], (object["count"] as? Int) == 3, (object["nav"] as? Int) == 3,
                let snapshot = object["snapshot"] as? [String:Any], let answers = snapshot["answers"] as? [String:Any],
                answers["text"] as? String == "Gesichert", answers["single"] as? String == "b" {
                 passed=true

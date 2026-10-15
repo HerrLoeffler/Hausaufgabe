@@ -5,7 +5,7 @@ let package = Package(
     platforms: [.macOS(.v13)],
     products: [],
     targets: [
-        .target(name: "AssessmentLabCore", path: "Sources", exclude: ["AssessmentLab.swift", "GradeCrewSecureApp.swift", "StagingWebView.swift", "StartView.swift", "SecureAttemptStore.swift", "SecureAssessmentSession.swift", "SecureExamCoordinator.swift", "SecureExamWebView.swift", "SecureStagingRootView.swift"], sources: ["AssessmentLabState.swift", "AssessmentLabTimer.swift", "SecureExamPolicy.swift", "SecureAssessmentAPI.swift"]),
+        .target(name: "AssessmentLabCore", path: "Sources", exclude: ["AssessmentLab.swift", "GradeCrewSecureApp.swift", "StagingWebView.swift", "StartView.swift", "SecureAttemptStore.swift", "SecureAssessmentSession.swift", "SecureExamCoordinator.swift", "SecureExamWebView.swift", "SecureStagingRootView.swift", "SecureTheme.swift", "SecureEntryView.swift", "SecureExamChrome.swift", "SecureStatusView.swift", "SecureTelemetry.swift"], sources: ["AssessmentLabState.swift", "AssessmentLabTimer.swift", "SecureExamPolicy.swift", "SecureAssessmentAPI.swift", "SecureSavedWork.swift", "SecureTelemetryPolicy.swift"]),
         .testTarget(name: "AssessmentLabCoreTests", dependencies: ["AssessmentLabCore"], path: "Tests")
     ]
 )

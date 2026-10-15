@@ -8,12 +8,13 @@ struct SecureAttemptIdentity: Codable {
     var token = UUID().uuidString.replacingOccurrences(of: "-", with: "") + UUID().uuidString.replacingOccurrences(of: "-", with: "")
     var attemptID: String?
 }
-struct SecureSavedWork: Codable {
-    var answers = SecureAnswerState()
-    var response: Data?
-    var autoSubmitted = false
+protocol SecureAttemptPersistence {
+    func identity() throws -> SecureAttemptIdentity?
+    func work() throws -> SecureSavedWork
+    func save(identity:SecureAttemptIdentity,work:SecureSavedWork) throws
+    func clear() throws
 }
-final class SecureAttemptStore {
+final class SecureAttemptStore:SecureAttemptPersistence {
     private let service = "de.gradecrew.secure.staging-attempt-v1"
     private var directory: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("SecureStaging", isDirectory: true)

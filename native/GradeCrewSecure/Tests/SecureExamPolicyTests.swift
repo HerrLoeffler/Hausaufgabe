@@ -53,4 +53,11 @@ final class SecureExamPolicyTests: XCTestCase {
         XCTAssertNil(SecureInputPolicy.code("abc"))
         XCTAssertNil(SecureInputPolicy.code(""))
     }
+    func testSubmissionSummaryIsOptionalAndNeverGradesAnswers() {
+        XCTAssertEqual(SecureSubmissionSummary.title(total:10,completed:7), "Noch 3 Aufgaben offen. Trotzdem abgeben?")
+        XCTAssertEqual(SecureSubmissionSummary.title(total:1,completed:0), "Noch 1 Aufgabe offen. Trotzdem abgeben?")
+        for count in [nil, -1, 11, 10] as [Int?] {
+            XCTAssertEqual(SecureSubmissionSummary.title(total:10,completed:count), "Antworten verbindlich abgeben?")
+        }
+    }
 }

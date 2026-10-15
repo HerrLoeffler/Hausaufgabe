@@ -2,7 +2,7 @@ name: GradeCrew Secure Staging → TestFlight
 on:
   workflow_dispatch:
   push:
-    branches: [feature/secure-aac-device-lab-20261015]
+    branches: [feature/secure-layout-telemetry-20261016]
     paths:
       - .github/workflows/gradecrew-secure-testflight.yml
       - native/GradeCrewSecure/**
@@ -12,7 +12,71 @@ concurrency:
   group: gradecrew-secure-aac-lab-testflight
   cancel-in-progress: false
 jobs:
+  layout-native:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - name: Prepare real Secure resources
+        run: swift native/GradeCrewSecure/prepare_assets.swift
+      - name: Full native layout matrix
+        run: |
+          python3 native/GradeCrewSecure/LayoutTests/run_layout_checks.py --output "$RUNNER_TEMP/secure-native" --suite full --layer native
+      - name: Preserve native layout reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: secure-native-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/secure-native/native/
+            ${{ runner.temp }}/secure-native/summary.json
+            ${{ runner.temp }}/secure-native/*-xcodebuild.log
+          if-no-files-found: error
+  layout-web:
+    runs-on: macos-26
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        device: [mini, large]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test renderer and telemetry contract
+        run: |
+          npm ci --prefix tools/ui
+          node --test native/GradeCrewSecure/ScriptTests/*.test.cjs native/GradeCrewSecure/TelemetryBackend/core.test.cjs
+      - name: Prepare resources and select actual iPad simulator
+        env:
+          DEVICE_CLASS: ${{ matrix.device }}
+        run: |
+          swift native/GradeCrewSecure/prepare_assets.swift
+          python3 - <<'PY_DEVICE'
+          import json, os, subprocess
+          inventory=json.loads(subprocess.check_output(['xcrun','simctl','list','devices','available','-j']))
+          needle='iPad mini' if os.environ['DEVICE_CLASS']=='mini' else 'iPad Pro 13'
+          devices=[d for ds in inventory['devices'].values() for d in ds if needle in d['name'] and d.get('isAvailable')]
+          if not devices: raise SystemExit('Required actual iPad simulator is unavailable: '+needle)
+          with open(os.environ['GITHUB_ENV'],'a') as f:f.write('SECURE_DEVICE='+devices[0]['udid']+'\n')
+          PY_DEVICE
+      - name: Full WebKit layout and actual navigation interactions
+        run: |
+          python3 native/GradeCrewSecure/LayoutTests/run_layout_checks.py --output "$RUNNER_TEMP/secure-web" --suite full --layer web --device-id "$SECURE_DEVICE"
+      - name: Preserve WebKit layout reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: secure-web-${{ matrix.device }}-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/secure-web/web/
+            ${{ runner.temp }}/secure-web/interactions/
+            ${{ runner.temp }}/secure-web/summary.json
+            ${{ runner.temp }}/secure-web/*-xcodebuild.log
+          if-no-files-found: error
   build-and-upload:
+    needs: [layout-native, layout-web]
     runs-on: macos-26
     timeout-minutes: 40
     env:
@@ -53,7 +117,7 @@ jobs:
             -scheme 'GradeCrew Secure Staging' -configuration SecureStaging \
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/GradeCrewSecureLab.xcarchive" \
-            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" MARKETING_VERSION=0.2.1 \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" MARKETING_VERSION=0.2.2 \
             CURRENT_PROJECT_VERSION="$LAB_BUILD" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY='' archive
       - name: Preserve AAC entitlement in unsigned archive before cloud export
@@ -105,7 +169,7 @@ jobs:
           IPA="$(find "$RUNNER_TEMP/SecureExport" -maxdepth 1 -name '*.ipa' -print -quit)"
           xcrun altool --upload-app --file "$IPA" --type ios \
             --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID"
-          echo "Uploaded GradeCrew Secure Staging 0.2.1 ($LAB_BUILD). Apple processing and physical iPad test remain separate."
+          echo "Uploaded GradeCrew Secure Staging 0.2.2 ($LAB_BUILD). Apple processing and physical iPad test remain separate."
       - name: Remove API key and decoded profile
         if: always()
         shell: bash

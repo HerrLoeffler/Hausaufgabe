@@ -4,6 +4,11 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src https: data:; media-src https: data:; connect-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'">
 <title>GradeCrew Secure · Prüfung</title><link rel="stylesheet" href="exam.css"></head>
 <body><main>
-<div class="progress" aria-live="polite"><strong id="secureProgressText"></strong><span id="secureOpenText"></span><span class="track"><span id="secureProgressFill"></span></span></div>
+<aside id="secureNavigation" class="secureNavigation" aria-label="Aufgabenführung">
+<div class="secureNavigationMain"><button id="securePrevious" type="button" aria-label="Vorherige Aufgabe">‹</button><strong id="secureCurrentQuestion"></strong><button id="secureNext" type="button" aria-label="Nächste Aufgabe">›</button><button id="secureOverviewToggle" type="button" aria-expanded="false" aria-controls="secureQuestionNumbers">Übersicht</button></div>
+<div class="progress"><strong id="secureProgressText"></strong><span id="secureOpenText"></span><span class="track"><span id="secureProgressFill"></span></span></div>
+<nav id="secureQuestionNumbers" class="secureQuestionNumbers" aria-label="Aufgabenübersicht"></nav>
+<p class="secureNavigationLegend">✓ bearbeitet · ohne Haken noch offen</p>
+</aside>
 <div id="secureQuestions"></div>
-</main><script src="question-renderer.js"></script><script src="native-exam.js"></script></body></html>
+</main><script src="question-progress.js"></script><script src="question-renderer.js"></script><script src="question-navigation.js"></script><script src="native-exam.js"></script></body></html>

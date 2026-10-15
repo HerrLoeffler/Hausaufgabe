@@ -47,7 +47,7 @@ for name in ['Debug','Release','AACLab','AACLabDistribution','SecureStaging']:
         settings['CURRENT_PROJECT_VERSION']='2'
         if name=='AACLabDistribution': settings['MARKETING_VERSION']='0.2.0'
         if name=='SecureStaging':
-            settings['MARKETING_VERSION']='0.2.1'
+            settings['MARKETING_VERSION']='0.2.2'
             settings['INFOPLIST_KEY_CFBundleDisplayName']='GradeCrew Secure'
             settings['INFOPLIST_FILE']='Config/StagingInfo.plist'
     target_configs.append(obj('target-'+name,isa='XCBuildConfiguration',name=name,buildSettings=settings))

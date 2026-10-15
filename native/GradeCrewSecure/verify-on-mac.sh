@@ -7,6 +7,7 @@ if ! command -v xcodebuild >/dev/null 2>&1; then
 fi
 xcodebuild -version
 swift prepare_assets.swift
+node --test ScriptTests/*.test.cjs TelemetryBackend/core.test.cjs
 swift test --package-path .
 swift ScriptTests/verify_renderer_webkit.swift "$PWD/Resources/Exam/index.html"
 PYTHONPYCACHEPREFIX="${TMPDIR:-/private/tmp}/gradecrew-aac-pycache" python3 -m unittest discover -s ScriptTests -v
@@ -24,4 +25,5 @@ assert info.get('CFBundleIdentifier') == 'de.gradecrew.secure'
 assert info.get('CFBundleDisplayName') == 'GradeCrew Secure'
 print('Built Staging configuration verified.')
 PY_CHECK
+python3 LayoutTests/run_layout_checks.py --output "${TMPDIR:-/private/tmp}/secure-layout-smoke-$(date +%s)" --suite smoke --layer all
 echo 'Alle drei Simulator-Builds erfolgreich. Der vollständige Staging-Prüfungsablauf muss separat auf dem iPad geprüft werden.'

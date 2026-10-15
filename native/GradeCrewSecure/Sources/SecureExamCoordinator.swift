@@ -4,7 +4,11 @@ import WebKit
 @MainActor
 final class SecureExamCoordinator: ObservableObject {
     enum Phase { case code, identity, starting, waiting, active, submitting, verifying, recovery, interrupted, completed }
-    @Published private(set) var phase: Phase = .code
+    @Published private(set) var phase: Phase = .code {
+        didSet { if phase != .active { cancelSubmitConfirmation() } }
+    }
+    @Published private(set) var showingSubmitConfirmation=false
+    private var confirmationAttemptID:String?
     @Published var code = ""
     @Published var name = ""
     @Published private(set) var title = ""
@@ -15,10 +19,11 @@ final class SecureExamCoordinator: ObservableObject {
     @Published private(set) var paper: [String: Any]?
     @Published private(set) var busy = false
     @Published private(set) var storageFailed = false
+    @Published private(set) var answeredCount:Int?
     let assessment = SecureAssessmentSession()
     weak var webView: WKWebView?
-    private let api = SecureAssessmentAPI()
-    private let store = SecureAttemptStore()
+    private let api:SecureAssessmentAPI
+    private let store:any SecureAttemptPersistence
     private var identity: SecureAttemptIdentity?
     private var work = SecureSavedWork()
     private var clock: SecureExamClock?
@@ -27,15 +32,19 @@ final class SecureExamCoordinator: ObservableObject {
     private var polling = false
     private var submitting = false
     private var ticks = 0
+    private var lastMetricAt:TimeInterval = -30
+    private var latestCompletedIDs:[String]=[]
     private var operations = SecureOperationGate()
     private struct StaleOperation: Error {}
     private func ensureCurrent(_ generation: UUID, completing: Bool = false) throws {
         guard operations.isCurrent(generation), completing || !operations.completionClaimed else { throw StaleOperation() }
     }
 
-    init() {
+    init(api:SecureAssessmentAPI = SecureAssessmentAPI(),store:any SecureAttemptPersistence = SecureAttemptStore()) {
+        self.api=api;self.store=store
         assessment.interrupted = { [weak self] in
             guard let self else { return }
+            self.metric("interrupted")
             self.operations.invalidate()
             self.polling = false
             self.submitting = false
@@ -55,6 +64,7 @@ final class SecureExamCoordinator: ObservableObject {
             }
         } catch { phase = .recovery; message = error.localizedDescription }
     }
+    var restoredPresentation:SecureExamPresentation? { work.presentation }
     var savedRevision: Int { work.answers.revision }
     var attemptID: String { identity?.attemptID ?? "pending" }
     var canSubmit: Bool { phase == .active && !busy && !submitting && !storageFailed }
@@ -62,6 +72,27 @@ final class SecureExamCoordinator: ObservableObject {
         guard let remaining else { return "Ohne Zeitlimit" }
         return String(format: "%02d:%02d", remaining / 60, remaining % 60)
     }
+    func requestSubmitConfirmation() {
+        guard canSubmit else { return }
+        confirmationAttemptID=attemptID;showingSubmitConfirmation=true
+    }
+    func cancelSubmitConfirmation() { showingSubmitConfirmation=false;confirmationAttemptID=nil }
+    func submitConfirmed() async {
+        guard showingSubmitConfirmation,confirmationAttemptID == attemptID,canSubmit else { return }
+        cancelSubmitConfirmation();await submit(auto:false)
+    }
+#if SECURE_LAYOUT_TESTS
+    // Test-host-only fixture. No AAC active flag or shipping assessment bypass exists.
+    func installLifecycleFixture(expired:Bool) {
+        operations.invalidate();work=SecureSavedWork()
+        identity=SecureAttemptIdentity(code:"AB12CD",name:"Synthetic lifecycle")
+        identity?.attemptID="a_"+String(repeating:"1",count:28)
+        paper=["paper":(0..<30).map{["id":"q\($0)","type":"text","text":"Aufgabe \($0+1)","points":1] as [String:Any]},"quiz":["contentLocale":"de-DE"]]
+        clock=SecureExamClock(serverNowMillis:1000,deadlineMillis:expired ? 1000 : 999999,receivedUptime:SecureMonotonic.now)
+        remaining=clock?.remaining(at:SecureMonotonic.now);phase = .active
+    }
+    func runLifecycleTick() async { await tick() }
+#endif
     func preflight() async {
         guard !busy, let normalized = SecureInputPolicy.code(code) else { message = "Bitte einen gültigen Testcode eingeben."; return }
         let generation = operations.generation
@@ -155,29 +186,38 @@ final class SecureExamCoordinator: ObservableObject {
         remaining = clock?.remaining(at: SecureMonotonic.now)
         paper = result
         phase = .active
+        metric("started")
         message = ""
         storageStatus = "Antworten werden auf diesem iPad gesichert."
         if remaining == 0 { await submit(auto: true) }
     }
     @discardableResult
-    func snapshot(revision: Int, answers: [String: Any]) -> Bool {
+    func snapshot(revision: Int, answers: [String: Any], presentation:SecureExamPresentation? = nil, completedQuestionIDs:[String]? = nil) -> Bool {
         guard phase == .active || phase == .submitting else { return false }
         do {
             let bytes = try JSONSerialization.data(withJSONObject: answers)
             guard bytes.count <= 850_000 else { throw invalidResponse() }
             if work.answers.accept(revision: revision, answers: bytes) {
+                let ids=Set(((paper?["paper"] as? [[String:Any]]) ?? []).compactMap{$0["id"] as? String})
+                work.updatePresentation(presentation,allowedIDs:ids)
+                if let completedQuestionIDs, Set(completedQuestionIDs).count==completedQuestionIDs.count, Set(completedQuestionIDs).isSubset(of:ids) {
+                    answeredCount=completedQuestionIDs.count
+                    latestCompletedIDs=completedQuestionIDs
+                }
                 try persist()
                 storageFailed = false
                 storageStatus = "Auf diesem iPad gesichert"
+                if SecureMonotonic.now-lastMetricAt>=30 { lastMetricAt=SecureMonotonic.now;metric("progress") }
             }
             return !storageFailed
-        } catch { storageFailed = true; storageStatus = "Nicht gesichert · " + error.localizedDescription; return false }
+        } catch { if !storageFailed { metric("storage_error") };storageFailed = true; storageStatus = "Nicht gesichert · " + error.localizedDescription; return false }
     }
     var restoredAnswers: [String: Any] { (try? JSONSerialization.jsonObject(with: work.answers.answers)) as? [String: Any] ?? [:] }
     func submit(auto: Bool) async {
         guard !submitting, phase == .active else { return }
         let generation = operations.generation
         submitting = true
+        metric("submit_requested",auto:auto)
         phase = .submitting
         message = auto ? "Zeit abgelaufen. Deine Antworten werden abgegeben …" : "Deine Antworten werden abgegeben …"
         defer { if operations.isCurrent(generation) { submitting = false } }
@@ -186,7 +226,7 @@ final class SecureExamCoordinator: ObservableObject {
                 let value = try await webView.evaluateJavaScript("window.gcFreezeAnswers()")
                 try ensureCurrent(generation)
                 guard let snapshot = value as? [String: Any], let answers = snapshot["answers"] as? [String: Any], let revision = snapshot["revision"] as? Int else { throw invalidResponse() }
-                guard self.snapshot(revision: revision, answers: answers) else { throw invalidResponse() }
+                guard self.snapshot(revision: revision, answers: answers, presentation:(snapshot["touchedQuestionIDs"] as? [String]).map{SecureExamPresentation(touchedQuestionIDs:$0)}, completedQuestionIDs:snapshot["completedQuestionIDs"] as? [String]) else { throw invalidResponse() }
             }
             _ = work.answers.freeze()
             work.autoSubmitted = auto
@@ -233,6 +273,7 @@ final class SecureExamCoordinator: ObservableObject {
         guard let receipt = result["receipt"] as? [String: Any], SecureReceiptPolicy.accepts(receipt, attemptID: id) else { throw invalidResponse() }
         guard operations.claimCompletion(generation) else { throw StaleOperation() }
         phase = .verifying
+        metric("receipt_confirmed")
         paper = nil
         message = "Abgabe bestätigt. Apple gibt das iPad frei …"
         timer?.invalidate(); timer = nil
@@ -246,10 +287,12 @@ final class SecureExamCoordinator: ObservableObject {
             phase = .recovery
             throw error
         }
+        metric("released")
         operations.invalidate()
         busy = false; submitting = false; polling = false
         identity = nil
         work = SecureSavedWork()
+        answeredCount=nil
         phase = .completed
         message = "Deine Abgabe ist gespeichert. Das iPad ist wieder freigegeben."
         return true
@@ -302,12 +345,18 @@ final class SecureExamCoordinator: ObservableObject {
             }
         } catch let error as SecureAssessmentAPI.Failure {
             guard operations.isCurrent(generation), !operations.completionClaimed else { return }
-            if error.retryable { message = "Verbindung unterbrochen · Antworten bleiben auf diesem iPad." }
+            if error.retryable { message = "Verbindung unterbrochen · Antworten bleiben auf diesem iPad."; if ticks % 120 == 0 { metric("connection_error") } }
             else { await submit(auto: true) }
         } catch {
             guard !(error is StaleOperation), operations.isCurrent(generation), !operations.completionClaimed else { return }
             message = error.localizedDescription
         }
+    }
+    func rendererRestarted() { metric("recovered") }
+    private func metric(_ kind:String,auto:Bool?=nil) {
+#if !SECURE_LAYOUT_TESTS
+        SecureTelemetry.shared.record(identity:identity,kind:kind,completed:latestCompletedIDs,touched:work.presentation?.touchedQuestionIDs,auto:auto,revision:work.answers.revision)
+#endif
     }
     private func persist() throws {
         guard let identity else { throw invalidResponse() }
@@ -316,6 +365,7 @@ final class SecureExamCoordinator: ObservableObject {
     func restart() {
         guard phase == .completed else { return }
         operations.invalidate()
+        latestCompletedIDs=[];lastMetricAt = -30
         phase = .code; code = ""; name = ""; title = ""; message = ""; remaining = nil
     }
     func backToCode() { if phase == .identity { phase = .code; message = "" } }

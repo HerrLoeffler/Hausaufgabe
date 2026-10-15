@@ -79,6 +79,15 @@ function formatMathText(value) {
   return html + escapeMathText(text.slice(cursor));
 }
 
+function wireMediaFeedback(media, container, kind) {
+  const status=document.createElement('span');
+  status.className='secureMediaStatus';status.hidden=true;status.setAttribute('role','alert');
+  media.addEventListener('error',()=> { status.hidden=false;status.textContent=kind==='image'?'Das Bild konnte nicht geladen werden. Bitte die Lehrkraft informieren.':'Audio konnte nicht geladen werden. Bitte die Lehrkraft informieren.'; });
+  media.addEventListener(kind==='image'?'load':'loadedmetadata',()=> {status.hidden=true;status.textContent='';});
+  if(kind==='image') { media.loading='lazy';media.decoding='async'; }
+  container.appendChild(status);
+}
+
 function questionShell(question, index) {
   const section = document.createElement("section");
   section.className = "secureQuestion";
@@ -109,6 +118,7 @@ function questionShell(question, index) {
     image.src = question.image.src;
     image.alt = question.image.alt || assessmentContentLabels(currentQuiz?.contentLocale).questionImage;
     figure.appendChild(image);
+    wireMediaFeedback(image,figure,"image");
     section.appendChild(figure);
   }
   if (question.audio?.src) {
@@ -123,6 +133,7 @@ function questionShell(question, index) {
     audio.src = question.audio.src;
     audio.setAttribute("aria-label", `Audio zu Aufgabe ${index + 1} anhören`);
     audioBox.append(label, audio);
+    wireMediaFeedback(audio,audioBox,"audio");
     section.appendChild(audioBox);
   }
   return section;
@@ -156,6 +167,7 @@ function renderOptions(section, question, multiple = false) {
       player.setAttribute("aria-label", `${contentLabels.answer} ${shownIndex + 1}`);
       player.addEventListener("click", event => event.stopPropagation());
       body.appendChild(player);
+    wireMediaFeedback(player,body,"audio");
     }
     if (option.image?.src) {
       const image = document.createElement("img");
@@ -163,6 +175,7 @@ function renderOptions(section, question, multiple = false) {
       image.src = option.image.src;
       image.alt = option.image.alt || (imageOnly ? "" : contentLabels.answerImage);
       body.appendChild(image);
+      wireMediaFeedback(image,body,"image");
     }
     label.append(input, body);
     section.appendChild(label);
@@ -188,6 +201,7 @@ function memoContent(item, index) {
     player.src = item.audio.src;
     player.setAttribute("aria-label", memoLabel(index));
     body.appendChild(player);
+    wireMediaFeedback(player,body,"audio");
   }
   return body;
 }
@@ -274,6 +288,7 @@ function renderMatching(section, question) {
 }
 
 function moveOrderItem(button, direction) {
+  markQuestionTouched(button.closest(".secureQuestion").dataset.qid);
   const item = button.closest(".secureOrderItem");
   const list = item?.parentElement;
   if (!item || !list) return;
@@ -306,6 +321,10 @@ function renderOrdering(section, question) {
     list.appendChild(row);
   });
   section.appendChild(list);
+  const confirm = document.createElement('button');
+  confirm.type = 'button'; confirm.textContent = 'Reihenfolge bestätigen';
+  confirm.addEventListener('click', () => { markQuestionTouched(question.id); onAnswerChanged(); });
+  section.appendChild(confirm);
 }
 
 function renderGrouping(section, question) {
@@ -384,6 +403,7 @@ function renderMarkwords(section, question) {
         button.setAttribute("aria-label", button.textContent);
       } else button.classList.toggle("selected");
       button.setAttribute("aria-pressed", button.classList.contains("selected") ? "true" : "false");
+      markQuestionTouched(question.id);
       onAnswerChanged();
     });
     wrap.appendChild(button);
@@ -393,30 +413,33 @@ function renderMarkwords(section, question) {
 
 function renderQuestion(question, index) {
   const section = questionShell(question, index);
-  if (question.type === "single") renderOptions(section, question, false);
-  else if (question.type === "multi") renderOptions(section, question, true);
-  else if (question.type === "dropdown") renderDropdown(section, question);
+  const answers = document.createElement('div');answers.className='secureAnswers';
+  answers.setAttribute('role','group');answers.setAttribute('aria-label',`Antwort zu Aufgabe ${index+1}`);
+  if (question.type === "single") renderOptions(answers, question, false);
+  else if (question.type === "multi") renderOptions(answers, question, true);
+  else if (question.type === "dropdown") renderDropdown(answers, question);
   else if (question.type === "truefalse") {
     const contentLabels = assessmentContentLabels(currentQuiz?.contentLocale);
-    renderOptions(section, { ...question, options: [{ id: "true", text: contentLabels.trueLabel }, { id: "false", text: contentLabels.falseLabel }] }, false);
+    renderOptions(answers, { ...question, options: [{ id: "true", text: contentLabels.trueLabel }, { id: "false", text: contentLabels.falseLabel }] }, false);
   } else if (question.type === "text") {
     const input = document.createElement("textarea");
     input.name = `q_${question.id}`;
     input.rows = 4;
     input.placeholder = "Antwort eingeben";
-    section.appendChild(input);
+    answers.appendChild(input);
   } else if (question.type === "number") {
     const input = document.createElement("input");
     input.type = "text";
     input.inputMode = "decimal";
     input.name = `q_${question.id}`;
     input.placeholder = question.unit ? `Ergebnis in ${question.unit}` : "Ergebnis";
-    section.appendChild(input);
-  } else if (question.type === "gapfill") renderGapfill(section, question);
-  else if (question.type === "matching") renderMatching(section, question);
-  else if (question.type === "ordering") renderOrdering(section, question);
-  else if (question.type === "grouping") renderGrouping(section, question);
-  else if (question.type === "markwords") renderMarkwords(section, question);
+    answers.appendChild(input);
+  } else if (question.type === "gapfill") renderGapfill(answers, question);
+  else if (question.type === "matching") renderMatching(answers, question);
+  else if (question.type === "ordering") renderOrdering(answers, question);
+  else if (question.type === "grouping") renderGrouping(answers, question);
+  else if (question.type === "markwords") renderMarkwords(answers, question);
+  section.appendChild(answers);
   return section;
 }
 
@@ -444,19 +467,11 @@ function collectAnswers() {
 }
 
 function answerIsComplete(question, value) {
-  if (question.type === "ordering") return Array.isArray(value) && value.length === (question.items || []).length;
-  if (question.type === "markwords" && (question.markGroups || []).length) return Boolean(value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length);
-  if (["multi", "markwords"].includes(question.type)) return Array.isArray(value) && value.length > 0;
-  if (question.type === "gapfill") return Array.isArray(value) && value.length > 0 && value.every(item => String(item || "").trim());
-  if (["matching", "grouping"].includes(question.type)) {
-    const values = value && typeof value === "object" ? Object.values(value) : [];
-    const expected = question.type === "matching" ? (question.leftItems || []).length : (question.items || []).length;
-    return values.length === expected && values.every(Boolean);
-  }
-  return String(value ?? "").trim().length > 0;
+  return questionCompletion(question, value, touchedQuestionIds) === 'complete';
 }
 
 function refreshProgress() {
+  document.querySelectorAll('.secureChoice').forEach(label=>label.classList.toggle('selected',Boolean(label.querySelector('input')?.checked)));
   const answers = collectAnswers();
   const done = currentPaper.filter(question => answerIsComplete(question, answers[question.id])).length;
   const total = currentPaper.length;
@@ -465,7 +480,9 @@ function refreshProgress() {
   $("secureProgressFill").style.width = `${total ? Math.round(done / total * 100) : 0}%`;
 }
 
-function onAnswerChanged() {
+function onAnswerChanged(event) {
+  const section = event?.target?.closest?.(".secureQuestion");
+  if (section) markQuestionTouched(section.dataset.qid);
   refreshProgress();
   saveDraft();
 }

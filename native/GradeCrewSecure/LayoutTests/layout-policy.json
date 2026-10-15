@@ -1,0 +1,105 @@
+{
+  "viewports": [
+    {
+      "name": "mini-portrait",
+      "width": 744,
+      "height": 1133
+    },
+    {
+      "name": "ipad-portrait",
+      "width": 834,
+      "height": 1194
+    },
+    {
+      "name": "large-portrait",
+      "width": 1024,
+      "height": 1366
+    },
+    {
+      "name": "mini-landscape",
+      "width": 1133,
+      "height": 744
+    },
+    {
+      "name": "ipad-landscape",
+      "width": 1194,
+      "height": 834
+    },
+    {
+      "name": "large-landscape",
+      "width": 1366,
+      "height": 1024
+    },
+    {
+      "name": "narrow-window",
+      "width": 507,
+      "height": 1024
+    },
+    {
+      "name": "compact",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "very-narrow",
+      "width": 320,
+      "height": 1024
+    },
+    {
+      "name": "keyboard-height",
+      "width": 834,
+      "height": 380
+    }
+  ],
+  "nativeScenarios": [
+    "entry-empty",
+    "entry-ready",
+    "code-error",
+    "preflight",
+    "starting",
+    "waiting",
+    "active",
+    "active-long",
+    "network",
+    "storage-error",
+    "submitting",
+    "verifying",
+    "recovery",
+    "interrupted",
+    "completed"
+  ],
+  "webScenarios": [
+    "all-types",
+    "thirty",
+    "hundred",
+    "long",
+    "media",
+    "recovery"
+  ],
+  "appearances": [
+    "light",
+    "dark"
+  ],
+  "textSizes": [
+    "large",
+    "xxxLarge",
+    "accessibility3"
+  ],
+  "minimumTarget": 44,
+  "maximumOverflow": 1,
+  "centerTolerance": 1.5,
+  "interactions": [
+    "direct",
+    "previous-next",
+    "bounds",
+    "clear",
+    "ordering",
+    "keyboard-height",
+    "image-resize",
+    "audio-pause",
+    "reduced-motion",
+    "freeze",
+    "reload",
+    "manual-scroll"
+  ]
+}

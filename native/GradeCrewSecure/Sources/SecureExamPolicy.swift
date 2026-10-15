@@ -66,3 +66,11 @@ struct SecureOperationGate {
     }
     mutating func invalidate() { generation = UUID(); completionClaimed = false }
 }
+
+enum SecureSubmissionSummary {
+    static func title(total:Int,completed:Int?) -> String {
+        guard total>0, let completed, (0..<total).contains(completed) else { return "Antworten verbindlich abgeben?" }
+        let open=total-completed
+        return "Noch \(open) \(open == 1 ? "Aufgabe" : "Aufgaben") offen. Trotzdem abgeben?"
+    }
+}

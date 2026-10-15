@@ -15,7 +15,7 @@ struct GradeCrewSecureApp: App {
     var body: some Scene {
         WindowGroup {
             #if SECURE_STAGING
-            SecureStagingRootView()
+            SecureStagingRootView().preferredColorScheme(.light)
             #elseif AAC_LAB
             AssessmentLabView()
             #else

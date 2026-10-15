@@ -25,7 +25,7 @@ This pilot is **not a full offline examination mode**. It cannot start offline. 
 - Signed iPad Simulator launch visually checked; no questions are exposed without actual AAC. Unsigned Simulator builds cannot access Keychain; they are compilation checks only.
 - Independent code review: stale completion P1 fixed and re-reviewed; no remaining blocker reported.
 
-GitHub CI, distribution entitlement check, upload and Apple processing are recorded separately after execution. A valid published Staging code has been requested for live testing. No positive live submission, real five-minute device test or offline recovery is claimed yet.
+GitHub CI, distribution entitlement check, upload and Apple processing are recorded separately after execution. A valid published Staging code has been requested for live testing. At upload time no positive live submission, real five-minute device test or offline recovery had yet been claimed; the later user-reported device result is recorded below.
 
 ## iPad pilot checklist
 
@@ -47,5 +47,13 @@ Use only fictitious participant names and Staging test data. This remains a cont
 - Signed app and distribution profile both contain AAC; strict signature/profile/mode checks passed before upload.
 - Upload succeeded without errors at **2026-10-15T14:21:43Z (16:21Berlin)**. Delivery UUID `cc416c60-e9cf-4b26-b171-ba3775763f55`.
 - Earlier run38749369918 was stopped before upload because Xcode omitted the generated custom mode key. Explicit StagingInfo.plist and a real built-file check fixed the root cause; the upload gate was preserved.
-- Apple processing, tester visibility, positive published-code submission, five-minute physical-device behavior and outage recovery remain unverified. The previous physical lock/release report applies to AAC Lab1031, not automatically to this complete exam flow.
+- At upload time Apple processing, tester visibility, positive published-code submission, five-minute physical-device behavior and outage recovery remained unverified. The previous physical lock/release report applies to AAC Lab1031, not automatically to this complete exam flow.
 - No Production, backend, rules or Hosting deployment; no teacher app changes.
+
+## Later user-reported physical test
+
+The user subsequently reports that a real test worked both when ended early and when allowed to expire: the iPad was locked during both runs and unlocked afterwards. This is positive user-reported evidence for the integrated exam flow after its TestFlight delivery, in addition to the earlier standalone AAC Lab report.
+
+The installed build number, exact iPad model/iPadOS version, timed measurement and independent server-answer/duplicate-submission inspection were not supplied in that report. Do not turn this report into a separately observed server audit or a long-offline recovery pass. The user's wording “vorzeitig abgebrochen” records an early end; it does not request a new unrestricted AAC abort control.
+
+Remaining work requested by the user is now layout clarity and the missing website-style numbered question navigation with green completion indicators. Detailed design and implementation plan are saved under docs/superpowers; no new runtime build is implied by those planning files.

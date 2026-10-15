@@ -1,0 +1,16 @@
+{
+  "functions": [
+    {
+      "source": "TelemetryBackend",
+      "codebase": "secure-telemetry",
+      "runtime": "nodejs22",
+      "ignore": [
+        "node_modules",
+        "*.test.cjs",
+        "firebase-debug.log",
+        ".git",
+        "verify_live.cjs"
+      ]
+    }
+  ]
+}

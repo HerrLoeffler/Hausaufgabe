@@ -1,29 +1,5 @@
-const test = require('node:test');
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
-const {JSDOM} = require('../../../tools/ui/node_modules/jsdom');
-const root = path.join(__dirname,'../Resources/Exam');
-const fixtures = [
-  {id:'s',type:'single',options:[{id:'a',text:'A'},{id:'b',text:'B'}]},
-  {id:'m',type:'multi',options:[{id:'a',text:'A'},{id:'b',text:'B'}]},
-  {id:'d',type:'dropdown',options:[{id:'a',text:'A'}]},
-  {id:'tf',type:'truefalse'}, {id:'t',type:'text'}, {id:'n',type:'number'},
-  {id:'g',type:'gapfill',segments:[{type:'text',text:'Das ist '},{type:'gap',id:'g1'}]},
-  {id:'match',type:'matching',leftItems:[{id:'l',text:'Links'}],rightItems:[{id:'r',text:'Rechts'}]},
-  {id:'order',type:'ordering',items:[{id:'x',text:'Eins'},{id:'y',text:'Zwei'}]},
-  {id:'group',type:'grouping',items:[{id:'x',text:'Wort'}],groups:[{id:'gg',name:'Gruppe'}]},
-  {id:'mark',type:'markwords',passage:'Ein kurzer Satz.'}
-].map(q=>({...q,text:'Aufgabe '+q.id,points:1}));
-function setup(answers={}, paper=fixtures) {
-  const dom = new JSDOM(fs.readFileSync(path.join(root,'index.html'),'utf8'),{runScripts:'outside-only',url:'https://local.invalid/'});
-  const w = dom.window, messages=[];
-  w.CSS = {escape:s=>String(s)};
-  w.__GC_EXAM__={paper,quiz:{contentLocale:'de-DE'},answers,revision:4};
-  w.webkit={messageHandlers:{gradecrewSecure:{postMessage:m=>messages.push(m)}}};
-  w.eval(fs.readFileSync(path.join(root,'question-renderer.js'),'utf8')+'\n'+fs.readFileSync(path.join(root,'native-exam.js'),'utf8'));
-  return {dom,w,messages};
-}
+const test=require('node:test'),assert=require('node:assert/strict');
+const {setup,fixtures,root}=require('./renderer-fixture.cjs');
 test('all eleven types render and restore their answer shapes',()=>{
   const answers={s:'b',m:['a','b'],d:'a',tf:'false',t:'Antwort',n:'12.5',g:['Wort'],match:{l:'r'},order:['y','x'],group:{x:'gg'},mark:['1']};
   const {dom,w,messages}=setup(answers);
@@ -40,7 +16,7 @@ test('input is sent to native storage without a website or callable request',()=
   input.dispatchEvent(new w.Event('input',{bubbles:true}));
   assert.equal(messages.at(-1).type,'snapshot');
   assert.equal(messages.at(-1).answers.t,'Meine Antwort');
-  assert.equal(messages.at(-1).revision,5);
+  assert.equal(messages.at(-1).revision,6);
   dom.window.close();
 });
 test('retry keeps the first final snapshot even if DOM changes later',()=>{
@@ -59,4 +35,38 @@ test('teacher text is displayed as text and cannot inject script markup',()=>{
   assert.equal(w.document.querySelectorAll('iframe,object,embed').length,0);
   assert.equal(w.document.querySelector('a[href]'),null);
   dom.window.close();
+});
+test('ordering confirmation updates progress without changing answer order',()=>{
+  const {dom,w,messages}=setup();
+  const before=w.gcExamSummary().completed;
+  const section=w.document.querySelector('.secureQuestion[data-qid="order"]');
+  const confirm=[...section.querySelectorAll('button')].find(b=>b.textContent==='Reihenfolge bestätigen');
+  confirm.click();
+  assert.equal(w.gcExamSummary().completed,before+1);
+  assert.deepEqual(JSON.parse(JSON.stringify(messages.at(-1).answers.order)),['x','y']);
+  assert.ok(messages.at(-1).touchedQuestionIDs.includes('order'));
+  dom.window.close();
+});
+test('selected answer row is distinct and media failure never changes answers',()=>{
+ const paper=[{id:'media',type:'single',text:'Welche Farbe?',image:{src:'https://example.invalid/image.png',alt:'Notwendiges Aufgabenbild'},options:[{id:'a',text:'Blau'},{id:'b',text:'Grün'}]}];
+ const {dom,w}=setup({},paper);
+ const section=w.document.querySelector('.secureQuestion');
+ const input=section.querySelector('input');input.click();
+ assert.ok(input.closest('label').classList.contains('selected'));
+ section.querySelector('img').dispatchEvent(new w.Event('error'));
+ const error=section.querySelector('[role=alert]');assert.ok(error);assert.match(error.textContent,/Bild.*nicht.*geladen/i);
+ assert.equal(w.gcFreezeAnswers().answers.media,'a');
+ dom.window.close();
+});
+test('listening-only instructions never expose hidden teacher question text',()=>{
+ const {dom,w}=setup({},[{id:'audio',type:'single',text:'GEHEIMER FRAGETEXT',audioPresentation:'listening-only',audioInstruction:'Höre genau zu.',audio:{src:'https://example.invalid/audio.wav'},options:[{id:'a',text:'Erste Antwort'}]}]);
+ assert.equal(w.document.querySelector('h2').textContent,'Höre genau zu.');
+ assert.equal(w.document.body.textContent.includes('GEHEIMER FRAGETEXT'),false);
+ dom.window.close();
+});
+test('marking then clearing words retains touched metadata without a completion mark',()=>{
+ const {dom,w,messages}=setup();const word=w.document.querySelector('.secureWord');word.click();word.click();
+ assert.ok(messages.at(-1).touchedQuestionIDs.includes('mark'));
+ assert.equal(messages.at(-1).completedQuestionIDs.includes('mark'),false);
+ dom.window.close();
 });

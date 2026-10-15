@@ -7,3 +7,9 @@ xcuserdata/
 .swiftpm/
 __pycache__/
 Resources/Assets.xcassets/
+
+GradeCrewSecureLayoutChecks.xcodeproj/
+LayoutTests/Fixtures/run.json
+LayoutTests/Fixtures/layout-policy.json
+TelemetryBackend/node_modules/
+firebase-debug.log
