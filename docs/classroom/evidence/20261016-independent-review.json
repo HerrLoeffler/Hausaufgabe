@@ -1,0 +1,52 @@
+{
+  "source": "0d99b33c7752563d7aa5e72768893c55ad4a464f",
+  "tree": "83973cd8ce9842217c7640eeaf4e81980d43c700",
+  "checks": [
+    {
+      "case": "identical",
+      "passed": true,
+      "counts": {
+        "created": 0,
+        "unchanged": 1,
+        "moved": 0,
+        "conflicts": 0
+      }
+    },
+    {
+      "case": "teacher",
+      "passed": true,
+      "counts": {
+        "created": 0,
+        "unchanged": 0,
+        "moved": 0,
+        "conflicts": 1
+      }
+    },
+    {
+      "case": "class",
+      "passed": true,
+      "counts": {
+        "created": 0,
+        "unchanged": 0,
+        "moved": 0,
+        "conflicts": 1
+      }
+    },
+    {
+      "case": "subject",
+      "passed": true,
+      "counts": {
+        "created": 0,
+        "unchanged": 0,
+        "moved": 0,
+        "conflicts": 1
+      }
+    }
+  ],
+  "unitRegression": "44/44 passed; existing jsdom teardown warning retained",
+  "uiDelta": "statically checked: conflict count, row label, explicit explanation, disabled confirmation",
+  "previousBrowserEvidence": {
+    "source": "36597662113374b75259d74b9b72ec187ece83d3",
+    "cases": 9
+  }
+}

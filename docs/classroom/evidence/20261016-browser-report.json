@@ -14,6 +14,7 @@
     "completed state and removed membership loses list and restart",
     "actual file picker pipe headerless first row, idempotence, partial no departures and full missing review",
     "teacher and teaching import, pending login remains separate",
+    "changed teaching assignment is visibly conflicted and import apply disabled",
     "native modal keyboard containment and Escape cleanup",
     "teacher transfer only selected grant, no private draft transfer",
     "school-scoped rollover and stable identity",

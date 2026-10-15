@@ -177,3 +177,10 @@ Authorbrowser,unabhängigerReview,menschlicherNutzertestundphysischerGerätetest
 ## Planprüfung
 
 Alle14Root-Schritt e sindobenTaskszugeordnet;EmulatoristbewusstoffeneFolgephase. GemeinsameSchnittstellen: App-PortliefertQuizID→AssignmentSnapshotreferenziertID→SchülerlisteprüftSnapshot+Membership; CSVliefertnormalisierteTextzeilen→Repositoryimportvergleichtschool/source/rawId→RollOverbehältIdentity. KeineNamezuIDFallbacks,keineProduktkeys,keineautorisierendenUIClaims. KleineImplementierungsdetailsentscheidetalleinigerWriter mitbegründetemEintraginderbestehendenÜbergabe.
+
+
+## Ausführungsabschluss des ersten Lieferblocks
+
+Am16.10.2026 wurde der lokale Lieferblock aus den Schritten1–11 und14 umgesetzt und geprüft; die ausdrücklich getrennte Backendfolgephase in Schritt12 bleibt offen. Der finale Produktkandidat ist0d99b33c7752563d7aa5e72768893c55ad4a464f. Die vorhandene App lädt tatsächlich ihre ursprünglichen Startup-, Editor-, Design- und Crew-Quellen. Der neue manuelle Testablauf erzeugt eine neue ID, die nach Speichern und ausdrücklicher Zuweisung unverändert in der persönlichen Testliste steht. Der Parser übernimmt ausschließlich lokal ausgewählte synthetische Dateien. Ein geänderter Unterrichtsbezug mit derselben Quellkennung ist ein sichtbarer, blockierender Konflikt.
+
+Autorbelege:18Browserfälle,44gezielteRegressionsprüfungen,329Root-Prüfungen und erfolgreicher Build mit171Dateien. Unabhängiger Endreview PASS am Produktkandidaten, einschließlich44eigenenTests und vier gezielten Importfällen. Das sind Nachweise für diesen lokalen Lieferblock. Echte Authentifizierung, Serverrechte, reale ASV-Stabilität, schulischer Schlüsselbetrieb, physische Geräte, Deployment und Production wurden damit nicht bestätigt. Die vollständigen Belege, zeitliche Bindung und Grenzen stehen in der bestehenden Workstream-Übergabe und in evidence/20261016-browser-report.json sowie evidence/20261016-independent-review.json.
