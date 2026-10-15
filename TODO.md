@@ -439,3 +439,8 @@ GC-FINANCE-BAYSTARTUP-20261008 · V9 Coco-Videokandidat liegt lokal, Abnahme off
 - [ ] Martin prüft den 20-s-Film und entscheidet, ob die 2.5D-Fuß-/Kopf-/Telefonbewegung als Coco-Kandidat weiterverwendet werden kann.
 - Kandidat: `outputs/gradecrew-investment-20261019/animation-v9-coco-video/Coco_V9_Auftritt_Telefon_und_Stimme.mp4`, 1280×720, 30 fps, H.264/AAC, SHA-256 `f5c7c286cb84f0da409b2b8a5af189ed056900a3b3f9eff0ee26b5150d38aec9`; 12 dekodierte Frames stichprobengeprüft. 2.5D-Puppet, keine 3D-/Physikgarantie; Mund ist Audioenergie-Näherung, kein Phonem-Sync. Nutzerabnahme und vollständiger Echtzeitdurchlauf noch offen.
 - Vorhandene normalisierte Coco-Zeile unverändert; keine neue Stimme, kein Paid-Video, keine PPT-/Produkt-/Main-/STATE-/Deployänderung. V6 abgelehnt, V7-Mund freigegeben, Körpergang bisher nicht freigegeben.
+
+
+GC-FINANCE-BAYSTARTUP-20261008 · V9 Encoder-/Audio-Prüfung ergänzt, 15.10.2026
+
+Finalmanifest `animation-v9-coco-video/Coco_V9_manifest.json` SHA-256 `786227e019dabbc65139f69133b87d326b6119f595c3c688ee148c00684f9db4`; 600 eindeutige Quellbilder/600 kodierte Samples, 20 s H.264/AAC. AAC alignment delta 0 Samples, Korrelation 0.9993866, RMS-Verhältnis 0.9983283; Byteidentität gilt nur für Quell-PCM im gepolsterten WAV. Root prüfte 12 dekodierte Bilder, kein vollständiger Durchlauf; Nutzerabnahme offen. Versuchshistorie präzisiert: zwei Sandbox-Encodefehler (-11834), zwei erfolgreiche lokale Exporte, Vor-Peek-Export erhalten.
