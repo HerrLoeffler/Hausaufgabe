@@ -67,7 +67,8 @@ let adminAuditCursor = null;
 let adminFeedbackCursor = null;
 let adminFeedbackHasMore = false;
 const firebaseConfig = firebaseModule.firebaseConfig;
-const appEnvironment = firebaseModule.appEnvironment || "production";
+const classroomPreview = window.__GRADECREW_CLASSROOM_PREVIEW__ === true && location.hostname === "127.0.0.1";
+const appEnvironment = classroomPreview ? "local-classroom" : firebaseModule.appEnvironment || "production";
 // Staging rules verified to deny authored/private reads and forged writes on 2026-10-09.
 const SECURE_AUDIO_PUBLICATION_ENABLED = firebaseConfig.projectId === "hausaufgabe-staging";
 const secureAudioPublicationBlocked = (quiz, questions = []) =>
@@ -582,6 +583,7 @@ async function finishTeacherTour() {
 }
 
 function showView(id) {
+  if (classroomPreview) document.dispatchEvent(new CustomEvent("gradecrew:classroom-view", {detail:{id}}));
   diagnostics.record("view", { view: id });
   if (id === "authView") document.dispatchEvent(new Event("gradecrew:signed-out"));
   if (id !== "publishView") clearPublishSubscriptions();
@@ -1517,6 +1519,7 @@ function openTemplateFromInput(value) {
 }
 
 async function loadDashboard() {
+  if (classroomPreview && window.GradeCrewClassroomApp) { window.GradeCrewClassroomApp.showDashboard(); return; }
   if (!state.user) return;
   const dashboardUid = state.user.uid;
   clearPublishSubscriptions();
@@ -1981,6 +1984,7 @@ async function createQuizDocument(base = {}) {
 }
 
 async function createQuiz() {
+  if (classroomPreview) { document.dispatchEvent(new Event("gradecrew:classroom-create")); return; }
   if (!state.user) {
     toast("Bitte zuerst anmelden.", "error");
     return;
@@ -6149,6 +6153,7 @@ async function saveCurrentQuiz(showMessage = true) {
       audioReady: true, solutionAudioReady: true
     };
     guestTourRepo.save(code, patch, state.questions);
+    if (classroomPreview) document.dispatchEvent(new CustomEvent("gradecrew:classroom-quiz-saved",{detail:{quiz:guestTourRepo.getQuiz(code)}}));
     state.currentQuiz = guestTourRepo.getQuiz(code);
     state.loadedQuestionIds = new Set(state.questions.map(q => q.id));
     $("editorHeading").textContent = patch.title;
@@ -6261,6 +6266,7 @@ async function saveCurrentQuiz(showMessage = true) {
 }
 
 async function publishCurrentQuiz() {
+  if (classroomPreview) { if(await saveCurrentQuiz(false)) document.dispatchEvent(new CustomEvent("gradecrew:classroom-assign",{detail:{quizId:state.currentQuiz.id}})); return; }
   if (state.currentQuiz?.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   if (!(await saveCurrentQuiz(false))) return;
   if (guestTourRepo) {
@@ -9318,3 +9324,25 @@ if (["staging", "local-review"].includes(appEnvironment)) {
 }
 
 window.addEventListener("gradecrew:visual-note-saved",()=>toast("Screenshot-Hinweis in Feedback gespeichert."));
+
+// Local classroom integration keeps the real editor and all normal runtime paths.
+// The explicit loopback server installs the blocked SDK before this module loads.
+if (classroomPreview) {
+  const { createClassroomAppRepository } = await import('./classroom/app-repository.mjs');
+  guestTourRepo = createClassroomAppRepository();
+  state.guestTourUid = 'local-tour';
+  let visibleQuizIds = [];
+  const refresh = () => { state.quizzes = guestTourRepo.list().filter(q => visibleQuizIds.includes(q.id)); renderQuizList(); };
+  window.GradeCrewClassroomApp = Object.freeze({
+    seed(quizzes) { for (const quiz of quizzes) if (!guestTourRepo.getQuiz(quiz.id)) guestTourRepo.create({...quizDefaults(), ...quiz, questions:deepClone(REVIEW_DEMO_TEST.questions).slice(0,2)}); },
+    listQuizzes: () => guestTourRepo.list(),
+    getQuiz: id => guestTourRepo.getQuiz(id),
+    openQuiz: id => openEditor(id),
+    async createQuiz(payload) { const id=guestTourRepo.create({...quizDefaults(), ...payload, questions:deepClone(REVIEW_DEMO_TEST.questions).slice(0,2)}); visibleQuizIds.push(id); await openEditor(id); return id; },
+    publishQuiz(id) { guestTourRepo.publish(id); refresh(); },
+    showDashboard() { refresh(); showView('dashboardView'); },
+    showView(id) { if(!views.includes(id))views.push(id); showView(id); },
+    setVisibleQuizzes(ids) { visibleQuizIds=[...ids]; refresh(); },
+    reset() { guestTourRepo.clear(); state.isDirty=false; state.currentQuiz=null;state.questions=[];visibleQuizIds=[];refresh(); },
+  });
+}

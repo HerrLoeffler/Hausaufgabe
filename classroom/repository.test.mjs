@@ -37,3 +37,14 @@ test('teacher transfer takes effect per grant and preserves other courses and au
 test('stale import preview is refused and reset removes all imported identities',()=>{
  const r=createClassroomRepository(); const p=r.previewImport({kind:'pupils',records:[{sourceId:'0001',className:'5a'}]}); r.addDemoMember('class-9b'); assert.throws(()=>r.applyImport('school-admin',p),/Vorschau/); r.reset(); assert.equal(r.getState().students.length,4);
 });
+test('North rollover never changes South and new-year reimport creates a new membership for the same identity',()=>{
+ const r=createClassroomRepository();r.applyImport('school-admin',r.previewImport({kind:'pupils',records:[{sourceId:'001',className:'9b'}],year:'2026/27'}));
+ const before=r.getState(),sid=before.students.at(-1).id,south=before.classes.find(c=>c.id==='class-south');
+ const p=r.previewImport({kind:'pupils',records:[{sourceId:'001',className:'9b'}],year:'2027/28'});r.applyImport('school-admin',p);
+ assert.ok(r.getState().memberships.some(m=>m.studentId===sid&&m.year==='2027/28'));assert.equal(r.getState().students.length,before.students.length);
+ const rr=createClassroomRepository();rr.rollover('school-admin','2027/28');assert.deepEqual(rr.getState().classes.find(c=>c.id==='class-south'),south);assert.equal(rr.getState().memberships.filter(m=>m.studentId==='pupil-south').length,1);
+});
+test('student projection contains neither other recipients nor private quiz metadata',()=>{
+ const r=createClassroomRepository();const other=r.addDemoMember('class-9b');const a=r.assign('teacher-tech',{quizId:'QTECH',courseId:'course-tech',startsAt:0,endsAt:9999999999999});
+ const list=r.listStudentTests('pupil-9b');assert.equal(JSON.stringify(list).includes(other.id),false);assert.equal('recipients' in list[0],false);assert.equal('ownerId' in list[0].quiz,false);assert.equal('createdBy' in list[0],false);assert.equal(list[0].id,a.id);
+});
