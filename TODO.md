@@ -444,3 +444,11 @@ GC-FINANCE-BAYSTARTUP-20261008 · V9 Coco-Videokandidat liegt lokal, Abnahme off
 GC-FINANCE-BAYSTARTUP-20261008 · V9 Encoder-/Audio-Prüfung ergänzt, 15.10.2026
 
 Finalmanifest `animation-v9-coco-video/Coco_V9_manifest.json` SHA-256 `786227e019dabbc65139f69133b87d326b6119f595c3c688ee148c00684f9db4`; 600 eindeutige Quellbilder/600 kodierte Samples, 20 s H.264/AAC. AAC alignment delta 0 Samples, Korrelation 0.9993866, RMS-Verhältnis 0.9983283; Byteidentität gilt nur für Quell-PCM im gepolsterten WAV. Root prüfte 12 dekodierte Bilder, kein vollständiger Durchlauf; Nutzerabnahme offen. Versuchshistorie präzisiert: zwei Sandbox-Encodefehler (-11834), zwei erfolgreiche lokale Exporte, Vor-Peek-Export erhalten.
+
+
+GC-FINANCE-BAYSTARTUP-20261008 · V9 visuell abgelehnt; V10 Bild-Gate offen (15.10.2026)
+
+- V9 MP4 bleibt als technisch geprüfter, aber vom Nutzer visuell abgelehnter Versuch erhalten; Root-Ursache: Stilabweichung zum V8-Konzept durch ältere V7-Referenz/2.5D-Torso und falsche Rüsselrichtung.
+- [ ] Zuerst zwölf Szenen-/Einzelbilder im verbindlichen V8-Referenzstil erstellen und Root-Bildprüfung abwarten.
+- [ ] Nur bei bestandenem Bild-Gate kurze Bildbewegungsprobe. Kein Vollclip davor.
+- Rüssel muss von links nach rechts das Telefon schieben und nach links zurück. Keine neue Stimme, kein Paid-Video, Kauf/Upgrade, PPTX/Produkt/Main/STATE/Deploy.
