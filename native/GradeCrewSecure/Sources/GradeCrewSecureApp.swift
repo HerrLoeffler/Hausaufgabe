@@ -14,7 +14,9 @@ struct GradeCrewSecureApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     var body: some Scene {
         WindowGroup {
-            #if AAC_LAB
+            #if SECURE_STAGING
+            SecureStagingRootView()
+            #elseif AAC_LAB
             AssessmentLabView()
             #else
             StartView()
