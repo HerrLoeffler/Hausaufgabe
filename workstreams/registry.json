@@ -636,6 +636,15 @@
       "integrationTarget": "lab/games-structure",
       "state": "integration_ready",
       "handoff": "workstreams/fastquiz-binomial-20261012.md"
+    },
+    {
+      "id": "games-learning-ux-20261015",
+      "title": "GC-GAMES-LEARNING-UX-01: gemeinsames Lernspiele-Planbuch",
+      "primaryBranch": "docs/games-learning-ux-20261015",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/games-learning-ux-20261015.md",
+      "relatedBranches": []
     }
   ]
 }

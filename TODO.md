@@ -551,3 +551,10 @@ Durable local evidence: analysis/GC-WEB-REPAIR-20261007-ADMIN/feedback-followup-
 ### GC-PLUGINS-01 — Godot-Lernbasis (14.10.2026)
 - [x] Verlinktes18:14-Video technisch vollständig dekodiert (32814Frames),154Zeit-/Szenenbilder auf13Kontaktbögen visuell gesichtet; keinTranskript wegenUntertitel429. OffizielleGrundlagen und passendeGitHubquellen analysiert, Lernroute/GradeCrew-Ableitungen/Versionsfallen dokumentiert; zwei getrennteDokumentationsreviews PASS. [Lernbasis und Beleggrenzen](workstreams/plugins-godot-learning-20261014.md). BestehenderGodot4.7.2 bestätigt, keinezweiteInstallation/MCP-Verbindung/Spielmigration.
 - [ ] OptionalerPraxisfolgepunkt imnächstenkonkretenAuftrag: vorhandenenKochspielstand prüfen, Button→Signal→Portionswert alskleineLernkontrolle, anschließend abgestimmtenZutatenabschnitt mitbestehenderWeblösung vergleichen. KeineEngine-/Geräte-/Lernendenabnahme ausRecherche ableiten; keinDeploy.
+
+
+## 15.10.2026 — GC-GAMES-LEARNING-UX-01
+
+| ID | Aufgabe | Stand | Nächster Schritt |
+|---|---|---|---|
+| GC-GAMES-LEARNING-UX-01 | Ausführliches gemeinsames Produkt-/UX-/Didaktik-Planbuch für Vocab Rush, Fast Quiz, Fehlerjagd Deutsch und Wissensreise; Lehrplan als erweiterte Option, Remy-Test und fünfminütiges Üben, feinere Schwierigkeit | **Dokumentationsentwurf branch_only; keine Runtimeänderung.** Eigener Branch docs/games-learning-ux-20261015. [Übergabe](workstreams/games-learning-ux-20261015.md). | Vollständiges Planbuch mit nachvollziehbarer Bestandsanalyse, Beispielen, Layouts und Abnahmeplan ausarbeiten und unabhängig prüfen. Keine Implementierung/Providerstarts/Builds/Deploys freigegeben. |
