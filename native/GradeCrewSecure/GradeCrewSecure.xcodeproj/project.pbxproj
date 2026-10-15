@@ -15,6 +15,26 @@
 "isa" = "PBXBuildFile";
 "fileRef" = "E96B28C52F63C87B484E7D4C";
 };
+"AA368B1F346AE4F63D5C8B73" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "Sources/AssessmentLabState.swift";
+"sourceTree" = "<group>";
+};
+"1D185DB877150AD0375B3DED" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "AA368B1F346AE4F63D5C8B73";
+};
+"325354CF7DA05504A8BD17AD" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "Sources/AssessmentLabTimer.swift";
+"sourceTree" = "<group>";
+};
+"0461F9E11F46DF618CD57E22" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "325354CF7DA05504A8BD17AD";
+};
 "1F432FA37FA32768681E7B0D" = {
 "isa" = "PBXFileReference";
 "lastKnownFileType" = "sourcecode.swift";
@@ -59,13 +79,26 @@
 "name" = "Products";
 "sourceTree" = "<group>";
 };
+"8BF729FFE074CAEE622C0292" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "folder.assetcatalog";
+"path" = "Resources/Assets.xcassets";
+"sourceTree" = "<group>";
+};
+"3158BC8E12D8909B7B6B3AFC" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "8BF729FFE074CAEE622C0292";
+};
 "0D6E4079E36703EBD37C0072" = {
 "isa" = "PBXGroup";
 "children" = (
 "E96B28C52F63C87B484E7D4C",
+"AA368B1F346AE4F63D5C8B73",
+"325354CF7DA05504A8BD17AD",
 "1F432FA37FA32768681E7B0D",
 "779BA0C3D5373C2B26A693E9",
 "75E0E873A9B684847A55F7A5",
+"8BF729FFE074CAEE622C0292",
 "0A3E27B8CA818264D75C8D81",
 );
 "sourceTree" = "<group>";
@@ -75,6 +108,8 @@
 "buildActionMask" = "2147483647";
 "files" = (
 "165EB1C2B45E075A59466D5F",
+"1D185DB877150AD0375B3DED",
+"0461F9E11F46DF618CD57E22",
 "3A961E28FE35AA72325C35F0",
 "9D2E9EAF8B55AF8A28115442",
 "9CB8E1FFC555DE6FC385E89F",
@@ -92,6 +127,7 @@
 "isa" = "PBXResourcesBuildPhase";
 "buildActionMask" = "2147483647";
 "files" = (
+"3158BC8E12D8909B7B6B3AFC",
 );
 "runOnlyForDeploymentPostprocessing" = "0";
 };
@@ -100,7 +136,7 @@
 "name" = "Debug";
 "buildSettings" = {
 "SDKROOT" = "iphoneos";
-"IPHONEOS_DEPLOYMENT_TARGET" = "16.0";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
 "CLANG_ENABLE_MODULES" = "YES";
 "SWIFT_VERSION" = "5.0";
 "SWIFT_OPTIMIZATION_LEVEL" = "-Onone";
@@ -118,6 +154,8 @@
 "MARKETING_VERSION" = "0.1.0";
 "CURRENT_PROJECT_VERSION" = "1";
 "CODE_SIGN_STYLE" = "Automatic";
+"ASSETCATALOG_COMPILER_APPICON_NAME" = "AppIcon";
+"INFOPLIST_KEY_ITSAppUsesNonExemptEncryption" = "NO";
 "GENERATE_INFOPLIST_FILE" = "YES";
 "INFOPLIST_KEY_CFBundleDisplayName" = "GradeCrew Secure";
 "INFOPLIST_KEY_UILaunchScreen_Generation" = "YES";
@@ -136,7 +174,7 @@
 "name" = "Release";
 "buildSettings" = {
 "SDKROOT" = "iphoneos";
-"IPHONEOS_DEPLOYMENT_TARGET" = "16.0";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
 "CLANG_ENABLE_MODULES" = "YES";
 "SWIFT_VERSION" = "5.0";
 "SWIFT_OPTIMIZATION_LEVEL" = "-O";
@@ -154,6 +192,8 @@
 "MARKETING_VERSION" = "0.1.0";
 "CURRENT_PROJECT_VERSION" = "1";
 "CODE_SIGN_STYLE" = "Automatic";
+"ASSETCATALOG_COMPILER_APPICON_NAME" = "AppIcon";
+"INFOPLIST_KEY_ITSAppUsesNonExemptEncryption" = "NO";
 "GENERATE_INFOPLIST_FILE" = "YES";
 "INFOPLIST_KEY_CFBundleDisplayName" = "GradeCrew Secure";
 "INFOPLIST_KEY_UILaunchScreen_Generation" = "YES";
@@ -172,7 +212,7 @@
 "name" = "AACLab";
 "buildSettings" = {
 "SDKROOT" = "iphoneos";
-"IPHONEOS_DEPLOYMENT_TARGET" = "16.0";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
 "CLANG_ENABLE_MODULES" = "YES";
 "SWIFT_VERSION" = "5.0";
 "SWIFT_OPTIMIZATION_LEVEL" = "-Onone";
@@ -188,10 +228,51 @@
 "PRODUCT_BUNDLE_IDENTIFIER" = "de.gradecrew.secure";
 "PRODUCT_NAME" = "$(TARGET_NAME)";
 "MARKETING_VERSION" = "0.1.0";
-"CURRENT_PROJECT_VERSION" = "1";
+"CURRENT_PROJECT_VERSION" = "2";
 "CODE_SIGN_STYLE" = "Automatic";
+"ASSETCATALOG_COMPILER_APPICON_NAME" = "AppIcon";
+"INFOPLIST_KEY_ITSAppUsesNonExemptEncryption" = "NO";
 "GENERATE_INFOPLIST_FILE" = "YES";
-"INFOPLIST_KEY_CFBundleDisplayName" = "GradeCrew Secure";
+"INFOPLIST_KEY_CFBundleDisplayName" = "GradeCrew AAC Lab";
+"INFOPLIST_KEY_UILaunchScreen_Generation" = "YES";
+"INFOPLIST_KEY_UIApplicationSceneManifest_Generation" = "YES";
+"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents" = "YES";
+"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad" = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+"TARGETED_DEVICE_FAMILY" = "2";
+"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+"SUPPORTS_MACCATALYST" = "NO";
+"SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD" = "NO";
+"LD_RUNPATH_SEARCH_PATHS" = "$(inherited) @executable_path/Frameworks";
+"CODE_SIGN_ENTITLEMENTS" = "Config/AACLab.entitlements";
+};
+};
+"846F4B50CAF0E0CF51454D64" = {
+"isa" = "XCBuildConfiguration";
+"name" = "AACLabDistribution";
+"buildSettings" = {
+"SDKROOT" = "iphoneos";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
+"CLANG_ENABLE_MODULES" = "YES";
+"SWIFT_VERSION" = "5.0";
+"SWIFT_OPTIMIZATION_LEVEL" = "-O";
+"SWIFT_ACTIVE_COMPILATION_CONDITIONS" = "AAC_LAB";
+"DEBUG_INFORMATION_FORMAT" = "dwarf-with-dsym";
+"ENABLE_TESTABILITY" = "NO";
+};
+};
+"EFEE4AF60352038A8C12CE74" = {
+"isa" = "XCBuildConfiguration";
+"name" = "AACLabDistribution";
+"buildSettings" = {
+"PRODUCT_BUNDLE_IDENTIFIER" = "de.gradecrew.secure";
+"PRODUCT_NAME" = "$(TARGET_NAME)";
+"MARKETING_VERSION" = "0.2.0";
+"CURRENT_PROJECT_VERSION" = "2";
+"CODE_SIGN_STYLE" = "Automatic";
+"ASSETCATALOG_COMPILER_APPICON_NAME" = "AppIcon";
+"INFOPLIST_KEY_ITSAppUsesNonExemptEncryption" = "NO";
+"GENERATE_INFOPLIST_FILE" = "YES";
+"INFOPLIST_KEY_CFBundleDisplayName" = "GradeCrew AAC Lab";
 "INFOPLIST_KEY_UILaunchScreen_Generation" = "YES";
 "INFOPLIST_KEY_UIApplicationSceneManifest_Generation" = "YES";
 "INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents" = "YES";
@@ -210,6 +291,7 @@
 "488864B3D19480A82F7F1786",
 "35B1014F135DE9B45529B733",
 "C08FEC1A4FF9D7E1828DB3DD",
+"846F4B50CAF0E0CF51454D64",
 );
 "defaultConfigurationIsVisible" = "0";
 "defaultConfigurationName" = "Release";
@@ -220,6 +302,7 @@
 "952548237D7F645F11D1E7B6",
 "E2D3A31BEAA1368FC62DA77A",
 "3A09BA0407E835AD9CF0D63A",
+"EFEE4AF60352038A8C12CE74",
 );
 "defaultConfigurationIsVisible" = "0";
 "defaultConfigurationName" = "Release";

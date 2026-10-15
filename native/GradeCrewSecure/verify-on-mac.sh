@@ -6,6 +6,9 @@ if ! command -v xcodebuild >/dev/null 2>&1; then
   exit 1
 fi
 xcodebuild -version
+swift prepare_assets.swift
+swift test --package-path .
+PYTHONPYCACHEPREFIX="${TMPDIR:-/private/tmp}/gradecrew-aac-pycache" python3 -m unittest discover -s ScriptTests -v
 for scheme in 'GradeCrew Secure' 'GradeCrew AAC Lab'; do
   xcodebuild -project GradeCrewSecure.xcodeproj -scheme "$scheme" \
     -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \

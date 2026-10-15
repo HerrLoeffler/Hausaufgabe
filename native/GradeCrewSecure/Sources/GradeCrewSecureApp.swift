@@ -13,6 +13,12 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
 struct GradeCrewSecureApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     var body: some Scene {
-        WindowGroup { StartView() }
+        WindowGroup {
+            #if AAC_LAB
+            AssessmentLabView()
+            #else
+            StartView()
+            #endif
+        }
     }
 }

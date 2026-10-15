@@ -1,0 +1,102 @@
+name: GradeCrew Secure AAC Lab → TestFlight
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/secure-aac-device-lab-20261015]
+    paths:
+      - .github/workflows/gradecrew-secure-testflight.yml
+      - native/GradeCrewSecure/**
+permissions:
+  contents: read
+concurrency:
+  group: gradecrew-secure-aac-lab-testflight
+  cancel-in-progress: false
+jobs:
+  build-and-upload:
+    runs-on: macos-26
+    timeout-minutes: 40
+    env:
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Verify Apple credentials are configured
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in APP_STORE_CONNECT_ISSUER_ID APP_STORE_CONNECT_KEY_ID APP_STORE_CONNECT_PRIVATE_KEY APPLE_TEAM_ID; do
+            test -n "${!name:-}" || { echo "::error::$name is missing"; exit 1; }
+          done
+          echo "LAB_BUILD=$((1000 + GITHUB_RUN_NUMBER * 10 + GITHUB_RUN_ATTEMPT))" >> "$GITHUB_ENV"
+      - name: Test the lab and build both simulator schemes
+        run: bash native/GradeCrewSecure/verify-on-mac.sh
+      - name: Generate Xcode project
+        run: python3 native/GradeCrewSecure/generate_project.py
+      - name: Prepare API signing key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$APP_STORE_CONNECT_PRIVATE_KEY" > "$HOME/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+          chmod 600 "$HOME/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+      - name: Archive only the isolated AAC lab
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -project native/GradeCrewSecure/GradeCrewSecure.xcodeproj \
+            -scheme 'GradeCrew AAC Lab' -configuration AACLabDistribution \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/GradeCrewSecureLab.xcarchive" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" MARKETING_VERSION=0.2.0 \
+            CURRENT_PROJECT_VERSION="$LAB_BUILD" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY='' archive
+      - name: Export with Apple distribution signing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, plistlib
+          from pathlib import Path
+          Path(os.environ['RUNNER_TEMP'], 'SecureExportOptions.plist').write_bytes(plistlib.dumps({
+              'method': 'app-store-connect', 'destination': 'export', 'signingStyle': 'automatic',
+              'teamID': os.environ['APPLE_TEAM_ID'], 'manageAppVersionAndBuildNumber': False,
+              'uploadSymbols': True
+          }))
+          PY
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/GradeCrewSecureLab.xcarchive" \
+            -exportPath "$RUNNER_TEMP/SecureExport" \
+            -exportOptionsPlist "$RUNNER_TEMP/SecureExportOptions.plist" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$HOME/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8" \
+            -authenticationKeyID "$APP_STORE_CONNECT_KEY_ID" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID"
+      - name: Verify AAC in signed app and distribution profile before upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          IPA="$(find "$RUNNER_TEMP/SecureExport" -maxdepth 1 -name '*.ipa' -print -quit)"
+          test -n "$IPA"
+          mkdir -p "$RUNNER_TEMP/SecureVerify"
+          unzip -q "$IPA" -d "$RUNNER_TEMP/SecureVerify"
+          APP="$RUNNER_TEMP/SecureVerify/Payload/GradeCrewSecure.app"
+          codesign --verify --strict "$APP"
+          codesign -d --entitlements :- "$APP" > "$RUNNER_TEMP/SecureAppEntitlements.plist"
+          security cms -D -i "$APP/embedded.mobileprovision" > "$RUNNER_TEMP/SecureProfile.plist"
+          python3 native/GradeCrewSecure/verify_distribution.py \
+            "$RUNNER_TEMP/SecureAppEntitlements.plist" "$RUNNER_TEMP/SecureProfile.plist" "$APP/Info.plist" "$APPLE_TEAM_ID"
+      - name: Upload validated Secure lab to TestFlight
+        shell: bash
+        run: |
+          set -euo pipefail
+          IPA="$(find "$RUNNER_TEMP/SecureExport" -maxdepth 1 -name '*.ipa' -print -quit)"
+          xcrun altool --upload-app --file "$IPA" --type ios \
+            --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID"
+          echo "Uploaded GradeCrew Secure AAC Lab 0.2.0 ($LAB_BUILD). Apple processing and physical iPad test remain separate."
+      - name: Remove API key and decoded profile
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$HOME/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
+          rm -f "$RUNNER_TEMP/SecureProfile.plist" "$RUNNER_TEMP/SecureAppEntitlements.plist"

@@ -1,3 +1,5 @@
+> **Aktualisierung 15.10.2026:** AAC-Freigabe vom Nutzer gemeldet. Der lokale Gerätetest wurde überarbeitet und startet im Schema **GradeCrew AAC Lab** direkt mit Dummy-Inhalt. Anleitung: [AAC_DEVICE_TEST.md](AAC_DEVICE_TEST.md). Die echte Sperre auf Martins iPad ist noch nicht nachgewiesen. Die folgenden September-Angaben beschreiben den ursprünglichen Projektstand; aktuelle Build-/Testbelege stehen unter `docs/secure/evidence/aac-lab-2026-10-15/` im Repository. Production unverändert.
+
 # GradeCrew Secure · Schritt 1
 
 Stand: 29.09.2026. Native SwiftUI-App für iPadOS 16+. **Entwicklungsprototyp, keine freigegebene Prüfungs-App.** Bestehendes Hosting/Backend wird nicht geändert. Keine Fremdbibliotheken oder zusätzlichen kostenpflichtigen Entwicklungswerkzeuge.

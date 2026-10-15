@@ -13,21 +13,25 @@ for path in sorted((ROOT/'Sources').glob('*.swift')):
     files.append(ref);builds.append(obj('build-'+path.name, isa='PBXBuildFile', fileRef=ref))
 product=obj('product', isa='PBXFileReference', explicitFileType='wrapper.application', path='GradeCrewSecure.app', sourceTree='BUILT_PRODUCTS_DIR')
 products=obj('products', isa='PBXGroup', children=[product], name='Products', sourceTree='<group>')
-main=obj('main', isa='PBXGroup', children=files+[products], sourceTree='<group>')
+asset=obj('assets', isa='PBXFileReference', lastKnownFileType='folder.assetcatalog', path='Resources/Assets.xcassets', sourceTree='<group>')
+asset_build=obj('build-assets', isa='PBXBuildFile', fileRef=asset)
+main=obj('main', isa='PBXGroup', children=files+[asset,products], sourceTree='<group>')
 sources=obj('sources', isa='PBXSourcesBuildPhase', buildActionMask='2147483647', files=builds, runOnlyForDeploymentPostprocessing='0')
 frameworks=obj('frameworks', isa='PBXFrameworksBuildPhase', buildActionMask='2147483647', files=[], runOnlyForDeploymentPostprocessing='0')
-resources=obj('resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647', files=[], runOnlyForDeploymentPostprocessing='0')
+resources=obj('resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647', files=[asset_build], runOnlyForDeploymentPostprocessing='0')
 project_configs=[]; target_configs=[]
-for name in ['Debug','Release','AACLab']:
-    debug=name!='Release'
+for name in ['Debug','Release','AACLab','AACLabDistribution']:
+    debug=name in ('Debug','AACLab')
     project_configs.append(obj('project-'+name, isa='XCBuildConfiguration', name=name, buildSettings={
-        'SDKROOT':'iphoneos','IPHONEOS_DEPLOYMENT_TARGET':'16.0','CLANG_ENABLE_MODULES':'YES',
+        'SDKROOT':'iphoneos','IPHONEOS_DEPLOYMENT_TARGET':'17.0','CLANG_ENABLE_MODULES':'YES',
         'SWIFT_VERSION':'5.0','SWIFT_OPTIMIZATION_LEVEL':'-Onone' if debug else '-O',
-        'SWIFT_ACTIVE_COMPILATION_CONDITIONS': 'DEBUG AAC_LAB' if name=='AACLab' else ('DEBUG' if debug else ''),
+        'SWIFT_ACTIVE_COMPILATION_CONDITIONS': 'DEBUG AAC_LAB' if name=='AACLab' else ('AAC_LAB' if name=='AACLabDistribution' else ('DEBUG' if debug else '')),
         'DEBUG_INFORMATION_FORMAT':'dwarf' if debug else 'dwarf-with-dsym',
         'ENABLE_TESTABILITY':'YES' if debug else 'NO'}))
     settings={'PRODUCT_BUNDLE_IDENTIFIER':'de.gradecrew.secure','PRODUCT_NAME':'$(TARGET_NAME)',
         'MARKETING_VERSION':'0.1.0','CURRENT_PROJECT_VERSION':'1','CODE_SIGN_STYLE':'Automatic',
+        'ASSETCATALOG_COMPILER_APPICON_NAME':'AppIcon',
+        'INFOPLIST_KEY_ITSAppUsesNonExemptEncryption':'NO',
         'GENERATE_INFOPLIST_FILE':'YES','INFOPLIST_KEY_CFBundleDisplayName':'GradeCrew Secure',
         'INFOPLIST_KEY_UILaunchScreen_Generation':'YES','INFOPLIST_KEY_UIApplicationSceneManifest_Generation':'YES',
         'INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents':'YES',
@@ -35,7 +39,11 @@ for name in ['Debug','Release','AACLab']:
         'TARGETED_DEVICE_FAMILY':'2','SUPPORTED_PLATFORMS':'iphoneos iphonesimulator',
         'SUPPORTS_MACCATALYST':'NO','SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD':'NO',
         'LD_RUNPATH_SEARCH_PATHS':'$(inherited) @executable_path/Frameworks'}
-    if name=='AACLab': settings['CODE_SIGN_ENTITLEMENTS']='Config/AACLab.entitlements'
+    if name in ('AACLab','AACLabDistribution'):
+        settings['CODE_SIGN_ENTITLEMENTS']='Config/AACLab.entitlements'
+        settings['INFOPLIST_KEY_CFBundleDisplayName']='GradeCrew AAC Lab'
+        settings['CURRENT_PROJECT_VERSION']='2'
+        if name=='AACLabDistribution': settings['MARKETING_VERSION']='0.2.0'
     target_configs.append(obj('target-'+name,isa='XCBuildConfiguration',name=name,buildSettings=settings))
 pl=obj('project-configs',isa='XCConfigurationList',buildConfigurations=project_configs,defaultConfigurationIsVisible='0',defaultConfigurationName='Release')
 tl=obj('target-configs',isa='XCConfigurationList',buildConfigurations=target_configs,defaultConfigurationIsVisible='0',defaultConfigurationName='Release')
@@ -52,15 +60,15 @@ for name,config in [('GradeCrew Secure','Debug'),('GradeCrew AAC Lab','AACLab')]
     xml=f'''<?xml version="1.0" encoding="UTF-8"?>
 <Scheme LastUpgradeVersion="1600" version="1.3">
 <BuildAction parallelizeBuildables="YES" buildImplicitDependencies="YES"><BuildActionEntries><BuildActionEntry buildForTesting="YES" buildForRunning="YES" buildForProfiling="YES" buildForArchiving="YES" buildForAnalyzing="YES">{ref}</BuildActionEntry></BuildActionEntries></BuildAction>
-<LaunchAction buildConfiguration="{config}" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.IDEFoundation.Launcher.LLDB" launchStyle="0" useCustomWorkingDirectory="NO" ignoresPersistentStateOnLaunch="NO" debugDocumentVersioning="YES" allowLocationSimulation="YES"><BuildableProductRunnable runnableDebuggingMode="0">{ref}</BuildableProductRunnable></LaunchAction>
+<LaunchAction buildConfiguration="{config}" selectedDebuggerIdentifier="{'' if name=='GradeCrew AAC Lab' else 'Xcode.DebuggerFoundation.Debugger.LLDB'}" selectedLauncherIdentifier="{'Xcode.IDEFoundation.Launcher.PosixSpawn' if name=='GradeCrew AAC Lab' else 'Xcode.IDEFoundation.Launcher.LLDB'}" launchStyle="0" useCustomWorkingDirectory="NO" ignoresPersistentStateOnLaunch="NO" debugDocumentVersioning="YES" allowLocationSimulation="YES"><BuildableProductRunnable runnableDebuggingMode="0">{ref}</BuildableProductRunnable></LaunchAction>
 <ProfileAction buildConfiguration="Release" shouldUseLaunchSchemeArgsEnv="YES" savedToolIdentifier="" useCustomWorkingDirectory="NO" debugDocumentVersioning="YES"><BuildableProductRunnable runnableDebuggingMode="0">{ref}</BuildableProductRunnable></ProfileAction>
 <AnalyzeAction buildConfiguration="Debug"/>
-<ArchiveAction buildConfiguration="Release" revealArchiveInOrganizer="YES"/>
+<ArchiveAction buildConfiguration="{'AACLabDistribution' if name=='GradeCrew AAC Lab' else 'Release'}" revealArchiveInOrganizer="YES"/>
 </Scheme>'''
     folder=p/'xcshareddata/xcschemes';folder.mkdir(parents=True,exist_ok=True)
     (folder/f'{name}.xcscheme').write_text(xml)
 # Structural checks: all IDs resolve and every source is represented once.
-assert len(files)==4
+assert len(files)==len(list((ROOT/'Sources').glob('*.swift')))
 assert all((ROOT/objects[ref]['path']).is_file() for ref in files)
 assert all(objects[c]['buildSettings'].get('CODE_SIGN_ENTITLEMENTS') is None for c in target_configs[:2])
-print('Xcode project generated: 4 sources, 3 configurations, 2 shared schemes.')
+print(f'Xcode project generated: {len(files)} sources, 4 configurations, 2 shared schemes.')
