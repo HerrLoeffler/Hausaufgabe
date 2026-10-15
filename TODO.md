@@ -432,3 +432,10 @@ GC-FINANCE-BAYSTARTUP-20261008 · V9 aktive Coco-Timeline aktualisiert, 15.10.20
 - [ ] Root prüft Kontakt-Proof, bevor vollständiger Coco-Render beginnt.
 - V9 aktive 20 s: 0–1 Coco späht; 1–3 Remys Rüssel schiebt Telefon von rechts ins Bild; 3–3,6 Rückzug/Blickfolge; 3,6–7,6 ca. acht alternierende Schritte; 7,6–8,6 Welle; 8,6–9,6 setzen; 9,6–10,6 greifen; 10,6–11,6 zuhören; 11,6–12,6 zurücklegen; 12,6–16,805714 vorhandene Coco-Zeile; 17–18 Blick nach rechts; bis 20 halten/blinzeln.
 - Artikulierter 2.5D-Ansatz mit getrennt steuerbaren Füßen, keine Behauptung eines fertigen 3D-Rigs. V7-Unterkiefer ist freigegeben und bleibt erhalten. V8-15-s-Plan ist nur Referenz und bleibt unverändert.
+
+
+GC-FINANCE-BAYSTARTUP-20261008 · V9 Coco-Videokandidat liegt lokal, Abnahme offen (15.10.2026)
+
+- [ ] Martin prüft den 20-s-Film und entscheidet, ob die 2.5D-Fuß-/Kopf-/Telefonbewegung als Coco-Kandidat weiterverwendet werden kann.
+- Kandidat: `outputs/gradecrew-investment-20261019/animation-v9-coco-video/Coco_V9_Auftritt_Telefon_und_Stimme.mp4`, 1280×720, 30 fps, H.264/AAC, SHA-256 `f5c7c286cb84f0da409b2b8a5af189ed056900a3b3f9eff0ee26b5150d38aec9`; 12 dekodierte Frames stichprobengeprüft. 2.5D-Puppet, keine 3D-/Physikgarantie; Mund ist Audioenergie-Näherung, kein Phonem-Sync. Nutzerabnahme und vollständiger Echtzeitdurchlauf noch offen.
+- Vorhandene normalisierte Coco-Zeile unverändert; keine neue Stimme, kein Paid-Video, keine PPT-/Produkt-/Main-/STATE-/Deployänderung. V6 abgelehnt, V7-Mund freigegeben, Körpergang bisher nicht freigegeben.
