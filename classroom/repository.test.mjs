@@ -48,3 +48,9 @@ test('student projection contains neither other recipients nor private quiz meta
  const r=createClassroomRepository();const other=r.addDemoMember('class-9b');const a=r.assign('teacher-tech',{quizId:'QTECH',courseId:'course-tech',startsAt:0,endsAt:9999999999999});
  const list=r.listStudentTests('pupil-9b');assert.equal(JSON.stringify(list).includes(other.id),false);assert.equal('recipients' in list[0],false);assert.equal('ownerId' in list[0].quiz,false);assert.equal('createdBy' in list[0],false);assert.equal(list[0].id,a.id);
 });
+test('same teaching ID with changed staff class or subject is a visible blocked conflict',()=>{
+ const r=createClassroomRepository();r.applyImport('school-admin',r.previewImport({kind:'teachers',records:[{sourceId:'T1'},{sourceId:'T2'}]}));
+ const record={sourceId:'U1',teacherId:'T1',className:'9b',subject:'Technik'};r.applyImport('school-admin',r.previewImport({kind:'teaching',records:[record]}));
+ const same=r.previewImport({kind:'teaching',records:[record]});assert.equal(same.counts.unchanged,1);assert.equal(same.counts.conflicts,0);
+ const before=r.getState();for(const change of [{teacherId:'T2'},{className:'5a'},{subject:'Deutsch'}]){const p=r.previewImport({kind:'teaching',records:[{...record,...change}]});assert.equal(p.counts.unchanged,0);assert.equal(p.counts.conflicts,1);assert.equal(p.changes[0].action,'conflict');assert.throws(()=>r.applyImport('school-admin',p),/Konflikte/);assert.deepEqual(r.getState(),before);}
+});

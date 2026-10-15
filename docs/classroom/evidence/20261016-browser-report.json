@@ -1,0 +1,36 @@
+{
+  "stagingComparison": {
+    "url": "https://hausaufgabe-staging.web.app/",
+    "version": "2.3.1-gc39",
+    "imageCount": 16
+  },
+  "cases": [
+    "full original app startup",
+    "student empty, no draft",
+    "original create choice and manual editor, new ID preserved into upcoming student test",
+    "actual editor save same ID QTECH and snapshot assign",
+    "own class visible, other class and school denied",
+    "late join excluded until explicit grant",
+    "completed state and removed membership loses list and restart",
+    "actual file picker pipe headerless first row, idempotence, partial no departures and full missing review",
+    "teacher and teaching import, pending login remains separate",
+    "native modal keyboard containment and Escape cleanup",
+    "teacher transfer only selected grant, no private draft transfer",
+    "school-scoped rollover and stable identity",
+    "no external origin and no raw CSV in browser storage",
+    "reset, mobile width and keyboard focus",
+    "English core navigation smoke, authored data unchanged",
+    "original GradeCrew entry preserved",
+    "anonymous current staging screenshot compared with original local entry"
+  ],
+  "errors": [],
+  "external": [],
+  "notFound": [],
+  "storage": {
+    "local": {},
+    "session": {}
+  },
+  "authorBrowser": true,
+  "physicalDevice": false,
+  "backendEmulator": false
+}
