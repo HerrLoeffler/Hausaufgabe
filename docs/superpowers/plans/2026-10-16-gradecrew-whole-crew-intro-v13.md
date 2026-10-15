@@ -1,6 +1,6 @@
-# Plan de travail V13 : storyboard animé de GradeCrew
+# GradeCrew Ganze-Crew-Intro V13 - Produktionsplan
 
-> **Pour les agentes et agents exécutants :** Exécuter le plan étape par étape avec superpowers:subagent-driven-development ou superpowers:executing-plans. Chaque tâche doit se terminer par un résultat vérifiable.
+> **Für ausführende Fachagenten:** Diesen Plan mit superpowers:subagent-driven-development oder superpowers:executing-plans Schritt für Schritt abarbeiten. Jeder Abschnitt endet mit einem prüfbaren Ergebnis.
 
 # GradeCrew Ganze-Crew-Intro V13 - Produktionsplan
 
