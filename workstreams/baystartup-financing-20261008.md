@@ -277,3 +277,19 @@ Der einzelne kurze Bewegungs-/Flow-Test schlug optisch fehl („melty dial“/ve
 Nächster ausführbarer Schritt ist ein weiterer begrenzter Bewegungs-Proof mit unveränderter V8-Coco und sauberer Telefonform; erst bei sichtbarer Form- und Bewegungsqualität über einen Vollfilm entscheiden. Nutzerbewegungsabnahme bleibt offen. Drei eingebaute Imagegen-Aufrufe für die gezeigten Referenz-/Detailbilder; keine neue Stimme, Audio-/bezahlte Videogenerierung, PowerPoint- oder Produktänderung. V6 und V9 bleiben abgelehnte Versuche; alle bisherigen Dateien bleiben erhalten.
 
 Lageprüfung vor diesem Checkpoint: Repository `HerrLoeffler/Hausaufgabe` (der erste fehlerhafte Repository-Parameter lieferte 404; korrekter Aufruf danach erfolgreich). Branch `docs/baystartup-financing-20261008` HEAD `3663b8b34ccb350c5179a86c2c5dcda56a11db08`, 74 ahead/137 behind `main`, diverged; letzter erfolgreicher Development-Status-Lauf #38728178408 auf main `8560992c072779814017ebac6e86b65e938bc951`; kein branch-eigener offener PR. Compare zeigt nur die drei gepflegten Dokumente. Keine Integration.
+
+
+## V11 Remy-Rüssel: Originalreferenz stimmt, Bewegungsfreigabe offen (15.10.2026)
+
+Korrektur: V10-Coco/Bühne/Telefonkomposition passten zur V8-Konzeptbildsprache, Remys Rüssel jedoch nicht. Root zieht die frühere Gesamtbild-/Rüssel-Freigabe zurück. Ein früheres Briefing hatte fälschlich einen rosa Unterstreifen und eine helle blaue Rüsselfarbe erfunden; der Rüssel wurde vor diesem Fehler nicht mit Remys tatsächlichem Original verglichen.
+
+Dauerhafte Gate-Regel: jedes Crew-Anhängsel vor dem Briefing/der Generierung mit dem Original derselben Figur abgleichen; Farben nie aus anderen Figuren, deren Ohren oder ähnlichen Elementen ableiten. Remys echte Referenz: `outputs/gradecrew-investment-20261019/animation-v6/art/references/image3.png`, 1241×1267, SHA-256 `3af4ee9699c2e7c17408e51fdc9ef6b31a91c194ccbb98319a7d4ae5204c9777`. Rüssel: blass periwinkle, zulaufend/gerundet, mit Querfalten und rundem Nasenloch; kein Rosa (rosa ist nur im Ohrinneren).
+
+Root verglich die korrigierten V11-Bilder direkt mit dem Original und bestand deren Rüsselfarbe/-form:
+- `outputs/gradecrew-investment-20261019/animation-v11-remy-reference-fix/art/remy-trunk-4details-v1.png` — 1672×941, SHA-256 `6927754d436c06827a2297cdde455701e0f5a237e56acb51e6013b2d14ef1bc9`.
+- `outputs/gradecrew-investment-20261019/animation-v11-remy-reference-fix/art/remy-trunk-12frames-v1.png` — 1932×814, SHA-256 `6010570392536d7cff50091e09ed8578d3bdb77a2d92a85b85770fc53dada15a`.
+- Original-/Korrekturvergleich: `.../remy-trunk-comparison.png`, SHA-256 `27ac77bbce46d53ec9e587fe8668bd7dd733d7cd47eb39921cf189b6c7657845`.
+
+V11 behält die V8-Coco-/Telefonbildsprache und die korrekte Richtung links→rechts. Das Gate deckt nur Erscheinungsform auf Bildern ab, nicht zeitliche Kontinuität: in einer 12er-Framezelle ist das Telefon außerhalb der Szene und nur die Rüsselspitze sichtbar. Kein vollständiger Szenenpass, kein Flow-Pass, kein V11-Film. Zwei gezielte eingebaute Imagegen-Bearbeitungen; keine Audio-/Stimmenerzeugung, kein Paid-Video und keine PPTX-/Produkt-/Main-/STATE-/Deployänderung. V6/V9 bleiben abgelehnte Versuche; V10-Rüssel-Freigabe ist zurückgezogen.
+
+Nächster Schritt: nur die Telefon-/Rüsselkontinuität in einem einzelnen kurzen Flow-Proof prüfen. Keine Vollfilmfortsetzung vor eigenem Bild-/Bewegungspass und anschließender Nutzerabnahme.
