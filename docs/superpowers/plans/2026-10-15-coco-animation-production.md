@@ -95,7 +95,10 @@ Die 20 Stills ersetzen die frühere grobe Zehnerliste; die 10 werden **nicht zus
 | CONTACT-01–03 | 01 Rüsselspitze schiebt die Telefonseite; 02 linke Flosse umfasst den Hörer; 03 Hörer sitzt auf beiden Auflagen, Flosse hält noch | Drei sichtbare Kontaktmakros; kein geplanter Kontaktton. Kabel und Telefonbasis bleiben befestigt. |
 
 Die 20 Bilder werden aus einem gemeinsamen Modell/Rig gerendert. Die sechs VIEW-Stills sind im Gesamtbudget enthalten und keine weiteren Gate-Renders. Bei den drei Kontakt-Makros wird die Kamera für die Diagnoseansicht gedreht/enger gestellt; die Filmkamera bleibt anschließend fest. Ein Kontaktbogen ist eine Montage dieser Stills, keine zusätzliche Posequelle.
-Der Root prüft den nummerierten 20er-Kontaktbogen gegen Quellenbild und reale Einzelstills. Stilabweichung oder ein unglaubwürdiger Kontakt stoppt die Vollanimation.
+
+**Stil- und Ähnlichkeitsgate vor jeder Bewegungsprobe:** Root prüft alle 20 Einzelstills gegen den V8-Coco-Kanon und Remys Original und stellt Martin anschließend den nummerierten 20er-Kontaktbogen sowie drei gut lesbare Einzelansichten/Kontaktmakros vor. Martin entscheidet an diesem einen Meilenstein, ob Coco und Remys sichtbarer Rüssel stilistisch stimmen. Ohne diesen Pass beginnt keine Gang-, Rüssel-, Griff- oder Sprachbewegungsprobe. Das Gate ist keine Abnahme des späteren Films; die finale Bewegungsabnahme bleibt separat.
+
+Stilabweichung oder ein unglaubwürdiger Kontakt stoppt die Vollanimation.
 
 ## 4. Szenenlayout und feste Bühne
 
@@ -197,7 +200,8 @@ Coco erhält getrennt steuerbare Hüfte, Knie, beide flachen Füße, beide Floss
 
 - [ ] Sechs VIEW-Stills, sechs POSE-Stills, fünf JAW-Stills und drei CONTACT-Makros nach Abschnitt 3 rendern.
 - [ ] Identität, Farbtreue, Größen-/Bodenstabilität, Fußkontakt, Hörergriff, Kabelverlauf und Rüssel-/Telefonkontakt notieren.
-- [ ] Root muss die 20 Einzelbilder visuell freigeben; Kontaktbogen allein reicht nicht.
+- [ ] Root prüft alle 20 Einzelbilder gegen den V8-Coco-Kanon und Remys Original.
+- [ ] Martin erhält den nummerierten Kontaktbogen mit allen 20 Bildern plus drei große lesbare Einzelansichten/Kontaktmakros und entscheidet einmalig über Coco-/Remy-Ähnlichkeit. Vor diesem Stilgate keine Bewegungsproben; Rootfreigabe ersetzt die Nutzerentscheidung nicht.
 - [ ] Falls die modellierte sichtbare Ansicht trotz dieser Referenzen unklar bleibt: höchstens vier einzeln begründete zusätzliche KI-Referenzbilder beantragen. Keine Anfrage ohne genaue Ansicht und offene Modellfrage.
 
 ### Task 5 - Timeline-Blockout und sechs begrenzte Proofs
