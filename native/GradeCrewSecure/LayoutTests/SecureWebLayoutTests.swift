@@ -120,7 +120,9 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler {
         if try await web.evaluateJavaScript(predicate) as? Bool != true { issues.append("Interaction failed: "+name) }
         if ["direct","reduced-motion","keyboard-height","image-resize"].contains(name) {
             let visible=try await web.evaluateJavaScript("(()=>{const id=document.querySelector('[aria-current=step]').dataset.qid;const section=[...document.querySelectorAll('.secureQuestion')].find(s=>s.dataset.qid===id);const top=section.querySelector('h2').getBoundingClientRect().top;return top>=document.getElementById('secureNavigation').getBoundingClientRect().bottom && top<innerHeight-20;})()") as? Bool
-            if visible != true { issues.append("Target question hidden after "+name) }
+            if visible != true { issues.append("Target question hidden after "+name)
+                let geometry=try? await web.evaluateJavaScript("JSON.stringify({height:innerHeight,scrollY,navBottom:document.getElementById('secureNavigation').getBoundingClientRect().bottom,targets:[...document.querySelectorAll('.secureQuestion')].filter(s=>s.dataset.qid===document.querySelector('[aria-current=step]').dataset.qid).map(s=>s.getBoundingClientRect().top)})")
+                issues.append("Geometry: "+String(describing:geometry)) }
         }
         if !["clear","ordering","freeze","reload"].contains(name),try await web.evaluateJavaScript("JSON.stringify(collectAnswers())===__beforeAnswers") as? Bool != true { issues.append("Navigation changed answers") }
         return issues

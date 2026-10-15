@@ -41,11 +41,11 @@ private struct SecureStagingScreen: View {
             Button("Prüfungsmodus starten") { Task { await model.startOrRecover() } }
             Button("Abbrechen",role:.cancel) {}
         }
-        .confirmationDialog(SecureSubmissionSummary.title(total:(model.paper?["paper"] as? [[String:Any]])?.count ?? 0,completed:model.answeredCount), isPresented:Binding(get:{model.showingSubmitConfirmation},set:{if !$0 {model.cancelSubmitConfirmation()}}), titleVisibility:.visible) {
+        .confirmationDialog(SecureSubmissionSummary.title(total:(model.paper?["paper"] as? [[String:Any]])?.count ?? 0,completed:model.answeredCount), isPresented:Binding(get:{model.showingSubmitConfirmation},set:{if !$0 {model.hideSubmitConfirmation()}}), titleVisibility:.visible) {
             Button("Jetzt abgeben") {
                 Task { await model.submitConfirmed() }
             }
-            Button("Weiterarbeiten",role:.cancel) {}
+            Button("Weiterarbeiten",role:.cancel) { model.cancelSubmitConfirmation() }
         }
     }
     private var statusContent:some View {

@@ -63,14 +63,15 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
     if(focus) { section.tabIndex=-1;section.focus({preventScroll:true}); }
     const top=section.getBoundingClientRect().top+window.scrollY-navRoot.getBoundingClientRect().height-8;
     window.scrollTo({top:Math.max(0,top),behavior:reducedMotion?'auto':'smooth'});
-    timer=setTimeout(()=>{navigating=false;},700);
+    timer=setTimeout(()=>{navigating=false;realign();},700);
     root.dispatchEvent(new CustomEvent('securequestionchange',{detail:{questionId:id,index}}));
     return true;
   }
   function scrollSync() {
     if(destroyed || locked || frame!==null) return;
     frame=requestAnimationFrame(()=> {
-      frame=null;if(navigating || anchor) return;
+      frame=null;if(navigating) return;
+      if(anchor){realign();return;}
       const edge=navRoot.getBoundingClientRect().bottom+9;
       let best=0;
       paper.forEach((q,i)=> { if(sections.get(q.id)?.getBoundingClientRect().top<=edge) best=i; });

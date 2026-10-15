@@ -76,9 +76,10 @@ final class SecureExamCoordinator: ObservableObject {
         guard canSubmit else { return }
         confirmationAttemptID=attemptID;showingSubmitConfirmation=true
     }
+    func hideSubmitConfirmation() { showingSubmitConfirmation=false }
     func cancelSubmitConfirmation() { showingSubmitConfirmation=false;confirmationAttemptID=nil }
     func submitConfirmed() async {
-        guard showingSubmitConfirmation,confirmationAttemptID == attemptID,canSubmit else { return }
+        guard confirmationAttemptID == attemptID,canSubmit else { return }
         cancelSubmitConfirmation();await submit(auto:false)
     }
 #if SECURE_LAYOUT_TESTS
