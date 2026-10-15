@@ -417,3 +417,11 @@ GC-FINANCE-BAYSTARTUP-20261008 · V8 Coco Planentwurf, 15.10.2026
 - [ ] Martins Sichtprüfung des 20-Bilder-Artplaybooks und der Coco-Regie/450-Frame-Planwerte; Konzeptbilder sind keine gerenderten Frames und zeigen den Links-Rechts-Fußwechsel nicht zuverlässig. Nutzerfreigabe betrifft nur V7-Unterkieferbewegung, nicht Körpergang/Konzeptbilder.
 - [ ] Vor weiterem Film: separate Entscheidung und Arbeit am stilgetreuen Coco-Modell/Rig, danach kurzer Eintritts-/Gangtest mit Weltkontakt der Füße und sauberer Form. Noch kein Coco-Rig vorhanden; Blender-Weg ist nur empfohlen.
 - V8-Planmaterial liegt lokal unter `outputs/gradecrew-investment-20261019/animation-v8-coco-plan/`. V6 bleibt abgelehnt/unverändert; kein V8-Film oder PPTX, keine weiteren Voice-/Paid-Videoaufrufe.
+
+
+GC-FINANCE-BAYSTARTUP-20261008 · V9 Coco-only Produktionsstart vorbereitet, 15.10.2026
+
+- [ ] Coco-Probe prüfen: sichtbarer wechselnder Links-Rechts-Fußkontakt ohne Rutschen; Kopf/Flossen können gezielt reagieren; Telefon wird mit Kontakt gegriffen/abgelegt; freigegebene V7-Unterkieferform bleibt erhalten.
+- [ ] Nur Remys Rüssel von rechts darf das Telefon ins Bild schieben und sich zurückziehen.
+- Ausführung separat durch Coco-Motion-/Artagenten; geplanter Ausgabeordner `outputs/gradecrew-investment-20261019/animation-v9-coco-video/`. Vor Rendercheckpoint noch kein V9-Video verifiziert.
+- V6 bleibt abgelehnt, V7-Mund freigegeben aber Körpergang nicht; V8 ist Konzeptmaterial. Keine neuen Stimmen/Voice-Calls, keine bezahlte Videogenerierung/Käufe, kein PPTX/Produkt/Main/STATE/Deploy/Kontakt. Task bleibt auf bestehendem Doku-Branch, ohne Main-Integration.
