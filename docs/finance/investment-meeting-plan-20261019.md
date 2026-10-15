@@ -376,10 +376,12 @@ Verbindlicher Coco-Bildkanon ist das zuletzt bestätigte V8-Storyboard `Coco_Sto
 Der Plan sieht 20 gemeinsame Rig-/Stil-Gatestills und 600 geplante Film-Frame-IDs vor. Sechs begrenzte Bewegungstests decken Gang [60,120), Rüssel [201,231), Sitzen [231,261), Griff [261,291), Rückgabe [318,354) und Sprechen [390,420) ab: zusammen 216 Frames. Diese können nur bei identischen finalen Renderbedingungen wiederverwendet werden; dann bleiben 384 Filmframes zusätzlich. Basisrechnung: 20 + 600 = 620 geplante Frame-/Still-Ausgaben. Null neue KI-Referenzbilder im Basisweg; höchstens vier einzeln begründete Ansichten nur nach separater Root-Freigabe.
 
 Lokale Arbeitsdateien:
-- `outputs/gradecrew-investment-20261019/animation-v12-production-plan/Coco_Produktionsplan_V12.md` (SHA-256 `8543302e958c57ba6fac2d88e1841df6d74b37f8ad09dd9411849d1ddffcdbcf`)
-- `outputs/gradecrew-investment-20261019/animation-v12-production-plan/Coco_Produktionsplan_V12.pdf` (17 Seiten; SHA-256 `54a9c43d33f3d2a50616224737015f8b950c283e5ceb3e32e04737a218fb7270`)
+- `outputs/gradecrew-investment-20261019/animation-v12-production-plan/Coco_Produktionsplan_V12.md` (SHA-256 `b17c1db53ef8ef77c05b33e1f506709f145fbacdef2d58bde34eae162267d45d`)
+- `outputs/gradecrew-investment-20261019/animation-v12-production-plan/Coco_Produktionsplan_V12.pdf` (17 Seiten; SHA-256 `f602812d33608ba6b5eaee6fe6b79d0eca605712ff5b5f49b0983a1f383f4380`)
 - `outputs/gradecrew-investment-20261019/animation-v12-production-plan/Coco_Bildliste_600_Frames.csv` (600 Zeilen F000–F599; SHA-256 `051fc39a4c3ba96f7453d71c2f7b9a0424f4f0258709e17bce38d7ed76912b25`)
 
 Repo-Plan: `docs/superpowers/plans/2026-10-15-coco-animation-production.md`. PDF-Seitenbogen und Zeitplantabelle wurden visuell geprüft. Der Plan ist eine künftige Arbeitsanweisung, keine Produktionsfreigabe und keine Abnahme eines Films. V6/V9 bleiben abgelehnt; V10/V11-Standbilder sind keine Animation. Keine Deckänderung oder Nutzerfreigabe für Körperbewegung.
+
+Neues Stilgate: Root prüft alle 20 Einzelstills; Martin erhält Kontaktbogen plus drei große Ansichten und entscheidet einmalig über Coco-/Remy-Ähnlichkeit, bevor Bewegungsproben starten. Filmabnahme bleibt separat.
 
 Nächster Schritt: erst nach separater Produktionsfreigabe einen stilgetreuen Coco-/Telefon-/Rüssel-Blockout und das 20-Still-Stilgate erstellen; bei Stilabweichung nicht in die Bewegung gehen. Vollfilm, weitere Crew-Szenen und PPTX-Einbettung bleiben getrennte spätere Aufgaben.
