@@ -61,3 +61,10 @@ test('current accessible number follows manually scrolled task',async()=>{
  w.dispatchEvent(new w.Event('scroll'));await new Promise(r=>setTimeout(r,30));
  assert.equal(w.document.querySelector('#secureCurrentQuestion').getAttribute('aria-label'),'Aufgabe 4 von 11');dom.window.close();
 });
+test('numbered task jumps are immediate rather than animating through many pages',()=>{
+ const {dom,w}=setup({},Array.from({length:30},(_,i)=>({id:'q'+i,type:'text',text:'Aufgabe '+i})));
+ let target;
+ w.scrollTo=options=>{target=options};
+ w.document.querySelectorAll('.secureQuestionNumber')[29].click();
+ assert.equal(target.behavior,'auto');dom.window.close();
+});

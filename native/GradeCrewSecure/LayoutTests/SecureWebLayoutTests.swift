@@ -8,6 +8,9 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler {
     }
 }
 @MainActor final class SecureWebLayoutTests:XCTestCase {
+    // Fixtures have no accounts or external requests. Reuse the ephemeral browser store,
+    // as a real exam does, instead of starting hundreds of isolated network processes.
+    private let fixtureStore=WKWebsiteDataStore.nonPersistent()
     func testResourceBoundary() throws { XCTAssertNotNil(Bundle.main.url(forResource:"index",withExtension:"html",subdirectory:"Exam")) }
     func testWebMatrix() async throws {
         try SecureReports.clear("web-")
@@ -25,7 +28,7 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler {
         let data=try JSONSerialization.data(withJSONObject:payload)
         let handler=SecureFixtureHandler(),config=WKWebViewConfiguration()
         config.mediaTypesRequiringUserActionForPlayback = []
-        config.websiteDataStore = .nonPersistent()
+        config.websiteDataStore = fixtureStore
         config.userContentController.add(handler,name:"gradecrewSecure")
         config.userContentController.addUserScript(WKUserScript(source:"window.__GC_EXAM__="+String(decoding:data,as:UTF8.self)+";",injectionTime:.atDocumentStart,forMainFrameOnly:true))
         let web=WKWebView(frame:CGRect(x:0,y:0,width:viewport.width,height:viewport.height),configuration:config)
@@ -34,7 +37,7 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler {
         let window=UIWindow(frame:web.frame);window.rootViewController=controller;window.makeKeyAndVisible();web.frame=CGRect(origin:.zero,size:CGSize(width:viewport.width,height:viewport.height))
         let page=try XCTUnwrap(Bundle.main.url(forResource:"index",withExtension:"html",subdirectory:"Exam"))
         web.loadFileURL(page,allowingReadAccessTo:page.deletingLastPathComponent())
-        for _ in 0..<100 { if handler.ready { break };try await Task.sleep(nanoseconds:50_000_000) }
+        for _ in 0..<300 { if handler.ready { break };try await Task.sleep(nanoseconds:50_000_000) }
         var issues:[String]=[]
         if !handler.ready { issues.append("Local renderer not ready") }
         var metrics:[String:Any]=[:]

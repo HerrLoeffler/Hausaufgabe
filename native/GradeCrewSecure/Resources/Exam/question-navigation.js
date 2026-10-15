@@ -62,7 +62,7 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
     root.querySelectorAll('audio').forEach(audio=> { if(!section.contains(audio) && !audio.paused) audio.pause(); });
     if(focus) { section.tabIndex=-1;section.focus({preventScroll:true}); }
     const top=section.getBoundingClientRect().top+window.scrollY-navRoot.getBoundingClientRect().height-8;
-    window.scrollTo({top:Math.max(0,top),behavior:reducedMotion?'auto':'smooth'});
+    window.scrollTo({top:Math.max(0,top),behavior:'auto'});
     timer=setTimeout(()=>{navigating=false;realign();},700);
     root.dispatchEvent(new CustomEvent('securequestionchange',{detail:{questionId:id,index}}));
     return true;
