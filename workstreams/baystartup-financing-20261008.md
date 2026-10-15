@@ -266,3 +266,14 @@ Aktueller Status: V6 abgelehnt, V9 visuell abgelehnt; V7-Mundform bleibt als fr�
 
 Lageprüfung vor dieser Stufe: `main` `8560992c072779814017ebac6e86b65e938bc951`; letzter erfolgreicher „GradeCrew Development Status“-Lauf #38728178408 auf diesem SHA, 15.10.2026 11:33 UTC. Bestehender Finance-Branch `717555f001be6d4c741128eddfa331aee5fa8785`, 71 Commits ahead/137 behind main, diverged; kein offener Finance-PR. GitHub-Compare weist ausschließlich die drei betreuten Doku-Dateien aus. Fortsetzung im bestehenden Task/Branch, keine Main-Integration.
 
+
+
+## V10 Bildstand bestanden; Flow-Proof abgelehnt (15.10.2026)
+
+Root prüfte beide tatsächlichen V10-Artefakte visuell und bestätigte den V8-Stil sowie die Telefonaktion: zwölfteilige Bildtafel `outputs/gradecrew-investment-20261019/animation-v10-reference-match/art/coco-phone-push-12frames-v2.png` (1932×814, SHA-256 `cf0b0d1c646e7e4768fb88bebac2e22f91a577c5124c76ad139eb2d677354c23`) und vier generierte Detailbilder `outputs/gradecrew-investment-20261019/animation-v10-reference-match/art/coco-phone-push-4details.png` (1672×941, SHA-256 `fe58e2d3b986b909b7e9f5314ab0e10b8d8a7b96392155aa433ca97495f54c52`). Insgesamt 16 Konzept-/Detailbilder; keine Filmframes. Das Detailset zeigt Kontakt beim Schieben von links nach rechts, stabile Telefonablage links und den Hörer in den vier geprüften Bildern.
+
+Der einzelne kurze Bewegungs-/Flow-Test schlug optisch fehl („melty dial“/verformte Wählscheibe). Keine Verlängerung, kein Vollclip, kein V10-MP4. V9-Bildmaterial wird nicht wiederverwendet. Dauerhafte Stilprüfung: nur V8-Referenz-Coco mit runder Kopfform, kurzem Körper, kleinen flachen Füßen und passenden Gesichtsproportionen; nicht in deutlich getrennte Teile verformen. Rüsselrichtung verbindlich links→rechts zum Schieben, dann links zurück. V7-Mundmechanikfreigabe überschreibt diese Stilreferenz nicht.
+
+Nächster ausführbarer Schritt ist ein weiterer begrenzter Bewegungs-Proof mit unveränderter V8-Coco und sauberer Telefonform; erst bei sichtbarer Form- und Bewegungsqualität über einen Vollfilm entscheiden. Nutzerbewegungsabnahme bleibt offen. Drei eingebaute Imagegen-Aufrufe für die gezeigten Referenz-/Detailbilder; keine neue Stimme, Audio-/bezahlte Videogenerierung, PowerPoint- oder Produktänderung. V6 und V9 bleiben abgelehnte Versuche; alle bisherigen Dateien bleiben erhalten.
+
+Lageprüfung vor diesem Checkpoint: korrektes Repository `HerrLoeffler/Hausaufgabe` (früherer Repositoryname lieferte 404). Branch `docs/baystartup-financing-20261008` HEAD `3663b8b34ccb350c5179a86c2c5dcda56a11db08`, 74 ahead/137 behind `main`, diverged; letzter erfolgreicher Development-Status-Lauf #38728178408 auf main `8560992c072779814017ebac6e86b65e938bc951`; kein branch-eigener offener PR. Compare zeigt nur die drei gepflegten Dokumente. Keine Integration.
