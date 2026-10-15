@@ -259,3 +259,11 @@ Relevanter Assuranceumfang (Implementierungsowner classroom_integrated_preview; 
 
 Genau nächster Schritt: den von der Zentrale gebündelten einzigen Umsetzungsplan übernehmen, selbst prüfen und vor Produktcode checkpointen; danach native Ausführung im selben sicheren Checkout.
 
+
+### Zwischenstand A – lokale Fachlogik und sichere Grenze
+
+Planreview durch classroom_contract_review: kein Startblocker; drei Präzisierungen verbindlich übernommen: headerloses Pipeprofil ohne Whitespace-Rekonstruktion, schulbezogene Adminprüfung und atomarer Import mit Revisionsprüfung. Die ursprünglichen acht Domain-/CSVtests erst rot (fehlende Module), danach grün; zusätzlicher Admin-/Atomizitätstest erst rot, danach grün. Mehrtest-Editorport und Remote-SDK-Grenztest ebenfalls erst rot, danach grün. Aktuell 12/12 Tests einschließlich bestehendem guest-tour-port bestanden. Lokaler Parser erhält führende Nullen, Quotes/Zeilenumbrüche, BOM und zehn headerlose Pipespalten. Keine echten Exportwerte übernommen.
+
+Neue Dateien: classroom/csv.mjs, repository.mjs, app-repository.mjs, demo-sdk.mjs mit Verhaltenstests sowie tools/classroom-preview/server.mjs. Bestehender guest-tour-port bekommt nur eine optionale Test-ID, Legacydefault unverändert. Mehrtestadapter delegiert weiterhin an diesen vorhandenen Port; kein neuer Editor oder Grader. Server liefert Originalindex mit vorinitialisierter Importmap/CSP. Noch NICHT mit dem Appcontroller verdrahtet, noch kein Browsernachweis oder Backendnachweis.
+
+Lokaler Dokumentationscommit5ae32268 und Remotecheckpoint7d1e2b259e1699dcf33dbb67e96e121729511311 haben denselbenTree2d195752b09f6b82815826cb801ee18c150243b7. Verschiedene Commitmetadaten durch Connectorfallback, kein Inhaltsunterschied. GitDNS weiterhin blockiert; Connector GitBlob/Tree/Commit/Branch-Sicherung funktioniert. Nächster Schritt: originale App mit kleinem lokalen Port anbinden und Controller für Navigation, Import und Zuweisung bauen.

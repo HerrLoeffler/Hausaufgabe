@@ -1,7 +1,6 @@
 const copy = value => value == null ? value : JSON.parse(JSON.stringify(value));
 
-export function createLocalTourRepository({ now = Date.now } = {}) {
-  const code = 'TOURLOCAL';
+export function createLocalTourRepository({ now = Date.now, code = 'TOURLOCAL' } = {}) {
   let quiz = null;
   let questions = [];
   let submissions = [];
