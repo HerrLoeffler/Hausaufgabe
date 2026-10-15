@@ -347,3 +347,19 @@ Zusammen sind das 16 Konzept-/Detailbilder zur gewünschten Telefonaktion. Root 
 Verbindliche V10-Gates bleiben: V8-Referenz-Coco (runder Kopf, kurzer Körper, kleine flache Schwimmfüße, passende Wangen-/Schnabel-/Augenproportionen, warmes helles Umfeld); Remys Rüssel schiebt das Telefon kurz von links nach rechts und zieht sich nach links zurück. Frühere V7-Mundfreigabe erlaubt keine Rückkehr zur abgelehnten V7-Figur. V9 bleibt visuell abgelehnt und wird nicht als Vorlage wiederverwendet.
 
 Nächster Schritt: die fehlerhafte kurze Bewegungsprobe prüfen/korrigieren und erneut nur als begrenzten Proof bewerten; vor bestandenem Bewegungs-Gate kein Vollfilm. Nutzerabnahme der Bewegung steht aus. Keine neue Stimme, kein bezahlter Videoaufruf/Upgrade, kein PPTX-/Produkt-/Main-/STATE-/Deploy-Schritt. Drei lokale Imagegen-Aufrufe für V10-Artreferenzen; keine Audio- oder bezahlte Videogenerierung.
+
+
+## 15.10.2026 — V11 Remy-Rüssel an Originalreferenz korrigiert
+
+Korrektur zur vorherigen V10-Bildbewertung: Coco, Bühne und Telefonfolge passten zur V8-Konzeptreferenz, aber der Rüssel war wegen falscher Farb-/Formvorgabe nicht akzeptiert. Die frühere Bildfreigabe wird für den Rüssel ausdrücklich zurückgezogen. Ursache: Ein früheres Briefing erfand eine rosa Rüsselunterseite und eine helle blaue Farbe, statt Remys eigenes Originalbild heranzuziehen.
+
+Dauerhafte Referenzregel: vor jeder Figuren-/Anhängsel-Generierung zuerst das tatsächliche Original derselben Figur prüfen; Farbe/Form nicht aus anderen Figuren oder deren Körperteilen ableiten. Remys Originalreferenz ist `outputs/gradecrew-investment-20261019/animation-v6/art/references/image3.png` (1241×1267, SHA-256 `3af4ee9699c2e7c17408e51fdc9ef6b31a91c194ccbb98319a7d4ae5204c9777`). Sie zeigt einen blass periwinkleblauen, zulaufenden gerundeten Rüssel mit Querfalten und rundem Nasenloch; kein rosa Rüsselstreifen. Rosa in Remys Original gehört zu den Ohren, nicht zum Rüssel.
+
+Root verglich die neue V11-Art mit dieser Referenz und bestand die Erscheinungsform:
+- `outputs/gradecrew-investment-20261019/animation-v11-remy-reference-fix/art/remy-trunk-4details-v1.png` — 1672×941; SHA-256 `6927754d436c06827a2297cdde455701e0f5a237e56acb51e6013b2d14ef1bc9`.
+- `outputs/gradecrew-investment-20261019/animation-v11-remy-reference-fix/art/remy-trunk-12frames-v1.png` — 1932×814; SHA-256 `6010570392536d7cff50091e09ed8578d3bdb77a2d92a85b85770fc53dada15a`.
+- Vergleichsbild `.../remy-trunk-comparison.png`, SHA-256 `27ac77bbce46d53ec9e587fe8668bd7dd733d7cd47eb39921cf189b6c7657845`.
+
+V11 bewahrt die V8-Coco-/Telefonbildsprache und setzt den richtigen links-nach-rechts Schub mit dem korrigierten Rüssel um. Dies ist nur ein Erscheinungsform-/Einzelbild-Gate, keine zeitliche Bewegungsfreigabe: in der 12er-Tafel ist in einem Bild das Telefon außerhalb der Szene und nur die Rüsselspitze sichtbar; vollständige Szenenkontinuität ist nicht bestätigt. Kein V11-Film, kein neues Audio, keine PPTX-/Produkt-/Main-/STATE-/Deployänderung. Zwei gezielte eingebaute Imagegen-Bearbeitungen für die V11-Detail- und Szenenbilder; ältere V10-Artefakte/Fehlversuche bleiben erhalten.
+
+Nächster Schritt: Telefonbildfolge gezielt auf durchgängige Ablage/Griff-/Rüsselkontinuität prüfen und nur bei bestandenem separatem kurzen Flow-Proof weiterplanen. Nutzerabnahme der Bewegung bleibt offen.
