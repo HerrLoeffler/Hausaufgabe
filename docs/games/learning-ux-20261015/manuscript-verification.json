@@ -1,0 +1,36 @@
+{
+  "word_count": 13483,
+  "sha256": "f2e67d9fcb260a1d8d3b084c1e1240976d4a3d18806e3afd0035bc62937c5478",
+  "main_chapters": [
+    "1. Auftrag, Leseweg und überprüfbarer Ausgangspunkt",
+    "2. Produktbild und begründete Auswahl des Ansatzes",
+    "3. Einfach starten: der primäre Einstieg",
+    "4. Genau auswählen: Lehrplan als erweiterte Option",
+    "5. Quellen und Remy: ein Vertrag, mehrere Einstiege",
+    "6. Gemeinsame Spieloberfläche und vollständige Zustandsfolge",
+    "7. Fast Quiz: Mathematik mit kleinen, sichtbaren Schritten",
+    "8. Fehlerjagd Deutsch: Lernziele sichtbar auseinanderhalten",
+    "9. Vocab Rush: Wortschatz, Bedeutung und Schreibweise",
+    "10. Wissensreise: fortlaufend üben ohne falsches Unendlichversprechen",
+    "11. Aufgabenprofile, Hilfen und Jahrgangsbezug",
+    "12. Anpassung, privater Fortschritt und faire Rückmeldung",
+    "13. Klassenmodus, Board, Code und QR",
+    "14. Gestaltung, Layout und verbindliche Textbedeutungen",
+    "15. Datenmodelle, Adapter und öffentliche Projektion",
+    "16. Kosten, Inhaltsqualität, Fehler und Sicherung",
+    "17. Umsetzungsphasen und begrenzte Arbeitspakete",
+    "18. Prüfbuch, Abnahmen und Entscheidungsvorlagen",
+    "19. Quellen, Nachweisgrenzen und Glossar"
+  ],
+  "appendices": [
+    "Anhang A. Konkrete Brücken am bisherigen Sprungpunkt",
+    "Anhang B. Forschungsnachweise und Kalibrierung"
+  ],
+  "placeholder_count": 0,
+  "concepts_12": true,
+  "five_minutes": true,
+  "private_seed": true,
+  "teacher_budget": true,
+  "no_manual_grading": true,
+  "sourceledger_valid": true
+}

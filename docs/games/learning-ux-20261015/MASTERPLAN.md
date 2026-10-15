@@ -120,7 +120,7 @@ Die Lehrplanauswahl verwendet Bundesland beziehungsweise Geltungsbereich, Schula
 
 ### 4.2 Herkunft und Prüfstatus sichtbar halten
 
-Jeder Lehrplaneintrag besitzt eine primäre Quelle, Versionsangabe, Abruf-/Prüfdatum und einen Status. **Quellengeprüft** bedeutet, dass die Zuordnung durch die benannte fachliche Prüfung getragen ist. **Entwurf** bedeutet, dass die Zuordnung noch nicht ausreichend geprüft wurde. Ein vorhandener PDFname oder ein erfolgreiches Importskript genügt nicht für „geprüft“. Der sichtbare Text darf nicht „Lehrplan vollständig“ heißen, solange die Vollauswertung offen ist.
+Jeder Lehrplaneintrag besitzt eine primäre Quelle, Versionsangabe, Abruf-/Prüfdatum und einen Status. **Quellengeprüft** bedeutet, dass die Zuordnung durch die benannte fachliche Prüfung getragen ist. **Entwurf** bedeutet, dass die Zuordnung noch nicht ausreichend geprüft wurde. Ein vorhandener PDFname oder ein erfolgreiches Importskript genügt nicht für „geprüft“. Der bestätigte Produktfokus Bayern/Mittelschule darf eine Quelle ohne Herkunft nicht rückwirkend als bayerischen Mittelschullehrplan etikettieren. Der sichtbare Text darf nicht „Lehrplan vollständig“ heißen, solange die Vollauswertung offen ist.
 
 Im Detailblatt steht beispielsweise: „Bayern · Mittelschule · Mathematik 5 · LehrplanPLUS · Quelle geprüft am …“. Darunter folgt die Kompetenz in lesbarer Sprache, dann ein kleiner Quellenlink. Die Aufgabe kann mehrere Kompetenzbezüge besitzen. Der Plan verlangt keine falsche Eins-zu-eins-Zuordnung, wenn eine Aufgabe mehrere Fähigkeiten verbindet.
 
@@ -248,6 +248,8 @@ Die Beispiele C und D sind zwei Teilfamilien, keine zwingende lineare Reihenfolg
 ### 7.5 Parametrik nur mit nachweisbarem Schlüssel
 
 Geeignete Familien erhalten deterministische Parameter, Invarianten und einen überprüften Lösungsgenerator. Bei „a/b + c/b“ werden Nenner größer null, gewünschter Ergebnisraum, Kürzungsbedingungen und verbotene Sonderfälle explizit festgelegt. Für eine Division werden Null als Divisor und ungewollte periodische Ergebnisse ausgeschlossen oder bewusst zum Lernziel gemacht. Der Originalschlüssel wird vor der Familienzuordnung verifiziert.
+
+Eine reproduzierbare Parameterinstanz erhält vor dem Spiel eine stabile Identität: **MathFamilyKey + Generatorversion + Profilversion + Seed beziehungsweise vollständige Parameterinstanz + Quell-ID und Quellrevision**. Dieselbe Sitzungsaufgaben-ID referenziert genau diese Instanz und ihre Schlüsselversion. Bei Wiederaufnahme werden identische Aufgabe und Lösung verwendet, statt neue Zufallszahlen zu ziehen. Seed, vollständige private Parameterinstanz und Schlüsselherleitung bleiben im bestehenden privaten/serverseitigen Vertrag. Die öffentliche Aufgabe erhält nur eine opake Aufgabeninstanz-ID und freigegebene Anzeigeparameter; aus dieser ID darf kein Lösungsschlüssel herleitbar sein. Ein Cachekey enthält zusätzlich die gültige Besitzer-/Freigabegrenze; ein Seed allein ist weder Zugriffsschutz noch eine Erlaubnis, private Quellen zu teilen. Die konkrete Feldabbildung wird vor dem Bau mit den vorhandenen Task-/Sourceverträgen abgeglichen.
 
 Ein beliebiger Mathematiktext wird nicht allein wegen enthaltener Ziffern parametriert. Eine Sachaufgabe mit Preisen, Rundung und mehreren Randbedingungen braucht einen passenden geprüften Parser oder bleibt unverändert. Der Plan erlaubt keine stille Umdeutung von Martins eigenem Lernziel in eine bequemere Standardfamilie.
 
@@ -549,7 +551,7 @@ Gespeicherte Sessions verwenden eine Schema-/Profilversion. Eine Migration erhä
 
 ### 16.1 Kosten sichtbar begrenzen
 
-Die Versorgung verwendet den vorhandenen quotagebundenen Weg. Kosten werden vor einem zulässigen Auftrag reserviert und nach dem tatsächlichen Ergebnis abgerechnet beziehungsweise freigegeben. Eine Antwort auf „Weiter“ ist kein Auftrag für eine neue kostenpflichtige Modellgenerierung. Wiederholung und geeignete Parametrik bilden einen unabhängigen sicheren Fortsetzungsweg.
+Die Versorgung verwendet den vorhandenen quotagebundenen Weg. Kosten werden vor einem zulässigen Auftrag reserviert und nach dem tatsächlichen Ergebnis abgerechnet beziehungsweise freigegeben. Eine Antwort auf „Weiter“ ist kein Auftrag für eine neue kostenpflichtige Modellgenerierung. Eine Reservierung bleibt an die zuständige Lehrkraft beziehungsweise den berechtigten Tenant, die Quellfreigabe und die bestehende Quotenperiode gebunden. Ein Schülerklick auf Weiter darf keine neue Teacherreservierung erzeugen und keine fremde Teacherquota nutzen. Öffentliche Aufgabenversorgung übernimmt nur bereits autorisierten Vorrat oder einen im bestehenden Vertrag genau einmal zugelassenen Nachfüllauftrag. Vor einer späteren Erweiterung werden Teacherbudget, Tenantbindung und maximale laufende Aufträge ausdrücklich negativ getestet. Wiederholung und geeignete Parametrik bilden einen unabhängigen sicheren Fortsetzungsweg.
 
 Ein Cache wird nach Quelle, Revision, Profil, Sprache, Freigabe und gegebenenfalls Besitzergrenze getrennt. Private Nutzerquellen wandern nicht in einen allgemeinen Cache. Eine neue dauerabhängige Budgetpolitik muss Kosten, maximale Varianten, Aufbewahrung und Abusegrenzen gemeinsam prüfen. Die heutige Grenze von drei mal zwölf Varianten wird nicht ohne gesonderte Entscheidung ausgeweitet.
 
@@ -729,7 +731,7 @@ Die nächsten Schritte werden angeboten, nicht als Charakterurteil dargestellt. 
 
 Der folgende Auszug ist der ausgewiesene Beitrag des Recherchefachagenten. Er dokumentiert Quellen und Grenzen, keine unabhängige Freigabe des Gesamtbuchs. Die vollständige eigenständige Researchdatei und SourceLedger liegen dem Paket bei. Die Nummerierung der folgenden Abschnitte stammt aus diesem Fachmemo.
 
-## 2. Quellen- und Revisionsbasis
+### 2. Quellen- und Revisionsbasis
 
 Aktuelles main `8560992c072779814017ebac6e86b65e938bc951` vom Root per API bestätigt. START_HERE und Gamesworkflow/Briefing/Assetguide frisch per GitHub gelesen; AGENTS/STATE/TODO/CHAT_CONTRACT/Registry und Skillzuordnung über den aktuellen main-input des Planowners gelesen. Jüngster Development Status laut Root: Run 38809750925, Job 116679689447 success; Warnungen sind keine Integrationsfreigabe. Reine Fach-/Lernlogikrecherche braucht keinen img2threejs-Schritt. using-superpowers gelesen; dessen Subagent-Ausnahme gilt. Keine eigene neue Task-/Registry-Datenbank angelegt.
 
@@ -739,9 +741,9 @@ Wissensreise PR238 `ec7512600bf6d48541cb304d746dca96b78358b5` sowie Dokumentatio
 
 
 
-## 3. Belegte Sprünge im aktuellen Bestand
+### 3. Belegte Sprünge im aktuellen Bestand
 
-### Mathematik
+#### Mathematik
 
 Datei [math-engine-v4.js, PR224](https://github.com/HerrLoeffler/Hausaufgabe/blob/2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5/lab/fast-quiz/math-engine-v4.js#L146), L146–237 sowie L261–279; Niveauetiketten L29–59.
 
@@ -758,19 +760,19 @@ Runden: [rounding-plus.js L39–85](https://github.com/HerrLoeffler/Hausaufgabe/
 
 [app-v4.js L108–144](https://github.com/HerrLoeffler/Hausaufgabe/blob/2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5/lab/fast-quiz/app-v4.js#L108): Dauer und scoring sind gesonderte Konfiguration. L327–330: Fehlersperre optional, sonst nächste Aufgabe nach380ms richtig/500ms falsch, Binomik2500ms. Das ist ein Lese-/Feedbackrisiko, kein Beleg einer getesteten Lernwirkung. Vorgeschlagen: Lernmodus lässt Erklärung nach Bedarf stehen; Wettbewerb darf anders takten.
 
-### Deutsch
+#### Deutsch
 
 [deutsch-engine.js L29–31](https://github.com/HerrLoeffler/Hausaufgabe/blob/c7eb2709cbcaede44f1ce07fb5ff1d362a182000/lab/fehlerjagd-deutsch/deutsch-engine.js#L29) setzt n1 und n2 beide auf Schwierigkeit1–2, n3 auf2–3, n4 auf3–4. [L233–245](https://github.com/HerrLoeffler/Hausaufgabe/blob/c7eb2709cbcaede44f1ce07fb5ff1d362a182000/lab/fehlerjagd-deutsch/deutsch-engine.js#L233) macht zugleich das Wiederholungsfenster enger: Jahrgang minus4/3/2/1 (mindestens5). Leerer Pool fällt erst ohne Unterjahrgangsgrenze, schließlich auf alle Skillaufgaben zurück. Deshalb besteht keine harte fachliche Garantie, dass „Klasse+Niveau“ immer den sichtbaren Pool begrenzt. Die Engine ist ein kuratierter Aufgabenpool, kein offener Sprachgenerator.
 
 Repräsentative Satzglieder L144–153: n1-Schwierigkeit Subjekt „Die neue Schülerin“ oder Akkusativobjekt „den Ball“; Schwierigkeit2 Dativ „seiner Schwester“, Temporal „morgen“, Lokal „im Park“; Schwierigkeit3 Kausal „wegen des Regens“/Final „zur Vorbereitung…“; Schwierigkeit4 Attribut als Satzgliedteil oder Subjektsatz. n3 kann zusätzlich Mehrfachmarkierung fehlerhafter Zuordnungen enthalten (L214–215). Satzlänge, Fachwortlast, Negation „Welche sind falsch?“ und Anzahl nötiger Entscheidungen sind eigenständige Belastungen. Wortarten und Satzglieder sind verschiedene Kompetenzfamilien. „Nomen“ und „Subjekt“ dürfen keine austauschbaren Antworten sein.
 
-### Englisch / Vocab Rush
+#### Englisch / Vocab Rush
 
 [curriculum.js L3–25](https://github.com/HerrLoeffler/Hausaufgabe/blob/4e739100d8a0e8c9be08d11b7bc96ddf86f3b141/lab/vocab-rush/curriculum.js#L3) ordnet Themen Einführungsjahrgängen5–9 zu; [L94–98](https://github.com/HerrLoeffler/Hausaufgabe/blob/4e739100d8a0e8c9be08d11b7bc96ddf86f3b141/lab/vocab-rush/curriculum.js#L94) bietet verfügbare/empfohlene Themen, einen Themenzyklus und feste Aufgabenfamilien. Kein Difficultyparameter. Explizit übergebene Themen werden nur gegen bekannte TOPICS geprüft, nicht erneut gegen den Jahrgang. Eigene Sets wechseln Richtung, ziehen bis3 Distraktoren aus dem Set, und können falsche Items zwei Plätze später wiederholen. Dieser kurzfristige Retry ist keine belegte verteilte Wiederholung über Tage. Irregular verbs, Satzbau und einfacher Wortabruf sind verschieden, obwohl sie dasselbe Spielgerüst nutzen.
 
 
 
-## 4. Vorhandene Lehrplanarbeit nutzen, Grenzen sichtbar halten
+### 4. Vorhandene Lehrplanarbeit nutzen, Grenzen sichtbar halten
 
 Remote-PR208-Branch `docs/pedagogy-curricula-20261011` enthält weiterhin Stand11.10, Workstream-Sicherung `ab2a76bfa4f463c49946d5f68272fb81594d84d1`; dessen Bericht ist keine Vollanalyse. Auf main ist die Workstream-Datei laut Root404. Neuere lokale Arbeitsdokumente wurden ausdrücklich getrennt gelesen: `analysis/GC-PEDAGOGY-KB-01/master/fortschritt-und-luecken.md` L3–21, L25–37 und `umsetzung-remy-emmi-2026-10-14.md` L3–9, L25–35.
 
@@ -780,7 +782,7 @@ Vertrauensmodell für Advanced: „amtliche Quelle gefunden“ → „passender 
 
 
 
-## 5. Primärquellen und abgeleitete Designregeln
+### 5. Primärquellen und abgeleitete Designregeln
 
 URLs am15./16.10.2026 geöffnet. Institutionelle Leitfäden synthetisieren Forschung; sie sind nicht jeweils eine einzelne Primärstudie. Keine Quelle beweist die Wirksamkeit von GradeCrew oder eine ideale Fünf-Minuten-Dauer. Pro Quelle bleibt die Paraphrase unter200 Wörtern.
 
@@ -798,7 +800,7 @@ URLs am15./16.10.2026 geöffnet. Institutionelle Leitfäden synthetisieren Forsc
 
 
 
-## 8. Kalibrierung und vorgeschlagene Gates
+### 8. Kalibrierung und vorgeschlagene Gates
 
 Zuerst Lehrkraftprüfung pro Familie: fachlich korrekte Antwort, eindeutiger Auftrag, Voraussetzungen, passende Hilfe, plausibler Distraktor, verlässliches Kompetenzmapping. Danach kleine formative Nutzungsprobe mit verschiedenem Vorwissen; beispielsweise5–8 Personen pro vorgesehener Zielgruppe und Gerät, keine repräsentative Wirksamkeitsstudie. Aufgaben erklären lassen, Irrwege beobachten, freiwillige Stopps ermöglichen. Persönliche Daten minimieren, vorhandene Einwilligungs-/Schulverträge verwenden; kein neues Schülerprofil aus diesem Memo.
 
