@@ -490,3 +490,18 @@ Repo-Plan: `docs/superpowers/plans/2026-10-15-coco-animation-production.md`. PDF
 Neues Stilgate: Root prüft alle 20 Einzelstills; Martin erhält Kontaktbogen plus drei große Ansichten und entscheidet einmalig über Coco-/Remy-Ähnlichkeit, bevor Bewegungsproben starten. Filmabnahme bleibt separat.
 
 Nächster Schritt: erst nach separater Produktionsfreigabe einen stilgetreuen Coco-/Telefon-/Rüssel-Blockout und das 20-Still-Stilgate erstellen; bei Stilabweichung nicht in die Bewegung gehen. Vollfilm, weitere Crew-Szenen und PPTX-Einbettung bleiben getrennte spätere Aufgaben.
+
+
+---
+
+## GC-FINANCE-BAYSTARTUP-20261008 · V13 Ganzcrew-Animatic und Bildpaket (16.10.2026)
+
+Der Nutzer autorisierte die Ausarbeitung der Coco-Prüfbilder und der erweiterten Auftritte von Remy, Emmi und Wilma. Der geprüfte lokale Export ist ein 74-Sekunden-Storyboard-Animatic, kein flüssiger Animationsfilm: 1920×1080, H.264/AAC, 50 fps, 3.700 gleichmäßig getaktete Samples. V2 hat gegenüber V1 einen engeren Bildausschnitt. Root prüfte eine Stichprobe von 22 dekodierten Bildern und gab nur die statische Storyboard-Framingprüfung frei; kein vollständiger Echtzeitdurchlauf oder menschliche Bewegungsabnahme wird behauptet.
+
+V2 MP4: `outputs/gradecrew-investment-20261019/animation-v13-full-crew/motion/V2_Bildausschnitt/GradeCrew_V13_Ganze_Crew_Storyboard_Teilvertonung.mp4` (53.792.695 Bytes; SHA-256 `91b949afe41bb2f943a662793fc7bae9f342f1d172deefe2fb726c4598779c3e`). Die zugehörige 22-Bilder-Stichprobe: `.../V2_Bildausschnitt/GradeCrew_V13_Decodierte_Szenen_22_Bilder.jpg` (SHA-256 `ade46418beff83501131f4355b64a9be1d1a481a1e640c7834b5750a162f1478`). Acht normalisierte vorhandene Sprachclips liegen im Tonmaster; Zeilen 4 und 7 bleiben sichtbar als stille Text-/Gestenabschnitte. Keine neuen Stimmen, bezahlten Videoaufrufe, PowerPoint-/Produktänderungen oder Deployments.
+
+Statische Bildprüfung: 20 Coco-Checks, davon 19 bestanden; Coco-Panel 19 (sicherer Griff um den Telefonhörer) bleibt offen. Zwölf Crew-Szenenbeats und ein separater Telefonankunft-Key bestanden statisch. Insgesamt 32/33 Konzeptbilder statisch bestanden; Standbilder sind kein zeitlicher Bewegungsnachweis. Der Coco-3D-Prototyp (55 Objekte/14 Kontrollen) verfehlte das V8-Identitätsgate in allen fünf begrenzten Lookdev-Pässen; 15 Diagnoseansichten wurden geprüft. Es gibt kein freigegebenes Modell/Rig und keine laufende Modellarbeit. Natürlicher Gang, kontinuierliche Figuren-/Kontaktbewegung, sicherer Griff, vollständiger Ton und Nutzerabnahme bleiben offen.
+
+Arbeitsdateien: `outputs/gradecrew-investment-20261019/animation-v13-production-plan/GradeCrew_Produktionsplan_V13.md` (SHA-256 `8a376ba0f91ede52c1a218c2a48680a399aabebff7ba70b02d4351dd9a961f82`), `GradeCrew_Produktionsplan_V13.pdf` (10 Seiten; SHA-256 `774af7368b0abcddcfdc4b74c7eeed3c49c0a875c7140e3dd5c0cf3562e3c3fd`) und `GradeCrew_V13_Bildpaket.zip` (86 eindeutige ZIP-Einträge, ZIP-Test bestanden; SHA-256 `87235cc633f945630fcbf70634c9923b3bbe64eb14d7b5b640cf3e5bc1047cfd`; enthält Bilder/Plan/Manifeste, nicht das MP4). Vollständiger V13-Arbeitsplan: `docs/superpowers/plans/2026-10-16-gradecrew-whole-crew-intro-v13.md`. V1/V2 und verworfene Lookdev-/Bildversuche bleiben als Verlauf erhalten; V2 ist der einzige aktuelle Animatic-Export.
+
+Nächster Schritt: natürlicher Film bleibt offen und erfordert eine tatsächlich stiltreue, animierbare Figur sowie validierte Gang-/Telefonkontakte und spätere Nutzerprüfung. Die fünf Lookdev-Pässe wurden gestoppt; das Animatic wird nicht als Ersatz für natürliche Animation ausgegeben. Keine Änderung an PowerPoint, Produkt, Main, STATE, Release oder Deploy.
