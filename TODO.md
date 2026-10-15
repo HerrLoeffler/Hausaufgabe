@@ -403,3 +403,10 @@ Nächster Schritt ausschließlich isolierter 10–12s-Coco-Proof mit verbesserte
 GC-FINANCE-BAYSTARTUP-20261008 · V7-Coco-Rig-Checkpoint (15.10.2026)
 
 Lokaler Proof mit fünf Kiefer- und acht Geh-Keyframes ist visuell gescheitert: weiße Lücke/abgesetzter Unterkiefer, Körper angeschnitten, Füße wirken getrennt. Noch kein V7-MP4. Proof unter `outputs/gradecrew-investment-20261019/animation-v7-coco-proof/review/`, Rig unter `.../animation-v7-coco-proof/rig/`. Ein Imagegen-Clean-Plate-Versuch zeichnete/vergrößerte Coco global und ist nicht registrierbar; verworfen, bleibt erhalten, keine Wiederholung. Geometry-Reviewer prüft isolierte maskierte Transformationen; Voice-Actor besitzt Renderer/Timeline/Video. Nächster Qualitätsgate bleibt kurzer Coco-Proof vor Vollfilm. Nutzerablehnung von V6 gilt; V5/V6 unverändert. Keine neuen Stimmen, ElevenLabs-Integration, bezahlte Videogeneration, PowerPoint-/Produktänderung und keine Fertig-/Akzeptanzbehauptung.
+
+
+GC-FINANCE-BAYSTARTUP-20261008 · V7-Coco-Eintritt/Sprechen v2 (15.10.2026)
+
+Korrigierte lokale 10-s-Probe: `outputs/gradecrew-investment-20261019/animation-v7-coco-proof/combined-proof-v2/Coco_V7_Eintritt_und_Sprechen_v2.mp4` (1280×720, 30 fps, H.264/AAC; SHA-256 `02a7ddc2638e859c7af7f3b42c89a32d37690eb1103e786c5e3c64e331834a55`). Root sichtete Eintrittsframes: 0 s offstage, 0,8 s links, 1,6 s mittig. Echter Eintritt korrigiert v1; technischer Kandidat für menschliches Feedback, keine Nutzerfreigabe, kein vollständiger Gehzyklus. Dokumentierter 1,7-s-Kameraschnitt, moderater Watschelgang, hinterer Fuß teilweise verdeckt. v1 und 5,233-s-Kieferstudie bleiben erhalten.
+
+Kein vollständiger Film/keine V7-PPTX; V6 bleibt abgelehnt und alle Decks unverändert. Nächster Schritt: Martins Sicht-/Hörprüfung der Coco-Proofs, erst danach Entscheidung über Fortsetzung. Keine neuen Voice-/ElevenLabs-/bezahlten Videoaufrufe und keine Produkt-/Main-/STATE-/Deployänderung.
