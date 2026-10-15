@@ -26,5 +26,7 @@ def validate(app, profile, info, team):
 
 if __name__ == '__main__':
     values = [plistlib.loads(Path(path).read_bytes()) for path in sys.argv[1:4]]
+    permission = 'com.apple.developer.automatic-assessment-configuration'
+    print('AAC present:', {'signed_app': values[0].get(permission) is True, 'profile': values[1].get('Entitlements', {}).get(permission) is True})
     validate(*values, sys.argv[4])
     print('Signed AAC app and distribution profile verified for de.gradecrew.secure.')

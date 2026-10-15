@@ -52,6 +52,14 @@ jobs:
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" MARKETING_VERSION=0.2.0 \
             CURRENT_PROJECT_VERSION="$LAB_BUILD" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY='' archive
+      - name: Preserve AAC entitlement in unsigned archive before cloud export
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP="$RUNNER_TEMP/GradeCrewSecureLab.xcarchive/Products/Applications/GradeCrewSecure.app"
+          codesign --force --sign - --generate-entitlement-der \
+            --entitlements native/GradeCrewSecure/Config/AACLab.entitlements "$APP"
+          codesign --verify --strict "$APP"
       - name: Export with Apple distribution signing
         shell: bash
         run: |
