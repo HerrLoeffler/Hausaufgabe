@@ -71,3 +71,12 @@ Ein großer Textpaket-Leseversuch wurde vor Gitmutation wegen Ausgabeabschneidun
 Dokumentationsumfang ausgearbeitet, gesichert und unabhängig geprüft; eigener Branch/Draft-PR, keine Integration. Produktcode und Release-/Deploystufen unverändert. Keine App-/Cloud-/Provider-/Lernwirksamkeits-/Geräte-/Productionabnahme aus dem Dokument-PASS ableiten.
 
 **Genau nächster Schritt:** Root prüft finalen Docshead und die Artefakthashes und legt Martin das61seitige Planbuch zur inhaltlichen Entscheidung vor. Umsetzung erst als separat konkret beauftragter Referenzabschnitt nach Kapitel17/18; dieses Artefakt ist keine Bau-, Merge- oder Deployfreigabe.
+
+
+## Fortsetzung 16.10.2026 — Punkte, Arbeitsweise und Denkzeit
+
+Neuer Nutzerauftrag im selben Task/Branch/PR: transparente optionale Punkte-Challenge, Kompetenz je Familie getrennt vom Score, Kopfrechnen mit passenden Zahlen, Stift/Block vorher ankündigen, längere Denkaufgaben und faire Zeit-/Endregeln detailliert planen. Noch ausschließlich Dokumentation. Original-PDF61Seiten und alter Review bleiben auf ihrer eingefrorenen Fassung. Eigene Markdown-Ergänzung ERGAENZUNG-PUNKTE-ARBEITSWEISEN-20261016.md, separater Nachtragsatz beim Designowner. Requested bestehendes Modell laut Auftrag, actual Modell/Effort/Usage unbekannt; keine Modellwechsel/Providerreservierung.
+
+Frisch gelesen: main START/AGENTS/STATE/TODO/Registry/Workstream-README/CHAT_CONTRACT/Gamesworkflow/Briefing/Assurance/Skillzuordnung unverändert. PR239 offen/Draft/unmerged f10627, exakte Handoff-/Developmentchecks38815987892/38815987909 success. Root las jüngsten Auditjob116700654162:26aktiv/22Überschneidungen/12ältere kritische/148unklassifiziert; keineBereinigung. Kein anderer Produktscope übernommen.
+
+Erster substantieller Nachtragcheckpoint: Ziel-/Achsentrennung, drei konkrete Lehrerpresets, gleichkriterielle1–10Vergleiche und fachliche Kopfrechenprofile inklusive Zahlen-/Strategiebeispielen. Noch offen: ausführbare Leiter-/Punkteformeln, Zeit-/Finishzustände, Simulation, Übertragung/Prüfkatalog, Vorrangmatrix und unabhängiger Nachtragreview. Keine Behauptung, der alte PASS decke den neuen Text. Genau nächster Schritt: konkrete Challengeleiter samt Restzeit-/Hilfen-/Grenzregeln ausarbeiten.
