@@ -2,6 +2,10 @@
 
 Auftrag15.10.2026, Satz-/Reviewabschluss16.10.2026. Zielgruppe bestätigt: Mittelschule Bayern, Klassen5–10. **Vorschlag, nur Planung.** Keine Produktänderung, Provideranforderung, Gamebuild, Integration oder Veröffentlichung.
 
+## Aktueller Nachtrag zum bestehenden Plan
+
+[Ergänzung: faire Chancen, Punkte und passende Denkzeit](ERGAENZUNG-PUNKTE-ARBEITSWEISEN-20261016.md) erweitert den ursprünglichen Plan um 7.393 Wörter. [Leseweg und Fassungsbezug](LESEREIHENFOLGE.md) verbindet beide Teile. Der Nachtrag enthält die optionale spielbare Punkte-Challenge, drei Lehrerpresets, getrennte Kopf-/Stift-/Denkprofile, transparente Zeit-/Hilferegeln und eine Vorrangmatrix in Kapitel14. Die unten genannten61Seiten/Originalhashes gehören weiterhin zur unveränderten ersten Fassung. Der Nachtrag erhält separate Satz-/Prüf-/Reviewbelege; der alte PASS wird nicht auf ihn übertragen.
+
 ## Dateien
 
 - `MASTERPLAN.md`: vollständiger fachlicher Produkt-/UX-/Umsetzungsentwurf,19Hauptkapitel und2Anhänge,13.483Wörter. SHA256`f2e67d9fcb260a1d8d3b084c1e1240976d4a3d18806e3afd0035bc62937c5478`.
@@ -38,3 +42,6 @@ Die SVG-Galerie bleibt ohne PDF-Compiler lesbar. Ein neuer Render kann technisch
 ## Stand und nächster Schritt
 
 Draft-PR239 gegen main: https://github.com/HerrLoeffler/Hausaufgabe/pull/239. Kein Merge-/Deployauftrag. Nach Prüfung des Planbuchs kann Martin einen klar begrenzten Referenzabschnitt beauftragen: vorhandener eigener Mathetest → verständlicher Start → fünfminütige fortlaufende Runde mit geprüftem Vorrat, Hilfe, Pause-/Deadlinevertrag, Resume und Abschluss. Dieser Bauauftrag ist durch die Dokumentation noch nicht freigegeben.
+
+
+Nachtragabschluss: 29 Seiten, zwei neue Konzeptansichten, Text-/PDFreview PASS ausschließlich im Dokumentumfang. End-PDF SHA256`e343a4d2848d4f5157494e88b1fb477e75cbc2b3f749e2788ba5bc7f8d15ccdf`. Dateien lokal unter `final/GradeCrew-Spiele-Nachtrag-Adaptive-Runden-20261016.pdf` beziehungsweise `.html`; diese Leseartefakte sind nicht als GitHubcommitted behauptet. Reproduzierbare neue Satz-/SVGquellen in `design/adaptive-addendum/`, eigener Review in `review/ADAPTIVE-REVIEW.md`. Hauptbuch und Nachtrag zusammen90Seiten, unterschiedliche Hashes und getrennte Prüfbelege.

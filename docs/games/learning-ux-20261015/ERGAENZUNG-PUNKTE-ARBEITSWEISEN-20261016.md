@@ -158,9 +158,9 @@ Hat jemand die Schwelle erreicht, kann er die nächste Stufe ansehen, Hilfe nutz
 
 Für die erste Simulation wird ein sichtbarer Faktor vorgeschlagen: selbständig richtig 100% der Aufgabenpunkte; nach einem aufgabenspezifischen Hinweis 50%; nach vollständiger Lösungsanzeige 0 gewertete Punkte. Diese Faktoren sind zu erproben. Die Hilfeoberfläche sagt die Wirkung **vor** dem Abruf: „Dieser Hinweis ist erlaubt. Bei richtiger Lösung erhältst du hier 15 statt 30 Spielpunkte.“ Lernfortschritt darf die Hilfe dennoch als sinnvollen Schritt erfassen.
 
-Damit Hinweise nicht zu einer dauerhaften Umgehung der nächsten Stufe werden, hat jeder Abschnitt den genannten endlichen Punktetopf. Die konkrete Formel lautet `Gutschrift = min(Restpunktetopf, Grundbelohnung × Hilfefaktor)`. Der Hilfefaktor wird zuerst auf die Grundbelohnung angewendet, niemals wiederholt auf einen schrumpfenden Rest. Beispiel: Bei 25 Leiterpunkten bleiben in Stufe 1 noch 5 Punkte. Die nächste richtige Aufgabe bringt maximal 5; auch ein erlaubter Hinweis mit regulär 5 Punkten kann diese letzten 5 abschließen. Die Schwelle wird nicht nur asymptotisch angenähert. Der Bildschirm zeigt bereits vor Ausgabe „Noch 5 Punkte in dieser Stufe“. Die Beispielwerte verwenden ganze Punkte; andere Tabellen brauchen vorab eine konsistente Rundungsregel.
+Damit Hinweise nicht zu einer dauerhaften Umgehung der nächsten Stufe werden, haben Stufe 1 und 2 den genannten endlichen Punktetopf. In Stufe 3 gilt stattdessen die veröffentlichte Grundbelohnung mal Hilfefaktor unter der unten festgelegten Instanz-/Wiederholungsgrenze bis zum Rundenschluss; dort wird kein undefinierter Resttopf verwendet. Für Stufe 1 und 2 lautet die konkrete Formel `Gutschrift = min(Restpunktetopf, Grundbelohnung × Hilfefaktor)`; für Stufe 3 gilt `Gutschrift = Grundbelohnung × Hilfefaktor` bei noch wertungsberechtigtem Fingerprint. Der Hilfefaktor wird zuerst auf die Grundbelohnung angewendet, niemals wiederholt auf einen schrumpfenden Rest. Beispiel: Bei 25 Leiterpunkten bleiben in Stufe 1 noch 5 Punkte. Die nächste richtige Aufgabe bringt maximal 5; auch ein erlaubter Hinweis mit regulär 5 Punkten kann diese letzten 5 abschließen. Die Schwelle wird nicht nur asymptotisch angenähert. Der Bildschirm zeigt bereits vor Ausgabe „Noch 5 Punkte in dieser Stufe“. Die Beispielwerte verwenden ganze Punkte; andere Tabellen brauchen vorab eine konsistente Rundungsregel.
 
-Nur die erste gültige Abgabe einer Instanz ist für Challengepunkte berechtigt. Nach einer falschen Antwort kann die Person ihre Lösung korrigieren und fachliches Feedback erhalten; diese Korrektur bringt derselben Instanz keine neuen Challengepunkte. Danach folgt eine geeignete neue Instanz derselben Stufe. Im Lernmodus werden Korrekturen weiterhin als Aktivität sichtbar, ohne sie als selbständigen Erstversuch auszugeben. Diese Regel verhindert unbegrenztes Erraten derselben Optionsliste bis zur vollen Wertung. Die Hilfefaktoren beschreiben Wettbewerbsbedingungen, keinen geringeren fachlichen Wert des Hilfesuchens.
+Nur die erste gültige Abgabe einer Instanz ist für Challengepunkte berechtigt. Nach einer falschen Antwort kann die Person ihre Lösung korrigieren und fachliches Feedback erhalten; diese Korrektur bringt derselben Instanz keine neuen Challengepunkte. Nach einem Fehler wird nicht sofort eine neue gewertete Ziehung angeboten. Zunächst bleibt dieselbe Instanz für gezielte Hilfe, Korrektur und einen ausdrücklichen Feedbackabschluss geöffnet; diese Korrektur ist ungewertet. Erst nach diesem Abschluss folgt eine geeignete neue Instanz derselben Stufe. Im Lernmodus werden Korrekturen weiterhin als Aktivität sichtbar, ohne sie als selbständigen Erstversuch auszugeben. Diese Regel verhindert unbegrenztes Erraten derselben Optionsliste bis zur vollen Wertung. Die Hilfefaktoren beschreiben Wettbewerbsbedingungen, keinen geringeren fachlichen Wert des Hilfesuchens.
 
 ### 6.4 Warum dies Aufholen ermöglichen kann
 
@@ -179,13 +179,19 @@ Die Leiter soll gute Leistung anerkennen: höhere Anforderungen besitzen ausreic
 |Viele Antworten parallel senden |Eine Aufgaben-/Attemptwirkung, nächster Zustand erst nach Bestätigung |Kein Punktemultiplikator durch Netzwerkverkehr |
 |Kurz vor Ende die Uhr lokal verstellen |Serverfrist maßgeblich |Kein zusätzlicher Wertungszeitraum |
 
+Die erste Referenz-Challenge verwendet ausschließlich kurze freie Zahlenantworten oder zuverlässig schlüsselbare strukturierte Eingaben. Multiple Choice bleibt ausgeschlossen, bis ein gesondert freigegebener fester Versuchs-/Zeit-/Punktevertrag schnelles Serienraten angemessen begrenzt. Auch bei Zahlenantworten werden blindes Senden, Fehlerkorrektur und schnelles Neubeginnen als konkrete Gegenstrategien geprüft. Ein bloßer Feedbackklick ist kein Nachweis, dass dieser Anreiz bereits technisch gelöst wäre.
+
+Jede fachliche Aufgabe erhält serverseitig einen privaten kanonischen Inhalts-/Parameterfingerprint aus Quelle und Revision, Familie/Version, Zielhandlung und validierter Parameterinstanz. Eine neue Instanz-ID, andere Optionsreihenfolge oder rein sprachliche Umformulierung macht dieselbe Aufgabe nicht neu. Derselbe fachliche Fingerprint ist pro Runde höchstens einmal für einen gewerteten Erstversuch berechtigt; ein Fehler verbraucht diese Gelegenheit ebenfalls. Freigegebene mathematische Zahlvarianten dürfen eigene Fingerprints haben, wenn sie tatsächlich neue passende Instanzen sind. Der öffentliche Client erhält daraus keinen Lösungsschlüssel.
+
+Vor Start prüft die Vorbereitung, ob ausreichend verschiedene freigegebene Aufgaben für die geplanten Stufen vorhanden sind. Bei nur zwei Fakten wird nicht ein künstlich langer Wettbewerb aus wiederholter voller Gutschrift gebaut. Die Oberfläche sagt „Diese Quelle reicht für fortlaufendes Lernen, aber nicht für die gewählte Punkte-Challenge. Wähle Lernen, gemeinsame begrenzte Etappen oder eine passende andere Quelle.“ Eine begrenzte Etappenalternative zeigt ihre Anzahl und Wertung vorab. Erschöpft sich der berechtigte Vorrat trotz Vorbereitung, bleiben Punkte erhalten; danach ist nur klar bezeichnetes ungewertetes Weiterüben möglich. Das ist eine Wertungsregel für Wiederholungen, keine neue Begrenzung zulässiger Quellaufgaben oder ein verstecktes Spielende nach zwei Quellen.
+
 Die Tabelle beschreibt beabsichtigte Regeln, keine bereits geprüfte Exploitresistenz. Punktetabellen können trotz dieser Regeln strategische Schwächen enthalten. Deshalb werden absichtliches Warten, Hilfenutzung, schnelles Raten und Abbruch als gegnerische Simulationen geprüft. Zufallstreffer in Auswahlaufgaben verlangen insbesondere einen passenden Prüf-/Punktevertrag; eine Serie von zehn beliebigen Klicks darf nicht mit selbständigem freien Abruf gleichgesetzt werden.
 
 ## 7. Punkte nach Zeit und Risiko normalisieren
 
 ### 7.1 Ein überprüfbares Modell statt „schwer=mehr“
 
-Eine erste Modellrechnung verwendet je freigegebenem Profil eine Referenzbearbeitungszeit `t`, eine Referenz-Erstlösungswahrscheinlichkeit `p` und einen gemeinsamen Zielwert `r` in erwarteten Punkten pro Sekunde. Eine mögliche Grundbelohnung lautet `R = r × t / p`. Bei Trefferquote `p` und Bearbeitungszeit`t` ergibt sich rechnerisch `p × R / t = r`. Der Hinweisfaktor und der Restpunktetopf begrenzen danach die konkrete Gutschrift.
+Eine erste Modellrechnung verwendet je freigegebenem Profil eine Referenzbearbeitungszeit `t`, eine Referenz-Erstlösungswahrscheinlichkeit `p` und einen gemeinsamen Zielwert `r` in erwarteten Punkten pro Sekunde. Eine mögliche Grundbelohnung lautet `R = r × t / p`. Bei Trefferquote `p` und Bearbeitungszeit`t` ergibt sich rechnerisch `p × R / t = r`. Der Hinweisfaktor und in Stufe 1/2 der Restpunktetopf begrenzen danach die konkrete Gutschrift.
 
 Das ist eine **Designhypothese**, keine validierte Fairnessformel. `p` darf nicht aus drei persönlichen Antworten geschätzt oder anhand des gewünschten Klassensiegers manipuliert werden. Es ist eine offen dokumentierte Referenzannahme für ein Aufgabenprofil, später durch geeignete anonyme Auswertung zu prüfen. Schätzunsicherheit, Lernstand, Leselast und Hilfen beeinflussen die Aussage. Bei unzureichender Kalibrierung wird eine einfache identische Punktetabelle mit gemeinsamen Zeitfenstern bevorzugt.
 
@@ -238,8 +244,8 @@ Für Denkaufgaben, die regelmäßig länger als einMinutenfenster benötigen, is
 | Ereignis/Zustand | Wertung | Nächster erlaubter Zustand |
 |---|---|---|
 |Aufgabe vor Ausgabe reserviert |Noch keine Punkte |Einmalig ausgeben, Instanz/Fristen speichern |
-|Aufgabe offen, erste gültige Abgabe rechtzeitig |Nach Schlüssel, Hilfe und Resttopf genau einmal |Feedback, bestätigter Score, gegebenenfalls nächste Stufe |
-|Aufgabe falsch |0 neue Punkte, keine Rückstufung |Korrektur ungewertet oder nächste zulässige Instanz |
+|Aufgabe offen, erste gültige Abgabe rechtzeitig |Nach Schlüssel, Hilfe und gegebenenfalls Resttopf genau einmal |Feedback, bestätigter Score, gegebenenfalls nächste Stufe |
+|Aufgabe falsch |0 neue Punkte, keine Rückstufung |Korrektur/Feedback ungewertet abschließen; danach nächste zulässige Instanz |
 |Rundenfrist bei harter Regel erreicht |Offene nicht abgegebene Aufgabe bringt keine Punkte, gilt nicht als fachlich falsch |Neutraler Abschluss, Erklärung optional ungewertet |
 |Ausgabephase mit Fertigstellregel endet |Keine neuen Instanzen |Bereits offene Instanz bis gemeinsamer Schlussfrist |
 |Gemeinsame Schlussfrist erreicht |Spätere Antworten ungewertet |Session geschlossen, kein persönlicher Nachlauf |
@@ -258,7 +264,7 @@ Beim Wiederverbinden werden Instanz-ID, Profil-/Generator-/Schlüsselversion, ve
 
 ### 10.1 Annahmen des Gedankenexperiments
 
-Die folgende Folge ist handkonstruiert, keine Messung, Prognose oder neue Wirksamkeitsstudie. Drei fiktive Bearbeitungsprofile beginnen gleichzeitig bei 0. Alle nutzen dieselbe veröffentlichte Beispiel-Leiter 10/30/60 Punkte und Schwellen 30/90. Keine Hilfe wird in dieser Simulation genutzt. Die Zeitprüfung verlangt vor einer Stufe 3-Aufgabe mindestens 60 Sekunden Rest. Am Ende gilt harter Rundenschluss. Rechenzeit umfasst in diesem Beispiel Lesen/Eingabe; echte Nutzungsdaten müssten diese Komponenten unterscheiden.
+Die folgende Folge ist handkonstruiert, keine Messung, Prognose oder neue Wirksamkeitsstudie. Drei fiktive Bearbeitungsprofile beginnen gleichzeitig bei 0. Alle nutzen dieselbe veröffentlichte Beispiel-Leiter 10/30/60 Punkte und Schwellen 30/90. Keine Hilfe wird in dieser Simulation genutzt. Die Zeitprüfung verlangt vor einer Stufe 3-Aufgabe mindestens 60 Sekunden Rest. Am Ende gilt harter Rundenschluss. Die angegebenen Zeitblöcke sind in diesem Gedankenexperiment All-in-Zeiten: Sie umfassen Lesen, Eingabe und nach einem Fehler auch die ungewertete Korrektur sowie den verpflichtenden Feedbackabschluss vor der nächsten Aufgabe. Diese Übergänge werden nicht zusätzlich auf die Tabelle aufgeschlagen. Echte Nutzungsdaten müssten die Komponenten unterscheiden.
 
 Die Namen A,B,C beschreiben ausschließlich diesen simulierten Verlauf. Sie sind keine dauerhaften „starken/mittleren/schwachen“ Kinderetiketten. Eine andere Aufgabenfamilie oder Tagesform kann den Verlauf verändern. Mehr Tempo in einer Familie beweist keine generell größere Kompetenz.
 
@@ -379,7 +385,9 @@ Die Zusatzmetadaten benötigen keinen Handschriftupload, keine Kamerabeobachtung
 |Angekündigte Fertigstellphase |Nur bereits ausgegebene Instanz, feste gemeinsame Schlussfrist |
 |Lokale Uhr verstellt / lange Hintergrundpause |Serverzeit bleibt maßgeblich |
 |Lehrkraftstop |Für alle gleicher Abschluss, bestehende Punkte erhalten |
-|Zwei Fakten als Quelle |Quellentreue Varianten/Wiederholung, keine neuen Fakten erfunden |
+|Zwei Fakten als Quelle |Quellentreues Lernen weiter möglich; Challenge-Eignung vorab prüfen, keine unbegrenzte Wiederholungswertung |
+|Gleicher Inhalt mit neuer Instanz-ID |Kanonischer Fingerprint bereits verbraucht, keine zweite Challengewertung |
+|Multiple Choice ohne eigenen geprüften Ratevertrag |Nicht Teil der ersten Referenz-Challenge |
 |Hilfe-/Raten-/Warte-Strategie |Kein offensichtlicher leichter Farmweg; verbleibende Anreize konkret berichten |
 |Fächer gemischt |Keine globale Kompetenzleiter; Wettbewerbsadapter nur bei freigegebener nachvollziehbarer Verteilung |
 |Wissensreise öffnen |Keine neuen Punkte, Rangliste oder manuelle Bewertung |
