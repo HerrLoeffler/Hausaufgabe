@@ -206,3 +206,10 @@ Der isolierte lokale V7-Coco-Proof hat fünf Unterkiefer- und acht Geh-Keyframes
 Ein gezielter Clean-Plate-Imagegenversuch hat Coco global verändert und vergrößert statt einen registrierten Patch zu liefern; Datei `outputs/gradecrew-investment-20261019/animation-v6/art/v7-coco-rig/coco-cleanplate-attempt1.png` bleibt als verworfener Versuch erhalten. Kein zweiter Imagegenversuch. Ein Geometry-Reviewer prüft nun maskierte Kiefertransformationen im isolierten Ordner `animation-v7-coco-proof/geometry-review/`; der Voice-Actor besitzt Renderer/Timeline/Video. Zuständigkeiten bleiben getrennt.
 
 Vor Fortsetzung des Gesamtfilms: nur kurzen Coco-Proof mit sauberer Kieferbewegung und flüssigem, nicht angeschnittenem Gehzyklus visuell prüfen. V6-Nutzerablehnung bleibt maßgeblich; V5/V6 werden nicht verändert. Keine neue Stimme, ElevenLabs-Produktintegration, bezahlte Videogeneration oder PowerPoint-/Produktänderung. Kein Status als abgeschlossen/akzeptiert.
+
+
+### GC-FINANCE-BAYSTARTUP-20261008 · V7-Coco-Eintritt/Sprechen v2 (15.10.2026)
+
+Korrigierte isolierte 10-s-Probe: `outputs/gradecrew-investment-20261019/animation-v7-coco-proof/combined-proof-v2/Coco_V7_Eintritt_und_Sprechen_v2.mp4` (1280×720, 30 fps, H.264/AAC; SHA-256 `02a7ddc2638e859c7af7f3b42c89a32d37690eb1103e786c5e3c64e331834a55`). Root sichtete drei Eintritts-Keyframes: 0,0 s außerhalb, 0,8 s links im Eintritt, 1,6 s mittig. Das korrigiert den fehlenden Einritt in v1 und ist ein technischer Kandidat für menschliches Feedback, keine Nutzerfreigabe und kein Nachweis eines vollständigen Walk-Zyklus. Manifest dokumentiert 1,7-s-Kameraschnitt, moderaten Watschelgang und teilweise verdeckten hinteren Fuß. v1 sowie die separate 5,233-s-Unterschnabel-Studie bleiben erhalten.
+
+Noch kein vollständiger Introfilm und keine V7-PPTX. V6 bleibt abgelehnt; bisherige Decks unverändert. Martins Sicht-/Hörprüfung der kurzen Coco-Proofs ist erforderlich, bevor Film oder Folie fortgesetzt werden. Keine neuen ElevenLabs-/Voice-Provider- oder bezahlten Videogenerierungen; keine Produkt-/Main-/STATE-/Deployänderung.
