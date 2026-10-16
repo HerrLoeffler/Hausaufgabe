@@ -38,8 +38,6 @@ export function createAccountController({root,getSession,call,refresh,open,forma
     updateSelection();
   }
   async function start(action,targets,value) {
-    // A distinct server action keeps older clients/previews from authorizing test closure.
-    if(action==='delete')action='end-tests-delete';
     if(busy||pending||!targets.length)return;
     if(getSession()!==session){reset();return;}
     const currentEpoch=epoch;busy=true;summary='Aktion wird geprüft …';render(rows,{allUsers});

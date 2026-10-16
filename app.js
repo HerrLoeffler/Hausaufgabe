@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc39";
+const APP_VERSION = "2.3.1-gc40";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -37,12 +37,12 @@ import {
   Timestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
-import { createAccountController } from "./admin-account-actions.mjs?v=1";
+import { createAccountController } from "./admin-account-actions.mjs?v=2";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-gc39";
-import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc39";
-import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc39";
+import { createAiClient } from "./ai-client.js?v=2.3.1-gc40";
+import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc40";
+import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc40";
 import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";

@@ -20,21 +20,33 @@ test("anonymous, teacher, suspended, disabled and revoked callers cannot mutate"
 test("confirmed deletion closes owned published tests before deleting identity and preserves school/foreign records",async()=>{
  await seed();await db.doc("quizzes/live").set({ownerId:"t",title:"Synthetic live test",published:true,ended:false,sessionState:"running",sessionRunId:"run-one",shareEnabled:true});
  await db.doc("quizzes/live/submissions/one").set({points:2});await db.doc("quizzes/live/attempts/one").set({status:"running"});await db.doc("quizzes/foreign").set({ownerId:"b",published:true,ended:false,sharedWith:["t"]});
- const p=await preview("a","end-tests-delete",["a","t"]);assert.deepEqual(p.targets.map(r=>r.code),["self-protected","allowed"]);assert.equal(p.targets[1].testsToEnd.length,1);assert.equal(p.targets[1].testsToEnd[0].id,"live");assert.equal((await db.doc("quizzes/live").get()).data().published,true);
+ const p=await preview("a","delete",["a","t"]);assert.deepEqual(p.targets.map(r=>r.code),["self-protected","allowed"]);assert.equal(p.targets[1].testsToEnd.length,1);assert.equal(p.targets[1].testsToEnd[0].id,"live");assert.equal((await db.doc("quizzes/live").get()).data().published,true);
  const originalDelete=auth.deleteUser;auth.deleteUser=async id=>{const q=(await db.doc("quizzes/live").get()).data();assert.equal(q.published,false);assert.equal(q.ended,true);assert.equal(q.sessionState,"ended");assert.ok(q.endedAt.toMillis()>0);return originalDelete(id);};
  try {const r=await execute("a",p);assert.deepEqual(r.outcomes,[{id:"a",code:"self-protected"},{id:"t",code:"complete"}]);}finally{auth.deleteUser=originalDelete;}
  const closed=(await db.doc("quizzes/live").get()).data();assert.equal(closed.sessionRunId,"run-one");assert.equal(closed.shareEnabled,true);assert.equal((await db.doc("quizzes/foreign").get()).data().published,true);for(const path of["quizzes/live/submissions/one","quizzes/live/attempts/one"])assert.equal((await db.doc(path).get()).exists,true);
 });
 test("stale identity, security state, expiration and new active exams invalidate confirmation",async()=>{for(const kind of["identity","auth-identity","status","expiry","exam"]){await seed();const p=await preview("a","delete",["t"]);if(kind==="identity")await db.doc("users/t").update({email:"different@example.invalid"});if(kind==="auth-identity")identities.get("t").email="changed@example.invalid";if(kind==="status")await db.doc("users/t").update({status:"suspended"});if(kind==="expiry")time+=301000;if(kind==="exam")await db.doc("quizzes/new").set({ownerId:"t",published:true});await assert.rejects(execute("a",p),{code:"failed-precondition"});assert.equal(identityDeletes,0);}});
-test('legacy delete cannot close tests and combined confirmation cannot silently expand or change runs/ownership',async()=>{
- for(const change of ['new','run','owner','end']){
+test('ordinary and combined deletion confirmations cannot silently expand or change runs/ownership',async()=>{
+ for(const action of ['delete','end-tests-delete'])for(const change of ['new','run','owner','end']){
   await seed();await db.doc('quizzes/live').set({ownerId:'t',published:true,ended:false,sessionRunId:'first'});
-  const legacy=await preview('a','delete',['t']);assert.equal(legacy.targets[0].code,'active-exam');await execute('a',legacy);assert.equal((await db.doc('quizzes/live').get()).data().published,true);assert.equal(identities.has('t'),true);
-  const p=await preview('a','end-tests-delete',['t']);
+  const p=await preview('a',action,['t']);assert.equal(p.targets[0].code,'allowed');
   if(change==='new')await db.doc('quizzes/new').set({ownerId:'t',published:true});
   else await db.doc('quizzes/live').update(change==='run'?{sessionRunId:'replacement'}:change==='owner'?{ownerId:'b'}:{ended:true,published:false});
   await assert.rejects(execute('a',p),{code:'failed-precondition'});assert.equal(identityDeletes,0);assert.equal((await db.doc('accountDeletions/t').get()).exists,false);
  }
+});
+test('fresh recovery confirmation explicitly closes newly published tests after a failed deletion',async()=>{
+ await seed();failure='t';const original=await preview('a','delete',['t']);await execute('a',original);failure='';
+ await db.doc('quizzes/newly-published').set({ownerId:'t',published:true,ended:false,sessionRunId:'original-round'});
+ const oldRetry=await execute('a',original);assert.equal(oldRetry.status,'partial');assert.equal(oldRetry.outcomes[0].reason,'tests-not-ended');assert.equal(identities.has('t'),true);
+ const recovery=await preview('b','recover-delete',['t']);assert.equal(recovery.targets[0].code,'allowed');assert.deepEqual(recovery.targets[0].testsToEnd.map(q=>q.id),['newly-published']);assert.equal((await db.doc('quizzes/newly-published').get()).data().published,true);
+ const result=await execute('b',recovery);assert.deepEqual(result.outcomes,[{id:'t',code:'complete'}]);assert.equal(identities.has('t'),false);
+ const q=(await db.doc('quizzes/newly-published').get()).data();assert.equal(q.published,false);assert.equal(q.ended,true);assert.equal(q.sessionRunId,'original-round');
+});
+test('a previously blocked legacy deletion preview requires a fresh confirmation',async()=>{
+ await seed();await db.doc('quizzes/live').set({ownerId:'t',published:true,ended:false});
+ const p=await preview('a','delete',['t']);const ref=db.doc(`accountActions/${p.operationId}`),saved=(await ref.get()).data();saved.rows[0].code='active-exam';await ref.set(saved);
+ await assert.rejects(execute('a',p),{code:'failed-precondition'});assert.equal(identities.has('t'),true);assert.equal((await db.doc('quizzes/live').get()).data().published,true);
 });
 test('combined test closure keeps end timestamp on retry after Auth failure and does not close unpublished drafts',async()=>{
  await seed();failure='t';await db.doc('quizzes/live').set({ownerId:'t',published:true,ended:false});await db.doc('quizzes/ended').set({ownerId:'t',published:true,ended:true,endedAt:new Date(time-200000)});await db.doc('quizzes/draft').set({ownerId:'t',published:false,ended:false});
@@ -59,7 +71,7 @@ test('combined closure is bounded across bulk targets and never deletes or ends 
 });
 test('combined deletion rechecks caller role and refuses pending new publications before Auth removal',async()=>{
  await seed();await db.doc('quizzes/live').set({ownerId:'t',published:true,ended:false});const p=await preview('a','end-tests-delete',['t']);await db.doc('users/a').update({role:'teacher'});await assert.rejects(execute('a',p),{code:'permission-denied'});assert.equal((await db.doc('quizzes/live').get()).data().published,true);
- await seed();failure='t';const q=await preview('a','end-tests-delete',['t']);await execute('a',q);await db.doc('quizzes/unexpected').set({ownerId:'t',published:true});failure='';const retry=await execute('a',q);assert.equal(retry.status,'partial');assert.equal(retry.outcomes[0].reason,'tests-not-ended');assert.equal(identities.has('t'),true);const recovery=await preview('b','recover-delete',['t']);assert.equal(recovery.targets[0].code,'active-exam');
+ await seed();failure='t';const q=await preview('a','end-tests-delete',['t']);await execute('a',q);await db.doc('quizzes/unexpected').set({ownerId:'t',published:true});failure='';const retry=await execute('a',q);assert.equal(retry.status,'partial');assert.equal(retry.outcomes[0].reason,'tests-not-ended');assert.equal(identities.has('t'),true);const recovery=await preview('b','recover-delete',['t']);assert.equal(recovery.targets[0].code,'allowed');assert.deepEqual(recovery.targets[0].testsToEnd.map(q=>q.id),['unexpected']);assert.equal((await db.doc('quizzes/unexpected').get()).data().published,true);
 });
 test("concurrent mutual admin demotion retains one active admin and denies the loser",async()=>{await seed();const p=await preview("a","role",["b"],"teacher"),q=await preview("b","role",["a"],"teacher");const r=await Promise.allSettled([execute("a",p),execute("b",q)]);assert.equal(r.filter(x=>x.status==="fulfilled").length,1);assert.equal(r.filter(x=>x.status==="rejected")[0].reason.code,"permission-denied");const admins=(await db.collection("users").where("role","==","admin").get()).docs.filter(s=>s.data().status==="active");assert.equal(admins.length,1);});
 test("mixed concurrent suspension and deletion cannot eliminate every administrator",async()=>{await seed();const p=await preview("a","delete",["b"]),q=await preview("b","status",["a"],"suspended");const r=await Promise.allSettled([execute("a",p),execute("b",q)]);assert.equal(r.filter(x=>x.status==="fulfilled").length,1);const admins=(await db.collection("users").where("role","==","admin").get()).docs.filter(s=>s.data().status==="active");assert.equal(admins.length,1);});

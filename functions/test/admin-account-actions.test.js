@@ -1,8 +1,7 @@
 "use strict";
 const test = require("node:test");
 const assert = require("node:assert/strict");
-let validate, plan;
-try { ({ validateAction: validate, planAction: plan } = require("../lib/admin-account-actions")); } catch (_) { validate = () => ({targets:[]}); plan = () => ({allowed:true}); }
+const { validateAction: validate, planAction: plan } = require("../lib/admin-account-actions");
 const admin = {id:"a",role:"admin",status:"active"};
 const teacher = {id:"t",role:"teacher",status:"active"};
 test("bounded requests reject empty, duplicate, oversized and path-like identities", () => {

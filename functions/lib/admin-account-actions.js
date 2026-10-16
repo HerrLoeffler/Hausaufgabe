@@ -77,8 +77,8 @@ function createAccountActions({ db, auth, now = () => Date.now() }) {
         if (quizzes.size > 500) code = "scope-too-large";
         else {
           testsToEnd = quizzes.docs.filter(s=>s.data().published===true).map(s=>({id:s.id,title:s.data().title||s.id,fingerprint:testFingerprint(s.id,s.data()),alreadyEnded:s.data().ended===true})).sort((a,b)=>a.id.localeCompare(b.id));
-          // Recovery never silently expands a previously confirmed deletion to new tests.
-          if (spec.action !== "end-tests-delete" && testsToEnd.length) code = "active-exam";
+          // Every fresh deletion preview explicitly lists the tests it will close.
+          // Execution binds that exact list; retries never silently expand it.
         }
       }
       if (deletesAccount(spec.action) && code === "allowed") {
