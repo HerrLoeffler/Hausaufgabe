@@ -24,23 +24,23 @@ Spec: docs/games/learning-ux-20261015 auf docs/games-learning-ux-20261015@c665cc
 ## Task1: pure engine + invariants
 Files: lab/fast-quiz-functions/classroom-math.js (UMD für Browserbuild), tools/games/classroom-math.test.cjs.
 Interfaces: generateTask(config,seed,index), planKinds(category,count,seed), balancedTeams(ids,seed), standings(members,roster), targetFor(round).
-- [ ] Failing tests für65Mix, Zahlen/Strategien, reproduzierbare eindeutige Optionen, Teamgrößen24/25,600/600Beispiel/Ties.
-- [ ] Node tests RED, implementieren, GREEN; Checkpointcommit.
+- [x] Failing tests für65Mix, Zahlen/Strategien, reproduzierbare eindeutige Optionen, Teamgrößen24/25,600/600Beispiel/Ties.
+- [x] Node tests RED, implementieren, GREEN; Checkpointcommit.
 
 ## Task2: server routes
 Files: lab/fast-quiz-functions/classroom.js/index.js, tools/games/classroom-server.test.cjs.
 Interfaces: classroomCreate/Join/State/Assign/Start/Stop/Task/Hint/Answer/Reveal auf bestehendem API mit Tokenvertrag; separate Collection.
-- [ ] Failing behavior tests mit Firestoretransaktionsadapter für Kernschleife/Manipulation/Rejoin/Latejoin/atomicStart/Antwortidempotenz/Fristen.
-- [ ] Implementieren und echte Tests grün. Keine Antworten/Seeds vorab.
+- [x] Failing behavior tests mit Firestoretransaktionsadapter für Kernschleife/Manipulation/Rejoin/Latejoin/atomicStart/Antwortidempotenz/Fristen.
+- [x] Implementieren und echte Tests grün. Keine Antworten/Seeds vorab.
 
 ## Task3: clear UI
 Files: lab/fast-quiz/classroom.js/classroom.css vom abgegrenzten UX-Fachagent; index.html + tools/build-lab-fast-quiz.mjs hier.
 Interfaces: global FastQuizClassroomMath; obige API. Nur zwei neue UI-Dateien parallel freigegeben.
-- [ ] Browsertests für Auswahl/Material/QR+Code/Teacher4Teams/Schülerkorrektur/freieÜbung/Stop/Rejoin.
-- [ ] Legacy-Suite/build/browser prüfen. Screens sichern.
+- [x] Browsertests für Auswahl/Material/QR+Code/Teacher4Teams/Schülerkorrektur/freieÜbung/Stop/Rejoin.
+- [x] Legacy-Suite/build/browser prüfen. Screens sichern.
 
 ## Task4: review + release
 Files: eigener Deploywrapper, workstreams/math-classroom-learning-ux-20261016.md/Receipts, scoped TODO/STATE-Snapshot.
-- [ ] PR+ExactSHA CI+unabhängigen Review, Findings begrenzt beheben.
-- [ ] Vorhandene Firebase CLI Anmeldung nutzen, bestehende separate fastquiz Functions und eigenen Hostingkanal deployen; Rules unverändert.
-- [ ] HTTPHash+Functionsreceipt, echter synthetischerTeacher/Student/Team/Computerlauf; URL und Grenzen sichern.
+- [x] PR+ExactSHA CI+unabhängigen Review, Findings begrenzt beheben.
+- [x] Vorhandene Firebase CLI Anmeldung nutzen, bestehende separate fastquiz Functions und eigenen Hostingkanal deployen; Rules unverändert.
+- [x] HTTPHash+Functionsreceipt, echter synthetischerTeacher/Student/Team/Computerlauf; URL und Grenzen sichern.
