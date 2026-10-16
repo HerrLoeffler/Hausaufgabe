@@ -639,12 +639,12 @@
     },
     {
       "id": "games-learning-ux-20261015",
-      "title": "GC-GAMES-LEARNING-UX-01: gemeinsames Lernspiele-Planbuch",
+      "title": "GC-GAMES-LEARNING-UX-01: Lernspieleplan und Mathe-Klassenruntime",
       "primaryBranch": "docs/games-learning-ux-20261015",
       "integrationTarget": "main",
       "state": "active",
       "handoff": "workstreams/games-learning-ux-20261015.md",
-      "relatedBranches": []
+      "relatedBranches": ["feat/math-classroom-learning-ux-20261016"]
     }
   ]
 }
