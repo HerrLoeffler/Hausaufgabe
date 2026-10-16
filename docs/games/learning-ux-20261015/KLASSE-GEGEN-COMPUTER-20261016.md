@@ -26,7 +26,7 @@ Gleiche konkrete Aufgaben oder fachlich geprüfte Parallelformen, Slottypen, Hin
 
 `Klassenstand = 1000 × Summe bestätigter Punkte / (N_fix × M)`.
 
-N wird vor Start von der Lehrkraft bestätigt, jede Person besitzt eine Teilnahmesitzung; doppelte Geräte zählen nicht doppelt. N≥1, M>0 und Zielwerte zwischen 1 und 1000 sind Startvoraussetzungen. Disconnect oder Abbruch entfernen niemanden aus dem Nenner. Serverfrist, Hintstatus und Wiederverbindung bleiben unverändert gebunden. Bei 18 Personen mit durchschnittlich 60/100 entstehen 600/1000, bei 30 Personen genauso. Die Normierung ist keine Fairness-/Lernwirkungsgarantie.
+N wird vor Start von der Lehrkraft bestätigt, jede Person besitzt eine Teilnahmesitzung; doppelte Geräte zählen nicht doppelt. N≥1 und M>0 sind Startvoraussetzungen; die Zielgrenze zwischen 1 und 1000 gilt für diesen normierten Referenzlauf. Disconnect oder Abbruch entfernen niemanden aus dem Nenner. Serverfrist, Hintstatus und Wiederverbindung bleiben unverändert gebunden. Bei 18 Personen mit durchschnittlich 60/100 entstehen 600/1000, bei 30 Personen genauso. Die Normierung ist keine Fairness-/Lernwirkungsgarantie.
 
 Der persönliche Maximalbeitrag begrenzt, wie weit eine einzige schnelle Person die Klasse tragen kann. Es gibt keinen öffentlich eingeforderten Mindestbeitrag pro Kind und keinen „letzten Pflichtretter“. Bei kleinen Gruppen bleiben Varianz und Zusammensetzung bedeutsam. Gemeinsame Teamgeräte erfordern einen eigenen Vertrag und werden nicht als unabhängige Personen gerechnet.
 
@@ -60,14 +60,14 @@ Retry beginnt als neue Runde mit zurückgesetztem Gegnerfortschritt und gleicher
 
 ## 6. Alternative und begrenzter nächster Schritt
 
-Eine freie fortlaufende Sammelrunde kann alternativ ein Gegnerziel `N_fix × Zielbeitrag pro Person` nutzen. Punkte-/Zeitbasis müssen vorab gleich erklärt sein; bei adaptiv unterschiedlichen Aufgabenströmen wird keine Vergleichsgarantie behauptet. Das ist eine Advancedalternative desselben Computerziels, keine zweite gleichgewichtige Startwelt. Beide Wertungen werden nicht innerhalb einer Runde vermischt. Wissensreise erhält weiterhin keine Punkte/Rangliste/manuelle Bewertung ohne eigenen ausdrücklichen Produktauftrag.
+Eine freie fortlaufende Sammelrunde kann alternativ ein Rohpunkteziel `N_fix × Rohzielbeitrag pro Person` nutzen. Verglichen wird dabei die bestätigte Rohpunktsumme mit diesem Rohpunkteziel; auch der Energiebalken setzt beide Größen in Rohpunkten ins Verhältnis. Die 1–1000-Grenze des normierten Referenzlaufs gilt hier nicht. Vor Start wird ein positiver Rohzielbeitrag festgelegt, der höchstens den für alle gleichen positiven persönlichen Beitragstopf erreicht. Nach ausgeschöpftem Topf bleibt Weiterüben ungewertet möglich. Punkte-/Zeitbasis werden vorher erklärt; bei adaptiv unterschiedlichen Aufgabenströmen wird keine Vergleichsgarantie behauptet. Das ist eine Advancedalternative desselben Computerziels, keine zweite gleichgewichtige Startwelt. Beide Wertungen werden nicht innerhalb einer Runde vermischt. Wissensreise erhält weiterhin keine Punkte/Rangliste/manuelle Bewertung ohne eigenen ausdrücklichen Produktauftrag.
 
 Referenzumfang: eine vorhandene freigegebene Mathequelle, eine Kategorie, ein Level, fester Computerzielbalken und der vorhandene QR-/Boardflow. Zu prüfen sind:
 
 1. Kopf bleibt 100%Kopf; SB behält seinen angekündigten Slotmix.
 2. Gegnerlevel und Fachlevel werden getrennt angezeigt; Wechsel nur vor neuer Runde.
 3.18 und 30 Personen erreichen bei gleichem Durchschnitt denselben Stand.
-4. Leeres N, ungültiges M oder Ziel außerhalb 1–1000 blockieren den Start.
+4. Im normierten Referenzlauf blockieren leeres N, ungültiges M oder ein Ziel außerhalb 1–1000 den Start.
 5. Hinweise/Erstabgabe/Einmalwertung beachten den 20/10/0-Vertrag.
 6. Exakter Zielstand gilt als geschafft; Zielunterschreitung führt zu gemeinsamer Retryoption.
 7. Teacherstop ist Abbruch; nächste Runde startet ausschließlich bewusst.
