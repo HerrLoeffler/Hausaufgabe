@@ -18,7 +18,7 @@
       if(level===1){a=int(124,386);b=int(137,294);answer=a+b;prompt=`${a} + ${b}`;hint='Schreibe die Zahlen stellenrichtig untereinander. Beginne bei den Einern.';strategy='Stellenweise addieren';}
       if(level===2){a=int(124,386);b=int(3,8);answer=a*b;prompt=`${a} × ${b}`;hint='Zerlege in Hunderter, Zehner und Einer oder rechne schriftlich.';strategy='Schriftlich multiplizieren';}
       if(level===3){a=int(23,68);b=int(13,39);answer=a*b;prompt=`${a} × ${b}`;hint='Notiere die beiden Teilprodukte nach Zehnern und Einern. Addiere sie.';strategy='Teilprodukte notieren';}
-      if(level===4){a=int(112,298)/10;b=int(23,68)/10;answer=Math.round(a*b*100)/100;prompt=`${format(a)} × ${format(b)}`;hint='Rechne zuerst ohne Kommas. Das Ergebnis hat zusammen zwei Nachkommastellen.';strategy='Dezimalzahlen schriftlich multiplizieren';}
+      if(level===4){a=int(112,298)/10;b=int(23,68)/10;answer=Math.round(a*b*100)/100;prompt=`${a.toLocaleString('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})} × ${b.toLocaleString('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1,useGrouping:false})}`;hint='Rechne zuerst ohne Kommas. Das Ergebnis hat zusammen zwei Nachkommastellen.';strategy='Dezimalzahlen schriftlich multiplizieren';}
     }else if(level===1){
       if(family===0){a=int(2,7)*10+8;b=int(3,9);answer=a+b;prompt=`${a} + ${b}`;hint=`Ergänze ${a} zuerst mit 2 zum nächsten Zehner. Addiere dann den Rest.`;strategy='Zum Zehner ergänzen';}
       if(family===1){a=int(3,9)*10+2;b=int(4,9);answer=a-b;prompt=`${a} − ${b}`;hint='Gehe zuerst zum vorherigen Zehner und ziehe dann den Rest ab.';strategy='Über den Zehner';}
@@ -42,9 +42,25 @@
     const correct=format(answer);const offsets=shuffle([1,2,5,10,20,-1,-2,-5,-10],random);const choices=[correct];for(const offset of offsets){const candidate=format(answer+offset);if(!choices.includes(candidate))choices.push(candidate);if(choices.length===4)break;}
     return{id:`${index}:${kind}:${family}`,prompt:prompt+' = ?',options:shuffle(choices,random),correct,hint,strategy,explanation:`${prompt} = ${correct}. ${hint}`,kind,material:kind==='P'?'Stift und Papier':'Im Kopf',calculatorAllowed:false,hintOrientation:kind==='P'?'20–60 Sekunden oder länger sind zum Nachdenken okay.':'In Ruhe im Kopf rechnen.'};
   }
+  function generateScoredTask(config,seed,slot){
+    const seen=new Set();let question;
+    for(let index=0;index<=slot;index++){
+      for(let attempt=0;attempt<100;attempt++){
+        question=generateTask({...config,slotCount:5},(seed+Math.imul(attempt,1013904223))>>>0,index);
+        // Keep the curriculum slot type fixed even when a duplicate variant is replaced.
+        question.kind=planKinds(config.category,5,seed)[index];
+        question.material=question.kind==='P'?'Stift und Papier':'Im Kopf';
+        question.fingerprint=[config.category,config.level,Number(config.campaignRound||1),question.kind,question.prompt,question.correct].join('|');
+        if(!seen.has(question.fingerprint))break;
+      }
+      if(seen.has(question.fingerprint))throw new Error('Kein eindeutiger Aufgabenplan verfügbar.');
+      seen.add(question.fingerprint);
+    }
+    return question;
+  }
   function balancedTeams(ids,seed){const assignment={};shuffle(ids,rng(seed)).forEach((id,i)=>{assignment[id]=i%4;});return assignment;}
-  function standings(members,roster){const rows=teams.map(team=>{const ids=Object.keys(roster||{}).filter(id=>roster[id]===team.id);const rawScore=ids.reduce((sum,id)=>sum+Math.max(0,Number(members[id]?.score)||0),0);return{...team,size:ids.length,rawScore,energy:ids.length?Math.round(1000*rawScore/(ids.length*100)):0};});for(const row of rows)row.rank=1+rows.filter(other=>other.energy>row.energy).length;return rows;}
+  function standings(members,roster){const rows=teams.map(team=>{const ids=Object.keys(roster||{}).filter(id=>roster[id]===team.id);const rawScore=ids.reduce((sum,id)=>sum+Math.max(0,Number(members[id]?.score)||0),0);return{...team,size:ids.length,rawScore,energy:ids.length?Math.round(100000*rawScore/(ids.length*100))/100:0};});for(const row of rows)row.rank=1+rows.filter(other=>other.energy>row.energy).length;return rows;}
   const targetFor=round=>[500,600,600,700][Math.max(0,Math.min(3,round-1))];
   function normalizeAnswer(value){const s=String(value??'').trim().replace(',','.');if(!/^[+−-]?\d+(?:\.\d+)?$/.test(s))return null;const n=Number(s.replace('−','-'));return Number.isFinite(n)&&Math.abs(n)<1000000000?format(n):null;}
-  return{normalizeAnswer,planKinds,generateTask,balancedTeams,standings,targetFor,teams,examples};
+  return{normalizeAnswer,planKinds,generateTask,generateScoredTask,balancedTeams,standings,targetFor,teams,examples};
 });

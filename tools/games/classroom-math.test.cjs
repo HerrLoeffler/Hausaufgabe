@@ -43,3 +43,20 @@ test('balanced roster 24/25 and group normalized energy uses frozen denominators
 });
 
 test('five generated scored slots preserve 3H/2P and numeric answers accept German comma',()=>{ assert.ok(math);for(let seed=0;seed<100;seed++){const qs=Array.from({length:5},(_,i)=>math.generateTask({category:'paper',level:'n2',slotCount:5},seed,i));assert.equal(qs.filter(x=>x.kind==='P').length,2);}assert.equal(math.normalizeAnswer('12,50'),'12,5');assert.equal(math.normalizeAnswer(' 12.50 '),'12,5');assert.equal(math.normalizeAnswer('Infinity'),null);assert.equal(math.normalizeAnswer('1,2,3'),null);});
+test('scored five-slot packs never score the same canonical math task twice',()=>{
+ assert.equal(typeof math.generateScoredTask,'function');
+ for(const category of ['mental','paper'])for(const level of ['n1','n2','n3','n4'])for(let seed=0;seed<100;seed++){
+  const qs=Array.from({length:5},(_,i)=>math.generateScoredTask({category,level,campaignRound:1},seed,i));
+  assert.equal(new Set(qs.map(q=>q.fingerprint)).size,5);
+  if(category==='paper')assert.equal(qs.filter(q=>q.kind==='P').length,2);
+ }
+});
+test('paper decimal procedure counts the places actually displayed, including integer operands',()=>{
+ for(let seed=0;seed<100;seed++){
+  const q=math.generateTask({category:'paper',level:'n4',slotCount:5},seed,1);
+  const operands=q.prompt.replace(' = ?','').split(' × ');
+  assert.equal(operands.length,2);assert.equal(operands.reduce((sum,x)=>sum+(x.split(',')[1]?.length||0),0),2);
+ }
+ const a=math.generateScoredTask({category:'mental',level:'n4',campaignRound:1},3,0),b=math.generateScoredTask({category:'mental',level:'n4',campaignRound:1},3,4);
+ assert.notEqual(a.fingerprint,b.fingerprint);
+});

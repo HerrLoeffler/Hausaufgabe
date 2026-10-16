@@ -1,6 +1,9 @@
 'use strict';
 const math=require('./classroom-math.js');
-const {randomBytes}=require('node:crypto');
+const {randomBytes,createHash}=require('node:crypto');
+const {readFileSync}=require('node:fs');
+const path=require('node:path');
+const buildHash=createHash('sha256').update(['index.js','classroom.js','classroom-math.js'].map(name=>readFileSync(path.join(__dirname,name))).reduce((a,b)=>Buffer.concat([a,b]),Buffer.alloc(0))).digest('hex');
 const DURATION_MS=300000,WINDOW_MS=60000,MAX_PLAYERS=30;
 function createApi({db,hashToken,newToken,fail,now=Date.now,randomSeed=()=>randomBytes(4).readUInt32BE(0)}) {
   const secretHash=token=>hashToken(String(token||''));
@@ -11,30 +14,32 @@ function createApi({db,hashToken,newToken,fail,now=Date.now,randomSeed=()=>rando
     return{category:raw.category,level:raw.level,gameMode:raw.gameMode,durationSec:300,slotCount:5,maxPoints:100,windowSec:60};
   }
   const publicMember=(id,m,room)=>({id,name:m.name,teamId:m.teamId,scored:Object.hasOwn(room.roster||{},id),score:Number(m.score||0)});
-  function metrics(room){const ids=Object.keys(room.roster||{});const total=ids.reduce((sum,id)=>sum+(room.members[id]?.score||0),0);const energy=ids.length?Math.round(1000*total/(ids.length*100)):0;return{energy,target:math.targetFor(room.round),success:energy>=math.targetFor(room.round)};}
+  function metrics(room){const ids=Object.keys(room.roster||{});const total=ids.reduce((sum,id)=>sum+(room.members[id]?.score||0),0);const energy=ids.length?Math.round(1000*total/(ids.length*100)):0;return{energy,target:math.targetFor(room.round),success:room.status!=='aborted'&&energy>=math.targetFor(room.round)};}
   function expire(room,time){if(room.status==='running'&&time>=room.endsAtMs)room.status='finished';}
   function host(room,p){if(!p.hostToken||secretHash(p.hostToken)!==room.hostTokenHash)fail('host_forbidden','Lehrerzugriff ungültig.',403);}
-  function player(room,p){const m=room.members[String(p.playerId||'')];if(!m||!p.playerToken||secretHash(p.playerToken)!==m.tokenHash)fail('player_forbidden','Spielerzugriff ungültig.',403);return m;}
+  function player(room,p){const id=String(p.playerId||'');const m=Object.hasOwn(room.members,id)?room.members[id]:null;if(!m||!p.playerToken||secretHash(p.playerToken)!==m.tokenHash)fail('player_forbidden','Spielerzugriff ungültig.',403);return m;}
   function projection(room,p,time){
     const isHost=Boolean(p.hostToken)&&secretHash(p.hostToken)===room.hostTokenHash;
     if(p.hostToken&&!isHost)host(room,p);
     const self=p.playerId||p.playerToken?publicMember(p.playerId,player(room,p),room):undefined;
     const teams=math.standings(room.members,room.status==='waiting'?Object.fromEntries(Object.entries(room.members).map(([id,m])=>[id,m.teamId])):room.roster);
-    return{code:room.code,config:room.config,status:room.status,round:room.round,startsAtMs:room.startsAtMs,endsAtMs:room.endsAtMs,serverNowMs:time,slot:room.startsAtMs?Math.max(0,Math.min(4,Math.floor((time-room.startsAtMs)/WINDOW_MS))):0,playerCount:Object.keys(room.members).length,...(isHost?{members:Object.entries(room.members).map(([id,m])=>publicMember(id,m,room))}:{}),...(self?{self}:{}),teams,...metrics(room)};
+    return{code:room.code,config:room.config,status:room.status,round:room.round,roundId:room.roundId||null,startsAtMs:room.startsAtMs,endsAtMs:room.endsAtMs,serverNowMs:time,slot:room.startsAtMs?Math.max(0,Math.min(4,Math.floor((time-room.startsAtMs)/WINDOW_MS))):0,playerCount:Object.keys(room.members).length,...(isHost?{members:Object.entries(room.members).map(([id,m])=>publicMember(id,m,room))}:{}),...(self?{self}:{}),teams,...metrics(room)};
   }
   async function transaction(payload,fn){
     const code=String(payload.code||'');if(!/^\d{6}$/.test(code))fail('code_invalid','Bitte einen sechsstelligen Rundencode eingeben.');
     const ref=db.collection('fastQuizClassrooms').doc(code);
     return db.runTransaction(async tx=>{const snap=await tx.get(ref);if(!snap.exists)fail('room_not_found','Diese Klassenrunde wurde nicht gefunden.',404);const room=snap.data();const time=now();if(room.expiresAtMs<time)fail('room_expired','Diese Klassenrunde ist abgelaufen.',410);const before=JSON.stringify(room);expire(room,time);const result=await fn(room,time);if(JSON.stringify(room)!==before)tx.set(ref,room);return result;});
   }
-  function activeTask(room,p,time){
+  function activeTask(room,p,time,mutation=false){
     const member=player(room,p);
     if(room.status!=='running')fail('room_not_running','Die Runde läuft gerade nicht.',409);
     if(time<room.startsAtMs)fail('not_started','Der gemeinsame Start steht noch bevor.',409);
     const slot=Math.floor((time-room.startsAtMs)/WINDOW_MS);
     if(slot<0||slot>=5)fail('window_closed','Dieses Zeitfenster ist beendet.',409);
+    if(mutation&&(!Number.isInteger(p.slot)||p.slot<0||p.slot>=5))fail('slot_required','Bitte das aktuelle Zeitfenster verwenden.',409);
+    if(mutation&&p.roundId!==room.roundId)fail('round_changed','Die Runde hat gewechselt. Bitte die aktuelle Aufgabe laden.',409);
     if(p.slot!==undefined&&(!Number.isInteger(p.slot)||p.slot!==slot))fail('window_mismatch','Dieses Zeitfenster ist nicht mehr aktiv.',409);
-    const scored=Object.hasOwn(room.roster,p.playerId);const question=math.generateTask({...room.config,slotCount:5,campaignRound:room.round},room.seed,slot);
+    const scored=Object.hasOwn(room.roster,p.playerId);const question=math.generateScoredTask({...room.config,campaignRound:room.round},room.seed,slot);
     return{member,slot,scored,question};
   }
   return async function api(action,p={}){
@@ -59,7 +64,7 @@ function createApi({db,hashToken,newToken,fail,now=Date.now,randomSeed=()=>rando
         case'classroomAssign':{
           host(room,p);if(!['waiting','finished','aborted'].includes(room.status))fail('round_frozen','Teams können nur vor einer Runde geändert werden.',409);
           const assignments=p.assignments;if(!assignments||typeof assignments!=='object'||Array.isArray(assignments))fail('assignment_invalid','Bitte die Teamzuordnung prüfen.');
-          for(const [id,teamId] of Object.entries(assignments)){if(!room.members[id]||!Number.isInteger(teamId)||teamId<0||teamId>3)fail('assignment_invalid','Bitte die Teamzuordnung prüfen.');}
+          for(const [id,teamId] of Object.entries(assignments)){if(!Object.hasOwn(room.members,id)||!Number.isInteger(teamId)||teamId<0||teamId>3)fail('assignment_invalid','Bitte die Teamzuordnung prüfen.');}
           for(const [id,teamId]of Object.entries(assignments))room.members[id].teamId=teamId;
           return projection(room,p,time);
         }
@@ -67,6 +72,7 @@ function createApi({db,hashToken,newToken,fail,now=Date.now,randomSeed=()=>rando
           host(room,p);
           if(room.status==='running')return projection(room,p,time);
           if(room.status!=='waiting'){
+            if((p.next===true||p.retry===true)&&p.expectedRoundId!==room.roundId)fail('round_changed','Die Runde hat gewechselt. Bitte den aktuellen Stand laden.',409);
             if(p.next===true){if(room.config.gameMode!=='computer'||room.status!=='finished'||!metrics(room).success||room.round>=4)fail('next_unavailable','Das nächste Kampagnenlevel ist noch nicht freigeschaltet.',409);room.round++;}
             else if(p.retry!==true)return projection(room,p,time);
           }
@@ -74,18 +80,18 @@ function createApi({db,hashToken,newToken,fail,now=Date.now,randomSeed=()=>rando
           if(room.config.gameMode==='teams'&&[0,1,2,3].some(t=>!ids.some(id=>room.members[id].teamId===t)))fail('team_empty','Für vier Gruppen muss in jedem Team mindestens eine Person sein.',409);
           room.roster=Object.fromEntries(ids.map(id=>[id,room.members[id].teamId]));
           for(const member of Object.values(room.members)){member.score=0;member.attempts={};member.hints={};}
-          room.seed=randomSeed();room.status='running';room.startsAtMs=time+5000;room.endsAtMs=room.startsAtMs+DURATION_MS;return projection(room,p,time);
+          room.seed=randomSeed();room.roundId=newToken();room.status='running';room.startsAtMs=time+5000;room.endsAtMs=room.startsAtMs+DURATION_MS;return projection(room,p,time);
         }
         case'classroomStop':host(room,p);if(room.status==='running'||room.status==='waiting')room.status='aborted';return projection(room,p,time);
         case'classroomTask':{
-          const {member,slot,scored,question}=activeTask(room,p,time);const {correct,hint,explanation,options,...safe}=question;
-          return{question:safe,slot,slotEndsAtMs:room.startsAtMs+(slot+1)*WINDOW_MS,practice:!scored,answerResult:member.attempts[slot]||null,hintUsed:Boolean(member.hints[slot])};
+          const {member,slot,scored,question}=activeTask(room,p,time);const {correct,hint,explanation,options,fingerprint,...safe}=question;safe.id=secretHash(room.seed+fingerprint).slice(0,24);
+          return{question:safe,slot,roundId:room.roundId,slotEndsAtMs:room.startsAtMs+(slot+1)*WINDOW_MS,practice:!scored,answerResult:member.attempts[slot]||null,hintUsed:Boolean(member.hints[slot])};
         }
         case'classroomHint':{
-          const {member,slot,question}=activeTask(room,p,time);member.hints[slot]=true;return{hint:question.hint};
+          const {member,slot,question}=activeTask(room,p,time,true);member.hints[slot]=true;return{hint:question.hint};
         }
         case'classroomAnswer':case'classroomReveal':{
-          const {member,slot,scored,question}=activeTask(room,p,time);const first=member.attempts[slot];
+          const {member,slot,scored,question}=activeTask(room,p,time,true);const first=member.attempts[slot];
           const reveal=action==='classroomReveal',answer=String(p.answer||'').slice(0,120),correct=!reveal&&math.normalizeAnswer(answer)===question.correct;
           if(!first){const points=scored&&correct?(member.hints[slot]?10:20):0;member.score+=points;member.attempts[slot]={correct,points,explanation:question.explanation};}
           const result=member.attempts[slot];return{...result,correct,retryAllowed:true,...(reveal?{correctAnswer:question.correct}:{})};
@@ -95,4 +101,4 @@ function createApi({db,hashToken,newToken,fail,now=Date.now,randomSeed=()=>rando
     });
   };
 }
-module.exports={createApi};
+module.exports={createApi,buildHash};

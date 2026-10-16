@@ -13,3 +13,14 @@ Skills gelesen: brainstorming/writing-plans/executing-plans/worktree/TDD/fronten
 AssuranceScope: SEC04/06/07/08/11/14/17 Token-/Antwort-/Roster-/Idempotenzverträge, PRIV07/12/13/14/17/20 Pseudonyme/keineöffentlichenEinzelranglisten/zugänglicheTextlabels/fairerNenner; Details vor exakter Review festhalten. Betreiber-/AVV-/Gerätefreigabe aus diesem synthetischen Stagingtest nicht ableiten. BestehendeBudgets/Versuche bleiben, keinebezahltenAufrufe/Guardianstarts. Modell requested vomKoordinator geerbt, actual/usage unknown, keinWechsel.
 
 Letzter gesicherter Schritt: isolierterCheckout+technischerPlan. Runtime noch nicht umgesetzt. LaufendeRunIDs: keineImplementierungsCI/Deploy gestartet. Nächster Schritt: Engine-/Fairnesstests zuerst rot, dann Engine implementieren.
+
+
+## Runtime checkpoint 16.10
+
+- Pure engine + server endpoints umgesetzt;11/11 Node22.23.3 comportement tests grün (aus echten RED-Läufen). Balanced35%-Präfixplan ergibt5Slots3H/2P und20Slots13H/7P. Neue freie Zahleneingabe unterstützt Komma/Punkt/überflüssigeNullen. Scored5erTaskplan verhindert canonical prompt/answer/profile-Duplikate unabhängigvonTaskindex/Optionsreihenfolge. Seed3n4explizitregressiert.
+- Computerziele500/600/600/700, drittes Kampagnenlevel führt einen kleinen zusätzlichenRechenschritt ein, category/levelbleiben. Ziele sind veröffentlichtePlanwerte, keinebehaupteteEmpirie.
+- NeueRoomcollection tokengeprüft/transaktional, Nfix/M100 eingefroren, latejoin0/rejoinidentisch, servergrade20/10/0, KorrekturenundLösungkeinzweiterScore, wiederholteAntwortidempotent. RoundnonceverhindertaltenAntwortreplaybeimRetry;Taskkeys/seed/fingerprintprivat. Legacy bleibtseparateCollectionundunverändert.
+- Unabhängiger Zwischenreview fand P2Dezimalhint (sichtbar22×4,5 aber2Stellenregel); RED-Regressionechtbeobachtet, P4OperandenjetztjeweilsmitgenaueinerNachkommastelle(22,0×4,5), GREEN. RootweitereKohärenzhinweisebalancierteQuote/Ziele/Beispieltextaufgenommen.
+- FullGamesSuite34/34vorletztemCanonicalDelta bestanden; bestehender BrowserSmoke9/9ModiPASS(Desktop/Tablet/Mobile, externeBackend/QRfixtures), integrierterGamesHubBuildPASS. NeuerUIBrowser fandRejoinquery-SitzungsfehlernachReload;DesignerhatpassendenBootstrapfixabgegrenzt, integrierteWiederprüfungoffen.
+- FirebaseCLI15.30.2bestehend/Node22.23.3: functions:liststagingSUCCESS, fastQuizApi/europe-west1/nodejs22/codebasefastquiz. Bestehende(default)FirestoreNative/STANDARD/eur3lesendbestätigt. KeinCredentialexport/Grant/Auth-/Rules-/TTL-/IAMsetup. expiresAtMsist6hZugriffsfrist, KEINNachweisautomatischerLöschungdieserCollection.
+- ShellpushdurchfehlendeHTTPSAnmeldungabgewiesen; keinCredentialerfragt/blinderRetry. ConnectorretteteidentischenTreefb048a75alsRemote2a55fc08(lokal5ec8b32). WeitereDeltasnochlokal, Userstagingreleaseausstehend. KeineProduction.

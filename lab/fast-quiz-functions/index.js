@@ -363,7 +363,7 @@ const classroomApi = require('./classroom.js').createApi({ db, hashToken, newTok
 async function dispatch(action, payload) {
   if (action.startsWith('classroom')) return classroomApi(action, payload);
   switch (action) {
-    case "ping": return { service: "gradecrew-fast-quiz", version: 4, maxPlayers: MAX_PLAYERS, classroomVersion: 1, classroomModes: ["computer", "teams"] };
+    case "ping": return { service: "gradecrew-fast-quiz", version: 4, maxPlayers: MAX_PLAYERS, classroomVersion: 1, classroomBuildHash: require("./classroom.js").buildHash, classroomModes: ["computer", "teams"] };
     case "createRoom": return createRoom(payload);
     case "joinRoom": return joinRoom(payload);
     case "roomState": return roomState(payload);

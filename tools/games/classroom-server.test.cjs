@@ -23,23 +23,41 @@ test('roster balances, freezes, rejoin is identical, latejoin has no scoring and
 });
 test('answers are server graded, atomic/idempotent; hint/solution/correction cannot add a second score',async()=>{
  assert.ok(createApi);const f=fixture(),r=await room(f,4,{gameMode:'computer'}),p=r.players[0],c=creds(r,p);
- await f.api('classroomStart',host(r));await assert.rejects(f.api('classroomTask',c),/Start/);f.tick(5000);
+ await f.api('classroomStart',host(r));await assert.rejects(f.api('classroomTask',c),/Start/);f.tick(5000);c.roundId=(await f.api('classroomState',c)).roundId;
  const q=await f.api('classroomTask',c);assert.equal(q.question.correct,undefined);assert.equal(q.question.hint,undefined);assert.equal(q.question.explanation,undefined);assert.equal(q.seed,undefined);
- const privateRoom=f.docs.get(r.code),math=require('../../lab/fast-quiz-functions/classroom-math.js');const key=math.generateTask({...privateRoom.config,slotCount:5},privateRoom.seed,0).correct;
+ const privateRoom=f.docs.get(r.code),math=require('../../lab/fast-quiz-functions/classroom-math.js');const key=math.generateScoredTask({...privateRoom.config,campaignRound:1},privateRoom.seed,0).correct;
  await f.api('classroomHint',{...c,slot:0});
  const answers=await Promise.all([f.api('classroomAnswer',{...c,slot:0,answer:key,summary:{score:999999}}),f.api('classroomAnswer',{...c,slot:0,answer:key})]);assert.equal(answers[0].points,10);assert.equal(answers[1].points,10);
  assert.equal((await f.api('classroomState',c)).self.score,10);
  const corrected=await f.api('classroomAnswer',{...c,slot:0,answer:'wrong'});assert.equal(corrected.points,10);assert.equal((await f.api('classroomState',c)).self.score,10);
  f.tick(60000);await assert.rejects(f.api('classroomAnswer',{...c,slot:0,answer:key}),/Zeitfenster/);
- await f.api('classroomReveal',{...c,slot:1});const next=math.generateTask({...privateRoom.config,slotCount:5},privateRoom.seed,1);await f.api('classroomAnswer',{...c,slot:1,answer:next.correct});assert.equal((await f.api('classroomState',c)).self.score,10);
+ await f.api('classroomReveal',{...c,slot:1});const next=math.generateScoredTask({...privateRoom.config,campaignRound:1},privateRoom.seed,1);await f.api('classroomAnswer',{...c,slot:1,answer:next.correct});assert.equal((await f.api('classroomState',c)).self.score,10);
  await f.api('classroomStop',host(r));assert.equal((await f.api('classroomState',c)).status,'aborted');await assert.rejects(f.api('classroomAnswer',{...c,slot:1,answer:key}),/Runde/);
 });
 test('five common windows give M100; equal target is success; next level teacher-only and retries remain possible',async()=>{
- assert.ok(createApi);const f=fixture(),r=await room(f,1,{gameMode:'computer'}),p=r.players[0],c=creds(r,p);await f.api('classroomStart',host(r));f.tick(5000);
+ assert.ok(createApi);const f=fixture(),r=await room(f,1,{gameMode:'computer'}),p=r.players[0],c=creds(r,p);await f.api('classroomStart',host(r));f.tick(5000);c.roundId=(await f.api('classroomState',c)).roundId;
  const math=require('../../lab/fast-quiz-functions/classroom-math.js');
- for(let i=0;i<5;i++) {const privateRoom=f.docs.get(r.code);const q=math.generateTask({...privateRoom.config,slotCount:5},privateRoom.seed,i);await f.api('classroomHint',{...c,slot:i});await f.api('classroomAnswer',{...c,slot:i,answer:q.correct});f.tick(60000);}
+ for(let i=0;i<5;i++) {const privateRoom=f.docs.get(r.code);const q=math.generateScoredTask({...privateRoom.config,campaignRound:1},privateRoom.seed,i);await f.api('classroomHint',{...c,slot:i});await f.api('classroomAnswer',{...c,slot:i,answer:q.correct});f.tick(60000);}
  let s=await f.api('classroomState',c);assert.equal(s.energy,500);assert.equal(s.success,true);assert.equal(s.status,'finished');
  await assert.rejects(f.api('classroomStart',{...c,next:true}),/Lehrer/);
- await f.api('classroomStart',{...host(r),next:true});s=await f.api('classroomState',host(r));assert.equal(s.round,2);assert.equal(s.target,600);assert.equal(s.config.level,'n2');
- await f.api('classroomStop',host(r));await f.api('classroomStart',{...host(r),retry:true});assert.equal((await f.api('classroomState',host(r))).status,'running');
+ await f.api('classroomStart',{...host(r),next:true,expectedRoundId:c.roundId});s=await f.api('classroomState',host(r));assert.equal(s.round,2);assert.equal(s.target,600);assert.equal(s.config.level,'n2');
+ await f.api('classroomStop',host(r));await f.api('classroomStart',{...host(r),retry:true,expectedRoundId:s.roundId});assert.equal((await f.api('classroomState',host(r))).status,'running');
+});
+test('host assignment rejects inherited names and old round answers cannot score a retry',async()=>{
+ assert.ok(createApi);const f=fixture(),r=await room(f,4),p=r.players[0],c=creds(r,p);
+ await assert.rejects(f.api('classroomAssign',{...host(r),assignments:JSON.parse('{"__proto__":2}')}),/Teamzuordnung/);
+ await f.api('classroomStart',host(r));f.tick(5000);const old=await f.api('classroomTask',c);await f.api('classroomStop',host(r));
+ await f.api('classroomStart',{...host(r),retry:true,expectedRoundId:old.roundId});f.tick(5000);
+ await assert.rejects(f.api('classroomAnswer',{...c,slot:0,roundId:old.roundId,answer:'50'}),/Runde/);
+});
+test('mutations require exact slot and round; abort never reports campaign success',async()=>{
+ const f=fixture(),r=await room(f,1,{gameMode:'computer'}),c=creds(r,r.players[0]);await f.api('classroomStart',host(r));f.tick(5000);const task=await f.api('classroomTask',c);
+ for(const action of ['classroomAnswer','classroomHint','classroomReveal']){
+  await assert.rejects(f.api(action,{...c,roundId:task.roundId,answer:'100'}),/Zeitfenster/);
+  await assert.rejects(f.api(action,{...c,slot:'0',roundId:task.roundId,answer:'100'}),/Zeitfenster/);
+  await assert.rejects(f.api(action,{...c,slot:0,answer:'100'}),/Runde/);
+ }
+ f.tick(60000);await assert.rejects(f.api('classroomAnswer',{...c,slot:0,roundId:task.roundId,answer:'100'}),/Zeitfenster/);
+ // Synthetic stored score only sets up the exact stop threshold; no live mutation route can set a score.
+ f.docs.get(r.code).members[c.playerId].score=60;await f.api('classroomStop',host(r));assert.equal((await f.api('classroomState',c)).success,false);
 });
