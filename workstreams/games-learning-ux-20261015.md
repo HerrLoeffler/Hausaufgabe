@@ -104,3 +104,12 @@ Wesentliche Reviewkorrekturen: erste Referenz-Challenge nur freie Zahlen/zuverl�
 Checkpoint2e29bcc9: vollständiger erster Text plus Research/Leseindex/TODO; Dokuchecks38818010377 und38818010219 success. Neuester gesammelter Abschlusshead und exakte CI danach im PR239 prüfen; keine Datei-/Actions-Schleife allein zur Selbstreferenz. Neuer Auftrag änderte keine Runtime-, Cloud-, Quellen-/Lehrplan- oder Productionstufe; STATE bleibt unverändert. Keine Provideranforderung, Gamebuilds, echten Schülerdaten, Merge oder Deploy.
 
 Genau nächster Schritt: Root prüft den neuesten Docshead/Hashes und liefert den fertigen29seitigen Nachtrag mit dem bestehenden Hauptbuch an Martin aus. Danach ausschließlich bei konkretem Folgeauftrag einen begrenzten Referenzabschnitt bauen; das Dokument selbst ist keine Umsetzungsfreigabe.
+
+
+## Neuer Folgeauftrag 16.10.2026 — Nutzerkorrektur Kategorien und Klassensammeln
+
+Gleiche Task/Branch/PR, Basis46c2ed99. Frische main-Regeln/STATE/TODO/Registry/Workstream/CHAT_CONTRACT/Gamesworkflow/Briefing/Assurance gelesen, gegenüber vorheriger Basis unverändert; exakte Dokuchecks38818718136/38818718109 success. Root las Auditjob116709752706:27aktiv/24Überschneidungen/12ältere kritische/148unklassifiziert, eigenePrimary+8/-0; nureigeneKoordinationszeile ändern.
+
+Nutzer korrigiert verbindlich: Kopfrechnenkategorie100%Kopf mit eigenen Leveln; Stift-und-Blockkategorie eigene Level, ungefähr65/35Slotmix aus erschwerten Kopf-/Materialaufgaben. Frühere freie Arbeitsweisenwahl und N1-Nachtragansicht insoweit überholt. Neuer Modus AlsKlasseSammeln übernimmt primär den bekannten individuell fortlaufenden Flow; optionaler Klassenvergleich braucht getrennte normierte Skala/feste Gelegenheiten. Keine Runtime-/Provider-/Build-/Deploy-/Mergeaktion. Requested bestehendes Sol/medium, actualRuntime/Effort/Usageunknown, keine neue Budgetreservierung.
+
+Erster substanzieller Checkpoint: FOLGEPLAN-KATEGORIEN-KLASSENSAMMELN-20261016.md mit verbindlicher Korrektur, getrennten Levelrastern und geprüften Beispielantworten, reproduzierbarem Präfixscheduler13/20,5Slots3/2Näherung, Quell-/Adaptionsgrenzen und einfachem Sammelflow. Weitere Normierung/Roster-/Fehlerregeln, Vergleichsmatrix, UI, Vorrang und Abnahmen folgen. Designer/Reviewer separat beauftragt; alte61/29Seiten und ihre Hashes bleiben erhalten. Genau nächster Schritt: konkreten Vergleichsvertrag mit festem Roster und gemeinsamen Gelegenheiten ausarbeiten.
