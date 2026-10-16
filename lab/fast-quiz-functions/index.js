@@ -358,9 +358,12 @@ async function getHighscoreBoard(payload) {
   return { boardId, config, leaderboard: await leaderboard(boardId, 20) };
 }
 
+const classroomApi = require('./classroom.js').createApi({ db, hashToken, newToken, fail });
+
 async function dispatch(action, payload) {
+  if (action.startsWith('classroom')) return classroomApi(action, payload);
   switch (action) {
-    case "ping": return { service: "gradecrew-fast-quiz", version: 4, maxPlayers: MAX_PLAYERS };
+    case "ping": return { service: "gradecrew-fast-quiz", version: 4, maxPlayers: MAX_PLAYERS, classroomVersion: 1, classroomModes: ["computer", "teams"] };
     case "createRoom": return createRoom(payload);
     case "joinRoom": return joinRoom(payload);
     case "roomState": return roomState(payload);
