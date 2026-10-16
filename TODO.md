@@ -551,3 +551,10 @@ Durable local evidence: analysis/GC-WEB-REPAIR-20261007-ADMIN/feedback-followup-
 ### GC-PLUGINS-01 — Godot-Lernbasis (14.10.2026)
 - [x] Verlinktes18:14-Video technisch vollständig dekodiert (32814Frames),154Zeit-/Szenenbilder auf13Kontaktbögen visuell gesichtet; keinTranskript wegenUntertitel429. OffizielleGrundlagen und passendeGitHubquellen analysiert, Lernroute/GradeCrew-Ableitungen/Versionsfallen dokumentiert; zwei getrennteDokumentationsreviews PASS. [Lernbasis und Beleggrenzen](workstreams/plugins-godot-learning-20261014.md). BestehenderGodot4.7.2 bestätigt, keinezweiteInstallation/MCP-Verbindung/Spielmigration.
 - [ ] OptionalerPraxisfolgepunkt imnächstenkonkretenAuftrag: vorhandenenKochspielstand prüfen, Button→Signal→Portionswert alskleineLernkontrolle, anschließend abgestimmtenZutatenabschnitt mitbestehenderWeblösung vergleichen. KeineEngine-/Geräte-/Lernendenabnahme ausRecherche ableiten; keinDeploy.
+
+
+## 15.10.2026 — GC-GAMES-LEARNING-UX-01
+
+| ID | Aufgabe | Stand | Nächster Schritt |
+|---|---|---|---|
+| GC-GAMES-LEARNING-UX-01 | Lernspieleplan und Mathe-Klassenruntime: Kopf-/SB-Level, Klasse gegen Computer, Gruppenrennen | **Plan-DraftPR239; Mathe isoliert auf Staging veröffentlicht, Runtime-DraftPR240, beide nicht main-integriert.** Quellcommit7abc866b,39Tests und exakteCI38854682474success; zwei natürliche5Min-Liverunden technischPASS mit echtenFirebase/Firestore-Daten, synthetischenTeilnehmern. UngleicheTeams2/1/1/1alle600/1000; CPU500Sieg/TeacherNext600/Stopaborted. [Runtimeübergabe](workstreams/math-classroom-learning-ux-20261016.md), [Familienübergabe](workstreams/games-learning-ux-20261015.md). KanonischerGC39/Production unverändert. | Martin testet den isoliertenFastQuizlink; physischeGeräte/KameraQR/Klassenlast/Nutzerabnahme offen. KeinMainmerge oderweitererDeploydurchdieseRegistrierung. VollständigeRelease-/Versuchshistorie beimRuntimeownerPR240. |

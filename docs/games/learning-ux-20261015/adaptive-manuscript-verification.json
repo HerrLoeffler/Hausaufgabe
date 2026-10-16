@@ -1,0 +1,17 @@
+{
+  "words": 7393,
+  "sha256": "b62db2815a1c72399769a3db8e8cea31df72d79648333916218a82f46ac700b7",
+  "chapters": 16,
+  "original_manuscript_sha256": "f2e67d9fcb260a1d8d3b084c1e1240976d4a3d18806e3afd0035bc62937c5478",
+  "original_pdf_sha256": "150f68ef7d150ac9b0cd90f94f92a05b7924e51740e519e91bcf2b68a0e92664",
+  "todo_placeholders": 0,
+  "score_scenario": {
+    "A": 210,
+    "B": 150,
+    "C": 90,
+    "tie_at_seconds": 140
+  },
+  "canonical_fingerprint": true,
+  "mc_scope": true,
+  "all_in_times": true
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "file": "01-hub-desktop.svg",
+    "title": "Der gemeinsame Spiele-Hub",
+    "device": "Desktop",
+    "explain": "Eine gemeinsame Marke, vier klare Fachprofile. Eine primäre Auswahl pro Spiel führt zum einfachen Start; die genaue Auswahl folgt bei Bedarf."
+  },
+  {
+    "file": "02-einfachstart-ipad.svg",
+    "title": "Ein schneller Start mit wenigen Entscheidungen",
+    "device": "iPad",
+    "explain": "Thema oder eigener Test, Dauer und greifbare Schwierigkeit. Die umfangreiche Lehrplanauswahl liegt hinter einem zweiten Einstieg."
+  },
+  {
+    "file": "03-remy-vorschau-desktop.svg",
+    "title": "Remy übersetzt einen Wunsch in prüfbare Felder",
+    "device": "Desktop",
+    "explain": "Die Parameter stehen vor dem Start offen. Materialauswahl und Anpassungen bleiben sichtbar; Mehrdeutigkeit erzeugt eine Rückfrage statt stiller Annahmen."
+  },
+  {
+    "file": "04-lehrplan-desktop.svg",
+    "title": "Die genaue Auswahl bleibt verfügbar",
+    "device": "Desktop",
+    "explain": "Abhängige Filter werden schrittweise eingeblendet. Bei einem Wechsel werden unpassende Folgewerte erklärt, statt verdeckt weiterverwendet."
+  },
+  {
+    "file": "05-schwierigkeit-ipad.svg",
+    "title": "Schwierigkeit wird an Beispielen verständlich",
+    "device": "iPad",
+    "explain": "Anstelle von Level 3 stehen konkrete Zahlenräume, Schritte und Hilfen. Lernende können zurückwechseln; Geschwindigkeit ist eine eigene Option."
+  },
+  {
+    "file": "06-lobby-board-desktop.svg",
+    "title": "Eine gemeinsame Runde mit sicherem Board",
+    "device": "Desktop / Board",
+    "explain": "Die Lehrkraft prüft Material und Modus. Board und Beitritt zeigen nur die benötigten Angaben; der QR ist ausdrücklich ein nicht funktionaler Platzhalter."
+  },
+  {
+    "file": "07-aufgabe-phone.svg",
+    "title": "Die Aufgabe hat auf dem Handy Vorrang",
+    "device": "Phone",
+    "explain": "Große Antwortflächen, getrenntes Prüfen und sichtbare Hilfe. Keine Rangliste oder hektische Animation neben der eigentlichen Lernaufgabe."
+  },
+  {
+    "file": "08-abschluss-ipad.svg",
+    "title": "Der Abschluss führt zurück ins Lernen",
+    "device": "iPad",
+    "explain": "Ergebnis, genutzte Hilfe und konkreter nächster Übungsschritt stehen zusammen. Spielpunkte werden sprachlich und fachlich von Noten getrennt."
+  },
+  {
+    "file": "09-material-zustaende-desktop.svg",
+    "title": "Leere und fehlerhafte Zustände bleiben handlungsfähig",
+    "device": "Desktop",
+    "explain": "Kein Zustand endet in einer Sackgasse. Ungeeignete Aufgaben werden erklärt, statt still verworfen; Rückweg und Wiederholen bleiben sichtbar."
+  },
+  {
+    "file": "10-wissensreise-ipad.svg",
+    "title": "Eigene Tests erhalten eine nachvollziehbare Route",
+    "device": "iPad",
+    "explain": "Wissensreise verwendet eigene Tests statt einer festen Themeninsel. Aufgabentypen und Feedback werden je Station geprüft. Es gibt keine manuelle Antwortbewertung; offene Reflexion bleibt unbewertet."
+  },
+  {
+    "file": "11-deutsch-aufgabe-ipad.svg",
+    "title": "Deutsch: eine Fähigkeit gezielt üben",
+    "device": "iPad",
+    "explain": "Das Eingabeformat folgt dem Fach: Wörter markieren statt vier abstrakte Antwortkarten. Die Hilfe richtet den Blick auf die Handlung; Satzglieder und Rechtschreibung werden nicht gleichzeitig geprüft."
+  },
+  {
+    "file": "12-vocab-aufgabe-phone.svg",
+    "title": "Englisch: erinnern statt nur wiedererkennen",
+    "device": "Phone",
+    "explain": "Freie Eingabe mit Kontext fordert aktiven Abruf. Sprachrichtung und orthografische Strenge werden vor dem Start getrennt erklärt; Audio wird hier nicht als vorhandene Fähigkeit behauptet."
+  }
+]

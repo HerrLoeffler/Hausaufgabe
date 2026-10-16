@@ -1,0 +1,89 @@
+{
+  "task_id": "GC-GAMES-LEARNING-UX-01",
+  "kind": "independent_plan_addendum",
+  "source_sha256": "b62db2815a1c72399769a3db8e8cea31df72d79648333916218a82f46ac700b7",
+  "pdf_sha256": "e343a4d2848d4f5157494e88b1fb477e75cbc2b3f749e2788ba5bc7f8d15ccdf",
+  "original_main_book_sha256": "150f68ef7d150ac9b0cd90f94f92a05b7924e51740e519e91bcf2b68a0e92664",
+  "files": [
+    {
+      "path": "ERGAENZUNG-PUNKTE-ARBEITSWEISEN-20261016.md",
+      "bytes": 60952,
+      "sha256": "b62db2815a1c72399769a3db8e8cea31df72d79648333916218a82f46ac700b7"
+    },
+    {
+      "path": "design/adaptive-addendum/build_addendum.py",
+      "bytes": 13425,
+      "sha256": "5c616e86fcea1f29aa5698630ef427f8cc39ddfce15b109c5939c192c98879db"
+    },
+    {
+      "path": "design/adaptive-addendum/build_print_html.py",
+      "bytes": 5505,
+      "sha256": "18c5bb7d2d3c975dfd188d4aaec0b369e7ec4696448e89a631d139615509f11f"
+    },
+    {
+      "path": "design/adaptive-addendum/contact_pdf.py",
+      "bytes": 568,
+      "sha256": "8da624f608d0c42b915fd981150fe635f099a03be12ef45b7ac18983bfe6af47"
+    },
+    {
+      "path": "design/adaptive-addendum/create_addendum_views.py",
+      "bytes": 7517,
+      "sha256": "fe1c8a15b2d73267e796836dd8efc0cb5a638efb9bba6f411b599101f5c94391"
+    },
+    {
+      "path": "design/adaptive-addendum/render_assets.cjs",
+      "bytes": 635,
+      "sha256": "ba15e4515bcc58fb8cc0bf8cc378d1d318ddc70730c6c6a3d2998b4cef165dbd"
+    },
+    {
+      "path": "design/adaptive-addendum/README.md",
+      "bytes": 2657,
+      "sha256": "76741233fdaecbfed4d1a206661c8774bcd187f3b60712f6dd5c0f39363a3bd7"
+    },
+    {
+      "path": "design/adaptive-addendum/DESIGN_HANDOFF.md",
+      "bytes": 7203,
+      "sha256": "f88ba83206466ac597f9ea86a1d7de7448bb473bfbf312ba7d1d8c51120a8a19"
+    },
+    {
+      "path": "design/adaptive-addendum/index.html",
+      "bytes": 1547,
+      "sha256": "0fc94f98c32b36e6ae69cfc30e6c0279bb2c3b116ce7951699bd7e99a400814b"
+    },
+    {
+      "path": "design/adaptive-addendum/mockups/N1-lehrkraft-runden-und-arbeitsweisen.svg",
+      "bytes": 16161,
+      "sha256": "3201dafffc711a13244efd68377e78bd74eb95a510c2c0380a294acc5c407787"
+    },
+    {
+      "path": "design/adaptive-addendum/mockups/N2-schueler-stift-block-punkte.svg",
+      "bytes": 13928,
+      "sha256": "4e05f1718d375791d45613511e3d133334985aed8751e5adaa0a8b0faa824beb"
+    },
+    {
+      "path": "design/adaptive-addendum/mockups/manifest.json",
+      "bytes": 1058,
+      "sha256": "584a2769ad72fa53c238ef15a6044c6bf149a80cc610808847cb67c5323cf745"
+    },
+    {
+      "path": "final/GradeCrew-Spiele-Nachtrag-Adaptive-Runden-20261016.pdf",
+      "bytes": 702663,
+      "sha256": "e343a4d2848d4f5157494e88b1fb477e75cbc2b3f749e2788ba5bc7f8d15ccdf"
+    },
+    {
+      "path": "final/GradeCrew-Spiele-Nachtrag-Adaptive-Runden-20261016.html",
+      "bytes": 123872,
+      "sha256": "3dae547d8b0c79177f4db835fb891fbf73eadb2810a246ccf7651292dfea157b"
+    },
+    {
+      "path": "final/adaptive-addendum-verification.json",
+      "bytes": 1486,
+      "sha256": "080f7972cf8fa2afbb4f2fcaab69ed73704529633797f7fb50c7741c4f55a48a"
+    },
+    {
+      "path": "final/adaptive-addendum-html-verification.json",
+      "bytes": 380,
+      "sha256": "8249088a30fbacdb380400a0d6269592ae2ad5e26ca821774eb6beac4e5dab1b"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "pdf": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/work/games-redesign-20261015/final/GradeCrew-Spiele-Korrektur-Level-und-Klassenrunde-20261016.pdf",
+  "pdf_sha256": "e06371d9e61c70403558001a2772f1c38eea049e1ae4ce99543d3fc4ff7e1c18",
+  "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/work/games-redesign-20261015/FOLGEPLAN-KATEGORIEN-KLASSENSAMMELN-20261016.md",
+  "source_sha256": "861e81cc37f65dfac05bedcb7cef3e9c9cca135d2b9222d00ae7c335913260d4",
+  "source_words": 3684,
+  "pages": 13,
+  "bookmarks": 24,
+  "content_blocks": 253,
+  "missing_content_blocks": {},
+  "content_check_passed": true,
+  "outside_safe_area": [],
+  "internal_links": 22,
+  "external_links": 0,
+  "invalid_internal_links": [],
+  "page_text_lengths": [
+    2079,
+    2230,
+    2654,
+    3136,
+    2929,
+    1881,
+    2955,
+    2324,
+    2631,
+    2201,
+    1488,
+    2191,
+    2325
+  ],
+  "previous_pdf_hashes": {
+    "GradeCrew-Spiele-Masterplan-20261015.pdf": "150f68ef7d150ac9b0cd90f94f92a05b7924e51740e519e91bcf2b68a0e92664",
+    "GradeCrew-Spiele-Nachtrag-Adaptive-Runden-20261016.pdf": "e343a4d2848d4f5157494e88b1fb477e75cbc2b3f749e2788ba5bc7f8d15ccdf"
+  },
+  "previous_pdfs_unchanged": true,
+  "visual_review": {
+    "all_pages_rendered": 13,
+    "all_pages_contact_reviewed": true,
+    "full_pages_reviewed": [
+      1,
+      2,
+      8,
+      12,
+      13
+    ],
+    "no_clipping_or_blank_filler_seen": true
+  }
+}

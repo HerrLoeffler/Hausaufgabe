@@ -1,0 +1,247 @@
+{
+  "task": "GC-GAMES-LEARNING-UX-01",
+  "scope": "Mittelschule Bayern5–10; plan only",
+  "requested_model": "Sol/medium",
+  "observed_model": "unknown",
+  "sources": [
+    {
+      "id": "S1",
+      "institution": "IES/WWC",
+      "title": "Organizing Instruction and Study to Improve Student Learning",
+      "url": "https://ies.ed.gov/ncee/wwc/PracticeGuide/1",
+      "published": "2007-09",
+      "accessed": "2026-10-15/16",
+      "locator": "Empfehlungen1,2,5b,7",
+      "claim": "Verteiltes Üben, Beispiel-Aufgaben-Wechsel, Abruf und Erklärfragen.",
+      "design_rule": "Wiederholung über Sitzungen; Hilfen abbauen.",
+      "limits": "Breite Leitlinie, keine GradeCrew-Wirkstudie.",
+      "type": "official_primary_institutional"
+    },
+    {
+      "id": "S2",
+      "institution": "IES/WWC",
+      "title": "Assisting Students Struggling with Mathematics: Intervention in the Elementary Grades",
+      "url": "https://ies.ed.gov/ncee/wwc/practiceguide/26",
+      "published": "2021-03",
+      "accessed": "2026-10-15/16",
+      "locator": "Empfehlungen1–6",
+      "claim": "Systematik, Sprache, Modelle, Zahlengerade, Sachaufgaben, timed fluency.",
+      "design_rule": "Fluency getrennt von Wissensschwierigkeit.",
+      "limits": "Elementary; Übertragung MS5–10 begründen.",
+      "type": "official_primary_institutional"
+    },
+    {
+      "id": "S3",
+      "institution": "NSW CESE",
+      "title": "Cognitive load theory in practice",
+      "url": "https://education.nsw.gov.au/about-us/education-data-and-research/cese/publications/practical-guides-for-educators/cognitive-load-theory-in-practice",
+      "published": "2018-11",
+      "accessed": "2026-10-15/16",
+      "locator": "Strategien1–7",
+      "claim": "Vorwissen, worked examples, schrittweise Selbständigkeit, irrelevante Information reduzieren.",
+      "design_rule": "Ein Anspruch pro Brücke; ruhiges HUD.",
+      "limits": "Institutioneller Forschungsleitfaden, kein numerischer Gatebeleg.",
+      "type": "official_primary_institutional"
+    },
+    {
+      "id": "S4",
+      "institution": "EEF",
+      "title": "Improving Mathematics in Key Stages 2 and 3",
+      "url": "https://educationendowmentfoundation.org.uk/education-evidence/guidance-reports/maths-ks-2-3",
+      "published": "2017-11-03",
+      "accessed": "2026-10-15/16",
+      "locator": "Empfehlung1",
+      "claim": "Diagnostik dient Unterrichtsanpassung und konkretem Feedback.",
+      "design_rule": "Vorwissen beobachten; Fehlvorstellungen nutzen.",
+      "limits": "7–14Jahre;9/10 nur begrenzt übertragen.",
+      "type": "official_primary_institutional"
+    },
+    {
+      "id": "S5",
+      "institution": "EEF",
+      "title": "Teacher Feedback to Improve Pupil Learning",
+      "url": "https://educationendowmentfoundation.org.uk/education-evidence/guidance-reports/feedback",
+      "published": "2021-06-11",
+      "accessed": "2026-10-15/16",
+      "locator": "Überblick",
+      "claim": "Feedbackprinzipien wichtig; ungeeignetes Feedback kann schaden.",
+      "design_rule": "Nächste Handlung ermöglichen.",
+      "limits": "Lehrerfeedback5–18; Spielübertragung Annahme.",
+      "type": "official_primary_institutional"
+    },
+    {
+      "id": "S6",
+      "institution": "ISB Bayern",
+      "title": "Mathematik5 Mittelschule",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/5/mathematik",
+      "published": null,
+      "accessed": "2026-10-15/16",
+      "locator": "M5 1.2 und2",
+      "claim": "Grundrechnen und anschauliche Zustandsänderungen mit ganzen Zahlen.",
+      "design_rule": "Negative Operanden nicht alle gleichzeitig einführen.",
+      "limits": "Dynamisch; kein sichtbares Fassungsdatum; keine Gesamtcurriculumabnahme.",
+      "type": "official_primary_institutional"
+    },
+    {
+      "id": "S7",
+      "institution": "ISB Bayern",
+      "title": "Deutsch5 Mittelschule",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/5/deutsch",
+      "published": null,
+      "accessed": "2026-10-15/16",
+      "locator": "D5 4.2/4.3",
+      "claim": "Wortarten, Satzglieder mit Proben, Rechtschreibstrategien.",
+      "design_rule": "Wortarten/Satzglieder getrennte Lernpfade.",
+      "limits": "Dynamisch; Jahresentwicklung kein Einstiegsniveau.",
+      "type": "official_primary_institutional"
+    },
+    {
+      "id": "S8",
+      "institution": "ISB Bayern",
+      "title": "Englisch5 Mittelschule",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/5/englisch",
+      "published": null,
+      "accessed": "2026-10-15/16",
+      "locator": "E5 1.2 Wortschatz",
+      "claim": "Ca550Wörter/Wendungen Jahresende, vertraute Kontexte.",
+      "design_rule": "Produktive Kontextverwendung zusätzlich zum Wiedererkennen.",
+      "limits": "Keine fixe550erWortliste aus Umfangswert.",
+      "type": "official_primary_institutional"
+    },
+    {
+      "id": "S9",
+      "institution": "W3C",
+      "title": "WCAG2.2 Recommendation",
+      "url": "https://www.w3.org/TR/2024/REC-WCAG22-20241212/",
+      "published": "2024-12-12",
+      "accessed": "2026-10-15/16",
+      "locator": "2.2.1,2.2.2,2.5.8,3.3.1",
+      "claim": "Zeitlimits/Bewegung steuern, Zielgrößen, textliche Fehler.",
+      "design_rule": "Daueroptionen und lesbares Feedback.",
+      "limits": "Ausnahmen beachten; keine Konformitätsprüfung.",
+      "type": "official_primary_institutional"
+    },
+    {
+      "id": "S10",
+      "institution": "ISB Bayern",
+      "title": "Deutsch6 Regelklasse",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/deutsch/regelklasse",
+      "published": null,
+      "accessed": "2026-10-15/16",
+      "locator": "D6 4.2",
+      "claim": "Konjunktionen/Präpositionen, weitere Zeiten, Aktiv/Passiv, Satzgliedproben.",
+      "design_rule": "Fachprogression getrennt von Interface-Difficulty.",
+      "limits": "Selektive Prüfung, kein Gesamtmapping.",
+      "type": "official_primary_institutional"
+    },
+    {
+      "id": "S11",
+      "institution": "ISB Bayern",
+      "title": "Mathematik9 Regelklasse",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/9/mathematik/regelklasse",
+      "published": null,
+      "accessed": "2026-10-15/16",
+      "locator": "R9 LB1/2",
+      "claim": "Prozent/Zins, Potenzen und passende Sachsituationen.",
+      "design_rule": "Höhere Ziele benötigen andere Familien als größere Zahlen.",
+      "limits": "Regelklasse bewahren; kein kompletter Inhaltsreview.",
+      "type": "official_primary_institutional"
+    },
+    {
+      "id": "S12",
+      "institution": "ISB Bayern",
+      "title": "Mathematik10 M-Klasse",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/10/mathematik/mittlere-reife-klasse",
+      "published": null,
+      "accessed": "2026-10-15/16",
+      "locator": "M10 LB1/2; Inhaltsverzeichnis",
+      "claim": "Potenzen/Wurzeln, Exponentialfunktion; weitere Geometrie.",
+      "design_rule": "M-Zweig und Lernziel explizit speichern.",
+      "limits": "Nicht pauschal auf alle10erWege übertragen.",
+      "type": "official_primary_institutional"
+    },
+    {
+      "id": "S13",
+      "institution": "ISB Bayern",
+      "title": "Englisch10 M-Klasse",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/10/englisch/mittlere-reife-klasse",
+      "published": null,
+      "accessed": "2026-10-15/16",
+      "locator": "Seitenkopf/Gliederung",
+      "claim": "Amtlicher Fachplan-Endpunkt für diesen Bildungsgang vorhanden.",
+      "design_rule": "Advanced benötigt Weg/Jahrgang plus individuelle Ziele.",
+      "limits": "Nur Weg-/Strukturprüfung; keine fachliche Vollauswertung.",
+      "type": "official_primary_institutional"
+    }
+  ],
+  "code": [
+    {
+      "id": "fast",
+      "path": "lab/fast-quiz/math-engine-v4.js",
+      "commit": "a2ffe52cf0240fa35f192fb62d70161ee575ce53",
+      "blob_sha": "78633efb2cfbe4c948b4fed6154b6452eb5fe1ed",
+      "lines": "29–59,122–237,261–279",
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/blob/a2ffe52cf0240fa35f192fb62d70161ee575ce53/lab/fast-quiz/math-engine-v4.js"
+    },
+    {
+      "id": "fast-primary",
+      "path": "lab/fast-quiz/math-engine-v4.js",
+      "commit": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+      "blob_sha": "e2b23aba2379a1166c45d05a66a043b042a84ed1",
+      "lines": "29–59,146–237,291–329",
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/blob/2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5/lab/fast-quiz/math-engine-v4.js"
+    },
+    {
+      "id": "rounding",
+      "path": "lab/fast-quiz/rounding-plus.js",
+      "commit": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+      "blob_sha": "e69d76f2c8dfb575a2b7c5fc02b47479c91e0a77",
+      "lines": "39–85",
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/blob/2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5/lab/fast-quiz/rounding-plus.js"
+    },
+    {
+      "id": "fast-app",
+      "path": "lab/fast-quiz/app-v4.js",
+      "commit": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+      "blob_sha": "5cc2381f2e9e146cd1c3a137cce332c9f31fd91f",
+      "lines": "108–144,305–330",
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/blob/2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5/lab/fast-quiz/app-v4.js"
+    },
+    {
+      "id": "deutsch",
+      "path": "lab/fehlerjagd-deutsch/deutsch-engine.js",
+      "commit": "c7eb2709cbcaede44f1ce07fb5ff1d362a182000",
+      "blob_sha": "531dd86834d8884062432ff0daadeea0e58a4d07",
+      "lines": "29–31,144–153,214–215,233–245",
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/blob/c7eb2709cbcaede44f1ce07fb5ff1d362a182000/lab/fehlerjagd-deutsch/deutsch-engine.js"
+    },
+    {
+      "id": "vocab",
+      "path": "lab/vocab-rush/curriculum.js",
+      "commit": "4e739100d8a0e8c9be08d11b7bc96ddf86f3b141",
+      "blob_sha": "1a59a381505943b674258dc292e8e36274ac4d2d",
+      "lines": "3–25,94–98",
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/blob/4e739100d8a0e8c9be08d11b7bc96ddf86f3b141/lab/vocab-rush/curriculum.js"
+    }
+  ],
+  "local_prior_work": [
+    {
+      "path": "analysis/GC-PEDAGOGY-KB-01/master/fortschritt-und-luecken.md",
+      "lines": "3–37",
+      "date": "2026-10-14",
+      "status": "uncommitted local reference; not released"
+    },
+    {
+      "path": "analysis/GC-PEDAGOGY-KB-01/master/umsetzung-remy-emmi-2026-10-14.md",
+      "lines": "25–35",
+      "status": "reported289localtests; no own rerun; no deploy"
+    }
+  ],
+  "verification_limits": [
+    "No runtime tests or provider calls",
+    "Verified branch trees not compared",
+    "Webintegration lab engine paths404; not proof of absent live games",
+    "Gates proposed not measured",
+    "Independent review of total plan pending"
+  ]
+}

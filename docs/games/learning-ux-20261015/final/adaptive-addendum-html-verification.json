@@ -1,0 +1,8 @@
+{
+  "source_sha256": "b62db2815a1c72399769a3db8e8cea31df72d79648333916218a82f46ac700b7",
+  "html_sha256": "3dae547d8b0c79177f4db835fb891fbf73eadb2810a246ccf7651292dfea157b",
+  "full_manuscript_contained": true,
+  "embedded_image_count": 3,
+  "all_images_embedded_svg": true,
+  "browser_visual_test": "not_claimed; no additional browser attempt, PDF is the fully rendered master"
+}
