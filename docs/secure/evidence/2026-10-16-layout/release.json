@@ -1,0 +1,247 @@
+{
+  "recordedAt": "2026-10-16T00:46:45Z",
+  "environment": "staging-exam",
+  "version": "0.2.2",
+  "build": 1101,
+  "sourceCommit": "663364987a944ddea9dd53595bf50334374ee622",
+  "sourceTree": "51ee64c5ea644170fde918e9efb100303e4b4fc1",
+  "runURL": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38828726981",
+  "runNumber": 10,
+  "runAttempt": 1,
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 116742225228,
+      "name": "layout-native",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Prepare real Secure resources",
+          "conclusion": "success"
+        },
+        {
+          "name": "Full native layout matrix",
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve native layout reports",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 116742225459,
+      "name": "layout-web (large)",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test renderer and telemetry contract",
+          "conclusion": "success"
+        },
+        {
+          "name": "Prepare resources and select actual iPad simulator",
+          "conclusion": "success"
+        },
+        {
+          "name": "Full WebKit layout and actual navigation interactions",
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve WebKit layout reports",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 116742225616,
+      "name": "layout-web (mini)",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test renderer and telemetry contract",
+          "conclusion": "success"
+        },
+        {
+          "name": "Prepare resources and select actual iPad simulator",
+          "conclusion": "success"
+        },
+        {
+          "name": "Full WebKit layout and actual navigation interactions",
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve WebKit layout reports",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 116745538377,
+      "name": "build-and-upload",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify Apple credentials are configured",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install pinned renderer test dependency",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test all question types and native snapshot bridge",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test Secure and build all simulator schemes",
+          "conclusion": "success"
+        },
+        {
+          "name": "Generate Xcode project",
+          "conclusion": "success"
+        },
+        {
+          "name": "Prepare API signing key",
+          "conclusion": "success"
+        },
+        {
+          "name": "Archive the Staging-only Secure exam app",
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve AAC entitlement in unsigned archive before cloud export",
+          "conclusion": "success"
+        },
+        {
+          "name": "Export with Apple distribution signing",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify AAC in signed app and distribution profile before upload",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload validated Secure Staging app to TestFlight",
+          "conclusion": "success"
+        },
+        {
+          "name": "Remove API key and decoded profile",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "layout": {
+    "native": 900,
+    "webMini": 360,
+    "webLarge": 360,
+    "interactionsPerWebDevice": 12
+  },
+  "aac": {
+    "signedApp": true,
+    "distributionProfile": true
+  },
+  "upload": {
+    "succeeded": true,
+    "deliveryUUID": "b0a0c962-7f6a-4596-8a9a-0472ea1007ea",
+    "at": "2026-10-16T00:46:04Z"
+  },
+  "appleProcessing": "not verified; App Store Connect login required",
+  "physicalDeviceTest": "open for this build",
+  "telemetry": "deployed to Staging; client invocation blocked with HTTP403 pending explicit IAM approval",
+  "production": "no deployment; main remains 8560992c072779814017ebac6e86b65e938bc951",
+  "artifacts": [
+    {
+      "name": "secure-web-mini-663364987a944ddea9dd53595bf50334374ee622",
+      "sizeBytes": 106625009
+    },
+    {
+      "name": "secure-native-663364987a944ddea9dd53595bf50334374ee622",
+      "sizeBytes": 213924506
+    },
+    {
+      "name": "secure-web-large-663364987a944ddea9dd53595bf50334374ee622",
+      "sizeBytes": 106519164
+    }
+  ]
+}
