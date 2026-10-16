@@ -56,7 +56,10 @@ function createApi({db,hashToken,newToken,fail,now=Date.now,randomSeed=()=>rando
           const joinKey=String(p.joinKey||'');if(!/^[A-Za-z0-9_-]{24,100}$/.test(joinKey))fail('join_key_invalid','Die Teilnahme konnte nicht gespeichert werden. Bitte Browser neu laden.');
           const id=secretHash(joinKey).slice(0,32);let member=room.members[id];
           if(!member){const name=String(p.name||'').trim().replace(/[<>]/g,'').slice(0,24);if(!name)fail('name_required','Bitte ein Kürzel eingeben.');if(Object.keys(room.members).length>=MAX_PLAYERS)fail('room_full','Die Runde ist mit 30 Teilnehmenden voll.',409);member={tokenHash:secretHash(joinKey),name,teamId:0,score:0,attempts:{},hints:{},joinedAtMs:time};room.members[id]=member;
-            if(room.status==='waiting'){const map=math.balancedTeams(Object.keys(room.members),room.seed);for(const key of Object.keys(room.members))room.members[key].teamId=map[key];}
+            if(room.status==='waiting'){
+              if(room.assignmentMode==='manual'){const counts=[0,1,2,3].map(t=>Object.entries(room.members).filter(([key,m])=>key!==id&&m.teamId===t).length);member.teamId=counts.indexOf(Math.min(...counts));}
+              else{const map=math.balancedTeams(Object.keys(room.members),room.seed);for(const key of Object.keys(room.members))room.members[key].teamId=map[key];}
+            }
           }
           return{code:room.code,playerId:id,playerToken:joinKey,name:member.name};
         }
@@ -65,7 +68,7 @@ function createApi({db,hashToken,newToken,fail,now=Date.now,randomSeed=()=>rando
           host(room,p);if(!['waiting','finished','aborted'].includes(room.status))fail('round_frozen','Teams können nur vor einer Runde geändert werden.',409);
           const assignments=p.assignments;if(!assignments||typeof assignments!=='object'||Array.isArray(assignments))fail('assignment_invalid','Bitte die Teamzuordnung prüfen.');
           for(const [id,teamId] of Object.entries(assignments)){if(!Object.hasOwn(room.members,id)||!Number.isInteger(teamId)||teamId<0||teamId>3)fail('assignment_invalid','Bitte die Teamzuordnung prüfen.');}
-          for(const [id,teamId]of Object.entries(assignments))room.members[id].teamId=teamId;
+          for(const [id,teamId]of Object.entries(assignments))room.members[id].teamId=teamId;room.assignmentMode='manual';
           return projection(room,p,time);
         }
         case'classroomStart':{

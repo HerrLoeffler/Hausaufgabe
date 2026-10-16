@@ -61,3 +61,8 @@ test('mutations require exact slot and round; abort never reports campaign succe
  // Synthetic stored score only sets up the exact stop threshold; no live mutation route can set a score.
  f.docs.get(r.code).members[c.playerId].score=60;await f.api('classroomStop',host(r));assert.equal((await f.api('classroomState',c)).success,false);
 });
+test('manual teacher assignments survive later lobby joins; new players fill a small team',async()=>{
+ const f=fixture(),r=await room(f,4),p=r.players[0];await f.api('classroomAssign',{...host(r),assignments:{[p.playerId]:3}});
+ await f.api('classroomJoin',{code:r.code,name:'new','joinKey':'late-lobby-key-1234567890123456'});
+ const s=await f.api('classroomState',host(r));assert.equal(s.members.find(m=>m.id===p.playerId).teamId,3);
+});
