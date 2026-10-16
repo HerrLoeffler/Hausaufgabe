@@ -1,0 +1,49 @@
+{
+  "task_id": "GC-GAMES-LEARNING-UX-01",
+  "kind": "user_correction_level_categories_class_collection",
+  "source_sha256": "861e81cc37f65dfac05bedcb7cef3e9c9cca135d2b9222d00ae7c335913260d4",
+  "pdf_sha256": "e06371d9e61c70403558001a2772f1c38eea049e1ae4ce99543d3fc4ff7e1c18",
+  "pages": 13,
+  "previous_pdfs_unchanged": true,
+  "previous_pdf_hashes": {
+    "GradeCrew-Spiele-Masterplan-20261015.pdf": "150f68ef7d150ac9b0cd90f94f92a05b7924e51740e519e91bcf2b68a0e92664",
+    "GradeCrew-Spiele-Nachtrag-Adaptive-Runden-20261016.pdf": "e343a4d2848d4f5157494e88b1fb477e75cbc2b3f749e2788ba5bc7f8d15ccdf"
+  },
+  "files": [
+    {
+      "path": "FOLGEPLAN-KATEGORIEN-KLASSENSAMMELN-20261016.md",
+      "bytes": 30118,
+      "sha256": "861e81cc37f65dfac05bedcb7cef3e9c9cca135d2b9222d00ae7c335913260d4"
+    },
+    {
+      "path": "design/level-class-correction/build_correction.py",
+      "bytes": 11643,
+      "sha256": "172e97c7d1199988b9fe9d904ebd8b26f65b1db8a0c215f78280be681734ddca"
+    },
+    {
+      "path": "design/level-class-correction/contact_pdf.py",
+      "bytes": 584,
+      "sha256": "5952c6d0133c3c9ed978fa49778228900125ecca3aebeea79acc6c8be73092f5"
+    },
+    {
+      "path": "design/level-class-correction/README.md",
+      "bytes": 1838,
+      "sha256": "ab344582b1c44a227eac5fbfdeb3101b7548686d64f854d98c990a04831351f2"
+    },
+    {
+      "path": "design/level-class-correction/DESIGN_HANDOFF.md",
+      "bytes": 4950,
+      "sha256": "0aae3411adec9d6573261762dac7ed1c7cc2ceedbe20a883b1a86dfb03023b04"
+    },
+    {
+      "path": "final/GradeCrew-Spiele-Korrektur-Level-und-Klassenrunde-20261016.pdf",
+      "bytes": 265211,
+      "sha256": "e06371d9e61c70403558001a2772f1c38eea049e1ae4ce99543d3fc4ff7e1c18"
+    },
+    {
+      "path": "final/level-class-correction-verification.json",
+      "bytes": 1474,
+      "sha256": "9efe0e73d2f9cd09277c442aae43a30558a4512e4ef6ab229ced12145ce7b432"
+    }
+  ]
+}

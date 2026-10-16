@@ -1,0 +1,38 @@
+{
+  "source_sha256": "861e81cc37f65dfac05bedcb7cef3e9c9cca135d2b9222d00ae7c335913260d4",
+  "source_words": 3684,
+  "chapters": 11,
+  "slot_sequence": [
+    "H",
+    "P",
+    "H",
+    "H",
+    "P",
+    "H",
+    "H",
+    "P",
+    "H",
+    "P",
+    "H",
+    "H",
+    "P",
+    "H",
+    "H",
+    "P",
+    "H",
+    "H",
+    "P",
+    "H"
+  ],
+  "P20": 7,
+  "H20": 13,
+  "P5": 2,
+  "H5": 3,
+  "same_performance_scores": [
+    600,
+    750
+  ],
+  "examples_arithmetic_checked": true,
+  "zero_denominator_gate": true,
+  "is_product_test": false
+}

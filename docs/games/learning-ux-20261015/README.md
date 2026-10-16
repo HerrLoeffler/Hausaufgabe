@@ -2,7 +2,13 @@
 
 Auftrag15.10.2026, Satz-/Reviewabschluss16.10.2026. Zielgruppe bestätigt: Mittelschule Bayern, Klassen5–10. **Vorschlag, nur Planung.** Keine Produktänderung, Provideranforderung, Gamebuild, Integration oder Veröffentlichung.
 
-## Aktueller Nachtrag zum bestehenden Plan
+## Aktuell vorrangiger Folgeplan: Nutzerkorrektur und Klassenrunde
+
+**[FOLGEPLAN-KATEGORIEN-KLASSENSAMMELN-20261016.md](FOLGEPLAN-KATEGORIEN-KLASSENSAMMELN-20261016.md)** ist für die Kategorien und den neuen Klassenmodus vorrangig. Kopfrechnen umfasst ausschließlich Kopfaufgaben mit eigenen Leveln; Stift und Block umfasst eigene Level mit ungefähr65% erschwerten Kopf-/35% Materialslots. Die frühere frei kombinierbare Arbeitsweisenwahl und AnsichtN1 des ersten Nachtrags sind insoweit überholt. „Als Klasse sammeln“ bleibt primär der bekannte fortlaufende Flow; ein optionaler Klassenvergleich verwendet gleiche feste Möglichkeiten und einen eingefrorenen Personennenner. [Aktuelle Lesereihenfolge und Vorrang](LESEREIHENFOLGE.md).
+
+Die beiden bisherigen PDFfassungen bleiben unverändert. Der neue Folgeplan hat3.684Wörter und eigene Satz-/Prüf-/Reviewbelege. Deren Produktvorschläge sind keine technische Implementierung oder Fairnesszertifizierung.
+
+## Erster Nachtrag zum bestehenden Plan
 
 [Ergänzung: faire Chancen, Punkte und passende Denkzeit](ERGAENZUNG-PUNKTE-ARBEITSWEISEN-20261016.md) erweitert den ursprünglichen Plan um 7.393 Wörter. [Leseweg und Fassungsbezug](LESEREIHENFOLGE.md) verbindet beide Teile. Der Nachtrag enthält die optionale spielbare Punkte-Challenge, drei Lehrerpresets, getrennte Kopf-/Stift-/Denkprofile, transparente Zeit-/Hilferegeln und eine Vorrangmatrix in Kapitel14. Die unten genannten61Seiten/Originalhashes gehören weiterhin zur unveränderten ersten Fassung. Der Nachtrag erhält separate Satz-/Prüf-/Reviewbelege; der alte PASS wird nicht auf ihn übertragen.
 
@@ -45,3 +51,6 @@ Draft-PR239 gegen main: https://github.com/HerrLoeffler/Hausaufgabe/pull/239. Ke
 
 
 Nachtragabschluss: 29 Seiten, zwei neue Konzeptansichten, Text-/PDFreview PASS ausschließlich im Dokumentumfang. End-PDF SHA256`e343a4d2848d4f5157494e88b1fb477e75cbc2b3f749e2788ba5bc7f8d15ccdf`. Dateien lokal unter `final/GradeCrew-Spiele-Nachtrag-Adaptive-Runden-20261016.pdf` beziehungsweise `.html`; diese Leseartefakte sind nicht als GitHubcommitted behauptet. Reproduzierbare neue Satz-/SVGquellen in `design/adaptive-addendum/`, eigener Review in `review/ADAPTIVE-REVIEW.md`. Hauptbuch und Nachtrag zusammen90Seiten, unterschiedliche Hashes und getrennte Prüfbelege.
+
+
+Abschluss der vorrangigen Korrekturfassung:13 PDF-Seiten, Text-/Dokumentreview PASS, L01 geschlossen. Endtext SHA256`861e81cc37f65dfac05bedcb7cef3e9c9cca135d2b9222d00ae7c335913260d4`; End-PDF SHA256`e06371d9e61c70403558001a2772f1c38eea049e1ae4ce99543d3fc4ff7e1c18`,265.211Bytes. PDF lokal unter `final/GradeCrew-Spiele-Korrektur-Level-und-Klassenrunde-20261016.pdf`, nicht als GitHubcommitted behauptet. Reproduzierbare unverändert übernommene Quellen in `design/level-class-correction/`, eigene Prüfmanifeste unter `final/level-class-correction-*`, neuer Review `review/LEVEL-KLASSEN-REVIEW.md`. Die alten61/29Seiten und ihre Hashes sind unverändert; aktuelle Vorrangregeln im Leseindex beachten.
