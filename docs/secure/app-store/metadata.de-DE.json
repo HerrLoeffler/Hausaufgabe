@@ -1,0 +1,30 @@
+{
+  "status": "draft_not_submitted",
+  "bundleId": "de.gradecrew.secure",
+  "platform": "iPadOS",
+  "minimumOS": "17.0",
+  "name": "GradeCrew Secure",
+  "subtitle": "Tests im Prüfungsmodus",
+  "primaryCategoryProposal": "EDUCATION",
+  "keywords": "Schule,Prüfung,Tests,iPad,Klassenarbeit,Leistungsnachweis,Lernen,GradeCrew",
+  "promotionalText": "Testcode eingeben, Aufgaben bearbeiten und Antworten abgeben: GradeCrew Secure begleitet digitale Leistungsnachweise auf dem iPad.",
+  "description": "Dein Test. Deine Aufgaben. Deine Crew.\n\nMit GradeCrew Secure bearbeitest du veröffentlichte GradeCrew-Tests auf dem iPad. Gib den Testcode deiner Lehrkraft und deinen Namen oder das vereinbarte Kürzel ein. Ein eigenes Schülerkonto ist dafür nicht erforderlich.\n\nWährend der Prüfung verwendet die App Apples Prüfungsmodus. Die Aufgabenübersicht hilft dir, zwischen Fragen zu wechseln und deinen Bearbeitungsstand im Blick zu behalten. Je nach Test stehen verschiedene Aufgabenformen sowie Bilder und Höraufgaben zur Verfügung. Bei Prüfungen mit Zeitlimit bleibt die verbleibende Zeit sichtbar.\n\nDeine Antworten werden während der Bearbeitung auf dem iPad gesichert. Nach der bestätigten Abgabe wird der Prüfungsmodus beendet.\n\nVoraussetzungen: ein unterstütztes iPad ab iPadOS 17, ein veröffentlichter GradeCrew-Test und eine Internetverbindung zum Starten und Übertragen der Abgabe. Die Lehrkraft erstellt und verwaltet Tests in GradeCrew.",
+  "supportURL": null,
+  "privacyPolicyURL": null,
+  "marketingURL": null,
+  "copyright": null,
+  "reviewContact": null,
+  "reviewTestCode": null,
+  "priceDecision": null,
+  "territoriesDecision": null,
+  "releaseModeProposal": "manual_after_approval",
+  "openItems": [
+    "Finale Umgebung und App-Store-Konfiguration freigeben",
+    "Offline-Abgabe implementieren und am Gerät prüfen",
+    "Betreiber- und Supportangaben ergänzen",
+    "Datenschutzerklärung und tatsächliche Datenangaben abschließen",
+    "Preis, Länder, Altersfreigabe und EU-Händlerstatus festlegen",
+    "Stabilen Review-Test ausschließlich mit fiktiven Daten bereitstellen",
+    "Echte Screenshots des endgültigen Builds aufnehmen"
+  ]
+}
