@@ -21,4 +21,12 @@ Bereits gespeicherte, damals blockierte Vorschauen werden nicht nachträglich m�
 
 ## Auslieferung
 
-Kandidat `2.3.1-gc40`, eigener Fix-Branch. Cloud-Prüfung, unabhängiges Review und gezielte Bereitstellung stehen bei Erstellung dieses Nachweises noch aus. Vorgesehen sind nur die beiden bestehenden Staging-Kontoverwaltungsfunktionen und das Staging-Hosting. Keine Regeländerung, keine Production-Bereitstellung und keine Löschung eines echten Nutzerkontos im Rahmen der Entwicklung.
+Releasequelle `21c919bfa41cb7d030d93e719789d0813bdc78e7`, Version `2.3.1-gc40`, Baum `782c77009a8bfb944604e6e6178b0ef2b08d12de`. Der kanonische Branch `feature/gradecrew-app-integration` wurde nach grüner Prüfung auf genau diesen Commit vorgezogen.
+
+- [Fix-Branch: vollständige AI Staging Checks](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38876544178) und [Admin-Prüfung](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38876544142): erfolgreich.
+- [Kanonischer Branch: vollständige AI Staging Checks](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38876929644) und [Admin-Prüfung](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38876929649): erfolgreich, derselbe Commit.
+- Unabhängiges Review: keine kritischen oder wichtigen Befunde. Bekannte bestehende Einschränkung: Nach einer unvollständigen Aktion mit neu hinzugekommenen veröffentlichten Tests muss die Administration neu geladen werden, um über „Löschung fortsetzen“ eine neue ausdrückliche Bestätigung einzuholen. Alte Wiederholungen erhalten keine erweiterten Rechte.
+- Ausschließlich die beiden bestehenden Staging-Funktionen wurden aktualisiert und als `ACTIVE` bestätigt: `previewadminaccountaction-00009-lub` und `executeadminaccountaction-00009-hot`. Die tatsächlich bereitgestellten Quellarchive beider Funktionen stimmen bytegenau mit dem geprüften Löschmodul überein.
+- Der erste CLI-Aufruf ohne Codebase-Präfix fand keine Funktion und brach ohne Bereitstellung ab. Der erfolgreiche Aufruf verwendete gezielt `functions:ai:previewAdminAccountAction,functions:ai:executeAdminAccountAction`.
+
+Staging-Hosting wurde erfolgreich bereitgestellt. Das öffentliche Release-Manifest bestätigt `2.3.1-gc40` und den Releasecommit `21c919bfa41cb7d030d93e719789d0813bdc78e7`; alle 165 ausgelieferten Dateien stimmen mit ihren SHA-256-Manifestwerten überein (`tools/verify-staging.mjs`). Die zusätzliche 166. Hostingdatei ist das Manifest selbst. Keine Regeländerung, keine Production-Bereitstellung und keine Löschung eines echten Nutzerkontos im Rahmen der Entwicklung. `main` wurde anschließend unverändert auf `8560992c072779814017ebac6e86b65e938bc951` bestätigt. Eine echte Admin-Löschung bleibt ein manueller Gerätetest des Nutzers.
