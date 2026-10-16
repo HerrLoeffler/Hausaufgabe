@@ -130,3 +130,10 @@ Tatsächliche Prüfungen: eigene Scheduler-/Schlüssel-/Normierungsarithmetik un
 Zwischencheckpoint ee92a631 sichert ersten substanziellen Abschnitt/Übergabe; exakteDokuchecks38829467781 und38829467780 success. GesammeltenFinalhead/CI vorNutzerlieferung frisch imPR239 lesen; kein weiterer Commit nur zur Selbstreferenz. STATE/Runtime/Provider/Builds/Merge/Deploy/Production unverändert. RequestedSol/medium,actualModell/Effort/Usageunknown; Historien/Budgets erhalten.
 
 Genau nächster Schritt: Root prüft aktuellenDocshead/Artefakthashes und liefert die vorrangige13seitigeKorrekturfassung anMartin. Erst bei gesondertem konkretem Folgeauftrag den beschriebenen Referenzabschnitt bauen.
+
+
+## Neuer kurzer Kooperationskern 16.10.2026 — Klasse gegen Computer
+
+GleicheTask/PR239/Branch, frisch bestätigteBasis1b972b94; mainSTART/AGENTS/STATE/TODOgegenvorherigeRegelblobs unverändert, exakteDokuchecks38830211315/38830211348success. Nutzerpräzisiert gemeinsamesPunktesammeln gegen virtuellenComputer mit steigendenLeveln. NurPlanung, keinDesigner/Recherche/Provider/Runtime/Merge/Deploy. RequestedSol/mediumbeibehalten,actualModell/Effort/Usageunknown.
+
+KLASSE-GEGEN-COMPUTER-20261016.md:1170Wörter,6Abschnitte, SHA2560e3fc987fcd8a1a913880dd7ecea6e64ce4caeffd7382ba62f6525bc42086181. Vollständiger erster Checkpoint: kooperativer bekannterFlow, deterministischer Energie-/Zielbalken stattLLMgegner, getrennteK/SB- undComputerlevel, vierBeispielrunden, Nfix/M100mitoffenen5×60Fenstern,≥ZielauchGleichstandgewonnen,TeacherstopAbbruch,RetryneueRunde,TeacherNextkeinAutostart;10Abnahmefälle. BegrenzterunabhängigerTextreview läuft. AltePDFs/Hashes unverändert, keinneuerPDFsatzbeauftragt. Genau nächsterSchritt: Reviewfindingseinarbeiten oderTextfreezeabschließen undLeseindex/TODO/Handoff imgleichenPRfinalisieren.
