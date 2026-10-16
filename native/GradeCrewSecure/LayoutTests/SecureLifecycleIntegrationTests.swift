@@ -68,10 +68,12 @@ private final class SecureLifecycleMemoryStore:SecureAttemptPersistence {
         for _ in 0..<100 { if SecureLifecycleHTTP.submissions>0 {break};try await Task.sleep(nanoseconds:20_000_000) }
         XCTAssertEqual(model.phase,.submitting,model.storageStatus+model.message)
         let bridge=try XCTUnwrap(web.navigationDelegate as? SecureExamWebView.Bridge)
+        let previousOrigin=try await web.evaluateJavaScript("performance.timeOrigin") as? Double ?? 0
+        XCTAssertGreaterThan(previousOrigin,0)
         bridge.webViewWebContentProcessDidTerminate(web)
         var refrozen=false
         for _ in 0..<150 {
-            if (try? await web.evaluateJavaScript("document.querySelector('textarea')?.value==='Gesicherte Antwort' && [...document.querySelectorAll('input,textarea,select,button')].every(x=>x.disabled)")) as? Bool == true { refrozen=true;break }
+            if (try? await web.evaluateJavaScript("performance.timeOrigin!==\(previousOrigin) && document.querySelector('textarea')?.value==='Gesicherte Antwort' && [...document.querySelectorAll('input,textarea,select,button')].every(x=>x.disabled)")) as? Bool == true { refrozen=true;break }
             try await Task.sleep(nanoseconds:20_000_000)
         }
         XCTAssertTrue(refrozen,"Actual Bridge.ready must freeze the replacement renderer while native submission is pending")

@@ -1,18 +1,34 @@
 import XCTest
 import WebKit
 @testable import GradeCrewSecureLayoutHost
-private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler {
+private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler,WKNavigationDelegate {
     var ready=false
+    var expectedDocument:URL?
+    var failures:[String]=[]
     func userContentController(_ userContentController:WKUserContentController,didReceive message:WKScriptMessage) {
+        guard message.frameInfo.isMainFrame,message.frameInfo.request.url == expectedDocument else { return }
         if (message.body as? [String:Any])?["type"] as? String == "ready" { ready=true }
     }
+    func webView(_ webView:WKWebView,didFail navigation:WKNavigation!,withError error:Error) { failures.append("Navigation: "+error.localizedDescription) }
+    func webView(_ webView:WKWebView,didFailProvisionalNavigation navigation:WKNavigation!,withError error:Error) { failures.append("Provisional navigation: "+error.localizedDescription) }
+    func webViewWebContentProcessDidTerminate(_ webView:WKWebView) { failures.append("Fixture WebContent process terminated") }
 }
 @MainActor final class SecureWebLayoutTests:XCTestCase {
     // Fixtures have no accounts or external requests. Reuse the ephemeral browser store,
     // as a real exam does, instead of starting hundreds of isolated network processes.
     private let fixtureStore=WKWebsiteDataStore.nonPersistent()
+    private var fixtureWeb:WKWebView?
+    private var fixtureWindow:UIWindow?
+    private var fixtureHandler:SecureFixtureHandler?
+    private func closeFixture() {
+        fixtureWeb?.stopLoading();fixtureWeb?.navigationDelegate=nil
+        fixtureWeb?.configuration.userContentController.removeScriptMessageHandler(forName:"gradecrewSecure")
+        fixtureWindow?.isHidden=true;fixtureWindow?.rootViewController=nil
+        fixtureWeb=nil;fixtureWindow=nil;fixtureHandler=nil
+    }
     func testResourceBoundary() throws { XCTAssertNotNil(Bundle.main.url(forResource:"index",withExtension:"html",subdirectory:"Exam")) }
     func testWebMatrix() async throws {
+        defer {closeFixture()}
         try SecureReports.clear("web-")
         let scenes=SecureReports.run.suite == "full" ? SecureReports.policy.webScenarios : ["all-types","thirty"]
         for view in SecureReports.views { for size in SecureReports.sizes { for scene in scenes { for overview in [false,true] {
@@ -26,20 +42,35 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler {
         let scale=UIFont.preferredFont(forTextStyle:.body,compatibleWith:UITraitCollection(preferredContentSizeCategory:SecureReports.category(size))).pointSize/17
         let payload:[String:Any]=["paper":paper,"quiz":["contentLocale":"de-DE"],"revision":0,"answers":scene == "recovery" ? ["text":"Meine gesicherte Antwort","single":"b"] : [:],"presentationScale":scale]
         let data=try JSONSerialization.data(withJSONObject:payload)
-        let handler=SecureFixtureHandler(),config=WKWebViewConfiguration()
-        config.mediaTypesRequiringUserActionForPlayback = []
-        config.websiteDataStore = fixtureStore
-        config.userContentController.add(handler,name:"gradecrewSecure")
-        config.userContentController.addUserScript(WKUserScript(source:"window.__GC_EXAM__="+String(decoding:data,as:UTF8.self)+";",injectionTime:.atDocumentStart,forMainFrameOnly:true))
-        let web=WKWebView(frame:CGRect(x:0,y:0,width:viewport.width,height:viewport.height),configuration:config)
-        web.scrollView.contentInsetAdjustmentBehavior = .never
-        let controller=UIViewController();controller.view.addSubview(web)
-        let window=UIWindow(frame:web.frame);window.rootViewController=controller;window.makeKeyAndVisible();web.frame=CGRect(origin:.zero,size:CGSize(width:viewport.width,height:viewport.height))
+        let web:WKWebView,window:UIWindow,handler:SecureFixtureHandler
+        if let existing=fixtureWeb,let existingWindow=fixtureWindow,let existingHandler=fixtureHandler {
+            web=existing;window=existingWindow;handler=existingHandler
+        } else {
+            handler=SecureFixtureHandler()
+            let config=WKWebViewConfiguration()
+            config.mediaTypesRequiringUserActionForPlayback=[];config.websiteDataStore=fixtureStore
+            config.userContentController.add(handler,name:"gradecrewSecure")
+            web=WKWebView(frame:.zero,configuration:config);web.navigationDelegate=handler
+            web.scrollView.contentInsetAdjustmentBehavior = .never
+            let controller=UIViewController();controller.view.addSubview(web)
+            window=UIWindow(frame:.zero);window.rootViewController=controller
+            fixtureWeb=web;fixtureWindow=window;fixtureHandler=handler
+        }
+        let frame=CGRect(x:0,y:0,width:viewport.width,height:viewport.height)
+        window.frame=frame;window.rootViewController?.view.frame=frame;web.frame=frame
+        window.makeKeyAndVisible();web.scrollView.setContentOffset(.zero,animated:false)
+        let scripts=web.configuration.userContentController
+        scripts.removeAllUserScripts()
+        scripts.addUserScript(WKUserScript(source:"window.__GC_EXAM__="+String(decoding:data,as:UTF8.self)+";",injectionTime:.atDocumentStart,forMainFrameOnly:true))
         let page=try XCTUnwrap(Bundle.main.url(forResource:"index",withExtension:"html",subdirectory:"Exam"))
-        web.loadFileURL(page,allowingReadAccessTo:page.deletingLastPathComponent())
+        var document=try XCTUnwrap(URLComponents(url:page,resolvingAgainstBaseURL:false))
+        document.queryItems=[URLQueryItem(name:"layoutCase",value:UUID().uuidString)]
+        let currentDocument=try XCTUnwrap(document.url)
+        handler.expectedDocument=currentDocument;handler.ready=false;handler.failures=[]
+        web.loadFileURL(currentDocument,allowingReadAccessTo:page.deletingLastPathComponent())
         for _ in 0..<300 { if handler.ready { break };try await Task.sleep(nanoseconds:50_000_000) }
         var issues:[String]=[]
-        if !handler.ready { issues.append("Local renderer not ready") }
+        if !handler.ready { issues.append("Local renderer not ready");issues += handler.failures }
         var metrics:[String:Any]=[:]
         if handler.ready {
             if overview { _=try await web.evaluateJavaScript("document.getElementById('secureOverviewToggle').click()") }
@@ -60,10 +91,10 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler {
         try SecureReports.save(id,viewport:SecureViewport(name:viewport.name,width:web.bounds.width,height:web.bounds.height),image:SecureReports.image(web),issues:issues,metrics:metrics)
         XCTAssertTrue(issues.isEmpty,id+": "+issues.joined(separator:", "))
         _=try? await web.evaluateJavaScript("document.getElementById('secureNavigation').__gcQuestionNavigation.destroy()")
-        web.stopLoading();config.userContentController.removeScriptMessageHandler(forName:"gradecrewSecure")
-        window.isHidden=true;window.rootViewController=nil
+        if !handler.ready { throw NSError(domain:"SecureFixture",code:1,userInfo:[NSLocalizedDescriptionKey:issues.joined(separator:", ")]) }
     }
     func testNavigationInteractions() async throws {
+        defer {closeFixture()}
         try SecureReports.clear("interaction-")
         let bounds=UIScreen.main.bounds
         let viewport=SecureViewport(name:"device",width:bounds.width,height:bounds.height)
@@ -99,10 +130,14 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler {
         case "freeze":_ = try await web.evaluateJavaScript("window.__final=gcFreezeAnswers();document.querySelector('textarea').value='late';window.__retry=gcFreezeAnswers()")
         case "reload":
             // Same local reload/bootstrap used after WebKit process loss; no new server attempt.
-            let revision=try await web.evaluateJavaScript("revision")
+            let before=try await web.evaluateJavaScript("performance.timeOrigin") as? Double ?? 0
+            if before<=0 {issues.append("Missing original document identity")}
             web.reload()
-            for _ in 0..<100 { if (try? await web.evaluateJavaScript("typeof gcFreezeAnswers==='function' && !!document.querySelector('textarea')")) as? Bool == true { break };try await Task.sleep(nanoseconds:50_000_000) }
-            _=revision
+            for _ in 0..<300 {
+                if (try? await web.evaluateJavaScript("performance.timeOrigin!==\(before) && typeof gcFreezeAnswers==='function' && !!document.querySelector('textarea')")) as? Bool == true { break }
+                try await Task.sleep(nanoseconds:50_000_000)
+            }
+            if try await web.evaluateJavaScript("performance.timeOrigin!==\(before)") as? Bool != true { issues.append("Reload did not create a new document") }
         case "manual-scroll":_ = try await web.evaluateJavaScript("window.scrollTo(0,document.querySelectorAll('.secureQuestion')[9].offsetTop-document.getElementById('secureNavigation').offsetHeight-4)")
         default:break
         }
