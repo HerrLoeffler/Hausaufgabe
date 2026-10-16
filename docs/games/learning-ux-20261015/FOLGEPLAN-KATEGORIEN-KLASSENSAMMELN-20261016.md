@@ -72,7 +72,7 @@ Remy beziehungsweise der eigene Test bleibt die Primärquelle. Hat eine Quelle k
 
 ## 4. „Als Klasse sammeln“ als eigener Spielmodus
 
-Der Modus bekommt einen eigenen Button wie die vorhandenen Solo-/Klasseneinstiege. Er verwendet dieselbe bekannte Quelle, Aufgabenbedienung, Rückmeldung und den bestehenden Code-/QR-/Boardweg. Gemeinsam werden Beiträge gesammelt, statt neue Interaktionen oder eine zweite Plattform einzuführen. Standard ist derselbe individuell fortlaufende Aufgabenfluss wie bisher. Es gibt keine neue Pflicht, nach jeder Minute auf die ganze Klasse zu warten. Gemeinsame Zeitfenster kommen ausschließlich beim zusätzlich ausgewählten Klassenvergleich hinzu.
+Der Modus bekommt einen eigenen Button wie die vorhandenen Solo-/Klasseneinstiege. Er verwendet dieselbe bekannte Quelle, Aufgabenbedienung, Rückmeldung und den bestehenden Code-/QR-/Boardweg. Gemeinsam werden Beiträge gesammelt, statt neue Interaktionen oder eine zweite Plattform einzuführen. Standard ist derselbe individuell fortlaufende Aufgabenfluss wie bisher. Es gibt keine neue Pflicht, nach jeder Minute auf die ganze Klasse zu warten. Gemeinsame Wertungsfenster kommen ausschließlich beim zusätzlich ausgewählten Vergleich zwischen Klassen oder Teams hinzu.
 
 Der einfache Start lautet: **Kategorie → Level → Quelle → Spielweise**. Die Spielweisen zeigen beispielsweise „Allein üben“, „Als Klasse sammeln“ und den vorhandenen geeigneten Wettbewerb. Im Sammelmodus stellt die Lehrkraft eine Dauer und ein gemeinsames Ziel ein oder übernimmt den vorgeschlagenen Wert. Ein kurzer Text reicht: „Alle tragen bei. Auf dem Board steht unser gemeinsamer Stand.“ Details zu Vergleich, Roster und Punktetopfen liegen in Advanced beziehungsweise in der einmaligen Rundenbestätigung.
 
@@ -83,6 +83,25 @@ Der erste Umsetzungsreferenzabschnitt betrifft ein geeignetes vorhandenes Mathem
 Beim reinen Sammeln kann die Rohsumme positiv angezeigt werden: „Unsere gesammelten Punkte:1080“. Ein kooperatives Ziel kann mit der vor Start bestätigten Zahl der Lernenden skalieren: `Klassenziel = N × Zielbeitrag pro Person`. Das ist ein gemeinsames Ziel, keine Pflicht, dass jede Person denselben Beitrag leisten muss.
 
 Bei „Klasse gegen Klasse“ oder „Gruppen gegeneinander“ wird die Rohsumme **nicht** als Siegermaßstab benutzt. Eine größere Klasse besitzt sonst allein durch ihre Größe mehr Chancen. Das Vergleichsboard zeigt eine eigene Skala „Klassenvergleich:600 von 1000“, die aus dem normierten Möglichkeitenscore entsteht. „Gesammelte Punkte“ und „Klassenvergleich“ werden nicht identisch beschriftet.
+
+### 4.2 Gruppen gegeneinander innerhalb einer Klasse
+
+**Verbindliche Planergänzung vom 16.10.2026:** Eine Klasse kann beispielsweise vier Teams bilden, die gleichzeitig gegeneinander spielen. Jedes Kind bearbeitet individuell dieselben bekannten Aufgabenabläufe; seine bestätigten Punkte fließen ausschließlich in sein Team. „Klasse gegen Computer“ bleibt die kooperative Alternative, „Klassenvergleich“ der Vergleich über Klassen hinweg. Kein Modus ersetzt die anderen. Der Gruppenmodus ist ein eigener Einstieg: **„Als Klasse → Gruppen gegeneinander“**.
+
+Die Lehrkraft wählt vor Start beispielsweise zwei bis sechs Teams, vorgeschlagen sind vier. Dieser Bereich ist eine UI-Hypothese. Sie lässt zufällig und zahlenmäßig möglichst ausgeglichen zuordnen oder ordnet selbst zu. Kein Kind wird öffentlich als „schwach“ eingestuft. Der Server bestätigt genau eine Teamzuordnung pro teilnehmender Person. Teamnamen und Farben sind sichtbar, zusätzlich unterscheiden Textlabels die Teams. Der vorhandene QR-/Codeweg führt in diese Runde; eine zweite Anmeldung oder ein zusätzliches Gerät erzeugt keinen zweiten Beitragstopf.
+
+**Entscheidung zur Anzeige:** Das Rennen verwendet immer dieselbe normierte Skala von 0 bis 1000, auch bei gleich großen Teams. Zusätzlich zeigt jedes Team seine aufsummierten Beiträge als „Gesammelte Punkte“. Die Beschriftungen und der vor Start bestätigte Siegermaßstab wechseln nicht heimlich. Bei 24 Kindern in vier Sechserteams wären direkte Summen unter identischen Aufgaben-, Punkte- und Zeitbedingungen rechnerisch vergleichbar; die einheitliche Normskala vermeidet dennoch einen Darstellungswechsel bei anderer Klassengröße.
+
+| Beispiel bei persönlichem Maximum M = 100 | Gesammelte Punkte | Rennstand |
+|---|---:|---:|
+| Team Blau: sieben Kinder mit je 60 Punkten | 420 | 600 / 1000 |
+| Team Grün: sechs Kinder mit je 60 Punkten | 360 | 600 / 1000 |
+
+Bei 25 Kindern mit Teams von 7/6/6/6 gewinnt das Siebenerteam deshalb nicht allein wegen seiner größeren Rohsumme. Pro Team gilt `Rennstand = 1000 × Summe bestätigter Beiträge / (N_fix × M)`. Alle vor Start bestätigten Teammitglieder zählen; `N_fix ≥ 1`, dasselbe serverbestätigte `M > 0` und identische Gelegenheiten sind Startbedingungen. Kleine Teams besitzen weiterhin größere Zufallsschwankungen; Zusammensetzung und Vorwissen verschwinden durch die Formel nicht.
+
+**Aufgabenfluss und Wertung bleiben getrennt:** Fortlaufendes Teamsammeln übernimmt die bekannte individuelle Bedienung. Für ein als fair vergleichbar angekündigtes Rennen wird zusätzlich der bestehende Vergleichsvertrag gewählt: beispielsweise fünf gemeinsame 60-Sekunden-Wertungsfenster, je maximal 20 Punkte, insgesamt M = 100 pro Person. Je Fenster zählt die erste freigegebene Aufgabe nach derselben 20/10/0-Hinweis-/Fehlerregel. Anschließend dürfen Kinder ungewertet weiterüben; niemand muss untätig warten. Unterschiedliche adaptive Aufgabenströme erhalten keine Rohsummenrangliste. Gleiche Aufgaben oder geprüfte Parallelformen, Quelle, Kategorie und eigenes Level, Material, Hilfen, Antwortformat und Serverzeit gelten für alle Teams. Kopfrechnen bleibt 100 Prozent Kopf; Stift und Block behält den geplanten 65/35-Slotvertrag. Kanonische Aufgabenidentität und idempotente Abgabe verhindern doppelte Wertung.
+
+Das Board zeigt vier Teamfelder mit Name, Farbe, Rennstand, Beiträgen, Restzeit und aktuellem Platz, keine privaten Antworten oder öffentliche Einzelrangliste. Ein Sieger steht erst bei gemeinsamer Serverfrist fest. Gleicher Endstand bedeutet geteilter Platz; ein Disconnect verkleinert keinen Nenner. Späte Beitritte üben bis zur nächsten Runde ungewertet. Teamwechsel und Umgruppieren sind ausschließlich vor Start beziehungsweise in einer neuen Runde erlaubt; bereits erzielte Punkte lassen sich nicht mitnehmen. Lehrerstop vor Frist beendet als Abbruch ohne Sieger, reguläres Ende schließt alle Teams gleichzeitig. Startprüfung, feste Teamlisten und Schlussabrechnung müssen insbesondere das 7-gegen-6-Beispiel, Doppelanmeldung, Gleichstand und Wiederverbinden nachvollziehbar bestehen. Diese Regeln sind Produktvorschläge, keine nachgewiesene Fairnessgarantie.
 
 ## 5. Unterschiedliche Gruppengrößen: Methoden ehrlich vergleichen
 
