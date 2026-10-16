@@ -10,7 +10,7 @@ const db = getFirestore();
 const REGION = "europe-west1";
 const ROOM_TTL_MS = 6 * 60 * 60 * 1000;
 const MAX_PLAYERS = 30;
-const VALID_OPS = new Set(["add", "sub", "mul", "div", "round"]);
+const VALID_OPS = new Set(["add", "sub", "mul", "div", "round", "binomial"]);
 const VALID_DOMAINS = new Set(["natural", "integer", "decimal", "fraction"]);
 const VALID_LEVELS = new Set(["n1", "n2", "n3", "n4"]);
 const VALID_PENALTIES = new Set([0, 25, 50, 100, 200]);
@@ -358,9 +358,12 @@ async function getHighscoreBoard(payload) {
   return { boardId, config, leaderboard: await leaderboard(boardId, 20) };
 }
 
+const classroomApi = require('./classroom.js').createApi({ db, hashToken, newToken, fail });
+
 async function dispatch(action, payload) {
+  if (action.startsWith('classroom')) return classroomApi(action, payload);
   switch (action) {
-    case "ping": return { service: "gradecrew-fast-quiz", version: 4, maxPlayers: MAX_PLAYERS };
+    case "ping": return { service: "gradecrew-fast-quiz", version: 4, maxPlayers: MAX_PLAYERS, classroomVersion: 1, classroomBuildHash: require("./classroom.js").buildHash, classroomModes: ["computer", "teams"] };
     case "createRoom": return createRoom(payload);
     case "joinRoom": return joinRoom(payload);
     case "roomState": return roomState(payload);

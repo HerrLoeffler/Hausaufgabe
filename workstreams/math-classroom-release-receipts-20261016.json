@@ -1,0 +1,402 @@
+{
+  "taskId": "GC-GAMES-LEARNING-UX-01",
+  "relatedTaskId": "GC-GAMES-FASTQUIZ-BINOMIAL-20261012",
+  "stage": "staging_deployed",
+  "userTested": false,
+  "productionChanged": false,
+  "canonicalHostingChanged": false,
+  "rulesChanged": false,
+  "rulesDeployed": false,
+  "authChanged": false,
+  "pullRequest": "https://github.com/HerrLoeffler/Hausaufgabe/pull/240",
+  "branch": "feat/math-classroom-learning-ux-20261016",
+  "sourceCommit": "7abc866b26b9bc0051667abc4ce700d681528b0e",
+  "sourceTree": "bf1906d027d79e4b1aa9cfcd1c3ccbe95bc2948f",
+  "baseCommit": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+  "integrationTarget": "lab/games-structure",
+  "integrated": false,
+  "ci": {
+    "workflow": "Games Lab Checks",
+    "runId": 38854682474,
+    "jobId": 116823390104,
+    "conclusion": "success",
+    "node": "22",
+    "testsPassed": 39,
+    "browser": "Legacy9modes and classroom3widths/5syntheticparticipants; real reducer/in-memory Firestore"
+  },
+  "review": {
+    "runtimeCommit": "cbd6def560da90a7949445704e42804ecb8b905f",
+    "result": "PASS no remaining P1/P2",
+    "receipt": "workstreams/math-classroom-independent-review-20261016.md",
+    "finalTestOnlyDelta": "Root independently read two synchronization lines; runtime files identical"
+  },
+  "deploy": {
+    "project": "hausaufgabe-staging",
+    "cliVersion": "15.30.2",
+    "execSession": 3707,
+    "result": "success",
+    "functions": {
+      "id": "fastQuizApi",
+      "region": "europe-west1",
+      "codebase": "fastquiz",
+      "runtime": "nodejs22",
+      "state": "ACTIVE",
+      "sourceHash": "2a2f749267f5323fb9cfce9c9e61c7a6b7f95638",
+      "runtimeBuildHash": "82d35bbd4f7e49573e59fdc965b74e23b355d421d5a77bb1923be0a9daa33871",
+      "operation": "operation-1792127743972-65dee41925392-c371c39b-c82560d2",
+      "cloudBuild": "47d05aba-6321-46f3-be9c-206158a50bda"
+    },
+    "hosting": {
+      "channel": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/channels/gradecrew-math-classroom-20261016",
+      "url": "https://hausaufgabe-staging--gradecrew-math-classroom-20261016-5qhq3iqm.web.app/fast-quiz/",
+      "expiresAt": "2026-10-23T05:16:58.176325926Z",
+      "release": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/channels/gradecrew-math-classroom-20261016/releases/1792127826139000",
+      "releasedAt": "2026-10-16T05:17:06.139Z",
+      "version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/041d48f37aae896f",
+      "files": 46,
+      "matchingHttpHashes": 45,
+      "manifestIdentical": true
+    }
+  },
+  "canonicalStaging": {
+    "url": "https://hausaufgabe-staging.web.app/",
+    "sourceCommit": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+    "note": "Fresh HTTP release.json after own-channel deployment remains GC39."
+  },
+  "liveQa": {
+    "status": "PASS",
+    "attempt": 2,
+    "session": 90958,
+    "firstAttempt": {
+      "result": "test-driver failure before room start",
+      "reason": "QRCodeJS hides canvas and displays img; corrected visible-img check",
+      "runtimeChanged": false,
+      "deploymentRepeated": false,
+      "unstartedSyntheticRooms": 2
+    },
+    "proof": {
+      "task": "GC-GAMES-LEARNING-UX-01",
+      "sourceCommit": "7abc866b26b9bc0051667abc4ce700d681528b0e",
+      "base": "https://hausaufgabe-staging--gradecrew-math-classroom-20261016-5qhq3iqm.web.app/fast-quiz/",
+      "startedAt": "2026-10-16T05:18:52.640Z",
+      "scope": "synthetic staging classroom test, real HTTP/Firebase/Firestore, natural five-minute windows",
+      "windows": [
+        {
+          "slot": 0,
+          "groups": [
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": true,
+              "points": 20
+            },
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": true,
+              "points": 20
+            },
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": true,
+              "points": 20
+            },
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": true,
+              "points": 20
+            },
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": true,
+              "points": 20
+            }
+          ],
+          "computer": {
+            "kind": "H",
+            "material": "Im Kopf",
+            "correct": true,
+            "points": 20
+          }
+        },
+        {
+          "slot": 1,
+          "groups": [
+            {
+              "kind": "P",
+              "material": "Stift und Papier",
+              "correct": true,
+              "points": 20
+            },
+            {
+              "kind": "P",
+              "material": "Stift und Papier",
+              "correct": true,
+              "points": 20
+            },
+            {
+              "kind": "P",
+              "material": "Stift und Papier",
+              "correct": true,
+              "points": 20
+            },
+            {
+              "kind": "P",
+              "material": "Stift und Papier",
+              "correct": true,
+              "points": 20
+            },
+            {
+              "kind": "P",
+              "material": "Stift und Papier",
+              "correct": true,
+              "points": 20
+            }
+          ],
+          "computer": {
+            "kind": "H",
+            "material": "Im Kopf",
+            "correct": true,
+            "points": 10
+          }
+        },
+        {
+          "slot": 2,
+          "groups": [
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": false,
+              "points": 0
+            },
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": false,
+              "points": 0
+            },
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": false,
+              "points": 0
+            },
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": false,
+              "points": 0
+            },
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": false,
+              "points": 0
+            }
+          ],
+          "computer": {
+            "kind": "H",
+            "material": "Im Kopf",
+            "correct": true,
+            "points": 20
+          }
+        },
+        {
+          "slot": 3,
+          "groups": [
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": false,
+              "points": 0
+            },
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": false,
+              "points": 0
+            },
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": false,
+              "points": 0
+            },
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": false,
+              "points": 0
+            },
+            {
+              "kind": "H",
+              "material": "Im Kopf",
+              "correct": false,
+              "points": 0
+            }
+          ],
+          "computer": {
+            "kind": "H",
+            "material": "Im Kopf",
+            "correct": false,
+            "points": 0
+          }
+        },
+        {
+          "slot": 4,
+          "groups": [
+            {
+              "kind": "P",
+              "material": "Stift und Papier",
+              "correct": true,
+              "points": 20
+            },
+            {
+              "kind": "P",
+              "material": "Stift und Papier",
+              "correct": true,
+              "points": 20
+            },
+            {
+              "kind": "P",
+              "material": "Stift und Papier",
+              "correct": true,
+              "points": 20
+            },
+            {
+              "kind": "P",
+              "material": "Stift und Papier",
+              "correct": true,
+              "points": 20
+            },
+            {
+              "kind": "P",
+              "material": "Stift und Papier",
+              "correct": true,
+              "points": 20
+            }
+          ],
+          "computer": {
+            "kind": "H",
+            "material": "Im Kopf",
+            "correct": false,
+            "points": 0
+          }
+        }
+      ],
+      "limits": [
+        "No physical camera QR scan",
+        "No physical iPad/phone or classroom load acceptance",
+        "No claim of automatic deletion from expiresAtMs"
+      ],
+      "manifest": {
+        "sourceCommit": "7abc866b26b9bc0051667abc4ce700d681528b0e",
+        "classroomVersion": 1
+      },
+      "backend": {
+        "version": 1,
+        "buildHash": "82d35bbd4f7e49573e59fdc965b74e23b355d421d5a77bb1923be0a9daa33871"
+      },
+      "logoLoaded": true,
+      "logoMime": "image/svg+xml",
+      "legacyLiveSetup": true,
+      "realQrRendered": true,
+      "lateJoinUnscored": true,
+      "freePractice": true,
+      "rejoinPreservedScore": true,
+      "teams": {
+        "status": "finished",
+        "teams": [
+          {
+            "id": 0,
+            "name": "Team Koralle",
+            "color": "#a84135",
+            "size": 2,
+            "rawScore": 120,
+            "energy": 600,
+            "rank": 1
+          },
+          {
+            "id": 1,
+            "name": "Team Ozean",
+            "color": "#24658a",
+            "size": 1,
+            "rawScore": 60,
+            "energy": 600,
+            "rank": 1
+          },
+          {
+            "id": 2,
+            "name": "Team Wald",
+            "color": "#386e4b",
+            "size": 1,
+            "rawScore": 60,
+            "energy": 600,
+            "rank": 1
+          },
+          {
+            "id": 3,
+            "name": "Team Sonne",
+            "color": "#8d6617",
+            "size": 1,
+            "rawScore": 60,
+            "energy": 600,
+            "rank": 1
+          }
+        ]
+      },
+      "computer": {
+        "status": "finished",
+        "energy": 500,
+        "target": 500,
+        "success": true
+      },
+      "publicKeysPrivate": true,
+      "computerNext": {
+        "round": 2,
+        "target": 600,
+        "level": "n1"
+      },
+      "teacherStop": {
+        "status": "aborted",
+        "success": false
+      },
+      "browserErrors": [],
+      "finishedAt": "2026-10-16T05:24:12.784Z",
+      "result": "PASS"
+    },
+    "phoneViewport": {
+      "navCount": 1,
+      "classroomCount": 1,
+      "titleCount": 1,
+      "steps": 3,
+      "viewportWidth": 390,
+      "documentWidth": 390,
+      "navPosition": "sticky",
+      "scrollY": 0
+    },
+    "qrJoinLinks": [
+      "https://hausaufgabe-staging--gradecrew-math-classroom-20261016-5qhq3iqm.web.app/fast-quiz/?classroom=302656",
+      "https://hausaufgabe-staging--gradecrew-math-classroom-20261016-5qhq3iqm.web.app/fast-quiz/?classroom=721331"
+    ],
+    "note": "QR title URLs and visible loaded IMG verified; camera scanning remains separate."
+  },
+  "limits": [
+    "Physical camera QR scan, physical iPad/phone and classroom-load/user acceptance remain unverified.",
+    "Concrete arithmetic profiles, not full grades5-10 curriculum; existing legacy topics preserved.",
+    "No existing FastQuiz Remy/own-test import contract found; no new adapter invented.",
+    "expiresAtMs is a six-hour access boundary, not proof of automatic Firestore deletion.",
+    "Own complete staging preview; canonical app and Production not updated."
+  ],
+  "costs": {
+    "paidProviderCalls": 0,
+    "newGuardianRuns": 0,
+    "modelRequested": "inherited/unknown",
+    "modelObserved": "unknown",
+    "usage": "unknown",
+    "historyPreserved": true
+  }
+}

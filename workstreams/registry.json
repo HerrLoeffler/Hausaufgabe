@@ -1,0 +1,13 @@
+{
+  "description": "Scoped branch registration; main workstreams/registry.json remains canonical. Merge only own new row during later main documentation integration.",
+  "workstreams": [
+    {
+      "id": "fastquiz-binomial-20261012",
+      "title": "Fast Quiz Binomische Formeln Klasse10",
+      "primaryBranch": "feat/fastquiz-binomial-20261012",
+      "integrationTarget": "lab/games-structure",
+      "state": "blocked",
+      "handoff": "workstreams/fastquiz-binomial-20261012.md"
+    }
+  ]
+}
