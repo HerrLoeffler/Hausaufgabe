@@ -5,7 +5,7 @@ import {allowLocalRequest} from './policy.mjs';
 const require=createRequire(import.meta.url);const {createReviewService}=require('../../functions/lib/review-mode.js');
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');const port=Number(process.env.REVIEW_PORT||8768);const folder=path.join(root,'.review-local');await fs.mkdir(folder,{recursive:true});
 const dataFile=path.join(folder,'notes.json');const store=await openReviewStore(dataFile);
-const service=createReviewService({store,projectId:'hausaufgabe-staging'});let build='',clients=new Set(),running=false;
+const service=createReviewService({store,projectId:'gradecrew-staging-2026'});let build='',clients=new Set(),running=false;
 const fingerprint=()=>sourceFingerprint(root);
 build=await fingerprint();const timer=setInterval(async()=>{try{const next=await fingerprint();if(next!==build){build=next;for(const client of clients)client.write(`data: ${JSON.stringify({build})}\n\n`);}}catch{}},1200);
 function json(response,status,value){response.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});response.end(JSON.stringify(value));}

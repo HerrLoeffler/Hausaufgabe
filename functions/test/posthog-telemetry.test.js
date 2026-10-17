@@ -12,15 +12,15 @@ const {
 } = require("../lib/posthog-telemetry");
 
 const stagingEnv = Object.freeze({
-  GCLOUD_PROJECT: "hausaufgabe-staging",
+  GCLOUD_PROJECT: "gradecrew-staging-2026",
   POSTHOG_PROJECT_TOKEN: "unit-test-project-token"
 });
 
 test("PostHog export activates only for configured staging runtime", () => {
-  assert.equal(runtimeProjectId(stagingEnv), "hausaufgabe-staging");
+  assert.equal(runtimeProjectId(stagingEnv), "gradecrew-staging-2026");
   assert.equal(isPosthogExportEnabled(stagingEnv), true);
   assert.equal(isPosthogExportEnabled({ ...stagingEnv, GCLOUD_PROJECT: "hausaufgabe-40294" }), false);
-  assert.equal(isPosthogExportEnabled({ GCLOUD_PROJECT: "hausaufgabe-staging" }), false);
+  assert.equal(isPosthogExportEnabled({ GCLOUD_PROJECT: "gradecrew-staging-2026" }), false);
 });
 
 test("PostHog distinct ids are stable only within the same day", () => {

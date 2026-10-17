@@ -4,7 +4,7 @@ import { assertReceiptMatches } from "../assessment-receipt-check.mjs";
 import { randomBytes } from "node:crypto";
 import { writeFile } from "node:fs/promises";
 
-const PROJECT_ID = "hausaufgabe-staging";
+const PROJECT_ID = "gradecrew-staging-2026";
 const REGION = "europe-west1";
 const MAX_PARTICIPANTS = 50;
 const DEFAULT_PARTICIPANTS = 30;

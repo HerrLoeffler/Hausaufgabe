@@ -245,6 +245,9 @@ jobs:
       - name: Verify isolated release targets
         run: node --test tools/environments.test.mjs tools/release-environments.test.mjs tools/deploy-release.test.mjs
 
+      - name: Verify live feedback connector without private accounts
+        run: node --test integrations/gradecrew-central/test/*.test.mjs
+
       - name: Smoke test staging build
         run: |
           BUILD_DIR="$(mktemp -d)"
