@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc40";
+const APP_VERSION = "2.3.1-gc41";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -40,9 +40,9 @@ import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/
 import { createAccountController } from "./admin-account-actions.mjs?v=2";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-gc40";
-import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc40";
-import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc40";
+import { createAiClient } from "./ai-client.js?v=2.3.1-gc41";
+import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc41";
+import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc41";
 import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";
@@ -1022,12 +1022,9 @@ function safeDialogClose(dialog) {
 
 function setTeacherBar() {
   const loggedIn = Boolean(state.user) && !new URLSearchParams(location.search).has("test");
-  const hostname = String(location.hostname || "").replace(/^\[|\]$/g, "").toLowerCase();
-  const localWorkbenchHost = ["localhost", "127.0.0.1", "::1"].includes(hostname);
   $("userBar").classList.toggle("hidden", !loggedIn);
   $("userLabel").textContent = state.profile?.displayName || state.user?.displayName || state.user?.email || "";
   $("adminTopBtn")?.classList.toggle("hidden", !loggedIn || !isAdmin());
-  $("gradecrewEtLauncher")?.classList.toggle("hidden", !loggedIn || !isAdmin() || localWorkbenchHost);
   $("appFooter")?.classList.toggle("hidden", !loggedIn);
 }
 
@@ -1049,7 +1046,7 @@ function renderBugOpsAttentionBadge(summary = state.bugOpsSummary) {
 async function refreshBugOpsAttention({ notify = false } = {}) {
   if (!state.user || !isAdmin() || typeof aiApi.getBugOpsSummary !== "function") {
     state.bugOpsSummary = null;
-    if (appEnvironment === "staging") void reviewController?.setSession(null);
+    if (["production", "staging"].includes(appEnvironment)) void reviewController?.setSession(null);
     renderBugOpsAttentionBadge(null);
     return null;
   }
@@ -1230,7 +1227,7 @@ onAuthStateChanged(auth, async (user) => {
     state.adminAudit = [];
     state.adminFeedback = [];
     state.bugOpsSummary = null;
-    if (appEnvironment === "staging") void reviewController?.setSession(null);
+    if (["production", "staging"].includes(appEnvironment)) void reviewController?.setSession(null);
     renderBugOpsAttentionBadge(null);
     $("adminAuditList")?.replaceChildren();
     $("adminFeedbackList")?.replaceChildren();
@@ -1280,7 +1277,7 @@ onAuthStateChanged(auth, async (user) => {
     : { state: "signedOut" };
   window.GradeCrewNative?.setAuthState?.(nativeAuthState)?.catch(() => {});
   setTeacherBar();
-  if (appEnvironment === "staging") void reviewController?.setSession(user ? { uid: user.uid } : null);
+  if (["production", "staging"].includes(appEnvironment)) void reviewController?.setSession(user ? { uid: user.uid } : null);
   if (user && isAdmin()) void refreshBugOpsAttention({ notify: true });
 
   const params = new URLSearchParams(location.search);
@@ -9239,7 +9236,7 @@ document.addEventListener("gradecrew:coco-guide", event => {
 });
 
 // Review UI uses a separate callable; never the paid AI proxy or public feedback.
-if (["staging", "local-review"].includes(appEnvironment)) {
+if (["production", "staging", "local-review"].includes(appEnvironment)) {
   const reviewApi = createAiClient(app, () => state.user?.uid || "");
   const localReview = appEnvironment === "local-review" && ["localhost", "127.0.0.1"].includes(location.hostname);
   const openScene = localReview ? scene => new Promise((resolve,reject) => {
@@ -9272,7 +9269,7 @@ if (["staging", "local-review"].includes(appEnvironment)) {
     }
   };
   reviewController = installReviewMode({
-    document, api: payload => reviewApi.reviewMode(payload), local: localReview, compact: !localReview, openScene, navigate:navigateReview,
+    document, api: payload => reviewApi.reviewMode(payload), local: localReview, compact: !localReview, environment:appEnvironment, openScene, navigate:navigateReview,
     getContext: () => ({view: views.find(id => !$(id)?.classList.contains("hidden")) || "authView", build: reviewBuild,
       scene: localReview ? reviewScene : "", locale: document.documentElement.lang.startsWith("en") ? "en" : "de",
       quizId: localReview ? "" : !$("studentView")?.classList.contains("hidden") ? $("studentQuizCard")?.dataset.reviewQuizId || "" : ["editorView","publishView"].some(id => !$(id)?.classList.contains("hidden")) ? state.currentQuiz?.id || "" : !$("resultsView")?.classList.contains("hidden") ? state.currentResultsQuiz?.id || "" : ""}),

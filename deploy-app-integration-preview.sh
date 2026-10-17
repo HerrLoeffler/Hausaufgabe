@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 MODE="${1:---check}"
 case "$MODE" in --check|--deploy) ;; *) echo "Aufruf: bash deploy-app-integration-preview.sh --check oder --deploy"; exit 1 ;; esac
-PROJECT_ID="hausaufgabe-staging"
+PROJECT_ID="gradecrew-staging-2026"
 BRANCH="feature/gradecrew-app-integration"
 CHANNEL="gradecrew-app-integration"
 if [[ "$(git branch --show-current)" != "$BRANCH" ]]; then
@@ -15,7 +15,7 @@ fi
 # The runtime must also work when a fresh Cloud Shell has no nvm at all.
 . tools/cloud-shell-runtime.sh
 gradecrew_use_node22
-grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js
+grep -q 'projectId: "gradecrew-staging-2026"' firebase-config.staging.js
 npm ci --prefix tools/ui --no-audit --no-fund
 for FILE in app.js startup.js visual-enhancements.js mobile-viewport-polish.js first-guide-responsive.js crew-tour-responsive.js gate-e-lab.js tools/gate-e-load-test.mjs; do node --check "$FILE"; done
 node --test diagnostics.test.mjs crew-art.test.mjs gradecrew-tour.test.mjs gradecrew-tour-v8-dashboard.test.mjs crew-tour-gc*.test.mjs first-guide-responsive.test.mjs crew-tour-responsive.test.mjs assessment-receipt-check.test.mjs gate-e-lab.test.mjs tools/gate-e-load-test.test.mjs secure-*.test.mjs assessment-functions/test/*.test.js

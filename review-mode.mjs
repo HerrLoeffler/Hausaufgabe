@@ -1,13 +1,15 @@
 import {installCompactCapture} from './review-capture.mjs';
 import {createReviewStorage} from './review-store.mjs';
 const labels={open:'Offen',working:'In Arbeit',review:'Zum Prüfen',done:'Erledigt',pending:'Wartet auf Freigabe',approved:'Freigegeben',rejected:'Abgelehnt',not_required:'Adminhinweis',passed:'Bestanden',failed:'Fehler',blocked:'Blockiert'};
-export function installReviewMode({document,api,getContext,storage=createReviewStorage(),openScene,navigate,runChecks,local=false,compact=false}) {
+export function installReviewMode({document,api,getContext,storage=createReviewStorage(),openScene,navigate,runChecks,local=false,compact=false,environment='production'}) {
  if(compact)document.body.id ||= 'gradecrewPage';
  const win=document.defaultView;let uid='',epoch=0,admin=false,catalog=[],root,toggle,marking=false,selected=null,highlight=null,notes=[],checks=[],syncing=false;
  let compactCapture=null;
  let regionMode=false,drag=null,regionOverlay=null,regionAnchor=null,regionBounds=null,suppressClick=false;
  let pendingWrites=Promise.resolve(),queueWrites=Promise.resolve();
- const updateQueue=(k,change)=>{const p=queueWrites.catch(()=>{}).then(async()=>storage.update?storage.update(k,change):storage.put(k,change(await storage.get(k))));queueWrites=p;return p;};const key=kind=>`staging:${uid}:${kind}`;
+ // Preserve the original live outbox key; the new test project gets its own namespace.
+ const namespace=environment==='production'?'staging':environment==='staging'?'staging-2026':environment;
+ const updateQueue=(k,change)=>{const p=queueWrites.catch(()=>{}).then(async()=>storage.update?storage.update(k,change):storage.put(k,change(await storage.get(k))));queueWrites=p;return p;};const key=kind=>`${namespace}:${uid}:${kind}`;
  const el=(tag,text,attrs={})=>{const node=document.createElement(tag);if(text!=null)node.textContent=text;for(const [k,v] of Object.entries(attrs))node.setAttribute(k,v);return node;};
  const button=(text,fn,attrs={})=>{const b=el('button',text,{type:'button',...attrs});b.addEventListener('click',fn);return b;};
  function message(text,error=false){const n=root?.querySelector('[data-review-message]');if(n){n.textContent=text;n.classList.toggle('reviewError',error);}}
@@ -18,7 +20,7 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
  function dispose(){compactCapture?.dispose();compactCapture=null;portalObserver.disconnect();epoch++;close();toggle?.remove();toggle=null;uid='';document.removeEventListener('click',capture,true);document.removeEventListener('pointerdown',capture,true);document.removeEventListener('pointermove',capture,true);document.removeEventListener('pointerup',capture,true);document.removeEventListener('pointercancel',capture,true);win.removeEventListener('resize',paintRegion);win.removeEventListener('scroll',paintRegion,true);document.removeEventListener('keydown',capture,true);win.removeEventListener('online',online);}
  async function setSession(session){epoch++;compactCapture?.dispose();compactCapture=null;close();toggle?.remove();toggle=null;uid=session?.uid||'';selected=null;notes=[];checks=[];if(!uid)return;
   const e=epoch;try{const access=await call({action:'access'});if(e!==epoch)return;admin=access.admin;catalog=access.catalog?.checks||[];
-   if(compact){void sync();return;}
+   if(compact){compactCapture=installCompactCapture({document,saveNote:recordCompactNote,feedback:true});void sync();return;}
    toggle=button('Seite überarbeiten',()=>void open(),{'data-review-toggle':'',class:'reviewToggle'});document.body.append(toggle);
   }catch{/* No access means no UI. Server remains authoritative. */}
  }

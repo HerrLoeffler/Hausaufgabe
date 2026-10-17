@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")"
-PROJECT_ID="hausaufgabe-staging"
+PROJECT_ID="gradecrew-staging-2026"
 EXPECTED_BRANCH="fix/gradecrew-staging-polish"
 
 CURRENT_BRANCH="$(git branch --show-current)"

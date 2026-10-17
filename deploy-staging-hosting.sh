@@ -3,7 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 MODE="${1:---check}"
 case "$MODE" in --check|--deploy) ;; *) echo "Aufruf: bash deploy-staging-hosting.sh --check oder --deploy"; exit 1 ;; esac
-PROJECT_ID="hausaufgabe-staging"
+PROJECT_ID="gradecrew-staging-2026"
 
 for FILE in app.js interface.js startup.js ai-client.js quick-remy-bridge.js auth-profile.js secure-assessment-client.js secure-student.js ui-enhancements.js visual-enhancements.js first-guide-guard.js crew-tour-hardening.js crew-tour-gc22-polish.js crew-tour-gc23-polish.js crew-tour-gc24-polish.js crew-tour-gc25-final-polish.js crew-tour-gc26-story-polish.js student-attempt-guard.js remy-ai-help.js teacher-copy-polish.js gradecrew-tour.js gradecrew-tour-v7.js gradecrew-tour-v8.js gradecrew-brand.js layout-enhancements.js variant-enhancements.js tutorial-variant-fallback.js admin-ai-access.js editor-drafts.js ai-review-state.js ordering-grading.mjs; do
   node --check "$FILE"
@@ -27,4 +27,4 @@ command -v firebase >/dev/null || { echo "Firebase CLI fehlt. Installieren: npm 
 echo "Veröffentliche ausschließlich Hosting auf $PROJECT_ID."
 firebase deploy --config "$BUILD_DIR/firebase.json" --project "$PROJECT_ID" --only hosting --non-interactive
 node tools/verify-staging.mjs "$BUILD_DIR/public/release.json"
-echo "Fertig: https://hausaufgabe-staging.web.app"
+echo "Fertig: https://gradecrew-staging-2026.web.app"
