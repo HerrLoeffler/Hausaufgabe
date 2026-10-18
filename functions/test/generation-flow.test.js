@@ -12,6 +12,7 @@ const { variantPrompt } = require("../lib/test-variant");
 const { validateAndRepairTest } = require("../lib/repair-test");
 const { reviewAndRepairTest } = require("../lib/quality");
 const { generateTestInBatches } = require("../lib/test-batches");
+const { preparePedagogicalPool } = require("../lib/pedagogical-pool");
 const source = readFileSync(require.resolve("../index.js"), "utf8");
 const handler = source.slice(source.indexOf("async function generateTestForUser("), source.indexOf("\nexports.generateTest ="));
 
@@ -21,7 +22,7 @@ test("actual generation handler connects constrained batches, validation, review
     const usage = [], progress = [];
     const context = vm.createContext({
       ...constants, ...validation, ...schemas, ...prompts, HttpsError,
-      generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, variantPrompt,
+      generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, preparePedagogicalPool, variantPrompt,
       randomUUID: () => "test-request", cleanInput: data => data, sanitizeMaterials: () => [],
       consumeQuota: async () => {}, materialInputs: async () => [], qualityMemoryPrompt: () => "",
       teacherQualityGuide: () => "",
@@ -69,7 +70,7 @@ test("actual fresh variant generation replaces every source task, keeps 10 tasks
   const clean = source.slice(source.indexOf("function cleanSourceTest("), source.indexOf("async function structuredResponse("));
   let reviewed = 0, generated = 0;
   const context = vm.createContext({ ...constants, ...validation, ...schemas, ...prompts, HttpsError, variantPrompt,
-    generateTestInBatches, validateAndRepairTest, reviewAndRepairTest,
+    generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, preparePedagogicalPool,
     randomUUID: () => "test-request", sanitizeMaterials: () => [], consumeQuota: async () => {}, materialInputs: async () => [],
     qualityMemoryPrompt: () => "", teacherQualityGuide: () => "", loadQualityMemory: async () => ({ negativeQuestions: [], memoryVersion: 2, stats: { total: 0 } }),
     structuredResponse: async ({ schemaName, userPrompt }) => {
@@ -81,6 +82,7 @@ test("actual fresh variant generation replaces every source task, keeps 10 tasks
   });
   vm.runInContext(clean + handler, context);
   const response = await context.generateTestForUser("teacher", input);
+  assert.equal(response.meta.pedagogicalPool.profileCount, 0);
   assert.equal(generated, 1); assert.equal(reviewed, 1); assert.equal(response.test.questions.length, 10);
   assert.equal(response.test.questions.reduce((sum, q) => sum + q.points, 0), 20);
   assert.equal(response.test.questions.some(q => originals.some(old => validation.variantRepeats(old, q))), false);
