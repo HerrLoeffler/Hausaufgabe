@@ -1,0 +1,69 @@
+{
+  "taskId": "GC-CLASSROOM-01",
+  "date": "2026-10-18",
+  "scope": "device-local named CSV import with explicit before/after approval in original app",
+  "source": {
+    "localCommit": "d38c7d4811f9a0e42687c08e592deeb20554f837",
+    "remoteCommit": "2abe19a9a81cf95087cb8b9c5b4d68358d606808",
+    "tree": "a5ddd0951ba88d2d66714d99a15add946b03944a",
+    "branch": "feature/classroom-integrated-preview-20261016"
+  },
+  "tests": {
+    "passed": 359,
+    "failed": 0,
+    "exitCode": 0,
+    "knownWarning": "Existing entry-flow jsdom teardown document is not defined"
+  },
+  "independentReview": {
+    "agent": "csv_roster_review",
+    "result": "PASS after bounded P2 fix",
+    "remainingFindings": 0,
+    "targetedTestsPassed": 12,
+    "ownSQLiteCommitAndBackStepReproduction": true,
+    "independentBrowserRun": false
+  },
+  "authorBrowser": {
+    "userPerformedLogin": true,
+    "onlySyntheticRosterImported": true,
+    "firstImportCreated": 2,
+    "secondImportPreview": {
+      "new": 0,
+      "unchanged": 0,
+      "updated": 2,
+      "review": 0,
+      "nameChanges": 1,
+      "classChanges": 2,
+      "from": "8b 2026/27",
+      "to": "9b 2027/28"
+    },
+    "explicitCheckboxAndCommit": true,
+    "reloadPreservedTotalStudents": 3,
+    "existingQuizCardDOMCountAfterAsyncLoad": 49,
+    "quizWriteOrPublish": false,
+    "finalBrowserErrorCount": 0,
+    "screenshotOutsideRepository": "outputs/classroom-20261018/csv-change-preview.jpg"
+  },
+  "boundaries": {
+    "namesStored": "private account-scoped SQLite on this Mac outside webroot",
+    "rawFileUploaded": false,
+    "onlyMappedNecessaryFieldsToLocalAPI": true,
+    "stableASVExportFieldVerified": false,
+    "namesAloneAutoMerged": false,
+    "missingRowsAutoDeleted": false,
+    "schoolwideCloudSharing": false,
+    "applicationLevelEncryption": false,
+    "studentLoginCreated": false
+  },
+  "server": {
+    "url": "http://127.0.0.1:8782/",
+    "sessionId": 53204
+  },
+  "release": {
+    "stage": "branch_only",
+    "hostingDeployed": false,
+    "functionsDeployed": false,
+    "rulesDeployed": false,
+    "productionChanged": false
+  },
+  "next": "User imports own CSV and reviews before consent; stable export ID and schoolwide backend remain separate qualification"
+}
