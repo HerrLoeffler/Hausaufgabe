@@ -10,5 +10,5 @@ export function createLocalRosterClient({port,fetchImpl=globalThis.fetch}){
   if(!Number.isSafeInteger(result.revision)||(preview?typeof result.planHash!=='string'||!Array.isArray(result.rows)||!result.counts:!Array.isArray(result.classes)||!Array.isArray(result.students)))throw Error('Der lokale Bestand konnte nicht gelesen werden.');
   return result;
  }
- return {read:()=>request(),previewImport:payload=>request({command:'previewStudentImport',payload},{preview:true}),mutate:(command,payload,expectedRevision,operationId)=>request({command,payload,expectedRevision,operationId})};
+ return {read:()=>request(),previewTeacherImport:payload=>request({command:'previewTeacherImport',payload},{preview:true}),previewImport:payload=>request({command:'previewStudentImport',payload},{preview:true}),mutate:(command,payload,expectedRevision,operationId)=>request({command,payload,expectedRevision,operationId})};
 }

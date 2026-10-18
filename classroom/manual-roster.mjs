@@ -78,11 +78,11 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
   target.addEventListener('close',()=>{if(dialog===target){target.remove();dialog=null;}});
   target.append(form);doc.body.append(target);if(typeof target.showModal==='function')target.showModal();else target.setAttribute('open','');form.querySelector('input')?.focus();
  }
- function importButton(){
-  const b=button('ASV-/CSV-Datei importieren',()=>{
+ function importButton(kind='students'){
+  const b=button(kind==='teachers'?'Lehrkräfte-CSV importieren':'ASV-/CSV-Datei importieren',()=>{
    if(status!=='ready'||!uid)return;dismiss();const current=epoch;
-   importDialog=openRosterImport({document:doc,client,state,isCurrent:()=>current===epoch&&!closed&&Boolean(uid),onCommit:(next,counts)=>{state=next;status='ready';importDialog=null;importNotice=`Import abgeschlossen: ${counts.newStudents} neu, ${counts.updated} geändert, ${counts.unchanged} unverändert.`;onChange();}});
-  },{'data-roster-import':''});b.disabled=status!=='ready';return b;
+   importDialog=openRosterImport({document:doc,kind,client,state,isCurrent:()=>current===epoch&&!closed&&Boolean(uid),onCommit:(next,counts)=>{state=next;status='ready';importDialog=null;importNotice=`Import abgeschlossen: ${counts.newTeachers??counts.newStudents} neu, ${counts.updated} geändert, ${counts.unchanged} unverändert.`;onChange();}});
+  },{[kind==='teachers'?'data-roster-import-teachers':'data-roster-import']:''});b.disabled=status!=='ready';return b;
  }
  function renderClasses(host){
   const section=make('section',undefined,{class:'rosterManaged','data-telemetry-private':'true'}),head=make('div',undefined,{class:'rosterHeading'});
@@ -92,6 +92,8 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
    const grid=make('div',undefined,{class:'classroomGrid'});
    for(const c of sortedClasses()){
     const card=make('article',undefined,{class:'card classroomClassCard'}),count=state.students.filter(s=>s.classId===c.id).length;
+    const teaching=(state.teachers||[]).flatMap(t=>(t.assignments||[]).filter(a=>a.classId===c.id).map(a=>`${t.firstName} ${t.lastName}: ${a.subject}`));
+    if(teaching.length)card.append(make('p',teaching.join(' · '),{class:'rosterClassTeaching'}));
     card.append(make('h3',c.name),make('p',c.schoolYear),make('p',`${count} Schüler:innen`),button('Schüler:innen öffnen',()=>{filter=c.id;search='';page=0;onStudents();},{'data-roster-class':c.id}),button('Klasse bearbeiten',()=>formDialog('class',c),{'data-roster-edit-class':c.id}));grid.append(card);
    }
    section.append(grid);
@@ -123,5 +125,26 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
   }
   input.addEventListener('input',()=>{search=input.value;page=0;list();});select.addEventListener('change',()=>{filter=select.value;page=0;list();});list();
  }
- return {setAccount,renderClasses,renderStudents,destroy(){closed=true;epoch++;dismiss();state={revision:0,classes:[],students:[]};}};
+ function renderTeachers(host){
+  const head=make('div',undefined,{class:'rosterHeading'});head.append(make('h2','Lehrkräftebestand'),importButton('teachers'));host.append(head);note(host);
+  host.append(make('p','Lehrkräfte mit ihren Klassen und Fächern verwalten. Ein Eintrag vergibt keine Login- oder Administrationsrechte.',{class:'hint'}));
+  const example='Personal-ID;Vorname;Nachname;Kürzel;Klasse;Fach\n0001;Ada;Beispiel;AB;8b;Deutsch\n0001;Ada;Beispiel;AB;9b;Englisch\n0002;Mila;Muster;MM;8b;Technik\n';
+  host.append(make('a','Beispiel-CSV herunterladen',{href:'data:text/csv;charset=utf-8,'+encodeURIComponent('\ufeff'+example),download:'SYNTHETISCH_Lehrkraefte_Beispiel.csv',class:'button ghost'}));
+  if(status!=='ready')return;
+  const label=make('label','Lehrkräfte suchen'),input=make('input',undefined,{type:'search','aria-label':'Lehrkräfte suchen',autocomplete:'off'}),result=make('div',undefined,{'data-telemetry-private':'true'});label.append(input);host.append(label,result);
+  function list(){
+   result.replaceChildren();const term=input.value.toLocaleLowerCase('de');
+   const teachers=(state.teachers||[]).filter(t=>`${t.firstName} ${t.lastName} ${t.shortCode}`.toLocaleLowerCase('de').includes(term)).sort((a,b)=>a.lastName.localeCompare(b.lastName,'de'));
+   if(!teachers.length){result.append(make('p','Noch keine passenden Lehrkräfte. Importiere eine CSV-Datei.'));return;}
+   const wrap=make('div',undefined,{class:'rosterTableWrap'}),table=make('table',undefined,{class:'rosterTable'}),thead=make('thead'),tr=make('tr');
+   for(const title of ['Lehrkraft','Kürzel','Klassen und Fächer'])tr.append(make('th',title,{scope:'col'}));thead.append(tr);table.append(thead);const tbody=make('tbody');
+   for(const t of teachers){const tr=make('tr');tr.append(make('td',`${t.firstName} ${t.lastName}`),make('td',t.shortCode||'—'));const pairs=make('td');
+    if(!t.assignments?.length)pairs.append(make('span','Keine Zuordnung'));
+    for(const a of t.assignments||[])pairs.append(make('p',`${classLabel(a.classId)} / ${a.subject}`));tr.append(pairs);tbody.append(tr);
+   }
+   table.append(tbody);wrap.append(table);result.append(wrap,make('p',`${teachers.length} Lehrkräfte`,{role:'status'}));
+  }
+  input.addEventListener('input',list);list();
+ }
+ return {setAccount,renderClasses,renderStudents,renderTeachers,destroy(){closed=true;epoch++;dismiss();state={revision:0,classes:[],students:[]};}};
 }

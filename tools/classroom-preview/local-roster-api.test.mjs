@@ -31,6 +31,9 @@ test('HTTP API requires real actor, same origin and JSON; HTTP state survives cl
   const imported=await post(base,'valid-a',{command:'importStudents',payload:{...input,previewHash:view.planHash},expectedRevision:view.revision,operationId:crypto.randomUUID()});
   assert.equal(imported.status,200);assert.equal((await imported.json()).students[0].firstName,'Ada');
 
+  const staff={schoolYear:'2026/27',sourceNamespace:'Teststaff',rows:[{line:2,firstName:'Mila',lastName:'Muster',shortCode:'MM',sourceId:'0001',className:'8b',subject:'Deutsch'}]};
+  const staffPreviewResponse=await post(base,'valid-a',{command:'previewTeacherImport',payload:staff,expectedRevision:undefined,operationId:undefined});assert.equal(staffPreviewResponse.status,200);const staffView=await staffPreviewResponse.json();assert.equal(staffView.counts.newTeachers,1);
+  const staffSaved=await post(base,'valid-a',{command:'importTeachers',payload:{...staff,previewHash:staffView.planHash},expectedRevision:staffView.revision,operationId:crypto.randomUUID()});assert.equal(staffSaved.status,200);assert.equal((await staffSaved.json()).teachers[0].assignments[0].subject,'Deutsch');assert.equal((await(await read('valid-b')).json()).teachers.length,0);
   assert.equal((await fetch(base+'/.gradecrew-local/classroom.sqlite')).status,404);
   const normal=await(await fetch(base)).text();assert.match(normal,/__GRADECREW_ACCOUNT_WORKSPACE__/);assert.doesNotMatch(normal,/importmap/);
  }finally{await new Promise(r=>server.close(r));store.close();}

@@ -77,12 +77,12 @@ test('unresolved person on another page is explained beside approval and reachab
   doc.querySelector('[data-import-preview]').click();await tick();
   const approval=doc.querySelector('[data-import-approval]');approval.checked=true;approval.dispatchEvent(new t.dom.window.Event('change'));
   assert.equal(doc.querySelector('[data-import-confirm]').disabled,true);
-  const status=doc.querySelector('[data-import-confirm-status]');assert.ok(status,'approval area explains disabled commit');assert.match(status.textContent,/1.*Zuordnung/);
+  const status=doc.querySelector('[data-import-confirm-status]');assert.ok(status,'approval area explains disabled commit');assert.match(status.textContent,/1.*offen/);
   const jump=doc.querySelector('[data-import-show-review]');assert.ok(jump&&!jump.hidden,'open decisions are reachable from approval area');jump.click();
   const select=doc.querySelector('select[aria-label="Entscheidung für Zeile 57"]');assert.ok(select,'jump reaches the page containing the unresolved record');assert.equal(doc.activeElement,select);
   select.value='link:'+old.students[0].id;select.dispatchEvent(new t.dom.window.Event('change'));
   assert.equal(doc.querySelector('[data-import-confirm]').disabled,true,'changed decision still requires a fresh preview');
-  assert.match(status.textContent,/erneut prüfen/);
+  assert.match(status.textContent,/automatisch geprüft/);
   doc.querySelector('[data-import-preview]').click();await tick();approval.checked=true;approval.dispatchEvent(new t.dom.window.Event('change'));
   assert.equal(doc.querySelector('[data-import-confirm]').disabled,false);doc.querySelector('[data-import-confirm]').click();await tick();
   assert.equal(t.store.read('a').students.length,60);assert.equal(t.store.read('a').students.find(s=>s.firstName==='Ada').id,old.students[0].id);modal.destroy();
@@ -98,4 +98,46 @@ test('large fully resolved import can commit from page six with one explicit app
   assert.equal(doc.querySelector('[data-import-confirm]').disabled,false);doc.querySelector('[data-import-confirm]').click();await tick();
   assert.equal(t.committed.students.length,320);
  }finally{t.dialog.destroy();t.store.close();t.dom.window.close();}
+});
+test('clicking the open count shows both late decisions together and automatically rechecks the batch',async()=>{
+ const t=setup(),doc=t.dom.window.document;try{
+  t.dialog.destroy();
+  let state=t.store.read('a');for(const firstName of ['Ada','Mila'])state=t.store.mutate('a',{command:'createStudent',payload:{firstName,lastName:'Beispiel',classId:null},expectedRevision:state.revision,operationId:crypto.randomUUID()});
+  const modal=openRosterImport({document:doc,client:{previewImport:async p=>t.store.previewImport('a',p),mutate:async(command,payload,expectedRevision,operationId)=>t.store.mutate('a',{command,payload,expectedRevision,operationId})},state,isCurrent:()=>true,onCommit:()=>{}});
+  await selectFile(t,'Vorname;Nachname;Klasse\n'+Array.from({length:110},(_,i)=>i===80?'Ada;Beispiel;8b':i===109?'Mila;Beispiel;8b':`Probe${i};Muster;8b`).join('\n'));
+  doc.querySelector('[data-import-preview]').click();await tick();const open=doc.querySelector('[data-import-filter="review"]');assert.ok(open,'open count is a filter button');open.click();
+  assert.equal(doc.querySelectorAll('[data-import-summary] tbody tr').length,2);
+  const selects=[...doc.querySelectorAll('[data-import-summary] tbody select')];for(const [i,s]of selects.entries()){s.value='link:'+state.students[i].id;s.dispatchEvent(new t.dom.window.Event('change'));}
+  await new Promise(r=>setTimeout(r,350));assert.match(doc.querySelector('[data-import-filter="review"]').textContent,/0/);
+  assert.equal(doc.querySelectorAll('[data-import-summary] tbody tr').length,2,'decisions remain in context after automatic validation');
+  const approval=doc.querySelector('[data-import-approval]');approval.checked=true;approval.dispatchEvent(new t.dom.window.Event('change'));assert.equal(doc.querySelector('[data-import-confirm]').disabled,false);
+  doc.querySelector('[data-import-confirm]').click();await tick();assert.equal(t.store.read('a').students.length,110);modal.destroy();
+ }finally{t.store.close();t.dom.window.close();}
+});
+test('teacher import uses same approval flow and persists one teacher with two explicit teaching pairs',async()=>{
+ const t=setup(),doc=t.dom.window.document;try{t.dialog.destroy();
+  const modal=openRosterImport({document:doc,kind:'teachers',client:{previewTeacherImport:async p=>t.store.previewTeacherImport('a',p),mutate:async(command,payload,expectedRevision,operationId)=>t.store.mutate('a',{command,payload,expectedRevision,operationId})},state:t.store.read('a'),isCurrent:()=>true,onCommit:()=>{}});
+  await selectFile(t,'Kennung;Vorname;Nachname;Kürzel;Klasse;Fach\n0001;Ada;Beispiel;AB;8b;Deutsch\n0001;Ada;Beispiel;AB;9b;Englisch');
+  const source=doc.querySelector('[data-import-map="sourceId"]');source.value='0';source.dispatchEvent(new t.dom.window.Event('change'));doc.querySelector('[data-import-preview]').click();await tick();
+  assert.match(doc.querySelector('[data-import-summary]').textContent,/1 Neu/);assert.match(doc.querySelector('[data-import-summary]').textContent,/8b \/ Deutsch/);assert.match(doc.querySelector('[data-import-summary]').textContent,/9b \/ Englisch/);
+  const approval=doc.querySelector('[data-import-approval]');approval.checked=true;approval.dispatchEvent(new t.dom.window.Event('change'));doc.querySelector('[data-import-confirm]').click();await tick();assert.equal(t.store.read('a').teachers.length,1);assert.equal(t.store.read('a').teachers[0].assignments.length,2);modal.destroy();
+ }finally{t.store.close();t.dom.window.close();}
+});
+test('late automatic preview cannot overwrite a newer batch of decisions or revive a closed import',async()=>{
+ const t=setup(),doc=t.dom.window.document;let pending=[],calls=0;try{t.dialog.destroy();
+  const initial=t.store.mutate('a',{command:'createStudent',payload:{firstName:'Ada',lastName:'Beispiel',classId:null},expectedRevision:0,operationId:crypto.randomUUID()});
+  const modal=openRosterImport({document:doc,client:{previewImport:p=>{calls++;const view=t.store.previewImport('a',p);return calls===1?Promise.resolve(view):new Promise(r=>pending.push(()=>r(view)));}},state:initial,isCurrent:()=>true,onCommit:()=>{}});
+  await selectFile(t,'Vorname;Nachname;Klasse\nAda;Beispiel;8b\nNeue;Person;8b');doc.querySelector('[data-import-preview]').click();await tick();
+  let choice=doc.querySelector('[aria-label="Entscheidung für Zeile 2"]');choice.value='skip';choice.dispatchEvent(new t.dom.window.Event('change'));await new Promise(r=>setTimeout(r,280));assert.equal(pending.length,1);
+  choice.value='create';choice.dispatchEvent(new t.dom.window.Event('change'));await new Promise(r=>setTimeout(r,280));assert.equal(pending.length,2);
+  pending[1]();await tick();assert.match(doc.querySelector('[data-import-filter=create]').textContent,/2/);pending[0]();await tick();assert.match(doc.querySelector('[data-import-filter=create]').textContent,/2/);
+  choice=doc.querySelector('[aria-label="Entscheidung für Zeile 2"]');choice.value='skip';choice.dispatchEvent(new t.dom.window.Event('change'));await new Promise(r=>setTimeout(r,280));modal.destroy();pending[2]();await tick();assert.equal(doc.querySelector('[data-import-dialog]'),null);
+ }finally{t.store.close();t.dom.window.close();}
+});
+test('failed automatic check shows its reason beside approval and cannot allow an old plan to commit',async()=>{
+ const t=setup(),doc=t.dom.window.document;try{t.dialog.destroy();let calls=0;
+  const modal=openRosterImport({document:doc,client:{previewImport:async p=>{if(calls++)throw Error('Prüfung vorübergehend nicht erreichbar.');return t.store.previewImport('a',p);}},state:t.store.read('a'),isCurrent:()=>true,onCommit:()=>{}});
+  await selectFile(t,'Vorname;Nachname;Klasse\nNeue;Person;8b');doc.querySelector('[data-import-preview]').click();await tick();const choice=doc.querySelector('[data-import-summary] select');choice.value='skip';choice.dispatchEvent(new t.dom.window.Event('change'));await new Promise(r=>setTimeout(r,300));
+  assert.match(doc.querySelector('[data-import-confirm-status]').textContent,/nicht erreichbar/);assert.equal(doc.querySelector('[data-import-confirm]').disabled,true);assert.equal(doc.querySelector('[data-import-preview]').hidden,false);modal.destroy();
+ }finally{t.store.close();t.dom.window.close();}
 });

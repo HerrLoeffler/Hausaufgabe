@@ -53,9 +53,9 @@ export async function handleLocalRoster(req,res,{store,verifyIdentity}){
   if(req.method==='GET')state=store.read(actor.uid);
   else{
    const body=await jsonBody(req);
-   if(body?.command==='previewStudentImport'){
+   if(['previewStudentImport','previewTeacherImport'].includes(body?.command)){
     if(Object.keys(body).some(k=>!['command','payload'].includes(k)))throw new RosterError('invalid-argument');
-    state=store.previewImport(actor.uid,body.payload);
+    state=body.command==='previewTeacherImport'?store.previewTeacherImport(actor.uid,body.payload):store.previewImport(actor.uid,body.payload);
    }else state=store.mutate(actor.uid,body);
   }
   send(res,200,state);

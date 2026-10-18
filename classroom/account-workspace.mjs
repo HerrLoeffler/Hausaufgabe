@@ -23,22 +23,23 @@ export function installAccountWorkspace({document:doc=globalThis.document,port,c
   const roster=rosterClient?createManualRoster({document:doc,client:rosterClient,onChange:()=>{if(port.getSession())render();},onStudents:()=>open('pupils')}):null;
   const classes=make('section',undefined,{id:'accountClassesView',class:'view hidden',tabindex:'-1'});
   const pupils=make('section',undefined,{id:'accountPupilsView',class:'view hidden',tabindex:'-1'});
-  for(const view of [classes,pupils]){main.append(view);port.registerView(view.id);}
+  const teachers=make('section',undefined,{id:'accountTeachersView',class:'view hidden',tabindex:'-1'});
+  for(const view of [classes,pupils,teachers]){main.append(view);port.registerView(view.id);}
   function open(page){
     if(!port.getSession())return;
     active=page;selectedClass='';
     if(page==='tests')port.showTests();
-    else{render();port.showView(page==='classes'?classes.id:pupils.id);}
+    else{render();port.showView(page==='classes'?classes.id:page==='teachers'?teachers.id:pupils.id);}
     refresh();
   }
-  for(const [key,label]of [['tests','Meine Tests'],['classes','Klassen'],['pupils','Schüler:innen']])nav.append(button(label,()=>open(key),{'data-account-nav':key}));
+  for(const [key,label]of [['tests','Meine Tests'],['classes','Klassen'],['pupils','Schüler:innen'],['teachers','Lehrkräfte']])nav.append(button(label,()=>open(key),{'data-account-nav':key}));
   main.prepend(nav);
   function heading(view,title,copy){
     const head=make('div',undefined,{class:'pageHead'}),body=make('div');
     body.append(make('h1',title),make('p',copy));head.append(body);view.append(head);
   }
   function render(){
-    classes.replaceChildren();pupils.replaceChildren();
+    classes.replaceChildren();pupils.replaceChildren();teachers.replaceChildren();
     if(!port.getSession())return;
     const tests=port.listTests();
     if(roster){
@@ -72,6 +73,8 @@ export function installAccountWorkspace({document:doc=globalThis.document,port,c
       classes.append(empty);
     }
     classes.append(make('p','Diese Ansicht verwendet deine Testangaben. Ein gemeinsamer schulischer Klassenbestand mit Mitgliedschaften wird zusätzlich angebunden.',{class:'hint'}));
+    heading(teachers,'Lehrkräfte','Klassen und Fächer deiner Lehrkräfte im Überblick.');
+    if(roster)roster.renderTeachers(teachers);else teachers.append(make('p','Der lokale Lehrkräftebestand ist noch nicht eingerichtet.'));
     if(roster){heading(pupils,'Schüler:innen','Schüler:innen mit Vor- und Nachnamen anlegen und ihren Klassen zuordnen.');roster.renderStudents(pupils);return;}
     heading(pupils,'Schüler:innen','Der zusätzliche Bereich für Klassenmitglieder und persönliche Schülerzugänge.');
     const empty=make('section',undefined,{class:'card empty'});
@@ -86,8 +89,8 @@ export function installAccountWorkspace({document:doc=globalThis.document,port,c
     const show=Boolean(uid)&&visible!=='authView';
     nav.classList.toggle('hidden',!show);doc.body.classList.toggle('classroomSignedIn',show);
     nav.querySelectorAll('[data-account-nav]').forEach(b=>b.setAttribute('aria-current',b.dataset.accountNav===active?'page':'false'));
-    if(uid&&(visible===classes.id||visible===pupils.id))render();
+    if(uid&&(visible===classes.id||visible===pupils.id||visible===teachers.id))render();
   }
   const unsubscribe=port.subscribe(refresh);refresh();
-  return {destroy(){unsubscribe();roster?.destroy();nav.remove();classes.remove();pupils.remove();doc.body.classList.remove('classroomSignedIn');}};
+  return {destroy(){unsubscribe();roster?.destroy();nav.remove();classes.remove();pupils.remove();teachers.remove();doc.body.classList.remove('classroomSignedIn');}};
 }
