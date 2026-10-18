@@ -4,7 +4,7 @@ import {parseCsv,decodeCsv,mapImportRows} from './csv.mjs';
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const localTime=value=>new Date(value-new Date(value).getTimezoneOffset()*60000).toISOString().slice(0,16);
 export function installClassroom({document:doc=globalThis.document,port}){
- const win=doc.defaultView,repository=createClassroomRepository();let actor='teacher-tech',student='pupil-9b',page='overview',classId='',classTab='overview',clockOffset=0;
+ const win=doc.defaultView,repository=createClassroomRepository();let actor='teacher-tech',student='pupil-9b',page='tests',classId='',classTab='overview',clockOffset=0,signedIn=false;
  const $=id=>doc.getElementById(id),state=()=>repository.getState(),now=()=>Date.now()+clockOffset;
  const listeners=[];const on=(target,event,fn,options)=>{target?.addEventListener(event,fn,options);listeners.push(()=>target?.removeEventListener(event,fn,options));};
  const node=(tag,attrs={},text)=>{const n=doc.createElement(tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n;};
@@ -15,11 +15,12 @@ export function installClassroom({document:doc=globalThis.document,port}){
  function syncQuiz(q){const old=state().quizzes.find(x=>x.id===q.id);repository.setQuiz({...q,ownerId:old?.ownerId||actor});}
  function seed(){port.seed(state().quizzes);}
  seed();
- const banner=node('aside',{class:'classroomTestTools','aria-label':'Lokales Testwerkzeug'});
- banner.innerHTML='<div><strong>Lokale Testseite</strong><span>Vollständige GradeCrew-App · nur Beispieldaten im Arbeitsspeicher · kein Serverzugriff</span></div><label>Testansicht<select id="classroomActor"></select></label><button id="classroomReset" class="button ghost" type="button">Zurücksetzen</button><button id="classroomHome" class="button ghost" type="button">Originale Startseite</button>';
- doc.querySelector('.topbar').after(banner);
- const nav=node('nav',{id:'classroomNav',class:'classroomNav','aria-label':'Arbeitsbereich'});
- for(const [key,label]of [['overview','Übersicht'],['classes','Klassen'],['tests','Tests']]){const b=button(label,()=>navigate(key),'ghost');b.dataset.nav=key;nav.append(b);}
+ const nav=node('nav',{id:'classroomNav',class:'classroomNav hidden','aria-label':'Arbeitsbereich'});
+ nav.append(node('span',{class:'classroomNavLabel'},'Mein Arbeitsbereich'));
+ for(const [key,label]of [['tests','Meine Tests'],['classes','Klassen'],['students','Schüler:innen'],['overview','Übersicht']]){const b=button(label,()=>navigate(key),'ghost');b.dataset.nav=key;nav.append(b);}
+ const banner=node('details',{class:'classroomTestTools','aria-label':'Lokales Testwerkzeug'});
+ banner.innerHTML='<summary>Lokale Testoptionen</summary><p>Beispieldaten · nur in diesem Fenster</p><label>Testansicht<select id="classroomActor"></select></label><button id="classroomReset" class="button ghost" type="button">Zurücksetzen</button><button id="classroomHome" class="button ghost" type="button">Startseite</button>';
+ nav.append(banner);
  $('mainContent').prepend(nav);
  const status=node('p',{id:'classroomStatus',class:'classroomStatus',role:'status','aria-live':'polite'});nav.after(status);
  const view=node('section',{id:'classroomView',class:'view hidden',tabindex:'-1'});$('mainContent').append(view);
@@ -28,24 +29,72 @@ export function installClassroom({document:doc=globalThis.document,port}){
  actorOptions();actorSelect.value=actor;
  const isStudent=()=>actor.startsWith('pupil-');
  const isAdmin=()=>state().teachers.some(t=>t.id===actor&&t.admin);
+ const loginNote=node('section',{class:'classroomLocalLogin','aria-label':'Lokale Testanmeldung'});
+ loginNote.append(node('p',{},'Lokale Vorschau: Wähle ein Beispielkonto. Echte Zugangsdaten sind nicht erforderlich.'));
+ const loginAccount=node('select',{id:'classroomLoginActor','aria-label':'Beispielkonto'});
+ for(const t of state().teachers.filter(t=>t.loginVerified))loginAccount.append(node('option',{value:t.id},t.name));
+ loginAccount.value=actor;
+ loginNote.append(loginAccount,button('Mit lokalem Testkonto anmelden',()=>login(loginAccount.value),'primary'));
+ $('loginForm')?.append(loginNote);
+ const pupilEntry=button('Mit Schülerzugang anmelden',openStudentLogin,'secondary');pupilEntry.id='classroomStudentLogin';
+ (doc.querySelector('.gcHeroJoin')||$('joinForm')?.parentElement)?.append(pupilEntry);
+ function syncShell(id){
+  const active=signedIn&&id!=='authView';
+  doc.body.classList.toggle('classroomSignedIn',active);
+  doc.body.classList.toggle('classroomStudentSession',active&&isStudent());
+  nav.classList.toggle('hidden',!active);
+  $('userBar')?.classList.toggle('hidden',!active);
+  $('settingsTopBtn')?.classList.toggle('hidden',!active||isStudent());
+  $('gcEntryLoginOpen')?.classList.toggle('hidden',active||$('authView')?.dataset.entryState!=='start');
+  nav.querySelectorAll('[data-nav]').forEach(b=>{b.classList.toggle('hidden',isStudent()&&b.dataset.nav!=='tests');b.setAttribute('aria-current',b.dataset.nav===page?'page':'false');});
+  const account=state().teachers.find(t=>t.id===actor),membership=state().memberships.find(m=>m.studentId===actor&&m.status==='active');
+  if($('userLabel'))$('userLabel').textContent=account?.name||membership?.alias||'Schülerzugang';
+ }
+ function login(id=loginAccount.value){
+  if(!state().teachers.some(t=>t.id===id&&t.loginVerified)&&!state().students.some(s=>s.id===id))throw Error('Dieses Beispielkonto ist nicht verfügbar.');
+  signedIn=true;actor=id;actorSelect.value=id;classId='';page='tests';
+  const person=state().teachers.find(t=>t.id===id);
+  port.setLocalSession?.({name:person?.name||'Schülerzugang',kind:person?'teacher':'student'});
+  $('loginPassword')&&($('loginPassword').value='');
+  render();
+ }
+ function logout(){closeDialogs();signedIn=false;port.setLocalSession?.(null);port.showView('authView');doc.querySelector('#authView [data-entry-back]')?.click();syncShell('authView');message('');}
+ function openStudentLogin(){
+  const d=dialog('Mit deinem Schülerzugang anmelden');
+  d.append(node('p',{},'Dein persönlicher Zugang führt zu deinen Tests in allen Fächern. Der Testcode auf der Startseite öffnet weiterhin einen einzelnen Test.'));
+  const code=node('input',{id:'classroomPersonalCode',type:'text',autocomplete:'off',placeholder:'Persönlicher Zugangscode'});
+  const label=node('label',{},'Persönlicher Zugangscode');label.append(code);d.append(label);
+  d.append(node('p',{class:'hint'},'Lokale Beispielcodes: FUCHS-17 (9b), EULE-08 (9c), LEER-00 (ohne Tests).'));
+  const error=node('p',{role:'alert',class:'classroomError'});d.append(error);
+  function submit(){const ids={'FUCHS17':'pupil-9b','EULE08':'pupil-9c','LEER00':'pupil-empty'};const id=ids[code.value.toUpperCase().replace(/[^A-Z0-9]/g,'')];if(!id){error.textContent='Dieser lokale Beispielcode ist nicht bekannt.';return;}d.close();login(id);}
+  d.append(button('Anmelden',submit,'primary'));code.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();act(submit);}});
+ }
  function closeDialogs(){for(const d of doc.querySelectorAll('dialog.classroomDialog')){d.close?.();d.remove();}}
  function navigate(next){closeDialogs();page=next;classId='';render();}
  function heading(title,copy){const h=node('div',{class:'pageHead'});const inner=node('div');inner.append(node('h1',{},title));if(copy)inner.append(node('p',{},copy));h.append(inner);view.append(h);return h;}
  function render(){
+  if(!signedIn){port.showView('authView');syncShell('authView');return;}
   port.setVisibleQuizzes(state().quizzes.filter(owns).map(q=>q.id));
-  nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',b.dataset.nav===page?'page':'false'));
-  nav.classList.toggle('hidden',isStudent());
-  $('userBar')?.classList.add('hidden');
+  syncShell(page==='tests'&&!isStudent()?'dashboardView':'classroomView');
   if(isStudent()){student=actor;renderStudent();return;}
   if(page==='tests'){port.showDashboard();decorateTests();return;}
   port.showView('classroomView');view.replaceChildren();
   if(page==='classes'){if(classId)renderClass();else renderClasses();return;}
+  if(page==='students'){renderStudents();return;}
   heading('Was steht als Nächstes an?','Deine Klassen, Entwürfe und Freigaben im Überblick.');
   const actions=node('div',{class:'actions'});actions.append(button('Neuen Test erstellen',()=>create(),'primary'),button('Klassen öffnen',()=>navigate('classes')));view.append(actions);
   const grid=node('div',{class:'classroomGrid'});for(const c of repository.listClasses(actor)){const card=classCard(c);grid.append(card);}view.append(grid);
   const drafts=state().quizzes.filter(q=>owns(q)&&!q.published);const section=node('section',{class:'card classroomSection'});section.append(node('h2',{},'Entwürfe weiterbearbeiten'));
   for(const q of drafts){const line=node('div',{class:'classroomRow'});line.append(node('span',{},`${q.title} · ${q.subject} · ${q.grade}`),button('Bearbeiten',()=>port.openQuiz(q.id)));section.append(line);}if(!drafts.length)section.append(node('p',{},'Keine offenen Entwürfe.'));view.append(section);
   if(isAdmin())renderAdministration();
+ }
+ function renderStudents(){
+  heading('Schüler:innen','Deine Schüler:innen aus den Klassen und Fächern, für die du zuständig bist.');
+  const classes=repository.listClasses(actor),filter=node('select',{id:'classroomStudentClass','aria-label':'Nach Klasse filtern'});
+  filter.append(node('option',{value:''},'Alle meine Klassen'));for(const c of classes)filter.append(node('option',{value:c.id},c.name));
+  const box=node('section',{class:'card classroomSection'});view.append(filter,box);
+  function list(){box.replaceChildren();for(const c of classes.filter(c=>!filter.value||filter.value===c.id))for(const m of state().memberships.filter(m=>m.classId===c.id&&m.status==='active')){const row=node('div',{class:'classroomRow'});row.append(node('strong',{},m.alias),node('span',{},`${c.name} · ${repository.listCourses(actor,c.id).map(co=>co.subject).join(', ')}`),button('Klasse öffnen',()=>{classId=c.id;classTab='students';page='classes';render();}));box.append(row);}if(!box.childElementCount)box.append(node('p',{},'Noch keine Schüler:innen in deinen Klassen.'));}
+  filter.addEventListener('change',list);list();
  }
  function classCard(c){const card=node('article',{class:'card classroomClassCard'});const count=state().memberships.filter(m=>m.classId===c.id&&m.status==='active').length;card.append(node('h2',{},c.name),node('p',{},`${c.year} · ${count} Schüler`),node('p',{},repository.listCourses(actor,c.id).map(co=>co.subject).join(', ')));const b=button('Klasse öffnen',()=>{classId=c.id;page='classes';classTab='overview';render();},'primary');b.dataset.class=c.id;card.append(b);return card;}
  function renderClasses(){const h=heading('Meine Klassen','Ein gemeinsamer Klassenbestand, getrennte Zuständigkeit je Fach.');if(isAdmin())h.append(button('ASV-Beispieldatei importieren',openImport));const grid=node('div',{class:'classroomGrid'});for(const c of repository.listClasses(actor))grid.append(classCard(c));view.append(grid);if(!grid.childElementCount)view.append(node('p',{class:'card'},'Du hast aktuell keine bestätigte Fachzuständigkeit. Schulverwaltung allein gibt keinen Zugriff auf Fachtests.'));if(isAdmin())renderAdministration();}
@@ -54,8 +103,8 @@ export function installClassroom({document:doc=globalThis.document,port}){
   const tabs=node('div',{class:'tabs',role:'tablist','aria-label':'Klassenbereiche'});for(const [key,label]of [['overview','Übersicht'],['students','Schüler'],['tests','Tests']]){const b=button(label,()=>{classTab=key;render();},'ghost');b.className=`tab ${classTab===key?'active':''}`;b.dataset.classTab=key;b.setAttribute('role','tab');b.setAttribute('aria-selected',String(classTab===key));tabs.append(b);}view.append(tabs);
   const body=node('section',{class:'card classroomSection',role:'tabpanel'});view.append(body);
   if(classTab==='students'){
-   body.append(node('h2',{},'Schüler und Zugänge'),node('p',{},'Persönlicher Zugangscode: geheim und einer Person zugeordnet. Klassencode: gemeinsamer Beitritt. Testcode: öffnet einen einzelnen Test. Hier wird nur die Testansicht gewechselt, kein echtes Konto angemeldet.'));
-   for(const m of state().memberships.filter(m=>m.classId===c.id)){const row=node('div',{class:'classroomRow'});row.append(node('span',{},`${m.alias} · ${m.status==='active'?'aktiv':'ausgeschieden'} · ${m.studentId}`));if(m.status==='active')row.append(button('Mitgliedschaft beenden',()=>{repository.removeMember(actor,c.id,m.studentId);render();}));body.append(row);}
+   body.append(node('h2',{},'Schüler und Zugänge'),node('p',{},'Der persönliche Zugang führt zu den eigenen Tests in allen Fächern. Ein Klassencode dient dem Klassenbeitritt; ein Testcode öffnet einen einzelnen Test.'));
+   for(const m of state().memberships.filter(m=>m.classId===c.id)){const row=node('div',{class:'classroomRow'});row.append(node('span',{},`${m.alias} · ${m.status==='active'?'aktiv':'ausgeschieden'}`));if(m.status==='active')row.append(button('Mitgliedschaft beenden',()=>{repository.removeMember(actor,c.id,m.studentId);render();}));body.append(row);}
    body.append(button('Synthetischen Nachzügler hinzufügen',()=>{const s=repository.addDemoMember(c.id);actorOptions();message(`Neue Testperson ${s.id}. Bestehende Testzuweisungen wurden nicht erweitert.`);render();}));
   }else if(classTab==='tests'){
    body.append(node('h2',{},'Tests dieser Klasse'));
@@ -94,14 +143,16 @@ export function installClassroom({document:doc=globalThis.document,port}){
  }
  function decorateTests(){for(const card of $('quizList')?.querySelectorAll('.quizCard')||[]){if(card.dataset.classroomDecorated)continue;card.dataset.classroomDecorated='1';card.querySelector('.dashboardPublishControl')?.classList.add('hidden');const qid=card.dataset.quizId;card.querySelector('.primaryQuizActions')?.append(button('Zuweisen',()=>assignmentDialog(qid),'primary'));}}
  const observer=win.MutationObserver?new win.MutationObserver(decorateTests):null;observer?.observe($('quizList'),{childList:true,subtree:true});
- on(actorSelect,'change',()=>{closeDialogs();actor=actorSelect.value;classId='';page='overview';message('Testansicht gewechselt. Dies ist keine echte Anmeldung.');render();});
+ on(actorSelect,'change',()=>{closeDialogs();login(actorSelect.value);message('Lokales Beispielkonto gewechselt.');});
  on($('classroomReset'),'click',()=>{closeDialogs();repository.reset();port.reset?.();seed();actor='teacher-tech';classId='';page='overview';clockOffset=0;actorOptions();actorSelect.value=actor;render();message('Zurückgesetzt. Alle Importdaten und lokalen Zuweisungen wurden aus diesem Testfenster entfernt.');});
- on($('classroomHome'),'click',()=>{closeDialogs();port.showView('authView');nav.classList.add('hidden');message('Originale GradeCrew-Startseite. Anmeldung, KI und Serverzugriffe sind in diesem lokalen Testmodus gesperrt.');});
+ on($('classroomHome'),'click',logout);
+ on(doc,'gradecrew:classroom-view',event=>{if(event.detail.id==='dashboardView')page='tests';syncShell(event.detail.id);});
+ for(const id of ['newQuizBtn','emptyNewQuizBtn'])on($(id),'click',event=>{event.preventDefault();event.stopImmediatePropagation();act(()=>create());},true);
  on(doc,'click',event=>{if(event.target.closest('#createAiBtn')){event.preventDefault();event.stopImmediatePropagation();message('KI-Erstellung ist im lokalen Testmodus gesperrt. Wähle Manuell erstellen.');}},true);
  on(doc,'gradecrew:classroom-create',()=>act(()=>create(classId||undefined)));
  on(doc,'gradecrew:classroom-assign',event=>act(()=>{const q=port.getQuiz(event.detail.quizId);if(q)syncQuiz(q);assignmentDialog(event.detail.quizId);}));
  on(doc,'gradecrew:classroom-quiz-saved',event=>syncQuiz(event.detail.quiz));
  on($('quizList'),'click',event=>{if(event.target.closest('.studentShare,.teacherShare,.duplicate,.remove,.end,.reopen')){event.preventDefault();event.stopImmediatePropagation();message('Diese ältere Testaktion bleibt in dieser Klassenprobe gesperrt. Verwende Bearbeiten oder Zuweisen.');}},true);
  render();
- return {repository,destroy(){observer?.disconnect();listeners.forEach(fn=>fn());closeDialogs();},getActor:()=>actor};
+ return {repository,login,logout,destroy(){observer?.disconnect();listeners.forEach(fn=>fn());closeDialogs();nav.remove();loginNote.remove();pupilEntry.remove();},getActor:()=>actor};
 }

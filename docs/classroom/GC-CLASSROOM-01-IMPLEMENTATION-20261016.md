@@ -1,5 +1,19 @@
 # GC-CLASSROOM-01 Implementation Plan
 
+## Verbindliche Bedienkorrektur vom 18. Oktober 2026
+
+Martin lehnt die sofortige Classroom-Demoübersicht ab. Die vollständige Website ist der Einstieg, nicht ein hinter einem Testwerkzeug versteckter Zusatz.
+
+1. Beim Öffnen der lokalen Adresse bleibt die originale GradeCrew-Startseite mit Crew, Animation, Testcode und Anmelden sichtbar. Keine automatische Lehrkraftauswahl oder Weiterleitung in Classroom.
+2. Die originale Anmeldeseite bleibt erreichbar. Eine ausdrücklich lokale Testanmeldung öffnet eine RAM-Sitzung mit synthetischer Lehrkraft; echte Firebase-Anmeldung bleibt eine getrennte Backendaufgabe. Die Testanmeldung braucht keine echten Zugangsdaten.
+3. Nach Anmeldung startet der originale Bereich „Meine Tests“ mit bestehender Suche, Filtern, Erstellen, Editor und Einstellungen. Die Benutzerleiste einschließlich Abmelden bleibt sichtbar.
+4. Eine linke Navigation ergänzt „Meine Tests“, „Klassen“, „Schüler:innen“ und die optionale Übersicht. Klassen- und Schülerlisten nutzen dieselben vorhandenen Zuständigkeitsprüfungen. Editor und Erstellungsansicht bleiben innerhalb dieser Hülle.
+5. Persönlicher Schülerzugang ist ein eigener Einstieg neben dem spontanen Testcode. Die lokale Probe erklärt ihre Beispielcodes; nach Anmeldung zeigt sie nur die persönlichen Zuweisungen.
+6. Die große Rollen-Testleiste entfällt aus dem normalen Ablauf. Erweiterte Testoptionen sind eingeklappt in der Navigation erreichbar. Abmelden führt zur vollständigen ursprünglichen Startseite; Neuladen beginnt ebenfalls dort.
+7. Neue Regressionen prüfen den öffentlichen Einstieg, lokale Anmeldung, originales Testdashboard, linke Navigation, Schülerliste und Abmelden. Die bestehende CSV-/Zuweisungslogik bleibt erhalten. Browserprüfung lokal auf Port 8782; kein Stagingaufruf oder Deployment.
+
+Die früheren grünen Funktionsnachweise belegen diese Bedienanforderung nicht. Diese Korrektur erhält eigene Nachweise und bleibt bis dahin offen.
+
 > For agentic workers: use superpowers:executing-plans. Ein Writer im isolierten Checkout; unabhängiger Review an fixiertem SHA. Dieser einzige Umsetzungsplan konkretisiert die 14 am16.10.2026 von der Zentrale veröffentlichten Schritte. Historische Implementierungsverbote im Konzept gelten für die damaligen Aufträge und sind für diesen ausdrücklich autorisierten lokalen Lieferblock abgelöst.
 
 **Goal:** In der vollständigen aktuellen GradeCrew-App Klassen, lokale ASV-Beispielimporte und explizite Testzuweisungen mit persönlichen Schüleransichten erproben.

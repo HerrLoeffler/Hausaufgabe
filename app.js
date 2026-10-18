@@ -1109,6 +1109,7 @@ bindTabs(document.querySelector("#authView [role=tablist]"));
 
 $("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+  if (typeof classroomPreview !== "undefined" && classroomPreview) { window.GradeCrewClassroom?.login(); return; }
   try {
     await signInWithEmailAndPassword(auth, $("loginEmail").value.trim(), $("loginPassword").value);
     toast("Erfolgreich angemeldet.");
@@ -1175,6 +1176,7 @@ $("resetForm")?.addEventListener("submit", async (event) => {
 });
 
 $("logoutBtn").addEventListener("click", async () => {
+  if (typeof classroomPreview !== "undefined" && classroomPreview) { window.GradeCrewClassroom?.logout(); return; }
   await Promise.race([
     Promise.allSettled(state.aiMaterials.map(m => aiApi.removeMaterial(m))),
     new Promise(resolve => setTimeout(resolve, 2000))
@@ -2662,7 +2664,7 @@ async function saveSettings() {
     defaultShowSolutions: $("defaultShowSolutions").checked
   };
   try {
-    await updateDoc(doc(db, "users", state.user.uid), { settings, gradeScales: scales });
+    if (!(typeof classroomPreview !== "undefined" && classroomPreview)) await updateDoc(doc(db, "users", state.user.uid), { settings, gradeScales: scales });
     state.profile = { ...state.profile, settings, gradeScales: scales };
     toast("Einstellungen gespeichert.");
     await loadDashboard();
@@ -9336,6 +9338,11 @@ if (typeof classroomPreview !== "undefined" && classroomPreview) {
   const seedQuestions = subject => subject === 'Englisch' ? deepClone(REVIEW_DEMO_TEST.questions).slice(0,2) : [{id:'synthetic-question-1',position:1,type:'single',text:subject==='Technik'?'Was gehört zur sicheren Arbeit in der Werkstatt?':'Womit beginnt ein vollständiger Satz?',points:1,options:subject==='Technik'?[{text:'Eine passende Schutzbrille tragen',correct:true},{text:'Ohne Einweisung beginnen',correct:false},{text:'Werkzeuge ungesichert liegen lassen',correct:false}]:[{text:'Mit einem Großbuchstaben',correct:true},{text:'Immer mit einem Komma',correct:false},{text:'Mit einem kleinen Buchstaben',correct:false}]}];
   const refresh = () => { state.quizzes = guestTourRepo.list().filter(q => visibleQuizIds.includes(q.id)); renderQuizList(); };
   window.GradeCrewClassroomApp = Object.freeze({
+    setLocalSession(account) {
+      state.user = account ? {uid:'local-tour', displayName:account.name} : null;
+      state.profile = account ? {displayName:account.name,role:'teacher',settings:deepClone(DEFAULT_SETTINGS),gradeScales:[deepClone(DEFAULT_SCALE)]} : null;
+      setTeacherBar();
+    },
     seed(quizzes) { for (const quiz of quizzes) if (!guestTourRepo.getQuiz(quiz.id)) guestTourRepo.create({...quizDefaults(), ...quiz, questions:seedQuestions(quiz.subject),questionCount:seedQuestions(quiz.subject).length,totalPoints:seedQuestions(quiz.subject).reduce((sum,q)=>sum+Number(q.points||0),0)}); },
     listQuizzes: () => guestTourRepo.list(),
     getQuiz: id => guestTourRepo.getQuiz(id),

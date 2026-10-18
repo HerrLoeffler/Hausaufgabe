@@ -1,5 +1,12 @@
 import {registerCatalog} from '../shared/i18n/browser-runtime.mjs?v=3';
 const entries={
+ 'Mein Arbeitsbereich':'My workspace','Schüler:innen':'Students','Lokale Testoptionen':'Local test options','Startseite':'Home',
+ 'Lokale Vorschau: Wähle ein Beispielkonto. Echte Zugangsdaten sind nicht erforderlich.':'Local preview: choose a sample account. Real credentials are not required.',
+ 'Mit lokalem Testkonto anmelden':'Sign in with a local test account','Beispielkonto':'Sample account',
+ 'Mit Schülerzugang anmelden':'Sign in as a student','Mit deinem Schülerzugang anmelden':'Sign in with your student access',
+ 'Persönlicher Zugangscode':'Personal access code','Nach Klasse filtern':'Filter by class','Alle meine Klassen':'All my classes',
+ 'Deine Schüler:innen aus den Klassen und Fächern, für die du zuständig bist.':'Your students from the classes and subjects you teach.',
+ 'Noch keine Schüler:innen in deinen Klassen.':'No students in your classes yet.',
  'Lokale Testseite':'Local test page',
  'Vollständige GradeCrew-App · nur Beispieldaten im Arbeitsspeicher · kein Serverzugriff':'Full GradeCrew app · in-memory sample data only · no server access',
  'Testansicht':'Test view','Zurücksetzen':'Reset','Originale Startseite':'Original home page',

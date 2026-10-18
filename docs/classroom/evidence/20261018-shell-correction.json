@@ -1,0 +1,30 @@
+{
+  "task": "GC-CLASSROOM-01",
+  "date": "2026-10-18",
+  "scope": "Local full-app entry and sidebar correction after user rejection",
+  "url": "http://127.0.0.1:8782/",
+  "method": "Direct interaction with existing Codex in-app browser tab using CUA",
+  "casesObserved": [
+    "Root URL shows original Crew homepage, test-code form and sign-in button",
+    "Original sign-in form remains present; explicit local sample-account action opens original tests dashboard",
+    "Left navigation contains tests, classes, pupils and overview; user bar shows settings and sign out",
+    "Teacher pupil list contains Fuchs 17 in own 9b/Technik, not Eule 08 or Otter 12",
+    "Class view has original planned overview, pupils and tests tabs",
+    "New test uses course selection then original creation-choice view and original manual editor",
+    "Original settings screen opens, saves locally and returns to tests",
+    "Sign out returns to original homepage and clears login URL intent",
+    "Personal pupil code has its own entry beside individual test code",
+    "Invalid sample code displays an error inside the dialog; FUCHS-17 plus Enter opens personal tests",
+    "Pupil view hides teacher navigation, settings and teacher assistant",
+    "390px viewport has document width 390px; viewport override reset afterwards"
+  ],
+  "consoleErrorsInLastRead": [],
+  "focusedRegressionTests": {"passed": 45, "failed": 0, "note": "After app-port changes; known entry-jsdom teardown warning remains in output"},
+  "finalClassroomRegressionTests": {"passed": 16, "failed": 0},
+  "longBrowserScript": "Updated for new entry and hidden test options; syntax checked only, not rerun in this correction",
+  "screenshots": "Project workspace outputs/classroom-20261018/*.jpg",
+  "humanAcceptance": "pending",
+  "realAuthentication": false,
+  "backendEmulator": false,
+  "deployment": false
+}
