@@ -20,3 +20,12 @@ test('valid dry runs return the exact Firebase target without publishing',()=>{
 test('legacy, unknown scopes and misspelled flags cannot publish',()=>{
  for(const args of [['--environment','legacy'],['--environment','staging','--project','gradecrew-staging-2026','--only','all'],['--environment','staging','--project','gradecrew-staging-2026','--dry-rnu']])assert.notEqual(run(...args).status,0);
 });
+test('Live AI deployment is bounded to the two changed school functions',()=>{
+ const args=['--environment','production','--project','hausaufgabe-staging','--confirm-project','hausaufgabe-staging','--dry-run'];
+ const broad=run(...args,'--only','functions:ai');
+ assert.notEqual(broad.status,0);assert.match(broad.stderr,/Einzelfunktionen/);
+ const scoped=run(...args,'--only','functions:ai:reviewMode,functions:ai:recordCrewTelemetry');
+ assert.equal(scoped.status,0,scoped.stderr);
+ assert.equal(JSON.parse(scoped.stdout).only,'functions:ai:reviewMode,functions:ai:recordCrewTelemetry');
+ for(const scope of ['functions:ai:reviewMode,functions:ai:generateTest','functions:ai:reviewMode,functions:assessment','functions:ai:recordCrewTelemetry,functions:ai:reviewMode,functions:ai:deleteAccount'])assert.notEqual(run(...args,'--only',scope).status,0);
+});

@@ -11,7 +11,8 @@ try{
  const {values}=parseArgs({options:{environment:{type:'string'},project:{type:'string'},'confirm-project':{type:'string'},only:{type:'string',default:'hosting'},'dry-run':{type:'boolean',default:false}},strict:true,allowPositionals:false});
  const env=assertDeploymentTarget(values.environment,values.project);
  if(env.name==='production'&&values['confirm-project']!==env.projectId)throw new Error('Live benötigt --confirm-project hausaufgabe-staging.');
- if(!['hosting','functions:ai','functions:assessment','firestore:rules,storage'].includes(values.only))throw new Error('Expliziten freigegebenen Deployment-Umfang wählen.');
+ if(env.name==='production'&&values.only==='functions:ai')throw new Error('Live nur mit expliziten Einzelfunktionen aktualisieren; separat betriebene Learning-Funktionen bleiben erhalten.');
+ if(!['hosting','functions:ai','functions:ai:reviewMode,functions:ai:recordCrewTelemetry','functions:assessment','firestore:rules,storage'].includes(values.only))throw new Error('Expliziten freigegebenen Deployment-Umfang wählen.');
  if(values['dry-run'])console.log(JSON.stringify({environment:env.name,projectId:env.projectId,only:values.only,dryRun:true}));
  else{
   execFileSync('git',['diff','--exit-code','HEAD','--'],{cwd:root,stdio:'pipe'});
