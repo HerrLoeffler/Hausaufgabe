@@ -332,14 +332,11 @@ function renderGapfill(section, question) {
     }
     const input = document.createElement("input");
     input.type = "text";
-    const color = ["blue", "orange", "green", "purple"].includes(segment.color) ? segment.color : "";
-    input.className = `secureGap${color ? ` gapColor-${color}` : ""}`;
+    input.className = "secureGap";
     input.dataset.gapIndex = String(gapIndex++);
     input.dataset.gapId = segment.id || "";
     input.autocomplete = "off";
-    const colorName = { blue: "Blau", orange: "Orange", green: "Grün", purple: "Lila" }[color];
-    input.setAttribute("aria-label", `Lücke ${gapIndex}${colorName ? ` (${colorName})` : ""}`);
-    if (colorName) input.placeholder = colorName;
+    input.setAttribute("aria-label", `Lücke ${gapIndex}`);
     wrap.appendChild(input);
   });
   section.appendChild(wrap);

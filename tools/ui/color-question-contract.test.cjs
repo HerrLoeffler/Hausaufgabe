@@ -33,10 +33,25 @@ test('secure student names the palette, selects word colors, reopens draft and g
   assert.match(word(2).getAttribute('aria-label'),/Nomen/);
 });
 
-test('secure blank color remains metadata and never adds a solution value', t => {
-  const w=harness(t);w.formatMathText=x=>x;w.eval(sourceFunction(secure,'renderGapfill'));
-  const section=w.document.querySelector('section');w.renderGapfill(section,buildPublicQuestion({id:'gap',type:'gapfill',text:'Ein [Igel] schläft.',points:1,gapColors:['blue']},'synthetic-secret'));
-  const input=section.querySelector('.secureGap');assert.ok(input.classList.contains('gapColor-blue'));assert.equal(input.value,'');assert.doesNotMatch(section.innerHTML,/Igel/);
+test('secure student gap inputs start blank and neutral while real draft answers restore', t => {
+  const w=harness(t);w.formatMathText=x=>x;w.eval(sourceFunction(secure,'renderGapfill'));w.eval(sourceFunction(secure,'applyDraft'));
+  const section=w.document.querySelector('section');const paper=buildPublicQuestion({id:'colors',type:'gapfill',text:'The sun is [yellow]. The grass is [green].',points:2,gapColors:['blue','green']},'synthetic-secret');
+  // Old cached/server papers may still contain presentation colors during rollout.
+  paper.segments.filter(segment=>segment.type==='gap').forEach((segment,index)=>{segment.color=['blue','green'][index];});
+  w.currentPaper.push(paper);
+  w.renderGapfill(section,paper);
+  const inputs=[...section.querySelectorAll('.secureGap')];assert.equal(inputs.length,2);
+  for(const input of inputs){assert.equal(input.value,'');assert.equal(input.getAttribute('placeholder'),null);assert.equal(input.className,'secureGap');assert.doesNotMatch(input.getAttribute('aria-label'),/Blau|Grün|blue|green/i);}
+  assert.doesNotMatch(section.textContent,/yellow|green|Blau|Grün/i);
+  w.applyDraft({colors:['yellow','green']});assert.deepEqual(inputs.map(input=>input.value),['yellow','green']);
+});
+
+test('teacher preview gap inputs also start blank and neutral',t=>{
+  const w=harness(t);w.formatMathText=x=>x;w.eval(sourceFunction(app,'renderGapfillStudent'));
+  const section=w.document.querySelector('section');w.renderGapfillStudent(section,{text:'The sun is [yellow]. The grass is [green].',gapColors:['blue','green']});
+  const inputs=[...section.querySelectorAll('.inlineGap')];assert.equal(inputs.length,2);
+  for(const input of inputs){assert.equal(input.value,'');assert.equal(input.getAttribute('placeholder'),null);assert.equal(input.className,'inlineGap');}
+  assert.doesNotMatch(section.textContent,/yellow|green|Blau|Grün/i);
 });
 
 test('saved teacher preview uses colored answers for completeness and the existing preview evaluation', t => {
@@ -62,7 +77,7 @@ test('removing the first real gap preserves the remaining color and rebuilds its
   container.querySelector('.gapChipRemove').click();assert.equal(q.text,'Der Igel [schläft].');assert.deepEqual([...q.gapColors],['green']);
   const selects=container.querySelectorAll('.gapColorEditor select');assert.equal(selects.length,1);assert.equal(selects[0].value,'green');
   selects[0].value='purple';selects[0].dispatchEvent(new w.Event('change'));assert.deepEqual([...q.gapColors],['purple']);
-  assert.equal(buildPublicQuestion(q,'secret').segments.find(segment=>segment.type==='gap').color,'purple');
+  assert.equal(buildPublicQuestion(q,'secret').segments.find(segment=>segment.type==='gap').color,undefined);
 });
 
 test('marking a real new gap inserts an uncolored slot and preserves previous assignments',t=>{
@@ -70,5 +85,5 @@ test('marking a real new gap inserts an uncolored slot and preserves previous as
   const editor=container.querySelector('.gapComposer');const range=w.document.createRange();const text=editor.lastChild;range.setStart(text,1);range.setEnd(text,8);w.getSelection().addRange(range);
   [...container.querySelectorAll('button')].find(button=>button.textContent==='Als Lücke markieren').click();
   assert.equal(q.text,'Der [Igel] [schläft].');assert.deepEqual([...q.gapColors],['blue','']);assert.equal(container.querySelectorAll('.gapColorEditor select').length,2);
-  assert.deepEqual(buildPublicQuestion(q,'secret').segments.filter(segment=>segment.type==='gap').map(segment=>segment.color),['blue',undefined]);
+  assert.deepEqual(buildPublicQuestion(q,'secret').segments.filter(segment=>segment.type==='gap').map(segment=>segment.color),[undefined,undefined]);
 });
