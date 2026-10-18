@@ -89,3 +89,6 @@ NächsterSchritt: Node22Ergebnislesen, exaktenKandidatenpushen/CI+finalenReviewf
 
 ###18Oct finalerReviewdeltaCheckpoint3
 UnabhängigerReviewer9/9Node22Runtimechecks grünam460f269e; zweibereitsbehobeneBefunde bestätigt. NeuergezielterP2vorRelease: kleinerH-PoolbeendeteauchAufbaugrößererP-Familie. MinimalfixmitRED→GREEN: H/Punabhängigvorrätig, Paper1200sH19mitFestigungszyklen+217eindeutigeP-Aufgaben,global35%-Präfixbis620Instanzenverifiziert. Gesamte52/52Node22grün. UIunverändert; erneuteexakteCIwegenCodeänderungerforderlich. NochkeinDeploystart.
+
+###18Oct abschließendegezielteReviewfixes
+Remyrequestthemabindungmit3TopicsRED→GREENbewahrt; keinversteckterIntegerzwangmehr. Testkonto-Registrierungsweg auf gradecrew-staging-2026.web.app/ tatsächlichHTTPgelesen (Account-erstellen-Formular), UIverlinkt. LetzterbelegterUI-P2gefixt: ReloadnachRundenendelädtserverseitigoffeneAufgabewiederfürLernfeedback. EigenerBrowserfallzuerst5sTimeoutRED, nachminimalerrefreshKorrekturGREEN; score20bleibt20beispäterrichtigerKorrektur. Gesamte53/53Node22weitergrün, echteReducerbrowserprobegrün; SDK-Authnochsynthetisch. KeinDeploystart, finalesgenauesCI-/Reviewgatefolgt.

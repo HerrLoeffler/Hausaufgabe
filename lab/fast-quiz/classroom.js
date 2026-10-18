@@ -144,7 +144,7 @@
   async function refresh(){
     if(state.pollBusy||!state.creds)return;state.pollBusy=true;const gen=state.generation;
     try{const data=await api('classroomV2State',state.creds);if(gen!==state.generation)return;state.room=data;state.config=data.config||state.config;if(Number.isFinite(data.serverNowMs))state.offset=data.serverNowMs-Date.now();renderRoom();
-      if(state.role==='player'&&data.status==='running'&&Date.now()+state.offset>=data.startsAtMs&&!state.busy){const task=await api('classroomV2Task',state.creds);if(gen!==state.generation)return;const key=`${data.roundId}:${task.slot}:${task.question?.id}`;if(key!==state.taskKey){state.task=task;state.taskKey=key;state.practice=null;renderStudentTask();}}
+      if(state.role==='player'&&['running','finished'].includes(data.status)&&Date.now()+state.offset>=data.startsAtMs&&!state.busy){const task=await api('classroomV2Task',state.creds);if(gen!==state.generation)return;const key=`${data.roundId}:${task.slot}:${task.question?.id}`;if(task.question&&key!==state.taskKey){if(data.status==='finished'&&!$('[data-fq-task-holder]'))$('[data-fq-room-body]').insertAdjacentHTML('afterbegin','<p class="fq-note">Die Runde ist beendet. Prüfe deine offene Aufgabe in Ruhe; der Punktestand bleibt fest.</p><div data-fq-task-holder></div>');state.task=task;state.taskKey=key;state.practice=null;renderStudentTask();}}
       const status=$('[data-fq-connection]');if(status)status.textContent='Verbunden';
     }catch(err){if(gen===state.generation)error(err.message+' Deine Runde bleibt erhalten.');}finally{state.pollBusy=false;}
   }
