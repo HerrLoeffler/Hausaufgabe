@@ -25,15 +25,15 @@ class PoolStagingRecoveryTests(unittest.TestCase):
                 cli.write_text('#!/usr/bin/env python3\nimport json,sys,os\nfrom pathlib import Path\nPath(os.environ["ARGS_FILE"]).write_text(json.dumps(sys.argv[1:]))\n')
                 cli.chmod(0o755)
                 env = {**os.environ, 'RUNNER_TEMP': folder, 'POOL_RECOVERY': recovery,
-                       'PROJECT_ID': 'hausaufgabe-staging', 'ARGS_FILE': str(root / 'args.json')}
+                       'PROJECT_ID': 'gradecrew-staging-2026', 'ARGS_FILE': str(root / 'args.json')}
                 result = subprocess.run(['bash', '-e', '-c', workflow_script('Deploy the approved AI scope to staging')], env=env, capture_output=True, text=True)
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assertEqual(json.loads((root / 'args.json').read_text()),
-                    ['deploy', '--project', 'hausaufgabe-staging', '--only', scope, '--non-interactive'])
+                    ['deploy', '--project', 'gradecrew-staging-2026', '--only', scope, '--non-interactive'])
 
     def test_actual_receipt_script_records_the_scoped_recovery(self):
         with TemporaryDirectory() as folder:
-            env = {**os.environ, 'POOL_RECOVERY': 'true', 'PROJECT_ID': 'hausaufgabe-staging',
+            env = {**os.environ, 'POOL_RECOVERY': 'true', 'PROJECT_ID': 'gradecrew-staging-2026',
                    'EXPECTED_SHA': 'a' * 40, 'INTEGRATION_BRANCH': 'feature/gradecrew-app-integration',
                    'RUN_ID': '123', 'UPSTREAM_RUN_ID': '456'}
             result = subprocess.run(['bash', '-e', '-c', workflow_script('Write deployment receipt')], env=env, cwd=folder, capture_output=True, text=True)

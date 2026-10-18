@@ -14,9 +14,9 @@ from .deployment_evidence import artifact_document, ci_source
 from .guardian import REPO, api
 from .preview import manifest
 
-SITE = "hausaufgabe-staging"
+SITE = "gradecrew-staging-2026"
 CHANNEL = "gradecrew-app-integration"
-CANONICAL_URL = "https://hausaufgabe-staging.web.app"
+CANONICAL_URL = "https://gradecrew-staging-2026.web.app"
 REJECTED_SHA = "f97841b82291d879cd9f4a9bccce0ee2c2cf3641"
 REQUEST = re.compile(r"automation/canonical-staging-requests/([a-z0-9][a-z0-9-]{0,79})\.json")
 ROOT = Path("promotion")
@@ -120,7 +120,7 @@ def qualify():
             or receipt.get("device_test") != "not_performed"
             or type(receipt.get("verified_files")) is not int or receipt["verified_files"] < 1
             or not re.fullmatch(
-                r"https://hausaufgabe-staging--gradecrew-app-integration-[a-z0-9]+\.web\.app/?",
+                r"https://gradecrew-staging-2026--gradecrew-app-integration-[a-z0-9]+\.web\.app/?",
                 str(receipt.get("url", "")))):
         raise ValueError("Preview verification receipt differs")
     return source, receipt
@@ -170,7 +170,7 @@ def channel_version(channel, required):
         return None
     version = current.get("version", {}).get("name")
     match = re.fullmatch(
-        r"(?:projects/(?:950775032930|hausaufgabe-staging)/)?sites/hausaufgabe-staging/versions/([A-Za-z0-9_-]+)",
+        r"(?:projects/(?:840345136563|gradecrew-staging-2026)/)?sites/gradecrew-staging-2026/versions/([A-Za-z0-9_-]+)",
         version or "") if isinstance(version, str) else None
     if not match:
         raise ValueError("Unexpected Hosting version")
@@ -226,3 +226,4 @@ def verify():
 if __name__ == "__main__":
     {"route": route, "resolve": resolve, "qualify": qualify,
      "prepare": prepare, "verify": verify}[sys.argv[1]]()
+

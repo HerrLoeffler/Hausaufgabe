@@ -3,7 +3,7 @@
 # This script is fail-closed: project, branch and source SHA are fixed/verified.
 set -euo pipefail
 
-PROJECT_ID="hausaufgabe-staging"
+PROJECT_ID="gradecrew-staging-2026"
 INTEGRATION_BRANCH="feature/gradecrew-app-integration"
 EXPECTED_SHA="${1:-}"
 MODE="${2:-}"
@@ -104,3 +104,4 @@ NODE
 echo
 echo "STAGING AI Functions deploy abgeschlossen und verifiziert für $EXPECTED_SHA."
 echo "Production, Firestore Rules, Hosting und Assessment-Codebase wurden von diesem Skript nicht angefordert."
+

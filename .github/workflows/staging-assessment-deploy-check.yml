@@ -23,7 +23,7 @@ jobs:
         run: |
           grep -q "deploy-assessment-functions:" .github/workflows/staging-functions.yml
           grep -q -- "--only functions:assessment" .github/workflows/staging-functions.yml
-          grep -q "PROJECT_ID: hausaufgabe-staging" .github/workflows/staging-functions.yml
+          grep -q "PROJECT_ID: gradecrew-staging-2026" .github/workflows/staging-functions.yml
           grep -q "staging-assessment-functions-receipt-" .github/workflows/staging-functions.yml
           grep -q "cleanupAssessmentPrivateOnQuizDelete" .github/workflows/staging-functions.yml
       - name: Checkout current integration separately
@@ -39,3 +39,4 @@ jobs:
           npm install --prefix integration/assessment-functions --no-package-lock --no-audit --no-fund
           npm test --prefix integration/assessment-functions
           npm run check --prefix integration/assessment-functions
+

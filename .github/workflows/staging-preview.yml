@@ -87,7 +87,7 @@ jobs:
           retention-days: 7
   deploy:
     needs: [source, build]
-    if: needs.source.outputs.mode == 'preview' && vars.STAGING_WIF_PROVIDER != ''
+    if: needs.source.outputs.mode == 'preview' && vars.STAGING2026_WIF_PROVIDER != ''
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -128,12 +128,12 @@ jobs:
           GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
       - uses: google-github-actions/auth@v3
         with:
-          project_id: hausaufgabe-staging
-          workload_identity_provider: ${{ vars.STAGING_WIF_PROVIDER }}
-          service_account: gradecrew-preview@hausaufgabe-staging.iam.gserviceaccount.com
+          project_id: gradecrew-staging-2026
+          workload_identity_provider: ${{ vars.STAGING2026_WIF_PROVIDER }}
+          service_account: gradecrew-preview@gradecrew-staging-2026.iam.gserviceaccount.com
       - name: Deploy preview channel only
         run: |
-          "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" hosting:channel:deploy gradecrew-app-integration --project hausaufgabe-staging --config preview/firebase.json --expires 7d --non-interactive --json > "$RUNNER_TEMP/deploy-result.json"
+          "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" hosting:channel:deploy gradecrew-app-integration --project gradecrew-staging-2026 --config preview/firebase.json --expires 7d --non-interactive --json > "$RUNNER_TEMP/deploy-result.json"
       - name: Verify published manifest and file hashes
         env:
           EXPECTED_SHA: ${{ needs.source.outputs.sha }}
@@ -146,10 +146,10 @@ jobs:
           if-no-files-found: error
   setup-needed:
     needs: [source, build]
-    if: needs.source.outputs.mode == 'preview' && vars.STAGING_WIF_PROVIDER == ''
+    if: needs.source.outputs.mode == 'preview' && vars.STAGING2026_WIF_PROVIDER == ''
     runs-on: ubuntu-latest
     steps:
-      - run: echo 'Build ready; no deployment. STAGING_WIF_PROVIDER is missing. Follow docs/AUTOMATION_SETUP.md.' >> "$GITHUB_STEP_SUMMARY"
+      - run: echo 'Build ready; no deployment. STAGING2026_WIF_PROVIDER is missing. Follow docs/AUTOMATION_SETUP.md.' >> "$GITHUB_STEP_SUMMARY"
   canonical:
     needs: source
     if: >-
@@ -191,14 +191,14 @@ jobs:
         run: npm install --prefix "$RUNNER_TEMP/firebase-cli" --no-audit --no-fund firebase-tools@14.17.0
       - name: Require the existing staging Hosting identity
         env:
-          STAGING_WIF_PROVIDER: ${{ vars.STAGING_WIF_PROVIDER }}
-        run: test -n "$STAGING_WIF_PROVIDER"
+          STAGING2026_WIF_PROVIDER: ${{ vars.STAGING2026_WIF_PROVIDER }}
+        run: test -n "$STAGING2026_WIF_PROVIDER"
       - id: auth
         uses: google-github-actions/auth@v3
         with:
-          project_id: hausaufgabe-staging
-          workload_identity_provider: ${{ vars.STAGING_WIF_PROVIDER }}
-          service_account: gradecrew-preview@hausaufgabe-staging.iam.gserviceaccount.com
+          project_id: gradecrew-staging-2026
+          workload_identity_provider: ${{ vars.STAGING2026_WIF_PROVIDER }}
+          service_account: gradecrew-preview@gradecrew-staging-2026.iam.gserviceaccount.com
           token_format: access_token
           access_token_scopes: https://www.googleapis.com/auth/cloud-platform
       - name: Recheck the verified preview and record previous staging live version
@@ -208,7 +208,7 @@ jobs:
       - name: Publish only the verified build to staging live Hosting
         run: |
           "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" deploy --only hosting \
-            --project hausaufgabe-staging --config promotion/firebase.json --non-interactive
+            --project gradecrew-staging-2026 --config promotion/firebase.json --non-interactive
       - name: Verify canonical URL, manifest and all file hashes
         env:
           GCP_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
@@ -227,3 +227,4 @@ jobs:
           path: promotion/promotion-state.json
           if-no-files-found: warn
           retention-days: 90
+

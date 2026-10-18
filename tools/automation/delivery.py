@@ -7,7 +7,7 @@ from .pipeline import path_allowed
 
 
 def verify_packaging(release, head, changed_files, public):
-    if release.get('project') != 'hausaufgabe-staging' or release.get('commit') != head:
+    if release.get('project') != 'gradecrew-staging-2026' or release.get('commit') != head:
         raise ValueError('Packaging belongs to another project or commit')
     files = release.get('files')
     if not isinstance(files, dict) or not isinstance(changed_files, list) or not changed_files or len(set(changed_files)) != len(changed_files):
@@ -23,3 +23,4 @@ def verify_packaging(release, head, changed_files, public):
         if hashlib.sha256(target.read_bytes()).hexdigest() != value:
             raise ValueError('Changed package file hash differs: ' + name)
     return sorted(changed_files)
+
