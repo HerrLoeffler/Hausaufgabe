@@ -101,7 +101,10 @@ def qualify():
             or run.get("status") != "completed" or run.get("conclusion") != "success"):
         raise ValueError("Source is not a successful trusted preview workflow")
     rows = api("actions/workflows/staging-preview.yml/runs?per_page=100")["workflow_runs"]
+    # An event whose entire workflow was skipped never attempted a preview.
+    # Failed, cancelled and pending attempts must still supersede old success.
     automatic = [row for row in rows if row.get("event") in {"push", "workflow_run"}
+                 and not (row.get("status") == "completed" and row.get("conclusion") == "skipped")
                  and not canonical_request_run(row)]
     if not automatic or automatic[0]["id"] != run_id:
         raise ValueError("A newer automatic preview attempt exists; inspect it first")
