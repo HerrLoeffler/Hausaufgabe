@@ -1,0 +1,48 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict');
+let sources;try{sources=require('../../lab/fast-quiz-functions/classroom-sources.js')}catch{}
+const original={id:'test-a',title:'Zehnerübergang',questions:[{id:'a',type:'number',text:'38 + 7 = ?',numericAnswer:45},{id:'b',type:'number',text:'52 − 8 = ?',numericAnswer:44}]};
+test('two actual source questions supply a unique checked ten-minute stream without originals or source mutation',()=>{
+ assert.ok(sources,'source compiler exists');const before=JSON.stringify(original),plan=sources.preparePlan(original,{category:'mental',durationSec:600});
+ assert.equal(plan.available,true);assert.ok(plan.requiredCount>=300);const tasks=Array.from({length:plan.requiredCount},(_,i)=>sources.taskAt(plan,i,81));
+ assert.equal(new Set(tasks.map(q=>q.fingerprint)).size,tasks.length);assert.equal(tasks.every(q=>q.kind==='H'&&q.sourceId&&q.weight===20),true);
+ for(const q of tasks){const m=q.prompt.match(/^(-?\d+) ([+−]) (\d+) = \?$/);assert.ok(m);assert.equal(Number(q.correct),m[2]==='+'?Number(m[1])+Number(m[3]):Number(m[1])-Number(m[3]));}
+ assert.equal(JSON.stringify(original),before);
+});
+test('unsupported knowledge questions, false source keys and inadequate paper families are explicit blockers',()=>{
+ assert.ok(sources);for(const source of [{id:'k',questions:[{id:'a',text:'Wer entdeckte Amerika?',type:'short',acceptedAnswers:['Kolumbus']}]},{id:'bad',questions:[{id:'a',type:'number',text:'38 + 7 = ?',numericAnswer:46}]}]){
+ const p=sources.preparePlan(source,{category:'mental',durationSec:300});assert.equal(p.available,false);assert.match(p.issues.join(' '),/Aufgabe|Lösung|Quelle|Familie/);
+ }
+ assert.equal(sources.preparePlan(original,{category:'paper',durationSec:300}).available,false);
+});
+test('validated curriculum covers selectable grades5–10 and legal tracks with real competency references',()=>{
+ assert.ok(sources);for(let grade=5;grade<=10;grade++){const rows=sources.curriculum.filter(r=>r.grade===grade);assert.ok(rows.length);assert.ok(rows.every(r=>r.sourceUrl.startsWith('https://www.lehrplanplus.bayern.de/fachlehrplan/')));if(grade<7)assert.deepEqual([...new Set(rows.map(r=>r.track))],['regel']);if(grade===10)assert.deepEqual([...new Set(rows.map(r=>r.track))],['m']);for(const row of rows){const p=sources.preparePlan(sources.curriculumSource(row),{category:'mental',durationSec:600});assert.equal(p.available,true,row.title);}}
+});
+test('duration rejects coercion, fractions, emptiness and excessive ranges',()=>{
+ assert.ok(sources);for(const durationSec of ['',0,-1,59,1201,60.5,'300',null])assert.throws(()=>sources.duration(durationSec));for(const n of [60,180,300,600,1200])assert.equal(sources.duration(n),n);
+});
+const {createHash}=require('node:crypto');let createApi;try{({createApi}=require('../../lab/fast-quiz-functions/classroom-v2.js'))}catch{}
+const hashToken=s=>createHash('sha256').update(String(s)).digest('hex');
+function fixture(){const docs=new Map();let time=2000000000000,serial=0,queue=Promise.resolve();const db={collection:collection=>({doc:id=>({id:collection+'/'+id})}),runTransaction:fn=>{const run=queue.then(()=>fn({get:async r=>({exists:docs.has(r.id),data:()=>structuredClone(docs.get(r.id))}),create:(r,v)=>docs.set(r.id,structuredClone(v)),set:(r,v)=>docs.set(r.id,structuredClone(v))}));queue=run.catch(()=>{});return run;}};const src=structuredClone(original);return{docs,src,get now(){return time},tick:ms=>time+=ms,api:createApi?.({db,hashToken,newToken:()=>`test-token-${++serial}`,fail:(code,message,status=400)=>{throw Object.assign(new Error(message),{apiCode:code,httpStatus:status})},now:()=>time,randomSeed:()=>12345,sourceRepo:{identity:async ctx=>{if(ctx?.authorization!=='valid')throw new Error('Anmeldung erforderlich');return{uid:'owner'}},list:async()=>[{id:src.id,title:src.title}],load:async(uid,id)=>{if(uid!=='owner'||id!==src.id)throw new Error('Keine Berechtigung');return src}}})};}
+const auth={authorization:'valid'};
+async function prepare(f,config={}){return f.api('Prepare',{source:{kind:'test',quizId:original.id},config:{category:'mental',durationSec:300,...config}},auth)}
+async function room2(f,n=4,config={}){const prep=await prepare(f,config);const r=await f.api('Create',{preparationId:prep.preparationId,sourceRevision:prep.sourceRevision,config:{category:'mental',gameMode:'teams',durationSec:300,teamCount:4,teamNames:['Rot','Blau','Grün','Gelb'],...config}},auth);r.players=[];for(let i=0;i<n;i++)r.players.push(await f.api('Join',{code:r.code,name:'QA'+i,joinKey:'opaque-join-key-'+i.toString().padStart(16,'0')}));return r;}
+const hc=r=>({code:r.code,hostToken:r.hostToken}),pc=(r,i=0)=>({code:r.code,playerId:r.players[i].playerId,playerToken:r.players[i].playerToken});
+test('source preparation requires active auth and binds immutable own source revision',async()=>{
+ assert.equal(typeof createApi,'function');const f=fixture();await assert.rejects(f.api('Sources',{}),/anmelden/);const p=await prepare(f);f.src.questions[0].text='39 + 7 = ?';await assert.rejects(f.api('Create',{preparationId:p.preparationId,sourceRevision:p.sourceRevision,config:{category:'mental',gameMode:'computer',durationSec:300}},auth),/geändert/);
+});
+test('continuous answers: sixth is scored, task never times out at60s, next requires feedback and round replay is rejected',async()=>{
+ assert.equal(typeof createApi,'function');const f=fixture(),r=await room2(f,1,{gameMode:'computer'}),c=pc(r);await f.api('Start',hc(r));f.tick(5000);
+ let first;for(let i=0;i<7;i++){const t=await f.api('Task',c);if(i===0){first=t;f.tick(61000);assert.equal((await f.api('Task',c)).question.id,t.question.id);await assert.rejects(f.api('Next',{...c,slot:t.slot,roundId:t.roundId}),/Antwort|Feedback/);}
+ const privateRoom=f.docs.get('fastQuizClassroomsV2/'+r.code),key=privateRoom.plan.tasks[t.slot].correct;
+ const a=await Promise.all([f.api('Answer',{...c,slot:t.slot,roundId:t.roundId,answer:key}),f.api('Answer',{...c,slot:t.slot,roundId:t.roundId,answer:key})]);assert.equal(a[0].points,20);assert.equal(a[1].points,20);await f.api('Next',{...c,slot:t.slot,roundId:t.roundId});}
+ assert.equal((await f.api('State',c)).self.score,140);await f.api('Stop',hc(r));await f.api('Start',{...hc(r),retry:true,expectedRoundId:first.roundId});f.tick(5000);await assert.rejects(f.api('Answer',{...c,slot:0,roundId:first.roundId,answer:'45'}),/Runde/);
+});
+test('duration/teams names enforce limits; unequal teams use average fixed roster and abort never wins',async()=>{
+ assert.equal(typeof createApi,'function');const f=fixture(),r=await room2(f,5,{teamCount:2,teamNames:['7a','7b'],durationSec:60});let s=await f.api('State',hc(r));assert.deepEqual(s.teams.map(t=>t.size),[3,2]);await assert.rejects(f.api('Teams',{...hc(r),teamCount:2,teamNames:['Gleich','gleich']}),/namen/i);await f.api('Teams',{...hc(r),teamCount:2,teamNames:['<A>','B']});await f.api('Start',hc(r));f.tick(5000);
+ for(let i=0;i<5;i++){const c=pc(r,i),t=await f.api('Task',c),key=f.docs.get('fastQuizClassroomsV2/'+r.code).plan.tasks[0].correct;await f.api('Answer',{...c,slot:t.slot,roundId:t.roundId,answer:key});}
+ s=await f.api('State',hc(r));assert.deepEqual(s.teams.map(t=>t.average),[20,20]);assert.deepEqual(s.teams.map(t=>t.rawScore),[60,40]);assert.equal(s.teams[0].rank,1);assert.equal(s.teams[1].rank,1);await f.api('Join',{code:r.code,name:'Late',joinKey:'opaque-late-join-key-123456789'});s=await f.api('State',hc(r));assert.deepEqual(s.teams.map(t=>t.size),[3,2]);await f.api('Stop',hc(r));assert.equal((await f.api('State',hc(r))).success,false);
+});
+test('hard score cutoff preserves late learning feedback without knowledge-error and keeps all keys private',async()=>{
+ assert.equal(typeof createApi,'function');const f=fixture(),r=await room2(f,1,{gameMode:'computer',durationSec:60}),c=pc(r);await f.api('Start',hc(r));f.tick(5000);const t=await f.api('Task',c);assert.equal(t.question.correct,undefined);assert.equal(t.question.hint,undefined);assert.equal(t.question.fingerprint,undefined);const view=await f.api('State',{code:r.code});assert.equal(view.members,undefined);assert.equal(view.plan,undefined);f.tick(60000);const answer=f.docs.get('fastQuizClassroomsV2/'+r.code).plan.tasks[0].correct,result=await f.api('Answer',{...c,slot:t.slot,roundId:t.roundId,answer});assert.equal(result.correct,true);assert.equal(result.points,0);assert.equal(result.late,true);assert.equal((await f.api('State',c)).self.score,0);assert.equal((await f.api('Next',{...c,slot:t.slot,roundId:t.roundId})).finished,true);
+});

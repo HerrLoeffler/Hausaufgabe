@@ -13,7 +13,7 @@ const output = path.join(destination, 'public');
 await fs.mkdir(output, { recursive: true });
 if ((await fs.readdir(output)).length) throw new Error('Build directory must be empty.');
 
-const files = ['index.html', 'styles.css', 'fastquiz-v4.css', 'fastquiz-polish.css', 'math-engine-v4.js', 'rounding-plus.js', 'app-v4.js', 'classroom.js', 'classroom.css'];
+const files = ['index.html', 'styles.css', 'fastquiz-v4.css', 'fastquiz-polish.css', 'math-engine-v4.js', 'rounding-plus.js', 'app-v4.js', 'classroom.js', 'classroom.css', 'source-client.mjs'];
 for (const name of files) await fs.copyFile(path.join(source, name), path.join(output, name));
 
 await fs.copyFile(path.join(root, 'lab/fast-quiz-functions/classroom-math.js'), path.join(output, 'classroom-math.js'));
@@ -50,7 +50,7 @@ for (const required of ['Runden', 'Tausendstel', 'decimalRoundingQuestion', 'v2_
 const hashes = {};
 for (const name of [...files, 'classroom-math.js']) hashes[name] = createHash('sha256').update(await fs.readFile(path.join(output, name))).digest('hex');
 
-await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({ experiment: 'fast-quiz', format: 6, sourceCommit: (await import('node:child_process')).execFileSync('git', ['rev-parse', 'HEAD'], {cwd:root,encoding:'utf8'}).trim(), classroomVersion: 1, files: hashes }, null, 2) + '\n');
+await fs.writeFile(path.join(output, 'lab-release.json'), JSON.stringify({ experiment: 'fast-quiz', format: 6, sourceCommit: (await import('node:child_process')).execFileSync('git', ['rev-parse', 'HEAD'], {cwd:root,encoding:'utf8'}).trim(), classroomVersion: 2, files: hashes }, null, 2) + '\n');
 await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({ hosting: {
   site: 'hausaufgabe-staging', public: 'public', ignore: ['**/.*'],
   headers: [{ source: '**', headers: [{ key: 'Cache-Control', value: 'no-cache' }] }]

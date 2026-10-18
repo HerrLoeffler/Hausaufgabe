@@ -2,6 +2,7 @@
 
 const { createHash, randomBytes, randomUUID } = require("node:crypto");
 const { initializeApp } = require("firebase-admin/app");
+const { getAuth } = require("firebase-admin/auth");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { onRequest } = require("firebase-functions/v2/https");
 
@@ -359,11 +360,13 @@ async function getHighscoreBoard(payload) {
 }
 
 const classroomApi = require('./classroom.js').createApi({ db, hashToken, newToken, fail });
+const classroomV2Api = require('./classroom-v2.js').createApi({ db, hashToken, newToken, fail, sourceRepo: require('./classroom-source-repo').createSourceRepo({ db, getAuth, fail }) });
 
-async function dispatch(action, payload) {
+async function dispatch(action, payload, context = {}) {
+  if (action.startsWith('classroomV2')) return classroomV2Api(action, payload, context);
   if (action.startsWith('classroom')) return classroomApi(action, payload);
   switch (action) {
-    case "ping": return { service: "gradecrew-fast-quiz", version: 4, maxPlayers: MAX_PLAYERS, classroomVersion: 1, classroomBuildHash: require("./classroom.js").buildHash, classroomModes: ["computer", "teams"] };
+    case "ping": return { service: "gradecrew-fast-quiz", version: 4, maxPlayers: MAX_PLAYERS, classroomVersion: 2, classroomV2BuildHash: require('./classroom-v2.js').buildHash, classroomV2Sources: true, classroomBuildHash: require("./classroom.js").buildHash, classroomModes: ["computer", "teams"] };
     case "createRoom": return createRoom(payload);
     case "joinRoom": return joinRoom(payload);
     case "roomState": return roomState(payload);
@@ -383,7 +386,7 @@ exports.fastQuizApi = onRequest({ region: REGION, cors: true, timeoutSeconds: 30
   }
   try {
     const body = req.body && typeof req.body === "object" ? req.body : {};
-    const data = await dispatch(String(body.action || ""), body.payload && typeof body.payload === "object" ? body.payload : {});
+    const data = await dispatch(String(body.action || ""), body.payload && typeof body.payload === "object" ? body.payload : {}, { authorization: req.headers.authorization });
     res.status(200).json({ ok: true, data });
   } catch (err) {
     console.error("Fast Quiz API error", { code: err.apiCode || err.code, message: err.message });

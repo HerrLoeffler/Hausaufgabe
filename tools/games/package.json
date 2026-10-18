@@ -2,7 +2,7 @@
   "name": "gradecrew-games-structure-checks",
   "private": true,
   "scripts": {
-    "test": "node --test regression.test.cjs brand-core.test.cjs binomial.test.cjs classroom-math.test.cjs classroom-server.test.cjs",
+    "test": "node --test regression.test.cjs brand-core.test.cjs binomial.test.cjs classroom-math.test.cjs classroom-server.test.cjs classroom-v2.test.cjs",
     "test:browser": "node browser-smoke.cjs && node classroom-browser.cjs"
   },
   "devDependencies": { "jsdom": "26.1.0", "playwright": "1.62.1" }
