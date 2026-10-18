@@ -1,16 +1,16 @@
 {
-  "release": "2.3.1-gc39",
-  "commit": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
-  "integrationURL": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-  "verification": "Current release.json fetched read-only 2026-10-14; all source bytes match its SHA256 entries. Live served index.html, app.js, styles.css, workspace.css, design-system.css and gradecrew-brand.css were also fetched and verified against these hashes on 2026-10-14. Repository gc21 HTML/app differ.",
+  "release": "2.3.1-gc42",
+  "commit": "e35b2b482d10b8004e85c93391990ebfcbed49be",
+  "integrationURL": "https://gradecrew-staging-2026.web.app",
+  "verification": "Sources pinned from immutable combined school candidate e35b2b482d10b8004e85c93391990ebfcbed49be; served bytes are checked by verify_integration_source.py against the separate test environment before release.",
   "files": {
     "index.html": {
-      "sha256": "5d9f1e0049369d36085cc6fe6aced1973e2e198534845d29880f834bcf8289c5",
-      "origin": "integration release 2.3.1-gc39"
+      "sha256": "6811a17b238c1804940c1f0f268b45069359d1857714c86c25a678152cc6a293",
+      "origin": "integration release 2.3.1-gc42"
     },
     "app.js": {
-      "sha256": "13d1f844ebecdb5df9d2a9b557fbe9f236b4415f7a97ada780943bb260c10391",
-      "origin": "integration release 2.3.1-gc39"
+      "sha256": "110717a143c578dda7ce7b4a1a8364c630e87250236929496114ac9977e62e96",
+      "origin": "integration release 2.3.1-gc42"
     },
     "styles.css": {
       "sha256": "b306d72d46d8063b8d9a00a270eb630413fe8d74ad55e0d5a8e272a662185a00",
@@ -79,8 +79,8 @@
       "origin": "integration release 2.3.1-gc39"
     },
     "startup.js": {
-      "sha256": "fb4e0547c6b71a6b534263d2ba8208065511b4b7394ef15d87ee78e205fefe5f",
-      "origin": "integration release 2.3.1-gc39"
+      "sha256": "657374e77d49674a5f2302d3a5f7d9db302de9c210f8980b749b0d0b6f751469",
+      "origin": "integration release 2.3.1-gc42"
     },
     "gradecrew-tour-v7.js": {
       "sha256": "dbd7f83ff8ea82e52ba3d51f9ff843b8a23f1f499dd55ace0061aea2202450a0",

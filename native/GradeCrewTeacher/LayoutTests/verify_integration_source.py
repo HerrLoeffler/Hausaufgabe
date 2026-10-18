@@ -11,7 +11,7 @@ HERE = Path(__file__).resolve().parent
 def allowed(url):
     u = urllib.parse.urlsplit(url)
     host = u.hostname or ''
-    return u.scheme == 'https' and not u.username and not u.password and u.port in (None,443) and (host == 'hausaufgabe-staging.web.app' or (host.startswith('hausaufgabe-staging--') and host.endswith('.web.app')))
+    return u.scheme == 'https' and not u.username and not u.password and u.port in (None,443) and (host in ('hausaufgabe-staging.web.app', 'gradecrew-staging-2026.web.app') or (host.startswith('hausaufgabe-staging--') and host.endswith('.web.app')))
 
 def compare_manifest(manifest, pin):
     mismatches = [path for path, info in pin['files'].items() if manifest.get('files',{}).get(path) != info['sha256']]
