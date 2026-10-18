@@ -46,6 +46,30 @@ test("existing colored-gap attempts keep their source fingerprint after removing
   assert.deepEqual(contract.paper[0].segments.filter(segment => segment.type === "gap").map(segment => segment.color), [undefined, undefined]);
 });
 
+test("legacy fingerprints keep each authored gap color when question IDs repeat and questions shuffle", () => {
+  const questions = [
+    { id: "same", position: 1, type: "gapfill", text: "Sun [yellow].", points: 1, gapColors: ["blue"] },
+    { id: "same", position: 2, type: "gapfill", text: "Grass [green].", points: 1, gapColors: ["green"] },
+    { id: "same", position: 3, type: "gapfill", text: "Rose [red].", points: 1, gapColors: ["orange"] }
+  ];
+  const secret = "b".repeat(48);
+  assert.equal(buildAssessmentContract(questions, secret).sourceFingerprint,
+    "c037a5660b334f4a59ef92534e091b17f8c8c6147effd8ca3ec713e2099726c3");
+  const shuffled = buildAssessmentContract(questions, secret, { shuffleQuestions: true });
+  assert.equal(shuffled.sourceFingerprint,
+    "fe20dd771008524d407950efaa78ee4c53ea849e294e88446337dbd0ee56a336");
+  assert.ok(shuffled.paper.every(q => q.segments.every(segment => !Object.hasOwn(segment, "color"))));
+});
+
+test("legacy fingerprint retains gap colors when a public question ID is shortened", () => {
+  const q = { id: "q".repeat(121), position: 1, type: "gapfill", text: "Sky [blue].", points: 1, gapColors: ["blue"] };
+  const contract = buildAssessmentContract([q], "a".repeat(48));
+  assert.equal(contract.sourceFingerprint,
+    "8e4d3949278eb6c30d306fb6a5505a544aa0874f9a37e73dc5538936aa2961bf");
+  assert.equal(contract.paper[0].id.length, 120);
+  assert.equal(contract.paper[0].segments.find(segment => segment.type === "gap").color, undefined);
+});
+
 test("submitted color maps survive bounded answer storage before server grading", () => {
   const key=buildGradingKey(question(),"synthetic-secret");
   const stored=sanitizeAnswersForStorage([key],{colors:{1:"orange",2:"blue",3:"green"},foreignQuestion:{1:"blue"}});

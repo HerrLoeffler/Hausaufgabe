@@ -377,7 +377,9 @@ function buildAssessmentContract(questions, secret, { shuffleQuestions = false, 
   const gradingKey = entries.map(entry => entry.key);
   // Existing attempts compare this fingerprint on resume/poll. Keep their v1
   // presentation shape for hashing while returning locale-neutral image metadata.
-  const authoredById = new Map(normalized.map(question => [question.id, question]));
+  // Public IDs may be shortened and authored IDs need not be unique. Match the
+  // original entry by object identity, which survives deterministic shuffling.
+  const authoredByPaper = new Map(entries.map((entry, index) => [entry.paper, normalized[index]]));
   const fingerprintPaper = paper.map(question => {
     const { imageChoicesOnly, ...legacy } = question;
     if (legacy.image) legacy.image = { ...legacy.image, alt: legacy.image.alt || "Abbildung zur Aufgabe" };
@@ -386,7 +388,7 @@ function buildAssessmentContract(questions, secret, { shuffleQuestions = false, 
       image: option.image ? { ...option.image, alt: option.image.alt || "Antwortabbildung" } : null
     }));
     if (legacy.type === "gapfill") {
-      const colors = authoredById.get(legacy.id)?.gapColors || [];
+      const colors = authoredByPaper.get(question)?.gapColors || [];
       let gapIndex = 0;
       legacy.segments = legacy.segments.map(segment => {
         if (segment.type !== "gap") return segment;

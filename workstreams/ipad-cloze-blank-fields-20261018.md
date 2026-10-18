@@ -20,8 +20,9 @@ Branch `fix/ipad-cloze-empty-placeholder-20261018`, Basis des gemeinsamen Websta
 ## Nachweise und offene Gates
 
 - Neue DOM- und Server-Regressionstests zuerst RED (alte Platzhalter, alte öffentliche Farben), dann GREEN. Eine zusätzliche RED→GREEN-Probe sichert den exakten Fingerprint einer bestehenden farbigen Frage, damit laufende Versuche nicht wegen dieser Präsentationsänderung abgewiesen werden.
-- Lokal mit gebündeltem Node 24: Assessment-Funktionen 86/86 und UI 121/121 (`--experimental-vm-modules`) erfolgreich. Testdaten sind erfunden; keine realen Schülerdaten oder Live-Submissions benutzt.
-- Node-22-CI, unabhängige Quellprüfung, Abgleich mit inzwischen weitergelaufenem Integrationsbranch, gemeinsamer Schul-/Testumgebungs-Release und erneuter iPad-Gerätetest **noch offen**. Die Schuladresse darf nicht durch diesen Einzelbranch überschrieben werden.
-- Direkter Git-Transport zum Remote schlug wegen DNS-Auflösung fehl; Remote-Sicherung via GitHub-GitData läuft separat. Ein lokaler Commit ist noch kein Remote-Nachweis.
+- Lokal mit gebündeltem Node 24: Assessment-Funktionen 88/88 und UI 121/121 (`--experimental-vm-modules`) erfolgreich. Testdaten sind erfunden; keine realen Schülerdaten oder Live-Submissions benutzt.
+- Unabhängige Prüfung von Remote-Commit `3abdef6634e2caf1f8661c7df9705208796c6a49` in [PR #242](https://github.com/HerrLoeffler/Hausaufgabe/pull/242) fand einen Wiederaufnahme-Blocker: doppelte Aufgaben-IDs mit unterschiedlichen `gapColors` und sehr lange IDs änderten den alten `sourceFingerprint`. Die Zuordnung erfolgt jetzt über die ursprünglichen Aufgabenobjekte statt über öffentliche IDs; Regressionen prüfen alte Fingerprints mit wiederholten IDs, langen IDs und `shuffleQuestions` an zuvor ermittelten Konstanten (RED→GREEN). Erneute unabhängige Prüfung des Nachfolge-Commits steht aus.
+- Node-22-CI, Abgleich mit inzwischen weitergelaufenem Integrationsbranch, gemeinsamer Schul-/Testumgebungs-Release und erneuter iPad-Gerätetest **noch offen**. Die Schuladresse darf nicht durch diesen Einzelbranch überschrieben werden.
+- Direkter Git-Transport zum Remote schlug wegen DNS-Auflösung fehl; Remote-Sicherung erfolgt über GitHub-GitData.
 
 **Nächster Schritt:** Exakten Branchinhalt remote sichern, unabhängige Prüfung und Node-22-CI an diesem SHA durchführen; danach mit dem autorisierten gemeinsamen Web-Release koordinieren.
