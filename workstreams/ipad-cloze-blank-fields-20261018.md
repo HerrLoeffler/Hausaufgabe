@@ -1,6 +1,6 @@
 # GC-IPAD-CLOZE-20261018 — Leere, neutrale Lückentextfelder
 
-**Verantwortlich:** GradeCrew-Fachauftrag aus „GradeCrew Zentrale“; Chat-Link unbekannt. **Modell/Aufwand:** angefordert und tatsächlich verwendet unbekannt. **Stand:** 18.10.2026, `branch_only`; kein Merge, kein Deploy, kein Gerätetest nach Änderung.
+**Verantwortlich:** GradeCrew-Fachauftrag aus „GradeCrew Zentrale“; Chat-Link unbekannt. **Modell/Aufwand:** angefordert und tatsächlich verwendet unbekannt. **Stand:** 18.10.2026, Draft-PR #242; kein Merge, kein Deploy, kein Gerätetest nach Änderung.
 
 ## Befund und Ziel
 
@@ -21,8 +21,10 @@ Branch `fix/ipad-cloze-empty-placeholder-20261018`, Basis des gemeinsamen Websta
 
 - Neue DOM- und Server-Regressionstests zuerst RED (alte Platzhalter, alte öffentliche Farben), dann GREEN. Eine zusätzliche RED→GREEN-Probe sichert den exakten Fingerprint einer bestehenden farbigen Frage, damit laufende Versuche nicht wegen dieser Präsentationsänderung abgewiesen werden.
 - Lokal mit gebündeltem Node 24: Assessment-Funktionen 88/88 und UI 121/121 (`--experimental-vm-modules`) erfolgreich. Testdaten sind erfunden; keine realen Schülerdaten oder Live-Submissions benutzt.
-- Unabhängige Prüfung von Remote-Commit `3abdef6634e2caf1f8661c7df9705208796c6a49` in [PR #242](https://github.com/HerrLoeffler/Hausaufgabe/pull/242) fand einen Wiederaufnahme-Blocker: doppelte Aufgaben-IDs mit unterschiedlichen `gapColors` und sehr lange IDs änderten den alten `sourceFingerprint`. Die Zuordnung erfolgt jetzt über die ursprünglichen Aufgabenobjekte statt über öffentliche IDs; Regressionen prüfen alte Fingerprints mit wiederholten IDs, langen IDs und `shuffleQuestions` an zuvor ermittelten Konstanten (RED→GREEN). Erneute unabhängige Prüfung des Nachfolge-Commits steht aus.
-- Node-22-CI, Abgleich mit inzwischen weitergelaufenem Integrationsbranch, gemeinsamer Schul-/Testumgebungs-Release und erneuter iPad-Gerätetest **noch offen**. Die Schuladresse darf nicht durch diesen Einzelbranch überschrieben werden.
-- Direkter Git-Transport zum Remote schlug wegen DNS-Auflösung fehl; Remote-Sicherung erfolgt über GitHub-GitData.
+- Unabhängige Prüfung von Remote-Commit `3abdef6634e2caf1f8661c7df9705208796c6a49` in [PR #242](https://github.com/HerrLoeffler/Hausaufgabe/pull/242) fand einen Wiederaufnahme-Blocker: doppelte Aufgaben-IDs mit unterschiedlichen `gapColors` und sehr lange IDs änderten den alten `sourceFingerprint`. Die Zuordnung erfolgt jetzt über die ursprünglichen Aufgabenobjekte statt über öffentliche IDs; Regressionen prüfen alte Fingerprints mit wiederholten IDs, langen IDs und `shuffleQuestions` an zuvor ermittelten Konstanten (RED→GREEN).
+- Exakter geprüfter Code-Head `2ee39a6ff9faa1bd4e5fb2f4633a70b0997b4a61`: unabhängiger Re-Review **PASS**, alte/neue Fingerprints 6/6 identisch (normale, doppelte und >120-Zeichen-IDs, jeweils mit/ohne Shuffle), Assessment 88/88. UI-Testnachweis 121/121 stammt aus unserem lokalen Node-24-Lauf; Reviewer hatte `jsdom` lokal nicht verfügbar.
+- GitHub meldet PR #242 gegen aktuellen Integrations-Target `a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d` als `mergeable: true`. Target änderte seit gemeinsamer Basis nur Pool-/Generator-Dateien; kein Dateipfad überschneidet sich mit diesem PR. Ein kombinierter Funktionstest auf dem Merge-Commit steht noch aus.
+- Für Head `2ee39a6` meldeten GitHub Actions und Commit-Statusabfrage keine Checks/Workflow-Runs. Der Workflow benutzt Node 22, sein Push-Filter deckt diesen `fix/ipad-*`-Branch nicht ab. Node-22-CI bleibt offen. Gemeinsamer Schul-/Testumgebungs-Release und erneuter iPad-Gerätetest bleiben ebenfalls offen; die Schuladresse darf nicht durch diesen Einzelbranch überschrieben werden.
+- Direkter Git-Transport zum Remote schlug wegen DNS-Auflösung fehl; Remote-Sicherung erfolgt über GitHub-GitData. PR-Beschreibung am 18.10.2026 an diese Nachweise angepasst.
 
-**Nächster Schritt:** Exakten Branchinhalt remote sichern, unabhängige Prüfung und Node-22-CI an diesem SHA durchführen; danach mit dem autorisierten gemeinsamen Web-Release koordinieren.
+**Nächster Schritt:** Node-22-CI und kombinierte Regressionen auf dem späteren Integrations-Commit ausführen; danach mit dem autorisierten gemeinsamen Web-Release koordinieren und auf einem iPad abnehmen.
