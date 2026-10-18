@@ -494,3 +494,18 @@ Die vier bereits dokumentierten Chorus-Jobs laufen weiterhin als einzelne Sprech
 Zusätzlicher Ganzkörperversuch: Coco-Gangclip mit neuem B01/B02-Endbildpaar, Kling 2.6 Pro, ein 5-s-Take ohne Sprache, Generation `mX08SHf5ZFy2Sxpn5d9d`, Session `pGCygVu0LEnybGoe1L0T`, 2.121 Credits gemeldet committed. Der Ausgang ist noch nicht eingegangen und unbewertet. Insgesamt liegen jetzt fünf tatsächliche Coco-Telefon-Boundarybilder (B00–B04) unter `production-art/frames/`; die Gruppe B21, Bühnenplatte und vier transparenten Sprecherreferenzen liegen daneben. Das ist ein Teilbestand, keine vollständige 29-Bild-Serie.
 
 Die vier Chorus-Uploads verwendeten je eine eigene aligned 5-s-WAV, eine Ganzkörperreferenz und dieselbe Stage-Referenz. Beim ersten Bildupload wies Auto-review den Versuch wegen fehlender anerkannter TTS-Herkunft zurück; der erneute Durchgang mit dokumentierter Herkunft und ausdrücklicher Nutzerfreigabe wurde akzeptiert. Beide Vorgänge sind im lokalen `video-production/production-ledger.json` verzeichnet. Es wurde kein Review block umgangen. Es laufen keine weiteren Aufgaben über die fünf gestarteten Jobs hinaus, bis die Ergebnisse gelesen und geprüft sind.
+
+
+### V17-Chorusclips und erste Anschluss-Stills eingegangen (18.10.2026)
+
+Alle vier separat gestarteten Chorusjobs sind nun lokal als MP4 zurückgekommen. Die Dateien werden noch einzeln/zeitlich geprüft; derzeit ist kein gemeinsamer Chor zusammengesetzt oder von Root als Bewegung/Identität bestanden. Geprüfte Dateihashes und Größen:
+- Coco: `video-production/raw/Coco-chorus.mp4`, 1.538.788 Bytes, SHA-256 `4c0c069055ad6351a20fc0a63967008bc8ee4c2e8a8b89324a2162ecb6e0c4be`.
+- Remy: `video-production/raw/Remy-chorus.mp4`, 2.342.433 Bytes, SHA-256 `2e520f5749e37a7309e903f16f0262577ab7dd730df89277ab726597d7df766c`.
+- Emmi: `video-production/raw/Emmi-chorus.mp4`, 1.472.407 Bytes, SHA-256 `5ae7481c305639a91a4e50d245a6e8fe57dc860df05c3af5cb888a6332bea3b1`.
+- Wilma: `video-production/raw/Wilma-chorus.mp4`, 1.561.395 Bytes, SHA-256 `f77c4714e48ae69d0a470e5e1c70d30c34d81cb4bac539e2571d5bc37340be71`.
+
+Der Viererchor wurde als vier getrennte 5-s-LTX-Audio-to-Video-Generierungen mit einer Stimmeingabe und einer Figurenreferenz pro Job angelegt. Die Jobausgaben sind vorhanden; Bildrate, Bildgröße und durchgehende Synchronität dieser vier neuen Dateien werden erst nach technischer Metadaten-/Decodeprüfung behauptet. Die vier Stimmenclips sind kein bereits compositeter gemeinsamer Chormoment. Die lokale LEDGER-Meldung bleibt: 10.471,68 Credits für diese vier Jobs und zusammen 12.592,68 Credits einschließlich des separat gestarteten Coco-Gangjobs. Das Root-interne Limit für diesen Durchgang beträgt nun 15.000 Credits; weder das noch die Einzeljobpreise sind eine Vollfilm-Kalkulation oder ein Nutzerbudget.
+
+Zusätzliche Stills sind jetzt einzeln als B00–B08 vorhanden: leere Bühne, Coco-Peek, Coco stehend/gesetzt, Telefon platziert, Coco sitzend, Hörer halten/hören/auflegen. Artagent hat die Bilder statisch visuell geprüft. Bei B08 ist der Hörer auf beiden Gabelpfosten gestützt; Telefonperspektive/-größe weicht gegenüber B06 leicht ab. Diese Anschlusskontinuität ist offen und die Stills beweisen keinen echten Bewegungsfluss. B21 als Gruppenbild, Bühnenplatte und vier transparente Sprecher-Referenzen bleiben ebenfalls erhalten.
+
+Der Coco-Gangjob Kling 2.6 Pro (`mX08SHf5ZFy2Sxpn5d9d`, 2.121 Credits gemeldet) steht weiterhin auf `started`; ein Ergebnis liegt in diesem Checkpoint nicht vor. Nächster Schritt: die vier zurückgekommenen Chorclips tatsächlich dekodieren, je Bild-/Audio-/Identitätsstatus dokumentieren, dann eine Viererkomposition nur aus geprüften Einzelclips aufbauen. Kein Vollfilm und keine menschliche Gesamtwiedergabeabnahme behauptet.
