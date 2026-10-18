@@ -21,3 +21,5 @@
 
 .rosterImportDialog{width:min(1100px,calc(100vw - 32px))}.rosterImportOptions{display:grid;grid-template-columns:1fr 1fr;gap:16px}.rosterImportCounts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:12px 0;border-block:1px solid var(--gc-colors-border,#dfe5ec)}.rosterImportCounts p{font-weight:700;margin:4px 0}.rosterImportSample{font-size:12px;color:var(--gc-colors-muted,#596579);overflow-wrap:anywhere}.rosterImportDialog table{min-width:760px}.rosterImportDialog td{vertical-align:top}.rosterImportDialog td select{min-width:150px;max-width:260px}.rosterImportDialog details{margin-top:20px}.rosterLinkPicker{max-width:260px}.rosterImportDialog [data-import-summary]:empty{display:none}
 @media(max-width:600px){.rosterImportOptions{grid-template-columns:1fr}.rosterImportCounts{grid-template-columns:1fr 1fr}.rosterImportDialog{padding:16px}.rosterImportDialog>form{min-width:0}.rosterImportDialog fieldset{min-width:0}}
+
+.rosterImportDialog [hidden]{display:none!important}.rosterImportDialog [data-import-back]{margin:8px 0}

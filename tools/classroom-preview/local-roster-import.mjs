@@ -8,9 +8,12 @@ const classKey=(name,schoolYear)=>JSON.stringify([folded(name),schoolYear]);
 // A name is only a conflict hint. Only a confirmed source reference, an exact
 // previous import receipt, or an explicit user link may reuse an identity.
 export function buildStudentImportPlan({state,payload,lookupSource,lookupReceipt}){
- keys(payload,['schoolYear','sourceNamespace','rows','decisions']);
+ keys(payload,['schoolYear','sourceNamespace','rows','decisions','fixedClassId']);
  const schoolYear=year(payload.schoolYear),sourceNamespace=text(payload.sourceNamespace,80);
  if(!Array.isArray(payload.rows)||!payload.rows.length||payload.rows.length>2000)fail('invalid-argument');
+ const fixedClass=payload.fixedClassId?state.classes.find(c=>c.id===payload.fixedClassId):null;
+ if(payload.fixedClassId!==undefined&&!fixedClass)fail('not-found',404);
+ if(fixedClass&&fixedClass.schoolYear!==schoolYear)fail('target-conflict',409);
  const seenLines=new Set(),seenSources=new Set();
  const normalized=payload.rows.map(row=>{
   keys(row,['line','firstName','lastName','className','sourceId']);
@@ -18,7 +21,7 @@ export function buildStudentImportPlan({state,payload,lookupSource,lookupReceipt
   const sourceId=row.sourceId?text(row.sourceId,200):'';
   if(row.sourceId!==undefined&&typeof row.sourceId!=='string')fail('invalid-argument');
   if(sourceId&&seenSources.has(sourceId))fail('duplicate-source');if(sourceId)seenSources.add(sourceId);
-  return {line:row.line,firstName:text(row.firstName),lastName:text(row.lastName),className:text(row.className,40),sourceId};
+  return {line:row.line,firstName:text(row.firstName),lastName:text(row.lastName),className:fixedClass?.name||text(row.className,40),sourceId};
  });
  const decisions=new Map();
  if(payload.decisions!==undefined&&!Array.isArray(payload.decisions))fail('invalid-argument');

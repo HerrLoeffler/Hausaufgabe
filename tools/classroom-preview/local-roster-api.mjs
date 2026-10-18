@@ -11,6 +11,7 @@ const errors={
  'resource-exhausted':'Die Grenze für diesen lokalen Testbestand ist erreicht.',
  'duplicate-source':'Eine Kennung kommt in mehreren Dateizeilen vor. Bitte die Datei prüfen.',
  'duplicate-target':'Mehrere Zeilen sind derselben Person zugeordnet. Bitte die Zuordnung prüfen.',
+ 'target-conflict':'Das Schuljahr passt nicht zur gewählten Klasse. Bitte die Zielklasse erneut wählen.',
  'source-conflict':'Die Kennung ist bereits anders zugeordnet. Bitte die Importquelle prüfen.',
  'preview-mismatch':'Die Vorschau passt nicht mehr. Bitte eine neue Vorschau erstellen.',
  'import-unresolved':'Bitte zuerst alle unklaren Zuordnungen in der Vorschau prüfen.',

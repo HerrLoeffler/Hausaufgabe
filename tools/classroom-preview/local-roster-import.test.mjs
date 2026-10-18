@@ -63,3 +63,12 @@ test('ambiguous name candidate lists remain bounded and never auto-merge',()=>{
   const plan=s.previewImport('a',payload([row(2)]));assert.equal(plan.counts.review,1);assert.equal(plan.rows[0].candidates.length,50);
  }finally{s.close();}
 });
+test('fixed target class is authorized by ID and bound to its actual year',()=>{
+ const s=openLocalRoster(':memory:');try{
+  const c=s.mutate('a',operation('createClass',{name:'8b',schoolYear:'2025/26'})).classes[0];
+  const input={...payload([row(2,'Ada','Beispiel','ignored')],'2025/26'),fixedClassId:c.id};
+  const preview=s.previewImport('a',input);assert.equal(preview.newClasses.length,0);assert.equal(preview.rows[0].after.classLabel,'8b · 2025/26');
+  assert.throws(()=>s.previewImport('a',{...input,schoolYear:'2026/27'}),/target-conflict/);
+  assert.throws(()=>s.previewImport('b',input),/not-found/);
+ }finally{s.close();}
+});

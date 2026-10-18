@@ -14,6 +14,7 @@ test('CSV stays uncommitted until preview and explicit approval; summary reports
   await selectFile(t,'Vorname;Nachname;Klasse\nMila;Beispiel;8b\nAda;Übung;8b\n');
   doc.querySelector('[data-import-preview]').click();await tick();
   assert.equal(t.store.read('a').students.length,0);assert.match(doc.querySelector('[data-import-summary]').textContent,/2.*Neu/);
+  assert.equal(doc.querySelector('fieldset').hidden,true,'review step focuses on changes instead of repeating file setup');
   const confirm=doc.querySelector('[data-import-confirm]');assert.equal(confirm.disabled,true);
   const approval=doc.querySelector('[data-import-approval]');approval.checked=true;approval.dispatchEvent(new t.dom.window.Event('change'));assert.equal(confirm.disabled,false);
   confirm.click();await tick();assert.equal(t.committed.students.length,2);assert.equal(doc.querySelector('[data-import-dialog]'),null);
@@ -52,5 +53,17 @@ test('row decisions are locked while the approved import is being committed',asy
   const approval=doc.querySelector('[data-import-approval]');approval.checked=true;approval.dispatchEvent(new dom.window.Event('change'));doc.querySelector('[data-import-confirm]').click();
   assert.equal(doc.querySelector('[data-import-summary] select').disabled,true);
   resolve(store.read('a'));await tick();
+ }finally{modal.destroy();store.close();dom.window.close();}
+});
+test('fixed existing class includes its own school year and never creates a same-name class in a different year',async()=>{
+ const dom=new JSDOM('<body></body>',{url:'http://127.0.0.1:8782/'}),doc=dom.window.document,store=openLocalRoster(':memory:');
+ const initial=store.mutate('a',{command:'createClass',payload:{name:'8b',schoolYear:'2025/26'},expectedRevision:0,operationId:crypto.randomUUID()});
+ const modal=openRosterImport({document:doc,client:{previewImport:async p=>store.previewImport('a',p)},state:initial,isCurrent:()=>true,onCommit:()=>{}});
+ try{
+  await selectFile({dom},'Vorname;Nachname\nAda;Beispiel\n');doc.querySelector('[data-import-year]').value='2026/27';
+  const fixed=doc.querySelector('[data-import-fixed-class]');fixed.value=initial.classes[0].id;fixed.dispatchEvent(new dom.window.Event('change'));
+  doc.querySelector('[data-import-preview]').click();await tick();
+  assert.equal(doc.querySelector('[data-import-year]').value,'2025/26');assert.equal(doc.querySelector('[data-import-year]').disabled,true);
+  const summary=doc.querySelector('[data-import-summary]').textContent;assert.match(summary,/8b · 2025\/26/);assert.doesNotMatch(summary,/Neue Klassen:/);
  }finally{modal.destroy();store.close();dom.window.close();}
 });

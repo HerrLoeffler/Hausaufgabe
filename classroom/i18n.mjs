@@ -23,6 +23,7 @@ const entries={
  'Gleicher Name vorhanden: als weitere Person hinzufügen.':'The name already exists: add as another person.',
  'Eine Person mit diesem Namen ist bereits vorhanden. Bitte prüfen.':'A person with this name already exists. Please check.',
  'Dialog schließen':'Close dialog',
+ 'Datei und Spalten ändern':'Change file and columns',
  'ASV-/CSV-Datei importieren':'Import ASV/CSV file','Schülerliste importieren':'Import student roster','Import schließen':'Close import',
  'CSV-Datei lokal öffnen, Spalten prüfen und Änderungen erst nach deiner Zustimmung übernehmen. Deine Tests bleiben unverändert.':'Open a CSV file locally, check its columns and approve the changes before applying them. Your tests remain unchanged.',
  'Datei und Ziel':'File and destination','CSV-Datei (höchstens 2 MB)':'CSV file (maximum 2 MB)','Datei hat eine Kopfzeile':'File has a header row','Zielschuljahr':'Target school year','Feste Zielklasse (optional)':'Fixed target class (optional)',

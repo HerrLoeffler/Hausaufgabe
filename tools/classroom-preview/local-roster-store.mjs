@@ -41,7 +41,7 @@ export function openLocalRoster(filename){
    const state=read(uid);if(state.revision!==expectedRevision)fail('revision-conflict',409);
    let changed=true;
    if(command==='importStudents'){
-    keys(payload,['schoolYear','sourceNamespace','rows','decisions','previewHash']);
+    keys(payload,['schoolYear','sourceNamespace','rows','decisions','previewHash','fixedClassId']);
     const {previewHash,...input}=payload,plan=importPlan(uid,input,state);
     if(previewHash!==plan.view.planHash)fail('preview-mismatch',409);
     if(plan.view.counts.review)fail('import-unresolved',409);

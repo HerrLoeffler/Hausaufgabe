@@ -24,13 +24,14 @@ export function openRosterImport({document:doc,client,state,isCurrent,onCommit})
  config.append(make('p','Eine Kennung ist optional. Verwende sie nur, wenn sie dieselbe Person über mehrere Exporte zuverlässig bezeichnet. Behalte dafür dieselbe Importquelle bei.',{class:'hint'}));form.append(config);
  const mappingArea=make('section',undefined,{'data-import-mapping':''}),feedback=make('p','',{role:'alert',class:'classroomError'}),summary=make('section',undefined,{'data-import-summary':'','aria-live':'polite'});
  const previewButton=button('Änderungen prüfen',()=>void preview(),{class:'button secondary','data-import-preview':''});previewButton.disabled=true;
- form.append(mappingArea,feedback,previewButton,summary);
+ const back=button('Datei und Spalten ändern',()=>{if(busy)return;config.hidden=false;mappingArea.hidden=false;back.hidden=true;invalidate();},{'data-import-back':''});back.hidden=true;
+ form.append(mappingArea,feedback,previewButton,back,summary);
  const approvalLabel=make('label',undefined,{class:'classroomCheck'}),approval=make('input',undefined,{type:'checkbox','data-import-approval':''});approvalLabel.append(approval,make('span','Ich habe die Änderungen geprüft und möchte sie übernehmen.'));form.append(approvalLabel);
  const actions=make('div',undefined,{class:'rosterActions'}),cancel=button('Abbrechen',close,{'data-import-cancel':''}),confirm=button('Geprüfte Änderungen übernehmen',()=>void commit(),{class:'button primary','data-import-confirm':''});confirm.disabled=true;actions.append(cancel,confirm);form.append(actions);dialog.append(form);doc.body.append(dialog);
  let mapping={};
  function allowed(){return !dead&&isCurrent();}
- function invalidate(clear=true){generation++;plan=null;frozen=null;operationId=null;approval.checked=false;confirm.disabled=true;if(clear)summary.replaceChildren();}
- function setBusy(value){busy=value;for(const e of config.querySelectorAll('input,select'))e.disabled=Boolean(value);for(const e of mappingArea.querySelectorAll('select'))e.disabled=Boolean(value);for(const e of summary.querySelectorAll('button,input,select'))e.disabled=Boolean(value);approval.disabled=Boolean(value);previewButton.disabled=Boolean(value)||!parsed;cancel.disabled=value==='commit';confirm.disabled=Boolean(value)||!plan||plan.counts.review>0||!approval.checked;}
+ function invalidate(clear=true){generation++;plan=null;frozen=null;operationId=null;approval.checked=false;confirm.disabled=true;previewButton.hidden=false;if(clear)summary.replaceChildren();}
+ function setBusy(value){busy=value;back.disabled=Boolean(value);for(const e of config.querySelectorAll('input,select'))e.disabled=Boolean(value);for(const e of mappingArea.querySelectorAll('select'))e.disabled=Boolean(value);for(const e of summary.querySelectorAll('button,input,select'))e.disabled=Boolean(value);approval.disabled=Boolean(value);year.disabled=Boolean(value)||Boolean(fixed.value);previewButton.disabled=Boolean(value)||!parsed;cancel.disabled=value==='commit';confirm.disabled=Boolean(value)||!plan||plan.counts.review>0||!approval.checked;}
  function destroy(){if(dead)return;dead=true;generation++;bytes=null;parsed=null;plan=null;frozen=null;decisions=[];mapping={};file.value='';dialog.remove();}
  function close(){if(busy==='commit')return;destroy();if(isCurrent())doc.querySelector('[data-roster-import]')?.focus();}
  function parse(auto=false){
@@ -59,7 +60,8 @@ export function openRosterImport({document:doc,client,state,isCurrent,onCommit})
   try{const data=await selected.arrayBuffer();if(!allowed()||current!==generation)return;bytes=data;parse(true);}catch{if(allowed())feedback.textContent='Die Datei konnte nicht gelesen werden.';}
  });
  for(const control of [delimiter,encoding,hasHeader])control.addEventListener('change',()=>parse());
- for(const control of [year,fixed,source])control.addEventListener('change',()=>{decisions=[];invalidate();});
+ for(const control of [year,source])control.addEventListener('change',()=>{decisions=[];invalidate();});
+ fixed.addEventListener('change',()=>{const c=state.classes.find(c=>c.id===fixed.value);if(c)year.value=c.schoolYear;year.disabled=Boolean(c);decisions=[];invalidate();});
  approval.addEventListener('change',()=>{confirm.disabled=Boolean(busy)||!plan||plan.counts.review>0||!approval.checked;});
  function setDecision(line,action,studentId){decisions=decisions.filter(d=>d.line!==line);if(action)decisions.push({line,action,...(studentId?{studentId}:{})});invalidate();feedback.textContent='Zuordnung geändert. Bitte die Änderungen erneut prüfen.';}
  function chooseExisting(line,cell){
@@ -69,6 +71,7 @@ export function openRosterImport({document:doc,client,state,isCurrent,onCommit})
   input.addEventListener('input',fill);select.addEventListener('change',()=>{if(select.value)setDecision(line,'link',select.value);});fill();box.append(input,select);cell.append(box);input.focus();
  }
  function renderPlan(){
+  config.hidden=true;mappingArea.hidden=true;previewButton.hidden=true;back.hidden=false;
   summary.replaceChildren();summary.append(make('h3','Das wird übernommen'));
   const counts=make('div',undefined,{class:'rosterImportCounts'});
   for(const[count,label]of [[plan.counts.newStudents,'Neu'],[plan.counts.unchanged,'Unverändert'],[plan.counts.updated,'Geändert'],[plan.counts.review,'Zuordnung prüfen']])counts.append(make('p',`${count} ${label}`));summary.append(counts);
@@ -96,9 +99,9 @@ export function openRosterImport({document:doc,client,state,isCurrent,onCommit})
  }
  async function preview(){
   if(!parsed||busy||!allowed()||!form.reportValidity())return;
-  const fixedClassName=state.classes.find(c=>c.id===fixed.value)?.name||'',mapped=mapNamedStudents(parsed,mapping,{fixedClassName});
+  const fixedClass=state.classes.find(c=>c.id===fixed.value),fixedClassName=fixedClass?.name||'',mapped=mapNamedStudents(parsed,mapping,{fixedClassName});
   invalidate();feedback.textContent='';if(mapped.errors.length){feedback.textContent=mapped.errors.slice(0,20).map(e=>`${e.line?'Zeile '+e.line+': ':''}${e.message}`).join('\n');return;}
-  const current=generation,input={schoolYear:year.value.trim(),sourceNamespace:source.value.trim(),rows:mapped.rows,decisions:structuredClone(decisions)};setBusy('preview');
+  const current=generation,input={schoolYear:fixedClass?.schoolYear||year.value.trim(),...(fixedClass?{fixedClassId:fixedClass.id}:{}),sourceNamespace:source.value.trim(),rows:mapped.rows,decisions:structuredClone(decisions)};setBusy('preview');
   try{const result=await client.previewImport(input);if(!allowed()||current!==generation)return;plan=result;frozen=input;operationId=globalThis.crypto.randomUUID();page=0;renderPlan();}
   catch(e){if(allowed())feedback.textContent=e.message||'Die Vorschau konnte nicht erstellt werden.';}
   finally{if(allowed())setBusy(null);}
