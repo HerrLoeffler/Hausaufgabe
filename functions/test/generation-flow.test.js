@@ -8,6 +8,7 @@ const constants = require("../lib/constants");
 const validation = require("../lib/validation");
 const schemas = require("../lib/schemas");
 const prompts = require("../lib/prompts");
+const { variantPrompt } = require("../lib/test-variant");
 const { validateAndRepairTest } = require("../lib/repair-test");
 const { reviewAndRepairTest } = require("../lib/quality");
 const { generateTestInBatches } = require("../lib/test-batches");
@@ -21,7 +22,7 @@ test("actual generation handler connects constrained batches, validation, review
     const usage = [], progress = [];
     const context = vm.createContext({
       ...constants, ...validation, ...schemas, ...prompts, HttpsError,
-      generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, preparePedagogicalPool,
+      generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, preparePedagogicalPool, variantPrompt,
       randomUUID: () => "test-request", cleanInput: data => data, sanitizeMaterials: () => [],
       consumeQuota: async () => {}, materialInputs: async () => [], qualityMemoryPrompt: () => "",
       teacherQualityGuide: () => "",
@@ -60,4 +61,30 @@ test("actual generation handler connects constrained batches, validation, review
     assert.equal(usage[0][2].total_tokens, 130);
     assert.ok(progress.some(([stage]) => stage === "quality-review"));
   }
+});
+
+test("actual fresh variant generation replaces every source task, keeps 10 tasks/20 points and runs independent review", async () => {
+  const { buildVariantInput } = require("../lib/test-variant");
+  const originals = Array.from({ length: 10 }, (_, i) => ({ id: `q${i}`, position: i + 1, type: "number", text: `Berechne ${i + 1} Prozent von 100.`, numericAnswer: i + 1, points: 2 }));
+  const input = buildVariantInput({ title: "Prozentrechnung", subject: "Mathematik", grade: "7" }, originals);
+  const clean = source.slice(source.indexOf("function cleanSourceTest("), source.indexOf("async function structuredResponse("));
+  let reviewed = 0, generated = 0;
+  const context = vm.createContext({ ...constants, ...validation, ...schemas, ...prompts, HttpsError, variantPrompt,
+    generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, preparePedagogicalPool,
+    randomUUID: () => "test-request", sanitizeMaterials: () => [], consumeQuota: async () => {}, materialInputs: async () => [],
+    qualityMemoryPrompt: () => "", teacherQualityGuide: () => "", loadQualityMemory: async () => ({ negativeQuestions: [], memoryVersion: 2, stats: { total: 0 } }),
+    structuredResponse: async ({ schemaName, userPrompt }) => {
+      generated++; assert.equal(schemaName, "testify_test_v2"); assert.match(userPrompt, /Verbindliche Variantenpositionen/);
+      return { data: { title: "Neue Prozentrechnung", subject: "Mathematik", grade: "7", questions: originals.map((q, i) => ({ ...q, text: `Ein Preis von ${200 + i * 20} Euro wird um 20 Prozent reduziert. Wie viele Euro beträgt der Rabatt?`, numericAnswer: (200 + i * 20) / 5, mediaIntent: { kind: "none" }, audioIntent: { kind: "none" } })) }, usage: { total_tokens: 20 } };
+    },
+    reviewDraft: async draft => { reviewed++; assert.equal(draft.questions.length, 10); return { data: { issues: [] }, usage: {} }; },
+    recordUsage: async () => {}, deleteUploadedMaterials: async () => {}, reportAiError: error => error, console: { info() {}, warn() {} }
+  });
+  vm.runInContext(clean + handler, context);
+  const response = await context.generateTestForUser("teacher", input);
+  assert.equal(response.meta.pedagogicalPool.profileCount, 0);
+  assert.equal(generated, 1); assert.equal(reviewed, 1); assert.equal(response.test.questions.length, 10);
+  assert.equal(response.test.questions.reduce((sum, q) => sum + q.points, 0), 20);
+  assert.equal(response.test.questions.some(q => originals.some(old => validation.variantRepeats(old, q))), false);
+  assert.equal(response.test.questions.some(q => q.mediaIntent.kind !== "none" || q.audioIntent.kind !== "none"), false);
 });

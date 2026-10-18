@@ -79,10 +79,10 @@ export function installWorkspaceUpgrade(document = globalThis.document) {
     if (!entry) {
       entry = document.createElement('div'); entry.className = 'gcWorkspaceCrewEntry';
       const crew = document.createElement('div'); crew.className = 'gcWorkspaceCrewPortraits'; crew.setAttribute('aria-hidden', 'true');
-      for (const name of ['penguin-guide','elephant-create','fox-improve','owl-grade']) {
-        const portrait = document.createElement('img'); portrait.src = `assets/gradecrew/${name}.svg`; portrait.alt = ''; portrait.width = 88; portrait.height = 88;
-        crew.append(portrait);
-      }
+      const portrait = document.createElement('img');
+      portrait.src = 'assets/gradecrew/crew-dashboard-lineup-c-r-e-w-alpha.png';
+      portrait.alt = ''; portrait.width = 288; portrait.height = 100;
+      crew.append(portrait);
       entry.append(crew); button.before(entry); entry.append(button);
     }
     // Keep the original button and its tutorial handler; put the duration outside the CTA.
@@ -139,7 +139,7 @@ export function installWorkspaceUpgrade(document = globalThis.document) {
       addIcon(card.querySelector('.quizMore > summary'), 'more');
     }
     const trash = document.getElementById('trashBtn');
-    if (trash && !trash.querySelector('.gcWorkspaceIcon')) {
+    if (trash && !trash.querySelector('svg, img')) {
       for (const node of trash.childNodes) if (node.nodeType === 3) node.textContent = node.textContent.replace(/^\s*🗑\uFE0F?\s*/, '');
       addIcon(trash,'trash');
     }

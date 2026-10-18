@@ -195,7 +195,7 @@ function questionShell(question, index) {
 
   const title = document.createElement("h2");
   if (question.type === "gapfill") title.textContent = "Lückentext";
-  else if (question.audioPresentation === "listening-only") title.textContent = assessmentContentLabels(currentQuiz?.contentLocale)[question.image?.src ? "listeningImageInstruction" : "listeningInstruction"];
+  else if (question.audioPresentation === "listening-only") title.textContent = String(question.audioInstruction || "").trim() || (question.type === "truefalse" ? assessmentContentLabels(currentQuiz?.contentLocale).listeningTrueFalseInstruction : assessmentContentLabels(currentQuiz?.contentLocale).missingListeningInstruction);
   else title.innerHTML = formatMathText(question.text || "Aufgabe");
   section.appendChild(title);
 
@@ -332,11 +332,14 @@ function renderGapfill(section, question) {
     }
     const input = document.createElement("input");
     input.type = "text";
-    input.className = "secureGap";
+    const color = ["blue", "orange", "green", "purple"].includes(segment.color) ? segment.color : "";
+    input.className = `secureGap${color ? ` gapColor-${color}` : ""}`;
     input.dataset.gapIndex = String(gapIndex++);
     input.dataset.gapId = segment.id || "";
     input.autocomplete = "off";
-    input.setAttribute("aria-label", `Lücke ${gapIndex}`);
+    const colorName = { blue: "Blau", orange: "Orange", green: "Grün", purple: "Lila" }[color];
+    input.setAttribute("aria-label", `Lücke ${gapIndex}${colorName ? ` (${colorName})` : ""}`);
+    if (colorName) input.placeholder = colorName;
     wrap.appendChild(input);
   });
   section.appendChild(wrap);
@@ -438,6 +441,25 @@ function tokenizeWords(text) {
 function renderMarkwords(section, question) {
   const wrap = document.createElement("div");
   wrap.className = "secureMarkPassage";
+  const groups = (question.markGroups || []).filter(group => group.name && ["blue", "orange", "green", "purple"].includes(group.color));
+  let activeColor = groups[0]?.color || "";
+  if (groups.length) {
+    const palette = document.createElement("div");
+    palette.className = "markColorPalette";
+    groups.forEach(group => {
+      const choice = document.createElement("button");
+      choice.type = "button";
+      choice.className = `markColorChoice markColor-${group.color}`;
+      choice.textContent = group.name;
+      choice.setAttribute("aria-pressed", String(activeColor === group.color));
+      choice.addEventListener("click", () => {
+        activeColor = group.color;
+        palette.querySelectorAll("button").forEach(button => button.setAttribute("aria-pressed", String(button === choice)));
+      });
+      palette.appendChild(choice);
+    });
+    section.appendChild(palette);
+  }
   tokenizeWords(question.passage).forEach(token => {
     if (!token.isWord) {
       wrap.appendChild(document.createTextNode(token.text));
@@ -447,9 +469,17 @@ function renderMarkwords(section, question) {
     button.type = "button";
     button.className = "secureWord";
     button.dataset.wordIndex = String(token.wordIndex);
+    button.dataset.originalWord = token.text;
     button.textContent = token.text;
     button.addEventListener("click", () => {
-      button.classList.toggle("selected");
+      if (groups.length) {
+        const color = button.dataset.markColor === activeColor ? "" : activeColor;
+        button.dataset.markColor = color;
+        button.classList.toggle("selected", Boolean(color));
+        const name = groups.find(group => group.color === color)?.name;
+        button.textContent = token.text + (name ? ` (${name})` : "");
+        button.setAttribute("aria-label", button.textContent);
+      } else button.classList.toggle("selected");
       button.setAttribute("aria-pressed", button.classList.contains("selected") ? "true" : "false");
       onAnswerChanged();
     });
@@ -496,7 +526,10 @@ function collectQuestionAnswer(question, section) {
   if (question.type === "matching") return Object.fromEntries([...section.querySelectorAll("select[data-left-id]")].map(select => [select.dataset.leftId, select.value]));
   if (question.type === "ordering") return [...section.querySelectorAll(".secureOrderItem")].map(item => item.dataset.itemId);
   if (question.type === "grouping") return Object.fromEntries([...section.querySelectorAll("select[data-item-id]")].map(select => [select.dataset.itemId, select.value]));
-  if (question.type === "markwords") return [...section.querySelectorAll(".secureWord.selected")].map(button => button.dataset.wordIndex);
+  if (question.type === "markwords") {
+    const marked = [...section.querySelectorAll(".secureWord.selected")];
+    return (question.markGroups || []).length ? Object.fromEntries(marked.map(button => [button.dataset.wordIndex, button.dataset.markColor])) : marked.map(button => button.dataset.wordIndex);
+  }
   return null;
 }
 
@@ -509,6 +542,7 @@ function collectAnswers() {
 
 function answerIsComplete(question, value) {
   if (question.type === "ordering") return Array.isArray(value) && value.length === (question.items || []).length;
+  if (question.type === "markwords" && (question.markGroups || []).length) return Boolean(value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length);
   if (["multi", "markwords"].includes(question.type)) return Array.isArray(value) && value.length > 0;
   if (question.type === "gapfill") return Array.isArray(value) && value.length > 0 && value.every(item => String(item || "").trim());
   if (["matching", "grouping"].includes(question.type)) {
@@ -561,7 +595,13 @@ function applyDraft(draft) {
     } else if (question.type === "markwords") {
       const selected = new Set(Array.isArray(value) ? value.map(String) : []);
       section.querySelectorAll(".secureWord").forEach(button => {
-        const active = selected.has(button.dataset.wordIndex);
+        const group = (question.markGroups || []).find(group => group.color === value?.[button.dataset.wordIndex]);
+        const active = (question.markGroups || []).length ? Boolean(group) : selected.has(button.dataset.wordIndex);
+        if ((question.markGroups || []).length) {
+          button.dataset.markColor = group?.color || "";
+          button.textContent = button.dataset.originalWord + (group ? ` (${group.name})` : "");
+          button.setAttribute("aria-label", button.textContent);
+        }
         button.classList.toggle("selected", active);
         button.setAttribute("aria-pressed", active ? "true" : "false");
       });

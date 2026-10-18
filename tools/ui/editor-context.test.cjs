@@ -35,3 +35,62 @@ test('non-tutorial variant reaches the API with allowed types',async()=>{
 test('audio retry controls are rendered after clearing the pending operation, including failure',async()=>{
  for(const fail of [false,true]){const operations=new WeakMap();let lastBusy;const q={id:'q1',type:'single',audioAnswerMode:'audio-only',options:[{text:'cat',audioDataUrl:'old'}]};const c=harness({questionAnswerAudioEntries:q=>q.options.map((o,i)=>({key:`o${i}`,sourceText:o.text,asset:o})),questionHasAudioAnswerEntries:()=>true,audioOperations:()=>operations,renderQuestionAudioEditor(){lastBusy=operations.has(q);},verifyGeneratedAudio:async()=>{if(fail)throw new Error('silent');},aiFriendlyError:e=>e.message,REPORTABLE_ERROR_CODES:{aiEdit:'test'},showReportableError(){},aiApi:{generateQuestionAudio:async()=>({asset:{audioDataUrl:'data:audio/mpeg;base64,new'}})}});c.state.questions=[q];vm.runInContext(fn('answerAudioRepairState','async function reportMissingAnswerAudio'),c);vm.runInContext(fn('generateAiAnswerAudioForQuestion','async function generateAiSolutionAudioForQuestion'),c);await c.generateAiAnswerAudioForQuestion(q,{querySelector:()=>null},'o0');assert.equal(lastBusy,false);}
 });
+
+// Uploaded material limits use the existing creation editor and request.
+{
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const {JSDOM}=require('jsdom');
+const root=path.resolve(__dirname,'../..');
+const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
+function fn(name){let start=app.indexOf('function '+name+'(');
+if(app.slice(start-6,start)==='async ')start-=6;
+return app.slice(start,app.indexOf('\n}',start)+2);
+}
+function setup(t,existing=0){const dom=new JSDOM(fs.readFileSync(path.join(root,'index.html'),'utf8'),{runScripts:'outside-only',url:'https://hausaufgabe-staging.web.app'});
+t.after(()=>dom.window.close());
+const w=dom.window;
+w.$=id=>w.document.getElementById(id);
+w.state={aiMaterials:Array.from({length:existing},(_,i)=>({id:'old'+i,storagePath:'aiUploads/teacher/old'+i,mimeType:'image/png',name:'old'}))};
+w.calls=[];
+w.messages=[];
+w.toast=(message)=>w.messages.push(message);
+w.setAiProgress=()=>{};
+w.renderAiMaterials=()=>{};
+w.aiFriendlyError=e=>e.message;
+w.aiApi={uploadMaterial:async f=>{w.calls.push(f.name);
+return {id:f.name,storagePath:'aiUploads/teacher/'+f.name,mimeType:f.type,name:f.name};
+}};
+w.$('aiMaterialConfirmed').checked=true;
+w.eval(fn('handleAiMaterialFiles'));
+w.eval(fn('collectAiRequest'));
+return w;
+}
+const files=n=>Array.from({length:n},(_,i)=>({name:'fixture'+i,type:'image/png',size:1}));
+test('ten uploaded images reach the serialized creation request and generated-image and audio caps stay five',async t=>{const w=setup(t);
+await w.handleAiMaterialFiles({target:{files:files(10),value:'fixture'}});
+assert.equal(w.calls.length,10);
+w.$('aiTopic').value='Fixture';
+w.$('aiCount').value='10';
+w.$('aiPoints').value='20';
+w.$('aiTypeChecks').innerHTML='<input type="checkbox" value="single" checked>';
+const request=w.collectAiRequest();
+assert.equal(JSON.parse(JSON.stringify(request)).materials.length,10);
+assert.equal(w.$('aiImageQuestionCount').max,'5');
+assert.equal(request.imageQuestionCount,0);
+assert.equal(w.$('aiAudioQuestionCount').max,'5');
+assert.equal(w.$('aiAudioAnswerQuestionCount').max,'5');
+w.$('aiImageQuestionCount').value='6';
+assert.throws(()=>w.collectAiRequest(),/0 bis 5/);
+});
+test('eleventh uploaded material is blocked, including after nine existing files',async t=>{for(const [existing,n]of[[0,11],[9,2]]){const w=setup(t,existing);
+await w.handleAiMaterialFiles({target:{files:files(n),value:'fixture'}});
+assert.equal(w.state.aiMaterials.length,10);
+assert.equal(w.calls.length,10-existing);
+assert.equal(w.messages.length,1);
+assert.match(w.messages[0],/zehn|10/);
+}});
+
+}

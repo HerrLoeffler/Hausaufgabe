@@ -95,6 +95,12 @@ test('responsive and accessibility contracts are explicit', () => {
   assert.match(css, /@media \(max-width: 430px\)/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /grid-template-areas:[^}]*"lead"[^}]*"crew"[^}]*"actions"[^}]*"student"/);
+  assert.match(polishCss, /#authView \.gcEntryAuth\s*\{[^}]*justify-content:\s*center/s);
+  assert.match(polishCss, /#authView \.gcEntryAuth\s*\{[^}]*overflow-y:\s*auto/s);
+  assert.match(polishCss, /\.gcEntryAuthPanel\s*\{[^}]*margin-block:\s*auto/s);
+  assert.match(polishCss, /\.gcEntryLoginScene\s*\{[^}]*margin-block:\s*auto/s);
+  assert.match(polishCss, /\.gcEntryLoginCoco\s*\{/);
+  assert.doesNotMatch(polishCss, /@media \(max-height:\s*680px\)/);
   assert.match(entry, /aria-hidden/);
   assert.match(entry, /aria-live/);
 });
@@ -105,8 +111,8 @@ test('public design stays away from dashboard and secure student selectors', () 
   assert.match(css, /\.gcPublicEntryMode/);
 });
 
-test('startup installs v6 entry before app handlers and staging packages all scene assets', () => {
-  const entryImport = startup.indexOf('const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=6")');
+test('startup installs v7 entry before app handlers and staging packages all scene assets', () => {
+  const entryImport = startup.indexOf('const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=7")');
   const installerCall = startup.indexOf('installGradeCrewEntryFlow();');
   const appImport = startup.indexOf('./app.js?v=');
   assert.ok(entryImport >= 0, 'entry installer must be imported explicitly');
@@ -119,8 +125,8 @@ test('startup installs v6 entry before app handlers and staging packages all sce
     assert.ok(build.includes(name), `staging build missing ${name}`);
   }
   assert.match(startup, /auth-startscreen-v4/);
-  assert.match(startup, /auth-startscreen-polish-v1/);
-  assert.match(startup, /hero-scene-v2/);
+  assert.match(startup, /auth-startscreen-polish-v2/);
+  assert.match(startup, /hero-scene-v3/);
   assert.match(polishCss, /gcPublicEntryMode/);
 });
 
@@ -150,7 +156,13 @@ test('crew examples stay readable, pause cleanly and respect reduced motion', as
   tick();
   assert.equal(state.phase, 1);
   flow.stop();
+  flow.start('coco');
+  assert.equal(state.phase, 0);
+  assert.equal(delay, 4800);
+  tick(); assert.equal(state.phase, 1); assert.equal(delay, 4800);
+  tick(); assert.equal(state.phase, 2); assert.equal(pending, null);
   const reduced = createDemoFlow({ reducedMotion: true, onChange: next => { state = next; }, schedule: () => { throw Error('reduced motion scheduled a timer'); } });
-  reduced.start('emmi');
+  reduced.start('coco');
   assert.equal(state.phase, 2);
+  assert.equal(state.running, false);
 });

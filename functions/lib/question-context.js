@@ -1,7 +1,7 @@
 "use strict";
 
 // Teacher-only semantic context. Never include binary assets, IDs, drafts or feedback.
-const QUESTION_FIELDS = ['type','text','points','options','acceptedAnswers','manualReview','correctBoolean','pairs','items','acceptedOrders','groups','passage','targetWords','numericAnswer','tolerance','unit','mediaIntent','audioIntent','audioScript','audioPresentation','audioAnswerMode'];
+const QUESTION_FIELDS = ['type','text','points','options','acceptedAnswers','manualReview','correctBoolean','pairs','items','acceptedOrders','groups','passage','targetWords','markGroups','gapColors','numericAnswer','tolerance','unit','mediaIntent','audioIntent','audioScript','audioInstruction','audioPresentation','audioAnswerMode'];
 function semanticValue(value, depth = 0) {
   if (depth > 8) throw new Error('Aufgabenkontext ist zu stark verschachtelt.');
   if (typeof value === 'string') {

@@ -12,7 +12,8 @@ function runtime(q) {
   const helpers=app.slice(app.indexOf('function getQuestionAudioSrc('),app.indexOf('function renderQuestionAudioEditor('));
   const generate=app.slice(app.indexOf('async function generateAiAudioForQuestion('),app.indexOf('async function generateAiSolutionAudioForQuestion('));
   vm.runInNewContext(helpers+generate,context);
-  return {context,messages,requests,container:{querySelector:()=>null}};
+  const document = new JSDOM('<div class="questionAudioHost"></div>').window.document;
+  return {context,messages,requests,container:document.querySelector('.questionAudioHost')};
 }
 test('one click converts existing question text without requiring a second transcript',async()=>{
   const q={id:'q1',type:'single',text:'Which colour is the sky?',options:[{text:'blue',correct:true},{text:'red',correct:false}]};
@@ -20,6 +21,7 @@ test('one click converts existing question text without requiring a second trans
   await r.context.generateAiAudioForQuestion(q,r.container,{fromTask:true});
   assert.equal(q.audioScript,'Which colour is the sky?');
   assert.equal(q.audioPresentation,'listening-only');
+  assert.equal(q.audioInstruction,'Which colour is the sky?');
   assert.ok(q.audioDataUrl?.startsWith('data:audio/mpeg;base64,'));
   assert.equal(r.requests[0].script,'Which colour is the sky?');
 });

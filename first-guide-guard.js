@@ -23,6 +23,7 @@ function stopEvent(event) {
 }
 
 function blockOutsideGuide(event) {
+  if (["wheel", "touchstart", "touchmove"].includes(event.type)) return;
   const parts = activeGuideParts();
   if (!parts.active || isAllowedNode(event.target, parts)) return;
   stopEvent(event);
@@ -64,6 +65,7 @@ function keepKeyboardInsideGuide(event) {
   }
 
   if (isAllowedNode(event.target, parts)) return;
+  if (["ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown", " "].includes(event.key)) return;
   if (event.metaKey || event.ctrlKey || event.altKey) return;
   if (["Enter", " ", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End", "PageUp", "PageDown"].includes(event.key)) {
     stopEvent(event);
@@ -152,7 +154,7 @@ function polishGuideCopy() {
   const header = card.querySelector(".gradecrewGuideHeader");
   const image = header?.querySelector("img");
   const label = header?.querySelector("span");
-  if (image) image.src = elephant ? "/assets/gradecrew/elephant-create.svg" : "/assets/gradecrew/penguin-guide.svg";
+  if (image) image.src = elephant ? "/assets/gradecrew/remy-new-test-tablet.png" : "/assets/gradecrew/coco-footer-guide.png";
   if (label) label.textContent = elephant ? "Elefant · Erstellen" : "Deine Starthilfe";
 
   const title = card.querySelector("h2")?.textContent || "";

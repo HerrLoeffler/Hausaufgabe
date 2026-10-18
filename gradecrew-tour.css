@@ -87,6 +87,7 @@ dialog.gcTourVariantDialog::backdrop{background:rgba(15,23,42,.48);backdrop-filt
 
 /* Introductory scenes are centered; controls keep their nearby coach. */
 .gcCoachCentered{text-align:center}
+.gcRealCoach.gcCrewIntroCoach{left:50%!important;right:auto!important;translate:-50% 0}
 .gcCoachCentered .gcCoachIdentity{flex-direction:column;justify-content:center;gap:8px}
 .gcCoachCentered .gcCoachIdentity>div{max-width:540px}
 .gcCoachCentered>p{max-width:560px;margin-left:auto;margin-right:auto}

@@ -35,6 +35,7 @@ const { reserveJob, releaseJob, markQueueDispatchEnqueued, markQueueDispatchFail
 const { questionSnapshot, requestSnapshot } = require("./lib/diagnostics");
 const { createQuickRemyService } = require("./lib/quick-remy-flow");
 const { buildPrepareResult } = require("./lib/quick-remy-contract");
+const { loadVariantInput, variantPrompt, requireVariantMediaReady } = require("./lib/test-variant");
 
 initializeApp();
 const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
@@ -143,7 +144,7 @@ function cleanInput(data = {}) {
   }
   const audioAnswerQuestionCount = Number(data.audioAnswerQuestionCount ?? 0);
   if (!Number.isInteger(audioAnswerQuestionCount) || audioAnswerQuestionCount < 0 || audioAnswerQuestionCount > LIMITS.maxAudioQuestions || audioAnswerQuestionCount > count ||
-      (audioAnswerQuestionCount > 0 && !allowedTypes.some(type => ["single", "multi"].includes(type)))) {
+      (audioAnswerQuestionCount > 0 && !allowedTypes.some(type => (data.generationMode === "variant" ? ["single", "multi", "dropdown", "matching", "ordering", "grouping"] : ["single", "multi"]).includes(type)))) {
     throw new HttpsError("invalid-argument", "Bitte 0 bis 5 Audioantwort-Aufgaben und einen Auswahltyp wählen.");
   }
   return {
@@ -157,12 +158,11 @@ function cleanInput(data = {}) {
     solutionAudioQuestionCount, audioAnswerQuestionCount,
     maxVisualQuestions: exactImageCounts ? imageQuestionCount : imageMode === "none" ? 0 : Math.max(0, Math.min(LIMITS.maxVisualQuestions, Number(data.maxVisualQuestions) || 3)),
     materialMode: data.materialMode === "only" ? "only" : "inspiration",
-    // A false marker survives queue normalization. A true marker cannot
-    // manufacture context when the original explicit values are absent.
     pedagogicalContextKnown: data.pedagogicalContextKnown !== false &&
       typeof data.schoolType === "string" && Boolean(data.schoolType.trim()) &&
       typeof data.region === "string" && Boolean(data.region.trim()),
-    sourceTest: cleanSourceTest(data.sourceTest)
+    sourceTest: cleanSourceTest(data.sourceTest),
+    ...(data.generationMode === "variant" ? { generationMode: "variant", variantSlots: data.variantSlots, sourceTest: data.sourceTest, learningGoals: data.learningGoals || [], variantSourceFingerprint: data.variantSourceFingerprint, variantQuizSettings: data.variantQuizSettings } : {})
   };
 }
 
@@ -313,15 +313,16 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const memory = await loadQualityMemory({ subject: input.subject, grade: input.grade }, uid);
     const memoryGuide = qualityMemoryPrompt(memory);
     const personalGuide = teacherQualityGuide(memory);
-    const generationPrompt = `${testUserPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}${poolGuide}`;
+    const generationPrompt = `${testUserPrompt(input)}${variantPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}${poolGuide}`;
     phase = "test-generation";
     await onProgress("test-generation", 15, "Die KI erstellt den Test …");
     const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
+    if (input.generationMode === "variant") Object.assign(options, { requireFreshVariant: true, variantInput: input });
     const first = await generateTestInBatches(input, async (batch, prior) => {
       await onProgress("test-generation", 15 + Math.floor(20 * batch.batchOffset / input.count), `Aufgaben ${batch.batchOffset + 1} bis ${batch.batchOffset + batch.count} von ${input.count} werden erstellt …`);
       const priorContext = prior.length ? `\nBereits erstellte Aufgaben (nicht wiederholen): ${JSON.stringify(prior.map(q => ({ type: q.type, text: q.text })))}` : "";
       return structuredResponse({ schema: testSchemaForRequest({ count: batch.count, allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none", allowAudio: batch.audioMode !== "none" }),
-        schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}\n${memoryGuide}${personalGuide}${priorContext}${poolGuide}`, content: materialContent });
+        schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}${variantPrompt(input, batch.batchOffset, batch.count)}\n${memoryGuide}${personalGuide}${priorContext}${poolGuide}`, content: materialContent });
     });
     const usage = { ...first.usage };
     const addUsage = next => {
@@ -330,9 +331,10 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const normalizeTest = data => ({ ...data, questions: (Array.isArray(data?.questions) ? data.questions : []).map(normalizeQuestion) });
     const repairs = {
       generateQuestion: async ({ test, index, original, reasons, attempt, mediaKind, audioKind = original.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none" }) => {
+        const targetType = input.generationMode === "variant" ? input.variantSlots[index].type : input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0];
         const replacement = await structuredResponse({
-          schema: questionSchemaForType(input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0], { allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none"), allowAudio: input.audioMode !== "none", audioKind }), schemaName: "testify_test_question_replacement_v2",
-          userPrompt: `${replacementQuestionPrompt({ input, test, index, original, reasons, attempt, mediaKind, audioKind })}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}${poolGuide}`, content: materialContent
+          schema: questionSchemaForType(targetType, { allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none"), allowAudio: input.audioMode !== "none", audioKind }), schemaName: "testify_test_question_replacement_v2",
+          userPrompt: `${replacementQuestionPrompt({ input, test, index, original: { ...original, type: targetType }, reasons, attempt, mediaKind, audioKind })}${variantPrompt(input, index, 1)}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}${poolGuide}`, content: materialContent
         });
         addUsage(replacement.usage);
         return replacement.data;
@@ -425,6 +427,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
 
 exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async request => {
   const { uid } = await requireAiUser(request).catch(err => { throw reportAiError(err, "access"); });
+  if (request.data?.generationMode === "variant") throw new HttpsError("invalid-argument", "Neue Varianten bitte über die Warteschlange erstellen.");
   return generateTestForUser(uid, request.data || {});
 });
 
@@ -453,25 +456,36 @@ async function enqueueAiTestJob(jobRef) {
 }
 
 async function startAiTestJobForUser(uid, requestData = {}) {
-  const input = cleanInput(requestData || {});
+  const variant = requestData.generationMode === "variant";
+  const sourceQuizId = variant ? String(requestData?.sourceQuizId || "") : String(requestData?.sourceQuizId || "").slice(0, 40);
+  if (variant && (!/^[a-zA-Z0-9_-]{1,40}$/.test(sourceQuizId) || !/^[a-zA-Z0-9-]{1,40}$/.test(String(requestData.clientRequestId || "")))) throw new HttpsError("invalid-argument", "Für eine Variante sind Ausgangstest und eindeutige Anfrage-ID erforderlich.");
+  const db = getFirestore();
+  const input = cleanInput(variant ? await loadVariantInput(db, uid, sourceQuizId) : requestData || {});
   if (!input.topic) throw new HttpsError("invalid-argument", "Bitte ein Thema angeben.");
-  const materials = sanitizeMaterials(requestData?.materials, uid);
+  const materials = variant ? [] : sanitizeMaterials(requestData?.materials, uid);
   if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
-  const sourceQuizId = String(requestData?.sourceQuizId || "").slice(0, 40);
   if (sourceQuizId) {
     const source = await getFirestore().doc(`quizzes/${sourceQuizId}`).get();
     if (!source.exists || source.data()?.ownerId !== uid || source.data()?.rightsHold) throw new HttpsError("permission-denied", "Auf den Ausgangstest kann nicht zugegriffen werden.");
   }
   const requestId = String(requestData?.clientRequestId || randomUUID().slice(0, 12)).replace(/[^a-zA-Z0-9-]/g, "").slice(0, 40);
-  const db = getFirestore();
   // Repeated start requests with the same client ID must not charge for another test.
   const jobRef = db.collection("aiJobs").doc(createHash("sha256").update(`${uid}:${requestId}`).digest("hex").slice(0, 40));
   const lockRef = aiJobLock(uid);
   const now = Timestamp.now();
-  const reservation = await reserveJob(db, { uid, jobRef, lockRef, now, beforeReserve: tx => requireAccountWrite(tx, db, uid), jobData: {
+  const reservation = await reserveJob(db, { uid, jobRef, lockRef, now, beforeReserve: async tx => {
+    await requireAccountWrite(tx, db, uid);
+    const previous = await tx.get(jobRef);
+    if (previous.exists && ((previous.data()?.generationMode || "generated") !== (variant ? "variant" : "generated") || (previous.data()?.sourceQuizId || "") !== sourceQuizId)) throw new HttpsError("failed-precondition", "Diese Anfrage-ID gehört bereits zu einem anderen Auftrag.");
+    if (sourceQuizId) {
+      const source = await tx.get(db.doc(`quizzes/${sourceQuizId}`));
+      if (!source.exists || source.data()?.ownerId !== uid || source.data()?.rightsHold || source.data()?.isDeleted) throw new HttpsError("permission-denied", "Ausgangstest nicht verfügbar.");
+    }
+  }, jobData: {
       ownerId: uid, status: "queued", stage: "queued", dispatchState: "pending", progressMessage: "Erstellung wird gestartet …", percent: 0,
       completedCount: 0, requestedCount: input.count, imageCompleted: 0, imageTotal: 0, audioCompleted: 0, audioTotal: 0, answerAudioCompleted: 0, answerAudioTotal: input.audioAnswerQuestionCount || 0, solutionAudioCompleted: 0, solutionAudioTotal: input.solutionAudioQuestionCount || 0,
-      subject: input.subject, grade: input.grade, topic: input.topic, requestId,
+      subject: input.subject, grade: input.grade, topic: input.topic, requestId, generationMode: variant ? "variant" : "generated",
+      ...(variant ? { sourceFingerprint: input.variantSourceFingerprint } : {}),
       input: { ...Object.fromEntries(Object.entries(input).filter(([, value]) => value !== undefined)), clientRequestId: requestId }, materials, sourceQuizId,
       createdAt: now, updatedAt: now
     } });
@@ -486,7 +500,18 @@ async function startAiTestJobForUser(uid, requestData = {}) {
 
 exports.startAiTestJob = onCall({ ...callableOpts, timeoutSeconds: 60 }, async request => {
   const { uid } = await requireAiUser(request);
+  if (request.data?.generationMode === "variant") throw new HttpsError("invalid-argument", "Neue Varianten bitte über den Variantenauftrag erstellen.");
   return startAiTestJobForUser(uid, request.data || {});
+});
+
+// A separate callable name is the pre-generation compatibility boundary: older
+// deployments cannot silently accept this request as ordinary paid generation.
+exports.startAiTestVariantJob = onCall({ ...callableOpts, timeoutSeconds: 60 }, async request => {
+  const { uid } = await requireAiUser(request);
+  const data = request.data || {};
+  if (data.generationMode !== undefined && data.generationMode !== "variant") throw new HttpsError("invalid-argument", "Dieser Auftrag erstellt ausschließlich neue Varianten.");
+  const result = await startAiTestJobForUser(uid, { sourceQuizId: data.sourceQuizId, clientRequestId: data.clientRequestId, generationMode: "variant" });
+  return { jobId: result.jobId, generationMode: "variant", contractVersion: 1 };
 });
 
 const QUIZ_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -528,7 +553,7 @@ exports.processAiTestJob = onTaskDispatched({
   try {
     const { profile } = await requireAiUser({ auth: { uid } });
     const sourceSnap = job.sourceQuizId ? await db.collection("quizzes").doc(job.sourceQuizId).get() : null;
-    if (sourceSnap && (!sourceSnap.exists || sourceSnap.data().ownerId !== uid)) throw new HttpsError("permission-denied", "Ausgangstest nicht verfügbar.");
+    if (sourceSnap && (!sourceSnap.exists || sourceSnap.data().ownerId !== uid || sourceSnap.data().rightsHold || sourceSnap.data().isDeleted)) throw new HttpsError("permission-denied", "Ausgangstest nicht verfügbar.");
     const progress = async (stage, percent, message) => {
       activeStage = stage;
       return jobRef.update({ stage, percent, progressMessage: message, updatedAt: Timestamp.now() });
@@ -541,9 +566,10 @@ exports.processAiTestJob = onTaskDispatched({
     const totalImages = imageCount(questions);
     const totalAudios = audioCount(questions);
     const totalSolutionAudios = Math.min(questions.length, Number(job.input?.solutionAudioQuestionCount || 0));
-    const solutionAudioIndexes = new Set(planSolutionAudioIndexes(questions.length, totalSolutionAudios));
+    const isVariant = job.input?.generationMode === "variant";
+    const solutionAudioIndexes = new Set(isVariant ? job.input.variantSlots.flatMap((slot, index) => slot.solutionAudio ? [index] : []) : planSolutionAudioIndexes(questions.length, totalSolutionAudios));
     const totalAnswerAudios = Number(job.input?.audioAnswerQuestionCount || 0);
-    const answerAudioPositions = new Set(answerAudioIndexes(questions, totalAnswerAudios));
+    const answerAudioPositions = new Set(isVariant ? job.input.variantSlots.flatMap((slot, index) => slot.answerAudio ? [index] : []) : answerAudioIndexes(questions, totalAnswerAudios));
     await jobRef.update({ stage: "prepare_questions", percent: 65, progressMessage: "Aufgaben und Medien werden gespeichert …", imageTotal: totalImages, audioTotal: totalAudios, answerAudioTotal: totalAnswerAudios, solutionAudioTotal: totalSolutionAudios, updatedAt: Timestamp.now() });
     const quiz = await createAiQuiz(db, uid, jobId, quizForGeneratedTest(response.test, job.input, profile, sourceSnap?.data()));
     quizRef = quiz.ref;
@@ -563,17 +589,18 @@ exports.processAiTestJob = onTaskDispatched({
       const q = await storedAiQuestion(raw, index, {
         model: response.meta.model, promptVersion: response.meta.promptVersion,
         kind: job.sourceQuizId ? "similar" : "generated",
-        generateMedia: async options => (await createVerifiedMedia({ uid, ...options, testContext: { title: response.test.title, subject: job.input?.subject, grade: job.input?.grade, topic: job.input?.topic, contentLocale: require("./lib/content-locale").extractContentLocale(job.input?.notes) } })).asset,
+        generateMedia: async options => (await createVerifiedMedia({ uid, ...options, testContext: { title: response.test.title, subject: job.input?.subject, grade: job.input?.grade, topic: job.input?.topic, contentLocale: require("./lib/content-locale").extractContentLocale(job.input?.notes) } }, isVariant ? { cacheLoad: async () => null, cacheSave: async () => false } : {})).asset,
         generateAudio: async options => (await createAudioAsset({ uid, ...options })),
         onImage: async () => {
           completedImages += 1;
           await jobRef.update({ imageCompleted: completedImages, updatedAt: Timestamp.now() });
         },
+        onImageFallback: async () => { if (isVariant) throw new HttpsError("failed-precondition", "Die Variante benötigt vollständig neue Medien; das Aufgabenbild konnte nicht erzeugt werden."); },
         onAudio: async () => {
           completedAudios += 1;
           await jobRef.update({ audioCompleted: completedAudios, updatedAt: Timestamp.now() });
         },
-        onAudioFallback: async () => { audioReady = false; }
+        onAudioFallback: async () => { audioReady = false; if (isVariant) throw new HttpsError("failed-precondition", "Die Variante benötigt vollständig neue Medien; das Aufgabenaudio konnte nicht erzeugt werden."); }
       });
       const questionId = `q${String(index + 1).padStart(3, "0")}`;
       if (answerAudioPositions.has(index)) {
@@ -585,6 +612,7 @@ exports.processAiTestJob = onTaskDispatched({
           await jobRef.update({ answerAudioCompleted: completedAnswerAudios, updatedAt: Timestamp.now() });
         } catch (err) {
           if (["ReferenceError", "TypeError", "SyntaxError"].includes(String(err?.name || ""))) throw err;
+          if (isVariant) throw new HttpsError("failed-precondition", "Die Variante benötigt vollständig neue Medien; Antwortaudios konnten nicht erzeugt werden.");
           setAnswerAudioAssets(q, [], { incomplete: true });
           audioReady = false;
           console.warn("Antwortaudio konnte nicht erzeugt werden:", { questionId, code: err?.code || err?.name || "unknown" });
@@ -609,6 +637,7 @@ exports.processAiTestJob = onTaskDispatched({
           completedSolutionAudios += 1;
           await jobRef.update({ solutionAudioCompleted: completedSolutionAudios, updatedAt: Timestamp.now() });
         } catch (err) {
+          if (isVariant) throw new HttpsError("failed-precondition", "Die Variante benötigt vollständig neue Medien; Lösungsaudio konnte nicht erzeugt werden.");
           solutionAudioReady = false;
           console.warn("Audio-Lösung konnte nicht erzeugt werden:", { questionId, code: err?.code || err?.name || "unknown" });
         }
@@ -624,6 +653,7 @@ exports.processAiTestJob = onTaskDispatched({
       await quizRef.update({ questionCount: index + 1, totalPoints, updatedAt: Timestamp.now() });
       await jobRef.update({ completedCount: index + 1, percent: 65 + Math.floor(30 * (index + 1) / questions.length), updatedAt: Timestamp.now() });
     }
+    if (isVariant) requireVariantMediaReady(job.input, { images: completedImages, audios: completedAudios, answerAudios: completedAnswerAudios, solutionAudios: completedSolutionAudios });
     await quizRef.update({ generationStatus: "ready", questionCount: questions.length, totalPoints,
       audioQuestionCount: totalAudios, audioAnswerQuestionCount: totalAnswerAudios, audioReady,
       listeningOnlyQuestionCount: questions.filter(q => q.audioIntent?.kind === "ai_generated" && q.audioIntent?.presentation === "listening-only").length,

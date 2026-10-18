@@ -14,15 +14,16 @@ function planTestBatches(input, batchSize = 10) {
   const batches = [];
   for (let offset = 0; offset < count; offset += size) {
     const end = Math.min(count, offset + size);
-    const images = Math.floor(end * plannedImages / count) - Math.floor(offset * plannedImages / count);
-    const audios = Math.floor(end * plannedAudio / count) - Math.floor(offset * plannedAudio / count);
-    const answerAudios = Math.floor(end * plannedAnswerAudio / count) - Math.floor(offset * plannedAnswerAudio / count);
+    const slots = input.generationMode === "variant" ? input.variantSlots.slice(offset, end) : null;
+    const images = slots ? slots.filter(slot => slot.mediaKind === "ai_generated").length : Math.floor(end * plannedImages / count) - Math.floor(offset * plannedImages / count);
+    const audios = slots ? slots.filter(slot => slot.audioKind === "ai_generated").length : Math.floor(end * plannedAudio / count) - Math.floor(offset * plannedAudio / count);
+    const answerAudios = slots ? slots.filter(slot => slot.answerAudio).length : Math.floor(end * plannedAnswerAudio / count) - Math.floor(offset * plannedAnswerAudio / count);
     batches.push({ ...input, count: end - offset,
-      points: (Math.floor(end * units / count) - Math.floor(offset * units / count)) / 2,
-      ...(input.exactImageCounts ? { imageQuestionCount: images, imageAnswerQuestionCount: 0 } : {}),
-      ...(input.exactAudioCounts ? { audioQuestionCount: audios } : {}),
+      points: slots ? slots.reduce((sum, slot) => sum + slot.points, 0) : (Math.floor(end * units / count) - Math.floor(offset * units / count)) / 2,
+      ...(input.exactImageCounts || slots ? { exactImageCounts: true, imageQuestionCount: images, imageAnswerQuestionCount: 0 } : {}),
+      ...(input.exactAudioCounts || slots ? { exactAudioCounts: true, audioQuestionCount: audios } : {}),
       audioAnswerQuestionCount: answerAudios,
-      imageMode: images ? input.imageMode : "none", maxVisualQuestions: images,
+      imageMode: images ? (slots ? "exact" : input.imageMode) : "none", maxVisualQuestions: images,
       audioMode: audios ? "exact" : "none",
       batchOffset: offset, totalCount: count
     });

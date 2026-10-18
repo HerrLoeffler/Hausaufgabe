@@ -1,6 +1,6 @@
 import { gradeCrewI18n } from "./shared/i18n/bootstrap.mjs?v=3";
 import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js?v=1.2.0";
-import { installStagingShortLogin } from "./staging-short-login.mjs?v=1";
+import { installStagingShortLogin } from "./staging-short-login.mjs?v=2";
 
 // Public pupils use the server-authoritative assessment path. Teacher preview
 // intentionally remains in the existing app so authors can inspect the exact
@@ -13,8 +13,8 @@ function installGradeCrewDesignStyles() {
     ["./gradecrew-dashboard-foundation.css?v=1", "dashboard-foundation-v1"],
     ["./gradecrew-logo.css?v=1", "brand-logo-v1"],
     ["./gradecrew-auth-startscreen.css?v=4", "auth-startscreen-v4"],
-    ["./gradecrew-auth-startscreen-polish.css?v=1", "auth-startscreen-polish-v1"],
-    ["./gradecrew-hero-scene.css?v=2", "hero-scene-v2"],
+    ["./gradecrew-auth-startscreen-polish.css?v=2", "auth-startscreen-polish-v2"],
+    ["./gradecrew-hero-scene.css?v=3", "hero-scene-v3"],
     ["./gradecrew-workspace-upgrade.css?v=1", "workspace-upgrade-v1"]
   ];
   for (const [href, version] of styles) {
@@ -113,11 +113,11 @@ if (publicTestCode && !teacherPreview) {
   try {
     // Recompose the public entry before app.js binds the existing auth/test-code
     // handlers. The original forms and IDs are moved, not cloned or replaced.
-    const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=6");
+    const { installGradeCrewEntryFlow } = await import("./gradecrew-entry-flow.js?v=7");
     const entryInstalled = installGradeCrewEntryFlow();
     if (!entryInstalled) throw new Error("GradeCrew public entry could not be installed before app startup.");
 
-    await import("./app.js?v=2.3.1-gc33-quick-remy1");
+    await import("./app.js?v=2.3.1-gc40-quick-remy1");
     await import("./shared/i18n/assessment-locale-ui.mjs?v=3");
     await import("./gradecrew-workspace-upgrade.mjs?v=1");
     window.clearTimeout(slowStart);
@@ -125,7 +125,7 @@ if (publicTestCode && !teacherPreview) {
     import("./secure-assessment-teacher-polish.js?v=2.3.1-sec2").catch(error => {
       console.warn(gradeCrewI18n.t("system.secure_assessment_notice_failed", {}, "Secure-Assessment-Hinweise konnten nicht geladen werden."), error);
     });
-    import("./visual-enhancements.js?v=2.3.1-gc33-quick-remy1").catch(error => {
+    import("./visual-enhancements.js?v=2.3.1-gc40-quick-remy1").catch(error => {
       console.warn(gradeCrewI18n.t("system.extra_views_failed", {}, "Zusätzliche Ansichten konnten nicht geladen werden."), error);
     });
   } catch (error) {

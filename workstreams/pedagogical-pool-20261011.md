@@ -38,3 +38,8 @@ Angeforderter Reviewer Sol/medium gemäß Rollenleitlinie; tatsächliches Runtim
 ## Endabnahme der lokalen Umsetzung
 
 Der Kontextnachweis bleibt als serverseitig berechnetes pedagogicalContextKnown auch nach Normalisierung/Queue-Serialisierung erhalten. Legacy-Aufträge ohne Nachweis nutzen den alten Generator ohne Poolkontext. Zugehöriger Queue-/Normalisierungstest ebenfalls zuerst rot (1 statt0Profile), danach grün; Test bildet die reale Entfernen-undefined-Serialisierung nach. Endsuite248/248 unter Node22.23.3 und Node24.19.0, Syntax/ESLint/diff-check grün. Der Fix ist eine eigene Abnahme per Regressionstest, kein ungeprüfter bloßer Kommentar und keine wiederholte Vollreviewrunde.
+
+
+## Beauftragte Staging-Integration 18.10.2026
+
+Martin hat Übernahme in die Hausaufgabe-Staging-Web-App und Functions-Deploy ausdrücklich beauftragt. Bestehenden Task GC-PEDAGOGY-KB-01 fortgeführt. Development Status39142552587 erfolgreich samt Überlappungsnachweis gelesen: ausschließlich functions/index.js und generation-flow.test.js mit App-Branch. Integration vom aktuellen Ziel2e718ae bewusst zusammengeführt; Variantenprompt, feste Variantenslots und Medienfrische erhalten. Pool bleibt bei Ausgangstest/Variante deaktiviert. Functions281/281 unter Node22 und ESLint grün; neue Variantenregression bestätigt0Poolprofile. Staging-Deployment erst nach exakter Integrations-CI und gültigen Receipts. Production nicht beauftragt. Ausführender Fachchat, Chat-Link unbekannt. Angefordert Sol/medium für Merge-/Releasekoordination; tatsächliche Runtime/Usage unbekannt.

@@ -20,6 +20,11 @@ const groupSchema = {
   properties: { name: { type: "string" }, items: { type: "array", items: { type: "string" } } },
   required: ["name", "items"]
 };
+const markGroupSchema = {
+  type: "object", additionalProperties: false,
+  properties: { name: { type: "string" }, color: { type: "string", enum: ["blue", "orange", "green", "purple"] }, words: { type: "array", items: { type: "string" } } },
+  required: ["name", "color", "words"]
+};
 const mediaIntentSchema = {
   type: "object", additionalProperties: false,
   properties: {
@@ -38,9 +43,10 @@ const audioIntentSchema = {
     kind: { type: "string", enum: ["none", "ai_generated"] },
     script: { type: "string" },
     presentation: { type: "string", enum: ["supplement", "listening-only"] },
+    instruction: { type: "string", maxLength: 1000, description: "Öffentlicher Arbeitsauftrag ohne Hörtext oder Lösungen. Bei listening-only erforderlich, bei none leer." },
     reason: { type: "string" }
   },
-  required: ["kind", "script", "presentation", "reason"]
+  required: ["kind", "script", "presentation", "instruction", "reason"]
 };
 const questionSchema = {
   type: "object", additionalProperties: false,
@@ -58,13 +64,15 @@ const questionSchema = {
     groups: { type: "array", items: groupSchema },
     passage: { type: "string" },
     targetWords: { type: "array", items: { type: "string" } },
+    markGroups: { type: "array", maxItems: 4, items: markGroupSchema },
+    gapColors: { type: "array", items: { type: "string", enum: ["", "blue", "orange", "green", "purple"] } },
     numericAnswer: { type: "number", description: "Für number die richtige Zahl; bei anderen Typen 0." },
     tolerance: { type: "number", minimum: 0 },
     unit: { type: "string" },
     mediaIntent: mediaIntentSchema,
     audioIntent: audioIntentSchema
   },
-  required: ["type", "text", "points", "options", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "numericAnswer", "tolerance", "unit", "mediaIntent", "audioIntent"]
+  required: ["type", "text", "points", "options", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "markGroups", "gapColors", "numericAnswer", "tolerance", "unit", "mediaIntent", "audioIntent"]
 };
 // Compact per-type schemas prevent irrelevant nullable fields from being used as
 // missing answers. The root stays an object; unions are nested (Structured Outputs).
@@ -72,8 +80,8 @@ const NONEMPTY = { type: "string", pattern: "\\S" };
 const TYPE_FIELDS = {
   single: ["options"], multi: ["options"], dropdown: ["options"],
   text: ["acceptedAnswers", "manualReview"], truefalse: ["correctBoolean"],
-  gapfill: [], matching: ["pairs"], ordering: ["items", "acceptedOrders", "manualReview"], grouping: ["groups"],
-  markwords: ["passage", "targetWords"], number: ["numericAnswer", "tolerance", "unit"]
+  gapfill: ["gapColors"], matching: ["pairs"], ordering: ["items", "acceptedOrders", "manualReview"], grouping: ["groups"],
+  markwords: ["passage", "targetWords", "markGroups"], number: ["numericAnswer", "tolerance", "unit"]
 };
 function questionSchemaForType(type, { allowImages = true, mediaKind, allowAudio = true, audioKind } = {}) {
   if (!QUESTION_TYPES.includes(type)) throw new TypeError("Unbekannter Aufgabentyp");

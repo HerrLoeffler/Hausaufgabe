@@ -186,7 +186,7 @@ test("assessment locale survives normal saves and cannot silently change during 
 
 test("bilingual browser module graph is cache-busted consistently", () => {
   assert.match(startup, /bootstrap\.mjs\?v=3/);
-  assert.match(startup, /gradecrew-entry-flow\.js\?v=6/);
+  assert.match(startup, /gradecrew-entry-flow\.js\?v=7/);
   assert.match(startup, /assessment-locale-ui\.mjs\?v=3/);
   assert.match(secureHtml, /bootstrap\.mjs\?v=3/);
   assert.match(bootstrap, /browser-runtime\.mjs\?v=3/);

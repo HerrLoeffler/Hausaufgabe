@@ -845,6 +845,173 @@
   }
 }
 
+/* Keep the login in the available viewport instead of reserving room for artwork. */
+html:has(#authView:not(.hidden) .gcEntryAuth:not(.hidden)) {
+  overflow: hidden;
+}
+.gcPublicEntryMode:has(#authView:not(.hidden) .gcEntryAuth:not(.hidden)) {
+  display: flex;
+  flex-direction: column;
+  height: var(--gc-entry-viewport-height, 100dvh);
+  overflow: hidden;
+}
+.gcPublicEntryMode:has(#authView:not(.hidden) .gcEntryAuth:not(.hidden)) > .shell {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+.gcPublicEntryMode:has(#authView:not(.hidden) .gcEntryAuth:not(.hidden)) #authView {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: clamp(12px, 2vh, 24px) clamp(12px, 2vw, 24px);
+}
+.gcPublicEntryMode:has(#authView:not(.hidden) .gcEntryAuth:not(.hidden)) #authView .gcEntryShell {
+  height: 100%;
+}
+.gcPublicEntryMode #authView .gcEntryAuth {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 24px;
+  background: radial-gradient(ellipse at 50% 32%, #fff 0%, #eaf1fc 60%, #f6eee2 100%);
+  border-radius: 28px;
+}
+.gcPublicEntryMode #authView .gcEntryAuth .gcEntryBack {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  margin: 0;
+  color: #334760;
+}
+.gcPublicEntryMode #authView .gcEntryAuthPanel {
+  box-sizing: border-box;
+  width: min(500px, calc(100% - 24px));
+  margin-block: auto;
+  padding: clamp(24px, 4vw, 36px);
+  color: #18263a;
+  background: #fff;
+  border: 1px solid #d4dfed;
+  box-shadow: 0 18px 48px rgba(31, 49, 76, .16);
+  text-align: center;
+}
+.gcPublicEntryMode #authView .gcEntryAuthPanel > img:not(.gcEntryNameCoco):not(.gcEntryGateArt) {
+  margin: 0 auto 12px;
+}
+.gcPublicEntryMode #authView .gcEntryAuthPanel .gcEntryEyebrow {
+  display: block;
+  font-size: 15px;
+  color: #244eaa;
+}
+.gcPublicEntryMode #authView .gcEntryAuthPanel > p {
+  color: #40516a;
+  font-size: 16px;
+}
+.gcPublicEntryMode #authView .gcEntryAuthPanel form {
+  text-align: left;
+  font-size: 16px;
+}
+.gcPublicEntryMode #gcEntryLogin #loginForm > h2 {
+  display: none;
+}
+.gcPublicEntryMode #authView .gcEntryAuthPanel label {
+  color: #24364f;
+  font-size: 15px;
+  font-weight: 650;
+}
+.gcPublicEntryMode #authView .gcEntryAuthPanel input {
+  box-sizing: border-box;
+  min-height: 48px;
+  color: #18263a;
+  background: #f8faff;
+  border: 1px solid #91a4bf;
+  font-size: 16px;
+}
+.gcPublicEntryMode #authView .gcEntryAuthPanel input::placeholder {
+  color: #52637b;
+  opacity: 1;
+}
+.gcPublicEntryMode #authView .gcEntryAuthPanel .linkButton,
+.gcPublicEntryMode #authView .gcEntryAuthPanel .gcEntrySwitch button {
+  color: #244eaa;
+  font-size: 15px;
+}
+
+.gcPublicEntryMode #authView .gcEntryLoginScene {
+  position: relative;
+  width: min(500px, calc(100% - 24px));
+  box-sizing: border-box;
+  margin-block: auto;
+  padding-top: 150px;
+}
+.gcPublicEntryMode #authView .gcEntryLoginScene .gcEntryAuthPanel {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+.gcPublicEntryMode #authView .gcEntryLoginCoco {
+  position: absolute;
+  z-index: 3;
+  right: -32px;
+  top: 0;
+  width: 210px;
+  height: 180px;
+  pointer-events: none;
+}
+.gcPublicEntryMode #authView .gcEntryLoginCoco img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: none;
+}
+@keyframes gcLoginCocoHello {
+  from { transform: translateY(0) rotate(0); }
+  to { transform: translateY(-5px) rotate(1deg); }
+}
+@media (max-width: 900px), (max-height: 800px) {
+  .gcPublicEntryMode #authView .gcEntryLoginCoco { display: none; }
+  .gcPublicEntryMode #authView .gcEntryLoginScene { padding-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gcPublicEntryMode #authView .gcEntryLoginCoco img { animation: none; }
+}
+
+@media (max-height: 850px) {
+  .gcPublicEntryMode #authView .gcEntryAuthPanel {
+    padding: 16px 24px;
+  }
+  .gcPublicEntryMode #authView .gcEntryAuthPanel > img:not(.gcEntryNameCoco):not(.gcEntryGateArt) {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 4px;
+  }
+  .gcPublicEntryMode #authView .gcEntryAuthPanel h1 {
+    margin: 4px 0;
+    font-size: 30px;
+  }
+  .gcPublicEntryMode #authView .gcEntryAuthPanel > p {
+    margin: 8px 0;
+    line-height: 1.3;
+  }
+  .gcPublicEntryMode #authView .gcEntryAuthPanel form {
+    margin-top: 12px;
+  }
+  .gcPublicEntryMode #authView .gcEntryAuthPanel input {
+    min-height: 42px;
+  }
+  .gcPublicEntryMode #authView .gcEntryAuthPanel .gcEntrySwitch {
+    margin-top: 8px !important;
+    padding-top: 8px;
+  }
+}
+
 /* Keep the foundation's focus-visible and reduced-motion behavior intact.
    This layer adds no movement; its room lighting and shadows are static. */
 .gcPublicEntryMode .gcPublicNav button:focus-visible,
@@ -860,4 +1027,82 @@
     transition: none !important;
     transform: none;
   }
+}
+
+/* GC-DESIGN-05: one shared crew scene, with forms reachable when the keyboard opens. */
+.gcPublicEntryMode #authView .gcEntryAuth {
+  display: block;
+  padding: 44px 20px 24px;
+  background: var(--gc-colors-soft);
+  border-radius: var(--gc-radius-large-card);
+}
+.gcPublicEntryMode #authView .gcEntryLoginScene {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  width: min(960px, 100%);
+  margin: 0 auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--gc-colors-border);
+  border-radius: var(--gc-radius-large-card);
+  background: var(--gc-colors-surface);
+  box-shadow: var(--gc-shadows-floating);
+}
+.gcPublicEntryMode #authView .gcEntryLoginScene .gcEntryAuthPanel {
+  width: 100%;
+  margin: 0;
+  padding: 28px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  text-align: left;
+  color: var(--gc-colors-text);
+}
+.gcPublicEntryMode #authView .gcEntryLoginScene .gcEntryAuthPanel > img,
+.gcPublicEntryMode #authView .gcEntryLoginScene .gcEntryEyebrow { display: none; }
+.gcPublicEntryMode #authView .gcEntryAuthPanel h1 {
+  margin: 0;
+  font-size: clamp(25px, 3.5vw, 34px);
+  line-height: 1.14;
+  letter-spacing: -.025em;
+  color: var(--gc-colors-text);
+}
+.gcPublicEntryMode #authView .gcEntryAuthPanel > p { line-height: 1.45; }
+.gcPublicEntryMode #authView .gcEntryAuthArtwork { min-width: 0; overflow: hidden; }
+.gcPublicEntryMode #authView .gcEntryAuthArtwork img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 40% center;
+}
+.gcPublicEntryMode #authView .gcEntryAuthPanel input { min-height: 48px; }
+.gcPublicEntryMode #authView .gcEntryAuthPanel form .button { min-height: 48px; }
+.gcPublicEntryMode #authView .gcEntryAuthPanel .gcEntrySwitch { font-size: 14px; line-height: 1.5; }
+.gcPublicEntryMode #authView #resetStatus { margin: 0; line-height: 1.5; color: var(--gc-colors-text); }
+.gcPublicEntryMode #authView #resetStatus:empty { display: none; }
+.gcPublicEntryMode #authView #gcEntryReset .gcEntryAuthPanel {
+  width: min(500px, 100%);
+  margin: 0 auto;
+  padding: 28px;
+  text-align: left;
+  box-shadow: var(--gc-shadows-card);
+}
+@media (max-width: 720px) {
+  .gcPublicEntryMode:has(#authView:not(.hidden) .gcEntryAuth:not(.hidden)) #authView { padding: 0; }
+  .gcPublicEntryMode #authView .gcEntryAuth {
+    padding: 40px 12px max(16px, env(safe-area-inset-bottom));
+    border-radius: 0;
+  }
+  .gcPublicEntryMode #authView .gcEntryLoginScene { display: flex; flex-direction: column; max-width: 480px; }
+  .gcPublicEntryMode #authView .gcEntryAuthArtwork { order: -1; height: clamp(120px, 42vw, 190px); }
+  .gcPublicEntryMode #authView .gcEntryAuthArtwork img { object-position: center 56%; }
+  .gcPublicEntryMode #authView .gcEntryLoginScene .gcEntryAuthPanel,
+  .gcPublicEntryMode #authView #gcEntryReset .gcEntryAuthPanel { padding: 22px 20px; }
+  .gcPublicEntryMode #authView .gcEntryAuthPanel > p { font-size: 14px; margin: 10px 0 16px; }
+  .gcPublicEntryMode #authView .gcEntryAuthPanel form { margin-top: 16px; gap: 12px; }
+}
+@media (max-height: 520px) {
+  .gcPublicEntryMode #authView .gcEntryAuthArtwork { display: none; }
+  .gcPublicEntryMode #authView .gcEntryLoginScene { display: block; max-width: 500px; }
 }

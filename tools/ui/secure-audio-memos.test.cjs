@@ -83,7 +83,7 @@ for (const locale of ['de-DE', 'en-GB']) test(`${locale}: listening instructions
   const q={id:'listen',type:'single',text:'PRIVATE_TRANSCRIPT',points:1,audioPresentation:'listening-only',image:{src:'data:image/png;base64,AAAA'},audio:{src:audio(1)},options:[]};
   const h=await render(q,locale);
   try {
-    assert.match(h.section.querySelector('h2').textContent,locale==='de-DE'?/Aufnahme unter dem Bild/:/recording below the picture/);
+    assert.match(h.section.querySelector('h2').textContent,locale==='de-DE'?/Arbeitsauftrag fehlt/:/instructions are missing/);
     assert.doesNotMatch(h.section.textContent,/PRIVATE_TRANSCRIPT|KI-generierte Stimme/);
     assert.equal(h.section.querySelector('audio').controls,true);
     assert.equal(h.section.querySelector('audio').getAttribute('controlslist'),'nodownload noplaybackrate');

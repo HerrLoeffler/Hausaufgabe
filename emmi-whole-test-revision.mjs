@@ -71,7 +71,7 @@ function makePanel() {
   panel.className = "emmiWholeTestPanel";
   panel.setAttribute("aria-label", "Gesamten Test mit Emmi überarbeiten");
   panel.innerHTML = `
-    <img class="emmiWholeTestMascot" src="assets/gradecrew/fox-improve.svg" alt="Emmi">
+    <img class="emmiWholeTestMascot" src="assets/gradecrew/emmi-colors.png" alt="Emmi">
     <div class="emmiWholeTestCopy">
       <div class="emmiWholeTestHead">
         <div><span class="eyebrow">Emmi · Überarbeiten</span><h2>Emmi hilft dir beim Überarbeiten.</h2><p>Sag Emmi, was du an deinem Test ändern möchtest.</p></div>

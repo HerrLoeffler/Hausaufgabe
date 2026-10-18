@@ -8,12 +8,13 @@ import { installWorkspaceUpgrade } from '../../gradecrew-workspace-upgrade.mjs';
 import { setActiveUiLocale, translateTree, translateSource } from '../../shared/i18n/browser-runtime.mjs?v=3';
 const html = fs.readFileSync(new URL('../../index.html',import.meta.url),'utf8');
 const app = fs.readFileSync(new URL('../../app.js',import.meta.url),'utf8');
+const workspaceCss = fs.readFileSync(new URL('../../gradecrew-workspace-upgrade.css',import.meta.url),'utf8');
 function setup({reduced=false}={}) {
   const dom = new JSDOM(html,{url:'https://example.test'});
   dom.window.matchMedia = () => ({matches:reduced});
   const document=dom.window.document, $=id=>document.getElementById(id), calls=[];
   const state={quizzes:[{id:'ONE',title:'Mathematik '.repeat(25),subject:'Mathematik',grade:'5',questionCount:6,totalPoints:12,published:false},{id:'TWO',title:'Deutsch',subject:'Deutsch',grade:'6',questionCount:4,totalPoints:8,published:true}],aiJobs:[]};
-  const context=vm.createContext({document,$,state,Intl,Number,Boolean,String,secureAudioPublicationBlocked,normalize:value=>String(value).toLowerCase(),toMillis:()=>0,activeQuizzes:()=>state.quizzes,escapeHtml:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;'),renderFirstTestGuide:()=>{},toggleDashboardPublished:(...args)=>calls.push(['publish',...args]),...Object.fromEntries(['openEditor','openResults','duplicateQuiz','showPublish','shareQuizTemplate','endQuiz','reopenQuiz','deleteQuiz'].map(name=>[name,id=>calls.push([name,id])]))});
+  const context=vm.createContext({document,$,state,Intl,Number,Boolean,String,secureAudioPublicationBlocked,normalize:value=>String(value).toLowerCase(),toMillis:()=>0,activeQuizzes:()=>state.quizzes,escapeHtml:value=>String(value).replaceAll('&','&amp;').replaceAll('<','&lt;'),renderFirstTestGuide:()=>{},toggleDashboardPublished:(...args)=>calls.push(['publish',...args]),openQuizDuplicateChoiceDialog:trigger=>calls.push(['duplicate-choice',trigger?.classList.contains('duplicate')]),...Object.fromEntries(['openEditor','openResults','duplicateQuiz','showPublish','shareQuizTemplate','endQuiz','reopenQuiz','deleteQuiz'].map(name=>[name,id=>calls.push([name,id])]))});
   vm.runInContext(app.slice(app.indexOf('function filteredQuizzes()'),app.indexOf('async function toggleDashboardPublished')),context);
   vm.runInContext(app.slice(app.indexOf('$("quizSearch").addEventListener'),app.indexOf('$("backFromEditor").addEventListener')),context);
   vm.runInContext('renderQuizList()',context);
@@ -28,10 +29,18 @@ test('moves original toolbar above jobs and tests, preserves nodes and click han
   assert.ok(nodes.indexOf(x.document.querySelector('.dashboardToolbar'))<nodes.indexOf(x.$('aiJobsList')));
   assert.equal(x.document.querySelectorAll('.gcWorkspaceGreeting').length,0);
   assert.equal(x.document.querySelectorAll('[data-filter="all"]').length,1);
+  assert.equal(x.$('trashBtn').querySelectorAll('img').length,1);
+  assert.equal(x.$('trashBtn').querySelectorAll('svg').length,0);
+  assert.match(x.$('trashBtn').querySelector('img').getAttribute('src'),/trash-bin-3d\.png$/);
   x.document.querySelector('.edit').click(); x.document.querySelector('.duplicate').click();
   x.document.querySelector('.results').click(); x.document.querySelector('.remove').click();
-  assert.deepEqual(x.calls,[['openEditor','ONE'],['duplicateQuiz','ONE'],['openResults','ONE'],['deleteQuiz','ONE']]);
+  assert.deepEqual(x.calls,[['openEditor','ONE'],['duplicate-choice',true],['openResults','ONE'],['deleteQuiz','ONE']]);
  }finally{x.close();}
+});
+test('Remy action and recycling-bin positions remain in the desktop center and mobile first column',()=>{
+ assert.match(workspaceCss,/dashboardPrimaryActions\s*\{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1 \/ 3/s);
+ assert.match(workspaceCss,/\.dashboardPrimaryActions\s*\{[^}]*grid-column:\s*1;[^}]*grid-row:\s*2/s);
+ assert.match(workspaceCss,/#dashboardView\.gcWorkspace #trashBtn\s*\{[^}]*position:absolute;[^}]*right:14px/s);
 });
 test('all/status/search controls use real existing filtering and retain active counts after rerender',async()=>{
  const x=setup();try {
@@ -70,14 +79,15 @@ test('asynchronous job refresh preserves partial draft/report/dismiss actions an
   assert.deepEqual(seen,['openAiJob','reportAiJob','dismissAiJob']);assert.equal(card.querySelectorAll('button').length,3);
  }finally{x.close();}
 });
-test('late tutorial button keeps its handler, has four original portraits and one external duration after rerender',async()=>{
+test('late tutorial button keeps its handler, uses the crew lineup and one external duration after rerender',async()=>{
  const x=setup();try {
   const button=x.document.createElement('button');button.id='gradecrewTourBtn';
   button.innerHTML='<span>Crew kennenlernen</span><small>Tutorial · ca. 6–7 Minuten</small>';
   let started=0;button.onclick=()=>started++;
   x.document.querySelector('.dashboardActions').prepend(button);await tick();
   const entry=x.document.querySelector('.gcWorkspaceCrewEntry');
-  assert.equal(entry.querySelectorAll('img').length,4);assert.equal(entry.querySelector('button'),button);
+  const lineup=entry.querySelector('.gcWorkspaceCrewPortraits img');
+  assert.equal(entry.querySelectorAll('img').length,1);assert.match(lineup.src,/crew-dashboard-lineup-c-r-e-w-alpha\.png$/);assert.equal(lineup.width,288);assert.equal(lineup.height,100);assert.equal(entry.querySelector('button'),button);
   button.click();assert.equal(started,1);assert.equal(button.querySelector('small'),null);
   button.innerHTML='<span>Crew kennenlernen</span><small>Tutorial · ca. 6–7 Minuten</small>';await tick();
   assert.equal(entry.querySelectorAll(':scope > small').length,1);assert.equal(x.document.querySelectorAll('.gcWorkspaceCrewEntry').length,1);
