@@ -627,7 +627,9 @@
       "integrationTarget": "feature/gradecrew-app-integration",
       "state": "integrated",
       "handoff": "workstreams/pedagogical-pool-20261011.md",
-      "relatedBranches": []
+      "relatedBranches": [
+        "fix/pool-targeted-staging-20261018"
+      ]
     },
     {
       "id": "fastquiz-binomial-20261012",

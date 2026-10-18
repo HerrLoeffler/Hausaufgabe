@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+    "observed_integration_head": "a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -57,17 +57,17 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success38401650150_commit_8f8697901f8c1aea89897be855ca2872c82d0f2b",
+      "combined_ci": "success39156701861_commit_a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d",
       "mobile_tutorial": "success37630241356",
-      "hosting_preview": "success38401855165_receipt11815871515",
-      "staging_functions": "success38401855293_receipt11816121752",
+      "hosting_preview": "success39156854960_receipt12147635892",
+      "staging_functions": "targeted_pool_success39157680713_receipt12147672441_generateTest_startAiTestJob_processAiTestJob; unrelated AI retained; full AI attempt39156854952 safely aborted",
       "staging_rules": "secure_rules_live_exact_sha256195d40d6d65efa3edc7c647aba9a3004fd2dedbc584a0349bf9adc658ff90807_20261011",
       "desktop_ipad_iphone_test": "sourceauthoractualCuaDesktop/mobile/shortViewport +independentreview; liveanonymous/mobile/physicaldeviceunverified",
       "user_acceptance": "pending_gc39; no physical device, real practice submission, or paid generation test performed",
       "production": "not_requested",
-      "staging_assessment_functions": "success38401855293_receipt11815766955_plus_new_callable_successful_create",
+      "staging_assessment_functions": "success39156854952_receipt12147322047",
       "audio_v2_user_acceptance": "technical_staging_audio_start_and_resume_verified_29_questions; physical_device_acceptance_pending",
-      "canonical_hosting": "success38403541381_receipt11816811004"
+      "canonical_hosting": "success39157702689_receipt12147303541"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 165,
@@ -155,7 +155,7 @@
         "handoff": "workstreams/security-audio-release-20261009.md"
       }
     },
-    "canonical_request": "automation/canonical-staging-requests/gc39-feedback-20261013.json",
+    "canonical_request": "automation/canonical-staging-requests/gc-pedagogy-pool-recovery-20261018.json",
     "review_regions_followup": {
       "stage": "staging_deployed",
       "commit": "aed60ecf61537d3c38e2b3a6dbd6413d9776056c",
@@ -495,16 +495,35 @@
     },
     "pedagogical_pool_followup": {
       "task_id": "GC-PEDAGOGY-KB-01",
-      "stage": "integrated",
+      "stage": "staging_deployed",
       "pr": 218,
       "candidate": "0ed9d3c0791a6fa0a5322c837134f8a86c7737d7",
       "requested_target": "hausaufgabe-staging.web.app",
       "authorization": "explicit current user request18.10.2026",
-      "next_action": "observe integrated CI39156701861 and automatic Staging Functions/preview; promote exact verified preview to canonical",
+      "next_action": "Martin creates matching Mittelschule Bayern6/9 test; inspect generated draft and safe pedagogicalPool metadata for use/quality",
       "production": "not_requested",
       "commit": "a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d",
       "candidate_ci": 39156614592,
-      "merge_ci": 39156701861
+      "merge_ci": 39156701861,
+      "preview_run": 39156854960,
+      "preview_receipt": 12147635892,
+      "functions_run": 39157680713,
+      "functions_scope": [
+        "generateTest",
+        "startAiTestJob",
+        "processAiTestJob"
+      ],
+      "functions_receipt": 12147672441,
+      "canonical_run": 39157702689,
+      "canonical_receipt": 12147303541,
+      "canonical_url": "https://hausaufgabe-staging.web.app/",
+      "recovery_pr": 241,
+      "recovery_control": "c23dbf494cd267f1254cf73a762d0a557187f8ac",
+      "initial_functions_run": 39156854952,
+      "initial_functions_result": "aborted before update because12unrelated learning functions absent from source; preserved; no force",
+      "initial_canonical_run": 39157249364,
+      "initial_canonical_result": "aborted before deploy because fully skipped workflow misclassified; fixed and regressions passed",
+      "user_acceptance": "pending; no paid generation or physical-device quality comparison"
     }
   },
   "production": {
@@ -1663,19 +1682,29 @@
       "task_id": "GC-PEDAGOGY-KB-01",
       "branch": "feat/pedagogy-pool-20261011",
       "observed_head": "0ed9d3c0791a6fa0a5322c837134f8a86c7737d7",
-      "stage": "integrated",
+      "stage": "staging_deployed",
       "pull_request": 218,
       "integration": "a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d",
-      "staging": "awaiting_integrated_ci_and_deploy_receipts",
+      "staging": "canonical39157702689 receipt12147303541 and targeted AI39157680713 receipt12147672441 verified",
       "production": "not_requested",
-      "ci": "candidate39156614592 success; integrated39156701861 in_progress",
-      "local_tests": "281/281 Node22 + ESLint; 31/31 ai web regressions",
+      "ci": "candidate39156614592 + integrated39156701861 success; recovery PR241 CI39157563820 success",
+      "local_tests": "281 Functions Node22 + ESLint;31 web;121 automation incl actual bash deploy/receipt scripts",
       "independent_review": "one important explicit-context finding reproduced and fixed with direct and queued RED->GREEN regressions",
       "runtime_scope": "53 reviewed anonymous profiles, Mittelschule Bayern years6/9; no-match leaves first generation prompt unchanged",
-      "model_quality": "not_observed_no_live_provider_calls",
+      "model_quality": "no live paid generation comparison; technical activation verified only",
       "handoff": "workstreams/pedagogical-pool-20261011.md",
-      "next_action": "observe integrated CI39156701861 and automatic Staging Functions/preview; promote exact verified preview to canonical",
-      "staging_authorized": "Martin current chat18.10.2026; hausaufgabe-staging only"
+      "next_action": "Martin creates matching Mittelschule Bayern6/9 test; inspect generated draft and safe pedagogicalPool metadata for use/quality",
+      "staging_authorized": "Martin current chat18.10.2026; hausaufgabe-staging only",
+      "staging_url": "https://hausaufgabe-staging.web.app/",
+      "staging_commit": "a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d",
+      "staging_functions_scope": [
+        "generateTest",
+        "startAiTestJob",
+        "processAiTestJob"
+      ],
+      "deployment_control_pr": 241,
+      "deployment_control_merge": "c23dbf494cd267f1254cf73a762d0a557187f8ac",
+      "hosting_verified_files": 165
     }
   ],
   "deployments": [
