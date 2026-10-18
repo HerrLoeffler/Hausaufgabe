@@ -695,3 +695,18 @@ Der separat gestartete Coco-Gangclip Kling 2.6 Pro liegt lokal als `video-produc
 Eine einzige neue Emmi-Großgesichtskorrektur wurde danach gestartet, um das geschlossene Maul des Chorclips gezielt zu beheben: LTX-Job `RBYeM9LOM5anMPvzprBB`, Session `USsAXqHv83imvXkQHnT5`, 1.308,96 Credits gemeldet; Ergebnis ausstehend. Root-interne Obergrenze für diese Runde beträgt 16.500 Credits; die bislang gemeldete kumulative Belastung ist 13.901,64 Credits. Dies ist weder ein Nutzerbudget noch ein Vollfilmangebot. Eine alternative neue Coco-Ganzkörper-Walkgeneration wird nur nach passendem Startbild und frischer Einzelschätzung erwogen; sie wurde zum Zeitpunkt dieses Checkpoints noch nicht gestartet.
 
 Aktuelle Bilddateien B00–B08 sind statische Übergangs-/Telefon-Keys. Art-QA sieht bei B08 gegenüber B06 eine leichte Telefonperspektiv-/Größenabweichung. Der nächste Szenenkey sollte auf der akzeptierten B21-Gruppenbühne beruhen und die Figuren entfernen, statt die Kamera/Größe neu zu rahmen; keine Bewegungsfreigabe folgt aus diesen Stills. Keine fertig compositierte Chorsequenz und kein Vollfilm liegen vor. Die fehlenden Szenenbilder bleiben in Arbeit; die finale natürliche 24-fps-Ganzcrew-Animation ist unerfüllt.
+
+
+### V17-Update: Chorus-Frames dekodiert, erster Gang fehlgeschlagen, Korrekturen laufen (18.10.2026)
+
+Die vier Chorus-MP4s wurden inzwischen einzeln nativ dekodiert: alle vier haben je 120 Frames, 24 fps, 1024×1024 und 5 Sekunden. Mundstatus: Coco deutlich beweglich, Remy wiederholt offen/schließend, Wilma nur geringe Öffnung, Emmi in sämtlichen 120 Frames geschlossen. Damit bestehen drei Clips ein erstes bloßes Bewegungsscreening mit unterschiedlicher Qualität; Emmi besteht es nicht. Ein gemeinsamer Viererchor ist noch nicht zusammengesetzt, und keine der Dateien beweist für sich eine vollständige gemeinsame Bild-/Audiolippensynchronität. Der Agent dokumentierte die vier Bildbögen in `video-production/speech-QA/`.
+
+Der erste Coco-Walk-Kling-Clip ist jetzt zurückgekehrt und wurde **abgelehnt**: `video-production/raw/Coco-walk-Kling.mp4` (3.882.331 Bytes, SHA-256 `6bdcf58d4fdc9a378311bdc2f11e9328a3b5be1eddfc511607a039637d002f82`), 5,084 s, 122 Frames, 24 fps, 1916×1080. Die Flosse setzt wie eine Bodenhand auf und der hintere Fuß bleibt über F24–72 unbewegt; es fehlen die verlangten acht alternierenden Schritte. Dies ist kein akzeptabler Gang und wird nicht weiterverwendet.
+
+Zwei begrenzte Einzelkorrekturen sind als nächste Prüfversuche gestartet; noch kein Ergebnis liegt vor:
+- Emmi-Gesichtscrop vergrößert: `RBYeM9LOM5anMPvzprBB`, Session `USsAXqHv83imvXkQHnT5`, 1.308,96 Credits.
+- Coco aufrechter Gang mit neuem Startbild: `KQWvqEdEETPBSRV7b7qk`, Session `8ZogzGwEGmLQid3OEoUf`, 2.121 Credits.
+
+Das lokale Produktionsledger meldet sieben gestartete Aufträge und kumulativ 16.022,64 Credits innerhalb des root-internen 16.500-Credit-Limits. Noch 477,36 Credits bleiben in diesem internen Rahmen; das ist kein Plattformkontostand. Weitere Einzeljobs, volle Filmsegmente und ein fertiger Film sind dadurch nicht automatisch genehmigt oder finanziert. Die ursprünglichen vier Chorusjobs kosteten zusammen 10.471,68 Credits; beide Coco-Walkversuche jeweils 2.121, die Emmi-Korrektur 1.308,96. Eine neue Gesamtkostenrechnung liegt nicht vor.
+
+Neu vorhandene Bilddateien umfassen B00–B14, B18, B21-Varianten, Telefonbühne und Chorcutouts; B15–B17/B19–B23 und eine vollständig konsistente Sequenz sind in diesem Nachweis nicht als vorhanden belegt. Auch B06/B08 haben eine kleine Telefonperspektiv-/Größenabweichung. Die Szenenbilder sind Schlüsselstills, keine kontinuierliche Filmbewegung. V17 bleibt in Produktion; natürlicher Vollcrewfilm und menschliche Gesamtwiedergabeabnahme sind offen.
