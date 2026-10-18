@@ -1,6 +1,16 @@
 name: Automatic staging AI functions
 
 on:
+  workflow_dispatch:
+    inputs:
+      upstream_ci_run:
+        description: Successful push AI Staging Checks run for the current integration commit
+        required: true
+        type: string
+      commit:
+        description: Exact current integration SHA; deploy only the three pedagogical pool Functions
+        required: true
+        type: string
   push:
     branches: [main]
     paths: ['automation/deployment-requests/*.json']
@@ -19,6 +29,7 @@ concurrency:
 jobs:
   source:
     if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       (github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.head_repository.full_name == github.repository &&
@@ -27,6 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
+      pool_recovery: ${{ github.event_name == 'workflow_dispatch' }}
       sha: ${{ steps.source.outputs.sha }}
       ci_run: ${{ steps.source.outputs.upstream_ci }}
     steps:
@@ -39,7 +51,8 @@ jobs:
         run: python3 -m tools.automation.deployment_evidence
         env:
           GH_TOKEN: ${{ github.token }}
-          UPSTREAM_RUN_ID: ${{ github.event.workflow_run.id }}
+          UPSTREAM_RUN_ID: ${{ inputs.upstream_ci_run || github.event.workflow_run.id }}
+          EXPECTED_SHA: ${{ inputs.commit }}
           GUARDIAN_ENABLED: ${{ vars.GRADECREW_GUARDIAN_ENABLED }}
       - uses: actions/upload-artifact@v4
         with:
@@ -57,6 +70,7 @@ jobs:
       actions: read
       id-token: write
     env:
+      POOL_RECOVERY: ${{ needs.source.outputs.pool_recovery }}
       PROJECT_ID: hausaufgabe-staging
       INTEGRATION_BRANCH: feature/gradecrew-app-integration
       EXPECTED_SHA: ${{ needs.source.outputs.sha }}
@@ -135,12 +149,19 @@ jobs:
           printf 'POSTHOG_PROJECT_TOKEN=%s\n' "$POSTHOG_PROJECT_TOKEN_STAGING" > functions/.env.hausaufgabe-staging
           grep -q '^POSTHOG_PROJECT_TOKEN=' functions/.env.hausaufgabe-staging
 
-      - name: Deploy only the AI Functions codebase to staging
+      - name: Deploy the approved AI scope to staging
         run: |
-          "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" deploy \
-            --project "$PROJECT_ID" \
-            --only functions:ai \
-            --non-interactive
+          if [ "$POOL_RECOVERY" = "true" ]; then
+            "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" deploy \
+              --project "$PROJECT_ID" \
+              --only functions:ai:generateTest,functions:ai:startAiTestJob,functions:ai:processAiTestJob \
+              --non-interactive
+          else
+            "$RUNNER_TEMP/firebase-cli/node_modules/.bin/firebase" deploy \
+              --project "$PROJECT_ID" \
+              --only functions:ai \
+              --non-interactive
+          fi
 
       - name: Verify Crew, Emmi and telemetry Functions are visible in staging
         run: |
@@ -152,7 +173,8 @@ jobs:
           const payload = JSON.parse(fs.readFileSync(path, 'utf8'));
           const rows = Array.isArray(payload) ? payload : payload.result || payload.functions || [];
           const text = JSON.stringify(rows);
-          const requiredFunctions = [
+          const requiredFunctions = process.env.POOL_RECOVERY === 'true'
+            ? ['generateTest', 'startAiTestJob', 'processAiTestJob'] : [
             'crewAssistant',
             'reviseWholeTest',
             'recordCrewTelemetry',
@@ -174,12 +196,14 @@ jobs:
           const fs = require('node:fs');
           const receipt = {
             project: process.env.PROJECT_ID,
-            scope: 'functions:ai',
+            scope: process.env.POOL_RECOVERY === 'true'
+              ? 'functions:ai:generateTest,functions:ai:startAiTestJob,functions:ai:processAiTestJob' : 'functions:ai',
             commit: process.env.EXPECTED_SHA,
             integrationBranch: process.env.INTEGRATION_BRANCH,
             workflowRun: Number(process.env.RUN_ID),
             upstreamCiRun: Number(process.env.UPSTREAM_RUN_ID),
-            verifiedFunctions: [
+            verifiedFunctions: process.env.POOL_RECOVERY === 'true'
+              ? ['generateTest', 'startAiTestJob', 'processAiTestJob'] : [
               'crewAssistant',
               'reviseWholeTest',
               'recordCrewTelemetry',
@@ -205,7 +229,7 @@ jobs:
 
   deploy-assessment-functions:
     needs: source
-    if: vars.STAGING_FUNCTIONS_WIF_PROVIDER != ''
+    if: vars.STAGING_FUNCTIONS_WIF_PROVIDER != '' && needs.source.outputs.pool_recovery != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
