@@ -591,6 +591,7 @@ function showView(id) {
   if (id !== "studentView") clearStudentSubscriptions();
   const changed = $(id)?.classList.contains("hidden");
   views.forEach((v) => $(v).classList.toggle("hidden", v !== id));
+  if (typeof notifyAccountWorkspace === "function") notifyAccountWorkspace();
   if (changed) requestAnimationFrame(() => focusView($(id)));
   window.scrollTo({ top: 0, behavior: scrollBehavior() });
   if (typeof crewTour !== "undefined") crewTour?.notify("view", {id});
@@ -1032,6 +1033,7 @@ function setTeacherBar() {
   $("adminTopBtn")?.classList.toggle("hidden", !loggedIn || !isAdmin());
   $("gradecrewEtLauncher")?.classList.toggle("hidden", !loggedIn || !isAdmin() || localWorkbenchHost);
   $("appFooter")?.classList.toggle("hidden", !loggedIn);
+  if (typeof notifyAccountWorkspace === "function") notifyAccountWorkspace();
 }
 
 function renderBugOpsAttentionBadge(summary = state.bugOpsSummary) {
@@ -1746,6 +1748,7 @@ function quizStatusMeta(q) {
 }
 
 function renderQuizList() {
+  if (typeof notifyAccountWorkspace === "function") notifyAccountWorkspace();
   const list = $("quizList");
   list.innerHTML = "";
   const filtered = filteredQuizzes();
@@ -9327,6 +9330,25 @@ if (["staging", "local-review"].includes(appEnvironment)) {
 }
 
 window.addEventListener("gradecrew:visual-note-saved",()=>toast("Screenshot-Hinweis in Feedback gespeichert."));
+
+// The connected local workspace observes real app state. It never seeds a quiz,
+// signs in a user, wraps data calls or redirects existing test mutations.
+function notifyAccountWorkspace() {
+  if (window.__GRADECREW_ACCOUNT_WORKSPACE__ === true && location.hostname === '127.0.0.1') document.dispatchEvent(new Event('gradecrew:account-workspace-updated'));
+}
+if (window.__GRADECREW_ACCOUNT_WORKSPACE__ === true && location.hostname === '127.0.0.1') {
+  window.GradeCrewAccountWorkspacePort = Object.freeze({
+    getSession: () => state.user ? {uid:state.user.uid,displayName:state.profile?.displayName || state.user.displayName || '',environment:appEnvironment} : null,
+    listTests: () => state.user ? state.quizzes.map(q=>({id:q.id,title:q.title,grade:q.grade,subject:q.subject,published:q.published})) : [],
+    currentView: () => views.find(id=>!$(id)?.classList.contains('hidden')),
+    registerView(id) { if(!['accountClassesView','accountPupilsView'].includes(id))throw Error('Unbekannte Zusatzansicht.');if(!views.includes(id))views.push(id); },
+    showView,
+    showTests: loadDashboard,
+    openQuiz: openEditor,
+    openResults,
+    subscribe(listener) {document.addEventListener('gradecrew:account-workspace-updated',listener);return ()=>document.removeEventListener('gradecrew:account-workspace-updated',listener);}
+  });
+}
 
 // Local classroom integration keeps the real editor and all normal runtime paths.
 // The explicit loopback server installs the blocked SDK before this module loads.

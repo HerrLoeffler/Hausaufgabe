@@ -1,5 +1,13 @@
 import {registerCatalog} from '../shared/i18n/browser-runtime.mjs?v=3';
 const entries={
+ 'Deine vorhandenen Tests, nach ihren gespeicherten Klassenangaben geordnet.':'Your existing tests, grouped by their saved class labels.',
+ 'Noch keine Klassenangaben':'No class labels yet',
+ 'Wenn du in deinen Tests eine Klasse oder Klassenstufe hinterlegst, erscheinen die Tests hier gemeinsam.':'Add a class or year group to your tests to see them grouped here.',
+ 'Zu meinen Tests':'Go to my tests',
+ 'Diese Ansicht verwendet deine Testangaben. Ein gemeinsamer schulischer Klassenbestand mit Mitgliedschaften wird zusätzlich angebunden.':'This view uses your test labels. A shared school class roster with memberships will be connected separately.',
+ 'Der zusätzliche Bereich für Klassenmitglieder und persönliche Schülerzugänge.':'The additional area for class members and personal student access.',
+ 'Noch kein Schülerbestand verknüpft':'No student roster connected yet',
+ 'Die dauerhafte Schüler- und ASV-Anbindung ist für diesen Account noch nicht eingerichtet. Deine vorhandenen Tests und Auswertungen bleiben über „Meine Tests“ erreichbar.':'Persistent student and ASV integration is not yet set up for this account. Your existing tests and results remain available under “My tests”.',
  'Mein Arbeitsbereich':'My workspace','Schüler:innen':'Students','Lokale Testoptionen':'Local test options','Startseite':'Home',
  'Lokale Vorschau: Wähle ein Beispielkonto. Echte Zugangsdaten sind nicht erforderlich.':'Local preview: choose a sample account. Real credentials are not required.',
  'Mit lokalem Testkonto anmelden':'Sign in with a local test account','Beispielkonto':'Sample account',

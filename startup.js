@@ -125,6 +125,9 @@ if (publicTestCode && !teacherPreview) {
     if (window.__GRADECREW_CLASSROOM_PREVIEW__ === true && location.hostname === "127.0.0.1") {
       const {installClassroom} = await import("./classroom/controller.mjs");
       window.GradeCrewClassroom = installClassroom({document,port:window.GradeCrewClassroomApp});
+    } else if (window.__GRADECREW_ACCOUNT_WORKSPACE__ === true && location.hostname === "127.0.0.1") {
+      const {installAccountWorkspace} = await import("./classroom/account-workspace.mjs");
+      window.GradeCrewAccountWorkspace = installAccountWorkspace({document,port:window.GradeCrewAccountWorkspacePort});
     }
     import("./secure-assessment-teacher-polish.js?v=2.3.1-sec2").catch(error => {
       console.warn(gradeCrewI18n.t("system.secure_assessment_notice_failed", {}, "Secure-Assessment-Hinweise konnten nicht geladen werden."), error);

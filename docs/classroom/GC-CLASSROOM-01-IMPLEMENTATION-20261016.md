@@ -1,5 +1,17 @@
 # GC-CLASSROOM-01 Implementation Plan
 
+## Präzisierung: echter Lehreraccount und vorhandene Tests — 18. Oktober 2026
+
+Der normale lokale Einstieg muss den bestehenden Firebase-SDK, Login, Account, Testbestand und alle bisherigen Testaktionen verwenden. Eine lokale Beispielanmeldung erfüllt diesen Auftrag nicht.
+
+- Der Server liefert unter `/` die vollständige App mit ihrer unveränderten bestehenden Testbackend-Konfiguration (`hausaufgabe-staging`). Er injiziert dort weder Demo-SDK noch Classroom-Previewflag. Die Webadresse bleibt lokal; kein Hosting-/Rules-/Functionsdeploy.
+- Die bisherige synthetische Probe bleibt ausschließlich als ausdrücklich getrennte Datei `/classroom-demo.html` verfügbar. Ihre SDK-Sperre bleibt erhalten. Sie wird nicht als Anmeldung mit dem echten Lehreraccount dargestellt.
+- Ein kleiner Account-Workspace-Port gibt ausschließlich angemeldete Accountmetadaten, vorhandene Testmetadaten und bestehende Navigationsaktionen an eine additive Seitennavigation weiter. Keine künstliche Sitzung, kein zweiter Testbestand, keine Interception von Erstellung, Speichern, Veröffentlichen oder Einstellungen.
+- Die linke Navigation erscheint nur nach echter Anmeldung. „Meine Tests“ öffnet weiterhin den bisherigen Dashboardpfad. „Klassen“ gruppiert die vorhandenen Tests nach ihren bereits gespeicherten Klassenangaben und öffnet denselben Editor/dieselbe Auswertung. Diese Gruppierung ist noch kein verifizierter schulischer Mitgliederbestand.
+- „Schüler:innen“ erhält einen ehrlichen Leerzustand, solange noch keine echte schulische Mitglieder-/Identitätsanbindung implementiert ist. Keine erfundenen Beispielpersonen im echten Account, keine Ableitung von Personen aus Leistungsdaten, keine improvisierte Speicherung in Userprofilen oder Testdokumenten.
+- Beim Accountwechsel/Abmelden verschwinden Accountdaten aus den Zusatzansichten. Die Originalanmeldung wird im Browser mit echtem SDK geprüft; die erfolgreiche Anmeldung und tatsächliche vorhandene Tests müssen vom Nutzer selbst bestätigt werden, da der Agent keine Zugangsdaten benötigt.
+- Prüfungen: Serverauslieferung trennt verbundenen Accountbetrieb von isolierter Probe; Authform/ursprüngliche Dashboardknoten bleiben unverändert; Sidebar erst nach echter Sitzung; Klassen aus echten Testmetadaten; Accountwechsel entfernt alte Daten; Original-Auth-/Publishregressionen bleiben grün.
+
 ## Verbindliche Bedienkorrektur vom 18. Oktober 2026
 
 Martin lehnt die sofortige Classroom-Demoübersicht ab. Die vollständige Website ist der Einstieg, nicht ein hinter einem Testwerkzeug versteckter Zusatz.

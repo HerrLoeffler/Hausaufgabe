@@ -1,0 +1,20 @@
+{
+  "task": "GC-CLASSROOM-01",
+  "date": "2026-10-18",
+  "url": "http://127.0.0.1:8782/",
+  "backend": "hausaufgabe-staging (existing firebase-config.js, unchanged)",
+  "normalPage": "Original Firebase authentication and quiz lifecycle, additive metadata-only sidebar",
+  "explicitSyntheticPage": "/classroom-demo.html",
+  "humanConfirmation": {"normalLoginAndExistingTests": true, "response": "Ja, meine Tests sind da"},
+  "agentBrowserObserved": ["Original Crew entry", "Original teacher login without sample-account controls", "No startup error"],
+  "agentSignedIn": false,
+  "personalCredentialsRecorded": false,
+  "personalTestContentRecorded": false,
+  "focusedRegressions": {"passed": 47, "failed": 0},
+  "additionalAccountSwitchRecheck": {"passed": 2, "failed": 0},
+  "sidebar": {"classes": "Grouping of actual existing quiz class labels", "pupils": "Honest empty state until persistent school roster exists", "accountSwitchClearsPreviousView": true},
+  "persistentStudentBackend": false,
+  "serverSession": 39951,
+  "deployment": false,
+  "stage": "branch_only"
+}
