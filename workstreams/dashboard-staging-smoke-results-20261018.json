@@ -1,0 +1,145 @@
+{
+  "taskId": "GC-BRAND-HERO-MOTION-20261013",
+  "type": "agent_live_browser_smoke",
+  "observedAt": "2026-10-18T19:45:57.349Z",
+  "project": "hausaufgabe-staging",
+  "version": "2.3.1-gc41",
+  "commit": "7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
+  "result": "passed_with_observations",
+  "teacherOrigin": "https://hausaufgabe-staging.web.app",
+  "studentOrigin": "https://hausaufgabe-staging.firebaseapp.com",
+  "sameReleaseVerified": true,
+  "testArtifact": {
+    "title": "SYSTEMTEST gc41 – Addition und Subtraktion bis 20",
+    "code": "WX48ZVJC",
+    "state": "ended",
+    "questions": 3,
+    "points": 3,
+    "syntheticParticipant": "GC41-Systemtest",
+    "submissions": 1,
+    "finalPoints": 2,
+    "finalPercent": 67
+  },
+  "checks": [
+    {
+      "id": "session_restore",
+      "result": "pass",
+      "evidence": "Existing teacher session restored after reload; original48 tests loaded. Fresh password sign-in not tested."
+    },
+    {
+      "id": "dashboard_search_filter",
+      "result": "pass",
+      "evidence": "Own SYSTEMTEST and ended filter match one of49 tests; compact new-test button160.55x52 at actual1280px width without horizontal overflow."
+    },
+    {
+      "id": "remy_generation",
+      "result": "pass",
+      "evidence": "One normal creation start; background job produced exactly3 questions/3 points in requested single/number/truefalse types and exactly1 listening task."
+    },
+    {
+      "id": "audio_generation_playback",
+      "result": "pass",
+      "evidence": "Actual teacher and anonymous student player duration2.568s, readyState4, currentTime advanced, no media error. Speech quality/transcript not independently evaluated."
+    },
+    {
+      "id": "editor_save",
+      "result": "pass",
+      "evidence": "Manual wording edit stored with server confirmation; later secure-student fetch and reload contained persisted content."
+    },
+    {
+      "id": "emmi_revision",
+      "result": "pass_with_observation",
+      "evidence": "One normal whole-test revision returned requested question1 wording and retained working answers/points/audio; summary reports2 changed and1 protected image for an audio-only test; exact second change not established."
+    },
+    {
+      "id": "publish",
+      "result": "pass",
+      "evidence": "Own code WX48ZVJC published with normal teacher UI; no existing test publication changed."
+    },
+    {
+      "id": "anonymous_student_start",
+      "result": "pass",
+      "evidence": "Separate verified Firebase default origin with anonymous student access; code entry routed to secure-student and started with synthetic name."
+    },
+    {
+      "id": "resume",
+      "result": "pass",
+      "evidence": "After browser reload, two entered answers restored before final submission."
+    },
+    {
+      "id": "submit_auto_grade",
+      "result": "pass",
+      "evidence": "Deliberately one wrong answer: server receipt2/3 and67%; teacher table exactly1 graded submission with matching values. Submitted-page reload preserved receipt."
+    },
+    {
+      "id": "manual_grade",
+      "result": "pass",
+      "evidence": "Question2 score0->0.5 saved; teacher and student both2.5/3 and83%; restored0 and verified final2/3 in both views."
+    },
+    {
+      "id": "solution_gate",
+      "result": "pass",
+      "evidence": "Own test solution display disabled; student receipt states no solutions released before and after ending."
+    },
+    {
+      "id": "coco_context",
+      "result": "pass",
+      "evidence": "One normal support request answered correct SYSTEMTEST title and3 questions. No private past chat history included in evidence."
+    },
+    {
+      "id": "settings_tutorial_entry",
+      "result": "pass",
+      "evidence": "Permanent settings button loaded actual original Coco/Crew intro; full6-7minute tour not replayed. Reload exited intro without creating another tutorial test."
+    },
+    {
+      "id": "safe_end",
+      "result": "pass",
+      "evidence": "Own test safely ended with normal confirmation. Existing published count returned2->1; ended count15->16. Existing result retained after reload. One browser Return transport timeout reconciled via actual ended state, no action retry."
+    },
+    {
+      "id": "browser_errors",
+      "result": "pass",
+      "evidence": "No captured console errors in teacher or student tab at final check."
+    }
+  ],
+  "observations": [
+    {
+      "id": "footer_version",
+      "scope": "display_only",
+      "evidence": "index.html footer saysgc40; actual manifest, app module and meta aregc41."
+    },
+    {
+      "id": "emmi_revision_summary",
+      "scope": "wording_or_change_count_unresolved",
+      "evidence": "Protected audio labelled image; summary2 changes although only wording1 requested. Do not infer exact one-question adherence or model quality from this case."
+    }
+  ],
+  "notTested": [
+    "fresh_password_login",
+    "registration",
+    "password_reset_or_email",
+    "full_tutorial_completion",
+    "six_actual_new_signins",
+    "physical_iPad_iPhone_Safari",
+    "all_question_types",
+    "bulk_export_load_and_security_audit",
+    "independent_speech_quality"
+  ],
+  "productionChanged": false,
+  "productCodeChanged": false,
+  "deployTriggered": false,
+  "existingTeachingTestsModifiedByThisRun": false,
+  "ownStagingDataCreated": true,
+  "ordinaryProductStarts": {
+    "remy": 1,
+    "emmi": 1,
+    "coco": 1
+  },
+  "actualCost": "unknown",
+  "screenshots": [
+    "student-result.jpg",
+    "teacher-result.jpg",
+    "settings-tutorial-start.jpg"
+  ],
+  "handoff": "workstreams/dashboard-staging-smoke-20261018.md"
+}

@@ -543,7 +543,7 @@
       "production": "unchanged",
       "device_test": "not_performed",
       "handoff": "workstreams/dashboard-ipad-tutorial-20261018.md",
-      "next_action": "Martin checks the compact authenticated dashboard on a real iPad/iPhone and settings Tutorial replay; do not repeat deployment without new issue evidence.",
+      "next_action": "Track footer version and Emmi summary wording/count as scoped observations; real iPad/iPhone and remaining explicit acceptance boundaries remain open. No new deployment from this smoke request.",
       "preview_receipt": 12147502437,
       "verified_files": 167,
       "version": "2.3.1-gc41",
@@ -553,13 +553,27 @@
       "canonical_url": "https://hausaufgabe-staging.web.app/",
       "independent_public_hash_check": true,
       "browser_smoke": "actual public startup gc41 loaded with no captured console errors; no real account sign-in or counter mutation for acceptance",
-      "user_acceptance": "pending",
+      "user_acceptance": "agent_live_core_smoke_passed_with_observations; human_physical_device_pending",
       "unrelated_automatic_backend_attempt": {
         "run": 39158385700,
         "ai": "aborted in non-interactive deletion guard; twelve pre-existing learning functions absent from integration source retained; no force/delete/retry",
         "assessment": "success",
         "required_for_dashboard": false,
         "source_changes_by_this_task": false
+      },
+      "agent_live_smoke": {
+        "result": "passed_with_observations",
+        "source": "7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
+        "test_code": "WX48ZVJC",
+        "synthetic_submission": "1; expected and actual2/3; manual partial points roundtrip passed",
+        "coco_remy_emmi_audio": "actual normal product calls and playback passed",
+        "report": "workstreams/dashboard-staging-smoke-20261018.md",
+        "results": "workstreams/dashboard-staging-smoke-results-20261018.json",
+        "observations": [
+          "footer_version",
+          "emmi_revision_summary"
+        ],
+        "physical_device": "not_performed"
       }
     }
   },
@@ -1764,7 +1778,7 @@
         "mobile_tutorial": 39158225635
       },
       "device_test": "not_performed",
-      "next_action": "Martin checks the compact authenticated dashboard on a real iPad/iPhone and settings Tutorial replay; do not repeat deployment without new issue evidence.",
+      "next_action": "Track footer version and Emmi summary wording/count as scoped observations; real iPad/iPhone and remaining explicit acceptance boundaries remain open. No new deployment from this smoke request.",
       "integration": "7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
       "ci": "candidate39157540172; combined39158023424; integrated39158225634 all success",
       "canonical_run": 39158573068,
@@ -1774,7 +1788,21 @@
       "version": "2.3.1-gc41",
       "verified_files": 167,
       "independent_public_hash_check": true,
-      "user_test": "pending"
+      "user_test": "pending",
+      "agent_live_smoke": {
+        "result": "passed_with_observations",
+        "source": "7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
+        "test_code": "WX48ZVJC",
+        "synthetic_submission": "1; expected and actual2/3; manual partial points roundtrip passed",
+        "coco_remy_emmi_audio": "actual normal product calls and playback passed",
+        "report": "workstreams/dashboard-staging-smoke-20261018.md",
+        "results": "workstreams/dashboard-staging-smoke-results-20261018.json",
+        "observations": [
+          "footer_version",
+          "emmi_revision_summary"
+        ],
+        "physical_device": "not_performed"
+      }
     }
   ],
   "deployments": [
