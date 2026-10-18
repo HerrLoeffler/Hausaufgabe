@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-13",
+  "observed_at": "2026-10-18",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
+    "observed_integration_head": "5a248621f315c08e30a2639b162434526b4e7349",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -65,7 +65,7 @@
       "staging_rules": "secure_rules_live_exact_sha256195d40d6d65efa3edc7c647aba9a3004fd2dedbc584a0349bf9adc658ff90807_20261011",
       "desktop_ipad_iphone_test": "sourceauthoractualCuaDesktop/mobile/shortViewport +independentreview; liveanonymous/mobile/physicaldeviceunverified",
       "user_acceptance": "pending_gc39; no physical device, real practice submission, or paid generation test performed",
-      "production": "not_requested",
+      "production": "authorized_school_gc44_hosting_assets_verified_assessment7_feedback2_verified_20261018",
       "staging_assessment_functions": "success39156854952_receipt12147322047",
       "audio_v2_user_acceptance": "technical_staging_audio_start_and_resume_verified_29_questions; physical_device_acceptance_pending",
       "canonical_hosting": "success39158573068_receipt12147573847_commit_7a18445f"
@@ -73,7 +73,7 @@
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 167,
     "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate. Coco durable owner-only search/memory and contextual support PR179–183 now deployed with real own-account search/context checks; broader user/device acceptance separate.",
-    "next_action": "Martin checks gc41 compact dashboard on real iPad/iPhone and settings Tutorial replay; existing pedagogy/model-quality and other physical-device acceptance remain separate. Production not requested.",
+    "next_action": "Finish native candidate b43298b CI/TestFlight; physical iPad offline submit/restart/sync acceptance. Reload installed feedback connector and perform Live admin login before private feedback retrieval.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
@@ -578,10 +578,18 @@
     }
   },
   "production": {
-    "project": "hausaufgabe-40294",
+    "project": "hausaufgabe-staging",
     "approval_required": true,
-    "deployment_verified_this_session": false,
-    "changed_by_current_release_train": false
+    "deployment_verified_this_session": true,
+    "changed_by_current_release_train": true,
+    "legacy_project": "hausaufgabe-40294",
+    "legacy_project_changed": false,
+    "url": "https://hausaufgabe-staging.web.app/",
+    "version": "2.3.1-gc44",
+    "source_commit": "424473481a3bcb8818289f79f760772883f0492c",
+    "deployed_local_commit": "0de530730b78c25115f937ad224aab88ee22b650",
+    "tree": "c888657423cbba440545009c2ffebfe5405e8e65",
+    "user_acceptance": "current gc44 and new offline native policy physical acceptance pending"
   },
   "automation": {
     "preview_deployment": "verified_hosting_current_eb80_candidate",
@@ -2504,5 +2512,63 @@
     "handoff": "workstreams/fastquiz-binomial-20261012.md",
     "receipts": "workstreams/fastquiz-binomial-release-receipts-20261012.json",
     "next": "Martin opens isolated link, chooses Klasse10 binomial3minutes, creates fresh room, shares QR/code and starts after pupils join"
+  },
+  "test_environment": {
+    "project": "gradecrew-staging-2026",
+    "url": "https://gradecrew-staging-2026.web.app/",
+    "version": "2.3.1-gc44",
+    "separate_auth_firestore_storage_functions": true,
+    "functions_active": 38,
+    "automatic_deployment": "fail_closed_pending_STAGING2026_WIF_setup",
+    "manual_deployment": "verified"
+  },
+  "school_release_20261018": {
+    "handoff": "workstreams/live-staging-isolation-20261016.md",
+    "source_pr": 248,
+    "controller_pr": 244,
+    "source_ci": 39161102592,
+    "source_commit": "424473481a3bcb8818289f79f760772883f0492c",
+    "integration_commit": "5a248621f315c08e30a2639b162434526b4e7349",
+    "native_branch": "feature/native-live-staging-20261018",
+    "native_commit": "b43298b73d63707d2270ee4a3f4e49cf980dd606",
+    "teacher_testflight_run": 39161910081,
+    "secure_testflight_run": 39161910224,
+    "testflight_status": "running_not_uploaded",
+    "physical_acceptance": "pending_new_offline_policy",
+    "offline_policy": "unlock_only_after_verified_durable_local_submission_then_sync; block_new_attempt_until_server_receipt",
+    "live_functions": {
+      "active": 58,
+      "removed": 0,
+      "updated": [
+        "configurePracticeSolutionRelease",
+        "getAssessmentInfo",
+        "startAssessmentAttempt",
+        "resumeAssessmentAttempt",
+        "submitAssessmentAttempt",
+        "getAssessmentReceipt",
+        "cleanupAssessmentPrivateOnQuizDelete",
+        "reviewMode",
+        "recordCrewTelemetry"
+      ]
+    },
+    "teacher_feedback": {
+      "one_capture_path": true,
+      "pending_teacher_notes_require_admin_approval": true,
+      "connector_installed_version": "0.5.0",
+      "current_chat_reload_and_live_admin_login": "pending",
+      "private_live_notes_read": false
+    },
+    "backup": {
+      "date": "2026-10-16",
+      "private": true,
+      "auth_accounts": 41,
+      "firestore_documents": 3683,
+      "storage_objects": 55,
+      "storage_bytes": 4440874,
+      "checksums_verified": true,
+      "local_firestore_restore": true,
+      "complete_auth_disaster_recovery_test": false
+    },
+    "release_scope": "No data migration/deletion. Existing project remains school Live. Legacy project untouched. Website deployment is not App Store or physical AAC acceptance."
   }
 }

@@ -24,7 +24,9 @@ jobs:
           import json, pathlib
           data = json.loads(pathlib.Path('GRADECREW_STATE.json').read_text())
           assert data['schema_version'] == 2
-          assert data['production']['project'] == 'hausaufgabe-40294'
+          assert data['production']['project'] == 'hausaufgabe-staging'
+          assert data['production']['legacy_project'] == 'hausaufgabe-40294'
+          assert data['test_environment']['project'] == 'gradecrew-staging-2026'
           assert data['production']['approval_required'] is True
           assert data['automation']['agent_dispatch'] in {'not_configured', 'implemented_pending_credentials_and_e2e', 'verified'}
           expected = ['branch_only', 'ci_green', 'integrated', 'staging_deployed', 'user_tested', 'production']
