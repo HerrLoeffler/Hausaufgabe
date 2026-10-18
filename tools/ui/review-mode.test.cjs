@@ -79,3 +79,20 @@ test('releasing a region over sidebar ends drag before later pointer movement',a
 test('compact staging mode syncs existing notes without installing the area-marking shortcut',async t=>{
  const {w}=await fixture(t,null,{compact:true});assert.equal(w.document.body.id,'gradecrewPage');await settle();assert.equal(w.document.querySelector('[data-review-region]'),null);assert.equal(w.document.querySelector('[data-review-mark]'),null);
 });
+
+test('compact feedback offers one annotation control, sends a visual note and removes it on logout',async t=>{
+ const {w,calls,controller}=await fixture(t,d=>d.action==='access'?{admin:false,catalog:{checks:[]}}:null,{compact:true,environment:'production'});
+ w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};
+ w.HTMLDialogElement.prototype.close=function(){this.dispatchEvent(new w.Event('close'));};
+ w.document.body.getBoundingClientRect=()=>({left:0,top:0,width:1000,height:1000});
+ const feedback=w.document.querySelector('[data-gradecrew-feedback]');assert.ok(feedback,'teacher can open feedback');
+ assert.equal(w.document.querySelector('[data-review-toggle]'),null);
+ feedback.click();const overlay=w.document.querySelector('.gcLocalCapture');assert.ok(overlay);
+ overlay.dispatchEvent(new w.MouseEvent('pointerdown',{bubbles:true,clientX:100,clientY:100,button:0}));
+ overlay.dispatchEvent(new w.MouseEvent('pointerup',{bubbles:true,clientX:300,clientY:300,button:0}));
+ const input=w.document.querySelector('.gcLocalNote textarea');assert.ok(input);input.value='Diese Schrift ist abgeschnitten';
+ w.document.querySelector('.gcLocalNote form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await settle();
+ const sent=calls.find(c=>c.action==='create');assert.equal(sent.area,'visual-feedback');assert.equal(sent.text,input.value);assert.equal(sent.build,'test-build');
+ assert.equal(calls.some(c=>['approve','batch','transition','check'].includes(c.action)),false);
+ await controller.setSession(null);assert.equal(w.document.querySelector('[data-gradecrew-feedback]'),null);
+});

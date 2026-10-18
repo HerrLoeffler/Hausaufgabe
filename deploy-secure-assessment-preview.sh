@@ -5,8 +5,8 @@ cd "$(dirname "$0")"
 MODE="${1:---check}"
 case "$MODE" in --check|--deploy) ;; *) echo "Aufruf: bash deploy-secure-assessment-preview.sh --check oder --deploy"; exit 1 ;; esac
 
-PROJECT_ID="hausaufgabe-staging"
-PRODUCTION_ID="hausaufgabe-40294"
+PROJECT_ID="gradecrew-staging-2026"
+PRODUCTION_ID="hausaufgabe-staging"
 BRANCH="feature/secure-assessment-v1"
 CHANNEL="secure-assessment-v1"
 
@@ -27,7 +27,7 @@ if [[ "$(node -p 'process.versions.node.split(".")[0]')" != "22" ]]; then
   echo "FEHLER: Node 22 erforderlich. Bitte zuerst: nvm use 22"
   exit 1
 fi
-if ! grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js; then
+if ! grep -q 'projectId: "gradecrew-staging-2026"' firebase-config.staging.js; then
   echo "FEHLER: Staging-Konfiguration zeigt nicht auf $PROJECT_ID."
   exit 1
 fi
@@ -93,7 +93,7 @@ grep -q 'secure-draft-persistence.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'secure-deadline-guard.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'secure-result-policy.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
-grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
+grep -q 'gradecrew-staging-2026' "$BUILD_DIR/public/firebase-config.js"
 
 if [[ "$MODE" = "--check" ]]; then
   echo "Secure Assessment Preview geprüft. Es wurde nichts veröffentlicht."
@@ -117,7 +117,7 @@ Commit:  $(git rev-parse HEAD)
 
 1. Nur die isolierte Functions-Codebase "assessment" wird auf STAGING deployed.
 2. Die neue Oberfläche landet auf einem Preview Channel.
-3. https://hausaufgabe-staging.web.app bleibt unverändert.
+3. https://gradecrew-staging-2026.web.app bleibt unverändert.
 4. Firestore-Regeln werden noch NICHT verschärft.
 5. Production ($PRODUCTION_ID) bleibt unverändert.
 

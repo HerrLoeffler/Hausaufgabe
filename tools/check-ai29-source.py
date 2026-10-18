@@ -12,7 +12,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parent.parent
 BASE = "8dbfaaaaf022499610fd0a854fcb2836ebef9528"
 TARGETS = ("getAiStatus", "generateTest", "startAiTestJob", "processAiTestJob", "regenerateQuestion", "generateQuestionMedia", "analyzeMaterial")
-PROJECT = "hausaufgabe-staging"
+PROJECT = "gradecrew-staging-2026"
 # The uploaded 27 September backup showed that two functions still run the older
 # source. It contained the two-job lock and detailed image diagnostics, both of
 # which are integrated in this branch. Accept that exact source archive only.

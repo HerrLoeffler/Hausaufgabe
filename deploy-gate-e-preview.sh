@@ -5,8 +5,8 @@ cd "$(dirname "$0")"
 MODE="${1:---check}"
 case "$MODE" in --check|--deploy) ;; *) echo "Aufruf: bash deploy-gate-e-preview.sh --check oder --deploy"; exit 1 ;; esac
 
-PROJECT_ID="hausaufgabe-staging"
-PRODUCTION_ID="hausaufgabe-40294"
+PROJECT_ID="gradecrew-staging-2026"
+PRODUCTION_ID="hausaufgabe-staging"
 BRANCH="feature/gate-e-load-test"
 CHANNEL="gate-e-lab"
 
@@ -42,7 +42,7 @@ if [[ "$(node -p 'process.versions.node.split(".")[0]')" != "22" ]]; then
   echo "FEHLER: Node 22 konnte nicht aktiviert werden."
   exit 1
 fi
-if ! grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js; then
+if ! grep -q 'projectId: "gradecrew-staging-2026"' firebase-config.staging.js; then
   echo "FEHLER: Staging-Konfiguration zeigt nicht auf $PROJECT_ID."
   exit 1
 fi

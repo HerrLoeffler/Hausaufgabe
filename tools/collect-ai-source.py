@@ -11,7 +11,7 @@ import tempfile
 import uuid
 import zipfile
 
-PROJECT = "hausaufgabe-staging"
+PROJECT = "gradecrew-staging-2026"
 REGION = "europe-west1"
 FUNCTION = "processAiTestJob"
 MAX_FILE = 3 * 1024 * 1024

@@ -2,8 +2,8 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PROJECT_ID="hausaufgabe-staging"
-PRODUCTION_ID="hausaufgabe-40294"
+PROJECT_ID="gradecrew-staging-2026"
+PRODUCTION_ID="hausaufgabe-staging"
 BRANCH="feature/secure-assessment-v1"
 
 if [[ "$PROJECT_ID" == "$PRODUCTION_ID" ]]; then
@@ -23,7 +23,7 @@ if [[ "$(node -p 'process.versions.node.split(".")[0]')" != "22" ]]; then
   echo "FEHLER: Node 22 erforderlich. Bitte zuerst: nvm use 22"
   exit 1
 fi
-if ! grep -q 'projectId: "hausaufgabe-staging"' firebase-config.staging.js; then
+if ! grep -q 'projectId: "gradecrew-staging-2026"' firebase-config.staging.js; then
   echo "FEHLER: Staging-Konfiguration zeigt nicht auf $PROJECT_ID."
   exit 1
 fi
@@ -55,7 +55,7 @@ Branch:  $BRANCH
 Commit:  $(git rev-parse HEAD)
 
 Es werden ausschließlich die Functions der Codebase "assessment" auf
-hausaufgabe-staging veröffentlicht. Hosting, Firestore-Regeln, die bestehende
+gradecrew-staging-2026 veröffentlicht. Hosting, Firestore-Regeln, die bestehende
 AI-Codebase und Production ($PRODUCTION_ID) bleiben unverändert.
 EOF
 

@@ -2,7 +2,7 @@
 
 const crypto = require("node:crypto");
 
-const STAGING_PROJECT_ID = "hausaufgabe-staging";
+const STAGING_PROJECT_ID = "gradecrew-staging-2026";
 const POSTHOG_CAPTURE_URL = "https://eu.i.posthog.com/i/v0/e/";
 const POSTHOG_EVENT_PREFIX = "gradecrew.crew.";
 const DEFAULT_TIMEOUT_MS = 1200;

@@ -17,15 +17,15 @@ function regionValue(value) {
 }
 function createReviewService({store,projectId,now=Date.now}) {
  async function execute({uid,data={}}) {
-  if(projectId!=='hausaufgabe-staging')fail('failed-precondition','Überarbeitungsmodus nur auf Staging.');
+  if(!['hausaufgabe-staging','gradecrew-staging-2026'].includes(projectId))fail('failed-precondition','Feedback nur in der ausdrücklich freigegebenen GradeCrew-Umgebung.');
   if(!uid)fail('unauthenticated','Bitte anmelden.');id(uid);
   return store.transaction(async tx=>{
    const profile=await tx.get(`users/${uid}`),member=await tx.get(`reviewMembers/${uid}`);
    const admin=profile?.role==='admin';
-   if(!profile||(profile.status&&profile.status!=='active')||(!admin&&!(profile.role==='teacher'&&member?.enabled===true)))fail('permission-denied','Keine Berechtigung für den Überarbeitungsmodus.');
+   if(!profile||profile.accountDeletionId||(profile.status&&profile.status!=='active')||(!admin&&(profile.role!=='teacher'||member?.enabled===false)))fail('permission-denied','Keine Berechtigung für Feedback.');
    const requireAdmin=()=>{if(!admin)fail('permission-denied','Nur der Administrator darf diese Aktion ausführen.');};
    const quizAccess=async quizId=>{if(!quizId)return;const q=await tx.get(`quizzes/${id(quizId)}`);if(!q||(!admin&&q.ownerId!==uid))fail('permission-denied','Kein Zugriff auf diesen Test.');};
-   const feedbackValue=n=>({category:'screenshot_error',message:n.text,userId:n.authorId,authorId:n.authorId,displayName:n.authorId===uid?optional(profile.displayName,200):'',status:'new',createdAt:n.createdAt,updatedAt:now(),testCode:n.quizId||'',environment:'staging',reviewNoteId:n.id,reviewArea:'visual-feedback',view:n.view,target:n.target,build:n.build,...(n.region?{region:n.region}:{})});
+   const feedbackValue=n=>({category:'screenshot_error',message:n.text,userId:n.authorId,authorId:n.authorId,displayName:n.authorId===uid?optional(profile.displayName,200):'',status:'new',createdAt:n.createdAt,updatedAt:now(),testCode:n.quizId||'',environment:projectId==='hausaufgabe-staging'?'production':'staging',reviewNoteId:n.id,reviewArea:'visual-feedback',view:n.view,target:n.target,build:n.build,...(n.region?{region:n.region}:{})});
    async function ensureFeedback(n){if(n.area!=='visual-feedback'&&!(n.region&&!n.area))return false;const path=`feedback/visual-${n.id}`;if(await tx.get(path))return false;tx.set(path,feedbackValue(n));return true;}
    const action=data.action;
    if(action==='access')return {uid,admin,catalog};
@@ -46,16 +46,17 @@ function createReviewService({store,projectId,now=Date.now}) {
     for(const n of notes){await quizAccess(n.quizId);if(await ensureFeedback(n))imported++;}
     return {imported,nextCursor:notes.length===100?notes.at(-1).id:null};
    }
-   if(action==='list'||action==='batch'){
+   if(action==='list'||action==='batch'||action==='listTeacherFeedback'){
+    const teacherFeedback=action==='listTeacherFeedback';if(teacherFeedback)requireAdmin();
     if(action==='batch')requireAdmin();
     if(data.area && !['visual-feedback','general'].includes(data.area))fail('invalid-argument','Unbekannter Backlog-Bereich.');
     const author=data.authorId?id(data.authorId):'';if(author&&!admin&&author!==uid)fail('permission-denied','Kein Zugriff auf fremde Hinweise.');
     const cursor=data.cursor?id(data.cursor):'';
     const notes=await tx.list('reviewNotes',{owner:admin?null:uid,cursor,limit:100});
     const checks=action==='list'&&data.area!=='visual-feedback'?await tx.list('reviewChecks',{owner:admin?null:uid,cursor:data.checkCursor?id(data.checkCursor):'',limit:100}):[];
-    const visible=[];for(const n of notes){if(data.area&&(n.area||'general')!==data.area)continue;if(author&&n.authorId!==author)continue;if(action==='batch'&&n.area==='visual-feedback'&&(await tx.get(`feedback/visual-${n.id}`))?.status==='done')continue;try{await quizAccess(n.quizId);visible.push(n);}catch(e){if(e.code!=='permission-denied')throw e;}}
+    const visible=[];for(const n of notes){if(teacherFeedback&&(n.authorRole!=='teacher'||n.area!=='visual-feedback'))continue;if(data.area&&(n.area||'general')!==data.area)continue;if(author&&n.authorId!==author)continue;if(action==='batch'&&n.area==='visual-feedback'&&(await tx.get(`feedback/visual-${n.id}`))?.status==='done')continue;try{await quizAccess(n.quizId);visible.push(n);}catch(e){if(e.code!=='permission-denied')throw e;}}
     const eligible=n=>n.status!=='done'&&n.approval!=='rejected'&&(n.authorRole==='admin'||n.approvedContentRevision===n.contentRevision);
-    return {notes:action==='batch'?visible.filter(eligible):visible,checks,nextCursor:notes.length===100?notes.at(-1).id:null,nextCheckCursor:checks.length===100?checks.at(-1).id:null};
+    return {environment:projectId==='hausaufgabe-staging'?'production':'staging',notes:action==='batch'?visible.filter(eligible):visible,checks,nextCursor:notes.length===100?notes.at(-1).id:null,nextCheckCursor:checks.length===100?checks.at(-1).id:null};
    }
    if(action==='create'){
     const clientRequestId=id(data.clientRequestId),noteId=hash(`${uid}:${clientRequestId}`);
@@ -71,6 +72,7 @@ function createReviewService({store,projectId,now=Date.now}) {
     tx.set(`reviewNotes/${noteId}`,n);tx.set(`reviewNotes/${noteId}/history/1`,{action,actor:uid,at:now(),revision:1});await ensureFeedback(n);return {note:n};
    }
    if(action==='check'){
+    requireAdmin();
     const checkId=id(data.checkId),definition=catalog.checks.find(c=>c.id===checkId);
     if(!definition||definition.method==='automated'||(data.method&&data.method!=='manual')||!['passed','failed','blocked'].includes(data.result))fail('invalid-argument','Ungültige manuelle Prüfung.');
     const build=text(data.build,100),evidence=text(data.evidence,1500),checkKey=hash(`${uid}:${checkId}:${build}`);

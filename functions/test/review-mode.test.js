@@ -12,8 +12,8 @@ function setup(projectId='hausaufgabe-staging') {
  return {docs,call:(uid,data)=>service.execute({uid,data})};
 }
 const note={action:'create',clientRequestId:'note-12345678',text:'Bitte den Text kürzen',target:'hero-title',view:'authView',build:'abc1234',locale:'de',scene:'welcome'};
-test('review denies anonymous, ordinary teachers, inactive accounts and production',async()=>{
- const s=setup(); for(const uid of ['', 'other']) await assert.rejects(s.call(uid,note),e=>['unauthenticated','permission-denied'].includes(e.code));
+test('review denies anonymous, unknown roles, inactive accounts and the legacy project',async()=>{
+ const s=setup();s.docs.set('users/student',{role:'student'});for(const uid of ['', 'student']) await assert.rejects(s.call(uid,note),e=>['unauthenticated','permission-denied'].includes(e.code));
  s.docs.set('users/admin',{role:'admin',status:'suspended'});await assert.rejects(s.call('admin',note),{code:'permission-denied'});
  await assert.rejects(setup('hausaufgabe-40294').call('admin',note),{code:'failed-precondition'});
 });
@@ -53,9 +53,10 @@ test('teacher sees own notes only; admin workflow needs preview and acceptance e
 test('check records require known catalog id, tested build, result and evidence; cannot fake automated pass',async()=>{
  const s=setup();await assert.rejects(s.call('admin',{action:'check',checkId:'GC-TUTORIAL-01',build:'abc',result:'passed'}),{code:'invalid-argument'});
  await assert.rejects(s.call('admin',{action:'check',checkId:'injected',build:'abc',result:'passed',evidence:'checked'}),{code:'invalid-argument'});
- await s.call('teacher',{action:'check',checkId:'GC-TUTORIAL-01',build:'abc',result:'failed',evidence:'Abgabe reagiert nicht',method:'manual'});
- const r=await s.call('teacher',{action:'list'});assert.equal(r.checks[0].result,'failed');assert.equal(r.checks[0].method,'manual');
- await assert.rejects(s.call('teacher',{action:'check',checkId:'GC-TUTORIAL-01',build:'abc',result:'passed',evidence:'test',method:'automated'}),{code:'invalid-argument'});
+ await assert.rejects(s.call('teacher',{action:'check',checkId:'GC-TUTORIAL-01',build:'abc',result:'failed',evidence:'Abgabe reagiert nicht',method:'manual'}),{code:'permission-denied'});
+ await s.call('admin',{action:'check',checkId:'GC-TUTORIAL-01',build:'abc',result:'failed',evidence:'Abgabe reagiert nicht',method:'manual'});
+ const r=await s.call('admin',{action:'list'});assert.equal(r.checks[0].result,'failed');assert.equal(r.checks[0].method,'manual');
+ await assert.rejects(s.call('admin',{action:'check',checkId:'GC-TUTORIAL-01',build:'abc',result:'passed',evidence:'test',method:'automated'}),{code:'invalid-argument'});
 });
 test('admin can list selectable teachers without exposing email or private profile fields',async()=>{
  const s=setup();s.docs.set('users/teacher',{role:'teacher',displayName:'Testlehrkraft',email:'private@example.test',secret:'no'});
@@ -84,4 +85,30 @@ test('visual feedback has its own batch and never mixes general notes or checks'
 test('frame notes arrive in Feedback/Screenshot-Fehler exactly once and old online frames are restored',async()=>{
  const s=setup();const {note:n}=await s.call('admin',{...note,area:'visual-feedback'});const path='feedback/visual-'+n.id;assert.equal(s.docs.get(path).category,'screenshot_error');assert.equal(s.docs.get(path).message,n.text);s.docs.delete(path);const r=await s.call('admin',{action:'syncVisualFeedback'});assert.equal(r.imported,1);s.docs.set(path,{...s.docs.get(path),status:'done'});await s.call('admin',{action:'syncVisualFeedback'});assert.equal(s.docs.get(path).status,'done');await assert.rejects(s.call('teacher',{action:'syncVisualFeedback'}),{code:'permission-denied'});
  const generic=await s.call('admin',{...note,clientRequestId:'generic'});assert.equal(s.docs.has('feedback/visual-'+generic.note.id),false);
+});
+
+test('active teachers can submit compact feedback without individual enrollment on live and separate staging',async()=>{
+ for(const project of ['hausaufgabe-staging','gradecrew-staging-2026']){
+  const s=setup(project);s.docs.delete('reviewMembers/teacher');
+  const {note:n}=await s.call('teacher',{...note,area:'visual-feedback',authorRole:'admin',approval:'approved'});
+  assert.equal(n.authorRole,'teacher');assert.equal(n.approval,'pending');
+  assert.equal((await s.call('admin',{action:'batch',area:'visual-feedback'})).notes.length,0);
+  for(const action of ['batch','members','check','listTeacherFeedback'])await assert.rejects(s.call('teacher',{action}),{code:'permission-denied'});
+  await assert.rejects(s.call('teacher',{...note,clientRequestId:'foreign',quizId:'theirs'}),{code:'permission-denied'});
+ }
+});
+test('admin teacher-feedback read includes pending teacher notes and paginates across mixed authors',async()=>{
+ const s=setup();s.docs.delete('reviewMembers/teacher');
+ for(let i=0;i<108;i++)await s.call(i%2?'teacher':'admin',{...note,clientRequestId:'mixed-'+i,area:'visual-feedback'});
+ await s.call('teacher',{...note,clientRequestId:'general-note'});
+ let cursor='',all=[],pages=0;
+ do{const r=await s.call('admin',{action:'listTeacherFeedback',cursor});all.push(...r.notes);cursor=r.nextCursor||'';pages++;assert.equal(r.environment,'production');}while(cursor);
+ assert.ok(pages>1);assert.equal(all.length,54);assert.equal(new Set(all.map(n=>n.id)).size,54);
+ assert.ok(all.every(n=>n.authorRole==='teacher'&&n.approval==='pending'&&n.area==='visual-feedback'));
+});
+test('deleted or suspended teacher cannot submit feedback',async()=>{
+ const s=setup();s.docs.delete('reviewMembers/teacher');
+ for(const profile of [{role:'teacher',status:'suspended'},{role:'teacher',status:'active',accountDeletionId:'operation'}]){
+  s.docs.set('users/teacher',profile);await assert.rejects(s.call('teacher',{...note,area:'visual-feedback'}),{code:'permission-denied'});
+ }
 });

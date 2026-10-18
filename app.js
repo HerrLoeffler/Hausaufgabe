@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc41";
+const APP_VERSION = "2.3.1-gc44";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -38,14 +38,14 @@ import {
   Timestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
-import { createAccountController } from "./admin-account-actions.mjs?v=2";
+import { createAccountController } from "./admin-account-actions.mjs?v=3";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-gc40";
-import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc40";
+import { createAiClient } from "./ai-client.js?v=2.3.1-gc43";
+import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc43";
+import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc43";
 import { recordTutorialSignIn } from "./tutorial-signins.mjs?v=1";
 import { syncDashboardTutorialEntry } from "./dashboard-tutorial-entry.mjs?v=1";
-import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc40";
 import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";
@@ -1027,13 +1027,10 @@ function safeDialogClose(dialog) {
 
 function setTeacherBar() {
   const loggedIn = Boolean(state.user) && !new URLSearchParams(location.search).has("test");
-  const hostname = String(location.hostname || "").replace(/^\[|\]$/g, "").toLowerCase();
-  const localWorkbenchHost = ["localhost", "127.0.0.1", "::1"].includes(hostname);
   $("userBar").classList.toggle("hidden", !loggedIn);
   syncDashboardTutorialEntry(document, { enabled: loggedIn && !guestTourRepo, dashboard: !$("dashboardView").classList.contains("hidden"), count: state.profile?.crewTourSignInCount });
   $("userLabel").textContent = state.profile?.displayName || state.user?.displayName || state.user?.email || "";
   $("adminTopBtn")?.classList.toggle("hidden", !loggedIn || !isAdmin());
-  $("gradecrewEtLauncher")?.classList.toggle("hidden", !loggedIn || !isAdmin() || localWorkbenchHost);
   $("appFooter")?.classList.toggle("hidden", !loggedIn);
 }
 
@@ -1055,7 +1052,7 @@ function renderBugOpsAttentionBadge(summary = state.bugOpsSummary) {
 async function refreshBugOpsAttention({ notify = false } = {}) {
   if (!state.user || !isAdmin() || typeof aiApi.getBugOpsSummary !== "function") {
     state.bugOpsSummary = null;
-    if (appEnvironment === "staging") void reviewController?.setSession(null);
+    if (["production", "staging"].includes(appEnvironment)) void reviewController?.setSession(null);
     renderBugOpsAttentionBadge(null);
     return null;
   }
@@ -1244,7 +1241,7 @@ onAuthStateChanged(auth, async (user) => {
     state.adminAudit = [];
     state.adminFeedback = [];
     state.bugOpsSummary = null;
-    if (appEnvironment === "staging") void reviewController?.setSession(null);
+    if (["production", "staging"].includes(appEnvironment)) void reviewController?.setSession(null);
     renderBugOpsAttentionBadge(null);
     $("adminAuditList")?.replaceChildren();
     $("adminFeedbackList")?.replaceChildren();
@@ -1296,7 +1293,7 @@ onAuthStateChanged(auth, async (user) => {
     : { state: "signedOut" };
   window.GradeCrewNative?.setAuthState?.(nativeAuthState)?.catch(() => {});
   setTeacherBar();
-  if (appEnvironment === "staging") void reviewController?.setSession(user ? { uid: user.uid } : null);
+  if (["production", "staging"].includes(appEnvironment)) void reviewController?.setSession(user ? { uid: user.uid } : null);
   if (user && isAdmin()) void refreshBugOpsAttention({ notify: true });
 
   const params = new URLSearchParams(location.search);
@@ -1805,20 +1802,20 @@ function renderQuizList() {
       <div class="quizStats">
         <div><strong>${Number(q.questionCount || 0)}</strong><span>Aufgaben</span></div>
         <div><strong>${Number(q.totalPoints || 0)}</strong><span>Punkte</span></div>
-        ${Number(q.timeLimitMinutes) > 0 ? `<div><strong>${Number(q.timeLimitMinutes)}</strong><span>Minuten</span></div>` : ""}
-        ${q.startMode === "teacher" ? `<div><strong>Gemeinsam</strong><span>Start</span></div>` : ""}
+        ${Number(q.timeLimitMinutes) > 0 ? `<div><strong>${Number(q.timeLimitMinutes)}</strong><span>Minuten</span></div>` : `<div><strong>–</strong><span>Ohne Zeitlimit</span></div>`}
+        <div><strong>${q.startMode === "teacher" ? "Lehrkraft" : "Schüler"}</strong><span>Start</span></div>
       </div>
       <div class="quizActions primaryQuizActions">
-        <button class="button ${q.published ? "secondary" : "primary"} edit">Bearbeiten</button>
-        <button class="button ${q.published ? "primary" : "secondary"} results">Ergebnisse</button>
-        ${q.published && !q.ended && !q.rightsHold && !secureAudioPublicationBlocked(q) ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
+        <button class="button primary edit">Bearbeiten</button>
+        <button class="button secondary results">Ergebnisse</button>
       </div>
       <details class="quizMore"><summary>Weitere Aktionen</summary>
         <div class="quizActions secondaryQuizActions">
+          ${q.published && !q.ended && !q.rightsHold && !secureAudioPublicationBlocked(q) ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
           ${q.rightsHold ? "" : '<button class="button ghost duplicate">Duplizieren</button><button class="button ghost teacherShare">Mit Kollegen teilen</button>'}
           ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost end">Beenden</button>` : ""}
           ${q.ended && !q.rightsHold ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
-          <button class="button danger remove">Löschen</button>
+          <button class="button danger remove quizDeleteButton" type="button" aria-label="Test in den Papierkorb" title="Test in den Papierkorb"><svg class="gcWorkspaceIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></svg></button>
         </div>
       </details>`;
     card.querySelector(".dashboardPublishToggle")?.addEventListener("change", event => toggleDashboardPublished(q, event.currentTarget));
@@ -6605,11 +6602,9 @@ function renderGapfillStudent(section, q) {
   while ((match = regex.exec(q.text))) {
     appendText(q.text.slice(last, match.index));
     const input = document.createElement("input");
-    const color = q.gapColors?.[gapIndex];
-    input.className = `inlineGap${["blue", "orange", "green", "purple"].includes(color) ? ` gapColor-${color}` : ""}`;
+    input.className = "inlineGap";
     input.dataset.gapIndex = String(gapIndex++);
     input.type = "text";
-    input.placeholder = "…";
     wrap.appendChild(input);
     last = match.index + match[0].length;
   }
@@ -7770,7 +7765,8 @@ function renderResultsTable() {
   state.submissions.forEach((s) => {
     const duration = formatDuration(s.elapsedSeconds);
     const autoTag = s.autoSubmitted ? ` <span class="pill timedOut">Auto</span>` : "";
-    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${s.status === "review" ? "review" : "graded"}">${s.status === "review" ? "Prüfen" : "Bewertet"}</span>${autoTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(s.studentName)}">Bewerten</button></td></tr>`;
+    const recoveryTag = s.recoveryReviewRequired ? ` <span class="pill review">${s.status === "review" ? "Nachübertragung · bitte prüfen" : "Nachübertragung geprüft"}</span>` : "";
+    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${s.status === "review" ? "review" : "graded"}">${s.status === "review" ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(s.studentName)}">Bewerten</button></td></tr>`;
   });
   html += "</tbody></table>";
   wrap.innerHTML = html;
@@ -9265,7 +9261,7 @@ document.addEventListener("gradecrew:coco-guide", event => {
 });
 
 // Review UI uses a separate callable; never the paid AI proxy or public feedback.
-if (["staging", "local-review"].includes(appEnvironment)) {
+if (["production", "staging", "local-review"].includes(appEnvironment)) {
   const reviewApi = createAiClient(app, () => state.user?.uid || "");
   const localReview = appEnvironment === "local-review" && ["localhost", "127.0.0.1"].includes(location.hostname);
   const openScene = localReview ? scene => new Promise((resolve,reject) => {
@@ -9298,7 +9294,7 @@ if (["staging", "local-review"].includes(appEnvironment)) {
     }
   };
   reviewController = installReviewMode({
-    document, api: payload => reviewApi.reviewMode(payload), local: localReview, compact: !localReview, openScene, navigate:navigateReview,
+    document, api: payload => reviewApi.reviewMode(payload), local: localReview, compact: !localReview, environment:appEnvironment, openScene, navigate:navigateReview,
     getContext: () => ({view: views.find(id => !$(id)?.classList.contains("hidden")) || "authView", build: reviewBuild,
       scene: localReview ? reviewScene : "", locale: document.documentElement.lang.startsWith("en") ? "en" : "de",
       quizId: localReview ? "" : !$("studentView")?.classList.contains("hidden") ? $("studentQuizCard")?.dataset.reviewQuizId || "" : ["editorView","publishView"].some(id => !$(id)?.classList.contains("hidden")) ? state.currentQuiz?.id || "" : !$("resultsView")?.classList.contains("hidden") ? state.currentResultsQuiz?.id || "" : ""}),

@@ -12,6 +12,7 @@ import { assessmentContentLabels } from './shared/i18n/assessment-locale.mjs';
 import { DEMO_TEST } from './gradecrew-tour.js?v=2.3.1-gc21';
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from './ordering-grading.mjs';
 import { formatMathText } from './shared/math-display.mjs';
+import { installReviewMode } from './review-mode.mjs';
 
 test('app entry parses as the ES module used by the browser', () => {
   execFileSync(process.execPath, ['--input-type=module', '--check'], { input: fs.readFileSync('app.js'), stdio: 'pipe' });
@@ -121,7 +122,7 @@ test('app bootstrap binds its real auth controls after public entry installation
     const announcementReads = [];
     const forbidden = () => { forbiddenCalls += 1; throw new Error('Guest tutorial reached a provider'); };
     const bindings = {
-      initializeApp: () => ({}), getAuth: () => ({}), getFirestore: () => ({}), createAiClient: () => new Proxy({}, { get: () => forbidden }),
+      initializeApp: () => ({}), getAuth: () => ({}), getFirestore: () => ({}), createAiClient: () => new Proxy({}, { get: () => forbidden }), installReviewMode,
       firebaseSignIn: (...args) => { loginCalls.push(args); return Promise.resolve({ user: {} }); },
       createDiagnostics: () => ({ record: noop, setRelease: noop }), installDiagnostics: noop,
       createQuickRemyBridge: () => ({ authChanged: noop, prepare: async () => ({}), submit: async () => ({}), recoverPending: async () => ({ status: 'none' }) }),

@@ -1,10 +1,11 @@
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { assertDeploymentTarget } from './environments.mjs';
 
 const expected = JSON.parse(await readFile(process.argv[2], 'utf8'));
-if (expected.project !== 'hausaufgabe-staging') throw new Error('Staging verification only.');
+const environment = assertDeploymentTarget(expected.environment, expected.project);
 
-const origin = 'https://hausaufgabe-staging.web.app';
+const origin = environment.origin;
 const assets = Object.keys(expected.files);
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));

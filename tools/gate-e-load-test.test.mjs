@@ -6,7 +6,7 @@ const source = await readFile(new URL("./gate-e-load-test.mjs", import.meta.url)
 const tour = await readFile(new URL("../gradecrew-tour-v8.js", import.meta.url), "utf8");
 
 test("Gate E runner is fail-closed to staging and bounded", () => {
-  assert.match(source, /const PROJECT_ID = "hausaufgabe-staging"/);
+  assert.match(source, /const PROJECT_ID = "gradecrew-staging-2026"/);
   assert.match(source, /const REGION = "europe-west1"/);
   assert.match(source, /const MAX_PARTICIPANTS = 50/);
   assert.match(source, /const DEFAULT_PARTICIPANTS = 30/);

@@ -1,11 +1,10 @@
 export const firebaseConfig = {
-  apiKey: "AIzaSyB9M7jPOlgiqltTSDjv_Rem0g8s87LEIKE",
-  authDomain: "hausaufgabe-staging.firebaseapp.com",
-  projectId: "hausaufgabe-staging",
-  storageBucket: "hausaufgabe-staging.firebasestorage.app",
-  messagingSenderId: "950775032930",
-  appId: "1:950775032930:web:5b4be866a025b1a33a753b",
-  measurementId: "G-WXFB57TPXB"
+  apiKey: "AIzaSyDDbQoVjx3HLJa5fxtLJ94PhnaWVcM6bSQ",
+  authDomain: "gradecrew-staging-2026.firebaseapp.com",
+  projectId: "gradecrew-staging-2026",
+  storageBucket: "gradecrew-staging-2026.firebasestorage.app",
+  messagingSenderId: "840345136563",
+  appId: "1:840345136563:web:0bff6e2ce23627bf8eefc6"
 };
 
 export const appEnvironment = "staging";

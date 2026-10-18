@@ -3,14 +3,16 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import { getEnvironment } from './environments.mjs';
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const destination = process.argv[2];
+const environment = getEnvironment(process.argv[3] || 'staging');
 if (!destination || !path.isAbsolute(destination)) throw new Error('An absolute, empty build directory is required.');
 const output = path.join(destination, 'public');
 await fs.mkdir(output, { recursive: true });
 if ((await fs.readdir(output)).length) throw new Error('Build directory must be empty.');
-const config = await fs.readFile(path.join(root, 'firebase-config.staging.js'), 'utf8');
-if (!config.includes('projectId: "hausaufgabe-staging"') || !config.includes('appEnvironment = "staging"')) throw new Error('Not a staging configuration.');
+const config = await fs.readFile(path.join(root, environment.configFile), 'utf8');
+if (!config.includes(`projectId: "${environment.projectId}"`) || !config.includes(`appEnvironment = "${environment.name}"`)) throw new Error('Firebase configuration contradicts the explicit release environment.');
 const files = [
   'review-capture.mjs', 'review-mode.mjs', 'review-store.mjs', 'review-mode.css', 'functions/lib/review-checks.json',
   'diagnostics.mjs', 'admin-log-tools.mjs', 'bug-ops.mjs', 'student-submit-confirm.mjs', 'practice-solution-publication.mjs', 'secure-audio-publication.mjs', 'guest-tour-port.mjs', 'index.html', 'startup.js', 'staging-short-login.mjs', 'gradecrew-entry-flow.js', 'shared/math-display.mjs', 'shared/i18n/i18n-core.mjs', 'shared/i18n/browser-runtime.mjs', 'shared/i18n/messages-de-DE.mjs', 'shared/i18n/messages-en-GB.mjs', 'shared/i18n/extensions-en-GB-crew.mjs', 'shared/i18n/assessment-locale.mjs', 'shared/i18n/assessment-locale-ui.mjs', 'shared/i18n/bootstrap.mjs', 'app.js', 'interface.js', 'styles.css', 'generated/gradecrew-design-tokens.css', 'generated/gradecrew-assets.js', 'design-system.css', 'gradecrew-brand.css', 'gradecrew-logo.css', 'crew-clay.css', 'workspace.css', 'gradecrew-dashboard-foundation.css', 'gradecrew-auth-startscreen.css', 'gradecrew-auth-startscreen-polish.css', 'gradecrew-tour.css', 'tutorial-choice-v1.css',
@@ -76,10 +78,10 @@ const html = await fs.readFile(path.join(output, 'index.html'), 'utf8');
 const version = html.match(/name="app-version" content="([^"]+)"/)[1];
 const app = await fs.readFile(path.join(output, 'app.js'), 'utf8');
 if (!app.includes(`APP_VERSION = "${version}"`)) throw new Error('App and HTML versions differ.');
-const release = { project: 'hausaufgabe-staging', version, commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), files: hashes };
+const release = { project: environment.projectId, environment: environment.name, version, commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), files: hashes };
 await fs.writeFile(path.join(output, 'release.json'), JSON.stringify(release, null, 2) + '\n');
 await fs.writeFile(path.join(destination, 'firebase.json'), JSON.stringify({ hosting: {
-  site: 'hausaufgabe-staging', public: 'public', ignore: ['**/.*'],
+  site: environment.projectId, public: 'public', ignore: ['**/.*'],
   headers: [{ source: '**', headers: [{ key: 'Cache-Control', value: 'no-cache' }] }]
 } }, null, 2) + '\n');
-console.log(`Staging build verified: ${version}, ${files.length} files.`);
+console.log(`${environment.name} build verified: ${version}, ${files.length} files, ${environment.projectId}.`);
