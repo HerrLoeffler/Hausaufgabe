@@ -12,6 +12,26 @@ async function fixture(overrides={}){
 }
 const flush=()=>new Promise(r=>setImmediate(r));
 const click=(f,selector)=>{const el=f.root.querySelector(selector);assert.ok(el,selector);el.click();return el;};
+test('37 selected accounts explain the 20-account limit beside disabled bulk controls; reducing to 20 previews the exact selection',async()=>{
+ const f=await fixture(),rows=Array.from({length:37},(_,i)=>({id:`synthetic${i}`,role:'teacher',status:'active',displayName:`Synthetic ${i}`}));
+ f.controller.render(rows,{allUsers:rows});click(f,'[data-select-all]');
+ assert.equal(f.root.querySelector('[data-selected-count]').textContent,'37 ausgewählt');
+ const hint=f.root.querySelector('.adminAccountToolbar [data-selection-limit]');
+ assert.ok(hint,'limit explanation is inside the action toolbar');assert.match(hint.textContent,/20/);assert.match(hint.textContent,/17.*abwählen/);
+ for(const button of f.root.querySelectorAll('[data-bulk-action]')){assert.equal(button.disabled,true);assert.equal(button.getAttribute('aria-describedby'),hint.id);}
+ click(f,'[data-bulk-action="delete"]');await f.controller.start('delete',rows.map(r=>r.id));await flush();
+ assert.equal(f.calls.length,0);assert.equal(f.root.querySelector('dialog'),null);
+ for(let i=20;i<37;i++)click(f,`[data-select-account="synthetic${i}"]`);
+ assert.equal(f.root.querySelector('[data-selected-count]').textContent,'20 ausgewählt');assert.doesNotMatch(f.root.querySelector('[data-selection-limit]').textContent,/abwählen/);
+ assert.equal(f.root.querySelector('[data-bulk-action="delete"]').disabled,false);click(f,'[data-bulk-action="delete"]');await flush();
+ assert.deepEqual(f.calls[0].data.targets,rows.slice(0,20).map(r=>r.id));assert.equal(f.calls.length,1);assert.ok(f.root.querySelector('dialog'));click(f,'[data-cancel]');
+});
+test('filtering or clearing oversized selection removes the warning and restores normal bulk availability',async()=>{
+ const f=await fixture(),rows=Array.from({length:21},(_,i)=>({id:`synthetic${i}`,role:'teacher',status:'active'}));
+ f.controller.render(rows);click(f,'[data-select-all]');assert.equal(f.root.querySelector('[data-bulk-action="delete"]').disabled,true);
+ f.controller.render(rows.slice(0,1));assert.equal(f.root.querySelector('[data-selected-count]').textContent,'1 ausgewählt');assert.equal(f.root.querySelector('[data-bulk-action="delete"]').disabled,false);assert.doesNotMatch(f.root.querySelector('[data-selection-limit]').textContent,/abwählen/);
+ click(f,'[data-clear-selection]');assert.equal(f.root.querySelector('[data-bulk-action="delete"]').disabled,true);assert.doesNotMatch(f.root.querySelector('[data-selection-limit]').textContent,/abwählen/);assert.equal(f.calls.length,0);
+});
 test('test-ending deletion displays exact tests before confirmation and only executes the saved operation',async()=>{
  const calls=[];const f=await fixture({call:async(name,data)=>{calls.push({name,data});if(name==='previewAdminAccountAction')return{operationId:'combined',targets:[{id:'t',label:'T',code:'allowed',testsToEnd:[{id:'CODE01',title:'Synthetic assessment'}]}],extent:'Tests, Abgaben und Ergebnisse bleiben erhalten.'};return{status:'complete',outcomes:[{id:'t',code:'complete'}]};}});
  click(f,'[data-account-id="t"] [data-row-action="delete"]');await flush();const d=f.root.querySelector('dialog');assert.match(d.querySelector('h2').textContent,/Tests beenden und Konten löschen/);assert.match(d.textContent,/Synthetic assessment/);assert.match(d.textContent,/CODE01/);assert.equal(calls.length,1);assert.equal(calls[0].data.action,'delete');assert.match(d.querySelector('[data-confirm]').textContent,/Tests beenden und Konten löschen/);click(f,'[data-confirm]');await flush();assert.deepEqual(calls[1],{name:'executeAdminAccountAction',data:{operationId:'combined'}});
