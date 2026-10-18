@@ -5,8 +5,8 @@ import vm from 'node:vm';
 import { JSDOM } from 'jsdom';
 import { secureAudioPublicationBlocked } from '../../secure-audio-publication.mjs';
 import { installWorkspaceUpgrade } from '../../gradecrew-workspace-upgrade.mjs';
-import { registerCatalog, setActiveUiLocale, translateTree, translateSource } from '../../shared/i18n/browser-runtime.mjs?v=3';
-import { enGBMessages } from '../../shared/i18n/messages-en-GB.mjs?v=2';
+import { registerCatalog, registerSourcePatterns, setActiveUiLocale, translateTree, translateSource } from '../../shared/i18n/browser-runtime.mjs?v=3';
+import { enGBMessages, enGBSourcePatterns } from '../../shared/i18n/messages-en-GB.mjs?v=2';
 const html = fs.readFileSync(new URL('../../index.html',import.meta.url),'utf8');
 const app = fs.readFileSync(new URL('../../app.js',import.meta.url),'utf8');
 const workspaceCss = fs.readFileSync(new URL('../../gradecrew-workspace-upgrade.css',import.meta.url),'utf8');
@@ -78,7 +78,47 @@ test('the card trash action is icon-only, named for assistive tech and keeps del
 test('card spacing remains a fixed four-column grid on desktop and two-column grid on phones',()=>{
  assert.match(workspaceCss,/\.quizStats\s*\{[^}]*grid-template-columns:\s*repeat\(4,minmax\(0,1fr\)\)/s);
  assert.match(workspaceCss,/@media \(max-width: 650px\)[\s\S]*\.quizStats\s*\{[^}]*grid-template-columns:\s*repeat\(2,minmax\(0,1fr\)\)/);
+ assert.match(workspaceCss,/\.quizStats strong\s*\{[^}]*min-height:\s*2\.4em/s);
+ assert.match(workspaceCss,/\.quizStats span\s*\{[^}]*min-height:\s*2\.4em/s);
+ assert.match(workspaceCss,/@media \(max-width: 650px\)[\s\S]*\.quizStats :is\(strong,span\)\s*\{[^}]*min-height:\s*0/s);
+ assert.match(workspaceCss,/\.quizGrid\s*\{[^}]*align-items:\s*stretch/s);
+ assert.match(workspaceCss,/\.primaryQuizActions\s*\{[^}]*margin-top:\s*auto/s);
  assert.match(workspaceCss,/\.quizDeleteButton\s*\{[^}]*width:\s*44px/s);
+});
+test('a 70–95-character test title stays complete and keeps the same action structure',()=>{
+ const x=setup();try {
+  const fullTitle='Nomen und Adjektive – lustige Sprachaufgaben für die ganze fünfte Klasse';
+  assert.ok(fullTitle.length>=70&&fullTitle.length<=95);
+  x.state.quizzes[0].title=fullTitle;
+  vm.runInContext('renderQuizList()',x.context);x.api.refresh();
+  const [draft,published]=x.document.querySelectorAll('#quizList .quizCard');
+  assert.equal(draft.querySelector('h3').textContent,fullTitle);
+  assert.deepEqual([...draft.querySelectorAll('.primaryQuizActions button')].map(button=>button.textContent),[...published.querySelectorAll('.primaryQuizActions button')].map(button=>button.textContent));
+  assert.equal(draft.querySelectorAll('.quizStats > div').length,published.querySelectorAll('.quizStats > div').length);
+ }finally{x.close();}
+});
+test('all visible card controls and metadata translate to English while authored titles stay unchanged',()=>{
+ const x=setup();try {
+  x.state.quizzes[0].timeLimitMinutes=15;x.state.quizzes[0].startMode='teacher';
+  vm.runInContext('renderQuizList()',x.context);x.api.refresh();
+  registerCatalog('en-GB',enGBMessages);
+  registerSourcePatterns('en-GB',enGBSourcePatterns);
+  globalThis.document=x.document;globalThis.NodeFilter=x.dom.window.NodeFilter;
+  setActiveUiLocale('en-GB');translateTree(x.$('dashboardView'));
+  const [draft,published]=x.document.querySelectorAll('#quizList .quizCard');
+  assert.equal(draft.querySelector('h3').textContent,x.state.quizzes[0].title);
+  assert.equal(draft.querySelector('.meta').textContent,'Mathematik · Class 5 · Code ONE');
+  assert.deepEqual([...draft.querySelectorAll('.primaryQuizActions button')].map(button=>button.textContent),['Edit','Results']);
+  assert.deepEqual([...draft.querySelectorAll('.quizStats > div')].map(row=>row.querySelector('span').textContent),['Questions','Points','Minutes','Start']);
+  assert.equal(draft.querySelector('.quizStats > div:last-child strong').textContent,'Teacher');
+  assert.equal(published.querySelector('.quizStats > div:nth-child(3) span').textContent,'No time limit');
+  assert.equal(published.querySelector('.studentShare').textContent,'Student link');
+  assert.equal(published.querySelector('.quizMore summary').textContent,'More actions');
+  assert.equal(published.querySelector('.quizDeleteButton').getAttribute('aria-label'),'Move test to trash');
+  assert.equal(published.querySelector('.quizDeleteButton').getAttribute('title'),'Move test to trash');
+  assert.equal(published.querySelector('.dashboardPublishToggle').getAttribute('aria-label'),'Toggle publication');
+  assert.equal(published.querySelector('.status').textContent,'Published');
+ }finally{delete globalThis.document;delete globalThis.NodeFilter;setActiveUiLocale('de-DE');x.close();}
 });
 test('Remy action and recycling-bin positions remain in the desktop center and mobile first column',()=>{
  assert.match(workspaceCss,/dashboardPrimaryActions\s*\{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1 \/ 3/s);

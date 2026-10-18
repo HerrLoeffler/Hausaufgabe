@@ -31,7 +31,7 @@
 #dashboardView.gcWorkspace .dashboardToolbar label { font-size: 12px; }
 #dashboardView.gcWorkspace .dashboardToolbar :is(input,select) { min-height: 46px; background: #f9faff; }
 #dashboardView .gcWorkspaceFilterNote { margin: 8px 4px 22px; font-size: 12px; color: var(--workspace-muted); }
-#dashboardView.gcWorkspace .quizGrid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
+#dashboardView.gcWorkspace .quizGrid { grid-template-columns: repeat(3,minmax(0,1fr)); align-items: stretch; gap: 18px; }
 #dashboardView.gcWorkspace .quizCard { padding: 22px; border-radius: 18px; gap: 16px; box-shadow: 0 4px 18px #24396008; }
 #dashboardView.gcWorkspace .quizCardTop { flex-direction: column; gap: 14px; }
 #dashboardView.gcWorkspace .quizCardTop > div:first-child { width: 100%; }
@@ -41,8 +41,8 @@
 #dashboardView.gcWorkspace .dashboardPublishControl { position: relative; font-size: 11px; min-height: 30px; }
 #dashboardView.gcWorkspace .dashboardPublishControl input { width: 1px; height: 1px; margin: 0; clip-path: inset(50%); }
 #dashboardView.gcWorkspace .quizStats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); align-items: start; padding-block: 13px; }
-#dashboardView.gcWorkspace .quizStats strong { font-size: 18px; overflow-wrap: anywhere; }
-#dashboardView.gcWorkspace .quizStats span { font-size: 11px; text-transform: none; letter-spacing: 0; }
+#dashboardView.gcWorkspace .quizStats strong { min-height: 2.4em; font-size: 18px; line-height: 1.2; overflow-wrap: anywhere; }
+#dashboardView.gcWorkspace .quizStats span { min-height: 2.4em; font-size: 11px; line-height: 1.2; text-transform: none; letter-spacing: 0; }
 #dashboardView.gcWorkspace .quizStats > div { min-width: 0; padding-inline: 10px; }
 #dashboardView.gcWorkspace .quizStats > div:first-child { padding-inline-start: 0; }
 #dashboardView.gcWorkspace .quizStats > div:last-child { padding-inline-end: 0; }
@@ -51,7 +51,7 @@
 #dashboardView.gcWorkspace :is(.primaryQuizActions,.aiJobActions) { gap: 8px; }
 #dashboardView.gcWorkspace .aiJobActions { display: flex; flex-wrap: wrap; }
 #dashboardView.gcWorkspace .primaryQuizActions .button { min-height: 44px; font-size: 13px; padding-inline: 13px; }
-#dashboardView.gcWorkspace .primaryQuizActions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+#dashboardView.gcWorkspace .primaryQuizActions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); margin-top: auto; }
 #dashboardView.gcWorkspace .primaryQuizActions .button { min-width: 0; width: 100%; }
 #dashboardView.gcWorkspace .quizMore > summary { font-size: 12px; gap: 7px; min-height: 44px; }
 #dashboardView.gcWorkspace .secondaryQuizActions .button { min-height: 44px; font-size: 12px; }
@@ -112,6 +112,7 @@
   #dashboardView.gcWorkspace .quizStats { grid-template-columns: repeat(2,minmax(0,1fr)); row-gap: 12px; }
   #dashboardView.gcWorkspace .quizStats > div:nth-child(2) { border-right: 0; }
   #dashboardView.gcWorkspace .quizStats > div:nth-child(3) { padding-inline-start: 0; }
+  #dashboardView.gcWorkspace .quizStats :is(strong,span) { min-height: 0; }
   #dashboardView.gcWorkspace .primaryQuizActions { display: grid; grid-template-columns: minmax(0,1fr); }
   #dashboardView.gcWorkspace .primaryQuizActions .button { min-width: 0; width: 100%; }
   #dashboardView.gcWorkspace .aiJobCard { padding: 16px; gap: 10px; }
