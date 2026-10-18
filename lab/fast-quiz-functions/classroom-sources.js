@@ -23,7 +23,7 @@ function compile(q, trusted=false){
  const crossing=op==='+'?(a%10+b%10>=10):op==='-'?(a%10<b%10):null;
  const kind=(op==='+'||op==='-')?(a<100&&b<100?'H':'P'):a<=25&&b<=25?'H':'P';
  const loA=aDigits===1?1:10**(aDigits-1),hiA=10**aDigits-1,loB=bDigits===1?1:10**(bDigits-1),hiB=10**bDigits-1;
- return{sourceId:String(q.id),type:'binary',op,kind,crossing,loA,hiA,loB,hiB,capacity:(hiA-loA+1)*(hiB-loB+1),original:`${a}|${op}|${b}`};
+ return{sourceId:String(q.id),type:'binary',op,kind,crossing,answerDigits:String(answer).length,loA,hiA,loB,hiB,capacity:(hiA-loA+1)*(hiB-loB+1),original:`${a}|${op}|${b}`};
 }
 function candidate(f,n){
  let prompt,answer,hint,check,semantic;
@@ -33,14 +33,15 @@ function candidate(f,n){
   if((f.op==='+'&&((a%10+b%10>=10)!==f.crossing))||(f.op==='-'&&((a%10<b%10)!==f.crossing)))return null;
   if(f.kind==='H'&&['*','/'].includes(f.op)&&!(a<=10&&b<=10||a===25||b===25||[2,5,10].includes(b)))return null;
   if(a>f.hiA||((f.op==='-'||f.op==='/')&&a<b)||(f.op==='/'&&a%b!==0))return null;
-  semantic=`${a}|${f.op}|${b}`;if(semantic===f.original)return null;
+  semantic=['+','*'].includes(f.op)?`${Math.min(a,b)}|${f.op}|${Math.max(a,b)}`:`${a}|${f.op}|${b}`;const original=f.original.split('|');const originalCanonical=['+','*'].includes(f.op)?`${Math.min(Number(original[0]),Number(original[2]))}|${f.op}|${Math.max(Number(original[0]),Number(original[2]))}`:f.original;if(semantic===originalCanonical)return null;
   answer=f.op==='+'?a+b:f.op==='-'?a-b:f.op==='*'?a*b:a/b;
+  if(String(answer).length!==f.answerDigits)return null;
   check=f.op==='+'?answer-b===a:f.op==='-'?answer+b===a:f.op==='*'?answer/b===a:answer*b===a;
   const sign={'+':'+','-':'−','*':'×','/':'÷'}[f.op];prompt=`${a} ${sign} ${b} = ?`;hint=f.op==='+'?'Zerlege den zweiten Summanden und ergänze zum nächsten Zehner.':f.op==='-'?'Zerlege die Zahl und prüfe mit der Addition.':f.op==='*'?'Bilde einfache Teilprodukte und addiere.':'Prüfe mit der passenden Multiplikation.';
  }else{
   const a=1+Math.floor(n/100),b=1+n%100;
-  if(f.type==='natural'){const x=paper?a*10+107:a+10,y=paper?b*7+113:b;answer=x+y;prompt=`${x} + ${y} = ?`;hint=paper?'Notiere die Zahlen stellenrichtig untereinander und addiere von rechts.':'Ergänze zuerst zum Zehner; addiere den Rest.';semantic=`${x}|+|${y}`;check=answer-y===x;}
-  if(f.type==='fraction'){const d=paper?100:10,x=paper?a:b%10+1,y=paper?b:a;answer=(x+y)/d;prompt=`${x}/${d} + ${y}/${d} = ? (Dezimalzahl)`;hint='Addiere die Zähler. Der gemeinsame Nenner bleibt gleich. Schreibe das Ergebnis als Dezimalzahl.';semantic=`fraction:${x}:${y}:${d}`;check=Math.abs(answer*d-x-y)<1e-8;}
+  if(f.type==='natural'){const x=paper?a*10+107:a+10,y=paper?b*7+113:b;answer=x+y;prompt=`${x} + ${y} = ?`;hint=paper?'Notiere die Zahlen stellenrichtig untereinander und addiere von rechts.':'Ergänze zuerst zum Zehner; addiere den Rest.';semantic=`${Math.min(x,y)}|+|${Math.max(x,y)}`;check=answer-y===x;}
+  if(f.type==='fraction'){const d=paper?100:10,x=paper?a:b%10+1,y=paper?b:a;answer=(x+y)/d;prompt=`${x}/${d} + ${y}/${d} = ? (Dezimalzahl)`;hint='Addiere die Zähler. Der gemeinsame Nenner bleibt gleich. Schreibe das Ergebnis als Dezimalzahl.';semantic=`fraction:${Math.min(x,y)}:${Math.max(x,y)}:${d}`;check=Math.abs(answer*d-x-y)<1e-8;}
   if(f.type==='percent'){const base=paper?a*10+110:a*20,percent=paper?b:[1,2,4,5,10,20,25,50,75,100,150,200][(b-1)%12];answer=base*percent/100;prompt=`Wie viel sind ${percent} % von ${base}?`;hint='Berechne zuerst 1 % durch Teilen durch 100. Multipliziere mit dem Prozentsatz.';semantic=`percent:${base}:${percent}`;check=Math.abs(answer*100-base*percent)<1e-8;}
   if(f.type==='linear'){const coefficient=paper?Math.floor(a/5)+11:Math.floor((a-1)/10)+2,offset=paper?b*7:Math.floor((b-1)/5),solution=paper?1+(a%5)*100+b:1+((a-1)%10)*5+(b-1)%5,rhs=coefficient*solution+offset;answer=solution;prompt=`${coefficient}x + ${offset} = ${rhs}. x = ?`;hint='Subtrahiere die Zahl ohne x auf beiden Seiten. Teile danach durch den Faktor vor x.';semantic=`linear:${coefficient}:${offset}:${solution}`;check=coefficient*answer+offset===rhs;}
   if(f.type==='square'){const x=paper?a+100:1+Math.floor(n/20),y=paper?b+100:1+n%20;answer=y-x;prompt=`(x + ${x})² = ${y*y}; x + ${x} ≥ 0. x = ?`;hint='Ziehe die nichtnegative Quadratwurzel auf beiden Seiten. Subtrahiere dann die Zahl in der Klammer.';semantic=`square:${x}:${y}`;check=(answer+x)**2===y*y&&answer+x>=0;}
@@ -65,13 +66,15 @@ function preparePlan(source,config){
    while(cursor<f.capacity){const n=(cursor*7919)%f.capacity;cursor++;const q=candidate(f,n);if(q&&!seen.has(q.fingerprint)){question=q;break;}}
    cursors.set(key,cursor);
   }
-  if(!question){issues.push(`Der geprüfte Vorrat reicht für diese Dauer nicht (${tasks.length} neue Aufgaben). Bitte eine kürzere Dauer oder weitere passende Quellaufgaben wählen.`);exhausted=true;break;}
+  if(!question){exhausted=true;break;}
   seen.add(question.fingerprint);tasks.push(question);counts[kind]++;
  }
- let elapsed=0,referencePoints=0;for(const q of tasks){elapsed+=q.referenceSec;if(elapsed<=config.durationSec)referencePoints+=q.weight;else break;}
+ const pools={H:[],P:[]};tasks.forEach((q,i)=>pools[q.kind].push(i));
+ if(!issues.length&&(pools.H.length<2||(config.category==='paper'&&pools.P.length<2)))issues.push('Die Quelle liefert weniger als zwei verschiedene geprüfte Varianten je benötigter Arbeitsweise.');
+ let elapsed=0,referencePoints=0;for(let i=0;i<requiredCount&&tasks.length;i++){const pc=Math.floor((35*i+50)/100),nextP=config.category==='paper'&&Math.floor((35*(i+1)+50)/100)>pc,kind=nextP?'P':'H',ordinal=config.category==='paper'?(nextP?pc:i-pc):i,pool=pools[kind];if(!pool.length)break;const q=tasks[pool[ordinal%pool.length]];elapsed+=q.referenceSec;if(elapsed<=config.durationSec)referencePoints+=q.weight;else break;}
  if(!referencePoints&&tasks.length)issues.push('Die Dauer ist kürzer als der Richtwert der ersten Aufgabe.');
- return{version:2,source:{id:source.id,title:String(source.title||'Eigener Test').slice(0,160),kind:source.kind||'test',...(source.curriculum?{curriculum:source.curriculum}:{})},sourceRevision:digest(source),items,issues,available:issues.length===0&&!exhausted,capacity:tasks.length,requiredCount,referencePoints,tasks,config:{category:config.category,durationSec:config.durationSec}};
+ return{version:2,source:{id:source.id,title:String(source.title||'Eigener Test').slice(0,160),kind:source.kind||'test',...(source.curriculum?{curriculum:source.curriculum}:{})},sourceRevision:digest(source),items,issues,available:issues.length===0,capacity:tasks.length,requiredCount,referencePoints,repeating:exhausted,repeatNotice:'Neue Varianten; bekannte Aufgaben kehren nach dem geprüften Variantenzyklus zur Festigung zurück. Jede neue Instanz ist einmal wertbar.',pools,tasks,config:{category:config.category,durationSec:config.durationSec}};
 }
-function taskAt(plan,index,seed=0){if(!Number.isInteger(index)||index<0||index>=plan.tasks.length)throw new Error('Der geprüfte Aufgabenvorrat ist verbraucht.');return{...plan.tasks[index],id:digest([seed,index,plan.tasks[index].fingerprint]).slice(0,24)};}
-function publicReview(plan){const {tasks,...view}=plan;return{...view,examples:tasks.slice(0,3)};}
+function taskAt(plan,index,seed=0){if(!Number.isInteger(index)||index<0)throw new Error('Ungültige Aufgabenfolge.');const beforeP=Math.floor((35*index+50)/100),isP=plan.config.category==='paper'&&Math.floor((35*(index+1)+50)/100)>beforeP,kind=isP?'P':'H',ordinal=plan.config.category==='paper'?(isP?beforeP:index-beforeP):index,pool=plan.pools[kind];if(!pool?.length)throw new Error('Der geprüfte Aufgabenvorrat ist nicht verfügbar.');const q=plan.tasks[pool[ordinal%pool.length]];return{...q,id:digest([seed,index,q.fingerprint]).slice(0,24),cycle:Math.floor(ordinal/pool.length)};}
+function publicReview(plan){const {tasks,pools,...view}=plan;return{...view,examples:tasks.slice(0,3)};}
 module.exports={curriculum,curriculumSource,preparePlan,taskAt,publicReview,digest,duration};

@@ -46,3 +46,19 @@ test('duration/teams names enforce limits; unequal teams use average fixed roste
 test('hard score cutoff preserves late learning feedback without knowledge-error and keeps all keys private',async()=>{
  assert.equal(typeof createApi,'function');const f=fixture(),r=await room2(f,1,{gameMode:'computer',durationSec:60}),c=pc(r);await f.api('Start',hc(r));f.tick(5000);const t=await f.api('Task',c);assert.equal(t.question.correct,undefined);assert.equal(t.question.hint,undefined);assert.equal(t.question.fingerprint,undefined);const view=await f.api('State',{code:r.code});assert.equal(view.members,undefined);assert.equal(view.plan,undefined);f.tick(60000);const answer=f.docs.get('fastQuizClassroomsV2/'+r.code).plan.tasks[0].correct,result=await f.api('Answer',{...c,slot:t.slot,roundId:t.roundId,answer});assert.equal(result.correct,true);assert.equal(result.points,0);assert.equal(result.late,true);assert.equal((await f.api('State',c)).self.score,0);assert.equal((await f.api('Next',{...c,slot:t.slot,roundId:t.roundId})).finished,true);
 });
+test('commutative operands are a single canonical task; 30 fast players stay below Firestore room size limit',async()=>{
+ const plan=sources.preparePlan(sources.curriculumSource(sources.curriculum.find(c=>c.grade===5)),{category:'mental',durationSec:1200});assert.equal(plan.available,true);
+ const canonical=plan.tasks.map(q=>{const m=q.prompt.match(/^(\d+) \+ (\d+)/);return m?[Number(m[1]),Number(m[2])].sort((a,b)=>a-b).join('+'):q.prompt});assert.equal(new Set(canonical).size,canonical.length);
+ const f=fixture(),r=await room2(f,30,{durationSec:600});await f.api('Start',hc(r));f.tick(5000);
+ for(let i=0;i<25;i++)for(let j=0;j<30;j++){const c=pc(r,j),t=await f.api('Task',c),answer=f.docs.get('fastQuizClassroomsV2/'+r.code).plan.tasks[t.slot].correct;await f.api('Answer',{...c,slot:t.slot,roundId:t.roundId,answer});await f.api('Next',{...c,slot:t.slot,roundId:t.roundId});}
+ const stored=f.docs.get('fastQuizClassroomsV2/'+r.code);assert.ok(Object.values(stored.members).every(m=>Object.keys(m.receipts).length<=1));assert.ok(Buffer.byteLength(JSON.stringify(stored))<900000);
+});
+test('source variants keep original result digit width and never cross the original answer number range',()=>{
+ const p=sources.preparePlan(original,{category:'mental',durationSec:1200});assert.equal(p.available,true);assert.ok(p.tasks.every(q=>Number(q.correct)>=10&&Number(q.correct)<=99));
+});
+test('small finite math families transparently cycle through checked variants with new opaque instances and no dry runtime',()=>{
+ const source={id:'tiny',questions:[{id:'a',type:'number',text:'2 + 2 = ?',numericAnswer:4},{id:'b',type:'number',text:'3 + 1 = ?',numericAnswer:4}]};const p=sources.preparePlan(source,{category:'mental',durationSec:600});assert.equal(p.available,true);assert.equal(p.repeating,true);assert.match(p.repeatNotice,/Festigung/);const size=p.pools.H.length;assert.ok(size>2&&size<320);const first=sources.taskAt(p,0,12),again=sources.taskAt(p,size,12);assert.equal(first.fingerprint,again.fingerprint);assert.notEqual(first.id,again.id);assert.equal(new Set(Array.from({length:size},(_,i)=>sources.taskAt(p,i,12).fingerprint)).size,size);assert.ok(sources.taskAt(p,100000,12));
+});
+test('computer success compares exact raw threshold, independent from rounded display energy',async()=>{
+ const f=fixture(),r=await room2(f,7,{gameMode:'computer',durationSec:1200}),c=pc(r);await f.api('Start',hc(r));const stored=f.docs.get('fastQuizClassroomsV2/'+r.code);stored.round=2;stored.config.referencePoints=960;for(const m of Object.values(stored.members))m.score=0;stored.members[c.playerId].score=4030;f.tick(1205000);const s=await f.api('State',c);assert.equal(s.energy,600);assert.equal(s.success,false);
+});

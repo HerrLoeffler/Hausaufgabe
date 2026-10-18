@@ -25,9 +25,9 @@
 ### Task1: Quellen und geprüfte Varianten
 Files: classroom-sources.js (neu); classroom-v2.test.cjs (neu).
 Interface: compileSource(source), preparePlan(source,config), taskAt(plan,index,seed), publicReview(plan).
-- [ ] Verhaltensfälle vor Implementierung schreiben und RED sehen:2Originalaufgaben→600Varianten, Fremdformat/knapperVorrat blockiert, Kopf/SB-Präfix, amtlicheKlassen/Züge.
-- [ ] Kleinste quellentreue Familien und unabhängige Kontrollrechnung implementieren.
-- [ ] Fokusprüfung grün; Checkpoint.
+- [x] Verhaltensfälle vor Implementierung schreiben und RED sehen:2Originalaufgaben→600Varianten, Fremdformat/knapperVorrat blockiert, Kopf/SB-Präfix, amtlicheKlassen/Züge.
+- [x] Kleinste quellentreue Familien und unabhängige Kontrollrechnung implementieren.
+- [x] Fokusprüfung grün; Checkpoint.
 
 ### Task2: Private kontinuierliche Klassenrunde
 Files: classroom-v2.js (neu), index.js; Test wie Task1.
@@ -47,3 +47,5 @@ Files: deployment-wrapper, eigene Übergabe/Receipts.
 - [ ] Sämtliche betroffenen Tests/Build/Syntax und exakteCI; Root unabhängigen Review anfordern.
 - [ ] Saubere gepinnteQuelle nur fastquiz+eigenerHostingkanal in gradecrew-staging-2026 deployen.
 - [ ] ÖffentlichesManifest/Hashes/Functionhash+synthetischeLiveQA prüfen; offene Auth-/Remy-/Gerätebelege ehrlich sichern.
+
+Ruling18Oct: Nach vollständig geprüftem Variantenzyklus wiederkehrende Festigungsinstanzen erlauben (Rootpräzisierung), transparent inPrepare; keineunendlicheEinzigartigkeit. UngeeigneteQuellen/Familienweiterblockiert.
