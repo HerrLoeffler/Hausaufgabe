@@ -509,3 +509,16 @@ Das detaillierte Produktionsbuch mit shot-by-shot-Regie und getrennten englische
 Die zusätzliche Video-Vorprüfung ist begrenzt: Kling 2.6 Pro nannte 2.121 Credits/0,4242 USD für einen 5-s-16:9-Test mit dem bestehenden 496×496-Gesichtscrop; das ist kein Ganzkörper- oder Vollfilmangebot. LTX A2V mit verbundenem Bild erlaubt laut Preflight keine angeforderte Änderung auf 16:9/720p. Es wurde kein weiterer Auftrag ausgelöst. Der bereits dokumentierte einzelne 5-s-Coco-Proof bleibt das einzige ausgeführte V16-Videoexperiment; er enthält 24 native fps, aber nur ein quadratisches Gesicht/Oberkörperbild und beweist weder Körperbewegung noch Phonem-Sync.
 
 Nächster Schritt: Das Produktionsbuch und die 20- bzw. 12-Panel-Inventarbögen als Planung/Bestandsauskunft vorlegen. Vor einem Vollfilm fehlen weiterhin individuell passende Anschlussbilder, ein geklärter Griff und ein bestandener natürlicher Bewegungs-/Ganzkörperproof. Die neue Zustimmung erlaubt Referenzübermittlung, sie besagt nicht, dass der Film fertig oder der einzelne Proof für die Vollproduktion ausreichend ist. Keine neue Generation, kein Kauf/Upgrade und keine PPTX-/Produkt-/Main-/STATE-/Release-/Deployänderung.
+
+
+### V16-Produktionsbuch: finale Prompt-/PDF-Revision (18.10.2026)
+
+Die korrigierte lokale Endfassung liegt unter `outputs/gradecrew-investment-20261019/animation-v16-dialogue-production/promptbook/`:
+- `GradeCrew_V16_Produktionsbuch_und_Prompts.md` (125.856 Bytes; SHA-256 `bae312d372dd168e41c12cbf7bf4a0b2c03869a26be7a6fbb8175b81e929fab4`).
+- `GradeCrew_V16_Produktionsbuch_und_Prompts.pdf` (39 Seiten, 1.905.787 Bytes; SHA-256 `bdc564dc6140ed772b8e26a6e4fe2bcfd5aa7a96f5948a82b328e7177b8f0fd0`).
+- `shot-prompts-and-assets.json` (177.326 Bytes; SHA-256 `3b7bd8aa39ea6c5cd7fb7159141620f16cf0c4a6972dc11f825037bd29ed7f13`).
+- Inventarbögen `Inventar_20_Coco_Pruefbilder.jpg` (732.612 Bytes; SHA-256 `c60958a2dae8e2da52649b72367b2b998850b4a7671d3d491b3a0db337ade3f2`) und `Inventar_12_Crew_Szenenkonzepte.jpg` (644.332 Bytes; SHA-256 `0f9584e362fbc79b7bca3e56c5861417d4d792ea54aca8c93f8d24ae4d52113e`).
+
+Die finale 23-Shot-Fassung enthält für jede Einheit englische I2V-Prompts, ausdrücklich geplante Provider-Take-/10-s-/Schnittfenster und die getrennten A2V-Anforderungen. Die Emmi-A2V-Regie ist auf Fuchsschnauze korrigiert (kein Rüssel). Root prüfte PDF-Seite 1 und 12 auf Lesbarkeit/Überlauf und bestätigte den 20-Coco-Überblick sowie das Telefonbewegungs-Timing. Die Stilbögen bleiben statische Crops aus Vorlagen und ersetzen keine 20 eigenständigen Filmshots.
+
+Die Nutzerfreigabe für Übermittlung bereits bestätigter Referenzen besteht. Gemäß aktueller Koordination bleiben neue Uploads und Anbieterstarts vorerst pausiert; diese Pause ist kein offener Nutzerfreigabepunkt. Es wurde in dieser Revision keine weitere Generierung oder Anbieterbelastung ausgelöst. Vollständige natürliche Animation und echte Anschlussbilder bleiben offene Produktionsarbeit.
