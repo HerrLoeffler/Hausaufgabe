@@ -29,6 +29,9 @@ export async function signOut() {
   const {auth,authSdk} = await client();
   await authSdk.signOut(auth);
 }
+export function buildGenerationRequest({grade,topic}) {
+  return {subject:'Mathematik',grade:String(grade),schoolType:'Mittelschule',region:'Bayern',topic,difficulty:'mittel',count:10,points:20,allowedTypes:['number','text'],notes:'Das gewählte Thema und Kompetenzziel bleiben unverändert. Erstelle fachlich passende, zuverlässig numerisch oder als Kurztext bewertbare Aufgaben. Falls das Thema reine Ganzzahl-Grundrechnungen umfasst, formuliere diese als klare Rechnung. Ersetze andere Themen niemals durch Grundrechenarten. Nicht unterstützte Spielaufgaben werden anschließend ehrlich als ungeeignet angezeigt; der Originaltest bleibt erhalten.',materials:[],materialMode:'inspiration',imageMode:'none',imageQuestionCount:0,imageAnswerQuestionCount:0,clientRequestId:crypto.randomUUID()};
+}
 export async function generateTest({grade,topic,onProgress}) {
   const {auth,db,storeSdk:s,functionsSdk:f,functions} = await client();
   if (!auth.currentUser) throw new Error('Bitte zuerst mit deinem Testkonto anmelden.');
@@ -39,7 +42,7 @@ export async function generateTest({grade,topic,onProgress}) {
   if (!jobId) {
     let request;
     try{request=JSON.parse(sessionStorage.getItem(requestKey)||'null');}catch{}
-    request=request||{subject:'Mathematik',grade:String(grade),schoolType:'Mittelschule',region:'Bayern',topic,difficulty:'mittel',count:10,points:20,allowedTypes:['number','text'],notes:'Quellentreue, variierbare Rechenaufgaben. Jede Aufgabe im Text als genau eine Rechnung mit zwei positiven ganzen Zahlen, z. B. 38 + 7 = ? oder 72 : 8 = ?. Nutze type number mit korrekter numericAnswer. Keine Sachtexte, Bruchschreibweisen, Medien oder Wissensfragen. Die Quelle wird anschließend auf geeignete Varianten geprüft.',materials:[],materialMode:'inspiration',imageMode:'none',imageQuestionCount:0,imageAnswerQuestionCount:0,clientRequestId:crypto.randomUUID()};
+    request=request||buildGenerationRequest({grade,topic});
     // Save the request before dispatch; an unclear network outcome reuses its id.
     sessionStorage.setItem(requestKey,JSON.stringify(request));
     const result=await f.httpsCallable(functions,'startAiTestJob')(request);
