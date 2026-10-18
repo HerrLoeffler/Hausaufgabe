@@ -1,5 +1,7 @@
 # Aktueller Leseweg und Vorrang
 
+**Neuer Mathevertrag18.10:** [Quellenbasiertes Mathe-Spiel](QUELLENBASIERTES-MATHE-SPIEL-20261018.md) ist für Quelle → Aufgaben/Klasse → Spielweise → Start, fortlaufende Versorgung/Wertung, variable Dauer und2–4Teams vorrangig. Eigener Test/Remy/Lehrplan5–10 bleiben das Produktziel. Kein zusätzlicher Testmodus/Testspieler oder Beitrittsfix; später ausdrücklich beauftragte Umsetzung/Staging wird getrennt nachgewiesen. Alte Texte/PDFs und ihre Reviews bleiben historische Fassungen.
+
 GC-GAMES-LEARNING-UX-01 ·16.10.2026 · ausschließlich Planung.
 
 1. **[Aktueller kooperativer Kern: Als ganze Klasse gegen den Computer](KLASSE-GEGEN-COMPUTER-20261016.md)** ·1.229Wörter. Die Klasse sammelt gemeinsam gegen ein offenes virtuelles Rundenziel; vier aufeinanderfolgende Beispiellevel, getrennte Fach-/Gegnerlevel, klare Erfolgs-/Abbruch-/Retryregeln und Lehrkraftstart. Kein PDFsatz für diesen kurzen Abschnitt beauftragt.

@@ -1,5 +1,7 @@
 # Lernspiele-Planbuch · GC-GAMES-LEARNING-UX-01
 
+**Neuer Mathevertrag18.10:** [Quellenbasiertes Mathe-Spiel](QUELLENBASIERTES-MATHE-SPIEL-20261018.md) ist für Quelle → Aufgaben/Klasse → Spielweise → Start, fortlaufende Versorgung/Wertung, variable Dauer und2–4Teams vorrangig. Eigener Test/Remy/Lehrplan5–10 bleiben das Produktziel. Kein zusätzlicher Testmodus/Testspieler oder Beitrittsfix; später ausdrücklich beauftragte Umsetzung/Staging wird getrennt nachgewiesen. Alte Texte/PDFs und ihre Reviews bleiben historische Fassungen.
+
 Auftrag15.10.2026, Satz-/Reviewabschluss16.10.2026. Zielgruppe bestätigt: Mittelschule Bayern, Klassen5–10. **Vorschlag, nur Planung.** Keine Produktänderung, Provideranforderung, Gamebuild, Integration oder Veröffentlichung.
 
 ## Aktuell vorrangiger Folgeplan: Nutzerkorrektur und Klassenrunde
