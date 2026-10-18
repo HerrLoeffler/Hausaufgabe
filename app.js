@@ -1022,12 +1022,10 @@ function safeDialogClose(dialog) {
 
 function setTeacherBar() {
   const loggedIn = Boolean(state.user) && !new URLSearchParams(location.search).has("test");
-  const hostname = String(location.hostname || "").replace(/^\[|\]$/g, "").toLowerCase();
-  const localWorkbenchHost = ["localhost", "127.0.0.1", "::1"].includes(hostname);
   $("userBar").classList.toggle("hidden", !loggedIn);
   $("userLabel").textContent = state.profile?.displayName || state.user?.displayName || state.user?.email || "";
   $("adminTopBtn")?.classList.toggle("hidden", !loggedIn || !isAdmin());
-  $("gradecrewEtLauncher")?.classList.toggle("hidden", !loggedIn || !isAdmin() || localWorkbenchHost);
+  $("teacherFeedbackBtn")?.classList.toggle("hidden", !loggedIn || isSuspended());
   $("appFooter")?.classList.toggle("hidden", !loggedIn);
 }
 
@@ -7939,6 +7937,7 @@ $("rightsReportForm")?.addEventListener("submit", async event => {
   } finally { button.disabled = false; }
 });
 $("footerFeedbackBtn")?.addEventListener("click", openFeedbackDialog);
+$("teacherFeedbackBtn")?.addEventListener("click", openFeedbackDialog);
 $("footerWhatsNewBtn")?.addEventListener("click", () => safeDialogOpen($("whatsNewDialog")));
 $("closeWhatsNewDialog")?.addEventListener("click", () => safeDialogClose($("whatsNewDialog")));
 $("whatsNewOk")?.addEventListener("click", () => safeDialogClose($("whatsNewDialog")));

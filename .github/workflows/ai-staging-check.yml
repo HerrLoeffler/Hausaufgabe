@@ -239,7 +239,7 @@ jobs:
         run: |
           node --check admin-account-actions.mjs
           node --check functions/admin-account-callables.js
-          node --test tools/ui/admin-account-actions.test.cjs
+          node --test tools/ui/admin-account-actions.test.cjs tools/ui/et-launcher-role.test.cjs
 
       - name: Smoke test staging build
         run: |
