@@ -5,7 +5,8 @@ import vm from 'node:vm';
 import { JSDOM } from 'jsdom';
 import { secureAudioPublicationBlocked } from '../../secure-audio-publication.mjs';
 import { installWorkspaceUpgrade } from '../../gradecrew-workspace-upgrade.mjs';
-import { setActiveUiLocale, translateTree, translateSource } from '../../shared/i18n/browser-runtime.mjs?v=3';
+import { registerCatalog, registerSourcePatterns, setActiveUiLocale, translateTree, translateSource } from '../../shared/i18n/browser-runtime.mjs?v=3';
+import { enGBMessages, enGBSourcePatterns } from '../../shared/i18n/messages-en-GB.mjs?v=2';
 const html = fs.readFileSync(new URL('../../index.html',import.meta.url),'utf8');
 const app = fs.readFileSync(new URL('../../app.js',import.meta.url),'utf8');
 const workspaceCss = fs.readFileSync(new URL('../../gradecrew-workspace-upgrade.css',import.meta.url),'utf8');
@@ -35,6 +36,98 @@ test('moves original toolbar above jobs and tests, preserves nodes and click han
   x.document.querySelector('.edit').click(); x.document.querySelector('.duplicate').click();
   x.document.querySelector('.results').click(); x.document.querySelector('.remove').click();
   assert.deepEqual(x.calls,[['openEditor','ONE'],['duplicate-choice',true],['openResults','ONE'],['deleteQuiz','ONE']]);
+ }finally{x.close();}
+});
+test('test cards keep the same primary actions and four stat slots across statuses',()=>{
+ const x=setup();try {
+  const [draft,published]=x.document.querySelectorAll('#quizList .quizCard');
+  for (const card of [draft,published]) {
+   assert.deepEqual([...card.querySelectorAll('.primaryQuizActions button')].map(button=>button.classList.contains('primary') ? 'primary' : 'secondary'),['primary','secondary']);
+   assert.deepEqual([...card.querySelectorAll('.primaryQuizActions button')].map(button=>button.textContent),['Bearbeiten','Ergebnisse']);
+   assert.equal(card.querySelectorAll('.quizStats > div').length,4);
+  }
+  assert.equal(draft.querySelector('.studentShare'),null);
+  assert.ok(published.querySelector('.secondaryQuizActions .studentShare'));
+  assert.equal(published.querySelector('.primaryQuizActions .studentShare'),null);
+  published.querySelector('.studentShare').click();
+  assert.deepEqual(x.calls.at(-1),['showPublish','TWO']);
+  x.state.quizzes[0].timeLimitMinutes=15;x.state.quizzes[0].startMode='teacher';
+  x.state.quizzes[1].ended=true;
+  vm.runInContext('renderQuizList()',x.context);x.api.refresh();
+  const [timed,ended]=x.document.querySelectorAll('#quizList .quizCard');
+  assert.deepEqual([...timed.querySelectorAll('.quizStats strong')].map(node=>node.textContent),['6','12','15','Lehrkraft']);
+  assert.deepEqual([...ended.querySelectorAll('.quizStats strong')].map(node=>node.textContent),['4','8','–','Schüler']);
+  assert.equal(ended.querySelector('.studentShare'),null);
+ }finally{x.close();}
+});
+test('the card trash action is icon-only, named for assistive tech and keeps deletion confirmation handler',()=>{
+ const x=setup();try {
+  const button=x.document.querySelector('#quizList .quizDeleteButton');
+  assert.equal(button.textContent.trim(),'');
+  assert.equal(button.getAttribute('aria-label'),'Test in den Papierkorb');
+  assert.equal(button.getAttribute('title'),'Test in den Papierkorb');
+  assert.equal(button.querySelectorAll('svg[aria-hidden="true"] path').length,1);
+  button.click();assert.deepEqual(x.calls.at(-1),['deleteQuiz','ONE']);
+  registerCatalog('en-GB',enGBMessages);
+  globalThis.document=x.document;globalThis.NodeFilter=x.dom.window.NodeFilter;
+  setActiveUiLocale('en-GB');translateTree(x.$('dashboardView'));
+  assert.equal(button.getAttribute('aria-label'),'Move test to trash');
+  assert.equal(x.document.querySelector('#quizList .quizCard .quizStats div:last-child strong').textContent,'Student');
+ }finally{delete globalThis.document;delete globalThis.NodeFilter;setActiveUiLocale('de-DE');x.close();}
+});
+test('card spacing remains a fixed four-column grid on desktop and two-column grid on phones',()=>{
+ assert.match(workspaceCss,/\.quizStats\s*\{[^}]*grid-template-columns:\s*repeat\(4,minmax\(0,1fr\)\)/s);
+ assert.match(workspaceCss,/@media \(max-width: 650px\)[\s\S]*\.quizStats\s*\{[^}]*grid-template-columns:\s*repeat\(2,minmax\(0,1fr\)\)/);
+ assert.match(workspaceCss,/\.quizStats strong\s*\{[^}]*min-height:\s*2\.4em/s);
+ assert.match(workspaceCss,/\.quizStats span\s*\{[^}]*min-height:\s*2\.4em/s);
+ assert.match(workspaceCss,/@media \(max-width: 650px\)[\s\S]*\.quizStats :is\(strong,span\)\s*\{[^}]*min-height:\s*0/s);
+ assert.match(workspaceCss,/\.quizGrid\s*\{[^}]*align-items:\s*stretch/s);
+ assert.match(workspaceCss,/\.primaryQuizActions\s*\{[^}]*margin-top:\s*auto/s);
+ assert.match(workspaceCss,/\.quizDeleteButton\s*\{[^}]*width:\s*44px/s);
+});
+test('a 70–95-character test title stays complete and keeps the same action structure',()=>{
+ const x=setup();try {
+  const fullTitle='Nomen und Adjektive – lustige Sprachaufgaben für die ganze fünfte Klasse';
+  assert.ok(fullTitle.length>=70&&fullTitle.length<=95);
+  x.state.quizzes[0].title=fullTitle;
+  vm.runInContext('renderQuizList()',x.context);x.api.refresh();
+  const [draft,published]=x.document.querySelectorAll('#quizList .quizCard');
+  assert.equal(draft.querySelector('h3').textContent,fullTitle);
+  assert.deepEqual([...draft.querySelectorAll('.primaryQuizActions button')].map(button=>button.textContent),[...published.querySelectorAll('.primaryQuizActions button')].map(button=>button.textContent));
+  assert.equal(draft.querySelectorAll('.quizStats > div').length,published.querySelectorAll('.quizStats > div').length);
+ }finally{x.close();}
+});
+test('all visible card controls and metadata translate to English while authored titles stay unchanged',()=>{
+ const x=setup();try {
+  x.state.quizzes[0].timeLimitMinutes=15;x.state.quizzes[0].startMode='teacher';
+  vm.runInContext('renderQuizList()',x.context);x.api.refresh();
+  registerCatalog('en-GB',enGBMessages);
+  registerSourcePatterns('en-GB',enGBSourcePatterns);
+  globalThis.document=x.document;globalThis.NodeFilter=x.dom.window.NodeFilter;
+  setActiveUiLocale('en-GB');translateTree(x.$('dashboardView'));
+  const [draft,published]=x.document.querySelectorAll('#quizList .quizCard');
+  assert.equal(draft.querySelector('h3').textContent,x.state.quizzes[0].title);
+  assert.equal(draft.querySelector('.meta').textContent,'Mathematik · Class 5 · Code ONE');
+  assert.deepEqual([...draft.querySelectorAll('.primaryQuizActions button')].map(button=>button.textContent),['Edit','Results']);
+  assert.deepEqual([...draft.querySelectorAll('.quizStats > div')].map(row=>row.querySelector('span').textContent),['Questions','Points','Minutes','Start']);
+  assert.equal(draft.querySelector('.quizStats > div:last-child strong').textContent,'Teacher');
+  assert.equal(published.querySelector('.quizStats > div:nth-child(3) span').textContent,'No time limit');
+  assert.equal(published.querySelector('.studentShare').textContent,'Student link');
+  assert.equal(published.querySelector('.quizMore summary').textContent,'More actions');
+  assert.equal(published.querySelector('.quizDeleteButton').getAttribute('aria-label'),'Move test to trash');
+  assert.equal(published.querySelector('.quizDeleteButton').getAttribute('title'),'Move test to trash');
+  assert.equal(published.querySelector('.dashboardPublishToggle').getAttribute('aria-label'),'Toggle publication');
+  assert.equal(published.querySelector('.status').textContent,'Published');
+ }finally{delete globalThis.document;delete globalThis.NodeFilter;setActiveUiLocale('de-DE');x.close();}
+});
+test('Remy action and recycling bin stay grouped in the compact desktop and mobile header',()=>{
+ const x=setup();try {
+  assert.equal(x.$('newQuizBtn').parentElement,x.$('trashBtn').parentElement);
+  assert.ok(x.$('trashBtn').closest('.dashboardActions'));
+  assert.match(workspaceCss,/\.dashboardActions\s*\{[^}]*display:\s*flex/s);
+  assert.match(workspaceCss,/\.dashboardPrimaryActions\s*\{[^}]*display:\s*flex/s);
+  assert.match(workspaceCss,/#dashboardView\.gcWorkspace #trashBtn\s*\{[^}]*width:\s*44px/s);
+  assert.match(workspaceCss,/@media \(max-width: 650px\)[\s\S]*\.dashboardActions\s*\{[^}]*justify-self:\s*end/s);
  }finally{x.close();}
 });
 test('all/status/search controls use real existing filtering and retain active counts after rerender',async()=>{

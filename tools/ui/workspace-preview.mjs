@@ -51,7 +51,7 @@ const render = new Function('document','state','log','secureAudioPublicationBloc
  const dismissAiJob=job=>action('Ausblenden',job.id),showReportableError=()=>action('Problem melden');
  const REPORTABLE_ERROR_CODES={aiSimilar:'demo',aiCreate:'demo'};
  ${source('function filteredQuizzes()','async function toggleDashboardPublished')}
- ${source('function renderAiJobs()','async function renderLocalDraftList()')}
+ ${source('function aiJobTitle(job)','async function renderLocalDraftList()')}
  ${source('$("quizSearch").addEventListener','$("backFromEditor").addEventListener')}
  return {renderQuizList,renderAiJobs};
 `)(document,state,log,secureAudioPublicationBlocked);
