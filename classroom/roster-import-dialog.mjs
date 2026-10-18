@@ -27,11 +27,18 @@ export function openRosterImport({document:doc,client,state,isCurrent,onCommit})
  const back=button('Datei und Spalten ändern',()=>{if(busy)return;config.hidden=false;mappingArea.hidden=false;back.hidden=true;invalidate();},{'data-import-back':''});back.hidden=true;
  form.append(mappingArea,feedback,previewButton,back,summary);
  const approvalLabel=make('label',undefined,{class:'classroomCheck'}),approval=make('input',undefined,{type:'checkbox','data-import-approval':''});approvalLabel.append(approval,make('span','Ich habe die Änderungen geprüft und möchte sie übernehmen.'));form.append(approvalLabel);
- const actions=make('div',undefined,{class:'rosterActions'}),cancel=button('Abbrechen',close,{'data-import-cancel':''}),confirm=button('Geprüfte Änderungen übernehmen',()=>void commit(),{class:'button primary','data-import-confirm':''});confirm.disabled=true;actions.append(cancel,confirm);form.append(actions);dialog.append(form);doc.body.append(dialog);
+ const confirmStatus=make('p','Bitte zuerst die Änderungen prüfen.',{id:'namedImportConfirmStatus',role:'status','data-import-confirm-status':''}),showReview=button('Offene Zuordnungen anzeigen',()=>{if(busy||!plan)return;const index=plan.rows.findIndex(r=>r.status==='review');if(index<0)return;page=Math.floor(index/50);renderPlan();summary.querySelector(`[aria-label="Entscheidung für Zeile ${plan.rows[index].line}"]`)?.focus();},{'data-import-show-review':''});showReview.hidden=true;form.append(confirmStatus,showReview);
+ const actions=make('div',undefined,{class:'rosterActions'}),cancel=button('Abbrechen',close,{'data-import-cancel':''}),confirm=button('Geprüfte Änderungen übernehmen',()=>void commit(),{class:'button primary','data-import-confirm':''});confirm.disabled=true;confirm.setAttribute('aria-describedby','namedImportConfirmStatus');actions.append(cancel,confirm);form.append(actions);dialog.append(form);doc.body.append(dialog);
  let mapping={};
  function allowed(){return !dead&&isCurrent();}
- function invalidate(clear=true){generation++;plan=null;frozen=null;operationId=null;approval.checked=false;confirm.disabled=true;previewButton.hidden=false;if(clear)summary.replaceChildren();}
- function setBusy(value){busy=value;back.disabled=Boolean(value);for(const e of config.querySelectorAll('input,select'))e.disabled=Boolean(value);for(const e of mappingArea.querySelectorAll('select'))e.disabled=Boolean(value);for(const e of summary.querySelectorAll('button,input,select'))e.disabled=Boolean(value);approval.disabled=Boolean(value);year.disabled=Boolean(value)||Boolean(fixed.value);previewButton.disabled=Boolean(value)||!parsed;cancel.disabled=value==='commit';confirm.disabled=Boolean(value)||!plan||plan.counts.review>0||!approval.checked;}
+ function invalidate(clear=true){generation++;plan=null;frozen=null;operationId=null;approval.checked=false;confirm.disabled=true;previewButton.hidden=false;if(clear)summary.replaceChildren();updateConfirmation();}
+ function setBusy(value){busy=value;back.disabled=Boolean(value);for(const e of config.querySelectorAll('input,select'))e.disabled=Boolean(value);for(const e of mappingArea.querySelectorAll('select'))e.disabled=Boolean(value);for(const e of summary.querySelectorAll('button,input,select'))e.disabled=Boolean(value);approval.disabled=Boolean(value);year.disabled=Boolean(value)||Boolean(fixed.value);previewButton.disabled=Boolean(value)||!parsed;cancel.disabled=value==='commit';updateConfirmation();}
+ function updateConfirmation(){
+  confirm.disabled=Boolean(busy)||!plan||plan.counts.review>0||!approval.checked;
+  showReview.hidden=!plan||plan.counts.review===0;showReview.disabled=Boolean(busy);
+  confirmStatus.className=plan?.counts.review?'classroomError':'hint';
+  confirmStatus.textContent=busy==='commit'?'Änderungen werden gespeichert …':busy==='preview'?'Änderungen werden geprüft …':!plan?(parsed?'Bitte die Änderungen erneut prüfen.':'Bitte zuerst die Änderungen prüfen.'):plan.counts.review?`${plan.counts.review} Zuordnung(en) noch offen. Bitte auch auf den anderen Seiten entscheiden: bestehende Person zuordnen, neu anlegen oder überspringen.`:!approval.checked?'Bitte die geprüften Änderungen mit dem Häkchen bestätigen.':'Alle Zuordnungen geklärt. Die geprüften Änderungen können übernommen werden.';
+ }
  function destroy(){if(dead)return;dead=true;generation++;bytes=null;parsed=null;plan=null;frozen=null;decisions=[];mapping={};file.value='';dialog.remove();}
  function close(){if(busy==='commit')return;destroy();if(isCurrent())doc.querySelector('[data-roster-import]')?.focus();}
  function parse(auto=false){
@@ -62,7 +69,7 @@ export function openRosterImport({document:doc,client,state,isCurrent,onCommit})
  for(const control of [delimiter,encoding,hasHeader])control.addEventListener('change',()=>parse());
  for(const control of [year,source])control.addEventListener('change',()=>{decisions=[];invalidate();});
  fixed.addEventListener('change',()=>{const c=state.classes.find(c=>c.id===fixed.value);if(c)year.value=c.schoolYear;year.disabled=Boolean(c);decisions=[];invalidate();});
- approval.addEventListener('change',()=>{confirm.disabled=Boolean(busy)||!plan||plan.counts.review>0||!approval.checked;});
+ approval.addEventListener('change',updateConfirmation);
  function setDecision(line,action,studentId){decisions=decisions.filter(d=>d.line!==line);if(action)decisions.push({line,action,...(studentId?{studentId}:{})});invalidate();feedback.textContent='Zuordnung geändert. Bitte die Änderungen erneut prüfen.';}
  function chooseExisting(line,cell){
   invalidate(false);for(const e of summary.querySelectorAll('button,input,select'))e.disabled=true;
@@ -71,6 +78,7 @@ export function openRosterImport({document:doc,client,state,isCurrent,onCommit})
   input.addEventListener('input',fill);select.addEventListener('change',()=>{if(select.value)setDecision(line,'link',select.value);});fill();box.append(input,select);cell.append(box);input.focus();
  }
  function renderPlan(){
+  updateConfirmation();
   config.hidden=true;mappingArea.hidden=true;previewButton.hidden=true;back.hidden=false;
   summary.replaceChildren();summary.append(make('h3','Das wird übernommen'));
   const counts=make('div',undefined,{class:'rosterImportCounts'});

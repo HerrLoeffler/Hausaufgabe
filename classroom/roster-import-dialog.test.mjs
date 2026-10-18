@@ -67,3 +67,35 @@ test('fixed existing class includes its own school year and never creates a same
   const summary=doc.querySelector('[data-import-summary]').textContent;assert.match(summary,/8b · 2025\/26/);assert.doesNotMatch(summary,/Neue Klassen:/);
  }finally{modal.destroy();store.close();dom.window.close();}
 });
+
+test('unresolved person on another page is explained beside approval and reachable without weakening the commit guard',async()=>{
+ const t=setup(),doc=t.dom.window.document;try{
+  t.dialog.destroy();
+  const old=t.store.mutate('a',{command:'createStudent',payload:{firstName:'Ada',lastName:'Beispiel',classId:null},expectedRevision:0,operationId:crypto.randomUUID()});
+  const modal=openRosterImport({document:doc,client:{previewImport:async p=>t.store.previewImport('a',p),mutate:async(command,payload,expectedRevision,operationId)=>t.store.mutate('a',{command,payload,expectedRevision,operationId})},state:old,isCurrent:()=>true,onCommit:()=>{}});
+  await selectFile(t,'Vorname;Nachname;Klasse\n'+Array.from({length:60},(_,i)=>i===55?'Ada;Beispiel;9b':`Probe${i};Muster;9b`).join('\n'));
+  doc.querySelector('[data-import-preview]').click();await tick();
+  const approval=doc.querySelector('[data-import-approval]');approval.checked=true;approval.dispatchEvent(new t.dom.window.Event('change'));
+  assert.equal(doc.querySelector('[data-import-confirm]').disabled,true);
+  const status=doc.querySelector('[data-import-confirm-status]');assert.ok(status,'approval area explains disabled commit');assert.match(status.textContent,/1.*Zuordnung/);
+  const jump=doc.querySelector('[data-import-show-review]');assert.ok(jump&&!jump.hidden,'open decisions are reachable from approval area');jump.click();
+  const select=doc.querySelector('select[aria-label="Entscheidung für Zeile 57"]');assert.ok(select,'jump reaches the page containing the unresolved record');assert.equal(doc.activeElement,select);
+  select.value='link:'+old.students[0].id;select.dispatchEvent(new t.dom.window.Event('change'));
+  assert.equal(doc.querySelector('[data-import-confirm]').disabled,true,'changed decision still requires a fresh preview');
+  assert.match(status.textContent,/erneut prüfen/);
+  doc.querySelector('[data-import-preview]').click();await tick();approval.checked=true;approval.dispatchEvent(new t.dom.window.Event('change'));
+  assert.equal(doc.querySelector('[data-import-confirm]').disabled,false);doc.querySelector('[data-import-confirm]').click();await tick();
+  assert.equal(t.store.read('a').students.length,60);assert.equal(t.store.read('a').students.find(s=>s.firstName==='Ada').id,old.students[0].id);modal.destroy();
+ }finally{t.store.close();t.dom.window.close();}
+});
+
+test('large fully resolved import can commit from page six with one explicit approval',async()=>{
+ const t=setup(),doc=t.dom.window.document;try{
+  await selectFile(t,'Vorname;Nachname;Klasse\n'+Array.from({length:320},(_,i)=>`Probe${i};Muster;8b`).join('\n'));
+  doc.querySelector('[data-import-preview]').click();await tick();
+  for(let i=0;i<5;i++)[...doc.querySelectorAll('[data-import-summary] button')].find(b=>b.textContent==='Weiter').click();
+  const approval=doc.querySelector('[data-import-approval]');approval.checked=true;approval.dispatchEvent(new t.dom.window.Event('change'));
+  assert.equal(doc.querySelector('[data-import-confirm]').disabled,false);doc.querySelector('[data-import-confirm]').click();await tick();
+  assert.equal(t.committed.students.length,320);
+ }finally{t.dialog.destroy();t.store.close();t.dom.window.close();}
+});
