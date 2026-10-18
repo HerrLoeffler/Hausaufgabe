@@ -68,12 +68,12 @@
       "production": "not_requested",
       "staging_assessment_functions": "success39156854952_receipt12147322047",
       "audio_v2_user_acceptance": "technical_staging_audio_start_and_resume_verified_29_questions; physical_device_acceptance_pending",
-      "canonical_hosting": "success39157702689_receipt12147303541"
+      "canonical_hosting": "success39158573068_receipt12147573847_commit_7a18445f"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 167,
     "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate. Coco durable owner-only search/memory and contextual support PR179–183 now deployed with real own-account search/context checks; broader user/device acceptance separate.",
-    "next_action": "Martin tests canonical gc39 startup/login and explicitly published practice solutions after own submission; broader physical-device acceptance remains pending. Production not requested.",
+    "next_action": "Martin checks gc41 compact dashboard on real iPad/iPhone and settings Tutorial replay; existing pedagogy/model-quality and other physical-device acceptance remain separate. Production not requested.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
@@ -528,7 +528,7 @@
     },
     "dashboard_ipad_tutorial_followup": {
       "task_id": "GC-BRAND-HERO-MOTION-20261013",
-      "stage": "integrated",
+      "stage": "staging_deployed",
       "pr": 243,
       "candidate": "4b30fd5a6c73ca132a03f9201586c05bce226c74",
       "commit": "7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
@@ -543,11 +543,24 @@
       "production": "unchanged",
       "device_test": "not_performed",
       "handoff": "workstreams/dashboard-ipad-tutorial-20261018.md",
-      "next_action": "Observe exact preview receipt, promote it through existing append-only canonical request; verify actual manifest and file hashes.",
+      "next_action": "Martin checks the compact authenticated dashboard on a real iPad/iPhone and settings Tutorial replay; do not repeat deployment without new issue evidence.",
       "preview_receipt": 12147502437,
       "verified_files": 167,
       "version": "2.3.1-gc41",
-      "canonical_request": "automation/canonical-staging-requests/gc-dashboard-ipad-tutorial-20261018.json"
+      "canonical_request": "automation/canonical-staging-requests/gc-dashboard-ipad-tutorial-20261018.json",
+      "canonical_run": 39158573068,
+      "canonical_receipt": 12147573847,
+      "canonical_url": "https://hausaufgabe-staging.web.app/",
+      "independent_public_hash_check": true,
+      "browser_smoke": "actual public startup gc41 loaded with no captured console errors; no real account sign-in or counter mutation for acceptance",
+      "user_acceptance": "pending",
+      "unrelated_automatic_backend_attempt": {
+        "run": 39158385700,
+        "ai": "aborted in non-interactive deletion guard; twelve pre-existing learning functions absent from integration source retained; no force/delete/retry",
+        "assessment": "success",
+        "required_for_dashboard": false,
+        "source_changes_by_this_task": false
+      }
     }
   },
   "production": {
@@ -1735,9 +1748,9 @@
       "task_id": "GC-BRAND-HERO-MOTION-20261013",
       "branch": "fix/tutorial-dashboard-ipad-20261018",
       "observed_head": "4b30fd5a6c73ca132a03f9201586c05bce226c74",
-      "stage": "integrated",
+      "stage": "staging_deployed",
       "pull_request": 243,
-      "staging": "preview_verified39158385658; canonical_requested_pending",
+      "staging": "canonical_hosting_verified",
       "production": "not_requested",
       "handoff": "workstreams/dashboard-ipad-tutorial-20261018.md",
       "scope": "Authenticated dashboard only: compact top-right new test, small header tutorial hint for first five newly observed logins, permanent settings replay. Public homepage and experiment unchanged.",
@@ -1751,9 +1764,17 @@
         "mobile_tutorial": 39158225635
       },
       "device_test": "not_performed",
-      "next_action": "Observe exact preview receipt, promote it through existing append-only canonical request; verify actual manifest and file hashes.",
+      "next_action": "Martin checks the compact authenticated dashboard on a real iPad/iPhone and settings Tutorial replay; do not repeat deployment without new issue evidence.",
       "integration": "7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
-      "ci": "candidate39157540172; combined39158023424; integrated39158225634 all success"
+      "ci": "candidate39157540172; combined39158023424; integrated39158225634 all success",
+      "canonical_run": 39158573068,
+      "canonical_receipt": 12147573847,
+      "preview_run": 39158385658,
+      "preview_receipt": 12147502437,
+      "version": "2.3.1-gc41",
+      "verified_files": 167,
+      "independent_public_hash_check": true,
+      "user_test": "pending"
     }
   ],
   "deployments": [

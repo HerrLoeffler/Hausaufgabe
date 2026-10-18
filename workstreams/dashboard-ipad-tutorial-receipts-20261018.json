@@ -1,0 +1,33 @@
+{
+  "taskId": "GC-BRAND-HERO-MOTION-20261013",
+  "scope": "authenticated dashboard frontend only",
+  "project": "hausaufgabe-staging",
+  "url": "https://hausaufgabe-staging.web.app/",
+  "commit": "7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
+  "version": "2.3.1-gc41",
+  "pullRequest": 243,
+  "candidateCi": 39158023424,
+  "integratedCi": 39158225634,
+  "mobileTutorialCheck": 39158225635,
+  "previewRun": 39158385658,
+  "previewReceiptArtifact": 12147502437,
+  "canonicalRun": 39158573068,
+  "canonicalReceiptArtifact": 12147573847,
+  "verifiedFiles": 167,
+  "independentPublicHashCheck": true,
+  "actualBrowserStartup": "gc41; no captured console errors; anonymous public entry unchanged",
+  "functionsChangedByTask": false,
+  "rulesChangedByTask": false,
+  "experimentChangedByTask": false,
+  "publicHomepageChangedByTask": false,
+  "productionChanged": false,
+  "deviceTest": "not_performed",
+  "actualAccountCounterAcceptance": "not_performed",
+  "unrelatedBackendAttempt": {
+    "run": 39158385700,
+    "ai": "aborted in non-interactive deletion guard; twelve pre-existing learning functions absent from integration source retained; no force/delete/retry",
+    "assessment": "success",
+    "required_for_dashboard": false,
+    "source_changes_by_this_task": false
+  }
+}

@@ -50,5 +50,8 @@ Interfaces: syncDashboardTutorialEntry(document,{enabled,dashboard,count}) moves
 - [x] Use isolated local fixture with original HTML/CSS/modules and synthetic profiles. Reproduce old layout first, then compare 1366×1024,1024×1366,768×1024,390×844 plus desktop. Verify no overlap/overflow, touch sizes and original Remy aspect ratio.
 - [x] Exercise first/fifth/sixth visibility and settings restart. Verify no guest/backend leakage.
 - [x] Build staging artifact and confirm new modules/assets manifest. Run combined CI on immutable candidate and independent review before integration.
-- [ ] Fresh-check target and live overlaps; only then use existing authorized Staging release path, verify exact source/manifest. No Production. If release gate unavailable, preserve reviewable branch/PR and report precise missing gate rather than claim deployment.
-- [ ] Update existing task handoff/TODO and exact stage/commit/proofs. Keep original task/attempt/budget history; no paid generation.
+- [x] Fresh-check target and live overlaps; only then use existing authorized Staging release path, verify exact source/manifest. No Production. If release gate unavailable, preserve reviewable branch/PR and report precise missing gate rather than claim deployment.
+- [x] Update existing task handoff/TODO and exact stage/commit/proofs. Keep original task/attempt/budget history; no paid generation.
+
+
+Abschlussnachweis: PR243, Integrations-CI39158225634, Vorschau39158385658, kanonische Übernahme39158573068, unabhängige167-Dateihashprüfung erfolgreich. Reale Geräte-/Kontozählerabnahme bleibt separat offen. Keine Production-/Homepage-/Experimentänderung.
