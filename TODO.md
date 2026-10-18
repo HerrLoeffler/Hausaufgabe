@@ -551,3 +551,9 @@ Durable local evidence: analysis/GC-WEB-REPAIR-20261007-ADMIN/feedback-followup-
 ### GC-PLUGINS-01 — Godot-Lernbasis (14.10.2026)
 - [x] Verlinktes18:14-Video technisch vollständig dekodiert (32814Frames),154Zeit-/Szenenbilder auf13Kontaktbögen visuell gesichtet; keinTranskript wegenUntertitel429. OffizielleGrundlagen und passendeGitHubquellen analysiert, Lernroute/GradeCrew-Ableitungen/Versionsfallen dokumentiert; zwei getrennteDokumentationsreviews PASS. [Lernbasis und Beleggrenzen](workstreams/plugins-godot-learning-20261014.md). BestehenderGodot4.7.2 bestätigt, keinezweiteInstallation/MCP-Verbindung/Spielmigration.
 - [ ] OptionalerPraxisfolgepunkt imnächstenkonkretenAuftrag: vorhandenenKochspielstand prüfen, Button→Signal→Portionswert alskleineLernkontrolle, anschließend abgestimmtenZutatenabschnitt mitbestehenderWeblösung vergleichen. KeineEngine-/Geräte-/Lernendenabnahme ausRecherche ableiten; keinDeploy.
+
+## 18.10.2026 — Schul Webabschluss planen
+
+| Bestehende Task | Gesicherter Teilstand | Nächster Schritt |
+|---|---|---|
+| GC-WEB-REPAIR-20261007, Bezug GC-IOS-01/02 | [Abschlussplan](docs/release/school-web-closeout-plan-20261018.md) und [eigene Übergabe](workstreams/school-web-closeout-plan-20261018.md): gc40Live/21c919; gc41b21 CI39155663251 grün, ausdrücklich deploy-paused; Schul-/Testtrennung und aufgenommener Umfang offen. V7, Audio-Klarheit und Classroom getrennt eingeordnet, keine pauschale Erledigung. | Belegten Umgebungsplan aus GC · iPhone & iPad abholen; Pflichtumfang/Zurückstellungen mit Martin entscheiden. Kein Merge/Deploy/Datenkopieren durch diesen Plan. |
