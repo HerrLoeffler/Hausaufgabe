@@ -625,7 +625,7 @@
       "title": "GC-PEDAGOGY-KB-01: geprüfter Aufgabenpool in Testgenerierung",
       "primaryBranch": "feat/pedagogy-pool-20261011",
       "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "active",
+      "state": "integrated",
       "handoff": "workstreams/pedagogical-pool-20261011.md",
       "relatedBranches": []
     },

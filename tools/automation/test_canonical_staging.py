@@ -61,6 +61,30 @@ class CanonicalStagingTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "newer automatic preview"):
                 promotion.qualify()
 
+    def test_fully_skipped_workflow_event_does_not_supersede_verified_preview(self):
+        def github(path):
+            if path == f"actions/runs/{RUN_ID}":
+                return RUN
+            return {"workflow_runs": [
+                {"id": 124, "event": "workflow_run", "status": "completed", "conclusion": "skipped"},
+                {"id": RUN_ID, "event": "workflow_run", "status": "completed", "conclusion": "success"}]}
+        with patch.dict(os.environ, ENV), patch.object(promotion, "api", side_effect=github), \
+                patch.object(promotion, "artifact_document", side_effect=[SOURCE, RECEIPT]), \
+                patch.object(promotion, "ci_source", return_value=SHA):
+            self.assertEqual(promotion.qualify(), (SOURCE, RECEIPT))
+
+    def test_failed_cancelled_and_pending_newer_previews_still_block(self):
+        for status, conclusion in [("completed", "failure"), ("completed", "cancelled"), ("in_progress", None)]:
+            with self.subTest(status=status, conclusion=conclusion):
+                def github(path):
+                    if path == f"actions/runs/{RUN_ID}":
+                        return RUN
+                    return {"workflow_runs": [{"id": 124, "event": "workflow_run", "status": status, "conclusion": conclusion},
+                                              {"id": RUN_ID, "event": "workflow_run"}]}
+                with patch.dict(os.environ, ENV), patch.object(promotion, "api", side_effect=github):
+                    with self.assertRaisesRegex(ValueError, "newer automatic preview"):
+                        promotion.qualify()
+
     def test_receipt_must_match_exact_sha_and_preview_scope(self):
         bad_receipt = {**RECEIPT, "channel": "live"}
         with patch.dict(os.environ, ENV), \
