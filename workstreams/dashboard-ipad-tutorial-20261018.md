@@ -23,3 +23,11 @@ Ruling: optionale Metadatenaufnahme läuft nach gültigem Authprofil im Hintergr
 Original-Tourengine V7/V8 unverändert. Große Crew-Decorator-Karte und widersprüchliche absolute Center-Platzierung entfernt; ein vereinheitlichtes Headergrid ersetzt sie. Bestehendes Tutorialbutton-Element samt Handler in userBar verschoben; außerhalb Dashboard und ab Zähler6 versteckt. Dauerhafter Button in Einstellungen. Neue Runtime-Module im Stagingbuilder und CI-Tourtests enthalten; Versionskandidat gc41.
 
 Nächster Schritt: lokaler Vergleich mit Originalstyles auf iPadgrößen, dann vollständige relevante Regressionen/Build, unabhängiges Review und exakte Cloud-CI. Noch kein Stagingdeploy.
+
+## Ergänzter lokaler Prüfstand
+
+Codecheckpoint auf GitHub 0827b9ce5ac53cf3d5046521014d94e681ccbb60, Baum identisch zu lokalem Commit61f147c (9ab243ea…). CLI-Push war wegen fehlender CLI-Anmeldedaten eindeutig abgebrochen; vorhandener GitHub-Connector hat den identischen Dateibaum gesichert. Kein Credentialzugriff oder Geschichtsreset. CI39157144848 auf erstem Zwischenstand rot; neue importierte UI-Helfer fehlten in zwei bestehenden VM-Testbindings. Tatsächliche Helfer in diesen Fixtures ergänzt; kein Produktguard abgeschwächt. Neue SDK-Transaktion ist in der loopback-only Firebase-Fixture ausdrücklich verboten exportiert, damit der vollständige isolierte Appimport weiter funktioniert. Startup-Appcachekey aktualisiert.
+
+65/65 erweiterte Regressionen lokal grün, darunter echte vollständige vorbereitete Tourpfade bis Create-, Settings- und Gastabschluss. Separater Entry/ET-Lauf10/10 grün; historischer globaler Document-Cleanup-Warntext im Entryfixture separat erhalten, kein Browserfehler behauptet. Build167Dateien gc41 erfolgreich. Layoutprobe tools/ui/dashboard-layout-preview.html/.mjs nur synthetische Daten/CSPconnectnone, nicht Staging-Allowlist. Server8785 Session42661. Browser-ID änderte sich seit14.10.; nach Inventory tatsächliche IAB3 gebunden, vorhandene User-Tabs unberührt.
+
+1366×1024: neuer CTA160.55×52px rechts oben, Tutorial154.22×44px in Kopfzeile, pageWidth1366 ohne horizontalen Überlauf. iPadportrait zeigte noch alte1150px-Ein-Spalten-Regel; diese im vorhandenen Block entfernt, Einspalte nur650px. Inline78×86-Absolute-Styles an Remy entfernt; objektgetreue38×42pxDarstellung. Hochformat/Phoneprüfung läuft. Keine Stagingveröffentlichung bisher.

@@ -4,6 +4,8 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import { execFileSync } from 'node:child_process';
 import { JSDOM } from './tools/ui/node_modules/jsdom/lib/api.js';
+import { syncDashboardTutorialEntry } from './dashboard-tutorial-entry.mjs';
+import { recordTutorialSignIn } from './tutorial-signins.mjs';
 import { createLocalTourRepository } from './guest-tour-port.mjs';
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from './ai-review-state.js';
 import { assessmentContentLabels } from './shared/i18n/assessment-locale.mjs';
@@ -132,6 +134,7 @@ test('app bootstrap binds its real auth controls after public entry installation
       installWorkspaceInteractions: noop, bindTabs: noop, onAuthStateChanged: noop, focusView: noop, scrollBehavior: () => 'auto',
       setSaveState: noop, CSS: { escape: value => String(value) },
       requestStudentSubmitConfirmation: async () => true,
+      syncDashboardTutorialEntry, recordTutorialSignIn,
       assessmentContentLabels, formatMathText,
       validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage,
       AbortController,
@@ -140,7 +143,7 @@ test('app bootstrap binds its real auth controls after public entry installation
       firestoreGetDoc: forbidden, firestoreGetDocs: () => allowAnnouncementReads
         ? new Promise(resolve => announcementReads.push(resolve)) : forbidden(), firestoreOnSnapshot: forbidden,
       firestoreSetDoc: forbidden, firestoreAddDoc: forbidden, firestoreUpdateDoc: forbidden,
-      firestoreDeleteDoc: forbidden, firestoreWriteBatch: forbidden,
+      firestoreDeleteDoc: forbidden, firestoreWriteBatch: forbidden, firestoreRunTransaction: forbidden,
       collection: (...segments) => segments,
       createLocalTourRepository: () => { guestPort = createLocalTourRepository(); return guestPort; },
       installCrewTour: api => { guestApi = api; return {

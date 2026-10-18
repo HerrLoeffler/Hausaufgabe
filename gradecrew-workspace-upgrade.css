@@ -19,6 +19,7 @@
 #dashboardView.gcWorkspace > .pageHead p { font-size: 14px; line-height: 1.55; }
 #dashboardView .gcWorkspaceGreeting { position: absolute; right: 0; top: 4px; width: 96px; height: 96px; object-fit: contain; pointer-events: none; }
 #dashboardView.gcWorkspace .dashboardActions { display: flex; flex-wrap: nowrap; align-items: center; align-self: start; justify-content: flex-end; gap: 10px; width: auto; max-width: none; }
+#dashboardView.gcWorkspace .dashboardPrimaryActions { display:flex; align-items:center; gap:8px; }
 #dashboardView.gcWorkspace #newQuizBtn { display:inline-flex; align-items:center; justify-content:center; gap:8px; width:auto; min-height:48px; padding:5px 16px; white-space:nowrap; background: var(--workspace-blue); box-shadow: 0 4px 12px #285ac920; }
 #dashboardView.gcWorkspace #newQuizBtn img { width:38px; height:42px; object-fit:contain; }
 #dashboardView.gcWorkspace #trashBtn { border-color:transparent; background:transparent; width:44px; height:48px; min-width:44px; padding:3px; }
@@ -82,14 +83,12 @@
 #dashboardView.gcWorkspace :is(button,summary,input,select):focus-visible { outline: 3px solid #7040b5; outline-offset: 3px; }
 @media (min-width: 1500px) { #dashboardView.gcWorkspace .quizGrid { grid-template-columns: repeat(4,minmax(0,1fr)); } }
 @media (max-width: 1150px) {
-  #dashboardView.gcWorkspace > .pageHead { grid-template-columns: minmax(0,1fr); }
-  #dashboardView.gcWorkspace .dashboardActions { max-width: none; justify-content: flex-start; }
   #dashboardView.gcWorkspace .quizGrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   #dashboardView.gcWorkspace .aiJobCard { grid-template-columns: 32px minmax(0,1fr); }
   #dashboardView.gcWorkspace .aiJobActions { grid-column: 2; grid-row: auto; max-width: none; justify-content: flex-start; }
 }
 @media (max-width: 650px) {
-  #dashboardView.gcWorkspace > .pageHead { padding: 20px 16px; border-radius: 16px; gap: 18px; }
+  #dashboardView.gcWorkspace > .pageHead { grid-template-columns:minmax(0,1fr); padding: 20px 16px; border-radius: 16px; gap: 18px; }
   #dashboardView.gcWorkspace > .pageHead > div:first-child { padding-inline-end: 0; }
   #dashboardView .gcWorkspaceGreeting { width: 60px; height: 60px; top: -4px; }
   #dashboardView.gcWorkspace > .pageHead :is(h1,.eyebrow) { padding-inline-end: 66px; }
