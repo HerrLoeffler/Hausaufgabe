@@ -56,9 +56,9 @@ function preparePlan(source,config){
  for(const q of questions){try{const family=compile(q,source.kind==='curriculum');families.push(family);items.push({id:String(q.id),text:String(q.text||`${q.kind==='P'?'Schriftliche':'Kopf'} Varianten: ${q.family}`),status:'variable',reason:`Geprüfte ${family.kind==='H'?'Kopf':'Papier'}familie`});}catch(e){items.push({id:String(q.id),text:String(q.text||'Aufgabe'),status:'unsupported',reason:e.message});issues.push(`Aufgabe ${q.id}: ${e.message}`);}}
  const byKind={H:families.filter(f=>f.kind==='H'),P:families.filter(f=>f.kind==='P')};
  if(!byKind.H.length)issues.push('Diese Quelle enthält keine geprüfte Kopffamilie.');if(config.category==='paper'&&!byKind.P.length)issues.push('Für 65/35 fehlen passende Papieraufgaben aus derselben Quelle.');
- const requiredCount=Math.ceil(config.durationSec/2)+20,tasks=[],seen=new Set(),cursors=new Map(),counts={H:0,P:0};let exhausted=false;
+ const requiredCount=Math.ceil(config.durationSec/2)+20,tasks=[],seen=new Set(),cursors=new Map(),counts={H:0,P:0};let exhausted=false;const exhaustedKinds=new Set();
  if(!issues.length)for(let i=0;i<requiredCount;i++){
-  const kind=config.category==='paper'&&Math.floor((35*(i+1)+50)/100)>Math.floor((35*i+50)/100)?'P':'H';let question=null;
+  const kind=config.category==='paper'&&Math.floor((35*(i+1)+50)/100)>Math.floor((35*i+50)/100)?'P':'H';if(exhaustedKinds.has(kind))continue;let question=null;
   const selected=byKind[kind];
   for(let cycle=0;cycle<selected.length&&!question;cycle++){
    const f=selected[(counts[kind]+cycle)%selected.length],key=f.sourceId+':'+kind;let cursor=cursors.get(key)||0;
@@ -66,7 +66,7 @@ function preparePlan(source,config){
    while(cursor<f.capacity){const n=(cursor*7919)%f.capacity;cursor++;const q=candidate(f,n);if(q&&!seen.has(q.fingerprint)){question=q;break;}}
    cursors.set(key,cursor);
   }
-  if(!question){exhausted=true;break;}
+  if(!question){exhausted=true;exhaustedKinds.add(kind);continue;}
   seen.add(question.fingerprint);tasks.push(question);counts[kind]++;
  }
  const pools={H:[],P:[]};tasks.forEach((q,i)=>pools[q.kind].push(i));

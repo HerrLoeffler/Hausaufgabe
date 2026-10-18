@@ -62,3 +62,6 @@ test('small finite math families transparently cycle through checked variants wi
 test('computer success compares exact raw threshold, independent from rounded display energy',async()=>{
  const f=fixture(),r=await room2(f,7,{gameMode:'computer',durationSec:1200}),c=pc(r);await f.api('Start',hc(r));const stored=f.docs.get('fastQuizClassroomsV2/'+r.code);stored.round=2;stored.config.referencePoints=960;for(const m of Object.values(stored.members))m.score=0;stored.members[c.playerId].score=4030;f.tick(1205000);const s=await f.api('State',c);assert.equal(s.energy,600);assert.equal(s.success,false);
 });
+test('a small head family cycles independently while a large paper family continues new variants',()=>{
+ const source={id:'mixed',questions:[{id:'h',type:'number',text:'2 + 2 = ?',numericAnswer:4},{id:'p',type:'number',text:'147 + 268 = ?',numericAnswer:415}]};const p=sources.preparePlan(source,{category:'paper',durationSec:1200});assert.equal(p.available,true);assert.ok(p.pools.H.length<30);assert.ok(p.pools.P.length>=217);const tasks=Array.from({length:620},(_,i)=>sources.taskAt(p,i,90));for(let i=1;i<=620;i++)assert.equal(tasks.slice(0,i).filter(t=>t.kind==='P').length,Math.floor((35*i+50)/100));const written=tasks.filter(q=>q.kind==='P');assert.equal(new Set(written.map(q=>q.fingerprint)).size,written.length);
+});
