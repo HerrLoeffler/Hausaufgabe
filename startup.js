@@ -15,7 +15,7 @@ function installGradeCrewDesignStyles() {
     ["./gradecrew-auth-startscreen.css?v=4", "auth-startscreen-v4"],
     ["./gradecrew-auth-startscreen-polish.css?v=2", "auth-startscreen-polish-v2"],
     ["./gradecrew-hero-scene.css?v=3", "hero-scene-v3"],
-    ["./gradecrew-workspace-upgrade.css?v=1", "workspace-upgrade-v1"]
+    ["./gradecrew-workspace-upgrade.css?v=2.3.1-gc44", "workspace-upgrade-v1"]
   ];
   for (const [href, version] of styles) {
     if (document.querySelector(`link[data-gradecrew-design="${version}"]`)) continue;
@@ -117,7 +117,7 @@ if (publicTestCode && !teacherPreview) {
     const entryInstalled = installGradeCrewEntryFlow();
     if (!entryInstalled) throw new Error("GradeCrew public entry could not be installed before app startup.");
 
-    await import("./app.js?v=2.3.1-gc43-quick-remy1");
+    await import("./app.js?v=2.3.1-gc44");
     await import("./shared/i18n/assessment-locale-ui.mjs?v=3");
     await import("./gradecrew-workspace-upgrade.mjs?v=1");
     window.clearTimeout(slowStart);

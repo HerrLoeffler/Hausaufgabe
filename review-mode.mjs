@@ -3,10 +3,10 @@ import {createReviewStorage} from './review-store.mjs';
 const labels={open:'Offen',working:'In Arbeit',review:'Zum Prüfen',done:'Erledigt',pending:'Wartet auf Freigabe',approved:'Freigegeben',rejected:'Abgelehnt',not_required:'Adminhinweis',passed:'Bestanden',failed:'Fehler',blocked:'Blockiert'};
 export function installReviewMode({document,api,getContext,storage=createReviewStorage(),openScene,navigate,runChecks,local=false,compact=false,environment='production'}) {
  if(compact)document.body.id ||= 'gradecrewPage';
- const win=document.defaultView;let uid='',epoch=0,admin=false,catalog=[],root,toggle,marking=false,selected=null,highlight=null,notes=[],checks=[],syncing=false;
+ const win=document.defaultView;let uid='',epoch=0,admin=false,catalog=[],root,toggle,marking=false,selected=null,highlight=null,notes=[],checks=[];
  let compactCapture=null;
  let regionMode=false,drag=null,regionOverlay=null,regionAnchor=null,regionBounds=null,suppressClick=false;
- let pendingWrites=Promise.resolve(),queueWrites=Promise.resolve();
+ let pendingWrites=Promise.resolve(),queueWrites=Promise.resolve(),syncTask=Promise.resolve();
  // Preserve the original live outbox key; the new test project gets its own namespace.
  const namespace=environment==='production'?'staging':environment==='staging'?'staging-2026':environment;
  const updateQueue=(k,change)=>{const p=queueWrites.catch(()=>{}).then(async()=>storage.update?storage.update(k,change):storage.put(k,change(await storage.get(k))));queueWrites=p;return p;};const key=kind=>`${namespace}:${uid}:${kind}`;
@@ -93,7 +93,8 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
   const payload={action:'create',clientRequestId:win.crypto.randomUUID(),...context,text:input.value.trim()};const e=epoch,k=key('outbox');
   try{await pendingWrites;await updateQueue(k,current=>[...(current||[]),payload]);if(e!==epoch)return;if(input.value.trim()===payload.text){input.value='';const draftKey=key('draft');pendingWrites=pendingWrites.catch(()=>{}).then(async()=>{const change=current=>current?.text?.trim()===payload.text?null:current;if(storage.update)return storage.update(draftKey,change);return storage.put(draftKey,change(await storage.get(draftKey)));});await pendingWrites;}message('Lokal gespeichert – wird übertragen');await sync();}catch(err){error(err);}
  }
- async function sync(){if(syncing||!uid)return;syncing=true;const e=epoch,k=key('outbox');
+ function sync(){const requestedEpoch=epoch;const next=syncTask.catch(()=>{}).then(()=>requestedEpoch===epoch?performSync():undefined);syncTask=next;return next;}
+ async function performSync(){if(!uid)return;const e=epoch,k=key('outbox');
   try{let queue=await storage.get(k)||[];let sent;
    while((sent=queue.find(x=>!x._error))&&e===epoch){
     try{await call(sent);await updateQueue(k,current=>(current||[]).filter(x=>x.clientRequestId!==sent.clientRequestId));}
@@ -104,7 +105,7 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
     queue=await storage.get(k)||[];
    }
    if(e===epoch){message(queue.length?'Einige Hinweise sind nur lokal gespeichert. Bitte die Ausgangsliste prüfen.':local?'In der lokalen Prüfumgebung gespeichert':'Online gespeichert',queue.length>0);await refresh();}
-  }catch(err){if(e===epoch)message(`Nur lokal gespeichert. ${err.message}`,true);}finally{syncing=false;if(e===epoch)await renderOutbox();}
+  }catch(err){if(e===epoch)message(`Nur lokal gespeichert. ${err.message}`,true);}finally{if(e===epoch)await renderOutbox();}
  }
  async function renderOutbox(){const list=root?.querySelector('[data-review-outbox]');if(!list)return;const e=epoch,k=key('outbox');let queue;
   try{queue=await storage.get(k)||[];}catch{return;}if(e!==epoch||!list.isConnected)return;list.replaceChildren();

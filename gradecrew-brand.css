@@ -23,12 +23,6 @@ body { color: var(--text); -webkit-font-smoothing: antialiased; }
 .eyebrow { font-size: 12px; letter-spacing: .13em; font-weight: 750; }
 .button { font-size: 13px; border-radius: 9px; }
 .dashboardPrimaryActions { display: flex; align-items: center; gap: 8px; }
-.gcEtLauncher { position: fixed; z-index: 1400; left: 16px; bottom: 16px; display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid #c8d7e8; border-radius: 16px; background: #fff; color: #174f9f; box-shadow: 0 10px 28px #152f4b24; text-decoration: none; font-weight: 850; }
-.gcEtLauncher[hidden], .gcEtLauncher.hidden { display: none !important; }
-.gcEtLauncher span { display: grid; place-items: center; width: 32px; height: 26px; border-radius: 9px; background: #eaf2ff; font-size: 14px; letter-spacing: -.04em; }
-.gcEtLauncher small { margin-top: -2px; color: #64748b; font-size: 9px; line-height: 1; }
-.gcEtLauncher:hover { transform: translateY(-2px); box-shadow: 0 14px 32px #152f4b30; }
-.gcEtLauncher:focus-visible { outline: 3px solid #4b7fe0; outline-offset: 3px; }
 .card { border-radius: 16px; }
 input:not([type="checkbox"]):not([type="radio"]), select, textarea { border-radius: 9px; border-color: #c7d0db; }
 .authIntro { display: grid; grid-template-columns: 1fr 240px; align-items: center; gap: 48px; max-width: 1000px; margin: 4px auto 30px; }
