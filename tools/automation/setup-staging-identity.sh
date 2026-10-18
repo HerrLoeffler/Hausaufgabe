@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Run once in the user's authenticated Cloud Shell. No service-account key created.
 set -euo pipefail
-PROJECT_ID=hausaufgabe-staging
+PROJECT_ID=gradecrew-staging-2026
 REPOSITORY=HerrLoeffler/Hausaufgabe
 REPOSITORY_ID=1076884609
 POOL=gradecrew-github
@@ -33,11 +33,12 @@ fi
 gcloud iam service-accounts add-iam-policy-binding "$SERVICE_ACCOUNT" --project "$PROJECT_ID" --role=roles/iam.workloadIdentityUser --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$POOL/attribute.repository_id/$REPOSITORY_ID" --quiet >/dev/null
 PROVIDER_NAME="projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/$POOL/providers/$PROVIDER"
 if command -v gh >/dev/null && gh auth status >/dev/null 2>&1; then
-  gh variable set STAGING_WIF_PROVIDER --repo "$REPOSITORY" --body "$PROVIDER_NAME"
+  gh variable set STAGING2026_WIF_PROVIDER --repo "$REPOSITORY" --body "$PROVIDER_NAME"
   echo 'GitHub variable saved. Next successful app-integration push CI will deploy its preview.'
 else
   echo 'Google Cloud ready. Create this GitHub Actions repository variable:'
-  echo "STAGING_WIF_PROVIDER=$PROVIDER_NAME"
+  echo "STAGING2026_WIF_PROVIDER=$PROVIDER_NAME"
   echo "https://github.com/$REPOSITORY/settings/variables/actions"
 fi
 echo 'Only staging Hosting roles granted. This script did not deploy hosting, rules or functions.'
+

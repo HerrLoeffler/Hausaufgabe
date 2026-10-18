@@ -88,7 +88,7 @@ node --test tools/gate-e-load-test.test.mjs
 node --check gate-e-lab.js
 node --test gate-e-lab.test.mjs
 bash -n deploy-gate-e-preview.sh
-grep -q 'PROJECT_ID="hausaufgabe-staging"' deploy-gate-e-preview.sh
+grep -q 'PROJECT_ID="gradecrew-staging-2026"' deploy-gate-e-preview.sh
 grep -q 'CHANNEL="gate-e-lab"' deploy-gate-e-preview.sh
 grep -q -- '--only functions' deploy-gate-e-preview.sh && { echo 'Gate E deploy must not redeploy functions'; exit 1; } || true
 grep -q 'hosting:channel:deploy' deploy-gate-e-preview.sh
@@ -191,4 +191,5 @@ grep -q 'secure-draft-persistence.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'secure-deadline-guard.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'secure-result-policy.js' "$BUILD_DIR/public/secure-student.html"
 grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
-grep -q 'hausaufgabe-staging' "$BUILD_DIR/public/firebase-config.js"
+grep -q 'gradecrew-staging-2026' "$BUILD_DIR/public/firebase-config.js"
+

@@ -49,7 +49,7 @@ jobs:
           retention-days: 30
   deploy-ai-functions:
     needs: source
-    if: vars.STAGING_FUNCTIONS_WIF_PROVIDER != ''
+    if: vars.STAGING2026_FUNCTIONS_WIF_PROVIDER != ''
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -57,7 +57,7 @@ jobs:
       actions: read
       id-token: write
     env:
-      PROJECT_ID: hausaufgabe-staging
+      PROJECT_ID: gradecrew-staging-2026
       INTEGRATION_BRANCH: feature/gradecrew-app-integration
       EXPECTED_SHA: ${{ needs.source.outputs.sha }}
       FIREBASE_TOOLS_VERSION: 15.32.0
@@ -117,9 +117,9 @@ jobs:
       - name: Authenticate only as the staging Functions deployer
         uses: google-github-actions/auth@v3
         with:
-          project_id: hausaufgabe-staging
-          workload_identity_provider: ${{ vars.STAGING_FUNCTIONS_WIF_PROVIDER }}
-          service_account: gradecrew-functions@hausaufgabe-staging.iam.gserviceaccount.com
+          project_id: gradecrew-staging-2026
+          workload_identity_provider: ${{ vars.STAGING2026_FUNCTIONS_WIF_PROVIDER }}
+          service_account: gradecrew-functions@gradecrew-staging-2026.iam.gserviceaccount.com
 
       - name: Prepare staging PostHog runtime configuration
         if: hashFiles('functions/lib/posthog-telemetry.js') != ''
@@ -132,8 +132,8 @@ jobs:
             exit 1
           }
           umask 077
-          printf 'POSTHOG_PROJECT_TOKEN=%s\n' "$POSTHOG_PROJECT_TOKEN_STAGING" > functions/.env.hausaufgabe-staging
-          grep -q '^POSTHOG_PROJECT_TOKEN=' functions/.env.hausaufgabe-staging
+          printf 'POSTHOG_PROJECT_TOKEN=%s\n' "$POSTHOG_PROJECT_TOKEN_STAGING" > functions/.env.gradecrew-staging-2026
+          grep -q '^POSTHOG_PROJECT_TOKEN=' functions/.env.gradecrew-staging-2026
 
       - name: Deploy only the AI Functions codebase to staging
         run: |
@@ -205,7 +205,7 @@ jobs:
 
   deploy-assessment-functions:
     needs: source
-    if: vars.STAGING_FUNCTIONS_WIF_PROVIDER != ''
+    if: vars.STAGING2026_FUNCTIONS_WIF_PROVIDER != ''
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -213,7 +213,7 @@ jobs:
       actions: read
       id-token: write
     env:
-      PROJECT_ID: hausaufgabe-staging
+      PROJECT_ID: gradecrew-staging-2026
       INTEGRATION_BRANCH: feature/gradecrew-app-integration
       EXPECTED_SHA: ${{ needs.source.outputs.sha }}
       FIREBASE_TOOLS_VERSION: 15.32.0
@@ -273,9 +273,9 @@ jobs:
       - name: Authenticate only as the staging Functions deployer
         uses: google-github-actions/auth@v3
         with:
-          project_id: hausaufgabe-staging
-          workload_identity_provider: ${{ vars.STAGING_FUNCTIONS_WIF_PROVIDER }}
-          service_account: gradecrew-functions@hausaufgabe-staging.iam.gserviceaccount.com
+          project_id: gradecrew-staging-2026
+          workload_identity_provider: ${{ vars.STAGING2026_FUNCTIONS_WIF_PROVIDER }}
+          service_account: gradecrew-functions@gradecrew-staging-2026.iam.gserviceaccount.com
 
       - name: Deploy only the Assessment Functions codebase to staging
         run: |
@@ -347,11 +347,12 @@ jobs:
 
   setup-needed:
     needs: source
-    if: vars.STAGING_FUNCTIONS_WIF_PROVIDER == ''
+    if: vars.STAGING2026_FUNCTIONS_WIF_PROVIDER == ''
     runs-on: ubuntu-latest
     steps:
       - run: |
           echo 'AI Functions CI is green, but automatic staging Functions deployment is not activated yet.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Run tools/automation/setup-staging-functions-identity.sh once from authenticated Google Cloud Shell.' >> "$GITHUB_STEP_SUMMARY"
           echo 'No Functions, Rules, Hosting or Production resources were changed.' >> "$GITHUB_STEP_SUMMARY"
+
 

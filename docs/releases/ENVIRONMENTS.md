@@ -1,5 +1,19 @@
 # GradeCrew: Umgebungen und Wiederherstellung
 
+## Beauftragte Trennung vom 18.10.2026
+
+| Rolle | Firebase-Projekt | Adresse |
+|---|---|---|
+| Schulversion / Live-Ziel | `hausaufgabe-staging` | https://hausaufgabe-staging.web.app/ |
+| Getrennte Entwicklungstests | `gradecrew-staging-2026` | https://gradecrew-staging-2026.web.app/ |
+| Unveränderter Altbestand | `hausaufgabe-40294` | kein neuer Rollout |
+
+Bestehende Konten, Tests und Dateien bleiben im Schulprojekt; keine Migration oder Neuregistrierung dort. Die neue Testumgebung enthält ausschließlich Testdaten. Die Schulfreigabe ist erst nach dokumentierter End-to-End-Abnahme und App-/Geräteprüfung abgeschlossen; diese Zuordnung allein behauptet keinen Live-Deploy.
+
+Die automatischen Staging-Controller und ihre Manifest-/Receiptprüfungen sind auf das neue Testprojekt gerichtet. Neue Variablen `STAGING2026_WIF_PROVIDER` und `STAGING2026_FUNCTIONS_WIF_PROVIDER` verhindern, dass alte Live-Projekt-Identitäten weiterverwendet werden. Ohne Einrichtung der neuen Identitäten erfolgt kein automatischer Staging-Deploy. Manuelle Deploys verwenden den expliziten, projektgebundenen Release-Einstieg im Webbranch. Für Live ist eine gesonderte bewusste Freigabe nötig.
+
+
+
 ## Entscheidung vom 01.10.2026
 
 Vier Rollen sind sinnvoll, aber eine vierte URL ist kein Backup und keine 100%-Garantie.
@@ -49,3 +63,4 @@ Die vorhandenen sogenannten Mobile-Tutorial-Checks sind automatisierte Regressio
 Zielwerte für Wiederherstellungsdauer und maximal akzeptablen Datenverlust werden erst nach einem echten Restore-Test festgelegt. Momentan besteht keine vollständig geprüfte Disaster-Recovery-Lösung.
 
 Quelle: https://firebase.google.com/docs/hosting/manage-hosting-resources
+

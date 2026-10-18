@@ -642,7 +642,7 @@ class DeploymentTests(unittest.TestCase):
                          'GITHUB_OUTPUT': str(root / 'outputs'), 'GUARDIAN_ENABLED': 'true'}):
                     d.main()
                     self.assertEqual(json.loads((root / 'deployment-source.json').read_text()),
-                        {'commit': B, 'upstreamCiRun': 44, 'workflowRun': 66, 'project': 'hausaufgabe-staging'})
+                        {'commit': B, 'upstreamCiRun': 44, 'workflowRun': 66, 'project': 'gradecrew-staging-2026'})
                     self.assertEqual(ledger, original)
                     with patch.dict(os.environ, {'UPSTREAM_RUN_ID': '44', 'EXPECTED_SHA': A}), self.assertRaises(ValueError):
                         d.main()
@@ -724,7 +724,7 @@ class DeliveryTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         self.public=Path(self.temp.name)/'public';self.public.mkdir()
         (self.public/'coach.js').write_text('export const next = true;')
-        self.release={'project':'hausaufgabe-staging','commit':B,'files':{'coach.js':hashlib.sha256((self.public/'coach.js').read_bytes()).hexdigest()}}
+        self.release={'project':'gradecrew-staging-2026','commit':B,'files':{'coach.js':hashlib.sha256((self.public/'coach.js').read_bytes()).hexdigest()}}
 
     def test_changed_file_is_physically_present_and_hash_bound_to_package(self):
         self.assertEqual(delivery.verify_packaging(self.release,B,['coach.js'],self.public),['coach.js'])
@@ -762,7 +762,7 @@ class ValidationReportTests(unittest.TestCase):
             (source/'coach.js').write_text(code);git('commit','-am','candidate');head=git('rev-parse','HEAD')
             public=root/'public';public.mkdir();(public/'coach.js').write_text(code)
             files={'coach.js':hashlib.sha256(code.encode()).hexdigest()} if packaged else {}
-            (public/'release.json').write_text(json.dumps({'project':'hausaufgabe-staging','commit':head,'files':files}))
+            (public/'release.json').write_text(json.dumps({'project':'gradecrew-staging-2026','commit':head,'files':files}))
             env=os.environ|{'EXPECTED_HEAD':head,'TEST_RESULT':'success','PACKAGE_RESULT':package_result,
                             'PACKAGED_PUBLIC':str(public),'REHEARSAL':str(rehearsal).lower()}
             proc=subprocess.run(['python3',str(Path(__file__).with_name('validation_report.py'))],cwd=root,env=env,capture_output=True,text=True)
@@ -796,3 +796,4 @@ class ValidationReportTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+

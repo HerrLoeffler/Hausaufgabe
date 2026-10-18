@@ -164,7 +164,7 @@ def reconcile_deployment(attempt, persist=None):
                 raise ValueError(kind + ' latest deployment is missing/pending/failed')
             run = rows[0]
             source = artifact_document(run['id'], 'verified-deploy-source', 'deployment-source.json')
-            if source != {'commit': head, 'upstreamCiRun': newest['id'], 'workflowRun': run['id'], 'project': 'hausaufgabe-staging'}:
+            if source != {'commit': head, 'upstreamCiRun': newest['id'], 'workflowRun': run['id'], 'project': 'gradecrew-staging-2026'}:
                 raise ValueError(kind + ' deployment source belongs to another CI/candidate')
             if run.get('status') == 'completed' and run.get('conclusion') == 'failure' and persist is not None:
                 retry_failed_deploy(attempt, kind, run, persist)
@@ -192,8 +192,9 @@ def main():
         raise ValueError('Staging source differs from original build')
     output(sha=head, upstream_ci=run_id)
     Path('deployment-source.json').write_text(json.dumps({'commit': head, 'upstreamCiRun': run_id,
-        'workflowRun': int(os.environ['GITHUB_RUN_ID']), 'project': 'hausaufgabe-staging'}) + '\n')
+        'workflowRun': int(os.environ['GITHUB_RUN_ID']), 'project': 'gradecrew-staging-2026'}) + '\n')
 
 
 if __name__ == '__main__':
     main()
+

@@ -33,12 +33,12 @@ class SnapshotTests(unittest.TestCase):
             root = Path(directory)
             public = root / 'build/public'
             public.mkdir(parents=True)
-            files = {'index.html': b'preview', 'firebase-config.js': b'projectId: "hausaufgabe-staging"'}
+            files = {'index.html': b'preview', 'firebase-config.js': b'projectId: "gradecrew-staging-2026"'}
             for name, content in files.items():
                 (public / name).write_bytes(content)
             sha = 'a' * 40
-            (public / 'release.json').write_text(json.dumps({'project':'hausaufgabe-staging', 'commit':sha, 'files': {n:hashlib.sha256(c).hexdigest() for n,c in files.items()}}))
-            receipt = {'project':'hausaufgabe-staging','channel':'gradecrew-app-integration','commit':sha,'ci_run':'123','verified_files':2,'url':'https://hausaufgabe-staging--gradecrew-app-integration-abc.web.app'}
+            (public / 'release.json').write_text(json.dumps({'project':'gradecrew-staging-2026', 'commit':sha, 'files': {n:hashlib.sha256(c).hexdigest() for n,c in files.items()}}))
+            receipt = {'project':'gradecrew-staging-2026','channel':'gradecrew-app-integration','commit':sha,'ci_run':'123','verified_files':2,'url':'https://gradecrew-staging-2026--gradecrew-app-integration-abc.web.app'}
             package(root/'build', receipt, '123', root/'out')
             extract((root/'out/hosting-snapshot.zip').read_bytes(), root/'restored')
             for name, content in files.items():
@@ -55,3 +55,4 @@ class SnapshotTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

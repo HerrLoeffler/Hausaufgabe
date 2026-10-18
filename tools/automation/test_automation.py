@@ -22,10 +22,10 @@ class AutomationTests(unittest.TestCase):
             root = Path(folder)
             public = root / 'public'
             public.mkdir()
-            files = {'index.html': b'<html>preview</html>', 'firebase-config.js': b'projectId: "hausaufgabe-staging"'}
+            files = {'index.html': b'<html>preview</html>', 'firebase-config.js': b'projectId: "gradecrew-staging-2026"'}
             for name, content in files.items():
                 (public / name).write_bytes(content)
-            release = {'project': 'hausaufgabe-staging', 'commit': 'a' * 40, 'files': {name: hashlib.sha256(content).hexdigest() for name, content in files.items()}}
+            release = {'project': 'gradecrew-staging-2026', 'commit': 'a' * 40, 'files': {name: hashlib.sha256(content).hexdigest() for name, content in files.items()}}
             manifest = public / 'release.json'
             manifest.write_text(json.dumps(release))
             self.assertEqual(preview.manifest(root, 'a' * 40), release)
@@ -35,7 +35,7 @@ class AutomationTests(unittest.TestCase):
             manifest.write_text(json.dumps(release))
             with self.assertRaises(ValueError):
                 preview.manifest(root, 'a' * 40)
-            release['project'] = 'hausaufgabe-staging'
+            release['project'] = 'gradecrew-staging-2026'
             manifest.write_text(json.dumps(release))
             (public / 'index.html').write_text('changed')
             with self.assertRaises(ValueError):
@@ -46,11 +46,25 @@ class AutomationTests(unittest.TestCase):
                 preview.manifest(root, 'a' * 40)
 
     def test_only_expected_preview_origin(self):
-        allowed = 'https://hausaufgabe-staging--gradecrew-app-integration-abc123.web.app'
+        allowed = 'https://gradecrew-staging-2026--gradecrew-app-integration-abc123.web.app'
         self.assertEqual(preview.preview_url({'result': {'site': {'url': allowed}}}), allowed)
-        for url in ['https://hausaufgabe-40294.web.app', 'https://hausaufgabe-staging.web.app', allowed + '.evil.example', 'http://' + allowed[8:]]:
+        for url in ['https://hausaufgabe-staging--gradecrew-app-integration-abc123.web.app','https://hausaufgabe-40294.web.app', 'https://gradecrew-staging-2026.web.app', allowed + '.evil.example', 'http://' + allowed[8:]]:
             with self.assertRaises(ValueError):
                 preview.preview_url({'url': url})
+
+    def test_school_project_is_never_a_staging_deployment_target(self):
+        for file in ['staging-preview.yml','staging-functions.yml']:
+            text=(Path(__file__).resolve().parents[2]/'.github/workflows'/file).read_text()
+            self.assertNotIn('hausaufgabe-staging',text)
+            self.assertIn('gradecrew-staging-2026',text)
+            self.assertNotIn('vars.STAGING_WIF_PROVIDER',text)
+            self.assertNotIn('vars.STAGING_FUNCTIONS_WIF_PROVIDER',text)
+        with tempfile.TemporaryDirectory() as folder:
+            public=Path(folder)/'public';public.mkdir()
+            data=b'projectId: "hausaufgabe-staging"'
+            (public/'firebase-config.js').write_bytes(data)
+            (public/'release.json').write_text(json.dumps({'project':'hausaufgabe-staging','commit':'a'*40,'files':{'firebase-config.js':hashlib.sha256(data).hexdigest()}}))
+            with self.assertRaises(ValueError): preview.manifest(Path(folder),'a'*40)
 
     def test_tasks_require_valid_id_pinned_commit_and_allowed_branch(self):
         valid = {'id': 'tutorial-1', 'base_branch': 'feature/gradecrew-app-integration', 'base_sha': 'a' * 40, 'goal': 'Fix', 'acceptance': 'Test', 'constraints': 'Scope'}
@@ -64,3 +78,4 @@ class AutomationTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

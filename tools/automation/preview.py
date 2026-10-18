@@ -12,7 +12,7 @@ import urllib.request
 def manifest(root, expected):
     public = root / 'public'
     release = json.loads((public / 'release.json').read_text())
-    if release.get('project') != 'hausaufgabe-staging' or release.get('commit') != expected:
+    if release.get('project') != 'gradecrew-staging-2026' or release.get('commit') != expected:
         raise ValueError('Wrong project or commit in release manifest')
     files = release.get('files')
     if not isinstance(files, dict) or not files or 'index.html' not in files or 'firebase-config.js' not in files:
@@ -29,7 +29,7 @@ def manifest(root, expected):
     actual = {str(p.relative_to(public)) for p in public.rglob('*') if p.is_file()}
     if actual != set(files) | {'release.json'}:
         raise ValueError('Unlisted files in build')
-    if 'projectId: "hausaufgabe-staging"' not in (public / 'firebase-config.js').read_text():
+    if 'projectId: "gradecrew-staging-2026"' not in (public / 'firebase-config.js').read_text():
         raise ValueError('Wrong Firebase client config')
     return release
 
@@ -47,7 +47,7 @@ def preview_url(result):
             for item in value:
                 walk(item)
     walk(result)
-    valid = [u.rstrip('/') for u in urls if re.fullmatch(r'https://hausaufgabe-staging--gradecrew-app-integration-[a-z0-9]+\.web\.app/?', u)]
+    valid = [u.rstrip('/') for u in urls if re.fullmatch(r'https://gradecrew-staging-2026--gradecrew-app-integration-[a-z0-9]+\.web\.app/?', u)]
     if len(set(valid)) != 1:
         raise ValueError('No unambiguous allowed preview URL')
     return valid[0]
@@ -62,7 +62,7 @@ def main():
     release = manifest(root, expected)
     if mode == 'prepare':
         (root / 'firebase.json').write_text(json.dumps({'hosting': {
-            'site': 'hausaufgabe-staging', 'public': 'public', 'ignore': ['**/.*'],
+            'site': 'gradecrew-staging-2026', 'public': 'public', 'ignore': ['**/.*'],
             'headers': [{'source': '**', 'headers': [{'key': 'Cache-Control', 'value': 'no-cache'}]}]
         }}))
         return
@@ -81,7 +81,7 @@ def main():
     for name, digest in release['files'].items():
         if hashlib.sha256(get(name)).hexdigest() != digest:
             raise ValueError('Published bytes differ: ' + name)
-    receipt = {'project': 'hausaufgabe-staging', 'channel': 'gradecrew-app-integration', 'commit': expected, 'url': url, 'verified_files': len(release['files']), 'ci_run': os.environ.get('GITHUB_RUN_ID'), 'device_test': 'not_performed'}
+    receipt = {'project': 'gradecrew-staging-2026', 'channel': 'gradecrew-app-integration', 'commit': expected, 'url': url, 'verified_files': len(release['files']), 'ci_run': os.environ.get('GITHUB_RUN_ID'), 'device_test': 'not_performed'}
     (root / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
     with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as output:
         output.write('Preview verified: ' + url + '\n\nCommit: `' + expected + '`\n\nAll manifest file hashes match. Device testing remains open.\n')
@@ -89,3 +89,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

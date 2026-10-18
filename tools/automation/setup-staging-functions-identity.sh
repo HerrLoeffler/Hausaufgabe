@@ -4,7 +4,7 @@
 # No service-account key is created and Production is never targeted.
 set -euo pipefail
 
-PROJECT_ID="hausaufgabe-staging"
+PROJECT_ID="gradecrew-staging-2026"
 REPOSITORY="HerrLoeffler/Hausaufgabe"
 REPOSITORY_ID="1076884609"
 POOL="gradecrew-functions-github"
@@ -12,7 +12,7 @@ PROVIDER="staging-functions"
 ACCOUNT="gradecrew-functions"
 SERVICE_ACCOUNT="$ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com"
 WORKFLOW="$REPOSITORY/.github/workflows/staging-functions.yml@refs/heads/main"
-VARIABLE="STAGING_FUNCTIONS_WIF_PROVIDER"
+VARIABLE="STAGING2026_FUNCTIONS_WIF_PROVIDER"
 POOL_DISPLAY='GradeCrew Staging Functions'
 PROVIDER_DISPLAY='GradeCrew Staging OIDC'
 MAX_WIF_DISPLAY_LENGTH=32
@@ -163,5 +163,6 @@ fi
 echo
 echo 'Einrichtung abgeschlossen.'
 echo 'Der Functions-Workflow darf ausschließlich aus staging-functions.yml auf main über diese Identität authentifizieren.'
-echo 'Der Workflow deployt ausschließlich functions:ai nach hausaufgabe-staging.'
+echo 'Der Workflow deployt ausschließlich functions:ai nach gradecrew-staging-2026.'
 echo 'Keine Production-Rolle, kein Schlüssel, kein Firestore-Rules- oder Hosting-Deploy wurde eingerichtet.'
+

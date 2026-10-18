@@ -53,7 +53,7 @@ def package(build, receipt, run_id, output):
     sha = receipt.get('commit', '')
     if not re.fullmatch('[0-9a-f]{40}', sha):
         raise ValueError('Invalid commit')
-    if receipt.get('project') != 'hausaufgabe-staging' or receipt.get('channel') != 'gradecrew-app-integration' or str(receipt.get('ci_run')) != str(run_id):
+    if receipt.get('project') != 'gradecrew-staging-2026' or receipt.get('channel') != 'gradecrew-app-integration' or str(receipt.get('ci_run')) != str(run_id):
         raise ValueError('Receipt belongs to another deployment')
     preview_url({'url': receipt.get('url')})
     release = manifest(build, sha)
@@ -104,3 +104,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

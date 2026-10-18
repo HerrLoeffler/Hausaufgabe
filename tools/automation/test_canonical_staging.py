@@ -14,9 +14,9 @@ from tools.automation import preview
 SHA = "a" * 40
 RUN_ID = 123
 SOURCE = {"commit": SHA, "upstreamCiRun": 456, "workflowRun": RUN_ID,
-          "project": "hausaufgabe-staging"}
-RECEIPT = {"project": "hausaufgabe-staging", "channel": "gradecrew-app-integration",
-           "commit": SHA, "url": "https://hausaufgabe-staging--gradecrew-app-integration-abc123.web.app",
+          "project": "gradecrew-staging-2026"}
+RECEIPT = {"project": "gradecrew-staging-2026", "channel": "gradecrew-app-integration",
+           "commit": SHA, "url": "https://gradecrew-staging-2026--gradecrew-app-integration-abc123.web.app",
            "verified_files": 2, "ci_run": str(RUN_ID), "device_test": "not_performed"}
 RUN = {"name": "Automatic staging preview", "path": ".github/workflows/staging-preview.yml",
        "event": "workflow_run", "head_branch": "main",
@@ -138,16 +138,16 @@ class CanonicalStagingTests(unittest.TestCase):
             public = root / "public"
             public.mkdir()
             files = {"index.html": b"<h1>Test</h1>",
-                     "firebase-config.js": b'projectId: "hausaufgabe-staging"'}
+                     "firebase-config.js": b'projectId: "gradecrew-staging-2026"'}
             for name, data in files.items():
                 (public / name).write_bytes(data)
-            release = {"project": "hausaufgabe-staging", "commit": SHA,
+            release = {"project": "gradecrew-staging-2026", "commit": SHA,
                        "files": {name: hashlib.sha256(data).hexdigest()
                                  for name, data in files.items()}}
             (public / "release.json").write_text(json.dumps(release))
             deploy = root / "deploy.json"
             deploy.write_text(json.dumps({"status": "success", "result": {
-                "hausaufgabe-staging": {"url": RECEIPT["url"], "version": ""}}}))
+                "gradecrew-staging-2026": {"url": RECEIPT["url"], "version": ""}}}))
             summary = root / "summary"
 
             def served(request, timeout):
@@ -185,7 +185,7 @@ class CanonicalStagingTests(unittest.TestCase):
 
     def test_live_verification_requires_stable_version_and_exact_bytes(self):
         state = {"sourceRun": RUN_ID, "commit": SHA, "upstreamCiRun": 456,
-                 "previousLiveVersion": "sites/hausaufgabe-staging/versions/v0"}
+                 "previousLiveVersion": "sites/gradecrew-staging-2026/versions/v0"}
         with TemporaryDirectory() as folder:
             state_file = Path(folder) / "state.json"
             state_file.write_text(json.dumps(state))
@@ -195,16 +195,16 @@ class CanonicalStagingTests(unittest.TestCase):
                     patch.object(promotion, "bundle", return_value={"files": {"index.html": "a"}}), \
                     patch.object(promotion, "published_files"), \
                     patch.object(promotion, "channel_version", side_effect=[
-                        "sites/hausaufgabe-staging/versions/v1",
-                        "sites/hausaufgabe-staging/versions/v2"]):
+                        "sites/gradecrew-staging-2026/versions/v1",
+                        "sites/gradecrew-staging-2026/versions/v2"]):
                 with self.assertRaisesRegex(ValueError, "live channel changed"):
                     promotion.verify()
 
     def test_changed_live_version_blocks_deploy_preparation(self):
         with TemporaryDirectory() as folder:
             state_file = Path(folder) / "state.json"
-            versions = ["sites/hausaufgabe-staging/versions/v0",
-                        "sites/hausaufgabe-staging/versions/v2"]
+            versions = ["sites/gradecrew-staging-2026/versions/v0",
+                        "sites/gradecrew-staging-2026/versions/v2"]
             with patch.dict(os.environ, ENV), \
                     patch.object(promotion, "qualify", return_value=(SOURCE, RECEIPT)), \
                     patch.object(promotion, "bundle", return_value={"files": {"index.html": "a"}}), \
@@ -216,17 +216,17 @@ class CanonicalStagingTests(unittest.TestCase):
 
     def test_project_qualified_hosting_version_is_normalized(self):
         payload = {"release": {"version": {"name":
-            "projects/950775032930/sites/hausaufgabe-staging/versions/v1"}}}
+            "projects/840345136563/sites/gradecrew-staging-2026/versions/v1"}}}
         def served(request, timeout):
             self.assertEqual(request.full_url,
-                             "https://firebasehosting.googleapis.com/v1beta1/sites/hausaufgabe-staging/channels/live")
+                             "https://firebasehosting.googleapis.com/v1beta1/sites/gradecrew-staging-2026/channels/live")
             return BytesIO(json.dumps(payload).encode())
         with patch.dict(os.environ, {"GCP_ACCESS_TOKEN": "test"}), \
                 patch.object(promotion.urllib.request, "urlopen", side_effect=served):
             self.assertEqual(promotion.channel_version("live", True),
-                             "sites/hausaufgabe-staging/versions/v1")
+                             "sites/gradecrew-staging-2026/versions/v1")
         payload["release"]["version"]["name"] = (
-            "projects/other-project/sites/hausaufgabe-staging/versions/v1")
+            "projects/other-project/sites/gradecrew-staging-2026/versions/v1")
         with patch.dict(os.environ, {"GCP_ACCESS_TOKEN": "test"}), \
                 patch.object(promotion.urllib.request, "urlopen",
                              return_value=BytesIO(json.dumps(payload).encode())):
@@ -236,3 +236,4 @@ class CanonicalStagingTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
