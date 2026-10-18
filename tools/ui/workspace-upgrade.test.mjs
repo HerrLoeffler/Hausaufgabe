@@ -5,7 +5,8 @@ import vm from 'node:vm';
 import { JSDOM } from 'jsdom';
 import { secureAudioPublicationBlocked } from '../../secure-audio-publication.mjs';
 import { installWorkspaceUpgrade } from '../../gradecrew-workspace-upgrade.mjs';
-import { setActiveUiLocale, translateTree, translateSource } from '../../shared/i18n/browser-runtime.mjs?v=3';
+import { registerCatalog, setActiveUiLocale, translateTree, translateSource } from '../../shared/i18n/browser-runtime.mjs?v=3';
+import { enGBMessages } from '../../shared/i18n/messages-en-GB.mjs?v=2';
 const html = fs.readFileSync(new URL('../../index.html',import.meta.url),'utf8');
 const app = fs.readFileSync(new URL('../../app.js',import.meta.url),'utf8');
 const workspaceCss = fs.readFileSync(new URL('../../gradecrew-workspace-upgrade.css',import.meta.url),'utf8');
@@ -36,6 +37,48 @@ test('moves original toolbar above jobs and tests, preserves nodes and click han
   x.document.querySelector('.results').click(); x.document.querySelector('.remove').click();
   assert.deepEqual(x.calls,[['openEditor','ONE'],['duplicate-choice',true],['openResults','ONE'],['deleteQuiz','ONE']]);
  }finally{x.close();}
+});
+test('test cards keep the same primary actions and four stat slots across statuses',()=>{
+ const x=setup();try {
+  const [draft,published]=x.document.querySelectorAll('#quizList .quizCard');
+  for (const card of [draft,published]) {
+   assert.deepEqual([...card.querySelectorAll('.primaryQuizActions button')].map(button=>button.classList.contains('primary') ? 'primary' : 'secondary'),['primary','secondary']);
+   assert.deepEqual([...card.querySelectorAll('.primaryQuizActions button')].map(button=>button.textContent),['Bearbeiten','Ergebnisse']);
+   assert.equal(card.querySelectorAll('.quizStats > div').length,4);
+  }
+  assert.equal(draft.querySelector('.studentShare'),null);
+  assert.ok(published.querySelector('.secondaryQuizActions .studentShare'));
+  assert.equal(published.querySelector('.primaryQuizActions .studentShare'),null);
+  published.querySelector('.studentShare').click();
+  assert.deepEqual(x.calls.at(-1),['showPublish','TWO']);
+  x.state.quizzes[0].timeLimitMinutes=15;x.state.quizzes[0].startMode='teacher';
+  x.state.quizzes[1].ended=true;
+  vm.runInContext('renderQuizList()',x.context);x.api.refresh();
+  const [timed,ended]=x.document.querySelectorAll('#quizList .quizCard');
+  assert.deepEqual([...timed.querySelectorAll('.quizStats strong')].map(node=>node.textContent),['6','12','15','Lehrkraft']);
+  assert.deepEqual([...ended.querySelectorAll('.quizStats strong')].map(node=>node.textContent),['4','8','–','Schüler']);
+  assert.equal(ended.querySelector('.studentShare'),null);
+ }finally{x.close();}
+});
+test('the card trash action is icon-only, named for assistive tech and keeps deletion confirmation handler',()=>{
+ const x=setup();try {
+  const button=x.document.querySelector('#quizList .quizDeleteButton');
+  assert.equal(button.textContent.trim(),'');
+  assert.equal(button.getAttribute('aria-label'),'Test in den Papierkorb');
+  assert.equal(button.getAttribute('title'),'Test in den Papierkorb');
+  assert.equal(button.querySelectorAll('svg[aria-hidden="true"] path').length,1);
+  button.click();assert.deepEqual(x.calls.at(-1),['deleteQuiz','ONE']);
+  registerCatalog('en-GB',enGBMessages);
+  globalThis.document=x.document;globalThis.NodeFilter=x.dom.window.NodeFilter;
+  setActiveUiLocale('en-GB');translateTree(x.$('dashboardView'));
+  assert.equal(button.getAttribute('aria-label'),'Move test to trash');
+  assert.equal(x.document.querySelector('#quizList .quizCard .quizStats div:last-child strong').textContent,'Student');
+ }finally{delete globalThis.document;delete globalThis.NodeFilter;setActiveUiLocale('de-DE');x.close();}
+});
+test('card spacing remains a fixed four-column grid on desktop and two-column grid on phones',()=>{
+ assert.match(workspaceCss,/\.quizStats\s*\{[^}]*grid-template-columns:\s*repeat\(4,minmax\(0,1fr\)\)/s);
+ assert.match(workspaceCss,/@media \(max-width: 650px\)[\s\S]*\.quizStats\s*\{[^}]*grid-template-columns:\s*repeat\(2,minmax\(0,1fr\)\)/);
+ assert.match(workspaceCss,/\.quizDeleteButton\s*\{[^}]*width:\s*44px/s);
 });
 test('Remy action and recycling-bin positions remain in the desktop center and mobile first column',()=>{
  assert.match(workspaceCss,/dashboardPrimaryActions\s*\{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1 \/ 3/s);
