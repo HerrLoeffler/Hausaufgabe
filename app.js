@@ -9348,7 +9348,7 @@ if (window.__GRADECREW_ACCOUNT_WORKSPACE__ === true && location.hostname === '12
     },
     listTests: () => state.user ? state.quizzes.map(q=>({id:q.id,title:q.title,grade:q.grade,subject:q.subject,published:q.published})) : [],
     currentView: () => views.find(id=>!$(id)?.classList.contains('hidden')),
-    registerView(id) { if(!['accountClassesView','accountPupilsView'].includes(id))throw Error('Unbekannte Zusatzansicht.');if(!views.includes(id))views.push(id); },
+    registerView(id) { if(!['accountClassesView','accountPupilsView','accountTeachersView'].includes(id))throw Error('Unbekannte Zusatzansicht.');if(!views.includes(id))views.push(id); },
     showView,
     showTests: loadDashboard,
     openQuiz: openEditor,

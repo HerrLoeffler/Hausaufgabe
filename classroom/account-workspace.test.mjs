@@ -45,3 +45,11 @@ test('account sidebar preserves original login and tests and derives classes onl
  assert.doesNotMatch(doc.getElementById('accountClassesView').textContent,/Mein vorhandener Test/);
  shell.destroy();dom.window.close();
 });
+
+test('actual original app port accepts the additive teacher view and still rejects arbitrary views',()=>{
+ const source=fs.readFileSync(new URL('../app.js',import.meta.url),'utf8');
+ const method=source.slice(source.indexOf('window.GradeCrewAccountWorkspacePort =')).match(/registerView\(id\) \{([^\n]+)\}/)[0];
+ const views=['dashboardView'],port=Function('views',`return ({${method}});`)(views);
+ assert.doesNotThrow(()=>port.registerView('accountTeachersView'));port.registerView('accountTeachersView');assert.equal(views.filter(v=>v==='accountTeachersView').length,1);
+ assert.throws(()=>port.registerView('arbitraryView'),/Unbekannte Zusatzansicht/);
+});

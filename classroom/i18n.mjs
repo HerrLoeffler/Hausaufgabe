@@ -1,5 +1,16 @@
 import {registerCatalog} from '../shared/i18n/browser-runtime.mjs?v=3';
 const entries={
+ 'Lehrkräfteliste importieren':'Import teacher roster','Lehrkräfte-CSV importieren':'Import teacher CSV','Lehrkräftebestand':'Teacher roster',
+ 'Klassen und Fächer deiner Lehrkräfte im Überblick.':'Your teachers’ classes and subjects at a glance.',
+ 'Lehrkräfte mit ihren Klassen und Fächern verwalten. Ein Eintrag vergibt keine Login- oder Administrationsrechte.':'Manage teachers, classes and subjects. A record grants no sign-in or administrator permissions.',
+ 'Beispiel-CSV herunterladen':'Download example CSV','Lehrkräfte suchen':'Search teachers','Lehrkraft':'Teacher','Kürzel':'Short code','Klassen und Fächer':'Classes and subjects','Keine Zuordnung':'No assignment',
+ 'Noch keine passenden Lehrkräfte. Importiere eine CSV-Datei.':'No matching teachers yet. Import a CSV file.',
+ 'Kürzel (optional)':'Short code (optional)','Klasse (optional)':'Class (optional)','Fach (optional)':'Subject (optional)','Nicht importieren':'Do not import',
+ 'Bisheriger Unterricht':'Previous teaching assignments','Neuer Unterricht':'New teaching assignments','Bestehende Person zugeordnet':'Matched to existing person',
+ 'Name, Kürzel oder Unterricht geändert':'Name, short code or teaching assignments changed','Entscheidungen werden automatisch geprüft …':'Checking decisions automatically …',
+ 'Unterricht im Zielschuljahr wird wie angezeigt übernommen. Andere Schuljahre bleiben erhalten.':'Teaching assignments for the target year will be applied as shown. Other school years are preserved.',
+ 'Pro Klasse und Fach eine Zeile. Für mehrere Zuordnungen dieselbe stabile Kennung auswählen. Ohne Klasse und Fach werden nur Namen und Kürzel importiert; vorhandene Zuordnungen bleiben erhalten.':'Use one row per class and subject. Select the same stable identifier for multiple assignments. Without class and subject, only names and short codes are imported; existing assignments are preserved.',
+
  'Deine vorhandenen Tests, nach ihren gespeicherten Klassenangaben geordnet.':'Your existing tests, grouped by their saved class labels.',
  'Noch keine Klassenangaben':'No class labels yet',
  'Wenn du in deinen Tests eine Klasse oder Klassenstufe hinterlegst, erscheinen die Tests hier gemeinsam.':'Add a class or year group to your tests to see them grouped here.',

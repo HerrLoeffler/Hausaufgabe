@@ -1,0 +1,84 @@
+{
+  "taskId": "GC-CLASSROOM-01",
+  "date": "2026-10-18",
+  "scope": "local teacher CSV import and simpler inline decisions for both roster types",
+  "source": {
+    "baseLocal": "fc261d537cb0bb16ad09a73ee4eae031aaada848",
+    "candidateLocal": "1f7b1a45fdfee7c1371ef87b6a9998bd8e403376",
+    "candidateRemote": "0d6049d60f6b0d90e966b20b5371871509ddc12b",
+    "finalProductLocal": "eed60c25335812c65cb37ea6010f553fbd5091f2",
+    "finalProductTree": "d6e13df7d11dfd67d29be8e6f93e406c94665360",
+    "branch": "feature/classroom-integrated-preview-20261016"
+  },
+  "verification": {
+    "testsPassed": 375,
+    "failed": 0,
+    "exitCode": 0,
+    "candidateTestsPassed": 374,
+    "knownWarning": "Existing gradecrew-entry-flow jsdom teardown warning retained"
+  },
+  "independentReview": {
+    "agent": "teacher_import_review",
+    "candidateResult": "PASS, no P1/P2",
+    "candidateOwnTests": 21,
+    "deltaResult": "PASS, no P1/P2",
+    "deltaOwnTests": 5,
+    "independentBrowserRun": false
+  },
+  "authorBrowser": {
+    "normalExistingLogin": true,
+    "onlySyntheticImportByAgent": true,
+    "firstTeacherCSVRows": 3,
+    "teachersCreated": 2,
+    "teachingPairsCreated": 3,
+    "multipleStaffInSameClass": true,
+    "oneStaffInMultipleClassesAndSubjects": true,
+    "reloadPreservedTeacherRoster": true,
+    "secondPreviewOpenDecisions": 2,
+    "topCountFilterClicked": true,
+    "decisionsMadeInSameDialog": 2,
+    "automaticPreviewOpenDecisionsAfter": 0,
+    "manualRepreviewNeeded": false,
+    "approvalThenCommitEnabled": true,
+    "secondPreviewCancelledWithoutCommit": true,
+    "existingQuizCardsAfterLoading": 49,
+    "quizWriteOrPublish": false,
+    "initialBrowserFinding": "Original registerView allowlist omitted accountTeachersView; fixed after RED regression; only that app guard extended",
+    "newErrorsAfterFix": 0,
+    "physicalDeviceTest": false,
+    "screenshotOutsideRepository": [
+      "outputs/classroom-20261018/teacher-roster-result.jpg",
+      "outputs/classroom-20261018/teacher-import-preview.jpg",
+      "outputs/classroom-20261018/import-two-open.jpg"
+    ]
+  },
+  "dataBoundary": {
+    "storage": "private local SQLite on this Mac, per verified Firebase UID",
+    "staffRecordsAreAuthAccounts": false,
+    "csvGrantsRoles": false,
+    "firebaseAuthenticationChanged": false,
+    "schoolwideSharing": false,
+    "applicationLayerEncryption": false,
+    "realUserRosterImportedByAgent": false,
+    "rawFilePosted": false,
+    "sourceIDMustBeExplicitlySelected": true,
+    "staffAndStudentSourceIndicesSeparate": true,
+    "namesAloneAutoMerge": false,
+    "missingStaffDeleted": false,
+    "priorYearsPreserved": true,
+    "staffOnlyImportPreservesAssignments": true,
+    "unmappedShortCodePreserved": true
+  },
+  "server": {
+    "url": "http://127.0.0.1:8782/",
+    "session": 10997
+  },
+  "release": {
+    "stage": "branch_only",
+    "hostingDeployed": false,
+    "functionsDeployed": false,
+    "rulesDeployed": false,
+    "productionChanged": false
+  },
+  "next": "Martin tests own teacher CSV mapping and teaching pairs; shared school backend and verified teacher account linking remain separately planned"
+}

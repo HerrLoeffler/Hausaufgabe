@@ -25,3 +25,5 @@
 .rosterImportDialog [hidden]{display:none!important}.rosterImportDialog [data-import-back]{margin:8px 0}
 
 .rosterImportCounts{grid-template-columns:repeat(4,minmax(0,1fr));position:sticky;top:0;background:var(--gc-colors-surface,#fff);z-index:2}.rosterImportCounts button{font-weight:700;min-height:48px;white-space:normal}.rosterImportCounts button[aria-pressed=true]{background:var(--gc-colors-primary,#3554a4);color:#fff}.rosterImportDialog [data-import-confirm-status]{margin-bottom:8px}.rosterImportDialog td{overflow-wrap:anywhere}.rosterClassTeaching{font-size:13px;order:2}@media(max-width:600px){.rosterImportCounts{grid-template-columns:1fr 1fr}}
+
+.rosterTeacherSearch{display:grid;gap:6px;margin:18px 0 8px}.rosterTeacherSearch input{width:100%;min-height:44px}

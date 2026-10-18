@@ -93,8 +93,7 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
    for(const c of sortedClasses()){
     const card=make('article',undefined,{class:'card classroomClassCard'}),count=state.students.filter(s=>s.classId===c.id).length;
     const teaching=(state.teachers||[]).flatMap(t=>(t.assignments||[]).filter(a=>a.classId===c.id).map(a=>`${t.firstName} ${t.lastName}: ${a.subject}`));
-    if(teaching.length)card.append(make('p',teaching.join(' · '),{class:'rosterClassTeaching'}));
-    card.append(make('h3',c.name),make('p',c.schoolYear),make('p',`${count} Schüler:innen`),button('Schüler:innen öffnen',()=>{filter=c.id;search='';page=0;onStudents();},{'data-roster-class':c.id}),button('Klasse bearbeiten',()=>formDialog('class',c),{'data-roster-edit-class':c.id}));grid.append(card);
+    card.append(make('h3',c.name),make('p',c.schoolYear),make('p',`${count} Schüler:innen`),button('Schüler:innen öffnen',()=>{filter=c.id;search='';page=0;onStudents();},{'data-roster-class':c.id}),button('Klasse bearbeiten',()=>formDialog('class',c),{'data-roster-edit-class':c.id}));if(teaching.length)card.append(make('p',teaching.join(' · '),{class:'rosterClassTeaching'}));grid.append(card);
    }
    section.append(grid);
   }
@@ -131,7 +130,7 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
   const example='Personal-ID;Vorname;Nachname;Kürzel;Klasse;Fach\n0001;Ada;Beispiel;AB;8b;Deutsch\n0001;Ada;Beispiel;AB;9b;Englisch\n0002;Mila;Muster;MM;8b;Technik\n';
   host.append(make('a','Beispiel-CSV herunterladen',{href:'data:text/csv;charset=utf-8,'+encodeURIComponent('\ufeff'+example),download:'SYNTHETISCH_Lehrkraefte_Beispiel.csv',class:'button ghost'}));
   if(status!=='ready')return;
-  const label=make('label','Lehrkräfte suchen'),input=make('input',undefined,{type:'search','aria-label':'Lehrkräfte suchen',autocomplete:'off'}),result=make('div',undefined,{'data-telemetry-private':'true'});label.append(input);host.append(label,result);
+  const label=make('label','Lehrkräfte suchen',{class:'rosterTeacherSearch'}),input=make('input',undefined,{type:'search','aria-label':'Lehrkräfte suchen',autocomplete:'off'}),result=make('div',undefined,{'data-telemetry-private':'true'});label.append(input);host.append(label,result);
   function list(){
    result.replaceChildren();const term=input.value.toLocaleLowerCase('de');
    const teachers=(state.teachers||[]).filter(t=>`${t.firstName} ${t.lastName} ${t.shortCode}`.toLocaleLowerCase('de').includes(term)).sort((a,b)=>a.lastName.localeCompare(b.lastName,'de'));
