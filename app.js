@@ -9339,6 +9339,13 @@ function notifyAccountWorkspace() {
 if (window.__GRADECREW_ACCOUNT_WORKSPACE__ === true && location.hostname === '127.0.0.1') {
   window.GradeCrewAccountWorkspacePort = Object.freeze({
     getSession: () => state.user ? {uid:state.user.uid,displayName:state.profile?.displayName || state.user.displayName || '',environment:appEnvironment} : null,
+    async getAuthToken() {
+      const user=auth.currentUser;
+      if(!user||user.uid!==state.user?.uid)throw Error('Bitte zuerst anmelden.');
+      const token=await user.getIdToken();
+      if(auth.currentUser?.uid!==user.uid||state.user?.uid!==user.uid)throw Error('account-changed');
+      return token;
+    },
     listTests: () => state.user ? state.quizzes.map(q=>({id:q.id,title:q.title,grade:q.grade,subject:q.subject,published:q.published})) : [],
     currentView: () => views.find(id=>!$(id)?.classList.contains('hidden')),
     registerView(id) { if(!['accountClassesView','accountPupilsView'].includes(id))throw Error('Unbekannte Zusatzansicht.');if(!views.includes(id))views.push(id); },

@@ -74,3 +74,8 @@ public/
 
 # Device-local review fixtures and evidence
 .review-local/
+
+# Device-local named classroom records (never commit)
+.gradecrew-local/
+*.sqlite
+*.sqlite-journal

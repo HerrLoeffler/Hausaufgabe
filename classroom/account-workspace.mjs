@@ -1,7 +1,9 @@
 // Additive navigation only: authentication, quiz data and mutations stay in app.js.
 import './i18n.mjs';
+import {createLocalRosterClient} from './local-roster-client.mjs';
+import {createManualRoster} from './manual-roster.mjs';
 
-export function installAccountWorkspace({document:doc=globalThis.document,port}) {
+export function installAccountWorkspace({document:doc=globalThis.document,port,client}) {
   const main=doc.getElementById('mainContent');
   if(!main||!port)return null;
   const make=(tag,text,attributes={})=>{
@@ -17,6 +19,8 @@ export function installAccountWorkspace({document:doc=globalThis.document,port})
   const nav=make('nav',undefined,{id:'accountWorkspaceNav',class:'classroomNav hidden','aria-label':'Arbeitsbereich'});
   nav.append(make('span','Mein Arbeitsbereich',{class:'classroomNavLabel'}));
   let active='tests',selectedClass='',accountId=null;
+  const rosterClient=client||(port.getAuthToken?createLocalRosterClient({port}):null);
+  const roster=rosterClient?createManualRoster({document:doc,client:rosterClient,onChange:()=>{if(port.getSession())render();},onStudents:()=>open('pupils')}):null;
   const classes=make('section',undefined,{id:'accountClassesView',class:'view hidden',tabindex:'-1'});
   const pupils=make('section',undefined,{id:'accountPupilsView',class:'view hidden',tabindex:'-1'});
   for(const view of [classes,pupils]){main.append(view);port.registerView(view.id);}
@@ -37,7 +41,12 @@ export function installAccountWorkspace({document:doc=globalThis.document,port})
     classes.replaceChildren();pupils.replaceChildren();
     if(!port.getSession())return;
     const tests=port.listTests();
-    heading(classes,'Klassen','Deine vorhandenen Tests, nach ihren gespeicherten Klassenangaben geordnet.');
+    if(roster){
+      heading(classes,'Klassen','Deine Klassen und die bisherigen Testgruppen im Überblick.');
+      roster.renderClasses(classes);
+      classes.append(make('h2','Vorhandene Testgruppen',{class:'classroomSection'}));
+    }
+    if(!roster)heading(classes,'Klassen','Deine vorhandenen Tests, nach ihren gespeicherten Klassenangaben geordnet.');
     const groupNames=[...new Set(tests.map(q=>String(q.grade||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'de',{numeric:true}));
     if(selectedClass){
       classes.append(button('Alle Klassen',()=>{selectedClass='';render();}));
@@ -63,6 +72,7 @@ export function installAccountWorkspace({document:doc=globalThis.document,port})
       classes.append(empty);
     }
     classes.append(make('p','Diese Ansicht verwendet deine Testangaben. Ein gemeinsamer schulischer Klassenbestand mit Mitgliedschaften wird zusätzlich angebunden.',{class:'hint'}));
+    if(roster){heading(pupils,'Schüler:innen','Schüler:innen mit Vor- und Nachnamen anlegen und ihren Klassen zuordnen.');roster.renderStudents(pupils);return;}
     heading(pupils,'Schüler:innen','Der zusätzliche Bereich für Klassenmitglieder und persönliche Schülerzugänge.');
     const empty=make('section',undefined,{class:'card empty'});
     empty.append(make('h2','Noch kein Schülerbestand verknüpft'),make('p','Die dauerhafte Schüler- und ASV-Anbindung ist für diesen Account noch nicht eingerichtet. Deine vorhandenen Tests und Auswertungen bleiben über „Meine Tests“ erreichbar.'),button('Zu meinen Tests',()=>open('tests')));
@@ -70,7 +80,7 @@ export function installAccountWorkspace({document:doc=globalThis.document,port})
   }
   function refresh(){
     const session=port.getSession(),uid=session?.uid||null;
-    if(uid!==accountId){accountId=uid;selectedClass='';active='tests';render();}
+    if(uid!==accountId){accountId=uid;selectedClass='';active='tests';roster?.setAccount(uid);render();}
     const visible=port.currentView();
     if(visible==='dashboardView')active='tests';
     const show=Boolean(uid)&&visible!=='authView';
@@ -79,5 +89,5 @@ export function installAccountWorkspace({document:doc=globalThis.document,port})
     if(uid&&(visible===classes.id||visible===pupils.id))render();
   }
   const unsubscribe=port.subscribe(refresh);refresh();
-  return {destroy(){unsubscribe();nav.remove();classes.remove();pupils.remove();doc.body.classList.remove('classroomSignedIn');}};
+  return {destroy(){unsubscribe();roster?.destroy();nav.remove();classes.remove();pupils.remove();doc.body.classList.remove('classroomSignedIn');}};
 }

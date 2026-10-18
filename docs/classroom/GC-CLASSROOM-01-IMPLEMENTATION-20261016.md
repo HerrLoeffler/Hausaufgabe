@@ -12,6 +12,14 @@
 
 **Stand:** 18.10.2026; detaillierter Umsetzungsvorschlag zur Nutzerprüfung, nicht implementiert. Aufgabenbranch `feature/classroom-integrated-preview-20261016`; Integrationsziel weiterhin `feature/gradecrew-app-integration`. Ausgangscode lokal `60295f223cc9a1daf56dc0e22da87c48400b0d73`, remote `505d22c4243f5578b65eb66b033a1584e3987e9a`, identischer Tree `e40635b8a72fa670ff16983a6dd7a5cda3319d92`. Unterschiedliche Commit-SHAs entstehen durch die bereits dokumentierte Connector-Sicherung, nicht durch einen anderen Produktbaum.
 
+## Autorisierte Präzisierung: erster lokaler Ausbau mit Vor-/Nachnamen — 18.10.2026
+
+Martin hat die Umsetzung freigegeben, zuerst dauerhafte Klassen und manuelle Schüleraufnahme. Für diesen Lieferumfang werden Vor- und Nachnamen regulär eingegeben und angezeigt; keine Pseudonyme. Diese ausdrückliche Nutzervorgabe ersetzt die früheren namenlosen UI-/Speicheranforderungen für diesen lokalen Teil. Namen sind dennoch personenbezogene Daten; DSGVO Art4/5/6/32 bleibt relevant (Primärquelle: https://eur-lex.europa.eu/legal-content/DE/TXT/?uri=CELEX:32016R0679). Kein allgemeiner schulrechtlicher Freigabenachweis.
+
+Der sofort nutzbare erste Ausbau speichert die Namen und Klassen im vorhandenen Loopbackserver auf diesem Mac in SQLite, außerhalb des statischen Webroots, mit Dateirechten0600 und pro geprüftem echtem Lehreraccount getrennt. Bestehende Lehreranmeldung/Tests bleiben im bisherigen Testbackend. Tokenprüfung erfolgt über den dokumentierten Firebase-Auth-endpunkt accounts:lookup; dabei werden keine Schülerdaten übertragen. Keine CSV-/ASV- oder schulweite Rollenfunktion in diesem ersten Lieferumfang; späterer Cloudadapter und Schulfreigaben bleiben erforderlich. Die neue lokale Speicherung ersetzt weder eine schulweite gemeinsame Cloudverwaltung noch deren Backendrelease. Kein Hosting-/Rules-/Functionsdeploy.
+
+Dieser Teil ergänzt die im Folgenden beschriebene Zielarchitektur. Abweichende Aussagen „Namen nur im Browser-RAM“ gelten für diesen ausdrücklich autorisierten lokalen Namenbestand nicht. Keine Namen, lokale Datenbank oder Credentials im Gitbaum, in AI, Logs oder Telemetrie. Keine Bestands-Quizmutation durch die neue Verwaltung.
+
 ## Global Constraints
 
 - Lokaler Einstieg bleibt `http://127.0.0.1:8782/`; originale Startseite, normaler Lehrerlogin, bestehende Tests, Erstellen, Editor, Auswertungen, Einstellungen, Coco und bestehender Gast-Testcode bleiben erhalten.
