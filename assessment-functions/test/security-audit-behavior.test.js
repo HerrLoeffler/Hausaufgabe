@@ -76,6 +76,7 @@ function fixture() {
     exports, Buffer,
     Date: class extends Date { static now() { return now; } },
     require: name => {
+      if (name === './offline-recovery-policy') return require('../lib/offline-recovery-policy');
       if (name === './observability') return require('../lib/observability');
       if (name === './audio-release-gate') return require('../lib/audio-release-gate');
       if (name === 'firebase-functions/logger') return { info() {}, warn() {}, error() {} };

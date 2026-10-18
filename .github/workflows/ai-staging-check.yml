@@ -71,7 +71,7 @@ jobs:
         run: npm ci --prefix tools/ui --no-audit --no-fund
 
       - name: Practice solution publication tests
-        run: node --test practice-solution-publication.test.mjs
+        run: node --test practice-solution-publication.test.mjs secure-offline-review-label.test.mjs
 
       - name: Install security rules test dependencies
         run: npm ci --prefix tools/rules --no-audit --no-fund

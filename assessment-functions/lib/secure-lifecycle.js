@@ -17,6 +17,7 @@ const {
   publicQuizMetadata,
   assertNoSolutionLeak
 } = require("./assessment-core");
+const {offlineRecovery}=require("./offline-recovery-policy");
 const { audioReleaseBlockedByMetadata, audioReleaseBlockedByQuestions } = require("./audio-release-gate");
 const {
   buildTeacherDecoderShape,
@@ -504,6 +505,7 @@ function makeReceipt(submission, quiz = null, privateData = null, publicationPol
     && quiz != null
     && quiz?.isDeleted !== true
     && quiz?.rightsHold !== true
+    && !(submission?.recoveryReviewRequired === true && submission?.status === "review")
     && Array.isArray(privateData?.solutionSnapshot);
   const receipt = {
     submissionId: submission?.attemptId || submission?.id || null,
@@ -577,7 +579,7 @@ exports.getAssessmentInfo = onCall(callableOpts, observed("getAssessmentInfo", a
   const quizId = cleanQuizId(request.data?.quizId);
   const { data: quiz } = await readQuiz(quizId);
   validateQuizOpen(quiz);
-  return { quiz: publicQuizState(quiz, quizId) };
+  return { quiz: publicQuizState(quiz, quizId), capabilities: { offlineRecovery: 1 } };
 }));
 
 exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentAttempt", async request => {
@@ -815,13 +817,20 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
     if (!quizSnap.exists) throw new HttpsError("not-found", "Dieser Test existiert nicht mehr.");
     const quiz = quizSnap.data();
     const nowMillis = Date.now();
-    validateSubmissionWindow(quiz, attempt, nowMillis);
-    assertSameRun(attempt, quiz, quizId);
-    if (attempt.status !== "running") throw new HttpsError("failed-precondition", "Der Test wurde für diesen Versuch noch nicht gestartet.");
-
     const startedAtMillis = toMillis(attempt.startedAt);
     const deadlineAtMillis = toMillis(attempt.deadlineAt) || deadlineMillis(startedAtMillis, attempt.timeLimitMinutes);
-    if (deadlineAtMillis && nowMillis > deadlineAtMillis + SUBMIT_GRACE_SECONDS * 1000) {
+    let recovery;
+    try {
+      recovery=offlineRecovery({requested:request.data?.recoverySubmission,now:nowMillis,startedAt:startedAtMillis,
+        deadlineAt:deadlineAtMillis,quiz,sameRun:effectiveRunId(quiz,quizId)===attempt.sessionRunId,
+        status:attempt.status,reason:request.data?.recoveryReason});
+    } catch(error) { throw new HttpsError(error.code||"failed-precondition",error.message); }
+    if (!recovery?.review) {
+      validateSubmissionWindow(quiz, attempt, nowMillis);
+      assertSameRun(attempt, quiz, quizId);
+    }
+    if (attempt.status !== "running") throw new HttpsError("failed-precondition", "Der Test wurde für diesen Versuch noch nicht gestartet.");
+    if (!recovery?.review && deadlineAtMillis && nowMillis > deadlineAtMillis + SUBMIT_GRACE_SECONDS * 1000) {
       throw new HttpsError("deadline-exceeded", "Die serverseitige Abgabefrist ist abgelaufen. Bitte wende dich an deine Lehrkraft.");
     }
     const gradingKey = Array.isArray(privateData.gradingKey) ? privateData.gradingKey : [];
@@ -835,7 +844,8 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
     const result = gradeSubmission(gradingKey, secureAnswers);
     const teacherAnswers = decodeSubmissionAnswersFromShape(decoderShape, secureAnswers, paperSecret);
     const scale = attempt.gradeScaleSnapshot?.thresholds?.length === 6 ? attempt.gradeScaleSnapshot : gradingScaleSnapshot(quiz);
-    const grade = result.needsReview ? null : gradeFromPercent(result.percent, scale.thresholds);
+    const needsReview = result.needsReview || recovery?.review === true;
+    const grade = needsReview ? null : gradeFromPercent(result.percent, scale.thresholds);
     const resultMode = normalizeResultMode(attempt.resultMode);
     const submittedAt = Timestamp.now();
     const elapsedSeconds = startedAtMillis ? Math.max(0, Math.round((nowMillis - startedAtMillis) / 1000)) : null;
@@ -854,7 +864,9 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
       resultMode,
       showSolutionsAfterEnd: attempt.showSolutionsAfterEnd === true,
       solutionPolicy: privateData.solutionPolicy || null,
-      status: result.needsReview ? "review" : "graded",
+      status: needsReview ? "review" : "graded",
+      recoveryReviewRequired: recovery?.review === true,
+      recoveryReason: recovery?.reason || null,
       timeLimitMinutes: attempt.timeLimitMinutes || null,
       sessionRunId: attempt.sessionRunId || null,
       startMode: attempt.mode,
