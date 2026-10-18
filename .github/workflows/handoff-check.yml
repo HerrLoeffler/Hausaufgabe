@@ -56,16 +56,16 @@ jobs:
           from pathlib import Path
           workflow = Path('.github/workflows/staging-functions.yml').read_text()
           setup = Path('tools/automation/setup-staging-functions-identity.sh').read_text()
-          assert 'PROJECT_ID: hausaufgabe-staging' in workflow
+          assert 'PROJECT_ID: gradecrew-staging-2026' in workflow
           assert '--project "$PROJECT_ID"' in workflow
           assert '--only functions:ai' in workflow
-          assert 'gradecrew-functions@hausaufgabe-staging.iam.gserviceaccount.com' in workflow
-          assert 'STAGING_FUNCTIONS_WIF_PROVIDER' in workflow
+          assert 'gradecrew-functions@gradecrew-staging-2026.iam.gserviceaccount.com' in workflow
+          assert 'STAGING2026_FUNCTIONS_WIF_PROVIDER' in workflow
           assert 'github.event.workflow_run.event == \'push\'' in workflow
           assert 'current=$(gh api' in workflow
           assert 'PROJECT_ID: hausaufgabe-40294' not in workflow
           assert '--project hausaufgabe-40294' not in workflow
-          assert 'PROJECT_ID="hausaufgabe-staging"' in setup
+          assert 'PROJECT_ID="gradecrew-staging-2026"' in setup
           assert 'POOL="gradecrew-functions-github"' in setup
           assert 'roles/secretmanager.viewer' in setup
           assert 'roles/iam.serviceAccountUser' in setup
