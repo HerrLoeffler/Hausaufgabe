@@ -463,3 +463,6 @@ Arbeitsannahme für die Bildseite: bis zu 29 noch fehlende Anschluss-/Grenzbilde
 Zum Zeitpunkt dieses Zwischencheckpoints liegen noch keine neuen V17-Job-IDs, erzeugten V17-Szenenbilder oder V17-Videodatei mit geprüften Metadaten vor. Daher wird hier keine Generierung oder Fertigstellung behauptet. Die vorherige V16-Bildinventur bleibt gültig: 20 Coco-PNGs sind einzelne statische Prüfcrops, nicht 20 fertige Filmshots; der sichere Griff war offen. V16-Plan, V16-Coco-Proof, Nutzerfeedback und sämtliche vorherigen Fehlversuche bleiben als Historie erhalten.
 
 Nächster Schritt: tatsächliche Generierungs-IDs, Einzeldateien/Hashes und Providerkosten der ersten Bild- und Chorus-Aufträge erfassen; anschließend Qualität und vierfach sichtbare Chor-Szene prüfen, bevor weitere Szenensegmente ausgeführt werden. Keine PPTX-, Produkt-, Main-, STATE-, Release- oder Deployänderung.
+
+
+**Klarstellung zum internen Credit-Limit:** 12.000 Credits sind ein von Root für diesen Ausführungsdurchgang gesetztes internes Providerlimit, kein vom Nutzer festgelegtes Budget und kein Vollfilmangebot. Die früheren 1.308,96 Credits für den V16-Proof und 373 Credits für die separate V15-Audiogenerierung bleiben getrennte, bereits dokumentierte Verbräuche. Ein aktueller Kontostand ist nicht belegt; Starter-Credits werden nicht unterstellt.
