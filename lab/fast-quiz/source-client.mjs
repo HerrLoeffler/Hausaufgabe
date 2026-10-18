@@ -30,9 +30,16 @@ export async function signOut() {
   await authSdk.signOut(auth);
 }
 export function buildGenerationRequest({grade,topic}) {
+  if(!String(topic||'').trim())throw new Error('Bitte ein Thema für Remi eingeben.');
   return {subject:'Mathematik',grade:String(grade),schoolType:'Mittelschule',region:'Bayern',topic,difficulty:'mittel',count:10,points:20,allowedTypes:['number','text'],notes:'Das gewählte Thema und Kompetenzziel bleiben unverändert. Erstelle fachlich passende, zuverlässig numerisch oder als Kurztext bewertbare Aufgaben. Falls das Thema reine Ganzzahl-Grundrechnungen umfasst, formuliere diese als klare Rechnung. Ersetze andere Themen niemals durch Grundrechenarten. Nicht unterstützte Spielaufgaben werden anschließend ehrlich als ungeeignet angezeigt; der Originaltest bleibt erhalten.',materials:[],materialMode:'inspiration',imageMode:'none',imageQuestionCount:0,imageAnswerQuestionCount:0,clientRequestId:crypto.randomUUID()};
 }
-export async function generateTest({grade,topic,onProgress}) {
+export function resolveGenerationOperation({jobId,pendingRequest,resumeOnly=false,grade,topic}) {
+  if(jobId)return{dispatch:false,jobId,request:null};
+  if(pendingRequest)return{dispatch:true,jobId:null,request:pendingRequest};
+  if(resumeOnly)throw new Error('Kein vorhandener Remi-Auftrag auf diesem Gerät. Erstelle zuerst bewusst einen neuen Test.');
+  return{dispatch:true,jobId:null,request:buildGenerationRequest({grade,topic})};
+}
+export async function generateTest({grade,topic,onProgress,resumeOnly=false}) {
   const {auth,db,storeSdk:s,functionsSdk:f,functions} = await client();
   if (!auth.currentUser) throw new Error('Bitte zuerst mit deinem Testkonto anmelden.');
   const ownerId=auth.currentUser.uid;
@@ -42,7 +49,7 @@ export async function generateTest({grade,topic,onProgress}) {
   if (!jobId) {
     let request;
     try{request=JSON.parse(sessionStorage.getItem(requestKey)||'null');}catch{}
-    request=request||buildGenerationRequest({grade,topic});
+    request=resolveGenerationOperation({jobId,pendingRequest:request,resumeOnly,grade,topic}).request;
     // Save the request before dispatch; an unclear network outcome reuses its id.
     sessionStorage.setItem(requestKey,JSON.stringify(request));
     const result=await f.httpsCallable(functions,'startAiTestJob')(request);
