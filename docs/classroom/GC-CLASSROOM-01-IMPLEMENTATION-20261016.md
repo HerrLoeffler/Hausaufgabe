@@ -1,5 +1,7 @@
 # GC-CLASSROOM-01 Implementation Plan
 
+**Aktueller Planstand 18.10.2026:** Der lokale Schüler-/Lehrkräfteimport ist bereits umgesetzt und geprüft. Der neue [detaillierte Ausbauplan für Schulverwaltung, Accountverknüpfung, Schülerzugänge, Druck und Testzuweisung](#schulverwaltung-accountverknuepfung-und-schuelerzugaenge) ist noch nicht implementiert. Er führt dieselbe Task GC-CLASSROOM-01 fort. Ältere Ausgangsstände und Pseudonymvorgaben sind ausdrücklich Historie; der aktuelle lokale Namenbestand bleibt erhalten.
+
 > **For agentic workers:** Bei späterer Umsetzung `superpowers:executing-plans` verwenden. Ein Writer im bestehenden isolierten Checkout. Dieser Auftrag liefert zunächst den ausführlichen Plan; keine Produktimplementierung oder Veröffentlichung vor Martins Planprüfung. Bestehende Task-ID und Versuchshistorie erhalten.
 
 **Goal:** Dauerhafte Schüler- und Klassenverwaltung mit manueller Pflege, ASV-/CSV-Abgleich und persönlichen Schülerzugängen in die vorhandene GradeCrew-Website integrieren; bestehende Lehreranmeldung, Tests und Testabläufe erhalten.
@@ -10,7 +12,7 @@
 
 **Spec:** [Teacher UX](../CLASSROOM_TEACHER_UX_V1.md), [Masterprojekt](../CLASSROOM_STUDENT_MASTERPROJECT_V1.md), [Identität und Jahreswechsel](../privacy/CLASSROOM_IDENTITY_ASV_ROLLOVER.md), [ASV-Datenschutzkonzept](../privacy/CLASSROOM_ASV_IMPORT_PRIVACY.md). Die aktuelle Nutzerpräzisierung vom 18.10.2026 und dieser aktuelle Planteil ersetzen widersprechende frühere Demo-/RAM-Anforderungen. Die am Ende erhaltene Historie ist keine aktuelle Implementierungsanweisung.
 
-**Stand:** 18.10.2026; detaillierter Umsetzungsvorschlag zur Nutzerprüfung, nicht implementiert. Aufgabenbranch `feature/classroom-integrated-preview-20261016`; Integrationsziel weiterhin `feature/gradecrew-app-integration`. Ausgangscode lokal `60295f223cc9a1daf56dc0e22da87c48400b0d73`, remote `505d22c4243f5578b65eb66b033a1584e3987e9a`, identischer Tree `e40635b8a72fa670ff16983a6dd7a5cda3319d92`. Unterschiedliche Commit-SHAs entstehen durch die bereits dokumentierte Connector-Sicherung, nicht durch einen anderen Produktbaum.
+**Historischer Ausgangsstand vor den lokalen Ausbauten:** 18.10.2026; damaliger Umsetzungsvorschlag zur Nutzerprüfung, seinerzeit noch nicht implementiert. Aufgabenbranch `feature/classroom-integrated-preview-20261016`; Integrationsziel weiterhin `feature/gradecrew-app-integration`. Ausgangscode lokal `60295f223cc9a1daf56dc0e22da87c48400b0d73`, remote `505d22c4243f5578b65eb66b033a1584e3987e9a`, identischer Tree `e40635b8a72fa670ff16983a6dd7a5cda3319d92`. Unterschiedliche Commit-SHAs entstehen durch die bereits dokumentierte Connector-Sicherung, nicht durch einen anderen Produktbaum.
 
 ## Autorisierte Präzisierung: erster lokaler Ausbau mit Vor-/Nachnamen — 18.10.2026
 
@@ -707,3 +709,194 @@ Der Nutzer beauftragt den dokumentierten Lehrkräfteimport jetzt ausdrücklich z
 
 
 Abnahme dieses lokalen Lieferblocks18.10.2026:375/375 Tests PASS, unabhängiger Gesamt- und gezielter Port-/Layout-/Katalog-Nachreview PASS. Echte Browserprobe im bestehenden normalen Account mit zwei künstlichen Lehrkräften/dreiPaaren, Persistenz nach Reload und direktem Zweientscheidungsfilter→automatisch gültiger Vorschau bestanden.49vorhandeneTests unverändert geladen, kein Testwrite. Namensstammsätze lokal, keine neuen Auth-/Adminrechte, kein Cloud-/Hostingdeploy. Details und Grenzen im [Nachweis](evidence/20261018-teacher-import.json).
+
+
+<a id="schulverwaltung-accountverknuepfung-und-schuelerzugaenge"></a>
+## Nächster Ausbau: Schulverwaltung, Accountverknüpfung, Schülerzugänge, Druck und Testzuweisung
+
+**Auftrag:** Ausführlicher Plan, keine Produktumsetzung in diesem Turn. Martin möchte importierte Lehrkräfte mit ihren normalen Lehreraccounts verbinden, damit jede Person ihre Klassen/Fächer sieht und Schüler:innen Tests zuweisen kann. Eine Schule soll eine oder mehrere benannte Verwaltungslehrkräfte haben, typisch zwei oder drei. Ergänzung: persönliche Schülerkennung und QR-Zugang; kompakte Schülerlisten auf möglichst1–2Seiten sowie einzelne Blätter pro Person drucken. Weiter dieselbe vollständige lokale Website8782, normaler Login und vorhandene Tests erhalten.
+
+**Planungsstand:** lokal40313fa4 / remote0d3b0525, identischer Treef5fb183e, Produkt zuletzt eed60c2.375Tests und echte lokale Lehrerimport-/49Quiz-Belege sind Nachweise der bisherigen Funktion, keine Abnahme dieses neuen Rollen-/Zugangsplans. Integration inzwischen5a248621 nach PR248 (Umgebungsisolation, Assessment-/Offline-Recoveryänderungen). Vor Umsetzung die betroffenen Auth-/Environment-/Assessmentverträge gegen diesen neuen Integrationsstand abgleichen; hier weder übernehmen noch deployen. Kein heimlicher Authprojektwechsel und keine Zuordnung über gleiche E-Mail über Projektgrenzen.
+
+### A. Verbindliches Ziel und verständlicher Alltag
+
+Nach Einrichtung gehört ein schulischer Klassen-/Personenbestand einer Schule. Die importierte Lehrkraft ist ein Personaleintrag, ihr Login ein eigenes bestehendes Konto. Eine überprüfte Verbindung schafft die Mitgliedschaft. Die Verwaltung weist den Personaleintrag Unterrichtsgruppen zu. Nach normaler Anmeldung erhält die Lehrkraft aus dieser Mitgliedschaft ihre Klassensicht; ihr privater Testbestand bleibt ihr eigener.
+
+Beispiel mit erfundenen Personen: Ada ist Verwaltungslehrkraft und unterrichtet8bDeutsch; Mila und Leon sind ebenfalls Verwalter, Mila unterrichtet8bEnglisch, Leon9aTechnik. Alle nutzen ihre normalen persönlichen Logins. Die drei können Schulorganisation pflegen. Mila sieht nach Anmeldung8b/Englisch und ihre dortigen Schüler:innen; sie kann einen eigenen Test diesem Unterricht zuweisen. Sie erhält dadurch weder Adas private Entwürfe noch deren vollständige Deutsch-Auswertungen. Derselbe Schülerdatensatz hat je nach Unterricht mehrere zulässige Zuweisungen und einen persönlichen Zugang.
+
+Einfacher Ablauf: Schule einrichten → eigenen Bestand geprüft übernehmen → Verwaltungsvertretung hinzufügen → importierte Lehrkräfte einladen/verknüpfen → Klassen/Fächer bestätigen → Schülerzugänge erstellen/drucken → vorhandenen Test mit Empfängervorschau zuweisen. Diese Aktionen verwenden die Originalnavigation und einheitliche Inlinevorschauen. Kein neuer Parallel-Login, keine neue Gesamtoberfläche und keine zweite Prüfungsengine.
+
+### B. Was heute vorhanden ist und was wirklich fehlt
+
+Vorhanden: normale Firebase-Lehreranmeldung; persönliche Tests mit gespeichertem `ownerId`; Schüler-/Klassen-/Lehrkräftebestand pro geprüftem Lehreraccount in lokaler SQLite; stabile interne IDs; CSVvorschau/Bestätigung; Lehrer-Unterrichtspaare als Daten; Schutz gegen unklare Zusammenführung.
+
+Fehlt: schulische gemeinsame Datenhoheit, echte Rollen, Einladungen und bestätigte Accountverknüpfungen, serverseitige Unterrichtsrechte, persönliche Schülerauthentifizierung, ausgebbare/reproduzierbar druckbare Zugangscodes/QRs sowie freigegebene an Empfänger gebundene Testzuweisungen. Angelegte Schülerdatensätze sind noch keine angemeldeten Schülerkonten. Bestehende öffentliche Testcodes sind keine persönlichen Schülerkennungen.
+
+Lokale Website und gemeinsames Backend sind zwei verschiedene Dinge. Unter127.0.0.1 bezeichnet jeder Rechner sich selbst. Mehrere normale Accounts lassen sich auf diesem Mac in getrennten Browserprofilen gegen dieselbe lokale SQLite prüfen; Kolleg:innen auf eigenen Geräten teilen diese Daten damit noch nicht. Eine lokal gespeicherte Rolle kann außerdem keine Cloud-Assessment-Function verlässlich autorisieren, die diesen Mac nicht als vertrauenswürdige Rollenquelle kennt.
+
+Empfohlene Etappen: zuerst Schul-/Verknüpfungs-/Druckabläufe auf8782 mit lokalem Backend und abgesichertem Emulator prüfen. Danach dasselbe API-/Rollenmodell in einem qualifizierten gemeinsamen Testbackend bereitstellen, während die Bedienseite lokal bleiben darf. Echte mehrgerätefähige Schülerzuweisung setzt diese gemeinsame Rechte-/Assessmentquelle voraus. Ein späterer Functions-/Rules-/Indexesrelease und etwaige Cloud-Namensspeicherung bleiben ein ausdrücklich zu prüfender separater Schritt. Keine tatsächliche Veröffentlichung durch diesen Plan.
+
+### C. Schule und ein bis mehrere Verwalter
+
+Eine Schule erhält eine unveränderliche interne `schoolId`, Anzeigenamen, Betriebsstatus und das verbindliche Auth-/Backendprojekt. Die schoolId ist eine Referenz, kein geheimer Zugangsschlüssel. Eingegebene Schulnummer oder E-Mail-Domain allein begründet keine offizielle Schulhoheit.
+
+Für den lokalen Pilot kann der aktuell verifizierte Bestandsinhaber einen ausdrücklich lokalen Schulentwurf erstellen und seinen eigenen Bestand dorthin übernehmen. Er verwaltet nur diesen lokalen Entwurf, keine dadurch als echt verifizierte andere Schule. Die erste Verwaltung einer tatsächlich gemeinsamen Schule wird über den Betreiber-/Schulverifikationsprozess mit benannter verantwortlicher Person freigeschaltet. Kein allgemeiner CSVwert `admin=true` und keine Selbsternennung für eine bestehende Schule.
+
+Danach kann ein aktiver Schulverwalter eine bereits bestätigte Schulmitgliedschaft zur Verwaltung ernennen oder eine zusätzliche Person über denselben bestätigten Einladungsablauf aufnehmen. Sinnvoll sind zwei oder drei Verwalter; eine einzelne Person ist möglich, keine starre Dreiergrenze. Alle verwenden eigene Logins. Es gibt kein gemeinsam geteiltes Schulpasswort.
+
+Die Ansicht **Schulverwaltung → Verwaltung & Zugänge** zeigt Name, eigenes bestätigtes Konto, Status und Verwaltungsrolle. Rollenänderungen bekommen eine klare Wirkungsvorschau. Die letzte aktive Verwaltung darf sich nicht selbst entfernen oder durch zwei konkurrierende Änderungen gleichzeitig verschwinden. Prüfung und Änderung laufen atomar. Weitere Verwalter erhalten die organisatorischen Rechte; persönliche Tests/alle Noten/Schlüsselverwahrung folgen daraus nicht automatisch.
+
+Wenn ein Konto außerhalb dieses Schulmoduls gelöscht/gesperrt wird, kann tatsächlich die letzte Verwaltung ausfallen. Dann geht die Schule in einen Recoveryzustand; die Regel behauptet nicht, das Authsystem an jeder externen Sperre hindern zu können. Eine verbliebene Verwaltung kann eine andere Person verknüpfen. Bei Totalausfall gibt es einen dokumentierten Betreiber-/Schulnachweisprozess, keinen Hintertürcode oder eine bloße Namens-/Schulnummernabfrage. Rollenwiederherstellung und Wiederherstellung von Verschlüsselungsschlüsseln sind getrennte Aufgaben.
+
+### D. Verknüpfung einer importierten Lehrkraft mit ihrem normalen Account
+
+1. Verwaltung öffnet im vorhandenen Lehrkräftebereich die Zeile, Status **Noch nicht verbunden**, und wählt **Konto verbinden**.
+2. Das System erstellt eine persönliche, widerrufbare Einladung für genau Schule+Personaleintrag. V1 bietet **Link kopieren**; keine automatische echte E-Mail oder weltweite Suche in allen Konten.
+3. Die Person öffnet den Link auf derselben vorgesehenen Umgebung, meldet sich mit ihrem normalen Konto an und sieht Schule, eingeladenen Namen, vorgesehene Rolle und Unterricht. Kein fremder Schülerbestand ist vor Freigabe sichtbar.
+4. **Mit meinem Konto verbinden** reicht die eigene, serverseitig verifizierte Kontoreferenz ein. Keine vom Client frei behauptete uid.
+5. Die Verwaltung sieht die Anfrage in derselben Lehrkräftezeile, vergleicht die Kontodarstellung mit der tatsächlich bekannten Person und bestätigt einmal. Bei falschem Konto wird abgelehnt/Einladung erneuert. Erst diese Freigabe aktiviert Mitgliedschaft und Unterrichtsrechte.
+6. Die Lehrkraft sieht anschließend nach normalem Login ihre Schule/Klassen/Fächer. Kein erneuter Import und kein neuer Account nötig. Ohne Schulzugehörigkeit funktionieren ihre bisherigen persönlichen Tests unverändert.
+
+Zustände: unverbunden → eingeladen → Bestätigung ausstehend → verbunden; separat abgelaufen, widerrufen, gesperrt, ausgeschieden. Eine Einladung ist24Stunden gültig, enthält mindestens32zufälligeBytes und wird nur gehasht gespeichert. Der Link allein aktiviert keine Mitgliedschaft. Einmalverwendung, Widerruf, Rate-Limit und gebundene Schule/Umgebung verhindern beliebige Wiederverwendung. Fremde öffentliche Kontoprofile werden nicht als Suchdatenbank bereitgestellt. Einladungsgeheimnisse kommen nicht in Logs/Telemetrie/Referer; Hash-/Fragmentübergabe wird vor normalen Analytics entfernt.
+
+Pro Schule höchstens eine aktive Verbindung Personaleintrag↔Kontoreferenz; ein Account kann Mitglied mehrerer Schulen sein, mit jeweils getrennten Rollen. Referenz ist `(authProjectId, uid)`, nicht der Name. Zwei gleichnamige Lehrkräfte bleiben getrennt. CSVänderungen können Namen, Kürzel und ausdrücklich bestätigte Unterrichtspaare ändern, niemals die verbundene uid oder Verwaltungsrolle. Ein Kontowechsel hat einen eigenen geprüften Übergabeablauf und verschiebt keine persönlichen Tests automatisch.
+
+### E. Rollen und Sichtbarkeit
+
+| Aktion | Schulverwaltung | Normale Lehrkraft |
+|---|---|---|
+| Schule, Schuljahre, Personalimporte organisieren | Ja, nur eigene Schule | Nein |
+| Weitere Verwalter ernennen/entfernen | Ja, bestätigte Mitglieder, letzter Verwalter geschützt | Nein |
+| Klassen/Fächer und Lehrkräftezuordnung pflegen | Ja, Änderungsvorschau | Eigene Zuordnungen sehen |
+| Organisatorischen Schülerbestand sehen/pflegen | Eigene Schule | Nur eigene Unterrichtsgruppen; Pflege nur bei gesonderter Delegation |
+| Schülerzugänge erstellen/zurücksetzen/drucken | Eigene Schule, ausdrücklich berechtigt | Eigene Gruppen bei explizitem Zugangsverwaltungsrecht |
+| Eigenen privaten Testbestand nutzen | Wie bisher für eigenen Account | Wie bisher |
+| Tests fremder Lehrkräfte bearbeiten | Kein pauschales Recht | Kein pauschales Recht |
+| Eigenen Test zuweisen | Mit eigener aktiver Unterrichtszuständigkeit | Eigene aktive Unterrichtsgruppen |
+| Ergebnisse anderer Fächer lesen | Kein pauschales Recht | Nur ausdrücklich berechtigte Zuweisung/Auswertung |
+
+Die bestehende globale **Administration** ist nicht dieselbe Rolle wie **Schulverwaltung**. Es wird kein globales Firebase-/GradeCrewadminrecht gesetzt. UIausblenden genügt nie: Jede API prüft aktuellen Accountstatus, Schule, aktive Mitgliedschaft und Unterrichtsscope. Entzug wirkt bei der nächsten geschützten Anfrage, auch bei noch offenem Browser. Schulrollen liegen in aktueller serverseitiger Mitgliedschaft, nicht ausschließlich in möglicherweise alten IDtoken-Claims.
+
+### F. Klassen und Fächer ohne tägliche Mehrarbeit
+
+Aus einem importierten Paar8b/Deutsch entsteht eine Unterrichtsgruppe mit stabiler ID und Schuljahr. Zwei Lehrkräfte dürfen derselben Gruppe zugeordnet sein; eine Lehrkraft beliebig mehreren zulässigen Gruppen. Fächer bekommen schulbezogene stabile IDs. Bestehende Freitexte werden über eine Vorschau in diesen Katalog überführt; gleichnamige Testlabels werden nicht automatisch zu Rollen.
+
+Die Verwaltung arbeitet möglichst in einer Tabelle: **Lehrkraft | Konto | Klassen/Fächer | Rolle | Status**. Ein Klick auf8b öffnet ihre Fächer-/Lehrkräftezuordnung. CSVimporte nutzen dieselbe direkte Offen-Prüfung, ergänzt um sichtbare Rechtewirkung, beispielsweise „Mila erhält8b/Englisch“. Fehlende Zeilen eines Teilimports entziehen keine Mitgliedschaften. Vollbestands-/Abgangsabgleich bleibt eine eigene ausdrücklich bestätigte Aktion.
+
+Eine Lehreransicht zeigt nur ihre Gruppen im aktuellen Schuljahr; bei einer Schule keine dauernde Schulauswahl. Bei mehreren Schulen gibt es eine klare Schulauswahl. **Meine Tests** bleibt persönlich und vollständig. **Klassen → 8b → Englisch** zeigt Schüler:innen und Testzuweisungen dieses Unterrichts. Schuljahreswechsel ändert Gruppen-/Klassenmitgliedschaften, keine Lehrerlogin- oder Schüleridentität. Vertretung hat Beginn/Ende und konkreten Scope. Persönliche Entwürfe werden beim Lehrerwechsel nicht automatisch weitergegeben; laufende Prüfungen und benötigte Auswertungen benötigen eine ausdrückliche Übergabe.
+
+### G. Persönliche Schülerkennung und QR-Zugang
+
+Jede angelegte/importierte Person erhält eine stabile interne Schüler-ID. Ein persönlicher Zugang wird daraus getrennt erstellt: zufälliger nicht namensbasierter Code, QR-Link, Versionsnummer, Aktiv-/Sperrstatus. Als V1format20gut unterscheidbare Base32zeichen in fünf Vierergruppen; der Code wird kryptografisch zufällig erzeugt und niemals aus Name, Geburtstag oder ASV-ID berechnet. Schuljahr/Klassenwechsel oder Wiederimport lässt den gültigen Zugang unverändert.
+
+Verwaltung/ausdrücklich berechtigte Klassenpflege wählt **Zugänge erstellen** für fehlende Zugänge. Vorschau nennt z.B.28fehlend/2bereits vorhanden. Ein erneuter Klick erzeugt keine neuen Codes für bestehende Personen. **Zurücksetzen** ist eine separate Aktion mit klarer Wirkung auf alten Code und Sitzungen. Abgang/Sperre beendet neue Zugriffe; historische Abgaben bleiben erhalten. Nur Besitz des Codes reicht nicht für jede beliebige Prüfung, sondern nur für aktuell berechtigte Zuweisungen dieser Identität.
+
+QR öffnet den Schülerzugang im bestehenden GradeCrewprodukt. Er enthält eine richtige Zieladresse und den persönlichen Zugang, keine Bewertung/ASV-ID/Klassenliste. Lokale Test-QRs werden als nur auf diesem Mac nutzbar kenntlich gemacht. Ein Handy erreicht über127.0.0.1 nicht diesen Mac; mehrgerätefähige QRkarten dürfen erst die tatsächlich freigegebene gemeinsame HTTPSadresse verwenden. Keine scheinbar fertigen Karten mit einer für Schüler unerreichbaren Adresse drucken.
+
+Schülerzugang und Lehreranmeldung haben getrennte Sitzungskontexte. Schülerlogin darf keinen Lehrkraftaccount abmelden oder ein Lehrertoken umdeuten. Lokal: eigene eng begrenzte serverseitige Schülersitzung, keine Lehrer-APIberechtigung. Gemeinsam: qualifizierter Student-Authadapter für dasselbe Secure-Assessmentbackend; keine ungeprüften localtokens an CloudFunctions. Der Zugriff prüft bei Start/Resume/Abgabe/Receipt Identität, Schule, Sitzungsversion und Zuweisung. Ungültig/gesperrt gibt eine verständliche Meldung, keine fremde Personensuche.
+
+Wiederholbarer Druck: Lehrkräfte müssen Karten später erneut ausgeben können, ohne jedes Mal alle Codes zurückzusetzen. Daher Lookupdigest und verschlüsselt wiederlesbare Codeablage getrennt. Der Druckdienst darf Codes nur für aktuell erlaubte Personen entschlüsseln, nicht mit einer allgemeinen Schülerlistenabfrage ausgeben. Verschlüsselungsschlüssel liegt außerhalb SQLite/Git im qualifizierten Betriebsschlüsselspeicher; Backup/Restore vor Freigabe prüfen. Keine ungeprüfte Keychain-/Secret-Managerinstallation in diesem Planungsturn. Ohne verlässlich geschützten Schlüsselbetrieb darf die Funktion nicht als dauerhaft sicher wiederholbar freigegeben werden; einmalige Ausgabe ist ausdrücklich eine andere, eingeschränkte Zwischenstufe.
+
+Technisch: zufälligeCodes mit Lookup-HMAC; Codeverschlüsselung AEAD mit AADschoolId/studentId/version, frischerNonce pro Datensatz und gesonderter Schlüsselrolle. Codes/Einladungen niemals plaintextloggen oder in allgemeinen Account-/Schullisten zurückgeben. Druck-/Zugriffsrechte und Rücksetzungen werden datenarm protokolliert. Eine Verwaltungsrolle ist nicht automatisch Besitz des Entschlüsselungsschlüssels.
+
+### H. Schülerlisten und Einzelblätter drucken
+
+Im Schülerbereich **Drucken** öffnet genau eine Vorschau mit Auswahlumfang (aktuelle Klasse, gefilterte Auswahl, einzelne Personen, ganze Schule nur mit Verwaltungsrecht) und zwei verständlichen Typen:
+
+| Drucktyp | Zweck und Layout |
+|---|---|
+| Namensliste | Vorname/Nachname, Klasse, optional Fach; keine Zugangscodes standardmäßig. A4, ein- oder mehrspaltig, Ziel1oder2Seiten, tatsächliche Seitenzahl anzeigen. |
+| Persönliche Blätter/Zugangskarten | Name, Klasse, persönlicher Code, QR und kurze Anmeldungshilfe; **eine Person pro A4-Seite** oder mehrere ausgeschnittene Karten pro Sammelbogen. |
+
+Die Personenauswahl ist im Scope der angemeldeten Person serverseitig geprüft; Gesamtlisten sind keine Möglichkeit, fremde Schulen/Klassen zu exportieren. Layoutvorschau zeigt gesamte Personenzahl und erwartete Seitenzahl. Eine optionale Lehrkräftekarte ist nicht Bestandteil dieser Schülerzugangsfunktion.
+
+1–2Seiten sind ein Ziel bei passender Auswahl, kein Grund zur unleserlichen Verkleinerung. Mindestschrift9pt für Listen, keine abgeschnittenen Namen und genügend QRgröße/Ruhezonen. Eine volle Schule mit Hunderten Zugangskarten passt nicht als lesbare QRsammlung auf zweiSeiten; dafür Sammelbogen oder Einzelblätter. Bei Überlauf Vorschau mit tatsächlicher Mehrseitenzahl und Klassenfilter anbieten; niemals heimlich Schüler weglassen. Exakte QRgröße mit echtem Handyscan prüfen, nicht nur mit einem Screenshot.
+
+Drucken einzelner Blätter ist auch ohne Zugang möglich (nur Personendaten); mit Zugangscode/QR nur nach wirksamer Zugangserstellung und Druckberechtigung. Solange kein Code existiert, steht **Zugang noch nicht erstellt**, kein erfundener oder nicht gespeicherter QR. Wiederholter Druck benutzt denselben gültigen Code; verlorene Karte erfordert bewusste Rotation statt einfachem Reprint, wenn Missbrauch zu befürchten ist.
+
+Vorschau ist einheitlich: Layoutwahl → gegebenenfalls fehlende Zugänge erzeugen → **„28 Einzelblätter drucken“** bzw. **„Klassenliste · 2Seiten drucken“**. Keine Kette zusätzlicher unklarer Bestätigungsdialoge. Abbruch des Systemdruckdialogs löscht oder rotiert keine schon erstellten Zugänge; verschlüsselte Ablage erlaubt späteren Reprint. Druckansicht ohne Seitennavigation, Coco, private Lösungen oder fremde Daten. PDF-/Browserdruck erzeugt keine automatische Cloudablage und kein Feedbackupload.
+
+### I. Vorhandene Tests gezielt zuweisen
+
+Lehrkraft öffnet einen vorhandenen eigenen Test und wählt **Zuweisen**. Dasselbe ist in ihrer Klasse/Fachgruppe möglich, mit vorausgewähltem Unterricht. Ein Dialog zeigt Schule, Klasse/Fach, Zeitpunkt/Modus, Teilnehmerzahl, einzelne Ausnahmen und aktuelle Empfängerliste. Nach Bestätigung entsteht eine Zuweisung zum bestehenden Test, keine automatisch duplizierte Testvorlage. `quizzes.ownerId` und vorhandene Test-IDs bleiben unverändert.
+
+Server prüft: aktives berechtigtes Konto; bestätigte Schulmitgliedschaft; aktive Unterrichtszuordnung; Test gehört tatsächlich diesem Account oder hat ein ausdrücklich qualifiziertes Freigaberecht; Testversion und Sitzung stimmen; Empfänger gehören zur zulässigen Gruppe. Clientseitige `ownerId`/Klassenlabels sind kein Nachweis. Für die lokale Planung kann eine echte autorisierte lesende Firestoreabfrage mit Nutzer-IDtoken Eigentum prüfen; kein Admincredential aus Bequemlichkeit und keine komplette Lösungenkopie in der lokalen SchulDB.
+
+Zuweisung speichert schoolId/groupId/quizId/sessionRunId, Vorlagenversion, Ersteller, Verfügbarkeit und Empfänger-IDs als nachvollziehbaren Snapshot. Änderungen an Gruppen vor Freigabe erfordern frische Empfängervorschau. Nach Prüfungsstart ist der Empfängerkontext unveränderlich; Nachzügler werden ausdrücklich gesondert ergänzt, nicht unbemerkt durch neue CSVzeilen. Änderungen während einer laufenden Prüfung öffnen keinen neuen Run und werten bestehende Abgaben nicht neu.
+
+Bestehender Lifecycle führt aktuell den wirksamen `sessionRunId` am Quiz. V1 darf daher nicht für jede parallele Klassenzuweisung unbemerkt „reopen“ aufrufen. Gleiche Bedingungen können ausdrücklich denselben Run mit getrennten zulässigen Empfängergruppen verwenden; abweichende Termine/Modi werden als konfliktbehaftet erklärt und brauchen einen eigenen qualifizierten Run-/Snapshotvertrag. Dieser wird innerhalb derselben Assessmentengine umgesetzt, nicht mit einer zweiten Bewertung. Kein „Zugewiesen“-Erfolgsstatus, wenn lediglich eine lokale ungeschützte Liste existiert.
+
+Persönlich zugewiesene Prüfungen brauchen einen ausgewiesenen Zugangsmodus: alle bestehenden start/resume/submit/receipt-Endpunkte prüfen die Schüler-/Assignmentbindung. Ein weiter gültiger allgemeiner Testcode darf diesen Modus nicht umgehen. Vorhandene alte Code-/Gasttests behalten ihren bisherigen Vertrag. Lösungen, private Kriterien und Auswertungen bleiben nach den bestehenden serverseitigen Freigaberegeln geschützt. Schulverwalter erhalten nicht automatisch Einsicht in alle Fächer.
+
+In der persönlichen Schüleransicht erscheinen **Anstehend**, **Jetzt verfügbar**, **Erledigt**. Noch nichts zugewiesen ist ein ehrlicher Leerzustand. Dieselbe Schüleridentität empfängt Deutsch und Englisch verschiedener Lehrkräfte. Namensänderungen und Klassenwechsel ändern alte Empfänger/Ergebnisse nicht rückwirkend. Lehrerwechsel überträgt nur ausdrücklich freigegebene Unterrichts-/Prüfungszuständigkeit, keine privaten Vorlagen oder komplette Ergebnissammlungen.
+
+### J. Datenmodell und serverseitige Verträge
+
+Die vorgeschlagenen neuen Domänenmodelle werden von den vorhandenen SQLiteworkspaces getrennt, mit Migration statt stiller Umdeutung:
+
+| Modell | Wesentliche Identität/Regeln |
+|---|---|
+| school | schoolId, name, authProjectId, draft/active/recovery, revision |
+| schoolMember | schoolId, authProjectId+uid, active/pending/suspended/left, explizite organisatorische Rollen |
+| staffAccountLink | schoolId, teacherPersonId, authProjectId+uid; beide Richtungen pro Schule aktiv eindeutig |
+| schoolRoster | bisherige Schüler-/Lehrkraft-/Klassen-IDs im Schulsystem, keine Accountkopien |
+| subject / teachingGroup | schoolId, stabile subjectId/groupId, classId, schoolYear; Anzeigename keine Berechtigung |
+| teachingMember | groupId, teacherPersonId, gültigVon/Bis, fachlicher Scope; mehrere Lehrkräfte möglich |
+| studentMembership | studentIdentityId, schoolId/classId, schoolYear, Zeitgrenzen |
+| schoolInvitation / linkRequest | festes Ziel/Umgebung, Hash, Ablauf, Status, revisionsfeste Zustimmung |
+| studentAccess | studentIdentityId, Codeversion, Lookupdigest, verschlüsselterCode, Status, Credentialschlüsselversion |
+| studentSession | schoolId/studentIdentityId, Codeversion, Ablauf/Widerruf; keine Lehrerrechte |
+| assessmentAssignment / recipient | Schule/Unterricht/quizId/runId/Version, feste Personenzuordnung und explizite Auswertungsrechte |
+| schoolAuditEvent / migrationReceipt | minimale Akteur-/Aktion-/ID-/Zeit-/Revisionsmetadaten; keine Namen/Codes/Token-/Lösungspayloads |
+
+Schreibvertrag: RequestActor ausschließlich aus verifiziertem Token (`authProjectId,uid`); jede Mutation `{command,payload,expectedRevision,operationId}` plus `previewHash` bei Bestands-/Rechte-/Migrations-/Empfängeränderungen. Fremde schoolId/groupId ist niemals ein akzeptierter Scopebeweis. Mutation liest Rollen und relevante Revision in derselben Transaktion; Idempotenz ist pro actor+school+operation gebunden. Rückgaben sind auf den aktuellen Akteur projiziert. Keine erst komplett geladene Schule, die nur im Browser nach Klassen gefiltert wird.
+
+Vorgeschlagene Servicefunktionen (noch nicht vorhanden): `listMySchools(actor)`, `previewSchoolSetup(actor,input)`, `commitSchoolSetup(actor,input,previewHash)`, `createTeacherInvitation(actor,schoolId,teacherId)`, `claimTeacherInvitation(actor,secret)`, `approveTeacherLink(actor,requestId,expectedRevision)`, `changeSchoolRole(actor,input)`, `previewTeachingChanges(actor,input)`, `commitTeachingChanges(actor,input,previewHash)`, `previewStudentAccessIssue(actor,selection)`, `issueStudentAccess(actor,input,previewHash)`, `rotateStudentAccess(actor,studentId,expectedVersion)`, `createStudentSession(code)`, `preparePrintRoster(actor,selection,layout)`, `preparePrintAccess(actor,selection,layout)`, `previewAssignment(actor,input)`, `commitAssignment(actor,input,previewHash)`, `listStudentAssignments(studentSession)`.
+
+Lokale Routefamilien `/api/classroom/schools`, `/api/classroom/invitations`, `/api/classroom/student-access`, `/api/classroom/print`, `/api/classroom/assignments`; Methoden und Payloadfelder pro Implementierungstest exakt festlegen. GET hat keine Seiteneffekte. Keine breite generische Updateobjekt-API für Rollen oder Codefelder. Serverseitiger Druck rendert nur erlaubte Projektionen; Namen/Geheimnisse nicht in URLparametern. Temporäre Druckdaten dürfen nicht unter statisch ausgelieferten Git-/Projektpfaden landen.
+
+### K. Bestehenden persönlichen Bestand erhalten
+
+Erste Migration hat eine eigene Vorschau: XKlassen, YSchüler, ZLehrkräfte, Unterrichtspaare, Quellenbelege und vorgeschlagene Verwalter. Nur der aktuelle autorisierte Bestandsinhaber darf seinen eigenen Bestand zur neu bestätigten Schule übernehmen. Initial kein Zusammenführen fremder persönlicher Bestände anhand gleicher Namen. Echte weitere Bestandszusammenführung ist ein gesonderter konfliktsicherer Vorgang.
+
+Vor Commit konsistenten privaten Backupstand/Revision sichern. Die Übernahme läuft atomar; stabile IDs und vorhandene Quellbelege bleiben erhalten bzw. werden über einen expliziten mappingReceipt zu schoolId geführt. Rollen-/Freigabeänderungen tauchen in der Vorschau auf. Der alte Accountbestand wird nach erfolgreicher Aktivierung schreibgeschützt/migriert markiert; keine zwei konkurrierenden Wahrheiten. Alte Clientmutationen erhalten `workspace-migrated` und laden den neuen Kontext, statt weiter im alten privaten Bestand zu schreiben. Fehlgeschlagener Commit hinterlässt den alten Stand unverändert.
+
+Neue Unterrichts-/Accountbindungen machen vorhandene Tests nicht zu Schuleigentum. Es werden weder49persönliche Quizvorlagen migriert noch deren `ownerId` geändert. Authprojektwechsel und die neuen Umgebungsregeln aus Integration5a248621 sind vor einer späteren Implementierung abzugleichen. Gleichlautende uid/email in verschiedenen Projekten ist kein Cross-Projekt-Identitätsbeweis.
+
+### L. Umsetzung in überprüfbaren Paketen
+
+Jedes Paket: zuerst scheiternde sinnvolle Verhaltenstests → kleinste Implementierung → gezielte Tests plus passende bestehende Regressionen → Code-/Handoffcheckpoint. Kein weiteres Produktpaket startet allein durch diesen Dokumentturn.
+
+| Paket | Dateien/Verantwortung | Konkretes Ergebnis und Akzeptanz |
+|---|---|---|
+| 0 Basis/Umgebung abgleichen | bestehende firebase-config/app/startup/assessment-Portverträge, keine blinde Integration | Aktueller authProjectId/backend schriftlich fixiert; bisheriger Login/49Tests weiterhin sichtbar; originaler Owner-/Offlinevertrag erhalten. |
+| 1 Schulen/Rollen/Migration | neu `tools/classroom-preview/local-school-store.mjs`, `local-school-policy.mjs`, `local-school-api.mjs` und Tests; bestehende store/api/server nur Adapter | Zweitkonto auf gleichem Mac hat nur erlaubte Schulprojektion; atomare Migration; Fremdschule abgewiesen; zwei parallele letzteAdminentfernungen können Schule nicht verwaltungslos machen. |
+| 2 Einladungen/Verknüpfung | neu `school-invitations.mjs` plus UI `classroom/school-administration.mjs`; account-workspace/localclient additiv | Zwei echte normale Lehreraccounts können eine Einladung annehmen/bestätigen; falscher/abgelaufener/wiederverwendeter Link und ungeprüfte UID bleiben ohne Rechte; Mehrschule sauber getrennt. |
+| 3 Unterrichtssicht | neu `classroom/school-context.mjs`, bestehende manual-roster/teacherimport um Schuladapter; group policy Tests | Admin pflegt8bDeutsch/Englisch mit unterschiedlichen Lehrkräften/Teamteaching; jeder sieht nur zugeordneten Bestand; Entzug greift bei nächster API; CSV kann keine uid/adminrechte setzen. |
+| 4 Schülerzugänge | neu `student-access-service.mjs`, `student-session-api.mjs`, `classroom/student-access.mjs`, eigener Authadapter, Credentialstore/Restoretests | Jede ausgewählte Person erhält einen gespeicherten stabilen Zugang; gleiche CSV ändert ihn nicht; Rotation/Sperre macht alte Codes/Sitzungen unwirksam; Teacherlogin bleibt bestehen; Student hat nie Teacher-APIzugriff. |
+| 5 Druck | neu `classroom/roster-print.mjs`, `roster-print.css`, Druckprojektion/QRgenerator über bestehende passende Bibliothek nach Bestandsprüfung | Klassenliste, lesbare große Gesamtliste,1Person/A4 und Sammelbogen; keine Kürzung langer Namen; richtige Person↔Code↔QR; wiederholter Druck ohne Codewechsel; fremde IDs/Rollenentzug während Druck werden abgewiesen. |
+| 6 Zuweisung und Secure-Anbindung | neu `classroom/assignment-dialog.mjs`, Service `classroom-assignment-service`; bestehende Assessmentlifecycle/Rulestests nach freigegebenem gemeinsamen Backendplan | Nur eigener/belegbar freigegebener Test, richtige Gruppe/Empfängersnapshot, sichere Schülerbindung auf allen Lifecyclecalls; Parallelrun-Konflikt erklärt; keine neue Bewertungsengine, kein Gastcodebypass für assignedmode. |
+| 7 Gesamtabnahme/Schreibfreigaben | bestehende Emulator-/Root-/HTTP-/Browserchecks, unabhängiger konkreter Kandidatenreview | Admin A/B/C, Lehrkraft D, zwei Schulen, zwei Schüler, Rechteentzug, Jahreswechsel, verlorenerQR, Reprint und bestehender Testbetrieb gemeinsam geprüft. Gemeinsamer Backend-/Rulesrelease braucht eigenen exakten Ziel-/SHA-/Daten-/Deployauftrag. |
+
+Die Paketnummern sind Implementierungsreihenfolge, keine Zeit-/Budgetschätzung. Neue konkrete Fileschnittstellen im Startbrief des jeweiligen Pakets aus den oben benannten Services ableiten; keine noch nicht existierenden exports als vorhandene Fähigkeit ausgeben. Für den wiederholbaren Druck Schlüsselbetrieb/Restore zuerst qualifizieren, nicht erst nach Ausgabe echter Codes.
+
+### M. Pflichtfälle für die Abnahme
+
+- Eine, zwei und drei Verwaltungslehrkräfte; letzteSelbstentfernung, gleichzeitige Rollenänderung, extern gesperrtes letztes Konto und Recovery.
+- Importierte Lehrkraft ohneLogin; vorhandenes Konto an richtiger/falscher Schule; Link weitergegeben/abgelaufen/widerrufen; zwei gleichnamige Personen; ein Account mit zwei Schulen; keine automatische E-Mail-/UIDfusion.
+- Ein Lehrer zwei Fächer, zwei Lehrer ein Fach, befristete Vertretung, Wechsel mitten im Jahr, geänderter CSVname bei unveränderter Verbindung.
+- Eigener und fremder Test; gleiches Quiz in zwei Klassen; neuerRun darf alteEmpfänger nicht invalidieren; private Lösungen/Ergebnisse und globales Adminrecht bleiben geschützt.
+- Eine Schüleridentität in Deutsch/Englisch; Name/Klasse/Schuljahr ändern ohne neuesLogin; keineZuweisung→Leerzustand; fremder oder abgelaufener Zugang, Sperre/Rotation und alteSitzung.
+- Print0/1/30/300Personen, sehrlange/mehrteilige/Umlautnamen, Auswahl über mehrereSeiten, doppelteKlicks, Druckdialogabbruch, keinQRohneCredential,1PersonproBlatt, lesbare1–2Seitenliste bzw. ehrlicherÜberlauf.
+- QR auf echtem Handy zur richtigen tatsächlich erreichbaren Umgebung; loopbackkarte nicht als mehrgerätefähig ausgeben. Unautorisierter Reprint/Export scheitert serverseitig.
+- Vor und nach Migration normaler Login, persönliche Tests/Editor/Ergebnisse/Coco und alte Gast-Testcodes unverändert; Fremdschool-Requests und manipulierterBrowserstatus bleiben wirkungslos.
+
+### N. Grenzen, Nachweise und nächster Schritt
+
+Diese Planung belegt keinen neuen implementierten Zugriff, keine Schüleranmeldung, keine Druckfunktion und keinen Deploy. Die vorhandenen375Tests bleiben beim bisherigen Produktstand. Neue Rollen-, Verknüpfungs-, Druck- und Assessmenttests werden erst mit tatsächlicher Umsetzung abgenommen. Zuständig bleibt der ausführende Classroom-Fachchat; für den späteren privilegierten Kandidaten ist ein unabhängiger Reviewer separat zu benennen. Relevante Kontrollen SEC04/06/07/08/11/14/17, PRIV01/07/08/17/20 sind für neue Fähigkeiten offen/nicht geprüft; keine pauschale Schul-/Rechtsfreigabe.
+
+Produktentscheidungen dieses Vorschlags: gemeinsame Schulmitgliedschaft statt Kopien pro Lehrer; zwei oder drei persönliche Verwalter empfohlen; beiderseitig geprüfte Accountverknüpfung; aktuelle serverseitige Rollen statt reiner Tokenclaims; stabile Schülerkennung mit separater rotierbarer Zugangsversion; wiederholbarer geschützter Druck; dieselbe Secure-Assessmentengine; lokale Oberfläche bleibt, echter Mehrgerätebetrieb erfordert gemeinsame abgesicherte Daten-/Autorisierungsquelle. Fachliche Schulfreigaben, genaue ASV-ID und späterer Provider-/Schlüsselbetrieb bleiben Tatsachen, die vor dem jeweiligen Echtbetrieb belegt werden müssen.
+
+Nächster ausführbarer Umsetzungsschritt nach Martins Planentscheidung: Paket0 und1, insbesondere vorhandenen persönlichen Bestand sicher einer lokalen Schule zuordnen und mehrere normale Accounts mit geprüften Schulrollen testen. Paket4/5 ergänzt die jetzt ausdrücklich gewünschten Schülercodes/QRs/Druckblätter, bevor Paket6 den vollständigen echten Schüler-Testablauf freigibt.
+
+Technische Primärquellen geprüft18.10.2026: [Firebase-IDtokenprüfung](https://firebase.google.com/docs/auth/admin/verify-id-tokens), [CustomClaims und deren Aktualisierung](https://firebase.google.com/docs/auth/admin/custom-claims), [Firestore REST-Authentifizierung und SecurityRules](https://firebase.google.com/docs/firestore/use-rest-api). Diese erklären Plattformverträge; Einladungsdauer, Rollenmatrix und Druckkonzept sind unsere Produktvorschläge, keine Firebase-Vorgaben. Kein neuer Authprovider oder Authdeploy aus dem gelesenen Firebase-Skill.
