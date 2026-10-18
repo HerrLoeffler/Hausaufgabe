@@ -649,6 +649,17 @@
       "relatedBranches": [
         "docs/gc-brand-hero-motion-20261013"
       ]
+    },
+    {
+      "id": "live-staging-isolation-20261016",
+      "title": "Schul-Live, getrennte Tests, native Offline-Abgabe und Lehrerfeedback",
+      "primaryBranch": "feature/live-staging-isolation-20261016",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/live-staging-isolation-20261016.md",
+      "relatedBranches": [
+        "feature/native-live-staging-20261018"
+      ]
     }
   ]
 }
