@@ -508,7 +508,7 @@ GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://g
 
 | ID | Auftrag | Stand | Nächster Schritt |
 |---|---|---|---|
-| GC-PEDAGOGY-KB-01 | Passende geprüfte Aufgabenprofile automatisch bei der Testgenerierung berücksichtigen | **Staging-Integration beauftragt und vorbereitet.** PR218 auf aktuellen App-Branch zusammengeführt, Kandidat0ed9d3c. 281 Functions- und31 Webtests lokal grün; Kandidaten-CI39156614592 läuft. | [Übergabe](workstreams/pedagogical-pool-20261011.md). Nach CI Merge, Functions-Receipts und kanonisches Staging; Modellqualität/Nutzertest offen. Medienanalyse aus PR214/208 bleibt separat. |
+| GC-PEDAGOGY-KB-01 | Geprüfte Aufgabenprofile automatisch bei der Testgenerierung berücksichtigen | **In App-Branch integriert**, PR218, Mergea425605b. Kandidaten-CI39156614592 erfolgreich,281Functions/31Webtests lokal grün; integrierte CI39156701861 läuft. | [Übergabe](workstreams/pedagogical-pool-20261011.md). Automatische Staging-Receipts abwarten, exakten Previewstand kanonisch veröffentlichen. Nutzer-/Modellqualitätsabnahme offen. Medienvollanalyse separat. |
 
 
 ## 11.10.2026 — GC-WEB-REPAIR-20261007 Feedback auf kanonischem Staging

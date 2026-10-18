@@ -48,3 +48,8 @@ PR218 https://github.com/HerrLoeffler/Hausaufgabe/pull/218, Remote-Commit64d78d1
 ## Stagingauftrag18.10.2026 – Integrationscheckpoint
 
 Martin beauftragt die Aktivierung auf hausaufgabe-staging.web.app. Development Status39142552587 frisch gelesen: Pool1ahead/19behind, Überlappungen nur functions/index.js und generation-flow.test.js. Aktueller App-Stand2e718ae44519fc22a7c64ad354b62dd26a6999ca in Pool zusammengeführt, Variantenvertrag erhalten. Kandidat0ed9d3c0791a6fa0a5322c837134f8a86c7737d7 mit Tree66fd1cfcd3dc9f5e24e8c46b982f05745d9ed3e9 bytegleich lokal911d5fb. 281/281Functions Node22, ESLint und31/31AI-Webregressionen grün. Zwei unveränderte Assets im Sparsecheckout nachgeladen, kein Produktfehler. Kandidaten-CI39156614592 läuft. Nächster Schritt: nach bestätigter CI PR218 in Appbranch, exakte integrierte CI und Stagingfunctions-/Hostingreceipts prüfen; kanonischen Deploy beauftragen. Production nicht beauftragt. AngefordertSol/medium für Integration; Runtime/Usageunbekannt. SEC06/07/14/17 undPRIV07/08/09 unveränderter begrenzter Poolscope; eigene Abstraktionen ohne Originalassets und Secrets. Ursprüngliche Task/Budgethistorie erhalten.
+
+
+### Integration gesichert
+
+PR218 mit erwarteter Kopf-SHA0ed9d3c und unverändertem Ziel2e718ae erfolgreich gemergt: a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d. Kandidaten-CI39156614592/Job117761050244 success (Functions+Lint+BugOpsRules). Integrierte CI39156701861 läuft. Stufe integrated, noch kein Deploymentnachweis. Beauftragtes Deployziel hausaufgabe-staging, exakter Commit a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d. Automatik deployt bestehende AI/Assessment-Codebases und Preview nach CI; danach kanonische Promotion desselben Builds. Kein Rules-/Productiondeploy.
