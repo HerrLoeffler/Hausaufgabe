@@ -1,3 +1,37 @@
+# GC-GAMES-LEARNING-UX-01 — Mathe, finaler Stand18Oct2026
+
+**staging_deployed**, isoliertes neues Testprojekt; echte synthetische Cloud-QA bestanden. Nutzer-/physische Geräteabnahme offen. PR240 bleibt offen/unmerged. Kein Schul-/Productiondeploy durch diesen Auftrag.
+
+[Mathe öffnen](https://gradecrew-staging-2026--gradecrew-math-classroom-20261-gyuq6rlo.web.app/fast-quiz/) · [Sanitisierter Release-/QA-Beleg](math-classroom-release-receipts-20261018.json).
+
+Die Vorschau läuft am **2026-10-25T20:22:22.956306354Z** ab (25.10.2026,21:22CET). Sie verwendet ausschließlich `gradecrew-staging-2026`; bestehende Schulkonten/Tests bleiben im Schulprojekt. Unter „Testkonto anmelden“ ist die tatsächliche Registrierung der neuen Testumgebung verlinkt. Keine Kontenmigration oder Authprovideränderung.
+
+## Für den Unterrichtstest
+
+Testkonto anmelden → Quelle laden (eigener Test / neuer Test mit Remi / Lehrplan Bayern) → Aufgaben prüfen, Beispiele und Lösungen bei Bedarf aufklappen → allein, Computer oder Teams wählen → Dauer und Start. Bei Teams2/3/4 wählen, Namen bei Bedarf ändern, alle Teams vor Start besetzen. Jedes Kind tritt normal über Code/QR auf seinem Gerät bei. Keine Testspieler und kein Testmodus eingeführt.
+
+## Implementiert und belegt
+
+Vier kompakte Schritte; Quellenrevision/Ownerprüfung, echte vorhandene GradeCrew-Anmeldung und vorhandener `startAiTestJob`-Pfad. Originaltests bleiben unverändert. Neue private Instanzen bleiben quellentreu; bekannte geprüfte Varianten kehren nach dem Zyklus ausdrücklich zur Festigung zurück. Konservative nicht unterstützte Originalformate werden sichtbar gesperrt oder von der Lehrkraft ausdrücklich ausgeschlossen.
+
+Fortlaufend wertbare Aufgaben bis zur gemeinsamen Serverfrist; kein5×60-Modell mehr. Richtige Erstabgabe20, mit Hinweis10, sonst0, kein zusätzlicher Speedbonus. Korrekturen bewerten dieselbe Instanz nicht neu. Nach Frist nur Lernfeedback, keine neue Wertung und kein Wissensfehler wegen unfertiger Aufgabe. Reload erhält offene Aufgabe; Lehrerabbruch ist kein Erfolg. Solo ohne Zeitlimit. Dauer1/3/5/10min und60–1200ganzeSekunden; H100%, Papierpräfix35%P(20=13H/7P). Gruppengröße/Zuordnung werden vor Start eingefroren, Rohsumme und Durchschnitt angezeigt; gleiche Beiträge je Person ergeben trotz unterschiedlicher Teamgrößen Gleichstand. Computerziel folgt Dauer/Profil mit transparenten Richtwerten zur Erprobung, ohne heimliches fachliches Hochstufen.
+
+**Hostingquelle1ee536e0e0cf787e733c130398f7de0a44595eed**, ExactCI39162885662SUCCESS. **Functionsquellece5c9c1d2de564505c2ddfd39fd2f9d4dda2cec6**, ExactCI39162483510SUCCESS; Node22ACTIVE, logischer Buildhash625c90a28a752d5a5057da28070dabe310ff4b03c67fcb299274df26a25e084f. Gezielte getrennte Deploysessions75248(initial),66494(SourcequeryFunctionsfix),97359(HostingResumeguard), jeweilsEXIT0. Kein Rules-/AI-/Assessment-/Schul-/Productiondeploy durch diesen Auftrag.
+
+55/55Node22Tests, Legacy9Browsermodi und neuer echter Reducer mit synthetischerSDK/Firestoreumgebung grün. Unabhängiger finaler RuntimeReview plus Sourcequery4/4 und RemiResume5/5DeltaReviewsPASS, bekannteP2mitbeobachtetemRED→GREENbehoben. Tatsächliche Cloud: normaleSDKTestkontoanmeldung,2Originalfragen,3getrennteBrowseridentitäten/2Teams,7wertbareAufgaben jePerson: Scores140/140/140, Rohsummen280/140, Durchschnitt140/140, echte60Sekunden und nachträglichesFeedback/Reload ohneScoreänderung. Vierer-Lobby[1,1,1,1]+Teacherstart/Abort, öffentlicheprojektionprivat; direkte private Prep-/Roomreads anonym+alsQAteacheralle403.
+
+Remi**genau ein**gesicherterJobfd2ad3352e9063c1f59fe61f4343988b6580e294, Requestad213fe2-dfc6-45b1-b9fb-446f6491d33d, QuizHCQD3K49. Alle10Originalaufgaben im realen Adapter variierbar,320geprüfteVariantenfür600Sekunden. Reale UI nimmt den fertigen Job über vorhandenen Firestorelistener wieder auf, startet dessen Quelle, prüft Antwort/Next und Reload. Leeres „Fortsetzen“ zeigt nach stabilerLadung den konkreten Hinweis und erzeugt0neueProviderrequests. Keine Wiederholung des RemiJobs. Lehrplan10M-Solo realCloudbelegt; weitere veröffentlichte Klassen-/Zugpfade automatisiert geprüft.
+
+## Grenzen und offene Abnahme
+
+Lehrplanteilkompetenzen:5natürlicheZahlen;6gleichnamigeBrüche;7Prozent/Gleichungen;8/9lineareGleichungen;10quadratischeGleichungenmitVorzeichenbedingung. Offizielle LehrplanPLUSlinks, kein vollständiger Lehrplan behauptet. Eigene Testfamilien derzeit konservativ exakte binäre Ganzzahlarithmetik; weitere Formate erhalten keine themenfremde Ersatzaufgabe. Computerzeiten/Ziele sind noch nicht im Unterricht kalibriert. Physische iPad/iPhone, Kamerascan, reale Klasse sowie Martins fachliche/visuelle Abnahme bleiben offen. Testdaten markiert; sechsstündige Raumzugriffsfrist ist kein automatischer Löschbeleg.
+
+Im Zeitfenster änderten sich die37anderenFunctions als beobachteter fremder Projektbaselinewechsel; daher **keine37-unchanged-Behauptung**. Die eigenen CLI-Belege umfassen nurfastquiz/eigenenHostingkanal. Keine Ursachenzuschreibung ohne fremden exaktenReceipt.
+
+Nächster Schritt: Martin prüft die verlinkte Mathe-Vorschau mit einem Testkonto; danach konkrete Rückmeldungen sammeln. Keine weiteren Deploys oder Providerstarts für diese Sicherung nötig.
+
+## Historische Implementierung, Wiederaufnahme und Versuchshistorie
+
 # GC-GAMES-LEARNING-UX-01 — Mathe auf Staging
 
 **Aktueller Stand: staging_deployed, echte synthetische Live-QA bestanden.** Nutzer- und physische Geräteabnahme bleiben offen. PR240 ist offen/unmerged; kein Update der kanonischen GC39-App oder Production.
