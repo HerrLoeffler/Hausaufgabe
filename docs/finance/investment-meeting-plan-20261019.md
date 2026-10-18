@@ -450,3 +450,14 @@ Nutzertexte im neuen Abschluss: Emmi/L4 „Zeig mal her! Oh, da hab ich eine Ide
 Wortanfänge des Viererchors wurden mit ElevenLabs Scribe geschätzt (80-ms-Quantisierung); Abstände wurden durch Stille angleichen, Sprachsamples und Tonhöhe blieben erhalten. Das belegt technische Ausrichtung, aber keine menschliche Hör- oder subjektive Klangabnahme; auch eine vollständige Bild-/Lippensynchronität ist nicht geprüft. Es wurden nach den sieben Takes keine weiteren Aufrufe gemacht.
 
 Dies ist ausschließlich ein Audiofortschritt. Kein V15-Film wurde erzeugt oder abgenommen: V14 bleibt abgelehnt, der V15-Coco-Pilot ist weiterhin am Mund-/Qualitätsgate gescheitert, und der vollständige natürliche 24-fps-Ganzcrewfilm bleibt offen. Keine Video-/Bildgenerierung, keine PowerPoint-/Produktänderung, keine Integration, kein Release oder Deploy.
+
+
+### V16-Zwischenstand: vollständiger neuer Dialog, begrenzter Coco-Proof läuft (18.10.2026)
+
+Der Nutzer hat die Vollcrew-Animation mit 24 fps und dem akzeptierten Dialog erneut beauftragt. Der Audio-Agent hat sieben neue ElevenLabs-Takes erfolgreich erzeugt (7/7, 373 Credits; genaue Takes und normalisierte Mischung stehen im V15-Audioeintrag). Der daraus gebaute kompakte Master ist vollständig und wurde byte-/Signalprüfungen unterzogen. Für V16 wurde daraus eine 72,000-s-Timeline mit 24 fps und 1.728 Frame-Zeitpunkten vorbereitet; die Sprecherauftritte und der gemeinsame Viererchor sind zeitlich eingeplant. Diese Daten sind Vorbereitungsartefakte und kein fertiger Film.
+
+Lokale V16-Vorbereitung unter `outputs/gradecrew-investment-20261019/animation-v16-dialogue-production/`: `audio/dialogue-film-72s-master-PCM-preserved.wav` (SHA-256 `aaf1617127bf05ad0cd81a67f18a263d1769824d1a7275b107e6047492b3d4ce`), `dialogue-timeline-24fps.csv` (SHA-256 `33dd74664b9773560e311d36f5e3a1ced6925dd35dcdc5946f3df241c02ad477`) und `audio/PCM-verification.json` (SHA-256 `558c4b22519c6f1f76b646ceda1cac12373596b5659f83a19797b6fbaf51eef9`). Der begleitende Regieplan und die endgültige Prüfung der Retimingdateien stehen noch aus.
+
+Ein einzelner Coco-Video-Proof wurde nach Vorabschätzung gestartet: LTX-Job `dzyKzZyujTYeHScAvVQZ`, eine Variation, gemeldete tatsächliche Belastung 1.308,96 Credits innerhalb der ausdrücklich gesetzten 1.500-Credit-Grenze. Zum Zeitpunkt dieses Checkpoints läuft die Generierung noch; ein MP4, technische Metadaten und eine Bild-/Mundbewegungsprüfung sind nicht belegt. Es gab keinen Wiederholungsversuch und keinen Vollfilm-Auftrag. Kein Anbieterpreis oder Budget für den vollständigen Film wurde freigegeben.
+
+Der frühere V15-Coco-Pilot bleibt am Schnabel-/Qualitätsgate gescheitert; V14 bleibt abgelehnt. Dieser Zwischenstand ersetzt diese Befunde nicht und verspricht keine natürliche Animation. Vollcrewfilm, 24-fps-Ausgabe, Coco-Schnabelsynchronität sowie menschliche Sicht-/Hörabnahme bleiben offen. Keine PPTX-, Produkt-, Main-, STATE-, Release- oder Deployänderung.
