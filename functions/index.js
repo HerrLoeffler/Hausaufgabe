@@ -37,6 +37,9 @@ const { createQuickRemyService } = require("./lib/quick-remy-flow");
 const { buildPrepareResult } = require("./lib/quick-remy-contract");
 const { loadVariantInput, variantPrompt, requireVariantMediaReady } = require("./lib/test-variant");
 
+// Share the established structured transport/quota path; no new provider client.
+require("./lib/wissensreise-generation").configure({ structuredResponse, consumeQuota, recordUsage });
+
 initializeApp();
 const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
 const callableOpts = { region: REGION, secrets: [OPENAI_API_KEY], timeoutSeconds: 300, memory: "1GiB", enforceAppCheck: false };

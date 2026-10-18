@@ -1792,6 +1792,7 @@ function renderQuizList() {
         ${q.startMode === "teacher" ? `<div><strong>Gemeinsam</strong><span>Start</span></div>` : ""}
       </div>
       <div class="quizActions primaryQuizActions">
+        ${!q.rightsHold && (!q.published || q.ended) ? `<a class="button secondary" href="./learning.html?source=${encodeURIComponent(q.id)}">Wissensreise</a>` : ""}
         <button class="button ${q.published ? "secondary" : "primary"} edit">Bearbeiten</button>
         <button class="button ${q.published ? "primary" : "secondary"} results">Ergebnisse</button>
         ${q.published && !q.ended && !q.rightsHold && !secureAudioPublicationBlocked(q) ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
