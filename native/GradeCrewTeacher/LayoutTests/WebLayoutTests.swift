@@ -49,6 +49,13 @@ final class WebLayoutTests: XCTestCase {
             for scenario in scenarios { try await check(scenario, viewport: viewport) }
         }
     }
+    func testWebShortDocumentBottomScroll() async throws {
+        // Reproduce the three short-page cases where an out-of-range test scroll
+        // displaced all page contents by one full viewport, including fixed Coco.
+        for (type, index) in [("number", 8), ("text", 7), ("gapfill", 8)] {
+            try await check("screen=editor&lang=de&role=teacher&type=" + type, viewport: LayoutViewport.matrix[index])
+        }
+    }
     private func check(_ scenario: String, viewport: LayoutViewport) async throws {
         let root = Bundle.main.url(forResource: "GeneratedWeb", withExtension: nil)
         guard let root else { XCTFail("Missing offline fixture bundle; run prepare_web_fixtures.py"); return }
@@ -118,7 +125,10 @@ final class WebLayoutTests: XCTestCase {
     private static func scrollScript(_ position: String) -> String {
         // The real SPA also uses nested scrolling sections. window.scrollTo alone
         // leaves their offsets intact and would falsely label a middle image as top.
-        let action = position == "bottom" ? "for(const e of containers.reverse()) e.scrollTo({top:e.scrollHeight,left:0,behavior:'instant'}); window.scrollTo({top:document.scrollingElement.scrollHeight,left:0,behavior:'instant'});" : (position == "answers" ? "document.querySelector('.answerEditor')?.scrollIntoView({block:'start',behavior:'instant'});" : "")
+        // Request only reachable offsets: short documents have a bottom offset of zero.
+        // WKWebView can temporarily honor scrollHeight itself as overscroll, placing
+        // even correctly fixed controls outside the viewport before it clamps back.
+        let action = position == "bottom" ? "for(const e of containers.reverse()) e.scrollTo({top:Math.max(0,e.scrollHeight-e.clientHeight),left:0,behavior:'instant'}); window.scrollTo({top:Math.max(0,document.scrollingElement.scrollHeight-innerHeight),left:0,behavior:'instant'});" : (position == "answers" ? "document.querySelector('.answerEditor')?.scrollIntoView({block:'start',behavior:'instant'});" : "")
         return """
         (()=>{const containers=[...document.querySelectorAll('*')].filter(e=>!e.matches('textarea,input,[contenteditable=true]')&&e.clientHeight>0&&e.scrollHeight>e.clientHeight+1&&/(auto|scroll)/.test(getComputedStyle(e).overflowY)); for(const e of containers)e.scrollTo({top:0,left:0,behavior:'instant'});window.scrollTo({top:0,left:0,behavior:'instant'}); \(action) return containers.map(e=>({id:e.id,top:e.scrollTop,height:e.scrollHeight,client:e.clientHeight}));})()
         """
