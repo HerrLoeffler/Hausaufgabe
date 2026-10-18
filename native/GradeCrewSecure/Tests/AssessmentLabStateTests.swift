@@ -92,15 +92,27 @@ final class AssessmentLabStateTests: XCTestCase {
     }
 
     func testSafetyTimerContinuesDuringTrackingRunLoopMode() {
-        let tracking = "GradeCrewLabTracking"
-        let cfMode = CFStringCreateWithCString(nil, tracking, CFStringBuiltInEncodings.UTF8.rawValue)!
-        CFRunLoopAddCommonMode(CFRunLoopGetCurrent(), CFRunLoopMode(rawValue: cfMode))
-        var fired = false
-        let timer = AssessmentLabTimer.schedule(every: 0.01) { fired = true }
-        defer { timer.invalidate() }
-        // This mode is common but not default: reproduces UIKit scroll tracking.
-        _ = RunLoop.current.run(mode: .init(rawValue: tracking), before: Date().addingTimeInterval(0.1))
-        XCTAssertTrue(fired, "Safety deadline must still be checked while scrolling")
+        let checked = expectation(description: "Common-mode safety timer fires while tracking")
+        // Production schedules on RunLoop.main. Exercise that same loop even when
+        // XCTest invokes this synchronous test on a worker thread.
+        DispatchQueue.main.async {
+            let tracking = "GradeCrewLabTracking"
+            let cfMode = CFStringCreateWithCString(nil, tracking, CFStringBuiltInEncodings.UTF8.rawValue)!
+            CFRunLoopAddCommonMode(CFRunLoopGetMain(), CFRunLoopMode(rawValue: cfMode))
+            var fired = false
+            let timer = AssessmentLabTimer.schedule(every: 0.01) { fired = true }
+            defer { timer.invalidate(); checked.fulfill() }
+            // A run-loop iteration can return for unrelated wakeups before the
+            // timer is due. Keep running only tracking mode until it fires or the
+            // bounded deadline expires; a default-mode-only timer must still fail.
+            let deadline = Date().addingTimeInterval(2)
+            while !fired && Date() < deadline {
+                _ = RunLoop.main.run(mode: .init(rawValue: tracking), before: deadline)
+            }
+            XCTAssertTrue(fired, "Safety deadline must still be checked while scrolling")
+        }
+        wait(for: [checked], timeout: 3)
+
     }
 
 }
