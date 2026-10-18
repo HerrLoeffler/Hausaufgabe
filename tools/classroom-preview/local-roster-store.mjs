@@ -3,18 +3,9 @@ import {mkdirSync,openSync,closeSync,chmodSync} from 'node:fs';
 import {dirname} from 'node:path';
 import {randomUUID,createHash} from 'node:crypto';
 
-export class RosterError extends Error {
- constructor(code,status=400){super(code);this.code=code;this.status=status;}
-}
-const fail=(code,status)=>{throw new RosterError(code,status);};
-const object=value=>value&&typeof value==='object'&&!Array.isArray(value);
-function keys(value,allowed){if(!object(value)||Object.keys(value).some(k=>!allowed.includes(k)))fail('invalid-argument');}
-function text(value,max=100){
- if(typeof value!=='string'||/[\p{Cc}\p{Cf}]/u.test(value))fail('invalid-argument');
- const result=value.trim();if(!result||result.length>max)fail('invalid-argument');return result;
-}
-function year(value){const result=text(value,7);if(!/^\d{4}\/\d{2}$/.test(result)||Number(result.slice(-2))!==(Number(result.slice(0,4))+1)%100)fail('invalid-argument');return result;}
-function actor(uid){if(typeof uid!=='string'||!uid||uid.length>128)fail('unauthenticated',401);return uid;}
+import {RosterError,fail,keys,text,year,actor} from './local-roster-validation.mjs';
+import {buildStudentImportPlan} from './local-roster-import.mjs';
+export {RosterError};
 const empty=()=>({schemaVersion:1,revision:0,classes:[],students:[],storage:'local-device'});
 
 // Device-local first slice. No school authority, cloud migration or shared grants
@@ -27,20 +18,47 @@ export function openLocalRoster(filename){
  const db=new DatabaseSync(filename);
  db.exec(`PRAGMA busy_timeout=5000; PRAGMA journal_mode=DELETE; PRAGMA synchronous=FULL;
  CREATE TABLE IF NOT EXISTS workspaces(owner_uid TEXT PRIMARY KEY, document TEXT NOT NULL);
- CREATE TABLE IF NOT EXISTS operations(owner_uid TEXT NOT NULL, operation_id TEXT NOT NULL, digest TEXT NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY(owner_uid,operation_id));`);
+ CREATE TABLE IF NOT EXISTS operations(owner_uid TEXT NOT NULL, operation_id TEXT NOT NULL, digest TEXT NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY(owner_uid,operation_id));
+ CREATE TABLE IF NOT EXISTS source_matches(owner_uid TEXT NOT NULL, source_key TEXT NOT NULL, student_id TEXT NOT NULL, PRIMARY KEY(owner_uid,source_key));
+ CREATE TABLE IF NOT EXISTS import_receipts(owner_uid TEXT NOT NULL, file_hash TEXT NOT NULL, identities TEXT NOT NULL, PRIMARY KEY(owner_uid,file_hash));`);
  const read=uid=>{actor(uid);const row=db.prepare('SELECT document FROM workspaces WHERE owner_uid=?').get(uid);return row?JSON.parse(row.document):empty();};
+ function importPlan(uid,payload,state=read(uid)){
+  actor(uid);return buildStudentImportPlan({state,payload,
+   lookupSource:key=>db.prepare('SELECT student_id FROM source_matches WHERE owner_uid=? AND source_key=?').get(uid,key)?.student_id,
+   lookupReceipt:key=>{const row=db.prepare('SELECT identities FROM import_receipts WHERE owner_uid=? AND file_hash=?').get(uid,key);return row?JSON.parse(row.identities):null;}
+  });
+ }
  function mutate(uid,request){
   actor(uid);keys(request,['command','payload','expectedRevision','operationId']);
   const {command,payload,expectedRevision,operationId}=request;
   if(!Number.isSafeInteger(expectedRevision)||expectedRevision<0||typeof operationId!=='string'||!/^[a-zA-Z0-9_-]{16,100}$/.test(operationId))fail('invalid-argument');
-  if(!['createClass','updateClass','createStudent','updateStudent'].includes(command))fail('invalid-argument');
+  if(!['createClass','updateClass','createStudent','updateStudent','importStudents'].includes(command))fail('invalid-argument');
   const digest=createHash('sha256').update(JSON.stringify(request)).digest('hex');
   db.exec('BEGIN IMMEDIATE');
   try{
    const previous=db.prepare('SELECT digest FROM operations WHERE owner_uid=? AND operation_id=?').get(uid,operationId);
    if(previous){if(previous.digest!==digest)fail('operation-conflict',409);const state=read(uid);db.exec('COMMIT');return state;}
    const state=read(uid);if(state.revision!==expectedRevision)fail('revision-conflict',409);
-   if(command==='createClass'||command==='updateClass'){
+   let changed=true;
+   if(command==='importStudents'){
+    keys(payload,['schoolYear','sourceNamespace','rows','decisions','previewHash']);
+    const {previewHash,...input}=payload,plan=importPlan(uid,input,state);
+    if(previewHash!==plan.view.planHash)fail('preview-mismatch',409);
+    if(plan.view.counts.review)fail('import-unresolved',409);
+    changed=Boolean(plan.view.counts.newStudents||plan.view.counts.updated);
+    const identities=[];
+    for(const action of plan.actions){
+     if(action.action==='skip')continue;
+     let c=state.classes.find(c=>c.schoolYear===action.schoolYear&&c.name.normalize('NFC').toLocaleLowerCase('de')===action.className.normalize('NFC').toLocaleLowerCase('de'));
+     if(!c){c={id:randomUUID(),name:action.className,schoolYear:action.schoolYear,createdAt:new Date().toISOString()};state.classes.push(c);}
+     let student=state.students.find(s=>s.id===action.studentId);
+     if(!student){student={id:randomUUID(),createdAt:new Date().toISOString()};state.students.push(student);}
+     Object.assign(student,{firstName:action.firstName,lastName:action.lastName,classId:c.id});
+     if(action.sourceKey)db.prepare('INSERT INTO source_matches(owner_uid,source_key,student_id) VALUES(?,?,?) ON CONFLICT(owner_uid,source_key) DO UPDATE SET student_id=excluded.student_id').run(uid,action.sourceKey,student.id);
+     identities.push({line:action.line,studentId:student.id});
+    }
+    db.prepare('INSERT INTO import_receipts(owner_uid,file_hash,identities) VALUES(?,?,?) ON CONFLICT(owner_uid,file_hash) DO UPDATE SET identities=excluded.identities').run(uid,plan.fileHash,JSON.stringify(identities));
+   }else if(command==='createClass'||command==='updateClass'){
     keys(payload,command==='createClass'?['name','schoolYear']:['id','name','schoolYear']);
     const name=text(payload.name,40),schoolYear=year(payload.schoolYear);
     let item=command==='updateClass'?state.classes.find(c=>c.id===payload.id):null;
@@ -57,12 +75,12 @@ export function openLocalRoster(filename){
     if(item)Object.assign(item,{firstName,lastName,classId});
     else{if(state.students.length>=5000)fail('resource-exhausted',429);state.students.push({id:randomUUID(),firstName,lastName,classId,createdAt:new Date().toISOString()});}
    }
-   state.revision++;
+   if(changed)state.revision++;
    db.prepare('INSERT INTO workspaces(owner_uid,document) VALUES(?,?) ON CONFLICT(owner_uid) DO UPDATE SET document=excluded.document').run(uid,JSON.stringify(state));
    db.prepare('INSERT INTO operations(owner_uid,operation_id,digest,created_at) VALUES(?,?,?,?)').run(uid,operationId,digest,Date.now());
    db.prepare('DELETE FROM operations WHERE owner_uid=? AND created_at<?').run(uid,Date.now()-7*86400000);
    db.exec('COMMIT');return state;
   }catch(error){db.exec('ROLLBACK');throw error;}
  }
- return {read,mutate,close:()=>db.close()};
+ return {read,mutate,previewImport:(uid,payload)=>importPlan(uid,payload).view,close:()=>db.close()};
 }

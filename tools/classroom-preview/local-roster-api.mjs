@@ -9,6 +9,11 @@ const errors={
  'already-exists':'Diese Klasse ist in diesem Schuljahr bereits vorhanden.',
  'not-found':'Der Eintrag ist nicht mehr verfügbar. Bitte den Bestand neu laden.',
  'resource-exhausted':'Die Grenze für diesen lokalen Testbestand ist erreicht.',
+ 'duplicate-source':'Eine Kennung kommt in mehreren Dateizeilen vor. Bitte die Datei prüfen.',
+ 'duplicate-target':'Mehrere Zeilen sind derselben Person zugeordnet. Bitte die Zuordnung prüfen.',
+ 'source-conflict':'Die Kennung ist bereits anders zugeordnet. Bitte die Importquelle prüfen.',
+ 'preview-mismatch':'Die Vorschau passt nicht mehr. Bitte eine neue Vorschau erstellen.',
+ 'import-unresolved':'Bitte zuerst alle unklaren Zuordnungen in der Vorschau prüfen.',
  'internal':'Speichern nicht möglich. Bitte erneut versuchen.'
 };
 export function createFirebaseIdentityVerifier({apiKey,fetchImpl=globalThis.fetch}){
@@ -30,7 +35,7 @@ function send(res,status,data){res.writeHead(status,{'Content-Type':'application
 async function jsonBody(req){
  if(!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))throw new RosterError('invalid-argument',415);
  let bytes=0;const parts=[];
- for await(const chunk of req){bytes+=chunk.length;if(bytes>16384)throw new RosterError('invalid-argument',413);parts.push(chunk);}
+ for await(const chunk of req){bytes+=chunk.length;if(bytes>4*1024*1024)throw new RosterError('invalid-argument',413);parts.push(chunk);}
  try{return JSON.parse(Buffer.concat(parts).toString('utf8'));}catch{throw new RosterError('invalid-argument',400);}
 }
 export async function handleLocalRoster(req,res,{store,verifyIdentity}){
@@ -43,7 +48,15 @@ export async function handleLocalRoster(req,res,{store,verifyIdentity}){
   if(!match)throw new RosterError('unauthenticated',401);
   const actor=await verifyIdentity(match[1]);
   if(!actor?.uid)throw new RosterError('unauthenticated',401);
-  const state=req.method==='GET'?store.read(actor.uid):store.mutate(actor.uid,await jsonBody(req));
+  let state;
+  if(req.method==='GET')state=store.read(actor.uid);
+  else{
+   const body=await jsonBody(req);
+   if(body?.command==='previewStudentImport'){
+    if(Object.keys(body).some(k=>!['command','payload'].includes(k)))throw new RosterError('invalid-argument');
+    state=store.previewImport(actor.uid,body.payload);
+   }else state=store.mutate(actor.uid,body);
+  }
   send(res,200,state);
  }catch(error){
   const code=error.code&&errors[error.code]?error.code:error.message==='unauthenticated'?'unauthenticated':'internal';

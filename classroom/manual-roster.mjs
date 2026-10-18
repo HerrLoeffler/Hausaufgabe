@@ -1,13 +1,14 @@
+import {openRosterImport} from './roster-import-dialog.mjs';
 // Named, account-owned device-local roster. No authentication simulation or quiz
 // writes. IDs remain stable when names and class membership are edited.
 export function createManualRoster({document:doc,client,onChange,onStudents}){
  let uid=null,epoch=0,status='idle',error='',state={revision:0,classes:[],students:[]};
- let filter='',search='',page=0,dialog=null,closed=false;
+ let filter='',search='',page=0,dialog=null,importDialog=null,closed=false,importNotice='';
  const make=(tag,text,attrs={})=>{const el=doc.createElement(tag);if(text!==undefined)el.textContent=text;for(const[k,v]of Object.entries(attrs))el.setAttribute(k,v);return el;};
  const button=(label,action,attrs={})=>{const b=make('button',label,{type:'button',class:'button ghost',...attrs});b.addEventListener('click',action);return b;};
  const sortedClasses=()=>[...state.classes].sort((a,b)=>b.schoolYear.localeCompare(a.schoolYear)||a.name.localeCompare(b.name,'de',{numeric:true}));
  const classLabel=id=>{const c=state.classes.find(x=>x.id===id);return c?`${c.name} · ${c.schoolYear}`:'Ohne Klasse';};
- function dismiss(){if(!dialog)return;dialog.remove();dialog=null;}
+ function dismiss(){importDialog?.destroy();importDialog=null;if(!dialog)return;dialog.remove();dialog=null;}
  async function load(){
   if(!uid||closed)return;const current=epoch;status='loading';error='';onChange();
   try{const data=await client.read();if(current!==epoch||closed)return;state=data;status='ready';}
@@ -15,10 +16,11 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
   onChange();
  }
  function setAccount(next){
-  if(uid===next)return;uid=next;epoch++;dismiss();filter='';search='';page=0;state={revision:0,classes:[],students:[]};status='idle';error='';
+  if(uid===next)return;uid=next;epoch++;dismiss();filter='';search='';page=0;importNotice='';state={revision:0,classes:[],students:[]};status='idle';error='';
   if(uid)queueMicrotask(load);
  }
  function note(host){
+  if(importNotice)host.append(make('p',importNotice,{role:'status',class:'rosterImportSuccess'}));
   host.append(make('p','Auf diesem Mac gespeichert · Nur für deinen angemeldeten Account',{class:'hint rosterStorageNote'}));
   if(status==='loading')host.append(make('p','Klassen und Schüler:innen werden geladen …',{role:'status'}));
   if(status==='error'){
@@ -76,9 +78,15 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
   target.addEventListener('close',()=>{if(dialog===target){target.remove();dialog=null;}});
   target.append(form);doc.body.append(target);if(typeof target.showModal==='function')target.showModal();else target.setAttribute('open','');form.querySelector('input')?.focus();
  }
+ function importButton(){
+  const b=button('ASV-/CSV-Datei importieren',()=>{
+   if(status!=='ready'||!uid)return;dismiss();const current=epoch;
+   importDialog=openRosterImport({document:doc,client,state,isCurrent:()=>current===epoch&&!closed&&Boolean(uid),onCommit:(next,counts)=>{state=next;status='ready';importDialog=null;importNotice=`Import abgeschlossen: ${counts.newStudents} neu, ${counts.updated} geändert, ${counts.unchanged} unverändert.`;onChange();}});
+  },{'data-roster-import':''});b.disabled=status!=='ready';return b;
+ }
  function renderClasses(host){
   const section=make('section',undefined,{class:'rosterManaged','data-telemetry-private':'true'}),head=make('div',undefined,{class:'rosterHeading'});
-  head.append(make('h2','Klassenbestand'));const add=button('Klasse hinzufügen',()=>formDialog('class'),{class:'button primary','data-roster-create-class':''});add.disabled=status!=='ready';head.append(add);section.append(head);note(section);
+  head.append(make('h2','Klassenbestand'));const add=button('Klasse hinzufügen',()=>formDialog('class'),{class:'button primary','data-roster-create-class':''});add.disabled=status!=='ready';head.append(add,importButton());section.append(head);note(section);
   if(status==='ready'){
    if(!state.classes.length)section.append(make('p','Noch keine Klasse angelegt. Lege deine erste Klasse an und füge anschließend Schüler:innen hinzu.'));
    const grid=make('div',undefined,{class:'classroomGrid'});
@@ -92,7 +100,7 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
  }
  function renderStudents(host){
   const head=make('div',undefined,{class:'rosterHeading'});head.append(make('h2','Schülerbestand'));
-  const add=button('Schüler:in hinzufügen',()=>formDialog('student'),{class:'button primary','data-roster-create-student':''});add.disabled=status!=='ready';head.append(add);host.append(head);note(host);
+  const add=button('Schüler:in hinzufügen',()=>formDialog('student'),{class:'button primary','data-roster-create-student':''});add.disabled=status!=='ready';head.append(add,importButton());host.append(head);note(host);
   if(status!=='ready')return;
   const tools=make('div',undefined,{class:'rosterFilters'}),searchLabel=make('label','Nach Namen suchen'),input=make('input',undefined,{type:'search','aria-label':'Nach Namen suchen',autocomplete:'off'});input.value=search;
   const filterLabel=make('label','Klasse'),select=make('select',undefined,{'aria-label':'Nach Klasse filtern'});

@@ -1,0 +1,56 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {createRequire} from 'node:module';
+const {JSDOM}=createRequire(import.meta.url)('../tools/ui/node_modules/jsdom');
+import {openRosterImport} from './roster-import-dialog.mjs';
+import {openLocalRoster} from '../tools/classroom-preview/local-roster-store.mjs';
+const tick=()=>new Promise(r=>setTimeout(r,0));
+function setup(){const dom=new JSDOM('<body><button>Zurück</button></body>',{url:'http://127.0.0.1:8782/'}),store=openLocalRoster(':memory:');let committed=null;
+ const client={previewImport:async payload=>store.previewImport('a',payload),mutate:async(command,payload,expectedRevision,operationId)=>store.mutate('a',{command,payload,expectedRevision,operationId})};
+ const dialog=openRosterImport({document:dom.window.document,client,state:store.read('a'),isCurrent:()=>true,onCommit:s=>{committed=s;}});
+ return {dom,store,dialog,get committed(){return committed;}};
+}
+async function selectFile(t,text){const input=t.dom.window.document.querySelector('[data-import-file]');Object.defineProperty(input,'files',{value:[{size:Buffer.byteLength(text),arrayBuffer:async()=>new TextEncoder().encode(text).buffer}],configurable:true});input.dispatchEvent(new t.dom.window.Event('change'));await tick();}
+test('CSV stays uncommitted until preview and explicit approval; summary reports new accounts/classes',async()=>{
+ const t=setup(),doc=t.dom.window.document;try{
+  await selectFile(t,'Vorname;Nachname;Klasse\nMila;Beispiel;8b\nAda;Übung;8b\n');
+  doc.querySelector('[data-import-preview]').click();await tick();
+  assert.equal(t.store.read('a').students.length,0);assert.match(doc.querySelector('[data-import-summary]').textContent,/2.*Neu/);
+  const confirm=doc.querySelector('[data-import-confirm]');assert.equal(confirm.disabled,true);
+  const approval=doc.querySelector('[data-import-approval]');approval.checked=true;approval.dispatchEvent(new t.dom.window.Event('change'));assert.equal(confirm.disabled,false);
+  confirm.click();await tick();assert.equal(t.committed.students.length,2);assert.equal(doc.querySelector('[data-import-dialog]'),null);
+ }finally{t.dialog.destroy();t.store.close();t.dom.window.close();}
+});
+test('headerless pipe auto keeps first row; cancellation does not create accounts',async()=>{
+ const t=setup(),doc=t.dom.window.document;try{
+  await selectFile(t,'0010|0001|von Beispiel|Ada|||w|8b||\n0010|0002|Übung|Mila|||d|8b||\n');
+  assert.equal(doc.querySelector('[data-import-header]').checked,false);
+  doc.querySelector('[data-import-preview]').click();await tick();assert.match(doc.querySelector('[data-import-summary]').textContent,/2.*Neu/);
+  doc.querySelector('[data-import-cancel]').click();assert.equal(t.store.read('a').students.length,0);assert.equal(doc.querySelector('[data-import-dialog]'),null);
+ }finally{t.dialog.destroy();t.store.close();t.dom.window.close();}
+});
+test('manual existing person is explicitly linked and year/class move is previewed before commit',async()=>{
+ const t=setup(),doc=t.dom.window.document;try{
+  t.dialog.destroy();
+  const initial=t.store.mutate('a',{command:'createClass',payload:{name:'8b',schoolYear:'2026/27'},expectedRevision:0,operationId:crypto.randomUUID()});
+  const old=t.store.mutate('a',{command:'createStudent',payload:{firstName:'Mila',lastName:'Beispiel',classId:initial.classes[0].id},expectedRevision:1,operationId:crypto.randomUUID()});
+  const nextDialog=openRosterImport({document:doc,client:{previewImport:async p=>t.store.previewImport('a',p),mutate:async(command,payload,expectedRevision,operationId)=>t.store.mutate('a',{command,payload,expectedRevision,operationId})},state:old,isCurrent:()=>true,onCommit:()=>{}});
+  await selectFile(t,'Vorname;Nachname;Klasse\nMila;Beispiel;9b\n');doc.querySelector('[data-import-year]').value='2027/28';
+  doc.querySelector('[data-import-preview]').click();await tick();assert.match(doc.querySelector('[data-import-summary]').textContent,/Zuordnung prüfen/);
+  [...doc.querySelectorAll('button')].find(b=>b.textContent==='Eindeutige Namensvorschläge zuordnen').click();
+  doc.querySelector('[data-import-preview]').click();await tick();
+  const summary=doc.querySelector('[data-import-summary]').textContent;assert.match(summary,/Klassenwechsel/);assert.match(summary,/8b · 2026\/27/);assert.match(summary,/9b · 2027\/28/);
+  assert.equal(t.store.read('a').students[0].classId,initial.classes[0].id,'preview cannot move pupil');
+  const approval=doc.querySelector('[data-import-approval]');approval.checked=true;approval.dispatchEvent(new t.dom.window.Event('change'));doc.querySelector('[data-import-confirm]').click();await tick();
+  assert.equal(t.store.read('a').students[0].id,old.students[0].id);assert.equal(t.store.read('a').students.length,1);nextDialog.destroy();
+ }finally{t.store.close();t.dom.window.close();}
+});
+test('row decisions are locked while the approved import is being committed',async()=>{
+ const dom=new JSDOM('<body></body>',{url:'http://127.0.0.1:8782/'}),store=openLocalRoster(':memory:');let resolve;
+ const client={previewImport:async p=>store.previewImport('a',p),mutate:()=>new Promise(r=>{resolve=r;})};
+ const modal=openRosterImport({document:dom.window.document,client,state:store.read('a'),isCurrent:()=>true,onCommit:()=>{}}),t={dom};
+ try{
+  await selectFile(t,'Vorname;Nachname;Klasse\nAda;Beispiel;8b\n');const doc=dom.window.document;doc.querySelector('[data-import-preview]').click();await tick();
+  const approval=doc.querySelector('[data-import-approval]');approval.checked=true;approval.dispatchEvent(new dom.window.Event('change'));doc.querySelector('[data-import-confirm]').click();
+  assert.equal(doc.querySelector('[data-import-summary] select').disabled,true);
+  resolve(store.read('a'));await tick();
+ }finally{modal.destroy();store.close();dom.window.close();}
+});

@@ -20,6 +20,18 @@ Der sofort nutzbare erste Ausbau speichert die Namen und Klassen im vorhandenen 
 
 Dieser Teil ergänzt die im Folgenden beschriebene Zielarchitektur. Abweichende Aussagen „Namen nur im Browser-RAM“ gelten für diesen ausdrücklich autorisierten lokalen Namenbestand nicht. Keine Namen, lokale Datenbank oder Credentials im Gitbaum, in AI, Logs oder Telemetrie. Keine Bestands-Quizmutation durch die neue Verwaltung.
 
+## Beauftragte Fortsetzung: lokaler ASV-/CSV-Listenimport mit Vorschaufenster — 18.10.2026
+
+Nach manueller Persistenz beauftragt Martin den CSV-Import mit Vor-/Nachnamen und Klassenzuordnung. Die weitere Präzisierung verlangt eine ANTON-artige Übersicht vor der Zustimmung: neue/bestehende Personen, Namensänderungen, Klassen-/Schuljahreswechsel (8b2026/27→9b2027/28), unklare Zuordnungen. Dieser lokale Lieferblock bleibt beim bestehenden echten Lehrerlogin und SQLite-Backend auf demselben Mac; keine Hosting-/Cloud-/Quizänderung.
+
+Ablauf: Datei lokal öffnen (CSV2MiB, max2000Zeilen) → Kopfzeile/Trennzeichen/Kodierung bestätigen → Vor-/Nachname/Klasse mappen, optional feste vorhandene Klasse und Zielschuljahr → optionale ausdrücklich gewählte Quellkennung/Importquelle → serverautorisierte read-only Vorschau → Konflikte einzeln oder eindeutige Namensvorschläge ausdrücklich zuordnen → neue Vorschau → Checkbox „Ich habe die Änderungen geprüft und möchte sie übernehmen.“ → atomare Übernahme. Neue Klassen entstehen erst mit Bestätigung. Fehlende bestehende Personen bleiben unverändert; kein automatisches Löschen/Archivieren oder pauschaler Promotionslauf.
+
+Identitätsvertrag lokal: gleicher bestätigter Quellenbezug innerhalb desselben Accounts oder gleiche vorher ausdrücklich übernommene Importdatei führt zur stabilen vorhandenen Schüler-ID. Namen allein erzeugen keine automatische Zusammenführung. Manuell vorhandene Personen werden als Zuordnungsvorschlag gezeigt, ausdrücklich verknüpft oder als eigenständige neue Person angelegt/übersprungen. Optionaler Quellenindex speichert ausschließlich einen lokalen Digest und die interne Schüler-ID; dieser Digest wird nicht als kryptografische Anonymisierung oder verifiziertes ASV-Schema bezeichnet. Die konkrete ASV-ID-Spalte muss die Schule weiterhin sachlich bestätigen. Keine schulweite gemeinsame Auth-/Schlüssel-/Jahresmitgliedschaftsimplementierung aus dieser lokalen Listenfunktion ableiten.
+
+Geplante/umgesetzte Dateien dieser Fortsetzung: classroom/named-import.mjs und roster-import-dialog.mjs mit Tests, local-roster-client/manual-roster/CSS/i18n; tools/classroom-preview/local-roster-import.mjs und validation.mjs, store/api und Tests. Vorschau/Bestätigung binden Daten, Entscheidungen und Bestandsrevision an einen serverberechneten Planhash. Veränderter Bestand verlangt eine neue Vorschau. Die SQL-Transaktion übernimmt alle Personen/Klassen/privaten Indizes oder nichts; idempotente Bestätigung erzeugt keine Doppelanlagen. Größengebundene API4MiB, Bestandsgrenzen200Klassen/5000Personen unverändert. Vorhandene app.js/Auth-/Quiz-/Assessmentpfade bleiben unverändert.
+
+Prüfung: neue Parser-/Backend-/UI-Verträge zuerst rot, dann grün; breite Websuite357/357 inklusive bestehendem Login/Editor/Publish/Assessmentclient grün. Echte lokale Browserprobe und unabhängiger Review werden am gesicherten Kandidaten gesondert belegt. Alte jsdomTeardownwarnung bleibt bekannt. Keine eigenen realen Schülerdateien in Nachweis/Git; synthetische Testdateien und Metadaten genügen.
+
 ## Global Constraints
 
 - Lokaler Einstieg bleibt `http://127.0.0.1:8782/`; originale Startseite, normaler Lehrerlogin, bestehende Tests, Erstellen, Editor, Auswertungen, Einstellungen, Coco und bestehender Gast-Testcode bleiben erhalten.

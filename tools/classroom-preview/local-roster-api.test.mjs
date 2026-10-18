@@ -24,6 +24,13 @@ test('HTTP API requires real actor, same origin and JSON; HTTP state survives cl
   assert.equal((await (await read('valid-a')).json()).classes[0].name,'9b');
   assert.equal((await (await read('valid-b')).json()).classes.length,0);
   assert.equal((await post(base,'valid-a',{ownerUid:'valid-b'})).status,400);
+  const input={schoolYear:'2026/27',sourceNamespace:'Testquelle',rows:[{line:2,firstName:'Ada',lastName:'Beispiel',className:'8b',sourceId:''}],decisions:[]};
+  const viewResponse=await fetch(base+'/api/classroom/roster',{method:'POST',headers:{Origin:base,Authorization:'Bearer valid-a','Content-Type':'application/json'},body:JSON.stringify({command:'previewStudentImport',payload:input})});
+  assert.equal(viewResponse.status,200);const view=await viewResponse.json();assert.equal(view.counts.newStudents,1);
+  assert.equal((await (await read('valid-a')).json()).students.length,0,'HTTP preview is read-only');
+  const imported=await post(base,'valid-a',{command:'importStudents',payload:{...input,previewHash:view.planHash},expectedRevision:view.revision,operationId:crypto.randomUUID()});
+  assert.equal(imported.status,200);assert.equal((await imported.json()).students[0].firstName,'Ada');
+
   assert.equal((await fetch(base+'/.gradecrew-local/classroom.sqlite')).status,404);
   const normal=await(await fetch(base)).text();assert.match(normal,/__GRADECREW_ACCOUNT_WORKSPACE__/);assert.doesNotMatch(normal,/importmap/);
  }finally{await new Promise(r=>server.close(r));store.close();}
