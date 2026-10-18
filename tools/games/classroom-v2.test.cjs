@@ -68,3 +68,12 @@ test('a small head family cycles independently while a large paper family contin
 test('Remi request preserves selected grade and topic without imposing a different arithmetic curriculum',async()=>{
  const {buildGenerationRequest}=await import('../../lab/fast-quiz/source-client.mjs');assert.equal(typeof buildGenerationRequest,'function');for(const topic of ['Brüche addieren','Lineare Gleichungen','Prozentrechnung']){const request=buildGenerationRequest({grade:9,topic});assert.equal(request.topic,topic);assert.equal(request.grade,'9');assert.deepEqual(request.allowedTypes,['number','text']);assert.match(request.notes,/Thema.*unverändert/);assert.doesNotMatch(request.notes,/Keine Sachtexte|Keine.*Bruch|zwei positiven ganzen Zahlen/);}
 });
+test('real GradeCrew source repository preserves position questions and legacy questions without position',async()=>{
+ const {createSourceRepo}=require('../../lab/fast-quiz-functions/classroom-source-repo');
+ const questions=[{id:'b',position:2,type:'number',text:'52 − 8 = ?',numericAnswer:44},{id:'a',position:1,type:'number',text:'38 + 7 = ?',numericAnswer:45},{id:'legacy',type:'number',text:'47 + 8 = ?',numericAnswer:55}];
+ function query(field,limit=1000){return{orderBy:key=>query(key,limit),limit:n=>query(field,n),get:async()=>{const rows=(field?questions.filter(q=>Object.hasOwn(q,field)).sort((a,b)=>a[field]-b[field]):questions).slice(0,limit);return{size:rows.length,docs:rows.map(q=>({id:q.id,data:()=>q}))}}};}
+ const db={doc:p=>({get:async()=>p==='users/owner'?{exists:true,data:()=>({role:'teacher',status:'active'})}:p==='accountDeletions/owner'?{exists:false,data:()=>null}:{exists:true,data:()=>({ownerId:'owner',title:'Remi-Test',generationStatus:'ready'})},collection:()=>query()})};
+ const repo=createSourceRepo({db,getAuth:()=>({getUser:async()=>({disabled:false})}),fail:(code,message)=>{throw new Error(message)}});
+ const result=await repo.load('owner','remi-generated');assert.deepEqual(result.questions.map(q=>q.id),['a','b','legacy']);assert.equal(result.questions.length,3);assert.equal(sources.preparePlan(result,{category:'mental',durationSec:600}).available,true);
+ const originalOrder=sources.digest(result);questions.reverse();assert.equal(sources.digest(await repo.load('owner','remi-generated')),originalOrder);
+});
