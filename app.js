@@ -6579,11 +6579,9 @@ function renderGapfillStudent(section, q) {
   while ((match = regex.exec(q.text))) {
     appendText(q.text.slice(last, match.index));
     const input = document.createElement("input");
-    const color = q.gapColors?.[gapIndex];
-    input.className = `inlineGap${["blue", "orange", "green", "purple"].includes(color) ? ` gapColor-${color}` : ""}`;
+    input.className = "inlineGap";
     input.dataset.gapIndex = String(gapIndex++);
     input.type = "text";
-    input.placeholder = "…";
     wrap.appendChild(input);
     last = match.index + match[0].length;
   }

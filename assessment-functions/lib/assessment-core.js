@@ -98,7 +98,7 @@ function publicGapSegments(question, secret) {
   let cursor = 0;
   gaps.forEach((gap, index) => {
     if (gap.start > cursor) segments.push({ type: "text", text: text.slice(cursor, gap.start) });
-    segments.push({ type: "gap", id: opaqueId(secret, question.id, "gap", index), ...(colors[index] ? { color: colors[index] } : {}) });
+    segments.push({ type: "gap", id: opaqueId(secret, question.id, "gap", index) });
     cursor = gap.end;
   });
   if (cursor < text.length) segments.push({ type: "text", text: text.slice(cursor) });
@@ -377,6 +377,7 @@ function buildAssessmentContract(questions, secret, { shuffleQuestions = false, 
   const gradingKey = entries.map(entry => entry.key);
   // Existing attempts compare this fingerprint on resume/poll. Keep their v1
   // presentation shape for hashing while returning locale-neutral image metadata.
+  const authoredById = new Map(normalized.map(question => [question.id, question]));
   const fingerprintPaper = paper.map(question => {
     const { imageChoicesOnly, ...legacy } = question;
     if (legacy.image) legacy.image = { ...legacy.image, alt: legacy.image.alt || "Abbildung zur Aufgabe" };
@@ -384,6 +385,15 @@ function buildAssessmentContract(questions, secret, { shuffleQuestions = false, 
       ...option,
       image: option.image ? { ...option.image, alt: option.image.alt || "Antwortabbildung" } : null
     }));
+    if (legacy.type === "gapfill") {
+      const colors = authoredById.get(legacy.id)?.gapColors || [];
+      let gapIndex = 0;
+      legacy.segments = legacy.segments.map(segment => {
+        if (segment.type !== "gap") return segment;
+        const color = colors[gapIndex++];
+        return color ? { ...segment, color } : segment;
+      });
+    }
     return legacy;
   });
   const sourceFingerprint = sha256(JSON.stringify({ paper: fingerprintPaper, gradingKey }));
