@@ -1,0 +1,197 @@
+{
+  "task": "GC-GAMES-LEARNING-UX-01",
+  "stage": "staging_deployed",
+  "project": "gradecrew-staging-2026",
+  "url": "https://gradecrew-staging-2026--gradecrew-math-classroom-20261-gyuq6rlo.web.app/fast-quiz/",
+  "hosting": {
+    "source": "1ee536e0e0cf787e733c130398f7de0a44595eed",
+    "ci": 39162885662,
+    "ciConclusion": "success",
+    "version": "sites/gradecrew-staging-2026/versions/cd2ade9950753b1b",
+    "release": "sites/gradecrew-staging-2026/channels/gradecrew-math-classroom-20261018/releases/1792354950789000",
+    "expiresAt": "2026-10-25T20:22:22.956306354Z",
+    "manifestFileHashes": 16,
+    "manifestHashesAllMatch": true,
+    "bundledFilesIncludingManifest": 17,
+    "firebaseReservedInitFiles": 2,
+    "hostingInventoryFiles": 19,
+    "noSchoolEndpointInServedFiles": true
+  },
+  "functions": {
+    "source": "ce5c9c1d2de564505c2ddfd39fd2f9d4dda2cec6",
+    "ci": 39162483510,
+    "ciConclusion": "success",
+    "state": "ACTIVE",
+    "runtime": "nodejs22",
+    "logicalBuildHash": "625c90a28a752d5a5057da28070dabe310ff4b03c67fcb299274df26a25e084f",
+    "firebaseSourceHash": "e8c391aa7fe5befb14b97d581f4d493a98ab38c1",
+    "cloudBuild": "projects/840345136563/locations/europe-west1/builds/6773b0fa-4694-4c8c-9f6e-b7123741647b",
+    "sourceGeneration": "1792354681661640",
+    "onlyCodebaseDeployed": "fastquiz"
+  },
+  "deployAttempts": [
+    {
+      "session": 75248,
+      "source": "7b52985d1e6a9358bd369d28a0586b31d952cbca",
+      "scope": "fastquiz plus isolated hosting",
+      "result": "exit0"
+    },
+    {
+      "session": 66494,
+      "source": "ce5c9c1d2de564505c2ddfd39fd2f9d4dda2cec6",
+      "scope": "fastquiz only; actual position/legacy source query fix",
+      "result": "exit0"
+    },
+    {
+      "session": 97359,
+      "source": "1ee536e0e0cf787e733c130398f7de0a44595eed",
+      "scope": "same hosting channel only; Remi resume cost guard",
+      "result": "exit0"
+    }
+  ],
+  "localVerification": {
+    "runtime": "Node22.23.3",
+    "gamesTests": 55,
+    "gamesTestsPassed": 55,
+    "browser": "legacy9modes plus actual V2 reducer with synthetic SDK/Firestore; end-reload regression",
+    "redGreenObserved": [
+      "source compiler/runtime",
+      "result range",
+      "unrounded computer threshold",
+      "independent H/P cycles",
+      "position and legacy source contract",
+      "resume cost guard",
+      "round-end reload"
+    ]
+  },
+  "independentReviews": [
+    {
+      "file": "artifacts/math-classroom-20261018/independent-review/final-receipt.json",
+      "sha256": "5fa716083da814d68e882248d32ad6d246b9e4a7847f99bfb4c450edfe11534b",
+      "status": "PASS"
+    },
+    {
+      "file": "artifacts/math-classroom-20261018/independent-review/source-query-delta-receipt.json",
+      "sha256": "70c4e6a58a2e615a4ee26c085b699ee214aa19748a7b071c4caa3866a52cbbd7",
+      "status": "PASS"
+    },
+    {
+      "file": "artifacts/math-classroom-20261018/independent-review/remi-resume-delta-receipt.json",
+      "sha256": "8dace04c29baecb31d947b20e05e34a9b798247fecedb1e264c7c28657640e38",
+      "status": "PASS"
+    }
+  ],
+  "cloud": {
+    "realFirebaseSdkEmailPasswordLogin": true,
+    "syntheticOnly": true,
+    "ownTestSourceQuestions": 2,
+    "classroom": {
+      "syntheticOnly": true,
+      "project": "gradecrew-staging-2026",
+      "serverStoredDurationSec": 60,
+      "playerCount": 3,
+      "scores": [
+        140,
+        140,
+        140
+      ],
+      "teamSizes": [
+        2,
+        1
+      ],
+      "rawScores": [
+        280,
+        140
+      ],
+      "averages": [
+        140,
+        140
+      ],
+      "status": "finished",
+      "lateFeedbackDidNotChangeFrozenScores": true,
+      "method": "Actual browser21Answers+natural60sec+reloadlatefeedback; serverprojection and synthetic-own-room storage crosscheck"
+    },
+    "fourTeamRoster": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "teacherStopAborts": true,
+    "privateDirectFirestoreReads": [
+      {
+        "collection": "fastQuizPreparationsV2",
+        "identity": "anonymous",
+        "status": 403
+      },
+      {
+        "collection": "fastQuizPreparationsV2",
+        "identity": "synthetic-teacher",
+        "status": 403
+      },
+      {
+        "collection": "fastQuizClassroomsV2",
+        "identity": "anonymous",
+        "status": 403
+      },
+      {
+        "collection": "fastQuizClassroomsV2",
+        "identity": "synthetic-teacher",
+        "status": 403
+      }
+    ],
+    "positiveResumeUiSteps": [
+      "real SDK test-account login and source listing",
+      "real curriculum class10 M selection, preparation and solo task",
+      "existing ready Remy job resumed through real Firestore listener; generated own quiz selected, no new job",
+      "actual ready Remy source passed 10-minute variant preparation, private answer check and next new task",
+      "Remy-derived solo session reload resumes"
+    ],
+    "pageErrors": [],
+    "forbiddenSchoolRequests": [],
+    "extraRemyDispatchesInResumeUi": 0,
+    "emptyResume": {
+      "project": "gradecrew-staging-2026",
+      "source": "1ee536e0e0cf787e733c130398f7de0a44595eed",
+      "emptyResumeVisibleMessage": "Kein vorhandener Remi-Auftrag auf diesem Gerät. Erstelle zuerst bewusst einen neuen Test.",
+      "newProviderDispatches": 0,
+      "pageErrors": 0,
+      "explicitIdleWait": true,
+      "at": "2026-10-18T20:26:31.315Z"
+    },
+    "remy": {
+      "jobId": "fd2ad3352e9063c1f59fe61f4343988b6580e294",
+      "requestId": "ad213fe2-dfc6-45b1-b9fb-446f6491d33d",
+      "generatedQuizId": "HCQD3K49",
+      "exactlyOneRemyJob": true,
+      "preparedAvailable": true,
+      "sourceQuestionCount": 10,
+      "variableCount": 10,
+      "requiredCount": 320,
+      "capacity": 320,
+      "issues": []
+    }
+  },
+  "existingFunctionsBaseline": {
+    "beforeCount": 37,
+    "afterCount": 38,
+    "observedExistingHashesChanged": 37,
+    "allExistingFunctionsUnchangedClaimed": false,
+    "note": "Concurrent project baseline changed in observed window. This task logs only fastquiz and its isolated Hosting channel; no attribution of other changes."
+  },
+  "attemptHistory": [
+    "CloudQA1 passed real class21scores/natural60sec/lateReload; stopped on driver missing source-radio switch before curriculum.",
+    "CloudResume positive5steps passed; final negative assertion raced loadSources busy no-op. Explicit idle-only negative proof then PASS, no product redeploy or extra Remy job."
+  ],
+  "limits": [
+    "Physical iPad/iPhone, camera QR scan, real classroom and Martin acceptance remain unverified.",
+    "Curriculum5–10 offers explicitly named verified partial competencies, not complete curriculum coverage.",
+    "Own-source compiler supports conservative exact integer binary arithmetic; unsupported source formats remain visible and require explicit exclusion.",
+    "Computer reference times and targets are trial values, not classroom-calibrated competency measurements.",
+    "Prepared variants can recur transparently for consolidation; no claim of infinitely many unique tasks.",
+    "Synthetic QA resources are marked test data; room6h access expiry is not an automatic-deletion proof."
+  ],
+  "productionChanged": false,
+  "schoolProjectDeploysByThisTask": 0,
+  "completedAt": "2026-10-18T20:27:47.846609+00:00"
+}

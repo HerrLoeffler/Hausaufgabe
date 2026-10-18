@@ -1,0 +1,23 @@
+{
+  "schema_version": 2,
+  "repository": "HerrLoeffler/Hausaufgabe",
+  "description": "Scoped Fast Quiz branch evidence only. Current main GRADECREW_STATE.json remains canonical for global Release Train; this historical Games base had no state file. Do not replace main coordination with this snapshot.",
+  "production": "not_authorized",
+  "workstreams": [
+    {
+      "id": "fastquiz-binomial-20261012",
+      "task_id": "GC-GAMES-FASTQUIZ-BINOMIAL-20261012",
+      "branch": "feat/fastquiz-binomial-20261012",
+      "stage": "ci_green",
+      "handoff": "workstreams/fastquiz-binomial-20261012.md",
+      "local_validation": "26 Games tests + isolated Hub/backend build; independent diff review no concrete defect",
+      "staging": "not_deployed; current fastQuizApi drops binomial",
+      "user_test": "not_performed",
+      "next_action": "Authorized staging session deploys exact reviewed candidate with isolated wrapper then real teacher/student/QR/score check",
+      "production": "not_authorized",
+      "observed_head": "96cc5b0b4473237a22ce97c379f68aeff98c5587",
+      "ci": "success run38224683291; synthetic backend/QR browser flows",
+      "pull_request": 224
+    }
+  ]
+}
