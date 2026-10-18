@@ -466,3 +466,20 @@ Nächster Schritt: tatsächliche Generierungs-IDs, Einzeldateien/Hashes und Prov
 
 
 **Klarstellung zum internen Credit-Limit:** 12.000 Credits sind ein von Root für diesen Ausführungsdurchgang gesetztes internes Providerlimit, kein vom Nutzer festgelegtes Budget und kein Vollfilmangebot. Die früheren 1.308,96 Credits für den V16-Proof und 373 Credits für die separate V15-Audiogenerierung bleiben getrennte, bereits dokumentierte Verbräuche. Ein aktueller Kontostand ist nicht belegt; Starter-Credits werden nicht unterstellt.
+
+
+### V17-Chorauftrag gestartet: vier getrennte Sprecherclips in Arbeit (18.10.2026)
+
+Der erste Videoauftrag nach dem neuen Nutzerauftrag ist der priorisierte Fünf-Sekunden-Chor: Coco, Remy, Emmi und Wilma sind jeweils gleichzeitig im selben Szenenbild vorgesehen, aber jede Figur erhält ihre eigene ausgerichtete Stimmeingabe. Die Nutzerfreigabe für die Crew-Referenzen lag vor. Vier freigestellte Ganzkörperreferenzen, vier fünfsekündige WAV-Eingaben und eine Bühnenreferenz wurden im bestehenden ElevenLabs-Flow `W0TsplxmFLPNiprgpqod` hochgeladen. Ein erster Uploadversuch wurde durch die Auto-Prüfung abgelehnt; derselbe zulässige Uploadweg wurde danach mit belegter TTS-Herkunft und Nutzerfreigabe akzeptiert. Kein alternativer oder verdeckter Übermittlungsweg wurde benutzt.
+
+Vier einzelne `ltx-audio-to-video`-Jobs wurden gestartet, je ein Take und je 2.617,92 Credits; die im Ledger erfasste Summe beträgt 10.471,68 Credits und liegt unter dem internen Durchgangslimit von 12.000 Credits. Es handelt sich um vier getrennte Generierungen für einen gemeinsamen Chormoment, nicht um einen fertigen Chorusclip. IDs/Status zum Checkpoint:
+- Coco: generation `rAJXkBjFeKV4Dg4Z03ia`, session `7MBivXCsoAgSrCMzJlyY`.
+- Remy: generation `13JkWNudC4bx7l6ym3O7`, session `VvqUJAoxPYhMIDVXL0ei`.
+- Emmi: generation `Plpb9KGuKyMkCxHtj9R2`, session `UjFA8GPxjfOSSWSkyv6D`.
+- Wilma: generation `L252H7TQtnfdpddN9Jxe`, session `5RgPZ17Hag3ZHSPkNSvE`.
+
+Beim Checkpoint standen alle vier Jobs auf `started`; noch lagen keine Ergebnisclips oder Abschluss-QA vor. Der lokale `video-production/production-ledger.json` hält Schätzungen, Uploadasset-IDs, Freigabeverlauf und Jobdaten fest. Eine separate aktuelle Kontostands-/Rechnungsprüfung ist nicht belegt. Keine weiteren Variationen oder Wiederholungen werden gestartet, bevor diese vier Ergebnisse geprüft sind.
+
+Vorhandene lokale Bilddateien unter `production-art/frames/` umfassen B00/B01, den Bühnenhintergrund, vier transparente Sprecherreferenzen und zwei B21-Gruppenvarianten (offene bzw. geschlossene Münder). B21 mit geschlossenen Mündern ist als möglicher Chorus-Eingang vorzuziehen; das allein macht die vier generierten Clips noch nicht zu einem synchronisierten Viererchor. Ein vorhandenes V13-Walk-Referenzbild wurde zur Bewegungseingabe verwendet; einzelne weitere Szenenbilder sind noch in Bearbeitung. Die Gesamtserie fehlender Filmszenen ist nicht vollständig.
+
+Die bereits erzeugten V16-Assets ändern den Status des Coco-Proofs nicht: dessen 5-s-Ergebnis bleibt ein quadratischer Gesichts-/Oberkörperclip. Ziel der Ausführung bleibt ein natürlicher, vollständiger 24-fps-Ganzcrewfilm; weder der Chor noch die gesamte Animation sind derzeit als fertig oder abgenommen belegt. Keine PowerPoint-, Produkt-, Main-, STATE-, Release- oder Deployänderung.
