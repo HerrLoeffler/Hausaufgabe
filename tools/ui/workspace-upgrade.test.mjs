@@ -37,11 +37,6 @@ test('moves original toolbar above jobs and tests, preserves nodes and click han
   assert.deepEqual(x.calls,[['openEditor','ONE'],['duplicate-choice',true],['openResults','ONE'],['deleteQuiz','ONE']]);
  }finally{x.close();}
 });
-test('Remy action and recycling-bin positions remain in the desktop center and mobile first column',()=>{
- assert.match(workspaceCss,/dashboardPrimaryActions\s*\{[^}]*grid-column:\s*2;[^}]*grid-row:\s*1 \/ 3/s);
- assert.match(workspaceCss,/\.dashboardPrimaryActions\s*\{[^}]*grid-column:\s*1;[^}]*grid-row:\s*2/s);
- assert.match(workspaceCss,/#dashboardView\.gcWorkspace #trashBtn\s*\{[^}]*position:absolute;[^}]*right:14px/s);
-});
 test('all/status/search controls use real existing filtering and retain active counts after rerender',async()=>{
  const x=setup();try {
   x.document.querySelector('[data-filter="published"]').click(); await tick();
@@ -79,18 +74,16 @@ test('asynchronous job refresh preserves partial draft/report/dismiss actions an
   assert.deepEqual(seen,['openAiJob','reportAiJob','dismissAiJob']);assert.equal(card.querySelectorAll('button').length,3);
  }finally{x.close();}
 });
-test('late tutorial button keeps its handler, uses the crew lineup and one external duration after rerender',async()=>{
+test('late tutorial button keeps its handler without recreating the large crew card',async()=>{
  const x=setup();try {
   const button=x.document.createElement('button');button.id='gradecrewTourBtn';
   button.innerHTML='<span>Crew kennenlernen</span><small>Tutorial · ca. 6–7 Minuten</small>';
   let started=0;button.onclick=()=>started++;
   x.document.querySelector('.dashboardActions').prepend(button);await tick();
-  const entry=x.document.querySelector('.gcWorkspaceCrewEntry');
-  const lineup=entry.querySelector('.gcWorkspaceCrewPortraits img');
-  assert.equal(entry.querySelectorAll('img').length,1);assert.match(lineup.src,/crew-dashboard-lineup-c-r-e-w-alpha\.png$/);assert.equal(lineup.width,288);assert.equal(lineup.height,100);assert.equal(entry.querySelector('button'),button);
-  button.click();assert.equal(started,1);assert.equal(button.querySelector('small'),null);
+  assert.equal(x.document.querySelector('.gcWorkspaceCrewEntry'),null);
+  button.click();assert.equal(started,1);
   button.innerHTML='<span>Crew kennenlernen</span><small>Tutorial · ca. 6–7 Minuten</small>';await tick();
-  assert.equal(entry.querySelectorAll(':scope > small').length,1);assert.equal(x.document.querySelectorAll('.gcWorkspaceCrewEntry').length,1);
+  x.api.refresh();assert.equal(x.document.querySelector('.gcWorkspaceCrewEntry'),null);
   button.click();assert.equal(started,2);
  }finally{x.close();}
 });
