@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-13",
+  "updatedAt": "2026-10-18T19:22:33.847Z",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -638,6 +638,17 @@
       "integrationTarget": "lab/games-structure",
       "state": "integration_ready",
       "handoff": "workstreams/fastquiz-binomial-20261012.md"
+    },
+    {
+      "id": "dashboard-ipad-tutorial-20261018",
+      "title": "GC-BRAND-HERO-MOTION-20261013: kompaktes Dashboard und Tutorialzugang",
+      "primaryBranch": "fix/tutorial-dashboard-ipad-20261018",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/dashboard-ipad-tutorial-20261018.md",
+      "relatedBranches": [
+        "docs/gc-brand-hero-motion-20261013"
+      ]
     }
   ]
 }

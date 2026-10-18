@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d",
+    "observed_integration_head": "7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -40,7 +40,8 @@
       "gc-web-polish-20261007",
       "review-mode-20261007",
       "coco-support-memory-20261009",
-      "pedagogical-pool-20261011"
+      "pedagogical-pool-20261011",
+      "dashboard-ipad-tutorial-20261018"
     ],
     "later_integrations_observed": [
       "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
@@ -57,9 +58,9 @@
       "Administration zeigt bei wichtigen Incidents einen Attention-Zähler und höchstens einen Hinweis pro Login; automatische Kundenbug→Guardian-Reparatur bleibt noch deaktiviert."
     ],
     "gates": {
-      "combined_ci": "success39156701861_commit_a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d",
-      "mobile_tutorial": "success37630241356",
-      "hosting_preview": "success39156854960_receipt12147635892",
+      "combined_ci": "success39158225634_commit_7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
+      "mobile_tutorial": "success39158225635",
+      "hosting_preview": "success39158385658_receipt12147502437_commit_7a18445f",
       "staging_functions": "targeted_pool_success39157680713_receipt12147672441_generateTest_startAiTestJob_processAiTestJob; unrelated AI retained; full AI attempt39156854952 safely aborted",
       "staging_rules": "secure_rules_live_exact_sha256195d40d6d65efa3edc7c647aba9a3004fd2dedbc584a0349bf9adc658ff90807_20261011",
       "desktop_ipad_iphone_test": "sourceauthoractualCuaDesktop/mobile/shortViewport +independentreview; liveanonymous/mobile/physicaldeviceunverified",
@@ -70,7 +71,7 @@
       "canonical_hosting": "success39157702689_receipt12147303541"
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
-    "preview_verified_files": 165,
+    "preview_verified_files": 167,
     "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate. Coco durable owner-only search/memory and contextual support PR179–183 now deployed with real own-account search/context checks; broader user/device acceptance separate.",
     "next_action": "Martin tests canonical gc39 startup/login and explicitly published practice solutions after own submission; broader physical-device acceptance remains pending. Production not requested.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
@@ -155,7 +156,7 @@
         "handoff": "workstreams/security-audio-release-20261009.md"
       }
     },
-    "canonical_request": "automation/canonical-staging-requests/gc-pedagogy-pool-recovery-20261018.json",
+    "canonical_request": "automation/canonical-staging-requests/gc-dashboard-ipad-tutorial-20261018.json",
     "review_regions_followup": {
       "stage": "staging_deployed",
       "commit": "aed60ecf61537d3c38e2b3a6dbd6413d9776056c",
@@ -524,6 +525,29 @@
       "initial_canonical_run": 39157249364,
       "initial_canonical_result": "aborted before deploy because fully skipped workflow misclassified; fixed and regressions passed",
       "user_acceptance": "pending; no paid generation or physical-device quality comparison"
+    },
+    "dashboard_ipad_tutorial_followup": {
+      "task_id": "GC-BRAND-HERO-MOTION-20261013",
+      "stage": "integrated",
+      "pr": 243,
+      "candidate": "4b30fd5a6c73ca132a03f9201586c05bce226c74",
+      "commit": "7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
+      "merge_ci": 39158225634,
+      "candidate_ci": 39158023424,
+      "preview_run": 39158385658,
+      "authorization": "Martin18Oct: compact authenticated iPad dashboard, five-signin hint and permanent settings Tutorial; normal Staging named in current instruction",
+      "functions_changed_by_task": false,
+      "rules_changed_by_task": false,
+      "public_homepage_changed_by_task": false,
+      "experiment_changed_by_task": false,
+      "production": "unchanged",
+      "device_test": "not_performed",
+      "handoff": "workstreams/dashboard-ipad-tutorial-20261018.md",
+      "next_action": "Observe exact preview receipt, promote it through existing append-only canonical request; verify actual manifest and file hashes.",
+      "preview_receipt": 12147502437,
+      "verified_files": 167,
+      "version": "2.3.1-gc41",
+      "canonical_request": "automation/canonical-staging-requests/gc-dashboard-ipad-tutorial-20261018.json"
     }
   },
   "production": {
@@ -1705,6 +1729,31 @@
       "deployment_control_pr": 241,
       "deployment_control_merge": "c23dbf494cd267f1254cf73a762d0a557187f8ac",
       "hosting_verified_files": 165
+    },
+    {
+      "id": "dashboard-ipad-tutorial-20261018",
+      "task_id": "GC-BRAND-HERO-MOTION-20261013",
+      "branch": "fix/tutorial-dashboard-ipad-20261018",
+      "observed_head": "4b30fd5a6c73ca132a03f9201586c05bce226c74",
+      "stage": "integrated",
+      "pull_request": 243,
+      "staging": "preview_verified39158385658; canonical_requested_pending",
+      "production": "not_requested",
+      "handoff": "workstreams/dashboard-ipad-tutorial-20261018.md",
+      "scope": "Authenticated dashboard only: compact top-right new test, small header tutorial hint for first five newly observed logins, permanent settings replay. Public homepage and experiment unchanged.",
+      "evidence": {
+        "candidate_ci": 39157540172,
+        "local_root_tests": "346/346",
+        "independent_review": "no actionable findings; 19/19 focused tests; unchanged original tour engines",
+        "layout_probe": "1366x1024,1024x1366,768x1024,390x844, no horizontal overflow; fifth/sixth and settings restart verified with synthetic account",
+        "combined_ci": 39158023424,
+        "integrated_ci": 39158225634,
+        "mobile_tutorial": 39158225635
+      },
+      "device_test": "not_performed",
+      "next_action": "Observe exact preview receipt, promote it through existing append-only canonical request; verify actual manifest and file hashes.",
+      "integration": "7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
+      "ci": "candidate39157540172; combined39158023424; integrated39158225634 all success"
     }
   ],
   "deployments": [
