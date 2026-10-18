@@ -8,7 +8,7 @@ import Security
     private var queue=SecureTelemetryQueue()
     private var flushing=false
     private var retry:Task<Void,Never>?
-    private let query:[String:Any]=[kSecClass as String:kSecClassGenericPassword,kSecAttrService as String:"de.gradecrew.secure.staging-telemetry-v1",kSecAttrAccount as String:"outbox"]
+    private let query:[String:Any]=[kSecClass as String:kSecClassGenericPassword,kSecAttrService as String:SecureReleaseEnvironment.telemetryService,kSecAttrAccount as String:"outbox"]
     private init() {
         var read=query;read[kSecReturnData as String]=true;read[kSecMatchLimit as String]=kSecMatchLimitOne
         var value:CFTypeRef?

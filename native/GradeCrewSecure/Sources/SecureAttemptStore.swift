@@ -15,9 +15,9 @@ protocol SecureAttemptPersistence {
     func clear() throws
 }
 final class SecureAttemptStore:SecureAttemptPersistence {
-    private let service = "de.gradecrew.secure.staging-attempt-v1"
+    private let service = SecureReleaseEnvironment.attemptService
     private var directory: URL {
-        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("SecureStaging", isDirectory: true)
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent(SecureReleaseEnvironment.workDirectory, isDirectory: true)
     }
     private var file: URL { directory.appendingPathComponent("answers.json") }
     private var query: [String: Any] {
@@ -35,7 +35,8 @@ final class SecureAttemptStore:SecureAttemptPersistence {
     }
     func work() throws -> SecureSavedWork {
         guard FileManager.default.fileExists(atPath: file.path) else { return SecureSavedWork() }
-        return try JSONDecoder().decode(SecureSavedWork.self, from: Data(contentsOf: file))
+        guard let identity = try identity() else { throw storeError() }
+        return try SecureWorkEnvelope.decode(Data(contentsOf:file),code:identity.code,clientID:identity.clientID,attemptID:identity.attemptID)
     }
     func save(identity: SecureAttemptIdentity, work: SecureSavedWork) throws {
         let data = try JSONEncoder().encode(identity)
@@ -51,12 +52,13 @@ final class SecureAttemptStore:SecureAttemptPersistence {
         var flags = URLResourceValues()
         flags.isExcludedFromBackup = true
         try folder.setResourceValues(flags)
-        try JSONEncoder().encode(work).write(to: file, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+        try SecureWorkEnvelope.encode(work,code:identity.code,clientID:identity.clientID).write(to: file, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
     }
     func clear() throws {
+        // Clear only after the matching server receipt. Keep the token until file removal succeeds.
+        if FileManager.default.fileExists(atPath: file.path) { try FileManager.default.removeItem(at: file) }
         let status = SecItemDelete(query as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else { throw storeError() }
-        if FileManager.default.fileExists(atPath: file.path) { try FileManager.default.removeItem(at: file) }
     }
     private func storeError() -> NSError {
         NSError(domain: "GradeCrewSecureStorage", code: 1, userInfo: [NSLocalizedDescriptionKey: "Der Prüfungsstand konnte nicht sicher auf diesem iPad gespeichert werden. Bitte die Lehrkraft informieren."])

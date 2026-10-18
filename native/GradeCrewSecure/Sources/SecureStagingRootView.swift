@@ -49,7 +49,7 @@ private struct SecureStagingScreen: View {
         }
     }
     private var statusContent:some View {
-        SecureStatusView(presentation:.init(phase:model.phase,message:model.message,busy:model.busy)) {
+        SecureStatusView(presentation:.init(phase:model.phase,message:model.message,busy:model.busy,pendingSubmission:model.pendingSubmission)) {
             if model.phase == .completed { model.restart() }
             else if model.phase == .recovery || model.phase == .interrupted { Task { await model.startOrRecover() } }
         }

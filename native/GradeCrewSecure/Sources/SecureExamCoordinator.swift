@@ -32,6 +32,7 @@ final class SecureExamCoordinator: ObservableObject {
     private var polling = false
     private var submitting = false
     private var ticks = 0
+    private var retryAttempts = 0
     private var lastMetricAt:TimeInterval = -30
     private var latestCompletedIDs:[String]=[]
     private var operations = SecureOperationGate()
@@ -65,6 +66,7 @@ final class SecureExamCoordinator: ObservableObject {
         } catch { phase = .recovery; message = error.localizedDescription }
     }
     var restoredPresentation:SecureExamPresentation? { work.presentation }
+    var pendingSubmission:Bool { work.answers.frozen != nil }
     var savedRevision: Int { work.answers.revision }
     var attemptID: String { identity?.attemptID ?? "pending" }
     var canSubmit: Bool { phase == .active && !busy && !submitting && !storageFailed }
@@ -102,6 +104,9 @@ final class SecureExamCoordinator: ObservableObject {
         do {
             let result = try await api.invoke("getAssessmentInfo", data: ["quizId": normalized])
             try ensureCurrent(generation)
+            guard ((result["capabilities"] as? [String:Any])?["offlineRecovery"] as? NSNumber)?.intValue == 1 else {
+                throw SecureAssessmentAPI.Failure(code:"UPDATE_REQUIRED",message:"Der Prüfungsserver ist für diese Schulversion noch nicht bereit. Bitte die Lehrkraft informieren; es wurde kein Versuch gestartet.")
+            }
             guard let quiz = result["quiz"] as? [String: Any] else { throw invalidResponse() }
             code = normalized
             title = quiz["title"] as? String ?? "Test"
@@ -127,6 +132,10 @@ final class SecureExamCoordinator: ObservableObject {
             // Resolve a lost submission response before requesting a new AAC session.
             if identity?.attemptID != nil, try await verifyIfSubmitted() { return }
             try ensureCurrent(generation)
+            if work.answers.frozen != nil {
+                await sendFrozenSubmission()
+                return
+            }
             phase = .starting
             if !assessment.active { try await assessment.begin() }
             try ensureCurrent(generation)
@@ -224,10 +233,19 @@ final class SecureExamCoordinator: ObservableObject {
         defer { if operations.isCurrent(generation) { submitting = false } }
         do {
             if let webView {
-                let value = try await webView.evaluateJavaScript("window.gcFreezeAnswers()")
-                try ensureCurrent(generation)
-                guard let snapshot = value as? [String: Any], let answers = snapshot["answers"] as? [String: Any], let revision = snapshot["revision"] as? Int else { throw invalidResponse() }
-                guard self.snapshot(revision: revision, answers: answers, presentation:(snapshot["touchedQuestionIDs"] as? [String]).map{SecureExamPresentation(touchedQuestionIDs:$0)}, completedQuestionIDs:snapshot["completedQuestionIDs"] as? [String]) else { throw invalidResponse() }
+                do {
+                    let value = try await webView.evaluateJavaScript("window.gcFreezeAnswers()")
+                    try ensureCurrent(generation)
+                    guard let snapshot = value as? [String: Any], let answers = snapshot["answers"] as? [String: Any], let revision = snapshot["revision"] as? Int else { throw invalidResponse() }
+                    guard self.snapshot(revision:revision,answers:answers,presentation:(snapshot["touchedQuestionIDs"] as? [String]).map{SecureExamPresentation(touchedQuestionIDs:$0)},completedQuestionIDs:snapshot["completedQuestionIDs"] as? [String]) else { throw invalidResponse() }
+                } catch {
+                    try ensureCurrent(generation)
+                    // A dead renderer cannot replace durable answers with an empty snapshot.
+                    let saved = try store.work()
+                    guard saved.response != nil else { throw invalidResponse() }
+                    work = saved
+                    work.recoveryReason = "last_saved_snapshot"
+                }
             }
             _ = work.answers.freeze()
             work.autoSubmitted = auto
@@ -240,11 +258,18 @@ final class SecureExamCoordinator: ObservableObject {
     }
     private func sendFrozenSubmission() async {
         let generation = operations.generation
+        var durable = false
         do {
             try ensureCurrent(generation)
             phase = .submitting
             guard let bytes = work.answers.frozen, let answers = try JSONSerialization.jsonObject(with: bytes) as? [String: Any] else { throw invalidResponse() }
+            try persist()
+            guard let savedIdentity = try store.identity(), savedIdentity.clientID == identity?.clientID,
+                  try store.work().answers.frozen == bytes else { throw invalidResponse() }
+            durable = true
             var data = try authenticatedData()
+            data["recoverySubmission"] = true
+            if let reason=work.recoveryReason { data["recoveryReason"]=reason }
             data["answers"] = answers
             data["autoSubmitted"] = work.autoSubmitted
             _ = try await api.invoke("submitAssessmentAttempt", data: data)
@@ -255,7 +280,14 @@ final class SecureExamCoordinator: ObservableObject {
         } catch {
             guard !(error is StaleOperation), operations.isCurrent(generation), !operations.completionClaimed else { return }
             phase = .recovery
-            message = error.localizedDescription + " Deine Antworten bleiben gesichert. Abgabe erneut prüfen."
+            if durable {
+                paper = nil
+                await assessment.end()
+                guard operations.isCurrent(generation), !operations.completionClaimed else { return }
+                message = "Antworten auf diesem iPad gesichert · Übertragung ausstehend. Das iPad ist freigegeben. Bitte die App bei bestehender Verbindung erneut öffnen. " + error.localizedDescription
+            } else {
+                message = "Die lokale Abgabe konnte nicht sicher gespeichert werden. Bitte die Lehrkraft informieren. " + error.localizedDescription
+            }
             scheduleRetry(after: error)
         }
     }
@@ -292,6 +324,7 @@ final class SecureExamCoordinator: ObservableObject {
         operations.invalidate()
         busy = false; submitting = false; polling = false
         identity = nil
+        retryAttempts = 0
         work = SecureSavedWork()
         answeredCount=nil
         phase = .completed
@@ -300,8 +333,11 @@ final class SecureExamCoordinator: ObservableObject {
     }
     private func scheduleRetry(after error: Error) {
         guard work.answers.frozen != nil, (error as? SecureAssessmentAPI.Failure)?.retryable == true else { return }
+        guard retryAttempts < 10 else { return }
+        retryAttempts += 1
         retryTimer?.invalidate()
-        retryTimer = AssessmentLabTimer.schedule(every: 5) { [weak self] in
+        let delay = min(60.0, 5.0 * pow(2.0, Double(min(retryAttempts - 1, 4))))
+        retryTimer = AssessmentLabTimer.schedule(every: delay) { [weak self] in
             Task { @MainActor in
                 guard let self, self.phase == .recovery, !self.busy, !self.submitting else { return }
                 await self.startOrRecover()

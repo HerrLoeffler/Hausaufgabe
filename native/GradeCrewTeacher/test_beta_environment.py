@@ -7,27 +7,19 @@ root = Path(__file__).parent
 source = (root / 'Sources' / 'GradeCrewBetaEnvironment.swift').read_text()
 version = (root / 'VERSION').read_text().strip()
 checks = f'''
-let preview = GradeCrewBetaEnvironment.previewURL(from: "  https://hausaufgabe-staging--gradecrew-app-integration-abc123.web.app/?gateE=1#old  ")!
-assert(preview.absoluteString == "https://hausaufgabe-staging--gradecrew-app-integration-abc123.web.app/")
-for value in ["http://hausaufgabe-staging--abc.web.app", "https://hausaufgabe-40294.web.app", "https://hausaufgabe-staging--abc.web.app.evil.test", "https://x:secret@hausaufgabe-staging--abc.web.app", "https://hausaufgabe-staging--abc.web.app:443", "https://hausaufgabe-staging--.web.app", "not a URL"] {{
-    assert(GradeCrewBetaEnvironment.previewURL(from: value) == nil, value)
-}}
-assert(GradeCrewBetaEnvironment.baseURL(for: "") == GradeCrewBetaEnvironment.integrationPreviewURL)
-assert(GradeCrewBetaEnvironment.baseURL(for: "broken") == GradeCrewBetaEnvironment.integrationPreviewURL)
-assert(GradeCrewBetaEnvironment.baseURL(for: GradeCrewBetaEnvironment.stablePreference) == GradeCrewBetaEnvironment.stableStagingURL)
-assert(GradeCrewBetaEnvironment.environmentLabel(for: "") == "Integration")
-assert(GradeCrewBetaEnvironment.environmentLabel(for: GradeCrewBetaEnvironment.stablePreference) == "Staging")
+assert(GradeCrewBetaEnvironment.baseURL(for: "") == GradeCrewBetaEnvironment.defaultURL)
+assert(GradeCrewBetaEnvironment.baseURL(for: "https://hausaufgabe-staging--old.web.app/") == GradeCrewBetaEnvironment.defaultURL)
+assert(GradeCrewBetaEnvironment.previewURL(from:"https://hausaufgabe-staging--old.web.app/") == nil)
+assert(GradeCrewBetaEnvironment.environmentLabel(for: "") == "Live")
 let normal = GradeCrewBetaEnvironment.homeURL(preference: "", version: "{version}")
-assert(normal.host == "hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app")
-let stable = GradeCrewBetaEnvironment.homeURL(preference: GradeCrewBetaEnvironment.stablePreference, version: "{version}")
-assert(stable.host == "hausaufgabe-staging.web.app")
-let selected = GradeCrewBetaEnvironment.homeURL(preference: preview.absoluteString, version: "{version}")
-assert(selected.host == preview.host)
-let items = URLComponents(url: selected, resolvingAgainstBaseURL: false)!.queryItems!
+assert(normal.host == "hausaufgabe-staging.web.app")
+let items = URLComponents(url: normal, resolvingAgainstBaseURL: false)!.queryItems!
 assert(items.first(where: {{ $0.name == "appVersion" }})?.value == "{version}")
 assert(items.first(where: {{ $0.name == "gradecrewApp" }})?.value == "teacher")
 assert(items.first(where: {{ $0.name == "source" }})?.value == "ios")
-print("Beta environment routing: passed for {version}")
+let login = GradeCrewBetaEnvironment.signInURL(preference:"", version:"{version}")
+assert(URLComponents(url:login,resolvingAgainstBaseURL:false)!.queryItems!.contains(where: {{ $0.name == "intent" && $0.value == "login" }}))
+print("Live routing: passed")
 '''
 with tempfile.TemporaryDirectory() as work:
     script = Path(work) / 'routing.swift'

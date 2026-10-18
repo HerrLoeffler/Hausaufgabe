@@ -121,33 +121,39 @@ struct TeacherRootView: View {
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
-                    Section("Automatischer Integrationsstand") {
-                        Text("TestFlight öffnet standardmäßig den automatisch geprüften GradeCrew-Integrationskanal. Neue Webstände erscheinen dort nach grüner CI und verifiziertem Preview-Deploy, ohne neuen iOS-Build.")
-                        Button("Aktuelle Integration öffnen") {
+                    #if GRADECREW_STAGING
+                    Section("Testumgebung") {
+                        Text("Dieser Testbuild verwendet ausschließlich die getrennte Testumgebung.")
+                        Button("Testumgebung öffnen") {
                             previewPreference = ""
                             reloadAndCloseDiagnostics()
                         }
                     }
                     Section("Andere Staging-Preview") {
-                        Text("Nur für gezielte Tests: eine andere hausaufgabe-staging Preview-Adresse einsetzen. Production-Adressen werden abgewiesen.")
-                        TextField("https://hausaufgabe-staging--….web.app", text: $pendingPreview)
+                        Text("Nur für gezielte Tests: eine andere gradecrew-staging-2026 Preview-Adresse einsetzen. Production-Adressen werden abgewiesen.")
+                        TextField("https://gradecrew-staging-2026--….web.app", text: $pendingPreview)
                             .keyboardType(.URL)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
                         if let settingsError { Text(settingsError).foregroundStyle(.red) }
                         Button("Andere Preview öffnen") {
                             guard let url = GradeCrewBetaEnvironment.previewURL(from: pendingPreview) else {
-                                settingsError = "Bitte eine HTTPS-Preview-Adresse von hausaufgabe-staging verwenden."
+                                settingsError = "Bitte eine HTTPS-Preview-Adresse von gradecrew-staging-2026 verwenden."
                                 return
                             }
                             previewPreference = url.absoluteString
                             reloadAndCloseDiagnostics()
                         }
-                        Button("Normales Staging öffnen") {
+                        Button("Standard-Testadresse öffnen") {
                             previewPreference = GradeCrewBetaEnvironment.stablePreference
                             reloadAndCloseDiagnostics()
                         }
                     }
+                    #else
+                    Section("Schulversion") {
+                        Text("Diese App verwendet die feste GradeCrew-Schuladresse. Konten und Tests bleiben dort gespeichert.")
+                    }
+                    #endif
                     Section {
                         Text("Beim Wechsel wird die Seite neu geladen. Speichere vorher offene Änderungen.")
                     }

@@ -23,7 +23,7 @@ assert "setTimeout(resolve, 50)" in web_portal
 assert "action === 'populateAiForm'" in web_portal
 assert "input.dispatchEvent(new Event('input'" in web_portal
 checks = r'''
-let selected = URL(string: "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/")!
+let selected = URL(string: "https://hausaufgabe-staging.web.app/")!
 let body: [String: Any] = ["version": 1, "id": "request-1", "action": "shareFile", "payload": ["filename": "Ergebnisse.csv", "mimeType": "text/csv;charset=utf-8", "base64": "TmFtZTtQdW5rdGVcbsOEbm5lOzEw"]]
 func parse(_ input: Any = body, source: URL? = selected, loaded: URL? = selected, main: Bool = true) throws -> GradeCrewNativeBridgePolicy.Request {
     try GradeCrewNativeBridgePolicy.validate(body: input, sourceURL: source, loadedURL: loaded, isMainFrame: main, selectedBaseURL: selected)

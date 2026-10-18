@@ -1,21 +1,28 @@
 import Foundation
 
-// TestFlight should follow the continuously verified integration preview by default.
-// Stable staging remains an explicit fallback. Production is never selectable here.
+// Live always uses the canonical school site. Test builds use a different project.
 enum GradeCrewBetaEnvironment {
-    static let stableStagingURL = URL(string: "https://hausaufgabe-staging.web.app/")!
-    static let integrationPreviewURL = URL(string: "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/")!
-    static let defaultURL = integrationPreviewURL
-    static let preferenceKey = "gradecrew.teacher.stagingPreviewURL"
+    #if GRADECREW_STAGING
+    static let isStaging = true
+    static let projectID = "gradecrew-staging-2026"
+    static let preferenceKey = "gradecrew.teacher.test2026PreviewURL"
+    #else
+    static let isStaging = false
+    static let projectID = "hausaufgabe-staging"
+    static let preferenceKey = "gradecrew.teacher.liveURL"
+    #endif
+    static let stableStagingURL = URL(string: "https://\(projectID).web.app/")!
+    static let integrationPreviewURL = stableStagingURL
+    static let defaultURL = stableStagingURL
     static let stablePreference = "__stable_staging__"
 
     static func previewURL(from value: String) -> URL? {
-        guard var components = URLComponents(string: value.trimmingCharacters(in: .whitespacesAndNewlines)),
+        guard isStaging, var components = URLComponents(string: value.trimmingCharacters(in: .whitespacesAndNewlines)),
               components.scheme?.lowercased() == "https",
               components.user == nil, components.password == nil, components.port == nil,
               let host = components.host?.lowercased(),
-              host.hasPrefix("hausaufgabe-staging--"), host.hasSuffix(".web.app") else { return nil }
-        let channel = host.dropFirst("hausaufgabe-staging--".count).dropLast(".web.app".count)
+              host.hasPrefix("gradecrew-staging-2026--"), host.hasSuffix(".web.app") else { return nil }
+        let channel = host.dropFirst("gradecrew-staging-2026--".count).dropLast(".web.app".count)
         guard !channel.isEmpty, channel.allSatisfy({ "abcdefghijklmnopqrstuvwxyz0123456789-".contains($0) }) else { return nil }
         components.host = host
         components.path = "/"
@@ -32,8 +39,7 @@ enum GradeCrewBetaEnvironment {
 
     static func environmentLabel(for preference: String) -> String {
         let url = baseURL(for: preference)
-        if url.host == integrationPreviewURL.host { return "Integration" }
-        if url.host == stableStagingURL.host { return "Staging" }
+        if url.host == stableStagingURL.host { return isStaging ? "Testumgebung" : "Live" }
         return "Preview"
     }
 

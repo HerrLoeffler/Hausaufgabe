@@ -11,6 +11,7 @@ node --test ScriptTests/*.test.cjs TelemetryBackend/core.test.cjs
 swift test --package-path .
 swift ScriptTests/verify_renderer_webkit.swift "$PWD/Resources/Exam/index.html"
 PYTHONPYCACHEPREFIX="${TMPDIR:-/private/tmp}/gradecrew-aac-pycache" python3 -m unittest discover -s ScriptTests -v
+python3 ../test_release_environments.py
 for scheme in 'GradeCrew Secure' 'GradeCrew AAC Lab' 'GradeCrew Secure Staging'; do
   xcodebuild -project GradeCrewSecure.xcodeproj -scheme "$scheme" \
     -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \

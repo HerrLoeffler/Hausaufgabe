@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
+      - feature/native-live-staging-20261018
       - feature/shared-gradecrew-design-system
       - feature/ios-latest-integration-v1
       - feature/ios-brand-icon-v1
@@ -75,7 +76,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ''
       - name: Test beta environment routing
-        run: python3 native/GradeCrewTeacher/test_beta_environment.py
+        run: |
+          python3 native/test_release_environments.py
+          python3 native/GradeCrewTeacher/test_beta_environment.py
 
       - name: Test native navigation policy
         run: python3 native/GradeCrewTeacher/test_navigation_policy.py

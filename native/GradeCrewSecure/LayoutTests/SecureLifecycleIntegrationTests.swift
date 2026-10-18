@@ -6,13 +6,33 @@ import WebKit
 private final class SecureLifecycleHTTP:URLProtocol {
     private static let lock=NSLock()
     private static var requests=0
+    static var readyBackend=false
+    static var failSubmission=false
+    static var receiptPending=false
+    static var sentAnswers:[Data]=[]
     static var submissions:Int { lock.lock();defer{lock.unlock()};return requests }
-    static func reset(){lock.lock();requests=0;lock.unlock()}
+    static func reset(){lock.lock();requests=0;readyBackend=false;failSubmission=false;receiptPending=false;sentAnswers=[];lock.unlock()}
     override class func canInit(with request:URLRequest)->Bool { true }
     override class func canonicalRequest(for request:URLRequest)->URLRequest { request }
     override func startLoading(){
+        if request.url?.lastPathComponent == "getAssessmentInfo" {
+            var result:[String:Any]=["quiz":["title":"QA","timeLimitMinutes":5]]
+            if Self.readyBackend { result["capabilities"]=["offlineRecovery":1] }
+            let body=try! JSONSerialization.data(withJSONObject:["result":result])
+            client?.urlProtocol(self,didReceive:HTTPURLResponse(url:request.url!,statusCode:200,httpVersion:nil,headerFields:nil)!,cacheStoragePolicy:.notAllowed)
+            client?.urlProtocol(self,didLoad:body);client?.urlProtocolDidFinishLoading(self);return
+        }
         let submit=request.url?.lastPathComponent == "submitAssessmentAttempt"
         if submit { Self.lock.lock();Self.requests+=1;Self.lock.unlock() }
+        if submit {
+            if let bytes=request.httpBody { Self.sentAnswers.append(bytes) }
+            if Self.failSubmission { client?.urlProtocol(self,didFailWithError:URLError(.notConnectedToInternet));return }
+            Self.receiptPending=false
+        } else if Self.receiptPending {
+            let body=Data("{\"error\":{\"status\":\"FAILED_PRECONDITION\",\"message\":\"Not submitted\"}}".utf8)
+            client?.urlProtocol(self,didReceive:HTTPURLResponse(url:request.url!,statusCode:400,httpVersion:nil,headerFields:nil)!,cacheStoragePolicy:.notAllowed)
+            client?.urlProtocol(self,didLoad:body);client?.urlProtocolDidFinishLoading(self);return
+        }
         let receipt:[String:Any]=["attemptId":"a_"+String(repeating:"1",count:28),"submissionId":"a_"+String(repeating:"1",count:28),"status":"graded","submittedAtMillis":1000]
         let body=try! JSONSerialization.data(withJSONObject:["result":submit ? [:] : ["receipt":receipt]])
         DispatchQueue.global().asyncAfter(deadline:.now()+(submit ? 6 : 0)) { [self] in
@@ -31,10 +51,10 @@ private final class SecureLifecycleMemoryStore:SecureAttemptPersistence {
     func clear() throws { savedIdentity=nil;savedWork=SecureSavedWork() }
 }
 @MainActor final class SecureLifecycleIntegrationTests:XCTestCase {
-    private func setup(expired:Bool) async throws ->(SecureExamCoordinator,UIWindow,WKWebView) {
+    private func setup(expired:Bool,store:SecureLifecycleMemoryStore=SecureLifecycleMemoryStore()) async throws ->(SecureExamCoordinator,UIWindow,WKWebView) {
         SecureLifecycleHTTP.reset()
         let config=URLSessionConfiguration.ephemeral;config.protocolClasses=[SecureLifecycleHTTP.self]
-        let model=SecureExamCoordinator(api:SecureAssessmentAPI(session:URLSession(configuration:config)),store:SecureLifecycleMemoryStore())
+        let model=SecureExamCoordinator(api:SecureAssessmentAPI(session:URLSession(configuration:config)),store:store)
         model.installLifecycleFixture(expired:expired)
         let view=SecureExamWebView(payload:model.paper!,answers:[:],revision:0,coordinator:model)
         let host=UIHostingController(rootView:view),window=UIWindow(frame:CGRect(x:0,y:0,width:744,height:800))
@@ -44,6 +64,52 @@ private final class SecureLifecycleMemoryStore:SecureAttemptPersistence {
             try await Task.sleep(nanoseconds:20_000_000)
         }
         throw NSError(domain:"SecureLifecycleTest",code:1)
+    }
+    func testPreflightRequiresRecoveryCapableBackendBeforeAnyAttemptStarts() async throws {
+        SecureLifecycleHTTP.reset()
+        let config=URLSessionConfiguration.ephemeral;config.protocolClasses=[SecureLifecycleHTTP.self]
+        let store=SecureLifecycleMemoryStore()
+        let model=SecureExamCoordinator(api:SecureAssessmentAPI(session:URLSession(configuration:config)),store:store)
+        model.code="QA1234"
+        await model.preflight()
+        XCTAssertEqual(model.phase,.code)
+        XCTAssertTrue(model.message.contains("noch nicht bereit"))
+        XCTAssertNil(store.savedIdentity)
+        SecureLifecycleHTTP.readyBackend=true
+        await model.preflight()
+        XCTAssertEqual(model.phase,.identity)
+        XCTAssertNil(store.savedIdentity)
+    }
+    func testOfflineSubmissionPersistsThenRecoversAfterAppRestartWithoutNewAAC() async throws {
+        let store=SecureLifecycleMemoryStore()
+        let (model,window,web)=try await setup(expired:false,store:store)
+        defer {window.isHidden=true;window.rootViewController=nil}
+        _=try await web.evaluateJavaScript("const field=document.querySelector('textarea');field.value='Offline answer';field.dispatchEvent(new Event('input',{bubbles:true}))")
+        SecureLifecycleHTTP.failSubmission=true
+        await model.submit(auto:false)
+        XCTAssertEqual(model.phase,.recovery)
+        XCTAssertNotNil(store.savedWork.answers.frozen)
+        XCTAssertNotNil(store.savedIdentity)
+        XCTAssertNil(model.paper)
+        XCTAssertFalse(model.assessment.active)
+        XCTAssertFalse(model.canSubmit)
+        XCTAssertTrue(model.message.contains("Übertragung ausstehend"))
+        let frozen=store.savedWork.answers.frozen
+        SecureLifecycleHTTP.failSubmission=false;SecureLifecycleHTTP.receiptPending=true
+        let config=URLSessionConfiguration.ephemeral;config.protocolClasses=[SecureLifecycleHTTP.self]
+        let restored=SecureExamCoordinator(api:SecureAssessmentAPI(session:URLSession(configuration:config)),store:store)
+        await restored.startOrRecover()
+        XCTAssertEqual(restored.phase,.completed,"Pending transmission must not attempt a new AAC session on simulator")
+        XCTAssertNil(store.savedIdentity)
+        XCTAssertEqual(SecureLifecycleHTTP.submissions,2)
+        for bytes in SecureLifecycleHTTP.sentAnswers {
+            let payload=try XCTUnwrap(try JSONSerialization.jsonObject(with:bytes) as? [String:Any])
+            let data=try XCTUnwrap(payload["data"] as? [String:Any])
+            let answers=try XCTUnwrap(data["answers"])
+            let sent=try JSONSerialization.data(withJSONObject:answers,options:.sortedKeys)
+            let expected=try JSONSerialization.data(withJSONObject:JSONSerialization.jsonObject(with:try XCTUnwrap(frozen)),options:.sortedKeys)
+            XCTAssertEqual(sent,expected)
+        }
     }
     func testDeadlineClosesNativeConfirmationAndFreezesOpenOverviewExactlyOnce() async throws {
         let (model,window,web)=try await setup(expired:true)

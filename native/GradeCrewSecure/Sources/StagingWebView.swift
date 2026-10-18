@@ -3,7 +3,7 @@ import WebKit
 
 // This is a navigation boundary, NOT server authentication or exam attestation.
 enum StagingPolicy {
-    static let host = "hausaufgabe-staging.web.app"
+    static let host = "\(SecureReleaseEnvironment.projectID).web.app"
     static func testURL(code: String) -> URL? {
         let normalized = code.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         guard normalized.range(of: "^[A-Z0-9]{4,16}$", options: .regularExpression) != nil else { return nil }

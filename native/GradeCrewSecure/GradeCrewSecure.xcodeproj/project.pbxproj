@@ -125,6 +125,16 @@
 "isa" = "PBXBuildFile";
 "fileRef" = "3BA4128750770734F6BB6E7F";
 };
+"160812F5A3A89C0495EB6000" = {
+"isa" = "PBXFileReference";
+"lastKnownFileType" = "sourcecode.swift";
+"path" = "Sources/SecureReleaseEnvironment.swift";
+"sourceTree" = "<group>";
+};
+"E07214068769176566B102E5" = {
+"isa" = "PBXBuildFile";
+"fileRef" = "160812F5A3A89C0495EB6000";
+};
 "E97476367A64BDCA0E89983C" = {
 "isa" = "PBXFileReference";
 "lastKnownFileType" = "sourcecode.swift";
@@ -254,6 +264,7 @@
 "158B49289FEF3C95E6DCF748",
 "2E92EC3FC1A46B4F51E4ABB4",
 "3BA4128750770734F6BB6E7F",
+"160812F5A3A89C0495EB6000",
 "E97476367A64BDCA0E89983C",
 "339477F97EED2C54083AA5D2",
 "1A8983F9389C3FE0A7A37C8E",
@@ -284,6 +295,7 @@
 "44FF3E47C3302268EC5E107D",
 "E5A18F8737F014276F9C5DE4",
 "5DFAE0103304A3089FFF1961",
+"E07214068769176566B102E5",
 "B4A26AE1FF9D1D68DBC22816",
 "0B3E8A69D5CAF750D9977CE6",
 "F66E1A297A4B1DC1F947ED81",
@@ -474,7 +486,7 @@
 "CLANG_ENABLE_MODULES" = "YES";
 "SWIFT_VERSION" = "5.0";
 "SWIFT_OPTIMIZATION_LEVEL" = "-O";
-"SWIFT_ACTIVE_COMPILATION_CONDITIONS" = "SECURE_STAGING";
+"SWIFT_ACTIVE_COMPILATION_CONDITIONS" = "SECURE_STAGING GRADECREW_STAGING";
 "DEBUG_INFORMATION_FORMAT" = "dwarf-with-dsym";
 "ENABLE_TESTABILITY" = "NO";
 };
@@ -485,7 +497,7 @@
 "buildSettings" = {
 "PRODUCT_BUNDLE_IDENTIFIER" = "de.gradecrew.secure";
 "PRODUCT_NAME" = "$(TARGET_NAME)";
-"MARKETING_VERSION" = "0.2.2";
+"MARKETING_VERSION" = "0.2.3";
 "CURRENT_PROJECT_VERSION" = "2";
 "CODE_SIGN_STYLE" = "Automatic";
 "ASSETCATALOG_COMPILER_APPICON_NAME" = "AppIcon";
@@ -505,6 +517,46 @@
 "INFOPLIST_FILE" = "Config/StagingInfo.plist";
 };
 };
+"0F113B8B04EEF24E7E41807E" = {
+"isa" = "XCBuildConfiguration";
+"name" = "SecureLive";
+"buildSettings" = {
+"SDKROOT" = "iphoneos";
+"IPHONEOS_DEPLOYMENT_TARGET" = "17.0";
+"CLANG_ENABLE_MODULES" = "YES";
+"SWIFT_VERSION" = "5.0";
+"SWIFT_OPTIMIZATION_LEVEL" = "-O";
+"SWIFT_ACTIVE_COMPILATION_CONDITIONS" = "SECURE_STAGING";
+"DEBUG_INFORMATION_FORMAT" = "dwarf-with-dsym";
+"ENABLE_TESTABILITY" = "NO";
+};
+};
+"F9E08B2B4BD37ABECA42277A" = {
+"isa" = "XCBuildConfiguration";
+"name" = "SecureLive";
+"buildSettings" = {
+"PRODUCT_BUNDLE_IDENTIFIER" = "de.gradecrew.secure";
+"PRODUCT_NAME" = "$(TARGET_NAME)";
+"MARKETING_VERSION" = "0.2.3";
+"CURRENT_PROJECT_VERSION" = "2";
+"CODE_SIGN_STYLE" = "Automatic";
+"ASSETCATALOG_COMPILER_APPICON_NAME" = "AppIcon";
+"INFOPLIST_KEY_ITSAppUsesNonExemptEncryption" = "NO";
+"GENERATE_INFOPLIST_FILE" = "YES";
+"INFOPLIST_KEY_CFBundleDisplayName" = "GradeCrew Secure";
+"INFOPLIST_KEY_UILaunchScreen_Generation" = "YES";
+"INFOPLIST_KEY_UIApplicationSceneManifest_Generation" = "YES";
+"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents" = "YES";
+"INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad" = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+"TARGETED_DEVICE_FAMILY" = "2";
+"SUPPORTED_PLATFORMS" = "iphoneos iphonesimulator";
+"SUPPORTS_MACCATALYST" = "NO";
+"SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD" = "NO";
+"LD_RUNPATH_SEARCH_PATHS" = "$(inherited) @executable_path/Frameworks";
+"CODE_SIGN_ENTITLEMENTS" = "Config/AACLab.entitlements";
+"INFOPLIST_FILE" = "Config/LiveInfo.plist";
+};
+};
 "B4E10CAA9C5E22150B71559C" = {
 "isa" = "XCConfigurationList";
 "buildConfigurations" = (
@@ -513,6 +565,7 @@
 "C08FEC1A4FF9D7E1828DB3DD",
 "846F4B50CAF0E0CF51454D64",
 "24C5881070A2C3F683A0A11F",
+"0F113B8B04EEF24E7E41807E",
 );
 "defaultConfigurationIsVisible" = "0";
 "defaultConfigurationName" = "Release";
@@ -525,6 +578,7 @@
 "3A09BA0407E835AD9CF0D63A",
 "EFEE4AF60352038A8C12CE74",
 "91818E25D516D9467787CCEA",
+"F9E08B2B4BD37ABECA42277A",
 );
 "defaultConfigurationIsVisible" = "0";
 "defaultConfigurationName" = "Release";

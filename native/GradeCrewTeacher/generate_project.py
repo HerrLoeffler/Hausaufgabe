@@ -77,7 +77,7 @@ resources = obj('resources', isa='PBXResourcesBuildPhase', buildActionMask='2147
 
 project_configs = []
 target_configs = []
-for name in ['Debug', 'Release']:
+for name in ['Debug', 'Release', 'Staging']:
     debug = name == 'Debug'
     project_configs.append(obj(
         'project-' + name,
@@ -89,7 +89,7 @@ for name in ['Debug', 'Release']:
             'CLANG_ENABLE_MODULES': 'YES',
             'SWIFT_VERSION': '5.0',
             'SWIFT_OPTIMIZATION_LEVEL': '-Onone' if debug else '-O',
-            'SWIFT_ACTIVE_COMPILATION_CONDITIONS': 'DEBUG' if debug else '',
+            'SWIFT_ACTIVE_COMPILATION_CONDITIONS': 'GRADECREW_STAGING' if name == 'Staging' else ('DEBUG' if debug else ''),
             'DEBUG_INFORMATION_FORMAT': 'dwarf' if debug else 'dwarf-with-dsym',
             'ENABLE_TESTABILITY': 'YES' if debug else 'NO',
         },
@@ -99,7 +99,7 @@ for name in ['Debug', 'Release']:
         isa='XCBuildConfiguration',
         name=name,
         buildSettings={
-            'PRODUCT_BUNDLE_IDENTIFIER': 'de.gradecrew',
+            'PRODUCT_BUNDLE_IDENTIFIER': 'de.gradecrew.staging' if name == 'Staging' else 'de.gradecrew',
             'PRODUCT_NAME': '$(TARGET_NAME)',
             'MARKETING_VERSION': MARKETING_VERSION,
             'CURRENT_PROJECT_VERSION': '1',
@@ -186,6 +186,7 @@ xml = f'''<?xml version="1.0" encoding="UTF-8"?>
 scheme_dir = project_dir / 'xcshareddata' / 'xcschemes'
 scheme_dir.mkdir(parents=True, exist_ok=True)
 (scheme_dir / 'GradeCrew.xcscheme').write_text(xml)
+(scheme_dir / 'GradeCrew Staging.xcscheme').write_text(xml.replace('buildConfiguration="Debug"', 'buildConfiguration="Staging"').replace('buildConfiguration="Release"', 'buildConfiguration="Staging"'))
 
 assert source_paths
 assert all(source.is_file() for source in source_paths)

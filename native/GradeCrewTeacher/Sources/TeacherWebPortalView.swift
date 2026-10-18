@@ -144,7 +144,7 @@ struct GradeCrewWebView: UIViewRepresentable {
                                           if (!assistant) {
                                             const { getApp } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js');
                                             const { getFunctions, httpsCallable } = await import('https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js');
-                                            if (getApp().options.projectId !== 'hausaufgabe-staging') throw new Error('Die Staging-Verbindung konnte nicht bestätigt werden.');
+                                            if (getApp().options.projectId !== expectedProjectID) throw new Error('Die GradeCrew-Verbindung konnte nicht bestätigt werden.');
                                             assistant = httpsCallable(getFunctions(getApp(), 'europe-west1'), 'crewAssistant', { timeout: 60000 });
                                             window.__gradeCrewRemyFieldVerifier = assistant;
                                           }
@@ -324,7 +324,7 @@ struct GradeCrewWebView: UIViewRepresentable {
                                         if (typeof method !== 'function') throw new Error('Remy ist in GradeCrew noch nicht verfügbar.');
                                         return await method(payload);
                                         """,
-                                        arguments: ["action": action, "payload": payload], in: nil, in: .page) { result in
+                                        arguments: ["action": action, "payload": payload, "expectedProjectID": GradeCrewBetaEnvironment.projectID], in: nil, in: .page) { result in
                 switch result {
                 case let .success(value):
                     guard let object = value as? [String: Any] else {
@@ -658,7 +658,7 @@ struct GradeCrewWebView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
-        configuration.websiteDataStore = .default()
+        configuration.websiteDataStore = GradeCrewBetaEnvironment.isStaging ? .nonPersistent() : .default()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
         configuration.allowsInlineMediaPlayback = true
         configuration.applicationNameForUserAgent = "GradeCrew-iOS/\(GradeCrewAppEnvironment.version)"

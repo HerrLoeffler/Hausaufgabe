@@ -1,18 +1,17 @@
 import Foundation
 
 enum GradeCrewNavigationPolicy {
-    static let firebaseAuthHost = "hausaufgabe-staging.firebaseapp.com"
+    static let firebaseAuthHost = "\(GradeCrewBetaEnvironment.projectID).firebaseapp.com"
 
     static func isTrustedHost(_ host: String, selectedBaseURL: URL) -> Bool {
         let normalizedHost = host.lowercased()
-        let trustedHosts = [
-            selectedBaseURL.host?.lowercased(),
-            GradeCrewBetaEnvironment.integrationPreviewURL.host?.lowercased(),
-            GradeCrewBetaEnvironment.stableStagingURL.host?.lowercased(),
-            firebaseAuthHost,
-        ].compactMap { $0 }
-        if trustedHosts.contains(normalizedHost) { return true }
-        return GradeCrewBetaEnvironment.previewURL(from: "https://\(normalizedHost)/") != nil
+        guard selectedBaseURL.scheme == "https", selectedBaseURL.user == nil,
+              selectedBaseURL.password == nil, selectedBaseURL.port == nil,
+              let selectedHost = selectedBaseURL.host,
+              selectedHost == GradeCrewBetaEnvironment.defaultURL.host || GradeCrewBetaEnvironment.previewURL(from: selectedBaseURL.absoluteString) != nil else { return false }
+        return normalizedHost == GradeCrewBetaEnvironment.defaultURL.host
+            || normalizedHost == firebaseAuthHost
+            || GradeCrewBetaEnvironment.previewURL(from: "https://\(normalizedHost)/") != nil
     }
 
     static func isTrustedInternalURL(_ url: URL, selectedBaseURL: URL) -> Bool {

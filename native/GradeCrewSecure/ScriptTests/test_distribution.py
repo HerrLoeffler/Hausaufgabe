@@ -26,6 +26,14 @@ class DistributionTests(unittest.TestCase):
         info['GradeCrewSecureMode'] = 'staging-exam'
         distribution.validate(app, profile, info, 'TESTTEAM01', 'staging-exam')
 
+    def test_live_exam_refuses_test_configuration(self):
+        app, profile, info = self.fixture()
+        info['CFBundleDisplayName'] = 'GradeCrew Secure'
+        info['GradeCrewSecureMode'] = 'staging-exam'
+        with self.assertRaises(ValueError): distribution.validate(app, profile, info, 'TESTTEAM01', 'live-exam')
+        info['GradeCrewSecureMode'] = 'live-exam'
+        distribution.validate(app, profile, info, 'TESTTEAM01', 'live-exam')
+
     def test_missing_aac_rejected(self):
         app, profile, info = self.fixture()
         profile['Entitlements'].pop('com.apple.developer.automatic-assessment-configuration')

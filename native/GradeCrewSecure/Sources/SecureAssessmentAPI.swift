@@ -13,7 +13,7 @@ final class SecureAssessmentAPI {
         guard ["getAssessmentInfo", "startAssessmentAttempt", "resumeAssessmentAttempt", "submitAssessmentAttempt", "getAssessmentReceipt", "recordSecureExamTelemetry"].contains(name) else {
             throw Failure(code: "INVALID_ARGUMENT", message: "Unbekannte Prüfungsanfrage.")
         }
-        let url = URL(string: "https://europe-west1-hausaufgabe-staging.cloudfunctions.net/" + name)!
+        let url = SecureReleaseEnvironment.functionsURL.appendingPathComponent(name)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.timeoutInterval = 20
@@ -25,7 +25,10 @@ final class SecureAssessmentAPI {
         let response: URLResponse
         do { (bytes, response) = try await session.data(for: request) }
         catch { throw Failure(code: "NETWORK", message: "Keine Verbindung. Deine gespeicherten Antworten bleiben auf diesem iPad erhalten.") }
-        guard let json = try JSONSerialization.jsonObject(with: bytes) as? [String: Any] else {
+        if let http=response as? HTTPURLResponse, http.statusCode >= 500 {
+            throw Failure(code:"UNAVAILABLE",message:"Der Prüfungsserver ist vorübergehend nicht erreichbar. Die gesicherte Abgabe wird erneut übertragen.")
+        }
+        guard let json = (try? JSONSerialization.jsonObject(with: bytes)) as? [String: Any] else {
             throw Failure(code: "INVALID_RESPONSE", message: "Ungültige Antwort des Prüfungsservers.")
         }
         if let error = json["error"] as? [String: Any] {

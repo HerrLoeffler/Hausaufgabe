@@ -19,7 +19,7 @@ struct SecureWelcomeFrame<Content:View>: View {
             VStack(spacing:24) {
                 SecureBrandHeader()
                 content()
-                Text("Staging · Testumgebung").font(.footnote).foregroundStyle(SecureTheme.secondaryText)
+                Text(SecureReleaseEnvironment.projectID == "gradecrew-staging-2026" ? "Testumgebung" : "Schulversion").font(.footnote).foregroundStyle(SecureTheme.secondaryText)
             }.padding(.vertical,24).frame(maxWidth:SecureTheme.formWidth).secureMeasure("welcome",role:"center")
                 .frame(maxWidth:.infinity).padding(.horizontal,16)
         }.background(SecureTheme.canvas).foregroundStyle(SecureTheme.text).tint(SecureTheme.brand).preferredColorScheme(.light)

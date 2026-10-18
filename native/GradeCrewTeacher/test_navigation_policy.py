@@ -7,7 +7,7 @@ root = Path(__file__).parent
 beta = (root / "Sources" / "GradeCrewBetaEnvironment.swift").read_text()
 policy = (root / "Sources" / "GradeCrewNavigationPolicy.swift").read_text()
 checks = r'''
-let selected = URL(string: "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app/")!
+let selected = URL(string: "https://hausaufgabe-staging.web.app/")!
 let stable = URL(string: "https://hausaufgabe-staging.web.app/")!
 let otherPreview = URL(string: "https://hausaufgabe-staging--mobile-test.web.app/path")!
 let auth = URL(string: "https://hausaufgabe-staging.firebaseapp.com/__/auth/handler")!
@@ -19,7 +19,7 @@ let blob = URL(string: "blob:https://hausaufgabe-staging.web.app/123")!
 assert(GradeCrewNavigationPolicy.isTrustedHost("hausaufgabe-staging.firebaseapp.com", selectedBaseURL: selected))
 assert(GradeCrewNavigationPolicy.isTrustedInternalURL(selected, selectedBaseURL: selected))
 assert(GradeCrewNavigationPolicy.isTrustedInternalURL(stable, selectedBaseURL: selected))
-assert(GradeCrewNavigationPolicy.isTrustedInternalURL(otherPreview, selectedBaseURL: selected))
+assert(!GradeCrewNavigationPolicy.isTrustedInternalURL(otherPreview, selectedBaseURL: selected))
 assert(GradeCrewNavigationPolicy.isTrustedInternalURL(auth, selectedBaseURL: selected))
 assert(GradeCrewNavigationPolicy.isTrustedInternalURL(blob, selectedBaseURL: selected))
 assert(!GradeCrewNavigationPolicy.isTrustedInternalURL(production, selectedBaseURL: selected))
@@ -29,7 +29,7 @@ assert(GradeCrewNavigationPolicy.shouldOpenExternally(external, selectedBaseURL:
 assert(GradeCrewNavigationPolicy.shouldOpenExternally(mail, selectedBaseURL: selected, userActivated: true))
 assert(GradeCrewNavigationPolicy.shouldOpenExternally(production, selectedBaseURL: selected, userActivated: true))
 assert(!GradeCrewNavigationPolicy.shouldOpenExternally(external, selectedBaseURL: selected, userActivated: false))
-assert(!GradeCrewNavigationPolicy.shouldOpenExternally(otherPreview, selectedBaseURL: selected, userActivated: true))
+assert(GradeCrewNavigationPolicy.shouldOpenExternally(otherPreview, selectedBaseURL: selected, userActivated: true))
 
 assert(GradeCrewNavigationPolicy.safeDownloadFilename("Ergebnisse 9b.csv") == "Ergebnisse 9b.csv")
 assert(GradeCrewNavigationPolicy.safeDownloadFilename("../../secret.csv") == ".-.-secret.csv")

@@ -5,8 +5,8 @@ import sys
 from pathlib import Path
 
 def validate(app, profile, info, team, mode="aac-lab"):
-    expected_name = 'GradeCrew Secure' if mode == 'staging-exam' else 'GradeCrew AAC Lab'
-    if mode == 'staging-exam' and info.get('GradeCrewSecureMode') != mode:
+    expected_name = 'GradeCrew Secure' if mode in ('staging-exam', 'live-exam') else 'GradeCrew AAC Lab'
+    if mode in ('staging-exam', 'live-exam') and info.get('GradeCrewSecureMode') != mode:
         raise ValueError('Expected Staging exam configuration')
     if info.get('CFBundleIdentifier') != 'de.gradecrew.secure' or info.get('CFBundleDisplayName') != expected_name:
         raise ValueError('Expected isolated Secure AAC Lab, not another app')

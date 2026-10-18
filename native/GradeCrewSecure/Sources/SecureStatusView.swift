@@ -6,12 +6,12 @@ struct SecureStatusPresentation {
     let message:String
     let actionTitle:String?
     let busy:Bool
-    init(phase:SecureExamCoordinator.Phase,message:String,busy:Bool) {
+    init(phase:SecureExamCoordinator.Phase,message:String,busy:Bool,pendingSubmission:Bool=false) {
         self.busy=busy
         self.message=message.isEmpty ? "Apple bereitet die geschützte Prüfung vor …" : message
         switch phase {
         case .completed:kind = .success;title="Abgabe gespeichert";actionTitle="Zurück zum Start"
-        case .recovery:kind = .warning;title="Prüfung fortsetzen";actionTitle="Verbindung und Prüfungsstand prüfen"
+        case .recovery:kind = .warning;title=pendingSubmission ? "Übertragung ausstehend" : "Prüfung fortsetzen";actionTitle=pendingSubmission ? "Gesicherte Abgabe übertragen" : "Verbindung und Prüfungsstand prüfen"
         case .interrupted:kind = .warning;title="Prüfung unterbrochen";actionTitle="Verbindung und Prüfungsstand prüfen"
         case .waiting:kind = .progress;title="Du bist bereit";actionTitle=nil
         case .submitting:kind = .progress;title="Abgabe wird gesendet";actionTitle=nil
