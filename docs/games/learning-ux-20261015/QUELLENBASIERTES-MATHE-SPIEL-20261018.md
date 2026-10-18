@@ -4,6 +4,8 @@ GC-GAMES-LEARNING-UX-01 · 18.10.2026 · konkreter Konzeptvorschlag, ausschließ
 
 Dieser Text hat für den neuen Matheentwurf Vorrang bei Einstieg, Quellenwahl, Dauer und fortlaufender Wertung. Die älteren Bücher und Prüfberichte bleiben historische Fassungen. Kopf/SB-Trennung, private Lösungsschlüssel, serverseitige Einmalwertung und die bestehende Releasegrenze gelten weiter. Der nachfolgend ausdrücklich erteilte Umsetzungs-/Stagingauftrag wird im Runtimeworkstream geführt; dieses Dokument allein ersetzt dessen Prüfungen nicht. Production bleibt gesperrt.
 
+Neue Stagingdeploys dieses Auftrags gehen ausschließlich nach `gradecrew-staging-2026` mit Testdaten. `hausaufgabe-staging` ist gemäß [ENVIRONMENTS.md vom18.10](https://github.com/HerrLoeffler/Hausaufgabe/blob/a2db22f81127fc40ee43d1221d27b6af42ea8ae5/docs/releases/ENVIRONMENTS.md) nun das Schul-/Liveprojekt; keine Schulmigration, Kontenänderung oder Livefreigabe ist Teil dieses Auftrags. Der bisherige7abc866b-Nachweis und seine alte Adresse bleiben historische Belege.
+
 ## 1. Ziel und Empfehlung
 
 Eine Lehrkraft soll ihre echten Unterrichtsaufgaben so einfach wie einen GradeCrew-Test auswählen oder mit Remy erstellen und daraus sofort eine passende Mathe-Spielrunde vorbereiten können. Alternativ wählt sie Bayern → Mittelschule → Klasse5–10 → Thema/Kompetenzen. Die Runde liefert bis zum gewählten Zeitende neue fachlich passende Aufgaben; kurze Originaltests werden nicht bloß unsichtbar im Kreis abgespielt. Allein ausprobieren, als Klasse gegen Computer und Gruppen gegeneinander bleiben zugänglich.
@@ -32,7 +34,7 @@ Der erste Ansatz benötigt zunächst Adapter und fachlich geprüfte Familien, bi
 
 Direkte Quellen: [Runtimevertrag an7abc866b](https://github.com/HerrLoeffler/Hausaufgabe/blob/7abc866b26b9bc0051667abc4ce700d681528b0e/lab/fast-quiz-functions/classroom.js), [Mathefamilien](https://github.com/HerrLoeffler/Hausaufgabe/blob/7abc866b26b9bc0051667abc4ce700d681528b0e/lab/fast-quiz-functions/classroom-math.js), [App-Testerstellung am Poolrelease](https://github.com/HerrLoeffler/Hausaufgabe/blob/a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d/app.js), [Poolmodul](https://github.com/HerrLoeffler/Hausaufgabe/blob/a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d/functions/lib/pedagogical-pool.js), [Poolnachweise](https://github.com/HerrLoeffler/Hausaufgabe/blob/a2db22f81127fc40ee43d1221d27b6af42ea8ae5/workstreams/pedagogical-pool-20261011.md). Der Pool ergänzt ausdrücklich weder material-only noch Ausgangstests. Diese Grenze wird nicht umgangen.
 
-Martins anschließende Klärung: Das Spiel läuft; er war allein. Ein zusätzlich vorgeschlagener Testmodus mit Testspielern wurde ausdrücklich abgelehnt. Daraus entstehen weder Testspieler noch ein Beitrittsfixauftrag. Die zwölf separat vorhandenen Wissensreise-Funktionen werden weder als Matheadapter benutzt noch verändert.
+Martins anschließende Klärung: Das Spiel läuft; er war allein. Ein zusätzlich vorgeschlagener Testmodus mit Testspielern wurde ausdrücklich abgelehnt. Daraus entstehen weder Testspieler noch ein Beitrittsfixauftrag. Die zwölf separat vorhandenen Wissensreise-Funktionen werden nicht ungeprüft als Matheadapter vorausgesetzt. Wiederverwendung erfolgt nur mit geprüftem Auth-/Daten-/Releasevertrag.
 
 ## 3. Vier kurze Schritte statt einer Einstellungswand
 
@@ -144,7 +146,7 @@ Abnahmefälle, jeweils mit Commit/Build, Ablauf und tatsächlichem Ergebnis:
 
 1. Vorhandener eigener Test und neuer Remyentwurf kommen mit unveränderter Stoffgrenze in dieselbe Prüfansicht zurück; Material-only erhält keinen fremden Poolstoff.
 2. Klasse5 bis10 auswählbar; relevante Zweige Regelklasse/M-Zug korrekt, fehlende Spielabdeckung ehrlich sichtbar; mindestens ein belegter Kompetenzweg je veröffentlichter Klasse. Kein Vollabdeckungslabel ohne vollständiges Register.
-3. Ein Test mit12Originalaufgaben liefert beim schnellen1/5/10-Minuten-Lastfall neue validierte Varianten bis zum Ende. Nicht variierbarer Text wird als endlich erkannt; Startblockade statt heimlicher Schleife.
+3. Ein Test mit2Originalaufgaben liefert beim schnellen1/5/10-Minuten-Lastfall neue validierte Varianten bis zum Ende. Nicht variierbarer Text wird als endlich erkannt; Startblockade statt heimlicher Schleife.
 4. Keine mathematisch fehlerhafte Instanz im geprüften Parameterraum; Grenzwerte/Nullnenner/Dezimalkomma/Einheiten/äquivalente Antworten und Deduplikation geprüft. Zufallsstichproben allein ersetzen bei großem Raum die Constraint-/Prüferbelege nicht.
 5. Provider aus und Nachfüllen verzögert: Puffer/Deterministik trägt den freigegebenen Fall; echter Engpass wird sichtbar und macht den Vergleich ungültig.
 6. Kopf enthält0P; SB20Slots13H/7P; Hilfe/Korrektur ändern den Slottyp nicht. Große Zahlen erhöhen nicht automatisch das Niveau.
