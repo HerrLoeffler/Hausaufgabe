@@ -1,0 +1,22 @@
+// Local synthetic layout probe only. Excluded from the staging build allowlist.
+import {gradeCrewI18n} from '../../shared/i18n/bootstrap.mjs?v=3';
+import {GRADECREW_ASSETS} from '../../generated/gradecrew-assets.js';
+import {installWorkspaceUpgrade} from '../../gradecrew-workspace-upgrade.mjs';
+import {syncDashboardTutorialEntry} from '../../dashboard-tutorial-entry.mjs';
+import {installCrewTour} from '../../gradecrew-tour.js';
+const $=id=>document.getElementById(id);
+const count=Number(new URLSearchParams(location.search).get('logins')||1);
+const dashboard=$('dashboardView');
+const show=id=>{document.querySelectorAll('main > section.view').forEach(v=>v.classList.toggle('hidden',v.id!==id));syncDashboardTutorialEntry(document,{enabled:true,dashboard:id==='dashboardView',count});window.scrollTo(0,0);};
+$('userBar').classList.remove('hidden');$('adminTopBtn').classList.remove('hidden');$('userLabel').textContent='Demo-Lehrkraft';
+const logo=document.createElement('img');logo.src=GRADECREW_ASSETS.brand.primary;logo.alt='';logo.width=44;logo.height=44;logo.dataset.gradecrewBrandMark='1';document.querySelector('.brandMark').dataset.gradecrewBrandReady='1';document.querySelector('.brandMark').replaceChildren(logo);
+$('publishedQuizCount').textContent='1';$('draftQuizCount').textContent='32';$('endedQuizCount').textContent='15';
+$('quizList').innerHTML='<article class="card quizCard"><div class="quizCardTop"><h3>Wortarten entdecken</h3><span class="status draft">Entwurf</span></div><p class="meta">Deutsch · Klasse 3 · 10 Aufgaben</p><p>Vorbereiteter Beispieltest für die lokale Layoutprüfung.</p></article>';
+show('dashboardView');installWorkspaceUpgrade(document);
+const tour=installCrewTour({uid:()=> 'layout-demo',isDashboard:()=>!dashboard.classList.contains('hidden'),isGuest:()=>true,beginRun:()=>{},createDemo:async()=> 'layout-demo-test',exitTour:()=>show('dashboardView')});
+tour.dashboard({uid:'layout-demo',firstVisit:false,completed:true,isAdmin:true});
+syncDashboardTutorialEntry(document,{enabled:true,dashboard:true,count});
+$('settingsTopBtn').onclick=()=>show('settingsView');$('backFromSettings').onclick=()=>show('dashboardView');
+$('settingsTutorialStart').onclick=()=>{show('dashboardView');tour.start();};
+$('newQuizBtn').onclick=()=>show('createView');$('backFromCreate').onclick=()=>show('dashboardView');
+const note=document.createElement('p');note.textContent='Lokale Layoutprobe · Beispieldaten';note.style.cssText='position:fixed;bottom:0;right:0;margin:0;padding:5px 10px;background:#fff;color:#526579;font:11px system-ui;z-index:100';document.body.append(note);

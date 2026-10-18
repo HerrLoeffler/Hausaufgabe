@@ -213,7 +213,7 @@ jobs:
           node --test ordering-grading.test.mjs
           node --test gradecrew-tour.test.mjs
           node --test student-submit-confirm.test.mjs
-          node --test gradecrew-tour-v8-dashboard.test.mjs
+          node --test gradecrew-tour-v8-dashboard.test.mjs tutorial-signins.test.mjs dashboard-tutorial-entry.test.mjs
           node --test tutorial-ordering-guard.test.mjs
           node --test crew-tour-gc23-polish.test.mjs
           node --test crew-tour-gc24-polish.test.mjs
