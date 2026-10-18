@@ -25,7 +25,7 @@ async function browser(t,query,{native=true}={}){
 }
 test('generated fixture uses pinned real HTML, native scripts and manifest sources',()=>{
  const provenance=JSON.parse(fs.readFileSync(path.join(output,'provenance.json')));
- assert.equal(provenance.release,'2.3.1-gc42');assert.equal(provenance.commit,'e35b2b482d10b8004e85c93391990ebfcbed49be');
+ assert.equal(provenance.release,'2.3.1-gc44');assert.equal(provenance.commit,'424473481a3bcb8818289f79f760772883f0492c');
  assert.ok(provenance.rendererFunctions.renderQuestions);assert.ok(provenance.cocoPresentationFunctions.createUi);
  assert.equal(provenance.files['assets/gradecrew/penguin-icon.svg'].repositoryPath,'assets/gradecrew/brand-icon-v1.svg');assert.match(html,/connect-src 'none'/);
  assert.ok(!html.includes('src="startup.js'));assert.ok(!html.includes('firebase'));assert.ok(!html.includes('cdnjs'));

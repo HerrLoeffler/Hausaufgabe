@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc42";
+const APP_VERSION = "2.3.1-gc44";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -22,6 +22,7 @@ import {
   addDoc as firestoreAddDoc,
   updateDoc as firestoreUpdateDoc,
   writeBatch as firestoreWriteBatch,
+  runTransaction as firestoreRunTransaction,
   deleteDoc as firestoreDeleteDoc,
   collection,
   getDocs as firestoreGetDocs,
@@ -37,12 +38,14 @@ import {
   Timestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
-import { createAccountController } from "./admin-account-actions.mjs?v=2";
+import { createAccountController } from "./admin-account-actions.mjs?v=3";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
-import { createAiClient } from "./ai-client.js?v=2.3.1-gc42";
-import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc42";
-import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc42";
+import { createAiClient } from "./ai-client.js?v=2.3.1-gc43";
+import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc43";
+import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc43";
+import { recordTutorialSignIn } from "./tutorial-signins.mjs?v=1";
+import { syncDashboardTutorialEntry } from "./dashboard-tutorial-entry.mjs?v=1";
 import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";
@@ -112,6 +115,7 @@ const addDoc = (...args) => { requireProductionData(); return firestoreAddDoc(..
 const updateDoc = (...args) => { requireProductionData(); return firestoreUpdateDoc(...args); };
 const deleteDoc = (...args) => { requireProductionData(); return firestoreDeleteDoc(...args); };
 const writeBatch = (...args) => { requireProductionData(); return firestoreWriteBatch(...args); };
+const runTransaction = (...args) => { requireProductionData(); return firestoreRunTransaction(...args); };
 const createUserWithEmailAndPassword = (...args) => { requireProductionData(); return firebaseCreateUser(...args); };
 const signInWithEmailAndPassword = (...args) => { requireProductionData(); return firebaseSignIn(...args); };
 const sendPasswordResetEmail = (...args) => { requireProductionData(); return firebaseSendPasswordReset(...args); };
@@ -590,6 +594,7 @@ function showView(id) {
   views.forEach((v) => $(v).classList.toggle("hidden", v !== id));
   if (changed) requestAnimationFrame(() => focusView($(id)));
   window.scrollTo({ top: 0, behavior: scrollBehavior() });
+  syncDashboardTutorialEntry(document, { enabled: Boolean(state.user) && !guestTourRepo, dashboard: id === "dashboardView", count: state.profile?.crewTourSignInCount });
   if (typeof crewTour !== "undefined") crewTour?.notify("view", {id});
 }
 
@@ -1023,6 +1028,7 @@ function safeDialogClose(dialog) {
 function setTeacherBar() {
   const loggedIn = Boolean(state.user) && !new URLSearchParams(location.search).has("test");
   $("userBar").classList.toggle("hidden", !loggedIn);
+  syncDashboardTutorialEntry(document, { enabled: loggedIn && !guestTourRepo, dashboard: !$("dashboardView").classList.contains("hidden"), count: state.profile?.crewTourSignInCount });
   $("userLabel").textContent = state.profile?.displayName || state.user?.displayName || state.user?.email || "";
   $("adminTopBtn")?.classList.toggle("hidden", !loggedIn || !isAdmin());
   $("appFooter")?.classList.toggle("hidden", !loggedIn);
@@ -1213,6 +1219,14 @@ function authMessage(err) {
   return map[err?.code] || `Fehler: ${err?.message || "unbekannt"}`;
 }
 
+async function refreshTutorialSignIn(user, generation) {
+  if (Number(state.profile?.crewTourSignInCount) >= 6) return;
+  const profile = await recordTutorialSignIn({ user, db, ref: doc(db, "users", user.uid), runTransaction, isCurrent: () => generation === authStateGeneration });
+  if (!profile || generation !== authStateGeneration || state.user?.uid !== user.uid) return;
+  state.profile = { ...state.profile, crewTourSignInCount: profile.crewTourSignInCount, crewTourSignInSessions: profile.crewTourSignInSessions };
+  syncDashboardTutorialEntry(document, { enabled: true, dashboard: !$("dashboardView").classList.contains("hidden"), count: state.profile.crewTourSignInCount });
+}
+
 let authStateGeneration = 0;
 onAuthStateChanged(auth, async (user) => {
   const generation = ++authStateGeneration;
@@ -1261,6 +1275,8 @@ onAuthStateChanged(auth, async (user) => {
         if (generation === authStateGeneration) await signOut(auth);
         return;
       }
+      // This optional onboarding preference must not delay a successful sign-in.
+      void refreshTutorialSignIn(user, generation);
       state.shownThisLogin = new Set();
       await touchLastActive(user, profile);
       if (generation !== authStateGeneration) return;
@@ -1539,7 +1555,8 @@ async function loadDashboard() {
       if (state.user?.uid !== dashboardUid || $("dashboardView").classList.contains("hidden")) return;
       if (!crewTour) crewTour = module.installCrewTour(makeTourApi());
       window.gradecrewPracticeReady = true;
-      crewTour.dashboard({uid: state.user.uid, firstVisit: true, completed: Boolean(state.profile?.crewTourCompletedAt), offerHandled: Boolean(state.profile?.crewTourOfferHandledAt), isAdmin: isAdmin()});
+      crewTour.dashboard({uid: state.user.uid, firstVisit: true, completed: Boolean(state.profile?.crewTourCompletedAt), offerHandled: Boolean(state.profile?.crewTourOfferHandledAt) || Number(state.profile?.crewTourSignInCount) > 5, isAdmin: isAdmin()});
+      syncDashboardTutorialEntry(document, { enabled: true, dashboard: true, count: state.profile?.crewTourSignInCount });
     } catch (error) { console.warn("GradeCrew-Tutorial nicht verfügbar", error); }
     const tourOpened = crewTour?.active || maybeShowTeacherTour();
     if (!tourOpened) await loadAnnouncements();
@@ -1785,20 +1802,20 @@ function renderQuizList() {
       <div class="quizStats">
         <div><strong>${Number(q.questionCount || 0)}</strong><span>Aufgaben</span></div>
         <div><strong>${Number(q.totalPoints || 0)}</strong><span>Punkte</span></div>
-        ${Number(q.timeLimitMinutes) > 0 ? `<div><strong>${Number(q.timeLimitMinutes)}</strong><span>Minuten</span></div>` : ""}
-        ${q.startMode === "teacher" ? `<div><strong>Gemeinsam</strong><span>Start</span></div>` : ""}
+        ${Number(q.timeLimitMinutes) > 0 ? `<div><strong>${Number(q.timeLimitMinutes)}</strong><span>Minuten</span></div>` : `<div><strong>–</strong><span>Ohne Zeitlimit</span></div>`}
+        <div><strong>${q.startMode === "teacher" ? "Lehrkraft" : "Schüler"}</strong><span>Start</span></div>
       </div>
       <div class="quizActions primaryQuizActions">
-        <button class="button ${q.published ? "secondary" : "primary"} edit">Bearbeiten</button>
-        <button class="button ${q.published ? "primary" : "secondary"} results">Ergebnisse</button>
-        ${q.published && !q.ended && !q.rightsHold && !secureAudioPublicationBlocked(q) ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
+        <button class="button primary edit">Bearbeiten</button>
+        <button class="button secondary results">Ergebnisse</button>
       </div>
       <details class="quizMore"><summary>Weitere Aktionen</summary>
         <div class="quizActions secondaryQuizActions">
+          ${q.published && !q.ended && !q.rightsHold && !secureAudioPublicationBlocked(q) ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
           ${q.rightsHold ? "" : '<button class="button ghost duplicate">Duplizieren</button><button class="button ghost teacherShare">Mit Kollegen teilen</button>'}
           ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost end">Beenden</button>` : ""}
           ${q.ended && !q.rightsHold ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
-          <button class="button danger remove">Löschen</button>
+          <button class="button danger remove quizDeleteButton" type="button" aria-label="Test in den Papierkorb" title="Test in den Papierkorb"><svg class="gcWorkspaceIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></svg></button>
         </div>
       </details>`;
     card.querySelector(".dashboardPublishToggle")?.addEventListener("change", event => toggleDashboardPublished(q, event.currentTarget));
@@ -2549,6 +2566,7 @@ async function importSharedTemplate() {
 // ---------- Einstellungen ----------
 $("backFromSettings").addEventListener("click", loadDashboard);
 $("saveSettingsBtn").addEventListener("click", saveSettings);
+$("settingsTutorialStart")?.addEventListener("click", startSettingsTutorial);
 $("addGradeScaleBtn").addEventListener("click", () => {
   state.gradeScalesDraft.push({
     id: randomId("scale"),
@@ -2557,6 +2575,14 @@ $("addGradeScaleBtn").addEventListener("click", () => {
   });
   renderGradeScaleSettings();
 });
+
+async function startSettingsTutorial() {
+  const uid = state.user?.uid;
+  if (!uid || guestTourRepo) return;
+  await loadDashboard();
+  if (state.user?.uid !== uid) return;
+  crewTour?.start();
+}
 
 function openSettings() {
   if (state.isDirty && !confirm("Es gibt ungespeicherte Änderungen im Test. Wirklich ohne Speichern zu den Einstellungen wechseln?")) return;
@@ -6576,11 +6602,9 @@ function renderGapfillStudent(section, q) {
   while ((match = regex.exec(q.text))) {
     appendText(q.text.slice(last, match.index));
     const input = document.createElement("input");
-    const color = q.gapColors?.[gapIndex];
-    input.className = `inlineGap${["blue", "orange", "green", "purple"].includes(color) ? ` gapColor-${color}` : ""}`;
+    input.className = "inlineGap";
     input.dataset.gapIndex = String(gapIndex++);
     input.type = "text";
-    input.placeholder = "…";
     wrap.appendChild(input);
     last = match.index + match[0].length;
   }

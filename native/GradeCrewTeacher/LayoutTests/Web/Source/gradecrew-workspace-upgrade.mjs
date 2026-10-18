@@ -1,6 +1,8 @@
 /** Presentation-only dashboard enhancement. Never owns data, publishing or provider actions. */
 import { registerCatalog, registerSourcePatterns } from './shared/i18n/browser-runtime.mjs?v=3';
 registerCatalog('en-GB', Object.fromEntries(Object.entries({
+  'Tutorial starten': 'Start tutorial',
+  'Lerne mit Coco, Remy, Emmi und Wilma den Weg zu deinem ersten Test kennen.': 'Learn how to create your first test with Coco, Remy, Emmi and Wilma.',
   'Vollständigen Titel anzeigen': 'Show full title',
   'Auftrag im Detail': 'Request details',
   'Erstellung unterbrochen': 'Creation interrupted',
@@ -72,23 +74,6 @@ export function installWorkspaceUpgrade(document = globalThis.document) {
   const subtitle = heading?.querySelector(':scope > p');
   const defaultSubtitle = 'Alles für deinen nächsten Leistungsnachweis an einem Ort.';
   let previousFailedCount = 0;
-  const decorateCrew = () => {
-    const button = document.getElementById('gradecrewTourBtn');
-    if (!button) return;
-    let entry = dashboard.querySelector('.gcWorkspaceCrewEntry');
-    if (!entry) {
-      entry = document.createElement('div'); entry.className = 'gcWorkspaceCrewEntry';
-      const crew = document.createElement('div'); crew.className = 'gcWorkspaceCrewPortraits'; crew.setAttribute('aria-hidden', 'true');
-      const portrait = document.createElement('img');
-      portrait.src = 'assets/gradecrew/crew-dashboard-lineup-c-r-e-w-alpha.png';
-      portrait.alt = ''; portrait.width = 288; portrait.height = 100;
-      crew.append(portrait);
-      entry.append(crew); button.before(entry); entry.append(button);
-    }
-    // Keep the original button and its tutorial handler; put the duration outside the CTA.
-    const duration = button.querySelector('small');
-    if (duration) { entry.querySelector(':scope > small')?.remove(); entry.append(duration); }
-  };
   const refresh = () => {
     const failedCount = jobs?.querySelectorAll('.aiJobFailed').length || 0;
     if (subtitle && failedCount !== previousFailedCount) {
@@ -146,7 +131,6 @@ export function installWorkspaceUpgrade(document = globalThis.document) {
     // The existing + label stays intact for its i18n source mapping.
     const loading = dashboard.querySelector('#quizList > .card:not(.quizCard)');
     if (loading && !loading.classList.contains('gcWorkspaceLoading')) { loading.classList.add('gcWorkspaceLoading'); loading.setAttribute('role','status'); }
-    decorateCrew();
   };
   // Observe only this view, not the entire application. Disconnect during own writes.
   const observer = new window.MutationObserver(() => { observer.disconnect(); refresh(); observe(); });

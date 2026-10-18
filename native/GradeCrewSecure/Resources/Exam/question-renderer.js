@@ -1,4 +1,5 @@
-// Reused unchanged from GradeCrew staging 8f869790, secure-student.js questionShell through applyDraft.
+// Derived from GradeCrew staging 8f869790, secure-student.js questionShell through applyDraft.
+// Legacy gap papers are neutralized in parity with the reviewed gc44 web renderer.
 const ASSESSMENT_LOCALE_SCHEMA_VERSION = 1;
 const DEFAULT_CONTENT_LOCALE = "de-DE";
 const SUPPORTED_CONTENT_LOCALES = Object.freeze(["de-DE", "en-GB"]);
@@ -249,14 +250,11 @@ function renderGapfill(section, question) {
     }
     const input = document.createElement("input");
     input.type = "text";
-    const color = ["blue", "orange", "green", "purple"].includes(segment.color) ? segment.color : "";
-    input.className = `secureGap${color ? ` gapColor-${color}` : ""}`;
+    input.className = "secureGap";
     input.dataset.gapIndex = String(gapIndex++);
     input.dataset.gapId = segment.id || "";
     input.autocomplete = "off";
-    const colorName = { blue: "Blau", orange: "Orange", green: "Grün", purple: "Lila" }[color];
-    input.setAttribute("aria-label", `Lücke ${gapIndex}${colorName ? ` (${colorName})` : ""}`);
-    if (colorName) input.placeholder = colorName;
+    input.setAttribute("aria-label", `Lücke ${gapIndex}`);
     wrap.appendChild(input);
   });
   section.appendChild(wrap);

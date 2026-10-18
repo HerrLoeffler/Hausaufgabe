@@ -70,3 +70,13 @@ test('marking then clearing words retains touched metadata without a completion 
  assert.equal(messages.at(-1).completedQuestionIDs.includes('mark'),false);
  dom.window.close();
 });
+test('legacy colored gap papers show empty neutral fields and restore only actual student answers',()=>{
+ const paper=[{id:'legacy',type:'gapfill',text:'Colors',segments:[{type:'text',text:'The sky is '},{type:'gap',id:'g1',color:'blue'},{type:'text',text:' and the grass is '},{type:'gap',id:'g2',color:'green'}]}];
+ for(const answers of [{},{legacy:['blue','green']}]){
+  const {dom,w}=setup(answers,paper);const inputs=[...w.document.querySelectorAll('.secureGap')];assert.equal(inputs.length,2);
+  assert.deepEqual(inputs.map(x=>x.value),answers.legacy||['','']);
+  assert.ok(inputs.every(x=>!x.hasAttribute('placeholder')&&!/gapColor-/.test(x.className)));
+  assert.deepEqual(inputs.map(x=>x.getAttribute('aria-label')),['Lücke 1','Lücke 2']);
+  assert.deepEqual(JSON.parse(JSON.stringify(w.gcFreezeAnswers().answers)).legacy,answers.legacy||['','']);dom.window.close();
+ }
+});
