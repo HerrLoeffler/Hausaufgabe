@@ -508,7 +508,7 @@ GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://g
 
 | ID | Auftrag | Stand | Nächster Schritt |
 |---|---|---|---|
-| GC-PEDAGOGY-KB-01 | Passende geprüfte Aufgabenprofile nach Fach, Jahrgang und Schulart automatisch bei der Testgenerierung berücksichtigen | **Code und CI grün; noch nicht integriert/deployed.** [PR218](https://github.com/HerrLoeffler/Hausaufgabe/pull/218), Commit64d78d19fd48b50b440adf829c26de5e85c5dc4f. 53 eigene anonyme Startprofile, strikte Prüf-/Kontext-/Mediengates, unveränderter Erstprompt ohne Treffer. 248 lokale Functions-Tests unter Node22/24; GitHub Functions/Lint/BugOps-Regeln success38137059508. | [Übergabe](workstreams/pedagogical-pool-20261011.md). Qualifizierte Integration in bestehenden App-Branch und Staging-Aktivierung; Modellqualität/Nutzertest offen. Lokal archivierte Originale und größere, teils ungeprüfte Register bleiben separat; vollständige Medienanalyse aus PR214/208 offen. |
+| GC-PEDAGOGY-KB-01 | Passende geprüfte Aufgabenprofile automatisch bei der Testgenerierung berücksichtigen | **Staging-Integration beauftragt und vorbereitet.** PR218 auf aktuellen App-Branch zusammengeführt, Kandidat0ed9d3c. 281 Functions- und31 Webtests lokal grün; Kandidaten-CI39156614592 läuft. | [Übergabe](workstreams/pedagogical-pool-20261011.md). Nach CI Merge, Functions-Receipts und kanonisches Staging; Modellqualität/Nutzertest offen. Medienanalyse aus PR214/208 bleibt separat. |
 
 
 ## 11.10.2026 — GC-WEB-REPAIR-20261007 Feedback auf kanonischem Staging

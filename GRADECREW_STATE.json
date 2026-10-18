@@ -491,6 +491,16 @@
       "userAcceptance": "pending",
       "handoff": "workstreams/feedback-gc39-release-20261013.md",
       "receipts": "workstreams/feedback-gc39-release-receipts-20261013.json"
+    },
+    "pedagogical_pool_followup": {
+      "task_id": "GC-PEDAGOGY-KB-01",
+      "stage": "ci_green",
+      "pr": 218,
+      "candidate": "0ed9d3c0791a6fa0a5322c837134f8a86c7737d7",
+      "requested_target": "hausaufgabe-staging.web.app",
+      "authorization": "explicit current user request18.10.2026",
+      "next_action": "explicit user Staging release18.10.2026: merge PR218 after fresh CI, automatic staging AI Functions and verified canonical promotion",
+      "production": "not_requested"
     }
   },
   "production": {
@@ -1648,19 +1658,20 @@
       "id": "pedagogical-pool-20261011",
       "task_id": "GC-PEDAGOGY-KB-01",
       "branch": "feat/pedagogy-pool-20261011",
-      "observed_head": "64d78d19fd48b50b440adf829c26de5e85c5dc4f",
+      "observed_head": "0ed9d3c0791a6fa0a5322c837134f8a86c7737d7",
       "stage": "ci_green",
       "pull_request": 218,
       "integration": "not_integrated",
       "staging": "not_deployed",
       "production": "not_requested",
-      "ci": "success38137059508; Functions plus lint and BugOps rules",
-      "local_tests": "248/248 Node22.23.3 and Node24.19.0; syntax and ESLint",
+      "ci": "candidate39156614592 pending; prior248tests green; merged local281/281 Node22 plus31web",
+      "local_tests": "281/281 Node22 + ESLint; 31/31 ai web regressions",
       "independent_review": "one important explicit-context finding reproduced and fixed with direct and queued RED->GREEN regressions",
       "runtime_scope": "53 reviewed anonymous profiles, Mittelschule Bayern years6/9; no-match leaves first generation prompt unchanged",
       "model_quality": "not_observed_no_live_provider_calls",
       "handoff": "workstreams/pedagogical-pool-20261011.md",
-      "next_action": "qualified integration to existing app integration branch and Staging activation; physical/model quality acceptance separate"
+      "next_action": "explicit user Staging release18.10.2026: merge PR218 after fresh CI, automatic staging AI Functions and verified canonical promotion",
+      "staging_authorized": "Martin current chat18.10.2026; hausaufgabe-staging only"
     }
   ],
   "deployments": [
