@@ -1,0 +1,63 @@
+{
+  "taskId": "GC-CLASSROOM-01",
+  "date": "2026-10-18",
+  "scope": "first device-local persistent classes and manually named students in original app",
+  "source": {
+    "localCommit": "5bcba273c46612bbd85147159641022dbc23373e",
+    "remoteCommit": "76c1587f017e44176243cdfcbf10a4fce3141b9f",
+    "tree": "20d8d3f6f61dddb0993666d2fd65478e43f524ed",
+    "branch": "feature/classroom-integrated-preview-20261016"
+  },
+  "tests": {
+    "targeted": 53,
+    "passed": 53,
+    "failed": 0,
+    "exitCode": 0,
+    "knownWarning": "Existing gradecrew-entry-flow jsdom teardown document is not defined; no browser errors observed"
+  },
+  "independentReview": {
+    "agent": "manual_roster_review",
+    "fixedLocalCommit": "5bcba273c46612bbd85147159641022dbc23373e",
+    "result": "PASS",
+    "p1p2Findings": 0,
+    "relevantTestsPassed": 8,
+    "limits": "No independent real-account browser run or live Google call; no application-layer encryption or schoolwide/cloud qualification"
+  },
+  "authorBrowser": {
+    "actualBrowser": "Chrome teacher profile",
+    "userPerformedLogin": true,
+    "normalLoginAndOriginalUI": true,
+    "existingTestCountAfterAsyncLoad": 48,
+    "createdClearlySyntheticClassAndStudent": true,
+    "editedAndRestoredSyntheticName": true,
+    "reloadPreservedRoster": true,
+    "actualProviderVerificationAndLocalWrite": true,
+    "mobileWidth": 390,
+    "mobileDocumentWidth": 390,
+    "browserErrorsAtEnd": [],
+    "physicalDevice": false,
+    "loggedOutAndReauthenticatedByAgent": false
+  },
+  "dataBoundary": {
+    "namesStored": "private SQLite outside static webroot on this Mac only",
+    "databaseMode": "0600",
+    "accountAuthority": "existing Firebase Auth accounts:lookup",
+    "pupilNamesSentToFirebaseByNewCode": false,
+    "cloudFirestoreOrRulesChanged": false,
+    "schoolwideSharing": false,
+    "applicationLevelEncryption": false,
+    "syntheticFixtureLeftForUser": true
+  },
+  "server": {
+    "url": "http://127.0.0.1:8782/",
+    "sessionId": 83956
+  },
+  "release": {
+    "stage": "branch_only",
+    "hostingDeployed": false,
+    "functionsDeployed": false,
+    "rulesDeployed": false,
+    "productionChanged": false
+  },
+  "next": "Martin tests own manual class/student workflow; ASV and shared school backend remain separate planned scope"
+}
