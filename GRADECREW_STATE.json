@@ -157,7 +157,7 @@
       },
       "mobile_student_chrome_20261019": {
         "task_id": "GC-WEB-REPAIR-20261007",
-        "stage": "ci_green",
+        "stage": "production",
         "branch": "fix/staging-feedback-mobile-student-20261019",
         "candidate": "457dd1832c8e3f0340ed3c244af53533805c1548",
         "tree": "ebe96f78148a87c4bb17e9ad550d649dee85f5d7",
@@ -172,11 +172,30 @@
           "verified_asset_count": 168,
           "scope": "hosting-preview-only"
         },
-        "school_live": "unchanged; not authorized in this request",
-        "integration": "not merged",
+        "school_live": {
+          "url": "https://hausaufgabe-staging.web.app/",
+          "manifest": "https://hausaufgabe-staging.web.app/release.json",
+          "project": "hausaufgabe-staging",
+          "environment": "production",
+          "version": "2.3.1-gc45-rc1",
+          "commit": "4f8b79222a35997852aad4673f8aaf338904f485",
+          "scope": "hosting_only",
+          "user_approval": "Ja, auf der Schuladresse veröffentlichen",
+          "verified_asset_count": 168,
+          "independent_public_review": "PASS full manifest and10critical assets/config/cache",
+          "backend_rules_native_changes": false
+        },
+        "integration": {
+          "pr": 250,
+          "commit": "4f8b79222a35997852aad4673f8aaf338904f485",
+          "tree_matches_reviewed_source": true,
+          "ci_run": 39325006198,
+          "mobile_ci_run": 39325006269,
+          "admin_ci_run": 39325006259
+        },
         "physical_device_acceptance": "pending",
         "handoff": "workstreams/mobile-student-chrome-20261019.md",
-        "next_action": "Review preview on Safari/phone, then coordinate integration; school Live needs specific authorization."
+        "next_action": "Martin verifies QR-code test in Safari/on phone; physical acceptance remains separate."
       }
     },
     "canonical_request": "automation/canonical-staging-requests/gc-dashboard-ipad-tutorial-20261018.json",
@@ -2592,6 +2611,26 @@
       "local_firestore_restore": true,
       "complete_auth_disaster_recovery_test": false
     },
-    "release_scope": "No data migration/deletion. Existing project remains school Live. Legacy project untouched. Website deployment is not App Store or physical AAC acceptance."
+    "release_scope": "No data migration/deletion. Existing project remains school Live. Legacy project untouched. Website deployment is not App Store or physical AAC acceptance.",
+    "mobile_student_chrome_followup": {
+      "task_id": "GC-WEB-REPAIR-20261007",
+      "handoff": "workstreams/mobile-student-chrome-20261019.md",
+      "pr": 250,
+      "integration_commit": "4f8b79222a35997852aad4673f8aaf338904f485",
+      "hosting": {
+        "url": "https://hausaufgabe-staging.web.app/",
+        "manifest": "https://hausaufgabe-staging.web.app/release.json",
+        "project": "hausaufgabe-staging",
+        "environment": "production",
+        "version": "2.3.1-gc45-rc1",
+        "commit": "4f8b79222a35997852aad4673f8aaf338904f485",
+        "scope": "hosting_only",
+        "user_approval": "Ja, auf der Schuladresse veröffentlichen",
+        "verified_asset_count": 168,
+        "independent_public_review": "PASS full manifest and10critical assets/config/cache",
+        "backend_rules_native_changes": false
+      },
+      "physical_device_acceptance": "pending"
+    }
   }
 }
