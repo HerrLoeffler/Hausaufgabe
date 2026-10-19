@@ -795,3 +795,10 @@ Keine weiteren Medienanbieteraufrufe oder Käufe für V8. Die vorherige V7-Ableh
 Der Nutzer begrenzt die nächste Filmkorrektur auf Remys Gang und Cocos Einstieg; der Rest von V17 soll unverändert bleiben. Motion prüft Assets und Schätzung zuerst. Noch kein neuer Job, kein V18-Film und keine freigegebene Anbieterausgabe. V8-Deck bleibt bei SHA-256 `3ceceaa58001a1aa8d24e7f83c865788e70afea4ef61581912c8f67afa58e27f`; V17-Film bleibt bei `4e6ccf7e4a9aeb13b408cda63ed8e6764e6fc0b4eeee9322a3c541057fe238f1`, bis Root einen Ersatzfilm freigibt. Erst nach diesem Film-Gate ein V9-Cover-only-Deck erstellen, mainSeq-Autostart sowie Folien 2–14 und Notizen unverändert erhalten und nativen Start neu prüfen.
 
 Budgethistorie bleibt: 22 gestartete Providerjobs, 36.128,508 Credits als Ledger-Summe (keine bestätigte Endabrechnung); letzter UI-Restbetrag 2.648 Credits ist nicht aktuell. V18 hat keine neuen Starts/Käufe. Live-Audit run 39259533166 meldete den Branch als nicht klassifiziert, ohne PR-Suchergebnis; Vergleich mit main +172/−155. Details und nächste Schritte: `workstreams/baystartup-financing-20261008.md`.
+
+
+### GC-FINANCE-BAYSTARTUP-20261008 — V18 zwei Starts: Remy da, Coco ausstehend (19.10.2026)
+
+Root gab zwei Runway Gen-4 Turbo Takes frei (je 909 Credits, zusammen 1.818). Remy-Generation `REQoGsqepU01dwAIhJ6f` / Session `H6G2YKI4ZgprGpGdcLTK` ist zurückgekehrt (3,0417 s/24 fps); Root sah verbesserten Gang, noch kein Film-Integrationsgate. Coco-Sitzen Generation `GGDVK6JakGlmcFpwuqxF` / Session `Jjh9qunAfR5MMbI1Ap2P` läuft noch. Keine weiteren Takes/Käufe freigegeben. Kling-Fehlertext dokumentiert; kein Retry desselben Jobs.
+
+Gemeldeter Ledgerstand 24 Starts / 37.946,508 Credits committed, keine bestätigte Schlussrechnung. UI-Restbetrag 2.648 ist veraltet; 830 ist nur Rahmenrechnung, kein bestätigter Kontostand. V8/V17 bleiben unverändert. Nächster Schritt: Coco-Ergebnis read-only abholen und tatsächliche QA/Hash festhalten, danach Root-Filmgate; erst nach Freigabe V9-Cover-only bauen. Details: `workstreams/baystartup-financing-20261008.md`.
