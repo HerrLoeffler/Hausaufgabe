@@ -1,5 +1,10 @@
 # GradeCrew – gemeinsame To-do-Liste
 
+## GC-WEB-REPAIR-20261007 — mobile Schüler-Browseransicht (19.10.2026)
+
+- [ ] Abgabe nur am Testende, mitwandernde Aufgabennavigation und GC-Logo sind per [PR250](https://github.com/HerrLoeffler/Hausaufgabe/pull/250) integriert und nach ausdrücklicher Nutzerfreigabe als Hosting-only auf [Schul-Live](https://hausaufgabe-staging.web.app/) veröffentlicht: SHA `4f8b7922`, Version `2.3.1-gc45-rc1`, alle168 öffentlichen Assetprüfsummen bestätigt, unabhängiger öffentlicher Review PASS. Exakte Merge-CI39325006198, mobile39325006269 und admin39325006259 grün. Physische Safari-/Handyabnahme bleibt offen; keine Functions-/Rules-/Nativeänderungen. [Übergabe](workstreams/mobile-student-chrome-20261019.md).
+
+
 Stand: 05.10.2026. Zentrale Aufgabenübersicht auf **main**. Dies ist keine Live-Freigabe.
 Bei „Was steht auf der To-do-Liste?“ diese Datei frisch von GitHub lesen und P0, P1, blockierte Aufgaben und zuletzt Erledigtes zusammenfassen. Ohne Zugriff: fehlenden Zugriff nennen und diese Datei anfordern.
 
