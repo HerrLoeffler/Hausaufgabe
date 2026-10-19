@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc44";
+const APP_VERSION = "2.3.1-gc45-rc1";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
