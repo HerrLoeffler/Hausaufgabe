@@ -660,6 +660,15 @@
       "relatedBranches": [
         "feature/native-live-staging-20261018"
       ]
+    },
+    {
+      "id": "mobile-student-chrome-20261019",
+      "title": "GC-WEB-REPAIR-20261007: mobile Schülernavigation, Abgabe am Ende und GC-Logo",
+      "primaryBranch": "fix/staging-feedback-mobile-student-20261019",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/mobile-student-chrome-20261019.md",
+      "relatedBranches": []
     }
   ]
 }

@@ -154,6 +154,29 @@
         "user_acceptance": "not_required_for_technical_repair; broader_device_acceptance_pending",
         "production": "unchanged",
         "handoff": "workstreams/security-audio-release-20261009.md"
+      },
+      "mobile_student_chrome_20261019": {
+        "task_id": "GC-WEB-REPAIR-20261007",
+        "stage": "ci_green",
+        "branch": "fix/staging-feedback-mobile-student-20261019",
+        "candidate": "457dd1832c8e3f0340ed3c244af53533805c1548",
+        "tree": "ebe96f78148a87c4bb17e9ad550d649dee85f5d7",
+        "pr": 250,
+        "ci_run": 39324201295,
+        "admin_ci_run": 39324208215,
+        "review": "independent PASS exact remote tree",
+        "hosting_preview": {
+          "url": "https://gradecrew-staging-2026--mobile-student-20261019-622htm60.web.app/",
+          "project": "gradecrew-staging-2026",
+          "hosting_version": "681c55544ce3bcb2",
+          "verified_asset_count": 168,
+          "scope": "hosting-preview-only"
+        },
+        "school_live": "unchanged; not authorized in this request",
+        "integration": "not merged",
+        "physical_device_acceptance": "pending",
+        "handoff": "workstreams/mobile-student-chrome-20261019.md",
+        "next_action": "Review preview on Safari/phone, then coordinate integration; school Live needs specific authorization."
       }
     },
     "canonical_request": "automation/canonical-staging-requests/gc-dashboard-ipad-tutorial-20261018.json",
