@@ -595,3 +595,12 @@ Der Film ist die von Root geprüfte hybride Präsentationsfassung mit nativen Ch
 Das Produktionsledger meldet 22 gestartete Anbieterjobs und 36.128,508 Credits committed; das ist keine bestätigte Endabrechnung. Die separat zuletzt sichtbare UI-Restmenge war 2.648 Credits; eine Erstattung des fehlgeschlagenen Remy-Jobs ist unbestätigt. Es gab keine weiteren Anbieterstarts oder Käufe für diesen Deckschritt. Für künftige Sprachjobs gilt die dokumentierte Lehre, Auflösung und Mundbewegung erst je Figur in einem passenden Proof zu validieren, bevor mehrere Clips gestartet werden.
 
 Status: lokale V7-Präsentation erstellt und strukturell geprüft; nativer PowerPoint-Start offen. Keine Main-, Produkt-, Release- oder Deployänderung.
+
+
+### V7 PowerPoint autoplay follow-up (19.10.2026)
+
+V7 was tested directly in native Microsoft PowerPoint. Its slide-1 XML starts the media node with delay 0 and holds its ending frame, but nests the video directly under `tmRoot`, without a `mainSeq` sequence. A separate diagnostic PPTX, `outputs/gradecrew-investment-20261019/native-powerpoint-tests/V7_timing-sequence-test.pptx` (SHA-256 `51013a52a02bfcc0e158404faa517ed42285d1a7054a96b67e129fb2da49e322`), changes only that timing wrapper to the V6 donor's `seq/mainSeq` structure; it retains the same video, poster, target shape, and zero-delay/hold settings.
+
+Two native starts of the diagnostic copy each showed progression from the opening Coco shot to later footage with Coco and Remy. CUA/UI latency is not a reliable scene clock: no elapsed-time claim is made, and the earlier “about 2.5 seconds” estimate is withdrawn as inconsistent with the film order. The wrapper is a plausible explanation for the earlier intermittent V7 behavior, but causality remains unproven from this small sample. The earlier V7 rerun showed only the logo in its sampled screenshots. AAC was not heard; audio remains unverified. The temporary copy is not a deliverable, and the user's visual rejection of V7 remains in force.
+
+Next: receive and root-accept the corrected film, create a new versioned deck using the sequence/main-sequence timing pattern, preserve approved V5 slides 2–14 and all 14 notes byte-for-byte, then test visible autoplay on that actual deck. Check audio separately only with audible evidence. Local detailed log: `outputs/gradecrew-investment-20261019/native-powerpoint-tests/v7-native-playback-2026-10-19.md`.
