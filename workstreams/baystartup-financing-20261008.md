@@ -642,3 +642,14 @@ Nächster Schritt: nur den laufenden Coco-Job über seine bekannte ID abholen, e
 
 
 **Nachtrag zum V18-Status:** Remy-Datei zurückgekehrt: `animation-v18-entry-fix/remy-proof`, 1280×720, 24 fps, SHA-256 `f5f6451468ba430a390e8a881187ae3673628cfe12e3158a0c8b6f00e1f85afd`. Ein lokaler 2-s/48-Frame-Integrationsproof liegt unter `remy-proof/motion-with-audio.mp4`; Root-Gate ist ausstehend und noch kein Film-Integrationspass. Exakte Generation-ID: `REqoGsqepU01dwAIhJ6f`. Coco-Generation `GGDVK6JakGlmcFpwuqxF` ist beim letzten Status noch pending.
+
+
+### V9-Deck: Filmtausch und PowerPoint-Test (19.10.2026)
+
+V18 wurde nach Root-Freigabe in einer neuen Deckversion eingesetzt: `outputs/gradecrew-investment-20261019/files/GradeCrew_Erstgespraech_20261019_v9_crewintro_autoplay.pptx`, SHA-256 `922cf6456f3bcc5ef59d16ff8c260aa2361cc716d6e06824527568b6d1661aa0`, 52.158.333 Bytes. Die Ausgangsdatei V8 wurde vorher frisch geprüft. Der Paketvergleich bestätigt 14 Folien/14 Notizen; exakt ein ZIP-Bestandteil änderte sich: `ppt/media/media1.mp4`. Alle übrigen Einträge einschließlich Coverlayout/-poster/-Timing, Folien 2–14 und sämtlicher Notizen sind byte-identisch zu V8. Das eingebettete MP4 ist exakt V18 SHA-256 `80f1ca0985f909d92c1ffed42572906b1d001a4f770183dfb5b3217e553aa3b4` (46.851.396 Bytes; 62,583333 s; 1.502 Frames; 24 fps; 1280×720). MainSeq-Autostart bleibt erhalten.
+
+Microsoft PowerPoint zeigte beim nativen Start der neuen V9-Datei zweimal sichtbare Bewegung innerhalb von Folie 1; kein Folienwechsel wurde beobachtet. Das belegt den visuellen Autostart in diesen zwei Starts. Audio wurde nicht hörgeprüft. Ein separater lokaler Screenshot dieser UI-Starts wurde nicht gespeichert; der Paket-/OOXML-Audit ist unter `outputs/gradecrew-investment-20261019/native-powerpoint-tests/v9-package-audit.json` dokumentiert. Keine belastbare Zeit-/Frameangabe aus der CUA-Latenz ableiten.
+
+Der V18-Film ändert nur Coco F0–116 und Remy F317–364 gegenüber V17; die übrigen 1.337 Quellbilder sowie die vollständige Audiospur sind byte-identisch. Root hat den Film und kritische Kontaktbilder unabhängig geprüft. Begrenzung: stilisierte hybride 2D-/Poseanimation, keine behauptete perfekte Kinoanimation oder exakte menschliche Phonem-Synchronität; Remys Gang endet mit einem sichtbaren Posewechsel in die sitzende Dialogpose, nicht mit einer natürlichen Hinsetzbewegung. Eine persönliche Qualitätsabnahme durch den Nutzer ist nicht behauptet.
+
+Der Ledgerstand bleibt 24 Providerstarts und 37.946,508 gemeldete Credits committed (22 frühere Starts/36.128,508 plus zwei V18-Starts/1.818). Das ist keine bestätigte Schlussabrechnung. Zuletzt sichtbare UI-Restmenge 2.648 Credits ist nicht frisch; 830 Credits sind nur rechnerischer Rahmenrest, keine belegte Kontobalance. Keine weiteren Starts oder Käufe. Keine Main-, Produkt-, Release- oder Deploymentänderung.
