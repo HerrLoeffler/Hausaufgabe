@@ -802,3 +802,6 @@ Budgethistorie bleibt: 22 gestartete Providerjobs, 36.128,508 Credits als Ledger
 Root gab zwei Runway Gen-4 Turbo Takes frei (je 909 Credits, zusammen 1.818). Remy-Generation `REQoGsqepU01dwAIhJ6f` / Session `H6G2YKI4ZgprGpGdcLTK` ist zurückgekehrt (3,0417 s/24 fps); Root sah verbesserten Gang, noch kein Film-Integrationsgate. Coco-Sitzen Generation `GGDVK6JakGlmcFpwuqxF` / Session `Jjh9qunAfR5MMbI1Ap2P` läuft noch. Keine weiteren Takes/Käufe freigegeben. Kling-Fehlertext dokumentiert; kein Retry desselben Jobs.
 
 Gemeldeter Ledgerstand 24 Starts / 37.946,508 Credits committed, keine bestätigte Schlussrechnung. UI-Restbetrag 2.648 ist veraltet; 830 ist nur Rahmenrechnung, kein bestätigter Kontostand. V8/V17 bleiben unverändert. Nächster Schritt: Coco-Ergebnis read-only abholen und tatsächliche QA/Hash festhalten, danach Root-Filmgate; erst nach Freigabe V9-Cover-only bauen. Details: `workstreams/baystartup-financing-20261008.md`.
+
+
+**V18-Remy Nachtrag:** Der zurückgekehrte Remy-Clip hat SHA-256 `f5f6451468ba430a390e8a881187ae3673628cfe12e3158a0c8b6f00e1f85afd` (1280×720, 24 fps). Die lokale 2-s/48-Frame-Probe `remy-proof/motion-with-audio.mp4` wartet auf Root-Prüfung; nicht als Gesamtfilm-Pass werten. Exakte Generation-ID `REqoGsqepU01dwAIhJ6f`. Coco-Job war zuletzt pending.
