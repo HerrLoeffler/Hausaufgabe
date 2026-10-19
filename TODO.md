@@ -770,3 +770,10 @@ Der Film ist die von Root geprüfte hybride Präsentationsfassung mit nativen Ch
 Das Produktionsledger meldet 22 gestartete Anbieterjobs und 36.128,508 Credits committed; das ist keine bestätigte Endabrechnung. Die separat zuletzt sichtbare UI-Restmenge war 2.648 Credits; eine Erstattung des fehlgeschlagenen Remy-Jobs ist unbestätigt. Es gab keine weiteren Anbieterstarts oder Käufe für diesen Deckschritt. Für künftige Sprachjobs gilt die dokumentierte Lehre, Auflösung und Mundbewegung erst je Figur in einem passenden Proof zu validieren, bevor mehrere Clips gestartet werden.
 
 Status: lokale V7-Präsentation erstellt und strukturell geprüft; nativer PowerPoint-Start offen. Keine Main-, Produkt-, Release- oder Deployänderung.
+
+
+### GC-FINANCE-BAYSTARTUP-20261008 — PowerPoint autoplay diagnosis (19.10.2026)
+
+A separate native-PowerPoint diagnostic copy of V7, `outputs/gradecrew-investment-20261019/native-powerpoint-tests/V7_timing-sequence-test.pptx` (SHA-256 `51013a52a02bfcc0e158404faa517ed42285d1a7054a96b67e129fb2da49e322`), visibly progressed from the opening Coco shot to later Coco+Remy footage on two starts. It differs from source V7 only by wrapping the same delay-0 video node in a V6-style `mainSeq` timing sequence; V7's original slide-1 video node is directly under `tmRoot`. This is a likely cause of intermittent playback, not proven causality. CUA timings were unreliable; the previous “about 2.5 seconds” scene timing is withdrawn. Audio was not heard. V7 visual quality remains user-rejected.
+
+Next: after corrected-film QA is accepted, create a new versioned cover-only deck with sequence timing, retain V5 slides 2–14 and all notes byte-identical, and test that actual deck in native PowerPoint. Audio remains separate until audibly verified. Full test detail: `outputs/gradecrew-investment-20261019/native-powerpoint-tests/v7-native-playback-2026-10-19.md`. No PPTX was changed in this diagnostic step; the temporary copy is not a deliverable.
