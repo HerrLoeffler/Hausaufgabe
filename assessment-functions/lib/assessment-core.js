@@ -2,9 +2,11 @@
 
 const { createHash, createHmac, timingSafeEqual } = require("node:crypto");
 
+const { TYPES: VISUAL_TYPES, publicVisual, visualKey, gradeVisual, visualRatio } = require('./visual-questions');
+
 const SUPPORTED_TYPES = new Set([
   "single", "multi", "text", "dropdown", "truefalse", "gapfill",
-  "matching", "ordering", "grouping", "markwords", "number"
+  "matching", "ordering", "grouping", "markwords", "number", ...VISUAL_TYPES
 ]);
 
 function clampString(value, max = 500) {
@@ -164,6 +166,7 @@ function commonPublicQuestion(question) {
 
 function buildPublicQuestion(question, secret, { shuffleAnswers = false } = {}) {
   const q = commonPublicQuestion(question);
+  if (VISUAL_TYPES.includes(q.type)) return {...q, visual: publicVisual(question, (kind,id) => opaqueId(secret,question.id,kind,id))};
   const structuredAudio = question.audioAnswerMode === "audio-only" && ["matching", "ordering", "grouping"].includes(question.type);
   const audioItems = structuredAudio ? question.audioAnswerItems || [] : [];
   if (structuredAudio && (!Array.isArray(audioItems) || audioItems.length < 2 || audioItems.length > 12 || audioItems.reduce((size, item) => size + String(item.audioDataUrl || "").length, String(question.audioDataUrl || "").length) > 700000)) throw new Error("Audio answer items are incomplete");
@@ -253,6 +256,7 @@ function buildGradingKey(question, secret) {
     manualReview: question.manualReview === true
   };
 
+  if (VISUAL_TYPES.includes(type)) return {...key, ...visualKey(question,(kind,id) => opaqueId(secret,question.id,kind,id))};
   if (["single", "multi", "dropdown"].includes(type)) {
     key.correctOptionIds = (Array.isArray(question.options) ? question.options : [])
       .map((option, index) => option?.correct ? opaqueId(secret, question.id, "option", index) : null)
@@ -321,6 +325,7 @@ function buildGradingKey(question, secret) {
 
 function fingerprintQuestion(question) {
   return {
+    ...(VISUAL_TYPES.includes(question?.type) ? {visual:question.visual,visualSolution:question.visualSolution} : {}),
     id: String(question?.id || ""), position: Number(question?.position) || 0,
     type: String(question?.type || ""), text: String(question?.text || ""), points: Number(question?.points) || 0,
     imageDataUrl: String(question?.imageDataUrl || ""), imageUrl: String(question?.imageUrl || ""), imageAlt: String(question?.imageAlt || ""),
@@ -414,6 +419,7 @@ function resultShape(max, awarded, needsReview, correct) {
 function gradeQuestion(key, given) {
   const max = round1(key.points);
   const type = key.type;
+  if (VISUAL_TYPES.includes(type)) {const points=gradeVisual(key,given);return resultShape(max,points,false,visualRatio(key,given)===1);}
 
   if (type === "text") {
     if (key.manualReview) return resultShape(max, 0, true, null);
@@ -532,14 +538,14 @@ function sanitizeAnswersForStorage(gradingKey, answers) {
   const allowed = new Map((Array.isArray(gradingKey) ? gradingKey : []).map(key => [key.id, key]));
   for (const [questionId, key] of allowed.entries()) {
     const value = source[questionId];
-    if (["single", "dropdown", "truefalse", "text", "number"].includes(key.type)) {
+    if (["single", "dropdown", "truefalse", "text", "number", "numberline"].includes(key.type)) {
       out[questionId] = clampString(value, 4000);
     } else if (key.type === "markwords" && key.correctWordColors) {
       const map = value && typeof value === "object" && !Array.isArray(value) ? value : {};
       out[questionId] = Object.fromEntries(Object.entries(map).slice(0, 100).map(([index, color]) => [clampString(index, 100), clampString(color, 100)]));
-    } else if (["multi", "ordering", "markwords", "gapfill"].includes(key.type)) {
+    } else if (["multi", "ordering", "markwords", "gapfill", "hotspot"].includes(key.type)) {
       out[questionId] = (Array.isArray(value) ? value : []).slice(0, 100).map(item => clampString(item, 1000));
-    } else if (["matching", "grouping"].includes(key.type)) {
+    } else if (["matching", "grouping", "image-labeling"].includes(key.type)) {
       const map = value && typeof value === "object" && !Array.isArray(value) ? value : {};
       out[questionId] = Object.fromEntries(Object.entries(map).slice(0, 100).map(([k, v]) => [clampString(k, 100), clampString(v, 100)]));
     }
@@ -569,7 +575,7 @@ function publicQuizMetadata(quiz, quizId) {
 
 function assertNoSolutionLeak(paper) {
   const forbiddenKeys = new Set([
-    "correct", "correctBoolean", "acceptedAnswers", "numericAnswer", "tolerance",
+    "visualSolution", "correct", "correctBoolean", "acceptedAnswers", "numericAnswer", "tolerance",
     "targetWords", "correctWordColors", "acceptedOrders", "gradingKey", "answerKey", "solutions",
     "audioScript", "transcript", "audioTranscript", "solutionAudioDataUrl", "solutionScript", "solutionAudioScript", "optionAudioScript"
   ]);

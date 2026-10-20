@@ -1,3 +1,4 @@
+import {VISUAL_TYPES,renderVisual,readVisual,restoreVisual,visualComplete} from './visual-question-ui.mjs';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { createSecureAssessmentClient } from "./secure-assessment-client.js";
@@ -487,7 +488,8 @@ function renderMarkwords(section, question) {
 
 function renderQuestion(question, index) {
   const section = questionShell(question, index);
-  if (question.type === "single") renderOptions(section, question, false);
+  if (["hotspot","image-labeling","numberline"].includes(question.type)) renderVisual(section,question,'',onAnswerChanged);
+  else if (question.type === "single") renderOptions(section, question, false);
   else if (question.type === "multi") renderOptions(section, question, true);
   else if (question.type === "dropdown") renderDropdown(section, question);
   else if (question.type === "truefalse") {
@@ -516,6 +518,7 @@ function renderQuestion(question, index) {
 
 function collectQuestionAnswer(question, section) {
   if (!section) return null;
+  if (["hotspot","image-labeling","numberline"].includes(question.type)) return readVisual(section);
   if (["single", "truefalse"].includes(question.type)) return section.querySelector("input:checked")?.value || "";
   if (question.type === "multi") return [...section.querySelectorAll("input:checked")].map(input => input.value);
   if (["text", "number", "dropdown"].includes(question.type)) return section.querySelector("textarea,input,select")?.value || "";
@@ -538,6 +541,7 @@ function collectAnswers() {
 }
 
 function answerIsComplete(question, value) {
+  if (["hotspot","image-labeling","numberline"].includes(question.type)) return visualComplete(question,value);
   if (question.type === "ordering") return Array.isArray(value) && value.length === (question.items || []).length;
   if (question.type === "markwords" && (question.markGroups || []).length) return Boolean(value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length);
   if (["multi", "markwords"].includes(question.type)) return Array.isArray(value) && value.length > 0;
@@ -570,7 +574,8 @@ function applyDraft(draft) {
     if (value == null) continue;
     const section = document.querySelector(`.secureQuestion[data-qid="${CSS.escape(question.id)}"]`);
     if (!section) continue;
-    if (["single", "truefalse"].includes(question.type)) {
+    if (["hotspot","image-labeling","numberline"].includes(question.type)) restoreVisual(section,question,value);
+    else if (["single", "truefalse"].includes(question.type)) {
       const input = [...section.querySelectorAll("input")].find(node => node.value === String(value));
       if (input) input.checked = true;
     } else if (question.type === "multi") {
@@ -682,6 +687,7 @@ function showReceipt(receipt) {
   const solutionNote = document.createElement("p");
   solutionNote.textContent = "Lösungen werden nicht automatisch mit der Abgabe freigegeben.";
   host.appendChild(solutionNote);
+  if(firebaseConfig.projectId==='local-review' && receipt.localPrototype){copy.textContent='Lokale Beispielabgabe gespeichert. Bewertung durch den echten Assessmentkern auf diesem Rechner; keine Cloudabgabe.';for(const item of receipt.localBreakdown||[]){const line=document.createElement('p');line.textContent=`Aufgabe ${item.number}: ${item.points} / ${item.max} Punkte`;host.append(line);}}
   showOnly("secureResult");
 }
 

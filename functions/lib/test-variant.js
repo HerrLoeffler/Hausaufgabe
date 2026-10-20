@@ -24,7 +24,7 @@ function buildVariantInput(quiz, questions, privateAudios = new Map(), originalI
     const privateAudio = privateAudios.get(q.id) || {};
     const projection = {};
     // Explicit authoring allowlist: never copy attempts, asset bytes, release state or IDs.
-    for (const key of ["type", "text", "points", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "markGroups", "gapColors", "numericAnswer", "tolerance", "unit"]) {
+    for (const key of ["visual", "visualSolution", "type", "text", "points", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "markGroups", "gapColors", "numericAnswer", "tolerance", "unit"]) {
       if (q[key] !== undefined) projection[key] = JSON.parse(JSON.stringify(q[key]));
     }
     if (q.options) projection.options = q.options.map(o => ({ text: text(o.text, 500), correct: o.correct === true }));

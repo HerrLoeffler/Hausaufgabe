@@ -1,0 +1,682 @@
+{
+  "schemaVersion": 2,
+  "updatedAt": "2026-10-18T19:22:33.847Z",
+  "canonicalBaseBranch": "main",
+  "allowedStates": [
+    "active",
+    "integration_ready",
+    "blocked",
+    "integrated",
+    "archive_candidate"
+  ],
+  "staleAfterDays": 7,
+  "staleBehindThreshold": 1,
+  "ignoredBranches": [
+    "main",
+    "automation/guardian-state"
+  ],
+  "ignoredPrefixes": [
+    "preview-snapshot-",
+    "automation/worker/"
+  ],
+  "archivePrefixes": [
+    "backup/",
+    "v2."
+  ],
+  "workstreams": [
+    {
+      "id": "launch-controls-20261010",
+      "title": "GC-LAUNCH-CONTROLS-01: Technische Sicherheit + Datenschutz/Recht/faire Bedienung",
+      "primaryBranch": "docs/gc-launch-controls-integration-20261010",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/launch-controls-integration-20261010.md",
+      "relatedBranches": [
+        "docs/gc-launch-security-20261010",
+        "docs/gc-launch-privacy-20261010"
+      ]
+    },
+    {
+      "id": "development-status-v1",
+      "title": "Development Status / Mehr-Chat-Control-Plane",
+      "primaryBranch": "feature/development-status-v1",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/development-status-v1.md",
+      "relatedBranches": [
+        "feature/dev-governance-emulator"
+      ]
+    },
+    {
+      "id": "web-app",
+      "title": "Website / gemeinsamer App-Webstand",
+      "primaryBranch": "feature/gradecrew-app-integration",
+      "integrationTarget": "main",
+      "state": "active",
+      "relatedBranches": [
+        "fix/gradecrew-staging-polish",
+        "fix/gradecrew-staging-release-final",
+        "fix/admin-controls-auth-ready"
+      ]
+    },
+    {
+      "id": "crew-assistant",
+      "title": "Crew Assistant Core",
+      "primaryBranch": "feature/crew-assistant-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "relatedBranches": [
+        "fix/contextual-crew-assistants-v2",
+        "feature/coco-support-memory-20261009",
+        "fix/staging-feedback-coco-memory-20261009",
+        "fix/gc-security-coco-owned-id-20261009",
+        "fix/staging-feedback-coco-images-20261009",
+        "fix/staging-feedback-coco-turn-20261009",
+        "fix/staging-feedback-coco-context-20261009"
+      ]
+    },
+    {
+      "id": "remy-structured-telemetry-v1",
+      "title": "Remy Struktur / Telemetrie",
+      "primaryBranch": "feature/remy-structured-telemetry-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "relatedBranches": [
+        "fix/crew-telemetry-retention-v1",
+        "fix/remy-integration-test-loader",
+        "fix/remy-parser-review-v1"
+      ]
+    },
+    {
+      "id": "posthog-staging-telemetry-v1",
+      "title": "PostHog Staging Telemetrie / Privacy Projection",
+      "primaryBranch": "feature/posthog-staging-telemetry-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/posthog-staging-telemetry-v1.md",
+      "relatedBranches": [
+        "chore/posthog-staging-functions-config-v1"
+      ]
+    },
+    {
+      "id": "emmi-whole-test-revision",
+      "title": "Emmi / ganzen Test überarbeiten",
+      "primaryBranch": "feature/emmi-whole-test-revision-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "relatedBranches": []
+    },
+    {
+      "id": "tutorial-choice-replay-v1",
+      "title": "Tutorial Choice / Replay",
+      "primaryBranch": "feature/tutorial-choice-replay-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "relatedBranches": [
+        "fix/tutorial-finale-arrow-only"
+      ]
+    },
+    {
+      "id": "freetext-review",
+      "title": "Freitext-Prüfhilfe",
+      "primaryBranch": "feature/freetext-review-priority",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "blocked",
+      "relatedBranches": []
+    },
+    {
+      "id": "secure-assessment",
+      "title": "Prüfungsserver / Security",
+      "primaryBranch": "feature/secure-assessment-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "relatedBranches": [
+        "feature/gate-e-load-test",
+        "hardening/secure-preview-full-rc-check",
+        "integration/secure-assessment-mobile-gc28",
+        "fix/mobile-review-release-audit"
+      ]
+    },
+    {
+      "id": "telemetry",
+      "title": "Generische Telemetrie / Produktdiagnose",
+      "primaryBranch": "feature/telemetry-implementation",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "relatedBranches": [
+        "feature/telemetry-contract-v1",
+        "feature/telemetry-measurement-design",
+        "integration/telemetry-emulator-gate"
+      ]
+    },
+    {
+      "id": "bug-ops-v1",
+      "title": "BugOps / Fehler-Inbox und sichere Reparaturautomatik",
+      "primaryBranch": "feature/bug-ops-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/bug-ops-v1.md",
+      "relatedBranches": [
+        "feature/telemetry-implementation",
+        "feature/guardian-execution-v2",
+        "feature/bug-ops-server-v1",
+        "feature/bug-ops-attention-v1"
+      ]
+    },
+    {
+      "id": "ios-teacher-app",
+      "title": "iPad-Lehrerapp / Shared Design",
+      "primaryBranch": "feature/shared-gradecrew-design-system",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "relatedBranches": [
+        "feature/gradecrew-secure-ios",
+        "fix/gc-ios-02-auth12-native"
+      ]
+    },
+    {
+      "id": "design-foundation",
+      "title": "Design Foundation",
+      "primaryBranch": "feature/gradecrew-design-foundation-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "relatedBranches": [
+        "feature/design-dashboard-v1",
+        "feature/brand-logo-v1",
+        "feature/brand-core-v1",
+        "feature/games-brand-core-v1"
+      ]
+    },
+    {
+      "id": "design-startscreen-v1",
+      "title": "Öffentlicher GradeCrew Startscreen",
+      "primaryBranch": "fix/gc-design-05-mobile-auth-20261012",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/gc-design-05-mobile-auth-20261012.md",
+      "relatedBranches": [
+        "feature/design-startscreen-entry-activation-fix",
+        "feature/design-startscreen-masterpiece-v1",
+        "feature/design-startscreen-v1",
+        "fix/staging-feedback-mobile-auth-20261012",
+        "fix/staging-feedback-mobile-auth-ci-20261012"
+      ]
+    },
+    {
+      "id": "release-safety",
+      "title": "Release-Sicherung",
+      "primaryBranch": "feature/release-safety-snapshots",
+      "integrationTarget": "main",
+      "state": "active",
+      "relatedBranches": [
+        "chore/release-state-v2"
+      ]
+    },
+    {
+      "id": "staging-functions-automation-history",
+      "title": "Staging Functions Automatisierung / Nachweise",
+      "primaryBranch": "chore/staging-functions-automation",
+      "integrationTarget": "main",
+      "state": "archive_candidate",
+      "relatedBranches": [
+        "chore/record-staging-functions-e2e",
+        "chore/verify-crew-telemetry-staging-functions",
+        "fix/staging-functions-wif-display"
+      ]
+    },
+    {
+      "id": "games-structure",
+      "title": "Games Hub / Struktur",
+      "primaryBranch": "lab/games-structure",
+      "integrationTarget": "lab/vocab-rush",
+      "state": "active",
+      "relatedBranches": [
+        "lab/games-hub",
+        "lab/fast-quiz",
+        "lab/fast-quiz-v4-verified",
+        "lab/fehlerjagd-deutsch",
+        "lab/fehlerjagd-deutsch-v1-verified",
+        "lab/vocab-rush-v1-verified"
+      ]
+    },
+    {
+      "id": "games-escape",
+      "title": "Games / Escape Room",
+      "primaryBranch": "feature/escape-room-mvp-v1",
+      "integrationTarget": "lab/games-structure",
+      "state": "active",
+      "relatedBranches": [
+        "fix/escape-review-v1"
+      ]
+    },
+    {
+      "id": "games-design-system",
+      "title": "Games Design System",
+      "primaryBranch": "lab/games-design-system",
+      "integrationTarget": "lab/games-structure",
+      "state": "active",
+      "relatedBranches": []
+    },
+    {
+      "id": "games-production-guide",
+      "title": "GC-GAMES-PIPELINE-01: gemeinsamer Produktionsguide",
+      "primaryBranch": "docs/games-guide-consolidation-20261011",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/great-games-production-20261006.md",
+      "relatedBranches": [
+        "docs/great-games-production-20261006",
+        "docs/games-foundation-dev-mode-20261010"
+      ]
+    },
+    {
+      "id": "escape-tutor-cost-guards",
+      "title": "Escape Tutor Kosten-/Fallback-Guards",
+      "primaryBranch": "fix/escape-tutor-cost-guards",
+      "integrationTarget": "feature/escape-room-mvp-v1",
+      "state": "integrated",
+      "relatedBranches": []
+    },
+    {
+      "id": "ai-gateway-foundation",
+      "title": "Multi-Provider AI Gateway",
+      "primaryBranch": "feature/multi-provider-ai-gateway-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "relatedBranches": []
+    },
+    {
+      "id": "quality-routing-contract-v1",
+      "title": "KI-Qualitäts-/Sprachvertrag",
+      "primaryBranch": "feature/quality-routing-contract-v1",
+      "integrationTarget": "feature/multi-provider-ai-gateway-v1",
+      "state": "active",
+      "relatedBranches": [
+        "fix/ai-review-workflow",
+        "fix/ai-format-reliability",
+        "feature/ai-integration"
+      ]
+    },
+    {
+      "id": "ai-orchestration-v1",
+      "title": "Automatische KI-Auswahl / Kosten",
+      "primaryBranch": "feature/ai-orchestration-v1",
+      "integrationTarget": "feature/quality-routing-contract-v1",
+      "state": "active",
+      "relatedBranches": [
+        "fix/ai-routing-review-v1"
+      ]
+    },
+    {
+      "id": "openai-gateway-provider-v1",
+      "title": "OpenAI im gemeinsamen Gateway",
+      "primaryBranch": "feature/openai-gateway-provider-v1",
+      "integrationTarget": "feature/ai-orchestration-v1",
+      "state": "active",
+      "relatedBranches": []
+    },
+    {
+      "id": "ai-gateway-staging-cicd-v1",
+      "title": "Automatisches AI-Gateway-Staging",
+      "primaryBranch": "feature/ai-gateway-staging-cicd-v1",
+      "integrationTarget": "feature/openai-gateway-provider-v1",
+      "state": "blocked",
+      "relatedBranches": [
+        "integration/ai-gateway-staging",
+        "fix/ai-gateway-preflight-diagnostics"
+      ]
+    },
+    {
+      "id": "gemini-gateway-provider-v1",
+      "title": "Gemini im Staging AI Gateway",
+      "primaryBranch": "feature/gemini-gateway-provider-v1",
+      "integrationTarget": "integration/ai-gateway-staging",
+      "state": "active",
+      "relatedBranches": []
+    },
+    {
+      "id": "i18n-foundation-plan",
+      "title": "Internationalisierungsplan",
+      "primaryBranch": "feature/i18n-foundation-plan",
+      "integrationTarget": "main",
+      "state": "archive_candidate",
+      "relatedBranches": [
+        "feature/i18n-core-v1",
+        "feature/i18n-english-ui-v1",
+        "feature/i18n-german-refactor-v1"
+      ]
+    },
+    {
+      "id": "system-review-2026-10-02",
+      "title": "Gesamtprüfung / Integrationslücken",
+      "primaryBranch": "chore/resume-system-audit-20261002",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/system-review-2026-10-02.md",
+      "relatedBranches": []
+    },
+    {
+      "id": "dev-legacy-triage",
+      "title": "Legacy dev Branch",
+      "primaryBranch": "dev",
+      "integrationTarget": "main",
+      "state": "archive_candidate",
+      "relatedBranches": [
+        "chore/shared-todo-and-games-scope"
+      ]
+    },
+    {
+      "id": "dev-governance-emulator",
+      "title": "Alte Governance-/Emulator-Arbeit",
+      "primaryBranch": "feature/dev-governance-emulator",
+      "integrationTarget": "main",
+      "state": "archive_candidate",
+      "relatedBranches": [
+        "chore/gradecrew-automation",
+        "chore/shared-agent-handoffs"
+      ]
+    },
+    {
+      "id": "release-control-evidence-v2",
+      "title": "Release Control: verifizierte Receipts und ehrliche Abnahme",
+      "primaryBranch": "fix/release-control-evidence-v2",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/release-control-evidence-v2.md",
+      "relatedBranches": [
+        "feature/release-control-acceptance-v1"
+      ]
+    },
+    {
+      "id": "web-premerge-combined-ci-v1",
+      "title": "Combined CI vor Web-Integration",
+      "primaryBranch": "fix/web-premerge-combined-ci-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integration_ready",
+      "handoff": "workstreams/web-premerge-combined-ci-v1.md"
+    },
+    {
+      "id": "stage-guardian-v1",
+      "title": "Automatische KI-Fortsetzung der Entwicklungsphasen",
+      "primaryBranch": "feature/stage-guardian-v1",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/stage-guardian-v1.md"
+    },
+    {
+      "id": "guardian-execution-v2",
+      "title": "Autonome Auftrag-PR-Review-Integration-Staging-Kette",
+      "primaryBranch": "feature/guardian-execution-v2",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/guardian-execution-v2.md",
+      "relatedBranches": [
+        "feature/stage-guardian-v1",
+        "fix/guardian-delivery-proof-v1",
+        "fix/guardian-three-reviewers-v1"
+      ]
+    },
+    {
+      "id": "guardian-budget-pilot-v1",
+      "title": "Kleines Guardian-Kostenprofil und vorbereiteter E2E-Pilot",
+      "primaryBranch": "fix/guardian-budget-pilot-v1",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/guardian-budget-pilot-v1.md",
+      "relatedBranches": [
+        "feature/guardian-execution-v2"
+      ]
+    },
+    {
+      "id": "guardian-recovery-audit-20261004",
+      "title": "Guardian permission recovery and current repository audit",
+      "primaryBranch": "fix/guardian-recovery-queue-20261004",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/guardian-source-recovery-20261004.md",
+      "relatedBranches": [
+        "fix/guardian-read-permission-homepage-admission-20261004",
+        "fix/guardian-source-recovery-20261004",
+        "docs/guardian-source-recovery-evidence-20261004"
+      ]
+    },
+    {
+      "id": "actions-cost-policy-20261004",
+      "title": "Actions-Kosten / bewusste Preview-Meilensteine",
+      "primaryBranch": "fix/actions-cost-policy-20261004",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/actions-cost-policy-20261004.md",
+      "relatedBranches": [
+        "fix/actions-manual-visual-20261004",
+        "fix/actions-web-docs-20261004"
+      ]
+    },
+    {
+      "id": "guardian-staging-handoff-20261004",
+      "title": "Guardian exact CI to verified Staging handoff",
+      "primaryBranch": "fix/guardian-deploy-handoff-20261004",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/guardian-staging-handoff-20261004.md",
+      "relatedBranches": [
+        "docs/guardian-verified-pilot-20261004"
+      ]
+    },
+    {
+      "id": "audio-masterpiece-v2",
+      "title": "Audio Masterpiece V2 / Hör- und Lösungsaudio",
+      "primaryBranch": "feature/audio-masterpiece-v2",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/audio-masterpiece-v2.md",
+      "relatedBranches": [
+        "feature/audio-v2-staging-checkpoint",
+        "fix/audio-private-drafts-staging-v1"
+      ]
+    },
+    {
+      "id": "classroom-student-management-v1",
+      "title": "Schüler:innen-/Klassenverwaltung / Classroom Masterprojekt",
+      "primaryBranch": "feature/classroom-student-management-v1",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/classroom-student-management-v1.md",
+      "relatedBranches": [
+        "feature/secure-assessment-v1"
+      ]
+    },
+    {
+      "id": "gc-web-polish-20261007",
+      "title": "Startbühne und Lehrer-UI-Polish nach Staging-Screenshots",
+      "primaryBranch": "feature/gc-web-polish-20261007",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/gc-web-polish-20261007.md",
+      "relatedBranches": []
+    },
+    {
+      "id": "web-repair-20261007",
+      "title": "Web UI / Remy / gated audio choices",
+      "primaryBranch": "fix/staging-feedback-gc39-20261013",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/feedback-gc39-release-20261013.md",
+      "relatedBranches": [
+        "feature/gc-web-polish-20261007",
+        "feature/audio-web-repair-20261007",
+        "fix/web-acceptance-regressions-20261007",
+        "feature/audio-web-acceptance-20261007",
+        "fix/staging-feedback-20261011",
+        "fix/staging-feedback-followup-20261011",
+        "fix/staging-feedback-login-copy-20261011",
+        "fix/audio-question-single-field-20261011",
+        "fix/coco-staging-ui-cleanup-20261011",
+        "fix/local-color-contract-20261011",
+        "fix/gc-startup-flash-20261013",
+        "feature/practice-solution-release-20261013",
+        "fix/gc-ai-01-generation-notes-20261013",
+        "fix/staging-feedback-images10-20261013"
+      ]
+    },
+    {
+      "id": "lerninsel-layouts-20261007",
+      "title": "Ego-Lerninsel / Layouts und Spielbuch",
+      "primaryBranch": "docs/lerninsel-layouts-20261007",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/lerninsel-layouts-20261007.md",
+      "relatedBranches": [
+        "feature/lerninsel-ego-v1"
+      ]
+    },
+    {
+      "id": "lerninsel-ego-v1",
+      "title": "Ego-Lerninsel / erster Unreal-Spielabschnitt",
+      "primaryBranch": "feature/lerninsel-ego-v1",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/lerninsel-layouts-20261007.md",
+      "relatedBranches": [
+        "docs/lerninsel-layouts-20261007"
+      ]
+    },
+    {
+      "id": "img2threejs-codex-install-20261009",
+      "title": "img2threejs: lokales Codex-Werkzeug, Games-Zugriff und Assetqualität",
+      "primaryBranch": "docs/img2threejs-codex-install-20261009",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/img2threejs-codex-install-20261009.md",
+      "relatedBranches": []
+    },
+    {
+      "id": "codex-lifecycle-hooks-20261010",
+      "title": "GC-HOOKS-01: Lifecycle-Hook-Entwurf und zentrale Rollenabgrenzung",
+      "primaryBranch": "docs/gc-hooks-01-design-20261010",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/skills-integration-20261010.md",
+      "relatedBranches": []
+    },
+    {
+      "id": "gc-hooks-skills-setup-20261010",
+      "title": "GC-HOOKS-01-SKILLS: gezielte lokale Skills und Fachrollen-Zuordnung",
+      "primaryBranch": "docs/gc-hooks-skills-setup-20261010",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/skills-integration-20261010.md",
+      "relatedBranches": [
+        "docs/gc-hooks-skills-integration-20261010"
+      ]
+    },
+    {
+      "id": "matt-pocock-research-20261010",
+      "title": "GC-POCOCK-RESEARCH-01: lokale Caption-/Primärtextforschung, zentrale Metadaten",
+      "primaryBranch": "docs/gc-launch-blocked-checkpoints-20261010",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/matt-pocock-research-20261010.md",
+      "relatedBranches": []
+    },
+    {
+      "id": "privacy-controls-integration-20261010",
+      "title": "GC-LAUNCH-CONTROLS-01-PRIVACY: Integration nach belegten Gates vorbereiten",
+      "primaryBranch": "fix/gc-privacy-controls-20261010",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "blocked",
+      "handoff": "workstreams/privacy-controls-integration-20261010.md",
+      "relatedBranches": [
+        "fix/coco-chat-ui-background-memory-20261010"
+      ]
+    },
+    {
+      "id": "native-chat-model-20261010",
+      "title": "GC-MODEL-GOVERNOR-01: native Codex model defaults and GradeCrew start policy",
+      "primaryBranch": "feat/gc-native-chat-model-20261010",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/native-chat-model-20261010.md",
+      "relatedBranches": [
+        "docs/gc-model-governor-evidence-20261010",
+        "codex/gc-model-governor-first-import-20261010"
+      ]
+    },
+    {
+      "id": "gc-video-insights-20261011",
+      "title": "GC-VIDEO-INSIGHTS-20261011: Julian-Ivanov- und StrategieNerd-Videorecherche",
+      "primaryBranch": "docs/gc-video-insights-20261011",
+      "integrationTarget": "main",
+      "state": "integrated",
+      "handoff": "workstreams/research-videos-20261011.md",
+      "relatedBranches": []
+    },
+    {
+      "id": "admin-account-actions-20261011",
+      "title": "GC-WEB-REPAIR-20261007-ADMIN: Kontoverwaltung in vorhandener Testseite",
+      "primaryBranch": "feat/admin-account-actions-20261011",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/admin-account-actions-20261011.md",
+      "relatedBranches": []
+    },
+    {
+      "id": "pedagogical-pool-20261011",
+      "title": "GC-PEDAGOGY-KB-01: geprüfter Aufgabenpool in Testgenerierung",
+      "primaryBranch": "feat/pedagogy-pool-20261011",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/pedagogical-pool-20261011.md",
+      "relatedBranches": [
+        "fix/pool-targeted-staging-20261018"
+      ]
+    },
+    {
+      "id": "fastquiz-binomial-20261012",
+      "title": "Fast Quiz: binomische Formeln, Klasse10",
+      "primaryBranch": "feat/fastquiz-binomial-20261012",
+      "integrationTarget": "lab/games-structure",
+      "state": "integration_ready",
+      "handoff": "workstreams/fastquiz-binomial-20261012.md"
+    },
+    {
+      "id": "dashboard-ipad-tutorial-20261018",
+      "title": "GC-BRAND-HERO-MOTION-20261013: kompaktes Dashboard und Tutorialzugang",
+      "primaryBranch": "fix/tutorial-dashboard-ipad-20261018",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/dashboard-ipad-tutorial-20261018.md",
+      "relatedBranches": [
+        "docs/gc-brand-hero-motion-20261013"
+      ]
+    },
+    {
+      "id": "live-staging-isolation-20261016",
+      "title": "Schul-Live, getrennte Tests, native Offline-Abgabe und Lehrerfeedback",
+      "primaryBranch": "feature/live-staging-isolation-20261016",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/live-staging-isolation-20261016.md",
+      "relatedBranches": [
+        "feature/native-live-staging-20261018"
+      ]
+    },
+    {
+      "id": "mobile-student-chrome-20261019",
+      "title": "GC-WEB-REPAIR-20261007: mobile Schülernavigation, Abgabe am Ende und GC-Logo",
+      "primaryBranch": "fix/staging-feedback-mobile-student-20261019",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/mobile-student-chrome-20261019.md",
+      "relatedBranches": []
+    },
+    {
+      "id": "extended-question-types-20261020",
+      "title": "GC-EXTENDED-QUESTION-TYPES-01: integrierte visuelle Leistungsnachweise",
+      "primaryBranch": "feature/extended-question-types-20261020",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/extended-question-types-20261020.md"
+    }
+  ]
+}

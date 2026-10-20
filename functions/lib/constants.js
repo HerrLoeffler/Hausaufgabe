@@ -8,7 +8,7 @@ const PROMPT_VERSION = "testify-ai-v16";
 const AI_SCHEMA_VERSION = 5;
 const QUESTION_TYPES = Object.freeze([
   "single", "multi", "text", "dropdown", "truefalse", "gapfill",
-  "matching", "ordering", "grouping", "markwords", "number"
+  "matching", "ordering", "grouping", "markwords", "number", "hotspot", "image-labeling", "numberline"
 ]);
 const MATERIAL_MIME_TYPES = Object.freeze([
   "application/pdf", "image/jpeg", "image/png", "image/webp",

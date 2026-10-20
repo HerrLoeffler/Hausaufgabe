@@ -340,7 +340,10 @@ function buildSolutionSnapshot(questions) {
     const type = String(question?.type || "text");
     let prompt = type === "gapfill" ? "Lückentext" : cleanDisplay(question?.text, 1500);
     let answer = "";
-    if (["single", "multi", "dropdown"].includes(type)) {
+    if(type==='numberline'){answer=String(question.visualSolution?.value??'');}
+    else if(type==='hotspot'){answer=(question.visualSolution?.selected||[]).map(id=>`Bereich ${Number(id.slice(1))}`).join(', ');}
+    else if(type==='image-labeling'){answer=Object.entries(question.visualSolution?.assignments||{}).map(([id,label])=>`Bereich ${Number(id.slice(1))}: ${question.visual?.labels?.find(l=>l.id===label)?.text||'–'}`).join('; ');}
+    else if (["single", "multi", "dropdown"].includes(type)) {
       answer = (Array.isArray(question.options) ? question.options : [])
         .filter(option => option?.correct === true)
         .map(option => cleanDisplay(option?.text, 500))

@@ -1,7 +1,7 @@
 "use strict";
 
 // Teacher-only semantic context. Never include binary assets, IDs, drafts or feedback.
-const QUESTION_FIELDS = ['type','text','points','options','acceptedAnswers','manualReview','correctBoolean','pairs','items','acceptedOrders','groups','passage','targetWords','markGroups','gapColors','numericAnswer','tolerance','unit','mediaIntent','audioIntent','audioScript','audioInstruction','audioPresentation','audioAnswerMode'];
+const QUESTION_FIELDS = ['visual','visualSolution','type','text','points','options','acceptedAnswers','manualReview','correctBoolean','pairs','items','acceptedOrders','groups','passage','targetWords','markGroups','gapColors','numericAnswer','tolerance','unit','mediaIntent','audioIntent','audioScript','audioInstruction','audioPresentation','audioAnswerMode'];
 function semanticValue(value, depth = 0) {
   if (depth > 8) throw new Error('Aufgabenkontext ist zu stark verschachtelt.');
   if (typeof value === 'string') {
@@ -17,7 +17,7 @@ function semanticValue(value, depth = 0) {
   return undefined;
 }
 function taskContext(question = {}, testContext = {}) {
-  const q = Object.fromEntries(QUESTION_FIELDS.filter(k => question[k] !== undefined).map(k => [k,semanticValue(question[k])]));
+  const q = Object.fromEntries(QUESTION_FIELDS.filter(k => question[k] !== undefined).map(k => [k, k === 'visual' || k === 'visualSolution' ? JSON.parse(JSON.stringify(question[k])) : semanticValue(question[k])]));
   const test = Object.fromEntries(['title','subject','grade','topic','difficulty','contentLocale','schoolType','region'].filter(k => testContext[k] !== undefined).map(k => [k,semanticValue(testContext[k])]));
   return {question:q,test};
 }

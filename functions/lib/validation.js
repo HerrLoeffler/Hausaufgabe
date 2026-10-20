@@ -1,5 +1,6 @@
 "use strict";
 
+const {TYPES:VISUAL_TYPES,validateVisual}=require('./visual-questions');
 const { QUESTION_TYPES, LIMITS } = require("./constants");
 const { hasAudioAnswerEntries } = require("./audio-answers");
 
@@ -96,6 +97,7 @@ function variantRepeats(a, b) {
 
 function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true, requiredMediaKind, allowAudio = true, requiredAudioKind } = {}) {
   const errors = [];
+  if (VISUAL_TYPES.includes(q?.type)) {try {validateVisual(q);}catch(error){errors.push(error.message);}}
   if (!q || typeof q !== "object" || Array.isArray(q)) return ["Aufgabe fehlt."];
   if (!allowedTypes.includes(q.type)) errors.push(`Nicht erlaubter Aufgabentyp: ${q.type}`);
   if (!normalizeText(q.text)) errors.push("Fragetext fehlt.");

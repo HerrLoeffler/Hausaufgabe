@@ -10,6 +10,7 @@ function buildTeacherDecoderShape(questions) {
   return (Array.isArray(questions) ? questions : []).filter(question => question?.id).map(question => ({
     id: String(question.id),
     type: String(question.type || "text"),
+    ...(['hotspot','image-labeling','numberline'].includes(question.type)?{visualRegionIds:['r1','r2','r3','r4'],visualLabelIds:(question.visual?.labels||[]).map(l=>l.id)}:{}),
     optionCount: Array.isArray(question.options) ? question.options.length : 0,
     pairCount: Array.isArray(question.pairs) ? question.pairs.length : 0,
     itemCount: Array.isArray(question.items) ? question.items.length : 0,
@@ -29,7 +30,13 @@ function optionIndexMapFromCount(questionId, count, secret) {
 function decodeQuestionAnswerFromShape(shape, given, secret) {
   const type = shape.type;
   const questionId = shape.id;
-  if (["text", "number", "truefalse"].includes(type)) return stringValue(given);
+  if(type==='hotspot'||type==='image-labeling'){
+    const regions=new Map((shape.visualRegionIds||[]).map(id=>[opaqueId(secret,questionId,'region',id),id]));
+    if(type==='hotspot')return (Array.isArray(given)?given:[]).map(id=>regions.get(id)).filter(Boolean);
+    const labels=new Map((shape.visualLabelIds||[]).map(id=>[opaqueId(secret,questionId,'label',id),id]));
+    return Object.fromEntries(Object.entries(given&&typeof given==='object'&&!Array.isArray(given)?given:{}).filter(([id])=>regions.has(id)).map(([id,label])=>[regions.get(id),labels.get(label)||'']));
+  }
+  if (["text", "number", "truefalse", "numberline"].includes(type)) return stringValue(given);
   if (type === "gapfill" || type === "markwords") return Array.isArray(given) ? given.map(stringValue) : [];
 
   if (["single", "dropdown"].includes(type)) {

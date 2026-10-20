@@ -48,6 +48,8 @@ const audioIntentSchema = {
   },
   required: ["kind", "script", "presentation", "instruction", "reason"]
 };
+const visualSchema={type:'object',additionalProperties:false,properties:{version:{type:'integer',enum:[1]},template:{type:'string',enum:['plant','room','']},min:{type:'number'},max:{type:'number'},step:{type:'number'},labels:{type:'array',maxItems:12,items:{type:'object',additionalProperties:false,properties:{id:{type:'string'},text:{type:'string'}},required:['id','text']}}},required:['version','template','min','max','step','labels']};
+const visualSolutionSchema={type:'object',additionalProperties:false,properties:{selected:{type:'array',items:{type:'string'}},assignments:{type:'object',additionalProperties:false,properties:Object.fromEntries(['r1','r2','r3','r4'].map(id=>[id,{type:'string'}])),required:['r1','r2','r3','r4']},value:{type:'number'},tolerance:{type:'number',minimum:0}},required:['selected','assignments','value','tolerance']};
 const questionSchema = {
   type: "object", additionalProperties: false,
   properties: {
@@ -69,15 +71,18 @@ const questionSchema = {
     numericAnswer: { type: "number", description: "Für number die richtige Zahl; bei anderen Typen 0." },
     tolerance: { type: "number", minimum: 0 },
     unit: { type: "string" },
+    visual: visualSchema,
+    visualSolution: visualSolutionSchema,
     mediaIntent: mediaIntentSchema,
     audioIntent: audioIntentSchema
   },
-  required: ["type", "text", "points", "options", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "markGroups", "gapColors", "numericAnswer", "tolerance", "unit", "mediaIntent", "audioIntent"]
+  required: ["type", "text", "points", "options", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "markGroups", "gapColors", "numericAnswer", "tolerance", "unit", "visual", "visualSolution", "mediaIntent", "audioIntent"]
 };
 // Compact per-type schemas prevent irrelevant nullable fields from being used as
 // missing answers. The root stays an object; unions are nested (Structured Outputs).
 const NONEMPTY = { type: "string", pattern: "\\S" };
 const TYPE_FIELDS = {
+  hotspot:['visual','visualSolution'], 'image-labeling':['visual','visualSolution'], numberline:['visual','visualSolution'],
   single: ["options"], multi: ["options"], dropdown: ["options"],
   text: ["acceptedAnswers", "manualReview"], truefalse: ["correctBoolean"],
   gapfill: ["gapColors"], matching: ["pairs"], ordering: ["items", "acceptedOrders", "manualReview"], grouping: ["groups"],

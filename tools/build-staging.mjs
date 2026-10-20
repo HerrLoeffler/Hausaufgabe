@@ -22,6 +22,7 @@ const files = [
   'secure-student.html', 'secure-student-navigation.mjs', 'secure-student.js', 'secure-student.css', 'secure-assessment-client.js', 'secure-draft-persistence.js', 'secure-deadline-guard.js', 'secure-result-policy.js', 'secure-solution-release.js',
   'assets/vendor/qrcodejs-1.0.0.min.js', 'assets/vendor/qrcodejs-LICENSE.txt'
 ];
+files.push('visual-question-ui.mjs','visual-question-ui.css','shared/visual-templates.mjs');
 files.push(
   'tutorial-signins.mjs', 'dashboard-tutorial-entry.mjs',
   'gradecrew-workspace-upgrade.mjs',

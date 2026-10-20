@@ -1,0 +1,2 @@
+const note=document.createElement('div');note.setAttribute('role','note');note.style.cssText='background:#edf0f7;color:#283e60;padding:9px 16px;font:13px system-ui;border-bottom:1px solid #c6cfde';note.textContent='Lokaler GradeCrew-Prototyp · vorbereitete Beispielerstellung, simulierte Anmeldung · echter lokaler Grader · keine Cloudverbindung';document.body.prepend(note);
+document.addEventListener('gradecrew:review-ready',()=>document.dispatchEvent(new Event('gradecrew:extended-start')),{once:true});

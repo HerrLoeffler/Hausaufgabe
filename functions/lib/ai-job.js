@@ -125,6 +125,7 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
   if (q.type === "grouping") q.groups = raw.groups;
   if (q.type === "markwords") { q.passage = raw.passage; q.targetWords = raw.targetWords; q.markGroups = raw.markGroups || []; }
   if (q.type === "number") { q.numericAnswer = raw.numericAnswer; q.tolerance = raw.tolerance; q.unit = raw.unit; }
+  if(['hotspot','image-labeling','numberline'].includes(q.type)){q.visual=raw.visual;q.visualSolution=raw.visualSolution;}
   return q;
 }
 
