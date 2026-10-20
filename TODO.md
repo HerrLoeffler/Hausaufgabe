@@ -578,3 +578,7 @@ Native b43298b auf eigenem Branch: Teacher39161910081/Secure39161910224 laufen; 
 ## GC-ADAPTIVE-PRACTICE-01 – adaptive Übungsbegleitung (Planung)
 
 Beauftragt: Grob-/Detailkonzept und Stufenplan innerhalb GradeCrew. `branch_only`, Grob-/Detailentwurf, zwei Lernverläufe, Stufen-/Aufwandsplan und Akzeptanzmatrix gesichert; fachliche Pilotentscheidung offen. Keine Produktimplementierung/Deploys. [Konzept](docs/concepts/adaptive-practice-01.md). Draft [PR253](https://github.com/HerrLoeffler/Hausaufgabe/pull/253), Konzeptcommit `e510b7b`. Eigener Docsbranch `docs/gc-adaptive-practice-01`; [Übergabe](workstreams/adaptive-practice-01.md). Kapitel/GC-CLASSROOM-01/GC-PEDAGOGY-KB-01 nur lesend anbinden.
+
+### GC-ADAPTIVE-PRACTICE-01 Konkretisierung Lerngehirn 20.10.2026
+
+Martins Bild als anklickbarer Facheinstieg, Themen erst nach Fachwahl, Mathe6 mit sieben LehrplanPLUS-Bereichen. Bruchunterziele automatisch über begrenzte Suchphase mit gezielten Sprüngen und Ursachenprüfung; gemeinsame geprüfte Aufgaben per API-Entwurfsversorgung wiederverwenden, individuelle Lernstände getrennt halten. [Erweiterter Plan](docs/concepts/adaptive-practice-01.md), [Draft PR253](https://github.com/HerrLoeffler/Hausaufgabe/pull/253), Konzeptcommit8facad1. Status branch_only/Planung, keine Produktimplementierung oder Deploys. Nächster Schritt: zwei vollständige Bruchfolgen fachlich prüfen.
