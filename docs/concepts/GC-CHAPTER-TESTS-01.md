@@ -6,13 +6,13 @@ GC-CHAPTER-TESTS-01 · Konzeptentwurf vom 20.10.2026 · keine Produktfreigabe
 
 **Gut und realisierbar: 8/10 für optionale Kapitel im bestehenden Test.** Besonders plausibel bei einem breiten Mathetest: Themenplan, Orientierung und thematische Auswertung werden verständlicher. Das ist eine begründete Produkteinschätzung, kein Nachweis besserer Lernergebnisse. Bei kurzen Tests wären sechs Kapitel zusätzliche Bedienlast. Kapitelanzahl deshalb frei wählbar; ohne Kapitel bleibt der heutige Ablauf erhalten.
 
-Schlecht wäre ein Start mit sechs getrennten Prüfungen, eigenen Timern, Sperren und adaptiven Aufgaben. Das erhöht Organisationslast, Zustandskomplexität und das Risiko verlorener oder missverständlich abgegebener Antworten. Empfehlung: **ein Test, optionale Kapitel, freie Rückkehr, eine Endabgabe**. Der Nutzen muss anschließend mit Lehrkräften und echten Geräten geprüft werden.
+Unnötig wäre ein Start mit sechs getrennten Prüfungen und eigener Prüfungsengine. Optionale Bereichstimer gehören dagegen als Erweiterung der vorhandenen Testeinstellungen zum Konzept; ihre genaue Zeitlogik ist gesondert festzulegen. Das erhöht Organisationslast, Zustandskomplexität und das Risiko verlorener oder missverständlich abgegebener Antworten. Empfehlung: **ein Test, optionale Kapitel, freie Rückkehr, eine Endabgabe**. Der Nutzen muss anschließend mit Lehrkräften und echten Geräten geprüft werden.
 
-Vermuteter Zweck: einen längeren, thematisch breiten Test übersichtlich planen und bearbeiten und anschließend Stärken/Übungsbedarf erkennen. Ob Martin vorrangig eine Übung, eine benotete Leistungserhebung oder eine Standortbestimmung will, ist noch offen. Der Entwurf bevorzugt zunächst eine Standortbestimmung ohne neue Notenlogik.
+Von Martin am 20.10.2026 präzisiert: Übung und benoteter Test erhalten dieselbe Kapitelstruktur und dieselben optionalen Einstellungen. Das vorhandene Testerstellungssystem wird erweitert. Bundesland/Jahrgang sind keine Voraussetzung für diese Funktion; die vorhandene Lehrplaneinbindung bleibt im bestehenden Hintergrundprozess. Deren Kapitelanbindung wurde hier noch nicht technisch geprüft. Keine zusätzliche Diagnose- oder Erstellungsoberfläche.
 
 ## Beispiel: sechs Kapitel Mathematik
 
-Frei gewählter Themenmix, **kein offizieller Jahrgangsstufentest und keine Lehrplanbehauptung**. Jahrgang, Schulart und Bundesland sind noch nicht festgelegt. Zahlen dienen nur dazu, Planung und Gewichtung sichtbar zu machen. 18 Aufgaben sind kein Qualitätsziel und keine Aussage über eine passende Bearbeitungszeit.
+Frei gewählter Themenmix, **kein offizieller Jahrgangsstufentest und keine Lehrplanbehauptung**. Die grundlegende Kapitelrealisierung ist unabhängig von einer Festlegung auf Jahrgang, Schulart oder Bundesland. Zahlen dienen nur dazu, Planung und Gewichtung sichtbar zu machen. 18 Aufgaben sind kein Qualitätsziel und keine Aussage über eine passende Bearbeitungszeit.
 
 | Kapitel | Drei vorgeschlagene Aufgaben | Punkte | Schwerpunkt |
 |---|---|---:|---|
@@ -44,7 +44,7 @@ A schafft schnell Lesestruktur, aber ohne echte Zuordnung keine verlässlichen K
 
 B erfüllt das konkrete Beispiel und übernimmt bestehende Abgabe, Bewertung und Fristen. Der Preis ist eine Änderung quer durch Speicherung, sichere Projektion, Navigation und Auswertung. Deshalb Technik 6/10. Die Bedienung kann für kleine Tests unverändert bleiben. **Empfehlung für den ersten Produktumfang.**
 
-C wäre erst sinnvoll, wenn eigenständige Diagnoseziele mit geprüften Aufgabenpools, Interpretationsregeln und wiederholten Messungen gefordert werden. Kapitel allein rechtfertigen keinen neuen Modus. Eigene Abgaben/Zeiten wären ein zusätzlicher Produktauftrag; eine zweite Exam-Engine ist nicht vorgesehen. C hat potenziell hohen Nutzen, aber für Martins bisherige Frage unnötig viel Bedien- und Entwicklungsaufwand.
+C wäre erst sinnvoll, wenn eigenständige Diagnoseziele mit geprüften Aufgabenpools, Interpretationsregeln und wiederholten Messungen gefordert werden. Kapitel allein rechtfertigen keinen neuen Modus. Getrennte Abgaben wären ein zusätzlicher Produktumfang; optionale Zeitregeln lassen sich innerhalb von B planen; eine zweite Exam-Engine ist nicht vorgesehen. C hat potenziell hohen Nutzen, aber für Martins bisherige Frage unnötig viel Bedien- und Entwicklungsaufwand.
 
 ## Konkreter Ablauf in der bestehenden Oberfläche
 
@@ -82,7 +82,7 @@ Fortschritt bedeutet **Antwort vorhanden**, nicht richtig oder vollständig rich
 
 Die neue schmale mobile Aufgabenleiste bleibt bestehen: Vorherige – „Kapitel 2 · Aufgabe 5/18“ – Übersicht – Nächste. Die Übersicht gruppiert die bestehenden Aufgabenbuttons nach Kapitel und bietet den Filter „ohne/mit unvollständiger Antwort“. Kapitel sind keine neuen Seiten mit eigener Antwortspeicherung. Freie Rückkehr und globale Nummerierung bleiben möglich. Keine zweite dauerhafte Leiste, die auf Handy oder iPad Tastatur und Audio verdeckt. Sprünge setzen den Fokus zur Aufgabe; neutraler Text ergänzt Statussymbole.
 
-Am Ende des Tests steht einmal „Test abgeben“. Vor der Bestätigung: „Noch 3 Aufgaben ohne Antwort: …“. Die Lehrkraft darf offene Antworten weiterhin zulassen. Kein Kapitelwechsel gibt ab. Fristablauf und automatische Abgabe bleiben globale Vorgänge im vorhandenen Lebenszyklus. Ein angezeigter Offline-Stand muss klar zwischen lokal gesichert und vom Server bestätigt unterscheiden.
+Am Ende des Tests steht einmal „Test abgeben“. Vor der Bestätigung: „Noch 3 Aufgaben ohne Antwort: …“. Die Lehrkraft darf offene Antworten weiterhin zulassen. Kein Kapitelwechsel gibt ab. Ohne Bereichstimer bleiben Fristablauf und automatische Abgabe globale Vorgänge im vorhandenen Lebenszyklus. Optionale Bereichsfristen müssen diesen Lebenszyklus kontrolliert erweitern (siehe Zeitkonzept). Ein angezeigter Offline-Stand muss klar zwischen lokal gesichert und vom Server bestätigt unterscheiden.
 
 ### Ergebnisse
 
@@ -108,7 +108,7 @@ Die Bezeichnungen Draft/Question/Paper/Attempt/Grading/Result sind hier fachlich
 | Grading / Result | `assessment-core.js:503` bewertet nach Schlüssel-ID und summiert Punkte; `index.js:380` führt serverseitige Abgabe durch. `app.js:7911` exportiert Einzelantworten, Gesamtpunkte, Prozent und Status als CSV. | Kapitelaggregation anhand serverseitig fixierter Zuordnung, nicht vom Client gemeldeter Kapitel. Review-/Nachkorrekturpfad aktualisieren; Result um Kapitelpunkte/-maxima/-status ergänzen. CSV erhält stabile Kapitelspalten mit ID/Titel. Alte Ergebnisse ohne Metadaten bleiben lesbar; keine erfundene historische Kapitelzuordnung. |
 | Lebenszyklus / Regeln | `firestore.secure-assessment.rules:67` begrenzt Änderungen aktiver Tests; Fragenzugriff und private Assessmentdaten sind getrennt. | Kapitel und Zuordnung ebenfalls während Veröffentlichung/laufender Versuche sperren. Keine Aufnahme in allgemeine Liste frei änderbarer Lifecyclefelder. Neue freigegebene Revision erst für neue Versuche. |
 | Schüler-Web | `secure-student-navigation.mjs` navigiert bestehende `.secureQuestion[data-qid]` im DOM, ohne eigene Antworten oder Abgabe. `secure-assessment-client.js` nutzt vorhandene Callables. | Gruppierte Übersicht und Fortschritt aus Antwortzustand; bisherige IDs, Fokus-/Scrolllogik und Endabgabe erhalten. Auswertungs-/Freigabepolitik durchgängig nutzen. |
-| Offline / Fristen | `assessment-functions/lib/offline-recovery-policy.js` behandelt verspätete Nachlieferung ggf. als Review; sieben Tage Recovery sind keine zusätzliche Prüfungszeit. Serverfrist wird im Submit geprüft. | Metadaten und Navigation in denselben lokalen Versuch aufnehmen. Keine Kapitelpausen oder neuen lokalen Fristen. Nachlieferung, Quittung und Reviewstatus erhalten. Ein lokal gespeicherter Stand ist kein Beleg rechtzeitiger Serverabgabe. |
+| Offline / Fristen | `assessment-functions/lib/offline-recovery-policy.js` behandelt verspätete Nachlieferung ggf. als Review; sieben Tage Recovery sind keine zusätzliche Prüfungszeit. Serverfrist wird im Submit geprüft. | Metadaten und Navigation in denselben lokalen Versuch aufnehmen. Optionale Bereichsfristen serverseitig ergänzen; keine nur lokal maßgeblichen Fristen oder impliziten Pausen. Nachlieferung, Quittung und Reviewstatus erhalten. Ein lokal gespeicherter Stand ist kein Beleg rechtzeitiger Serverabgabe. |
 | App / Secure | Im separaten nativen Branch nutzen `SecureAssessmentAPI.swift` dieselben Callables, `SecureAttemptStore.swift` eine Codable-Identität, `SecureExamWebView.swift` lokale Webdateien. Die native README des Webbranches ist historisch und reicht nicht als aktueller Appnachweis. | API-/Decoderverträglichkeit und mitgelieferte lokale Webassets gesondert prüfen/aktualisieren. Browseränderung allein aktualisiert kein Apppaket. Secure-Sitzung bleibt über alle Kapitel durchgehend; Entsperren erst nach bestehender dauerhafter lokaler Abgabe-/Syncpolitik, kein Entsperren am Kapitelende. Physische Geräteprüfung erforderlich. |
 | Druck / PDF | PDF-/Bildimport ist sichtbar vorhanden. Ein dedizierter Test-PDF-/Druckexport wurde in den geprüften Webpfaden nicht nachgewiesen; vorhandener Ergebnisexport ist CSV. | Bei vorhandenem weiteren Druckpfad nachinventarisieren. Minimum für Kapiteldarstellung: druckbare Überschriften/Nummern, keine Navigation im Ausdruck, keine abgeschnittenen Aufgaben. Einen neuen PDFgenerator als separaten Umfang behandeln; Audio im Papier klar kennzeichnen/mit zugelassenem Ersatz, keine Lösungen abdrucken. |
 
@@ -129,13 +129,13 @@ Zufall: Kapitelreihenfolge zunächst fest; Fragen nur innerhalb ihres Kapitels m
 
 ## Stufenplan und Aufwand
 
-**Stufe 0 – Produktentscheidungen:** Zweck und Zielgruppe festlegen, Beispielplan auf tatsächlichen Unterricht zuschneiden, B und Punktesummenmodell bestätigen. Vor Implementierung exakte Runtimebasis und native Paketbasis erneut feststellen. Dieser Entwurf ist die Entscheidungsgrundlage, kein Startsignal für Entwicklung.
+**Stufe 0 – geklärte Richtung:** B erweitert die vorhandene Testerstellung gleichermaßen für Übung und benoteten Test; keine Bundeslandfestlegung nötig. Vorhandene Lehrplananbindung weiterverwenden. Optionales Zeitkonzept mitführen; dessen Ablaufdetails sind noch Vorschläge. Vor Implementierung exakte Runtimebasis und native Paketbasis erneut feststellen. Dieser Entwurf ist die Entscheidungsgrundlage, kein Startsignal für Entwicklung.
 
 **Stufe 1 – kleinstes zusammenhängendes Produkt:** optionaler Kapitelplan, manuelle Zuordnung, stabile IDs/Validierung, gesicherter Publish-/Resumevertrag, freie Kapitelnavigation mit vorhandener Leiste, eine Endabgabe, einfache Kapitelpunkte samt Reviewstatus, bestehende Freigabe, CSV. Remy-Themenplan kontrolliert in bestehenden Job-/Editorweg integrieren, wenn „vollständigen Test nach Themenplan erstellen“ zum ersten Pilot gehört. Alternativ zuerst manuell testen und KI-Anbindung separat nachziehen; dies wäre eine ausdrücklich reduzierte Pilotvariante. Keine Kapitelgewichte, Sperren oder Teilabgaben.
 
 **Stufe 2 – nach Pilotnutzen:** komfortable Kapitelvorlagen, bessere Plan-/Ist-Prüfung durch Remy/Emmi/Wilma, Themenfilter in Auswertung und Übungsentwurf, druckbare Darstellung, belastbar getestete App-/Securefreigabe. Breite Freigabe erst nach Browser-, nativer Kompatibilitäts- und Geräteabnahme; Stufe 1 darf bis dahin nur gezielt freigegebene Clients bedienen.
 
-**Offene Optionen mit jeweils neuem Auftrag:** Kapitelreihenfolge ändern lassen, Kapitel sperren, getrennte Abgaben, einzelne Timer, echte Pausen, adaptive Auswahl oder separate Kapitelgewichte. Jede Option braucht eine begründete pädagogische Anforderung und neue Zustands-/Abnahmebedingungen. Bei benoteten Tests könnten unterschiedliche adaptive Wege die Vergleichbarkeit erschweren; das ist hier eine Designfrage, keine geklärte Messmethode.
+**Offene Optionen mit jeweils neuem Auftrag:** Kapitelreihenfolge ändern lassen, Kapitel sperren, getrennte Abgaben, echte Pausen, adaptive Auswahl oder separate Kapitelgewichte. Jede Option braucht eine begründete pädagogische Anforderung und neue Zustands-/Abnahmebedingungen. Bei benoteten Tests könnten unterschiedliche adaptive Wege die Vergleichbarkeit erschweren; das ist hier eine Designfrage, keine geklärte Messmethode.
 
 Aufwand: A ist relativ klein, sofern nur Darstellung betroffen ist. B ist ein **mittleres, mehrere Schichten betreffendes Vorhaben**, kein reiner Editorbutton: ungefähr sieben Arbeitspakete (Vertrag/Legacy; Editor/Draft; Generierung; Server/Resume/Regeln; Navigation/Offline; Auswertung/Export; Geräte/App). C wäre ein großes separates Produktvorhaben. Eine seriöse Kalender- oder Preisangabe ist vor ID-/Fingerprint-/App-Kompatibilitätsprobe und festgelegtem KI-/PDFumfang nicht möglich. Annahme für B: vorhandene Engine und Punktepolitik werden wiederverwendet, keine Bestandsmigration, kein neuer PDFgenerator und keine native Neuentwicklung. Größte Unsicherheit: Kompatibilität alter Versuche und eigenständig ausgelieferter nativer Webassets.
 
@@ -164,8 +164,24 @@ Koordination frisch gelesen: [main-Einstieg](https://github.com/HerrLoeffler/Hau
 
 Die Schuladresse hausaufgabe-staging ist gemäß aktuellem STATE Production, gc45-rc1 aus 4f8b7922; getrennt gradecrew-staging-2026. Hier wurde nur der belegte Repo-/Refstand geprüft, kein neuer öffentlicher Manifest-/Assetabruf und keine Live-Funktionsprobe vorgenommen. Kein Deployment, keine Release-Stufe angehoben, keine Produkttests ausgeführt. Pädagogische Aussagen sind Entwurfsabwägungen; es wurde keine Wirksamkeit oder offizielle Lehrplankonformität behauptet.
 
-## Drei entscheidende Fragen an Martin
+## Optionales Zeitkonzept innerhalb derselben Testerstellung
 
-1. Soll der erste Einsatz vor allem **Standortbestimmung/Übung** oder **benoteter Test** sein?
-2. Für welche **Jahrgangsstufe, Schulart und welches Bundesland** soll das erste konkrete Mathebeispiel passen?
-3. Passt als erster Umfang **optionale Kapitel, freie Rückkehr, eine gemeinsame Endabgabe und Gewichtung über Aufgabenpunkte**?
+Von Martin gewünscht: Die Lehrkraft kann optional Gesamtzeit oder Zeiten für einzelne Bereiche einstellen. Diese Möglichkeiten gelten gleich für Übung und benoteten Test. Sie sind keine sechs separaten Tests. Noch keine Implementierung beauftragt.
+
+Vorschlag für die vorhandenen Zeiteinstellungen:
+
+- **Ohne Zeitlimit:** freie Kapitelwahl und Rückkehr.
+- **Gesamtzeit:** vorhandener Testtimer; Kapitelwechsel verbraucht keine zusätzliche oder neue Zeit.
+- **Bereichszeiten:** je Kapitel optional Minuten, leeres Feld bedeutet kein eigenes Bereichslimit. Als einfacher Startvorschlag beginnt eine Bereichsfrist beim ausdrücklichen ersten Start dieses Bereichs und läuft auch beim Verlassen weiter. Rückkehr bleibt bis zum Fristende möglich. Das Öffnen der Kapitelübersicht startet keinen Timer.
+
+Gesamtzeit und Bereichszeiten zunächst als alternative Einstellungen anbieten. Eine Kombination bleibt mögliches späteres Detail; falls gewünscht gilt die jeweils frühere Frist und die Oberfläche muss beide Grenzen verständlich zeigen. Dies ist ein Vorschlag zur Begrenzung der Bedienkomplexität, keine bereits von Martin entschiedene Beschränkung.
+
+Bei Bereichsfristende schlägt der Entwurf vor, die betreffenden Antworten zu sichern und nur diesen Bereich für Änderungen zu schließen. Der Test läuft weiter; es bleibt eine gemeinsame Endabgabe. Dafür ist eine serverseitig gespeicherte Antwortmomentaufnahme beim Bereichsschluss nötig: bloßes Sperren im Browser reicht nicht. Verspätete/offline übermittelte Antworten benötigen wie bisher einen nachvollziehbaren Reviewpfad. Kapitelzeit niemals beim Reload, Wechsel oder Wiederverbinden zurücksetzen. Andere Kapitel und die Secure-Sitzung werden durch Bereichsende nicht beendet oder entsperrt.
+
+Noch offen vor Timerimplementierung: Soll die Bereichszeit ab erstem Start durchlaufen (Vorschlag) oder nur aktive Bearbeitungszeit zählen? Was geschieht bei Bereichsfristende und Offlinezustand genau? Aktive Bearbeitungszeit hätte deutlich mehr Pause-/Wechsel-/Manipulationsfragen. Diese Detailfragen blockieren den grundlegenden Kapitelentwurf nicht.
+
+Technisch ergänzen: optionales Zeitprofil in Quiz/Draft, eingefrorene Zeitregeln im Versuch, serverseitig bestätigte Bereichsstarts/-fristen und gegebenenfalls gesicherte Bereichsantworten. Bestehende Callables/Lebenszyklus gezielt erweitern, keine zweite Engine. Timer-Akzeptanzfälle: ohne Limit, Gesamtlimit, gemischte begrenzte/unbegrenzte Bereiche, Start erst nach Bestätigung, Wechsel/Reload/Offline ohne Reset, Fristende mit offener Eingabe, idempotentes Bereichsschließen und gemeinsame Endabgabe. Aufwand für Kapitelgrundstruktur und Bereichstimer separat schätzen: Timer benötigen zusätzliche Serverzustände und erhöhen den Umfang.
+
+## Nächster Planungsschritt
+
+Den bestehenden Erstellungsablauf Schritt für Schritt um optionale Kapitel und die Zeiteinstellungen ergänzen. Zuerst Kapitelvertrag, Zuordnung, Veröffentlichung, Navigation und Kapitelpunkte konkretisieren; anschließend Bereichszeitregeln ausarbeiten. Kein eigenständiger Übungs-/Testmodus, keine erneute Bundeslandfrage und kein Nachbau der Oberfläche.
