@@ -1,5 +1,13 @@
 # GradeCrew – gemeinsame To-do-Liste
 
+## GC-CHAPTER-TESTS-01 — Kapitelgrundstruktur, isolierte Testvorschau (20.10.2026)
+
+- [x] Bestehende Testerstellung, Remy/Emmi, Veröffentlichung, Schülernavigation, Auswertung und CSV um optionale Kapitel erweitert. Bereichstimer ausgenommen.
+- [x] Unabhängiges Review mit sechs korrigierten Befunden; Node22 Functions289, Assessment98, Web/UI506, Kapitelregeln13, vollständige Emulatorkette und GitHub-CI39471477562 grün. Echte synthetische Chrome-Browserkette inklusive Reload, Abgabe und Nachkorrektur bestanden.
+- [x] Nur getrenntes Testprojekt gradecrew-staging-2026: selektive Functions/Rules und [eigene Vorschau](https://gradecrew-staging-2026--chapters-20261020-w5x2v4cu.web.app) bis27.10.2026. Runtime cf21ddf9;172 Assets geprüft. [Implementierung PR254](https://github.com/HerrLoeffler/Hausaufgabe/pull/254), [Übergabe](workstreams/chapter-tests-01.md), [Releasebelege](docs/evidence/chapter-tests-20261020.json). Keine Productionänderung.
+- [ ] Martin prüft die Grundstruktur auf der Vorschau. Physische iPad-/Nativeabnahme und Integrationsmerge offen; echte KI-Generierungen nicht ausgeführt. Bereichstimer danach separat konkretisieren.
+
+
 ## GC-WEB-REPAIR-20261007 — mobile Schüler-Browseransicht (19.10.2026)
 
 - [ ] Abgabe nur am Testende, mitwandernde Aufgabennavigation und GC-Logo sind per [PR250](https://github.com/HerrLoeffler/Hausaufgabe/pull/250) integriert und nach ausdrücklicher Nutzerfreigabe als Hosting-only auf [Schul-Live](https://hausaufgabe-staging.web.app/) veröffentlicht: SHA `4f8b7922`, Version `2.3.1-gc45-rc1`, alle168 öffentlichen Assetprüfsummen bestätigt, unabhängiger öffentlicher Review PASS. Exakte Merge-CI39325006198, mobile39325006269 und admin39325006259 grün. Physische Safari-/Handyabnahme bleibt offen; keine Functions-/Rules-/Nativeänderungen. [Übergabe](workstreams/mobile-student-chrome-20261019.md).
@@ -574,8 +582,3 @@ PR243→Integrationscommit7a18445f926a16b9a795c761f9863d7ecfb6b3b0, Kandidat4b30
 Die Schuladresse **https://hausaufgabe-staging.web.app/** ist jetzt bewusst Live und liefert gc44 aus dem geprüften Baum c8886574 (Source42447348, kanonische Integration5a248621, PR248). Hosting-Dateien vollständig remote verglichen;58/58 Schulfunctions aktiv, genau sieben Assessment- und zwei Feedback-/Telemetryfunctions aktualisiert, keine entfernt. Getrennte Tests unter https://gradecrew-staging-2026.web.app/ (38/38Functions aktiv). Altprojekt hausaufgabe-40294 unverändert. Kein Datenumzug.
 
 Native b43298b auf eigenem Branch: Teacher39161910081/Secure39161910224 laufen; **neuer Upload und physische Offline-Abnahme noch offen**. Nutzerentscheidung: nach dauerhaft lokal gesicherter Abgabe freigeben, später synchronisieren; weitere Prüfung bis Serverreceipt gesperrt. Kein Fake-Erfolg. Feedback hat einen Capture-Pfad und bleibt freigabepflichtig. Connector0.5 installiert/geprüft; aktueller Chat braucht Reload und separate Live-Adminanmeldung. Neue Test-WIF-Automatik bleibt bis Einrichtung fail-closed. [Vollständige Übergabe](workstreams/live-staging-isolation-20261016.md). Ältere Production-/Staging-Aussagen oben sind historische Nachweise und keine aktuelle Projektzuordnung.
-
-
-## GC-CHAPTER-TESTS-01 – Idee/Planung (20.10.2026)
-
-- [ ] Kapitel im bestehenden Test prüfen: Konzept und konkreter siebenstufiger Umsetzungsplan erstellt: bestehende manuelle/Remy-Erstellung, Kapitelvertrag, Speicherung, sichere Publikation/Resume, Schülernavigation, Auswertung/Nachkorrektur und Verpackung/Geräte. Grundstruktur zuerst; Bereichstimer danach separat planen, heutiger Gesamttimer bleibt. Keine Produktfreigabe oder Implementierung, keine Release-Stufenänderung. Martin präzisiert: vorhandene Testerstellung erweitern, Kapitel für Übung/benoteten Test gleich; ohne Bundeslandfestlegung. Optionale Gesamt-/Bereichstimer mitplanen, Ablaufdetails offen. [Konzept](docs/concepts/GC-CHAPTER-TESTS-01.md) · [Übergabe](workstreams/chapter-tests-01.md). [Umsetzungsplan](docs/superpowers/plans/2026-10-20-gradecrew-chapters-foundation.md). Nächster Schritt: Martin prüft den Plan; Implementierung erst nach anschließendem Auftrag.

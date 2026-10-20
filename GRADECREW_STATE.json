@@ -1853,6 +1853,41 @@
         ],
         "physical_device": "not_performed"
       }
+    },
+    {
+      "id": "chapter-tests-01",
+      "task_id": "GC-CHAPTER-TESTS-01",
+      "branch": "feat/chapter-tests-20261020",
+      "stage": "staging_deployed",
+      "verification_scope": "isolated_test_preview_and_selected_backend; integration not merged",
+      "runtime_commit": "cf21ddf969c41eee1b7cb1fdb51c243da10f0351",
+      "observed_head": "021c8e8c2431ff20306a66186e4fdcfcbbe73f94",
+      "implementation_pr": 254,
+      "documentation_pr": 252,
+      "ci": {
+        "run": 39471477562,
+        "sha": "5f85a53e175824475c9d2deeca19c2dcc4a63578",
+        "conclusion": "success",
+        "runtime_equivalent_to_deployed": true
+      },
+      "staging": {
+        "project": "gradecrew-staging-2026",
+        "preview_url": "https://gradecrew-staging-2026--chapters-20261020-w5x2v4cu.web.app",
+        "hosting_version": "3aab4ac47985d1f5",
+        "expires": "2026-10-27",
+        "verified_assets": 172,
+        "backend": "14 selected functions plus Firestore rules; successful CLI receipt; inventory38->40"
+      },
+      "user_test": "not_performed; synthetic Chrome teacher/student/review/CSV passed",
+      "handoff": "workstreams/chapter-tests-01.md",
+      "evidence": "docs/evidence/chapter-tests-20261020.json",
+      "next_action": "Martin prüft Kapitelgrundstruktur auf Testpreview; Feedback im selben Task, Bereichstimer danach konkretisieren",
+      "limits": [
+        "No physical iPad/native acceptance",
+        "No paid AI generation",
+        "No school/production deployment",
+        "No integration/main merge"
+      ]
     }
   ],
   "deployments": [

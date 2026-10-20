@@ -672,11 +672,14 @@
     },
     {
       "id": "chapter-tests-01",
-      "title": "GC-CHAPTER-TESTS-01: optionale Kapiteltests – Idee und Konzept",
-      "primaryBranch": "docs/gc-chapter-tests-01",
-      "integrationTarget": "main",
+      "title": "Optionale Kapitel in vorhandener Testerstellung",
+      "primaryBranch": "feat/chapter-tests-20261020",
+      "integrationTarget": "feature/gradecrew-app-integration",
       "state": "active",
-      "handoff": "workstreams/chapter-tests-01.md"
+      "handoff": "workstreams/chapter-tests-01.md",
+      "relatedBranches": [
+        "docs/gc-chapter-tests-01"
+      ]
     }
   ]
 }
