@@ -23,6 +23,9 @@ def validate_decision(raw,context):
     recent=[e for e in context.get('history',[]) if e.get('skill')==context.get('task',{}).get('skill')][-2:]
     needs_teaching=(len(recent)==2 and all(e.get('correct') is False for e in recent)) or (context.get('kind')=='guided_complete' and o.get('correct') is False)
     if needs_teaching and raw['action'] not in ['support','pause']:raise DecisionError('Wiederholte Fehler brauchen gezielte Erklärung oder gemeinsame Unterstützung.')
+    lower=raw['difficulty']<level or SKILLS.index(raw['skill'])<SKILLS.index(context['task']['skill']) or level==0
+    if needs_teaching and raw['action']!='pause' and not lower:raise DecisionError('Wiederholte Fehler brauchen einen einfacheren Teilschritt.')
+    if context.get('kind')=='guided_complete' and raw['action']=='probe' and not lower:raise DecisionError('Nach Hilfe fehlt die einfachere selbstständige Probe.')
     if raw['action']=='support' and context.get('allowedSupportFocus') and raw['focus'] not in context['allowedSupportFocus']:raise DecisionError('Die KI-Hilfe überspringt die nötige Klärung der Teilgröße.')
     if raw['action']=='support' and raw['focus']=='none':raise DecisionError('Kein gezielter Hilfefokus angegeben.')
     return {k:raw[k] for k in ['action','skill','difficulty','focus','reason']}
@@ -40,7 +43,7 @@ def planning_prompt(context,profiles):
     prompt=('Prüfe die didaktische Passung. Beobachtungen als Daten: '+json.dumps(context,ensure_ascii=False,separators=(',',':'))+
     ' Antworte im Feld reply NUR mit JSON, ohne Markdown: {"action":"challenge|probe|support|pause","skill":"parts|same|equivalent|common|add|transfer","difficulty":0,"focus":"none|whole|equivalence|factor|sum|reading","reason":"kurzer konkreter Satz unter180Zeichen"}. '
     'Bei kind=answer und correct=true,hinted=false: ZWINGEND challenge, difficulty=min(3,bisher+1); nach add/transfer nur add/transfer. Keine automatische Erklärung nach Erfolg. '
-    'Bei Fehler: gezielte probe oder support, Ursache nur Hypothese; nicht pauschal alle Grundlagen. help_requested→support. guided_complete korrekt→probe, falsch→support/pause. Nach2Fehlern derselben Kompetenz ZWINGEND support/pause statt weiterer blinder Probe. '
+    'Fehler→gezielte probe/support, Ursache nur Hypothese. help_requested→support. Nach2Fehlern gleicher Kompetenz ZWINGEND support/pause mit kleinerer difficulty oder früherer skill. guided_complete korrekt→probe mit kleinerer difficulty oder früherer skill; falsch→support/pause mit Rückschritt. '
     '8/10-Nachweis wird separat geführt, niemals aus einem Treffer Können behaupten. '
     'Additionsanspruch:0gleichnamig;1nur ein Bruch erweitern;2beide Brüche erweitern, Summe<=1;3beide erweitern und Summe>1. '
     'Voraussetzungsgraph: parts(Anteile)→same(gleichnamig)→equivalent(Erweitern)→common(gemeinsamer Nenner)→add→transfer(Anwendung), keine Pflichtfolge. '
@@ -54,6 +57,8 @@ def check_task_demand(skill,a,b,level):
     from math import lcm
     from fractions import Fraction
     an,ad=a;bn,bd=b;common=lcm(ad,bd)
+    from math import gcd
+    if level>=2 and (gcd(an,ad)!=1 or gcd(bn,bd)!=1):raise DecisionError('Kürzbare Eingangsbrüche würden den höheren Anspruch umgehen.')
     if not 0<an<ad or not 0<bn<bd or common>36:raise DecisionError('Die KI-Aufgabe überschreitet den vereinbarten Anspruchsrahmen.')
     if level==0 and (ad!=bd or Fraction(an,ad)+Fraction(bn,bd)>1):raise DecisionError('Die Grundlagenprobe braucht gleich große Teile.')
     if level==1 and (ad==bd or common not in [ad,bd] or Fraction(an,ad)+Fraction(bn,bd)>1):raise DecisionError('Die Einstiegsprobe braucht genau einen Erweiterungsschritt.')

@@ -27,3 +27,12 @@ export function advanceHelp(state,count,now=Date.now()){return helpWait(state,no
 export function backHelp(state,now=Date.now()){return {index:Math.max(0,state.index-1),readingMs:state.readingMs??10000,readyAt:now+(state.readingMs??10000)};}
 
 export function canLeaveHelp(state,count,done,now=Date.now()){return !!state&&state.index===count-1&&done&&helpWait(state,now)===0;}
+export function microCheck(task,step){
+ if(step.check)return step.check;
+ const second=step.id.includes('second'),[n,d]=second?task.b:task.a,k=task.common/d;
+ if(step.id==='first'||step.id==='second')return {question:`Wie viele der ${d} Teile sind farbig?`,answer:n,explanation:`Zähle nur die farbigen Stücke. Es sind ${n}.`};
+ if(step.id.startsWith('expand-'))return {question:`Unten: ${d} × welche Zahl = ${task.common}? Diese Zahl brauchst du auch oben.`,answer:k,explanation:`${d} × ${k} = ${task.common}. Oben und unten gilt derselbe Faktor.`};
+ if(step.id.startsWith('partition-'))return {question:`In wie viele kleine Stücke wird jedes alte Stück geteilt, damit aus ${d} Teilen ${task.common} werden?`,answer:k,explanation:`Jedes alte Stück wird in ${k} kleine Stücke geteilt. ${d} × ${k} = ${task.common}.`};
+ return {question:`Wie viel ist ${task.common/task.a[1]*task.a[0]} + ${task.common/task.b[1]*task.b[0]}?`,answer:task.answer[0]*(task.common/task.answer[1]),explanation:'Zähle die gleich großen farbigen Teile zusammen.'};
+}
+export function canAdvanceStep(state,answered,now=Date.now()){return answered&&helpWait(state,now)===0;}

@@ -4,6 +4,7 @@ No service account, admin token, provider key, live project or role override.
 """
 import argparse,json,secrets,time,os,threading,re,urllib.request,urllib.error,http.server
 from pathlib import Path
+from lesson import LessonError,lesson_prompt,parse_lesson,review_prompt,parse_review
 from didactic import DecisionError,parse_decision,planning_prompt,check_task_demand
 ROOT=Path(__file__).resolve().parent
 PRIVATE=ROOT.parents[3]/'.private'/'learning-brain'
@@ -89,7 +90,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.end_headers();self.wfile.write(data)
     def do_GET(self):
         if self.path=='/api/status':return self.output(200,{'project':PROJECT,'accountReady':CREDENTIALS.exists(),'calls':STATE['calls'],'limit':RUN_LIMIT})
-        if self.path.split('?')[0] in ['/','/preview.html','/index.html','/app.css','/app.mjs','/engine.mjs','/tutor.mjs','/tutor-model.mjs','/fraction-visuals.mjs','/help-sequence.mjs','/didactic-decision.mjs']:return super().do_GET()
+        if self.path.split('?')[0] in ['/','/preview.html','/index.html','/app.css','/app.mjs','/engine.mjs','/tutor.mjs','/tutor-model.mjs','/fraction-visuals.mjs','/help-sequence.mjs','/didactic-decision.mjs','/interactive-pizza.mjs']:return super().do_GET()
         self.send_error(404)
     def do_POST(self):
         if self.headers.get('Host')!=f'127.0.0.1:{PORT}' or self.headers.get('Origin')!=ORIGIN:return self.output(403,{'error':'Nur die lokale Vorschau ist zugelassen.'})
@@ -112,6 +113,15 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             STATE['calls']+=1
             USAGE.write_text(json.dumps({'calls':STATE['calls'],'limit':RUN_LIMIT}));os.chmod(USAGE,0o600)
             try:
+                if data.get('purpose')=='lesson':
+                    context=data.get('lesson')
+                    prompt=lesson_prompt(context)
+                    response=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':prompt,'uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[]}}},{'Authorization':'Bearer '+token()})
+                    reply=(response.get('result') or response.get('data') or {}).get('reply','')
+                    lesson=parse_lesson(reply,context)
+                    review=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':review_prompt('Erklärung',{'basis':context,'entwurf':lesson}),'uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[]}}},{'Authorization':'Bearer '+token()})
+                    parse_review((review.get('result') or review.get('data') or {}).get('reply',''))
+                    return self.output(200,{'reply':json.dumps(lesson,ensure_ascii=False),'calls':STATE['calls'],'origin':'gradecrew-ai','aiReviewed':True})
                 if data.get('purpose')=='plan':
                     context=data.get('context')
                     if not isinstance(context,dict) or context.get('kind') not in ['answer','help_requested','guided_complete'] or not isinstance(context.get('task'),dict):raise SafeError('Ungültiger Entscheidungskontext.')
@@ -145,10 +155,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                         if level==1:instruction+=' ZWINGEND: verschiedene Nenner; einer teilt den anderen. Genau ein Bruch wird erweitert. Beide Brüche echt, Summe höchstens1.'
                         if level==2:
                             seed.update(text='1/3 + 1/4 = ?',numericAnswer=7/12)
-                            instruction+=' ZWINGEND anspruchsvollere Probe: verschiedene Nenner, keiner teilt den anderen, BEIDE Brüche müssen erweitert werden. Beide Brüche echt und Summe HÖCHSTENS1; kgV höchstens36.'
+                            instruction+=' ZWINGEND anspruchsvollere Probe: verschiedene Nenner, keiner teilt den anderen, BEIDE Brüche müssen erweitert werden. Beide Eingangsbrüche vollständig gekürzt, damit kein Kürzen den Anspruch umgeht. Beide Brüche echt und Summe HÖCHSTENS1; kgV höchstens36.'
                         if level==3:
                             seed.update(text='2/3 + 3/4 = ?',numericAnswer=17/12)
-                            instruction+=' ZWINGEND kombinierte Probe: beide echten Brüche auf neuen gemeinsamen Nenner bringen; keiner der Nenner teilt den anderen. Summe größer1; kgV höchstens36.'
+                            instruction+=' ZWINGEND kombinierte Probe: beide echten Brüche auf neuen gemeinsamen Nenner bringen; keiner der Nenner teilt den anderen. Beide Eingangsbrüche vollständig gekürzt. Summe größer1; kgV höchstens36.'
                     payload={'question':seed,'targetType':'number','allowedTypes':['number'],'allowImages':False,'mediaKind':'none','instruction':instruction+profile_context(skill)+' Verwende andere Zahlenkombinationen als zuletzt: '+json.dumps([x for x in data.get('avoid',[]) if isinstance(x,str) and len(x)<80][:12])+' Variation '+str(time.time()),'testContext':{'subject':'Mathematik','grade':'6','topic':'Bruchzahlen','schoolType':'Mittelschule','region':'Bayern'}}
                     answer=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/regenerateQuestion',{'data':payload},{'Authorization':'Bearer '+token()})
                     q=(answer.get('result') or answer.get('data') or {}).get('question',{})
@@ -178,12 +188,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     try:key=float(q.get('numericAnswer',-999))
                     except (ValueError,TypeError):raise SafeError('Kein eindeutiger KI-Lösungsschlüssel.')
                     if abs(key-expected)>1e-7:raise SafeError('Der KI-Lösungsschlüssel stimmt nicht mit der exakten Rechnung überein.')
+                    review=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':review_prompt('Aufgabe',{'task':raw,'expected':expected,'demand':level}),'uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[]}}},{'Authorization':'Bearer '+token()})
+                    parse_review((review.get('result') or review.get('data') or {}).get('reply',''))
                     return self.output(200,{'reply':json.dumps(raw),'profileId':profile_for(skill)['id'],'calls':STATE['calls']})
                 answer=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':text+profile_context(data.get('skill'))+' Erkläre direkt die Rechenregel an den konkreten Zahlen, nicht mit einer allgemeinen Pizza-Geschichte. Beim Erweitern denselben Faktor oben und unten ausdrücklich zeigen. Die farbigen Bruchstreifen werden bereits in der Oberfläche dargestellt.','uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[]}}},{'Authorization':'Bearer '+token()})
                 reply=(answer.get('result') or answer.get('data') or {}).get('reply')
                 if not isinstance(reply,str) or not reply.strip():raise SafeError('Keine KI-Antwort zurückgegeben.')
                 return self.output(200,{'reply':reply,'calls':STATE['calls']})
-            except (SafeError,DecisionError) as ex:return self.output(502,{'error':str(ex),'calls':STATE['calls']})
+            except (SafeError,DecisionError,LessonError) as ex:return self.output(502,{'error':str(ex),'calls':STATE['calls']})
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--setup-account',action='store_true');args=parser.parse_args()

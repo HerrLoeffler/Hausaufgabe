@@ -37,3 +37,14 @@ class PlanHandlerTest(unittest.TestCase):
   raw={'action':'challenge','skill':'add','difficulty':2,'focus':'none','reason':'Beide Brüche erweitern.'};out,req=self.run_plan(json.dumps(raw));self.assertEqual(out[0],200);self.assertEqual(json.loads(out[1]['reply']),raw);self.assertIn('crewAssistant',req[0][0]);self.assertIn('"correct":true',req[0][1]['data']['text'])
  def test_unsuitable_response_has_no_hidden_rule_based_plan(self):
   out,_=self.run_plan('Probiere noch eine Aufgabe.');self.assertEqual(out[0],502);self.assertNotIn('reply',out[1])
+
+class ProgressionRegressionTest(unittest.TestCase):
+ def test_repeated_errors_require_a_lower_demand(self):
+  c={'kind':'answer','task':{'skill':'add','difficulty':2},'observation':{'correct':False},'history':[{'skill':'add','correct':False},{'skill':'add','correct':False}]}
+  p={'action':'support','skill':'add','difficulty':2,'focus':'factor','reason':'Noch einmal.'}
+  with self.assertRaises(DecisionError):validate_decision(p,c)
+ def test_successful_help_returns_to_easier_independent_probe(self):
+  c={'kind':'guided_complete','task':{'skill':'add','difficulty':2},'observation':{'correct':True,'hinted':True},'history':[]}
+  with self.assertRaises(DecisionError):validate_decision({'action':'probe','skill':'add','difficulty':2,'focus':'none','reason':'Wieder dasselbe.'},c)
+ def test_reduced_inputs_cannot_undermine_difficulty(self):
+  with self.assertRaises(DecisionError):check_task_demand('add',[1,8],[3,12],2)
