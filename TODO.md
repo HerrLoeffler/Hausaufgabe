@@ -7,3 +7,5 @@ Zentrale Prioritäten und Releasezustände stehen auf aktuellem main.
 
 ## GC-EXTENDED-QUESTION-TYPES-01 · 20.10.2026
 Aktiv, branch_only: Bildbereiche, Grafikbeschriftung und Zahlenstrahl im vorhandenen Remy-/Editor-/Assessmentweg. Eigener lokaler Prototyp, keine Deploys/Providerstarts. [Plan](docs/superpowers/plans/2026-10-20-extended-question-types.md), [Übergabe](workstreams/extended-question-types-20261020.md). Nachweise: lokale Gesamt-App, Remy-/Emmi-Simulation, echter lokaler Grader7/10, Reload, Wilma-Nachkorrektur7→8→7 und unabhängiger Review. Assessment96/Functions281/Root384 grün; UI-Alttestfehler auf sauberer Basis reproduziert. Nächster Schritt: Martin prüft lokalen Prototyp; kein Merge/Deploy.
+
+Nutzerfeedback zum selben Task: Bedienqualität noch nicht abgenommen. Offen: Beschriftung direkt auf der Grafik per Ziehen/Tippalternative, mehrere Ereignisse auf gemeinsamer Zeitachse, Referenz-Satzglieddiagramm. Textbericht des anderen Chats vorhanden, verlinkte HTML-Datei fehlt. Nächster Schritt: HTML-Referenz praktisch vergleichen; Details und Grenzen in der bestehenden Übergabe. Keine neue Implementierung/Tests/Deploys durch diesen Dokumentationsschritt.
