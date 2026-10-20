@@ -1,0 +1,14 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createSession, submit, requestHint, nextQuestion, questions} from './engine.mjs';
+const answer=(s,a)=>nextQuestion(submit(s,a));
+test('independent success skips to combined application',()=>assert.equal(answer(createSession(),'4').id,'sum'));
+test('incorrect addition checks same-denominator prerequisite',()=>assert.equal(answer(answer(createSession(),'4'),'4/10').id,'same'));
+test('failed opening checks representation instead of harder arithmetic',()=>assert.equal(answer(createSession(),'2').id,'parts'));
+test('hinted success is retained as supported and receives a fresh probe',()=>{let s=submit(requestHint(createSession()),'4');assert.equal(s.history[0].independent,false);assert.equal(nextQuestion(s).id,'equiv');});
+test('empty or malformed answer is not a negative observation',()=>{let s=createSession();assert.equal(submit(s,'').history.length,0);assert.equal(submit(s,'banana').history.length,0);});
+test('duplicate submission cannot add evidence twice',()=>{let s=submit(createSession(),'4');assert.equal(submit(s,'4').history.length,1);});
+test('equivalent exact fractions accepted and near answer rejected',()=>{let s=answer(createSession(),'4');assert.equal(submit(s,'22 / 24').feedback.correct,true);assert.equal(submit(s,'0.916').feedback.correct,false);});
+test('all independent correct path ends without claiming mastery',()=>{let s=createSession();s=answer(s,'4');s=answer(s,'11/12');s=answer(s,'3/4');assert.equal(s.id,'done');assert.equal(s.history.length,3);assert.equal(s.mastered,undefined);});
+test('two failures at foundation offer supportive end rather than loop',()=>{let s=answer(createSession(),'2');s=answer(s,'1');s=answer(s,'1');assert.equal(s.id,'done');assert.equal(s.needsSupport,true);});
+test('question graph has valid destinations and mathematically checked keys',()=>{assert.ok(Object.keys(questions).length>=8);for(const q of Object.values(questions)){assert.ok(q.prompt);for(const destination of [q.right,q.wrong,q.supported])assert.ok(destination==='done'||questions[destination]);assert.equal(submit({...createSession(),id:q.id},q.answer).feedback.correct,true);}});
