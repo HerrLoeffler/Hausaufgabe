@@ -4,13 +4,14 @@ No service account, admin token, provider key, live project or role override.
 """
 import argparse,json,secrets,time,os,threading,re,urllib.request,urllib.error,http.server
 from pathlib import Path
+import expansion
 from lesson import LessonError,lesson_prompt,parse_lesson,review_prompt,parse_review,lesson_review_data
 from didactic import DecisionError,parse_decision,planning_prompt,check_task_demand
 ROOT=Path(__file__).resolve().parent
 PRIVATE=ROOT.parents[3]/'.private'/'learning-brain'
 PROJECT='gradecrew-staging-2026'
 API_KEY='AIzaSyDDbQoVjx3HLJa5fxtLJ94PhnaWVcM6bSQ' # public Firebase application identifier
-RUN_LIMIT=80
+RUN_LIMIT=120
 PORT=8769
 ORIGIN=f'http://127.0.0.1:{PORT}'
 CREDENTIALS=PRIVATE/'account.json'
@@ -90,7 +91,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.end_headers();self.wfile.write(data)
     def do_GET(self):
         if self.path=='/api/status':return self.output(200,{'project':PROJECT,'accountReady':CREDENTIALS.exists(),'calls':STATE['calls'],'limit':RUN_LIMIT})
-        if self.path.split('?')[0] in ['/','/preview.html','/index.html','/app.css','/app.mjs','/engine.mjs','/tutor.mjs','/tutor-model.mjs','/fraction-visuals.mjs','/help-sequence.mjs','/didactic-decision.mjs','/interactive-pizza.mjs']:return super().do_GET()
+        if self.path.split('?')[0] in ['/','/preview.html','/index.html','/app.css','/app.mjs','/engine.mjs','/tutor.mjs','/tutor-model.mjs','/fraction-visuals.mjs','/help-sequence.mjs','/didactic-decision.mjs','/interactive-pizza.mjs','/expansion.mjs']:return super().do_GET()
         self.send_error(404)
     def do_POST(self):
         if self.headers.get('Host')!=f'127.0.0.1:{PORT}' or self.headers.get('Origin')!=ORIGIN:return self.output(403,{'error':'Nur die lokale Vorschau ist zugelassen.'})
@@ -102,17 +103,27 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         except Exception:return self.output(400,{'error':'Ungültiges JSON.'})
         if self.path=='/api/session':
             if not CREDENTIALS.exists():return self.output(503,{'error':'Das Testkonto ist noch nicht eingerichtet.'})
-            return self.output(200,{'connected':True,'project':PROJECT,'calls':STATE['calls']},cookie=True)
+            return self.output(200,{'connected':True,'project':PROJECT,'calls':STATE['calls'],'limit':RUN_LIMIT},cookie=True)
         if self.path!='/api/crew':return self.output(404,{'error':'Nicht gefunden.'})
         cookie=self.headers.get('Cookie','')
         if f'gc_prototype={STATE["session"]}' not in cookie:return self.output(401,{'error':'Bitte lokale Testverbindung starten.'})
         text=data.get('text') if isinstance(data,dict) else None
         if not isinstance(text,str) or not text.strip() or len(text)>2500:return self.output(400,{'error':'Ungültige Übungsfrage.'})
         with LOCK:
-            if STATE['calls']>=RUN_LIMIT:return self.output(429,{'error':'Limit von80 KI-Anfragen für diesen Prototyplauf erreicht.'})
+            if data.get('purpose')=='expansion':
+                try:prior=expansion.cached(data)
+                except expansion.ExpansionError as ex:return self.output(400,{'error':str(ex),'calls':STATE['calls']})
+                if prior:return self.output(200,{**prior,'calls':STATE['calls'],'limit':RUN_LIMIT})
+            if STATE['calls']>=RUN_LIMIT:return self.output(429,{'error':f'Der begrenzte KI-Testrahmen von{RUN_LIMIT} Anfragen ist erreicht.'})
             STATE['calls']+=1
             USAGE.write_text(json.dumps({'calls':STATE['calls'],'limit':RUN_LIMIT}));os.chmod(USAGE,0o600)
             try:
+                if data.get('purpose')=='expansion':
+                    def call_tutor(prompt):
+                        response=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':prompt,'uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[]}}},{'Authorization':'Bearer '+token()})
+                        return (response.get('result') or response.get('data') or {}).get('reply','')
+                    result=expansion.execute(data,call_tutor)
+                    return self.output(200,{**result,'calls':STATE['calls'],'limit':RUN_LIMIT})
                 if data.get('purpose')=='lesson':
                     context=data.get('lesson')
                     prompt=lesson_prompt(context)
@@ -195,7 +206,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 reply=(answer.get('result') or answer.get('data') or {}).get('reply')
                 if not isinstance(reply,str) or not reply.strip():raise SafeError('Keine KI-Antwort zurückgegeben.')
                 return self.output(200,{'reply':reply,'calls':STATE['calls']})
-            except (SafeError,DecisionError,LessonError) as ex:return self.output(502,{'error':str(ex),'calls':STATE['calls']})
+            except (SafeError,DecisionError,LessonError,expansion.ExpansionError) as ex:return self.output(502,{'error':str(ex),'calls':STATE['calls']})
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--setup-account',action='store_true');args=parser.parse_args()
