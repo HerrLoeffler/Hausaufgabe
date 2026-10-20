@@ -1,3 +1,4 @@
+import { mountChapterStudent } from "./chapter-student.mjs";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { createSecureAssessmentClient } from "./secure-assessment-client.js";
@@ -10,6 +11,7 @@ const params = new URLSearchParams(location.search);
 const quizId = String(params.get("test") || "").trim();
 const $ = id => document.getElementById(id);
 
+let chapterStudent = null;
 let currentQuiz = null;
 let currentAttempt = null;
 let currentPaper = [];
@@ -554,6 +556,7 @@ function refreshProgress() {
   const answers = collectAnswers();
   const done = currentPaper.filter(question => answerIsComplete(question, answers[question.id])).length;
   const total = currentPaper.length;
+  chapterStudent?.renderProgress();
   $("secureProgressText").textContent = `${done} von ${total} bearbeitet`;
   $("secureOpenText").textContent = `${Math.max(0, total - done)} offen`;
   $("secureProgressFill").style.width = `${total ? Math.round(done / total * 100) : 0}%`;
@@ -618,7 +621,9 @@ function enterAssessment(response) {
   $("secureRunningMeta").textContent = [currentQuiz?.subject, currentQuiz?.grade ? `Klasse ${currentQuiz.grade}` : ""].filter(Boolean).join(" · ");
   $("secureRunningTitle").textContent = currentQuiz?.title || "Test";
   const root = $("secureQuestions");
+  chapterStudent?.destroy();
   root.replaceChildren(...currentPaper.map(renderQuestion));
+  chapterStudent=mountChapterStudent({root,paper:currentPaper,chapters:response.chapters,getAnswers:collectAnswers,isComplete:answerIsComplete,goToQuestion:id=>{const section=[...root.querySelectorAll(".secureQuestion[data-qid]")].find(n=>n.dataset.qid===id);section?.focus();section?.scrollIntoView({block:"start"});}});
   root.addEventListener("input", onAnswerChanged);
   root.addEventListener("change", onAnswerChanged);
   applyDraft(readDraft());
@@ -678,6 +683,11 @@ function showReceipt(receipt) {
       meta.appendChild(g);
     }
     host.appendChild(meta);
+  }
+  if(Array.isArray(receipt.chapterResults) && receipt.chapterResults.length) {
+    const table=document.createElement("table");table.className="secureChapterResults";
+    const caption=document.createElement("caption");caption.textContent="Kapitelpunkte";table.append(caption);
+    for(const row of receipt.chapterResults){const tr=document.createElement("tr");for(const value of [row.title,`${row.awardedPoints}/${row.maxPoints}`,row.percent==null?"":`${row.percent} %`]){const td=document.createElement("td");td.textContent=value;tr.append(td);}table.append(tr);}host.append(table);
   }
   const solutionNote = document.createElement("p");
   solutionNote.textContent = "Lösungen werden nicht automatisch mit der Abgabe freigegeben.";

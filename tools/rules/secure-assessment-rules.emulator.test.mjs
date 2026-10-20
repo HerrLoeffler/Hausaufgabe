@@ -214,3 +214,13 @@ test("secure assessment Firestore rules enforce the real access matrix", async t
 
   assert.ok(true);
 });
+
+
+test('chapter publication and chapter review cannot bypass server validation',async()=>{
+ await seed();const owner=env.authenticatedContext('owner').firestore();
+ const ref=doc(owner,'quizzes','CHAPTER1');const draft={ownerId:'owner',published:false,ended:false,rightsHold:false,chapterSchemaVersion:1,chapters:[{id:'ch_one',title:'Zahlen',position:1}]};
+ await assertSucceeds(setDoc(ref,draft));await assertFails(updateDoc(ref,{published:true}));await assertFails(updateDoc(ref,{chapterPublicationRevision:'forged'}));
+ await assertFails(setDoc(doc(owner,'quizzes','CHAPTER2'),{...draft,published:true}));
+ await env.withSecurityRulesDisabled(async c=>{await setDoc(doc(c.firestore(),'quizzes','CHAPTER1','submissions','s1'),{studentName:'Test',chapterSnapshot:{version:1},grading:{},totalPoints:0});});
+ await assertFails(updateDoc(doc(owner,'quizzes','CHAPTER1','submissions','s1'),{totalPoints:100,grading:{q1:{awardedPoints:100}}}));
+});

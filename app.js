@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc45-rc1";
+const APP_VERSION = "2.3.1-gc46-chapters-rc1";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -46,6 +46,7 @@ import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc43";
 import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc43";
 import { recordTutorialSignIn } from "./tutorial-signins.mjs?v=1";
 import { syncDashboardTutorialEntry } from "./dashboard-tutorial-entry.mjs?v=1";
+import { mountChapterCreation } from "./chapter-creation.mjs";
 import { mountChapterEditor, mountQuestionChapterSelect, chapterFields, copyChapterFields } from "./chapter-editor.mjs";
 import "./shared/chapter-contract.js";
 const Chapters = globalThis.GradeCrewChapters;
@@ -134,6 +135,13 @@ function getPracticePublisher() {
   });
 }
 async function publishPracticeQuiz(quiz) {
+  if(quiz.chapterSchemaVersion===1 && quiz.solutionReleaseMode!=="practice_after_submit") {
+    const uid=state.user?.uid, revision=draftRevision;
+    const call=httpsCallable(getFunctions(app,"europe-west1"),"publishChapterAssessment");
+    const prepared=(await call({quizId:quiz.id,action:"prepare"})).data;
+    if(state.user?.uid!==uid || draftRevision!==revision) throw new Error("Der Entwurf wurde während der Prüfung verändert. Bitte erneut veröffentlichen.");
+    return (await call({quizId:quiz.id,action:"publish",expectedRevision:prepared.revision})).data;
+  }
   const uid = state.user?.uid;
   const revision = draftRevision;
   return getPracticePublisher().publish(quiz, {
@@ -2381,7 +2389,7 @@ async function reopenQuiz(code, { returnToEditor = false } = {}) {
     if (!await checkQuizAudioPublication({ ...current, id: code })) return;
     if (current.audioReady === false) return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Öffne den Test und erzeuge es neu.", "error");
     if (current.showSolutions && current.solutionAudioReady === false) return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Öffne den Test und erzeuge sie neu oder entferne sie.", "error");
-    if (current.solutionReleaseMode === "practice_after_submit") {
+    if (current.solutionReleaseMode === "practice_after_submit" || current.chapterSchemaVersion===1) {
       const practice = await publishPracticeQuiz({ ...current, id: code });
       if (!practice) return;
       if (state.currentQuiz?.id === code) Object.assign(state.currentQuiz, practice, { published: true, ended: false });
@@ -2736,6 +2744,7 @@ function updateAiTypeCount() {
 }
 
 function resetAiFormForNewTest() {
+  state.chapterCreationController?.reset();
   ["aiTopic", "aiCustomNotes"].forEach(id => { if ($(id)) $(id).value = ""; });
   ["aiCount", "aiPoints", "aiSchoolType", "aiRegion"].forEach(id => { const input = $(id); if (input) input.value = input.defaultValue; });
   ["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiSolutionAudioQuestionCount"].forEach(id => { if ($(id)) $(id).value = "0"; });
@@ -2744,7 +2753,9 @@ function resetAiFormForNewTest() {
   document.dispatchEvent(new CustomEvent("gradecrew:ai-form-reset"));
 }
 
+
 async function openAiView() {
+  if($("chapterCreation") && !state.chapterCreationController) state.chapterCreationController=mountChapterCreation({root:$("chapterCreation"),counts:$("aiCount"),points:$("aiPoints")});
   resetAiFormForNewTest();
   const settings = getSettings();
   $("aiMaterialConfirmed").checked = false;
@@ -2970,6 +2981,7 @@ function collectAiRequest() {
   if (!answerInput?.value.trim() || !Number.isInteger(audioAnswerQuestionCount) || audioAnswerQuestionCount < 0 || audioAnswerQuestionCount > 5 || audioAnswerQuestionCount > count) throw new Error("Bitte 0 bis 5 Aufgaben mit Audioantworten wählen.");
   if (audioAnswerQuestionCount && !allowedTypes.some(type => ["single", "multi"].includes(type))) throw new Error("Für Audioantworten bitte Einzel- oder Mehrfachauswahl erlauben.");
   return {
+    ...(state.chapterCreationController?.getPlan() || {}),
     subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
     topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, points,
     allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
@@ -3196,6 +3208,7 @@ function normalizeImportedQuestion(rawInput, index, report) {
   }
 
   const q = newQuestion(type, false);
+  if(raw?.chapterId) q.chapterId=raw.chapterId;
   const rawText = looseField(raw, ["text", "question", "prompt", "frage", "instruction", "aufgabe"], "");
   q.text = String(rawText || "").trim();
   // Only the explicit public field is imported; never promote a legacy private text.
@@ -4321,6 +4334,7 @@ function applyPendingVariants() {
   const next = task.questions.splice(0, available);
   if (!next.length) return;
   const anchor = state.questions.findIndex(q => q.id === task.anchorId);
+  if(state.currentQuiz?.chapterSchemaVersion===1) next.forEach(q=>{q.chapterId=state.questions.find(q=>q.id===task.sourceQuestionId)?.chapterId || state.questions[Math.max(0,anchor)]?.chapterId || state.currentQuiz.chapters[0].id;});
   state.questions.splice(anchor < 0 ? state.questions.length : anchor + 1, 0, ...next);
   task.anchorId = next.at(-1).id;
   renderQuestions();
@@ -6320,6 +6334,7 @@ async function saveCurrentQuiz(showMessage = true) {
 }
 
 async function publishCurrentQuiz() {
+  if(state.currentQuiz?.chapterSchemaVersion===1 && state.currentQuiz.published && !state.currentQuiz.ended) return showPublish(state.currentQuiz.id);
   if (state.currentQuiz?.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   if (!(await saveCurrentQuiz(false))) return;
   if (guestTourRepo) {
@@ -7791,6 +7806,11 @@ function submissionGrade(s) {
   return gradeFromPercent(Number(s.percent || 0), scale);
 }
 
+function chapterResultsMarkup(submission) {
+  const rows=submission.chapterSnapshot ? Chapters.aggregateChapterResults(submission.chapterSnapshot,submission.grading) : submission.chapterResults || [];
+  if(!rows.length)return "";
+  return `<table class="secureChapterResults"><thead><tr><th>Kapitel</th><th>Punkte</th><th>Prozent</th><th>Status</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${escapeHtml(r.title)}</td><td>${r.awardedPoints}/${r.maxPoints}</td><td>${r.percent==null?"–":r.percent+" %"}</td><td>${r.needsReview?"Bewertung offen":"Bewertet"}</td></tr>`).join("")}</tbody></table>`;
+}
 function renderResultsTable() {
   const wrap = $("resultsTableWrap");
   if (!state.submissions.length) {
@@ -7805,6 +7825,7 @@ function renderResultsTable() {
     html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${s.status === "review" ? "review" : "graded"}">${s.status === "review" ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(s.studentName)}">Bewerten</button></td></tr>`;
   });
   html += "</tbody></table>";
+  html += state.submissions.filter(s=>s.chapterSnapshot).map(s=>`<details class="card"><summary>${escapeHtml(s.studentName)} · Kapitelpunkte</summary>${chapterResultsMarkup(s)}</details>`).join("");
   wrap.innerHTML = html;
   wrap.querySelectorAll(".reviewBtn").forEach((btn) => btn.addEventListener("click", () => openReview(btn.dataset.id)));
 }
@@ -7818,7 +7839,8 @@ function openReview(id) {
   panel.setAttribute("aria-labelledby", "reviewHeading");
   panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2 id="reviewHeading" tabindex="-1">${escapeHtml(s.studentName)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div><div class="reviewHeader"><strong id="reviewTotal"></strong><button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
   const root = $("reviewQuestions");
-  state.resultQuestions.forEach((q, i) => {
+  const reviewQuestions=s.chapterQuestions?.length?s.chapterQuestions:state.resultQuestions;
+  reviewQuestions.forEach((q, i) => {
     const g = s.grading?.[q.id] || { awardedPoints: 0, maxPoints: Number(q.points) || 0 };
     const div = document.createElement("div");
     div.className = "reviewQuestion";
@@ -7893,11 +7915,16 @@ async function saveReview(submissionId) {
   const panel = $("reviewPanel");
   const submission = state.submissions.find((x) => x.id === submissionId);
   if (!submission) return;
+  if(submission.chapterSnapshot && !guestTourRepo) {
+    const awards=[...panel.querySelectorAll(".manualPoints")].map(inp=>({questionId:inp.dataset.qid,awardedPoints:Number(inp.value)}));
+    try{await httpsCallable(getFunctions(app,"europe-west1"),"reviewChapterAssessment")({quizId:state.currentResultsQuiz.id,submissionId,expectedReviewRevision:submission.reviewRevision||0,awards});toast("Bewertung gespeichert.");await openResults(state.currentResultsQuiz.id);}catch(error){toast(error.message||"Bewertung konnte nicht gespeichert werden.","error");}
+    return;
+  }
   const grading = { ...(submission.grading || {}) };
   let total = 0;
   let max = 0;
   panel.querySelectorAll(".manualPoints").forEach((inp) => {
-    const q = state.resultQuestions.find((x) => x.id === inp.dataset.qid);
+    const q = (submission.chapterQuestions?.length?submission.chapterQuestions:state.resultQuestions).find((x) => x.id === inp.dataset.qid);
     const qMax = Number(q?.points || 0);
     const awarded = Math.max(0, Math.min(qMax, round1(Number(inp.value) || 0)));
     grading[inp.dataset.qid] = {
@@ -7949,10 +7976,12 @@ function exportResultsCsv() {
     toast("Keine Ergebnisse zum Exportieren.", "error");
     return;
   }
-  const header = ["Name", ...state.resultQuestions.map((_, i) => `Aufgabe ${i + 1}`), "Punkte", "Max", "Prozent", "Note", "Status", "Bearbeitungszeit", "Auto-Abgabe", "Abgegeben"];
+  const chapterColumns=[...new Map(state.submissions.flatMap(s=>s.chapterSnapshot?.chapters||[]).map(ch=>[ch.id,ch])).values()];
+  const header = ["Name", ...chapterColumns.flatMap(ch=>[`${ch.title} (${ch.id}) Punkte`,`${ch.title} Max`,`${ch.title} Prozent`,`${ch.title} Status`]), ...state.resultQuestions.map((_, i) => `Aufgabe ${i + 1}`), "Punkte", "Max", "Prozent", "Note", "Status", "Bearbeitungszeit", "Auto-Abgabe", "Abgegeben"];
   const rows = [header];
   state.submissions.forEach((s) => {
-    const r = [s.studentName];
+    const chapterResults=s.chapterSnapshot?Chapters.aggregateChapterResults(s.chapterSnapshot,s.grading):[];
+    const r = [s.studentName,...chapterColumns.flatMap(ch=>{const result=chapterResults.find(r=>r.chapterId===ch.id);return result?[result.awardedPoints,result.maxPoints,result.percent,result.needsReview?"Bewertung offen":"Bewertet"]:["","","",""];})];
     state.resultQuestions.forEach((q) => r.push(answerDisplay(q, s.answers?.[q.id], state.currentResultsQuiz?.contentLocale)));
     r.push(s.totalPoints, s.maxPoints, s.percent, s.status === "review" ? "" : submissionGrade(s), s.status, formatDuration(s.elapsedSeconds), s.autoSubmitted ? "Ja" : "Nein", fmtDate(s.submittedAt || s.submittedAtLocal));
     rows.push(r);
@@ -9067,12 +9096,14 @@ function wholeTestRevisionLocked(question) {
 
 function wholeTestRevisionSource() {
   return {
+    ...chapterFields(state.currentQuiz),
     title: $("quizTitle")?.value.trim() || state.currentQuiz?.title || "Test",
     subject: $("quizSubject")?.value.trim() || state.currentQuiz?.subject || "",
     grade: $("quizGrade")?.value.trim() || state.currentQuiz?.grade || "",
     description: $("quizDescription")?.value.trim() || state.currentQuiz?.description || "",
     questions: state.questions.map(question => ({
       ...questionForAi(question),
+      ...(question.chapterId ? {chapterId:question.chapterId} : {}),
       locked: wholeTestRevisionLocked(question),
       fixedImage: Boolean(getQuestionImageSrc(question)),
       fixedImageAlt: String(question.imageAlt || "").slice(0, 500)
@@ -9081,6 +9112,7 @@ function wholeTestRevisionSource() {
 }
 
 function restoreWholeRevisionMedia(sourceQuestion, nextQuestion) {
+  if(sourceQuestion?.chapterId) nextQuestion.chapterId=sourceQuestion.chapterId;
   for (const key of ["imageDataUrl", "imageUrl", "imagePath", "imageByteSize", "imageAlt", "audioDataUrl", "audioByteSize", "audioVoice", "audioModel", "audioAiGenerated", "audioNeedsRegeneration", "audioScript"]) {
     if (sourceQuestion?.[key] !== undefined) nextQuestion[key] = sourceQuestion[key];
   }

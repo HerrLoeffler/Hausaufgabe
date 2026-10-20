@@ -76,6 +76,8 @@ function fixture() {
     exports, Buffer,
     Date: class extends Date { static now() { return now; } },
     require: name => {
+      if (name === './chapter-results') return require('../lib/chapter-results');
+      if (name === './shared/chapter-contract') return require('../lib/shared/chapter-contract');
       if (name === './offline-recovery-policy') return require('../lib/offline-recovery-policy');
       if (name === './observability') return require('../lib/observability');
       if (name === './audio-release-gate') return require('../lib/audio-release-gate');
@@ -497,4 +499,36 @@ test('missing immutable audio can be repaired on authenticated start retry only 
   f.docs.get(`quizzes/${f.quizId}/audioScripts/q1`).solutionAudioDataUrl = 'data:audio/wav;base64,TkVX';
   await f.start('repairmedia');
   assert.equal(f.docs.has('assessmentSolutionAssets/' + assetId), false);
+});
+
+test('chapter start requires a capable client and returns stable grouping with private grading',async()=>{
+ const f=fixture();const quiz=f.docs.get(`quizzes/${f.quizId}`);
+ Object.assign(quiz,{chapterSchemaVersion:1,chapters:[{id:'ch_one',title:'Zahlen',position:1}]});f.docs.get(`quizzes/${f.quizId}/questions/q1`).chapterId='ch_one';quiz.chapterPublicationRevision=core.authoringFingerprint([f.docs.get(`quizzes/${f.quizId}/questions/q1`)],{chapterSchemaVersion:1,chapters:quiz.chapters});
+ await assert.rejects(f.start('oldclient'),e=>e.code==='failed-precondition');
+ const a=await f.exports.startAssessmentAttempt(f.request({studentName:'new',clientAttemptId:'new'.padEnd(20,'_'),attemptToken:f.token,clientCapabilities:{chapters:1}}));
+ assert.equal(a.chapters[0].title,'Zahlen');assert.equal(a.paper[0].chapterId,'ch_one');
+ const submitted=await f.submit(a.attemptId);assert.equal(submitted.receipt.chapterResults[0].awardedPoints,1);
+ const resume=await f.receipt(a.attemptId);assert.equal(resume.receipt.chapterResults[0].awardedPoints,1);
+});
+
+
+test('chapter publication validates ownership, stale revision and chapter coverage',async()=>{
+ const f=practiceFixture({showSolutions:false});const q=f.docs.get(`quizzes/${f.quizId}`);
+ Object.assign(q,{solutionReleaseMode:'exam_after_end',chapterSchemaVersion:1,chapters:[{id:'ch_one',title:'Zahlen',position:1}]});f.docs.get(`quizzes/${f.quizId}/questions/q1`).chapterId='ch_one';
+ await assert.rejects(f.teacher({action:'prepare'},'other'),e=>e.code==='permission-denied');
+ const p=await f.teacher({action:'prepare'});q.chapters[0].title='Umbenannt';
+ await assert.rejects(f.teacher({action:'publish',expectedRevision:p.revision}),e=>e.code==='aborted');
+ const next=await f.teacher({action:'prepare'});await f.teacher({action:'publish',expectedRevision:next.revision});
+ assert.equal(f.docs.get(`quizzes/${f.quizId}`).chapterPublicationRevision,next.revision);assert.equal(f.docs.get(`quizzes/${f.quizId}`).published,true);
+});
+
+test('chapter review is authorized revisioned and atomic with chapter totals',async()=>{
+ const f=practiceFixture({showSolutions:false}),quiz=f.docs.get(`quizzes/${f.quizId}`);Object.assign(quiz,{solutionReleaseMode:'exam_after_end',resultMode:'points_grade',chapterSchemaVersion:1,chapters:[{id:'ch_one',title:'Zahlen',position:1}]});f.docs.get(`quizzes/${f.quizId}/questions/q1`).chapterId='ch_one';
+ await f.publish();f.docs.get(`quizzes/${f.quizId}`).sessionState='running';
+ const a=await f.exports.startAssessmentAttempt(f.request({studentName:'new',clientAttemptId:'new'.padEnd(20,'_'),attemptToken:f.token,clientCapabilities:{chapters:1}}));await f.submit(a.attemptId);
+ const data={submissionId:a.attemptId,expectedReviewRevision:0,awards:[{questionId:'q1',awardedPoints:0.5}]};
+ await assert.rejects(f.exports.reviewChapterAssessment({...f.request(data),auth:{uid:'other'}}),e=>e.code==='permission-denied');
+ await f.exports.reviewChapterAssessment({...f.request(data),auth:{uid:'owner'}});
+ const s=f.docs.get(`quizzes/${f.quizId}/submissions/${a.attemptId}`);assert.equal(s.totalPoints,0.5);assert.equal(s.chapterResults[0].awardedPoints,0.5);
+ await assert.rejects(f.exports.reviewChapterAssessment({...f.request(data),auth:{uid:'owner'}}),e=>e.code==='aborted');
 });

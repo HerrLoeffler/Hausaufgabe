@@ -21,6 +21,7 @@ function quizForGeneratedTest(test, input, profile = {}, sourceQuiz = null) {
   const title = /^(?:ki[- ]?test|testify|test zu|test über)(?:\s*[·:–-]\s*.*)?$/iu.test(generatedTitle)
     ? (topicTitle || generatedTitle || "Test") : (generatedTitle || topicTitle || "Test");
   return {
+    ...(input.chapterSchemaVersion===1?{chapterSchemaVersion:1,chapters:input.chapters,chapterPlan:input.chapterPlan}:{}),
     title, subject: String(input.generationMode === "variant" ? input.subject : test.subject || input.subject || ""),
     grade: String(input.generationMode === "variant" ? input.grade : test.grade || input.grade || ""),
     creationContext: { schoolType: input.schoolType || "", region: input.region || "", topic: input.topic || "", difficulty: input.difficulty || "", learningGoals: input.learningGoals || [], contentLocale },
@@ -60,6 +61,7 @@ function fallbackQuestionText(text, intent = {}) {
 
 async function storedAiQuestion(raw, index, { model, promptVersion, kind = "generated", generateMedia, generateAudio, onImage = async () => {}, onImageFallback = async () => {}, onAudio = async () => {}, onAudioFallback = async () => {} }) {
   const q = {
+    ...(raw.chapterId?{chapterId:raw.chapterId}:{}),
     type: raw.type, text: String(raw.text || "").trim(), points: Number(raw.points), position: index + 1,
     aiOrigin: { kind, model, promptVersion }
   };

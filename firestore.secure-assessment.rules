@@ -143,6 +143,31 @@ service cloud.firestore {
       allow create, update, delete: if false;
     }
 
+    // Chapter publication proof and cross-document validation are server-owned.
+    function validChapterDraftFields() {
+      let version = request.resource.data.get('chapterSchemaVersion', null);
+      return version == null || (version == 1
+        && request.resource.data.get('chapters', []) is list
+        && request.resource.data.get('chapters', []).size() > 0
+        && request.resource.data.get('chapters', []).size() <= 100);
+    }
+    function chapterClientCreateSafe() {
+      return validChapterDraftFields()
+        && request.resource.data.get('chapterPublicationRevision', null) == null
+        && (request.resource.data.get('chapterSchemaVersion', null) == null
+          || request.resource.data.get('published', false) != true
+          || request.resource.data.get('ended', false) == true);
+    }
+    function chapterClientUpdateSafe() {
+      let hasChapters = resource.data.get('chapterSchemaVersion', null) != null
+        || request.resource.data.get('chapterSchemaVersion', null) != null;
+      let wasActive = resource.data.get('published', false) == true && resource.data.get('ended', false) != true;
+      let becomesActive = request.resource.data.get('published', false) == true && request.resource.data.get('ended', false) != true;
+      return validChapterDraftFields()
+        && request.resource.data.get('chapterPublicationRevision', null) == resource.data.get('chapterPublicationRevision', null)
+        && (!hasChapters || !becomesActive || wasActive);
+    }
+
     match /quizzes/{quizId} {
       // SECURITY BOUNDARY: Anonyme Schüler lesen auch Quiz-Metadaten nicht mehr
       // direkt aus Firestore. Join-Metadaten kommen ausschließlich über die
@@ -153,11 +178,11 @@ service cloud.firestore {
       allow list: if isAdmin()
                   || (accountActive() && resource.data.ownerId == request.auth.uid);
 
-      allow create: if accountActive()
+      allow create: if chapterClientCreateSafe() && accountActive()
                     && request.resource.data.ownerId == request.auth.uid
                     && request.resource.data.get('rightsHold', false) == false;
 
-      allow update: if quizPublicationOwnerAvailable() && (isAdmin()
+      allow update: if chapterClientUpdateSafe() && quizPublicationOwnerAvailable() && (isAdmin()
                     || (
                       accountActive()
                       && resource.data.ownerId == request.auth.uid
@@ -216,9 +241,10 @@ service cloud.firestore {
         // Nach der Abgabe sind ursprüngliche Schülerantworten und sichere
         // Metadaten unveränderlich. Die Lehrkraft darf ausschließlich die Felder
         // ändern, die die bestehende manuelle Bewertung tatsächlich benötigt.
-        allow update: if isAdmin()
+        allow update: if (isAdmin() && resource.data.get('chapterSnapshot', null) == null)
                       || (
                         ownsQuiz(quizId)
+                        && resource.data.get('chapterSnapshot', null) == null
                         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
                           'grading', 'totalPoints', 'maxPoints', 'percent', 'grade',
                           'gradeScaleSnapshot', 'status', 'reviewedAt', 'reviewedBy'

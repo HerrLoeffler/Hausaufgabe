@@ -52,3 +52,13 @@ Genau ein nächster Schritt: Martin prüft den Grundstrukturplan; erst nach Impl
 
 ## Implementierung autorisiert – 20.10.2026
 Martin: Kapitelgrundstruktur nach Plan auf einer Testseite im vorhandenen System umsetzen. Eigener Runtimebranch feat/chapter-tests-20261020 auf 4f8b7922. Getrenntes Ziel gradecrew-staging-2026, keine Schul-/Productionänderungen. Kein Bereichstimer. Baseline Assessment-Core16/16 (Node24.19); genaue Node22-/CI-/Geräteprüfung noch offen. Eigenes SDD-Ledger führt die sieben Pakete. Nächster Schritt: Kapitelvertrag TDD.
+
+## Runtime-Zwischenstand vor Review/Deploy – 20.10.2026
+
+Autorisierter Runtimebranch feat/chapter-tests-20261020, isolierter Checkout gradecrew-chapters-20261020. Implementiert: gemeinsamer Kapitelvertrag, vorhandener Editor/Remyplan, vorhandene Publish-/Start-/Resume-/Submitpfade, freie Schülernavigation, Kapitel-/Gesamtpunkte und serverseitig revisionsgebundene Nachkorrektur. Quellen-/Lösungsschutz und alte Hashpfade erhalten. Neue Browsercapability; keine native App neu gebaut. Bereichstimer unverändert außerhalb.
+
+Tatsächliche lokale Prüfungen Node22.23.3: Functions286/286 und check; Assessment97/97 und Syntaxcheck; vollständige Web-/UI-Suite501/501 mit experimental-vm-modules; Sharedvertrag4; lokaler Firestore-Emulator12/12 einschließlich Kapitelpublication/Reviewdeny; gezielte Batch-/Audiosyncfehlertests2/2. Stagingbuild172 Dateien gc46-chapters-rc1, ausdrückliches Projekt gradecrew-staging-2026. Keine Produktfreigabe daraus. Unabhängiger Whole-branch-Reviewer auf lokalem Head2a5691f4 arbeitet lesend; Ergebnis noch offen.
+
+Git-Shellpush ohne Credentials möglich nicht; eigene Branchsicherung über GitHubconnector. Frühere Remote-Sicherung7e7e5051 enthielt Vertrag/Editor; neuer Sicherungscommit wird aus GitHubref abgeleitet. Keine unklaren Providerstarts, keine echten Generierungen. Firebaseprojektzugang lesend bestätigt, Baseline-Functions vor Deploy werden privat inventarisiert. Noch kein Kapiteldeploy, kein Live-/Schulzugriff, kein Main-/Integrationsmerge.
+
+Nächster Schritt: unabhängigen Review und echten Browsernachweis abschließen, relevante Befunde mit Tests beheben; erst dann exakt gesicherte Quelle selektiv auf getrennte Testbackend-/Previewumgebung veröffentlichen.

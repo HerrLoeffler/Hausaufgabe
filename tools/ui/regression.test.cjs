@@ -353,6 +353,8 @@ test('admin tabs expose exactly the selected panel for mouse and keyboard users'
 
 test('view navigation restores focus without interrupting an input or an open dialog', async t => {
   const w = fixture(t);
+  w.syncDashboardTutorialEntry=(await import('../../dashboard-tutorial-entry.mjs')).syncDashboardTutorialEntry;
+  w.state ||= {}; w.guestTourRepo=null;
   w.views = ['authView', 'editorView', 'dashboardView'];
   w.clearPublishSubscriptions = () => {};
   w.clearStudentSubscriptions = () => {};

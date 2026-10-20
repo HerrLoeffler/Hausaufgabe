@@ -1,4 +1,5 @@
 "use strict";
+const {createChapterSnapshot}=require("./shared/chapter-contract");
 
 const { createHash, createHmac, timingSafeEqual } = require("node:crypto");
 
@@ -352,28 +353,30 @@ function fingerprintQuestion(question) {
   };
 }
 
-function authoringFingerprint(questions, { shuffleQuestions = false, shuffleAnswers = false } = {}) {
+function authoringFingerprint(questions, { shuffleQuestions = false, shuffleAnswers = false, chapterSchemaVersion, chapters } = {}) {
   const normalized = (Array.isArray(questions) ? questions : [])
     .map((question, index) => ({ ...question, id: String(question?.id || `q${index + 1}`) }))
     .sort((a, b) => (Number(a.position) || 0) - (Number(b.position) || 0));
   return sha256(JSON.stringify({
+    ...(chapterSchemaVersion != null ? {chapterSnapshot:createChapterSnapshot({chapterSchemaVersion,chapters},normalized)} : {}),
     shuffleQuestions: Boolean(shuffleQuestions),
     shuffleAnswers: Boolean(shuffleAnswers),
     questions: normalized.map(fingerprintQuestion)
   }));
 }
 
-function buildAssessmentContract(questions, secret, { shuffleQuestions = false, shuffleAnswers = false } = {}) {
+function buildAssessmentContract(questions, secret, { shuffleQuestions = false, shuffleAnswers = false, chapterSchemaVersion, chapters } = {}) {
   if (typeof secret !== "string" || !/^[A-Za-z0-9_-]{32,128}$/.test(secret)) throw new Error("Invalid paper secret");
   const normalized = (Array.isArray(questions) ? questions : [])
     .map((question, index) => ({ ...question, id: String(question?.id || `q${index + 1}`) }))
     .sort((a, b) => (Number(a.position) || 0) - (Number(b.position) || 0));
+  const chapterSnapshot=chapterSchemaVersion != null ? createChapterSnapshot({chapterSchemaVersion,chapters},normalized) : null;
   const entries = normalized.map(question => ({
-    paper: buildPublicQuestion(question, secret, { shuffleAnswers }),
+    paper: {...buildPublicQuestion(question, secret, { shuffleAnswers }),...(chapterSnapshot?{chapterId:question.chapterId}:{})},
     key: buildGradingKey(question, secret)
   }));
   const naturalPaper = entries.map(entry => entry.paper);
-  const paper = shuffleQuestions ? deterministicOrder(naturalPaper, secret, "questions") : naturalPaper;
+  const paper = chapterSnapshot ? chapterSnapshot.chapters.flatMap(ch=>{const group=naturalPaper.filter(q=>q.chapterId===ch.id);return shuffleQuestions ? deterministicOrder(group,secret,`questions:${ch.id}`) : group;}) : shuffleQuestions ? deterministicOrder(naturalPaper, secret, "questions") : naturalPaper;
   const gradingKey = entries.map(entry => entry.key);
   // Existing attempts compare this fingerprint on resume/poll. Keep their v1
   // presentation shape for hashing while returning locale-neutral image metadata.
@@ -403,7 +406,8 @@ function buildAssessmentContract(questions, secret, { shuffleQuestions = false, 
     paper,
     gradingKey,
     sourceFingerprint,
-    authoringFingerprint: authoringFingerprint(normalized, { shuffleQuestions, shuffleAnswers })
+    ...(chapterSnapshot?{chapterSnapshot}:{}),
+    authoringFingerprint: authoringFingerprint(normalized, { shuffleQuestions, shuffleAnswers, chapterSchemaVersion, chapters })
   };
 }
 

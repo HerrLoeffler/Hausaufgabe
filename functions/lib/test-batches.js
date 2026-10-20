@@ -1,6 +1,8 @@
 "use strict";
+const {planChapterSlots,bindGeneratedChapterSlots}=require("./chapter-generation");
 
 function planTestBatches(input, batchSize = 10) {
+  const chapterSlots=planChapterSlots(input);
   const count = input.count;
   const units = Math.round(input.points * 2);
   if (!Number.isInteger(count) || count < 1 || count > 100 || !Number.isFinite(units) || units < count) throw new RangeError("Ungültige Testgröße oder Punkte");
@@ -18,8 +20,8 @@ function planTestBatches(input, batchSize = 10) {
     const images = slots ? slots.filter(slot => slot.mediaKind === "ai_generated").length : Math.floor(end * plannedImages / count) - Math.floor(offset * plannedImages / count);
     const audios = slots ? slots.filter(slot => slot.audioKind === "ai_generated").length : Math.floor(end * plannedAudio / count) - Math.floor(offset * plannedAudio / count);
     const answerAudios = slots ? slots.filter(slot => slot.answerAudio).length : Math.floor(end * plannedAnswerAudio / count) - Math.floor(offset * plannedAnswerAudio / count);
-    batches.push({ ...input, count: end - offset,
-      points: slots ? slots.reduce((sum, slot) => sum + slot.points, 0) : (Math.floor(end * units / count) - Math.floor(offset * units / count)) / 2,
+    batches.push({ ...input, ...(chapterSlots.length?{chapterSlots:chapterSlots.slice(offset,end)}:{}), count: end - offset,
+      points: chapterSlots.length ? chapterSlots.slice(offset,end).reduce((sum,s)=>sum+s.points,0) : slots ? slots.reduce((sum, slot) => sum + slot.points, 0) : (Math.floor(end * units / count) - Math.floor(offset * units / count)) / 2,
       ...(input.exactImageCounts || slots ? { exactImageCounts: true, imageQuestionCount: images, imageAnswerQuestionCount: 0 } : {}),
       ...(input.exactAudioCounts || slots ? { exactAudioCounts: true, audioQuestionCount: audios } : {}),
       audioAnswerQuestionCount: answerAudios,
@@ -40,7 +42,7 @@ async function generateTestInBatches(input, generate) {
     const result = await generate(batch, questions);
     if (!Array.isArray(result?.data?.questions)) throw new Error("Die KI-Antwort enthält keine Aufgabenliste.");
     metadata ||= result.data;
-    questions.push(...result.data.questions);
+    questions.push(...bindGeneratedChapterSlots(result.data.questions,batch.chapterSlots));
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage?.[key] || 0);
   }
   return { data: { ...metadata, questions }, usage };

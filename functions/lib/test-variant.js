@@ -57,7 +57,9 @@ function buildVariantInput(quiz, questions, privateAudios = new Map(), originalI
     timeLimitMinutes: Number.isFinite(quiz.timeLimitMinutes) && quiz.timeLimitMinutes > 0 ? quiz.timeLimitMinutes : null,
     startMode: quiz.startMode === "teacher" ? "teacher" : "student", shuffleQuestions: Boolean(quiz.shuffleQuestions), shuffleAnswers: Boolean(quiz.shuffleAnswers)
   };
+  const chapterFields = quiz.chapterSchemaVersion===1 ? {chapterSchemaVersion:1,chapters:quiz.chapters,chapterPlan:quiz.chapters.map(ch=>({chapterId:ch.id,topic:quiz.chapterPlan?.find(p=>p.chapterId===ch.id)?.topic||ch.title,count:sorted.filter(q=>q.chapterId===ch.id).length,points:sorted.filter(q=>q.chapterId===ch.id).reduce((sum,q)=>sum+Number(q.points),0),materialIds:[]}))} : {};
   const input = {
+    ...chapterFields,
     schoolType: field("schoolType", "nicht gespeichert – aus Ausgangstest ableiten"), region: field("region", "nicht gespeichert"),
     subject: field("subject", "aus Ausgangstest ableiten"), grade: field("grade", "aus Ausgangstest ableiten"), topic: field("topic", quiz.title || "Ausgangstest"),
     difficulty: field("difficulty", "gleiches Niveau wie Ausgangstest"), learningGoals,

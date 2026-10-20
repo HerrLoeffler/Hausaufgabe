@@ -14,6 +14,7 @@ const { questionSchema, questionSchemaForType, testSchemaForRequest } = require(
 const { requestStructured, AiResponseError } = require("./lib/structured-response");
 const { generateTestInBatches } = require("./lib/test-batches");
 const { preparePedagogicalPool } = require("./lib/pedagogical-pool");
+const {planChapterSlots,bindGeneratedChapterSlots,chapterPrompt}=require("./lib/chapter-generation");
 const { validateTest, validateQuestion, normalizeQuestion, sameQuestion, variantRepeats } = require("./lib/validation");
 const { requireAiUser } = require("./lib/access");
 const { consumeQuota, recordUsage } = require("./lib/usage");
@@ -148,6 +149,7 @@ function cleanInput(data = {}) {
     throw new HttpsError("invalid-argument", "Bitte 0 bis 5 Audioantwort-Aufgaben und einen Auswahltyp wählen.");
   }
   return {
+    ...(data.chapterSchemaVersion != null ? {chapterSchemaVersion:data.chapterSchemaVersion,chapters:data.chapters,chapterPlan:data.chapterPlan}:{}),
     schoolType: String(data.schoolType || "Mittelschule").slice(0, 100), region: String(data.region || "Bayern").slice(0, 100),
     subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, 500),
     difficulty: String(data.difficulty || "mittel").slice(0, 50), count, points,
@@ -294,6 +296,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
   const input = cleanInput(data || {});
   if (!input.topic) throw new HttpsError("invalid-argument", "Bitte ein Thema angeben.");
   const materials = sanitizeMaterials(data?.materials, uid);
+  planChapterSlots(input,materials.map(m=>m.id));
   if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
   await consumeQuota(uid, "test").catch(err => { throw reportAiError(err, "test-quota"); });
   let phase = "material";
@@ -322,7 +325,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       await onProgress("test-generation", 15 + Math.floor(20 * batch.batchOffset / input.count), `Aufgaben ${batch.batchOffset + 1} bis ${batch.batchOffset + batch.count} von ${input.count} werden erstellt …`);
       const priorContext = prior.length ? `\nBereits erstellte Aufgaben (nicht wiederholen): ${JSON.stringify(prior.map(q => ({ type: q.type, text: q.text })))}` : "";
       return structuredResponse({ schema: testSchemaForRequest({ count: batch.count, allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none", allowAudio: batch.audioMode !== "none" }),
-        schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}${variantPrompt(input, batch.batchOffset, batch.count)}\n${memoryGuide}${personalGuide}${priorContext}${poolGuide}`, content: materialContent });
+        schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}${chapterPrompt(batch.chapterSlots)}${variantPrompt(input, batch.batchOffset, batch.count)}\n${memoryGuide}${personalGuide}${priorContext}${poolGuide}`, content: materialContent });
     });
     const usage = { ...first.usage };
     const addUsage = next => {
@@ -352,6 +355,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     phase = "test-repair";
     await onProgress("test-repair", 38, "Aufgaben und Punkte werden geprüft …");
     const result = await validateAndRepairTest(normalizeTest(first.data), options, repairs);
+    if(input.chapterSchemaVersion===1) result.test.questions=bindGeneratedChapterSlots(result.test.questions,planChapterSlots(input));
     if (result.errors.length) {
       await recordUsage(uid, "test", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: true, errors: result.errors.slice(0, 6) });
       throw new HttpsError("failed-precondition", "Auch nach automatischer Neuerstellung sind Aufgaben fehlerhaft.", { errors: result.errors.slice(0, 10) });
@@ -404,7 +408,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     });
     if (hardErrors.length) throw new HttpsError("failed-precondition", "Der Test ist nach der automatischen Reparatur strukturell noch nicht gültig.", { errors: hardErrors.slice(0, 10) });
     return {
-      test: reviewed.test,
+      test: input.chapterSchemaVersion===1 ? {...reviewed.test,questions:bindGeneratedChapterSlots(reviewed.test.questions,planChapterSlots(input))} : reviewed.test,
       meta: {
         model: TEXT_MODEL,
         promptVersion: PROMPT_VERSION,
@@ -463,6 +467,7 @@ async function startAiTestJobForUser(uid, requestData = {}) {
   const input = cleanInput(variant ? await loadVariantInput(db, uid, sourceQuizId) : requestData || {});
   if (!input.topic) throw new HttpsError("invalid-argument", "Bitte ein Thema angeben.");
   const materials = variant ? [] : sanitizeMaterials(requestData?.materials, uid);
+  planChapterSlots(input,materials.map(m=>m.id));
   if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
   if (sourceQuizId) {
     const source = await getFirestore().doc(`quizzes/${sourceQuizId}`).get();

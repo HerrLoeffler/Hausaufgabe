@@ -1,3 +1,4 @@
+import {mountChapterCreation} from './chapter-creation.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -46,7 +47,7 @@ test('opening a new creation form clears task-specific fields but restores saved
   const resetStart=app.indexOf('function resetAiFormForNewTest(');
   const helper=resetStart<0?'':app.slice(resetStart,start);
   const noop=()=>{};
-  const context={document:doc,window:dom.window,CustomEvent:dom.window.CustomEvent,state,$:id=>doc.getElementById(id),getSettings:()=>({defaultSubject:'Mathematik',defaultGrade:'7'}),QUESTION_TYPES:[['single','Single Choice']],renderAiMaterials:noop,updateAiTypeCount:noop,updateAiImageControls:noop,updateAiAudioControls:noop,updateAiPointsControls:noop,showView:noop,setAiProgress:noop,renderAiJobs:noop,escapeHtml:s=>s,firstAiGuideStep:null,crewTour:null,aiApi:{status:async()=>({enabled:true})}};
+  const context={mountChapterCreation,document:doc,window:dom.window,CustomEvent:dom.window.CustomEvent,state,$:id=>doc.getElementById(id),getSettings:()=>({defaultSubject:'Mathematik',defaultGrade:'7'}),QUESTION_TYPES:[['single','Single Choice']],renderAiMaterials:noop,updateAiTypeCount:noop,updateAiImageControls:noop,updateAiAudioControls:noop,updateAiPointsControls:noop,showView:noop,setAiProgress:noop,renderAiJobs:noop,escapeHtml:s=>s,firstAiGuideStep:null,crewTour:null,aiApi:{status:async()=>({enabled:true})}};
   await vm.runInNewContext(helper+app.slice(start,end)+'\nopenAiView()',context);
   assert.equal(doc.getElementById('aiTopic').value,'');
   assert.equal(doc.getElementById('aiCustomNotes').value,'');

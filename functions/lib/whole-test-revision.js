@@ -29,6 +29,7 @@ function cleanQuestion(raw = {}, index = 0) {
   const points = Number(raw?.points);
   return {
     sourceIndex: index,
+    ...(raw.chapterId ? {chapterId:String(raw.chapterId)} : {}),
     locked: Boolean(raw?.locked),
     fixedImage: Boolean(raw?.fixedImage),
     fixedImageAlt: cleanString(raw?.fixedImageAlt || raw?.imageAlt, MAX_ALT_CHARS),
@@ -72,6 +73,7 @@ function cleanWholeTestRevisionRequest(data = {}) {
   return {
     instruction,
     test: {
+      ...(rawTest.chapterSchemaVersion===1 ? {chapterSchemaVersion:1,chapters:rawTest.chapters} : {}),
       title: cleanString(rawTest.title, 180) || "Test",
       subject: cleanString(rawTest.subject, 120),
       grade: cleanString(rawTest.grade, 60),
