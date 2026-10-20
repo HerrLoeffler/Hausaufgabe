@@ -394,3 +394,8 @@ Lerngehirn als anklickbarer Einstieg, große Themen nach Fachwahl, automatische 
 Einstieg/Regeln und Release-Train auf aktuellem main gelesen; Remote-Refs frisch abgefragt. [Development Status 39372029039](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39372029039), Job 118461802742 erfolgreich; Fetch-/Audit-/Warnlogs gelesen. Warnungen betreffen unter anderem unregistrierte Branches/PRs und Überschneidungen; daraus folgt keine konfliktfreie Gesamtintegration. Aktuelle offene PRs über GitHub-Connector gesucht; verwandte Games-/Kapitelarbeit gelesen. Suche in TODO/Registry nach Adaptivität, Lernstand und Empfehlungen ergab keinen zugeordneten dedizierten Auftrag für diesen Umfang. Suchgrenze: kein vollständiger Inhaltsvergleich aller historischen Branches.
 
 Aktueller Runtimecommit separat ausgepackt und die oben genannten Funktionen gelesen. Fremde offene Checkouts und synchronisierte sources unverändert. Quellenrecherche nur öffentliche Fachquellen; keine Schülerdaten, Klassenlisten oder Kontoinhalte. Produkttests, Geräteabnahme, Providerlauf und Deploy sind außerhalb dieses Konzeptauftrags. Technisch geprüft wurden die Dokumentationsdiffs und Registry-JSON; fachliche Abnahme der entworfenen Aufgaben und Produktwirksamkeit sind offen.
+
+
+## Forschungsbasierter Didaktikentwurf vom 20.10.2026
+
+Auf erneuten Nutzerauftrag zuerst recherchieren und konzipieren. Neuer [Didaktikentwurf](adaptive-practice-01-didactics.md) mit konkretem Erweitern-Dialog, Fehlerzweigen, Materialerschließung und Abnahmefällen liegt zur Fachprüfung vor. Er präzisiert und korrigiert frühere vereinfachte Annahmen wie automatisches Schwierigerwerden und pauschalen 8/10-Beherrschungsnachweis. Noch keine Umsetzung dieses Entwurfs, kein neuer Wirksamkeitsnachweis.

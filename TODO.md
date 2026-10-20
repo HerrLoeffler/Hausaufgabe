@@ -610,3 +610,8 @@ Beauftragter Test sinnvoller Steigerung und wiederholter Fehler; Learning-Snacks
 ### GC-ADAPTIVE-PRACTICE-01 Automatische Fortsetzung
 
 Gemeldeten fehlenden Folgeschritt nach Fehler korrigiert: KI-gewählte Probe oder Hilfe startet automatisch.52JS-Tests grün, keine weitere didaktische Änderung; Qualitätsbedarf bleibt offen und vorerst zurückgestellt. Persistentes lokales80er-Testlimit durch Nutzerübung erreicht, kein Reset/weitere Providerprobe. Gleicher PR253, localhost/branch_only, kein Deploy.
+
+
+### GC-ADAPTIVE-PRACTICE-01 Quellenbasierte Didaktik
+
+Neuer Forschungsauftrag vor weiterer Umsetzung: 295 öffentliche Fachportal-Seiten kurz gesichtet,19 Kernquellen in ausgewählten Volltextabschnitten vertieft. Konzept mit konkreter Diagnose/Hilfe zum Erweitern, getrennten Lernbelegen, Materialerschließung und Abnahmefällen liegt unter docs/concepts/adaptive-practice-01-didactics.md zur Fachprüfung vor. Kein Produktcode, Providerlauf, Budgetreset oder Deploy.

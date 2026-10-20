@@ -1,0 +1,255 @@
+[
+  {
+    "label": "Q1",
+    "title": "Adding It Up: Helping Children Learn Mathematics",
+    "authors": "National Research Council; Jeremy Kilpatrick, Jane Swafford, Bradford Findell (editors)",
+    "year": 2001,
+    "url": "https://www.nationalacademies.org/read/9822/chapter/6",
+    "read": "S. 115–123 und 231–241; ausgewählte Buchabschnitte, nicht das ganze Buch.",
+    "limit": "Forschungssynthese und fachlicher Rahmen; kein einzelner Wirksamkeitsversuch."
+  },
+  {
+    "label": "Q2",
+    "title": "How People Learn: Brain, Mind, Experience, and School: Expanded Edition",
+    "authors": "National Research Council; John D. Bransford, Ann L. Brown, Rodney R. Cocking (editors)",
+    "year": 2000,
+    "url": "https://www.nationalacademies.org/read/9853/chapter/6",
+    "read": "S. 51–66, Kapitel 3 teilweise; nicht das ganze Buch.",
+    "limit": "Fachübergreifende Synthese zu Lernen und Transfer."
+  },
+  {
+    "label": "Q3",
+    "title": "Verstehens- und strukturorientiertes Üben am Beispiel des Brüchespiels „Fang das Bild“ – Didaktische Ansätze und ihre Wirkungen in Lernprozessen",
+    "authors": [
+      "Susanne Prediger",
+      "Andrea Schink"
+    ],
+    "year": 2013,
+    "url": "https://wwwold.mathematik.tu-dortmund.de/~prediger/veroeff/13-Prediger-Schink-Strukturorientiert-Web.pdf",
+    "read": "Autor-Webfassung PDF-S.1–14; Literaturverzeichnis nicht gelesen.",
+    "limit": "Qualitative Designexperimente mit 119 Lernenden in Kl. 7/8; keine randomisierte Effektprüfung."
+  },
+  {
+    "label": "Q4",
+    "title": "LehrplanPLUS Bayern: Mathematik6, Mittelschule, Regelklasse",
+    "authors": "ISB Bayern",
+    "year": "Abruf 2026",
+    "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/mathematik/regelklasse",
+    "read": "Lernbereich1 mit Kompetenzerwartungen zu Bruchzahlen; amtliche Zielvorgabe.",
+    "limit": "Curriculum, kein Wirksamkeitsnachweis."
+  },
+  {
+    "label": "Q5",
+    "title": "Didaktischer Kommentar B1: Brüche und Prozente verstehen",
+    "authors": [
+      "Andrea Schink",
+      "Susanne Prediger",
+      "Lena Wessel",
+      "Lena Böing"
+    ],
+    "year": 2026,
+    "url": "https://mathe-sicher-koennen.dzlm.de/mskfiles/uploads/Dokumente/msk_didkomm_b1_260209.pdf",
+    "read": "PDF-S.2–6,23–26.",
+    "limit": "Didaktischer Kommentar; Förderung des Bruchverständnisses, keine KI-Evaluation."
+  },
+  {
+    "label": "Q6",
+    "title": "Didaktischer Kommentar B2: Gleichwertige Brüche verstehen und berechnen",
+    "authors": [
+      "Andrea Schink",
+      "Birte Pöhler-Friedrich",
+      "Susanne Prediger",
+      "Lena Wessel",
+      "Lena Böing"
+    ],
+    "year": 2026,
+    "url": "https://mathe-sicher-koennen.dzlm.de/mskfiles/uploads/Dokumente/msk_didkomm_b2_260214.pdf",
+    "read": "PDF-S.2–5,14–19,22–25; Bilder auf PDF-S.15–16 zusätzlich visuell geprüft.",
+    "limit": "Didaktischer Lernpfad und Fehlerhinweise; keine validierte automatische Fortschrittsregel."
+  },
+  {
+    "label": "Q7",
+    "title": "Didaktischer Kommentar B3: Brüche und Prozente ordnen",
+    "authors": [
+      "Andrea Schink",
+      "Susanne Prediger",
+      "Lena Böing"
+    ],
+    "year": 2026,
+    "url": "https://mathe-sicher-koennen.dzlm.de/mskfiles/uploads/Dokumente/msk_didkomm_b3_260214.pdf",
+    "read": "PDF-S.2–3,8–13.",
+    "limit": "Didaktischer Kommentar zu Ordnung und Vergleich von Brüchen."
+  },
+  {
+    "label": "Q8",
+    "title": "Didaktischer Kommentar B4: Addition & Subtraktion von Brüchen verstehen",
+    "authors": [
+      "Andrea Schink",
+      "Susanne Prediger",
+      "Lena Böing"
+    ],
+    "year": 2026,
+    "url": "https://mathe-sicher-koennen.dzlm.de/mskfiles/uploads/Dokumente/msk_didkomm_b4_260214.pdf",
+    "read": "PDF-S.2–8.",
+    "limit": "Didaktischer Kommentar zu Addition und Subtraktion."
+  },
+  {
+    "label": "Q9",
+    "title": "Vorstellungen zum Operieren mit Brüchen entwickeln und erheben: Vorschläge für vorstellungsorientierte Zugänge und diagnostische Aufgaben",
+    "authors": [
+      "Susanne Prediger"
+    ],
+    "year": 2006,
+    "url": "https://wwwold.mathematik.tu-dortmund.de/~prediger/veroeff/06-PM-H11-Prediger-Vorstellungen.pdf",
+    "read": "Autor-Vorfassung PDF-S.1–8.",
+    "limit": "Diagnostische Aufgaben und Grundvorstellungen; keine automatische Diagnosevalidierung."
+  },
+  {
+    "label": "Q10",
+    "title": "Focus on Formative Feedback",
+    "authors": [
+      "Valerie J. Shute"
+    ],
+    "year": 2008,
+    "url": "https://myweb.fsu.edu/vshute/pdf/shute%202008_b.pdf",
+    "read": "Zeitschriften-S.153–156,177–181.",
+    "limit": "Integrativer Forschungsüberblick; Feedback wirkt abhängig von Aufgabe und Lernenden."
+  },
+  {
+    "label": "Q11",
+    "title": "Organizing Instruction and Study to Improve Student Learning",
+    "authors": "Harold Pashler, Patrice M. Bain, Brian A. Bottge, Arthur Graesser, Kenneth Koedinger, Mark McDaniel, Janet Metcalfe",
+    "year": 2007,
+    "url": "https://ies.ed.gov/ncee/WWC/Docs/PracticeGuide/20072004.pdf",
+    "read": "Gedruckte S.5–7,9–11,19–23,29–31.",
+    "limit": "Praxisleitfaden; mehrere Fachgebiete, keine universelle optimale Warte- oder Wiederholungszeit."
+  },
+  {
+    "label": "Q12",
+    "title": "From Example Study to Problem Solving: Smooth Transitions Help Learning",
+    "authors": [
+      "Alexander Renkl",
+      "Robert K. Atkinson",
+      "Uwe H. Maier",
+      "Richard Staley"
+    ],
+    "year": 2002,
+    "url": "https://scispace.com/pdf/from-example-study-to-problem-solving-smooth-transitions-15tfd8h0l4.pdf",
+    "read": "Zeitschriften-S.297–313.",
+    "limit": "Drei Studien, unterschiedliche Gruppen; Nahtransfer günstiger, Ferntransfer gemischt."
+  },
+  {
+    "label": "Q13",
+    "title": "Developing Effective Fractions Instruction for Kindergarten Through 8th Grade: A Practice Guide",
+    "authors": "Robert Siegler, Thomas Carpenter, Francis Fennell, David Geary, James Lewis, Yukari Okamoto, Laurie Thompson, Jonathan Wray",
+    "year": 2010,
+    "url": "https://files.eric.ed.gov/fulltext/ED512043.pdf",
+    "read": "Gedruckte S.19–34,55–59; gelesen über ERIC-Volltext.",
+    "limit": "Bruchdidaktischer Praxisleitfaden; Empfehlungen 2/3 mit moderater Evidenzbewertung, kein GradeCrew-Test."
+  },
+  {
+    "label": "Q14",
+    "title": "Assisting Students Struggling with Mathematics: Intervention in the Elementary Grades",
+    "authors": [
+      "Lynn S. Fuchs",
+      "Rebecca Newman-Gonchar",
+      "Robin Schumacher",
+      "Barbara Dougherty",
+      "Nicole Bucka",
+      "Karen S. Karp",
+      "John Woodward",
+      "Ben Clarke",
+      "Nancy C. Jordan",
+      "Russell Gersten",
+      "Madhavi Jayanthi",
+      "Betsy Keating",
+      "Seth Morgan"
+    ],
+    "year": 2021,
+    "url": "https://ies.ed.gov/ncee/WWC/Docs/PracticeGuide/WWC2021006-Math-PG.pdf",
+    "read": "Gedruckte S.6–7,21–29.",
+    "limit": "Förderung in der Grundschule; Übertragung auf Klasse 6 gesondert prüfen."
+  },
+  {
+    "label": "Q15",
+    "title": "Generative AI without guardrails can harm learning: Evidence from high school mathematics",
+    "authors": [
+      "Hamsa Bastani",
+      "Osbert Bastani",
+      "Alp Sungu",
+      "Haosen Ge",
+      "Özge Kabakcı",
+      "Rei Mariman"
+    ],
+    "year": 2025,
+    "url": "https://hamsabastani.github.io/education_llm.pdf",
+    "read": "Autor-PDF S.3–16, inklusive Beispielprompt S.7; Anhänge nicht vollständig.",
+    "limit": "Mathematik, eine türkische Schule, Kl. 9–11. Ungeführte KI half beim Üben, schadete später ohne KI; Tutorvariante zeigte keinen unabhängigen Prüfungsgewinn gegenüber Kontrolle."
+  },
+  {
+    "label": "Q16",
+    "title": "AI tutoring outperforms in-class active learning: an RCT introducing a novel research-based design in an authentic educational setting",
+    "authors": [
+      "Greg Kestin",
+      "Kelly Miller",
+      "Anna Klales",
+      "Timothy Milbourne",
+      "Gregorio Ponti"
+    ],
+    "year": 2025,
+    "url": "https://www.nature.com/articles/s41598-025-97652-6?code=none&error=cookies_not_supported",
+    "read": "HTML: Einleitung, Ergebnisse, Diskussion und Methoden zur Stichprobe.",
+    "limit": "Zwei Physikeinheiten an einer Universität; unmittelbarer Lerntest, kein Bruch- oder Langzeitnachweis."
+  },
+  {
+    "label": "Q17",
+    "title": "Aufgaben als Lerngelegenheiten für konzeptuelles und prozedurales Wissen zu Brüchen – Eine vergleichende Schulbuchanalyse",
+    "authors": [
+      "Katja Lenz",
+      "Gerald Wittmann",
+      "Lars Holzäpfel"
+    ],
+    "year": 2019,
+    "url": "https://journals.ub.uni-koeln.de/index.php/mathematica_didactica/article/download/1140/1574/4176",
+    "read": "PDF-S.1–8,13; Teilstücke aus9,12 nicht als volle Seiten gezählt.",
+    "limit": "Inhaltsanalyse von fünf Schulbuchreihen; keine gemessenen Lernwirkungen."
+  },
+  {
+    "label": "Q18",
+    "title": "Online Mathematics Homework Increases Student Achievement",
+    "authors": [
+      "Jeremy Roschelle",
+      "Mingyu Feng",
+      "Robert F. Murphy",
+      "Craig A. Mason"
+    ],
+    "year": 2016,
+    "url": "https://journals.sagepub.com/doi/full/10.1177/2332858416673968",
+    "read": "HTML: Studiendesign, Messinstrumente, Ergebnisse und Diskussion; Korrektur 2017 gelesen.",
+    "limit": "Schulrandomisierter Versuch, Kl. 7; Tutorsystem plus Lehrkraftfortbildung, keine isolierte Chatbotwirkung. Korrigierte Tabelle beachten."
+  },
+  {
+    "label": "Q19",
+    "title": "Effectiveness of Intelligent Tutoring Systems: A Meta-Analytic Review",
+    "authors": [
+      "James A. Kulik",
+      "J. D. Fletcher"
+    ],
+    "year": 2016,
+    "url": "https://www.researchgate.net/publication/277636218_Effectiveness_of_Intelligent_Tutoring_Systems_A_Meta-Analytic_Review",
+    "read": "Zeitschriften-S.42–48,60,63–69; Studientabelle selektiv.",
+    "limit": "Metaanalyse klassischer Tutorsysteme, heterogene Ergebnisse; keine Effektprognose für generative KI."
+  },
+  {
+    "label": "Q20",
+    "title": "An effective metacognitive strategy: learning by doing and explaining with a computer-based Cognitive Tutor",
+    "authors": [
+      "Vincent A. W. M. M. Aleven",
+      "Kenneth R. Koedinger"
+    ],
+    "year": 2002,
+    "url": "https://people.cs.vt.edu/~shaffer/CS6604/Papers/AlevenKoedinger2002.pdf",
+    "read": "Zeitschriften-S.147–153,155–161.",
+    "limit": "Kleine Geometriestudien; strukturierte Begründungen, kein allgemeiner Nachweis für freie KI-Dialoge."
+  }
+]
