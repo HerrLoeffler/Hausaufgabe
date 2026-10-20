@@ -1,5 +1,5 @@
 import {pizzaMarkup,togglePiece,splitPizza,pizzaMatches,splitOptions,canRefine} from './interactive-pizza.mjs';
-import {validateDecision,decisionContext,selectSupportSteps} from './didactic-decision.mjs';
+import {validateDecision,decisionContext,selectSupportSteps,continueTutor} from './didactic-decision.mjs';
 import {buildHelp,createHelp,helpWait,advanceHelp,backHelp,canLeaveHelp,microCheck,canAdvanceStep} from './help-sequence.mjs';
 import {visualHelp,wallView,plainMath} from './fraction-visuals.mjs';
 import {skills,validateTask,evaluateFraction,learnerState,checkStep,remainingSeconds,taskVariant} from './tutor-model.mjs';
@@ -29,9 +29,8 @@ async function planNext(kind='answer',guided=null){
  catch(err){if(version===generation)error=fail(err);}
  finally{if(version===generation){busy=false;isPlanning=false;}}
  if(version!==generation)return;
- if(accepted?.action==='support'){await openHelp(accepted.focus);return;}
- if(kind==='guided_complete'&&accepted){helpState=null;helpSteps=[];if(accepted.action==='probe'){await generate();return;}}
- renderTutor();
+ if(kind==='guided_complete'&&accepted&&accepted.action!=='support'){helpState=null;helpSteps=[];}
+ await continueTutor(accepted,context,{support:openHelp,probe:generate,show:renderTutor});
 }
 async function generate(){if(busy||expired)return;const target=decision||{skill:'add',difficulty:1};decision=null;helpState=null;helpSteps=[];busy=true;error='';aiText='';task=null;feedback=null;steps=false;hinted=false;stepStatus='';draft={};helpLevel=0;guideDone=false;guideTries=0;guideMessage='';const version=++generation;renderTutor();try{const text=await ask(taskPrompt(),'task',{skill:target.skill,difficulty:target.difficulty});let cleaned=text.replace(/^```(?:json)?\s*/,'').replace(/\s*```$/,'');const data=JSON.parse(cleaned);if(version!==generation)return;task=validateTask(data);task.planReason=target.reason||'Eine kurze Einstiegsprobe.';if(deadline===null)deadline=Date.now()+minutes*60000;}catch(err){if(version===generation)error=fail(err);}finally{if(version===generation){busy=false;renderTutor();}}}
 export function statusMarkup(){const m=learnerState(events);return `<div class="practice-settings"><label>Lehrkraft-Vorschau: <input type="number" data-practice-minutes min="1" max="90" value="${minutes}" ${deadline?'disabled':''}> Minuten individuell üben</label><span data-countdown>${clockLabel()}</span></div><section class="learning-status" aria-label="Dein aktueller Lernweg"><div><h3>Nachweis erreicht: mindestens 8 von 10</h3><p>${m.shown.length?m.shown.map(s=>`<span class="state-chip shown">✓ ${skills[s]} (${m.evidence[s].correct}/10)</span>`).join(''):'Noch kein gesicherter Nachweis. Ein richtiger Versuch allein reicht nicht.'}</p></div><div><h3>Hier übst du gerade</h3><p>${m.practice.length?m.practice.map(s=>`<span class="state-chip practicing">${m.recheck.includes(s)?'↻ Erneut prüfen: ':''}${skills[s]} · ${m.evidence[s].correct}/${m.evidence[s].total} richtig, Ziel 8/10</span>`).join(''):events.length?'Bisher keine offene Beobachtung. Neue Aufgaben prüfen weiter.':'Dein Einstieg wird mit einer Aufgabe geprüft.'}</p></div><div><h3>Als Nächstes empfohlen</h3><p><span class="state-chip next">${decision?skills[decision.skill]:'Die KI wählt nach deiner Antwort.'}</span></p><button class="text-btn" data-tutor="start">${connected()?'Mit KI weiterüben':'KI-Übung starten'}</button></div><small>Für jeden Nachweis: 10 verschiedene Aufgaben ohne Hilfe, davon mindestens 8 richtig. Neue Aufgaben nach einer Erklärung prüfen erst weiter; unterstützte und wiederholte Aufgaben zählen nicht. Ein späterer Fehler löst eine erneute Prüfung aus.</small></section>`;}

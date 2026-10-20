@@ -15,3 +15,8 @@ export function validateDecision(raw,context){
 }
 export function selectSupportSteps(steps,focus){let index=0;if(focus==='factor')index=steps.findIndex(s=>s.id.startsWith('expand-'));else if(focus==='sum')index=steps.findIndex(s=>s.id==='sum');else if(focus==='equivalence')index=steps.findIndex(s=>s.id.startsWith('partition-'));return steps.slice(Math.max(0,index));}
 export const demandLabels=['Grundlage mit kleinen Zahlen','Ein Bruch muss erweitert werden','Beide Brüche müssen erweitert werden','Kombinierte Anwendung über ein Ganzes'];
+export async function continueTutor(decision,context,{support,probe,show}){
+ if(decision?.action==='support'){await support(decision.focus);return;}
+ if(decision?.action==='probe'&&(context.kind==='guided_complete'||context.kind==='answer'&&context.observation?.correct===false)){await probe();return;}
+ show();
+}

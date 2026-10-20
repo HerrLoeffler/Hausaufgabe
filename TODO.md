@@ -606,3 +606,7 @@ Echte Emmi-Auswahl für nächste Aktivität ergänzt; Aufgabe, exakte Antwortbew
 ### GC-ADAPTIVE-PRACTICE-01 Echter Test und KI-Antwortdialog
 
 Beauftragter Test sinnvoller Steigerung und wiederholter Fehler; Learning-Snacks-Prinzip als kurzer Dialog mit Antwortfeld pro Frage. Erklärung jetzt echte KI, separater KI-Prüfdurchlauf für Aufgaben/Erklärungen; Bilder/Interaktion nur bei Passung, keine Pflicht-Pizza. Regressionsfälle für tatsächlichen Anspruch, Rückschritt und Antwortverarbeitung. Gleicher lokaler Bruchpilot/PR253, kein Deploy; Details und reale Versuche in workstreams/adaptive-practice-01.md und LIVE-TEST.md. Menschliche didaktische Abnahme offen.
+
+### GC-ADAPTIVE-PRACTICE-01 Automatische Fortsetzung
+
+Gemeldeten fehlenden Folgeschritt nach Fehler korrigiert: KI-gewählte Probe oder Hilfe startet automatisch.52JS-Tests grün, keine weitere didaktische Änderung; Qualitätsbedarf bleibt offen und vorerst zurückgestellt. Persistentes lokales80er-Testlimit durch Nutzerübung erreicht, kein Reset/weitere Providerprobe. Gleicher PR253, localhost/branch_only, kein Deploy.
