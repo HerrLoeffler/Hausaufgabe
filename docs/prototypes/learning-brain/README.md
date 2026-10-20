@@ -14,9 +14,9 @@ Zufällige Zugangsdaten liegen mit Dateimodus600 außerhalb des Checkouts und We
 
 - Lerngehirn: vier große Fächer, Profil in der Mitte. Mathe öffnet sieben LehrplanPLUS-Themen; Bruchzahlen ist der ausgearbeitete Übungsweg.
 - Lehrkraft-Vorschau: Dauer1–90 Minuten, Standard20. Countdown beginnt mit der ersten gültigen Aufgabe. Zeitablauf beendet die Einheit ohne Bewertung des Könnens. Die Einstellung simuliert einen Auftrag; noch keine Klassenzuweisung oder Synchronisierung.
-- Neue Aufgaben über den bestehenden GradeCrew-Callable `regenerateQuestion`; Erklärungen über `crewAssistant`/Emmi. Echte KI-Antworten, kein stiller Ersatz durch feste Aufgaben.
+- Neue Aufgaben über den bestehenden GradeCrew-Callable `regenerateQuestion`. Geführte Rechenschritte und SVG-Bilder werden exakt aus dieser Aufgabe berechnet. Optionale kurze Rückfrage über `crewAssistant`/Emmi.
 - KI-Zahlendaten werden begrenzt und unabhängig nachgerechnet. Brüche mit Zähler/Nenner eingeben; gleichwertige ungekürzte Antworten zählen. Optionale Erweiterungsschritte und freie Rückfrage an die KI.
-- Fehler: konkrete KI-Erklärung, danach Prüfung eines Teilschritts. Richtige selbstständige Antworten führen weiter. Unterstützte Antworten gelten nicht als selbstständiger Beleg. Die transparente lokale Lernlogik unterscheidet Anteilebild, gleichnamige Addition, Erweitern, gemeinsamen Nenner, Addition und eigene Rechenmauer. Nach Fehlern zuerst Regel/Bild und geführter Schritt, danach leichtere Probe. Noch keine validierte umfassende Diagnose.
+- Fehler: sofortige schrittweise Material-/Rechenhilfe, danach Prüfung eines Teilschritts. Richtige selbstständige Antworten führen weiter. Unterstützte Antworten gelten nicht als selbstständiger Beleg. Die transparente lokale Lernlogik unterscheidet Anteilebild, gleichnamige Addition, Erweitern, gemeinsamen Nenner, Addition und eigene Rechenmauer. Nach Fehlern zuerst Regel/Bild und geführter Schritt, danach leichtere Probe. Noch keine validierte umfassende Diagnose.
 - Lerngehirn zeigt Zwischenstände, Nachweise erst ab8/10 verschiedenen unabhängigen Aufgaben je Teilkompetenz, Übungsbedarf und Empfehlung; ein späterer Fehler nach Erfolg löst „erneut prüfen“ aus. Keine Beherrschungsquote. Lernbelege nur im Browser-Arbeitsspeicher; Refresh löscht sie. KI-Anfragen laufen über GradeCrew an dessen Provider und unterliegen dessen bestehender Verarbeitung. Nur synthetische Übungsangaben verwenden.
 
 ## Materialien und Grenzen
@@ -29,7 +29,7 @@ Nach Fehler: ausgearbeitete Regel/Bild → kleine geführte Frage → neue einfa
 
 ## Nachweise
 
-`node --test *.test.mjs`:29/29 bestanden (10 historische Demo-,14 aktuelle Modell-,5 Visualfälle). `python3 -m unittest test_server.py`:4/4 ohne Netzwerk/echte Credentials bestanden. Fälle: exakte Rechnung1/2+4/8, gültige/ungültige KI-Aufgaben, äquivalente Brüche, Erweiterungsschritte, selbstständige/unterstützte Belege, erneute Unsicherheit, Empfehlungen und Zeitgrenze. JS-Syntax und Python-Quellsyntax geprüft.
+`node --test *.test.mjs`:35/35 bestanden (10 historische Demo-,14 aktuelle Modell-,5 Visual- und6 Schrittfolgenfälle). `python3 -m unittest test_server.py`:4/4 ohne Netzwerk/echte Credentials bestanden. Fälle: exakte Rechnung1/2+4/8, gültige/ungültige KI-Aufgaben, äquivalente Brüche, Erweiterungsschritte, selbstständige/unterstützte Belege, erneute Unsicherheit, Empfehlungen und Zeitgrenze. JS-Syntax und Python-Quellsyntax geprüft.
 
 Echter Browserdurchlauf am20.10.2026: KI erzeugt1/8+1/8; absichtliche Antwort2/16 löst reale Pizza-Erklärung aus; nächster KI-Teilschritt2/3 und1/6, Antwort6 selbstständig richtig. Anschließend zeigt das Lerngehirn „1 gezeigt ·1 in Übung“, den gemeinsamen Nenner als Beleg und Addition als Übungsbedarf. Countdown20Minuten sichtbar. Zwei frühere direkte Emmi-Requests belegen Erklärung, aber der erste Versuch konnte keine strukturierten Aufgabendaten liefern; danach den vorhandenen Aufgabengenerator verwendet. Insgesamt5 Provider-Endpunktaufrufe bis zu diesem Nachweis, tatsächliche Tokenkosten unbekannt. Kein pädagogischer Wirksamkeits- oder Productionnachweis.
 
@@ -40,3 +40,11 @@ Frühere Beispielversion desktop und390px geprüft; neue KI-Version desktop und3
 Am20.10.2026 neue KI-Aufgabe3/8+1/4, absichtliche Antwort4/12. Sofort eigene farbige Streifen/Erweiterung, geführte Frage und konkrete KI-Erklärung. Nach geführter Antwort2 neue einfachere KI-Aufgabe2/5+3/5; richtige Antwort5/5 ergibt nur „1/1 richtig, Ziel8/10“, ausdrücklich keinen grünen Nachweis. Der vorherige Browsernachweis mit grüner Einzelantwort ist historisch und wurde durch diese Änderung korrigiert. Erweitern zeigt denselben Faktor innerhalb von Zähler und Nenner; Roh-LaTex im KI-Text wird für die Anzeige lesbar umgewandelt.
 
 Der bisherige Verbrauch von19Aufrufen aus Martins Test wurde erhalten. Für die ausdrücklich gewünschte längere Nachweislogik beträgt die neue lokale Obergrenze80Gesamtrequests, kein Reset und kein automatischer weiterer Ausbau. Server läuft als eigener Prozess weiter auf8769. Tatsächliche Providerkosten unbekannt.
+
+## Schrittweise Lernhilfe statt Textwand
+
+Die aktuelle Hilfe ersetzt die frühere gleichzeitige Darstellung aller Streifen, Rechenschritte und freien KI-Erklärung. Jede Ansicht enthält nur einen kurzen Lernschritt. Folge je nach Aufgabe: erster Anteil → zweiter Anteil → gleicher Faktor oben/unten → neue Unterteilung → Zusammenzählen → konkrete kleine Frage. Jede Vorwärtsaktion hat10Sekunden Lesepause; Back/Beenden möglich, kein automatischer Wechsel. Eine Pause beweist kein Lesen/Verstehen. Die geführte Frage bezieht sich auf die tatsächliche Rechnung; kein konstantes1+1 oder Faktor2.
+
+Mathematische Regeln und genaue SVG-Bilder entstehen aus unabhängig validierten Aufgabenzahlen und Materialprofilen. Dicke Linien bewahren die alte Teilung, feine Linien zeigen neue Teile. Die Ganzengröße bleibt gleich. Neue Aufgaben weiter echte GradeCrew-KI; freie Zusatzfrage nur optional zum aktuellen Schritt, maximale Anzeige240Zeichen. Überlange Antworten werden nicht als Textwand gezeigt. Kein automatischer Provideraufruf nach falscher Antwort.
+
+Expliziter Bruchvergleich bei1/4+1/5:9/20,18/40 und45/100 korrekt;4/40 und4/4 falsch. Der vorhandene exakte Grader akzeptiert gleichwertige Brüche bereits, keine Lösung auf einen einzelnen Nenner festgelegt.35/35JS-Tests einschließlich neuer Schritt-/Timer-/Gleichwertigkeitsfälle,4/4Proxytests.

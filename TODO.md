@@ -594,3 +594,7 @@ Auf ausdrücklichen Auftrag separates Lehrkraft-Testkonto in gradecrew-staging-2
 ### GC-ADAPTIVE-PRACTICE-01 Materialpfad und Nachweiskorrektur
 
 Bestehende Bruchmaterialien tatsächlich gesichtet; sechs eigene Prototypprofile aus Strategiekarten, Faltblatt und Rechenmauern abgeleitet. Farbige berechnete Bruchstreifen, gleiche Erweiterungsfaktoren oben/unten und geführter Lernschritt vor leichterer Probe. Nutzerfehlerbericht korrigiert: Einzelantwort wird nicht mehr als Können angezeigt; Nachweis erst mindestens8/10 verschiedene selbstständige Aufgaben pro Teilkompetenz, Hilfen/Duplikate ausgeschlossen. Lokaler Prototyp/gleicher PR253, keine Produktintegration oder Material-Vollfreigabe. Fachliche Nutzerprüfung offen.
+
+### GC-ADAPTIVE-PRACTICE-01 Kleinschrittige Lernhilfe
+
+Auf konkreten Nutzerbefund Textwand durch einzelne klickbare Ansichten ersetzt: Anteil → Faktor → feinere Teilung → Summe → aufgabenbezogene Hilfefrage.10Sekunden Lesepause vor jedem Weiter, kein Auto-Wechsel. Keine automatische freie KI-Langerklärung nach Fehler. Gleichwertige Ergebnisse unabhängig vom Nenner weiter exakt geprüft; zusätzliche Fälle9/20=18/40 zu1/4+1/5.35JS-/4Proxytests lokal grün, gleicher Prototyp/PR253, kein Schuldeploy. Nutzer-/didaktische Abnahme offen.
