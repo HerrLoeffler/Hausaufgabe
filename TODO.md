@@ -574,3 +574,8 @@ PR243→Integrationscommit7a18445f926a16b9a795c761f9863d7ecfb6b3b0, Kandidat4b30
 Die Schuladresse **https://hausaufgabe-staging.web.app/** ist jetzt bewusst Live und liefert gc44 aus dem geprüften Baum c8886574 (Source42447348, kanonische Integration5a248621, PR248). Hosting-Dateien vollständig remote verglichen;58/58 Schulfunctions aktiv, genau sieben Assessment- und zwei Feedback-/Telemetryfunctions aktualisiert, keine entfernt. Getrennte Tests unter https://gradecrew-staging-2026.web.app/ (38/38Functions aktiv). Altprojekt hausaufgabe-40294 unverändert. Kein Datenumzug.
 
 Native b43298b auf eigenem Branch: Teacher39161910081/Secure39161910224 laufen; **neuer Upload und physische Offline-Abnahme noch offen**. Nutzerentscheidung: nach dauerhaft lokal gesicherter Abgabe freigeben, später synchronisieren; weitere Prüfung bis Serverreceipt gesperrt. Kein Fake-Erfolg. Feedback hat einen Capture-Pfad und bleibt freigabepflichtig. Connector0.5 installiert/geprüft; aktueller Chat braucht Reload und separate Live-Adminanmeldung. Neue Test-WIF-Automatik bleibt bis Einrichtung fail-closed. [Vollständige Übergabe](workstreams/live-staging-isolation-20261016.md). Ältere Production-/Staging-Aussagen oben sind historische Nachweise und keine aktuelle Projektzuordnung.
+
+
+## GC-CHAPTER-TESTS-01 – Idee/Planung (20.10.2026)
+
+- [ ] Kapitel im bestehenden Test prüfen: Konzept mit sechs Mathethemen, A/B/C-Vergleich, Codeinventur und Stufenplan zur Nutzerentscheidung erstellt. Keine Produktfreigabe oder Implementierung, keine Release-Stufenänderung. Empfehlung B noch nicht beschlossen. [Konzept](docs/concepts/GC-CHAPTER-TESTS-01.md) · [Übergabe](workstreams/chapter-tests-01.md). Nächster Schritt: Martin legt ersten Einsatzzweck fest.

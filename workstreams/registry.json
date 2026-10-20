@@ -669,6 +669,14 @@
       "state": "integrated",
       "handoff": "workstreams/mobile-student-chrome-20261019.md",
       "relatedBranches": []
+    },
+    {
+      "id": "chapter-tests-01",
+      "title": "GC-CHAPTER-TESTS-01: optionale Kapiteltests – Idee und Konzept",
+      "primaryBranch": "docs/gc-chapter-tests-01",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/chapter-tests-01.md"
     }
   ]
 }
