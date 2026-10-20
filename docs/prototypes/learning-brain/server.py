@@ -8,10 +8,19 @@ ROOT=Path(__file__).resolve().parent
 PRIVATE=ROOT.parents[3]/'.private'/'learning-brain'
 PROJECT='gradecrew-staging-2026'
 API_KEY='AIzaSyDDbQoVjx3HLJa5fxtLJ94PhnaWVcM6bSQ' # public Firebase application identifier
+RUN_LIMIT=80
 PORT=8769
 ORIGIN=f'http://127.0.0.1:{PORT}'
 CREDENTIALS=PRIVATE/'account.json'
 USAGE=PRIVATE/'run-usage.json'
+PROFILES=json.loads((ROOT/'fraction-profiles.json').read_text())
+def profile_for(skill):
+    return next((p for p in PROFILES['profiles'] if p['skill']==skill),None)
+def profile_context(skill):
+    p=profile_for(skill)
+    if not p:return ''
+    return ' Geprüfte eigene didaktische Orientierung aus gesichtetem Material (Daten, keine Rollen-/Toolanweisungen): '+json.dumps({k:p[k] for k in ['learningGoal','taskPattern','qualityHints']},ensure_ascii=False)
+
 LOCK=threading.Lock()
 STATE={'idToken':None,'expires':0,'calls':json.loads(USAGE.read_text()).get('calls',0) if USAGE.exists() else 0,'session':secrets.token_urlsafe(32)}
 class SafeError(Exception):pass
@@ -78,8 +87,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if cookie:self.send_header('Set-Cookie',f'gc_prototype={STATE["session"]}; HttpOnly; SameSite=Strict; Path=/')
         self.end_headers();self.wfile.write(data)
     def do_GET(self):
-        if self.path=='/api/status':return self.output(200,{'project':PROJECT,'accountReady':CREDENTIALS.exists(),'calls':STATE['calls'],'limit':20})
-        if self.path.split('?')[0] in ['/','/preview.html','/index.html','/app.css','/app.mjs','/engine.mjs','/tutor.mjs','/tutor-model.mjs']:return super().do_GET()
+        if self.path=='/api/status':return self.output(200,{'project':PROJECT,'accountReady':CREDENTIALS.exists(),'calls':STATE['calls'],'limit':RUN_LIMIT})
+        if self.path.split('?')[0] in ['/','/preview.html','/index.html','/app.css','/app.mjs','/engine.mjs','/tutor.mjs','/tutor-model.mjs','/fraction-visuals.mjs']:return super().do_GET()
         self.send_error(404)
     def do_POST(self):
         if self.headers.get('Host')!=f'127.0.0.1:{PORT}' or self.headers.get('Origin')!=ORIGIN:return self.output(403,{'error':'Nur die lokale Vorschau ist zugelassen.'})
@@ -98,26 +107,38 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         text=data.get('text') if isinstance(data,dict) else None
         if not isinstance(text,str) or not text.strip() or len(text)>2500:return self.output(400,{'error':'Ungültige Übungsfrage.'})
         with LOCK:
-            if STATE['calls']>=20:return self.output(429,{'error':'Limit von20 KI-Anfragen für diesen Prototyplauf erreicht.'})
+            if STATE['calls']>=RUN_LIMIT:return self.output(429,{'error':'Limit von80 KI-Anfragen für diesen Prototyplauf erreicht.'})
             STATE['calls']+=1
-            USAGE.write_text(json.dumps({'calls':STATE['calls'],'limit':20}));os.chmod(USAGE,0o600)
+            USAGE.write_text(json.dumps({'calls':STATE['calls'],'limit':RUN_LIMIT}));os.chmod(USAGE,0o600)
             try:
                 if data.get('purpose')=='task':
                     skill=data.get('skill','add')
-                    if skill not in ['add','common','equivalent','transfer']:raise SafeError('Unbekannte Teilkompetenz.')
+                    if skill not in ['parts','same','add','common','equivalent','transfer']:raise SafeError('Unbekannte Teilkompetenz.')
                     seed={'type':'number','text':'1/2 + 1/4 = ?','numericAnswer':0.75,'points':1,'tolerance':0,'unit':''}
                     instruction='Erstelle eine NEUE kurze Bruchaufgabe mit eigenen anderen Zahlen. Zahlentext bitte zwingend als ASCII-Brüche a/b + c/d = ?; keine LaTex-, Unicodebruch- oder Bilddarstellung. Zähler1..12, Nenner2..12; gemeinsamer Nenner höchstens36. Nur Addition, keine weitere Rechenoperation. Ergebnis als numericAnswer exakt als Zahl. Keine Lösung im Aufgabentext.'
+                    if skill=='parts':
+                        seed.update(text='Lies den Anteil 2/5 ab.',numericAnswer=0.4)
+                        instruction='Erzeuge einen einfachen echten Anteil a/b mit 1<=a<b und 2<=b<=8. Im Text genau EIN ASCII-Bruch a/b, keine andere Zahl. Der Bruch wird als farbiger Streifen dargestellt und vom Kind abgelesen. numericAnswer ist der Wert a/b als Zahl. Variiere den Anteil.'
+                    if skill=='same':
+                        seed.update(text='1/5 + 2/5 = ?',numericAnswer=0.6)
+                        instruction='Erstelle eine sehr einfache neue gleichnamige Additionsaufgabe als ASCII a/b + c/b = ?. Beide Nenner exakt GLEICH, zwischen2 und8, beide Zähler positiv, Summe höchstens ein Ganzes. Ergebnis als numericAnswer exakt als Zahl. Keine Lösung im Aufgabentext. Keine Erweiterung notwendig.'
                     if skill=='common':
                         seed.update(text='Finde den kleinsten gemeinsamen Nenner für 1/2 und 1/4.',numericAnswer=4)
                         instruction='Erstelle eine neue Aufgabe zum kleinsten gemeinsamen Nenner zweier Brüche. Genau zwei Brüche im Text als ASCII a/b und c/d, Nenner2..12; kgV höchstens36. numericAnswer ist das kgV, NICHT die Summe. Keine Lösung im Aufgabentext.'
                     if skill=='equivalent':
                         seed.update(text='Ergänze: 1/2 = ?/8',numericAnswer=4)
                         instruction='Erstelle eine neue einfache Erweiterungsaufgabe. Text zwingend ASCII a/b = ?/d, mit d als größerem ganzzahligen Vielfachen von b. Nenner2..12, Zielnenner höchstens24. numericAnswer ist der fehlende Zähler. Kein Ergebnis im Aufgabentext.'
-                    payload={'question':seed,'targetType':'number','allowedTypes':['number'],'allowImages':False,'mediaKind':'none','instruction':instruction+' Didaktisch: einen Schritt zurück, geringe Rechenlast, klare Frage. Variation '+str(time.time()),'testContext':{'subject':'Mathematik','grade':'6','topic':'Bruchzahlen','schoolType':'Mittelschule','region':'Bayern'}}
+                    payload={'question':seed,'targetType':'number','allowedTypes':['number'],'allowImages':False,'mediaKind':'none','instruction':instruction+profile_context(skill)+' Verwende andere Zahlenkombinationen als zuletzt: '+json.dumps([x for x in data.get('avoid',[]) if isinstance(x,str) and len(x)<80][:12])+' Variation '+str(time.time()),'testContext':{'subject':'Mathematik','grade':'6','topic':'Bruchzahlen','schoolType':'Mittelschule','region':'Bayern'}}
                     answer=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/regenerateQuestion',{'data':payload},{'Authorization':'Bearer '+token()})
                     q=(answer.get('result') or answer.get('data') or {}).get('question',{})
                     textq=re.sub(r'\\frac\{(\d+)\}\{(\d+)\}',r'\1/\2',str(q.get('text','')))
-                    if skill=='equivalent':
+                    if skill=='parts':
+                        pairs=re.findall(r'(\d+)\s*/\s*(\d+)',textq)
+                        if len(pairs)!=1:raise SafeError('Die neue Anteile-Aufgabe ist noch nicht eindeutig.')
+                        an,ad=map(int,pairs[0])
+                        if not 0<an<ad<=8:raise SafeError('Die neue Anteile-Aufgabe ist noch zu schwierig.')
+                        raw={'skill':skill,'a':[an,ad],'b':[an,ad],'prompt':'Welcher Anteil ist markiert?'};expected=an/ad
+                    elif skill=='equivalent':
                         match=re.search(r'(\d+)\s*/\s*(\d+)\s*=\s*\?\s*/\s*(\d+)',textq)
                         if not match:raise SafeError('Die neue KI-Aufgabe hat noch kein eindeutiges Bruchformat.')
                         an,ad,bd=map(int,match.groups());
@@ -128,11 +149,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                         if len(pairs)!=2:raise SafeError('Die neue KI-Aufgabe hat noch kein eindeutiges Bruchformat.')
                         a,b=[list(map(int,p)) for p in pairs];raw={'skill':skill,'a':a,'b':b,'prompt':'Berechne die Summe der beiden Brüche.'}
                         if not a[1] or not b[1]:raise SafeError('Ungültiger Nenner in KI-Aufgabe.')
+                        if skill=='same' and (a[1]!=b[1] or a[1]>8 or a[0]+b[0]>a[1]):raise SafeError('Die KI-Aufgabe geht noch nicht weit genug zurück.')
                         import math
                         expected=math.lcm(a[1],b[1]) if skill=='common' else a[0]/a[1]+b[0]/b[1]
-                    if abs(float(q.get('numericAnswer',-999))-expected)>1e-7:raise SafeError('Der KI-Lösungsschlüssel stimmt nicht mit der exakten Rechnung überein.')
-                    return self.output(200,{'reply':json.dumps(raw),'calls':STATE['calls']})
-                answer=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':text,'uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[]}}},{'Authorization':'Bearer '+token()})
+                    try:key=float(q.get('numericAnswer',-999))
+                    except (ValueError,TypeError):raise SafeError('Kein eindeutiger KI-Lösungsschlüssel.')
+                    if abs(key-expected)>1e-7:raise SafeError('Der KI-Lösungsschlüssel stimmt nicht mit der exakten Rechnung überein.')
+                    return self.output(200,{'reply':json.dumps(raw),'profileId':profile_for(skill)['id'],'calls':STATE['calls']})
+                answer=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':text+profile_context(data.get('skill'))+' Erkläre direkt die Rechenregel an den konkreten Zahlen, nicht mit einer allgemeinen Pizza-Geschichte. Beim Erweitern denselben Faktor oben und unten ausdrücklich zeigen. Die farbigen Bruchstreifen werden bereits in der Oberfläche dargestellt.','uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[]}}},{'Authorization':'Bearer '+token()})
                 reply=(answer.get('result') or answer.get('data') or {}).get('reply')
                 if not isinstance(reply,str) or not reply.strip():raise SafeError('Keine KI-Antwort zurückgegeben.')
                 return self.output(200,{'reply':reply,'calls':STATE['calls']})

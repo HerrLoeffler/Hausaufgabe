@@ -590,3 +590,7 @@ Martin beauftragt nach Planfreigabe einen Prototyp mit Beispielaufgaben. Lokale 
 ### GC-ADAPTIVE-PRACTICE-01 Echte KI und Übungszeit
 
 Auf ausdrücklichen Auftrag separates Lehrkraft-Testkonto in gradecrew-staging-2026 eingerichtet, lokaler Proxy ohne Schulzugang/Deploy. Echte Aufgabenerstellung und Emmi-Erklärung im Browser geprüft: Fehler → Erklärung → Voraussetzung → selbstständiger Beleg im Lerngehirn. Bruchfelder/Zwischenschritte, dynamische Belege/Empfehlung und1–90Minuten-Einheit (Standard20) ergänzt.18/18 Logiktests. Status branch_only/Prototyp; menschliche didaktische Abnahme, Bruch-Materialzuordnung und Produktintegration offen. Gleicher PR253 und gleiche Übergabe; keine Produktionsänderung.
+
+### GC-ADAPTIVE-PRACTICE-01 Materialpfad und Nachweiskorrektur
+
+Bestehende Bruchmaterialien tatsächlich gesichtet; sechs eigene Prototypprofile aus Strategiekarten, Faltblatt und Rechenmauern abgeleitet. Farbige berechnete Bruchstreifen, gleiche Erweiterungsfaktoren oben/unten und geführter Lernschritt vor leichterer Probe. Nutzerfehlerbericht korrigiert: Einzelantwort wird nicht mehr als Können angezeigt; Nachweis erst mindestens8/10 verschiedene selbstständige Aufgaben pro Teilkompetenz, Hilfen/Duplikate ausgeschlossen. Lokaler Prototyp/gleicher PR253, keine Produktintegration oder Material-Vollfreigabe. Fachliche Nutzerprüfung offen.
