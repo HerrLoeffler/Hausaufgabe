@@ -1,0 +1,63 @@
+{
+  "task": "GC-EXTENDED-QUESTION-TYPES-01",
+  "date": "2026-10-20",
+  "stage": "branch_only",
+  "sourceCommit": "9fbfd6c4ddc8cc0d0ed3834e508148a01ea4ec3d",
+  "sourceTree": "6a77d6adf33439530444b96b6a312e0963defad0",
+  "localSourceCommit": "52afb730833a7ef24c820b1c13ccf36dc9917d90",
+  "sourceTreesEqual": true,
+  "tests": {
+    "assessment": {
+      "passed": 96,
+      "failed": 0
+    },
+    "functions": {
+      "passed": 281,
+      "failed": 0
+    },
+    "rootWeb": {
+      "passed": 384,
+      "failed": 0
+    },
+    "localService": {
+      "passed": 5,
+      "failed": 0
+    },
+    "httpIsolation": {
+      "passed": 1,
+      "failed": 0
+    },
+    "additionalUi": {
+      "passed": 129,
+      "failed": 1,
+      "baselineReproduced": true,
+      "failure": "view navigation restores focus: missing syncDashboardTutorialEntry in test stub"
+    }
+  },
+  "runtime": "Node24.19.0; Node22CI not run",
+  "localApp": "http://127.0.0.1:8784/",
+  "browserEvidence": [
+    "Remy prepared generation into existing editor",
+    "bounded Emmi simulation changes2questions",
+    "secure pupil real core grading7/10",
+    "structured answer reload",
+    "Wilma manual correction7to8to7",
+    "390/768/1024 iframe browser layouts; no physical device proof"
+  ],
+  "simulated": [
+    "generation",
+    "teacher identity",
+    "SDK",
+    "assessment lifecycle adapter",
+    "bounded Emmi revision"
+  ],
+  "notPerformed": [
+    "emulator",
+    "provider generation",
+    "CI",
+    "integration",
+    "deploy",
+    "physical devices",
+    "full print PDF acceptance"
+  ]
+}
