@@ -62,7 +62,7 @@ Der von Martin gewünschte schnelle Einstieg ist als begrenzte Suchphase vorgese
 
 Ein Sprung überspringt Übungsaufgaben, nicht automatisch den Nachweis aller Voraussetzungen. Nach einem Fehler werden die Anforderungen der Aufgabe zerlegt. Eine gezielte kleinere Probe prüft die wahrscheinlich fehlende Voraussetzung. Ein einzelner Fehler genügt nicht, um das Kind dauerhaft einzustufen. Ungeprüfte Fähigkeiten bleiben unbekannt, auch wenn die schwere Aufgabe richtig war. Hilfen, Wiederholungen und vermutetes Raten bleiben vom unabhängigen Erstversuch unterscheidbar.
 
-Vorgeschlagene Produktregeln für den Pilot: etwa 4–6 aussagekräftige Einstiegsantworten oder spätestens nach ungefähr 5 Minuten in einen hilfreichen Übungsweg wechseln; weder harte Pflichtprüfung noch Diagnoseschleife. Nach zwei nicht gelungenen anspruchsvolleren Proben vorerst keine weiteren großen Sprünge. Bei Überforderung früher helfen oder beenden. Richtwerte müssen mit Lehrkräften und Kindern erprobt werden.
+Vorgeschlagene Produktregeln für den Pilot: zunächst 2–4, bei nötiger Klärung höchstens etwa 6 aussagekräftige Einstiegsantworten; spätestens nach ungefähr 5 Minuten in einen hilfreichen Übungsweg wechseln; weder harte Pflichtprüfung noch Diagnoseschleife. Nach zwei nicht gelungenen anspruchsvolleren Proben vorerst keine weiteren großen Sprünge. Bei Überforderung früher helfen oder beenden. Richtwerte müssen mit Lehrkräften und Kindern erprobt werden.
 
 Konkrete synthetische Suchfolge, alle Vergleiche beziehen sich auf gleich große Ganze:
 
@@ -131,7 +131,7 @@ Ein Klick zeigt die Begründung mit Aufgabenrevisionen und Antwort-/Hilfebelegen
 
 ## Leistungsstand vorsichtig erfassen
 
-**Coldstart:** Lehrkraftziel und optional eine Selbsteinschätzung dienen zur Startwahl. Danach zwei bis vier kurze, unterschiedliche Einstiegsaufgaben im gewählten Teilgebiet; bei deutlicher Belastung direkt unterstützt beginnen. Das ist eine Orientierung, kein umfassender Einstufungstest über sechs Themen. Ein Kind darf ohne Lernstandsprofil üben; längsschnittliche Anpassung erfordert eine verlässliche pseudonyme Identität.
+**Coldstart:** Lehrkraftziel und optional eine Selbsteinschätzung dienen zur Startwahl. Danach zwei bis vier kurze, unterschiedliche Einstiegsaufgaben im gewählten Teilgebiet; bei deutlicher Belastung direkt unterstützt beginnen. Das ist eine Orientierung, kein umfassender Einstufungstest über alle sieben Themen. Ein Kind darf ohne Lernstandsprofil üben; längsschnittliche Anpassung erfordert eine verlässliche pseudonyme Identität.
 
 **Bestandsresultate:** Nur freigegebene, rechtmäßig für diesen Zweck nutzbare Resultate mit stabiler Aufgabenrevision, Teilkompetenzzuordnung und geklärtem Bewertungsstatus übernehmen. Kapitelpunkte allein nicht importieren. Manuell noch ungeprüfte Antworten bleiben offen. Alte Testresultate sind schwache, zeitgebundene Hinweise; aktuelle kurze Gegenproben verhindern, dass eine alte Note den Weg dauerhaft bestimmt. Bestehende Tests werden nicht nachträglich verändert.
 
@@ -304,7 +304,7 @@ Kompetenzgraph und zwei reale Aufgabensequenzen mit Lehrkraft prüfen; zulässig
 
 ### Stufe 1 als kleiner MVP
 
-Ein Thema, vier bis sechs Teilkompetenzen, etwa 40–60 kuratierte Karten mit mehreren Familien, Hilfen und zurückgehaltenen neuen Transferkarten. Bestehende Typen und Grader; regelbasierte Auswahl; eine kurze Schülereinheit; Lehrkraftziel/Override und einfache Belegsicht; sichere Ereignisse, Resume und Kostenfallback. Keine sechs vollständig ausgebauten Themen, kein freier KI-Tutor, kein Gamesumbau.
+Ein Thema, vier bis sechs Teilkompetenzen, etwa 40–60 kuratierte Karten mit mehreren Familien, Hilfen und zurückgehaltenen neuen Transferkarten. Bestehende Typen und Grader; regelbasierte Auswahl; eine kurze Schülereinheit; Lehrkraftziel/Override und einfache Belegsicht; sichere Ereignisse, Resume und Kostenfallback. Keine sieben vollständig ausgebauten Themen, kein freier KI-Tutor, kein Gamesumbau.
 
 | Arbeitspaket | Größenordnung | Annahme und wichtigste Unsicherheit |
 |---|---:|---|
@@ -322,7 +322,7 @@ Vorschlag: zwei Lehrkräfte und ein bis zwei Klassen, vier bis sechs Unterrichts
 
 ### Stufe 3 nur nach belegtem Nutzen
 
-Sechs Themen mit kuratierten Kompetenznetzen; nach Datenlage Vergleich statistischer Modelle gegen Baseline; begrenzte LLM-Erklärungen; einzelne passende Gamesadapter. Jeder Ausbau erhält eigene fachliche und technische Abnahme. Eine freie generative Lernplattform oder neuer 3D-Gamesbau ist kein notwendiger Folgeschritt. Aufwandszahl erst nach ausgewähltem Umfang; Contentabdeckung und Medien sind voraussichtlich große Treiber.
+Alle sieben Mathethemen mit kuratierten Kompetenznetzen; nach Datenlage Vergleich statistischer Modelle gegen Baseline; begrenzte LLM-Erklärungen; einzelne passende Gamesadapter. Jeder Ausbau erhält eigene fachliche und technische Abnahme. Eine freie generative Lernplattform oder neuer 3D-Gamesbau ist kein notwendiger Folgeschritt. Aufwandszahl erst nach ausgewähltem Umfang; Contentabdeckung und Medien sind voraussichtlich große Treiber.
 
 | Abhängigkeit | Was parallel möglich ist | Was vor Anschluss geklärt sein muss |
 |---|---|---|
