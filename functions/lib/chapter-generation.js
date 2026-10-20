@@ -15,6 +15,11 @@ function planChapterSlots(input, materialIds) {
     for(let i=0;i<plan.count;i++) slots.push({index:slots.length,chapterId:chapter.id,title:chapter.title,topic:plan.topic,points:(Math.floor((i+1)*units/plan.count)-Math.floor(i*units/plan.count))/2,materialIds:[...refs]});
   }
   if(input.chapterPlan.length!==ids.size||slots.length!==input.count||slots.length>100||slots.reduce((n,s)=>n+s.points,0)!==input.points) throw new Error('Kapitelanzahl und Punkte müssen mit den Gesamtsummen übereinstimmen.');
+  if(input.generationMode==='variant') {
+    if(!Array.isArray(input.variantSlots)||input.variantSlots.length!==slots.length)throw new Error("Quellslots fehlen.");
+    slots.forEach((slot,i)=>{const points=Number(input.variantSlots[i].points);if(!Number.isInteger(points*2)||points<0.5)throw new Error("Ungültige Quellpunkte.");slot.points=points;});
+    for(const chapter of input.chapters) if(slots.filter(s=>s.chapterId===chapter.id).reduce((n,s)=>n+s.points,0)!==input.chapterPlan.find(p=>p.chapterId===chapter.id).points)throw new Error("Quellpunkte passen nicht zum Kapitel.");
+  }
   return slots;
 }
 function bindGeneratedChapterSlots(questions, slots) {

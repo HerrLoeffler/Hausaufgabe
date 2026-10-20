@@ -316,7 +316,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const memory = await loadQualityMemory({ subject: input.subject, grade: input.grade }, uid);
     const memoryGuide = qualityMemoryPrompt(memory);
     const personalGuide = teacherQualityGuide(memory);
-    const generationPrompt = `${testUserPrompt(input)}${variantPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}${poolGuide}`;
+    const generationPrompt = `${testUserPrompt(input)}${chapterPrompt(planChapterSlots(input))}${variantPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}${poolGuide}`;
     phase = "test-generation";
     await onProgress("test-generation", 15, "Die KI erstellt den Test …");
     const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };

@@ -22,6 +22,7 @@ on:
       - 'feature/local-staging-*'
       - 'fix/audio-*'
       - 'feat/admin-account-*'
+      - 'feat/chapter-tests-*'
       - 'fix/admin-*'
       - 'feature/live-staging-*'
       - 'fix/visual-backlog-*'

@@ -168,6 +168,11 @@ service cloud.firestore {
         && (!hasChapters || !becomesActive || wasActive);
     }
 
+    match /assessmentSolutionAssets/{assetId} {
+      allow get: if resource.data.get("kind", "") == "chapter_review_image" && (ownsQuiz(resource.data.quizId) || isAdmin());
+      allow list, write: if false;
+    }
+
     match /quizzes/{quizId} {
       // SECURITY BOUNDARY: Anonyme Schüler lesen auch Quiz-Metadaten nicht mehr
       // direkt aus Firestore. Join-Metadaten kommen ausschließlich über die

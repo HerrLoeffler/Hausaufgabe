@@ -224,3 +224,10 @@ test('chapter publication and chapter review cannot bypass server validation',as
  await env.withSecurityRulesDisabled(async c=>{await setDoc(doc(c.firestore(),'quizzes','CHAPTER1','submissions','s1'),{studentName:'Test',chapterSnapshot:{version:1},grading:{},totalPoints:0});});
  await assertFails(updateDoc(doc(owner,'quizzes','CHAPTER1','submissions','s1'),{totalPoints:100,grading:{q1:{awardedPoints:100}}}));
 });
+
+test('immutable review images are owner-only and cannot be forged by clients',async()=>{
+ await seed();await env.withSecurityRulesDisabled(async c=>{await setDoc(doc(c.firestore(),'assessmentSolutionAssets','review'),{quizId,kind:'chapter_review_image',media:{imageDataUrl:'data:image/png;base64,AAAA'}});});
+ for(const who of ['owner','admin'])await assertSucceeds(getDoc(doc(env.authenticatedContext(who).firestore(),'assessmentSolutionAssets','review')));
+ for(const db of [env.unauthenticatedContext().firestore(),env.authenticatedContext('other').firestore()])await assertFails(getDoc(doc(db,'assessmentSolutionAssets','review')));
+ await assertFails(setDoc(doc(env.authenticatedContext('owner').firestore(),'assessmentSolutionAssets','review'),{quizId,kind:'chapter_review_image',media:{}}));
+});

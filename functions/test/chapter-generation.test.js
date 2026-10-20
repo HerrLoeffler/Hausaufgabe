@@ -13,3 +13,12 @@ test('invalid budgets foreign materials and missing generated slots fail closed'
  const other=fixture();other.chapterPlan[0].materialIds=['foreign'];assert.throws(()=>planChapterSlots(other,[]));
  assert.throws(()=>bindGeneratedChapterSlots([],planChapterSlots(fixture())));
 });
+test('similar test retains individual source slot points within a chapter',()=>{
+ const input={chapterSchemaVersion:1,chapters:[{id:'ch_one',title:'One',position:1}],chapterPlan:[{chapterId:'ch_one',topic:'Numbers',count:2,points:4}],count:2,points:4,generationMode:'variant',variantSlots:[{points:1},{points:3}]};
+ assert.deepEqual(planChapterSlots(input).map(s=>s.points),[1,3]);
+});
+test('Emmi briefing includes chapter names and source question assignments',()=>{
+ const {cleanWholeTestRevisionRequest,wholeTestRevisionPrompt}=require('../lib/whole-test-revision');
+ const request=cleanWholeTestRevisionRequest({instruction:'Vereinfache nur Kapitel Brüche',test:{chapterSchemaVersion:1,chapters:[{id:'ch_a',title:'Brüche',position:1}],questions:[{chapterId:'ch_a',type:'number',text:'Berechne',points:1,numericAnswer:2}]}});
+ const prompt=wholeTestRevisionPrompt(request);assert.match(prompt,/"chapters":\[/);assert.match(prompt,/"chapterId":"ch_a"/);assert.match(prompt,/Brüche/);
+});

@@ -76,6 +76,7 @@ function fixture() {
     exports, Buffer,
     Date: class extends Date { static now() { return now; } },
     require: name => {
+      if (name === './chapter-media') return require('../lib/chapter-media');
       if (name === './chapter-results') return require('../lib/chapter-results');
       if (name === './shared/chapter-contract') return require('../lib/shared/chapter-contract');
       if (name === './offline-recovery-policy') return require('../lib/offline-recovery-policy');

@@ -2512,7 +2512,7 @@ function clearTemplateUrlAndDashboard() {
 
 async function importSharedTemplate() {
   let source = state.currentSharedTemplate;
-  if (source) { const copied = copyChapterFields(source, source.questions || []); source = {...source,...copied.quiz,questions:copied.questions}; }
+  if (source) { const copied = copyChapterFields(source.quiz, source.questions || []); source = {...source,quiz:{...source.quiz,...copied.quiz},questions:copied.questions}; }
   if (!source?.quiz || !state.user) return;
   const btn = $("importTemplateCopy");
   if (btn) {
@@ -2522,7 +2522,7 @@ async function importSharedTemplate() {
   try {
     const quiz = source.quiz;
     const base = {
-      ...chapterFields(source),
+      ...chapterFields(quiz),
       title: `${quiz.title || "Geteilter Test"} – Kopie`,
       subject: quiz.subject || "",
       grade: quiz.grade || "",
@@ -3487,6 +3487,7 @@ function renderQuestionOutline() {
     if (state.currentQuiz?.chapterSchemaVersion === 1 && state.questions[from].chapterId !== state.questions[to].chapterId) return toast("Zum Kapitelwechsel bitte die Kapitelzuordnung der Aufgabe verwenden.");
     if (swap) [state.questions[from], state.questions[to]] = [state.questions[to], state.questions[from]];
     else { const [q] = state.questions.splice(from, 1); state.questions.splice(to, 0, q); }
+    state.questions.forEach((q,i)=>{q.position=i+1;});
     state.questionOrderFrom = null; renderQuestions(); markDirty();
   };
   host.querySelectorAll("button").forEach(button => {
@@ -4533,6 +4534,7 @@ function moveQuestion(index, delta) {
   if (next < 0 || next >= state.questions.length) return;
   if(state.currentQuiz?.chapterSchemaVersion===1 && state.questions[index].chapterId!==state.questions[next]?.chapterId) return;
   [state.questions[index], state.questions[next]] = [state.questions[next], state.questions[index]];
+  state.questions.forEach((q,i)=>{q.position=i+1;});
   renderQuestions();
   markDirty();
   focusEditorQuestion(next);
@@ -7809,7 +7811,7 @@ function submissionGrade(s) {
 function chapterResultsMarkup(submission) {
   const rows=submission.chapterSnapshot ? Chapters.aggregateChapterResults(submission.chapterSnapshot,submission.grading) : submission.chapterResults || [];
   if(!rows.length)return "";
-  return `<table class="secureChapterResults"><thead><tr><th>Kapitel</th><th>Punkte</th><th>Prozent</th><th>Status</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${escapeHtml(r.title)}</td><td>${r.awardedPoints}/${r.maxPoints}</td><td>${r.percent==null?"–":r.percent+" %"}</td><td>${r.needsReview?"Bewertung offen":"Bewertet"}</td></tr>`).join("")}</tbody></table>`;
+  return `<table class="secureChapterResults"><thead><tr><th>Kapitel</th><th>Punkte</th><th>Prozent</th><th>Status</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${escapeHtml(r.title)}</td><td>${r.awardedPoints}/${r.maxPoints}</td><td>${r.percent==null?"–":r.percent+" %"}</td><td>${r.needsReview||submission.status==="review"?"Bewertung offen":"Bewertet"}</td></tr>`).join("")}</tbody></table>`;
 }
 function renderResultsTable() {
   const wrap = $("resultsTableWrap");
@@ -7830,7 +7832,7 @@ function renderResultsTable() {
   wrap.querySelectorAll(".reviewBtn").forEach((btn) => btn.addEventListener("click", () => openReview(btn.dataset.id)));
 }
 
-function openReview(id) {
+async function openReview(id) {
   const s = state.submissions.find((x) => x.id === id);
   if (!s) return;
   const panel = $("reviewPanel");
@@ -7839,7 +7841,17 @@ function openReview(id) {
   panel.setAttribute("aria-labelledby", "reviewHeading");
   panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2 id="reviewHeading" tabindex="-1">${escapeHtml(s.studentName)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div><div class="reviewHeader"><strong id="reviewTotal"></strong><button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
   const root = $("reviewQuestions");
-  const reviewQuestions=s.chapterQuestions?.length?s.chapterQuestions:state.resultQuestions;
+  let reviewQuestions=s.chapterQuestions?.length?s.chapterQuestions:state.resultQuestions;
+  try {
+    if(reviewQuestions.some(q=>q.reviewMediaAssetId))reviewQuestions=await Promise.all(reviewQuestions.map(async q=>{
+      if(!q.reviewMediaAssetId)return q;
+      const asset=await getDoc(doc(db,"assessmentSolutionAssets",q.reviewMediaAssetId));
+      if(!asset.exists()||asset.data().quizId!==state.currentResultsQuiz.id)throw new Error("Bildreferenz fehlt");
+      const media=asset.data().media;
+      return {...q,...media,options:(q.options||[]).map((o,i)=>({...o,...media.options?.[i]}))};
+    }));
+  } catch(err) { toast("Die ursprünglichen Aufgabenbilder konnten nicht geladen werden. Bitte erneut öffnen.","error");panel.classList.add("hidden");return; }
+  if(!state.submissions.includes(s)||panel.classList.contains("hidden"))return;
   reviewQuestions.forEach((q, i) => {
     const g = s.grading?.[q.id] || { awardedPoints: 0, maxPoints: Number(q.points) || 0 };
     const div = document.createElement("div");
@@ -7977,12 +7989,14 @@ function exportResultsCsv() {
     return;
   }
   const chapterColumns=[...new Map(state.submissions.flatMap(s=>s.chapterSnapshot?.chapters||[]).map(ch=>[ch.id,ch])).values()];
-  const header = ["Name", ...chapterColumns.flatMap(ch=>[`${ch.title} (${ch.id}) Punkte`,`${ch.title} Max`,`${ch.title} Prozent`,`${ch.title} Status`]), ...state.resultQuestions.map((_, i) => `Aufgabe ${i + 1}`), "Punkte", "Max", "Prozent", "Note", "Status", "Bearbeitungszeit", "Auto-Abgabe", "Abgegeben"];
+  const exportQuestions=[...new Map(state.submissions.flatMap(s=>s.chapterSnapshot?s.chapterQuestions||[]:state.resultQuestions).map(q=>[q.id,q])).values()];
+  const header = ["Name", ...chapterColumns.flatMap(ch=>[`${ch.title} (${ch.id}) Punkte`,`${ch.title} Max`,`${ch.title} Prozent`,`${ch.title} Status`]), ...exportQuestions.map((q, i) => `Aufgabe ${i + 1} (${q.id})`), "Punkte", "Max", "Prozent", "Note", "Status", "Bearbeitungszeit", "Auto-Abgabe", "Abgegeben"];
   const rows = [header];
   state.submissions.forEach((s) => {
     const chapterResults=s.chapterSnapshot?Chapters.aggregateChapterResults(s.chapterSnapshot,s.grading):[];
-    const r = [s.studentName,...chapterColumns.flatMap(ch=>{const result=chapterResults.find(r=>r.chapterId===ch.id);return result?[result.awardedPoints,result.maxPoints,result.percent,result.needsReview?"Bewertung offen":"Bewertet"]:["","","",""];})];
-    state.resultQuestions.forEach((q) => r.push(answerDisplay(q, s.answers?.[q.id], state.currentResultsQuiz?.contentLocale)));
+    const r = [s.studentName,...chapterColumns.flatMap(ch=>{const result=chapterResults.find(r=>r.chapterId===ch.id);return result?[result.awardedPoints,result.maxPoints,result.percent,result.needsReview||s.status==="review"?"Bewertung offen":"Bewertet"]:["","","",""];})];
+    const frozen=new Map((s.chapterSnapshot?s.chapterQuestions||[]:state.resultQuestions).map(q=>[q.id,q]));
+    exportQuestions.forEach((q) => r.push(frozen.has(q.id)?answerDisplay(frozen.get(q.id), s.answers?.[q.id], state.currentResultsQuiz?.contentLocale):""));
     r.push(s.totalPoints, s.maxPoints, s.percent, s.status === "review" ? "" : submissionGrade(s), s.status, formatDuration(s.elapsedSeconds), s.autoSubmitted ? "Ja" : "Nein", fmtDate(s.submittedAt || s.submittedAtLocal));
     rows.push(r);
   });

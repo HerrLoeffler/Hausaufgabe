@@ -1,4 +1,5 @@
 "use strict";
+const {snapshotChapterQuestions}=require("./chapter-media");
 const {reviewChapterResults}=require("./chapter-results");
 const {aggregateChapterResults}=require("./shared/chapter-contract");
 
@@ -651,6 +652,10 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
             && !(await tx.get(db.doc(`assessmentSolutionAssets/${asset.assetId}`))).exists) solutionAssets.push(asset);
         }
       }
+      if(storedPrivate.chapterSnapshot) {
+        const refs=new Set((storedPrivate.chapterQuestions||[]).map(q=>q.reviewMediaAssetId).filter(Boolean));
+        solutionAssets.push(...snapshotChapterQuestions(quizId,await readQuestions(quizId,tx)).assets.filter(a=>refs.has(a.assetId)));
+      }
       return { storedAttempt, storedPrivate, currentQuiz, newContract: null, solutionAssets };
     }
 
@@ -715,7 +720,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       attemptId: id,
       tokenHash: tokenHash(attemptToken),
       paperSecret: newPaperSecret,
-      ...(newContract.chapterSnapshot?{chapterSnapshot:newContract.chapterSnapshot,chapterQuestions:questions.map(q=>Object.fromEntries(["id","position","type","text","points","options","acceptedAnswers","manualReview","correctBoolean","pairs","items","acceptedOrders","groups","passage","targetWords","markGroups","gapColors","numericAnswer","tolerance","unit"].filter(key=>q[key]!==undefined).map(key=>[key,key==="options"?q.options.map(o=>({text:o.text,correct:o.correct})):q[key]])))}:{}),
+      ...(newContract.chapterSnapshot?{chapterSnapshot:newContract.chapterSnapshot,chapterQuestions:snapshotChapterQuestions(quizId,questions).questions}:{}),
       sourceFingerprint: newContract.sourceFingerprint,
       authoringFingerprint: newContract.authoringFingerprint,
       gradingKey: newContract.gradingKey,
@@ -733,7 +738,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
     tx.set(quota.ref, quota.data, { merge: true });
     tx.create(aRef, created);
     tx.create(pRef, privateData);
-    return { storedAttempt: created, storedPrivate: privateData, currentQuiz, newContract, solutionAssets: audioSnapshot.assets };
+    return { storedAttempt: created, storedPrivate: privateData, currentQuiz, newContract, solutionAssets: [...audioSnapshot.assets,...(newContract.chapterSnapshot?snapshotChapterQuestions(quizId,questions).assets:[])] };
   });
 
   await persistSolutionAssets(quizId, solutionAssets);
