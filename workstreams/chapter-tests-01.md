@@ -9,7 +9,7 @@
 
 ## Ergebnis und Entscheidungen
 
-B empfohlen (noch nicht beschlossen): optionale Kapitel im vorhandenen Test, freie Navigation, eine Endabgabe, Punktegewichtung. Sechs-Kapitel-Beispiel 18 Aufgaben/48 Punkte ist frei gewählt, keine offizielle Lehrplanvorgabe. A/B/C mit gleichen vier Kriterien verglichen. Lehrkraft-/Schüler-/Ergebnisabläufe, Datenvertrag, Generation, Offline/Resume/Fristen, Native, CSV/Druckgrenzen und Akzeptanzfälle im Konzept.
+Ursprünglicher Entwurf: B empfohlen: optionale Kapitel im vorhandenen Test, freie Navigation, eine Endabgabe, Punktegewichtung. Sechs-Kapitel-Beispiel 18 Aufgaben/48 Punkte ist frei gewählt, keine offizielle Lehrplanvorgabe. A/B/C mit gleichen vier Kriterien verglichen. Lehrkraft-/Schüler-/Ergebnisabläufe, Datenvertrag, Generation, Offline/Resume/Fristen, Native, CSV/Druckgrenzen und Akzeptanzfälle im Konzept.
 
 ## Belege und Grenzen
 
@@ -29,4 +29,10 @@ Modell: requested nicht explizit im Delegationsstart; nach Projektregel Architek
 
 ## Genau ein nächster Schritt
 
-Martin entscheidet den ersten Zweck (Standortbestimmung/Übung oder benoteter Test); anschließend Beispiel auf Jahrgang/Schulart/Bundesland und gewünschten Umfang zuschneiden. Drei gebündelte Entscheidungsfragen stehen am Konzeptende. Keine Produktimplementierung ohne neuen Auftrag.
+Die vorhandene Testerstellung um optionale Kapitel konkretisieren; Übung und benoteter Test identisch, keine Bundeslandfestlegung als Voraussetzung. Optionales Gesamt-/Bereichszeitkonzept ausarbeiten. Keine Produktimplementierung ohne neuen Auftrag.
+
+## Nutzerpräzisierung 20.10.2026
+
+Martin: Übung/benoteter Test sollen sich bei dieser Erweiterung nicht unterscheiden; bundeslandunabhängig planen, vorhandene Lehrpläne im Hintergrund und bestehende Testerstellung verwenden. Kapitel sind eine Erweiterung, kein neues System. Gesamt-/Bereichstimer optional mitplanen. Entwurf entsprechend überarbeitet; frühere Zweck-/Bundeslandfragen entfallen. Freie Rückkehr gilt ohne Bereichsfrist bzw. bis zu deren Ablauf. Timerstart bei erstem ausdrücklichen Bereichsstart, durchlaufende Frist, Bereichssperre mit serverseitiger Antwortmomentaufnahme und zunächst alternative Gesamt-/Bereichszeit sind Vorschläge, keine beschlossenen Detailregeln. Noch keine Runtimeänderung oder Releasefreigabe. Draft-PR252 bleibt Dokumentation.
+
+Prüfung: lokale Textaktualisierung auf überholte Zweckfrage und vorhandenen Timerabschnitt geprüft; keine Produkt-/Gerätetests. Nächster Schritt: konkreten bestehenden Erstellungsablauf mit Kapitelzuordnung und optionalen Zeiteinstellungen ausarbeiten.
