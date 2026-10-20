@@ -586,3 +586,7 @@ Martins Bild als anklickbarer Facheinstieg, Themen erst nach Fachwahl, Mathe6 mi
 ### GC-ADAPTIVE-PRACTICE-01 Klickbare Vorschau
 
 Martin beauftragt nach Planfreigabe einen Prototyp mit Beispielaufgaben. Lokale Vorschau und portable `docs/prototypes/learning-brain/preview.html` im bestehenden PR253 gesichert: Lerngehirn → Mathe → Bruchzahlen, größerer Schritt, Voraussetzung/Hilfe, Abschluss und beispielhafte spätere Probe. 10/10 Logiktests; Browserpfad und390px-Ansicht geprüft. Status branch_only/Prototyp, kein Produkt-/Provider-/Cloud-/Deployumfang. Nächster Schritt: Martins Eindruck beim Durchklicken, Geräte-/pädagogische Abnahme weiter offen.
+
+### GC-ADAPTIVE-PRACTICE-01 Echte KI und Übungszeit
+
+Auf ausdrücklichen Auftrag separates Lehrkraft-Testkonto in gradecrew-staging-2026 eingerichtet, lokaler Proxy ohne Schulzugang/Deploy. Echte Aufgabenerstellung und Emmi-Erklärung im Browser geprüft: Fehler → Erklärung → Voraussetzung → selbstständiger Beleg im Lerngehirn. Bruchfelder/Zwischenschritte, dynamische Belege/Empfehlung und1–90Minuten-Einheit (Standard20) ergänzt.18/18 Logiktests. Status branch_only/Prototyp; menschliche didaktische Abnahme, Bruch-Materialzuordnung und Produktintegration offen. Gleicher PR253 und gleiche Übergabe; keine Produktionsänderung.

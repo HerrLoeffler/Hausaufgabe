@@ -1,0 +1,11 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {validateTask,evaluateFraction,learnerState,checkStep} from './tutor-model.mjs';
+const raw={skill:'add',a:[1,2],b:[4,8],prompt:'Addiere die beiden Brüche.'};
+test('valid generated arithmetic is recalculated independently',()=>{const q=validateTask(raw);assert.deepEqual(q.answer,[1,1]);assert.equal(q.common,8);});
+test('malformed or extreme generated tasks rejected',()=>{for(const a of [[1,0],[1,999],['1',2],[1.2,2]])assert.throws(()=>validateTask({...raw,a}));assert.throws(()=>validateTask({...raw,skill:'invented'}));});
+test('equivalent fractions and whole result accepted exactly',()=>{assert.equal(evaluateFraction('8','8',[1,1]),true);assert.equal(evaluateFraction('1','1',[1,1]),true);assert.equal(evaluateFraction('1','0',[1,1]),false);assert.equal(evaluateFraction('7','8',[1,1]),false);});
+test('hinted answer is not independent capability evidence',()=>{const m=learnerState([{skill:'add',correct:true,hinted:true}]);assert.equal(m.shown.includes('add'),false);assert.ok(m.practice.includes('add'));});
+test('previous independent success with new error is marked for rechecking',()=>{const m=learnerState([{skill:'add',correct:true,hinted:false},{skill:'add',correct:false,hinted:false}]);assert.ok(m.recheck.includes('add'));assert.equal(m.next,'common');});
+test('successful prerequisites change next recommendation',()=>{assert.equal(learnerState([{skill:'equivalent',correct:true,hinted:false}]).next,'common');assert.equal(learnerState([{skill:'common',correct:true,hinted:false}]).next,'add');});
+test('intermediate expansion checked separately',()=>{assert.equal(checkStep('4',[1,2],8),true);assert.equal(checkStep('1',[1,2],8),false);assert.equal(checkStep('',[1,2],8),false);});
+test('time window measures remaining practice time without ability inference',async()=>{const {remainingSeconds}=await import('./tutor-model.mjs');assert.equal(remainingSeconds(1200000,0),1200);assert.equal(remainingSeconds(1200000,1205000),0);assert.equal(remainingSeconds(null,0),null);});
