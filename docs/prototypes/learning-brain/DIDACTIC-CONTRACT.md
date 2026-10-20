@@ -18,3 +18,11 @@ Die Beobachtung enthält Aufgabe, Anspruch, eingegebene Antwort, unabhängig gep
 Beobachtungs- und Entscheidungsformat sind wiederverwendbar. Implementiert ist ausschließlich der begrenzte Bruchadapter. Für weitere Fächer fehlen Kompetenzgraph, aufbereitete Materialprofile, unabhängige Aufgabenprüfung, passende Darstellungen und fachliche Abnahme. Ein universell wirksames Didaktiksystem ist damit nicht behauptet.
 
 Quelle der Materialmuster: drei tatsächlich gesichtete Bestandsmaterialien, dokumentiert in MATERIAL-BASIS.md. Keine Originalseiten an den Provider übermittelt. Keine Cloud-/Productionänderung, keine dauerhafte Schülerakte.
+
+## Antwortdialog und zweite KI-Prüfung
+
+Pro Hilfeschritt: exakte Ausgangsrechnung und aktuelle Antwort → kurze KI-Erklärung → nur bei Passung eine Darstellung → kleine Frage mit Antwortfeld → geprüfte Antwort. Jede Frage hat einen konkreten Antwortvertrag; zusätzliche rhetorische Fragen im KI-Text werden abgewiesen. Bei zwei Fehlern erhält die KI auch die tatsächliche kleine Frage. Das gilt für den begrenzten Bruchadapter, nicht beliebige freie Antworten in allen Fächern.
+
+KI-Text entsteht pro Ansicht neu aus geprüften Zahlen und Schrittziel. Ein separater KI-Prüfdurchlauf kontrolliert fachliche Passung und Frage/Schlüssel. Der zweite Aufruf nutzt denselben vorhandenen Dienst in einem separaten Kontext, ist keine unabhängige Modell-/Lehrkraftgarantie. Schülerantwort und Musterlösung sind eindeutig bezeichnet. Unklare/abgelehnte Entwürfe werden angezeigt als nicht freigegeben und können erneut angefordert werden; kein versteckter Ersatz.
+
+Die optionale interaktive Pizza erhält die gleiche Ganzengröße, Teilung und markierte Menge werden exakt gerechnet. Bei Veränderung muss das Bild zur verlangten Menge passen; ein passendes Zahlenfeld allein reicht nicht. Bilder/Interaktion werden nur für passende Anteils-/Teilungsfragen zugelassen. Kein neues H5P-System installiert.

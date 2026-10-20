@@ -48,3 +48,25 @@ class ProgressionRegressionTest(unittest.TestCase):
   with self.assertRaises(DecisionError):validate_decision({'action':'probe','skill':'add','difficulty':2,'focus':'none','reason':'Wieder dasselbe.'},c)
  def test_reduced_inputs_cannot_undermine_difficulty(self):
   with self.assertRaises(DecisionError):check_task_demand('add',[1,8],[3,12],2)
+
+class PromptCapacityTest(unittest.TestCase):
+ def test_actual_micro_question_fits_with_history_and_material(self):
+  import server
+  c={'kind':'guided_complete','task':{'skill':'add','difficulty':3,'a':[3,4],'b':[7,10],'answer':[29,20]},'observation':{'correct':False,'hinted':True,'answer':'2','step':{'id':'expand-first','question':'Unten: 4 × welche Zahl = 20? Diese Zahl brauchst du auch oben.','expected':5}},'history':[{'skill':'add','difficulty':2,'correct':False,'hinted':False,'answer':'10/14'}]*4,'evidence':{'total':4,'correct':2,'supported':0,'criterion':False},'masteryClaim':False}
+  self.assertLessEqual(len(planning_prompt(c,server.PROFILES['profiles'])),2450)
+
+class RealStepbackTest(unittest.TestCase):
+ def test_failed_partition_cannot_repeat_same_partition_under_lower_label(self):
+  c={'kind':'guided_complete','task':{'skill':'add','difficulty':1},'observation':{'correct':False,'hinted':True,'answer':'4','step':{'id':'partition-first','question':'4 mal welche Zahl ergibt8?','expected':2}},'history':[]}
+  with self.assertRaises(DecisionError):validate_decision({'action':'support','skill':'equivalent','difficulty':0,'focus':'equivalence','reason':'Noch einmal gleich.'},c)
+  self.assertEqual(validate_decision({'action':'support','skill':'parts','difficulty':0,'focus':'whole','reason':'Zuerst ein farbiges Teil erkennen.'},c)['focus'],'whole')
+
+class AnswerabilityTest(unittest.TestCase):
+ def test_plan_reason_cannot_ask_an_ungraded_extra_question(self):
+  c={'kind':'answer','task':{'skill':'add','difficulty':1},'observation':{'correct':True,'hinted':False},'history':[]}
+  with self.assertRaises(DecisionError):validate_decision({'action':'challenge','skill':'add','difficulty':2,'focus':'none','reason':'Wie viele Teile ergeben ein Ganzes?'},c)
+
+class HelpPrerequisiteTest(unittest.TestCase):
+ def test_help_cannot_skip_expansion_to_an_unexplained_sum(self):
+  c={'kind':'help_requested','task':{'skill':'add','difficulty':1,'a':[3,8],'b':[1,4]},'observation':None,'history':[]}
+  with self.assertRaises(DecisionError):validate_decision({'action':'support','skill':'add','difficulty':0,'focus':'sum','reason':'Nur zusammenzählen.'},c)

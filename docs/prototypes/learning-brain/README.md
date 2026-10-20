@@ -10,6 +10,14 @@ Für diesen Arbeitsplatz wurde auf Martins ausdrücklichen Auftrag ein eigenes g
 
 Zufällige Zugangsdaten liegen mit Dateimodus600 außerhalb des Checkouts und Webroots unter dem Elternordner des Checkouts in `.private/learning-brain/account.json`. Nicht committen, weitergeben oder über HTTP ausliefern. Der Browser erhält nur ein HttpOnly/SameSite-Strict-Sitzungscookie. Der Proxy bindet ausschließlich127.0.0.1:8769 und prüft Host, Origin, Sitzungskennung, Anfragegröße und statische Dateiliste. Keine Provider-Schlüssel im Frontend. Vorhandene serverseitige Rollen und Quoten bleiben unverändert. Zusätzlich maximal80 lokale KI-Anfragen für diesen Prototyplauf; Zähler bleibt über Browserrefresh und Serverneustart erhalten. Ein Aufgabenaufruf kann im bestehenden Backend mehrere interne Modellversuche auslösen;80 Requests sind kein Token-/Eurobudget. Kein automatischer Reset.
 
+## Kurzer KI-Lerndialog mit Antwortmöglichkeit
+
+Jeder Hilfeschritt enthält jetzt eine echte, kurz formulierte KI-Erklärung und direkt eine beantwortbare kleine Frage. Erst die geprüfte Antwort gibt den nächsten Schritt frei. Zwei falsche Antworten im Hilfeschritt gehen samt konkreter Frage an die KI zurück. Es gibt keine zusätzliche unbeantwortbare Frage im Erklärungstext. Die KI entscheidet je Schritt, ob ein Bild hilft: kein Bild, Bruchstreifen oder bei passender Anteils-/Unterteilungsfrage eine veränderbare Pizza. Interaktion ist keine Pflicht. Rechenformeln bleiben unabhängig berechnet.
+
+Neue Aufgaben und Erklärungen erhalten einen separaten KI-Prüfdurchlauf ohne vorherigen Gesprächskontext; ein abgewiesener Entwurf erscheint nicht als freigegebene Hilfe. Beide Aufrufe verwenden denselben vorhandenen GradeCrew-Dienst, keine behauptete unabhängige Modell- oder Lehrkraftfreigabe. Ein lokaler Endpunktaufruf kann dadurch mehrere kostenpflichtige Provideraufrufe auslösen. Der erhaltene80er-Endpunktrahmen ist kein Euro-/Tokenlimit.
+
+[Konkrete Live-Testfälle und Grenzen](LIVE-TEST.md). Historische Abschnitte unten beschreiben frühere Versionen.
+
 ## Aktuelle KI-Auswahl
 
 Die KI entscheidet jetzt nach jeder abgegebenen Antwort anhand von Rechnung, exakter Bewertung, Hilfenutzung, jüngsten Versuchen und Materialprofil über die nächste Aktivität. Selbstständig richtig führt zu einer anspruchsvolleren Probe ohne automatische Grundlagenlektion oder Lesesperre. Ein Treffer bleibt ein Zwischenstand. Fehler führen zu einer gezielten Probe oder Unterstützung; wiederholte Fehler verlangen Hilfe oder Pause. Ungültige KI-Entscheidungen werden sichtbar abgewiesen; kein heimlicher lokaler Ersatz.

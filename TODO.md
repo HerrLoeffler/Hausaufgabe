@@ -602,3 +602,7 @@ Auf konkreten Nutzerbefund Textwand durch einzelne klickbare Ansichten ersetzt: 
 ### GC-ADAPTIVE-PRACTICE-01 KI-Entscheidung nach Beobachtung
 
 Echte Emmi-Auswahl für nächste Aktivität ergänzt; Aufgabe, exakte Antwortbewertung, Hilfe und Verlauf werden berücksichtigt. Richtiger Versuch führt ohne Zwangslektion zu höherem Anspruch; Hilfe behält ganze Rechnung sichtbar. Wiederholungsfehler verlangen Unterstützung,8/10-Nachweis bleibt unabhängig. Nur Bruchpilot; weitere Fächer, fachliche Nutzerabnahme und Produktintegration offen. Gleicher Draft PR253, kein Deploy.
+
+### GC-ADAPTIVE-PRACTICE-01 Echter Test und KI-Antwortdialog
+
+Beauftragter Test sinnvoller Steigerung und wiederholter Fehler; Learning-Snacks-Prinzip als kurzer Dialog mit Antwortfeld pro Frage. Erklärung jetzt echte KI, separater KI-Prüfdurchlauf für Aufgaben/Erklärungen; Bilder/Interaktion nur bei Passung, keine Pflicht-Pizza. Regressionsfälle für tatsächlichen Anspruch, Rückschritt und Antwortverarbeitung. Gleicher lokaler Bruchpilot/PR253, kein Deploy; Details und reale Versuche in workstreams/adaptive-practice-01.md und LIVE-TEST.md. Menschliche didaktische Abnahme offen.

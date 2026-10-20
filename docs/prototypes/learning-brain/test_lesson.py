@@ -42,3 +42,17 @@ class LessonHandlerTest(unittest.TestCase):
    self.assertEqual(len(req),2);self.assertEqual(out[0][0],200 if approved else 502)
    if approved:self.assertTrue(out[0][1]['aiReviewed'])
    else:self.assertNotIn('reply',out[0][1])
+
+class ReviewContextTest(unittest.TestCase):
+ def test_wrong_student_attempt_is_never_called_a_solution(self):
+  from lesson import lesson_review_data,review_prompt
+  c={'task':{'a':[1,4],'b':[1,10],'answer':[7,20]},'answer':'2/14','steps':[]}
+  data=lesson_review_data(c,{'steps':[]});self.assertNotIn('answer',data);self.assertEqual(data['studentAttempt'],'2/14');self.assertFalse(data['studentAttemptIsSolution']);self.assertIn('keine Musterlösung',review_prompt('Erklärung',data))
+
+class StageMeaningTest(unittest.TestCase):
+ def test_addition_is_not_explained_as_unchanged_total_quantity(self):
+  p=lesson_prompt({'task':{'a':[1,4],'b':[1,8]},'steps':[{'id':'sum','text':'2 blaue und1 orange Teile sind3Teile.'}]})
+  self.assertNotIn('Warum bleibt gleich viel gefärbt?',p)
+  self.assertIn('Mengen zusammenzählen',p)
+ def test_partition_explains_unchanged_quantity_with_new_cut_lines(self):
+  p=lesson_prompt({'steps':[{'id':'partition-first','text':'Jedes alte Stück wird in2geteilt.'}]});self.assertIn('Schnittlinien',p)

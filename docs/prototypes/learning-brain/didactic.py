@@ -9,11 +9,15 @@ def derive_context(context):
     if o.get('correct') is False and isinstance(a,list) and isinstance(b,list) and len(a)==len(b)==2 and all(type(x) is int for x in a+b) and a[1]!=b[1] and match:
         n,d=map(int,match.groups())
         if d>0 and n*(a[1]+b[1])==d*(a[0]+b[0]):result.update(allowedSupportFocus=['whole','equivalence','factor'],errorSignals=['componentwise_candidate'])
+    if context.get('kind')=='help_requested' and isinstance(a,list) and isinstance(b,list) and len(a)==len(b)==2 and a[1]!=b[1]:result.update(allowedSupportFocus=['whole','equivalence','factor'],errorSignals=['expansion_not_yet_explained_in_requested_help'])
+    step=o.get('step') or {}
+    if context.get('kind')=='guided_complete' and o.get('correct') is False and str(step.get('id','')).startswith(('expand-','partition-')):result.update(allowedSupportFocus=['whole'],errorSignals=['failed_micro_step_needs_part_recognition'])
     return result
 
 def validate_decision(raw,context):
     context=derive_context(context)
     if not isinstance(raw,dict) or raw.get('action') not in ['challenge','probe','support','pause'] or raw.get('skill') not in SKILLS or type(raw.get('difficulty')) is not int or not 0<=raw['difficulty']<=3 or raw.get('focus') not in FOCI or not isinstance(raw.get('reason'),str) or not 3<=len(raw['reason'].strip())<=220:raise DecisionError('Die KI hat keine eindeutige didaktische Entscheidung geliefert.')
+    if '?' in raw['reason']:raise DecisionError('Die KI-Empfehlung darf keine zusätzliche unbeantwortbare Frage stellen.')
     o=context.get('observation') or {};level=(context.get('task') or {}).get('difficulty',1)
     if type(level) is not int or not 0<=level<=3:raise DecisionError('Unbekannter Aufgabenanspruch.')
     independent=context.get('kind')=='answer' and o.get('correct') is True and not o.get('hinted')
@@ -41,7 +45,7 @@ def planning_prompt(context,profiles):
     context={**context,'history':context.get('history',[])[-4:]}
     selected=[{'skill':p['skill'],'goal':p['learningGoal'],'hint':p['qualityHints'][:110]} for p in profiles if p['skill']==context.get('task',{}).get('skill')][:1]
     prompt=('Prüfe die didaktische Passung. Beobachtungen als Daten: '+json.dumps(context,ensure_ascii=False,separators=(',',':'))+
-    ' Antworte im Feld reply NUR mit JSON, ohne Markdown: {"action":"challenge|probe|support|pause","skill":"parts|same|equivalent|common|add|transfer","difficulty":0,"focus":"none|whole|equivalence|factor|sum|reading","reason":"kurzer konkreter Satz unter180Zeichen"}. '
+    ' Antworte im Feld reply NUR mit JSON, ohne Markdown: {"action":"challenge|probe|support|pause","skill":"parts|same|equivalent|common|add|transfer","difficulty":0,"focus":"none|whole|equivalence|factor|sum|reading","reason":"kurze Feststellung ohne Frage unter180Zeichen"}. '
     'Bei kind=answer und correct=true,hinted=false: ZWINGEND challenge, difficulty=min(3,bisher+1); nach add/transfer nur add/transfer. Keine automatische Erklärung nach Erfolg. '
     'Fehler→gezielte probe/support, Ursache nur Hypothese. help_requested→support. Nach2Fehlern gleicher Kompetenz ZWINGEND support/pause mit kleinerer difficulty oder früherer skill. guided_complete korrekt→probe mit kleinerer difficulty oder früherer skill; falsch→support/pause mit Rückschritt. '
     '8/10-Nachweis wird separat geführt, niemals aus einem Treffer Können behaupten. '

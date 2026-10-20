@@ -4,7 +4,7 @@ No service account, admin token, provider key, live project or role override.
 """
 import argparse,json,secrets,time,os,threading,re,urllib.request,urllib.error,http.server
 from pathlib import Path
-from lesson import LessonError,lesson_prompt,parse_lesson,review_prompt,parse_review
+from lesson import LessonError,lesson_prompt,parse_lesson,review_prompt,parse_review,lesson_review_data
 from didactic import DecisionError,parse_decision,planning_prompt,check_task_demand
 ROOT=Path(__file__).resolve().parent
 PRIVATE=ROOT.parents[3]/'.private'/'learning-brain'
@@ -119,7 +119,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     response=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':prompt,'uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[]}}},{'Authorization':'Bearer '+token()})
                     reply=(response.get('result') or response.get('data') or {}).get('reply','')
                     lesson=parse_lesson(reply,context)
-                    review=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':review_prompt('Erklärung',{'basis':context,'entwurf':lesson}),'uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[]}}},{'Authorization':'Bearer '+token()})
+                    review=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':review_prompt('Erklärung',lesson_review_data(context,lesson)),'uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[]}}},{'Authorization':'Bearer '+token()})
                     parse_review((review.get('result') or review.get('data') or {}).get('reply',''))
                     return self.output(200,{'reply':json.dumps(lesson,ensure_ascii=False),'calls':STATE['calls'],'origin':'gradecrew-ai','aiReviewed':True})
                 if data.get('purpose')=='plan':
