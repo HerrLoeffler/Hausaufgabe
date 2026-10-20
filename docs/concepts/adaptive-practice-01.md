@@ -4,7 +4,7 @@ Konzept und Realisierungsplan für Martin · 20. Oktober 2026 · GC-ADAPTIVE-PRA
 
 ## Grobkonzept auf einer Seite
 
-**Empfehlung: GradeCrew bekommt einen direkten Einstieg „Jetzt üben“.** Das Kind erhält eine kurze passende Aktivität, Hilfe und einen verständlichen nächsten Vorschlag. Optional wählt es eines von ungefähr sechs freigegebenen Themen. Lehrkräfte legen Ziele und Grenzen fest. Ein Kurskatalog, tägliche Pflichtserie oder neues Kontosystem ist dafür nicht nötig.
+**Empfehlung: GradeCrew bekommt einen direkten Einstieg „Jetzt üben“.** Das Kind erhält eine kurze passende Aktivität, Hilfe und einen verständlichen nächsten Vorschlag. Es öffnet ein Fach im persönlichen Lerngehirn und wählt bei Bedarf einen großen freigegebenen Themenbereich; Mathematik 6 erhält die sieben Bereiche des verlinkten Lehrplans. Lehrkräfte legen Ziele und Grenzen fest. Ein Kurskatalog, tägliche Pflichtserie oder neues Kontosystem ist dafür nicht nötig.
 
 Beispiel: „Heute üben wir Brüche vergleichen. Bei Aufgaben mit verschieden großen Teilen warst du zuletzt noch unsicher.“ Dann folgt eine Aufgabe, bei Bedarf eine Darstellung oder ein ausgearbeitetes Beispiel, anschließend eine neue Aufgabe ohne Hilfe. Nach etwa 5–8 Minuten: „Für heute fertig. Beim nächsten Mal schauen wir kurz nach, was geblieben ist.“ Die Dauer ist eine zu erprobende Produktannahme; jederzeit beenden und später fortsetzen bleibt möglich.
 
@@ -24,11 +24,97 @@ Skala 1 = kaum geeignet, 10 = sehr geeignet; begründete Entwurfseinschätzungen
 
 Der größte Aufwand steckt im guten Aufgaben- und Kompetenzmodell und in verlässlicher Rückmeldung, weniger im Startbutton. Lehrkraftkontrolle, freiwilliger Ausstieg, sichere Identität, getrennte Übungsdaten und Evaluation sind Voraussetzungen eines verantwortbaren Piloten.
 
+## Lerngehirn als Einstieg und adaptive Standortbestimmung
+
+Martins Bild und Konkretisierung vom 20.10.2026 legen die Richtung fest: Das persönliche Lernnetz ist eine funktionale Navigation. Auf der Startansicht erscheinen die großen Fächer um das eigene Profil. Kleine Themenzweige werden erst nach Fachwahl sichtbar. Der Standardweg ist **Lerngehirn → Mathe → Bruchzahlen → direkt üben**. Die Lehrkraft kann dieselbe fachliche Struktur für ein ausgewähltes Kind öffnen; die Rollenrechte bleiben verschieden. Dieser Architekturplan erweitert den bisherigen Entwurf, ohne eine Umsetzung zu starten.
+
+### Erscheinungsbild und Bedienung
+
+Die Referenz zeigt vier farbige Fachbereiche, ein Profil im Zentrum und viele leuchtende Verbindungen. Übernommen werden die zusammenhängende Gehirnsilhouette, große Fachknoten, klare Fachfarben und das persönliche Zentrum. Die im Bild sichtbaren kleinen Kreise „Brüche“, „Prozent“, „Geometrie“ usw. entfallen auf der ersten Ebene ausdrücklich. Labels aus dem Bild sind keine verbindliche Lehrplangliederung. Das Netz muss auch ohne Daueranimation verständlich bleiben; keine pulsierenden Punkte als Pflicht, kein Fadenkreuz aus winzigen Klickzielen.
+
+Klick auf Mathe öffnet eine fokussierte Fachansicht: „Mathe · Klasse 6“ mit großen Themenknoten bzw. gut lesbaren Themenkarten und „Für mich weiterüben“. Der Rückweg „Mein Lernnetz“ bleibt sichtbar. Auswahl von Bruchzahlen startet die Übungsoberfläche mit einer kurzen Erklärung „Wir schauen, wo du gut weiterlernen kannst“. Das Kind muss nicht vorher Kürzen, Erweitern oder Rechenarten selbst diagnostizieren. Eine optionale Themenübersicht kann diese Unterziele erklären, ist aber kein zusätzlicher Pflichtschritt vor der ersten Aufgabe.
+
+Das Gehirn ist Navigation und eine zurückhaltende Zusammenfassung. Fachfarbe bedeutet Fachzugehörigkeit, nicht Leistungsniveau. Datenzustände zusätzlich in Text: „noch nicht angesehen“, „gerade geübt“, „später wiederholen“. Keine dauerhafte rote Defizitregion und kein „Dein Gehirn ist zu 73 % entwickelt“. Netzdichte und Leuchtstärke dürfen keine Intelligenz oder vollständige Beherrschung vortäuschen. Untersuchte Teilkompetenzen sind nur ein Ausschnitt des Faches.
+
+Empfohlene Darstellung: große anklickbare Fächer im Gehirnbild, danach übersichtliche Themenkarten. Vergleich auf 1–10, als Entwurfseinschätzung: Diese Kombination erhält für Wiedererkennung/Bedienklarheit/Barrierefreiheit 9/9/8; ein vollständig verzweigtes Gehirn auf jeder Ebene 9/5/4, weil Beschriftungen und Trefferflächen schnell zu klein werden; reine Listen 5/10/10. Die Kombination erhält den Charakter der Vorlage und bietet auf Handy, mit Tastatur und Screenreader eine gleichwertige strukturierte Liste. Keine technische 3D-Engine nötig. Kleine Bildlabels und Bearbeiten-/Teilen-Buttons werden nicht ungeprüft übernommen: Profilpflege später optional, Schülerlernstände standardmäßig nicht öffentlich teilbar.
+
+### Die Themen in Mathematik 6
+
+Der verlinkte offizielle Fachlehrplan für die Regelklasse der Mittelschule führt **sieben** Lernbereiche. Für die Oberfläche werden diese verständlich beschriftet; die vollständige Zuordnung bleibt hinterlegt:
+
+| Anzeigevorschlag | Offizielle Zuordnung |
+|---|---|
+| Bruchzahlen | M6 1 |
+| Rationale Zahlen | M6 2 |
+| Figuren und Körper | M6 3 |
+| Oberfläche | M6 4 |
+| Volumen | M6 5 |
+| Daten | M6 6 |
+| Gleichungen und Formeln | M6 7 |
+
+Bei Bruchzahlen trennt der Lehrplan Zahlbereichserweiterung und Rechnen. Er umfasst unter anderem Darstellungen, Erweitern/Kürzen, Vergleichen, Darstellungswechsel und Rechenanwendungen. Die Zahlbereichserweiterung bedeutet mehr als nur „einen Bruch erweitern“. Diese Unterscheidung ist für das Kompetenzmodell wichtig. [Originallehrplan, gelesen am 20.10.2026](https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/mathematik/regelklasse).
+
+Die sieben Hauptbereiche bilden die Navigation; fachliche Teilkompetenzen und Voraussetzungen liegen darunter. Der folgende Graph ist eine didaktische Produktzerlegung, keine wortgetreue amtliche Stufenfolge: Anteile verstehen → Brüche darstellen → Gleichwertigkeit erkennen → erweitern/kürzen → vergleichen und umwandeln → Rechenoperationen und Anwendungen. Mehrere Wege und Querverbindungen sind möglich. Schwierigkeit wird je Kompetenz/Familie modelliert, nicht als eine einzige Zahl für ganz Mathe. Ein Erfolg beim Addieren sagt noch nichts über räumliche Vorstellung.
+
+### Einstiegsprobe mit gezielten Sprüngen
+
+Der von Martin gewünschte schnelle Einstieg ist als begrenzte Suchphase vorgesehen. Ohne Daten beginnt eine repräsentative Aufgabe mittleren Anspruchs im gewählten Bereich; nach einem selbstständigen Erfolg darf eine deutlich anspruchsvollere Probe folgen. Bei belastbarem Vorwissen kann das zwei oder drei **intern definierte** Anspruchsstufen überspringen. Diese Stufen sind kein amtlicher Maßstab und zunächst nicht kalibriert. Jede Probe braucht eine fachlich beschriebene Anforderung.
+
+Ein Sprung überspringt Übungsaufgaben, nicht automatisch den Nachweis aller Voraussetzungen. Nach einem Fehler werden die Anforderungen der Aufgabe zerlegt. Eine gezielte kleinere Probe prüft die wahrscheinlich fehlende Voraussetzung. Ein einzelner Fehler genügt nicht, um das Kind dauerhaft einzustufen. Ungeprüfte Fähigkeiten bleiben unbekannt, auch wenn die schwere Aufgabe richtig war. Hilfen, Wiederholungen und vermutetes Raten bleiben vom unabhängigen Erstversuch unterscheidbar.
+
+Vorgeschlagene Produktregeln für den Pilot: etwa 4–6 aussagekräftige Einstiegsantworten oder spätestens nach ungefähr 5 Minuten in einen hilfreichen Übungsweg wechseln; weder harte Pflichtprüfung noch Diagnoseschleife. Nach zwei nicht gelungenen anspruchsvolleren Proben vorerst keine weiteren großen Sprünge. Bei Überforderung früher helfen oder beenden. Richtwerte müssen mit Lehrkräften und Kindern erprobt werden.
+
+Konkrete synthetische Suchfolge, alle Vergleiche beziehen sich auf gleich große Ganze:
+
+| Beobachtung | Folgerung und nächste Aktivität |
+|---|---|
+| A: `1/2 = ?/8` → `4`, ohne Hilfe | Gleichwertigkeit hier gezeigt. Sprung zur kombinierten Anwendung `3/4 + 1/6` |
+| A: `3/4 + 1/6` → `4/10` | Möglicher komponentenweiser Additionsfehler; Ursache offen. Gegenprobe `1/4 + 2/4` |
+| A: `1/4 + 2/4` → `3/4` | Gleichnamige Addition hier möglich. Prüfen, ob selbstständig auf gemeinsamen Nenner gebracht werden kann |
+| A: `1/6 = ?/12` → `2`, `3/4 = ?/12` → `3` | Gleichwertigkeit nur teilweise sicher. Prüfen, ob der Faktor für beide Zahlen verstanden ist; passende Streifendarstellung statt weiterer Additionsserie |
+| Nach Beispiel: `2/3 = ?/12` → `8` | Erfolg nach Unterstützung; später neue hilfefreie Probe. Nicht sofort als sicher speichern |
+
+Zweiter Weg: B löst `1/2 = 4/8`, `3/4 + 1/6 = 11/12` und eine neue kontextuelle Anwendung ohne Hilfen. Dann keine lange Basisserie: schwierigere Anwendung, anderes freigegebenes Thema oder regulärer Abschluss; unabhängige spätere Probe folgt. Der Empfehlungskern muss auch die Alternative „wir wissen genug für die nächste Übung, aber noch nicht für ein festes Urteil“ zulassen.
+
+Die Übungsphase setzt am gefundenen Anschluss an: Beispiel verstehen → geführten Teilschritt ergänzen → selbstständig neue Aufgabe → später erneut abrufen. Abwechslung betrifft Darstellung und Denkhandlung, nicht nur größere Zahlen. Die bereits beschriebenen zwei mehrsitzigen Lernverläufe gelten weiter.
+
+### API und gemeinsam nutzbarer Aufgabenbestand
+
+Martins Wunsch nach KI im Hintergrund wird als **API-gestützte Inhaltsversorgung und begrenzte Erklärhilfe** eingeplant. Das System beobachtet fortlaufend, muss aber nicht bei jeder Antwort einen Provider aufrufen. Auswahl aus geprüften Aufgaben, Bewertung und einfache Anpassung sind serverseitig schnell und reproduzierbar möglich. Ein LLM unterstützt neue Inhaltsentwürfe und, nach eigener Freigabe, alternative Erklärungen. API-Anbindung bedeutet keine Erlaubnis, jetzt einen bezahlten Lauf zu starten.
+
+Vier getrennte Datenarten sind notwendig:
+
+1. **Gemeinsame Aufgabe:** fachlicher Inhalt, Revision, Lehrplanzuordnung, Kompetenzen/Voraussetzungen, Anspruchsmerkmale, Format, Medien, plausible Fehler, geprüfte Hilfen und privater Schlüssel. Keine Schüleridentität oder echte Antwortgeschichte.
+2. **Individuelles Ereignis:** welches Kind welche freigegebene Revision mit welcher Hilfe bearbeitet hat. Bleibt zugriffsgeschützt und getrennt vom gemeinsamen Pool.
+3. **Lernstand und Entscheidung:** aus gültigen Ereignissen abgeleitet, einschließlich Unsicherheit und Auswahlbegründung.
+4. **Qualitätsdaten der Aufgabe:** zunächst technische/fachliche Meldungen; spätere aggregierte Itemanalyse nur mit genehmigtem Zweck und Schutz gegen Rückschlüsse auf einzelne Kinder.
+
+Inhaltsablauf: vorhandenen Pool prüfen → passende geprüfte Karte ausliefern. Fehlt Inhalt: Entwurfsauftrag an die serverseitige KI mit Fachziel, Kontext und erlaubtem Format, ohne Namen/Schülerhistorie → Schema-/Rechen-/Leakprüfung → fachliche Freigabe → versionierter gemeinsamer Pool. Identische Anfragen bündeln und bereits erzeugte Entwürfe erkennen. Ein validierter mathematischer Generator kann später Varianten erzeugen, braucht aber eine geprüfte Vorlage, Lösung und Grenzen. Neu generierte ungeprüfte Aufgaben werden nicht unmittelbar mehreren Kindern zugestellt.
+
+Die Wiederverwendung spart wiederholte Generierung und Sucharbeit, erfordert aber differenzierte Sperren: aktive Prüfungsaufgaben/-familien, lizenzgebundene Lehrkraftmaterialien und personenbezogene Freitexte dürfen nicht pauschal in den gemeinsamen Pool. Die Wiederholung derselben Karte für dasselbe Kind ist kein neuer unabhängiger Lernstandsbeleg. Aufgaben für spätere Transferprüfung werden von den Übungsfamilien getrennt reserviert.
+
+Providerstörung, fehlender Treffer oder Tageslimit: geprüfte Standardfolge im gewählten Thema; ohne passende Karte „Für dieses Ziel fehlt noch eine freigegebene Aufgabe“ an die Lehrkraft. Kein erfundener Inhalt und kein endloses Warten. Redaktionelle Queue gebündelt statt einer Nachricht pro Kind; die Lehrkraft arbeitet im Alltag mit Vorschlägen und Ausnahmen, nicht mit manueller Aufgabensuche vor jeder Einheit.
+
+### Realisierung dieser Konkretisierung
+
+Der Gesamtentwurf umfasst das Lerngehirn und die spätere Themenbreite. Der erste Entwicklungsauftrag bleibt enger, ohne das Zielbild umzudeuten:
+
+1. **Fachliche Planung:** sieben Themenzuordnungen, begrenzter Bruchkompetenzgraph, Anspruchsmerkmale und zwei komplette Such-/Übungsfolgen prüfen. Diese Dokuarbeit ist autorisiert.
+2. **Später beauftragte Bedienprobe:** Lerngehirn mit großen Fachknoten → Mathe mit Themen → Bruchübung an synthetischen Daten. Tastatur, kleines Display und Zurückweg testen. Keine neue eigenständige Plattform.
+3. **Später beauftragter vertikaler Pilot:** pseudonyme Identität, geprüfter Bruchpool, Suchphase mit Sprüngen, gezielte Rückführung, Hilfen, Wiederholungsprüfung, Lehrerbegründung und gemeinsame Poolablage.
+4. **API-Inhaltsversorgung ergänzen:** serverseitige Entwurfsqueue, Freigabe, Cache, Limits, Fehlerrückfall und Nachweis, dass keine Identitätsdaten in generischen Aufgaben landen.
+5. **Breite ausbauen:** weitere Mathethemen und später Fächer erst mit ausreichendem geprüftem Inhalt. Sichtbarer Themenknoten zeigt ehrlich, ob Übungen verfügbar sind; kein leeres Versprechen „alles adaptiv“.
+
+Die frühere Größenordnung von 40–75 Personentagen galt dem begrenzten Pilot, nicht einem vollständigen Lerngehirn für alle Fächer. Als vorläufige Zusatzplanung für einfache Gehirnnavigation mit Listenalternative etwa 4–8 Personentage, für API-Entwurfsqueue/Freigabe/Cache etwa 8–15; nur soweit diese Teile nicht bereits in MVP-Arbeitspaketen enthalten sind, nicht blind addieren. Keine neue Preis- oder Kalenderzusage. Contentabdeckung aller sieben Bereiche muss separat nach Aufgabenzahl, Familien, Medien und fachlicher Prüfung geschätzt werden.
+
+Ergänzende Akzeptanz: erste Ansicht ohne Themenzweige; Mathe zeigt sieben korrekt zugeordnete Bereiche; Brüche beginnt ohne Unterzielauswahl; größere Sprünge überspringen keine Beleganforderungen; `4/10` löst Ursachenprüfung aus; API-Ausfall lässt geprüfte Übungen weiterlaufen; Poolrevision kann mehreren Berechtigten dienen, ohne Antworten/Identitäten zu vermischen; veraltete/gesperrte Karten werden nicht erneut ausgeliefert; Tastatur-/Listenweg bietet dieselben Funktionen. Nächster Schritt bleibt die Prüfung zweier konkreter Bruchfolgen gegen den Kompetenzgraph.
+
+
 ## Schüler und Lehrkraft im Alltag
 
 ### Schülerablauf
 
-1. Im bestehenden GradeCrew-Schülerbereich steht „Jetzt üben“. Darunter optional „Anderes Thema“. Sechs Themen erscheinen nur bei Bedarf, nur soweit die Lehrkraft sie freigegeben hat. Keine leeren Themen mit vorgetäuschter Diagnose.
+1. Im bestehenden GradeCrew-Schülerbereich steht „Jetzt üben“. Darunter optional „Anderes Thema“. Die zum Fach gehörenden Themen erscheinen erst nach Fachwahl, nur soweit die Lehrkraft sie freigegeben hat. Keine leeren Themen mit vorgetäuschter Diagnose.
 2. Die Startkarte nennt Ziel und knappe Begründung: „Brüche vergleichen · etwa 6 Minuten · wir prüfen zuerst zwei Beispiele“. Ohne Daten: „Wir schauen gemeinsam, was schon gut klappt.“ Bestehende benotete Tests behalten ihren eigenen Einstieg.
 3. Eine Aufgabe je Ansicht. „Antwort prüfen“, „Hilfe“ und ein unaufdringliches Menü für „Anders erklären“, „Aufgabe überspringen“, „Aufgabe melden“ und „Beenden“. Keine Geschwindigkeitspunkte. Bei Audio bleibt die konkrete Arbeitsanweisung verständlich und nochmals abrufbar.
 4. Nach einer Antwort gibt es eine kurze fachliche Rückmeldung. „Die Nenner sagen, wie groß die Teile sind. Vergleiche zuerst gleich große Ganze.“ Das Kind erhält Gelegenheit zur Korrektur, aber die Korrektur ersetzt nicht die Beobachtung der ersten Antwort.
@@ -81,9 +167,9 @@ Ein LLM kann später einen freigegebenen Hinweis sprachlich vereinfachen oder ei
 
 Statistische Lernstandmodelle wie Bayesian Knowledge Tracing können später Raten und versehentliche Fehler probabilistisch modellieren. Sie benötigen geeignete Kompetenzzerlegung, Daten und Kalibrierung; ein bekannter Algorithmus ersetzt diese Arbeit nicht. IRT wäre eher für einen kalibrierten Aufgabenpool geeignet und erklärt noch nicht den passenden didaktischen Hilfetyp. Komplexere Modelle erst aufnehmen, wenn sie bei neuen Schülern/Aufgaben besser vorhersagen **und** bessere Lernentscheidungen ermöglichen als die Regelbaseline. LLM-only ist keine empfohlene Referenzarchitektur.
 
-## Sechs Themen und konkrete Lernverläufe
+## Lehrplanbezug und konkrete Lernverläufe
 
-**Arbeitsannahme:** Mathematik Jahrgang 6, Mittelschule Bayern als anschlussfähiges Beispiel zum vorhandenen Poolkontext. Die folgende Sechsergliederung ist eine illustrative Auswahl der Lehrkraft, kein behaupteter offizieller Jahreslehrplan: Zahlen und Grundrechnen; Brüche und Anteile; Dezimalzahlen; Größen und Messen; Geometrie; Daten und Diagramme. Verbindliche Zuordnung später über vorhandene Lehrplaneinbindung und Originallehrplan prüfen. Keine neue globale Lehrplanengine.
+**Konkretisierter Kontext:** Mathematik 6, Mittelschule Bayern, Regelklasse gemäß Martins verlinktem LehrplanPLUS. Die frühere illustrative Sechserauswahl ist durch die sieben Lernbereiche in der neuen Lerngehirnplanung ersetzt. Bruchzahlen ist der erste vertiefte Planungsbereich.
 
 Für „Brüche und Anteile“: gleich große Ganze/Teile erkennen → Zähler und Nenner deuten → gleichnamige bzw. gleichzählige Brüche vergleichen → Gleichwertigkeit/Erweitern nutzen → ungleichnamige Brüche vergleichen → in neuem Kontext anwenden. Voraussetzungen bilden einen kleinen fachlich geprüften Graphen; sie sind keine starren lebenslangen Sperren.
 
@@ -299,13 +385,9 @@ Die folgenden Primärarbeiten wurden aufgerufen und in den einschlägigen Ergebn
 - **Feedback:** Shute (2008), *Focus on Formative Feedback*. Gelesener zugänglicher Abstract der Originalpublikation empfiehlt unterstützende, spezifische und zeitlich passende Rückmeldung; Wirkung hängt von Lernenden und Aufgabe ab. Volltext war dort zugangsbeschränkt. Konkrete Feedbacktexte/Hilfestufen sind daher Designentscheidungen, nicht als aus einem ungelesenen Volltext bewiesen ausgeben. [Originalpublikation und Abstract](https://journals.sagepub.com/doi/10.3102/0034654307313795).
 - **Praxisorientierte Evidenzsynthese:** Pashler et al. (2007), IES *Organizing Instruction and Study to Improve Student Learning*, Empfehlungen 1–7: Verteilung, Wechsel zwischen Beispiel und eigener Lösung, verbale/bildliche Verknüpfung und Abrufübung. Die Evidenzgrade unterscheiden sich je Empfehlung. Daraus folgt ein begründeter Formatmix, keine feste Bildschirmfolge und keine Wirksamkeitsgarantie. [Vollständiger Guide](https://ies.ed.gov/ncee/wwc/Docs/PracticeGuide/20072004.pdf).
 
-## Drei Entscheidungen für Martin nach dem Entwurf
+## Beschlossene Richtung und verbleibende Planung
 
-1. Soll der erste fachliche Pilot beim vorgeschlagenen Bruchthema in Mathematik beginnen, oder gibt es eine konkrete andere Klasse und ein vorrangiges Ziel? Die sechs Themen sind hier nur die spätere einfache Auswahl.
-2. Ist der erste Einsatz angeleitete Übungszeit in der Schule oder selbstständige Hausübung? Das beeinflusst Identitäts-/Resumeanforderungen und erreichbare Lehrkrafthilfe erheblich.
-3. Soll die erste Version vollständig mit geprüften Hinweisen auskommen (Empfehlung), oder ist ein freier Erklärdialog so wichtig, dass sein zusätzlicher Qualitäts-/Daten-/Kostenumfang bereits zum Pilot gehören soll?
-
-Der nächste ausführbare Planungsschritt ist eine Lehrkraftprüfung des vorgeschlagenen Kompetenzgraphs und zweier vollständiger Aufgabenfolgen. Produktimplementierung benötigt einen Folgeauftrag.
+Lerngehirn als anklickbarer Einstieg, große Themen nach Fachwahl, automatische Unterzielbestimmung, gezielte Schwierigkeitssprünge und gemeinsam wiederverwendbare KI-gestützte Aufgaben sind Martins konkretisierte Richtung. Schul-/Hausübungsbetrieb, genaue fachliche Regeln und Freigabeverantwortung werden vor einem Pilotauftrag festgelegt. Produktimplementierung benötigt einen Folgeauftrag.
 
 ## Prüfnachweis des Konzeptauftrags
 
