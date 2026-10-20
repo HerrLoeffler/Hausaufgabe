@@ -578,4 +578,4 @@ Native b43298b auf eigenem Branch: Teacher39161910081/Secure39161910224 laufen; 
 
 ## GC-CHAPTER-TESTS-01 – Idee/Planung (20.10.2026)
 
-- [ ] Kapitel im bestehenden Test prüfen: Konzept mit sechs Mathethemen, A/B/C-Vergleich, Codeinventur und Stufenplan zur Nutzerentscheidung erstellt. Keine Produktfreigabe oder Implementierung, keine Release-Stufenänderung. Empfehlung B noch nicht beschlossen. [Konzept](docs/concepts/GC-CHAPTER-TESTS-01.md) · [Übergabe](workstreams/chapter-tests-01.md). Nächster Schritt: Martin legt ersten Einsatzzweck fest.
+- [ ] Kapitel im bestehenden Test prüfen: Konzept mit sechs Mathethemen, A/B/C-Vergleich, Codeinventur und Stufenplan zur Nutzerentscheidung erstellt. Keine Produktfreigabe oder Implementierung, keine Release-Stufenänderung. Martin präzisiert: vorhandene Testerstellung erweitern, Kapitel für Übung/benoteten Test gleich; ohne Bundeslandfestlegung. Optionale Gesamt-/Bereichstimer mitplanen, Ablaufdetails offen. [Konzept](docs/concepts/GC-CHAPTER-TESTS-01.md) · [Übergabe](workstreams/chapter-tests-01.md). Nächster Schritt: Kapitelzuordnung und optionale Zeitregeln im vorhandenen Erstellungsablauf konkretisieren.
