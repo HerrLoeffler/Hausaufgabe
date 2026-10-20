@@ -598,3 +598,7 @@ Bestehende Bruchmaterialien tatsächlich gesichtet; sechs eigene Prototypprofile
 ### GC-ADAPTIVE-PRACTICE-01 Kleinschrittige Lernhilfe
 
 Auf konkreten Nutzerbefund Textwand durch einzelne klickbare Ansichten ersetzt: Anteil → Faktor → feinere Teilung → Summe → aufgabenbezogene Hilfefrage.10Sekunden Lesepause vor jedem Weiter, kein Auto-Wechsel. Keine automatische freie KI-Langerklärung nach Fehler. Gleichwertige Ergebnisse unabhängig vom Nenner weiter exakt geprüft; zusätzliche Fälle9/20=18/40 zu1/4+1/5.35JS-/4Proxytests lokal grün, gleicher Prototyp/PR253, kein Schuldeploy. Nutzer-/didaktische Abnahme offen.
+
+### GC-ADAPTIVE-PRACTICE-01 KI-Entscheidung nach Beobachtung
+
+Echte Emmi-Auswahl für nächste Aktivität ergänzt; Aufgabe, exakte Antwortbewertung, Hilfe und Verlauf werden berücksichtigt. Richtiger Versuch führt ohne Zwangslektion zu höherem Anspruch; Hilfe behält ganze Rechnung sichtbar. Wiederholungsfehler verlangen Unterstützung,8/10-Nachweis bleibt unabhängig. Nur Bruchpilot; weitere Fächer, fachliche Nutzerabnahme und Produktintegration offen. Gleicher Draft PR253, kein Deploy.

@@ -10,6 +10,14 @@ Für diesen Arbeitsplatz wurde auf Martins ausdrücklichen Auftrag ein eigenes g
 
 Zufällige Zugangsdaten liegen mit Dateimodus600 außerhalb des Checkouts und Webroots unter dem Elternordner des Checkouts in `.private/learning-brain/account.json`. Nicht committen, weitergeben oder über HTTP ausliefern. Der Browser erhält nur ein HttpOnly/SameSite-Strict-Sitzungscookie. Der Proxy bindet ausschließlich127.0.0.1:8769 und prüft Host, Origin, Sitzungskennung, Anfragegröße und statische Dateiliste. Keine Provider-Schlüssel im Frontend. Vorhandene serverseitige Rollen und Quoten bleiben unverändert. Zusätzlich maximal80 lokale KI-Anfragen für diesen Prototyplauf; Zähler bleibt über Browserrefresh und Serverneustart erhalten. Ein Aufgabenaufruf kann im bestehenden Backend mehrere interne Modellversuche auslösen;80 Requests sind kein Token-/Eurobudget. Kein automatischer Reset.
 
+## Aktuelle KI-Auswahl
+
+Die KI entscheidet jetzt nach jeder abgegebenen Antwort anhand von Rechnung, exakter Bewertung, Hilfenutzung, jüngsten Versuchen und Materialprofil über die nächste Aktivität. Selbstständig richtig führt zu einer anspruchsvolleren Probe ohne automatische Grundlagenlektion oder Lesesperre. Ein Treffer bleibt ein Zwischenstand. Fehler führen zu einer gezielten Probe oder Unterstützung; wiederholte Fehler verlangen Hilfe oder Pause. Ungültige KI-Entscheidungen werden sichtbar abgewiesen; kein heimlicher lokaler Ersatz.
+
+Die gesamte Rechnung und abgegebene Antwort bleiben während der Hilfe sichtbar. Die KI wählt den Hilfefokus; die mathematischen Bilder und Rechenschritte werden unabhängig aus der tatsächlichen Aufgabe berechnet. Zehn Sekunden Lesepause gelten für Fehlerhilfe, nicht für eine freiwillige Nachbesprechung nach richtiger Antwort.
+
+[Entscheidungsvertrag und Grenzen](DIDACTIC-CONTRACT.md). Ältere Durchlaufbeschreibungen unten sind historische Nachweise; die hier beschriebene Auswahl ersetzt ihre starre lokale Folge.
+
 ## Ausprobieren
 
 - Lerngehirn: vier große Fächer, Profil in der Mitte. Mathe öffnet sieben LehrplanPLUS-Themen; Bruchzahlen ist der ausgearbeitete Übungsweg.

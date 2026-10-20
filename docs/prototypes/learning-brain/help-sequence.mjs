@@ -21,9 +21,9 @@ export function buildHelp(task){const {denominator:d,first,second,total}=visualP
  else check={question:`Wir behalten den Nenner ${d}. Wie viel ist ${first} + ${second}?`,answer:total,explanation:`${first} + ${second} = ${total}. Der Nenner ${d} bleibt gleich.`};
  steps.push({id:'check',title:'Ein kleiner Schritt für dich.',text:'Diese Frage gehört noch zur Erklärung. Danach kommt eine neue Aufgabe ohne Hilfe.',html:'',check});return steps;
 }
-export function createHelp(now=Date.now()){return {index:0,readyAt:now+10000};}
+export function createHelp(now=Date.now(),readingMs=10000){return {index:0,readingMs,readyAt:now+readingMs};}
 export function helpWait(state,now=Date.now()){return Math.max(0,Math.ceil((state.readyAt-now)/1000));}
-export function advanceHelp(state,count,now=Date.now()){return helpWait(state,now)>0||state.index>=count-1?state:{index:state.index+1,readyAt:now+10000};}
-export function backHelp(state,now=Date.now()){return {index:Math.max(0,state.index-1),readyAt:now+10000};}
+export function advanceHelp(state,count,now=Date.now()){return helpWait(state,now)>0||state.index>=count-1?state:{index:state.index+1,readingMs:state.readingMs??10000,readyAt:now+(state.readingMs??10000)};}
+export function backHelp(state,now=Date.now()){return {index:Math.max(0,state.index-1),readingMs:state.readingMs??10000,readyAt:now+(state.readingMs??10000)};}
 
 export function canLeaveHelp(state,count,done,now=Date.now()){return !!state&&state.index===count-1&&done&&helpWait(state,now)===0;}

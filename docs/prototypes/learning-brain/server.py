@@ -4,6 +4,7 @@ No service account, admin token, provider key, live project or role override.
 """
 import argparse,json,secrets,time,os,threading,re,urllib.request,urllib.error,http.server
 from pathlib import Path
+from didactic import DecisionError,parse_decision,planning_prompt,check_task_demand
 ROOT=Path(__file__).resolve().parent
 PRIVATE=ROOT.parents[3]/'.private'/'learning-brain'
 PROJECT='gradecrew-staging-2026'
@@ -88,7 +89,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.end_headers();self.wfile.write(data)
     def do_GET(self):
         if self.path=='/api/status':return self.output(200,{'project':PROJECT,'accountReady':CREDENTIALS.exists(),'calls':STATE['calls'],'limit':RUN_LIMIT})
-        if self.path.split('?')[0] in ['/','/preview.html','/index.html','/app.css','/app.mjs','/engine.mjs','/tutor.mjs','/tutor-model.mjs','/fraction-visuals.mjs','/help-sequence.mjs']:return super().do_GET()
+        if self.path.split('?')[0] in ['/','/preview.html','/index.html','/app.css','/app.mjs','/engine.mjs','/tutor.mjs','/tutor-model.mjs','/fraction-visuals.mjs','/help-sequence.mjs','/didactic-decision.mjs']:return super().do_GET()
         self.send_error(404)
     def do_POST(self):
         if self.headers.get('Host')!=f'127.0.0.1:{PORT}' or self.headers.get('Origin')!=ORIGIN:return self.output(403,{'error':'Nur die lokale Vorschau ist zugelassen.'})
@@ -100,7 +101,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         except Exception:return self.output(400,{'error':'Ungültiges JSON.'})
         if self.path=='/api/session':
             if not CREDENTIALS.exists():return self.output(503,{'error':'Das Testkonto ist noch nicht eingerichtet.'})
-            return self.output(200,{'connected':True,'project':PROJECT},cookie=True)
+            return self.output(200,{'connected':True,'project':PROJECT,'calls':STATE['calls']},cookie=True)
         if self.path!='/api/crew':return self.output(404,{'error':'Nicht gefunden.'})
         cookie=self.headers.get('Cookie','')
         if f'gc_prototype={STATE["session"]}' not in cookie:return self.output(401,{'error':'Bitte lokale Testverbindung starten.'})
@@ -111,9 +112,20 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             STATE['calls']+=1
             USAGE.write_text(json.dumps({'calls':STATE['calls'],'limit':RUN_LIMIT}));os.chmod(USAGE,0o600)
             try:
+                if data.get('purpose')=='plan':
+                    context=data.get('context')
+                    if not isinstance(context,dict) or context.get('kind') not in ['answer','help_requested','guided_complete'] or not isinstance(context.get('task'),dict):raise SafeError('Ungültiger Entscheidungskontext.')
+                    if context['task'].get('skill') not in ['parts','same','equivalent','common','add','transfer']:raise SafeError('Unbekannte Kompetenz im Entscheidungskontext.')
+                    prompt=planning_prompt(context,PROFILES['profiles'])
+                    response=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':prompt,'uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[]}}},{'Authorization':'Bearer '+token()})
+                    reply=(response.get('result') or response.get('data') or {}).get('reply','')
+                    decision=parse_decision(reply,context)
+                    return self.output(200,{'reply':json.dumps(decision,ensure_ascii=False),'calls':STATE['calls'],'origin':'gradecrew-ai'})
                 if data.get('purpose')=='task':
                     skill=data.get('skill','add')
                     if skill not in ['parts','same','add','common','equivalent','transfer']:raise SafeError('Unbekannte Teilkompetenz.')
+                    level=data.get('difficulty',1 if skill in ['add','transfer'] else 0)
+                    if type(level) is not int or not 0<=level<=3:raise SafeError('Unbekannter Aufgabenanspruch.')
                     seed={'type':'number','text':'1/2 + 1/4 = ?','numericAnswer':0.75,'points':1,'tolerance':0,'unit':''}
                     instruction='Erstelle eine NEUE kurze Bruchaufgabe mit eigenen anderen Zahlen. Zahlentext bitte zwingend als ASCII-Brüche a/b + c/d = ?; keine LaTex-, Unicodebruch- oder Bilddarstellung. Zähler1..12, Nenner2..12; gemeinsamer Nenner höchstens36. Nur Addition, keine weitere Rechenoperation. Ergebnis als numericAnswer exakt als Zahl. Keine Lösung im Aufgabentext.'
                     if skill=='parts':
@@ -128,6 +140,15 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     if skill=='equivalent':
                         seed.update(text='Ergänze: 1/2 = ?/8',numericAnswer=4)
                         instruction='Erstelle eine neue einfache Erweiterungsaufgabe. Text zwingend ASCII a/b = ?/d, mit d als größerem ganzzahligen Vielfachen von b. Nenner2..12, Zielnenner höchstens24. numericAnswer ist der fehlende Zähler. Kein Ergebnis im Aufgabentext.'
+                    if skill in ['add','transfer']:
+                        if level==0:instruction+=' Beide Nenner gleich, Summe höchstens1.'
+                        if level==1:instruction+=' ZWINGEND: verschiedene Nenner; einer teilt den anderen. Genau ein Bruch wird erweitert. Beide Brüche echt, Summe höchstens1.'
+                        if level==2:
+                            seed.update(text='1/3 + 1/4 = ?',numericAnswer=7/12)
+                            instruction+=' ZWINGEND anspruchsvollere Probe: verschiedene Nenner, keiner teilt den anderen, BEIDE Brüche müssen erweitert werden. Beide Brüche echt und Summe HÖCHSTENS1; kgV höchstens36.'
+                        if level==3:
+                            seed.update(text='2/3 + 3/4 = ?',numericAnswer=17/12)
+                            instruction+=' ZWINGEND kombinierte Probe: beide echten Brüche auf neuen gemeinsamen Nenner bringen; keiner der Nenner teilt den anderen. Summe größer1; kgV höchstens36.'
                     payload={'question':seed,'targetType':'number','allowedTypes':['number'],'allowImages':False,'mediaKind':'none','instruction':instruction+profile_context(skill)+' Verwende andere Zahlenkombinationen als zuletzt: '+json.dumps([x for x in data.get('avoid',[]) if isinstance(x,str) and len(x)<80][:12])+' Variation '+str(time.time()),'testContext':{'subject':'Mathematik','grade':'6','topic':'Bruchzahlen','schoolType':'Mittelschule','region':'Bayern'}}
                     answer=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/regenerateQuestion',{'data':payload},{'Authorization':'Bearer '+token()})
                     q=(answer.get('result') or answer.get('data') or {}).get('question',{})
@@ -147,11 +168,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     else:
                         pairs=re.findall(r'(\d+)\s*/\s*(\d+)',textq)
                         if len(pairs)!=2:raise SafeError('Die neue KI-Aufgabe hat noch kein eindeutiges Bruchformat.')
-                        a,b=[list(map(int,p)) for p in pairs];raw={'skill':skill,'a':a,'b':b,'prompt':'Berechne die Summe der beiden Brüche.'}
+                        a,b=[list(map(int,p)) for p in pairs];raw={'skill':skill,'a':a,'b':b,'prompt':str(q.get('text','Berechne die Summe der beiden Brüche.'))[:230]}
                         if not a[1] or not b[1]:raise SafeError('Ungültiger Nenner in KI-Aufgabe.')
                         if skill=='same' and (a[1]!=b[1] or a[1]>8 or a[0]+b[0]>a[1]):raise SafeError('Die KI-Aufgabe geht noch nicht weit genug zurück.')
                         import math
                         expected=math.lcm(a[1],b[1]) if skill=='common' else a[0]/a[1]+b[0]/b[1]
+                    raw['difficulty']=level
+                    check_task_demand(skill,raw['a'],raw['b'],level)
                     try:key=float(q.get('numericAnswer',-999))
                     except (ValueError,TypeError):raise SafeError('Kein eindeutiger KI-Lösungsschlüssel.')
                     if abs(key-expected)>1e-7:raise SafeError('Der KI-Lösungsschlüssel stimmt nicht mit der exakten Rechnung überein.')
@@ -160,7 +183,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 reply=(answer.get('result') or answer.get('data') or {}).get('reply')
                 if not isinstance(reply,str) or not reply.strip():raise SafeError('Keine KI-Antwort zurückgegeben.')
                 return self.output(200,{'reply':reply,'calls':STATE['calls']})
-            except SafeError as ex:return self.output(502,{'error':str(ex),'calls':STATE['calls']})
+            except (SafeError,DecisionError) as ex:return self.output(502,{'error':str(ex),'calls':STATE['calls']})
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--setup-account',action='store_true');args=parser.parse_args()
