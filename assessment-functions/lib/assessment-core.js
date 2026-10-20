@@ -538,7 +538,12 @@ function sanitizeAnswersForStorage(gradingKey, answers) {
   const allowed = new Map((Array.isArray(gradingKey) ? gradingKey : []).map(key => [key.id, key]));
   for (const [questionId, key] of allowed.entries()) {
     const value = source[questionId];
-    if (["single", "dropdown", "truefalse", "text", "number", "numberline"].includes(key.type)) {
+    if (key.type === 'fraction-grid') {
+      out[questionId] = Array.isArray(value) && value.length > 100 ? [null] : (Array.isArray(value) ? value : []).map(item => typeof item === 'number' && Number.isInteger(item) ? item : null);
+    } else if (key.type === 'bar-chart' || key.type === 'numberline' && key.visual.markers) {
+      const map = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+      out[questionId] = Object.fromEntries(Object.entries(map).slice(0,100).map(([k,v]) => [clampString(k,100),clampString(v,100)]));
+    } else if (["single", "dropdown", "truefalse", "text", "number", "numberline", "angle-measure"].includes(key.type)) {
       out[questionId] = clampString(value, 4000);
     } else if (key.type === "markwords" && key.correctWordColors) {
       const map = value && typeof value === "object" && !Array.isArray(value) ? value : {};
@@ -575,7 +580,7 @@ function publicQuizMetadata(quiz, quizId) {
 
 function assertNoSolutionLeak(paper) {
   const forbiddenKeys = new Set([
-    "visualSolution", "correct", "correctBoolean", "acceptedAnswers", "numericAnswer", "tolerance",
+    "visualSolution", "degrees", "correct", "correctBoolean", "acceptedAnswers", "numericAnswer", "tolerance",
     "targetWords", "correctWordColors", "acceptedOrders", "gradingKey", "answerKey", "solutions",
     "audioScript", "transcript", "audioTranscript", "solutionAudioDataUrl", "solutionScript", "solutionAudioScript", "optionAudioScript"
   ]);

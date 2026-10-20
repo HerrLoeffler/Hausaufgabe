@@ -34,7 +34,7 @@ function cleanQuestion(raw = {}, index = 0) {
     fixedImageAlt: cleanString(raw?.fixedImageAlt || raw?.imageAlt, MAX_ALT_CHARS),
     question: {
       type,
-      ...(['hotspot','image-labeling','numberline'].includes(type) ? {visual:raw.visual,visualSolution:raw.visualSolution} : {}),
+      ...(['hotspot','image-labeling','numberline','fraction-grid','bar-chart','angle-measure'].includes(type) ? {visual:raw.visual,visualSolution:raw.visualSolution} : {}),
       text: cleanString(raw?.text, 900),
       points: Number.isFinite(points) && points >= 0.5 ? Math.round(points * 2) / 2 : 1,
       options: Array.isArray(raw?.options) ? raw.options.slice(0, 10).map(option => ({

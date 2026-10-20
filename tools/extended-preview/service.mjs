@@ -13,14 +13,15 @@ export function createExtendedService({state={draft:null,published:null,attempts
    if(!data.test||!Array.isArray(data.test.questions))throw Error('Test fehlt.');
    if(!/einfach|kürzer|klarer/i.test(data.instruction||''))throw Error('Die lokale Emmi-Simulation unterstützt nur „Einfacher formulieren“ und „Kürzer und klarer“. Kein KI-Aufruf.');
    const next=clone(data.test);const changed=[];
-   next.questions.forEach((q,i)=>{if(q.type==='hotspot'){q.text=q.visual?.template==='room'?'Wähle das Fenster.':'Welcher Bereich nimmt Wasser aus dem Boden auf?';changed.push(i);}else if(q.type==='image-labeling'){q.text='Ordne jedem nummerierten Bereich den passenden Begriff zu.';changed.push(i);}});
+   next.questions.forEach((q,i)=>{if(q.type==='hotspot'){q.text=q.visual?.template==='room'?'Wähle das Fenster.':'Welcher Bereich nimmt Wasser aus dem Boden auf?';changed.push(i);}else if(q.type==='image-labeling'){q.text=q.visual?.template==='sentence'?'Welche Funktion haben die Satzbausteine? Ordne zu.':q.visual?.template==='receipt'?'Welche Angaben stehen auf dem Beleg? Ordne zu.':'Ordne jedem nummerierten Bereich den passenden Begriff zu.';changed.push(i);}});
    return {test:next,changedIndices:changed,unchangedIndices:next.questions.map((_,i)=>i).filter(i=>!changed.includes(i)),lockedCount:0,invalidCount:0,meta:{model:'prepared-local-simulation',revisionVersion:'extended-prototype-v1'},simulated:true};
   }
   if(action==='teacher')return {test:state.draft};
   if(action==='generate'){
-   if((data.count!=null&&data.count!==5)||(data.points!=null&&data.points!==10))throw Error('Lokale vorbereitete Beispiele haben genau 5 Aufgaben und 10 Punkte. Bitte diese Werte einstellen.');
+   const showcase=/visuell|alle formate|aufgabenformate/i.test(String(data.topic||''));
+   if((data.count!=null&&data.count!==(showcase?9:5))||(data.points!=null&&data.points!==(showcase?24:10)))throw Error(showcase?'Der lokale Formatvergleich hat 9 Aufgaben und 24 Punkte.':'Lokale vorbereitete Beispiele haben genau 5 Aufgaben und 10 Punkte. Bitte diese Werte einstellen.');
    const topic=String(data.topic||'Pflanze');const room=/raum|zimmer|classroom|room|möbel/i.test(topic);const history=/zeitachse|geschichte|kalter krieg/i.test(topic);
-   if(!room&&!history&&!/pflanz|blüte|biolog/i.test(topic))throw Error('Für dieses Thema fehlt im lokalen Prototyp eine geprüfte Vorlage. Beispiele: Blütenpflanze, classroom/room, historische Zeitachse. Keine freie KI-Erstellung aktiv.');
+   if(!showcase&&!room&&!history&&!/pflanz|blüte|biolog/i.test(topic))throw Error('Für dieses Thema fehlt im lokalen Prototyp eine geprüfte Vorlage. Beispiele: Visuelle Aufgaben (9/24), Blütenpflanze, classroom/room, historische Zeitachse (je5/10). Keine freie KI-Erstellung aktiv.');
    const template=room?'room':'plant';const labels=(room?['Tisch','Ball','Fenster','Tür']:['Blatt','Wurzel','Blüte','Sprossachse']).map((text,i)=>({id:['b','d','a','c'][i],text}));
    const assignments=room?{r1:'a',r2:'c',r3:'b',r4:'d'}:{r1:'a',r2:'c',r3:'b',r4:'d'};
    let questions=[
@@ -35,9 +36,20 @@ export function createExtendedService({state={draft:null,published:null,attempts
     {id:'example4',type:'truefalse',text:'Die Berliner Mauer wurde nach der deutschen Wiedervereinigung gebaut.',points:1,correctBoolean:false},
     {id:'example5',type:'single',text:'Welches Ereignis gehört zum Jahr 1989?',points:1,options:[{text:'Öffnung der Berliner Mauer',correct:true},{text:'Gründung der Bundesrepublik Deutschland',correct:false},{text:'Bau der Berliner Mauer',correct:false}]}
    ];
+   if(showcase)questions=[
+    {...questions[0],points:1},
+    {...questions[1],text:'Ziehe die Begriffe an die passenden Teile der Blütenpflanze.'},
+    {...questions[2]},
+    {id:'example4',type:'numberline',text:'Ordne die drei Ereignisse auf der gemeinsamen Zeitachse ein: Gründung der BRD, Bau der Berliner Mauer und deutsche Wiedervereinigung.',points:3,visual:{version:1,min:1940,max:2000,step:1,markers:[{id:'c',text:'Deutsche Wiedervereinigung'},{id:'a',text:'Gründung der BRD'},{id:'b',text:'Bau der Berliner Mauer'}]},visualSolution:{positions:[{id:'c',value:1990,tolerance:0},{id:'a',value:1949,tolerance:0},{id:'b',value:1961,tolerance:0}]}},
+    {id:'example5',type:'image-labeling',text:'Ordne den vier Satzbausteinen ihre Satzgliedfunktion zu.',points:4,visual:{version:1,template:'sentence',labels:[{id:'d',text:'Ortsangabe'},{id:'b',text:'Prädikat'},{id:'a',text:'Zeitangabe'},{id:'c',text:'Subjekt'}]},visualSolution:{assignments:{r1:'a',r2:'b',r3:'c',r4:'d'}}},
+    {id:'example6',type:'fraction-grid',text:'Markiere 35 % der Fläche. Alle 20 Kästchen sind gleich groß.',points:2,visual:{version:1,rows:4,columns:5},visualSolution:{count:7}},
+    {id:'example7',type:'bar-chart',text:'Ergänze das Säulendiagramm: Übertrage die gemessenen Pflanzenhöhen aus der Tabelle.',points:3,visual:{version:1,min:0,max:10,step:1,unit:'cm',categories:[{id:'a',text:'A',sourceValue:4},{id:'b',text:'B',sourceValue:7},{id:'c',text:'C',sourceValue:5}]},visualSolution:{values:[{id:'a',value:4},{id:'b',value:7},{id:'c',value:5}]}},
+    {id:'example8',type:'angle-measure',text:'Miss den Winkel α mit dem Winkelmesser und trage deine Messung in Grad ein. Messtoleranz: ±1°.',points:1,visual:{version:1,degrees:68},visualSolution:{value:68,tolerance:1}},
+    {id:'example9',type:'image-labeling',text:'Beschrifte den fiktiven Kassenbeleg: Datum, Artikel, Gesamtbetrag und Zahlungsart.',points:4,visual:{version:1,template:'receipt',labels:[{id:'c',text:'Gesamtbetrag'},{id:'a',text:'Datum'},{id:'d',text:'Zahlungsart'},{id:'b',text:'Artikel'}]},visualSolution:{assignments:{r1:'a',r2:'b',r3:'c',r4:'d'}}}
+   ];
    const allowed=Array.isArray(data.allowedTypes)?data.allowedTypes:[];
-   if(allowed.length&&questions.some(q=>!allowed.includes(q.type)))throw Error('Dieses vorbereitete Beispiel benötigt Bildbereiche, Grafikbeschriftung, Skala, Richtig/Falsch und Single Choice. Wähle diese Formate aus.');
-   state.draft={title:history?'Deutsche Teilung und Einheit – lokale Zeitachsen':room?'Raumszene und Skala – lokales Beispiel':'Blütenpflanze und Skala – lokales Beispiel',subject:String(data.subject||'NT / Biologie'),grade:String(data.grade||'6'),description:'Vorbereitete lokale Beispielerstellung (5 Aufgaben / 10 Punkte). Keine KI-Generierung.',questions};await persist(state);return {test:clone(state.draft),simulated:true};
+   if(allowed.length&&questions.some(q=>!allowed.includes(q.type)))throw Error('Dieses vorbereitete Beispiel benötigt folgende Formate: '+[...new Set(questions.map(q=>q.type))].join(', ')+'. Bitte auswählen.');
+   state.draft={title:showcase?'Visuelle Aufgaben – neun interaktive Beispiele':history?'Deutsche Teilung und Einheit – lokale Zeitachsen':room?'Raumszene und Skala – lokales Beispiel':'Blütenpflanze und Skala – lokales Beispiel',subject:String(data.subject||'NT / Biologie'),grade:String(data.grade||'6'),description:showcase?'Vorbereiteter lokaler Formatvergleich (9 Aufgaben / 24 Punkte). Keine KI-Generierung.':'Vorbereitete lokale Beispielerstellung (5 Aufgaben / 10 Punkte). Keine KI-Generierung.',questions};await persist(state);return {test:clone(state.draft),simulated:true};
   }
   if(action==='save'||action==='publish'){
    if(!data.quiz||!Array.isArray(data.questions)||data.questions.length>20)throw Error('Ungültiger Beispieltest.');

@@ -340,7 +340,10 @@ function buildSolutionSnapshot(questions) {
     const type = String(question?.type || "text");
     let prompt = type === "gapfill" ? "Lückentext" : cleanDisplay(question?.text, 1500);
     let answer = "";
-    if(type==='numberline'){answer=String(question.visualSolution?.value??'');}
+    if(type==='numberline'){answer=question.visual?.markers?(question.visualSolution?.positions||[]).map(p=>`${question.visual.markers.find(m=>m.id===p.id)?.text||p.id}: ${p.value}`).join('; '):String(question.visualSolution?.value??'');}
+    else if(type==='fraction-grid'){answer=`${question.visualSolution?.count} von ${question.visual?.rows*question.visual?.columns} Feldern`;}
+    else if(type==='bar-chart'){answer=(question.visualSolution?.values||[]).map(p=>`${question.visual?.categories?.find(c=>c.id===p.id)?.text||p.id}: ${p.value}${question.visual?.unit?' '+question.visual.unit:''}`).join('; ');}
+    else if(type==='angle-measure'){answer=`${question.visualSolution?.value}°`; }
     else if(type==='hotspot'){answer=(question.visualSolution?.selected||[]).map(id=>`Bereich ${Number(id.slice(1))}`).join(', ');}
     else if(type==='image-labeling'){answer=Object.entries(question.visualSolution?.assignments||{}).map(([id,label])=>`Bereich ${Number(id.slice(1))}: ${question.visual?.labels?.find(l=>l.id===label)?.text||'–'}`).join('; ');}
     else if (["single", "multi", "dropdown"].includes(type)) {

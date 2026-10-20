@@ -40,3 +40,12 @@ Unbekannte/doppelte IDs; Leaks über Optionen/Reihenfolge; geänderte Modelle be
 
 ## Ausführungsreceipt
 Inline ausgeführt, isolierter Clone von4f8b792. Siehe HDF für echte Tests, einen bereits auf der Basis reproduzierten UI-Testharnessfehler und noch offene Geräte-/Cloud-/Provider-/Drucknachweise. Die Umsetzung liefert einen lokalen Prototyp; die Checkboxen sind kein Releasegate oder Abschluss aller späteren Produktionsanforderungen.
+
+## V2: autorisierte Überarbeitung nach tatsächlicher Referenz, 20.10.2026
+- Referenzgrade: bestehende GradeCrew-Oberfläche erhalten; keine zweite App als Ergebnis. Referenz sechs Familien/acht Aufgaben im Quelltext bestätigt; Browser-file://-Policy nicht umgehen.
+- Bestehende Beschriftung um direkt sichtbare Dropfelder/Verbindungslinien, Pointerziehen, Tippen, Tastatur und optionale native Auswahllisten erweitern. Jeder Begriff einmal; Vertragsvalidator entsprechend eindeutig.
+- Zahlenstrahlvertrag skalar abwärtskompatibel, mehrere Ereignisse mit eigenen opaken IDs und Teilpunkten auf EINER Achse. Antwortstruktur bleibt nach Reload erhalten.
+- Neue geprüfte lokale Familien: gleich große Rasterzellen (beliebige Anordnung), veränderbare Säulen nach gegebener Messwerttabelle, Winkelablesen mit Instrument ohne Gradlösung im Paper. Geometrie öffentlich, Schlüssel privat.
+- Satzglied-/Belegvorlagen ergänzen; gemeinsamer lokaler9/24-Vergleich über vorhandenes Remyformular. Keine echte KI-Erzeugung oder freie Fachbibliothek behaupten.
+- Tests rot→grün, voller Web/Functions/Assessmentlauf, gezielte reale Browsergesten und unabhängiger Review. Musterlösungsansicht gegen jede Eingabe sperren. Lokalen Zwischencommit und Remote sichern; kein Deploy.
+- Recherche getrennt vom implementierten Umfang: Funktionsgraph (Stützpunkte/Steigung), Spiegelbild (Transformationsbeziehung), Schaltung (elektrische Topologie), Molekül (Bindungsstruktur), Textbelegverknüpfung, kontrollierter Versuch. Erst semantische Bewertungsregeln spezifizieren, dann neue Familien bauen.

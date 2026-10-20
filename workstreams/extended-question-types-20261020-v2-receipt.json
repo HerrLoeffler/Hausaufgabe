@@ -1,0 +1,58 @@
+{
+  "task": "GC-EXTENDED-QUESTION-TYPES-01",
+  "stage": "branch_only",
+  "codeCommit": "03425e14302dfc255d0ece194490ffd611d05b47",
+  "localApp": "http://127.0.0.1:8784/",
+  "examples": 9,
+  "points": 24,
+  "localGrader": true,
+  "realAIGeneration": false,
+  "physicalDevices": false,
+  "ci": false,
+  "deployed": false,
+  "tests": {
+    "rootWeb": {
+      "pass": 391,
+      "fail": 0
+    },
+    "assessment": {
+      "pass": 109,
+      "fail": 0
+    },
+    "functions": {
+      "pass": 286,
+      "fail": 0
+    },
+    "uiServiceHTTP": {
+      "pass": 19,
+      "fail": 0
+    },
+    "additionalUi": {
+      "pass": 129,
+      "fail": 1,
+      "baselineReproduced": true,
+      "failure": "view navigation restores focus: missing syncDashboardTutorialEntry in test stub"
+    },
+    "independentFixReview": {
+      "pass": 25,
+      "fail": 0
+    }
+  },
+  "browserEvidence": [
+    "mouse drag label into graphic field",
+    "tap and Enter keyboard assignments",
+    "three independent timeline positions restore after reload",
+    "seven nonconsecutive fraction cells selected",
+    "bar A dragged to4; B deliberately6 instead7; C5",
+    "angle69 accepted within1degree tolerance of68",
+    "receipt and sentence labels assigned",
+    "real submit23/24; chart2/3; teacher shows decoded answers/solutions",
+    "390px iframe actual layout; no physical touch/Safari test"
+  ],
+  "reviewFixes": [
+    "public angle uses rays; no literal degrees",
+    "readonly teacher preview blocks SVG events",
+    "unique label solution contract"
+  ],
+  "serverSession": 95006
+}

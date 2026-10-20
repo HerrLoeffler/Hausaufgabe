@@ -48,8 +48,19 @@ const audioIntentSchema = {
   },
   required: ["kind", "script", "presentation", "instruction", "reason"]
 };
-const visualSchema={type:'object',additionalProperties:false,properties:{version:{type:'integer',enum:[1]},template:{type:'string',enum:['plant','room','']},min:{type:'number'},max:{type:'number'},step:{type:'number'},labels:{type:'array',maxItems:12,items:{type:'object',additionalProperties:false,properties:{id:{type:'string'},text:{type:'string'}},required:['id','text']}}},required:['version','template','min','max','step','labels']};
+const visualSchema={type:'object',additionalProperties:false,properties:{version:{type:'integer',enum:[1]},template:{type:'string',enum:['plant','room','sentence','receipt','']},min:{type:'number'},max:{type:'number'},step:{type:'number'},labels:{type:'array',maxItems:12,items:{type:'object',additionalProperties:false,properties:{id:{type:'string'},text:{type:'string'}},required:['id','text']}}},required:['version','template','min','max','step','labels']};
 const visualSolutionSchema={type:'object',additionalProperties:false,properties:{selected:{type:'array',items:{type:'string'}},assignments:{type:'object',additionalProperties:false,properties:Object.fromEntries(['r1','r2','r3','r4'].map(id=>[id,{type:'string'}])),required:['r1','r2','r3','r4']},value:{type:'number'},tolerance:{type:'number',minimum:0}},required:['selected','assignments','value','tolerance']};
+const strictObject = properties => ({type:'object',additionalProperties:false,properties,required:Object.keys(properties)});
+const num={type:'number'},version={type:'integer',enum:[1]};
+const namedSchema=strictObject({id:{type:'string',pattern:'^\\w{1,40}$'},text:{type:'string',minLength:1,maxLength:100}});
+const positionSchema=strictObject({id:{type:'string'},value:num,tolerance:{type:'number',minimum:0}});
+const numericValueSchema=strictObject({id:{type:'string'},value:num});
+const visualModels={
+ 'fraction-grid':[strictObject({version,rows:{type:'integer',minimum:1,maximum:100},columns:{type:'integer',minimum:1,maximum:100}}),strictObject({count:{type:'integer',minimum:0,maximum:100}})],
+ 'angle-measure':[strictObject({version,degrees:{type:'integer',minimum:10,maximum:170}}),strictObject({value:num,tolerance:{type:'number',minimum:0,maximum:2}})],
+ 'bar-chart':[strictObject({version,min:num,max:num,step:num,unit:{type:'string',maxLength:40},categories:{type:'array',minItems:1,maxItems:8,items:strictObject({...namedSchema.properties,sourceValue:num})}}),strictObject({values:{type:'array',minItems:1,maxItems:8,items:numericValueSchema}})],
+ numberline:[{anyOf:[strictObject({version,min:num,max:num,step:num}),strictObject({version,min:num,max:num,step:num,markers:{type:'array',minItems:1,maxItems:8,items:namedSchema}}),visualSchema]},{anyOf:[strictObject({value:num,tolerance:{type:'number',minimum:0}}),strictObject({positions:{type:'array',minItems:1,maxItems:8,items:positionSchema}}),visualSolutionSchema]}]
+};
 const questionSchema = {
   type: "object", additionalProperties: false,
   properties: {
@@ -82,7 +93,7 @@ const questionSchema = {
 // missing answers. The root stays an object; unions are nested (Structured Outputs).
 const NONEMPTY = { type: "string", pattern: "\\S" };
 const TYPE_FIELDS = {
-  hotspot:['visual','visualSolution'], 'image-labeling':['visual','visualSolution'], numberline:['visual','visualSolution'],
+  hotspot:['visual','visualSolution'], 'image-labeling':['visual','visualSolution'], numberline:['visual','visualSolution'], 'fraction-grid':['visual','visualSolution'], 'bar-chart':['visual','visualSolution'], 'angle-measure':['visual','visualSolution'],
   single: ["options"], multi: ["options"], dropdown: ["options"],
   text: ["acceptedAnswers", "manualReview"], truefalse: ["correctBoolean"],
   gapfill: ["gapColors"], matching: ["pairs"], ordering: ["items", "acceptedOrders", "manualReview"], grouping: ["groups"],
@@ -92,6 +103,7 @@ function questionSchemaForType(type, { allowImages = true, mediaKind, allowAudio
   if (!QUESTION_TYPES.includes(type)) throw new TypeError("Unbekannter Aufgabentyp");
   const fields = ["type", "text", "points", ...TYPE_FIELDS[type], "mediaIntent", "audioIntent"];
   const properties = Object.fromEntries(fields.map(key => [key, JSON.parse(JSON.stringify(questionSchema.properties[key]))]));
+  if(visualModels[type]) [properties.visual,properties.visualSolution]=JSON.parse(JSON.stringify(visualModels[type]));
   properties.type = { type: "string", enum: [type] };
   properties.text = { ...properties.text, ...NONEMPTY };
   const media = properties.mediaIntent;

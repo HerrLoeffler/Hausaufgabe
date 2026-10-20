@@ -11,6 +11,8 @@ function buildTeacherDecoderShape(questions) {
     id: String(question.id),
     type: String(question.type || "text"),
     ...(['hotspot','image-labeling','numberline'].includes(question.type)?{visualRegionIds:['r1','r2','r3','r4'],visualLabelIds:(question.visual?.labels||[]).map(l=>l.id)}:{}),
+    ...(question.type==='numberline'&&question.visual?.markers?{visualMarkerIds:question.visual.markers.map(m=>m.id)}:{}),
+    ...(question.type==='bar-chart'?{visualCategoryIds:(question.visual?.categories||[]).map(c=>c.id)}:{}),
     optionCount: Array.isArray(question.options) ? question.options.length : 0,
     pairCount: Array.isArray(question.pairs) ? question.pairs.length : 0,
     itemCount: Array.isArray(question.items) ? question.items.length : 0,
@@ -30,13 +32,19 @@ function optionIndexMapFromCount(questionId, count, secret) {
 function decodeQuestionAnswerFromShape(shape, given, secret) {
   const type = shape.type;
   const questionId = shape.id;
+  if(type==='bar-chart'||type==='numberline'&&shape.visualMarkerIds){
+    const kind=type==='bar-chart'?'category':'marker';const ids=type==='bar-chart'?shape.visualCategoryIds:shape.visualMarkerIds;
+    const map=new Map((ids||[]).map(id=>[opaqueId(secret,questionId,kind,id),id]));
+    return Object.fromEntries(Object.entries(given&&typeof given==='object'&&!Array.isArray(given)?given:{}).filter(([id])=>map.has(id)).map(([id,value])=>[map.get(id),stringValue(value)]));
+  }
+  if(type==='fraction-grid')return Array.isArray(given)?given:[];
   if(type==='hotspot'||type==='image-labeling'){
     const regions=new Map((shape.visualRegionIds||[]).map(id=>[opaqueId(secret,questionId,'region',id),id]));
     if(type==='hotspot')return (Array.isArray(given)?given:[]).map(id=>regions.get(id)).filter(Boolean);
     const labels=new Map((shape.visualLabelIds||[]).map(id=>[opaqueId(secret,questionId,'label',id),id]));
     return Object.fromEntries(Object.entries(given&&typeof given==='object'&&!Array.isArray(given)?given:{}).filter(([id])=>regions.has(id)).map(([id,label])=>[regions.get(id),labels.get(label)||'']));
   }
-  if (["text", "number", "truefalse", "numberline"].includes(type)) return stringValue(given);
+  if (["text", "number", "truefalse", "numberline", "angle-measure"].includes(type)) return stringValue(given);
   if (type === "gapfill" || type === "markwords") return Array.isArray(given) ? given.map(stringValue) : [];
 
   if (["single", "dropdown"].includes(type)) {

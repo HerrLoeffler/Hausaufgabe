@@ -64,7 +64,7 @@ import { installReviewMode } from "./review-mode.mjs";
 import { DEMO_TEST as REVIEW_DEMO_TEST } from "./gradecrew-tour-v8.js";
 import { createLocalTourRepository } from "./guest-tour-port.mjs";
 import { installCrewTour } from "./gradecrew-tour.js?v=2.3.1-gc21";
-import {VISUAL_TYPES,renderVisual,readVisual,restoreVisual,visualComplete,visualAnswerDisplay} from './visual-question-ui.mjs';
+import {VISUAL_TYPES,renderVisual,readVisual,restoreVisual,visualComplete,visualAnswerDisplay,visualSolutionAnswer} from './visual-question-ui.mjs';
 import {authoredVisual} from './shared/visual-templates.mjs';
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
@@ -196,7 +196,10 @@ const QUESTION_TYPES = [
   ["number", "Zahl / Rechenergebnis"],
   ["hotspot", "Bildbereiche auswählen"],
   ["image-labeling", "Grafik beschriften"],
-  ["numberline", "Zahlenstrahl / Skala"]
+  ["numberline", "Zahlenstrahl / Zeitachse"],
+  ["fraction-grid", "Flächenanteile markieren"],
+  ["bar-chart", "Säulendiagramm ergänzen"],
+  ["angle-measure", "Winkel messen"]
 ];
 
 const state = {
@@ -2778,7 +2781,7 @@ async function openAiView() {
   renderAiJobs();
   if (firstAiGuideStep === "ai") setTimeout(() => renderFirstAiGuideStep("details"), 100);
   const notice = $("aiBetaNotice");
-  if (typeof extendedPreview !== "undefined" && extendedPreview) {notice.textContent='Vorbereitete lokale Beispielerstellung: Pflanze, Raumszene oder Zeitachse; 5 Aufgaben / 10 Punkte. Kein KI-Aufruf.';notice.classList.remove('hidden');return;}
+  if (typeof extendedPreview !== "undefined" && extendedPreview) {notice.textContent='Lokale Beispiele: „Visuelle Aufgaben“ mit 9 Aufgaben / 24 Punkten; alternativ Pflanze, Raumszene oder Zeitachse mit 5 / 10. Vorlagen statt KI.';notice.classList.remove('hidden');return;}
   if (crewTour?.creating) { notice.textContent = "Übung: vorbereitete Aufgaben, keine KI-Anfrage."; notice.classList.remove("hidden"); return; }
   try {
     notice.className = "aiStatusNotice";
@@ -3132,7 +3135,7 @@ function pushUnique(list, message) {
 }
 
 function normalizeQuestionTypeLoose(value) {
-  if (["hotspot","image-labeling","numberline"].includes(value)) return value;
+  if (["hotspot","image-labeling","numberline","fraction-grid","bar-chart","angle-measure"].includes(value)) return value;
   const token = canonicalImportToken(value);
   const map = {
     single: "single", singlechoice: "single", singleanswer: "single", radio: "single", mcq: "single",
@@ -3362,7 +3365,7 @@ function normalizeImportedQuestion(rawInput, index, report) {
     q.unit = String(looseField(raw, ["unit", "einheit"], "") || "");
   }
 
-  if (["hotspot","image-labeling","numberline"].includes(type)) {q.visual=deepClone(raw.visual);q.visualSolution=deepClone(raw.visualSolution);}
+  if (["hotspot","image-labeling","numberline","fraction-grid","bar-chart","angle-measure"].includes(type)) {q.visual=deepClone(raw.visual);q.visualSolution=deepClone(raw.visualSolution);}
   q.position = index + 1;
   return q;
 }
@@ -5658,10 +5661,10 @@ function renderGapColorEditor(container, q) {
 
 function renderAnswerEditor(container, q) {
   container.innerHTML = "";
-  if (["hotspot","image-labeling","numberline"].includes(q.type)) {
+  if (["hotspot","image-labeling","numberline","fraction-grid","bar-chart","angle-measure"].includes(q.type)) {
     if (!q.visual || !q.visualSolution) {container.textContent='Diese Aufgabe benötigt eine vollständige Remy-Erstellung mit Grafik und Lösung.';return;}
     const display={...q,visual:authoredVisual(q)};
-    renderVisual(container,display,q.type==='numberline'?String(q.visualSolution.value):q.type==='hotspot'?q.visualSolution.selected:q.visualSolution.assignments,()=>{});
+    renderVisual(container,display,visualSolutionAnswer(q),()=>{},{readOnly:true});
     const note=document.createElement('p');note.className='hint';note.textContent='Lehrkraftprüfung: Musterlösung eingeblendet. Grafik und Bewertung wurden gemeinsam vorbereitet. Fragetext und Punkte wie gewohnt bearbeiten. Fachliche Änderungen benötigen einen vollständig neu erzeugten Aufgabenvertrag.';container.append(note);
     container.querySelectorAll('input,select,button').forEach(control=>control.disabled=true);
     return;
@@ -6076,7 +6079,7 @@ function validateQuiz() {
       ? (String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() || (q.type === "truefalse" && questionStudentAudioReady(q) ? assessmentContentLabels(state.currentQuiz?.contentLocale).listeningTrueFalseInstruction : ""))
       : String(q.text || "");
     if (!publicQuestion.trim()) return `Aufgabe ${i + 1}: Fragetext fehlt.`;
-    if (["hotspot","image-labeling","numberline"].includes(q.type) && (!q.visual || !q.visualSolution)) return `Aufgabe ${i+1}: Vollständige visuelle Erstellung fehlt.`;
+    if (["hotspot","image-labeling","numberline","fraction-grid","bar-chart","angle-measure"].includes(q.type) && (!q.visual || !q.visualSolution)) return `Aufgabe ${i+1}: Vollständige visuelle Erstellung fehlt.`;
     if (!(Number(q.points) > 0)) return `Aufgabe ${i + 1}: Punkte müssen größer als 0 sein.`;
     if (q.type === "text" && !q.manualReview && !(q.acceptedAnswers || []).length) return `Aufgabe ${i + 1}: Hinterlege mindestens eine akzeptierte Antwort oder aktiviere die manuelle Prüfung.`;
     if (["single", "multi", "dropdown"].includes(q.type)) {
@@ -6179,7 +6182,7 @@ function sanitizeQuestionForSave(q) {
     base.tolerance = Math.max(0, Number(q.tolerance) || 0);
     base.unit = String(q.unit || "").trim();
   }
-  if (["hotspot","image-labeling","numberline"].includes(q.type)) {base.visual=deepClone(q.visual);base.visualSolution=deepClone(q.visualSolution);}
+  if (["hotspot","image-labeling","numberline","fraction-grid","bar-chart","angle-measure"].includes(q.type)) {base.visual=deepClone(q.visual);base.visualSolution=deepClone(q.visualSolution);}
   return base;
 }
 
@@ -7085,7 +7088,7 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       section.appendChild(audioBox);
     }
 
-    if (["hotspot","image-labeling","numberline"].includes(q.type)) {renderVisual(section,{...q,visual:authoredVisual(q)},'',()=>refreshStudentProgress(questions));}
+    if (["hotspot","image-labeling","numberline","fraction-grid","bar-chart","angle-measure"].includes(q.type)) {renderVisual(section,{...q,visual:authoredVisual(q)},'',()=>refreshStudentProgress(questions));}
     else if (q.type === "text") {
       const inp = document.createElement("input");
       inp.type = "text";
@@ -7349,7 +7352,7 @@ function setupStudentProgress(questions) {
 }
 
 function studentAnswerIsComplete(q, given) {
-  if (["hotspot","image-labeling","numberline"].includes(q.type)) return visualComplete({...q,visual:authoredVisual(q)},given);
+  if (["hotspot","image-labeling","numberline","fraction-grid","bar-chart","angle-measure"].includes(q.type)) return visualComplete({...q,visual:authoredVisual(q)},given);
   if (q.type === "text" || q.type === "number" || q.type === "dropdown" || q.type === "single" || q.type === "truefalse") return String(given ?? "").trim() !== "";
   if (q.type === "multi") return Array.isArray(given) && given.length > 0;
   if (q.type === "gapfill") return Array.isArray(given) && given.length > 0 && given.every((x) => String(x || "").trim() !== "");
@@ -7414,7 +7417,7 @@ function runStudentTimer(quiz, questions, startedAt, attemptLimitMinutes = null)
 function readStudentAnswer(q) {
   const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
   if (!section) return "";
-  if (["hotspot","image-labeling","numberline"].includes(q.type)) return readVisual(section);
+  if (["hotspot","image-labeling","numberline","fraction-grid","bar-chart","angle-measure"].includes(q.type)) return readVisual(section);
   if (q.type === "multi") return Array.from(section.querySelectorAll(`input[name="${CSS.escape(q.id)}"]:checked`)).map((x) => x.value);
   if (["single", "truefalse"].includes(q.type)) return section.querySelector(`input[name="${CSS.escape(q.id)}"]:checked`)?.value ?? "";
   if (["text", "dropdown"].includes(q.type)) return section.querySelector(`[name="${CSS.escape(q.id)}"]`)?.value ?? "";
@@ -7443,7 +7446,7 @@ function readStudentAnswer(q) {
 }
 
 function evaluateAnswer(q, given) {
-  if (["hotspot","image-labeling","numberline"].includes(q.type)) return {awarded:0,max:Number(q.points)||0,needsReview:true,correct:null};
+  if (["hotspot","image-labeling","numberline","fraction-grid","bar-chart","angle-measure"].includes(q.type)) return {awarded:0,max:Number(q.points)||0,needsReview:true,correct:null};
   const max = round1(Number(q.points) || 0);
   if (q.type === "text") {
     if (q.manualReview) return { awarded: 0, max, needsReview: true, correct: null };
@@ -7559,7 +7562,7 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
 
   const answers = {};
   const grading = {};
-  const visualPreview = (typeof extendedPreview !== "undefined" && extendedPreview) ? await extendedCall('preview-grade',{questions:questions.filter(q=>["hotspot","image-labeling","numberline"].includes(q.type)),answers:Object.fromEntries(questions.map(q=>[q.id,readStudentAnswer(q)]))}) : null;
+  const visualPreview = (typeof extendedPreview !== "undefined" && extendedPreview) ? await extendedCall('preview-grade',{questions:questions.filter(q=>["hotspot","image-labeling","numberline","fraction-grid","bar-chart","angle-measure"].includes(q.type)),answers:Object.fromEntries(questions.map(q=>[q.id,readStudentAnswer(q)]))}) : null;
   let points = 0;
   let maxPoints = 0;
   let needsReview = false;
@@ -7660,7 +7663,7 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
 }
 
 function answerDisplay(q, given, contentLocale) {
-  if (["hotspot","image-labeling","numberline"].includes(q.type)) return visualAnswerDisplay({...q,visual:authoredVisual(q)},given);
+  if (["hotspot","image-labeling","numberline","fraction-grid","bar-chart","angle-measure"].includes(q.type)) return visualAnswerDisplay({...q,visual:authoredVisual(q)},given);
   if (q.type === "text") return String(given || "(leer)");
   if (q.type === "number") return given === "" ? "(leer)" : `${given}${q.unit ? ` ${q.unit}` : ""}`;
   if (q.type === "truefalse") {
@@ -7698,7 +7701,7 @@ function answerDisplay(q, given, contentLocale) {
 }
 
 function correctDisplay(q, contentLocale) {
-  if (["hotspot","image-labeling","numberline"].includes(q.type)) return visualAnswerDisplay({...q,visual:authoredVisual(q)},q.type==='numberline'?q.visualSolution?.value:q.type==='hotspot'?q.visualSolution?.selected:q.visualSolution?.assignments);
+  if (["hotspot","image-labeling","numberline","fraction-grid","bar-chart","angle-measure"].includes(q.type)) return visualAnswerDisplay({...q,visual:authoredVisual(q)},visualSolutionAnswer(q));
   if (q.type === "text") return q.manualReview ? "wird von der Lehrkraft geprüft" : (q.acceptedAnswers || []).join(", ");
   if (q.type === "number") return `${q.numericAnswer}${q.unit ? ` ${q.unit}` : ""}${Number(q.tolerance) ? ` (±${q.tolerance})` : ""}`;
   if (q.type === "truefalse") {
@@ -9355,9 +9358,10 @@ if (["production", "staging", "local-review"].includes(appEnvironment)) {
       extendedPreview=true;state.user={uid:'local-tour',email:'lokales-beispiel@example.invalid'};state.profile={role:'teacher',displayName:'Lokale Lehrkraft'};state.guestTourUid='local-tour';
       guestTourRepo=createLocalTourRepository();
       const saved=await extendedCall('teacher',{});
-      if(saved.test){const code=guestTourRepo.create({...quizDefaults(),...saved.test});guestTourRepo.save(code,{timeLimitMinutes:0,tutorialReady:true},guestTourRepo.getQuestions(code));await openEditor(code);}else {await openAiView();prefillTutorialRequest();$('aiTopic').value='Aufbau einer Blütenpflanze – mit Bildbereichen, Beschriftung und Skala';$('aiSubject').value='NT / Biologie';$('aiGrade').value='6';$('aiCount').value='5';$('aiPoints').value='10';$('aiSchoolType').value='Mittelschule';$('aiImageQuestionCount').value='0';$('aiCustomNotes').value='Vorbereitetes lokales Beispiel; keine KI-Anfrage.';}
+      if(saved.test){const code=guestTourRepo.create({...quizDefaults(),...saved.test});guestTourRepo.save(code,{timeLimitMinutes:0,tutorialReady:true},guestTourRepo.getQuestions(code));await openEditor(code);}else {await openAiView();prefillTutorialRequest();$('aiTopic').value='Visuelle Aufgaben';$('aiSubject').value='Fächerübergreifend';$('aiGrade').value='6';$('aiCount').value='9';$('aiPoints').value='24';$('aiSchoolType').value='Mittelschule';$('aiImageQuestionCount').value='0';$('aiCustomNotes').value='Vorbereitetes lokales Beispiel; keine KI-Anfrage.';}
       const notices=[...document.querySelectorAll('p,small')];for(const n of notices){if(n.textContent.includes('gehen an OpenAI'))n.textContent='Lokaler Prototyp: keine Übertragung an OpenAI oder Firebase.';if(n.textContent==='Kosten können für Tests, Bilder und Audio entstehen.')n.textContent='Dieses vorbereitete Beispiel erzeugt keine Providerkosten.';}
     });
+    document.addEventListener('gradecrew:extended-showcase',async()=>{await openAiView();prefillTutorialRequest();$('aiTopic').value='Visuelle Aufgaben';$('aiSubject').value='Fächerübergreifend';$('aiGrade').value='6';$('aiCount').value='9';$('aiPoints').value='24';$('aiImageQuestionCount').value='0';$('aiCustomNotes').value='Lokaler Beispieltest mit sechs visuellen Aufgabenfamilien, Satzgliedern, Beleg und mehreren Ereignissen auf gemeinsamer Zeitachse.';document.querySelectorAll('#aiTypeChecks input').forEach(c=>c.checked=true);});
     let sceneWork = Promise.resolve();
     document.addEventListener("gradecrew:review-scene", event => {
       const scene = event.detail?.scene;
