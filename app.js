@@ -46,6 +46,9 @@ import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc43";
 import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc43";
 import { recordTutorialSignIn } from "./tutorial-signins.mjs?v=1";
 import { syncDashboardTutorialEntry } from "./dashboard-tutorial-entry.mjs?v=1";
+import { mountChapterEditor, mountQuestionChapterSelect, chapterFields, copyChapterFields } from "./chapter-editor.mjs";
+import "./shared/chapter-contract.js";
+const Chapters = globalThis.GradeCrewChapters;
 import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";
@@ -2110,7 +2113,10 @@ async function duplicateQuiz(code, mode = "exact", closeDialog = null) {
       audioScript: String(audioScripts.get(d.id) || ""),
       solutionAudioScript: String(solutionScripts.get(d.id) || "")
     }));
+    const chapterCopy = copyChapterFields(source, questions);
+    questions.forEach((q,i) => Object.assign(q, chapterCopy.questions[i]));
     const base = {
+      ...chapterCopy.quiz,
       title: `${source.title || "Test"} – Kopie`,
       subject: source.subject || "",
       grade: source.grade || "",
@@ -2497,7 +2503,8 @@ function clearTemplateUrlAndDashboard() {
 }
 
 async function importSharedTemplate() {
-  const source = state.currentSharedTemplate;
+  let source = state.currentSharedTemplate;
+  if (source) { const copied = copyChapterFields(source, source.questions || []); source = {...source,...copied.quiz,questions:copied.questions}; }
   if (!source?.quiz || !state.user) return;
   const btn = $("importTemplateCopy");
   if (btn) {
@@ -2507,6 +2514,7 @@ async function importSharedTemplate() {
   try {
     const quiz = source.quiz;
     const base = {
+      ...chapterFields(source),
       title: `${quiz.title || "Geteilter Test"} – Kopie`,
       subject: quiz.subject || "",
       grade: quiz.grade || "",
@@ -3463,6 +3471,7 @@ function renderQuestionOutline() {
   host.innerHTML = state.questions.map((q, index) => `<button type="button" class="questionOutlineItem${activeQualityIssue(index) ? " hasIssue" : ""}${unlocked && state.questionOrderFrom === q.id ? " selectedForMove" : ""}" draggable="${unlocked}" data-position="${index + 1}" aria-label="Aufgabe ${index + 1}${unlocked ? ", zum Tauschen auswählen" : activeQualityIssue(index) ? ", Hinweis prüfen" : ""}"${unlocked ? ` aria-pressed="${state.questionOrderFrom === q.id}"` : ""}>${index + 1}${activeQualityIssue(index) ? " !" : ""}</button>`).join("");
   const applyOrder = (from, to, swap) => {
     if (!unlocked || state.currentQuiz?.published && !state.currentQuiz?.ended || from < 0 || to < 0 || from === to) return;
+    if (state.currentQuiz?.chapterSchemaVersion === 1 && state.questions[from].chapterId !== state.questions[to].chapterId) return toast("Zum Kapitelwechsel bitte die Kapitelzuordnung der Aufgabe verwenden.");
     if (swap) [state.questions[from], state.questions[to]] = [state.questions[to], state.questions[from]];
     else { const [q] = state.questions.splice(from, 1); state.questions.splice(to, 0, q); }
     state.questionOrderFrom = null; renderQuestions(); markDirty();
@@ -3608,10 +3617,16 @@ async function importAiJson() {
   }
 
   const { meta, questions, report } = normalized;
+  Object.assign(meta, chapterFields(parsed.data));
+  if (parsed.data?.chapterSchemaVersion === 1) {
+    questions.forEach((q,i) => { q.chapterId = parsed.data.questions?.[i]?.chapterId; });
+    if (Chapters.validateChapterStructure(meta, questions, {phase:"draft"}).errors.length) return toast("Die importierte Kapitelzuordnung ist ungültig.", "error");
+  }
   clearAiImportHelp();
   try {
     const base = {
       ...quizDefaults(),
+      ...chapterFields(meta),
       title: meta.title || "Test",
       subject: meta.subject || $("aiSubject").value || getSettings().defaultSubject || "",
       grade: meta.grade || $("aiGrade").value || getSettings().defaultGrade || "",
@@ -3713,7 +3728,8 @@ function newQuestion(type = "single", needsFirestoreId = true) {
     type,
     text: "",
     points: type === "multi" ? 2 : 1,
-    position: state.questions.length + 1
+    position: state.questions.length + 1,
+    ...(state.currentQuiz?.chapterSchemaVersion === 1 ? {chapterId:state.questions.at(-1)?.chapterId || state.currentQuiz.chapters[0]?.id} : {})
   };
   initializeTypeData(q, type);
   return q;
@@ -3922,7 +3938,16 @@ function bindQuestionTextEditor(node, q) {
   };
 }
 
+let chapterEditorController = null;
+function renderChapterEditor() {
+  const root = $("chapterEditor");
+  if (!root) return;
+  chapterEditorController ||= mountChapterEditor({root,getState:()=>({quiz:state.currentQuiz,questions:state.questions}),onChange:({quizPatch,questions})=>{state.currentQuiz=quizPatch;state.questions=questions;markDirty();renderQuestions();}});
+  chapterEditorController.render();
+}
 function renderQuestions() {
+  if (state.currentQuiz?.chapterSchemaVersion === 1) state.questions = Chapters.canonicalizeChapterQuestions(state.currentQuiz,state.questions);
+  renderChapterEditor();
   $("editorView").dataset.quizId = state.currentQuiz?.id || "";
   $("editorView").dataset.ownerId = tourUid();
   $("editorView").dataset.variantAllowed = String(!state.newManualQuiz && !(state.currentQuiz?.published && !state.currentQuiz?.ended));
@@ -3932,6 +3957,7 @@ function renderQuestions() {
     q.position = index + 1;
     const node = $("questionTemplate").content.firstElementChild.cloneNode(true);
     node.dataset.id = q.id;
+    mountQuestionChapterSelect(node,q,state.currentQuiz,id=>{q.chapterId=id;q.position=state.questions.length+1;markDirty();renderQuestions();});
     node.dataset.reviewId = `editor-question-${q.id}`;
     node.dataset.index = String(index);
     node.setAttribute("aria-label", `Aufgabe ${index + 1}`);
@@ -4451,8 +4477,9 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
     }
     index = editorQuestionIndex(state, target);
     if (index < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
+    if(q.chapterId) next.chapterId=q.chapterId;
     if (variant) state.questions.splice(index + 1, 0, next);
-    else { state.questions[index] = next; resolveQualityIssues(q.id); }
+    else { if(q.chapterId) next.chapterId=q.chapterId; state.questions[index] = next; resolveQualityIssues(q.id); }
     renderQuestions(); markDirty(); toast(variant ? "Zusätzliche Variante hinzugefügt. Bitte speichern." : "Aufgabe überarbeitet.");
     if (typeof crewTour !== "undefined") crewTour?.notify("edited", {quizId: target.quizId});
     return next;
@@ -4490,6 +4517,7 @@ function focusEditorQuestion(index, selector = "") {
 function moveQuestion(index, delta) {
   const next = index + delta;
   if (next < 0 || next >= state.questions.length) return;
+  if(state.currentQuiz?.chapterSchemaVersion===1 && state.questions[index].chapterId!==state.questions[next]?.chapterId) return;
   [state.questions[index], state.questions[next]] = [state.questions[next], state.questions[index]];
   renderQuestions();
   markDirty();
@@ -5912,6 +5940,7 @@ function editorDraftSnapshot() {
     newManualQuiz: state.newManualQuiz, baseUpdatedAt: state.draftBaseUpdatedAt,
     savedAt: Date.now(),
     quiz: {
+      ...chapterFields(quiz),
       title: $("quizTitle").value, subject: $("quizSubject").value, grade: $("quizGrade").value,
       description: $("quizDescription").value, gradeScaleId: scaleId,
       gradeScaleSnapshot: deepClone(scale), resultMode: $("quizResultMode").value,
@@ -6088,6 +6117,7 @@ function validateQuiz() {
 
 function sanitizeQuestionForSave(q) {
   const base = {
+    ...(q.chapterId ? {chapterId:q.chapterId} : {}),
     type: q.type,
     text: String(q.text || "").trim(),
     points: Math.max(0.5, round1(Number(q.points) || 1)),
@@ -6150,6 +6180,9 @@ function sanitizeQuestionForSave(q) {
 }
 
 async function saveCurrentQuiz(showMessage = true) {
+  if (state.currentQuiz?.chapterSchemaVersion === 1 && state.currentQuiz.published && !state.currentQuiz.ended) { toast("Der veröffentlichte Test ist für Änderungen gesperrt.","error"); return false; }
+  const structure=Chapters.validateChapterStructure(state.currentQuiz,state.questions,{phase:"draft"});
+  if(structure.errors.length) { toast("Bitte die Kapitelzuordnung prüfen.","error"); return false; }
   const error = validateQuiz();
   if (error) {
     toast(error, "error");
@@ -6160,6 +6193,7 @@ async function saveCurrentQuiz(showMessage = true) {
     if (!guestTourRepo.getQuiz(code)) return false;
     const scaleId = $("quizGradeScale").value;
     const patch = {
+      ...chapterFields(state.currentQuiz),
       title: $("quizTitle").value.trim(), subject: $("quizSubject").value.trim(),
       grade: $("quizGrade").value.trim(), description: $("quizDescription").value.trim(),
       gradeScaleId: scaleId, gradeScaleSnapshot: getScaleById(scaleId),
@@ -6196,6 +6230,7 @@ async function saveCurrentQuiz(showMessage = true) {
       : (state.currentQuiz.gradingLocale || contentLocale);
     syncQualityReport();
     const patch = {
+      ...chapterFields(state.currentQuiz),
       qualityIssues: state.currentQuiz.qualityIssues || [], qualityWarnings: state.currentQuiz.qualityWarnings || [],
       title: $("quizTitle").value.trim(),
       subject: $("quizSubject").value.trim(),
@@ -6235,7 +6270,9 @@ async function saveCurrentQuiz(showMessage = true) {
       code = created.code;
       state.currentQuiz = { ...created.quiz, ...patch, id: code };
       state.newManualQuiz = false;
-    } else await updateDoc(doc(db, "quizzes", code), patch);
+    }
+    const chapterBatch = (state.currentQuiz.chapterSchemaVersion === 1 || state.currentQuiz._chaptersRemoved) ? writeBatch(db) : null;
+    if (!state.newManualQuiz) { if (chapterBatch) chapterBatch.update(doc(db,"quizzes",code),patch); else await updateDoc(doc(db,"quizzes",code),patch); }
 
     const currentIds = new Set();
     const audioDrafts = [];
@@ -6244,11 +6281,9 @@ async function saveCurrentQuiz(showMessage = true) {
       const q = state.questions[i];
       q.position = i + 1;
       currentIds.add(q.id);
-      await setDoc(doc(db, "quizzes", code, "questions", q.id), {
-        ...sanitizeQuestionForSave(q),
-        position: q.position,
-        updatedAt: serverTimestamp()
-      });
+      const questionRef = doc(db,"quizzes",code,"questions",q.id);
+      const savedQuestion = {...sanitizeQuestionForSave(q),position:q.position,updatedAt:serverTimestamp()};
+      if (chapterBatch) chapterBatch.set(questionRef,savedQuestion); else await setDoc(questionRef,savedQuestion);
       const audioScript = String(q.audioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
       if (audioScript) audioDrafts.push({ questionId: q.id, script: audioScript });
       const solutionAudioScript = String(q.solutionAudioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
@@ -6256,9 +6291,10 @@ async function saveCurrentQuiz(showMessage = true) {
     }
     for (const oldId of state.loadedQuestionIds) {
       if (!currentIds.has(oldId)) {
-        await deleteDoc(doc(db, "quizzes", code, "questions", oldId));
+        if (chapterBatch) chapterBatch.delete(doc(db,"quizzes",code,"questions",oldId)); else await deleteDoc(doc(db,"quizzes",code,"questions",oldId));
       }
     }
+    if (chapterBatch) await chapterBatch.commit();
     await aiApi.syncQuestionAudioDrafts({ quizId: code, drafts: audioDrafts, solutionDrafts: solutionAudioDrafts });
     state.loadedQuestionIds = currentIds;
     state.currentQuiz = { ...state.currentQuiz, ...patch };
