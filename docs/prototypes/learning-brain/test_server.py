@@ -39,9 +39,10 @@ class ExpansionHandlerTest(unittest.TestCase):
   def provider(url,data,headers):
    req.append(data)
    draft={'task':{'n':2,'d':3,'k':2},'text':'Probiere zuerst selbst, beide Zahlen zu erweitern.','question':'Welcher Bruch entsteht beim Erweitern mit2?','solution':[4,6],'visual':'none'}
-   return {'result':{'reply':json.dumps(draft if len(req)==1 else {'approved':True,'reason':'Stimmt.'})}}
+   return {'result':{'question':{'text':'2/3 = ?/6','numericAnswer':4}}} if 'regenerateQuestion' in url else {'result':{'reply':json.dumps({'approved':True,'reason':'Stimmt.'})}}
   with tempfile.TemporaryDirectory() as folder,patch.object(server,'USAGE',Path(folder)/'usage.json'),patch.object(server,'STATE',{'calls':80,'session':'controlled','idToken':'not-a-real-token','expires':time.time()+500}),patch.object(server,'request_json',provider):h.do_POST()
   self.assertEqual(out[0][0],200)
   self.assertEqual(out[0][1].get('target'),'practice')
   self.assertEqual(len(req),2)
   self.assertNotIn('solution',out[0][1])
+  self.assertIn('Gleichwertigkeit',req[0]['data']['instruction'])

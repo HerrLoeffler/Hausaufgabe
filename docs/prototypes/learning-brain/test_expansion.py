@@ -65,13 +65,67 @@ class ExpansionRequestTest(unittest.TestCase):
   data={'action':'start','requestId':'request-retry-001'};calls=[]
   def ai(prompt):
    calls.append(prompt)
-   return json.dumps({'task':{'n':2,'d':3,'k':2},'text':'Probiere es zuerst selbst mit beiden Zahlen.','question':'Welcher Bruch entsteht mit Faktor2?','solution':[4,6],'visual':'none'} if len(calls)==1 else {'approved':True,'reason':'Stimmt.'})
-  first=expansion.execute(data,ai)
+   return json.dumps({'approved':True,'reason':'Stimmt.'})
+  def generate(plan):
+   calls.append('generator');return {'text':'2/3 = ?/6','numericAnswer':4}
+  first=expansion.execute(data,ai,generate)
   self.assertEqual(expansion.cached(data),first)
-  self.assertEqual(expansion.execute(data,ai),first)
+  self.assertEqual(expansion.execute(data,ai,generate),first)
   self.assertEqual(len(calls),2)
  def test_helpful_response_after_free_question_stays_supported(self):
   p=expansion.plan_turn(expansion.new_state({'n':2,'d':3,'k':2}),'question')
   p=expansion.plan_turn(p['state'],'answer',{'n':'4','d':'6'})
   self.assertEqual(len(p['state']['independent']),0)
   self.assertEqual(p['state']['level'],0)
+
+class ExpansionRepeatTest(unittest.TestCase):
+ def test_task_shown_with_help_is_excluded_from_next_independent_probe(self):
+  import json
+  p=expansion.plan_turn(expansion.new_state({'n':2,'d':3,'k':2}),'help')
+  p=expansion.plan_turn(p['state'],'answer','2')
+  p=expansion.plan_turn(p['state'],'answer','4')
+  p=expansion.plan_turn(p['state'],'answer',{'n':'4','d':'6'})
+  draft={'task':{'n':2,'d':3,'k':2},'text':'Versuche nun eine neue Aufgabe ohne Hilfe.','question':'Welcher Bruch entsteht mit Faktor2?','solution':[4,6],'visual':'none'}
+  with self.assertRaises(expansion.ExpansionError):expansion.parse_draft(json.dumps(draft),p)
+
+class ExpansionGeneratorTest(unittest.TestCase):
+ def test_existing_task_generator_is_mapped_with_exact_answer_check(self):
+  self.assertTrue(callable(getattr(expansion,'generator_draft',None)),'Der vorhandene Aufgabengenerator muss angebunden werden.')
+  p=expansion.plan_turn(expansion.new_state(None),'start')
+  d=expansion.generator_draft({'text':'Ergänze: 2/3 = ?/6','numericAnswer':4},p)
+  self.assertEqual(d['task'],{'n':2,'d':3,'k':2})
+  self.assertEqual(d['solution'],[4,6])
+  self.assertIn('2/3',d['question'])
+  self.assertIn('mit2',d['question'].replace(' ',''))
+  with self.assertRaises(expansion.ExpansionError):expansion.generator_draft({'text':'Ergänze: 2/3 = ?/6','numericAnswer':5},p)
+
+class ExpansionDialogueTest(unittest.TestCase):
+ def test_singleton_numeric_answer_is_normalized_without_changing_its_value(self):
+  import json
+  p=expansion.plan_turn(expansion.new_state({'n':2,'d':7,'k':3},1),'answer',{'n':'6','d':'10'})
+  p=expansion.plan_turn(p['state'],'answer','10')
+  d={'task':p['state']['task'],'text':'Zwei alte Stücke werden halbiert. Zähle alle kleinen Stücke.','question':'Wie viele kleine Teile gibt es insgesamt?','solution':[4],'visual':'groups'}
+  self.assertEqual(expansion.parse_draft(json.dumps(d),p)['solution'],4)
+ def test_denominator_number_is_not_described_as_a_piece_to_divide(self):
+  import json
+  p=expansion.plan_turn(expansion.new_state({'n':2,'d':7,'k':3},1),'answer',{'n':'6','d':'10'})
+  d={'task':p['state']['task'],'text':'Jedes der sieben Teile wird in drei gleich große Teile geteilt.','question':'Wie viele Teile gibt es, wenn du den Nenner 7 in 3 gleich große Teile teilst?','solution':21,'visual':'none'}
+  with self.assertRaises(expansion.ExpansionError):expansion.parse_draft(json.dumps(d),p)
+
+class ExpansionQuestionBudgetTest(unittest.TestCase):
+ def test_visible_maximum_question_fits_existing_ai_contract(self):
+  p=expansion.plan_turn(expansion.new_state({'n':2,'d':7,'k':3},1),'answer',{'n':'6','d':'10'})
+  self.assertLessEqual(len(expansion.generation_prompt(p,'Warum '*30)),2450)
+
+class ExpansionActiveExampleTest(unittest.TestCase):
+ def test_small_bridge_is_distinct_from_visible_original_task(self):
+  p=expansion.plan_turn(expansion.new_state({'n':3,'d':4,'k':2}),'answer',{'n':'6','d':'6'})
+  p=expansion.plan_turn(p['state'],'answer','6')
+  f=expansion.facts(p)
+  self.assertEqual(f.get('activeExample'),{'n':1,'d':2,'k':2})
+  self.assertEqual(f.get('originalTask'),{'n':3,'d':4,'k':2})
+  self.assertEqual(f['expected'],4)
+ def test_maximum_question_after_larger_faulty_numbers_fits(self):
+  p=expansion.plan_turn(expansion.new_state({'n':4,'d':8,'k':4},2),'answer',{'n':'16','d':'999','k':'999'})
+  p=expansion.plan_turn(p['state'],'question')
+  self.assertLessEqual(len(expansion.generation_prompt(p,'x'*180)),2450)

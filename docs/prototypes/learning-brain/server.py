@@ -120,10 +120,21 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             try:
                 if data.get('purpose')=='expansion':
                     def call_tutor(prompt):
-                        response=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':prompt,'uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[]}}},{'Authorization':'Bearer '+token()})
-                        return (response.get('result') or response.get('data') or {}).get('reply','')
-                    result=expansion.execute(data,call_tutor)
-                    return self.output(200,{**result,'calls':STATE['calls'],'limit':RUN_LIMIT})
+                        response=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/crewAssistant',{'data':{'crewId':'emmi','text':prompt,'uiLocale':'de-DE','context':{'screen':'learningBrainPrototype','history':[],'questionContext':{'type':'number','text':(profile_for('equivalent')['learningGoal']+'. '+profile_for('equivalent')['taskPattern']+' '+profile_for('equivalent')['qualityHints']+' '+prompt[-1150:])[:1500]}}}},{'Authorization':'Bearer '+token()})
+                        reply=(response.get('result') or response.get('data') or {}).get('reply','')
+                        if os.environ.get('GC_EXPANSION_TRACE')=='1':
+                            trace=PRIVATE/'expansion-trace.jsonl'
+                            fd=os.open(trace,os.O_CREAT|os.O_APPEND|os.O_WRONLY,0o600)
+                            with os.fdopen(fd,'a') as f:f.write(json.dumps({'call':STATE['calls'],'reply':reply},ensure_ascii=False)+'\n')
+                        return reply
+                    def generate_expansion(plan):
+                        bounds=expansion.task_bounds(plan['state']['level'])
+                        instruction='Erstelle eine NEUE Erweiterungsaufgabe. Text zwingend ASCII a/b = ?/D. D=b*k; n=a und Nenner b innerhalb bounds, k aus factor. Zähler kleiner als Nenner. numericAnswer ist a*k, der fehlende Zähler. Keine Lösung im Text. Andere Zahlen als avoid. '+json.dumps({'bounds':bounds,'avoid':(plan['state'].get('presented',[])+([list(plan['state']['task'].values())] if plan['state'].get('task') else []))[-8:]},ensure_ascii=False)+profile_context('equivalent')
+                        payload={'question':{'type':'number','text':'1/2 = ?/4','numericAnswer':2,'points':1,'tolerance':0,'unit':''},'targetType':'number','allowedTypes':['number'],'allowImages':False,'mediaKind':'none','instruction':instruction,'testContext':{'subject':'Mathematik','grade':'6','topic':'Brüche erweitern','schoolType':'Mittelschule','region':'Bayern'}}
+                        response=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/regenerateQuestion',{'data':payload},{'Authorization':'Bearer '+token()})
+                        return (response.get('result') or response.get('data') or {}).get('question',{})
+                    result=expansion.execute(data,call_tutor,generate_expansion)
+                    return self.output(200,{**result,'profileId':profile_for('equivalent')['id'],'calls':STATE['calls'],'limit':RUN_LIMIT})
                 if data.get('purpose')=='lesson':
                     context=data.get('lesson')
                     prompt=lesson_prompt(context)
