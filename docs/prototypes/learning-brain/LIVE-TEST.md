@@ -1,5 +1,25 @@
 # Reale KI-Durchläufe – 20.10.2026
 
+## Aktiver Erweitern-Pilot nach dem Forschungsentwurf
+
+Die nachfolgenden älteren Additionsdurchläufe sind Historie. Aktive Route: `expansion.mjs`/`expansion.py`, bestehender GradeCrew-Generator plus gesonderte Emmi-Prüfung; Hilfetext und Lernfrage ebenfalls echte Emmi-Erzeugung mit zweiter Prüfung. Nur synthetische Angaben im eigenen Browser-Testtab, getrenntes Testkonto.
+
+| Endpunkt | Echte Browserbeobachtung |
+|---|---|
+|94–95|Aufgabe2/5 mit2 erweitern. Absichtlich4/7 statt4/10: Hilfe betrifft ausschließlich den Nenner5×2; richtiger Zähler bleibt erhalten.|
+|96|Auf Hilfefrage absichtlich7: tatsächlich kleineres, ausdrücklich benanntes Beispiel1/2 mit2 erweitern. Vier kleine Teile statt zehn, Originalaufgabe separat sichtbar.|
+|97|Auf Frage nach vier Teilen absichtlich3: nun nur ein einziges altes Stück, in zwei Teile geteilt. Kurze echte KI-Erklärung, passende Darstellung und beantwortbare Frage.|
+|98|Antwort2 richtig: zurück zu2/5 mit2, korrekter Zähler4 vorgegeben, Nenner erneut einzugeben. Kein unabhängiger Erfolg.|
+|99|Nenner10 richtig: neue selbstständige Aufgabe1/3 mit2. Anzeige0/1 unabhängig richtig,1mitHilfe gelöst; beide Ergebnisfelder leer.|
+|100–101|2/6 richtig. Einmal liefert die Gegenprüfung Fließtext statt JSON; sichtbar gestoppt, Eingabe/Zustand erhalten. Bewusster einmaliger erneuter Versuch liefert neue freigegebene Aufgabe3/5 mit3, Anzeige1/2 unabhängig richtig. Keine automatische Lesehilfe oder Wartepflicht.|
+|102|3/5×3 mit9/15 richtig: neue Aufgabe2/7 aufNenner21. Faktor selbst finden und Ergebnisbruch eingeben; tatsächlich andere Anforderung. Anzeige2/3 unabhängig richtig,1mitHilfe gelöst, kein Beherrschungslabel.|
+
+Abschlussverbrauch102/120, ursprüngliche80er-Historie erhalten:22zusätzliche Endpunkte in diesem Umsetzungsauftrag,18im lokalen Rahmen übrig. Meist zwei Backendaufrufe je Endpunkt, interne Versuche möglich; tatsächliche Token/Euro unbekannt. Diagnose-Trace nach Abschluss deaktiviert; Server bleibt lokal für den Nutzertest offen.
+
+Frühere Fehlversuche81–93 bleiben in der Übergabe dokumentiert: Rollenpassung des Generators, Frageformat, Stück-/Nennertrennung, Skalarformat und die Trennung Originalaufgabe/kleines Beispiel wurden anhand echter Ablehnungen verbessert. Keine Prosa nachträglich als Prüffreigabe interpretiert, keine feste Ersatzaufgabe. Bereits84–85 war der selbstständige Übergang3/5×2 richtig zu2/7×3 im Browser belegt.
+
+45Python-/55JS-Tests frisch grün; unabhängiger Quellreview bestätigt behobene Wiederholungs-/Busyfehler und keine weiteren wichtigen konkreten Bugs im überprüften Scope. Dies ersetzt keine fachliche Lehrkraft- oder Lernwirkungsprüfung. Zweitprüfung verwendet denselben KI-Dienst. Screenshot des tatsächlichen97er-Lernschritts liegt im lokalen Chatoutput `output/expansion/ki-rueckschritt.jpg`. Keine aktuelle Mobil-/physische Geräteabnahme behauptet.
+
 Task GC-ADAPTIVE-PRACTICE-01, lokaler Bruchpilot auf8769, getrenntes Lehrkraft-Testkonto in gradecrew-staging-2026. Synthetische Eingaben im separaten Testtab. Kein Schulzugang, Clouddeploy oder echte Schülerakte.
 
 | Tatsächliche Aufgabe / Eingabe | Beobachtung |

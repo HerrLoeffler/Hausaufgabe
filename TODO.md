@@ -615,3 +615,7 @@ Gemeldeten fehlenden Folgeschritt nach Fehler korrigiert: KI-gewählte Probe ode
 ### GC-ADAPTIVE-PRACTICE-01 Quellenbasierte Didaktik
 
 Neuer Forschungsauftrag vor weiterer Umsetzung: 295 öffentliche Fachportal-Seiten kurz gesichtet,19 Kernquellen in ausgewählten Volltextabschnitten vertieft. Konzept mit konkreter Diagnose/Hilfe zum Erweitern, getrennten Lernbelegen, Materialerschließung und Abnahmefällen liegt unter docs/concepts/adaptive-practice-01-didactics.md zur Fachprüfung vor. Kein Produktcode, Providerlauf, Budgetreset oder Deploy.
+
+### GC-ADAPTIVE-PRACTICE-01 Enger Erweitern-Pilot
+
+Autorisiert umgesetzt im bestehenden lokalen Prototyp: echte GradeCrew-Aufgabenerzeugung und kurze KI-Hilfen mit gesonderter KI-Prüfung. Wiederholte Nennerfehler im Browser führen nachweislich von10Teilen über4Teile zu einem einzelnen halbierten Stück; danach Originalrechnung und neue selbstständige Aufgabe. Unterstützte Belege getrennt, kein Beherrschungsstatus nach einem Treffer.45Python-/55JS-Tests grün, Quellreview nachgeprüft. Weiterhin Draft-PR253/branch_only/localhost; kein Schulversions-/Clouddeploy. Fachliche Nutzer-/Lehrkraftabnahme und Zuverlässigkeit des KI-Antwortformats offen. Reale Versuche und Verbrauch in docs/prototypes/learning-brain/LIVE-TEST.md sowie workstreams/adaptive-practice-01.md.
