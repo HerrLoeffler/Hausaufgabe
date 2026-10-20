@@ -2,6 +2,8 @@
 
 ## GC-CHAPTER-TESTS-01 — Kapitelgrundstruktur, isolierte Testvorschau (20.10.2026)
 
+- [ ] Nutzerpräzisierung20.10.: Kapitelwahl direkt bei Thema, gemeinsame Testsprache/Fach; kurze Kapitelhinweise und automatische Kapitelplanung aus vorhandenem Text-/Sprachauftrag mit Lehrplankontext ergänzen. Notizen werden bereits als Lehrerwünsche übertragen, erzeugen aktuell jedoch noch keinen Kapitelplan. Keine Timer-/Mehrfachfach-Erweiterung.
+
 - [x] Bestehende Testerstellung, Remy/Emmi, Veröffentlichung, Schülernavigation, Auswertung und CSV um optionale Kapitel erweitert. Bereichstimer ausgenommen.
 - [x] Unabhängiges Review mit sechs korrigierten Befunden; Node22 Functions289, Assessment98, Web/UI506, Kapitelregeln13, vollständige Emulatorkette und GitHub-CI39471477562 grün. Echte synthetische Chrome-Browserkette inklusive Reload, Abgabe und Nachkorrektur bestanden.
 - [x] Nur getrenntes Testprojekt gradecrew-staging-2026: selektive Functions/Rules und [eigene Vorschau](https://gradecrew-staging-2026--chapters-20261020-w5x2v4cu.web.app) bis27.10.2026. Runtime cf21ddf9;172 Assets geprüft. [Implementierung PR254](https://github.com/HerrLoeffler/Hausaufgabe/pull/254), [Übergabe](workstreams/chapter-tests-01.md), [Releasebelege](docs/evidence/chapter-tests-20261020.json). Keine Productionänderung.
