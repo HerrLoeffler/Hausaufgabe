@@ -71,6 +71,9 @@ jobs:
       - name: Install UI test dependencies
         run: npm ci --prefix tools/ui --no-audit --no-fund
 
+      - name: Chapter foundation regressions
+        run: node --test shared/chapter-contract.test.cjs chapter-draft-roundtrip.test.mjs chapter-save-behavior.test.mjs chapter-review-regressions.test.mjs tools/ui/chapter-editor.test.cjs tools/ui/chapter-student.test.cjs tools/ui/chapter-results.test.cjs
+
       - name: Practice solution publication tests
         run: node --test practice-solution-publication.test.mjs secure-offline-review-label.test.mjs
 
