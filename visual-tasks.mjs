@@ -119,18 +119,13 @@ export function renderVisualEditor(container, q, onChange) {
   const select=document.createElement('select');
   for(const format of VISUAL_FORMATS){const option=document.createElement('option');option.value=format;option.textContent=core().names[format];select.append(option);}
   let task;try{task=parseVisualTask(q);}catch(error){
-    const warning=document.createElement('p');warning.textContent=error.message;
-    const repair=document.createElement('textarea');repair.rows=12;repair.value=q.visualTask||'';repair.setAttribute('aria-label','Ungültige Aufgabendaten korrigieren');
-    repair.addEventListener('change',()=>{try{q.visualTask=normalizeVisualTask({...q,visualTask:repair.value});onChange(true);}catch(e){warning.textContent=e.message;}});
-    container.append(warning,repair);return;
+    const warning=document.createElement('p');warning.setAttribute('role','alert');warning.textContent=error.message+' Bitte mit Emmi überarbeiten oder eine neue Aufgabe erstellen.';
+    container.append(warning);return;
   }
   select.value=task.format;formatLabel.append(select);container.append(formatLabel);
   const preview=document.createElement('div');container.append(preview);
   const solution=document.createElement('p');solution.className='hint';container.append(solution);
-  const details=document.createElement('details'),summary=document.createElement('summary'),label=document.createElement('label'),input=document.createElement('textarea'),error=document.createElement('p');
-  summary.textContent='Darstellung und Lösung bearbeiten';label.textContent='Aufgabendaten (JSON)';input.rows=12;input.spellcheck=false;input.value=JSON.stringify(task,null,2);label.append(input);error.setAttribute('role','alert');details.append(summary,label,error);container.append(details);
   function show(){mountVisualQuestion(preview,q);solution.textContent='Lösung: '+visualSolution(q);}
-  select.addEventListener('change',()=>{task=core().example(select.value);task.maxPoints=Number(q.points)||1;q.visualTask=JSON.stringify(task);q.text=task.prompt;input.value=JSON.stringify(task,null,2);onChange(true);show();});
-  input.addEventListener('change',()=>{try{const next={...q,visualTask:input.value};q.visualTask=normalizeVisualTask(next);task=parseVisualTask(q);select.value=task.format;error.textContent='';onChange(false);show();}catch(e){error.textContent=e.message;}});
+  select.addEventListener('change',()=>{task=core().example(select.value);task.maxPoints=Number(q.points)||1;q.visualTask=JSON.stringify(task);q.text=task.prompt;onChange(true);show();});
   show();
 }
