@@ -141,14 +141,16 @@
     {
       "id": "telemetry",
       "title": "Generische Telemetrie / Produktdiagnose",
-      "primaryBranch": "feature/telemetry-implementation",
+      "primaryBranch": "feature/analytics-teacher-v1-20261021",
       "integrationTarget": "feature/gradecrew-app-integration",
       "state": "active",
       "relatedBranches": [
         "feature/telemetry-contract-v1",
         "feature/telemetry-measurement-design",
-        "integration/telemetry-emulator-gate"
-      ]
+        "integration/telemetry-emulator-gate",
+        "feature/telemetry-implementation"
+      ],
+      "handoff": "workstreams/telemetry-implementation.md"
     },
     {
       "id": "bug-ops-v1",
