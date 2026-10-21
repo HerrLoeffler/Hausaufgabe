@@ -73,7 +73,7 @@
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 167,
     "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate. Coco durable owner-only search/memory and contextual support PR179–183 now deployed with real own-account search/context checks; broader user/device acceptance separate.",
-    "next_action": "Finish native candidate b43298b CI/TestFlight; physical iPad offline submit/restart/sync acceptance. Reload installed feedback connector and perform Live admin login before private feedback retrieval.",
+    "next_action": "Martin tests Secure1.0(1141) on physical iPad: offline submission, restart, later sync and matching receipt. Complete remaining operator Apple confirmations before Store submission. Reload installed feedback connector and perform Live admin login before private feedback retrieval.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
@@ -2644,8 +2644,8 @@
     "native_branch": "feature/native-live-staging-20261018",
     "native_commit": "b43298b73d63707d2270ee4a3f4e49cf980dd606",
     "teacher_testflight_run": 39161910081,
-    "secure_testflight_run": 39161910224,
-    "testflight_status": "teacher_0.2.0_48_and_secure_0.2.3_1131_upload_succeeded_20261018;processing_installability_physical_acceptance_separate",
+    "secure_testflight_run": 39629456276,
+    "testflight_status": "teacher_0.2.0_48_unchanged;secure_1.0_1141_signed_AAC_verified_uploaded_processed_internal_GradeCrew_Tester_assigned_20261021;physical_acceptance_pending",
     "physical_acceptance": "pending_new_offline_policy",
     "offline_policy": "unlock_only_after_verified_durable_local_submission_then_sync; block_new_attempt_until_server_receipt",
     "live_functions": {
@@ -2703,7 +2703,32 @@
       "physical_device_acceptance": "pending"
     },
     "teacher_testflight_build": "0.2.0(48)",
-    "secure_testflight_build": "0.2.3(1131)"
+    "secure_testflight_build": "1.0(1141)",
+    "secure_native_commit": "8ab3891b3e07a5369ec4206f9e30c0f3469d81c5",
+    "secure_testflight_receipt": {
+      "task_ids": [
+        "GC-IOS-02",
+        "GC-RELEASE-06"
+      ],
+      "commit": "8ab3891b3e07a5369ec4206f9e30c0f3469d81c5",
+      "branch": "feature/native-live-staging-20261018",
+      "pr": 257,
+      "version": "1.0",
+      "build": "1141",
+      "ci_run": 39629456276,
+      "ci": "success",
+      "signed_aac_app_and_profile": "verified",
+      "upload": "success_2026-10-21T16:32:11Z",
+      "apple_processing": "complete",
+      "internal_group": "GradeCrew Tester",
+      "invited_testers": 1,
+      "physical_acceptance": "pending",
+      "app_store_submission": false,
+      "production_backend_changed": false,
+      "website_changed": false,
+      "teacher_app_changed": false,
+      "handoff": "workstreams/secure-testflight-1141-20261021.md"
+    }
   },
   "public_legal_information_20261021": {
     "handoff": "workstreams/secure-legal-release-20261021.md",
@@ -2729,7 +2754,7 @@
       39624481757
     ],
     "native_pr": 257,
-    "native_source_commit": "593076f8c2154760fecd966e80d89a216e0a1322",
+    "native_source_commit": "8ab3891b3e07a5369ec4206f9e30c0f3469d81c5",
     "native_candidate_archive": "0.2.3(1132)_unsigned_local_not_uploaded",
     "native_checks": {
       "swift": 28,
@@ -2740,11 +2765,37 @@
     "physical_acceptance": "pending",
     "legal_certification": false,
     "remaining": [
-      "ASC trader and actual account/contracts",
-      "final price countries age ratings",
-      "stable synthetic review test",
-      "signed final build plus physical offline/restart/sync acceptance and Store screenshots",
+      "Apple trader phone verification and any subsequent required evidence",
+      "explicit final age-category and content-rights confirmation",
+      "explicit publication of saved privacy labels",
+      "stable synthetic review test and real Store screenshots",
+      "physical iPad offline/restart/sync acceptance",
       "school roles/AVV plus verified provider/server/backup retention"
-    ]
+    ],
+    "native_uploaded_build": "1.0(1141)",
+    "native_release_receipt": {
+      "task_ids": [
+        "GC-IOS-02",
+        "GC-RELEASE-06"
+      ],
+      "commit": "8ab3891b3e07a5369ec4206f9e30c0f3469d81c5",
+      "branch": "feature/native-live-staging-20261018",
+      "pr": 257,
+      "version": "1.0",
+      "build": "1141",
+      "ci_run": 39629456276,
+      "ci": "success",
+      "signed_aac_app_and_profile": "verified",
+      "upload": "success_2026-10-21T16:32:11Z",
+      "apple_processing": "complete",
+      "internal_group": "GradeCrew Tester",
+      "invited_testers": 1,
+      "physical_acceptance": "pending",
+      "app_store_submission": false,
+      "production_backend_changed": false,
+      "website_changed": false,
+      "teacher_app_changed": false,
+      "handoff": "workstreams/secure-testflight-1141-20261021.md"
+    }
   }
 }
