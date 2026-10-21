@@ -48,3 +48,86 @@ Die Quelle selbst ordnet sich Grundschule4/Bayern zu. Die offizielle Fachplanadr
 ## Offene Arbeit
 
 Vollständige Einzelvalidierung aller Lösungsschlüssel, übrige Ressourcen desselben Buches, andere Regalmedien und praktische Qualitätsabnahme neu erzeugter Aufgaben. Die seitenbezogenen Analysepakete und ihr genauer Prüfumfang stehen unter `media/commentary-8d468f417d811a7a-20261021/`.
+
+
+## Deutsch und Schriftspracherwerb – Grundschule1
+
+Quelle ea3d79400d5b5503: alle284PDF-Seiten textlich und visuell gelesen. Diagnosequelle6b47874d62ea10d8: alle22Seiten gelesen, einschließlich der Bildformulare. Die folgenden Regeln sind eigene Transferentwürfe; sie belegen keine vergleichende Wirksamkeit einer bestimmten Methode. Referenzierte Zusatzmaterialien gelten dadurch nicht automatisch als analysiert.
+
+### 13. Teilkompetenzen getrennt belegen
+
+Wortschatz, Lautanalyse, Graphemwissen, Synthese, Sinnentnahme, eigenes Schreiben und Motorik getrennt erfassen. Eine richtige Teilhandlung belegt die übrigen nicht.
+
+Beleg: ea3d79400d5b5503, PDF-Seiten 58, 74, 275.
+
+### 14. Bildwortschatz vor Lautdiagnose klären
+
+Für jedes Lautbild eine passende bekannte Bezeichnung sichern. Gültige alternative Benennungen berücksichtigen; unbekannte Wörter nicht als Lautfehler werten.
+
+Beleg: ea3d79400d5b5503, PDF-Seiten 13, 35, 58.
+
+### 15. Laut, Zeichen und Silbe unterscheiden
+
+Buchstabennamen, gesprochene Laute, mehrgliedrige Grapheme und Silben nicht über dieselbe Anzahl gleichsetzen. Pro Zielstelle die relevante Einheit benennen.
+
+Beleg: ea3d79400d5b5503, PDF-Seiten 13, 37, 47, 112, 191.
+
+### 16. Synthese mit korrekter Lautung stützen
+
+Lautfolgen mit passender Stütze verbinden, ohne zusätzliche Hilfsvokale oder dauernde Stimmhaftigkeit zu erzwingen. Lautdiagnose nicht ausschließlich aus Flüstern ableiten.
+
+Beleg: ea3d79400d5b5503, PDF-Seiten 74, 75, 86, 89.
+
+### 17. Schreiben als beobachtbaren Prozess begleiten
+
+Benennen, gliedern, Zeichen finden, schreiben und kontrollieren getrennt beobachten. Genau am stockenden Schritt helfen und Unterstützung später abbauen.
+
+Beleg: ea3d79400d5b5503, PDF-Seiten 58, 59, 277.
+
+### 18. Rechtschreibstrategie zur Zielstelle wählen
+
+Hören, Verlängern, Wortverwandtschaft und Merkwissen je nach Stelle unterscheiden. Lautvollständigkeit und Normschreibung mit getrennten Kriterien beurteilen.
+
+Beleg: ea3d79400d5b5503, PDF-Seiten 149, 175, 191, 192, 198.
+
+### 19. Textbeleg und eigene Stellungnahme unterscheiden
+
+Bei textbezogenen Fragen einen Beleg verlangen; bei Meinung, Fortsetzung und Bilddeutung mehrere begründete Antworten mit eigener Rubrik zulassen.
+
+Beleg: ea3d79400d5b5503, PDF-Seiten 112, 144, 220.
+
+### 20. Zugang und geprüfte Leistung sichtbar halten
+
+Audio, Lesetandem, Bildstütze, gelegte Buchstaben oder diktiertes Schreiben ermöglichen Teilhabe. Im Ergebnis festhalten, welche Hilfe benutzt wurde und welche Teilkompetenz damit belegt ist.
+
+Beleg: ea3d79400d5b5503, PDF-Seiten 205, 220, 231, 275.
+
+### 21. Förderung als überprüfbaren Zyklus führen
+
+Konkretes Ziel, Ressourcen des Kindes, Maßnahme, Datum und beobachtete Wirkung verbinden. Die nächste Hilfe an der Beobachtung ausrichten; kein Defizitetikett aus einer Einzelantwort ableiten.
+
+Beleg: ea3d79400d5b5503, PDF-Seiten 276, 277, 278, 279.
+
+### 22. Erledigung von Kompetenz trennen
+
+Erledigt, beobachtet, selbstständig gelungen, mit Hilfe gelungen und noch nicht gelungen getrennt führen. Unbeobachtet darf weder richtig noch falsch bedeuten; ordinale Kategorien nicht in Lernprozente umrechnen.
+
+Beleg: ea3d79400d5b5503, PDF-Seiten 275, 280, 281.
+
+### 23. Offene Sprachproduktion fair bewerten
+
+Für Brief, Erzählung, Beschreibung und Reflexion Zweck und wenige passende Kriterien festlegen. Mündliche oder fiktive Anlässe zulassen, wenn private Fotos oder Schreibmotorik keine Zielanforderung sind.
+
+Beleg: ea3d79400d5b5503, PDF-Seiten 205, 212, 231, 281.
+
+### 24. Anfangsmodelle fachlich eingrenzen
+
+Elementare Nomen-, Satz-, Verb- und Lautregeln als begrenzte Lernmodelle behandeln. Fehlerhafte Verweise und Immer-Regeln vor Übernahme prüfen und mit Gegenbeispielen begrenzen.
+
+Beleg: ea3d79400d5b5503, PDF-Seiten 104, 116, 121, 152, 195.
+
+### Ergänzende Prüfung aus dem Diagnosepaket
+
+Die ß-Aufgabe auf PDF12 benötigt eine präzise Erklärung, die auch Diphthonge berücksichtigt. Maßgeblich ist die vollständige [amtliche Regel§25 beim IDS](https://grammis.ids-mannheim.de/rechtschreibung/6180), einschließlich ihrer Bedingungen und Ausnahme. Nomenproben ohne Satzkontext können bei nominalisierten Wörtern mehrdeutig werden. Grafische Lautfelder, Silbenbögen und Bildfarben sind Informationsträger; ihre Originalseiten bleiben privat erhalten.
+
+**Freigabegrenze:**24Konzeptregeln vorgeschlagen, keine neue Laufzeitfreigabe. Offene Einzelaufgaben, sprachliche Detailregeln, Lösungen, Farboriginale und referenzierte Audios verlangen passende eigene Nachweise. Aktuelle Lehrplanzuordnung dieser neuen Deutschquelle noch offen.

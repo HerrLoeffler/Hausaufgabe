@@ -1,0 +1,11 @@
+{
+  "content_id": "6b47874d62ea10d8",
+  "pdf_pages": 22,
+  "text_read_pages": 22,
+  "visual_review_pages": 22,
+  "page_images": 22,
+  "task_pattern_groups": 41,
+  "solution_validation": "partial; open tasks need rubric; graph search not exhaustively checked",
+  "runtime_profiles_added": 0,
+  "orthography_reference": "https://grammis.ids-mannheim.de/rechtschreibung/6180"
+}

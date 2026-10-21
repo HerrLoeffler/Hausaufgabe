@@ -1,0 +1,9 @@
+{
+  "new_archive_sha256_checked": 9,
+  "page_image_references_checked": 470,
+  "candidate_references_checked": 1169,
+  "transfer_rules_checked": 24,
+  "candidate_profiles_accidentally_released": 0,
+  "data_checks_passed": true,
+  "scope": "archive integrity, page/reference coverage, status consistency; not full solution validation or product testing"
+}

@@ -1,0 +1,25 @@
+{
+  "content_id": "ea3d79400d5b5503",
+  "pdf_pages": 284,
+  "text_read_pages": 284,
+  "visual_review_pages": 284,
+  "read_from_page_image_pages": [
+    276,
+    277,
+    278,
+    279,
+    280,
+    281,
+    282,
+    284
+  ],
+  "task_method_reference_form_groups": 598,
+  "solution_validation": "not_complete; open and referenced tasks require individual rubric and resource review",
+  "solution_page_statuses": {
+    "not_applicable": 43,
+    "partial_conceptual_only": 3,
+    "not_checked": 238
+  },
+  "all_reader_resources_complete": false,
+  "runtime_profiles_added": 0
+}

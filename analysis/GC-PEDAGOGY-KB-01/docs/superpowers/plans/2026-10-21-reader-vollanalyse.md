@@ -35,8 +35,8 @@
 - [x] Aktuellen Development Status39629725383 lesen; vorhandene Analyse-PR214 und integrierten Pool erkennen.
 - [x] Dateibestand auf unfertige Downloads prüfen: derzeit0Dateien mit üblichen Teil-Download-Endungen. Das ist kein Beweis, dass alle je angeforderten Downloads vorhanden sind.
 - [x] Früher registrierte Readerdownloads gegen Downloads abgleichen:62/62anonyme IDs wiedergefunden,216PDF-Seiten, SHA-256-geprüft archiviert.
-- [x] Anmeldestatus prüfen: Bildungslogin verlangt erneute Anmeldung; Nutzer asynchron um Anmeldung gebeten.
-- [ ] Regalzahl und ausgeblendete Medien nach Anmeldung erneut bestätigen;125ist der frühere, nicht der heutige verifizierte Zählstand.
+- [x] Anmeldestatus geprüft: vorhandene Chrome-Sitzung ist angemeldet. Die getrennte neu geöffnete Sitzung war abgemeldet; keine erneute Anmeldung im vorhandenen Chrome nötig.
+- [x] Regalansicht einschließlich eingeblendeter ausgeblendeter Titel erneut geprüft:125echte Coverkarten am21.10.2026. Einzelne R-Positionszuordnungen weiterhin an der Quelle bestätigen.
 
 **Ablage:** `media/reader-source-recovery-20261021.json`; Originale `private-archive/reader-recovered-20261021/`. Kein erneuter Download eines nachweislich identischen Inhalts.
 
@@ -71,7 +71,7 @@
 - [ ] Audios einmal transkribieren, Quellen-/Sprachvarianten separat erhalten, Zahlen/Negationen und Aufgabenbezüge anhand der Quelle prüfen.
 - [ ] Seitenlücken, Text-/Bildlücken und Lösungslücken durch Mengenabgleich feststellen. Begründet ausgenommene Verwaltungsseiten bleiben als solche nachgewiesen.
 
-**Begonnenes vollständiges Dokumentpaket:** Kommentar8d468f417d811a7a,164PDF-Seiten; feste Pakete1–55,56–110,111–164. Drei getrennte Analyse-Agenten arbeiten an diesen Bereichen. 164/164Seiten sind bereits privat textlich erschlossen; das zählt ausdrücklich noch nicht als fachliche oder visuelle Abnahme.
+**Abgenommene vollständige Dokumentpakete:** Kommentar8d468f417d811a7a164/164, Kommentar ea3d79400d5b5503 284/284 und Diagnose6b47874d62ea10d8 22/22PDF-Seiten vollständig textlich und visuell gelesen.470PDF-Seiten mit470privaten Einzelbildern; inhaltliche Überschneidungen zwischen Dokumenten sind möglich. Kleine Graustufenminiaturen beweisen keine Farb-/Detailprüfung des höher aufgelösten Hauptbuchs. Die unabhängige Einzelaufgaben-/Lösungsprüfung ist weiterhin unvollständig. Alle sechs Teilprüfungen dieser beiden Kommentare sind beendet.
 
 ## 4. Didaktische Hinweise in das pädagogische Konzept übertragen
 
@@ -101,3 +101,13 @@ Ein Medium gilt erst dann als vollständig im vereinbarten zugänglichen Umfang 
 ## Zeit- und Stoppregel
 
 Nach dem ersten vollständig ausgewerteten Ressourcenpaket tatsächliche Seiten-/Aufgabenrate messen. Restzeit je Readerfamilie aus verbleibenden Seiten, Dateien, Audiodauer und offenen Prüfungen schätzen; keine ungemessene Ein-Stunden-Zusage für das ganze Regal. Nach jedem Paket Ergebnisse und Übergabe sichern. Gleiche Downloads nach unerwartet identischen Hashes nicht wiederholen. Blockierte Reader werden nach einem belegten Versuch zurückgestellt; vorhandene lokale Quellen weiter auswerten.
+
+
+## Ausgeführter Stand21.10.2026
+
+-62registriertePDFs/216Seiten wiederhergestellt.
+-9neue unterschiedliche Dateien privat archiviert:7PDFs/1040Seiten,1Word,1Bild.
+-3Dokumente/470PDF-Seiten vollständig Text und Bild gelesen;1169eigene Aufgaben-/Methoden-/Referenzgruppen als Kandidaten erfasst. Diese Zahl ist keine Zahl fertiger Testaufgaben.
+-24konkrete didaktische Transferregeln für Mathematik4 und Deutsch1 vorgeschlagen.
+-0/125Regalmedien einschließlich aller Haupt-/Zusatzressourcen und Qualitätsprüfung komplett;0neueLaufzeitprofile veröffentlicht.
+-Genau nächster Schritt: offene R001-Sammeldateien Arbeitsheft/Kopiervorlagen/Anlautmaterial/Stoffverteilung vollständig auswerten und verbleibende Einzelmedien abgleichen. R002-Gesamtmaterial369Seiten liegt bereits privat als weitere Quelle bereit.
