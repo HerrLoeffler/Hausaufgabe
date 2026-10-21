@@ -1,8 +1,8 @@
 # GC-CLASSROOM-01 Implementation Plan
 
-**Aktueller Stand 21.10.2026:** Schule und mehrere Verwalter sind jetzt lokal implementiert: explizite Übernahmevorschau, atomare Bestandsübernahme mit stabilen IDs/Quellbelegen, geschützte Einladungen mit Kontoannahme und Verwaltungsbestätigung sowie Rollenwechsel mit Letztverwalterschutz. Martins Nachtrag gilt: bestätigte Lehrkräfte wählen ihre Klassen selbst. Die bestehende Oberfläche/Anmeldung/Tests bleiben erhalten. 563 automatisierte Tests bestehen; unabhängiger Review nach zwei Korrekturen ohne offene P1/P2. Nach Martins Loginantwort ist die eingerichtete lokale Schule im echten Account mit Verwalterrolle und49persönlichen Tests lesend bestätigt. Übernahmeaktion selbst nicht beobachtet; Einladung mit zweitem echten Konto weiter offen. Importierte Personaleinträge mit Login verbinden, Fach-/Prüfungsrechte, persönliche Schülercodes/QR, Druck und gemeinsames Mehrgerätebackend bleiben offen. Derselbe lokale Stand, kein Deploy; Details siehe [Übergabe](../../workstreams/classroom-student-management-v1.md).
+**Aktueller Stand 21.10.2026:** Lokal implementiert sind Schule/mehrere Verwalter, Bestandsübernahme, selbst gewählte Klassen sowie jetzt gemeinsame Klassenanlage durch bestätigte Lehrkräfte mit automatischem Beitritt und manuelle Schüleraufnahme in ihre gewählten Klassen. Persistente achtstellige persönliche Schülercodes, getrennte Schüleranmeldung und berechtigte A4-Druckvorschau (Liste, Karten, Einzelblatt) sind ergänzt. Originaloberfläche, Lehrerlogin und Tests bleiben erhalten. Abschließend571/571Tests bestanden; unabhängiger Review ohne verbleibende P1/P2 nach Korrektur eines tatsächlichen A4-Überlaufs. Im Browser neuer Schülereinstieg und ungültiger Code geprüft; echter angemeldeter Lehrerbestand mit49Tests wurde im vorigen Schritt geprüft, nicht erneut in dieser Sitzung. Schüler-Testzuweisungen/Versuchsregeln sind inP präzisiert, noch nicht angebunden: der Schülerbereich zeigt ehrlich keine zugewiesenen Tests. QR, gemeinsames Mehrgerätebackend, Personaleintrag-Verknüpfung und Fach-/Prüfungsrechte bleiben offen. Nur8782/branch_only, kein Deploy. [Übergabe](../../workstreams/classroom-student-management-v1.md).
 
-> **For agentic workers:** Bei späterer Umsetzung `superpowers:executing-plans` verwenden. Ein Writer im bestehenden isolierten Checkout. Dieser Auftrag liefert zunächst den ausführlichen Plan; keine Produktimplementierung oder Veröffentlichung vor Martins Planprüfung. Bestehende Task-ID und Versuchshistorie erhalten.
+> **For agentic workers:** Bei späterer Umsetzung `superpowers:executing-plans` verwenden. Ein Writer im bestehenden isolierten Checkout. Martin hat die lokale Umsetzung vonO freigegeben; weitere Cloud-/Assessmentveröffentlichung ist dadurch nicht autorisiert. Bestehende Task-ID und Versuchshistorie erhalten.
 
 **Goal:** Dauerhafte Schüler- und Klassenverwaltung mit manueller Pflege, ASV-/CSV-Abgleich und persönlichen Schülerzugängen in die vorhandene GradeCrew-Website integrieren; bestehende Lehreranmeldung, Tests und Testabläufe erhalten.
 
@@ -1039,4 +1039,33 @@ Reihenfolge: (1) bestätigten Lehrkräften gemeinsames Klassenanlegen+automatisc
 - Schülerzugangsservice ausG/L: achtZeichenformat/Kollision/Wiederimport/Jahreswechsel, Transaktionsfehler/Mehrfachklick, RateLimit unterSchulNAT, falscherCode/Rotation/Sperre/Sitzungsablauf; niemalsLehrerrechte.
 - Druckmodul ausH/L:0/1/30/35/300Personen undlangeNamen,1A4Klassenliste vs.ehrlicherÜberlauf, Reprint gleicherCode, fremdeSchule/Rollenentzug/abgebrochenerDruck, Schlüsselbackup+Restore vorFreigabe; echteQRkamera später separat.
 
-Dies ist eine gespeicherte Anforderung/Spezifikation, kein bereits getesteterachtstelligerZugang. Aktueller Produktstatus563Tests/branch_only unverändert. Keine Namen/Schülerdaten/Einladungsgeheimnisse in diesem Plan und keine Nutzerkontenänderung.
+O1–O5 sind jetzt im lokalen Umfang umgesetzt und mit571Tests geprüft. Teacher-CSV bleibt auf Verwaltung begrenzt; manuelle Aufnahme in gewählte Klassen ist freigegeben. QR und echter Mehrgerätebetrieb bleiben offen. Keine realen Codes durch den Agenten ausgegeben oder rotiert. Nachweis: evidence/20261021-pupil-access-print.json.
+
+
+### P. Einfache Schüler-Testansicht und verbindlicher Vorschlag für Versuchsregeln
+
+**Umsetzungsgrenze:** Der lokale Schülerzugang ist vorhanden. Die folgenden Zuweisungs- und Prüfungsregeln sind der nächste geplante Ausbau; sie ändern weder bestehende Tests noch deren Veröffentlichung. Ohne sichere Zuweisungsanbindung werden keine Tests aus dem Lehrerbestand an Schüler ausgegeben.
+
+#### P1. Ansicht ohne Ordnerpflicht
+
+Nach Anmeldung zuerst „Verfügbar“, daneben „Erledigt“. Karten zeigen Titel, Fach, Lehrkraft, Klasse und gegebenenfalls Enddatum. Ein optionaler Fachfilter reicht; Schüler müssen keine Ordner anlegen. Noch nicht geöffnete Freigaben können als „Ab …“ angezeigt werden. Ohne Zuweisung erscheint ein verständlicher Leerzustand. Mehrere Fachlehrkräfte verwenden dieselbe Schulklasse; jeder weist seine eigenen Tests ausdrücklich zu.
+
+#### P2. Veröffentlichung, Zeitraum und persönlicher Versuch getrennt
+
+Eine vorhandene Veröffentlichung ist noch keine Klassenzuweisung. Eine Zuweisung verbindet Test/Version, sichere Prüfungsrunde, Fach, Empfänger und Zeitraum. Vorgeschlagener Standard für neue Zuweisungen: Enddatum in sieben Tagen, vor Bestätigung sichtbar und änderbar; bewusst „Ohne Enddatum“ möglich. Bestehende Veröffentlichungen erhalten keine nachträglich erfundene Frist. Lange offene Freigaben können eine unaufdringliche Erinnerung für die Lehrkraft bekommen, werden aber nicht still geschlossen.
+
+Bei bewerteten Tests gilt standardmäßig ein Versuch pro Schüler und Zuweisung. Nach bestätigter Abgabe steht der Test unter „Erledigt“. Bleibt er weitere fünf Tage offen, dürfen andere berechtigte Schüler ihn noch bearbeiten; die bereits abgegebene Person erhält dadurch keinen neuen Versuch. Der Server speichert und prüft den Abschluss dauerhaft. Eine Seitenaktualisierung, Neuanmeldung oder Code-Neuausgabe setzt ihn nicht zurück.
+
+#### P3. Wiederholen, Üben und Unterbrechungen
+
+Eine weitere bewertete Bearbeitung verlangt ausdrücklich „Weiteren Versuch erlauben“ durch die zuständige Lehrkraft für ausgewählte Personen; alter Versuch/Abgabe bleiben unverändert nachvollziehbar. Üben ist ein bewusst gewählter Modus mit mehreren Versuchen und klarer Kennzeichnung; es überschreibt keine bewertete Abgabe. „Begonnen“ bedeutet fortsetzen desselben Versuchs, nicht neu beginnen. Bei der Zuweisung muss festgelegt werden, ob das Enddatum nur den Start sperrt oder auch laufende Bearbeitungen beendet; der Server setzt dies mit Zeitzone und eventueller individueller Verlängerung durch. Kein Timer allein im Browser.
+
+#### P4. Sichere Integration statt zweiter Prüfungsengine
+
+Start, Fortsetzen, Abgabe und Ergebnisabruf prüfen serverseitig Schüleridentität, Schul-/Klassenzuweisung, Zuweisungsversion, sessionRunId und attemptId. Die bestehende Secure-Assessment-Engine bleibt zuständig; der alte Gast-Testcode darf keine auf zugewiesene Personen begrenzte Prüfung umgehen. Ergebnisse/Lösungen werden nur nach ausdrücklich geltender Freigaberegel angezeigt. Die bisherige einzelne aktuelle Prüfungsrunde pro Quiz muss vor Mehrklassenzuweisungen qualifiziert werden; kein stilles Erzeugen einer neuen Runde oder Entöffentlichen zulasten anderer Klassen.
+
+Empfänger werden bei Freigabe nachvollziehbar festgehalten; späterer Klassenzutritt bedeutet keine automatische rückwirkende Prüfungsberechtigung. Die Lehrkraft kann neue Schüler bewusst ergänzen. Klassenwechsel und Lehrerwechsel verändern historische Abgaben nicht. Vor Umsetzung: Verhaltenstests für fünftägig offene bereits abgegebene Tests, Doppelklick/Neuversuch, Rollenentzug, fremde Schüler, spätere Empfänger, Frist/Verlängerung und mehrere Klassen. Anschließend echte Browserprüfung mit getrennten Lehrer- und Schülerkonten.
+
+#### P5. Lokaler Betrieb und Wiederherstellung
+
+Datenbank und separate Datei `<Datenbank>.student-key` gehören zusammen in eine geschützte Sicherung. Ohne passenden Schlüssel werden bestehende Codes nicht neu verschlüsselt oder still ersetzt; Zugriff scheitert geschlossen. Wiederherstellung mit beiden Dateien ist synthetisch getestet. Schlüsseldatei und Codes gehören nicht ins Repository. Die aktuelle Adresse127.0.0.1 funktioniert nur auf diesem Mac; Handy-/Schulbetrieb benötigt später ein geprüftes gemeinsames HTTPS-Backend. Kein solcher Deploy ist erfolgt.

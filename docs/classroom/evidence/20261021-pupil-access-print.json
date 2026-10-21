@@ -1,0 +1,70 @@
+{
+  "task": "GC-CLASSROOM-01",
+  "date": "2026-10-21",
+  "stage": "branch_only",
+  "url": "http://127.0.0.1:8782/",
+  "product_checkpoint": "a8ff4060844ad403b54541501f4d754e815ba961",
+  "final_delta": "A4 print spacing and documentation; final commit recorded in git history",
+  "tests": {
+    "passed": 571,
+    "failed": 0,
+    "log": "/tmp/gc-access-final.log"
+  },
+  "physical_print_review": {
+    "normal30": [
+      1,
+      1,
+      30
+    ],
+    "normal32": [
+      1,
+      1,
+      32
+    ],
+    "normal35": [
+      1,
+      1,
+      35
+    ],
+    "normal36": [
+      2,
+      2,
+      36
+    ],
+    "long300": [
+      43,
+      43,
+      300
+    ],
+    "cards8": [
+      1,
+      1,
+      8
+    ],
+    "single1": [
+      1,
+      1,
+      1
+    ],
+    "tuple": "declared pages, actual A4 PDF pages, codes retained"
+  },
+  "review": "One P2 physical overflow fixed and independently rechecked; no remaining P1/P2 in reviewed delta",
+  "browser": [
+    "Original start and additive pupil entry visible",
+    "Synthetic invalid code rejected with readable error",
+    "No real credentials issued or rotated",
+    "Authenticated teacher account not reverified this turn; prior49-test observation retained as historical"
+  ],
+  "server": {
+    "pid": 59651,
+    "exec_session": 39403,
+    "bind": "127.0.0.1:8782"
+  },
+  "not_implemented": [
+    "Secure test assignments and retake/deadline lifecycle",
+    "QR codes",
+    "Shared multi-device backend"
+  ],
+  "deploy": false,
+  "private_data_in_evidence": false
+}
