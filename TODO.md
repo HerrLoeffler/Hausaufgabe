@@ -574,3 +574,55 @@ PR243→Integrationscommit7a18445f926a16b9a795c761f9863d7ecfb6b3b0, Kandidat4b30
 Die Schuladresse **https://hausaufgabe-staging.web.app/** ist jetzt bewusst Live und liefert gc44 aus dem geprüften Baum c8886574 (Source42447348, kanonische Integration5a248621, PR248). Hosting-Dateien vollständig remote verglichen;58/58 Schulfunctions aktiv, genau sieben Assessment- und zwei Feedback-/Telemetryfunctions aktualisiert, keine entfernt. Getrennte Tests unter https://gradecrew-staging-2026.web.app/ (38/38Functions aktiv). Altprojekt hausaufgabe-40294 unverändert. Kein Datenumzug.
 
 Native b43298b auf eigenem Branch: Teacher39161910081/Secure39161910224 laufen; **neuer Upload und physische Offline-Abnahme noch offen**. Nutzerentscheidung: nach dauerhaft lokal gesicherter Abgabe freigeben, später synchronisieren; weitere Prüfung bis Serverreceipt gesperrt. Kein Fake-Erfolg. Feedback hat einen Capture-Pfad und bleibt freigabepflichtig. Connector0.5 installiert/geprüft; aktueller Chat braucht Reload und separate Live-Adminanmeldung. Neue Test-WIF-Automatik bleibt bis Einrichtung fail-closed. [Vollständige Übergabe](workstreams/live-staging-isolation-20261016.md). Ältere Production-/Staging-Aussagen oben sind historische Nachweise und keine aktuelle Projektzuordnung.
+
+## GC-ADAPTIVE-PRACTICE-01 – adaptive Übungsbegleitung (Planung)
+
+Beauftragt: Grob-/Detailkonzept und Stufenplan innerhalb GradeCrew. `branch_only`, Grob-/Detailentwurf, zwei Lernverläufe, Stufen-/Aufwandsplan und Akzeptanzmatrix gesichert; fachliche Pilotentscheidung offen. Keine Produktimplementierung/Deploys. [Konzept](docs/concepts/adaptive-practice-01.md). Draft [PR253](https://github.com/HerrLoeffler/Hausaufgabe/pull/253), Konzeptcommit `e510b7b`. Eigener Docsbranch `docs/gc-adaptive-practice-01`; [Übergabe](workstreams/adaptive-practice-01.md). Kapitel/GC-CLASSROOM-01/GC-PEDAGOGY-KB-01 nur lesend anbinden.
+
+### GC-ADAPTIVE-PRACTICE-01 Konkretisierung Lerngehirn 20.10.2026
+
+Martins Bild als anklickbarer Facheinstieg, Themen erst nach Fachwahl, Mathe6 mit sieben LehrplanPLUS-Bereichen. Bruchunterziele automatisch über begrenzte Suchphase mit gezielten Sprüngen und Ursachenprüfung; gemeinsame geprüfte Aufgaben per API-Entwurfsversorgung wiederverwenden, individuelle Lernstände getrennt halten. [Erweiterter Plan](docs/concepts/adaptive-practice-01.md), [Draft PR253](https://github.com/HerrLoeffler/Hausaufgabe/pull/253), Konzeptcommit8facad1. Status branch_only/Planung, keine Produktimplementierung oder Deploys. Nächster Schritt: zwei vollständige Bruchfolgen fachlich prüfen.
+
+### GC-ADAPTIVE-PRACTICE-01 Klickbare Vorschau
+
+Martin beauftragt nach Planfreigabe einen Prototyp mit Beispielaufgaben. Lokale Vorschau und portable `docs/prototypes/learning-brain/preview.html` im bestehenden PR253 gesichert: Lerngehirn → Mathe → Bruchzahlen, größerer Schritt, Voraussetzung/Hilfe, Abschluss und beispielhafte spätere Probe. 10/10 Logiktests; Browserpfad und390px-Ansicht geprüft. Status branch_only/Prototyp, kein Produkt-/Provider-/Cloud-/Deployumfang. Nächster Schritt: Martins Eindruck beim Durchklicken, Geräte-/pädagogische Abnahme weiter offen.
+
+### GC-ADAPTIVE-PRACTICE-01 Echte KI und Übungszeit
+
+Auf ausdrücklichen Auftrag separates Lehrkraft-Testkonto in gradecrew-staging-2026 eingerichtet, lokaler Proxy ohne Schulzugang/Deploy. Echte Aufgabenerstellung und Emmi-Erklärung im Browser geprüft: Fehler → Erklärung → Voraussetzung → selbstständiger Beleg im Lerngehirn. Bruchfelder/Zwischenschritte, dynamische Belege/Empfehlung und1–90Minuten-Einheit (Standard20) ergänzt.18/18 Logiktests. Status branch_only/Prototyp; menschliche didaktische Abnahme, Bruch-Materialzuordnung und Produktintegration offen. Gleicher PR253 und gleiche Übergabe; keine Produktionsänderung.
+
+### GC-ADAPTIVE-PRACTICE-01 Materialpfad und Nachweiskorrektur
+
+Bestehende Bruchmaterialien tatsächlich gesichtet; sechs eigene Prototypprofile aus Strategiekarten, Faltblatt und Rechenmauern abgeleitet. Farbige berechnete Bruchstreifen, gleiche Erweiterungsfaktoren oben/unten und geführter Lernschritt vor leichterer Probe. Nutzerfehlerbericht korrigiert: Einzelantwort wird nicht mehr als Können angezeigt; Nachweis erst mindestens8/10 verschiedene selbstständige Aufgaben pro Teilkompetenz, Hilfen/Duplikate ausgeschlossen. Lokaler Prototyp/gleicher PR253, keine Produktintegration oder Material-Vollfreigabe. Fachliche Nutzerprüfung offen.
+
+### GC-ADAPTIVE-PRACTICE-01 Kleinschrittige Lernhilfe
+
+Auf konkreten Nutzerbefund Textwand durch einzelne klickbare Ansichten ersetzt: Anteil → Faktor → feinere Teilung → Summe → aufgabenbezogene Hilfefrage.10Sekunden Lesepause vor jedem Weiter, kein Auto-Wechsel. Keine automatische freie KI-Langerklärung nach Fehler. Gleichwertige Ergebnisse unabhängig vom Nenner weiter exakt geprüft; zusätzliche Fälle9/20=18/40 zu1/4+1/5.35JS-/4Proxytests lokal grün, gleicher Prototyp/PR253, kein Schuldeploy. Nutzer-/didaktische Abnahme offen.
+
+### GC-ADAPTIVE-PRACTICE-01 KI-Entscheidung nach Beobachtung
+
+Echte Emmi-Auswahl für nächste Aktivität ergänzt; Aufgabe, exakte Antwortbewertung, Hilfe und Verlauf werden berücksichtigt. Richtiger Versuch führt ohne Zwangslektion zu höherem Anspruch; Hilfe behält ganze Rechnung sichtbar. Wiederholungsfehler verlangen Unterstützung,8/10-Nachweis bleibt unabhängig. Nur Bruchpilot; weitere Fächer, fachliche Nutzerabnahme und Produktintegration offen. Gleicher Draft PR253, kein Deploy.
+
+### GC-ADAPTIVE-PRACTICE-01 Echter Test und KI-Antwortdialog
+
+Beauftragter Test sinnvoller Steigerung und wiederholter Fehler; Learning-Snacks-Prinzip als kurzer Dialog mit Antwortfeld pro Frage. Erklärung jetzt echte KI, separater KI-Prüfdurchlauf für Aufgaben/Erklärungen; Bilder/Interaktion nur bei Passung, keine Pflicht-Pizza. Regressionsfälle für tatsächlichen Anspruch, Rückschritt und Antwortverarbeitung. Gleicher lokaler Bruchpilot/PR253, kein Deploy; Details und reale Versuche in workstreams/adaptive-practice-01.md und LIVE-TEST.md. Menschliche didaktische Abnahme offen.
+
+### GC-ADAPTIVE-PRACTICE-01 Automatische Fortsetzung
+
+Gemeldeten fehlenden Folgeschritt nach Fehler korrigiert: KI-gewählte Probe oder Hilfe startet automatisch.52JS-Tests grün, keine weitere didaktische Änderung; Qualitätsbedarf bleibt offen und vorerst zurückgestellt. Persistentes lokales80er-Testlimit durch Nutzerübung erreicht, kein Reset/weitere Providerprobe. Gleicher PR253, localhost/branch_only, kein Deploy.
+
+
+### GC-ADAPTIVE-PRACTICE-01 Quellenbasierte Didaktik
+
+Neuer Forschungsauftrag vor weiterer Umsetzung: 295 öffentliche Fachportal-Seiten kurz gesichtet,19 Kernquellen in ausgewählten Volltextabschnitten vertieft. Konzept mit konkreter Diagnose/Hilfe zum Erweitern, getrennten Lernbelegen, Materialerschließung und Abnahmefällen liegt unter docs/concepts/adaptive-practice-01-didactics.md zur Fachprüfung vor. Kein Produktcode, Providerlauf, Budgetreset oder Deploy.
+
+### GC-ADAPTIVE-PRACTICE-01 Enger Erweitern-Pilot
+
+Autorisiert umgesetzt im bestehenden lokalen Prototyp: echte GradeCrew-Aufgabenerzeugung und kurze KI-Hilfen mit gesonderter KI-Prüfung. Wiederholte Nennerfehler im Browser führen nachweislich von10Teilen über4Teile zu einem einzelnen halbierten Stück; danach Originalrechnung und neue selbstständige Aufgabe. Unterstützte Belege getrennt, kein Beherrschungsstatus nach einem Treffer.45Python-/55JS-Tests grün, Quellreview nachgeprüft. Weiterhin Draft-PR253/branch_only/localhost; kein Schulversions-/Clouddeploy. Fachliche Nutzer-/Lehrkraftabnahme und Zuverlässigkeit des KI-Antwortformats offen. Reale Versuche und Verbrauch in docs/prototypes/learning-brain/LIVE-TEST.md sowie workstreams/adaptive-practice-01.md.
+
+21.10.: Prüfformatfehler aus Nutzerscreenshot korrigiert: einmalige automatische KI-Formatkorrektur, keine Wiederholung fachlicher Ablehnungen. Exakter Fall2/3×2→1/1 im echten Browser erneut geprüft: kurze KI-Hilfe und beantwortbare Faktorfrage erscheinen.50Python-/55JS-Tests grün, Reviewer-Grenzfall false ohne reason behoben/nachgeprüft.108/120historische Endpunkte, kein Reset. Weiterhin lokal, fachliche Abnahme offen.
+
+
+### GC-ADAPTIVE-PRACTICE-01 Investorendemo21.10.
+
+Auf ausdrücklichen Nutzerauftrag lokale120er-KI-Sperre im gesonderten Demo-Modus aufgehoben, sichtbaren Lernstand zurückgesetzt; echte KI und Nutzungshistorie erhalten.52Python/56JSgrün, Quellreview bestanden. Ausschließlich localhost; normaler Start weiterhin begrenzt, keine Backend-/Schul-/Productionänderung. Übergabe workstreams/adaptive-practice-01.md.

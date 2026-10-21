@@ -669,6 +669,14 @@
       "state": "integrated",
       "handoff": "workstreams/mobile-student-chrome-20261019.md",
       "relatedBranches": []
+    },
+    {
+      "id": "adaptive-practice-01",
+      "title": "GC-ADAPTIVE-PRACTICE-01: adaptive Übungsbegleitung – Konzept",
+      "primaryBranch": "docs/gc-adaptive-practice-01",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/adaptive-practice-01.md"
     }
   ]
 }

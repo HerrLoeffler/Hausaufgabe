@@ -1,0 +1,78 @@
+{
+  "version": "learning-brain-fractions-v1",
+  "scope": "Lokale Prototyp-Profile; eigene Abstraktionen aus gesichteten Quellen, keine Freigabe des vollständigen Archivs. Zuordnung Mathe6 ist eigener Entwurf.",
+  "profiles": [
+    {
+      "id": "lb-fraction-parts",
+      "skill": "parts",
+      "learningGoal": "Gleich große Teile erkennen",
+      "taskPattern": "Ein gleich großes Ganzes in wenige gleich große Teile zerlegen; markierte Teile zählen und als Anteil benennen.",
+      "qualityHints": "Erst das Ganze festlegen, dann Teilgröße, dann Anzahl; Zähler und Nenner getrennt erklären.",
+      "source": {
+        "contentId": "25ffd5bed3aafa17",
+        "page": 1
+      },
+      "reviewStatus": "prototype_reviewed"
+    },
+    {
+      "id": "lb-fraction-same",
+      "skill": "same",
+      "learningGoal": "Anzahl gleicher Teile zusammenzählen",
+      "taskPattern": "Zwei Anteile mit gleichem Nenner addieren; Nenner bleibt die Teilgröße. Erst ohne Kürzungszwang und höchstens ein Ganzes.",
+      "qualityHints": "Bei Fehler eine Zählprobe; nicht sofort ein fremdes Nennerproblem stellen.",
+      "source": {
+        "contentId": "25ffd5bed3aafa17",
+        "page": 2
+      },
+      "reviewStatus": "prototype_reviewed"
+    },
+    {
+      "id": "lb-fraction-equivalent",
+      "skill": "equivalent",
+      "learningGoal": "Gleichwertigkeit beim Erweitern verstehen",
+      "taskPattern": "Zähler und Nenner mit demselben Faktor verändern. Ein gleich langer Streifen zeigt, dass der Anteil erhalten bleibt.",
+      "qualityHints": "Faktor oben und unten farbig gleich markieren; Mengenwert bleibt erhalten.",
+      "source": {
+        "contentId": "617ff81e57f1c42c",
+        "page": 2
+      },
+      "reviewStatus": "prototype_reviewed"
+    },
+    {
+      "id": "lb-fraction-common",
+      "skill": "common",
+      "learningGoal": "Gleich große Teile vorbereiten",
+      "taskPattern": "Einen gemeinsamen Nenner finden und beide Zähler passend erweitern; Faktoren einzeln prüfen.",
+      "qualityHints": "Zwei gleich große Ganze; bei kleinen Nennern beginnen. Erst erweitern, danach rechnen.",
+      "source": {
+        "contentId": "617ff81e57f1c42c",
+        "page": 2
+      },
+      "reviewStatus": "prototype_reviewed"
+    },
+    {
+      "id": "lb-fraction-add",
+      "skill": "add",
+      "learningGoal": "Addition in sichtbare Schritte zerlegen",
+      "taskPattern": "Gemeinsamen Nenner wählen, beide Brüche erweitern, Zähler addieren, Ergebnis bei Bedarf kürzen.",
+      "qualityHints": "Lösung zunächst verdecken. Hilfe schrittweise zeigen, danach neue selbstständige Probe.",
+      "source": {
+        "contentId": "47b2a329b97579cd",
+        "page": 1
+      },
+      "reviewStatus": "prototype_reviewed"
+    },
+    {
+      "id": "lb-fraction-transfer",
+      "skill": "transfer",
+      "learningGoal": "Addition in einer Rechenmauer anwenden",
+      "taskPattern": "Zwei untere Bruchsteine ergeben gemeinsam den oberen Stein. Neue Zahlen und eigener Aufbau.",
+      "qualityHints": "Gleich große Ganze und Summe mit exakter Rechnung prüfen; ursprüngliche Layouts nicht kopieren.",
+      "source": {
+        "contentId": "25ffd5bed3aafa17",
+        "page": 2
+      },
+      "reviewStatus": "prototype_reviewed"
+    }
+  ]
+}
