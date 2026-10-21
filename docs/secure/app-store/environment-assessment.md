@@ -1,3 +1,5 @@
+> Historische Bestandsaufnahme vom16.10.2026. Seit18.10. ist `hausaufgabe-staging` bewusst Schul-Live; getrennte Tests liegen in `gradecrew-staging-2026`. Der alte Bestand `hausaufgabe-40294` blieb erhalten. Aktuelle Nachweise: `GRADECREW_STATE.json` auf main und `workstreams/live-staging-isolation-20261016.md`. Der folgende Text ist keine aktuelle Ausführungsbehauptung.
+
 # Firebase Umgebungen und möglicher Produktivwechsel
 
 Stand 16. Oktober 2026. Die Bestandsaufnahme war ausschließlich lesend: Projektkonfigurationen, Dienste und aggregierte Dokumentanzahlen. Keine Antworten, Namen, E-Mails, Zugangstokens oder einzelnen Nutzerprofile wurden ausgegeben. Die Dokumentanzahlen sind weder aktive Personen noch ausschließlich Testdaten.

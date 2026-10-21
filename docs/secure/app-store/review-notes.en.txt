@@ -1,29 +1,28 @@
-GradeCrew Secure — App Review notes draft
+GradeCrew Secure — App Review preparation,21 October2026
+NOT SUBMITTED. Review code/contact and a final signed candidate are not yet provided. Do not paste this unfinished header into a submission.
 
-This document is prepared for the eventual production release. It has not been submitted. The final review test code, contact details, environment, build and tested offline behavior must be supplied before submission.
+Product
+Independent iPad-only student assessment app, bundle de.gradecrew.secure, minimum iPadOS17. Teachers publish assessments in the separate GradeCrew interface. Students enter a published test code and a name/agreed alias. No student account or password is created in this app.
 
-Purpose
-GradeCrew Secure is the student assessment app for GradeCrew. Teachers create and publish assessments in the separate GradeCrew teacher interface. Students enter an assessment code and a name or an agreed alias. Students do not create an account in this app.
+Build evidence
+Previously uploaded0.2.3(1131), sourceb43298b, passed distribution-signature/profile verification for Automatic Assessment Configuration and Apple accepted the TestFlight upload on18October. The new simple GC entry is a later source candidate. Entitlement approval and TestFlight acceptance do not establish App Review approval or physical acceptance of this candidate.
 
-Assessment mode
-The app uses Apple's Automatic Assessment Configuration framework. The com.apple.developer.automatic-assessment-configuration entitlement has been granted for de.gradecrew.secure. The actual distribution app and provisioning profile must both contain the entitlement. Please test the assessment flow on a supported physical iPad. The Simulator does not demonstrate the system-level assessment restrictions.
+Reviewer access — REQUIRED BEFORE SUBMISSION
+Supply a stable published assessment on the Live backend hausaufgabe-staging, containing fictional material only. Insert the actual working code and review contact in ASC. Keep the test open during review; an ended test or code from separate gradecrew-staging-2026 will not work in this Live-bound app. Prepare a short timed test and representative image/listening questions. Do not use real student work or provide teacher credentials as a substitute for a student test code.
 
-Review setup
-Provide the reviewer with a dedicated published assessment containing only fictional content. Use a short time limit and allow repeated independent review attempts. Supply a separate suitable test for image and listening questions if those features cannot be reviewed in the primary assessment. Keep these review tests available throughout review and any appeal or follow-up period.
+Suggested review steps
+1.Open the app; enter the supplied test code and fictional name Apple Review.
+2.Tap Test starten. Check the assessment summary and explicitly confirm Prüfungsmodus starten. AAC must become active before questions are exposed.
+3.Answer questions and use the question overview. Completion indicators represent filled answers, not correctness.
+4.Submit early and confirm the warning for incomplete questions. Check the server acknowledgement and released device.
+5.Start a new independent attempt and let the supplied time limit expire; confirm the single frozen submission and device release.
+6.For outage review: start online, disconnect Wi-Fi, answer, submit. The app may release AAC only after durable local persistence has been verified. It must show delivery pending, not server-confirmed. Reopen with connectivity; check receipt, no duplicate work and removal of the pending-start block. Uncertain late delivery is flagged for teacher review, not silently considered timely.
 
-Steps
-1. Open the app and enter the review assessment code supplied in App Store Connect.
-2. Enter the fictional participant name "Apple Review".
-3. Confirm the assessment start. The app requests Apple's assessment mode before exposing the running assessment.
-4. Answer a question and use the numbered question navigation or overview. A completed indicator describes answer completeness, not whether an answer is correct.
-5. Submit early. If questions remain incomplete, confirm the submission warning. The app independently checks the matching server receipt and ends assessment mode.
-6. Start another attempt with a different fictional alias and let the short timer expire. The answers should be frozen and submitted once, followed by assessment-mode release after the receipt is verified.
-
-Connectivity
-A network connection is required to start the assessment and to confirm delivery. Do not describe the app as a fully offline assessment system. The production review notes must state the final, physically verified behavior during an outage, including whether the iPad remains in assessment mode until transmission is confirmed. The current TestFlight build does not yet support reliable delayed delivery beyond the existing server grace period.
+Connectivity and device safety
+A connection is required to start and deliver an assessment; this is not a fully offline exam product. While delivery is pending, another assessment cannot start in this app. If secure local storage fails, the app must not pretend that submission succeeded. The submitted workflow, timeout and interruption handling must be tested on physical iPads. This candidate has no shipping review bypass that skips AAC. Third-party keyboards are disabled. System restrictions/screen capture differ from an ordinary app and must be evaluated under Apple's assessment guidance; permission for the entitlement is not a blanket App Review exemption.
 
 Data and permissions
-Assessment answers and the entered name/alias are sent to the GradeCrew assessment backend. Local progress is protected on the iPad. Assessment statistics and retention must match the final privacy disclosures. This student app does not require microphone or camera access for the existing text/image/listening assessment flow; prerecorded listening material is playback, not a student recording.
+Name/alias, answers and attempt identifiers are sent to the assessment backend. The client records attempt-related completion/technical events without answer text in that queue. Final privacy disclosures and retention must match real operation. Listening questions play prerecorded material; no microphone or camera capture is required by this student flow.
 
-Before copying to App Store Connect
-Replace this draft with notes tied to the actual released build. Supply the working review test code, review contact, backend environment and the verified supported-device requirements. Do not submit a staging label, unavailable test, development prototype or temporary placeholder as the final product.
+Missing before submission
+Confirmed operator, public support/privacy URLs and accessible in-app privacy link; complete ASC privacy/age/export/territory information; working review code/contact; actual final13-inch screenshots and physical offline acceptance. Final reviewer notes must identify the exact reviewed build and replace all unfinished fields. No App Review submission or new legal agreement has been executed.

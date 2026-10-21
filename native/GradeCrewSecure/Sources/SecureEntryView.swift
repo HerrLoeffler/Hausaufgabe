@@ -1,24 +1,30 @@
 import SwiftUI
 
-struct SecureBrandHeader: View {
+private struct SecureEntryBrandHeader: View {
     var body: some View {
-        VStack(spacing:16) {
-            Image("GradeCrewCrew").resizable().scaledToFit().frame(maxWidth:280,maxHeight:120).accessibilityHidden(true)
-            ViewThatFits(in:.horizontal) {
-                HStack(spacing:12) { logo; Text("GradeCrew Secure").font(.title2.bold()).fixedSize(horizontal:false,vertical:true) }
-                VStack(spacing:8) { logo; Text("GradeCrew Secure").font(.title2.bold()).multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true) }
-            }
-        }.frame(maxWidth:.infinity).foregroundStyle(SecureTheme.text).secureMeasure("brand",role:"center")
+        VStack(spacing:12) {
+            Image("GradeCrewLogo").resizable().scaledToFit()
+                .frame(width:96,height:96).accessibilityHidden(true)
+            Text("GradeCrew").font(.largeTitle.bold())
+                .multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true)
+            Text("Secure").font(.title3.weight(.semibold)).foregroundStyle(SecureTheme.secondaryText)
+        }.frame(maxWidth:.infinity).foregroundStyle(SecureTheme.text)
+            .accessibilityElement(children:.combine).secureMeasure("brand",role:"center")
     }
-    private var logo: some View { Image("GradeCrewLogo").resizable().scaledToFit().frame(width:48,height:48).accessibilityHidden(true) }
+}
+
+struct SecureBrandHeader: View {
+    var body: some View { SecureEntryBrandHeader() }
 }
 struct SecureWelcomeFrame<Content:View>: View {
+    var entry:Bool = false
     @ViewBuilder let content: () -> Content
     var body: some View {
         ScrollView {
             VStack(spacing:24) {
-                SecureBrandHeader()
+                if entry { SecureEntryBrandHeader() } else { SecureBrandHeader() }
                 content()
+                if entry { SecureLegalLinks() }
                 Text(SecureReleaseEnvironment.projectID == "gradecrew-staging-2026" ? "Testumgebung" : "Schulversion").font(.footnote).foregroundStyle(SecureTheme.secondaryText)
             }.padding(.vertical,24).frame(maxWidth:SecureTheme.formWidth).secureMeasure("welcome",role:"center")
                 .frame(maxWidth:.infinity).padding(.horizontal,16)

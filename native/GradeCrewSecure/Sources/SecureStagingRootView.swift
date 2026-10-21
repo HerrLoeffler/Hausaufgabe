@@ -26,7 +26,7 @@ private struct SecureStagingScreen: View {
                     }
                 }
             } else {
-                SecureWelcomeFrame {
+                SecureWelcomeFrame(entry:model.phase == .code || model.phase == .identity) {
                     if model.phase == .code || model.phase == .identity {
                         SecureEntryView(code:$model.code,name:$model.name,busy:model.busy,message:model.message) {
                             Task { await model.preflight(); if model.phase == .identity { confirmStart = true } }

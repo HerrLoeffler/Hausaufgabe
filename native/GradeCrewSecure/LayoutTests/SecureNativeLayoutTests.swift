@@ -49,7 +49,7 @@ import SwiftUI
 
     @ViewBuilder private func fixture(_ scenario:String,ready:Bool)->some View {
         if ["entry-empty","entry-ready","code-error","preflight"].contains(scenario) {
-            SecureWelcomeFrame {
+            SecureWelcomeFrame(entry:true) {
                 SecureEntryView(code:.constant(ready ? "AB12CD" : ""),name:.constant(ready ? "Testkürzel" : ""),busy:scenario == "preflight",message:scenario == "code-error" ? "Dieser Test existiert nicht. Prüfe bitte den Code deiner Lehrkraft." : "",onStart:{})
             }
         } else if ["active","active-long","network","storage-error"].contains(scenario) {
