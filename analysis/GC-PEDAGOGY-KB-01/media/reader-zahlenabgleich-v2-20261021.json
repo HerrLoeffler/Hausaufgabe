@@ -1,0 +1,95 @@
+{
+  "task_id": "GC-PEDAGOGY-KB-01",
+  "date": "2026-10-21",
+  "scope": "nine_new_original_files_only_not_all_downloads",
+  "files": 9,
+  "pdf_files": 7,
+  "pdf_document_pages": 1040,
+  "complete_books": 0,
+  "last_counted_shelf_books": 125,
+  "unique_mainbook_pages_not_established": true,
+  "all_hashes_checked_now": true,
+  "files_checked": [
+    {
+      "reader_ref": "R001",
+      "content_id": "ea3d79400d5b5503",
+      "sha256": "ea3d79400d5b5503e67023a3f9e2d66c2164638beec32c5ed3885f660baa712b",
+      "resource_role": "teacher_commentary_bundle",
+      "bytes": 32747308,
+      "pdf_pages": 284,
+      "sha256_matches_journal": true
+    },
+    {
+      "reader_ref": "R001",
+      "content_id": "6b47874d62ea10d8",
+      "sha256": "6b47874d62ea10d8c92fcce4ef9017d0e82bfefcfd42171b8d1fbc4d99a97871",
+      "resource_role": "assessment_bundle",
+      "bytes": 3780398,
+      "pdf_pages": 22,
+      "sha256_matches_journal": true
+    },
+    {
+      "reader_ref": "R001",
+      "content_id": "355f8ec214bd88bd",
+      "sha256": "355f8ec214bd88bd2d1391594fcd39b525d49b35e944cdcee024319d2f418eda",
+      "resource_role": "workbook_with_solutions_bundle",
+      "bytes": 59295492,
+      "pdf_pages": 168,
+      "sha256_matches_journal": true
+    },
+    {
+      "reader_ref": "R001",
+      "content_id": "b0992c0ad3b74948",
+      "sha256": "b0992c0ad3b74948f183fe5668b876b611b84b7e4a5a630a796de4487d64d4bf",
+      "resource_role": "copying_templates_bundle",
+      "bytes": 13997526,
+      "pdf_pages": 106,
+      "sha256_matches_journal": true
+    },
+    {
+      "reader_ref": "R001",
+      "content_id": "2956ad5d9a7b5d3f",
+      "sha256": "2956ad5d9a7b5d3fd0ad5dac61a54afc129b37de23b2d2a7ad0fcf019f64375f",
+      "resource_role": "phonics_cards_bundle",
+      "bytes": 3815883,
+      "pdf_pages": 40,
+      "sha256_matches_journal": true
+    },
+    {
+      "reader_ref": "R001",
+      "content_id": "1238532f17dc6ece",
+      "sha256": "1238532f17dc6eceba03891ca527a24d96db8cb8a82add75803997d6fa687b3f",
+      "resource_role": "scope_sequence_pdf",
+      "bytes": 1041689,
+      "pdf_pages": 51,
+      "sha256_matches_journal": true
+    },
+    {
+      "reader_ref": "R001",
+      "content_id": "36bb6b3ddebc5d8e",
+      "sha256": "36bb6b3ddebc5d8efbaffa02b00aa7db99671c84f520cc52c7986461d64881e1",
+      "resource_role": "scope_sequence_editable",
+      "bytes": 755200,
+      "pdf_pages": null,
+      "sha256_matches_journal": true
+    },
+    {
+      "reader_ref": "R001",
+      "content_id": "720e4887cc0f6bd8",
+      "sha256": "720e4887cc0f6bd8c7423e412cc2462207fdf96fb31ce779382c5889b16ab98d",
+      "resource_role": "phonics_image",
+      "bytes": 72203,
+      "pdf_pages": null,
+      "sha256_matches_journal": true
+    },
+    {
+      "reader_ref": "R002",
+      "content_id": "6e9af45c5c640631",
+      "sha256": "6e9af45c5c64063139c4f3b8268a7b2af35783fc2136eaf52b00e4205bd151c3",
+      "resource_role": "teacher_materials_bundle",
+      "bytes": 43886648,
+      "pdf_pages": 369,
+      "sha256_matches_journal": true
+    }
+  ]
+}
