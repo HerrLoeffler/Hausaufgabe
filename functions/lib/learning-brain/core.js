@@ -14,7 +14,7 @@ function transition(previous,action,assessment,now=Date.now()){
  }
  s.feedback={outcome:correct?'correct':'incorrect',short:correct?'Richtig. Jetzt folgt eine neue Probe.':'Wir schauen uns einen kleineren Schritt an.'};
  if(correct){
-  if(s.phase==='help'){s.phase='completion';s.task=s.originalTask;s.explanation='Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen.';return s;}
+  if(s.phase==='help'){s.phase='completion';s.task=s.originalTask;s.visual=null;s.feedback.short='Das klappt. Versuch jetzt deine Ausgangsaufgabe.';s.explanation='Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen.';return s;}
   s.level=s.phase==='completion'?0:Math.min(3,(s.level||0)+1);
   s.phase='practice';s.supportStage=0;s.originalTask=null;s.explanation='';s.visual=null;return s;
  }

@@ -54,3 +54,7 @@ test('duplicate task cannot conceal a new independent failure',()=>{
  events.push({...events[9],correct:false,at:20});
  assert.notEqual(projectSkill(events,30).status,'secure');
 });
+test('return to original never keeps a picture from a different micro-question',()=>{
+ let s=transition(start(),'help');s.visual={kind:'fraction-strip',numerator:1,denominator:2,factor:2};
+ s=transition(s,'answer',{outcome:'correct'});assert.equal(s.phase,'completion');assert.equal(s.visual,null);assert.equal(s.task.prompt,'Erweitere');
+});
