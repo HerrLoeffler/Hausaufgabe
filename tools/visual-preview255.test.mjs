@@ -6,3 +6,8 @@ test('all preview endpoint names isolate the task and preserve other functions',
 test('browser source stays on existing endpoints outside explicit preview builds', async()=>{const s=await readFile(new URL('../visual-preview255.mjs',import.meta.url),'utf8');assert.match(s,/ENABLED = false/);});
 
 test('self-editable profile flags cannot grant preview access',()=>{assert.equal(previewAccountAllowed('other-teacher',{role:'teacher',visualPreview255:true}),false);assert.equal(previewAccountAllowed(PREVIEW_TEST_UID,{role:'teacher'}),true);assert.equal(previewAccountAllowed('existing-admin',{role:'admin'}),true);});
+
+test('the verified preview owner can use AI without receiving administrator privileges',()=>{
+  assert.equal(previewAccountAllowed('8bStKRCHSOcxHp3xEDER0pUP0z53',{role:'teacher',status:'active'}),true);
+  assert.equal(previewAccountAllowed('another-active-teacher',{role:'teacher',status:'active',displayName:'Admin'}),false);
+});
