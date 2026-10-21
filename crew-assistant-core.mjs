@@ -114,7 +114,7 @@ function normalizeLocale(value = "de-DE") {
   return /^en(?:-|$)/i.test(String(value || "")) ? "en-GB" : "de-DE";
 }
 
-const PARSER_VERSION = "remy-structure-v7-audio-answer-semantics";
+const PARSER_VERSION = "remy-structure-v8-dictation-wishes";
 const INITIAL_EASY = /\b(?:(?:die\s+)?(?:erste[nr]?\s+aufgaben?|am\s+anfang|anfangs)|(?:the\s+)?(?:first\s+(?:questions?|tasks?)|at\s+the\s+beginning|initially))\b[^.!?]{0,50}?\b(?:leicht|einfach|easy|simple)\b/i;
 const NEGATED_DIFFICULTY = /\b(?:nicht|keinesfalls|keine?|not|no)\s+(?:(?:zu|so|too)\s+)?(?:leicht(?:e[nrsm]?)?|einfach(?:e[nrsm]?)?|schwer(?:e[nrsm]?)?|anspruchsvoll(?:e[nrsm]?)?|mittel|gemischt|easy|simple|hard|difficult|challenging|medium|mixed)\b/gi;
 const NUMBER_WORDS = Object.freeze({
@@ -162,6 +162,8 @@ function extractNumber(text, patterns, min, max) {
 function cleanTopic(value = "") {
   return normalizeText(value)
     .replace(/^[\s:,-]+|[\s,;.?!]+$/g, "")
+    .replace(/\s+(?=(?:gern(?:e)?|eigene\s+wünsche|i\s+would\s+like)\b).*$/i, "")
+    .replace(new RegExp(`[,;\\s]+(?=${QUANTITY_SOURCE}\\s+(?:audios?|audioaufgaben|audio[- ]?clips?)\\b).*`, "i"), "")
     .replace(/\s+(?=\b(?:bitte|please)\b).*$/i, "")
     .replace(/\s+(?=(?:ich\s+(?:will|möchte|moechte)|i\s+(?:want|would like))\b).*$/i, "")
     .replace(/\s+(?:die|das)\s+(?:in|an)\s+(?:der|einer)\s+(?:mittelschule|grundschule|realschule|gymnasium|gesamtschule|berufsschule)\b.*$/i, "")
@@ -209,7 +211,7 @@ function extractTopic(text) {
   return undefined;
 }
 
-function extractNotes(text) {
+function extractNotes(text, patch) {
   const notes = [];
   const add = note => {
     const value = normalizeText(note).replace(/[\s,;:.]+$/g, "");
@@ -236,6 +238,27 @@ function extractNotes(text) {
 
   const explicit = text.match(/\b(?:(?:eigene\s+)?wünsche?|requests?|additional requests?|notes?)\s*[:=-]\s*([^.!?]+)/i);
   if (explicit?.[1]) add(explicit[1].slice(0, 500));
+
+  // Keep free preferences in the teacher's own words. A partial local match
+  // must not silently discard wishes just because they are not in the list above.
+  const preference = /(?:^|\s)(?:gern(?:e)?|bitte\s+(?=(?:verwende|benutze|nutze|baue|beziehe|mit|ohne)\b)|(?:eigene\s+)?wünsche\s+(?:bitte\s+)?|ich\s+(?:möchte|moechte|hätte\s+gern(?:e)?)|i\s+would\s+like|please\s+(?=(?:use|include|add)\b))\s*([^.!?]+)/gi;
+  for (const match of text.matchAll(preference)) {
+    const wish = match[1]
+      .replace(new RegExp(`\\b(${QUANTITY_SOURCE})\\s+(aufgaben?|fragen?|questions?|tasks?|bilder?|pictures?|images?|audios|audioaufgaben|hör\\s*aufgaben|hoer\\s*aufgaben|punkte?|points?|minuten?|minutes?)\\b`, "gi"), (span, quantity, unit) => {
+        const field = /^(?:bild|picture|image)/i.test(unit) ? "imageQuestionCount"
+          : /^(?:audio|hör|hoer)/i.test(unit) ? "audioQuestionCount"
+            : /^(?:punkt|point)/i.test(unit) ? "points"
+              : /^min/i.test(unit) ? "durationMinutes" : "count";
+        return Number(normalizeSpokenNumbers(quantity)) === patch[field] ? " " : span;
+      })
+      .replace(/^[\s,;]*(?:(?:und|and|auch)\b[\s,;]*)+/i, "")
+      .replace(/[,;]\s*(?=(?:und|and)\b)/gi, " ")
+      .replace(/\s+(?:und|and|auch)[\s,;]*$/i, "")
+      .trim();
+    // Requests fully represented by existing form fields are not extra wishes.
+    if (!wish || /^(?:(?:einen?|an?|the)\s+)?(?:test|quiz|assessment)\b/i.test(wish)) continue;
+    add(wish.slice(0, 500));
+  }
 
   return notes.join(" ").slice(0, 1000) || undefined;
 }
@@ -302,6 +325,8 @@ function parseTestRequest(input = "") {
   if (imageQuestionCount !== undefined) patch.imageQuestionCount = imageQuestionCount;
 
   const audioQuestionCount = extractNumber(numericText, [
+    /\b(\d{1,2})\s*(?:audios|audioaufgaben|audio[- ]?clips?)\b/i,
+    /\b(\d{1,2})\s+audio\b(?![-\s]*(?:antwort|option|lösun|loesun|erklär|erklaer|answer|solution|explanation))/i,
     /\b(?:davon\s+)?(\d{1,2})\s*(?:hör|hoer)\s*(?:aufgaben?|fragen?)\b/i,
     /\b(\d{1,2})\s*(?:aufgaben?|fragen?)\s+mit\s+(?:audio(?![-\s]?(?:antwort|option|lösun|loesun|answer|solution))|hörtext|hoertext)\b/i,
     /\b(?:of\s+those\s+)?(\d{1,2})\s*(?:listening|audio)\s+(?:questions?|tasks?)\b/i,
@@ -342,7 +367,7 @@ function parseTestRequest(input = "") {
   if (allowedTypes.length) patch.allowedTypes = allowedTypes;
   if (excludedTypes.length) patch.excludeTypes = excludedTypes;
 
-  const notes = extractNotes(text);
+  const notes = extractNotes(text, patch);
   if (notes) patch.notes = notes;
 
   return patch;
