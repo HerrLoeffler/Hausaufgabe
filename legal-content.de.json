@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "language": "de-DE",
+  "updatedAt": "2026-10-21",
+  "operator": {
+    "name": "Martin Löffler",
+    "address": [
+      "Auenstraße 76",
+      "80469 München",
+      "Deutschland"
+    ],
+    "email": "martin.loeffler91@yahoo.de",
+    "phone": "+49 170 4917107",
+    "vatId": "DE453111477"
+  },
+  "pages": [
+    {
+      "id": "privacy",
+      "filename": "datenschutz.html",
+      "title": "Datenschutz",
+      "intro": "Was GradeCrew und GradeCrew Secure verarbeiten – verständlich erklärt.",
+      "sections": [
+        {
+          "title": "Kurz erklärt",
+          "paragraphs": [
+            "GradeCrew unterstützt Lehrkräfte beim Erstellen und Durchführen von Tests. GradeCrew Secure ist die iPad-App für die Teilnahme an einer Prüfung mit Testcode und Name oder vereinbartem Kürzel. Ein Kürzel ist nicht automatisch anonym.",
+            "Deine Antworten und dein Bearbeitungsstand werden für die Prüfung verarbeitet. Bei einem WLAN-Ausfall sichert Secure die Arbeit auf dem Gerät und versucht die Übertragung später erneut. Die lokale Sicherung ist noch keine Empfangsbestätigung des Servers.",
+            "Diese Informationen gelten für die öffentliche GradeCrew-Website, die Lehrerfunktionen und GradeCrew Secure. Neue Funktionen und die getrennte Testumgebung können zusätzliche Datenverarbeitung erfordern; echte Schülerdaten gehören nicht in die Testumgebung."
+          ]
+        },
+        {
+          "title": "Verantwortung und Kontakt",
+          "paragraphs": [
+            "Anbieter und Ansprechpartner für den Betrieb von GradeCrew ist Martin Löffler, Auenstraße 76, 80469 München, Deutschland. Datenschutzanfragen sind an martin.loeffler91@yahoo.de möglich; telefonisch unter +49 170 4917107.",
+            "Bei einer schulisch organisierten Prüfung entscheidet die jeweilige Schule über den Einsatz, die erforderlichen Schülerangaben und die schulische Auswertung. Die konkrete verantwortliche Schule, ihre Datenschutzkontakte, Rechtsgrundlage und Aufbewahrungsvorgaben erfährst du von deiner Lehrkraft beziehungsweise Schule. Die Betreiberangaben ersetzen diese schulischen Informationen nicht.",
+            "Soweit GradeCrew Prüfungsdaten im Auftrag einer Schule verarbeitet, sind Weisungen, Zugriffsrechte und Löschung mit ihr zu regeln. Die Bereitstellung dieser Seite bestätigt keinen bereits abgeschlossenen Auftragsverarbeitungsvertrag und keine Freigabe eines konkreten Schuleinsatzes."
+          ]
+        },
+        {
+          "title": "Website, Konto und lokale Speicherung",
+          "paragraphs": [
+            "Beim Abruf der Website und von Medien werden Verbindungsdaten wie IP-Adresse, Zeitpunkt und technische Angaben an den jeweiligen Server übertragen. Sie ermöglichen die Bereitstellung und dienen der Sicherheit und Fehlerbehandlung.",
+            "Für Lehrerkonten werden die bei der Registrierung angegebenen Kontaktdaten, Kontoidentität und Anmeldedaten über Firebase Authentication verarbeitet. Profile, Einstellungen, Tests und zugehörige Inhalte werden serverseitig gespeichert. Die Anmeldung und Entwürfe können im Browser beziehungsweise der App gespeichert bleiben, bis du dich abmeldest oder Daten entfernst. Verwende auf gemeinsam genutzten Geräten dein eigenes Konto und melde dich anschließend ab.",
+            "GradeCrew nutzt auch lokalen Browser-Speicher für Entwürfe, Einstellungen und noch nicht übertragene Feedbackmeldungen. Das Entfernen von Browser- oder Appdaten kann ausstehende Arbeit löschen. Diese Rechts- und Supportseiten selbst initialisieren keine Anmeldung, Analyse oder KI und funktionieren ohne JavaScript."
+          ]
+        },
+        {
+          "title": "Prüfungen und GradeCrew Secure",
+          "paragraphs": [
+            "Für eine Teilnahme werden Test- und Versuchkennungen, Name oder Kürzel, Antworten, Bearbeitungsstände und Zeitangaben verarbeitet. Die vorgesehenen schulischen Zugriffe ermöglichen der Lehrkraft die Auswertung. Der technische Betreiber kann Daten im Rahmen berechtigter Support- und Betriebsaufgaben verarbeiten; Prüfungsdaten sind keine öffentlich zugängliche Statistik.",
+            "Secure nutzt Apples Automatic Assessment Configuration. Vor dem Start wird die Prüfungssperre bestätigt. Der untersuchte Secure-Schülerablauf nimmt weder Kamera noch Mikrofon auf und enthält kein eigenes Schülerkonto mit E-Mail und Passwort. Die Sperre ersetzt keine Prüfungsaufsicht.",
+            "Die technische Auswertung kann nach dem hinterlegten Lösungsschlüssel Punkte berechnen. KI-generierte Testentwürfe und technische Bewertungen benötigen die Prüfung der Lehrkraft. Diese Seite trifft keine Zusage, dass jede schulische Notenentscheidung allein automatisch erfolgen darf."
+          ]
+        },
+        {
+          "title": "WLAN-Ausfall und Nachübertragung",
+          "paragraphs": [
+            "Secure hält den Antwortpuffer im geschützten App-Speicher. Er ist vom Gerätebackup ausgeschlossen; Zugangsmerkmale werden gerätegebunden in der Keychain gespeichert. Bei einer lokal dauerhaft gesicherten Abgabe kann das iPad bereits freigegeben werden, obwohl der Server noch nicht bestätigt hat. Die App kennzeichnet eine ausstehende Übertragung.",
+            "Öffne Secure mit Internetverbindung erneut. Vor der passenden Serverbestätigung bleibt ein neuer Test gesperrt. Bei vollständig beendeter App ist kein sofortiger Hintergrundtransfer garantiert. Lösche die App nicht und setze das Gerät nicht zurück, solange eine Abgabe aussteht.",
+            "Der lokale Antwortpuffer wird nach der passenden Serverbestätigung entfernt. Die begrenzte technische Möglichkeit einer späteren Wiederherstellung ist keine Löschfrist für bereits abgegebene Schülerleistungen. Zeitlich unklare Abgaben können eine Lehrkraftprüfung erfordern."
+          ]
+        },
+        {
+          "title": "KI-Funktionen, Sprache und Material",
+          "paragraphs": [
+            "Wenn eine Lehrkraft eine KI-Funktion nutzt, werden die dafür eingegebenen Themen, Wünsche, Testkontexte und gegebenenfalls Material oder ausgewählte Aufgaben über den Server an OpenAI übermittelt. Dazu können auch Inhalte zur Überarbeitung, Bild- oder Audioerstellung und kontextbezogenen Crew-Unterstützung gehören. Nicht benötigte Schülernamen, Leistungsdaten oder andere personenbezogene Informationen dürfen nicht in KI-Eingaben oder Material gelangen.",
+            "Die lokale Spracherkennung in der nativen Remy-Schnellfunktion verarbeitet die Aufnahme auf dem Gerät; der erkannte Text kann für die gewünschte Testerstellung an den Server und die KI gehen. Das ist von der Secure-Schüler-App zu unterscheiden. Andere Browserfunktionen können abweichende Berechtigungen und Verarbeitung haben.",
+            "Hochgeladene Originalmaterialien werden vorübergehend in Firebase Storage gespeichert. Der vorgesehene Ablauf löscht sie nach dem Erstellungsversuch; nicht verwendete Uploads werden ab einem Alter von 24 Stunden durch einen täglichen Bereinigungsjob erfasst. Erstellte Aufgaben und Medien können Bestandteil des gespeicherten Tests bleiben.",
+            "OpenAI beschreibt für API-Dienste standardmäßig keinen Einsatz von Ein- und Ausgaben zum Modelltraining. Das bedeutet nicht, dass keine Speicherung stattfindet: Sicherheitsprotokolle und weitere Aufbewahrung hängen vom verwendeten Dienst und den Kontoeinstellungen ab. Für Responses-Aufrufe wird soweit im untersuchten Erstellungsweg vorgesehen store:false verwendet; dies ersetzt keine Prüfung der übrigen Anbieteraufbewahrung."
+          ]
+        },
+        {
+          "title": "Feedback, Crew-Unterstützung und Statistik",
+          "paragraphs": [
+            "Feedback kann Angaben zur betroffenen Oberfläche, technische Informationen, von dir verfasste Hinweise und gegebenenfalls bewusst beigefügte Bilder enthalten. Hinweise von Lehrkräften werden zur Prüfung gespeichert; sie lösen keine ungeprüfte automatische Änderung aus. Übermittle keine unnötigen Schülerdaten in Meldungen. Crew-Unterstützung kann kontobezogenen Kontext und gespeicherte Präferenzen nutzen.",
+            "Technische Crew-Metriken erfassen zum Beispiel Eingabemodus, Latenz, Fehlerart und welche Formularfelder korrigiert wurden. Der untersuchte Metrikpfad speichert dafür keine vollständigen Sprachaufnahmen, Themen, Wünsche oder Antworttexte. Pseudonyme Kontokennungen können dennoch personenbezogen sein.",
+            "Secure kann versuchsbezogene Ereignisse zu Start, Unterbrechung, Bearbeitungsstatus und Abgabe verarbeiten. Die Dauer zwischen Start und Abgabe ist keine Messung durchgehend aktiver Lernzeit. Die lokale Ereigniswarteschlange sondert bei ihrer Verarbeitung Einträge anhand einer 30-Tage-Grenze aus; bei ausgeschalteter App läuft kein garantierter Löschjob.",
+            "Der untersuchte Web-Export zu PostHog ist auf die getrennte Testumgebung gradecrew-staging-2026 begrenzt. Er überträgt technische Crew-Ereignisse mit tagesbezogenen pseudonymen Kennungen an den EU-Endpunkt und vermeidet Personenprofile. Für die Schulversion hausaufgabe-staging ist dieser Export in diesem Codepfad deaktiviert. Das ist keine pauschale Aussage über sämtliche Anbieterprotokolle."
+          ]
+        },
+        {
+          "title": "Dienstleister, Datenstandorte und Übermittlungen",
+          "paragraphs": [
+            "GradeCrew verwendet Google-/Firebase-Dienste für Hosting, Anmeldung, Datenbank, Dateien und serverseitige Verarbeitung. Die konfigurierte Firestore-Region ist eur3, die Functions-Region europe-west1. Daraus folgt nicht, dass alle Daten ausschließlich in Deutschland oder ausschließlich in der EU verarbeitet werden. Insbesondere Authentifizierung, Anbieter-Support und Sicherheitsprotokolle sind gesondert zu berücksichtigen.",
+            "OpenAI wird bei den beschriebenen KI-Aktionen eingesetzt. Ausgelieferte Bild- und Audiodateien und externe Bibliotheken können zusätzliche Verbindungen zum jeweiligen Anbieter auslösen. Apple verarbeitet Daten im Zusammenhang mit App Store und Betriebssystem nach eigenen Informationen.",
+            "Für beauftragte Verarbeitung und mögliche Drittlandübermittlungen sind die tatsächlich geltenden Anbietervereinbarungen und geeigneten Übermittlungsgrundlagen maßgeblich. Informationen zu den für deinen Einsatz geltenden Empfängern und Garantien kannst du beim Betreiber beziehungsweise der zuständigen Schule anfordern. Diese Seite behauptet weder eine ausschließlich deutsche Verarbeitung noch einen bereits abgeschlossenen Vertrag jeder Schule.",
+            "Anbieterinformationen: Firebase https://firebase.google.com/support/privacy ; Google Cloud Datenschutzbedingungen https://cloud.google.com/terms/data-processing-addendum ; OpenAI https://openai.com/policies/data-processing-addendum/ ; OpenAI API-Datenkontrollen https://developers.openai.com/api/docs/guides/your-data ."
+          ]
+        },
+        {
+          "title": "Zwecke und Rechtsgrundlagen",
+          "paragraphs": [
+            "Lehrerkonten, angeforderte Funktionen und zugehöriger Support dienen der Bereitstellung des Dienstes; soweit die Voraussetzungen vorliegen, ist Art. 6 Abs. 1 Buchstabe b DSGVO maßgeblich. Sicherheits- und Fehlerbehandlung dient dem berechtigten Interesse an einem verlässlichen Betrieb nach Art. 6 Abs. 1 Buchstabe f DSGVO; dabei sind die Interessen betroffener Personen, insbesondere von Kindern, zu berücksichtigen. Gesetzliche Pflichten können Art. 6 Abs. 1 Buchstabe c DSGVO erfordern.",
+            "Bei einer schulischen Prüfung legt die verantwortliche Schule die konkrete schulrechtliche Grundlage fest. Das Drücken von Test starten ist keine pauschale Einwilligung in beliebige Statistik, Werbung oder KI-Verarbeitung. Eine gegebenenfalls erforderliche gesonderte Einwilligung muss freiwillig und widerrufbar sein.",
+            "Die für einen Test erforderlichen Angaben teilt die Lehrkraft mit. Ohne gültigen Code und die vereinbarte Teilnehmerkennung kann die Teilnahme nicht zugeordnet werden. Für optionale KI-Funktionen oder Feedback musst du keine zusätzlichen Schülerdaten bereitstellen."
+          ]
+        },
+        {
+          "title": "Aufbewahrung und Löschung",
+          "paragraphs": [
+            "Konten und Inhalte bleiben für die laufende Nutzung gespeichert. Für Prüfungen, Antworten und Ergebnisse ist derzeit keine einheitliche automatische Löschung nach einer festen Zahl von Tagen zugesichert. Die verantwortliche Schule muss die erforderliche Dauer anhand Prüfungszweck und schulischen Pflichten bestimmen; Löschung und Auskunft können über Schule und Betreiber angefragt werden. Eine bloße Papierkorbablage oder Abmeldung ist nicht gleichbedeutend mit einer vollständigen Löschung.",
+            "Der untersuchte Web-Code sieht für Crew-Rohereignisse 30 Tage und für Marker eindeutiger Nutzer 90 Tage bis zur Bereinigung vor. Inhaltsfreie Tagesaggregate können für Trends weiterbestehen. Diese Fristen sind nicht auf Prüfungsantworten, KI-Sicherheitsprotokolle oder sämtliche Supportdaten übertragbar.",
+            "Sicherungen können zeitweise ältere Daten enthalten. Die vollständigen konkreten Fristen für Serverprotokolle, Supportfälle und Backups werden nicht durch die genannten lokalen oder Metrikfristen abgedeckt. Kontaktiere den Betreiber für die auf deinen Vorgang anwendbaren Kriterien; notwendige Aufbewahrung und tatsächliche Löschung müssen vor einem schulischen Einsatz abgestimmt sein. Es wird keine sofortige Löschung sämtlicher Sicherungen zugesagt."
+          ]
+        },
+        {
+          "title": "Deine Rechte und Beschwerden",
+          "paragraphs": [
+            "Du kannst unter den gesetzlichen Voraussetzungen Auskunft, Berichtigung, Löschung oder Einschränkung der Verarbeitung verlangen. Je nach Rechtsgrundlage bestehen ein Recht auf Datenübertragbarkeit, ein Widerspruchsrecht und bei Einwilligung deren Widerruf für die Zukunft. Schulische Aufbewahrungspflichten können einer sofortigen Löschung entgegenstehen.",
+            "Wende dich für schulische Prüfungsdaten zunächst an deine Schule; für die GradeCrew-Betriebsverarbeitung an martin.loeffler91@yahoo.de. Bei Kürzeln kann die Zuordnung über die Schule erforderlich sein. Sende keine unnötigen Ausweiskopien oder fremden Schülerdaten.",
+            "Du kannst dich bei einer Datenschutzaufsichtsbehörde beschweren. Für einen privaten Betreiber in Bayern ist das Bayerische Landesamt für Datenschutzaufsicht eine Anlaufstelle: https://www.lda.bayern.de . Für bayerische staatliche Schulen ist der Bayerische Landesbeauftragte für den Datenschutz zuständig: https://www.datenschutz-bayern.de ."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "imprint",
+      "filename": "impressum.html",
+      "title": "Impressum",
+      "intro": "Anbieter und Kontakt für GradeCrew und GradeCrew Secure.",
+      "sections": [
+        {
+          "title": "Anbieter",
+          "paragraphs": [
+            "Martin Löffler",
+            "Auenstraße 76",
+            "80469 München, Deutschland"
+          ]
+        },
+        {
+          "title": "Kontakt",
+          "paragraphs": [
+            "E-Mail: martin.loeffler91@yahoo.de",
+            "Telefon: +49 170 4917107"
+          ]
+        },
+        {
+          "title": "Umsatzsteuer-Identifikationsnummer",
+          "paragraphs": [
+            "Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: DE453111477"
+          ]
+        },
+        {
+          "title": "Angebot",
+          "paragraphs": [
+            "GradeCrew und GradeCrew Secure sind Produktbezeichnungen des oben genannten Betreibers. Diese Anbieterinformationen gelten für die GradeCrew-Website und die zugehörige Secure-App.",
+            "Bei fachlichen Fragen zu einer schulischen Prüfung ist die jeweilige Lehrkraft beziehungsweise Schule zuständig."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "support",
+      "filename": "support.html",
+      "title": "Support",
+      "intro": "Hilfe zur Teilnahme, zur Abgabe und zu technischen Fragen.",
+      "sections": [
+        {
+          "title": "So erreichst du uns",
+          "paragraphs": [
+            "E-Mail: martin.loeffler91@yahoo.de",
+            "Telefon: +49 170 4917107",
+            "Bitte nenne App-Version, iPad-Modell, Betriebssystem und den Wortlaut der Fehlermeldung. Übermittle keine Zugangstoken, Passwörter, vollständigen Prüfungsantworten oder fremden Schülerdaten. Eine Rund-um-die-Uhr-Betreuung oder feste Antwortzeit wird nicht zugesichert."
+          ]
+        },
+        {
+          "title": "Testcode und Teilnahme",
+          "paragraphs": [
+            "Für GradeCrew Secure benötigst du einen gültigen Code deiner Lehrkraft und deinen Namen oder ein vereinbartes Kürzel. Ein eigenes Schülerkonto ist dafür nicht erforderlich. Fragen zu Aufgaben, Ergebnissen oder dem Zeitlimit beantwortet die zuständige Lehrkraft."
+          ]
+        },
+        {
+          "title": "Abgabe noch nicht übertragen",
+          "paragraphs": [
+            "Verbinde das iPad mit dem Internet und öffne Secure erneut. Eine lokale Sicherung ist noch keine Bestätigung des Servers. Solange die Abgabe aussteht, die App nicht löschen und das Gerät nicht zurücksetzen. Ein neuer Test bleibt bis zur Empfangsbestätigung gesperrt. Zeige eine weiterhin bestehende Meldung deiner Lehrkraft."
+          ]
+        },
+        {
+          "title": "Prüfungssperre lässt sich nicht starten",
+          "paragraphs": [
+            "Zeige die Meldung deiner Lehrkraft. Beginne eine beaufsichtigte Secure-Prüfung nicht unter Umgehung der vorgesehenen Sperre. Der aktuelle Store-Kandidat unterstützt iPads ab iPadOS 17; nicht jedes ältere iPad erfüllt diese Voraussetzung."
+          ]
+        },
+        {
+          "title": "Datenschutz oder Konto löschen",
+          "paragraphs": [
+            "Schreibe für betriebliche Datenschutzfragen an die oben genannte Adresse. Für schulische Prüfungsdaten ist zusätzlich die zuständige Schule einzubeziehen. Nenne nur die für die Zuordnung erforderlichen Angaben; ein Löschwunsch ersetzt keine Prüfung gesetzlicher Aufbewahrungspflichten."
+          ]
+        }
+      ]
+    }
+  ]
+}

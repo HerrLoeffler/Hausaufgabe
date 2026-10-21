@@ -357,6 +357,8 @@ test('view navigation restores focus without interrupting an input or an open di
   w.clearPublishSubscriptions = () => {};
   w.clearStudentSubscriptions = () => {};
   w.scrollTo = () => {};
+  w.state = { user: null, profile: null };
+  w.syncDashboardTutorialEntry = () => {}; // Existing showView dependency; tutorial behavior has its own suite.
   w.eval(fn('showView'));
   w.$('loginEmail').focus();
   w.showView('editorView');
