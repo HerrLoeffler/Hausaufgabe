@@ -9,8 +9,8 @@ test('teacher chapter table uses frozen labels and escapes author text',()=>{
 test('chapter notes use the frozen scale and remain pending until reviewed',()=>{
  const c={Chapters:C,escapeHtml:s=>String(s),gradeFromPercent:(p,scale)=>p>=scale.thresholds[1]?2:4};vm.createContext(c);vm.runInContext(source.slice(source.indexOf('function chapterResultsMarkup('),source.indexOf('\nfunction renderResultsTable(')),c);
  const submission={status:'graded',gradeScaleSnapshot:{thresholds:[95,80,65,50,30,0]},chapterSnapshot:{chapters:[{id:'ch_a',title:'Brüche',position:1}],questions:[{id:'q',chapterId:'ch_a',maxPoints:4}]},grading:{q:{awardedPoints:3}}};
- let html=c.chapterResultsMarkup(submission);assert.match(html,/<th>Note<\/th>/);assert.match(html,/>4<\/td>/);
- html=c.chapterResultsMarkup({...submission,status:'review'});assert.doesNotMatch(html,/>4<\/td>/);assert.match(html,/Bewertung offen/);
+ let html=c.chapterResultsMarkup(submission);assert.match(html,/<th>Note<\/th>/);assert.match(html,/>4,0<\/td>/);
+ html=c.chapterResultsMarkup({...submission,status:'review'});assert.doesNotMatch(html,/>4,0<\/td>/);assert.match(html,/Bewertung offen/);
 });
 
 test('secure student renders supplied chapter notes only in grade release mode',()=>{
@@ -27,6 +27,6 @@ test('class average is a native disclosure with overall grade visible while coll
  const {JSDOM}=require('jsdom');
  for(const total of [null,{count:3,gradeCount:3,points:7,maxPoints:10,percent:70,grade:2.67}]){
   const c={classAverages:()=>({total,chapters:[],included:total?3:0,pending:1}),gradeFromPercent(){},escapeHtml:s=>String(s)};vm.createContext(c);vm.runInContext(source.slice(source.indexOf('function classAveragesMarkup('),source.indexOf('\nfunction renderResultsTable(')),c);
-  const dom=new JSDOM(c.classAveragesMarkup([]));const detail=dom.window.document.querySelector('details.chapterClassAverages');assert.ok(detail);assert.equal(detail.open,false);assert.match(detail.querySelector('summary').textContent,/Klassendurchschnitt/);assert.match(detail.querySelector('summary').textContent,total?/Ø Gesamtnote 2,67/:/Ø Gesamtnote –/);dom.window.close();
+  const dom=new JSDOM(c.classAveragesMarkup([]));const detail=dom.window.document.querySelector('details.chapterClassAverages');assert.ok(detail);assert.equal(detail.open,false);assert.match(detail.querySelector('summary').textContent,/Klassendurchschnitt/);assert.match(detail.querySelector('summary').textContent,total?/Ø Gesamtnote 2,7/:/Ø Gesamtnote –/);dom.window.close();
  }
 });

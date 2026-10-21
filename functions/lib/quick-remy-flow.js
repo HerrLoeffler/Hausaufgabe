@@ -7,6 +7,9 @@ const {
   normalizeRecoveryRequest
 } = require("./quick-remy-contract");
 
+const { preparePedagogicalPool } = require("./pedagogical-pool");
+const { buildChapterPlan } = require("./quick-remy-chapter-planning");
+
 function safeDefaults(profile = {}) {
   const settings = profile.settings && typeof profile.settings === "object" ? profile.settings : {};
   const defaults = {};
@@ -26,14 +29,16 @@ function createQuickRemyService({ requireUser, consumeQuota, interpret, recordUs
     const { uid, profile } = await requireUser(request);
     const input = normalizePrepareRequest(request.data || {});
     await consumeQuota(uid, "quickRemy");
+    const pedagogicalContext = input.chapterPlanning ? preparePedagogicalPool({ ...input.knownFields, ...input.chapterPlanning, notes: input.conversationText }) : undefined;
     let response;
+    let result;
     try {
-      response = await interpret({ uid, ...input, defaults: safeDefaults(profile) });
+      response = await interpret({ uid, ...input, ...(pedagogicalContext ? { pedagogicalContext } : {}), defaults: safeDefaults(profile) });
+      result = input.chapterPlanning ? buildChapterPlan(response?.data, input, pedagogicalContext.meta) : normalizePrepareResult(response?.data || {});
     } catch (error) {
-      await recordUsage(uid, "quickRemy", error?.usage || {}, { model, promptVersion, failed: true, code: String(error?.code || error?.name || "provider-error").slice(0, 60) });
+      await recordUsage(uid, "quickRemy", error?.usage || response?.usage || {}, { model, promptVersion, failed: true, code: String(error?.code || error?.name || "provider-error").slice(0, 60) });
       throw error;
     }
-    const result = normalizePrepareResult(response?.data || {});
     await recordUsage(uid, "quickRemy", response?.usage || {}, { model, promptVersion, failed: false });
     return result;
   }

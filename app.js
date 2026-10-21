@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc46-chapters-rc3";
+const APP_VERSION = "2.3.1-gc46-chapters-rc4";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -46,6 +46,7 @@ import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc43";
 import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc43";
 import { recordTutorialSignIn } from "./tutorial-signins.mjs?v=1";
 import { syncDashboardTutorialEntry } from "./dashboard-tutorial-entry.mjs?v=1";
+import { mountChapterAnswerExplorer } from "./chapter-answer-explorer.mjs";
 import { classAverages } from "./chapter-averages.mjs";
 import { mountChapterCreation } from "./chapter-creation.mjs";
 import { mountChapterEditor, mountQuestionChapterSelect, chapterFields, copyChapterFields } from "./chapter-editor.mjs";
@@ -1247,6 +1248,9 @@ onAuthStateChanged(auth, async (user) => {
   if (guestTourRepo && user) exitGuestTour();
   const accountChanged = state.user?.uid !== user?.uid;
   if (accountChanged) {
+    state.answerExplorerController?.destroy();
+    state.answerExplorerController = null;
+    state.chapterCreationController?.reset();
     window.GradeCrewNative?.setAuthState?.({ state: "checking" })?.catch(() => {});
     document.dispatchEvent(new CustomEvent("gradecrew:account-changed"));
     adminAuditCursor = null;
@@ -2755,8 +2759,21 @@ function resetAiFormForNewTest() {
 }
 
 
+function chapterPlanningContext() {
+  return JSON.stringify([state.user?.uid, ...["aiSubject","aiGrade","aiTopic","aiCount","aiPoints","aiCustomNotes","aiSchoolType","aiRegion"].map(id=>$(id)?.value||""),window.GradeCrewAssessmentLocale?.getContentLocale?.()||"de-DE"]);
+}
+
+async function planRemyChapters() {
+  const subject=$("aiSubject").value.trim(), grade=$("aiGrade").value.trim(), topic=$("aiTopic").value.trim();
+  const count=Number($("aiCount").value), points=Number($("aiPoints").value);
+  if(!state.user)throw new Error("Bitte zuerst anmelden.");
+  if(!subject||!grade||!topic)throw new Error("Bitte Fach, Klasse und Thema eintragen, damit Remy die Kapitel passend planen kann.");
+  if(!Number.isInteger(count)||count<1||count>100||!Number.isFinite(points)||!Number.isInteger(points*2)||points<count/2||points>1000)throw new Error("Bitte Aufgabenanzahl und Gesamtpunkte prüfen (maximal 100 Aufgaben und 1000 Punkte).");
+  return aiApi.prepareQuickRemy({requestId:`chap-${crypto.randomUUID().replace(/-/g,"")}`,conversationText:$("aiCustomNotes")?.value.trim()||topic,knownFields:{subject,grade,topic,count},chapterPlanning:{points,schoolType:$("aiSchoolType").value.trim(),region:$("aiRegion").value.trim(),contentLocale:window.GradeCrewAssessmentLocale?.getContentLocale?.()||"de-DE"}});
+}
+
 async function openAiView() {
-  if($("chapterCreation") && !state.chapterCreationController) state.chapterCreationController=mountChapterCreation({root:$("chapterCreation"),counts:$("aiCount"),points:$("aiPoints")});
+  if($("chapterCreation") && !state.chapterCreationController) state.chapterCreationController=mountChapterCreation({root:$("chapterCreation"),counts:$("aiCount"),points:$("aiPoints"),onPlan:planRemyChapters,getContextKey:chapterPlanningContext});
   resetAiFormForNewTest();
   const settings = getSettings();
   $("aiMaterialConfirmed").checked = false;
@@ -2955,7 +2972,7 @@ async function handleAiMaterialFiles(event) {
   setAiProgress();
 }
 
-function collectAiRequest() {
+function collectAiRequest({skipChapterPlan=false}={}) {
   if (state.aiMaterials.length && !$("aiMaterialConfirmed").checked) throw new Error("Bitte die Prüfung der hochgeladenen Materialien bestätigen.");
   const allowedTypes = Array.from($("aiTypeChecks").querySelectorAll('input[type="checkbox"]:checked')).map(x => x.value);
   if (!$("aiTopic").value.trim()) throw new Error("Bitte ein Thema eingeben.");
@@ -2982,7 +2999,7 @@ function collectAiRequest() {
   if (!answerInput?.value.trim() || !Number.isInteger(audioAnswerQuestionCount) || audioAnswerQuestionCount < 0 || audioAnswerQuestionCount > 5 || audioAnswerQuestionCount > count) throw new Error("Bitte 0 bis 5 Aufgaben mit Audioantworten wählen.");
   if (audioAnswerQuestionCount && !allowedTypes.some(type => ["single", "multi"].includes(type))) throw new Error("Für Audioantworten bitte Einzel- oder Mehrfachauswahl erlauben.");
   return {
-    ...(state.chapterCreationController?.getPlan() || {}),
+    ...(skipChapterPlan?{}:state.chapterCreationController?.getPlan() || {}),
     subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
     topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, points,
     allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
@@ -3019,12 +3036,18 @@ async function generateAiTestNative() {
     if (crewTour.creating) return crewTour.create();
     return toast("Folge zuerst dem aktuellen Schritt der Einführung.");
   }
+  if(state.chapterPlanningSubmitPending||state.aiStarting)return;
+  state.chapterPlanningSubmitPending=true;
+  const generateButton=$("generateAiTestBtn");if(generateButton)generateButton.disabled=true;
   try {
+    collectAiRequest({skipChapterPlan:true});
+    await state.chapterCreationController?.ensurePlan();
     const request = collectAiRequest();
     await saveAiPreferences({ silent: true });
     await startAiCreationJob(request);
   }
   catch (err) { setAiProgress(aiFriendlyError(err), true); toast(aiFriendlyError(err), "error"); }
+  finally {state.chapterPlanningSubmitPending=false;if(generateButton&&!state.aiStarting)generateButton.disabled=false;}
 }
 
 async function saveAiPreferences({ silent = false } = {}) {
@@ -7739,7 +7762,7 @@ function renderStudentResult(quiz, questions, answers, grading, points, maxPoint
   } else {
     summary += `<div class="scoreBig">${round1(points)}/${round1(maxPoints)} Punkte</div>`;
     if (mode === "points_percent" || mode === "points_grade") summary += `<p>${percent}%${needsReview ? " · vorläufiges Ergebnis" : ""}</p>`;
-    if (mode === "points_grade" && !needsReview) summary += `<p class="studentGrade">Note ${gradeFromPercent(percent, scale)}</p>`;
+    if (mode === "points_grade" && !needsReview) summary += `<p class="studentGrade">Note ${gradeFromPercent(percent, scale).toLocaleString("de-DE",{minimumFractionDigits:1,maximumFractionDigits:1})}</p>`;
     if (needsReview) summary += `<p>Mindestens eine Antwort wird noch von der Lehrkraft geprüft.</p>`;
   }
   if (showSolutions && mode !== "none") summary += `<div id="studentResultDetails"></div>`;
@@ -7804,9 +7827,9 @@ async function openResults(code) {
 
 function submissionGrade(s) {
   if (s.status === "review") return "–";
-  if (Number.isFinite(Number(s.grade)) && Number(s.grade) >= 1 && Number(s.grade) <= 6) return Number(s.grade);
+  if (Number.isFinite(Number(s.grade)) && Number(s.grade) >= 1 && Number(s.grade) <= 6) return Number(s.grade).toLocaleString("de-DE",{minimumFractionDigits:1,maximumFractionDigits:1});
   const scale = s.gradeScaleSnapshot?.thresholds?.length === 6 ? s.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
-  return gradeFromPercent(Number(s.percent || 0), scale);
+  return gradeFromPercent(Number(s.percent || 0), scale).toLocaleString("de-DE",{minimumFractionDigits:1,maximumFractionDigits:1});
 }
 
 function chapterResultsMarkup(submission) {
@@ -7816,13 +7839,13 @@ function chapterResultsMarkup(submission) {
   return `<table class="secureChapterResults"><thead><tr><th>Kapitel</th><th>Punkte</th><th>Prozent</th><th>Note</th><th>Status</th></tr></thead><tbody>${rows.map(r=>{
     const pending=r.needsReview||submission.status==="review";
     const grade=!pending&&r.percent!=null&&scale?.thresholds?.length===6?gradeFromPercent(r.percent,scale):null;
-    return `<tr><td>${escapeHtml(r.title)}</td><td>${r.awardedPoints}/${r.maxPoints}</td><td>${r.percent==null?"–":r.percent+" %"}</td><td>${grade==null?"–":grade}</td><td>${pending?"Bewertung offen":"Bewertet"}</td></tr>`;
+    return `<tr><td>${escapeHtml(r.title)}</td><td>${r.awardedPoints}/${r.maxPoints}</td><td>${r.percent==null?"–":r.percent+" %"}</td><td>${grade==null?"–":grade.toLocaleString("de-DE",{minimumFractionDigits:1,maximumFractionDigits:1})}</td><td>${pending?"Bewertung offen":"Bewertet"}</td></tr>`;
   }).join("")}</tbody></table>`;
 }
 
 function classAveragesMarkup(submissions) {
   const summary=classAverages(submissions,gradeFromPercent);
-  const number=value=>value==null?"–":Number(value.toFixed(2)).toLocaleString("de-DE");
+  const number=value=>value==null?"–":Number(value).toLocaleString("de-DE",{minimumFractionDigits:1,maximumFractionDigits:1});
   const heading=`<summary><span class="chapterAverageSummaryContent"><strong>Klassendurchschnitt</strong><span>Ø Gesamtnote ${number(summary.total?.grade)}</span></span></summary>`;
   if(!summary.total)return `<details class="card chapterClassAverages">${heading}<p>Noch keine vollständig bewerteten Abgaben. ${summary.pending} Bewertung(en) offen.</p></details>`;
   const row=(title,value,total=false)=>`<tr${total?' class="chapterClassTotal"':''}><th scope="row">${escapeHtml(title)}</th><td>${number(value.points)}/${number(value.maxPoints)}</td><td>${number(value.percent)} %</td><td>${number(value.grade)}${value.gradeCount!==value.count?` <small>(${value.gradeCount} Noten)</small>`:""}</td><td>${value.count}</td></tr>`;
@@ -7830,6 +7853,7 @@ function classAveragesMarkup(submissions) {
 }
 
 function renderResultsTable() {
+  state.answerExplorerController?.destroy();state.answerExplorerController=null;
   const wrap = $("resultsTableWrap");
   if (!state.submissions.length) {
     wrap.innerHTML = `<div class="empty"><h2>Noch keine Abgaben</h2><p>Sobald Schüler den Test abgeben, erscheinen die Ergebnisse hier.</p></div>`;
@@ -7844,8 +7868,10 @@ function renderResultsTable() {
   });
   html += "</tbody></table>";
   html += state.submissions.filter(s=>s.chapterSnapshot).map(s=>`<details class="card"><summary>${escapeHtml(s.studentName)} · Kapitelpunkte</summary>${chapterResultsMarkup(s)}</details>`).join("");
+  html+='<section id="chapterAnswerExplorer" class="card"></section>';
   if(state.submissions.some(s=>s.chapterSnapshot))html+=classAveragesMarkup(state.submissions);
   wrap.innerHTML = html;
+  state.answerExplorerController=mountChapterAnswerExplorer({root:$("chapterAnswerExplorer"),submissions:state.submissions,currentQuestions:state.resultQuestions,answerDisplay,correctDisplay,locale:state.currentResultsQuiz?.contentLocale,onReview:openReview});
   wrap.querySelectorAll(".reviewBtn").forEach((btn) => btn.addEventListener("click", () => openReview(btn.dataset.id)));
 }
 
@@ -7916,7 +7942,7 @@ async function openReview(id) {
     const max = state.resultQuestions.reduce((sum, q) => sum + Number(q.points || 0), 0);
     const pc = max ? Math.round((pts / max) * 100) : 0;
     const scale = s.gradeScaleSnapshot?.thresholds?.length === 6 ? s.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
-    $("reviewTotal").textContent = `${round1(pts)}/${round1(max)} Punkte · ${pc}% · Note ${gradeFromPercent(pc, scale)}`;
+    $("reviewTotal").textContent = `${round1(pts)}/${round1(max)} Punkte · ${pc}% · Note ${gradeFromPercent(pc, scale).toLocaleString("de-DE",{minimumFractionDigits:1,maximumFractionDigits:1})}`;
   };
   panel.querySelectorAll(".manualPoints").forEach((x) => {
     x.addEventListener("input", recompute);

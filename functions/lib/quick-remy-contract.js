@@ -40,10 +40,13 @@ function normalizeKnownFields(value = {}) {
 }
 
 function normalizePrepareRequest(data = {}) {
+  const knownFields = normalizeKnownFields(data.knownFields);
+  const chapterPlanning = data.chapterPlanning === undefined ? undefined : require("./quick-remy-chapter-planning").normalizeChapterPlanning(data.chapterPlanning, knownFields, data.conversationText);
   return {
     requestId: normalizeRequestId(data.requestId),
-    conversationText: normalizeText(data.conversationText, "Sprachtext", MAX_CONVERSATION_CHARS),
-    knownFields: normalizeKnownFields(data.knownFields)
+    conversationText: normalizeText(data.conversationText, "Sprachtext", chapterPlanning ? 6000 : MAX_CONVERSATION_CHARS),
+    knownFields,
+    ...(chapterPlanning ? { chapterPlanning } : {})
   };
 }
 

@@ -679,7 +679,7 @@ function showReceipt(receipt) {
     }
     if (receipt.grade != null) {
       const g = document.createElement("span");
-      g.textContent = `Note ${receipt.grade}`;
+      g.textContent = `Note ${Number(receipt.grade).toLocaleString("de-DE",{minimumFractionDigits:1,maximumFractionDigits:1})}`;
       meta.appendChild(g);
     }
     host.appendChild(meta);
@@ -692,7 +692,7 @@ function showReceipt(receipt) {
     const head=document.createElement("thead"),header=document.createElement("tr");
     for(const label of ["Kapitel","Punkte",...(showPercent?["Prozent"]:[]),...(showGrade?["Note"]:[])]){const th=document.createElement("th");th.scope="col";th.textContent=label;header.append(th);}head.append(header);table.append(head);
     const body=document.createElement("tbody");
-    for(const row of receipt.chapterResults){const tr=document.createElement("tr");for(const value of [row.title,`${row.awardedPoints}/${row.maxPoints}`,...(showPercent?[row.percent==null?"–":`${row.percent} %`]:[]),...(showGrade?[row.grade==null?"–":`Note ${row.grade}`]:[])]){const td=document.createElement("td");td.textContent=value;tr.append(td);}body.append(tr);}table.append(body);host.append(table);
+    for(const row of receipt.chapterResults){const tr=document.createElement("tr");for(const value of [row.title,`${row.awardedPoints}/${row.maxPoints}`,...(showPercent?[row.percent==null?"–":`${row.percent} %`]:[]),...(showGrade?[row.grade==null?"–":`Note ${Number(row.grade).toLocaleString("de-DE",{minimumFractionDigits:1,maximumFractionDigits:1})}`]:[])]){const td=document.createElement("td");td.textContent=value;tr.append(td);}body.append(tr);}table.append(body);host.append(table);
   }
   const solutionNote = document.createElement("p");
   solutionNote.textContent = "Lösungen werden nicht automatisch mit der Abgabe freigegeben.";

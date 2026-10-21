@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GradeCrew – Tests. Einfach digital.</title>
   <meta name="crew-art-version" content="clay-2" />
-  <meta name="app-version" content="2.3.1-gc46-chapters-rc3" />
+  <meta name="app-version" content="2.3.1-gc46-chapters-rc4" />
   <link rel="stylesheet" href="styles.css?v=2.3.1-gc2" />
   <link rel="stylesheet" href="design-system.css?v=2.3.1-gc2" />
-  <link rel="stylesheet" href="gradecrew-brand.css?v=2.3.1-gc46-chapters-rc3" />
+  <link rel="stylesheet" href="gradecrew-brand.css?v=2.3.1-gc46-chapters-rc4" />
   <link rel="stylesheet" href="crew-clay.css?v=3" />
   <link rel="stylesheet" href="workspace.css?v=2.3.1-gc2" />
   <link rel="icon" href="assets/gradecrew/penguin-icon.svg" type="image/svg+xml" />
@@ -325,15 +325,18 @@
             <label>Schulart<input id="aiSchoolType" type="text" value="Mittelschule" /></label>
             <label>Bundesland<input id="aiRegion" type="text" value="Bayern" /></label>
             <label class="span2">Thema<input id="aiTopic" type="text" placeholder="Zinsrechnung" /></label>
+            <section id="chapterCreation" class="chapterEditor span2" aria-label="Themenplan"></section>
             <label>Aufgabenanzahl<input id="aiCount" type="number" min="1" max="100" value="10" /></label>
             <label>Schwierigkeit<select id="aiDifficulty"><option>leicht</option><option selected>mittel</option><option>anspruchsvoll</option><option>gemischt</option></select></label>
             <label>Gesamtpunkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label>
           </div>
+          <label class="aiNotesField">Eigene Wünsche <small>(optional)</small><textarea id="aiCustomNotes" rows="5" maxlength="6000" placeholder="z. B. anspruchsvolle Sachaufgaben, viele Zuordnungen, keine Babysätze …"></textarea></label>
+          <p class="hint">Tippe oder diktiere deinen Auftrag für den gesamten Test. Zum Beispiel: „Sechs Kapitel zu Brüchen mit unterschiedlichen Anforderungen.“ Remy berücksichtigt den Auftrag bei allen Kapiteln.</p>
           <p id="aiPointsHint" class="hint" aria-live="polite"></p>
           <div class="aiCoreActions">
             <p id="aiActiveJobsNotice" class="hint hidden" role="status"></p>
             <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
-            <small class="hint aiCostNote">Kosten können für Tests, Bilder und Audio entstehen.</small>
+            <small class="hint aiCostNote">Kosten können für Kapitelplanung, Tests, Bilder und Audio entstehen.</small>
             <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
             <small class="hint aiReturnNote">Nach dem Start schließt sich diese Ansicht automatisch. Den fertigen Test findest du unter „Meine Tests“.</small>
           </div>
@@ -341,7 +344,6 @@
           <details class="aiTypePicker"><summary>Aufgabentypen erlauben <span id="aiTypeCount">9 ausgewählt</span></summary>
             <div id="aiTypeChecks" class="typeCheckGrid"></div>
           </details>
-          <label class="aiNotesField">Eigene Wünsche <small>(optional)</small><textarea id="aiCustomNotes" rows="5" maxlength="6000" placeholder="z. B. anspruchsvolle Sachaufgaben, viele Zuordnungen, keine Babysätze …"></textarea></label>
           <details class="gradecrewPreferenceDetails"><summary>Persönliche KI-Vorgaben <small>optional</small></summary><div class="gradecrewPreferenceBody">          <label class="aiNotesField">Vorgaben für meine Tests <small>(für künftige Tests)</small><textarea id="aiPersonalPreferences" rows="3" maxlength="1000" placeholder="z. B. klare Alltagssprache, lieber kurze Aufgaben, keine Fachwörter ohne Erklärung"></textarea></label>
           <div class="aiPreferencesActions"><button id="saveAiPreferencesBtn" class="button secondary" type="button">Vorgaben speichern</button><small class="hint">Nur in deinem Profil gespeichert; bei KI-Erstellungen an OpenAI übermittelt. GradeCrew berücksichtigt zusätzlich deine Aufgabenbewertungen.</small></div></div></details>
           </details>
@@ -360,7 +362,6 @@
               </div>
             </details>
           </div>
-          <section id="chapterCreation" class="chapterEditor" aria-label="Themenplan"></section>
           <label class="aiUploadBox" for="aiMaterialInput"><strong>Material hinzufügen</strong><span>PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 10 Dateien · max. 15 MB</span><input id="aiMaterialInput" type="file" multiple accept=".pdf,image/jpeg,image/png,image/webp,.txt,.csv,.docx,.pptx,.xlsx" /></label>
           <div id="aiMaterialList" class="aiMaterialList"></div>
           <section class="aiMaterialOptions" aria-labelledby="aiMaterialOptionsTitle">
@@ -580,11 +581,11 @@
     <div class="shareDialogFoot"><small>Der Vorlagencode beginnt mit „V-“ und ist dadurch klar vom Schüler-Testcode zu unterscheiden.</small><button id="doneShareDialog" class="button primary" type="button">Fertig</button></div>
   </dialog>
 
-  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">GradeCrew</span><span>·</span><span id="footerVersion">v2.3.1-gc46-chapters-rc3</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
+  <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">GradeCrew</span><span>·</span><span id="footerVersion">v2.3.1-gc46-chapters-rc4</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
   <footer class="appFooter rightsFooter"><button id="openRightsReport" class="footerLink" type="button">Inhalt melden</button></footer>
 
   <div id="startupNotice" class="startupNotice hidden" role="status" aria-live="polite"><span id="startupMessage"></span><button type="button" id="startupRetry" class="button secondary hidden">Erneut laden</button></div>
   <noscript><p class="startupNotice">Bitte JavaScript aktivieren, um GradeCrew zu verwenden.</p></noscript>
-  <script type="module" src="startup.js?v=2.3.1-gc46-chapters-rc3"></script>
+  <script type="module" src="startup.js?v=2.3.1-gc46-chapters-rc4"></script>
 </body>
 </html>
