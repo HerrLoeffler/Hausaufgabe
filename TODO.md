@@ -626,3 +626,7 @@ Autorisiert umgesetzt im bestehenden lokalen Prototyp: echte GradeCrew-Aufgabene
 ### GC-ADAPTIVE-PRACTICE-01 Investorendemo21.10.
 
 Auf ausdrücklichen Nutzerauftrag lokale120er-KI-Sperre im gesonderten Demo-Modus aufgehoben, sichtbaren Lernstand zurückgesetzt; echte KI und Nutzungshistorie erhalten.52Python/56JSgrün, Quellreview bestanden. Ausschließlich localhost; normaler Start weiterhin begrenzt, keine Backend-/Schul-/Productionänderung. Übergabe workstreams/adaptive-practice-01.md.
+
+### GC-ADAPTIVE-PRACTICE-01 Vollständiger Ausbau Mathe/Deutsch5–10
+
+Nutzer21.10.bestätigt schriftlichenUmfang:persönlichesdauerhaftesLerngehirnMatheDeutsch5–10 undRolloutnurnachgradecrew-staging-2026. Vorhandenerpädagogischer/Second-Brain-Bestandgefundenundführend;18Quellen/12Fach-Jahrgangspaare/105BereichemitHashesbelegt,R/Mgetrennt, fachlicheFeinfreigabeoffen. ZweifächrigeStartansichtlokalumgesetzt. Implementierungsplanunterdocs/superpowers/plans/2026-10-21-learning-brain-mathe-deutsch-5-10.md; eigenerAppbranchfeat/learning-brain-mathe-deutsch-20261021. NochkeinDauerprofil-/Cloudrolloutnachweis; Schul-Liveunverändert. [Übergabe](workstreams/adaptive-practice-01.md).

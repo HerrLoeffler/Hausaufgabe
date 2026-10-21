@@ -1,0 +1,371 @@
+{
+  "task": "GC-ADAPTIVE-PRACTICE-01",
+  "asOf": "2026-10-21",
+  "kind": "read_only_inventory_of_existing_sources_not_a_new_runtime_catalog",
+  "sourceThreadId": "01a1280a-c9f4-73a3-a12a-7b2b93a5ba5a",
+  "sourceThreadTitle": "GC · Pädagogisches Konzept",
+  "sources": [
+    {
+      "sourceId": "BY-59e19c7b9df3",
+      "grade": 5,
+      "subject": "Deutsch",
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/5/deutsch/regelklasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-59e19c7b9df3.txt",
+      "fileExists": true,
+      "sha256": "b70851a22296a7e3ad19381a54856b1899946d2a6c99e7870f46c9b997a26fcd",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "D5 Lernbereich 1: Sprechen und Zuhören",
+        "D5 Lernbereich 2: Lesen – mit Texten und weiteren Medien umgehen",
+        "D5 Lernbereich 3: Schreiben",
+        "D5 Lernbereich 4: Sprachgebrauch und Sprache untersuchen und reflektieren"
+      ],
+      "subareaCount": 14
+    },
+    {
+      "sourceId": "BY-4419bfcf4cb3",
+      "grade": 6,
+      "subject": "Deutsch",
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/deutsch/regelklasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-4419bfcf4cb3.txt",
+      "fileExists": true,
+      "sha256": "4b18ac2fa07a5ca7360e5c8d05ab5dc6b99bb4c74d1bfdc5c6c92824a3c36d5b",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "D6 Lernbereich 1: Sprechen und Zuhören",
+        "D6 Lernbereich 2: Lesen – mit Texten und weiteren Medien umgehen",
+        "D6 Lernbereich 3: Schreiben",
+        "D6 Lernbereich 4: Sprachgebrauch und Sprache untersuchen und reflektieren"
+      ],
+      "subareaCount": 14
+    },
+    {
+      "sourceId": "BY-22562f2e3b80",
+      "grade": 7,
+      "subject": "Deutsch",
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/7/deutsch/mittlere-reife-klasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-22562f2e3b80.txt",
+      "fileExists": true,
+      "sha256": "23ccb49e7172cc57b04bb0da9a1c6f73da06841c1046d9a0d22bb91e3adbc99d",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "D7 Lernbereich 1: Sprechen und Zuhören",
+        "D7 Lernbereich 2: Lesen – mit Texten und weiteren Medien umgehen",
+        "D7 Lernbereich 3: Schreiben",
+        "D7 Lernbereich 4: Sprachgebrauch und Sprache untersuchen und reflektieren"
+      ],
+      "subareaCount": 14
+    },
+    {
+      "sourceId": "BY-be53dd90c7b8",
+      "grade": 7,
+      "subject": "Deutsch",
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/7/deutsch/regelklasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-be53dd90c7b8.txt",
+      "fileExists": true,
+      "sha256": "0a6ad99e8fe597b109ac5c9a9660250cf30573799075f73f65016adb03d0d559",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "D7 Lernbereich 1: Sprechen und Zuhören",
+        "D7 Lernbereich 2: Lesen – mit Texten und weiteren Medien umgehen",
+        "D7 Lernbereich 3: Schreiben",
+        "D7 Lernbereich 4: Sprachgebrauch und Sprache untersuchen und reflektieren"
+      ],
+      "subareaCount": 14
+    },
+    {
+      "sourceId": "BY-3a9dc43ec30c",
+      "grade": 8,
+      "subject": "Deutsch",
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/8/deutsch/mittlere-reife-klasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-3a9dc43ec30c.txt",
+      "fileExists": true,
+      "sha256": "e0e06e644265880e7e8b861349c849c1287eb13a4b8a23a1bee10c81f248f0d9",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "D8 Lernbereich 1: Sprechen und Zuhören",
+        "D8 Lernbereich 2: Lesen – mit Texten und weiteren Medien umgehen",
+        "D8 Lernbereich 3: Schreiben",
+        "D8 Lernbereich 4: Sprachgebrauch und Sprache untersuchen und reflektieren"
+      ],
+      "subareaCount": 14
+    },
+    {
+      "sourceId": "BY-b630dae33f32",
+      "grade": 8,
+      "subject": "Deutsch",
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/8/deutsch/regelklasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-b630dae33f32.txt",
+      "fileExists": true,
+      "sha256": "2d57d40c5fbfd5300ad577fdd07db5678016d468f4655f2e0c4e55e1382206a2",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "D8 Lernbereich 1: Sprechen und Zuhören",
+        "D8 Lernbereich 2: Lesen – mit Texten und weiteren Medien umgehen",
+        "D8 Lernbereich 3: Schreiben",
+        "D8 Lernbereich 4: Sprachgebrauch und Sprache untersuchen und reflektieren"
+      ],
+      "subareaCount": 14
+    },
+    {
+      "sourceId": "BY-2fd15684d59a",
+      "grade": 9,
+      "subject": "Deutsch",
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/9/deutsch/mittlere-reife-klasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-2fd15684d59a.txt",
+      "fileExists": true,
+      "sha256": "c3dde9c8f276d4a9d491934e120a101a6266c4622318b2f661838b7892d51045",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "D9 Lernbereich 1: Sprechen und zuhören",
+        "D9 Lernbereich 2: Lesen – mit Texten und weiteren Medien umgehen",
+        "D9 Lernbereich 3: Schreiben",
+        "D9 Lernbereich 4: Sprachgebrauch und Sprache untersuchen und reflektieren"
+      ],
+      "subareaCount": 14
+    },
+    {
+      "sourceId": "BY-8f0c1e392b32",
+      "grade": 9,
+      "subject": "Deutsch",
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/9/deutsch/regelklasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-8f0c1e392b32.txt",
+      "fileExists": true,
+      "sha256": "e2f72ff5345336993c6dd5c59030d2f02035aa7d99792d2f1704dfe9db8f55db",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "D9 Lernbereich 1: Sprechen und Zuhören",
+        "D9 Lernbereich 2: Lesen – mit Texten und weiteren Medien umgehen",
+        "D9 Lernbereich 3: Schreiben",
+        "D9 Lernbereich 4: Sprachgebrauch und Sprache untersuchen und reflektieren"
+      ],
+      "subareaCount": 14
+    },
+    {
+      "sourceId": "BY-4fd8f18a1dc6",
+      "grade": 10,
+      "subject": "Deutsch",
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/10/deutsch/mittlere-reife-klasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-4fd8f18a1dc6.txt",
+      "fileExists": true,
+      "sha256": "5ee93715cf9266f912382f1199b16ac90b48dd04f47ca0cd3200f99c64b3d994",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "D10 Lernbereich 1: Sprechen und Zuhören",
+        "D10 Lernbereich 2: Lesen – mit Texten und weiteren Medien umgehen",
+        "D10 Lernbereich 3: Schreiben",
+        "D10 Lernbereich 4: Sprachgebrauch und Sprache untersuchen und reflektieren"
+      ],
+      "subareaCount": 14
+    },
+    {
+      "sourceId": "BY-38ada466aa58",
+      "grade": 5,
+      "subject": "Mathe",
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/5/mathematik/regelklasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-38ada466aa58.txt",
+      "fileExists": true,
+      "sha256": "4848f9f0de73ecafa2b08d03cc6ba10f628d8d454fe599503dcdbd6d8bb1a007",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "M5 Lernbereich 1: Natürliche Zahlen",
+        "M5 Lernbereich 2: Ganze Zahlen",
+        "M5 Lernbereich 3: Geometrische Figuren und Lagebeziehungen",
+        "M5 Lernbereich 4: Flächeninhalt – Rechtecke",
+        "M5 Lernbereich 5: Größen im Alltag",
+        "M5 Lernbereich 6: Daten",
+        "M5 Lernbereich 7: Gleichungen und Formeln"
+      ],
+      "subareaCount": 2
+    },
+    {
+      "sourceId": "BY-3dcd29f28ce3",
+      "grade": 6,
+      "subject": "Mathe",
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/mathematik/regelklasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-3dcd29f28ce3.txt",
+      "fileExists": true,
+      "sha256": "60894181fcaa4f9a93a1da73f0bacd021f59c3c8c08abbb5c1245eb2555b9dfd",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "M6 Lernbereich 1: Bruchzahlen",
+        "M6 Lernbereich 2: Rationale Zahlen",
+        "M6 Lernbereich 3: Geometrische Figuren, Körper und Lagebeziehungen",
+        "M6 Lernbereich 4: Flächeninhalt – Oberflächeninhalt von Quadern",
+        "M6 Lernbereich 5: Rauminhalt – Quader",
+        "M6 Lernbereich 6: Daten",
+        "M6 Lernbereich 7: Gleichungen und Formeln"
+      ],
+      "subareaCount": 4
+    },
+    {
+      "sourceId": "BY-ae8afea3657c",
+      "grade": 7,
+      "subject": "Mathe",
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/7/mathematik/mittlere-reife-klasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-ae8afea3657c.txt",
+      "fileExists": true,
+      "sha256": "ad4b9e55f332354589776914493dfba656cbf5a9d459aa1c051c6875f19e9dca",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "M7 Lernbereich 1: Prozentrechnung",
+        "M7 Lernbereich 2: Rationale Zahlen – Rechenregeln",
+        "M7 Lernbereich 3: Geometrische Figuren, Körper und Lagebeziehungen",
+        "M7 Lernbereich 4: Flächeninhalt – Parallelogramme und Dreiecke",
+        "M7 Lernbereich 5: Rauminhalt – gerade Prismen",
+        "M7 Lernbereich 6: Diagramme und statistische Kennwerte",
+        "M7 Lernbereich 7: Gleichungen",
+        "M7 Lernbereich 8: Proportionalität"
+      ],
+      "subareaCount": 0
+    },
+    {
+      "sourceId": "BY-37af8b8c14a6",
+      "grade": 7,
+      "subject": "Mathe",
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/7/mathematik/regelklasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-37af8b8c14a6.txt",
+      "fileExists": true,
+      "sha256": "080c9ab0442af0dcceb9ad826412938094e6b6b1e792300d883c91215c331abd",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "M7 Lernbereich 1: Prozentrechnung",
+        "M7 Lernbereich 2: Rationale Zahlen – Rechenregeln",
+        "M7 Lernbereich 3: Geometrische Figuren, Körper und Lagebeziehungen",
+        "M7 Lernbereich 4: Flächeninhalt – Parallelogramme und Dreiecke",
+        "M7 Lernbereich 5: Rauminhalt – gerade Prismen",
+        "M7 Lernbereich 6: Diagramme und statistische Kennwerte",
+        "M7 Lernbereich 7: Gleichungen",
+        "M7 Lernbereich 8: Proportionalität"
+      ],
+      "subareaCount": 0
+    },
+    {
+      "sourceId": "BY-9845e2bae409",
+      "grade": 8,
+      "subject": "Mathe",
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/8/mathematik/mittlere-reife-klasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-9845e2bae409.txt",
+      "fileExists": true,
+      "sha256": "de0273bdf1c15e5519f11cda63f21aaf9ce5efc6658b121406bd84b1b583b3ca",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "M8 Lernbereich 1: Prozentrechnung",
+        "M8 Lernbereich 2: Quadratzahlen und Quadratwurzeln",
+        "M8 Lernbereich 3: Geometrische Figuren, Körper und Lagebeziehungen",
+        "M8 Lernbereich 4: Flächeninhalt – Kreise",
+        "M8 Lernbereich 5: Rauminhalt – Zylinder",
+        "M8 Lernbereich 6: Zufallsexperimente",
+        "M8 Lernbereich 7: Gleichungen",
+        "M8 Lernbereich 8: Funktionale Zusammenhänge"
+      ],
+      "subareaCount": 0
+    },
+    {
+      "sourceId": "BY-6db3f7dbf98c",
+      "grade": 8,
+      "subject": "Mathe",
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/8/mathematik/regelklasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-6db3f7dbf98c.txt",
+      "fileExists": true,
+      "sha256": "0508853463a8d8bbf36dc96ffd8a20177d0fa6ae205a1e7cac5c0880ab56065e",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "M8 Lernbereich 1: Prozentrechnung",
+        "M8 Lernbereich 2: Quadratzahlen und Quadratwurzeln",
+        "M8 Lernbereich 3: Geometrische Figuren, Körper und Lagebeziehungen",
+        "M8 Lernbereich 4: Flächeninhalt – Kreise",
+        "M8 Lernbereich 5: Rauminhalt – Zylinder",
+        "M8 Lernbereich 6: Zufallsexperimente",
+        "M8 Lernbereich 7: Gleichungen",
+        "M8 Lernbereich 8: Funktionale Zusammenhänge"
+      ],
+      "subareaCount": 0
+    },
+    {
+      "sourceId": "BY-e98cd916f02a",
+      "grade": 9,
+      "subject": "Mathe",
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/9/mathematik/mittlere-reife-klasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-e98cd916f02a.txt",
+      "fileExists": true,
+      "sha256": "de58c8297eadde658b2486a780c5fa92bd87dad51bbe4c95418baec09e4fe253",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "M9 Lernbereich 1: Prozent- und Zinsrechnung",
+        "M9 Lernbereich 2: Potenzen",
+        "M9 Lernbereich 3: Geometrische Figuren, Körper und Lagebeziehungen",
+        "M9 Lernbereich 4: Flächeninhalt – Vielecke",
+        "M9 Lernbereich 5: Rauminhalt – Prismen, Pyramiden, Kegel",
+        "M9 Lernbereich 6: Wahrscheinlichkeiten",
+        "M9 Lernbereich 7: Gleichungen",
+        "M9 Lernbereich 8: Funktionale Zusammenhänge"
+      ],
+      "subareaCount": 0
+    },
+    {
+      "sourceId": "BY-ae7a6aa84fde",
+      "grade": 9,
+      "subject": "Mathe",
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/9/mathematik/regelklasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-ae7a6aa84fde.txt",
+      "fileExists": true,
+      "sha256": "cb96a5c474366679b6076861ce244a5bcce10191155b24cc9ec111ca280d43dd",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "M9 Lernbereich 1: Prozent- und Zinsrechnung",
+        "M9 Lernbereich 2: Potenzen",
+        "M9 Lernbereich 3: Geometrische Figuren, Körper und Lagebeziehungen",
+        "M9 Lernbereich 4: Flächeninhalt – Vielecke",
+        "M9 Lernbereich 5: Rauminhalt – Prismen, Pyramiden, Kegel",
+        "M9 Lernbereich 6: Wahrscheinlichkeiten",
+        "M9 Lernbereich 7: Gleichungen",
+        "M9 Lernbereich 8: Funktionale Zusammenhänge"
+      ],
+      "subareaCount": 0
+    },
+    {
+      "sourceId": "BY-e56feb597d1b",
+      "grade": 10,
+      "subject": "Mathe",
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/10/mathematik/mittlere-reife-klasse",
+      "existingFile": "analysis/GC-PEDAGOGY-KB-01/work/bw-by-be-bb/fulltext/BY-e56feb597d1b.txt",
+      "fileExists": true,
+      "sha256": "8c571ca8a1fbb6779e36d2d8b0bc3241ba86ac3924cc0a8f80e975933f7136dd",
+      "sourceStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "learningAreas": [
+        "M10 Lernbereich 1: Potenzen und Wurzeln",
+        "M10 Lernbereich 2: Exponentialfunktion",
+        "M10 Lernbereich 3: Ähnliche Figuren",
+        "M10 Lernbereich 4: Trigonometrie",
+        "M10 Lernbereich 5: Flächeninhalt und Rauminhalt – Kugeln",
+        "M10 Lernbereich 6: Beschreibende Statistik und Wahrscheinlichkeiten",
+        "M10 Lernbereich 7: Funktionale Zusammenhänge"
+      ],
+      "subareaCount": 0
+    }
+  ],
+  "limits": [
+    "Metadata/headings verified against existing files, not full competence review.",
+    "Existing R/M source mappings must not be merged silently.",
+    "Student Second Brain is an existing architecture proposal, not a deployed service."
+  ]
+}
