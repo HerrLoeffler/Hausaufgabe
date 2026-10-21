@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { getEnvironment } from './environments.mjs';
+import { buildLegalPages } from './build-legal-pages.mjs';
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const destination = process.argv[2];
 const environment = getEnvironment(process.argv[3] || 'staging');
@@ -14,6 +15,7 @@ if ((await fs.readdir(output)).length) throw new Error('Build directory must be 
 const config = await fs.readFile(path.join(root, environment.configFile), 'utf8');
 if (!config.includes(`projectId: "${environment.projectId}"`) || !config.includes(`appEnvironment = "${environment.name}"`)) throw new Error('Firebase configuration contradicts the explicit release environment.');
 const files = [
+  'legal-content.de.json', 'legal-pages.css',
   'review-capture.mjs', 'review-mode.mjs', 'review-store.mjs', 'review-mode.css', 'functions/lib/review-checks.json',
   'diagnostics.mjs', 'admin-log-tools.mjs', 'bug-ops.mjs', 'student-submit-confirm.mjs', 'practice-solution-publication.mjs', 'secure-audio-publication.mjs', 'guest-tour-port.mjs', 'index.html', 'startup.js', 'staging-short-login.mjs', 'gradecrew-entry-flow.js', 'shared/math-display.mjs', 'shared/i18n/i18n-core.mjs', 'shared/i18n/browser-runtime.mjs', 'shared/i18n/messages-de-DE.mjs', 'shared/i18n/messages-en-GB.mjs', 'shared/i18n/extensions-en-GB-crew.mjs', 'shared/i18n/assessment-locale.mjs', 'shared/i18n/assessment-locale-ui.mjs', 'shared/i18n/bootstrap.mjs', 'app.js', 'interface.js', 'styles.css', 'generated/gradecrew-design-tokens.css', 'generated/gradecrew-assets.js', 'design-system.css', 'gradecrew-brand.css', 'gradecrew-logo.css', 'crew-clay.css', 'workspace.css', 'gradecrew-dashboard-foundation.css', 'gradecrew-auth-startscreen.css', 'gradecrew-auth-startscreen-polish.css', 'gradecrew-tour.css', 'tutorial-choice-v1.css',
   'ai-json-tools.js', 'ai-client.js', 'quick-remy-bridge.js', 'auth-profile.js', 'ui-enhancements.js', 'visual-enhancements.js', 'mobile-viewport-polish.js', 'first-guide-responsive.js', 'crew-tour-responsive.js', 'first-guide-guard.js', 'crew-tour-hardening.js', 'crew-tour-gc22-polish.js', 'crew-tour-gc23-polish.js', 'crew-tour-gc24-polish.js', 'crew-tour-gc25-final-polish.js', 'crew-tour-gc26-story-polish.js', 'student-attempt-guard.js', 'remy-ai-help.js', 'crew-telemetry-client.mjs', 'crew-statistics-admin.mjs', 'admin-account-actions.mjs', 'admin-test-account-bootstrap.mjs', 'admin-test-account-controls.mjs', 'crew-assistant-ui.js', 'crew-assistant-core.js', 'crew-assistant-core.mjs', 'emmi-whole-test-revision.mjs', 'teacher-copy-polish.js', 'gradecrew-tour.js', 'gradecrew-tour-v7.js', 'gradecrew-tour-v8.js', 'tutorial-ordering-guard.js', 'gate-e-lab.js', 'assessment-receipt-check.mjs', 'gradecrew-brand.js',
@@ -55,6 +57,7 @@ for (const name of files) {
   await fs.mkdir(path.dirname(target), { recursive: true });
   await fs.copyFile(path.join(root, name), target);
 }
+files.push(...await buildLegalPages(root, output));
 await fs.writeFile(path.join(output, 'firebase-config.js'), config);
 files.push('firebase-config.js');
 for (const name of files.filter(name => /\.(js|mjs|html|css)$/.test(name))) {
