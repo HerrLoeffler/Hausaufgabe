@@ -7,13 +7,14 @@ const summarize=rows=>({count:rows.length,points:mean(rows.map(r=>r.points)),max
 export function classAverages(submissions,gradeForPercent){
  const groups=new Map(),versions=new Map(),totals=[];let pending=0;
  for(const submission of submissions){
-  if(submission.status!=='graded'||Object.values(submission.grading||{}).some(g=>g.needsReview===true)){pending++;continue;}
+  const chapterRows=submission.chapterSnapshot?C.aggregateChapterResults(submission.chapterSnapshot,submission.grading):[];
+  if(submission.status!=='graded'||Object.values(submission.grading||{}).some(g=>g.needsReview===true)||chapterRows.some(row=>row.needsReview)){pending++;continue;}
   const scale=submission.gradeScaleSnapshot;
   const calculate=percent=>finite(percent)&&scale?.thresholds?.length===6?gradeForPercent(percent,scale):null;
   const storedGrade=finite(submission.grade)&&submission.grade>=1&&submission.grade<=6?submission.grade:null;
   totals.push({points:Number(submission.totalPoints)||0,maxPoints:Number(submission.maxPoints)||0,percent:finite(submission.percent)?submission.percent:null,grade:storedGrade??calculate(submission.percent)});
   if(!submission.chapterSnapshot)continue;
-  for(const row of C.aggregateChapterResults(submission.chapterSnapshot,submission.grading)){
+  for(const row of chapterRows){
    if(row.needsReview)continue;
    const tasks=submission.chapterSnapshot.questions.filter(q=>q.chapterId===row.chapterId);
    const key=JSON.stringify([row.chapterId,row.title,tasks.map(q=>[q.id,q.maxPoints,q.position])]);

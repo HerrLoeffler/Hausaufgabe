@@ -9,3 +9,7 @@ test('historically changed chapter maxima stay separate; missing grades never be
  const changed=sub(2);changed.chapterSnapshot=structuredClone(changed.chapterSnapshot);changed.chapterSnapshot.questions[0].maxPoints=8;const noGrade={...sub(2),grade:null,gradeScaleSnapshot:null};
  const r=classAverages([sub(4),changed,noGrade],grade);assert.equal(r.chapters.length,2);assert.equal(r.mixedVersions,true);assert.equal(r.total.grade,2.5);assert.equal(r.total.gradeCount,2);assert.equal(classAverages([sub(0,'review')],grade).total,null);
 });
+test('a graded submission with a missing snapshot question is excluded as a whole',()=>{
+ const incomplete=sub(4);incomplete.chapterSnapshot=structuredClone(incomplete.chapterSnapshot);incomplete.chapterSnapshot.chapters.push({id:'ch_b',title:'Kürzen',position:2});incomplete.chapterSnapshot.questions.push({id:'missing',chapterId:'ch_b',position:2,maxPoints:2});
+ const r=classAverages([sub(4),incomplete],grade);assert.equal(r.included,1);assert.equal(r.pending,1);assert.equal(r.total.count,1);assert.equal(r.chapters[0].count,1);
+});
