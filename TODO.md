@@ -2,6 +2,8 @@
 
 ## GC-CHAPTER-TESTS-01 — Kapitelgrundstruktur, isolierte Testvorschau (20.10.2026)
 
+- [ ] Diagnose21.10., Referenzab3f5617: Erstellung scheitert an ungültigen Zielwörtern bei Wortmarkierung, Aufgaben9/19. Fehlerklasse lokal reproduziert; Originalentwurf fehlt, konkreter Auslöser offen. Vor Investorpräsentation ausdrücklich keine Hauptseitenänderung; keine Runtimeänderung/Deploy. Übergangsweg: Wörter markieren abwählen. Nach Präsentation Originalentwurf gezielt prüfen. [Übergabe](workstreams/chapter-tests-01.md).
+
 - [x] UI-Ergänzung21.10.: Klassendurchschnitt standardmäßig eingeklappt, ØGesamtnote aller bewerteten Abgaben in der sichtbaren Kopfzeile. Hosting-only-Preview rc3/21c379f0,173 Assets geprüft,512 Webprüfungen plus Klick-/Enter-/Leertasten-Browsernachweis. [Beleg](docs/evidence/chapter-fold-20261021.json). Backend unverändert; Nutzerabnahme der Ergänzung offen.
 
 - [x] Nutzerergänzung21.10.: Bereichsnoten neben Kapitelpunkten/Prozent sowie untere Klassenübersicht je Kapitel und Gesamttest auf derselben Vorschau bereitgestellt (rc2, Runtime5b1c0737,173 Assets geprüft, CI39588408745 grün). Gefrorener Notenschlüssel, Freigabemodus und vollständige Bewertungen beachtet;99 Assessment-/511 Webtests und synthetischer Browsernachweis mit zwei Abgaben. [Releasebeleg](docs/evidence/chapter-notes-20261021.json).
