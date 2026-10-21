@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "2a6ff107c3e84c9020507f2b384fdd20354efbf7",
+    "observed_integration_head": "ab6fcc9d72aa9d401eba2ec4db31c01f7758c0f0",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -2766,7 +2766,7 @@
     "legal_certification": false,
     "remaining": [
       "Apple trader phone verification and any subsequent required evidence",
-      "explicit final age-category and content-rights confirmation",
+      "explicit final age-category confirmation",
       "explicit publication of saved privacy labels",
       "stable synthetic review test and real Store screenshots",
       "physical iPad offline/restart/sync acceptance",
@@ -2796,6 +2796,37 @@
       "website_changed": false,
       "teacher_app_changed": false,
       "handoff": "workstreams/secure-testflight-1141-20261021.md"
+    },
+    "material_rights_followup": {
+      "task_ids": [
+        "GC-IOS-02",
+        "GC-RELEASE-06"
+      ],
+      "handoff": "workstreams/material-rights-notice-20261021.md",
+      "web_pr": 267,
+      "web_commit": "ab6fcc9d72aa9d401eba2ec4db31c01f7758c0f0",
+      "web_ci": [
+        39678215545,
+        39678215463,
+        39678215543
+      ],
+      "web_ci_conclusion": "success",
+      "school_hosting": "deployed_and_173_assets_hash_verified",
+      "changed_asset": "index.html",
+      "removed_assets": 0,
+      "staging": "not_deployed_preserved_independent_lerngehirn_prototype",
+      "native_pr": 268,
+      "native_commit": "aa39a9fbbec550f0cf42bfd22ced6719d02dad60",
+      "native_simulator_build": "success",
+      "native_teacher_upload_run": 39678556334,
+      "native_teacher_upload_status": "in_progress_not_claimed_delivered",
+      "secure_build_unchanged": "1.0(1141)",
+      "apple_content_rights": "explicit_user_confirmed_saved_reload_verified",
+      "apple_review_explanation": "saved_reload_verified",
+      "apple_store_draft_build": "1.0(1141)_selected_saved_reload_verified",
+      "app_review_submitted": false,
+      "backend_rules_changed": false,
+      "review": "independent_bounded_PASS"
     }
   }
 }
