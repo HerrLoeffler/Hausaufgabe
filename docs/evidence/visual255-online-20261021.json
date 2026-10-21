@@ -509,7 +509,10 @@
         "Teacher editor and real Emmi single-task conversion to grid",
         "Real whole-test Emmi preservation/rewording",
         "Teacher review acknowledgement, save; resulting final grid read directly from server after reload",
-        "Public secure student intro with 6 tasks / 12 points"
+        "Public secure student intro with 6 tasks / 12 points",
+        "Existing saved quiz VSSP9ZEH reloaded in integrated browser; final Emmi grid wording retained",
+        "Browser answered all 6 tasks: intentional wrong Q1, correct Q2-Q6, 18/24 grid cells",
+        "Browser submission receipt: Abgabe gespeichert, Sicher gespeichert, 10 / 12 Punkte, 83 %, Note 2"
       ],
       "serverDirectConfirmed": [
         "Resume stable paper",
@@ -525,8 +528,19 @@
         "Native numeric parity",
         "Actual editor template loaded visual selection"
       ],
-      "remaining": "A JavaScript confirmation dialog about deleting only the synthetic local draft blocks further interaction in the integrated browser. Supported dialog API returned no dialog; native Codex app automation is disallowed. User was asked to close the dialog. Therefore a complete final browser-driven submission is not claimed; genuine online server E2E has passed.",
-      "physicalDevice": "not tested"
+      "remaining": "Physical device acceptance not tested; online browser fraction reload/answer/submission/result check completed.",
+      "physicalDevice": "not tested",
+      "fractionBrowserSubmission": {
+        "checkedAt": "2026-10-21T21:08:16.146170+00:00",
+        "quizCode": "VSSP9ZEH",
+        "studentAlias": "Browserprobe 255",
+        "score": 10,
+        "maxScore": 12,
+        "percentDisplayed": 83,
+        "gradeDisplayed": 2,
+        "newAiCalls": 0,
+        "screenshot": "outputs/Bruchtest-Browser-Ergebnis.png"
+      }
     }
   },
   "boundaries": {
