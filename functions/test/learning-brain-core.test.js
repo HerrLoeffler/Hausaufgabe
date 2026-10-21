@@ -27,7 +27,7 @@ test('repeated errors reduce demand then invite teacher; never repeat same-level
 test('one correct is not mastery; ten varied independent observations across sessions required',()=>{
  const e={correct:true,independent:true,fingerprint:'a',family:'x',sessionId:'s',at:100};
  assert.notEqual(projectSkill([e],200).status,'secure');
- const events=Array.from({length:10},(_,i)=>({...e,correct:i>=2,fingerprint:'a'+i,family:i%2?'x':'y',sessionId:i<5?'s':'s2',at:i}));
+ const events=Array.from({length:10},(_,i)=>({...e,correct:i>=2,fingerprint:'a'+i,family:i%2?'x':'y',sessionId:i<5?'s':'s2',level:2,at:i}));
  assert.equal(projectSkill(events,200).status,'secure');
  assert.notEqual(projectSkill([...events,{...e,correct:false,fingerprint:'last',at:201}],202).status,'secure');
  assert.notEqual(projectSkill(events.map(x=>({...x,independent:false})),200).status,'secure');
@@ -57,4 +57,10 @@ test('duplicate task cannot conceal a new independent failure',()=>{
 test('return to original never keeps a picture from a different micro-question',()=>{
  let s=transition(start(),'help');s.visual={kind:'fraction-strip',numerator:1,denominator:2,factor:2};
  s=transition(s,'answer',{outcome:'correct'});assert.equal(s.phase,'completion');assert.equal(s.visual,null);assert.equal(s.task.prompt,'Erweitere');
+});
+test('ten easy independent successes alone cannot establish a whole competency',()=>{
+ const events=Array.from({length:10},(_,i)=>({independent:true,correct:true,level:0,fingerprint:'easy'+i,family:i%2?'identify':'apply',sessionId:i<5?'s1':'s2',at:i}));
+ assert.notEqual(projectSkill(events,20).status,'secure');
+ events[8].level=2;events[9].level=2;assert.equal(projectSkill(events,20).status,'secure');
+ const s=transition(start(),'answer',{outcome:'correct'});assert.equal(s.previousLevel,1);assert.equal(s.events[0].level,1);
 });
