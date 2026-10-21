@@ -16,7 +16,7 @@ Stand21.10.2026. Eigenständige iPad-App `de.gradecrew.secure`; keine Umgestaltu
 |---|---|---|
 | Bundle/Target/Version/Devices | vorhanden | sieheoben; fertiges neues Archiv nochmals gegenprüfen |
 | AAC/Apple-Signierung | vorhandener signierter Nachweis |1131 bestätigt; neues Archiv muss denselben Distribution-Gate bestehen |
-| AppStoreConnect-Eintrag | nur über erfolgreichen Upload belegt | aktuelle Metadaten, Verfügbarkeit, Mitgliedschaft, Gruppen und Verträge ohne ASC-Sitzung **nicht geprüft** |
+| AppStoreConnect-Eintrag | nur über erfolgreichen Upload belegt | am21.10. nach echter Anmeldung geprüft; Metadaten/Datenschutz als Entwurf gespeichert, siehe ASC-STATUS-20261021.md |
 | Neuer einfacher Einstieg | Quellkandidat | Vorher/Nachher und aktuelle Build-/Layoutnachweise in der Workstream-Übergabe; noch nicht in1131 enthalten |
 | PrivacyManifest | im neuen Quellkandidaten | SystemBootTime35F9.1 für mitkompilierten lokalen Lab-Timer, im neuen Paket prüfen; keine Behauptung „keine Daten“ |
 | Produkttexte | Entwurf vorhanden | `metadata.de-DE.json`; Name16, Untertitel22Zeichen, Zeichenlimits vor Eingabe nochmals prüfen |
@@ -25,7 +25,7 @@ Stand21.10.2026. Eigenständige iPad-App `de.gradecrew.secure`; keine Umgestaltu
 | Tracking/ATT | kein entsprechender SDK-/Werbepfad im untersuchten Secure-Code | kein pauschaler Laufzeit-/Dienstleisterbeweis; bei geänderter Nutzung neu prüfen |
 | Altersfreigabe/KidsCategory | **von Martin nötig** | aktuellen Fragebogen sachlich beantworten; Lehrkraftinhalte variabel, keine automatische4+- oder Kids-Freigabe |
 | ExportCompliance | bestehender PlistwertNO, nurOS-TLS/Keychain im untersuchten Code | tatsächliches Endpaket und Vertriebsentscheidung prüfen; keine Vertragserklärung abgegeben |
-| Preis/Länder/EU-Händlerstatus | **von Martin nötig** | keine stillschweigende Preis-/Länderwahl oder neuen Verträge |
+| Preis/Länder/EU-Händlerstatus | kostenlos, Deutschland gespeichert | direkt von Martin bestätigt; Händlerverifizierung noch offen, keine Verträge akzeptiert |
 | Review-Code/-Kontakt | **fehlt** | stabiler veröffentlichter Live-Test mit ausschließlich fiktiven Inhalten; kein kurzlebiger Test- oder bereits beendeter Code |
 | iPad-Screenshots | Vorschau vorbereitet, Store-Satz **fehlt** | echte finale13-Zoll-Aufnahmen; Komponentenfixtures nicht als fertig getestete Produktabläufe ausgeben |
 | Physische Abnahme | **offen für neuen Kandidaten** | AAC, Timer, früheAbgabe, lokalesOfflineende, Neustart/Nachsynchronisierung, Medien, ältere unterstützteHardware |
@@ -52,7 +52,7 @@ Betreiberangaben sind jetzt bestätigt und Rechts-/Supportseiten samt nativer Of
 
 ## Öffentliche Rechts- und Supportseiten
 
-Auf Martins Rückfrage wurden [konkrete Textentwürfe](public-information-draft.de.md) und eine [Veröffentlichungscheckliste](privacy-publication-checklist.md) ergänzt. Eine eigene Domain ist nicht erforderlich: geplante `.html`-Seiten können auf der bestehenden Live-Adresse liegen. Diese URLs sind noch nicht veröffentlicht oder in ASC eingetragen. Aktueller Web-Quellstand4f8b7922 enthält KI-Uploadhinweise, aber diese ersetzen keine vollständige Secure-Erklärung. Martin wurde nach tatsächlichem Betreiber, öffentlicher Kontakt-E-Mail und Anschrift gefragt; keine Fakten erfinden. Schulische Rollen, Dienstleisterverträge und Serverfristen bleiben gesondert zu bestätigen.
+Auf Martins Rückfrage wurden [konkrete Textentwürfe](public-information-draft.de.md) und eine [Veröffentlichungscheckliste](privacy-publication-checklist.md) ergänzt. Eine eigene Domain ist nicht erforderlich: geplante `.html`-Seiten können auf der bestehenden Live-Adresse liegen. Diese frühere Planungsnotiz ist überholt: URLs sind inzwischen live und bei Apple als Entwurf eingetragen. Aktueller Web-Quellstand4f8b7922 enthält KI-Uploadhinweise, aber diese ersetzen keine vollständige Secure-Erklärung. Martin wurde nach tatsächlichem Betreiber, öffentlicher Kontakt-E-Mail und Anschrift gefragt; keine Fakten erfinden. Schulische Rollen, Dienstleisterverträge und Serverfristen bleiben gesondert zu bestätigen.
 
 ## Rechtsseiten-Einbindung
 

@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-21",
+  "bundle": "de.gradecrew.secure",
+  "version": "1.0",
+  "build": "1132",
+  "mode": "live-exam",
+  "minimumOS": "17.0",
+  "deviceFamily": [
+    2
+  ],
+  "signed": false,
+  "uploaded": false,
+  "legalContentSHA256": "8a799779ec8532f9ed883bc6a8faac5c7c4f6c840902a2d51e197dff3832497b",
+  "manifestBundled": true,
+  "checks": {
+    "genericIOSArchive": "pass",
+    "python": 20,
+    "priorSameUIAndLegalCandidate": {
+      "version": "0.2.3",
+      "build": "1132",
+      "swift": 28,
+      "nativeLayouts": 40,
+      "simulatorBuild": "pass"
+    }
+  },
+  "independentSourceReview": "pass_no_blocking_findings",
+  "limits": [
+    "No physical iPad acceptance for this build",
+    "Store metadata/privacy draft saved; no review submission, privacy publication or contract acceptance",
+    "School roles/contracts and exact provider/server retention not certified"
+  ]
+}

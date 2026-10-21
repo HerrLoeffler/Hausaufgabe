@@ -100,8 +100,16 @@ jobs:
         run: node --test native/GradeCrewSecure/ScriptTests/renderer.test.cjs
       - name: Test Secure and build all simulator schemes
         run: bash native/GradeCrewSecure/verify-on-mac.sh
-      - name: Generate Xcode project
-        run: python3 native/GradeCrewSecure/generate_project.py
+      - name: Generate Xcode project and read the shared release version
+        run: |
+          python3 native/GradeCrewSecure/generate_project.py
+          python3 - <<'PY_VERSION'
+          import json, os
+          from pathlib import Path
+          version=json.loads(Path('native/GradeCrewSecure/Config/ReleaseVersion.json').read_text())['marketingVersion']
+          with open(os.environ['GITHUB_ENV'],'a') as output:
+              output.write('SECURE_MARKETING_VERSION='+version+'\n')
+          PY_VERSION
       - name: Prepare API signing key
         shell: bash
         run: |
@@ -117,7 +125,7 @@ jobs:
             -scheme 'GradeCrew Secure' -configuration SecureLive \
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/GradeCrewSecureLab.xcarchive" \
-            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" MARKETING_VERSION=0.2.3 \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" MARKETING_VERSION="$SECURE_MARKETING_VERSION" \
             CURRENT_PROJECT_VERSION="$LAB_BUILD" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY='' archive
       - name: Preserve AAC entitlement in unsigned archive before cloud export
@@ -169,7 +177,7 @@ jobs:
           IPA="$(find "$RUNNER_TEMP/SecureExport" -maxdepth 1 -name '*.ipa' -print -quit)"
           xcrun altool --upload-app --file "$IPA" --type ios \
             --apiKey "$APP_STORE_CONNECT_KEY_ID" --apiIssuer "$APP_STORE_CONNECT_ISSUER_ID"
-          echo "Uploaded GradeCrew Secure Live 0.2.3 ($LAB_BUILD). Apple processing and physical iPad test remain separate."
+          echo "Uploaded GradeCrew Secure Live $SECURE_MARKETING_VERSION ($LAB_BUILD). Apple processing and physical iPad test remain separate."
       - name: Remove API key and decoded profile
         if: always()
         shell: bash

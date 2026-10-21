@@ -1,8 +1,11 @@
 """Regenerate the dependency-free Xcode project. No credentials, network or packages."""
 from pathlib import Path
-import hashlib, json
+import hashlib, json, re
 from xml.sax.saxutils import escape
 ROOT = Path(__file__).resolve().parent
+release_version = json.loads((ROOT/'Config/ReleaseVersion.json').read_text())['marketingVersion']
+if not isinstance(release_version,str) or not re.fullmatch(r'[0-9]+(?:\.[0-9]+){0,2}',release_version):
+    raise ValueError('Invalid Secure marketing version')
 objects = {}
 def ident(name): return hashlib.sha256(name.encode()).hexdigest()[:24].upper()
 def obj(key_name, **values):
@@ -51,7 +54,7 @@ for name in ['Debug','Release','AACLab','AACLabDistribution','SecureStaging','Se
         settings['CURRENT_PROJECT_VERSION']='2'
         if name=='AACLabDistribution': settings['MARKETING_VERSION']='0.2.0'
         if name in ('SecureStaging','SecureLive'):
-            settings['MARKETING_VERSION']='0.2.3'
+            settings['MARKETING_VERSION']=release_version if name=='SecureLive' else '0.2.3'
             settings['INFOPLIST_KEY_CFBundleDisplayName']='GradeCrew Secure'
             settings['INFOPLIST_FILE']='Config/LiveInfo.plist' if name=='SecureLive' else 'Config/StagingInfo.plist'
     target_configs.append(obj('target-'+name,isa='XCBuildConfiguration',name=name,buildSettings=settings))

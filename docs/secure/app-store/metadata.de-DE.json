@@ -20,16 +20,17 @@
     "phoneNumber": "+491704917107"
   },
   "reviewTestCode": null,
-  "priceDecision": null,
-  "territoriesDecision": null,
+  "priceDecision": "FREE",
+  "territoriesDecision": [
+    "DEU"
+  ],
   "releaseModeProposal": "manual_after_approval",
   "openItems": [
-    "Öffentliche URLs nach Hostingfreigabe auf echten Inhalt prüfen; native Offline-Informationen im finalen signierten Build abnehmen",
-    "Datenschutzangaben, Aufbewahrung, Länder, Preis, Altersfreigabe und EU-Händlerstatus verbindlich klären",
-    "Neuen signierten Kandidaten mit dem schlichten Einstieg bauen und am iPad einschließlich WLAN-Ausfall abnehmen",
-    "Stabilen freigegebenen Review-Test mit fiktiven Inhalten und gültigem Code bereitstellen",
-    "Echte 13-Zoll-Storeaufnahmen des finalen signierten Builds; vorhandene Testhostbilder nur Vorschau",
-    "App-Store-Connect-Metadaten und Verträge nach echter Anmeldung prüfen; erst danach abschließende Einreichungsfreigabe"
+    "Signierten 1.0-Kandidaten hochladen und physisch am iPad einschließlich WLAN-Ausfall und Nachsynchronisierung abnehmen",
+    "Stabilen Live-Review-Test mit fiktiven Inhalten bereitstellen",
+    "Echte Store-Screenshots des finalen Builds erstellen",
+    "Altersfragebogen, Inhaltsrechte und EU-Händlerverifizierung abschließen",
+    "Datenschutzentwurf bei Apple abschließend prüfen und veröffentlichen; dann Einreichungsfreigabe"
   ],
   "operator": {
     "name": "Martin Löffler",
@@ -46,5 +47,7 @@
     "hostingVersion": "6e2c90f76d61ad36",
     "verifiedAssets": 173,
     "pr": 256
-  }
+  },
+  "marketingVersion": "1.0",
+  "appStoreConnectStatus": "saved_draft_not_submitted_2026-10-21"
 }
