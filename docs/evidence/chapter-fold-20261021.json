@@ -1,0 +1,45 @@
+{
+  "task_id": "GC-CHAPTER-TESTS-01",
+  "date": "2026-10-21",
+  "stage": "staging_deployed",
+  "runtime_commit": "21c379f09892f5fadcc4d210137e49219a7afaf5",
+  "version": "2.3.1-gc46-chapters-rc3",
+  "project": "gradecrew-staging-2026",
+  "preview_url": "https://gradecrew-staging-2026--chapters-20261020-w5x2v4cu.web.app",
+  "hosting_version": "24cbc476765f16ba",
+  "expires": "2026-10-28",
+  "scope": "hosting_only; backend remains5b1c0737; school/production untouched",
+  "verified_assets": 173,
+  "local_checks": {
+    "targeted": 7,
+    "web_ui": 512,
+    "build": "pass"
+  },
+  "browser_checks": {
+    "overall_grade_visible_collapsed": 2,
+    "native_disclosure_initially_closed": true,
+    "mouse_toggle": true,
+    "enter_toggle": true,
+    "space_toggle": true,
+    "overall_percent_unchanged": 87.5,
+    "desktop_and_390px_screenshots": "visually inspected; no physical device claim"
+  },
+  "ci": {
+    "run": 39592285659,
+    "last_observed": "in_progress",
+    "source": "21c379f09892f5fadcc4d210137e49219a7afaf5"
+  },
+  "manifest_base": "docs/evidence/chapter-notes-20261021.json#release_manifest",
+  "changed_asset_hashes": {
+    "app.js": "1916bd4a068a3c35d5252dd490662200a38872b6ff55d562d4d266e35d344fd9",
+    "index.html": "fda44eba29edcc4fc6a93221f952b679476dbb215516b670578389900b63f51d",
+    "secure-student.html": "aca7644a2ab1ce72067997f200e7dcb7e38a44683cf2a17b6f96e2ad614efe40",
+    "styles.css": "f422273c8ca58c94fd15b3df8a021ba2db38946e2364c776c322f86655842e25"
+  },
+  "new_manifest_metadata": {
+    "project": "gradecrew-staging-2026",
+    "environment": "staging",
+    "version": "2.3.1-gc46-chapters-rc3",
+    "commit": "21c379f09892f5fadcc4d210137e49219a7afaf5"
+  }
+}

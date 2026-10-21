@@ -1,5 +1,22 @@
 # GradeCrew – gemeinsame To-do-Liste
 
+## GC-CHAPTER-TESTS-01 — Kapitelgrundstruktur, isolierte Testvorschau (20.10.2026)
+
+- [ ] Diagnose21.10., Referenzab3f5617: Erstellung scheitert an ungültigen Zielwörtern bei Wortmarkierung, Aufgaben9/19. Fehlerklasse lokal reproduziert; Originalentwurf fehlt, konkreter Auslöser offen. Vor Investorpräsentation ausdrücklich keine Hauptseitenänderung; keine Runtimeänderung/Deploy. Übergangsweg: Wörter markieren abwählen. Nach Präsentation Originalentwurf gezielt prüfen. [Übergabe](workstreams/chapter-tests-01.md).
+
+- [x] UI-Ergänzung21.10.: Klassendurchschnitt standardmäßig eingeklappt, ØGesamtnote aller bewerteten Abgaben in der sichtbaren Kopfzeile. Hosting-only-Preview rc3/21c379f0,173 Assets geprüft,512 Webprüfungen plus Klick-/Enter-/Leertasten-Browsernachweis. [Beleg](docs/evidence/chapter-fold-20261021.json). Backend unverändert; Nutzerabnahme der Ergänzung offen.
+
+- [x] Nutzerergänzung21.10.: Bereichsnoten neben Kapitelpunkten/Prozent sowie untere Klassenübersicht je Kapitel und Gesamttest auf derselben Vorschau bereitgestellt (rc2, Runtime5b1c0737,173 Assets geprüft, CI39588408745 grün). Gefrorener Notenschlüssel, Freigabemodus und vollständige Bewertungen beachtet;99 Assessment-/511 Webtests und synthetischer Browsernachweis mit zwei Abgaben. [Releasebeleg](docs/evidence/chapter-notes-20261021.json).
+- [ ] Martin prüft die neue Noten-/Klassenschnittanzeige; der bisherige veröffentlichte Kapitel-/Punkteablauf wurde von ihm als passend bestätigt. Editorvorschau war die Ursache seiner zunächst flachen Ansicht; deren Gleichstand bleibt offen.
+
+- [x] Nutzerpräzisierung20./21.10.: Kapitel direkt am Thema, vorhandener Sprach-/Textauftrag, automatische Planung über bestehenden Remy-/Lehrplankontext; Kapitel-/Aufgabenvergleich aller Schülerantworten und Noten mit einer Nachkommastelle auf isolierter Preview rc4/261b78dd. 559 Web/UI-,298 Functions-,99 Assessmenttests, exakte CI39596536375 und174 Assethashes grün. Browser mit zwei synthetischen Abgaben; KI-Planung dabei ausdrücklich simuliert, kein bezahlter Modellaufruf. [Beleg](docs/evidence/chapter-planning-20261021.json). Fachliche KI-Ausgabe, physisches Diktat und Nutzerabnahme offen; Timer/Editorvorschau weiterhin separat.
+
+- [x] Bestehende Testerstellung, Remy/Emmi, Veröffentlichung, Schülernavigation, Auswertung und CSV um optionale Kapitel erweitert. Bereichstimer ausgenommen.
+- [x] Unabhängiges Review mit sechs korrigierten Befunden; Node22 Functions289, Assessment98, Web/UI506, Kapitelregeln13, vollständige Emulatorkette und GitHub-CI39471477562 grün. Echte synthetische Chrome-Browserkette inklusive Reload, Abgabe und Nachkorrektur bestanden.
+- [x] Nur getrenntes Testprojekt gradecrew-staging-2026: selektive Functions/Rules und [eigene Vorschau](https://gradecrew-staging-2026--chapters-20261020-w5x2v4cu.web.app) bis27.10.2026. Runtime cf21ddf9;172 Assets geprüft. [Implementierung PR254](https://github.com/HerrLoeffler/Hausaufgabe/pull/254), [Übergabe](workstreams/chapter-tests-01.md), [Releasebelege](docs/evidence/chapter-tests-20261020.json). Keine Productionänderung.
+- [ ] Martin prüft die Grundstruktur auf der Vorschau. Physische iPad-/Nativeabnahme und Integrationsmerge offen; echte KI-Generierungen nicht ausgeführt. Bereichstimer danach separat konkretisieren.
+
+
 ## GC-WEB-REPAIR-20261007 — mobile Schüler-Browseransicht (19.10.2026)
 
 - [ ] Abgabe nur am Testende, mitwandernde Aufgabennavigation und GC-Logo sind per [PR250](https://github.com/HerrLoeffler/Hausaufgabe/pull/250) integriert und nach ausdrücklicher Nutzerfreigabe als Hosting-only auf [Schul-Live](https://hausaufgabe-staging.web.app/) veröffentlicht: SHA `4f8b7922`, Version `2.3.1-gc45-rc1`, alle168 öffentlichen Assetprüfsummen bestätigt, unabhängiger öffentlicher Review PASS. Exakte Merge-CI39325006198, mobile39325006269 und admin39325006259 grün. Physische Safari-/Handyabnahme bleibt offen; keine Functions-/Rules-/Nativeänderungen. [Übergabe](workstreams/mobile-student-chrome-20261019.md).

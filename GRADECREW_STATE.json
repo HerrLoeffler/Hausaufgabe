@@ -1853,6 +1853,45 @@
         ],
         "physical_device": "not_performed"
       }
+    },
+    {
+      "id": "chapter-tests-01",
+      "task_id": "GC-CHAPTER-TESTS-01",
+      "branch": "feat/chapter-tests-20261020",
+      "stage": "staging_deployed",
+      "verification_scope": "isolated_test_preview_and_selected_backend; integration not merged",
+      "runtime_commit": "261b78dd5ecd9841cc5913f9212cd54186eef284",
+      "observed_head": "99158ff06f14ead012c85e14e5cc794a3b3f6d0a",
+      "implementation_pr": 254,
+      "documentation_pr": 252,
+      "ci": {
+        "run": 39596536375,
+        "sha": "261b78dd5ecd9841cc5913f9212cd54186eef284",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      "staging": {
+        "project": "gradecrew-staging-2026",
+        "preview_url": "https://gradecrew-staging-2026--chapters-20261020-w5x2v4cu.web.app",
+        "hosting_version": "c4207db46b9b03d3",
+        "expires": "2026-10-28",
+        "verified_assets": 174,
+        "backend": "Only ai:prepareQuickRemy updated for planning; assessment stays5b1c0737; no rules change",
+        "version": "2.3.1-gc46-chapters-rc4",
+        "hosting_source": "261b78dd5ecd9841cc5913f9212cd54186eef284",
+        "backend_source": "5b1c07376ca9be1ab38be2fd89a3c226da451f78",
+        "ai_planning_source": "261b78dd5ecd9841cc5913f9212cd54186eef284"
+      },
+      "user_test": "Published earlier chapter flow accepted. New planning/answer comparison awaits user acceptance; synthetic Chrome tests passed with explicitly stubbed planning response.",
+      "handoff": "workstreams/chapter-tests-01.md",
+      "evidence": "docs/evidence/chapter-planning-20261021.json",
+      "next_action": "Martin checks topic/dictation chapter planning and teacher chapter/question answer comparison on same preview.",
+      "limits": [
+        "No physical iPad/native acceptance",
+        "No paid AI generation",
+        "No school/production deployment",
+        "No integration/main merge"
+      ]
     }
   ],
   "deployments": [

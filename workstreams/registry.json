@@ -669,6 +669,17 @@
       "state": "integrated",
       "handoff": "workstreams/mobile-student-chrome-20261019.md",
       "relatedBranches": []
+    },
+    {
+      "id": "chapter-tests-01",
+      "title": "Optionale Kapitel in vorhandener Testerstellung",
+      "primaryBranch": "feat/chapter-tests-20261020",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/chapter-tests-01.md",
+      "relatedBranches": [
+        "docs/gc-chapter-tests-01"
+      ]
     }
   ]
 }
