@@ -2779,6 +2779,7 @@
     "physical_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
     "legal_certification": false,
     "remaining": [
+      "primary-school age-rating requirement: current13+ rejected by operator; target4+ requires accurate content/control assessment before submission",
       "Apple trader phone verification and any subsequent required evidence",
       "explicit publication of saved privacy labels",
       "stable synthetic review test and real Store screenshots",
@@ -2843,7 +2844,18 @@
       "apple_age_rating": "13+_saved_reload_verified_explicit_user_confirmed;older_than_OS26_global12+regionalexceptions",
       "secure_physical_offline_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
       "apple_phone_verification": "fresh_email_code_requested_after_incomplete_previous_flow;awaiting_user_direct_entry",
-      "privacy_labels": "draft_not_published_user_requested_explanation_then_approval_pending"
+      "privacy_labels": "draft_not_published_user_requested_explanation_then_approval_pending",
+      "age_rating_followup": {
+        "user_requirement": "Secure must be usable by primary-school children including age6",
+        "target": "4+_Apple_global;no6+globalrating",
+        "current_saved_rating": "13+",
+        "current_rating_accepted_for_release": false,
+        "status": "clarifying_actual_content_before_truthful_reclassification",
+        "reason": "prior questionnaire too broad; distinguish educational topics from Apple's defined depictions or medical/treatment instructions",
+        "apple_reference": "https://developer.apple.com/help/app-store-connect/reference/app-information/age-ratings-values-and-definitions/",
+        "comparison": "SafeExamBrowser Apple Store4+within-appcontrols;notapprovalforGradeCrew",
+        "app_review_submitted": false
+      }
     }
   }
 }

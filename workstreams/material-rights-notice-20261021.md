@@ -32,3 +32,10 @@ Martin bestätigt Secure1.0(1141) auf seinem iPad: offline abgeben, App schließ
 - Uploadbeleg:2026-10-21T21:49:13.6481320Z ARCHIVE SUCCEEDED;21:50:39.0936410Z Uploaded GradeCrew;21:50:39.0937800Z EXPORT SUCCEEDED. Beide iPhone-/iPadLayoutjobs und Uploadjob success. KeineNeueSecure-Binärversion.
 - Restfragen nicht eigenständig beantwortet: Datenschutzlabels nurbeschrieben, nicht freigegeben; Telefonnummer/E-Mail-Kontaktflow benötigt aktuelle Direktverifikation; stabilerReviewcode/echteProduktbilder fehlen.13+-Rating nicht durch falscheInhaltsangaben abgesenkt.
 Nächster Schritt: Martins Freigabe der reinenDatenschutzkategorien bzw. direkteApple-Kontaktverifikation übernehmen; vorStoreeinreichung echtenReviewcode/Produktbilder vervollständigen.
+
+## Neue verbindliche Altersanforderung
+
+### 22.10.2026 · Secure muss auch mit sechs Jahren nutzbar sein
+GC-IOS-02 / GC-RELEASE-06: Martin lehnt den gespeicherten13+-Stand als Veröffentlichungsziel ausdrücklich ab; Secure soll alleSchulstufen einschließlichGrundschule bedienen. Apple hat global4+/9+/13+/16+/18+, kein6+; passendesZiel wäre4+. FrühereInhaltsabfrage warzupauschal: fachlicheThemen vontatsächlichenDarstellungen/Behandlungsanleitungen unterscheiden.13+bleibt nurtatsächlicherASC-Zwischenstand und istkeine akzeptierteProduktfreigabe. Gegenfrage zurInhaltseinordnung gestellt; keine wahrheitswidrigeHerabsetzung, keinAppReview eingereicht. ApplePrimärquelle und VergleichSEB4+geprüft; Vergleich ersetztkeine eigeneApplefreigabe. [Übergabe](workstreams/material-rights-notice-20261021.md).
+
+Nächster Schritt: Antwort auf konkreteInhaltsabgrenzung übernehmen; tatsächlicheSecure-Kontrollen/Appledefinitionen abgleichen und erst danach korrekteEinstufung bearbeiten. Keine neueApplekommunikation außerhalb vorhandenerMetadaten ohne ausdrücklichenAuftrag.13+nochgespeichert, nichtalsallgemeineFreigabe melden.
