@@ -593,3 +593,12 @@ GC-IOS-02 / GC-RELEASE-06: PR257 in den nativen Releasebranch integriert (`8ab38
 
 ### 21.10.2026 · Materialrechte und Apple-Inhaltsrechte
 GC-IOS-02 / GC-RELEASE-06: bestätigter Materialhinweis auf Schulwebsite veröffentlicht (PR267, ab6fcc9d),173/173Assethashes geprüft, nur index.html geändert,0entfernt. Alle3exakten CI-Läufe39678215545/39678215463/39678215543 erfolgreich;24lokale Webregressionen,320/834px ohne Überlauf. Getrennte Testseite wegen eigenem Lerngehirn-Prototyp nicht überschrieben. NativeTeacher-Text PR268 integriert aa39a9fb, Simulatorbuild und unabhängige begrenzte Prüfung PASS; automatischer Teacher-TestFlightlauf39678556334 läuft, noch kein neuer Uploadnachweis. Secure1.0(1141) bleibt unverändert. Apple-Inhaltsrechte nach konkreter Bestätigung gespeichert, sachliche KI-/Lehrkraftinhalte-Erläuterung in Review-Anmerkungen nach Reload bestätigt;1141 im Storeentwurf zugeordnet. Keine AppRevieweinreichung. Noch offen: Telefonverifikation, genaue Altersangaben, explizite Veröffentlichung der Datenschutzlabels, stabiler synthetischer Reviewcode/Storebilder und physische Offlineabnahme. [Übergabe](workstreams/material-rights-notice-20261021.md).
+
+
+## GC-BRAIN-01 — Planabnahme und Umsetzungsgates (21.10.2026)
+
+- [x] Planabnahme durch drei gezielte unabhängige Deltareviews: **PASS, 9/10 Planreife** am eingefrorenen Head `7342609fb90bffeaecf6f07855173936ef1023bc`; D1–D4 geschlossen. Belege: `outputs/brain-v1-plan-review-20261021/{product,runtime,data-dispatch}-delta.md`. Dokumentationschecks `39681027160` und `39681027252` success am Quellhead. Das ist keine Produkt-/Runtime-/V1-Abnahme.
+- [ ] P0 beim vorhandenen Chat GC · Automatisierung & Integration (`01a1089e-bbae-74c2-9a6a-6ce71fb3dba7`) neu beauftragt: Ownership-/Overlapprüfung, begrenzte Host-first Capability-/Runtimequalifikation, dann echter `P0_EXIT_RECEIPT`. Receipt/Zugang/Budget/Verbrauch noch ausstehend bzw. unknown; P1/P2 gesperrt.
+- [ ] GC · Design (`01a130fa-babb-7de3-bfeb-785499e7c061`) nur für spätere Views reserviert, nach P0 und Portfreeze; keine Homepage-/Store-/API-/Migrationsarbeit.
+- [ ] P1→P2→P3: genau ein noch gesondert zu bestätigender Store/API/Migrationswriter. P4: unabhängigen Produkt-/Recoveryreviewer vor Start benennen (dauerhafter Chat derzeit unknown).
+- [x] Planungswriter-Übergabe dokumentiert: Nachfolgecommit schließt diesen Plan-/HDF-/TODO-/Registry-Writer; Integrator erhält bis zur separaten P1-Freigabe nur isolierte P0-Diagnose-/Übergabearbeit. **Live unverändert.**

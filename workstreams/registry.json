@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-21T15:24:39.544556+00:00",
+  "updatedAt": "2026-10-21T21:52:21+00:00",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -683,6 +683,15 @@
       "relatedBranches": [
         "feature/public-legal-pages-20261021"
       ]
+    },
+    {
+      "id": "gc-brain-firmenzentrale-20261021",
+      "title": "GC-BRAIN-01: Firmenzentrale — Planabnahme bestanden; Umsetzung gated bei P0",
+      "primaryBranch": "docs/gc-brain-firmenzentrale-plan-20261021",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/gc-brain-firmenzentrale-20261021.md",
+      "relatedBranches": []
     }
   ]
 }
