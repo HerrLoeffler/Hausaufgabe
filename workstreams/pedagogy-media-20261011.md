@@ -52,3 +52,18 @@ Die Originale sind jetzt im privaten Archiv unabhängig von Downloads verfügbar
 Aktiv: drei lokale Teilprüfungen für Quelle ea3d79400d5b5503, Bereiche1–95,96–190,191–284; keine Actions/externen Providerläufe gestartet. Angefordert Sol/medium für fachliche Bild-/Sprachprüfung; tatsächlich beobachtetes Runtime-Modell,Kosten,Usage unbekannt. Versuchshistorie erhalten. Nächster Schritt: die284Seitenrecords abnehmen,konsolidieren und didaktisch übertragen; danach offene Sammeldateien/Einzelressourcen.
 
 Dokumentationscheckpoint PR214: b5eab19ae13fef5a7e53ee18260fc9d18036f293. Originale und detaillierte Seitenrecords weiterhin nur lokal. Aktuelle Hauptstand-Livebehandlung respektiert; kein Releasezustandswechsel.
+
+
+## Abgenommener Teilcheckpoint vom 21.10.2026
+
+Die sechs lokalen Kommentarbereiche sind beendet und konsolidiert: 164/164 Seiten Mathematik4, 284/284 Seiten Deutsch1 und zusätzlich 22/22 Seiten Diagnose/Förderplanung Deutsch1. Insgesamt 470 PDF-Seiten vollständig textlich und visuell gelesen, mit 470 privaten PNG-Seitenreferenzen. Dokumentübergreifende Inhalte können sich überschneiden; kleine Graustufenminiaturen ersetzen keine Prüfung jedes farbigen oder unscharfen Hauptbuchdetails.
+
+1.169 eigene Aufgaben-, Methoden-, Formular- und Verweisgruppen liegen als lokale Kandidaten vor. Das sind keine 1.169 fertigen Testaufgaben. 24 eigene didaktische Transferregeln mit Fundstellen sind in der Konzeptergänzung dokumentiert. Einzelantworten, Rubriken und Zusatzressourcen sind weiterhin unvollständig geprüft. Keine neuen Laufzeitprofile freigegeben.
+
+Neue Sammlung: neun unterschiedliche Originaldateien, davon sieben PDFs mit 1.040 Seiten sowie Word und Bild. Alle neun Hashes nach Archivierung erneut geprüft. R001: sieben Sammeldateien mit 671 PDF-Seiten plus Word und zusätzlich ein Originalbild. R002: ein Gesamtmaterial mit 369 PDF-Seiten. Technische Herkunfts- und Downloadkennungen bleiben privat. Weiterhin 0/125 vollständig abgeschlossene Regalmedien.
+
+Lokale eigene Detaildaten unter analysis/GC-PEDAGOGY-KB-01: media/reader-task-pool-candidates-20261021.jsonl, die seitenbezogenen JSONL-Dokumente und private-archive/reader-page-asset-index-20261021.json. Integritätsbeleg: media/reader-integrity-20261021.json. Der PR sichert eigene Planung, Standbericht, 24 Konzeptregeln und anonyme Abdeckungsbelege; Originale und detaillierte Seitenrecords bleiben lokal.
+
+Aktuell keine laufenden lokalen Kommentar-Teilprüfungen oder manuell gestarteten Actions-, Provider- oder Deployvorgänge. Nächster ausführbarer Schritt: übrige R001-Sammeldateien vollständig auswerten und mit Einzelmedien abgleichen. Produkt-/Livezustand unverändert.
+
+Dokumentationsstand PR214: edcd5695cdca9979ba734970bad2856dadb59e06. Hauptstand erhält ausschließlich diese Koordinationsaktualisierung; keine Produktintegration oder Deployment.
