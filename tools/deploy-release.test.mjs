@@ -29,3 +29,9 @@ test('Live AI deployment is bounded to the two changed school functions',()=>{
  assert.equal(JSON.parse(scoped.stdout).only,'functions:ai:reviewMode,functions:ai:recordCrewTelemetry');
  for(const scope of ['functions:ai:reviewMode,functions:ai:generateTest','functions:ai:reviewMode,functions:assessment','functions:ai:recordCrewTelemetry,functions:ai:reviewMode,functions:ai:deleteAccount'])assert.notEqual(run(...args,'--only',scope).status,0);
 });
+test('Analytics release is exactly scoped and preserves all unknown functions',()=>{
+ const scope='functions:ai:crewAssistant,functions:ai:recordCrewTelemetry,functions:ai:recordTeacherTelemetry,functions:ai:cleanupCrewTelemetry,functions:ai:retryTeacherAnalytics,functions:ai:teacherQuizAnalytics,functions:ai:teacherJobAnalytics,functions:ai:teacherUsageAnalytics,functions:ai:teacherSubmissionAnalytics';
+ const args=['--environment','staging','--project','gradecrew-staging-2026','--dry-run'];
+ assert.equal(run(...args,'--only',scope).status,0);
+ assert.notEqual(run(...args,'--only',scope+',functions:ai:generateTest').status,0);
+});

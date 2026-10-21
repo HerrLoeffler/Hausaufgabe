@@ -21,24 +21,34 @@ const ALLOWED_EVENTS = new Set([
 ]);
 
 function runtimeProjectId(env = process.env) {
-  for (const key of ["GCLOUD_PROJECT", "GOOGLE_CLOUD_PROJECT", "GCP_PROJECT"]) {
-    const value = String(env?.[key] || "").trim();
-    if (value) return value;
-  }
+  const values = ["GCLOUD_PROJECT", "GOOGLE_CLOUD_PROJECT", "GCP_PROJECT"]
+    .map(key => String(env?.[key] || "").trim()).filter(Boolean);
   try {
-    const config = JSON.parse(String(env?.FIREBASE_CONFIG || ""));
-    return String(config?.projectId || "").trim();
-  } catch {
-    return "";
-  }
+    const config = JSON.parse(String(env?.FIREBASE_CONFIG || "{}"));
+    if (config.projectId) values.push(String(config.projectId).trim());
+  } catch { return ""; }
+  return new Set(values).size === 1 ? values[0] : "";
 }
 
 function projectToken(env = process.env) {
-  return String(env?.POSTHOG_PROJECT_TOKEN || "").trim();
+  const project = runtimeProjectId(env);
+  if (project === STAGING_PROJECT_ID) return String(env?.POSTHOG_PROJECT_TOKEN || "").trim();
+  if (project === "hausaufgabe-staging" && env.POSTHOG_SCHOOL_ENABLED === "true") {
+    const token = String(env.POSTHOG_SCHOOL_PROJECT_TOKEN || "").trim();
+    return token && token !== String(env.POSTHOG_PROJECT_TOKEN || "").trim() ? token : "";
+  }
+  return "";
 }
 
 function isPosthogExportEnabled(env = process.env) {
-  return runtimeProjectId(env) === STAGING_PROJECT_ID && Boolean(projectToken(env));
+  return Boolean(projectToken(env));
+}
+
+const FIELD_NAMES = new Set(["subject", "grade", "schoolType", "region", "topic", "difficulty", "count", "points", "durationMinutes", "imageQuestionCount", "audioQuestionCount", "audioAnswerQuestionCount", "solutionAudioQuestionCount", "notes", "questionTypes"]);
+const member = (value, allowed) => allowed.includes(value) ? value : undefined;
+function releaseRef(env) {
+  const value = String(env.GC_SOURCE_RELEASE || "");
+  return /^[a-f0-9]{40}$/.test(value) ? value : "unknown";
 }
 
 function safeDay(value) {
@@ -65,33 +75,40 @@ function compactProperties(properties) {
   );
 }
 
-function buildPosthogCapture({ uid, day, eventId, metric = {}, metricVersion = "crew-metrics-v1" } = {}, env = process.env) {
+function buildPosthogCapture({ uid, day, eventId, metric = {}, metricVersion = "crew-metrics-v1", profile } = {}, env = process.env) {
   const event = String(metric.event || "");
   if (!ALLOWED_EVENTS.has(event)) throw new TypeError("Unsupported PostHog crew event");
+  if (runtimeProjectId(env) === "hausaufgabe-staging" && !require("./teacher-analytics-core").teacherChannel(profile, "hausaufgabe-staging")) throw new TypeError("School analytics purpose not enabled");
   const token = projectToken(env);
   if (!token) throw new TypeError("Missing PostHog project token");
 
   const cleanDay = safeDay(day);
   const fields = Array.isArray(metric.fields)
-    ? metric.fields.map(String).filter(Boolean).slice(0, 16)
+    ? [...new Set(metric.fields.filter(field => FIELD_NAMES.has(field)))].slice(0, 16)
     : undefined;
 
   const properties = compactProperties({
     "$process_person_profile": false,
     "$insert_id": String(eventId || "").slice(0, 120) || undefined,
-    environment: "staging",
+    environment: runtimeProjectId(env) === STAGING_PROJECT_ID ? "staging" : "school",
+    source_project: runtimeProjectId(env),
+    source_release: releaseRef(env),
+    event_schema_version: 2,
+    platform: "web",
+    measurement_channel: runtimeProjectId(env) === STAGING_PROJECT_ID ? "synthetic" : require("./teacher-analytics-core").teacherChannel(profile, "hausaufgabe-staging"),
+    role: member(profile?.role, ["teacher", "admin"]),
     source_system: "gradecrew",
     metric_version: String(metricVersion || "").slice(0, 80),
-    crew_id: metric.crewId,
-    input_mode: metric.inputMode,
-    source: metric.source,
+    crew_id: member(metric.crewId, ["remy", "emmi", "coco", "wilma"]),
+    input_mode: member(metric.inputMode, ["voice", "text"]),
+    source: member(metric.source, ["local", "ai"]),
     fields,
-    corrected_field: metric.correctedField,
-    error_type: metric.errorType,
-    latency_ms: Number.isFinite(metric.latencyMs) ? metric.latencyMs : undefined,
-    parser_version: metric.parserVersion,
+    corrected_field: FIELD_NAMES.has(metric.correctedField) ? metric.correctedField : undefined,
+    error_type: member(metric.errorType, ["network", "permission", "unsupported", "unavailable", "unknown"]),
+    latency_ms: Number.isFinite(metric.latencyMs) ? Math.max(0, Math.min(300000, metric.latencyMs)) : undefined,
+    parser_version: /^[a-zA-Z0-9._-]{1,60}$/.test(metric.parserVersion || "") ? metric.parserVersion : undefined,
     has_notes: typeof metric.hasNotes === "boolean" ? metric.hasNotes : undefined,
-    screen: metric.screen,
+    screen: member(metric.screen, ["ai_create"]),
     server_day: cleanDay
   });
 
@@ -105,9 +122,10 @@ function buildPosthogCapture({ uid, day, eventId, metric = {}, metricVersion = "
 
 async function captureCrewMetricToPosthog(input = {}, options = {}) {
   const env = options.env || process.env;
-  if (runtimeProjectId(env) !== STAGING_PROJECT_ID) return { sent: false, reason: "not-staging" };
+  if (![STAGING_PROJECT_ID, "hausaufgabe-staging"].includes(runtimeProjectId(env))) return { sent: false, reason: "not-staging" };
   if (!projectToken(env)) return { sent: false, reason: "not-configured" };
 
+  if (runtimeProjectId(env) === "hausaufgabe-staging" && !require("./teacher-analytics-core").teacherChannel(input.profile, "hausaufgabe-staging")) return {sent: false, reason: "purpose-not-enabled"};
   const fetchImpl = options.fetchImpl || globalThis.fetch;
   if (typeof fetchImpl !== "function") return { sent: false, reason: "fetch-unavailable" };
 
