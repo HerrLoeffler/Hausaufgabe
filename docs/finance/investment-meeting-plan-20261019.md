@@ -730,3 +730,21 @@ Neue lokale Datei: `outputs/gradecrew-investment-20261019/files/GradeCrew_Erstge
 Der ZIP-Vergleich bestätigt: alle 14 ursprünglichen Folien, 14 Notizen und vorhandenen Medien bleiben byte-identisch; das eingebettete Introvideo ist unverändert (SHA-256 `80f1ca0985f909d92c1ffed42572906b1d001a4f770183dfb5b3217e553aa3b4`). Drei Präsentationsstrukturteile wurden angepasst und zwei Folien samt Illustration ergänzt. Root hat die beiden gerenderten neuen Folien sowie das vollständige Paket geprüft. Vorschauen: `outputs/gradecrew-investment-20261019/v10-preview/page-12.png` und `page-13.png`.
 
 Der V9-Autostart wurde zuvor in PowerPoint zweimal sichtbar beobachtet; V10 übernimmt dasselbe Timing. Ein neuer nativer Starttest für V10 wurde nicht dokumentiert, und Audio wurde nicht hörgeprüft. Keine Änderung an TODO, Produktcode, Main, Release oder Deployment.
+
+
+## Ergänzung: Vor- und Nachteile, Lizenz- und Pilotfragen (21.10.2026)
+
+Die Nutzerfassung aus Downloads wurde als eigene Basis geprüft und lokal um eine Folie „Vorteile & Herausforderungen“ ergänzt. Die Folie steht zwischen „Ziele“ und „Offene Fragen“. Sie beschreibt mögliche Ablaufvorteile (Vorbereitung, Durchführung und Auswertung an einem Ort; Aufgaben an den eigenen Unterricht anpassen; Ergebnisse digital überblicken) und Schulbetriebsfragen (fachliche Prüfung von KI-Aufgaben; Geräte, Internet und technischer Betrieb; Datenschutz, Support und Kosten). Der Abschlusssatz lautet: „Im Pilot prüfen: Zeitaufwand, Aufgabenqualität und tatsächlicher Nutzen.“ Das sind Prüffragen, keine gemessenen Lern- oder Zeiteffekte.
+
+Lokale Ausgabe: `outputs/gradecrew-investment-20261019/files/GradeCrew_Praesentation_20261021_Vorteile_Herausforderungen.pptx`, 12 Folien/9 vorhandene Notizen. Basis war die angehängte Nutzerdatei `/Users/martin/Downloads/GradeCrew Präsentation.pptx`, SHA-256 `2fd12c302c7a90ca13f16a8b1a24860fef16b32fe238e2aab64e6095f289d933`; V10 wurde ausdrücklich nicht als Basis verwendet. In der Ausgabe blieben alle ursprünglichen Folien, Notizen und Medien byte-identisch; das Video `ppt/media/media1.mp4` behält SHA-256 `4e6ccf7e4a9aeb13b408cda63ed8e6764e6fc0b4eeee9322a3c541057fe238f1`. Vorschau der neuen Folie: `outputs/gradecrew-investment-20261019/v11-preview-final/page-11.png`. Das finale PPTX hat 12 Folien und wurde nach der kleinen Layoutkorrektur neu gerendert.
+
+### Gesprächssammlung: Lizenzen, Pilot und Betrieb
+
+Die folgenden Punkte sind Arbeitshypothesen und offene Fragen, keine Preis- oder Rechtsaussagen:
+- Mögliche Angebotsformen vergleichen: Pilotpaket mit klarer Laufzeit und Umfang, Lehrkraftlizenz, Schullizenz und später gegebenenfalls ein Vertrag mit Träger oder Land.
+- Nutzer, Entscheider, Vertragspartner und Zahler getrennt ermitteln. Schülerzugänge und den jeweiligen Umfang von Web-App, App, Games und Secure festlegen.
+- Preise erst nach Ermittlung realer Betriebs-, KI- und Supportkosten sowie nach Prüfung der Pilotbereitschaft ansetzen; keine Preise vorwegnehmen.
+- Nutzungsrechte für Bilder, Stimmen, Unterrichtsmaterial und Software gesondert fachlich prüfen lassen; keine Rechtsfreigabe behaupten.
+- Klären, welchen konkreten Vorteil GradeCrew gegenüber vorhandenen Werkzeugen bietet und wer einen bezahlten Pilot beauftragen könnte.
+- Vor einem Pilot messbare Prüfkriterien vereinbaren, etwa Vorbereitungszeit, Aufgabenqualität und tatsächliche Wiederbenutzung; keine Wirkung vorab behaupten.
+- Datenschutz und technischen Betrieb prüfen lassen, Supportzuständigkeit festlegen und Skalierungs- sowie laufende Kosten ermitteln.
