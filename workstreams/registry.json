@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-18T19:22:33.847Z",
+  "updatedAt": "2026-10-21T15:24:39.544556+00:00",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -669,6 +669,17 @@
       "state": "integrated",
       "handoff": "workstreams/mobile-student-chrome-20261019.md",
       "relatedBranches": []
+    },
+    {
+      "id": "secure-store-entry-20261021",
+      "title": "Secure-App-Store-Einstieg und öffentliche Rechts-/Supportseiten",
+      "primaryBranch": "feature/secure-store-entry-20261021",
+      "integrationTarget": "feature/native-live-staging-20261018",
+      "state": "active",
+      "handoff": "workstreams/secure-legal-release-20261021.md",
+      "relatedBranches": [
+        "feature/public-legal-pages-20261021"
+      ]
     }
   ]
 }
