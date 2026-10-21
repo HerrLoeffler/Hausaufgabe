@@ -2,6 +2,10 @@
 
 ## Aktiver Erweitern-Pilot nach dem Forschungsentwurf
 
+Nachbesserung21.10.: Erneuter Nutzer-Screenshot mit Prüfformatfehler bei2/3×2 und1/1. Prüfprompt gekürzt und Schema vorn/hinten; genau eine automatische KI-Formatkorrektur ausschließlich bei ungültigem Urteil. Fünf neue Regressionen vor Korrektur fehlgeschlagen, danach50Python-/55JS-Fälle grün. Fachliche Ablehnung (auch ohne/null Begründung) wird niemals zur Wiederholung geschickt; wiederholt ungültiges Format bleibt begrenzt und verändert keinen Lernzustand.
+
+Echter Browserlauf107–108 nach finalem Serverstart: Generator erzeugt tatsächlich2/3×2; synthetische1/1 abgegeben. Ohne manuellen Wiederholungsbutton erscheint echte, gesondert KI-geprüfte Regelhilfe: „Beim Erweitern bleibt die Fläche gleich, nur die Teilung wird feiner:2/3 wird mit Faktor2 zu4/6. Zähler und Nenner werden beide mal2.“ Passendes Vorher-/Nachherbild und Faktorfrage mit Antwortfeld. Keine Aussage, dass die Formatkorrektur in diesem Liveaufruf benötigt wurde (Trace deaktiviert); deren Wiederholungs-/Ablehnungszweige sind kontrolliert getestet. Screenshot im Chatoutput output/expansion/ki-formatkorrektur.jpg. Zähler vor eigenem Test106 (einschließlich Nutzerversuchen103–106), danach108/120, kein Reset;12übrig. Server ohne Diagnoseoption, getrenntes Testkonto, keine Schul-/Clouddateien geändert.
+
 Die nachfolgenden älteren Additionsdurchläufe sind Historie. Aktive Route: `expansion.mjs`/`expansion.py`, bestehender GradeCrew-Generator plus gesonderte Emmi-Prüfung; Hilfetext und Lernfrage ebenfalls echte Emmi-Erzeugung mit zweiter Prüfung. Nur synthetische Angaben im eigenen Browser-Testtab, getrenntes Testkonto.
 
 | Endpunkt | Echte Browserbeobachtung |

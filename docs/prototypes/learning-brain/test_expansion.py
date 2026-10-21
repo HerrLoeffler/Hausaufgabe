@@ -129,3 +129,35 @@ class ExpansionActiveExampleTest(unittest.TestCase):
   p=expansion.plan_turn(expansion.new_state({'n':4,'d':8,'k':4},2),'answer',{'n':'16','d':'999','k':'999'})
   p=expansion.plan_turn(p['state'],'question')
   self.assertLessEqual(len(expansion.generation_prompt(p,'x'*180)),2450)
+
+class ExpansionReviewFormatTest(unittest.TestCase):
+ def setUp(self):
+  expansion.SESSIONS.clear();expansion.RESPONSES.clear()
+ def run_start(self,replies):
+  self.prompts=[]
+  def ai(prompt):
+   self.prompts.append(prompt);return replies.pop(0)
+  return expansion.execute({'action':'start','requestId':'format-test-start'},ai,lambda p:{'text':'2/3 = ?/6','numericAnswer':4})
+ def test_prose_review_is_repaired_by_ai_before_display(self):
+  result=self.run_start(['Die Aufgabe ist fachlich richtig.','{"approved":true,"reason":"Korrekt geprüft."}'])
+  self.assertTrue(result['aiReviewed']);self.assertEqual(len(self.prompts),2)
+  self.assertIn('Format',self.prompts[1]);self.assertIn('Die Aufgabe ist fachlich richtig.',self.prompts[1])
+  self.assertTrue(all(len(p)<=2450 for p in self.prompts))
+ def test_explicit_rejection_is_never_retried_into_approval(self):
+  from lesson import LessonError
+  with self.assertRaises(LessonError):self.run_start(['{"approved":false,"reason":"Frage unpassend."}'])
+  self.assertEqual(len(self.prompts),1);self.assertFalse(expansion.SESSIONS)
+ def test_repaired_negative_verdict_stays_rejected(self):
+  from lesson import LessonError
+  with self.assertRaises(LessonError):self.run_start(['Fachlich nicht passend.','{"approved":false,"reason":"Falscher Faktor."}'])
+  self.assertEqual(len(self.prompts),2);self.assertFalse(expansion.SESSIONS)
+ def test_repeated_malformed_review_is_bounded_and_preserves_state(self):
+  with self.assertRaisesRegex(expansion.ExpansionError,'Eingabe'):
+   self.run_start(['Bitte anders formulieren.','Immer noch nur Text.'])
+  self.assertEqual(len(self.prompts),2);self.assertFalse(expansion.SESSIONS);self.assertFalse(expansion.RESPONSES)
+ def test_rejection_without_reason_is_still_final(self):
+  from lesson import LessonError
+  for reply in ['{"approved":false}','{"approved":false,"reason":null}']:
+   with self.subTest(reply=reply):
+    with self.assertRaises(LessonError):self.run_start([reply,'{"approved":true,"reason":"Darf nicht angefragt werden."}'])
+    self.assertEqual(len(self.prompts),1);self.assertFalse(expansion.SESSIONS)

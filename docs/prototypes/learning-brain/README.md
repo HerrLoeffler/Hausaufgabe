@@ -12,6 +12,8 @@ Vorhandenes gewöhnliches Lehrkraft-Testkonto ausschließlich im getrennten Proj
 
 Neue Aufgaben entstehen über den vorhandenen GradeCrew-Callable `regenerateQuestion`. Emmi prüft den Entwurf gesondert. Für Hilfen erhält Emmi die konkrete Ausgangsaufgabe, die tatsächliche Antwort, den exakt berechneten Schlüssel und das Ziel des aktuellen Teilschritts. Emmi formuliert die kurze Erklärung und die direkt beantwortbare Frage; eine zweite KI-Anfrage prüft die Passung. Kein lokaler Beispielpool wird als echte KI ausgegeben. Die zweite KI ist derselbe Dienst, keine Garantie eines unabhängigen Modells oder einer menschlichen Fachfreigabe.
 
+Bei einer formal ungültigen Prüferantwort erfolgt einmal automatisch eine KI-Formatkorrektur mit demselben Prüfkontext. Ein explizites `approved:false` bleibt auch ohne Begründung endgültig abgelehnt. Nach erneutem Formatfehler stoppt der Schritt mit erhaltener Eingabe; keine automatische Freigabe oder Ersatzaufgabe. Diese begrenzte Korrektur kann einen zusätzlichen Backendaufruf verursachen.
+
 - Falscher Zähler bei richtigem Nenner: nur den Zählerschritt klären.
 - Falscher Nenner bei richtigem Zähler: nur die Gesamtzahl der Teile klären.
 - Beide falsch: gleicher Faktor für beide Zahlen, danach ein Rechenschritt.
