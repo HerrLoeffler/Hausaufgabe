@@ -687,7 +687,12 @@ function showReceipt(receipt) {
   if(Array.isArray(receipt.chapterResults) && receipt.chapterResults.length) {
     const table=document.createElement("table");table.className="secureChapterResults";
     const caption=document.createElement("caption");caption.textContent="Kapitelpunkte";table.append(caption);
-    for(const row of receipt.chapterResults){const tr=document.createElement("tr");for(const value of [row.title,`${row.awardedPoints}/${row.maxPoints}`,row.percent==null?"":`${row.percent} %`]){const td=document.createElement("td");td.textContent=value;tr.append(td);}table.append(tr);}host.append(table);
+    const showPercent=receipt.chapterResults.some(row=>row.percent!=null);
+    const showGrade=receipt.resultMode==="points_grade"&&receipt.chapterResults.some(row=>row.grade!=null);
+    const head=document.createElement("thead"),header=document.createElement("tr");
+    for(const label of ["Kapitel","Punkte",...(showPercent?["Prozent"]:[]),...(showGrade?["Note"]:[])]){const th=document.createElement("th");th.scope="col";th.textContent=label;header.append(th);}head.append(header);table.append(head);
+    const body=document.createElement("tbody");
+    for(const row of receipt.chapterResults){const tr=document.createElement("tr");for(const value of [row.title,`${row.awardedPoints}/${row.maxPoints}`,...(showPercent?[row.percent==null?"–":`${row.percent} %`]:[]),...(showGrade?[row.grade==null?"–":`Note ${row.grade}`]:[])]){const td=document.createElement("td");td.textContent=value;tr.append(td);}body.append(tr);}table.append(body);host.append(table);
   }
   const solutionNote = document.createElement("p");
   solutionNote.textContent = "Lösungen werden nicht automatisch mit der Abgabe freigegeben.";

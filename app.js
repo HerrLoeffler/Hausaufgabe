@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc46-chapters-rc1";
+const APP_VERSION = "2.3.1-gc46-chapters-rc2";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -46,6 +46,7 @@ import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc43";
 import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc43";
 import { recordTutorialSignIn } from "./tutorial-signins.mjs?v=1";
 import { syncDashboardTutorialEntry } from "./dashboard-tutorial-entry.mjs?v=1";
+import { classAverages } from "./chapter-averages.mjs";
 import { mountChapterCreation } from "./chapter-creation.mjs";
 import { mountChapterEditor, mountQuestionChapterSelect, chapterFields, copyChapterFields } from "./chapter-editor.mjs";
 import "./shared/chapter-contract.js";
@@ -7811,8 +7812,22 @@ function submissionGrade(s) {
 function chapterResultsMarkup(submission) {
   const rows=submission.chapterSnapshot ? Chapters.aggregateChapterResults(submission.chapterSnapshot,submission.grading) : submission.chapterResults || [];
   if(!rows.length)return "";
-  return `<table class="secureChapterResults"><thead><tr><th>Kapitel</th><th>Punkte</th><th>Prozent</th><th>Status</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${escapeHtml(r.title)}</td><td>${r.awardedPoints}/${r.maxPoints}</td><td>${r.percent==null?"–":r.percent+" %"}</td><td>${r.needsReview||submission.status==="review"?"Bewertung offen":"Bewertet"}</td></tr>`).join("")}</tbody></table>`;
+  const scale=submission.gradeScaleSnapshot;
+  return `<table class="secureChapterResults"><thead><tr><th>Kapitel</th><th>Punkte</th><th>Prozent</th><th>Note</th><th>Status</th></tr></thead><tbody>${rows.map(r=>{
+    const pending=r.needsReview||submission.status==="review";
+    const grade=!pending&&r.percent!=null&&scale?.thresholds?.length===6?gradeFromPercent(r.percent,scale):null;
+    return `<tr><td>${escapeHtml(r.title)}</td><td>${r.awardedPoints}/${r.maxPoints}</td><td>${r.percent==null?"–":r.percent+" %"}</td><td>${grade==null?"–":grade}</td><td>${pending?"Bewertung offen":"Bewertet"}</td></tr>`;
+  }).join("")}</tbody></table>`;
 }
+
+function classAveragesMarkup(submissions) {
+  const summary=classAverages(submissions,gradeFromPercent);
+  const number=value=>value==null?"–":Number(value.toFixed(2)).toLocaleString("de-DE");
+  if(!summary.total)return `<section class="card chapterClassAverages"><h2>Klassendurchschnitt</h2><p>Noch keine vollständig bewerteten Abgaben. ${summary.pending} Bewertung(en) offen.</p></section>`;
+  const row=(title,value,total=false)=>`<tr${total?' class="chapterClassTotal"':''}><th scope="row">${escapeHtml(title)}</th><td>${number(value.points)}/${number(value.maxPoints)}</td><td>${number(value.percent)} %</td><td>${number(value.grade)}${value.gradeCount!==value.count?` <small>(${value.gradeCount} Noten)</small>`:""}</td><td>${value.count}</td></tr>`;
+  return `<section class="card chapterClassAverages"><h2>Klassendurchschnitt</h2><p>${summary.included} bewertete Abgaben · ${summary.pending} Bewertung(en) offen</p><div class="chapterAverageScroll"><table class="resultTable"><thead><tr><th>Bereich</th><th>Ø Punkte</th><th>Ø Prozent</th><th>Ø Note</th><th>Abgaben</th></tr></thead><tbody>${summary.chapters.map(ch=>row(ch.title,ch)).join("")}${row("Gesamttest",summary.total,true)}</tbody></table></div><p class="hint">Durchschnitt der Einzelwerte je Abgabe. Der Gesamtnotenschnitt basiert auf den Gesamtnoten.${summary.mixedVersions?" Unterschiedliche Kapitelstände werden getrennt ausgewertet.":""}</p></section>`;
+}
+
 function renderResultsTable() {
   const wrap = $("resultsTableWrap");
   if (!state.submissions.length) {
@@ -7828,6 +7843,7 @@ function renderResultsTable() {
   });
   html += "</tbody></table>";
   html += state.submissions.filter(s=>s.chapterSnapshot).map(s=>`<details class="card"><summary>${escapeHtml(s.studentName)} · Kapitelpunkte</summary>${chapterResultsMarkup(s)}</details>`).join("");
+  if(state.submissions.some(s=>s.chapterSnapshot))html+=classAveragesMarkup(state.submissions);
   wrap.innerHTML = html;
   wrap.querySelectorAll(".reviewBtn").forEach((btn) => btn.addEventListener("click", () => openReview(btn.dataset.id)));
 }

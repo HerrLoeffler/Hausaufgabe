@@ -542,7 +542,7 @@ function makeReceipt(submission, quiz = null, privateData = null, publicationPol
   if (!receipt.needsReview && ["points", "points_percent", "points_grade"].includes(mode)) {
     receipt.totalPoints = Number(submission?.totalPoints) || 0;
     receipt.maxPoints = Number(submission?.maxPoints) || 0;
-    if(submission?.chapterSnapshot) receipt.chapterResults=aggregateChapterResults(submission.chapterSnapshot,submission.grading).map(result=>{const safe={chapterId:result.chapterId,title:result.title,awardedPoints:result.awardedPoints,maxPoints:result.maxPoints};if(["points_percent","points_grade"].includes(mode))safe.percent=result.percent;return safe;});
+    if(submission?.chapterSnapshot) receipt.chapterResults=aggregateChapterResults(submission.chapterSnapshot,submission.grading).map(result=>{const safe={chapterId:result.chapterId,title:result.title,awardedPoints:result.awardedPoints,maxPoints:result.maxPoints};if(["points_percent","points_grade"].includes(mode))safe.percent=result.percent;if(mode==="points_grade"&&!result.needsReview&&result.percent!=null&&submission.gradeScaleSnapshot?.thresholds?.length===6)safe.grade=gradeFromPercent(result.percent,submission.gradeScaleSnapshot.thresholds);return safe;});
   }
   if (!receipt.needsReview && ["points_percent", "points_grade"].includes(mode)) receipt.percent = Number(submission?.percent) || 0;
   if (!receipt.needsReview && mode === "points_grade" && submission?.grade != null) receipt.grade = Number(submission.grade);

@@ -533,3 +533,13 @@ test('chapter review is authorized revisioned and atomic with chapter totals',as
  const s=f.docs.get(`quizzes/${f.quizId}/submissions/${a.attemptId}`);assert.equal(s.totalPoints,0.5);assert.equal(s.chapterResults[0].awardedPoints,0.5);
  await assert.rejects(f.exports.reviewChapterAssessment({...f.request(data),auth:{uid:'owner'}}),e=>e.code==='aborted');
 });
+
+test('chapter receipt notes use frozen grading scale and obey result modes and review status',async()=>{
+ for(const mode of ['none','points','points_percent','points_grade']){
+  const f=fixture(),quiz=f.docs.get(`quizzes/${f.quizId}`);Object.assign(quiz,{resultMode:mode,gradeScaleSnapshot:{thresholds:[100,90,80,70,60,0]},chapterSchemaVersion:1,chapters:[{id:'ch_one',title:'Brüche',position:1}]});f.docs.get(`quizzes/${f.quizId}/questions/q1`).chapterId='ch_one';quiz.chapterPublicationRevision=core.authoringFingerprint([f.docs.get(`quizzes/${f.quizId}/questions/q1`)],{chapterSchemaVersion:1,chapters:quiz.chapters});
+  const a=await f.exports.startAssessmentAttempt(f.request({studentName:'notes',clientAttemptId:'notes'.padEnd(20,'_'),attemptToken:f.token,clientCapabilities:{chapters:1}}));await f.submit(a.attemptId);const s=f.docs.get(`quizzes/${f.quizId}/submissions/${a.attemptId}`);s.grading.q1.awardedPoints=0.5;s.percent=50;s.grade=6;
+  quiz.gradeScaleSnapshot={thresholds:[50,40,30,20,10,0]};const receipt=(await f.receipt(a.attemptId)).receipt;
+  if(mode==='points_grade')assert.equal(receipt.chapterResults[0].grade,6);else assert.equal(receipt.chapterResults?.[0]?.grade,undefined);
+  s.status='review';assert.equal((await f.receipt(a.attemptId)).receipt.chapterResults,undefined);
+ }
+});
