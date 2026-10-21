@@ -787,7 +787,7 @@ Eine Lehreransicht zeigt nur ihre Gruppen im aktuellen Schuljahr; bei einer Schu
 
 ### G. Persönliche Schülerkennung und QR-Zugang
 
-Jede angelegte/importierte Person erhält eine stabile interne Schüler-ID. Ein persönlicher Zugang wird daraus getrennt erstellt: zufälliger nicht namensbasierter Code, QR-Link, Versionsnummer, Aktiv-/Sperrstatus. Als V1format20gut unterscheidbare Base32zeichen in fünf Vierergruppen; der Code wird kryptografisch zufällig erzeugt und niemals aus Name, Geburtstag oder ASV-ID berechnet. Schuljahr/Klassenwechsel oder Wiederimport lässt den gültigen Zugang unverändert.
+Jede angelegte/importierte Person erhält eine stabile interne Schüler-ID. Ein persönlicher Zugang wird daraus getrennt erstellt: zufälliger nicht namensbasierter Code, QR-Link, Versionsnummer, Aktiv-/Sperrstatus. Nach Martins Präzisierung vom21.10.2026 ist das V1format **acht gut unterscheidbare Base32zeichen**, z.B. `7K4M9R2X` (optional in zwei Vierergruppen dargestellt); dies ersetzt den früheren20Zeichen-Vorschlag; der Code wird kryptografisch zufällig erzeugt und niemals aus Name, Geburtstag oder ASV-ID berechnet. Schuljahr/Klassenwechsel oder Wiederimport lässt den gültigen Zugang unverändert.
 
 Verwaltung/ausdrücklich berechtigte Klassenpflege wählt **Zugänge erstellen** für fehlende Zugänge. Vorschau nennt z.B.28fehlend/2bereits vorhanden. Ein erneuter Klick erzeugt keine neuen Codes für bestehende Personen. **Zurücksetzen** ist eine separate Aktion mit klarer Wirkung auf alten Code und Sitzungen. Abgang/Sperre beendet neue Zugriffe; historische Abgaben bleiben erhalten. Nur Besitz des Codes reicht nicht für jede beliebige Prüfung, sondern nur für aktuell berechtigte Zuweisungen dieser Identität.
 
@@ -806,6 +806,7 @@ Im Schülerbereich **Drucken** öffnet genau eine Vorschau mit Auswahlumfang (ak
 | Drucktyp | Zweck und Layout |
 |---|---|
 | Namensliste | Vorname/Nachname, Klasse, optional Fach; keine Zugangscodes standardmäßig. A4, ein- oder mehrspaltig, Ziel1oder2Seiten, tatsächliche Seitenzahl anzeigen. |
+| Zugangsliste je Klasse | Vorname/Nachname und persönlicher achtstelliger Code; Ziel eine lesbare A4-Seite für eine übliche Klasse, tatsächliche Seitenzahl vor dem Druck sichtbar. Nur ausdrücklich gewählter Zugangsdruck enthält Codes. |
 | Persönliche Blätter/Zugangskarten | Name, Klasse, persönlicher Code, QR und kurze Anmeldungshilfe; **eine Person pro A4-Seite** oder mehrere ausgeschnittene Karten pro Sammelbogen. |
 
 Die Personenauswahl ist im Scope der angemeldeten Person serverseitig geprüft; Gesamtlisten sind keine Möglichkeit, fremde Schulen/Klassen zu exportieren. Layoutvorschau zeigt gesamte Personenzahl und erwartete Seitenzahl. Eine optionale Lehrkräftekarte ist nicht Bestandteil dieser Schülerzugangsfunktion.
@@ -987,3 +988,55 @@ Konkrete Dateien: `tools/classroom-preview/local-school-store.mjs` ist Schul-/Mi
 Verifiziert am Produkt04409e9: 563Tests mit bestehendem UI-VMFlag und vorhandenen Firebase-Testabhängigkeiten; einschließlich Migrationrollback bei synthetischem DBfehler,3Verwalter, konkurrierendem Rollenentzug, Fremdschule, Kontext-/Revisionkonflikt, Einladung/Annahme/Bestätigung/Widerruf, selbstgewählter Klassenprojektion, ursprünglichem Login-DOM/Testbestand und Logout-/Refreshisolation. Unabhängiger Review meldete2P2 (Refreshcache, letzte verbleibende Schule nach Mitgliedschaftsentzug); beide RED→GREEN behoben und nachgeprüft. Browser auf8782 bestätigt bestehenden Startbildschirm und normales Anmeldeformular; angemeldete echte Übernahme und mehrgerätefähiger Betrieb nicht geprüft. Kleinere offene Bediengrenze: nach fehlgeschlagenen Formularaktionen müssen Eingaben teilweise erneut eingegeben werden.
 
 Weiterhin außerhalb dieses Pakets: externe/offizielle Schulverifikation und Recovery ausgefallener letzter Authkonten, echte Geräte anderer Kolleg:innen, Fächer-/Prüfungsbetreuung, sichere Testzuweisung, Schülerzugänge/QR/Druck und explizite Verbindung importierter Lehrkräfte mit ihren Personaleinträgen. Bestätigung eines lokalen Mitglieds ist noch keine automatische Fusion mit einem CSV-Personaleintrag. Keine neuen Cloudrechte.
+
+
+### O. Ohne ASV starten: gemeinsame Klassen selbst anlegen, achtstellige Schülerzugänge und Druck
+
+**Nutzerpräzisierung21.10.2026:** Auch ohne ASV muss jede bestätigte Lehrkraft eine Klasse an der eigenen Schule anlegen können, die andere Kolleg:innen wiederfinden. Zusätzlich persönliche achtstellige Schülercodes zum Accountlogin und übersichtlicher Zugangsdruck wie bei einer Klassenliste. Diese Sektion ist Planung, noch keine neue Produktimplementierung. Iststand geprüft: `canManageRoster` ist derzeit anAdminrolle gebunden; normale Mitglieder können vorhandene Klassen wählen, aber noch keine Klassen/Schüler anlegen. Produkt04409e9 bleibt unverändert,563Testbeleg gilt nicht für diesen Folgeumfang.
+
+#### O1. Gemeinsamer Klassenkatalog statt persönlicher Klassenkopien
+
+ASV/CSV sind optionale Hilfen, keine Voraussetzung für Schul-/Klassen-/Schülerbetrieb. Eine Klasse gehört zur bestätigten Schule und zum Schuljahr; eine Lehrkraft ist Mitglied der Klasse. Sie ist nicht alleinige Eigentümerin des Klassenstammsatzes. Bestehende IDs/Importbelege bleiben unverändert nutzbar.
+
+Unter **Klassen** zwei einfache Einstiege: **Meine Klassen** und **Klasse finden oder anlegen**. Letzterer sucht zuerst im schulischen Katalog (Name, Schuljahr, optional Jahrgang), zeigt vorhandene Treffer und **Klasse auswählen**. Fehlt die Klasse: Name+Schuljahr eingeben, z.B.8b/2026–27, Schule aus aktuellem Kontext vorausgewählt anzeigen, dann **Klasse anlegen**. Nach Erfolg ist sie sofort für Kolleg:innen derselben Schule auffindbar; die anlegende Person ist automatisch zugeordnet. Kein zusätzlicher Adminfreigabedialog pro Klasse und kein privater Einladungscode für eine bereits schulweite Klasse.
+
+Gemeinsames Beispiel: Ada legt8b an und trägt den Schülerbestand ein. Bea findet8b und wählt sie für ihren Unterricht aus. Beide verwenden denselben Klassen-/Schülerbestand; Deutsch/Englisch sind später getrennte Unterrichtsgruppen dieser Klasse. Keine zweiten Klassen8bDeutsch/8bEnglisch mit kopierten Schüleraccounts.
+
+Dubletten verhindern: serverseitig in derselben Transaktion auf schoolId+schoolYear+normalisiertem Klassennamen prüfen, dann erstellen+eigene Mitgliedschaft zusammen speichern. Normalisierung umfasstUnicodeNFC, Außenleerzeichen, vereinheitlichte Leerzeichen und Groß-/Kleinschreibung. Ähnliche Schreibweisen wie8 B/8b werden als vorhandener Vorschlag gezeigt, ohne zwei schon bestehende Klassen anhand bloßer Ähnlichkeit still zusammenzuführen. Wenn zwei Lehrkräfte gleichzeitig8b anlegen, entsteht genau eine Klasse, und der zweite Versuch bietet diese bestehende Klasse zur Auswahl. Klassen aus anderen Schulen oder anderen Jahren sind keine verdeckten Treffer derselben Identität.
+
+#### O2. Rechte nach Handlung statt pauschalem Vollzugriff
+
+Ein neues enges Lehrerrecht **Klasse anlegen/beitreten** ersetzt nicht pauschal `canManageRoster=false` durchtrue. Die Schul-API prüft weiter aktive bestätigte Mitgliedschaft und aktuellen Kontext. Lehrer dürfen eigene Klassenauswahl verändern und eine neue Klasse in dieser Schule anlegen. Bestehende Klassen schulweit umbenennen, archivieren, verschieben oder zusammenführen bleibt zunächst Verwaltungsaufgabe. Eigenen Unterricht verlassen löscht weder Klasse noch Schüler.
+
+Damit der manuelle Weg tatsächlich nutzbar ist, gehört **Schüler:innen hinzufügen** für ausgewählte eigene Klassen zum Vorschlag: einzeln mit Vor-/Nachname oder über eine einfache Namens-CSV, ohne ASV-IDpflicht. Kein Lehrer-Personalimport oder schulweiter Rechteimport daraus. CSV für Lehrkräfte wird auf die ausdrücklich ausgewählte erlaubte Zielklasse gebunden; sie darf keine versteckten fremden Klassen anlegen/verschieben oder fremde Schülerkennungen umhängen. Mögliche vorhandene Schüler werden nur über geprüfte Identitäts-/Zuordnungsvorschau übernommen, niemals allein wegen gleichen Namens automatisch fusioniert. Schulweite Löschung, Entzug oder Zusammenführung bleibt bei der Verwaltung. Das aktuelle manuelleNamensmodell wird beibehalten.
+
+Nach späterem ASV-Import werden diese manuell angelegten Personen wiedererkannt/zugeordnet, statt blind neue Accounts anzulegen. Fehlende stabile Quellkennung erfordert eine ausdrückliche Entscheidung; gleicher Name ist kein Identitätsbeweis. Persönlicher Schülercode hängt anstabiler Schüler-ID und wird bei bestätigter späterer Verknüpfung nicht automatisch geändert.
+
+#### O3. Acht Zeichen führen in den persönlichen Schülerbereich
+
+V1code: **acht kryptografisch zufällige Base32zeichen** aus `23456789ABCDEFGHJKLMNPQRSTUVWXYZ`, Beispiel `7K4M9R2X`. Acht Zeichen, keine aus Namen/Geburtsdaten/ASVnummern berechnete Kennung. Eingabe akzeptiert Kleinschreibung und getrennte Vierergruppen. Der achtstellige Wunsch ersetzt ausdrücklich den früheren20Zeichenplan. Kollisionsprüfung und Neuziehung vor Aktivierung; bei einem Codefeld ohne Schule muss jeder aktive Code im gesamten zuständigen Backend eindeutig sein, nicht nur innerhalb einer Schule.
+
+Im Schülerbereich der Lehrkraft: Zustand **Zugang fehlt/Aktiv/Gesperrt**, **Fehlende Zugänge erstellen**, proPerson **Zugang erneuern**. Batchauswahl hat eine verständliche Vorschau: wie viele fehlende Codes entstehen, vorhandene Codes bleiben. Codes werden erst nach erfolgreichem atomaren Speichern als aktiv angezeigt. Schuljahr, Klasse, Name undReimport ändern den Code nicht; Rotation/Sperre macht alte Codes und ihre Sitzungen unwirksam. Codevergabe ist nicht nur das Zeichnen einer Karte, sondern eine wirkliche serverseitige Schülerauthentifizierung.
+
+Auf dem bestehenden Startbildschirm klar unterscheidbar: **Mein Schülerzugang** mit achtstelligemCode vs. bisheriger **Testcode** für einen konkreten Test. Die bisherigen Testcodes/Normalanmeldung bleiben unverändert. Erfolgreicher persönlicher Code öffnet den eigenen Schülerbereich, nicht eine neue Testvorlage oder Lehreransicht. Ohne zugewiesene Tests erscheint ein ehrlicher Leerzustand. Der Lehrerlogin im selben Browser wird durch einen Schülerlogin nicht überschrieben.
+
+Acht Base32zeichen haben40BitSuchraum; deshalb gehören zum selben Lieferumfang serverseitige Online-Abwehr, Begrenzung fehlgeschlagener Versuche mit Rückmeldungen, keine Personensuche durch Fehlermeldungen, abgesicherte hochentropische Sitzungen und Prüfung vonSperr-/Codeversion bei jeder geschützten Anfrage. Grenzen müssen den gleichzeitigen Unterrichtsstart hinter einer gemeinsamen Schul-IP zulassen; keine starre kleine IPquote, die ganze Klassen sperrt. Keine dauerhaften Sperren fremder Personen allein durch erratene ungültige Eingaben. Entropie ist keine pauschale Sicherheitsfreigabe; Rate-Limit-/Abusefälle werden getestet. HMAClookup, AEADspeicherung und Wiederherstellung der getrennten Betriebsschlüssel ausG bleiben Pflicht für wiederholbaren Zugangsdruck.
+
+#### O4. Eine Druckvorschau für Listen und Karten
+
+**Drucken** bietet im bestehenden Schülerbereich drei klare Formate: **Klassenliste mit Codes** (Name+achtZeichen, optionalKlasse; Ziel eine lesbareA4Seite für üblicheKlassengröße), **Zugangskarten** (mehrere proBlatt, Name/Code/kurzeAnmeldehilfe, QR optional) und **Eine Person pro Seite**. Die reineNamensliste ohneCodes bleibt zusätzlich möglich. Klasse/ausgewähltePersonen, Anzahl und tatsächlicheSeitenzahl stehen in derselben Vorschau. Keine technisch formulierte PDF-/Datenbank-/Schlüsselbedienung im Lehrerablauf.
+
+Wiederholter Druck zeigt denselben gespeicherten gültigen Code; Drucken oderAbbruch erzeugt keinen neuen. LangeNamen werden umbrochen, keinePerson wird abgeschnitten oder ausgelassen. Eine Klasse soll aufeineSeite passen, eine ganze Schule wird nicht aufeine unleserliche Seite geschrumpft. Vorschau bietet beiÜberlauf mehrereSeiten oderKarten; Mindestschrift9pt ausH gilt weiter. QRist eine zusätzliche Eingabehilfe und ersetzt den lesbaren achtstelligenCode nicht.
+
+Zugangsdruck ist eine eigene serverseitig berechtigte Projektion, keine allgemeine schulweite Secretliste im Browser. Bestätigte Lehrkräfte drucken ihre gewählten Klassen, Verwalter bei ausdrücklicherAuswahl schulweit. Codes nichtinLogs/URLs/Telemetrie/Repository; Druckdateien nur im privaten temporären Bereich, kein unbeabsichtigter statischer Export. Lokales8782 bleibt zunächst nur auf diesemMac nutzbar; nutzbareHandy-/Schulkarten brauchen das tatsächlich bereitgestellte gemeinsameHTTPSbackend. Keine Veröffentlichung durch diesen Plan.
+
+#### O5. Nächster ausführbarer Ausbau und Nachweise
+
+Reihenfolge: (1) bestätigten Lehrkräften gemeinsames Klassenanlegen+automatischenBeitritt mit Dublettenprüfung erlauben und manuelleSchüleraufnahme aufgewählteKlassen begrenzen; (2) bestehende Schüler-ID mit persistentem achtstelligemZugang/echterSchülersitzung verbinden; (3) dieselben gültigenZugänge in Klassenliste/Karten/Einzelblättern drucken. VorhandenePakete3–5 ausL werden damitpräzisiert, nicht durch einen neuen Plan ersetzt. Fach-/Assessmentbindung ausPaket6 bleibt gesondert zu qualifizieren.
+
+- `local-school-store.mjs`/Policytests: Lehrer erstellt8b undwirdzugeordnet; zweiteLehrkraftfindetdieselbeID; zwei gleichzeitigeAnlagen ergebenkeineDuplikate; Fremdschule/Status/ClientUIDabgewiesen; Rohimport kannkeinenScopeerweitern.
+- `manual-roster.mjs`/Client/API: Klassenkatalogauffindbar ohneSchülerdatenvorbeitritt; manuellerSchülerbestand imrichtigenSchulkontext; `canCreateClass`/`canAddStudents` getrenntvonAdminrollen; ursprünglicherLogin49Testbestand unverändert.
+- Schülerzugangsservice ausG/L: achtZeichenformat/Kollision/Wiederimport/Jahreswechsel, Transaktionsfehler/Mehrfachklick, RateLimit unterSchulNAT, falscherCode/Rotation/Sperre/Sitzungsablauf; niemalsLehrerrechte.
+- Druckmodul ausH/L:0/1/30/35/300Personen undlangeNamen,1A4Klassenliste vs.ehrlicherÜberlauf, Reprint gleicherCode, fremdeSchule/Rollenentzug/abgebrochenerDruck, Schlüsselbackup+Restore vorFreigabe; echteQRkamera später separat.
+
+Dies ist eine gespeicherte Anforderung/Spezifikation, kein bereits getesteterachtstelligerZugang. Aktueller Produktstatus563Tests/branch_only unverändert. Keine Namen/Schülerdaten/Einladungsgeheimnisse in diesem Plan und keine Nutzerkontenänderung.
