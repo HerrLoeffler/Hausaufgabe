@@ -73,7 +73,7 @@
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 167,
     "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate. Coco durable owner-only search/memory and contextual support PR179–183 now deployed with real own-account search/context checks; broader user/device acceptance separate.",
-    "next_action": "Martin tests Secure1.0(1141) on physical iPad: offline submission, restart, later sync and matching receipt. Complete remaining operator Apple confirmations before Store submission. Reload installed feedback connector and perform Live admin login before private feedback retrieval.",
+    "next_action": "Martin confirmed Secure1.0(1141) physical iPad offline submission, restart, later sync and teacher receipt on21Oct. Complete trader contact verification and privacy-label publication approval; stable synthetic review code and actual Store screenshots remain before submission. Reload installed feedback connector and perform Live admin login before private feedback retrieval.",
     "canonical_url": "https://hausaufgabe-staging.web.app/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
@@ -2642,11 +2642,11 @@
     "source_commit": "424473481a3bcb8818289f79f760772883f0492c",
     "integration_commit": "5a248621f315c08e30a2639b162434526b4e7349",
     "native_branch": "feature/native-live-staging-20261018",
-    "native_commit": "b43298b73d63707d2270ee4a3f4e49cf980dd606",
-    "teacher_testflight_run": 39161910081,
+    "native_commit": "aa39a9fbbec550f0cf42bfd22ced6719d02dad60",
+    "teacher_testflight_run": 39678556334,
     "secure_testflight_run": 39629456276,
-    "testflight_status": "teacher_0.2.0_48_unchanged;secure_1.0_1141_signed_AAC_verified_uploaded_processed_internal_GradeCrew_Tester_assigned_20261021;physical_acceptance_pending",
-    "physical_acceptance": "pending_new_offline_policy",
+    "testflight_status": "teacher_0.2.0_49_and_secure_1.0_1141_uploaded_processed_internal_groups_assigned;Secure_offline_user_confirmed_20261021",
+    "physical_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
     "offline_policy": "unlock_only_after_verified_durable_local_submission_then_sync; block_new_attempt_until_server_receipt",
     "live_functions": {
       "active": 58,
@@ -2702,7 +2702,7 @@
       },
       "physical_device_acceptance": "pending"
     },
-    "teacher_testflight_build": "0.2.0(48)",
+    "teacher_testflight_build": "0.2.0(49)",
     "secure_testflight_build": "1.0(1141)",
     "secure_native_commit": "8ab3891b3e07a5369ec4206f9e30c0f3469d81c5",
     "secure_testflight_receipt": {
@@ -2722,12 +2722,26 @@
       "apple_processing": "complete",
       "internal_group": "GradeCrew Tester",
       "invited_testers": 1,
-      "physical_acceptance": "pending",
+      "physical_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
       "app_store_submission": false,
       "production_backend_changed": false,
       "website_changed": false,
       "teacher_app_changed": false,
       "handoff": "workstreams/secure-testflight-1141-20261021.md"
+    },
+    "teacher_testflight_receipt": {
+      "commit": "aa39a9fbbec550f0cf42bfd22ced6719d02dad60",
+      "pr": 268,
+      "run": 39678556334,
+      "conclusion": "success",
+      "version": "0.2.0",
+      "build": "49",
+      "upload": "success_2026-10-21T21:50:39Z",
+      "apple_processing": "complete",
+      "internal_group": "Grade Crew TesterL",
+      "invited_testers": 1,
+      "test_notes": "saved_reload_verified",
+      "physical_acceptance": "not_yet_tested_this_teacher_build"
     }
   },
   "public_legal_information_20261021": {
@@ -2762,14 +2776,12 @@
       "layout": 40
     },
     "new_app_store_submission": false,
-    "physical_acceptance": "pending",
+    "physical_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
     "legal_certification": false,
     "remaining": [
       "Apple trader phone verification and any subsequent required evidence",
-      "explicit final age-category confirmation",
       "explicit publication of saved privacy labels",
       "stable synthetic review test and real Store screenshots",
-      "physical iPad offline/restart/sync acceptance",
       "school roles/AVV plus verified provider/server/backup retention"
     ],
     "native_uploaded_build": "1.0(1141)",
@@ -2790,7 +2802,7 @@
       "apple_processing": "complete",
       "internal_group": "GradeCrew Tester",
       "invited_testers": 1,
-      "physical_acceptance": "pending",
+      "physical_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
       "app_store_submission": false,
       "production_backend_changed": false,
       "website_changed": false,
@@ -2819,14 +2831,19 @@
       "native_commit": "aa39a9fbbec550f0cf42bfd22ced6719d02dad60",
       "native_simulator_build": "success",
       "native_teacher_upload_run": 39678556334,
-      "native_teacher_upload_status": "in_progress_not_claimed_delivered",
+      "native_teacher_upload_status": "success_uploaded_0.2.0_49_Apple_processed_internal_group_Grade_Crew_TesterL_1_tester",
       "secure_build_unchanged": "1.0(1141)",
       "apple_content_rights": "explicit_user_confirmed_saved_reload_verified",
       "apple_review_explanation": "saved_reload_verified",
       "apple_store_draft_build": "1.0(1141)_selected_saved_reload_verified",
       "app_review_submitted": false,
       "backend_rules_changed": false,
-      "review": "independent_bounded_PASS"
+      "review": "independent_bounded_PASS",
+      "native_teacher_upload_utc": "2026-10-21T21:50:39Z",
+      "apple_age_rating": "13+_saved_reload_verified_explicit_user_confirmed;older_than_OS26_global12+regionalexceptions",
+      "secure_physical_offline_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
+      "apple_phone_verification": "fresh_email_code_requested_after_incomplete_previous_flow;awaiting_user_direct_entry",
+      "privacy_labels": "draft_not_published_user_requested_explanation_then_approval_pending"
     }
   }
 }
