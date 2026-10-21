@@ -1,0 +1,50 @@
+{
+  "task": "GC-CREW-AI-04",
+  "url": "https://hausaufgabe-staging.web.app/",
+  "project": "hausaufgabe-staging",
+  "environment": "production",
+  "commit": "2a6ff107c3e84c9020507f2b384fdd20354efbf7",
+  "version": "2.3.1-gc45-rc1",
+  "scope": "hosting_only",
+  "deploy_attempt": 1,
+  "deploy_result": "success",
+  "public_manifest_matches": true,
+  "verified_asset_count": 173,
+  "parser_sha256": "1e74b01574092a154173c2f7b6a10cf9ba8a3c1a7db32736f6820cd45cecacf6",
+  "parser_cache_control": "no-cache",
+  "changed_runtime_assets": [
+    "crew-assistant-core.mjs"
+  ],
+  "unchanged_runtime_assets": 172,
+  "backend_rules_native_changed": false,
+  "ci_run": 39629276498,
+  "ci_result": "success",
+  "form_smoke": {
+    "method": "Cua Chrome existing signed-in account, new unsaved form",
+    "input_source": "Original transcript text pasted into Remy input; no physical microphone use",
+    "preview": {
+      "count": 15,
+      "imageQuestionCount": 2,
+      "audioQuestionCount": 2,
+      "notes_present": true
+    },
+    "after_confirm": {
+      "count": 15,
+      "imageQuestionCount": 2,
+      "audioQuestionCount": 2,
+      "audioAnswerQuestionCount": 0,
+      "solutionAudioQuestionCount": 0,
+      "notes_present": true,
+      "notes_exact_transcript_retained": true,
+      "status_lists_audio_and_wishes": true
+    },
+    "result": "pass",
+    "test_generation_started": false,
+    "existing_test_changed": false,
+    "screenshot": "live-form-proof.jpg"
+  },
+  "limits": [
+    "Physical microphone/device not tested",
+    "No paid test generation run"
+  ]
+}

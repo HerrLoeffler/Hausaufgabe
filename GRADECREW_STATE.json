@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "39e70b20b304ded6db8c2a668f1622851b15fb32",
+    "observed_integration_head": "2a6ff107c3e84c9020507f2b384fdd20354efbf7",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -923,7 +923,7 @@
       "next_action": "Echtes Beispiel prüfen, bewusste Feldkorrektur auslösen und Admin-Statistik auf eingehende Signale testen.",
       "dictation_wishes_followup_20261021": {
         "task_id": "GC-CREW-AI-04",
-        "stage": "integrated",
+        "stage": "production",
         "branch": "fix/remy-dictation-wishes-20261021",
         "candidate": "378393a79f912daf963cd244cc9f1818e4def040",
         "tree": "58281cee55a6ef99d42d0e6b4fcbccba8747586f",
@@ -939,14 +939,23 @@
         "ci_status": "success",
         "integration": "2a6ff107c3e84c9020507f2b384fdd20354efbf7",
         "staging": "not_deployed",
-        "school_live": "deployment_authorized_not_yet_started",
+        "school_live": "hosting_deployed_verified173assets",
         "physical_microphone": "not_tested",
         "handoff": "workstreams/remy-dictation-wishes-20261021.md",
-        "next_action": "Deploy exact reviewed merge2a6ff107 to hausaufgabe-staging Hosting, verify public173hashes and UI form smoke.",
+        "next_action": "Martin can retry dictation; no remaining implementation/deploy step in requested scope. Physical microphone acceptance remains separate.",
         "merge_ci_run": 39629276498,
         "merge_ci_status": "success",
         "user_authorization": "Ja, veröffentliche die geprüfte Remy-Korrektur auf hausaufgabe-staging.web.app und prüf danach kurz, ob Audios und eigene Wünsche richtig übernommen werden.",
-        "release_scope": "hosting_only; one changed parser asset,172unchanged"
+        "release_scope": "hosting_only",
+        "release_commit": "2a6ff107c3e84c9020507f2b384fdd20354efbf7",
+        "release_version": "2.3.1-gc45-rc1",
+        "release_project": "hausaufgabe-staging",
+        "release_url": "https://hausaufgabe-staging.web.app/",
+        "public_asset_count": 173,
+        "user_acceptance": "agent_actual_form_smoke_passed; human_physical_microphone_pending",
+        "form_smoke": "preview_count15_images2_audio2_notes_present; confirmed_form_audio2_notes_present; no_generation_started",
+        "backend_rules_native_changed": false,
+        "receipt": "workstreams/remy-school-release-receipt-20261021.json"
       }
     },
     {
