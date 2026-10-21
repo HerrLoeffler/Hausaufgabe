@@ -1,0 +1,8 @@
+{
+  "separateAuthenticatedProfiles": true,
+  "foreignSessionDenied": true,
+  "ownPrivateDirectReadDenied": true,
+  "foreignPrivateDirectReadDenied": true,
+  "clientOwnerOverrideDenied": true,
+  "unauthenticatedDenied": true
+}

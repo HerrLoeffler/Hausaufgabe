@@ -1,0 +1,220 @@
+[
+  {
+    "stage": "start",
+    "session": {
+      "id": "9e5cf3f6-99c9-4b44-8bbd-0dfacd9c3926",
+      "revision": 1,
+      "topic": {
+        "id": "BY-3dcd29f28ce3:math:6:R:v1:B07",
+        "subject": "math",
+        "grade": 6,
+        "track": "R",
+        "title": "Wertgleich erweitern",
+        "area": "M6 Lernbereich 1: Bruchzahlen",
+        "goal": "Einen Bruch durch gemeinsame Vervielfachung von Zähler und Nenner wertgleich erweitern.",
+        "source": {
+          "id": "BY-3dcd29f28ce3",
+          "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/mathematik/regelklasse",
+          "status": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+          "sha256": "60894181fcaa4f9a93a1da73f0bacd021f59c3c8c08abbb5c1245eb2555b9dfd",
+          "anchor": "M6 1.1 Erweiterung des Zahlbereichs auf Bruchzahlen"
+        },
+        "prerequisites": [
+          "BY-3dcd29f28ce3:math:6:R:v1:B02"
+        ],
+        "modality": "text",
+        "guidance": "Am gleichen Ganzen die Verfeinerung zeigen; keine bloße Nenneränderung. Rechenwert, Bedingungen und Einheiten fachlich prüfen; bei offener Begründung passende Kriterien und gültige Alternativen erhalten. Nach wiederholtem Fehler eine Anforderung entfernen und eine beantwortbare Mikrofrage stellen; nach weiter erfolgloser Hilfe gemeinsam mit der Lehrkraft fortsetzen.",
+        "availability": "requires_task_validation",
+        "reviewStatus": "inhaltliche_Pruefung_offen",
+        "conceptRefs": [
+          "BY/MS/M6/Brueche/B07"
+        ]
+      },
+      "phase": "practice",
+      "task": {
+        "id": "48628742-9588-40ea-9793-755a372b8cf7",
+        "prompt": "Erweitere den Bruch gleichwertig mit dem Faktor 2: 2/3 = __/__.",
+        "contextText": "",
+        "input": "text",
+        "options": []
+      },
+      "originalTask": null,
+      "explanation": "",
+      "visual": {
+        "kind": "fraction-strip",
+        "numerator": 2,
+        "denominator": 3,
+        "factor": 2,
+        "description": "Der Bruch 2/3 wird in gleich große Teile aufgeteilt, sodass jedes Drittel in 2 Teile zerlegt wird."
+      },
+      "feedback": {
+        "outcome": "",
+        "short": ""
+      },
+      "remainingSeconds": 1191,
+      "summary": null
+    }
+  },
+  {
+    "answer": "999",
+    "session": {
+      "id": "9e5cf3f6-99c9-4b44-8bbd-0dfacd9c3926",
+      "revision": 2,
+      "topic": {
+        "id": "BY-3dcd29f28ce3:math:6:R:v1:B07",
+        "subject": "math",
+        "grade": 6,
+        "track": "R",
+        "title": "Wertgleich erweitern",
+        "area": "M6 Lernbereich 1: Bruchzahlen",
+        "goal": "Einen Bruch durch gemeinsame Vervielfachung von Zähler und Nenner wertgleich erweitern.",
+        "source": {
+          "id": "BY-3dcd29f28ce3",
+          "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/mathematik/regelklasse",
+          "status": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+          "sha256": "60894181fcaa4f9a93a1da73f0bacd021f59c3c8c08abbb5c1245eb2555b9dfd",
+          "anchor": "M6 1.1 Erweiterung des Zahlbereichs auf Bruchzahlen"
+        },
+        "prerequisites": [
+          "BY-3dcd29f28ce3:math:6:R:v1:B02"
+        ],
+        "modality": "text",
+        "guidance": "Am gleichen Ganzen die Verfeinerung zeigen; keine bloße Nenneränderung. Rechenwert, Bedingungen und Einheiten fachlich prüfen; bei offener Begründung passende Kriterien und gültige Alternativen erhalten. Nach wiederholtem Fehler eine Anforderung entfernen und eine beantwortbare Mikrofrage stellen; nach weiter erfolgloser Hilfe gemeinsam mit der Lehrkraft fortsetzen.",
+        "availability": "requires_task_validation",
+        "reviewStatus": "inhaltliche_Pruefung_offen",
+        "conceptRefs": [
+          "BY/MS/M6/Brueche/B07"
+        ]
+      },
+      "phase": "help",
+      "task": {
+        "id": "120b58ca-ff8d-48be-ab7f-a7673bf7fa73",
+        "prompt": "Rechne nur den Zähler: 2 · 2 = ?",
+        "contextText": "Beim wertgleichen Erweitern wird der Zähler mit demselben Faktor wie der Nenner vervielfacht. Der Faktor ist 2.",
+        "input": "number",
+        "options": []
+      },
+      "originalTask": {
+        "id": "48628742-9588-40ea-9793-755a372b8cf7",
+        "prompt": "Erweitere den Bruch gleichwertig mit dem Faktor 2: 2/3 = __/__.",
+        "contextText": "",
+        "input": "text",
+        "options": []
+      },
+      "explanation": "Damit der Bruch gleich viel bedeutet, werden oben und unten beide mit 2 vervielfacht. Zuerst rechnen wir nur den Zähler: 2 mal 2.",
+      "visual": null,
+      "feedback": {
+        "outcome": "incorrect",
+        "short": "Nicht richtig: 2 · 2 = 4 und 3 · 2 = 6. Die Antwort ist 4/6."
+      },
+      "remainingSeconds": 1173,
+      "summary": null
+    }
+  },
+  {
+    "answer": "4",
+    "session": {
+      "id": "9e5cf3f6-99c9-4b44-8bbd-0dfacd9c3926",
+      "revision": 3,
+      "topic": {
+        "id": "BY-3dcd29f28ce3:math:6:R:v1:B07",
+        "subject": "math",
+        "grade": 6,
+        "track": "R",
+        "title": "Wertgleich erweitern",
+        "area": "M6 Lernbereich 1: Bruchzahlen",
+        "goal": "Einen Bruch durch gemeinsame Vervielfachung von Zähler und Nenner wertgleich erweitern.",
+        "source": {
+          "id": "BY-3dcd29f28ce3",
+          "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/mathematik/regelklasse",
+          "status": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+          "sha256": "60894181fcaa4f9a93a1da73f0bacd021f59c3c8c08abbb5c1245eb2555b9dfd",
+          "anchor": "M6 1.1 Erweiterung des Zahlbereichs auf Bruchzahlen"
+        },
+        "prerequisites": [
+          "BY-3dcd29f28ce3:math:6:R:v1:B02"
+        ],
+        "modality": "text",
+        "guidance": "Am gleichen Ganzen die Verfeinerung zeigen; keine bloße Nenneränderung. Rechenwert, Bedingungen und Einheiten fachlich prüfen; bei offener Begründung passende Kriterien und gültige Alternativen erhalten. Nach wiederholtem Fehler eine Anforderung entfernen und eine beantwortbare Mikrofrage stellen; nach weiter erfolgloser Hilfe gemeinsam mit der Lehrkraft fortsetzen.",
+        "availability": "requires_task_validation",
+        "reviewStatus": "inhaltliche_Pruefung_offen",
+        "conceptRefs": [
+          "BY/MS/M6/Brueche/B07"
+        ]
+      },
+      "phase": "completion",
+      "task": {
+        "id": "48628742-9588-40ea-9793-755a372b8cf7",
+        "prompt": "Erweitere den Bruch gleichwertig mit dem Faktor 2: 2/3 = __/__.",
+        "contextText": "",
+        "input": "text",
+        "options": []
+      },
+      "originalTask": {
+        "id": "48628742-9588-40ea-9793-755a372b8cf7",
+        "prompt": "Erweitere den Bruch gleichwertig mit dem Faktor 2: 2/3 = __/__.",
+        "contextText": "",
+        "input": "text",
+        "options": []
+      },
+      "explanation": "Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen.",
+      "visual": null,
+      "feedback": {
+        "outcome": "correct",
+        "short": "Richtig."
+      },
+      "remainingSeconds": 1123,
+      "summary": null
+    }
+  },
+  {
+    "answer": "4/6",
+    "session": {
+      "id": "9e5cf3f6-99c9-4b44-8bbd-0dfacd9c3926",
+      "revision": 4,
+      "topic": {
+        "id": "BY-3dcd29f28ce3:math:6:R:v1:B07",
+        "subject": "math",
+        "grade": 6,
+        "track": "R",
+        "title": "Wertgleich erweitern",
+        "area": "M6 Lernbereich 1: Bruchzahlen",
+        "goal": "Einen Bruch durch gemeinsame Vervielfachung von Zähler und Nenner wertgleich erweitern.",
+        "source": {
+          "id": "BY-3dcd29f28ce3",
+          "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/mathematik/regelklasse",
+          "status": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+          "sha256": "60894181fcaa4f9a93a1da73f0bacd021f59c3c8c08abbb5c1245eb2555b9dfd",
+          "anchor": "M6 1.1 Erweiterung des Zahlbereichs auf Bruchzahlen"
+        },
+        "prerequisites": [
+          "BY-3dcd29f28ce3:math:6:R:v1:B02"
+        ],
+        "modality": "text",
+        "guidance": "Am gleichen Ganzen die Verfeinerung zeigen; keine bloße Nenneränderung. Rechenwert, Bedingungen und Einheiten fachlich prüfen; bei offener Begründung passende Kriterien und gültige Alternativen erhalten. Nach wiederholtem Fehler eine Anforderung entfernen und eine beantwortbare Mikrofrage stellen; nach weiter erfolgloser Hilfe gemeinsam mit der Lehrkraft fortsetzen.",
+        "availability": "requires_task_validation",
+        "reviewStatus": "inhaltliche_Pruefung_offen",
+        "conceptRefs": [
+          "BY/MS/M6/Brueche/B07"
+        ]
+      },
+      "phase": "practice",
+      "task": {
+        "id": "407a5cac-546b-46b7-83a2-d92ced89d3ae",
+        "prompt": "Erweitere den Bruch 1/4 so, dass der Nenner 12 ist: 1/4 = __/__.",
+        "contextText": "",
+        "input": "text",
+        "options": []
+      },
+      "originalTask": null,
+      "explanation": "",
+      "visual": null,
+      "feedback": {
+        "outcome": "correct",
+        "short": "Richtig!"
+      },
+      "remainingSeconds": 1112,
+      "summary": null
+    }
+  }
+]
