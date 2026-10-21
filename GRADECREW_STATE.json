@@ -997,7 +997,41 @@
       "staging": "generic_telemetry_not_activated; remy_specific_telemetry_is_separate_and_deployed",
       "user_test": "not_tested",
       "evidence": "Assessment/Rules/Functions integration emulator passed on integration/telemetry-emulator-gate@dd722845a1f75feaa0369fde34a1d0dee3c56c52, run 36934351905.",
-      "next_action": "Generische Telemetrie weiterhin separat behandeln; Remy-Metriken nicht mit diesem älteren Workstream verwechseln."
+      "next_action": "Generische Telemetrie weiterhin separat behandeln; Remy-Metriken nicht mit diesem älteren Workstream verwechseln.",
+      "analytics_v1_20261021": {
+        "task_id": "GC-ANALYTICS-01",
+        "owner": "GC · Betrieb & Qualität / Analytics",
+        "branch": "feature/analytics-teacher-v1-20261021",
+        "candidate": "1b2fbdd14577e5646a1d57c1048623178ab1ff7a",
+        "tree": "ce7ab719428b7000f64976e11d9993d40144242c",
+        "pr": 263,
+        "stage": "ci_green",
+        "target": "feature/gradecrew-app-integration@2a6ff107",
+        "local_tests": {
+          "functions": 295,
+          "tracker_client_scope": 18,
+          "bootstrap": 9,
+          "remy_compatibility": 64,
+          "legal_build": 1,
+          "web": 398
+        },
+        "independent_review": "fixes_pass_on_immutable_b8b48833; bootstrap_fix_local_tests",
+        "ci_run": 39631257956,
+        "ci_status": "success",
+        "dashboard": "https://eu.posthog.com/project/293682/dashboard/1043578",
+        "ingestion": "new_teacher_events_not_verified",
+        "staging": "not_deployed",
+        "school_live": "not_deployed; old crewAssistant export-capable proven",
+        "native": "no_new_native_build",
+        "activation_gates": [
+          "safe_runtime_configuration_preserving_existing_secrets",
+          "dedicated_school_destination",
+          "purpose_retention_information",
+          "selective_test_deploy_and_real_ingestion"
+        ],
+        "next_action": "Resolve blocked safe runtime configuration boundary; exact selective test deployment and synthetic ingestion remain required.",
+        "integration": "not_merged"
+      }
     },
     {
       "id": "games-escape",
