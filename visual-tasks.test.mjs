@@ -107,3 +107,13 @@ test('native numeric practice evaluation accepts fractions with server parity an
     assert.equal(result.awarded,server.awardedPoints,`server points: ${JSON.stringify(answer)}`);
   }
 });
+
+test('the actual editor template type menu matches runtime types including loaded visual tasks', () => {
+  const html=fs.readFileSync('index.html','utf8');
+  const template=html.match(/<template id="questionTemplate">([^]*?)<\/template>/)[1];
+  const select=template.match(/<select class="qType">([^]*?)<\/select>/)[1];
+  const optionTypes=[...select.matchAll(/<option value="([^"]+)"/g)].map(match=>match[1]);
+  const runtime=fs.readFileSync('app.js','utf8').match(/const QUESTION_TYPES = (\[[^]*?\n\]);/)[1];
+  assert.deepEqual(optionTypes,Function('return '+runtime)().map(([value])=>value));
+  assert.equal(optionTypes.filter(value=>value==='visual').length,1);
+});

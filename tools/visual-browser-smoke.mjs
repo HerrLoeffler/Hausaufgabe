@@ -21,6 +21,18 @@ try{
  const url=`http://127.0.0.1:${server.address().port}/visual-tasks.mjs`;
  await page.evaluate(async(url)=>{window.V=await import(url);for(const format of V.VISUAL_FORMATS){const task=GC2.publicTask(GC2.example(format));const section=document.createElement('section');section.id='test-'+format;document.querySelector('main').append(section);V.mountVisualQuestion(section,{type:'visual',visualTask:JSON.stringify(task)});}},url);
  assert.equal(await page.locator('.gc-visual').count(),12);
+ // Clone the production editor template and select a loaded generated visual task.
+ const sourceHtml=await fs.readFile(path.join(root,'index.html'),'utf8');
+ const questionTemplate=sourceHtml.match(/<template id="questionTemplate">([^]*?)<\/template>/)[1];
+ const editorSelection=await page.evaluate(templateHtml=>{
+   const template=document.createElement('template');template.innerHTML=templateHtml;
+   const card=template.content.cloneNode(true),select=card.querySelector('.qType');
+   const generated={type:'visual',visualTask:JSON.stringify(GC2.example('grid'))};
+   select.value=generated.type;
+   return {value:select.value,label:select.selectedOptions[0]?.textContent,visualOptions:[...select.options].filter(option=>option.value==='visual').length};
+ },questionTemplate);
+ assert.deepEqual(editorSelection,{value:'visual',label:'Visuelle Interaktion',visualOptions:1});
+
  await page.locator('#test-grid [data-cell]').nth(0).tap();
  assert.deepEqual(await page.evaluate(()=>V.collectVisualAnswer(document.querySelector('#test-grid'))),[0]);
  // Instrument controls never populate the response or expose sought angle as text.
