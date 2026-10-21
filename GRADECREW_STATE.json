@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-18",
+  "observed_at": "2026-10-21",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "5a248621f315c08e30a2639b162434526b4e7349",
+    "observed_integration_head": "39e70b20b304ded6db8c2a668f1622851b15fb32",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -2575,7 +2575,7 @@
     "native_commit": "b43298b73d63707d2270ee4a3f4e49cf980dd606",
     "teacher_testflight_run": 39161910081,
     "secure_testflight_run": 39161910224,
-    "testflight_status": "running_not_uploaded",
+    "testflight_status": "teacher_0.2.0_48_and_secure_0.2.3_1131_upload_succeeded_20261018;processing_installability_physical_acceptance_separate",
     "physical_acceptance": "pending_new_offline_policy",
     "offline_policy": "unlock_only_after_verified_durable_local_submission_then_sync; block_new_attempt_until_server_receipt",
     "live_functions": {
@@ -2631,6 +2631,50 @@
         "backend_rules_native_changes": false
       },
       "physical_device_acceptance": "pending"
-    }
+    },
+    "teacher_testflight_build": "0.2.0(48)",
+    "secure_testflight_build": "0.2.3(1131)"
+  },
+  "public_legal_information_20261021": {
+    "handoff": "workstreams/secure-legal-release-20261021.md",
+    "web_pr": 256,
+    "integration_commit": "39e70b20b304ded6db8c2a668f1622851b15fb32",
+    "project": "hausaufgabe-staging",
+    "hosting_version": "6e2c90f76d61ad36",
+    "hosting_only": true,
+    "verified_asset_count": 173,
+    "unchanged_existing_assets": 166,
+    "changed_existing_assets": [
+      "index.html",
+      "styles.css"
+    ],
+    "removed_assets": 0,
+    "public_urls": [
+      "https://hausaufgabe-staging.web.app/datenschutz.html",
+      "https://hausaufgabe-staging.web.app/impressum.html",
+      "https://hausaufgabe-staging.web.app/support.html"
+    ],
+    "exact_package_ci": [
+      39624491617,
+      39624481757
+    ],
+    "native_pr": 257,
+    "native_source_commit": "593076f8c2154760fecd966e80d89a216e0a1322",
+    "native_candidate_archive": "0.2.3(1132)_unsigned_local_not_uploaded",
+    "native_checks": {
+      "swift": 28,
+      "python": 20,
+      "layout": 40
+    },
+    "new_app_store_submission": false,
+    "physical_acceptance": "pending",
+    "legal_certification": false,
+    "remaining": [
+      "ASC trader and actual account/contracts",
+      "final price countries age ratings",
+      "stable synthetic review test",
+      "signed final build plus physical offline/restart/sync acceptance and Store screenshots",
+      "school roles/AVV plus verified provider/server/backup retention"
+    ]
   }
 }
