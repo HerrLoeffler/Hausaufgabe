@@ -1,3 +1,4 @@
+import {createLocalSchoolStore} from './local-school-store.mjs';
 import {DatabaseSync} from 'node:sqlite';
 import {mkdirSync,openSync,closeSync,chmodSync} from 'node:fs';
 import {dirname} from 'node:path';
@@ -11,7 +12,7 @@ const empty=()=>({schemaVersion:1,revision:0,classes:[],students:[],teachers:[],
 
 // Device-local first slice. No school authority, cloud migration or shared grants
 // are inferred from this account-owned workspace.
-export function openLocalRoster(filename){
+export function openLocalRoster(filename,{authProjectId='local-test'}={}){
  if(filename!==':memory:'){
   mkdirSync(dirname(filename),{recursive:true,mode:0o700});
   closeSync(openSync(filename,'a',0o600));chmodSync(filename,0o600);
@@ -34,16 +35,16 @@ export function openLocalRoster(filename){
  function teacherPlan(uid,payload,state=read(uid)){
   actor(uid);return buildTeacherImportPlan({state,payload,lookupSource:key=>db.prepare('SELECT teacher_id FROM teacher_sources WHERE owner_uid=? AND source_key=?').get(uid,key)?.teacher_id,lookupReceipt:key=>{const r=db.prepare('SELECT identities FROM teacher_receipts WHERE owner_uid=? AND file_hash=?').get(uid,key);return r?JSON.parse(r.identities):null;}});
  }
- function mutate(uid,request){
+ function mutate(uid,request,inTransaction=false){
   actor(uid);keys(request,['command','payload','expectedRevision','operationId']);
   const {command,payload,expectedRevision,operationId}=request;
   if(!Number.isSafeInteger(expectedRevision)||expectedRevision<0||typeof operationId!=='string'||!/^[a-zA-Z0-9_-]{16,100}$/.test(operationId))fail('invalid-argument');
   if(!['createClass','updateClass','createStudent','updateStudent','importStudents','importTeachers'].includes(command))fail('invalid-argument');
   const digest=createHash('sha256').update(JSON.stringify(request)).digest('hex');
-  db.exec('BEGIN IMMEDIATE');
+  if(!inTransaction)db.exec('BEGIN IMMEDIATE');
   try{
    const previous=db.prepare('SELECT digest FROM operations WHERE owner_uid=? AND operation_id=?').get(uid,operationId);
-   if(previous){if(previous.digest!==digest)fail('operation-conflict',409);const state=read(uid);db.exec('COMMIT');return state;}
+   if(previous){if(previous.digest!==digest)fail('operation-conflict',409);const state=read(uid);if(!inTransaction)db.exec('COMMIT');return state;}
    const state=read(uid);if(state.revision!==expectedRevision)fail('revision-conflict',409);
    let changed=true;
    if(command==='importTeachers'){
@@ -107,8 +108,9 @@ export function openLocalRoster(filename){
    db.prepare('INSERT INTO workspaces(owner_uid,document) VALUES(?,?) ON CONFLICT(owner_uid) DO UPDATE SET document=excluded.document').run(uid,JSON.stringify(state));
    db.prepare('INSERT INTO operations(owner_uid,operation_id,digest,created_at) VALUES(?,?,?,?)').run(uid,operationId,digest,Date.now());
    db.prepare('DELETE FROM operations WHERE owner_uid=? AND created_at<?').run(uid,Date.now()-7*86400000);
-   db.exec('COMMIT');return state;
-  }catch(error){db.exec('ROLLBACK');throw error;}
+   if(!inTransaction)db.exec('COMMIT');return state;
+  }catch(error){if(!inTransaction)db.exec('ROLLBACK');throw error;}
  }
- return {read,mutate,previewTeacherImport:(uid,payload)=>teacherPlan(uid,payload).view,previewImport:(uid,payload)=>importPlan(uid,payload).view,close:()=>db.close()};
+ const school=createLocalSchoolStore({db,readRaw:read,mutateRaw:mutate,previewImportRaw:(uid,payload)=>importPlan(uid,payload).view,previewTeacherRaw:(uid,payload)=>teacherPlan(uid,payload).view,authProjectId});
+ return {school,read:school.rosterRead,mutate:school.rosterMutate,previewImport:school.previewImport,previewTeacherImport:school.previewTeacherImport,close:()=>db.close()};
 }

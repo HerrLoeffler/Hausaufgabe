@@ -21,14 +21,14 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
  }
  function note(host){
   if(importNotice)host.append(make('p',importNotice,{role:'status',class:'rosterImportSuccess'}));
-  host.append(make('p','Auf diesem Mac gespeichert · Nur für deinen angemeldeten Account',{class:'hint rosterStorageNote'}));
+  host.append(make('p',state.contextId?`Auf diesem Mac gespeichert · ${state.schoolName} · ${state.canManageRoster?'Schulverwaltung':'Deine ausgewählten Klassen'}`:'Auf diesem Mac gespeichert · Nur für deinen angemeldeten Account',{class:'hint rosterStorageNote'}));
   if(status==='loading')host.append(make('p','Klassen und Schüler:innen werden geladen …',{role:'status'}));
   if(status==='error'){
    host.append(make('p',error,{class:'classroomError',role:'alert'}),button('Erneut laden',load));
   }
  }
  function formDialog(kind,item=null){
-  if(status!=='ready'||!uid)return;
+  if(status!=='ready'||!uid||state.canManageRoster===false)return;
   dismiss();const current=epoch,revision=state.revision,isStudent=kind==='student';
   let pending=false,lastPayload='',operationId='';
   const title=isStudent?(item?'Schüler:in bearbeiten':'Schüler:in hinzufügen'):(item?'Klasse bearbeiten':'Klasse hinzufügen');
@@ -80,20 +80,20 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
  }
  function importButton(kind='students'){
   const b=button(kind==='teachers'?'Lehrkräfte-CSV importieren':'ASV-/CSV-Datei importieren',()=>{
-   if(status!=='ready'||!uid)return;dismiss();const current=epoch;
+   if(status!=='ready'||!uid||state.canManageRoster===false)return;dismiss();const current=epoch;
    importDialog=openRosterImport({document:doc,kind,client,state,isCurrent:()=>current===epoch&&!closed&&Boolean(uid),onCommit:(next,counts)=>{state=next;status='ready';importDialog=null;importNotice=`Import abgeschlossen: ${counts.newTeachers??counts.newStudents} neu, ${counts.updated} geändert, ${counts.unchanged} unverändert.`;onChange();}});
-  },{[kind==='teachers'?'data-roster-import-teachers':'data-roster-import']:''});b.disabled=status!=='ready';return b;
+  },{[kind==='teachers'?'data-roster-import-teachers':'data-roster-import']:''});b.disabled=status!=='ready'||state.canManageRoster===false;return b;
  }
  function renderClasses(host){
   const section=make('section',undefined,{class:'rosterManaged','data-telemetry-private':'true'}),head=make('div',undefined,{class:'rosterHeading'});
-  head.append(make('h2','Klassenbestand'));const add=button('Klasse hinzufügen',()=>formDialog('class'),{class:'button primary','data-roster-create-class':''});add.disabled=status!=='ready';head.append(add,importButton());section.append(head);note(section);
+  head.append(make('h2','Klassenbestand'));const add=button('Klasse hinzufügen',()=>formDialog('class'),{class:'button primary','data-roster-create-class':''});add.disabled=status!=='ready'||state.canManageRoster===false;head.append(add,importButton());section.append(head);note(section);
   if(status==='ready'){
    if(!state.classes.length)section.append(make('p','Noch keine Klasse angelegt. Lege deine erste Klasse an und füge anschließend Schüler:innen hinzu.'));
    const grid=make('div',undefined,{class:'classroomGrid'});
    for(const c of sortedClasses()){
     const card=make('article',undefined,{class:'card classroomClassCard'}),count=state.students.filter(s=>s.classId===c.id).length;
     const teaching=(state.teachers||[]).flatMap(t=>(t.assignments||[]).filter(a=>a.classId===c.id).map(a=>`${t.firstName} ${t.lastName}: ${a.subject}`));
-    card.append(make('h3',c.name),make('p',c.schoolYear),make('p',`${count} Schüler:innen`),button('Schüler:innen öffnen',()=>{filter=c.id;search='';page=0;onStudents();},{'data-roster-class':c.id}),button('Klasse bearbeiten',()=>formDialog('class',c),{'data-roster-edit-class':c.id}));if(teaching.length)card.append(make('p',teaching.join(' · '),{class:'rosterClassTeaching'}));grid.append(card);
+    card.append(make('h3',c.name),make('p',c.schoolYear),make('p',`${count} Schüler:innen`),button('Schüler:innen öffnen',()=>{filter=c.id;search='';page=0;onStudents();},{'data-roster-class':c.id}),...(state.canManageRoster===false?[]:[button('Klasse bearbeiten',()=>formDialog('class',c),{'data-roster-edit-class':c.id})]));if(teaching.length)card.append(make('p',teaching.join(' · '),{class:'rosterClassTeaching'}));grid.append(card);
    }
    section.append(grid);
   }
@@ -101,7 +101,7 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
  }
  function renderStudents(host){
   const head=make('div',undefined,{class:'rosterHeading'});head.append(make('h2','Schülerbestand'));
-  const add=button('Schüler:in hinzufügen',()=>formDialog('student'),{class:'button primary','data-roster-create-student':''});add.disabled=status!=='ready';head.append(add,importButton());host.append(head);note(host);
+  const add=button('Schüler:in hinzufügen',()=>formDialog('student'),{class:'button primary','data-roster-create-student':''});add.disabled=status!=='ready'||state.canManageRoster===false;head.append(add,importButton());host.append(head);note(host);
   if(status!=='ready')return;
   const tools=make('div',undefined,{class:'rosterFilters'}),searchLabel=make('label','Nach Namen suchen'),input=make('input',undefined,{type:'search','aria-label':'Nach Namen suchen',autocomplete:'off'});input.value=search;
   const filterLabel=make('label','Klasse'),select=make('select',undefined,{'aria-label':'Nach Klasse filtern'});
@@ -116,7 +116,7 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
    const wrap=make('div',undefined,{class:'rosterTableWrap'}),table=make('table',undefined,{class:'rosterTable'}),thead=make('thead'),heading=make('tr');
    for(const label of ['Vorname','Nachname','Klasse','Aktionen'])heading.append(make('th',label,{scope:'col'}));thead.append(heading);const tbody=make('tbody');
    for(const s of rows.slice(page*50,page*50+50)){
-    const row=make('tr');row.append(make('td',s.firstName),make('td',s.lastName),make('td',classLabel(s.classId)));const action=make('td');action.append(button('Bearbeiten',()=>formDialog('student',s),{'data-roster-edit-student':s.id,'aria-label':`${s.firstName} ${s.lastName} bearbeiten`}));row.append(action);tbody.append(row);
+    const row=make('tr');row.append(make('td',s.firstName),make('td',s.lastName),make('td',classLabel(s.classId)));const action=make('td');if(state.canManageRoster!==false)action.append(button('Bearbeiten',()=>formDialog('student',s),{'data-roster-edit-student':s.id,'aria-label':`${s.firstName} ${s.lastName} bearbeiten`}));row.append(action);tbody.append(row);
    }
    table.append(thead,tbody);wrap.append(table);result.append(wrap);
    const paging=make('div',undefined,{class:'rosterActions'}),prev=button('Zurück',()=>{page--;list();}),next=button('Weiter',()=>{page++;list();});prev.disabled=page===0;next.disabled=page>=pages-1;
@@ -145,5 +145,5 @@ export function createManualRoster({document:doc,client,onChange,onStudents}){
   }
   input.addEventListener('input',list);list();
  }
- return {setAccount,renderClasses,renderStudents,renderTeachers,destroy(){closed=true;epoch++;dismiss();state={revision:0,classes:[],students:[]};}};
+ return {setAccount,reload(){epoch++;dismiss();void load();},renderClasses,renderStudents,renderTeachers,destroy(){closed=true;epoch++;dismiss();state={revision:0,classes:[],students:[]};}};
 }

@@ -1,9 +1,11 @@
+import {createSchoolAdministration} from './school-administration.mjs';
+import {createLocalSchoolClient} from './local-school-client.mjs';
 // Additive navigation only: authentication, quiz data and mutations stay in app.js.
 import './i18n.mjs';
 import {createLocalRosterClient} from './local-roster-client.mjs';
 import {createManualRoster} from './manual-roster.mjs';
 
-export function installAccountWorkspace({document:doc=globalThis.document,port,client}) {
+export function installAccountWorkspace({document:doc=globalThis.document,port,client,schoolClient}) {
   const main=doc.getElementById('mainContent');
   if(!main||!port)return null;
   const make=(tag,text,attributes={})=>{
@@ -24,15 +26,18 @@ export function installAccountWorkspace({document:doc=globalThis.document,port,c
   const classes=make('section',undefined,{id:'accountClassesView',class:'view hidden',tabindex:'-1'});
   const pupils=make('section',undefined,{id:'accountPupilsView',class:'view hidden',tabindex:'-1'});
   const teachers=make('section',undefined,{id:'accountTeachersView',class:'view hidden',tabindex:'-1'});
-  for(const view of [classes,pupils,teachers]){main.append(view);port.registerView(view.id);}
+  const school=make('section',undefined,{id:'accountSchoolView',class:'view hidden',tabindex:'-1'});
+  const schoolApi=schoolClient||(port.getAuthToken?createLocalSchoolClient({port}):null);
+  const schoolUI=schoolApi?createSchoolAdministration({document:doc,host:school,port,client:schoolApi,onContextChange:()=>roster?.reload(),onLabel:name=>{nav.querySelector('.classroomNavLabel').textContent=name||'Mein Arbeitsbereich';}}):null;
+  for(const view of [classes,pupils,teachers,school]){main.append(view);port.registerView(view.id);}
   function open(page){
     if(!port.getSession())return;
     active=page;selectedClass='';
     if(page==='tests')port.showTests();
-    else{render();port.showView(page==='classes'?classes.id:page==='teachers'?teachers.id:pupils.id);}
+    else{render();port.showView(page==='school'?school.id:page==='classes'?classes.id:page==='teachers'?teachers.id:pupils.id);}
     refresh();
   }
-  for(const [key,label]of [['tests','Meine Tests'],['classes','Klassen'],['pupils','Schüler:innen'],['teachers','Lehrkräfte']])nav.append(button(label,()=>open(key),{'data-account-nav':key}));
+  for(const [key,label]of [['tests','Meine Tests'],['classes','Klassen'],['pupils','Schüler:innen'],['teachers','Lehrkräfte'],['school','Schule & Mitglieder']])nav.append(button(label,()=>open(key),{'data-account-nav':key}));
   main.prepend(nav);
   function heading(view,title,copy){
     const head=make('div',undefined,{class:'pageHead'}),body=make('div');
@@ -83,14 +88,15 @@ export function installAccountWorkspace({document:doc=globalThis.document,port,c
   }
   function refresh(){
     const session=port.getSession(),uid=session?.uid||null;
-    if(uid!==accountId){accountId=uid;selectedClass='';active='tests';roster?.setAccount(uid);render();}
+    if(uid!==accountId){accountId=uid;selectedClass='';active='tests';roster?.setAccount(uid);schoolUI?.setAccount(uid);render();}
     const visible=port.currentView();
     if(visible==='dashboardView')active='tests';
     const show=Boolean(uid)&&visible!=='authView';
+    if(!uid)nav.querySelector('.classroomNavLabel').textContent='Mein Arbeitsbereich';
     nav.classList.toggle('hidden',!show);doc.body.classList.toggle('classroomSignedIn',show);
     nav.querySelectorAll('[data-account-nav]').forEach(b=>b.setAttribute('aria-current',b.dataset.accountNav===active?'page':'false'));
     if(uid&&(visible===classes.id||visible===pupils.id||visible===teachers.id))render();
   }
   const unsubscribe=port.subscribe(refresh);refresh();
-  return {destroy(){unsubscribe();roster?.destroy();nav.remove();classes.remove();pupils.remove();teachers.remove();doc.body.classList.remove('classroomSignedIn');}};
+  return {destroy(){unsubscribe();schoolUI?.destroy();roster?.destroy();nav.remove();classes.remove();pupils.remove();teachers.remove();school.remove();doc.body.classList.remove('classroomSignedIn');}};
 }

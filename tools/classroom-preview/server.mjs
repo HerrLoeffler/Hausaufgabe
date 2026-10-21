@@ -13,14 +13,14 @@ export function renderPreviewDocument(html,{demo=false}={}){
 }
 export function createPreviewServer({rosterStore,verifyIdentity}={}){
  let localStore=rosterStore;
- const verifier=verifyIdentity||createFirebaseIdentityVerifier({apiKey:firebaseConfig.apiKey});
+ const verifier=verifyIdentity||createFirebaseIdentityVerifier({apiKey:firebaseConfig.apiKey,authProjectId:firebaseConfig.projectId});
  const server=http.createServer(async(req,res)=>{
  try{
   if(!/^127\.0\.0\.1(?::\d+)?$/.test(req.headers.host||'')){res.writeHead(403);res.end('Loopback only');return;}
   const u=new URL(req.url,'http://127.0.0.1');
-  if(u.pathname==='/api/classroom/roster'){
-   localStore ||= openLocalRoster(path.resolve(root,'../.gradecrew-local/classroom.sqlite'));
-   await handleLocalRoster(req,res,{store:localStore,verifyIdentity:verifier});return;
+  if(['/api/classroom/roster','/api/classroom/school'].includes(u.pathname)){
+   localStore ||= openLocalRoster(path.resolve(root,'../.gradecrew-local/classroom.sqlite'),{authProjectId:firebaseConfig.projectId});
+   await handleLocalRoster(req,res,{store:localStore,verifyIdentity:verifier,school:u.pathname.endsWith('/school')});return;
   }
   if(u.pathname.startsWith('/api/')){res.writeHead(404);res.end();return;}
   if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405);res.end('Read-only preview');return;}

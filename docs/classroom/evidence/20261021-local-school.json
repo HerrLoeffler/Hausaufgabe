@@ -1,0 +1,55 @@
+{
+  "taskId": "GC-CLASSROOM-01",
+  "date": "2026-10-21",
+  "scope": "device-local schools, approved school membership and multiple admins; user-selected classes",
+  "productLocal": "04409e991a13c88c3391f641b876ca5fe11895f4",
+  "productTree": "81f816df1c0b8f7b4526c8b4f5b68b5fee669e78",
+  "verification": {
+    "testsPassed": 563,
+    "failed": 0,
+    "command": "NODE_PATH=<existing Firebase dependencies> node --experimental-vm-modules --test *.test.mjs *.test.cjs *.test.js classroom/*.test.mjs tools/classroom-preview/*.test.mjs tools/ui/*.test.cjs tools/ui/*.test.mjs",
+    "initialSetupFailures": [
+      "UI VM module flag absent",
+      "Firebase Functions test dependency absent"
+    ],
+    "knownWarning": "existing jsdom entry-flow teardown warning"
+  },
+  "independentReview": {
+    "agent": "school_scope_review",
+    "initialP2": 2,
+    "fixedWithRegressionTests": 2,
+    "deltaP1P2": 0,
+    "deltaTestsPassed": 8,
+    "reviewerHttpLimitation": "EPERM on loopback; author authorized HTTP checks pass"
+  },
+  "browser": {
+    "originalStartScreen": true,
+    "originalLoginForm": true,
+    "newAuthenticatedFlow": false,
+    "realRosterMigration": false,
+    "newLiveQuizCountChecked": false
+  },
+  "localServer": {
+    "url": "http://127.0.0.1:8782/",
+    "pid": 70553,
+    "session": 64103
+  },
+  "boundaries": {
+    "existingFirebaseProjectUnchanged": true,
+    "quizOwnerOrContentWrites": false,
+    "emailSent": false,
+    "cloudSchoolData": false,
+    "deployment": false,
+    "productionChanged": false,
+    "localSchoolVerificationOnly": true
+  },
+  "open": [
+    "real user accepts migration",
+    "second real existing-account acceptance on same Mac",
+    "explicit imported-person-to-account link",
+    "subject and assessment authorisation",
+    "student credentials QR print",
+    "shared multi-device backend",
+    "minor form input retention on errors"
+  ]
+}

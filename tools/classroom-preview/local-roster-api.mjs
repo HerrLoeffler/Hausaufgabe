@@ -15,9 +15,14 @@ const errors={
  'source-conflict':'Die Kennung ist bereits anders zugeordnet. Bitte die Importquelle prüfen.',
  'preview-mismatch':'Die Vorschau passt nicht mehr. Bitte eine neue Vorschau erstellen.',
  'import-unresolved':'Bitte zuerst alle unklaren Zuordnungen in der Vorschau prüfen.',
+ 'context-mismatch':'Du bist inzwischen in einem anderen Schulbestand. Bitte neu laden.',
+ 'workspace-migrated':'Dein Bestand wurde bereits einer Schule zugeordnet. Bitte die Schule neu laden.',
+ 'last-admin':'Mindestens ein Verwalter muss aktiv bleiben. Bitte zuerst eine weitere Person ernennen.',
+ 'invitation-invalid':'Die Einladung ist abgelaufen, widerrufen oder bereits verwendet. Bitte eine neue Einladung anfordern.',
+ 'already-member':'Dieses Konto gehört bereits zur Schule.',
  'internal':'Speichern nicht möglich. Bitte erneut versuchen.'
 };
-export function createFirebaseIdentityVerifier({apiKey,fetchImpl=globalThis.fetch}){
+export function createFirebaseIdentityVerifier({apiKey,authProjectId,fetchImpl=globalThis.fetch}){
  return async token=>{
   if(typeof token!=='string'||token.length<1||token.length>16000)throw new RosterError('unauthenticated',401);
   let response,data;
@@ -29,7 +34,7 @@ export function createFirebaseIdentityVerifier({apiKey,fetchImpl=globalThis.fetc
   const user=data.users?.[0];
   if(!user?.localId||user.disabled)throw new RosterError('unauthenticated',401);
   if(!Array.isArray(user.providerUserInfo)||!user.providerUserInfo.some(p=>['password','google.com','apple.com','microsoft.com','oidc.school'].includes(p.providerId)))throw new RosterError('permission-denied',403);
-  return {uid:user.localId};
+  return {uid:user.localId,...(authProjectId?{authProjectId,email:user.email||'',displayName:user.displayName||''}:{})};
  };
 }
 function send(res,status,data){res.writeHead(status,{'Content-Type':'application/json;charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'});res.end(JSON.stringify(data));}
@@ -39,7 +44,7 @@ async function jsonBody(req){
  for await(const chunk of req){bytes+=chunk.length;if(bytes>4*1024*1024)throw new RosterError('invalid-argument',413);parts.push(chunk);}
  try{return JSON.parse(Buffer.concat(parts).toString('utf8'));}catch{throw new RosterError('invalid-argument',400);}
 }
-export async function handleLocalRoster(req,res,{store,verifyIdentity}){
+export async function handleLocalRoster(req,res,{store,verifyIdentity,school=false}){
  try{
   const origin=`http://${req.headers.host}`;
   if((req.headers.origin&&req.headers.origin!==origin)||req.headers['sec-fetch-site']==='cross-site')throw new RosterError('permission-denied',403);
@@ -50,13 +55,21 @@ export async function handleLocalRoster(req,res,{store,verifyIdentity}){
   const actor=await verifyIdentity(match[1]);
   if(!actor?.uid)throw new RosterError('unauthenticated',401);
   let state;
-  if(req.method==='GET')state=store.read(actor.uid);
+  if(req.method==='GET')state=school?store.school.read(actor):store.read(actor);
   else{
    const body=await jsonBody(req);
-   if(['previewStudentImport','previewTeacherImport'].includes(body?.command)){
-    if(Object.keys(body).some(k=>!['command','payload'].includes(k)))throw new RosterError('invalid-argument');
-    state=body.command==='previewTeacherImport'?store.previewTeacherImport(actor.uid,body.payload):store.previewImport(actor.uid,body.payload);
-   }else state=store.mutate(actor.uid,body);
+   if(school){
+    if(body?.command==='previewSchoolSetup'){
+     if(Object.keys(body).some(k=>!['command','payload','expectedRevision','operationId','contextId'].includes(k)))throw new RosterError('invalid-argument');
+     state=store.school.previewSetup(actor,body.payload);
+    }else{
+     if(!['createSchool','claimInvitation','selectSchool'].includes(body?.command)&&body?.contextId!==(store.school.read(actor).currentSchool?.id||null))throw new RosterError('context-mismatch',409);
+     state=store.school.command(actor,body);
+    }
+   }else if(['previewStudentImport','previewTeacherImport'].includes(body?.command)){
+    if(Object.keys(body).some(k=>!['command','payload','contextId'].includes(k)))throw new RosterError('invalid-argument');
+    state=body.command==='previewTeacherImport'?store.previewTeacherImport(actor,body.payload,body.contextId):store.previewImport(actor,body.payload,body.contextId);
+   }else state=store.mutate(actor,body);
   }
   send(res,200,state);
  }catch(error){
