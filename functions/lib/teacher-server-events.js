@@ -1,7 +1,6 @@
 "use strict";
 function quizTransitions(before = {}, after = {}) {
   const events = [];
-  if (after.generationStatus === "ready" && before.generationStatus !== "ready") events.push("test_ready");
   if (after.published === true && before.published !== true && !after.rightsHold && !after.isDeleted) events.push("test_published");
   return events;
 }

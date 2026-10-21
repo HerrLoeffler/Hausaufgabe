@@ -30,3 +30,16 @@ test('bounded server retry delivers without browser and suppresses revoked purpo
  const suppressed=await retryTeacherEvents({db,now:500000,env,fetchImpl:async()=>{throw Error('must not send');}});
  assert.equal(suppressed.suppressed,1);
 });
+
+test('expired canonical retry and delayed server first event never reexport',async()=>{
+ const {db}=database();let sends=0;const opts={db,env,now:100000,fetchImpl:async()=>{sends++;return {ok:false};}};
+ await recordTeacherEvent('u',profile,raw,opts);opts.now+=31*86400000;
+ assert.equal((await recordTeacherEvent('u',profile,raw,opts)).expired,true);assert.equal(sends,1);
+ const late=await recordTeacherEvent('u',profile,{...raw,event:'test_ready'}, {...opts,server:true});
+ assert.equal(late.expired,true);assert.equal(sends,1);
+});
+test('terminal retry rows are completed so the next bounded page can make progress',async()=>{
+ const {db,rows}=database();for(let i=0;i<100;i++)rows.set('teacherTelemetryEvents/dead'+i,{delivered:false,actorKey:'missing',expiresAt:{toMillis:()=>99999999}});
+ const r=await retryTeacherEvents({db,now:500000,env});assert.equal(r.suppressed,100);
+ assert.equal([...rows.values()].filter(r=>r.delivered===false).length,0);
+});

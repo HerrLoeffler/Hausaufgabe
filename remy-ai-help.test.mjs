@@ -60,6 +60,34 @@ function acceptProposal(w) {
   w.document.getElementById('gcRemyProposalApply')?.click();
 }
 
+test('the spoken fractions request previews and applies listening audio and personal wishes together', async t => {
+  const w = setup(t);
+  const collect = installCollector(w);
+  const notes = w.document.getElementById('aiCustomNotes');
+  notes.value = 'Vorhandener Wunsch.';
+  w.document.getElementById('gcRemyCreateInput').value = 'mathe 5 Klasse Thema Bruchrechnen kürzen und erweitern 15 Aufgaben zwei Bilder zwei Audios gerne ihr einfache Aufgaben';
+  w.document.getElementById('gcRemyCreateForm').dispatchEvent(new w.Event('submit', { bubbles: true, cancelable: true }));
+  await settle(w);
+  assert.equal(w.document.querySelector('[data-proposal-key="audioQuestionCount"]')?.value, '2');
+  assert.match(w.document.querySelector('[data-proposal-key="notes"]')?.value || '', /einfache Aufgaben/i);
+  assert.equal(notes.value, 'Vorhandener Wunsch.');
+  acceptProposal(w);
+  assert.equal(w.document.getElementById('aiAudioQuestionCount').value, '2');
+  assert.equal(w.document.getElementById('aiCount').value, '15');
+  assert.equal(w.document.getElementById('aiImageQuestionCount').value, '2');
+  assert.equal(w.document.getElementById('aiTopic').value, 'Bruchrechnen kürzen und erweitern');
+  assert.match(notes.value, /^Vorhandener Wunsch\.[\s\S]*einfache Aufgaben/i);
+  assert.equal(w.document.querySelector('.aiOptionalTestOptions').open, true);
+  const status = w.document.getElementById('gcRemyCreateStatus').textContent;
+  assert.match(status, /Höraufgaben/);
+  assert.match(status, /Eigene Wünsche/);
+  const request = collect();
+  assert.equal(request.audioQuestionCount, 2);
+  assert.equal(request.imageQuestionCount, 2);
+  assert.equal(request.count, 15);
+  assert.match(request.notes, /einfache Aufgaben/i);
+});
+
 function installCollector(w) {
   const app = fs.readFileSync('app.js', 'utf8');
   const start = app.indexOf('function collectAiRequest()');

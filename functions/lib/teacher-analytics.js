@@ -12,6 +12,7 @@ async function recordTeacherEvent(uid, profile, raw, {env = process.env, db = ge
   if (!channel || env.GC_TEACHER_ANALYTICS_ENABLED !== "true" || !projectToken(env)) return {ok: true, disabled: true};
   let event;
   try { event = cleanTeacherEvent(raw, raw?.at, {server}); } catch { throw new HttpsError("invalid-argument", "Ungültige Messdaten."); }
+  if (server && event.at < now - 30 * DAY) return {ok: true, expired: true};
   const actorKey = hash(`${project}:${uid}`), day = new Date(now).toISOString().slice(0, 10);
   const ref = db.doc(`teacherTelemetryEvents/${hash(`${actorKey}:${event.id}`)}`);
   const actorRef = db.doc(`teacherTelemetryActors/${actorKey}`);
@@ -25,7 +26,7 @@ async function recordTeacherEvent(uid, profile, raw, {env = process.env, db = ge
       if (stored.payloadHash !== payloadHash) throw new HttpsError("already-exists", "Widersprüchliche Messkennung.");
       return;
     }
-    cleanTeacherEvent(raw, now, {server}); // Freshness applies only to new canonical events.
+    if (!server) cleanTeacherEvent(raw, now, {server}); // Freshness applies only to new canonical events.
     const previous = budget.exists ? budget.data() : null;
     if (Number(previous?.count || 0) >= 3000) throw new HttpsError("resource-exhausted", "Messlimit erreicht.");
     const actorData = actor.data();
@@ -37,6 +38,7 @@ async function recordTeacherEvent(uid, profile, raw, {env = process.env, db = ge
     tx.set(actorRef, currentActor);
     tx.set(budgetRef, {count: Number(previous?.count || 0) + 1, lastAt: event.event === "activity_summary" || !previous ? now : previous.lastAt, expiresAt: Timestamp.fromMillis(now + 2 * DAY)});
   });
+  if (stored.expiresAt.toMillis() <= now) {await ref.update({delivered: true, suppressed: true});return {ok: true, expired: true};}
   if (stored.delivered) return {ok: true, duplicate: true};
   return deliverTeacherEvent(ref, stored, profile, {env, fetchImpl});
 }
@@ -67,9 +69,9 @@ async function retryTeacherEvents({env = process.env, db = getFirestore(), now =
   let delivered = 0, suppressed = 0;
   for (const document of pending.docs) {
     const stored = document.data();
-    if (stored.expiresAt.toMillis() <= now) continue;
+    if (stored.expiresAt.toMillis() <= now) {await document.ref.update({delivered: true, suppressed: true});suppressed++;continue;}
     const actor = (await db.doc(`teacherTelemetryActors/${stored.actorKey}`).get()).data();
-    if (!actor?.ownerId) continue;
+    if (!actor?.ownerId) {await document.ref.update({delivered: true, suppressed: true});suppressed++;continue;}
     const profile = (await db.doc(`users/${actor.ownerId}`).get()).data();
     if (!teacherChannel(profile, runtimeProjectId(env))) {
       await document.ref.update({delivered: true, suppressed: true}); suppressed++; continue;

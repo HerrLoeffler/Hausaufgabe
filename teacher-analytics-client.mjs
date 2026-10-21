@@ -6,7 +6,7 @@ import {createOperationTelemetry} from './assessment-telemetry-transport.mjs';
 export function createTeacherAnalytics({send, doc = globalThis.document, nav = globalThis.navigator,
   clock = () => performance.now(), wall = () => Date.now(), locks = nav?.locks,
   every = setInterval, cancel = clearInterval} = {}) {
-  let uid = '', release = '', profile = null, active = false, stopLock = null, timer = null, generation = 0;
+  let uid = '', release = '', profile = null, active = false, stopLock = null, timer = null, leaderTimer = null, generation = 0;
   let tracker = null, previous = null, view = 'none', waitingCount = 0;
   const outbox = createOperationTelemetry({enabled: true, release: 'teacher-v2', capacity: 100,
     clock, now: () => new Date(wall()), send: async batch => {
@@ -52,14 +52,17 @@ export function createTeacherAnalytics({send, doc = globalThis.document, nav = g
       await new Promise(resolve => {stopLock = resolve;});
     }).catch(() => {});
   }
-  function sync() {if (!nav.onLine || doc.visibilityState !== 'visible') releaseLeader(); else void acquire();}
+  function sync() {
+    const enabled = Boolean(release && uid && profile?.analyticsConsent === true && ['teacher','admin'].includes(profile.role));
+    if (!enabled) {releaseLeader();if (leaderTimer !== null) cancel(leaderTimer);leaderTimer = null;return;}
+    if (leaderTimer === null) leaderTimer = every(() => {if (!active) void acquire();}, 5000);
+    if (!nav.onLine || doc.visibilityState !== 'visible') releaseLeader(); else void acquire();
+  }
   const activity = event => {if (event.isTrusted && active) tracker.activity();};
   for (const type of ['pointerdown', 'keydown', 'scroll', 'touchstart']) doc.addEventListener(type, activity, {passive: true});
   doc.addEventListener('visibilitychange', sync);
   globalThis.addEventListener?.('offline', sync);globalThis.addEventListener?.('online', sync);
   globalThis.addEventListener?.('pagehide', releaseLeader);
-  // Reattempt leadership after the foreground tab exits; no heartbeat is emitted here.
-  every(() => {if (!active) void acquire();}, 5000);
   return {
     setRelease(value) {release = /^[a-f0-9]{40}$/.test(value || '') ? value : '';sync();},
     setSession(nextUid, nextProfile) {generation++; releaseLeader(); waitingCount = 0;outbox.clear();uid = nextUid || '';profile = nextProfile;sync();},

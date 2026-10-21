@@ -229,7 +229,7 @@ async function projectTeacherServerEvent(event, uid, name, metadata = {}) {
   if (!Number.isFinite(at)) return;
   await require("./lib/teacher-analytics").recordTeacherEvent(uid, profile, {
     id, event: name, release: process.env.GC_SOURCE_RELEASE, platform: "server", at, ...metadata
-  }, {server: true, now: at});
+  }, {server: true});
 }
 const teacherQuizAnalytics = onDocumentWritten({region: REGION, document: "quizzes/{quizId}"}, async event => {
   if (!event.data?.after.exists) return;
@@ -243,6 +243,7 @@ const teacherJobAnalytics = onDocumentWritten({region: REGION, document: "aiJobs
   const after = event.data.after.data(), before = event.data.before.data() || {};
   const name = require("./lib/teacher-server-events").jobTransition(before.status, after.status);
   if (name) await projectTeacherServerEvent(event, after.ownerId, name, {operation: "generate"});
+  if (name === "generation_completed") await projectTeacherServerEvent(event, after.ownerId, "test_ready", {operation: "generate", ...(typeof after.quizId === "string" ? {entityId: after.quizId} : {})});
 });
 const teacherUsageAnalytics = onDocumentWritten({region: REGION, document: "users/{uid}/aiEvents/{usageId}"}, async event => {
   if (!event.data?.after.exists || event.data.before.exists) return;
