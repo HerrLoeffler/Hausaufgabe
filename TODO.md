@@ -2,6 +2,9 @@
 
 ## GC-CHAPTER-TESTS-01 — Kapitelgrundstruktur, isolierte Testvorschau (20.10.2026)
 
+- [x] Nutzerergänzung21.10.: Bereichsnoten neben Kapitelpunkten/Prozent sowie untere Klassenübersicht je Kapitel und Gesamttest auf derselben Vorschau bereitgestellt (rc2, Runtime5b1c0737,173 Assets geprüft, CI39588408745 grün). Gefrorener Notenschlüssel, Freigabemodus und vollständige Bewertungen beachtet;99 Assessment-/511 Webtests und synthetischer Browsernachweis mit zwei Abgaben. [Releasebeleg](docs/evidence/chapter-notes-20261021.json).
+- [ ] Martin prüft die neue Noten-/Klassenschnittanzeige; der bisherige veröffentlichte Kapitel-/Punkteablauf wurde von ihm als passend bestätigt. Editorvorschau war die Ursache seiner zunächst flachen Ansicht; deren Gleichstand bleibt offen.
+
 - [ ] Nutzerpräzisierung20.10.: Kapitelwahl direkt bei Thema, gemeinsame Testsprache/Fach; kurze Kapitelhinweise und automatische Kapitelplanung aus vorhandenem Text-/Sprachauftrag mit Lehrplankontext ergänzen. Notizen werden bereits als Lehrerwünsche übertragen, erzeugen aktuell jedoch noch keinen Kapitelplan. Keine Timer-/Mehrfachfach-Erweiterung.
 
 - [x] Bestehende Testerstellung, Remy/Emmi, Veröffentlichung, Schülernavigation, Auswertung und CSV um optionale Kapitel erweitert. Bereichstimer ausgenommen.
