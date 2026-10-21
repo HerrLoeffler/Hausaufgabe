@@ -5,6 +5,8 @@ module.exports = [{
   languageOptions: {
     sourceType: "commonjs",
     globals: {
+      globalThis: "readonly",
+      structuredClone: "readonly",
       Buffer: "readonly",
       console: "readonly",
       process: "readonly",

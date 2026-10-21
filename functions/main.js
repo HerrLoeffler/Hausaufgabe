@@ -426,7 +426,8 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
       ...result,
       meta: {
         model: TEXT_MODEL,
-        revisionVersion: REVISION_VERSION
+        revisionVersion: REVISION_VERSION,
+        usage
       }
     };
   } catch (err) {

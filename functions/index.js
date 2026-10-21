@@ -103,6 +103,7 @@ function cleanSourceTest(value) {
       groups: Array.isArray(q?.groups) ? q.groups.slice(0, 6).map(g => ({ name: String(g?.name || "").slice(0, 80), items: Array.isArray(g?.items) ? g.items.slice(0, 8).map(x => String(x).slice(0, 80)) : [] })) : [],
       passage: String(q?.passage || "").slice(0, 400),
       targetWords: Array.isArray(q?.targetWords) ? q.targetWords.slice(0, 8).map(x => String(x).slice(0, 80)) : [],
+      ...(q?.type === "visual" && typeof q.visualTask === "string" && q.visualTask.length <= 20000 ? { visualTask: q.visualTask } : {}),
       numericAnswer: Number.isFinite(Number(q?.numericAnswer)) ? Number(q.numericAnswer) : null,
       unit: String(q?.unit || "").slice(0, 30),
       mediaIntent: { kind: q?.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none" },
@@ -326,6 +327,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     });
     const usage = { ...first.usage };
     const addUsage = next => {
+      if (next.providerRequests?.length) usage.providerRequests = [...(usage.providerRequests || []), ...next.providerRequests].slice(-100);
       for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(next[key] || 0);
     };
     const normalizeTest = data => ({ ...data, questions: (Array.isArray(data?.questions) ? data.questions : []).map(normalizeQuestion) });
@@ -409,6 +411,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
         model: TEXT_MODEL,
         promptVersion: PROMPT_VERSION,
         schemaVersion: AI_SCHEMA_VERSION,
+        usage,
         replacedQuestions: result.replaced + reviewed.replaced,
         qualityReviewPasses: reviewed.reviewPasses,
         fullRepair: result.fullRepair,
@@ -759,6 +762,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
     }).slice(0, 2500) : "";
     const retryPrompt = `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors?.join(" ") || ""}${rejectedDraft ? `\nVerworfener Vorschlag (nicht wiederholen): ${rejectedDraft}` : ""}\nErstelle eine neue, geprüfte Aufgabe mit einem anderen Beispiel oder Kontext.`;
     const result = await structuredResponse({ schema: variantSchema, schemaName: request.data?.variant ? "testify_question_variant_v2" : "testify_question_v1", userPrompt: attempt ? retryPrompt : prompt });
+    if (result.usage.providerRequests?.length) usage.providerRequests = [...(usage.providerRequests || []), ...result.usage.providerRequests].slice(-100);
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage[key] || 0);
     normalized = normalizeQuestion(result.data);
     errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds, requiredMediaKind: mediaKind, allowAudio: true, requiredAudioKind: audioKind });
@@ -770,6 +774,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
     if (memory.negativeQuestions.some(other => sameQuestion(other, normalized))) errors.push("Die Aufgabe ähnelt einer zuvor als fehlerhaft bewerteten Aufgabe.");
     if (!errors.length) {
       const review = await reviewDraft({ subject: request.data?.testContext?.subject || "", grade: request.data?.testContext?.grade || "", questions: [normalized] }, memory);
+      if (review.usage.providerRequests?.length) usage.providerRequests = [...(usage.providerRequests || []), ...review.usage.providerRequests].slice(-100);
       for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(review.usage[key] || 0);
       errors.push(...normalizeReviewIssues(review.data, { questions: [normalized] }).map(issue => `Qualitätsprüfung: ${issue.detail}`));
     }
@@ -777,7 +782,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   }
   await recordUsage(uid, "question", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: Boolean(errors.length), qualityMemoryVersion: memory.memoryVersion, feedbackSignals: memory.stats?.total || 0, positivePatterns: memory.positivePatterns?.length || 0, recurringRuleCandidates: memory.ruleCandidates?.length || 0 });
   if (errors.length) throw new HttpsError("failed-precondition", "Die neue Aufgabe ist nicht zuverlässig gültig.", { errors });
-  return { question: normalized, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION } };
+  return { question: normalized, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, usage } };
   } catch (err) { throw reportAiError(err, "question-regeneration"); }
 });
 

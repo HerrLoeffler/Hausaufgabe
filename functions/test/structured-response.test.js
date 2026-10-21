@@ -29,3 +29,7 @@ test("transport retries belong to the SDK; permanent errors do not loop", async 
 test("completed JSON must contain an object", () => {
   for (const value of [null, [], "text", false, 42]) assert.throws(() => parseStructuredResponse(complete(value)));
 });
+test("successful responses carry bounded genuine provider identifiers without content", async () => {
+  const result = await requestStructured(async () => ({ ...complete({ok:true}), id:'resp_123',_request_id:'req_456',model:'actual-model' }), {model:'requested-model'});
+  assert.deepEqual(result.usage.providerRequests,[{responseId:'resp_123',requestId:'req_456',model:'actual-model'}]);
+});

@@ -41,6 +41,7 @@ async function generateTestInBatches(input, generate) {
     if (!Array.isArray(result?.data?.questions)) throw new Error("Die KI-Antwort enthält keine Aufgabenliste.");
     metadata ||= result.data;
     questions.push(...result.data.questions);
+    if (result.usage?.providerRequests?.length) usage.providerRequests = [...(usage.providerRequests || []), ...result.usage.providerRequests].slice(-100);
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage?.[key] || 0);
   }
   return { data: { ...metadata, questions }, usage };

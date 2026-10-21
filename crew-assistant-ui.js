@@ -1,3 +1,4 @@
+import { previewCallable } from "./visual-preview255.mjs";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import { getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
@@ -163,7 +164,7 @@ function currentContext() {
 async function callCrewAi(payload,expectedUid=memoryUid) {
   if(getAuth(getApp()).currentUser?.uid!==expectedUid)throw new Error("Das Konto wurde gewechselt.");
   const functions = getFunctions(getApp(), "europe-west1");
-  const callable = httpsCallable(functions, "crewAssistant", { timeout: 90000 });
+  const callable = httpsCallable(functions, previewCallable("crewAssistant"), { timeout: 90000 });
   const result = await callable({...payload,accountId:expectedUid,memoryGeneration});
   if(getAuth(getApp()).currentUser?.uid!==expectedUid)throw new Error("Das Konto wurde gewechselt.");
   return result.data || {};

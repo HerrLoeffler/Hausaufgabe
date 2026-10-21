@@ -124,6 +124,7 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
   if (q.type === "ordering") { q.items = raw.items; q.acceptedOrders = (raw.acceptedOrders || []).map(order => ({ indices: [...(Array.isArray(order) ? order : Array.isArray(order?.indices) ? order.indices : [])] })); q.manualReview = Boolean(raw.manualReview); }
   if (q.type === "grouping") q.groups = raw.groups;
   if (q.type === "markwords") { q.passage = raw.passage; q.targetWords = raw.targetWords; q.markGroups = raw.markGroups || []; }
+  if (q.type === "visual") { require("./visual-task").parseVisualTask(raw.visualTask, { points: q.points }); q.visualTask = raw.visualTask; }
   if (q.type === "number") { q.numericAnswer = raw.numericAnswer; q.tolerance = raw.tolerance; q.unit = raw.unit; }
   return q;
 }

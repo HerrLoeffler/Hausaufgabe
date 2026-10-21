@@ -30,6 +30,10 @@ async function requestStructured(create, request) {
   const usage = {};
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const response = await create(request);
+    if (response?.id || response?._request_id) {
+      const safe = value => String(value || "").replace(/[^A-Za-z0-9_.:-]/g, "").slice(0, 180);
+      (usage.providerRequests ||= []).push({ responseId: safe(response.id), requestId: safe(response._request_id), model: safe(response.model || request.model) });
+    }
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(response?.usage?.[key] || 0);
     try { return { data: parseStructuredResponse(response), usage }; }
     catch (err) {
