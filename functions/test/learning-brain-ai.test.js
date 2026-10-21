@@ -17,5 +17,5 @@ test('only a newly corrected and independently approved candidate can follow rej
 
 test('numeric private keys normalize only mathematical display wrappers and preserve required form',()=>{
  for(const key of ['\\frac{4}{6}','\\(\\frac{4}{6}\\)','4⁄6']){const d=generated();d.task.answer.values=[key];assert.equal(cleanGenerated(d,s).task.answer.values[0],'4/6');}
- for(const key of ['4/6 = 2/3','Zähler 4 Nenner 6','4*2','\\frac{1}{0}']){const d=generated();d.task.answer.values=[key];assert.throws(()=>cleanGenerated(d,s),e=>e.critique.includes('answer.values'));}
+ for(const key of ['1 1/2','1½','1 ½','2⅓','4/6 = 2/3','Zähler 4 Nenner 6','4*2','\\frac{1}{0}']){const d=generated();d.task.answer.values=[key];assert.throws(()=>cleanGenerated(d,s),e=>e.critique.includes('answer.values'));}
 });
