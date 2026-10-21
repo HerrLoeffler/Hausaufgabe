@@ -27,7 +27,16 @@
     "originalLoginForm": true,
     "newAuthenticatedFlow": false,
     "realRosterMigration": false,
-    "newLiveQuizCountChecked": false
+    "newLiveQuizCountChecked": false,
+    "authenticatedSchoolRead": true,
+    "existingQuizCards": 49,
+    "userSchoolAlreadyPresent": true,
+    "administratorRoleVisible": true,
+    "classChoicesVisible": 21,
+    "selectedClassesVisible": 2,
+    "schoolErrorsVisible": 0,
+    "secondRealAccountFlowTested": false,
+    "agentPerformedMigration": false
   },
   "localServer": {
     "url": "http://127.0.0.1:8782/",
