@@ -44,6 +44,8 @@ Die adaptive Modell-/Aufwandswahl aus AGENTS.md gilt auch für direkt gestartete
 
 ## Beschlossene Zentralenrollen — GC-HOOKS-01, 10.10.2026
 
+**Priorität 1 (Martin, 21.10.2026): Jeder Auftrag an eine Zentrale wird an einen zuständigen ausführenden Fach-Chat weitergeleitet. Zentralen arbeiten selbst nicht an den Themen – unabhängig davon, wie der Auftrag formuliert ist.**
+
 Martins feste Regel: Zentralen koordinieren ausschließlich. Die zunächst für die Hauptzentrale beschlossene Grenze wurde ausdrücklich auf die folgende Hierarchie erweitert: **GradeCrew-Zentrale → gemeinsame Games-Zentrale → Zentrale je Spiel → ausführende Fach-Chats**. Die fünf bestehenden Zentralenchats wurden konkret zugeordnet; keine neue Chat-Erstellung durch diese Regel.
 
 | Rolle | Bestehender Chat | Thread-ID |
