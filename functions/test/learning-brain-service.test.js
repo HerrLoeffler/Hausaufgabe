@@ -22,3 +22,10 @@ test('test project, verified uid, active profile and deletion guard are mandator
  assert.equal(requireLearningIdentity(d),'A');
  for(const patch of [{project:'hausaufgabe-staging'},{project:'hausaufgabe-40294'},{uid:null},{profile:null},{deleted:true},{profile:{role:'student',status:'disabled'}},{profile:{role:'teacher',accountDeletionId:'x'}}])assert.throws(()=>requireLearningIdentity({...d,...patch}));
 });
+test('area entry chooses a text goal server-side and preserves the last open learning point',async()=>{
+ const topics=[{id:'math-5-a',subject:'math',grade:5,track:'R',area:'Zahlen',modality:'text',prerequisites:[]},{id:'math-5-b',subject:'math',grade:5,track:'R',area:'Zahlen',modality:'text',prerequisites:['math-5-a']},{id:'math-5-c',subject:'math',grade:5,track:'R',area:'Zahlen',modality:'visual',prerequisites:[]}];
+ let state;const service=createService({catalog:{topics,version:'v'},store:{transact:async(_uid,fn)=>{const r=fn(globalThis.structuredClone(state));state=globalThis.structuredClone(r.state);return r.result;}},ai:{next:async()=>({task:{id:'task',prompt:'Rechne',answer:{kind:'number',values:['2']},family:'entry'},explanation:'',visual:null})}});
+ const data={area:'Zahlen',subject:'math',grade:5,track:'R',minutes:20,eventId:'area-start-01'};assert.equal((await service.start('A',data)).topic.id,'math-5-a');
+ state.topicEvents['math-5-b']=[{independent:true,correct:false,fingerprint:'x',family:'entry',sessionId:'a',at:1}];
+ assert.equal((await service.start('A',{...data,eventId:'area-start-02'})).topic.id,'math-5-b');
+});

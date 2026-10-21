@@ -22,7 +22,7 @@ function handler(method){return onCall(opts,async request=>{
  const uid=await identity(request);
  if(request.data?.uid||request.data?.studentId||request.data?.ownerUid)throw new HttpsError('invalid-argument','Es wird ausschließlich dein eigenes Profil verwendet.');
  try{return await service(uid)[method](uid,request.data||{});}
- catch(error){if(error instanceof HttpsError)throw error;if(error instanceof LearningError)throw new HttpsError(error.code,error.message);console.warn('Lerngehirn-Schritt fehlgeschlagen',{code:error?.code,name:error?.name});throw new HttpsError('unavailable','Der KI-Schritt konnte noch nicht zuverlässig abgeschlossen werden. Dein bestätigter Stand bleibt gespeichert. Bitte erneut versuchen.');}
+ catch(error){if(error instanceof HttpsError)throw error;if(error instanceof LearningError)throw new HttpsError(error.code,error.message,{stage:error.stage||"validation"});console.warn('Lerngehirn-Schritt fehlgeschlagen',{code:error?.code,name:error?.name});throw new HttpsError('unavailable','Der KI-Schritt konnte noch nicht zuverlässig abgeschlossen werden. Dein bestätigter Stand bleibt gespeichert. Bitte erneut versuchen.');}
 });}
 module.exports={
  learningBrainCatalog:onCall({region:REGION,timeoutSeconds:30,memory:'256MiB'},async request=>{await identity(request);return getCatalog();}),

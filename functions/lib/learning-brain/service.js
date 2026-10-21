@@ -37,7 +37,15 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
    if(state.lock&&state.lock.until>time)fail('aborted','Ein Schritt wird gerade bearbeitet. Bitte gleich erneut versuchen.');
    let session;
    if(kind==='start'){
-    const topic=getTopic(data.topicId);if(!topic)fail('not-found','Lernziel nicht gefunden.');
+    let topic=getTopic(data.topicId);
+    if(!data.topicId&&typeof data.area==='string'&&data.area.length<=180){
+     const grade=Number(data.grade),track=grade===10?'M':grade<7?'R':data.track;
+     const candidates=catalog.topics.filter(t=>t.area===data.area&&t.subject===data.subject&&t.grade===grade&&t.track===track&&t.modality==='text');
+     const learning=candidates.find(t=>projectSkill(state.topicEvents[t.id]||[],time).status==='practicing');
+     topic=learning||candidates.find(t=>projectSkill(state.topicEvents[t.id]||[],time).status!=='secure'&&(t.prerequisites||[]).every(p=>projectSkill(state.topicEvents[p]||[],time).status==='secure'))||candidates.find(t=>projectSkill(state.topicEvents[t.id]||[],time).status!=='secure')||candidates[0];
+     if(topic)state.learner={...state.learner,grade,track};
+    }
+    if(!topic)fail('not-found','Für dieses Thema ist noch kein passender Übungsweg verfügbar.');
     if(['audio','speaking','visual'].includes(topic.modality))fail('failed-precondition','Dieses Lernziel benötigt einen passenden Medienweg oder eine Arbeitsprobe. Bitte gemeinsam mit deiner Lehrkraft üben.');
     const minutes=Number(data.minutes);if(!Number.isInteger(minutes)||minutes<1||minutes>60)fail('invalid-argument','Bitte 1 bis 60 Minuten wählen.');
     session={id:randomUUID(),topic,revision:0,phase:'practice',level:0,supportStage:0,deadline:time+minutes*60000,events:[],task:null,originalTask:null};
@@ -53,7 +61,7 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
    }
    state.requests[data.eventId]={hash:inputHash,status:'pending'};state.lock={ticket,until:time+180000};
    return {state,result:{session}};
-  },{eventId:data.eventId});
+  },{eventId:data.eventId,allTopics:kind==='start'});
   if(reservation.cached)return reservation.cached;
   let s=reservation.session; let unclear=false;
   try{
