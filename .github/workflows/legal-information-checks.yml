@@ -1,0 +1,20 @@
+name: Legal information package checks
+on:
+  push:
+    branches: ['feature/public-legal-pages-*', 'feature/gradecrew-app-integration']
+    paths: ['legal-content.de.json', 'legal-pages.css', 'index.html', 'styles.css', 'tools/build-staging.mjs', 'tools/build-legal-pages.mjs', 'tools/test-legal-build.mjs', '.github/workflows/legal-information-checks.yml']
+  pull_request:
+    paths: ['legal-content.de.json', 'legal-pages.css', 'index.html', 'styles.css', 'tools/build-staging.mjs', 'tools/build-legal-pages.mjs', 'tools/test-legal-build.mjs', '.github/workflows/legal-information-checks.yml']
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify public information in both environment packages
+        run: node --test tools/test-legal-build.mjs
