@@ -1,3 +1,4 @@
+import {createLocalStudentAccess} from './local-student-access.mjs';
 import {createLocalSchoolStore} from './local-school-store.mjs';
 import {DatabaseSync} from 'node:sqlite';
 import {mkdirSync,openSync,closeSync,chmodSync} from 'node:fs';
@@ -92,7 +93,7 @@ export function openLocalRoster(filename,{authProjectId='local-test'}={}){
     const name=text(payload.name,40),schoolYear=year(payload.schoolYear);
     let item=command==='updateClass'?state.classes.find(c=>c.id===payload.id):null;
     if(command==='updateClass'&&!item)fail('not-found',404);
-    if(state.classes.some(c=>c.id!==item?.id&&c.schoolYear===schoolYear&&c.name.toLocaleLowerCase('de')===name.toLocaleLowerCase('de')))fail('already-exists',409);
+    if(state.classes.some(c=>c.id!==item?.id&&c.schoolYear===schoolYear&&c.name.normalize('NFC').trim().replace(/\s+/g,' ').toLocaleLowerCase('de')===name.normalize('NFC').trim().replace(/\s+/g,' ').toLocaleLowerCase('de')))fail('already-exists',409);
     if(item)Object.assign(item,{name,schoolYear});
     else{if(state.classes.length>=200)fail('resource-exhausted',429);state.classes.push({id:randomUUID(),name,schoolYear,createdAt:new Date().toISOString()});}
    }else{
@@ -112,5 +113,6 @@ export function openLocalRoster(filename,{authProjectId='local-test'}={}){
   }catch(error){if(!inTransaction)db.exec('ROLLBACK');throw error;}
  }
  const school=createLocalSchoolStore({db,readRaw:read,mutateRaw:mutate,previewImportRaw:(uid,payload)=>importPlan(uid,payload).view,previewTeacherRaw:(uid,payload)=>teacherPlan(uid,payload).view,authProjectId});
- return {school,read:school.rosterRead,mutate:school.rosterMutate,previewImport:school.previewImport,previewTeacherImport:school.previewTeacherImport,close:()=>db.close()};
+ const access=createLocalStudentAccess({db,school,filename});
+ return {school,access,read:school.rosterRead,mutate:school.rosterMutate,previewImport:school.previewImport,previewTeacherImport:school.previewTeacherImport,close:()=>db.close()};
 }

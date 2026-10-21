@@ -1,5 +1,5 @@
 import {RosterError} from './local-roster-store.mjs';
-const errors={
+export const errors={
  'unauthenticated':'Bitte melde dich erneut mit deinem Lehreraccount an.',
  'permission-denied':'Dieser Zugang kann die lokale Klassenverwaltung nicht verwenden.',
  'unavailable':'Die Anmeldung konnte gerade nicht geprüft werden. Bitte erneut versuchen.',
@@ -20,6 +20,12 @@ const errors={
  'last-admin':'Mindestens ein Verwalter muss aktiv bleiben. Bitte zuerst eine weitere Person ernennen.',
  'invitation-invalid':'Die Einladung ist abgelaufen, widerrufen oder bereits verwendet. Bitte eine neue Einladung anfordern.',
  'already-member':'Dieses Konto gehört bereits zur Schule.',
+ 'school-required':'Bitte zuerst eine Schule einrichten oder einer Schule beitreten.',
+ 'access-missing':'Für diese Auswahl fehlen aktive Zugänge. Bitte zuerst die fehlenden Zugänge erstellen.',
+ 'access-conflict':'Der Zugang wurde inzwischen geändert. Bitte neu laden und erneut prüfen.',
+ 'key-unavailable':'Der lokale Zugangsschlüssel fehlt oder passt nicht zur Datenbank. Bitte Datenbank und Schlüssel gemeinsam wiederherstellen.',
+ 'invalid-access':'Der Zugangscode ist ungültig oder nicht mehr aktiv.',
+ 'rate-limited':'Zu viele fehlgeschlagene Versuche. Bitte kurz warten und den Code prüfen.',
  'internal':'Speichern nicht möglich. Bitte erneut versuchen.'
 };
 export function createFirebaseIdentityVerifier({apiKey,authProjectId,fetchImpl=globalThis.fetch}){
@@ -37,14 +43,14 @@ export function createFirebaseIdentityVerifier({apiKey,authProjectId,fetchImpl=g
   return {uid:user.localId,...(authProjectId?{authProjectId,email:user.email||'',displayName:user.displayName||''}:{})};
  };
 }
-function send(res,status,data){res.writeHead(status,{'Content-Type':'application/json;charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'});res.end(JSON.stringify(data));}
-async function jsonBody(req){
+export function send(res,status,data){res.writeHead(status,{'Content-Type':'application/json;charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer'});res.end(JSON.stringify(data));}
+export async function jsonBody(req){
  if(!/^application\/json(?:;|$)/i.test(req.headers['content-type']||''))throw new RosterError('invalid-argument',415);
  let bytes=0;const parts=[];
  for await(const chunk of req){bytes+=chunk.length;if(bytes>4*1024*1024)throw new RosterError('invalid-argument',413);parts.push(chunk);}
  try{return JSON.parse(Buffer.concat(parts).toString('utf8'));}catch{throw new RosterError('invalid-argument',400);}
 }
-export async function handleLocalRoster(req,res,{store,verifyIdentity,school=false}){
+export async function handleLocalRoster(req,res,{store,verifyIdentity,school=false,access=false}){
  try{
   const origin=`http://${req.headers.host}`;
   if((req.headers.origin&&req.headers.origin!==origin)||req.headers['sec-fetch-site']==='cross-site')throw new RosterError('permission-denied',403);
@@ -58,7 +64,10 @@ export async function handleLocalRoster(req,res,{store,verifyIdentity,school=fal
   if(req.method==='GET')state=school?store.school.read(actor):store.read(actor);
   else{
    const body=await jsonBody(req);
-   if(school){
+   if(access){
+    if(Object.keys(body).some(k=>!['command','payload'].includes(k))||!['statuses','issue','rotate','block','print'].includes(body?.command))throw new RosterError('invalid-argument');
+    state=store.access[body.command](actor,body.payload);
+   }else if(school){
     if(body?.command==='previewSchoolSetup'){
      if(Object.keys(body).some(k=>!['command','payload','expectedRevision','operationId','contextId'].includes(k)))throw new RosterError('invalid-argument');
      state=store.school.previewSetup(actor,body.payload);

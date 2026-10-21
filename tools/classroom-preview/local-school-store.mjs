@@ -132,20 +132,20 @@ export function createLocalSchoolStore({db,readRaw,mutateRaw,previewImportRaw,pr
    return {...read(a),...resultExtra};
   });
  }
- function scope(input,contextId,write,fn){
+ function scope(input,contextId,write,fn,{allowTeacher=false}={}){
   const a=actor(input),id=selected(a);
   const perform=()=>{
    if(!id){if(get('SELECT school_id FROM local_school_migrations WHERE actor_key=?',a.key))fail('workspace-migrated',409);if(contextId)fail('context-mismatch',409);return fn(a.uid,null);}
    const m=membership(a,id);school(id);
    if((write||contextId!==undefined)&&contextId!==id)fail('context-mismatch',409);
-   if(write&&m.role!=='admin')fail('permission-denied',403);
+   if(write&&m.role!=='admin'&&!allowTeacher)fail('permission-denied',403);
    return fn(schoolKey(id),m);
   };
   return write?transaction(perform):perform();
  }
  function rosterRead(input){return scope(input,undefined,false,(key,m)=>{
   const state=readRaw(key);if(!m)return state;
-  const result={...state,contextId:m.school_id,canManageRoster:m.role==='admin',schoolName:school(m.school_id).name};
+  const result={...state,contextId:m.school_id,canManageRoster:m.role==='admin',canCreateClass:true,canAddStudents:m.role==='admin'||JSON.parse(m.class_ids).length>0,schoolName:school(m.school_id).name};
   if(m.role!=='admin'){
    const ids=new Set(JSON.parse(m.class_ids));result.classes=state.classes.filter(c=>ids.has(c.id));result.students=state.students.filter(s=>ids.has(s.classId));
    result.teachers=state.teachers.map(t=>({...t,assignments:(t.assignments||[]).filter(pair=>ids.has(pair.classId))})).filter(t=>t.assignments.length);
@@ -153,7 +153,27 @@ export function createLocalSchoolStore({db,readRaw,mutateRaw,previewImportRaw,pr
   return result;
  });}
  return {read,previewSetup,command,rosterRead,
-  rosterMutate:(input,request)=>scope(input,request.contextId,true,key=>{const {contextId,...body}=request;mutateRaw(key,body,true);return rosterRead(input);}),
+  rosterMutate:(input,request)=>scope(input,request.contextId,true,(key,m)=>{
+   const before=readRaw(key);
+   if(m&&m.role!=='admin'){
+    if(!['createClass','createStudent'].includes(request.command))fail('permission-denied',403);
+    if(request.command==='createStudent'&&!JSON.parse(m.class_ids).includes(request.payload?.classId))fail('permission-denied',403);
+   }
+   const {contextId,...body}=request;const next=mutateRaw(key,body,true);
+   if(m&&request.command==='createClass'){
+    const added=next.classes.filter(c=>!before.classes.some(old=>old.id===c.id));
+    if(added.length){run('UPDATE local_school_members SET class_ids=? WHERE id=?',JSON.stringify([...new Set([...JSON.parse(m.class_ids),...added.map(c=>c.id)])]),m.id);run('UPDATE local_schools SET revision=revision+1 WHERE id=?',m.school_id);}
+   }
+   return rosterRead(input);
+  },{allowTeacher:true}),
+  withStudents:(input,contextId,studentIds,fn)=>scope(input,contextId,true,(key,m)=>{
+   if(!m)fail('school-required',409);
+   if(!Array.isArray(studentIds)||!studentIds.length||studentIds.length>5000||new Set(studentIds).size!==studentIds.length||studentIds.some(id=>typeof id!=='string'))fail('invalid-argument');
+   const state=readRaw(key),selected=new Set(JSON.parse(m.class_ids));
+   const students=studentIds.map(id=>{const row=state.students.find(s=>s.id===id);if(!row||(m.role!=='admin'&&!selected.has(row.classId)))fail('permission-denied',403);return row;});
+   return fn({state,students,schoolId:m.school_id,actorKey:actor(input).key});
+  },{allowTeacher:true}),
+  studentRecord:(schoolId,studentId)=>{const s=school(schoolId),state=readRaw(schoolKey(schoolId)),student=state.students.find(p=>p.id===studentId);if(!student)fail('unauthenticated',401);return {student:{id:student.id,firstName:student.firstName,lastName:student.lastName,className:state.classes.find(c=>c.id===student.classId)?.name||'Ohne Klasse'},school:{id:s.id,name:s.name}};},
   previewImport:(input,payload,contextId)=>scope(input,contextId,true,key=>previewImportRaw(key,payload)),
   previewTeacherImport:(input,payload,contextId)=>scope(input,contextId,true,key=>previewTeacherRaw(key,payload))};
 }

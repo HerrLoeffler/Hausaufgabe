@@ -44,7 +44,7 @@ test('school refresh invalidates personal roster after approval and exposes a so
   s.school.command('b',op('claimInvitation',{secret:invite('a'),displayName:'Bea'}));approve('a');
   doc.querySelector('[data-account-nav=school]').click();doc.querySelector('[data-school-refresh]').click();await tick();await tick();doc.querySelector('[data-account-nav=classes]').click();
   assert.doesNotMatch(doc.getElementById('accountClassesView').textContent,/Privater Altbestand/,'approval refresh must invalidate old roster');
-  assert.equal(doc.querySelector('[data-roster-create-class]').disabled,true,'teacher cannot edit organisational roster');
+  assert.equal(doc.querySelector('[data-roster-create-class]').disabled,false,'confirmed teacher can now create shared classes');
   s.school.command('b',op('claimInvitation',{secret:invite('c'),displayName:'Bea'}));approve('c');let a=s.school.read('a');s.school.command('a',op('removeMember',{memberId:a.members.find(m=>m.displayName==='Bea').id},a.revision));
   doc.querySelector('[data-account-nav=school]').click();doc.querySelector('[data-school-refresh]').click();await tick();await tick();
   assert.ok(doc.querySelector('[data-school-switch]'),'one remaining school can be selected after removal');

@@ -63,7 +63,7 @@ test('confirmed teachers select classes themselves; other school and admin mutat
   s.mutate('a',op('createStudent',{firstName:'Mila',lastName:'Muster',classId:c.id},personal.revision));setup(s);join(s,'a','b','teacher');
   let b=s.school.read('b');assert.equal(b.classChoices.length,1);assert.equal(s.read('b').students.length,0);
   s.school.command('b',op('selectClasses',{classIds:[c.id]},b.revision));assert.equal(s.read('b').students.length,1);
-  const roster=s.read('b');assert.throws(()=>s.mutate('b',{...op('createStudent',{firstName:'X',lastName:'Y'},roster.revision),contextId:roster.contextId}),/permission-denied/);
+  const roster=s.read('b');assert.throws(()=>s.mutate('b',{...op('createStudent',{firstName:'X',lastName:'Y',classId:'not-selected'},roster.revision),contextId:roster.contextId}),/permission-denied/);
   b=s.school.read('b');s.school.command('b',op('selectClasses',{classIds:[]},b.revision));assert.equal(s.read('b').students.length,0);
   setup(s,'x');const foreign=s.read('x');assert.throws(()=>s.school.command('b',op('selectClasses',{classIds:[foreign.classes[0]?.id||'foreign']},s.school.read('b').revision)),/not-found/);
   assert.throws(()=>s.school.command('b',op('selectSchool',{schoolId:foreign.contextId})),/permission-denied/);

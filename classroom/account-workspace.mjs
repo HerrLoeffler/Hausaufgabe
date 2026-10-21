@@ -1,3 +1,5 @@
+import {createLocalAccessClient} from './local-access-client.mjs';
+import {installStudentPortal} from './student-portal.mjs';
 import {createSchoolAdministration} from './school-administration.mjs';
 import {createLocalSchoolClient} from './local-school-client.mjs';
 // Additive navigation only: authentication, quiz data and mutations stay in app.js.
@@ -5,7 +7,7 @@ import './i18n.mjs';
 import {createLocalRosterClient} from './local-roster-client.mjs';
 import {createManualRoster} from './manual-roster.mjs';
 
-export function installAccountWorkspace({document:doc=globalThis.document,port,client,schoolClient}) {
+export function installAccountWorkspace({document:doc=globalThis.document,port,client,schoolClient,accessClient}) {
   const main=doc.getElementById('mainContent');
   if(!main||!port)return null;
   const make=(tag,text,attributes={})=>{
@@ -20,9 +22,11 @@ export function installAccountWorkspace({document:doc=globalThis.document,port,c
   };
   const nav=make('nav',undefined,{id:'accountWorkspaceNav',class:'classroomNav hidden','aria-label':'Arbeitsbereich'});
   nav.append(make('span','Mein Arbeitsbereich',{class:'classroomNavLabel'}));
+  const pupilPortal=port.getAuthToken?installStudentPortal({document:doc}):null;
+  const accessApi=accessClient||(port.getAuthToken?createLocalAccessClient({port}):null);
   let active='tests',selectedClass='',accountId=null;
   const rosterClient=client||(port.getAuthToken?createLocalRosterClient({port}):null);
-  const roster=rosterClient?createManualRoster({document:doc,client:rosterClient,onChange:()=>{if(port.getSession())render();},onStudents:()=>open('pupils')}):null;
+  const roster=rosterClient?createManualRoster({document:doc,client:rosterClient,accessClient:accessApi,onFindClasses:()=>{open('school');void schoolUI?.reload();},onClassesChanged:()=>void schoolUI?.reload(),onChange:()=>{if(port.getSession())render();},onStudents:()=>open('pupils')}):null;
   const classes=make('section',undefined,{id:'accountClassesView',class:'view hidden',tabindex:'-1'});
   const pupils=make('section',undefined,{id:'accountPupilsView',class:'view hidden',tabindex:'-1'});
   const teachers=make('section',undefined,{id:'accountTeachersView',class:'view hidden',tabindex:'-1'});
@@ -98,5 +102,5 @@ export function installAccountWorkspace({document:doc=globalThis.document,port,c
     if(uid&&(visible===classes.id||visible===pupils.id||visible===teachers.id))render();
   }
   const unsubscribe=port.subscribe(refresh);refresh();
-  return {destroy(){unsubscribe();schoolUI?.destroy();roster?.destroy();nav.remove();classes.remove();pupils.remove();teachers.remove();school.remove();doc.body.classList.remove('classroomSignedIn');}};
+  return {destroy(){unsubscribe();pupilPortal?.destroy();schoolUI?.destroy();roster?.destroy();nav.remove();classes.remove();pupils.remove();teachers.remove();school.remove();doc.body.classList.remove('classroomSignedIn');}};
 }

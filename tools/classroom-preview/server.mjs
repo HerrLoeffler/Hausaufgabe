@@ -1,3 +1,4 @@
+import {handleLocalStudent} from './local-student-api.mjs';
 import http from 'node:http';import fs from 'node:fs/promises';import path from 'node:path';import {fileURLToPath} from 'node:url';
 import {sampleCsv} from '../../classroom/csv.mjs';
 import {openLocalRoster} from './local-roster-store.mjs';
@@ -18,9 +19,10 @@ export function createPreviewServer({rosterStore,verifyIdentity}={}){
  try{
   if(!/^127\.0\.0\.1(?::\d+)?$/.test(req.headers.host||'')){res.writeHead(403);res.end('Loopback only');return;}
   const u=new URL(req.url,'http://127.0.0.1');
-  if(['/api/classroom/roster','/api/classroom/school'].includes(u.pathname)){
+  if(['/api/classroom/roster','/api/classroom/school','/api/classroom/access'].includes(u.pathname)||u.pathname.startsWith('/api/classroom/student/')){
    localStore ||= openLocalRoster(path.resolve(root,'../.gradecrew-local/classroom.sqlite'),{authProjectId:firebaseConfig.projectId});
-   await handleLocalRoster(req,res,{store:localStore,verifyIdentity:verifier,school:u.pathname.endsWith('/school')});return;
+   if(u.pathname.startsWith('/api/classroom/student/')){await handleLocalStudent(req,res,{access:localStore.access,path:u.pathname});return;}
+   await handleLocalRoster(req,res,{store:localStore,verifyIdentity:verifier,school:u.pathname.endsWith('/school'),access:u.pathname.endsWith('/access')});return;
   }
   if(u.pathname.startsWith('/api/')){res.writeHead(404);res.end();return;}
   if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405);res.end('Read-only preview');return;}
