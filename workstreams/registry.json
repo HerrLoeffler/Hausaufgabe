@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-21T15:24:39.544556+00:00",
+  "updatedAt": "2026-10-21T16:10:30.553247+00:00",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -682,6 +682,17 @@
       "handoff": "workstreams/secure-legal-release-20261021.md",
       "relatedBranches": [
         "feature/public-legal-pages-20261021"
+      ]
+    },
+    {
+      "id": "gc-brain-01",
+      "title": "GC-BRAIN-01: interne Firmenzentrale — Fachplanung auf vorhandenem Control-Fundament",
+      "primaryBranch": "docs/gc-brain-firmenzentrale-plan-20261021",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/gc-brain-firmenzentrale-20261021.md",
+      "relatedBranches": [
+        "prototype/gradecrew-control-local-v1"
       ]
     }
   ]
