@@ -1,0 +1,22 @@
+{
+  "content_id": "8d468f417d811a7a",
+  "pdf_pages": 164,
+  "text_read_pages": 164,
+  "visual_review_pages": 164,
+  "task_pattern_groups": 530,
+  "independent_solution_validation": "partial_only",
+  "solution_page_statuses": {
+    "not_applicable": 22,
+    "not_checked": 123,
+    "partial": 8,
+    "partial: group3 only": 1,
+    "partial: group3c modelling issue": 1,
+    "partial: cross-representation consistency only": 1,
+    "partially_checked": 2,
+    "confirmed_source_conflict": 2,
+    "partially_checked_conflict": 4
+  },
+  "reader_main_book_complete": false,
+  "all_reader_resources_complete": false,
+  "runtime_profiles_added": 0
+}

@@ -37,3 +37,16 @@ Konkrete Lernziele, eigene Lösungswege, Zahlen-/Negationsfallen und Unterschied
 Maßgeblicher lokaler Bericht: analysis/GC-PEDAGOGY-KB-01/media/download-2-audio-pruefbericht.md. Reproduzierbare lokale Programme: audio_pipeline.py, audio_source_linking.py, audio_alignment.py, audio_export.py; Versionsliste audio-requirements-lock.txt. Original-/Transkriptarchiv, Softwareumgebung und Modelle sind durch task-eigene .gitignore für Repo-Upload ausgeschlossen. Scripts und Detaildaten sind lokal erhalten, dieser Commit sichert die Übergabe. Scope bleibt fachliche Datenarbeit; keine Produktintegration, CI-/Deploy-/Productionfreigabe. Der gesamte restliche Aufgaben-/Diagrammbestand und 125 Regalmedien sind weiterhin unvollständig.
 
 Nächster Gesamtarbeitsschritt: übrige nicht-audiobezogene Aufgaben und Diagramme aus den archivierten Quellen konkret prüfen. Aktive lokale Transkriptionsprozesse sind beendet. Beobachtetes Modell, Kosten und Usage unbekannt.
+
+
+## Wiederaufnahme21.10.2026 — belastbarer Teilabschluss
+
+Auftrag: gesamte Reader-Inhalte und Didaktik schnell und belegbar auswerten, gleiche Task-ID fortgeführt. Aktueller main/DevStatus39629725383 geprüft; letzter gelesener main25c118f2518e4f87d0c9ea6301611cd2e7e4ae3f. PR214 bleibt der Medien-Dokumentationsbranch, PR208 Lehrpläne getrennt. Vorhandene Produktänderungen im lokalen curriculum-integration-Checkout nicht angefasst.
+
+62/62 früher registrierte PDFs (216Seiten) per vollem SHA wiedergefunden und unverändert privat archiviert.164-seitiger Kommentar8d468f417d811a7a vollständig in Text und Bild gelesen;530eigene Aufgaben-/Referenzgruppen erfasst. Lösungskontrolle nur teilweise; konkrete Quellenfehler einschließlich unabhängig bestätigtem Extremfallfehler dokumentiert. Sämtliche164Seiten besitzen private PNG-Nachweise.12didaktische Transferregeln vorgeschlagen. Kein gesamtes Regalmedium fertig.
+
+Angemeldeter Chrome-Zugang funktioniert; aktuell125Coverkarten. R001:7angebotene Sammeldateien neu gesichert,6PDFs/671Seiten plusWord, zusätzlich eine Originalbilddatei.284-seitiger Deutschkommentar ea3d79400d5b5503 wird in drei lokalen Bereichen vollständig ausgewertet. Lokale Nachweise: analysis/GC-PEDAGOGY-KB-01/media/reader-vollanalyse-stand-20261021.md und Ausführungsplan docs/superpowers/plans/2026-10-21-reader-vollanalyse.md innerhalb der Analyseablage. Keine Biblioangaben in neuen Wissensregistern; technische Downloadzuordnung privat.
+
+Die Originale sind jetzt im privaten Archiv unabhängig von Downloads verfügbar. Originalbilder,Volltexte,Transkripte und Dateinamen werden nicht hochgeladen. Anonyme Einzelanalysen bleiben lokal; der PR sichert eigene Planung,Synthese,Abdeckungsbelege und Übergabe.530Gruppen sind Kandidaten, keine530 vollständig geprüften Lösungen.53bereits integrierte Starterprofile aus PR218 bleiben getrennt. hausaufgabe-staging.web.app ist im heutigen Hauptstand Live; keine Deploy-/Produktänderung in diesem Auftrag.
+
+Aktiv: drei lokale Teilprüfungen für Quelle ea3d79400d5b5503, Bereiche1–95,96–190,191–284; keine Actions/externen Providerläufe gestartet. Angefordert Sol/medium für fachliche Bild-/Sprachprüfung; tatsächlich beobachtetes Runtime-Modell,Kosten,Usage unbekannt. Versuchshistorie erhalten. Nächster Schritt: die284Seitenrecords abnehmen,konsolidieren und didaktisch übertragen; danach offene Sammeldateien/Einzelressourcen.
