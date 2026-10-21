@@ -1,0 +1,550 @@
+{
+  "task": "GC-VISUAL-PROTOTYPE-AI-02",
+  "issue": "https://github.com/HerrLoeffler/Hausaufgabe/issues/255",
+  "pullRequest": "https://github.com/HerrLoeffler/Hausaufgabe/pull/265",
+  "at": "2026-10-21",
+  "releaseStage": "staging_deployed",
+  "hosting": {
+    "origin": "https://gradecrew-staging-2026--visual255-rjcwf436.web.app",
+    "project": "gradecrew-staging-2026",
+    "commit": "989f6463e9b1e41edb4f931bc2ddcc46393e7b7e",
+    "tree": "6962f0dae4d63ab6912641a682b3fbdade595a10",
+    "verifiedAssets": 179,
+    "at": "2026-10-21T16:26:55.135Z"
+  },
+  "backend": {
+    "project": "gradecrew-staging-2026",
+    "sourceCommit": "cfea0cc207cf7197da9d36c3e553137e6fca7ad6",
+    "newCodebases": [
+      "visual255-ai",
+      "visual255-assessment"
+    ],
+    "deployedEndpoints": [
+      {
+        "id": "visual255ConfigurePracticeSolutionRelease",
+        "codebase": "visual255-assessment",
+        "hash": "7de802f75e6c3c1c2e2b1122fa3a5f6356cd7bf5",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255ConfigurePracticeSolutionRelease"
+      },
+      {
+        "id": "visual255CrewAssistant",
+        "codebase": "visual255-ai",
+        "hash": "45e4f185c4de6861d0b1e36afc29e1647707811a",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255CrewAssistant"
+      },
+      {
+        "id": "visual255GenerateTest",
+        "codebase": "visual255-ai",
+        "hash": "45e4f185c4de6861d0b1e36afc29e1647707811a",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255GenerateTest"
+      },
+      {
+        "id": "visual255GetAssessmentInfo",
+        "codebase": "visual255-assessment",
+        "hash": "7de802f75e6c3c1c2e2b1122fa3a5f6356cd7bf5",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255GetAssessmentInfo"
+      },
+      {
+        "id": "visual255GetAssessmentReceipt",
+        "codebase": "visual255-assessment",
+        "hash": "7de802f75e6c3c1c2e2b1122fa3a5f6356cd7bf5",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255GetAssessmentReceipt"
+      },
+      {
+        "id": "visual255GetQuickRemySubmission",
+        "codebase": "visual255-ai",
+        "hash": "6b36d052fefed750a5c41982a3a48ffea5b5889f",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255GetQuickRemySubmission"
+      },
+      {
+        "id": "visual255PrepareQuickRemy",
+        "codebase": "visual255-ai",
+        "hash": "45e4f185c4de6861d0b1e36afc29e1647707811a",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255PrepareQuickRemy"
+      },
+      {
+        "id": "visual255ProcessAiTestJob",
+        "codebase": "visual255-ai",
+        "hash": "45e4f185c4de6861d0b1e36afc29e1647707811a",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255ProcessAiTestJob"
+      },
+      {
+        "id": "visual255RegenerateQuestion",
+        "codebase": "visual255-ai",
+        "hash": "45e4f185c4de6861d0b1e36afc29e1647707811a",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255RegenerateQuestion"
+      },
+      {
+        "id": "visual255ResumeAssessmentAttempt",
+        "codebase": "visual255-assessment",
+        "hash": "7de802f75e6c3c1c2e2b1122fa3a5f6356cd7bf5",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255ResumeAssessmentAttempt"
+      },
+      {
+        "id": "visual255ReviseWholeTest",
+        "codebase": "visual255-ai",
+        "hash": "45e4f185c4de6861d0b1e36afc29e1647707811a",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255ReviseWholeTest"
+      },
+      {
+        "id": "visual255StartAiTestJob",
+        "codebase": "visual255-ai",
+        "hash": "45e4f185c4de6861d0b1e36afc29e1647707811a",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255StartAiTestJob"
+      },
+      {
+        "id": "visual255StartAiTestVariantJob",
+        "codebase": "visual255-ai",
+        "hash": "45e4f185c4de6861d0b1e36afc29e1647707811a",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255StartAiTestVariantJob"
+      },
+      {
+        "id": "visual255StartAssessmentAttempt",
+        "codebase": "visual255-assessment",
+        "hash": "7de802f75e6c3c1c2e2b1122fa3a5f6356cd7bf5",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255StartAssessmentAttempt"
+      },
+      {
+        "id": "visual255SubmitAssessmentAttempt",
+        "codebase": "visual255-assessment",
+        "hash": "7de802f75e6c3c1c2e2b1122fa3a5f6356cd7bf5",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255SubmitAssessmentAttempt"
+      },
+      {
+        "id": "visual255SubmitQuickRemy",
+        "codebase": "visual255-ai",
+        "hash": "6b36d052fefed750a5c41982a3a48ffea5b5889f",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255SubmitQuickRemy"
+      }
+    ],
+    "existingInventoryCount": 44,
+    "existingChangedDuringWindow": [
+      "learningBrainProfile",
+      "learningBrainStart",
+      "learningBrainTurn"
+    ],
+    "existingChangeExplanation": "The only deploy command in this task selected the two new visual255 codebases. Three learningBrain endpoints changed concurrently in the separate adaptive-learning workstream. No existing endpoint was selected or overwritten by this task."
+  },
+  "formats": [
+    {
+      "id": "hotspot",
+      "name": "Bildbereiche anklicken"
+    },
+    {
+      "id": "labeling",
+      "name": "Grafik beschriften"
+    },
+    {
+      "id": "scale",
+      "name": "Position auf einer Skala"
+    },
+    {
+      "id": "angle",
+      "name": "Winkel messen mit verschiebbarem und drehbarem Winkelmesser"
+    },
+    {
+      "id": "grid",
+      "name": "Flächenanteile markieren"
+    },
+    {
+      "id": "chart",
+      "name": "Diagramm ergänzen"
+    },
+    {
+      "id": "connections",
+      "name": "Verbindungen und gerichtete Pfeile"
+    },
+    {
+      "id": "coordinate",
+      "name": "Punkte und Strecken im Koordinatensystem"
+    },
+    {
+      "id": "evidence",
+      "name": "Textbelege mit alternativen richtigen Auswahlmengen"
+    },
+    {
+      "id": "range",
+      "name": "Geschlossene Bereiche auf einer Skala"
+    },
+    {
+      "id": "table",
+      "name": "Tabellen vervollständigen"
+    },
+    {
+      "id": "correction",
+      "name": "Fehler erkennen und berichtigen"
+    }
+  ],
+  "reuse": {
+    "menu": "One additional visual interaction family, not 15 duplicate menu entries.",
+    "existing": [
+      "single",
+      "multi",
+      "number",
+      "matching",
+      "markwords"
+    ],
+    "extensions": [
+      "Native number accepts safe fraction and decimal input with preview/server parity.",
+      "Spatial directed connections differ from ordinary pair matching; sentence evidence supports alternative complete selections rather than word tokens."
+    ]
+  },
+  "realAI": {
+    "provider": "OpenAI, existing server-side Secret Manager binding",
+    "model": "gpt-5.6-luna",
+    "logicalRequests": 5,
+    "uniqueProviderRequests": 17,
+    "inputTokens": 78398,
+    "outputTokens": 9735,
+    "costAmount": null,
+    "costLimitation": "Exact monetary charges were not available; token counts and all provider IDs are preserved. No new API key or simulated AI result.",
+    "events": [
+      {
+        "id": "CLUsfF3QeVEa2jRnsrb8",
+        "kind": "test",
+        "model": "gpt-5.6-luna",
+        "questionCount": 6,
+        "inputTokens": 6717,
+        "outputTokens": 1026,
+        "totalTokens": 7743,
+        "failed": null,
+        "replacedQuestions": null,
+        "fullRepair": null,
+        "qualityReviewPasses": null,
+        "providerRequests": [
+          {
+            "responseId": "resp_03b9c14031e38e3d016ad8e6b13c7087d2bdb2341ae5bb0289",
+            "requestId": "req_3a58e171d6d74f5888067c7e6344d3ba",
+            "model": "gpt-5.6-luna"
+          }
+        ]
+      },
+      {
+        "id": "SMrzDkCRtbiSmQhJFpO0",
+        "kind": "test",
+        "model": "gpt-5.6-luna",
+        "questionCount": 4,
+        "inputTokens": 8742,
+        "outputTokens": 2182,
+        "totalTokens": 10924,
+        "failed": false,
+        "replacedQuestions": 0,
+        "fullRepair": false,
+        "qualityReviewPasses": 1,
+        "providerRequests": [
+          {
+            "responseId": "resp_0f4df82045951b15016ad8e85a4c5887d2bba6273dfa0182f3",
+            "requestId": "req_22875eb004d642feb44428b0f042b47b",
+            "model": "gpt-5.6-luna"
+          },
+          {
+            "responseId": "resp_0d75297865ac6a2a016ad8e86df10087d2ad00a17428f8c458",
+            "requestId": "req_85ec21096edd43d585afe6deba3d68fe",
+            "model": "gpt-5.6-luna"
+          }
+        ]
+      },
+      {
+        "id": "e6VpjDFg0gY8JfpCjue7",
+        "kind": "test",
+        "model": "gpt-5.6-luna",
+        "questionCount": 1,
+        "inputTokens": 44601,
+        "outputTokens": 4359,
+        "totalTokens": 48960,
+        "failed": false,
+        "replacedQuestions": 3,
+        "fullRepair": false,
+        "qualityReviewPasses": 4,
+        "providerRequests": [
+          {
+            "responseId": "resp_00517aebdd9c07ae016ad8e939b0ec87d2ad02f3c0f15f8729",
+            "requestId": "req_2ecd77b3ae9b46f691712bee4d3195ef",
+            "model": "gpt-5.6-luna"
+          },
+          {
+            "responseId": "resp_0bd5f5533575bb3b016ad8e943f88487d2baff8752b6d9cf01",
+            "requestId": "req_fea763208b504debadd98eb53427adb2",
+            "model": "gpt-5.6-luna"
+          },
+          {
+            "responseId": "resp_06ab6bfc507c2e8e016ad8e946a4ec87d291a09baf7cf2f950",
+            "requestId": "req_7cae9269fd7b41f5bf06e66f212adeb4",
+            "model": "gpt-5.6-luna"
+          },
+          {
+            "responseId": "resp_06e91d279571bc4e016ad8e94e615487d29f89250daab0621c",
+            "requestId": "req_d36e7da601484803a25f2ed4012098af",
+            "model": "gpt-5.6-luna"
+          },
+          {
+            "responseId": "resp_00e86865d4b4549d016ad8e956bbd887d2903fe2bfd3d816cc",
+            "requestId": "req_9e32740ea7be47318d92dbbb1f7847f3",
+            "model": "gpt-5.6-luna"
+          },
+          {
+            "responseId": "resp_0285f30e82a8f8d7016ad8e95a933c87d289f5c56e6101dcbc",
+            "requestId": "req_a30c43ff21a64e01805285725778caeb",
+            "model": "gpt-5.6-luna"
+          },
+          {
+            "responseId": "resp_04b15fb5b5e9f7ab016ad8e9620a3887d287e9173c853f6100",
+            "requestId": "req_ceba8471924247b2bfab63900be6dfe8",
+            "model": "gpt-5.6-luna"
+          },
+          {
+            "responseId": "resp_0996940841eab219016ad8e965e98487d29f1a9821d20ef413",
+            "requestId": "req_0df86db213de477c8a52e99d37024fed",
+            "model": "gpt-5.6-luna"
+          },
+          {
+            "responseId": "resp_0282ded9aad30573016ad8e96d3b2887d297969c7692630252",
+            "requestId": "req_f008f9f68ada4c85b47028c4ab4ece32",
+            "model": "gpt-5.6-luna"
+          },
+          {
+            "responseId": "resp_0c747cbc2e5e9335016ad8e974df4087d281b10bea28f49e7f",
+            "requestId": "req_b1d74977bd6c4847be9fdabc72e972c5",
+            "model": "gpt-5.6-luna"
+          }
+        ]
+      },
+      {
+        "id": "f6J3jO6WWZNqur75Q37V",
+        "kind": "question",
+        "model": "gpt-5.6-luna",
+        "questionCount": null,
+        "inputTokens": 8119,
+        "outputTokens": 592,
+        "totalTokens": 8711,
+        "failed": false,
+        "replacedQuestions": null,
+        "fullRepair": null,
+        "qualityReviewPasses": null,
+        "providerRequests": [
+          {
+            "responseId": "resp_075f26ccdc9f679c016ad8e66e0cc087d2b93f94b2d6fdeb4b",
+            "requestId": "req_bbdd6aa7aa2e4c7abcc0c5f77a7e38af",
+            "model": "gpt-5.6-luna"
+          },
+          {
+            "responseId": "resp_0c5941be73a6e571016ad8e67bcb8887d2b5b28c0ebc4616b2",
+            "requestId": "req_4b59c72c7ffd4ab087cde5aac3caf352",
+            "model": "gpt-5.6-luna"
+          }
+        ]
+      },
+      {
+        "id": "m9rmynUEFEZ3fJZOFJHH",
+        "kind": "test",
+        "model": "gpt-5.6-luna",
+        "questionCount": 6,
+        "inputTokens": 10219,
+        "outputTokens": 1576,
+        "totalTokens": 11795,
+        "failed": false,
+        "replacedQuestions": 0,
+        "fullRepair": false,
+        "qualityReviewPasses": 1,
+        "providerRequests": [
+          {
+            "responseId": "resp_0dbc1fda45c6110a016ad8e60eb09087d2bbad5ff8f373c2d1",
+            "requestId": "req_c18d370da49b40e789e8abb2586a4afc",
+            "model": "gpt-5.6-luna"
+          },
+          {
+            "responseId": "resp_09d42e727abd42cb016ad8e61f319c87d283bcc4dc12dffe9c",
+            "requestId": "req_25afa01ad7f740898024954dc54076a0",
+            "model": "gpt-5.6-luna"
+          }
+        ]
+      }
+    ]
+  },
+  "verification": {
+    "fractions": {
+      "quizId": "VSSP9ZEH",
+      "attemptId": "a_15377234a6f2caf9521d3849bb18",
+      "expectedPoints": 10,
+      "maxPoints": 12,
+      "resumePaperUnchanged": true,
+      "publicVisualSolutionAbsent": true,
+      "first": {
+        "receipt": {
+          "submissionId": "a_15377234a6f2caf9521d3849bb18",
+          "attemptId": "a_15377234a6f2caf9521d3849bb18",
+          "status": "graded",
+          "needsReview": false,
+          "resultMode": "points_grade",
+          "submittedAtMillis": 1792600320009,
+          "solutionsConfigured": true,
+          "solutionReleaseMode": "exam_after_end",
+          "solutionsReleased": false,
+          "totalPoints": 10,
+          "maxPoints": 12,
+          "percent": 83,
+          "grade": 2
+        },
+        "diagnosticReference": "ASM-dd1efcd2-46e3-4ce5-8e00-b9edffd5b762"
+      },
+      "duplicate": {
+        "receipt": {
+          "submissionId": "a_15377234a6f2caf9521d3849bb18",
+          "attemptId": "a_15377234a6f2caf9521d3849bb18",
+          "status": "graded",
+          "needsReview": false,
+          "resultMode": "points_grade",
+          "submittedAtMillis": 1792600320009,
+          "solutionsConfigured": true,
+          "solutionReleaseMode": "exam_after_end",
+          "solutionsReleased": false,
+          "totalPoints": 10,
+          "maxPoints": 12,
+          "percent": 83,
+          "grade": 2
+        },
+        "diagnosticReference": "ASM-f8a7f999-0544-4d27-b54e-140f59faafc7"
+      },
+      "idempotent": true
+    },
+    "nt": {
+      "quizId": "P5TRADQM",
+      "formats": [
+        "labeling",
+        "single",
+        "multi",
+        "matching"
+      ],
+      "expectedPoints": 8,
+      "maxPoints": 8,
+      "publicSolutionAbsent": true,
+      "result": {
+        "receipt": {
+          "submissionId": "a_1b17dac76a5fe5449aeb374d1457",
+          "attemptId": "a_1b17dac76a5fe5449aeb374d1457",
+          "status": "graded",
+          "needsReview": false,
+          "resultMode": "points_grade",
+          "submittedAtMillis": 1792600412194,
+          "solutionsConfigured": true,
+          "solutionReleaseMode": "exam_after_end",
+          "solutionsReleased": false,
+          "totalPoints": 8,
+          "maxPoints": 8,
+          "percent": 100,
+          "grade": 1
+        },
+        "diagnosticReference": "ASM-0322acec-9089-4232-954b-25f02d343d89"
+      }
+    },
+    "angle": {
+      "quizId": "E5NPTL3M",
+      "format": "angle",
+      "maxPoints": 2,
+      "publicSolutionAbsent": true,
+      "noDigitalAnswerInPrompt": true,
+      "results": [
+        {
+          "case": "within-one-degree",
+          "expectedPoints": 2,
+          "result": {
+            "receipt": {
+              "submissionId": "a_c22b6454c65cd766d6527a6e5111",
+              "attemptId": "a_c22b6454c65cd766d6527a6e5111",
+              "status": "graded",
+              "needsReview": false,
+              "resultMode": "points_grade",
+              "submittedAtMillis": 1792600545257,
+              "solutionsConfigured": true,
+              "solutionReleaseMode": "exam_after_end",
+              "solutionsReleased": false,
+              "totalPoints": 2,
+              "maxPoints": 2,
+              "percent": 100,
+              "grade": 1
+            },
+            "diagnosticReference": "ASM-574a6d52-1cee-4771-a1d2-653b788238c9"
+          }
+        },
+        {
+          "case": "outside-tolerance",
+          "expectedPoints": 0,
+          "result": {
+            "receipt": {
+              "submissionId": "a_77b96e38ba879fd7f27880104345",
+              "attemptId": "a_77b96e38ba879fd7f27880104345",
+              "status": "graded",
+              "needsReview": false,
+              "resultMode": "points_grade",
+              "submittedAtMillis": 1792600546008,
+              "solutionsConfigured": true,
+              "solutionReleaseMode": "exam_after_end",
+              "solutionsReleased": false,
+              "totalPoints": 0,
+              "maxPoints": 2,
+              "percent": 0,
+              "grade": 6
+            },
+            "diagnosticReference": "ASM-e86dbd47-38b0-422f-a3c4-49c12650057e"
+          }
+        }
+      ]
+    },
+    "unauthenticatedAI": {
+      "http": 401,
+      "code": "UNAUTHENTICATED"
+    },
+    "localTests": {
+      "functions": 293,
+      "assessment": 97,
+      "latestRelevantBrowserAndUI": 100,
+      "environment": 3,
+      "eslintAndSyntax": "passed"
+    },
+    "review": "Independent source and generated-package review; corrected writable allowlist flag, fraction parity, assistant routing, marker IDs and static editor menu. Final scoped review no remaining actionable findings.",
+    "browser": {
+      "actualOnlineConfirmed": [
+        "Login with dedicated synthetic test account",
+        "Exact fraction prompt entered in Remy, 6 tasks / 12 points generated",
+        "Teacher editor and real Emmi single-task conversion to grid",
+        "Real whole-test Emmi preservation/rewording",
+        "Teacher review acknowledgement, save; resulting final grid read directly from server after reload",
+        "Public secure student intro with 6 tasks / 12 points"
+      ],
+      "serverDirectConfirmed": [
+        "Resume stable paper",
+        "Correct and wrong answer submission gives 10/12",
+        "Repeated submission idempotent",
+        "NT plant labeling and classic formats gives 8/8",
+        "Angle tolerance gives 2/2 and 0/2, no digital target answer in public prompt"
+      ],
+      "localChromeConfirmed": [
+        "All 12 solution-free renderers",
+        "Touch-type grid selection and protractor pointer movement/rotation",
+        "Keyboard/numeric protractor translation and rotation",
+        "Native numeric parity",
+        "Actual editor template loaded visual selection"
+      ],
+      "remaining": "A JavaScript confirmation dialog about deleting only the synthetic local draft blocks further interaction in the integrated browser. Supported dialog API returned no dialog; native Codex app automation is disallowed. User was asked to close the dialog. Therefore a complete final browser-driven submission is not claimed; genuine online server E2E has passed.",
+      "physicalDevice": "not tested"
+    }
+  },
+  "boundaries": {
+    "project": "gradecrew-staging-2026",
+    "canonicalTestHostingChanged": false,
+    "schoolLiveChanged": false,
+    "productionChanged": false,
+    "newKeys": false,
+    "secretsInBrowser": false,
+    "openPublicPaidAI": false,
+    "accountAccess": {
+      "project": "gradecrew-staging-2026",
+      "existingAdminProfiles": 0,
+      "activeAdmins": 0,
+      "dedicatedSyntheticAccount": "gc-visual255-e2e",
+      "ownerWritableFlagsGrantAccess": false
+    },
+    "previewExpires": "2026-11-20T16:23:34Z",
+    "schoolApproval": false
+  }
+}
