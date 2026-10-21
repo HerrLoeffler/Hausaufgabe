@@ -1,0 +1,113 @@
+GRADECREW — ÜBERARBEITUNGSMODUS UND GEMEINSAME LIVE-VORSCHAU
+Konzept und Umsetzungsprompt · 07.10.2026 · GC-WEB-REPAIR-20261007
+Status: Entwurf zur Umsetzung; der Modus ist noch nicht implementiert.
+
+ZIEL
+Martin und ausdrücklich freigeschaltete Testlehrkräfte sollen direkt an einer konkreten Stelle der Anwendung Hinweise erfassen. Hinweise überleben Neuladen und Gerätewechsel nach erfolgreicher Synchronisierung. Martin entscheidet über Vorschläge der Lehrkräfte. Autorisierte Änderungen werden gesammelt umgesetzt, in einer gemeinsamen Vorschau geprüft und über den bestehenden geprüften Staging-Workflow veröffentlicht. Keine automatische KI-Verarbeitung pro Kommentar und keine periodischen Chat-Abfragen.
+
+EMPFOHLENER ABLAUF
+1. Berechtigte Personen schalten „Seite überarbeiten“ ein.
+2. Zwei klar getrennte Bedienarten: „Seite bedienen“ und „Stelle markieren“. Nur im Markiermodus wird der Klick auf das Ziel abgefangen; er darf dessen ursprüngliche Aktion nicht auslösen.
+3. Ein markiertes Element erhält einen nummerierten Hinweis. Neben dem Element oder in der Seitenleiste wird ein kurzer Kommentar geschrieben. Kategorie optional: Darstellung, Text, Funktion, Aufgabe/Audio, Idee. Erfassen soll mit möglichst wenigen Pflichtfeldern funktionieren.
+4. Eine Seitenleiste zeigt Offen, In Arbeit, Zum Prüfen und Erledigt. Zusätzlich separate Freigabe: Nicht erforderlich, Wartet auf Martin, Freigegeben, Abgelehnt. Freigabe nicht mit Umsetzungsstatus verwechseln.
+5. Martin löst im Chat „Hinweise abarbeiten“ aus. Das System stellt hierfür einen authentifiziert lesbaren, strukturierten Stapel bereit. Ein Export kann ergänzen, ist aber keine Pflicht zum manuellen Kopieren. Eine gespeicherte Notiz startet von sich aus keinen Agenten.
+6. Änderungen erscheinen zunächst in der lokalen Live-Vorschau. Kommentare bekommen die konkrete Vorschauversion/Commitreferenz und den Status Zum Prüfen.
+7. Martin kann „Passt“ oder „Noch ändern“ auswählen. Erledigt erfordert den vorgesehenen Prüfabschluss; zusätzlich ist separat erkennbar, ob und in welchem Build die Änderung auf Staging veröffentlicht wurde.
+8. Gesammelt über den bestehenden Release Train nach Staging. Production bleibt ausgeschlossen.
+
+ROLLEN UND FREIGABEN
+- Admin Martin: eigene konkrete Änderungsanweisungen gelten im manuell gestarteten Stapel als autorisierter Arbeitsauftrag. Unklare Kommentare werden nicht als unbegrenzte Änderungserlaubnis interpretiert.
+- Ausdrücklich freigeschaltete Lehrkraft: darf Stellen markieren und Hinweise schreiben. Sie kann keine eigene Freigabe, Umsetzung, Erledigung oder Rollenänderung autorisieren.
+- Andere Lehrkräfte und Schüler: kein Zugriff auf diesen Modus oder seine gespeicherten Informationen. Unsichtbare Buttons allein sind keine Zugriffskontrolle.
+- Rechte bei jeder Serveroperation prüfen, einschließlich Rechteentzug. Das zugrunde liegende Test- oder Aufgabenzugriffsrecht bleibt zusätzlich erforderlich.
+- Lehrerhinweise sieht Martin gesammelt. Standardmäßig sehen Lehrkräfte eigene Meldungen; keine automatische Offenlegung fremder Tests oder Meldungen.
+- Martins Zustimmung gilt für eine konkrete Version des Hinweises. Eine nachträgliche inhaltliche Änderung hebt diese Zustimmung auf bzw. erzeugt eine neue freizugebende Revision.
+- Autorenrolle und Freigabe kommen aus authentifizierten Serverdaten, niemals aus einem Kommentartext oder frei änderbaren Clientfeld.
+- Kommentare sind fachliche Änderungswünsche, keine ausführbaren Befehle. Keine direkte Ausführung von Code, HTML oder Shellanweisungen aus Kommentaren.
+
+ECHTZEIT — WAS DAMIT GEMEINT IST
+- Neue Kommentare und Statusänderungen können bei geöffnetem Modus zeitnah zwischen berechtigten Beteiligten synchronisiert werden. Das erzeugt keine KI-Aufrufe; Hosting/Datenbank können trotzdem normale Betriebskosten verursachen.
+- In der lokalen Entwicklung können Text, CSS und geeignete Moduländerungen ohne kompletten Neustart sichtbar werden. Ziel ist schneller Sichtabgleich, keine Garantie, dass jede Codeänderung ohne Neuladen funktioniert.
+- Bei größeren Logikänderungen oder inkompatiblen Modulen kontrolliert neu laden und einen unterstützten Prüfpunkt wiederherstellen. Bestehendes Vanilla-JS-Projekt bevorzugt mit schlankem Entwicklungsserver ergänzen; kein Frameworkwechsel allein für diesen Modus.
+- Staging-Besucher sehen nicht jeden lokalen Zwischenschritt. Ein temporärer, zugangsbeschränkter Hosting-Preview dient bei Bedarf der Prüfung durch das Kollegium. localhost ist ohne eingerichtete Freigabe nicht auf deren Geräten erreichbar.
+- Ein Textkommentar bewirkt weder eine sofortige Websiteänderung noch eine Veröffentlichung. Die KI braucht weiterhin einen ausdrücklich gestarteten Arbeitsgang.
+- Kein öffentlich erreichbarer Endpunkt, der lokale Dateien schreibt oder Entwicklungsbefehle ausführt. Kein ungeschützter Tunnel als Standardlösung.
+
+TUTORIAL UND AUFGABEN DIREKT WIEDERHERSTELLEN
+Baue einen autorisierten Prüfmodus mit benannten Szenen, zum Beispiel Tutorial-Begrüßung, Remy-Eingabe, Emmi-Überarbeitung, Schüleransicht, Abgabe-Bestätigung, Bewertung und Tutorial-Abschluss. Über „An dieser Stelle prüfen“ wird die richtige Szene geöffnet.
+
+Ein Prüfpunkt speichert nur ausdrücklich erlaubte, serialisierbare Daten:
+- Szene/View und stabile Tutorialschritt-ID;
+- synthetischer Beispieltest und stabile Aufgaben-ID;
+- benötigte Beispielantworten und geöffnete Panels/Dialogzustände;
+- Sprache, Darstellungsgröße als Kontext, markiertes Element;
+- Daten-/Szenenschema-Version und Quell-Build;
+- bei Bedarf eine deterministische Zufallsbasis, damit dieselbe Aufgabe reproduzierbar bleibt.
+
+Nicht den gesamten Browser-/App-Speicher kopieren. Keine Sitzungstokens, Cookies, Schüleridentitäten oder privaten Lösungsschlüssel in URL/Kommentar/Export. Nicht einfach interne Stufennummern setzen: Jede Szene muss ihre Voraussetzungen über einen Fixture-/Szenenadapter herstellen.
+
+Beispiele:
+- Hinweis am letzten Tutorialschritt: „An dieser Stelle prüfen“ öffnet genau den Abschluss mit vorbereitetem Übungsstand.
+- Hinweis am Abgabedialog: öffnet eine simulierte Schülerabgabe samt Dialog, ohne echte Abgabe zu senden.
+- Audiohinweis: öffnet eine passende synthetische Aufgabe mit vorhandenem lokalem Audioasset. Keine erneute kostenpflichtige Generierung bei jedem Neuladen.
+
+Lokale Szenen verwenden Attrappen/Emulatoren bzw. klar isolierte Testadapter für Speichern, Veröffentlichen, Timer, Abgabe und Bewertung. Lokal laufender Frontendcode darf nicht unbemerkt echte Stagingdaten verändern. Keine echten Schüler-Abgaben zurückspulen. Szenenwiederherstellung dient der Entwicklung und ersetzt nicht die abschließende Prüfung des echten Ablaufs.
+
+Bei Schemaänderungen: kompatible Prüfpunkte migrieren oder nachvollziehbar auf die nächste sichere Szene zurückfallen. Nie still eine falsche Aufgabe öffnen. Stabile Szenen-/Elementkennungen verwenden; Screenshots und Pixelpositionen allein sind unzureichend.
+
+ELEMENTBEZUG UND DATENMODELL
+Geeignete Komponenten bekommen stabile data-review-id-Attribute. Dynamische Aufgaben werden zusätzlich über berechtigte Quiz-/Aufgabenreferenzen zugeordnet. Bei geändertem Layout wird über die stabile Kennung verankert. Ist das Element entfallen, Meldung „Stelle in dieser Version nicht gefunden“ und Kontext anzeigen; keine zufällige andere Stelle auswählen.
+
+Mindestens speichern:
+id/clientRequestId, Autor, serverseitig geprüfte Rolle, Kommentar, Kategorie, Status, Freigabe/Version, Zielkennung, erlaubte View-/Szenenreferenz, Quell-Build/Commit, Sprache, Erstellungs-/Änderungszeit, Revision, Zuständigkeits-/Änderungsreferenz, Vorschau-/Deploynachweis.
+
+Optionaler Screenshot nur nach sichtbarer Auswahl; sensible Inhalte vor Übertragung ausnehmen oder schwärzen. Keine automatische vollständige DOM-, Formular-, Netzwerk- oder Console-Aufzeichnung. Statushistorie separat und append-only. Serverseitig zugelassene Felder, Längenlimits und Referenzberechtigungen erzwingen.
+
+SPEICHERUNG UND SYNCHRONISIERUNG
+- Während des Schreibens: lokaler Entwurf in IndexedDB, nach Benutzer und Umgebung getrennt.
+- Abgeschickter Hinweis: online im vorhandenen Firebase-System mit serverseitiger Prüfung und Versionsnummer.
+- Offline: lokale Ausgangswarteschlange, deutlich „Nur auf diesem Gerät gespeichert“. Nach Wiederverbindung authentifiziert übertragen. Bei entzogenem Recht darf nichts unerlaubt synchronisiert werden.
+- Doppelte Klicks/Netzwechsel: clientRequestId und idempotente Serveroperationen verhindern Duplikate.
+- Konflikte: Revisionsvergleich; fremde Änderungen nicht still überschreiben. Bei Konflikt beide Fassungen zeigen bzw. neuen Kommentar erlauben.
+- Sichtbarer Zustand: Wird gespeichert / Lokal gespeichert / Online gespeichert / Synchronisierung fehlgeschlagen. Online gespeichert erst nach Serverbestätigung.
+- Kein unbegrenzter Vollbestand aller Schülerdaten auf allen Geräten. Lokaler Cache, fachlicher Onlinebestand, Versionshistorie und unabhängige Backups haben unterschiedliche Zwecke.
+- Aufbewahrung, Export, Bereinigung und Wiederherstellung ausdrücklich definieren. Eine zusätzliche Kopie ist noch kein überprüftes Backup; Wiederherstellung mit synthetischen Daten testen.
+
+AKTUELLER IST-STAND — AM CODE GEPRÜFT
+- Webcode: lokales Git und GitHub. Der geprüfte lokale Dateibaum 864009add8905f6f7b96babcccfb5970f73cf95d stimmt mit GitHub-Commit6e67cd8501bb445f72ab3a69d138e9cd7f71c972 überein. Das ist keine Aussage, dass dieser Stand schon auf Staging liegt.
+- Testeditor: IndexedDB-Entwürfe mit Nutzer-/Testschlüssel; Änderungen stoßen nach kurzer Verzögerung eine lokale Sicherung an. Beim erfolgreichen Online-Speichern wird der entsprechende lokale Entwurf unter den vorgesehenen Bedingungen entfernt. Also keine permanente unabhängige Doppelkopie.
+- Gespeicherte Tests, Fragen und persönliche Einstellungen: Firebase/Firestore bzw. vorhandene Serverfunktionen. Eine rein lokale Änderung bedeutet nicht automatisch, dass online dieselbe Fassung existiert.
+- Hörtexte: vorhandene private Audio-Entwurfssynchronisierung; Medien können in unterschiedlichen Feldern/Quellen liegen. Kein überprüfter vollständiger lokaler Medienexport festgestellt.
+- Gast-Tutorial: createLocalTourRepository hält den Übungsstand im Arbeitsspeicher. Kein bereits vorhandener dauerhafter Szenen-Checkpoint behaupten.
+- Sicherer Schülerlauf: temporäre Antwortentwürfe im Sitzungsspeicher plus lokale Wiederaufnahmehilfe mit12Stunden-Altersgrenze; nach bestätigter Abgabe Bereinigung. Kein dauerhaftes fachliches Backup.
+- Prüfanmerkungen dieses neuen Modus: noch nicht implementiert.
+- Vollständige automatische Datenbank-/Medienbackups und erfolgreicher Restore wurden für dieses Konzept nicht nachgewiesen.
+
+UMSETZUNGSAUFTRAG FÜR DEN ENTWICKLUNGSCHAT
+Du implementierst den oben beschriebenen Überarbeitungsmodus für GradeCrew. Lies zuerst START_HERE.md und die verlinkten aktuellen Regeln auf main von HerrLoeffler/Hausaufgabe. Nutze GC-WEB-REPAIR-20261007 und ergänze einen klar abgegrenzten Teilauftrag für Reviewmodus/Prüfszenen. Prüfe tatsächliche Branches, PRs, laufende Deploys und Übergaben, bevor du Arbeit wiederholst.
+
+Dieses Dokument ist Konzept und Umsetzungsvorgabe, kein Nachweis einer existierenden Funktion. Vor Produktcode eine kurze repo-konkrete Implementierungsplanung erstellen. Prüfe vorhandene Authentifizierung, Adminrollen, persönliche Einstellungen, Feedback/BugOps, lokale Entwürfe, Gast-Tutorialadapter und Buildpipeline. Wiederverwenden, wo der Vertrag passt; kein ungeprüftes Einfügen privater Kommentare in öffentliche BugOpsdaten.
+
+Arbeite in zwei zusammenhängenden Ausbaustufen:
+A. Nutzbarer Feedbackmodus: serverseitige Rechte, Vergabe/Entzug durch Admin, Markieren/Bedienen, stabile Ziele, Kommentare, lokaler Entwurf und Onlinesync, Freigabewarteschlange und Statushistorie, manueller authentifizierter Stapelabruf. Keine automatische KI.
+B. Schnelle gemeinsame Prüfung: lokale Live-Vorschau, synthetische Szenen/Prüfpunkte, Wiederaufnahme nach Reload, Verknüpfung von Hinweis zu Vorschauversion und Änderungsnachweis. Spätere Echtzeit-Direktbearbeitung von beliebigen Elementen ist kein MVP-Ziel.
+
+Freigabesemantik und Szenenadapter früh gemeinsam entwerfen, damit StufeA den für StufeB nötigen Kontext schon erfasst. Bestehende Dateistruktur sinnvoll nutzen, eng begrenzte Module ergänzen. Keine allgemeine Remote-IDE bauen.
+
+Akzeptanzkriterien:
+1. Unberechtigte Konten können auch durch direkte APIaufrufe keine Reviewdaten lesen oder schreiben.
+2. Freigeschaltete Lehrkräfte können melden, aber nicht selbst freigeben. Nur freigegebene konkrete Versionen gelangen in den Arbeitsstapel.
+3. Adminhinweise werden erst durch manuell ausgelöste Bearbeitung verarbeitet, nicht pro Tastendruck oder Kommentar.
+4. Markierklicks lösen keine Veröffentlichung, Abgabe oder andere ursprüngliche Aktion aus; Bedienmodus bleibt normal nutzbar.
+5. Reload/kurzer Verbindungsverlust verliert keinen bestätigten Hinweis; lokale und Onlinezustände sind ehrlich unterscheidbar.
+6. Wiederholte Übertragung erzeugt keine Duplikate; Konflikte und Rechteentzug werden nachvollziehbar behandelt.
+7. „An dieser Stelle prüfen“ öffnet repräsentative Tutorial-/Aufgabenszenen ohne kompletten Durchlauf, ohne produktive Seiteneffekte oder neue Providerkosten.
+8. Text-/Layoutänderungen erscheinen in der lokalen Vorschau direkt, Logikänderungen stellen nötigenfalls nach Reload einen kompatiblen Prüfpunkt wieder her. Nicht unterstützte Zustände werden kenntlich gemacht.
+9. Die Seitenleiste ist per Tastatur bedienbar, verdeckt nicht die markierte Stelle und funktioniert als kompaktes Panel auf kleinen Bildschirmen. DE/EN berücksichtigen.
+10. Lehrkräfte können fremde Testdaten nicht über eine Hinweisreferenz lesen; Exporte enthalten keine Tokens oder unnötigen Schülerdaten.
+11. Erledigt, geprüft und auf Staging veröffentlicht werden getrennt nachgewiesen. Jeder Deploy verweist auf den geprüften Build.
+12. Ein Wiederherstellungstest mit synthetischen Hinweisen belegt die gewählte Sicherungsstrategie.
+
+Gezielt testen: Rechte/Freigabeversionen, lokale Warteschlange/Idempotenz/Konflikte, Szenenwiederaufnahme, Markierklick ohne Seiteneffekt, einfache Tastatur- und Mobilbedienung. Vor Staging einen echten durchgängigen Beispielablauf prüfen. Keine bezahlte Bild-/Audiogenerierung als Test. Keine Budget-/Versuchsresets. Bestehende Audio-Sicherheitsgates nicht lockern. Falls neue Firebase-Regeln nötig sind, separat prüfen und im bestehenden Freigabeprozess behandeln; alte Sperren werden durch diesen Auftrag nicht aufgehoben.
+
+Quellcode nach sinnvollen Teilschritten lokal committen und remote sichern. TODO, STATE und Workstream mit konkreter Phase aktualisieren. Unveränderte Zustände nicht ständig durch KI abfragen. Keine automatische Hintergrundautomation hinzufügen. Am Ende tatsächlichen Umfang, Testnachweise, lokale/Online-Speicherung, bekannte Einschränkungen und exakten Deploystand nennen.

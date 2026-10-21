@@ -1,0 +1,50 @@
+name: Apply first AI guide preview
+
+on:
+  push:
+    branches:
+      - fix/ai-review-workflow
+    paths:
+      - tools/apply-first-ai-guide-preview.py
+      - .github/workflows/apply-first-ai-guide-preview.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-test:
+    if: ${{ !contains(github.event.head_commit.message || '', '[first-ai-guide-preview-applied]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/ai-review-workflow
+          fetch-depth: 0
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - name: Apply preview patch
+        run: python3 tools/apply-first-ai-guide-preview.py
+      - name: Install function dependencies
+        working-directory: functions
+        run: npm ci --include=dev
+      - name: Run function tests
+        working-directory: functions
+        run: npm test
+      - name: Check browser code
+        run: |
+          node --check app.js
+          node --test ai-*.test.js
+      - name: Commit tested preview mode
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app.js tools/apply-first-ai-guide-preview.py
+          git commit -m "Allow staging preview of first AI guide [first-ai-guide-preview-applied]"
+          git push origin HEAD:fix/ai-review-workflow

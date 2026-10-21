@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "gradecrew-staging-2026",
+    "staging": "gradecrew-staging-2026",
+    "production": "hausaufgabe-staging",
+    "legacy": "hausaufgabe-40294"
+  }
+}

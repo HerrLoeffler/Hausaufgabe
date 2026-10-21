@@ -1,0 +1,348 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function currentUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && currentUserData().get('role', 'teacher') == 'admin'
+        && accountActive();
+    }
+
+    function accountActive() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && !exists(/databases/$(database)/documents/accountDeletions/$(request.auth.uid))
+        && currentUserData().get('status', 'active') == 'active';
+    }
+
+    // Publishing must not recreate a student entry point for a deleted/deleting owner.
+    // End/archive/read support remains governed by the existing policies below.
+    function quizPublicationOwnerAvailable() {
+      let ownerId = request.resource.data.get('ownerId', '');
+      return request.resource.data.get('published', false) != true
+        || (ownerId is string && ownerId.size() > 0
+          && exists(/databases/$(database)/documents/users/$(ownerId))
+          && !exists(/databases/$(database)/documents/accountDeletions/$(ownerId))
+          && get(/databases/$(database)/documents/users/$(ownerId)).data.get('accountDeletionId', '') == ''
+          && get(/databases/$(database)/documents/users/$(ownerId)).data.get('status', 'active') != 'deleting');
+    }
+
+    function ownsQuiz(quizId) {
+      return accountActive()
+        && get(/databases/$(database)/documents/quizzes/$(quizId)).data.ownerId == request.auth.uid;
+    }
+
+    function quizShared(quizId) {
+      let quiz = get(/databases/$(database)/documents/quizzes/$(quizId)).data;
+      return accountActive()
+        && quiz.get('shareEnabled', false) == true
+        && quiz.get('isDeleted', false) == false
+        && quiz.get('rightsHold', false) == false
+        && (quiz.get('published', false) != true || quiz.get('ended', false) == true);
+    }
+
+    function quizContentEditable(quizId) {
+      let quiz = get(/databases/$(database)/documents/quizzes/$(quizId)).data;
+      return ownsQuiz(quizId)
+        && (quiz.get('published', false) != true || quiz.get('ended', false) == true);
+    }
+
+    function ownerSelfTestAllowed(quizId) {
+      let quiz = get(/databases/$(database)/documents/quizzes/$(quizId)).data;
+      return ownsQuiz(quizId)
+        && quiz.get('published', false) == true
+        && quiz.get('ended', false) == false
+        && quiz.get('isDeleted', false) == false
+        && quiz.get('rightsHold', false) == false;
+    }
+
+    function ownerQuizUpdateAllowed() {
+      let active = resource.data.get('published', false) == true
+        && resource.data.get('ended', false) == false;
+      let activeChangeSafe = request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+        'published', 'ended', 'sessionState', 'sessionStartedAt', 'endedAt',
+        'updatedAt', 'shareEnabled', 'sharedAt'
+      ]);
+      let activeLifecycleSafe = request.resource.data.get('published', false) == true
+        || request.resource.data.get('ended', false) == true;
+      return !active || (activeChangeSafe && activeLifecycleSafe);
+    }
+
+    function ownerQuizDeleteAllowed() {
+      return accountActive()
+        && resource.data.ownerId == request.auth.uid
+        && resource.data.get('rightsHold', false) == false
+        && (
+          resource.data.get('published', false) != true
+          || resource.data.get('ended', false) == true
+          || resource.data.get('isDeleted', false) == true
+        );
+    }
+
+    // Only an owner may normalize an absent effective teacher/active default.
+    // Existing protected fields still cannot be changed or removed by clients.
+    function safeOwnProfileDefaults(userId) {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      return signedIn() && request.auth.uid == userId && accountActive()
+        && !changed.hasAny(['isTestAccountArchived', 'accountDeletionId'])
+        && (resource.data.keys().hasAny(['role'])
+          ? !changed.hasAny(['role']) : request.resource.data.get('role', 'teacher') == 'teacher')
+        && (resource.data.keys().hasAny(['status'])
+          ? !changed.hasAny(['status']) : request.resource.data.get('status', 'active') == 'active');
+    }
+
+    match /users/{userId} {
+      allow create: if signedIn()
+                    && request.auth.uid == userId
+                    && !exists(/databases/$(database)/documents/accountDeletions/$(userId))
+                    && !request.resource.data.keys().hasAny(['accountDeletionId'])
+                    && request.resource.data.get('isTestAccount', false) == false
+                    && request.resource.data.get('isTestAccountArchived', false) == false
+                    && request.resource.data.get('role', 'teacher') == 'teacher'
+                    && request.resource.data.get('status', 'active') == 'active'
+                    && request.resource.data.get('aiBetaEnabled', false) == false;
+
+      allow get: if isAdmin() || (signedIn() && request.auth.uid == userId
+        && !exists(/databases/$(database)/documents/accountDeletions/$(userId)));
+      allow list: if isAdmin();
+
+      allow update: if (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'status', 'isTestAccountArchived', 'accountDeletionId'])
+                      || safeOwnProfileDefaults(userId))
+                    && (
+                      (isAdmin() && resource.data.get('accountDeletionId', '') == ''
+                        && (request.resource.data.get('isTestAccount', false) == resource.data.get('isTestAccount', false)
+                          || (resource.data.get('role', 'teacher') != 'admin' && resource.data.get('isTestAccountArchived', false) == false)))
+                    || (
+                      accountActive()
+                      && request.auth.uid == userId
+                      && request.resource.data.get('role', 'teacher') == resource.data.get('role', 'teacher')
+                      && request.resource.data.get('status', 'active') == resource.data.get('status', 'active')
+                      && request.resource.data.get('aiBetaEnabled', false) == resource.data.get('aiBetaEnabled', false)
+                      && request.resource.data.get('aiPreferences', '') is string
+                      && request.resource.data.get('aiPreferences', '').size() <= 1000
+                      && request.resource.data.get('isTestAccount', false) == resource.data.get('isTestAccount', false)
+                    ));
+
+      allow delete: if false; // Auth/profile deletion and last-admin invariant are server-authorized.
+
+      match /announcementViews/{announcementId} {
+        allow read, create, update, delete: if !exists(/databases/$(database)/documents/accountDeletions/$(userId))
+          && (isAdmin() || (accountActive() && request.auth.uid == userId));
+      }
+    }
+
+    match /aiJobs/{jobId} {
+      allow get, list: if accountActive() && resource.data.ownerId == request.auth.uid;
+      allow create, update, delete: if false;
+    }
+
+    // Chapter publication proof and cross-document validation are server-owned.
+    function validChapterDraftFields() {
+      let version = request.resource.data.get('chapterSchemaVersion', null);
+      return version == null || (version == 1
+        && request.resource.data.get('chapters', []) is list
+        && request.resource.data.get('chapters', []).size() > 0
+        && request.resource.data.get('chapters', []).size() <= 100);
+    }
+    function chapterClientCreateSafe() {
+      return validChapterDraftFields()
+        && request.resource.data.get('chapterPublicationRevision', null) == null
+        && (request.resource.data.get('chapterSchemaVersion', null) == null
+          || request.resource.data.get('published', false) != true
+          || request.resource.data.get('ended', false) == true);
+    }
+    function chapterClientUpdateSafe() {
+      let hasChapters = resource.data.get('chapterSchemaVersion', null) != null
+        || request.resource.data.get('chapterSchemaVersion', null) != null;
+      let wasActive = resource.data.get('published', false) == true && resource.data.get('ended', false) != true;
+      let becomesActive = request.resource.data.get('published', false) == true && request.resource.data.get('ended', false) != true;
+      return validChapterDraftFields()
+        && request.resource.data.get('chapterPublicationRevision', null) == resource.data.get('chapterPublicationRevision', null)
+        && (!hasChapters || !becomesActive || wasActive);
+    }
+
+    match /assessmentSolutionAssets/{assetId} {
+      allow get: if resource.data.get("kind", "") == "chapter_review_image" && (ownsQuiz(resource.data.quizId) || isAdmin());
+      allow list, write: if false;
+    }
+
+    match /quizzes/{quizId} {
+      // SECURITY BOUNDARY: Anonyme Schüler lesen auch Quiz-Metadaten nicht mehr
+      // direkt aus Firestore. Join-Metadaten kommen ausschließlich über die
+      // serverseitige getAssessmentInfo-Callable. Dadurch gibt es für den
+      // öffentlichen Prüfungsweg keinen Firestore-Ausweichpfad mehr.
+      allow get: if ownsQuiz(quizId) || quizShared(quizId) || isAdmin();
+
+      allow list: if isAdmin()
+                  || (accountActive() && resource.data.ownerId == request.auth.uid);
+
+      allow create: if chapterClientCreateSafe() && accountActive()
+                    && request.resource.data.ownerId == request.auth.uid
+                    && request.resource.data.get('rightsHold', false) == false;
+
+      allow update: if chapterClientUpdateSafe() && quizPublicationOwnerAvailable() && (isAdmin()
+                    || (
+                      accountActive()
+                      && resource.data.ownerId == request.auth.uid
+                      && request.resource.data.ownerId == request.auth.uid
+                      && request.resource.data.get('rightsHold', false) == resource.data.get('rightsHold', false)
+                      && request.resource.data.get('rightsHoldAt', null) == resource.data.get('rightsHoldAt', null)
+                      && request.resource.data.get('rightsHoldBy', null) == resource.data.get('rightsHoldBy', null)
+                      && ownerQuizUpdateAllowed()
+                    ));
+
+      // A running assessment must not disappear underneath active attempts.
+      // Owners delete only inactive/ended/trash quizzes; admins retain support access.
+      allow delete: if isAdmin() || ownerQuizDeleteAllowed();
+
+      match /questions/{questionId} {
+        // Autorendokumente enthalten den Lösungsschlüssel. Sie bleiben deshalb
+        // ausschließlich für Eigentümer, angemeldete Vorlagenempfänger und Admins lesbar.
+        // Eine aktiv veröffentlichte Prüfung ist aber auch für Kollegen versiegelt.
+        allow read: if ownsQuiz(quizId) || quizShared(quizId) || isAdmin();
+        // Ein veröffentlichter, noch nicht beendeter Test ist inhaltlich
+        // unveränderlich. Das schützt alle laufenden Versuche vor Versionsdrift.
+        allow create, update, delete: if quizContentEditable(quizId) || isAdmin();
+      }
+
+      // Hörtexte bleiben private Autorendaten. Der Schüler erhält Audio nur
+      // über den serverseitig gebauten Assessment-Contract.
+      match /audioScripts/{questionId} {
+        allow read, write: if false;
+      }
+
+      match /attempts/{attemptId} {
+        // Öffentliche Schüler-Attempts werden ausschließlich durch Admin SDK /
+        // Callables angelegt. Die einzige Client-Ausnahme ist der eingeloggte
+        // Eigentümer beim internen "Test selbst ausfüllen" / Tutorial.
+        allow create: if ownerSelfTestAllowed(quizId)
+                      && request.resource.data.studentName is string
+                      && request.resource.data.studentName.size() > 0
+                      && request.resource.data.studentName.size() <= 120;
+        allow get, list, delete: if ownsQuiz(quizId) || isAdmin();
+        allow update: if false;
+      }
+
+      match /submissions/{submissionId} {
+        // Verbindliche öffentliche Abgaben entstehen ausschließlich serverseitig
+        // unter submissionId == attemptId. Der Eigentümer-Selbsttest bleibt als
+        // bewusst begrenzte interne Ausnahme erhalten, damit Tutorial und Vorschau
+        // nicht auf einen unsicheren öffentlichen Pfad angewiesen sind.
+        allow create: if ownerSelfTestAllowed(quizId)
+                      && request.resource.data.studentName is string
+                      && request.resource.data.studentName.size() > 0
+                      && request.resource.data.studentName.size() <= 120
+                      && request.resource.data.answers is map;
+
+        allow read, delete: if ownsQuiz(quizId) || isAdmin();
+
+        // Nach der Abgabe sind ursprüngliche Schülerantworten und sichere
+        // Metadaten unveränderlich. Die Lehrkraft darf ausschließlich die Felder
+        // ändern, die die bestehende manuelle Bewertung tatsächlich benötigt.
+        allow update: if (isAdmin() && resource.data.get('chapterSnapshot', null) == null)
+                      || (
+                        ownsQuiz(quizId)
+                        && resource.data.get('chapterSnapshot', null) == null
+                        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+                          'grading', 'totalPoints', 'maxPoints', 'percent', 'grade',
+                          'gradeScaleSnapshot', 'status', 'reviewedAt', 'reviewedBy'
+                        ])
+                      );
+      }
+    }
+
+    // SERVER-ONLY: enthält Token-Hash, Paper-Secret und laufenden Grading-Key.
+    // Admin SDK in Cloud Functions umgeht Firestore Security Rules gezielt.
+    match /assessmentPrivate/{privateId} {
+      allow read, write: if false;
+    }
+
+    // SERVER-ONLY: enthält nur gehashte tägliche Abuse-Zähler, keine Klartext-IP.
+    match /assessmentRateLimits/{rateId} {
+      allow read, write: if false;
+    }
+
+    match /announcements/{announcementId} {
+      allow read: if accountActive() || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /appConfig/{configId} {
+      allow read: if accountActive() || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /feedback/{feedbackId} {
+      allow create: if accountActive()
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() > 0
+                    && request.resource.data.message.size() <= 2000
+                    && (
+                      request.resource.data.get('category', '') != 'ai_question'
+                      || (
+                        (isAdmin() || ownsQuiz(request.resource.data.get('testCode', '')))
+                        && request.resource.data.get('verdict', '') in ['good', 'bad']
+                        && request.resource.data.get('reason', '') in ['', 'incorrect', 'answer_leak', 'image_mismatch', 'ambiguous', 'duplicate', 'other']
+                        && (request.resource.data.verdict == 'good' || request.resource.data.reason != '')
+                        && request.resource.data.get('teacherComment', '') is string
+                        && request.resource.data.get('teacherComment', '').size() <= 500
+                        && (request.resource.data.reason != 'other' || request.resource.data.teacherComment.size() > 0)
+                        && request.resource.data.get('action', '') in ['keep', 'replace', 'remove']
+                        && request.resource.data.get('questionSnapshot', null) is map
+                        && request.resource.data.questionSnapshot.get('text', '') is string
+                        && request.resource.data.questionSnapshot.get('text', '').size() <= 900
+                      )
+                    );
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (
+          accountActive()
+          && resource.data.get('category', '') == 'ai_question'
+          && resource.data.userId == request.auth.uid
+          && request.resource.data.userId == resource.data.userId
+          && request.resource.data.get('category', '') == 'ai_question'
+          && request.resource.data.get('testCode', '') == resource.data.get('testCode', '')
+          && request.resource.data.get('questionId', '') == resource.data.get('questionId', '')
+          && ownsQuiz(resource.data.get('testCode', ''))
+          && request.resource.data.get('questionSnapshot', null) == resource.data.get('questionSnapshot', null)
+          && request.resource.data.message is string
+          && request.resource.data.message.size() > 0
+          && request.resource.data.message.size() <= 2000
+          && request.resource.data.get('verdict', '') in ['good', 'bad']
+          && request.resource.data.get('reason', '') in ['', 'incorrect', 'answer_leak', 'image_mismatch', 'ambiguous', 'duplicate', 'other']
+          && (request.resource.data.verdict == 'good' || request.resource.data.reason != '')
+          && request.resource.data.get('teacherComment', '') is string
+          && request.resource.data.get('teacherComment', '').size() <= 500
+          && (request.resource.data.reason != 'other' || request.resource.data.teacherComment.size() > 0)
+          && request.resource.data.get('action', '') in ['keep', 'replace', 'remove']
+          && request.resource.data.get('status', '') in ['new', 'done']
+        );
+    }
+
+    // BugOps summaries and internal markers remain server-only after cutover.
+    match /bugIncidents/{incidentId} {
+      allow read, write: if false;
+      match /{serverMarker=**} {
+        allow read, write: if false;
+      }
+    }
+
+    match /adminAudit/{auditId} {
+      allow create: if isAdmin();
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    match /submissions/{legacyId} {
+      allow read, write: if false;
+    }
+  }
+}

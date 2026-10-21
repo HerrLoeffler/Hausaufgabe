@@ -1,0 +1,11 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';
+import Chapters from './shared/chapter-contract.js';import {chapterFields} from './chapter-editor.mjs';
+const source=fs.readFileSync(new URL('./app.js',import.meta.url),'utf8');
+function fixture(failure){
+ let commitCalls=0,publishCalls=0,saved=0;
+ const state={isDirty:true,newManualQuiz:false,loadedQuestionIds:new Set(['q1']),user:{uid:'test'},currentQuiz:{id:'TEST01',chapterSchemaVersion:1,chapters:[{id:'ch_one',title:'Zahlen',position:1}]},questions:[{id:'q1',chapterId:'ch_one',position:1,type:'number',text:'Rechne',points:2,numericAnswer:2}]};
+ const c={state,Chapters,chapterFields,guestTourRepo:null,draftRevision:1,window:{},syncQualityReport(){},validateQuiz:()=>null,round1:n=>Math.round(n*2)/2,$:()=>({value:'',checked:false,textContent:''}),getScaleById:()=>({}),getQuizScale:()=>({}),deepClone:structuredClone,serverTimestamp:()=>0,doc:(_db,...parts)=>parts.join('/'),db:{},writeBatch:()=>({set(){},update(){},delete(){},async commit(){commitCalls++;if(failure==='batch')throw Error('simulated batch failure');}}),aiApi:{async syncQuestionAudioDrafts(){if(failure==='audio')throw Error('simulated audio failure');}},getQuestionAudioSrc:()=>'',getQuestionSolutionAudioSrc:()=>'',questionAllAudioReady:()=>true,questionSolutionAudioReady:()=>true,questionAudioReady:()=>true,questionAnswerAudioEntries:()=>[],questionHasAudioAnswerEntries:()=>false,markSaved:()=>saved++,markDirty:()=>{},removeEditorDraft:async()=>{},toast(){},console:{error(){}},Date,Number,String,Math,httpsCallable:()=>{publishCalls++;return async()=>({data:{}});}};
+ vm.createContext(c);vm.runInContext(source.slice(source.indexOf('function sanitizeQuestionForSave('),source.indexOf('\nasync function publishCurrentQuiz(')),c);
+ return {c,state,get commitCalls(){return commitCalls;},get publishCalls(){return publishCalls;},get saved(){return saved;}};
+}
+for(const failure of ['batch','audio'])test(`${failure} failure retains the unsaved chapter draft`,async()=>{const f=fixture(failure);assert.equal(await f.c.saveCurrentQuiz(false),false);assert.equal(f.commitCalls,1);assert.equal(f.saved,0);assert.equal(f.state.isDirty,true);assert.equal(f.state.questions[0].chapterId,'ch_one');assert.equal(f.publishCalls,0);});

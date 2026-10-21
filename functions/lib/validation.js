@@ -1,0 +1,306 @@
+"use strict";
+
+const { QUESTION_TYPES, LIMITS } = require("./constants");
+const { hasAudioAnswerEntries } = require("./audio-answers");
+
+function roundHalf(value) { return Math.round(Number(value) * 2) / 2; }
+function normalizeText(value) { return ["string", "number"].includes(typeof value) ? String(value).trim() : ""; }
+function explicitBoolean(value) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") {
+    const text = value.trim().toLocaleLowerCase("de");
+    if (["true", "wahr", "richtig"].includes(text)) return true;
+    if (["false", "falsch", "falsch"].includes(text)) return false;
+  }
+  return value; // A missing/ambiguous answer must fail validation, never become false.
+}
+function isSentenceOrder(text) {
+  return /\bsatz(?:es|baustein\w*|bau\w*|glieder\w*|stellung\w*)?\b|\bsätze\b|\bwörter\s+(?:zu\s+einem\s+)?satz/iu.test(String(text || ""));
+}
+function validOrder(order, length) {
+  return Array.isArray(order) && order.length === length && new Set(order).size === length
+    && order.every(index => Number.isInteger(index) && index >= 0 && index < length);
+}
+function comparable(value) {
+  return normalizeText(value)
+    .normalize("NFKC")
+    .toLocaleLowerCase("de")
+    .replace(/€/g, " euro ")
+    .replace(/%/g, " prozent ")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+function comparableAnswer(value) { return comparable(value).replace(/^(?:a|an|the|ein|eine|einen|einem|eines|der|die|das) /, ""); }
+const INSTRUCTION_WORDS = new Set("welche welcher welches welchen wähle waehle kreuze an zu aus richtige richtiges richtigen antwort bild abbildung zeigt sehen sie du das die der den dem ein eine einen einem eines ist sind wird werden auf im in mit und oder welche bilder choice choose select identify which what is the a an of shown picture image correct answer item".split(" "));
+function keyTerms(text) { return [...new Set(comparable(text).split(" ").filter(w => w.length > 1 && !INSTRUCTION_WORDS.has(w)))]; }
+function answerKey(q) {
+  if (["single", "dropdown", "multi"].includes(q.type)) return (q.options || []).filter(o => o.correct).map(o => comparableAnswer(o.text)).sort().join("|");
+  if (q.type === "text") return (q.acceptedAnswers || []).map(comparableAnswer).sort().join("|");
+  if (q.type === "gapfill") return [...String(q.text || "").matchAll(/\[([^\]]+)\]/g)].map(m => comparable(m[1].split("|")[0])).join("|");
+  if (q.type === "number") return `${q.numericAnswer}:${comparable(q.unit)}`;
+  return "";
+}
+function sameQuestion(a, b) {
+  if (!a || !b || !a.text || !b.text) return false;
+  const family = t => ["single", "dropdown"].includes(t) ? "choice" : t;
+  const sameFormat = family(a.type) === family(b.type) && (a.mediaIntent?.kind || "none") === (b.mediaIntent?.kind || "none");
+  const stemA = comparable(a.text), stemB = comparable(b.text);
+  const keyA = answerKey(a), keyB = answerKey(b);
+  if (stemA === stemB) return sameFormat || Boolean(keyA && keyA === keyB);
+  if (!keyA || keyA !== keyB) return false;
+  const termsA = keyTerms(a.text), termsB = keyTerms(b.text);
+  if (!termsA.length || !termsB.length) return false;
+  const overlap = termsA.filter(x => termsB.includes(x)).length;
+  return overlap / Math.max(termsA.length, termsB.length) >= (sameFormat ? 0.8 : 0.9);
+}
+
+function variantContentKey(q) {
+  if (!q || typeof q !== "object") return "";
+  if (["single", "dropdown", "multi", "text", "gapfill", "number"].includes(q.type)) return answerKey(q);
+  if (q.type === "matching") return (q.pairs || [])
+    .map(pair => `${comparableAnswer(pair?.left)}=>${comparableAnswer(pair?.right)}`)
+    .filter(Boolean).sort().join("|");
+  if (q.type === "ordering") return (q.items || []).map(comparableAnswer).filter(Boolean).join("|");
+  if (q.type === "grouping") return (q.groups || [])
+    .map(group => `${comparable(group?.name)}:${(group?.items || []).map(comparableAnswer).filter(Boolean).sort().join(",")}`)
+    .filter(Boolean).sort().join("|");
+  if (q.type === "markwords") return `${comparable(q.passage)}::${(q.targetWords || []).map(comparableAnswer).filter(Boolean).sort().join("|")}`;
+  if (q.type === "truefalse") return typeof q.correctBoolean === "boolean" ? String(q.correctBoolean) : "";
+  return "";
+}
+
+function variantRepeats(a, b) {
+  if (!a || !b || !a.text || !b.text) return false;
+  const stemA = comparable(a.text), stemB = comparable(b.text);
+  const contentA = variantContentKey(a), contentB = variantContentKey(b);
+  // Many structured tasks legitimately share a short instruction such as
+  // "Ordne die Wörter zu". In that case the actual pairs/items/groups are the task.
+  // Reject only when that task content is also the same.
+  if (stemA === stemB) {
+    if (contentA && contentB) return contentA === contentB;
+    return true;
+  }
+  const structural = new Set(["matching", "ordering", "grouping", "markwords"]);
+  if (a.type === b.type && structural.has(a.type) && contentA && contentB && contentA !== contentB) return false;
+  const termsA = keyTerms(a.text), termsB = keyTerms(b.text);
+  if (!termsA.length || !termsB.length) return false;
+  const setA = new Set(termsA), setB = new Set(termsB);
+  if (setA.size === setB.size && [...setA].every(term => setB.has(term))) return contentA && contentB ? contentA === contentB : true;
+  if (Math.min(setA.size, setB.size) < 3) return false;
+  const overlap = [...setA].filter(term => setB.has(term)).length;
+  const union = new Set([...setA, ...setB]).size;
+  if (!(union > 0 && overlap / union >= 0.88)) return false;
+  return contentA && contentB ? contentA === contentB : true;
+}
+
+function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true, requiredMediaKind, allowAudio = true, requiredAudioKind } = {}) {
+  const errors = [];
+  if (!q || typeof q !== "object" || Array.isArray(q)) return ["Aufgabe fehlt."];
+  if (!allowedTypes.includes(q.type)) errors.push(`Nicht erlaubter Aufgabentyp: ${q.type}`);
+  if (!normalizeText(q.text)) errors.push("Fragetext fehlt.");
+  if (!Number.isFinite(Number(q.points)) || !(Number(q.points) >= 0.5) || Math.abs(Number(q.points) * 2 - Math.round(Number(q.points) * 2)) > 1e-9) errors.push("Punkte müssen positive 0,5-Schritte sein.");
+  if (["single", "dropdown", "multi"].includes(q.type)) {
+    const opts = Array.isArray(q.options) ? q.options : [];
+    if (opts.length < 2 || opts.some(o => !normalizeText(o?.text))) errors.push("Antwortoptionen unvollständig.");
+    const labels = opts.map(o => comparableAnswer(o?.text)).filter(Boolean);
+    if (new Set(labels).size !== labels.length) errors.push("Antwortoptionen müssen eindeutig sein.");
+    if (opts.some(o => typeof o?.correct !== "boolean")) errors.push("Antwortmarkierungen müssen true oder false sein.");
+    const correct = opts.filter(o => o?.correct === true).length;
+    if (q.type === "multi" ? correct < 1 : correct !== 1) errors.push(q.type === "multi" ? "Multiple Choice braucht mindestens eine richtige Antwort." : "Genau eine Antwort muss richtig sein.");
+  }
+  if (q.type === "text" && !q.manualReview && !(Array.isArray(q.acceptedAnswers) && q.acceptedAnswers.some(normalizeText))) errors.push("Freitext braucht Lösungen oder manuelle Prüfung.");
+  if (q.type === "truefalse" && typeof q.correctBoolean !== "boolean") errors.push("Richtig/Falsch-Lösung fehlt.");
+  if (q.type === "gapfill") {
+    const text = normalizeText(q.text);
+    const gaps = [...text.matchAll(/\[([^\[\]]*)\]/g)];
+    if (!gaps.length) errors.push("Lückentext enthält keine [Lösung].");
+    else if (gaps.some(gap => gap[1].split("|").some(answer => !answer.trim()))) errors.push("Jede Lücke braucht eine nicht leere Lösung.");
+    if (q.gapColors !== undefined && (!Array.isArray(q.gapColors) || (q.gapColors.length > 0 && q.gapColors.length !== gaps.length) || q.gapColors.some(color => !["", "blue", "orange", "green", "purple"].includes(color)))) errors.push("Lückenfarben müssen zur Anzahl der Lücken passen.");
+    if (/[\[\]]/.test(text.replace(/\[[^\[\]]*\]/g, ""))) errors.push("Klammern im Lückentext sind nicht vollständig.");
+  }
+  if (q.type === "matching" && (!Array.isArray(q.pairs) || q.pairs.length < 2 || q.pairs.some(p => !normalizeText(p?.left) || !normalizeText(p?.right)))) errors.push("Zuordnung braucht mindestens zwei vollständige Paare.");
+  if (q.type === "matching" && Array.isArray(q.pairs)) {
+    for (const side of ["left", "right"]) {
+      const entries = q.pairs.map(pair => comparableAnswer(pair?.[side])).filter(Boolean);
+      if (new Set(entries).size !== entries.length) errors.push(side === "left" ? "Satzanfänge der Zuordnung müssen eindeutig sein." : "Zuordnungswörter müssen eindeutig sein.");
+    }
+  }
+  if (q.type === "ordering" && (!Array.isArray(q.items) || q.items.length < 2 || q.items.some(x => !normalizeText(x)))) errors.push("Sortierung braucht mindestens zwei Elemente.");
+  if (q.type === "ordering" && Array.isArray(q.items)) {
+    const entries = q.items.map(comparableAnswer).filter(Boolean);
+    if (new Set(entries).size !== entries.length) errors.push("Sortierelemente müssen eindeutig sein.");
+    if (q.acceptedOrders !== undefined && (!Array.isArray(q.acceptedOrders) || q.acceptedOrders.some(order => !validOrder(order, q.items.length)))) errors.push("Zusätzliche Reihenfolgen müssen jeden Baustein genau einmal enthalten.");
+  }
+  if (q.type === "grouping" && (!Array.isArray(q.groups) || q.groups.length < 2 || q.groups.some(g => !normalizeText(g?.name) || !Array.isArray(g?.items) || !g.items.length || g.items.some(item => !normalizeText(item))))) errors.push("Gruppierung braucht mindestens zwei vollständige Gruppen.");
+  if (q.type === "grouping" && Array.isArray(q.groups)) {
+    const names = q.groups.map(group => comparable(group?.name)).filter(Boolean);
+    const items = q.groups.flatMap(group => Array.isArray(group?.items) ? group.items.map(comparableAnswer).filter(Boolean) : []);
+    if (new Set(names).size !== names.length) errors.push("Gruppen müssen eindeutig benannt sein.");
+    if (new Set(items).size !== items.length) errors.push("Jedes Wort darf in der Gruppierung nur einmal vorkommen.");
+  }
+  if (q.type === "markwords") {
+    if (!normalizeText(q.passage)) errors.push("Markiertext fehlt.");
+    const targets = Array.isArray(q.targetWords) ? q.targetWords.filter(normalizeText) : [];
+    if (!targets.length) errors.push("Zielwörter fehlen.");
+    const words = new Set((normalizeText(q.passage).match(/[\p{L}\p{N}]+(?:[’'-][\p{L}\p{N}]+)*/gu) || []).map(word => word.toLocaleLowerCase("de")));
+    if (targets.some(word => !words.has(normalizeText(word).toLocaleLowerCase("de")))) errors.push("Jedes Zielwort muss als ganzes Wort im Markiertext vorkommen.");
+    const marks = Array.isArray(q.markGroups) ? q.markGroups : [];
+    if (marks.length) {
+      const colors = new Set(), assigned = new Set();
+      if (marks.length < 2 || marks.length > 4) errors.push("Farbiges Markieren braucht zwei bis vier Gruppen.");
+      for (const group of marks) {
+        if (!normalizeText(group?.name) || !["blue", "orange", "green", "purple"].includes(group?.color) || !Array.isArray(group?.words) || !group.words.length) errors.push("Jede Farbgruppe braucht Namen, Farbe und Zielwörter.");
+        if (colors.has(group?.color)) errors.push("Jede Markierfarbe darf nur einmal verwendet werden.");
+        colors.add(group?.color);
+        for (const word of group?.words || []) {
+          const key = normalizeText(word).toLocaleLowerCase("de");
+          if (assigned.has(key)) errors.push("Ein Wort darf nicht mehreren Farbgruppen zugeordnet sein.");
+          assigned.add(key);
+          if (!words.has(key)) errors.push("Jedes Farbwort muss im Markiertext vorkommen.");
+        }
+      }
+      const targetSet = new Set(targets.map(word => normalizeText(word).toLocaleLowerCase("de")));
+      if (assigned.size !== targetSet.size || [...assigned].some(word => !targetSet.has(word))) errors.push("Zielwörter und Farbgruppen müssen übereinstimmen.");
+    }
+  }
+  if (q.type === "number" && (q.numericAnswer === null || q.numericAnswer === undefined || typeof q.numericAnswer === "boolean" || !String(q.numericAnswer).trim() || !Number.isFinite(Number(q.numericAnswer)))) errors.push("Numerische Lösung fehlt.");
+  if (q.type === "number" && /\b(?:wie viele|anzahl der)\s+komma(?:s|ta)?\b/i.test(q.text || "")) {
+    const quotedSentences = [...String(q.text).matchAll(/„([^“]+)“|"([^"]+)"/g)].map(match => match[1] || match[2]);
+    const sentence = quotedSentences.length ? quotedSentences.join(" ") : String(q.text).split(/[?:]/).slice(1).join(" ");
+    if (sentence.includes(",")) errors.push("Bei einer Frage nach der Anzahl der Kommas darf der zu prüfende Satz noch keine Kommas enthalten.");
+  }
+  const mi = q.mediaIntent || { kind: "none" };
+  if (requiredMediaKind && mi.kind !== requiredMediaKind) errors.push(`Die gewählte Bildart muss eingehalten werden: mediaIntent.kind=${requiredMediaKind}.`);
+  if (!["none", "ai_generated", "image_choices", "uploaded_crop"].includes(mi.kind)) errors.push("Unbekannte Bildart.");
+  if (!allowImages && mi.kind !== "none") errors.push("Bilder sind für diesen Test deaktiviert.");
+  if (!allowImageChoices && mi.kind === "image_choices") errors.push("Bildantworten sind deaktiviert.");
+  if (mi.kind === "ai_generated" && !normalizeText(mi.prompt)) errors.push("Bildbeschreibung fehlt.");
+  if (mi.kind === "uploaded_crop") errors.push("Upload-Ausschnitte werden derzeit nicht automatisch erstellt.");
+  if (mi.kind === "image_choices") {
+    if (!["single", "multi"].includes(q.type)) errors.push("Bildantworten brauchen Single Choice oder Multiple Choice.");
+    if (!Array.isArray(q.options) || q.options.length < 2 || q.options.length > 4 || mi.count !== q.options.length) errors.push("Bildantworten brauchen genau 2–4 Bilder, eines pro Antwortoption.");
+    const scenes = (q.options || []).map(o => normalizeText(o.imageScene || o.text));
+    if (scenes.some(scene => !scene || /^(?:bild|abbildung)\s*[a-d1-4]?\s*$/i.test(scene))) {
+      errors.push("Jede Bildantwort braucht intern eine konkrete, eigene Szenenbeschreibung.");
+    }
+    const comparableScenes = scenes.filter(Boolean).map(comparable);
+    if (new Set(comparableScenes).size !== comparableScenes.length) errors.push("Die Szenen der Bildantworten müssen eindeutig verschieden sein.");
+    const stem = comparable(q.text);
+    const stemTerms = keyTerms(q.text);
+    if (/\b(wieder|erneut|noch einmal)\b/.test(stem) && /\b(bedeutung|abbildung|bild|zeigt)\b/.test(stem)) {
+      errors.push("Die zeitliche Bedeutung von ‚wieder‘ ist aus einem einzelnen Bild nicht eindeutig erkennbar.");
+    }
+    if (/welche pr[aä]position/.test(stem) && /\b(unter|auf|ueber|über|neben|zwischen|hinter|vor)\b/.test(stem)) {
+      errors.push("Der Fragetext nennt bereits die gesuchte räumliche Beziehung.");
+    }
+    if (!/\bwelche[sr]?\s+(abbildung|bild)\b/.test(stem) && (q.options || []).filter(o => o.correct).some(o => {
+      const terms = keyTerms(o.text).filter(term => term.length >= 3);
+      return terms.length && terms.every(term => stemTerms.includes(term)) && (terms.length >= 2 || /\b(welche|welches|welcher)\b/.test(stem));
+    })) errors.push("Die Lösung der Bildantwort steht bereits im Fragetext.");
+  }
+  const audio = q.audioIntent || { kind: "none", script: "", reason: "" };
+  if (requiredAudioKind && audio.kind !== requiredAudioKind) errors.push(`Die gewählte Audioart muss eingehalten werden: audioIntent.kind=${requiredAudioKind}.`);
+  if (!["none", "ai_generated"].includes(audio.kind)) errors.push("Unbekannte Audioart.");
+  if (!allowAudio && audio.kind !== "none") errors.push("Höraufgaben sind für diesen Test deaktiviert.");
+  if (audio.kind === "ai_generated") {
+    const script = normalizeText(audio.script);
+    if (!script) errors.push("Hörtext fehlt.");
+    if (script.length > LIMITS.maxAudioScriptChars) errors.push(`Hörtext ist zu lang (maximal ${LIMITS.maxAudioScriptChars} Zeichen).`);
+    if (/\b(?:lösung|richtige antwort|answer is)\s*:/i.test(script)) errors.push("Der Hörtext darf keine als Lösung markierte Antwort enthalten.");
+    if (audio.presentation === "listening-only" && !normalizeText(audio.instruction)) errors.push("Sichtbarer Arbeitsauftrag für die Höraufgabe fehlt.");
+    if (normalizeText(audio.instruction).length > 1000) errors.push("Der sichtbare Arbeitsauftrag ist zu lang (maximal 1000 Zeichen).");
+    if (audio.presentation === "listening-only" && ["gapfill", "markwords"].includes(q.type)) errors.push("Nur-Hören-Modus ist für Textmarkierungs- und Lückenaufgaben nicht geeignet.");
+  }
+  return errors;
+}
+
+function normalizeQuestion(q) {
+  const copy = q && typeof q === "object" && !Array.isArray(q) ? JSON.parse(JSON.stringify(q)) : {};
+  copy.points = Number.isFinite(Number(copy.points)) ? Math.max(0.5, roundHalf(copy.points || 1)) : 1;
+  copy.text = normalizeText(copy.text);
+  copy.options = Array.isArray(copy.options) ? copy.options.map(o => ({ text: normalizeText(o?.text), correct: explicitBoolean(o?.correct), imageScene: normalizeText(o?.imageScene) })) : [];
+  if (["single", "dropdown", "multi"].includes(copy.type)) {
+    const distinct = new Map();
+    for (const option of copy.options) {
+      const key = comparableAnswer(option.text);
+      if (!key || !distinct.has(key)) distinct.set(key || Symbol(), option);
+      else if (typeof distinct.get(key).correct === "boolean" && typeof option.correct === "boolean") distinct.get(key).correct ||= option.correct;
+    }
+    // A single remaining choice cannot make a valid question; let the repair pass replace it.
+    if (distinct.size >= 2) copy.options = [...distinct.values()];
+  }
+  copy.acceptedAnswers = Array.isArray(copy.acceptedAnswers) ? copy.acceptedAnswers.map(normalizeText).filter(Boolean) : [];
+  copy.pairs = Array.isArray(copy.pairs) ? copy.pairs.map(p => ({ left: normalizeText(p?.left), right: normalizeText(p?.right) })) : [];
+  copy.items = Array.isArray(copy.items) ? copy.items.map(normalizeText).filter(Boolean) : [];
+  if (copy.type === "ordering") {
+    copy.acceptedOrders = (Array.isArray(copy.acceptedOrders) ? copy.acceptedOrders : [])
+      .map(order => Array.isArray(order) ? order : order?.indices).filter(Array.isArray);
+    copy.manualReview = copy.manualReview === true || isSentenceOrder(copy.text);
+  }
+  copy.groups = Array.isArray(copy.groups) ? copy.groups.map(g => ({ name: normalizeText(g?.name), items: Array.isArray(g?.items) ? g.items.map(normalizeText).filter(Boolean) : [] })) : [];
+  copy.targetWords = Array.isArray(copy.targetWords) ? copy.targetWords.map(normalizeText).filter(Boolean) : [];
+  copy.markGroups = Array.isArray(copy.markGroups) ? copy.markGroups.map(group => ({ name: normalizeText(group?.name), color: group?.color, words: Array.isArray(group?.words) ? group.words.map(normalizeText).filter(Boolean) : [] })) : [];
+  copy.gapColors = Array.isArray(copy.gapColors) ? copy.gapColors.filter(color => typeof color === "string") : [];
+  copy.passage = normalizeText(copy.passage);
+  if (copy.correctBoolean !== undefined) copy.correctBoolean = explicitBoolean(copy.correctBoolean);
+  copy.unit = normalizeText(copy.unit);
+  copy.tolerance = Math.max(0, Number(copy.tolerance) || 0);
+  copy.mediaIntent = (copy.mediaIntent && typeof copy.mediaIntent === "object" && !Array.isArray(copy.mediaIntent) ? copy.mediaIntent : null) || { kind: "none", prompt: "", altText: "", count: 0, sourceMaterialId: "", reason: "" };
+  copy.audioIntent = (copy.audioIntent && typeof copy.audioIntent === "object" && !Array.isArray(copy.audioIntent) ? copy.audioIntent : null) || { kind: "none", script: "", reason: "" };
+  copy.audioIntent.kind = copy.audioIntent.kind === "ai_generated" ? "ai_generated" : "none";
+  copy.audioIntent.script = normalizeText(copy.audioIntent.script).slice(0, LIMITS.maxAudioScriptChars);
+  if (copy.audioIntent.presentation !== undefined) {
+    copy.audioIntent.presentation = copy.audioIntent.presentation === "listening-only" ? "listening-only" : "supplement";
+  }
+  if (copy.audioIntent.instruction !== undefined) copy.audioIntent.instruction = normalizeText(copy.audioIntent.instruction).slice(0, 1000);
+  copy.audioIntent.reason = normalizeText(copy.audioIntent.reason).slice(0, 300);
+  return copy;
+}
+
+function validateTest(test, opts = {}) {
+  const errors = [];
+  if (!test || typeof test !== "object") return ["Test fehlt."];
+  if (!normalizeText(test.title)) errors.push("Titel fehlt.");
+  const qs = Array.isArray(test.questions) ? test.questions : [];
+  if (!qs.length || qs.length > LIMITS.maxQuestions) errors.push("Ungültige Aufgabenanzahl.");
+  qs.forEach((q, i) => validateQuestion(q, opts).forEach(e => errors.push(`Aufgabe ${i + 1}: ${e}`)));
+  for (let i = 0; i < qs.length; i += 1) {
+    const prior = qs.findIndex((q, j) => j < i && (opts.requireFreshVariant ? variantRepeats : sameQuestion)(q, qs[i]));
+    if (prior >= 0) errors.push(`Aufgabe ${i + 1} wiederholt inhaltlich Aufgabe ${prior + 1}.`);
+    if (Array.isArray(opts.referenceQuestions) && opts.referenceQuestions.some(q => (opts.requireFreshVariant ? variantRepeats : sameQuestion)(q, qs[i]))) errors.push(`Aufgabe ${i + 1} wiederholt eine Aufgabe des Ausgangstests.`);
+    if (opts.requireFreshVariant) require("./test-variant").variantQuestionErrors(qs[i], i, opts.variantInput).forEach(e => errors.push(`Aufgabe ${i + 1}: ${e}`));
+    if (opts.negativeQuestions?.some(q => sameQuestion(q, qs[i]))) errors.push(`Aufgabe ${i + 1}: Eine ähnliche Aufgabe wurde zuvor als fehlerhaft bewertet.`);
+    for (const issue of opts.reviewIssues || []) {
+      if (issue.index === i && comparable(issue.text) === comparable(qs[i].text)) errors.push(`Aufgabe ${i + 1}: Qualitätsprüfung: ${issue.detail}`);
+    }
+  }
+  if (opts.expectedCount && qs.length !== opts.expectedCount) errors.push(`Erwartet ${opts.expectedCount} Aufgaben, erhalten ${qs.length}.`);
+  if (opts.targetPoints) {
+    const sum = roundHalf(qs.reduce((s, q) => s + Number(q.points || 0), 0));
+    if (sum !== roundHalf(opts.targetPoints)) errors.push(`Gesamtpunkte ${sum} statt ${roundHalf(opts.targetPoints)}.`);
+  }
+  if (opts.maxVisualQuestions != null) {
+    const count = qs.filter(q => q.mediaIntent?.kind && q.mediaIntent.kind !== "none").length;
+    if (count > opts.maxVisualQuestions) errors.push(`Zu viele visuelle Aufgaben (${count}/${opts.maxVisualQuestions}).`);
+  }
+  if (opts.imageQuestionCount != null) {
+    const count = qs.filter(q => q.mediaIntent?.kind === "ai_generated").length;
+    if (count !== opts.imageQuestionCount) errors.push(`Erwartet ${opts.imageQuestionCount} Aufgaben mit einem Bild, erhalten ${count}.`);
+  }
+  if (opts.imageAnswerQuestionCount != null) {
+    const count = qs.filter(q => q.mediaIntent?.kind === "image_choices").length;
+    if (count !== opts.imageAnswerQuestionCount) errors.push(`Erwartet ${opts.imageAnswerQuestionCount} Aufgaben mit Bildantworten, erhalten ${count}.`);
+  }
+  if (opts.audioQuestionCount != null) {
+    const count = qs.filter(q => q.audioIntent?.kind === "ai_generated").length;
+    if (count !== opts.audioQuestionCount) errors.push(`Erwartet ${opts.audioQuestionCount} Höraufgaben, erhalten ${count}.`);
+  }
+  if (opts.audioAnswerQuestionCount != null) {
+    const eligible = qs.filter(hasAudioAnswerEntries).length;
+    if (eligible < opts.audioAnswerQuestionCount) errors.push(`Für ${opts.audioAnswerQuestionCount} Audioantworten fehlen geeignete Auswahlaufgaben.`);
+  }
+  return errors;
+}
+
+module.exports = { validateQuestion, validateTest, normalizeQuestion, roundHalf, sameQuestion, variantRepeats };
