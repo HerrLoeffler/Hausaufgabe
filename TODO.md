@@ -621,3 +621,8 @@ Neuer Forschungsauftrag vor weiterer Umsetzung: 295 öffentliche Fachportal-Seit
 Autorisiert umgesetzt im bestehenden lokalen Prototyp: echte GradeCrew-Aufgabenerzeugung und kurze KI-Hilfen mit gesonderter KI-Prüfung. Wiederholte Nennerfehler im Browser führen nachweislich von10Teilen über4Teile zu einem einzelnen halbierten Stück; danach Originalrechnung und neue selbstständige Aufgabe. Unterstützte Belege getrennt, kein Beherrschungsstatus nach einem Treffer.45Python-/55JS-Tests grün, Quellreview nachgeprüft. Weiterhin Draft-PR253/branch_only/localhost; kein Schulversions-/Clouddeploy. Fachliche Nutzer-/Lehrkraftabnahme und Zuverlässigkeit des KI-Antwortformats offen. Reale Versuche und Verbrauch in docs/prototypes/learning-brain/LIVE-TEST.md sowie workstreams/adaptive-practice-01.md.
 
 21.10.: Prüfformatfehler aus Nutzerscreenshot korrigiert: einmalige automatische KI-Formatkorrektur, keine Wiederholung fachlicher Ablehnungen. Exakter Fall2/3×2→1/1 im echten Browser erneut geprüft: kurze KI-Hilfe und beantwortbare Faktorfrage erscheinen.50Python-/55JS-Tests grün, Reviewer-Grenzfall false ohne reason behoben/nachgeprüft.108/120historische Endpunkte, kein Reset. Weiterhin lokal, fachliche Abnahme offen.
+
+
+### GC-ADAPTIVE-PRACTICE-01 Investorendemo21.10.
+
+Auf ausdrücklichen Nutzerauftrag lokale120er-KI-Sperre im gesonderten Demo-Modus aufgehoben, sichtbaren Lernstand zurückgesetzt; echte KI und Nutzungshistorie erhalten.52Python/56JSgrün, Quellreview bestanden. Ausschließlich localhost; normaler Start weiterhin begrenzt, keine Backend-/Schul-/Productionänderung. Übergabe workstreams/adaptive-practice-01.md.

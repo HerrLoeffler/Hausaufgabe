@@ -30,7 +30,9 @@ Bruchwerte werden exakt mit rationaler Rechnung geprüft. Beim Auftrag „mit Fa
 
 Der Server hält Lernzustand und bearbeitete Varianten im Arbeitsspeicher, kontrolliert `stepId` und puffert erfolgreiche `requestId`-Antworten. Gleiche Wiederholung verursacht keine weitere KI-Anfrage; geänderter Inhalt mit gleicher Kennung wird abgelehnt. Keine dauerhafte Schülerakte. Ein Serverneustart beendet diese flüchtigen Beispielsitzungen; Browserrefresh beginnt eine neue Vorschau.
 
-## Begrenzter Testrahmen
+## Testrahmen und Investorenvorführung
+
+Für die von Martin ausdrücklich angeforderte Investorenvorführung am21.10.2026 startet `GC_DEMO_UNLIMITED=1 python3 server.py` ohne lokale Anfragenobergrenze. Die UI zeigt „KI-Demo“, die fortlaufende Nutzungshistorie bleibt erhalten. Der sichtbare Lernstand wird durch Neuladen zurückgesetzt. Bestehende Authentifizierung und Backendquoten bleiben unverändert. Normaler Start ohne diese Option verwendet weiterhin den folgenden begrenzten Rahmen.
 
 Die bisherige80er-Versuchshistorie bleibt erhalten. Der neue explizite Auftrag erweitert den lokalen Gesamtrahmen auf120Endpunktaufrufe, also höchstens40zusätzliche Schritte für Test und Vorschau. Kein Reset, keine weitere automatische Erhöhung. Normalerweise zwei kostenpflichtige Backendaufrufe je Schritt; interne Providerwiederholungen können hinzukommen. Keine bekannte Token-/Eurogarantie. Bestehende Backendquoten bleiben wirksam.
 

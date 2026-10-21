@@ -6,7 +6,7 @@ from unittest.mock import patch
 import server
 
 class ProxyProfilesTest(unittest.TestCase):
- def run_task(self,skill,text,key):
+ def run_task(self,skill,text,key,calls=0,limit=120):
   body=json.dumps({'text':'synthetic exercise','purpose':'task','skill':skill,'avoid':[]}).encode()
   handler=server.Handler.__new__(server.Handler);handler.path='/api/crew';handler.rfile=io.BytesIO(body)
   headers=Message()
@@ -15,8 +15,14 @@ class ProxyProfilesTest(unittest.TestCase):
   def provider(url,data,headers):
    requests.append((url,data))
    return {'result':{'reply':json.dumps({'approved':True,'reason':'Passend.'})}} if 'crewAssistant' in url else {'result':{'question':{'text':text,'numericAnswer':key}}}
-  with tempfile.TemporaryDirectory() as folder,patch.object(server,'USAGE',Path(folder)/'usage.json'),patch.object(server,'STATE',{'calls':0,'session':'controlled','idToken':'not-a-real-token','expires':time.time()+500}),patch.object(server,'request_json',provider):handler.do_POST()
+  with tempfile.TemporaryDirectory() as folder,patch.object(server,'USAGE',Path(folder)/'usage.json'),patch.object(server,'STATE',{'calls':calls,'session':'controlled','idToken':'not-a-real-token','expires':time.time()+500}),patch.object(server,'request_json',provider),patch.object(server,'RUN_LIMIT',limit):handler.do_POST()
   return out[0],requests
+ def test_demo_accepts_calls_above_old_limit_without_reset(self):
+  out,req=self.run_task('same','2/7 + 3/7 = ?',5/7,calls=120,limit=None)
+  self.assertEqual(out[0],200);self.assertEqual(out[1]['calls'],121);self.assertEqual(len(req),2)
+ def test_normal_mode_still_stops_at_limit(self):
+  out,req=self.run_task('same','2/7 + 3/7 = ?',5/7,calls=120)
+  self.assertEqual(out[0],429);self.assertEqual(req,[])
  def test_source_profile_reaches_actual_generator_handler(self):
   out,req=self.run_task('same','2/7 + 3/7 = ?',5/7)
   self.assertEqual(out[0],200);self.assertEqual(out[1]['profileId'],'lb-fraction-same')

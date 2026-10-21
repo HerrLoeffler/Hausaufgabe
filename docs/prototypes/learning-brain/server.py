@@ -11,7 +11,7 @@ ROOT=Path(__file__).resolve().parent
 PRIVATE=ROOT.parents[3]/'.private'/'learning-brain'
 PROJECT='gradecrew-staging-2026'
 API_KEY='AIzaSyDDbQoVjx3HLJa5fxtLJ94PhnaWVcM6bSQ' # public Firebase application identifier
-RUN_LIMIT=120
+RUN_LIMIT=None if os.environ.get('GC_DEMO_UNLIMITED')=='1' else 120
 PORT=8769
 ORIGIN=f'http://127.0.0.1:{PORT}'
 CREDENTIALS=PRIVATE/'account.json'
@@ -114,7 +114,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 try:prior=expansion.cached(data)
                 except expansion.ExpansionError as ex:return self.output(400,{'error':str(ex),'calls':STATE['calls']})
                 if prior:return self.output(200,{**prior,'calls':STATE['calls'],'limit':RUN_LIMIT})
-            if STATE['calls']>=RUN_LIMIT:return self.output(429,{'error':f'Der begrenzte KI-Testrahmen von{RUN_LIMIT} Anfragen ist erreicht.'})
+            if RUN_LIMIT is not None and STATE['calls']>=RUN_LIMIT:return self.output(429,{'error':f'Der begrenzte KI-Testrahmen von{RUN_LIMIT} Anfragen ist erreicht.'})
             STATE['calls']+=1
             USAGE.write_text(json.dumps({'calls':STATE['calls'],'limit':RUN_LIMIT}));os.chmod(USAGE,0o600)
             try:
