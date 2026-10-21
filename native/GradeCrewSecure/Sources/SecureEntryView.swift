@@ -14,16 +14,7 @@ private struct SecureEntryBrandHeader: View {
 }
 
 struct SecureBrandHeader: View {
-    var body: some View {
-        VStack(spacing:16) {
-            Image("GradeCrewCrew").resizable().scaledToFit().frame(maxWidth:280,maxHeight:120).accessibilityHidden(true)
-            ViewThatFits(in:.horizontal) {
-                HStack(spacing:12) { logo; Text("GradeCrew Secure").font(.title2.bold()).fixedSize(horizontal:false,vertical:true) }
-                VStack(spacing:8) { logo; Text("GradeCrew Secure").font(.title2.bold()).multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true) }
-            }
-        }.frame(maxWidth:.infinity).foregroundStyle(SecureTheme.text).secureMeasure("brand",role:"center")
-    }
-    private var logo: some View { Image("GradeCrewLogo").resizable().scaledToFit().frame(width:48,height:48).accessibilityHidden(true) }
+    var body: some View { SecureEntryBrandHeader() }
 }
 struct SecureWelcomeFrame<Content:View>: View {
     var entry:Bool = false
