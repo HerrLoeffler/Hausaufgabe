@@ -40,3 +40,7 @@ Branch/PR über GitHub-API sichern und exakte CI beobachten. CI, Integration und
 ## GitHub-Sicherung
 
 Remote-Kandidat `378393a79f912daf963cd244cc9f1818e4def040`, Tree `58281cee55a6ef99d42d0e6b4fcbccba8747586f` identisch zum lokal geprüften `a2bb95f54e9082e4244bb50df98ca61aedc5f839`. [PR260](https://github.com/HerrLoeffler/Hausaufgabe/pull/260) ist Draft zum bestehenden Integrationsbranch. Exakte AI Staging CI39628044930 läuft; noch kein CI-Erfolgsnachweis. Stufe branch_only; kein Merge und kein Deploy. Nächster Schritt: exakte CI bestätigen und nach Release-Train integrieren. Schul-Live benötigt ausdrückliche aktuelle Freigabe.
+
+## Exakte CI bestätigt
+
+AI Staging Checks [Run39628044930](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39628044930), Job119318461028: vollständig success auf `378393a79f912daf963cd244cc9f1818e4def040`, einschließlich Node22-Functions, Assessment, Firestore-Emulatorregeln, Webregressionen und Build. Stufe **ci_green**. Keine Integration, kein Hosting-/Functions-/Rulesdeploy und kein physischer Mikrofontest. Nächster Schritt: geprüften Kandidaten über den Release-Train integrieren; Schul-Live-Veröffentlichung benötigt ausdrückliche aktuelle Nutzerfreigabe.

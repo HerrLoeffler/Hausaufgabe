@@ -2,7 +2,7 @@
 
 ## GC-CREW-AI-04 — Diktat: Audios und eigene Wünsche (21.10.2026)
 
-- [ ] Korrektur auf eigenem Branch gesichert: [PR260](https://github.com/HerrLoeffler/Hausaufgabe/pull/260), Kandidat `378393a7`, Stufe **branch_only**. „Zwei Audios“ → Höraufgaben; freie Wünsche → Vorschau/Eigene Wünsche. 386 Root-Webtests und 64 Parser-/Formulartests grün, unabhängige Nachprüfung PASS; lokaler Build für `gradecrew-staging-2026` verifiziert. Exakte CI39628044930 läuft. Keine Integration, kein Staging-/Schul-Live-Deploy; physischer Mikrofontest offen. [Übergabe](workstreams/remy-dictation-wishes-20261021.md).
+- [ ] Korrektur auf eigenem Branch gesichert: [PR260](https://github.com/HerrLoeffler/Hausaufgabe/pull/260), Kandidat `378393a7`, Stufe **ci_green**. „Zwei Audios“ → Höraufgaben; freie Wünsche → Vorschau/Eigene Wünsche. 386 Root-Webtests und 64 Parser-/Formulartests grün, unabhängige Nachprüfung PASS; lokaler Build für `gradecrew-staging-2026` verifiziert. Exakte CI39628044930 vollständig grün (inkl. Functions, Assessment, Emulatorregeln und Build). Keine Integration, kein Staging-/Schul-Live-Deploy; physischer Mikrofontest offen. [Übergabe](workstreams/remy-dictation-wishes-20261021.md).
 
 
 ## GC-WEB-REPAIR-20261007 — mobile Schüler-Browseransicht (19.10.2026)
