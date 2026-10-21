@@ -19,13 +19,14 @@ def raw(url,data=None,token=None,method=None):
 
 def call(method,data,token=None):
     status,body=raw(f'https://europe-west1-{PROJECT}.cloudfunctions.net/{method}',{'data':data},token or bridge.token())
-    if status!=200:raise RuntimeError(f'{method}: HTTP{status} '+str(body.get('error',{}).get('status','unavailable')))
+    if status!=200:raise RuntimeError(f'{method}: HTTP{status} '+str({k:body.get('error',{}).get(k) for k in ['status','message','details']}))
     return body.get('result',body.get('data'))
 
 def entries():
-    catalog=call('learningBrainCatalog',{});results=[]
+    catalog=call('learningBrainCatalog',{});results=json.loads(ARGS.output.read_text()) if ARGS.output.exists() else []
     for grade in range(5,11):
         for subject in ['math','german']:
+            if any(r['grade']==grade and r['subject']==subject for r in results):continue
             topic=next(t for t in catalog['topics'] if t['grade']==grade and t['subject']==subject and t['track']==('M' if grade==10 else 'R') and t['modality']=='text')
             result=call('learningBrainStart',{'topicId':topic['id'],'minutes':20,'eventId':str(uuid.uuid4())})
             assert result['phase']=='practice' and result['task']['prompt'] and not result['explanation']
