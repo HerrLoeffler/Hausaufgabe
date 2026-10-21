@@ -325,6 +325,9 @@ struct QuickRemyView: View {
     private var materialsSection: some View {
         optionSection("Material hinzufügen\(materialNames.isEmpty ? "" : " (\(materialNames.count))")", expanded: $showMaterials) {
             VStack(alignment: .leading, spacing: 10) {
+                Text("GradeCrew nutzt deine Materialien als Grundlage für die KI-gestützte Erstellung neuer Aufgaben. Lade nur Materialien hoch, die du für diesen Zweck verwenden und an den KI-Dienst übermitteln darfst. Prüfe die erzeugten Aufgaben vor der Veröffentlichung auch auf mögliche Übernahmen geschützter Inhalte.")
+                    .font(.caption).foregroundStyle(GradeCrewDesignTokens.Colors.muted)
+                    .fixedSize(horizontal: false, vertical: true)
                 Toggle("Ich darf das Material an OpenAI übermitteln; es enthält keine personenbezogenen Daten.", isOn: $materialConfirmed).font(.caption)
                     .frame(minHeight: GradeCrewLayoutGuides.minimumTapSize)
                     .gcLayout("remy.material.permission", role: "control")
