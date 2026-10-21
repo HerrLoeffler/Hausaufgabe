@@ -1,5 +1,5 @@
 {
-  "status": "draft_not_submitted",
+  "status": "draft_not_submitted_2026-10-21",
   "bundleId": "de.gradecrew.secure",
   "platform": "iPadOS",
   "minimumOS": "17.0",
@@ -8,23 +8,37 @@
   "primaryCategoryProposal": "EDUCATION",
   "keywords": "Schule,Prüfung,Tests,iPad,Klassenarbeit,Leistungsnachweis,Lernen,GradeCrew",
   "promotionalText": "Testcode eingeben, Aufgaben bearbeiten und Antworten abgeben: GradeCrew Secure begleitet digitale Leistungsnachweise auf dem iPad.",
-  "description": "Dein Test. Deine Aufgaben. Deine Crew.\n\nMit GradeCrew Secure bearbeitest du veröffentlichte GradeCrew-Tests auf dem iPad. Gib den Testcode deiner Lehrkraft und deinen Namen oder das vereinbarte Kürzel ein. Ein eigenes Schülerkonto ist dafür nicht erforderlich.\n\nWährend der Prüfung verwendet die App Apples Prüfungsmodus. Die Aufgabenübersicht hilft dir, zwischen Fragen zu wechseln und deinen Bearbeitungsstand im Blick zu behalten. Je nach Test stehen verschiedene Aufgabenformen sowie Bilder und Höraufgaben zur Verfügung. Bei Prüfungen mit Zeitlimit bleibt die verbleibende Zeit sichtbar.\n\nDeine Antworten werden während der Bearbeitung auf dem iPad gesichert. Nach der bestätigten Abgabe wird der Prüfungsmodus beendet.\n\nVoraussetzungen: ein unterstütztes iPad ab iPadOS 17, ein veröffentlichter GradeCrew-Test und eine Internetverbindung zum Starten und Übertragen der Abgabe. Die Lehrkraft erstellt und verwaltet Tests in GradeCrew.",
-  "supportURL": null,
-  "privacyPolicyURL": null,
-  "marketingURL": null,
-  "copyright": null,
-  "reviewContact": null,
+  "description": "Mit GradeCrew Secure bearbeitest du veröffentlichte GradeCrew-Tests auf dem iPad. Gib den Testcode deiner Lehrkraft und deinen Namen oder das vereinbarte Kürzel ein. Ein eigenes Schülerkonto ist nicht erforderlich.\n\nVor dem Start bestätigst du den Prüfungsmodus. Die Aufgabenübersicht zeigt deinen Bearbeitungsstand und lässt dich zwischen Fragen wechseln. Je nach Test stehen verschiedene Aufgabenformen, Bilder und Höraufgaben zur Verfügung. Ein vorgegebenes Zeitlimit bleibt sichtbar.\n\nDeine Antworten werden während der Bearbeitung auf dem iPad gesichert. Bei der Abgabe werden sie festgeschrieben. Auch bei einem Verbindungsfehler kann das iPad nach überprüfter lokaler Sicherung freigegeben werden. Die App zeigt eine ausstehende Übertragung ausdrücklich an. Öffne sie mit Internetverbindung erneut, damit die Abgabe übertragen und der Serverempfang bestätigt werden kann. Bis dahin lässt sich in der App kein weiterer Test starten.\n\nVoraussetzungen: iPadOS 17 oder neuer, ein veröffentlichter GradeCrew-Test und Internet zum Prüfungsstart und zur Übertragung. Tests werden von der Lehrkraft in der getrennten GradeCrew-Oberfläche erstellt und verwaltet.",
+  "supportURL": "https://hausaufgabe-staging.web.app/support.html",
+  "privacyPolicyURL": "https://hausaufgabe-staging.web.app/datenschutz.html",
+  "marketingURL": "https://hausaufgabe-staging.web.app/",
+  "copyright": "2026 Martin Löffler",
+  "reviewContact": {
+    "firstName": "Martin",
+    "lastName": "Löffler",
+    "email": "martin.loeffler91@yahoo.de",
+    "phoneNumber": "+491704917107"
+  },
   "reviewTestCode": null,
   "priceDecision": null,
   "territoriesDecision": null,
   "releaseModeProposal": "manual_after_approval",
   "openItems": [
-    "Finale Umgebung und App-Store-Konfiguration freigeben",
-    "Offline-Abgabe implementieren und am Gerät prüfen",
-    "Betreiber- und Supportangaben ergänzen",
-    "Datenschutzerklärung und tatsächliche Datenangaben abschließen",
-    "Preis, Länder, Altersfreigabe und EU-Händlerstatus festlegen",
-    "Stabilen Review-Test ausschließlich mit fiktiven Daten bereitstellen",
-    "Echte Screenshots des endgültigen Builds aufnehmen"
-  ]
+    "Öffentliche URLs nach Hostingfreigabe auf echten Inhalt prüfen; native Offline-Informationen im finalen signierten Build abnehmen",
+    "Datenschutzangaben, Aufbewahrung, Länder, Preis, Altersfreigabe und EU-Händlerstatus verbindlich klären",
+    "Neuen signierten Kandidaten mit dem schlichten Einstieg bauen und am iPad einschließlich WLAN-Ausfall abnehmen",
+    "Stabilen freigegebenen Review-Test mit fiktiven Inhalten und gültigem Code bereitstellen",
+    "Echte 13-Zoll-Storeaufnahmen des finalen signierten Builds; vorhandene Testhostbilder nur Vorschau",
+    "App-Store-Connect-Metadaten und Verträge nach echter Anmeldung prüfen; erst danach abschließende Einreichungsfreigabe"
+  ],
+  "operator": {
+    "name": "Martin Löffler",
+    "address": "Auenstraße 76, 80469 München, Deutschland",
+    "email": "martin.loeffler91@yahoo.de",
+    "phoneNumber": "+491704917107",
+    "vatId": "DE453111477",
+    "source": "direct_user_confirmed_2026-10-21",
+    "officialValidation": false
+  },
+  "publicPageStatus": "implemented_locally_not_deployed"
 }

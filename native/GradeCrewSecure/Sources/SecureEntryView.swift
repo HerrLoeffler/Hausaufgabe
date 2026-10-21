@@ -1,5 +1,18 @@
 import SwiftUI
 
+private struct SecureEntryBrandHeader: View {
+    var body: some View {
+        VStack(spacing:12) {
+            Image("GradeCrewLogo").resizable().scaledToFit()
+                .frame(width:96,height:96).accessibilityHidden(true)
+            Text("GradeCrew").font(.largeTitle.bold())
+                .multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true)
+            Text("Secure").font(.title3.weight(.semibold)).foregroundStyle(SecureTheme.secondaryText)
+        }.frame(maxWidth:.infinity).foregroundStyle(SecureTheme.text)
+            .accessibilityElement(children:.combine).secureMeasure("brand",role:"center")
+    }
+}
+
 struct SecureBrandHeader: View {
     var body: some View {
         VStack(spacing:16) {
@@ -13,12 +26,14 @@ struct SecureBrandHeader: View {
     private var logo: some View { Image("GradeCrewLogo").resizable().scaledToFit().frame(width:48,height:48).accessibilityHidden(true) }
 }
 struct SecureWelcomeFrame<Content:View>: View {
+    var entry:Bool = false
     @ViewBuilder let content: () -> Content
     var body: some View {
         ScrollView {
             VStack(spacing:24) {
-                SecureBrandHeader()
+                if entry { SecureEntryBrandHeader() } else { SecureBrandHeader() }
                 content()
+                if entry { SecureLegalLinks() }
                 Text(SecureReleaseEnvironment.projectID == "gradecrew-staging-2026" ? "Testumgebung" : "Schulversion").font(.footnote).foregroundStyle(SecureTheme.secondaryText)
             }.padding(.vertical,24).frame(maxWidth:SecureTheme.formWidth).secureMeasure("welcome",role:"center")
                 .frame(maxWidth:.infinity).padding(.horizontal,16)

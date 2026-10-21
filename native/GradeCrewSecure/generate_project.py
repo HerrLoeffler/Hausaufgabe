@@ -17,10 +17,14 @@ asset=obj('assets', isa='PBXFileReference', lastKnownFileType='folder.assetcatal
 asset_build=obj('build-assets', isa='PBXBuildFile', fileRef=asset)
 exam=obj('exam', isa='PBXFileReference', lastKnownFileType='folder', path='Resources/Exam', sourceTree='<group>')
 exam_build=obj('build-exam', isa='PBXBuildFile', fileRef=exam)
-main=obj('main', isa='PBXGroup', children=files+[asset,exam,products], sourceTree='<group>')
+privacy=obj('privacy', isa='PBXFileReference', lastKnownFileType='text.xml', path='Resources/PrivacyInfo.xcprivacy', sourceTree='<group>')
+privacy_build=obj('build-privacy', isa='PBXBuildFile', fileRef=privacy)
+legal=obj('legal', isa='PBXFileReference', lastKnownFileType='folder', path='Resources/Legal', sourceTree='<group>')
+legal_build=obj('build-legal', isa='PBXBuildFile', fileRef=legal)
+main=obj('main', isa='PBXGroup', children=files+[asset,exam,privacy,legal,products], sourceTree='<group>')
 sources=obj('sources', isa='PBXSourcesBuildPhase', buildActionMask='2147483647', files=builds, runOnlyForDeploymentPostprocessing='0')
 frameworks=obj('frameworks', isa='PBXFrameworksBuildPhase', buildActionMask='2147483647', files=[], runOnlyForDeploymentPostprocessing='0')
-resources=obj('resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647', files=[asset_build,exam_build], runOnlyForDeploymentPostprocessing='0')
+resources=obj('resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647', files=[asset_build,exam_build,privacy_build,legal_build], runOnlyForDeploymentPostprocessing='0')
 project_configs=[]; target_configs=[]
 for name in ['Debug','Release','AACLab','AACLabDistribution','SecureStaging','SecureLive']:
     debug=name in ('Debug','AACLab')

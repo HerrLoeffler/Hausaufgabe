@@ -1,0 +1,48 @@
+{
+  "candidate": "0.2.3(1132)",
+  "signed": false,
+  "uploaded": false,
+  "bundle": "de.gradecrew.secure",
+  "mode": "live-exam",
+  "minimumOS": "17.0",
+  "devices": [
+    2
+  ],
+  "privacyManifest": {
+    "NSPrivacyAccessedAPITypes": [
+      {
+        "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime",
+        "NSPrivacyAccessedAPITypeReasons": [
+          "35F9.1"
+        ]
+      }
+    ]
+  },
+  "screenshots": "native SwiftUI component previews, not actual signed App Store submission screenshots",
+  "layoutBefore": {
+    "passed": true,
+    "layers": [
+      {
+        "passed": true,
+        "expected": 40,
+        "reported": 40,
+        "issues": []
+      }
+    ],
+    "device": "GC Secure Store Preview 20261021",
+    "suite": "smoke"
+  },
+  "layoutAfter": {
+    "passed": true,
+    "layers": [
+      {
+        "passed": true,
+        "expected": 40,
+        "reported": 40,
+        "issues": []
+      }
+    ],
+    "device": "GC Secure Store Preview 20261021",
+    "suite": "smoke"
+  }
+}

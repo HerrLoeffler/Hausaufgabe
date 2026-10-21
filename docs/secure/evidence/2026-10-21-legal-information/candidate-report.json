@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-21",
+  "bundle": "de.gradecrew.secure",
+  "version": "0.2.3",
+  "build": "1132",
+  "mode": "live-exam",
+  "minimumOS": "17.0",
+  "deviceFamily": [
+    2
+  ],
+  "signed": false,
+  "uploaded": false,
+  "legalContentSHA256": "8a799779ec8532f9ed883bc6a8faac5c7c4f6c840902a2d51e197dff3832497b",
+  "manifestBundled": true,
+  "checks": {
+    "simulatorBuild": "pass",
+    "genericIOSArchive": "pass",
+    "swift": 28,
+    "python": 20,
+    "nativeLayouts": 40
+  },
+  "independentSourceReview": "pass_no_blocking_findings",
+  "limits": [
+    "No physical iPad acceptance for this build",
+    "No App Store metadata submission or contract acceptance",
+    "School roles/contracts and exact provider/server retention not certified"
+  ]
+}
