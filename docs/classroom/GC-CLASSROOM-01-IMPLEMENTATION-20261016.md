@@ -1,6 +1,6 @@
 # GC-CLASSROOM-01 Implementation Plan
 
-**Aktueller Planstand 18.10.2026:** Der lokale Schüler-/Lehrkräfteimport ist bereits umgesetzt und geprüft. Der neue [detaillierte Ausbauplan für Schulverwaltung, Accountverknüpfung, Schülerzugänge, Druck und Testzuweisung](#schulverwaltung-accountverknuepfung-und-schuelerzugaenge) ist noch nicht implementiert. Er führt dieselbe Task GC-CLASSROOM-01 fort. Ältere Ausgangsstände und Pseudonymvorgaben sind ausdrücklich Historie; der aktuelle lokale Namenbestand bleibt erhalten.
+**Aktueller Planstand 21.10.2026:** Der lokale Schüler-/Lehrkräfteimport ist bereits umgesetzt und geprüft. Der neue [detaillierte Ausbauplan für Schulverwaltung, Accountverknüpfung, Schülerzugänge, Druck und Testzuweisung](#schulverwaltung-accountverknuepfung-und-schuelerzugaenge) ist noch nicht implementiert. Die [Präzisierung für viele Lehrkräfte, Unterrichtszuordnung und Schulwechsel](#n-schnelle-schulorganisation-und-schulwechsel--21102026) ergänzt diesen Plan. Er führt dieselbe Task GC-CLASSROOM-01 fort. Ältere Ausgangsstände und Pseudonymvorgaben sind ausdrücklich Historie; der aktuelle lokale Namenbestand bleibt erhalten.
 
 > **For agentic workers:** Bei späterer Umsetzung `superpowers:executing-plans` verwenden. Ein Writer im bestehenden isolierten Checkout. Dieser Auftrag liefert zunächst den ausführlichen Plan; keine Produktimplementierung oder Veröffentlichung vor Martins Planprüfung. Bestehende Task-ID und Versuchshistorie erhalten.
 
@@ -900,3 +900,77 @@ Produktentscheidungen dieses Vorschlags: gemeinsame Schulmitgliedschaft statt Ko
 Nächster ausführbarer Umsetzungsschritt nach Martins Planentscheidung: Paket0 und1, insbesondere vorhandenen persönlichen Bestand sicher einer lokalen Schule zuordnen und mehrere normale Accounts mit geprüften Schulrollen testen. Paket4/5 ergänzt die jetzt ausdrücklich gewünschten Schülercodes/QRs/Druckblätter, bevor Paket6 den vollständigen echten Schüler-Testablauf freigibt.
 
 Technische Primärquellen geprüft18.10.2026: [Firebase-IDtokenprüfung](https://firebase.google.com/docs/auth/admin/verify-id-tokens), [CustomClaims und deren Aktualisierung](https://firebase.google.com/docs/auth/admin/custom-claims), [Firestore REST-Authentifizierung und SecurityRules](https://firebase.google.com/docs/firestore/use-rest-api). Diese erklären Plattformverträge; Einladungsdauer, Rollenmatrix und Druckkonzept sind unsere Produktvorschläge, keine Firebase-Vorgaben. Kein neuer Authprovider oder Authdeploy aus dem gelesenen Firebase-Skill.
+
+
+### N. Schnelle Schulorganisation und Schulwechsel — 21.10.2026
+
+**Auftrag und Iststand:** Martin fragt nach dem noch fehlenden Verwalter sowie schneller Zuordnung bei vielen Klassen/Lehrkräften und späterem Schulwechsel. Dies präzisiert denselben Ausbauplan; keine Implementierungsfreigabe aus dieser Frage ableiten. Geprüft: lokal86a1951 nach4690172; letzter neuer Commit stellt nur die lokale Erreichbarkeit in der Übergabe dar. Die echte Persistenz in `local-roster-store.mjs` hat weiterhin Accountworkspaces und sechs bestehende Mutationsbefehle, keine Schulmitgliedschaften/Rollenprüfung. Ältere synthetische Schulrollen in `classroom/repository.mjs` sind ausschließlich Demo und zählen nicht als Umsetzung. Schulverwaltung/Accountverknüpfung/Zugriff bleiben offen.
+
+#### N1. Ein Konto, getrennte Schulen und Unterrichtsrechte
+
+Drei unterschiedliche Entscheidungen werden verständlich getrennt: **An welcher Schule bin ich? Was darf ich dort verwalten? Welchen Unterricht habe ich dort?** Der Name eines CSV-Personaleintrags entscheidet keine dieser Berechtigungen automatisch. Ein vorhandenes Konto bleibt unverändert; Schulmitgliedschaften verbinden es mit den jeweiligen schulischen Personaleinträgen. Mehrere gleichzeitige Schulen sind erlaubt.
+
+Oben in der bestehenden angemeldeten Oberfläche steht die aktuelle Schule mit Schuljahr; bei mehreren Schulen ein Wechselmenü. Ohne verbundene Schule bleiben die bisherigen persönlichen Tests nutzbar. **Meine Tests** bleibt persönlich und wird beim Schulwechsel nicht in einen Schulbestand umgewandelt. Klassen/Schüler:innen/Lehrkräfte laden den ausdrücklich gewählten Schulkontext und erlaubten Unterricht. Persönliche Vorlagen und schulbezogene Zuweisungen sind in der Beschriftung erkennbar.
+
+Ein normaler Lehrer sieht Klassen/Fächer seines aktiven Unterrichts; die Verwaltungsfunktion erscheint nur für die eigene aktive Verwaltungsrolle. Vorgeschlagene Ergänzung der vorhandenen Navigation: **Schulverwaltung** mit Unteransichten **Schule & Verwalter**, **Lehrkräfte**, **Unterrichtszuordnung**. Bestehende Lehrerlisten und Klassendetails werden wiederverwendet, kein zweiter paralleler Personalbestand und keine neue Gesamtoberfläche. Die abschließende Benennung wird am vorhandenen Menü geprüft, bevor weitere Navigation dupliziert wird.
+
+#### N2. Verwalter einfach festlegen
+
+Der erste lokale Schulentwurf und die verifizierte gemeinsame Schule bleiben wie inC unterschiedlich. In **Schule & Verwalter** werden bereits bestätigte Mitglieder ausgewählt und über **Als Verwalter einsetzen** ernannt. Üblich sind zwei oder drei Personen mit eigenen Konten; die Zahl ist nicht künstlich begrenzt. Vorschau nennt Person, Schule und organisatorische Befugnisse. Entziehen funktioniert am selben Ort; die letzte aktive Verwaltung bleibt geschützt.
+
+Eine noch nicht verbundene Person kann als vorgesehener Verwalter eingeladen werden. Die Rolle bleibt bis zur geprüften Kontoannahme und ausdrücklichen Verwaltungsbestätigung inaktiv. Kein CSV-Import und kein gesetztes Kontrollkästchen im Browser erzeugt allein Schulhoheit. Eine Kontaktperson kann optional gekennzeichnet werden; dafür entsteht keine zweite mächtigere Adminrolle. Unterricht wird unabhängig zugeordnet: Ein Schulverwalter bekommt nicht pauschal jede Klasse, jedes Ergebnis oder fremde private Tests.
+
+#### N3. Einrichtung für viele Klassen und Lehrkräfte
+
+1. **Bestand übernehmen/importieren:** Klassen, Schüler:innen und Lehrkräfte einmal je Schule einrichten; vorhandene IDs und Quellenbelege erhalten. Unterrichtspaare aus CSV werden als Vorschläge übernommen. Ohne Unterrichtsdaten bleibt deren Zuordnung offen statt geraten.
+2. **Konten verbinden:** Lehrkräfteliste zeigt **Nicht verbunden**, **Eingeladen**, **Bestätigung offen**, **Verbunden** sowie Klassen/Fächerzahl. Persönliche Links können gesammelt vorbereitet werden, bleiben aber individuell und widerrufbar. Keine automatische E-Mail. Ausstehende Verbindungen bleiben über einen oben anklickbaren Statusfilter auffindbar.
+3. **Unterricht gesammelt zuordnen:** Zwei Ansichten arbeiten auf denselben Unterrichtsgruppen, beschrieben inN4. Unterricht darf vor der Kontoannahme vorbereitet werden; Zugriff entsteht erst aus bestätigter Mitgliedschaft und aktiver Zuordnung.
+4. **Nur offene Stellen fertigstellen:** Oben anklickbare Zähler für fehlende Accountverbindung, Unterricht ohne Lehrkraft und unklare CSV-Zuordnung. Jeder Zähler öffnet direkt die passenden Zeilen und Entscheidungen, ohne manuelles Suchen über mehrere Seiten.
+5. **Eine Änderungsvorschau bestätigen:** Neue/entfernte/befristete Zuordnungen mit betroffenen Personen, Klassen, Fächern und Wirksamkeitsdatum. Änderungen bleiben im selben Ablauf, offene Konflikte direkt dort bearbeiten. Nach Erfolg erscheinen dieselben Zuordnungen in Lehrer- und Klassenansicht.
+
+Beispiel mit erfundenen Zahlen: Bei30Lehrkräften und20Klassen werden keine600einzelnen Freigaben angeklickt. Vorhandene CSV-Unterrichtspaare füllen den Plan; fehlende Fachzuordnungen werden gesammelt ergänzt. Die tatsächliche Zahl nötiger Entscheidungen hängt von der Exportqualität ab und wird nicht als feste Klickzahl versprochen.
+
+#### N4. Zwei schnelle Wege zum gleichen Unterrichtsplan
+
+**Von der Klasse aus:** Zeilen sind Klassen, Spalten die gewählten Fächer. Zellen zeigen zugeordnete Lehrkräfte als Namen/Kürzel. Suche, Schuljahr, Jahrgang, Fach und **Nur offene Zuordnungen** begrenzen die Ansicht. Eine Zelle darf mehrere Lehrkräfte enthalten. Leere Fächer, die an einer Klasse gar nicht unterrichtet werden, werden als **Nicht vorgesehen** vom tatsächlich fehlenden Lehrer unterschieden; keine unbelegten Warnungen in jeder leeren Matrixzelle. Der benötigte Fachumfang kommt aus bestätigtem Schulunterrichtsplan bzw. bewusster Auswahl, nicht aus erfundenen Pflichtfächern.
+
+**Von der Lehrkraft aus:** In der vorhandenen Zeile **Unterricht bearbeiten** öffnen. Fach wählen, mehrere Klassen markieren, speichern. Beispiel: **Deutsch →8a,8b,9a** erzeugt drei konkrete Unterrichtszuordnungen; nicht einen pauschalen Zugriff auf alle Fächer dieser Klassen. Zweites Fach oder Teamteaching ergänzen dieselben Gruppen. Befristete Vertretung hat Beginn und Ende; sie ersetzt keine bestehende Lehrkraft unbeabsichtigt.
+
+Verwaltung kann mehrere Zellen/Zeilen für dieselbe Aktion markieren, z.B. Lehrkraft hinzufügen, befristete Vertretung ergänzen oder eine bestimmte Person entfernen. Standardaktion **Hinzufügen** erhält die bisherigen Personen. **Ersetzen** ist gesondert beschriftet und zeigt ausdrücklich alle entzogenen Rechte. Kein pauschales **Alle Klassen freigeben** als Voreinstellung. Optionaler Klassenleitungseintrag ist organisatorisch und verleiht keine fremden Fachnotenrechte.
+
+Die Lehreransicht und Klassenansicht sind zwei Darstellungen derselben Daten, keine getrennten Speichervorgänge. Eine riesige Lehrkräfte-mal-alle-Klassen-Matrix ist nicht die Standardansicht. Auf kleinen Bildschirmen erscheinen dieselben Klassen/Fächer als gefilterte Liste; Namen und Aktionen bleiben erreichbar.
+
+#### N5. CSV und Schuljahreswechsel ohne Doppelpflege
+
+Geeignetes Langformat: eine Zeile je **stabile Lehrerkennung + Klasse + Fach + Schuljahr**, optionale Gültigkeitsdaten. Wiederholte stabile Lehrerkennung bezeichnet dieselbe Person mit weiterem Unterricht. Unterschiedliche Exportspalten werden im vorhandenen Importablauf zugeordnet; kein bestimmter ASV-Spaltenname oder verfügbare Exportart wird ohne Beispielschema behauptet. Namen/Kürzel allein führen bei Mehrdeutigkeit zur Entscheidung.
+
+Der schulbezogene neue Importvertrag unterscheidet **Ergänzen** (Standard) und **Vollständigen Unterrichtsbestand für ausgewählten Umfang ersetzen** (ausdrücklich gewählt). Eine fehlende Zeile in einer Teil-Datei entzieht standardmäßig keine Rechte. Leere Unterrichtsspalten bedeuten im Ergänzungsmodus **keine Änderung**. Bestehende Importsemantik der privaten lokalen Workspaces nicht stillschweigend umdeuten: Schuladapter und Vorschau zeigen die Unterschiede vor jeder Migration. CSV setzt niemals Konto-ID oder Verwalterrolle.
+
+**Vorjahr übernehmen** erzeugt nur Vorschläge für das neue Jahr. Zielklassen werden über bestätigte Klassen-/Jahreszuordnungen bestimmt;8b→9b wird nicht allein aus Textarithmetik abgeleitet. Fach, Lehrkraft, Vertretungsende und Abgänge werden in der Änderungsvorschau sichtbar. Neue Klassen-/Jahresmitgliedschaft verändert alte Prüfungen oder deren Empfänger nicht rückwirkend.
+
+Bei umfangreichen Listen bleiben Filter, Auswahl und Scrollposition erhalten. **Alle gefilterten auswählen** benennt Gesamtzahl und Auswahlumfang und meint nicht nur die aktuelle50erSeite. Serverseitige Auswahl wird an Schule, Filter, zulässige IDs und Bestandsrevision gebunden; geänderte Rechte/Revision erfordern eine neue Vorschau. Normale Lehrkräfte erhalten nur ihre erlaubte Datenprojektion; schulweite Listen werden paginiert statt alle Schülerdaten an jeden Browser zu senden.
+
+#### N6. Schulwechsel und mehrere Einsatzschulen
+
+Eine Lehrkraft zieht nicht mitsamt Datenbestand um. Sie erhält mit demselben Konto eine bestätigte Mitgliedschaft an der neuen Schule. Die bisherige Schule beendet ihre eigenen Unterrichtsrechte und ggf. die Mitgliedschaft zum vereinbarten Datum; die neue Schule bestätigt ihrerseits Aufnahme und Unterricht. Kein Verwalter vonSchuleA darf Rechte fürSchuleB erteilen. Gleichzeitige Beschäftigung an zwei Schulen bleibt möglich; ein bloßer Wechsel im Schulmenü kündigt keine Mitgliedschaft.
+
+Ablauf in **Lehrkraft → Schulzugehörigkeit beenden**: Wirksamkeitsdatum wählen → betroffene Unterrichtsgruppen und laufende Prüfungen sehen → bei Bedarf Nachfolge zuordnen → Entzug bestätigen. Die neue Schule verwendet ihren gewöhnlichen Einladungsablauf. Beide Schritte sind unabhängig nachvollziehbar; kein unbelegtes globales Verschiebe-Recht zwischen Schulen.
+
+Persönlicher Login und eigene Testvorlagen bleiben erhalten. Schüler:innen, schulische Zugehörigkeiten, alte Zuweisungen und Ergebnisse bleiben bei ihrer Schule. Ein früherer Lehrer behält nach Austritt nicht automatisch Zugriff auf Schulpersonen oder Schulresultate. Eventuelle weitergehende gesetzliche Aufbewahrungs-/Auskunftsanforderungen werden gesondert qualifiziert, nicht als pauschales technisches Dauerrecht vergeben. Bestehende private Testvorlagen dürfen keine Schulschülerlisten als unkontrollierte Kopie erhalten.
+
+Bei laufenden Prüfungen endet die Lehrerberechtigung trotzdem zum bestätigten Datum. Vorher zeigt die Vorschau notwendige Betreuung/Nachfolge; Schülerabgabe/Synchronisation läuft im unveränderten Run weiter. Nur ausdrücklich qualifizierte Zuweisungsbetreuung geht an die Nachfolge, keine privaten Vorlagen und keine gesamten Ergebnisse aller Fächer. Ist keine erlaubte Übergabe möglich, wird der offene Fall klar angezeigt statt heimlich Eigentümerschaft zu überschreiben. Diese Fälle gehören zum späteren Assessmentpaket6; reine lokale Rollen dürfen keine echten Cloudrechte behaupten.
+
+#### N7. Präzisierte Umsetzung und Abnahmekriterien
+
+Die vorhandenen Pakete0–3 und6 bleiben die Reihenfolge. Paket1 baut Schulmitgliedschaft, mehrere Verwalter und sichere Bestandsübernahme; Paket2 verbindet echte Konten; Paket3 liefert beide Zuordnungsansichten, Bulk-Vorschau und zeitgebundene Rechte. Der Schulwechsel verwendet Mitgliedschafts-/Unterrichtsende plus separate Aufnahme; Paket6 ergänzt die echte Prüfungsübergabe. Keine dritte Rollen-/Importdatenbank.
+
+| Zuständigkeit im bestehenden Plan | Zusätzlicher konkreter Abnahmetest |
+|---|---|
+| Paket1: `local-school-store.mjs`, `local-school-policy.mjs` | Ein Konto inA/B; AdminA kannB weder ernennen noch lesen; gleichzeitiges Entfernen der letzten beiden Verwalter lässt mindestens einen aktiv. |
+| Paket2: `school-invitations.mjs` | Vorbereiteter Unterricht bleibt ohne bestätigten Account unwirksam; CSV-Kennung kann keine fremde Kontoverbindung übernehmen. |
+| Paket3: bestehende `manual-roster.mjs`, neues `school-context.mjs`/Schulverwaltungsmodul | Deutsch für8a/8b/9a gesammelt hinzugefügt; Englischzugriff bleibt ausgeschlossen; Teamteaching erhalten; Klassen- und Lehreransicht zeigen identische Gruppen. |
+| Paket3: Unterrichtsplanung und Schul-Importadapter | Teil-CSV entfernt keine Zuordnung; explizites Ersetzen benennt Entzüge; nicht vorgesehenes Fach meldet keinen fehlenden Lehrer; Vorjahresübernahme ändert keine historischen Gruppen. |
+| Paket3: Bulk-/Lesepolicy | Auswahl über50/100Einträge und Seitenwechsel bleibt vollständig; zwischen Vorschau und Commit entzogene Rolle/Revision verwirft Commit; Client erhält keine Fremdgruppen. |
+| Paket3/6: Mitgliedschaftsende und Assessmentadapter | Terminierter Austritt entzieht eigene Schulrechte, SchuleB/Konto/privaterTest unverändert; laufende Schülerabgabe bleibt idempotent; Betreuung nur explizit übergeben. |
+
+Pro Paket erst diese Verhaltenstests reproduzierbar scheitern lassen, dann kleinste Umsetzung, gezielte Regression und Code-/Handoffcheckpoint. Prüfungen des aktuellen Dokumentturns sind nur Status-/Diff-/Planprüfungen und qualifizieren keine der noch fehlenden Produktfähigkeiten. Der erste nächste Umsetzungsschritt bleibt Paket0/1 nach Planentscheidung; normaler Login und bestehende Tests sind dabei verbindliche Regressionskriterien.
