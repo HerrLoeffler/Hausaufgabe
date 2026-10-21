@@ -1,6 +1,6 @@
 # GradeCrew Secure — App-Store-Vorbereitung
 
-Stand21.10.2026. Eigenständige iPad-App `de.gradecrew.secure`; keine Umgestaltung der Lehrer-App. Dieses Paket ist **nicht eingereicht**, keine Veröffentlichung, kein neuer TestFlight-Upload und kein Live-Deploy.
+Stand21.10.2026. Eigenständige iPad-App `de.gradecrew.secure`; keine Umgestaltung der Lehrer-App. Dieses App-Store-Paket ist **nicht eingereicht**; kein neuer TestFlight-Upload oder App-Store-Release. Die zugehörigen öffentlichen Rechts-/Supportseiten sind am21.10.2026 ausschließlich perHosting auf der Schulwebsite veröffentlicht.
 
 ## Belegter Stand
 
@@ -20,7 +20,7 @@ Stand21.10.2026. Eigenständige iPad-App `de.gradecrew.secure`; keine Umgestaltu
 | Neuer einfacher Einstieg | Quellkandidat | Vorher/Nachher und aktuelle Build-/Layoutnachweise in der Workstream-Übergabe; noch nicht in1131 enthalten |
 | PrivacyManifest | im neuen Quellkandidaten | SystemBootTime35F9.1 für mitkompilierten lokalen Lab-Timer, im neuen Paket prüfen; keine Behauptung „keine Daten“ |
 | Produkttexte | Entwurf vorhanden | `metadata.de-DE.json`; Name16, Untertitel22Zeichen, Zeichenlimits vor Eingabe nochmals prüfen |
-| Support-/Datenschutz-URL | implementiert, Veröffentlichung noch offen | drei öffentliche Seiten im Web-Build; identische Texte lokal in Secure vor Namenseingabe, Betreiber/Kontakt/Anschrift/Telefon/USt-ID von Martin bestätigt |
+| Support-/Datenschutz-URL | **öffentlich veröffentlicht und geprüft** | drei öffentliche Seiten im Web-Build; identische Texte lokal in Secure vor Namenseingabe, Betreiber/Kontakt/Anschrift/Telefon/USt-ID von Martin bestätigt |
 | PrivacyLabels | technischer Entwurf | sieheInventar; Betreiber-/Partner-/Fristenentscheidung und reale Betriebsprüfung fehlen |
 | Tracking/ATT | kein entsprechender SDK-/Werbepfad im untersuchten Secure-Code | kein pauschaler Laufzeit-/Dienstleisterbeweis; bei geänderter Nutzung neu prüfen |
 | Altersfreigabe/KidsCategory | **von Martin nötig** | aktuellen Fragebogen sachlich beantworten; Lehrkraftinhalte variabel, keine automatische4+- oder Kids-Freigabe |
@@ -48,7 +48,7 @@ AAC-Genehmigung ist eine Voraussetzung für diesen Systemmodus, keine pauschale 
 - [Altersfreigabe](https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating/)
 - [EU-Händlerangaben](https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements/)
 
-Betreiberangaben sind jetzt bestätigt und Rechts-/Supportseiten samt nativer Offlineansicht implementiert. Öffentliche Bereitstellung, verbindliche Betriebs-/Vertragsnachweise und die physische Offline-Abnahme bleiben getrennte Gates; ein erfolgreicher Build oder TestFlight-Upload ersetzt sie nicht.
+Betreiberangaben sind jetzt bestätigt und Rechts-/Supportseiten samt nativer Offlineansicht implementiert. Die öffentliche Bereitstellung ist bestätigt; verbindliche Betriebs-/Vertragsnachweise und die physische Offline-Abnahme bleiben getrennte Gates; ein erfolgreicher Build oder TestFlight-Upload ersetzt sie nicht.
 
 ## Öffentliche Rechts- und Supportseiten
 
@@ -57,3 +57,7 @@ Auf Martins Rückfrage wurden [konkrete Textentwürfe](public-information-draft.
 ## Rechtsseiten-Einbindung
 
 Neue maßgebliche Quelle: `native/GradeCrewSecure/Resources/Legal/legal-content.de.json`, identisch zum Webbranch `feature/public-legal-pages-20261021`. Darin alle bestätigten Betreiberangaben und aktuelle Datenschutz-/Support-/Impressumstexte. Die früheren Arbeitsfassungen bleiben historische Dokumente. SwiftUI zeigt die lokalen Texte ausschließlich am Code-/Namenseinstieg; kein Netzwerkaufruf oder externer Link während AAC. Hostingseiten benötigen keine Anmeldung/JavaScript. Vertragliche Schulrollen, verbindliche Aufbewahrungs-/Transfernachweise und Händler-/ASC-Prüfung werden durch die Textveröffentlichung nicht ersetzt.
+
+## Verifizierte Veröffentlichung21.10.2026
+
+[Datenschutz](https://hausaufgabe-staging.web.app/datenschutz.html), [Impressum](https://hausaufgabe-staging.web.app/impressum.html), [Support](https://hausaufgabe-staging.web.app/support.html) ohne Anmeldung erreichbar. Websitequelle39e70b20/PR256 integriert; Hostingversion6e2c90f76d61ad36, alle173Manifest-Dateihashes perHTTPS geprüft.166bestehende Dateien unverändert, nur index/styles plus5Informationsdateien; kein Backend-/Rules-/Daten-/Appdeploy. Neue unabhängige Quellprüfung ohne blockierende Befunde; dedizierte Paket-CI39624491617 und39624481757 success, AdminCI39624491477success. NativeQuellkandidat593076f8/PR257 bleibt Draft, Archiv0.2.3(1132) lokal unsigniert, nicht hochgeladen. Die alten Arbeitsfassungen/Checklisten stellen nicht den aktuellen Veröffentlichungsstatus dar.

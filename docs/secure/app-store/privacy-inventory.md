@@ -29,6 +29,6 @@ Kein Werbe-/IDFA-/ATT-/Datenbrokerpfad in den untersuchten nativen Quellen. Das 
 
 ## Von Martin/Betreiber offen
 
-Rechtlicher Betreiber und Kontakt; Schul-/Dienstleisterzuständigkeit; öffentliche Datenschutz- und Support-URL; Fristen/Löschweg für Prüfungen und Statistik; endgültige Partner-/Logging- und Trackingerklärung. Keine Annahme einer rechtlichen Freigabe aus AAC oder TestFlight.
+Betreiber Martin Löffler und öffentliche Kontakt-/Adressangaben sind direkt bestätigt; Datenschutz-/Supportseiten sind auf der Schulwebsite veröffentlicht und hashgeprüft. Noch offen: Schul-/Dienstleisterzuständigkeit, Fristen/Löschweg für Prüfungen und Statistik, endgültige Partner-/Logging- und Trackingerklärung. Keine Annahme einer rechtlichen Freigabe aus AAC oder TestFlight.
 
 Quellen: [Apple-AppPrivacy](https://developer.apple.com/app-store/app-privacy-details/), [RequiredReasonAPIs](https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype), [AppReview5.1](https://developer.apple.com/app-store/review/guidelines/). Labels sind ein konkreter technischer Entwurf, keine bereits bestätigten ASC-Angaben.

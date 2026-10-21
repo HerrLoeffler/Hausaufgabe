@@ -40,5 +40,11 @@
     "source": "direct_user_confirmed_2026-10-21",
     "officialValidation": false
   },
-  "publicPageStatus": "implemented_locally_not_deployed"
+  "publicPageStatus": "school_live_verified_2026-10-21",
+  "publicPageRelease": {
+    "commit": "39e70b20b304ded6db8c2a668f1622851b15fb32",
+    "hostingVersion": "6e2c90f76d61ad36",
+    "verifiedAssets": 173,
+    "pr": 256
+  }
 }
