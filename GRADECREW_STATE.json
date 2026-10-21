@@ -920,7 +920,30 @@
       "admin_statistics": "included_in_admin_overview",
       "user_test": "not_performed_after_deploy",
       "handoff": "workstreams/remy-structured-telemetry-v1.md",
-      "next_action": "Echtes Beispiel prüfen, bewusste Feldkorrektur auslösen und Admin-Statistik auf eingehende Signale testen."
+      "next_action": "Echtes Beispiel prüfen, bewusste Feldkorrektur auslösen und Admin-Statistik auf eingehende Signale testen.",
+      "dictation_wishes_followup_20261021": {
+        "task_id": "GC-CREW-AI-04",
+        "stage": "branch_only",
+        "branch": "fix/remy-dictation-wishes-20261021",
+        "candidate": "378393a79f912daf963cd244cc9f1818e4def040",
+        "tree": "58281cee55a6ef99d42d0e6b4fcbccba8747586f",
+        "pr": 260,
+        "local_tests": {
+          "root_web": 386,
+          "parser_form": 64,
+          "result": "pass"
+        },
+        "independent_review": "three_P2_fixed_recheck_PASS64of64",
+        "local_build": "173files_gradecrew-staging-2026_no_deploy",
+        "ci_run": 39628044930,
+        "ci_status": "in_progress",
+        "integration": "not_performed",
+        "staging": "not_deployed",
+        "school_live": "unchanged",
+        "physical_microphone": "not_tested",
+        "handoff": "workstreams/remy-dictation-wishes-20261021.md",
+        "next_action": "Confirm exact CI, then integrate through release train; School-Live requires explicit current authorization."
+      }
     },
     {
       "id": "emmi-whole-test-revision",

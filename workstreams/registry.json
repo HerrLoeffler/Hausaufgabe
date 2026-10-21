@@ -84,7 +84,8 @@
       "relatedBranches": [
         "fix/crew-telemetry-retention-v1",
         "fix/remy-integration-test-loader",
-        "fix/remy-parser-review-v1"
+        "fix/remy-parser-review-v1",
+        "fix/remy-dictation-wishes-20261021"
       ]
     },
     {
