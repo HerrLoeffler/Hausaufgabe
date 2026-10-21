@@ -79,3 +79,10 @@ Konkrete Revision3 auf GitHub sichern und der bestehenden GradeCrew Zentrale01a1
 
 
 Revisionsprüfung3 tatsächlich erfolgreich:12Abschnitte/6Lieferpakete, neueZiel-/Konzept-/Wissensobjekte undPorts mitAbnahmeszenarien verknüpft; STATE bytegleich zuMain2324652c, alle60Main-Registryeinträge und vollständigeMain-TODO erhalten. Nurvier eigeneDokumentations-/Zuordnungsdateien imMain-Diff; Release-Status-Parser und git diff --check erfolgreich. Diesistkein unabhängigerProduktreview/Runtime-/Deploybeleg.
+
+
+## Tatsächliche GitHub-Sicherung / Übergabe zur V1-Planprüfung
+
+Martin hat den Export ausdrücklich freigegeben. Shellpush scheiterte ausschließlich an fehlenden Credentials; verbundener GitHub-Zugang anschließend erfolgreich genutzt. Remote-Plancommit `61e1b71b3c9022ea56facfe10bf59c32d0a02c44`, exakt gleicher Baum `5e7d51c7e39726eafdded7b0d65af3bfc5b5f432` wie lokal `2571637a1dfe0fdbb909a55cfaf1381a8ec4f187`. [Draft-PR269](https://github.com/HerrLoeffler/Hausaufgabe/pull/269), vier eigene Dokumentationsdateien gegen Main2324652c. Dieser Folgecommit ergänzt ausschließlich diesen Receipt; die technische/fachliche Planquelle bleibt61e1b71b. Finalen PR-Head/CI vor Integration frisch lesen.
+
+Keine Mainintegration und keine Liveänderung. V1-Planprüfung und anschließende Verteilung an zuständige bestehende Fachchats sind beauftragt; tatsächliche Produkt-/Runtimeabnahme weiterhin offen. GitHub-Workflowzustand separat lesen, kein Erfolg aus PR-Erstellung ableiten.
