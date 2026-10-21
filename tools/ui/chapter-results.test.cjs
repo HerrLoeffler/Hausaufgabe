@@ -22,3 +22,11 @@ test('secure student renders supplied chapter notes only in grade release mode',
   const table=c.document.querySelector('.secureChapterResults');assert.equal(table.textContent.includes('Note 3'),mode==='points_grade');assert.match(table.textContent,/75 %/);dom.window.close();
  }
 });
+
+test('class average is a native disclosure with overall grade visible while collapsed',()=>{
+ const {JSDOM}=require('jsdom');
+ for(const total of [null,{count:3,gradeCount:3,points:7,maxPoints:10,percent:70,grade:2.67}]){
+  const c={classAverages:()=>({total,chapters:[],included:total?3:0,pending:1}),gradeFromPercent(){},escapeHtml:s=>String(s)};vm.createContext(c);vm.runInContext(source.slice(source.indexOf('function classAveragesMarkup('),source.indexOf('\nfunction renderResultsTable(')),c);
+  const dom=new JSDOM(c.classAveragesMarkup([]));const detail=dom.window.document.querySelector('details.chapterClassAverages');assert.ok(detail);assert.equal(detail.open,false);assert.match(detail.querySelector('summary').textContent,/Klassendurchschnitt/);assert.match(detail.querySelector('summary').textContent,total?/Ø Gesamtnote 2,67/:/Ø Gesamtnote –/);dom.window.close();
+ }
+});

@@ -414,3 +414,5 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 .chapterEditor {margin-bottom:16px}.chapterEditorRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0}.chapterEditorRow input{flex:1;min-width:160px}.chapterEditorRow button,.chapterEditorRow select{min-height:44px}.chapterEditorRow small{color:var(--muted,#667085)}.chapterQuestionSelect{display:flex;gap:12px;align-items:center;margin:12px 0}.chapterQuestionSelect select{max-width:100%;min-height:44px}
 
 .chapterClassAverages{margin-top:24px}.chapterAverageScroll{overflow-x:auto}.chapterClassTotal{font-weight:700;border-top:2px solid var(--primary,#2458d8)}.chapterClassAverages .hint{margin-top:12px}
+
+.chapterClassAverages>summary{cursor:pointer;min-height:44px;align-content:center}.chapterAverageSummaryContent{display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 20px;width:calc(100% - 24px)}.chapterAverageSummaryContent strong{font-size:1.2rem}.chapterAverageSummaryContent>span{font-weight:700}.chapterClassAverages[open]>summary{margin-bottom:12px}

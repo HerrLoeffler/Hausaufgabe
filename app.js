@@ -1,6 +1,6 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
-const APP_VERSION = "2.3.1-gc46-chapters-rc2";
+const APP_VERSION = "2.3.1-gc46-chapters-rc3";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -7823,9 +7823,10 @@ function chapterResultsMarkup(submission) {
 function classAveragesMarkup(submissions) {
   const summary=classAverages(submissions,gradeFromPercent);
   const number=value=>value==null?"–":Number(value.toFixed(2)).toLocaleString("de-DE");
-  if(!summary.total)return `<section class="card chapterClassAverages"><h2>Klassendurchschnitt</h2><p>Noch keine vollständig bewerteten Abgaben. ${summary.pending} Bewertung(en) offen.</p></section>`;
+  const heading=`<summary><span class="chapterAverageSummaryContent"><strong>Klassendurchschnitt</strong><span>Ø Gesamtnote ${number(summary.total?.grade)}</span></span></summary>`;
+  if(!summary.total)return `<details class="card chapterClassAverages">${heading}<p>Noch keine vollständig bewerteten Abgaben. ${summary.pending} Bewertung(en) offen.</p></details>`;
   const row=(title,value,total=false)=>`<tr${total?' class="chapterClassTotal"':''}><th scope="row">${escapeHtml(title)}</th><td>${number(value.points)}/${number(value.maxPoints)}</td><td>${number(value.percent)} %</td><td>${number(value.grade)}${value.gradeCount!==value.count?` <small>(${value.gradeCount} Noten)</small>`:""}</td><td>${value.count}</td></tr>`;
-  return `<section class="card chapterClassAverages"><h2>Klassendurchschnitt</h2><p>${summary.included} bewertete Abgaben · ${summary.pending} Bewertung(en) offen</p><div class="chapterAverageScroll"><table class="resultTable"><thead><tr><th>Bereich</th><th>Ø Punkte</th><th>Ø Prozent</th><th>Ø Note</th><th>Abgaben</th></tr></thead><tbody>${summary.chapters.map(ch=>row(ch.title,ch)).join("")}${row("Gesamttest",summary.total,true)}</tbody></table></div><p class="hint">Durchschnitt der Einzelwerte je Abgabe. Der Gesamtnotenschnitt basiert auf den Gesamtnoten.${summary.mixedVersions?" Unterschiedliche Kapitelstände werden getrennt ausgewertet.":""}</p></section>`;
+  return `<details class="card chapterClassAverages">${heading}<p>${summary.included} bewertete Abgaben · ${summary.pending} Bewertung(en) offen</p><div class="chapterAverageScroll"><table class="resultTable"><thead><tr><th>Bereich</th><th>Ø Punkte</th><th>Ø Prozent</th><th>Ø Note</th><th>Abgaben</th></tr></thead><tbody>${summary.chapters.map(ch=>row(ch.title,ch)).join("")}${row("Gesamttest",summary.total,true)}</tbody></table></div><p class="hint">Durchschnitt der Einzelwerte je Abgabe. Der Gesamtnotenschnitt basiert auf den Gesamtnoten.${summary.mixedVersions?" Unterschiedliche Kapitelstände werden getrennt ausgewertet.":""}</p></details>`;
 }
 
 function renderResultsTable() {
