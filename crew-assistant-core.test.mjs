@@ -2,6 +2,68 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { CREW_MEMBERS, parseTestRequest, patchSummary, resolveLocalCrewRequest } from "./crew-assistant-core.mjs";
 
+test("spoken Audios reaches listening tasks while the teacher's preference reaches wishes", () => {
+  const result = resolveLocalCrewRequest({ crewId: "remy", text: "mathe 5 Klasse Thema Bruchrechnen kürzen und erweitern 15 Aufgaben zwei Bilder zwei Audios gerne ihr einfache Aufgaben" });
+  assert.equal(result.action.patch.audioQuestionCount, 2);
+  assert.equal(result.action.patch.count, 15);
+  assert.equal(result.action.patch.imageQuestionCount, 2);
+  assert.equal(result.action.patch.topic, "Bruchrechnen kürzen und erweitern");
+  assert.match(result.action.patch.notes, /einfache Aufgaben/i);
+});
+
+test("standalone audio counts accept everyday plurals without changing answer or release audio", () => {
+  for (const [text, expected] of [["zwei Audios", 2], ["3 Audioaufgaben", 3], ["2 audio clips", 2], ["null Audios", 0]]) {
+    const patch = parseTestRequest(text);
+    assert.equal(patch.audioQuestionCount, expected, text);
+    assert.equal(patch.audioAnswerQuestionCount, undefined, text);
+    assert.equal(patch.solutionAudioQuestionCount, undefined, text);
+  }
+  const patch = parseTestRequest("Thema Brüche zwei Audios und drei vorgelesene Antwortoptionen");
+  assert.equal(patch.topic, "Brüche");
+  assert.equal(patch.audioQuestionCount, 2);
+  assert.equal(parseTestRequest("zwei Audio-Lösungen nach Abgabe").audioQuestionCount, undefined);
+});
+
+test("free additional preferences survive beside recognised fields without becoming the topic", () => {
+  for (const [text, topic, wish] of [
+    ["Mathe Klasse 5 Thema Brüche gerne mit Piraten und kleinen Geschichten", "Brüche", /Piraten und kleinen Geschichten/],
+    ["Deutsch Klasse 3 Thema Wortarten. Bitte verwende Beispiele aus dem Schulgarten.", "Wortarten", /Beispiele aus dem Schulgarten/],
+    ["Math Year 5 topic fractions. I would like examples about astronauts.", "fractions", /examples about astronauts/i],
+    ["Mathe Klasse 5 Thema Brüche. Eigene Wünsche bitte mit Bezug zum Fußball.", "Brüche", /Bezug zum Fußball/]
+  ]) {
+    const patch = parseTestRequest(text);
+    assert.equal(patch.topic, topic, text);
+    assert.match(patch.notes, wish, text);
+  }
+});
+
+test("a plain structured creation request does not duplicate itself into wishes", () => {
+  const patch = parseTestRequest("Bitte erstelle einen Mathetest für Klasse 5 Thema Brüche mit 15 Aufgaben und zwei Audios.");
+  assert.equal(patch.audioQuestionCount, 2);
+  assert.equal(patch.notes, undefined);
+});
+
+test("post-submission audio explanations never also request listening tasks", () => {
+  for (const text of ["zwei Audio-Erklärungen nach Abgabe", "zwei Audio Erklärungen nach Abgabe", "zwei Audio-Erklaerungen nach Abgabe"]) {
+    const patch = parseTestRequest(`Mathe Klasse 5 Thema Brüche ${text}`);
+    assert.equal(patch.audioQuestionCount, undefined, text);
+    assert.equal(patch.solutionAudioQuestionCount, 2, text);
+  }
+});
+
+test("quantities inside a preference cannot swallow the remaining personal wishes", () => {
+  for (const [text, notes] of [
+    ["Mathe Klasse 5 Thema Brüche gerne zwei Audios und Beispiele aus dem Schulgarten", /Beispiele aus dem Schulgarten/],
+    ["Mathe Klasse 5 Thema Brüche gerne mit Piraten, zwei Bilder und kleinen Geschichten", /Piraten[\s\S]*kleinen Geschichten/],
+    ["Mathe Klasse 5 Thema Brüche gerne mit Piraten und kleinen Geschichten, zwei Bilder", /Piraten und kleinen Geschichten/],
+    ["Mathe Klasse 5 Thema Brüche gerne sieben Audios und Beispiele aus dem Schulgarten", /sieben Audios und Beispiele aus dem Schulgarten/i]
+  ]) assert.match(parseTestRequest(text).notes, notes, text);
+});
+
+test("the word wishes inside a subject topic is preserved", () => {
+  assert.equal(parseTestRequest("Ethik Klasse 5 Thema Bedürfnisse und Wünsche").topic, "Bedürfnisse und Wünsche");
+});
+
 test("staging dictation keeps school and funny-sentence wishes out of the English topic", () => {
   const patch = parseTestRequest("9 Klasse großer Englischtest über alle Bereiche die in der Mittelschule vorkommen ich will vor allem witzige lustige Sätze Grammatik alles was eben im Lehrplan so Englisch irgendwie auch abgefragt wird mit einbauen 20 Fragen 10 Minuten Zeit drei Bilder zwei hör Aufgaben zwei mit vorgelesenen Antwortmöglichkeiten und zwei mit Lösungen als Audio");
   assert.equal(patch.subject, "Englisch");

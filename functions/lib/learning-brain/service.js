@@ -14,7 +14,7 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
   const contextTopics=catalog.topics.filter(t=>t.grade===state.learner.grade&&t.track===state.learner.track&&!['audio','speaking','visual'].includes(t.modality));
   const active=state.sessions[state.activeSessionId];
   const recommendations=skills.filter(s=>s.status==='practicing'||s.reviewDue).map(s=>({topicId:s.topicId,title:getTopic(s.topicId)?.title||'',reason:s.reviewDue?'Zeit für eine neue Probe ohne Hilfe.':'Hier kannst du an deinen letzten Schritt anknüpfen.'}));
-  if(!recommendations.length&&contextTopics[0])recommendations.push({topicId:contextTopics[0].id,title:contextTopics[0].title,reason:'Starte mit einer ersten Probe. Dein Lernstand ist noch offen.'});
+  if(!recommendations.length)for(const subject of ['math','german']){const first=contextTopics.find(t=>t.subject===subject);if(first)recommendations.push({topicId:first.id,title:first.title,reason:'Starte mit einer ersten Probe. Dein Lernstand ist noch offen.'});}
   return {learner:state.learner,skills,recommendations:recommendations.slice(0,8),activeSession:active&&active.phase!=='ended'?publicSession(active,now()):null,catalogVersion:catalog.version};
  };
  async function profile(uid,data={}){return store.transact(uid,state=>{
