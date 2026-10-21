@@ -45,3 +45,8 @@ Automatic approval review rejected a proposed broad query of staging profile nam
 Browser fraction acceptance is complete. Physical-device acceptance remains untested. Main TODO/STATE/registry promotion remains with the integration owner; proposed coordination delta is this existing task -> staging_deployed, PR265, runtime989f646/backendcfea0cc, private/test-only access. No unrelated main coordination objects copied into product branch.
 
 Relevant scoped assurance: SEC04/06/07/08/11/14/17 and PRIV07/17/20: own synthetic accounts only, server key, auth/quota, closed input/public projection, immutable/idempotent grading and no pupil answers to AI; current source tests and genuine server receipts above. Broader school/AVV/legal/device approval not claimed. Requested project working model for integration Sol/medium, actual runtime effort unknown; no runtime switch claimed.
+
+
+## Verified owner preview access (2026-10-21)
+
+Owner reported AI-CREATE-001 while the header displayed Admin. A targeted lookup of the explicitly supplied own login verified an active teacher profile in gradecrew-staging-2026; Admin is the display name, not the role. After explicit owner approval, source commit a18870f5086adaf3985c75d0070b22ddef2b84e2 adds only the exact verified staging UID to the compiled preview allowlist. No administrator promotion and no owner-editable opt-in flag. Both visual255 codebases were deployed successfully; all 16 prefixed functions are ACTIVE with new revisions. Tests: 4 preview access + 293 Functions + 97 Assessment passed. No AI generation triggered during this fix. No Hosting or School Live deployment. Evidence: docs/evidence/visual255-owner-access-20261021.json.
