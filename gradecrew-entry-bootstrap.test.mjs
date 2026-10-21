@@ -1,3 +1,8 @@
+import {mountChapterEditor,mountQuestionChapterSelect,chapterFields,copyChapterFields} from './chapter-editor.mjs';
+import {mountChapterAnswerExplorer} from './chapter-answer-explorer.mjs';
+import {classAverages} from './chapter-averages.mjs';
+import {mountChapterCreation} from './chapter-creation.mjs';
+import Chapters from './shared/chapter-contract.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -122,6 +127,7 @@ test('app bootstrap binds its real auth controls after public entry installation
     const announcementReads = [];
     const forbidden = () => { forbiddenCalls += 1; throw new Error('Guest tutorial reached a provider'); };
     const bindings = {
+      mountChapterEditor,mountQuestionChapterSelect,chapterFields,copyChapterFields,mountChapterCreation,mountChapterAnswerExplorer,classAverages,Chapters,structuredClone,
       initializeApp: () => ({}), getAuth: () => ({}), getFirestore: () => ({}), createAiClient: () => new Proxy({}, { get: () => forbidden }), installReviewMode,
       firebaseSignIn: (...args) => { loginCalls.push(args); return Promise.resolve({ user: {} }); },
       createDiagnostics: () => ({ record: noop, setRelease: noop }), installDiagnostics: noop,

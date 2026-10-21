@@ -15,7 +15,7 @@ function startFixture(previous = null) {
   const jobs = [], enqueued = [], loaded = [];
   const sourceRef = { get: async () => ({ exists: true, data: () => ({ ownerId: "teacher" }) }) };
   const db = { doc: () => sourceRef, collection: () => ({ doc: id => ({ id, get: async () => ({ data: () => previous || {} }) }) }) };
-  const context = vm.createContext({ ...require("../lib/constants"), ...variants, HttpsError, createHash,
+  const context = vm.createContext({ ...require("../lib/chapter-generation"), ...require("../lib/constants"), ...variants, HttpsError, createHash,
     getFirestore: () => db, randomUUID: () => "generated-request", Timestamp: { now: () => ({}) }, aiJobLock: () => ({}),
     sanitizeMaterials: () => [], requireAccountWrite: async () => {},
     loadVariantInput: async (_db, uid, id) => { loaded.push([uid, id]); return blueprint(); },
@@ -63,7 +63,7 @@ async function workerFixture({ failImage = false, heldSource = false } = {}) {
   const jobRef = { id: "0000000000", update: async update => { current = { ...current, ...update }; } };
   const quizRef = { update: async update => { quizUpdates.push(update); }, collection: name => ({ doc: id => ({ create: async value => { questions.set(id, value); }, set: async value => { privateAudio.set(id, value); } }) }) };
   const db = { collection: name => ({ doc: () => name === "aiJobs" ? jobRef : { get: async () => ({ exists: true, data: () => original }) } }), runTransaction: async callback => callback({ get: async () => ({ exists: true, data: () => current }), update: (_ref, update) => { current = { ...current, ...update }; } }) };
-  const context = vm.createContext({ ...require("../lib/constants"), ...variants, ...require("../lib/ai-job"), ...require("../lib/solution-audio"), ...require("../lib/audio-answers"), HttpsError, require: name => require(name.startsWith("./lib/") ? `../${name.slice(2)}` : name),
+  const context = vm.createContext({ ...require("../lib/chapter-generation"), ...require("../lib/constants"), ...variants, ...require("../lib/ai-job"), ...require("../lib/solution-audio"), ...require("../lib/audio-answers"), HttpsError, require: name => require(name.startsWith("./lib/") ? `../${name.slice(2)}` : name),
     exports: {}, OPENAI_API_KEY: "mock-secret-reference", onTaskDispatched: (_options, fn) => fn, getFirestore: () => db, Timestamp: { now: () => ({ synthetic: true }) },
     requireAiUser: async () => ({ profile: {} }),
     generateTestForUser: async () => ({ test: { title: "Neue Variante", questions: [generated] }, meta: {} }),

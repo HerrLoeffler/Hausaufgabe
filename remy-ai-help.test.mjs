@@ -62,7 +62,7 @@ function acceptProposal(w) {
 
 function installCollector(w) {
   const app = fs.readFileSync('app.js', 'utf8');
-  const start = app.indexOf('function collectAiRequest()');
+  const start = app.indexOf('function collectAiRequest(');
   const end = app.indexOf('\n}', start) + 2;
   w.eval(`$ = id => document.getElementById(id); state = { aiMaterials: [] }; ${app.slice(start, end)}; window.collectAiRequest = collectAiRequest;`);
   const values = { aiCount: '5', aiPoints: '10', aiImageQuestionCount: '0', aiAudioQuestionCount: '0', aiAudioAnswerQuestionCount: '0', aiSolutionAudioQuestionCount: '0' };

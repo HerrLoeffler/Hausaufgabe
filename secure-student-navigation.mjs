@@ -13,16 +13,19 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
   let sections = [];
   let index = 0;
   let frame;
+  let openOnly=false;
 
   const measure = () => {
     doc.documentElement.style.setProperty('--secure-header-height', `${Math.ceil(header.getBoundingClientRect().height)}px`);
     doc.documentElement.style.setProperty('--secure-navigation-height', `${Math.ceil(nav.getBoundingClientRect().height)}px`);
   };
   const paint = () => {
-    current.textContent = `Aufgabe ${index + 1} von ${sections.length}`;
+    const title=sections[index]?.dataset.chapterTitle;
+    current.textContent = `${title ? title+" · " : ""}Aufgabe ${index + 1} von ${sections.length}`;
     previous.disabled = index === 0;
     next.disabled = index === sections.length - 1;
-    overview.querySelectorAll('button').forEach((button, i) => {
+    overview.querySelectorAll('button[data-question-index]').forEach((button, i) => {
+      button.hidden=openOnly && sections[i]?.dataset.answered==='true';
       if (i === index) button.setAttribute('aria-current', 'step');
       else button.removeAttribute('aria-current');
     });
@@ -63,11 +66,21 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
     overview.replaceChildren(...sections.map((_, i) => {
       const button = doc.createElement('button');
       button.type = 'button';
+      button.dataset.questionIndex=String(i);
       button.textContent = String(i + 1);
       button.setAttribute('aria-label', `Aufgabe ${i + 1}`);
       button.addEventListener('click', () => go(i));
       return button;
     }));
+    if(sections.some(s=>s.dataset.chapterId)) {
+      let prior=null;
+      for(const button of [...overview.querySelectorAll('[data-question-index]')]) {
+        const section=sections[Number(button.dataset.questionIndex)];
+        if(section.dataset.chapterId!==prior){const heading=doc.createElement('strong');heading.className='secureChapterOverviewTitle';heading.textContent=section.dataset.chapterTitle;button.before(heading);prior=section.dataset.chapterId;}
+      }
+      const filter=doc.createElement('button');filter.type='button';filter.textContent='Nur offene Aufgaben';filter.setAttribute('aria-pressed',String(openOnly));
+      filter.addEventListener('click',()=>{openOnly=!openOnly;filter.setAttribute('aria-pressed',String(openOnly));paint();});overview.prepend(filter);
+    }
     closeOverview();
     if (sections.length) paint();
     schedule();
@@ -86,6 +99,7 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
   next.addEventListener('click', onNext);
   toggle.addEventListener('click', onToggle);
   nav.addEventListener('keydown', onKey);
+  questions.addEventListener('chapter-progress',schedule);
   win.addEventListener('scroll', schedule, { passive: true });
   win.addEventListener('resize', schedule, { passive: true });
   win.visualViewport?.addEventListener('resize', schedule, { passive: true });
@@ -107,6 +121,7 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
     toggle.removeEventListener('click', onToggle); nav.removeEventListener('keydown', onKey);
     win.removeEventListener('scroll', schedule); win.removeEventListener('resize', schedule);
     win.visualViewport?.removeEventListener('resize', schedule);
+    questions.removeEventListener('chapter-progress',schedule);
     questions.removeEventListener('load', schedule, true);
   };
 }

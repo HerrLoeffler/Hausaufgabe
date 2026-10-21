@@ -1,4 +1,7 @@
 "use strict";
+const {snapshotChapterQuestions}=require("./chapter-media");
+const {reviewChapterResults}=require("./chapter-results");
+const {aggregateChapterResults}=require("./shared/chapter-contract");
 
 const { randomBytes } = require("node:crypto");
 const { initializeApp, getApps } = require("firebase-admin/app");
@@ -123,7 +126,7 @@ async function authorizePolicyTeacher(request, quiz, tx) {
 
 // Private publication evidence cannot be forged through client quiz writes.
 // A draft practice flag is never itself an authorization.
-exports.configurePracticeSolutionRelease = onCall(callableOpts, observed("configurePracticeSolutionRelease", async request => {
+async function configurePracticeSolutionReleaseHandler(request) {
   const quizId = cleanQuizId(request.data?.quizId);
   const action = request.data?.action;
   if (!["prepare", "publish", "release"].includes(action)) throw new HttpsError("invalid-argument", "Ungültige Freigabeaktion.");
@@ -151,6 +154,19 @@ exports.configurePracticeSolutionRelease = onCall(callableOpts, observed("config
       tx.update(quizRef, { practiceSolutionsReleased: true, updatedAt: Timestamp.now() });
       return { revision: policy.revision, released: true };
     }
+    if (quiz.chapterSchemaVersion != null && quiz.chapterSchemaVersion !== 1) throw new HttpsError("failed-precondition","Diese Kapitelversion wird noch nicht unterstützt.");
+    if (quiz.chapterSchemaVersion === 1 && quiz.solutionReleaseMode !== PRACTICE_MODE) {
+      if (quiz.published === true && quiz.ended !== true) throw new HttpsError("failed-precondition","Die laufende Runde ist unveränderlich.");
+      if (audioReleaseBlockedByMetadata(quiz) || quiz.audioReady === false || quiz.showSolutions === true && quiz.solutionAudioReady === false) throw new HttpsError("failed-precondition","Bitte die Audios vor Veröffentlichung prüfen.");
+      const questions=await readQuestions(quizId,tx);
+      let revision;
+      try { revision=authoringFingerprint(questions,contractOptions(quiz)); } catch { throw new HttpsError("failed-precondition","Bitte Kapiteltitel und Aufgabenzuordnung prüfen."); }
+      if(action==="prepare") return {revision,needsConfirmation:false};
+      if(request.data?.expectedRevision!==revision) throw new HttpsError("aborted","Der Test wurde geändert. Bitte erneut prüfen.");
+      const now=Timestamp.now();const runId=sessionMode(quiz)==="teacher"?`run_${randomBytes(16).toString("hex")}`:null;
+      const patch={published:true,ended:false,publishedAt:now,reopenedAt:now,chapterPublicationRevision:revision,sessionState:sessionMode(quiz)==="teacher"?"waiting":"open",sessionRunId:runId,sessionStartedAt:null,updatedAt:now};
+      tx.update(quizRef,patch);return {...patch,revision};
+    }
     if (quiz.solutionReleaseMode !== PRACTICE_MODE) throw new HttpsError("failed-precondition", "Bitte ausdrücklich den Übungsmodus wählen.");
     if (quiz.published === true && quiz.ended !== true) throw new HttpsError("failed-precondition", "Die laufende Runde darf nicht umgestellt werden.");
     if (audioReleaseBlockedByMetadata(quiz) || quiz.audioReady === false
@@ -171,6 +187,7 @@ exports.configurePracticeSolutionRelease = onCall(callableOpts, observed("config
     const patch = {
       published: true, ended: false, publishedAt: now, reopenedAt: now,
       sessionState: sessionMode(quiz) === "teacher" ? "waiting" : "open", sessionRunId: runId, sessionStartedAt: null,
+      ...(quiz.chapterSchemaVersion===1?{chapterPublicationRevision:authoringFingerprint(questions,contractOptions(quiz))}:{}),
       practiceSolutionRevision: revision, practiceSolutionsReleased: needsConfirmation,
       contentLocale: quiz.contentLocale || "de-DE", gradingLocale: quiz.gradingLocale || quiz.contentLocale || "de-DE",
       localeContractVersion: Number(quiz.localeContractVersion) || 1, updatedAt: now
@@ -178,7 +195,9 @@ exports.configurePracticeSolutionRelease = onCall(callableOpts, observed("config
     tx.update(quizRef, patch);
     return { revision, published: true, sessionRunId: runId, sessionState: patch.sessionState, practiceSolutionsReleased: needsConfirmation };
   });
-}));
+}
+exports.configurePracticeSolutionRelease=onCall(callableOpts,observed("configurePracticeSolutionRelease",configurePracticeSolutionReleaseHandler));
+exports.publishChapterAssessment=onCall(callableOpts,observed("publishChapterAssessment",configurePracticeSolutionReleaseHandler));
 
 function cleanQuizId(value) {
   const quizId = String(value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
@@ -277,13 +296,14 @@ function publicQuizState(quiz, quizId) {
 
 function contractOptions(quiz) {
   return {
+    ...(quiz.chapterSchemaVersion != null ? {chapterSchemaVersion:quiz.chapterSchemaVersion,chapters:quiz.chapters}:{}),
     shuffleQuestions: quiz.shuffleQuestions === true,
     shuffleAnswers: quiz.shuffleAnswers === true
   };
 }
 
 function contractOptionsEqual(a, b) {
-  return a.shuffleQuestions === b.shuffleQuestions && a.shuffleAnswers === b.shuffleAnswers;
+  return a.shuffleQuestions === b.shuffleQuestions && a.shuffleAnswers === b.shuffleAnswers && JSON.stringify(a.chapters||null)===JSON.stringify(b.chapters||null) && a.chapterSchemaVersion===b.chapterSchemaVersion;
 }
 
 function attemptStatusForStart(quiz) {
@@ -416,6 +436,7 @@ function attemptPublicState(attempt, quiz, paper = null) {
     deadlineAtMillis,
     serverNowMillis: Date.now(),
     timeLimitMinutes: attempt.timeLimitMinutes || null,
+    ...(attempt.chapterContractVersion===1?{chapterContractVersion:1,chapters:attempt.chapters}:{}),
     paper: attempt.status === "running" ? paper : null,
     quiz: publicQuizState(quiz, attempt.quizId)
   };
@@ -521,6 +542,7 @@ function makeReceipt(submission, quiz = null, privateData = null, publicationPol
   if (!receipt.needsReview && ["points", "points_percent", "points_grade"].includes(mode)) {
     receipt.totalPoints = Number(submission?.totalPoints) || 0;
     receipt.maxPoints = Number(submission?.maxPoints) || 0;
+    if(submission?.chapterSnapshot) receipt.chapterResults=aggregateChapterResults(submission.chapterSnapshot,submission.grading).map(result=>{const safe={chapterId:result.chapterId,title:result.title,awardedPoints:result.awardedPoints,maxPoints:result.maxPoints};if(["points_percent","points_grade"].includes(mode))safe.percent=result.percent;if(mode==="points_grade"&&!result.needsReview&&result.percent!=null&&submission.gradeScaleSnapshot?.thresholds?.length===6)safe.grade=gradeFromPercent(result.percent,submission.gradeScaleSnapshot.thresholds);return safe;});
   }
   if (!receipt.needsReview && ["points_percent", "points_grade"].includes(mode)) receipt.percent = Number(submission?.percent) || 0;
   if (!receipt.needsReview && mode === "points_grade" && submission?.grade != null) receipt.grade = Number(submission.grade);
@@ -561,6 +583,7 @@ async function buildReleasedReceipt(quizId, submission, quiz, privateData) {
 function contractForQuestions(questions, privateData) {
   if (!privateData?.paperSecret) throw new HttpsError("data-loss", "Die sichere Aufgabenabbildung fehlt.");
   const options = {
+    ...(privateData.chapterSnapshot?{chapterSchemaVersion:1,chapters:privateData.chapterSnapshot.chapters}:{}),
     shuffleQuestions: privateData.shuffleQuestions === true,
     shuffleAnswers: privateData.shuffleAnswers === true
   };
@@ -579,7 +602,7 @@ exports.getAssessmentInfo = onCall(callableOpts, observed("getAssessmentInfo", a
   const quizId = cleanQuizId(request.data?.quizId);
   const { data: quiz } = await readQuiz(quizId);
   validateQuizOpen(quiz);
-  return { quiz: publicQuizState(quiz, quizId), capabilities: { offlineRecovery: 1 } };
+  return { quiz: publicQuizState(quiz, quizId), capabilities: { offlineRecovery: 1, chapters: 1 } };
 }));
 
 exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentAttempt", async request => {
@@ -590,6 +613,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
   const db = getFirestore();
   const { ref: quizRef, data: initialQuiz } = await readQuiz(quizId);
   validateQuizOpen(initialQuiz);
+  if(initialQuiz.chapterSchemaVersion != null && (initialQuiz.chapterSchemaVersion!==1 || request.data?.clientCapabilities?.chapters!==1)) throw new HttpsError("failed-precondition","Bitte öffne diesen Kapiteltest in der aktuellen GradeCrew-Webversion.");
   const initialRunId = effectiveRunId(initialQuiz, quizId);
   const initialOptions = contractOptions(initialQuiz);
   const id = deriveAttemptId(quizId, initialRunId, clientAttemptId);
@@ -628,6 +652,10 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
             && !(await tx.get(db.doc(`assessmentSolutionAssets/${asset.assetId}`))).exists) solutionAssets.push(asset);
         }
       }
+      if(storedPrivate.chapterSnapshot) {
+        const refs=new Set((storedPrivate.chapterQuestions||[]).map(q=>q.reviewMediaAssetId).filter(Boolean));
+        solutionAssets.push(...snapshotChapterQuestions(quizId,await readQuestions(quizId,tx)).assets.filter(a=>refs.has(a.assetId)));
+      }
       return { storedAttempt, storedPrivate, currentQuiz, newContract: null, solutionAssets };
     }
 
@@ -639,6 +667,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
     const newPaperSecret = createPaperSecret();
     const newContract = buildAssessmentContract(questions, newPaperSecret, initialOptions);
     assertNoSolutionLeak(newContract.paper);
+    if(newContract.chapterSnapshot && currentQuiz.chapterPublicationRevision!==newContract.authoringFingerprint) throw new HttpsError("failed-precondition","Die Kapitelveröffentlichung muss erneut geprüft werden.");
     const newDecoderShape = buildTeacherDecoderShape(questions);
     const newSolutionSnapshot = buildSolutionSnapshot(questions);
     const now = Date.now();
@@ -681,6 +710,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       solutionPolicy,
       questionCount: newContract.paper.length,
       maxPoints: newContract.gradingKey.reduce((sum, key) => sum + Number(key.points || 0), 0),
+      ...(newContract.chapterSnapshot?{chapterContractVersion:1,chapters:newContract.chapterSnapshot.chapters}:{}),
       secureAssessmentVersion: 2,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now()
@@ -690,6 +720,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       attemptId: id,
       tokenHash: tokenHash(attemptToken),
       paperSecret: newPaperSecret,
+      ...(newContract.chapterSnapshot?{chapterSnapshot:newContract.chapterSnapshot,chapterQuestions:snapshotChapterQuestions(quizId,questions).questions}:{}),
       sourceFingerprint: newContract.sourceFingerprint,
       authoringFingerprint: newContract.authoringFingerprint,
       gradingKey: newContract.gradingKey,
@@ -707,7 +738,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
     tx.set(quota.ref, quota.data, { merge: true });
     tx.create(aRef, created);
     tx.create(pRef, privateData);
-    return { storedAttempt: created, storedPrivate: privateData, currentQuiz, newContract, solutionAssets: audioSnapshot.assets };
+    return { storedAttempt: created, storedPrivate: privateData, currentQuiz, newContract, solutionAssets: [...audioSnapshot.assets,...(newContract.chapterSnapshot?snapshotChapterQuestions(quizId,questions).assets:[])] };
   });
 
   await persistSolutionAssets(quizId, solutionAssets);
@@ -855,6 +886,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
       studentName: attempt.studentName,
       answers: teacherAnswers,
       grading: result.grading,
+      ...(privateData.chapterSnapshot?{chapterSnapshot:privateData.chapterSnapshot,chapterQuestions:privateData.chapterQuestions||[],chapterResults:aggregateChapterResults(privateData.chapterSnapshot,result.grading),reviewRevision:0}:{}),
       autoPoints: result.autoPoints,
       totalPoints: result.totalPoints,
       maxPoints: result.maxPoints,
@@ -919,4 +951,20 @@ exports.getAssessmentReceipt = onCall(callableOpts, observed("getAssessmentRecei
     policySnap.exists ? policySnap.data() : null
   );
   return { receipt: await attachReleasedSolutionAudio(quizId, receipt, privateSnap.data()) };
+}));
+
+exports.reviewChapterAssessment=onCall(callableOpts,observed("reviewChapterAssessment",async request=>{
+  const quizId=cleanQuizId(request.data?.quizId),id=cleanAttemptId(request.data?.submissionId),db=getFirestore();
+  return db.runTransaction(async tx=>{
+    const quizRef=db.doc(`quizzes/${quizId}`),sRef=submissionRef(quizId,id);
+    const quizSnap=await tx.get(quizRef),submissionSnap=await tx.get(sRef);
+    if(!quizSnap.exists||!submissionSnap.exists)throw new HttpsError("not-found","Die Abgabe existiert nicht.");
+    const quiz=quizSnap.data();await authorizePolicyTeacher(request,quiz,tx);
+    if(quiz.isDeleted===true||quiz.rightsHold===true)throw new HttpsError("failed-precondition","Dieser Test ist gesperrt.");
+    const submission=submissionSnap.data();let patch;
+    try{patch=reviewChapterResults(submission,request.data?.awards,request.data?.expectedReviewRevision);}catch(error){throw new HttpsError(error.code||"invalid-argument",error.message);}
+    const scale=submission.gradeScaleSnapshot?.thresholds?.length===6?submission.gradeScaleSnapshot:gradingScaleSnapshot(quiz);
+    patch.grade=gradeFromPercent(patch.percent,scale.thresholds);patch.reviewedAt=Timestamp.now();patch.reviewedBy=request.auth.uid;
+    tx.update(sRef,patch);return {reviewRevision:patch.reviewRevision};
+  });
 }));

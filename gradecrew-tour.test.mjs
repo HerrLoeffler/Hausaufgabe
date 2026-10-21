@@ -112,7 +112,7 @@ test('Public wrapper keeps live flags; Coco introduces Remy and onboarding never
   const tour = w.install(api);
   let providerCalls = 0, preparedCalls = 0;
   Object.assign(w, {
-    crewTour: tour, toast: () => {}, collectAiRequest: () => ({}),
+    crewTour: tour, state:{}, $:id=>w.document.getElementById(id), toast: () => {}, collectAiRequest: () => ({}),
     saveAiPreferences: async () => {}, startAiCreationJob: async () => providerCalls++
   });
   w.eval(fn('generateAiTestNative'));

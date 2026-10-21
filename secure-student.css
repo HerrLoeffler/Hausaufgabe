@@ -46,3 +46,5 @@ html{scroll-padding-top:calc(var(--secure-header-height,88px) + var(--secure-nav
   .secureNavigationRow strong{font-size:13px}
   .secureNavigationRow button{padding:6px}
 }
+
+.secureChapterHeading{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:24px 0 12px;font-size:1.2rem;scroll-margin-top:calc(var(--secure-header-height,60px) + var(--secure-navigation-height,60px) + 12px)}.secureChapterHeading small{font-size:.8rem;font-weight:400;color:#667085}.secureChapterOverviewTitle{flex-basis:100%;width:100%;padding-top:8px;font-size:.9rem}.secureChapterResults{width:100%;border-collapse:collapse;margin-top:16px}.secureChapterResults td,.secureChapterResults th{padding:8px;text-align:left;border-bottom:1px solid #e1e7ef}
