@@ -68,7 +68,11 @@ function validate(c,topic,task){
   if(tokens.length<2||tokens.length>40)invalidText(c.mode,`${field} enthält ${tokens.length} Token; erlaubt sind 2 bis 40.`,{field,tokenCount:tokens.length});
   if(c.mode==='select'&&c.tokens.length&&(c.tokens.length!==tokens.length||c.tokens.some((token,index)=>token!==tokens[index])))invalidText(c.mode,'tokens muss leer oder mit den sichtbaren Wörtern identisch sein (gleiche Zeichen und Reihenfolge).',{field:'tokens',tokenCount:c.tokens.length,sourceTokenCount:tokens.length});
   if(c.mode==='order'&&c.tokens.some(token=>!text(token,80)||!token.trim()))invalidText(c.mode,'tokens darf nur nichtleere Wörter mit höchstens 80 Zeichen enthalten.',{field:'tokens',tokenCount:c.tokens.length});
-  if(c.role==='answer'&&(task.answer?.kind!=='open'||!task.answer.values?.length))bad('Die Textwerkstatt braucht fachliche Antwortkriterien.');
+  if(c.role==='answer'){
+   const answer=task.answer,actualKind=typeof answer?.kind==='string'&&/^[a-z-]{1,40}$/u.test(answer.kind)?answer.kind:answer?.kind===undefined?'missing':'invalid';
+   const values=answer?.values,valuesType=Array.isArray(values)?'array':values===undefined?'missing':values===null?'null':typeof values,valuesCount=Array.isArray(values)?values.length:null;
+   if(actualKind!=='open'||!Array.isArray(values)||!values.length||values.some(value=>typeof value!=='string'||!value.trim()))invalidText(c.mode,`answer.kind=${actualKind}, answer.values Typ=${valuesType}, Anzahl=${valuesCount??'unbekannt'}; erforderlich sind answer.kind=open und answer.values mit mindestens einem konkreten ${c.mode==='select'?'auswählbaren Textbeleg':'geordneten Satz'}. rubric allein genügt nicht.`,{field:actualKind!=='open'?'answer.kind':'answer.values',actualKind,valuesType,valuesCount});
+  }
   rejectSelectionLeak(c,task);
   return {...common,mode:c.mode,text:c.text,tokens:c.mode==='select'?[]:[...c.tokens]};
  }
