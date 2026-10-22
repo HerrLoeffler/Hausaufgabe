@@ -2670,9 +2670,9 @@
     "integration_commit": "5a248621f315c08e30a2639b162434526b4e7349",
     "native_branch": "feature/native-live-staging-20261018",
     "native_commit": "acb7060c90a601feec28f49b22f6e9990f8e696a",
-    "teacher_testflight_run": 39678556334,
-    "secure_testflight_run": 39629456276,
-    "testflight_status": "teacher_0.2.0_49_and_secure_1.0_1141_uploaded_processed_internal_groups_assigned;Secure_offline_user_confirmed_20261021",
+    "teacher_testflight_run": 39783328084,
+    "secure_testflight_run": 39784682376,
+    "testflight_status": "teacher_0.2.0_50_and_secure_1.0_1161_uploaded_processed_existing_internal_groups_notes_verified;new_physical_acceptance_pending",
     "physical_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
     "offline_policy": "unlock_only_after_verified_durable_local_submission_then_sync; block_new_attempt_until_server_receipt",
     "live_functions": {
@@ -2729,10 +2729,157 @@
       },
       "physical_device_acceptance": "pending"
     },
-    "teacher_testflight_build": "0.2.0(49)",
-    "secure_testflight_build": "1.0(1141)",
-    "secure_native_commit": "8ab3891b3e07a5369ec4206f9e30c0f3469d81c5",
+    "teacher_testflight_build": "0.2.0(50)",
+    "secure_testflight_build": "1.0(1161)",
+    "secure_native_commit": "acb7060c90a601feec28f49b22f6e9990f8e696a",
     "secure_testflight_receipt": {
+      "task_ids": [
+        "GC-IOS-02",
+        "GC-RELEASE-06"
+      ],
+      "commit": "acb7060c90a601feec28f49b22f6e9990f8e696a",
+      "branch": "feature/native-live-staging-20261018",
+      "pr": 277,
+      "version": "1.0",
+      "build": "1161",
+      "ci_run": 39784682376,
+      "ci": "success",
+      "signed_aac_app_and_profile": "verified_2026-10-22T13:41:50Z",
+      "upload": "success_2026-10-22T13:43:51Z",
+      "apple_processing": "complete",
+      "internal_group": "GradeCrew Tester",
+      "invited_testers": 1,
+      "physical_acceptance": "pending_return_after_receipt_and_next_attempt_on_real_iPad",
+      "app_store_submission": false,
+      "production_backend_changed": false,
+      "website_changed": false,
+      "teacher_app_changed": "separate_PR279",
+      "handoff": "workstreams/secure-return-after-sync-20261022.md",
+      "ci_repair_pr": 280,
+      "apple_build_id": "6be8e4fb-315b-406b-a706-aa69fcd02616",
+      "test_notes": "saved_reload_verified"
+    },
+    "teacher_testflight_receipt": {
+      "commit": "60927e062e2a4cd52493cfcbdd53603c1f5d1add",
+      "pr": 279,
+      "run": 39783328084,
+      "conclusion": "success",
+      "version": "0.2.0",
+      "build": "50",
+      "upload": "success",
+      "apple_processing": "complete",
+      "apple_build_id": "eb0f8dab-57bc-4d74-bfdb-515e48a672ac",
+      "internal_group": "Grade Crew TesterL",
+      "invited_testers": 1,
+      "test_notes": "saved_reload_verified",
+      "physical_acceptance": "pending_authenticated_login_logout_account_switch",
+      "handoff": "workstreams/teacher-direct-entry-20261022.md"
+    },
+    "secure_return_sync_followup": {
+      "task_ids": [
+        "GC-IOS-02",
+        "GC-RELEASE-06"
+      ],
+      "pr": 277,
+      "fix_merge": "1f206aed95ceccd22cd738ca67f68ae8ca857383",
+      "ci_repair_pr": 280,
+      "candidate": "acb7060c90a601feec28f49b22f6e9990f8e696a",
+      "run": 39784682376,
+      "status": "full_ci_success_uploaded_processed_internal_group_notes_verified",
+      "prior_run": {
+        "id": 39781850861,
+        "attempt": 1,
+        "native": "900_passed_including_actual_return_UI",
+        "web_mini": "360_geometry_12_interactions_passed",
+        "web_large": "360_geometry_passed_audio_startup_timeout_2seconds",
+        "upload": "skipped"
+      },
+      "local": {
+        "swift": 28,
+        "python": 20,
+        "node": 24,
+        "controller": 5,
+        "actual_return_ui": 1,
+        "layout": 40,
+        "audio_navigation": 12
+      },
+      "physical_acceptance": "new_candidate_pending;user_confirmed_offline_sync_on1141_and_reported_return_failure",
+      "handoff": "workstreams/secure-return-after-sync-20261022.md",
+      "cloud": {
+        "native_layout": 900,
+        "web_mini_geometry": 360,
+        "web_mini_interactions": 12,
+        "web_large_geometry": 360,
+        "web_large_interactions": 12,
+        "build_and_upload": "success"
+      }
+    },
+    "teacher_direct_entry_followup": {
+      "task_id": "GC-IOS-02",
+      "pr": 279,
+      "merge": "60927e062e2a4cd52493cfcbdd53603c1f5d1add",
+      "run": 39783328084,
+      "status": "uploaded_processed_existing_internal_group_notes_verified",
+      "local": {
+        "python_scripts": 15,
+        "node": 62,
+        "simulator_build": "Release_iphone_ipad_passed",
+        "actual_signed_out_preview": [
+          "iphone16",
+          "ipad13"
+        ]
+      },
+      "physical_authenticated_walkthrough": "pending",
+      "remy_implementation": "preserved_entry_chooser_hidden",
+      "website_changed": false,
+      "secure_changed": false,
+      "handoff": "workstreams/teacher-direct-entry-20261022.md"
+    },
+    "teacher_testflight_previous_receipt": {
+      "commit": "aa39a9fbbec550f0cf42bfd22ced6719d02dad60",
+      "pr": 268,
+      "run": 39678556334,
+      "conclusion": "success",
+      "version": "0.2.0",
+      "build": "49",
+      "upload": "success_2026-10-21T21:50:39Z",
+      "apple_processing": "complete",
+      "internal_group": "Grade Crew TesterL",
+      "invited_testers": 1,
+      "test_notes": "saved_reload_verified",
+      "physical_acceptance": "not_yet_tested_this_teacher_build"
+    },
+    "native_domain_dependency": {
+      "domain": "gradecrew.de",
+      "domainOwnerThread": "01a15f06-837c-73b3-93fa-0d07a8104d3a",
+      "sourceThread": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+      "status": "wait_for_verified_HTTPS_Auth_cutover_receipt;no_native_URL_change",
+      "preserve": "existing_links_and_fallback;internal_projectIDs_and_separate_test_environment",
+      "scope": "Teacher/Secure web targets, support/privacy/review links after receipt;no_new_release_from_this_note",
+      "locations": [
+        {
+          "path": "native/GradeCrewTeacher/Sources/GradeCrewBetaEnvironment.swift",
+          "note": "Separate public base URL from internal Firebase projectID; preserve old .web.app fallback."
+        },
+        {
+          "path": "native/GradeCrewTeacher/Sources/TeacherWebPortalView.swift",
+          "note": "Native bridge only accepts parent.url host; new-domain redirects require reviewed origin/navigation allowlist before cutover."
+        },
+        {
+          "path": "native/GradeCrewSecure/Sources/SecureReleaseEnvironment.swift",
+          "note": "Cloud Functions project/endpoints and persisted Keychain/workDirectory identifiers stay unchanged; a domain rename must not discard pending submissions."
+        },
+        {
+          "path": "native/GradeCrewSecure/Sources/SecureLegalInformation.swift",
+          "note": "Public privacy fallback URL needs updating only after verified HTTPS/legal route."
+        },
+        {
+          "path": "App Store Connect Review/Support/Privacy metadata",
+          "note": "Review test/support/privacy links separately verify against new domain, old links remain usable."
+        }
+      ]
+    },
+    "secure_testflight_previous_receipt": {
       "task_ids": [
         "GC-IOS-02",
         "GC-RELEASE-06"
@@ -2755,72 +2902,6 @@
       "website_changed": false,
       "teacher_app_changed": false,
       "handoff": "workstreams/secure-testflight-1141-20261021.md"
-    },
-    "teacher_testflight_receipt": {
-      "commit": "aa39a9fbbec550f0cf42bfd22ced6719d02dad60",
-      "pr": 268,
-      "run": 39678556334,
-      "conclusion": "success",
-      "version": "0.2.0",
-      "build": "49",
-      "upload": "success_2026-10-21T21:50:39Z",
-      "apple_processing": "complete",
-      "internal_group": "Grade Crew TesterL",
-      "invited_testers": 1,
-      "test_notes": "saved_reload_verified",
-      "physical_acceptance": "not_yet_tested_this_teacher_build"
-    },
-    "secure_return_sync_followup": {
-      "task_ids": [
-        "GC-IOS-02",
-        "GC-RELEASE-06"
-      ],
-      "pr": 277,
-      "fix_merge": "1f206aed95ceccd22cd738ca67f68ae8ca857383",
-      "ci_repair_pr": 280,
-      "candidate": "acb7060c90a601feec28f49b22f6e9990f8e696a",
-      "run": 39784682376,
-      "status": "full_ci_in_progress_no_upload_yet",
-      "prior_run": {
-        "id": 39781850861,
-        "attempt": 1,
-        "native": "900_passed_including_actual_return_UI",
-        "web_mini": "360_geometry_12_interactions_passed",
-        "web_large": "360_geometry_passed_audio_startup_timeout_2seconds",
-        "upload": "skipped"
-      },
-      "local": {
-        "swift": 28,
-        "python": 20,
-        "node": 24,
-        "controller": 5,
-        "actual_return_ui": 1,
-        "layout": 40,
-        "audio_navigation": 12
-      },
-      "physical_acceptance": "new_candidate_pending;user_confirmed_offline_sync_on1141_and_reported_return_failure",
-      "handoff": "workstreams/secure-return-after-sync-20261022.md"
-    },
-    "teacher_direct_entry_followup": {
-      "task_id": "GC-IOS-02",
-      "pr": 279,
-      "merge": "60927e062e2a4cd52493cfcbdd53603c1f5d1add",
-      "run": 39783328084,
-      "status": "full_ci_in_progress_no_upload_yet",
-      "local": {
-        "python_scripts": 15,
-        "node": 62,
-        "simulator_build": "Release_iphone_ipad_passed",
-        "actual_signed_out_preview": [
-          "iphone16",
-          "ipad13"
-        ]
-      },
-      "physical_authenticated_walkthrough": "pending",
-      "remy_implementation": "preserved_entry_chooser_hidden",
-      "website_changed": false,
-      "secure_changed": false,
-      "handoff": "workstreams/teacher-direct-entry-20261022.md"
     }
   },
   "public_legal_information_20261021": {
