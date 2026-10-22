@@ -27,6 +27,9 @@ struct SecureStagingScreen: View {
                 }
             } else {
                 SecureWelcomeFrame(entry:model.phase == .code || model.phase == .identity) {
+                    #if GRADECREW_STAGING
+                    Text("TESTUMGEBUNG 2026").font(.caption.bold()).foregroundStyle(SecureTheme.secondaryText)
+                    #endif
                     if model.phase == .code || model.phase == .identity {
                         SecureEntryView(code:$model.code,name:$model.name,busy:model.busy,message:model.message) {
                             Task { await model.preflight(); if model.phase == .identity { confirmStart = true } }
