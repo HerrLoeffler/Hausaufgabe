@@ -86,3 +86,11 @@ test('help generator and reviewer share the same failed visible state, not a fab
  await ai.next({...s,phase:'help',supportStage:2},{workshop:observation});
  assert.deepEqual(requests[0].workshopObservation,observation);assert.deepEqual(requests[1].workshopObservation,observation);
 });
+
+test('independent text reviewer receives the selectable tokens actually derived by the renderer',async()=>{
+ const d=generated();d.task.prompt='Welche Wortgruppe sagt, wann etwas geschieht?';d.task.input='workshop';d.task.answer={kind:'open',values:['Am Abend']};d.task.rubric='Die vollständige Zeitangabe markieren.';d.task.workshop={tool:'text-workbench',version:1,role:'answer',goal:'text',mode:'select',text:'Am Abend liest Mia ein Buch.',tokens:[],instruction:'Markiere die passende Wortgruppe.'};
+ const requests=[],replies=[d,{approved:true,reason:'visible exact tokens'}];
+ const ai=createAI({client:{responses:{create:async req=>{requests.push(JSON.parse(req.input[1].content));return {status:'completed',output_text:JSON.stringify(replies.shift())};}}}});
+ await ai.next({...s,topic:{subject:'german',title:'Satzglieder'},task:null},{});
+ assert.deepEqual(requests[1].renderedWorkshop.selectableTokens,['Am','Abend','liest','Mia','ein','Buch.']);assert.deepEqual(requests[1].candidate.task.workshop.tokens,[]);
+});
