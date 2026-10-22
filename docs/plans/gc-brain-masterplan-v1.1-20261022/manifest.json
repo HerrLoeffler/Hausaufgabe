@@ -65,13 +65,13 @@
     },
     {
       "name": "10-Anforderungen-und-Abnahmekatalog.md",
-      "bytes": 26255,
-      "sha256": "9cddb888acfba6b749f27548b280afd881a723e89392fd16f5b3187b1f340560"
+      "bytes": 27809,
+      "sha256": "cfda41a430b34b8f0a1ee53bea764f0636f6a2927a07c4c5dc3e9d23116ed2b0"
     },
     {
       "name": "11-API-Nachrichten-und-Zustandsprotokoll.md",
-      "bytes": 18495,
-      "sha256": "c96f07c36c2beac17208d383763163ca672814d911caeff56599466a3f57a389"
+      "bytes": 19209,
+      "sha256": "a88264c6806aff91f912cfa6a7824c1fa5113d68e87dd605445faf97693401fd"
     },
     {
       "name": "12-Betriebsablaeufe-und-konkrete-Faelle.md",
@@ -100,13 +100,17 @@
     },
     {
       "name": "17-Aufgabenentwicklung-Qualitaet-und-Gruenprozess.md",
-      "bytes": 28655,
-      "sha256": "bc7a5ff4530c00b78e45678546a71ecdada7e9b94190d144b8f1cacd80cdcdb2"
+      "bytes": 31036,
+      "sha256": "0bf2ad0902c428f8eba7c6e2b102fffafb2c1b8e601a45f319295b66619b35e6"
     },
     {
       "name": "18-Zentraler-Eingang-Kunden-Mail-und-Probleme.md",
       "bytes": 18531,
       "sha256": "3a0b7a6531e7e173bd83d05802445109a500f4d40b5bf7789fa2118690248d10"
     }
-  ]
+  ],
+  "sourceAmendment": "P1 eligibility serialization and actual start boundary; independent re-review pending",
+  "renderedOutputStatus": "historical 84de180; PDF/HTML/combined MD/ZIP not regenerated and do not contain P1 fix",
+  "renderedSourceCommit": "84de180da7e6f44e825460c7eca5a2d57dee53bf",
+  "wordsStatus": "historical pre-fix count"
 }

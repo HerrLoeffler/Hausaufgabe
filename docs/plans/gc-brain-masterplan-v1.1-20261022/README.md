@@ -1,3 +1,10 @@
+
+## Enger P1-Vertragsfix nach Delta-Review
+
+Diese Quellen ergänzen Revision 1.1 auf Basis 84de180da7e6f44e825460c7eca5a2d57dee53bf ausschließlich um den gemeinsamen Eligibility-/Entzugsstand und die tatsächliche Startgrenze (Band 17/11; geplante Fälle AT50 a/b und AT59 c/d). Unabhängige Nachprüfung dieses Fixes steht aus. Kein Gesamt-PASS aller 115 Seiten und keine Produktabnahme.
+
+**Ausgabestand:** PDF, kombinierte Markdown-Langfassung, HTML, ZIP und deren Seiten-/Wortangaben aus dem ursprünglichen Ausgabeordner bleiben ausdrücklich die unveränderte historische Ausgabe zu 84de180; sie enthalten diesen Fix NICHT. Die Kapitelquellen in diesem Fixpaket beziehungsweise auf dem neuen PR-Commit sind für das Delta maßgeblich. Der alte PDF-Hash c2abb50d88bbb986443ce01913e47161b924c744a95e5cd2ed28e85a96315f1d ist ausschließlich ein Altbeleg. Kein neues PDF wurde erzeugt oder visuell geprüft.
+
 # GradeCrew Firmenzentrale - Gesamtplan 1.1
 
 GC-BRAIN-01 | 22.10.2026 | Planrevision, unabhängiger Review ausstehend

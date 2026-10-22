@@ -107,8 +107,14 @@
   ],
   "htmlAnchorsValid": true,
   "productAcceptanceCasesExecuted": 0,
-  "independentReview": "pending",
+  "independentReview": "P1 delta re-review pending",
   "pdfSha256": "c2abb50d88bbb986443ce01913e47161b924c744a95e5cd2ed28e85a96315f1d",
   "renderVisualInspection": "All 115 final pages inspected on contact sheets; page 103 additionally at 140 dpi; no observed clipping or overlap.",
-  "renderLogBytes": 0
+  "renderLogBytes": 0,
+  "qaScope": "Historical rendered QA at84de180 only; current source amendment separately checked, no new render",
+  "sourceAmendmentChecks": [
+    "AT50 expressly covers Accept vs same-basis finding and Revalidate vs same-basis regression/correction",
+    "AT59 covers queue/admission before actual start and immutable already-started snapshot",
+    "Shared atomic eligibility revision and authoritative start fence specified in Band17 and Band11"
+  ]
 }

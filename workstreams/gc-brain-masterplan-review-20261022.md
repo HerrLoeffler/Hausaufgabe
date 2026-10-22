@@ -42,3 +42,11 @@ Genau nächster Schritt: Zentrale prüft bzw. organisiert gezielt den Review von
 Kopierbarer Zusatz für den vorhandenen GC-BRAIN-01-Eintrag durch den gemeinsamen Writer: „Masterplan Revision 1.1 nach Nutzerreview: einfacher Eingang/Arbeitsmodell, Aufgabenentwicklung & Qualität mit scopegebundenem Grün, zentraler Kunden-/Maileingang; 115 Seiten, 19 Kapitel, WP23-27/AT49-72 ergänzt. Dokumentationsfassung, unabhängiger Review offen; P0 weiter offen. Neue Quellen im eigenen Masterplanreview-Branch, keine Produkt-/Liveänderung. Nächster Schritt: gezielter Deltareview und bestätigte Ownerzuordnung.“
 
 Runtime-Modell/Effort und Usage dieses laufenden Chats nicht gesichert beobachtbar: unknown. Kein zusätzlicher Subagent-/Providerstart und kein Budget-/Attemptreset. Keine alten Versuche verändert.
+
+## Enger P1-Vertragsfix nach Delta-Review
+
+Diese Quellen ergänzen Revision 1.1 auf Basis 84de180da7e6f44e825460c7eca5a2d57dee53bf ausschließlich um den gemeinsamen Eligibility-/Entzugsstand und die tatsächliche Startgrenze (Band 17/11; geplante Fälle AT50 a/b und AT59 c/d). Unabhängige Nachprüfung dieses Fixes steht aus. Kein Gesamt-PASS aller 115 Seiten und keine Produktabnahme.
+
+**Ausgabestand:** PDF, kombinierte Markdown-Langfassung, HTML, ZIP und deren Seiten-/Wortangaben aus dem ursprünglichen Ausgabeordner bleiben ausdrücklich die unveränderte historische Ausgabe zu 84de180; sie enthalten diesen Fix NICHT. Die Kapitelquellen in diesem Fixpaket beziehungsweise auf dem neuen PR-Commit sind für das Delta maßgeblich. Der alte PDF-Hash c2abb50d88bbb986443ce01913e47161b924c744a95e5cd2ed28e85a96315f1d ist ausschließlich ein Altbeleg. Kein neues PDF wurde erzeugt oder visuell geprüft.
+
+Befundquelle unverändert: outputs/brain-v1-plan-review-20261021/data-dispatch-masterplan-v1.1.md; SPEC und Runtime PASS9/10, Daten CHANGES_REQUIRED8/10 zum abgegrenzten Delta an84de. Genau ein P1 behoben als Planvertrag; WP24 bleibt bis unabhängiger Nachprüfung offen. Sicherer bestehender Host-P0 unabhängig. Keine Produktdateien, gemeinsamen TODO-/Registry-/STATE-Dateien oder PR269 geändert. Nächster Schritt: Zentrale organisiert nur Datenreview dieses immutable Deltas. Requested gpt-6.1-sol/medium; actual Modell/Effort/Usage unknown. Keine neuen Provider/Worker/Logins, kein Budget-/Attemptreset, Live unverändert.

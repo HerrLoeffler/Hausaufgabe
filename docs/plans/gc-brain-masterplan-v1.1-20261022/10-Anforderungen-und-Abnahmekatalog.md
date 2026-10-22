@@ -271,9 +271,9 @@ Beleg: genaue Basis-/Kandidatrevision, tatsächliche Zustandsereignisse und rele
 
 ### FZ-AT50 - Geänderte Bewertungsgrundlage
 
-Eingang/Aktion: Zwischen Review und Annahme ändert sich der Graderhash.
+Eingang/Aktion: Zwischen Review und Annahme ändert sich der Graderhash. Zusätzlich bei identischer Basis B und unveränderten Abhängigkeiten zwei Konkurrenzfälle in beiden serialisierten Reihenfolgen prüfen: (a) AcceptQualityDecision parallel zur Annahme eines bestätigten blockierenden Fehlers; (b) RevalidateQualityDecision parallel zu neuer Regression oder angenommener Lehrkraftkorrektur. Annahmerequests enthalten alte PASSbelege und erwartete eligibility-/Finding-/Retest-/Entscheidungsrevisionen.
 
-Erwartung: CAS schlägt fehl; needs_revalidation und betroffene Kriterien sichtbar. Alter PASS wird nicht übernommen.
+Erwartung: Bei geänderter Basis scheitert CAS; needs_revalidation und betroffene Kriterien sichtbar. In (a)/(b) ändern Annahme, Entzug und Wiederfreigabe denselben Eligibilitystand atomar: Entzug zuerst verwirft alte Requests; Annahme zuerst wird durch den folgenden Entzug ungültig. Keine Wiederbelebung von Grün aus alten Belegen, keine Löschung offener bestätigter Sperren. Rot/needs_revalidation bleibt auch bei verzögerten Grünprojektionen konsistent. Wiederfreigabe erst mit aktueller Befundauflösung und passenden Retests; IDs, Historie, Versuche und Budget bleiben erhalten.
 
 Beleg: genaue Basis-/Kandidatrevision, tatsächliche Zustandsereignisse und relevante Artefakte; ausgelassene Schritte ausdrücklich offen.
 
@@ -343,9 +343,9 @@ Beleg: genaue Basis-/Kandidatrevision, tatsächliche Zustandsereignisse und rele
 
 ### FZ-AT59 - Freigabeentzug während Nutzung
 
-Eingang/Aktion: Ein Befund betrifft neue Starts; eine Prüfung läuft bereits mit eingefrorenem Snapshot.
+Eingang/Aktion: (c) Entzug nach Planung, Queue oder Admission, aber vor tatsächlicher Auswahl-/Startgrenze bei unveränderter Basis B; jede Variante einschließlich Start-/Entzugskonkurrenz prüfen. (d) Dieselbe Entzugsentscheidung betrifft eine tatsächlich bereits gestartete Prüfung mit eingefrorenem Snapshot.
 
-Erwartung: Neue Auswahl nach autorisiertem Profil blockiert; laufender Snapshot unverändert, notwendige verantwortliche Entscheidung sichtbar. Keine stille Umbewertung.
+Erwartung: (c) Die bestehende Aufgabenplattform prüft den aktuellen Eligibilitystand an der tatsächlichen Startgrenze und ordnet Start und Entzug atomar. Alter Admissionbeleg genügt nicht; nach Entzug vor Start revalidieren oder sperren, kein Neustart trotz Entzug. Nicht frisch prüfbare Gültigkeit sperrt den neuen Start. (d) Ein vor Entzug tatsächlich gestarteter Snapshot bleibt unverändert; verantwortliche Incidententscheidung sichtbar, keine stille Umbewertung. Autoritative Historie und rot/needs_revalidation-Projektion stimmen überein; OriginalIDs, Versuche und Reservierungen erhalten.
 
 Beleg: genaue Basis-/Kandidatrevision, tatsächliche Zustandsereignisse und relevante Artefakte; ausgelassene Schritte ausdrücklich offen.
 
