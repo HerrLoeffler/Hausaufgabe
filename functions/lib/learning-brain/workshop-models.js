@@ -19,6 +19,27 @@ function onGrid(c,value){
 }
 function range(c){if(!n(c.minimum,-10000,10000)||!n(c.maximum,-10000,10000)||c.minimum>=c.maximum||!n(c.step,0.001,10000)||(c.maximum-c.minimum)/c.step>100||!onGrid(c,c.maximum)||!onGrid(c,c.initialValue))bad('Skala, Schrittweite und Ausgangswert passen nicht zusammen.');}
 function privateNumber(task,accept){if(task.answer?.kind==='open'||!task.answer?.values?.length||task.answer.values.some(v=>{const r=rational(v);return !r||!accept(r);} ))bad('Darstellung und privater Lösungsschlüssel passen nicht zusammen.');}
+// Literal source-span guard only: rubric interpretation and paraphrases still need review.
+const words=value=>(typeof value==='string'?value.normalize('NFKC').toLocaleLowerCase('de-DE').match(/[\p{L}\p{N}]+/gu):null)||[];
+const phrase=value=>words(value).join(' ');
+const containsPhrase=(text,span)=>` ${text} `.includes(` ${span} `);
+function explicitlyNames(value,span){
+ if(typeof value!=='string')return false;
+ for(const match of value.matchAll(/["„“”«»'‚‘]([^"„“”«»'‚‘]+)["„“”«»'‚‘]/gu))if(phrase(match[1])===span)return true;
+ // Do not confuse an incidental article/preposition with naming a one-word answer.
+ if(!span.includes(' ')&&['am','an','auf','aus','bei','das','dem','den','der','des','die','ein','eine','im','in','ist','mit','und','von','zu'].includes(span))return false;
+ return new RegExp(`(?:^| )(?:markiere|markier|wähle|waehle|klicke|tippe)(?: bitte)? (?:(?:das wort|die wörter|die wortgruppe|die gruppe|den ausdruck|den textteil) )?${span}(?: |$)`,'u').test(phrase(value));
+}
+function rejectSelectionLeak(c,task){
+ if(c.role!=='answer'||c.mode!=='select')return;
+ const source=phrase(c.text);
+ for(const value of task.answer.values){
+  const span=phrase(value);if(!span||!containsPhrase(source,span)||explicitlyNames(task.prompt,span))continue;
+  // Repeating the entire original sentence as context does not itself identify its answer.
+  const instruction=span===source?phrase(c.instruction):phrase(c.instruction).replace(new RegExp(`(^| )${source}(?= |$)`,'gu'),'$1');
+  if(explicitlyNames(c.instruction,span)||span.includes(' ')&&containsPhrase(instruction,span))bad('Die Werkstattanweisung darf den gesuchten Textbeleg nicht vorwegnehmen.');
+ }
+}
 function validate(c,topic,task){
  if(!Object.hasOwn(registry,c.tool)||!registry[c.tool].supports(topic)||c.version!==1||!['answer','support'].includes(c.role)||!text(c.instruction,240)||!c.instruction.trim()||(task.input==='workshop')!==(c.role==='answer'))bad('Dieses Werkzeug passt nicht zum Lernziel und Antwortweg.');
  const common={tool:c.tool,version:1,role:c.role,goal:c.goal,instruction:c.instruction};
@@ -39,6 +60,7 @@ function validate(c,topic,task){
   const tokens=c.mode==='select'?c.text.trim().split(/\s+/).filter(Boolean):c.tokens;
   if(tokens.length<2||tokens.length>40||c.mode==='select'&&c.tokens.length)bad('Der Text braucht 2 bis 40 Wörter.');
   if(c.role==='answer'&&(task.answer?.kind!=='open'||!task.answer.values?.length))bad('Die Textwerkstatt braucht fachliche Antwortkriterien.');
+  rejectSelectionLeak(c,task);
   return {...common,mode:c.mode,text:c.text,tokens:[...c.tokens]};
  }
  bad('Unbekanntes Werkzeug.');

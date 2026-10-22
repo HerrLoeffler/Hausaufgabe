@@ -1,7 +1,7 @@
 'use strict';
 const {createHash,randomUUID}=require('node:crypto');
 const {fingerprint}=require('./core');
-const VERSION='private-reviewed-pool-v1';
+const VERSION='private-reviewed-pool-v2';
 const digest=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
 function createPool({store,now=Date.now}){
  const key=(s,p)=>digest([VERSION,s.topic.id,s.topic.subject,s.topic.grade,s.topic.track,p.version,p.demand,p.level]);

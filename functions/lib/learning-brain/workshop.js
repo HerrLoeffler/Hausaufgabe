@@ -22,7 +22,11 @@ function validateConfig(c,topic,task){
   const goal=c.goal==='equivalent'?[BigInt(c.numerator*c.targetDenominator/c.denominator),BigInt(c.targetDenominator)]:[BigInt(c.numerator),BigInt(c.denominator)];
   if(!['rational','exact-fraction','number'].includes(task.answer?.kind)||!task.answer.values?.length)bad('Die Werkstatt braucht einen geprüften Zahlenschlüssel.');
   if(c.goal==='equivalent'&&task.answer.kind!=='exact-fraction')bad('Der Zielnenner muss im Zahlenschlüssel erhalten bleiben.');
-  if(task.answer.values.some(v=>{const r=rational(v);return !r||(c.goal==='equivalent'?(r[0]!==goal[0]||r[1]!==goal[1]):r[0]*goal[1]!==goal[0]*r[1]);}))bad('Werkstatt und Lösungsschlüssel stimmen nicht überein.');
+  if(task.answer.values.some(v=>{const r=rational(v);return !r||(c.goal==='equivalent'?(r[0]!==goal[0]||r[1]!==goal[1]):r[0]*goal[1]!==goal[0]*r[1]);})){
+   const error=new WorkshopError('Werkstatt und Lösungsschlüssel stimmen nicht überein.');
+   error.critique=c.goal==='equivalent'?`fraction-board equivalent: answer.values muss den vollständigen Bruch ${goal[0]}/${goal[1]} im exakten Zielnennerformat enthalten (answer.kind=exact-fraction). Ein einzelner Zähler, ein Faktor oder der gekürzte Ausgangsbruch ist kein vollständiger Werkstatt-Antwortschlüssel. Wenn nur eine Zählerrechnung gefragt ist, input=number und role=support verwenden.`:`fraction-board represent: answer.values muss einen vollständigen Bruch oder eine exakt wertgleiche Zahl für ${goal[0]}/${goal[1]} enthalten. Einzelne Zähler-/Nennerwerte genügen nicht.`;
+   throw error;
+  }
  }
  // Explicit projection; no model-supplied markup or secret keys survive.
  return {tool:c.tool,version:1,role:c.role,goal:c.goal,numerator:c.numerator,denominator:c.denominator,targetDenominator:c.targetDenominator,instruction:c.instruction};

@@ -1,5 +1,5 @@
 'use strict';
-const VERSION='workshop-plan-20261022-v1';
+const VERSION='workshop-plan-20261022-v2';
 function eligibility(t){
  if(['audio','speaking'].includes(t?.modality))return {available:false,reason:'Dieser Lernweg braucht einen echten Hör- oder Sprechweg. Er wird für dieses Testpaket noch vorbereitet.'};
  if(t?.modality==='visual'&&!/Ganzes und gleiche Teile|Zahlengerad|Zahlenstrahl|Negative Bruchzahlen einordnen/i.test(t.title||''))return {available:false,reason:'Dieses Lernziel braucht ein zusätzliches geprüftes Bild- oder Konstruktionswerkzeug.'};

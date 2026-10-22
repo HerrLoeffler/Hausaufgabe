@@ -58,3 +58,22 @@ test('unusable successful provider responses still record their consumed tokens 
  const records=[];const ai=createAI({record:async(u,op)=>records.push({u,op}),client:{responses:{create:async()=>({status:'incomplete',incomplete_details:{reason:'max_output_tokens'},usage:{input_tokens:10,output_tokens:20}})}}});
  await assert.rejects(ai.next({...s,task:null},{}));assert.equal(records.length,1);assert.equal(records[0].u.input_tokens,20);assert.equal(records[0].u.output_tokens,40);
 });
+test('invalid generated fields carry private path and type/length diagnostics without copying text',()=>{
+ for(const [field,modify] of [['task.prompt',d=>d.task.prompt='PRIVATE-PUPIL-TEXT'.repeat(40)],['task.contextText',d=>d.task.contextText=null],['task.rubric',d=>d.task.rubric={}],['task.family',d=>d.task.family=[]],['task.options',d=>d.task.options=['PRIVATE-PUPIL-TEXT'.repeat(20)]],['explanation',d=>d.explanation='PRIVATE-PUPIL-TEXT'.repeat(30)]]){
+  const d=generated();modify(d);assert.throws(()=>cleanGenerated(d,s),error=>{assert.equal(error.stage,'candidate-validation');assert.ok(error.critique.includes(field));assert.ok(/type=|length=/.test(error.critique));assert.equal(error.critique.includes('PRIVATE-PUPIL-TEXT'),false);return true;});
+ }
+});
+test('fraction whole-answer mismatch gives private exact format rather than an isolated numerator',()=>{
+ const d=generated();d.task.input='workshop';d.task.workshop={tool:'fraction-board',version:1,role:'answer',goal:'equivalent',numerator:2,denominator:3,targetDenominator:6,instruction:'Unterteile.'};d.task.answer.values=['4'];
+ assert.throws(()=>cleanGenerated(d,{...s,phase:'help',topic:{subject:'math',title:'Brüche'}}),error=>error.critique.includes('4/6')&&error.critique.includes('vollständigen Bruch')&&error.critique.includes('answer.values'));
+});
+test('balance cannot mandate isolating x when the answer contract checks its weight only',()=>{
+ const d=generated();d.task.input='workshop';d.task.prompt='Stelle x allein auf eine Seite und finde das Gewicht.';d.task.answer={kind:'number',values:['4']};d.task.workshop={tool:'balance',version:1,role:'answer',goal:'balance',leftCoefficient:2,leftConstant:2,rightCoefficient:0,rightConstant:10,minimum:0,maximum:10,step:1,initialValue:1,instruction:'Finde das Gewicht.'};
+ assert.throws(()=>cleanGenerated(d,{...s,topic:{subject:'math',title:'Gleichung'}}),error=>error.critique.includes('Umformungen')&&error.critique.includes('optional'));
+ d.task.prompt='Finde das Gewicht von x.';assert.equal(cleanGenerated(d,{...s,topic:{subject:'math',title:'Gleichung'}}).task.workshop.tool,'balance');
+});
+
+test('balance rejects the actually observed hidden isolation requirement',()=>{
+ const d=generated();d.task.input='workshop';d.task.prompt='Finde die Zahl x. Verändere die Waage so, dass x allein übrig bleibt.';d.task.answer={kind:'number',values:['4']};d.task.workshop={tool:'balance',version:1,role:'answer',goal:'balance',leftCoefficient:2,leftConstant:3,rightCoefficient:0,rightConstant:11,minimum:0,maximum:10,step:1,initialValue:1,instruction:'Finde das Gewicht.'};
+ assert.throws(()=>cleanGenerated(d,{...s,topic:{subject:'math',title:'Gleichung'}}),e=>e.critique.includes('optional'));
+});
