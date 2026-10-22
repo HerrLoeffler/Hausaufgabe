@@ -21,3 +21,8 @@ Grenzen: API-Server-Lehrerfluss belegt, kein physischer iPad-AAC-Test und keine 
 ## Nächster Schritt / externe Vorgänge
 
 Checkpoint lokal152ddae / remote874b8f99, gleicherTree1b40da97. GitHub-2FA vonMartin selbst abgeschlossen. Manueller Start ist inUI nicht verfügbar, daWorkflow aufmain fehlt (Connector404); keinMain-/Native-Livemerge als Umgehung. Ruling: ausschließlich eigenen2026Branch zusätzlich imPushtrigger zulassen; exakte eigeneRef→2026, bestehende nativeLiveRef→Live, alle anderenPushrefs failclosed. Keine Änderung der Gates/Signing/Profilrechte. RED neuer Refparameter fehlt, danach24/24Python PASS (/private/tmp/gc-2026-release-tests-branch.log). Nächster eigener Codepush soll genau einen vollständigen2026TestFlightlauf starten. Noch nicht gestartet. Enger unabhängiger Nachreview beauftragt. Run-ID nach tatsächlichem Start hier nachtragen. Vor Upload/Veröffentlichung keine Erfolgsaussage. Nach Build/Appleverarbeitung frischen wartenden Test für realen iPad-Ablauf bereitstellen.
+
+
+## Externer Lauf tatsächlich gestartet
+
+22.10.2026 20:43UTC: Remote ec17ac5897657380f36cc4f72cfe717e0724ff4d (lokal92ddf9e), gleicherTree6e0dfcf2. Genau ein Pushlauf39851303382, Versuch1, https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39851303382 . Beobachtet: Layout-native/Phone und beideWebjobs gestartet, build-and-upload wartet aufGates. ErwarteterBuild1.0(1181), nochkeinUpload/Processing/Gerätetest. Nachreview ohneP1/P2, unabhängig2ZielwahltestsPASS. Hinweis: jeder spätere passendeProduktcodepushaufdieserBranch löstweiterenBuildaus; reineWorkstreamdokumentationaußerhalbPfadfilterlöstdiesennichtaus. KeineblindenNeuversuche.
