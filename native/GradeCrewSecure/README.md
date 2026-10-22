@@ -6,7 +6,7 @@ Stand: 29.09.2026. Native SwiftUI-App für iPadOS 16+. **Entwicklungsprototyp, k
 
 ## Was dieser Stand kann
 
-- Native Codeeingabe (4–16 ASCII-Buchstaben/Ziffern), öffnet die bestehende Schülerroute `https://hausaufgabe-staging.web.app/?test=CODE`.
+- Native Codeeingabe (4–16 ASCII-Buchstaben/Ziffern), öffnet die bestehende Schülerroute `https://gradecrew.de/?test=CODE`.
 - Staging-Vorschau in WKWebView, dauerhaft als **ohne Gerätesperre** bezeichnet. Website kann Übungsabgaben im Staging-Backend speichern; nur fiktive Daten verwenden.
 - Navigation beschränkt auf exakten HTTPS-Staging-Host; keine Popups, externen Apps, native JavaScript-Brücke oder persistente Web-Anmeldung. Das ist keine Netzwerk-Firewall: Webressourcen können Firebase/CDNs kontaktieren.
 - Separater lokaler AAC-Hardwaretest: Aufgabe erst nach Apples `assessmentSessionDidBegin`, Unterbrechung blendet sie sofort aus, Ende erst nach Delegate-Bestätigung. Expliziter Beenden-Knopf und 60-Sekunden-Ende bei laufender App. Kein echter Versuch, keine Serverabgabe, keine Schülerberechtigung.

@@ -69,7 +69,7 @@ private struct SecureLegalSheet:View {
                         }
                     } else {
                         Text("Die Informationen konnten nicht geöffnet werden.").font(.headline)
-                        Text("Bitte kontaktiere GradeCrew über martin.loeffler91@yahoo.de. Die öffentlichen Informationen findest du unter https://hausaufgabe-staging.web.app/datenschutz.html.").textSelection(.enabled)
+                        Text("Bitte kontaktiere GradeCrew über martin.loeffler91@yahoo.de. Die öffentlichen Informationen findest du unter https://\(SecureReleaseEnvironment.publicHost)/datenschutz.html.").textSelection(.enabled)
                     }
                 }.padding(24).frame(maxWidth:720,alignment:.leading).frame(maxWidth:.infinity)
             }.background(SecureTheme.canvas).foregroundStyle(SecureTheme.text)

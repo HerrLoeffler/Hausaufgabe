@@ -9,9 +9,9 @@
   "keywords": "Schule,Prüfung,Tests,iPad,Klassenarbeit,Leistungsnachweis,Lernen,GradeCrew",
   "promotionalText": "Testcode eingeben, Aufgaben bearbeiten und Antworten abgeben: GradeCrew Secure begleitet digitale Leistungsnachweise auf dem iPad.",
   "description": "Mit GradeCrew Secure bearbeitest du veröffentlichte GradeCrew-Tests auf dem iPad. Gib den Testcode deiner Lehrkraft und deinen Namen oder das vereinbarte Kürzel ein. Ein eigenes Schülerkonto ist nicht erforderlich.\n\nVor dem Start bestätigst du den Prüfungsmodus. Die Aufgabenübersicht zeigt deinen Bearbeitungsstand und lässt dich zwischen Fragen wechseln. Je nach Test stehen verschiedene Aufgabenformen, Bilder und Höraufgaben zur Verfügung. Ein vorgegebenes Zeitlimit bleibt sichtbar.\n\nDeine Antworten werden während der Bearbeitung auf dem iPad gesichert. Bei der Abgabe werden sie festgeschrieben. Auch bei einem Verbindungsfehler kann das iPad nach überprüfter lokaler Sicherung freigegeben werden. Die App zeigt eine ausstehende Übertragung ausdrücklich an. Öffne sie mit Internetverbindung erneut, damit die Abgabe übertragen und der Serverempfang bestätigt werden kann. Bis dahin lässt sich in der App kein weiterer Test starten.\n\nVoraussetzungen: iPadOS 17 oder neuer, ein veröffentlichter GradeCrew-Test und Internet zum Prüfungsstart und zur Übertragung. Tests werden von der Lehrkraft in der getrennten GradeCrew-Oberfläche erstellt und verwaltet.",
-  "supportURL": "https://hausaufgabe-staging.web.app/support.html",
-  "privacyPolicyURL": "https://hausaufgabe-staging.web.app/datenschutz.html",
-  "marketingURL": "https://hausaufgabe-staging.web.app/",
+  "supportURL": "https://gradecrew.de/support.html",
+  "privacyPolicyURL": "https://gradecrew.de/datenschutz.html",
+  "marketingURL": "https://gradecrew.de/",
   "copyright": "2026 Martin Löffler",
   "reviewContact": {
     "firstName": "Martin",

@@ -13,5 +13,9 @@ enum SecureReleaseEnvironment {
     static let telemetryService = "de.gradecrew.secure.staging-telemetry-v1"
     static let workDirectory = "SecureStaging"
     #endif
+    static let publicHost = projectID == "gradecrew-staging-2026" ? "\(projectID).web.app" : "gradecrew.de"
+    static let webHosts: Set<String> = projectID == "gradecrew-staging-2026"
+        ? [publicHost]
+        : [publicHost, "www.gradecrew.de", "hausaufgabe-staging.web.app"]
     static let functionsURL = URL(string: "https://europe-west1-\(projectID).cloudfunctions.net/")!
 }

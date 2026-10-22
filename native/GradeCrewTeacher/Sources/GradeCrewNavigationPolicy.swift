@@ -8,8 +8,8 @@ enum GradeCrewNavigationPolicy {
         guard selectedBaseURL.scheme == "https", selectedBaseURL.user == nil,
               selectedBaseURL.password == nil, selectedBaseURL.port == nil,
               let selectedHost = selectedBaseURL.host,
-              selectedHost == GradeCrewBetaEnvironment.defaultURL.host || GradeCrewBetaEnvironment.previewURL(from: selectedBaseURL.absoluteString) != nil else { return false }
-        return normalizedHost == GradeCrewBetaEnvironment.defaultURL.host
+              GradeCrewBetaEnvironment.webHosts.contains(selectedHost) || GradeCrewBetaEnvironment.previewURL(from: selectedBaseURL.absoluteString) != nil else { return false }
+        return GradeCrewBetaEnvironment.webHosts.contains(normalizedHost)
             || normalizedHost == firebaseAuthHost
             || GradeCrewBetaEnvironment.previewURL(from: "https://\(normalizedHost)/") != nil
     }

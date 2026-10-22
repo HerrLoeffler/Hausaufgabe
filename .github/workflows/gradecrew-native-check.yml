@@ -2,7 +2,7 @@ name: GradeCrew Native Checks
 
 on:
   pull_request:
-    branches: [feature/shared-gradecrew-design-system]
+    branches: [feature/shared-gradecrew-design-system, feature/native-live-staging-20261018]
     paths:
       - native/GradeCrewTeacher/**
       - native/Shared/**
