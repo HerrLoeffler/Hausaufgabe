@@ -11,7 +11,7 @@ on:
           - live
           - staging2026
   push:
-    branches: [feature/native-live-staging-20261018]
+    branches: [feature/native-live-staging-20261018, feature/classroom-secure-access-20261022]
     paths:
       - .github/workflows/gradecrew-secure-testflight.yml
       - native/GradeCrewSecure/**
@@ -146,6 +146,7 @@ jobs:
         env:
           SECURE_RELEASE_EVENT: ${{ github.event_name }}
           SECURE_RELEASE_TARGET: ${{ inputs.release_target }}
+          SECURE_RELEASE_REF: ${{ github.ref }}
         run: python3 native/GradeCrewSecure/release_target.py
       - name: Prepare API signing key
         shell: bash
