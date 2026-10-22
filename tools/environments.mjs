@@ -1,5 +1,5 @@
 const environments=Object.freeze({
- production:Object.freeze({name:'production',projectId:'hausaufgabe-staging',origin:'https://hausaufgabe-staging.web.app',configFile:'firebase-config.production.js',firestoreLocation:'eur3',functionsRegion:'europe-west1'}),
+ production:Object.freeze({name:'production',projectId:'hausaufgabe-staging',origin:'https://gradecrew.de',configFile:'firebase-config.production.js',firestoreLocation:'eur3',functionsRegion:'europe-west1'}),
  staging:Object.freeze({name:'staging',projectId:'gradecrew-staging-2026',origin:'https://gradecrew-staging-2026.web.app',configFile:'firebase-config.staging.js',firestoreLocation:'eur3',functionsRegion:'europe-west1'})
 });
 export function getEnvironment(name){

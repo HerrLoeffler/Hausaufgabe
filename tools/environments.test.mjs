@@ -5,7 +5,7 @@ import {getEnvironment,assertDeploymentTarget} from './environments.mjs';
 test('live preserves the exact existing project, canonical URL and data region',()=>{
  const env=getEnvironment('production');
  assert.equal(env.projectId,'hausaufgabe-staging');
- assert.equal(env.origin,'https://hausaufgabe-staging.web.app');
+ assert.equal(env.origin,'https://gradecrew.de');
  assert.equal(env.firestoreLocation,'eur3');
 });
 test('staging has a separate project and no live or legacy fallback',()=>{
