@@ -85,3 +85,12 @@ Daten-/Dokumentprüfung dieses Checkpoints: neun Originalhashes und sieben PDF-S
 **Genau nächster Schritt:** atomare lokale Auftragssteuerung und Import mit explizitem belegtem Pfad für den kleinen Readerpilot implementieren; Pilot nachweisen, dann sämtliche Buchaufträge im Sammlungsdurchlauf abarbeiten. Sicherung ist kein Abschluss der Analyse. Gemeinsame aktuelle TODO-/Workstreamstände vor Schreiben neu lesen und nur diese Task ergänzen. Vorhandener schmutziger curriculum-integration-Checkout bleibt unangetastet.
 
 Dokumentationscheckpoint PR214: e47e221ec055b70357fbf0e68e16fd9d87a0548d. Hauptstand-Änderung beschränkt sich auf diese Task-Koordination und TODO; kein Merge von Produkt- oder Medienrohdaten.
+
+
+## Koordinationsstand 22.10.2026 — Ausführung läuft, Browser benötigt Entsperren
+
+[PR214-Checkpoint e0da75dd279ce25290deb983ee62ab999c8fb0f8](https://github.com/HerrLoeffler/Hausaufgabe/commit/e0da75dd279ce25290deb983ee62ab999c8fb0f8) enthält den ausführlichen neuen Stand. 20 lokale Steuerungstests sind belegt. 197 weitere Ressourcen-PDF-Seiten sind vollständig in Text/Bild erstgelesen; 63 Teilhandlungen genau einer R115-Hauptbuchseite haben eigene und unabhängig nachgerechnete Lösungen. Das ist keine Gesamtbuch- oder Laufzeitfreigabe. Drei reale Luna/medium-Inhaltsworker bearbeiten vorhandene Ressourcen weiter; tatsächliches Modell/Usage/Kosten unbekannt. Detailanalysen und Originale bleiben lokal privat, anonymisierte Berichte/Metadaten im PR.
+
+Alle 918 historischen Register-IDs sind in privaten Originalen beziehungsweise ZIP-Kindern wiedergefunden. 171 fehlende Originalkopien und 20 gültige ZIPs neu privat gesichert; 3371 Kindobjekte CRC/SHA geprüft, einschließlich 16 verschachtelter ZIPs. Eine weitere ZIP ist leer/defekt. Die Archivzahlen sind keine Buch- oder Seitenanalysen. Neun Metadaten wurden vom Konzeptchat kalibriert, Feldkorrekturen eingearbeitet; offener DOC-Fußkonflikt und geschätzte Einsatzbereiche bleiben sichtbar.
+
+**0/125 Bücher vollständig, vollständiger Downloadpilot weiterhin offen.** R003-PDF-Versuch 023650bd31b4492d89c9b188e2b62b5d ohne bestätigten Dateipfad; R100 uncertain. Native Browsersteuerung meldet gesperrten Mac und verlangt manuelles Entsperren; Benutzer ist im laufenden Chat informiert. Keine blinden Wiederholungen unklarer externer Downloads. Nach Entsperren zuerst sichtbaren Downloadstatus abgleichen, dann regulären Exportpilot fortsetzen. Lokale Inhaltsarbeit ist davon unabhängig und läuft weiter. Keine Produktänderung oder Deploymentfreigabe; Live-/Staging-Abgrenzung erhalten.
