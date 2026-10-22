@@ -5,7 +5,7 @@ struct TeacherRootView: View {
     @AppStorage(GradeCrewBetaEnvironment.preferenceKey) private var previewPreference = ""
     @State private var isLoading = true
     @State private var authFormPresented = false
-    @State private var workspaceOpening = false
+    @State private var workspaceOpeningGeneration:Int?
     @State private var brandAnimationStartedAt = Date()
     @State private var loadError: String?
     @State private var reloadID = 0
@@ -27,6 +27,7 @@ struct TeacherRootView: View {
 
     private var authState: GradeCrewNativeBridgePolicy.AuthState { homeNavigation.authState }
     private var route: GradeCrewHomeNavigation.Route { homeNavigation.route }
+    private var workspaceOpening:Bool { workspaceOpeningGeneration == auditGeneration }
 
     private var homeURL: URL {
         GradeCrewBetaEnvironment.homeURL(preference: previewPreference, version: GradeCrewAppEnvironment.version)
@@ -61,44 +62,25 @@ struct TeacherRootView: View {
                 onAuthStateChanged: receiveAuthState,
                 onQuickRemyBridgeReady: { quickRemyCall = $0 }
             )
-            .opacity(route == .workspace ? 1 : 0)
-            .allowsHitTesting(route == .workspace)
+            .opacity(homeNavigation.showsWorkspace ? 1 : 0)
+            .allowsHitTesting(homeNavigation.showsWorkspace)
             .safeAreaInset(edge: .top, spacing: 0) {
                 if route == .quickRemy {
                     QuickRemyView(onBack: { homeNavigation.showHome() }, call: quickRemyCall)
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
             }
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                if route == .workspace {
-                    HStack {
-                        Button {
-                            homeNavigation.showHome()
-                        } label: {
-                            Image(systemName: "house.fill")
-                                .font(.system(size: 18, weight: .semibold))
-                                .frame(width: 44, height: 44)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(GradeCrewDesignTokens.Colors.primary)
-                        .accessibilityLabel("Start")
-                        .accessibilityHint("Zur nativen GradeCrew-Auswahl zurückkehren")
-                        Spacer()
-                    }
-                    .padding(.horizontal, GradeCrewDesignTokens.Spacing.lg)
-                    .background(.regularMaterial)
-                }
-            }
-
-            if route == .home || route == .signIn {
+            if route == .home || route == .signIn || !isAuthRestored {
                 homeScreen
                     .transition(.opacity)
             }
         }
         .background(GradeCrewDesignTokens.Colors.background)
         .animation(.easeInOut(duration: 0.18), value: route)
-        .task(id: auditKey) { await monitorGenerationAudit() }
+        .task(id: auditKey) {
+            if homeNavigation.shouldOpenWorkspaceAutomatically { openWorkspace() }
+            else { await monitorGenerationAudit() }
+        }
         .onChange(of: scenePhase) { phase in
             if phase == .active { auditRefresh += 1 }
         }
@@ -185,7 +167,9 @@ struct TeacherRootView: View {
             case .checking, .signedOut:
                 authRestoringScreen
             case .signedIn(_, _):
-                homeMenuScreen
+                // Keep the loading cover until the existing web dashboard has
+                // acknowledged readiness. The Remy chooser remains reusable.
+                authRestoringScreen
             }
         }
     }
@@ -279,11 +263,11 @@ struct TeacherRootView: View {
     private func openWorkspace() {
         guard case .signedIn = authState else { homeNavigation.openWorkspace(); return }
         guard !workspaceOpening else { return }
-        workspaceOpening = true
+        workspaceOpeningGeneration = auditGeneration
         loadError = nil
         let generation = auditGeneration
         Task { @MainActor in
-            defer { workspaceOpening = false }
+            defer { if workspaceOpeningGeneration == generation { workspaceOpeningGeneration = nil } }
             do {
                 guard let call = quickRemyCall else {
                     throw NSError(domain: "GradeCrewWorkspace", code: 1, userInfo: [NSLocalizedDescriptionKey: "GradeCrew ist noch nicht bereit. Bitte erneut versuchen."])
@@ -291,11 +275,11 @@ struct TeacherRootView: View {
                 let result: [String: Any] = try await withCheckedThrowingContinuation { continuation in
                     call("openWorkspace", [:]) { continuation.resume(with: $0) }
                 }
-                guard generation == auditGeneration, route == .home else { return }
+                guard generation == auditGeneration, homeNavigation.shouldOpenWorkspaceAutomatically else { return }
                 guard result["status"] as? String == "ready" else { return }
                 homeNavigation.openWorkspace()
             } catch {
-                guard generation == auditGeneration, route == .home else { return }
+                guard generation == auditGeneration, homeNavigation.shouldOpenWorkspaceAutomatically else { return }
                 loadError = error.localizedDescription
             }
         }
