@@ -44,3 +44,29 @@ Der Versuch R003 mit tatsächlich angebotenem Konzeptions-PDF ist ohne Downloade
 - Konzeptchat hat neunMetadaten plusR115 unabhängig kalibriert; Beitrag material-jahrgangskalibrierung-20261022.md übernommen. Die3neuenR115Didaktikfolgen wurden zur getrennten Konzeptbewertung beauftragt. Keine Änderung der kanonischen Konzeptdatei oder des Produktpools daraus behaupten.
 
 Weiterhin **Bücher vollständig:0/125**. Tatsächlich belegt sind Originalerhalt, seitenbezogene Erstanalysen und eine eng begrenzte unabhängige Einzelprüfung. Der volleDownloadpilot ist nicht bestanden. Nächster Browser-Schritt nach manuellem Entsperren: ungeklärte externe Versuche zuerst mit sichtbarem Downloadstatus abgleichen, dann den regulären Export an R003/R100 prüfen; nicht erneut dieselbeDatei blind laden. Lokale Inhaltsarbeit wird währenddessen fortgesetzt.
+
+## Nutzervorgabe zur Downloadfreigabe — 22.10.2026
+
+Der Nutzer hat ausdrücklich alle Downloads von sämtlichen Buchseiten und zugehörigen Materialien vorab erlaubt. Dafür keine Einzelrückfrage mehr. Erforderliche reguläre Downloadfreigaben der betreffenden Buchportale können im beauftragten Umfang angenommen werden. Diese Freigabe löst nicht die am22.10. erneut gemeldete Mac-Sperre: Die Computersteuerung verlangte weiterhin manuelles Entsperren. Der Nutzer wurde gezielt nur darum gebeten; kein Passwort angefordert. Fünf offene Buch-/Downloadtabs wurden als unfertiger Workflow für die Wiederaufnahme erhalten.
+
+ZIP-Normalisierung zusätzlich ausgeführt: Alle3371geprüften Kindreferenzen der20gültigen ZIPs sind nun auch über unveränderte lokale Hashobjekte auflösbar;2749unterschiedlicheKindobjekte,2086fehlendeKindkopien neu privat gesichert. Bekannte Originalobjekte wiederverwendet, keine Quelle ausgeführt und kein neuer Browserdownload daraus gezählt.
+
+Der lokale Wissensindex `media/reader-knowledge-index-20261022.json` verbindet Ressourcen, kanonische Metadaten, Originalarchiv und die tatsächlichen Analyse-/Reviewdateien. Er ist kein Produkt-Laufzeitimport. Bestätigter Quelljahrgang und geschätzter Einsatz sind darin getrennt; ältere perTask-Schätzfelder sind keine bestätigte Quellenprovenienz.
+
+## Vollständige Erstlektüre der fünf verbleibenden PDF-Ressourcen
+
+Die angeforderten lokalen Pakete sind jetzt durchgehend erstgelesen:106+40+51+168+369=734weiterePDF-Seiten, überall Seitenbild und Text. Root hat die369/168Seitenfolgen und dieJSON-Struktur selbst kontrolliert;197vorherigeSeiten bereits geprüft. R002 hat nach drei Ergänzungen 915 Aufgabenrecords/120 Didaktikrecords; das Arbeitsheft 379 Gruppen mit Einzelitems; die Kopiervorlagen 2209 Einzelitems. Diese Zahlen sind keine fertigen Testaufgaben und keine unabhängigen Kompetenzbelege. Offene Quellen-/Audio-/Bildfragen und Gruppen bleiben ausgewiesen.
+
+Die begrenzten unabhängigenReviews umfassen63R115Task-IDs,447Kopiervorlagen-Subtasks fürPDF6–20 und59Arbeitsheft-Tasks fürPDF1–20. Abdeckung ist nicht gleich fehlerfrei: Säge→SCH wurde zuS korrigiert; QuizoptionBlaumeise/R zuKohlmeise/R; eine naturwissenschaftlich ungenaue Quellenantwort getrennt bewertet. DieMathematik-ZweitprüfungPDF300–325 läuft noch. IhrPrüfer öffnete anfangs irrtümlich35Seiten verschobene Renders; Root stoppte dies und bestätigte diekorrekteOriginalzuordnung selbst. FalscheMappingbehauptung zurückgenommen. Das istkeineVollfreigabe.
+
+DerKonzeptowner hat27bereits geprüfteRegeln tatsächlich in diebestehende lokaleKonzeptdatei eingearbeitet und Diff/ID-Receipt gespeichert. KeinRemote-Commit durch diesenOwner; dessen vorbestehende direkte Nutzervorgabe zuCommits/PRs wurde nicht aufgehoben. KeineR002Erstregeln ungeprüft übernommen, keineProduktfreigabe.
+
+Gesamtauftrag weiterhin offen:0/125Bücher vollständig. Downloadfreigabe füralleBuchseiten liegt vor; dieComputersteuerung fordert weiterhin manuellesEntsperren desMacs.
+
+## Gesicherter Stand nach den lokalen Zweitprüfungen
+
+Alle 315 vorhandenen Mathematik-Task-IDs auf PDF300–325 haben einen individuellen unabhängigen Reviewrecord. 312 sind konkret unabhängig gelöst, zwei Fahrzeugrichtungen bleiben teilweise offen, ein historischer Spielregelfehler ist nach Review behoben. Neun weitere beanstandete Records wurden in der Erstlösung korrigiert: vier Zahlenhaus-Beispiele auf PDF304, vier Karten-Ungleichungen auf PDF306 und eine Bildrechnung auf PDF316. Root hat die tatsächlichen Änderungen nachgelesen und PDF304 selbst visuell geöffnet: Die leeren Zeilen legen keine eindeutige Reihenfolge fest; gültige andere Summandenpaare beziehungsweise Reihenfolgen dürfen nicht als falsch bewertet werden. Die unabhängige Reviewhistorie bleibt erhalten. Keine unabhängige Prüfung sämtlicher 915 Tasks behauptet.
+
+Der lokale Wissensindex wird mit allen tatsächlich vorhandenen JSONL-/Reviewdateien und aktuellen Hashes aktualisiert. Rohdaten, Originale und detaillierte Aufgaben bleiben privat. Die 27 lokalen Konzeptübernahmen sind über den Receipt belegt; die kanonische Konzeptdatei wird wegen der fortgeltenden Nutzeranweisung im Konzeptchat nicht durch diesen Mediencheckpoint remote veröffentlicht. Keine neuen Produktprofile, kein Deploy.
+
+Die pauschale Nutzerfreigabe gilt für alle Buchseiten und Zusatzmaterialdownloads einschließlich regulärer Mehrfachdownload-Freigaben der beteiligten Portale. Es folgen keine Dateieinzelfragen. Browserberechtigungen sind während der Mac-Sperre noch nicht geändert. Nächster Browser-Schritt bleibt manuelles Entsperren und Abgleich der unklaren Versuche, nicht deren blinde Wiederholung. Die drei lokalen Inhaltsaufträge sind beendet; aktuell läuft kein Buchsammler oder Hintergrunddienst.

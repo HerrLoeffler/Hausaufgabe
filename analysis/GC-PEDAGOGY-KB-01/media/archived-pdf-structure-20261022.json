@@ -1,0 +1,11 @@
+{
+  "scope": "structure check only of registered privately archived PDFs; no page content analysis",
+  "unique_archived_pdfs_checked": 908,
+  "readable_pdf_page_trees": 908,
+  "document_pages_structurally_present": 8465,
+  "pdfs_with_encryption_flag": 214,
+  "password_required_not_opened": 0,
+  "parse_errors": 0,
+  "new_book_completions": 0,
+  "opening_note": "No password guessing or permission changes; ordinary file opening only."
+}

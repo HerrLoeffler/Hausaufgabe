@@ -1,0 +1,156 @@
+{
+  "generated_at_utc": "2026-10-22T08:35:27.622555+00:00",
+  "scope": "archive hash, JSON parse, page sequence, task ID and local review coverage only; not full semantic validation or book completion",
+  "books_complete": 0,
+  "runtime_release": false,
+  "resources": [
+    {
+      "content_id": "ea3d79400d5b5503",
+      "archive_sha256_matches": true,
+      "record_files": 4,
+      "records_by_kind": {
+        "pages-all": 284,
+        "pages001-095": 95,
+        "pages096-190": 95,
+        "pages191-284": 94
+      },
+      "pdf_page_count": 284,
+      "complete_first_read_page_sequence": true
+    },
+    {
+      "content_id": "6b47874d62ea10d8",
+      "archive_sha256_matches": true,
+      "record_files": 1,
+      "records_by_kind": {
+        "pages-all": 22
+      },
+      "pdf_page_count": 22,
+      "complete_first_read_page_sequence": true
+    },
+    {
+      "content_id": "355f8ec214bd88bd",
+      "archive_sha256_matches": true,
+      "record_files": 5,
+      "records_by_kind": {
+        "independent-review-001-020": 59,
+        "pages": 168,
+        "root-bounded-review": 5,
+        "tasks": 379,
+        "visuals": 168
+      },
+      "pdf_page_count": 168,
+      "complete_first_read_page_sequence": true
+    },
+    {
+      "content_id": "b0992c0ad3b74948",
+      "archive_sha256_matches": true,
+      "record_files": 6,
+      "records_by_kind": {
+        "independent-subtasks-006-020": 447,
+        "pages": 106,
+        "root-bounded-review": 39,
+        "subtasks": 2209,
+        "tasks": 203,
+        "visuals": 106
+      },
+      "pdf_page_count": 106,
+      "complete_first_read_page_sequence": true
+    },
+    {
+      "content_id": "2956ad5d9a7b5d3f",
+      "archive_sha256_matches": true,
+      "record_files": 3,
+      "records_by_kind": {
+        "pages": 40,
+        "tasks": 38,
+        "visuals": 40
+      },
+      "pdf_page_count": 40,
+      "complete_first_read_page_sequence": true
+    },
+    {
+      "content_id": "1238532f17dc6ece",
+      "archive_sha256_matches": true,
+      "record_files": 3,
+      "records_by_kind": {
+        "pages": 51,
+        "tasks": 48,
+        "visuals": 51
+      },
+      "pdf_page_count": 51,
+      "complete_first_read_page_sequence": true
+    },
+    {
+      "content_id": "36bb6b3ddebc5d8e",
+      "archive_sha256_matches": true,
+      "record_files": 0,
+      "records_by_kind": {}
+    },
+    {
+      "content_id": "720e4887cc0f6bd8",
+      "archive_sha256_matches": true,
+      "record_files": 0,
+      "records_by_kind": {}
+    },
+    {
+      "content_id": "6e9af45c5c640631",
+      "archive_sha256_matches": true,
+      "record_files": 5,
+      "records_by_kind": {
+        "didactics": 120,
+        "independent-review-300-325": 315,
+        "pages": 369,
+        "tasks": 915,
+        "visuals": 369
+      },
+      "pdf_page_count": 369,
+      "complete_first_read_page_sequence": true
+    },
+    {
+      "content_id": "0013cff36fb3ae6f",
+      "archive_sha256_matches": true,
+      "record_files": 5,
+      "records_by_kind": {
+        "didactics": 3,
+        "independent-review": 63,
+        "pages": 1,
+        "tasks": 63,
+        "visuals": 3
+      }
+    }
+  ],
+  "newly_first_read_pdf_pages": 734,
+  "all_seven_acquired_pdf_pages": 1040,
+  "teacher_task_count": 915,
+  "teacher_review_records": 315,
+  "teacher_review_statuses": {
+    "corrected_after_independent_review": 1,
+    "independently_checked": 312,
+    "open_partial_source_ambiguous": 2
+  },
+  "concept_receipt_top_level_fields": [
+    "task_id",
+    "date",
+    "canonical_file",
+    "status",
+    "source_rule_ids",
+    "r115_rule_ids",
+    "source_rules_adopted",
+    "r115_rules_adopted",
+    "unadopted_rule_ids",
+    "excluded_claims",
+    "previous_sha256",
+    "canonical_sha256",
+    "patch",
+    "patch_sha256",
+    "document_checks",
+    "product_tests_run",
+    "media_database_product_changes",
+    "commit",
+    "pr_changes",
+    "deployment",
+    "pr208_checked_head",
+    "remote_path_present_on_main_or_pr208",
+    "remaining_delivery_limit"
+  ]
+}

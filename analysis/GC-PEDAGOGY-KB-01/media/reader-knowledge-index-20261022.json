@@ -1,0 +1,1022 @@
+{
+  "generated_at_utc": "2026-10-22T08:35:27.622555+00:00",
+  "schema": "local_reader_knowledge_source_index_v1",
+  "scope": "local archive/analysis resolution; not application runtime pool or verified book-completion list",
+  "books_complete": 0,
+  "last_counted_books": 125,
+  "source_metadata_rule": "canonical_metadata separates confirmed source grades from estimated use; copied estimated source_grade fields in older per-task files are not confirmed source provenance",
+  "resources": [
+    {
+      "content_id": "ea3d79400d5b5503",
+      "sha256": "ea3d79400d5b5503e67023a3f9e2d66c2164638beec32c5ed3885f660baa712b",
+      "reader_ref": "R001",
+      "resource_role": "teacher_commentary_bundle",
+      "original_archive_relative": "private-archive/reader-acquired-20261021/ea3d79400d5b5503e67023a3f9e2d66c2164638beec32c5ed3885f660baa712b.pdf",
+      "expected_pdf_pages": 284,
+      "canonical_metadata": {
+        "content_id": "ea3d79400d5b5503",
+        "reader_ref": "R001",
+        "resource_role": "teacher_commentary_bundle",
+        "metadata_review": "input_metadata_check_only",
+        "subjects": [
+          {
+            "value": "Deutsch / Schriftspracherwerb",
+            "status": "source_confirmed",
+            "evidence": [
+              "PDF p.4 contents identifies Fibel commentary; pp.5-10 describe reading and writing acquisition, letter-sound links and language reflection"
+            ]
+          }
+        ],
+        "source_grades": {
+          "values": [
+            1
+          ],
+          "basis": "explicit",
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.3 identifies Fibel 1 teacher materials; p.7 says the Fibel accompanies children from first school day through end of first class"
+          ]
+        },
+        "school_type": {
+          "value": "Grundschule",
+          "status": "estimated",
+          "reason": "Source names the first class and a school primer but does not explicitly print a school-type label on checked front matter."
+        },
+        "source_jurisdiction": {
+          "value": "Bayern (Germany)",
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.3 cover identifies Bayern; p.5 references LehrplanPLUS"
+          ]
+        },
+        "source_year": {
+          "copyright_year": 2014,
+          "print_year": 2019,
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.2 copyright notice and print note"
+          ]
+        },
+        "evidence_refs": [
+          {
+            "pdf_pages": [
+              2,
+              3,
+              4,
+              5,
+              7
+            ],
+            "scope": "copyright/print note, cover, contents, concept introduction"
+          }
+        ],
+        "open_fields": [
+          "school_type"
+        ],
+        "target_audience": "teacher",
+        "calibration_ref": "master/material-jahrgangskalibrierung-20261022.md",
+        "curriculum_mapping_status": "not_confirmed",
+        "runtime_release": false
+      },
+      "record_files": [
+        {
+          "path": "media/commentary-ea3d79400d5b5503-20261021/pages-all.jsonl",
+          "record_count": 284,
+          "kind": "pages-all",
+          "sha256": "ac3913ca4f17c2b9e9e8770970da32d327a1d6953b7b9f92c88651a20c5e0b74"
+        },
+        {
+          "path": "media/commentary-ea3d79400d5b5503-20261021/pages001-095.jsonl",
+          "record_count": 95,
+          "kind": "pages001-095",
+          "sha256": "3af99ca3b58192b3294b877400386065348945141cbd3616ed279c1b2f1c678d"
+        },
+        {
+          "path": "media/commentary-ea3d79400d5b5503-20261021/pages096-190.jsonl",
+          "record_count": 95,
+          "kind": "pages096-190",
+          "sha256": "7675b0f073a4172e35c44622aff9aae542be27cc374e7d871839537198df368d"
+        },
+        {
+          "path": "media/commentary-ea3d79400d5b5503-20261021/pages191-284.jsonl",
+          "record_count": 94,
+          "kind": "pages191-284",
+          "sha256": "7963dc301d6139709970feda093bffb9090106381c5f8598b68c41a62d527541"
+        }
+      ],
+      "runtime_release": false,
+      "completion_scope": "not_a_complete_book",
+      "text_visual_page_records": 284,
+      "summary_files": [
+        "media/commentary-ea3d79400d5b5503-20261021/synthesis001-095.md",
+        "media/commentary-ea3d79400d5b5503-20261021/synthesis096-190.md",
+        "media/commentary-ea3d79400d5b5503-20261021/synthesis191-284.md"
+      ]
+    },
+    {
+      "content_id": "6b47874d62ea10d8",
+      "sha256": "6b47874d62ea10d8c92fcce4ef9017d0e82bfefcfd42171b8d1fbc4d99a97871",
+      "reader_ref": "R001",
+      "resource_role": "assessment_bundle",
+      "original_archive_relative": "private-archive/reader-acquired-20261021/6b47874d62ea10d8c92fcce4ef9017d0e82bfefcfd42171b8d1fbc4d99a97871.pdf",
+      "expected_pdf_pages": 22,
+      "canonical_metadata": {
+        "content_id": "6b47874d62ea10d8",
+        "reader_ref": "R001",
+        "resource_role": "assessment_bundle",
+        "metadata_review": "input_metadata_check_only",
+        "subjects": [
+          {
+            "value": "Deutsch / Lesen und Schreiben",
+            "status": "estimated",
+            "reason": "Original pp.1-10 contain letter-sound, syllable, reading and writing tasks; no subject label or title page is present."
+          }
+        ],
+        "source_grades": {
+          "values": [],
+          "basis": "unknown",
+          "status": "unresolved",
+          "reason": "Checked original pages contain no explicit grade; activity level alone is insufficient to establish source grade."
+        },
+        "school_type": {
+          "value": null,
+          "status": "unresolved",
+          "reason": "No school-type label on checked original pages."
+        },
+        "source_jurisdiction": {
+          "value": null,
+          "status": "unresolved",
+          "reason": "No state or country label on checked original pages."
+        },
+        "source_year": {
+          "copyright_year": null,
+          "print_year": null,
+          "status": "unresolved",
+          "reason": "No edition/year statement found on checked original pages."
+        },
+        "evidence_refs": [
+          {
+            "pdf_pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "scope": "opening task pages; text and page layout inspected"
+          }
+        ],
+        "relationship_note": "Reader reference R001 is not treated as proof that this bundled resource shares every metadata field with another R001 item.",
+        "estimated_use_range": {
+          "grades": [
+            1,
+            2
+          ],
+          "status": "pedagogical_estimate_not_curriculum_mapping",
+          "scope": "only content-matched beginning-literacy activities or first-year planning sections; not every page at school entry",
+          "target_education_path": "Grundschule/Eingangsbereich, estimated",
+          "prerequisites": [
+            "known picture vocabulary when required",
+            "task-specific grapheme, reading or writing prerequisites"
+          ],
+          "limits": "No source-grade confirmation or transfer to other school types. See independent concept report for section restrictions."
+        },
+        "target_audience": "learner_and_teacher",
+        "calibration_ref": "master/material-jahrgangskalibrierung-20261022.md",
+        "curriculum_mapping_status": "not_confirmed",
+        "runtime_release": false,
+        "open_fields": [
+          "source_grades",
+          "school_type",
+          "source_jurisdiction",
+          "source_year"
+        ]
+      },
+      "record_files": [
+        {
+          "path": "media/diagnosis-6b47874d62ea10d8-20261021/pages-all.jsonl",
+          "record_count": 22,
+          "kind": "pages-all",
+          "sha256": "707a55c0183aab9dc999dc417308fbe74a50f49aba50395c253f57626973ab9f"
+        }
+      ],
+      "runtime_release": false,
+      "completion_scope": "not_a_complete_book",
+      "text_visual_page_records": 22,
+      "summary_files": [
+        "media/diagnosis-6b47874d62ea10d8-20261021/synthesis.md"
+      ]
+    },
+    {
+      "content_id": "355f8ec214bd88bd",
+      "sha256": "355f8ec214bd88bd2d1391594fcd39b525d49b35e944cdcee024319d2f418eda",
+      "reader_ref": "R001",
+      "resource_role": "workbook_with_solutions_bundle",
+      "original_archive_relative": "private-archive/reader-acquired-20261021/355f8ec214bd88bd2d1391594fcd39b525d49b35e944cdcee024319d2f418eda.pdf",
+      "expected_pdf_pages": 168,
+      "canonical_metadata": {
+        "content_id": "355f8ec214bd88bd",
+        "reader_ref": "R001",
+        "resource_role": "workbook_with_solutions_bundle",
+        "metadata_review": "input_metadata_check_only",
+        "subjects": [
+          {
+            "value": "Deutsch / Lesen und Schreiben",
+            "status": "source_confirmed",
+            "evidence": [
+              "PDF pp.2-3 contents and introduction identify letter learning, reading and writing goals"
+            ]
+          }
+        ],
+        "source_grades": {
+          "values": [
+            1
+          ],
+          "basis": "explicit",
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.3 introduction explicitly discusses spelling instruction in the first class; the standalone cover numeral is not relied on as an explicit grade statement."
+          ]
+        },
+        "school_type": {
+          "value": "Grundschule",
+          "status": "estimated",
+          "reason": "The original labels first class and uses a first-class primer/workbook, but does not explicitly print Grundschule on the checked cover."
+        },
+        "source_jurisdiction": {
+          "value": "Bayern (Germany)",
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.1 cover explicitly labels Bayern"
+          ]
+        },
+        "source_year": {
+          "copyright_year": null,
+          "print_year": null,
+          "status": "unresolved",
+          "reason": "No publication or print year was located on checked opening pages."
+        },
+        "evidence_refs": [
+          {
+            "pdf_pages": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "scope": "cover, contents and introduction"
+          }
+        ],
+        "open_fields": [
+          "school_type",
+          "source_year"
+        ],
+        "target_audience": "learner_and_teacher",
+        "calibration_ref": "master/material-jahrgangskalibrierung-20261022.md",
+        "curriculum_mapping_status": "not_confirmed",
+        "runtime_release": false
+      },
+      "record_files": [
+        {
+          "path": "media/workbook-355f8ec214bd88bd2d1391594fcd39b525d49b35e944cdcee024319d2f418eda-20261022/independent-review-001-020.jsonl",
+          "record_count": 59,
+          "kind": "independent-review-001-020",
+          "sha256": "472c4ff4d18c949a7dd4d4241a2be5dc0cd14ded76d431c3210ff75b8eb22595"
+        },
+        {
+          "path": "media/workbook-355f8ec214bd88bd2d1391594fcd39b525d49b35e944cdcee024319d2f418eda-20261022/pages.jsonl",
+          "record_count": 168,
+          "kind": "pages",
+          "sha256": "b462b1c0b266a4b5fdf2e49cc6d25500ecf696338097cc35b03eee6809ee1c29"
+        },
+        {
+          "path": "media/workbook-355f8ec214bd88bd2d1391594fcd39b525d49b35e944cdcee024319d2f418eda-20261022/root-bounded-review.jsonl",
+          "record_count": 5,
+          "kind": "root-bounded-review",
+          "sha256": "4ed6b2a415ca99e1c27fc82d43125fa699e477353d0f2fc6e6c4697beb15f3b6"
+        },
+        {
+          "path": "media/workbook-355f8ec214bd88bd2d1391594fcd39b525d49b35e944cdcee024319d2f418eda-20261022/tasks.jsonl",
+          "record_count": 379,
+          "kind": "tasks",
+          "sha256": "daf98a5cb03c5e816e9acc1c35cd816d0ef846edf2bd9d24b0bcf0ba717dceae"
+        },
+        {
+          "path": "media/workbook-355f8ec214bd88bd2d1391594fcd39b525d49b35e944cdcee024319d2f418eda-20261022/visuals.jsonl",
+          "record_count": 168,
+          "kind": "visuals",
+          "sha256": "5a63d7ab8b95263489aa48f4509bf1858104f89837803063a2958621b461538d"
+        }
+      ],
+      "runtime_release": false,
+      "completion_scope": "not_a_complete_book",
+      "text_visual_page_records": 168,
+      "summary_files": [
+        "media/workbook-355f8ec214bd88bd2d1391594fcd39b525d49b35e944cdcee024319d2f418eda-20261022/independent-review-001-020.md",
+        "media/workbook-355f8ec214bd88bd2d1391594fcd39b525d49b35e944cdcee024319d2f418eda-20261022/root-bounded-review.md",
+        "media/workbook-355f8ec214bd88bd2d1391594fcd39b525d49b35e944cdcee024319d2f418eda-20261022/summary.md"
+      ]
+    },
+    {
+      "content_id": "b0992c0ad3b74948",
+      "sha256": "b0992c0ad3b74948f183fe5668b876b611b84b7e4a5a630a796de4487d64d4bf",
+      "reader_ref": "R001",
+      "resource_role": "copying_templates_bundle",
+      "original_archive_relative": "private-archive/reader-acquired-20261021/b0992c0ad3b74948f183fe5668b876b611b84b7e4a5a630a796de4487d64d4bf.pdf",
+      "expected_pdf_pages": 106,
+      "canonical_metadata": {
+        "content_id": "b0992c0ad3b74948",
+        "reader_ref": "R001",
+        "resource_role": "copying_templates_bundle",
+        "metadata_review": "input_metadata_check_only",
+        "subjects": [
+          {
+            "value": "Deutsch / Lesen und Schreiben",
+            "status": "source_confirmed",
+            "evidence": [
+              "PDF pp.3-6 contents and first template pages focus on letters, sounds, words and reading/writing"
+            ]
+          }
+        ],
+        "source_grades": {
+          "values": [],
+          "basis": "unknown",
+          "status": "unresolved",
+          "reason": "Cover carries a volume/stage numeral1, not an explicit first-school-year label. Grade1 is a justified use estimate from the beginning literacy content, not confirmed source provenance."
+        },
+        "school_type": {
+          "value": "Grundschule",
+          "status": "estimated",
+          "reason": "The original identifies Fibel 1 but does not explicitly print Grundschule on the checked cover."
+        },
+        "source_jurisdiction": {
+          "value": "Bayern (Germany)",
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.1 cover explicitly labels Bayern"
+          ]
+        },
+        "source_year": {
+          "copyright_year": 2014,
+          "print_year": 2019,
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.2 copyright and print notice"
+          ]
+        },
+        "evidence_refs": [
+          {
+            "pdf_pages": [
+              1,
+              2,
+              3,
+              6
+            ],
+            "scope": "cover, imprint, contents and initial template"
+          }
+        ],
+        "open_fields": [
+          "source_grades",
+          "school_type"
+        ],
+        "candidate_evidence": {
+          "grade": 1,
+          "basis": "cover numeral and beginning-literacy content",
+          "review_status": "explicit_source_grade_not_established"
+        },
+        "estimated_use_range": {
+          "grades": [
+            1,
+            2
+          ],
+          "status": "pedagogical_estimate_not_curriculum_mapping",
+          "scope": "only content-matched beginning-literacy activities or first-year planning sections; not every page at school entry",
+          "target_education_path": "Grundschule/Eingangsbereich, estimated",
+          "prerequisites": [
+            "known picture vocabulary when required",
+            "task-specific grapheme, reading or writing prerequisites"
+          ],
+          "limits": "No source-grade confirmation or transfer to other school types. See independent concept report for section restrictions."
+        },
+        "target_audience": "learner_and_teacher",
+        "calibration_ref": "master/material-jahrgangskalibrierung-20261022.md",
+        "curriculum_mapping_status": "not_confirmed",
+        "runtime_release": false
+      },
+      "record_files": [
+        {
+          "path": "media/resources-20261022/b0992c0ad3b74948/independent-subtasks-006-020.jsonl",
+          "record_count": 447,
+          "kind": "independent-subtasks-006-020",
+          "sha256": "32be4d57e515ca8508dd881784b0b31958d12c1e67ca58408106666c2bf0e611"
+        },
+        {
+          "path": "media/resources-20261022/b0992c0ad3b74948/pages.jsonl",
+          "record_count": 106,
+          "kind": "pages",
+          "sha256": "2f1a1ff82be373e77a84c35a31a292756cb2b206b69f75e01231b3485bb62997"
+        },
+        {
+          "path": "media/resources-20261022/b0992c0ad3b74948/root-bounded-review.jsonl",
+          "record_count": 39,
+          "kind": "root-bounded-review",
+          "sha256": "d106b2681d105cd7250cfdec789ca6e1676654d316822c0cd22237f567a109fd"
+        },
+        {
+          "path": "media/resources-20261022/b0992c0ad3b74948/subtasks.jsonl",
+          "record_count": 2209,
+          "kind": "subtasks",
+          "sha256": "c7ccc5e882a02cc70edac38a09b7c73e5f10b8d7e5a3ff64715988271eafef1c"
+        },
+        {
+          "path": "media/resources-20261022/b0992c0ad3b74948/tasks.jsonl",
+          "record_count": 203,
+          "kind": "tasks",
+          "sha256": "301d48a7166ae4c7df1731d42aa6ae9656800db026218afd9a513fb270c77418"
+        },
+        {
+          "path": "media/resources-20261022/b0992c0ad3b74948/visuals.jsonl",
+          "record_count": 106,
+          "kind": "visuals",
+          "sha256": "f36644c89815e1e68c33ac2043e8e14a6ba54bf4c0144be6ca5539287ccda1b5"
+        }
+      ],
+      "runtime_release": false,
+      "completion_scope": "not_a_complete_book",
+      "text_visual_page_records": 106,
+      "summary_files": [
+        "media/resources-20261022/b0992c0ad3b74948/independent-subtasks-006-020.md",
+        "media/resources-20261022/b0992c0ad3b74948/refinement-progress.md",
+        "media/resources-20261022/b0992c0ad3b74948/root-bounded-review.md",
+        "media/resources-20261022/b0992c0ad3b74948/summary.md"
+      ]
+    },
+    {
+      "content_id": "2956ad5d9a7b5d3f",
+      "sha256": "2956ad5d9a7b5d3fd0ad5dac61a54afc129b37de23b2d2a7ad0fcf019f64375f",
+      "reader_ref": "R001",
+      "resource_role": "phonics_cards_bundle",
+      "original_archive_relative": "private-archive/reader-acquired-20261021/2956ad5d9a7b5d3fd0ad5dac61a54afc129b37de23b2d2a7ad0fcf019f64375f.pdf",
+      "expected_pdf_pages": 40,
+      "canonical_metadata": {
+        "content_id": "2956ad5d9a7b5d3f",
+        "reader_ref": "R001",
+        "resource_role": "phonics_cards_bundle",
+        "metadata_review": "input_metadata_check_only",
+        "subjects": [
+          {
+            "value": "Deutsch / Laut-Buchstaben-Zuordnung",
+            "status": "source_confirmed",
+            "evidence": [
+              "PDF pp.1,3-10 identify initial-sound cards and show German letter/sound prompts"
+            ]
+          }
+        ],
+        "source_grades": {
+          "values": [],
+          "basis": "unknown",
+          "status": "unresolved",
+          "reason": "No grade or school-year statement appears on checked original pages."
+        },
+        "school_type": {
+          "value": null,
+          "status": "unresolved",
+          "reason": "No school-type label appears on checked original pages."
+        },
+        "source_jurisdiction": {
+          "value": null,
+          "status": "unresolved",
+          "reason": "No state/country label appears on checked original pages."
+        },
+        "source_year": {
+          "copyright_year": 2014,
+          "print_year": 2019,
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.2 copyright and print note"
+          ]
+        },
+        "evidence_refs": [
+          {
+            "pdf_pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "scope": "card-set opener, imprint and sample cards"
+          }
+        ],
+        "relationship_note": "Shared visual design and publisher line do not independently prove a grade, school type, or state relationship.",
+        "estimated_use_range": {
+          "grades": [
+            1,
+            2
+          ],
+          "status": "pedagogical_estimate_not_curriculum_mapping",
+          "scope": "only content-matched beginning-literacy activities or first-year planning sections; not every page at school entry",
+          "target_education_path": "Grundschule/Eingangsbereich, estimated",
+          "prerequisites": [
+            "known picture vocabulary when required",
+            "task-specific grapheme, reading or writing prerequisites"
+          ],
+          "limits": "No source-grade confirmation or transfer to other school types. See independent concept report for section restrictions."
+        },
+        "target_audience": "learner_and_teacher",
+        "calibration_ref": "master/material-jahrgangskalibrierung-20261022.md",
+        "curriculum_mapping_status": "not_confirmed",
+        "runtime_release": false,
+        "open_fields": [
+          "source_grades",
+          "school_type",
+          "source_jurisdiction"
+        ]
+      },
+      "record_files": [
+        {
+          "path": "media/resources-20261022/2956ad5d9a7b5d3f/pages.jsonl",
+          "record_count": 40,
+          "kind": "pages",
+          "sha256": "179638a5af20e3648b212efb790bca5ff90dc983f1341065fad44c54f36ebb43"
+        },
+        {
+          "path": "media/resources-20261022/2956ad5d9a7b5d3f/tasks.jsonl",
+          "record_count": 38,
+          "kind": "tasks",
+          "sha256": "d7595a2be7254dee84e311aef8b69043210fce8de8a444628f139e990e37a755"
+        },
+        {
+          "path": "media/resources-20261022/2956ad5d9a7b5d3f/visuals.jsonl",
+          "record_count": 40,
+          "kind": "visuals",
+          "sha256": "75598aa9c9fffdf894cd637b8636df06e033116c6cdb52268b4a40c5c2fa6455"
+        }
+      ],
+      "runtime_release": false,
+      "completion_scope": "not_a_complete_book",
+      "text_visual_page_records": 40,
+      "summary_files": [
+        "media/resources-20261022/2956ad5d9a7b5d3f/summary.md"
+      ]
+    },
+    {
+      "content_id": "1238532f17dc6ece",
+      "sha256": "1238532f17dc6eceba03891ca527a24d96db8cb8a82add75803997d6fa687b3f",
+      "reader_ref": "R001",
+      "resource_role": "scope_sequence_pdf",
+      "original_archive_relative": "private-archive/reader-acquired-20261021/1238532f17dc6eceba03891ca527a24d96db8cb8a82add75803997d6fa687b3f.pdf",
+      "expected_pdf_pages": 51,
+      "canonical_metadata": {
+        "content_id": "1238532f17dc6ece",
+        "reader_ref": "R001",
+        "resource_role": "scope_sequence_pdf",
+        "metadata_review": "input_metadata_check_only",
+        "subjects": [
+          {
+            "value": "Deutsch",
+            "status": "source_confirmed",
+            "evidence": [
+              "PDF pp.2-5 name German learning areas and cite D 1/2; tables map primer and workbook competencies"
+            ]
+          }
+        ],
+        "source_grades": {
+          "values": [
+            1
+          ],
+          "basis": "explicit",
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.2 header explicitly says Fibel Bayern 1. Schuljahr"
+          ]
+        },
+        "school_type": {
+          "value": "Grundschule",
+          "status": "estimated",
+          "reason": "The original explicitly identifies the first school year and cites Lehrplan Plus 1/2, but the checked header does not print the school-type label Grundschule."
+        },
+        "source_jurisdiction": {
+          "value": "Bayern (Germany)",
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.2 header explicitly says Bayern"
+          ]
+        },
+        "source_year": {
+          "copyright_year": null,
+          "print_year": null,
+          "status": "unresolved",
+          "reason": "No publication/print year found on checked opening pages."
+        },
+        "evidence_refs": [
+          {
+            "pdf_pages": [
+              2,
+              3,
+              4,
+              5
+            ],
+            "scope": "header and first units/competency mappings"
+          }
+        ],
+        "open_fields": [
+          "school_type",
+          "source_year"
+        ],
+        "target_audience": "teacher",
+        "calibration_ref": "master/material-jahrgangskalibrierung-20261022.md",
+        "curriculum_mapping_status": "not_confirmed",
+        "runtime_release": false
+      },
+      "record_files": [
+        {
+          "path": "media/resources-20261022/1238532f17dc6ece/pages.jsonl",
+          "record_count": 51,
+          "kind": "pages",
+          "sha256": "d54568cf7fc8930003a696dba319ab5c9eb5b35b3e26bd32c88e8304d78403cf"
+        },
+        {
+          "path": "media/resources-20261022/1238532f17dc6ece/tasks.jsonl",
+          "record_count": 48,
+          "kind": "tasks",
+          "sha256": "16347ada6d1c2c0cd73ddf43b514dbc0ab9fce60fd27004547dfba8fa5ebadf4"
+        },
+        {
+          "path": "media/resources-20261022/1238532f17dc6ece/visuals.jsonl",
+          "record_count": 51,
+          "kind": "visuals",
+          "sha256": "c0cbd28ff1e00f150ff7a89f30c424ba6f4b1c9a69f65d31557fd4cb0523e021"
+        }
+      ],
+      "runtime_release": false,
+      "completion_scope": "not_a_complete_book",
+      "text_visual_page_records": 51,
+      "summary_files": [
+        "media/resources-20261022/1238532f17dc6ece/summary.md"
+      ]
+    },
+    {
+      "content_id": "36bb6b3ddebc5d8e",
+      "sha256": "36bb6b3ddebc5d8efbaffa02b00aa7db99671c84f520cc52c7986461d64881e1",
+      "reader_ref": "R001",
+      "resource_role": "scope_sequence_editable",
+      "original_archive_relative": "private-archive/reader-acquired-20261021/36bb6b3ddebc5d8efbaffa02b00aa7db99671c84f520cc52c7986461d64881e1.doc",
+      "expected_pdf_pages": null,
+      "canonical_metadata": {
+        "content_id": "36bb6b3ddebc5d8e",
+        "reader_ref": "R001",
+        "resource_role": "scope_sequence_editable",
+        "metadata_review": "input_metadata_check_only",
+        "normalization": "textutil extracted readable text to transient private conversion; original Word file retained unchanged",
+        "subjects": [
+          {
+            "value": "Deutsch",
+            "status": "source_confirmed",
+            "evidence": [
+              "Normalized text begins with first unit and explicitly contains D 1/2 German learning-area references and mappings to primer/workbook/KV"
+            ]
+          }
+        ],
+        "source_grades": {
+          "values": [],
+          "basis": "unknown",
+          "status": "unresolved",
+          "review_status": "conflict_open",
+          "reason": "Footer in original normalized text mentions Bavaria/first school year but an inconsistent template label remains; whole-file provenance requires layout/scope confirmation."
+        },
+        "school_type": {
+          "value": null,
+          "status": "unresolved",
+          "reason": "Normalized text cites D 1/2 but does not state a school type for this document."
+        },
+        "source_jurisdiction": {
+          "value": null,
+          "status": "unresolved",
+          "review_status": "conflict_open",
+          "reason": "Bavaria occurs in footer; earlier claim that normalized text has no jurisdiction label is withdrawn. Contradictory template identifier prevents whole-file confirmation."
+        },
+        "source_year": {
+          "copyright_year": null,
+          "print_year": null,
+          "status": "unresolved",
+          "reason": "Word file properties show 2014 creation/print times, which do not establish the source edition year."
+        },
+        "evidence_refs": [
+          {
+            "document_section": "opening content (after blank leading pages), unit 'In der Schule'; normalized text pages/sections not present in original file",
+            "scope": "curriculum table and references to primer/workbook pages"
+          },
+          {
+            "document_section": "original footer/end section after textutil normalization",
+            "scope": "Bavaria/first-school-year positive evidence and inconsistent template label; independent concept review, not layout verified"
+          }
+        ],
+        "open_fields": [
+          "source_grades",
+          "school_type",
+          "source_jurisdiction",
+          "source_year"
+        ],
+        "candidate_evidence": {
+          "grade": 1,
+          "jurisdiction": "Bayern",
+          "locator": "footer of original normalized text near end; see independent concept calibration report",
+          "review_status": "layout_and_scope_confirmation_pending"
+        },
+        "correction_history": [
+          {
+            "date": "2026-10-22",
+            "reason": "Independent concept review found footer evidence omitted by earlier input metadata pass; previous absence claims withdrawn."
+          }
+        ],
+        "estimated_use_range": {
+          "grades": [
+            1
+          ],
+          "status": "pedagogical_estimate_not_curriculum_mapping",
+          "scope": "only content-matched beginning-literacy activities or first-year planning sections; not every page at school entry",
+          "target_education_path": "Grundschule/Eingangsbereich, estimated",
+          "prerequisites": [
+            "known picture vocabulary when required",
+            "task-specific grapheme, reading or writing prerequisites"
+          ],
+          "limits": "No source-grade confirmation or transfer to other school types. See independent concept report for section restrictions."
+        },
+        "target_audience": "teacher",
+        "calibration_ref": "master/material-jahrgangskalibrierung-20261022.md",
+        "curriculum_mapping_status": "not_confirmed",
+        "runtime_release": false
+      },
+      "record_files": [],
+      "runtime_release": false,
+      "completion_scope": "not_a_complete_book",
+      "analysis_status": "metadata_only_or_separate_image_record; full_format_review_pending"
+    },
+    {
+      "content_id": "720e4887cc0f6bd8",
+      "sha256": "720e4887cc0f6bd8c7423e412cc2462207fdf96fb31ce779382c5889b16ab98d",
+      "reader_ref": "R001",
+      "resource_role": "phonics_image",
+      "original_archive_relative": "private-archive/reader-acquired-20261021/720e4887cc0f6bd8c7423e412cc2462207fdf96fb31ce779382c5889b16ab98d.jpg",
+      "expected_pdf_pages": null,
+      "canonical_metadata": {
+        "content_id": "720e4887cc0f6bd8",
+        "reader_ref": "R001",
+        "resource_role": "phonics_image",
+        "metadata_review": "input_metadata_check_only",
+        "subjects": [
+          {
+            "value": "Deutsch / Laut-Buchstaben-Zuordnung",
+            "status": "source_confirmed",
+            "evidence": [
+              "Original image depicts German alphabet/initial-sound cue and picture prompts"
+            ]
+          }
+        ],
+        "source_grades": {
+          "values": [],
+          "basis": "unknown",
+          "status": "unresolved",
+          "reason": "Image carries no grade or edition information."
+        },
+        "school_type": {
+          "value": null,
+          "status": "unresolved",
+          "reason": "Image carries no school-type label."
+        },
+        "source_jurisdiction": {
+          "value": null,
+          "status": "unresolved",
+          "reason": "Image carries no state/country label."
+        },
+        "source_year": {
+          "copyright_year": null,
+          "print_year": null,
+          "status": "unresolved",
+          "reason": "Image carries no publication information."
+        },
+        "evidence_refs": [
+          {
+            "media": "original image, privately archived",
+            "scope": "visual semantics only"
+          }
+        ],
+        "relationship_note": "Reader reference alone does not assign this standalone image the metadata of neighboring resources.",
+        "estimated_use_range": {
+          "grades": [
+            1,
+            2
+          ],
+          "status": "pedagogical_estimate_not_curriculum_mapping",
+          "scope": "only content-matched beginning-literacy activities or first-year planning sections; not every page at school entry",
+          "target_education_path": "Grundschule/Eingangsbereich, estimated",
+          "prerequisites": [
+            "known picture vocabulary when required",
+            "task-specific grapheme, reading or writing prerequisites"
+          ],
+          "limits": "No source-grade confirmation or transfer to other school types. See independent concept report for section restrictions."
+        },
+        "target_audience": "learner_and_teacher",
+        "calibration_ref": "master/material-jahrgangskalibrierung-20261022.md",
+        "curriculum_mapping_status": "not_confirmed",
+        "runtime_release": false,
+        "open_fields": [
+          "source_grades",
+          "school_type",
+          "source_jurisdiction",
+          "source_year"
+        ]
+      },
+      "record_files": [],
+      "runtime_release": false,
+      "completion_scope": "not_a_complete_book",
+      "analysis_status": "metadata_only_or_separate_image_record; full_format_review_pending"
+    },
+    {
+      "content_id": "6e9af45c5c640631",
+      "sha256": "6e9af45c5c64063139c4f3b8268a7b2af35783fc2136eaf52b00e4205bd151c3",
+      "reader_ref": "R002",
+      "resource_role": "teacher_materials_bundle",
+      "original_archive_relative": "private-archive/reader-acquired-20261021/6e9af45c5c64063139c4f3b8268a7b2af35783fc2136eaf52b00e4205bd151c3.pdf",
+      "expected_pdf_pages": 369,
+      "canonical_metadata": {
+        "content_id": "6e9af45c5c640631",
+        "reader_ref": "R002",
+        "resource_role": "teacher_materials_bundle",
+        "metadata_review": "input_metadata_check_only",
+        "subjects": [
+          {
+            "value": "Mathematik",
+            "status": "source_confirmed",
+            "evidence": [
+              "PDF p.1 cover identifies the subject series; PDF p.4 contents and pp.6-10 discuss mathematical competencies"
+            ]
+          }
+        ],
+        "source_grades": {
+          "values": [
+            1
+          ],
+          "basis": "explicit",
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.1 cover identifies volume 1; PDF p.4 contents explicitly names 1. Schuljahr"
+          ]
+        },
+        "school_type": {
+          "value": "Grundschule",
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.6 concept introduction explicitly references LehrplanPLUS Grundschule"
+          ]
+        },
+        "source_jurisdiction": {
+          "value": "Bayern (Germany)",
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.1 cover explicitly labels Bayern"
+          ]
+        },
+        "source_year": {
+          "copyright_year": null,
+          "print_year": 2021,
+          "status": "source_confirmed",
+          "evidence": [
+            "PDF p.3 print notice"
+          ]
+        },
+        "evidence_refs": [
+          {
+            "pdf_pages": [
+              1,
+              2,
+              3,
+              4,
+              6
+            ],
+            "scope": "cover, imprint, contents and concept introduction"
+          }
+        ],
+        "open_fields": [
+          "source_year"
+        ],
+        "target_audience": "teacher",
+        "calibration_ref": "master/material-jahrgangskalibrierung-20261022.md",
+        "curriculum_mapping_status": "not_confirmed",
+        "runtime_release": false
+      },
+      "record_files": [
+        {
+          "path": "media/teacher-6e9af45c5c640631-20261022/didactics.jsonl",
+          "record_count": 120,
+          "kind": "didactics",
+          "sha256": "28240e01c5e3129a7ae4a2b888271f89fe63f278d90a2eb56bff223d5fbdf1d5"
+        },
+        {
+          "path": "media/teacher-6e9af45c5c640631-20261022/independent-review-300-325.jsonl",
+          "record_count": 315,
+          "kind": "independent-review-300-325",
+          "sha256": "47f1ffea10e40cecab1bbc9c9cca0fc234dc9d0c7dfdc9a2476c3a6333876e6d"
+        },
+        {
+          "path": "media/teacher-6e9af45c5c640631-20261022/pages.jsonl",
+          "record_count": 369,
+          "kind": "pages",
+          "sha256": "c23ccbd253eedcda3315bf6b0304c244023ef9a90cb175fd8bdd47a081b6e85c"
+        },
+        {
+          "path": "media/teacher-6e9af45c5c640631-20261022/tasks.jsonl",
+          "record_count": 915,
+          "kind": "tasks",
+          "sha256": "7e7bcb4c139f860a6b8c41bc52d101795d92c140089ee47aa35ebdc1b1614bac"
+        },
+        {
+          "path": "media/teacher-6e9af45c5c640631-20261022/visuals.jsonl",
+          "record_count": 369,
+          "kind": "visuals",
+          "sha256": "16cf067768af1a55ec0f332bf11aad7a2c23688f76698f4ff797d3c8968d2d9b"
+        }
+      ],
+      "runtime_release": false,
+      "completion_scope": "not_a_complete_book",
+      "text_visual_page_records": 369,
+      "summary_files": [
+        "media/teacher-6e9af45c5c640631-20261022/independent-review-300-325.md",
+        "media/teacher-6e9af45c5c640631-20261022/summary.md"
+      ]
+    },
+    {
+      "content_id": "0013cff36fb3ae6f",
+      "sha256": "0013cff36fb3ae6f7ef8de9c6a983bc9b336e0fc286e48036b56d5ff6ffba093",
+      "reader_ref": "R115",
+      "resource_role": "mainbook_page_image",
+      "printed_page": 8,
+      "expected_pdf_pages": null,
+      "image_pages": 1,
+      "task_records": 63,
+      "independently_solution_checked_task_ids": 63,
+      "original_archive_relative": "private-archive/reader-acquired-v2/0013cff36fb3ae6f7ef8de9c6a983bc9b336e0fc286e48036b56d5ff6ffba093",
+      "record_files": [
+        {
+          "path": "media/mainbook-R115-page8-20261022/didactics.jsonl",
+          "record_count": 3,
+          "kind": "didactics",
+          "sha256": "75bc8bd13bfd65596d1b9629da77a1e52e237d7fc9f3462586dcff51e46179d3"
+        },
+        {
+          "path": "media/mainbook-R115-page8-20261022/independent-review.jsonl",
+          "record_count": 63,
+          "kind": "independent-review",
+          "sha256": "c62b3735a9785c9fe0f8b1bc067cac2a4ba19864abef0c83ea516d6411b1039b"
+        },
+        {
+          "path": "media/mainbook-R115-page8-20261022/pages.jsonl",
+          "record_count": 1,
+          "kind": "pages",
+          "sha256": "63824f2fb2ec398e079032de649e3753c0c2cdfa9d1aaf06a37a9c8ba5732212"
+        },
+        {
+          "path": "media/mainbook-R115-page8-20261022/tasks.jsonl",
+          "record_count": 63,
+          "kind": "tasks",
+          "sha256": "1e0423e03a382275137e53546d4fe16bd0b2cc7610900e469151a94fe17bafae"
+        },
+        {
+          "path": "media/mainbook-R115-page8-20261022/visuals.jsonl",
+          "record_count": 3,
+          "kind": "visuals",
+          "sha256": "8ddddf6a3ef533bfc653d6e012cd5e7ee641b00002437535a05ee179cd012050"
+        }
+      ],
+      "runtime_release": false,
+      "completion_scope": "exactly_one_book_page; whole_book_inventory_incomplete",
+      "summary_files": [
+        "media/mainbook-R115-page8-20261022/independent-review.md",
+        "media/mainbook-R115-page8-20261022/summary.md"
+      ]
+    }
+  ],
+  "download_authorization": {
+    "all_book_and_supplement_downloads_preapproved": true,
+    "per_file_user_questions_required": false,
+    "browser_permission_changes_confirmed": false,
+    "blocking_observation": "native_control_reports_mac_locked; manual_unlock_requested"
+  },
+  "open_requirements": [
+    "complete reader collection pilot",
+    "full125book and supplementary inventories",
+    "remaining individual item/solution/visual/audio checks",
+    "current official curriculum mappings",
+    "runtime profile selection/import evidence"
+  ],
+  "concept_rules_locally_integrated": 27,
+  "concept_integration_ref": "master/konzeptuebernahme-materialregeln-20261022.md",
+  "remote_concept_integration_status": "not_committed_by_concept_owner"
+}

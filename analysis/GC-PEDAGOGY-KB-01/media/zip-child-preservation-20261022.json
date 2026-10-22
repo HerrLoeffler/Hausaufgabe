@@ -1,0 +1,12 @@
+{
+  "completed_at_utc": "2026-10-22T08:07:47.935233+00:00",
+  "zip_parents": 20,
+  "child_references_archived": 3371,
+  "unique_child_objects": 2749,
+  "new_unique_child_archive_copies": 2086,
+  "duplicates_reuse_existing_object": 1285,
+  "issues": [],
+  "scope": "raw immutable ZIP-child preservation/normalization only; no content or book completion",
+  "new_downloads": 0,
+  "new_book_completions": 0
+}
