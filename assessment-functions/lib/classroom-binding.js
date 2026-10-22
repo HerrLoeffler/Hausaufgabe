@@ -1,6 +1,7 @@
 'use strict';
 const {hash}=require('./classroom-service');
 const {assessmentRunId}=require('./assessment-run-id');
+const {commonDeadlineExpired}=require('./classroom-round');
 const safe=value=>typeof value==='string'&&/^[A-Za-z0-9_-]{1,128}$/.test(value);
 async function readClassroomStart({get,fail,now,quizId,quiz,attemptId,data}){
  const policy=await get(`classroomQuizPolicies/${quizId}`),runId=assessmentRunId(quiz,quizId,fail);
@@ -12,6 +13,7 @@ async function readClassroomStart({get,fail,now,quizId,quiz,attemptId,data}){
  const base=`classroomSchools/${session.schoolId}`,aPath=`${base}/assignments/${data.classroomAssignment}`;
  const [p,a,participant]=await Promise.all([get(`${base}/students/${session.studentId}`),get(aPath),get(`${aPath}/participants/${session.studentId}`)]);
  if(!p||p.status!=='active'||p.accessVersion!==session.accessVersion||!a||a.quizId!==quizId||a.sessionRunId!==runId||!a.recipientIds?.includes(session.studentId))fail('permission-denied','Dieser Test ist dir nicht mehr zugewiesen.');
+ if(commonDeadlineExpired(quiz,now))fail('failed-precondition','Die gemeinsame Prüfungszeit ist abgelaufen. Bitte die Lehrkraft ansprechen.');
  const generation=participant?.generation||0;
  if(data.classroomGeneration!==generation)fail('failed-precondition','Die Lehrkraft hat einen neuen Versuch freigegeben. Bitte deine Testübersicht aktualisieren.');
  if(participant?.attemptId&&participant.attemptId!==attemptId)fail('already-exists','Für dich besteht bereits ein Versuch. Bitte auf demselben Gerät fortsetzen oder die Lehrkraft um Hilfe bitten.');
