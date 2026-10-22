@@ -8,10 +8,12 @@ bridge = (root / "TeacherWebPortalView.swift").read_text()
 
 assert "authFormPresented = true" in teacher and "GradeCrewAuthView(" in teacher
 assert "case .signedIn(_, _):" in teacher and "homeMenuScreen" in teacher
+assert 'Image(systemName: "house.fill")' not in teacher
+assert 'homeNavigation.shouldOpenWorkspaceAutomatically { openWorkspace() }' in teacher
 assert 'Mit GradeCrew anmelden' not in teacher
 assert 'call: quickRemyCall,' in teacher
-assert ".opacity(route == .workspace ? 1 : 0)" in teacher
-assert ".allowsHitTesting(route == .workspace)" in teacher
+assert ".opacity(homeNavigation.showsWorkspace ? 1 : 0)" in teacher
+assert ".allowsHitTesting(homeNavigation.showsWorkspace)" in teacher
 assert "if route == .quickRemy {" in teacher and "QuickRemyView(onBack:" in teacher
 
 assert "ScrollView" in remy

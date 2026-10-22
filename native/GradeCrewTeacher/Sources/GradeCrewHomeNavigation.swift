@@ -7,6 +7,15 @@ struct GradeCrewHomeNavigation {
     private(set) var authState: GradeCrewNativeBridgePolicy.AuthState = .checking
     private var shouldReturnHomeAfterLogin = false
 
+    var showsWorkspace:Bool {
+        if case .signedIn = authState { return route == .workspace }
+        return false
+    }
+    var shouldOpenWorkspaceAutomatically:Bool {
+        if case .signedIn = authState { return route == .home || route == .signIn }
+        return false
+    }
+
     var isAuthRestored: Bool {
         if case .checking = authState { return false }
         return true
@@ -16,6 +25,7 @@ struct GradeCrewHomeNavigation {
         authState = state
         switch state {
         case let .signedIn(_, accountChanged):
+            if accountChanged, route == .workspace { route = .home }
             if accountChanged, route == .quickRemy { route = .home }
             if shouldReturnHomeAfterLogin {
                 shouldReturnHomeAfterLogin = false
