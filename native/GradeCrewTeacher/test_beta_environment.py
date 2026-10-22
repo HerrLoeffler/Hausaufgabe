@@ -12,7 +12,7 @@ assert(GradeCrewBetaEnvironment.baseURL(for: "https://hausaufgabe-staging--old.w
 assert(GradeCrewBetaEnvironment.previewURL(from:"https://hausaufgabe-staging--old.web.app/") == nil)
 assert(GradeCrewBetaEnvironment.environmentLabel(for: "") == "Live")
 let normal = GradeCrewBetaEnvironment.homeURL(preference: "", version: "{version}")
-assert(normal.host == "hausaufgabe-staging.web.app")
+assert(normal.host == "gradecrew.de")
 let items = URLComponents(url: normal, resolvingAgainstBaseURL: false)!.queryItems!
 assert(items.first(where: {{ $0.name == "appVersion" }})?.value == "{version}")
 assert(items.first(where: {{ $0.name == "gradecrewApp" }})?.value == "teacher")

@@ -47,7 +47,7 @@ enum GradeCrewNativeBridgePolicy {
               let host = url.host?.lowercased(), host == selectedBaseURL.host?.lowercased(),
               selectedBaseURL.scheme?.lowercased() == "https",
               selectedBaseURL.user == nil, selectedBaseURL.password == nil, selectedBaseURL.port == nil else { return false }
-        return host == GradeCrewBetaEnvironment.defaultURL.host || GradeCrewBetaEnvironment.previewURL(from: "https://\(host)/") != nil
+        return GradeCrewBetaEnvironment.webHosts.contains(host) || GradeCrewBetaEnvironment.previewURL(from: "https://\(host)/") != nil
     }
 
     static func validate(body: Any, sourceURL: URL?, loadedURL: URL?, isMainFrame: Bool, selectedBaseURL: URL) throws -> Request {

@@ -11,7 +11,11 @@ enum GradeCrewBetaEnvironment {
     static let projectID = "hausaufgabe-staging"
     static let preferenceKey = "gradecrew.teacher.liveURL"
     #endif
-    static let stableStagingURL = URL(string: "https://\(projectID).web.app/")!
+    static let publicHost = isStaging ? "\(projectID).web.app" : "gradecrew.de"
+    static let webHosts: Set<String> = isStaging
+        ? [publicHost]
+        : [publicHost, "www.gradecrew.de", "hausaufgabe-staging.web.app"]
+    static let stableStagingURL = URL(string: "https://\(publicHost)/")!
     static let integrationPreviewURL = stableStagingURL
     static let defaultURL = stableStagingURL
     static let stablePreference = "__stable_staging__"

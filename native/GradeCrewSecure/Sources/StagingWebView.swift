@@ -3,7 +3,7 @@ import WebKit
 
 // This is a navigation boundary, NOT server authentication or exam attestation.
 enum StagingPolicy {
-    static let host = "\(SecureReleaseEnvironment.projectID).web.app"
+    static let host = SecureReleaseEnvironment.publicHost
     static func testURL(code: String) -> URL? {
         let normalized = code.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         guard normalized.range(of: "^[A-Z0-9]{4,16}$", options: .regularExpression) != nil else { return nil }
@@ -16,7 +16,7 @@ enum StagingPolicy {
     }
     static func allows(_ url: URL?) -> Bool {
         guard let url else { return false }
-        return url.scheme == "https" && url.host == host &&
+        return url.scheme == "https" && SecureReleaseEnvironment.webHosts.contains(url.host ?? "") &&
             (url.port == nil || url.port == 443) && url.user == nil && url.password == nil
     }
 }
