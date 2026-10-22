@@ -2642,10 +2642,10 @@
     "source_commit": "424473481a3bcb8818289f79f760772883f0492c",
     "integration_commit": "5a248621f315c08e30a2639b162434526b4e7349",
     "native_branch": "feature/native-live-staging-20261018",
-    "native_commit": "acb7060c90a601feec28f49b22f6e9990f8e696a",
+    "native_commit": "b9edcd6e765b6fe5479e18a50ac4a23fd41793e8",
     "teacher_testflight_run": 39783328084,
-    "secure_testflight_run": 39784682376,
-    "testflight_status": "teacher_0.2.0_50_and_secure_1.0_1161_uploaded_processed_existing_internal_groups_notes_verified;new_physical_acceptance_pending",
+    "secure_testflight_run": 39837839965,
+    "testflight_status": "teacher_0.2.0_50_and_universal_secure_1.0_1171_uploaded_processed_internal_groups_notes_verified;physical_iPhone_acceptance_pending",
     "physical_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
     "offline_policy": "unlock_only_after_verified_durable_local_submission_then_sync; block_new_attempt_until_server_receipt",
     "live_functions": {
@@ -2703,34 +2703,39 @@
       "physical_device_acceptance": "pending"
     },
     "teacher_testflight_build": "0.2.0(50)",
-    "secure_testflight_build": "1.0(1161)",
-    "secure_native_commit": "acb7060c90a601feec28f49b22f6e9990f8e696a",
+    "secure_testflight_build": "1.0(1171)",
+    "secure_native_commit": "b9edcd6e765b6fe5479e18a50ac4a23fd41793e8",
     "secure_testflight_receipt": {
       "task_ids": [
         "GC-IOS-02",
         "GC-RELEASE-06"
       ],
-      "commit": "acb7060c90a601feec28f49b22f6e9990f8e696a",
+      "commit": "b9edcd6e765b6fe5479e18a50ac4a23fd41793e8",
       "branch": "feature/native-live-staging-20261018",
-      "pr": 277,
+      "pr": 286,
       "version": "1.0",
-      "build": "1161",
-      "ci_run": 39784682376,
+      "build": "1171",
+      "ci_run": 39837839965,
       "ci": "success",
-      "signed_aac_app_and_profile": "verified_2026-10-22T13:41:50Z",
-      "upload": "success_2026-10-22T13:43:51Z",
+      "signed_aac_app_and_profile": "verified_2026-10-22T19:37:21Z",
+      "signed_device_families": [
+        1,
+        2
+      ],
+      "minimum_OS": "17.0",
+      "upload": "success_2026-10-22T19:39:12Z",
       "apple_processing": "complete",
-      "internal_group": "GradeCrew Tester",
-      "invited_testers": 1,
-      "physical_acceptance": "pending_return_after_receipt_and_next_attempt_on_real_iPad",
+      "apple_build_id": "d044bfe7-86f3-4e6e-9b7e-8c7a4c6131e5",
+      "physical_acceptance": "pending_real_iPhone_AAC_timer_offline_and_iPad_regression",
       "app_store_submission": false,
       "production_backend_changed": false,
       "website_changed": false,
-      "teacher_app_changed": "separate_PR279",
-      "handoff": "workstreams/secure-return-after-sync-20261022.md",
-      "ci_repair_pr": 280,
-      "apple_build_id": "6be8e4fb-315b-406b-a706-aa69fcd02616",
-      "test_notes": "saved_reload_verified"
+      "teacher_app_changed": false,
+      "handoff": "workstreams/secure-iphone-20261022.md",
+      "internal_group": "GradeCrew Tester",
+      "invited_testers": 1,
+      "test_notes": "saved_reload_verified",
+      "UI_proof": "Apple_build_detail_readback_verified;browser_screenshot_displayed;CUA_local_save_EPERM"
     },
     "teacher_testflight_receipt": {
       "commit": "60927e062e2a4cd52493cfcbdd53603c1f5d1add",
@@ -2886,7 +2891,7 @@
       "source": "2b7929520778d9f9aeaeb2ec936b778aaa609a86",
       "candidate": "b9edcd6e765b6fe5479e18a50ac4a23fd41793e8",
       "run": 39837839965,
-      "status": "full_release_pipeline_started_no_upload_yet",
+      "status": "uploaded_processed_existing_internal_group_notes_verified",
       "local": {
         "swift": 28,
         "python": 22,
@@ -2909,7 +2914,47 @@
       "independent_review": "prior_P2_composed_gap_addressed_no_remaining_concrete_P0P2",
       "physical_acceptance": "pending_iPhone_AAC_time_offline_reconnect_return_and_iPad_regression",
       "website_backend_rules_changed": false,
-      "domain_changed": false
+      "domain_changed": false,
+      "previous_iPad_receipt": {
+        "task_ids": [
+          "GC-IOS-02",
+          "GC-RELEASE-06"
+        ],
+        "commit": "acb7060c90a601feec28f49b22f6e9990f8e696a",
+        "branch": "feature/native-live-staging-20261018",
+        "pr": 277,
+        "version": "1.0",
+        "build": "1161",
+        "ci_run": 39784682376,
+        "ci": "success",
+        "signed_aac_app_and_profile": "verified_2026-10-22T13:41:50Z",
+        "upload": "success_2026-10-22T13:43:51Z",
+        "apple_processing": "complete",
+        "internal_group": "GradeCrew Tester",
+        "invited_testers": 1,
+        "physical_acceptance": "pending_return_after_receipt_and_next_attempt_on_real_iPad",
+        "app_store_submission": false,
+        "production_backend_changed": false,
+        "website_changed": false,
+        "teacher_app_changed": "separate_PR279",
+        "handoff": "workstreams/secure-return-after-sync-20261022.md",
+        "ci_repair_pr": 280,
+        "apple_build_id": "6be8e4fb-315b-406b-a706-aa69fcd02616",
+        "test_notes": "saved_reload_verified"
+      },
+      "cloud": {
+        "native_ipad": 900,
+        "web_mini": 360,
+        "web_large": 360,
+        "web_interactions_each": 12,
+        "native_phone": 540,
+        "web_phone": 216,
+        "phone_interactions": 12,
+        "phone_composed": 6,
+        "build_job": 120038292018,
+        "all_jobs": "success"
+      },
+      "additional_local_max_phone_UI": "portrait_and_landscape_passed"
     }
   },
   "public_legal_information_20261021": {

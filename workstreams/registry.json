@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-22T19:00:00Z",
+  "updatedAt": "2026-10-22T20:26:17Z",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -696,7 +696,8 @@
       "state": "active",
       "handoff": "workstreams/interactive-learning-principles-20261022.md",
       "relatedBranches": [
-        "feature/extended-question-types-20261020"
+        "feature/extended-question-types-20261020",
+        "docs/digital-task-market-research-20261022"
       ]
     }
   ]
