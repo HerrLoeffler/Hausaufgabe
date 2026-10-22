@@ -601,14 +601,13 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       throw new HttpsError("aborted", "Der Test wurde gerade geändert. Bitte erneut starten.");
     }
 
-    const classroom = await readClassroomStart({get: async path => (await tx.get(db.doc(path))).data(), fail: classroomFail, now: Date.now(), quizId, quiz: currentQuiz, attemptId: id, data: request.data || {}});
-    if (classroom) studentName = classroom.studentName;
-
     if (existingAttempt.exists || existingPrivate.exists) {
       if (!existingAttempt.exists || !existingPrivate.exists) throw new HttpsError("data-loss", "Der Bearbeitungsversuch ist unvollständig gespeichert.");
       const storedAttempt = existingAttempt.data();
       const storedPrivate = existingPrivate.data();
       assertAttemptToken(storedPrivate, attemptToken);
+      await checkClassroomAttempt({get: async path => (await tx.get(db.doc(path))).data(), fail: classroomFail, attempt: storedAttempt});
+      if (storedAttempt.classroom) studentName = storedAttempt.studentName;
       if (String(storedAttempt.studentName || "") !== studentName) {
         throw new HttpsError("permission-denied", "Dieser Bearbeitungsversuch wurde bereits mit einem anderen Kürzel gestartet.");
       }
@@ -626,6 +625,9 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       }
       return { storedAttempt, storedPrivate, currentQuiz, newContract: null, solutionAssets };
     }
+
+    const classroom = await readClassroomStart({get: async path => (await tx.get(db.doc(path))).data(), fail: classroomFail, now: Date.now(), quizId, quiz: currentQuiz, attemptId: id, data: request.data || {}});
+    if (classroom) studentName = classroom.studentName;
 
     // Quota/authentication must precede the expensive author-question query.
     const quota = await readStartQuota(request, quizId, tx);
