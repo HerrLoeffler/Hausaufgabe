@@ -1,6 +1,6 @@
 # Wie GradeCrew aus Lernantworten besser fördert
 
-GC-ADAPTIVE-PRACTICE-01 · 22.10.2026 · vertiefter Konzept- und Abnahmeentwurf. **Lokales Dokument, keine Runtimefreigabe.** Es konkretisiert das [Lernwerkstattkonzept](../superpowers/specs/2026-10-22-learning-workshop-system.md) und das [Lerngehirn 5–10](../superpowers/specs/2026-10-21-learning-brain-mathe-deutsch-5-10.md). Bestehende Kompetenz-, Material- und Identitätskonzepte bleiben führend. Keine neue Kompetenzdatenbank, keine zweite Anmeldung und kein behaupteter Schülerrollout.
+GC-ADAPTIVE-PRACTICE-01 · 22.10.2026 · vertiefter Konzept- und Abnahmeentwurf. **Versioniertes Arbeitsdokument, keine pauschale Runtimefreigabe.** Es konkretisiert das [Lernwerkstattkonzept](../superpowers/specs/2026-10-22-learning-workshop-system.md) und das [Lerngehirn 5–10](../superpowers/specs/2026-10-21-learning-brain-mathe-deutsch-5-10.md). Bestehende Kompetenz-, Material- und Identitätskonzepte bleiben führend. Keine neue Kompetenzdatenbank, keine zweite Anmeldung und kein behaupteter Schülerrollout.
 
 ## 1. Ziel, Umfang und vier verschiedene Bedeutungen von „lernen“
 
@@ -335,3 +335,12 @@ Konkrete private Diagnosefelder, beispielsweise Prüfphase und begrenzter Ablehn
 Die fachliche Hilfematrix für das Erweitern entfernt nun konkrete Anforderungen: zuerst nur die Zählerrechnung mit bekanntem Faktor, dann deren wiederholte Addition, dann eine einzelne kleine Addition. Der Hinweis auf ein bevorzugtes Bruchmodell ist in diesen numerischen Mikrofragen entfernt; eine erneute vollständige Unterteilung wäre hier keine Vereinfachung. Die Erklärung und die konkrete Rückfrage bleiben echt erzeugte und gegengeprüfte KI-Inhalte.
 
 Der tatsächliche Browserlauf maß beim Vergleich 2/3 zu 4/6 beide Streifen mit exakt 767 × 100 CSS-Pixeln. Die sichtbaren Markierungen änderten sich von 2 von 3 auf 4 von 6 bei gleicher Fläche. In der folgenden selbstständigen 3/5-Aufgabe wurden die ersten drei Felder mit einer tatsächlichen Ziehbewegung markiert. Dieser Desktopnachweis ersetzt keinen Touch-/Gerätetest. Eine unterstützte richtige Rückkehr wird weiterhin getrennt von selbstständigen Proben gespeichert.
+
+
+### Abschließender technischer Blocker des Prüflaufs
+
+Der letzte Kandidat `18905bb6eec6fc87669cd02c8b204de4a2b01579` ergänzt tatsächliche auswählbare Texttokens im Reviewer-Kontext und präzisiert die Bruchantwort auf einen neuen Bruch statt zweier Angaben.372 Backend-/62 UI-Prüfungen sind lokal grün. Die Veröffentlichungen19 und20 (ein begrenzter Wiederholungsversuch mit unverändertem Funktionscode) scheiterten jedoch beim Cloud-Run-Start beider neuen Revisionen. Der Build19 war erfolgreich, der lokale echte Moduleinstieg lädt auch unter den relevanten Cloud-Startparametern. Ein konkreter Anwendungsstack wurde nicht gefunden. Keine Ursache als bewiesen behaupten.
+
+Danach lieferten auch der unverändert veröffentlichte eigene Katalog und das Profil HTTP500, der Katalog ebenfalls über seine direkte offizielle Cloud-Run-Adresse. Test-Runtimekonto aktiv, bestehende Secretversion aktiv, Abrechnung aktiviert; daraus folgt noch keine Ursache. Der öffentliche [Google-Cloud-Status](https://status.cloud.google.com/) meldete zum Abruf keinen breiten schweren Vorfall; ein bestätigter globaler Ausfall wird deshalb ausdrücklich nicht behauptet. Keine Port-/Timeout-/Sicherheitsänderung, kein Schul-Live-Eingriff und kein dritter blinder Deploy.
+
+Die erfolgreichen früheren konkreten Lernpfade bleiben als historische Testbelege erhalten. Sie beweisen keine aktuell benutzbare Vorschau. Die tatsächliche Wiederverwendung des neuen Fundus und die letzte neue Textprobe konnten nach diesem Serverfehler nicht abgeschlossen werden; automatische Cachehit-Prüfung ist kein Ersatz für den offenen echten Lauf. Vor Lehrkraft-/Schülerweitergabe zuerst diesen begrenzten Laufzeitblocker beheben, neuen Kandidaten verifizieren und die ausstehenden Pfade nachholen.

@@ -5,7 +5,7 @@
   "identities": "two existing synthetic owner-isolated test accounts; no pupil identities/credentials included",
   "hostingSource": "c44a67f7704158dc5dbaf2a87dc8acacd121edad",
   "backendSourcePrepared": "18905bb6eec6fc87669cd02c8b204de4a2b01579",
-  "backendDeploy19": "pending at this checkpoint",
+  "backendDeploy19": "FAILED: Cloud Run startup healthcheck, both own functions",
   "automated": {
     "functions": 372,
     "ui": 62,
@@ -755,5 +755,18 @@
         }
       }
     ]
+  },
+  "backendDeploy20": "FAILED: same unchanged functions code retried once, both startup healthchecks",
+  "lastSuccessfulBackendSource": "8ac816cd8f4dc78518643ca8f1979b2826366674",
+  "currentAvailability": "BLOCKED: learningBrainCatalog and learningBrainProfile HTTP500, including unchanged own catalog direct official Cloud Run URI",
+  "livePoolReuse": "not verified: catalog HTTP500 prevented new session; automated cache-hit test passes",
+  "runtimeDiagnostics": {
+    "build19": "SUCCESS",
+    "moduleBootLocalUnderCloudParameters": "start and turn exports load as functions",
+    "runtimeAccountDisabled": false,
+    "billingEnabled": true,
+    "existingSecretVersionState": "ENABLED",
+    "startupLogs": "only generic healthcheck system events, no concrete application stack found",
+    "noThirdBlindDeploy": true
   }
 }
