@@ -1,5 +1,6 @@
 'use strict';
 const {randomUUID,createHash}=require('node:crypto');
+const {observe}=require('./workshop');
 const {transition,projectSkill,publicSession}=require('./core');
 class LearningError extends Error{constructor(code,message){super(message);this.code=code;}}
 const fail=(code,message)=>{throw new LearningError(code,message);};
@@ -55,27 +56,34 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
     if(session.revision!==data.revision)fail('aborted','Dein Stand hat sich geändert. Bitte den gespeicherten Stand laden.');
     if(session.phase==='ended')fail('failed-precondition','Diese Einheit ist beendet.');
     if(!['answer','help','question','finish'].includes(data.action))fail('invalid-argument','Unbekannter Lernschritt.');
-    if(data.action==='answer'&&(typeof data.answer!=='string'||!data.answer.trim()||data.answer.length>4000))fail('invalid-argument','Bitte zuerst eine kurze Antwort eingeben.');
+    if(data.action==='answer'&&session.task.input!=='workshop'&&(typeof data.answer!=='string'||!data.answer.trim()||data.answer.length>4000))fail('invalid-argument','Bitte zuerst eine kurze Antwort eingeben.');
     if(data.action==='question'&&(typeof data.question!=='string'||!data.question.trim()||data.question.length>2000))fail('invalid-argument','Bitte zuerst deine Frage eingeben.');
     if(session.phase==='teacher'&&data.action!=='finish')fail('failed-precondition','Bitte zuerst gemeinsam mit deiner Lehrkraft auf diesen Schritt schauen.');
    }
+   let workshopEvidence=null;
+   if(kind!=='start'&&data.action!=='finish'){
+    if(data.workshop){try{workshopEvidence=observe(session.task,data.workshop);}catch(error){fail('invalid-argument',error.message);}}
+    if(session.task.input==='workshop'&&data.action==='answer'&&!workshopEvidence)fail('invalid-argument','Bitte zuerst deine Darstellung senden.');
+   }
    state.requests[data.eventId]={hash:inputHash,status:'pending'};state.lock={ticket,until:time+180000};
-   return {state,result:{session}};
+   return {state,result:{session,workshopEvidence}};
   },{eventId:data.eventId,allTopics:kind==='start'});
   if(reservation.cached)return reservation.cached;
   let s=reservation.session; let unclear=false;
+  const workshop=reservation.workshopEvidence;
+  const learnerAnswer=s.task?.input==='workshop'&&workshop?workshop.answer:data.answer;
   try{
    const ended=kind!=='start'&&(data.action==='finish'||s.deadline<=time);
    if(!ended){
     await quota(uid);
     if(kind!=='start'){
-     const assessment=data.action==='answer'?await ai.assess(s,data.answer):null;
+     const assessment=data.action==='answer'?await ai.assess(s,learnerAnswer,{workshop}):null;
      unclear=assessment?.outcome==='unclear';
      s=transition(s,data.action,assessment,time);
      if(assessment?.short)s.feedback.short=assessment.short;
     }
     if(!unclear&&(kind==='start'||s.phase==='practice'||s.phase==='help'||s.phase==='teacher')){
-     const generated=await ai.next(s,{action:data.action||'start',question:data.question||'',answer:data.answer||''});
+     const generated=await ai.next(s,{action:data.action||'start',question:data.question||'',answer:learnerAnswer||'',workshop});
      s.task=generated.task;s.explanation=generated.explanation;s.visual=generated.visual;
     }
    }else{s.phase='ended';s.summary=summary(s);}

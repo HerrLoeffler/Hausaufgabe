@@ -19,3 +19,16 @@ test('numeric private keys normalize only mathematical display wrappers and pres
  for(const key of ['\\frac{4}{6}','\\(\\frac{4}{6}\\)','4⁄6']){const d=generated();d.task.answer.values=[key];assert.equal(cleanGenerated(d,s).task.answer.values[0],'4/6');}
  for(const key of ['1 1/2','1½','1 ½','2⅓','4/6 = 2/3','Zähler 4 Nenner 6','4*2','\\frac{1}{0}']){const d=generated();d.task.answer.values=[key];assert.throws(()=>cleanGenerated(d,s),e=>e.critique.includes('answer.values'));}
 });
+
+test('AI assessment and independent reviewer both receive server-derived manipulation evidence',async()=>{
+ const requests=[],evidence={tool:'fraction-board',final:{numerator:1,denominator:6},valuePreserved:false,changes:[{type:'set-parts',value:6}]};
+ const replies=[{outcome:'incorrect',short:'Du hast nur unten die Zahl verändert.',reason:'not equal'},{approved:true,reason:'consistent'}];
+ const ai=createAI({client:{responses:{create:async req=>{requests.push(JSON.parse(req.input[1].content));return {status:'completed',output_text:JSON.stringify(replies.shift())};}}}});
+ await ai.assess(s,'1/6',{workshop:evidence});assert.deepEqual(requests[0].workshop,evidence);assert.deepEqual(requests[1].workshop,evidence);
+});
+
+test('new workshop task is validated against its topic and private key before review',()=>{
+ const d=generated();d.task.input='workshop';d.task.workshop={tool:'fraction-board',version:1,role:'answer',goal:'equivalent',numerator:2,denominator:3,targetDenominator:6,instruction:'Unterteile.'};
+ assert.equal(cleanGenerated(d,{...s,topic:{subject:'math',title:'Brüche'}}).task.workshop.tool,'fraction-board');
+ assert.throws(()=>cleanGenerated(d,{...s,topic:{subject:'german',title:'Lesen'}}));
+});

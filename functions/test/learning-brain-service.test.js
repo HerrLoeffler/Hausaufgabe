@@ -29,3 +29,13 @@ test('area entry chooses a text goal server-side and preserves the last open lea
  state.topicEvents['math-5-b']=[{independent:true,correct:false,fingerprint:'x',family:'entry',sessionId:'a',at:1}];
  assert.equal((await service.start('A',{...data,eventId:'area-start-02'})).topic.id,'math-5-b');
 });
+
+test('workshop replay supplies actual answer and observations to assessment and next help; forged success is rejected',async()=>{
+ const w={tool:'fraction-board',version:1,role:'answer',goal:'equivalent',numerator:1,denominator:3,targetDenominator:6,instruction:'Stelle denselben Anteil dar.'};
+ let state,assessed,nextContext,quota=0;
+ const svc=createService({catalog:{version:'v',topics:[{id:'fractions-6',subject:'math',title:'Brüche',modality:'text'}]},quota:async()=>{quota++;},store:{transact:async(_uid,fn)=>{const r=fn(globalThis.structuredClone(state));state=globalThis.structuredClone(r.state);return r.result;}},ai:{next:async(s,c)=>{nextContext=c;return {task:{id:'board-task',input:'workshop',prompt:'Zeige1/3inSechsteln',workshop:w,answer:{kind:'exact-fraction',values:['2/6']}},explanation:'',visual:null};},assess:async(s,answer,c)=>{assessed={answer,c};return {outcome:'incorrect',short:'Du hast nur die Gesamtzahl der Teile verändert.'};}}});
+ const s=await svc.start('A',{topicId:'fractions-6',minutes:20,eventId:'work-start-01'});assert.deepEqual(s.task.workshop,w);assert.equal(s.task.answer,undefined);
+ const data={sessionId:s.id,revision:1,eventId:'work-turn-01',action:'answer',answer:'',workshop:{tool:w.tool,version:1,taskId:'board-task',actions:[{type:'set-parts',value:6}]}};
+ await svc.turn('A',data);assert.equal(assessed.answer,'1/6');assert.equal(assessed.c.workshop.valuePreserved,false);assert.deepEqual(nextContext.workshop.final,{numerator:1,denominator:6});assert.equal((await svc.profile('A')).skills[0].correct,0);
+ const used=quota;await assert.rejects(svc.turn('A',{...data,revision:2,eventId:'work-bad-01',workshop:{...data.workshop,final:{numerator:2,denominator:6}}}),e=>e.code==='invalid-argument');assert.equal(quota,used);
+});
