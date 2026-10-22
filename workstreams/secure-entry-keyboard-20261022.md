@@ -1,6 +1,6 @@
 # GC-IOS-02 — Startknopf bei offener Tastatur, 22.10.2026
 
-Native-Fachchat 01a10c75-8912-7a12-98f0-c9e78064aa2c. Konkreter Bericht vom autorisierten Domainchat: Test starten muss ohne Schließen der Bildschirmtastatur bedienbar sein. Safari/Secure-Zuordnung dort noch in Klärung. Keine neue Task-/Budgethistorie; Domaincutover und GC-CLASSROOM-01 bleiben getrennt.
+Native-Fachchat 01a10c75-8912-7a12-98f0-c9e78064aa2c. Konkreter Bericht vom autorisierten Domainchat: Test starten muss ohne Schließen der Bildschirmtastatur bedienbar sein. Zuordnung zur Secure-App vom Nutzer im Domainchat ausdrücklich bestätigt. Keine neue Task-/Budgethistorie; Domaincutover und GC-CLASSROOM-01 bleiben getrennt.
 
 Isolierter Checkout /private/tmp/gc-secure-keyboard-20261022, Branch fix/secure-entry-keyboard-20261022, Basis24c0f856384f037ebe156e20dc20a03ae10c4cf8. Keine laufenden Uploadkandidaten oder produktiven Dateien verändert. Bisher ausschließlich zusätzliche echte XCUI-Abnahme: Code/Name ohne Return eingeben, sichtbare Softwaretastatur verlangen, sichtbaren und nicht überdeckten Startknopf prüfen und tatsächlich antippen.
 
@@ -13,3 +13,5 @@ Korrektur: bestehende automatische Fokuspositionierung nicht mehr auf kompakte B
 Nächster Schritt: unabhängiger Review des isolierten Kandidaten und Draft-PR. Keine Integration vor Abstimmung mit laufender unveränderlicher Releasekette. Kein neuer Uploadstart allein wegen des Berichts und keine Änderung der laufenden unveränderlichen Domainkandidaten. Persönlicher Schülerzugang bleibt bei Classroom-Owner und ist in diesem Test nicht enthalten; Live- und2026-Testcodes nicht vermischen.
 
 Grenzen: zwei vorhandene Simulatoren mit iOS27 und normaler Textgröße; keine physische Geräteabnahme, kein Test aller Tastaturvarianten, keine persönliche Schülerkonto-Anmeldung. Angefordertes/actual Runtime-Modell unbekannt, kein Modellwechsel. Ausgewählte Assurance SEC15/18 und PRIV12/14/19: begrenzte Eingabebedienung, keine neuen Daten-/Tracking-/Zugriffswege.
+
+Unabhängiger Read-only-Review: kein konkreter P0–P2-Befund für 24c0f856..9f59a488. Bestehende Feldanker, Tastaturbedienung, Validierung und Startaktion bleiben erhalten. Andere WelcomeFrame-Szenen liefern keine Entry-Fokuspräferenz und erhalten keinen neuen Scrollimpuls. Review prüfte den Diff und git diff --check; XCUI nicht erneut ausgeführt. Draft-PR294, Remote93c352d09047494e315f3b12e97314b01b92706d, Tree5eb8b872583df96391a1610e9af0485c43e3e6db. Weiterhin nicht integriert oder hochgeladen.
