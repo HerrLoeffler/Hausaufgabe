@@ -17,6 +17,7 @@ const {
   publicQuizMetadata,
   assertNoSolutionLeak
 } = require("./assessment-core");
+const {offlineRecovery}=require("./offline-recovery-policy");
 const { audioReleaseBlockedByMetadata, audioReleaseBlockedByQuestions } = require("./audio-release-gate");
 const {
   buildTeacherDecoderShape,
@@ -29,6 +30,9 @@ const logger = require("firebase-functions/logger");
 const { observeAssessment } = require("./observability");
 const observed = (action, handler) => observeAssessment(action, handler, { logger, HttpsError });
 
+const {assessmentRunId}=require("./assessment-run-id");
+const { readClassroomStart, checkClassroomAttempt } = require("./classroom-binding");
+const classroomFail = (code, message) => { throw new HttpsError(code, message); };
 const REGION = "europe-west1";
 const callableOpts = {
   region: REGION,
@@ -254,17 +258,7 @@ function sessionMode(quiz) {
   return quiz.startMode === "teacher" ? "teacher" : "student";
 }
 
-function effectiveRunId(quiz, quizId) {
-  if (sessionMode(quiz) === "teacher") {
-    const explicit = String(quiz.sessionRunId || "").trim();
-    if (!explicit) throw new HttpsError("failed-precondition", "Die gemeinsame Testrunde ist unvollständig. Bitte den Test erneut veröffentlichen.");
-    return explicit;
-  }
-  const epochs = [quiz.reopenedAt, quiz.publishedAt].map(toMillis).filter(Number.isFinite);
-  const epoch = epochs.length ? Math.max(...epochs) : toMillis(quiz.createdAt);
-  const seed = Number.isFinite(epoch) ? String(epoch) : sha256(`${quizId}:${String(quiz.accessCode || "")}`).slice(0, 20);
-  return `student_${seed}`;
-}
+function effectiveRunId(quiz, quizId) { return assessmentRunId(quiz, quizId, classroomFail); }
 
 function publicQuizState(quiz, quizId) {
   return {
@@ -504,6 +498,7 @@ function makeReceipt(submission, quiz = null, privateData = null, publicationPol
     && quiz != null
     && quiz?.isDeleted !== true
     && quiz?.rightsHold !== true
+    && !(submission?.recoveryReviewRequired === true && submission?.status === "review")
     && Array.isArray(privateData?.solutionSnapshot);
   const receipt = {
     submissionId: submission?.attemptId || submission?.id || null,
@@ -577,12 +572,12 @@ exports.getAssessmentInfo = onCall(callableOpts, observed("getAssessmentInfo", a
   const quizId = cleanQuizId(request.data?.quizId);
   const { data: quiz } = await readQuiz(quizId);
   validateQuizOpen(quiz);
-  return { quiz: publicQuizState(quiz, quizId) };
+  return { quiz: publicQuizState(quiz, quizId), capabilities: { offlineRecovery: 1 } };
 }));
 
 exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentAttempt", async request => {
   const quizId = cleanQuizId(request.data?.quizId);
-  const studentName = cleanStudentName(request.data?.studentName);
+  let studentName = cleanStudentName(request.data?.studentName);
   const clientAttemptId = cleanClientAttemptId(request.data?.clientAttemptId);
   const attemptToken = cleanAttemptToken(request.data?.attemptToken);
   const db = getFirestore();
@@ -605,6 +600,9 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
     if (currentRunId !== initialRunId || !contractOptionsEqual(contractOptions(currentQuiz), initialOptions)) {
       throw new HttpsError("aborted", "Der Test wurde gerade geändert. Bitte erneut starten.");
     }
+
+    const classroom = await readClassroomStart({get: async path => (await tx.get(db.doc(path))).data(), fail: classroomFail, now: Date.now(), quizId, quiz: currentQuiz, attemptId: id, data: request.data || {}});
+    if (classroom) studentName = classroom.studentName;
 
     if (existingAttempt.exists || existingPrivate.exists) {
       if (!existingAttempt.exists || !existingPrivate.exists) throw new HttpsError("data-loss", "Der Bearbeitungsversuch ist unvollständig gespeichert.");
@@ -680,6 +678,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       questionCount: newContract.paper.length,
       maxPoints: newContract.gradingKey.reduce((sum, key) => sum + Number(key.points || 0), 0),
       secureAssessmentVersion: 2,
+      ...(classroom ? {classroom: classroom.metadata, lastSeenAt: Timestamp.now()} : {}),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now()
     };
@@ -702,6 +701,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       updatedAt: Timestamp.now()
     };
     assertPrivatePayloadSafe(privateData);
+    if (classroom?.needsWrite) tx.set(db.doc(classroom.path), classroom.participant);
     tx.set(quota.ref, quota.data, { merge: true });
     tx.create(aRef, created);
     tx.create(pRef, privateData);
@@ -746,6 +746,7 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, observed("resumeAssessmen
     };
   }
 
+  await checkClassroomAttempt({get: async path => (await db.doc(path).get()).data(), fail: classroomFail, attempt});
   if (stateOnly) validateSubmissionWindow(initialQuiz, attempt, Date.now());
   else validateQuizOpen(initialQuiz);
   assertSameRun(attempt, initialQuiz, quizId);
@@ -786,6 +787,7 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, observed("resumeAssessmen
     const questions = await readQuestions(quizId);
     paper = contractForQuestions(questions, privateData).paper;
   }
+  if (attempt.classroom && Date.now() - toMillis(attempt.lastSeenAt) >= 10000) await aRef.update({lastSeenAt: Timestamp.now()});
   return attemptPublicState(attempt, currentQuiz, paper);
 }));
 
@@ -813,15 +815,23 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
       return { submission: { id: existingSubmission.id, ...existingSubmission.data() }, quiz: quizSnap.exists ? quizSnap.data() : null, privateData };
     }
     if (!quizSnap.exists) throw new HttpsError("not-found", "Dieser Test existiert nicht mehr.");
+    await checkClassroomAttempt({get: async path => (await tx.get(db.doc(path))).data(), fail: classroomFail, attempt});
     const quiz = quizSnap.data();
     const nowMillis = Date.now();
-    validateSubmissionWindow(quiz, attempt, nowMillis);
-    assertSameRun(attempt, quiz, quizId);
-    if (attempt.status !== "running") throw new HttpsError("failed-precondition", "Der Test wurde für diesen Versuch noch nicht gestartet.");
-
     const startedAtMillis = toMillis(attempt.startedAt);
     const deadlineAtMillis = toMillis(attempt.deadlineAt) || deadlineMillis(startedAtMillis, attempt.timeLimitMinutes);
-    if (deadlineAtMillis && nowMillis > deadlineAtMillis + SUBMIT_GRACE_SECONDS * 1000) {
+    let recovery;
+    try {
+      recovery=offlineRecovery({requested:request.data?.recoverySubmission,now:nowMillis,startedAt:startedAtMillis,
+        deadlineAt:deadlineAtMillis,quiz,sameRun:effectiveRunId(quiz,quizId)===attempt.sessionRunId,
+        status:attempt.status,reason:request.data?.recoveryReason});
+    } catch(error) { throw new HttpsError(error.code||"failed-precondition",error.message); }
+    if (!recovery?.review) {
+      validateSubmissionWindow(quiz, attempt, nowMillis);
+      assertSameRun(attempt, quiz, quizId);
+    }
+    if (attempt.status !== "running") throw new HttpsError("failed-precondition", "Der Test wurde für diesen Versuch noch nicht gestartet.");
+    if (!recovery?.review && deadlineAtMillis && nowMillis > deadlineAtMillis + SUBMIT_GRACE_SECONDS * 1000) {
       throw new HttpsError("deadline-exceeded", "Die serverseitige Abgabefrist ist abgelaufen. Bitte wende dich an deine Lehrkraft.");
     }
     const gradingKey = Array.isArray(privateData.gradingKey) ? privateData.gradingKey : [];
@@ -835,7 +845,8 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
     const result = gradeSubmission(gradingKey, secureAnswers);
     const teacherAnswers = decodeSubmissionAnswersFromShape(decoderShape, secureAnswers, paperSecret);
     const scale = attempt.gradeScaleSnapshot?.thresholds?.length === 6 ? attempt.gradeScaleSnapshot : gradingScaleSnapshot(quiz);
-    const grade = result.needsReview ? null : gradeFromPercent(result.percent, scale.thresholds);
+    const needsReview = result.needsReview || recovery?.review === true;
+    const grade = needsReview ? null : gradeFromPercent(result.percent, scale.thresholds);
     const resultMode = normalizeResultMode(attempt.resultMode);
     const submittedAt = Timestamp.now();
     const elapsedSeconds = startedAtMillis ? Math.max(0, Math.round((nowMillis - startedAtMillis) / 1000)) : null;
@@ -843,6 +854,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
     const submission = {
       attemptId: id,
       studentName: attempt.studentName,
+      ...(attempt.classroom ? {classroom: attempt.classroom} : {}),
       answers: teacherAnswers,
       grading: result.grading,
       autoPoints: result.autoPoints,
@@ -854,7 +866,9 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
       resultMode,
       showSolutionsAfterEnd: attempt.showSolutionsAfterEnd === true,
       solutionPolicy: privateData.solutionPolicy || null,
-      status: result.needsReview ? "review" : "graded",
+      status: needsReview ? "review" : "graded",
+      recoveryReviewRequired: recovery?.review === true,
+      recoveryReason: recovery?.reason || null,
       timeLimitMinutes: attempt.timeLimitMinutes || null,
       sessionRunId: attempt.sessionRunId || null,
       startMode: attempt.mode,

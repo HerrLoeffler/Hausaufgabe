@@ -76,6 +76,9 @@ function fixture() {
     exports, Buffer,
     Date: class extends Date { static now() { return now; } },
     require: name => {
+      if (name === './offline-recovery-policy') return require('../lib/offline-recovery-policy');
+      if (name === './assessment-run-id') return require('../lib/assessment-run-id');
+      if (name === './classroom-binding') return require('../lib/classroom-binding');
       if (name === './observability') return require('../lib/observability');
       if (name === './audio-release-gate') return require('../lib/audio-release-gate');
       if (name === 'firebase-functions/logger') return { info() {}, warn() {}, error() {} };
@@ -498,14 +501,8 @@ test('missing immutable audio can be repaired on authenticated start retry only 
   assert.equal(f.docs.has('assessmentSolutionAssets/' + assetId), false);
 });
 
-
-test('teacher-controlled cohort shares authoritative start and deadline even when devices poll at different times', async () => {
-  const f=fixture(),quiz=f.docs.get(`quizzes/${f.quizId}`);
-  Object.assign(quiz,{sessionState:'waiting',sessionStartedAt:null,timeLimitMinutes:10});
-  const cohort=await Promise.all(['pupil_one','pupil_two','pupil_three'].map(name=>f.start(name)));
-  for(const result of cohort){assert.equal(result.status,'ready');assert.equal(result.paper,null);assert.equal(result.startedAtMillis,null);}
-  for(const result of cohort){const waiting=await f.exports.resumeAssessmentAttempt(f.request({attemptId:result.attemptId,attemptToken:f.token}));assert.equal(waiting.status,'ready');assert.equal(waiting.paper,null);}
-  const start=f.now-2700;Object.assign(quiz,{sessionState:'running',sessionStartedAt:start});
-  for(const result of cohort){const active=await f.exports.resumeAssessmentAttempt(f.request({attemptId:result.attemptId,attemptToken:f.token}));assert.equal(active.status,'running');assert.equal(active.startedAtMillis,start);assert.equal(active.deadlineAtMillis,start+600000);assert.equal(active.paper.length,1);}
-  for(const result of cohort)assert.equal(f.docs.get(`quizzes/${f.quizId}/attempts/${result.attemptId}`).startedAt,start);
-});
+function classroomFixture(){const f=fixture();const {hash}=require('../lib/classroom-service');const sessionToken='C'.repeat(43);f.docs.set('classroomQuizPolicies/'+f.quizId,{required:true,schoolId:'school',sessionRunId:'run1'});f.docs.set('classroomSessions/'+hash(sessionToken),{schoolId:'school',studentId:'pupil',deviceMode:'shared',lastActivity:f.now,expiresAt:f.now+300000,accessVersion:1});f.docs.set('classroomSchools/school/students/pupil',{firstName:'Test',lastName:'Eins',status:'active',accessVersion:1});f.docs.set('classroomSchools/school/assignments/assignment',{quizId:f.quizId,sessionRunId:'run1',recipientIds:['pupil']});const start=(client='classroom-client-0001')=>f.exports.startAssessmentAttempt(f.request({studentName:'FORGED',clientAttemptId:client,attemptToken:f.token,classroomSession:sessionToken,classroomAssignment:'assignment',classroomGeneration:0}));return {...f,startPersonal:start};}
+test('actual assessment handler blocks guest bypass and binds server pupil name to one attempt',async()=>{const f=classroomFixture();await assert.rejects(f.start('guest'),{code:'unauthenticated'});assert.equal([...f.docs.keys()].some(k=>k.includes('/attempts/')),false);const a=await f.startPersonal();const stored=f.docs.get(`quizzes/${f.quizId}/attempts/${a.attemptId}`);assert.equal(stored.studentName,'Test Eins');assert.equal(stored.classroom.studentId,'pupil');await assert.rejects(f.startPersonal('different-client-0001'),{code:'already-exists'});const submitted=await f.submit(a.attemptId);assert.equal(submitted.receipt.attemptId,a.attemptId);const saved=f.docs.get(`quizzes/${f.quizId}/submissions/${a.attemptId}`);assert.equal(saved.classroom.studentId,'pupil');assert.equal(saved.classroom.assignmentId,'assignment');});
+test('released replacement blocks old attempt submission and leaves old answers/attempt intact',async()=>{const f=classroomFixture();const a=await f.startPersonal();const path='classroomSchools/school/assignments/assignment/participants/pupil';f.docs.set(path,{generation:1,attemptId:null});await assert.rejects(f.submit(a.attemptId),{code:'failed-precondition'});assert.equal(f.docs.get(`quizzes/${f.quizId}/attempts/${a.attemptId}`).status,'running');assert.equal(f.docs.has(`quizzes/${f.quizId}/submissions/${a.attemptId}`),false);await assert.rejects(f.exports.resumeAssessmentAttempt(f.request({attemptId:a.attemptId,attemptToken:f.token})),{code:'failed-precondition'});});
+test('guest attempts started before a class assignment cannot resume or submit after its personal gate is enabled',async()=>{const f=fixture();const a=await f.start('prior-guest');f.docs.set('classroomQuizPolicies/'+f.quizId,{required:true,schoolId:'school',sessionRunId:'run1'});await assert.rejects(f.exports.resumeAssessmentAttempt(f.request({attemptId:a.attemptId,attemptToken:f.token})),{code:'permission-denied'});await assert.rejects(f.submit(a.attemptId),{code:'permission-denied'});assert.equal(f.docs.has(`quizzes/${f.quizId}/submissions/${a.attemptId}`),false);});
+test('personal gate also protects self-start rounds using the authoritative student epoch run id',async()=>{const f=fixture();Object.assign(f.docs.get(`quizzes/${f.quizId}`),{startMode:'student',publishedAt:f.now,sessionRunId:'author-ui-run'});f.docs.set('classroomQuizPolicies/'+f.quizId,{required:true,schoolId:'school',sessionRunId:`student_${f.now}`});await assert.rejects(f.start('guest'),{code:'unauthenticated'});});

@@ -33,10 +33,10 @@ test('secure student names the palette, selects word colors, reopens draft and g
   assert.match(word(2).getAttribute('aria-label'),/Nomen/);
 });
 
-test('secure blank color remains metadata and never adds a solution value', t => {
+test('secure blanks omit private author colors and never add a solution value', t => {
   const w=harness(t);w.formatMathText=x=>x;w.eval(sourceFunction(secure,'renderGapfill'));
   const section=w.document.querySelector('section');w.renderGapfill(section,buildPublicQuestion({id:'gap',type:'gapfill',text:'Ein [Igel] schläft.',points:1,gapColors:['blue']},'synthetic-secret'));
-  const input=section.querySelector('.secureGap');assert.ok(input.classList.contains('gapColor-blue'));assert.equal(input.value,'');assert.doesNotMatch(section.innerHTML,/Igel/);
+  const input=section.querySelector('.secureGap');assert.equal(input.classList.contains('gapColor-blue'),false);assert.equal(input.value,'');assert.doesNotMatch(section.innerHTML,/Igel/);
 });
 
 test('saved teacher preview uses colored answers for completeness and the existing preview evaluation', t => {
@@ -62,7 +62,7 @@ test('removing the first real gap preserves the remaining color and rebuilds its
   container.querySelector('.gapChipRemove').click();assert.equal(q.text,'Der Igel [schläft].');assert.deepEqual([...q.gapColors],['green']);
   const selects=container.querySelectorAll('.gapColorEditor select');assert.equal(selects.length,1);assert.equal(selects[0].value,'green');
   selects[0].value='purple';selects[0].dispatchEvent(new w.Event('change'));assert.deepEqual([...q.gapColors],['purple']);
-  assert.equal(buildPublicQuestion(q,'secret').segments.find(segment=>segment.type==='gap').color,'purple');
+  assert.equal(buildPublicQuestion(q,'secret').segments.find(segment=>segment.type==='gap').color,undefined);
 });
 
 test('marking a real new gap inserts an uncolored slot and preserves previous assignments',t=>{
@@ -70,5 +70,5 @@ test('marking a real new gap inserts an uncolored slot and preserves previous as
   const editor=container.querySelector('.gapComposer');const range=w.document.createRange();const text=editor.lastChild;range.setStart(text,1);range.setEnd(text,8);w.getSelection().addRange(range);
   [...container.querySelectorAll('button')].find(button=>button.textContent==='Als Lücke markieren').click();
   assert.equal(q.text,'Der [Igel] [schläft].');assert.deepEqual([...q.gapColors],['blue','']);assert.equal(container.querySelectorAll('.gapColorEditor select').length,2);
-  assert.deepEqual(buildPublicQuestion(q,'secret').segments.filter(segment=>segment.type==='gap').map(segment=>segment.color),['blue',undefined]);
+  assert.deepEqual(buildPublicQuestion(q,'secret').segments.filter(segment=>segment.type==='gap').map(segment=>segment.color),[undefined,undefined]);
 });
