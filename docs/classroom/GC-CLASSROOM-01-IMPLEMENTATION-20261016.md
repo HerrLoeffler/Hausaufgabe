@@ -1069,3 +1069,62 @@ Empfänger werden bei Freigabe nachvollziehbar festgehalten; späterer Klassenzu
 #### P5. Lokaler Betrieb und Wiederherstellung
 
 Datenbank und separate Datei `<Datenbank>.student-key` gehören zusammen in eine geschützte Sicherung. Ohne passenden Schlüssel werden bestehende Codes nicht neu verschlüsselt oder still ersetzt; Zugriff scheitert geschlossen. Wiederherstellung mit beiden Dateien ist synthetisch getestet. Schlüsseldatei und Codes gehören nicht ins Repository. Die aktuelle Adresse127.0.0.1 funktioniert nur auf diesem Mac; Handy-/Schulbetrieb benötigt später ein geprüftes gemeinsames HTTPS-Backend. Kein solcher Deploy ist erfolgt.
+
+
+### Q. Bestandsprüfung und Abschlussplan — 22.10.2026
+
+**Auftrag/Rolle:** GC-CLASSROOM-01, bestehender ausführender Classroom-Fachchat; Owner Martin. Bestehenden Stand prüfen und nächsten Ausbau planen. In diesem Schritt keine neue Produktfunktion, kein Deploy, keine echte Schüler-/Rollenmutation. Einziger Betriebsgriff: vorhandenen Loopbackserver wieder starten.
+
+**Quellen:** lokaler Produktstand ba360c91ab46ff170deb926767ebd63ed59290c8, remote ebd8cb40a90aa19634c710dbf3bc8c10dfcf7db2, identischer Tree970c2986efc5d71dfe5881ac63d95a2e2e7c2c01. Current-main START_HERE/AGENTS/STATE/TODO/CHAT_CONTRACT und Skill-/Assuranceeinstieg frisch gelesen; Integration ab6fcc9d72aa9d401eba2ec4db31c01f7758c0f0. Jüngster sichtbarer Development-Status39820706574 erfolgreich (kein Classroom-CI-Beleg). OffenePRs282Domain,263Analytics,254Kapitel und246/245Testkarten berühren spätere Integration; keine davon übernommen. main-TODO beschreibt Classroom noch historisch als Mockplanung; dieser Aufgabenbranch belegt den lokalen Ausbau. Kein anderer offener Classroom-PR in der gelesenen Liste.
+
+**Bewertung:** 6/10 zur vollständigen vereinbarten Klassenverwaltung mit persönlichem Schülerzugang UND zugewiesenen Tests. Begründung: lokale Namen-/Klassen-/CSVverwaltung, Schule/mehrere Verwalter, Codes und Druck stehen; historische571Tests und A4-Nachweise sind an ihren Kandidaten gebunden. Wesentliche Verbindung Schüler→Zuweisung→bestehende Prüfung fehlt, ebenso reale Mehrkontoabnahme und Mehrgerätebetrieb. Dies ist eine begründete Einschätzung, keine gemessene Prozentzahl oder Bewertung des Gesamtprojekts. Keine pauschale Security-/Datenschutzfreigabe.
+
+#### Q0. Erreichbarkeit und verlässlicher lokaler Betrieb — zuerst
+
+Beobachtet: vor Start kein Listener8782. Unveränderter Server startet und liefert im Browser Originalstart plus Schülerzugang; Ursache der früheren Prozessbeendigung unbekannt. Erster Start innerhalbSandbox scheiterte an EPERM; autorisierter Loopbackstart außerhalbSandbox erfolgreich (Exec82369). Das ist eine wieder gestartete Testsitzung, kein dauerhaft betriebener Dienst.
+
+- [ ] Im bestehenden tools/classroom-preview/server.mjs einen gezielten Startfehler-/Portbelegt-Hinweis vorsehen; keine Schüler-/Tokeninhalte loggen.
+- [ ] Einen projektlokalen Start-/Status-/Stop-Einstieg ergänzen (tools/classroom-preview/manage-local.mjs und start-local.command), genau Checkout und127.0.0.1:8782 prüfen. Fremden Prozess niemals abschießen, keinen Ersatzport still wählen. Start doppelt darf keine zweite Instanz erzeugen; Status zeigt lokale Adresse und gültigen Prozess. Keine ungefragte macOS-Autostartinstallation.
+- [ ] Synthetische Tests: freier Port→Start/HTTP200, bereits eigener Server→wiederverwenden, fremder Port→verständlicher Konflikt, Neustart→gleiche DB+Codes; Fehler durch fehlenden Schlüssel klar von leerem Bestand unterscheiden. Danach normaler Browserlogin und bestehende Tests prüfen.
+
+#### Q1. Vorhandenen Umfang wirklich abnehmen und kleine Hindernisse beseitigen
+
+- [ ] Auf8782 mit zwei echten Lehreraccounts und klar markiertem synthetischem Schüler alle Schritte durchgehen: Verwaltereinladung/Annahme/Bestätigung, normaleLehrkraft→Klassefinden/anlegen, automatischeZuordnung, Schüleraufnahme, Codeausgabe, Login, Druck, Neuladen, Rollenentzug. Reale Daten nicht zum Testen ändern; Lehrkraft meldet sich selbst an.
+- [ ] classroom/manual-roster.mjs: beim Anlegen in gefilterter Klasse diese vorbelegen; normaleLehrkraft muss berechtigte Klasse wählen, kein irreführender Default„OhneKlasse“. Schulauswahl/Jahr in Titel und Rückmeldungen eindeutig, ohne neue Navigation.
+- [ ] classroom/student-access-dialog.mjs: gesperrte oder fehlende Zugänge dürfen nicht pauschal die gesamte Liste blockieren. „Aktive Karten drucken“ mit sichtbarer Zahl, fehlende gezielt erstellen; gesperrte niemals still entsperren. Namensliste weiterhin unabhängig. Auswahl/Filter/alleSeiten klar halten, Konflikt bietet Aktualisieren ohne Doppelanlage.
+- [ ] Tests für gemischte Auswahl aktiv/gesperrt/fehlend, Abbruch, Änderung während Vorschau, Kontowechsel; vorhandene Print-/UI-Tests ergänzen. Ausgabe30/35/36/300 und lange Namen physisch A4 prüfen.
+
+#### Q2. Importierte Lehrkraft mit echtem Konto verbinden; Fachzuordnung bündeln
+
+ImportiertePerson, Loginaccount und bestätigteSchulmitgliedschaft sind drei getrennte Dinge. Keine Verknüpfung oder Verwalterrechte aus Namens-/E-Mailähnlichkeit. Vorhandene persönliche Einladung/Kontoannahme/Bestätigung wiederverwenden; Verwalter ordnet einem bestätigten Mitglied genau den richtigen Personalstammsatz zu, mit Kollisionprüfung und Rücknahme ohne Testbesitz umzuschreiben. Importierte Fächer/Klassen dienen als Vorschlag; bestehende Entscheidung bleibt: bestätigte Lehrkräfte wählen ihre Klassen selbst. Testbewertungen und fremde Lehrerentwürfe sind dadurch nicht pauschal lesbar.
+
+- [ ] local-school-store.mjs und classroom/school-administration.mjs, local-teacher-import.mjs: expliziteVerknüpfung und Revision mit stabiler Lehrer-ID definieren. Gemeinsame Fächerliste mit stabilerID und lesbarem Namen, mehrereFächer/Lehrkräfte proKlasse; Schnellwahl/Mehrfachzuordnung stattEinzelklicks.
+- [ ] Tests: gleicheNamen,zweimaligeVerknüpfung,falscheSchule,veralteteVorschau,Verwalterverlust; importierteLehrkraftwirdnichtautomatischAdmin. Schulwechsel: neueMitgliedschaft, bewussterAustritt, historischeSchulabgabenbleiben; persönlicheTestsnichtungefragtübertragen.
+
+#### Q3. Der wichtigste Funktionsabschluss: Klasse→Test→Schüler→Abgabe
+
+NachQ1 bestehende Secure-Assessment-Schnittstellen und heutigeRunsemantik an aktuellemIntegrationsstand qualifizieren; local-student-access.me liefert nachweislich noch assignments:[]/pending. Eine lokale Identität darf nicht einfach mit Clientangaben zu einem Firebase-Prüfungsteilnehmer erklärt werden. Zuerst serverseitig autorisierten Identitätsadapter/Entitlementvertrag festlegen; ohne passende gemeinsame Backendfreigabe keine Attrappe anbieten. Keine zweite Bewertungsengine oder reineIframeverlinkung als gesichertenAbschluss ausgeben.
+
+- [ ] Minimaler Lehrkraftablauf: vorhandenerTest→„Klasse zuweisen“→Klasse(n),Fach,Modus,Zeitraum→kurze Empfängerübersicht→Bestätigen. Bestehende Publikation, Testbesitz und sichereInhaltsversion erhalten. ParallelPR254/246 sowie Secureänderungen vor Codearbeit abgleichen.
+- [ ] Vertrag assessmentAssignment: id,schoolId,quizId,quizVersion,sessionRunId,subjectId,recipientSnapshot,mode,opensAt,startUntil,teacherId,revision. Server legt ausschließlich aus bestätigtenRechten an; keine Sammlungs-/Endpunktnamen erfinden, bevor bestehendeFunctions/Rules gelesen sind. SQLite-ID allein ist kein Cloudnachweis.
+- [ ] Auth-/Assignmentadapter und Lifecycle gemeinsam aufsetzen; Start/Resume/Submit/Receipt prüfen Identität,Empfänger,Version,Run,Attempt. Einmaliger Start atomar/idempotent. Integrationstests für paralleleStarts, zweiKlassen, fremdeSchüler und Gastcodebypass; lokaleDB und Cloud dürfen nicht halbfreigegebeneZuweisungen erzeugen.
+- [ ] Schülerportal nutzt „Verfügbar“/„Erledigt“+optionalFachfilter gemäßP. BegonnenePrüfung bietet„Fortsetzen“. Veröffentlichtbleiben setzt abgegebenenVersuchniemalszurück. Eine explizitgewährteWiederholunglegtneuenAttemptmitBezugzumAltenan. Übungbewusstmehrfach, keineÜberschreibungbewerteterAbgabe.
+- [ ] Zeitraum vereinfachen: Empfehlung EnddatumbegrenztneueStarts; bereitsbegonnenerVersuchfolgtseparaterBearbeitungszeit/Verlängerung. HarteAbgabefristnuralsbewussteZusatzoption. Standardvorschlag7TageistnochkeineausgeführteNutzerentscheidung. ErinnerungstattstillemSchließen; Endeüberschritten→„Geschlossen“, Abgabebleibt„Erledigt“. Ergebnis-/LösungsfreigabegetrenntvomOffenstatus.
+- [ ] Schülersitzung auf gemeinsamemGerät: sichtbarerName/Klasse, prominentesAbmelden, beiWiederöffnen„Du bist …“ mitKontoWechsel; DialogschließenistnichtAbmelden. Bei Offlineabgabe Sicherheit/ReceiptregelnbestehenderEngineübernehmen, nichtUI-ErfolgvorServerbestätigungzeigen.
+
+#### Q4. Schuljahreswechsel, Archiv und Datenpflege abschließen
+
+- [ ] BestehendeImportvorschau nutzen; bestätigteQuellkennung/stabileinterneID erhalten. Nameallein bleibtVorschlag. Klassenjahr istMitgliedschaft, keineUmbenennungderhistorischenKlasse8b in9b. AlteZuweisungen/ErgebnissebehaltenEmpfängersnapshot; CodebleibtbeimWechselgleich.
+- [ ] ArchivierteKlassen/SchülerundehemaligeLehrkräfte erhaltenklareSichtbarkeit undZugriffsende. FehlendeCSVzeilebedeutetnicht„löschen“. AustrittbzwCodeSperre explizit bestätigen, laufendeVersuchebewusst behandeln. Fachkurse/Gruppen getrenntvomStammklasseneintrag erstbeikonkretemUnterrichtsbedarf ergänzen.
+- [ ] Zweijahres-Synthetikabnahme:8b→9b,neuePerson,Abgang,Rückkehr,Namensänderung,gleicheNamen,erneuterImport,Abbruch,andererSchulkontext; keineDoppelidentitätoderverlorenenAbgaben.
+
+#### Q5. Betrieb vor echtem Schuleinsatz; Extras danach
+
+- [ ] Wiederherstellungsablauf für DB+Schlüssel mit zuständigenVerwalternverständlicherklären und ausSicherungaufisolierterKopieprüfen. MinimalnötigeAuditdaten/Aufbewahrung/Archiv-/Löschfristen definieren; keineunbegrenztenCodes-/SitzungstabellenalsBetriebsstandard. VerlorenenSchlüsselniemalsdurchstillesNeuAnlegenersetzen.
+- [ ] GemeinsamesHTTPSbackend/Schulmandanten,VerwalterwiederherstellungundLehrkraft-/Schülerrechtequalifizieren,bevoreinehandytauglicheQRkarte sinnvollist. Aktuell127.0.0.1zeigtaufdemSchülergerätdessenEigenesGerät. QR späterohneCodeinTracking-/Refererpfaden; echterKameratestalsseparaterNachweis.
+- [ ] ZuständigeSchule/BetreiberprüfenZweck,Rechtsgrundlage,Namens-/Ergebnisverarbeitung,Provider/AVVundFristen vorSchulbetrieb; keineRechtsfreigabeausdiesemTechnikplan. Keine pauschaleBehauptung„Klarnamenirrelevant“.
+- [ ] Abschlussabnahme: normalerLogin/Testbestand,2Lehrer/1Schule/2Klassen/2Schüler, einmaligeAbgabeauch5Tagespäter, Wiederholung, Verlängerung, Rollenentzug, Schuljahreswechsel, Druck und Restore. ErstbeiErfüllungalsvollständigenClassroomablaufbewerten; CI/Integration/Hosting/Functions/Rules/Geräte/Productiongetrenntbelegen.
+
+**Bewusst nachrangig:** QR, eigeneFachordner,Stundenplan,Elternkonten,Chat,umfassendesNotenbuch. Sie schließen die offene Kernverbindung nicht. Ein schlanker Ablauf gewinnt: Klassefinden→Schüleraufnehmen/importieren→Zugangdrucken→Testzuweisen→Ergebnisansehen.
+
+**Genau nächster Schritt:** Q0 verlässlicherlokalerStart/StatusmitTests; danachQ1 realeEnde-zu-Ende-Abnahme. Q2–Q5 sind priorisiertePlanung, in diesemTurnnichtimplementiert. FürspätereUmsetzung vorhandenenexecuting-plans-Wegbeibehalten, keinneuesAufgaben-/Agentensystem. SecurityrelevanteSchema-/Identityadapterdetails werdendirektvorQ3amaktuellenCodefinalisiert, keinvorzeitigesClouddeploy.
