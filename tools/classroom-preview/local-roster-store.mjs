@@ -13,7 +13,7 @@ const empty=()=>({schemaVersion:1,revision:0,classes:[],students:[],teachers:[],
 
 // Device-local first slice. No school authority, cloud migration or shared grants
 // are inferred from this account-owned workspace.
-export function openLocalRoster(filename,{authProjectId='local-test'}={}){
+export function openLocalRoster(filename,{authProjectId='local-test',now=Date.now}={}){
  if(filename!==':memory:'){
   mkdirSync(dirname(filename),{recursive:true,mode:0o700});
   closeSync(openSync(filename,'a',0o600));chmodSync(filename,0o600);
@@ -113,6 +113,6 @@ export function openLocalRoster(filename,{authProjectId='local-test'}={}){
   }catch(error){if(!inTransaction)db.exec('ROLLBACK');throw error;}
  }
  const school=createLocalSchoolStore({db,readRaw:read,mutateRaw:mutate,previewImportRaw:(uid,payload)=>importPlan(uid,payload).view,previewTeacherRaw:(uid,payload)=>teacherPlan(uid,payload).view,authProjectId});
- const access=createLocalStudentAccess({db,school,filename});
+ const access=createLocalStudentAccess({db,school,filename,now});
  return {school,access,read:school.rosterRead,mutate:school.rosterMutate,previewImport:school.previewImport,previewTeacherImport:school.previewTeacherImport,close:()=>db.close()};
 }

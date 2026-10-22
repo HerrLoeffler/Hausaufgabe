@@ -24,6 +24,7 @@ export const errors={
  'access-missing':'Für diese Auswahl fehlen aktive Zugänge. Bitte zuerst die fehlenden Zugänge erstellen.',
  'access-conflict':'Der Zugang wurde inzwischen geändert. Bitte neu laden und erneut prüfen.',
  'key-unavailable':'Der lokale Zugangsschlüssel fehlt oder passt nicht zur Datenbank. Bitte Datenbank und Schlüssel gemeinsam wiederherstellen.',
+ 'session-locked':'Das gemeinsam genutzte Gerät wurde gesperrt. Bitte deinen persönlichen Code erneut eingeben.',
  'invalid-access':'Der Zugangscode ist ungültig oder nicht mehr aktiv.',
  'rate-limited':'Zu viele fehlgeschlagene Versuche. Bitte kurz warten und den Code prüfen.',
  'internal':'Speichern nicht möglich. Bitte erneut versuchen.'

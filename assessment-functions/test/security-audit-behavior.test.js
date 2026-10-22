@@ -497,3 +497,15 @@ test('missing immutable audio can be repaired on authenticated start retry only 
   await f.start('repairmedia');
   assert.equal(f.docs.has('assessmentSolutionAssets/' + assetId), false);
 });
+
+
+test('teacher-controlled cohort shares authoritative start and deadline even when devices poll at different times', async () => {
+  const f=fixture(),quiz=f.docs.get(`quizzes/${f.quizId}`);
+  Object.assign(quiz,{sessionState:'waiting',sessionStartedAt:null,timeLimitMinutes:10});
+  const cohort=await Promise.all(['pupil_one','pupil_two','pupil_three'].map(name=>f.start(name)));
+  for(const result of cohort){assert.equal(result.status,'ready');assert.equal(result.paper,null);assert.equal(result.startedAtMillis,null);}
+  for(const result of cohort){const waiting=await f.exports.resumeAssessmentAttempt(f.request({attemptId:result.attemptId,attemptToken:f.token}));assert.equal(waiting.status,'ready');assert.equal(waiting.paper,null);}
+  const start=f.now-2700;Object.assign(quiz,{sessionState:'running',sessionStartedAt:start});
+  for(const result of cohort){const active=await f.exports.resumeAssessmentAttempt(f.request({attemptId:result.attemptId,attemptToken:f.token}));assert.equal(active.status,'running');assert.equal(active.startedAtMillis,start);assert.equal(active.deadlineAtMillis,start+600000);assert.equal(active.paper.length,1);}
+  for(const result of cohort)assert.equal(f.docs.get(`quizzes/${f.quizId}/attempts/${result.attemptId}`).startedAt,start);
+});

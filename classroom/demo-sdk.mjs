@@ -9,7 +9,7 @@ export const getFirestore=()=>({}),getFunctions=()=>({}),getStorage=()=>({});
 export const doc=(...path)=>({path}),collection=doc,collectionGroup=doc,query=doc,where=doc,orderBy=doc,limit=doc,startAfter=doc,ref=doc;
 export const serverTimestamp=()=>Date.now();
 export class Timestamp{constructor(seconds){this.seconds=seconds;}toMillis(){return this.seconds*1000;}static now(){return new Timestamp(Date.now()/1000);}static fromMillis(ms){return new Timestamp(ms/1000);}}
-export const getDoc=blocked,getDocs=blocked,setDoc=blocked,addDoc=blocked,updateDoc=blocked,deleteDoc=blocked,writeBatch=blocked,onSnapshot=blocked,getCountFromServer=blocked;
+export const getDoc=blocked,getDocs=blocked,setDoc=blocked,addDoc=blocked,updateDoc=blocked,deleteDoc=blocked,writeBatch=blocked,runTransaction=blocked,onSnapshot=blocked,getCountFromServer=blocked;
 export const createUserWithEmailAndPassword=blocked,signInWithEmailAndPassword=blocked,sendPasswordResetEmail=blocked,signOut=blocked,updateProfile=blocked,signInWithCustomToken=blocked;
 export const httpsCallable=()=>async()=>blocked();
 export const uploadBytesResumable=blocked,deleteObject=blocked;

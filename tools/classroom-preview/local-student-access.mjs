@@ -7,6 +7,7 @@ export function createLocalStudentAccess({db,school,filename,now=Date.now}){
  db.exec(`CREATE TABLE IF NOT EXISTS pupil_access(school_id TEXT NOT NULL,student_id TEXT NOT NULL,digest TEXT NOT NULL UNIQUE,cipher TEXT NOT NULL,key_id TEXT NOT NULL,version INTEGER NOT NULL,status TEXT NOT NULL,PRIMARY KEY(school_id,student_id));
  CREATE TABLE IF NOT EXISTS pupil_retired_codes(digest TEXT PRIMARY KEY);
  CREATE TABLE IF NOT EXISTS pupil_sessions(digest TEXT PRIMARY KEY,school_id TEXT NOT NULL,student_id TEXT NOT NULL,version INTEGER NOT NULL,expires_at INTEGER NOT NULL);
+ CREATE TABLE IF NOT EXISTS pupil_session_policy(digest TEXT PRIMARY KEY,device_mode TEXT NOT NULL,last_activity INTEGER NOT NULL);
  CREATE TABLE IF NOT EXISTS pupil_rate(key TEXT PRIMARY KEY,window_start INTEGER NOT NULL,attempts INTEGER NOT NULL);
  CREATE TABLE IF NOT EXISTS pupil_access_ops(actor_key TEXT NOT NULL,operation_id TEXT NOT NULL,digest TEXT NOT NULL,PRIMARY KEY(actor_key,operation_id));`);
  const get=(sql,...args)=>db.prepare(sql).get(...args),run=(sql,...args)=>db.prepare(sql).run(...args);
@@ -75,7 +76,8 @@ export function createLocalStudentAccess({db,school,filename,now=Date.now}){
   });
  }
  function transaction(fn){db.exec('BEGIN IMMEDIATE');try{const result=fn();db.exec('COMMIT');return result;}catch(e){db.exec('ROLLBACK');throw e;}}
- function login(value,device,ip){
+ function login(value,device,ip,{deviceMode='shared'}={}){
+  if(!['shared','personal'].includes(deviceMode))fail('invalid-argument');
   const k=key(),code=normalizeCode(value);if(typeof device!=='string'||device.length>200||typeof ip!=='string'||ip.length>200)fail('invalid-argument');
   const result=transaction(()=>{
    const limits=[['device:'+device,8,60000],['ip:'+ip,1200,600000]];
@@ -86,14 +88,24 @@ export function createLocalStudentAccess({db,school,filename,now=Date.now}){
    const token=randomBytes(32).toString('base64url');run('DELETE FROM pupil_sessions WHERE expires_at<=?',now());
    // Bound the number of live browser sessions for one pupil.
    run('DELETE FROM pupil_sessions WHERE digest IN (SELECT digest FROM pupil_sessions WHERE school_id=? AND student_id=? ORDER BY expires_at DESC LIMIT -1 OFFSET 4)',found.school_id,found.student_id);
-   run('INSERT INTO pupil_sessions VALUES(?,?,?,?,?)',digest('session:'+token,k),found.school_id,found.student_id,found.version,now()+8*3600000);return {token};
+   const maxAge=deviceMode==='personal'?30*86400:8*3600,sessionDigest=digest('session:'+token,k);
+   run('INSERT INTO pupil_sessions VALUES(?,?,?,?,?)',sessionDigest,found.school_id,found.student_id,found.version,now()+maxAge*1000);
+   run('INSERT INTO pupil_session_policy VALUES(?,?,?)',sessionDigest,deviceMode,now());
+   run('DELETE FROM pupil_session_policy WHERE digest NOT IN (SELECT digest FROM pupil_sessions)');return {token,maxAge};
   });
   if(result.error)fail(result.error,result.error==='rate-limited'?429:401);return result;
  }
- function me(token){
+ function session(token){
   if(typeof token!=='string'||!/^[a-zA-Z0-9_-]{43}$/.test(token))fail('unauthenticated',401);
-  const row=get("SELECT s.school_id,s.student_id FROM pupil_sessions s JOIN pupil_access a ON a.school_id=s.school_id AND a.student_id=s.student_id WHERE s.digest=? AND s.expires_at>? AND s.version=a.version AND a.status='active'",digest('session:'+token),now());
-  if(!row)fail('unauthenticated',401);return {...school.studentRecord(row.school_id,row.student_id),assignments:[],assignmentConnection:'pending',localOnly:true};
+  const row=get("SELECT s.school_id,s.student_id,s.digest,s.expires_at,p.device_mode,p.last_activity FROM pupil_sessions s JOIN pupil_access a ON a.school_id=s.school_id AND a.student_id=s.student_id JOIN pupil_session_policy p ON p.digest=s.digest WHERE s.digest=? AND s.expires_at>? AND s.version=a.version AND a.status='active'",digest('session:'+token),now());
+  if(!row)fail('unauthenticated',401);
+  if(row.device_mode==='shared'&&now()-row.last_activity>=300000)fail('session-locked',401);
+  return row;
  }
- return {statuses:(actor,payload)=>{checkPayload(payload);return scoped(actor,payload,status);},issue,rotate:(actor,payload)=>change(actor,payload,'rotate'),block:(actor,payload)=>change(actor,payload,'block'),print,login,me,logout(token){if(typeof token==='string'&&/^[a-zA-Z0-9_-]{43}$/.test(token))run('DELETE FROM pupil_sessions WHERE digest=?',digest('session:'+token));}};
+ function me(token){
+  const row=session(token);return {...school.studentRecord(row.school_id,row.student_id),session:{deviceMode:row.device_mode,expiresAt:row.expires_at,idleTimeoutMillis:row.device_mode==='shared'?300000:null},assignments:[],assignmentConnection:'pending',localOnly:true};
+ }
+ function activity(token){const row=session(token);run('UPDATE pupil_session_policy SET last_activity=? WHERE digest=?',now(),row.digest);return {active:true};}
+
+ return {statuses:(actor,payload)=>{checkPayload(payload);return scoped(actor,payload,status);},issue,rotate:(actor,payload)=>change(actor,payload,'rotate'),block:(actor,payload)=>change(actor,payload,'block'),print,login,me,activity,logout(token){if(typeof token==='string'&&/^[a-zA-Z0-9_-]{43}$/.test(token))run('DELETE FROM pupil_sessions WHERE digest=?',digest('session:'+token));}};
 }

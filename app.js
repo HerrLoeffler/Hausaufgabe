@@ -16,6 +16,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import {
   getFirestore,
+  runTransaction,
   doc,
   getDoc as firestoreGetDoc,
   setDoc as firestoreSetDoc,
@@ -37,6 +38,7 @@ import {
   Timestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
+import { startTeacherSessionOnce } from "./teacher-session-start.mjs";
 import { createAccountController } from "./admin-account-actions.mjs?v=1";
 import * as firebaseModule from "./firebase-config.js?v=2.3.0";
 import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
@@ -6456,7 +6458,7 @@ function renderTeacherLivePanel(quiz, attempts, submissions) {
   panel.innerHTML = `
     <div class="liveStatusRow waiting"><div class="liveIcon waiting">⌛</div><div class="liveGrow"><span class="eyebrow">Warteraum</span><h3>${runAttempts.length} ${runAttempts.length === 1 ? "Schüler ist" : "Schüler sind"} bereit</h3><p>Die Aufgaben bleiben verborgen, bis du den Test für alle startest.${minutes ? ` Dann laufen für alle gleichzeitig ${minutes} Minuten.` : ""}</p></div></div>
     <div class="liveActions"><button id="liveStartBtn" class="button primary bigAction" type="button">Test für alle starten</button><button id="liveRefreshResultsBtn" class="button ghost" type="button">Ergebnisse</button></div>`;
-  $("liveStartBtn")?.addEventListener("click", () => startTeacherSession(quiz.id, runAttempts.length));
+  $("liveStartBtn")?.addEventListener("click", () => startTeacherSession(quiz.id, runAttempts.length, quiz.sessionRunId));
   $("liveRefreshResultsBtn")?.addEventListener("click", () => openResults(quiz.id));
 }
 
@@ -6475,18 +6477,14 @@ function updateTeacherSessionClock(quiz) {
   el.classList.toggle("clockWarning", Boolean(minutes && seconds <= 60));
 }
 
-async function startTeacherSession(code, readyCount = 0) {
+async function startTeacherSession(code, readyCount = 0, expectedRunId) {
   const message = readyCount
     ? `${readyCount} ${readyCount === 1 ? "Schüler ist" : "Schüler sind"} bereit. Test jetzt für alle starten?`
     : "Noch niemand ist im Warteraum. Test trotzdem starten?";
   if (!confirm(message)) return;
   try {
-    await updateDoc(doc(db, "quizzes", code), {
-      sessionState: "running",
-      sessionStartedAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    });
-    toast("Test für alle gestartet.");
+    const result = await startTeacherSessionOnce({ db, reference: doc(db, "quizzes", code), expectedRunId, runTransaction, serverTimestamp });
+    toast(result === "already-running" ? "Der Test läuft bereits. Die Startzeit bleibt erhalten." : "Test für alle gestartet.");
   } catch (err) {
     console.error(err);
     toast("Der Test konnte nicht gestartet werden.", "error");
