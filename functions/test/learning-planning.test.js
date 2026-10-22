@@ -18,3 +18,10 @@ test('fraction addition, reduction and representation never receive an expansion
  const reduce=P.plan({topic:{subject:'math',title:'Wertgleich kürzen'},phase:'practice',level:2});assert.match(reduce.demand,/Kürz|kürz|Teiler/);
  const part=P.plan({topic:{subject:'math',title:'Ganzes und gleiche Teile',goal:'Bruchteile darstellen'},phase:'practice',level:0});assert.equal(part.preferredTool,'fraction-board');assert.match(part.demand,/Anteil/);
 });
+
+test('fraction expansion help removes the whole-board demand and isolates smaller prerequisites',()=>{
+ const topic={subject:'math',title:'Wertgleich erweitern',goal:'Zähler und Nenner mit demselben Faktor multiplizieren'};
+ const demands=[1,2,3].map(supportStage=>P.plan({topic,phase:'help',supportStage,level:0}));
+ assert.match(demands[0].demand,/Zählerrechnung/);assert.match(demands[1].demand,/Addition/);assert.match(demands[2].demand,/einzelne/);
+ assert.equal(demands.every(p=>p.preferredTool==='none'),true);assert.equal(new Set(demands.map(p=>p.demand)).size,3);
+});

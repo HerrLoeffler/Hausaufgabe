@@ -40,6 +40,11 @@ function rejectSelectionLeak(c,task){
   if(explicitlyNames(c.instruction,span)||span.includes(' ')&&containsPhrase(instruction,span))bad('Die Werkstattanweisung darf den gesuchten Textbeleg nicht vorwegnehmen.');
  }
 }
+function invalidText(mode,message,details={}){
+ const safeMode=['select','order'].includes(mode)?mode:'invalid';
+ const error=new Error(`Textwerkstatt (${safeMode}): ${message}`);error.code='invalid-argument';
+ error.diagnostic={tool:'text-workbench',mode:safeMode,...details};throw error;
+}
 function validate(c,topic,task){
  if(!Object.hasOwn(registry,c.tool)||!registry[c.tool].supports(topic)||c.version!==1||!['answer','support'].includes(c.role)||!text(c.instruction,240)||!c.instruction.trim()||(task.input==='workshop')!==(c.role==='answer'))bad('Dieses Werkzeug passt nicht zum Lernziel und Antwortweg.');
  const common={tool:c.tool,version:1,role:c.role,goal:c.goal,instruction:c.instruction};
@@ -56,12 +61,16 @@ function validate(c,topic,task){
   return {...common,leftCoefficient:c.leftCoefficient,leftConstant:c.leftConstant,rightCoefficient:c.rightCoefficient,rightConstant:c.rightConstant,minimum:c.minimum,maximum:c.maximum,step:c.step,initialValue:c.initialValue};
  }
  if(c.tool==='text-workbench'){
-  if(c.goal!=='text'||!['select','order'].includes(c.mode)||!text(c.text,1200)||!Array.isArray(c.tokens)||c.tokens.length>40||c.tokens.some(t=>!text(t,80)||!t.trim()))bad('Die kurze Textwerkstatt ist ungültig.');
-  const tokens=c.mode==='select'?c.text.trim().split(/\s+/).filter(Boolean):c.tokens;
-  if(tokens.length<2||tokens.length>40||c.mode==='select'&&c.tokens.length)bad('Der Text braucht 2 bis 40 Wörter.');
+  if(c.goal!=='text'||!['select','order'].includes(c.mode))invalidText(c.mode,'goal muss text und mode muss select oder order sein.',{field:'mode'});
+  if(!text(c.text,1200))invalidText(c.mode,'text muss eine Zeichenfolge mit höchstens 1200 Zeichen sein.',{field:'text'});
+  if(!Array.isArray(c.tokens))invalidText(c.mode,'tokens muss ein Array sein.',{field:'tokens'});
+  const tokens=c.mode==='select'?c.text.trim().split(/\s+/).filter(Boolean):c.tokens,field=c.mode==='select'?'text':'tokens';
+  if(tokens.length<2||tokens.length>40)invalidText(c.mode,`${field} enthält ${tokens.length} Token; erlaubt sind 2 bis 40.`,{field,tokenCount:tokens.length});
+  if(c.mode==='select'&&c.tokens.length&&(c.tokens.length!==tokens.length||c.tokens.some((token,index)=>token!==tokens[index])))invalidText(c.mode,'tokens muss leer oder mit den sichtbaren Wörtern identisch sein (gleiche Zeichen und Reihenfolge).',{field:'tokens',tokenCount:c.tokens.length,sourceTokenCount:tokens.length});
+  if(c.mode==='order'&&c.tokens.some(token=>!text(token,80)||!token.trim()))invalidText(c.mode,'tokens darf nur nichtleere Wörter mit höchstens 80 Zeichen enthalten.',{field:'tokens',tokenCount:c.tokens.length});
   if(c.role==='answer'&&(task.answer?.kind!=='open'||!task.answer.values?.length))bad('Die Textwerkstatt braucht fachliche Antwortkriterien.');
   rejectSelectionLeak(c,task);
-  return {...common,mode:c.mode,text:c.text,tokens:[...c.tokens]};
+  return {...common,mode:c.mode,text:c.text,tokens:c.mode==='select'?[]:[...c.tokens]};
  }
  bad('Unbekanntes Werkzeug.');
 }
