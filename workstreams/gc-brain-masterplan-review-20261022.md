@@ -1,0 +1,44 @@
+# GC-BRAIN-01 - Masterplanreview und Revision 1.1
+
+Stand 22.10.2026. Ausführender Planungsfachchat: GC · Firmenzentrale – Konzept & Bauplan, Thread 01a15f30-b738-7d50-8aa2-f34447eb5723. Koordination: GradeCrew Zentrale, Thread 01a10df6-736b-7a62-bd38-2724cf254c2e.
+
+## Auftrag und Scope
+
+Direkter Nutzerauftrag: den ausführlichen Plan erneut prüfen und einfacher/besser machen; technische Weiterentwicklung bestehender und komplexer Lernaufgaben als eigenen Block planen, drei bestehende Fachstränge verbinden, nachvollziehbar auf Grün bringen und dauerhaft prüfen; gemeinsame Firmen-App für Kundenanfragen, E-Mails und Probleme. Fortgeltend autorisiert: Plan auf GitHub sichern und über Zentrale prüfen/anschließend zuständigen Fachchats zuordnen. Live bleibt unverändert.
+
+Umgesetzt wurde Planreview mit vollständiger Revision der Dokumente, keine Produktimplementierung oder Übernahme laufender Fachaufträge. Schriftliche Delta-Verträge und klare Abnahmen sind vor ihrer späteren Umsetzung reviewbar. P0/D1-D4 und bestehende Grenzen bleiben erhalten.
+
+## Gelieferte Revision
+
+115 PDF-Seiten, 35.151 Wörter in 19 Kapiteln; 28 Umsetzungspakete, 72 geplante Abnahmefälle, 19 Automationsprofile. Zwölf konkrete Befunde RV01-RV12 behoben; Navigation auf Heute/Eingang/Arbeit/Wissen vereinfacht; gemeinsame Akte; eigenständiger Aufgabenqualitätsblock; zentraler Eingang; Lieferfolge L0-L6. Band 16 ab PDF-Seite 95, Band 17 ab Seite 101, Band 18 ab Seite 110. Alte Fassung 1.0 bleibt im bisherigen Ausgabeordner erhalten.
+
+Quellenpfade für GitHub: ausschließlich docs/plans/gc-brain-masterplan-v1.1-20261022/ und diese separate Übergabe workstreams/gc-brain-masterplan-review-20261022.md. Eigener Sicherungsbranch docs/gc-brain-masterplan-review-20261022 auf gelesenem main cb1b0e284e97f072db058b7705cdb70c45943a3a. Keine parallele Änderung von TODO.md, Registry, STATE oder PR269. Gemeinsame Nachführung bleibt beim bestehenden Integrationswriter.
+
+## Inhaltliche Kernverträge
+
+- Bestehende Katalog-/Task-/Format-IDs und fachliche Owner erhalten. Identifizierte drei Stränge: Erweiterte Aufgabentypen, GradeCrew-Design modernisieren, Adaptives Lernen. Kapiteltests und Pädagogisches Konzept als angeschlossene Abhängigkeiten; endgültige Writerzuordnung durch Zentrale vor Umsetzung.
+- Grün gilt für genaue Format-/Item-/Bewertungsfassung, Modus und Clientumfang. Q1-Q7, unabhängige Annahme, relevante Abhängigkeitsänderung entzieht Gültigkeit. Kein CI-PASS als pauschale Unterrichts-/Livefreigabe.
+- Rot zu Grün: Befund, Reproduktion, Schutztest, Korrektur, passende Nachprüfung, unabhängiger Review, gebundene Qualitätsentscheidung, separate Veröffentlichung und Nachbeobachtung.
+- Beobachtung löst Hypothese aus; fachlich angenommene Erkenntnis verbessert Bestand/Regeln. Kein automatisches Training oder allgemeiner Rohimport von Schülerantworten in Firmenwissen.
+- Eingang: atomarer idempotenter Import, klarer Owner, Split/Merge mit ACLgrenzen, Fristen, Antwortvorbereitung, gebundener Versand und Unknown-Abgleich, Wiederöffnung und Restore ohne Doppelmail.
+- Ein kompletter interner Firmenfall zuerst; externer Mailkanal erst nach tatsächlicher Konto-/Rechte-/Providerentscheidung. Keine neuen Accounts, Scheduler oder bezahlten Läufe aus dieser Planung.
+
+## Quellen und heutiger Stand
+
+Aktuelle Mainregeln sowie relevante TODO-/STATE-/Registryteile und Aufgabenprinzipien/-katalog auf cb1b0e2 gelesen. Development-Audit 39849601427, Job 120071908032: GitHub meldet success, Schritte Fetch/Build/Upload success; keine vollständige neue Überschneidungsanalyse sämtlicher Produktbranches behauptet. Plan-PR269 auf cf5b8c4 weiterhin Draft/nicht mergebar. Alte Planabnahme 7342609 bleibt ausschließlich ihrem Scope zugeordnet.
+
+Aktuelle Chatnachrichten gelesen: Hauptzentrale, Integrator, erweiterte Aufgabentypen, Designmodernisierung, Adaptives Lernen, Kapiteltests. Laufende Fremdarbeit nur gelesen. PR265 Kopf 1ce20d9630d82209316ab7ab13764c4ee158f20f; dessen Produktprüfungen sind Fachberichte, keine durch diesen Chat wiederholten Tests. Kapitel-Wortmarkierfehler bleibt mit plausibler, nicht final bestätigter Ursache offen. Integrator berichtet weiter P0 offen; dessen zuletzt gelesene Nachführung e5c2901 / lokaler Diagnosecheckpoint 28237d4.
+
+## Tatsächliche Dokumentprüfung
+
+19 Kapitel und Abschnittsnummern, 28 WP/72 AT/19 AUT/24 REQ ohne Kennungslücken, interne HTMLanker und Kapiteltitel im PDF geprüft. Alle 115 finalen Seiten gerendert und über Kontaktbögen gesichtet; Qualitätsmatrix Seite 103 zusätzlich hochaufgelöst geprüft. Kein beobachtetes Clipping/Überlappen, keine außerhalb der Seite liegenden Textzeichen, keine fast leere Spillseite. Ein Layoutüberlauf sowie doppelte/übersprungene Abschnittsnummern während der Erstellung korrigiert. Kein Produkt-Abnahmefall ausgeführt; unabhängiger Review dieser Revision ausstehend.
+
+PDF SHA256: c2abb50d88bbb986443ce01913e47161b924c744a95e5cd2ed28e85a96315f1d. Weitere Datei-Hashes in manifest.json; Strukturprüfung qa-structure.json. Reproduzierbarer Renderer separat enthalten. Keine Produkt-/Release-/Verbindungsänderungen durch diesen Review.
+
+## Nächster Schritt und gemeinsame TODO-Nachführung
+
+Genau nächster Schritt: Zentrale prüft bzw. organisiert gezielt den Review von Band 16-18 und den betroffenen Deltas in Band 03/07/09/10/11, bestätigt danach die vorhandenen Fachowner und führt den bereits zugewiesenen Host-P0 beim Integrator fort. Neue Pakete nicht allein durch ihre Beschreibung als gestartet verbuchen. Kein vollständiger Neustart der bereits akzeptierten D1-D4-Prüfung; deren Erhalt am Delta prüfen.
+
+Kopierbarer Zusatz für den vorhandenen GC-BRAIN-01-Eintrag durch den gemeinsamen Writer: „Masterplan Revision 1.1 nach Nutzerreview: einfacher Eingang/Arbeitsmodell, Aufgabenentwicklung & Qualität mit scopegebundenem Grün, zentraler Kunden-/Maileingang; 115 Seiten, 19 Kapitel, WP23-27/AT49-72 ergänzt. Dokumentationsfassung, unabhängiger Review offen; P0 weiter offen. Neue Quellen im eigenen Masterplanreview-Branch, keine Produkt-/Liveänderung. Nächster Schritt: gezielter Deltareview und bestätigte Ownerzuordnung.“
+
+Runtime-Modell/Effort und Usage dieses laufenden Chats nicht gesichert beobachtbar: unknown. Kein zusätzlicher Subagent-/Providerstart und kein Budget-/Attemptreset. Keine alten Versuche verändert.

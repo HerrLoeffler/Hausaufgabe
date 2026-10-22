@@ -1,0 +1,112 @@
+{
+  "taskId": "GC-BRAIN-01",
+  "version": "1.1",
+  "date": "2026-10-22",
+  "chapters": 19,
+  "words": 35151,
+  "pdfPages": 115,
+  "pdfFile": "GradeCrew-Firmenzentrale-Gesamtplan.pdf",
+  "pdfBytes": 500453,
+  "implementationPackages": 28,
+  "acceptanceCases": 72,
+  "automationProfiles": 19,
+  "authoringOnly": true,
+  "independentMasterplanReview": "pending",
+  "chapterFiles": [
+    {
+      "name": "00-Auftrag-Stand-und-Lesefuehrung.md",
+      "bytes": 10379,
+      "sha256": "10b33364cd437ba2b143d967be0c7068e1c2419a4d9fd6f680eb487370387f8d"
+    },
+    {
+      "name": "01-Firmenordnung-und-Verantwortung.md",
+      "bytes": 15838,
+      "sha256": "58f719df99cfa30b6d31feee47fb2a9b8ce728afed2adf28964e415d4648c2bd"
+    },
+    {
+      "name": "02-Fuehrung-Ziele-und-Entscheidungen.md",
+      "bytes": 12320,
+      "sha256": "5fb020c0e2cc779f5a34537d074d22d33758c38366bfc4346d20f5ffdd1af22a"
+    },
+    {
+      "name": "03-Oberflaeche-und-Bedienablaeufe.md",
+      "bytes": 16650,
+      "sha256": "c3349bf146ef4a5f871cba844337fd677935a7a38a71c3faf6697ccbf0ad095f"
+    },
+    {
+      "name": "04-Datenmodell-Speicherung-und-Vertraege.md",
+      "bytes": 16140,
+      "sha256": "8f99db38e265306cb72dc00407d97d89d49725ca14428fc9b2afc364d00c4d72"
+    },
+    {
+      "name": "05-Wissen-Quellen-und-Kontextaufbau.md",
+      "bytes": 11982,
+      "sha256": "ad6a9fcca31a258fcc34b4df0eed343173789780f9acc1c29e0f85ffe681a393"
+    },
+    {
+      "name": "06-ChatGPT-Anbindung-Routing-und-Ausfuehrung.md",
+      "bytes": 16436,
+      "sha256": "dc5a4f11e4c172bd7ac8b39460cb570148ef3431be02237ca8edf29062d7af7b"
+    },
+    {
+      "name": "07-Automatisierung-und-Verbindungen.md",
+      "bytes": 16707,
+      "sha256": "5839b1e625904bc3b963ec0255c3ddd413d64bdb86feb938e547986e12598096"
+    },
+    {
+      "name": "08-Rechte-Sicherheit-und-Betrieb.md",
+      "bytes": 13229,
+      "sha256": "9ceb2dfef9bd8ad4c7aef92aef5293731c2fe16609588874d934ad10b4dfe4cb"
+    },
+    {
+      "name": "09-Umsetzungspakete-Dateien-und-Abhaengigkeiten.md",
+      "bytes": 25129,
+      "sha256": "6c7d7285f2f8d2ad890c51db034f36b72bcbe33c12a99a31fe905586f27fad8c"
+    },
+    {
+      "name": "10-Anforderungen-und-Abnahmekatalog.md",
+      "bytes": 26255,
+      "sha256": "9cddb888acfba6b749f27548b280afd881a723e89392fd16f5b3187b1f340560"
+    },
+    {
+      "name": "11-API-Nachrichten-und-Zustandsprotokoll.md",
+      "bytes": 18495,
+      "sha256": "c96f07c36c2beac17208d383763163ca672814d911caeff56599466a3f57a389"
+    },
+    {
+      "name": "12-Betriebsablaeufe-und-konkrete-Faelle.md",
+      "bytes": 15036,
+      "sha256": "c4609b0d789294664af1085225475653094b14fdd05b0cd6481bcd6fbcc5e171"
+    },
+    {
+      "name": "13-Fachobjekte-und-Bereichsdaten.md",
+      "bytes": 14943,
+      "sha256": "8b517b74d7ea22c023c7d38d9666f20b310ce2dea5e7db4c1cfd7ef9c34b44b9"
+    },
+    {
+      "name": "14-Entscheidungen-Quellen-und-Liefergrenzen.md",
+      "bytes": 12946,
+      "sha256": "fcc2072c54ed574b65c233f76f9315d60bc7400d42aa7abc544570eb01ba8b43"
+    },
+    {
+      "name": "15-Technische-Arbeitskarten-und-Pruefbefehle.md",
+      "bytes": 14729,
+      "sha256": "519ad36ae959638919a36d3c5a9e137698e3e45f941511793aa872db44ea1fbf"
+    },
+    {
+      "name": "16-Planreview-Vereinfachung-und-Lieferfolge.md",
+      "bytes": 16135,
+      "sha256": "98ac125e553df6c8467556c97c981e74df88a0952f64830a1dc7be1f20de6ecd"
+    },
+    {
+      "name": "17-Aufgabenentwicklung-Qualitaet-und-Gruenprozess.md",
+      "bytes": 28655,
+      "sha256": "bc7a5ff4530c00b78e45678546a71ecdada7e9b94190d144b8f1cacd80cdcdb2"
+    },
+    {
+      "name": "18-Zentraler-Eingang-Kunden-Mail-und-Probleme.md",
+      "bytes": 18531,
+      "sha256": "3a0b7a6531e7e173bd83d05802445109a500f4d40b5bf7789fa2118690248d10"
+    }
+  ]
+}

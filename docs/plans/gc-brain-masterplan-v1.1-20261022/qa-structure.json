@@ -1,0 +1,114 @@
+{
+  "sectionNumbersValid": true,
+  "FZ-WP": 28,
+  "FZ-AT": 72,
+  "AUT-": 19,
+  "chapters": 19,
+  "pdfPages": 115,
+  "words": 35151,
+  "outOfPageCharacters": [],
+  "shortPages": [],
+  "chapterMap": [
+    {
+      "file": "00-Auftrag-Stand-und-Lesefuehrung.md",
+      "title": "GradeCrew Firmenzentrale: Gesamtplan und Betriebsbuch",
+      "page": 3
+    },
+    {
+      "file": "01-Firmenordnung-und-Verantwortung.md",
+      "title": "Band 01 - Firmenordnung und Verantwortung",
+      "page": 7
+    },
+    {
+      "file": "02-Fuehrung-Ziele-und-Entscheidungen.md",
+      "title": "Band 02 - Führungsübersicht, Ziele und Entscheidungen",
+      "page": 12
+    },
+    {
+      "file": "03-Oberflaeche-und-Bedienablaeufe.md",
+      "title": "Band 03 - Oberfläche und Bedienabläufe",
+      "page": 16
+    },
+    {
+      "file": "04-Datenmodell-Speicherung-und-Vertraege.md",
+      "title": "Band 04 - Datenmodell, Speicherung und Konsistenz",
+      "page": 21
+    },
+    {
+      "file": "05-Wissen-Quellen-und-Kontextaufbau.md",
+      "title": "Band 05 - Firmenwissen, Quelleninventar und Kontext",
+      "page": 27
+    },
+    {
+      "file": "06-ChatGPT-Anbindung-Routing-und-Ausfuehrung.md",
+      "title": "Band 06 - ChatGPT-Anbindung, Zentralenrouting und Ausführung",
+      "page": 31
+    },
+    {
+      "file": "07-Automatisierung-und-Verbindungen.md",
+      "title": "Band 07 - Automatisierungen und Verbindungen",
+      "page": 37
+    },
+    {
+      "file": "08-Rechte-Sicherheit-und-Betrieb.md",
+      "title": "Band 08 - Rechte, Sicherheit, Wiederherstellung und Betrieb",
+      "page": 43
+    },
+    {
+      "file": "09-Umsetzungspakete-Dateien-und-Abhaengigkeiten.md",
+      "title": "Band 09 - Umsetzungspakete, Dateien und Abhängigkeiten",
+      "page": 48
+    },
+    {
+      "file": "10-Anforderungen-und-Abnahmekatalog.md",
+      "title": "Band 10 - Anforderungen und Abnahmekatalog",
+      "page": 56
+    },
+    {
+      "file": "11-API-Nachrichten-und-Zustandsprotokoll.md",
+      "title": "Band 11 - API-, Nachrichten- und Zustandsprotokoll",
+      "page": 67
+    },
+    {
+      "file": "12-Betriebsablaeufe-und-konkrete-Faelle.md",
+      "title": "Band 12 - Betriebsabläufe und konkrete Firmenfälle",
+      "page": 74
+    },
+    {
+      "file": "13-Fachobjekte-und-Bereichsdaten.md",
+      "title": "Band 13 - Fachobjekte und Bereichsdaten",
+      "page": 80
+    },
+    {
+      "file": "14-Entscheidungen-Quellen-und-Liefergrenzen.md",
+      "title": "Band 14 - Entscheidungen, Quellen und Liefergrenzen",
+      "page": 85
+    },
+    {
+      "file": "15-Technische-Arbeitskarten-und-Pruefbefehle.md",
+      "title": "Band 15 - Technische Arbeitskarten und Prüfbefehle",
+      "page": 90
+    },
+    {
+      "file": "16-Planreview-Vereinfachung-und-Lieferfolge.md",
+      "title": "Band 16 - Planreview, Vereinfachung und Lieferfolge",
+      "page": 95
+    },
+    {
+      "file": "17-Aufgabenentwicklung-Qualitaet-und-Gruenprozess.md",
+      "title": "Band 17 - Aufgabenentwicklung, Qualität und Grünprozess",
+      "page": 101
+    },
+    {
+      "file": "18-Zentraler-Eingang-Kunden-Mail-und-Probleme.md",
+      "title": "Band 18 - Zentraler Eingang für Kunden, E-Mails und Probleme",
+      "page": 110
+    }
+  ],
+  "htmlAnchorsValid": true,
+  "productAcceptanceCasesExecuted": 0,
+  "independentReview": "pending",
+  "pdfSha256": "c2abb50d88bbb986443ce01913e47161b924c744a95e5cd2ed28e85a96315f1d",
+  "renderVisualInspection": "All 115 final pages inspected on contact sheets; page 103 additionally at 140 dpi; no observed clipping or overlap.",
+  "renderLogBytes": 0
+}
