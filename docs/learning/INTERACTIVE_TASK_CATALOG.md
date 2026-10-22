@@ -2,6 +2,12 @@
 
 Task GC-EXTENDED-QUESTION-TYPES-01 · Stand 22.10.2026. Zusammen mit den [Grundsätzen](INTERACTIVE_TASK_PRINCIPLES.md) lesen. Fach-/Jahrgangsangaben unten sind Einsatzideen, keine amtliche Lehrplanzuordnung. Alle neuen Umsetzungen zunächst im beauftragten Testumfang; kein automatischer Staging-/Live-Import.
 
+## Erweiterte Markt- und Fachdidaktikrecherche
+
+Die [Synthese vom 22.10.2026](DIGITAL_TASK_MARKET_RESEARCH_20261022.md) und der [strukturierte Recherchekatalog](research/digital-task-market-20261022.json) ergänzen diesen Fundus um 148 Angebots-/Fach-/Referenzprofile und 163 eigene Aufgabenentwürfe über allgemeinbildende und berufliche Fächer. Die [Prüfnotiz](research/digital-task-market-20261022-review.md) dokumentiert die Inhalts- und Synthesekorrekturen; [Arbeitsübergabe](../../workstreams/digital-task-market-research-20261022.md).
+
+Katalog-IDs bei passender Facharbeit verwenden; Lernziel, Material, gültige Alternativen und D/H/L-Auswertung gemeinsam lesen. Die Entwürfe sind keine zusätzlichen 163 technischen Fragetypen und kein automatisch freigegebener Generator-/Runtime-Pool. Anbieterbeobachtung, eigener Transfer und tatsächlicher Implementierungsstand bleiben getrennt. Die Synthese priorisiert 20 Referenzaufgaben als Vorschlag für die nächste fachliche Ausarbeitung. Vor echter Wiederverwendung Rechte, Curriculum, Aufgabengüte und technische Unterstützung konkret prüfen.
+
 ## Wiederverwendbare Interaktionen
 
 **Nachweis V1:** eigener integrierter Branch `feature/extended-question-types-20261020`, [gesicherter Commit](https://github.com/HerrLoeffler/Hausaufgabe/commit/415e7d5da047a2a5730a2f8ae37b52f7b5033dfd). Lokaler Remy→Editor→Schüler→Wilma-Ablauf, neun Beispiele/24 Punkte, tatsächlich 23/24 mit absichtlich falschem Balken. Vor Wiederverwendung aktuellen Code, Export und eigene Tests prüfen. Kein Cloud-/Gerätenachweis.
@@ -56,3 +62,4 @@ Quellen zum Nachlesen, keine importierten Assets: [ZUM Deutsch Lernen](https://d
 ## Einen Eintrag erweitern
 
 Bestehende ID fortführen; Lernziel/Zielgruppe, eigene Aufgabenidee, Interaktion, Antwort/Bewertung, Quelle/Version, Rechte bei Übernahme, Modus und Wiederverwendung nennen. Ergebnis nur mit Commit/Umgebung/Prüfbeleg aufwerten. Offene Risiken und genau nächsten Test festhalten. Bestandene technische Prüfung, fachliche Abnahme, tatsächlicher Geräteeinsatz und Lernwirksamkeit sind verschiedene Nachweise. Bestehende Task-/Budgethistorie erhalten.
+
