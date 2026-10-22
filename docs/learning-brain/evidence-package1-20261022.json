@@ -1,0 +1,759 @@
+{
+  "task": "GC-ADAPTIVE-PRACTICE-01",
+  "date": "2026-10-22",
+  "environment": "gradecrew-staging-2026",
+  "identities": "two existing synthetic owner-isolated test accounts; no pupil identities/credentials included",
+  "hostingSource": "c44a67f7704158dc5dbaf2a87dc8acacd121edad",
+  "backendSourcePrepared": "18905bb6eec6fc87669cd02c8b204de4a2b01579",
+  "backendDeploy19": "pending at this checkpoint",
+  "automated": {
+    "functions": 372,
+    "ui": 62,
+    "skipped": 0,
+    "scopedESLint": "passed"
+  },
+  "geometryDesktop": {
+    "source": {
+      "width": 767,
+      "height": 100,
+      "parts": 3,
+      "selected": 2
+    },
+    "expanded": {
+      "width": 767,
+      "height": 100,
+      "parts": 6,
+      "selected": 4
+    }
+  },
+  "actualBrowserActions": [
+    "balance: subtract1 both sides three times, divide2, set x4, AIcorrect",
+    "text: move Heute left three positions, AIcorrect",
+    "fraction: partition2, 4/6 AIcorrect; fresh3/5 painted via drag, AIcorrect"
+  ],
+  "knownBoundaries": [
+    "some generated candidates rejected; correct assessment persists before next generation",
+    "no complete regular student/Classroom login proof",
+    "no physical timed raw-data TTL cleanup configured",
+    "desktop evidence only; no physical touch-device signoff",
+    "no blanket all-topic/Quali or learning-effectiveness acceptance",
+    "reuse pool initially owner-private; no automatic global training"
+  ],
+  "traces": {
+    "fraction": [
+      {
+        "action": "start",
+        "revision": 1,
+        "phase": "practice",
+        "pendingNext": false,
+        "task": {
+          "id": "ba05c35f-f148-4156-81dd-81869c0b3dcb",
+          "prompt": "Erweitere den Bruch wertgleich auf den Nenner 6. Zeige das Ergebnis mit dem Werkzeug.",
+          "contextText": "Gegeben ist der Bruch 2/3.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "fraction-board",
+            "version": 1,
+            "role": "answer",
+            "goal": "equivalent",
+            "numerator": 2,
+            "denominator": 3,
+            "targetDenominator": 6,
+            "instruction": "Stelle 2/3 dar und unterteile das Ganze so, dass es 6 gleich große Teile gibt. Die gefärbte Fläche bleibt gleich."
+          }
+        },
+        "explanation": "",
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        }
+      },
+      {
+        "action": "wrong",
+        "revision": 2,
+        "phase": "help",
+        "pendingNext": true,
+        "task": null,
+        "explanation": "",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Nicht wertgleich: Bei 6 Teilen müssen 4 gefärbt sein. Richtig ist 4/6."
+        }
+      },
+      {
+        "action": "retry",
+        "revision": 3,
+        "phase": "help",
+        "pendingNext": true,
+        "task": null,
+        "explanation": "",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Nicht wertgleich: Bei 6 Teilen müssen 4 gefärbt sein. Richtig ist 4/6."
+        }
+      },
+      {
+        "action": "retry",
+        "revision": 4,
+        "phase": "help",
+        "pendingNext": true,
+        "task": null,
+        "explanation": "",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Nicht wertgleich: Bei 6 Teilen müssen 4 gefärbt sein. Richtig ist 4/6."
+        }
+      },
+      {
+        "action": "retry",
+        "revision": 5,
+        "phase": "help",
+        "pendingNext": false,
+        "task": {
+          "id": "b8bab76e-a945-417d-8055-8eb3c6843d20",
+          "prompt": "Der Erweiterungsfaktor ist 2. Rechne nur den neuen Zähler aus: 2 · 2 = ?",
+          "contextText": "Beim Erweitern von 2/3 auf den Nenner 6 wird der Zähler ebenfalls mit 2 multipliziert.",
+          "input": "number",
+          "options": [],
+          "workshop": null
+        },
+        "explanation": "Der Nenner wurde mit 2 vervielfacht. Deshalb wird auch der Zähler 2 mit 2 vervielfacht.",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Nicht wertgleich: Bei 6 Teilen müssen 4 gefärbt sein. Richtig ist 4/6."
+        }
+      },
+      {
+        "action": "wrong",
+        "revision": 6,
+        "phase": "help",
+        "pendingNext": false,
+        "task": {
+          "id": "fbb08447-3eed-4f11-b054-be67571c3724",
+          "prompt": "Rechne die kurze Plusaufgabe: 2 + 2 = ?",
+          "contextText": "2 · 2 bedeutet: 2 + 2.",
+          "input": "number",
+          "options": [],
+          "workshop": null
+        },
+        "explanation": "Bei 2 · 2 addierst du die 2 zweimal: 2 + 2. Wie viel ist das?",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Das Ergebnis ist 4, nicht 999."
+        }
+      },
+      {
+        "action": "wrong",
+        "revision": 7,
+        "phase": "help",
+        "pendingNext": false,
+        "task": {
+          "id": "91aa6c89-4191-4860-9cc9-8d49d1507681",
+          "prompt": "Rechne: 1 + 2 = ?",
+          "contextText": "",
+          "input": "number",
+          "options": [],
+          "workshop": null
+        },
+        "explanation": "Bei Plus kommen zwei Mengen zusammen.",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Das Ergebnis ist nicht richtig."
+        }
+      },
+      {
+        "action": "3",
+        "revision": 8,
+        "phase": "completion",
+        "pendingNext": false,
+        "task": {
+          "id": "ba05c35f-f148-4156-81dd-81869c0b3dcb",
+          "prompt": "Erweitere den Bruch wertgleich auf den Nenner 6. Zeige das Ergebnis mit dem Werkzeug.",
+          "contextText": "Gegeben ist der Bruch 2/3.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "fraction-board",
+            "version": 1,
+            "role": "answer",
+            "goal": "equivalent",
+            "numerator": 2,
+            "denominator": 3,
+            "targetDenominator": 6,
+            "instruction": "Stelle 2/3 dar und unterteile das Ganze so, dass es 6 gleich große Teile gibt. Die gefärbte Fläche bleibt gleich."
+          }
+        },
+        "explanation": "Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen.",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig!"
+        }
+      },
+      {
+        "action": "profile",
+        "revision": 9,
+        "phase": "practice",
+        "pendingNext": false,
+        "task": {
+          "id": "3e36b4db-6633-4a6b-ba9b-f53cba14c259",
+          "prompt": "Stelle den Anteil mit dem Werkzeug dar.",
+          "contextText": "Gegeben ist der Bruch 3/5.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "fraction-board",
+            "version": 1,
+            "role": "answer",
+            "goal": "represent",
+            "numerator": 3,
+            "denominator": 5,
+            "targetDenominator": 0,
+            "instruction": "Stelle den gegebenen Bruch mit gleich großen Teilen dar und markiere den passenden Anteil."
+          }
+        },
+        "explanation": "",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig! 2/3 wurde wertgleich zu 4/6 erweitert."
+        }
+      },
+      {
+        "action": "profile",
+        "revision": 10,
+        "phase": "practice",
+        "pendingNext": true,
+        "task": null,
+        "explanation": "",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig!"
+        }
+      },
+      {
+        "action": "retry",
+        "revision": 11,
+        "phase": "practice",
+        "pendingNext": false,
+        "task": {
+          "id": "04c1f0bb-5673-44be-adba-69768dc46030",
+          "prompt": "Bestimme den Erweiterungsfaktor und den neuen Bruch. Antworte mit beiden Angaben.",
+          "contextText": "Gegeben ist der Bruch 3/4. Der neue Nenner soll 20 sein.",
+          "input": "text",
+          "options": [],
+          "workshop": null
+        },
+        "explanation": "",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig!"
+        }
+      }
+    ],
+    "line": [
+      {
+        "action": "start",
+        "revision": 1,
+        "phase": "practice",
+        "pendingNext": true,
+        "task": null,
+        "explanation": "",
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        }
+      },
+      {
+        "action": "retry",
+        "revision": 2,
+        "phase": "practice",
+        "pendingNext": false,
+        "task": {
+          "id": "1c41d371-e332-4774-9327-b3ac30b4b322",
+          "prompt": "Setze den Punkt auf 3/4.",
+          "contextText": "Der Zahlenstrahl reicht von 0 bis 1 und ist in Viertel eingeteilt.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "number-line",
+            "version": 1,
+            "role": "answer",
+            "goal": "locate",
+            "instruction": "Verschiebe den Punkt auf 3/4.",
+            "minimum": 0,
+            "maximum": 1,
+            "step": 0.25,
+            "initialValue": 0.25,
+            "unit": ""
+          }
+        },
+        "explanation": "",
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        }
+      },
+      {
+        "action": "3/4",
+        "revision": 3,
+        "phase": "practice",
+        "pendingNext": true,
+        "task": null,
+        "explanation": "",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig: 0,75 entspricht 3/4. Der Punkt steht beim dritten Viertel."
+        }
+      },
+      {
+        "action": "retry",
+        "revision": 4,
+        "phase": "practice",
+        "pendingNext": true,
+        "task": null,
+        "explanation": "",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig: 0,75 entspricht 3/4. Der Punkt steht beim dritten Viertel."
+        }
+      },
+      {
+        "action": "retry",
+        "revision": 5,
+        "phase": "practice",
+        "pendingNext": false,
+        "task": {
+          "id": "75eb5398-ce64-4de3-8f7b-2c0ff6d4ccd5",
+          "prompt": "Welcher Wert steht am 4. Strich?",
+          "contextText": "Die Striche einer Zahlengeraden sind von links nach rechts nummeriert und gleich weit voneinander entfernt. Am 2. Strich steht 1/3. Am 6. Strich steht 4/3.",
+          "input": "number",
+          "options": [],
+          "workshop": null
+        },
+        "explanation": "",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig: 0,75 entspricht 3/4. Der Punkt steht beim dritten Viertel."
+        }
+      },
+      {
+        "action": "wrong",
+        "revision": 6,
+        "phase": "help",
+        "pendingNext": false,
+        "task": {
+          "id": "5afb5c16-dec3-4863-aa4b-34a30551dca4",
+          "prompt": "Zwischen dem 2. und dem 6. Strich liegen gleich große Schritte. Wie viele Schritte sind das?",
+          "contextText": "Am 2. Strich steht 1/3. Am 6. Strich steht 4/3.",
+          "input": "number",
+          "options": [],
+          "workshop": null
+        },
+        "explanation": "Zähle die Abstände, nicht nur die Striche: 2 → 3 → 4 → 5 → 6.",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Das ist nicht richtig. Am 4. Strich steht 5/6."
+        }
+      },
+      {
+        "action": "wrong",
+        "revision": 7,
+        "phase": "help",
+        "pendingNext": false,
+        "task": {
+          "id": "fa495c82-a8f6-4e1b-ae76-8c9771b40024",
+          "prompt": "Von Strich 3 zu Strich 4 geht ein Schritt. Wie viele Schritte sind das?",
+          "contextText": "Die Striche sind gleich weit voneinander entfernt.",
+          "input": "number",
+          "options": [],
+          "workshop": null
+        },
+        "explanation": "Zwei direkt benachbarte Striche sind genau einen Schritt voneinander entfernt.",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Nicht ganz. Von Strich 2 bis Strich 6 sind es 4 gleich große Schritte."
+        }
+      },
+      {
+        "action": "1",
+        "revision": 8,
+        "phase": "completion",
+        "pendingNext": false,
+        "task": {
+          "id": "75eb5398-ce64-4de3-8f7b-2c0ff6d4ccd5",
+          "prompt": "Welcher Wert steht am 4. Strich?",
+          "contextText": "Die Striche einer Zahlengeraden sind von links nach rechts nummeriert und gleich weit voneinander entfernt. Am 2. Strich steht 1/3. Am 6. Strich steht 4/3.",
+          "input": "number",
+          "options": [],
+          "workshop": null
+        },
+        "explanation": "Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen.",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig!"
+        }
+      },
+      {
+        "action": "5/6",
+        "revision": 9,
+        "phase": "practice",
+        "pendingNext": false,
+        "task": {
+          "id": "ed081134-4b5c-4cad-9435-9ec04e6c5199",
+          "prompt": "Stelle den Bruch 3/4 auf dem Zahlenstrahl ein.",
+          "contextText": "Jeder Schritt auf dem Zahlenstrahl entspricht 1/4.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "number-line",
+            "version": 1,
+            "role": "answer",
+            "goal": "locate",
+            "instruction": "Stelle den geforderten Wert mit dem Zahlenstrahl ein.",
+            "minimum": 0,
+            "maximum": 2,
+            "step": 0.25,
+            "initialValue": 0,
+            "unit": "Ganze"
+          }
+        },
+        "explanation": "",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig: Am 4. Strich steht 5/6."
+        }
+      }
+    ],
+    "balance": [
+      {
+        "action": "start",
+        "revision": 1,
+        "phase": "practice",
+        "pendingNext": false,
+        "task": {
+          "id": "7e499336-631c-4407-b9ed-ba3d1046059c",
+          "prompt": "Finde die Zahl x. Verändere die Waage so, dass x allein übrig bleibt.",
+          "contextText": "Die Waage zeigt: 2 · x + 3 = 11.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "balance",
+            "version": 1,
+            "role": "answer",
+            "goal": "balance",
+            "instruction": "Bringe die Waage ins Gleichgewicht und bestimme das Gewicht von x.",
+            "leftCoefficient": 2,
+            "leftConstant": 3,
+            "rightCoefficient": 0,
+            "rightConstant": 11,
+            "minimum": 0,
+            "maximum": 12,
+            "step": 1,
+            "initialValue": 1
+          }
+        },
+        "explanation": "",
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        }
+      },
+      {
+        "action": "wrong",
+        "revision": 2,
+        "phase": "help",
+        "pendingNext": false,
+        "task": {
+          "id": "dcf1109e-c759-4cdc-a328-51ad3ea0c657",
+          "prompt": "Ziehe auf beiden Seiten dieselbe Zahl ab. Welche Zahl ist das?",
+          "contextText": "Die Waage zeigt: 2 · x + 3 = 11. Der Versuch mit x = 1 ist noch nicht im Gleichgewicht.",
+          "input": "number",
+          "options": [],
+          "workshop": null
+        },
+        "explanation": "Der feste Teil ist +3. Ziehe deshalb auf beiden Seiten 3 ab: 2 · x = 8.",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Noch nicht: Bei x = 1 ist 2 · 1 + 3 = 5, nicht 11. Richtig ist x = 4."
+        }
+      },
+      {
+        "action": "wrong",
+        "revision": 3,
+        "phase": "help",
+        "pendingNext": false,
+        "task": {
+          "id": "f41914f9-4899-4173-80e8-e5dad6963b51",
+          "prompt": "Rechne 11 − 3. Welche Zahl bleibt rechts übrig?",
+          "contextText": "Aus 2 · x + 3 = 11 wird nach dem Abziehen von 3 auf beiden Seiten: 2 · x = 8.",
+          "input": "number",
+          "options": [],
+          "workshop": null
+        },
+        "explanation": "Ziehe auf beiden Seiten 3 ab. Rechts rechnest du 11 − 3.",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Nicht ganz: Ziehe auf beiden Seiten die 3 ab."
+        }
+      },
+      {
+        "action": "8",
+        "revision": 4,
+        "phase": "completion",
+        "pendingNext": false,
+        "task": {
+          "id": "7e499336-631c-4407-b9ed-ba3d1046059c",
+          "prompt": "Finde die Zahl x. Verändere die Waage so, dass x allein übrig bleibt.",
+          "contextText": "Die Waage zeigt: 2 · x + 3 = 11.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "balance",
+            "version": 1,
+            "role": "answer",
+            "goal": "balance",
+            "instruction": "Bringe die Waage ins Gleichgewicht und bestimme das Gewicht von x.",
+            "leftCoefficient": 2,
+            "leftConstant": 3,
+            "rightCoefficient": 0,
+            "rightConstant": 11,
+            "minimum": 0,
+            "maximum": 12,
+            "step": 1,
+            "initialValue": 1
+          }
+        },
+        "explanation": "Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen.",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig!"
+        }
+      },
+      {
+        "action": "profile",
+        "revision": 5,
+        "phase": "practice",
+        "pendingNext": false,
+        "task": {
+          "id": "17f7b1ef-0bae-4a8f-958c-45f85175065e",
+          "prompt": "Finde das Gewicht von x. Bringe die Waage ins Gleichgewicht und bestimme x.",
+          "contextText": "Die Waage zeigt: 12 = 3 · x + 3.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "balance",
+            "version": 1,
+            "role": "answer",
+            "goal": "balance",
+            "instruction": "Verändere die Waage so, dass x allein übrig bleibt.",
+            "leftCoefficient": 0,
+            "leftConstant": 12,
+            "rightCoefficient": 3,
+            "rightConstant": 3,
+            "minimum": 0,
+            "maximum": 12,
+            "step": 1,
+            "initialValue": 1
+          }
+        },
+        "explanation": "",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig: Du hast die Waage ausgeglichen und x = 4 gefunden."
+        }
+      }
+    ],
+    "text": [
+      {
+        "action": "start",
+        "revision": 1,
+        "phase": "practice",
+        "pendingNext": false,
+        "task": {
+          "id": "d4cc3c3f-4d88-46b9-95fd-70d5e6d87beb",
+          "prompt": "Markiere die Satzgliedgruppe, die sagt, wann Lina liest.",
+          "contextText": "Am Morgen liest Lina ein Buch.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "text-workbench",
+            "version": 1,
+            "role": "answer",
+            "goal": "text",
+            "instruction": "Markiere „Am Morgen“.",
+            "mode": "select",
+            "text": "Am Morgen liest Lina ein Buch.",
+            "tokens": []
+          }
+        },
+        "explanation": "",
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        }
+      },
+      {
+        "action": "start",
+        "revision": 1,
+        "phase": "practice",
+        "pendingNext": false,
+        "task": {
+          "id": "e0f29596-405b-447c-a1f7-2cab84a5d0bb",
+          "prompt": "Ordne die Wörter zu einem richtigen Satz.",
+          "contextText": "",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "text-workbench",
+            "version": 1,
+            "role": "answer",
+            "goal": "text",
+            "instruction": "Bringe die Wörter in eine passende Reihenfolge.",
+            "mode": "order",
+            "text": "",
+            "tokens": [
+              "liest",
+              "Mia",
+              "ein Buch",
+              "Heute",
+              "."
+            ]
+          }
+        },
+        "explanation": "",
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        }
+      },
+      {
+        "action": "wrong",
+        "revision": 2,
+        "phase": "help",
+        "pendingNext": false,
+        "task": {
+          "id": "0903d3a0-cad2-4631-8d29-809e93798460",
+          "prompt": "Welches Wort sagt, wann etwas passiert?",
+          "contextText": "Wörter: Heute, liest, Mia, ein Buch.",
+          "input": "choice",
+          "options": [
+            "Heute",
+            "liest",
+            "Mia",
+            "ein Buch"
+          ],
+          "workshop": null
+        },
+        "explanation": "Eine Zeitangabe kann am Satzanfang stehen. Wähle das passende Wort.",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Die Reihenfolge stimmt noch nicht."
+        }
+      },
+      {
+        "action": "wrong",
+        "revision": 3,
+        "phase": "help",
+        "pendingNext": false,
+        "task": {
+          "id": "2653e5b3-7b56-4d39-8cc2-8c4e40e11941",
+          "prompt": "Wähle das Wort für die Zeit.",
+          "contextText": "Heute liest Mia ein Buch.",
+          "input": "choice",
+          "options": [
+            "Heute",
+            "Mia"
+          ],
+          "workshop": null
+        },
+        "explanation": "„Heute“ sagt, wann etwas passiert. Wähle jetzt das passende Wort.",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Falsch. „Heute“ sagt, wann etwas passiert."
+        }
+      },
+      {
+        "action": "Heute",
+        "revision": 4,
+        "phase": "completion",
+        "pendingNext": false,
+        "task": {
+          "id": "e0f29596-405b-447c-a1f7-2cab84a5d0bb",
+          "prompt": "Ordne die Wörter zu einem richtigen Satz.",
+          "contextText": "",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "text-workbench",
+            "version": 1,
+            "role": "answer",
+            "goal": "text",
+            "instruction": "Bringe die Wörter in eine passende Reihenfolge.",
+            "mode": "order",
+            "text": "",
+            "tokens": [
+              "liest",
+              "Mia",
+              "ein Buch",
+              "Heute",
+              "."
+            ]
+          }
+        },
+        "explanation": "Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen.",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig!"
+        }
+      },
+      {
+        "action": "profile",
+        "revision": 5,
+        "phase": "practice",
+        "pendingNext": true,
+        "task": null,
+        "explanation": "",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig! Du hast alle Wörter zu einem passenden Satz geordnet."
+        }
+      },
+      {
+        "action": "retry",
+        "revision": 6,
+        "phase": "practice",
+        "pendingNext": true,
+        "task": null,
+        "explanation": "",
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig! Du hast alle Wörter zu einem passenden Satz geordnet."
+        }
+      },
+      {
+        "action": "start",
+        "revision": 1,
+        "phase": "practice",
+        "pendingNext": true,
+        "task": null,
+        "explanation": "",
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        }
+      },
+      {
+        "action": "retry",
+        "revision": 2,
+        "phase": "practice",
+        "pendingNext": true,
+        "task": null,
+        "explanation": "",
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        }
+      }
+    ]
+  }
+}
