@@ -1150,3 +1150,30 @@ Martin präzisiert ausdrücklich: Secure bedeutet die native App auf dem iPad. D
 5. EchteAbnahme mitsynthetischemSchüler undbewusstemTest: Lehreranmeldung→Konto/Klasse→Testerstellen→Zuweisung→iPadSecurestart→Abgabe→Serverbestätigung→SchülerErledigt+LehrerAbgabe. Anschließend erneutesÖffnen5Tagespäter, Offline/WLANwechsel, WiederholungnurmitFreigabe, fremdesKonto, alteApp und falscheUmgebungnegativprüfen. Erst dann alsdurchgängigtestbar melden.
 
 R ersetzt die frühere Vorstellung, schon der lokale Codes-/Druckstand sei der kompletteTest. VorhandeneModulebleibennutzbar; keine neueOberfläche. Aufklärungs-/Prüfturn undStarthelfer sindkein AuftragsevidenzfürbereitsdurchgeführtesCloud-/Functions-/Rules-/TestFlightdeploy. KonkretnächsterFachschritt: aktuellerSecure-Testbuild/Backend-Vertragabgleich nachR1, dannIdentity-/Assignmentadapter; keine weitereTestbereitmeldungvorR5.
+
+
+### S. Entscheidungsvorlage Schülerzugang gegenüber Testcode/Kürzel — 22.10.2026
+
+Martin hinterfragt den Accountnutzen vor Übungen und bittet um Vor-/Nachteile. Dies ist Produktabwägung, keine Freigabe einer neuen Loginpflicht oder eines Umbaus. Bestehende Anforderungen bleiben; die folgende Empfehlung ist noch nicht vom Nutzer gewählt. Quelle cf392f054fd8a881b60a1e1908e39e1a38f29dcd (remote f7a3675377e363a19da8b0e01de4ee09aba302be). Codeprüfung student-portal.mjs bestätigt lokalen separaten Codezugang, verfügbare/erledigteAnsicht, ehrlichenLeerzustand; keine internetweiteClassroom-Securebindung.
+
+Drei Begriffe: Testcode bezeichnet eine Prüfung und ist in der Regel für mehrereTeilnehmer gleich. SichtbarerName/Kürzel bezeichnet die Person in der Abgabe und ist kein Authentifizierungsgeheimnis. PersönlicherSchülercode authentifiziert das angelegteSchülerprofil durchBesitz; er darf nicht als Name/Kürzel in einer Testabgabe oder öffentlichsichtbaren Liste erscheinen. Codebesitz allein beweist nicht, welche realePerson amGerät sitzt. InterneStudentID bleibt davon getrennt und stabil. Der jetzige lokaleCode ist achtstellig alphanumerisch, keine zugesagte reineZahlenfolge.
+
+Bewertungsmaßstab für alleVarianten: geringeEingabehürde, zuverlässigeZuordnung übermehrereTests/Geräte, NutzenfürZuweisung/Ergebnisse/Übung. Zahlen sind begründeteProdukteinschätzungen, keine Messung oderSecurityzertifikate.
+
+| Variante | Einstieg | DauerhafteZuordnung | Zuweisung/Übung | GesamteignungfürGradeCrew |
+|---|---:|---:|---:|---:|
+| Testcode+frei eingegebenesKürzel | 9/10 | 3/10 | 3/10 | 6/10 |
+| SeparaterSchülerzugang mitpersönlichemCode | 8/10 | 8/10 | 9/10 | 9/10 |
+| E-Mail/Passwort wieLehrkraft | 4/10 | 8/10 | 9/10 | 6/10 |
+
+Testcode/Kürzel: schnell, ohne vorbereitetenKlassenbestand und ideal fürEinzeltests/Gäste. Tippfehler, gleiche oder wechselndeKürzel erzeugenkeineverlässlichejahresübergreifendeIdentität; ErgebnislistebrauchtsachlicheZuordnung,„Erledigt“aufanderemGerätundEinmalversuchproPersonnichtalleindadurchgesichert. NamenmatchingnichtautomatischzumAccountlinkmachen.
+
+PersönlicherCode: keinSchüler-Selbstregistrieren,keineE-Mail,keinPasswortreset; LehrkraftlegtProfilmanuell/perCSV anundverteiltKarte. SchülergibteinCodeeinundsiehterlaubteTests. NutzenbereitsvorÜbungen: Zuordnungen,Aufgabenliste,Abgabestatus,FortsetzungundKlassenwechsel; nurwenndieseFunktionentatsächlichangebundenwerden. Nachteile: Kartenverlust/Weitergabe,Verwaltungs-/Recoveryaufwand,Gemeinschaftsgerät-Abmelden,vertraulicherCodebetrieb. DerzeitistschonlokalerEinstieg,aberkeinvollständigerInternet-/Nativeablaufvorhanden.
+
+LehrerähnlicheAnmeldung: ermöglichtProfil,bringtimVergleichzumpersönlichenCodefürdiesenNutzungsfallkeinenzusätzlichenLernnutzen,aberSchülerregistrierung,Passwort-/E-MailverwaltungundSupport. SelbeAnmeldemaskeistnichtgleichselbeRolle; SchülerdürfennieTesterstellerrechtebekommen.
+
+**Empfehlung, noch offen:** dauerhafteSchülerprofile optionalbereitstellen; keinePflichtfürjedenGasttest. GemeinsamerSchülereinstieg mitklarerWahl„MeineTests&Übungen“(persönlicherCode)oder„TestmitTestcodeöffnen“(bisherigerGastablauf). EinangemeldeterSchülerwähltzugewiesenenTestohneerneuteNamens-/Codeeingabe. ZugewiesenePrüfungenerfordernserverseitigverifizierteIdentität; keinGastwegzumUmgehenderselbenZuweisung. ExterneGäste/EinzeltestsbleibenbewusstzugänglichohneClassroomprofil.
+
+Schülerstartseitebewusstklein: Verfügbar,Erledigt,späterÜben; optionalFachfilter,keineTesterstellerbuttonsundkeinOrdnerzwang.„Erledigt“erstnachbestätigterServerabgabe,keineweitereBearbeitungohneneueFreigabe.NativeSecureübergabeidentifiziertSchüler/Test/VersuchohneerneutesfreiesKürzel;konkreteÜbergabeweiterR3offen. AchtstelligenLoginCodeniealsAbgabenamenübertragen. Mehrgeräte-/KontobindungvorpraktischemEinsatzqualifizieren.
+
+**Nächste Entscheidung Martin:** Soll dieser optionaleDoppelzugang dieZielrichtungsein? BisAntwortkeineUI-/BackendänderungausS; bisherigerR-Testumfangbleibtoffen. KeinneuerImplementierungsplanoderClouddeployausdieserAbwägung.
