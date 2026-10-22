@@ -1,0 +1,33 @@
+[
+  {
+    "scenario": "start",
+    "phase": "practice",
+    "prompt": "Erweitere den Bruch 1/3 wertgleich auf den Nenner 6.",
+    "workshop": {
+      "tool": "fraction-board",
+      "version": 1,
+      "role": "answer",
+      "goal": "equivalent",
+      "numerator": 1,
+      "denominator": 3,
+      "targetDenominator": 6,
+      "instruction": "Teile jedes Drittel gleichmäßig und markiere gleich viele Teile."
+    },
+    "explanation": "",
+    "feedback": {
+      "outcome": "",
+      "short": ""
+    }
+  },
+  {
+    "scenario": "correct",
+    "phase": "practice",
+    "prompt": "Ein Schüler sagt: „3/4 wird zu 6/12 erweitert.“ Ist das richtig? Begründe deine Entscheidung mit dem passenden Vervielfachungsfaktor.",
+    "workshop": null,
+    "explanation": "",
+    "feedback": {
+      "outcome": "correct",
+      "short": "Richtig! 1/3 entspricht 2/6."
+    }
+  }
+]
