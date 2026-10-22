@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-22T13:13:22.737Z",
+  "updatedAt": "2026-10-22",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -686,6 +686,15 @@
         "fix/secure-return-after-sync-20261022",
         "fix/secure-audio-ci-readiness-20261022"
       ]
+    },
+    {
+      "id": "domain-gradecrew-de-20261022",
+      "title": "GC-DOMAIN-01: gradecrew.de für bestehendes Schul-Live",
+      "primaryBranch": "feature/domain-gradecrew-de-20261022",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "blocked",
+      "handoff": "workstreams/domain-gradecrew-de-20261022.md",
+      "relatedBranches": []
     }
   ]
 }

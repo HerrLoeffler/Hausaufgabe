@@ -1923,6 +1923,33 @@
         ],
         "physical_device": "not_performed"
       }
+    },
+    {
+      "id": "domain-gradecrew-de-20261022",
+      "task_id": "GC-DOMAIN-01",
+      "branch": "feature/domain-gradecrew-de-20261022",
+      "observed_head": "6057467dcbedec28c9b6ef7b9a48addedf19a442",
+      "stage": "branch_only",
+      "pull_request": 282,
+      "handoff": "workstreams/domain-gradecrew-de-20261022.md",
+      "scope": "Existing school-live Firebase Hosting custom domains only; no server/data migration or unrelated product rollout.",
+      "production": "CustomDomain resources prepared on existing school site; DNS/ownership/TLS pending; no Hosting content/Auth/Functions/Rules/Native change.",
+      "evidence": {
+        "project": "hausaufgabe-staging",
+        "site": "hausaufgabe-staging",
+        "baseline_commit": "ab6fcc9d72aa9d401eba2ec4db31c01f7758c0f0",
+        "hosting_version": "4641f2c63bbbb2f3",
+        "create_operations": [
+          "88430c73-26cf-4677-b8fa-7045544456a2",
+          "e208d009-38ab-4f0f-8eea-bf546271db77"
+        ],
+        "netcup": "clock/as soon as active; DNS editing unavailable; public NXDOMAIN",
+        "domain_status": "HOST_UNHOSTED; OWNERSHIP_MISSING; CERT_VALIDATING",
+        "local_tests": "10/10 domain/environment/build contracts",
+        "public_file_hash_checks": "7/7 against unchanged manifest; semantic metadata/file equality verified",
+        "github_ci": "pending; inspect PR282"
+      },
+      "next_action": "On Netcup activation/DNS-zone availability: save original zone, reread Firebase requirements, set only required records, verify ownership/TLS and query-preserving WWW redirect before reviewed Auth/canonical/Native URL changes. Do not repeat create."
     }
   ],
   "deployments": [
