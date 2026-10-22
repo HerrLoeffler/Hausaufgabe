@@ -9,6 +9,7 @@ const {requireAccountWrite}=require('../account-state');
 const {getCatalog}=require('./catalog');
 const {createService,firestoreStore,LearningError}=require('./service');
 const {createAI}=require('./ai');
+const {firestorePool}=require('./fundus');
 const {requireLearningIdentity}=require('./contracts');
 const opts={region:REGION,timeoutSeconds:120,memory:'512MiB',enforceAppCheck:false,secrets:[defineSecret('OPENAI_API_KEY')]};
 function testProject(){if((process.env.GCLOUD_PROJECT||process.env.GOOGLE_CLOUD_PROJECT)!=='gradecrew-staging-2026')throw new HttpsError('failed-precondition','Das Lerngehirn ist nur in der getrennten Testumgebung verfügbar.');}
@@ -17,7 +18,7 @@ async function identity(request){
  const db=getFirestore();const [user,deleted]=await Promise.all([db.doc(`users/${uid}`).get(),db.doc(`accountDeletions/${uid}`).get()]);const profile=user.data();
  try{return requireLearningIdentity({project:process.env.GCLOUD_PROJECT||process.env.GOOGLE_CLOUD_PROJECT,uid,profile,deleted:deleted.exists});}catch(error){throw new HttpsError(error.code,error.message);}
 }
-function service(uid){return createService({catalog:getCatalog(),store:firestoreStore(getFirestore(),requireAccountWrite),quota:id=>consumeQuota(id,'assistant'),ai:createAI({client:getOpenAI(),record:(usage,operation)=>recordUsage(uid,'learning-brain',usage,{operation,promptVersion:'learning-brain-2026-10-21'})})});}
+function service(uid){return createService({catalog:getCatalog(),store:firestoreStore(getFirestore(),requireAccountWrite),quota:id=>consumeQuota(id,'assistant'),ai:createAI({client:getOpenAI(),pool:firestorePool(getFirestore(),uid),record:(usage,operation)=>recordUsage(uid,'learning-brain',usage,{operation,promptVersion:'learning-brain-2026-10-21'})})});}
 function handler(method){return onCall(opts,async request=>{
  const uid=await identity(request);
  if(request.data?.uid||request.data?.studentId||request.data?.ownerUid)throw new HttpsError('invalid-argument','Es wird ausschließlich dein eigenes Profil verwendet.');

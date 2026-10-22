@@ -1,14 +1,17 @@
 'use strict';
 // Own, versioned learning models. No third-party simulation code or assets.
 const {rational}=require('./exact');
+const models=require('./workshop-models');
 class WorkshopError extends Error{constructor(message){super(message);this.code='invalid-argument';}}
 const bad=message=>{throw new WorkshopError(message);};
 const registry=Object.freeze({
+ ...models.registry,
  'fraction-board':Object.freeze({id:'fraction-board',version:1,label:'Anteile und Unterteilungen',capabilities:['represent-part-whole','subdivide-preserving-value'],actions:['set-parts','toggle-part','partition','reset'],evidence:['selected-part-count','total-equal-parts','value-preserved','target-denominator'],limits:{maxParts:36,maxActions:60},supports:topic=>topic?.subject==='math'&&/Br[üu]ch|Anteil|erweitern|kürzen/i.test([topic.title,topic.goal].join(' '))})
 });
 function toolsFor(topic){return Object.values(registry).filter(t=>t.supports(topic)).map(({supports,...t})=>t);}
 function validateConfig(c,topic,task){
  if(!c||c.tool==='none')return null;
+ if(Object.hasOwn(models.registry,c.tool))return models.validate(c,topic,task);
  const adapter=registry[c.tool];
  if(!adapter||c.version!==adapter.version||!adapter.supports(topic)||!['answer','support'].includes(c.role)||!['represent','equivalent'].includes(c.goal))bad('Dieses Werkzeug passt noch nicht zur Aufgabe.');
  if(![c.numerator,c.denominator,c.targetDenominator].every(Number.isInteger)||c.numerator<0||c.numerator>c.denominator||c.denominator<1||c.denominator>12||typeof c.instruction!=='string'||!c.instruction.trim()||c.instruction.length>240)bad('Die Werkstatt-Vorgabe ist ungültig.');
@@ -47,7 +50,8 @@ function apply(state,a){
 }
 function observe(task,payload){
  const c=task.workshop;
- if(!c||!registry[c.tool]||payload?.tool!==c.tool||payload.version!==c.version||payload.taskId!==task.id||Object.keys(payload).some(k=>!['tool','version','taskId','actions'].includes(k))||!Array.isArray(payload.actions)||payload.actions.length>60)bad('Die Darstellung gehört nicht zur aktuellen Aufgabe.');
+ if(!c||!Object.hasOwn(registry,c.tool)||payload?.tool!==c.tool||payload.version!==c.version||payload.taskId!==task.id||Object.keys(payload).some(k=>!['tool','version','taskId','actions'].includes(k))||!Array.isArray(payload.actions)||payload.actions.length>60)bad('Die Darstellung gehört nicht zur aktuellen Aufgabe.');
+ if(Object.hasOwn(models.registry,c.tool))return models.observe(task,payload);
  let state=initial(c);const changes=[];
  for(const a of payload.actions){const before={numerator:state.selected.length,denominator:state.parts};state=a?.type==='reset'&&a.value===0&&Object.keys(a).every(k=>['type','value'].includes(k))?initial(c):apply(state,a);changes.push({type:a.type,value:a.value,before,after:{numerator:state.selected.length,denominator:state.parts}});}
  const final={numerator:state.selected.length,denominator:state.parts};

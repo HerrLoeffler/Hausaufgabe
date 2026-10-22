@@ -45,3 +45,12 @@ test('generator and reviewer receive the same explicit demand-increase contract 
  await ai.next({...s,level:1,previousLevel:0},{});
  assert.equal(requests[0].requireDemandIncrease,true);assert.equal(requests[1].requireDemandIncrease,true);
 });
+
+test('a reviewed private pool task is actually reused without another generation API request',async()=>{
+ const {createPool}=require('../lib/learning-brain/fundus');const {plan}=require('../lib/learning-brain/planning');const rows=[];
+ const pool=createPool({store:{list:async()=>rows,put:async(_key,_id,row)=>{rows.push(row);}}});
+ const state={...s,task:null,events:[],topic:{id:'B07',title:'Wertgleich erweitern',subject:'math',grade:6,track:'R'}};
+ const d=generated();await pool.save(state,plan(state),d,{approved:true,reusable:true});
+ const ai=createAI({pool,client:{responses:{create:async()=>{throw new Error('Unexpected provider generation');}}}});
+ const r=await ai.next(state,{});assert.equal(r.task.prompt,'Erweitere 2/3 mit 2.');assert.equal(r.task.generationSource,'reviewed-pool');assert.ok(r.task.id);assert.equal(r.explanation,'');
+});

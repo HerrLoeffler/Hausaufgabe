@@ -38,6 +38,6 @@ function projectSkill(events,now=Date.now()){
 }
 function safeTask(task){return task?{id:task.id,prompt:task.prompt,contextText:task.contextText||'',input:task.input||'text',options:task.options||[],workshop:task.workshop||null}:null;}
 function publicSession(s,now=Date.now()){
- return {id:s.id,revision:s.revision,topic:s.topic,phase:s.phase,task:safeTask(s.task),originalTask:safeTask(s.originalTask),explanation:s.explanation||'',visual:s.visual||null,feedback:s.feedback||{outcome:'',short:''},remainingSeconds:Math.max(0,Math.ceil((s.deadline-now)/1000)),summary:s.summary||null};
+ return {id:s.id,revision:s.revision,topic:s.topic,phase:s.phase,task:s.pendingNext?null:safeTask(s.task),pendingNext:!!s.pendingNext,nextMessage:s.pendingNext?'Deine Antwort ist gespeichert. Der nächste Lernschritt konnte noch nicht bereitgestellt werden. Bitte versuche es erneut.':'',originalTask:safeTask(s.originalTask),explanation:s.explanation||'',visual:s.visual||null,feedback:s.feedback||{outcome:'',short:''},remainingSeconds:Math.max(0,Math.ceil((s.deadline-now)/1000)),summary:s.summary||null};
 }
 module.exports={transition,projectSkill,publicSession,fingerprint};

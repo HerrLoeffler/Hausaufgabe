@@ -11,7 +11,8 @@ function freezeTree(value) {
   return Object.freeze(value);
 }
 
-const catalog = freezeTree(data);
+const {eligibility,plan}=require("./planning");
+const catalog = freezeTree({...data,version:data.version+"-workshop1",topics:data.topics.map(t=>({...t,practice:{...eligibility(t),preferredTool:plan({topic:t,phase:"practice",level:0}).preferredTool}}))});
 const topicsById = new Map(catalog.topics.map((topic) => [topic.id, topic]));
 
 function getCatalog() {
