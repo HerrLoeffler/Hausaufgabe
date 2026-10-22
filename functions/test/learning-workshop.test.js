@@ -11,3 +11,10 @@ test('denominator-only change is observable and never accepted as equal value',(
 test('marking arbitrary cells counts actual area, reset returns to original model',()=>{let r=workshop.observe(task,payload([{type:'set-parts',value:6},{type:'toggle-part',value:4}]));assert.equal(r.answer,'2/6');r=workshop.observe(task,payload([{type:'partition',value:3},{type:'reset',value:0}]));assert.equal(r.answer,'1/3');});
 test('invalid, stale, oversized and forged workshop submissions fail closed',()=>{for(const p of [payload([{type:'partition',value:0}]),payload([{type:'toggle-part',value:36}]),payload([{type:'set-parts',value:10000}]),payload([{type:'partition',value:6},{type:'partition',value:6}]),payload(Array.from({length:61},()=>({type:'reset',value:0}))),{...payload([]),taskId:'other'},{...payload([]),tool:'molecule'},{...payload([]),final:{numerator:2,denominator:6}},{...payload([]),version:2}])assert.throws(()=>workshop.observe(task,p));});
 test('configuration and private numeric key must match requested source and target exactly',()=>{assert.deepEqual(workshop.validateConfig(config,topic,task),config);for(const c of [{...config,denominator:0},{...config,targetDenominator:7},{...config,numerator:9},{...config,tool:'molecule'}])assert.throws(()=>workshop.validateConfig(c,topic,task));assert.throws(()=>workshop.validateConfig(config,{subject:'german'},task));assert.throws(()=>workshop.validateConfig(config,topic,{...task,answer:{kind:'rational',values:['1/6']}}));});
+
+test('ten successful manipulations alone never establish unassisted mastery',()=>{
+ const {projectSkill}=require('../lib/learning-brain/core');
+ const events=Array.from({length:10},(_,i)=>({independent:true,correct:true,level:2,tool:'fraction-board',fingerprint:'tool-'+i,sessionId:i<5?'a':'b',family:i%2?'apply':'reason',at:i+1}));
+ assert.equal(projectSkill(events).status,'practicing');
+ events[8].tool=null;events[9].tool=null;assert.equal(projectSkill(events).status,'secure');
+});

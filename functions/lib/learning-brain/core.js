@@ -30,7 +30,7 @@ function projectSkill(events,now=Date.now()){
  const varied=new Set(independent.map(e=>e.family)).size>=2;
  const sessions=new Set(independent.map(e=>e.sessionId)).size>=2;
  const last=events.at(-1);
- const challenging=independent.filter(e=>e.correct&&Number(e.level)>=2).length>=2;
+ const challenging=independent.filter(e=>e.correct&&!e.tool&&Number(e.level)>=2).length>=2;
  const secure=independent.length>=10&&correct>=8&&varied&&sessions&&challenging&&events.filter(e=>e.independent).at(-1)?.correct===true;
  const supported=events.filter(e=>!e.independent&&e.correct).length;
  const lastPracticed=last?.at||null;
