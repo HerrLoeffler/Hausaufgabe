@@ -642,3 +642,8 @@ Eigene wiederverwendbare Werkzeugarchitektur und fraction-board als erster Adapt
 ### GC-ADAPTIVE-PRACTICE-01 Architekturkorrektur22.10.
 
 NutzerverlangtPlanfürfachübergreifendeLernwerkstattstattweitererErweitern-Einzelpolitur. EntwurfimApprepo docs/superpowers/specs/2026-10-22-learning-workshop-system.md:11Werkzeugfamilien/50geplanteAufgabenfamilien,bestehendeVIS01–13wiederverwenden;ersterAusbauAnteile/Skala/Waage/Textarbeit. GleicheMaßstäbe/BezugsganzeundvonFolgegenerierunggetrennteAntwortspeicherungverbindlich. Planerstellt,keineUmsetzung/keinDeploy;aktuellerGeometrie-undProgressionsfehleroffen. Übergabeadaptive-practice-01fortgeführt.
+
+
+### GC-ADAPTIVE-PRACTICE-01 Erstes Werkstattpaket und Lernsystem, 22.10.
+
+Vier wiederverwendbare Modelle auf der getrennten Testseite: Brüche, Zahlenstrahl, Waage und kurze Textarbeit. Vorhandene Lehrplanziele/Materialprofile genutzt, echte KI mit gesonderter Prüfung, gemeinsame gestufte Hilfe. Antwortbelege überstehen Folgefehler; kontoprivater geprüfter Aufgabenfundus und begrenzte private Versuche implementiert. 372 Backend-/62 UI-Prüfungen grün. Hosting c44a67f / Backend8ac816c getrennt belegt; Kandidat18905bb Deploy19 läuft; PR262/253 bleiben Draft/unmerged. Ausführliches Lernsystemkonzept im Apprepo docs/learning-brain/didactics-learning-system-20261022.md. Waage/Text/Zahlenstrahl und Bruchhilfe-Rückkehr konkret geprüft; letzte Text-Gegenprüfung nach Rendererabgleich noch im Nachtest. Kein vollständiger Mathe-/Deutsch-/Quali-Rollout; regulärer Schülerlogin, zeitgesteuerte physische Rohdatenlöschung und Geräte-/didaktische Abnahme vor echtem Schülerpilot offen. [Übergabe](workstreams/adaptive-practice-01.md).
