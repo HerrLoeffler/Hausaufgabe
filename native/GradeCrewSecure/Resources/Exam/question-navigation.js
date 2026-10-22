@@ -27,7 +27,7 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
   }
   function measure() {
     const font=parseFloat(getComputedStyle(numbers).fontSize)||19;
-    const compact=font>27 && (navRoot.clientWidth<600 || window.innerHeight<850);
+    const compact=(font>27 && (navRoot.clientWidth<600 || window.innerHeight<850)) || window.innerHeight<500 || (navRoot.clientWidth>0 && navRoot.clientWidth<400);
     navRoot.classList.toggle('compactNavigation',compact);
     current.textContent=compact ? `${index+1} / ${paper.length}` : `Aufgabe ${index+1} von ${paper.length}`;
     current.setAttribute('aria-label',`Aufgabe ${index+1} von ${paper.length}`);
@@ -61,7 +61,7 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
     index=target;anchor=id;navigating=true;clearTimeout(timer);sync();measure();
     root.querySelectorAll('audio').forEach(audio=> { if(!section.contains(audio) && !audio.paused) audio.pause(); });
     if(focus) { section.tabIndex=-1;section.focus({preventScroll:true}); }
-    const top=section.getBoundingClientRect().top+window.scrollY-navRoot.getBoundingClientRect().height-8;
+    const top=(window.innerHeight<250 ? (section.querySelector('h2') || section) : section).getBoundingClientRect().top+window.scrollY-navRoot.getBoundingClientRect().height-8;
     window.scrollTo({top:Math.max(0,top),behavior:'auto'});
     timer=setTimeout(()=>{navigating=false;realign();},700);
     root.dispatchEvent(new CustomEvent('securequestionchange',{detail:{questionId:id,index}}));
@@ -90,7 +90,8 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
   function realign() {
     if(!anchor || destroyed || locked) return;
     const section=sections.get(anchor);if(!section)return;
-    const delta=section.getBoundingClientRect().top-navRoot.getBoundingClientRect().height-8;
+    const target=window.innerHeight<250 ? (section.querySelector('h2') || section) : section;
+    const delta=target.getBoundingClientRect().top-navRoot.getBoundingClientRect().height-8;
     if(Math.abs(delta)>1)window.scrollTo({top:Math.max(0,window.scrollY+delta),behavior:'auto'});
   }
   if(window.visualViewport) bind(window.visualViewport,'resize',()=>{measure();realign();scrollSync();});

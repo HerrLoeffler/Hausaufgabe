@@ -4,7 +4,7 @@ import WebKit
 @testable import GradeCrewSecureLayoutHost
 
 struct SecureViewport: Decodable { let name:String; let width:CGFloat; let height:CGFloat }
-struct SecureLayoutPolicy: Decodable { let viewports:[SecureViewport];let nativeScenarios:[String];let webScenarios:[String];let appearances:[String];let textSizes:[String];let interactions:[String] }
+struct SecureLayoutPolicy: Decodable { let viewports:[SecureViewport];let phoneViewports:[SecureViewport];let nativeScenarios:[String];let webScenarios:[String];let appearances:[String];let textSizes:[String];let interactions:[String] }
 struct SecureLayoutRun: Decodable { let suite:String;let layer:String }
 @MainActor enum SecureReports {
     static let run:SecureLayoutRun = {
@@ -15,8 +15,8 @@ struct SecureLayoutRun: Decodable { let suite:String;let layer:String }
         let path=Bundle.main.url(forResource:"layout-policy",withExtension:"json",subdirectory:"Fixtures")!
         return try! JSONDecoder().decode(SecureLayoutPolicy.self,from:Data(contentsOf:path))
     }()
-    static var views:[SecureViewport] { run.suite == "full" ? policy.viewports : [policy.viewports[1],policy.viewports[8]] }
-    static var sizes:[String] { run.suite == "full" ? policy.textSizes : [policy.textSizes[0],policy.textSizes[2]] }
+    static var views:[SecureViewport] { run.suite == "phone" ? policy.phoneViewports : (run.suite == "full" ? policy.viewports : [policy.viewports[1],policy.viewports[8]]) }
+    static var sizes:[String] { run.suite != "smoke" ? policy.textSizes : [policy.textSizes[0],policy.textSizes[2]] }
     static func size(_ name:String)->DynamicTypeSize { name == "accessibility3" ? .accessibility3 : (name == "xxxLarge" ? .xxxLarge : .large) }
     static func category(_ name:String)->UIContentSizeCategory { name == "accessibility3" ? .accessibilityExtraLarge : (name == "xxxLarge" ? .extraExtraExtraLarge : .large) }
     static var folder:URL { FileManager.default.urls(for:.documentDirectory,in:.userDomainMask)[0].appendingPathComponent("SecureLayoutReports") }

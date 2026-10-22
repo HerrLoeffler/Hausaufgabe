@@ -37,7 +37,7 @@ struct SecureStagingScreen: View {
         }
         .background(background.ignoresSafeArea()).foregroundStyle(SecureTheme.text).tint(blue).preferredColorScheme(.light)
         .onChange(of:scenePhase) { _, phase in if phase == .active { Task { await model.foreground() } } }
-        .confirmationDialog("\(model.title)\n\(model.details)\nDas iPad wird für diese Prüfung gesperrt.", isPresented:$confirmStart, titleVisibility:.visible) {
+        .confirmationDialog("\(model.title)\n\(model.details)\nDas Gerät wird für diese Prüfung gesperrt.", isPresented:$confirmStart, titleVisibility:.visible) {
             Button("Prüfungsmodus starten") { Task { await model.startOrRecover() } }
             Button("Abbrechen",role:.cancel) {}
         }

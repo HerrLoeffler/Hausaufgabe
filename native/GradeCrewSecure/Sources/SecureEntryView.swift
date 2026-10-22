@@ -16,10 +16,18 @@ private struct SecureEntryBrandHeader: View {
 struct SecureBrandHeader: View {
     var body: some View { SecureEntryBrandHeader() }
 }
+private struct SecureEntryFocusKey:PreferenceKey {
+    static var defaultValue:String? = nil
+    static func reduce(value:inout String?,nextValue:()->String?) { value=nextValue() ?? value }
+}
 struct SecureWelcomeFrame<Content:View>: View {
+    @Environment(\.horizontalSizeClass) private var widthClass
+    @State private var focusedField:String?
+
     var entry:Bool = false
     @ViewBuilder let content: () -> Content
     var body: some View {
+        ScrollViewReader { proxy in
         ScrollView {
             VStack(spacing:24) {
                 if entry { SecureEntryBrandHeader() } else { SecureBrandHeader() }
@@ -28,6 +36,14 @@ struct SecureWelcomeFrame<Content:View>: View {
                 Text(SecureReleaseEnvironment.projectID == "gradecrew-staging-2026" ? "Testumgebung" : "Schulversion").font(.footnote).foregroundStyle(SecureTheme.secondaryText)
             }.padding(.vertical,24).frame(maxWidth:SecureTheme.formWidth).secureMeasure("welcome",role:"center")
                 .frame(maxWidth:.infinity).padding(.horizontal,16)
+        }.scrollDismissesKeyboard(.interactively)
+            .onPreferenceChange(SecureEntryFocusKey.self) { field in
+                focusedField=field
+                if widthClass == .compact,let field { withAnimation { proxy.scrollTo(field,anchor:.top) } }
+            }
+            .onReceive(NotificationCenter.default.publisher(for:UIResponder.keyboardDidShowNotification)) { _ in
+                if widthClass == .compact,let focusedField { withAnimation { proxy.scrollTo(focusedField,anchor:.top) } }
+            }
         }.background(SecureTheme.canvas).foregroundStyle(SecureTheme.text).tint(SecureTheme.brand).preferredColorScheme(.light)
     }
 }
@@ -67,11 +83,12 @@ struct SecureEntryView: View {
             Text(helper).font(.footnote).foregroundStyle(SecureTheme.secondaryText).fixedSize(horizontal:false,vertical:true)
         }.padding(24).background(SecureTheme.surface,in:RoundedRectangle(cornerRadius:24))
             .foregroundStyle(SecureTheme.text).secureMeasure("entry",role:"center")
+            .preference(key:SecureEntryFocusKey.self,value:focus.map { $0 == .code ? "entry.code" : "entry.name" })
     }
     private var helper:String {
         if name.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty { return "Gib den Testcode und deinen Namen oder dein Kürzel ein." }
         if SecureInputPolicy.code(code)==nil { return "Gib den Code deiner Lehrkraft ein." }
-        return "Das iPad wird erst nach deiner Bestätigung für die Prüfung gesperrt."
+        return "Das Gerät wird erst nach deiner Bestätigung für die Prüfung gesperrt."
     }
 }
 private extension View {
@@ -79,6 +96,6 @@ private extension View {
         font(.title3).foregroundStyle(SecureTheme.text).padding(.horizontal,14).padding(.vertical,12)
             .frame(minHeight:52).background(SecureTheme.field,in:RoundedRectangle(cornerRadius:12))
             .overlay(RoundedRectangle(cornerRadius:12).stroke(SecureTheme.border,lineWidth:1.5))
-            .accessibilityIdentifier(id).secureMeasure(id,role:"field")
+            .id(id).accessibilityIdentifier(id).secureMeasure(id,role:"field")
     }
 }

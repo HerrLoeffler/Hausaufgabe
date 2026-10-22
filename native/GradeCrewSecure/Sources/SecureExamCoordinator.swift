@@ -200,7 +200,7 @@ final class SecureExamCoordinator: ObservableObject {
         phase = .active
         metric("started")
         message = ""
-        storageStatus = "Antworten werden auf diesem iPad gesichert."
+        storageStatus = "Antworten werden auf diesem Gerät gesichert."
         if remaining == 0 { await submit(auto: true) }
     }
     @discardableResult
@@ -218,7 +218,7 @@ final class SecureExamCoordinator: ObservableObject {
                 }
                 try persist()
                 storageFailed = false
-                storageStatus = "Auf diesem iPad gesichert"
+                storageStatus = "Auf diesem Gerät gesichert"
                 if SecureMonotonic.now-lastMetricAt>=30 { lastMetricAt=SecureMonotonic.now;metric("progress") }
             }
             return !storageFailed
@@ -286,7 +286,7 @@ final class SecureExamCoordinator: ObservableObject {
                 paper = nil
                 await assessment.end()
                 guard operations.isCurrent(generation), !operations.completionClaimed else { return }
-                message = "Antworten auf diesem iPad gesichert · Übertragung ausstehend. Das iPad ist freigegeben. Bitte die App bei bestehender Verbindung erneut öffnen. " + error.localizedDescription
+                message = "Antworten auf diesem Gerät gesichert · Übertragung ausstehend. Das Gerät ist freigegeben. Bitte die App bei bestehender Verbindung erneut öffnen. " + error.localizedDescription
             } else {
                 message = "Die lokale Abgabe konnte nicht sicher gespeichert werden. Bitte die Lehrkraft informieren. " + error.localizedDescription
             }
@@ -310,7 +310,7 @@ final class SecureExamCoordinator: ObservableObject {
         phase = .verifying
         metric("receipt_confirmed")
         paper = nil
-        message = "Abgabe bestätigt. Apple gibt das iPad frei …"
+        message = "Abgabe bestätigt. Apple gibt das Gerät frei …"
         timer?.invalidate(); timer = nil
         retryTimer?.invalidate(); retryTimer = nil
         await assessment.end()
@@ -330,7 +330,7 @@ final class SecureExamCoordinator: ObservableObject {
         work = SecureSavedWork()
         answeredCount=nil
         phase = .completed
-        message = "Deine Abgabe ist gespeichert. Das iPad ist wieder freigegeben."
+        message = "Deine Abgabe ist gespeichert. Das Gerät ist wieder freigegeben."
         return true
     }
     private func scheduleRetry(after error: Error) {
@@ -384,7 +384,7 @@ final class SecureExamCoordinator: ObservableObject {
             }
         } catch let error as SecureAssessmentAPI.Failure {
             guard operations.isCurrent(generation), !operations.completionClaimed else { return }
-            if error.retryable { message = "Verbindung unterbrochen · Antworten bleiben auf diesem iPad."; if ticks % 120 == 0 { metric("connection_error") } }
+            if error.retryable { message = "Verbindung unterbrochen · Antworten bleiben auf diesem Gerät."; if ticks % 120 == 0 { metric("connection_error") } }
             else { await submit(auto: true) }
         } catch {
             guard !(error is StaleOperation), operations.isCurrent(generation), !operations.completionClaimed else { return }

@@ -101,5 +101,37 @@
     "freeze",
     "reload",
     "manual-scroll"
+  ],
+  "phoneViewports": [
+    {
+      "name": "phone-small-portrait",
+      "width": 375,
+      "height": 667
+    },
+    {
+      "name": "phone-portrait",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "phone-large-portrait",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "name": "phone-small-landscape",
+      "width": 667,
+      "height": 375
+    },
+    {
+      "name": "phone-landscape",
+      "width": 844,
+      "height": 390
+    },
+    {
+      "name": "phone-keyboard",
+      "width": 390,
+      "height": 300
+    }
   ]
 }
