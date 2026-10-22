@@ -38,3 +38,10 @@ test('help keeps the actual failed fraction-board subdivision visible for its ne
  const result=cleanGenerated(d,{...s,phase:'help',topic:{subject:'math',title:'Brüche'}},{workshop:{tool:'fraction-board',goal:'equivalent',source:{numerator:2,denominator:3},final:{numerator:2,denominator:6},selection:[0,3]}});
  assert.deepEqual(result.task.workshop.initialState,{parts:6,selected:[0,3]});
 });
+
+test('generator and reviewer receive the same explicit demand-increase contract after independent success',async()=>{
+ const requests=[],replies=[generated(),{approved:true,reason:'valid'}];
+ const ai=createAI({client:{responses:{create:async req=>{requests.push(JSON.parse(req.input[1].content));return {status:'completed',output_text:JSON.stringify(replies.shift())};}}}});
+ await ai.next({...s,level:1,previousLevel:0},{});
+ assert.equal(requests[0].requireDemandIncrease,true);assert.equal(requests[1].requireDemandIncrease,true);
+});
