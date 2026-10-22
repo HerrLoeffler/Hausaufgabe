@@ -72,3 +72,15 @@ Secure39851773269: vorgelagerte native900/900, iPadsmini/pro je360Web+12Interakt
 Tastaturfix weiterhin separatDraftPR294, Produktbaum5eb8b872; Reviewdokumentation b156c122. KeinBestandteilderDomainquelle24c0f856.
 
 Checkpoint23.10.MESZ: Secure-Versuch2 wartete hinter separatemClassroom-Stagingrun39858281409/Run20/efc5e980e87adaf628ec20eb5c03105c73d9ceb7. Dieser kann alsBuild1201untergleicherBundleerscheinen, istkeinLivebuild1192. Nichtabgebrochen/umgedeutet. UnserRetryjob120113836876ist inzwischeninprogress, unveränderterSource24c0f856, zusätzlicheFunktionstests. NochkeinenUploadoderBereitschaftvon1192behauptet. Teacher51istfertigmitReloadbelegundbestehenderTestergruppe. Martins direktehiesigeSendefreigabefürAbschlussberichtanDomainchatliegtvor; vorherigeAutoReviewablehnungwaraufKommunikationbegrenztunddanachaufgelöst.
+
+## Abschließender TestFlight-Stand — 23.10.2026 MESZ
+
+Secure **1.0 (1192)** ist hochgeladen und verarbeitet. Run39851773269, Versuch2, Job120113836876: success. Quelle unverändert24c0f856384f037ebe156e20dc20a03ae10c4cf8. Zusätzliche Smokeprüfung:40native/16Web/12Interaktionen bestanden; alle drei Simulator-Schemata erfolgreich. Archive22:17:05UTC und Export22:17:31UTC erfolgreich. AAC in signierter App und Distributionprofil für de.gradecrew.secure bestätigt. UPLOAD SUCCEEDED ohne Fehler am22.10.22:19:33UTC. Die genaue Ursache des ursprünglichen Smoke-Xcode65 bleibt mangels gesichertem Detailprotokoll unbekannt; der erfolgreiche Retry ist kein behaupteter Produktfix.
+
+Applebuild e15b45bf-b928-4195-a849-9c26688781f9 gehört zur bestehenden internen Gruppe55873446-2ca1-4f80-af1f-66e1ec5f41a1 mit1Tester. Deutsche Hinweise als LIVE-Schulversion1192 gespeichert, Status „Gesichert“ gesehen, danach Reload und vollständiger Textvergleich PASS. UI-Beleg: outputs/native-domain-20261022/secure1192-ready.jpg.
+
+Teacher **0.2.0 (51)** ist ebenfalls verarbeitet, bestehender Gruppe mit1Tester zugeordnet und mit gespeicherten, nach Reload bestätigten Hinweisen versehen. UI-Beleg: teacher51-ready.jpg. Beide TestFlight-Seiten bleiben als Ergebnis offen. Keine App-Review-Einreichung und keine öffentliche App-Store-Freigabe. Physische Abnahme dieser Domainbuilds bleibt offen.
+
+Installationsziel für Live: Secure1.0(1192) und Teacher0.2.0(51). Separate Classroom-Stagingbuilds nicht anhand höherer Nummern als Live interpretieren. Falls TestFlight später weitere Testbuilds anzeigt, „Vorherige Builds“ und die explizit mit LIVE benannten Hinweise verwenden. Den Classroom-Lauf weder abgebrochen noch als eigenen fertigen Livebuild behauptet.
+
+Getrennt offen bleiben: Tastaturkorrektur DraftPR294 (unabhängig geprüft und lokal getestet, noch nicht integriert), bessere Sicherung der verschachtelten CI-Fehlerdiagnose bei Wiederauftreten, physische Domain-/Offlineabnahme sowie Apples inhaltliche Supportantwort und App-Store-Freigabe. Bestehende Task- und Budgethistorie bleibt erhalten. Endreceipts gehen mit Martins ausdrücklicher Freigabe an den Domainowner; dieser aktualisiert den gemeinsamen Mainstatus. Keine parallele Mainmutation hier.
