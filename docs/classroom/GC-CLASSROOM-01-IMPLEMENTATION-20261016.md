@@ -1177,3 +1177,51 @@ LehrerähnlicheAnmeldung: ermöglichtProfil,bringtimVergleichzumpersönlichenCod
 Schülerstartseitebewusstklein: Verfügbar,Erledigt,späterÜben; optionalFachfilter,keineTesterstellerbuttonsundkeinOrdnerzwang.„Erledigt“erstnachbestätigterServerabgabe,keineweitereBearbeitungohneneueFreigabe.NativeSecureübergabeidentifiziertSchüler/Test/VersuchohneerneutesfreiesKürzel;konkreteÜbergabeweiterR3offen. AchtstelligenLoginCodeniealsAbgabenamenübertragen. Mehrgeräte-/KontobindungvorpraktischemEinsatzqualifizieren.
 
 **Nächste Entscheidung Martin:** Soll dieser optionaleDoppelzugang dieZielrichtungsein? BisAntwortkeineUI-/BackendänderungausS; bisherigerR-Testumfangbleibtoffen. KeinneuerImplementierungsplanoderClouddeployausdieserAbwägung.
+
+
+### T. Persönlicher Schülerbereich und gemeinsam genutzte iPads — Entscheidungsvorlage 22.10.2026
+
+Martin befürwortet den persönlichen Codezugang neben Testcode/Kürzel. Ziel: App öffnen, eigene offene Tests sehen, ohne erneutes Scannen starten, später Übungen anbieten. Er fordert gut sichtbares Abmelden und eine verständliche Regel für private gegenüber geteilten Schulgeräten. Die doppelte Einstiegsidee ist damit bestätigt; konkrete Zeitwerte und Sicherheitsdetails unten sind Empfehlungen, noch keine abgeschlossene Nutzerentscheidung oder Implementierung. Quelle lokal860538eb/remote f3c5b94c; Produktumfang weiterhin branch_only.
+
+#### T1. Einstieg und Gerätemodus
+
+Auf Website und in der nativen Secure-App zwei gleichrangige Wege: „Testcode eingeben“ (bewusster Gasttest) und „Mein Schülerzugang“ (persönlicher Zugangscode). Keine E-Mail-/Passwortregistrierung für Schüler und keine Lehrerrechte. Martin bevorzugt eine reine Zahlenfolge; vorhandener lokaler Code ist bisher achtstellig alphanumerisch. Ein Wechsel zu acht Ziffern ist ein eigener Credential-/Rate-Limit-/Migrationsschritt, kein bloßes Umbenennen: bestehende Karten nicht still ungültig machen, öffentliches Backend gegen Raten absichern. Persönlichen Code nie als sichtbaren Abgabenamen oder Testcode verwenden.
+
+Erster persönlicher Einstieg fragt verständlich: „Gemeinsam genutztes Gerät“ (sicherer Standard) oder „Mein persönliches Gerät – angemeldet bleiben“. Keine zuverlässige Privat-/Schulgeräterkennung voraussetzen. Eine später qualifizierte Schulgeräte-Konfiguration kann den gemeinsamen Modus festlegen; ein Schüler darf eine schulisch erzwungene gemeinsame Einstellung nicht selbst in dauerhafte Anmeldung umstellen. Private fremde Geräte können ebenfalls geteilt sein; entscheidend ist die Nutzung, nicht der Eigentümer. Schulverwalter setzt Richtlinie, Gerätemodus wird durch tatsächlich registrierte Gerätebindung/qualifizierte Verwaltung autorisiert, nicht durch eine ungeprüfte Clientbehauptung.
+
+#### T2. Empfohlene Sitzungsregeln
+
+| Situation | Persönliches Gerät | Gemeinsam genutztes Gerät |
+|---|---|---|
+| App erneut öffnen | Eigene Liste nach gültiger gespeicherter Sitzung | Nach Abmeldung persönlichen Code eingeben |
+| Neue bewertete Prüfung | Sichtbar Name/Klasse und ausdrücklich Starten | Persönlichen Code vor jeder neuen Prüfung bestätigen, Identität anzeigen, ausdrücklich Starten |
+| Fünf Minuten ohne Aktivität außerhalb einer Prüfung | Keine automatische Abmeldung allein deswegen | Schüleransicht sperren; sensible Liste ausblenden, zum Entsperren Code verlangen |
+| Erfolgreiche Prüfungsabgabe | Erledigt anzeigen, zurück zur eigenen Liste | Nach Serverbestätigung verständliche Erfolgsanzeige, dann automatisch abmelden; vor der nächsten Übergabe keine alte Testliste zeigen |
+| Abmelden/Konto wechseln | Immer erreichbar außerhalb geschützter Prüfung | Prominente gleichartige Schaltfläche; Konto-/Codeeingabe zurücksetzen |
+
+Fünf Minuten sind ein vorgeschlagener Standard für die Sperre; fünf Stunden allein schützen nicht vor Übergabe nach einer halben Stunde. Inaktivität ist kein verlässlicher Personenwechsel-Nachweis. Deshalb zusätzlich Codebestätigung vor neuer bewerteter Prüfung auf gemeinsamem Gerät. Sichtbare Identitätsbestätigung allein verhindert bewusste Fremdnutzung nicht. Auch Codebesitz beweist keine reale Identität; weitergegebene Karten können missbraucht werden und müssen sperr-/erneuerbar sein.
+
+Dauerhafte Anmeldung nur bewusst auf persönlichem Gerät, mit sicher abgelegtem widerrufbarem Sitzungsschlüssel und serverseitig begrenzter/erneuerter Gültigkeit. Beispielvorschlag maximal30Tage, nicht als beschlossene Frist behandeln. Server prüft aktuelle Schule, Zugangsversion und Rechte bei jedem relevanten Vorgang. Codeänderung/Sperre/Abmeldung widerruft die betroffene Sitzung nach Vertrag; lokale Anzeige allein zählt nicht. Browser und native App haben verschiedene Speicheradapter, aber dieselbe serverseitige Richtlinie. Kein persönlicher Code in Logs, allgemeiner Browserpersistenz oder URLs.
+
+#### T3. Laufende Prüfung und ausstehende Übertragung schützen
+
+Während AAC/Prüfung kein pauschales Inaktivitätslogout nach fünf Minuten oder fünf Stunden. Denk-/Höraufgaben sind legitime Inaktivität. Prüfungsfrist und Bearbeitungszeit folgen dem Assessmentvertrag, nicht dem Dashboardtimer. Schüler-, Assignment- und Attemptbindung bleiben während des Versuchs unveränderlich. Ein Hintergrundwechsel richtet sich nach bestehender AAC-/Unterbrechungsregel, nicht nach improvisierter Logoutlogik.
+
+Offlineabgabe bleibt „Übertragung ausstehend“, niemals „Erledigt“. Auth-Sitzung und verschlüsselter offener Prüfungszustand sind getrennte Dinge. Bei Sperre/Widerruf darf ein enger qualifizierter Receipt-/Recoveryvertrag höchstens die ursprüngliche offene Abgabe übertragen, keine neuen Tests oder fremde Ergebnisse lesen. Keine Nutzung eines Sitzungstokens nach Widerruf einfach weiter zulassen. Welcher Adapter dies sicher leistet, muss R3 am aktuellen nativen Backend konkretisieren.
+
+Ein neues Schülerkonto darf auf dem Gerät nicht in eine fremde laufende/ausstehende Prüfung einsteigen oder sie überschreiben. Bei ausstehender Abgabe nur geschützter Recovery-/Lehrkrafthinweis, keine frei sichtbaren Antworten und kein Wechsel in eine andere Prüfung; Gerät bis erfolgreicher Übertragung oder qualifizierter beaufsichtigter Recovery nicht weitergeben. Ein verlorenes/abgestürztes Gerät ermöglicht genau denselben Versuch fortzusetzen, keine stille zweite Prüfungsidentität. Kein Wegwerf-Reset als Lösung. Nach Receipt geteilten Sitzungszugang widerrufen und Identitätsanzeige bereinigen; nur erforderliche geschützte Receiptdaten nach Betriebskonzept erhalten.
+
+#### T4. Tests veröffentlichen und Ergebnisse anzeigen
+
+Lehrkraft weist vorhandenen Test ausdrücklich Klasse/Fach zu; neue Zuweisung erscheint nach berechtigtem Laden/Aktualisieren in deren Schülerlisten. Keine Push-/Livegarantie ohne geprüfte Synchronisierung, keine automatische Prüfungseröffnung ohne Schüleraktion. Das Schülerkonto ersetzt erneute freie Namenseingabe. Native Startbestätigung und AAC bleiben erhalten. „Veröffentlicht“, „zugewiesen“, „begonnen“, „Übertragung ausstehend“, „abgegeben“ und „Ergebnis freigegeben“ sind unterschiedliche Zustände. Korrektur kann automatisch, manuell oder ausstehend sein; „abgegeben“ bedeutet nicht automatisch „vollständig korrigiert“.
+
+Der Schüler sieht Verfügbar und Erledigt, später bewusst Üben; Fachfilter statt Ordnerpflicht. Ein abgegebener Leistungsnachweis bleibt erledigt, auch wenn die Lehrkraft ihn geöffnet lässt. Neue bewertete Versuche nur mit ausdrücklicher Freigabe. Das Modusfeld Leistung/Übung muss im Vertrag vorgesehen und für die Lehrkraft sichtbar sein; volle Übungsfunktionen sind spätere Erweiterung, keine neue Engine in diesem Turn.
+
+#### T5. Abnahmefälle und Reihenfolge
+
+1. Gemeinsames Identitäts-/Assignment-/Secure-Receiptbackend gemäßR bleibt Voraussetzung; kein reiner Oberflächenumbau als Lösung.
+2. Gerätemodus, serverseitiger Sitzungs-/Widerrufsvertrag und geschützter Umgang mit offenen Abgaben spezifizieren; Zeitwerte mit Martin finalisieren. Persönlich versus gemeinsam ist eine Richtlinie, keine Personenrolle.
+3. Native Schülerliste und Codeeinstieg auf aktuellem Native-SHA umsetzen; ursprüngliche Gasttest-/AAC-/Offlinepfade erhalten.
+4. Echte iPad-Abnahme: Gerät nach30Minuten an andere Klasse, App schließen/neustarten, Privatgerät ohne erneutes Scannen, Schulgerät nach Abgabe abgemeldet, fünfMinuten Denkpause innerhalb Test, Offlineabgabe/WLANwiederkehr, Lehrkraft entzieht Zugang, Kartenrotation, abgelaufene Sitzung, absichtliches Umschalten des Schulmodus, noch offene Prüfung vor Kontowechsel. Kein Datenverlust, keine fremde Abgabe, kein stiller Wiederholungsversuch.
+
+**Empfehlung 9/10 für GradeCrew:** Optionaler persönlicher Codezugang mit zwei Nutzungsmodi trifft Einfachheit, dauerhafte Zuordnung und Übergabeschutz besser als ein einheitliches Fünfstundenlogout. Das ist eine Produktbewertung, kein Test- oder Sicherheitsnachweis. Risiken bleiben Codeweitergabe, falsche Gerätewahl und ungeklärte native Backendbindung; klare Richtlinie, serverseitige Durchsetzung und reale Geräteprüfung sind erforderlich. Konkrete Werte/Festlegungen sind noch nicht beschlossen. Dieser Turn speichert das Konzept und verändert keine Anmeldung/Sitzung/Prüfung.
