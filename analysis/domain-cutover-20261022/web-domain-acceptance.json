@@ -1,0 +1,42 @@
+{
+  "task": "GC-DOMAIN-01",
+  "at": "2026-10-22T20:25Z",
+  "newOrigin": "https://gradecrew.de",
+  "oldOrigin": "https://hausaufgabe-staging.web.app",
+  "browser": {
+    "newPasswordSignIn": "PASS",
+    "newSessionReload": "PASS",
+    "newLogout": "PASS",
+    "oldExistingSessionPreserved": "PASS; did not sign out or inspect test contents further",
+    "sameCredentialsBothOrigins": "REST password sign-in with both origin configs; identical UID",
+    "publishedSyntheticTest": "7WGQTJ5S",
+    "qrRendered": "190x190 PNG from actual publication UI",
+    "qrDecoded": "https://gradecrew.de/?test=7WGQTJ5S",
+    "qrDecoder": "Apple Vision local CPU; sandbox permission required for pixelbuffer",
+    "newStudentRoute": "PASS server Connected with matching title",
+    "oldStudentRoute": "PASS same test and title, no hard redirect",
+    "priorSyntheticSubmission": "PASS existing demo3F2RH3PU server receipt",
+    "physicalCameraScan": "not_performed",
+    "realEmailDelivery": "not_performed"
+  },
+  "authChange": {
+    "type": "only authorizedDomains additive",
+    "oldDomainsPreserved": true,
+    "unrelatedConfigUnchanged": true,
+    "independentReview": "PASS after receipt fix",
+    "reviewedScriptSha256": "d5decda9ae9883fb1113fb72338592cca7c21189726fe3d4e3a4e951ee6cabb0"
+  },
+  "native": {
+    "owner": "01a10c75-8912-7a12-98f0-c9e78064aa2c",
+    "pr": 289,
+    "candidate": "c85deddc408382f5b72aafdce0f7c33e917a11c8",
+    "premergeCI": 39848507858,
+    "status": "in_progress; no upload claim"
+  },
+  "limitations": [
+    "No real user account credentials used or reset",
+    "No claim of browser session sharing across domains",
+    "No paid AI calls or data migration",
+    "No physical device acceptance"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-22T20:19:12.545Z",
+  "project": "hausaufgabe-staging",
+  "before": [
+    "localhost",
+    "hausaufgabe-staging.firebaseapp.com",
+    "hausaufgabe-staging.web.app",
+    "hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+    "hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app",
+    "hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app",
+    "hausaufgabe-staging--gradecrew-math-classroom-20261016-5qhq3iqm.web.app",
+    "hausaufgabe-staging--legal-20261021-c6mgeg1s.web.app"
+  ],
+  "desired": [
+    "localhost",
+    "hausaufgabe-staging.firebaseapp.com",
+    "hausaufgabe-staging.web.app",
+    "hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+    "hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app",
+    "hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app",
+    "hausaufgabe-staging--gradecrew-math-classroom-20261016-5qhq3iqm.web.app",
+    "hausaufgabe-staging--legal-20261021-c6mgeg1s.web.app",
+    "gradecrew.de",
+    "www.gradecrew.de"
+  ],
+  "changed": true,
+  "mutationState": "patch_returned_success",
+  "after": [
+    "localhost",
+    "hausaufgabe-staging.firebaseapp.com",
+    "hausaufgabe-staging.web.app",
+    "hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+    "hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app",
+    "hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app",
+    "hausaufgabe-staging--gradecrew-math-classroom-20261016-5qhq3iqm.web.app",
+    "hausaufgabe-staging--legal-20261021-c6mgeg1s.web.app",
+    "gradecrew.de",
+    "www.gradecrew.de"
+  ],
+  "unrelatedConfigUnchanged": true,
+  "verification": "passed"
+}
