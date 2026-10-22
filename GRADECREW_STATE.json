@@ -2875,6 +2875,41 @@
       "website_changed": false,
       "teacher_app_changed": false,
       "handoff": "workstreams/secure-testflight-1141-20261021.md"
+    },
+    "secure_iphone_followup": {
+      "task_ids": [
+        "GC-IOS-02",
+        "GC-RELEASE-06"
+      ],
+      "handoff": "workstreams/secure-iphone-20261022.md",
+      "pr": 286,
+      "source": "2b7929520778d9f9aeaeb2ec936b778aaa609a86",
+      "candidate": "b9edcd6e765b6fe5479e18a50ac4a23fd41793e8",
+      "run": 39837839965,
+      "status": "full_release_pipeline_started_no_upload_yet",
+      "local": {
+        "swift": 28,
+        "python": 22,
+        "node": 24,
+        "phone_native": 540,
+        "phone_web": 216,
+        "phone_web_interactions": 12,
+        "phone_composed": 6,
+        "controller": 5,
+        "actual_return_UI": [
+          "portrait",
+          "landscape"
+        ],
+        "universal_live_simulator_build": "success",
+        "entry_previews": [
+          "iphone",
+          "ipad"
+        ]
+      },
+      "independent_review": "prior_P2_composed_gap_addressed_no_remaining_concrete_P0P2",
+      "physical_acceptance": "pending_iPhone_AAC_time_offline_reconnect_return_and_iPad_regression",
+      "website_backend_rules_changed": false,
+      "domain_changed": false
     }
   },
   "public_legal_information_20261021": {

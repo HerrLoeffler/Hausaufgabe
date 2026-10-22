@@ -645,3 +645,8 @@ Domainabhängigkeitgradecrew.de: keineNativeURLumstellungausunverifiziertemKaufh
 | Task | Auftrag | Gesicherter Umfang / Grenze | Nächster Schritt |
 |---|---|---|---|
 | GC-EXTENDED-QUESTION-TYPES-01 | Erkenntnisse aus visuellen Aufgaben, Designreview und PhET für künftige Testseiten verbindlich erhalten | Aufgabenprinzipien und Katalog mit 13 Interaktionsgruppen, 5 Experimentideen und 8 weiteren Methoden; Einstieg in AGENTS/START_HERE. Dokumentationskandidat, kein Generator-/Poolimport und kein Deploy. Bestehende Prototyp-/Issue255-/Adaptive-Nachweise getrennt referenziert. | Dokumentations-PR prüfen/in main integrieren; anschließend pro passender Testseitenaufgabe Katalog-IDs und echte Prüfbelege in der eigenen Übergabe verwenden. [Übergabe](workstreams/interactive-learning-principles-20261022.md). |
+
+
+### 22.10.2026 · GC-IOS-02 / GC-RELEASE-06 · Secure auch fürs iPhone
+
+MartinautorisiertgemeinsameiPhone-/iPad-Secure-AppundTestFlight. PR286 integriertb9edcd6; ab17.0, bisherigeiPad-Gerätefamilie/Orientierungerhalten,zusätzlichPhone. NeuePhoneeingabe-/kompakteAufgabenansicht, AAC/Timer/Queue/Receiptunverändert. Lokal22Python28Swift24Node540Native216Web12Interaktionen6komponierteFälle5ControllerintegrationechteUI-Rückkehr/Hoch-undQuerformat bestanden; tatsächlicheLive-Simulator-AppbeiderGerätevisuellgeprüft. UnabhängigeP2-Testlücke reproduziert/behoben,keineweiterenkonkretenP0–P2. Run39837839965 läuftmitallenbisherigeniPad-GatesplusPhonegate, Upload/AppleprocessingundphysischeHandyabnahmeoffen. KeineWebsite-/Backend-/Rules-/Domainänderung. [Übergabe](workstreams/secure-iphone-20261022.md).
