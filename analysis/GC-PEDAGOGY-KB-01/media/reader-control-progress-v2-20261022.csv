@@ -1,7 +1,7 @@
 reader_ref,complete,resources_archived,attempts,unresolved_attempts,uncertain,partial,quarantined,phase_inventory,phase_collection,phase_page_and_visual_review,phase_individual_tasks_and_independent_solutions,phase_audio_video_interactive_review,phase_grade_school_subject_region_curriculum,phase_didactic_transfer,phase_pool_release
 R001,False,1,1,0,0,0,0,pending,pending,pending,pending,pending,pending,pending,pending
 R002,False,0,0,0,0,0,0,pending,pending,pending,pending,pending,pending,pending,pending
-R003,False,0,0,0,0,0,0,pending,pending,pending,pending,pending,pending,pending,pending
+R003,False,0,1,1,0,0,0,pending,pending,pending,pending,pending,pending,pending,pending
 R004,False,0,0,0,0,0,0,pending,pending,pending,pending,pending,pending,pending,pending
 R005,False,0,0,0,0,0,0,pending,pending,pending,pending,pending,pending,pending,pending
 R006,False,0,0,0,0,0,0,pending,pending,pending,pending,pending,pending,pending,pending

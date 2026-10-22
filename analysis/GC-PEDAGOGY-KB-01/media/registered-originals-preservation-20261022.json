@@ -1,0 +1,22 @@
+{
+  "checked_at_utc": "2026-10-22T07:43:06.194866+00:00",
+  "scope": "only already registered material IDs from task manifests; unknown Downloads files not copied",
+  "matched_distinct_source_objects": 907,
+  "new_private_archive_copies": 171,
+  "archive_objects_sha256_checked": 907,
+  "registered_ids_missing_from_downloads_but_in_archive": 0,
+  "registered_ids_missing_from_both": [],
+  "errors": 0,
+  "new_downloads": 0,
+  "new_page_analyses": 0,
+  "note": "Original preservation/check, not new book collection or full content analysis.",
+  "registered_ids_found_in_other_archive_types": 9,
+  "unresolved_registered_ids_after_other_type_check": [],
+  "correction_note": "Previous missing-from-both list was limited to PDF/ZIP scanning and included other media. Supplementary actual-hash check resolves existing DOC/JPG/audio originals; remaining IDs are unresolved, not declared lost.",
+  "registered_ids_recovered_from_zip": [
+    "552be9864341b0be",
+    "6f95aee1a1a02bd2"
+  ],
+  "all_historical_registered_ids_originals_located": true,
+  "scope_note": "All918 registered IDs resolved across PDF/ZIP originals,9 other media,2 recovered children; IDs are not book counts or necessarily distinct files. Unregistered Downloads objects are not declared analyzed."
+}

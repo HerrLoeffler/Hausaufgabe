@@ -1,0 +1,24 @@
+{
+  "scanned_at_utc": "2026-10-22T07:41:06.106097+00:00",
+  "scope": "read-only recursive Downloads inventory of PDF/ZIP/partial-download files; paths private; no deletion or new download",
+  "extension_counts": {
+    ".pdf": 1782,
+    ".zip": 22
+  },
+  "bytes_hashed": 8289585493,
+  "registered_ids_expected": 918,
+  "registered_ids_still_in_downloads": 907,
+  "registered_ids_not_found_in_downloads": 11,
+  "new_content_analyses": 0,
+  "errors": 0,
+  "note": "Not-found source does not imply missing archive. Unknown PDFs/ZIPs are inventoried, not declared task material or analyzed. Partial files cannot be matched to reader attempts by name/time alone.",
+  "identity_count_note": "Historical manifests mix12/16-character hash prefixes; registered IDs are not necessarily distinct files. Every matching prefix is counted, not only one.",
+  "unique_hashed_objects_by_extension": {
+    ".pdf": 1083,
+    ".zip": 21
+  },
+  "extra_identical_copies_by_extension": {
+    ".pdf": 699,
+    ".zip": 1
+  }
+}

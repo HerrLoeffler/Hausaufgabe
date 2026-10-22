@@ -1,0 +1,44 @@
+{
+  "scope": "three resource structural checks, not independent full-content review",
+  "resources": [
+    {
+      "content_id": "b0992c0ad3b74948",
+      "expected_pages": 106,
+      "page_records": 106,
+      "task_group_records": 203,
+      "visual_records": 106,
+      "jsonl_files_parseable": true,
+      "page_sequence_complete": true,
+      "task_ids_unique": true,
+      "forbidden_bibliographic_fields": 0,
+      "independent_full_content_review": false,
+      "runtime_release": false
+    },
+    {
+      "content_id": "2956ad5d9a7b5d3f",
+      "expected_pages": 40,
+      "page_records": 40,
+      "task_group_records": 38,
+      "visual_records": 40,
+      "jsonl_files_parseable": true,
+      "page_sequence_complete": true,
+      "task_ids_unique": true,
+      "forbidden_bibliographic_fields": 0,
+      "independent_full_content_review": false,
+      "runtime_release": false
+    },
+    {
+      "content_id": "1238532f17dc6ece",
+      "expected_pages": 51,
+      "page_records": 51,
+      "task_group_records": 48,
+      "visual_records": 51,
+      "jsonl_files_parseable": true,
+      "page_sequence_complete": true,
+      "task_ids_unique": true,
+      "forbidden_bibliographic_fields": 0,
+      "independent_full_content_review": false,
+      "runtime_release": false
+    }
+  ]
+}
