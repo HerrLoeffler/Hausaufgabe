@@ -1,0 +1,21 @@
+{
+  "observedAt": "2026-10-22T18:49Z",
+  "source": "authenticated Netcup CloudDNS visible zone",
+  "domain": "gradecrew.de",
+  "soa": {
+    "retry": 7200,
+    "refresh": 28800,
+    "ttl": 86400,
+    "expire": 1209600
+  },
+  "records": [
+    {
+      "host": "@",
+      "type": "A",
+      "value": "46.38.243.234",
+      "ttl": 3600
+    }
+  ],
+  "mailRecordsPresent": false,
+  "plannedChange": "Replace parking A with actual Firebase A; add ownership TXT, www CNAME and current ACME TXT. Nameservers and SOA unchanged."
+}
