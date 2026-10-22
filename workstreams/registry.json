@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-22T13:13:22.737Z",
+  "updatedAt": "2026-10-22T19:00:00Z",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -685,6 +685,17 @@
         "feature/public-legal-pages-20261021",
         "fix/secure-return-after-sync-20261022",
         "fix/secure-audio-ci-readiness-20261022"
+      ]
+    },
+    {
+      "id": "extended-question-types-01",
+      "title": "GC-EXTENDED-QUESTION-TYPES-01: interaktive Aufgaben und gemeinsamer Lernfundus",
+      "primaryBranch": "docs/visual-learning-principles-20261022",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/interactive-learning-principles-20261022.md",
+      "relatedBranches": [
+        "feature/extended-question-types-20261020"
       ]
     }
   ]
