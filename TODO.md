@@ -637,3 +637,8 @@ Nutzer21.10.bestätigt schriftlichenUmfang:persönlichesdauerhaftesLerngehirnMat
 Eigene wiederverwendbare Werkzeugarchitektur und fraction-board als erster Adapter auf Testseite umgesetzt. Reale KI verarbeitet serverseitig nachgespielte Handlungen, konkrete Fehlerhilfe und unabhängige Prüfung; Darstellung imHilfeschrittbleibt erhalten. Hosting175Dateienhashgeprüft.324Backend/43UI-Testsgrün. Progressionsnachbesserung und weitere reale Fehlertests nochlaufend; keine vollständige fachübergreifende Werkzeugausstattung oder didaktische Abnahme behaupten. GleichePRs262/253, Schul-Liveunangetastet. [FortlaufendeÜbergabe](workstreams/adaptive-practice-01.md).
 
 22.10.Nachtest:324Backend/43UI/0skip,175Hostingassetsgeprüft. RealeSteigerungbisFehlerbegründungundFehlerhilfevereinfachungbisLehrkraftbelegt. SpätereFolgeaufgabenwerdenvereinzeltvomKI-Reviewerblockiert;offenerFehler,keineFertigmeldung. Backendcab21676ff,Hostingb599478a. ÜbergabeenthältFehlversucheundnächstenDiagnoseschritt.
+
+
+### GC-ADAPTIVE-PRACTICE-01 Architekturkorrektur22.10.
+
+NutzerverlangtPlanfürfachübergreifendeLernwerkstattstattweitererErweitern-Einzelpolitur. EntwurfimApprepo docs/superpowers/specs/2026-10-22-learning-workshop-system.md:11Werkzeugfamilien/50geplanteAufgabenfamilien,bestehendeVIS01–13wiederverwenden;ersterAusbauAnteile/Skala/Waage/Textarbeit. GleicheMaßstäbe/BezugsganzeundvonFolgegenerierunggetrennteAntwortspeicherungverbindlich. Planerstellt,keineUmsetzung/keinDeploy;aktuellerGeometrie-undProgressionsfehleroffen. Übergabeadaptive-practice-01fortgeführt.
