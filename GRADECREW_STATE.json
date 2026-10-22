@@ -2782,7 +2782,7 @@
       "primary-school age-rating requirement: current13+ rejected by operator; target4+ requires accurate content/control assessment before submission",
       "Apple trader phone verification and any subsequent required evidence",
       "explicit publication of saved privacy labels",
-      "stable synthetic review test and real Store screenshots",
+      "actual native13inch screenshot prepared; upload and additional exam screenshots pending Apple re-login/unlocked Mac; synthetic review code3F2RH3PU complete",
       "school roles/AVV plus verified provider/server/backup retention"
     ],
     "native_uploaded_build": "1.0(1141)",
@@ -2843,7 +2843,7 @@
       "native_teacher_upload_utc": "2026-10-21T21:50:39Z",
       "apple_age_rating": "13+_saved_reload_verified_explicit_user_confirmed;older_than_OS26_global12+regionalexceptions",
       "secure_physical_offline_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
-      "apple_phone_verification": "fresh_email_code_requested_after_incomplete_previous_flow;awaiting_user_direct_entry",
+      "apple_phone_verification": "current_Apple_session_expired;relogin_and_direct_email_phone_verification_required",
       "privacy_labels": "draft_not_published_user_requested_explanation_then_approval_pending",
       "age_rating_followup": {
         "user_requirement": "Secure must be usable by primary-school children including age6",
@@ -2855,6 +2855,28 @@
         "apple_reference": "https://developer.apple.com/help/app-store-connect/reference/app-information/age-ratings-values-and-definitions/",
         "comparison": "SafeExamBrowser Apple Store4+within-appcontrols;notapprovalforGradeCrew",
         "app_review_submitted": false
+      },
+      "apple_review_test": {
+        "code": "3F2RH3PU",
+        "title": "GradeCrew Secure · App Review Demo",
+        "questions": 2,
+        "minutes": 5,
+        "project": "hausaufgabe-staging",
+        "published": true,
+        "web_submission": "server_confirmed_fictional_App_Review_QA",
+        "apple_review_notes": "saved_reload_verified",
+        "physical_AAC_this_specific_code": "not_claimed"
+      },
+      "actual_store_screenshots": {
+        "source": "unchanged_Secure1141_equivalent_native_release_Xcode_simulator_build",
+        "entry_dimensions": [
+          2064,
+          2752
+        ],
+        "actual_app": true,
+        "upload": "not_completed_filechooser_interrupted_then_Apple_session_expired",
+        "local_artifacts": "outputs/secure-store-closeout-20261022",
+        "additional_exam_screens": "awaiting_unlocked_Mac"
       }
     }
   }
