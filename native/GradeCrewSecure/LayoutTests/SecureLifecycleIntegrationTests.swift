@@ -102,6 +102,17 @@ private final class SecureLifecycleMemoryStore:SecureAttemptPersistence {
         XCTAssertEqual(restored.phase,.completed,"Pending transmission must not attempt a new AAC session on simulator")
         XCTAssertNil(store.savedIdentity)
         XCTAssertEqual(SecureLifecycleHTTP.submissions,2)
+        XCTAssertFalse(restored.busy,"Confirmed completion must enable the return action")
+        restored.restart()
+        XCTAssertEqual(restored.phase,.code)
+        XCTAssertEqual(restored.code,"")
+        XCTAssertEqual(restored.name,"")
+        await restored.foreground()
+        XCTAssertEqual(restored.phase,.code,"A foreground callback must not restore the finished attempt")
+        SecureLifecycleHTTP.readyBackend=true
+        restored.code="NEXT123";restored.name="Next synthetic pupil"
+        await restored.preflight()
+        XCTAssertEqual(restored.phase,.identity,"The next test must be reachable without relaunching the app")
         for bytes in SecureLifecycleHTTP.sentAnswers {
             let payload=try XCTUnwrap(try JSONSerialization.jsonObject(with:bytes) as? [String:Any])
             let data=try XCTUnwrap(payload["data"] as? [String:Any])
