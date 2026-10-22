@@ -1,0 +1,13 @@
+{
+  "domain": "gradecrew.de",
+  "uiStatus": [
+    "clock icon",
+    "unknown hosting",
+    "as soon as active"
+  ],
+  "dnsManagementLinkAvailable": false,
+  "publicDNS": "NXDOMAIN for root NS/SOA/A/AAAA/MX/TXT/CAA and www A/AAAA/CNAME/TXT",
+  "cause": "Not specified by provider UI; no evidence of required payment/identity hold. Account overview showed no outstanding invoices. Generic NIS2 verification notice is not evidence of a specific hold.",
+  "writes": [],
+  "observedDate": "2026-10-22"
+}

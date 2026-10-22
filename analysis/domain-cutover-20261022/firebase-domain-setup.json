@@ -1,0 +1,156 @@
+{
+  "observedAt": "2026-10-22T13:28:19.551Z",
+  "site": "/projects/hausaufgabe-staging/sites/hausaufgabe-staging/customDomains",
+  "steps": [
+    {
+      "domain": "gradecrew.de",
+      "validation": {
+        "name": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/customDomains/gradecrew.de/operations/fa9582c7-4e7c-4eb7-949d-62c9c385f1ad",
+        "metadata": {
+          "@type": "type.googleapis.com/google.firebase.hosting.v1beta1.CustomDomainMetadata",
+          "liveMigrationSteps": [
+            {
+              "state": "PREPARING"
+            }
+          ]
+        }
+      },
+      "createRequestedAt": "2026-10-22T13:28:20.938Z",
+      "create": {
+        "name": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/customDomains/gradecrew.de/operations/88430c73-26cf-4677-b8fa-7045544456a2",
+        "metadata": {
+          "@type": "type.googleapis.com/google.firebase.hosting.v1beta1.CustomDomainMetadata",
+          "liveMigrationSteps": [
+            {
+              "state": "PREPARING"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "domain": "www.gradecrew.de",
+      "validation": {
+        "name": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/customDomains/www.gradecrew.de/operations/137be11f-dd5b-4980-86e7-771682117f47",
+        "metadata": {
+          "@type": "type.googleapis.com/google.firebase.hosting.v1beta1.CustomDomainMetadata",
+          "liveMigrationSteps": [
+            {
+              "state": "PREPARING"
+            }
+          ]
+        }
+      },
+      "createRequestedAt": "2026-10-22T13:28:22.576Z",
+      "create": {
+        "name": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/customDomains/www.gradecrew.de/operations/e208d009-38ab-4f0f-8eea-bf546271db77",
+        "metadata": {
+          "@type": "type.googleapis.com/google.firebase.hosting.v1beta1.CustomDomainMetadata",
+          "liveMigrationSteps": [
+            {
+              "state": "PREPARING"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "before": {},
+  "after": {
+    "customDomains": [
+      {
+        "name": "projects/950775032930/sites/hausaufgabe-staging/customDomains/gradecrew.de",
+        "createTime": "2026-10-22T13:28:21.717025340Z",
+        "updateTime": "2026-10-22T13:28:21.717025420Z",
+        "etag": "W/\"1792675701\"",
+        "hostState": "HOST_UNHOSTED",
+        "ownershipState": "OWNERSHIP_MISSING",
+        "requiredDnsUpdates": {
+          "desired": [
+            {
+              "domainName": "gradecrew.de",
+              "records": [
+                {
+                  "domainName": "gradecrew.de",
+                  "type": "A",
+                  "rdata": "199.36.158.100",
+                  "requiredAction": "ADD"
+                },
+                {
+                  "domainName": "gradecrew.de",
+                  "type": "TXT",
+                  "rdata": "hosting-site=hausaufgabe-staging",
+                  "requiredAction": "ADD"
+                }
+              ]
+            }
+          ],
+          "checkTime": "2026-10-22T13:28:21.959340972Z"
+        },
+        "certPreference": "PROJECT_GROUPED",
+        "cert": {
+          "type": "TEMPORARY",
+          "state": "CERT_VALIDATING",
+          "verification": {
+            "dns": {
+              "discovered": [
+                {
+                  "domainName": "_acme-challenge.gradecrew.de"
+                }
+              ],
+              "desired": [
+                {
+                  "domainName": "_acme-challenge.gradecrew.de",
+                  "records": [
+                    {
+                      "domainName": "_acme-challenge.gradecrew.de",
+                      "type": "TXT",
+                      "rdata": "g-DBj1nHgVXuiBpr7ygd7RQBmtoH6ue3Dw5TUUaUAuc",
+                      "requiredAction": "ADD"
+                    }
+                  ]
+                }
+              ],
+              "checkTime": "2026-10-22T13:28:23.515356395Z"
+            },
+            "http": {
+              "path": "/.well-known/acme-challenge/oS5C8TA92HFrkW5BKLo451_xMY02KleSykF4u2GXJ8NlaCKqCuE8OW3aNOc4-_7b",
+              "desired": "oS5C8TA92HFrkW5BKLo451_xMY02KleSykF4u2GXJ8NlaCKqCuE8OW3aNOc4-_7b.M0-GObbb5ePi63ASQsPKBrDqfgayGnOWpyrEF0nHqug",
+              "lastCheckTime": "2026-10-22T13:28:23.515356395Z"
+            }
+          }
+        }
+      },
+      {
+        "name": "projects/950775032930/sites/hausaufgabe-staging/customDomains/www.gradecrew.de",
+        "createTime": "2026-10-22T13:28:23.245058266Z",
+        "updateTime": "2026-10-22T13:28:23.245058346Z",
+        "etag": "W/\"1792675703\"",
+        "hostState": "HOST_UNHOSTED",
+        "ownershipState": "OWNERSHIP_MISSING",
+        "requiredDnsUpdates": {
+          "desired": [
+            {
+              "domainName": "www.gradecrew.de",
+              "records": [
+                {
+                  "domainName": "www.gradecrew.de",
+                  "type": "CNAME",
+                  "rdata": "hausaufgabe-staging.web.app",
+                  "requiredAction": "ADD"
+                }
+              ]
+            }
+          ],
+          "checkTime": "2026-10-22T13:28:23.496237908Z"
+        },
+        "certPreference": "PROJECT_GROUPED",
+        "cert": {
+          "type": "TEMPORARY",
+          "state": "CERT_PREPARING"
+        },
+        "redirectTarget": "gradecrew.de"
+      }
+    ]
+  }
+}

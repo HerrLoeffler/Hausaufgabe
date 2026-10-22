@@ -1,0 +1,189 @@
+{
+  "observedAt": "2026-10-22T13:30:52.676Z",
+  "operations": [
+    {
+      "domain": "gradecrew.de",
+      "name": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/customDomains/gradecrew.de/operations/88430c73-26cf-4677-b8fa-7045544456a2",
+      "error": null
+    },
+    {
+      "domain": "www.gradecrew.de",
+      "name": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/customDomains/www.gradecrew.de/operations/e208d009-38ab-4f0f-8eea-bf546271db77",
+      "error": null
+    }
+  ],
+  "fileChecks": [
+    {
+      "file": "index.html",
+      "status": 200,
+      "sha256": "06bb169d009d8af629c8778d031d3b57a53aaddee6855f5b060344cdb4f5b395",
+      "matchesManifest": true
+    },
+    {
+      "file": "app.js",
+      "status": 200,
+      "sha256": "ecfdf4927938cc1029197f5628740498e108f8061bc9f0b2f965a2158ff7c81b",
+      "matchesManifest": true
+    },
+    {
+      "file": "firebase-config.js",
+      "status": 200,
+      "sha256": "dd5268fcc28d360964924cd6fa2b7b374e19884d5e7e2dd2a1c06439a51c6a97",
+      "matchesManifest": true
+    },
+    {
+      "file": "secure-student.html",
+      "status": 200,
+      "sha256": "aabd1e2b44f912f4032effe054dbbabdf734954af93cfa6ceb74e03370f2f316",
+      "matchesManifest": true
+    },
+    {
+      "file": "secure-student.js",
+      "status": 200,
+      "sha256": "b3627a9cd2f4f7983ede0de0c2de844aa499d5114c643488006af2c0ff730a38",
+      "matchesManifest": true
+    },
+    {
+      "file": "secure-assessment-client.js",
+      "status": 200,
+      "sha256": "c238fa03f62d6a560c7c1fad440dfaaf977e3ba85b10027f6148cafca9fc8254",
+      "matchesManifest": true
+    },
+    {
+      "file": "legal-content.de.json",
+      "status": 200,
+      "sha256": "8a799779ec8532f9ed883bc6a8faac5c7c4f6c840902a2d51e197dff3832497b",
+      "matchesManifest": true
+    }
+  ],
+  "domains": [
+    {
+      "name": "projects/950775032930/sites/hausaufgabe-staging/customDomains/gradecrew.de",
+      "createTime": "2026-10-22T13:28:21.717025340Z",
+      "updateTime": "2026-10-22T13:28:21.717025420Z",
+      "etag": "W/\"1792675701\"",
+      "hostState": "HOST_UNHOSTED",
+      "ownershipState": "OWNERSHIP_MISSING",
+      "requiredDnsUpdates": {
+        "desired": [
+          {
+            "domainName": "gradecrew.de",
+            "records": [
+              {
+                "domainName": "gradecrew.de",
+                "type": "A",
+                "rdata": "199.36.158.100",
+                "requiredAction": "ADD"
+              },
+              {
+                "domainName": "gradecrew.de",
+                "type": "TXT",
+                "rdata": "hosting-site=hausaufgabe-staging",
+                "requiredAction": "ADD"
+              }
+            ]
+          }
+        ],
+        "checkTime": "2026-10-22T13:29:52.170324551Z"
+      },
+      "certPreference": "PROJECT_GROUPED",
+      "cert": {
+        "type": "TEMPORARY",
+        "state": "CERT_VALIDATING",
+        "verification": {
+          "dns": {
+            "discovered": [
+              {
+                "domainName": "_acme-challenge.gradecrew.de"
+              }
+            ],
+            "desired": [
+              {
+                "domainName": "_acme-challenge.gradecrew.de",
+                "records": [
+                  {
+                    "domainName": "_acme-challenge.gradecrew.de",
+                    "type": "TXT",
+                    "rdata": "g-DBj1nHgVXuiBpr7ygd7RQBmtoH6ue3Dw5TUUaUAuc",
+                    "requiredAction": "ADD"
+                  }
+                ]
+              }
+            ],
+            "checkTime": "2026-10-22T13:29:53.656683255Z"
+          },
+          "http": {
+            "path": "/.well-known/acme-challenge/oS5C8TA92HFrkW5BKLo451_xMY02KleSykF4u2GXJ8NlaCKqCuE8OW3aNOc4-_7b",
+            "desired": "oS5C8TA92HFrkW5BKLo451_xMY02KleSykF4u2GXJ8NlaCKqCuE8OW3aNOc4-_7b.M0-GObbb5ePi63ASQsPKBrDqfgayGnOWpyrEF0nHqug",
+            "lastCheckTime": "2026-10-22T13:29:53.656683255Z"
+          }
+        }
+      }
+    },
+    {
+      "name": "projects/950775032930/sites/hausaufgabe-staging/customDomains/www.gradecrew.de",
+      "createTime": "2026-10-22T13:28:23.245058266Z",
+      "updateTime": "2026-10-22T13:28:23.245058346Z",
+      "etag": "W/\"1792675703\"",
+      "hostState": "HOST_UNHOSTED",
+      "ownershipState": "OWNERSHIP_MISSING",
+      "requiredDnsUpdates": {
+        "desired": [
+          {
+            "domainName": "www.gradecrew.de",
+            "records": [
+              {
+                "domainName": "www.gradecrew.de",
+                "type": "CNAME",
+                "rdata": "hausaufgabe-staging.web.app",
+                "requiredAction": "ADD"
+              }
+            ]
+          }
+        ],
+        "checkTime": "2026-10-22T13:29:53.708322525Z"
+      },
+      "certPreference": "PROJECT_GROUPED",
+      "cert": {
+        "type": "TEMPORARY",
+        "state": "CERT_VALIDATING",
+        "verification": {
+          "dns": {
+            "discovered": [
+              {
+                "domainName": "_acme-challenge.www.gradecrew.de"
+              }
+            ],
+            "desired": [
+              {
+                "domainName": "_acme-challenge.www.gradecrew.de",
+                "records": [
+                  {
+                    "domainName": "_acme-challenge.www.gradecrew.de",
+                    "type": "TXT",
+                    "rdata": "lb-Mh94RsH5khMsZV2L--VSEM68Jp2URBu0xFLV-UGE",
+                    "requiredAction": "ADD"
+                  }
+                ]
+              }
+            ],
+            "checkTime": "2026-10-22T13:30:05.467469026Z"
+          },
+          "http": {
+            "path": "/.well-known/acme-challenge/rer1jNJ2GX4cpjvSv2g9z_qw9YDaL5zn_XhsVOU-14W9ZjhGLOwVyhMog0g2hi_A",
+            "desired": "rer1jNJ2GX4cpjvSv2g9z_qw9YDaL5zn_XhsVOU-14W9ZjhGLOwVyhMog0g2hi_A.M0-GObbb5ePi63ASQsPKBrDqfgayGnOWpyrEF0nHqug",
+            "lastCheckTime": "2026-10-22T13:30:05.467469026Z"
+          }
+        }
+      },
+      "redirectTarget": "gradecrew.de"
+    }
+  ],
+  "initialManifestSerializationComparison": false,
+  "semanticManifestProbe": {
+    "sameCommit": true,
+    "sameFiles": true,
+    "sameMetadata": true,
+    "reason": "Read-only follow-up compared identical metadata and files with deep equality. Initial JSON.stringify comparison differed only in key insertion order."
+  }
+}
