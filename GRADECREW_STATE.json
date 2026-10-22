@@ -2632,5 +2632,24 @@
       },
       "physical_device_acceptance": "pending"
     }
+  },
+  "learningWorkshop20261022": {
+    "task_id": "GC-ADAPTIVE-PRACTICE-01",
+    "app_pr": 262,
+    "docs_pr": 253,
+    "environment": "gradecrew-staging-2026",
+    "scope": "reusable workshop registry; fraction-board first adapter; real AI observes semantic actions",
+    "hosting_source": "b599478a475869ff264e14510e8e5520f1d15070",
+    "backend_source": "cab21676ff9983c7b9b6c0894eb14c4055ac3aa2",
+    "automated_tests": {
+      "backend": 324,
+      "ui": 43,
+      "skipped": 0
+    },
+    "verified_hosting_assets": 175,
+    "real_browser": "wrong denominator-only change → precise help on retained model → correct 2/6 → original retry → independent probe",
+    "remaining": "real repeated-error chain through teacher and first demand increase verified; later next-task review still blocks a correct free answer; other adapters and teacher acceptance open",
+    "production_changed": false,
+    "handoff": "workstreams/adaptive-practice-01.md"
   }
 }

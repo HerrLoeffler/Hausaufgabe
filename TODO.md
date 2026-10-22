@@ -630,3 +630,10 @@ Auf ausdrücklichen Nutzerauftrag lokale120er-KI-Sperre im gesonderten Demo-Modu
 ### GC-ADAPTIVE-PRACTICE-01 Vollständiger Ausbau Mathe/Deutsch5–10
 
 Nutzer21.10.bestätigt schriftlichenUmfang:persönlichesdauerhaftesLerngehirnMatheDeutsch5–10 undRolloutnurnachgradecrew-staging-2026. Vorhandenerpädagogischer/Second-Brain-Bestandgefundenundführend;18Quellen/12Fach-Jahrgangspaare/105BereichemitHashesbelegt,R/Mgetrennt, fachlicheFeinfreigabeoffen. ZweifächrigeStartansichtlokalumgesetzt. Implementierungsplanunterdocs/superpowers/plans/2026-10-21-learning-brain-mathe-deutsch-5-10.md; eigenerAppbranchfeat/learning-brain-mathe-deutsch-20261021. NochkeinDauerprofil-/Cloudrolloutnachweis; Schul-Liveunverändert. [Übergabe](workstreams/adaptive-practice-01.md).
+
+
+### GC-ADAPTIVE-PRACTICE-01 Lernwerkstatt22.10.
+
+Eigene wiederverwendbare Werkzeugarchitektur und fraction-board als erster Adapter auf Testseite umgesetzt. Reale KI verarbeitet serverseitig nachgespielte Handlungen, konkrete Fehlerhilfe und unabhängige Prüfung; Darstellung imHilfeschrittbleibt erhalten. Hosting175Dateienhashgeprüft.324Backend/43UI-Testsgrün. Progressionsnachbesserung und weitere reale Fehlertests nochlaufend; keine vollständige fachübergreifende Werkzeugausstattung oder didaktische Abnahme behaupten. GleichePRs262/253, Schul-Liveunangetastet. [FortlaufendeÜbergabe](workstreams/adaptive-practice-01.md).
+
+22.10.Nachtest:324Backend/43UI/0skip,175Hostingassetsgeprüft. RealeSteigerungbisFehlerbegründungundFehlerhilfevereinfachungbisLehrkraftbelegt. SpätereFolgeaufgabenwerdenvereinzeltvomKI-Reviewerblockiert;offenerFehler,keineFertigmeldung. Backendcab21676ff,Hostingb599478a. ÜbergabeenthältFehlversucheundnächstenDiagnoseschritt.
