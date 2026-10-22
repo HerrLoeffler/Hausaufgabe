@@ -639,3 +639,9 @@ GC-IOS-02 / GC-RELEASE-06: vollständiger Securelauf39784682376 aufacb7060 erfol
 GC-IOS-02: Teacher0.2.0(50), Run39783328084 auf60927e0 erfolgreich hochgeladen, Appleverarbeitungabgeschlossen, bestehendeinterneGruppeGrade Crew TesterL/1Tester zugeordnet; Testhinweise gespeichert/neugeladen. DirekteAuth-/eigeneTests-Einstieg umgesetzt, Remycode/-assets erhalten. PhysischerLogin-/Logout-/Kontowechseltestnoch offen. KeineWebsite-/Backend-/Rulesbereitstellung oderAppRevieweinreichung ausdiesenNativearbeiten.
 
 Domainabhängigkeitgradecrew.de: keineNativeURLumstellungausunverifiziertemKaufhinweis. VerifiziertenHTTPS-/Auth-Cutover-BelegdesDomainfachchatsabwarten, bisherigeLinks/Fallbacks undinterneProjekt-/PersistenzIDsbehalten. Pfad-/Bridge-/Keychainrisiken indenbeidenNativeübergabenvermerkt.
+
+## GC-EXTENDED-QUESTION-TYPES-01 — gemeinsamer Aufgabenfundus, 22.10.2026
+
+| Task | Auftrag | Gesicherter Umfang / Grenze | Nächster Schritt |
+|---|---|---|---|
+| GC-EXTENDED-QUESTION-TYPES-01 | Erkenntnisse aus visuellen Aufgaben, Designreview und PhET für künftige Testseiten verbindlich erhalten | Aufgabenprinzipien und Katalog mit 13 Interaktionsgruppen, 5 Experimentideen und 8 weiteren Methoden; Einstieg in AGENTS/START_HERE. Dokumentationskandidat, kein Generator-/Poolimport und kein Deploy. Bestehende Prototyp-/Issue255-/Adaptive-Nachweise getrennt referenziert. | Dokumentations-PR prüfen/in main integrieren; anschließend pro passender Testseitenaufgabe Katalog-IDs und echte Prüfbelege in der eigenen Übergabe verwenden. [Übergabe](workstreams/interactive-learning-principles-20261022.md). |

@@ -89,3 +89,7 @@ Alle GradeCrew-Chats – einschließlich Planung und Design – befolgen [docs/C
 ## Skills für autorisierte Facharbeit — GC-HOOKS-01-SKILLS
 
 [Verbindliche Skill-Zuordnung](docs/skills/GRADECREW_EXECUTION_SKILLS.md) verbindet vorhandene Fähigkeiten mit konkreten Fachaufträgen und den bestehenden Rollen-/Releasegrenzen. Sechs ausgewählte standalone User-Skills sind auf Martins Mac installiert; andere Hosts und Nutzung in alten Desktopturns separat prüfen. Zentralen koordinieren weiterhin ausschließlich. [Integrationsnachweis und Grenzen](workstreams/skills-integration-20261010.md); Hook-Entwurf PR184 bleibt getrennt, keine Hooks installiert.
+
+## Gemeinsamer Aufgabenfundus
+
+Bei Testseiten, interaktiven Aufgaben und adaptiven Übungen gelten die [Aufgabenprinzipien](docs/learning/INTERACTIVE_TASK_PRINCIPLES.md) und der [Methodenfundus](docs/learning/INTERACTIVE_TASK_CATALOG.md). Dort sind Erfahrungen aus den visuellen Prototypen, ZUM/H5P-Anregungen und PhET-Transferideen mit unterschiedlichem Nachweisstand gesichert. Neue passende Entwürfe verwenden diesen Einstieg und ergänzen belegte Erkenntnisse. Keine automatische Runtime-/Pool-/Staging-/Live-Freigabe.
