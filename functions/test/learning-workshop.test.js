@@ -25,3 +25,8 @@ test('follow-up help replays from the visible failed state and reset preserves t
  assert.equal(workshop.observe(follow,payload([{type:'toggle-part',value:1}])).answer,'2/6');
  assert.equal(workshop.observe(follow,payload([{type:'partition',value:2},{type:'reset',value:0}])).answer,'1/6');
 });
+
+test('a wrong total such as five parts is retained when help keeps the same source model',()=>{
+ const c=workshop.followupConfig(config,{tool:'fraction-board',goal:'equivalent',source:{numerator:1,denominator:3},final:{numerator:1,denominator:5},selection:[0]});
+ assert.deepEqual(c.initialState,{parts:5,selected:[0]});
+});

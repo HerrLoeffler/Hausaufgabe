@@ -28,7 +28,7 @@ function initial(c){
  if(c.initialState){const v=c.initialState;if(!Number.isInteger(v.parts)||v.parts<1||v.parts>36||!Array.isArray(v.selected)||v.selected.length>36||new Set(v.selected).size!==v.selected.length||v.selected.some(i=>!Number.isInteger(i)||i<0||i>=v.parts))bad('Ungültige Ausgangsdarstellung.');return {parts:v.parts,selected:[...v.selected]};}
  return {parts:c.denominator,selected:c.goal==='equivalent'?Array.from({length:c.numerator},(_,i)=>i):[]};}
 function followupConfig(c,observation){
- if(c?.goal!=='equivalent'||observation?.tool!==c.tool||observation.goal!==c.goal||observation.source?.numerator!==c.numerator||observation.source?.denominator!==c.denominator||observation.final?.denominator!==c.targetDenominator)return c;
+ if(c?.goal!=='equivalent'||observation?.tool!==c.tool||observation.goal!==c.goal||observation.source?.numerator!==c.numerator||observation.source?.denominator!==c.denominator)return c;
  const start={parts:observation.final.denominator,selected:observation.selection};
  const state=initial({...c,initialState:start});
  if(state.selected.length!==observation.final.numerator)bad('Ausgangsdarstellung und Beobachtung passen nicht zusammen.');
