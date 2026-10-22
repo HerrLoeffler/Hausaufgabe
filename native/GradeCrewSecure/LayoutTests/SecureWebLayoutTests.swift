@@ -125,7 +125,18 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler,WKNavig
             try await Task.sleep(nanoseconds:850_000_000)
             _=try await web.evaluateJavaScript("document.querySelectorAll('.secureQuestion')[5].appendChild(Object.assign(document.createElement('div'),{style:'height:360px'}));void 0")
         case "audio-pause":
-            _=try await web.callAsyncJavaScript("const audio=document.querySelector('audio');await Promise.race([audio.play(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Audio playback timeout')),2000))]);return !audio.paused;",arguments:[:],in:nil,contentWorld:.page)
+            // A cold simulator audio service can need more than two seconds.
+            // Still require real playback before testing navigation's pause.
+            let playing=try await web.callAsyncJavaScript("""
+                const audio=document.querySelector('audio');let timer;
+                try {
+                  await Promise.race([audio.play(),new Promise((_,reject)=>{
+                    timer=setTimeout(()=>reject(new Error('Audio playback timeout: '+JSON.stringify({readyState:audio.readyState,paused:audio.paused,error:audio.error?.code,visibility:document.visibilityState}))),10000);
+                  })]);
+                  return !audio.paused && audio.readyState>=2;
+                } finally { clearTimeout(timer); }
+                """,arguments:[:],in:nil,contentWorld:.page)
+            XCTAssertEqual(playing as? Bool,true,"The audio fixture must actually play before navigation pauses it")
             _=try await web.evaluateJavaScript("document.querySelectorAll('.secureQuestionNumber')[5].click()")
         case "freeze":_ = try await web.evaluateJavaScript("window.__final=gcFreezeAnswers();document.querySelector('textarea').value='late';window.__retry=gcFreezeAnswers()")
         case "reload":
