@@ -74,3 +74,16 @@ enum SecureSubmissionSummary {
         return "Noch \(open) \(open == 1 ? "Aufgabe" : "Aufgaben") offen. Trotzdem abgeben?"
     }
 }
+
+// Poll quickly in the waiting room; active exams keep their existing cadence.
+// A monotonic deadline avoids bursts after app suspension or a wall-clock change.
+struct SecureServerPollGate {
+    private var lastPoll: TimeInterval?
+    mutating func shouldPoll(at uptime: TimeInterval, waiting: Bool) -> Bool {
+        guard uptime.isFinite else { return false }
+        let interval: TimeInterval = waiting ? 1 : 5
+        if let lastPoll, uptime - lastPoll < interval { return false }
+        lastPoll = uptime
+        return true
+    }
+}

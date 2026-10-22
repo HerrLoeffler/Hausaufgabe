@@ -29,6 +29,7 @@ final class SecureExamCoordinator: ObservableObject {
     private var clock: SecureExamClock?
     private var timer: Timer?
     private var retryTimer: Timer?
+    private var serverPollGate = SecureServerPollGate()
     private var polling = false
     private var submitting = false
     private var ticks = 0
@@ -184,7 +185,7 @@ final class SecureExamCoordinator: ObservableObject {
         try persist()
         if result["status"] as? String == "ready" {
             phase = .waiting
-            message = "Du bist bereit. Die Lehrkraft startet den Test."
+            message = "Warte auf die Lehrkraft. Der Test startet automatisch nach ihrer Freigabe."
             return
         }
         guard result["status"] as? String == "running",
@@ -364,7 +365,7 @@ final class SecureExamCoordinator: ObservableObject {
             if remaining == 0 { await submit(auto: true); return }
         }
         ticks += 1
-        guard ticks % 20 == 0, !polling else { return }
+        guard !polling, serverPollGate.shouldPoll(at: SecureMonotonic.now, waiting: phase == .waiting) else { return }
         let generation = operations.generation
         polling = true
         defer { if operations.isCurrent(generation) { polling = false } }

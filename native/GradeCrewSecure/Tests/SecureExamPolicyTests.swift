@@ -61,3 +61,16 @@ final class SecureExamPolicyTests: XCTestCase {
         }
     }
 }
+
+extension SecureExamPolicyTests {
+    func testWaitingPollStartsQuicklyWithoutBurstOrChangingActiveCadence() {
+        var gate=SecureServerPollGate()
+        XCTAssertTrue(gate.shouldPoll(at:0,waiting:true))
+        XCTAssertFalse(gate.shouldPoll(at:0.25,waiting:true))
+        XCTAssertTrue(gate.shouldPoll(at:1,waiting:true))
+        XCTAssertFalse(gate.shouldPoll(at:1.25,waiting:false))
+        XCTAssertTrue(gate.shouldPoll(at:6,waiting:false))
+        XCTAssertTrue(gate.shouldPoll(at:100,waiting:true))
+        XCTAssertFalse(gate.shouldPoll(at:100,waiting:true))
+    }
+}

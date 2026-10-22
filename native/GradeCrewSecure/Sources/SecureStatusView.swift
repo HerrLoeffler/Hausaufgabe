@@ -13,7 +13,7 @@ struct SecureStatusPresentation {
         case .completed:kind = .success;title="Abgabe gespeichert";actionTitle="Zurück zum Start"
         case .recovery:kind = .warning;title=pendingSubmission ? "Übertragung ausstehend" : "Prüfung fortsetzen";actionTitle=pendingSubmission ? "Gesicherte Abgabe übertragen" : "Verbindung und Prüfungsstand prüfen"
         case .interrupted:kind = .warning;title="Prüfung unterbrochen";actionTitle="Verbindung und Prüfungsstand prüfen"
-        case .waiting:kind = .progress;title="Du bist bereit";actionTitle=nil
+        case .waiting:kind = .progress;title="Warte auf die Lehrkraft";actionTitle=nil
         case .submitting:kind = .progress;title="Abgabe wird gesendet";actionTitle=nil
         case .verifying:kind = .progress;title="Abgabe wird bestätigt";actionTitle=nil
         default:kind = .progress;title="Prüfungsmodus wird gestartet";actionTitle=nil
