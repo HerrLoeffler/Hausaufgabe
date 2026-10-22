@@ -51,3 +51,13 @@ Bild-Upload nicht abgeschlossen: filechooser verlor Backendzuordnung; anschließ
 Offen bleiben: neue Apple-Anmeldung und Händler-E-Mail/Telefon-Direktverifikation; Screenshot-Mediathek nach Anmeldung prüfen und fertiges Bild hochladen; präzise Inhalte für korrektes Grundschulziel4+ abklären; explizite Privacylabel-Publikationsfreigabe; AVV/Schulrollen/Provider-/Server-/Backupfristen gesondert belegen. Kein13+-Release und keine AppRevieweinreichung. Modell/Aufwand actual unknown; kein Wechsel behauptet.
 
 Nächster ausführbarer Schritt: nach Apple-Anmeldung vorhandene Screenshot-Mediathek prüfen, fehlendes echtes13Zollbild hochladen und Speichern/Reload belegen.
+
+
+## 22.10.2026 · Datenschutz veröffentlicht / Screenshot gespeichert / Händler-Nachweise
+Nach erneuter bestätigter Apple-Anmeldung: tatsächlichen13Zoll-Einstieg2064×2752 hochgeladen, Apple verarbeitet,1von10Bildern; nachReload vorhanden. Explizite Nutzerzustimmung zu den5vorbereiteten Datenkategorien erhalten, Veröffentlichung bestätigt; Apple zeigt „vonMartinLöfflerveröffentlicht“. NurDatenschutzangaben, keineAppRevieweinreichung/Storeveröffentlichung. Screenshotbelege lokal outputs/secure-store-closeout-20261022/asc-screenshot-saved.png und asc-privacy-published.png.
+
+Altersklarstellung: Nutzer will4+, bestätigt aber, dass fraglicheInhalte gelegentlich vorkommen können und Lehrkräfte für entsprechendeAltersstufen auswählen. Deshalb keine unwahre„Nie“-Umdeklaration. Alterswizard ohneÄnderungabgebrochen, tatsächlicher13+-Zwischenstand bleibt vonNutzer nichtzurVeröffentlichungakzeptiert. Lehrkräfte-/Testcode-Kontext inReviewnotizen sachlich ergänzt undnachReloadverifiziert, einschließlich fehlender eigenerAltersprüfung/proTest-Alterssperre; keine erfundeneSchutzfunktion. AppleGuidelines1.2/1.2.1 und2.3.6 sowieaktuelleDefinitionen gelesen.4+bleibtZiel, keinbestätigtesErgebnis. KeinApple-Support angeschrieben; keine technischeInhalts-/Alterskontrolle implementiert.
+
+Händlerflow mit bereits ausdrücklichbestätigtenidentischenGeschäftskontakten fortgesetzt. E-Mail-undSMS-Prüfung imaktuellenFlow akzeptiert (keineCodesinArtefakte/Repoübernommen). Apple verlangt jetzt„NachweisdesNamens“: KopieGeschäfts-/Gerichtsunterlagen,Deutsch,PDF/JPEG/PNGmax10MB. Nutzer umdirektenUpload beiApplegebeten; keinIdentitätsdokumentgelesen/hochgeladen. VollständigerHändlerantrag/Verifikation daherweiteroffen. AktiverIABTab13 wartetimNamensnachweisdialog,Tab12mitStoreentwurf erhalten; Chat-Linkunbekannt,verantwortlichbestehenderSecure-Fachchat. Kein neuerBuild/Hosting-/Backend-/Ruleswechsel.
+
+NächsterSchritt: Nutzer lädtNamensnachweisdirektbeiApplehoch; anschließendnachfolgendenApple-Schrittprüfen undHändlerantragvollständigabschließen.4+-Klassifikation bleibtseparaterEinreichungsblocker.

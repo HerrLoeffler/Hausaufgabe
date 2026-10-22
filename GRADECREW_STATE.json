@@ -2779,10 +2779,8 @@
     "physical_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
     "legal_certification": false,
     "remaining": [
-      "primary-school age-rating requirement: current13+ rejected by operator; target4+ requires accurate content/control assessment before submission",
-      "Apple trader phone verification and any subsequent required evidence",
-      "explicit publication of saved privacy labels",
-      "actual native13inch screenshot prepared; upload and additional exam screenshots pending Apple re-login/unlocked Mac; synthetic review code3F2RH3PU complete",
+      "primary-school4+ remains target; actual13+ unchanged pending truthful Apple classification or implemented controls",
+      "Apple trader name evidence (business/court document), subsequent checks and final submission/approval",
       "school roles/AVV plus verified provider/server/backup retention"
     ],
     "native_uploaded_build": "1.0(1141)",
@@ -2835,7 +2833,7 @@
       "native_teacher_upload_status": "success_uploaded_0.2.0_49_Apple_processed_internal_group_Grade_Crew_TesterL_1_tester",
       "secure_build_unchanged": "1.0(1141)",
       "apple_content_rights": "explicit_user_confirmed_saved_reload_verified",
-      "apple_review_explanation": "saved_reload_verified",
+      "apple_review_explanation": "rights_and_educational_age_rating_context_saved_reload_verified",
       "apple_store_draft_build": "1.0(1141)_selected_saved_reload_verified",
       "app_review_submitted": false,
       "backend_rules_changed": false,
@@ -2843,18 +2841,20 @@
       "native_teacher_upload_utc": "2026-10-21T21:50:39Z",
       "apple_age_rating": "13+_saved_reload_verified_explicit_user_confirmed;older_than_OS26_global12+regionalexceptions",
       "secure_physical_offline_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
-      "apple_phone_verification": "current_Apple_session_expired;relogin_and_direct_email_phone_verification_required",
-      "privacy_labels": "draft_not_published_user_requested_explanation_then_approval_pending",
+      "apple_phone_verification": "email_and_SMS_accepted_current_flow_20261022;Apple_requires_business_or_court_document_for_name;not_finally_submitted_or_approved",
+      "privacy_labels": "explicit_user_authorized_published_20261022_Apple_visible_success",
       "age_rating_followup": {
         "user_requirement": "Secure must be usable by primary-school children including age6",
         "target": "4+_Apple_global;no6+globalrating",
         "current_saved_rating": "13+",
         "current_rating_accepted_for_release": false,
-        "status": "clarifying_actual_content_before_truthful_reclassification",
+        "status": "operator_confirms_age_rated_educational_subjects_may_occur_teacher_selects_age_level;no_false_never_answers;Apple_classification_or_real_controls_required",
         "reason": "prior questionnaire too broad; distinguish educational topics from Apple's defined depictions or medical/treatment instructions",
         "apple_reference": "https://developer.apple.com/help/app-store-connect/reference/app-information/age-ratings-values-and-definitions/",
         "comparison": "SafeExamBrowser Apple Store4+within-appcontrols;notapprovalforGradeCrew",
-        "app_review_submitted": false
+        "app_review_submitted": false,
+        "operator_clarification": "Teacher assigns appropriate content to class; even potentially disturbing material cannot be declared categorically absent. Target4+ retained, current13+ notaccepted_for_release.",
+        "apple_review_context": "saved_reload_verified_teacher_code_distribution_no_public_feed_no_existing_pupil_age_verification_or_automated_per_test_age_gate_claimed"
       },
       "apple_review_test": {
         "code": "3F2RH3PU",
@@ -2874,7 +2874,7 @@
           2752
         ],
         "actual_app": true,
-        "upload": "not_completed_filechooser_interrupted_then_Apple_session_expired",
+        "upload": "actual_13inch_entry_2064x2752_uploaded_Apple_processed_1_of_10_reload_verified",
         "local_artifacts": "outputs/secure-store-closeout-20261022",
         "additional_exam_screens": "awaiting_unlocked_Mac"
       }
