@@ -2841,7 +2841,7 @@
       "native_teacher_upload_utc": "2026-10-21T21:50:39Z",
       "apple_age_rating": "13+_saved_reload_verified_explicit_user_confirmed;older_than_OS26_global12+regionalexceptions",
       "secure_physical_offline_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
-      "apple_phone_verification": "email_and_SMS_accepted_current_flow_20261022;Apple_requires_business_or_court_document_for_name;not_finally_submitted_or_approved",
+      "apple_phone_verification": "email_SMS_accepted_in_flow;final_Contact_information_confirmation_generic_Apple_error_reproduced_once_20261022_1210UTC;not_submitted_or_approved;filled_dialog_preserved",
       "privacy_labels": "explicit_user_authorized_published_20261022_Apple_visible_success",
       "age_rating_followup": {
         "user_requirement": "Secure must be usable by primary-school children including age6",
