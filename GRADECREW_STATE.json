@@ -2648,12 +2648,14 @@
     },
     "verified_hosting_assets": 175,
     "real_browser": "balance repeated-error path and x4; text repeated-error path and correct ordered sentence; number-line API chain correct→harder→2 errors→microstep→original→fresh probe",
-    "remaining": "four concrete error/help-return paths recorded; last text-renderer/reviewer consistency fix deploying; normal student/Classroom access, physical timed cleanup, devices, retention/transfer and full-topic/Quali content acceptance unverified",
+    "remaining": "Restore own test runtime first: generic startup failure and HTTP500, cause unknown; final text rendering/reviewer fix18905bb not deployed. Then live pool reuse, normal student/Classroom access, timed physical cleanup, devices, retention/transfer and per-topic/Quali acceptance.",
     "production_changed": false,
     "handoff": "workstreams/adaptive-practice-01.md",
     "stage": "staging_deployed",
     "app_integration": "draft PR262, not merged",
     "candidate_backend_source": "18905bb6eec6fc87669cd02c8b204de4a2b01579",
-    "candidate_backend_deploy": "19_in_progress"
+    "candidate_backend_deploy": "19_and20_failed_cloud_run_startup",
+    "runtime_status": "blocked_http500_including_unchanged_catalog_and_profile",
+    "live_pool_reuse": "unverified_due_to_runtime_blocker"
   }
 }
