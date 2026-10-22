@@ -49,3 +49,14 @@ Martin beauftragt direkt in diesem Fachchat: gradecrew.de jetzt mit bestehender 
 Netcup jetzt aktiv mit CloudDNS. Originalzone sichtbar und gesichert in analysis/domain-cutover-20261022/netcup-zone-before.json: ein Parkplatz-A @46.38.243.234 TTL3600; keineMailrecords, keineAAAA. SOA/Nameserver unverändert. Firebaseanforderungen frisch18:49UTC gelesen: A199.36.158.100 + TXT hosting-site=hausaufgabe-staging; wwwCNAMEhausaufgabe-staging.web.app, beide aktuellen ACME-TXT. Genau diesen Satz in Netcup vorbereitet/geprüft und regulär Apply changes/Yes continue bestätigt. Netcup meldet Upload/Deployment läuft, letzteAnzeige50%/12.5%; keine erneuteSubmission. Vor unabhängigen Host-/TLS-/Authbelegen kein fertigerCutover.
 
 NächsterSchritt: Netcup-Revision bis explizitem Deploymentabschluss beobachten, dann autoritativeDNS und FirebaseOwnership/TLS prüfen. Authdomains/KanonischeURLs erst nach Hostnachweis; Tests nur synthetisch. KeineAccounts aus echtenSchülerdaten, keine fremdenTestFlightänderungen. Modell angefragt nicht spezifiziert, actualunknown; kein Modellswitch oder bezahlterProviderstart.
+
+
+## DNS-Deployment bestätigt, HTTPS wartet — 18:55 UTC
+
+Netcup nach Neuladen: aktuelle Revision enthält exakt fünf neue/angepasste Records, keine offenen DesiredRevisionänderungen. Autoritative5/5Netcupnameserver liefern199.36.158.100; alle fünf konkretenRecords auf firstns korrekt. dns-published.json und cutover-progress.json sichernBelege. Screenshot lokal/private/tmp/gradecrew-domain-dns-20261022.png zeigt gespeicherteRevision, keineCredentials. DNS nicht erneut speichern.
+
+Firebase18:55:54UTC prüftnochgecacheteParkadresse46.38.243.234, HOST_MISMATCH/OWNERSHIP_MISSING/CERT_VALIDATING. DirekterHTTPScheckscheitertNamensprüfung, keineUmgehung. Firebase nenntfürDNS/Zertifikatsverteilung bis24Stunden (https://firebase.google.com/docs/hosting/custom-domain). KeinnachgewiesenerKonfigurationsfehlernachheutigemNameserverabgleich; keinVersuchdurchNeuanlegen/Nameserverwechselzuumgehen.
+
+10/10Domain-/Umgebungs-/Buildtests erneutausgeführtPASS, unveränderterProduktcode. API-/BrowserLogin, SchülerbeitrittundtatsächlicheQR-Erzeugung auf neuerOrigin ausdrücklichnochblockiertdurchTLS, physischerKamerascanungeprüft. KeineAuthallowlistoderkanonischeReleaseoriginvorTLSnachweisumgestellt. MainkoordinationPR283aufaktuellenmain970db464 unterErhaltungallerbisherigenWorkstream-/Release-/Nativebelegekonfliktbewusstabgeglichen, Remoteefc761a2992d1ac68a7f03ab974b6ff92aa24ae4. KeineMerge-/ProduktdeployfreigabeausDokumentationsCIableiten.
+
+AktuellerexternerBlockerundgenaunächsterSchritt: FirebasebestätigtOwnershipundstelltgültigesZertifikataus, anschließendHTTPS/WWWquery/manifestgleicheApp/AdditiveAuthdomains/synthetischerLogin/Schüler-/QR-Prüfung. KeineBackgroundautomationangelegt, keinungeprüfterLiveabschluss. UrsprünglicheTask-/Budget-/Versuchshistorieerhalten.

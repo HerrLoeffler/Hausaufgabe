@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-22T18:55:18.223389+00:00",
+  "servers": [
+    {
+      "server": "netcup.firstns.cc",
+      "a": "199.36.158.100"
+    },
+    {
+      "server": "netcup.secondns.at",
+      "a": "199.36.158.100"
+    },
+    {
+      "server": "netcup.thirdns.de",
+      "a": "199.36.158.100"
+    },
+    {
+      "server": "netcup.fourthns.systems",
+      "a": "199.36.158.100"
+    },
+    {
+      "server": "netcup.fifthns.com",
+      "a": "199.36.158.100"
+    }
+  ]
+}

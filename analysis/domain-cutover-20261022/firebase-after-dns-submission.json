@@ -1,0 +1,206 @@
+{
+  "observedAt": "2026-10-22T18:52:26.306Z",
+  "project": "hausaufgabe-staging",
+  "domains": {
+    "customDomains": [
+      {
+        "name": "projects/950775032930/sites/hausaufgabe-staging/customDomains/gradecrew.de",
+        "createTime": "2026-10-22T13:28:21.717025340Z",
+        "updateTime": "2026-10-22T13:28:21.717025420Z",
+        "etag": "W/\"1792675701\"",
+        "hostState": "HOST_MISMATCH",
+        "ownershipState": "OWNERSHIP_MISSING",
+        "requiredDnsUpdates": {
+          "discovered": [
+            {
+              "domainName": "gradecrew.de",
+              "records": [
+                {
+                  "domainName": "gradecrew.de",
+                  "type": "A",
+                  "rdata": "46.38.243.234",
+                  "requiredAction": "REMOVE"
+                }
+              ]
+            }
+          ],
+          "desired": [
+            {
+              "domainName": "gradecrew.de",
+              "records": [
+                {
+                  "domainName": "gradecrew.de",
+                  "type": "A",
+                  "rdata": "199.36.158.100",
+                  "requiredAction": "ADD"
+                },
+                {
+                  "domainName": "gradecrew.de",
+                  "type": "TXT",
+                  "rdata": "hosting-site=hausaufgabe-staging",
+                  "requiredAction": "ADD"
+                }
+              ]
+            }
+          ],
+          "checkTime": "2026-10-22T18:51:45.015411492Z"
+        },
+        "issues": [
+          {
+            "code": 9,
+            "message": "One or more of Hosting's HTTP GET request for the ACME challenge failed: 46.38.243.234: Request failed",
+            "details": [
+              {
+                "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+                "reason": "ACME_HTTP_ERROR",
+                "domain": "firebasehosting.googleapis.com",
+                "metadata": {
+                  "failures": "46.38.243.234: Request failed"
+                }
+              }
+            ]
+          }
+        ],
+        "certPreference": "PROJECT_GROUPED",
+        "cert": {
+          "type": "TEMPORARY",
+          "state": "CERT_VALIDATING",
+          "verification": {
+            "dns": {
+              "discovered": [
+                {
+                  "domainName": "_acme-challenge.gradecrew.de"
+                }
+              ],
+              "desired": [
+                {
+                  "domainName": "_acme-challenge.gradecrew.de",
+                  "records": [
+                    {
+                      "domainName": "_acme-challenge.gradecrew.de",
+                      "type": "TXT",
+                      "rdata": "g-DBj1nHgVXuiBpr7ygd7RQBmtoH6ue3Dw5TUUaUAuc",
+                      "requiredAction": "ADD"
+                    }
+                  ]
+                }
+              ],
+              "checkTime": "2026-10-22T18:49:57.691511153Z"
+            },
+            "http": {
+              "path": "/.well-known/acme-challenge/oS5C8TA92HFrkW5BKLo451_xMY02KleSykF4u2GXJ8NlaCKqCuE8OW3aNOc4-_7b",
+              "desired": "oS5C8TA92HFrkW5BKLo451_xMY02KleSykF4u2GXJ8NlaCKqCuE8OW3aNOc4-_7b.M0-GObbb5ePi63ASQsPKBrDqfgayGnOWpyrEF0nHqug",
+              "lastCheckTime": "2026-10-22T18:49:57.691511153Z",
+              "checkError": {
+                "code": 9,
+                "message": "One or more of Hosting's HTTP GET request for the ACME challenge failed: 46.38.243.234: Request failed",
+                "details": [
+                  {
+                    "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+                    "reason": "ACME_HTTP_ERROR",
+                    "domain": "firebasehosting.googleapis.com",
+                    "metadata": {
+                      "failures": "46.38.243.234: Request failed"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "issues": [
+            {
+              "code": 9,
+              "message": "One or more of Hosting's HTTP GET request for the ACME challenge failed: 46.38.243.234: Request failed",
+              "details": [
+                {
+                  "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+                  "reason": "ACME_HTTP_ERROR",
+                  "domain": "firebasehosting.googleapis.com",
+                  "metadata": {
+                    "failures": "46.38.243.234: Request failed"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "name": "projects/950775032930/sites/hausaufgabe-staging/customDomains/www.gradecrew.de",
+        "createTime": "2026-10-22T13:28:23.245058266Z",
+        "updateTime": "2026-10-22T13:28:23.245058346Z",
+        "etag": "W/\"1792675703\"",
+        "hostState": "HOST_UNHOSTED",
+        "ownershipState": "OWNERSHIP_MISSING",
+        "requiredDnsUpdates": {
+          "desired": [
+            {
+              "domainName": "www.gradecrew.de",
+              "records": [
+                {
+                  "domainName": "www.gradecrew.de",
+                  "type": "CNAME",
+                  "rdata": "hausaufgabe-staging.web.app",
+                  "requiredAction": "ADD"
+                }
+              ]
+            }
+          ],
+          "checkTime": "2026-10-22T18:51:49.032433367Z"
+        },
+        "certPreference": "PROJECT_GROUPED",
+        "cert": {
+          "type": "TEMPORARY",
+          "state": "CERT_VALIDATING",
+          "verification": {
+            "dns": {
+              "discovered": [
+                {
+                  "domainName": "_acme-challenge.www.gradecrew.de"
+                }
+              ],
+              "desired": [
+                {
+                  "domainName": "_acme-challenge.www.gradecrew.de",
+                  "records": [
+                    {
+                      "domainName": "_acme-challenge.www.gradecrew.de",
+                      "type": "TXT",
+                      "rdata": "lb-Mh94RsH5khMsZV2L--VSEM68Jp2URBu0xFLV-UGE",
+                      "requiredAction": "ADD"
+                    }
+                  ]
+                }
+              ],
+              "checkTime": "2026-10-22T18:51:50.624826998Z"
+            },
+            "http": {
+              "path": "/.well-known/acme-challenge/rer1jNJ2GX4cpjvSv2g9z_qw9YDaL5zn_XhsVOU-14W9ZjhGLOwVyhMog0g2hi_A",
+              "desired": "rer1jNJ2GX4cpjvSv2g9z_qw9YDaL5zn_XhsVOU-14W9ZjhGLOwVyhMog0g2hi_A.M0-GObbb5ePi63ASQsPKBrDqfgayGnOWpyrEF0nHqug",
+              "lastCheckTime": "2026-10-22T18:51:50.624826998Z"
+            }
+          }
+        },
+        "redirectTarget": "gradecrew.de"
+      }
+    ]
+  },
+  "auth": {
+    "authorizedDomains": [
+      "localhost",
+      "hausaufgabe-staging.firebaseapp.com",
+      "hausaufgabe-staging.web.app",
+      "hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+      "hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app",
+      "hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app",
+      "hausaufgabe-staging--gradecrew-math-classroom-20261016-5qhq3iqm.web.app",
+      "hausaufgabe-staging--legal-20261021-c6mgeg1s.web.app"
+    ]
+  },
+  "manifest": {
+    "commit": "ab6fcc9d72aa9d401eba2ec4db31c01f7758c0f0",
+    "version": "2.3.1-gc45-rc1",
+    "environment": "production",
+    "project": "hausaufgabe-staging"
+  }
+}

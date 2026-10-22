@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-22T18:55:54.448Z",
+  "task": "GC-DOMAIN-01",
+  "domain": "gradecrew.de",
+  "dns": "published_and_all_five_authoritative_nameservers_match",
+  "hostingContentChanged": false,
+  "releaseCommit": "ab6fcc9d72aa9d401eba2ec4db31c01f7758c0f0",
+  "domains": [
+    {
+      "name": "projects/950775032930/sites/hausaufgabe-staging/customDomains/gradecrew.de",
+      "hostState": "HOST_MISMATCH",
+      "ownershipState": "OWNERSHIP_MISSING",
+      "certState": "CERT_VALIDATING",
+      "dnsCheck": "2026-10-22T18:54:45.779708997Z"
+    },
+    {
+      "name": "projects/950775032930/sites/hausaufgabe-staging/customDomains/www.gradecrew.de",
+      "hostState": "HOST_UNHOSTED",
+      "ownershipState": "OWNERSHIP_MISSING",
+      "certState": "CERT_VALIDATING",
+      "dnsCheck": "2026-10-22T18:54:49.699792455Z"
+    }
+  ],
+  "https": {
+    "passed": false,
+    "observedError": "certificate subject name does not match gradecrew.de; TLS validation not bypassed"
+  },
+  "tests": {
+    "localLinkEnvironmentBuild": {
+      "passed": 10,
+      "failed": 0
+    },
+    "browserLogin": "blocked_by_TLS",
+    "browserStudentAccess": "blocked_by_TLS",
+    "browserQr": "blocked_by_TLS",
+    "physicalCameraScan": "not_tested"
+  },
+  "authAuthorizedDomainsChanged": false,
+  "canonicalOriginChanged": false,
+  "next": "Firebase observes DNS and issues certificate, then exact HTTPS/Auth/student/QR acceptance. Existing school URL remains operational."
+}
