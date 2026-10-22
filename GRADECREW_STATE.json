@@ -1942,7 +1942,7 @@
         "site": "hausaufgabe-staging",
         "hosting_commit": "ab6fcc9d72aa9d401eba2ec4db31c01f7758c0f0",
         "hosting_version": "4641f2c63bbbb2f3",
-        "domain": "HOST_ACTIVE/OWNERSHIP_ACTIVE; valid HTTPS",
+        "domain": "HOST_ACTIVE/OWNERSHIP_ACTIVE/CERT_ACTIVE for both apex and WWW",
         "www_http": "redirect preserves path and test query",
         "asset_verification": "all 173 manifest files on new origin match",
         "auth": "only gradecrew.de/www added; previous domains and all unrelated config preserved",
@@ -1958,10 +1958,20 @@
         "native_pr": 289,
         "native_candidate": "c85deddc408382f5b72aafdce0f7c33e917a11c8",
         "native_ci": 39848507858,
-        "native_status": "owner active; review/local checks PASS; upload pending",
-        "physical_device": "not_performed"
+        "native_status": "integrated after successful complete phone/tablet/native CI; TestFlight release chains running; no upload claim",
+        "physical_device": "not_performed",
+        "old_session_after_new_logout": "PASS; old signed-in session unchanged after logout on gradecrew.de",
+        "native_integration": "24c0f856384f037ebe156e20dc20a03ae10c4cf8",
+        "native_ci_conclusion": "success",
+        "native_layouts": "phone/tablet each114 native +204 web cases; 0 issues",
+        "native_testflight_runs": {
+          "secure": 39851773269,
+          "teacher": 39851773260,
+          "status": "in_progress"
+        },
+        "apple_store_urls": "Secure6817526711 and Teacher6817547234 Support/Marketing/Privacy URLs saved to gradecrew.de and reload verified; no AppReview/contracts/labels changes"
       },
-      "next_action": "Collect Native owner CI/TestFlight/Store URL receipts; preserve old account/links and do not migrate or rename Firebase/Auth/API/Keychain identifiers."
+      "next_action": "Existing Native owner continues release chains Secure39851773269 and Teacher39851773260; collect upload/Apple receipts without duplicate starts, then update only that remaining acceptance scope."
     }
   ],
   "deployments": [
