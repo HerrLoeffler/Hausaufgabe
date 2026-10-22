@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-21T15:24:39.544556+00:00",
+  "updatedAt": "2026-10-22T12:43:54.874Z",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -681,7 +681,8 @@
       "state": "active",
       "handoff": "workstreams/secure-legal-release-20261021.md",
       "relatedBranches": [
-        "feature/public-legal-pages-20261021"
+        "feature/public-legal-pages-20261021",
+        "fix/secure-return-after-sync-20261022"
       ]
     }
   ]
