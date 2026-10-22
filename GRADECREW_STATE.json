@@ -2642,7 +2642,7 @@
     "source_commit": "424473481a3bcb8818289f79f760772883f0492c",
     "integration_commit": "5a248621f315c08e30a2639b162434526b4e7349",
     "native_branch": "feature/native-live-staging-20261018",
-    "native_commit": "aa39a9fbbec550f0cf42bfd22ced6719d02dad60",
+    "native_commit": "acb7060c90a601feec28f49b22f6e9990f8e696a",
     "teacher_testflight_run": 39678556334,
     "secure_testflight_run": 39629456276,
     "testflight_status": "teacher_0.2.0_49_and_secure_1.0_1141_uploaded_processed_internal_groups_assigned;Secure_offline_user_confirmed_20261021",
@@ -2742,6 +2742,58 @@
       "invited_testers": 1,
       "test_notes": "saved_reload_verified",
       "physical_acceptance": "not_yet_tested_this_teacher_build"
+    },
+    "secure_return_sync_followup": {
+      "task_ids": [
+        "GC-IOS-02",
+        "GC-RELEASE-06"
+      ],
+      "pr": 277,
+      "fix_merge": "1f206aed95ceccd22cd738ca67f68ae8ca857383",
+      "ci_repair_pr": 280,
+      "candidate": "acb7060c90a601feec28f49b22f6e9990f8e696a",
+      "run": 39784682376,
+      "status": "full_ci_in_progress_no_upload_yet",
+      "prior_run": {
+        "id": 39781850861,
+        "attempt": 1,
+        "native": "900_passed_including_actual_return_UI",
+        "web_mini": "360_geometry_12_interactions_passed",
+        "web_large": "360_geometry_passed_audio_startup_timeout_2seconds",
+        "upload": "skipped"
+      },
+      "local": {
+        "swift": 28,
+        "python": 20,
+        "node": 24,
+        "controller": 5,
+        "actual_return_ui": 1,
+        "layout": 40,
+        "audio_navigation": 12
+      },
+      "physical_acceptance": "new_candidate_pending;user_confirmed_offline_sync_on1141_and_reported_return_failure",
+      "handoff": "workstreams/secure-return-after-sync-20261022.md"
+    },
+    "teacher_direct_entry_followup": {
+      "task_id": "GC-IOS-02",
+      "pr": 279,
+      "merge": "60927e062e2a4cd52493cfcbdd53603c1f5d1add",
+      "run": 39783328084,
+      "status": "full_ci_in_progress_no_upload_yet",
+      "local": {
+        "python_scripts": 15,
+        "node": 62,
+        "simulator_build": "Release_iphone_ipad_passed",
+        "actual_signed_out_preview": [
+          "iphone16",
+          "ipad13"
+        ]
+      },
+      "physical_authenticated_walkthrough": "pending",
+      "remy_implementation": "preserved_entry_chooser_hidden",
+      "website_changed": false,
+      "secure_changed": false,
+      "handoff": "workstreams/teacher-direct-entry-20261022.md"
     }
   },
   "public_legal_information_20261021": {
