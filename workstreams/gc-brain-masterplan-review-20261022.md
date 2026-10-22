@@ -1,5 +1,39 @@
 # GC-BRAIN-01 - Masterplanreview und Revision 1.1
 
+## Aktueller Abschluss dieser begrenzten Planreviewrunde
+
+Die Zentrale hat den Abschluss der unabhängigen Delta-Reviews bestätigt. Der Daten-Nachreview wurde hier vollständig gelesen und seine Quellenbindung geprüft. Der einzige maßgebliche P1-Planbefund zum Grün-/Entzugsweg ist am unveränderlichen Quellstand `907a961248ad0170cefb7bdd942c36b0b7eaf880` geschlossen. Die geprüften Erweiterungen und ihre benannten Schnittstellen haben damit eine gezielte PLANabnahme; in diesen Scopeteilen sind keine maßgeblichen Findings offen.
+
+| Prüfbereich | Akzeptierte Quelle | Ergebnis und genaue Grenze |
+| --- | --- | --- |
+| Produkt / SPEC | `84de180da7e6f44e825460c7eca5a2d57dee53bf` | PASS, Planreife 9/10 für das geprüfte Delta: Vierernavigation, Aufgabenqualitätsblock, gestufter Firmeneingang und konkret geprüfte Anschlüsse. |
+| Runtime / STANDARDS | `84de180da7e6f44e825460c7eca5a2d57dee53bf` | PASS, Planreife 9/10 ausschließlich für das geprüfte Runtime-/Liefergate-Delta und seine unveränderten Verträge. |
+| Daten / STANDARDS, enger P1-Nachtrag | `907a961248ad0170cefb7bdd942c36b0b7eaf880` | PASS, Planreife 9/10 für gemeinsame Eligibility-/Entzugsrevision, tatsächliche Startgrenze und vier Konkurrenzfälle; ursprünglicher P1 geschlossen. Der Vorbericht mit CHANGES_REQUIRED bleibt erhalten. |
+
+Die Bewertungen sind begründete Einschätzungen der jeweiligen Planreife. Sie sind keine gemessenen Fertigstellungsprozente, kein Gesamt-PASS aller 115 Seiten, keine nachträgliche Gesamtabnahme von Masterplan 1.0 oder sämtlichen 28 Umsetzungspaketen und keine Produkt-, P0-, WP24-, Runtime- oder Livefreigabe. AT50 a/b und AT59 c/d bleiben geplante, nicht ausgeführte Produktprüfungen. Sichere bestehende Host-P0-Arbeit bleibt unabhängig; Umsetzung der Qualitäts- und Mailanschlüsse benötigt weiterhin P0-, Port- und Ownerfreigabe.
+
+### Unveränderte Reviewberichte und Nachweise
+
+Die folgenden Berichte liegen lokal im gemeinsamen ChatGPT-Projektworkspace unter `outputs/brain-v1-plan-review-20261021/`, nicht als neue Repo-Dateien dieses Abschlusscommits:
+
+- `product-masterplan-v1.1.md`: SHA256 `d9b3d18f7e018c8ad40e0f6298f3fa4f24a4de0720436d9eb93f66d57ca105e5`.
+- `runtime-masterplan-v1.1.md`: SHA256 `e0733cf379da7de636498e0451e5bd6f13fa8c4f03f67556e61325186e278a75`.
+- Ursprünglicher Datenbefund: `data-dispatch-masterplan-v1.1.md`, unverändert erhalten.
+- Abschließender Daten-Nachreview: `data-dispatch-masterplan-v1.1-delta.md`, SHA256 `a70c0a547e4cb7fa64d9646996ae37cde7bc19bbbf3fcc9adf3752b0f01b80a6`.
+
+Die Dokumentationschecks am Quellfix `907a961` wurden separat erneut über GitHub verifiziert: [Project handoff checks 39854848770](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39854848770) und [GradeCrew Development Status 39854848768](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39854848768), jeweils completed/success. Diese erfolgreichen Läufe bleiben exakt diesem Commit zugeordnet. Neue Checks eines reinen Abschlusscommits sind eigene Dokumentationsbelege, keine zusätzlichen Produkt- oder Fachreviewbelege.
+
+### Übergabe und Ausgabestand
+
+Dieser Abschluss ändert ausschließlich diese HDF. Die akzeptierten Kapitelquellen an `84de180` plus engem Fix an `907a961` bleiben unverändert; keine erneute Umplanung oder Vollprüfung erforderlich. PDF/HTML/kombinierte Markdown-Ausgabe/ZIP bleiben ausdrücklich historische Ausgaben zu `84de180`, enthalten den P1-Fix nicht und werden für diesen Abschluss nicht neu erzeugt. Frühere Pending-Angaben in Quellmanifest/QA beschreiben deren damaligen Sicherungsstand; der aktuelle Reviewabschluss ist ausschließlich hier nachgeführt.
+
+Nächster Schritt bei der Zentrale: den vorhandenen sicheren Host-P0 und begrenzte L0-Nachweisbeiträge der drei bestehenden Aufgabenfachstränge koordinieren. Shared TODO/Registry/STATE führt ausschließlich der vereinbarte Integrationswriter nach. Keine Übernahme von Produkt-, Domain-, Native- oder Korrekturmodusarbeit, kein Merge/Deployment und keine zusätzliche Task-/Budgetfamilie. Vorhandene Versuche und Reservierungen bleiben erhalten. Requested Modell/Effort für den begrenzten Vertragsfix: gpt-6.1-sol/medium; actual Modell/Effort/Usage weiterhin unknown.
+
+## Historischer Erstellungs- und Fixverlauf
+
+Die folgenden Abschnitte bleiben als Versuchshistorie erhalten. Ihre damaligen offenen Reviewangaben werden durch den obigen, exakt begrenzten Abschluss fortgeschrieben.
+
+
 Stand 22.10.2026. Ausführender Planungsfachchat: GC · Firmenzentrale – Konzept & Bauplan, Thread 01a15f30-b738-7d50-8aa2-f34447eb5723. Koordination: GradeCrew Zentrale, Thread 01a10df6-736b-7a62-bd38-2724cf254c2e.
 
 ## Auftrag und Scope
