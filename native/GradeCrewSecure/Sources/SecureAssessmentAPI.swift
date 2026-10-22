@@ -10,7 +10,7 @@ final class SecureAssessmentAPI {
     private let session: URLSession
     init(session: URLSession = .shared) { self.session = session }
     func invoke(_ name: String, data: [String: Any]) async throws -> [String: Any] {
-        guard ["getAssessmentInfo", "startAssessmentAttempt", "resumeAssessmentAttempt", "submitAssessmentAttempt", "getAssessmentReceipt", "recordSecureExamTelemetry"].contains(name) else {
+        guard ["getAssessmentInfo", "startAssessmentAttempt", "resumeAssessmentAttempt", "submitAssessmentAttempt", "getAssessmentReceipt", "recordSecureExamTelemetry", "classroomAccess"].contains(name) else {
             throw Failure(code: "INVALID_ARGUMENT", message: "Unbekannte Prüfungsanfrage.")
         }
         let url = SecureReleaseEnvironment.functionsURL.appendingPathComponent(name)

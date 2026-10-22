@@ -7,6 +7,8 @@ struct SecureAttemptIdentity: Codable {
     var clientID = UUID().uuidString.replacingOccurrences(of: "-", with: "")
     var token = UUID().uuidString.replacingOccurrences(of: "-", with: "") + UUID().uuidString.replacingOccurrences(of: "-", with: "")
     var attemptID: String?
+    var classroom: SecureClassroomLaunch?
+    var startRequestSent: Bool?
 }
 protocol SecureAttemptPersistence {
     func identity() throws -> SecureAttemptIdentity?

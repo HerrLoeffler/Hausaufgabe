@@ -4,5 +4,16 @@
 <dict>
 	<key>GradeCrewSecureMode</key>
 	<string>staging-exam</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>de.gradecrew.secure.student</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>gradecrew-secure</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

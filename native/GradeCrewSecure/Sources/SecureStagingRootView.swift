@@ -9,6 +9,7 @@ struct SecureStagingScreen: View {
     @ObservedObject var assessment: SecureAssessmentSession
     @Environment(\.scenePhase) private var scenePhase
     @State private var confirmStart = false
+    @State private var showPupilAccess = false
     private let blue = SecureTheme.brand
     private let background = SecureTheme.canvas
 
@@ -31,14 +32,34 @@ struct SecureStagingScreen: View {
                     Text("TESTUMGEBUNG 2026").font(.caption.bold()).foregroundStyle(SecureTheme.secondaryText)
                     #endif
                     if model.phase == .code || model.phase == .identity {
+                        #if GRADECREW_STAGING
+                        Button("Persönlicher Schülerzugang – Meine Tests") { model.cancelPersonalSelection();showPupilAccess=true }.buttonStyle(.borderedProminent)
+                        #endif
+                        if model.personalSelection {
+                            VStack(spacing:16) {
+                                Text(model.name).font(.headline)
+                                Text(model.title).font(.title2.bold())
+                                Text("Du bist mit deinem persönlichen Schülerzugang angemeldet.")
+                                Button("Diesen Test starten") { confirmStart=true }.buttonStyle(.borderedProminent)
+                                Button("Andere zugewiesene Tests") { model.cancelPersonalSelection();showPupilAccess=true }
+                            }
+                        } else {
                         SecureEntryView(code:$model.code,name:$model.name,busy:model.busy,message:model.message) {
                             Task { await model.preflight(); if model.phase == .identity { confirmStart = true } }
+                        }
                         }
                     } else { statusContent }
                 }
             }
         }
         .background(background.ignoresSafeArea()).foregroundStyle(SecureTheme.text).tint(blue).preferredColorScheme(.light)
+        #if GRADECREW_STAGING
+        .sheet(isPresented:$showPupilAccess) { SecurePupilAccessView { launch in
+            if await model.preparePersonal(launch) { showPupilAccess=false;confirmStart=true;return nil }
+            return model.message.isEmpty ? "Bitte zuerst den gespeicherten Versuch fortsetzen." : model.message
+        } }
+        .onOpenURL { url in if url.scheme=="gradecrew-secure",url.host=="student",model.phase == .code { showPupilAccess=true } }
+        #endif
         .onChange(of:scenePhase) { _, phase in if phase == .active { Task { await model.foreground() } } }
         .confirmationDialog("\(model.title)\n\(model.details)\nDas Gerät wird für diese Prüfung gesperrt.", isPresented:$confirmStart, titleVisibility:.visible) {
             Button("Prüfungsmodus starten") { Task { await model.startOrRecover() } }

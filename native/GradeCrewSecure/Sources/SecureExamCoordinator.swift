@@ -25,6 +25,13 @@ final class SecureExamCoordinator: ObservableObject {
     private let api:SecureAssessmentAPI
     private let store:any SecureAttemptPersistence
     private var identity: SecureAttemptIdentity?
+    private var selectedClassroom: SecureClassroomLaunch?
+    var personalSelection: Bool { selectedClassroom != nil }
+    func preparePersonal(_ launch: SecureClassroomLaunch) async -> Bool {
+        guard identity == nil, !busy, phase == .code || phase == .identity else { return false }
+        selectedClassroom=launch;code=launch.quizID;name=launch.displayName;phase = .code
+        await preflight();let ready = phase == .identity;if !ready { selectedClassroom=nil };return ready
+    }
     private var work = SecureSavedWork()
     private var clock: SecureExamClock?
     private var timer: Timer?
@@ -97,6 +104,7 @@ final class SecureExamCoordinator: ObservableObject {
     }
     func runLifecycleTick() async { await tick() }
 #endif
+    func cancelPersonalSelection() { guard identity == nil, !busy else { return };selectedClassroom=nil;phase = .code;code="";name="";message="" }
     func preflight() async {
         guard !busy, let normalized = SecureInputPolicy.code(code) else { message = "Bitte einen gültigen Testcode eingeben."; return }
         let generation = operations.generation
@@ -126,10 +134,19 @@ final class SecureExamCoordinator: ObservableObject {
         defer { if operations.isCurrent(generation) { busy = false } }
         do {
             if identity == nil {
+                if let personal=selectedClassroom {
+                    let workspace=try await api.invoke("classroomAccess",data:["command":"activity","payload":["sessionToken":personal.sessionToken]])
+                    try ensureCurrent(generation)
+                    let assignments=workspace["assignments"] as? [[String:Any]] ?? []
+                    guard assignments.contains(where:{ ($0["id"] as? String)==personal.assignmentID && ($0["quizId"] as? String)==personal.quizID && ($0["generation"] as? NSNumber)?.intValue==personal.generation && ($0["status"] as? String)=="available" }) else {
+                        throw SecureAssessmentAPI.Failure(code:"FAILED_PRECONDITION",message:"Diese Zuweisung wurde geändert oder bereits begonnen. Bitte die Testübersicht aktualisieren.")
+                    }
+                }
                 guard let code = SecureInputPolicy.code(code), !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, name.count <= 120 else {
                     throw SecureAssessmentAPI.Failure(code: "INVALID_ARGUMENT", message: "Bitte Testcode und Name oder Kürzel prüfen.")
                 }
                 identity = SecureAttemptIdentity(code: code, name: name.trimmingCharacters(in: .whitespacesAndNewlines))
+                identity?.classroom=selectedClassroom
                 try persist()
             }
             // Resolve a lost submission response before requesting a new AAC session.
@@ -156,6 +173,11 @@ final class SecureExamCoordinator: ObservableObject {
             guard !(error is StaleOperation), operations.isCurrent(generation), !operations.completionClaimed else { return }
             if identity?.attemptID == nil { await assessment.end() }
             guard operations.isCurrent(generation) else { return }
+            if (identity?.classroom != nil || selectedClassroom != nil),
+               SecurePupilSessionPolicy.discardUnstarted(attemptID:identity?.attemptID,frozen:work.answers.frozen != nil,serverCode:(error as? SecureAssessmentAPI.Failure)?.code ?? "",requestSent:identity?.startRequestSent == true) {
+                do { try store.clear();identity=nil;selectedClassroom=nil;work=SecureSavedWork();phase = .code;message=error.localizedDescription;return }
+                catch { message=error.localizedDescription;phase = .recovery;return }
+            }
             phase = .recovery
             message = error.localizedDescription
             scheduleRetry(after: error)
@@ -170,7 +192,16 @@ final class SecureExamCoordinator: ObservableObject {
     private func invokeAttempt() async throws -> [String: Any] {
         guard let identity else { throw invalidResponse() }
         if identity.attemptID != nil { return try await api.invoke("resumeAssessmentAttempt", data: authenticatedData()) }
-        return try await api.invoke("startAssessmentAttempt", data: ["quizId": identity.code, "studentName": identity.name, "clientAttemptId": identity.clientID, "attemptToken": identity.token])
+        var data: [String:Any] = ["quizId": identity.code, "studentName": identity.name, "clientAttemptId": identity.clientID, "attemptToken": identity.token]
+        identity.classroom?.startFields.forEach { data[$0.key]=$0.value }
+        let previouslyUnconfirmed = identity.startRequestSent == true
+        self.identity?.startRequestSent=true
+        try persist()
+        do { return try await api.invoke("startAssessmentAttempt", data: data) }
+        catch let error as SecureAssessmentAPI.Failure {
+            if !previouslyUnconfirmed, SecurePupilSessionPolicy.discardUnstarted(attemptID:nil,frozen:false,serverCode:error.code) { self.identity?.startRequestSent=false;try persist() }
+            throw error
+        }
     }
     private func apply(_ result: [String: Any]) async throws {
         guard assessment.active else { throw invalidResponse() }
@@ -317,6 +348,8 @@ final class SecureExamCoordinator: ObservableObject {
         await assessment.end()
         try ensureCurrent(generation, completing: true)
         guard identity?.attemptID == id, phase != .interrupted else { throw StaleOperation() }
+        let completedClassroom=identity?.classroom
+        var pupilLogoutProblem:String?
         do { try store.clear() }
         catch {
             operations.abandonCompletion(generation)
@@ -326,12 +359,19 @@ final class SecureExamCoordinator: ObservableObject {
         metric("released")
         operations.invalidate()
         busy = false; submitting = false; polling = false
+        #if GRADECREW_STAGING
+        if completedClassroom?.deviceMode == "shared" {
+            do { try SecurePupilKeychain.clear() } catch { pupilLogoutProblem=error.localizedDescription }
+            if let token=completedClassroom?.sessionToken { Task { _ = try? await api.invoke("classroomAccess",data:["command":"logout","payload":["sessionToken":token]]) } }
+        }
+        #endif
         identity = nil
         retryAttempts = 0
         work = SecureSavedWork()
         answeredCount=nil
         phase = .completed
         message = "Deine Abgabe ist gespeichert. Das Gerät ist wieder freigegeben."
+        if let pupilLogoutProblem { message += " Der Schülerzugang ist auf diesem Gerät gesperrt; bitte den Code erneut eingeben. " + pupilLogoutProblem }
         return true
     }
     private func scheduleRetry(after error: Error) {
@@ -411,6 +451,7 @@ final class SecureExamCoordinator: ObservableObject {
         webView=nil;paper=nil;clock=nil
         details="";storageStatus="";storageFailed=false;ticks=0
         latestCompletedIDs=[];lastMetricAt = -30
+        selectedClassroom=nil
         phase = .code; code = ""; name = ""; title = ""; message = ""; remaining = nil
     }
     func backToCode() { if phase == .identity { phase = .code; message = "" } }
