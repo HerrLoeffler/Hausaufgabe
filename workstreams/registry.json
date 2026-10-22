@@ -684,7 +684,8 @@
       "relatedBranches": [
         "feature/public-legal-pages-20261021",
         "fix/secure-return-after-sync-20261022",
-        "fix/secure-audio-ci-readiness-20261022"
+        "fix/secure-audio-ci-readiness-20261022",
+        "feature/secure-iphone-20261022"
       ]
     },
     {
