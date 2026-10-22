@@ -1,0 +1,52 @@
+{
+  "response": {
+    "id": "57d3541f-53a1-40a7-bc39-a28f10ced86f",
+    "revision": 2,
+    "topic": {
+      "id": "BY-3dcd29f28ce3:math:6:R:v1:B07",
+      "subject": "math",
+      "grade": 6,
+      "track": "R",
+      "title": "Wertgleich erweitern",
+      "area": "M6 Lernbereich 1: Bruchzahlen",
+      "goal": "Einen Bruch durch gemeinsame Vervielfachung von Zähler und Nenner wertgleich erweitern.",
+      "source": {
+        "id": "BY-3dcd29f28ce3",
+        "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/mathematik/regelklasse",
+        "status": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+        "sha256": "60894181fcaa4f9a93a1da73f0bacd021f59c3c8c08abbb5c1245eb2555b9dfd",
+        "anchor": "M6 1.1 Erweiterung des Zahlbereichs auf Bruchzahlen"
+      },
+      "prerequisites": [
+        "BY-3dcd29f28ce3:math:6:R:v1:B02"
+      ],
+      "modality": "text",
+      "guidance": "Am gleichen Ganzen die Verfeinerung zeigen; keine bloße Nenneränderung. Rechenwert, Bedingungen und Einheiten fachlich prüfen; bei offener Begründung passende Kriterien und gültige Alternativen erhalten. Nach wiederholtem Fehler eine Anforderung entfernen und eine beantwortbare Mikrofrage stellen; nach weiter erfolgloser Hilfe gemeinsam mit der Lehrkraft fortsetzen.",
+      "availability": "requires_task_validation",
+      "reviewStatus": "inhaltliche_Pruefung_offen",
+      "conceptRefs": [
+        "BY/MS/M6/Brueche/B07"
+      ]
+    },
+    "phase": "practice",
+    "task": {
+      "id": "dccbfd2f-6d54-473f-86ce-bb50bbf0f1bc",
+      "prompt": "Erweitere den Bruch \\(\\frac{2}{5}\\) so, dass der Nenner 15 ist. Welcher wertgleiche Bruch entsteht?",
+      "contextText": "",
+      "input": "text",
+      "options": []
+    },
+    "originalTask": null,
+    "explanation": "",
+    "visual": null,
+    "feedback": {
+      "outcome": "correct",
+      "short": "Richtig!"
+    },
+    "remainingSeconds": 1077,
+    "summary": null
+  },
+  "sameEventCached": true,
+  "staleRevisionDenied": true,
+  "firstRequestSeconds": 18.45
+}

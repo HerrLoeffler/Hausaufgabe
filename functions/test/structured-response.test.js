@@ -29,3 +29,7 @@ test("transport retries belong to the SDK; permanent errors do not loop", async 
 test("completed JSON must contain an object", () => {
   for (const value of [null, [], "text", false, 42]) assert.throws(() => parseStructuredResponse(complete(value)));
 });
+test('token exhaustion and filtering remain distinguishable in private failure diagnostics',async()=>{
+ await assert.rejects(requestStructured(async()=>({status:'incomplete',incomplete_details:{reason:'max_output_tokens'}}),{}),e=>e.details.incompleteReason==='max_output_tokens');
+ await assert.rejects(requestStructured(async()=>({status:'incomplete',incomplete_details:{reason:'content_filter'}}),{}),e=>e.details.incompleteReason==='content_filter');
+});

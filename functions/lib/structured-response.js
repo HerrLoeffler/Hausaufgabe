@@ -7,7 +7,7 @@ class AiResponseError extends Error {
     super(message);
     this.name = "AiResponseError";
     this.code = reason === "refusal" ? "failed-precondition" : "unavailable";
-    this.details = { reason, responseStatus: response.status || "", providerResponseId: response.id || "" };
+    this.details = { reason, responseStatus: response.status || "", providerResponseId: response.id || "", incompleteReason: response.incomplete_details?.reason || "" };
   }
 }
 function parseStructuredResponse(response) {

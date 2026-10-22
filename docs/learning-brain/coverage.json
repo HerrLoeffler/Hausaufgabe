@@ -1,0 +1,750 @@
+{
+  "schemaVersion": 1,
+  "taskId": "GC-ADAPTIVE-PRACTICE-01",
+  "asOf": "2026-10-21",
+  "kind": "catalog_coverage_not_release_or_pedagogical_approval",
+  "catalog": {
+    "path": "functions/data/learning-brain-catalog.json",
+    "version": "by-ms-math-german-5-10.v1.2026-10-21",
+    "sha256": "0167330b692237c34ffd0af22422e59d1879983ad4c2d5322746a0dfbd973f5d"
+  },
+  "scope": {
+    "region": "BY",
+    "schoolType": "Mittelschule",
+    "subjects": [
+      "math",
+      "german"
+    ],
+    "grades": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "tracks": "Klasse 5–6 gemeinsamer Einstieg R; Klasse 7–9 R/M getrennt; Klasse 10 nur M"
+  },
+  "totals": {
+    "subjectGradePairs": 12,
+    "sourceContexts": 18,
+    "sources": 18,
+    "learningAreas": 105,
+    "coveredLearningAreas": 105,
+    "subareas": 132,
+    "coveredSubareas": 132,
+    "topics": 464,
+    "byModality": {
+      "text": 284,
+      "visual": 106,
+      "audio": 18,
+      "speaking": 56
+    },
+    "textEntriesRequiringTaskValidation": 284,
+    "mediaBoundEntriesOpen": 180
+  },
+  "availability": {
+    "text": {
+      "entryCount": 284,
+      "catalogStatus": "requires_task_validation",
+      "reviewStatus": "inhaltliche_Pruefung_offen",
+      "meaning": "Im Katalog wählbare Text-Einstiege; jede erzeugte Aufgabe und ihre fachliche Bewertung müssen geprüft werden. Kein pauschal freigegebener Aufgabenpool."
+    },
+    "visual": {
+      "entryCount": 106,
+      "catalogStatus": "requires_visual_adapter",
+      "status": "open",
+      "requiredEvidence": "Passender Darstellungs-/Eingabeweg mit fachlich geprüfter Skala, Geometrie, Schreibprobe oder Gestaltung; end-to-end am konkreten Lernziel nachweisen."
+    },
+    "audio": {
+      "entryCount": 18,
+      "catalogStatus": "requires_media_adapter",
+      "status": "open",
+      "requiredEvidence": "Echtes geprüftes Hörmedium und beobachtbare Hörverstehensleistung; Transkript oder Textfeld allein reicht nicht."
+    },
+    "speaking": {
+      "entryCount": 56,
+      "catalogStatus": "requires_media_adapter",
+      "status": "open",
+      "requiredEvidence": "Tatsächliche Sprechaufnahme oder beobachtbares Gespräch; für Körpersprache geeigneter Beobachtungsweg. Textantworten belegen diese Leistung nicht."
+    }
+  },
+  "contexts": [
+    {
+      "subject": "german",
+      "grade": 5,
+      "track": "R",
+      "sourceId": "BY-59e19c7b9df3",
+      "topicCount": 32,
+      "byModality": {
+        "text": 21,
+        "visual": 2,
+        "audio": 2,
+        "speaking": 7
+      },
+      "textEntriesRequiringTaskValidation": 21,
+      "mediaBoundEntriesOpen": 11,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "german",
+      "grade": 6,
+      "track": "R",
+      "sourceId": "BY-4419bfcf4cb3",
+      "topicCount": 32,
+      "byModality": {
+        "text": 21,
+        "visual": 2,
+        "audio": 2,
+        "speaking": 7
+      },
+      "textEntriesRequiringTaskValidation": 21,
+      "mediaBoundEntriesOpen": 11,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "german",
+      "grade": 7,
+      "track": "M",
+      "sourceId": "BY-22562f2e3b80",
+      "topicCount": 32,
+      "byModality": {
+        "text": 23,
+        "visual": 1,
+        "audio": 2,
+        "speaking": 6
+      },
+      "textEntriesRequiringTaskValidation": 23,
+      "mediaBoundEntriesOpen": 9,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "german",
+      "grade": 7,
+      "track": "R",
+      "sourceId": "BY-be53dd90c7b8",
+      "topicCount": 32,
+      "byModality": {
+        "text": 23,
+        "visual": 1,
+        "audio": 2,
+        "speaking": 6
+      },
+      "textEntriesRequiringTaskValidation": 23,
+      "mediaBoundEntriesOpen": 9,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "german",
+      "grade": 8,
+      "track": "M",
+      "sourceId": "BY-3a9dc43ec30c",
+      "topicCount": 33,
+      "byModality": {
+        "text": 24,
+        "visual": 1,
+        "audio": 2,
+        "speaking": 6
+      },
+      "textEntriesRequiringTaskValidation": 24,
+      "mediaBoundEntriesOpen": 9,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "german",
+      "grade": 8,
+      "track": "R",
+      "sourceId": "BY-b630dae33f32",
+      "topicCount": 33,
+      "byModality": {
+        "text": 24,
+        "visual": 1,
+        "audio": 2,
+        "speaking": 6
+      },
+      "textEntriesRequiringTaskValidation": 24,
+      "mediaBoundEntriesOpen": 9,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "german",
+      "grade": 9,
+      "track": "M",
+      "sourceId": "BY-2fd15684d59a",
+      "topicCount": 33,
+      "byModality": {
+        "text": 24,
+        "visual": 1,
+        "audio": 2,
+        "speaking": 6
+      },
+      "textEntriesRequiringTaskValidation": 24,
+      "mediaBoundEntriesOpen": 9,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "german",
+      "grade": 9,
+      "track": "R",
+      "sourceId": "BY-8f0c1e392b32",
+      "topicCount": 33,
+      "byModality": {
+        "text": 24,
+        "visual": 1,
+        "audio": 2,
+        "speaking": 6
+      },
+      "textEntriesRequiringTaskValidation": 24,
+      "mediaBoundEntriesOpen": 9,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "german",
+      "grade": 10,
+      "track": "M",
+      "sourceId": "BY-4fd8f18a1dc6",
+      "topicCount": 32,
+      "byModality": {
+        "text": 23,
+        "visual": 1,
+        "audio": 2,
+        "speaking": 6
+      },
+      "textEntriesRequiringTaskValidation": 23,
+      "mediaBoundEntriesOpen": 9,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "math",
+      "grade": 5,
+      "track": "R",
+      "sourceId": "BY-38ada466aa58",
+      "topicCount": 17,
+      "byModality": {
+        "text": 8,
+        "visual": 9,
+        "audio": 0,
+        "speaking": 0
+      },
+      "textEntriesRequiringTaskValidation": 8,
+      "mediaBoundEntriesOpen": 9,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "math",
+      "grade": 6,
+      "track": "R",
+      "sourceId": "BY-3dcd29f28ce3",
+      "topicCount": 32,
+      "byModality": {
+        "text": 19,
+        "visual": 13,
+        "audio": 0,
+        "speaking": 0
+      },
+      "textEntriesRequiringTaskValidation": 19,
+      "mediaBoundEntriesOpen": 13,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "math",
+      "grade": 7,
+      "track": "M",
+      "sourceId": "BY-ae8afea3657c",
+      "topicCount": 20,
+      "byModality": {
+        "text": 8,
+        "visual": 12,
+        "audio": 0,
+        "speaking": 0
+      },
+      "textEntriesRequiringTaskValidation": 8,
+      "mediaBoundEntriesOpen": 12,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "math",
+      "grade": 7,
+      "track": "R",
+      "sourceId": "BY-37af8b8c14a6",
+      "topicCount": 17,
+      "byModality": {
+        "text": 7,
+        "visual": 10,
+        "audio": 0,
+        "speaking": 0
+      },
+      "textEntriesRequiringTaskValidation": 7,
+      "mediaBoundEntriesOpen": 10,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "math",
+      "grade": 8,
+      "track": "M",
+      "sourceId": "BY-9845e2bae409",
+      "topicCount": 18,
+      "byModality": {
+        "text": 7,
+        "visual": 11,
+        "audio": 0,
+        "speaking": 0
+      },
+      "textEntriesRequiringTaskValidation": 7,
+      "mediaBoundEntriesOpen": 11,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "math",
+      "grade": 8,
+      "track": "R",
+      "sourceId": "BY-6db3f7dbf98c",
+      "topicCount": 15,
+      "byModality": {
+        "text": 7,
+        "visual": 8,
+        "audio": 0,
+        "speaking": 0
+      },
+      "textEntriesRequiringTaskValidation": 7,
+      "mediaBoundEntriesOpen": 8,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "math",
+      "grade": 9,
+      "track": "M",
+      "sourceId": "BY-e98cd916f02a",
+      "topicCount": 21,
+      "byModality": {
+        "text": 11,
+        "visual": 10,
+        "audio": 0,
+        "speaking": 0
+      },
+      "textEntriesRequiringTaskValidation": 11,
+      "mediaBoundEntriesOpen": 10,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "math",
+      "grade": 9,
+      "track": "R",
+      "sourceId": "BY-ae7a6aa84fde",
+      "topicCount": 15,
+      "byModality": {
+        "text": 8,
+        "visual": 7,
+        "audio": 0,
+        "speaking": 0
+      },
+      "textEntriesRequiringTaskValidation": 8,
+      "mediaBoundEntriesOpen": 7,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    },
+    {
+      "subject": "math",
+      "grade": 10,
+      "track": "M",
+      "sourceId": "BY-e56feb597d1b",
+      "topicCount": 17,
+      "byModality": {
+        "text": 2,
+        "visual": 15,
+        "audio": 0,
+        "speaking": 0
+      },
+      "textEntriesRequiringTaskValidation": 2,
+      "mediaBoundEntriesOpen": 15,
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen"
+    }
+  ],
+  "sources": [
+    {
+      "id": "BY-59e19c7b9df3",
+      "subject": "german",
+      "grade": 5,
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/5/deutsch/regelklasse",
+      "sha256": "b70851a22296a7e3ad19381a54856b1899946d2a6c99e7870f46c9b997a26fcd",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 4,
+      "coveredLearningAreaCount": 4,
+      "subareaCount": 14,
+      "coveredSubareaCount": 14,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 32
+    },
+    {
+      "id": "BY-4419bfcf4cb3",
+      "subject": "german",
+      "grade": 6,
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/deutsch/regelklasse",
+      "sha256": "4b18ac2fa07a5ca7360e5c8d05ab5dc6b99bb4c74d1bfdc5c6c92824a3c36d5b",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 4,
+      "coveredLearningAreaCount": 4,
+      "subareaCount": 14,
+      "coveredSubareaCount": 14,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 32
+    },
+    {
+      "id": "BY-22562f2e3b80",
+      "subject": "german",
+      "grade": 7,
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/7/deutsch/mittlere-reife-klasse",
+      "sha256": "23ccb49e7172cc57b04bb0da9a1c6f73da06841c1046d9a0d22bb91e3adbc99d",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 4,
+      "coveredLearningAreaCount": 4,
+      "subareaCount": 14,
+      "coveredSubareaCount": 14,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 32
+    },
+    {
+      "id": "BY-be53dd90c7b8",
+      "subject": "german",
+      "grade": 7,
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/7/deutsch/regelklasse",
+      "sha256": "0a6ad99e8fe597b109ac5c9a9660250cf30573799075f73f65016adb03d0d559",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 4,
+      "coveredLearningAreaCount": 4,
+      "subareaCount": 14,
+      "coveredSubareaCount": 14,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 32
+    },
+    {
+      "id": "BY-3a9dc43ec30c",
+      "subject": "german",
+      "grade": 8,
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/8/deutsch/mittlere-reife-klasse",
+      "sha256": "e0e06e644265880e7e8b861349c849c1287eb13a4b8a23a1bee10c81f248f0d9",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 4,
+      "coveredLearningAreaCount": 4,
+      "subareaCount": 14,
+      "coveredSubareaCount": 14,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 33
+    },
+    {
+      "id": "BY-b630dae33f32",
+      "subject": "german",
+      "grade": 8,
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/8/deutsch/regelklasse",
+      "sha256": "2d57d40c5fbfd5300ad577fdd07db5678016d468f4655f2e0c4e55e1382206a2",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 4,
+      "coveredLearningAreaCount": 4,
+      "subareaCount": 14,
+      "coveredSubareaCount": 14,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 33
+    },
+    {
+      "id": "BY-2fd15684d59a",
+      "subject": "german",
+      "grade": 9,
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/9/deutsch/mittlere-reife-klasse",
+      "sha256": "c3dde9c8f276d4a9d491934e120a101a6266c4622318b2f661838b7892d51045",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 4,
+      "coveredLearningAreaCount": 4,
+      "subareaCount": 14,
+      "coveredSubareaCount": 14,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 33
+    },
+    {
+      "id": "BY-8f0c1e392b32",
+      "subject": "german",
+      "grade": 9,
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/9/deutsch/regelklasse",
+      "sha256": "e2f72ff5345336993c6dd5c59030d2f02035aa7d99792d2f1704dfe9db8f55db",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 4,
+      "coveredLearningAreaCount": 4,
+      "subareaCount": 14,
+      "coveredSubareaCount": 14,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 33
+    },
+    {
+      "id": "BY-4fd8f18a1dc6",
+      "subject": "german",
+      "grade": 10,
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/10/deutsch/mittlere-reife-klasse",
+      "sha256": "5ee93715cf9266f912382f1199b16ac90b48dd04f47ca0cd3200f99c64b3d994",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 4,
+      "coveredLearningAreaCount": 4,
+      "subareaCount": 14,
+      "coveredSubareaCount": 14,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 32
+    },
+    {
+      "id": "BY-38ada466aa58",
+      "subject": "math",
+      "grade": 5,
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/5/mathematik/regelklasse",
+      "sha256": "4848f9f0de73ecafa2b08d03cc6ba10f628d8d454fe599503dcdbd6d8bb1a007",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 7,
+      "coveredLearningAreaCount": 7,
+      "subareaCount": 2,
+      "coveredSubareaCount": 2,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 17
+    },
+    {
+      "id": "BY-3dcd29f28ce3",
+      "subject": "math",
+      "grade": 6,
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/mathematik/regelklasse",
+      "sha256": "60894181fcaa4f9a93a1da73f0bacd021f59c3c8c08abbb5c1245eb2555b9dfd",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 7,
+      "coveredLearningAreaCount": 7,
+      "subareaCount": 4,
+      "coveredSubareaCount": 4,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 32
+    },
+    {
+      "id": "BY-ae8afea3657c",
+      "subject": "math",
+      "grade": 7,
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/7/mathematik/mittlere-reife-klasse",
+      "sha256": "ad4b9e55f332354589776914493dfba656cbf5a9d459aa1c051c6875f19e9dca",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 8,
+      "coveredLearningAreaCount": 8,
+      "subareaCount": 0,
+      "coveredSubareaCount": 0,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 20
+    },
+    {
+      "id": "BY-37af8b8c14a6",
+      "subject": "math",
+      "grade": 7,
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/7/mathematik/regelklasse",
+      "sha256": "080c9ab0442af0dcceb9ad826412938094e6b6b1e792300d883c91215c331abd",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 8,
+      "coveredLearningAreaCount": 8,
+      "subareaCount": 0,
+      "coveredSubareaCount": 0,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 17
+    },
+    {
+      "id": "BY-9845e2bae409",
+      "subject": "math",
+      "grade": 8,
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/8/mathematik/mittlere-reife-klasse",
+      "sha256": "de0273bdf1c15e5519f11cda63f21aaf9ce5efc6658b121406bd84b1b583b3ca",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 8,
+      "coveredLearningAreaCount": 8,
+      "subareaCount": 0,
+      "coveredSubareaCount": 0,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 18
+    },
+    {
+      "id": "BY-6db3f7dbf98c",
+      "subject": "math",
+      "grade": 8,
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/8/mathematik/regelklasse",
+      "sha256": "0508853463a8d8bbf36dc96ffd8a20177d0fa6ae205a1e7cac5c0880ab56065e",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 8,
+      "coveredLearningAreaCount": 8,
+      "subareaCount": 0,
+      "coveredSubareaCount": 0,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 15
+    },
+    {
+      "id": "BY-e98cd916f02a",
+      "subject": "math",
+      "grade": 9,
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/9/mathematik/mittlere-reife-klasse",
+      "sha256": "de58c8297eadde658b2486a780c5fa92bd87dad51bbe4c95418baec09e4fe253",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 8,
+      "coveredLearningAreaCount": 8,
+      "subareaCount": 0,
+      "coveredSubareaCount": 0,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 21
+    },
+    {
+      "id": "BY-ae7a6aa84fde",
+      "subject": "math",
+      "grade": 9,
+      "track": "R",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/9/mathematik/regelklasse",
+      "sha256": "cb96a5c474366679b6076861ce244a5bcce10191155b24cc9ec111ca280d43dd",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 8,
+      "coveredLearningAreaCount": 8,
+      "subareaCount": 0,
+      "coveredSubareaCount": 0,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 15
+    },
+    {
+      "id": "BY-e56feb597d1b",
+      "subject": "math",
+      "grade": 10,
+      "track": "M",
+      "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/10/mathematik/mittlere-reife-klasse",
+      "sha256": "8c571ca8a1fbb6779e36d2d8b0bc3241ba86ac3924cc0a8f80e975933f7136dd",
+      "sourceReviewStatus": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+      "archiveIntegrity": "sha256_and_headers_verified",
+      "learningAreaCount": 7,
+      "coveredLearningAreaCount": 7,
+      "subareaCount": 0,
+      "coveredSubareaCount": 0,
+      "uncoveredLearningAreas": [],
+      "uncoveredSubareas": [],
+      "topicCount": 17
+    }
+  ],
+  "existingConceptReuse": {
+    "fractionMap": "B01–B20",
+    "referenceCount": 20,
+    "references": [
+      "BY/MS/M6/Brueche/B01",
+      "BY/MS/M6/Brueche/B02",
+      "BY/MS/M6/Brueche/B03",
+      "BY/MS/M6/Brueche/B04",
+      "BY/MS/M6/Brueche/B05",
+      "BY/MS/M6/Brueche/B06",
+      "BY/MS/M6/Brueche/B07",
+      "BY/MS/M6/Brueche/B08",
+      "BY/MS/M6/Brueche/B09",
+      "BY/MS/M6/Brueche/B10",
+      "BY/MS/M6/Brueche/B11",
+      "BY/MS/M6/Brueche/B12",
+      "BY/MS/M6/Brueche/B13",
+      "BY/MS/M6/Brueche/B14",
+      "BY/MS/M6/Brueche/B15",
+      "BY/MS/M6/Brueche/B16",
+      "BY/MS/M6/Brueche/B17",
+      "BY/MS/M6/Brueche/B18",
+      "BY/MS/M6/Brueche/B19",
+      "BY/MS/M6/Brueche/B20"
+    ],
+    "sourceConcepts": [
+      {
+        "path": "analysis/GC-PEDAGOGY-KB-01/master/paedagogisches-konzept-gradecrew.md",
+        "sha256": "2d0152d8d3307afa924106fcb2166a60eadf726d1910c5491e35264ccf6a73d8"
+      },
+      {
+        "path": "analysis/GC-PEDAGOGY-KB-01/master/schueler-second-brain-architektur-und-umsetzungsplan-2026-10-16.md",
+        "sha256": "6d3be12197cd6c9b54eb14610e47cd8e688d7fee67b89e8c04fe30ab88e30d14"
+      },
+      {
+        "path": "analysis/GC-PEDAGOGY-KB-01/master/schuelerkonten-kompetenzprofile-adaptives-lernen-entwurf-2026-10-16.md",
+        "sha256": "75a3196536be86358596cf598e6bba098f5b0a7c156abaef32e1ed89371dc63d"
+      },
+      {
+        "path": "analysis/GC-PEDAGOGY-KB-01/master/brueche-by-ms-56-kompetenzkarte-und-pilotplan-2026-10-16.md",
+        "sha256": "608456271354c251a9aa58579db81dd3c029311dda21240f116e33ed279b63a0"
+      }
+    ],
+    "meaning": "Vorhandene Konzeptreferenzen und Voraussetzungspfade wiederverwendet; keine Übernahme der dortigen Aufgaben- oder Lösungstexte."
+  },
+  "materialBoundary": {
+    "sourceArchive": "existing_read_only_archive",
+    "originalMaterialContentCopied": false,
+    "bookContentOrAnswerKeysIncluded": false,
+    "licenseApprovalClaimed": false,
+    "meaning": "Die Matrix enthält Metadaten und Zählungen. Originalmaterialien und Lizenztexte bleiben im bisherigen Bestand; ihre Nutzungsfreigabe wird hier nicht bestätigt."
+  },
+  "openGates": [
+    {
+      "id": "source_content_review",
+      "status": "open",
+      "meaning": "Hashes und Überschriften sind geprüft; eine vollständige inhaltliche Fachprüfung der 18 Quellenzuordnungen und abgeleiteten Lernziele bleibt offen."
+    },
+    {
+      "id": "task_family_validation",
+      "status": "open",
+      "meaning": "464 Katalogziele sind keine 464 geprüften Aufgabenfamilien. Text-Einstiege benötigen passende Generierung, fachliche Prüfung, Bewertungsweg und nachvollziehbare Hilfen."
+    },
+    {
+      "id": "media_adapters",
+      "status": "open",
+      "entryCount": 180,
+      "meaning": "106 visuelle, 18 Hör- und 56 Sprechziele benötigen den jeweils geeigneten geprüften Medienweg."
+    },
+    {
+      "id": "learner_evidence",
+      "status": "not_established_by_catalog",
+      "meaning": "Menüabdeckung beweist weder individuelles Können noch unabhängige Belege, Behalten oder diagnostische Validität."
+    },
+    {
+      "id": "runtime_and_release",
+      "status": "not_evaluated_in_this_matrix",
+      "meaning": "Diese Katalogmatrix bestätigt keine Bereitstellung, Geräteabnahme oder vollständige Ende-zu-Ende-Freigabe."
+    }
+  ]
+}
