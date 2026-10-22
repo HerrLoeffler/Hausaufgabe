@@ -62,7 +62,7 @@ test("submit forwards only validated fields and derives owner from authenticated
   assert.deepEqual(await service.submit({ ...submitRequest, data: { ...submitRequest.data, uid: "spoofed" } }), { status: "accepted", jobId: "job-1234567890" });
   assert.deepEqual(calls.find(call => call[0] === "startJob"), ["startJob", "teacher-1", {
     subject: "Mathematik", grade: "6", topic: "Brüche", count: 8, clientRequestId: "voice-1",
-    allowedTypes: ["single", "multi", "text", "dropdown", "truefalse", "gapfill", "matching", "ordering", "grouping", "markwords", "number"],
+    allowedTypes: ["single", "multi", "text", "dropdown", "truefalse", "gapfill", "matching", "ordering", "grouping", "markwords", "number", "visual"],
     points: 8, imageMode: "none"
   }]);
   await assert.rejects(service.submit({ ...submitRequest, profile: { role: "student" } }), { code: "permission-denied" });

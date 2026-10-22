@@ -66,13 +66,14 @@ const questionSchema = {
     targetWords: { type: "array", items: { type: "string" } },
     markGroups: { type: "array", maxItems: 4, items: markGroupSchema },
     gapColors: { type: "array", items: { type: "string", enum: ["", "blue", "orange", "green", "purple"] } },
+    visualTask: { type: "string", maxLength: 20000, description: "Für visual ein vollständiger Prototype-02-v2-Auftrag als JSON-String mit spec und privater solution. Keine HTML/SVG/Links; maxPoints entspricht points. Bei anderen Typen leer." },
     numericAnswer: { type: "number", description: "Für number die richtige Zahl; bei anderen Typen 0." },
     tolerance: { type: "number", minimum: 0 },
     unit: { type: "string" },
     mediaIntent: mediaIntentSchema,
     audioIntent: audioIntentSchema
   },
-  required: ["type", "text", "points", "options", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "markGroups", "gapColors", "numericAnswer", "tolerance", "unit", "mediaIntent", "audioIntent"]
+  required: ["type", "text", "points", "options", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "markGroups", "gapColors", "numericAnswer", "tolerance", "unit", "visualTask", "mediaIntent", "audioIntent"]
 };
 // Compact per-type schemas prevent irrelevant nullable fields from being used as
 // missing answers. The root stays an object; unions are nested (Structured Outputs).
@@ -81,7 +82,7 @@ const TYPE_FIELDS = {
   single: ["options"], multi: ["options"], dropdown: ["options"],
   text: ["acceptedAnswers", "manualReview"], truefalse: ["correctBoolean"],
   gapfill: ["gapColors"], matching: ["pairs"], ordering: ["items", "acceptedOrders", "manualReview"], grouping: ["groups"],
-  markwords: ["passage", "targetWords", "markGroups"], number: ["numericAnswer", "tolerance", "unit"]
+  markwords: ["passage", "targetWords", "markGroups"], number: ["numericAnswer", "tolerance", "unit"], visual: ["visualTask"]
 };
 function questionSchemaForType(type, { allowImages = true, mediaKind, allowAudio = true, audioKind } = {}) {
   if (!QUESTION_TYPES.includes(type)) throw new TypeError("Unbekannter Aufgabentyp");

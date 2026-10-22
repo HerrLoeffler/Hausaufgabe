@@ -14,7 +14,7 @@ test("secure assessment client uses callable functions and never imports Firesto
     "resumeAssessmentAttempt",
     "submitAssessmentAttempt",
     "getAssessmentReceipt"
-  ]) assert.match(source, new RegExp(`httpsCallable\\(functions, ["']${name}["']\\)`));
+  ]) assert.match(source, new RegExp(`httpsCallable\\(functions, previewCallable\\(["']${name}["']\\)\\)`));
 });
 
 test("browser stores only its opaque attempt credential, never grading material", () => {

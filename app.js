@@ -1,3 +1,4 @@
+import { parseNumericAnswer, normalizeVisualTask, renderVisualEditor, mountVisualQuestion, collectVisualAnswer, decodeVisualAnswer, visualAnswered, evaluateVisual, visualSolution } from "./visual-tasks.mjs";
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
 const APP_VERSION = "2.3.1-gc45-rc1";
@@ -188,7 +189,8 @@ const QUESTION_TYPES = [
   ["ordering", "Sortieren / Reihenfolge"],
   ["grouping", "Gruppieren / Kategorien"],
   ["markwords", "Wörter markieren"],
-  ["number", "Zahl / Rechenergebnis"]
+  ["number", "Zahl / Rechenergebnis"],
+  ["visual", "Visuelle Interaktion"]
 ];
 
 const state = {
@@ -3123,6 +3125,7 @@ function normalizeQuestionTypeLoose(value) {
     ordering: "ordering", order: "ordering", sorting: "ordering", sortieren: "ordering", reihenfolge: "ordering",
     grouping: "grouping", group: "grouping", categorization: "grouping", kategorisieren: "grouping", gruppieren: "grouping",
     markwords: "markwords", highlightwords: "markwords", highlight: "markwords", woertermarkieren: "markwords", wortemarkieren: "markwords",
+    visual: "visual",
     number: "number", numeric: "number", zahl: "number", rechenaufgabe: "number", calculation: "number"
   };
   return map[token] || null;
@@ -3188,6 +3191,7 @@ function normalizeImportedQuestion(rawInput, index, report) {
   }
 
   const q = newQuestion(type, false);
+  if (type === "visual") q.visualTask = normalizeVisualTask({ ...raw, points: Number(raw.points) || 1 });
   const rawText = looseField(raw, ["text", "question", "prompt", "frage", "instruction", "aufgabe"], "");
   q.text = String(rawText || "").trim();
   // Only the explicit public field is imported; never promote a legacy private text.
@@ -3720,6 +3724,7 @@ function newQuestion(type = "single", needsFirestoreId = true) {
 }
 
 function initializeTypeData(q, type) {
+  if (type === "visual" && !q.visualTask) { const task = globalThis.GC2.example("grid"); task.maxPoints = Number(q.points) || 1; q.visualTask = JSON.stringify(task); q.text ||= task.prompt; }
   q.points = Math.max(0.5, round1(Number(q.points) || (type === "multi" ? 2 : 1)));
   if (["single", "multi", "dropdown"].includes(type)) {
     q.options = q.options?.length ? q.options : [{ text: "", correct: true }, { text: "", correct: false }];
@@ -3968,11 +3973,13 @@ function renderQuestions() {
     } else type.title = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(state.currentQuiz?.id)) ? "Die Einführung verwendet vorbereitete Aufgaben. Typwechsel ist in deinen eigenen Tests verfügbar." : "Emmi passt Inhalt und Lösungen mit KI an. Beim Zurückwechseln bleibt deine bisherige Fassung erhalten.";
     points.addEventListener("input", (e) => {
       q.points = Math.max(0.5, Number(e.target.value) || 1);
+      if (q.type === "visual") { try { q.visualTask = normalizeVisualTask(q); } catch {} }
       updateSummary();
       markDirty();
     });
     points.addEventListener("change", (e) => {
       q.points = Math.max(0.5, round1(Number(e.target.value) || 1));      e.target.value = q.points;
+      if (q.type === "visual") { try { q.visualTask = normalizeVisualTask(q); } catch {} }
       updateSummary();
     });
     node.querySelector(".aiEditQuestion")?.addEventListener("click", () => toggleQuestionAiPanel(node, q, index));
@@ -4042,7 +4049,7 @@ function questionContext(index) {
   return {
     title: state.currentQuiz?.title || $("quizTitle")?.value || "", subject: $("quizSubject")?.value || state.currentQuiz?.subject || "", grade: $("quizGrade")?.value || state.currentQuiz?.grade || "",
     contentLocale: state.currentQuiz?.contentLocale || "de-DE",
-    existingQuestions: others.map(q => ({ type: q.type, text: String(q.text || "").slice(0, 300), options: (q.options || []).map(o => ({ text: String(o.text || "").slice(0, 100), correct: Boolean(o.correct) })), acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4), numericAnswer: q.numericAnswer, unit: q.unit, mediaIntent: { kind: getQuestionImageSrc(q) ? "ai_generated" : "none" }, audioIntent: { kind: getQuestionAudioSrc(q) || q.audioScript ? "ai_generated" : "none", script: String(q.audioScript || "").slice(0, 500), reason: "" } }))
+    existingQuestions: others.map(q => ({ type: q.type, text: String(q.text || "").slice(0, 300), options: (q.options || []).map(o => ({ text: String(o.text || "").slice(0, 100), correct: Boolean(o.correct) })), acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4), numericAnswer: q.numericAnswer, visualTask: q.visualTask, unit: q.unit, mediaIntent: { kind: getQuestionImageSrc(q) ? "ai_generated" : "none" }, audioIntent: { kind: getQuestionAudioSrc(q) || q.audioScript ? "ai_generated" : "none", script: String(q.audioScript || "").slice(0, 500), reason: "" } }))
   };
 }
 
@@ -4083,6 +4090,7 @@ function aiQuestionFeedbackSnapshot(q) {
     groups: (q.groups || []).slice(0, 10).map(group => ({ name: String(group.name).slice(0, 100), items: (group.items || []).slice(0, 20).map(item => String(item).slice(0, 180)) })),
     targetWords: (q.targetWords || []).slice(0, 30),
     markGroups: (q.markGroups || []).slice(0, 4),
+    visualTask: q.type === "visual" ? q.visualTask : "",
     numericAnswer: q.type === "number" && Number.isFinite(Number(q.numericAnswer)) ? Number(q.numericAnswer) : null,
     passage: String(q.passage || "").slice(0, 600),
     imageChoices: Boolean(q.imageChoicesOnly), imagePresent: Boolean(getQuestionImageSrc(q) || q.options?.some(o => o.imageDataUrl))
@@ -5634,6 +5642,7 @@ function renderGapColorEditor(container, q) {
 
 function renderAnswerEditor(container, q) {
   container.innerHTML = "";
+  if (q.type === "visual") { renderVisualEditor(container, q, refresh => { markDirty(); if (refresh) renderQuestions(); }); return; }
 
   if (["single", "multi", "dropdown"].includes(q.type)) {
     const info = document.createElement("p");
@@ -6081,6 +6090,7 @@ function validateQuiz() {
         if (q.markGroups.some(group => group.words.some(word => !tokenizeWords(q.passage).some(token => token.isWord && normalizeWord(token.text) === normalizeWord(word))))) return `Aufgabe ${i + 1}: Jedes Farbwort muss im Text vorkommen.`;
       }
     }
+    if (q.type === "visual") { try { normalizeVisualTask(q); } catch(e) { return `Aufgabe ${i + 1}: ${e.message}`; } }
     if (q.type === "number" && !Number.isFinite(Number(q.numericAnswer))) return `Aufgabe ${i + 1}: Das richtige Rechenergebnis fehlt.`;
   }
   return "";
@@ -6093,6 +6103,7 @@ function sanitizeQuestionForSave(q) {
     points: Math.max(0.5, round1(Number(q.points) || 1)),
     position: Number(q.position || 0)
   };
+  if (q.type === "visual") base.visualTask = normalizeVisualTask(q);
   if (q.aiVariantKept === true) base.aiVariantKept = true;
   if (q.aiOrigin?.kind) base.aiOrigin = { kind: String(q.aiOrigin.kind).slice(0, 30), model: String(q.aiOrigin.model || "").slice(0, 60), promptVersion: String(q.aiOrigin.promptVersion || "").slice(0, 60) };
   if (q.imageDataUrl) {
@@ -7048,7 +7059,9 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       section.appendChild(audioBox);
     }
 
-    if (q.type === "text") {
+    if (q.type === "visual") {
+      mountVisualQuestion(section, q);
+    } else if (q.type === "text") {
       const inp = document.createElement("input");
       inp.type = "text";
       inp.name = q.id;
@@ -7311,6 +7324,7 @@ function setupStudentProgress(questions) {
 }
 
 function studentAnswerIsComplete(q, given) {
+  if (q.type === "visual") return visualAnswered(q, given);
   if (q.type === "text" || q.type === "number" || q.type === "dropdown" || q.type === "single" || q.type === "truefalse") return String(given ?? "").trim() !== "";
   if (q.type === "multi") return Array.isArray(given) && given.length > 0;
   if (q.type === "gapfill") return Array.isArray(given) && given.length > 0 && given.every((x) => String(x || "").trim() !== "");
@@ -7375,6 +7389,7 @@ function runStudentTimer(quiz, questions, startedAt, attemptLimitMinutes = null)
 function readStudentAnswer(q) {
   const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
   if (!section) return "";
+  if (q.type === "visual") return collectVisualAnswer(section);
   if (q.type === "multi") return Array.from(section.querySelectorAll(`input[name="${CSS.escape(q.id)}"]:checked`)).map((x) => x.value);
   if (["single", "truefalse"].includes(q.type)) return section.querySelector(`input[name="${CSS.escape(q.id)}"]:checked`)?.value ?? "";
   if (["text", "dropdown"].includes(q.type)) return section.querySelector(`[name="${CSS.escape(q.id)}"]`)?.value ?? "";
@@ -7403,6 +7418,7 @@ function readStudentAnswer(q) {
 }
 
 function evaluateAnswer(q, given) {
+  if (q.type === "visual") return evaluateVisual(q, given);
   const max = round1(Number(q.points) || 0);
   if (q.type === "text") {
     if (q.manualReview) return { awarded: 0, max, needsReview: true, correct: null };
@@ -7410,7 +7426,7 @@ function evaluateAnswer(q, given) {
     return { awarded: ok ? max : 0, max, needsReview: false, correct: ok };
   }
   if (q.type === "number") {
-    const value = Number(String(given || "").trim().replace(",", "."));
+    const value = parseNumericAnswer(given);
     const ok = Number.isFinite(value) && Math.abs(value - Number(q.numericAnswer)) <= Math.max(0, Number(q.tolerance) || 0) + 1e-9;
     return { awarded: ok ? max : 0, max, needsReview: false, correct: ok };
   }
@@ -7523,7 +7539,7 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
   let needsReview = false;
   for (const q of questions) {
     const given = readStudentAnswer(q);
-    answers[q.id] = given;
+    answers[q.id] = q.type === "visual" ? JSON.stringify(given) : given;
     const result = evaluateAnswer(q, given);
     grading[q.id] = {
       autoPoints: result.awarded,
@@ -7618,6 +7634,7 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
 }
 
 function answerDisplay(q, given, contentLocale) {
+  if (q.type === "visual") { const answer = decodeVisualAnswer(given); return answer == null ? "(leer)" : JSON.stringify(answer); }
   if (q.type === "text") return String(given || "(leer)");
   if (q.type === "number") return given === "" ? "(leer)" : `${given}${q.unit ? ` ${q.unit}` : ""}`;
   if (q.type === "truefalse") {
@@ -7655,6 +7672,7 @@ function answerDisplay(q, given, contentLocale) {
 }
 
 function correctDisplay(q, contentLocale) {
+  if (q.type === "visual") return visualSolution(q);
   if (q.type === "text") return q.manualReview ? "wird von der Lehrkraft geprüft" : (q.acceptedAnswers || []).join(", ");
   if (q.type === "number") return `${q.numericAnswer}${q.unit ? ` ${q.unit}` : ""}${Number(q.tolerance) ? ` (±${q.tolerance})` : ""}`;
   if (q.type === "truefalse") {

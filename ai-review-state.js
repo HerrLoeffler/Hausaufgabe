@@ -27,7 +27,7 @@ export function parseStoredQualityIssue(value) {
 
 // A content version for editor conflict detection; not an authentication token.
 export function questionReviewKey(question) {
-  const fields = ["type", "text", "options", "correctBoolean", "acceptedAnswers", "manualReview", "numericAnswer", "unit", "tolerance", "pairs", "items", "groups", "passage", "targetWords", "imageDataUrl", "imageUrl", "imageAlt"];
+  const fields = ["visualTask", "type", "text", "options", "correctBoolean", "acceptedAnswers", "manualReview", "numericAnswer", "unit", "tolerance", "pairs", "items", "groups", "passage", "targetWords", "imageDataUrl", "imageUrl", "imageAlt"];
   const text = JSON.stringify(fields.map(key => question?.[key] ?? null));
   let hash = 2166136261;
   for (let i = 0; i < text.length; i++) hash = Math.imul(hash ^ text.charCodeAt(i), 16777619);
