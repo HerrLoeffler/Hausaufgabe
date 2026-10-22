@@ -24,7 +24,16 @@ function validateConfig(c,topic,task){
  // Explicit projection; no model-supplied markup or secret keys survive.
  return {tool:c.tool,version:1,role:c.role,goal:c.goal,numerator:c.numerator,denominator:c.denominator,targetDenominator:c.targetDenominator,instruction:c.instruction};
 }
-function initial(c){return {parts:c.denominator,selected:c.goal==='equivalent'?Array.from({length:c.numerator},(_,i)=>i):[]};}
+function initial(c){
+ if(c.initialState){const v=c.initialState;if(!Number.isInteger(v.parts)||v.parts<1||v.parts>36||!Array.isArray(v.selected)||v.selected.length>36||new Set(v.selected).size!==v.selected.length||v.selected.some(i=>!Number.isInteger(i)||i<0||i>=v.parts))bad('Ungültige Ausgangsdarstellung.');return {parts:v.parts,selected:[...v.selected]};}
+ return {parts:c.denominator,selected:c.goal==='equivalent'?Array.from({length:c.numerator},(_,i)=>i):[]};}
+function followupConfig(c,observation){
+ if(c?.goal!=='equivalent'||observation?.tool!==c.tool||observation.goal!==c.goal||observation.source?.numerator!==c.numerator||observation.source?.denominator!==c.denominator||observation.final?.denominator!==c.targetDenominator)return c;
+ const start={parts:observation.final.denominator,selected:observation.selection};
+ const state=initial({...c,initialState:start});
+ if(state.selected.length!==observation.final.numerator)bad('Ausgangsdarstellung und Beobachtung passen nicht zusammen.');
+ return {...c,initialState:state};
+}
 function apply(state,a){
  if(!a||Object.keys(a).some(k=>!['type','value'].includes(k))||!Number.isInteger(a.value))bad('Ungültiger Werkstattschritt.');
  let {parts,selected}=state;selected=[...selected];
@@ -43,6 +52,6 @@ function observe(task,payload){
  for(const a of payload.actions){const before={numerator:state.selected.length,denominator:state.parts};state=a?.type==='reset'&&a.value===0&&Object.keys(a).every(k=>['type','value'].includes(k))?initial(c):apply(state,a);changes.push({type:a.type,value:a.value,before,after:{numerator:state.selected.length,denominator:state.parts}});}
  const final={numerator:state.selected.length,denominator:state.parts};
  const valuePreserved=final.numerator*c.denominator===c.numerator*final.denominator;
- return {tool:c.tool,version:1,role:c.role,goal:c.goal,source:{numerator:c.numerator,denominator:c.denominator},final,answer:`${final.numerator}/${final.denominator}`,valuePreserved,targetReached:valuePreserved&&(c.goal==='represent'||final.denominator===c.targetDenominator),actionCount:payload.actions.length,changes:changes.slice(-12)};
+ return {tool:c.tool,version:1,role:c.role,goal:c.goal,source:{numerator:c.numerator,denominator:c.denominator},final,selection:[...state.selected],answer:`${final.numerator}/${final.denominator}`,valuePreserved,targetReached:valuePreserved&&(c.goal==='represent'||final.denominator===c.targetDenominator),actionCount:payload.actions.length,changes:changes.slice(-12)};
 }
-module.exports={registry,toolsFor,validateConfig,observe,WorkshopError};
+module.exports={registry,toolsFor,validateConfig,followupConfig,observe,WorkshopError};

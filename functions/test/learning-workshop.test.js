@@ -18,3 +18,10 @@ test('ten successful manipulations alone never establish unassisted mastery',()=
  assert.equal(projectSkill(events).status,'practicing');
  events[8].tool=null;events[9].tool=null;assert.equal(projectSkill(events).status,'secure');
 });
+
+test('follow-up help replays from the visible failed state and reset preserves that starting point',()=>{
+ const follow={...task,workshop:{...config,initialState:{parts:6,selected:[0]}}};
+ assert.equal(workshop.observe(follow,payload([])).answer,'1/6');
+ assert.equal(workshop.observe(follow,payload([{type:'toggle-part',value:1}])).answer,'2/6');
+ assert.equal(workshop.observe(follow,payload([{type:'partition',value:2},{type:'reset',value:0}])).answer,'1/6');
+});

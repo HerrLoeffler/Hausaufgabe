@@ -1,7 +1,16 @@
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const integer=(n,min,max)=>Number.isInteger(n)&&n>=min&&n<=max;
-function fractionDescriptor(value){if(value?.tool!=='fraction-board'||value.version!==1||!['answer','support'].includes(value.role)||!['represent','equivalent'].includes(value.goal)||!integer(value.numerator,0,36)||!integer(value.denominator,1,36)||value.numerator>value.denominator||(value.goal==='represent'?value.targetDenominator!==0:!integer(value.targetDenominator,2,36)))return null;return {tool:value.tool,version:1,role:value.role,goal:value.goal,numerator:value.numerator,denominator:value.denominator,targetDenominator:value.targetDenominator,instruction:typeof value.instruction==='string'?value.instruction.slice(0,600):''};}
-const adapters=Object.freeze({'fraction-board':{descriptor:fractionDescriptor,initial(descriptor){return {parts:descriptor.denominator,selected:descriptor.goal==='equivalent'?Array.from({length:descriptor.numerator},(_,i)=>i):[]};}}});
+function fractionDescriptor(value){
+  if(value?.tool!=='fraction-board'||value.version!==1||!['answer','support'].includes(value.role)||!['represent','equivalent'].includes(value.goal)||!integer(value.numerator,0,36)||!integer(value.denominator,1,36)||value.numerator>value.denominator||(value.goal==='represent'?value.targetDenominator!==0:!integer(value.targetDenominator,2,36)))return null;
+  let initialState;
+  if(Object.hasOwn(value,'initialState')){
+    const state=value.initialState;
+    if(!state||typeof state!=='object'||Array.isArray(state)||Object.keys(state).length!==2||!Object.hasOwn(state,'parts')||!Object.hasOwn(state,'selected')||!integer(state.parts,1,36)||!Array.isArray(state.selected)||state.selected.length>36||state.selected.some(i=>!integer(i,0,state.parts-1))||new Set(state.selected).size!==state.selected.length)return null;
+    initialState={parts:state.parts,selected:[...state.selected].sort((a,b)=>a-b)};
+  }
+  return {tool:value.tool,version:1,role:value.role,goal:value.goal,numerator:value.numerator,denominator:value.denominator,targetDenominator:value.targetDenominator,instruction:typeof value.instruction==='string'?value.instruction.slice(0,600):'',...initialState?{initialState}:{}};
+}
+const adapters=Object.freeze({'fraction-board':{descriptor:fractionDescriptor,initial(descriptor){if(descriptor.initialState)return {parts:descriptor.initialState.parts,selected:[...descriptor.initialState.selected]};return {parts:descriptor.denominator,selected:descriptor.goal==='equivalent'?Array.from({length:descriptor.numerator},(_,i)=>i):[]};}}});
 export function createWorkshop(task){const adapter=adapters[task?.workshop?.tool],descriptor=adapter?.descriptor(task.workshop);if(!descriptor||typeof task?.id!=='string')return null;return {taskId:task.id,descriptor,signature:JSON.stringify(descriptor),...adapter.initial(descriptor),actions:[]};}
 export function syncWorkshop(state,task){const next=createWorkshop(task);return next&&state?.taskId===next.taskId&&state.signature===next.signature?state:next;}
 export function workshopAction(state,action){if(!state||state.actions.length>=60||!Number.isInteger(action?.value))return state;let parts=state.parts,selected=[...state.selected];const {type,value}=action;

@@ -32,3 +32,9 @@ test('new workshop task is validated against its topic and private key before re
  assert.equal(cleanGenerated(d,{...s,topic:{subject:'math',title:'Brüche'}}).task.workshop.tool,'fraction-board');
  assert.throws(()=>cleanGenerated(d,{...s,topic:{subject:'german',title:'Lesen'}}));
 });
+
+test('help keeps the actual failed fraction-board subdivision visible for its next micro-step',()=>{
+ const d=generated();d.task.input='workshop';d.task.workshop={tool:'fraction-board',version:1,role:'answer',goal:'equivalent',numerator:2,denominator:3,targetDenominator:6,instruction:'Markiere jetzt gleich viel.'};d.explanation='Du hast sechs Teile, aber nur zwei markiert.';
+ const result=cleanGenerated(d,{...s,phase:'help',topic:{subject:'math',title:'Brüche'}},{workshop:{tool:'fraction-board',goal:'equivalent',source:{numerator:2,denominator:3},final:{numerator:2,denominator:6},selection:[0,3]}});
+ assert.deepEqual(result.task.workshop.initialState,{parts:6,selected:[0,3]});
+});

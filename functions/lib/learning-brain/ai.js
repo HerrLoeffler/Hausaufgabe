@@ -2,7 +2,7 @@
 const {randomUUID}=require('node:crypto');
 const {requestStructured}=require('../structured-response');
 const {assessExact,rational}=require('./exact');
-const {toolsFor,validateConfig}=require('./workshop');
+const {toolsFor,validateConfig,followupConfig}=require('./workshop');
 const {TEXT_MODEL}=require('../constants');
 const {preparePedagogicalPool}=require('../pedagogical-pool');
 const {LearningError}=require('./service');
@@ -23,7 +23,7 @@ function numericKey(value){
  if(/\d\s+\d/.test(text))return ''; // Never concatenate a mixed number.
  return text;
 }
-function cleanGenerated(data,s){
+function cleanGenerated(data,s,context={}){
  const t=data?.task;if(!t||typeof t.prompt!=='string'||!t.prompt.trim()||t.prompt.length>600||typeof t.contextText!=='string'||t.contextText.length>1800||!['text','number','choice','workshop'].includes(t.input)||!Array.isArray(t.options)||t.options.length>6||t.options.some(x=>typeof x!=='string'||x.length>200)||!t.answer||!Array.isArray(t.answer.values)||t.answer.values.length>12||!t.rubric||t.rubric.length>1800||!t.family||t.family.length>80)throw new LearningError('unavailable','Die KI-Aufgabe war noch nicht zuverlässig genug. Bitte erneut versuchen.');
  if(t.input==='choice'&&(t.options.length<2||t.answer.values.some(x=>!t.options.includes(x))))throw new LearningError('unavailable','Die Auswahlmöglichkeiten passen noch nicht.');
  if(t.answer.kind!=='open'){
@@ -43,7 +43,7 @@ function cleanGenerated(data,s){
   visual={...v,description:String(v.description||'').slice(0,300)};
  }
  let workshop=null;
- try{workshop=validateConfig(t.workshop,s.topic,t);}catch(error){const e=new LearningError('unavailable','Die Lernwerkstatt passt noch nicht zuverlässig zur Aufgabe.');e.critique=error.message;throw e;}
+ try{workshop=validateConfig(t.workshop,s.topic,t);if(workshop&&s.phase==='help'&&context.workshop)workshop=followupConfig(workshop,context.workshop);}catch(error){const e=new LearningError('unavailable','Die Lernwerkstatt passt noch nicht zuverlässig zur Aufgabe.');e.critique=error.message;throw e;}
  if(t.input==='workshop'&&!workshop)throw new LearningError('unavailable','Das Werkzeug für diese Aufgabe fehlt.');
  return {task:{...t,workshop,toolDecision:workshop?{tool:workshop.tool,reason:String(t.workshop.reason||'').slice(0,600)}:null,id:randomUUID()},explanation:data.explanation,visual:workshop?null:visual};
 }
@@ -70,7 +70,7 @@ function createAI({client,record=async()=>{}}){
    for(let attempt=0;attempt<2;attempt++){
    const data=await ask('learning_next',nextSchema,instruction+`\nLernwerkstatt: Du wählst nur aus workshopTools. Ohne konkreten fachlichen Nutzen tool=none. Bei normalen Rechen-/Begründungsproben, sprachlichen Themen und Hilfestufe>=2 meist kein Werkzeug. Bei selbstständigen Bruchproben ab Level2 tool=none, damit Transfer ohne Werkstatt geprüft wird. Nach erfolgreich gelöster Ausgangsaufgabe mit Hilfe folgt wieder ein einfacher Einstieg mit gegebenem Faktor2; keinen gesuchten Faktor vorweg als Tipp verraten. Bei einem Einstieg in wertgleiches Erweitern auf Level0 oder der ersten Hilfe nach einer misslungenen Anteilshandlung ist fraction-board mit goal=equivalent sinnvoll: kleine Quelle numerator/denominator, größerer ganzzahliger Zielnenner targetDenominator, role=answer und input=workshop. Das Kind verändert und markiert gleiche Teile. Lösungsschlüssel exact-fraction muss zum Zielnenner passen. goal=represent prüft Anteilelegen; dann targetDenominator=0, role=answer, input=workshop, Schlüssel rational mit Vorgabebruch. role=support nur bei einer ausdrücklich unterstützten Teilaufgabe und separater Textfrage. instruction ist genau ein kurzer Arbeitsauftrag, reason die private Begründung der Werkzeugwahl. Eine Probe mit Werkzeug ersetzt keine selbstständige spätere Probe ohne Werkzeug. Bei tool=none sonstige workshop-Zahlen0,version1,instruction/reason leer. Keine Molekül-, Diagramm- oder anderen nicht implementierten Werkzeuge erfinden. Kurz: Erklärung maximal420Zeichen. contextText enthält alle zum Antworten nötigen Textdaten. Bei Deutsch Lesen eigenständigen kurzen Text mitliefern; alle plausiblen Antworten anhand rubric anerkennen. answer.kind open für Sprache/Begründungen; rational für Rechenergebnis mit gleichwertigen Brüchen; exact-fraction NUR wenn eine bestimmte Erweiterung/Form ausdrücklich verlangt wird. values private Musterantworten, rubric private Begründung. Bei numerischen Schlüsseln enthalten values ausschließlich einzelne Zahlen oder Brüche als Klartext, z.B. "4/6", "2", "0,5"; niemals LaTeX, Wörter, Gleichungen oder Rechenzeichen. Bei Auswahl mit Wortoptionen answer.kind=open verwenden. Keine Code-/HTML-Bilder. visual.kind none, wenn kein Bild fachlich hilft. Bei fraction-strip beschreiben numerator/denominator den Ausgangsbruch und factor die gleichmäßige Unterteilung. Faktor1 ist erlaubt. Wenn das Lernziel Wertgleich erweitern ist: erster Einstieg bei level0 Bruch mit kleinem Zähler und Nenner2bis5, Faktor2. Später selbst den passenden Faktor erschließen oder einen Fehler begründen. Falls repair vorliegt, korrigiere den konkreten Fehler des alten Entwurfs. Erstelle einen neuen fachlich passenden Entwurf, deute keine Ablehnung in eine Freigabe um.`,{repair,workshopTools,workshopObservation:context.workshop||null,topic:s.topic,materialGuidance:pool.prompt,materialProfileVersion:pool.meta.version,phase:s.phase,level:s.level,supportStage:s.supportStage,originalTask:s.originalTask,lastTask:s.task,learnerAnswer:context.answer,learnerQuestion:context.question,recentTasks:(s.events||[]).slice(-6).map(e=>({family:e.family,fingerprint:e.fingerprint}))});
    try{
-    const result=cleanGenerated(data,s);
+    const result=cleanGenerated(data,s,context);
     await review('neue Aufgabe und Hilfe',{topic:s.topic,phase:s.phase,level:s.level,supportStage:s.supportStage,originalTask:s.originalTask,lastTask:s.task,candidate:result,requireDemandIncrease:s.phase==='practice'&&Boolean(s.task)&&s.level>Number(s.previousLevel??s.level)});
     return result;
    }catch(error){
