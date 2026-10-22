@@ -684,17 +684,32 @@
       "relatedBranches": [
         "feature/public-legal-pages-20261021",
         "fix/secure-return-after-sync-20261022",
-        "fix/secure-audio-ci-readiness-20261022"
+        "fix/secure-audio-ci-readiness-20261022",
+        "feature/secure-iphone-20261022"
+      ]
+    },
+    {
+      "id": "extended-question-types-01",
+      "title": "GC-EXTENDED-QUESTION-TYPES-01: interaktive Aufgaben und gemeinsamer Lernfundus",
+      "primaryBranch": "docs/visual-learning-principles-20261022",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/interactive-learning-principles-20261022.md",
+      "relatedBranches": [
+        "feature/extended-question-types-20261020"
       ]
     },
     {
       "id": "domain-gradecrew-de-20261022",
-      "title": "GC-DOMAIN-01: gradecrew.de für bestehendes Schul-Live",
+      "title": "GC-DOMAIN-01: neue Liveadresse, alte Konten und Links erhalten",
       "primaryBranch": "feature/domain-gradecrew-de-20261022",
       "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "blocked",
+      "state": "integrated",
       "handoff": "workstreams/domain-gradecrew-de-20261022.md",
-      "relatedBranches": []
+      "relatedBranches": [
+        "feature/live-staging-domain-20261022",
+        "feature/native-gradecrew-domain-20261022"
+      ]
     }
   ]
 }

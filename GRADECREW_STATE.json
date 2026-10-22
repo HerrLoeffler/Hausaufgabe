@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "ab6fcc9d72aa9d401eba2ec4db31c01f7758c0f0",
+    "observed_integration_head": "750212e7a38df4d0bbce833d2ae46b3f8f8b2b68",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -74,7 +74,7 @@
     "preview_verified_files": 167,
     "important": "PR176–178 repair publishing, Firestore ordering storage and Staging private audio activation. Real local publish and Staging off/on plus private-audio start/resume verified. Existing local design/multicolour work preserved. Broader physical-device/load acceptance and Production remain separate. Coco durable owner-only search/memory and contextual support PR179–183 now deployed with real own-account search/context checks; broader user/device acceptance separate.",
     "next_action": "Martin confirmed Secure1.0(1141) physical iPad offline submission, restart, later sync and teacher receipt on21Oct. Complete trader contact verification and privacy-label publication approval; stable synthetic review code and actual Store screenshots remain before submission. Reload installed feedback connector and perform Live admin login before private feedback retrieval.",
-    "canonical_url": "https://hausaufgabe-staging.web.app/",
+    "canonical_url": "https://gradecrew.de/",
     "active_repair": {
       "task_id": "GC-WEB-REPAIR-20261007",
       "stage": "staging_deployed",
@@ -626,12 +626,15 @@
     "changed_by_current_release_train": true,
     "legacy_project": "hausaufgabe-40294",
     "legacy_project_changed": false,
-    "url": "https://hausaufgabe-staging.web.app/",
+    "url": "https://gradecrew.de/",
     "version": "2.3.1-gc44",
     "source_commit": "424473481a3bcb8818289f79f760772883f0492c",
     "deployed_local_commit": "0de530730b78c25115f937ad224aab88ee22b650",
     "tree": "c888657423cbba440545009c2ffebfe5405e8e65",
-    "user_acceptance": "current gc44 and new offline native policy physical acceptance pending"
+    "user_acceptance": "current gc44 and new offline native policy physical acceptance pending",
+    "alternate_urls": [
+      "https://hausaufgabe-staging.web.app/"
+    ]
   },
   "automation": {
     "preview_deployment": "verified_hosting_current_eb80_candidate",
@@ -1928,31 +1931,37 @@
       "id": "domain-gradecrew-de-20261022",
       "task_id": "GC-DOMAIN-01",
       "branch": "feature/domain-gradecrew-de-20261022",
-      "observed_head": "79bd8525f86601d9bcdb5a5d57081fcad24054ef",
-      "stage": "branch_only",
+      "observed_head": "750212e7a38df4d0bbce833d2ae46b3f8f8b2b68",
+      "stage": "integrated",
       "pull_request": 282,
       "handoff": "workstreams/domain-gradecrew-de-20261022.md",
-      "scope": "Existing school-live Firebase Hosting custom domains only; no server/data migration or unrelated product rollout.",
-      "production": "Custom domain serving existing school-live over valid HTTPS; synthetic student submission confirmed; authenticated login and QR/device acceptance remain open.",
+      "scope": "Canonical domain and additive Auth on existing school-live; preserve old accounts/links; Native owner follows separately.",
+      "production": "gradecrew.de serving same existing school release; old school origin remains live; no Hosting content/Functions/Rules/data migration.",
       "evidence": {
         "project": "hausaufgabe-staging",
         "site": "hausaufgabe-staging",
-        "baseline_commit": "ab6fcc9d72aa9d401eba2ec4db31c01f7758c0f0",
+        "hosting_commit": "ab6fcc9d72aa9d401eba2ec4db31c01f7758c0f0",
         "hosting_version": "4641f2c63bbbb2f3",
-        "create_operations": [
-          "88430c73-26cf-4677-b8fa-7045544456a2",
-          "e208d009-38ab-4f0f-8eea-bf546271db77"
-        ],
-        "netcup": "clock/as soon as active; DNS editing unavailable; public NXDOMAIN",
-        "domain_status": "HOST_ACTIVE/OWNERSHIP_ACTIVE; CERT_PROPAGATING; actual HTTPS200 verified",
-        "local_tests": "10/10 domain/environment/build contracts",
-        "public_file_hash_checks": "7/7 against unchanged manifest; semantic metadata/file equality verified",
-        "github_ci": "pending; inspect PR282",
-        "https": "same manifest files and commit as old school site; HTTP/WWW preserve path/query; legal/support200",
-        "student": "actual browser synthetic demo start/answer/submit; server-side receipt visible",
-        "auth": "new domain absent from authorizedDomains; login form only; password login/reset unverified"
+        "domain": "HOST_ACTIVE/OWNERSHIP_ACTIVE; valid HTTPS",
+        "www_http": "redirect preserves path and test query",
+        "asset_verification": "all 173 manifest files on new origin match",
+        "auth": "only gradecrew.de/www added; previous domains and all unrelated config preserved",
+        "account_compatibility": "same synthetic credentials and UID with both origin configs; new browser password login/reload/logout PASS; old existing browser session preserved",
+        "student": "actual synthetic demo submission server confirmed; own new QR test opens same test on new and old origins",
+        "qr": "actual generated PNG decoded to https://gradecrew.de/?test=7WGQTJ5S",
+        "reset": "both continueUrls accepted without mail or password change; actual delivery untested",
+        "local_tests": "10/10 passed; canonical expectation red then green",
+        "independent_review": "PASS after receipt-state fix, auth script d5decda9ae9883fb1113fb72338592cca7c21189726fe3d4e3a4e951ee6cabb0",
+        "candidate_ci": 39848742312,
+        "candidate_ci_conclusion": "success",
+        "candidate_commit": "750212e7a38df4d0bbce833d2ae46b3f8f8b2b68",
+        "native_pr": 289,
+        "native_candidate": "c85deddc408382f5b72aafdce0f7c33e917a11c8",
+        "native_ci": 39848507858,
+        "native_status": "owner active; review/local checks PASS; upload pending",
+        "physical_device": "not_performed"
       },
-      "next_action": "Reviewed additive Authdomain update, then actual login/logout/reset and QR/camera acceptance; preserve old origin and native owner scope."
+      "next_action": "Collect Native owner CI/TestFlight/Store URL receipts; preserve old account/links and do not migrate or rename Firebase/Auth/API/Keychain identifiers."
     }
   ],
   "deployments": [
@@ -2672,10 +2681,10 @@
     "source_commit": "424473481a3bcb8818289f79f760772883f0492c",
     "integration_commit": "5a248621f315c08e30a2639b162434526b4e7349",
     "native_branch": "feature/native-live-staging-20261018",
-    "native_commit": "acb7060c90a601feec28f49b22f6e9990f8e696a",
+    "native_commit": "b9edcd6e765b6fe5479e18a50ac4a23fd41793e8",
     "teacher_testflight_run": 39783328084,
-    "secure_testflight_run": 39784682376,
-    "testflight_status": "teacher_0.2.0_50_and_secure_1.0_1161_uploaded_processed_existing_internal_groups_notes_verified;new_physical_acceptance_pending",
+    "secure_testflight_run": 39837839965,
+    "testflight_status": "teacher_0.2.0_50_and_universal_secure_1.0_1171_uploaded_processed_internal_groups_notes_verified;physical_iPhone_acceptance_pending",
     "physical_acceptance": "user_confirmed_success_20261021_Secure1.0_1141_offline_submit_close_reopen_sync_teacher_receipt",
     "offline_policy": "unlock_only_after_verified_durable_local_submission_then_sync; block_new_attempt_until_server_receipt",
     "live_functions": {
@@ -2733,34 +2742,39 @@
       "physical_device_acceptance": "pending"
     },
     "teacher_testflight_build": "0.2.0(50)",
-    "secure_testflight_build": "1.0(1161)",
-    "secure_native_commit": "acb7060c90a601feec28f49b22f6e9990f8e696a",
+    "secure_testflight_build": "1.0(1171)",
+    "secure_native_commit": "b9edcd6e765b6fe5479e18a50ac4a23fd41793e8",
     "secure_testflight_receipt": {
       "task_ids": [
         "GC-IOS-02",
         "GC-RELEASE-06"
       ],
-      "commit": "acb7060c90a601feec28f49b22f6e9990f8e696a",
+      "commit": "b9edcd6e765b6fe5479e18a50ac4a23fd41793e8",
       "branch": "feature/native-live-staging-20261018",
-      "pr": 277,
+      "pr": 286,
       "version": "1.0",
-      "build": "1161",
-      "ci_run": 39784682376,
+      "build": "1171",
+      "ci_run": 39837839965,
       "ci": "success",
-      "signed_aac_app_and_profile": "verified_2026-10-22T13:41:50Z",
-      "upload": "success_2026-10-22T13:43:51Z",
+      "signed_aac_app_and_profile": "verified_2026-10-22T19:37:21Z",
+      "signed_device_families": [
+        1,
+        2
+      ],
+      "minimum_OS": "17.0",
+      "upload": "success_2026-10-22T19:39:12Z",
       "apple_processing": "complete",
-      "internal_group": "GradeCrew Tester",
-      "invited_testers": 1,
-      "physical_acceptance": "pending_return_after_receipt_and_next_attempt_on_real_iPad",
+      "apple_build_id": "d044bfe7-86f3-4e6e-9b7e-8c7a4c6131e5",
+      "physical_acceptance": "pending_real_iPhone_AAC_timer_offline_and_iPad_regression",
       "app_store_submission": false,
       "production_backend_changed": false,
       "website_changed": false,
-      "teacher_app_changed": "separate_PR279",
-      "handoff": "workstreams/secure-return-after-sync-20261022.md",
-      "ci_repair_pr": 280,
-      "apple_build_id": "6be8e4fb-315b-406b-a706-aa69fcd02616",
-      "test_notes": "saved_reload_verified"
+      "teacher_app_changed": false,
+      "handoff": "workstreams/secure-iphone-20261022.md",
+      "internal_group": "GradeCrew Tester",
+      "invited_testers": 1,
+      "test_notes": "saved_reload_verified",
+      "UI_proof": "Apple_build_detail_readback_verified;browser_screenshot_displayed;CUA_local_save_EPERM"
     },
     "teacher_testflight_receipt": {
       "commit": "60927e062e2a4cd52493cfcbdd53603c1f5d1add",
@@ -2905,6 +2919,81 @@
       "website_changed": false,
       "teacher_app_changed": false,
       "handoff": "workstreams/secure-testflight-1141-20261021.md"
+    },
+    "secure_iphone_followup": {
+      "task_ids": [
+        "GC-IOS-02",
+        "GC-RELEASE-06"
+      ],
+      "handoff": "workstreams/secure-iphone-20261022.md",
+      "pr": 286,
+      "source": "2b7929520778d9f9aeaeb2ec936b778aaa609a86",
+      "candidate": "b9edcd6e765b6fe5479e18a50ac4a23fd41793e8",
+      "run": 39837839965,
+      "status": "uploaded_processed_existing_internal_group_notes_verified",
+      "local": {
+        "swift": 28,
+        "python": 22,
+        "node": 24,
+        "phone_native": 540,
+        "phone_web": 216,
+        "phone_web_interactions": 12,
+        "phone_composed": 6,
+        "controller": 5,
+        "actual_return_UI": [
+          "portrait",
+          "landscape"
+        ],
+        "universal_live_simulator_build": "success",
+        "entry_previews": [
+          "iphone",
+          "ipad"
+        ]
+      },
+      "independent_review": "prior_P2_composed_gap_addressed_no_remaining_concrete_P0P2",
+      "physical_acceptance": "pending_iPhone_AAC_time_offline_reconnect_return_and_iPad_regression",
+      "website_backend_rules_changed": false,
+      "domain_changed": false,
+      "previous_iPad_receipt": {
+        "task_ids": [
+          "GC-IOS-02",
+          "GC-RELEASE-06"
+        ],
+        "commit": "acb7060c90a601feec28f49b22f6e9990f8e696a",
+        "branch": "feature/native-live-staging-20261018",
+        "pr": 277,
+        "version": "1.0",
+        "build": "1161",
+        "ci_run": 39784682376,
+        "ci": "success",
+        "signed_aac_app_and_profile": "verified_2026-10-22T13:41:50Z",
+        "upload": "success_2026-10-22T13:43:51Z",
+        "apple_processing": "complete",
+        "internal_group": "GradeCrew Tester",
+        "invited_testers": 1,
+        "physical_acceptance": "pending_return_after_receipt_and_next_attempt_on_real_iPad",
+        "app_store_submission": false,
+        "production_backend_changed": false,
+        "website_changed": false,
+        "teacher_app_changed": "separate_PR279",
+        "handoff": "workstreams/secure-return-after-sync-20261022.md",
+        "ci_repair_pr": 280,
+        "apple_build_id": "6be8e4fb-315b-406b-a706-aa69fcd02616",
+        "test_notes": "saved_reload_verified"
+      },
+      "cloud": {
+        "native_ipad": 900,
+        "web_mini": 360,
+        "web_large": 360,
+        "web_interactions_each": 12,
+        "native_phone": 540,
+        "web_phone": 216,
+        "phone_interactions": 12,
+        "phone_composed": 6,
+        "build_job": 120038292018,
+        "all_jobs": "success"
+      },
+      "additional_local_max_phone_UI": "portrait_and_landscape_passed"
     }
   },
   "public_legal_information_20261021": {

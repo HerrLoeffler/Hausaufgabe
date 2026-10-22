@@ -1,0 +1,51 @@
+# GC-IOS-02 / GC-RELEASE-06 — Secure auf iPhone und iPad
+
+Direkter Auftrag von Martin: bestehende Secure-App auch am iPhone nutzbar machen und über TestFlight testen, iPad-Verhalten erhalten. Ausführender Native-Fachchat dieses Gesprächs; Chatlink unbekannt. Keine zweite App/Bundle-ID, kein Website-/Backend-/Domain-Cutover. Basis acb7060c90a601feec28f49b22f6e9990f8e696a; eigener Branch feature/secure-iphone-20261022 im bereits isolierten eigenen Checkout /private/tmp/gc-material-rights-native-20261021. Frischer main970db46/Einstieg/STATE/TODO/Registry und Development Status39820706574success geprüft. Offene Domain-PR282 betrifft Websiteintegration, keine konkurrierende Native-PR. Initialer Sandbox-Fetch fehlgeschlagen, autorisiert eskalierter Fetch erfolgreich, eigener Branch anschließend fast-forward auf tatsächlichen Zielstand; keine fremde Arbeit zurückgesetzt.
+
+## Umsetzung und Prüfziel
+
+Eine universelle App de.gradecrew.secure für Gerätefamilien1/2 ab iOS/iPadOS17. Bestehende iPad-Orientierungen erhalten, iPhone Hoch-/Querformat. AAC, Prüfungsserver, Antworten, Zeitlimit, verschlüsselte lokale Queue und Receipt-/Freigabepolitik bleiben gleich. Gerätehinweise verwenden „Gerät“ statt iPad. Neue Phone-Matrix separat zusätzlich zu unveränderten900Native-/2x360Web-iPad-Gates: sechs Telefonansichten (375x667,390x844,430x932,667x375,844x390,390x300), drei Textgrößen, alle Zustände/Fragentypen und tatsächliche Navigation. Neuer eigener iPhone-Simulatorjob blockiert Upload bis Erfolg. Distribution prüft beide Gerätefamilien im signierten Artefakt neben AAC/Profil.
+
+## Bisherige Belege / Checkpoint
+
+Neue Tests zuerst rot: fehlende Phone-Abdeckung und fehlende universelle Distribution-Garantie. Nach Umsetzung22Pythonprüfungen bestanden; bestehende28Swiftprüfungen für Timer/Queue/Policy ebenfalls bestanden. Node-Aufruf zunächst mangels PATH nicht gestartet, gebündelter Node wird verwendet. Eigener Phone-Simulator53F3E226-D523-4F00-9E56-7325D82EA16E; echte SwiftUI-/WebKit-/Controller-/UI-Prüfung läuft lokal unter /private/tmp/gc-secure-iphone-layout-20261022, Prozesssession44305. Nur iOS27Runtime vorhanden; kein tatsächlicher AAC-/Telefonanruf-/Gerätebeleg. Noch kein Commit/PR/Upload oder erfolgreicher kompletter Matrixlauf behauptet.
+
+## Assurance und Grenzen
+
+SEC14/PRIV13: neue Geräteanbindung und schmale/Keyboard-/Großschriftansichten benötigen echte Layout-/Interaktionsbelege. SEC08/11: vorhandene AAC-/Timer-/Durable-Abgabe-Guards nicht umgehen; echte Sperre am physischen iPhone bleibt Nutzerabnahme. Keine neuen SDKs, Datenkategorien oder Berechtigungen; PRIV07/17 keine neuen Datenflüsse. Ein Simulator darf keine echte Sperre vortäuschen. Requested Modell unverändert, actual unbekannt, kein bezahlter Providerstart. gradecrew.de bleibt unverifizierte spätere URL-Abhängigkeit; Keychain-/Queue-/ProjektIDs erhalten.
+
+Nächster Schritt: lokale echte Phone-Matrix auswerten, konkrete Layoutfehler beheben und unveränderlichen Diff unabhängig reviewen; danach bestehende TestFlightpipeline einmal mit frischem Zielabgleich starten.
+
+## Konkrete Phone-Befunde und Folgekandidat
+
+Erster echter iPhone-Lauf vollständig ausgewertet:540/540nativeGeometriefälle ohneBeanstandung und216Webberichte erhalten, aber echterUI-Returntest scheiterte: Tastatur-Autofillleiste lag überdemNamensfeld (Feld504–557, Leiste524–568), Codebliebfokussiert. Webtest fandbei375x667/normalergroßerSchrift übergroßegeöffneteAufgabenübersicht.12tatsächlicheWebinteraktionen bestanden. Nicht alsgrünerLaufausgegeben.
+
+ExplizitesFokus-Scrollen aufkompaktenGeräten nachFokuswechsel undKeyboardanzeige hältCode-/Namensfeldbedienbar; gezielterUI-Test anschließendgrün. KleinerePhoneübersicht/kompakteNavigation sparenPlatz. UnabhängigerReview acb7060..5f294f1 fandP2-Abdeckungslücke: WebmatrixhattegesamteGerätegröße stattverbleibenderFlächezwischenShippingkopf/-fuß. SechsneuekomponierteTestsverwendenwirklichenSecureExamFrame undwirklichenlokalenWKRenderer; erzwingenFragenwahlmitunverändertenAntwortenundsichtbarerZielüberschrift. Tatsächlicher390x300Fallwurde rot (Webhöhe98), danachkompaktereKopf-/Fußabstände undkonsistenteAusrichtungderFragenüberschriftbeisehrkleinerLesehöhe; sechsKompositionen anschließendgrün (gc-secure-iphone-composed-final.log). KeinAAC-/Queue-/Server-/Antwortinhaltverändert.
+
+VollständigerlokalerFolgelauf jetzt /private/tmp/gc-secure-iphone-layout-final-20261022; zusätzlichwirklicherUI-TastentestimPhonequerformat.24Nodeerneutgrün. DraftPR286 sichert erstenKandidaten28855699a9cd152067f0bf2d4f8ad51550481ca1 (treegleichlokal5f294f1); spätereKorrekturen nochseparatzusichern. KeinneuerCloud-/TestFlightlaufgestartet. PhysischeAAC-/Telefonanruf-/Sperr-/OfflineabnahmeamHandybleibtoffen.
+
+## Unabhängiger Review und echte Phone-Eingabe
+
+Review5f294f1..84b3737: vorherigeP2-LückedurchsechskomponiertePflichtberichtebehoben, keineweiterenkonkretenP0–P2-Befunde. ReviewerführtekeineeigenenTests/Sessionsaus; KompositionsbelegderzeitNormalschrift/geschlosseneÜbersicht, zusätzlicheTextgrößeninderseparatenvollständigenNative-/Webmatrix. DerneueUI-ReturntestbestandaufdemtatsächlichenPhone-SimulatorimHoch-undQuerformat (9.5s/11.6s), biszurnächstenStartbestätigung. NeuerkomponierterTestbestandebenfalls6/6. Release-SimulatorbuildSecureLiveerfolgreich; Info.plistbestätigtUIDeviceFamily[1,2],MinimumOS17.0,Phone3Orientierungenundunverändert4iPadOrientierungen. VollständigerPhone-Webmatrixabschlussnochoffen, keinCloud-/Uploadbeleg.
+
+## Vollständige lokale Freigabe des Kandidaten
+
+Folgelaufgc-secure-iphone-layout-final-20261022 abgeschlossen:540/540Native und216/216Webgeometriefälle,12/12echteWebinteraktionen und6/6komponiertePhoneansichten bestanden. FünfController-/WebKit-Lifecycleprüfungen undbeideechtenUI-Return-/Eingabetests (Hoch-/Querformat) ebenfallsbestanden.22Python/28Swift/24Node erfolgreich. TatsächlicheShipping-AppaufdemeigeneniPad-Simulatorvisuellgeprüft, gewohnte96pxLogo/Formbreite/AbständeaufgroßemDisplayerhalten. KeinephysischeAAC-AbnahmeausSimulatortestsabgeleitet. UnabhängigerReviewf470816/treegleich84b3737ohneweitereP0–P2; neuerCloudlaufnachfrischemZiel-/PRabgleichalsnächsterSchritt.
+
+
+## Integrierter Releasecheckpoint
+
+PR286 integriertb9edcd6e765b6fe5479e18a50ac4a23fd41793e8, Quellcommit2b7929520778d9f9aeaeb2ec936b778aaa609a86 (Produktbaumgleichlokal518f3d7). VollständigerCloud-/TestFlightlauf39837839965 gestartet; eigenePhonepflichtprüfungzusätzlichzuunveränderten900Native-/2x360Web-iPad-Gates. NochkeinUpload/Buildnummer/Appleprocessingbehauptet. Bestehender1161-Releasebelegbleibtgetrennt. iPhoneStorebilder/spätereAppRevieweinreichungnichtTeildiesesTestFlightauftrags. AktuelleEigenvorschauen/gesamterlokalerBericht outputs/secure-iphone-20261022/.
+
+
+## Abschluss: Secure 1.0 (1171) verfügbar
+
+Der vollständige GitHub-Actions-Lauf [39837839965](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39837839965) auf b9edcd6e765b6fe5479e18a50ac4a23fd41793e8 ist im ersten Versuch erfolgreich abgeschlossen. Alle bisherigen iPad-Gates bleiben bestanden: 900 native Fälle sowie je 360 WebKit-Fälle und zwölf Interaktionen auf mini und großem iPad. Der zusätzliche echte iPhone-17-Pro-Simulatorlauf bestand 540 native Fälle, 216 WebKit-Fälle, zwölf Interaktionen und sechs komponierte Prüfungsansichten. Der separate lokale iPhone-16-Pro-Max-Test bestand beide echten UI-Eingabe-/Rückkehrtests im Hoch- und Querformat. Die große eigene QA-Simulation wurde anschließend heruntergefahren.
+
+Buildjob120038292018: Archiv erfolgreich um19:37:01UTC, Export19:37:21UTC, signierte AAC-App und Distributionprofil geprüft. Die verpflichtende Distributionprüfung bestätigt zusätzlich UIDeviceFamily[1,2] und den Live-Modus. Upload1.0(1171) erfolgreich am22.10.2026 um19:39:12UTC. Apple hat den Build verarbeitet (ID d044bfe7-86f3-4e6e-9b7e-8c7a4c6131e5); bestehende interne Gruppe „GradeCrew Tester“ mit einem Tester automatisch zugeordnet. Keine neue Einladung oder Rechteausweitung. Deutsche Testanleitung gespeichert und nach Neuladen überprüft. [Apple-Builddetail](https://appstoreconnect.apple.com/teams/d0d618ea-0473-441c-b669-ee875c408bc8/apps/6817526711/testflight/ios/d044bfe7-86f3-4e6e-9b7e-8c7a4c6131e5).
+
+Lokale Nachweise und echte App-Vorschauen: outputs/secure-iphone-20261022/. Das Speichern des Browser-Screenshots wurde im CUA-Host trotz freigegebenem Ausgabeordner mit EPERM verhindert; keine vorhandene Screenshotdatei behaupten. Sichtbarer Screenshot wurde im Chat ausgegeben, Build/Gruppe/Testhinweise zusätzlich über tatsächliche UI nach Neuladen bestätigt. Das ist eine Artefaktgrenze, kein fehlender TestFlight-Upload.
+
+Offen bleibt die physische Abnahme auf Martins iPhone: AAC-Sperre, vorzeitige und zeitgesteuerte Abgabe, tatsächlicher Netzverlust (mobile Daten zuvor aus), spätere Synchronisation und Rückkehr zum Start. Derselbe neue Build braucht einen kurzen iPad-Regressionstest. Simulatoren beweisen weder echte AAC-Sperre noch Anruf-/Systemunterbrechungen oder alle älteren iOS-Versionen. Minimum bleibt17.0. Die bisherigen iPad-Builds wurden nicht ungültig gemacht. Website, Backend, Rules, Domains, gespeicherte Versuchsschlüssel und App-Store-Einreichung wurden in diesem Auftrag nicht verändert.
+
+Nächster Schritt: Martin testet Build1171 auf iPhone und iPad anhand der hinterlegten TestFlight-Anleitung; Ergebnis mit Buildnummer in dieser Übergabe ergänzen. Keine zweite App und kein neuer Server erforderlich.
