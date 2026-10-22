@@ -94,6 +94,7 @@ jobs:
             ${{ runner.temp }}/secure-phone/native/
             ${{ runner.temp }}/secure-phone/web/
             ${{ runner.temp }}/secure-phone/interactions/
+            ${{ runner.temp }}/secure-phone/composed/
             ${{ runner.temp }}/secure-phone/summary.json
             ${{ runner.temp }}/secure-phone/*-xcodebuild.log
           if-no-files-found: error

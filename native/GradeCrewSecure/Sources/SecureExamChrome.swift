@@ -34,7 +34,7 @@ struct SecureExamHeader:View {
                     VStack(alignment:.leading,spacing:12) { identity;clock }
                 }
             }
-        }.padding(.horizontal,16).padding(.vertical,12).frame(maxWidth:SecureTheme.examWidth)
+        }.padding(.horizontal,16).padding(.vertical,compact ? 4 : 12).frame(maxWidth:SecureTheme.examWidth)
             .frame(maxWidth:.infinity).background(SecureTheme.surface).overlay(alignment:.bottom) { Rectangle().fill(SecureTheme.border).frame(height:1) }
             .secureMeasure("exam.header")
     }
@@ -48,7 +48,7 @@ struct SecureExamHeader:View {
     private var clock:some View {
         Label(time,systemImage:"clock").font(.title3.monospacedDigit().bold())
             .foregroundStyle((remaining ?? 61)<=60 ? SecureTheme.warningText : SecureTheme.brand)
-            .padding(.horizontal,12).padding(.vertical,8)
+            .padding(.horizontal,12).padding(.vertical,compact ? 4 : 8)
             .background((remaining ?? 61)<=60 ? SecureTheme.warningFill : SecureTheme.field,in:RoundedRectangle(cornerRadius:12))
             .accessibilityLabel("Verbleibende Zeit: "+time).secureMeasure("exam.clock")
     }
@@ -73,7 +73,7 @@ struct SecureExamFooter:View {
                     VStack(alignment:.leading,spacing:12) { statusText;submit.frame(maxWidth:.infinity) }
                 }
             }
-        }.padding(16).frame(maxWidth:SecureTheme.examWidth).frame(maxWidth:.infinity).background(SecureTheme.surface)
+        }.padding(compact ? 8 : 16).frame(maxWidth:SecureTheme.examWidth).frame(maxWidth:.infinity).background(SecureTheme.surface)
             .overlay(alignment:.top) { Rectangle().fill(SecureTheme.border).frame(height:1) }
             .alert("Speicherstatus",isPresented:$showStatus) { Button("Schließen",role:.cancel) {} } message: { Text([storageStatus,warning].compactMap{$0}.filter{!$0.isEmpty}.joined(separator:"\n")) }
     }
@@ -83,7 +83,7 @@ struct SecureExamFooter:View {
             .accessibilityLabel("Speicherstatus: "+storageStatus).secureMeasure("exam.storage-details",role:"tap")
     }
     private var submit:some View {
-        Button(action:onSubmit) { Text("Abgeben").font(.headline).padding(.horizontal,20).frame(minHeight:52) }
+        Button(action:onSubmit) { Text("Abgeben").font(.headline).padding(.horizontal,20).frame(minHeight:compact ? 44 : 52) }
             .buttonStyle(.plain).foregroundStyle(canSubmit ? SecureTheme.surface : SecureTheme.secondaryText)
             .background(canSubmit ? SecureTheme.brand : SecureTheme.field,in:RoundedRectangle(cornerRadius:14))
             .overlay(RoundedRectangle(cornerRadius:14).stroke(canSubmit ? SecureTheme.brand : SecureTheme.border,lineWidth:1))

@@ -1,5 +1,6 @@
 import XCTest
 import WebKit
+import SwiftUI
 @testable import GradeCrewSecureLayoutHost
 private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler,WKNavigationDelegate {
     var ready=false
@@ -12,6 +13,11 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler,WKNavig
     func webView(_ webView:WKWebView,didFail navigation:WKNavigation!,withError error:Error) { failures.append("Navigation: "+error.localizedDescription) }
     func webView(_ webView:WKWebView,didFailProvisionalNavigation navigation:WKNavigation!,withError error:Error) { failures.append("Provisional navigation: "+error.localizedDescription) }
     func webViewWebContentProcessDidTerminate(_ webView:WKWebView) { failures.append("Fixture WebContent process terminated") }
+}
+private struct SecureComposedWeb: UIViewRepresentable {
+    let web:WKWebView
+    func makeUIView(context:Context)->WKWebView { web }
+    func updateUIView(_ view:WKWebView,context:Context) {}
 }
 @MainActor final class SecureWebLayoutTests:XCTestCase {
     // Fixtures have no accounts or external requests. Reuse the ephemeral browser store,
@@ -35,7 +41,7 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler,WKNavig
             try await capture(view,size:size,scene:scene,overview:overview)
         } } } }
     }
-    private func capture(_ viewport:SecureViewport,size:String,scene:String,overview:Bool,interaction:String? = nil) async throws {
+    private func capture(_ viewport:SecureViewport,size:String,scene:String,overview:Bool,interaction:String? = nil,composed:Bool = false) async throws {
         let url=try XCTUnwrap(Bundle.main.url(forResource:"papers",withExtension:"json",subdirectory:"Fixtures"))
         let fixtures=try XCTUnwrap(try JSONSerialization.jsonObject(with:Data(contentsOf:url)) as? [String:[[String:Any]]])
         let paper=try XCTUnwrap(fixtures[scene])
@@ -57,8 +63,17 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler,WKNavig
             fixtureWeb=web;fixtureWindow=window;fixtureHandler=handler
         }
         let frame=CGRect(x:0,y:0,width:viewport.width,height:viewport.height)
-        window.frame=frame;window.rootViewController?.view.frame=frame;web.frame=frame
-        window.makeKeyAndVisible();web.scrollView.setContentOffset(.zero,animated:false)
+        if composed {
+            window.rootViewController=UIHostingController(rootView:SecureExamFrame(
+                header:SecureExamHeader(title:"Englisch · Farben und Schulsachen",participant:"Testkürzel",remaining:300),
+                footer:SecureExamFooter(storageStatus:"Auf diesem Gerät gesichert",warning:nil,canSubmit:true,onSubmit:{})) {
+                    SecureComposedWeb(web:web)
+                })
+        }
+        window.frame=frame;window.rootViewController?.view.frame=frame
+        if !composed { web.frame=frame }
+        window.makeKeyAndVisible();window.rootViewController?.view.layoutIfNeeded()
+        web.scrollView.setContentOffset(.zero,animated:false)
         let scripts=web.configuration.userContentController
         scripts.removeAllUserScripts()
         scripts.addUserScript(WKUserScript(source:"window.__GC_EXAM__="+String(decoding:data,as:UTF8.self)+";",injectionTime:.atDocumentStart,forMainFrameOnly:true))
@@ -87,8 +102,8 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler,WKNavig
         if let interaction,handler.ready {
             issues += try await exercise(interaction,web:web,viewport:viewport)
         }
-        let id=interaction.map { "interaction-"+$0 } ?? "web-\(viewport.name)-\(size)-\(scene)-\(overview ? "open" : "closed")"
-        try SecureReports.save(id,viewport:SecureViewport(name:viewport.name,width:web.bounds.width,height:web.bounds.height),image:SecureReports.image(web),issues:issues,metrics:metrics)
+        let id=composed ? "composed-"+viewport.name : interaction.map { "interaction-"+$0 } ?? "web-\(viewport.name)-\(size)-\(scene)-\(overview ? "open" : "closed")"
+        try SecureReports.save(id,viewport:SecureViewport(name:viewport.name,width:web.bounds.width,height:web.bounds.height),image:SecureReports.image(composed ? window.rootViewController!.view : web),issues:issues,metrics:metrics)
         XCTAssertTrue(issues.isEmpty,id+": "+issues.joined(separator:", "))
         _=try? await web.evaluateJavaScript("document.getElementById('secureNavigation').__gcQuestionNavigation.destroy()")
         if !handler.ready { throw NSError(domain:"SecureFixture",code:1,userInfo:[NSLocalizedDescriptionKey:issues.joined(separator:", ")]) }
@@ -101,6 +116,15 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler,WKNavig
         let cases=[("direct","thirty"),("previous-next","thirty"),("bounds","hundred"),("clear","all-types"),("ordering","all-types"),("keyboard-height","thirty"),("image-resize","media"),("audio-pause","media"),("reduced-motion","thirty"),("freeze","thirty"),("reload","recovery"),("manual-scroll","thirty")]
         XCTAssertEqual(cases.map{$0.0},SecureReports.policy.interactions)
         for (name,scene) in cases { try await capture(viewport,size:"large",scene:scene,overview:false,interaction:name) }
+    }
+    func testComposedPhoneReadingArea() async throws {
+        guard SecureReports.run.suite == "phone" else { return }
+        try SecureReports.clear("composed-")
+        defer {closeFixture()}
+        for viewport in SecureReports.policy.phoneViewports {
+            closeFixture()
+            try await capture(viewport,size:"large",scene:"thirty",overview:false,interaction:"direct",composed:true)
+        }
     }
     private func exercise(_ name:String,web:WKWebView,viewport:SecureViewport) async throws ->[String] {
         var issues:[String]=[]

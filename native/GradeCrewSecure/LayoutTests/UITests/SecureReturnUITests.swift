@@ -1,13 +1,26 @@
 import XCTest
+import UIKit
 
 final class SecureReturnUITests:XCTestCase {
     func testConfirmedOfflineSubmissionReturnsToCodeFormAndNextTest() {
+        XCUIDevice.shared.orientation = .portrait
+        returnFlow()
+    }
+    func testPhoneLandscapeReturnAndKeyboardEntry() {
+        guard UIDevice.current.userInterfaceIdiom == .phone else { return }
+        XCUIDevice.shared.orientation = .landscapeLeft
+        defer { XCUIDevice.shared.orientation = .portrait }
+        returnFlow()
+    }
+    private func returnFlow() {
         let app=XCUIApplication()
         app.launchArguments=["--secure-lifecycle-ui","--late-recovery-task"]
         app.launch()
         let back=app.buttons["Zurück zum Start"]
         XCTAssertTrue(back.waitForExistence(timeout:15))
         XCTAssertTrue(back.isEnabled)
+        if !back.isHittable { app.swipeUp() }
+        XCTAssertTrue(back.isHittable)
         // The visible blue surface must respond, including beside the text.
         back.coordinate(withNormalizedOffset:CGVector(dx:0.06,dy:0.5)).tap()
         let code=app.textFields["entry.code"]

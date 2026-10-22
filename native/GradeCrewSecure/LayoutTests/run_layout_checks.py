@@ -78,6 +78,14 @@ def main():
             gallery(interactions);(interactions/'summary.json').write_text(json.dumps(interaction_summary,indent=2))
             summary['interactionReports']=interaction_summary
             if not interaction_summary['passed']:summary['passed']=False;summary['issues'].append('Incomplete or failed WebKit interactions')
+            if args.suite=='phone':
+                composed=out/'composed';composed.mkdir()
+                if source is not None:
+                    for f in source.glob('composed-*'):shutil.copy2(f,composed/f.name)
+                composed_summary=validate_reports(composed,['composed-'+v['name'] for v in policy['phoneViewports']])
+                gallery(composed);(composed/'summary.json').write_text(json.dumps(composed_summary,indent=2))
+                summary['composedReports']=composed_summary
+                if not composed_summary['passed']:summary['passed']=False;summary['issues'].append('Incomplete or failed composed phone layout')
         if result.returncode:summary['passed']=False;summary['issues'].append('xcodebuild failed: '+str(result.returncode))
         gallery(target);(target/'summary.json').write_text(json.dumps(summary,indent=2));results.append(summary)
     final={'passed':all(r['passed'] for r in results),'layers':results,'device':device['name'],'suite':args.suite}
