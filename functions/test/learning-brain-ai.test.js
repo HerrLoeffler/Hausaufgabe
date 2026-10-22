@@ -54,3 +54,7 @@ test('a reviewed private pool task is actually reused without another generation
  const ai=createAI({pool,client:{responses:{create:async()=>{throw new Error('Unexpected provider generation');}}}});
  const r=await ai.next(state,{});assert.equal(r.task.prompt,'Erweitere 2/3 mit 2.');assert.equal(r.task.generationSource,'reviewed-pool');assert.ok(r.task.id);assert.equal(r.explanation,'');
 });
+test('unusable successful provider responses still record their consumed tokens before failing safely',async()=>{
+ const records=[];const ai=createAI({record:async(u,op)=>records.push({u,op}),client:{responses:{create:async()=>({status:'incomplete',incomplete_details:{reason:'max_output_tokens'},usage:{input_tokens:10,output_tokens:20}})}}});
+ await assert.rejects(ai.next({...s,task:null},{}));assert.equal(records.length,1);assert.equal(records[0].u.input_tokens,20);assert.equal(records[0].u.output_tokens,40);
+});

@@ -135,7 +135,7 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
     try{
      const generated=await ai.next(s,s.nextContext);
      s.task=generated.task;s.explanation=generated.explanation;s.visual=generated.visual;s.pendingNext=false;delete s.nextContext;delete s.nextFailure;
-    }catch(error){s.nextFailure={stage:String(error?.stage||'generation').slice(0,100),critique:String(error?.critique||'').slice(0,800)};return await persist({release:true});}
+    }catch(error){s.nextFailure={stage:String(error?.stage||error?.details?.incompleteReason||error?.details?.reason||'generation').slice(0,100),critique:String(error?.critique||error?.message||'').slice(0,800)};return await persist({release:true});}
    }
    return await persist({release:true,record:!checkpointed&&kind!=='start'&&data.action!=='retry-next'});
   }catch(error){

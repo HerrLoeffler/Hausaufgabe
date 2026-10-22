@@ -58,7 +58,7 @@ function cleanGenerated(data,s,context={}){
 }
 function createAI({client,record=async()=>{},pool=null}){
  async function ask(name,schema,instruction,data){
-  const result=await requestStructured(req=>client.responses.create(req),{model:TEXT_MODEL,store:false,max_output_tokens:2200,input:[{role:'system',content:SYSTEM+'\n'+instruction},{role:'user',content:JSON.stringify(data)}],text:{format:{type:'json_schema',name,strict:true,schema}}});
+  let result;try{result=await requestStructured(req=>client.responses.create(req),{model:TEXT_MODEL,store:false,max_output_tokens:2200,input:[{role:'system',content:SYSTEM+'\n'+instruction},{role:'user',content:JSON.stringify(data)}],text:{format:{type:'json_schema',name,strict:true,schema}}});}catch(error){if(error.usage)await record(error.usage,name+'-failed');throw error;}
   await record(result.usage,name);return result.data;
  }
  async function review(kind,data){
