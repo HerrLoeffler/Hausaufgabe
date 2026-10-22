@@ -61,7 +61,7 @@ def main():
         (HERE/'Fixtures/run.json').write_text(json.dumps(config))
         log=out/(layer+'-xcodebuild.log')
         with log.open('w') as stream:
-            result=subprocess.run(['xcodebuild','-project',str(ROOT/'GradeCrewSecureLayoutChecks.xcodeproj'),'-scheme','GradeCrew Secure Layout Checks','-destination','platform=iOS Simulator,id='+device['udid'],'-derivedDataPath',str(out/'derived'),'-resultBundlePath',str(out/(layer+'.xcresult')),'-only-testing:GradeCrewSecureLayoutTests/'+('SecureNativeLayoutTests' if layer=='native' else 'SecureWebLayoutTests'),*(['-only-testing:GradeCrewSecureLayoutTests/SecureLifecycleIntegrationTests'] if layer=='native' else []),'-parallel-testing-enabled','NO','-collect-test-diagnostics','never','CODE_SIGNING_ALLOWED=NO','ONLY_ACTIVE_ARCH=YES','test'],stdout=stream,stderr=subprocess.STDOUT,timeout=2700)
+            result=subprocess.run(['xcodebuild','-project',str(ROOT/'GradeCrewSecureLayoutChecks.xcodeproj'),'-scheme','GradeCrew Secure Layout Checks','-destination','platform=iOS Simulator,id='+device['udid'],'-derivedDataPath',str(out/'derived'),'-resultBundlePath',str(out/(layer+'.xcresult')),'-only-testing:GradeCrewSecureLayoutTests/'+('SecureNativeLayoutTests' if layer=='native' else 'SecureWebLayoutTests'),*(['-only-testing:GradeCrewSecureLayoutTests/SecureLifecycleIntegrationTests','-only-testing:GradeCrewSecureReturnUITests'] if layer=='native' else []),'-parallel-testing-enabled','NO','-collect-test-diagnostics','never','CODE_SIGNING_ALLOWED=NO','ONLY_ACTIVE_ARCH=YES','test'],stdout=stream,stderr=subprocess.STDOUT,timeout=2700)
         target=out/layer;target.mkdir()
         source=None
         try:

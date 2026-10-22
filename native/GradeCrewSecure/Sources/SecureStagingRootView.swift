@@ -4,7 +4,7 @@ struct SecureStagingRootView: View {
     @StateObject private var model = SecureExamCoordinator()
     var body: some View { SecureStagingScreen(model: model, assessment: model.assessment) }
 }
-private struct SecureStagingScreen: View {
+struct SecureStagingScreen: View {
     @ObservedObject var model: SecureExamCoordinator
     @ObservedObject var assessment: SecureAssessmentSession
     @Environment(\.scenePhase) private var scenePhase
@@ -53,5 +53,6 @@ private struct SecureStagingScreen: View {
             if model.phase == .completed { model.restart() }
             else if model.phase == .recovery || model.phase == .interrupted { Task { await model.startOrRecover() } }
         }
+        .id(model.phase)
     }
 }

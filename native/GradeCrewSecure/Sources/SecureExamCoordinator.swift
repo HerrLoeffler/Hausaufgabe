@@ -116,7 +116,9 @@ final class SecureExamCoordinator: ObservableObject {
         } catch { guard operations.isCurrent(generation) else { return }; message = error.localizedDescription }
     }
     func startOrRecover() async {
-        guard !busy else { return }
+        // A queued recovery task can run after a receipt has already completed
+        // this attempt. It must not recreate an identity or re-enter AAC.
+        guard !busy, phase == .identity || phase == .recovery || phase == .interrupted else { return }
         let generation = operations.generation
         busy = true; message = ""
         retryTimer?.invalidate(); retryTimer = nil
@@ -402,6 +404,11 @@ final class SecureExamCoordinator: ObservableObject {
     func restart() {
         guard phase == .completed else { return }
         operations.invalidate()
+        timer?.invalidate();timer=nil
+        retryTimer?.invalidate();retryTimer=nil
+        busy=false;submitting=false;polling=false
+        webView=nil;paper=nil;clock=nil
+        details="";storageStatus="";storageFailed=false;ticks=0
         latestCompletedIDs=[];lastMetricAt = -30
         phase = .code; code = ""; name = ""; title = ""; message = ""; remaining = nil
     }
