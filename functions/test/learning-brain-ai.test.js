@@ -77,3 +77,12 @@ test('balance rejects the actually observed hidden isolation requirement',()=>{
  const d=generated();d.task.input='workshop';d.task.prompt='Finde die Zahl x. Verändere die Waage so, dass x allein übrig bleibt.';d.task.answer={kind:'number',values:['4']};d.task.workshop={tool:'balance',version:1,role:'answer',goal:'balance',leftCoefficient:2,leftConstant:3,rightCoefficient:0,rightConstant:11,minimum:0,maximum:10,step:1,initialValue:1,instruction:'Finde das Gewicht.'};
  assert.throws(()=>cleanGenerated(d,{...s,topic:{subject:'math',title:'Gleichung'}}),e=>e.critique.includes('optional'));
 });
+
+test('help generator and reviewer share the same failed visible state, not a fabricated fresh board',async()=>{
+ const observation={tool:'fraction-board',goal:'equivalent',source:{numerator:2,denominator:3},final:{numerator:2,denominator:6},selection:[0,1]};
+ const d=generated();d.task.input='number';d.task.prompt='Rechne 2 mal 2.';d.task.answer={kind:'number',values:['4']};d.explanation='Oben und unten gilt derselbe Faktor.';
+ const requests=[],replies=[d,{approved:true,reason:'single multiplication'}];
+ const ai=createAI({client:{responses:{create:async req=>{requests.push(JSON.parse(req.input[1].content));return {status:'completed',output_text:JSON.stringify(replies.shift())};}}}});
+ await ai.next({...s,phase:'help',supportStage:2},{workshop:observation});
+ assert.deepEqual(requests[0].workshopObservation,observation);assert.deepEqual(requests[1].workshopObservation,observation);
+});
