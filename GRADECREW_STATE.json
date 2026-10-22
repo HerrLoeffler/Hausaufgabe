@@ -2877,7 +2877,19 @@
         "upload": "actual_13inch_entry_2064x2752_uploaded_Apple_processed_1_of_10_reload_verified",
         "local_artifacts": "outputs/secure-store-closeout-20261022",
         "additional_exam_screens": "awaiting_unlocked_Mac"
-      }
+      },
+      "apple_support": {
+        "explicit_user_authorization": true,
+        "submitted": true,
+        "receipt": "local_outputs/secure-store-closeout-20261022",
+        "topics": [
+          "DSA_final_confirmation_error",
+          "truthful4+classification_teacher_assigned_examination_client"
+        ],
+        "reply_channel": "AppleAccount_email_and_recent_cases",
+        "app_review_submitted": false
+      },
+      "pricing_recheck": "0.00EUR_Germany_only1available174unavailable;paidAgreementNeu_unaccepted"
     }
   }
 }
