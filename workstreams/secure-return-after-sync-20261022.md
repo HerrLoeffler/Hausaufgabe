@@ -34,4 +34,20 @@ Nächster Schritt: Ergebnis des UI-Tastentests und Martins Phasenhinweis abgleic
 
 Echter UI-Tastentest im nicht verteilten Host ebenfalls bestanden: gespeicherter Abgabe-Receipt → „Zurück zum Start“ → leere Code-/Namensfelder → nächster Preflight → echte SwiftUI-Startbestätigung. Sowohl mittiger Tastendruck als auch linke Schaltflächenfläche (6% Breite) funktionieren ohne Produktfix. Logs `/private/tmp/gc-return-sync-ui-20261022-final.log` und `/private/tmp/gc-return-sync-ui-edge-red-20261022.log`; der Dateiname edge-red bezeichnet nur die geplante Falsifikationsprobe, tatsächliches Ergebnis ist **grün**, kein Rot/Grün-Fixbeleg. Erster UI-Lauf scheiterte ausschließlich an einer zusätzlichen Abbrechen-Abfrage nach bereits erfolgreicher Rückkehr; diese nicht zum Fehler gehörende Testabfrage entfernt. Nur iOS27-Simulatorruntime installiert; keine echte AAC-/Touch-/iPadOS-Abnahme. Produktreparatur und TestFlightupload bleiben offen, bis der gemeldete Zustand präzisiert/reproduziert ist.
 
-Gesicherter Diagnose-Commit `fd309adc329962fbfe15a2f4416f387c95b6439e`, [Draft-PR277](https://github.com/HerrLoeffler/Hausaufgabe/pull/277), Zielbranch unverändert; nicht integriert/nicht hochgeladen.
+## Reparaturkandidat nach Martins Präzisierung
+
+Martin bestätigt: angezeigt war „Abgabe gespeichert / Zurück zum Start“. Abgabe-/Receiptfehler damit nicht behaupten. Gezielte zusätzliche Probe: Nach bestätigtem Receipt einen bereits eingeplanten `startOrRecover`-Aufruf ausführen. Alter Code wechselt `.completed` nach `.recovery`, persistiert eine frische Identität und blockiert `restart`; Test reproduzierbar rot (6 Folgeassertionen) in `/private/tmp/gc-return-late-retry-red-20261022.log`. Das belegt den erreichbaren Zustandsfehler, aber nicht per Geräte-Trace, dass dies exakt Martins Ursache war.
+
+Kleinster Fix: Start-/Recovery-Einstieg nur aus identity/recovery/interrupted zulassen; verspätete Aufrufe aus completed/code/active ignorieren. Rückkehr invalidiert Timer und flüchtige UI-/Busy-/WebView-/Clockzustände. Erfolgsstatus erhält eigene SwiftUI-Identität statt Status-Button wiederzuverwenden. Kein Löschen/Verwerfen einer offenen Abgabe, keine Änderung an Netzwerk-/AAC-/Receipt-/Persistenzverfahren.
+
+Neue Controllerprobe anschließend grün: 5 Lifecycle-Integrationstests; echter UI-Tastentest mit zusätzlichem verspätetem Recovery-Task ebenfalls grün bis zur Bestätigung des nächsten Tests. 28Swift-/20Pythonregressionen bestanden. UI-Test in bestehende native CI-Matrix aufgenommen; noch keine frische komplette Layout-/Cloud-/TestFlightabnahme. Offener Gerätebeleg bleibt nach neuem Build nötig.
+
+## Review / ergänzte Prüfungen
+
+Unabhängiger Prüfer `review_secure_return22` hat unveränderlich aa39a9f..913ff94 gelesen: keine P0–P2-Befunde, Empfehlung scoped fix akzeptieren; keine eigenen Simulatorläufe behauptet. Bestätigt: neue Phase-Guards erhalten vorhandene Start-/Recovery-Aufrufer, Reset nur nach completed, kein Verlust offener Abgaben, Testfixture nicht im Shippingtarget. Grenzen ausdrücklich erhalten: reproduzierbarer Zustandsfehler ist kein Geräte-Trace von Martins Vorfall.
+
+Zusätzlich 24Node-Regressionen und beide Live/Staging-Umgebungskompilerpfade bestanden. Erster Nodeaufruf scheiterte an fehlendem jsdom, nicht am Produkt; vorhandene Installation aus eigenem früheren Checkout bei bytegleichem package-lock wiederverwendet, danach24/24grün. 40nativeLayout-Smokes plus Controller-/UI-Test über den produktiven Runner laufen noch.
+
+## Integrierter Kandidat und Releasecheckpoint
+
+PR277 integriert1f206ae.40/40lokaleLayoutsmokes ebenfalls bestanden. VollerCloudlauf39781850861: native900 inklusiveController-/UI-Test erfolgreich, mini360+12erfolgreich, large360erfolgreich aber Audio-Starttimeout bei2s, Upload damit korrekt gesperrt. Folgereparatur ausschließlich Testbereitschaft: PR280 integriertacb7060, unabhängig geprüft, lokaler12-Fall-Interaktionstest bestanden. Genau ein neuer vollständiger Securelauf39784682376 gestartet; noch kein Upload/Appleprocessing/neueBuildnummer bestätigt. Neuer iPad-Rückweggerätetest bleibt nötig. Separate Teacheränderung PR279 integriert60927e0, betrifft keine Secure-Produktdatei.

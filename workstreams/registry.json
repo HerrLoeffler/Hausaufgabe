@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-22T12:43:54.874Z",
+  "updatedAt": "2026-10-22T13:13:22.737Z",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -174,7 +174,8 @@
       "state": "active",
       "relatedBranches": [
         "feature/gradecrew-secure-ios",
-        "fix/gc-ios-02-auth12-native"
+        "fix/gc-ios-02-auth12-native",
+        "fix/teacher-direct-entry-20261022"
       ]
     },
     {
@@ -682,7 +683,8 @@
       "handoff": "workstreams/secure-legal-release-20261021.md",
       "relatedBranches": [
         "feature/public-legal-pages-20261021",
-        "fix/secure-return-after-sync-20261022"
+        "fix/secure-return-after-sync-20261022",
+        "fix/secure-audio-ci-readiness-20261022"
       ]
     }
   ]
