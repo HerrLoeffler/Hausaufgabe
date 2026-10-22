@@ -3,7 +3,7 @@ import XCTest
 final class SecureReturnUITests:XCTestCase {
     func testConfirmedOfflineSubmissionReturnsToCodeFormAndNextTest() {
         let app=XCUIApplication()
-        app.launchArguments=["--secure-lifecycle-ui"]
+        app.launchArguments=["--secure-lifecycle-ui","--late-recovery-task"]
         app.launch()
         let back=app.buttons["Zurück zum Start"]
         XCTAssertTrue(back.waitForExistence(timeout:15))

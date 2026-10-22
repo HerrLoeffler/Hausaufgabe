@@ -53,5 +53,6 @@ struct SecureStagingScreen: View {
             if model.phase == .completed { model.restart() }
             else if model.phase == .recovery || model.phase == .interrupted { Task { await model.startOrRecover() } }
         }
+        .id(model.phase)
     }
 }

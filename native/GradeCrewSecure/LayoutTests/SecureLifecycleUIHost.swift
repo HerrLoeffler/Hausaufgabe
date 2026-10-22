@@ -10,7 +10,10 @@ struct SecureLifecycleUIHost:View {
     }
     var body:some View {
         SecureStagingScreen(model:model,assessment:model.assessment)
-            .task { await model.foreground() }
+            .task {
+                await model.foreground()
+                if ProcessInfo.processInfo.arguments.contains("--late-recovery-task") { await model.startOrRecover() }
+            }
     }
 }
 private final class SecureUIPendingStore:SecureAttemptPersistence {

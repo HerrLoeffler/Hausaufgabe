@@ -103,6 +103,10 @@ private final class SecureLifecycleMemoryStore:SecureAttemptPersistence {
         XCTAssertNil(store.savedIdentity)
         XCTAssertEqual(SecureLifecycleHTTP.submissions,2)
         XCTAssertFalse(restored.busy,"Confirmed completion must enable the return action")
+        // A retry queued before confirmation must not start another attempt.
+        await restored.startOrRecover()
+        XCTAssertEqual(restored.phase,.completed,"A late retry must leave confirmed completion available")
+        XCTAssertNil(store.savedIdentity,"A late retry must not persist a fresh attempt")
         restored.restart()
         XCTAssertEqual(restored.phase,.code)
         XCTAssertEqual(restored.code,"")
