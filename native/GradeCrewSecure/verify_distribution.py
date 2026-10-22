@@ -10,6 +10,8 @@ def validate(app, profile, info, team, mode="aac-lab"):
         raise ValueError('Expected Staging exam configuration')
     if info.get('CFBundleIdentifier') != 'de.gradecrew.secure' or info.get('CFBundleDisplayName') != expected_name:
         raise ValueError('Expected isolated Secure AAC Lab, not another app')
+    if mode in ('staging-exam', 'live-exam') and info.get('UIDeviceFamily') != [1, 2]:
+        raise ValueError('Secure must support both iPhone and iPad')
     for label, entitlements in [('app', app), ('profile', profile.get('Entitlements', {}))]:
         if entitlements.get('com.apple.developer.automatic-assessment-configuration') is not True:
             raise ValueError(f'AAC missing in {label}')

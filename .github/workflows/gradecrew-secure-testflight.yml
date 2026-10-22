@@ -75,8 +75,30 @@ jobs:
             ${{ runner.temp }}/secure-web/summary.json
             ${{ runner.temp }}/secure-web/*-xcodebuild.log
           if-no-files-found: error
+  layout-phone:
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+      - name: Prepare real Secure resources
+        run: swift native/GradeCrewSecure/prepare_assets.swift
+      - name: Native and WebKit matrix on an actual iPhone simulator
+        run: |
+          python3 native/GradeCrewSecure/LayoutTests/run_layout_checks.py --output "$RUNNER_TEMP/secure-phone" --suite phone --layer all
+      - name: Preserve iPhone layout and interaction reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: secure-phone-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/secure-phone/native/
+            ${{ runner.temp }}/secure-phone/web/
+            ${{ runner.temp }}/secure-phone/interactions/
+            ${{ runner.temp }}/secure-phone/summary.json
+            ${{ runner.temp }}/secure-phone/*-xcodebuild.log
+          if-no-files-found: error
   build-and-upload:
-    needs: [layout-native, layout-web]
+    needs: [layout-native, layout-web, layout-phone]
     runs-on: macos-26
     timeout-minutes: 40
     env:

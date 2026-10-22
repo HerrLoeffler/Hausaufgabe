@@ -35,3 +35,13 @@ class LayoutReports(unittest.TestCase):
             with self.assertRaises(RuntimeError): module.lock_device('test-device',pathlib.Path(folder))
             first.close()
             module.lock_device('test-device',pathlib.Path(folder)).close()
+    def test_phone_suite_covers_portrait_landscape_and_keyboard_without_replacing_ipads(self):
+        policy=json.loads((ROOT/'LayoutTests/layout-policy.json').read_text())
+        phone=module.case_list(policy,'phone','native')
+        self.assertTrue(any('phone-small-portrait' in case for case in phone))
+        self.assertTrue(any('phone-landscape' in case for case in phone))
+        self.assertTrue(any('phone-keyboard' in case for case in phone))
+        self.assertTrue(any('accessibility3-completed' in case for case in phone))
+        self.assertEqual(len(phone),540)
+        self.assertEqual(len(module.case_list(policy,'phone','web')),216)
+        self.assertEqual(len(module.case_list(policy,'full','native')),900)

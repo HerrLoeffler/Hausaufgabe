@@ -14,7 +14,7 @@ final class SecureAssessmentSession: NSObject, ObservableObject, @preconcurrency
 
     func begin() async throws {
         #if targetEnvironment(simulator)
-        throw SecureAssessmentAPI.Failure(code: "SIMULATOR", message: "Echte Prüfungen benötigen ein iPad. Im Simulator wird keine Sperre vorgetäuscht.")
+        throw SecureAssessmentAPI.Failure(code: "SIMULATOR", message: "Echte Prüfungen benötigen ein echtes iPhone oder iPad. Im Simulator wird keine Sperre vorgetäuscht.")
         #else
         guard session == nil else { throw SecureAssessmentAPI.Failure(code: "AAC_BUSY", message: "Der vorherige Prüfungsmodus wird noch beendet.") }
         try await withCheckedThrowingContinuation { continuation in

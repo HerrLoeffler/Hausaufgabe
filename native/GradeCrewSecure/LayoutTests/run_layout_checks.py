@@ -1,4 +1,4 @@
-"""Actual SwiftUI/WebKit layout checks in a separate, non-distributed iPad test host."""
+"""Actual SwiftUI/WebKit layout checks in a separate, non-distributed iPhone/iPad test host."""
 import argparse, html, itertools, json, pathlib, shutil, subprocess, sys, fcntl, tempfile
 HERE=pathlib.Path(__file__).resolve().parent
 ROOT=HERE.parent
@@ -11,12 +11,12 @@ def lock_device(device_id,root=pathlib.Path(tempfile.gettempdir())):
     return file
 
 def case_list(policy,suite,layer):
-    views=policy['viewports'] if suite=='full' else [policy['viewports'][1],policy['viewports'][8]]
-    sizes=policy['textSizes'] if suite=='full' else [policy['textSizes'][0],policy['textSizes'][2]]
+    views=policy['phoneViewports'] if suite=='phone' else (policy['viewports'] if suite!='smoke' else [policy['viewports'][1],policy['viewports'][8]])
+    sizes=policy['textSizes'] if suite!='smoke' else [policy['textSizes'][0],policy['textSizes'][2]]
     if layer=='native':
-        scenes=policy['nativeScenarios'] if suite=='full' else ['entry-empty','entry-ready','active','storage-error','completed']
+        scenes=policy['nativeScenarios'] if suite!='smoke' else ['entry-empty','entry-ready','active','storage-error','completed']
         return ['native-'+ '-'.join([v['name'],appearance,size,scene]) for v,appearance,size,scene in itertools.product(views,policy['appearances'],sizes,scenes)]
-    scenes=policy['webScenarios'] if suite=='full' else ['all-types','thirty']
+    scenes=policy['webScenarios'] if suite!='smoke' else ['all-types','thirty']
     return ['web-'+ '-'.join([v['name'],size,scene,overview]) for v,size,scene,overview in itertools.product(views,sizes,scenes,['closed','open'])]
 def validate_reports(folder,expected):
     issues=[]
@@ -40,15 +40,15 @@ def gallery(folder):
     (folder/'gallery.html').write_text('<!doctype html><meta charset="utf-8"><title>Secure Layoutberichte</title><style>body{font:16px system-ui;background:#eff3f9;color:#15283f}main{display:flex;flex-wrap:wrap;gap:16px}figure{width:260px;margin:0;padding:10px;background:white}img{width:100%;height:340px;object-fit:contain}figcaption{font-size:12px;overflow-wrap:anywhere}</style><h1>GradeCrew Secure Layoutberichte</h1><main>'+cards+'</main>')
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--output',required=True,type=pathlib.Path);p.add_argument('--suite',choices=['smoke','full'],default='smoke');p.add_argument('--layer',choices=['native','web','all'],default='all');p.add_argument('--device-id')
+    p.add_argument('--output',required=True,type=pathlib.Path);p.add_argument('--suite',choices=['smoke','full','phone'],default='smoke');p.add_argument('--layer',choices=['native','web','all'],default='all');p.add_argument('--device-id')
     args=p.parse_args();out=args.output.resolve()
     if out.exists() and any(out.iterdir()):p.error('Output directory must be new or empty')
     out.mkdir(parents=True,exist_ok=True)
     policy=json.loads((HERE/'layout-policy.json').read_text())
     inventory=json.loads(run(['xcrun','simctl','list','devices','available','-j'],capture_output=True,text=True).stdout)
-    devices=[d for ds in inventory['devices'].values() for d in ds if d.get('isAvailable') and 'iPad' in d.get('deviceTypeIdentifier','')]
+    devices=[d for ds in inventory['devices'].values() for d in ds if d.get('isAvailable') and ('iPhone' if args.suite=='phone' else 'iPad') in d.get('deviceTypeIdentifier','')]
     if args.device_id:devices=[d for d in devices if d['udid']==args.device_id]
-    if not devices:raise RuntimeError('No available iPad simulator; missing coverage is not a pass')
+    if not devices:raise RuntimeError('No available simulator for the requested device family; missing coverage is not a pass')
     device=next((d for d in devices if d['state']=='Booted'),devices[0])
     simulator_lock=lock_device(device['udid'])
     if device['state']!='Booted':run(['xcrun','simctl','boot',device['udid']])

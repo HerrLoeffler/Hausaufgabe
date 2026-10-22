@@ -30,7 +30,7 @@ private final class SecureFixtureHandler:NSObject,WKScriptMessageHandler,WKNavig
     func testWebMatrix() async throws {
         defer {closeFixture()}
         try SecureReports.clear("web-")
-        let scenes=SecureReports.run.suite == "full" ? SecureReports.policy.webScenarios : ["all-types","thirty"]
+        let scenes=SecureReports.run.suite != "smoke" ? SecureReports.policy.webScenarios : ["all-types","thirty"]
         for view in SecureReports.views { for size in SecureReports.sizes { for scene in scenes { for overview in [false,true] {
             try await capture(view,size:size,scene:scene,overview:overview)
         } } } }

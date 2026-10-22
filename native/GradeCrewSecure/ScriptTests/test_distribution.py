@@ -15,10 +15,19 @@ class DistributionTests(unittest.TestCase):
                'com.apple.developer.automatic-assessment-configuration': True,
                'get-task-allow': False}
         profile = {'Entitlements': dict(app), 'ExpirationDate': datetime.datetime(2099, 1, 1)}
-        info = {'CFBundleIdentifier': 'de.gradecrew.secure', 'CFBundleDisplayName': 'GradeCrew AAC Lab'}
+        info = {'UIDeviceFamily': [1, 2], 'CFBundleIdentifier': 'de.gradecrew.secure', 'CFBundleDisplayName': 'GradeCrew AAC Lab'}
         return app, profile, info
     def test_valid_distribution(self):
         distribution.validate(*self.fixture(), 'TESTTEAM01')
+    def test_live_release_requires_both_iphone_and_ipad(self):
+        app, profile, info = self.fixture()
+        info.update(CFBundleDisplayName='GradeCrew Secure', GradeCrewSecureMode='live-exam')
+        for family in (None, [1], [2]):
+            info['UIDeviceFamily'] = family
+            with self.assertRaises(ValueError):
+                distribution.validate(app, profile, info, 'TESTTEAM01', 'live-exam')
+        info['UIDeviceFamily'] = [1, 2]
+        distribution.validate(app, profile, info, 'TESTTEAM01', 'live-exam')
     def test_staging_exam_requires_its_own_release_mode(self):
         app, profile, info = self.fixture()
         info['CFBundleDisplayName'] = 'GradeCrew Secure'

@@ -17,7 +17,7 @@ import SwiftUI
     func testEntryMatrix() async throws {
         try SecureReports.clear("native-")
         for view in SecureReports.views { for appearance in ["light","dark"] { for size in SecureReports.sizes {
-            for scenario in (SecureReports.run.suite == "full" ? SecureReports.policy.nativeScenarios : ["entry-empty","entry-ready","active","storage-error","completed"]) {
+            for scenario in (SecureReports.run.suite != "smoke" ? SecureReports.policy.nativeScenarios : ["entry-empty","entry-ready","active","storage-error","completed"]) {
                 try await capture(view,appearance:appearance,size:size,scenario:scenario)
             }
         } } }

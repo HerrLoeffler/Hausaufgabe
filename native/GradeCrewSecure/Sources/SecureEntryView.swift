@@ -71,7 +71,7 @@ struct SecureEntryView: View {
     private var helper:String {
         if name.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty { return "Gib den Testcode und deinen Namen oder dein Kürzel ein." }
         if SecureInputPolicy.code(code)==nil { return "Gib den Code deiner Lehrkraft ein." }
-        return "Das iPad wird erst nach deiner Bestätigung für die Prüfung gesperrt."
+        return "Das Gerät wird erst nach deiner Bestätigung für die Prüfung gesperrt."
     }
 }
 private extension View {

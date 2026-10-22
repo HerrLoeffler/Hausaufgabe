@@ -24,7 +24,7 @@ final class SecureAssessmentAPI {
         let bytes: Data
         let response: URLResponse
         do { (bytes, response) = try await session.data(for: request) }
-        catch { throw Failure(code: "NETWORK", message: "Keine Verbindung. Deine gespeicherten Antworten bleiben auf diesem iPad erhalten.") }
+        catch { throw Failure(code: "NETWORK", message: "Keine Verbindung. Deine gespeicherten Antworten bleiben auf diesem Gerät erhalten.") }
         if let http=response as? HTTPURLResponse, http.statusCode >= 500 {
             throw Failure(code:"UNAVAILABLE",message:"Der Prüfungsserver ist vorübergehend nicht erreichbar. Die gesicherte Abgabe wird erneut übertragen.")
         }
