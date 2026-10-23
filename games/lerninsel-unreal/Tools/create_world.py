@@ -1,0 +1,59 @@
+import unreal
+tools = unreal.AssetToolsHelpers.get_asset_tools()
+edit = unreal.MaterialEditingLibrary
+for name, glow in [('M_Island', False), ('M_Glow', True), ('M_Glass', False)]:
+    mat = unreal.load_asset('/Game/Materials/' + name)
+    if not mat:
+        mat = tools.create_asset(name, '/Game/Materials', unreal.Material, unreal.MaterialFactoryNew())
+    edit.delete_all_material_expressions(mat)
+    mat.set_editor_property('two_sided', True)
+    mat.set_editor_property('used_with_instanced_static_meshes', True)
+    if name == 'M_Glass':
+        mat.set_editor_property('blend_mode', unreal.BlendMode.BLEND_TRANSLUCENT)
+        opacity = edit.create_material_expression(mat, unreal.MaterialExpressionConstant, -180, 250)
+        opacity.set_editor_property('r', .15)
+        edit.connect_material_property(opacity, '', unreal.MaterialProperty.MP_OPACITY)
+    tint = edit.create_material_expression(mat, unreal.MaterialExpressionVectorParameter, -500, 0)
+    tint.set_editor_property('parameter_name', 'Tint')
+    tint.set_editor_property('default_value', unreal.LinearColor(.8,.7,.5,1))
+    vertex = edit.create_material_expression(mat, unreal.MaterialExpressionVertexColor, -500, 180)
+    product = edit.create_material_expression(mat, unreal.MaterialExpressionMultiply, -180, 0)
+    edit.connect_material_expressions(tint, '', product, 'A')
+    edit.connect_material_expressions(vertex, '', product, 'B')
+    edit.connect_material_property(product, '', unreal.MaterialProperty.MP_BASE_COLOR)
+    rough = edit.create_material_expression(mat, unreal.MaterialExpressionConstant, -180, 160)
+    rough.set_editor_property('r', .82)
+    edit.connect_material_property(rough, '', unreal.MaterialProperty.MP_ROUGHNESS)
+    if glow:
+        edit.connect_material_property(product, '', unreal.MaterialProperty.MP_EMISSIVE_COLOR)
+    edit.recompile_material(mat)
+    unreal.EditorAssetLibrary.save_loaded_asset(mat)
+maps = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
+if unreal.EditorAssetLibrary.does_asset_exist('/Game/Maps/Lerninsel'):
+    current = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem).get_editor_world()
+    if current.get_path_name() != '/Game/Maps/Lerninsel.Lerninsel' and not maps.load_level('/Game/Maps/Lerninsel'):
+        raise RuntimeError('Cannot load own Lerninsel map')
+elif not maps.new_level('/Game/Maps/Lerninsel'):
+    raise RuntimeError('Cannot create Lerninsel map')
+actors = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
+def get_or_spawn(cls, location, rotation=unreal.Rotator(0,0,0)):
+    found = [a for a in actors.get_all_level_actors() if isinstance(a, cls)]
+    return found[0] if found else actors.spawn_actor_from_class(cls, location, rotation)
+sun = get_or_spawn(unreal.DirectionalLight, unreal.Vector(0,0,1500), unreal.Rotator(-38,-30,0))
+light = sun.get_component_by_class(unreal.DirectionalLightComponent)
+light.set_mobility(unreal.ComponentMobility.MOVABLE)
+light.set_editor_property('intensity', 3.2)
+light.set_editor_property('light_color', unreal.Color(255,241,214,255))
+light.set_editor_property('light_source_angle', 3.0)
+sky = get_or_spawn(unreal.SkyLight, unreal.Vector(0,0,1200))
+ambient = sky.get_component_by_class(unreal.SkyLightComponent)
+ambient.set_mobility(unreal.ComponentMobility.MOVABLE)
+ambient.set_editor_property('source_type', unreal.SkyLightSourceType.SLS_SPECIFIED_CUBEMAP)
+ambient.set_editor_property('cubemap', unreal.load_asset('/Engine/MapTemplates/Sky/DaylightAmbientCubemap'))
+ambient.set_editor_property('intensity', 1.7)
+ambient.set_editor_property('lower_hemisphere_is_black', False)
+get_or_spawn(unreal.SkyAtmosphere, unreal.Vector(0,0,0))
+get_or_spawn(unreal.PlayerStart, unreal.Vector(-1600,0,90))
+maps.save_current_level()
+unreal.log('LERNINSEL_MAP_CREATED')
+unreal.SystemLibrary.quit_editor()

@@ -1,0 +1,4 @@
+PASS 64 rule checks
+PASS 88 puzzle checks
+PASS 7 control checks
+FAIL after 1: Apply(s,Action::CupAdjust,1)==Result::Blocked

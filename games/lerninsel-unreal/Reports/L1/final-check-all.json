@@ -1,0 +1,104 @@
+﻿{
+	"devices": [
+		{
+			"deviceName": "Mac.fritz.box",
+			"instance": "13E0C537A843E259501606BB13879B6B",
+			"instanceName": "Mac.fritz.box-65518",
+			"platform": "MacEditor",
+			"oSVersion": "macOS 27.0.1 26A434",
+			"model": "Default",
+			"gPU": "Apple M5 Pro",
+			"cPUModel": "Apple M5 Pro",
+			"rAMInGB": 48,
+			"renderMode": "SM5",
+			"rHI": "Metal Bindful (SM5)",
+			"appInstanceLog": ""
+		}
+	],
+	"reportCreatedOn": "2026.10.10-11.10.38",
+	"succeeded": 5,
+	"succeededWithWarnings": 0,
+	"failed": 0,
+	"notRun": 0,
+	"inProcess": 0,
+	"totalDuration": 59.424480438232422,
+	"comparisonExported": false,
+	"comparisonExportDirectory": "",
+	"tests": [
+		{
+			"testDisplayName": "Controls",
+			"fullTestPath": "GradeCrew.Lerninsel.Controls",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"13E0C537A843E259501606BB13879B6B"
+			],
+			"duration": 2.3322596549987793,
+			"dateTime": "2026.10.10-11.09.38",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "FourPuzzles",
+			"fullTestPath": "GradeCrew.Lerninsel.FourPuzzles",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"13E0C537A843E259501606BB13879B6B"
+			],
+			"duration": 14.067107200622559,
+			"dateTime": "2026.10.10-11.09.41",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "Fox",
+			"fullTestPath": "GradeCrew.Lerninsel.Fox",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"13E0C537A843E259501606BB13879B6B"
+			],
+			"duration": 8.3015060424804688,
+			"dateTime": "2026.10.10-11.09.55",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "Play",
+			"fullTestPath": "GradeCrew.Lerninsel.Play",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"13E0C537A843E259501606BB13879B6B"
+			],
+			"duration": 13.013933181762695,
+			"dateTime": "2026.10.10-11.10.03",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		},
+		{
+			"testDisplayName": "WorldPreview",
+			"fullTestPath": "GradeCrew.Lerninsel.WorldPreview",
+			"tags": [],
+			"state": "Success",
+			"deviceInstance": [
+				"13E0C537A843E259501606BB13879B6B"
+			],
+			"duration": 21.709674835205078,
+			"dateTime": "2026.10.10-11.10.16",
+			"entries": [],
+			"warnings": 0,
+			"errors": 0,
+			"artifacts": []
+		}
+	]
+}

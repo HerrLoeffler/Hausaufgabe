@@ -1,0 +1,354 @@
+[
+  {
+    "asset": "SM_Prop_MeasuringCup_1L",
+    "category": "Props",
+    "triangles": 5116,
+    "parts": 26,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Props/SM_Prop_MeasuringCup_1L.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Prop_Bucket_Open",
+    "category": "Props",
+    "triangles": 1344,
+    "parts": 4,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Props/SM_Prop_Bucket_Open.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Prop_Bucket_Handle",
+    "category": "Props",
+    "triangles": 1616,
+    "parts": 5,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Props/SM_Prop_Bucket_Handle.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Prop_Inflow_100ml",
+    "category": "Props",
+    "triangles": 744,
+    "parts": 6,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Props/SM_Prop_Inflow_100ml.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Prop_Inflow_200ml",
+    "category": "Props",
+    "triangles": 912,
+    "parts": 7,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Props/SM_Prop_Inflow_200ml.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Prop_Drain_100ml",
+    "category": "Props",
+    "triangles": 532,
+    "parts": 4,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Props/SM_Prop_Drain_100ml.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Prop_WaterTrough",
+    "category": "Props",
+    "triangles": 680,
+    "parts": 8,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Props/SM_Prop_WaterTrough.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Gate_Arch",
+    "category": "Props",
+    "triangles": 2052,
+    "parts": 21,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Props/SM_Gate_Arch.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Gate_Door",
+    "category": "Props",
+    "triangles": 1328,
+    "parts": 13,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Props/SM_Gate_Door.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Gate_Latch",
+    "category": "Props",
+    "triangles": 216,
+    "parts": 3,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Props/SM_Gate_Latch.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Gate_RopeLoop",
+    "category": "Props",
+    "triangles": 660,
+    "parts": 1,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Props/SM_Gate_RopeLoop.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_FencePanel",
+    "category": "Environment",
+    "triangles": 432,
+    "parts": 5,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_FencePanel.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Puzzle_WordStone_01",
+    "category": "Puzzles",
+    "triangles": 668,
+    "parts": 3,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Puzzles/SM_Puzzle_WordStone_01.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Puzzle_WordStone_02",
+    "category": "Puzzles",
+    "triangles": 384,
+    "parts": 3,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Puzzles/SM_Puzzle_WordStone_02.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Puzzle_WordStone_03",
+    "category": "Puzzles",
+    "triangles": 536,
+    "parts": 3,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Puzzles/SM_Puzzle_WordStone_03.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_IslandGrass",
+    "category": "Environment",
+    "triangles": 320,
+    "parts": 2,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_IslandGrass.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_ShoreSand",
+    "category": "Environment",
+    "triangles": 320,
+    "parts": 2,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_ShoreSand.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Transition",
+    "category": "Environment",
+    "triangles": 400,
+    "parts": 3,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Transition.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Rock_01",
+    "category": "Environment",
+    "triangles": 80,
+    "parts": 2,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Rock_01.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Rock_02",
+    "category": "Environment",
+    "triangles": 80,
+    "parts": 2,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Rock_02.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Rock_03",
+    "category": "Environment",
+    "triangles": 80,
+    "parts": 2,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Rock_03.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Bush_01",
+    "category": "Environment",
+    "triangles": 1000,
+    "parts": 11,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Bush_01.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Bush_02",
+    "category": "Environment",
+    "triangles": 1000,
+    "parts": 11,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Bush_02.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Bush_03",
+    "category": "Environment",
+    "triangles": 1000,
+    "parts": 11,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Bush_03.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Tree_01",
+    "category": "Environment",
+    "triangles": 2392,
+    "parts": 23,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Tree_01.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Tree_02",
+    "category": "Environment",
+    "triangles": 2392,
+    "parts": 23,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Tree_02.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Tree_03",
+    "category": "Environment",
+    "triangles": 2392,
+    "parts": 23,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Tree_03.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_GrassTuft",
+    "category": "Environment",
+    "triangles": 408,
+    "parts": 17,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_GrassTuft.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_FlowerPatch",
+    "category": "Environment",
+    "triangles": 1148,
+    "parts": 56,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_FlowerPatch.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Sign",
+    "category": "Environment",
+    "triangles": 912,
+    "parts": 4,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Sign.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_BridgeModule",
+    "category": "Environment",
+    "triangles": 1188,
+    "parts": 12,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_BridgeModule.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_PathModule",
+    "category": "Environment",
+    "triangles": 324,
+    "parts": 4,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_PathModule.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Shell",
+    "category": "Environment",
+    "triangles": 432,
+    "parts": 9,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Shell.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Driftwood",
+    "category": "Environment",
+    "triangles": 80,
+    "parts": 2,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Driftwood.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_Lantern",
+    "category": "Environment",
+    "triangles": 880,
+    "parts": 9,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_Lantern.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Puzzle_PerspectiveArc_01",
+    "category": "Puzzles",
+    "triangles": 500,
+    "parts": 1,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Puzzles/SM_Puzzle_PerspectiveArc_01.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Puzzle_PerspectiveArc_02",
+    "category": "Puzzles",
+    "triangles": 500,
+    "parts": 1,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Puzzles/SM_Puzzle_PerspectiveArc_02.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Puzzle_PerspectiveArc_03",
+    "category": "Puzzles",
+    "triangles": 500,
+    "parts": 1,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Puzzles/SM_Puzzle_PerspectiveArc_03.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Puzzle_ViewpointMarker",
+    "category": "Puzzles",
+    "triangles": 384,
+    "parts": 2,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Puzzles/SM_Puzzle_ViewpointMarker.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Puzzle_LogicBlock_01",
+    "category": "Puzzles",
+    "triangles": 152,
+    "parts": 3,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Puzzles/SM_Puzzle_LogicBlock_01.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Puzzle_LogicBlock_02",
+    "category": "Puzzles",
+    "triangles": 132,
+    "parts": 3,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Puzzles/SM_Puzzle_LogicBlock_02.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Puzzle_LogicBlock_03",
+    "category": "Puzzles",
+    "triangles": 224,
+    "parts": 3,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Puzzles/SM_Puzzle_LogicBlock_03.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Puzzle_Station",
+    "category": "Puzzles",
+    "triangles": 948,
+    "parts": 4,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Puzzles/SM_Puzzle_Station.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  },
+  {
+    "asset": "SM_Env_WallModule",
+    "category": "Environment",
+    "triangles": 972,
+    "parts": 10,
+    "fbx": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/gradecrew-lerninsel-unreal/games/lerninsel-unreal/Content/Art/LocalAssetsV2/Export/Environment/SM_Env_WallModule.fbx",
+    "status": "draft; no Unreal import/animation validation"
+  }
+]
