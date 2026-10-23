@@ -66,3 +66,18 @@ export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},on
   void refresh();
   return {refresh,dispose(){disposed=true;clearInterval(timer);doc.removeEventListener('visibilitychange',visibility);host.replaceChildren();records.clear();}};
 }
+
+// The original gc44 start handler writes its timestamp directly. Assigned rounds
+// must instead use the atomic Classroom start path, including from this entry.
+export function installAssignedStartRoute({doc,getAccountId,getContext,openMonitor,onError}){
+ const replay=new WeakSet();
+ const code=()=>{try{return new URL(doc.getElementById('publishedLink')?.value,doc.location.href).searchParams.get('test');}catch{return null;}};
+ doc.addEventListener('click',event=>{
+  const button=event.target?.closest?.('#liveStartBtn');if(!button||replay.has(button))return;
+  event.preventDefault();event.stopImmediatePropagation();
+  const account=getAccountId(),quizId=code(),view=doc.getElementById('publishView');if(!account||!quizId)return;
+  const valid=()=>button.isConnected&&!view?.classList.contains('hidden')&&getAccountId()===account&&code()===quizId;
+  const disabled=button.disabled;button.disabled=true;
+  void (async()=>{try{const context=await getContext(quizId);if(!valid())return;if(context.assignment)await openMonitor(context.assignment.id);else{button.disabled=disabled;replay.add(button);try{button.click();}finally{replay.delete(button);}}}catch(e){if(valid())onError(e);}finally{button.disabled=disabled;}})();
+ },true);
+}
