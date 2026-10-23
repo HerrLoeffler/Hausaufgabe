@@ -18,7 +18,7 @@ export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},on
   const doc=host.ownerDocument;
   const el=(tag,text,attrs={})=>{const n=doc.createElement(tag);if(text!==undefined)n.textContent=text;for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);return n;};
   const action=(label,fn)=>{const b=el('button',label,{type:'button',class:'button ghost'});b.addEventListener('click',()=>void fn());return b;};
-  let disposed=false,inFlight=null,latest=null,receivedAt=0,filter='all',starting=false;
+  let disposed=false,inFlight=null,latest=null,receivedAt=0,filter='all',starting=false,connected=false;
   const records=new Map();
   const heading=el('h2','Prüfungsübersicht'),subtitle=el('p','Teilnehmer werden geladen …'),roundLine=el('p'),updated=el('p',undefined,{class:'gcMonitorUpdated'});
   const warning=el('p','', {role:'alert',class:'gcOnlineError'});warning.hidden=true;
@@ -32,7 +32,7 @@ export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},on
   for(const[key,label]of Object.entries(monitorLabels)){const b=action(label,()=>{filter=key;applyFilter();});b.dataset.filter=key;filters.append(b);filterButtons[key]=b;}
   function applyFilter(){for(const[key,b]of Object.entries(filterButtons))b.setAttribute('aria-pressed',String(key===filter));for(const r of records.values())r.node.hidden=filter!=='all'&&(filter==='attention'?!r.row.stale:r.row.status!==filter);}
   function render(result){
-    latest=result;receivedAt=now();const m=monitorModel(result,result.round?.serverNow||now());
+    connected=true;latest=result;receivedAt=now();const m=monitorModel(result,result.round?.serverNow||now());
     heading.textContent=result.assignment.title;subtitle.textContent=`${result.assignment.className} · ${m.counts.all} erwartete Schüler:innen`;
     roundLine.textContent=m.round.state==='waiting'?'Warteraum: Die Lehrkraft gibt den Test gemeinsam frei.':m.round.state==='running'?`Prüfung läuft${m.remainingSeconds===null?' ohne Zeitlimit':` · ${Math.ceil(m.remainingSeconds/60)} Minuten verbleiben`}`:m.round.state==='closed'?'Diese Prüfungsrunde ist geschlossen.':'Der Test kann individuell gestartet werden.';
     updated.textContent=`Aktualisiert: ${new Date(now()).toLocaleTimeString('de-DE')}`;warning.hidden=true;
@@ -50,7 +50,7 @@ export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},on
     applyFilter();
   }
   async function requestStart(confirmed){
-    if(disposed||starting||!latest)return;
+    if(disposed||starting||!latest||!connected)return;
     const model=monitorModel(latest,(latest.round?.serverNow||now())+Math.max(0,now()-receivedAt));if(!model.canStart)return;
     if(model.counts.not_joined&&!confirmed){confirmation.replaceChildren(el('p',`${model.counts.ready} Schüler:innen warten. ${model.counts.not_joined} sind noch nicht beigetreten.`),action('Fehlende anzeigen',()=>{filter='not_joined';applyFilter();}),action('Trotzdem starten',()=>requestStart(true)));confirmation.hidden=false;return;}
     starting=true;start.disabled=true;
@@ -58,7 +58,7 @@ export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},on
   }
   function refresh(){
     if(disposed)return Promise.resolve();if(inFlight)return inFlight;
-    inFlight=Promise.resolve().then(()=>disposed?null:api.teacher('participants',{assignmentId})).then(result=>{if(!disposed)render(result);}).catch(()=>{if(!disposed){warning.textContent='Verbindung der Übersicht unterbrochen. Die angezeigten Stände sind nicht aktuell.';warning.hidden=false;start.disabled=true;}}).finally(()=>{inFlight=null;});
+    inFlight=Promise.resolve().then(()=>disposed?null:api.teacher('participants',{assignmentId})).then(result=>{if(!disposed)render(result);}).catch(()=>{if(!disposed){connected=false;warning.textContent='Verbindung der Übersicht unterbrochen. Die angezeigten Stände sind nicht aktuell.';warning.hidden=false;start.disabled=true;}}).finally(()=>{inFlight=null;});
     return inFlight;
   }
   const timer=setInterval(()=>{if(!doc.hidden)void refresh();},5000);
