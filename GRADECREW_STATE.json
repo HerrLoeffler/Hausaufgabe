@@ -1275,17 +1275,17 @@
       "id": "classroom-student-management-v1",
       "task_id": "GC-CLASSROOM-01",
       "branch": "feature/classroom-integrated-preview-20261016",
-      "observed_head": "892160f6cfd7fcd862cfb2cec7ff6aef65e6729e",
+      "observed_head": "209d6132362b12faa38201a051cdd886cf0b75c3",
       "stage": "staging_deployed",
-      "ci": "local_713_tests_pass_remote_candidate_pending",
+      "ci": "local_713_tests_pass_native_full_candidate_in_progress",
       "staging": "gradecrew-staging-2026_only",
       "user_test": "synthetic_browser_and_actual_native_API_pass_physical_iPad_pending",
       "handoff": "workstreams/classroom-student-management-v1.md",
-      "next_action": "Publish independently reviewed local-session/recovery fixes, then one complete 2026 TestFlight candidate and physical personal-code AAC acceptance.",
+      "next_action": "Complete the single native2026 TestFlight run40003836588 on7bed48c0, then physical personal-code AAC/offline/replacement acceptance.",
       "deployment_evidence": {
         "project": "gradecrew-staging-2026",
-        "hosting_source": "892160f6cfd7fcd862cfb2cec7ff6aef65e6729e",
-        "hosting_hashes_verified": 179,
+        "hosting_source": "209d6132362b12faa38201a051cdd886cf0b75c3",
+        "hosting_hashes_verified": 181,
         "backend_source": "1d1084795981fabf5331d57e7b1b3fb95caaf751",
         "functions_ready": [
           "classroomweb-00004-poj",
@@ -1296,8 +1296,18 @@
         ],
         "synthetic_personal_flow": "code_login -> assigned_test -> ready_no_paper -> teacher_start -> running10questions -> matching_server_receipt -> pupil_done -> teacher_graded_result",
         "teacher_original_tests_preserved": 3,
-        "review_fixes": "local_only_until_new_Hosting_release",
-        "native_candidate": "not_uploaded_yet"
+        "review_fixes": "published_2026_verified_713tests",
+        "native_candidate": {
+          "run_id": 40003836588,
+          "source": "7bed48c0f02f8eecb07236dc8afee94eb612efcb",
+          "status": "in_progress",
+          "uploaded": false
+        },
+        "negative_checks": {
+          "nonrecipient_assignment": "403_PERMISSION_DENIED",
+          "new_attempt_after_submission": "409_ALREADY_EXISTS",
+          "logout_reload": "code_required"
+        }
       }
     },
     {
