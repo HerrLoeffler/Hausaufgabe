@@ -62,3 +62,9 @@ One fresh read-only reviewer returned5Important native/web issues, noCritical/Mi
 37Swift/24Python andrenderer suite pass; native3recoveryintegration+2returnUI tests PASS, actual2026Staging BUILD SUCCEEDED. Full localphonegate before reviewdelta PASS540native/216Web/12interaction/6composed. Finalcandidate stillmustpassallremote gates; sourcechecks are not upload/physicalacceptance. Renderer initialrun missing localjsdom; linkedexistinginstalleddependency inownignoredtools/ui/node_modules, thenactualtestpassed; nodependency/productchange.
 
 Rulings: physicalAAC/signedKeychain acceptance stayspending; useactualdeployreceipts separately fromsourcereview. Freshmainrules readbyexecutor despite reviewer'sDNSfailure. Nosecondreview. No genericerrorclearing. One final2026productpushplanned; noLive target orsecondapp.
+
+## Single final native candidate running
+
+Remote7bed48c0f02f8eecb07236dc8afee94eb612efcb / locald7eda8c5 / tree14ca4de3682782c1c62d373194355ff3f9799b18. Exactlyone productpush triggered TestFlightworkflow40003836588,run21,23Oct20:30Europe/Berlin. Actualsource/branch/push verifiedGitHubUI. layout-native120586569898,layout-phone120586570112,web-large120586570157,web-mini120586570229 inprogress; build/uploadnotstarted. No retry/skip/cancel. 2026target isselectedbyisolatedbranch, not Live.
+
+FinalWeb209d6132 online181hashesverified. ActualpersonalshippingAPI receipt alreadyconfirmed plusBrowserpupilDone/TeachergradedTestEins6/20. Nonrecipientforeignassignment403; newattemptafterreceivedsubmission409. This isAPI/browserproof, physicalAAC/Keychain/archivetransferstillpending. This docs-only checkpoint must not start anothernativeproductbuild.
