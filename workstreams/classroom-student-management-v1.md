@@ -817,3 +817,7 @@ Actual final24pupil UI test: teacherreplacementform released TestEins oldattempt
 Printpreview found compact-listmode actuallyused4PDFpages for24normaltestnames. New isolatedprintlayout usesone compacttable, explicit12cardA4sheets, oronecardpersheet; names/codes remaintextonly, sortedwithoutmutatingcredentials. TwoRED/GREEN regressions; current717/717PASS. ActualPDFpagecountverificationpendingthissourcepublish. Noactualprinting/externalsend.
 
 Native40003836588 allfourremote gatescompletedSUCCESS: native120586569898,phone120586570112,webLarge120586570157,webMini120586570229. Buildandupload120594304938 nowinprogress, runningverify-on-mac; notuploaded/processed/physicalaccepted yet. Stillonecandidate7bed48c0, no rerun.
+
+Actual ChromePDFpreview after0ff43f02:24pupil list2pages, groupedcards2pages, singlecards24pages. Allthreepreviews cancelled, noactualprint. Exactpagecounts savedprivate/tmp/gc-classroom-actual-print-pages.json. Names/codes safelyrenderedastext; nocredentialsinGit.
+
+Fastreloadtesting exposed anoriginalauthrestore race: normalapp awaitsprofile/touchLastActive thenloadDashboard; existingadditiveobserver discardedalreadychosenClassesview. NewreconcileTeacherViews keepslaterelectedClasses/Monitor aboveautomaticdashboard/home restore, whileexplicitoriginalEditor/Settings navigationstilltakesoveranddisposesmonitor. Observesviewclasschanges too. FocusedRED/GREEN test; complete718/718PASS. Original174assetsstillunchanged; onlyownmoduleschanged. Native40003836588 allfourpreflightgatessuccess, build/uploadinprogress; noadditionalnativepush.

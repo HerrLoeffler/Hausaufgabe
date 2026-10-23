@@ -2,7 +2,7 @@ import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/12.4.0/f
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js';
 import {getFirestore,collection,query,where,getDocs,getDoc,doc as firestoreDoc} from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js';
 import {firebaseConfig} from '../firebase-config.js?v=2.3.0';
-import {createOnlineClient} from './online-client.mjs';
+import {createOnlineClient,reconcileTeacherViews} from './online-client.mjs';
 import {createExamMonitor,installAssignedStartRoute} from './exam-monitor.mjs';
 import {createPupilSession} from './online-pupil-session.mjs';
 import {createReplacementForm} from './exam-replacement.mjs';
@@ -68,7 +68,7 @@ function install(){
   studentView.append(button('Zur bisherigen Startseite',()=>{pupilActive=false;studentView.classList.add('hidden');doc.body.classList.remove('gcOnlinePupilMode');if(previousViews.length)previousViews.forEach(v=>v.classList.remove('hidden'));else showOriginal();nav.classList.toggle('hidden',!user);}));
  }
  const decorate=()=>{for(const card of doc.querySelectorAll('#quizList .quizCard[data-quiz-id]')){if(card.querySelector('[data-online-assign]'))continue;const b=button('Klasse zuweisen',()=>assignDialog(card.dataset.quizId));b.dataset.onlineAssign='';(card.querySelector('.primaryQuizActions')||card).append(b);}};
- new MutationObserver(()=>{decorate();if(!pupilActive&&!view.classList.contains('hidden')&&[...main.querySelectorAll('.view:not(.hidden)')].some(v=>v!==view&&v!==studentView)){view.classList.add('hidden');monitor?.dispose();monitor=null;}}).observe(main,{childList:true,subtree:true});
+ new MutationObserver(()=>{decorate();reconcileTeacherViews({main,teacherView:view,pupilView:studentView,pupilActive,page,onLeave:()=>{monitor?.dispose();monitor=null;}});}).observe(main,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
  installAssignedStartRoute({doc,getAccountId:()=>auth.currentUser?.uid,getContext:async quizId=>{const [current,snapshot]=await Promise.all([api.teacher('workspace'),getDoc(firestoreDoc(db,'quizzes',quizId))]);const quiz=snapshot.data();if(!snapshot.exists()||quiz.ownerId!==auth.currentUser?.uid)throw Error('Dieser Test gehört nicht zu deinem aktuellen Konto.');return {assignment:current.assignments.find(a=>a.quizId===quizId&&a.sessionRunId===quiz.sessionRunId)||null};},openMonitor,onError:e=>error(doc.getElementById('publishView')||main,e)});
  onAuthStateChanged(auth,next=>{if(user?.uid!==next?.uid){workspace=null;quizzes=[];studentClassFocus=null;for(const d of doc.querySelectorAll('dialog.gcOnlineDialog')){d.replaceChildren();d.close();d.remove();}view.classList.add('hidden');monitor?.dispose();monitor=null;generation++;}user=next;nav.classList.toggle('hidden',!user||pupilActive);doc.body.classList.toggle('gcOnlineTeacherMode',!!user);decorate();});
  const activity=()=>{if(pupilActive)pupilSession.activity();};doc.addEventListener('pointerdown',activity);doc.addEventListener('keydown',activity);

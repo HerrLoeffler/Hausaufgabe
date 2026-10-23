@@ -8,3 +8,13 @@ export function createOnlineClient({getToken,getAccountId,fetchImpl=globalThis.f
  }
  return {teacher:(command,payload)=>request(command,payload,true),pupil:(command,payload)=>request(command,payload,false)};
 }
+
+export function reconcileTeacherViews({main,teacherView,pupilView,pupilActive,page,onLeave}){
+ if(pupilActive||teacherView.classList.contains('hidden'))return;
+ const visible=[...main.querySelectorAll('.view:not(.hidden)')].filter(v=>v!==teacherView&&v!==pupilView);
+ if(!visible.length)return;
+ // The original app restores its dashboard after its async profile load. A
+ // later user choice in our navigation takes precedence over that restore.
+ if(page!=='tests'&&visible.every(v=>['dashboardView','homeView'].includes(v.id))){for(const v of visible)v.classList.add('hidden');return;}
+ teacherView.classList.add('hidden');onLeave?.();
+}
