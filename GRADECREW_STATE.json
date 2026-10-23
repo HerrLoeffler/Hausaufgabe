@@ -1281,7 +1281,7 @@
       "staging": "gradecrew-staging-2026_only",
       "user_test": "synthetic_browser_and_actual_native_API_pass_physical_iPad_pending",
       "handoff": "workstreams/classroom-student-management-v1.md",
-      "next_action": "Wait for Apple processing of1.0(1211), then physical personal-code AAC/offline/replacement acceptance using ready24pupil test66CCZ7JY.",
+      "next_action": "Install processed TestFlight1.0(1211) from existing internal group, then physical personal-code AAC/offline/replacement acceptance using ready24pupil test66CCZ7JY.",
       "deployment_evidence": {
         "project": "gradecrew-staging-2026",
         "hosting_source": "5490a5d166226f6f78f2624f2341e1137fa75099",
@@ -1300,10 +1300,13 @@
         "native_candidate": {
           "run_id": 40003836588,
           "source": "7bed48c0f02f8eecb07236dc8afee94eb612efcb",
-          "status": "success_Apple_processing",
+          "status": "success_processed_internal_group_assigned",
           "uploaded": true,
           "version": "1.0",
-          "build": 1211
+          "build": 1211,
+          "apple_processed": true,
+          "internal_group": "GradeCrew Tester",
+          "device_installation_verified": false
         },
         "negative_checks": {
           "nonrecipient_assignment": "403_PERMISSION_DENIED",

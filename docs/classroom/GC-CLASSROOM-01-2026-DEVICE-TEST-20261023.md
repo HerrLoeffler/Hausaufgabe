@@ -23,7 +23,7 @@ Der ältere Test **SYSTEMTEST · Persönlicher Schülerzugang 2026** (`BZSZRHJF`
 
 Genau ein neuer Produktlauf: https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40003836588
 
-Quelle `7bed48c0`, Lauf 21: alle vier Vorpruefungen und Build/Signierung/Upload erfolgreich. Tatsaechlich hochgeladen: **Version 1.0 (1211)**, ausschliesslich `gradecrew-staging-2026`. App Store Connect bestaetigt den Eingang; Apple-Status derzeit **Processing**. Erst nach Verarbeitung und sichtbarer Verfuegbarkeit diese Version installieren. Noch kein physischer iPad-Nachweis.
+Quelle `7bed48c0`, Lauf 21: alle vier Vorpruefungen und Build/Signierung/Upload erfolgreich. Tatsaechlich hochgeladen: **Version 1.0 (1211)**, ausschliesslich `gradecrew-staging-2026`. App Store Connect bestaetigt inzwischen die abgeschlossene Verarbeitung und Zuordnung zur bestehenden internen Gruppe **GradeCrew Tester** (1 Tester). In TestFlight **1.0 (1211)** auswaehlen; die tatsaechliche Installation am iPad ist noch nicht bestaetigt.
 
 Es handelt sich um dieselbe GradeCrew-Secure-App mit der ausdrücklich ausgewählten 2026-Testumgebung. Ein Simulator bestätigt keine echte Apple-Gerätesperre und keinen signierten Geräte-Schlüsselbund.
 
