@@ -33,11 +33,12 @@ function navigation(){
     const a=link('',`#/${id}`,`nav-link ${route.page===id?'active':''}`);append(a,icon(id),el('span','',name));if(route.page===id)a.setAttribute('aria-current','page');$('#primary').append(a);
   }
   if(route.page==='arbeit'){
-    for(const [id,name] of [['themen','Themen & Projekte'],['ziele','Ziele'],['qualitaet','Aufgabenqualität'],['bereich','Firmenbereiche'],['netz','Zusammenhänge']]){
+    if(route.section!=='bereich')for(const [id,name] of [['themen','Themen & Projekte'],['ziele','Ziele'],['qualitaet','Aufgabenqualität'],['bereich','Firmenbereiche'],['netz','Zusammenhänge']]){
       const active=route.section===id||(!route.section&&id==='themen')||(route.section==='thema'&&id==='themen');
       const a=link(name,`#/arbeit/${id}${id==='bereich'?'/strategy':''}`,`sub-link ${active?'active':''}`);if(active)a.setAttribute('aria-current','page');$('#secondary').append(a);
     }
     if(route.section==='bereich'){
+      $('#secondary').append(link('← Arbeitsübersicht','#/arbeit','sub-link'));
       $('#secondary').append(el('label','sub-label','Ausgewählter Bereich'));
       const select=el('select','area-select');select.setAttribute('aria-label','Firmenbereich auswählen');areas.forEach(a=>{const o=el('option','',a.name);o.value=a.id;o.selected=a.id===route.id;select.append(o);});
       select.addEventListener('change',()=>location.hash=`/arbeit/bereich/${select.value}`);$('#secondary').append(select);
@@ -47,6 +48,7 @@ function navigation(){
   const names={heute:'Heute',eingang:'Eingang',arbeit:'Arbeit',wissen:'Wissen',verbindungen:'Verbindungen'};
   $('#breadcrumb').replaceChildren(link('Firmenzentrale','#/heute'),el('span','','/'),el('span','current',names[route.page]||'Heute'));
   if(route.section==='thema')$('#breadcrumb').append(el('span','','/'),el('span','current',topics.find(t=>t.id===route.id)?.title||'Thema'));
+  if(route.section==='bereich')$('#breadcrumb').append(el('span','','/'),el('span','current',areaName(route.id)));
 }
 
 function today(){
