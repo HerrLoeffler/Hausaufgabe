@@ -10,6 +10,7 @@ on:
       - feature/secure-assessment-v1
       - feature/gate-e-load-test
       - feature/gradecrew-app-integration
+      - 'feature/analytics-*'
       - 'feature/quick-remy-*'
       - 'feature/bug-ops-*'
       - 'fix/remy-*'
@@ -80,6 +81,9 @@ jobs:
         run: |
           bash -n tools/cloud-shell-runtime.sh deploy-app-integration-preview.sh cloud-shell-bootstrap.sh
           python3 -m unittest tools.test_cloud_shell_runtime -v
+
+      - name: Teacher analytics lifecycle tests
+        run: node --test ai-teacher-active-time.test.js assessment-telemetry-transport.test.mjs teacher-analytics-client.test.mjs
 
       - name: Run unit tests
         working-directory: functions

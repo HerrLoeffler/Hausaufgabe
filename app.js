@@ -63,6 +63,7 @@ import { installReviewMode } from "./review-mode.mjs";
 import { DEMO_TEST as REVIEW_DEMO_TEST } from "./gradecrew-tour-v8.js";
 import { createLocalTourRepository } from "./guest-tour-port.mjs";
 import { installCrewTour } from "./gradecrew-tour.js?v=2.3.1-gc21";
+import { createTeacherAnalytics } from "./teacher-analytics-client.mjs";
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
 fetch("./release.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(r => r && diagnostics.setRelease(r)).catch(() => {});
@@ -80,13 +81,32 @@ const secureAudioPublicationMessage = "Dieser Test enthält Audioantworten oder 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const teacherAnalytics = createTeacherAnalytics({send: async (data, actorUid) => {
+  if (guestTourRepo || firebaseModule.teacherAnalyticsEnabled !== true) return {ok: true};
+  if (auth.currentUser?.uid !== actorUid) return {ok: true};
+  return (await httpsCallable(getFunctions(app, "europe-west1"), "recordTeacherTelemetry", {timeout: 5000})({actorUid, event: data})).data;
+}});
+fetch("./release.json", {cache: "no-store"}).then(r => r.json()).then(r => teacherAnalytics.setRelease(r.commit)).catch(() => {});
 const aiApi = new Proxy(createAiClient(app, () => state.user?.uid || auth.currentUser?.uid || ""), {
   get(target, key) {
     const value = target[key];
     if (typeof value !== "function") return value;
     return (...args) => {
       if (guestTourRepo) throw new Error("Im lokalen Tutorial sind KI- und Billing-Aufrufe gesperrt.");
-      return value.apply(target, args);
+      const started = performance.now();
+      const analyticsAccount = state.user?.uid;
+      const operation = key === "uploadMaterial" || key === "analyzeMaterial" ? "upload" : /generate|regenerate|AiTestJob|QuickRemy|reviseWholeTest/.test(String(key)) ? "generate" : null;
+      if (!operation) return value.apply(target, args);
+      teacherAnalytics.waiting(true);
+      return Promise.resolve().then(() => value.apply(target, args)).then(result => {
+        if (state.user?.uid === analyticsAccount) teacherAnalytics.operation(operation, "acknowledged", performance.now() - started);
+        const feature = /Audio/.test(String(key)) ? "audio" : key === "generateQuestionMedia" ? "image" : key === "reviseWholeTest" || key === "regenerateQuestion" ? "emmi" : key === "uploadMaterial" || key === "analyzeMaterial" ? "upload" : "remy";
+        if (state.user?.uid === analyticsAccount) teacherAnalytics.feature(feature);
+        return result;
+      }, error => {
+        if (state.user?.uid === analyticsAccount) teacherAnalytics.operation(operation, "failed", performance.now() - started);
+        throw error;
+      }).finally(() => {if (state.user?.uid === analyticsAccount) teacherAnalytics.waiting(false);});
     };
   }
 });
@@ -587,6 +607,7 @@ async function finishTeacherTour() {
 
 function showView(id) {
   diagnostics.record("view", { view: id });
+  teacherAnalytics.view(guestTourRepo ? "none" : id);
   if (id === "authView") document.dispatchEvent(new Event("gradecrew:signed-out"));
   if (id !== "publishView") clearPublishSubscriptions();
   if (id !== "studentView") clearStudentSubscriptions();
@@ -1229,6 +1250,7 @@ async function refreshTutorialSignIn(user, generation) {
 
 let authStateGeneration = 0;
 onAuthStateChanged(auth, async (user) => {
+  teacherAnalytics.setSession(null, null);
   const generation = ++authStateGeneration;
   quickRemyBridge.authChanged(user);
   if (guestTourRepo && !user) return;
@@ -1292,6 +1314,7 @@ onAuthStateChanged(auth, async (user) => {
     ? { state: "signedIn", accountLabel: String(state.profile?.displayName || user.displayName || user.email || "Angemeldet").trim().slice(0, 160), accountChanged }
     : { state: "signedOut" };
   window.GradeCrewNative?.setAuthState?.(nativeAuthState)?.catch(() => {});
+  teacherAnalytics.setSession(firebaseModule.teacherAnalyticsEnabled === true && !guestTourRepo ? user?.uid : null, state.profile);
   setTeacherBar();
   if (["production", "staging"].includes(appEnvironment)) void reviewController?.setSession(user ? { uid: user.uid } : null);
   if (user && isAdmin()) void refreshBugOpsAttention({ notify: true });
@@ -2589,6 +2612,8 @@ function openSettings() {
   state.isDirty = false;
   state.settingsDraft = deepClone(getSettings());
   state.gradeScalesDraft = deepClone(getGradeScales());
+  $("teacherAnalyticsConsent").checked = state.profile?.analyticsConsent === true;
+  $("teacherAnalyticsConsent").disabled = firebaseModule.teacherAnalyticsEnabled !== true;
   $("defaultSubject").value = state.settingsDraft.defaultSubject || "";
   $("defaultGrade").value = state.settingsDraft.defaultGrade || "";
   $("defaultDescription").value = state.settingsDraft.defaultDescription || "";
@@ -2597,6 +2622,20 @@ function openSettings() {
   renderGradeScaleSettings();
   showView("settingsView");
 }
+
+$("teacherAnalyticsConsent").addEventListener("change", async event => {
+  const uid = state.user?.uid;
+  const enabled = event.target.checked;
+  if (!uid || guestTourRepo || firebaseModule.teacherAnalyticsEnabled !== true) return;
+  if (!enabled) teacherAnalytics.setSession(null, null);
+  try {
+    await setDoc(doc(db, "users", uid), {analyticsConsent: enabled}, {merge: true});
+    if (state.user?.uid !== uid) return;
+    state.profile = {...state.profile, analyticsConsent: enabled};
+    teacherAnalytics.setSession(uid, state.profile);
+    toast(enabled ? "Freiwillige Nutzungsanalyse eingeschaltet." : "Nutzungsanalyse ausgeschaltet.");
+  } catch {event.target.checked = state.profile?.analyticsConsent === true;toast("Auswahl konnte nicht gespeichert werden.", "error");}
+});
 
 function renderGradeScaleSettings() {
   const root = $("gradeScaleList");
@@ -6269,6 +6308,7 @@ async function saveCurrentQuiz(showMessage = true) {
     if (oldDraftId !== code || !state.isDirty) {
       await removeEditorDraft(state.user.uid, oldDraftId).catch(err => console.warn("Lokale Sicherung konnte nicht entfernt werden:", err));
     }
+    teacherAnalytics.operation("save");
     if (showMessage) toast("Test gespeichert.");
     return true;
   } catch (err) {
@@ -6306,6 +6346,7 @@ async function publishCurrentQuiz() {
       Object.assign(state.currentQuiz, practice, { published: true, ended: false });
       state.pendingImportReport = null;
       renderImportReviewBanner(); renderAiJobs(); updateSummary(); updateEditorPublishControls();
+      teacherAnalytics.operation("publish");
       toast("Test veröffentlicht."); showPublish(state.currentQuiz.id); return;
     }
     const teacherMode = state.currentQuiz.startMode === "teacher";
@@ -6330,6 +6371,7 @@ async function publishCurrentQuiz() {
     renderAiJobs();
     updateSummary();
     updateEditorPublishControls();
+    teacherAnalytics.operation("publish");
     toast("Test veröffentlicht.");
     showPublish(state.currentQuiz.id);
   } catch (err) {
@@ -7739,6 +7781,7 @@ async function openResults(code) {
     const timeMeta = Number(quiz.timeLimitMinutes) > 0 ? ` · Zeitlimit: ${Number(quiz.timeLimitMinutes)} Min.` : "";
     $("resultsMeta").textContent = `${state.submissions.length} Abgaben · ${quiz.totalPoints || 0} Punkte maximal · Notenschlüssel: ${getQuizScale(quiz).name || "Standard"}${timeMeta}`;
     showView("resultsView");
+    teacherAnalytics.operation("results");
     renderResultsTable();
     $("reviewPanel").classList.add("hidden");
     crewTour?.notify("results-ready", {quizId: code});

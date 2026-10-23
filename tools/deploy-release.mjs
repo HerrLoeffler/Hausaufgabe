@@ -12,7 +12,7 @@ try{
  const env=assertDeploymentTarget(values.environment,values.project);
  if(env.name==='production'&&values['confirm-project']!==env.projectId)throw new Error('Live benötigt --confirm-project hausaufgabe-staging.');
  if(env.name==='production'&&values.only==='functions:ai')throw new Error('Live nur mit expliziten Einzelfunktionen aktualisieren; separat betriebene Learning-Funktionen bleiben erhalten.');
- if(!['hosting','functions:ai','functions:ai:reviewMode,functions:ai:recordCrewTelemetry','functions:assessment','firestore:rules,storage'].includes(values.only))throw new Error('Expliziten freigegebenen Deployment-Umfang wählen.');
+ if(!['hosting','functions:ai','functions:ai:reviewMode,functions:ai:recordCrewTelemetry','functions:ai:crewAssistant,functions:ai:recordCrewTelemetry,functions:ai:recordTeacherTelemetry,functions:ai:cleanupCrewTelemetry,functions:ai:retryTeacherAnalytics,functions:ai:teacherQuizAnalytics,functions:ai:teacherJobAnalytics,functions:ai:teacherUsageAnalytics,functions:ai:teacherSubmissionAnalytics','functions:assessment','firestore:rules,storage'].includes(values.only))throw new Error('Expliziten freigegebenen Deployment-Umfang wählen.');
  if(values['dry-run'])console.log(JSON.stringify({environment:env.name,projectId:env.projectId,only:values.only,dryRun:true}));
  else{
   execFileSync('git',['diff','--exit-code','HEAD','--'],{cwd:root,stdio:'pipe'});

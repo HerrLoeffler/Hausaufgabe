@@ -220,6 +220,52 @@ const getBugOpsSummary = onCall(telemetryOpts, async request => {
   return bugOpsAttentionSummary(getFirestore());
 });
 
+async function projectTeacherServerEvent(event, uid, name, metadata = {}) {
+  if (process.env.GC_TEACHER_ANALYTICS_ENABLED !== "true" || !uid || !/^[a-f0-9]{40}$/.test(process.env.GC_SOURCE_RELEASE || "")) return;
+  const profile = (await getFirestore().doc(`users/${uid}`).get()).data();
+  const digest = require("node:crypto").createHash("sha256").update(`${event.id}:${name}`).digest("hex");
+  const id = `${digest.slice(0, 8)}-${digest.slice(8, 12)}-${digest.slice(12, 16)}-${digest.slice(16, 20)}-${digest.slice(20, 32)}`;
+  const at = Date.parse(event.time);
+  if (!Number.isFinite(at)) return;
+  await require("./lib/teacher-analytics").recordTeacherEvent(uid, profile, {
+    id, event: name, release: process.env.GC_SOURCE_RELEASE, platform: "server", at, ...metadata
+  }, {server: true});
+}
+const teacherQuizAnalytics = onDocumentWritten({region: REGION, document: "quizzes/{quizId}"}, async event => {
+  if (!event.data?.after.exists) return;
+  const after = event.data.after.data(), before = event.data.before.data() || {};
+  for (const name of require("./lib/teacher-server-events").quizTransitions(before, after)) {
+    await projectTeacherServerEvent(event, after.ownerId, name, {entityId: event.params.quizId});
+  }
+});
+const teacherJobAnalytics = onDocumentWritten({region: REGION, document: "aiJobs/{jobId}"}, async event => {
+  if (!event.data?.after.exists) return;
+  const after = event.data.after.data(), before = event.data.before.data() || {};
+  const name = require("./lib/teacher-server-events").jobTransition(before.status, after.status);
+  if (name) await projectTeacherServerEvent(event, after.ownerId, name, {operation: "generate"});
+  if (name === "generation_completed") await projectTeacherServerEvent(event, after.ownerId, "test_ready", {operation: "generate", ...(typeof after.quizId === "string" ? {entityId: after.quizId} : {})});
+});
+const teacherUsageAnalytics = onDocumentWritten({region: REGION, document: "users/{uid}/aiEvents/{usageId}"}, async event => {
+  if (!event.data?.after.exists || event.data.before.exists) return;
+  await projectTeacherServerEvent(event, event.params.uid, "ai_usage_recorded", require("./lib/teacher-server-events").usageMetric(event.data.after.data()));
+});
+const teacherSubmissionAnalytics = onDocumentWritten({region: REGION, document: "quizzes/{quizId}/submissions/{submissionId}"}, async event => {
+  if (!event.data?.after.exists || event.data.before.exists || process.env.GC_TEACHER_ANALYTICS_ENABLED !== "true") return;
+  // Only existence and quiz owner are used; no student document data is accessed.
+  const quiz = (await getFirestore().doc(`quizzes/${event.params.quizId}`).get()).data();
+  await projectTeacherServerEvent(event, quiz?.ownerId, "submission_confirmed", {entityId: event.params.quizId});
+});
+
+const retryTeacherAnalytics = onSchedule({region: REGION, schedule: "every 5 minutes", timeoutSeconds: 300, memory: "256MiB"}, async () => {
+  console.info("Teacher analytics delivery", await require("./lib/teacher-analytics").retryTeacherEvents());
+});
+
+const recordTeacherTelemetry = onCall(telemetryOpts, async request => {
+  const { uid, profile } = await requireAiUser(request);
+  if (request.data?.actorUid !== uid) throw new HttpsError("permission-denied", "Messkonto hat gewechselt.");
+  return require("./lib/teacher-analytics").recordTeacherEvent(uid, profile, request.data.event);
+});
+
 const recordCrewTelemetry = onCall(telemetryOpts, async request => {
   const { uid } = await requireAiUser(request);
   await writeCrewMetric(uid, request.data || {}, { server: false });
@@ -448,6 +494,12 @@ module.exports = {
   aggregateBugFeedback,
   getBugOpsSummary,
   recordCrewTelemetry,
+  recordTeacherTelemetry,
+  retryTeacherAnalytics,
+  teacherQuizAnalytics,
+  teacherJobAnalytics,
+  teacherUsageAnalytics,
+  teacherSubmissionAnalytics,
   getCrewTelemetrySummary,
   cleanupCrewTelemetry,
   getQuestionAudioDrafts,

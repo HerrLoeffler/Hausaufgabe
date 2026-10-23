@@ -12,7 +12,7 @@ const METRIC_VERSION = "crew-metrics-v1";
 const RAW_COLLECTION = "crewTelemetryEvents";
 const USER_MARKER_COLLECTION = "crewTelemetryUsers";
 const DAILY_COLLECTION = "crewTelemetryDaily";
-const EXPIRING_COLLECTIONS = Object.freeze([RAW_COLLECTION, USER_MARKER_COLLECTION]);
+const EXPIRING_COLLECTIONS = Object.freeze([RAW_COLLECTION, USER_MARKER_COLLECTION, "teacherTelemetryEvents", "teacherTelemetryActors", "teacherTelemetryBudget"]);
 const CREW_IDS = new Set(["coco", "remy", "emmi", "wilma"]);
 const FIELD_NAMES = new Set([
   "subject", "grade", "schoolType", "region", "topic", "difficulty",
@@ -133,7 +133,10 @@ async function writeCrewMetric(uid, raw = {}, options = {}) {
   // PostHog is a staging-only, best-effort projection of the already allowlisted
   // GradeCrew metric. A PostHog outage must never block product behavior or the
   // canonical Firestore telemetry write.
+  const schoolProfile = require("./posthog-telemetry").runtimeProjectId() === "hausaufgabe-staging"
+    ? (await db.doc(`users/${uid}`).get()).data() : undefined;
   await captureCrewMetricToPosthogSafe({
+    profile: schoolProfile,
     uid,
     day,
     eventId: eventRef.id,
@@ -180,7 +183,8 @@ async function cleanupExpiredCrewTelemetry(now = Timestamp.now()) {
     deleteExpiredCollection(RAW_COLLECTION, now),
     deleteExpiredCollection(USER_MARKER_COLLECTION, now)
   ]);
-  return { eventsDeleted, usersDeleted };
+  const teacherDeleted = await Promise.all(EXPIRING_COLLECTIONS.slice(2).map(name => deleteExpiredCollection(name, now)));
+  return { eventsDeleted, usersDeleted, teacherDeleted };
 }
 
 function dayKeys(days, now = new Date()) {

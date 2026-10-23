@@ -111,3 +111,37 @@ test("PostHog exporter sends one personless custom event to the EU endpoint", as
   assert.equal(requests[0].body.event, "gradecrew.crew.input_submitted");
   assert.equal(requests[0].body.properties.$process_person_profile, false);
 });
+
+test('source attribution is server derived and conflicting runtime projects fail closed', async () => {
+  const p = buildPosthogCapture({uid:'teacher', day:'2026-10-21', eventId:'one', metric:{event:'input_submitted',source_project:'spoof'}}, stagingEnv);
+  assert.equal(p.properties.source_project, 'gradecrew-staging-2026');
+  assert.equal(p.properties.event_schema_version, 2);
+  assert.equal(p.properties.platform, 'web');
+  assert.equal(p.properties.source_release, 'unknown');
+  assert.equal(isPosthogExportEnabled({...stagingEnv, GOOGLE_CLOUD_PROJECT:'hausaufgabe-staging'}), false);
+});
+
+test('school requires its own explicit destination and cannot reuse staging token', () => {
+  const school = {...stagingEnv, GCLOUD_PROJECT:'hausaufgabe-staging'};
+  assert.equal(isPosthogExportEnabled(school), false);
+  assert.equal(isPosthogExportEnabled({...school, POSTHOG_SCHOOL_ENABLED:'true',POSTHOG_SCHOOL_PROJECT_TOKEN:'school-only'}), true);
+  const p=buildPosthogCapture({uid:'teacher',day:'2026-10-21',eventId:'one',profile:{role:'teacher',analyticsConsent:true},metric:{event:'input_submitted'}},{...school,POSTHOG_SCHOOL_ENABLED:'true',POSTHOG_SCHOOL_PROJECT_TOKEN:'school-only'});
+  assert.equal(p.api_key,'school-only');
+  assert.equal(p.properties.environment,'school');
+});
+
+test('secondary projection rejects content smuggled through metadata values', () => {
+  const p=buildPosthogCapture({uid:'teacher',day:'2026-10-21',eventId:'one',metric:{event:'input_submitted',crewId:'private text',fields:['topic','private text'],parserVersion:'private text',screen:'private text'}},stagingEnv);
+  assert.equal(p.properties.crew_id,undefined);
+  assert.deepEqual(p.properties.fields,['topic']);
+  assert.equal(p.properties.parser_version,undefined);
+  assert.equal(p.properties.screen,undefined);
+});
+
+ test('school crew projection cannot bypass optional purpose or role', async () => {
+ const env={GCLOUD_PROJECT:'hausaufgabe-staging',POSTHOG_SCHOOL_ENABLED:'true',POSTHOG_SCHOOL_PROJECT_TOKEN:'school-only'};
+ for(const profile of [undefined,{role:'teacher'},{role:'student',analyticsConsent:true}]) {
+ const r=await captureCrewMetricToPosthog({uid:'u',profile,metric:{event:'input_submitted'}},{env,fetchImpl:()=>{throw Error('must never send');}});
+ assert.equal(r.reason,'purpose-not-enabled');
+ }
+ });
