@@ -21,6 +21,8 @@ jobs:
         with:
           node-version: 22
       - name: Check frontend syntax
-        run: node --check docs/prototypes/firmenzentrale/app.mjs
+        run: |
+          node --check docs/prototypes/firmenzentrale/app.mjs
+          node --check docs/prototypes/firmenzentrale/network-view.mjs
       - name: Test navigation, evidence and draft persistence
         run: node --test tests/firmenzentrale/*.test.mjs

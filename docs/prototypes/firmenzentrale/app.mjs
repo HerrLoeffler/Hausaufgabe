@@ -1,5 +1,6 @@
 import {areas,topics} from './data.mjs';
 import {domains,recordsFor,coverage,primaryDomain} from './portfolio.mjs';
+import {mountNetwork} from './network-view.mjs';
 let inventory,brandManifest;
 try {
  const responses=await Promise.all([fetch('inventory.json'),fetch('/shared/gradecrew-design/assets.json')]);
@@ -45,7 +46,7 @@ function navigation(){
   }
   if(route.page==='arbeit'){
     if(route.section!=='bereich')for(const [id,name] of [['landkarte','Projektlandkarte'],['abdeckung','Quellenabdeckung'],['themen','Detailakten'],['ziele','Ziele'],['qualitaet','Aufgabenqualität'],['bereich','Firmenbereiche'],['netz','Zusammenhänge']]){
-      const active=route.section===id||(!route.section&&id==='themen')||(route.section==='thema'&&id==='themen');
+      const active=route.section===id||(!route.section&&id==='landkarte')||(route.section==='thema'&&id==='themen');
       const a=link(name,`#/arbeit/${id}${id==='bereich'?'/strategy':''}`,`sub-link ${active?'active':''}`);if(active)a.setAttribute('aria-current','page');$('#secondary').append(a);
     }
     if(route.section==='bereich'){
@@ -62,26 +63,8 @@ function navigation(){
   if(route.section==='bereich')$('#breadcrumb').append(el('span','','/'),el('span','current',areaName(route.id)));
 }
 
-function domainRow(d){
- const records=recordsFor(inventory,d.id);
- const a=link('',`#/arbeit/landkarte/${d.id}`,'domain-tile');
- append(a,el('h2','',d.name),el('p','domain-built',d.built.split('. ')[0]+'.'),append(el('div','domain-next'),el('strong','','Nächstes Lieferstück'),el('p','',d.next[0])),el('span','domain-open','Leistungen, Lücken und Quellen öffnen'));
- return a;
-}
 function today(){
- const c=$('#content');
- append(c,append(el('section','portfolio-intro'),el('p','portfolio-kicker','GradeCrew · Unternehmenscockpit'),el('h1','','GradeCrew im Überblick.'),el('p','portfolio-lead','Unsere Produkte, unsere Firma und die nächsten großen Schritte.')));
- append(c,append(el('div','portfolio-bar'),el('span','','Quellenstand 23. Oktober 2026'),link('Abdeckung und Grenzen ansehen','#/arbeit/abdeckung','button quiet')));
- append(c,section('Unsere Produkte','Leistungen und größere Lieferstücke. Details öffnen sich in der jeweiligen Themenakte.'));
- const decision=append(el('details','decisions-preview'),el('summary','','Zur Entscheidung: Prüfungswege abnehmen · Prototypen qualifizieren · Firmenaufbau ordnen'),el('p','','Aus der Inventur abgeleitete Vorschläge; eine verbindliche Firmenpriorisierung steht noch aus.'));c.append(decision);const products=el('div','product-map');domains.filter(d=>d.category==='Produkte').forEach(d=>products.append(domainRow(d)));c.append(products);
- append(c,section('Was GradeCrew trägt','Pädagogik, Marke, Betrieb und Unternehmensaufbau gehören zum selben Projekt.'));
- const foundations=el('div','foundation-map');domains.filter(d=>d.category!=='Produkte').forEach(d=>foundations.append(domainRow(d)));c.append(foundations);
- append(c,append(el('section','priority-board'),section('Als Nächstes zu entscheiden','Vorschläge aus der Inventur; noch keine neue verbindliche Firmenpriorisierung.'),...[
- ['Betriebsfähige Lern- und Prüfungswege','Classroom, Secure und adaptives Lernen an ihren tatsächlichen Server-, Geräte- und Fachabnahmen zusammenführen.','classroom'],
- ['Vom Prototyp zum freigegebenen Produkt','Für Aufgabenformate und Games je Kandidat einen klaren Einsatzbereich und belastbare Abnahmen festlegen.','learning'],
- ['Firma und Zusammenarbeit vervollständigen','Ziele, Verantwortlichkeiten, Kundenwege und den echten Chatanschluss mit dem Projektbestand verbinden.','central']
- ].map(([title,body,id])=>append(el('article'),link(title,`#/arbeit/landkarte/${id}`),el('p','',body)))));
- c.append(note('Diese Landkarte ist eine erste redaktionelle Zusammenführung. Die Inventur ist noch nicht vollständig ausgewertet. Veröffentlichungen, Code und Prüfungen werden in den Akten getrennt ausgewiesen.'));
+ mountNetwork($('#content'),{selected:route.section==='landkarte'?route.id:'',brandIcon:`/${brandManifest.root}/${brandManifest.brand.icon}`,onDraft:(n,edge)=>openEditor(null,{area:n.area,title:edge?`Weiterarbeit: ${edge.scope}`:`Weiterarbeit: ${n.label}`,body:`Bereich: ${n.name}\nZuständigkeit: ${n.owner}\n\n${edge?`Verbindung: ${edge.from} → ${edge.to}\nBetroffener Umfang: ${edge.scope}\nZusammenhang: ${edge.reason}\nArbeitsschritt: ${edge.next||n.blocker?.next||n.next[0]}\nQuelle: ${edge.source}`:`Nächster Schritt: ${n.blocker?.next||n.next[0]}\nBelegter Ausgangsstand: ${n.built}`}\n\nStatus: lokaler Entwurf, nicht gesendet. Bestehende Task-ID und aktuellen Quellenstand vor Ausführung prüfen.`})});
 }
 function sourceAge(value){const n=typeof value==='number'?(value<1e12?value*1000:value):Date.parse(value);if(!Number.isFinite(n))return 'Quelldatum unbekannt';const days=Math.max(0,Math.floor((Date.now()-n)/86400000));return new Date(n).toLocaleDateString('de-DE')+' · '+days+' Tage alt';}
 function portfolioDetail(){
@@ -215,7 +198,7 @@ mobile.addEventListener('change',closeMenu);
 $('#menu').addEventListener('click',()=>{const open=$('#sidebar').classList.toggle('open');syncMenu();if(open)$('#primary a').focus();});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'&&!$('#editor').open){e.preventDefault();if(!$('#search-dialog').open)openSearch();}if(e.key==='Escape'&&$('#sidebar').classList.contains('open')){closeMenu();$('#menu').focus();}});
 document.addEventListener('click',e=>{if($('#sidebar').classList.contains('open')&&!$('#sidebar').contains(e.target)&&!$('#menu').contains(e.target))closeMenu();});
-function render(focus=true){route=parseRoute(location.hash);navigation();$('#content').replaceChildren();if(route.page==='eingang')inbox();else if(route.page==='wissen')knowledge();else if(route.page==='verbindungen')connections();else if(route.page==='arbeit'){if(route.section==='landkarte'&&route.id)portfolioDetail();else if(route.section==='abdeckung')coverageView();else if(route.section==='thema')detail();else if(route.section==='ziele')goals();else if(route.section==='qualitaet')quality();else if(route.section==='bereich')area();else if(route.section==='netz')network();else if(route.section==='landkarte'||!route.section)today();else themes();}else today();document.title=`${$('#content h1')?.textContent||'Firmenzentrale'} · GradeCrew`;closeMenu();if(focus){$('#content').focus({preventScroll:true});window.scrollTo(0,0);}}
+function render(focus=true){route=parseRoute(location.hash);document.body.classList.toggle('network-mode',route.page==='heute'||route.page==='arbeit'&&(!route.section||route.section==='landkarte'));navigation();$('#content').replaceChildren();if(route.page==='eingang')inbox();else if(route.page==='wissen')knowledge();else if(route.page==='verbindungen')connections();else if(route.page==='arbeit'){if(route.section==='akte')portfolioDetail();else if(route.section==='landkarte'&&route.id)today();else if(route.section==='abdeckung')coverageView();else if(route.section==='thema')detail();else if(route.section==='ziele')goals();else if(route.section==='qualitaet')quality();else if(route.section==='bereich')area();else if(route.section==='netz')network();else if(route.section==='landkarte'||!route.section)today();else themes();}else today();document.title=`${$('#content h1')?.textContent||'Firmenzentrale'} · GradeCrew`;closeMenu();if(focus){$('#content').focus({preventScroll:true});window.scrollTo(0,0);}}
 window.addEventListener('hashchange',()=>render());
 window.addEventListener('storage',event=>{if(event.key==='gradecrew-company-personal-drafts-v1'){const latest=readDrafts(storage);if(!$('#editor').open){draftsState=latest;drafts=latest.items;render(false);}else notify('Entwürfe wurden in einer anderen Ansicht geändert.');}});
 render(false);

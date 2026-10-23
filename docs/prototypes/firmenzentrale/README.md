@@ -34,7 +34,7 @@ Zielprozente erscheinen erst mit vereinbarten, gewichteten und abgenommenen Meil
 
 ```sh
 node --check docs/prototypes/firmenzentrale/app.mjs
-node --test tests/firmenzentrale/model.test.mjs
+node --test tests/firmenzentrale/*.test.mjs
 git diff --check
 ```
 
@@ -45,3 +45,7 @@ Die eigene CI Firmenzentrale UI checks prüft Syntax und Modellregressionen. Bro
 Die bisherige inhaltliche und optische Abnahmeannahme ist aufgehoben. Die Hauptansicht zeigt elf große Themenfelder statt vier Web-Akten. inventory.json enthält eine datierte Erfassung der unterstützten APIs; portfolio.mjs eine vorläufige redaktionelle Synthese. Die Quellenabdeckung bleibt ausdrücklich unvollständig, insbesondere bei älteren fehlgeschlagenen Cursorn und der noch offenen redaktionellen Vollauswertung. Originalverläufe und reale Schülerdaten werden nicht exportiert. Die vier bisherigen Akten bleiben historische Detailakten.
 
 Logo, Manifest, Brand Core und Tokens stammen bytegleich aus dem Produktbranch750212e7. Sie liegen unter ihren kanonischen Repo-Pfaden; keine produktbezogene Logo-Neuzeichnung oder Kopie. Der lokale Vorschauhelfer liefert ausschließlich Frontend- und Markenpfade aus.
+
+## Interaktives Unternehmensnetz
+
+Start und Projektlandkarte zeigen denselben zentralen Graphen mit elf Bereichsknoten und21 typisierten, gerichteten Verbindungen. Knoten öffnen Voraussetzungen/Weiterwirkungen und nächste Arbeit. Linien und bei Auswahl erscheinende Beschriftungen öffnen Umfang und Quelle. Gemeldete Engpässe sind begrenzt und datiert; kein Liveverkehr oder pauschaler Produktstatus. Filter, Unterthemensuche, Zoom/Einpassen und Ziehen sind bedienbar. Auf kleinen Bildschirmen steht eine zusätzliche Bereichsauswahl bereit. Vollständige Akten bleiben unter Arbeit/akte/ID erreichbar. Arbeitsaufträge werden als lokale Entwürfe vorbereitet; die echte Chat-Ausführung bleibt offen.
