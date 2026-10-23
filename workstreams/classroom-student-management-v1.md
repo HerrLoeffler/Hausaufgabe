@@ -821,3 +821,14 @@ Native40003836588 allfourremote gatescompletedSUCCESS: native120586569898,phone1
 Actual ChromePDFpreview after0ff43f02:24pupil list2pages, groupedcards2pages, singlecards24pages. Allthreepreviews cancelled, noactualprint. Exactpagecounts savedprivate/tmp/gc-classroom-actual-print-pages.json. Names/codes safelyrenderedastext; nocredentialsinGit.
 
 Fastreloadtesting exposed anoriginalauthrestore race: normalapp awaitsprofile/touchLastActive thenloadDashboard; existingadditiveobserver discardedalreadychosenClassesview. NewreconcileTeacherViews keepslaterelectedClasses/Monitor aboveautomaticdashboard/home restore, whileexplicitoriginalEditor/Settings navigationstilltakesoveranddisposesmonitor. Observesviewclasschanges too. FocusedRED/GREEN test; complete718/718PASS. Original174assetsstillunchanged; onlyownmoduleschanged. Native40003836588 allfourpreflightgatessuccess, build/uploadinprogress; noadditionalnativepush.
+
+
+## Final verified delivery checkpoint 2026-10-23
+
+Hosting source5490a5d166226f6f78f2624f2341e1137fa75099 (localbbdf0961, treefef9d9af28256159c78bc3d742a96ed9ac20d067):182/182 publicly served hashes verified;174 original assets preserved from gc44, index only original asset modified. Actual fast reload and immediate Classes navigation now survives delayed teacher auth restoration. Full web/server/UI suite718/718 PASS, no skips. Teacher Admin and original3 tests preserved;2 separate synthetic copies only.
+
+Actual Chrome print previews for24 fictitious pupils: list2 pages, cards2 sheets, singlecards24 pages; all cancelled, no actual print. Explicit teacher replacement release plus shipping API typed receipt verified for oldattempt a_ecd596df11115ed4328b4ab513c1. New66CCZ7JY remains waiting, currentgeneration1,24 notjoined, available for real iPad test. Original BZSZRHJF has matching synthetic submission/teacher graded result; cannot be restarted.
+
+Single native candidate40003836588 completed SUCCESS in all5 jobs. Source7bed48c0f02f8eecb07236dc8afee94eb612efcb, actual version1.0 build1211. Upload log19:07:27UTC: UPLOAD SUCCEEDED with no errors; project gradecrew-staging-2026, SecureStaging, signed AAC/profile checks passed. App Store Connect existing GradeCrew Secure app6817526711 confirms1.0(1211) Processing at21:07Europe/Berlin. This is upload/processing evidence, not yet installation or physical AAC proof. No second app, repeat product push, live release or Production change.
+
+Physical Task8 remains open: personal-code iPad login -> waiting -> teacher start -> real AAC exam -> matching server receipt -> pupilDone/teacherSubmitted, signed-device Keychain, offline recovery and explicit archive transfer. Guide docs/classroom/GC-CLASSROOM-01-2026-DEVICE-TEST-20261023.md. Do not delete execution ledger before physical acceptance. No main/shared branch integration or PR created; this state is saved only on own feature branches.
