@@ -29,3 +29,18 @@ extension SecurePupilPolicyTests {
   XCTAssertFalse(SecurePupilSessionPolicy.valid(expiresAt:2000,now:1000,requiresCode:true))
  }
 }
+extension SecurePupilPolicyTests {
+ func testLocalSharedExpiryDoesNotNeedNetworkAndPollingCannotProlongIt(){
+  let shared=SecurePupilCredential(token:"opaque",deviceMode:"shared",expiresAt:999999,lastActivity:1000)
+  XCTAssertTrue(shared.locallyValid(at:300999));XCTAssertFalse(shared.locallyValid(at:301000))
+  let legacy=SecurePupilCredential(token:"opaque",deviceMode:"shared",expiresAt:999999)
+  XCTAssertFalse(legacy.locallyValid(at:1000))
+  XCTAssertTrue(SecurePupilCredential(token:"opaque",deviceMode:"personal",expiresAt:999999).locallyValid(at:301000))
+ }
+ func testRenewalRetainsOriginalAttemptBindingAndRequiresSamePupilNotJustSameClass(){
+  var original=SecureClassroomLaunch(quizID:"TEST2026",displayName:"Original",assignmentID:"assigned",generation:0,sessionToken:"old",deviceMode:"shared");original.studentID="A"
+  XCTAssertTrue(SecurePupilSessionPolicy.canRenew(original:original,replacement:original))
+  var other=SecureClassroomLaunch(quizID:"TEST2026",displayName:"Other",assignmentID:"assigned",generation:0,sessionToken:"new",deviceMode:"shared");other.studentID="B"
+  XCTAssertFalse(SecurePupilSessionPolicy.canRenew(original:original,replacement:other))
+ }
+}

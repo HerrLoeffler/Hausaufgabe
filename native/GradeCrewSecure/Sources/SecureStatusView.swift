@@ -21,14 +21,16 @@ struct SecureStatusPresentation {
     }
 }
 struct SecureStatusView:View {
+    @Environment(\.verticalSizeClass) private var heightClass
+    private var compact:Bool {heightClass == .compact}
     let presentation:SecureStatusPresentation
     let onAction:()->Void
     var body:some View {
-        VStack(alignment:.leading,spacing:20) {
+        VStack(alignment:.leading,spacing:compact ? 12 : 20) {
             HStack {
                 Spacer()
-                if presentation.kind == .success { Image(systemName:"checkmark.circle.fill").font(.system(size:54)).foregroundStyle(SecureTheme.completeText) }
-                else if presentation.kind == .warning { Image(systemName:"exclamationmark.circle.fill").font(.system(size:48)).foregroundStyle(SecureTheme.warningText) }
+                if presentation.kind == .success { Image(systemName:"checkmark.circle.fill").font(.system(size:compact ? 32 : 54)).foregroundStyle(SecureTheme.completeText) }
+                else if presentation.kind == .warning { Image(systemName:"exclamationmark.circle.fill").font(.system(size:compact ? 32 : 48)).foregroundStyle(SecureTheme.warningText) }
                 else { ProgressView().controlSize(.large).tint(SecureTheme.brand).accessibilityLabel(presentation.title) }
                 Spacer()
             }
@@ -39,11 +41,11 @@ struct SecureStatusView:View {
                     .font(.footnote).foregroundStyle(SecureTheme.warningText).fixedSize(horizontal:false,vertical:true).padding(12).background(SecureTheme.warningFill,in:RoundedRectangle(cornerRadius:12))
             }
             if let action=presentation.actionTitle {
-                Button(action:onAction) { Text(action).font(.headline).fixedSize(horizontal:false,vertical:true).frame(maxWidth:.infinity,minHeight:52).padding(12) }
+                Button(action:onAction) { Text(action).font(.headline).fixedSize(horizontal:false,vertical:true).frame(maxWidth:.infinity,minHeight:compact ? 44 : 52).padding(compact ? 8 : 12) }
                     .buttonStyle(.plain).foregroundStyle(SecureTheme.surface).background(SecureTheme.brand,in:RoundedRectangle(cornerRadius:14))
                     .disabled(presentation.busy).secureMeasure("status.action",role:"tap")
             }
-        }.padding(24).frame(maxWidth:.infinity,alignment:.leading).background(SecureTheme.surface,in:RoundedRectangle(cornerRadius:24))
+        }.padding(compact ? 16 : 24).frame(maxWidth:.infinity,alignment:.leading).background(SecureTheme.surface,in:RoundedRectangle(cornerRadius:24))
             .foregroundStyle(SecureTheme.text).secureMeasure("status",role:"center")
     }
 }

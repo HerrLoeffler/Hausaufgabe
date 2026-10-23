@@ -19,6 +19,9 @@ final class SecureReturnUITests:XCTestCase {
         let back=app.buttons["Zurück zum Start"]
         XCTAssertTrue(back.waitForExistence(timeout:15))
         XCTAssertTrue(back.isEnabled)
+        if UIDevice.current.userInterfaceIdiom == .phone, XCUIDevice.shared.orientation.isLandscape {
+            XCTAssertTrue(back.isHittable,"The confirmed-return action must fit on a landscape phone without a scroll gesture.")
+        }
         if !back.isHittable { app.swipeUp() }
         XCTAssertTrue(back.isHittable)
         // The visible blue surface must respond, including beside the text.

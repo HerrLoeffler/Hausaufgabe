@@ -8,6 +8,8 @@ final class SecureExamCoordinator: ObservableObject {
         didSet { if phase != .active { cancelSubmitConfirmation() } }
     }
     @Published private(set) var showingSubmitConfirmation=false
+    @Published private(set) var resumeNotice:SecureResumeNotice?
+    @Published private(set) var replacementReceipt:SecureReplacementReceipt?
     private var confirmationAttemptID:String?
     @Published var code = ""
     @Published var name = ""
@@ -27,6 +29,13 @@ final class SecureExamCoordinator: ObservableObject {
     private var identity: SecureAttemptIdentity?
     private var selectedClassroom: SecureClassroomLaunch?
     var personalSelection: Bool { selectedClassroom != nil }
+    var canRenewPersonal:Bool {identity?.classroom != nil && replacementReceipt == nil && (phase == .recovery || phase == .interrupted)}
+    func renewPersonalSession(_ launch:SecureClassroomLaunch) -> String? {
+        guard !busy,canRenewPersonal,let old=identity?.classroom,SecurePupilSessionPolicy.canRenew(original:old,replacement:launch) else{return "Bitte mit dem ursprünglichen Schülercode anmelden und genau denselben Test wählen. Der gespeicherte Versuch bleibt erhalten."}
+        let previous=identity;identity?.classroom=launch
+        do {try persist();message="Die Schüleranmeldung wurde erneuert. Derselbe gespeicherte Versuch wird fortgesetzt.";return nil}
+        catch {identity=previous;return error.localizedDescription}
+    }
     func preparePersonal(_ launch: SecureClassroomLaunch) async -> Bool {
         guard identity == nil, !busy, phase == .code || phase == .identity else { return false }
         selectedClassroom=launch;code=launch.quizID;name=launch.displayName;phase = .code
@@ -94,10 +103,11 @@ final class SecureExamCoordinator: ObservableObject {
     }
 #if SECURE_LAYOUT_TESTS
     // Test-host-only fixture. No AAC active flag or shipping assessment bypass exists.
-    func installLifecycleFixture(expired:Bool) {
+    func installLifecycleFixture(expired:Bool,classroom:SecureClassroomLaunch?=nil) {
         operations.invalidate();work=SecureSavedWork()
         identity=SecureAttemptIdentity(code:"AB12CD",name:"Synthetic lifecycle")
         identity?.attemptID="a_"+String(repeating:"1",count:28)
+        identity?.classroom=classroom
         paper=["paper":(0..<30).map{["id":"q\($0)","type":"text","text":"Aufgabe \($0+1)","points":1] as [String:Any]},"quiz":["contentLocale":"de-DE"]]
         clock=SecureExamClock(serverNowMillis:1000,deadlineMillis:expired ? 1000 : 999999,receivedUptime:SecureMonotonic.now)
         remaining=clock?.remaining(at:SecureMonotonic.now);phase = .active
@@ -127,7 +137,7 @@ final class SecureExamCoordinator: ObservableObject {
     func startOrRecover() async {
         // A queued recovery task can run after a receipt has already completed
         // this attempt. It must not recreate an identity or re-enter AAC.
-        guard !busy, phase == .identity || phase == .recovery || phase == .interrupted else { return }
+        guard replacementReceipt == nil, !busy, phase == .identity || phase == .recovery || phase == .interrupted else { return }
         let generation = operations.generation
         busy = true; message = ""
         retryTimer?.invalidate(); retryTimer = nil
@@ -165,6 +175,7 @@ final class SecureExamCoordinator: ObservableObject {
             } else {
                 let result = try await invokeAttempt()
                 try ensureCurrent(generation)
+                if try await receiveReplacement(result) { return }
                 try await apply(result)
             }
             try ensureCurrent(generation)
@@ -182,6 +193,43 @@ final class SecureExamCoordinator: ObservableObject {
             message = error.localizedDescription
             scheduleRetry(after: error)
         }
+    }
+    private func receiveNotice(_ result:[String:Any]) {
+        guard let binding=identity?.classroom,let action=result["resumeAction"] as? [String:Any] else {resumeNotice=nil;return}
+        resumeNotice=SecureResumeNotice.parse(action,generation:binding.generation,serverNow:(result["serverNowMillis"] as? NSNumber)?.doubleValue ?? Date().timeIntervalSince1970*1000)
+    }
+    func acknowledgeResumeNotice() async {
+        guard let notice=resumeNotice,!busy else{return};let current=operations.generation
+        do {var data=try authenticatedData();data["stateOnly"]=true;data["acknowledgeResume"]=notice.id
+            let result=try await api.invoke("resumeAssessmentAttempt",data:data);try ensureCurrent(current)
+            if try await receiveReplacement(result){return};receiveNotice(result)
+        } catch {if operations.isCurrent(current){message=error.localizedDescription}}
+    }
+    private func receiveReplacement(_ result:[String:Any]) async throws -> Bool {
+        guard result["status"] as? String == "replaced" else{return false}
+        let current=operations.generation
+        guard let saved=identity,let binding=saved.classroom,let id=result["attemptId"] as? String,saved.attemptID==nil||saved.attemptID==id,let value=result["replacementReceipt"] as? [String:Any],let receipt=SecureReplacementReceipt.parse(value,quizID:saved.code,attemptID:id,assignmentID:binding.assignmentID,generation:binding.generation) else {throw invalidResponse()}
+        // Capture the last renderer state before hiding it. Failure keeps the
+        // already durable snapshot; it never substitutes empty answers.
+        if phase == .active,let webView,let value=try? await webView.evaluateJavaScript("window.gcFreezeAnswers()"),let snapshot=value as? [String:Any],let answers=snapshot["answers"] as? [String:Any],let revision=snapshot["revision"] as? Int {
+            guard self.snapshot(revision:revision,answers:answers) else{throw invalidResponse()}
+        }
+        try ensureCurrent(current)
+        identity?.attemptID=id;try persist();replacementReceipt=receipt;resumeNotice=nil
+        timer?.invalidate();timer=nil;retryTimer?.invalidate();retryTimer=nil
+        phase = .recovery;message="Die Lehrkraft hat einen neuen Versuch freigegeben. Dein bisheriger Stand bleibt geschützt erhalten. Übernimm den Ersatzversuch ausdrücklich und melde dich danach in deiner Testübersicht an. Die gemeinsame Prüfungszeit wird nicht verlängert."
+        return true
+    }
+    func acceptReplacement() async {
+        guard !busy,let receipt=replacementReceipt,let saved=identity else{return};busy=true
+        defer{busy=false}
+        do {
+            try store.archiveReplaced(identity:saved,work:work,receipt:receipt)
+            operations.invalidate();await assessment.end()
+            identity=nil;selectedClassroom=nil;work=SecureSavedWork();paper=nil;webView=nil;clock=nil;remaining=nil;replacementReceipt=nil;resumeNotice=nil
+            storageFailed=false;storageStatus="";code="";name="";title="";phase = .code
+            message="Der bisherige Stand wurde geschützt gesichert. Öffne deinen persönlichen Schülerzugang und wähle den neu freigegebenen Versuch."
+        } catch {message=error.localizedDescription}
     }
     private func authenticatedData() throws -> [String: Any] {
         guard let identity else { throw invalidResponse() }
@@ -212,6 +260,7 @@ final class SecureExamCoordinator: ObservableObject {
             guard try await verifyIfSubmitted() else { throw invalidResponse() }
             return
         }
+        receiveNotice(result)
         work.response = try JSONSerialization.data(withJSONObject: result)
         try persist()
         if result["status"] as? String == "ready" {
@@ -306,8 +355,9 @@ final class SecureExamCoordinator: ObservableObject {
             if let reason=work.recoveryReason { data["recoveryReason"]=reason }
             data["answers"] = answers
             data["autoSubmitted"] = work.autoSubmitted
-            _ = try await api.invoke("submitAssessmentAttempt", data: data)
+            let result = try await api.invoke("submitAssessmentAttempt", data: data)
             try ensureCurrent(generation)
+            if try await receiveReplacement(result) { return }
             phase = .verifying
             message = "Abgabe wird unabhängig beim Server bestätigt …"
             guard try await verifyIfSubmitted() else { throw invalidResponse() }
@@ -413,12 +463,15 @@ final class SecureExamCoordinator: ObservableObject {
             if phase == .waiting {
                 let result = try await invokeAttempt()
                 try ensureCurrent(generation)
+                if try await receiveReplacement(result) { return }
                 try await apply(result)
             } else {
                 var data = try authenticatedData()
                 data["stateOnly"] = true
                 let result = try await api.invoke("resumeAssessmentAttempt", data: data)
                 try ensureCurrent(generation)
+                if try await receiveReplacement(result) { return }
+                receiveNotice(result)
                 if result["status"] as? String == "submitted" { _ = try await verifyIfSubmitted() }
                 else if (result["quiz"] as? [String: Any])?["ended"] as? Bool == true { await submit(auto: true) }
                 else { message = "" }
@@ -451,7 +504,7 @@ final class SecureExamCoordinator: ObservableObject {
         webView=nil;paper=nil;clock=nil
         details="";storageStatus="";storageFailed=false;ticks=0
         latestCompletedIDs=[];lastMetricAt = -30
-        selectedClassroom=nil
+        selectedClassroom=nil;resumeNotice=nil;replacementReceipt=nil
         phase = .code; code = ""; name = ""; title = ""; message = ""; remaining = nil
     }
     func backToCode() { if phase == .identity { phase = .code; message = "" } }

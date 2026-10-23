@@ -22,6 +22,7 @@ private struct SecureEntryFocusKey:PreferenceKey {
 }
 struct SecureWelcomeFrame<Content:View>: View {
     @Environment(\.horizontalSizeClass) private var widthClass
+    @Environment(\.verticalSizeClass) private var heightClass
     @State private var focusedField:String?
 
     var entry:Bool = false
@@ -29,12 +30,12 @@ struct SecureWelcomeFrame<Content:View>: View {
     var body: some View {
         ScrollViewReader { proxy in
         ScrollView {
-            VStack(spacing:24) {
-                if entry { SecureEntryBrandHeader() } else { SecureBrandHeader() }
+            VStack(spacing:!entry && heightClass == .compact ? 12 : 24) {
+                if entry { SecureEntryBrandHeader() } else if heightClass != .compact { SecureBrandHeader() }
                 content()
                 if entry { SecureLegalLinks() }
                 Text(SecureReleaseEnvironment.projectID == "gradecrew-staging-2026" ? "Testumgebung" : "Schulversion").font(.footnote).foregroundStyle(SecureTheme.secondaryText)
-            }.padding(.vertical,24).frame(maxWidth:SecureTheme.formWidth).secureMeasure("welcome",role:"center")
+            }.padding(.vertical,!entry && heightClass == .compact ? 12 : 24).frame(maxWidth:SecureTheme.formWidth).secureMeasure("welcome",role:"center")
                 .frame(maxWidth:.infinity).padding(.horizontal,16)
         }.scrollDismissesKeyboard(.interactively)
             .onPreferenceChange(SecureEntryFocusKey.self) { field in
