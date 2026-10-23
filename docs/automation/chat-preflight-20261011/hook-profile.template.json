@@ -1,0 +1,18 @@
+{
+  "description": "GradeCrew prompt freshness hook candidate. Install only after source review and explicit hook trust.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.codex/hooks/gradecrew-chat-preflight.py --profile ~/.codex/gradecrew-chat-preflight-profile.json",
+            "timeout": 20,
+            "statusMessage": "Checking GradeCrew rule freshness",
+            "additionalContextLimit": 1000
+          }
+        ]
+      }
+    ]
+  }
+}
