@@ -1,0 +1,63 @@
+✔ teacher authored question and context run exactly, not default examples (1.141708ms)
+✔ custom fraction and unit drive measured result (0.341583ms)
+✔ invalid fraction and unrepresentable scale cannot be launched (0.157708ms)
+✔ contradictory visible fraction is rejected (0.067209ms)
+✔ German verb selection requires sentence context and valid chosen options (0.114708ms)
+✔ ordering accepts explicitly entered alternatives (0.11225ms)
+✔ duplicate tokens are ambiguous and invalid orders are rejected (0.058083ms)
+✔ matching keeps pairs, validates empty/duplicate answers (0.130458ms)
+✔ teacher edit cannot change already compiled round (0.073334ms)
+✔ unknown type, oversized lesson, empty title and prompt fail (0.11975ms)
+✔ default four stations compile and are answerable (0.101916ms)
+✖ changing teacher option texts clears stale correctness before launch (0.449208ms)
+✖ explicit whole and absolute fraction cannot contradict configured amount (2.223208ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 11
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 42.656708
+
+✖ failing tests:
+
+test at games/lerninsel-browser-prototype/tests/core.test.mjs:16:1
+✖ changing teacher option texts clears stale correctness before launch (0.449208ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at TestContext.<anonymous> (file:///Users/martin/Documents/Codex/2026-10-10/gradecrew-lerninsel-integration/work/lerninsel-browser-prototype/games/lerninsel-browser-prototype/tests/core.test.mjs:16:138)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at games/lerninsel-browser-prototype/tests/core.test.mjs:17:1
+✖ explicit whole and absolute fraction cannot contradict configured amount (2.223208ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(compileLesson({title:'Mathe',tasks:[t]}).errors.length)
+  
+      at TestContext.<anonymous> (file:///Users/martin/Documents/Codex/2026-10-10/gradecrew-lerninsel-integration/work/lerninsel-browser-prototype/games/lerninsel-browser-prototype/tests/core.test.mjs:20:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1382:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:960:18)
+      at Test.postRun (node:internal/test_runner/test:1522:19)
+      at Test.run (node:internal/test_runner/test:1447:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
