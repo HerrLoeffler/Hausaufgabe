@@ -1,0 +1,2 @@
+import test from'node:test';import assert from'node:assert/strict';let clock={};try{clock=await import('../../lab/test-rallye/clock.mjs')}catch(e){if(e.code!=='ERR_MODULE_NOT_FOUND')throw e}
+test('five minute countdown has no 4:00 glitch and clamps at expiry',()=>{assert.equal(typeof clock.formatRallyeClock,'function');for(const [now,expect]of [[0,'5:00'],[1,'5:00'],[999,'5:00'],[1000,'4:59'],[1001,'4:59'],[299001,'0:01'],[300000,'0:00'],[300001,'0:00']])assert.equal(clock.formatRallyeClock(300000,now),expect)});

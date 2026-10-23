@@ -1,0 +1,1 @@
+{"name":"gradecrew-test-rallye-functions","private":true,"version":"1.0.0","engines":{"node":"22"},"main":"index.js","type":"commonjs","dependencies":{"firebase-admin":"14.4.0","firebase-functions":"7.4.0"}}
