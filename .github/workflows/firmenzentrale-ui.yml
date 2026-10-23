@@ -23,4 +23,4 @@ jobs:
       - name: Check frontend syntax
         run: node --check docs/prototypes/firmenzentrale/app.mjs
       - name: Test navigation, evidence and draft persistence
-        run: node --test tests/firmenzentrale/model.test.mjs
+        run: node --test tests/firmenzentrale/*.test.mjs
