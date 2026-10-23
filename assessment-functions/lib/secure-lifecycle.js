@@ -31,7 +31,8 @@ const { observeAssessment } = require("./observability");
 const observed = (action, handler) => observeAssessment(action, handler, { logger, HttpsError });
 
 const {assessmentRunId}=require("./assessment-run-id");
-const { readClassroomStart, checkClassroomAttempt } = require("./classroom-binding");
+const { readClassroomStart, checkClassroomAttempt, readReplacementReceipt } = require("./classroom-binding");
+const { attemptResumeAction } = require("./classroom-actions");
 const classroomFail = (code, message) => { throw new HttpsError(code, message); };
 const REGION = "europe-west1";
 const callableOpts = {
@@ -589,7 +590,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
   const aRef = attemptRef(quizId, id);
   const pRef = assessmentPrivateRef(quizId, id);
   // Only the final, committed callback result may escape a transaction retry.
-  const { storedAttempt, storedPrivate, currentQuiz, newContract, solutionAssets } = await db.runTransaction(async tx => {
+  const { storedAttempt, storedPrivate, currentQuiz, newContract, solutionAssets, replacementReceipt } = await db.runTransaction(async tx => {
     const quizSnap = await tx.get(quizRef);
     const existingAttempt = await tx.get(aRef);
     const existingPrivate = await tx.get(pRef);
@@ -606,6 +607,8 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       const storedAttempt = existingAttempt.data();
       const storedPrivate = existingPrivate.data();
       assertAttemptToken(storedPrivate, attemptToken);
+      const replacementReceipt = await readReplacementReceipt({get: async path => (await tx.get(db.doc(path))).data(),attempt:storedAttempt,now:Date.now()});
+      if(replacementReceipt)return {storedAttempt,storedPrivate,currentQuiz,newContract:null,solutionAssets:[],replacementReceipt};
       await checkClassroomAttempt({get: async path => (await tx.get(db.doc(path))).data(), fail: classroomFail, attempt: storedAttempt});
       if (storedAttempt.classroom) studentName = storedAttempt.studentName;
       if (String(storedAttempt.studentName || "") !== studentName) {
@@ -710,6 +713,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
     return { storedAttempt: created, storedPrivate: privateData, currentQuiz, newContract, solutionAssets: audioSnapshot.assets };
   });
 
+  if(replacementReceipt)return {status:'replaced',attemptId:id,replacementReceipt};
   await persistSolutionAssets(quizId, solutionAssets);
 
   if (storedAttempt.status === "submitted") {
@@ -748,6 +752,8 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, observed("resumeAssessmen
     };
   }
 
+  const replacementReceipt=await readReplacementReceipt({get: async path => (await db.doc(path).get()).data(),attempt,now:Date.now()});
+  if(replacementReceipt)return {status:'replaced',attemptId:id,replacementReceipt};
   await checkClassroomAttempt({get: async path => (await db.doc(path).get()).data(), fail: classroomFail, attempt});
   if (stateOnly) validateSubmissionWindow(initialQuiz, attempt, Date.now());
   else validateQuizOpen(initialQuiz);
@@ -790,7 +796,8 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, observed("resumeAssessmen
     paper = contractForQuestions(questions, privateData).paper;
   }
   if (attempt.classroom && Date.now() - toMillis(attempt.lastSeenAt) >= 10000) await aRef.update({lastSeenAt: Timestamp.now()});
-  return attemptPublicState(attempt, currentQuiz, paper);
+  const resumeAction = await attemptResumeAction({transaction: fn => db.runTransaction(tx => fn({get: async path => (await tx.get(db.doc(path))).data(), set: (path,value) => tx.set(db.doc(path),value)})), attempt, now: Date.now(), ackId: request.data?.acknowledgeResume, fail: classroomFail});
+  return {...attemptPublicState(attempt, currentQuiz, paper), ...(resumeAction ? {resumeAction} : {})};
 }));
 
 exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmentAttempt", async request => {
@@ -817,6 +824,8 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
       return { submission: { id: existingSubmission.id, ...existingSubmission.data() }, quiz: quizSnap.exists ? quizSnap.data() : null, privateData };
     }
     if (!quizSnap.exists) throw new HttpsError("not-found", "Dieser Test existiert nicht mehr.");
+    const replacementReceipt=await readReplacementReceipt({get:async path=>(await tx.get(db.doc(path))).data(),attempt,now:Date.now()});
+    if(replacementReceipt)return {replacementReceipt};
     await checkClassroomAttempt({get: async path => (await tx.get(db.doc(path))).data(), fail: classroomFail, attempt});
     const quiz = quizSnap.data();
     const nowMillis = Date.now();
@@ -899,6 +908,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
     });
     return { submission, quiz, privateData };
   });
+  if(receiptContext.replacementReceipt)return {status:'replaced',attemptId:id,replacementReceipt:receiptContext.replacementReceipt};
   return { receipt: await buildReleasedReceipt(quizId, receiptContext.submission, receiptContext.quiz, receiptContext.privateData) };
 }));
 

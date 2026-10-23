@@ -37,12 +37,13 @@ export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},on
     roundLine.textContent=m.round.state==='waiting'?'Warteraum: Die Lehrkraft gibt den Test gemeinsam frei.':m.round.state==='running'?`Prüfung läuft${m.remainingSeconds===null?' ohne Zeitlimit':` · ${Math.ceil(m.remainingSeconds/60)} Minuten verbleiben`}`:m.round.state==='closed'?'Diese Prüfungsrunde ist geschlossen.':'Der Test kann individuell gestartet werden.';
     updated.textContent=`Aktualisiert: ${new Date(now()).toLocaleTimeString('de-DE')}`;warning.hidden=true;
     for(const[key,b]of Object.entries(filterButtons))b.textContent=`${monitorLabels[key]}: ${m.counts[key]}`;
-    start.hidden=!m.canStart;start.disabled=starting;confirmation.hidden=true;
+    start.hidden=!m.canStart;start.disabled=starting;if(!m.canStart)confirmation.hidden=true;
     const ids=new Set(m.rows.map(r=>r.studentId));for(const[id,r]of records)if(!ids.has(id)){r.node.remove();records.delete(id);}
     for(let index=0;index<m.rows.length;index++){
       const row=m.rows[index];let record=records.get(row.studentId);
       if(!record){const node=el('tr'),cells=Array.from({length:4},()=>el('td'));node.append(...cells);record={node,cells,row};record.help=action('Hilfe',()=>record.row.status==='submitted'?onOpenResults(record.row,latest.assignment):onHelp(record.row,latest.assignment));cells[3].append(record.help);records.set(row.studentId,record);}
       record.row=row;record.cells[0].textContent=row.name;record.cells[1].textContent=(monitorLabels[row.status]||'Stand unbekannt')+(row.stale?' · Kein frisches Signal':'');
+      const actionLabels={pending:'Fortsetzungsbitte ausstehend',delivered:'Fortsetzungsbitte zugestellt',acknowledged:'Fortsetzung bestätigt',expired:'Fortsetzungsbitte abgelaufen'};if(row.resumeAction)record.cells[1].textContent+=' · '+(actionLabels[row.resumeAction.state]||'');
       record.cells[2].textContent=row.lastSeenAt?new Date(row.lastSeenAt).toLocaleTimeString('de-DE'):'Noch kein Kontakt';record.help.textContent=row.status==='submitted'?'Ergebnis':'Hilfe';
       if(body.children[index]!==record.node)body.insertBefore(record.node,body.children[index]||null);
     }

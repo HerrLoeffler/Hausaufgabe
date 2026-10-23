@@ -29,3 +29,13 @@ async function checkClassroomAttempt({get,fail,attempt}){
  if(!p||p.attemptId!==attempt.attemptId||p.generation!==b.generation)fail('failed-precondition','Die Lehrkraft hat diesen Versuch ersetzt. Deine gesicherten Antworten bleiben erhalten; bitte wende dich an die Lehrkraft.');
 }
 module.exports={readClassroomStart,checkClassroomAttempt};
+// Returned only after the caller verified the ORIGINAL attempt token. A generic
+// failed-precondition is never an authorization to discard local work.
+async function readReplacementReceipt({get,attempt,now}){
+ const b=attempt.classroom;if(!b||attempt.status==='submitted')return null;
+ const base=`classroomSchools/${b.schoolId}/assignments/${b.assignmentId}`;
+ const [p,r]=await Promise.all([get(`${base}/participants/${b.studentId}`),get(`${base}/replacements/${attempt.attemptId}`)]);
+ if(!r||r.studentId!==b.studentId||r.oldGeneration!==b.generation||!r.actionId||!p||!Number.isInteger(p.generation)||p.generation<=b.generation||r.generation>b.generation+1||r.generation!==b.generation+1)return null;
+ return {kind:'classroom_replacement_v1',quizId:attempt.quizId,oldAttemptId:attempt.attemptId,schoolId:b.schoolId,studentId:b.studentId,assignmentId:b.assignmentId,oldGeneration:b.generation,generation:p.generation,replacementActionId:r.actionId,releasedAt:r.releasedAt,serverNow:now};
+}
+module.exports.readReplacementReceipt=readReplacementReceipt;

@@ -25,3 +25,17 @@ test('expired common deadline closes unstarted personal tests and blocks replace
 test('technical replacement never reopens a received submission or changes its participant binding',async()=>{const f=await setup();const a=await f.teacher('assign',{quizId:'TEST2026',classId:f.c.id});const path=`classroomSchools/teacher/assignments/${a.id}/participants/${f.p.id}`;f.docs.set(path,{generation:0,attemptId:'received'});f.docs.set('quizzes/TEST2026/submissions/received',{status:'graded'});await assert.rejects(f.teacher('restart',{assignmentId:a.id,studentId:f.p.id,expectedGeneration:0,confirm:true,reason:'Technical help'}),{code:'failed-precondition'});assert.deepEqual(f.docs.get(path),{generation:0,attemptId:'received'});});
 
 test('monitor reports the current common server clock and closes stale rounds without exposing questions',async()=>{const f=await setup();const a=await f.teacher('assign',{quizId:'TEST2026',classId:f.c.id});const before=await f.teacher('participants',{assignmentId:a.id});assert.equal(before.round.state,'waiting');assert.equal(before.round.serverNow,1800000000000);const q=f.docs.get('quizzes/TEST2026');f.docs.set('quizzes/TEST2026',{...q,timeLimitMinutes:2,questions:[{answer:'private'}]});await f.teacher('startRound',{assignmentId:a.id});f.advance(1000);const current=await f.teacher('participants',{assignmentId:a.id});assert.equal(current.round.state,'running');assert.equal(current.round.startedAt,1800000000000);assert.equal(current.round.deadlineAt,1800000120000);assert.ok(!JSON.stringify(current).includes('private'));f.advance(119000);assert.equal((await f.teacher('participants',{assignmentId:a.id})).round.state,'closed');});
+test('only owning teacher may request resume and only current assigned pupil may receive and acknowledge it',async()=>{
+ const f=await setup(),a=await f.teacher('assign',{quizId:'TEST2026',classId:f.c.id});
+ await assert.rejects(f.teacher('requestResume',{assignmentId:a.id,studentId:f.q.id,expectedGeneration:0,actionId:'help1'}),{code:'permission-denied'});
+ await f.teacher('requestResume',{assignmentId:a.id,studentId:f.p.id,expectedGeneration:0,actionId:'help1'});
+ let row=(await f.teacher('participants',{assignmentId:a.id})).rows[0];assert.equal(row.resumeAction.state,'pending');
+ const login=await f.student('login',{code:f.p.code,deviceMode:'personal'});assert.equal(login.assignments[0].resumeAction.id,'help1');
+ row=(await f.teacher('participants',{assignmentId:a.id})).rows[0];assert.equal(row.resumeAction.state,'delivered');
+ const other=await f.student('login',{code:f.q.code});await assert.rejects(f.student('acknowledgeResume',{sessionToken:other.sessionToken,assignmentId:a.id,actionId:'help1',generation:0}),{code:'permission-denied'});
+ await f.student('acknowledgeResume',{sessionToken:login.sessionToken,assignmentId:a.id,actionId:'help1',generation:0});
+ assert.equal((await f.teacher('participants',{assignmentId:a.id})).rows[0].resumeAction.state,'acknowledged');
+ await assert.rejects(f.teacher('requestResume',{assignmentId:a.id,studentId:f.p.id,expectedGeneration:1,actionId:'help2'}),{code:'aborted'});
+ const p=`classroomSchools/teacher/assignments/${a.id}/participants/${f.p.id}`;f.docs.set(p,{...f.docs.get(p),attemptId:'done'});f.docs.set('quizzes/TEST2026/submissions/done',{status:'graded'});
+ await assert.rejects(f.teacher('requestResume',{assignmentId:a.id,studentId:f.p.id,expectedGeneration:0,actionId:'help3'}),{code:'failed-precondition'});
+});
