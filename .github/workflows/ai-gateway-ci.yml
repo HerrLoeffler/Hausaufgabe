@@ -1,0 +1,34 @@
+name: AI Gateway CI
+
+on:
+  pull_request:
+    paths:
+      - 'ai-gateway/**'
+      - '.github/workflows/ai-gateway-ci.yml'
+  push:
+    branches:
+      - 'feature/multi-provider-ai-gateway-v1'
+    paths:
+      - 'ai-gateway/**'
+      - '.github/workflows/ai-gateway-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ai-gateway
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Node syntax check
+        run: npm run check
+      - name: Deploy script syntax check
+        run: bash -n deploy-staging.sh
+      - name: Unit tests
+        run: npm test
