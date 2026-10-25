@@ -95,3 +95,11 @@ test("building a reordered catalogue is stable, does not mutate parents and excl
   assert.equal(JSON.stringify(topics), before);
   assert.ok(a.competencies.every((c) => [5, 6].includes(c.grade) && c.track === "R"));
 });
+
+test('expansion starts with the actual whole-fraction action; help removes the denominator coordination',()=>{
+ const c=build().competencies.find(c=>c.didacticFamily==='expand');
+ assert.match(c.learningPlan.levels[0],/Zähler und Nenner/);
+ assert.match(c.learningPlan.levels[0],/angeben/);
+ assert.match(c.learningPlan.help[0],/Nur die Zähler/);
+ assert.doesNotMatch(c.learningPlan.help[0],/Faktor.*selbst/);
+});

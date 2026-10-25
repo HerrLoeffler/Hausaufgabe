@@ -596,6 +596,19 @@ link("german:6:zeichensetzung-erklaeren:k2", "german:5:satzglieder-und-satzbau:k
 link("german:6:informierend-berichten:k2", "german:6:informierend-berichten:k1", "Der sachliche Bericht verwendet die zuvor ausgewählten wesentlichen Ereignisinformationen.");
 link("german:6:behauptung-und-begruendung:k2", "german:6:behauptung-und-begruendung:k1", "Ein eigenes Argument verbindet ausdrücklich unterschiedene Behauptung, Grund und Beispiel.");
 
+// A whole-fraction entry is larger than its numerator-only prerequisite help.
+// Do not replace this with a factor-reading question that is easier than its help.
+define("expand", [
+  "Bei einem einfachen Bruch Zähler und Nenner mit demselben gegebenen kleinen Faktor multiplizieren und nur den erweiterten Bruch angeben.",
+  "Den erweiterten Bruch ohne vorgegebenes Bruchmodell selbst berechnen; beide Multiplikationen gedanklich koordinieren.",
+  "Eine Erweiterung mit nur verändertem Nenner durch den richtigen Zielbruch korrigieren und die gemeinsame Multiplikation kurz begründen.",
+  "Zwei unterschiedliche wertgleiche Erweiterungen zu einem neuen Bruch angeben und die gemeinsame Regel begründen.",
+], [
+  "Nur die Zählermultiplikation mit bereits gegebenem Faktor berechnen; Nenner und Faktorwahl bleiben vorgegeben.",
+  "Nur die entsprechende wiederholte Addition mit vollständig angegebenen Summanden lösen.",
+  "Nur eine einzelne kleine Addition aus dieser Summe lösen; anschließend zur Zählermultiplikation zurückkehren.",
+], "fraction-board");
+
 function buildCompetencies(topics) {
   if (!Array.isArray(topics)) throw new TypeError("topics must be an array");
   const parents = topics.filter((t) => [5, 6].includes(t.grade) && t.track === "R" && ["math", "german"].includes(t.subject));
