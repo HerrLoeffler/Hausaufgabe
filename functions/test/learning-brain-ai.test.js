@@ -175,3 +175,10 @@ test('a deliberate retry preserves the previous private review critique instead 
  const ai=createAI({client:{responses:{create:async request=>{requests.push(JSON.parse(request.input[1].content));return {status:'completed',output_text:JSON.stringify(replies.shift())};}}}});
  await ai.next({...s,nextFailure:{stage:'candidate-validation',critique:'Keep the required degree-scale tool.'}},{});assert.equal(requests[0].repair.critique,'Keep the required degree-scale tool.');
 });
+
+test('required point-setting and connecting cannot be substituted with a static diagram or plot-only task',()=>{
+ const topic=require('../lib/learning-brain/catalog').getCatalog().competencies.find(c=>c.subject==='math'&&c.grade===6&&c.didacticFamily==='coordinates'&&/verbinden/.test(c.goal));assert.ok(topic);
+ const state={...s,topic,level:2};const d=generated();d.task.input='number';d.task.answer={kind:'number',values:['1']};d.task.diagram={kind:'coordinates',title:'Punkte',unit:'',xMin:0,xMax:2,yMin:0,yMax:2,step:1,points:[{label:'A',x:1,y:1}]};assert.throws(()=>cleanGenerated(d,state));
+ d.task.input='workshop';d.task.diagram={kind:'none'};d.task.answer={kind:'open',values:['A:0|0;B:1|1']};d.task.workshop={tool:'coordinate-plane',version:1,role:'answer',goal:'plot',instruction:'Setze und verbinde die Punkte.',xMin:-2,xMax:2,yMin:-2,yMax:2,step:1,labels:['A','B'],initialPoints:[]};assert.throws(()=>cleanGenerated(d,state));
+ d.task.workshop.goal='plot-and-connect';d.task.answer.values=['A:0|0;B:1|1#A-B'];assert.equal(cleanGenerated(d,state).task.workshop.goal,'plot-and-connect');
+});
