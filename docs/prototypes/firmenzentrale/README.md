@@ -49,3 +49,13 @@ Logo, Manifest, Brand Core und Tokens stammen bytegleich aus dem Produktbranch75
 ## Interaktives Unternehmensnetz
 
 Start und Projektlandkarte zeigen denselben zentralen Graphen mit elf Bereichsknoten und21 typisierten, gerichteten Verbindungen. Knoten öffnen Voraussetzungen/Weiterwirkungen und nächste Arbeit. Linien und bei Auswahl erscheinende Beschriftungen öffnen Umfang und Quelle. Gemeldete Engpässe sind begrenzt und datiert; kein Liveverkehr oder pauschaler Produktstatus. Filter, Unterthemensuche, Zoom/Einpassen und Ziehen sind bedienbar. Auf kleinen Bildschirmen steht eine zusätzliche Bereichsauswahl bereit. Vollständige Akten bleiben unter Arbeit/akte/ID erreichbar. Arbeitsaufträge werden als lokale Entwürfe vorbereitet; die echte Chat-Ausführung bleibt offen.
+
+## Bereich in den Mittelpunkt nehmen —25.10.2026
+
+Ein Bereichsklick wechselt in ein fokussiertes Netz. Der gewählte Bereich steht mittig, seine Unterpunkte ringsum. Alle elf Bereiche sind erschlossen:62 explizite Arbeitsumfänge einschließlich „Technische Erneuerungen der Aufgaben“. Unterpunkte besitzen eigene Status-/Dringlichkeitsdaten, Stand, Lücke, nächste Aktion, Abnahmekriterien, Owner und Quelle. Ein Elternblocker wird nicht auf alle Unterpunkte kopiert.
+
+Beispiele: `#/arbeit/landkarte/design` öffnet die fünf Designunterpunkte; `#/arbeit/landkarte/learning/erneuerungen` öffnet das Arbeitsblatt der neuen Aufgabenformate. Gesamtnetz und Bereich sind über Brotkrumen erreichbar. Reload und Browser-Verlauf erhalten die Adressierung. Ungültige IDs haben Meldung und Rückweg. Fokus-Suche/Filter werden beim Bereichs-/Ebenenwechsel zurückgesetzt; beim Unterpunktwechsel bleiben Kartenposition und Filter bestehen.
+
+Auf Handybreite ist die Satellitenübersicht durch eine lesbare Linkauswahl ergänzt. Ein geöffneter Unterpunkt scrollt zum Arbeitsblatt unterhalb der fixierten Kopfzeile. DOM-/Lesereihenfolge entspricht der sichtbaren Reihenfolge. Bewegung wird bei reduzierter Bewegung abgeschaltet. Zoomzahlen bedeuten ausschließlich Vergrößerung.
+
+Konzept: [Bereichsfokus](../../superpowers/specs/2026-10-25-bereichsfokus-design.md). Ausführungsplan: [Implementierung](../../superpowers/plans/2026-10-25-bereichsfokus.md). Daten stammen aus der bisherigen Fachinventur23.10.; neue Konzeptanforderungen tragen25.10. Sie werden nicht als Live-Aktualisierung ausgegeben. Vorbereitete Aufträge enthalten den genauen Unterpunkt samt Abnahme und bleiben ausdrücklich lokal/ungesendet.

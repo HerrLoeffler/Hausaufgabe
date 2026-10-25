@@ -39,31 +39,33 @@
 
 **Interfaces:** childrenFor(domainId)→Child[]; focusProjection(domainId,childId)→{domain,children,selected,invalid}; filterChildren(children,query,mode)→Child[]; prepareChildWork(child)→string; focusPositions(count)→{x,y}[]; statusLabels.
 
-- [ ] Test vollständige Abdeckung der bisherigen pieces, stabile eindeutige IDs und Pflichtfelder schreiben.
-- [ ] Tests Mittelpunkt/Positionen, ungültige IDs, nur begrenzte Blocker, Erneuerungen, Suche/Filter und Entwurfkontext schreiben und rot ausführen.
-- [ ] Explizite Arbeitsdaten je Unterpunkt implementieren; redaktionelle Nachweisgrenzen erhalten.
-- [ ] Tests grün ausführen; Handoff aktualisieren; Zwischencommit sichern.
+- [x] Test vollständige Abdeckung der bisherigen pieces, stabile eindeutige IDs und Pflichtfelder schreiben.
+- [x] Tests Mittelpunkt/Positionen, ungültige IDs, nur begrenzte Blocker, Erneuerungen, Suche/Filter und Entwurfkontext schreiben und rot ausführen.
+- [x] Explizite Arbeitsdaten je Unterpunkt implementieren; redaktionelle Nachweisgrenzen erhalten.
+- [x] Tests grün ausführen; Handoff aktualisieren; Zwischencommit sichern.
 
 ### Task2: Fokusnetz und Arbeitsblatt
 
 **Interfaces:** mountNetwork(container,{selected,child,onDraft,brandIcon}); onDraft(domain,{scope,next,childWork}) nutzt vorhandenen Editor.
 
-- [ ] Fokusmodell in bestehende Ansicht einbinden; ausgewählten Bereich mittig setzen, untergeordnete Speichen ohne Abhängigkeitspfeile zeichnen.
-- [ ] Alle Unterpunkte beschriftet darstellen; Auswahl per Klick/Tastatur/URL; Rückwege und Fehlermeldungen ergänzen.
-- [ ] Bereichsübersicht mit sortierter nächster Arbeit; Unterpunktblatt mit allen Pflichtfeldern; Verbindungskontext weiter erreichbar.
-- [ ] Fokus-Suche/Filter mit Leerzustand und Reset; kleinere Breiten über lesbare Auswahlliste absichern.
-- [ ] Bestehenden Entwurfeditor mit vollständigem Unterpunktkontext öffnen; Speicher-/Sendegrenze erhalten.
-- [ ] Syntax, Tests und diff check ausführen; Zwischencommit sichern.
+- [x] Fokusmodell in bestehende Ansicht einbinden; ausgewählten Bereich mittig setzen, untergeordnete Speichen ohne Abhängigkeitspfeile zeichnen.
+- [x] Alle Unterpunkte beschriftet darstellen; Auswahl per Klick/Tastatur/URL; Rückwege und Fehlermeldungen ergänzen.
+- [x] Bereichsübersicht mit sortierter nächster Arbeit; Unterpunktblatt mit allen Pflichtfeldern; Verbindungskontext weiter erreichbar.
+- [x] Fokus-Suche/Filter mit Leerzustand und Reset; kleinere Breiten über lesbare Auswahlliste absichern.
+- [x] Bestehenden Entwurfeditor mit vollständigem Unterpunktkontext öffnen; Speicher-/Sendegrenze erhalten.
+- [x] Syntax, Tests und diff check ausführen; Zwischencommit sichern.
 
 ### Task3: sichtbare Prüfung und Sicherung
 
-- [ ] Tatsächliche lokale Vorschau öffnen; Design/Marke, Lernen/Erneuerungen, Classroom/Zuweisung samt Rückwegen prüfen.
-- [ ] Reload, Filter, kein Treffer, Einpassen/Zoom, Tastatur und kleine Breite prüfen.
-- [ ] Entwurf öffnen und Inhalt nachlesen, ohne Versand; Fehlerprotokoll lesen.
-- [ ] Gefundene Fehler im Scope korrigieren, passende Regressionen ergänzen.
-- [ ] Screenshots und Prüfbeleg sichern; Handoff mit Grenzen und nächster Aktion ergänzen.
-- [ ] Auf bestehenden Remote-Branch mit geprüftem Parent sichern, PR295 aktualisieren, neun/neue Blobs vergleichen und tatsächliche CI abwarten.
+- [x] Tatsächliche lokale Vorschau öffnen; Design/Marke, Lernen/Erneuerungen, Classroom/Zuweisung samt Rückwegen prüfen.
+- [x] Reload, Filter, kein Treffer, Einpassen/Zoom, Tastatur und kleine Breite prüfen.
+- [x] Entwurf öffnen und Inhalt nachlesen, ohne Versand; Fehlerprotokoll lesen.
+- [x] Gefundene Fehler im Scope korrigieren, passende Regressionen ergänzen.
+- [x] Screenshots und Prüfbeleg sichern; Handoff mit Grenzen und nächster Aktion ergänzen.
+- [x] Auf bestehenden Remote-Branch mit geprüftem Parent sichern, PR295 aktualisieren, neun/neue Blobs vergleichen und tatsächliche CI abwarten.
 
 ## Selbstprüfung des Plans
 
 Das Konzept ist durch die drei Tasks abgedeckt: Datenvollständigkeit und Ehrlichkeit in Task1, Bedienung und Darstellung in Task2, praktische Nutzung und Sicherung in Task3. Gemeinsamer Store/Chatversand/Produktfreigaben sind ausdrücklich Folgearbeiten des bestehenden Gesamtplans. Kein neuer Design-Freigabestopp: der Nutzer verlangt Konzept und direkte Umsetzung, und hat die eigenständige Ausführung bereits vorgegeben.
+
+Ausgeführt25.10.2026 durch denselben Fachchat. Selbstprüfung, keine unabhängige Vollabnahme. Tests19/19; Browser alle elf Bereiche mit62 Unterpunkten, Deep-Link/Reload/Verlauf/Filter/Zoom/Drag und390/768-Breite. Remote-Zwischenstand8c770d3: alle drei Checks grün. Abschließende Dokumentationssicherung im selben PR; exakte finale SHA/CI in PR-Beschreibung und lokalem Prüfbeleg.
