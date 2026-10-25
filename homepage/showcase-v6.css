@@ -1,0 +1,75 @@
+/* Focused refinement of the existing local GradeCrew showcase. */
+@media(min-width:821px){.hero .lead{top:clamp(230px,24vw,320px)}}
+.coordinate-layout .point-controls{display:flex;align-items:center;justify-content:center}
+.coordinate-layout .point-switch{display:flex;gap:10px}
+.coordinate-layout .point-select{min-width:48px;min-height:44px}
+.point-select.point-b.active{color:#9d4e28;border-color:#e58858;background:#fff0e8;box-shadow:0 0 0 3px #e5885826}
+.point-select.point-a.active{color:#235faf;border-color:#387aca;background:#eef5ff;box-shadow:0 0 0 3px #387aca25}
+.plant-stage{height:265px;max-width:390px;background:radial-gradient(ellipse at 50% 35%,#fff 0%,#f4f9f7 70%,#ecf4ef 100%);border:1px solid #e0ece8}
+.botanical-art{display:block;width:100%;height:100%;object-fit:contain}
+.plant-target,.plant-target.filled{min-width:74px;min-height:31px;padding:5px 8px;border-radius:9px;border:1px dashed #93add0;background:#fffdfa;color:#4c6683;box-shadow:0 3px 12px #3c5c6430;font-size:10px;font-weight:750;line-height:1.12;white-space:normal}
+.plant-target.filled{border-style:solid;border-color:#75a4d5;background:#eaf5ff;color:#235888}
+.plant-target span{font-weight:900;color:#b45754}
+.chip-bank{justify-content:center}
+.history-widget{gap:12px}
+.timeline-viewport{min-width:0;overflow-x:auto;scrollbar-color:#a8c3e1 transparent;scrollbar-width:thin}
+.timeline{height:180px;position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;border-radius:13px;background:linear-gradient(180deg,#f9fbff,#f2f7fc);border:1px solid #e1eaf3;padding:0 7px}
+.timeline-axis{position:absolute;top:87px;left:26px;right:26px;height:3px;border-radius:3px;background:linear-gradient(90deg,#b4c8de,#3977bd);box-shadow:0 1px 2px #90abc955}
+.timeline-stop{position:relative;min-width:0;text-align:center}
+.timeline-stop i{position:absolute;top:80px;left:50%;transform:translateX(-50%);width:17px;height:17px;border:4px solid #fff;border-radius:50%;background:#3b7bc0;box-shadow:0 0 0 1px #3b7bc0;z-index:1}
+.timeline-stop strong{position:absolute;left:0;right:0;top:100px;color:#275b91;font-size:11px;white-space:nowrap}
+.timeline-stop.below strong{top:57px}
+.timeline .history-slot{position:absolute;top:8px;left:0;width:100%;height:62px;min-height:0;display:grid;place-items:center;padding:5px;border:1px dashed #a5bdd7;border-radius:9px;background:#fff;color:#607894;text-align:center}
+.timeline .history-slot span{font-size:9px;line-height:1.15;hyphens:auto;overflow-wrap:anywhere}
+.timeline .history-slot.filled{border-style:solid;border-color:#86b2dd;background:#eaf4ff;color:#2d5f90}
+.timeline .history-slot b{color:#b65755}
+.timeline-stop.below .history-slot{top:112px}
+.instrument-bank{grid-template-columns:repeat(3,minmax(0,1fr))}
+.instrument-card{min-height:42px;display:grid;place-items:center;padding:6px 8px;font-size:12px;font-weight:750;text-align:center}
+.music-bins{align-items:stretch}
+.music-group{min-width:0;display:flex;flex-direction:column;gap:5px;padding:5px;border:1px solid #d9e6f4;border-radius:11px;background:#f9fcff}
+.music-group .music-bin{min-height:57px;width:100%;border:1px dashed #aac4df;background:#fff;text-align:center;place-items:center;padding:6px}
+.music-group .music-bin strong{font-size:10px}
+.music-group .music-bin span{font-size:9px}
+.assigned-terms{display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start;min-height:23px}
+.assigned-terms button{border:1px solid #a9cbe8;border-radius:7px;background:#eaf5ff;color:#285e92;font-size:9px;font-weight:750;padding:4px 5px}
+.equation-widget{display:grid;gap:11px}
+.equation-main{padding:13px 12px;border-radius:13px;background:linear-gradient(110deg,#eaf3ff,#f9fcff);color:#244a78;font-size:25px;font-weight:750;letter-spacing:-.02em;text-align:center}
+.equation-main sup{font-size:.55em}
+.solution-work{display:grid;gap:3px;padding:10px 13px;border:1px solid #e1e9f3;border-radius:11px;background:#fff;color:#3c536e;font-size:13px;font-weight:650}
+.solution-work span{padding:3px 7px}
+.solution-work .wrong-step{border-radius:6px;background:#fff2ed;color:#9b4d38}
+.wrong-step b{float:right;color:#d27156}
+.equation-prompt{margin:0;color:#405f82;font-size:11px;font-weight:750}
+.equation-inputs{display:flex;gap:8px}
+.equation-inputs label{display:flex;align-items:center;gap:7px;flex:1;color:#315f91;font-size:13px;font-weight:800}
+.equation-inputs input{min-width:0;width:100%;height:39px;padding:7px 10px;border:1px solid #bfd3e9;border-radius:8px;color:#234a78;background:#fff}
+.result-entry{display:grid;grid-template-columns:minmax(0,1fr) 75px;gap:5px}
+.result-entry>button{min-width:0;width:100%}
+.result-entry>button>span:nth-child(2){min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.point-weight{display:grid;gap:2px;align-content:center;color:#5d7590;font-size:8px;font-weight:700;text-align:center}
+.point-weight input{width:100%;height:30px;border:1px solid #c6d9ed;border-radius:7px;background:#fff;color:#244f81;text-align:center;font-size:11px;font-weight:800}
+.evaluate-stack{display:grid;gap:2px;justify-items:end}
+.footer-score{color:#275a94;font-size:10px;font-weight:800;white-space:nowrap}
+.footer-score[hidden]{display:none}
+.test-bottom:has(.footer-score:not([hidden])){height:70px;flex-basis:70px}
+@media(max-width:600px){
+  .plant-stage{height:225px}
+  .plant-target,.plant-target.filled{min-width:57px;font-size:8px;padding:3px 4px}
+  .history-bank{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+  .history-card{min-height:88px}
+  .history-card span{font-size:9px}
+  .timeline{height:160px;min-width:500px;padding:0 6px;gap:2px}
+  .timeline-axis{top:76px;left:14px;right:14px}
+  .timeline-stop i{top:69px}
+  .timeline-stop strong{top:89px;font-size:9px}
+  .timeline-stop.below strong{top:48px}
+  .timeline .history-slot{top:5px;height:56px;padding:2px}
+  .timeline .history-slot span{font-size:9px}
+  .timeline-stop.below .history-slot{top:98px}
+  .instrument-bank{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .instrument-card{min-height:36px;font-size:10px}
+  .equation-main{font-size:20px}
+  .solution-work{font-size:11px}
+  .test-bottom:has(.footer-score:not([hidden])){height:66px;flex-basis:66px}
+}

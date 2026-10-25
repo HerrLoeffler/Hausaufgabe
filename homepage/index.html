@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071b3b">
+  <title>GradeCrew – Tests. Einfach digital.</title>
+  <meta name="description" content="Erstelle, verbessere und bewerte digitale Tests mit GradeCrew. Entdecke die interaktive Testvorschau für Lehrkräfte aller Schulformen.">
+  <meta name="homepage-version" content="20261025-v8">
+  <script type="module" src="/homepage/entry-route.js"></script>
+  <link rel="icon" href="/homepage/assets/brand-icon-v1.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/homepage/styles.css?v=15">
+  <link rel="stylesheet" href="/homepage/showcase-v5.css?v=16">
+  <link rel="stylesheet" href="/homepage/showcase-v6.css?v=2">
+  <link rel="stylesheet" href="/homepage/showcase-v7.css?v=4">
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="GradeCrew Start">
+        <img src="/homepage/assets/brand-primary-v1.svg" alt="">
+        <span><strong>GradeCrew</strong><small data-i18n="tagline">Tests. Einfach digital.</small></span>
+      </a>
+      <nav class="header-actions" aria-label="Navigation">
+        <div class="language" role="group" aria-label="Language / Sprache">
+          <button class="lang is-active" type="button" data-lang="de" aria-pressed="true">DE</button>
+          <button class="lang" type="button" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <a class="login" id="loginLink" href="/workspace.html?intent=login" data-i18n="login">Anmelden</a>
+        <a class="register" id="registerLink" href="/workspace.html?intent=register" data-i18n="register">Konto erstellen</a>
+      </nav>
+    </header>
+    <main class="stage">
+      <section class="hero" aria-labelledby="hero-title">
+        <p class="eyebrow" data-i18n="audience">FÜR LEHRKRÄFTE ALLER SCHULFORMEN</p>
+        <h1 id="hero-title" data-i18n="hero">Gute Tests<br>entstehen im Team.</h1>
+        <p class="lead" data-i18n="lead"><span>Deine Idee wird ein digitaler Test.</span><span>Die Crew hilft beim Erstellen, Verbessern und Auswerten.</span></p>
+        <div class="crew-wrap"><img class="crew-photo" src="/homepage/assets/crew-cutout-v2.png" alt="Coco, Remy, Emmi und Wilma – die GradeCrew"></div>
+        <div class="crew-names" aria-label="Coco, Remy, Emmi und Wilma"><span>Coco</span><span>Remy</span><span>Emmi</span><span>Wilma</span></div>
+      </section>
+      <section class="showcase" aria-label="GradeCrew Testübersicht">
+        <div class="test-shell">
+          <div class="test-top">
+            <div class="test-heading">
+              <div class="test-mark" aria-hidden="true"><img src="/homepage/assets/brand-icon-v1.svg" alt=""></div>
+              <div><p class="kicker" data-i18n="preview">INTERAKTIVE VORSCHAU</p><h2 data-i18n="testTitle">GradeCrew Testübersicht</h2></div>
+            </div>
+          </div>
+          <div class="test-summary"><span id="currentMeta">Aufgabe 1 von 10</span></div>
+          <nav id="overviewGrid" class="overview-grid" aria-label="Aufgaben 1 bis 10"></nav>
+          <div id="testScroll" class="test-scroll" role="region" aria-label="Interaktive Testübersicht" tabindex="0"><div id="testContent"></div></div>
+          <section id="resultsPanel" class="results-panel" aria-label="Testergebnis" hidden>
+            <div class="results-head"><strong id="resultsTitle">Beispielauswertung</strong><button type="button" id="resultsClose" aria-label="Ergebnis schließen">×</button></div>
+            <div id="resultsBody" class="results-body"></div>
+          </section>
+          <div class="test-bottom">
+            <div class="footer-progress"><span id="footerCount">01 / 10</span><span class="progress-track" aria-hidden="true"><span id="progressFill"></span></span></div>
+            <div class="evaluate-stack"><span id="footerScore" class="footer-score" aria-live="polite" hidden></span><button type="button" class="evaluate-button" id="evaluateBtn">Test auswerten</button></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <nav class="public-links" aria-label="Service"><a href="/workspace.html" data-i18n="studentEntry">Schülerzugang</a><a href="/datenschutz.html" data-i18n="privacy">Datenschutz</a><a href="/impressum.html" data-i18n="legal">Impressum</a></nav>
+  </div>
+  <script type="module" src="/homepage/app.js?v=24"></script>
+</body>
+</html>

@@ -15,6 +15,13 @@ for(const [environment,project] of [['staging','gradecrew-staging-2026'],['produ
    const config=await readFile(join(dir,'public/firebase-config.js'),'utf8');
    assert.equal(manifest.project,project);assert.equal(manifest.environment,environment);
    assert.equal(hosting.hosting.site,project);
+   const root=await readFile(join(dir,'public/index.html'),'utf8');
+   const workspace=await readFile(join(dir,'public/workspace.html'),'utf8');
+   assert.equal(workspace,await readFile('index.html','utf8'),'existing application is preserved byte-for-byte');
+   assert.match(root,/homepage-version/);
+   assert.match(root,/\/homepage\/entry-route.js/);
+   for(const name of ['workspace.html','homepage/app.js','homepage/routing.mjs','homepage/grading.mjs','homepage/assets/crew-cutout-v2.png','homepage/assets/remy-gradecrew-de-v8.wav','homepage/assets/remy-gradecrew-en.mp3']) assert.match(manifest.files[name],/^[a-f0-9]{64}$/);
+   assert.ok(!Object.keys(manifest.files).some(name=>name.includes('source-history')||name.endsWith('.test.mjs')));
    assert.match(config,new RegExp(`projectId: "${project}"`));
    assert.match(config,new RegExp(`appEnvironment = "${environment}"`));
   }finally{await rm(dir,{recursive:true,force:true});}

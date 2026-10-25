@@ -1,0 +1,148 @@
+/* V5 uses the existing GradeCrew stage and Crew photograph. The tasks provide the motion and colour. */
+.showcase{height:min(690px,calc(100dvh - 150px));width:min(46vw,680px);min-width:510px}
+.test-shell{border-radius:23px;box-shadow:0 28px 70px #06132959,0 4px 16px #03122726}
+.test-top{padding:21px 25px 6px}
+.test-mark{display:none}
+.test-heading{gap:0}
+.test-top h2{font-size:22px}
+.kicker{font-size:10px;letter-spacing:.09em}
+.test-summary{padding:0 25px 11px;border:0;font-size:11px;color:#69819d}
+.overview-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;margin:0 23px 12px;padding:0 0 13px;border-bottom:1px solid #e5edf6}
+.overview-grid button{min-width:0;height:35px;min-height:35px;border-radius:9px;font-size:12px;position:relative}
+.overview-grid button.attempted:not(.active):after{content:"";position:absolute;bottom:3px;left:50%;width:4px;height:4px;border-radius:50%;background:#4a84d3;transform:translateX(-50%)}
+.overview-grid button.active{background:#245fba;color:#fff;box-shadow:0 5px 11px #255fb52b}
+.overview-grid button:hover:not(.active){background:#eaf3ff;border-color:#9cbee9;color:#285b9c}
+.test-scroll{display:block;scroll-snap-type:none;overflow-y:auto;overscroll-behavior:contain;background:transparent}
+.test-scroll #testContent{height:auto;min-height:100%;width:100%;margin:0;padding:12px 22px 19px;display:flex;align-items:center}
+.test-scroll .task.featured{width:100%;max-height:none;overflow:visible;margin:0;padding:18px 19px;border:1px solid #e0e8f2;border-radius:16px;box-shadow:0 8px 30px #1f4b7b0d}
+.task.featured .task-top{margin-bottom:10px}
+.task.featured h4{font-size:16px;line-height:1.4;letter-spacing:-.01em;margin:0 0 13px;color:#243b5b}
+.task-index{background:#e8f2ff;color:#2b65b2;border-radius:7px}
+.task-type{font-size:11px;color:#5f7c9c}
+.widget{font-size:12px;color:#314961}
+.micro-instruction{font-size:10px;color:#7388a2;line-height:1.4;margin:8px 0 0}
+.test-bottom{height:60px;flex-basis:60px;padding:0 22px}
+.footer-progress{font-size:11px}
+.evaluate-button{min-height:39px;padding:0 17px;border-radius:10px}
+
+/* Coordinates and true upper-secondary curve analysis. */
+.graph-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(125px,.72fr);gap:17px;align-items:center}
+.graph-host{min-width:0}
+.graph-svg{display:block;width:100%;height:226px;border:1px solid #dce8f5;border-radius:12px;background:#f8fbff;touch-action:none;cursor:crosshair}
+.graph-svg text{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:11px;fill:#718aa4}
+.graph-svg .point-label{font-size:15px;font-weight:800;fill:#294662}
+.graph-svg .grid-line{stroke:#e1eaf4;stroke-width:1}
+.graph-svg .axis-line{stroke:#8da6bf;stroke-width:2}
+.point-controls{display:grid;gap:11px;align-content:center}
+.point-switch{display:flex;gap:8px}
+.point-select{min-width:46px;min-height:42px;padding:6px 11px;border:1px solid #cad9ec;border-radius:10px;background:#f7faff;color:#315a89;font-size:15px;font-weight:850}
+.point-select small{display:block;font-size:9px;font-weight:700}
+.point-select.active{background:#eaf3ff;border-color:#356cc2;box-shadow:0 0 0 2px #356cc21e}
+.point-select.point-b.active{background:#fff0e8;border-color:#e5834e;box-shadow:0 0 0 2px #e5834e22;color:#aa592f}
+.point-select.point-h.active{background:#fff1e7;border-color:#da8b4e;color:#97542b}
+.point-select.point-t.active{background:#e9f6f8;border-color:#4b9dab;color:#2b7783}
+.point-fields{display:flex;gap:7px}
+.point-fields label{font-size:12px;font-weight:800;color:#5f7590;display:grid;gap:4px;flex:1;min-width:0}
+.point-fields input{width:100%;height:38px;padding:5px 7px;border:1px solid #d4e1ef;border-radius:9px;background:#fff;color:#2b4565;text-align:center;font-size:15px;font-weight:750}
+.point-fields.field-a input:focus{border-color:#2869c8}
+.point-fields.field-b input:focus{border-color:#e6844f}
+.formula-strip{display:inline-block;padding:8px 13px;margin:0 0 10px;background:#eef5ff;border:1px solid #dce9fb;border-radius:9px;color:#285888;font-size:16px;font-weight:750;letter-spacing:.01em}
+.math-widget .graph-svg{height:215px}
+.math-widget.evaluated .graph-svg{height:157px}
+.fountain-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
+.fountain-actions .micro-instruction{margin:0;max-width:255px}
+.fountain-actions .local-check{flex:none}
+.reveal-curve{stroke-dasharray:100;stroke-dashoffset:100;animation:draw-curve 1.4s cubic-bezier(.23,.83,.36,1) forwards}
+@keyframes draw-curve{to{stroke-dashoffset:0}}
+.water-ripple{transform-origin:center;animation:water-ripple 1.8s ease-out infinite}
+@keyframes water-ripple{0%{opacity:.7;transform:scale(.5)}100%{opacity:0;transform:scale(1.6)}}
+
+/* Remy's approved audio stays simple. */
+.audio-question{display:grid;gap:14px}
+.audio-board.audio-only{display:flex;align-items:center;gap:12px;flex-wrap:nowrap;margin:0;padding:18px;border:1px solid #dce8f7;border-radius:14px;background:linear-gradient(112deg,#eaf4ff,#f9fcff)}
+.audio-symbol{width:45px;height:45px;border-radius:50%;display:grid;place-items:center;background:#d7eaff;color:#2a65b0;font-size:20px;font-weight:850;letter-spacing:-4px;padding-right:5px}
+.audio-copy{display:grid;gap:2px}
+.audio-copy strong{font-size:13px;color:#2d517d}
+.audio-copy small{font-size:10px;color:#758ba4}
+.audio-play{margin-left:auto;white-space:nowrap}
+.audio-question .choice-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.audio-question .choice{min-height:43px;font-size:13px}
+
+/* Shared visual assignment controls. */
+.label-chip,.history-card,.instrument-card,.plant-target,.history-slot,.music-bin,.scene-card{cursor:pointer}
+.label-chip,.history-card,.instrument-card{border:1px solid #dce7f3;background:#fbfdff;color:#2f4b69;border-radius:10px}
+.label-chip.active,.history-card.active,.instrument-card.active,.scene-card.active{border-color:#3171c4;box-shadow:0 0 0 3px #3171c428;background:#eef6ff}
+.label-chip.assigned,.history-card.assigned,.instrument-card.assigned{opacity:.62}
+.chip-bank{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.label-chip{min-height:35px;padding:6px 12px;font-size:11px;font-weight:800}
+.plant-stage{height:230px;max-width:360px;position:relative;margin:0 auto;border-radius:16px;overflow:hidden}
+.plant-stage .plant-art{width:100%;height:100%;display:block}
+.plant-target{position:absolute;transform:translate(-50%,-50%);min-width:27px;min-height:27px;padding:3px 7px;border:2px solid #fff;border-radius:17px;background:#2f6bb0;color:#fff;font-size:12px;font-weight:800;box-shadow:0 2px 7px #264c7d63;white-space:nowrap}
+.plant-target.filled{background:#fff;color:#2c649f;border:1px solid #80b2df;box-shadow:0 3px 10px #264c7d2c}
+.plant-target:hover,.history-slot:hover,.music-bin:hover{border-color:#3c7aca;background:#eaf4ff;color:#285b9d}
+
+/* Five sources across a long span, with year slots rather than a false linear scale. */
+.history-widget{display:grid;gap:9px}
+.history-bank{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.history-card{padding:3px;display:grid;align-content:start;gap:4px;text-align:center;min-height:110px}
+.history-card svg{width:100%;height:57px;display:block;border-radius:8px}
+.history-card span{font-size:9px;font-weight:750;line-height:1.2;hyphens:auto}
+.history-line{display:grid;gap:4px;position:relative}
+.history-line:before{content:"";position:absolute;left:31px;top:15px;bottom:15px;width:2px;background:#a9c5e5;pointer-events:none}
+.history-slot{position:relative;display:grid;grid-template-columns:62px 1fr;align-items:center;gap:8px;min-height:36px;padding:3px 9px 3px 0;border:1px solid #dfebf8;border-radius:9px;background:#f8fbff;color:#4d6c90;text-align:left}
+.history-slot strong{z-index:1;margin-left:3px;padding:5px;border-radius:7px;background:#e2efff;color:#2e66a9;font-size:11px;text-align:center;white-space:nowrap}
+.history-slot span{font-size:10px;font-weight:750}
+.history-slot.filled{background:#f0f7ff;border-color:#a9c9ec;color:#2f5d93}
+.history-widget .micro-instruction{margin:0}
+
+/* Instrument families, with a second subject beyond science and maths. */
+.music-widget{display:grid;gap:12px}
+.instrument-bank{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.instrument-card{display:grid;align-content:start;gap:2px;min-height:103px;padding:4px 3px;text-align:center}
+.instrument-card svg{width:100%;height:68px;display:block}
+.instrument-card span{font-size:10px;font-weight:800;line-height:1.15}
+.music-bins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.music-bin{min-height:75px;padding:8px;border:1px dashed #aac4df;border-radius:11px;background:#f8fbff;color:#52749a;text-align:left;display:grid;align-content:start;gap:6px}
+.music-bin strong{font-size:11px;color:#2e608f}
+.music-bin span{font-size:10px;line-height:1.3}
+.music-widget .micro-instruction{margin:0}
+
+/* Circuit diagrams: no lamp gives away the answer until this card is checked. */
+.circuit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.circuit-card{position:relative;display:grid;justify-items:center;gap:1px;min-height:142px;padding:6px;border:1px solid #dce7f2;border-radius:12px;background:#f9fbfe;color:#365f87}
+.circuit-card svg{display:block;width:100%;height:105px}
+.circuit-card.selected{background:#e8f2ff;border-color:#3b77c7;box-shadow:inset 0 0 0 1px #3b77c7}
+.circuit-card.lit{background:#fff9e9}
+.circuit-letter{position:absolute;left:10px;top:9px;z-index:1;font-weight:850;font-size:12px;color:#3a6090}
+.circuit-state{font-size:10px;font-weight:800;color:#6b84a1}
+.circuit-card.selected .circuit-state{color:#2c68b4}
+.circuit-actions{display:flex;align-items:center;gap:11px;margin-top:10px}
+.local-check{min-height:35px;white-space:nowrap;border:0;border-radius:9px;background:#285fba;color:#fff;padding:0 12px;font-size:11px;font-weight:800}
+.circuit-explanation{font-size:10px;line-height:1.35;color:#50708e}
+.bulb-glow{transform-origin:141px 26px;animation:lamp-on .45s ease-out both}
+@keyframes lamp-on{from{opacity:0;transform:scale(.55)}to{opacity:.67;transform:scale(1)}}
+
+/* Illustrated seahorse strategy, explicitly sortable by touch, mouse and keyboard. */
+.seahorse-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.scene-wrap{position:relative}
+.scene-card{display:block;width:100%;padding:5px;border:1px solid #dce7f2;border-radius:12px;background:#f5fbfc;position:relative}
+.scene-card svg{display:block;width:100%;height:104px}
+.scene-number{position:absolute;top:9px;left:10px;z-index:1;width:25px;height:25px;display:grid;place-items:center;border-radius:7px;background:#fff;color:#2b7288;font-size:11px;font-weight:850;box-shadow:0 2px 8px #17495820}
+.scene-actions{display:flex;justify-content:center;gap:9px;margin-top:3px}
+.scene-actions button{width:29px;height:24px;border:1px solid #dce9ed;border-radius:7px;background:#fff;color:#4b7e8a;font-size:13px;font-weight:850}
+.scene-actions button:disabled{opacity:.28;cursor:default}
+
+/* One consistent semicircular instrument. */
+.angle-widget{text-align:center}
+.angle-board{margin:0 auto;max-width:470px;border:1px solid #dce9f5;border-radius:13px;background:#f8fbff;touch-action:none}
+.angle-svg{display:block;width:100%;height:215px;touch-action:none}
+.angle-svg .degree-label{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:11px;font-weight:800;fill:#2c5e98}
+.angle-set-range{display:block;width:68%;max-width:none;margin:13px auto 0}
+.angle-widget .micro-instruction{margin-top:5px}
+
+@media(min-width:821px){.crew-wrap{left:0;width:min(43vw,575px)}.crew-photo{width:146%}}
+@media(max-width:1100px){.showcase{width:48vw;min-width:480px}.history-card span{font-size:8px}.instrument-card span{font-size:9px}}
+@media(max-width:820px){.showcase{width:100%;min-width:0;height:calc(100% - 225px)}.test-scroll #testContent{min-height:100%}}
+@media(max-width:600px){.site-header{height:65px}.showcase{height:calc(100% - 170px)}.test-top{padding:11px 14px 5px}.test-top h2{font-size:17px}.test-summary{padding:0 14px 8px}.overview-grid{margin:0 11px 8px;padding-bottom:8px;gap:3px}.overview-grid button{height:29px;min-height:29px;font-size:10px;border-radius:7px}.test-scroll #testContent{padding:10px 12px 15px;align-items:flex-start}.test-scroll .task.featured{padding:12px}.task.featured h4{font-size:14px}.graph-layout{grid-template-columns:1fr;gap:7px}.graph-svg{height:170px}.math-widget .graph-svg{height:158px}.math-widget.evaluated .graph-svg{height:145px}.fountain-actions{align-items:flex-start}.fountain-actions .micro-instruction{max-width:180px}.point-controls{display:flex;align-items:center;justify-content:space-between;gap:9px}.point-switch{flex:none}.point-select{min-height:33px;min-width:35px;font-size:12px;padding:4px 7px}.point-fields{flex:1}.point-fields input{height:32px}.plant-stage{height:195px}.history-bank{grid-template-columns:repeat(5,minmax(0,1fr))}.history-card{min-height:83px}.history-card svg{height:45px}.history-card span{font-size:7px}.history-slot{min-height:33px}.instrument-bank{grid-template-columns:repeat(3,minmax(0,1fr))}.instrument-card{min-height:78px}.instrument-card svg{height:51px}.music-bins{gap:4px}.music-bin{min-height:68px;padding:5px}.music-bin strong,.music-bin span{font-size:9px}.circuit-card{min-height:119px}.circuit-card svg{height:85px}.scene-card svg{height:85px}.angle-svg{height:165px}.test-bottom{height:55px;flex-basis:55px;padding:0 11px}.evaluate-button{padding:0 10px;font-size:10px}.results-panel{top:98px;bottom:60px}}
+@media(max-height:720px) and (min-width:821px){.showcase{height:calc(100dvh - 122px)}.test-top{padding-top:12px}.overview-grid{margin-bottom:7px;padding-bottom:7px}.test-scroll #testContent{padding:8px 20px}.test-scroll .task.featured{padding:13px}.graph-svg{height:190px}.plant-stage{height:195px}.history-card{min-height:89px}.history-card svg{height:47px}.history-slot{min-height:31px}.instrument-card{min-height:87px}.instrument-card svg{height:57px}.circuit-card{min-height:119px}.circuit-card svg{height:83px}.scene-card svg{height:82px}}
+@media(prefers-reduced-motion:reduce){.bulb-glow,.reveal-curve,.water-ripple{animation:none}.reveal-curve{stroke-dashoffset:0}.water-droplet{display:none}.evaluate-button,.progress-track span{transition:none}}

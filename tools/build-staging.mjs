@@ -57,6 +57,27 @@ for (const name of files) {
   await fs.mkdir(path.dirname(target), { recursive: true });
   await fs.copyFile(path.join(root, name), target);
 }
+// The public homepage is isolated from the existing teacher/student application.
+async function homepageFiles(dir, prefix = 'homepage') {
+  const result = [];
+  for (const entry of await fs.readdir(dir, {withFileTypes:true})) {
+    const name = `${prefix}/${entry.name}`;
+    if (entry.isDirectory()) result.push(...await homepageFiles(path.join(dir, entry.name), name));
+    else if (!entry.name.includes('.test.') && /\.(html|css|js|mjs|png|svg|mp3|wav)$/.test(entry.name)) result.push(name);
+  }
+  return result;
+}
+for (const name of await homepageFiles(path.join(root, 'homepage'))) {
+  await fs.mkdir(path.dirname(path.join(output, name)), {recursive:true});
+  await fs.copyFile(path.join(root, name), path.join(output, name));
+  files.push(name);
+}
+const originalIndex = await fs.readFile(path.join(output, 'index.html'), 'utf8');
+await fs.writeFile(path.join(output, 'workspace.html'), originalIndex);
+files.push('workspace.html');
+const appVersion = originalIndex.match(/name="app-version" content="([^"]+)"/)[1];
+const homepage = await fs.readFile(path.join(output, 'homepage/index.html'), 'utf8');
+await fs.writeFile(path.join(output, 'index.html'), homepage.replace('</head>', `<meta name="app-version" content="${appVersion}"></head>`));
 files.push(...await buildLegalPages(root, output));
 await fs.writeFile(path.join(output, 'firebase-config.js'), config);
 files.push('firebase-config.js');
