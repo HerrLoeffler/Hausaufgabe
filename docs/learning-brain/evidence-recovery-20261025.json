@@ -1,0 +1,293 @@
+{
+  "task": "GC-ADAPTIVE-PRACTICE-01",
+  "date": "2026-10-25",
+  "environment": "gradecrew-staging-2026",
+  "codeCommit": "18905bb6eec6fc87669cd02c8b204de4a2b01579",
+  "functionsTree": "2ee5241ba0bd49a3451cc2083b989273819b82c5",
+  "deployAttempt": 21,
+  "deployment": "success: learningBrainStart and learningBrainTurn only",
+  "readyRevisions": {
+    "start": "learningbrainstart-00020-tul",
+    "turn": "learningbrainturn-00021-les"
+  },
+  "unchangedFunctions": [
+    "learningBrainCatalog",
+    "learningBrainProfile"
+  ],
+  "hosting": "unchanged; no new UI source needed",
+  "localPreview": "http://127.0.0.1:8775/lerngehirn/",
+  "serverRepair": {
+    "loopback": "not listening at start; restarted on8775 and separate own test8774",
+    "cloud": "new rollout21 became ready; old failed rollouts19/20 retained in history",
+    "catalogAndProfile": "already answered again before new deploy; do not attribute their recovery to our code",
+    "historicalStartupRootCause": "not conclusively determined; source archive byte-matched local code, no concrete application stack found"
+  },
+  "automated": {
+    "backend": 372,
+    "ui": 62,
+    "skipped": 0,
+    "scopedESLint": "passed"
+  },
+  "poolCurrentBackend": {
+    "pendingNext": false,
+    "phase": "practice",
+    "generationSource": "reviewed-pool",
+    "tool": "fraction-board",
+    "poolRef": true,
+    "nextFailure": null
+  },
+  "actualBrowser": {
+    "fraction": "reviewed-pool task2/3→6, partition2→4/6, actualAIcorrect, new independent target-denominator task without mandatory written factor",
+    "text": "Morgen incorrectly selected→AIcorrectly rejects→targeted timeword hint→nachtscorrect→original selection restored→actual browser selectednachts→AIcorrect→new independent Mila/morgens task"
+  },
+  "knownLimitation": "First text-help candidate pair rejected by independent reviewer; one deliberate retry produced suitable targeted help. No rejected candidate was displayed. This is not proof of zero AI generation failures.",
+  "traces": {
+    "fraction": [
+      {
+        "action": "start",
+        "phase": "practice",
+        "revision": 1,
+        "pendingNext": false,
+        "task": {
+          "id": "88a64815-d42a-4982-af19-617b00fd116a",
+          "prompt": "Stelle den Anteil mit dem Werkzeug dar.",
+          "contextText": "Gegeben ist der Bruch 3/5.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "fraction-board",
+            "version": 1,
+            "role": "answer",
+            "goal": "represent",
+            "numerator": 3,
+            "denominator": 5,
+            "targetDenominator": 0,
+            "instruction": "Stelle den gegebenen Bruch mit gleich großen Teilen dar und markiere den passenden Anteil."
+          }
+        },
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        },
+        "explanation": ""
+      },
+      {
+        "action": "correct",
+        "phase": "practice",
+        "revision": 2,
+        "pendingNext": false,
+        "task": {
+          "id": "8463e94a-6a6f-4641-9a4d-1d9c04823562",
+          "prompt": "Erweitere den Bruch auf den Zielnenner. Gib nur den neuen Bruch an.",
+          "contextText": "Gegeben ist der Bruch 7/9. Der Zielnenner ist 36.",
+          "input": "text",
+          "options": [],
+          "workshop": null
+        },
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig! Du hast 3 von 5 gleich großen Teilen markiert."
+        },
+        "explanation": ""
+      },
+      {
+        "action": "start",
+        "phase": "practice",
+        "revision": 1,
+        "pendingNext": false,
+        "task": {
+          "id": "d22207e7-e72a-4b1d-ae6b-905c1cf9ad7b",
+          "prompt": "Erweitere den Bruch wertgleich auf den Nenner 6. Nutze dazu das Werkzeug.",
+          "contextText": "Gegeben ist der Bruch 2/3.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "fraction-board",
+            "version": 1,
+            "role": "answer",
+            "goal": "equivalent",
+            "numerator": 2,
+            "denominator": 3,
+            "targetDenominator": 6,
+            "instruction": "Unterteile die Fläche in insgesamt 6 gleich große Teile. Markiere dieselbe Fläche wie vorher."
+          }
+        },
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        },
+        "explanation": ""
+      },
+      {
+        "action": "start",
+        "phase": "practice",
+        "revision": 1,
+        "pendingNext": false,
+        "task": {
+          "id": "e0fbef69-05d3-4275-b987-4979e373c423",
+          "prompt": "Erweitere den Bruch wertgleich auf den Nenner 6. Nutze dazu das Werkzeug.",
+          "contextText": "Gegeben ist der Bruch 2/3.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "fraction-board",
+            "version": 1,
+            "role": "answer",
+            "goal": "equivalent",
+            "numerator": 2,
+            "denominator": 3,
+            "targetDenominator": 6,
+            "instruction": "Unterteile die Fläche in insgesamt 6 gleich große Teile. Markiere dieselbe Fläche wie vorher."
+          }
+        },
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        },
+        "explanation": ""
+      },
+      {
+        "action": "profile",
+        "phase": "practice",
+        "revision": 2,
+        "pendingNext": false,
+        "task": {
+          "id": "b788a393-280d-403a-8b94-674dba94426c",
+          "prompt": "Erweitere den Bruch auf den Zielnenner. Gib nur den neuen Bruch an.",
+          "contextText": "Gegeben ist der Bruch 7/9. Der Zielnenner ist 36.",
+          "input": "text",
+          "options": [],
+          "workshop": null
+        },
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig: 2/3 sind wertgleich mit 4/6."
+        },
+        "explanation": ""
+      }
+    ],
+    "text": [
+      {
+        "action": "start",
+        "phase": "practice",
+        "revision": 1,
+        "pendingNext": false,
+        "task": {
+          "id": "92ffe77a-f02d-46b5-91d7-5f49a0a0d575",
+          "prompt": "Markiere im Text das Wort, das zeigt, wann der Igel Futter sucht.",
+          "contextText": "Der Igel sucht nachts Futter. Am Morgen schläft er unter einem Busch.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "text-workbench",
+            "version": 1,
+            "role": "answer",
+            "goal": "text",
+            "instruction": "Markiere das passende Wort im Text.",
+            "mode": "select",
+            "text": "Der Igel sucht nachts Futter. Am Morgen schläft er unter einem Busch.",
+            "tokens": []
+          }
+        },
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        },
+        "explanation": ""
+      },
+      {
+        "action": "Morgen",
+        "phase": "help",
+        "revision": 2,
+        "pendingNext": true,
+        "task": null,
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Nicht ganz: Der Igel sucht „nachts“ Futter. „Morgen“ passt zum Schlafen."
+        },
+        "explanation": ""
+      },
+      {
+        "action": "retry",
+        "phase": "help",
+        "revision": 3,
+        "pendingNext": false,
+        "task": {
+          "id": "0ee9e8ef-21f0-4699-98ae-ea2615e372b5",
+          "prompt": "Du hast „Morgen“ markiert. Im ersten Satz steht, wann der Igel Futter sucht. Schreibe dieses Zeitwort auf.",
+          "contextText": "Der Igel sucht nachts Futter. Am Morgen schläft er unter einem Busch.",
+          "input": "text",
+          "options": [],
+          "workshop": null
+        },
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Nicht ganz: Der Igel sucht „nachts“ Futter. „Morgen“ passt zum Schlafen."
+        },
+        "explanation": "„Morgen“ gehört zum Schlafen. Suche im Satz mit „sucht Futter“ das Zeitwort."
+      },
+      {
+        "action": "nachts",
+        "phase": "completion",
+        "revision": 4,
+        "pendingNext": false,
+        "task": {
+          "id": "92ffe77a-f02d-46b5-91d7-5f49a0a0d575",
+          "prompt": "Markiere im Text das Wort, das zeigt, wann der Igel Futter sucht.",
+          "contextText": "Der Igel sucht nachts Futter. Am Morgen schläft er unter einem Busch.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "text-workbench",
+            "version": 1,
+            "role": "answer",
+            "goal": "text",
+            "instruction": "Markiere das passende Wort im Text.",
+            "mode": "select",
+            "text": "Der Igel sucht nachts Futter. Am Morgen schläft er unter einem Busch.",
+            "tokens": []
+          }
+        },
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig! Das Zeitwort ist „nachts“."
+        },
+        "explanation": "Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen."
+      },
+      {
+        "action": "profile",
+        "phase": "practice",
+        "revision": 5,
+        "pendingNext": false,
+        "task": {
+          "id": "64d755fb-929b-4bc3-be33-6b2f7d4d2742",
+          "prompt": "Markiere im Text das Wort, das zeigt, wann Mila die Pflanzen gießt.",
+          "contextText": "",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "text-workbench",
+            "version": 1,
+            "role": "answer",
+            "goal": "text",
+            "instruction": "Markiere die passende Belegstelle im Text.",
+            "mode": "select",
+            "text": "Mila gießt morgens die Pflanzen. Danach liest sie ein Buch.",
+            "tokens": []
+          }
+        },
+        "feedback": {
+          "outcome": "correct",
+          "short": "Richtig! „nachts“ zeigt, wann der Igel Futter sucht."
+        },
+        "explanation": ""
+      }
+    ]
+  },
+  "scopeBoundaries": [
+    "synthetic separated accounts only",
+    "no SchoolLive/Production/Rules/IAM change",
+    "no all-topic/Quali or physical-device acceptance",
+    "regular student/Classroom identity and timed physical raw-data cleanup remain separate pilot gates"
+  ]
+}

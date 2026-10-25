@@ -1,0 +1,20 @@
+{
+  "project": "gradecrew-staging-2026",
+  "url": "https://gradecrew-staging-2026.web.app/lerngehirn/",
+  "backendSource": "ecb87d77c66709679765606835439f779fc125a9",
+  "backendTree": "7b2f217b57e9db4affe9b8548e55cddc0fffc614",
+  "hostingSource": "d8e1c2b77209fe14a4737c05fa11292f25c497a4",
+  "baselineFunctionsUnchanged": 40,
+  "ownFunctions": [
+    "learningBrainCatalog",
+    "learningBrainProfile",
+    "learningBrainStart",
+    "learningBrainTurn"
+  ],
+  "parallelNewFunctions": 16,
+  "functionsTests": 313,
+  "uiTests": 28,
+  "originalSourceHashes": 18,
+  "entryPairsActuallyGenerated": 12,
+  "productionDeployment": false
+}

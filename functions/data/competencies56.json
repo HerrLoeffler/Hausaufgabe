@@ -1,0 +1,1436 @@
+{
+  "version": "by-ms-56-competencies-20261025-v3",
+  "definitions": {
+    "math:5:stellenwerte-lesen": [
+      {
+        "title": "Ziffern haben Stellenwerte",
+        "goal": "Den Wert einer markierten Ziffer in einer natürlichen Zahl bis zur Milliarde aus ihrer Stelle bestimmen.",
+        "family": "place"
+      },
+      {
+        "title": "Zahlwort und Zahl verbinden",
+        "goal": "Eine natürliche Zahl mit inneren Nullen zwischen Zahlwort, Ziffernschreibweise und Stellenwerttafel übertragen.",
+        "family": "place"
+      }
+    ],
+    "math:5:zahlen-vergleichen-und-runden": [
+      {
+        "title": "Zahlen stellenweise vergleichen",
+        "goal": "Zwei große natürliche Zahlen an der ersten unterschiedlichen Stelle vergleichen und die Reihenfolge begründen.",
+        "family": "compare"
+      },
+      {
+        "title": "Rundungsstelle entscheiden",
+        "goal": "Eine natürliche Zahl auf eine vorgegebene Stelle runden und anhand der Nachbarwerte begründen.",
+        "family": "round"
+      },
+      {
+        "title": "Zahlenmuster fortsetzen",
+        "goal": "Die wiederkehrende Rechenregel einer natürlichen Zahlenfolge beschreiben und ein fehlendes Glied bestimmen.",
+        "family": "sequence"
+      }
+    ],
+    "math:5:grundrechenarten-sicher-anwenden": [
+      {
+        "title": "Addition mit Überträgen",
+        "goal": "Natürliche Zahlen stellenrichtig addieren und einen Übertrag als Bündelung erläutern.",
+        "family": "addNatural"
+      },
+      {
+        "title": "Subtraktion mit Entbündeln",
+        "goal": "Natürliche Zahlen mit Stellenwechsel subtrahieren und die Entbündelung nachvollziehbar notieren.",
+        "family": "subtractNatural"
+      },
+      {
+        "title": "Multiplikation zerlegen",
+        "goal": "Ein Produkt natürlicher Zahlen durch Stellenwertzerlegung oder ein schriftliches Verfahren berechnen.",
+        "family": "multiplyNatural"
+      },
+      {
+        "title": "Division und Rest prüfen",
+        "goal": "Eine natürliche Zahl durch einen natürlichen Divisor teilen und einen Rest mit der Multiplikationsprobe prüfen.",
+        "family": "divideNatural"
+      }
+    ],
+    "math:5:reihenfolge-und-rechenvorteile": [
+      {
+        "title": "Klammer und Punktrechnung",
+        "goal": "In einem Term mit natürlichen Zahlen die Klammer- und Punkt-vor-Strich-Reihenfolge korrekt ausführen.",
+        "family": "term"
+      },
+      {
+        "title": "Rechenwege vorteilhaft umformen",
+        "goal": "Eine Summe oder ein Produkt mit Tausch-, Verbindungs- oder Verteilungsgesetz wertgleich umformen.",
+        "family": "laws"
+      }
+    ],
+    "math:5:rechenmodell-und-gegenprobe": [
+      {
+        "title": "Sachverhalt als Rechnung",
+        "goal": "Aus einer kurzen Sachsituation benötigte Daten und die passende Grundoperation auswählen.",
+        "family": "model"
+      },
+      {
+        "title": "Ergebnis durch Gegenprobe",
+        "goal": "Ein berechnetes Alltagsergebnis mit Überschlag oder passender Umkehroperation auf Plausibilität prüfen.",
+        "family": "check"
+      }
+    ],
+    "math:5:ganze-zahlen-ordnen": [
+      {
+        "title": "Zustände am Nullpunkt",
+        "goal": "Positive und negative ganze Zahlen in einer beschrifteten Zahlengeraden als Zustände verorten.",
+        "family": "signedPosition"
+      },
+      {
+        "title": "Negative Zustände vergleichen",
+        "goal": "Zwei negative ganze Zustände mit Bezug auf den Nullpunkt vergleichen und ihr Größerzeichen begründen.",
+        "family": "signedCompare"
+      }
+    ],
+    "math:5:zustandsaenderungen-beschreiben": [
+      {
+        "title": "Start und Änderung trennen",
+        "goal": "In einer Temperatur- oder Höhenbeschreibung Ausgangswert und gerichtete Änderung getrennt angeben.",
+        "family": "signedChange"
+      },
+      {
+        "title": "Endzustand berechnen",
+        "goal": "Aus einem ganzzahligen Startwert und einer gerichteten Änderung den Endzustand bestimmen.",
+        "family": "signedCalculate"
+      }
+    ],
+    "math:5:punkte-und-linien-bestimmen": [
+      {
+        "title": "Koordinaten im ersten Quadranten",
+        "goal": "Die Koordinaten eines dargestellten Punkts im ersten Quadranten in der Reihenfolge x und y ablesen.",
+        "family": "coordinates"
+      },
+      {
+        "title": "Punkte nach Koordinaten setzen",
+        "goal": "Einen Punkt mit gegebenen natürlichen Koordinaten in ein beschriftetes Koordinatengitter eintragen.",
+        "family": "coordinates"
+      },
+      {
+        "title": "Parallel und senkrecht prüfen",
+        "goal": "An gezeichneten Geraden Parallelität und Rechtwinkligkeit anhand der Richtung beziehungsweise des rechten Winkels entscheiden.",
+        "family": "lines"
+      }
+    ],
+    "math:5:winkel-messen-und-zeichnen": [
+      {
+        "title": "Winkelgröße ablesen",
+        "goal": "Einen dargestellten Winkel bis 180 Grad mit vorgegebener Nullrichtung auf der richtigen Winkelskala ablesen.",
+        "family": "angleRead"
+      },
+      {
+        "title": "Winkel konstruieren vorbereiten",
+        "goal": "In einer begrenzten Winkelzeichnung einen zweiten Schenkel zur vorgegebenen Gradzahl setzen und mit 90 Grad vergleichen.",
+        "family": "angleDraw"
+      }
+    ],
+    "math:5:umfang-bestimmen": [
+      {
+        "title": "Randstrecke zusammensetzen",
+        "goal": "Den Umfang eines beschrifteten Dreiecks oder Vierecks als Summe sämtlicher Randseiten bestimmen.",
+        "family": "perimeter"
+      },
+      {
+        "title": "Fehlende Randlänge finden",
+        "goal": "Bei gegebenem Umfang und übrigen Seitenlängen die fehlende Seite eines Dreiecks oder Vierecks bestimmen.",
+        "family": "perimeterMissing"
+      }
+    ],
+    "math:5:rechteckflaechen-verstehen": [
+      {
+        "title": "Einheitsquadrate zählen",
+        "goal": "Die Fläche eines lückenlos gerasterten Rechtecks als Anzahl gleicher Einheitsquadrate angeben.",
+        "family": "areaCount"
+      },
+      {
+        "title": "Rechteckformel begründen",
+        "goal": "Den Flächeninhalt eines Rechtecks mit Länge mal Breite berechnen und die Faktoren als Quadrate pro Reihe und Reihenzahl deuten.",
+        "family": "areaRectangle"
+      }
+    ],
+    "math:5:zusammengesetzte-rechteckflaechen": [
+      {
+        "title": "Fläche sinnvoll zerlegen",
+        "goal": "Eine dargestellte rechtwinklige Figur in überschneidungsfreie Rechtecke zerlegen und deren Flächen addieren.",
+        "family": "areaComposite"
+      },
+      {
+        "title": "Quadratische Einheiten umrechnen",
+        "goal": "Benachbarte Flächeneinheiten anhand der quadratischen Unterteilung wertgleich umrechnen.",
+        "family": "areaUnits"
+      }
+    ],
+    "math:5:alltagsgroessen-abschaetzen": [
+      {
+        "title": "Passende Bezugsgröße wählen",
+        "goal": "Für eine Alltagsschätzung von Länge, Masse, Zeit, Geld oder Füllmenge eine bekannte passende Bezugsgröße wählen.",
+        "family": "estimate"
+      },
+      {
+        "title": "Schätzung begründet eingrenzen",
+        "goal": "Eine Alltagsgröße durch Vergleich mit mehreren Bezugsgrößen in ein plausibles Intervall einordnen.",
+        "family": "estimate"
+      }
+    ],
+    "math:5:groessen-umrechnen": [
+      {
+        "title": "Einheiten und Maßzahl verbinden",
+        "goal": "Eine Länge, Masse oder Füllmenge unter Beachtung des Einheitenfaktors in eine benachbarte Einheit übertragen.",
+        "family": "units"
+      },
+      {
+        "title": "Zeit und Geld umrechnen",
+        "goal": "Zeitspannen beziehungsweise Geldbeträge mit ihrem tatsächlichen Umrechnungsfaktor zwischen zwei Einheiten ausdrücken.",
+        "family": "timeMoney"
+      },
+      {
+        "title": "Messangaben sinnvoll runden",
+        "goal": "Eine umgerechnete Alltagsgröße auf eine zur Messsituation passende Genauigkeit runden.",
+        "family": "round"
+      }
+    ],
+    "math:5:daten-sammeln-und-ordnen": [
+      {
+        "title": "Häufigkeiten aus Rohdaten",
+        "goal": "Aus einer endlichen Datenliste eine Strichliste oder Häufigkeitstabelle mit absoluten Häufigkeiten erstellen.",
+        "family": "frequency"
+      },
+      {
+        "title": "Datenerhebung planen",
+        "goal": "Zu einer überschaubaren Frage ein eindeutiges Merkmal und geeignete Kategorien für eine anonyme Datenerhebung festlegen.",
+        "family": "survey"
+      }
+    ],
+    "math:5:diagramme-lesen": [
+      {
+        "title": "Werte mit Skala ablesen",
+        "goal": "Einen Datenwert aus einem beschrifteten Säulen- oder Balkendiagramm unter Beachtung der Achsenskalierung ablesen.",
+        "family": "chartRead"
+      },
+      {
+        "title": "Aussagen mit Daten prüfen",
+        "goal": "Eine Vergleichsaussage über ein Diagramm mit zwei korrekt abgelesenen Werten belegen oder widerlegen.",
+        "family": "chartCompare"
+      }
+    ],
+    "math:5:unbekannte-durch-umkehren-finden": [
+      {
+        "title": "Unbekannte Zahl finden",
+        "goal": "Eine unbekannte natürliche Zahl in einer einstufigen Gleichung durch passende Umkehroperation ermitteln und einsetzen.",
+        "family": "equation"
+      },
+      {
+        "title": "Rechteckformel rückwärts",
+        "goal": "Bei gegebener Rechteckfläche und einer Seitenlänge die andere Seitenlänge mit Einheit bestimmen.",
+        "family": "areaInverse"
+      }
+    ],
+    "math:6:B01": [
+      {
+        "title": "Bezugsgröße festlegen",
+        "goal": "In einer Anteilsdarstellung genau kennzeichnen, welche zusammenhängende Fläche oder Menge als ein Ganzes gilt.",
+        "family": "whole"
+      },
+      {
+        "title": "Gleich große Teile prüfen",
+        "goal": "An einer unterteilten Fläche entscheiden, ob die Teilstücke gleich groß sind und als gleichwertige Bruchteile zählen.",
+        "family": "equalParts"
+      }
+    ],
+    "math:6:B02": [
+      {
+        "title": "Zähler und Nenner zuordnen",
+        "goal": "Zu einem markierten Anteil eines gleichmäßig geteilten Ganzen Zähler und Nenner mit ihrer jeweiligen Bedeutung angeben.",
+        "family": "fractionRead"
+      },
+      {
+        "title": "Vorgegebenen Anteil darstellen",
+        "goal": "Einen echten Bruch auf einem festgelegten Ganzen mit gleich großen Teilstücken darstellen.",
+        "family": "fractionRepresent"
+      }
+    ],
+    "math:6:B03": [
+      {
+        "title": "Brüche über ein Ganzes hinaus",
+        "goal": "Einen unechten positiven Bruch auf mehreren gleich großen Ganzen darstellen und die ganzen Einheiten mitzählen.",
+        "family": "improper"
+      },
+      {
+        "title": "Gemischte Schreibweise verbinden",
+        "goal": "Eine positive gemischte Zahl und einen unechten Bruch wertgleich ineinander überführen.",
+        "family": "mixed"
+      }
+    ],
+    "math:6:B04": [
+      {
+        "title": "Bruchskala erschließen",
+        "goal": "Aus zwei beschrifteten Stellen einer gleichmäßig geteilten Zahlengeraden den Wert eines Abstandes bestimmen.",
+        "family": "fractionScale"
+      },
+      {
+        "title": "Bruch auf Zahlengerade setzen",
+        "goal": "Einen positiven Bruch auf einer beschrifteten gleichmäßigen Zahlengeraden einschließlich Werten über eins verorten.",
+        "family": "fractionPosition"
+      }
+    ],
+    "math:6:B05": [
+      {
+        "title": "Einheitsbruch einer Menge",
+        "goal": "Den n-ten Teil einer teilbaren Menge bestimmen und die Division durch den Nenner erläutern.",
+        "family": "fractionAmountUnit"
+      },
+      {
+        "title": "Mehrere Bruchteile einer Menge",
+        "goal": "Einen echten Bruchteil einer teilbaren Menge durch Teilen durch den Nenner und Vervielfachen mit dem Zähler berechnen.",
+        "family": "fractionAmount"
+      }
+    ],
+    "math:6:B06": [
+      {
+        "title": "Teilen als Bruchzahl",
+        "goal": "Den Anteil je Person bei gleichmäßiger Verteilung einer natürlichen Gesamtmenge auf mehrere Personen als Bruch angeben.",
+        "family": "quotientFraction"
+      },
+      {
+        "title": "Verteilung und Rest verbinden",
+        "goal": "Eine gleichmäßige Verteilung mit ganzen Anteilen und verbleibendem Bruchanteil beschreiben und die Gesamtmenge prüfen.",
+        "family": "quotientMixed"
+      }
+    ],
+    "math:6:B07": [
+      {
+        "title": "Erweitern mit gegebenem Faktor",
+        "goal": "Zähler und Nenner eines positiven Bruchs mit demselben natürlichen Faktor multiplizieren und den erweiterten Bruch angeben.",
+        "family": "expand"
+      },
+      {
+        "title": "Wertgleichheit beim Erweitern",
+        "goal": "Am unveränderten Ganzen erklären, weshalb eine feinere gleichmäßige Unterteilung den markierten Anteil erhält.",
+        "family": "expandMeaning"
+      },
+      {
+        "title": "Erweiterungsfaktor erschließen",
+        "goal": "Zu einem gegebenen Zielnenner den natürlichen Erweiterungsfaktor ermitteln und den passenden Zähler bestimmen.",
+        "family": "expandTarget"
+      }
+    ],
+    "math:6:B08": [
+      {
+        "title": "Gemeinsam kürzen",
+        "goal": "Zähler und Nenner eines positiven Bruchs durch einen angegebenen gemeinsamen Teiler teilen und den neuen Bruch angeben.",
+        "family": "reduce"
+      },
+      {
+        "title": "Kürzbarkeit entscheiden",
+        "goal": "Einen gemeinsamen Teiler von Zähler und Nenner finden und eine vollständig gekürzte wertgleiche Form begründen.",
+        "family": "reduceChoice"
+      }
+    ],
+    "math:6:B09": [
+      {
+        "title": "Gleiches Teilmaß vergleichen",
+        "goal": "Positive Brüche mit gleichem Nenner oder gleichem Zähler bei gleicher Bezugseinheit vergleichen.",
+        "family": "fractionCompare"
+      },
+      {
+        "title": "Verschiedene Nenner vergleichen",
+        "goal": "Zwei positive Brüche durch wertgleiches Umformen oder geeignete Bezugswerte begründet ordnen.",
+        "family": "fractionCompareUnlike"
+      }
+    ],
+    "math:6:B10": [
+      {
+        "title": "Ergänzung zum Ganzen",
+        "goal": "Zu einem echten Bruch den fehlenden gleichnamigen Anteil bis zu einem Ganzen bestimmen.",
+        "family": "fractionComplement"
+      },
+      {
+        "title": "Teil und Ergänzung verknüpfen",
+        "goal": "Aus einer gegebenen Ergänzung zu eins den ursprünglichen Anteil bestimmen und die beiden Anteile am Ganzen prüfen.",
+        "family": "fractionComplementInverse"
+      }
+    ],
+    "math:6:B16": [
+      {
+        "title": "Zehnerbrüche als Dezimalzahl",
+        "goal": "Brüche mit Nenner zehn, hundert oder tausend in Dezimalschreibweise übertragen und die Nachkommastellen deuten.",
+        "family": "decimalPlace"
+      },
+      {
+        "title": "Endliche Dezimalzahl als Bruch",
+        "goal": "Eine endliche positive Dezimalzahl als Zehnerbruch schreiben und gegebenenfalls wertgleich kürzen.",
+        "family": "decimalFraction"
+      }
+    ],
+    "math:6:B17": [
+      {
+        "title": "Hundertstel als Prozent",
+        "goal": "Einen Anteil in einer Hundertsteldarstellung als Prozentzahl und Hundertstelbruch angeben.",
+        "family": "percentHundred"
+      },
+      {
+        "title": "Einfache Anteilsformen verbinden",
+        "goal": "Einfache positive Brüche, endliche Dezimalzahlen und Prozentangaben über dasselbe Ganze wertgleich zuordnen.",
+        "family": "percentConvert"
+      }
+    ],
+    "math:6:B11": [
+      {
+        "title": "Gleichnamige Brüche addieren",
+        "goal": "Positive gleichnamige Brüche durch Zusammenlegen gleich großer Teile addieren und den unveränderten Nenner erläutern.",
+        "family": "fractionAdd"
+      },
+      {
+        "title": "Gleichnamige Brüche subtrahieren",
+        "goal": "Von einem positiven Bruch einen nicht größeren gleichnamigen Bruch abziehen und den verbleibenden Anteil angeben.",
+        "family": "fractionSubtract"
+      }
+    ],
+    "math:6:B12": [
+      {
+        "title": "Gemeinsames Teilmaß herstellen",
+        "goal": "Für zwei positive ungleichnamige Brüche einen gemeinsamen Nenner wählen und beide wertgleich dorthin erweitern.",
+        "family": "commonDenominator"
+      },
+      {
+        "title": "Ungleichnamige Brüche addieren",
+        "goal": "Zwei positive Brüche mit verschiedenen Nennern durch ein gemeinsames Teilmaß addieren und die Größenordnung prüfen.",
+        "family": "unlikeAdd"
+      },
+      {
+        "title": "Ungleichnamige Brüche subtrahieren",
+        "goal": "Zwei positive Brüche mit nichtnegativer Differenz auf ein gemeinsames Teilmaß bringen und subtrahieren.",
+        "family": "unlikeSubtract"
+      }
+    ],
+    "math:6:B13": [
+      {
+        "title": "Natürliche Vervielfachung deuten",
+        "goal": "Eine natürliche Anzahl gleicher positiver Bruchteile als wiederholte Addition und als Produkt darstellen.",
+        "family": "fractionTimesMeaning"
+      },
+      {
+        "title": "Bruch mit natürlicher Zahl rechnen",
+        "goal": "Einen positiven Bruch mit einer natürlichen Zahl multiplizieren und das Ergebnis gegebenenfalls als gemischte Zahl angeben.",
+        "family": "fractionTimes"
+      }
+    ],
+    "math:6:B14": [
+      {
+        "title": "Anteil eines Anteils darstellen",
+        "goal": "Den Anteil eines positiven Bruchteils an einem anderen Bruchteil auf einem gleichbleibenden Flächenganzen darstellen.",
+        "family": "fractionProductMeaning"
+      },
+      {
+        "title": "Bruchprodukt bestimmen",
+        "goal": "Das Produkt zweier positiver Brüche berechnen und bei echten Faktoren durch die Größenordnung prüfen.",
+        "family": "fractionProduct"
+      }
+    ],
+    "math:6:B15": [
+      {
+        "title": "Bruch gleichmäßig verteilen",
+        "goal": "Einen positiven Bruchanteil in eine natürliche Anzahl gleicher Anteile aufteilen und den Anteil je Gruppe darstellen.",
+        "family": "fractionDivideMeaning"
+      },
+      {
+        "title": "Bruch durch natürliche Zahl",
+        "goal": "Einen positiven Bruch durch eine natürliche Zahl ungleich null teilen und das Ergebnis durch Vervielfachen prüfen.",
+        "family": "fractionDivide"
+      }
+    ],
+    "math:6:B18": [
+      {
+        "title": "Bruchterm mit Klammer",
+        "goal": "In einem Term aus positiven Brüchen eine vorgegebene Klammer zuerst berechnen und Zwischenergebnisse erhalten.",
+        "family": "fractionTerm"
+      },
+      {
+        "title": "Rechenreihenfolge begründen",
+        "goal": "Bei einem kombinierten Bruchterm den Vorrang von Multiplikation beziehungsweise natürlicher Division vor Addition erklären.",
+        "family": "fractionTermOrder"
+      }
+    ],
+    "math:6:B19": [
+      {
+        "title": "Anteilssituation modellieren",
+        "goal": "In einer Sachsituation mit positiven Brüchen das Ganze, gegebene Anteile und die gesuchte Größe vor der Rechnung festlegen.",
+        "family": "fractionModel"
+      },
+      {
+        "title": "Bruchergebnis zurückbeziehen",
+        "goal": "Das Ergebnis einer Anteilsrechnung mit passender Einheit in die Sachsituation zurückübersetzen und seine Plausibilität begründen.",
+        "family": "fractionContextCheck"
+      }
+    ],
+    "math:6:B20": [
+      {
+        "title": "Fehler am Teilmaß erklären",
+        "goal": "Eine fehlerhafte Addition gleichnamiger Brüche durch Bezug auf das unveränderte Teilmaß widerlegen.",
+        "family": "fractionError"
+      },
+      {
+        "title": "Wertgleichheitsbehauptung prüfen",
+        "goal": "Eine Behauptung über Erweitern oder Kürzen mit einer korrekten Umformung oder einem passenden Gegenbeispiel prüfen.",
+        "family": "fractionEqualityCheck"
+      }
+    ],
+    "math:6:negative-bruchzahlen-einordnen": [
+      {
+        "title": "Rationale Gegenzahlen verorten",
+        "goal": "Eine negative Dezimalzahl oder einen negativen Bruch und die positive Gegenzahl auf derselben Zahlengeraden verorten.",
+        "family": "signedPosition"
+      },
+      {
+        "title": "Negative Brüche ordnen",
+        "goal": "Negative Brüche und endliche Dezimalzahlen durch ihre Lage links vom Nullpunkt begründet vergleichen.",
+        "family": "signedCompare"
+      }
+    ],
+    "math:6:mit-rationalen-zustaenden-rechnen": [
+      {
+        "title": "Rationale Änderung als Bewegung",
+        "goal": "Zu einem rationalen Ausgangswert eine positive oder negative additive Änderung auf der Zahlengeraden darstellen.",
+        "family": "signedChange"
+      },
+      {
+        "title": "Rationale Endwerte bestimmen",
+        "goal": "Addition und Subtraktion rationaler Zustandsänderungen berechnen und Vorzeichen der Zahl vom Rechenzeichen unterscheiden.",
+        "family": "signedCalculate"
+      }
+    ],
+    "math:6:multiplikation-und-umkehrung-deuten": [
+      {
+        "title": "Rationale Schritte vervielfachen",
+        "goal": "Eine natürliche Anzahl gleicher rationaler Änderungen als Produkt mit natürlichem Faktor deuten und berechnen.",
+        "family": "signedTimes"
+      },
+      {
+        "title": "Rationale Änderung aufteilen",
+        "goal": "Eine rationale Änderung durch eine positive natürliche Zahl teilen und das Ergebnis mit der passenden Multiplikation prüfen.",
+        "family": "signedDivide"
+      }
+    ],
+    "math:6:vierecke-und-kreise-beschreiben": [
+      {
+        "title": "Vierecke nach Eigenschaften",
+        "goal": "Gezeichnete Vierecke anhand paralleler Seiten, gleicher Seiten und rechter Winkel mehreren passenden Klassen zuordnen.",
+        "family": "quadrilaterals"
+      },
+      {
+        "title": "Radius und Durchmesser",
+        "goal": "In einer Kreiszeichnung Mittelpunkt, Radius und Durchmesser unterscheiden und ihre Längenbeziehung erläutern.",
+        "family": "circle"
+      }
+    ],
+    "math:6:koordinaten-in-vier-quadranten": [
+      {
+        "title": "Vorzeichen in Koordinaten lesen",
+        "goal": "Koordinaten dargestellter Punkte in allen vier Quadranten mit richtiger Achsenreihenfolge und Vorzeichen ablesen.",
+        "family": "coordinates"
+      },
+      {
+        "title": "Figuren mit Koordinaten erzeugen",
+        "goal": "Gegebene rationale Koordinaten in allen vier Quadranten eintragen und die Punkte in angegebener Reihenfolge zur Figur verbinden.",
+        "family": "coordinates"
+      }
+    ],
+    "math:6:koerper-und-netze-erkennen": [
+      {
+        "title": "Körpermerkmale unterscheiden",
+        "goal": "An klaren Körperzeichnungen Flächen, Kanten und Ecken unterscheiden und Würfel oder Quader begründet zuordnen.",
+        "family": "solids"
+      },
+      {
+        "title": "Netz und Körper verbinden",
+        "goal": "In einem Quadernetz zusammengehörige gegenüberliegende Flächen identifizieren und dem beschrifteten Schrägbild zuordnen.",
+        "family": "nets"
+      },
+      {
+        "title": "Faltbarkeit eines Netzes prüfen",
+        "goal": "An einem vorgegebenen Würfel- oder Quadernetz prüfen, ob beim Falten sechs passende Flächen ohne Überlappung entstehen.",
+        "family": "netFold"
+      }
+    ],
+    "math:6:quaderoberflaechen-berechnen": [
+      {
+        "title": "Flächenpaare im Quadernetz",
+        "goal": "An einem bemaßten Quadernetz die drei Paare gleich großer Rechteckflächen erkennen und passende Seitenmaße zuordnen.",
+        "family": "surfacePairs"
+      },
+      {
+        "title": "Oberfläche zusammensetzen",
+        "goal": "Aus den sechs Rechteckflächen eines Quaders die gesamte Oberfläche mit quadratischer Einheit berechnen.",
+        "family": "surface"
+      }
+    ],
+    "math:6:volumen-mit-einheitswuerfeln": [
+      {
+        "title": "Eine Würfelschicht bestimmen",
+        "goal": "An einer transparenten oder schichtweise dargestellten Quaderfüllung die Einheitswürfel einer vollständigen Schicht zählen.",
+        "family": "volumeLayer"
+      },
+      {
+        "title": "Schichten zum Volumen verbinden",
+        "goal": "Das Quadervolumen als Würfel je Schicht mal Anzahl der Schichten bestimmen und die drei Faktoren erläutern.",
+        "family": "volume"
+      }
+    ],
+    "math:6:volumen-und-einheiten-anwenden": [
+      {
+        "title": "Quader und Würfelkörper berechnen",
+        "goal": "Das Volumen eines bemaßten Quaders oder eines aus vollständigen Quadern zusammengesetzten Körpers ohne Doppelzählung bestimmen.",
+        "family": "volumeComposite"
+      },
+      {
+        "title": "Raumeinheiten wertgleich wechseln",
+        "goal": "Volumenangaben zwischen benachbarten Kubikeinheiten und einfache Literbezüge über ihre Raumeinheitenbeziehung umrechnen.",
+        "family": "volumeUnits"
+      }
+    ],
+    "math:6:daten-und-darstellungen-vergleichen": [
+      {
+        "title": "Tabelle und Diagramm abgleichen",
+        "goal": "Werte derselben Erhebung zwischen beschrifteter Tabelle und Diagramm einschließlich Einheit und Bezugsgruppe abgleichen.",
+        "family": "chartRead"
+      },
+      {
+        "title": "Diagrammaussage kritisch prüfen",
+        "goal": "Eine Aussage zu zwei Datendarstellungen auf unterschiedliche Skalen, Zeiträume oder Bezugsgruppen prüfen.",
+        "family": "chartCompare"
+      }
+    ],
+    "math:6:arithmetisches-mittel-verstehen": [
+      {
+        "title": "Durchschnitt als Ausgleich",
+        "goal": "Für eine kurze Datenliste das arithmetische Mittel durch gleichmäßiges Verteilen der Gesamtsumme auf alle Werte bestimmen.",
+        "family": "mean"
+      },
+      {
+        "title": "Durchschnitt im Kontext deuten",
+        "goal": "Erklären, was der berechnete Durchschnitt einer Datenliste im Kontext aussagt und weshalb er kein tatsächlich vorkommender Wert sein muss.",
+        "family": "meanMeaning"
+      }
+    ],
+    "math:6:volumenformeln-umkehren": [
+      {
+        "title": "Fehlenden Quaderfaktor finden",
+        "goal": "Bei bekanntem Quadervolumen und zwei Seitenlängen die dritte Seitenlänge durch Umkehroperationen mit Einheit bestimmen.",
+        "family": "volumeInverse"
+      },
+      {
+        "title": "Formelprobe am Quader",
+        "goal": "Eine vorgeschlagene unbekannte Quaderlänge durch Einsetzen in die Volumenformel prüfen und einen unpassenden Wert begründet verwerfen.",
+        "family": "volumeProbe"
+      }
+    ],
+    "german:5:gehoertes-wiedergeben": [
+      {
+        "title": "Zentrale Hörinformation sichern",
+        "goal": "Nach dem Anhören einer kurzen Erzählung die Hauptfigur und das auslösende Ereignis ohne eingeblendeten Text nennen.",
+        "family": "listenDetail"
+      },
+      {
+        "title": "Gehörte Handlung ordnen",
+        "goal": "Die wichtigsten Ereignisse einer kurzen gehörten Erzählung in eigenen Worten zeitlich geordnet wiedergeben.",
+        "family": "listenSequence"
+      }
+    ],
+    "german:5:verstaendnisfragen-stellen": [
+      {
+        "title": "Unklare Hörstelle benennen",
+        "goal": "Nach einem echten Hörabschnitt eine für das Verständnis fehlende oder unklare Information benennen.",
+        "family": "listenGap"
+      },
+      {
+        "title": "Gezielt zum Gehörten fragen",
+        "goal": "Eine offene Verständnisfrage formulieren, die sich auf eine konkrete Unklarheit im gehörten Text bezieht.",
+        "family": "listenQuestion"
+      }
+    ],
+    "german:5:anschaulich-erzaehlen": [
+      {
+        "title": "Erzählung für das Sprechen planen",
+        "goal": "Als Vorbereitung einer mündlichen Erlebniserzählung Stichpunkte zu Anfang, Wendepunkt und Ende in eine verständliche Reihenfolge bringen.",
+        "family": "oralPlan"
+      },
+      {
+        "title": "Erlebnis zusammenhängend erzählen",
+        "goal": "Ein kurzes Erlebnis tatsächlich mündlich mit zeitlichen Verbindungen und einem nachvollziehbaren Ende erzählen.",
+        "family": "speechStory"
+      }
+    ],
+    "german:5:kurzvortrag-gestalten": [
+      {
+        "title": "Sprechkarte für einen Kurzvortrag",
+        "goal": "Als Vorbereitung eines Kurzvortrags eine Einleitung, zwei geordnete Kerninformationen und einen Abschluss auf einer Stichwortkarte planen.",
+        "family": "oralPlan"
+      },
+      {
+        "title": "Stimme und Körpersprache einsetzen",
+        "goal": "Einen kurzen Vortrag hörbar und verständlich halten und den Blick sowie eine passende Geste bewusst an das Publikum richten.",
+        "family": "speechPresentation"
+      }
+    ],
+    "german:5:gespraechsregeln-anwenden": [
+      {
+        "title": "Respektvolle Nachfrage vorbereiten",
+        "goal": "Als Vorbereitung eines Gesprächs zu einem fiktiven fremden Beitrag eine passende respektvolle Nachfrage formulieren.",
+        "family": "oralResponsePlan"
+      },
+      {
+        "title": "Gesprächswechsel beobachten",
+        "goal": "In einem tatsächlichen Gespräch andere ausreden lassen und mit einer inhaltlich passenden Nachfrage an ihren Beitrag anschließen.",
+        "family": "speechConversation"
+      }
+    ],
+    "german:5:meinung-begruenden": [
+      {
+        "title": "Meinung und Grund vorbereiten",
+        "goal": "Als Vorbereitung eines mündlichen Meinungsbeitrags eine Position und einen passenden nachvollziehbaren Grund in Stichpunkten verbinden.",
+        "family": "argument"
+      },
+      {
+        "title": "Auf fremde Meinung eingehen",
+        "goal": "Die eigene Meinung in einem tatsächlichen Gespräch begründen und dabei einen konkreten fremden Gedanken zustimmend oder widersprechend aufgreifen.",
+        "family": "speechConversation"
+      }
+    ],
+    "german:5:figuren-sprechen-lassen": [
+      {
+        "title": "Sprechweise einer Figur planen",
+        "goal": "Als Vorbereitung einer kurzen Szene für eine Rollenabsicht ein passendes Sprechtempo und eine sinnvolle Betonungsstelle kennzeichnen.",
+        "family": "rolePlan"
+      },
+      {
+        "title": "Figur deutlich sprechen lassen",
+        "goal": "Eine kurze Rolle tatsächlich mit verständlicher Artikulation und zur Situation passendem Sprechtempo darstellen.",
+        "family": "speechRole"
+      }
+    ],
+    "german:5:spielwirkung-beschreiben": [
+      {
+        "title": "Stimmwirkung unterscheiden",
+        "goal": "Nach tatsächlichem Anhören zweier Sprechfassungen eine hörbare Veränderung von Tempo oder Lautstärke und deren mögliche Wirkung beschreiben.",
+        "family": "listenVoice"
+      },
+      {
+        "title": "Gestik an Szene belegen",
+        "goal": "Nach Beobachtung einer tatsächlichen Szene eine konkrete Geste beschreiben und ihre Wirkung mit der Situation verbinden.",
+        "family": "observeGesture"
+      }
+    ],
+    "german:5:schluesselstellen-finden": [
+      {
+        "title": "Leitfrage und Textstelle verbinden",
+        "goal": "Zu einer Leitfrage die ausdrücklich antwortende Schlüsselstelle in einem kurzen Absatz auswählen.",
+        "family": "textEvidence"
+      },
+      {
+        "title": "Wesentliche Information verdichten",
+        "goal": "Die für eine Leitfrage wichtigen Informationen aus einem kurzen Text in einem eigenen knappen Satz bündeln.",
+        "family": "textSummary"
+      }
+    ],
+    "german:5:leseerwartung-pruefen": [
+      {
+        "title": "Erwartung aus Überschrift",
+        "goal": "Aus einer Überschrift und einer benannten Textsorte eine begründete Erwartung an den folgenden Text formulieren.",
+        "family": "prediction"
+      },
+      {
+        "title": "Erwartung am Text prüfen",
+        "goal": "Eine zuvor formulierte Leseerwartung anhand einer konkreten Textstelle bestätigen oder berichtigen.",
+        "family": "textEvidence"
+      }
+    ],
+    "german:5:handlung-nachvollziehen": [
+      {
+        "title": "Ereignisse einer Geschichte ordnen",
+        "goal": "Drei zentrale Handlungsschritte eines kurzen literarischen Textes in die erzählte Reihenfolge bringen.",
+        "family": "storySequence"
+      },
+      {
+        "title": "Handlungszusammenhang erklären",
+        "goal": "An einer kurzen Geschichte erklären, wie eine Figurenhandlung das folgende Ereignis auslöst.",
+        "family": "literaryReason"
+      }
+    ],
+    "german:5:figuren-und-textformen-deuten": [
+      {
+        "title": "Figurenmerkmal mit Beleg",
+        "goal": "Eine Eigenschaft einer Figur an ihrer Handlung oder Äußerung aus einem kurzen Text begründen.",
+        "family": "literaryEvidence"
+      },
+      {
+        "title": "Sprachbild im Text deuten",
+        "goal": "Ein einfaches sprachliches Bild einer literarischen Textstelle mit einer passenden wörtlichen Umschreibung erklären.",
+        "family": "idiom"
+      },
+      {
+        "title": "Märchen Fabel Gedicht unterscheiden",
+        "goal": "Einen kurzen Text als Märchen, Fabel oder Gedicht einordnen und mindestens ein tatsächlich vorhandenes Merkmal belegen.",
+        "family": "genre"
+      }
+    ],
+    "german:5:sachinformationen-entnehmen": [
+      {
+        "title": "Sachinformation gezielt finden",
+        "goal": "Die Antwort auf eine konkrete Sachfrage einem passenden Satz eines kurzen Sachtextes entnehmen.",
+        "family": "textEvidence"
+      },
+      {
+        "title": "Antwort und Beleg verknüpfen",
+        "goal": "Eine Sachfrage in eigenen Worten beantworten und die passende Textinformation als Beleg hinzufügen.",
+        "family": "textEvidence"
+      }
+    ],
+    "german:5:textfunktion-und-quelle-pruefen": [
+      {
+        "title": "Information oder Aufforderung",
+        "goal": "In kurzen Alltagstexten sachliche Information von einer Aufforderung unterscheiden und ein sprachliches Signal benennen.",
+        "family": "textFunction"
+      },
+      {
+        "title": "Recherchequelle passend wählen",
+        "goal": "Für eine konkrete Informationsfrage aus zwei vorgegebenen Quellen die passendere anhand von Urheberschaft, Thema und Aktualität auswählen.",
+        "family": "source"
+      }
+    ],
+    "german:5:werbeabsicht-erkennen": [
+      {
+        "title": "Werbeversprechen benennen",
+        "goal": "In einer kurzen fiktiven Werbeanzeige das beworbene Angebot und die beabsichtigte Kaufhandlung benennen.",
+        "family": "mediaIntent"
+      },
+      {
+        "title": "Werbemittel und Wirkung verbinden",
+        "goal": "Ein sichtbares sprachliches oder bildliches Gestaltungsmittel einer fiktiven Anzeige mit seiner beabsichtigten Wirkung verbinden.",
+        "family": "mediaVisual"
+      }
+    ],
+    "german:5:digitale-mitteilung-passend-gestalten": [
+      {
+        "title": "Nachricht an Empfänger anpassen",
+        "goal": "Eine kurze digitale Nachricht an eine vertraute Person oder eine Lehrkraft mit passender Anrede, klarem Anliegen und Abschluss formulieren.",
+        "family": "message"
+      },
+      {
+        "title": "Persönliche Angaben schützen",
+        "goal": "In einer fiktiven digitalen Mitteilung eine unnötige persönliche Angabe erkennen und eine datensparsame Formulierung vorschlagen.",
+        "family": "mediaResponsibility"
+      }
+    ],
+    "german:5:text-uebersichtlich-gestalten": [
+      {
+        "title": "Absätze nach Sinnabschnitten",
+        "goal": "Einen kurzen Text an einem Themen- oder Handlungsschrittwechsel in sinnvolle Absätze gliedern.",
+        "family": "layout"
+      },
+      {
+        "title": "Überschrift und Lesbarkeit",
+        "goal": "Für einen kurzen Text eine passende Überschrift und eine verständliche Anordnung von Überschrift und Absätzen auswählen.",
+        "family": "layout"
+      }
+    ],
+    "german:5:textmuster-verwenden": [
+      {
+        "title": "Aufbau eines Vorbilds untersuchen",
+        "goal": "An einem kurzen Brief, einer Beschreibung oder Erzählung die für den Schreibzweck wichtigen Bausteine zuordnen.",
+        "family": "textPattern"
+      },
+      {
+        "title": "Baustein für eigenen Zweck wählen",
+        "goal": "Aus einem Textvorbild einen passenden Aufbau- oder Sprachbaustein auswählen und auf einen neuen Schreibanlass anpassen.",
+        "family": "textPattern"
+      }
+    ],
+    "german:5:schreibideen-ordnen": [
+      {
+        "title": "Ideen zum Schreibanlass sammeln",
+        "goal": "Zu einem begrenzten Schreibanlass passende Ideen sammeln und vom Thema abweichende Einfälle aussortieren.",
+        "family": "writingPlan"
+      },
+      {
+        "title": "Schreibplan in Reihenfolge",
+        "goal": "Aus ausgewählten Ideen einen kurzen Schreibplan mit Anfang, Hauptteil und Schluss erstellen.",
+        "family": "writingPlan"
+      }
+    ],
+    "german:5:erzaehlung-ausgestalten": [
+      {
+        "title": "Handlungsschritt ausformulieren",
+        "goal": "Einen geplanten Handlungsschritt einer kurzen Erzählung mit zeitlicher Verbindung verständlich ausformulieren.",
+        "family": "narrative"
+      },
+      {
+        "title": "Gedanken und Gefühle zeigen",
+        "goal": "Eine kurze Erzählszene durch einen passenden Gedanken oder ein situationsbezogenes Gefühl einer Figur anschaulicher gestalten.",
+        "family": "narrative"
+      }
+    ],
+    "german:5:rueckmeldung-geben": [
+      {
+        "title": "Kriterium am fremden Text prüfen",
+        "goal": "An einem kurzen fremden Text zu einem vorgegebenen Kriterium eine konkrete gelungene oder verbesserbare Stelle benennen.",
+        "family": "feedback"
+      },
+      {
+        "title": "Hilfreiche Rückmeldung formulieren",
+        "goal": "Zu einer konkreten Textstelle eine respektvolle Rückmeldung mit einem umsetzbaren Verbesserungsvorschlag formulieren.",
+        "family": "feedback"
+      }
+    ],
+    "german:5:text-gezielt-verbessern": [
+      {
+        "title": "Überarbeitungsstelle auswählen",
+        "goal": "Mit einer kurzen Checkliste eine Textstelle finden, an der ein ausdrücklich gewähltes Kriterium noch nicht erfüllt ist.",
+        "family": "revision"
+      },
+      {
+        "title": "Eine Textstelle überarbeiten",
+        "goal": "Eine gefundene Stelle eines eigenen kurzen Textes gezielt verändern und erklären, wie die Änderung das gewählte Kriterium erfüllt.",
+        "family": "revision"
+      }
+    ],
+    "german:5:fachsprache-klaeren": [
+      {
+        "title": "Fachbegriff aus Kontext erklären",
+        "goal": "Die Bedeutung eines schulischen Fachbegriffs aus einem kurzen Sachzusammenhang mit eigenen einfachen Worten erklären.",
+        "family": "vocabulary"
+      },
+      {
+        "title": "Fachwort sinnvoll verwenden",
+        "goal": "Einen geklärten schulischen Fachbegriff in einem neuen passenden Beispielsatz fachlich richtig verwenden.",
+        "family": "vocabulary"
+      }
+    ],
+    "german:5:sprachbilder-verstehen": [
+      {
+        "title": "Wörtlich und übertragen trennen",
+        "goal": "Bei einem einfachen sprachlichen Bild im Satz zwischen wörtlicher Vorstellung und gemeinter Bedeutung unterscheiden.",
+        "family": "idiom"
+      },
+      {
+        "title": "Bild in Alltagssprache erklären",
+        "goal": "Ein sprachliches Bild mit Hilfe seines Kontextes durch eine sinngemäße alltägliche Formulierung ersetzen.",
+        "family": "idiom"
+      }
+    ],
+    "german:5:wortarten-und-wortbildung": [
+      {
+        "title": "Nomen und Verb im Satz",
+        "goal": "Nomen und Verben in einem Satz mit passenden Artikel- beziehungsweise Veränderungsproben unterscheiden.",
+        "family": "wordClass"
+      },
+      {
+        "title": "Adjektiv und Pronomen im Satz",
+        "goal": "Adjektive und Pronomen im Satzzusammenhang anhand ihrer Funktion und möglicher Ersatzformen bestimmen.",
+        "family": "wordClass"
+      },
+      {
+        "title": "Wortbausteine erschließen",
+        "goal": "Wortstamm, Vorsilbe oder Nachsilbe in einem gegliederten Wort bestimmen und ihren Beitrag zur Wortbedeutung erklären.",
+        "family": "morphology"
+      }
+    ],
+    "german:5:satzglieder-und-satzbau": [
+      {
+        "title": "Satzglied mit Umstellprobe",
+        "goal": "Zusammengehörige Wortgruppen eines einfachen Satzes mit einer Umstellprobe als Satzglieder erkennen.",
+        "family": "sentencePart"
+      },
+      {
+        "title": "Satzgliedfunktion erfragen",
+        "goal": "Subjekt und einfache Zeit- oder Ortsangaben eines Satzes mit einer passenden Frage oder Ersatzprobe bestimmen.",
+        "family": "sentencePart"
+      },
+      {
+        "title": "Hauptsatz und Nebensatz",
+        "goal": "In einer kurzen Satzverbindung Haupt- und Nebensatz anhand von Einleitung und Stellung der finiten Verbform unterscheiden.",
+        "family": "clause"
+      }
+    ],
+    "german:5:schreibstrategie-begruenden": [
+      {
+        "title": "Schreibung durch Verlängern",
+        "goal": "Die Schreibung eines fraglichen Auslauts durch eine passende verlängerte Wortform überprüfen und begründen.",
+        "family": "spellingExtend"
+      },
+      {
+        "title": "Schreibung durch Ableiten",
+        "goal": "Eine ä- oder äu-Schreibung mit einem passenden verwandten Wort erklären und von nicht ableitbaren Wörtern unterscheiden.",
+        "family": "spellingDerive"
+      },
+      {
+        "title": "Silben und Merkstellen nutzen",
+        "goal": "Bei einem geeigneten Wort eine eingeführte Silbenstrategie anwenden oder eine nicht regelhaft ableitbare Stelle als Merkstelle kennzeichnen.",
+        "family": "spellingSyllable"
+      }
+    ],
+    "german:5:grossschreibung-und-satzzeichen": [
+      {
+        "title": "Nominale Kerne großschreiben",
+        "goal": "Den nominalen Kern einer einfachen Wortgruppe mithilfe von Begleitern erkennen und die Großschreibung begründen.",
+        "family": "capital"
+      },
+      {
+        "title": "Satzschluss und Aufzählung",
+        "goal": "In kurzen Sätzen passende Satzschlusszeichen und Kommas zwischen nicht mit und verbundenen Aufzählungsgliedern setzen.",
+        "family": "punctuation"
+      },
+      {
+        "title": "Wörtliche Rede kennzeichnen",
+        "goal": "In einem einfachen Satz mit vorangestelltem Begleitsatz Doppelpunkt, Anführungszeichen und Satzschluss der wörtlichen Rede setzen.",
+        "family": "directSpeech"
+      }
+    ],
+    "german:5:sachlich-beschreiben": [
+      {
+        "title": "Vorgangsschritte ordnen",
+        "goal": "Die wesentlichen Schritte eines überschaubaren beobachteten oder bildlich dargestellten Vorgangs in sachgerechte Reihenfolge bringen.",
+        "family": "procedure"
+      },
+      {
+        "title": "Vorgang verständlich beschreiben",
+        "goal": "Einen kurzen Vorgang mit treffenden Tätigkeitswörtern und eindeutigen zeitlichen Verbindungen sachlich beschreiben.",
+        "family": "procedure"
+      }
+    ],
+    "german:5:anliegen-schriftlich-begruenden": [
+      {
+        "title": "Anliegen und Grund verbinden",
+        "goal": "Ein klar benanntes Anliegen in einem kurzen Brief- oder E-Mail-Abschnitt mit einem passenden nachvollziehbaren Grund verbinden.",
+        "family": "argument"
+      },
+      {
+        "title": "Anliegen adressatengerecht rahmen",
+        "goal": "Für ein begründetes Anliegen eine zum Empfänger passende Anrede, höfliche Bitte und Schlussformel formulieren.",
+        "family": "message"
+      }
+    ],
+    "german:5:lesbare-handschrift": [
+      {
+        "title": "Lesbarkeit vorbereitend prüfen",
+        "goal": "Als Vorbereitung des Schreibens für einen kurzen handschriftlichen Text Kriterien zu Buchstabenabständen und Zeilenführung auswählen.",
+        "family": "handwritingPlan"
+      },
+      {
+        "title": "Kurzen Text lesbar schreiben",
+        "goal": "Einen kurzen Text tatsächlich von Hand mit unterscheidbaren Buchstaben, Wortabständen und nachvollziehbarer Zeilenführung schreiben.",
+        "family": "handwriting"
+      }
+    ],
+    "german:5:sinnbetont-vorlesen": [
+      {
+        "title": "Sinneinheiten vorbereitend markieren",
+        "goal": "Als Vorbereitung des Vorlesens in einem kurzen Text passende Sinneinheiten und eine begründete Betonungsstelle markieren.",
+        "family": "readingPlan"
+      },
+      {
+        "title": "Text hörbar sinnbetont lesen",
+        "goal": "Einen kurzen Text tatsächlich laut mit Pausen an Sinneinheiten, verständlichem Tempo und passender Betonung vorlesen.",
+        "family": "speechRead"
+      }
+    ],
+    "german:6:hoerinhalte-zusammenfassen": [
+      {
+        "title": "Hauptsache vom Hördetail trennen",
+        "goal": "Nach Anhören einer kurzen Geschichte wesentliche Handlungsschritte von nebensächlichen Details unterscheiden.",
+        "family": "listenDetail"
+      },
+      {
+        "title": "Gehörtes geordnet zusammenfassen",
+        "goal": "Die wichtigsten Inhalte einer tatsächlich gehörten Geschichte in einer knappen geordneten Zusammenfassung verbinden.",
+        "family": "listenSequence"
+      }
+    ],
+    "german:6:auf-gehoertes-reagieren": [
+      {
+        "title": "Verständnissichernd nachfragen",
+        "goal": "Nach einem echten gehörten Beitrag eine gezielte Rückfrage zu einer mehrdeutigen oder fehlenden Information formulieren.",
+        "family": "listenQuestion"
+      },
+      {
+        "title": "Rückmeldung zum Hörbeitrag",
+        "goal": "Zu einem tatsächlich gehörten Beitrag eine konkrete Rückmeldung formulieren, die dessen Inhalt korrekt aufgreift.",
+        "family": "listenResponse"
+      }
+    ],
+    "german:6:sachlich-berichten": [
+      {
+        "title": "Mündlichen Bericht vorbereiten",
+        "goal": "Als Vorbereitung eines mündlichen Berichts aus Ereignisstichpunkten sachliche W-Fragen-Informationen in zeitlicher Reihenfolge ordnen.",
+        "family": "oralReportPlan"
+      },
+      {
+        "title": "Ereignis sachlich mündlich berichten",
+        "goal": "Ein überschaubares Geschehen tatsächlich mündlich mit wesentlichen W-Fragen-Informationen und ohne erfundene Ausschmückung berichten.",
+        "family": "speechReport"
+      }
+    ],
+    "german:6:vortrag-mit-feedback": [
+      {
+        "title": "Vortrag und Rückmeldung planen",
+        "goal": "Als Vorbereitung eines Vortrags einen gegliederten Stichwortzettel und ein überprüfbares Beobachtungskriterium für das Feedback festlegen.",
+        "family": "oralPlan"
+      },
+      {
+        "title": "Vortrag halten und reflektieren",
+        "goal": "Einen kurzen Vortrag mit tatsächlichem Blickkontakt und passender Betonung halten und anhand einer konkreten Beobachtung reflektieren.",
+        "family": "speechPresentation"
+      }
+    ],
+    "german:6:beitraege-sinnvoll-ergaenzen": [
+      {
+        "title": "Anschlussbeitrag vorbereiten",
+        "goal": "Als Vorbereitung eines Gruppengesprächs eine sachlich passende Ergänzung zu einem vorgegebenen Beitrag mit begründetem Bezug formulieren.",
+        "family": "oralResponsePlan"
+      },
+      {
+        "title": "Im Gruppengespräch anschließen",
+        "goal": "In einem tatsächlichen Gruppengespräch gezielt nachfragen, begründet zustimmen oder einen fremden Beitrag inhaltlich ergänzen.",
+        "family": "speechConversation"
+      }
+    ],
+    "german:6:lerngespraech-fuehren": [
+      {
+        "title": "Lernbeleg und Ziel vorbereiten",
+        "goal": "Als Vorbereitung eines Lerngesprächs an einem konkreten eigenen Übungsbeispiel einen erreichten Schritt und ein nächstes erreichbares Ziel festhalten.",
+        "family": "learningReflection"
+      },
+      {
+        "title": "Lernfortschritt mündlich erklären",
+        "goal": "In einem tatsächlichen Lerngespräch den eigenen Fortschritt mit einem Beispiel beschreiben und ein erreichbares Übungsziel vereinbaren.",
+        "family": "speechLearning"
+      }
+    ],
+    "german:6:perspektive-szenisch-umsetzen": [
+      {
+        "title": "Rollenabsicht aus Text ableiten",
+        "goal": "Als Vorbereitung einer Szene die Absicht einer literarischen Figur mit einer Textstelle begründen und eine passende Äußerung planen.",
+        "family": "rolePlan"
+      },
+      {
+        "title": "Perspektive körperlich darstellen",
+        "goal": "Eine literarische Rolle tatsächlich mit zur Figur passenden sprachlichen Mitteln, Haltung und Bewegung darstellen.",
+        "family": "speechRole"
+      }
+    ],
+    "german:6:stimme-bewusst-variieren": [
+      {
+        "title": "Stimmvarianten hörend vergleichen",
+        "goal": "Nach tatsächlichem Anhören zweier Rollenfassungen Unterschiede in Tonhöhe, Lautstärke oder Tempo mit der Rollenwirkung verbinden.",
+        "family": "listenVoice"
+      },
+      {
+        "title": "Stimme gezielt verändern",
+        "goal": "Eine kurze Rolle tatsächlich mit bewusst veränderter Tonhöhe, Lautstärke und Tempo sprechen und die beabsichtigte Wirkung erläutern.",
+        "family": "speechVoice"
+      }
+    ],
+    "german:6:textaussagen-belegen": [
+      {
+        "title": "Aussage und Beleg unterscheiden",
+        "goal": "In einem kurzen Text eine Behauptung von einer ausdrücklich dazu passenden Belegstelle unterscheiden.",
+        "family": "textEvidence"
+      },
+      {
+        "title": "Wesentliche Aussage belegen",
+        "goal": "Eine wesentliche Information aus mehreren Absätzen erschließen und mit einem passenden genauen Textbezug begründen.",
+        "family": "textEvidence"
+      }
+    ],
+    "german:6:woerter-im-kontext-klaeren": [
+      {
+        "title": "Kontexthinweise nutzen",
+        "goal": "Zu einem unbekannten Wort im kurzen Text aus benachbarten Wörtern oder einer Erklärung eine plausible Bedeutung erschließen.",
+        "family": "vocabulary"
+      },
+      {
+        "title": "Wortdeutung im Satz prüfen",
+        "goal": "Eine erschlossene Wortbedeutung durch sinngemäßes Ersetzen im Satz und Abgleich mit dem weiteren Text prüfen.",
+        "family": "vocabulary"
+      }
+    ],
+    "german:6:figuren-mit-textbelegen-deuten": [
+      {
+        "title": "Eigenschaft aus Handlung ableiten",
+        "goal": "Aus Handlung und Äußerung einer literarischen Figur eine passende Eigenschaft ableiten und mit Textbezug begründen.",
+        "family": "literaryEvidence"
+      },
+      {
+        "title": "Motiv mit Textbelegen erklären",
+        "goal": "Eine mögliche Absicht einer Figur anhand zweier zusammenpassender Textinformationen erklären und unbelegte Vermutungen abgrenzen.",
+        "family": "literaryReason"
+      }
+    ],
+    "german:6:thema-und-erzaehlperspektive": [
+      {
+        "title": "Thema einer Erzählung bündeln",
+        "goal": "Ein zentrales Thema eines kurzen Erzähltextes benennen und von einem einzelnen Handlungsdetail unterscheiden.",
+        "family": "literaryTheme"
+      },
+      {
+        "title": "Erzählperspektive und Wirkung",
+        "goal": "Ich-Erzählung und Er- beziehungsweise Sie-Erzählung an Textsignalen unterscheiden und eine begrenzte Wirkung der Perspektive erklären.",
+        "family": "narrator"
+      }
+    ],
+    "german:6:sachtext-und-diagramm-verbinden": [
+      {
+        "title": "Diagramm und Sachtext zuordnen",
+        "goal": "Eine Information aus einem kurzen Sachtext dem passenden beschrifteten Diagrammwert mit identischer Einheit zuordnen.",
+        "family": "textChart"
+      },
+      {
+        "title": "Zwei Darstellungen für Antwort",
+        "goal": "Eine Leitfrage durch Verbindung einer Textinformation mit einem tatsächlich sichtbaren Diagrammwert beantworten und beide Quellen nennen.",
+        "family": "textChart"
+      }
+    ],
+    "german:6:quellen-vergleichen": [
+      {
+        "title": "Informationslücken vergleichen",
+        "goal": "An zwei kurzen altersgemäßen Quellen feststellen, welche Informationen zur Leitfrage jeweils enthalten sind oder fehlen.",
+        "family": "source"
+      },
+      {
+        "title": "Quellenauswahl begründen",
+        "goal": "Für eine Leitfrage zwischen zwei Quellen mit Bezug auf Informationsgehalt, erkennbare Urheberschaft und Aktualität begründet wählen.",
+        "family": "source"
+      }
+    ],
+    "german:6:medienabsichten-unterscheiden": [
+      {
+        "title": "Information und Unterhaltung",
+        "goal": "Die vorrangige Informations- oder Unterhaltungsabsicht einer kurzen medialen Darstellung anhand konkreter Merkmale benennen.",
+        "family": "mediaIntent"
+      },
+      {
+        "title": "Mischabsicht mit Beleg erklären",
+        "goal": "Bei einer fiktiven medialen Darstellung informative und unterhaltende Anteile unterscheiden und die Einschätzung an Gestaltungsmitteln belegen.",
+        "family": "mediaIntent"
+      }
+    ],
+    "german:6:mediennutzung-reflektieren": [
+      {
+        "title": "Medienzeit begründet planen",
+        "goal": "An einem fiktiven Tagesablauf eine zur Situation passende Begrenzung der Medienzeit vorschlagen und begründen.",
+        "family": "mediaResponsibility"
+      },
+      {
+        "title": "Verantwortlich digital reagieren",
+        "goal": "In einem fiktiven digitalen Austausch eine respektvolle und datensparsame Reaktion auf einen problematischen Beitrag formulieren.",
+        "family": "mediaResponsibility"
+      }
+    ],
+    "german:6:text-und-bild-sinnvoll-verbinden": [
+      {
+        "title": "Sinnabschnitte im Layout",
+        "goal": "Einen kurzen informierenden Text nach Themenwechseln in Absätze mit passenden Zwischenüberschriften gliedern.",
+        "family": "layout"
+      },
+      {
+        "title": "Bild und Beschriftung zuordnen",
+        "goal": "Für einen Textabschnitt ein inhaltlich passendes Bild mit erklärender Beschriftung auswählen und den Informationsbeitrag begründen.",
+        "family": "textImage"
+      }
+    ],
+    "german:6:textmuster-unterscheiden": [
+      {
+        "title": "Schreibzwecke auseinanderhalten",
+        "goal": "Kurze erzählende, informierende und überzeugende Texte nach ihrem vorrangigen Kommunikationszweck unterscheiden.",
+        "family": "textPattern"
+      },
+      {
+        "title": "Textaufbau mit Zweck verbinden",
+        "goal": "An einem kurzen Text zeigen, wie Aufbau und ausgewählte Sprachmittel zum erzählenden, informierenden oder überzeugenden Zweck passen.",
+        "family": "textPattern"
+      }
+    ],
+    "german:6:schreibplan-mit-w-fragen": [
+      {
+        "title": "W-Fragen für Schreibstoff",
+        "goal": "Zu einem begrenzten Schreibanlass gesammelte Informationen passenden W-Fragen zuordnen und eine wichtige Lücke benennen.",
+        "family": "writingPlan"
+      },
+      {
+        "title": "Schreibplan thematisch ordnen",
+        "goal": "Aus einer Ideensammlung oder Mindmap einen geordneten Schreibplan mit sinnvollen Abschnitten entwickeln.",
+        "family": "writingPlan"
+      }
+    ],
+    "german:6:erzaehlerisch-ausgestalten": [
+      {
+        "title": "Atmosphäre an Einzelheiten zeigen",
+        "goal": "Einen kurzen Erzählabschnitt durch passende wahrnehmbare Einzelheiten ausgestalten, die eine gewählte Atmosphäre tragen.",
+        "family": "narrative"
+      },
+      {
+        "title": "Verben und Abfolge verbessern",
+        "goal": "In einer kurzen Erzählung ungenaue Verben durch treffende ersetzen und die zeitliche Abfolge durch passende Verknüpfungen sichern.",
+        "family": "narrative"
+      }
+    ],
+    "german:6:kriterien-an-textstellen-pruefen": [
+      {
+        "title": "Wort und Satz kriterienbezogen prüfen",
+        "goal": "An einem kurzen Text eine konkrete Stelle auf Wort- oder Satzebene anhand eines vereinbarten Kriteriums prüfen und das Urteil belegen.",
+        "family": "feedback"
+      },
+      {
+        "title": "Textzusammenhang prüfen",
+        "goal": "An zwei benachbarten Absätzen prüfen, ob Reihenfolge und inhaltlicher Anschluss für den angegebenen Schreibzweck verständlich sind.",
+        "family": "revision"
+      }
+    ],
+    "german:6:feedback-fuer-revision-nutzen": [
+      {
+        "title": "Feedback in Auftrag übersetzen",
+        "goal": "Eine konkrete Rückmeldung zu einem eigenen kurzen Text in einen ausführbaren Überarbeitungsauftrag übersetzen.",
+        "family": "revision"
+      },
+      {
+        "title": "Revision mit Wirkung begründen",
+        "goal": "Eine Textstelle nach Rückmeldung überarbeiten und anhand von Vorher und Nachher erklären, was verständlicher oder zweckmäßiger geworden ist.",
+        "family": "revision"
+      }
+    ],
+    "german:6:sprachebene-auswaehlen": [
+      {
+        "title": "Sprachebene im Kontext erkennen",
+        "goal": "In kurzen Äußerungen Standardsprache, Umgangssprache oder ausdrücklich gekennzeichneten Dialekt anhand sprachlicher Merkmale unterscheiden.",
+        "family": "register"
+      },
+      {
+        "title": "Ausdruck an Situation anpassen",
+        "goal": "Eine kurze Äußerung für eine vorgegebene schulische oder private Kommunikationssituation passend umformulieren, ohne Dialekt abzuwerten.",
+        "family": "register"
+      }
+    ],
+    "german:6:redensarten-erklaeren": [
+      {
+        "title": "Redensart sinngemäß erschließen",
+        "goal": "Eine geläufige Redensart aus ihrem Satz- und Situationszusammenhang in eigenen Worten sinngemäß erklären.",
+        "family": "idiom"
+      },
+      {
+        "title": "Wirkung der Redensart",
+        "goal": "An einer kurzen Textstelle erläutern, welche Haltung oder anschauliche Wirkung eine Redensart gegenüber einer sachlichen Umschreibung hervorruft.",
+        "family": "idiom"
+      }
+    ],
+    "german:6:zeitformen-funktional-nutzen": [
+      {
+        "title": "Zeitformen und zeitliche Lage",
+        "goal": "Die zeitliche Beziehung von Ereignissen in einem kurzen Kontext mit Präsens, Präteritum oder Perfekt passend ausdrücken.",
+        "family": "tense"
+      },
+      {
+        "title": "Vorzeitigkeit im Plusquamperfekt",
+        "goal": "Ein Ereignis, das vor einem bereits vergangenen Geschehen liegt, mit einer passenden Plusquamperfektform ausdrücken.",
+        "family": "pastPerfect"
+      },
+      {
+        "title": "Zukünftiges mit Futur I",
+        "goal": "Eine zukünftige Absicht mit korrekt gebildetem Futur I ausdrücken und von der im Kontext ebenfalls möglichen Präsensform unterscheiden.",
+        "family": "future"
+      }
+    ],
+    "german:6:satzverknuepfung-und-flexion": [
+      {
+        "title": "Sätze nach Beziehung verbinden",
+        "goal": "Zwei kurze Sätze durch ein zum zeitlichen oder ursächlichen Zusammenhang passendes Bindewort verbinden.",
+        "family": "connective"
+      },
+      {
+        "title": "Präposition und Kasus",
+        "goal": "Nach einer bekannten Präposition den passenden Kasus und die dazugehörige Artikel- und Nomenform in einem eindeutigen Kontext verwenden.",
+        "family": "case"
+      }
+    ],
+    "german:6:fehler-mit-strategie-beheben": [
+      {
+        "title": "Rechtschreibstrategie passend wählen",
+        "goal": "Für eine markierte Zweifelsstelle eine geeignete Strategie des Verlängerns, Ableitens oder silbischen Prüfens auswählen und ausführen.",
+        "family": "spellingChoose"
+      },
+      {
+        "title": "Wörterbucheintrag nutzen",
+        "goal": "Ein Zweifelswort in bereitgestellten alphabetischen Wörterbucheinträgen finden und die zum Kontext passende Schreibung übernehmen.",
+        "family": "dictionary"
+      }
+    ],
+    "german:6:zeichensetzung-erklaeren": [
+      {
+        "title": "Satzgrenzen mit Zeichen sichern",
+        "goal": "In einer kurzen Folge bekannter Satzarten passende Satzschlusszeichen setzen und an der Aussageabsicht begründen.",
+        "family": "punctuation"
+      },
+      {
+        "title": "Komma in Satzverbindung",
+        "goal": "In einer eindeutigen Verbindung aus Haupt- und eingeleitetem Nebensatz das Komma setzen und die Satzgrenze mit den finiten Verben begründen.",
+        "family": "clauseComma"
+      },
+      {
+        "title": "Zeichen der wörtlichen Rede",
+        "goal": "In einem kurzen Text mit einfachem voran- oder nachgestelltem Begleitsatz die Zeichen der wörtlichen Rede korrekt setzen.",
+        "family": "directSpeech"
+      }
+    ],
+    "german:6:informierend-berichten": [
+      {
+        "title": "Berichtinformationen auswählen",
+        "goal": "Aus vorgegebenen Ereignisnotizen die für einen sachlichen Bericht nötigen W-Fragen-Informationen auswählen und Wertungen abgrenzen.",
+        "family": "report"
+      },
+      {
+        "title": "Kurzen Bericht verfassen",
+        "goal": "Zu einem überschaubaren Ereignis einen kurzen sachlichen Bericht mit verständlicher zeitlicher Abfolge und passenden Informationen schreiben.",
+        "family": "report"
+      }
+    ],
+    "german:6:behauptung-und-begruendung": [
+      {
+        "title": "Behauptung von Grund trennen",
+        "goal": "In einem kurzen argumentierenden Text eine Behauptung, einen passenden Grund und ein mögliches Beispiel unterscheiden.",
+        "family": "argument"
+      },
+      {
+        "title": "Kurzes Argument ausformulieren",
+        "goal": "Zu einer altersgemäßen Frage eine Behauptung mit nachvollziehbarem Grund und einem passenden Beispiel zu einem kurzen Argument verbinden.",
+        "family": "argument"
+      }
+    ],
+    "german:6:lesbare-handschrift": [
+      {
+        "title": "Handschrift bewusst vorbereiten",
+        "goal": "Als Vorbereitung einer situationsgerechten Handschrift passende Kriterien für Buchstabenform, Abstände und Gliederung eines kurzen Textes begründet auswählen.",
+        "family": "handwritingPlan"
+      },
+      {
+        "title": "Handschrift im Anlass prüfen",
+        "goal": "Einen kurzen Text tatsächlich von Hand zur vorgesehenen Lesesituation passend schreiben und die Lesbarkeit an konkreten Schriftstellen überprüfen.",
+        "family": "handwriting"
+      }
+    ],
+    "german:6:sinnbetont-vorlesen": [
+      {
+        "title": "Vorlesegestaltung am Sinn planen",
+        "goal": "Als Vorbereitung des Vorlesens Pausen und Betonungen eines kurzen Textes an seiner Bedeutung begründet kennzeichnen.",
+        "family": "readingPlan"
+      },
+      {
+        "title": "Vorlesen mit Sinnbezug",
+        "goal": "Einen kurzen Text tatsächlich laut mit sinngerechten Pausen, passender Betonung und adressatengerechtem Tempo vorlesen.",
+        "family": "speechRead"
+      }
+    ]
+  }
+}

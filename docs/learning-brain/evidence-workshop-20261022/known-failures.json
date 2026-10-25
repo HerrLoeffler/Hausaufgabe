@@ -1,0 +1,23 @@
+{
+  "attempts": [
+    {
+      "source": "b599478a",
+      "case": "correct independent board answer",
+      "stage": "next-step-review",
+      "resolved": "new generation progression contract; later independent success tested"
+    },
+    {
+      "source": "752a9a81",
+      "case": "teacher handoff after support3",
+      "stage": "next-step-review",
+      "resolved": "teacher-specific review; phase teacher confirmed on cab21676"
+    },
+    {
+      "source": "752a9a81",
+      "case": "correct free error explanation after advanced probe",
+      "stage": "next-step-review",
+      "resolved": false
+    }
+  ],
+  "fullProviderCost": "unknown"
+}

@@ -1,0 +1,612 @@
+{
+  "taskId": "GC-ADAPTIVE-PRACTICE-01",
+  "at": "2026-10-25T14:30:48.221188+00:00",
+  "project": "gradecrew-staging-2026",
+  "syntheticAccountsOnly": true,
+  "scope": "Existing Bavarian Mittelschule Math/German grade5/6 source anchors. No School Live/Production, rule/IAM/provider/key changes, merger or ordinary classroom pilot.",
+  "catalog": {
+    "version": "by-ms-56-competencies-20261025-v3",
+    "sourceAnchors": 113,
+    "childGoals": 241,
+    "digitalGoals": 225,
+    "humanObservationGoals": 16,
+    "prerequisites": 148,
+    "contexts": {
+      "math5": 39,
+      "math6": 67,
+      "german5": 69,
+      "german6": 66
+    },
+    "sourceReview": "inherited-extraction-content-review-open"
+  },
+  "workshops": [
+    "fraction-board",
+    "fraction-units",
+    "number-line",
+    "balance",
+    "coordinate-plane",
+    "angle-protractor",
+    "text-workbench"
+  ],
+  "diagrams": [
+    "coordinates",
+    "angle",
+    "rectangle",
+    "triangle",
+    "circle",
+    "cuboid",
+    "cube-net",
+    "bars",
+    "data-list",
+    "area-grid",
+    "unit-cubes",
+    "cuboid-net",
+    "fraction-area",
+    "segment-figure"
+  ],
+  "automated": {
+    "functions": 431,
+    "frontend": 92,
+    "pythonPreviewIsolation": 1,
+    "allPassed": true,
+    "lint": "pass",
+    "diffCheck": "pass",
+    "meaning": "Automated boundary/behavior checks; not human didactic approval or device acceptance."
+  },
+  "hosting": {
+    "project": "gradecrew-staging-2026",
+    "sourceCommit": "d9a59fb8839066bd611cbb8278c6d02929b81b4b",
+    "checkedAt": "2026-10-25T14:00:23.259Z",
+    "checks": [
+      {
+        "path": "lerngehirn/index.html",
+        "match": true
+      },
+      {
+        "path": "lerngehirn/app.mjs",
+        "match": true
+      },
+      {
+        "path": "lerngehirn/api.mjs",
+        "match": true
+      },
+      {
+        "path": "lerngehirn/model.mjs",
+        "match": true
+      },
+      {
+        "path": "lerngehirn/network.mjs",
+        "match": true
+      },
+      {
+        "path": "lerngehirn/delivery.mjs",
+        "match": true
+      },
+      {
+        "path": "lerngehirn/diagrams.mjs",
+        "match": true
+      },
+      {
+        "path": "lerngehirn/diagram-extras.mjs",
+        "match": true
+      },
+      {
+        "path": "lerngehirn/brain.mjs",
+        "match": true
+      },
+      {
+        "path": "lerngehirn/workshop.mjs",
+        "match": true
+      },
+      {
+        "path": "lerngehirn/workshop-units.mjs",
+        "match": true
+      },
+      {
+        "path": "lerngehirn/styles.css",
+        "match": true
+      }
+    ]
+  },
+  "backendSource": {
+    "catalog": "e988eea3f87cb11b28f9f7d95951cf701094dd3e",
+    "profileStartTurn": "fba1f8dc6ba42de19a8dccfd5bfac001565c1bb8",
+    "audio": "b1c5ebe3c604191a5b79104dd7b9037e9e904908"
+  },
+  "liveCases": {
+    "angle5-A": [
+      {
+        "method": "learningBrainStart",
+        "action": "start",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "",
+        "prompt": "Lies die Größe des Winkels ab. Gib nur die Zahl in Grad ein.",
+        "explanation": "",
+        "diagram": "angle",
+        "audio": false
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "correct",
+        "prompt": "Lies die Größe des Winkels ab. Gib nur die Zahl in Grad ein.",
+        "explanation": "",
+        "diagram": "angle",
+        "audio": false
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "help",
+        "pendingNext": false,
+        "outcome": "incorrect",
+        "prompt": "Schau auf den unteren Schenkel. Welche Zahl steht dort an der Nullmarke?",
+        "explanation": "Der Ausgangsschenkel zeigt, wo du die Winkelskala beginnst. Dort steht 0°.",
+        "diagram": "angle",
+        "audio": false
+      }
+    ],
+    "fraction6v25-wrong-path": [
+      {
+        "method": "learningBrainStart",
+        "action": "start",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "",
+        "prompt": "Erweitere den Bruch 2/5 mit dem Faktor 3. Stelle den neuen, gleichwertigen Bruch mit dem fraction-board dar.",
+        "explanation": "",
+        "tool": "fraction-board",
+        "audio": false
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "audio": false,
+        "technicalRejection": "learningBrainTurn: HTTP503 {'status': 'UNAVAILABLE', 'message': 'Die zusätzliche KI-Prüfung hat diesen Schritt noch nicht freigegeben. Bitte erneut versuchen.', 'details': {'stage': 'answer-review'}}"
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "help",
+        "pendingNext": false,
+        "outcome": "incorrect",
+        "prompt": "Rechne nur den Zähler: 2 · 3 = ?",
+        "explanation": "Der Zähler 2 wird dreimal genommen: 2 + 2 + 2. Wie viel ist das?",
+        "audio": false
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "help",
+        "pendingNext": false,
+        "outcome": "incorrect",
+        "prompt": "Rechne: 2 + 2 + 2 = ?",
+        "explanation": "Der Faktor 3 bedeutet: Nimm die 2 dreimal. Wie viel ist 2 + 2 + 2?",
+        "audio": false
+      }
+    ],
+    "spelling6-B": [
+      {
+        "method": "learningBrainStart",
+        "action": "start",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "",
+        "prompt": "Markiere die Wortstelle, die du durch Verlängern prüfen kannst.",
+        "explanation": "",
+        "tool": "text-workbench",
+        "audio": false
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "help",
+        "pendingNext": false,
+        "outcome": "incorrect",
+        "prompt": "Wähle das Wort, das du durch Verlängern prüfen kannst.",
+        "explanation": "Beim Verlängern machst du das Wort länger. Wähle das Wort, das du so prüfen kannst.",
+        "audio": false
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "help",
+        "pendingNext": false,
+        "outcome": "incorrect",
+        "prompt": "Welche Verlängerung passt zu „Korb“?",
+        "explanation": "Verlängere das Nomen im Kopf. Wähle die Form, die als Mehrzahl passt.",
+        "audio": false
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "completion",
+        "pendingNext": false,
+        "outcome": "correct",
+        "prompt": "Markiere die Wortstelle, die du durch Verlängern prüfen kannst.",
+        "explanation": "Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen.",
+        "tool": "text-workbench",
+        "audio": false
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "correct",
+        "prompt": "Markiere das Nomen, dessen Endlaut du durch Verlängern prüfen kannst.",
+        "explanation": "",
+        "tool": "text-workbench",
+        "audio": false
+      }
+    ],
+    "listen5-B": [
+      {
+        "method": "learningBrainStart",
+        "action": "start",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "",
+        "prompt": "Wie heißt das Kind im Hörtext?",
+        "explanation": "",
+        "audio": true
+      },
+      {
+        "method": "learningBrainAudio",
+        "decodedAudioDataUrlLength": 130583,
+        "aiGenerated": true
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "correct",
+        "prompt": "Was geschieht zuerst und was passiert danach?",
+        "explanation": "",
+        "audio": true
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "help",
+        "pendingNext": false,
+        "outcome": "incorrect",
+        "prompt": "Wer findet etwas?",
+        "explanation": "Höre noch einmal. Achte nur auf die Person, die etwas findet.",
+        "audio": true
+      }
+    ],
+    "fraction6v25-B": [
+      {
+        "method": "learningBrainStart",
+        "action": "start",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "",
+        "prompt": "Erweitere den Bruch 2/3 mit dem Faktor 4. Gib den erweiterten Bruch an.",
+        "explanation": "",
+        "tool": "fraction-board",
+        "audio": false
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "correct",
+        "prompt": "Erweitere den Bruch 4/7 mit dem Faktor 3. Gib den erweiterten Bruch an.",
+        "explanation": "",
+        "audio": false
+      }
+    ],
+    "coordinate6-B": [
+      {
+        "method": "learningBrainStart",
+        "action": "start",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "",
+        "prompt": "Lies die x-Koordinate des markierten Punktes P ab. Schreibe nur die Zahl.",
+        "explanation": "",
+        "diagram": "coordinates",
+        "audio": false
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "correct",
+        "prompt": "Setze den Punkt A bei (-2|3) im Koordinatensystem. Achte auf die Reihenfolge: zuerst x, dann y.",
+        "explanation": "",
+        "tool": "coordinate-plane",
+        "audio": false
+      },
+      {
+        "method": "learningBrainProfile",
+        "action": "snapshot",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "correct",
+        "prompt": "Der Punkt P soll bei P(-3|-2) liegen. Im Gitter ist P bei (-3|2) eingezeichnet. Erkläre kurz, welcher Fehler passiert ist.",
+        "explanation": "",
+        "diagram": "coordinates",
+        "audio": false
+      }
+    ],
+    "units6-B": [
+      {
+        "method": "learningBrainStart",
+        "action": "start",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "",
+        "prompt": "Stelle den Bruch 9/4 dar. Markiere dafür Teile auf den gleichen Ganzen.",
+        "explanation": "",
+        "tool": "fraction-units",
+        "audio": false
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "correct",
+        "prompt": "Welche unechte Bruchzahl zeigt das Raster? Schreibe den Bruch auf.",
+        "explanation": "",
+        "diagram": "area-grid",
+        "audio": false
+      }
+    ],
+    "units-pool6-B": [
+      {
+        "method": "learningBrainStart",
+        "action": "start",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "",
+        "prompt": "Stelle den Bruch 9/4 dar. Markiere dafür Teile auf den gleichen Ganzen.",
+        "explanation": "",
+        "tool": "fraction-units",
+        "audio": false
+      },
+      {
+        "method": "learningBrainProfile",
+        "action": "snapshot",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "correct",
+        "prompt": "Welche unechte Bruchzahl zeigt das Raster? Schreibe den Bruch auf.",
+        "explanation": "",
+        "diagram": "area-grid",
+        "audio": false
+      }
+    ],
+    "area5-A": [
+      {
+        "method": "learningBrainStart",
+        "action": "start",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "",
+        "prompt": "Wie viele Einheitsquadrate siehst du in der Reihe?",
+        "explanation": "",
+        "diagram": "area-grid",
+        "audio": false
+      },
+      {
+        "method": "learningBrainTurn",
+        "action": "answer",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "correct",
+        "prompt": "Wie viele Einheitsquadrate bedecken das Rechteck insgesamt?",
+        "explanation": "",
+        "diagram": "area-grid",
+        "audio": false
+      }
+    ],
+    "angle-final5-A": [
+      {
+        "method": "learningBrainStart",
+        "action": "start",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "",
+        "prompt": "Stelle den zweiten Schenkel auf 60° ein. Die Nullrichtung ist der feste Schenkel bei 0°.",
+        "explanation": "",
+        "tool": "angle-protractor",
+        "audio": false
+      },
+      {
+        "method": "learningBrainProfile",
+        "action": "snapshot",
+        "phase": "practice",
+        "pendingNext": false,
+        "outcome": "correct",
+        "prompt": "Stelle den zweiten Schenkel auf 74° ein. Die Nullrichtung ist der feste Schenkel bei 0°.",
+        "explanation": "",
+        "tool": "angle-protractor",
+        "audio": false
+      }
+    ]
+  },
+  "currentFundusProvenance": {
+    "pendingNext": false,
+    "phase": "practice",
+    "generationSource": "reviewed-pool",
+    "tool": "fraction-units",
+    "poolRef": true,
+    "nextFailure": null
+  },
+  "persistedEvidenceAfterRealBrowserAnswers": [
+    {
+      "goal": "Brüche über ein Ganzes hinaus",
+      "state": "practicing",
+      "evidence": {
+        "status": "practicing",
+        "independent": 1,
+        "correct": 1,
+        "supported": 0,
+        "reviewDue": false,
+        "retention": "open"
+      }
+    },
+    {
+      "goal": "Figuren mit Koordinaten erzeugen",
+      "state": "practicing",
+      "evidence": {
+        "status": "practicing",
+        "independent": 3,
+        "correct": 3,
+        "supported": 0,
+        "reviewDue": false,
+        "retention": "open"
+      }
+    }
+  ],
+  "browserProof": {
+    "audio": {
+      "readyState": 4,
+      "durationSeconds": 6.12,
+      "playbackBecameActive": true,
+      "publicTranscript": false
+    },
+    "equalWholes": {
+      "wholeWidthsPx": [
+        767,
+        767,
+        767
+      ],
+      "partsEach": [
+        4,
+        4,
+        4
+      ],
+      "selectedTotal": 9,
+      "displayedFraction": "9/4"
+    },
+    "coordinateFigure": {
+      "points": [
+        "A(-3|1)",
+        "B(1|3)",
+        "C(3|-2)",
+        "D(-2|-3)"
+      ],
+      "edges": [
+        "A-B",
+        "B-C",
+        "C-D",
+        "A-D"
+      ],
+      "actualUiActions": true,
+      "aiFeedback": "correct"
+    },
+    "angle": {
+      "firstTargetDegrees": 60,
+      "firstStep": 10,
+      "nextTargetDegrees": 74,
+      "nextStep": 1,
+      "actualUiSliderUsed": true,
+      "aiFeedback": "correct"
+    },
+    "timedSessionExpiryObserved": true
+  },
+  "screenshots": [
+    "evidence/full56-20261025/network-help.png",
+    "evidence/full56-20261025/coordinate-figure.png",
+    "evidence/full56-20261025/equal-wholes.png",
+    "evidence/full56-20261025/angle-live.png"
+  ],
+  "limits": [
+    "Not all225digital goals were individually live-calibrated.",
+    "16actual oral/gesture/group/handwriting performances remain visible human-observation boundaries; preparation is separately scoped.",
+    "No automatic global model training or cross-pupil task promotion; reviewed pool remains owner-private.",
+    "Regular classroom/teacher roster identity, scheduled physical deletion of raw attempts and real device acceptance remain separate open gates.",
+    "AI may still reject uncertain candidates; no fictitious fallback or flipped approval."
+  ],
+  "budget": {
+    "attemptHistoryPreserved": true,
+    "noExplicitNewTokenBudget": true,
+    "runtimeModelAndTotalProviderCost": "not independently attested; existing provider and normal quotas reused"
+  },
+  "liveCaseProvenance": {
+    "angle5-A": "Historical release22 regression origin: number-only progression, subsequently corrected. Not a claim of final-candidate quality.",
+    "otherSequences": "Sequences span releases22–30; per-request cloud revision was not captured. Final UI/model behavior and final source hashes are attested separately.",
+    "angle-final5-A": "Fresh run after release29 completed; actual slider60→74with1degree steps.",
+    "units-pool6-B": "Current V7private reviewed pool reused, equal-length wholes checked in browser, actual9/4replayed and correctly graded."
+  },
+  "readyRuntimeRevisions": [
+    {
+      "name": "learningBrainStart",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-25T14:12:40.715990281Z",
+      "build": "projects/840345136563/locations/europe-west1/builds/2ccd1925-2279-4560-b3b0-8a2ea75b383c",
+      "revision": "learningbrainstart-00030-piz"
+    },
+    {
+      "name": "learningBrainTurn",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-25T14:12:40.593394969Z",
+      "build": "projects/840345136563/locations/europe-west1/builds/2ccd1925-2279-4560-b3b0-8a2ea75b383c",
+      "revision": "learningbrainturn-00031-net"
+    },
+    {
+      "name": "learningBrainCatalog",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-25T13:19:40.688170018Z",
+      "build": "projects/840345136563/locations/europe-west1/builds/4b9b7627-e2da-4d72-905a-cefd7ae2598b",
+      "revision": "learningbraincatalog-00005-xot"
+    },
+    {
+      "name": "learningBrainProfile",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-25T14:12:34.641549461Z",
+      "build": "projects/840345136563/locations/europe-west1/builds/2ccd1925-2279-4560-b3b0-8a2ea75b383c",
+      "revision": "learningbrainprofile-00010-hoj"
+    }
+  ],
+  "canonicalBuild": {
+    "source": "1a307ff78ee393cf879102d9d30dd7c6bc6a718f",
+    "regressionTests": 7,
+    "actions": [
+      {
+        "name": "Legal information package checks",
+        "runId": 40201853340,
+        "conclusion": "success"
+      },
+      {
+        "name": "Admin test-account controls",
+        "runId": 40201853343,
+        "conclusion": "success"
+      },
+      {
+        "name": "BugOps Server Checks",
+        "runId": 40201853323,
+        "conclusion": "success"
+      }
+    ],
+    "historicalFailure": "Previous fba1f8 canonical package omitted learner diagram imports; fixed in 1a307ff. No production learner bundle added."
+  },
+  "durableHelpProof": {
+    "child": "BY-38ada466aa58:math:5:R:v1:grundrechenarten-sicher-anwenden:k1",
+    "wrongAnswer": "999",
+    "initialStep": "7+8 within 47+38",
+    "smallerHelp": "7+3=___",
+    "afterSessionFinished": {
+      "activeSession": false,
+      "state": "using-help",
+      "independent": 1,
+      "correct": 0,
+      "supported": 0
+    }
+  },
+  "finalScreenshot": {
+    "file": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/work/GC-ADAPTIVE-PRACTICE-01-prototype/evidence/full56-20261025/network-final.png",
+    "sha256": "a651e2233810ec9fa3f7a488179e28712a0e4a0f82431c7c3d039d2c30caf1a7"
+  }
+}

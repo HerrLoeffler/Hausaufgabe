@@ -1,0 +1,228 @@
+[
+  {
+    "scenario": "start",
+    "phase": "practice",
+    "prompt": "Zeige am Bruchbrett, wie der Bruch 1/3 mit dem Faktor 2 wertgleich erweitert wird.",
+    "workshop": {
+      "tool": "fraction-board",
+      "version": 1,
+      "role": "answer",
+      "goal": "equivalent",
+      "numerator": 1,
+      "denominator": 3,
+      "targetDenominator": 6,
+      "instruction": "Teile jedes Drittel gleichmäßig und markiere danach dieselbe Menge."
+    },
+    "explanation": "",
+    "feedback": {
+      "outcome": "",
+      "short": ""
+    }
+  },
+  {
+    "scenario": "profile",
+    "phase": "help",
+    "prompt": "Markiere bei 6 gleich großen Teilen jetzt 2 Teile.",
+    "workshop": {
+      "tool": "fraction-board",
+      "version": 1,
+      "role": "answer",
+      "goal": "equivalent",
+      "numerator": 1,
+      "denominator": 3,
+      "targetDenominator": 6,
+      "instruction": "Markiere 2 von 6 Teilen."
+    },
+    "explanation": "Du hast in sechs Teile geteilt, aber nur einen Teil markiert. Markiere jetzt zwei Teile: Sind nun zwei Teile markiert?",
+    "feedback": {
+      "outcome": "incorrect",
+      "short": "Noch nicht richtig: Aus 1/3 wird bei Faktor 2 der gleichwertige Bruch 2/6."
+    }
+  },
+  {
+    "scenario": "wrong",
+    "phase": "help",
+    "prompt": "Markiere noch 1 Teil.",
+    "workshop": {
+      "tool": "fraction-board",
+      "version": 1,
+      "role": "answer",
+      "goal": "equivalent",
+      "numerator": 1,
+      "denominator": 3,
+      "targetDenominator": 6,
+      "instruction": "Markiere noch 1 Teil."
+    },
+    "explanation": "Die 6 Teile sind kleinere Stücke; zur gleichen Menge wie 1/3 gehören deshalb 2 von 6. Markierst du noch 1 Teil?",
+    "feedback": {
+      "outcome": "incorrect",
+      "short": "Nicht ganz: Markiere 2 von 6 Teilen. Der passende Bruch ist 2/6, nicht 1/6."
+    }
+  },
+  {
+    "scenario": "start",
+    "phase": "practice",
+    "prompt": "Erweitere den Bruch 1/3 mit dem Faktor 2. Lege den Bruch am gleichen Ganzen wertgleich auf Sechstel um.",
+    "workshop": {
+      "tool": "fraction-board",
+      "version": 1,
+      "role": "answer",
+      "goal": "equivalent",
+      "numerator": 1,
+      "denominator": 3,
+      "targetDenominator": 6,
+      "instruction": "Erweitere den Bruch auf Sechstel."
+    },
+    "explanation": "",
+    "feedback": {
+      "outcome": "",
+      "short": ""
+    }
+  },
+  {
+    "scenario": "wrong",
+    "phase": "help",
+    "prompt": "Bringe den Bruch durch korrektes Umteilen auf Sechstel.",
+    "workshop": {
+      "tool": "fraction-board",
+      "version": 1,
+      "role": "answer",
+      "goal": "equivalent",
+      "numerator": 1,
+      "denominator": 3,
+      "targetDenominator": 6,
+      "instruction": "Setze auf 3 Teile zurück und teile jedes Drittel in 2 gleiche Teile.",
+      "initialState": {
+        "parts": 6,
+        "selected": [
+          0
+        ]
+      }
+    },
+    "explanation": "Du siehst gerade 1 markiertes Sechstel. Setze die Einteilung zuerst auf 3 Teile zurück und teile dann jedes Drittel in 2 gleiche Teile.",
+    "feedback": {
+      "outcome": "incorrect",
+      "short": "Noch nicht: Zähler und Nenner mit 2 erweitern: 1/3 = 2/6."
+    }
+  },
+  {
+    "scenario": "profile",
+    "phase": "completion",
+    "prompt": "Erweitere den Bruch 1/3 mit dem Faktor 2. Lege den Bruch am gleichen Ganzen wertgleich auf Sechstel um.",
+    "workshop": {
+      "tool": "fraction-board",
+      "version": 1,
+      "role": "answer",
+      "goal": "equivalent",
+      "numerator": 1,
+      "denominator": 3,
+      "targetDenominator": 6,
+      "instruction": "Erweitere den Bruch auf Sechstel."
+    },
+    "explanation": "Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen.",
+    "feedback": {
+      "outcome": "correct",
+      "short": "Richtig! Aus 1/3 werden durch Umteilen 2 von 6 Teilen: 2/6."
+    }
+  },
+  {
+    "scenario": "profile",
+    "phase": "practice",
+    "prompt": "Erweitere den Bruch 2/5 mit dem Faktor 2. Lege ihn am gleichen Ganzen wertgleich auf Zehntel um.",
+    "workshop": {
+      "tool": "fraction-board",
+      "version": 1,
+      "role": "answer",
+      "goal": "equivalent",
+      "numerator": 2,
+      "denominator": 5,
+      "targetDenominator": 10,
+      "instruction": "Erweitere den Bruch auf Zehntel."
+    },
+    "explanation": "",
+    "feedback": {
+      "outcome": "correct",
+      "short": "Richtig: Du hast Zähler und Nenner mit 2 vervielfacht. Der wertgleiche Bruch ist 2/6."
+    }
+  },
+  {
+    "scenario": "wrong",
+    "phase": "help",
+    "prompt": "Markiere 2 weitere Zehntel, sodass der Bruch wertgleich bleibt.",
+    "workshop": {
+      "tool": "fraction-board",
+      "version": 1,
+      "role": "answer",
+      "goal": "equivalent",
+      "numerator": 2,
+      "denominator": 5,
+      "targetDenominator": 10,
+      "instruction": "Markiere 2 weitere Zehntel.",
+      "initialState": {
+        "parts": 10,
+        "selected": [
+          0,
+          1
+        ]
+      }
+    },
+    "explanation": "Du hast schon 10 Teile, aber erst 2 markiert. Markiere 2 weitere Teile: Wie viele Zehntel sind dann markiert?",
+    "feedback": {
+      "outcome": "incorrect",
+      "short": "Fast: Beim Erweitern mit 2 musst du Zähler und Nenner verdoppeln: 2/5 = 4/10."
+    }
+  },
+  {
+    "scenario": "wrong",
+    "phase": "help",
+    "prompt": "Wie viele Zehntel müssen markiert sein?",
+    "workshop": null,
+    "explanation": "Du hast die 10 Teile eingestellt, aber die 2 markierten Teile nicht mitvermehrt. Für denselben Anteil müssen 4 von 10 Teilen markiert sein.",
+    "feedback": {
+      "outcome": "incorrect",
+      "short": "Du hast noch keine 2 weiteren Zehntel markiert. Richtig sind 4/10."
+    }
+  },
+  {
+    "scenario": "textwrong",
+    "phase": "help",
+    "prompt": "Wie viel ist 2 mal 2?",
+    "workshop": null,
+    "explanation": "Damit derselbe Anteil bleibt, werden auch die 2 markierten Teile verdoppelt.",
+    "feedback": {
+      "outcome": "incorrect",
+      "short": "Nicht richtig. Bei 10 Teilen müssen 4 markiert sein."
+    }
+  },
+  {
+    "scenario": "textwrong",
+    "phase": "teacher",
+    "prompt": "Schau mit mir das Beispiel gemeinsam an.",
+    "workshop": null,
+    "explanation": "Wir schauen das vollständige Beispiel jetzt gemeinsam mit der Lehrkraft an. Dabei wird besprochen, warum aus 2/5 der gleich große Bruch 4/10 wird.",
+    "feedback": {
+      "outcome": "incorrect",
+      "short": "Das ist leider falsch."
+    }
+  },
+  {
+    "scenario": "start",
+    "phase": "practice",
+    "prompt": "Erweitere den Bruch 1/3 auf den Nenner 6. Nutze dazu die Lernwerkstatt und gib den neuen Bruch an.",
+    "workshop": {
+      "tool": "fraction-board",
+      "version": 1,
+      "role": "answer",
+      "goal": "equivalent",
+      "numerator": 1,
+      "denominator": 3,
+      "targetDenominator": 6,
+      "instruction": "Teile die drei Teile gleichmäßig weiter und markiere denselben Anteil."
+    },
+    "explanation": "",
+    "feedback": {
+      "outcome": "",
+      "short": ""
+    }
+  }
+]

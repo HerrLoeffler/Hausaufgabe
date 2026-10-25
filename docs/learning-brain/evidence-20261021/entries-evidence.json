@@ -1,0 +1,110 @@
+[
+  {
+    "grade": 5,
+    "subject": "math",
+    "topicId": "BY-38ada466aa58:math:5:R:v1:stellenwerte-lesen",
+    "title": "Stellenwerte lesen",
+    "prompt": "Schreibe die Zahl als Ziffern.",
+    "hasContext": true,
+    "result": "generated-and-second-AI-reviewed"
+  },
+  {
+    "grade": 5,
+    "subject": "german",
+    "topicId": "BY-59e19c7b9df3:german:5:R:v1:schluesselstellen-finden",
+    "title": "Schlüsselstellen finden",
+    "prompt": "Lies den Text. Warum legt die Klasse einen Schulgarten an? Nenne einen Grund aus dem Text.",
+    "hasContext": true,
+    "result": "generated-and-second-AI-reviewed"
+  },
+  {
+    "grade": 6,
+    "subject": "math",
+    "topicId": "BY-3dcd29f28ce3:math:6:R:v1:B05",
+    "title": "Anteil einer Menge",
+    "prompt": "Wie viel sind \\(\\frac{1}{3}\\) von 12 Äpfeln?",
+    "hasContext": false,
+    "result": "generated-and-second-AI-reviewed"
+  },
+  {
+    "grade": 6,
+    "subject": "german",
+    "topicId": "BY-4419bfcf4cb3:german:6:R:v1:textaussagen-belegen",
+    "title": "Textaussagen belegen",
+    "prompt": "Welche Textstelle zeigt, dass Noor die Pflanzen pflegt? Schreibe den Satz wörtlich ab.",
+    "hasContext": true,
+    "result": "generated-and-second-AI-reviewed"
+  },
+  {
+    "grade": 7,
+    "subject": "math",
+    "topicId": "BY-37af8b8c14a6:math:7:R:v1:prozentgroessen-zuordnen",
+    "title": "Prozentgrößen zuordnen",
+    "prompt": "Welche Prozentgröße ist die Zahl 25?",
+    "hasContext": true,
+    "result": "generated-and-second-AI-reviewed"
+  },
+  {
+    "grade": 7,
+    "subject": "german",
+    "topicId": "BY-be53dd90c7b8:german:7:R:v1:textabschnitte-strukturieren",
+    "title": "Textabschnitte strukturieren",
+    "prompt": "Formuliere eine kurze Überschrift, die den wesentlichen Inhalt des Textabschnitts zusammenfasst.",
+    "hasContext": true,
+    "result": "generated-and-second-AI-reviewed"
+  },
+  {
+    "grade": 8,
+    "subject": "math",
+    "topicId": "BY-6db3f7dbf98c:math:8:R:v1:veraenderte-grundwerte-verstehen",
+    "title": "Veränderte Grundwerte verstehen",
+    "prompt": "Ein Rucksack kostet 50 €. Im Angebot wird der Preis um 20 % vermindert. Wie viel kostet der Rucksack jetzt?",
+    "hasContext": false,
+    "result": "generated-and-second-AI-reviewed"
+  },
+  {
+    "grade": 8,
+    "subject": "german",
+    "topicId": "BY-b630dae33f32:german:8:R:v1:komplexere-texte-erschliessen",
+    "title": "Komplexere Texte erschließen",
+    "prompt": "Lies den Text mit der Frage: Was ist die wichtigste Veränderung? Fasse diese Information in einem Satz mit höchstens 15 Wörtern zusammen.",
+    "hasContext": true,
+    "result": "generated-and-second-AI-reviewed"
+  },
+  {
+    "grade": 9,
+    "subject": "math",
+    "topicId": "BY-ae7a6aa84fde:math:9:R:v1:zinsgroessen-und-jahreszinsen",
+    "title": "Zinsgrößen und Jahreszinsen",
+    "prompt": "Ein Sparguthaben beträgt 600 €. Der Zinssatz beträgt 3 % pro Jahr. Wie viele Jahreszinsen erhältst du?",
+    "hasContext": false,
+    "result": "generated-and-second-AI-reviewed"
+  },
+  {
+    "grade": 9,
+    "subject": "german",
+    "topicId": "BY-8f0c1e392b32:german:9:R:v1:selbstaendig-strukturierend-lesen",
+    "title": "Selbständig strukturierend lesen",
+    "prompt": "Lies den Text und sichere seinen Inhalt in einer Gliederung mit drei kurzen Überschriften. Verwende für jeden Abschnitt eine passende Überschrift.",
+    "hasContext": true,
+    "result": "generated-and-second-AI-reviewed"
+  },
+  {
+    "grade": 10,
+    "subject": "math",
+    "topicId": "BY-e56feb597d1b:math:10:M:v1:potenzgesetze-erklaeren",
+    "title": "Potenzgesetze erklären",
+    "prompt": "Vereinfache den Term: 3² · 3³",
+    "hasContext": false,
+    "result": "generated-and-second-AI-reviewed"
+  },
+  {
+    "grade": 10,
+    "subject": "german",
+    "topicId": "BY-4fd8f18a1dc6:german:10:M:v1:komplexe-textmuster-erschliessen",
+    "title": "Komplexe Textmuster erschließen",
+    "prompt": "Lies den Text. Welche Textstruktur hat der Abschnitt? Begründe deine Antwort mit einer Textstelle.",
+    "hasContext": true,
+    "result": "generated-and-second-AI-reviewed"
+  }
+]

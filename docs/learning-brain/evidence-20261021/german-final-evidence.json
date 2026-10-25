@@ -1,0 +1,96 @@
+{
+  "before": {
+    "id": "b3523d7f-b24f-4b69-a01d-1eae4004435d",
+    "revision": 1,
+    "topic": {
+      "id": "BY-4419bfcf4cb3:german:6:R:v1:behauptung-und-begruendung",
+      "subject": "german",
+      "grade": 6,
+      "track": "R",
+      "title": "Behauptung und Begründung",
+      "area": "D6 Lernbereich 3: Schreiben",
+      "goal": "Eine eigene Behauptung von einer Begründung unterscheiden und in einem kurzen argumentierenden Text verbinden.",
+      "source": {
+        "id": "BY-4419bfcf4cb3",
+        "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/deutsch/regelklasse",
+        "status": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+        "sha256": "4b18ac2fa07a5ca7360e5c8d05ab5dc6b99bb4c74d1bfdc5c6c92824a3c36d5b",
+        "anchor": "D6 3.2 Texte planen und schreiben"
+      },
+      "prerequisites": [
+        "BY-59e19c7b9df3:german:5:R:v1:schreibideen-ordnen"
+      ],
+      "modality": "text",
+      "guidance": "Nur ein sichtbares Schreibkriterium auf einmal vertiefen; vor dem Gesamttext einen kurzen Plan oder Absatz erarbeiten. Textbelege und mehrere fachlich vertretbare Formulierungen akzeptieren; Rechtschreibung nur als Ziel der Aufgabe bewerten. Bei unklarer Bewertung keine falsche Evidenz setzen. Nach wiederholtem Fehler eine Anforderung entfernen und eine beantwortbare Mikrofrage stellen; nach weiter erfolgloser Hilfe gemeinsam mit der Lehrkraft fortsetzen.",
+      "availability": "requires_task_validation",
+      "reviewStatus": "inhaltliche_Pruefung_offen"
+    },
+    "phase": "practice",
+    "task": {
+      "id": "fd7b1a6d-0b66-4ef1-ba9f-e4d36af80132",
+      "prompt": "Welche Zuordnung stimmt? Wähle eine Antwort.",
+      "contextText": "Satz 1: In der Pause sollte es auf dem Schulhof mehr Sitzbänke geben.\nSatz 2: Dann könnten sich mehr Kinder ausruhen.",
+      "input": "choice",
+      "options": [
+        "Satz 1 ist die Behauptung, Satz 2 ist die Begründung.",
+        "Satz 1 ist die Begründung, Satz 2 ist die Behauptung.",
+        "Beide Sätze sind Behauptungen.",
+        "Beide Sätze sind Begründungen."
+      ]
+    },
+    "originalTask": null,
+    "explanation": "",
+    "visual": null,
+    "feedback": {
+      "outcome": "",
+      "short": ""
+    },
+    "remainingSeconds": 1189,
+    "summary": null
+  },
+  "answer": "Satz 1 ist die Behauptung, Satz 2 ist die Begründung.",
+  "after": {
+    "id": "b3523d7f-b24f-4b69-a01d-1eae4004435d",
+    "revision": 2,
+    "topic": {
+      "id": "BY-4419bfcf4cb3:german:6:R:v1:behauptung-und-begruendung",
+      "subject": "german",
+      "grade": 6,
+      "track": "R",
+      "title": "Behauptung und Begründung",
+      "area": "D6 Lernbereich 3: Schreiben",
+      "goal": "Eine eigene Behauptung von einer Begründung unterscheiden und in einem kurzen argumentierenden Text verbinden.",
+      "source": {
+        "id": "BY-4419bfcf4cb3",
+        "url": "https://www.lehrplanplus.bayern.de/fachlehrplan/mittelschule/6/deutsch/regelklasse",
+        "status": "volltext_extrahiert_inhaltliche_Pruefung_offen",
+        "sha256": "4b18ac2fa07a5ca7360e5c8d05ab5dc6b99bb4c74d1bfdc5c6c92824a3c36d5b",
+        "anchor": "D6 3.2 Texte planen und schreiben"
+      },
+      "prerequisites": [
+        "BY-59e19c7b9df3:german:5:R:v1:schreibideen-ordnen"
+      ],
+      "modality": "text",
+      "guidance": "Nur ein sichtbares Schreibkriterium auf einmal vertiefen; vor dem Gesamttext einen kurzen Plan oder Absatz erarbeiten. Textbelege und mehrere fachlich vertretbare Formulierungen akzeptieren; Rechtschreibung nur als Ziel der Aufgabe bewerten. Bei unklarer Bewertung keine falsche Evidenz setzen. Nach wiederholtem Fehler eine Anforderung entfernen und eine beantwortbare Mikrofrage stellen; nach weiter erfolgloser Hilfe gemeinsam mit der Lehrkraft fortsetzen.",
+      "availability": "requires_task_validation",
+      "reviewStatus": "inhaltliche_Pruefung_offen"
+    },
+    "phase": "practice",
+    "task": {
+      "id": "6aae8630-bec6-412c-a255-f90c1a6f5950",
+      "prompt": "Schreibe einen kurzen argumentierenden Satz. Verbinde die Behauptung mit einer passenden Begründung und benutze dabei „weil“: Die Schule sollte im Klassenzimmer mehr Pflanzen aufstellen.",
+      "contextText": "",
+      "input": "text",
+      "options": []
+    },
+    "originalTask": null,
+    "explanation": "",
+    "visual": null,
+    "feedback": {
+      "outcome": "correct",
+      "short": "Richtig!"
+    },
+    "remainingSeconds": 1058,
+    "summary": null
+  }
+}

@@ -447,6 +447,7 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
 
 module.exports = {
   ...existing,
+  ...require("./lib/learning-brain/callables"),
   ...require("./admin-account-callables"),
   ...require("./review-mode-callables"),
   aggregateBugFeedback,
