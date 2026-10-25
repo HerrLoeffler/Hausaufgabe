@@ -6,7 +6,7 @@ test('all existing subtopics have stable independent work records and bounded da
  assert.equal(typeof m.childrenFor,'function');
  const ids=[];
  for(const d of domains){const list=m.childrenFor(d.id);assert.ok(d.pieces.every(title=>list.some(c=>c.title===title)),d.id);
-  for(const c of list){ids.push(`${c.domainId}/${c.id}`);for(const f of ['id','domainId','title','state','priority','why','current','gap','next','owner','source','sourceDate'])assert.ok(c[f],`${d.id}/${c.id}: ${f}`);assert.ok(c.acceptance.length>0);assert.equal(c.progress,null);assert.equal(c.sourceDate,c.id==='erneuerungen'?'2026-10-25':'2026-10-23');}
+  for(const c of list){ids.push(`${c.domainId}/${c.id}`);for(const f of ['id','domainId','title','state','priority','why','current','gap','next','owner','source','sourceDate'])assert.ok(c[f],`${d.id}/${c.id}: ${f}`);assert.ok(c.acceptance.length>0);assert.equal(c.progress,null);assert.equal(c.sourceDate,c.id==='erneuerungen'||d.id==='central'&&['chat','wissen'].includes(c.id)?'2026-10-25':'2026-10-23');}
  }assert.equal(new Set(ids).size,ids.length);
 });
 test('each area becomes the center, all children are placed distinctly and deep links resolve safely',()=>{

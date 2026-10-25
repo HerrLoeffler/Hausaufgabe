@@ -4,6 +4,8 @@ on:
     paths:
       - 'docs/prototypes/firmenzentrale/**'
       - 'tests/firmenzentrale/**'
+      - 'tools/central_runtime/**'
+      - 'tools/serve_firmenzentrale.py'
       - '.github/workflows/firmenzentrale-ui.yml'
   workflow_dispatch:
 permissions:
@@ -25,5 +27,8 @@ jobs:
           node --check docs/prototypes/firmenzentrale/app.mjs
           node --check docs/prototypes/firmenzentrale/network-view.mjs
           node --check docs/prototypes/firmenzentrale/focus-view.mjs
+          node --check docs/prototypes/firmenzentrale/runtime-view.mjs
       - name: Test navigation, evidence and draft persistence
         run: node --test tests/firmenzentrale/*.test.mjs
+      - name: Test local broker without model calls or credentials
+        run: python3 -m unittest discover -s tests/firmenzentrale -p 'test_*.py' -v
