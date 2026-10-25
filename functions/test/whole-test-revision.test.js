@@ -120,3 +120,17 @@ test("implicit type changes are rejected per question", () => {
   assert.equal(result.test.questions[0].type, "single");
   assert.deepEqual(result.unchangedIndices, [0]);
 });
+
+test("explicit total image wish survives revision as two concrete missing media intents", () => {
+  const clean = cleanWholeTestRevisionRequest({
+    instruction: "Wir wollten 2 Bilder in dem Test haben.",
+    test: { title: "Farben", questions: [singleQuestion(), singleQuestion()] }
+  });
+  const questions = ["Ein roter Kreis neben einem blauen Quadrat", "Ein grünes Dreieck neben einem gelben Kreis"].map(prompt => ({
+    ...singleQuestion("Welche Farbe hat die erste Form?"),
+    mediaIntent: { ...mediaNone(), kind: "ai_generated", count: 1, prompt, altText: "Formen zur Aufgabe" }
+  }));
+  const result = finalizeWholeTestRevision(clean, { questions });
+  assert.equal(result.test.questions.filter(q => q.mediaIntent.kind === "ai_generated").length, 2,
+    "A text revision must not silently erase the expressly requested image jobs");
+});
