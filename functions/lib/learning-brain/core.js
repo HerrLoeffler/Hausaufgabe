@@ -19,6 +19,7 @@ function transition(previous,action,assessment,now=Date.now()){
   s.previousLevel=s.level||0;s.level=s.phase==='completion'?0:Math.min(3,(s.level||0)+1);
   s.phase='practice';s.supportStage=0;s.originalTask=null;s.explanation='';s.visual=null;return s;
  }
+ if(s.topic.parentTopicId&&(s.phase==='practice'||s.phase==='completion'))s.events.push({kind:'help-started',topicId:s.topic.id,sessionId:s.id,at:now,independent:false});
  s.originalTask=s.originalTask||s.task;
  s.supportStage=Math.min(3,(s.supportStage||0)+1);s.level=0;
  s.phase=previous.supportStage>=3?'teacher':'help';

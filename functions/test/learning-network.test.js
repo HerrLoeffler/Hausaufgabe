@@ -36,3 +36,12 @@ test('out-of-context prerequisites never manufacture cross-grade readiness',()=>
  const c=globalThis.structuredClone(catalog);c.competencies[1].prerequisites=['math-five'];
  assert.equal(chooseCompetency(c,{}, {grade:6,subject:'math',parentTopicId:parent.id},200).grade,6);
 });
+
+test('automatic help after a confirmed error survives leaving the lesson without becoming mastery evidence',()=>{
+ const {transition}=require('../lib/learning-brain/core');
+ const topic={id:'auto-help',parentTopicId:'parent',subject:'math',grade:6,track:'R',area:'Brüche',title:'Erweitern',goal:'Einfach erweitern',learningPlan:{levels:['a','b','c','d'],help:['a','b','c']},prerequisites:[]};
+ const before={id:'session',topic,phase:'practice',level:0,supportStage:0,deadline:2000,events:[],task:{id:'task',prompt:'Erweitere2/3',answer:{kind:'exact-fraction',values:['4/6']},family:'expand'}};
+ const helped=transition(before,'answer',{outcome:'incorrect'},100);const ended=transition(helped,'finish',null,101);
+ const network=projectNetwork({version:'v',competencies:[topic]},{[topic.id]:ended.events},{session:ended},3000,{grade:6,track:'R',subject:'math'});
+ assert.equal(network.nodes[0].state,'using-help');assert.equal(network.nodes[0].evidence.independent,1);assert.equal(network.nodes[0].evidence.correct,0);
+});

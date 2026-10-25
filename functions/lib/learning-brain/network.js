@@ -7,7 +7,7 @@ function matches(topic,context={}){
 }
 function evidenceFor(topic,events,now){return projectSkill(events,now,topic);}
 function usingHelp(events){
- const last=events.at(-1);if(last?.kind==='help-requested'||(last?.independent===false&&last?.correct===true))return true;
+ const last=events.at(-1);if(['help-requested','help-started'].includes(last?.kind)||(last?.independent===false&&last?.correct===true))return true;
  const unique=new Set();const recent=events.filter(e=>e.independent&&!unique.has(e.fingerprint)&&unique.add(e.fingerprint)).slice(-2);
  return recent.length===2&&recent.every(e=>e.correct===false)&&last?.correct!==true;
 }
