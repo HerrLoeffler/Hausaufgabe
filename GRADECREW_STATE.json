@@ -1194,7 +1194,30 @@
       "masterpiece_branch": "feature/design-startscreen-masterpiece-v1",
       "masterpiece_merge": "7f464085e89bdb3ea331dfbc988decfa83bc59f6",
       "masterpiece_v4_merge": "fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41",
-      "masterpiece_v4_handoff": "workstreams/design-startscreen-multiai-v4.md"
+      "masterpiece_v4_handoff": "workstreams/design-startscreen-multiai-v4.md",
+      "auth_onboarding_followup": {
+        "task_id": "GC-DESIGN-05",
+        "observed_at": "2026-10-25",
+        "stage": "ci_green",
+        "branch": "feature/gc-auth-onboarding-20261025",
+        "pull_request": "https://github.com/HerrLoeffler/Hausaufgabe/pull/303",
+        "runtime_commit": "668ee2d81afda5d6ef4b4defe68207e7a3e47225",
+        "source_tree": "b847d86b6a3a4865b18d8e30fee1f5f95f58eaf7",
+        "checks": {
+          "web": 40192430620,
+          "package": 40192430626,
+          "server_and_rules": 40192430615
+        },
+        "integrated": false,
+        "staging_hosting": false,
+        "staging_functions": false,
+        "staging_rules": false,
+        "production": false,
+        "mail_provider_configured": false,
+        "real_email_receipt_tested": false,
+        "handoff": "workstreams/auth-onboarding-20261025.md",
+        "next_action": "Mailkonto, Absenderdomain und Secrets in getrennter Testkonfiguration einrichten; echten Codeempfang und Gerätefluss vor Integration/Deploy abnehmen."
+      }
     },
     {
       "id": "guardian-budget-pilot-v1",

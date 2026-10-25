@@ -1,5 +1,10 @@
 # GradeCrew – gemeinsame To-do-Liste
 
+## GC-DESIGN-05 — Konto, E-Mail-Code und Tutorial (25.10.2026)
+
+- [ ] **CI grün, Entwurf – nicht integriert oder deployed:** [PR303](https://github.com/HerrLoeffler/Hausaufgabe/pull/303), `668ee2d8`; Anmelden/Konto erstellen, Tutorial-Auswahl bis zur siebten Anmeldung und danach Einstellungen, neue Konten mit servergeprüftem sechsstelligen Code.399Web-/327Functions-Tests und vollständiger lokaler Rules-Ablauf bestanden; CI40192430620/40192430626/40192430615 erfolgreich. Maildienst ist ausdrücklich nur vorbereitet; Konto, Domain, Secrets und echter Empfangstest fehlen. [Übergabe](workstreams/auth-onboarding-20261025.md). Bestehende Release-Stufen unverändert.
+
+
 ## GC-WEB-REPAIR-20261007 — Aufgabenbewertungen, zentraler Abruf und Lernen (25.10.2026)
 
 - [x] **production, begrenzter Feedbackumfang:** Gemeinsame ☹ / 🗑-Taste, dauerhafte idempotente Sicherung und unterstützter zentraler Abruf live. Eigene Bewertungen beeinflussen sofort passende künftige Erstellung/Varianten/Überarbeitung; gemeinsame Signale erst nach fachlicher Adminprüfung. Tatsächlicher Einsatz bekommt Version/Operation/Zeit statt pauschalem „erledigt“. [PR297](https://github.com/HerrLoeffler/Hausaufgabe/pull/297) + [PR302](https://github.com/HerrLoeffler/Hausaufgabe/pull/302), finaler Code `9497e756`, alle174 öffentlichen Hashes bestätigt, fünf Einzelfunktionen erfolgreich aktualisiert, Rules freigegeben und beide Indizes READY. Exakte App-CI40190068197/40190263340, unabhängige Spec-/Standards-Nachprüfungen und312/417lokaleTests bestanden. Autorisierter zentraler Liveabruf vollständig:11Reports=5positive+5negative+1zurückgewiesenePrüferwarnung. Keine Rohdaten im Repo, keine bezahlte Modell-/physische Geräteabnahme. [Übergabe](workstreams/feedback-gc39-release-20261013.md) · [Receipts](workstreams/question-feedback-release-receipts-20261025.json).
