@@ -8,6 +8,13 @@ Gilt für Produkt-, Design-, Spiele-, Infrastruktur- und Coding-Aufgaben, sobald
 3. Konkreten Auftrag einer vorhandenen Task-ID zuordnen oder eine neue anlegen. Zuständigkeit/Branch, Release Train und Überschneidungen prüfen.
 4. Vor neuer Arbeit feststellen, ob dieselbe Funktion bereits auf einem Feature-, Fix-, Lab-, Integrationsbranch oder offenen PR existiert.
 
+## Evidenzpflicht bei Lernentscheidungen
+- Für wesentliche didaktische Entscheidungen gilt zusätzlich [EVIDENCE_RESEARCH_RULE.md](EVIDENCE_RESEARCH_RULE.md).
+- Vor der endgültigen Umsetzung von Fehlerfeedback, Scaffolding, Worked Examples, Transfer, Adaptivität, Gamification, Prüfungs-/Aufgabenlogik oder Bewertungsmechanismen einen kurzen Evidence Check durchführen.
+- Consensus ist das bevorzugte Recherchewerkzeug für peer-reviewte Evidenz; keine personenbezogenen Daten, Schülerantworten, vertraulichen Uploads oder Freitexte dorthin senden.
+- Dauerhafte Produktentscheidungen mit relevanter Lernwirkung unter `docs/evidence/` mit Frage, Evidenz, Grenzen und GradeCrew-Entscheidung dokumentieren.
+- Forschung und Nutzungsdaten trennen: Consensus liefert Evidenz aus Studien, PostHog beobachtet später datensparsam tatsächliches Produktverhalten; weder das eine noch das andere allein ersetzt pädagogisches Urteil.
+
 ## Während der Arbeit
 - Neue relevante Wünsche, offene Fragen und Blocker in TODO.md aufnehmen, bevor der Chat endet. Ideen als Ideen kennzeichnen; abgelehnte Vorschläge nicht als beschlossene Aufgaben erfassen.
 - Technische/Produktentscheidungen und Begründung in der eigenen Workstream-Übergabe festhalten. Keine vollständigen Chatkopien, Zugangsdaten oder Schülerdaten ablegen.
