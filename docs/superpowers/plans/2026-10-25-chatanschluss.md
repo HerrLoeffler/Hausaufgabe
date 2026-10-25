@@ -30,41 +30,43 @@
 
 Dateien: tools/central_runtime/store.py, tests/firmenzentrale/test_runtime.py.
 
-- [ ] Tests für Idempotenz, Inhaltskonflikt, Persistenz und Wiederaufnahme zunächst fehlschlagen lassen.
-- [ ] Store.create(payload, context), get(id), update(id, **fields), list(), event(id, kind, data) implementieren; SQLite-Transaktionen und private Dateirechte.
-- [ ] Tests ausführen, Zwischenstand sichern.
+- [x] Tests für Idempotenz, Inhaltskonflikt, Persistenz und Wiederaufnahme zunächst fehlschlagen lassen.
+- [x] Store.create(payload, context), get(id), update(id, **fields), list(), event(id, kind, data) implementieren; SQLite-Transaktionen und private Dateirechte.
+- [x] Tests ausführen, Zwischenstand sichern.
 
 ## 2. Qualifizierter Chatadapter
 
 Dateien: tools/central_runtime/rpc.py, service.py.
 
-- [ ] JSON-RPC-Transport mit Requestkorrelation, Zeitlimit, Prozessende und fail-closed Serverrequests implementieren.
-- [ ] Thread-/Turn-Start nur aus dauerhaftem Auftrag; begrenzte dynamische Werkzeuge mit echter Requestbindung.
-- [ ] Rückfragen und Berichte speichern, tatsächlichen Turnabschluss übernehmen, keine reine Textdelta-Erfolgsmeldung.
-- [ ] Fehlerfälle und Fremdwerkzeuge testen; realen Diagnoseauftrag samt Bericht und Rückfrage prüfen.
+- [x] JSON-RPC-Transport mit Requestkorrelation, Zeitlimit, Prozessende und fail-closed Serverrequests implementieren.
+- [x] Thread-/Turn-Start nur aus dauerhaftem Auftrag; begrenzte dynamische Werkzeuge mit echter Requestbindung.
+- [x] Rückfragen und Berichte speichern, tatsächlichen Turnabschluss übernehmen, keine reine Textdelta-Erfolgsmeldung.
+- [x] Fehlerfälle und Fremdwerkzeuge testen; realen Diagnoseauftrag samt Bericht und Rückfrage prüfen.
 
 ## 3. Quellenbestand
 
 Datei: tools/central_runtime/sources.py.
 
-- [ ] Paginierte unterstützte Chatlese-APIs und feste GitHub-Lesequellen, Zeitstempel und Fehlerzustände implementieren.
-- [ ] Nur relevante Projektchats, keine persönlichen/Schülerdaten-Threads; Quellgrenzen sichtbar erhalten.
-- [ ] Bekannte Cloudchats über Desktopconnector prüfen; nur redaktionelle Abdeckungsmetadaten sichern.
-- [ ] Letzten guten Stand bei Teilfehler und Cursorgrenzen testen.
+- [x] Paginierte unterstützte Chatlese-APIs und feste GitHub-Lesequellen, Zeitstempel und Fehlerzustände implementieren.
+- [x] Nur relevante Projektchats, keine persönlichen/Schülerdaten-Threads; Quellgrenzen sichtbar erhalten.
+- [x] Bekannte Cloudchats über Desktopconnector prüfen; nur redaktionelle Abdeckungsmetadaten sichern.
+- [x] Letzten guten Stand bei Teilfehler und Cursorgrenzen testen.
 
 ## 4. Bestehende Oberfläche anbinden
 
 Dateien: tools/serve_firmenzentrale.py, docs/prototypes/firmenzentrale/runtime-view.mjs, app.mjs, index.html, style.css.
 
-- [ ] HTTP-Schnittstelle mit Origin/Host/Token/Größenprüfung; nur eigene Dateien und API ausliefern.
-- [ ] Im vorhandenen Editor klaren Startknopf ergänzen; Entwurfsspeicherung behalten.
-- [ ] Eingang zeigt Auftrag, Status, Ergebnis, Bericht, Rückfrage und Versuch; Polling ohne Formularverlust.
-- [ ] Datenstand und neue Quellen in Verbindungen/Abdeckung anzeigen; Netzwerkfokus erhalten.
-- [ ] Desktop, Handy, Reload, Doppelstart und echte Ergebnisrückkehr prüfen.
+- [x] HTTP-Schnittstelle mit Origin/Host/Token/Größenprüfung; nur eigene Dateien und API ausliefern.
+- [x] Im vorhandenen Editor klaren Startknopf ergänzen; Entwurfsspeicherung behalten.
+- [x] Eingang zeigt Auftrag, Status, Ergebnis, Bericht, Rückfrage und Versuch; Polling ohne Formularverlust.
+- [x] Datenstand und neue Quellen in Verbindungen/Abdeckung anzeigen; Netzwerkfokus erhalten.
+- [x] Desktop, Handy, Reload, Doppelstart und echte Ergebnisrückkehr prüfen.
 
 ## 5. Sicherung und Nachweise
 
-- [ ] Gezielte Python- und vorhandene 19 JavaScript-Tests sowie Syntaxprüfungen ausführen.
-- [ ] Echten End-to-End-Beleg mit Thread-/Turn-ID, Berichtsha und Neustartgrenze dokumentieren.
-- [ ] Eigene Übergabe/README aktualisieren, keine fremden gemeinsamen Statusdateien überschreiben.
-- [ ] Gleichen DraftPR295 ohne Force-Push sichern, CI am exakten Remotecommit prüfen.
+- [x] Gezielte Python- und vorhandene 19 JavaScript-Tests sowie Syntaxprüfungen ausführen.
+- [x] Echten End-to-End-Beleg mit Thread-/Turn-ID, Berichtsha und Neustartgrenze dokumentieren.
+- [x] Eigene Übergabe/README aktualisieren, keine fremden gemeinsamen Statusdateien überschreiben.
+- [ ] Abschließende Sicherung auf gleichem DraftPR295 ohne Force-Push; CI am finalen Remotecommit prüfen. Zwischencheckpoint0f1bd8a ist bereits auf allen drei Workflows grün.
+
+Prüfstand: 15 Python- und 19 JavaScript-Tests bestanden. Echte Diagnose mit Rückfrage sowie bereichsübergreifender Bericht vorhanden. Cloudkürzungen, unbekannte Historie und verbleibende V1-Funktionen sind ausdrücklich offen; die Checkliste beschreibt ausschließlich den oben begrenzten Lieferumfang.

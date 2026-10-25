@@ -59,3 +59,32 @@ Beispiele: `#/arbeit/landkarte/design` öffnet die fünf Designunterpunkte; `#/a
 Auf Handybreite ist die Satellitenübersicht durch eine lesbare Linkauswahl ergänzt. Ein geöffneter Unterpunkt scrollt zum Arbeitsblatt unterhalb der fixierten Kopfzeile. DOM-/Lesereihenfolge entspricht der sichtbaren Reihenfolge. Bewegung wird bei reduzierter Bewegung abgeschaltet. Zoomzahlen bedeuten ausschließlich Vergrößerung.
 
 Konzept: [Bereichsfokus](../../superpowers/specs/2026-10-25-bereichsfokus-design.md). Ausführungsplan: [Implementierung](../../superpowers/plans/2026-10-25-bereichsfokus.md). Daten stammen aus der bisherigen Fachinventur23.10.; neue Konzeptanforderungen tragen25.10. Sie werden nicht als Live-Aktualisierung ausgegeben. Vorbereitete Aufträge enthalten den genauen Unterpunkt samt Abnahme und bleiben ausdrücklich lokal/ungesendet.
+
+## Lokaler Chatanschluss (25.10.2026)
+
+Start mit vorhandenem Codex im PATH und bestehender Anmeldung:
+
+```sh
+python3 tools/serve_firmenzentrale.py --port 8796 --data-dir /ABSOLUTER/PRIVATER/PFAD
+```
+
+Python3.11+; ausschließlich127.0.0.1. `--codex` erlaubt den expliziten Pfad zur bestehenden CLI. Kein API-Key wird übernommen oder ausgelesen. Der private Datenpfad darf NICHT unter der ausgelieferten App oder in Git liegen. Der Dienst muss laufen; kein System-Autostart und keine Cloudbereitstellung installiert. Auf Martins Rechner liegt der Bestand im bestehenden Konzeptprojekt unter runtime/.
+
+Im Dialog: Entwurf speichern bleibt im Browser; Bearbeitung starten speichert einen Auftrag und öffnet einen eigenen Codex-App-Server-Verlauf. Der Eingang zeigt Status, Rückfragen, Bericht und Ergebnis. Quellenprüfung alle fünf Minuten, UI-Abgleich alle drei Sekunden (im Hintergrund alle zwölf Sekunden). Neue Quellen verändern fachliche Bewertungen nicht automatisch.
+
+**Geprüftes Profil:** Analyse, Konzepte, Texte und Diagnoseberichte. Werkzeuge central_context (gebundener Bestand und historische Textsuche), central_question, central_report (fester Pfad je Auftrag). Environments leer, Shell/Apps/Plugins/Subagenten deaktiviert, keine zusätzlichen Rechtefreigaben. Produktcode, externe Nachrichten und Deployments sind nicht Teil dieses Profils. Zentrale/Coordinator erhält keine durchgereichte beliebige RPC-Schnittstelle.
+
+**Persistenz:** SQLite mit vollständigen Transaktionen, Brief-/Quellenhash und Ereignissen. Browser speichert eine unklare Übermittlung mit derselben Request-ID; Server weist ID/Inhaltskonflikte ab. Nach Dienstneustart bekannte Turns lesend abgleichen; unklare Starts niemals automatisch wiederholen. Unterbrochene Arbeit kann Abgleich nötig bleiben. Kein Backupimport oder automatische Wiederaufnahme verlorener Freigaben implementiert. Vor Übernahme eines Datensnapshots bestehendes Dispatchjournal und Hostzustand abgleichen; nicht einfach einen alten Datenordner über einen aktiven Bestand kopieren.
+
+**Privater Wissensbestand:** Unterstützte App-Server-APIs lesen ausschließlich zugeordnete Firmenchats. Lokale Textkopien sind mit Quellrevision und Herkunft suchbar; pro Nachricht maximal24000Zeichen. Rohdaten und Berichte bleiben im privaten Datenordner, nicht im Repo. Cloudchats werden separat mit Desktopconnector geprüft, als cloud-import.json lokal übernommen und ausdrücklich nicht als automatisch synchronisiert dargestellt. Bilder/Anhänge und private Quellen außerhalb des Auftrags werden nicht erschlossen. Die API-Seitenabdeckung bestätigt keine semantische Vollanalyse. Gemeinsame Identitäten, ACL-/Löschsynchronisation und Firmenbetrieb mit mehreren Nutzern bleiben offene V1-Arbeit.
+
+**Quellen:** GitHub öffentlich/read-only, feste Repoendpunkte, kein Connectorcredential im Dienst. Bei unverändertem main werden Inhaltsdateien wiederverwendet; offene PRs werden erneut gelesen. Fehler behalten den letzten guten Stand mit Fehlermeldung. Kein Auto-Merge oder Deploy. Nach längerer Offlinezeit zuerst Quellenzeitstempel prüfen.
+
+Prüfen ohne Modellaufruf:
+
+```sh
+python3 -m unittest discover -s tests/firmenzentrale -p 'test_*.py' -v
+node --test tests/firmenzentrale/*.test.mjs
+```
+
+Echter lokaler Durchstich und Grenzen: workstreams/gc-brain-implementation-20261022.md. Design/Plan: docs/superpowers/specs/2026-10-25-chatanschluss-design.md und docs/superpowers/plans/2026-10-25-chatanschluss.md. Offizielles Protokoll https://learn.chatgpt.com/docs/app-server, lokal qualifiziert gegen0.163.0-alpha.11.2. Experimentelle dynamische Werkzeuge/Umgebungsfelder benötigen dieselbe Hostqualifikation nach größeren CLI-Wechseln.

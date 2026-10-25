@@ -162,6 +162,7 @@ function connections(){const c=$('#content');append(c,head('Verbindungen & Daten
 
 function field(name,labelText,type,value,options){const l=el('label','field',labelText);let input;if(options){input=el('select');for(const [v,t]of options){const o=el('option','',t);o.value=v;input.append(o);}}else input=el(type==='textarea'?'textarea':'input');input.name=name;if(type!=='textarea'&&!options)input.type=type;input.value=value||'';l.append(input);return l;}
 function openEditor(d=null,preset={}){
+  try{const pending=JSON.parse(storage?.getItem('gradecrew-pending-dispatch-v1')||'null');if(pending&&central.state?.requests.some(r=>r.id===pending.requestId))storage.removeItem('gradecrew-pending-dispatch-v1');}catch{}
   editingId=d?.id||null;const value={kind:'task',area:'strategy',title:'',body:'',...preset,...d};$('#dialog-title').textContent=d?'Entwurf bearbeiten':'Neu erfassen';$('#editor-message').textContent='';$('#editor-message').className='';
   const title=field('title','Titel','text',value.title);title.lastChild.maxLength=160;title.lastChild.required=true;
   const body=field('body','Beschreibung & gewünschtes Ergebnis','textarea',value.body);body.lastChild.maxLength=12000;
@@ -231,6 +232,7 @@ sendTask.id='send-task';$('#editor .dialog-foot').append(sendTask);
 central.subscribe((state,error)=>{
  sendTask.disabled=!state?.connected||Boolean(error);
  document.querySelector('.footnote span').textContent=error?'Verbindung unterbrochen · letzter bekannter Stand':state?.connected?'Codex verbunden · Live unverändert':'Chatanschluss wird geprüft';
- try{const pending=JSON.parse(storage?.getItem('gradecrew-pending-dispatch-v1')||'null');if(pending&&state?.requests.some(r=>r.id===pending.requestId))storage.removeItem('gradecrew-pending-dispatch-v1');}catch{}
+ // Keep uncertain submissions bound to their original ID until the dialog acknowledges them.
+
 });
 central.poll();

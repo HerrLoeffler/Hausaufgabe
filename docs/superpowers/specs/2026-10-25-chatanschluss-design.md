@@ -22,7 +22,7 @@ Die Zentrale öffnet pro abgeschicktem Auftrag einen eigenen App-Server-Arbeitsv
 
 Zugelassen sind Analyse, Strukturierung, Konzept-/Textarbeit und Diagnoseberichte auf Basis der Projektquellen. Drei serverseitig begrenzte Werkzeuge: Kontext lesen, Bericht speichern, Rückfrage stellen. Berichte haben einen festen Pfad je Auftrag; Nutzereingaben können keine Dateipfade wählen. Kein GitHub-Schreibtool, Deployment, fremder Chatversand oder Produktdateizugriff für diesen Worker. Shell, Apps, Plugins, weitere MCP-Server und Subagenten werden im eigenen Prozess deaktiviert; managed Anforderungen bleiben maßgeblich. Native Rechteanfragen erhalten keine Erweiterung. Eine später gewünschte ausführende Codearbeit benötigt ein separates qualifiziertes Profil mit konkretem Checkout und Reviewgates; der UI-Text legt diese Grenze offen.
 
-Routine startet gemäß Projektvorgabe mit verfügbarem Luna/medium. Modellverfügbarkeit wird vor dem ersten Auftrag gelesen; ein fehlendes Modell führt zu einer sichtbaren Meldung statt stillem Ersatzprovider. Tatsächliche Thread-/Turn-ID, Modell und Token-Nutzungsereignisse werden gespeichert. Kein automatischer Wiederholungsstart bei unklarem Ausgang. Historische Pluginversuche 2/3 bleiben historische Einträge; neue App-Server-Versuche werden separat gezählt.
+Routine startet gemäß Projektvorgabe mit verfügbarem Luna/medium. Bereichsübergreifende oder längere Architektur-/Gesamtanalysen verwenden Sol/medium; die tatsächliche Auswahl wird protokolliert. Modellverfügbarkeit wird vor dem ersten Auftrag gelesen; ein fehlendes Modell führt zu einer sichtbaren Meldung statt stillem Ersatzprovider. Tatsächliche Thread-/Turn-ID, Modell und Token-Nutzungsereignisse werden gespeichert. Kein automatischer Wiederholungsstart bei unklarem Ausgang. Historische Pluginversuche 2/3 bleiben historische Einträge; neue App-Server-Versuche werden separat gezählt.
 
 ## Aktualisierung und Standpunkt null
 
@@ -45,3 +45,7 @@ Nur 127.0.0.1, Host-Allowlist, Origin-Prüfung und zufälliges Sitzungstoken fü
 Reale UI-Eingabe → dauerhaft angenommener Auftrag → tatsächlicher Modellturn → echter Kontext-/Berichttoolschritt → Hash und Ergebnis im UI. Dazu Rückfrage/Antwort, Reload, gleicher Request zweimal, Brokerneustart, fehlender Host, ungültige/zu große Texte, fremder Origin, unbekannte Werkzeuge, falsche Auftragbindung. Tests prüfen keinen echten Productionzugriff. Selbstreview ist kein unabhängiger PASS. P0-Exit wird nur für den tatsächlich belegten Umfang dokumentiert; die übrige V1 bleibt offen.
 
 Quellen: https://learn.chatgpt.com/docs/app-server und lokal generiertes Protokollschema derselben CLI-Version. Temporärer Schemaexport enthält keine Anmeldedaten.
+
+## Geprüfte Ergänzungen
+
+Private Textsuche bindet jeden Auftrag an konkrete Quellenrevisionen. Nachrichten sind auf 24000 Zeichen begrenzt, Cloudkürzungen explizit markiert. Suchantworten liefern höchstens acht begrenzte Treffer; wiederholter Grundkontext wird vermieden. Fehlerhafter Cloudimport blockiert nicht den Codex-/GitHub-Abgleich. Die elf geprüften Ausgangsakten stehen im Quellenpanel und in STANDPUNKT-NULL-2026-10-25.md. Zwei echte Aufträge sind im privaten Ereignisjournal belegt; breite V1-Abnahme und unabhängiger Review bleiben offen.

@@ -18,7 +18,6 @@ class StoreTests(unittest.TestCase):
  def test_durable_events_and_result(self):
   a=self.s.create(self.p,{});self.s.update(a['id'],status='completed',result='Ergebnis');self.assertEqual(self.s.get(a['id'])['result'],'Ergebnis');self.assertTrue(self.s.events(a['id']))
 
-if __name__=='__main__':unittest.main()
 
 from central_runtime.service import Service
 from central_runtime.sources import Sources
@@ -80,3 +79,18 @@ class HTTPBoundaryTests(unittest.TestCase):
   h=self.handler()
   for path in ['/../../tools/central_runtime/store.py','/%2e%2e/%2e%2e/central.sqlite','/assets/gradecrew/../../../../START_HERE.md','/api/../central.sqlite']:
    self.assertTrue(h.translate_path(path).endswith('__not_found__'))
+
+class ModelChoiceTests(unittest.TestCase):
+ def test_bounded_model_selection_without_fallback(self):
+  from central_runtime.service import choose_model
+  self.assertEqual(choose_model({'title':'Kurzbericht','body':'Pruefe diese Angabe'}),'gpt-6-luna')
+  self.assertEqual(choose_model({'title':'Standpunkt null','body':'Alle Firmenbereiche einordnen'}),'gpt-6.1-sol')
+
+class CloudFailureTests(unittest.TestCase):
+ def test_bad_cloud_import_does_not_block_other_sources(self):
+  with tempfile.TemporaryDirectory() as tmp:
+   store=Store(Path(tmp));sources=Sources(store,None,Path(__file__).resolve().parents[2]);(Path(tmp)/'cloud-import.json').write_text('{broken')
+   sources.chats=lambda:{'count':1};sources.github=lambda:{'commit':'ok'};sources.refresh();sources.lock.acquire(timeout=2);sources.lock.release()
+   self.assertIsNotNone(store.source('cloud')['error']);self.assertEqual(store.source('github')['data']['commit'],'ok');store.close()
+
+if __name__=='__main__':unittest.main()

@@ -1,3 +1,4 @@
+import { baseline } from './baseline.mjs';
 // Same-origin client. User drafts are never automatically submitted.
 export class CentralClient {
  constructor(){this.state=null;this.error='';this.token=null;this.listeners=new Set();this.timer=null;}
@@ -47,6 +48,8 @@ export function mountTasks(parent,client){
 }
 export function mountSources(parent,client){
  const wrap=el('section',undefined,'runtime-sources panel'),status=el('p'),rows=el('div'),error=el('p');wrap.append(el('h2','Aktueller Ausgangsstand'),status,btn('Quellen jetzt prüfen',async()=>{try{await client.post('/api/refresh',{});status.textContent='Quellen werden geprüft …';}catch(e){message(error,e);}}),error,rows);parent.insertBefore(wrap,parent.children[1]||null);
+ const baselineDetails=el('details');baselineDetails.append(el('summary','Standpunkt null · 11 Bereiche · geprüft am 25.10.2026'),el('p','Zusammengeführter Ausgangspunkt aus erreichbaren Quellen und eigenen Prüfungen. Historische Produktmeldungen sind keine aktuelle Vollabnahme. Der ausführliche Analysebericht liegt im Eingang.','tiny'));
+ for(const [title,stand,next] of baseline){const row=el('article',undefined,'aside-note');row.append(el('h3',title),el('p',stand),el('strong','Nächster Schritt'),el('p',next));baselineDetails.append(row);}wrap.append(baselineDetails);
  let last='';return client.subscribe((state,problem)=>{
   status.textContent=problem||`${state?.sources?.refreshing?'Quellen werden eingelesen …':'Automatische Prüfung alle 5 Minuten'} · ${state?.connected?'Codex verbunden':'Codex nicht verbunden'}`;
   const sources=state?.sources;if(!sources||JSON.stringify(sources)===last)return;last=JSON.stringify(sources);rows.replaceChildren();
@@ -54,7 +57,11 @@ export function mountSources(parent,client){
    const s=sources.sources[id],d=s?.data;const card=el('article',undefined,'aside-note');card.append(el('h3',title),el('p',`Letzter Erfolg: ${date(s?.lastSuccess)}`));
    if(s?.error)card.append(el('p',s.error,'error'));
    if(id==='codex'&&d){card.append(el('p',`${d.count} Chats · ${d.turns} Turns · ${d.complete} Verläufe technisch vollständig abgerufen`));const details=el('details');details.append(el('summary','Erfasste Chats und Lücken'));for(const t of d.chats||[])details.append(el('p',`${t.title} · ${t.turns} Turns · ${t.complete?'Abruf vollständig':t.error||'unvollständig'}`));card.append(details);}
-   if(id==='github'&&d)card.append(el('p',`${d.count} offene PRs · main ${d.commit?.slice(0,10)}`));
+   if(id==='github'&&d){
+    card.append(el('p',`${d.count} offene PRs · ${d.registryCount||0} registrierte Baustellen · main ${d.commit?.slice(0,10)}`));
+    const details=el('details');details.append(el('summary',`${d.workstreams?.length||0} Release-Arbeitsstände und nächste Schritte`));
+    for(const w of d.workstreams||[]){const row=el('article',undefined,'aside-note');row.append(el('h4',w.title),el('p',`${w.stage} · ${w.owner}`),el('p',w.next));details.append(row);}card.append(details);
+   }
    if(id==='cloud')card.append(el('p',d?`${d.readable} von ${d.count} Chats erreichbar · ${d.turns} gelieferte Turns · teils gekürzte Nachrichten. Abruf über Desktopconnector, nicht automatisch.`:'Historische Inventur vorhanden; neuer Abruf über Desktopconnector ausstehend.'));
    rows.append(card);
   }

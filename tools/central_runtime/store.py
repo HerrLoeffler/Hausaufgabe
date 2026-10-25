@@ -54,8 +54,9 @@ class Store:
 
  def index_messages(self, revision, thread_id, title, messages):
   with self.lock,self.db:
-   for item_id,text in messages:
-    self.db.execute('INSERT OR IGNORE INTO knowledge VALUES(?,?,?,?,?,?)',(revision,thread_id,item_id,title,text[:24000],int(len(text)>24000)))
+   for message in messages:
+    item_id,text=message[:2];source_truncated=bool(message[2]) if len(message)>2 else False
+    self.db.execute('INSERT OR IGNORE INTO knowledge VALUES(?,?,?,?,?,?)',(revision,thread_id,item_id,title,text[:24000],int(source_truncated or len(text)>24000)))
  def search_knowledge(self, query, revisions, limit=8):
   if not revisions or not query.strip():return []
   import re
@@ -65,8 +66,14 @@ class Store:
    rows=self.db.execute('SELECT revision,thread_id,item_id,title,body,truncated FROM knowledge WHERE revision IN ('+','.join('?' for _ in revisions)+')',revisions).fetchall()
   scored=[]
   for r in rows:
-   text=r[4];score=sum(w in (r[3]+' '+text).lower() for w in words)
+   text=r[4];score=sum((2 if w in r[3].lower() else 0)+(1 if w in text.lower() else 0) for w in words)
    if score:
     pos=min([text.lower().find(w) for w in words if w in text.lower()] or [0]);start=max(0,pos-300)
     scored.append((score,{'revision':r[0],'threadId':r[1],'itemId':r[2],'title':r[3],'excerpt':text[start:start+3000],'truncated':bool(r[5]) or len(text)>3000}))
-  return [x[1] for x in sorted(scored,key=lambda x:x[0],reverse=True)[:limit]]
+  result=[];seen=set()
+  for _,item in sorted(scored,key=lambda x:x[0],reverse=True):
+   key=item['excerpt']
+   if key in seen:continue
+   seen.add(key);result.append(item)
+   if len(result)>=limit:break
+  return result

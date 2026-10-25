@@ -1,9 +1,13 @@
 """Bounded analysis worker, with durable intent before external side effects."""
-import hashlib, json, os, threading, time
+import hashlib, json, os, threading, time, re
 from pathlib import Path
 from .store import Store, now
 from .rpc import RPC
 from .sources import Sources
+
+def choose_model(brief):
+ text=brief['title']+' '+brief['body']
+ return 'gpt-6.1-sol' if len(text)>2000 or re.search(r'standpunkt null|architektur|bereichsübergreifend|gesamtplan|gesamte firma',text,re.I) else 'gpt-6-luna'
 
 TERMINAL={'completed','failed','interrupted','unknown','cancelled'}
 def tool(name, description, properties, required):
@@ -49,9 +53,11 @@ class Service:
  def start_request(self,ident):
   r=self.store.update(ident,status='starting',attempts=self.store.get(ident)['attempts']+1,error='')
   try:
-   model=next((m.get('model') or m.get('id') for m in self.models if (m.get('model') or m.get('id'))=='gpt-6-luna'),None)
-   if not model:raise RuntimeError('Das vorgesehene Modell gpt-6-luna ist nicht verfügbar; kein automatischer Modellwechsel.')
+   requested=choose_model(r);model=next((m.get('model') or m.get('id') for m in self.models if (m.get('model') or m.get('id'))==requested),None)
+   if not model:raise RuntimeError('Das vorgesehene Modell '+requested+' ist nicht verfügbar; kein automatischer Modellwechsel.')
+   self.store.event(ident,'model_selection',{'requested':requested,'effort':'medium','reason':'bereichsübergreifende/umfangreiche Analyse' if requested=='gpt-6.1-sol' else 'begrenzter Routineauftrag'})
    cwd=self.store.root/'work'/ident;cwd.mkdir(parents=True,exist_ok=True)
+   self.store.event(ident,'thread_intent',{'briefHash':r['briefHash']})
    result=self.rpc.call('thread/start',{'cwd':str(cwd),'model':model,'sandbox':'read-only','approvalPolicy':'untrusted','environments':[],'dynamicTools':TOOLS,'baseInstructions':INSTRUCTIONS,'config':{'features.shell_tool':False,'features.apps':False,'features.plugins':False,'features.multi_agent':False,'mcp_servers':{},'web_search':'disabled','project_doc_max_bytes':0},'allowProviderModelFallback':False})
    tid=result['thread']['id'];self.store.update(ident,threadId=tid,model=result.get('model',model),effort='medium')
    self.rpc.call('thread/name/set',{'threadId':tid,'name':'GC Auftrag · '+r['title'][:100]})
@@ -60,7 +66,7 @@ class Service:
    current=self.store.get(ident)
    self.store.update(ident,turnId=result['turn']['id'],status=current['status'] if current['status']!='starting' else 'running')
   except Exception as e:
-   current=self.store.get(ident);ambiguous=any(x['kind']=='turn_intent' for x in self.store.events(ident))
+   current=self.store.get(ident);ambiguous=any(x['kind'] in ['thread_intent','turn_intent'] for x in self.store.events(ident))
    self.store.update(ident,status='unknown' if ambiguous else 'failed',error=str(e)[:700])
  def find(self,params):
   return next((r for r in self.store.list() if r['threadId']==params.get('threadId') and r['threadId']),None)
@@ -100,7 +106,10 @@ class Service:
     query=args.get('query','')
     if not isinstance(query,str) or len(query)>200:raise ValueError('Suchbegriff zu lang')
     context={k:v for k,v in r['context'].items() if k!='knowledgeRevisions'}
-    if query:context['searchResults']=self.store.search_knowledge(query,r['context'].get('knowledgeRevisions',[]))
+    if query:
+     context={k:context.get(k) for k in ['sourceCommit','sources','limits','rules']}
+     context['query']=query;context['searchResults']=self.store.search_knowledge(query,r['context'].get('knowledgeRevisions',[]))
+     self.store.event(r['id'],'knowledge_query',{'query':query,'matches':len(context['searchResults'])})
     result=json.dumps(context,ensure_ascii=False)
    elif name=='central_report':
     text=args.get('text');
