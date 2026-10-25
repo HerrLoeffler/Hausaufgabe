@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "750212e7a38df4d0bbce833d2ae46b3f8f8b2b68",
+    "observed_integration_head": "9497e756ed2defb4da6b05773146a19929101b3c",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -617,6 +617,13 @@
         ],
         "physical_device": "not_performed"
       }
+    },
+    "latest_authorized_production_update_20261025": {
+      "scope": "Task-rating capture, admin-only central reader and personal-immediate/shared-reviewed structured learning; not whole-project completion",
+      "commit": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "origin": "https://gradecrew.de",
+      "receipts": "workstreams/question-feedback-release-receipts-20261025.json",
+      "stage": "production"
     }
   },
   "production": {
@@ -1487,21 +1494,57 @@
         "receipts": "workstreams/feedback-gc39-release-receipts-20261013.json",
         "user_test": "pending"
       },
-      "question_feedback_candidate_20261025": {
-        "stage": "ci_green",
-        "branch": "fix/question-feedback-removal-20261025",
-        "pr": 297,
-        "commit": "e21269101f794c285e6a0a4d3665892c692cc497",
-        "tree": "eccfcd19bf84ee3b7df432e8a7fd6e3f45298cd5",
-        "ci_run": 40186371014,
-        "ci_result": "success",
-        "independent_review": "Spec and Standards re-review PASS; each 14 targeted tests independently run",
-        "live_records": "unknown; installed connector reads ET reviewNotes, not feedback/ai_question",
-        "deployment": "not_requested_not_performed",
-        "plugin_installation": "not_requested_not_performed",
-        "next_action": "Central assessment of reviewed isolated candidate; supported handler/plugin provision needs separate scope, then authorized historical read.",
-        "ci_job": 121147912016,
-        "rules_emulator": "new server-created/teacher-immutable/admin-readable task feedback cases passed in Node22/Java21 CI"
+      "latest_question_feedback_20261025": {
+        "stage": "production",
+        "scope": "Task-rating capture, admin-only central reader and personal-immediate/shared-reviewed structured learning; not whole-project completion",
+        "branch": "fix/question-feedback-learning-20261025",
+        "integration_branch": "feature/gradecrew-app-integration",
+        "prs": [
+          297,
+          302
+        ],
+        "commit": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "tree": "6df2507cf3c9fcd0b46e6cbf9a6f80ef170e8425",
+        "origin": "https://gradecrew.de",
+        "project": "hausaufgabe-staging",
+        "candidate_ci": 40190068197,
+        "merge_ci": 40190263340,
+        "public_files": 174,
+        "verified_files": 174,
+        "functions": [
+          "reviewMode",
+          "generateTest",
+          "processAiTestJob",
+          "regenerateQuestion",
+          "reviseWholeTest"
+        ],
+        "rules": "released; server-only sharedLearning/learningUse fields",
+        "indexes": "both READY",
+        "independent_review": "Spec and Standards PASS; exact tree6df2507c",
+        "personal_effect": "next suitable model request uses own structured signals; actual use recorded after model response",
+        "shared_effect": "only professionally approved signal version; pending/rejected ratings excluded",
+        "historical_feedback": {
+          "reports": 11,
+          "positive": 5,
+          "negative": 5,
+          "rejectedReviewerWarning": 1,
+          "pages": 1,
+          "truncated": false,
+          "read_at": "2026-10-25T11:55:24.772Z",
+          "prior_per_rating_use_evidence": "not_recorded"
+        },
+        "plugin_installation": "reviewed source/cache overlay installed; supported MCP read succeeded; new status fields load on next normal process start",
+        "unrelated_failed_check": {
+          "run": 40190263345,
+          "attempts": 2,
+          "scope": "unchanged local Workbench test temporary-file cleanup",
+          "not_in_production_manifest": true
+        },
+        "paid_model_test": "not_performed",
+        "physical_device_test": "not_performed",
+        "handoff": "workstreams/feedback-gc39-release-20261013.md",
+        "receipts": "workstreams/question-feedback-release-receipts-20261025.json",
+        "next_action": "Professional per-rating review of historical reports; then observe first normal user generation receipts. Fix unrelated Workbench cleanup test separately."
       }
     },
     {
@@ -1988,6 +2031,65 @@
         "apple_store_urls": "Secure6817526711 and Teacher6817547234 Support/Marketing/Privacy URLs saved to gradecrew.de and reload verified; no AppReview/contracts/labels changes"
       },
       "next_action": "Existing Native owner continues release chains Secure39851773269 and Teacher39851773260; collect upload/Apple receipts without duplicate starts, then update only that remaining acceptance scope."
+    },
+    {
+      "id": "extended-question-types-01",
+      "task_id": "GC-EXTENDED-QUESTION-TYPES-01",
+      "stage": "staging_deployed",
+      "scope": "isolated visual255 preview only; canonical staging/school/Production unchanged",
+      "branch": "test/visual-24-pilot-20261025",
+      "pr": 296,
+      "evidence_commit": "021ef5c2d4bee1daa6d353635ae18f63bbe28c50",
+      "deployed_local_commit": "a396feedccf0d41ecf48c0e23e3e99d53e1cbf3a",
+      "deployed_remote_tree": "62f9997587e35eeb0d69eed6d60e4176445d5fe5",
+      "preview_url": "https://gradecrew-staging-2026--visual255-rjcwf436.web.app/pilot24/",
+      "functions_codebases": [
+        "visual255-ai",
+        "visual255-assessment"
+      ],
+      "verification": {
+        "generated_tests": 24,
+        "questions": 192,
+        "content_amendments": 63,
+        "independent_content_review": 192,
+        "deterministic_checks": 1176,
+        "focused_regressions": 23,
+        "functions_tests": 293,
+        "assessment_tests": 97,
+        "live_server_cases": 120,
+        "live_server_passed": 120,
+        "resume_checks": 120,
+        "idempotence_checks": 24,
+        "hosting_hashes": 180,
+        "other_functions_unchanged": 46,
+        "browser_submission": "P05 lowercase error1/16 as expected"
+      },
+      "rules_changed": false,
+      "production": "unchanged",
+      "human_teacher_acceptance": "pending",
+      "physical_device_acceptance": "pending",
+      "handoff": "workstreams/visual-pilot-24-20261025.md",
+      "next_action": "Delegated research PDF fully analyze and map to existing task catalog; prepare selection/generation contract and small pilot plan. No broad implementation/paid generation. Teacher/device review can continue in parallel.",
+      "user_feedback_followup": {
+        "at": "2026-10-25",
+        "evidence_commit": "fda13a26d1c4b4cdeadd3689a1280cdd68beb765",
+        "hosting_commit": "731d97eb70c5a09142319268695e6063d4235b1b",
+        "backend_commit": "2ae8fb6b8545eac316fde1a41f08dc8ce67bdbd3",
+        "scope": "existing visual255 preview only",
+        "revised_test_codes": {
+          "P02": "C0E863A9",
+          "P04": "88C01170",
+          "P07": "52F21DC8"
+        },
+        "original_questions_preserved": 24,
+        "focused_tests": 34,
+        "additional_live_server_cases": 6,
+        "hosting_hashes": 180,
+        "private_viewer_public_status": 404,
+        "teacher_review": "local only:192task navigation, editable device drafts",
+        "physical_touch": "pending",
+        "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/fda13a26d1c4b4cdeadd3689a1280cdd68beb765/docs/evidence/visual-pilot-24-20261025/followup/REPORT.md"
+      }
     }
   ],
   "deployments": [

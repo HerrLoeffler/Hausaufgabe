@@ -58,3 +58,19 @@ Je tatsächlich geändertem Interaktionsweg prüfen und belegen:
 - Resultat mit Commit, Umgebung und Grenzen sichern. Online-KI, sichere Serverabgabe und physisches Gerät jeweils separat belegen, falls beansprucht.
 
 Keine neuen Vollprüfungen unveränderter Komponenten allein wegen dieser Dokumentation. Beobachtete Schwächen aus einer fremden laufenden Vorschau mit Snapshot melden, nicht deren Dateien parallel verändern.
+
+## Aus24 echten Probetests gelernt — 25.10.2026
+
+Beleg: [Prüfbericht der192 Aufgaben](https://github.com/HerrLoeffler/Hausaufgabe/blob/021ef5c2d4bee1daa6d353635ae18f63bbe28c50/docs/evidence/visual-pilot-24-20261025/REPORT.md), [Übergabe](../../workstreams/visual-pilot-24-20261025.md). Diese Erkenntnisse gelten für passende künftige Testseiten; sie importieren keine Aufgaben automatisch.
+
+- **Fachrichtigkeit unabhängig rechnen:** Ein Lösungsschlüssel kann technisch gültig und dennoch falsch sein. Den gegebenen Sachverhalt unabhängig auswerten; erst danach richtige/falsche/leere/alternative Antworten prüfen.
+- **Antwortumfang und Bewertung abstimmen:** Freie Sätze, Begründungen und algebraisch gleichwertige Formeln nicht gegen wenige exakte Mustertexte benoten. Entweder passende offene Bewertung mit Lehrkraftprüfung vorsehen oder klare Wörter, Kategorien, Koeffizienten und Belegauswahl verlangen. Übliche gleichwertige Fachbegriffe zulassen.
+- **Schreibung bewusst prüfen:** Bei Groß-/Kleinschreibung als Lernziel darf Normalisierung den Fehler nicht verschwinden lassen. Im übrigen Sprachvergleich tolerante Standardbehandlung erhalten.
+- **Nur belegte Aussagen verlangen:** Beschluss ist keine Umsetzung; zwei Messzeitpunkte kein durchgehender Jahresverlauf; Nutzung keine Zustimmung. Bezugsgrößen, Modellannahmen, Kriterien, Quellen und alle nötigen Daten mitliefern. Fiktive Methodendaten ausdrücklich von Faktenwissen unterscheiden.
+- **Darstellung benennt die wirkliche Interaktion:** Säulenaufgabe nicht als Liniendiagramm bezeichnen; Uhrzeiten als HH:MM zeigen. Lange Grafikinhalte vollständig lesbar und auswählbar halten. Hinweise dürfen die Lösung nicht durch Übersetzung verraten.
+- **Generierungsqualität sichtbar machen:** Logische Tests, interne Modellaufrufe und Aufgabenersetzungen getrennt zählen. Diese Serie benötigte24 Erstellungen,161 interne Providerrequests und67 Ersetzungen;63 Aufgaben wurden anschließend korrigiert oder präzisiert. Daraus keine automatische Unterrichtsfreigabe ableiten.
+- **Nachweisstufen erhalten:** Die Serie besteht technische und echte Serverprüfungen in einer getrennten Testvorschau. Lehrkrafturteil, Gerätestest und Lernwirksamkeit bleiben eigene offene Nachweise. Vor der Produktintegration passende Aufgaben in der Zielklasse erproben.
+
+### Nach Nutzerprüfung der Testserie
+
+Fehlerstellen nicht im Arbeitsauftrag vorwegnehmen: „Berichtige das Verb“ ist sinnvoller als das gesuchte falsche Wort bereits zu nennen. Kurze Diagrammbeschriftungen bezeichnen die fachliche Rolle (z.B.Behauptung/Begründung), vollständige Texte bleiben verfügbar. Wenn die Lernhandlung das Einstellen einer Säule oder Anlegen eines Instruments ist, unnötige numerische Ersatzfelder vermeiden; direkte Bedienung und Tastaturalternative erhalten. Messabweichung passend zum Lernziel festlegen und Grenzfälle serverseitig prüfen;±3° ist hier der freigegebene Winkelpilot, kein pauschaler didaktischer Standard. Aufgaben nach Nutzerkritik verständlicher machen, statt bloß den ursprünglichen Entwurf im Chat zu erklären. [Erprobte Änderungen](https://github.com/HerrLoeffler/Hausaufgabe/blob/fda13a26d1c4b4cdeadd3689a1280cdd68beb765/docs/evidence/visual-pilot-24-20261025/followup/REPORT.md).
