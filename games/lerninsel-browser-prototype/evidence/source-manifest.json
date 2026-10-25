@@ -1,0 +1,19 @@
+{
+  "files": {
+    "dist/app.mjs": "189f7cce772b11319a76ca2154ac3372b88d1712a618b99733fa5e36050bdceb",
+    "dist/core.mjs": "ae0734552a1fb06343d71482a396873d6df01bb1fe9af990e4d2c069ea0ad62d",
+    "dist/gradecrew-logo.svg": "755f94c0ecc23b02c110b04a95485cc17c0d8e98b07ac03d403de998c3f698a7",
+    "dist/index.html": "74966ffee1b288e8a0bdb4916b4ca78a23c7c7842fc2f4fd0f851683ac0dd95a",
+    "dist/probe-status.json": "c5d880885b449ec0ba5ce5b373e5482bb28d128e3e93a015d6e99f9d34bdf0e4",
+    "dist/scene.mjs": "4d387f41a15117a1e51a45c6bade17a66e0c2acefb39c1aac5d1230f14d102b6",
+    "dist/styles.css": "2cd05383bd0908fa2f136ae23c12cb9fcde6c5b91fc2b39f43898fc9e5017247",
+    "dist/vendor/THREE-LICENSE.txt": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601",
+    "dist/vendor/provenance.json": "dc015e8daf76b59d5429f4e21140c716be33d7321139601e7de9dd776d2a79ac",
+    "dist/vendor/three.core.js": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20",
+    "dist/vendor/three.module.js": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a"
+  },
+  "rawRuntimeBytes": 2060399,
+  "nodeTests": 14,
+  "runtime": "actual-local-iab-webgl",
+  "nativeOrPhysicalDeviceAcceptance": false
+}
