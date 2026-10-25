@@ -1,13 +1,13 @@
 export const companyAudit = {
-  "checkedAt": "2026-10-25T11:31:31.925702+00:00",
-  "main": "41af350be3f99d7f6d6b2782ac56b3db2140171e",
+  "checkedAt": "2026-10-25T12:21:45.155030+00:00",
+  "main": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
   "scope": "38 bekannte Codex-Chats: jüngste Meldungen; Classroom/Native zusätzlich vertieft. 12 Cloudchats jüngster lesbarer Stand, teils gekürzt. Anhänge und gesamte historische Produktarbeit nicht vollständig abgenommen.",
   "areas": {
     "web": {
-      "status": "Bestand + neue Kandidaten",
-      "built": "Web ist auf gradecrew.de erreichbar. Neue Remy-Bedienung ist konzipiert; Wilma-Prüfprototyp und Aufgabenfeedback haben eigene Nachweise.",
-      "gap": "Konzept, lokaler Prototyp, integrierter Feedbackcode und tatsächliche Veröffentlichung unterscheiden; Verarbeitung von Feedback separat nachweisen.",
-      "next": "Aufgabenfeedback am integrierten Stand dem Test- und Veröffentlichungsweg zuordnen.",
+      "status": "Livebestand + neue Kandidaten",
+      "built": "Live-Hosting9497e756 samt Feedback-Lernpfad belegt. PR303 ergänzt Konto, E-Mail-Code und Tutorial als separaten Kandidaten.",
+      "gap": "PR303 ist CI-grün. Maildienst, echter Empfang und gemeinsame Testbereitstellung fehlen.",
+      "next": "Maildienst und Absenderdomain im erlaubten Testumfang konfigurieren; Konto→Codeempfang→Freischaltung mit richtigen, falschen und abgelaufenen Codes sowie Kontowechsel auf Zielgeräten abnehmen.",
       "owner": "Web / Design / Analytics",
       "chats": [
         {
@@ -23,13 +23,15 @@ export const companyAudit = {
         {
           "id": "01a15f1d-8adf-77e0-831d-f97cfcd0e5e2",
           "title": "GC · Nutzungsanalyse & PostHog – Umsetzung",
-          "updatedAt": 1792927870
+          "updatedAt": 1792929553
         }
       ],
       "links": [
-        "https://github.com/HerrLoeffler/Hausaufgabe/pull/297"
+        "https://github.com/HerrLoeffler/Hausaufgabe/pull/302",
+        "https://github.com/HerrLoeffler/Hausaufgabe/pull/303",
+        "https://gradecrew.de/release.json"
       ],
-      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
+      "checkedAt": "2026-10-25T12:19:00Z"
     },
     "classroom": {
       "status": "2026 testbereit",
@@ -106,16 +108,16 @@ export const companyAudit = {
       "checkedAt": "2026-10-25T11:31:31.925702+00:00"
     },
     "learning": {
-      "status": "Neue Nachtests abgleichen",
-      "built": "24 Probetests samt Korrekturen liegen auf visual255; Mausbedienung geprüft. Adaptiver Fachchat meldet neue Nachtests abgeschlossen.",
-      "gap": "Letzter ausführlicher Runtimebeleg meldete Serverfehler; neuer Nachtestbericht muss mit Source/Deploy abgeglichen werden. Finger-/Fachabnahme der Formate offen.",
-      "next": "Neue adaptive Nachtests und Laufzeitnachweise zuordnen; korrigierte Probetests fachlich und auf Touchgeräten abnehmen.",
+      "status": "Pilotnachweise geklärt",
+      "built": "24 visuelle Probetests vorhanden. Adaptiver Dienststart,372 Backend-/62 UI-Tests und echte Lernpfade auf18905bb6 belegt.",
+      "gap": "Gemeinsame Version der visuellen Folgepatches, Touch-/Fachabnahme sowie adaptive Identitäts-/Löschgates fehlen. Klasse5/6-Ausbau läuft.",
+      "next": "Visuelle PR265/271/296/300 zusammen qualifizieren; adaptive Pilotgrenzen und StudentIdentity/Löschung abnehmen.",
       "owner": "Lernen / Aufgabenformate / Kapiteltests",
       "chats": [
         {
           "id": "01a158f7-7f85-77e1-9448-b32682030c05",
           "title": "GC · Adaptives Lernen – Konzept & Realisierung",
-          "updatedAt": 1792927886
+          "updatedAt": 1792929556
         },
         {
           "id": "01a15a72-d74c-79a3-a180-2bd47a23d663",
@@ -138,13 +140,13 @@ export const companyAudit = {
         "https://github.com/HerrLoeffler/Hausaufgabe/pull/262",
         "https://github.com/HerrLoeffler/Hausaufgabe/pull/254"
       ],
-      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
+      "checkedAt": "2026-10-25T12:19:00Z"
     },
     "design": {
-      "status": "Konzept + lokale Vorschau",
-      "built": "Startseite lokal überarbeitet und geprüft; Beschriftungskorrektur in PR300. Neuer Remy-Einstieg bleibt Konzept.",
-      "gap": "Homepage noch nicht integriert; PR300 hängt von PR265 ab. Maildienst/Absender für Onboarding noch zu klären.",
-      "next": "Maildienst klären und lokale Homepage mit Login, Audio und Tutorial in einen Testkandidaten integrieren.",
+      "status": "Onboarding als PR303",
+      "built": "Konto, E-Mail-Code und Tutorial implementiert. Auf aktuellem Webziel9497e756 aufgebaut;399 Web-/327 Functionstests und kompletter Rulesablauf laut Übergabe. Drei Headprüfungen auf668ee2d8 grün; früherer structuredClone-Lintfehler korrigiert.",
+      "gap": "Maildienst, Absenderdomain und Testkonfiguration fehlen; kein echter Codeversand oder Empfang belegt. Hosting, Callables und Rules noch nicht gemeinsam im getrennten Testsystem abgenommen; Geräte-/Empfangstest offen.",
+      "next": "Maildienst und Absenderdomain im erlaubten Testumfang konfigurieren; Konto→Codeempfang→Freischaltung mit richtigen, falschen und abgelaufenen Codes sowie Kontowechsel auf Zielgeräten abnehmen.",
       "owner": "GC · Design / Startseite",
       "chats": [
         {
@@ -155,17 +157,17 @@ export const companyAudit = {
         {
           "id": "01a1638a-ad42-77d2-885a-77fd743f774f",
           "title": "GradeCrew-Design modernisieren",
-          "updatedAt": 1792927880
+          "updatedAt": 1792929552
         }
       ],
       "links": [],
-      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
+      "checkedAt": "2026-10-25T12:19:00Z"
     },
     "operations": {
-      "status": "Versionen getrennt belegt",
-      "built": "gradecrew.de und alte Schuladresse liefern denselben Hostingstand. 2026 ist getrennt; visual255 besitzt einen eigenen Kandidaten.",
-      "gap": "Neue adaptive Nachtests und geänderte Aufgaben-Vorschau brauchen erneuten Versionsabgleich. Hosting allein belegt keine Backend-/Gerätefreigabe.",
-      "next": "Seiten & Releases: zuerst fehlende Test-/Zielzuordnungen und abgelaufene Vorschauen klären.",
+      "status": "PRs und Komponenten zugeordnet",
+      "built": "79 offene PRs in36 aktiven Familien zugeordnet. Hosting, Backend, Dokumentation und historische Reste getrennt erfasst.",
+      "gap": "Neue Pakete ohne vollständige Abnahme; abgelaufene Vorschauen, Konflikte und fehlende Geräte-/Integrationsnachweise sichtbar.",
+      "next": "In Seiten & Releases zuerst Mail-Testkonfiguration, visuelle Patchkombination und erreichbare Spielevorschauen klären.",
       "owner": "Technik / Release-Verantwortliche",
       "chats": [
         {
@@ -176,26 +178,26 @@ export const companyAudit = {
         {
           "id": "01a158f7-7f85-77e1-9448-b32682030c05",
           "title": "GC · Adaptives Lernen – Konzept & Realisierung",
-          "updatedAt": 1792927886
+          "updatedAt": 1792929556
         }
       ],
       "links": [
         "https://gradecrew.de/release.json",
         "https://gradecrew-staging-2026.web.app/release.json"
       ],
-      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
+      "checkedAt": "2026-10-25T12:19:00Z"
     },
     "customers": {
-      "status": "Feedbackcode integriert",
-      "built": "Aufgabenfeedback PR297 ist zusammengeführt. Historische Bewertungen wurden im Fachchat abgerufen; Analytics PR263 bleibt deaktiviert.",
-      "gap": "Veröffentlichung des neuen Feedbackwegs fehlt. Alter Status „erledigt“ beweist keine tatsächliche Verwendung durch die KI.",
-      "next": "Feedbackweg bis zur nachvollziehbaren Verarbeitung prüfen; Analytics-Konfiguration und echten Testfluss separat klären.",
+      "status": "Feedback veröffentlicht",
+      "built": "Feedback und Lernpfad aus PR297/302 sind auf gradecrew.de veröffentlicht; Abschlussreceipt liegt vor. AnalyticsPR263 bleibt aus.",
+      "gap": "Historische Einzelverwendung wurde nicht gespeichert. Neue Nutzungsbelege und fachliche Freigaben bleiben separat offen.",
+      "next": "Nächste normale Erstellung auf tatsächlichen Verwendungsnachweis prüfen; Altberichte einzeln fachlich bewerten.",
       "owner": "GC · Analytics / Kunden",
       "chats": [
         {
           "id": "01a15f1d-8adf-77e0-831d-f97cfcd0e5e2",
           "title": "GC · Nutzungsanalyse & PostHog – Umsetzung",
-          "updatedAt": 1792927870
+          "updatedAt": 1792929553
         },
         {
           "id": "01a135dd-f37c-7e01-9f60-e197ebd1f6f0",
@@ -204,10 +206,11 @@ export const companyAudit = {
         }
       ],
       "links": [
-        "https://github.com/HerrLoeffler/Hausaufgabe/pull/297",
-        "https://github.com/HerrLoeffler/Hausaufgabe/pull/263"
+        "https://github.com/HerrLoeffler/Hausaufgabe/pull/302",
+        "https://github.com/HerrLoeffler/Hausaufgabe/pull/303",
+        "https://gradecrew.de/release.json"
       ],
-      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
+      "checkedAt": "2026-10-25T12:19:00Z"
     },
     "strategy": {
       "status": "Entscheidungen offen",
@@ -287,9 +290,9 @@ export const companyAudit = {
       "priority": "next"
     },
     "customers/feedback": {
-      "current": "Aufgabenfeedback PR297 ist zusammengeführt. Historische Bewertungen wurden im Fachchat abgerufen; Analytics PR263 bleibt deaktiviert.",
-      "gap": "Veröffentlichung des neuen Feedbackwegs fehlt. Alter Status „erledigt“ beweist keine tatsächliche Verwendung durch die KI.",
-      "next": "Feedbackweg bis zur nachvollziehbaren Verarbeitung prüfen; Analytics-Konfiguration und echten Testfluss separat klären.",
+      "current": "Feedback und Lernpfad aus PR297/302 sind auf gradecrew.de veröffentlicht; Abschlussreceipt liegt vor. AnalyticsPR263 bleibt aus.",
+      "gap": "Historische Einzelverwendung wurde nicht gespeichert. Neue Nutzungsbelege und fachliche Freigaben bleiben separat offen.",
+      "next": "Nächste normale Erstellung auf tatsächlichen Verwendungsnachweis prüfen; Altberichte einzeln fachlich bewerten.",
       "state": "review",
       "priority": "next"
     },
@@ -301,9 +304,9 @@ export const companyAudit = {
       "priority": "next"
     },
     "operations/release": {
-      "current": "gradecrew.de und alte Schuladresse liefern denselben Hostingstand. 2026 ist getrennt; visual255 besitzt einen eigenen Kandidaten.",
-      "gap": "Hostingmanifest beweist keine vollständige Backend-/Rules-/Gerätefreigabe. Mehrere Kandidaten warten auf Zuordnung.",
-      "next": "Seiten & Releases: zuerst fehlende Test-/Zielzuordnungen und abgelaufene Vorschauen klären.",
+      "current": "79 offene PRs in36 aktiven Familien zugeordnet. Hosting, Backend, Dokumentation und historische Reste getrennt erfasst.",
+      "gap": "Neue Pakete ohne vollständige Abnahme; abgelaufene Vorschauen, Konflikte und fehlende Geräte-/Integrationsnachweise sichtbar.",
+      "next": "In Seiten & Releases zuerst Mail-Testkonfiguration, visuelle Patchkombination und erreichbare Spielevorschauen klären.",
       "state": "review",
       "priority": "next"
     },
@@ -350,11 +353,11 @@ export const companyAudit = {
       "priority": "next"
     },
     "learning/adaptiv": {
-      "current": "Vier adaptive Lernmodelle geprüft; aktueller Fachchat meldet Nachtests abgeschlossen und bereitet eine neue Sitzung vor.",
-      "gap": "Neuer Nachteststand gegenüber zuletzt dokumentiertem Serverfehler noch ohne zugeordneten Deploy-/Laufzeitbeleg.",
-      "next": "Neue Nachtest- und Versionsbelege des bestehenden Fachchats prüfen; danach denselben Lernlauf einschließlich Fundus abnehmen.",
-      "state": "clarify",
-      "priority": "urgent"
+      "current": "Recoveryreceipt25.10: Deploy21 erfolgreich, Start00020-tul/Turn00021-les Ready;372 Backend-/62 UI-Tests und echte Bruch-/Textlernabläufe. PR253 ist der frühere lokale Prototyp.",
+      "gap": "Reguläre StudentIdentity/Klassenrechte und physischer zeitgesteuerter Rohdatenlöschlauf fehlen. Geräte- und fachliche Abnahme je Thema/Modus sowie Transfer-/Behaltensbelege fehlen. Das detaillierte persönliche Kompetenznetz und die vollständige Klasse5/6-Abdeckung werden im Fachchat noch ausgebaut.",
+      "next": "Die vier belegten Beispielpfade auf18905bb6 als engen Pilotscope festhalten; Identitäts-/Löschgates schließen und neuen Klasse5/6-Ausbau getrennt prüfen.",
+      "state": "review",
+      "priority": "next"
     },
     "learning/fundus": {
       "current": "Vier adaptive Lernmodelle geprüft; aktueller Fachchat meldet Nachtests abgeschlossen und bereitet eine neue Sitzung vor.",
@@ -406,39 +409,39 @@ export const companyAudit = {
       "priority": "next"
     },
     "games/mathe": {
-      "current": "PR240: getrennte Mathevorschau, wiederaufgenommener echter Job und 16 Manifestdateien geprüft.",
-      "gap": "Reale Klasse, physische Geräte, Kamerascan und Nutzerabnahme fehlen.",
-      "next": "Aktuelle Vorschau bestätigen und Lehrer-/Gruppenlauf auf Zielgeräten abnehmen.",
+      "current": "Hosting1ee536e0/Functionsce5c9c1d mit eigenen grünen CI-Läufen. Drei echte synthetische Browserteilnahmen, Teamnormierung, natürliches Rundenende und Remy-Resume belegt. PR239 ist Plan.",
+      "gap": "Aktueller Previewabruf liefert keinen Manifestbeleg; früherer Deploy ist kein aktueller Erreichbarkeitsnachweis. Reale Klasse, physische iPad/iPhone, Kamerascan und menschliche Nutzerabnahme fehlen. Produktintegration und aktueller kombinierter Teststand fehlen.",
+      "next": "Zuerst dieselbe Testbereitstellung wieder erreichbar machen lassen; dann Geräte-/Klassentest mit zwei ungleichen Teams, Reload und Endstand abnehmen.",
       "state": "review",
       "priority": "next"
     },
     "games/reise-rallye": {
-      "current": "Wissensreise und Test-Rallye besitzen getrennte veröffentlichte Kandidaten.",
-      "gap": "Test-Rallye-Kanal war bis20.10. gültig; echter angemeldeter Durchlauf und aktuelle Erreichbarkeit offen.",
-      "next": "Aktive Testumgebung je Spiel klären und angemeldeten Test bis zum Endstand durchspielen.",
+      "current": "Wissensreise: echte50-Fragen-Vorbereitung bereits belegt (46spielbar/4ausgeschlossen). Test-Rallye:143Tests und historischer Deploy.",
+      "gap": "Wissensreise: vollständiges Generate→Publish→Cloudplay offen. Rallye: angemeldeter Lehrer→Schüler→Endstand offen. Aktuelle Vorschauen fehlen.",
+      "next": "Testbereitstellung je Spiel klären; nur die noch offenen vollständigen Abläufe abnehmen.",
       "state": "review",
       "priority": "next"
     },
     "design/crew": {
-      "current": "Startseite lokal überarbeitet und geprüft; Beschriftungskorrektur in PR300. Neuer Remy-Einstieg bleibt Konzept.",
-      "gap": "Homepage noch nicht integriert; PR300 hängt von PR265 ab. Maildienst/Absender für Onboarding noch zu klären.",
-      "next": "Maildienst klären und lokale Homepage mit Login, Audio und Tutorial in einen Testkandidaten integrieren.",
+      "current": "Konto, E-Mail-Code und Tutorial implementiert. Auf aktuellem Webziel9497e756 aufgebaut;399 Web-/327 Functionstests und kompletter Rulesablauf laut Übergabe. Drei Headprüfungen auf668ee2d8 grün; früherer structuredClone-Lintfehler korrigiert.",
+      "gap": "Maildienst, Absenderdomain und Testkonfiguration fehlen; kein echter Codeversand oder Empfang belegt. Hosting, Callables und Rules noch nicht gemeinsam im getrennten Testsystem abgenommen; Geräte-/Empfangstest offen.",
+      "next": "Maildienst und Absenderdomain im erlaubten Testumfang konfigurieren; Konto→Codeempfang→Freischaltung mit richtigen, falschen und abgelaufenen Codes sowie Kontowechsel auf Zielgeräten abnehmen.",
       "state": "review",
-      "priority": "next"
+      "priority": "urgent"
     },
     "design/dashboard": {
-      "current": "Startseite lokal überarbeitet und geprüft; Beschriftungskorrektur in PR300. Neuer Remy-Einstieg bleibt Konzept.",
-      "gap": "Homepage noch nicht integriert; PR300 hängt von PR265 ab. Maildienst/Absender für Onboarding noch zu klären.",
-      "next": "Maildienst klären und lokale Homepage mit Login, Audio und Tutorial in einen Testkandidaten integrieren.",
+      "current": "Konto, E-Mail-Code und Tutorial implementiert. Auf aktuellem Webziel9497e756 aufgebaut;399 Web-/327 Functionstests und kompletter Rulesablauf laut Übergabe. Drei Headprüfungen auf668ee2d8 grün; früherer structuredClone-Lintfehler korrigiert.",
+      "gap": "Maildienst, Absenderdomain und Testkonfiguration fehlen; kein echter Codeversand oder Empfang belegt. Hosting, Callables und Rules noch nicht gemeinsam im getrennten Testsystem abgenommen; Geräte-/Empfangstest offen.",
+      "next": "Maildienst und Absenderdomain im erlaubten Testumfang konfigurieren; Konto→Codeempfang→Freischaltung mit richtigen, falschen und abgelaufenen Codes sowie Kontowechsel auf Zielgeräten abnehmen.",
       "state": "review",
-      "priority": "next"
+      "priority": "urgent"
     },
     "operations/backend": {
-      "current": "Vier adaptive Lernmodelle geprüft; aktueller Fachchat meldet Nachtests abgeschlossen und bereitet eine neue Sitzung vor.",
-      "gap": "Neuer Nachteststand gegenüber zuletzt dokumentiertem Serverfehler noch ohne zugeordneten Deploy-/Laufzeitbeleg.",
-      "next": "Neue Nachtest- und Versionsbelege des bestehenden Fachchats prüfen; danach denselben Lernlauf einschließlich Fundus abnehmen.",
-      "state": "clarify",
-      "priority": "urgent"
+      "current": "Recoveryreceipt25.10: Deploy21 erfolgreich, Start00020-tul/Turn00021-les Ready;372 Backend-/62 UI-Tests und echte Bruch-/Textlernabläufe. PR253 ist der frühere lokale Prototyp.",
+      "gap": "Reguläre StudentIdentity/Klassenrechte und physischer zeitgesteuerter Rohdatenlöschlauf fehlen. Geräte- und fachliche Abnahme je Thema/Modus sowie Transfer-/Behaltensbelege fehlen. Das detaillierte persönliche Kompetenznetz und die vollständige Klasse5/6-Abdeckung werden im Fachchat noch ausgebaut.",
+      "next": "Die vier belegten Beispielpfade auf18905bb6 als engen Pilotscope festhalten; Identitäts-/Löschgates schließen und neuen Klasse5/6-Ausbau getrennt prüfen.",
+      "state": "review",
+      "priority": "next"
     },
     "customers/analytics": {
       "current": "PR263 implementiert und CI-geprüft; neue Messgates bleiben aus.",
@@ -474,6 +477,20 @@ export const companyAudit = {
       "next": "Datenweg des ersten Piloten und benötigte Verträge/Providerbelege mit Zuständigen klären.",
       "state": "clarify",
       "priority": "next"
+    },
+    "web/feedback": {
+      "current": "Feedback und Lernpfad aus PR297/302 sind auf gradecrew.de veröffentlicht; Abschlussreceipt liegt vor. AnalyticsPR263 bleibt aus.",
+      "gap": "Historische Einzelverwendung wurde nicht gespeichert. Neue Nutzungsbelege und fachliche Freigaben bleiben separat offen.",
+      "next": "Nächste normale Erstellung auf tatsächlichen Verwendungsnachweis prüfen; Altberichte einzeln fachlich bewerten.",
+      "state": "review",
+      "priority": "next"
+    },
+    "design/tutorial": {
+      "current": "Konto, E-Mail-Code und Tutorial implementiert. Auf aktuellem Webziel9497e756 aufgebaut;399 Web-/327 Functionstests und kompletter Rulesablauf laut Übergabe. Drei Headprüfungen auf668ee2d8 grün; früherer structuredClone-Lintfehler korrigiert.",
+      "gap": "Maildienst, Absenderdomain und Testkonfiguration fehlen; kein echter Codeversand oder Empfang belegt. Hosting, Callables und Rules noch nicht gemeinsam im getrennten Testsystem abgenommen; Geräte-/Empfangstest offen.",
+      "next": "Maildienst und Absenderdomain im erlaubten Testumfang konfigurieren; Konto→Codeempfang→Freischaltung mit richtigen, falschen und abgelaufenen Codes sowie Kontowechsel auf Zielgeräten abnehmen.",
+      "state": "review",
+      "priority": "urgent"
     }
   }
 };

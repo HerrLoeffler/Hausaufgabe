@@ -25,11 +25,11 @@ def fetch_manifest(url,project):
 
 class Releases:
  def __init__(self,store,root):
-  self.store=store;self.catalog=json.loads((root/'docs/prototypes/firmenzentrale/releases.json').read_text());self.fetch=fetch_manifest;self.lock=threading.Lock();self.busy=False;self.stopped=threading.Event()
+  self.root=root;self.audit=json.loads((root/'docs/prototypes/firmenzentrale/pr-audit.json').read_text());self.store=store;self.catalog=json.loads((root/'docs/prototypes/firmenzentrale/releases.json').read_text());self.fetch=fetch_manifest;self.lock=threading.Lock();self.busy=False;self.stopped=threading.Event()
   with store.lock,store.db:store.db.execute('CREATE TABLE IF NOT EXISTS release_reviews(seq INTEGER PRIMARY KEY AUTOINCREMENT,id TEXT UNIQUE NOT NULL,fingerprint TEXT NOT NULL,value TEXT NOT NULL)')
  def public(self):
   with self.store.lock:reviews=[json.loads(r[0]) for r in self.store.db.execute('SELECT value FROM release_reviews ORDER BY seq')]
-  return {'catalog':self.catalog,'refreshing':self.busy,'observations':(self.store.source('release_observations') or {}),'reviews':reviews}
+  return {'audit':self.audit,'catalog':self.catalog,'refreshing':self.busy,'observations':(self.store.source('release_observations') or {}),'reviews':reviews}
  def review(self,payload):
   fields=['id','candidate','sha','environment','check','result','reviewer','evidence']
   if not isinstance(payload,dict) or set(payload)!=set(fields) or any(not isinstance(payload[k],str) for k in fields):raise ValueError('Prüfnotiz unvollständig')

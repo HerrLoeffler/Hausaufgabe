@@ -7,3 +7,10 @@ test('expired previews and source changes remain explicit',()=>{assert.equal(env
 test('old manifest is never current',()=>{assert.equal(environmentState({kind:'test'},{lastGood:{commit:sha},lastSuccess:'2020-01-01'}).kind,'stale');});
 
 test('expired channel and mismatched CI cannot become ready',()=>{const candidate={...c,automated:{status:'passed',sha:'b'.repeat(40)},releasePreparation:''};const obs={test:{lastGood:{commit:sha},lastSuccess:new Date().toISOString()},__environments:[{id:'test',kind:'preview',expiresAt:'2020-01-01'}]};const r=candidateState(candidate,obs,[{candidate:'c',sha,environment:'test',check:'device',result:'passed'}]);assert.equal(r.automated,false);assert.equal(r.deployed,false);assert.equal(r.ready,false);});
+
+test('backend receipt is never compared as a hosting commit and published hosting is explicit',()=>{
+ const obs={test:{lastGood:{commit:sha},lastSuccess:new Date().toISOString()}};
+ const backend=candidateState({...c,sourceComponent:'backend'},obs);assert.equal(backend.deployed,false);assert.equal(backend.label,'Komponenten belegt · Abnahme offen');
+ const published=candidateState({...c,published:true,publication:{commit:sha}},obs);assert.equal(published.live,true);assert.equal(published.ready,false);
+ assert.equal(candidateState({...c,published:true,publication:{commit:sha}},{}).live,false);
+});

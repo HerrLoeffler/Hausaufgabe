@@ -88,14 +88,19 @@ class Sources:
    item=get('contents/'+path+'?ref='+sha);files[path]=base64.b64decode(item['content']).decode()
   prs=[]
   for page in range(1,21):
-   data=get('pulls?state=open&per_page=100&page='+str(page));prs.extend({'number':p['number'],'title':p['title'],'url':p['html_url'],'head':p['head']['sha'],'branch':p['head']['ref'],'draft':p['draft']} for p in data)
+   data=get('pulls?state=open&per_page=100&page='+str(page));prs.extend({'number':p['number'],'title':p['title'],'url':p['html_url'],'head':p['head']['sha'],'branch':p['head']['ref'],'draft':p['draft'],'base':p['base']['ref'],'updatedAt':p['updated_at']} for p in data)
    if len(data)<100:break
   else:raise RuntimeError('PR-Seitenlimit erreicht')
   revision='github:'+sha
   for path,text in files.items():
    chunks=[text[i:i+12000] for i in range(0,len(text),12000)]
    self.store.index_messages(revision,'github',path,[(path+':'+str(i),chunk) for i,chunk in enumerate(chunks)])
-  return {'revision':revision,'commit':sha,'prs':prs,'files':files,'count':len(prs)}
+  # Resolve only targets with a complete approval packet; never trust pulls.base.sha as current.
+  audit=json.loads((self.root/'docs/prototypes/firmenzentrale/pr-audit.json').read_text())
+  targets={g['approval']['base'] for g in audit['groups'] if g.get('approval') and g['approval'].get('base')}
+  from urllib.parse import quote
+  heads={base:get('git/ref/heads/'+quote(base,safe='/'))['object']['sha'] for base in targets}
+  return {'revision':revision,'commit':sha,'prs':prs,'branchHeads':heads,'files':files,'count':len(prs)}
  def context(self, title='', area=''):
   source=self.status();github=(source['sources']['github'] or {}).get('data',{});codex=(source['sources']['codex'] or {}).get('data',{})
   terms=[x.lower() for x in (title+' '+area).split() if len(x)>3]

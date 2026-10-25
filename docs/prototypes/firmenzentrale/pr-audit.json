@@ -1,0 +1,4631 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-25T12:25:06.227218+00:00",
+  "sourceMain": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+  "liveSource": "9497e756ed2defb4da6b05773146a19929101b3c",
+  "openCount": 79,
+  "complete": true,
+  "groups": [
+    {
+      "id": "visual",
+      "name": "Visuelle Aufgaben",
+      "area": "learning",
+      "owner": "Fachchat Erweiterte Aufgabentypen",
+      "task": "GC-VISUAL-PROTOTYPE-AI-02",
+      "kind": "product",
+      "prs": [
+        265,
+        271,
+        296,
+        300
+      ],
+      "target": "Schul-Live nach gemeinsamer Testabnahme",
+      "done": "Zwölf Formate und 24 Probetests; Hosting731d97eb und Backend2ae8fb6 im getrennten Preview. PR300: zwölf Browserformate geprüft. PR271: JSON-Felder entfernt, zehn fokussierte Tests bestanden.",
+      "gaps": [
+        "PR271, PR296 und PR300 gemeinsam auf PR265 abstimmen; die Folgepatches sind nicht als gemeinsamer Release getestet.",
+        "PR271 meldet drei bereits auf der Basis reproduzierte Root-Testfehler; betroffenen Gesamtteststand klären.",
+        "Physische Touch-/Screenreaderprüfung und fachliche Abnahme der korrigierten Aufgaben fehlen.",
+        "Gemeinsame Quellversion, CI, Komponentenreceipt und Rückfallplan für das Livepaket fehlen."
+      ],
+      "next": "Zuerst einen gemeinsamen Kandidaten aus PR265/271/296/300 bilden lassen; dann zwölf Formate und repräsentative Fachaufgaben auf diesem Stand abnehmen.",
+      "related": [],
+      "candidate": "GC-VISUAL-PROTOTYPE-AI-02",
+      "approval": null
+    },
+    {
+      "id": "feedback-record",
+      "name": "Aufgabenfeedback: Statusnachtrag",
+      "area": "customers",
+      "owner": "Fachchat Betrieb & Qualität / Analytics",
+      "task": "GC-WEB-REPAIR-20261007",
+      "kind": "documentation",
+      "prs": [
+        298
+      ],
+      "target": "Dokumentation auf main; veröffentlichte Arbeit separat",
+      "done": "PR298 ist inzwischen zusammengeführt. Capture/Read aus PR297 und Lernpfad aus PR302 sind veröffentlicht. Hosting9497e756, fünf Functions, Rules und zwei READY-Indizes im Abschlussreceipt belegt.",
+      "gaps": [
+        "Historische Bewertungen besitzen keine damaligen Verwendungsnachweise. Erste neue Nutzung und fachliche Einzelfreigaben bleiben gesondert nachzuweisen.",
+        "Separater Workbench-Test scheitert beim temporären Verzeichniscleanup; keine Behauptung aller Repositoryprüfungen grün."
+      ],
+      "next": "Bei der nächsten normalen Erstellung den neuen Nutzungsbeleg prüfen; historische Hinweise einzeln fachlich bewerten. Separaten Workbench-Testfehler im bestehenden Task nachführen.",
+      "related": [
+        297,
+        302
+      ],
+      "candidate": "GC-WEB-REPAIR-20261007",
+      "approval": null
+    },
+    {
+      "id": "central",
+      "name": "Firmenzentrale",
+      "area": "central",
+      "owner": "Dieser Firmenzentralen-Fachchat",
+      "task": "GC-BRAIN-01",
+      "kind": "tooling",
+      "prs": [
+        269,
+        293,
+        295
+      ],
+      "target": "Lokale Firmenzentrale; Plan-/Codeintegration getrennt",
+      "done": "PR269: abgenommener Planscope. PR293: Masterplanrevision. PR295: lokaler Chat-/Berichtsweg und geprüfte Oberfläche.",
+      "gaps": [
+        "PR269 hat einen aktuellen Zusammenführungskonflikt; alte gemeinsame Regeln nicht überschreiben.",
+        "PR293 braucht ein Delta-Review; PR295 braucht unabhängige V1-/Recovery-/Bedienabnahme.",
+        "Produktcodeprofil, E-Mail-Eingang und Mehrbenutzerbetrieb sind eigene offene Pakete."
+      ],
+      "next": "PR269/293 als Planquellen mit PR295 verknüpfen; nur eigene Planänderungen konfliktbewusst übernehmen und V1-Review am konkreten Code durchführen.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "fundus",
+      "name": "Aufgabenfundus",
+      "area": "learning",
+      "owner": "Fachchat Aufgabenfundus / Recherche",
+      "task": "GC-EXTENDED-QUESTION-TYPES-01",
+      "kind": "documentation",
+      "prs": [
+        290
+      ],
+      "target": "Wissensfundus auf main",
+      "done": "163 Entwürfe plus27 geprüfte Ergänzungen dokumentiert; keine190 lauffähigen Fragetypen.",
+      "gaps": [
+        "Dokumentationsintegration und spätere Auswahl konkreter Referenzaufgaben offen.",
+        "Jede technische Übernahme braucht einen eigenen Aufgaben-/Bewertungs-/Hilfenbeleg."
+      ],
+      "next": "Aktuellen PR290-Stand integrieren lassen und die vorgeschlagenen Referenzaufgaben NM01/NM02/NR02/NR03/NL01/NL03/NR01 fachlich konkretisieren.",
+      "related": [
+        265,
+        296
+      ],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "keyboard",
+      "name": "Secure: Start mit offener Tastatur",
+      "area": "native",
+      "owner": "GC · iPhone & iPad",
+      "task": "GC-IOS-02",
+      "kind": "native",
+      "prs": [
+        294
+      ],
+      "target": "Secure-TestFlight → App-Store-Version",
+      "done": "iPad/iPhone-Simulator Hoch-/Querformat mit tatsächlich sichtbarer Tastatur und antippbarem Startknopf bestanden; unabhängiger Quellreview vorhanden.",
+      "gaps": [
+        "Separater Kandidat noch nicht in aktuelle native Releasequelle übernommen.",
+        "Gebauter und hochgeladener Nachfolgebuild sowie echte iPad-Abnahme mit offener Tastatur fehlen."
+      ],
+      "next": "Drei geänderte Dateien mit dem aktuellen Native-Ziel abgleichen; nach gezielter Integration TestFlightbuild bis zum realen iPad-Start prüfen.",
+      "related": [],
+      "candidate": "GC-SECURE-KEYBOARD",
+      "approval": null
+    },
+    {
+      "id": "analytics",
+      "name": "Lehrkraftmessung",
+      "area": "customers",
+      "owner": "Fachchat Betrieb & Qualität / Analytics",
+      "task": "GC-ANALYTICS-01",
+      "kind": "product",
+      "prs": [
+        263
+      ],
+      "target": "Getrenntes Testsystem → eigenes Schulziel",
+      "done": "Exakte Produkt-CI grün; Messgates bleiben aus. Vorbereitete V1-Dashboardfelder sind noch leer.",
+      "gaps": [
+        "Autorisierter Konfigurationsweg und eigenes Schul-PostHogziel fehlen; frühere Approval-Sperre bleibt erhalten.",
+        "Zweck-/Fristeninformation und echter Ereignisfluss bis zum Dashboard fehlen.",
+        "Selektiver Testdeploy der neun Funktionen und gemeinsame Integration fehlen."
+      ],
+      "next": "Erlaubten Konfigurationsweg mit dem bestehenden Owner klären; einen synthetischen Opt-in-Lauf bis zum Dashboard belegen.",
+      "related": [],
+      "candidate": "GC-ANALYTICS-01",
+      "approval": null
+    },
+    {
+      "id": "adaptive",
+      "name": "Adaptives Lerngehirn",
+      "area": "learning",
+      "owner": "GC · Adaptives Lernen – Konzept & Realisierung",
+      "task": "GC-ADAPTIVE-PRACTICE-01",
+      "kind": "product",
+      "prs": [
+        262,
+        253
+      ],
+      "target": "Getrenntes Testsystem → begrenzter Schülerpilot",
+      "done": "Recoveryreceipt25.10: Deploy21 erfolgreich, Start00020-tul/Turn00021-les Ready;372 Backend-/62 UI-Tests und echte Bruch-/Textlernabläufe. PR253 ist der frühere lokale Prototyp.",
+      "gaps": [
+        "Reguläre StudentIdentity/Klassenrechte und physischer zeitgesteuerter Rohdatenlöschlauf fehlen.",
+        "Geräte- und fachliche Abnahme je Thema/Modus sowie Transfer-/Behaltensbelege fehlen.",
+        "Das detaillierte persönliche Kompetenznetz und die vollständige Klasse5/6-Abdeckung werden im Fachchat noch ausgebaut.",
+        "PR253 hat Konflikte; Prototyp nicht als gleichwertiges Produktpaket integrieren."
+      ],
+      "next": "Die vier belegten Beispielpfade auf18905bb6 als engen Pilotscope festhalten; Identitäts-/Löschgates schließen und neuen Klasse5/6-Ausbau getrennt prüfen.",
+      "related": [],
+      "candidate": "GC-ADAPTIVE-PRACTICE-01",
+      "approval": null
+    },
+    {
+      "id": "privacy",
+      "name": "Datenschutz und Kontogedächtnis",
+      "area": "governance",
+      "owner": "Fachrolle Datenschutz, Recht & faire Bedienung",
+      "task": "GC-LAUNCH-CONTROLS-01-PRIVACY",
+      "kind": "product",
+      "prs": [
+        259,
+        191,
+        188
+      ],
+      "target": "PR191: Produkt; PR188/259: Dokumentation",
+      "done": "PR191 hat synthetische Kontowechsel-/Resettests und Browserbelege. Rolle/Katalog aus PR188 liegen bereits auf main; PR259 ist ein konkreter Lückenbericht.",
+      "gaps": [
+        "PR191 braucht aktuelle CombinedCI, unabhängige Prüfung der Kontogrenzen und echten berechtigten Testfluss.",
+        "Schul-/Anbieter-/Aufbewahrungsbelege für den betroffenen Pilotumfang fehlen; Bericht allein schließt sie nicht.",
+        "PR188/259 sind keine separat zu deployenden Produktänderungen."
+      ],
+      "next": "PR191 gegen aktuellen Webstand qualifizieren; Lesen → Abbrechen → bestätigtes Löschen → Kontowechsel prüfen. Fehlende Betreiber-/Providerbelege zuordnen.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "chapters",
+      "name": "Kapitel und Antwortvergleich",
+      "area": "learning",
+      "owner": "Fachchat Kapiteltests",
+      "task": "GC-CHAPTER-TESTS-01",
+      "kind": "product",
+      "prs": [
+        254,
+        252
+      ],
+      "target": "Kapitelpreview → Schul-Live",
+      "done": "Runtime261b78dd im Preview;559 Web-/298 Functions-/99 Assessmenttests. Antwortvergleich mit zwei synthetischen Abgaben belegt. PR252 dokumentiert den Plan.",
+      "gaps": [
+        "Reale KI-Kapitelplanqualität und physische Diktat-/iPadabnahme fehlen.",
+        "Gemeldete Wortmarkierung sowie Timer-/Editorvorschau müssen am vorgesehenen Scope geklärt werden.",
+        "Gemeinsame Integration, aktuelle Komponenten und Rückfall-/Nachkontrollplan fehlen."
+      ],
+      "next": "Wortmarkierungsfall reproduzieren und einen tatsächlich erzeugten Kapiteltest fachlich abnehmen; Preview läuft laut Beleg am28.10. aus.",
+      "related": [],
+      "candidate": "GC-CHAPTER-TESTS-01",
+      "approval": null
+    },
+    {
+      "id": "web-old",
+      "name": "Web-Korrekturen aus früherem Sammelstand",
+      "area": "web",
+      "owner": "Fachchat Web / Betrieb & Qualität",
+      "task": "GC-WEB-REPAIR-20261007",
+      "kind": "historical",
+      "prs": [
+        246,
+        245,
+        242
+      ],
+      "target": "Restdelta gegen aktuellen Webstand",
+      "done": "Lückentext-/Servermodule und mehrere Sammelpatchdateien sind im heutigen Webstand bytegleich vorhanden. Die alten PRs sind weiterhin offen.",
+      "gaps": [
+        "App-/Cache-/Stildateien wurden danach geändert; vollständige Patchgleichheit ist nicht belegt.",
+        "Kein zweites vollständiges Einspielen der alten Sammelbasis."
+      ],
+      "next": "Nur verbleibende Hunks von PR242/245/246 gegen9497e756 prüfen; bestätigte Restkorrektur oder erledigten Altstand dokumentieren, dann erst bewusst schließen.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "math",
+      "name": "Mathe-Gruppenrunden",
+      "area": "games",
+      "owner": "Fachchat Mathe-Spiel / Games",
+      "task": "GC-GAMES-LEARNING-UX-01",
+      "kind": "product",
+      "prs": [
+        240,
+        239
+      ],
+      "target": "Getrennte Mathevorschau → Games im Schulprodukt",
+      "done": "Hosting1ee536e0/Functionsce5c9c1d mit eigenen grünen CI-Läufen. Drei echte synthetische Browserteilnahmen, Teamnormierung, natürliches Rundenende und Remy-Resume belegt. PR239 ist Plan.",
+      "gaps": [
+        "Aktueller Previewabruf liefert keinen Manifestbeleg; früherer Deploy ist kein aktueller Erreichbarkeitsnachweis.",
+        "Reale Klasse, physische iPad/iPhone, Kamerascan und menschliche Nutzerabnahme fehlen.",
+        "Produktintegration und aktueller kombinierter Teststand fehlen."
+      ],
+      "next": "Zuerst dieselbe Testbereitstellung wieder erreichbar machen lassen; dann Geräte-/Klassentest mit zwei ungleichen Teams, Reload und Endstand abnehmen.",
+      "related": [],
+      "candidate": "GC-MATH-CLASSROOM",
+      "approval": null
+    },
+    {
+      "id": "journey",
+      "name": "Wissensreise",
+      "area": "games",
+      "owner": "Fachchat Wissensreise",
+      "task": "GC-LEARNING-WISSENSREISE-01",
+      "kind": "product",
+      "prs": [
+        238,
+        237
+      ],
+      "target": "Isolierte Wissensreise → Games im Schulprodukt",
+      "done": "Sourceec751260;289 Functions-/7 DOMtests und CI38600305961. Angemeldete50-Fragen-Vorbereitung bereits belegt:46 spielbar,4 transparent ausgeschlossen;11 Functionsreceipt.",
+      "gaps": [
+        "Aktuelle Vorschau nicht über das Manifest bestätigt.",
+        "Vollständiges echtes Generate→Publish→Cloudplay, Providersemantik, Geräte und Klassenlast offen.",
+        "Gemeinsame Produktintegration und Rückfallplan fehlen."
+      ],
+      "next": "Die bereits belegte50-Fragen-Vorbereitung nicht wieder als fehlend führen; als Nächstes den kompletten echten Veröffentlichungs-/Spiellauf auf erreichbarer Vorschau abnehmen.",
+      "related": [],
+      "candidate": "GC-WISSENSREISE",
+      "approval": null
+    },
+    {
+      "id": "rally",
+      "name": "Test-Rallye",
+      "area": "games",
+      "owner": "Fachchat Test-Rallye",
+      "task": "GC-GAMES-TEST-RALLYE-01",
+      "kind": "product",
+      "prs": [
+        236,
+        235
+      ],
+      "target": "Isolierte Rallyevorschau → Games im Schulprodukt",
+      "done": "Source79754937;143Tests, CI38471572958, unabhängiger Review und isolierte Browserchecks. Hosting und zwei Functions historisch deployed.",
+      "gaps": [
+        "Vorschaukanal abgelaufen.",
+        "Legitime Lehrkraftanmeldung → eigener Test → Schülerbeitritt → echte Serverpunkte → Endstand noch nicht belegt.",
+        "Authentifizierte Rulesprofile, physische Geräte/QR und Klassenlast offen."
+      ],
+      "next": "Erreichbare Testversion mit exakt diesem Scope bereitstellen lassen; echten Lehrer-Schüler-Lauf bis zum synchronen Endstand abnehmen.",
+      "related": [],
+      "candidate": "GC-GAMES-TEST-RALLYE-01",
+      "approval": null
+    },
+    {
+      "id": "lerninsel",
+      "name": "Lerninsel: Pläne und Prototypen",
+      "area": "games",
+      "owner": "Lerninsel-Fachchats Gameplay / Art / Browser",
+      "task": "GC-GAMES-LERNINSEL-ADAPTIVE-PLAN-20261013",
+      "kind": "prototype",
+      "prs": [
+        234,
+        230,
+        220,
+        219,
+        175,
+        173
+      ],
+      "target": "Lokale Browser-/Unreal-Erprobung",
+      "done": "PR234: vier editierbare Browserstationen mit14Tests und echtem Browserdurchlauf. PR175/220: native Referenzstände; PR173/219/230: Entwurf und Plan.",
+      "gaps": [
+        "PR220: zusammenhängende normale Eingabefolge und Abschluss-A/B offen.",
+        "PR234: physische Geräte-/Lastprüfung und Produkt-/Lehrkraftanbindung fehlen.",
+        "Native Weltqualität, vollständige Wege und späterer Browser-/App-Port sind keine belegte Schul-Live-Freigabe."
+      ],
+      "next": "Prototypziel je PR beibehalten: PR220 normalen Level1-Lauf abnehmen; PR234 Lehrkraftmechaniken prüfen. Danach ausdrücklich den gewünschten Produktanschluss auswählen.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "binomial",
+      "name": "Fast Quiz: Binome",
+      "area": "games",
+      "owner": "Fachchat Fast Quiz / Games",
+      "task": "GC-GAMES-FASTQUIZ-BINOMIAL-20261012",
+      "kind": "product",
+      "prs": [
+        224
+      ],
+      "target": "Fast-Quiz-Vorschau → Games im Schulprodukt",
+      "done": "Exakte Source2e5f8b8e und CI38227329308; echter Zweitab-Lauf über180Sekunden mit synchronen150Punkten dokumentiert.",
+      "gaps": [
+        "Vorschaukanal seit19.10. abgelaufen.",
+        "Physischer Kamerascan, iPad/Phone, Klasse und Nutzerabnahme fehlen.",
+        "Gemeinsamer Hub-/Produktstand und aktuelle Backendkombination fehlen."
+      ],
+      "next": "Getestete Binomialquelle mit aktuellem FastQuiz-Ziel abgleichen und danach Geräte-/Klassentest auf erneuerter Testbereitstellung durchführen.",
+      "related": [],
+      "candidate": "GC-FASTQUIZ-BINOMIAL",
+      "approval": null
+    },
+    {
+      "id": "pedagogy",
+      "name": "Lehrpläne, Medien und Forschungsregeln",
+      "area": "learning",
+      "owner": "Fachchats Lehrpläne / Medien / Didaktik",
+      "task": "GC-PEDAGOGY-KB-01",
+      "kind": "documentation",
+      "prs": [
+        214,
+        208,
+        112
+      ],
+      "target": "Geprüfter Wissensfundus",
+      "done": "Teilanalysen und Quellenregister vorhanden; PR112 dokumentiert Evidenzregeln. PR214 meldet0/125 vollständig abgeschlossene Regalmedien.",
+      "gaps": [
+        "Länder-/Fach-/Kohorteninventare, Volllektüre und unabhängige Zweitprüfungen bleiben teilweise offen.",
+        "Materialanalyse laut Projektstand pausiert; dieser Audit aktiviert sie nicht.",
+        "Dokumentation ist keine Freigabe eines Laufzeit-Aufgabenpools."
+      ],
+      "next": "Bisherige Teilanalysen mit Abdeckungsgrenzen sichern; erst nach bestehender Prioritätsentscheidung den nächsten begrenzten Quellenblock bearbeiten.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "governor",
+      "name": "Chatregeln und Modellsteuerung",
+      "area": "central",
+      "owner": "Bestehender Governor-/Plugins-Fachowner",
+      "task": "GC-MODEL-GOVERNOR-01",
+      "kind": "tooling",
+      "prs": [
+        206,
+        203,
+        184
+      ],
+      "target": "Lokaler qualifizierter Codex-Arbeitsweg",
+      "done": "PR184: Regeln/Hookentwurf. PR203: nicht installierter Preflightkandidat mit sechs Offlineprüfungen. PR206: reine lokale Clientspezifikation.",
+      "gaps": [
+        "Unterstützte Runtime-/Hookqualifikation und unabhängiger aktueller Review fehlen.",
+        "Native Desktop-/Cloud-Modellsteuerung ist nicht durch Offlineproben belegt."
+      ],
+      "next": "PR203 in seinem isolierten unterstützten Hookprofil qualifizieren; vor Aktivierung genaue Kommando-/Hash-/Rollenbindung prüfen. PR206 bleibt gesonderter Cliententwurf.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "backup",
+      "name": "Backup und Wiederherstellung",
+      "area": "operations",
+      "owner": "Fachchat Backup / Wiederherstellung",
+      "task": "GC-RESTORE-01",
+      "kind": "documentation",
+      "prs": [
+        204
+      ],
+      "target": "Wiederherstellungsnachweise auf main",
+      "done": "Verschlüsselte Ergänzung und isolierter Emulator-Restore mit Wiederstart sind belegt; private Daten/Schlüssel bleiben außerhalb Git.",
+      "gaps": [
+        "Eine doppelte Staging-Mailadresse ist im Auth-Emulator nicht darstellbar.",
+        "Vollständige Cloud-Katastrophenwiederherstellung ist nicht geprüft."
+      ],
+      "next": "Begrenzte Restorebelege in bestehende Übergabe integrieren; Cloud-Recovery und Auth-Ausnahme als getrennte konkrete Prüfaufgaben erhalten.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "workflow",
+      "name": "Arbeitsbrief- und Abhängigkeitsprüfung",
+      "area": "central",
+      "owner": "GC · Automatisierung & Integration",
+      "task": "GC-POCOCK-IMPLEMENT-01",
+      "kind": "tooling",
+      "prs": [
+        197
+      ],
+      "target": "Gemeinsame Arbeitswerkzeuge auf main",
+      "done": "Neun echte CLI-Verhaltenstests und bestehende Automationsprüfungen bestanden; Handoff-CI führt den neuen Schritt tatsächlich aus.",
+      "gaps": [
+        "Unabhängige Requirements-/Standardsabnahme und einmalige Nachfahrt sind in der Übergabe noch offen.",
+        "Shared-Dateiüberschneidungen mit Governor-Addenda müssen bei Integration erhalten bleiben."
+      ],
+      "next": "Vorhandenen Codekandidaten5fdfc290 mit aktueller Metadatenfassung dem bestehenden Reviewer zuordnen; neun CLI-Fälle und den realen Brief einmal nachfahren lassen.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "security",
+      "name": "Sicherheitsrollen und Startschutz",
+      "area": "governance",
+      "owner": "Fachrolle Technische Sicherheit",
+      "task": "GC-SECURITY-02",
+      "kind": "historical",
+      "prs": [
+        189,
+        146
+      ],
+      "target": "SEC-Dokumentation und aktueller Web-Sicherheitsscope",
+      "done": "SEC-Rolle ist auf main; der zentrale Status belegt spätere Web-Sicherheitsintegration. PR146 ist der ältere kleine Startschutzpatch mit grüner Node22-CI.",
+      "gaps": [
+        "PR146 nicht als alten Security-Gesamtbranch über den heutigen Webstand legen.",
+        "Verbleibende Delta-/Geräte-/Lastgates C–G müssen am aktuellen Scope beurteilt werden."
+      ],
+      "next": "PR146-Hunks mit späterem Sicherheitsintegrationsbeleg abgleichen und nur noch einzigartige Reständerungen übernehmen lassen; PR189-Dokurest getrennt behandeln.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "coco",
+      "name": "Coco ohne Erinnerungseditor",
+      "area": "web",
+      "owner": "Fachchat Crew / Coco",
+      "task": "GC-CREW-AI-01-CHAT-UI",
+      "kind": "product",
+      "prs": [
+        187,
+        186
+      ],
+      "target": "Kontogedächtnis im aktuellen Webprodukt",
+      "done": "PR186:40 fokussierte Tests und lokaler Hydration-/Reloadlauf; Hintergrundgedächtnis bleibt. PR187 ist der Statusnachtrag.",
+      "gaps": [
+        "Aktuelle Produktintegration und tatsächliche Kontoprüfung fehlen für diesen isolierten Kandidaten.",
+        "PR191 ergänzt separate Kontoeinstellungen und muss bewusst abgestimmt werden."
+      ],
+      "next": "Aktuellen Coco-Stand gegen PR186 prüfen; verbleibende Editorentfernung mit PR191 zusammen abnehmen, ohne Hintergrundgedächtnis oder Löschgrenzen zu verlieren.",
+      "related": [
+        191
+      ],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "games-foundation",
+      "name": "Games: Hub und gemeinsame Bausteine",
+      "area": "games",
+      "owner": "Games-Fachowner Hub / gemeinsame Oberfläche",
+      "task": "GC-GAMES-PIPELINE-01",
+      "kind": "product",
+      "prs": [
+        185,
+        153,
+        28,
+        2
+      ],
+      "target": "Gemeinsamer Games-Teststand → Schulprodukt",
+      "done": "Hubprüfungen mit simulierten Backends; Design-System0.1.0 und Produktions-/Entwicklermoduspläne vorhanden.",
+      "gaps": [
+        "PR28 hat Zusammenführungskonflikte.",
+        "Echte gemeinsame Backendabläufe, Geräte und Klassenlast fehlen für den Hub.",
+        "PR153/185 sind Leitfaden bzw. Entwurf, keine implementierte native Agentbrücke."
+      ],
+      "next": "Hub und Designsystem konfliktbewusst auf einen aktuellen Teststand bringen; zuerst einen tatsächlichen Lehrer→Spiel→Ergebnis-Ablauf als Referenz qualifizieren.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "expedition",
+      "name": "Escape und Expedition",
+      "area": "games",
+      "owner": "Escape-/Expedition-Fachchats",
+      "task": "GC-GAMES-ESCAPE-VISUAL-01",
+      "kind": "prototype",
+      "prs": [
+        171,
+        83,
+        60,
+        56,
+        53,
+        10
+      ],
+      "target": "Getrennte lokale und historische Spielprototypen",
+      "done": "Native Küstenepisode mit zwölf Stationen und synthetischen Eingabetests; mehrere frühere Browser-Prototypen mit eigenen Previewbelegen.",
+      "gaps": [
+        "Native normale OS-Eingabe-/Touch-/Zehn-Minuten-Abnahme offen.",
+        "PR83: ursprünglicher Kandidat35/36 Controllerprüfungen, kein belegtes voll grünes Aktivierungspaket.",
+        "PR10 hat Konflikte; alte Varianten sind keine parallelen fertigen Livefeatures.",
+        "Hauptprodukt-/Klassen-/Schüleranschluss und Geräteabnahme je ausgewählter Variante fehlen."
+      ],
+      "next": "Aktuelle gewünschte Spielvariante beim bestehenden Owner festhalten; dort vollständigen normalen Durchlauf abnehmen. Historische Varianten erhalten und nur gezielte Restarbeit übernehmen.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "pizza",
+      "name": "Bruchpizzeria",
+      "area": "games",
+      "owner": "Pizzeria-Fachchats Browser / Unreal",
+      "task": "GC-GAMES-PIZZA-01",
+      "kind": "prototype",
+      "prs": [
+        160,
+        158
+      ],
+      "target": "Lokale Spielabnahme; Produktweg separat",
+      "done": "Browserpilot mit17Tests und Spielablauf; Unrealstand mit890reinen Checks, elf gerenderten Tests und behobenen Teller-/Reinigungsfällen.",
+      "gaps": [
+        "Physische Geräte- und menschliche Spiel-/Lernabnahme fehlen.",
+        "Kein gemeinsamer Auth-/Backend-/Schulproduktanschluss und kein Browserpaket aus dem Unrealstand belegt."
+      ],
+      "next": "Gewählte Browser- bzw. Unrealversion normal spielen und visuell abnehmen; erst danach passenden Produktanschluss definieren.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "ios-history",
+      "name": "Historische iOS-Übergabe",
+      "area": "native",
+      "owner": "GC · iPhone & iPad",
+      "task": "GC-IOS-02",
+      "kind": "documentation",
+      "prs": [
+        145
+      ],
+      "target": "Native Releasehistorie",
+      "done": "PR145 korrigiert frühere0.1.8/0.1.9-Nachweise. Aktuelle Securebuilds1192/1221 sind spätere getrennte Verteilungen.",
+      "gaps": [
+        "Historische Koordinationszeilen dürfen neuere Native-/Domainnachweise nicht überschreiben."
+      ],
+      "next": "Nur die historischen Receipts in die bestehende Nativeakte übernehmen; aktuelle Store-/TestFlightabnahme an1192/1221 weiterführen.",
+      "related": [
+        294
+      ],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "homepage",
+      "name": "Homepage-Entwürfe und alter Guardianpatch",
+      "area": "design",
+      "owner": "GradeCrew-Design modernisieren",
+      "task": "GC-DESIGN-05",
+      "kind": "prototype",
+      "prs": [
+        143,
+        118
+      ],
+      "target": "Lokaler Showcase → späterer Webkandidat",
+      "done": "PR143 sichert die interaktive Crew-Startszene. PR118 ist ein älterer automatisch gesicherter CSS-Kandidat; spätere Startscreenintegration steht im zentralen Status.",
+      "gaps": [
+        "Aktuelle lokale Homepage, Login/Tutorial/Audio und Mail-Codeverifikation sind noch nicht als gemeinsames Produktpaket belegt.",
+        "Alte Guardiandatei nicht zusätzlich ungeprüft über die aktuelle Gestaltung legen."
+      ],
+      "next": "Lokalen neuesten Showcase als unveränderliche Quelle sichern und gegen heutige Homepage abgleichen; Login/Tutorial/Mailcode als konkretes Integrationspaket abnehmen.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "plugins",
+      "name": "Werkzeug- und Skillrecherche",
+      "area": "central",
+      "owner": "Plugins-Fachchat",
+      "task": "GC-PLUGINS-01",
+      "kind": "documentation",
+      "prs": [
+        142
+      ],
+      "target": "Wissens-/Arbeitsregeln auf main",
+      "done": "Kurs-/Skills-Recherche dokumentiert; spätere gezielte Skillinstallationen haben eigene integrierte Belege.",
+      "gaps": [
+        "Historische Werkzeugzahlen/Installationsbehauptungen bei Dokumentübernahme mit heutiger Quelle abgleichen."
+      ],
+      "next": "Nur noch fehlende Recherche-/Regeldeltas auf main zuordnen; keine erneute Installation oder automatische Aktivierung aus PR142.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "classroom-plan",
+      "name": "Classroom: Architekturentwurf",
+      "area": "classroom",
+      "owner": "GC · Schüler, Klassen & ASV",
+      "task": "GC-CLASSROOM-01",
+      "kind": "documentation",
+      "prs": [
+        141
+      ],
+      "target": "Architekturakte; aktueller2026-Pilot separat",
+      "done": "PR141 ist der frühe ASV-/Identitätsplan. Aktueller2026-Fachstand und Secure1221 sind weiter als diese Dokumentation.",
+      "gaps": [
+        "Tatsächliches ASV-Exportprofil, schulischer Schlüsseltresor/Recovery und fachliche Rechte-/Aufbewahrungsprüfung fehlen im Planscope.",
+        "Eine Planintegration ersetzt nicht die physische1221-Abnahme."
+      ],
+      "next": "Plan mit aktuellem Classroomvertrag abgleichen; bestätigten vollständigen iPad-Zuweisungs-/Abgabelauf separat dokumentieren.",
+      "related": [],
+      "candidate": "GC-CLASSROOM-01",
+      "approval": null
+    },
+    {
+      "id": "i18n",
+      "name": "Sprachen: Plan und frühere Teilpatches",
+      "area": "web",
+      "owner": "Fachchat Internationalisierung / Web",
+      "task": "GC-I18N-03",
+      "kind": "historical",
+      "prs": [
+        140,
+        137,
+        15
+      ],
+      "target": "Restdelta gegen heutigen zweisprachigen Webstand",
+      "done": "GC-I18N-03 ist laut zentralem Status später integriert und deployed; mehrere PR137-Sprachmodule sind im heutigen Webstand bytegleich.",
+      "gaps": [
+        "PR137 ausdrücklich nicht zusätzlich zu kombiniertem PR139 einspielen.",
+        "Aktuelle DE/EN-, Warmcache-, Resume-/Export-/Datumsabnahme nicht aus alter CI ableiten.",
+        "PR15 bleibt der Grundlagenplan, PR140 der historische Nachtrag."
+      ],
+      "next": "Verbleibende Sprachlücken gegen heutigen Webstand prüfen; historische Dokumentation ohne Rücksetzen neuerer Versionen integrieren.",
+      "related": [
+        139
+      ],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "automation",
+      "name": "Guardian-Profile und Ausbauplan",
+      "area": "operations",
+      "owner": "GC · Automatisierung & Integration",
+      "task": "GC-AUTOMATION-08",
+      "kind": "tooling",
+      "prs": [
+        126,
+        65
+      ],
+      "target": "Begrenzt qualifizierte Entwicklungsautomatik",
+      "done": "136Tests und Games-Rehearsal dokumentiert; Profil/Publisher deaktiviert. PR65 beschreibt spätere komplexe Fähigkeiten.",
+      "gaps": [
+        "Historische Runnerfehler sind kein aktueller Produkttest; fehlende Web-/Stagebelege gezielt nachweisen.",
+        "Kanal-/Hostingownership, positiver Gameskandidat36/36 und konkreter Kosten-/Quellauftrag fehlen zur Aktivierung."
+      ],
+      "next": "Vorhandene Runs und unveränderte Controllerbytes prüfen; nur fehlende Qualifikation am konkreten Profil nachholen lassen, keinen neuen bezahlten Pilot starten.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "combined-ci",
+      "name": "Webprüfungen vor Integration",
+      "area": "operations",
+      "owner": "GC · Automatisierung & Integration",
+      "task": "GC-RELEASE-02",
+      "kind": "tooling",
+      "prs": [
+        51
+      ],
+      "target": "Workflowintegration; kein eigener Liveinhalt",
+      "done": "Echter Merge-Ergebnislauf37074747781 mit Emulator-/Browser-/Buildprüfungen bestanden.",
+      "gaps": [
+        "Aktuellen Workflowdiff mit inzwischen verändertem Ziel abgleichen.",
+        "Integration kann bestehende automatische Stagingketten auslösen; kein Merge in diesem Audit."
+      ],
+      "next": "Nur fehlende Workflowhunks gegen aktuelle CI bestimmen und mit dem Integrationsowner im bestehenden Releaseweg abnehmen.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "tutorial-old",
+      "name": "Tutorial: bereits enthaltene Korrektur",
+      "area": "web",
+      "owner": "Web-/Tutorial-Fachowner",
+      "task": null,
+      "kind": "historical",
+      "prs": [
+        78
+      ],
+      "target": "Bereits im aktuellen Web-Dateistand",
+      "done": "Einzige geänderte Datei tutorial-choice-v1.css ist bytegleich im aktuellen Webstand9497e756. Kein neuer Produktpatch nötig.",
+      "gaps": [
+        "Historischen Guardianauftrag/Abschlussstatus beim bestehenden Owner abgleichen; offener PR ist kein fehlender Deploy."
+      ],
+      "next": "Dateigleichheit als Erledigungsbeleg aufnehmen und PR78 nach Ownerprüfung bewusst schließen lassen; nicht neu mergen.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "gateway",
+      "name": "KI-Gateway und Qualitätsrouting",
+      "area": "operations",
+      "owner": "Fachchat AI-Gateway / Routing",
+      "task": "GC-AI-GATEWAY-01",
+      "kind": "service",
+      "prs": [
+        37,
+        29,
+        26,
+        25,
+        24
+      ],
+      "target": "Isolierter Gatewaypilot; bestehende Produktpipeline erhalten",
+      "done": "Frühere echte Claude-/OpenAI-Smokes und Gatewaydeploys belegt; exakte Checks der PRheads grün. Qualitätsvertrag, Budgetrouter und CI/CD sind getrennte Schichten.",
+      "gaps": [
+        "Letzter zentraler Gatebeleg: Traffic-Preflight von Run37010376603 fehlgeschlagen; aktuellen sicheren100%-Revisionstand klären.",
+        "Caller-IAM, signierte qualifizierte Routingpolicy, reale Kosten-/Qualitätsbenchmarks und kontrollierter Functions-Pilot fehlen.",
+        "Kein pauschaler Ersatz der laufenden Produktpipeline aus Gatewaytests."
+      ],
+      "next": "Zuerst die aktuelle Gatewayrevision/Traffic-Zuordnung lesend belegen; danach einen begrenzten Caller-/Fallbackpilot mit vorhandenem Owner planen.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "tutor-old",
+      "name": "Escape-Tutor: Schutz bereits enthalten",
+      "area": "games",
+      "owner": "Escape-Fachowner",
+      "task": "GC-GAMES-COST-01",
+      "kind": "historical",
+      "prs": [
+        27
+      ],
+      "target": "Runtime bereits im Escapeziel; Dokurest separat",
+      "done": "Tutorimplementierung und zugehöriger Verhaltenstest sind bytegleich im Escapeziela7ffc382. Zentraler Status bestätigt den integrierten Runtimeumfang.",
+      "gaps": [
+        "Dedizierter Workflow und Übergabe aus PR27 sind nicht vollständig übernommen.",
+        "Geräteabnahme und serverseitige Tutor-/Budgetgrenzen gehören zum Spielscope."
+      ],
+      "next": "Nur Workflow-/Dokumentationsrest bewerten; keine erneute Implementierung des Kosten-/Fallbackschutzes.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "governance-old",
+      "name": "Alte Branch-/Emulator-Governance",
+      "area": "operations",
+      "owner": "GC · Automatisierung & Integration",
+      "task": null,
+      "kind": "tooling",
+      "prs": [
+        14
+      ],
+      "target": "Restdelta zu heutigen Koordinationsregeln",
+      "done": "Frühe Governance-/Emulatortests vorhanden; aktuelle START/AGENTS/DevelopmentStatus wurden seitdem erheblich weitergeführt.",
+      "gaps": [
+        "Historischer Shared-Dateiensatz darf heutige Regeln/Registry nicht ersetzen.",
+        "Unique Emulator-/Toolinghunks gegen heutige Tests noch abzugleichen."
+      ],
+      "next": "Nur einzigartige Test-/Toolingdeltas prüfen; übernommene Dokumentation als historischen Rest kennzeichnen, keine breite Altbranchintegration.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "freetext",
+      "name": "Freitext-Prüfhilfe",
+      "area": "web",
+      "owner": "Fachchat Freitext / Assessment",
+      "task": null,
+      "kind": "product",
+      "prs": [
+        11
+      ],
+      "target": "Aktueller Web-/Assessment-Teststand → Schulprodukt",
+      "done": "Neun lokale Klassifizierertests und isolierter Patch vorhanden; zentraler Status nennt ci_green, aktuelle Head-Checkabfrage liefert keinen Checkrun.",
+      "gaps": [
+        "PR-Ziel fix/gradecrew-staging-release-final widerspricht Registryziel feature/gradecrew-app-integration.",
+        "Aktuelle Rules-/Emulatorprüfung und kompletter Browserlauf fehlen.",
+        "Musterlösungs-/manuelle Bewertungskontrakte gegen heutigen Assessmentstand abgleichen."
+      ],
+      "next": "Zielkonflikt zuerst auflösen; danach kleinen Restpatch gegen aktuellen Assessmentstand qualifizieren und echte Lehrkraftkorrektur prüfen.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    },
+    {
+      "id": "onboarding",
+      "name": "Registrierung, E-Mail-Code und Tutorial",
+      "area": "design",
+      "owner": "GradeCrew-Design modernisieren",
+      "task": "GC-DESIGN-05",
+      "kind": "product",
+      "prs": [
+        303,
+        304
+      ],
+      "target": "Getrennte Testumgebung → Schul-Live",
+      "done": "Konto, E-Mail-Code und Tutorial implementiert. Auf aktuellem Webziel9497e756 aufgebaut;399 Web-/327 Functionstests und kompletter Rulesablauf laut Übergabe. Drei Headprüfungen auf668ee2d8 grün; früherer structuredClone-Lintfehler korrigiert.",
+      "gaps": [
+        "Maildienst, Absenderdomain und Testkonfiguration fehlen; kein echter Codeversand oder Empfang belegt.",
+        "Hosting, Callables und Rules noch nicht gemeinsam im getrennten Testsystem abgenommen; Geräte-/Empfangstest offen."
+      ],
+      "next": "Maildienst und Absenderdomain im erlaubten Testumfang konfigurieren; Konto→Codeempfang→Freischaltung mit richtigen, falschen und abgelaufenen Codes sowie Kontowechsel auf Zielgeräten abnehmen.",
+      "related": [],
+      "candidate": null,
+      "approval": null
+    }
+  ],
+  "entries": [
+    {
+      "number": 300,
+      "title": "GC-VISUAL-PROTOTYPE-AI-02: Beschriftungen zentrieren und Zuordnung lösen",
+      "head": "1f63c959655866210942dad39ca36217d10dc7ab",
+      "branch": "fix/visual-label-slots-homepage-20261025",
+      "base": "feature/visual-prototype-ai-02-20261021",
+      "baseSHA": "1ce20d9630d82209316ab7ab13764c4ee158f20f",
+      "updatedAt": "2026-10-25T11:14:23Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/300",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 2,
+        "total_commits": 0,
+        "merge_base_commit": "1ce20d9630d82209316ab7ab13764c4ee158f20f",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/1f63c959655866210942dad39ca36217d10dc7ab...1ce20d9630d82209316ab7ab13764c4ee158f20f"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "visual",
+      "kind": "product",
+      "fileCount": 4,
+      "handoffs": [
+        "workstreams/visual-label-slot-polish-20261025.md"
+      ],
+      "dependencies": [
+        265
+      ]
+    },
+    {
+      "number": 298,
+      "title": "Aufgabenfeedback: geprüften Kandidaten und offene Live-Daten dokumentieren",
+      "head": "9fa1dd3670cc00c4cf034ea5d4bd4a3aabb2b874",
+      "branch": "docs/question-feedback-evidence-20261025",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-25T10:55:03Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/298",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "9fa1dd3670cc00c4cf034ea5d4bd4a3aabb2b874",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40186721328/job/121148975602",
+          "completedAt": "2026-10-25T10:55:22Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "9fa1dd3670cc00c4cf034ea5d4bd4a3aabb2b874",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40186721320/job/121148975578",
+          "completedAt": "2026-10-25T10:55:20Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 4,
+        "behind_by": 2,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "21723ad5cfe3fb8e4062280b2dc2b7fb476c1de3",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/9fa1dd3670cc00c4cf034ea5d4bd4a3aabb2b874...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "feedback-record",
+      "kind": "documentation",
+      "fileCount": 4,
+      "handoffs": [
+        "workstreams/feedback-gc39-release-20261013.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 296,
+      "title": "24 visuelle Probetests: Nutzerkorrekturen, direkte Werkzeuge und schnelle Prüfansicht",
+      "head": "fda13a26d1c4b4cdeadd3689a1280cdd68beb765",
+      "branch": "test/visual-24-pilot-20261025",
+      "base": "feature/visual-prototype-ai-02-20261021",
+      "baseSHA": "1ce20d9630d82209316ab7ab13764c4ee158f20f",
+      "updatedAt": "2026-10-25T11:25:29Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/296",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 8,
+        "total_commits": 0,
+        "merge_base_commit": "1ce20d9630d82209316ab7ab13764c4ee158f20f",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/fda13a26d1c4b4cdeadd3689a1280cdd68beb765...1ce20d9630d82209316ab7ab13764c4ee158f20f"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "visual",
+      "kind": "product",
+      "fileCount": 181,
+      "handoffs": [
+        "workstreams/visual-pilot-24-20261025.md"
+      ],
+      "dependencies": [
+        265
+      ]
+    },
+    {
+      "number": 295,
+      "title": "Firmenzentrale: Bereichsstand, Chat-Aufträge und Weg nach Live",
+      "head": "e459e75071cf30a81ca6b3eafd9da1c7baa43c1c",
+      "branch": "feat/gc-brain-clear-navigation-20261022",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-25T11:50:45Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/295",
+      "checks": [
+        {
+          "name": "local-workspace",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "e459e75071cf30a81ca6b3eafd9da1c7baa43c1c",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40190293288/job/121159655210",
+          "completedAt": "2026-10-25T11:46:57Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "e459e75071cf30a81ca6b3eafd9da1c7baa43c1c",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40190293275/job/121159654963",
+          "completedAt": "2026-10-25T11:47:02Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "e459e75071cf30a81ca6b3eafd9da1c7baa43c1c",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40190293225/job/121159654815",
+          "completedAt": "2026-10-25T11:47:07Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 4,
+        "behind_by": 13,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "21723ad5cfe3fb8e4062280b2dc2b7fb476c1de3",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/e459e75071cf30a81ca6b3eafd9da1c7baa43c1c...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "central",
+      "kind": "tooling",
+      "fileCount": 49,
+      "handoffs": [
+        "workstreams/gc-brain-implementation-20261022.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 294,
+      "title": "Keep Test starten reachable with the iPad keyboard open",
+      "head": "b156c122dc3243049fa1c9fc7fbedb85b8d249cb",
+      "branch": "fix/secure-entry-keyboard-20261022",
+      "base": "feature/native-live-staging-20261018",
+      "baseSHA": "a6a6d322dbc7e5167299473df5c8731945b947c2",
+      "updatedAt": "2026-10-22T21:29:05Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/294",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 4,
+        "behind_by": 2,
+        "targetSHA": "a6a6d322dbc7e5167299473df5c8731945b947c2",
+        "merge_base_commit": "24c0f856384f037ebe156e20dc20a03ae10c4cf8",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/b156c122dc3243049fa1c9fc7fbedb85b8d249cb...a6a6d322dbc7e5167299473df5c8731945b947c2"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "keyboard",
+      "kind": "native",
+      "fileCount": 3,
+      "handoffs": [
+        "workstreams/secure-entry-keyboard-20261022.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 293,
+      "title": "GC-BRAIN-01: Masterplan 1.1 mit Aufgabenqualität und zentralem Eingang",
+      "head": "4ace3673bdd808d89454437f5505195eaf52b234",
+      "branch": "docs/gc-brain-masterplan-review-20261022",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-22T21:13:07Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/293",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "4ace3673bdd808d89454437f5505195eaf52b234",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39855443596/job/120092332348",
+          "completedAt": "2026-10-22T21:13:28Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "4ace3673bdd808d89454437f5505195eaf52b234",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39855443575/job/120092332028",
+          "completedAt": "2026-10-22T21:13:22Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 5,
+        "behind_by": 3,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "cb1b0e284e97f072db058b7705cdb70c45943a3a",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/4ace3673bdd808d89454437f5505195eaf52b234...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "central",
+      "kind": "documentation",
+      "fileCount": 24,
+      "handoffs": [
+        "workstreams/gc-brain-masterplan-review-20261022.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 290,
+      "title": "docs: Aufgabenfundus mit 163 Entwürfen und 27 geprüften Ergänzungen",
+      "head": "6b530c8e41acd04eace7d1e4b048e9dfd31aad4d",
+      "branch": "docs/digital-task-market-research-20261022",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-25T11:56:16Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/290",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "6b530c8e41acd04eace7d1e4b048e9dfd31aad4d",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40190904337/job/121161508701",
+          "completedAt": "2026-10-25T11:55:51Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "6b530c8e41acd04eace7d1e4b048e9dfd31aad4d",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40190904312/job/121161508571",
+          "completedAt": "2026-10-25T11:56:04Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": null,
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "fundus",
+      "kind": "documentation",
+      "fileCount": 12,
+      "handoffs": [
+        "workstreams/digital-task-market-research-20261022.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 271,
+      "title": "fix(visual255): JSON-Editor aus der Aufgabenoberfläche entfernen",
+      "head": "59289c2ef5b3371992720118498cac1525d8574a",
+      "branch": "fix/visual-editor-no-json-20261021",
+      "base": "feature/visual-prototype-ai-02-20261021",
+      "baseSHA": "1ce20d9630d82209316ab7ab13764c4ee158f20f",
+      "updatedAt": "2026-10-21T21:36:49Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/271",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 1,
+        "total_commits": 0,
+        "merge_base_commit": "1ce20d9630d82209316ab7ab13764c4ee158f20f",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/59289c2ef5b3371992720118498cac1525d8574a...1ce20d9630d82209316ab7ab13764c4ee158f20f"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "visual",
+      "kind": "product",
+      "fileCount": 4,
+      "handoffs": [
+        "workstreams/visual-prototype-ai-02-20261021.md"
+      ],
+      "dependencies": [
+        265
+      ]
+    },
+    {
+      "number": 269,
+      "title": "GC-BRAIN-01: Firmenordnung, visueller Entwurf und verbindliche V1-Verträge",
+      "head": "cf5b8c4e0029b9742b158d6d845aafbff7909097",
+      "branch": "docs/gc-brain-firmenzentrale-plan-20261021",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-21T21:54:02Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/269",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "cf5b8c4e0029b9742b158d6d845aafbff7909097",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39682327371/job/119507646112",
+          "completedAt": "2026-10-21T21:53:28Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "cf5b8c4e0029b9742b158d6d845aafbff7909097",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39682327270/job/119507645440",
+          "completedAt": "2026-10-21T21:53:25Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 34,
+        "behind_by": 4,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "18a6f25770b454fb5512d8263d5495c1c797d4da",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/cf5b8c4e0029b9742b158d6d845aafbff7909097...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "dirty",
+      "sameFiles": [],
+      "group": "central",
+      "kind": "documentation",
+      "fileCount": 6,
+      "handoffs": [
+        "workstreams/gc-brain-firmenzentrale-20261021.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 265,
+      "title": "Issue 255: veröffentlichte visuelle GradeCrew-Vorschau mit echten KI- und Bewertungsnachweisen",
+      "head": "1ce20d9630d82209316ab7ab13764c4ee158f20f",
+      "branch": "feature/visual-prototype-ai-02-20261021",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-21T21:19:27Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/265",
+      "checks": [
+        {
+          "name": "BugOps server and rules",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1ce20d9630d82209316ab7ab13764c4ee158f20f",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39677845928/job/119492269332",
+          "completedAt": "2026-10-21T21:20:17Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1ce20d9630d82209316ab7ab13764c4ee158f20f",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39677845890/job/119492263989",
+          "completedAt": "2026-10-21T21:19:41Z"
+        },
+        {
+          "name": "package",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1ce20d9630d82209316ab7ab13764c4ee158f20f",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39677845899/job/119492263563",
+          "completedAt": "2026-10-21T21:19:38Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 16,
+        "behind_by": 6,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "2a6ff107c3e84c9020507f2b384fdd20354efbf7",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/1ce20d9630d82209316ab7ab13764c4ee158f20f...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "visual",
+      "kind": "product",
+      "fileCount": 56,
+      "handoffs": [
+        "workstreams/visual-prototype-ai-02-20261021.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 263,
+      "title": "GC-ANALYTICS-01: datensparsame Lehrkraftmessung und klare Quellen",
+      "head": "1b2fbdd14577e5646a1d57c1048623178ab1ff7a",
+      "branch": "feature/analytics-teacher-v1-20261021",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-21T16:09:10Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/263",
+      "checks": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1b2fbdd14577e5646a1d57c1048623178ab1ff7a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39631268925/job/119329770969",
+          "completedAt": "2026-10-21T16:03:31Z"
+        },
+        {
+          "name": "BugOps server and rules",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1b2fbdd14577e5646a1d57c1048623178ab1ff7a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39631268870/job/119329770723",
+          "completedAt": "2026-10-21T16:03:54Z"
+        },
+        {
+          "name": "package",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1b2fbdd14577e5646a1d57c1048623178ab1ff7a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39631268952/job/119329769509",
+          "completedAt": "2026-10-21T16:03:34Z"
+        },
+        {
+          "name": "Node 22 tests",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1b2fbdd14577e5646a1d57c1048623178ab1ff7a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39631257956/job/119329728390",
+          "completedAt": "2026-10-21T16:05:26Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 16,
+        "behind_by": 2,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "2a6ff107c3e84c9020507f2b384fdd20354efbf7",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/1b2fbdd14577e5646a1d57c1048623178ab1ff7a...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "analytics",
+      "kind": "product",
+      "fileCount": 25,
+      "handoffs": [
+        "workstreams/telemetry-implementation.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 262,
+      "title": "feat: adaptives Lerngehirn mit vier wiederverwendbaren Lernmodellen",
+      "head": "1b70a416f50262d195e90b1241a15b8ceef9494a",
+      "branch": "feat/learning-brain-mathe-deutsch-20261021",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-25T11:28:07Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/262",
+      "checks": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1b70a416f50262d195e90b1241a15b8ceef9494a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40188987370/job/121155736985",
+          "completedAt": "2026-10-25T11:28:18Z"
+        },
+        {
+          "name": "BugOps server and rules",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1b70a416f50262d195e90b1241a15b8ceef9494a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40188987366/job/121155736920",
+          "completedAt": "2026-10-25T11:28:58Z"
+        },
+        {
+          "name": "package",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1b70a416f50262d195e90b1241a15b8ceef9494a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40188987344/job/121155736826",
+          "completedAt": "2026-10-25T11:28:18Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 16,
+        "behind_by": 28,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "2a6ff107c3e84c9020507f2b384fdd20354efbf7",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/1b70a416f50262d195e90b1241a15b8ceef9494a...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "adaptive",
+      "kind": "product",
+      "fileCount": 63,
+      "handoffs": [],
+      "dependencies": []
+    },
+    {
+      "number": 259,
+      "title": "GradeCrew: konkrete Datenschutzlücken für IONOS und OpenAI EU",
+      "head": "4ac195243fc4c85f61325debc5bda9044bf7363e",
+      "branch": "docs/privacy-migration-gap-review-20261021",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-21T15:29:52Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/259",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "4ac195243fc4c85f61325debc5bda9044bf7363e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39626236430/job/119312118658",
+          "completedAt": "2026-10-21T15:30:12Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "4ac195243fc4c85f61325debc5bda9044bf7363e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39626236376/job/119312118093",
+          "completedAt": "2026-10-21T15:30:15Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 51,
+        "behind_by": 1,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "c14a8fdee852f6d5105c1b7e12701a0112272263",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/4ac195243fc4c85f61325debc5bda9044bf7363e...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "privacy",
+      "kind": "documentation",
+      "fileCount": 3,
+      "handoffs": [
+        "workstreams/privacy-migration-gap-review-20261021.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 254,
+      "title": "Optionale Testkapitel mit Remy-Planung, Bereichsauswertung und Antwortvergleich",
+      "head": "99158ff06f14ead012c85e14e5cc794a3b3f6d0a",
+      "branch": "feat/chapter-tests-20261020",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-21T12:06:28Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/254",
+      "checks": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "99158ff06f14ead012c85e14e5cc794a3b3f6d0a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39596915624/job/119211385065",
+          "completedAt": "2026-10-21T12:06:06Z"
+        },
+        {
+          "name": "BugOps server and rules",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "99158ff06f14ead012c85e14e5cc794a3b3f6d0a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39596915597/job/119211384865",
+          "completedAt": "2026-10-21T12:06:39Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 21,
+        "behind_by": 13,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "4f8b79222a35997852aad4673f8aaf338904f485",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/99158ff06f14ead012c85e14e5cc794a3b3f6d0a...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "chapters",
+      "kind": "product",
+      "fileCount": 70,
+      "handoffs": [
+        "workstreams/chapter-tests-01.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 253,
+      "title": "Lerngehirn: didaktisches Konzept und lokaler KI-Pilot zum Erweitern",
+      "head": "25fd47f022281fdaa9f989c507956233a103b0e7",
+      "branch": "docs/gc-adaptive-practice-01",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-25T11:42:11Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/253",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 51,
+        "behind_by": 33,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "c14a8fdee852f6d5105c1b7e12701a0112272263",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/25fd47f022281fdaa9f989c507956233a103b0e7...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "dirty",
+      "sameFiles": [],
+      "group": "adaptive",
+      "kind": "prototype",
+      "fileCount": 43,
+      "handoffs": [
+        "workstreams/adaptive-practice-01.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 252,
+      "title": "Kapitelgrundstruktur: Konzept und konkreter Plan für die bestehende Testerstellung",
+      "head": "25e031ff8b59fd5bf56f47bd4cdda3037012859c",
+      "branch": "docs/gc-chapter-tests-01",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-21T12:22:47Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/252",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "25e031ff8b59fd5bf56f47bd4cdda3037012859c",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39599126188/job/119218823253",
+          "completedAt": "2026-10-21T12:23:12Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "25e031ff8b59fd5bf56f47bd4cdda3037012859c",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39599126171/job/119218822939",
+          "completedAt": "2026-10-21T12:23:04Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 51,
+        "behind_by": 11,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "c14a8fdee852f6d5105c1b7e12701a0112272263",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/25e031ff8b59fd5bf56f47bd4cdda3037012859c...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "chapters",
+      "kind": "documentation",
+      "fileCount": 10,
+      "handoffs": [
+        "workstreams/chapter-tests-01.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 246,
+      "title": "Review combined Web fixes for cloze, test cards and teacher feedback",
+      "head": "66f13538aea982835d96545109806c89ae89b45a",
+      "branch": "fix/staging-feedback-web-combined-gc43-20261018",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-18T19:36:42Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/246",
+      "checks": [
+        {
+          "name": "Node 22 tests",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "66f13538aea982835d96545109806c89ae89b45a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39159501640/job/117769625484",
+          "completedAt": "2026-10-18T19:37:52Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 34,
+        "behind_by": 1,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "7a18445f926a16b9a795c761f9863d7ecfb6b3b0",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/66f13538aea982835d96545109806c89ae89b45a...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "web-old",
+      "kind": "historical",
+      "fileCount": 23,
+      "handoffs": [
+        "workstreams/admin-account-actions-20261011.md",
+        "workstreams/feedback-gc41-release-20261018.md",
+        "workstreams/ipad-cloze-blank-fields-20261018.md",
+        "workstreams/teacher-feedback-entry-20261018.md",
+        "workstreams/test-card-unification-20261018.md",
+        "workstreams/web-combined-candidate-20261018.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 245,
+      "title": "Unify teacher test cards and use an icon-only trash action",
+      "head": "24dadd2ca1c2e30cba2700e2c8e05e14bbde8694",
+      "branch": "fix/test-card-unification-20261018",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-18T19:26:52Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/245",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 38,
+        "behind_by": 2,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "a425605b9bf8e3c6ae94666b0ae0d8bbba24e14d",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/24dadd2ca1c2e30cba2700e2c8e05e14bbde8694...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "web-old",
+      "kind": "historical",
+      "fileCount": 6,
+      "handoffs": [
+        "workstreams/test-card-unification-20261018.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 242,
+      "title": "fix: Lückentextfelder auf dem iPad leer und neutral anzeigen",
+      "head": "c82e65bc03b5c0d54e3e92916ddca2e77c21feed",
+      "branch": "fix/ipad-cloze-empty-placeholder-20261018",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-18T19:17:26Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/242",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 41,
+        "behind_by": 3,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "2e718ae44519fc22a7c64ad354b62dd26a6999ca",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/c82e65bc03b5c0d54e3e92916ddca2e77c21feed...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "web-old",
+      "kind": "historical",
+      "fileCount": 6,
+      "handoffs": [
+        "workstreams/ipad-cloze-blank-fields-20261018.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 240,
+      "title": "feat(math): quellenbasierte Runden mit fortlaufender Wertung und isoliertem Staging",
+      "head": "0c8c88319d25a339008bbab20ed5504fe768ec03",
+      "branch": "feat/math-classroom-learning-ux-20261016",
+      "base": "lab/games-structure",
+      "baseSHA": "55e58e4f6147d0d274d8e5f51578b5d60cb33b4e",
+      "updatedAt": "2026-10-18T20:30:29Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/240",
+      "checks": [
+        {
+          "name": "Games structure and browser checks",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "0c8c88319d25a339008bbab20ed5504fe768ec03",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/39163619775/job/117781903280",
+          "completedAt": "2026-10-18T20:31:36Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 18,
+        "total_commits": 0,
+        "merge_base_commit": "55e58e4f6147d0d274d8e5f51578b5d60cb33b4e",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/0c8c88319d25a339008bbab20ed5504fe768ec03...55e58e4f6147d0d274d8e5f51578b5d60cb33b4e"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "math",
+      "kind": "product",
+      "fileCount": 33,
+      "handoffs": [
+        "workstreams/fastquiz-binomial-20261012.md",
+        "workstreams/math-classroom-independent-review-20261016.md",
+        "workstreams/math-classroom-learning-ux-20261016.md"
+      ],
+      "dependencies": [
+        2
+      ]
+    },
+    {
+      "number": 239,
+      "title": "Mathe-Spiel: eigener Test, Remy und Lehrplan als Quelle für fortlaufende Runden",
+      "head": "64acc836820477ea0705ab2f888aa8fa1b0ce535",
+      "branch": "docs/games-learning-ux-20261015",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-18T19:47:10Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/239",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 73,
+        "behind_by": 16,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "8560992c072779814017ebac6e86b65e938bc951",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/64acc836820477ea0705ab2f888aa8fa1b0ce535...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "math",
+      "kind": "documentation",
+      "fileCount": 69,
+      "handoffs": [
+        "workstreams/games-learning-ux-20261015.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 238,
+      "title": "Wissensreise: eigene Tests als Lernspiel mit vertrauten Spieleinstellungen",
+      "head": "ec7512600bf6d48541cb304d746dca96b78358b5",
+      "branch": "feat/wissensreise-20261014",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-14T16:51:47Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/238",
+      "checks": [
+        {
+          "name": "BugOps server and rules",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "ec7512600bf6d48541cb304d746dca96b78358b5",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38600314699/job/115977557075",
+          "completedAt": "2026-10-14T16:42:44Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "ec7512600bf6d48541cb304d746dca96b78358b5",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38600314606/job/115977556714",
+          "completedAt": "2026-10-14T16:42:21Z"
+        },
+        {
+          "name": "Node 22 tests",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "ec7512600bf6d48541cb304d746dca96b78358b5",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38600305961/job/115977527496",
+          "completedAt": "2026-10-14T16:44:14Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 43,
+        "behind_by": 4,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/ec7512600bf6d48541cb304d746dca96b78358b5...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "journey",
+      "kind": "product",
+      "fileCount": 26,
+      "handoffs": [
+        "workstreams/wissensreise-plan-20261014.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 237,
+      "title": "Wissensreise: testbasierter Plan, Spieleinstellungen und geprüfte isolierte Vorschau",
+      "head": "a66fb81b590fe8780069c4898a7e0523476a57cf",
+      "branch": "docs/wissensreise-plan-20261014",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-14T16:58:17Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/237",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "a66fb81b590fe8780069c4898a7e0523476a57cf",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38602628543/job/115985426203",
+          "completedAt": "2026-10-14T16:58:30Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "a66fb81b590fe8780069c4898a7e0523476a57cf",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38602628242/job/115985424994",
+          "completedAt": "2026-10-14T16:58:48Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 76,
+        "behind_by": 7,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "d3dd36d5b63062de7d4702c40ac1dd87574cc484",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/a66fb81b590fe8780069c4898a7e0523476a57cf...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "journey",
+      "kind": "documentation",
+      "fileCount": 16,
+      "handoffs": [
+        "workstreams/wissensreise-plan-20261014.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 236,
+      "title": "feat: Test-Rallye mit Originaltests und sicherer Spielwertung auf eigenem Staging",
+      "head": "797549374df908cb9fd212be14b86e58061b347b",
+      "branch": "feat/test-rallye-20261013",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-13T21:45:52Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/236",
+      "checks": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "797549374df908cb9fd212be14b86e58061b347b",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38471572958/job/115551701313",
+          "completedAt": "2026-10-13T21:34:19Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "797549374df908cb9fd212be14b86e58061b347b",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38471568885/job/115551687226",
+          "completedAt": "2026-10-13T21:34:21Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 43,
+        "behind_by": 4,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "8f8697901f8c1aea89897be855ca2872c82d0f2b",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/797549374df908cb9fd212be14b86e58061b347b...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "rally",
+      "kind": "product",
+      "fileCount": 88,
+      "handoffs": [
+        "workstreams/test-rallye-plan-20261013.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 235,
+      "title": "docs: Test-Rallye-Plan und isolierte Staging-Nachweise sichern",
+      "head": "dc4a9747d4a179785dd715d08737330a2d5d4ffc",
+      "branch": "docs/test-rallye-plan-20261013",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-13T21:46:43Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/235",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "dc4a9747d4a179785dd715d08737330a2d5d4ffc",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38473125706/job/115557034260",
+          "completedAt": "2026-10-13T21:47:10Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "dc4a9747d4a179785dd715d08737330a2d5d4ffc",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38473125285/job/115557033254",
+          "completedAt": "2026-10-13T21:47:01Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 76,
+        "behind_by": 8,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "d3dd36d5b63062de7d4702c40ac1dd87574cc484",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/dc4a9747d4a179785dd715d08737330a2d5d4ffc...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "rally",
+      "kind": "documentation",
+      "fileCount": 6,
+      "handoffs": [
+        "workstreams/test-rallye-plan-20261013.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 234,
+      "title": "Lerninsel: kleiner Browserprototyp mit ausführbaren Lehrkraftfragen",
+      "head": "e7ae59fd3b100bf0fc9525229cd0b40f395f2ecb",
+      "branch": "prototype/lerninsel-teacher-input-web-20261013",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-13T16:33:05Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/234",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "e7ae59fd3b100bf0fc9525229cd0b40f395f2ecb",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38431438329/job/115414344507",
+          "completedAt": "2026-10-13T16:33:51Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "e7ae59fd3b100bf0fc9525229cd0b40f395f2ecb",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38431438215/job/115414344492",
+          "completedAt": "2026-10-13T16:33:38Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 79,
+        "behind_by": 4,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "a0f16f9cf64c74dcdacefa489d2e7a1da1b58881",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/e7ae59fd3b100bf0fc9525229cd0b40f395f2ecb...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "lerninsel",
+      "kind": "prototype",
+      "fileCount": 26,
+      "handoffs": [
+        "workstreams/lerninsel-browser-prototype-20261013.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 230,
+      "title": "Lerninsel: adaptierbare Lehrer-Tests, Web-first-Machbarkeit und Kostenplan",
+      "head": "1bc1b27de768a731be943bdbe51fc79aa366ef6e",
+      "branch": "docs/lerninsel-adaptive-plan-20261013",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-13T16:33:01Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/230",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1bc1b27de768a731be943bdbe51fc79aa366ef6e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38431433657/job/115414331418",
+          "completedAt": "2026-10-13T16:33:20Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1bc1b27de768a731be943bdbe51fc79aa366ef6e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38431433650/job/115414329302",
+          "completedAt": "2026-10-13T16:33:32Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 79,
+        "behind_by": 3,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "a0f16f9cf64c74dcdacefa489d2e7a1da1b58881",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/1bc1b27de768a731be943bdbe51fc79aa366ef6e...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "lerninsel",
+      "kind": "documentation",
+      "fileCount": 9,
+      "handoffs": [
+        "workstreams/lerninsel-adaptive-plan-20261013.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 224,
+      "title": "Fast Quiz: leichte Binomische Formeln für Klasse 10 im bestehenden Live-Modus",
+      "head": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+      "branch": "feat/fastquiz-binomial-20261012",
+      "base": "lab/games-structure",
+      "baseSHA": "55e58e4f6147d0d274d8e5f51578b5d60cb33b4e",
+      "updatedAt": "2026-10-12T09:33:15Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/224",
+      "checks": [
+        {
+          "name": "Games structure and browser checks",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38227329308/job/114737935595",
+          "completedAt": "2026-10-12T09:03:37Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 5,
+        "total_commits": 0,
+        "merge_base_commit": "55e58e4f6147d0d274d8e5f51578b5d60cb33b4e",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5...55e58e4f6147d0d274d8e5f51578b5d60cb33b4e"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "binomial",
+      "kind": "product",
+      "fileCount": 12,
+      "handoffs": [
+        "workstreams/fastquiz-binomial-20261012.md"
+      ],
+      "dependencies": [
+        2
+      ]
+    },
+    {
+      "number": 220,
+      "title": "Lerninsel Level 1: begehbare Referenz mit Schritt-Auswahl, Menü und eigenen Saves",
+      "head": "ee994cbc8e61134d3daa72dd46f1a589205ec6a5",
+      "branch": "feature/lerninsel-level1-reference-20261011",
+      "base": "docs/lerninsel-level1-plan-20261011",
+      "baseSHA": "5315f67c24599480cd485c2b7070e58afb902e09",
+      "updatedAt": "2026-10-11T19:49:10Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/220",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "ee994cbc8e61134d3daa72dd46f1a589205ec6a5",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38169615938/job/114559283469",
+          "completedAt": "2026-10-11T19:49:29Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 3,
+        "total_commits": 0,
+        "merge_base_commit": "5315f67c24599480cd485c2b7070e58afb902e09",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/ee994cbc8e61134d3daa72dd46f1a589205ec6a5...5315f67c24599480cd485c2b7070e58afb902e09"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "lerninsel",
+      "kind": "prototype",
+      "fileCount": 34,
+      "handoffs": [],
+      "dependencies": [
+        219
+      ]
+    },
+    {
+      "number": 219,
+      "title": "Lerninsel Level 1: ausführlicher Plan, Spielbrief und Abnahmematrix",
+      "head": "5315f67c24599480cd485c2b7070e58afb902e09",
+      "branch": "docs/lerninsel-level1-plan-20261011",
+      "base": "feature/lerninsel-ego-v1",
+      "baseSHA": "a5dc474295dea4abda06c5be8923de1bc0206248",
+      "updatedAt": "2026-10-11T12:54:37Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/219",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "5315f67c24599480cd485c2b7070e58afb902e09",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38140979746/job/114474617299",
+          "completedAt": "2026-10-11T12:53:28Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "5315f67c24599480cd485c2b7070e58afb902e09",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38140979755/job/114474617213",
+          "completedAt": "2026-10-11T12:53:29Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 3,
+        "total_commits": 0,
+        "merge_base_commit": "a5dc474295dea4abda06c5be8923de1bc0206248",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/5315f67c24599480cd485c2b7070e58afb902e09...a5dc474295dea4abda06c5be8923de1bc0206248"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "lerninsel",
+      "kind": "documentation",
+      "fileCount": 14,
+      "handoffs": [
+        "workstreams/lerninsel-level1-plan-20261011.md"
+      ],
+      "dependencies": [
+        175
+      ]
+    },
+    {
+      "number": 214,
+      "title": "GC-PEDAGOGY-KB-01: Medien-Vollanalyse planen und Zwischenstand sichern",
+      "head": "ff4a4a21e55628ede19af5eca8ea177f1aeb2567",
+      "branch": "docs/pedagogy-media-20261011",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-22T08:37:52Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/214",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 112,
+        "behind_by": 9,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "983136812777267e675c50b9a3a69ed91b00ca09",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/ff4a4a21e55628ede19af5eca8ea177f1aeb2567...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "pedagogy",
+      "kind": "documentation",
+      "fileCount": 54,
+      "handoffs": [
+        "workstreams/pedagogy-media-20261011.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 208,
+      "title": "GC-PEDAGOGY-KB-01: Lehrplan-Vollauswertung planen und Arbeitsstand sichern",
+      "head": "60cfc7e230fd517d607bd10fe2056336010d6a61",
+      "branch": "docs/pedagogy-curricula-20261011",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-11T01:22:51Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/208",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "60cfc7e230fd517d607bd10fe2056336010d6a61",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38101635719/job/114358580756",
+          "completedAt": "2026-10-11T01:23:07Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "60cfc7e230fd517d607bd10fe2056336010d6a61",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38101635717/job/114358580647",
+          "completedAt": "2026-10-11T01:23:00Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 114,
+        "behind_by": 28,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "6b433856760a08001e731e40ac7def16b4210c1b",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/60cfc7e230fd517d607bd10fe2056336010d6a61...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "pedagogy",
+      "kind": "documentation",
+      "fileCount": 28,
+      "handoffs": [
+        "workstreams/pedagogy-curricula-20261011.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 206,
+      "title": "docs(governor): specify local App Server chat client",
+      "head": "5d766b818fa181e7cc36ff15b6402d9e19b727e0",
+      "branch": "docs/gc-model-governor-client-design-20261011",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-11T00:03:59Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/206",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "5d766b818fa181e7cc36ff15b6402d9e19b727e0",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38097152856/job/114345301454",
+          "completedAt": "2026-10-11T00:04:22Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 114,
+        "behind_by": 2,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "6b433856760a08001e731e40ac7def16b4210c1b",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/5d766b818fa181e7cc36ff15b6402d9e19b727e0...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "governor",
+      "kind": "documentation",
+      "fileCount": 1,
+      "handoffs": [],
+      "dependencies": []
+    },
+    {
+      "number": 204,
+      "title": "docs: GC-RESTORE-01 encrypted secrets and isolated recovery evidence",
+      "head": "b5ef8eba477b8aba3887a2abec5af85639ece6df",
+      "branch": "docs/gc-restore-secrets-emulator-20261011",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-10T23:04:04Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/204",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "b5ef8eba477b8aba3887a2abec5af85639ece6df",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38093719490/job/114335187221",
+          "completedAt": "2026-10-10T23:04:24Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "b5ef8eba477b8aba3887a2abec5af85639ece6df",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38093719494/job/114335186569",
+          "completedAt": "2026-10-10T23:04:17Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 115,
+        "behind_by": 1,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "6833a1d93562a29199183dc90e59f8069286bf6e",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/b5ef8eba477b8aba3887a2abec5af85639ece6df...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "backup",
+      "kind": "documentation",
+      "fileCount": 1,
+      "handoffs": [
+        "workstreams/firebase-backup-restore-20261011.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 203,
+      "title": "feat(chat): add scoped GradeCrew preflight candidate",
+      "head": "60dbce63f1694a138cda0cc822fcea0062062c23",
+      "branch": "feat/gc-chat-preflight-20261011",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-10T23:55:30Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/203",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "60dbce63f1694a138cda0cc822fcea0062062c23",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38096683275/job/114343912912",
+          "completedAt": "2026-10-10T23:55:49Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "60dbce63f1694a138cda0cc822fcea0062062c23",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38096683220/job/114343911556",
+          "completedAt": "2026-10-10T23:55:52Z"
+        },
+        {
+          "name": "offline-preflight",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "60dbce63f1694a138cda0cc822fcea0062062c23",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38096683203/job/114343904433",
+          "completedAt": "2026-10-10T23:55:40Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 122,
+        "behind_by": 10,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "7eb49b50315b34e25e4af67a46c2addfa575febe",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/60dbce63f1694a138cda0cc822fcea0062062c23...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "governor",
+      "kind": "tooling",
+      "fileCount": 9,
+      "handoffs": [
+        "workstreams/chat-preflight-20261011.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 197,
+      "title": "GC-POCOCK-IMPLEMENT-01: prüfbare Briefs, Frontier und angewandte Arbeitsabläufe",
+      "head": "433bbf442b8ca74b216a9aa603b39f7a71ddd527",
+      "branch": "feat/gc-pocock-workflow-20261010",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-10T22:01:22Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/197",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 139,
+        "behind_by": 5,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "91f52ec2d0aa4cb11b5003fc5abd31fa2e4659e9",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/433bbf442b8ca74b216a9aa603b39f7a71ddd527...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "workflow",
+      "kind": "tooling",
+      "fileCount": 16,
+      "handoffs": [
+        "workstreams/model-governor-20261010.md",
+        "workstreams/pocock-workflow-implementation-20261010.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 191,
+      "title": "Privacy: account memory controls outside Coco chat and 20-point audit",
+      "head": "bb1c6bee97ee42fe3981905d9c89123dc96d26bf",
+      "branch": "fix/gc-privacy-controls-20261010",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-10T15:47:17Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/191",
+      "checks": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "bb1c6bee97ee42fe3981905d9c89123dc96d26bf",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38065021884/job/114250805131",
+          "completedAt": "2026-10-10T15:47:30Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 77,
+        "behind_by": 2,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "c3a5fdcfb949bc0de23295a549388c23cf7655e6",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/bb1c6bee97ee42fe3981905d9c89123dc96d26bf...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "privacy",
+      "kind": "product",
+      "fileCount": 9,
+      "handoffs": [
+        "workstreams/gc-launch-privacy-audit-20261010.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 189,
+      "title": "GC-LAUNCH-CONTROLS-01: technical security role and 20 launch checks",
+      "head": "873bf75b46cf6889286cb6fec9f1a504befabf82",
+      "branch": "docs/gc-launch-security-20261010",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-10T15:14:56Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/189",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "873bf75b46cf6889286cb6fec9f1a504befabf82",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38062837565/job/114244424957",
+          "completedAt": "2026-10-10T15:15:10Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "873bf75b46cf6889286cb6fec9f1a504befabf82",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38062837519/job/114244424900",
+          "completedAt": "2026-10-10T15:15:25Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 155,
+        "behind_by": 2,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "59dd0a501a28c04c36ee877450239bf1d64a3187",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/873bf75b46cf6889286cb6fec9f1a504befabf82...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "security",
+      "kind": "documentation",
+      "fileCount": 3,
+      "handoffs": [
+        "workstreams/launch-controls-security-20261010.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 188,
+      "title": "GradeCrew: privacy, legal and fair UX role with 20 launch controls",
+      "head": "d5e6988efbc7458f3d550c8b578f8e1e1417ba4f",
+      "branch": "docs/gc-launch-privacy-20261010",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-10T15:14:55Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/188",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "d5e6988efbc7458f3d550c8b578f8e1e1417ba4f",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38062835957/job/114244420236",
+          "completedAt": "2026-10-10T15:15:10Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "d5e6988efbc7458f3d550c8b578f8e1e1417ba4f",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38062835900/job/114244419937",
+          "completedAt": "2026-10-10T15:15:21Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 155,
+        "behind_by": 3,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "59dd0a501a28c04c36ee877450239bf1d64a3187",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/d5e6988efbc7458f3d550c8b578f8e1e1417ba4f...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "privacy",
+      "kind": "documentation",
+      "fileCount": 3,
+      "handoffs": [
+        "workstreams/gc-launch-privacy-20261010.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 187,
+      "title": "GC-CREW-AI-01-CHAT-UI: record locally verified Coco correction",
+      "head": "f439f11ac24664f11091ccdca4e0d0f3954a065a",
+      "branch": "docs/coco-chat-ui-status-20261010",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-10T11:05:18Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/187",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "f439f11ac24664f11091ccdca4e0d0f3954a065a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38047171876/job/114198927042",
+          "completedAt": "2026-10-10T11:05:46Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "f439f11ac24664f11091ccdca4e0d0f3954a065a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38047171882/job/114198926990",
+          "completedAt": "2026-10-10T11:05:30Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 155,
+        "behind_by": 2,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "59dd0a501a28c04c36ee877450239bf1d64a3187",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/f439f11ac24664f11091ccdca4e0d0f3954a065a...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "coco",
+      "kind": "documentation",
+      "fileCount": 3,
+      "handoffs": [
+        "workstreams/coco-chat-ui-20261010.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 186,
+      "title": "Coco: remove memory editor from chat, preserve account persistence",
+      "head": "70f420498c26f26ad2920bc061cce78d9b0f75a2",
+      "branch": "fix/coco-chat-ui-background-memory-20261010",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-10T11:04:39Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/186",
+      "checks": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "70f420498c26f26ad2920bc061cce78d9b0f75a2",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38047130239/job/114198813491",
+          "completedAt": "2026-10-10T11:04:52Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 77,
+        "behind_by": 1,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "c3a5fdcfb949bc0de23295a549388c23cf7655e6",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/70f420498c26f26ad2920bc061cce78d9b0f75a2...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "coco",
+      "kind": "product",
+      "fileCount": 5,
+      "handoffs": [
+        "workstreams/coco-chat-ui-20261010.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 185,
+      "title": "GC-GAMES-PIPELINE-01: Design-Draft für gemeinsame Games-Grundlage und Entwicklermodus",
+      "head": "503191251223e5c03470223d10aff6eb21e448e6",
+      "branch": "docs/games-foundation-dev-mode-20261010",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-10T11:04:36Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/185",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "503191251223e5c03470223d10aff6eb21e448e6",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38047127403/job/114198805375",
+          "completedAt": "2026-10-10T11:04:50Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "503191251223e5c03470223d10aff6eb21e448e6",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38047127387/job/114198805350",
+          "completedAt": "2026-10-10T11:05:07Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 155,
+        "behind_by": 3,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "59dd0a501a28c04c36ee877450239bf1d64a3187",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/503191251223e5c03470223d10aff6eb21e448e6...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "games-foundation",
+      "kind": "documentation",
+      "fileCount": 3,
+      "handoffs": [
+        "workstreams/games-foundation-developer-mode-20261010.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 184,
+      "title": "GC-HOOKS-01: coordinator-only rule and scoped lifecycle hook design",
+      "head": "cfe75f60e9bc1a10e07b8066a31dbe10f050e801",
+      "branch": "docs/gc-hooks-01-design-20261010",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-10T10:59:02Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/184",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "cfe75f60e9bc1a10e07b8066a31dbe10f050e801",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38046727102/job/114197648922",
+          "completedAt": "2026-10-10T10:58:01Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "cfe75f60e9bc1a10e07b8066a31dbe10f050e801",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38046727107/job/114197648843",
+          "completedAt": "2026-10-10T10:58:12Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 155,
+        "behind_by": 3,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "59dd0a501a28c04c36ee877450239bf1d64a3187",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/cfe75f60e9bc1a10e07b8066a31dbe10f050e801...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "governor",
+      "kind": "documentation",
+      "fileCount": 7,
+      "handoffs": [
+        "workstreams/codex-lifecycle-hooks-20261010.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 175,
+      "title": "Lerninsel: Vier-Rätsel-Prototyp, gesicherte Weltvorschau und Integrationsprüfung",
+      "head": "a5dc474295dea4abda06c5be8923de1bc0206248",
+      "branch": "feature/lerninsel-ego-v1",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-10T11:15:19Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/175",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "a5dc474295dea4abda06c5be8923de1bc0206248",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38047705104/job/114200476244",
+          "completedAt": "2026-10-10T11:14:50Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "a5dc474295dea4abda06c5be8923de1bc0206248",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/38047705031/job/114200476006",
+          "completedAt": "2026-10-10T11:14:51Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 223,
+        "behind_by": 19,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "ca67f2c87e2d4da7064eafbbdac3e442dbb38897",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/a5dc474295dea4abda06c5be8923de1bc0206248...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "lerninsel",
+      "kind": "prototype",
+      "fileCount": 453,
+      "handoffs": [
+        "workstreams/lerninsel-l1-20261010.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 173,
+      "title": "GC-GAMES-ESCAPE-VISUAL-01: Lerninsel mit 21 Layoutmotiven und ausführlichem Spielbuch",
+      "head": "a87abfe4d11b1223630aa2c6ecf2fca2326e2db7",
+      "branch": "docs/lerninsel-layouts-20261007",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-07T22:04:50Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/173",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "a87abfe4d11b1223630aa2c6ecf2fca2326e2db7",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37693746581/job/113040071308",
+          "completedAt": "2026-10-07T22:04:27Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 238,
+        "behind_by": 2,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "12094d9b7ca28458f57605e67618624bc04a34d2",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/a87abfe4d11b1223630aa2c6ecf2fca2326e2db7...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "lerninsel",
+      "kind": "documentation",
+      "fileCount": 10,
+      "handoffs": [],
+      "dependencies": []
+    },
+    {
+      "number": 171,
+      "title": "Expedition: native twelve-station coastal learning game",
+      "head": "a56b2a6bca8fab0a708dcb3d4e64a6a1d486949b",
+      "branch": "feature/escape-expedition-unreal-v1",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-08T09:54:01Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/171",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 246,
+        "behind_by": 9,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "eb2d42d08476ceee1be9331fade024978da59899",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/a56b2a6bca8fab0a708dcb3d4e64a6a1d486949b...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "expedition",
+      "kind": "prototype",
+      "fileCount": 71,
+      "handoffs": [
+        "workstreams/escape-expedition-unreal-20261007.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 160,
+      "title": "Bruchpizzeria: echte Teller, Gastübergabe, Abwasch und Müllkosten",
+      "head": "c7d05339f48614c6cbe1f0f0a35801143b9f8d13",
+      "branch": "feature/bruchpizzeria-unreal-v1",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-07T21:51:06Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/160",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "c7d05339f48614c6cbe1f0f0a35801143b9f8d13",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37692271654/job/113035147169",
+          "completedAt": "2026-10-07T21:51:22Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "c7d05339f48614c6cbe1f0f0a35801143b9f8d13",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37692271772/job/113035147055",
+          "completedAt": "2026-10-07T21:51:22Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 238,
+        "behind_by": 11,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "12094d9b7ca28458f57605e67618624bc04a34d2",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/c7d05339f48614c6cbe1f0f0a35801143b9f8d13...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "pizza",
+      "kind": "prototype",
+      "fileCount": 52,
+      "handoffs": [
+        "workstreams/bruchpizzeria-unreal-20261007.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 158,
+      "title": "GC-GAMES-PIZZA-01: Bruchpizzeria Browser-Pilot mit echten Schnitten",
+      "head": "bc92c38bfa35b7f5803fa0105bd98f13ca7fda62",
+      "branch": "feature/bruchpizzeria-browser-pilot-v1",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-06T23:19:51Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/158",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 284,
+        "behind_by": 4,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "ee8c7158c670a0489245dd88adce9c938d280eb9",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/bc92c38bfa35b7f5803fa0105bd98f13ca7fda62...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "pizza",
+      "kind": "prototype",
+      "fileCount": 23,
+      "handoffs": [
+        "workstreams/bruchpizzeria-browser-pilot-20261006.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 153,
+      "title": "docs(games): Spielbriefing, Enginewahl und belegte Produktionslektionen",
+      "head": "f40401f3c8e66313fb0cb9d67a71229bcf56e1f5",
+      "branch": "docs/great-games-production-20261006",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-06T15:52:00Z",
+      "draft": false,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/153",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "f40401f3c8e66313fb0cb9d67a71229bcf56e1f5",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37491088172/job/112363698407",
+          "completedAt": "2026-10-06T15:52:16Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "f40401f3c8e66313fb0cb9d67a71229bcf56e1f5",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37491088024/job/112363698275",
+          "completedAt": "2026-10-06T15:52:16Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 301,
+        "behind_by": 3,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "9c24523c701fc580a73b95b354ad0337d5bcbf22",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/f40401f3c8e66313fb0cb9d67a71229bcf56e1f5...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "games-foundation",
+      "kind": "documentation",
+      "fileCount": 14,
+      "handoffs": [
+        "workstreams/great-games-production-20261006.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 146,
+      "title": "GC-SECURITY-02: guard start reads, preserve retry identity and lock dependencies",
+      "head": "b1119cc3c58957f002e2310af60bad30801843b0",
+      "branch": "fix/gc-security-02-gates-20261006",
+      "base": "feature/secure-assessment-v1",
+      "baseSHA": "76417085b6ae42cb9f6d5733af726c2eeb05dd79",
+      "updatedAt": "2026-10-06T05:20:14Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/146",
+      "checks": [
+        {
+          "name": "Deploy secure staging preview",
+          "status": "completed",
+          "conclusion": "skipped",
+          "head": "b1119cc3c58957f002e2310af60bad30801843b0",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37417782699/job/112120344349",
+          "completedAt": "2026-10-06T05:18:07Z"
+        },
+        {
+          "name": "Node 22 tests",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "b1119cc3c58957f002e2310af60bad30801843b0",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37417782699/job/112120144082",
+          "completedAt": "2026-10-06T05:18:07Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 3,
+        "total_commits": 0,
+        "merge_base_commit": "76417085b6ae42cb9f6d5733af726c2eeb05dd79",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/b1119cc3c58957f002e2310af60bad30801843b0...76417085b6ae42cb9f6d5733af726c2eeb05dd79"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "security",
+      "kind": "historical",
+      "fileCount": 9,
+      "handoffs": [
+        "workstreams/security-production-gates-20261006.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 145,
+      "title": "GC-IOS-02: reconcile 0.1.8 TestFlight evidence and 0.1.9 Xcode handoff",
+      "head": "8abec9f04f8569d0469ba3db07e083620fb44155",
+      "branch": "docs/gc-ios-02-xcode-handoff-20261006",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-05T23:45:39Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/145",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "8abec9f04f8569d0469ba3db07e083620fb44155",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37390167245/job/112033089080",
+          "completedAt": "2026-10-05T23:44:20Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "8abec9f04f8569d0469ba3db07e083620fb44155",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37390166843/job/112033088137",
+          "completedAt": "2026-10-05T23:44:16Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 326,
+        "behind_by": 2,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "8360bc5f056837118ffd83138ffa2468ae42647e",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/8abec9f04f8569d0469ba3db07e083620fb44155...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "ios-history",
+      "kind": "documentation",
+      "fileCount": 5,
+      "handoffs": [
+        "workstreams/ios-app-v2.md",
+        "workstreams/ios-native-bridge-019.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 143,
+      "title": "GC-DESIGN-05: interaktiver Crew-Startbildschirm mit Wortarten-Beispielen",
+      "head": "c7933c6e9b6e2e59fd2e82ba20d71e34480a3456",
+      "branch": "docs/gc-design-05-reference-plan-20261006",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-06T12:14:48Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/143",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 326,
+        "behind_by": 16,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "8360bc5f056837118ffd83138ffa2468ae42647e",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/c7933c6e9b6e2e59fd2e82ba20d71e34480a3456...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "homepage",
+      "kind": "prototype",
+      "fileCount": 83,
+      "handoffs": [
+        "workstreams/startscreen-hero-animation-20261004.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 142,
+      "title": "GC-PLUGINS-01: Video-, Plugin- und Skills-Recherche für GradeCrew",
+      "head": "bd4acf4693a9a5e1cf8f4b27a09e0138a6e18640",
+      "branch": "docs/gc-plugins-01-video-20261006",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-05T23:15:19Z",
+      "draft": false,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/142",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "bd4acf4693a9a5e1cf8f4b27a09e0138a6e18640",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37387437246/job/112024144456",
+          "completedAt": "2026-10-05T23:15:41Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "bd4acf4693a9a5e1cf8f4b27a09e0138a6e18640",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37387437310/job/112024108668",
+          "completedAt": "2026-10-05T23:15:32Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 326,
+        "behind_by": 4,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "8360bc5f056837118ffd83138ffa2468ae42647e",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/bd4acf4693a9a5e1cf8f4b27a09e0138a6e18640...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "plugins",
+      "kind": "documentation",
+      "fileCount": 6,
+      "handoffs": [
+        "workstreams/plugins-tool-strategy-20261006.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 141,
+      "title": "GC-CLASSROOM-01: Identität, Klassen und Lehrer-/Schülernavigation",
+      "head": "9b23052e7bb3a8e6009cca64a7498d942cd7bc1d",
+      "branch": "docs/gc-classroom-01-identity-rollover-20261005",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-11T00:50:53Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/141",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 326,
+        "behind_by": 8,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "8360bc5f056837118ffd83138ffa2468ae42647e",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/9b23052e7bb3a8e6009cca64a7498d942cd7bc1d...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "classroom-plan",
+      "kind": "documentation",
+      "fileCount": 8,
+      "handoffs": [
+        "workstreams/classroom-student-management-v1.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 140,
+      "title": "GC-I18N-03: record verified CI, task handoff and integration gates",
+      "head": "e2eb9b3eea38bfb01affc7f2e24ca01b03b6091f",
+      "branch": "docs/gc-i18n-03-handoff-20261005",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-06T05:11:38Z",
+      "draft": false,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/140",
+      "checks": [
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "e2eb9b3eea38bfb01affc7f2e24ca01b03b6091f",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37326636949/job/111818960299",
+          "completedAt": "2026-10-05T14:40:56Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "e2eb9b3eea38bfb01affc7f2e24ca01b03b6091f",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37326636519/job/111818959169",
+          "completedAt": "2026-10-05T14:40:55Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 329,
+        "behind_by": 1,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "9d368c2054b1fbb8fd1590e919786ebfda93ac3b",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/e2eb9b3eea38bfb01affc7f2e24ca01b03b6091f...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "i18n",
+      "kind": "documentation",
+      "fileCount": 4,
+      "handoffs": [
+        "workstreams/i18n-content-labels-gc-i18n-03.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 137,
+      "title": "Reconcile bilingual cache bust and semantic header labels",
+      "head": "fe5ed72f583cebfee8d3b4991b9438a5fa3aa841",
+      "branch": "feature/i18n-cache-v3-reconcile-20261004",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-05T07:07:58Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/137",
+      "checks": [
+        {
+          "name": "Node 22 tests",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "fe5ed72f583cebfee8d3b4991b9438a5fa3aa841",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37276016105/job/111653091554",
+          "completedAt": "2026-10-05T07:09:35Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 191,
+        "behind_by": 11,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "f1fa6d7ca5c91d6c754f240e0b649317e17ce7c9",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/fe5ed72f583cebfee8d3b4991b9438a5fa3aa841...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "i18n",
+      "kind": "historical",
+      "fileCount": 11,
+      "handoffs": [
+        "workstreams/i18n-english-ui-v1.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 126,
+      "title": "GC-AUTOMATION-08: gated task profiles and separate Games chain",
+      "head": "65a480962f573e0c41998faedaf444e8fe00df9b",
+      "branch": "docs/guardian-admission-profiles-20261004",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-05T21:16:38Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/126",
+      "checks": [
+        {
+          "name": "continue",
+          "status": "completed",
+          "conclusion": "skipped",
+          "head": "65a480962f573e0c41998faedaf444e8fe00df9b",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37374686719/job/111982250426",
+          "completedAt": "2026-10-05T21:20:45Z"
+        },
+        {
+          "name": "validation / test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "65a480962f573e0c41998faedaf444e8fe00df9b",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37374687146/job/111980435935",
+          "completedAt": "2026-10-05T21:17:12Z"
+        },
+        {
+          "name": "source",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "65a480962f573e0c41998faedaf444e8fe00df9b",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37374687146/job/111980196408",
+          "completedAt": "2026-10-05T21:15:39Z"
+        },
+        {
+          "name": "known-blocker",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "65a480962f573e0c41998faedaf444e8fe00df9b",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37374686704/job/111980195406",
+          "completedAt": "2026-10-05T21:15:50Z"
+        },
+        {
+          "name": "controller",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "65a480962f573e0c41998faedaf444e8fe00df9b",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37374686704/job/111980195313",
+          "completedAt": "2026-10-05T21:15:56Z"
+        },
+        {
+          "name": "browser",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "65a480962f573e0c41998faedaf444e8fe00df9b",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37374686704/job/111980195265",
+          "completedAt": "2026-10-05T21:16:15Z"
+        },
+        {
+          "name": "check",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "65a480962f573e0c41998faedaf444e8fe00df9b",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37374686719/job/111980195167",
+          "completedAt": "2026-10-05T21:20:45Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "65a480962f573e0c41998faedaf444e8fe00df9b",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37374686621/job/111980195078",
+          "completedAt": "2026-10-05T21:25:18Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "65a480962f573e0c41998faedaf444e8fe00df9b",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37374686618/job/111980194806",
+          "completedAt": "2026-10-05T21:15:45Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 326,
+        "behind_by": 15,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "8360bc5f056837118ffd83138ffa2468ae42647e",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/65a480962f573e0c41998faedaf444e8fe00df9b...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "automation",
+      "kind": "tooling",
+      "fileCount": 39,
+      "handoffs": [
+        "workstreams/guardian-admission-profiles-v1.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 118,
+      "title": "Guardian: startscreen-masterpiece-v4-20261004",
+      "head": "961416cdcb3d71d5f45e1e416f6f50ae71a5b7c4",
+      "branch": "automation/worker/startscreen-masterpiece-v4-20261004/run-37229978936-1",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-04T19:58:40Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/118",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 256,
+        "behind_by": 1,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "578677633c1759e75fee6479f416fb64566f5c5c",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/961416cdcb3d71d5f45e1e416f6f50ae71a5b7c4...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "homepage",
+      "kind": "prototype",
+      "fileCount": 1,
+      "handoffs": [],
+      "dependencies": []
+    },
+    {
+      "number": 112,
+      "title": "Make evidence reviews mandatory for GradeCrew learning decisions",
+      "head": "fc96a30cb86d5a936cc32512c2fd4d384484c4a1",
+      "branch": "docs/consensus-evidence-rule-v1",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-04T19:44:27Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/112",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "fc96a30cb86d5a936cc32512c2fd4d384484c4a1",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37229428436/job/111515775748",
+          "completedAt": "2026-10-04T19:44:42Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "fc96a30cb86d5a936cc32512c2fd4d384484c4a1",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37229428408/job/111515775732",
+          "completedAt": "2026-10-04T19:44:42Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 389,
+        "behind_by": 3,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "d75f809f2891b65ce39d16ba291c2f583a028bff",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/fc96a30cb86d5a936cc32512c2fd4d384484c4a1...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "pedagogy",
+      "kind": "documentation",
+      "fileCount": 3,
+      "handoffs": [],
+      "dependencies": []
+    },
+    {
+      "number": 83,
+      "title": "Escape Visual Masterpiece: Amazonas art direction and Camp reference scene",
+      "head": "6434ddefb83cffca7bde5a7347ed6d2f56d5cb45",
+      "branch": "prototype/escape-expedition-visual-masterpiece-v1",
+      "base": "prototype/escape-expedition-masterpiece-v1",
+      "baseSHA": "934354fce20a24fd27f47a9b69237f3d04e3a3f5",
+      "updatedAt": "2026-10-04T15:44:57Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/83",
+      "checks": [
+        {
+          "name": "Games structure and browser checks",
+          "status": "completed",
+          "conclusion": "skipped",
+          "head": "6434ddefb83cffca7bde5a7347ed6d2f56d5cb45",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37214163861/job/111471199288",
+          "completedAt": "2026-10-04T15:45:00Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "skipped",
+          "head": "6434ddefb83cffca7bde5a7347ed6d2f56d5cb45",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37214163921/job/111471178928",
+          "completedAt": "2026-10-04T15:45:00Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 23,
+        "total_commits": 0,
+        "merge_base_commit": "934354fce20a24fd27f47a9b69237f3d04e3a3f5",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/6434ddefb83cffca7bde5a7347ed6d2f56d5cb45...934354fce20a24fd27f47a9b69237f3d04e3a3f5"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "expedition",
+      "kind": "prototype",
+      "fileCount": 10,
+      "handoffs": [
+        "workstreams/actions-manual-visual-20261004.md",
+        "workstreams/escape-expedition-visual-v1.md"
+      ],
+      "dependencies": [
+        60
+      ]
+    },
+    {
+      "number": 78,
+      "title": "Guardian: pilot-tutorial-later-a11y-20261004",
+      "head": "bb8188f9dc1928e7ab9a956b952beabd4af5844b",
+      "branch": "automation/worker/pilot-tutorial-later-a11y-20261004/run-37196815805-1",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-04T10:54:13Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/78",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 399,
+        "behind_by": 1,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "eb80c5e6a8b6c1ae13deba676709607bfccee208",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/bb8188f9dc1928e7ab9a956b952beabd4af5844b...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [
+        {
+          "path": "tutorial-choice-v1.css",
+          "sha": "2f3ec9bd187930be90af7afc38c593526dab3276"
+        }
+      ],
+      "group": "tutorial-old",
+      "kind": "historical",
+      "fileCount": 1,
+      "handoffs": [],
+      "dependencies": []
+    },
+    {
+      "number": 65,
+      "title": "Plan Guardian support for complex tasks, visual review and whole-code audits",
+      "head": "e511976f7feac960a1693482d363b0bc11f306ba",
+      "branch": "docs/guardian-complex-design-plan-20261004",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-04T09:54:17Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/65",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "e511976f7feac960a1693482d363b0bc11f306ba",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37193638729/job/111410853264",
+          "completedAt": "2026-10-04T09:54:31Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "e511976f7feac960a1693482d363b0bc11f306ba",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37193638712/job/111410853240",
+          "completedAt": "2026-10-04T09:54:33Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "e511976f7feac960a1693482d363b0bc11f306ba",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37193636777/job/111410847705",
+          "completedAt": "2026-10-04T09:54:30Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 470,
+        "behind_by": 2,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "93bfd9eaf8544c9afdd85b62dfe8dbc17c8d9b18",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/e511976f7feac960a1693482d363b0bc11f306ba...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "automation",
+      "kind": "documentation",
+      "fileCount": 2,
+      "handoffs": [
+        "workstreams/guardian-complex-design-plan.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 60,
+      "title": "Escape Masterpiece: phased Jungle reference-world polish",
+      "head": "934354fce20a24fd27f47a9b69237f3d04e3a3f5",
+      "branch": "prototype/escape-expedition-masterpiece-v1",
+      "base": "prototype/escape-expedition-jungle-v1",
+      "baseSHA": "17698e8927a4f020a2acd61b566e22894508474d",
+      "updatedAt": "2026-10-04T11:22:00Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/60",
+      "checks": [
+        {
+          "name": "Games structure and browser checks",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "934354fce20a24fd27f47a9b69237f3d04e3a3f5",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37198496913/job/111425158844",
+          "completedAt": "2026-10-04T11:23:05Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "934354fce20a24fd27f47a9b69237f3d04e3a3f5",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37198496899/job/111425158757",
+          "completedAt": "2026-10-04T11:22:52Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 17,
+        "total_commits": 0,
+        "merge_base_commit": "17698e8927a4f020a2acd61b566e22894508474d",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/934354fce20a24fd27f47a9b69237f3d04e3a3f5...17698e8927a4f020a2acd61b566e22894508474d"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "expedition",
+      "kind": "prototype",
+      "fileCount": 7,
+      "handoffs": [
+        "workstreams/escape-expedition-masterpiece-v1.md"
+      ],
+      "dependencies": [
+        56
+      ]
+    },
+    {
+      "number": 56,
+      "title": "Prototype: Expedition Amazonas multi-level Escape",
+      "head": "17698e8927a4f020a2acd61b566e22894508474d",
+      "branch": "prototype/escape-expedition-jungle-v1",
+      "base": "prototype/escape-adventure-room1-v1",
+      "baseSHA": "23b59b21a25bcfe28f2beddd718104f467a40d12",
+      "updatedAt": "2026-10-03T07:17:45Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/56",
+      "checks": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "17698e8927a4f020a2acd61b566e22894508474d",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37105879197/job/111154171599",
+          "completedAt": "2026-10-03T07:18:06Z"
+        },
+        {
+          "name": "Games structure and browser checks",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "17698e8927a4f020a2acd61b566e22894508474d",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37105879208/job/111154171561",
+          "completedAt": "2026-10-03T07:18:47Z"
+        },
+        {
+          "name": "Verify and deploy multi-level expedition prototype",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "17698e8927a4f020a2acd61b566e22894508474d",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37105876086/job/111154162253",
+          "completedAt": "2026-10-03T07:18:33Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 11,
+        "total_commits": 0,
+        "merge_base_commit": "23b59b21a25bcfe28f2beddd718104f467a40d12",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/17698e8927a4f020a2acd61b566e22894508474d...23b59b21a25bcfe28f2beddd718104f467a40d12"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "expedition",
+      "kind": "prototype",
+      "fileCount": 8,
+      "handoffs": [
+        "workstreams/escape-expedition-jungle-v1.md"
+      ],
+      "dependencies": [
+        53
+      ]
+    },
+    {
+      "number": 53,
+      "title": "Prototype: steuerbarer Escape-Adventure-Raum 1",
+      "head": "23b59b21a25bcfe28f2beddd718104f467a40d12",
+      "branch": "prototype/escape-adventure-room1-v1",
+      "base": "feature/escape-room-mvp-v1",
+      "baseSHA": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+      "updatedAt": "2026-10-02T23:37:37Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/53",
+      "checks": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "23b59b21a25bcfe28f2beddd718104f467a40d12",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37078470095/job/111073537179",
+          "completedAt": "2026-10-02T23:37:59Z"
+        },
+        {
+          "name": "Games structure and browser checks",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "23b59b21a25bcfe28f2beddd718104f467a40d12",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37078470125/job/111073536941",
+          "completedAt": "2026-10-02T23:38:47Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 19,
+        "total_commits": 0,
+        "merge_base_commit": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/23b59b21a25bcfe28f2beddd718104f467a40d12...a7ffc382128c49b418a79c31812f88e7fe0fd3d2"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "expedition",
+      "kind": "prototype",
+      "fileCount": 9,
+      "handoffs": [
+        "workstreams/escape-adventure-room1.md"
+      ],
+      "dependencies": [
+        10
+      ]
+    },
+    {
+      "number": 51,
+      "title": "Run Combined CI on Web pull-request merge results",
+      "head": "1985673476606b9222f08a014f657b7579910891",
+      "branch": "fix/web-premerge-combined-ci-v1",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-02T22:57:27Z",
+      "draft": false,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/51",
+      "checks": [
+        {
+          "name": "Node 22 tests",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "1985673476606b9222f08a014f657b7579910891",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37074747781/job/111062016167",
+          "completedAt": "2026-10-02T22:53:59Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 443,
+        "behind_by": 1,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "8aba2a7ce70c75842fbe4b81c4e6491136366768",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/1985673476606b9222f08a014f657b7579910891...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "combined-ci",
+      "kind": "tooling",
+      "fileCount": 2,
+      "handoffs": [
+        "workstreams/web-premerge-combined-ci-v1.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 37,
+      "title": "Automate safe staging deploys for the AI gateway",
+      "head": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
+      "branch": "feature/ai-gateway-staging-cicd-v1",
+      "base": "feature/openai-gateway-provider-v1",
+      "baseSHA": "2a6a227788f512f06336ce59324413674e7af6b1",
+      "updatedAt": "2026-10-02T10:14:30Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/37",
+      "checks": [
+        {
+          "name": "setup-needed",
+          "status": "completed",
+          "conclusion": "skipped",
+          "head": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36999999589/job/110815645549",
+          "completedAt": "2026-10-02T11:16:39Z"
+        },
+        {
+          "name": "deploy",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36999999589/job/110815644123",
+          "completedAt": "2026-10-02T11:17:57Z"
+        },
+        {
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36999999589/job/110815274040",
+          "completedAt": "2026-10-02T11:16:38Z"
+        },
+        {
+          "name": "deploy",
+          "status": "completed",
+          "conclusion": "skipped",
+          "head": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36994489250/job/110798291468",
+          "completedAt": "2026-10-02T10:16:51Z"
+        },
+        {
+          "name": "setup-needed",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36994489250/job/110798289393",
+          "completedAt": "2026-10-02T10:16:56Z"
+        },
+        {
+          "name": "verify",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36994489250/job/110797961749",
+          "completedAt": "2026-10-02T10:16:51Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36994377986/job/110797613429",
+          "completedAt": "2026-10-02T10:14:45Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "46b21ff4a8b09f2bed9888ac29a954d52c7c794e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36994377990/job/110797612058",
+          "completedAt": "2026-10-02T10:15:25Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 1,
+        "total_commits": 0,
+        "merge_base_commit": "2a6a227788f512f06336ce59324413674e7af6b1",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/46b21ff4a8b09f2bed9888ac29a954d52c7c794e...2a6a227788f512f06336ce59324413674e7af6b1"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "gateway",
+      "kind": "service",
+      "fileCount": 5,
+      "handoffs": [
+        "workstreams/ai-gateway-staging-cicd-v1.md"
+      ],
+      "dependencies": [
+        29
+      ]
+    },
+    {
+      "number": 29,
+      "title": "Add OpenAI as second provider behind the GradeCrew AI gateway",
+      "head": "2a6a227788f512f06336ce59324413674e7af6b1",
+      "branch": "feature/openai-gateway-provider-v1",
+      "base": "feature/ai-orchestration-v1",
+      "baseSHA": "4ba8038e6951039f9388449c1f7c38022378ad3f",
+      "updatedAt": "2026-10-02T10:11:12Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/29",
+      "checks": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "2a6a227788f512f06336ce59324413674e7af6b1",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36990940444/job/110786750013",
+          "completedAt": "2026-10-02T09:39:28Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "2a6a227788f512f06336ce59324413674e7af6b1",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36990940366/job/110786749574",
+          "completedAt": "2026-10-02T09:38:35Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 13,
+        "total_commits": 0,
+        "merge_base_commit": "4ba8038e6951039f9388449c1f7c38022378ad3f",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/2a6a227788f512f06336ce59324413674e7af6b1...4ba8038e6951039f9388449c1f7c38022378ad3f"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "gateway",
+      "kind": "service",
+      "fileCount": 10,
+      "handoffs": [
+        "workstreams/openai-gateway-provider-v1.md"
+      ],
+      "dependencies": [
+        26
+      ]
+    },
+    {
+      "number": 28,
+      "title": "GradeCrew Games Design System foundation",
+      "head": "766cb55196eb536b98de2b9dc0cfb05ca7a1b91a",
+      "branch": "lab/games-design-system",
+      "base": "lab/games-structure",
+      "baseSHA": "55e58e4f6147d0d274d8e5f51578b5d60cb33b4e",
+      "updatedAt": "2026-10-02T07:32:59Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/28",
+      "checks": [
+        {
+          "name": "Games structure and browser checks",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "766cb55196eb536b98de2b9dc0cfb05ca7a1b91a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36979149003/job/110749471140",
+          "completedAt": "2026-10-02T07:34:08Z"
+        },
+        {
+          "name": "Games structure and browser checks",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "766cb55196eb536b98de2b9dc0cfb05ca7a1b91a",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36979143958/job/110749455891",
+          "completedAt": "2026-10-02T07:34:09Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 7,
+        "behind_by": 20,
+        "targetSHA": "55e58e4f6147d0d274d8e5f51578b5d60cb33b4e",
+        "merge_base_commit": "869ca416b868667c9e48c05f81c967fe6ad59020",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/766cb55196eb536b98de2b9dc0cfb05ca7a1b91a...55e58e4f6147d0d274d8e5f51578b5d60cb33b4e"
+      },
+      "mergeable": "dirty",
+      "sameFiles": [],
+      "group": "games-foundation",
+      "kind": "product",
+      "fileCount": 14,
+      "handoffs": [],
+      "dependencies": [
+        2
+      ]
+    },
+    {
+      "number": 27,
+      "title": "Fix Escape tutor duplicate calls, stale cache and failure fallback",
+      "head": "a521ec905c09793441a301c0304881a2fe9ab27e",
+      "branch": "fix/escape-tutor-cost-guards",
+      "base": "feature/escape-room-mvp-v1",
+      "baseSHA": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+      "updatedAt": "2026-10-02T06:43:58Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/27",
+      "checks": [
+        {
+          "name": "Games structure and browser checks",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "a521ec905c09793441a301c0304881a2fe9ab27e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36974980982/job/110736737352",
+          "completedAt": "2026-10-02T06:45:43Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "a521ec905c09793441a301c0304881a2fe9ab27e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36974981001/job/110736737321",
+          "completedAt": "2026-10-02T06:44:13Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "a521ec905c09793441a301c0304881a2fe9ab27e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36974975434/job/110736720883",
+          "completedAt": "2026-10-02T06:44:09Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 55,
+        "behind_by": 2,
+        "targetSHA": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+        "merge_base_commit": "0f89995ce820db313e0eee88d316fbca6dd65b1f",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/a521ec905c09793441a301c0304881a2fe9ab27e...a7ffc382128c49b418a79c31812f88e7fe0fd3d2"
+      },
+      "mergeable": "clean",
+      "sameFiles": [
+        {
+          "path": "lab/escape-room/escape-tutor.js",
+          "sha": "c7298aa0bc8ae63b4250feb972d74f3c994f6a21"
+        },
+        {
+          "path": "tools/games/escape-tutor.test.cjs",
+          "sha": "ba8a3885861e998b5becc49afb9d3a5c294fbf92"
+        }
+      ],
+      "group": "tutor-old",
+      "kind": "historical",
+      "fileCount": 4,
+      "handoffs": [
+        "workstreams/escape-tutor-cost-guards.md"
+      ],
+      "dependencies": [
+        10
+      ]
+    },
+    {
+      "number": 26,
+      "title": "Automatic quality-bound AI routing, budgets and model cost statistics",
+      "head": "4ba8038e6951039f9388449c1f7c38022378ad3f",
+      "branch": "feature/ai-orchestration-v1",
+      "base": "feature/quality-routing-contract-v1",
+      "baseSHA": "890a01180ef7bfb41daa8285c3b71a0c20a7bb12",
+      "updatedAt": "2026-10-02T06:48:13Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/26",
+      "checks": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "4ba8038e6951039f9388449c1f7c38022378ad3f",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36975324541/job/110737785370",
+          "completedAt": "2026-10-02T06:49:20Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "4ba8038e6951039f9388449c1f7c38022378ad3f",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36975324531/job/110737785189",
+          "completedAt": "2026-10-02T06:48:28Z"
+        },
+        {
+          "name": "offline-contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "4ba8038e6951039f9388449c1f7c38022378ad3f",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36975324484/job/110737785185",
+          "completedAt": "2026-10-02T06:48:28Z"
+        },
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "4ba8038e6951039f9388449c1f7c38022378ad3f",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36975320156/job/110737772720",
+          "completedAt": "2026-10-02T06:49:22Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 5,
+        "total_commits": 0,
+        "merge_base_commit": "890a01180ef7bfb41daa8285c3b71a0c20a7bb12",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/4ba8038e6951039f9388449c1f7c38022378ad3f...890a01180ef7bfb41daa8285c3b71a0c20a7bb12"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "gateway",
+      "kind": "service",
+      "fileCount": 28,
+      "handoffs": [
+        "workstreams/ai-orchestration-v1.md"
+      ],
+      "dependencies": [
+        25
+      ]
+    },
+    {
+      "number": 25,
+      "title": "Prepare shared voice, locale and quality admission contracts",
+      "head": "890a01180ef7bfb41daa8285c3b71a0c20a7bb12",
+      "branch": "feature/quality-routing-contract-v1",
+      "base": "feature/multi-provider-ai-gateway-v1",
+      "baseSHA": "232c0ed4bca32fb63a958d241220a5c644dd437c",
+      "updatedAt": "2026-10-02T01:02:23Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/25",
+      "checks": [
+        {
+          "name": "offline-contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "890a01180ef7bfb41daa8285c3b71a0c20a7bb12",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36948992733/job/110657476657",
+          "completedAt": "2026-10-02T01:02:38Z"
+        },
+        {
+          "name": "offline-contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "890a01180ef7bfb41daa8285c3b71a0c20a7bb12",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36948987995/job/110657460870",
+          "completedAt": "2026-10-02T01:02:33Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 3,
+        "total_commits": 0,
+        "merge_base_commit": "232c0ed4bca32fb63a958d241220a5c644dd437c",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/890a01180ef7bfb41daa8285c3b71a0c20a7bb12...232c0ed4bca32fb63a958d241220a5c644dd437c"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "gateway",
+      "kind": "service",
+      "fileCount": 7,
+      "handoffs": [
+        "workstreams/quality-routing-contract-v1.md"
+      ],
+      "dependencies": [
+        24
+      ]
+    },
+    {
+      "number": 24,
+      "title": "GC-AI-GATEWAY-01: Multi-provider AI gateway foundation",
+      "head": "232c0ed4bca32fb63a958d241220a5c644dd437c",
+      "branch": "feature/multi-provider-ai-gateway-v1",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-02T07:54:14Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/24",
+      "checks": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "232c0ed4bca32fb63a958d241220a5c644dd437c",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36946269864/job/110649012842",
+          "completedAt": "2026-10-02T00:29:59Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 534,
+        "behind_by": 4,
+        "targetSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "merge_base_commit": "a61759db01e41f19b7d34e6eb0e88bac42484c1e",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/232c0ed4bca32fb63a958d241220a5c644dd437c...9497e756ed2defb4da6b05773146a19929101b3c"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "gateway",
+      "kind": "service",
+      "fileCount": 13,
+      "handoffs": [
+        "workstreams/multi-provider-ai-gateway-v1.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 15,
+      "title": "Plan GradeCrew internationalization foundation",
+      "head": "dada166a965acd8f63f97b82625ee94f9710ab35",
+      "branch": "feature/i18n-foundation-plan",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-01T22:40:12Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/15",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "dada166a965acd8f63f97b82625ee94f9710ab35",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36936402683/job/110617580454",
+          "completedAt": "2026-10-01T22:40:01Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "dada166a965acd8f63f97b82625ee94f9710ab35",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36936396933/job/110617562159",
+          "completedAt": "2026-10-01T22:40:01Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 572,
+        "behind_by": 4,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "28297ff03009bdf15e1230bf0c2533b63426cc9f",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/dada166a965acd8f63f97b82625ee94f9710ab35...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "i18n",
+      "kind": "documentation",
+      "fileCount": 3,
+      "handoffs": [
+        "workstreams/i18n-foundation.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 14,
+      "title": "Add GradeCrew branch governance and reusable Firebase emulator gates",
+      "head": "0f38066904a42cc71976a70a7d8b33860dd26ba6",
+      "branch": "feature/dev-governance-emulator",
+      "base": "main",
+      "baseSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+      "updatedAt": "2026-10-01T22:28:57Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/14",
+      "checks": [
+        {
+          "name": "Firebase emulator",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "0f38066904a42cc71976a70a7d8b33860dd26ba6",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36935277617/job/110613958132",
+          "completedAt": "2026-10-01T22:28:41Z"
+        },
+        {
+          "name": "Branch governance",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "0f38066904a42cc71976a70a7d8b33860dd26ba6",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36935277617/job/110613957638",
+          "completedAt": "2026-10-01T22:28:45Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "0f38066904a42cc71976a70a7d8b33860dd26ba6",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36935277599/job/110613957335",
+          "completedAt": "2026-10-01T22:28:41Z"
+        },
+        {
+          "name": "Firebase emulator",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "0f38066904a42cc71976a70a7d8b33860dd26ba6",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36935272274/job/110613940846",
+          "completedAt": "2026-10-01T22:28:36Z"
+        },
+        {
+          "name": "Branch governance",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "0f38066904a42cc71976a70a7d8b33860dd26ba6",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36935272274/job/110613940573",
+          "completedAt": "2026-10-01T22:28:37Z"
+        },
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "0f38066904a42cc71976a70a7d8b33860dd26ba6",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36935272262/job/110613940226",
+          "completedAt": "2026-10-01T22:28:40Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 572,
+        "behind_by": 3,
+        "targetSHA": "c963c330c9b71ffec794ee0c0e349744ea06b8fb",
+        "merge_base_commit": "28297ff03009bdf15e1230bf0c2533b63426cc9f",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/0f38066904a42cc71976a70a7d8b33860dd26ba6...c963c330c9b71ffec794ee0c0e349744ea06b8fb"
+      },
+      "mergeable": "unknown",
+      "sameFiles": [],
+      "group": "governance-old",
+      "kind": "tooling",
+      "fileCount": 19,
+      "handoffs": [
+        "workstreams/ai-quality.md",
+        "workstreams/dev-governance-emulator.md",
+        "workstreams/freetext-review.md",
+        "workstreams/legacy-branch-triage.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 11,
+      "title": "Freitext-Prüfhilfe mit Ampelpriorisierung",
+      "head": "67dacb0e5fd1e2371ecbf142de37703e3b2ba1f7",
+      "branch": "feature/freetext-review-priority",
+      "base": "fix/gradecrew-staging-release-final",
+      "baseSHA": "acbe25b4bf4a0a5d42f0e3e3fb08ae4493fd90e1",
+      "updatedAt": "2026-10-01T21:12:17Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/11",
+      "checks": [],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 12,
+        "total_commits": 0,
+        "merge_base_commit": "acbe25b4bf4a0a5d42f0e3e3fb08ae4493fd90e1",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/67dacb0e5fd1e2371ecbf142de37703e3b2ba1f7...acbe25b4bf4a0a5d42f0e3e3fb08ae4493fd90e1"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "freetext",
+      "kind": "product",
+      "fileCount": 9,
+      "handoffs": [],
+      "dependencies": []
+    },
+    {
+      "number": 10,
+      "title": "Escape Room MVP: lernwirksame Referenzwelt „Die verriegelte Schule“",
+      "head": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+      "branch": "feature/escape-room-mvp-v1",
+      "base": "lab/games-structure",
+      "baseSHA": "55e58e4f6147d0d274d8e5f51578b5d60cb33b4e",
+      "updatedAt": "2026-10-02T14:41:32Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/10",
+      "checks": [
+        {
+          "name": "Test and deploy Escape Room dev preview",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "a7ffc382128c49b418a79c31812f88e7fe0fd3d2",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/37021633218/job/111534877678",
+          "completedAt": "2026-10-04T21:26:05Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "diverged",
+        "ahead_by": 7,
+        "behind_by": 115,
+        "total_commits": 7,
+        "merge_base_commit": "869ca416b868667c9e48c05f81c967fe6ad59020",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/a7ffc382128c49b418a79c31812f88e7fe0fd3d2...55e58e4f6147d0d274d8e5f51578b5d60cb33b4e"
+      },
+      "mergeable": "dirty",
+      "sameFiles": [],
+      "group": "expedition",
+      "kind": "prototype",
+      "fileCount": 48,
+      "handoffs": [
+        "workstreams/escape-review-v1.md",
+        "workstreams/escape-room-mvp.md"
+      ],
+      "dependencies": [
+        2
+      ]
+    },
+    {
+      "number": 2,
+      "title": "GradeCrew Games: gemeinsamer Hub und klare Modulstruktur",
+      "head": "55e58e4f6147d0d274d8e5f51578b5d60cb33b4e",
+      "branch": "lab/games-structure",
+      "base": "lab/vocab-rush",
+      "baseSHA": "4e739100d8a0e8c9be08d11b7bc96ddf86f3b141",
+      "updatedAt": "2026-10-02T10:00:56Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/2",
+      "checks": [
+        {
+          "name": "Games structure and browser checks",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "55e58e4f6147d0d274d8e5f51578b5d60cb33b4e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36993091180/job/110793565346",
+          "completedAt": "2026-10-02T10:02:03Z"
+        },
+        {
+          "name": "Games structure and browser checks",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "55e58e4f6147d0d274d8e5f51578b5d60cb33b4e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36993086082/job/110793550229",
+          "completedAt": "2026-10-02T10:01:54Z"
+        },
+        {
+          "name": "Games structure and browser checks",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "55e58e4f6147d0d274d8e5f51578b5d60cb33b4e",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/36993016609/job/110793343438",
+          "completedAt": "2026-10-02T10:01:24Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 8,
+        "total_commits": 0,
+        "merge_base_commit": "4e739100d8a0e8c9be08d11b7bc96ddf86f3b141",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/55e58e4f6147d0d274d8e5f51578b5d60cb33b4e...4e739100d8a0e8c9be08d11b7bc96ddf86f3b141"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "games-foundation",
+      "kind": "product",
+      "fileCount": 20,
+      "handoffs": [],
+      "dependencies": []
+    },
+    {
+      "number": 303,
+      "title": "GC-DESIGN-05: Konto erstellen, E-Mail-Code und Tutorial-Einstieg",
+      "head": "668ee2d81afda5d6ef4b4defe68207e7a3e47225",
+      "branch": "feature/gc-auth-onboarding-20261025",
+      "base": "feature/gradecrew-app-integration",
+      "baseSHA": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "updatedAt": "2026-10-25T12:21:34Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/303",
+      "checks": [
+        {
+          "name": "test",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "668ee2d81afda5d6ef4b4defe68207e7a3e47225",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40192430620/job/121166084841",
+          "completedAt": "2026-10-25T12:17:21Z"
+        },
+        {
+          "name": "package",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "668ee2d81afda5d6ef4b4defe68207e7a3e47225",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40192430626/job/121166084805",
+          "completedAt": "2026-10-25T12:17:17Z"
+        },
+        {
+          "name": "BugOps server and rules",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "668ee2d81afda5d6ef4b4defe68207e7a3e47225",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40192430615/job/121166084779",
+          "completedAt": "2026-10-25T12:17:54Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": null,
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "onboarding",
+      "kind": "product",
+      "fileCount": 36,
+      "handoffs": [
+        "workstreams/auth-onboarding-20261025.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "number": 304,
+      "title": "GC-DESIGN-05: Auth-Onboarding mit CI-Nachweis und Mail-Gate erfassen",
+      "head": "3d62968daa6bee24b8ea167f186e6fe9e819d97d",
+      "branch": "docs/auth-onboarding-status-20261025",
+      "base": "main",
+      "baseSHA": "ec388fcd835b87d8aa8653f9f0cae4c461408a2b",
+      "updatedAt": "2026-10-25T12:20:57Z",
+      "draft": true,
+      "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/304",
+      "checks": [
+        {
+          "name": "handoff",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "3d62968daa6bee24b8ea167f186e6fe9e819d97d",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40192706227/job/121166931742",
+          "completedAt": "2026-10-25T12:21:14Z"
+        },
+        {
+          "name": "Live branch / PR audit",
+          "status": "completed",
+          "conclusion": "success",
+          "head": "3d62968daa6bee24b8ea167f186e6fe9e819d97d",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40192706226/job/121166931665",
+          "completedAt": "2026-10-25T12:21:20Z"
+        }
+      ],
+      "reviews": [],
+      "statuses": [],
+      "comparison": {
+        "status": "behind",
+        "ahead_by": 0,
+        "behind_by": 1,
+        "targetSHA": "ec388fcd835b87d8aa8653f9f0cae4c461408a2b",
+        "merge_base_commit": "ec388fcd835b87d8aa8653f9f0cae4c461408a2b",
+        "url": "https://github.com/HerrLoeffler/Hausaufgabe/compare/3d62968daa6bee24b8ea167f186e6fe9e819d97d...ec388fcd835b87d8aa8653f9f0cae4c461408a2b"
+      },
+      "mergeable": "clean",
+      "sameFiles": [],
+      "group": "onboarding",
+      "kind": "documentation",
+      "fileCount": 3,
+      "handoffs": [
+        "workstreams/auth-onboarding-20261025.md"
+      ],
+      "dependencies": []
+    }
+  ],
+  "limits": [
+    "PR-Beschreibung und Originalreceipts sind Fachberichte; grüne GitHub-Checks allein sind keine Produktabnahme.",
+    "Vollständige Dateilisten und Headchecks geprüft, kein neuer Vollcode-/Geräte-/Provideraudit jedes PRs.",
+    "Diese Zuordnung ist eine datierte Sicht in der Zentrale. Kanonische Registry/Release-Control und zuständige Owner bleiben führend.",
+    "Keine Veröffentlichung, keine Integration, keine PR-Schließung durch diesen Audit."
+  ],
+  "recordedCount": 80,
+  "noLongerOpen": [
+    298
+  ],
+  "resolved": [
+    {
+      "name": "Adaptiver Dienststart",
+      "result": "Recovery-Deploy21 und echte Lernpfade auf18905bb6 belegt.",
+      "group": "adaptive"
+    },
+    {
+      "name": "Wissensreise:50 Fragen",
+      "result": "Angemeldete Vorbereitung:46 spielbar,4 ausgeschlossen.",
+      "group": "journey"
+    },
+    {
+      "name": "Mathe: getrennte Komponenten",
+      "result": "Hosting1ee536e0 und Functionsce5c9c1d mit eigenen Prüfbelegen.",
+      "group": "math"
+    },
+    {
+      "name": "Feedback bereits veröffentlicht",
+      "result": "PR297/302 veröffentlicht; PR298 integriert.9497e756 liefert174/174 geprüfte Hostingdateien.",
+      "group": "feedback-record"
+    },
+    {
+      "name": "Onboarding-CI",
+      "result": "Früherer Lintfehler behoben; drei Headprüfungen auf668ee2d8 grün.",
+      "group": "onboarding"
+    }
+  ]
+}

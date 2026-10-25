@@ -13,14 +13,16 @@ export function environmentState(e,o={}){
 export function candidateState(c,observations={},reviews=[]){
  const o=observations[c.testEnvironment],bound=validSHA(c.sourceCommit)&&c.sourceConfirmed!==false;
  const env=observations.__environments?.find(e=>e.id===c.testEnvironment),expired=Boolean(env?.expiresAt&&Date.parse(env.expiresAt)<Date.now());
- const deployed=Boolean(bound&&!expired&&env?.kind!=='historical'&&fresh(o)&&o.lastGood.commit===c.sourceCommit);
+ const hostingSource=!c.sourceComponent||c.sourceComponent==='hosting';
+ const deployed=Boolean(hostingSource&&bound&&!expired&&env?.kind!=='historical'&&fresh(o)&&o.lastGood.commit===c.sourceCommit);
  const checks=c.checks.map(check=>({...check,...reviews.filter(r=>r.candidate===c.id&&r.sha===c.sourceCommit&&r.environment===c.testEnvironment&&r.check===check.id).at(-1),result:reviews.filter(r=>r.candidate===c.id&&r.sha===c.sourceCommit&&r.environment===c.testEnvironment&&r.check===check.id).at(-1)?.result||'pending'}));
  const automated=Boolean(bound&&c.automated?.status==='passed'&&c.automated.sha===c.sourceCommit);
  const currentPR=observations.__prs?.find(p=>p.number===c.pr);
  const changed=Boolean(currentPR&&c.prHead&&currentPR.head!==c.prHead);
  const gateReady=Boolean(bound&&deployed&&automated&&!changed&&checks.every(r=>r.result==='passed'));
  // Journal never constitutes release permission. Integration/rollback decision is separate.
- return {bound,deployed,automated,checks,changed,ready:gateReady&&!c.releasePreparation,live:false,label:changed?'Neuer PR-Stand · Abgleich nötig':expired?'Vorschau abgelaufen':checks.some(r=>r.result==='failed')?'Prüfung fehlgeschlagen':!bound?'Version zuordnen':!deployed?'Teststand abgleichen':checks.some(r=>r.result!=='passed')?'Abnahme offen':'Freigabeunterlagen vervollständigen'};
+ const published=Boolean(c.published&&c.publication?.commit===c.sourceCommit);
+ return {bound,deployed,automated,checks,changed,ready:!published&&gateReady&&!c.releasePreparation,live:published&&deployed,label:published?(deployed?'Hosting live · Wirkung nachprüfen':'Veröffentlicht laut Receipt · Hosting abgleichen'):changed?'Neuer PR-Stand · Abgleich nötig':expired?'Vorschau abgelaufen':checks.some(r=>r.result==='failed')?'Prüfung fehlgeschlagen':!bound?'Version zuordnen':!hostingSource?'Komponenten belegt · Abnahme offen':!deployed?'Teststand abgleichen':checks.some(r=>r.result!=='passed')?'Abnahme offen':'Freigabeunterlagen vervollständigen'};
 }
 export function areaFreshness(area,sources){
  if(sources?.sources?.github?.error)return {kind:'unknown',label:'GitHub-Abgleich fehlgeschlagen'};

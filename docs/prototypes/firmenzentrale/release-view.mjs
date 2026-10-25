@@ -1,10 +1,13 @@
+import {safeLink} from './model.mjs';
+import {mountPRAssignments} from './pr-view.mjs';
+import {projectPRs,groupReadiness} from './pr-readiness.mjs';
 import {companyAudit,areaStatus} from './company-status.mjs';
 import {kindNames,environmentState,candidateState,areaFreshness,releaseBrief} from './release-model.mjs';
 import {domains} from './portfolio.mjs';
 const E=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const A=(p,...cs)=>(p.append(...cs.filter(Boolean)),p);
 const B=(text,fn,cls='button secondary')=>{const b=E('button',text,cls);b.type='button';b.onclick=fn;return b;};
-const L=(text,url)=>{const a=E('a',text);a.href=url;if(url.startsWith('https:')){a.target='_blank';a.rel='noopener noreferrer';}return a;};
+const L=(text,url)=>{const a=E('a',text);const href=url.startsWith('#/')?url:safeLink(url);if(href)a.href=href;if(href?.startsWith('https:')){a.target='_blank';a.rel='noopener noreferrer';}return a;};
 const D=(label,...children)=>A(E('details'),E('summary',label),...children);
 const stamp=s=>s?new Date(s).toLocaleString('de-DE'):'noch kein Beleg';
 const name=id=>domains.find(x=>x.id===id)?.name||id;
@@ -22,23 +25,30 @@ export function mountAreaAudit(parent,client,id,collapsed=false){
 }
 export function mountCompanyStatus(parent,client,onDraft){
  A(parent,E('h1','Was ist fertig – was fehlt?'),E('p','Elf Bereiche. Jeweils ein belegter Stand, eine Lücke und der nächste Schritt.','page-intro'),L('Seiten & Veröffentlichungen ansehen','#/arbeit/releases'));
- const grid=E('div',undefined,'audit-grid'),limits=D('Umfang des Abgleichs',E('p',companyAudit.scope),E('p','32 Unterthemen mit neuem Fachstand aktualisiert. Bei den übrigen30 ist kein neuer belastbarer Einzelabschluss belegt.'));
+ const grid=E('div',undefined,'audit-grid'),limits=D('Umfang des Abgleichs',E('p',companyAudit.scope),E('p','Aktualisierte Unterthemen sind datiert. Ohne neuen Einzelbeleg bleibt die bestehende Lücke sichtbar.'));
  A(parent,grid,limits);let last='';return client.subscribe(state=>{const key=JSON.stringify(Object.values(areaStatus).map(a=>areaFreshness(a,state?.sources)));if(key===last)return;last=key;grid.replaceChildren();for(const id of Object.keys(areaStatus)){const card=auditCard(id,state?.sources);card.append(B('Aufgabe vorbereiten',()=>onDraft(id,{title:`Weiterarbeit: ${name(id)}`,body:`${areaStatus[id].built}\n\nOffen: ${areaStatus[id].gap}\nNächster Schritt: ${areaStatus[id].next}\nZuständig: ${areaStatus[id].owner}\nVor Ausführung aktuelle Fachquellen prüfen. Live unverändert.`})));grid.append(card);}});
 }
 export function mountReleases(parent,client,onDraft,{tab='umgebungen',area='all'}={}){
- let data,selected='',mode=tab==='kandidaten'?'candidates':'environments',filter=area,query='',last='',formKey='';
+ let data,selected='',mode=tab==='prs'?'prs':tab==='kandidaten'?'candidates':'environments',filter=area,query='',last='',formKey='';
  const status=E('p',undefined,'tiny'),error=E('p',undefined,'error');error.setAttribute('role','status');
- const counts=E('div',undefined,'release-counts'),controls=E('div',undefined,'release-controls'),list=E('div',undefined,'release-list'),detail=E('section',undefined,'release-detail'),detailBody=E('div'),formHost=E('div'),unassigned=E('div');A(detail,detailBody,formHost);detail.tabIndex=-1;detail.setAttribute('aria-label','Gewählte Umgebung oder Arbeit');
- A(parent,E('h1','Seiten & Releases'),E('p','Wo liegt welche Arbeit? Was fehlt bis zur Veröffentlichung?','page-intro'),counts,controls,status,error,A(E('div',undefined,'release-layout'),list,detail),unassigned);
- const envTab=B('Umgebungen',()=>switchMode('environments')),candTab=B('Noch nicht abgeschlossen',()=>switchMode('candidates'));
+ const counts=E('div',undefined,'release-counts'),controls=E('div',undefined,'release-controls'),list=E('div',undefined,'release-list'),detail=E('section',undefined,'release-detail'),detailBody=E('div'),formHost=E('div'),prHost=E('section',undefined,'pr-assignments'),summary=E('section',undefined,'pr-overview');A(detail,detailBody,formHost);detail.tabIndex=-1;detail.setAttribute('aria-label','Gewählte Umgebung oder Arbeit');
+ const layout=A(E('div',undefined,'release-layout'),list,detail),prView=mountPRAssignments(prHost,onDraft);
+ A(parent,E('h1','Seiten & Releases'),E('p','Wo liegt welche Arbeit? Was fehlt bis zur Veröffentlichung?','page-intro'),summary,counts,controls,status,error,layout,prHost);
+ const envTab=B('Umgebungen',()=>switchMode('environments')),candTab=B('Release-Nachweise',()=>switchMode('candidates')),prTab=B('PR-Zuordnung',()=>switchMode('prs'));
  const select=E('select');select.setAttribute('aria-label','Bereich filtern');for(const [id,label] of [['all','Alle Bereiche'],...domains.map(x=>[x.id,x.name])]){const o=E('option',label);o.value=id;select.append(o);}select.value=filter;select.onchange=()=>{filter=select.value;selected='';render();};
  const search=E('input');search.type='search';search.placeholder='Seite oder Arbeit suchen';search.setAttribute('aria-label','Seiten und Kandidaten suchen');search.oninput=()=>{query=search.value.toLocaleLowerCase('de');selected='';render();};
- A(controls,envTab,candTab,select,search,B('Jetzt abgleichen',async()=>{try{await client.post('/api/releases/refresh',{});status.textContent='Öffentliche Versionsnachweise werden gelesen …';}catch(e){error.textContent=e.message;}}));
- function switchMode(value){mode=value;selected='';render();}
+ A(controls,envTab,candTab,prTab,select,search,B('Jetzt abgleichen',async()=>{try{await Promise.all([client.post('/api/releases/refresh',{}),client.post('/api/refresh',{})]);status.textContent='PRs, Chats und Versionsnachweise werden gelesen …';}catch(e){error.textContent=e.message;}}));
+ function switchMode(value){mode=value;history.replaceState(null,'','#/arbeit/releases/'+({prs:'prs',candidates:'kandidaten',environments:'umgebungen'}[value]));selected='';render();}
  function observations(){return {...data.observations,__environments:data.catalog.environments,__prs:client.state?.sources?.sources?.github?.data?.prs||[]};}
  function render(){
-  if(!data)return;const cat=data.catalog,obs=observations();envTab.setAttribute('aria-pressed',String(mode==='environments'));candTab.setAttribute('aria-pressed',String(mode==='candidates'));
-  counts.replaceChildren(...[[cat.environments.filter(e=>!['local','native'].includes(e.kind)).length,'bekannte Web-Umgebungen'],[cat.environments.filter(e=>e.kind==='local').length,'lokale Vorschauen'],[cat.environments.filter(e=>e.kind==='native').length,'App-Verteilwege'],[cat.candidates.length,'offene Kandidaten']].map(([n,label])=>A(E('div'),E('strong',String(n)),E('span',label))));
+  if(!data)return;const cat=data.catalog,obs=observations();envTab.setAttribute('aria-pressed',String(mode==='environments'));candTab.setAttribute('aria-pressed',String(mode==='candidates'));prTab.setAttribute('aria-pressed',String(mode==='prs'));
+  const projection=projectPRs(data.audit,client.state?.sources?.sources?.github),states=projection.groups.map(g=>groupReadiness(g,projection)),ready=states.filter(s=>s.ready).length,products=states.filter(s=>s.product).length;
+  const go=value=>{mode='prs';history.replaceState(null,'','#/arbeit/releases/prs');prView.show(value);render();};
+  summary.replaceChildren(E('h2','Was kann als Nächstes nach Live?'),E('p',projection.fresh?(ready?`${ready} Pakete vollständig belegt – Entscheidung ausstehend.`:'Noch kein neues Paket vollständig belegt.'):'Quellenprüfung offen. Bis zum aktuellen Abgleich wird kein Paket als bereit angezeigt.'),A(E('div',undefined,'pr-summary-actions'),B(`${ready} bereit zur Entscheidung`,()=>go('ready')),B(`${products} Livekandidaten prüfen`,()=>go('product')),B(`${projection.entries.length-projection.unassigned.length}/${projection.entries.length} offene PRs zugeordnet`,()=>go(projection.unassigned.length?'new':'all'))));
+  const live=obs.live;if(live?.lastGood)summary.append(E('p',`Live-Hosting: ${live.lastGood.commit.slice(0,12)} · ${live.error?'Abruf fehlgeschlagen; letzter Erfolg':stamp(live.lastSuccess)} · Hostingbeleg`,'tiny'));
+  counts.hidden=mode==='prs';layout.hidden=mode==='prs';prHost.hidden=mode!=='prs';if(data.audit?.resolved?.length)summary.append(D(`Geklärte Nachweise · ${data.audit.resolved.length}`,...data.audit.resolved.map(r=>pair(r.name,r.result))));prView.update(data.audit,client.state?.sources?.sources?.github,filter,query);
+  counts.replaceChildren(...[[cat.environments.filter(e=>!['local','native'].includes(e.kind)).length,'bekannte Web-Umgebungen'],[cat.environments.filter(e=>e.kind==='local').length,'lokale Vorschauen'],[cat.environments.filter(e=>e.kind==='native').length,'App-Verteilwege'],[cat.candidates.length,'Release-Nachweise']].map(([n,label])=>A(E('div'),E('strong',String(n)),E('span',label))));
+  if(mode==='prs')return;
   const items=(mode==='environments'?cat.environments:cat.candidates).filter(x=>(filter==='all'||x.area===filter)&&JSON.stringify(x).toLocaleLowerCase('de').includes(query));
   if(!items.some(x=>x.id===selected))selected=items[0]?.id||'';
   list.replaceChildren();if(!items.length)list.append(E('p','Keine Treffer. Bereich oder Suche ändern.'));
@@ -60,14 +70,13 @@ export function mountReleases(parent,client,onDraft,{tab='umgebungen',area='all'
   }else{
    const s=candidateState(x,obs,data.reviews),test=cat.environments.find(e=>e.id===x.testEnvironment);
    A(detailBody,E('p',s.label,'audit-fresh'),pair('Belegt',x.done),pair('Offen',x.gap),pair('Nächster Schritt',x.next),E('p',`Test: ${test?.name||'nicht zugeordnet'} → Ziel: ${cat.environments.find(e=>e.id===x.targetEnvironment)?.name||x.targetEnvironment}`,'tiny'));
-   const stages=A(E('ol',undefined,'release-gates'),E('li',s.bound?'Quellversion zugeordnet':'Exakte Produktversion noch zuordnen'),E('li',s.automated?'Automatische Prüfung exakt belegt':'Automatische Prüfung laut Fachbericht · exakte CI prüfen'),E('li',s.deployed?'Hostingversion auf Testseite aktuell bestätigt':'Aktuellen Testdeploy / Komponenten abgleichen'),E('li',`${s.checks.filter(r=>r.result==='passed').length}/${s.checks.length} lokale Prüfnotizen bestanden`),E('li','Integration / Rückfallplan / ausdrückliche Livefreigabe offen'),E('li','Veröffentlichung und Nachkontrolle separat'));
-   A(detailBody,D('Weg nach Live',stages,E('p','Prüfnotizen sind eigene Angaben. Sie ersetzen weder unabhängige Abnahme noch Livefreigabe.','tiny')),B('Abnahme vorbereiten',()=>onDraft(x.area,releaseBrief(x,s))));
+   const stages=A(E('ol',undefined,'release-gates'),E('li',s.bound?'Quellversion zugeordnet':'Exakte Produktversion noch zuordnen'),E('li',s.automated?'Automatische Prüfung exakt belegt':'Automatische Prüfung laut Fachbericht · exakte CI prüfen'),E('li',s.deployed?'Hostingversion aktuell bestätigt':x.sourceComponent&&x.sourceComponent!=='hosting'?'Backend-/App-Komponente gesondert belegt; Hostingmanifest ist dafür kein Versionsmaßstab':'Aktuellen Testdeploy / Komponenten abgleichen'),E('li',`${s.checks.filter(r=>r.result==='passed').length}/${s.checks.length} lokale Prüfnotizen bestanden`),E('li',x.published?'Veröffentlichung laut Abschlussreceipt erfolgt':'Integration / Rückfallplan / ausdrückliche Livefreigabe offen'),E('li',x.published?'Tatsächliche Nutzung und fachliche Wirkung weiter prüfen':'Veröffentlichung und Nachkontrolle separat'));
+   A(detailBody,D(x.published?'Veröffentlichung & Nachkontrolle':'Weg nach Live',stages,E('p','Prüfnotizen sind eigene Angaben. Sie ersetzen weder unabhängige Abnahme noch Livefreigabe.','tiny')),B(x.published?'Nachkontrolle vorbereiten':'Abnahme vorbereiten',()=>onDraft(x.area,releaseBrief(x,s))));
    const evidence=D('Version, Verantwortung & Belege',E('p',`${x.owner} · ${x.id}`),E('p',`Produktquelle: ${x.sourceCommit}${s.bound?'':' · noch nicht eindeutig bestätigt'}`,'release-sha'),E('p',`Benötigt: ${x.components.join(', ')}`),E('p',x.releasePreparation));for(const e of x.evidence)evidence.append(A(E('p'),L(e.label,e.url)));A(evidence,A(E('p'),L('Bestehender Release-Katalog',cat.controls.catalog)),A(E('p'),L('Zentrales Abnahmeregister',cat.controls.acceptance)));detailBody.append(evidence);
    const history=data.reviews.filter(r=>r.candidate===x.id);if(history.length)detailBody.append(D(`Prüfjournal · ${history.length} Einträge`,...history.slice().reverse().map(r=>E('p',`${stamp(r.at)} · ${r.check}: ${{passed:'bestanden',failed:'fehlgeschlagen',pending:'offen'}[r.result]} · ${r.reviewer}\n${r.evidence}\n${r.sha.slice(0,12)} / ${r.environment}`,'journal-entry'))));
    if(formKey!==x.id+':'+x.sourceCommit){formKey=x.id+':'+x.sourceCommit;formHost.replaceChildren();if(s.bound)formHost.append(reviewForm(x));else formHost.append(E('p','Vor einer Prüfnotiz zuerst die exakte Produktversion zuordnen.','info-note'));}
   }
-  const known=new Set(cat.candidates.map(c=>c.pr)),prs=(client.state?.sources?.sources?.github?.data?.prs||[]).filter(p=>!known.has(p.number));
-  unassigned.replaceChildren(D(`Weitere offene PRs · ${prs.length} noch nicht dieser Releaseübersicht zugeordnet`,E('p','Darunter Konzepte, Dokumentation und andere Aufgaben. Erst Scope und Test-/Releasebedarf zuordnen; offene PRs sind keine fertigen Features.','tiny'),...prs.map(p=>A(E('p'),L(`#${p.number} ${p.title}`,p.url)))));
+
  }
  function reviewForm(c){
   const form=E('form',undefined,'release-review'),message=E('p');message.setAttribute('role','status');
@@ -87,5 +96,5 @@ export function mountReleases(parent,client,onDraft,{tab='umgebungen',area='all'
    try{const r=await client.post('/api/release-review',{id:pending.id,...payload});if(!data.reviews.some(x=>x.id===r.id))data.reviews.push(r);pending=null;lastSaved=JSON.stringify(payload);try{localStorage.removeItem(storageKey);}catch{}message.textContent='Prüfnotiz gespeichert. Keine Veröffentlichung ausgelöst.';render();}catch(e){message.textContent=e.message;}finally{save.disabled=false;}
   };return form;
  }
- return client.subscribe((state,problem)=>{error.textContent=problem||'';if(!state?.releases){status.textContent='Releaseübersicht wird geladen …';return;}data=state.releases;status.textContent=data.refreshing?'Öffentliche Versionsnachweise werden gelesen …':'Automatischer Versionsabgleich alle 5 Minuten. Live bleibt unverändert.';const key=JSON.stringify([data,state.sources?.sources?.github?.data?.prs]);if(key!==last){last=key;render();}});
+ return client.subscribe((state,problem)=>{error.textContent=problem||'';if(!state?.releases){status.textContent='Releaseübersicht wird geladen …';return;}data=state.releases;status.textContent=data.refreshing?'Öffentliche Versionsnachweise werden gelesen …':'Automatischer Versionsabgleich alle 5 Minuten. Live bleibt unverändert.';const key=JSON.stringify([data,state.sources?.sources?.github,Math.floor(Date.now()/60000)]);if(key!==last){last=key;render();}});
 }

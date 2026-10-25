@@ -27,6 +27,11 @@ class ReleaseTests(unittest.TestCase):
   a=self.r.review(self.p);self.assertEqual(a,self.r.review(self.p));self.assertEqual(len(self.r.public()['reviews']),1)
   for patch in [{'sha':'0'*40},{'environment':'live'},{'candidate':'unknown'},{'check':'livefreigabe'},{'evidence':''},{'id':self.p['id'],'result':'failed'}]:
    with self.assertRaises(ValueError):self.r.review(dict(self.p,**patch))
+ def test_audit_projection_is_complete_and_does_not_mutate_journal(self):
+  before=self.r.public()['reviews'];audit=self.r.public()['audit']
+  self.assertEqual(audit['openCount'],79)
+  self.assertEqual(len(set(p['number'] for p in audit['entries'])),80)
+  self.assertEqual(before,self.r.public()['reviews'])
  def test_history_retained(self):
   self.r.review(self.p);self.r.review(dict(self.p,id='22222222-2222-4222-8222-222222222222',result='failed'));self.assertEqual(len(self.r.public()['reviews']),2)
  def test_manifest_validation_and_minimization(self):
