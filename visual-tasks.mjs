@@ -38,7 +38,7 @@ function geometryKey(t) {
     default:fail();
   }
 }
-const specFields={hotspot:'scene regions maxSelections',labeling:'scene regions items',scale:'context min max step majorStep unit card',angle:'degrees instrument min max',grid:'rows columns',chart:'min max step unit categories',connections:'directed nodes',coordinate:'mode minX maxX minY maxY step labels',evidence:'tokens',range:'min max step majorStep unit context startInclusive endInclusive',table:'columns rows answerMode numericForm',correction:'rows answerMode numericForm'};
+const specFields={hotspot:'scene regions maxSelections',labeling:'scene regions items',scale:'context min max step majorStep unit card',angle:'degrees instrument min max',grid:'rows columns',chart:'min max step unit categories',connections:'directed nodes',coordinate:'mode minX maxX minY maxY step labels',evidence:'tokens',range:'min max step majorStep unit context startInclusive endInclusive',table:'columns rows answerMode numericForm',correction:'rows answerMode numericForm caseSensitive'};
 const solutionFields={hotspot:'regions text',labeling:'assignments',scale:'value tolerance',angle:'value tolerance',grid:'count',chart:'values',connections:'edges',coordinate:'points',evidence:'selections',range:'start end',table:'cells',correction:'rowId accepted'};
 function closed(value,fields){if(!plain(value)||Object.keys(value).some(key=>!fields.split(' ').includes(key)))fail();}
 export function parseVisualTask(question, { publicOnly = false } = {}) {
@@ -53,6 +53,7 @@ export function parseVisualTask(question, { publicOnly = false } = {}) {
   if(t.provenance!==undefined)closed(t.provenance,'kind offline model createdAt requestId');
   if(t.review!==undefined)closed(t.review,'status summary warnings teacherApprovalRequired');
   const s=t.spec;
+  if(Object.hasOwn(s,'caseSensitive')&&typeof s.caseSensitive!=='boolean')fail();
   const records=(values,fields)=>{if(!Array.isArray(values))fail();values.forEach(v=>closed(v,fields));};
   if(s.items)records(s.items,'id text');
   if(s.tokens)records(s.tokens,'id text');

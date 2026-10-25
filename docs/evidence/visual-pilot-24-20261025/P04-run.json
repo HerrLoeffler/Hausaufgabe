@@ -1,0 +1,110 @@
+{
+  "id": "P04",
+  "row": {
+    "id": "P04",
+    "subject": "Mathematik",
+    "grade": 10,
+    "title": "Lineare Funktionen und Dateninterpretation",
+    "goal": "Funktionswerte und Graphpunkte linearer Funktionen sowie begründete Diagrammaussagen",
+    "formats": [
+      "coordinate",
+      "table",
+      "chart",
+      "evidence"
+    ],
+    "requestId": "VIS24-20261025-04-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T09:59:17.810Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-04-A",
+    "subject": "Mathematik",
+    "grade": "10",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Lineare Funktionen und Dateninterpretation: Funktionswerte und Graphpunkte linearer Funktionen sowie begründete Diagrammaussagen",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus coordinate, table, chart, evidence. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "61b5b229a41340f32a97c3dca6c131720bf5816b",
+  "dispatch": {
+    "jobId": "61b5b229a41340f32a97c3dca6c131720bf5816b"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:00:19.509Z",
+  "job": {
+    "status": "ready",
+    "createdAt": "2026-10-25T09:59:17.896Z",
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": [],
+      "status": "no_match"
+    },
+    "audioTotal": 0,
+    "qualityIssues": [],
+    "input": {
+      "schoolType": "Mittelschule",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus coordinate, table, chart, evidence. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "region": "Bayern",
+      "exactImageCounts": false,
+      "count": 8,
+      "allowedTypes": [
+        "visual"
+      ],
+      "imageMode": "none",
+      "materialMode": "inspiration",
+      "audioMode": "none",
+      "topic": "Lineare Funktionen und Dateninterpretation: Funktionswerte und Graphpunkte linearer Funktionen sowie begründete Diagrammaussagen",
+      "allowImageChoices": false,
+      "points": 16,
+      "audioQuestionCount": 0,
+      "pedagogicalContextKnown": true,
+      "maxVisualQuestions": 0,
+      "solutionAudioQuestionCount": 0,
+      "grade": "10",
+      "subject": "Mathematik",
+      "clientRequestId": "VIS24-20261025-04-A",
+      "exactAudioCounts": false,
+      "difficulty": "mittel bis anspruchsvoll",
+      "audioAnswerQuestionCount": 0
+    },
+    "answerAudioTotal": 0,
+    "imageCompleted": 0,
+    "requestId": "VIS24-20261025-04-A",
+    "updatedAt": "2026-10-25T10:00:14.173Z",
+    "audioCompleted": 0,
+    "percent": 100,
+    "requestedCount": 8,
+    "subject": "Mathematik",
+    "completedCount": 8,
+    "dispatchState": "enqueued",
+    "answerAudioCompleted": 0,
+    "generationMode": "generated",
+    "quizId": "NLRVJTW8",
+    "topic": "Lineare Funktionen und Dateninterpretation: Funktionswerte und Graphpunkte linearer Funktionen sowie begründete Diagrammaussagen",
+    "sourceQuizId": "",
+    "stage": "ready",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "imageTotal": 0,
+    "qualityWarnings": [],
+    "solutionAudioTotal": 0,
+    "grade": "10",
+    "ownerId": "gc-visual255-e2e",
+    "completedAt": "2026-10-25T10:00:14.173Z",
+    "startedAt": "2026-10-25T09:59:18.375Z",
+    "solutionAudioCompleted": 0,
+    "materials": [],
+    "id": "61b5b229a41340f32a97c3dca6c131720bf5816b"
+  },
+  "quizId": "NLRVJTW8"
+}

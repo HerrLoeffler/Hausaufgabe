@@ -30,7 +30,7 @@ const SPEC_FIELDS = {
   grid: "rows columns", chart: "min max step unit categories",
   connections: "directed nodes", coordinate: "mode minX maxX minY maxY step labels",
   evidence: "tokens", range: "min max step majorStep unit context startInclusive endInclusive",
-  table: "columns rows answerMode numericForm", correction: "rows answerMode numericForm"
+  table: "columns rows answerMode numericForm", correction: "rows answerMode numericForm caseSensitive"
 };
 const SOLUTION_FIELDS = {
   hotspot: "regions text", labeling: "assignments", scale: "value tolerance", angle: "value tolerance",
@@ -62,6 +62,7 @@ function parseVisualTask(raw, { points } = {}) {
     }
   }
   const spec = task.spec, solution = task.solution;
+  if (Object.hasOwn(spec, "caseSensitive") && typeof spec.caseSensitive !== "boolean") throw new Error("Ungültiger Groß-/Kleinschreibungsmodus.");
   for (const field of ["context", "unit", "card", "instrument", "mode", "answerMode", "numericForm", "scene"]) {
     if (Object.hasOwn(spec, field) && typeof spec[field] !== "string") throw new Error("Ungültiger Darstellungstext.");
   }

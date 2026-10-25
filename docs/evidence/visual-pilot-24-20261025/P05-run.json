@@ -1,0 +1,110 @@
+{
+  "id": "P05",
+  "row": {
+    "id": "P05",
+    "subject": "Deutsch",
+    "grade": 5,
+    "title": "Wortarten und einfache Satzglieder",
+    "goal": "Nomen, Verben und Adjektive sowie Subjekt und Prädikat an selbst erfundenen kurzen Sätzen erkennen",
+    "formats": [
+      "labeling",
+      "connections",
+      "correction",
+      "evidence"
+    ],
+    "requestId": "VIS24-20261025-05-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T09:55:48.492Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-05-A",
+    "subject": "Deutsch",
+    "grade": "5",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Wortarten und einfache Satzglieder: Nomen, Verben und Adjektive sowie Subjekt und Prädikat an selbst erfundenen kurzen Sätzen erkennen",
+    "count": 8,
+    "points": 16,
+    "difficulty": "leicht bis mittel",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus labeling, connections, correction, evidence. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "38e032343f094ff673481b141940258157d8b527",
+  "dispatch": {
+    "jobId": "38e032343f094ff673481b141940258157d8b527"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T09:57:00.304Z",
+  "job": {
+    "solutionAudioCompleted": 0,
+    "startedAt": "2026-10-25T09:55:49.687Z",
+    "completedAt": "2026-10-25T09:56:51.266Z",
+    "topic": "Wortarten und einfache Satzglieder: Nomen, Verben und Adjektive sowie Subjekt und Prädikat an selbst erfundenen kurzen Sätzen erkennen",
+    "qualityWarnings": [],
+    "audioCompleted": 0,
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match",
+      "profileCount": 0,
+      "profileIds": []
+    },
+    "audioTotal": 0,
+    "imageCompleted": 0,
+    "completedCount": 8,
+    "ownerId": "gc-visual255-e2e",
+    "generationMode": "generated",
+    "dispatchState": "enqueued",
+    "sourceQuizId": "",
+    "requestedCount": 8,
+    "answerAudioCompleted": 0,
+    "createdAt": "2026-10-25T09:55:48.593Z",
+    "qualityIssues": [],
+    "subject": "Deutsch",
+    "imageTotal": 0,
+    "updatedAt": "2026-10-25T09:56:51.266Z",
+    "stage": "ready",
+    "materials": [],
+    "requestId": "VIS24-20261025-05-A",
+    "input": {
+      "topic": "Wortarten und einfache Satzglieder: Nomen, Verben und Adjektive sowie Subjekt und Prädikat an selbst erfundenen kurzen Sätzen erkennen",
+      "schoolType": "Mittelschule",
+      "materialMode": "inspiration",
+      "subject": "Deutsch",
+      "imageMode": "none",
+      "region": "Bayern",
+      "audioQuestionCount": 0,
+      "count": 8,
+      "exactImageCounts": false,
+      "allowedTypes": [
+        "visual"
+      ],
+      "audioMode": "none",
+      "maxVisualQuestions": 0,
+      "solutionAudioQuestionCount": 0,
+      "points": 16,
+      "grade": "5",
+      "allowImageChoices": false,
+      "difficulty": "leicht bis mittel",
+      "clientRequestId": "VIS24-20261025-05-A",
+      "exactAudioCounts": false,
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus labeling, connections, correction, evidence. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "audioAnswerQuestionCount": 0,
+      "pedagogicalContextKnown": true
+    },
+    "percent": 100,
+    "quizId": "W2QQ9K3A",
+    "status": "ready",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "answerAudioTotal": 0,
+    "grade": "5",
+    "solutionAudioTotal": 0,
+    "id": "38e032343f094ff673481b141940258157d8b527"
+  },
+  "quizId": "W2QQ9K3A"
+}

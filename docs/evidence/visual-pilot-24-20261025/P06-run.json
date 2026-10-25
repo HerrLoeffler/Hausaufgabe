@@ -1,0 +1,99 @@
+{
+  "id": "P06",
+  "row": {
+    "id": "P06",
+    "subject": "Deutsch",
+    "grade": 7,
+    "title": "Satzbau und Textbelege",
+    "goal": "Satzglieder unterscheiden, kurze eigene Alltagstexte verstehen und Aussagen anhand vollständiger Textstellen belegen",
+    "formats": [
+      "labeling",
+      "evidence",
+      "correction",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-06-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:00:19.687Z",
+  "status": "running",
+  "input": {
+    "clientRequestId": "VIS24-20261025-06-A",
+    "subject": "Deutsch",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Satzbau und Textbelege: Satzglieder unterscheiden, kurze eigene Alltagstexte verstehen und Aussagen anhand vollständiger Textstellen belegen",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus labeling, evidence, correction, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "c7a87efa9e6718773b39e0f4ea23fd8cf60b1fa5",
+  "dispatch": {
+    "jobId": "c7a87efa9e6718773b39e0f4ea23fd8cf60b1fa5"
+  },
+  "stage": "quality-review",
+  "updatedAt": "2026-10-25T10:03:03.479Z",
+  "job": {
+    "solutionAudioCompleted": 0,
+    "progressMessage": "Aufgaben werden fachlich geprüft …",
+    "stage": "quality-review",
+    "createdAt": "2026-10-25T10:00:19.768Z",
+    "sourceQuizId": "",
+    "startedAt": "2026-10-25T10:00:21.131Z",
+    "percent": 50,
+    "completedCount": 0,
+    "input": {
+      "imageMode": "none",
+      "points": 16,
+      "clientRequestId": "VIS24-20261025-06-A",
+      "pedagogicalContextKnown": true,
+      "region": "Bayern",
+      "exactAudioCounts": false,
+      "topic": "Satzbau und Textbelege: Satzglieder unterscheiden, kurze eigene Alltagstexte verstehen und Aussagen anhand vollständiger Textstellen belegen",
+      "audioAnswerQuestionCount": 0,
+      "allowImageChoices": false,
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus labeling, evidence, correction, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "allowedTypes": [
+        "visual"
+      ],
+      "grade": "7",
+      "audioMode": "none",
+      "subject": "Deutsch",
+      "materialMode": "inspiration",
+      "audioQuestionCount": 0,
+      "exactImageCounts": false,
+      "difficulty": "mittel bis anspruchsvoll",
+      "maxVisualQuestions": 0,
+      "count": 8,
+      "schoolType": "Mittelschule",
+      "solutionAudioQuestionCount": 0
+    },
+    "topic": "Satzbau und Textbelege: Satzglieder unterscheiden, kurze eigene Alltagstexte verstehen und Aussagen anhand vollständiger Textstellen belegen",
+    "ownerId": "gc-visual255-e2e",
+    "requestedCount": 8,
+    "generationMode": "generated",
+    "subject": "Deutsch",
+    "status": "running",
+    "updatedAt": "2026-10-25T10:02:47.305Z",
+    "imageTotal": 0,
+    "grade": "7",
+    "imageCompleted": 0,
+    "materials": [],
+    "answerAudioCompleted": 0,
+    "answerAudioTotal": 0,
+    "audioTotal": 0,
+    "audioCompleted": 0,
+    "dispatchState": "enqueued",
+    "requestId": "VIS24-20261025-06-A",
+    "solutionAudioTotal": 0,
+    "id": "c7a87efa9e6718773b39e0f4ea23fd8cf60b1fa5"
+  }
+}
