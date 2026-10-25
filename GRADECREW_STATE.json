@@ -1275,17 +1275,17 @@
       "id": "classroom-student-management-v1",
       "task_id": "GC-CLASSROOM-01",
       "branch": "feature/classroom-integrated-preview-20261016",
-      "observed_head": "5490a5d166226f6f78f2624f2341e1137fa75099",
+      "observed_head": "e36ba13b15452daf4c8520a7a7cffd9ca35b8072",
       "stage": "staging_deployed",
-      "ci": "local_718_tests_pass_native_all5_jobs_success",
+      "ci": "local_723_tests_pass_native_all5_jobs_success",
       "staging": "gradecrew-staging-2026_only",
-      "user_test": "synthetic_browser_and_actual_native_API_pass_physical_iPad_pending",
+      "user_test": "executor_synthetic_browser_print_verified_physical_iPad_AAC_pending",
       "handoff": "workstreams/classroom-student-management-v1.md",
-      "next_action": "Install confirmed Apple-processed TestFlight1.0(1221); test personal code directly in right start card, then physical classroom AAC/submission acceptance. LIVE test-card link still separate pending web usability work.",
+      "next_action": "User verifies branded access printouts and direct pupil code view on2026; existing physical personal AAC/receipt/offline acceptance and LIVE test-card entry remain pending.",
       "deployment_evidence": {
         "project": "gradecrew-staging-2026",
-        "hosting_source": "5490a5d166226f6f78f2624f2341e1137fa75099",
-        "hosting_hashes_verified": 182,
+        "hosting_source": "e36ba13b15452daf4c8520a7a7cffd9ca35b8072",
+        "hosting_hashes_verified": 185,
         "backend_source": "1d1084795981fabf5331d57e7b1b3fb95caaf751",
         "functions_ready": [
           "classroomweb-00004-poj",
@@ -1296,7 +1296,7 @@
         ],
         "synthetic_personal_flow": "code_login -> assigned_test -> ready_no_paper -> teacher_start -> running10questions -> matching_server_receipt -> pupil_done -> teacher_graded_result",
         "teacher_original_tests_preserved": 3,
-        "review_fixes": "published_2026_verified_718tests",
+        "review_fixes": "published_2026_verified_723tests",
         "native_candidate": {
           "run_id": 40186256526,
           "source": "507cecc74de1f217ddef6494066c54be0cef8caf",
@@ -1321,7 +1321,8 @@
         "print_pages_24_pupils": {
           "list": 2,
           "cards": 2,
-          "single": 24
+          "single": 24,
+          "selected_pupil": 1
         },
         "physical_acceptance": false,
         "native_last_confirmed_available": {
@@ -1334,7 +1335,11 @@
           "apple_processed": true,
           "internal_group": "GradeCrew Tester",
           "device_installation_verified": false
-        }
+        },
+        "unrelated_assets_preserved": 180,
+        "access_card_branding": "one_loaded_existing_logo_per_card_4-4_display_no_rotation",
+        "api_route_repair": "headers_only_e538c694d10cdf05_cloned37682e5dfb7e282b_then_guarded_brandingdeploy",
+        "real_iPad_dual_entry_screenshot": "received25Oct_not_AAC_or_receiptproof"
       }
     },
     {
