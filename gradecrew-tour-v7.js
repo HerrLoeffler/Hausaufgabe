@@ -121,8 +121,8 @@ export function installCrewTour(api) {
     offerCard = document.createElement("section");
     offerCard.id = "gradecrewTutorialOffer";
     offerCard.className = "card gcTutorialOffer";
-    offerCard.setAttribute("aria-label", "GradeCrew-Tutorial starten oder später aufrufen");
-    offerCard.innerHTML = `<div class="gcTutorialOfferCopy"><span class="gcTutorialOfferEyebrow">👋 Deine erste GradeCrew-Reise</span><h2>Einmal alles ausprobieren – danach kennst du den ganzen Ablauf.</h2><p>Erstellen, überarbeiten, aus Schülerperspektive testen und bewerten. Du arbeitest direkt in GradeCrew mit sicheren Übungsdaten und kannst jederzeit abbrechen.</p><div class="gcTutorialOfferBenefits"><span>✓ echte Oberfläche</span><span>✓ keine KI-Kosten</span><span>✓ jederzeit abbrechbar</span></div></div><div class="gcTutorialOfferActions"><img class="gcTutorialOfferCrew" src="/assets/gradecrew/clay-welcome.svg" alt="" width="150" height="90"><button type="button" class="button primary gcTutorialOfferStart">Tutorial starten · ca. 5–7 Min.</button><button type="button" class="gcTutorialOfferLater">Jetzt nicht – später jederzeit über „Tutorial“</button></div>`;
+    offerCard.setAttribute("aria-label", "Crew kennenlernen oder später aufrufen");
+    offerCard.innerHTML = `<div class="gcTutorialOfferCopy"><span class="gcTutorialOfferEyebrow">👋 Deine erste GradeCrew-Reise</span><h2>Einmal alles ausprobieren – danach kennst du den ganzen Ablauf.</h2><p>Erstellen, überarbeiten, aus Schülerperspektive testen und bewerten. Du arbeitest direkt in GradeCrew mit sicheren Übungsdaten und kannst jederzeit abbrechen.</p><div class="gcTutorialOfferBenefits"><span>✓ echte Oberfläche</span><span>✓ jederzeit abbrechbar</span></div></div><div class="gcTutorialOfferActions"><img class="gcTutorialOfferCrew" src="/assets/gradecrew/crew-lineup-modern-cutout.png" alt="Coco, Remy, Emmi und Wilma – die GradeCrew" width="1536" height="1024"><button type="button" class="button primary gcTutorialOfferStart">Crew kennenlernen · ca. 6–7 Min.</button><button type="button" class="gcTutorialOfferLater">Jetzt nicht – später jederzeit über „Crew kennenlernen“</button></div>`;
     offerCard.querySelector(".gcTutorialOfferStart")?.addEventListener("click", () => chooseOffer("start"));
     offerCard.querySelector(".gcTutorialOfferLater")?.addEventListener("click", () => chooseOffer("later"));
     anchor.before(offerCard);
@@ -822,7 +822,7 @@ export function installCrewTour(api) {
     const english = document.documentElement.lang.toLowerCase().startsWith("en");
     button.title = button.dataset.tourAdmin === "1"
       ? (english ? "Try onboarding as an admin" : "Onboarding aus Admin-Sicht testen")
-      : (english ? "Start the GradeCrew tutorial" : "GradeCrew-Tutorial starten");
+      : (english ? "Meet the crew" : "Crew kennenlernen");
   }
 
   window.addEventListener("gradecrew:ui-locale-changed", updateDashboardTourTitle);
