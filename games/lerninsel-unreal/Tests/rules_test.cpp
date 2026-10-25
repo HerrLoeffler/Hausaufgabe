@@ -1,0 +1,86 @@
+#include "../Source/Lerninsel/Core/IslandRules.h"
+#include <iostream>
+#include <stdexcept>
+using namespace Island;
+int checks=0;
+#define CHECK(x) do { ++checks; if(!(x)) throw std::runtime_error(#x); } while(0)
+int main(){try{
+ State prompt;prompt.intro=true;
+ CHECK(PathPromptRow(prompt)==1);
+ Apply(prompt,Action::PathStart);Apply(prompt,Action::PathStep,1);
+ CHECK(PathPromptRow(prompt)==1); // wrong first row stays the correction target
+ Apply(prompt,Action::PathUndo);Apply(prompt,Action::PathStep,0);
+ CHECK(PathPromptRow(prompt)==2);
+ Apply(prompt,Action::PathStep,3);CHECK(PathPromptRow(prompt)==2);
+ Apply(prompt,Action::PathUndo);Apply(prompt,Action::PathStep,4);Apply(prompt,Action::PathStep,8);
+ CHECK(PathPromptRow(prompt)==3);
+ State s;
+ CHECK(!s.intro && !s.verbs && !s.water && s.tenths==0);
+ CHECK(Apply(s,Action::IntroToggle,0)==Result::Applied);
+ CHECK(Apply(s,Action::IntroToggle,1)==Result::Applied);
+ CHECK(Apply(s,Action::IntroToggle,2)==Result::Full);
+ CHECK(Apply(s,Action::IntroCheck)==Result::Wrong && !s.intro);
+ CHECK(Apply(s,Action::IntroToggle,1)==Result::Applied);
+ CHECK(Apply(s,Action::IntroToggle,2)==Result::Applied);
+ CHECK(Apply(s,Action::IntroCheck)==Result::Applied && s.intro);
+ CHECK(Apply(s,Action::IntroToggle,0)==Result::Already && s.intro);
+ CHECK(Apply(s,Action::PathStart)==Result::Applied);
+ CHECK(Apply(s,Action::PathStep,8)==Result::WrongRow && s.pathCount==0);
+ CHECK(Apply(s,Action::PathStep,0)==Result::Applied);
+ CHECK(Apply(s,Action::PathStep,0)==Result::Already && s.pathCount==1);
+ CHECK(Apply(s,Action::PathStep,3)==Result::Wrong && s.pathCount==2 && s.pathFailed);
+ CHECK(Apply(s,Action::PathStep,8)==Result::Blocked);
+ CHECK(Apply(s,Action::PathUndo)==Result::Applied && !s.pathFailed && s.pathCount==1);
+ CHECK(Apply(s,Action::PathStep,4)==Result::Applied);
+ CHECK(Apply(s,Action::PathCheck)==Result::Incomplete && !s.verbs);
+ CHECK(Apply(s,Action::PathStep,8)==Result::Applied && !s.verbs);
+ CHECK(Apply(s,Action::PathCheck)==Result::Applied && s.verbs);
+ CHECK(Apply(s,Action::PathStart)==Result::Already && s.verbs);
+ CHECK(Apply(s,Action::Fill)==Result::Blocked && s.tenths==0);
+ CHECK(Apply(s,Action::Pickup)==Result::Applied);
+ CHECK(Apply(s,Action::Pickup)==Result::Already);
+ CHECK(Apply(s,Action::Fill)==Result::Applied && s.tenths==1);
+ CHECK(Apply(s,Action::Fill)==Result::Applied && s.tenths==2);
+ CHECK(Apply(s,Action::PlacePlate)==Result::TooLow && !s.water && !s.carrying);
+ CHECK(Apply(s,Action::Pickup)==Result::Applied);
+ CHECK(Apply(s,Action::Fill)==Result::Applied && s.tenths==3);
+ CHECK(Apply(s,Action::Fill)==Result::Applied && s.tenths==4);
+ CHECK(Apply(s,Action::PlacePlate)==Result::TooHigh && !s.water);
+ CHECK(Apply(s,Action::Pickup)==Result::Applied);
+ CHECK(Apply(s,Action::Drain)==Result::Applied && s.tenths==3);
+ CHECK(Apply(s,Action::PlacePlate)==Result::Applied && s.water);
+ CHECK(Apply(s,Action::PlacePlate)==Result::Already && s.water);
+ CHECK(Apply(s,Action::Pickup)==Result::Applied);
+ for(int i=0;i<12;++i)Apply(s,Action::Fill);
+ CHECK(s.tenths==10 && Apply(s,Action::Fill)==Result::Full);
+ for(int i=0;i<12;++i)Apply(s,Action::Drain);
+ CHECK(s.tenths==0 && Apply(s,Action::Drain)==Result::Empty && s.water);
+ const std::string packed=Serialize(s); State resumed;
+ CHECK(Deserialize(packed,resumed) && resumed.water && resumed.verbs && resumed.intro && resumed.tenths==0);
+ const std::string before=Serialize(resumed);
+ CHECK(!Deserialize("LI1 1 1 1 99 1 0 0 0 -1 -1 -1",resumed));
+ CHECK(Serialize(resumed)==before);
+ CHECK(!Deserialize(packed+" extra",resumed));
+ CHECK(!Deserialize("LI99",resumed));
+ CHECK(Apply(s,Action::PathStep,-1)==Result::Invalid);
+ CHECK(Apply(s,Action::IntroToggle,99)==Result::Invalid);
+ PlateContact contact;
+ CHECK(contact.Update(0,.1,true)==-1);
+ CHECK(contact.Update(0,.19,true)==-1);
+ CHECK(contact.Update(0,.02,true)==0);
+ CHECK(contact.Update(0,1,true)==-1);
+ CHECK(contact.Update(-1,.1,true)==-1);
+ CHECK(contact.Update(0,.31,true)==0);
+ CHECK(contact.Update(1,1,false)==-1);
+ CHECK(contact.Update(1,.1,true)==-1);
+ TouchOwnership t;
+ CHECK(t.Begin(0,.12,.7)==TouchRole::Move);
+ CHECK(t.Begin(1,.6,.4)==TouchRole::Look);
+ CHECK(t.Begin(2,.13,.8)==TouchRole::None);
+ t.Cancel(); CHECK(t.Role(0)==TouchRole::None && t.Role(1)==TouchRole::None);
+ CHECK(t.Begin(0,.9,.9)==TouchRole::Action);
+ t.End(0); CHECK(t.Role(0)==TouchRole::None);
+ CHECK(t.Begin(0,.9,.8)==TouchRole::Hint);
+ t.End(0); CHECK(t.Role(0)==TouchRole::None);
+ std::cout<<"PASS "<<checks<<" rule checks\n";return 0;
+ }catch(const std::exception& e){std::cerr<<"FAIL after "<<checks<<" checks: "<<e.what()<<"\n";return 1;}}

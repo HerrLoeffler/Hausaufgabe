@@ -1,0 +1,26 @@
+world_mesh=StaticMeshActor_0 bounds_origin=X=0.000 Y=14000.000 Z=97.499 bounds_extent=X=16000.000 Y=12000.000 Z=555.001 collision=0
+camera_0 capsule=X=-1600.000 Y=0.000 Z=90.000 eyes=X=-1600.000 Y=0.000 Z=162.000 view=P=-18.000000 Y=0.000000 R=0.000000
+floor_0 hit=1 actor=Actor_0 z=0.00
+camera_1 capsule=X=-940.000 Y=-180.000 Z=90.000 eyes=X=-940.000 Y=-180.000 Z=162.000 view=P=-44.000000 Y=0.000000 R=0.000000
+floor_1 hit=1 actor=Actor_0 z=0.00
+camera_2 capsule=X=60.000 Y=0.000 Z=90.000 eyes=X=60.000 Y=0.000 Z=162.000 view=P=-24.000000 Y=0.000000 R=0.000000
+floor_2 hit=1 actor=Actor_0 z=0.00
+camera_3 capsule=X=1540.000 Y=0.000 Z=90.000 eyes=X=1540.000 Y=0.000 Z=162.000 view=P=-8.000000 Y=0.000000 R=0.000000
+floor_3 hit=1 actor=Actor_0 z=0.00
+camera_4 capsule=X=3550.000 Y=-20.000 Z=90.000 eyes=X=3550.000 Y=-20.000 Z=162.000 view=P=-12.000000 Y=-18.000000 R=0.000000
+floor_4 hit=1 actor=Actor_0 z=0.00
+camera_5 capsule=X=5350.000 Y=-100.000 Z=90.000 eyes=X=5350.000 Y=-100.000 Z=162.000 view=P=-12.000000 Y=15.000000 R=0.000000
+floor_5 hit=1 actor=Actor_0 z=0.00
+camera_6 capsule=X=6720.000 Y=-400.000 Z=90.000 eyes=X=6720.000 Y=-400.000 Z=162.000 view=P=-8.000000 Y=20.000000 R=0.000000
+floor_6 hit=1 actor=Actor_0 z=0.00
+camera_7 capsule=X=11680.000 Y=-350.000 Z=90.000 eyes=X=11680.000 Y=-350.000 Z=162.000 view=P=15.000000 Y=25.000000 R=0.000000
+floor_7 hit=1 actor=Actor_0 z=0.00
+camera_8 capsule=X=9400.000 Y=-850.000 Z=1090.150 eyes=X=9400.000 Y=-850.000 Z=1162.150 view=P=-12.000000 Y=-90.000000 R=0.000000
+floor_8 hit=1 actor=Actor_58 z=1000.00
+camera_9 capsule=X=1540.000 Y=0.000 Z=90.000 eyes=X=1540.000 Y=0.000 Z=162.000 view=P=5.000000 Y=90.000000 R=0.000000
+floor_9 hit=1 actor=Actor_0 z=0.00
+gate_closed=1 closed_actor=Actor_3 gate_open=0 open_actor=None
+route_sweep from=X=-1600.000 Y=0.000 Z=90.000 to=X=-1350.000 Y=0.000 Z=90.000 hit=0 actor=None
+route_sweep from=X=3200.000 Y=0.000 Z=90.000 to=X=3450.000 Y=0.000 Z=90.000 hit=0 actor=None
+route_sweep from=X=6400.000 Y=0.000 Z=90.000 to=X=6650.000 Y=0.000 Z=90.000 hit=0 actor=None
+route_sweep from=X=11600.000 Y=0.000 Z=90.000 to=X=11850.000 Y=0.000 Z=90.000 hit=0 actor=None

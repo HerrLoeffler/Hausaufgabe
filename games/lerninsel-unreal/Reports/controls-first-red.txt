@@ -1,0 +1,3 @@
+PASS 64 rule checks
+PASS 88 puzzle checks
+FAIL after 1: Island::NormalizeSensitivity(2.f)==2.f
