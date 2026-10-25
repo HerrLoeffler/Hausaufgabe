@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-22T20:26:17Z",
+  "updatedAt": "2026-10-25",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -691,13 +691,28 @@
     {
       "id": "extended-question-types-01",
       "title": "GC-EXTENDED-QUESTION-TYPES-01: interaktive Aufgaben und gemeinsamer Lernfundus",
-      "primaryBranch": "docs/visual-learning-principles-20261022",
-      "integrationTarget": "main",
+      "primaryBranch": "test/visual-24-pilot-20261025",
+      "integrationTarget": "feature/visual-prototype-ai-02-20261021",
       "state": "active",
-      "handoff": "workstreams/interactive-learning-principles-20261022.md",
+      "handoff": "workstreams/visual-pilot-24-20261025.md",
       "relatedBranches": [
         "feature/extended-question-types-20261020",
+        "docs/visual-learning-principles-20261022",
+        "feature/visual-prototype-ai-02-20261021",
+        "fix/visual-editor-no-json-20261021",
         "docs/digital-task-market-research-20261022"
+      ]
+    },
+    {
+      "id": "domain-gradecrew-de-20261022",
+      "title": "GC-DOMAIN-01: neue Liveadresse, alte Konten und Links erhalten",
+      "primaryBranch": "feature/domain-gradecrew-de-20261022",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integrated",
+      "handoff": "workstreams/domain-gradecrew-de-20261022.md",
+      "relatedBranches": [
+        "feature/live-staging-domain-20261022",
+        "feature/native-gradecrew-domain-20261022"
       ]
     }
   ]

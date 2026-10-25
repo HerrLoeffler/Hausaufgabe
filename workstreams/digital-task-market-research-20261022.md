@@ -41,10 +41,34 @@ Die vorgeschlagenen 20 Referenzaufgaben pro Fachkontext ausarbeiten: MATH01, MAT
 
 Kein flächendeckendes Mapping sämtlicher Bundesländer, Jahrgänge und Ausbildungsberufe. Kein vollständiger Preis-/API-/Rechte-/Accessibility-Audit fremder Produkte und kein empirischer Wirksamkeitsnachweis. Quellenzugang und Verfügbarkeit können sich ändern; scoyo, Duolingo for Schools und fobizz sind mit aktuellem differenziertem Status erfasst. Fachliche Eindeutigkeit, sinnvolle Alternativen und offene Beurteilung nicht durch einen allgemeinen freien KI-Korrektor ersetzen.
 
-## Ergänzungsauftrag 25.10.2026 · laufender Zwischenstand
+## Ergänzungsauftrag 25.10.2026 · abgeschlossen als Recherche
 
-Martin fragt nach konkreten bisherigen Aufgaben und weiteren neuen nutzbaren Formaten. Fortsetzung unter derselben Task-ID und PR290; nur Recherche/Dokumentation. Aktuelle main-Basis geprüft: `21723ad5cfe3fb8e4062280b2dc2b7fb476c1de3`. Bestehender PR290 ist gegenüber main divergiert (+2 eigene/-5 main-Commits); gemeinsame TODO-/Registry-Ergänzungen werden vor Abschluss additiv abgeglichen. Development-Status Run40183534335, Job121139415611 erfolgreich; relevante Logs gelesen. Primary bleibt `docs/visual-learning-principles-20261022`, laut Audit +0/-10. PR265/271/296 bearbeiten Prototypen und bleiben außerhalb dieser Recherche.
+Martin fragt nach konkreten bisherigen Aufgaben und weiteren neuen nutzbaren Formaten. Fortsetzung unter derselben Task-ID und Draft-PR290; Recherche und Dokumentation. Der frühere Zwischenstand mit 13 Kandidaten ist durch den vollständig geprüften Katalog ersetzt.
 
-Drei getrennte Fachrecherchen (MINT, Gesellschaft/Künste/Beruf, Sprache/Methoden) vergleichen Kandidaten gegen die 163 alten Entwürfe. Angefordert jeweils `gpt-6.1-sol`/`medium` für fachübergreifende Quellenarbeit; tatsächliche Provider-/Nutzungswerte unbekannt. Verantwortlicher Chat: bestehender Forschungsfachchat; Chat-Link unbekannt. Keine fremde aktive Schreibzuständigkeit übernommen.
+### Ergebnis der Ergänzung
 
-Zwischenstand: 13 Kandidaten aus MINT und Ergänzung (16 Quellenprofile), noch ohne vollständigen Querschnittsreview. Datei `docs/learning/research/digital-task-extension-20261025.json` ausdrücklich `research_in_progress`. Noch keine neue Gesamtzahl als final berichten. Nächster Schritt: weitere Fachbeiträge einlesen, neue Mechanik/Untertyp/Lernablauf getrennt zählen und Überschneidungen zusammenführen. Kein Code, Runtime-Poolimport oder Deploy.
+- 30 Vorschläge gesichtet; 27 aufgenommen: **7 neue Aufgabenfamilien, 17 fachliche Erweiterungen, 3 Lernabläufe**.
+- 40 Quellenprofile, einschließlich Belegen für ausdrücklich nicht neu gezählte Verfahren; nicht 40 einzigartige Anbieter.
+- NL08 und NS08 als vorhandene Varianten ausgeschlossen; NS09 mit NM09 fusioniert. NM04, NM06 und NS05 nach unabhängigem Review als Untertypen eingeordnet.
+- [Vollständige Synthese](../docs/learning/DIGITAL_TASK_EXTENSION_20261025.md), [strukturierter Katalog](../docs/learning/research/digital-task-extension-20261025.json), [Prüfnotiz](../docs/learning/research/digital-task-extension-20261025-review.md).
+- Nutzerartefakt: filterbare XLSX mit allen 27 Ideen und 40 Quellenprofilen; JSON zum Weiterarbeiten. Basiskatalog mit 163 Entwürfen bleibt erhalten. Aus den zusammen 190 Entwurfs-/Ergänzungseinträgen darf keine Zahl implementierter Fragetypen abgeleitet werden.
+
+### Quellen, Reviews und konkrete Korrekturen
+
+Drei getrennte Fachrecherchen (MINT, Gesellschaft/Künste/Beruf, Sprache/Methoden), ergänzende Root-Recherche, unabhängiger Neuheitsreview gegen den 163er-Katalog und VIS/EXP/MOD sowie unabhängiger Fachreview der Tabellen-, Beweis- und Würfelbeispiele. Angefordert jeweils `gpt-6.1-sol`/`medium`; tatsächliche Provider-/Nutzungswerte unbekannt. Verantwortlicher Chat bleibt der bestehende Forschungsfachchat; Chat-Link unbekannt. Keine fremde aktive Schreibzuständigkeit übernommen.
+
+Korrekturen im kanonischen Stand: Zuschlagssatz und kopierbare Zellbezüge einschließlich zulässigem F$1; echte Neuberechnung statt Cachevergleich; mehrere Beweisreihenfolgen über logische Abhängigkeiten; keine falsche Positivitätsannahme; Würfelspiegelung über das gefaltete Modell prüfen; positive Merkmalsformulierung bei vier Außenseitern; Konsens nicht als Wahrheit und Zweitabstimmung nicht als stabilen Kompetenznachweis behandeln. KI-Bedarf und Autorenvoraussetzungen getrennt. Eigene Varianten ausdrücklich von belegten Produktfunktionen getrennt.
+
+JSON-IDs, Referenzen und Zählung geprüft. Die Beispiele zu Formeln, Würfelgegenüberseiten, Ziffernkombinationen, Sortiernetz, Wahlverfahren und Mess-/Bestandsrechnung unabhängig nachvollzogen. XLSX: 712 Feldabgleiche, Zählformeln 27/7/17/3, keine Formelfehler; zwei native Tabellen mit Filter, fixierte Überschriften/IDs, beide Blätter in fünf Ausschnitten visuell geprüft. Kein Runtime-, Generator-, Import-, Browserprodukt-, Server- oder Gerätetest dieser neuen Entwürfe behauptet.
+
+### Abgleich mit paralleler Arbeit
+
+Aktuelle main-Basis für den Abschlusssnapshot: `41af350be3f99d7f6d6b2782ac56b3db2140171e`. Deren vollständiger Baum bildet die Grundlage; zwischenzeitliche Native-, Domain- und Pilotänderungen bleiben erhalten. Die aktuelle Registry weist `test/visual-24-pilot-20261025` als Primary und `feature/visual-prototype-ai-02-20261021` als Integration Target aus. Diese Zuständigkeit wird nicht geändert; nur der eigene Forschungsbranch wird als Related Branch ergänzt.
+
+Development-Status Run40183534335, Job121139415611 erfolgreich, relevante Logs gelesen. Dessen damaliger Snapshot führte noch den Dokumentationsbranch als Primary; die neuere main-Registry ist für aktuelle Zuständigkeit maßgeblich. PR265/271/296 bearbeiten Prototypen und bleiben außerhalb dieser Recherche. Die neuen Erkenntnisse aus 24 Probetests in `INTERACTIVE_TASK_PRINCIPLES.md` gelesen und unverändert erhalten. Gemeinsame TODO-/Registry-/Katalogänderungen additiv abgeglichen.
+
+### Nächster vorgeschlagener Schritt
+
+Sieben begrenzte Referenzaufgaben ausarbeiten: NM01 (vier Außenseiter), NM02 (alle Ziffernlösungen), NR02 (Beweisbausteine), NR03 (Körper und Netz), NL01 (vergleichendes Qualitätsurteil), NL03 (verteilte Hinweise), NR01 (funktionierende Tabelle). Je Lernziel, eigenes Material, zulässige Lösungen, Teilpunkte, Hilfen, zugängliche Bedienung und Lehrkraftvorschau festlegen. Strategisch später NL02 (lehrbarer Agent), NM05 (Trainingsdaten), NS03 (Georeferenzierung), NS06 (Musikcode). Das sind Priorisierungsvorschläge, keine allgemeine Implementierungs- oder Deployfreigabe.
+
+Recherche und Quellenbelege sind gesichert; unabhängige GradeCrew-Lernwirksamkeit, Unterrichtserprobung und technische Produktintegration stehen für diese neuen Entwürfe aus. Keine Änderung von Anwendungscode, Rules, Releasezustand, Laufzeit-Pool oder Deployment.
