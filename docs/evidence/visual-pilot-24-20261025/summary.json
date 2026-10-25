@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-25T10:41:35.430Z",
+  "readyTests": 24,
+  "plannedTests": 24,
+  "readyQuestions": 192,
+  "deterministicChecks": 1176,
+  "technicalFailures": 0,
+  "finalAcceptance": "pending"
+}

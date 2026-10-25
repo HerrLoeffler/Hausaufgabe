@@ -1,0 +1,110 @@
+{
+  "id": "P10",
+  "row": {
+    "id": "P10",
+    "subject": "Englisch",
+    "grade": 6,
+    "title": "A day out",
+    "goal": "Kurze englische Alltagsinformationen zu Uhrzeiten, Orten und Abläufen verstehen und sprachlich bearbeiten",
+    "formats": [
+      "scale",
+      "evidence",
+      "table",
+      "correction"
+    ],
+    "requestId": "VIS24-20261025-10-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:09:52.347Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-10-A",
+    "subject": "Englisch",
+    "grade": "6",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "A day out: Kurze englische Alltagsinformationen zu Uhrzeiten, Orten und Abläufen verstehen und sprachlich bearbeiten",
+    "count": 8,
+    "points": 16,
+    "difficulty": "leicht bis mittel",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus scale, evidence, table, correction. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "45ccea6cea37545b2585eb65d76420ab2fbc24fd",
+  "dispatch": {
+    "jobId": "45ccea6cea37545b2585eb65d76420ab2fbc24fd"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:10:33.537Z",
+  "job": {
+    "completedCount": 8,
+    "qualityIssues": [],
+    "sourceQuizId": "",
+    "imageCompleted": 0,
+    "pedagogicalPool": {
+      "status": "no_match",
+      "profileIds": [],
+      "profileCount": 0,
+      "version": "gc-pedagogy-pool-v1"
+    },
+    "topic": "A day out: Kurze englische Alltagsinformationen zu Uhrzeiten, Orten und Abläufen verstehen und sprachlich bearbeiten",
+    "quizId": "4Y3HHAM7",
+    "dispatchState": "enqueued",
+    "percent": 100,
+    "generationMode": "generated",
+    "solutionAudioCompleted": 0,
+    "materials": [],
+    "answerAudioTotal": 0,
+    "requestedCount": 8,
+    "audioTotal": 0,
+    "startedAt": "2026-10-25T10:09:52.927Z",
+    "qualityWarnings": [],
+    "completedAt": "2026-10-25T10:10:32.556Z",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "input": {
+      "materialMode": "inspiration",
+      "audioMode": "none",
+      "region": "Bayern",
+      "audioAnswerQuestionCount": 0,
+      "maxVisualQuestions": 0,
+      "imageMode": "none",
+      "pedagogicalContextKnown": true,
+      "exactAudioCounts": false,
+      "solutionAudioQuestionCount": 0,
+      "allowImageChoices": false,
+      "subject": "Englisch",
+      "count": 8,
+      "clientRequestId": "VIS24-20261025-10-A",
+      "audioQuestionCount": 0,
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus scale, evidence, table, correction. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "grade": "6",
+      "exactImageCounts": false,
+      "topic": "A day out: Kurze englische Alltagsinformationen zu Uhrzeiten, Orten und Abläufen verstehen und sprachlich bearbeiten",
+      "allowedTypes": [
+        "visual"
+      ],
+      "points": 16,
+      "difficulty": "leicht bis mittel",
+      "schoolType": "Mittelschule"
+    },
+    "stage": "ready",
+    "imageTotal": 0,
+    "solutionAudioTotal": 0,
+    "ownerId": "gc-visual255-e2e",
+    "requestId": "VIS24-20261025-10-A",
+    "grade": "6",
+    "subject": "Englisch",
+    "createdAt": "2026-10-25T10:09:52.510Z",
+    "audioCompleted": 0,
+    "status": "ready",
+    "updatedAt": "2026-10-25T10:10:32.556Z",
+    "answerAudioCompleted": 0,
+    "id": "45ccea6cea37545b2585eb65d76420ab2fbc24fd"
+  },
+  "quizId": "4Y3HHAM7"
+}

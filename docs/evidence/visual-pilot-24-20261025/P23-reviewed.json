@@ -1,0 +1,195 @@
+{
+  "pilotId": "P23",
+  "at": "2026-10-25T10:38:31.508Z",
+  "quiz": {
+    "updatedAt": "2026-10-25T10:38:30.142Z",
+    "shuffleQuestions": false,
+    "grade": "8",
+    "subject": "Wirtschaft",
+    "contentLocale": "de-DE",
+    "audioReady": true,
+    "rightsHold": false,
+    "shareEnabled": false,
+    "questionCount": 8,
+    "qualityIssues": [],
+    "generationStatus": "ready",
+    "published": false,
+    "pedagogicalPool": {
+      "profileIds": [],
+      "version": "gc-pedagogy-pool-v1",
+      "profileCount": 0,
+      "status": "no_match"
+    },
+    "audioQuestionCount": 0,
+    "ended": false,
+    "isDeleted": false,
+    "gradeScaleSnapshot": {
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "id": "standard",
+      "name": "Standard"
+    },
+    "title": "Angebote und Kosten vergleichen",
+    "resultMode": "points_grade",
+    "creationContext": {
+      "topic": "Angebote und Kostenvergleich: Vollständig definierte fiktive Preisangebote, Stückpreise und lineare Kosten; keine Rechts-/Finanzberatung",
+      "contentLocale": "de-DE",
+      "region": "Bayern",
+      "learningGoals": [],
+      "schoolType": "Mittelschule",
+      "difficulty": "mittel bis anspruchsvoll"
+    },
+    "requiresSecureAssessmentRules": false,
+    "gradeScaleId": "standard",
+    "startMode": "student",
+    "accessCode": "G9L3D46T",
+    "localeContractVersion": 1,
+    "solutionAudioReady": true,
+    "qualityWarnings": [],
+    "listeningOnlyQuestionCount": 0,
+    "shuffleAnswers": false,
+    "generationJobId": "157f7523f06a10bc4d20d0cfa43c04aafd6bb84d",
+    "description": "Viel Erfolg beim Test!",
+    "createdAt": "2026-10-25T10:38:28.685Z",
+    "ownerId": "gc-visual255-e2e",
+    "solutionAudioQuestionCount": 0,
+    "showSolutions": true,
+    "totalPoints": 16,
+    "gradingLocale": "de-DE",
+    "audioAnswerQuestionCount": 0,
+    "sessionState": "open",
+    "id": "G9L3D46T"
+  },
+  "questions": [
+    {
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wirtschaft-stueckpreise-tabelle-01\",\"revision\":0,\"format\":\"table\",\"title\":\"Stückpreise vergleichen\",\"subject\":\"Wirtschaft\",\"grade\":\"8\",\"prompt\":\"Vergleiche die drei fiktiven Angebote für 10 gleiche Ordner. Ergänze die fehlenden Stückpreise in der Tabelle.\",\"hint\":\"Teile den jeweiligen Gesamtpreis durch die Anzahl der Ordner. Gib Dezimalzahlen mit Komma ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Angebot\",\"Menge\",\"Gesamtpreis in Euro\",\"Stückpreis in Euro\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Angebot Nord\",\"input\":false},{\"id\":\"a2\",\"text\":\"10 Ordner\",\"input\":false},{\"id\":\"a3\",\"text\":\"24,00\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Angebot Mitte\",\"input\":false},{\"id\":\"b2\",\"text\":\"10 Ordner\",\"input\":false},{\"id\":\"b3\",\"text\":\"21,50\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"Angebot Süd\",\"input\":false},{\"id\":\"c2\",\"text\":\"10 Ordner\",\"input\":false},{\"id\":\"c3\",\"text\":\"26,00\",\"input\":false},{\"id\":\"c4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"2,40\",\"2.40\"]},{\"id\":\"b4\",\"accepted\":[\"2,15\",\"2.15\"]},{\"id\":\"c4\",\"accepted\":[\"2,60\",\"2.60\"]}]},\"objective\":\"Gesamtpreise auf gleiche Mengen beziehen und Stückpreise berechnen.\",\"rationale\":\"Der Stückpreis entsteht durch die Division des Gesamtpreises durch die angebotene Menge.\",\"sourceNote\":\"Eigenes fiktives Datenbeispiel ohne reale Anbieter oder Preise.\"}",
+      "points": 2,
+      "position": 1,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "updatedAt": "2026-10-25T10:38:28.818Z",
+      "text": "Vergleiche die drei fiktiven Angebote für 10 gleiche Ordner. Ergänze die fehlenden Stückpreise in der Tabelle.",
+      "id": "q001"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "text": "Berechne für beide vollständig fiktiven Angebote die Gesamtkosten für 18 Materialboxen und ergänze die Tabelle.",
+      "position": 2,
+      "updatedAt": "2026-10-25T10:38:28.970Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wirtschaft-materialboxen-kosten-ersatz-02\",\"revision\":0,\"format\":\"table\",\"title\":\"Gesamtkosten fiktiver Angebote berechnen\",\"subject\":\"Wirtschaft\",\"grade\":\"8\",\"prompt\":\"Berechne für beide vollständig fiktiven Angebote die Gesamtkosten für 18 Materialboxen und ergänze die Tabelle.\",\"hint\":\"Verwende die Rechnung: Grundpreis + Menge × Stückpreis. Trage ganze Eurobeträge ohne Währungszeichen ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Fiktives Angebot\",\"Menge\",\"Grundpreis in Euro\",\"Stückpreis in Euro\",\"Gesamtkosten in Euro\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Angebot Nord\",\"input\":false},{\"id\":\"a2\",\"text\":\"18\",\"input\":false},{\"id\":\"a3\",\"text\":\"7\",\"input\":false},{\"id\":\"a4\",\"text\":\"3\",\"input\":false},{\"id\":\"a5\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Angebot Süd\",\"input\":false},{\"id\":\"b2\",\"text\":\"18\",\"input\":false},{\"id\":\"b3\",\"text\":\"11\",\"input\":false},{\"id\":\"b4\",\"text\":\"2\",\"input\":false},{\"id\":\"b5\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"a5\",\"accepted\":[\"61\"]},{\"id\":\"b5\",\"accepted\":[\"47\"]}]},\"objective\":\"Lineare Gesamtkosten aus Grundpreis, Menge und Stückpreis berechnen.\",\"rationale\":\"Die Gesamtkosten ergeben sich jeweils aus dem festen Grundpreis und den variablen Kosten für 18 Stück.\",\"sourceNote\":\"Eigenes vollständig fiktives Beispiel zu Angeboten und Kostenvergleich.\"}",
+      "points": 2,
+      "type": "visual",
+      "id": "q002"
+    },
+    {
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wirtschaft-kosten-korrektur-snackboxen-03\",\"revision\":0,\"format\":\"correction\",\"title\":\"Variable Kosten einer fiktiven Preisaufstellung prüfen\",\"subject\":\"Wirtschaft\",\"grade\":\"8\",\"prompt\":\"Prüfe die drei fiktiven Kostenaufstellungen für Snackboxen. In genau einer Zeile ist der variable Kostenanteil falsch. Markiere diese Zeile und trage den richtigen variablen Kostenanteil ein.\",\"hint\":\"Der Gesamtpreis setzt sich aus Grundpreis und variablem Kostenanteil zusammen. Trage eine ganze Zahl in Euro ein.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"a\",\"text\":\"Angebot A: Grundpreis 5 Euro, variable Kosten 16 Euro, Gesamtpreis 21 Euro\"},{\"id\":\"b\",\"text\":\"Angebot B: Grundpreis 7 Euro, variable Kosten 14 Euro, Gesamtpreis 19 Euro\"},{\"id\":\"c\",\"text\":\"Angebot C: Grundpreis 4 Euro, variable Kosten 18 Euro, Gesamtpreis 22 Euro\"}],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"rowId\":\"b\",\"accepted\":[\"12\"]},\"objective\":\"Den variablen Kostenanteil aus Grundpreis und Gesamtpreis einer fiktiven Kostenaufstellung bestimmen.\",\"rationale\":\"Der variable Kostenanteil ergibt sich aus Gesamtpreis minus Grundpreis. Nur in Angebot B stimmt diese Differenz nicht mit dem angegebenen Anteil überein.\",\"sourceNote\":\"Eigenes fiktives Beispiel zu Grundpreis, variablem Kostenanteil und Gesamtkosten bei Snackboxen.\"}",
+      "type": "visual",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "Prüfe die drei fiktiven Kostenaufstellungen für Snackboxen. In genau einer Zeile ist der variable Kostenanteil falsch. Markiere diese Zeile und trage den richtigen variablen Kostenanteil ein.",
+      "updatedAt": "2026-10-25T10:38:29.131Z",
+      "position": 3,
+      "id": "q003"
+    },
+    {
+      "position": 4,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wirtschaft-kostenvergleich-versandboxen-04\",\"revision\":1,\"format\":\"table\",\"title\":\"Ab wann ist ein fiktives Angebot günstiger?\",\"subject\":\"Wirtschaft\",\"grade\":\"8\",\"prompt\":\"Zwei vollständig fiktive Anbieter berechnen die Kosten für Versandkartons unterschiedlich. Bestimme die kleinste ganze Stückzahl, ab der Angebot B günstiger ist als Angebot A. Ergänze anschließend die Gesamtkosten beider Angebote für diese Stückzahl. Trage nur Zahlen ohne Einheiten ein.\",\"hint\":\"Vergleiche die Kosten für aufeinanderfolgende ganze Stückzahlen. Prüfe, ob Angebot B an der gefundenen Stelle tatsächlich günstiger ist und bei der vorherigen Stückzahl noch nicht günstiger war.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Angabe\",\"Wert\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"Angebot A: Grundpreis 8 Euro plus 2 Euro je Karton\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"\",\"input\":false}],[{\"id\":\"r2c1\",\"text\":\"Angebot B: Grundpreis 20 Euro plus 1 Euro je Karton\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"\",\"input\":false}],[{\"id\":\"r3c1\",\"text\":\"Kleinste ganze Stückzahl, ab der B günstiger ist\",\"input\":false},{\"id\":\"r3c2\",\"text\":\"\",\"input\":true}],[{\"id\":\"r4c1\",\"text\":\"Gesamtkosten von A bei dieser Stückzahl\",\"input\":false},{\"id\":\"r4c2\",\"text\":\"\",\"input\":true}],[{\"id\":\"r5c1\",\"text\":\"Gesamtkosten von B bei dieser Stückzahl\",\"input\":false},{\"id\":\"r5c2\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"r3c2\",\"accepted\":[\"13\"]},{\"id\":\"r4c2\",\"accepted\":[\"34\"]},{\"id\":\"r5c2\",\"accepted\":[\"33\"]}]},\"objective\":\"Den Schnittpunkt beziehungsweise den ersten Kostenvorteil zweier linearer, vollständig definierter Preisangebote bestimmen.\",\"rationale\":\"Die feste Grundgebühr und der Stückpreis werden für aufeinanderfolgende ganze Stückzahlen verglichen. Dadurch wird erkennbar, ab welcher Menge das Angebot mit dem niedrigeren Stückpreis tatsächlich günstiger ist.\",\"sourceNote\":\"Eigenes vollständig fiktives Rechenbeispiel zu Angeboten und linearen Kosten; keine realen Anbieter- oder Schülerdaten.\"}",
+      "updatedAt": "2026-10-25T10:38:29.316Z",
+      "text": "Zwei vollständig fiktive Anbieter berechnen die Kosten für Versandkartons unterschiedlich. Bestimme die kleinste ganze Stückzahl, ab der Angebot B günstiger ist als Angebot A. Ergänze anschließend die Gesamtkosten beider Angebote für diese Stückzahl. Trage nur Zahlen ohne Einheiten ein.",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "points": 2,
+      "type": "visual",
+      "id": "q004"
+    },
+    {
+      "type": "visual",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "points": 2,
+      "position": 5,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wirtschaft-gesamtpreis-korrektur-05\",\"revision\":0,\"format\":\"correction\",\"title\":\"Einen Gesamtpreis prüfen und berichtigen\",\"subject\":\"Wirtschaft\",\"grade\":\"8\",\"prompt\":\"Prüfe die drei vollständig fiktiven Preisangebote für jeweils 15 Notizhefte. In genau einer Zeile ist der Gesamtpreis falsch. Markiere diese Zeile und trage den richtigen Gesamtpreis ein.\",\"hint\":\"Berechne jeden Gesamtpreis mit Grundpreis plus Stückpreis mal Menge. Trage den korrigierten Wert als Dezimalzahl ein.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"a\",\"text\":\"Angebot A: 3,50 € Grundpreis + 15 × 0,90 € = 17,00 €\"},{\"id\":\"b\",\"text\":\"Angebot B: 6,00 € Grundpreis + 15 × 0,70 € = 17,50 €\"},{\"id\":\"c\",\"text\":\"Angebot C: 2,00 € Grundpreis + 15 × 1,10 € = 18,50 €\"}],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"rowId\":\"b\",\"accepted\":[\"16,50\",\"16.5\",\"16.50\"]},\"objective\":\"Einen fehlerhaften linearen Gesamtpreis erkennen und rechnerisch berichtigen.\",\"rationale\":\"Die Lernenden wenden die Kostenregel Grundpreis plus Stückpreis mal Menge an und korrigieren genau einen fehlerhaften Gesamtpreis.\",\"sourceNote\":\"Eigenes vollständig fiktives Preisangebot-Beispiel mit frei erfundenen Zahlen.\"}",
+      "updatedAt": "2026-10-25T10:38:29.512Z",
+      "text": "Prüfe die drei vollständig fiktiven Preisangebote für jeweils 15 Notizhefte. In genau einer Zeile ist der Gesamtpreis falsch. Markiere diese Zeile und trage den richtigen Gesamtpreis ein.",
+      "id": "q005"
+    },
+    {
+      "text": "Ergänze für die beiden fiktiven Angebote die Koeffizienten a und b der Kostenfunktion K(n)=a·n+b. K wird in Euro angegeben, n ist die Stückzahl. Trage nur Zahlen ein.",
+      "updatedAt": "2026-10-25T10:38:29.670Z",
+      "position": 6,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wirtschaft-kostenfunktionen-tabelle-06\",\"revision\":1,\"format\":\"table\",\"title\":\"Lineare Kostenfunktionen aus Angeboten bilden\",\"subject\":\"Wirtschaft\",\"grade\":\"8\",\"prompt\":\"Ergänze für die beiden fiktiven Angebote die Koeffizienten a und b der Kostenfunktion K(n)=a·n+b. K wird in Euro angegeben, n ist die Stückzahl. Trage nur Zahlen ein.\",\"hint\":\"a ist der Preis pro Stück; b ist die feste Grundgebühr.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Angebot\",\"Grundpreis (€)\",\"Stückpreis (€)\",\"a\",\"b\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Angebot Nord\",\"input\":false},{\"id\":\"a2\",\"text\":\"8,00 €\",\"input\":false},{\"id\":\"a3\",\"text\":\"1,20 € je Stück\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true},{\"id\":\"a5\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Angebot Süd\",\"input\":false},{\"id\":\"b2\",\"text\":\"5,50 €\",\"input\":false},{\"id\":\"b3\",\"text\":\"1,80 € je Stück\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true},{\"id\":\"b5\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"1,20\"]},{\"id\":\"a5\",\"accepted\":[\"8\"]},{\"id\":\"b4\",\"accepted\":[\"1,80\"]},{\"id\":\"b5\",\"accepted\":[\"5,50\"]}]},\"objective\":\"Grundpreis und Stückpreis den Koeffizienten einer linearen Kostenfunktion zuordnen.\",\"rationale\":\"Grundpreis und Stückpreis den Koeffizienten einer linearen Kostenfunktion zuordnen. Die Antwortform ist auf die beschriebene Leistung begrenzt.\",\"sourceNote\":\"Eigenes vollständig fiktives Datenbeispiel ohne reale Anbieter oder Schülerdaten.\"}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "points": 2,
+      "type": "visual",
+      "id": "q006"
+    },
+    {
+      "type": "visual",
+      "points": 2,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wirtschaft-kostenpunkte-07\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Kostenpunkte eines Angebots\",\"subject\":\"Wirtschaft\",\"grade\":\"8\",\"prompt\":\"Ein fiktiver Anbieter verlangt 6 Euro Grundpreis und 1,50 Euro je Stück. Trage die Kostenpunkte für 2, 6 und 10 Stück in das Koordinatensystem ein.\",\"hint\":\"Berechne zuerst den Gesamtpreis für jede Menge. x steht für Stück, y für Euro.\",\"maxPoints\":2,\"spec\":{\"mode\":\"points\",\"minX\":0,\"maxX\":12,\"minY\":0,\"maxY\":25,\"step\":1,\"labels\":[\"Q2\",\"Q6\",\"Q10\"]},\"solution\":{\"points\":[{\"x\":2,\"y\":9},{\"x\":6,\"y\":15},{\"x\":10,\"y\":21}]},\"objective\":\"Grundpreis und Stückpreis zur Berechnung linearer Gesamtkosten verwenden.\",\"rationale\":\"Die Gesamtkosten ergeben sich aus 6 Euro Grundpreis plus 1,50 Euro je bestelltem Stück.\",\"sourceNote\":\"Eigenes fiktives Kostenmodell für eine Bestellmenge.\"}",
+      "position": 7,
+      "updatedAt": "2026-10-25T10:38:29.877Z",
+      "text": "Ein fiktiver Anbieter verlangt 6 Euro Grundpreis und 1,50 Euro je Stück. Trage die Kostenpunkte für 2, 6 und 10 Stück in das Koordinatensystem ein.",
+      "id": "q007"
+    },
+    {
+      "position": 8,
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wirtschaft-stueckpreis-korrektur-08\",\"revision\":0,\"format\":\"correction\",\"title\":\"Stückpreis korrigieren\",\"subject\":\"Wirtschaft\",\"grade\":\"8\",\"prompt\":\"In genau einer Zeile wurde ein Stückpreis aus Gesamtpreis und Menge falsch berechnet. Markiere die fehlerhafte Zeile und trage den richtigen Stückpreis ein.\",\"hint\":\"Teile den Gesamtpreis jeweils durch die Menge. Prüfe besonders die Division in jeder Zeile.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"p1\",\"text\":\"36 Euro für 12 Stück: 3 Euro pro Stück\"},{\"id\":\"p2\",\"text\":\"45 Euro für 15 Stück: 2 Euro pro Stück\"},{\"id\":\"p3\",\"text\":\"28 Euro für 8 Stück: 3,50 Euro pro Stück\"}],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"rowId\":\"p2\",\"accepted\":[\"3\",\"3,00\",\"3.00\"]},\"objective\":\"Einen fehlerhaften Stückpreis durch Division von Gesamtpreis und Menge berichtigen.\",\"rationale\":\"45 geteilt durch 15 ergibt 3 Euro pro Stück; die beiden anderen Stückpreise sind richtig.\",\"sourceNote\":\"Eigenes fiktives Preisbeispiel ohne reale Anbieter oder Kaufempfehlung.\"}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "points": 2,
+      "updatedAt": "2026-10-25T10:38:30.042Z",
+      "text": "In genau einer Zeile wurde ein Stückpreis aus Gesamtpreis und Menge falsch berechnet. Markiere die fehlerhafte Zeile und trage den richtigen Stückpreis ein.",
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 4,
+      "reason": "Zahlendarstellungen nicht durch exakten Textvergleich ablehnen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    },
+    {
+      "position": 6,
+      "reason": "Algebraisch gleichwertige Kostenfunktionen können nicht fair als exakter Text benotet werden; Koeffizienten getrennt erfassen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    }
+  ]
+}

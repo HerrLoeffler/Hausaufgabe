@@ -1,0 +1,205 @@
+{
+  "pilotId": "P12",
+  "at": "2026-10-25T10:14:49.773Z",
+  "quiz": {
+    "audioAnswerQuestionCount": 0,
+    "rightsHold": false,
+    "isDeleted": false,
+    "ended": false,
+    "createdAt": "2026-10-25T10:14:46.711Z",
+    "pedagogicalPool": {
+      "profileIds": [],
+      "status": "no_match",
+      "version": "gc-pedagogy-pool-v1",
+      "profileCount": 0
+    },
+    "updatedAt": "2026-10-25T10:14:48.658Z",
+    "localeContractVersion": 1,
+    "resultMode": "points_grade",
+    "title": "Media and opinions: Meldungen auswerten",
+    "grade": "9",
+    "gradingLocale": "de-DE",
+    "solutionAudioQuestionCount": 0,
+    "qualityIssues": [],
+    "totalPoints": 16,
+    "sessionState": "open",
+    "requiresSecureAssessmentRules": false,
+    "published": false,
+    "contentLocale": "de-DE",
+    "qualityWarnings": [],
+    "gradeScaleSnapshot": {
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "id": "standard",
+      "name": "Standard"
+    },
+    "shareEnabled": false,
+    "startMode": "student",
+    "audioQuestionCount": 0,
+    "listeningOnlyQuestionCount": 0,
+    "description": "Viel Erfolg beim Test!",
+    "subject": "Englisch",
+    "questionCount": 8,
+    "audioReady": true,
+    "showSolutions": true,
+    "shuffleQuestions": false,
+    "shuffleAnswers": false,
+    "solutionAudioReady": true,
+    "generationStatus": "ready",
+    "ownerId": "gc-visual255-e2e",
+    "gradeScaleId": "standard",
+    "generationJobId": "5f71d492a140ba98b3853a412cd2e221f5151205",
+    "accessCode": "R6D2JQKR",
+    "creationContext": {
+      "contentLocale": "de-DE",
+      "difficulty": "mittel bis anspruchsvoll",
+      "topic": "Media and opinions: Eigene kurze englische Meldungen und Meinungen auswerten; Aussagen belegen und eindeutige Sprachfehler korrigieren",
+      "learningGoals": [],
+      "schoolType": "Mittelschule",
+      "region": "Bayern"
+    },
+    "id": "R6D2JQKR"
+  },
+  "questions": [
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"evidence-podcast-01\",\"revision\":1,\"format\":\"evidence\",\"title\":\"Beliebtheit eines Schul-Podcasts belegen\",\"subject\":\"Englisch\",\"grade\":\"9\",\"prompt\":\"Markiere genau die zwei Sätze mit konkreten Zahlen zur Nutzung und Weiterverbreitung des fiktiven Schul-Podcasts. Eine positive Bewertung der Inhalte wird dadurch nicht bewiesen.\",\"hint\":\"Markiere genau zwei vollständige Sätze.\",\"maxPoints\":2,\"objective\":\"Aussagen durch passende Textstellen belegen.\",\"rationale\":\"Die Lernenden erkennen explizite Belege für eine behauptete Beliebtheit.\",\"sourceNote\":\"Eigener fiktiver englischer Text.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"The podcast is called School Voices.\"},{\"id\":\"s2\",\"text\":\"More than 300 students listen to every episode.\"},{\"id\":\"s3\",\"text\":\"The latest episode was shared 120 times.\"},{\"id\":\"s4\",\"text\":\"It is recorded in the library on Thursdays.\"},{\"id\":\"s5\",\"text\":\"The presenters use simple English.\"}]},\"solution\":{\"selections\":[[\"s2\",\"s3\"]]}}",
+      "text": "Markiere genau die zwei Sätze mit konkreten Zahlen zur Nutzung und Weiterverbreitung des fiktiven Schul-Podcasts. Eine positive Bewertung der Inhalte wird dadurch nicht bewiesen.",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "position": 1,
+      "updatedAt": "2026-10-25T10:14:46.877Z",
+      "points": 2,
+      "id": "q001"
+    },
+    {
+      "updatedAt": "2026-10-25T10:14:47.059Z",
+      "type": "visual",
+      "position": 2,
+      "text": "Ordne die beiden englischen Aussagen den jeweils passenden Belegen aus der fiktiven Meldung zu. Der Pfeil zeigt von der Aussage zum passenden Beleg. Verwende jede Verbindung genau einmal.",
+      "points": 2,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"connections-media-report-09\",\"revision\":0,\"format\":\"connections\",\"title\":\"Aussagen mit Belegen verbinden\",\"subject\":\"Englisch\",\"grade\":\"9\",\"prompt\":\"Ordne die beiden englischen Aussagen den jeweils passenden Belegen aus der fiktiven Meldung zu. Der Pfeil zeigt von der Aussage zum passenden Beleg. Verwende jede Verbindung genau einmal.\",\"hint\":\"Verbinde jede Aussage mit genau einem eindeutig passenden Beleg.\",\"maxPoints\":2,\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"c1\",\"label\":\"The clip was uploaded on Friday.\",\"x\":110,\"y\":90},{\"id\":\"c2\",\"label\":\"The clip lasts less than two minutes.\",\"x\":110,\"y\":220},{\"id\":\"e1\",\"label\":\"The platform lists the upload date as Friday, 12 April.\",\"x\":590,\"y\":90},{\"id\":\"e2\",\"label\":\"Its running time is 1 minute and 45 seconds.\",\"x\":590,\"y\":220}]},\"solution\":{\"edges\":[[\"c1\",\"e1\"],[\"c2\",\"e2\"]]},\"objective\":\"Englische Aussagen in einer kurzen fiktiven Medienmeldung mit eindeutigen Textbelegen verknüpfen.\",\"rationale\":\"Die beiden Belege bestätigen jeweils genau eine Aussage durch ein konkretes Datum beziehungsweise eine konkrete Zeitangabe.\",\"sourceNote\":\"Eigene fiktive englische Medienmeldung; alle Angaben sind erfunden.\"}",
+      "id": "q002"
+    },
+    {
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:14:47.258Z",
+      "text": "Trage in jede Lücke die passende englische Kategorie ein: fact oder opinion.",
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"table-fact-opinion-posts-03\",\"revision\":0,\"format\":\"table\",\"title\":\"Fakten und Meinungen unterscheiden\",\"subject\":\"Englisch\",\"grade\":\"9\",\"prompt\":\"Trage in jede Lücke die passende englische Kategorie ein: fact oder opinion.\",\"hint\":\"Prüfe, ob die Aussage überprüfbar ist oder eine persönliche Wertung ausdrückt. Verwende pro Lücke genau ein englisches Wort.\",\"maxPoints\":2,\"objective\":\"Überprüfbare Fakten und persönliche Meinungen in kurzen englischen Medienaussagen unterscheiden.\",\"rationale\":\"Die beiden Aussagen enthalten eindeutige sprachliche Hinweise auf entweder eine überprüfbare Information oder eine persönliche Wertung.\",\"sourceNote\":\"Eigene fiktive englische Medienaussagen ohne reale Personen oder Quellen.\",\"spec\":{\"columns\":[\"Fiktive englische Medienaussage\",\"Kategorie\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"The school website published the interview on Monday.\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"I believe the interview is more interesting than the written report.\",\"input\":false},{\"id\":\"b2\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a2\",\"accepted\":[\"fact\"]},{\"id\":\"b2\",\"accepted\":[\"opinion\"]}]}}",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "position": 3,
+      "id": "q003"
+    },
+    {
+      "position": 4,
+      "updatedAt": "2026-10-25T10:14:47.482Z",
+      "text": "In genau einer Zeile stimmt die Verbform im Simple Present nicht mit dem Subjekt überein. Markiere diese Zeile und trage nur die richtige Form des fehlerhaften Verbs ein.",
+      "points": 2,
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"correction-online-report-04\",\"revision\":1,\"format\":\"correction\",\"title\":\"Eine fiktive Online-Meldung korrigieren\",\"subject\":\"Englisch\",\"grade\":\"9\",\"prompt\":\"In genau einer Zeile stimmt die Verbform im Simple Present nicht mit dem Subjekt überein. Markiere diese Zeile und trage nur die richtige Form des fehlerhaften Verbs ein.\",\"hint\":\"Prüfe, ob Subjekt und Verb im Präsens zusammenpassen.\",\"maxPoints\":2,\"objective\":\"Einen eindeutigen Grammatikfehler in einer englischen Medienmeldung erkennen und korrigieren.\",\"rationale\":\"Die fehlerhafte Verbform wird erkannt und durch die grammatikalisch passende Form ersetzt.\",\"sourceNote\":\"Eigener kurzer Text zu einer fiktiven Online-Meldung.\",\"spec\":{\"rows\":[{\"id\":\"r1\",\"text\":\"The website publishes a short update every Friday.\"},{\"id\":\"r2\",\"text\":\"The editor check the facts before publication.\"},{\"id\":\"r3\",\"text\":\"Our readers send comments by email.\"},{\"id\":\"r4\",\"text\":\"The article explains the topic clearly.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"r2\",\"accepted\":[\"checks\"]}}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q004"
+    },
+    {
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:14:47.712Z",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "text": "Ergänze die Antworten durch wörtliche Entnahme aus der fiktiven Meldung: Was wurde getestet und was wurde womit verglichen? Übernimm jeweils nur die entsprechende Wortgruppe, keinen vollständigen Satz.",
+      "position": 5,
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"table-factcheck-05\",\"revision\":1,\"format\":\"table\",\"title\":\"Eine fiktive Medienmeldung auswerten\",\"subject\":\"Englisch\",\"grade\":\"9\",\"prompt\":\"Ergänze die Antworten durch wörtliche Entnahme aus der fiktiven Meldung: Was wurde getestet und was wurde womit verglichen? Übernimm jeweils nur die entsprechende Wortgruppe, keinen vollständigen Satz.\",\"hint\":\"Übertrage die passenden Informationen aus der Meldung. Schreibe auf Englisch.\",\"maxPoints\":2,\"objective\":\"Konkrete Informationen aus einer kurzen englischen Medienmeldung entnehmen und strukturiert wiedergeben.\",\"rationale\":\"Die Tabelle prüft, ob zentrale Angaben zu einem Medienprojekt gezielt aus einem sichtbaren englischen Text entnommen werden können.\",\"sourceNote\":\"Eigener fiktiver englischer Meldungstext für diese Aufgabe.\",\"spec\":{\"columns\":[\"Information from the fictional report\",\"Answer\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Fictional media note: On Tuesday, the Media Club tested a new fact-checking website. Members compared two online posts with library sources. They said the tool was helpful but slow.\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":false}],[{\"id\":\"b1\",\"text\":\"What did the Media Club test?\",\"input\":false},{\"id\":\"b2\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"What did the members compare?\",\"input\":false},{\"id\":\"c2\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"b2\",\"accepted\":[\"a new fact-checking website\",\"new fact-checking website\"]},{\"id\":\"c2\",\"accepted\":[\"two online posts with library sources\",\"two online posts and library sources\"]}]}}",
+      "id": "q005"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"correction-media-language-06\",\"revision\":1,\"format\":\"correction\",\"title\":\"Eine Medienmeldung sprachlich prüfen\",\"subject\":\"Englisch\",\"grade\":\"9\",\"prompt\":\"In genau einer Zeile steht ein Adjektiv statt des benötigten Adverbs. Markiere die Zeile und trage nur das passende Adverb anstelle des falschen Wortes ein.\",\"hint\":\"Prüfe besonders, ob die Wörter im Satz grammatikalisch passend verwendet werden.\",\"maxPoints\":2,\"objective\":\"Einen eindeutigen Sprachfehler in einer kurzen englischen Medienmeldung erkennen und korrigieren.\",\"rationale\":\"Die Aufgabe verbindet das Erkennen eines einzelnen Fehlers mit der passenden vollständigen Korrektur.\",\"sourceNote\":\"Eigene fiktive englische Medienmeldung ohne reale Personen oder Quellen.\",\"spec\":{\"rows\":[{\"id\":\"r1\",\"text\":\"The reporter explained the story clear.\"},{\"id\":\"r2\",\"text\":\"The headline sounds surprisingly balanced.\"},{\"id\":\"r3\",\"text\":\"Many readers reacted calmly to the criticism.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"r1\",\"accepted\":[\"clearly\"]}}",
+      "points": 2,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "type": "visual",
+      "text": "In genau einer Zeile steht ein Adjektiv statt des benötigten Adverbs. Markiere die Zeile und trage nur das passende Adverb anstelle des falschen Wortes ein.",
+      "updatedAt": "2026-10-25T10:14:47.903Z",
+      "position": 6,
+      "id": "q006"
+    },
+    {
+      "text": "Markiere genau die zwei Sätze, die eine überprüfbare Tatsache statt einer persönlichen Meinung ausdrücken.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"evidence-fact-opinion-07\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Tatsache und Meinung unterscheiden\",\"subject\":\"Englisch\",\"grade\":\"9\",\"prompt\":\"Markiere genau die zwei Sätze, die eine überprüfbare Tatsache statt einer persönlichen Meinung ausdrücken.\",\"hint\":\"Achte darauf, ob die Aussage durch Daten oder beobachtbare Angaben überprüft werden kann.\",\"maxPoints\":2,\"objective\":\"Überprüfbare Tatsachen von persönlichen Meinungen unterscheiden.\",\"rationale\":\"Die ausgewählten Sätze enthalten konkrete, überprüfbare Angaben und keine bloße Bewertung.\",\"sourceNote\":\"Eigener fiktiver englischer Beitrag über ein Schulmedium.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"The school website published twelve articles this month.\"},{\"id\":\"s2\",\"text\":\"The website is absolutely brilliant.\"},{\"id\":\"s3\",\"text\":\"I believe its design is boring.\"},{\"id\":\"s4\",\"text\":\"The student newspaper has four pages.\"},{\"id\":\"s5\",\"text\":\"In my view, the interviews are the best part.\"}]},\"solution\":{\"selections\":[[\"s1\",\"s4\"]]}}",
+      "type": "visual",
+      "points": 2,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "updatedAt": "2026-10-25T10:14:48.227Z",
+      "position": 7,
+      "id": "q007"
+    },
+    {
+      "type": "visual",
+      "text": "Ergänze in den beiden kurzen, fiktiven englischen Medienaussagen jeweils die fehlende Präposition.",
+      "position": 8,
+      "updatedAt": "2026-10-25T10:14:48.465Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"table-media-prepositions-08\",\"revision\":0,\"format\":\"table\",\"title\":\"Präpositionen in fiktiven Medienaussagen\",\"subject\":\"Englisch\",\"grade\":\"9\",\"prompt\":\"Ergänze in den beiden kurzen, fiktiven englischen Medienaussagen jeweils die fehlende Präposition.\",\"hint\":\"Lies jeweils das Verb und den folgenden Satzteil genau zusammen.\",\"maxPoints\":2,\"objective\":\"Typische Präpositionen in englischen Aussagen über Medien korrekt verwenden.\",\"rationale\":\"Die Aufgabe prüft die feste Verbindung englischer Verben mit passenden Präpositionen in einem verständlichen Medienkontext.\",\"sourceNote\":\"Eigenes Beispiel mit vollständig fiktiven Medienaussagen; keine realen Personen oder Quellen.\",\"spec\":{\"columns\":[\"Satzanfang\",\"Fehlende Präposition\",\"Satzende\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"The reporter based the short post\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":true},{\"id\":\"a3\",\"text\":\"a verified interview.\",\"input\":false}],[{\"id\":\"b1\",\"text\":\"Several readers disagreed\",\"input\":false},{\"id\":\"b2\",\"text\":\"\",\"input\":true},{\"id\":\"b3\",\"text\":\"the writer's opinion.\",\"input\":false}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a2\",\"accepted\":[\"on\"]},{\"id\":\"b2\",\"accepted\":[\"with\"]}]}}",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "points": 2,
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 1,
+      "reason": "Nutzungs- und Teilungszahlen belegen nicht automatisch Beliebtheit oder Zustimmung.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    },
+    {
+      "position": 4,
+      "reason": "Die grammatische Korrektur eindeutig auf die falsche Verbform begrenzen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    },
+    {
+      "position": 5,
+      "reason": "Wörtliche kurze Textentnahme verlangen, keine offene sinngemäße Antwort automatisch vergleichen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    },
+    {
+      "position": 6,
+      "reason": "Adverbkorrektur statt exakter Benotung eines vollständigen Satzes.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    }
+  ]
+}

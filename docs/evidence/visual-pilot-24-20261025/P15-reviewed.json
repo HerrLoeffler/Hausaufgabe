@@ -1,0 +1,209 @@
+{
+  "pilotId": "P15",
+  "at": "2026-10-25T10:19:26.354Z",
+  "quiz": {
+    "gradeScaleId": "standard",
+    "ended": false,
+    "resultMode": "points_grade",
+    "ownerId": "gc-visual255-e2e",
+    "audioAnswerQuestionCount": 0,
+    "qualityWarnings": [
+      "Aufgabe 7: ambiguous: Die Aufgabe beschreibt einen Wagen, der mit einer konstanten Kraft gezogen wird, verwendet aber in den beiden Messungen unterschiedliche Kräfte von 6 N und 9 N."
+    ],
+    "shareEnabled": false,
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "status": "no_match",
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": []
+    },
+    "solutionAudioReady": true,
+    "requiresSecureAssessmentRules": false,
+    "updatedAt": "2026-10-25T10:19:18.500Z",
+    "accessCode": "3XBSMR7M",
+    "createdAt": "2026-10-25T10:19:16.666Z",
+    "title": "Kraft, Bewegung und Energie",
+    "gradingLocale": "de-DE",
+    "rightsHold": false,
+    "subject": "Natur und Technik",
+    "totalPoints": 16,
+    "contentLocale": "de-DE",
+    "grade": "8",
+    "creationContext": {
+      "region": "Bayern",
+      "topic": "Kraft, Bewegung und Energie: Einfache Messreihen zu Weg und Zeit, Energieübertragungen und begründete Aussagen anhand mitgelieferter Daten",
+      "learningGoals": [],
+      "schoolType": "Mittelschule",
+      "difficulty": "mittel bis anspruchsvoll",
+      "contentLocale": "de-DE"
+    },
+    "published": false,
+    "shuffleAnswers": false,
+    "audioReady": true,
+    "qualityIssues": [
+      {
+        "questionPosition": 7,
+        "questionId": "q007",
+        "reason": "ambiguous",
+        "detail": "Die Aufgabe beschreibt einen Wagen, der mit einer konstanten Kraft gezogen wird, verwendet aber in den beiden Messungen unterschiedliche Kräfte von 6 N und 9 N."
+      }
+    ],
+    "localeContractVersion": 1,
+    "gradeScaleSnapshot": {
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "id": "standard",
+      "name": "Standard"
+    },
+    "startMode": "student",
+    "isDeleted": false,
+    "listeningOnlyQuestionCount": 0,
+    "shuffleQuestions": false,
+    "sessionState": "open",
+    "showSolutions": true,
+    "generationStatus": "ready",
+    "description": "Viel Erfolg beim Test!",
+    "generationJobId": "a62b26abddd1ff04ef6e3943ea5dd0aa0d52bbd4",
+    "solutionAudioQuestionCount": 0,
+    "audioQuestionCount": 0,
+    "questionCount": 8,
+    "id": "3XBSMR7M"
+  },
+  "questions": [
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:19:16.800Z",
+      "position": 1,
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"weg-zeit-diagramm-01\",\"revision\":1,\"format\":\"chart\",\"title\":\"Weg-Zeit-Diagramm ergänzen\",\"subject\":\"Natur und Technik\",\"grade\":\"8\",\"prompt\":\"Übertrage die fiktiven zurückgelegten Weglängen zu den angegebenen Messzeitpunkten in das Säulendiagramm.\",\"hint\":\"Stelle für jede Zeitangabe die passende Weglänge dar. Die Skala reicht von 0 bis 16 m.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":16,\"step\":1,\"unit\":\"m\",\"categories\":[{\"id\":\"t0\",\"label\":\"0 s\",\"value\":0},{\"id\":\"t1\",\"label\":\"2 s\",\"value\":3},{\"id\":\"t2\",\"label\":\"4 s\",\"value\":7},{\"id\":\"t3\",\"label\":\"6 s\",\"value\":10},{\"id\":\"t4\",\"label\":\"8 s\",\"value\":14}]},\"solution\":{\"values\":{\"t0\":0,\"t1\":3,\"t2\":7,\"t3\":10,\"t4\":14}},\"objective\":\"Messwerte aus einer Tabelle in ein Diagramm übertragen.\",\"rationale\":\"Die vorgegebenen Weglängen werden den passenden Zeitpunkten zugeordnet.\",\"sourceNote\":\"Eigene fiktive Messreihe ohne reale Schülerdaten.\"}",
+      "text": "Übertrage die fiktiven zurückgelegten Weglängen zu den angegebenen Messzeitpunkten in das Säulendiagramm.",
+      "type": "visual",
+      "id": "q001"
+    },
+    {
+      "points": 2,
+      "type": "visual",
+      "text": "Stelle die fiktiven Messwerte zur Bewegungsdauer als Säulendiagramm dar.",
+      "position": 2,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"bewegungsdauer-diagramm-02\",\"revision\":0,\"format\":\"chart\",\"title\":\"Bewegungsdauer vergleichen\",\"subject\":\"Natur und Technik\",\"grade\":\"8\",\"prompt\":\"Stelle die fiktiven Messwerte zur Bewegungsdauer als Säulendiagramm dar.\",\"hint\":\"Übertrage die drei Zeitwerte in Sekunden. Vergleiche die Säulen erst nach dem Eintragen.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":12,\"step\":1,\"unit\":\"s\",\"categories\":[{\"id\":\"a\",\"label\":\"Versuch A\",\"value\":6},{\"id\":\"b\",\"label\":\"Versuch B\",\"value\":9},{\"id\":\"c\",\"label\":\"Versuch C\",\"value\":4}]},\"solution\":{\"values\":{\"a\":6,\"b\":9,\"c\":4}},\"objective\":\"Messwerte mit unterschiedlichen Kategorien in einem Diagramm darstellen.\",\"rationale\":\"Die drei fiktiven Zeitmessungen werden korrekt als Säulen abgebildet.\",\"sourceNote\":\"Eigene fiktive Messdaten für drei Bewegungsversuche.\"}",
+      "updatedAt": "2026-10-25T10:19:16.992Z",
+      "id": "q002"
+    },
+    {
+      "updatedAt": "2026-10-25T10:19:17.263Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"kraftmessung-diagramm-03\",\"revision\":0,\"format\":\"chart\",\"title\":\"Kraftmesswerte darstellen\",\"subject\":\"Natur und Technik\",\"grade\":\"8\",\"prompt\":\"Übertrage die fiktiven Kraftmesswerte in das Säulendiagramm.\",\"hint\":\"Lies die Einheit Newton und die Skala sorgfältig ab.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":20,\"step\":1,\"unit\":\"N\",\"categories\":[{\"id\":\"leicht\",\"label\":\"leichte Last\",\"value\":5},{\"id\":\"mittel\",\"label\":\"mittlere Last\",\"value\":12},{\"id\":\"schwer\",\"label\":\"schwere Last\",\"value\":18},{\"id\":\"feder\",\"label\":\"Federkraft\",\"value\":9}]},\"solution\":{\"values\":{\"leicht\":5,\"mittel\":12,\"schwer\":18,\"feder\":9}},\"objective\":\"Kraftwerte mit einer geeigneten Skala in einem Diagramm darstellen.\",\"rationale\":\"Jeder fiktive Messwert wird der richtigen Kategorie und Höhe zugeordnet.\",\"sourceNote\":\"Eigene fiktive Kraftmesswerte ohne reale Messpersonen.\"}",
+      "position": 3,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "type": "visual",
+      "text": "Übertrage die fiktiven Kraftmesswerte in das Säulendiagramm.",
+      "points": 2,
+      "id": "q003"
+    },
+    {
+      "position": 4,
+      "points": 2,
+      "updatedAt": "2026-10-25T10:19:17.434Z",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"geschwindigkeit-tabelle-04\",\"revision\":0,\"format\":\"table\",\"title\":\"Geschwindigkeit aus Messwerten berechnen\",\"subject\":\"Natur und Technik\",\"grade\":\"8\",\"prompt\":\"Berechne für jede Zeile die durchschnittliche Geschwindigkeit und ergänze die Tabelle. Verwende v = s : t und gib die Ergebnisse in m/s mit einer Nachkommastelle an.\",\"hint\":\"Teile den Weg durch die benötigte Zeit. Verwende als Dezimaltrennzeichen ein Komma oder einen Punkt.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Weg\",\"Zeit\",\"Geschwindigkeit\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"12 m\",\"input\":false},{\"id\":\"a2\",\"text\":\"4 s\",\"input\":false},{\"id\":\"a3\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"15 m\",\"input\":false},{\"id\":\"b2\",\"text\":\"6 s\",\"input\":false},{\"id\":\"b3\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"21 m\",\"input\":false},{\"id\":\"c2\",\"text\":\"7 s\",\"input\":false},{\"id\":\"c3\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a3\",\"accepted\":[\"3,0\",\"3.0\",\"3\"]},{\"id\":\"b3\",\"accepted\":[\"2,5\",\"2.5\"]},{\"id\":\"c3\",\"accepted\":[\"3,0\",\"3.0\",\"3\"]}]},\"objective\":\"Eine durchschnittliche Geschwindigkeit aus Weg und Zeit berechnen.\",\"rationale\":\"Die Geschwindigkeit ergibt sich jeweils aus dem Quotienten von Weg und Zeit.\",\"sourceNote\":\"Eigene fiktive Messwerte; die Tabelle enthält keine realen Personendaten.\"}",
+      "type": "visual",
+      "text": "Berechne für jede Zeile die durchschnittliche Geschwindigkeit und ergänze die Tabelle.",
+      "id": "q004"
+    },
+    {
+      "type": "visual",
+      "text": "Berechne für jedes Gerät den Wirkungsgrad. Verwende: Wirkungsgrad = (Nutzenergie ÷ zugeführte Energie) × 100.",
+      "position": 5,
+      "updatedAt": "2026-10-25T10:19:17.745Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wirkungsgrad-tabelle-05\",\"revision\":0,\"format\":\"table\",\"title\":\"Wirkungsgrade berechnen\",\"subject\":\"Natur und Technik\",\"grade\":\"8\",\"prompt\":\"Berechne für jedes Gerät den Wirkungsgrad. Verwende: Wirkungsgrad = (Nutzenergie ÷ zugeführte Energie) × 100. Die Messdaten sind fiktiv.\",\"hint\":\"Setze die beiden Energiewerte in die Formel ein und gib das Ergebnis als Prozentzahl ohne Prozentzeichen an.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Gerät\",\"zugeführte Energie in J\",\"Nutzenergie in J\",\"Wirkungsgrad in %\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Elektromotor\",\"input\":false},{\"id\":\"a2\",\"text\":\"500\",\"input\":false},{\"id\":\"a3\",\"text\":\"350\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Wasserpumpe\",\"input\":false},{\"id\":\"b2\",\"text\":\"800\",\"input\":false},{\"id\":\"b3\",\"text\":\"600\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"70\"]},{\"id\":\"b4\",\"accepted\":[\"75\"]}]},\"objective\":\"Den Wirkungsgrad aus zugeführter und nutzbarer Energie berechnen.\",\"rationale\":\"Die Lernenden wenden die Formel für den Wirkungsgrad auf zwei fiktive Messdatensätze an.\",\"sourceNote\":\"Eigene fiktive Messdaten zu zwei technischen Geräten.\"}",
+      "id": "q005"
+    },
+    {
+      "position": 6,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"beschleunigung-messreihe-tabelle-06\",\"revision\":0,\"format\":\"table\",\"title\":\"Beschleunigung aus einer Messreihe bestimmen\",\"subject\":\"Natur und Technik\",\"grade\":\"8\",\"prompt\":\"Die folgende Messreihe ist fiktiv. Bei einem Wagen gilt: Beschleunigung = Kraft ÷ Masse. Berechne für jede Messung die Beschleunigung und ergänze die leeren Tabellenfelder. Gib die Werte als Dezimalzahlen an.\",\"hint\":\"Teile in jeder Zeile die Kraft durch die Masse. Trage nur die fehlenden Zahlen ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Messung\",\"Kraft in N\",\"Masse in kg\",\"Beschleunigung in m/s²\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"1\",\"input\":false},{\"id\":\"a2\",\"text\":\"5\",\"input\":false},{\"id\":\"a3\",\"text\":\"2\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"2\",\"input\":false},{\"id\":\"b2\",\"text\":\"9\",\"input\":false},{\"id\":\"b3\",\"text\":\"3\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"3\",\"input\":false},{\"id\":\"c2\",\"text\":\"14\",\"input\":false},{\"id\":\"c3\",\"text\":\"4\",\"input\":false},{\"id\":\"c4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"2,5\",\"2.5\"]},{\"id\":\"b4\",\"accepted\":[\"3\",\"3,0\",\"3.0\"]},{\"id\":\"c4\",\"accepted\":[\"3,5\",\"3.5\"]}]},\"objective\":\"Eine einfache Messreihe mithilfe einer physikalischen Beziehung auswerten.\",\"rationale\":\"Die Lernenden berechnen aus Kraft und Masse die zugehörige Beschleunigung und übertragen die Ergebnisse korrekt in eine Tabelle.\",\"sourceNote\":\"Eigene fiktive Messreihe ohne reale Schülerdaten.\"}",
+      "type": "visual",
+      "points": 2,
+      "text": "Die folgende Messreihe ist fiktiv. Bei einem Wagen gilt: Beschleunigung = Kraft ÷ Masse. Berechne für jede Messung die Beschleunigung und ergänze die leeren Tabellenfelder. Gib die Werte als Dezimalzahlen an.",
+      "updatedAt": "2026-10-25T10:19:17.943Z",
+      "id": "q006"
+    },
+    {
+      "points": 2,
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:19:18.233Z",
+      "text": "Fiktive Messreihe: Ein Wagen wird in jeder Messung mit einer während dieser Messung konstanten Kraft in Bewegungsrichtung gezogen. Berechne die übertragene Energie als Arbeit mit W = F · s und ergänze die Tabelle.",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "position": 7,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"arbeit-energie-messreihe-07\",\"revision\":1,\"format\":\"table\",\"title\":\"Übertragene Energie berechnen\",\"subject\":\"Natur und Technik\",\"grade\":\"8\",\"prompt\":\"Fiktive Messreihe: Ein Wagen wird in jeder Messung mit einer während dieser Messung konstanten Kraft in Bewegungsrichtung gezogen. Berechne die übertragene Energie als Arbeit mit W = F · s und ergänze die Tabelle.\",\"hint\":\"Multipliziere die Kraft in Newton mit dem Weg in Metern. Trage die Ergebnisse in Joule als ganze Zahlen ein.\",\"objective\":\"Die übertragene Energie mithilfe der Formel für mechanische Arbeit aus Kraft und Weg bestimmen.\",\"rationale\":\"Die Lernenden verknüpfen Messwerte für Kraft und Weg und berechnen daraus die übertragene Energie. Jede Tabellenzeile enthält eine eigene Messung.\",\"sourceNote\":\"Eigenes Beispiel mit fiktiven Messwerten; keine realen Schülerdaten.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Messung\",\"Kraft F in N\",\"Weg s in m\",\"Übertragene Energie W in J\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"1\",\"input\":false},{\"id\":\"a2\",\"text\":\"6\",\"input\":false},{\"id\":\"a3\",\"text\":\"4\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"2\",\"input\":false},{\"id\":\"b2\",\"text\":\"9\",\"input\":false},{\"id\":\"b3\",\"text\":\"5\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"24\"]},{\"id\":\"b4\",\"accepted\":[\"45\"]}]}}",
+      "id": "q007"
+    },
+    {
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"kraftwirkung-verbindungen-08\",\"revision\":1,\"format\":\"connections\",\"title\":\"Kraftwirkungen zuordnen\",\"subject\":\"Natur und Technik\",\"grade\":\"8\",\"prompt\":\"Verbinde die Richtung der resultierenden Gesamtkraft mit der unmittelbar folgenden Bewegungsänderung. Der Pfeil zeigt von der Kraftwirkung zur Wirkung auf die Bewegung.\",\"hint\":\"Jede Ursache wird mit genau einer passenden Wirkung verbunden.\",\"maxPoints\":2,\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"a\",\"label\":\"Gesamtkraft in Bewegungsrichtung\",\"x\":100,\"y\":80},{\"id\":\"b\",\"label\":\"Gesamtkraft entgegen der Bewegung\",\"x\":100,\"y\":250},{\"id\":\"c\",\"label\":\"Geschwindigkeit nimmt zu\",\"x\":550,\"y\":80},{\"id\":\"d\",\"label\":\"Geschwindigkeit nimmt ab\",\"x\":550,\"y\":250},{\"id\":\"e\",\"label\":\"Gesamtkraft quer zur Bewegung\",\"x\":320,\"y\":165},{\"id\":\"f\",\"label\":\"Bewegungsrichtung ändert sich\",\"x\":550,\"y\":165}]},\"solution\":{\"edges\":[[\"a\",\"c\"],[\"b\",\"d\"],[\"e\",\"f\"]]},\"objective\":\"Den Zusammenhang zwischen Kraftrichtung und Bewegungsänderung darstellen.\",\"rationale\":\"Eine Kraft in Bewegungsrichtung beschleunigt, eine entgegengesetzte Kraft bremst, und eine quer gerichtete Kraft kann die Bewegungsrichtung ändern.\",\"sourceNote\":\"Eigenes schematisches Modell zu Kraftwirkungen.\"}",
+      "updatedAt": "2026-10-25T10:19:18.392Z",
+      "type": "visual",
+      "position": 8,
+      "text": "Verbinde die Richtung der resultierenden Gesamtkraft mit der unmittelbar folgenden Bewegungsänderung. Der Pfeil zeigt von der Kraftwirkung zur Wirkung auf die Bewegung.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 1,
+      "reason": "Säulendarstellung ausdrücklich nennen; kein kontinuierliches Liniendiagramm versprechen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    },
+    {
+      "position": 7,
+      "reason": "Voraussetzungen der Arbeitsformel und je Messung konstante Kraft klarstellen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    },
+    {
+      "position": 8,
+      "reason": "Bewegungsänderung folgt aus der resultierenden Gesamtkraft, nicht einer beliebigen Einzelkraft.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    }
+  ]
+}

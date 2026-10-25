@@ -1,0 +1,183 @@
+{
+  "pilotId": "P08",
+  "at": "2026-10-25T10:08:10.104Z",
+  "quiz": {
+    "totalPoints": 16,
+    "localeContractVersion": 1,
+    "generationStatus": "ready",
+    "updatedAt": "2026-10-25T10:08:05.013Z",
+    "accessCode": "R8DKGGLD",
+    "resultMode": "points_grade",
+    "qualityIssues": [],
+    "contentLocale": "de-DE",
+    "audioQuestionCount": 0,
+    "subject": "Deutsch",
+    "sessionState": "open",
+    "shuffleQuestions": false,
+    "shuffleAnswers": false,
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileCount": 0,
+      "profileIds": [],
+      "status": "no_match"
+    },
+    "requiresSecureAssessmentRules": false,
+    "audioReady": true,
+    "gradeScaleId": "standard",
+    "rightsHold": false,
+    "creationContext": {
+      "learningGoals": [],
+      "topic": "Quellenkritik und Argumentationsanalyse: Eigene fiktive Quellen mit klaren Fakten nutzen, belegte Aussagen und Argumentationsbeziehungen prüfen",
+      "schoolType": "Mittelschule",
+      "difficulty": "mittel bis anspruchsvoll",
+      "contentLocale": "de-DE",
+      "region": "Bayern"
+    },
+    "ownerId": "gc-visual255-e2e",
+    "ended": false,
+    "createdAt": "2026-10-25T10:08:03.721Z",
+    "published": false,
+    "grade": "10",
+    "listeningOnlyQuestionCount": 0,
+    "isDeleted": false,
+    "shareEnabled": false,
+    "description": "Viel Erfolg beim Test!",
+    "solutionAudioQuestionCount": 0,
+    "qualityWarnings": [],
+    "gradingLocale": "de-DE",
+    "questionCount": 8,
+    "showSolutions": true,
+    "title": "Quellenkritik und Argumentationsanalyse",
+    "generationJobId": "8fec317b53bfa0a16250573d320349f102d18ccc",
+    "audioAnswerQuestionCount": 0,
+    "solutionAudioReady": true,
+    "gradeScaleSnapshot": {
+      "id": "standard",
+      "name": "Standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ]
+    },
+    "startMode": "student",
+    "id": "R8DKGGLD"
+  },
+  "questions": [
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"quellenkritik-evidence-01\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Belege für eine Aussage erkennen\",\"subject\":\"Deutsch\",\"grade\":\"10\",\"prompt\":\"Markiere genau die zwei Sätze, die die Aussage stützen: Die Stadt führte im Jahr 2024 wegen zunehmender Verkehrsprobleme neue Fahrradspuren ein.\",\"hint\":\"Wähle nur Sätze aus, die einen direkten sachlichen Beleg für die Aussage liefern.\",\"maxPoints\":2,\"objective\":\"Direkte Belege einer überprüfbaren Aussage zuordnen.\",\"rationale\":\"Die Lernenden unterscheiden relevante Belege von ergänzenden oder nicht passenden Informationen.\",\"sourceNote\":\"Eigenständig erstellte fiktive Quelle ohne reale Personen oder Orte.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Die fiktive Stadt Lindenau liegt an einem breiten Fluss.\"},{\"id\":\"s2\",\"text\":\"Der Stadtrat beschloss im März 2024, an drei Hauptstraßen neue Fahrradspuren einzurichten.\"},{\"id\":\"s3\",\"text\":\"Als Grund nannte der Verkehrsbericht die seit zwei Jahren zunehmenden Staus im Berufsverkehr.\"},{\"id\":\"s4\",\"text\":\"Viele Lindenauerinnen und Lindenauer nutzen am Wochenende den Uferweg zum Spazierengehen.\"}]},\"solution\":{\"selections\":[[\"s2\",\"s3\"]]}}",
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:08:03.831Z",
+      "text": "Markiere genau die zwei Sätze, die die Aussage stützen: Die Stadt führte im Jahr 2024 wegen zunehmender Verkehrsprobleme neue Fahrradspuren ein.",
+      "position": 1,
+      "points": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q001"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"quellenkritik-evidence-02\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Eine unbelegte Schlussfolgerung erkennen\",\"subject\":\"Deutsch\",\"grade\":\"10\",\"prompt\":\"Markiere genau den Satz, dessen Schlussfolgerung durch die vorherigen Angaben nicht ausreichend belegt ist.\",\"hint\":\"Prüfe, ob die genannte Schlussfolgerung wirklich aus den angegebenen Daten folgt.\",\"maxPoints\":2,\"objective\":\"Eine nicht hinreichend belegte Schlussfolgerung in einer fiktiven Quelle erkennen.\",\"rationale\":\"Die Aufgabe prüft, ob aus einer begrenzten Datengrundlage unzulässige Verallgemeinerungen erkannt werden.\",\"sourceNote\":\"Eigenständig erstellte fiktive Quelle ohne reale Personen oder Orte.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Für eine fiktive Befragung wurden 120 zufällig ausgewählte Einwohnerinnen und Einwohner befragt.\"},{\"id\":\"s2\",\"text\":\"68 Befragte sprachen sich für einen autofreien Marktplatz aus.\"},{\"id\":\"s3\",\"text\":\"Daraus folgt, dass die gesamte Bevölkerung von Lindenau einen autofreien Marktplatz verlangt.\"},{\"id\":\"s4\",\"text\":\"Die Befragung wurde im September 2025 schriftlich durchgeführt.\"}]},\"solution\":{\"selections\":[[\"s3\"]]}}",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:08:03.972Z",
+      "position": 2,
+      "text": "Markiere genau den Satz, dessen Schlussfolgerung durch die vorherigen Angaben nicht ausreichend belegt ist.",
+      "type": "visual",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q002"
+    },
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:08:04.124Z",
+      "text": "Markiere genau die zwei Sätze, die als überprüfbare Tatsachenbehauptungen formuliert sind.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"quellenkritik-evidence-03\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Tatsachenbehauptungen erkennen\",\"subject\":\"Deutsch\",\"grade\":\"10\",\"prompt\":\"Markiere genau die zwei Sätze, die als überprüfbare Tatsachenbehauptungen formuliert sind.\",\"hint\":\"Eine Tatsachenbehauptung kann grundsätzlich durch Daten, Beobachtungen oder Dokumente überprüft werden.\",\"maxPoints\":2,\"objective\":\"Überprüfbare Tatsachenbehauptungen von Wertungen unterscheiden.\",\"rationale\":\"Die Lernenden prüfen die sprachliche und inhaltliche Überprüfbarkeit einzelner Aussagen.\",\"sourceNote\":\"Eigenständig erstellte fiktive Quelle ohne reale Personen oder Orte.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Im Jahr 2023 wurden im fiktiven Landkreis Nordtal 412 Solaranlagen neu gemeldet.\"},{\"id\":\"s2\",\"text\":\"Diese Entwicklung ist eindeutig großartig und vorbildlich.\"},{\"id\":\"s3\",\"text\":\"Die zuständige Behörde veröffentlichte die Zahlen in ihrem Jahresbericht.\"},{\"id\":\"s4\",\"text\":\"Jede vernünftige Person sollte deshalb sofort eine Solaranlage kaufen.\"}]},\"solution\":{\"selections\":[[\"s1\",\"s3\"]]}}",
+      "position": 3,
+      "type": "visual",
+      "points": 2,
+      "id": "q003"
+    },
+    {
+      "text": "Verbinde jede Begründung mit der Aussage, die sie in der fiktiven Quelle stützt. Die Pfeile zeigen von der Begründung zur gestützten Aussage.",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:08:04.261Z",
+      "position": 4,
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"argumentation-connections-01\",\"revision\":0,\"format\":\"connections\",\"title\":\"Begründungen Aussagen zuordnen\",\"subject\":\"Deutsch\",\"grade\":\"10\",\"prompt\":\"Verbinde jede Begründung mit der Aussage, die sie in der fiktiven Quelle stützt. Die Pfeile zeigen von der Begründung zur gestützten Aussage.\",\"hint\":\"Ordne jeder Begründung genau eine passende Aussage zu.\",\"maxPoints\":2,\"objective\":\"Begründungsbeziehungen zwischen Aussagen erkennen und darstellen.\",\"rationale\":\"Die gerichteten Verbindungen machen sichtbar, welche Gründe welche Behauptungen stützen.\",\"sourceNote\":\"Eigenständig erstellte fiktive Argumentation ohne reale Personen oder Orte.\",\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"g1\",\"label\":\"An drei Messpunkten sank der Lärmpegel nach dem Tempolimit.\" ,\"x\":120,\"y\":80},{\"id\":\"g2\",\"label\":\"Der Busverkehr wurde im letzten Jahr um 15 Prozent erweitert.\",\"x\":120,\"y\":250},{\"id\":\"a1\",\"label\":\"Das Tempolimit verringerte die Lärmbelastung.\",\"x\":570,\"y\":80},{\"id\":\"a2\",\"label\":\"Der öffentliche Verkehr ist besser erreichbar geworden.\",\"x\":570,\"y\":250}]},\"solution\":{\"edges\":[[\"g1\",\"a1\"],[\"g2\",\"a2\"]]}}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q004"
+    },
+    {
+      "points": 2,
+      "position": 5,
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:08:04.411Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"argumentation-connections-02\",\"revision\":0,\"format\":\"connections\",\"title\":\"Gegenargumente und Entkräftungen\",\"subject\":\"Deutsch\",\"grade\":\"10\",\"prompt\":\"Verbinde jeweils das Gegenargument mit der passenden Entkräftung. Die Pfeile zeigen vom Gegenargument zur Entkräftung.\",\"hint\":\"Achte darauf, worauf die Entkräftung inhaltlich unmittelbar antwortet.\",\"maxPoints\":2,\"objective\":\"Gegenargumente und passende Entkräftungen in einer Argumentation zuordnen.\",\"rationale\":\"Die gerichteten Verbindungen zeigen, ob eine Antwort tatsächlich auf das jeweilige Gegenargument eingeht.\",\"sourceNote\":\"Eigenständig erstellte fiktive Argumentation ohne reale Personen oder Orte.\",\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"g1\",\"label\":\"Die Umstellung auf Mehrwegbecher sei für kleine Cafés zu teuer.\",\"x\":110,\"y\":80},{\"id\":\"g2\",\"label\":\"Mehrwegbecher würden den Arbeitsaufwand erhöhen.\",\"x\":110,\"y\":250},{\"id\":\"e1\",\"label\":\"Ein kommunaler Zuschuss kann die Anschaffungskosten im ersten Jahr teilweise ausgleichen.\",\"x\":590,\"y\":80},{\"id\":\"e2\",\"label\":\"Ein Rücknahmesystem mit zentraler Spülstelle kann den zusätzlichen Aufwand verringern.\",\"x\":590,\"y\":250}]},\"solution\":{\"edges\":[[\"g1\",\"e1\"],[\"g2\",\"e2\"]]}}",
+      "text": "Verbinde jeweils das Gegenargument mit der passenden Entkräftung. Die Pfeile zeigen vom Gegenargument zur Entkräftung.",
+      "id": "q005"
+    },
+    {
+      "updatedAt": "2026-10-25T10:08:04.575Z",
+      "points": 2,
+      "position": 6,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"quellenanalyse-table-01\",\"revision\":0,\"format\":\"table\",\"title\":\"Funktion und Beleglage bestimmen\",\"subject\":\"Deutsch\",\"grade\":\"10\",\"prompt\":\"Ergänze die fehlenden Angaben zur Funktion und zur Beleglage der Textstellen.\",\"hint\":\"Unterscheide zwischen überprüfbarer Tatsache, Wertung und Schlussfolgerung. Bewerte außerdem, ob ein konkreter Beleg genannt wird.\",\"maxPoints\":2,\"objective\":\"Aussagefunktion und Beleglage in einer fiktiven Quelle analysieren.\",\"rationale\":\"Die Tabelle verbindet die Einordnung sprachlicher Aussagen mit der Prüfung ihrer Begründung.\",\"sourceNote\":\"Eigenständig erstellte fiktive Quelle ohne reale Personen oder Orte.\",\"spec\":{\"columns\":[\"Textstelle\",\"Funktion\",\"Beleglage\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Im Versuch stieg die Keimrate von 62 auf 74 Prozent.\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":true},{\"id\":\"a3\",\"text\":\"konkrete Messwerte genannt\",\"input\":false}],[{\"id\":\"b1\",\"text\":\"Dieses Ergebnis beweist, dass das Mittel immer wirkt.\",\"input\":false},{\"id\":\"b2\",\"text\":\"\",\"input\":true},{\"id\":\"b3\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"Deshalb sollte die Schule das Mittel künftig einsetzen.\",\"input\":false},{\"id\":\"c2\",\"text\":\"\",\"input\":true},{\"id\":\"c3\",\"text\":\"keine zusätzliche Begründung genannt\",\"input\":false}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a2\",\"accepted\":[\"Tatsachenbehauptung\"]},{\"id\":\"b2\",\"accepted\":[\"Schlussfolgerung\"]},{\"id\":\"b3\",\"accepted\":[\"unzureichend belegt\"]},{\"id\":\"c2\",\"accepted\":[\"Forderung\"]}]}}",
+      "type": "visual",
+      "text": "Ergänze die fehlenden Angaben zur Funktion und zur Beleglage der Textstellen.",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q006"
+    },
+    {
+      "type": "visual",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:08:04.716Z",
+      "points": 2,
+      "text": "Ergänze für jede Quelle die passende Bewertung ihrer Aussagekraft und die entscheidende Begründung.",
+      "position": 7,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"quellenkritik-table-02\",\"revision\":0,\"format\":\"table\",\"title\":\"Aussagekraft fiktiver Quellen bewerten\",\"subject\":\"Deutsch\",\"grade\":\"10\",\"prompt\":\"Ergänze für jede Quelle die passende Bewertung ihrer Aussagekraft und die entscheidende Begründung.\",\"hint\":\"Prüfe Urheberschaft, Nachprüfbarkeit und Genauigkeit der Angaben.\",\"maxPoints\":2,\"objective\":\"Die Aussagekraft fiktiver Quellen anhand transparenter Kriterien bewerten.\",\"rationale\":\"Eine Quellenbewertung soll sich auf erkennbare Merkmale und nicht auf ein bloßes Gefühl stützen.\",\"sourceNote\":\"Eigenständig erstellte fiktive Quellen ohne reale Personen oder Orte.\",\"spec\":{\"columns\":[\"Quelle\",\"Aussagekraft\",\"entscheidendes Merkmal\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Fiktiver Bericht eines Forschungsinstituts mit Methode, Stichprobengröße und Rohdaten\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":true},{\"id\":\"a3\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Anonymer Beitrag mit der Überschrift: Alle wissen, dass es so ist!\",\"input\":false},{\"id\":\"b2\",\"text\":\"\",\"input\":true},{\"id\":\"b3\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a2\",\"accepted\":[\"hoch\"]},{\"id\":\"a3\",\"accepted\":[\"Methode und Rohdaten sind nachvollziehbar\"]},{\"id\":\"b2\",\"accepted\":[\"niedrig\"]},{\"id\":\"b3\",\"accepted\":[\"keine überprüfbare Urheberschaft oder Belege\"]}]}}",
+      "id": "q007"
+    },
+    {
+      "type": "visual",
+      "text": "Markiere die eine fehlerhafte Zeile und formuliere die Aussage fachlich richtig.",
+      "position": 8,
+      "updatedAt": "2026-10-25T10:08:04.847Z",
+      "points": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"argumentationsanalyse-correction-01\",\"revision\":0,\"format\":\"correction\",\"title\":\"Eine Argumentationsanalyse korrigieren\",\"subject\":\"Deutsch\",\"grade\":\"10\",\"prompt\":\"Markiere die eine fehlerhafte Zeile und formuliere die Aussage fachlich richtig.\",\"hint\":\"Prüfe, ob die jeweilige Aussage die Begriffe Beleg, Beispiel und Gegenargument korrekt verwendet.\",\"maxPoints\":2,\"objective\":\"Eine fehlerhafte Aussage über Argumentationsbeziehungen erkennen und korrigieren.\",\"rationale\":\"Die Aufgabe trennt das Erkennen eines fachlichen Fehlers von seiner begründeten Korrektur.\",\"sourceNote\":\"Eigenständig erstellte fiktive Aussagen ohne reale Personen oder Orte.\",\"spec\":{\"rows\":[{\"id\":\"a\",\"text\":\"Ein konkreter Messwert kann als Beleg für eine überprüfbare Tatsachenbehauptung dienen.\"},{\"id\":\"b\",\"text\":\"Ein einzelnes Beispiel beweist immer, dass eine allgemeine Behauptung richtig ist.\"},{\"id\":\"c\",\"text\":\"Ein Gegenargument stellt einen Einwand gegen eine vorherige Position dar.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"b\",\"accepted\":[\"Ein einzelnes Beispiel veranschaulicht eine Behauptung, beweist aber nicht automatisch ihre allgemeine Gültigkeit.\",\"Ein Beispiel kann eine Aussage erläutern, ist jedoch allein kein ausreichender Beweis für eine allgemeine Behauptung.\"]}}",
+      "id": "q008"
+    }
+  ]
+}

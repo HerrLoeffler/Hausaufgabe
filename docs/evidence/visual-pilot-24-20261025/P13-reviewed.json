@@ -1,0 +1,200 @@
+{
+  "pilotId": "P13",
+  "at": "2026-10-25T10:15:51.564Z",
+  "quiz": {
+    "creationContext": {
+      "learningGoals": [],
+      "difficulty": "leicht bis mittel",
+      "region": "Bayern",
+      "topic": "Pflanzen und Wachstumsdaten: Pflanzenteile und ihre Funktionen, einfache selbst konstruierte Wachstumsdaten fachlich nutzen",
+      "schoolType": "Mittelschule",
+      "contentLocale": "de-DE"
+    },
+    "resultMode": "points_grade",
+    "createdAt": "2026-10-25T10:15:41.967Z",
+    "subject": "Natur und Technik",
+    "shuffleQuestions": false,
+    "grade": "6",
+    "isDeleted": false,
+    "generationJobId": "93932c657effde4e218df72a2a9819a140d4ee92",
+    "shuffleAnswers": false,
+    "startMode": "student",
+    "gradeScaleId": "standard",
+    "qualityIssues": [],
+    "audioAnswerQuestionCount": 0,
+    "listeningOnlyQuestionCount": 0,
+    "showSolutions": true,
+    "audioReady": true,
+    "generationStatus": "ready",
+    "description": "Viel Erfolg beim Test!",
+    "qualityWarnings": [],
+    "rightsHold": false,
+    "ownerId": "gc-visual255-e2e",
+    "sessionState": "open",
+    "contentLocale": "de-DE",
+    "solutionAudioQuestionCount": 0,
+    "ended": false,
+    "shareEnabled": false,
+    "localeContractVersion": 1,
+    "gradingLocale": "de-DE",
+    "pedagogicalPool": {
+      "status": "no_match",
+      "profileIds": [],
+      "version": "gc-pedagogy-pool-v1",
+      "profileCount": 0
+    },
+    "published": false,
+    "updatedAt": "2026-10-25T10:15:43.615Z",
+    "accessCode": "5TLF5WTY",
+    "totalPoints": 16,
+    "questionCount": 8,
+    "requiresSecureAssessmentRules": false,
+    "solutionAudioReady": true,
+    "title": "Pflanzen und Wachstumsdaten",
+    "audioQuestionCount": 0,
+    "gradeScaleSnapshot": {
+      "id": "standard",
+      "name": "Standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ]
+    },
+    "id": "5TLF5WTY"
+  },
+  "questions": [
+    {
+      "position": 1,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "updatedAt": "2026-10-25T10:15:42.085Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"pflanze-beschriften-01\",\"revision\":0,\"format\":\"labeling\",\"title\":\"Eine Blütenpflanze beschriften\",\"subject\":\"Natur und Technik\",\"grade\":\"6\",\"prompt\":\"Beschrifte die vier markierten Teile der Blütenpflanze.\",\"hint\":\"Tippe zuerst einen Begriff und dann das passende markierte Feld an. Jeder Begriff wird genau einmal verwendet.\",\"maxPoints\":2,\"spec\":{\"scene\":\"plant\",\"regions\":[\"r1\",\"r2\",\"r3\",\"r4\"],\"items\":[{\"id\":\"b1\",\"text\":\"Blüte\"},{\"id\":\"b2\",\"text\":\"Sprossachse\"},{\"id\":\"b3\",\"text\":\"Blätter\"},{\"id\":\"b4\",\"text\":\"Wurzel\"}]},\"solution\":{\"assignments\":{\"r1\":\"b1\",\"r2\":\"b2\",\"r3\":\"b3\",\"r4\":\"b4\"}},\"objective\":\"Die wichtigsten Teile einer Blütenpflanze erkennen und benennen.\",\"rationale\":\"Die vier Begriffe werden den passenden markierten Pflanzenteilen zugeordnet.\",\"sourceNote\":\"Eigene schematische Darstellung einer Blütenpflanze.\"}",
+      "type": "visual",
+      "points": 2,
+      "text": "Beschrifte die vier markierten Teile der Blütenpflanze.",
+      "id": "q001"
+    },
+    {
+      "points": 2,
+      "text": "Klicke auf den Pflanzenteil, der Wasser und Mineralsalze aus dem Boden aufnimmt.",
+      "updatedAt": "2026-10-25T10:15:42.231Z",
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"pflanze-wurzel-02\",\"revision\":0,\"format\":\"hotspot\",\"title\":\"Wasseraufnahme der Pflanze\",\"subject\":\"Natur und Technik\",\"grade\":\"6\",\"prompt\":\"Klicke auf den Pflanzenteil, der Wasser und Mineralsalze aus dem Boden aufnimmt.\",\"hint\":\"Wähle genau einen Bereich der Pflanze aus.\",\"maxPoints\":2,\"spec\":{\"scene\":\"plant\",\"regions\":[\"r1\",\"r2\",\"r3\",\"r4\"],\"maxSelections\":1},\"solution\":{\"regions\":[\"r4\"],\"text\":\"Wurzel\"},\"objective\":\"Die Funktion der Wurzel erkennen.\",\"rationale\":\"Die Wurzel nimmt Wasser und Mineralsalze aus dem Boden auf.\",\"sourceNote\":\"Eigene schematische Darstellung einer Blütenpflanze.\"}",
+      "position": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q002"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"pflanze-blaetter-03\",\"revision\":1,\"format\":\"hotspot\",\"title\":\"Zuckerbildung in der Pflanze\",\"subject\":\"Natur und Technik\",\"grade\":\"6\",\"prompt\":\"Klicke auf den Pflanzenteil, in dem bei dieser Blütenpflanze überwiegend mit Licht Zucker hergestellt wird.\",\"hint\":\"Wähle genau einen Bereich der Pflanze aus.\",\"maxPoints\":2,\"spec\":{\"scene\":\"plant\",\"regions\":[\"r1\",\"r2\",\"r3\",\"r4\"],\"maxSelections\":1},\"solution\":{\"regions\":[\"r3\"],\"text\":\"Blätter\"},\"objective\":\"Die Funktion der Blätter bei der Herstellung von Zucker erkennen.\",\"rationale\":\"In den Blättern stellt die Pflanze mithilfe von Licht Zucker her.\",\"sourceNote\":\"Eigene schematische Darstellung einer Blütenpflanze.\"}",
+      "position": 3,
+      "type": "visual",
+      "text": "Klicke auf den Pflanzenteil, in dem bei dieser Blütenpflanze überwiegend mit Licht Zucker hergestellt wird.",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:15:42.589Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q003"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wachstum-saeulen-04\",\"revision\":0,\"format\":\"chart\",\"title\":\"Fiktive Pflanzenhöhen darstellen\",\"subject\":\"Natur und Technik\",\"grade\":\"6\",\"prompt\":\"Erstelle aus den fiktiven Messwerten ein Säulendiagramm zur Pflanzenhöhe.\",\"hint\":\"Trage jede Höhe bei der passenden Pflanze ein. Die Einheit ist Zentimeter.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":20,\"step\":1,\"unit\":\"cm\",\"categories\":[{\"id\":\"a\",\"label\":\"Pflanze A\",\"value\":8},{\"id\":\"b\",\"label\":\"Pflanze B\",\"value\":12},{\"id\":\"c\",\"label\":\"Pflanze C\",\"value\":10}]},\"solution\":{\"values\":{\"a\":8,\"b\":12,\"c\":10}},\"objective\":\"Messwerte in einem Säulendiagramm darstellen.\",\"rationale\":\"Die drei fiktiven Pflanzenhöhen werden den passenden Säulen zugeordnet.\",\"sourceNote\":\"Eigene fiktive Messdaten; keine realen Schülerdaten.\"}",
+      "position": 4,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "updatedAt": "2026-10-25T10:15:42.803Z",
+      "points": 2,
+      "text": "Erstelle aus den fiktiven Messwerten ein Säulendiagramm zur Pflanzenhöhe.",
+      "type": "visual",
+      "id": "q004"
+    },
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wachstum-tage-05\",\"revision\":0,\"format\":\"chart\",\"title\":\"Fiktisches Wachstum nach Tagen\",\"subject\":\"Natur und Technik\",\"grade\":\"6\",\"prompt\":\"Übertrage die fiktiven Wachstumsdaten in das Diagramm. Beachte die Reihenfolge der Tage.\",\"hint\":\"Trage die Höhe für jeden Tag in Zentimetern ein.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":15,\"step\":1,\"unit\":\"cm\",\"categories\":[{\"id\":\"tag1\",\"label\":\"Tag 1\",\"value\":4},{\"id\":\"tag2\",\"label\":\"Tag 2\",\"value\":6},{\"id\":\"tag3\",\"label\":\"Tag 3\",\"value\":9},{\"id\":\"tag4\",\"label\":\"Tag 4\",\"value\":11}]},\"solution\":{\"values\":{\"tag1\":4,\"tag2\":6,\"tag3\":9,\"tag4\":11}},\"objective\":\"Eine zeitlich geordnete Reihe von Wachstumsdaten darstellen.\",\"rationale\":\"Die fiktiven Messwerte werden den vier Tagen in der vorgegebenen Reihenfolge zugeordnet.\",\"sourceNote\":\"Eigene fiktive Messdaten; keine realen Schülerdaten.\"}",
+      "text": "Übertrage die fiktiven Wachstumsdaten in das Diagramm. Beachte die Reihenfolge der Tage.",
+      "type": "visual",
+      "points": 2,
+      "position": 5,
+      "updatedAt": "2026-10-25T10:15:42.943Z",
+      "id": "q005"
+    },
+    {
+      "text": "Ordne jedem Pflanzenteil genau einen der Begriffe zu: Wasser- und Mineralsalzaufnahme, Stützen und Tragen, Fotosynthese. Trage den passenden Begriff ein.",
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"pflanzenteile-funktionen-06\",\"revision\":1,\"format\":\"table\",\"title\":\"Pflanzenteile und Funktionen\",\"subject\":\"Natur und Technik\",\"grade\":\"6\",\"prompt\":\"Ordne jedem Pflanzenteil genau einen der Begriffe zu: Wasser- und Mineralsalzaufnahme, Stützen und Tragen, Fotosynthese. Trage den passenden Begriff ein.\",\"hint\":\"Trage kurze passende Begriffe oder Wortgruppen ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Pflanzenteil\",\"Funktion\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Wurzel\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Sprossachse\",\"input\":false},{\"id\":\"b2\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"Blätter\",\"input\":false},{\"id\":\"c2\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a2\",\"accepted\":[\"Wasser- und Mineralsalzaufnahme\"]},{\"id\":\"b2\",\"accepted\":[\"Stützen und Tragen\"]},{\"id\":\"c2\",\"accepted\":[\"Fotosynthese\",\"Photosynthese\"]}]},\"objective\":\"Pflanzenteilen passende Grundfunktionen zuordnen.\",\"rationale\":\"Jede Tabellenzeile verbindet einen Pflanzenteil mit einer passenden Funktion.\",\"sourceNote\":\"Eigene fachliche Zusammenstellung.\"}",
+      "updatedAt": "2026-10-25T10:15:43.130Z",
+      "position": 6,
+      "points": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q006"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"pflanzenteil-samen-07\",\"revision\":1,\"format\":\"hotspot\",\"title\":\"Pflanzenteil für die Samenbildung\",\"subject\":\"Natur und Technik\",\"grade\":\"6\",\"prompt\":\"Klicke auf den Pflanzenteil, in dem nach erfolgreicher Bestäubung und Befruchtung Samen entstehen.\",\"hint\":\"Wähle genau einen Bereich der Pflanze aus.\",\"maxPoints\":2,\"spec\":{\"scene\":\"plant\",\"regions\":[\"r1\",\"r2\",\"r3\",\"r4\"],\"maxSelections\":1},\"solution\":{\"regions\":[\"r1\"],\"text\":\"Blüte\"},\"objective\":\"Die Funktion eines Pflanzenteils im Zusammenhang mit der Samenbildung erkennen.\",\"rationale\":\"Nach der Bestäubung entstehen Samen aus der Blüte beziehungsweise aus Teilen der Blüte.\",\"sourceNote\":\"Eigene schematische Darstellung und fachlich vereinfachte Aufgabe mit fiktivem Kontext; keine realen Schülerdaten.\"}",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "points": 2,
+      "text": "Klicke auf den Pflanzenteil, in dem nach erfolgreicher Bestäubung und Befruchtung Samen entstehen.",
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:15:43.309Z",
+      "position": 7,
+      "id": "q007"
+    },
+    {
+      "updatedAt": "2026-10-25T10:15:43.490Z",
+      "position": 8,
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"pflanze-sprossachse-08\",\"revision\":0,\"format\":\"hotspot\",\"title\":\"Aufgaben der Sprossachse\",\"subject\":\"Natur und Technik\",\"grade\":\"6\",\"prompt\":\"Klicke auf den Pflanzenteil, der die Blätter trägt und Wasser innerhalb der Pflanze weiterleitet.\",\"hint\":\"Wähle genau einen Bereich der Pflanze aus.\",\"maxPoints\":2,\"spec\":{\"scene\":\"plant\",\"regions\":[\"r1\",\"r2\",\"r3\",\"r4\"],\"maxSelections\":1},\"solution\":{\"regions\":[\"r2\"],\"text\":\"Sprossachse\"},\"objective\":\"Die Sprossachse anhand ihrer Funktionen erkennen.\",\"rationale\":\"Die Sprossachse trägt unter anderem Blätter und leitet Wasser in der Pflanze weiter.\",\"sourceNote\":\"Eigene schematische Darstellung einer Blütenpflanze.\"}",
+      "type": "visual",
+      "text": "Klicke auf den Pflanzenteil, der die Blätter trägt und Wasser innerhalb der Pflanze weiterleitet.",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 3,
+      "reason": "Fotosynthese findet auch in anderen grünen Teilen statt; Blätter als Hauptort abfragen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    },
+    {
+      "position": 6,
+      "reason": "Freie Funktionsbeschreibungen nicht an zwei Mustersätzen messen; eindeutige Funktionsbegriffe vorgeben.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    },
+    {
+      "position": 7,
+      "reason": "Samenbildung setzt Befruchtung voraus, nicht nur Bestäubung.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    }
+  ]
+}

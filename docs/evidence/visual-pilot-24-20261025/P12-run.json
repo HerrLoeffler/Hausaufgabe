@@ -1,0 +1,110 @@
+{
+  "id": "P12",
+  "row": {
+    "id": "P12",
+    "subject": "Englisch",
+    "grade": 9,
+    "title": "Media and opinions",
+    "goal": "Eigene kurze englische Meldungen und Meinungen auswerten; Aussagen belegen und eindeutige Sprachfehler korrigieren",
+    "formats": [
+      "evidence",
+      "connections",
+      "correction",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-12-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:12:05.971Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-12-A",
+    "subject": "Englisch",
+    "grade": "9",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Media and opinions: Eigene kurze englische Meldungen und Meinungen auswerten; Aussagen belegen und eindeutige Sprachfehler korrigieren",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus evidence, connections, correction, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "5f71d492a140ba98b3853a412cd2e221f5151205",
+  "dispatch": {
+    "jobId": "5f71d492a140ba98b3853a412cd2e221f5151205"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:14:49.530Z",
+  "job": {
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "profileIds": [],
+      "status": "no_match",
+      "version": "gc-pedagogy-pool-v1"
+    },
+    "updatedAt": "2026-10-25T10:14:48.768Z",
+    "ownerId": "gc-visual255-e2e",
+    "imageCompleted": 0,
+    "solutionAudioCompleted": 0,
+    "sourceQuizId": "",
+    "startedAt": "2026-10-25T10:12:06.731Z",
+    "audioCompleted": 0,
+    "answerAudioCompleted": 0,
+    "solutionAudioTotal": 0,
+    "audioTotal": 0,
+    "requestedCount": 8,
+    "subject": "Englisch",
+    "answerAudioTotal": 0,
+    "topic": "Media and opinions: Eigene kurze englische Meldungen und Meinungen auswerten; Aussagen belegen und eindeutige Sprachfehler korrigieren",
+    "stage": "ready",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "qualityIssues": [],
+    "createdAt": "2026-10-25T10:12:06.180Z",
+    "status": "ready",
+    "input": {
+      "region": "Bayern",
+      "solutionAudioQuestionCount": 0,
+      "audioAnswerQuestionCount": 0,
+      "points": 16,
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus evidence, connections, correction, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "grade": "9",
+      "imageMode": "none",
+      "materialMode": "inspiration",
+      "audioQuestionCount": 0,
+      "allowedTypes": [
+        "visual"
+      ],
+      "audioMode": "none",
+      "topic": "Media and opinions: Eigene kurze englische Meldungen und Meinungen auswerten; Aussagen belegen und eindeutige Sprachfehler korrigieren",
+      "difficulty": "mittel bis anspruchsvoll",
+      "count": 8,
+      "pedagogicalContextKnown": true,
+      "exactAudioCounts": false,
+      "maxVisualQuestions": 0,
+      "schoolType": "Mittelschule",
+      "subject": "Englisch",
+      "allowImageChoices": false,
+      "clientRequestId": "VIS24-20261025-12-A",
+      "exactImageCounts": false
+    },
+    "percent": 100,
+    "completedAt": "2026-10-25T10:14:48.768Z",
+    "generationMode": "generated",
+    "quizId": "R6D2JQKR",
+    "materials": [],
+    "qualityWarnings": [],
+    "imageTotal": 0,
+    "requestId": "VIS24-20261025-12-A",
+    "grade": "9",
+    "dispatchState": "enqueued",
+    "completedCount": 8,
+    "id": "5f71d492a140ba98b3853a412cd2e221f5151205"
+  },
+  "quizId": "R6D2JQKR"
+}

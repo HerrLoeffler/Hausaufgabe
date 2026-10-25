@@ -1,0 +1,190 @@
+{
+  "pilotId": "P14",
+  "at": "2026-10-25T10:16:53.509Z",
+  "quiz": {
+    "accessCode": "ZADAHYZV",
+    "title": "Temperatur und Messreihen",
+    "questionCount": 8,
+    "audioAnswerQuestionCount": 0,
+    "requiresSecureAssessmentRules": false,
+    "updatedAt": "2026-10-25T10:16:49.284Z",
+    "ownerId": "gc-visual255-e2e",
+    "description": "Viel Erfolg beim Test!",
+    "localeContractVersion": 1,
+    "contentLocale": "de-DE",
+    "resultMode": "points_grade",
+    "gradeScaleSnapshot": {
+      "name": "Standard",
+      "id": "standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ]
+    },
+    "listeningOnlyQuestionCount": 0,
+    "rightsHold": false,
+    "shuffleAnswers": false,
+    "showSolutions": true,
+    "creationContext": {
+      "learningGoals": [],
+      "topic": "Temperatur und Messreihen: Temperaturskalen, Messwerttabellen und Diagramme in einfachen erfundenen Experimenten auswerten",
+      "difficulty": "mittel bis anspruchsvoll",
+      "region": "Bayern",
+      "contentLocale": "de-DE",
+      "schoolType": "Mittelschule"
+    },
+    "gradeScaleId": "standard",
+    "solutionAudioReady": true,
+    "subject": "Natur und Technik",
+    "audioQuestionCount": 0,
+    "audioReady": true,
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": [],
+      "profileCount": 0,
+      "status": "no_match"
+    },
+    "shuffleQuestions": false,
+    "gradingLocale": "de-DE",
+    "published": false,
+    "startMode": "student",
+    "totalPoints": 16,
+    "shareEnabled": false,
+    "isDeleted": false,
+    "sessionState": "open",
+    "qualityIssues": [],
+    "generationStatus": "ready",
+    "ended": false,
+    "grade": "7",
+    "generationJobId": "3402bbca22ea5081176fffc6afb155486134d9f8",
+    "qualityWarnings": [],
+    "solutionAudioQuestionCount": 0,
+    "createdAt": "2026-10-25T10:16:47.566Z",
+    "id": "ZADAHYZV"
+  },
+  "questions": [
+    {
+      "points": 2,
+      "text": "Markiere 6 °C auf der Temperaturskala.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"temperatur-skala-6-grad\",\"revision\":0,\"format\":\"scale\",\"title\":\"6 °C auf einer Temperaturskala\",\"subject\":\"Natur und Technik\",\"grade\":\"7\",\"prompt\":\"Markiere 6 °C auf der Temperaturskala.\",\"hint\":\"Wähle den passenden Teilstrich. Die Skala ist in gleich große Schritte eingeteilt.\",\"maxPoints\":2,\"spec\":{\"context\":\"temperature\",\"min\":-10,\"max\":20,\"step\":1,\"majorStep\":5,\"unit\":\"°C\",\"card\":\"●\"},\"solution\":{\"value\":6,\"tolerance\":0.4},\"objective\":\"Einen Temperaturwert auf einer Celsius-Skala verorten.\",\"rationale\":\"Die Aufgabe prüft das sichere Ablesen und Eintragen eines Temperaturwerts auf einer Skala.\",\"sourceNote\":\"Eigenes fiktives Beispiel mit einer Celsius-Temperaturskala.\"}",
+      "updatedAt": "2026-10-25T10:16:47.720Z",
+      "position": 1,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "id": "q001"
+    },
+    {
+      "points": 2,
+      "text": "Markiere 37 °C auf der Temperaturskala.",
+      "updatedAt": "2026-10-25T10:16:47.878Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"temperatur-skala-37-grad\",\"revision\":0,\"format\":\"scale\",\"title\":\"37 °C auf einer Temperaturskala\",\"subject\":\"Natur und Technik\",\"grade\":\"7\",\"prompt\":\"Markiere 37 °C auf der Temperaturskala.\",\"hint\":\"Achte auf die Beschriftung der größeren Teilstriche und zähle die kleinen Schritte ab.\",\"maxPoints\":2,\"spec\":{\"context\":\"temperature\",\"min\":20,\"max\":50,\"step\":1,\"majorStep\":5,\"unit\":\"°C\",\"card\":\"●\"},\"solution\":{\"value\":37,\"tolerance\":0.4},\"objective\":\"Einen Temperaturwert auf einer fein eingeteilten Celsius-Skala verorten.\",\"rationale\":\"Die Aufgabe prüft, ob ein Messwert zwischen beschrifteten Hauptmarken korrekt bestimmt wird.\",\"sourceNote\":\"Eigenes fiktives Beispiel mit einer Celsius-Temperaturskala.\"}",
+      "position": 2,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "id": "q002"
+    },
+    {
+      "position": 3,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"temperatur-bereich-minus4-bis3\",\"revision\":0,\"format\":\"range\",\"title\":\"Einen Temperaturbereich markieren\",\"subject\":\"Natur und Technik\",\"grade\":\"7\",\"prompt\":\"Markiere den Temperaturbereich von −4 °C bis einschließlich 3 °C auf der Skala.\",\"hint\":\"Setze beide Grenzen auf die passenden Teilstriche. Beide Grenzwerte gehören zum markierten Bereich.\",\"maxPoints\":2,\"spec\":{\"min\":-10,\"max\":10,\"step\":1,\"majorStep\":5,\"unit\":\"°C\",\"context\":\"temperature\",\"startInclusive\":true,\"endInclusive\":true},\"solution\":{\"start\":-4,\"end\":3},\"objective\":\"Einen geschlossenen Temperaturbereich auf einer Skala darstellen.\",\"rationale\":\"Die Aufgabe prüft das Bestimmen und Markieren zweier Temperaturgrenzen einschließlich beider Endpunkte.\",\"sourceNote\":\"Eigenes fiktives Beispiel mit einem Temperaturbereich.\"}",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:16:48.075Z",
+      "text": "Markiere den Temperaturbereich von −4 °C bis einschließlich 3 °C auf der Skala.",
+      "id": "q003"
+    },
+    {
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"temperatur-bereich-12-bis24\",\"revision\":0,\"format\":\"range\",\"title\":\"Messwerte als Bereich darstellen\",\"subject\":\"Natur und Technik\",\"grade\":\"7\",\"prompt\":\"Markiere den Bereich aller Messwerte von 12 °C bis einschließlich 24 °C.\",\"hint\":\"Wähle Anfang und Ende des zusammenhängenden Bereichs auf der Skala.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":30,\"step\":1,\"majorStep\":5,\"unit\":\"°C\",\"context\":\"temperature\",\"startInclusive\":true,\"endInclusive\":true},\"solution\":{\"start\":12,\"end\":24},\"objective\":\"Einen Wertebereich einer fiktiven Messreihe auf einer Temperaturskala abbilden.\",\"rationale\":\"Die Aufgabe verbindet die Bedeutung eines Messbereichs mit dem genauen Ablesen einer Temperaturskala.\",\"sourceNote\":\"Eigenes fiktives Beispiel zu einer Temperaturmessreihe.\"}",
+      "text": "Markiere den Bereich aller Messwerte von 12 °C bis einschließlich 24 °C.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "position": 4,
+      "updatedAt": "2026-10-25T10:16:48.260Z",
+      "type": "visual",
+      "id": "q004"
+    },
+    {
+      "type": "visual",
+      "position": 5,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "text": "Übertrage die fiktiven Messwerte in das Säulendiagramm.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"diagramm-messreihe-morgen\",\"revision\":0,\"format\":\"chart\",\"title\":\"Eine Temperaturmessreihe als Säulen darstellen\",\"subject\":\"Natur und Technik\",\"grade\":\"7\",\"prompt\":\"Übertrage die fiktiven Messwerte in das Säulendiagramm.\",\"hint\":\"Ordne jede Säule der richtigen Uhrzeit zu und trage die Höhe passend zur Celsius-Skala ein.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":30,\"step\":1,\"unit\":\"°C\",\"categories\":[{\"id\":\"sieben\",\"label\":\"7 Uhr\",\"value\":8},{\"id\":\"neun\",\"label\":\"9 Uhr\",\"value\":12},{\"id\":\"elf\",\"label\":\"11 Uhr\",\"value\":18},{\"id\":\"dreizehn\",\"label\":\"13 Uhr\",\"value\":21}]},\"solution\":{\"values\":{\"sieben\":8,\"neun\":12,\"elf\":18,\"dreizehn\":21}},\"objective\":\"Messwerte einer Tabelle in ein Säulendiagramm übertragen.\",\"rationale\":\"Die Aufgabe prüft das genaue Übertragen mehrerer Temperaturwerte zu den passenden Zeitangaben.\",\"sourceNote\":\"Eigenes fiktives Experiment mit stündlichen Temperaturmessungen.\"}",
+      "updatedAt": "2026-10-25T10:16:48.419Z",
+      "points": 2,
+      "id": "q005"
+    },
+    {
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:16:48.698Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"diagramm-temperatur-orte\",\"revision\":0,\"format\":\"chart\",\"title\":\"Temperaturen an verschiedenen Messstellen\",\"subject\":\"Natur und Technik\",\"grade\":\"7\",\"prompt\":\"Erstelle aus den fiktiven Messwerten ein Säulendiagramm.\",\"hint\":\"Jede Messstelle erhält eine Säule. Lies die Höhe an der Celsius-Skala ab.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":40,\"step\":1,\"unit\":\"°C\",\"categories\":[{\"id\":\"sonne\",\"label\":\"Sonne\",\"value\":28},{\"id\":\"schatten\",\"label\":\"Schatten\",\"value\":22},{\"id\":\"boden\",\"label\":\"Boden\",\"value\":16}]},\"solution\":{\"values\":{\"sonne\":28,\"schatten\":22,\"boden\":16}},\"objective\":\"Fiktive Temperaturmesswerte für verschiedene Messstellen in einem Diagramm darstellen.\",\"rationale\":\"Die Aufgabe prüft, ob Kategorien und zugehörige Werte in einer grafischen Darstellung korrekt zusammengeführt werden.\",\"sourceNote\":\"Eigenes fiktives Experiment mit drei Messstellen.\"}",
+      "points": 2,
+      "position": 6,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "Erstelle aus den fiktiven Messwerten ein Säulendiagramm.",
+      "id": "q006"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"temperaturveraenderung-tabelle-7\",\"revision\":0,\"format\":\"table\",\"title\":\"Temperaturänderungen berechnen\",\"subject\":\"Natur und Technik\",\"grade\":\"7\",\"prompt\":\"Berechne die Temperaturänderung in den beiden fiktiven Versuchen. Ergänze die fehlenden Werte in der Tabelle. Verwende die Rechnung: Temperatur am Ende minus Temperatur zu Beginn.\",\"hint\":\"Achte auf das Vorzeichen: Eine Abkühlung ergibt eine negative Temperaturänderung. Trage Dezimalzahlen ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Fiktiver Versuch\",\"Temperatur zu Beginn in °C\",\"Temperatur am Ende in °C\",\"Temperaturänderung in °C\"],\"rows\":[[{\"id\":\"versuchA\",\"text\":\"A\",\"input\":false},{\"id\":\"beginnA\",\"text\":\"6,5\",\"input\":false},{\"id\":\"endeA\",\"text\":\"14,0\",\"input\":false},{\"id\":\"aenderungA\",\"text\":\"\",\"input\":true}],[{\"id\":\"versuchB\",\"text\":\"B\",\"input\":false},{\"id\":\"beginnB\",\"text\":\"18,0\",\"input\":false},{\"id\":\"endeB\",\"text\":\"12,5\",\"input\":false},{\"id\":\"aenderungB\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"aenderungA\",\"accepted\":[\"7,5\",\"7.5\"]},{\"id\":\"aenderungB\",\"accepted\":[\"-5,5\",\"-5.5\"]}]},\"objective\":\"Temperaturänderungen aus Beginn- und Endwerten einer fiktiven Messreihe berechnen und tabellarisch eintragen.\",\"rationale\":\"Die vollständigen Ausgangsdaten ermöglichen eine eindeutige Berechnung. Dabei wird sowohl eine Erwärmung als auch eine Abkühlung mit negativem Vorzeichen erfasst.\",\"sourceNote\":\"Eigenes fiktives Experiment mit zwei Temperaturmessreihen; keine realen Messdaten.\"}",
+      "text": "Berechne die Temperaturänderung in den beiden fiktiven Versuchen. Ergänze die fehlenden Werte in der Tabelle. Verwende die Rechnung: Temperatur am Ende minus Temperatur zu Beginn.",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "position": 7,
+      "updatedAt": "2026-10-25T10:16:48.957Z",
+      "type": "visual",
+      "points": 2,
+      "id": "q007"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"tabelle-celsius-fahrenheit\",\"revision\":1,\"format\":\"table\",\"title\":\"Temperaturskalen vergleichen\",\"subject\":\"Natur und Technik\",\"grade\":\"7\",\"prompt\":\"Rechne mit der gegebenen Formel: Temperatur in °F = 1,8 · Temperatur in °C + 32. Ergänze die fehlenden Fahrenheitwerte und runde bei Bedarf auf eine Nachkommastelle.\",\"hint\":\"Verwende die Beziehung °F = °C × 1,8 + 32. Trage die Ergebnisse mit einer Nachkommastelle ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Temperatur in °C\",\"Temperatur in °F\"],\"rows\":[[{\"id\":\"c0\",\"text\":\"0\",\"input\":false},{\"id\":\"f0\",\"text\":\"\",\"input\":true}],[{\"id\":\"c10\",\"text\":\"10\",\"input\":false},{\"id\":\"f10\",\"text\":\"\",\"input\":true}],[{\"id\":\"c25\",\"text\":\"25\",\"input\":false},{\"id\":\"f25\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"f0\",\"accepted\":[\"32,0\",\"32.0\"]},{\"id\":\"f10\",\"accepted\":[\"50,0\",\"50.0\"]},{\"id\":\"f25\",\"accepted\":[\"77,0\",\"77.0\"]}]},\"objective\":\"Temperaturwerte zwischen Celsius- und Fahrenheit-Skala umrechnen.\",\"rationale\":\"Die Aufgabe prüft die Anwendung einer vorgegebenen Umrechnungsbeziehung auf mehrere fiktive Temperaturwerte.\",\"sourceNote\":\"Eigenes fiktives Beispiel zum Vergleich der Temperaturskalen.\"}",
+      "updatedAt": "2026-10-25T10:16:49.168Z",
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "position": 8,
+      "points": 2,
+      "text": "Rechne mit der gegebenen Formel: Temperatur in °F = 1,8 · Temperatur in °C + 32. Ergänze die fehlenden Fahrenheitwerte und runde bei Bedarf auf eine Nachkommastelle.",
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 8,
+      "reason": "Umrechnungsformel bereitstellen; physikalische Umrechnung nicht als fiktive Regel darstellen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "id": "P14",
+  "row": {
+    "id": "P14",
+    "subject": "Natur und Technik",
+    "grade": 7,
+    "title": "Temperatur und Messreihen",
+    "goal": "Temperaturskalen, Messwerttabellen und Diagramme in einfachen erfundenen Experimenten auswerten",
+    "formats": [
+      "scale",
+      "range",
+      "chart",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-14-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:15:51.565Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-14-A",
+    "subject": "Natur und Technik",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Temperatur und Messreihen: Temperaturskalen, Messwerttabellen und Diagramme in einfachen erfundenen Experimenten auswerten",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus scale, range, chart, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "3402bbca22ea5081176fffc6afb155486134d9f8",
+  "dispatch": {
+    "jobId": "3402bbca22ea5081176fffc6afb155486134d9f8"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:16:53.275Z",
+  "job": {
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "status": "no_match",
+      "profileIds": [],
+      "version": "gc-pedagogy-pool-v1"
+    },
+    "quizId": "ZADAHYZV",
+    "updatedAt": "2026-10-25T10:16:49.324Z",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "requestedCount": 8,
+    "answerAudioCompleted": 0,
+    "generationMode": "generated",
+    "percent": 100,
+    "ownerId": "gc-visual255-e2e",
+    "stage": "ready",
+    "imageCompleted": 0,
+    "topic": "Temperatur und Messreihen: Temperaturskalen, Messwerttabellen und Diagramme in einfachen erfundenen Experimenten auswerten",
+    "completedAt": "2026-10-25T10:16:49.324Z",
+    "qualityIssues": [],
+    "solutionAudioTotal": 0,
+    "dispatchState": "enqueued",
+    "qualityWarnings": [],
+    "createdAt": "2026-10-25T10:15:51.665Z",
+    "audioTotal": 0,
+    "audioCompleted": 0,
+    "materials": [],
+    "requestId": "VIS24-20261025-14-A",
+    "answerAudioTotal": 0,
+    "imageTotal": 0,
+    "sourceQuizId": "",
+    "solutionAudioCompleted": 0,
+    "completedCount": 8,
+    "grade": "7",
+    "status": "ready",
+    "subject": "Natur und Technik",
+    "input": {
+      "topic": "Temperatur und Messreihen: Temperaturskalen, Messwerttabellen und Diagramme in einfachen erfundenen Experimenten auswerten",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus scale, range, chart, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "audioAnswerQuestionCount": 0,
+      "solutionAudioQuestionCount": 0,
+      "difficulty": "mittel bis anspruchsvoll",
+      "count": 8,
+      "exactImageCounts": false,
+      "clientRequestId": "VIS24-20261025-14-A",
+      "exactAudioCounts": false,
+      "pedagogicalContextKnown": true,
+      "schoolType": "Mittelschule",
+      "grade": "7",
+      "region": "Bayern",
+      "allowedTypes": [
+        "visual"
+      ],
+      "audioQuestionCount": 0,
+      "subject": "Natur und Technik",
+      "materialMode": "inspiration",
+      "allowImageChoices": false,
+      "audioMode": "none",
+      "imageMode": "none",
+      "points": 16,
+      "maxVisualQuestions": 0
+    },
+    "startedAt": "2026-10-25T10:15:52.170Z",
+    "id": "3402bbca22ea5081176fffc6afb155486134d9f8"
+  },
+  "quizId": "ZADAHYZV"
+}

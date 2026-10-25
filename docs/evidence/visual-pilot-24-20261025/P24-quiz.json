@@ -1,0 +1,183 @@
+{
+  "pilotId": "P24",
+  "at": "2026-10-25T10:40:58.933Z",
+  "quiz": {
+    "generationStatus": "ready",
+    "questionCount": 8,
+    "showSolutions": true,
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "profileIds": [],
+      "status": "no_match",
+      "version": "gc-pedagogy-pool-v1"
+    },
+    "accessCode": "DGEA9BMU",
+    "audioReady": true,
+    "totalPoints": 16,
+    "shareEnabled": false,
+    "solutionAudioQuestionCount": 0,
+    "gradeScaleSnapshot": {
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "name": "Standard",
+      "id": "standard"
+    },
+    "startMode": "student",
+    "sessionState": "open",
+    "gradeScaleId": "standard",
+    "updatedAt": "2026-10-25T10:40:57.821Z",
+    "grade": "9",
+    "description": "Viel Erfolg beim Test!",
+    "qualityIssues": [],
+    "isDeleted": false,
+    "createdAt": "2026-10-25T10:40:55.919Z",
+    "generationJobId": "24ab5a395a799f83152d60d515e0e0b83f606bca",
+    "ownerId": "gc-visual255-e2e",
+    "title": "Betriebliche Entscheidungen mit Deckungsbeiträgen",
+    "contentLocale": "de-DE",
+    "qualityWarnings": [],
+    "solutionAudioReady": true,
+    "resultMode": "points_grade",
+    "subject": "Wirtschaft",
+    "requiresSecureAssessmentRules": false,
+    "ended": false,
+    "shuffleAnswers": false,
+    "shuffleQuestions": false,
+    "rightsHold": false,
+    "listeningOnlyQuestionCount": 0,
+    "audioAnswerQuestionCount": 0,
+    "localeContractVersion": 1,
+    "creationContext": {
+      "contentLocale": "de-DE",
+      "learningGoals": [],
+      "topic": "Betriebliche Entscheidungen: Fiktive kleine Produktions- und Absatzdaten, Deckungsbeiträge mit gegebener Definition und belegte Entscheidungen",
+      "schoolType": "Mittelschule",
+      "difficulty": "mittel bis anspruchsvoll",
+      "region": "Bayern"
+    },
+    "gradingLocale": "de-DE",
+    "audioQuestionCount": 0,
+    "published": false,
+    "id": "DGEA9BMU"
+  },
+  "questions": [
+    {
+      "text": "Fülle die fehlenden Deckungsbeiträge je Stück ein. Verwende die Definition: Deckungsbeitrag je Stück = Verkaufspreis je Stück − variable Kosten je Stück.",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"db-je-stueck-01\",\"revision\":0,\"format\":\"table\",\"title\":\"Deckungsbeitrag je Stück berechnen\",\"subject\":\"Wirtschaft\",\"grade\":\"9\",\"prompt\":\"Fiktive Daten: Fülle die fehlenden Deckungsbeiträge je Stück ein. Verwende die Definition: Deckungsbeitrag je Stück = Verkaufspreis je Stück − variable Kosten je Stück.\",\"hint\":\"Rechne für jede Produktart Verkaufspreis minus variable Kosten. Gib die Geldbeträge mit zwei Nachkommastellen an.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Produktart\",\"Verkaufspreis je Stück in EUR\",\"Variable Kosten je Stück in EUR\",\"Deckungsbeitrag je Stück in EUR\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"A\",\"input\":false},{\"id\":\"a2\",\"text\":\"18,00\",\"input\":false},{\"id\":\"a3\",\"text\":\"10,50\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"B\",\"input\":false},{\"id\":\"b2\",\"text\":\"25,00\",\"input\":false},{\"id\":\"b3\",\"text\":\"16,00\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"C\",\"input\":false},{\"id\":\"c2\",\"text\":\"12,00\",\"input\":false},{\"id\":\"c3\",\"text\":\"7,50\",\"input\":false},{\"id\":\"c4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"7,50\",\"7.50\"]},{\"id\":\"b4\",\"accepted\":[\"9,00\",\"9.00\"]},{\"id\":\"c4\",\"accepted\":[\"4,50\",\"4.50\"]}]},\"objective\":\"Den Deckungsbeitrag je Stück aus Verkaufspreis und variablen Kosten berechnen.\",\"rationale\":\"Die Differenz zwischen Verkaufspreis und variablen Kosten zeigt, welcher Betrag je Stück zur Deckung der Fixkosten beiträgt.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne externe Quelle.\"}",
+      "position": 1,
+      "type": "visual",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:40:56.073Z",
+      "id": "q001"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"gesamt-db-02\",\"revision\":0,\"format\":\"table\",\"title\":\"Gesamten Deckungsbeitrag berechnen\",\"subject\":\"Wirtschaft\",\"grade\":\"9\",\"prompt\":\"Fiktive Daten: Berechne den gesamten Deckungsbeitrag jeder Produktart und trage die fehlenden Werte ein. Es gilt: gesamter Deckungsbeitrag = Deckungsbeitrag je Stück × Absatzmenge.\",\"hint\":\"Multipliziere den Deckungsbeitrag je Stück mit der jeweiligen Absatzmenge. Gib die Ergebnisse in Euro an.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Produktart\",\"Absatzmenge in Stück\",\"Deckungsbeitrag je Stück in EUR\",\"Gesamter Deckungsbeitrag in EUR\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"A\",\"input\":false},{\"id\":\"a2\",\"text\":\"120\",\"input\":false},{\"id\":\"a3\",\"text\":\"7,50\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"B\",\"input\":false},{\"id\":\"b2\",\"text\":\"80\",\"input\":false},{\"id\":\"b3\",\"text\":\"9,00\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"C\",\"input\":false},{\"id\":\"c2\",\"text\":\"200\",\"input\":false},{\"id\":\"c3\",\"text\":\"4,50\",\"input\":false},{\"id\":\"c4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"900,00\",\"900.00\"]},{\"id\":\"b4\",\"accepted\":[\"720,00\",\"720.00\"]},{\"id\":\"c4\",\"accepted\":[\"900,00\",\"900.00\"]}]},\"objective\":\"Den gesamten Deckungsbeitrag aus Stückdeckungsbeitrag und Absatzmenge bestimmen.\",\"rationale\":\"Die Absatzmenge verändert den Beitrag eines einzelnen Produkts zum gesamten Deckungsbeitrag.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne externe Quelle.\"}",
+      "type": "visual",
+      "position": 2,
+      "updatedAt": "2026-10-25T10:40:56.237Z",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "text": "Berechne den gesamten Deckungsbeitrag jeder Produktart und trage die fehlenden Werte ein. Es gilt: gesamter Deckungsbeitrag = Deckungsbeitrag je Stück × Absatzmenge.",
+      "points": 2,
+      "id": "q002"
+    },
+    {
+      "updatedAt": "2026-10-25T10:40:56.421Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"absatzmengen-chart-03\",\"revision\":0,\"format\":\"chart\",\"title\":\"Absatzmengen darstellen\",\"subject\":\"Wirtschaft\",\"grade\":\"9\",\"prompt\":\"Übertrage die fiktiven Absatzmengen in das Säulendiagramm.\",\"hint\":\"Stelle für jede Produktart die angegebene Stückzahl dar. Die Skala reicht bis 240 Stück.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":240,\"step\":20,\"unit\":\"Stück\",\"categories\":[{\"id\":\"a\",\"label\":\"Produkt A\",\"value\":120},{\"id\":\"b\",\"label\":\"Produkt B\",\"value\":80},{\"id\":\"c\",\"label\":\"Produkt C\",\"value\":200}]},\"solution\":{\"values\":{\"a\":120,\"b\":80,\"c\":200}},\"objective\":\"Fiktive Absatzdaten in einem Säulendiagramm darstellen.\",\"rationale\":\"Ein Diagramm macht Unterschiede zwischen Absatzmengen übersichtlich vergleichbar.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne externe Quelle.\"}",
+      "type": "visual",
+      "position": 3,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "points": 2,
+      "text": "Übertrage die fiktiven Absatzmengen in das Säulendiagramm.",
+      "id": "q003"
+    },
+    {
+      "type": "visual",
+      "position": 4,
+      "points": 2,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "updatedAt": "2026-10-25T10:40:56.675Z",
+      "text": "Markiere genau die zwei Textstellen, die für die Berechnung des gesamten Deckungsbeitrags von Produkt B benötigt werden.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"belege-produkt-b-04\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Daten für eine Berechnung belegen\",\"subject\":\"Wirtschaft\",\"grade\":\"9\",\"prompt\":\"Markiere genau die zwei Textstellen, die für die Berechnung des gesamten Deckungsbeitrags von Produkt B benötigt werden.\",\"hint\":\"Wähle die Angabe zur Absatzmenge und die Angabe zum Deckungsbeitrag je Stück von Produkt B.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Produkt A wird in einer Menge von 120 Stück verkauft.\"},{\"id\":\"s2\",\"text\":\"Von Produkt B werden voraussichtlich 80 Stück abgesetzt.\"},{\"id\":\"s3\",\"text\":\"Der Deckungsbeitrag je Stück von Produkt B beträgt 9,00 Euro.\"},{\"id\":\"s4\",\"text\":\"Produkt C hat einen gesamten Deckungsbeitrag von 900,00 Euro.\"},{\"id\":\"s5\",\"text\":\"Die monatlichen Fixkosten des Betriebs betragen 1.500,00 Euro.\"}]},\"solution\":{\"selections\":[[\"s2\",\"s3\"]]},\"objective\":\"Die für eine betriebswirtschaftliche Berechnung relevanten Angaben in einem kurzen Text erkennen.\",\"rationale\":\"Für den gesamten Deckungsbeitrag werden genau Absatzmenge und Deckungsbeitrag je Stück benötigt.\",\"sourceNote\":\"Eigenes fiktives Textbeispiel ohne externe Quelle.\"}",
+      "id": "q004"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "In einer fiktiven Kleinwerkstatt ist die Maschinenzeit knapp. Berechne für jedes Produkt den relativen Deckungsbeitrag und trage die Rangfolge ein. Es gilt: Relativer Deckungsbeitrag = Deckungsbeitrag je Stück ÷ Maschinenzeit je Stück. Die Werkstatt soll bei einem Engpass zuerst das Produkt mit dem höchsten relativen Deckungsbeitrag fertigen.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"relativer-deckungsbeitrag-05\",\"revision\":0,\"format\":\"table\",\"title\":\"Produkte bei knapper Maschinenzeit vergleichen\",\"subject\":\"Wirtschaft\",\"grade\":\"9\",\"prompt\":\"In einer fiktiven Kleinwerkstatt ist die Maschinenzeit knapp. Berechne für jedes Produkt den relativen Deckungsbeitrag und trage die Rangfolge ein. Es gilt: Relativer Deckungsbeitrag = Deckungsbeitrag je Stück ÷ Maschinenzeit je Stück. Die Werkstatt soll bei einem Engpass zuerst das Produkt mit dem höchsten relativen Deckungsbeitrag fertigen.\",\"hint\":\"Teile bei jedem Produkt den Deckungsbeitrag je Stück durch die Maschinenzeit je Stück. Vergib Rang 1 für den höchsten Wert.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Produkt\",\"Deckungsbeitrag je Stück in €\",\"Maschinenzeit je Stück in Minuten\",\"Relativer Deckungsbeitrag in €/Minute\",\"Rangfolge\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Produkt A\",\"input\":false},{\"id\":\"a2\",\"text\":\"6,00\",\"input\":false},{\"id\":\"a3\",\"text\":\"4\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true},{\"id\":\"a5\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Produkt B\",\"input\":false},{\"id\":\"b2\",\"text\":\"8,00\",\"input\":false},{\"id\":\"b3\",\"text\":\"10\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true},{\"id\":\"b5\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"Produkt C\",\"input\":false},{\"id\":\"c2\",\"text\":\"9,00\",\"input\":false},{\"id\":\"c3\",\"text\":\"9\",\"input\":false},{\"id\":\"c4\",\"text\":\"\",\"input\":true},{\"id\":\"c5\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"1,5\",\"1.5\",\"1,50\",\"1.50\"]},{\"id\":\"a5\",\"accepted\":[\"1\"]},{\"id\":\"b4\",\"accepted\":[\"0,8\",\"0.8\",\"0,80\",\"0.80\"]},{\"id\":\"b5\",\"accepted\":[\"3\"]},{\"id\":\"c4\",\"accepted\":[\"1\",\"1,0\",\"1.0\",\"1,00\",\"1.00\"]},{\"id\":\"c5\",\"accepted\":[\"2\"]}]},\"objective\":\"Den relativen Deckungsbeitrag als Entscheidungsgrundlage bei einem betrieblichen Engpass berechnen und Produkte danach ordnen.\",\"rationale\":\"Der relative Deckungsbeitrag zeigt, wie viel Deckungsbeitrag pro knapper Maschinenminute erzielt wird. Dadurch lässt sich eine sinnvolle Fertigungsreihenfolge begründen.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne externe Quelle.\"}",
+      "position": 5,
+      "updatedAt": "2026-10-25T10:40:56.862Z",
+      "type": "visual",
+      "points": 2,
+      "id": "q005"
+    },
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:40:57.133Z",
+      "points": 2,
+      "position": 6,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"break-even-06\",\"revision\":0,\"format\":\"table\",\"title\":\"Break-even-Menge berechnen\",\"subject\":\"Wirtschaft\",\"grade\":\"9\",\"prompt\":\"Fiktive Daten: Die Fixkosten betragen 1.800,00 Euro. Berechne die kleinste ganze Absatzmenge, bei der die Fixkosten gedeckt sind. Trage die drei Ergebnisse in die Tabelle ein.\",\"hint\":\"Verwende: Break-even-Menge = Fixkosten ÷ Deckungsbeitrag je Stück. Runde bei Bedarf auf die nächste ganze Stückzahl auf.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Produktart\",\"Fixkosten in EUR\",\"Deckungsbeitrag je Stück in EUR\",\"Break-even-Menge in Stück\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"A\",\"input\":false},{\"id\":\"a2\",\"text\":\"1.800,00\",\"input\":false},{\"id\":\"a3\",\"text\":\"7,50\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"B\",\"input\":false},{\"id\":\"b2\",\"text\":\"1.800,00\",\"input\":false},{\"id\":\"b3\",\"text\":\"9,00\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"C\",\"input\":false},{\"id\":\"c2\",\"text\":\"1.800,00\",\"input\":false},{\"id\":\"c3\",\"text\":\"4,50\",\"input\":false},{\"id\":\"c4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"240\"]},{\"id\":\"b4\",\"accepted\":[\"200\"]},{\"id\":\"c4\",\"accepted\":[\"400\"]}]},\"objective\":\"Die Break-even-Menge aus Fixkosten und Deckungsbeitrag je Stück berechnen.\",\"rationale\":\"Am Break-even-Punkt entsprechen die gesamten Deckungsbeiträge den Fixkosten.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne externe Quelle.\"}",
+      "text": "Berechne die kleinste ganze Absatzmenge, bei der die Fixkosten gedeckt sind. Trage die drei Ergebnisse in die Tabelle ein.",
+      "id": "q006"
+    },
+    {
+      "text": "Ein Betrieb erhält einen fiktiven Auftrag über 150 Stück. Berechne für beide Anbieter die Gesamtkosten und entscheide nach der Regel: Bei gleichen Gesamtkosten wird der Anbieter mit der kürzeren Lieferzeit gewählt.",
+      "position": 7,
+      "points": 2,
+      "updatedAt": "2026-10-25T10:40:57.339Z",
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"lieferantenvergleich-auftrag-07\",\"revision\":0,\"format\":\"table\",\"title\":\"Einen Lieferanten auswählen\",\"subject\":\"Wirtschaft\",\"grade\":\"9\",\"prompt\":\"Ein Betrieb erhält einen fiktiven Auftrag über 150 Stück. Berechne für beide Anbieter die Gesamtkosten und entscheide nach der Regel: Bei gleichen Gesamtkosten wird der Anbieter mit der kürzeren Lieferzeit gewählt.\",\"hint\":\"Gesamtkosten = Stückpreis × Auftragsmenge + einmalige Pauschale. Trage Geldbeträge als Zahl in Euro ein und nenne anschließend den ausgewählten Anbieter.\",\"objective\":\"Eine betriebliche Lieferantenentscheidung anhand von Gesamtkosten und einer zusätzlichen Entscheidungsregel treffen.\",\"rationale\":\"Die Gesamtkosten ergeben sich aus dem mengenabhängigen Stückpreis und der einmaligen Pauschale. Bei Kostengleichheit entscheidet die kürzere Lieferzeit.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne externe Quelle.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Anbieter\",\"Stückpreis\",\"Einmalige Pauschale\",\"Lieferzeit\",\"Gesamtkosten bzw. Entscheidung\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Anbieter A\",\"input\":false},{\"id\":\"a2\",\"text\":\"3,20 EUR\",\"input\":false},{\"id\":\"a3\",\"text\":\"40 EUR\",\"input\":false},{\"id\":\"a4\",\"text\":\"4 Tage\",\"input\":false},{\"id\":\"a5\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Anbieter B\",\"input\":false},{\"id\":\"b2\",\"text\":\"2,90 EUR\",\"input\":false},{\"id\":\"b3\",\"text\":\"85 EUR\",\"input\":false},{\"id\":\"b4\",\"text\":\"7 Tage\",\"input\":false},{\"id\":\"b5\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"Auswahl\",\"input\":false},{\"id\":\"c2\",\"text\":\"\",\"input\":false},{\"id\":\"c3\",\"text\":\"\",\"input\":false},{\"id\":\"c4\",\"text\":\"\",\"input\":false},{\"id\":\"c5\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a5\",\"accepted\":[\"520\",\"520,00\",\"520.00\",\"520 EUR\",\"520,00 EUR\"]},{\"id\":\"b5\",\"accepted\":[\"520\",\"520,00\",\"520.00\",\"520 EUR\",\"520,00 EUR\"]},{\"id\":\"c5\",\"accepted\":[\"Anbieter A\"]}]}}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q007"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "Markiere genau die vier Textstellen, die die Annahme des Zusatzauftrags sachlich begründen.",
+      "position": 8,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"zusatzauftrag-belegen-08\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Eine betriebliche Entscheidung begründen\",\"subject\":\"Wirtschaft\",\"grade\":\"9\",\"prompt\":\"Markiere genau die vier Textstellen, die die Annahme des Zusatzauftrags sachlich begründen.\",\"hint\":\"Berücksichtige die verfügbare Kapazität, die Größe des Auftrags und den positiven Deckungsbeitrag je Stück.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Die Maschine kann höchstens 500 Stück im Monat herstellen.\"},{\"id\":\"s2\",\"text\":\"Bisher sind 420 Stück der monatlichen Kapazität verplant.\"},{\"id\":\"s3\",\"text\":\"Der Zusatzauftrag umfasst 60 Stück.\"},{\"id\":\"s4\",\"text\":\"Für jedes Stück des Zusatzauftrags entsteht ein positiver Deckungsbeitrag von 5,00 Euro.\"},{\"id\":\"s5\",\"text\":\"Das Firmenlogo ist auf dem Auftrag in blauer Farbe abgedruckt.\"}]},\"solution\":{\"selections\":[[\"s1\",\"s2\",\"s3\",\"s4\"]]},\"objective\":\"Eine betriebliche Entscheidung mit mehreren relevanten Daten begründen.\",\"rationale\":\"Die Entscheidung wird durch Kapazität, Auftragsmenge und positiven Deckungsbeitrag gestützt; die Gestaltung des Logos ist dafür nicht relevant.\",\"sourceNote\":\"Eigenes fiktives Textbeispiel ohne externe Quelle.\"}",
+      "type": "visual",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:40:57.580Z",
+      "id": "q008"
+    }
+  ]
+}

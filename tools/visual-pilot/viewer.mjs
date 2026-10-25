@@ -1,6 +1,7 @@
 import {mountVisualQuestion,collectVisualAnswer} from '../../visual-tasks.mjs';
 const $=id=>document.getElementById(id);let bundle,question,task;
 const base='../../docs/evidence/visual-pilot-24-20261025/';
+const summary=await(await fetch(base+'summary.json?at='+Date.now())).json();$('progress').textContent=`Erzeugt: ${summary.readyTests} / 24 Tests · ${summary.readyQuestions} Aufgaben · Abschlussabnahme offen.`;
 const matrix=await(await fetch(base+'matrix.json')).json();
 for(const row of matrix){const o=document.createElement('option');o.value=row.id;o.textContent=`${row.id} · ${row.subject} ${row.grade} · ${row.title}`;$('tests').append(o);}
 async function load(){const id=$('tests').value;$('feedback').textContent='';let r=await fetch(base+id+'-reviewed.json?at='+Date.now());const reviewed=r.ok;if(!reviewed)r=await fetch(base+id+'-quiz.json?at='+Date.now());if(!r.ok){$('status').textContent='Dieser Probetest ist noch nicht als fertiger Entwurf vorhanden.';$('exercise').replaceChildren();return;}bundle=await r.json();$('questions').replaceChildren();for(let i=0;i<bundle.questions.length;i++){const o=document.createElement('option');o.value=String(i);o.textContent=`Aufgabe ${i+1}`;$('questions').append(o);}$('status').textContent=`Testcode ${bundle.quiz.id} · ${bundle.questions.length} Aufgaben · ${bundle.quiz.totalPoints} Punkte · ${reviewed?'Korrigierter Prüfentwurf':'KI-Entwurf'}`;show();}

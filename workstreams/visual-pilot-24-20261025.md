@@ -17,3 +17,12 @@ NächsterSchritt: sichereAnmeldungdesbestehendenTestkontosundwiederaufnehmbarenR
 Casefix: optionalerBoolean spec.caseSensitive nurfürcorrection. Falschklein bekommt1/2 (richtigeZeile, falscheKorrektur), richtiggroß2/2. ZweiRegressionenzunächstrot (fehlenderVertrag), danach25/25relevanteTestsgrün mit vorhandenenAbhängigkeiten viaNODE_PATH. Browser P01beliebige4/10Felder2/2; P05Q8junge1/2,Junge2/2 tatsächlichbedient. Screenshot outputs/visual-pilot-case-fix-20261025.png. KeinphysischerTouchbeleg. Generatorprompthinweisergänzt, lokalerFixnichtalsdeployedbehaupten.
 
 NächsterSchritt: restlicheAufträgebeobachten, eigeneEntwürfefachlichlesen/korrigieren; danach TestbackendundnurzugehörigeVorschaubereitstellungmitScopeprüfung, eigeneServerabgabenundabschließendenReviewbelegen. Kosten/UsageausserverseitigenEreignissenspätergezieltfürdieseseigenenRequestslesen.
+
+## Checkpoint — 23 Tests /184 Aufgaben
+23 fertige Generierungen, P24 Job24ab5a395a799f83152d60d515e0e0b83f606bca läuft und wird nur gelesen (Unterbrechung: neue Pollsession79286). Alle Originale P01–P23 samt Hinweisen gelesen. Korrekturen für missverständliche Quellenbehauptungen, offene exakte Textbewertungen, einfache Anforderung, fehlende Daten und Lösungsverrat in separaten Corrections-Modulen. Aktuelle Details je Aufgabe in reviewed.corrections, Originale erhalten. Uhrzeitlabel und lange Verbindungsbeschriftungen RED→GREEN behoben. PR271-JSON-Editorentfernung wiederverwendet. 9 fokussierte Regressionen grün; volle Backendtests zuvor293 und97 grün. Noch NICHT bereitgestellt; online nur erste P03/P04/P05 Entwurfkorrekturen und P03 echter Editor-Speicherbeleg.
+
+Ruling: Der lokale Viewer enthält Lösungsschlüssel und bleibt ausschließlich lokale Lehrkraft-Prüfansicht; öffentliche Testlinks verwenden den bestehenden sicheren Schülerweg — schützt die Testbewertung; kein anonymer Lösungsviewer.
+Ruling: Fiktive Geschichts- und Wirtschaftsdaten prüfen Methoden, keine historische Faktenerinnerung oder reale Marktpreise — diese Grenze wird im Bericht genannt; sonst wäre eine falsche Fachabnahme möglich.
+Ruling: Keine neue Architektur und keine Regelnänderung; bestehende präfigierte Backendfunktionen werden nach Schlussreview gezielt aktualisiert — Produktintegration bleibt separat.
+
+Öffentlicher Linkverteiler tools/visual-pilot/build-hub.cjs vorbereitet: kopiert ausschließlich24Testlinks aus fertigen Runbelegen, keine Musterlösungen/Rohdaten. Wird nur in isoliertes visual255-Build mit geprüftem Manifest aufgenommen.

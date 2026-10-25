@@ -1,0 +1,190 @@
+{
+  "pilotId": "P22",
+  "at": "2026-10-25T10:35:18.050Z",
+  "quiz": {
+    "shuffleQuestions": false,
+    "updatedAt": "2026-10-25T10:35:14.987Z",
+    "audioReady": true,
+    "gradeScaleSnapshot": {
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "name": "Standard",
+      "id": "standard"
+    },
+    "questionCount": 8,
+    "listeningOnlyQuestionCount": 0,
+    "gradeScaleId": "standard",
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": [],
+      "status": "no_match",
+      "profileCount": 0
+    },
+    "contentLocale": "de-DE",
+    "subject": "Wirtschaft",
+    "localeContractVersion": 1,
+    "shuffleAnswers": false,
+    "title": "Budget und Sparen",
+    "sessionState": "open",
+    "shareEnabled": false,
+    "showSolutions": true,
+    "audioAnswerQuestionCount": 0,
+    "generationJobId": "4fdbfbeccb0495e97f17b80b1e4d8243eb851c37",
+    "generationStatus": "ready",
+    "qualityWarnings": [],
+    "totalPoints": 16,
+    "description": "Viel Erfolg beim Test!",
+    "grade": "7",
+    "published": false,
+    "solutionAudioQuestionCount": 0,
+    "startMode": "student",
+    "ended": false,
+    "gradingLocale": "de-DE",
+    "accessCode": "E5TSGNGB",
+    "createdAt": "2026-10-25T10:35:13.619Z",
+    "qualityIssues": [],
+    "solutionAudioReady": true,
+    "resultMode": "points_grade",
+    "requiresSecureAssessmentRules": false,
+    "isDeleted": false,
+    "rightsHold": false,
+    "ownerId": "gc-visual255-e2e",
+    "creationContext": {
+      "learningGoals": [],
+      "region": "Bayern",
+      "difficulty": "mittel bis anspruchsvoll",
+      "topic": "Budget und Sparen: Fiktive monatliche Einnahmen und Ausgaben, Sparanteile und Budgetgrenzen auswerten",
+      "contentLocale": "de-DE",
+      "schoolType": "Mittelschule"
+    },
+    "audioQuestionCount": 0,
+    "id": "E5TSGNGB"
+  },
+  "questions": [
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "position": 1,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"budget-chart-einnahmen-01\",\"revision\":0,\"format\":\"chart\",\"title\":\"Fiktive monatliche Einnahmen\",\"subject\":\"Wirtschaft\",\"grade\":\"7\",\"prompt\":\"Übertrage die fiktiven monatlichen Einnahmen in das Säulendiagramm.\",\"hint\":\"Ordne jede Säule der richtigen Einnahmequelle zu und trage den jeweiligen Betrag in Euro ein.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":300,\"step\":10,\"unit\":\"€\",\"categories\":[{\"id\":\"taschengeld\",\"label\":\"Taschengeld\",\"value\":180},{\"id\":\"nebenjob\",\"label\":\"Nebenjob\",\"value\":90},{\"id\":\"geschenk\",\"label\":\"Geschenk\",\"value\":40},{\"id\":\"sonstiges\",\"label\":\"Sonstiges\",\"value\":20}]},\"solution\":{\"values\":{\"taschengeld\":180,\"nebenjob\":90,\"geschenk\":40,\"sonstiges\":20}},\"objective\":\"Fiktive Einnahmen in einem Säulendiagramm darstellen.\",\"rationale\":\"Die Beträge werden den passenden Einnahmequellen zugeordnet und maßstabsgerecht eingetragen.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne reale Schülerdaten.\"}",
+      "updatedAt": "2026-10-25T10:35:13.762Z",
+      "points": 2,
+      "type": "visual",
+      "text": "Übertrage die fiktiven monatlichen Einnahmen in das Säulendiagramm.",
+      "id": "q001"
+    },
+    {
+      "text": "Ergänze die fehlenden Beträge und berechne die monatlichen Gesamteinnahmen, Gesamtausgaben und den verbleibenden Betrag.",
+      "type": "visual",
+      "points": 2,
+      "position": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"budget-table-gesamtbetrag-02\",\"revision\":0,\"format\":\"table\",\"title\":\"Ein fiktiver Monatsplan\",\"subject\":\"Wirtschaft\",\"grade\":\"7\",\"prompt\":\"Ergänze die fehlenden Beträge und berechne die monatlichen Gesamteinnahmen, Gesamtausgaben und den verbleibenden Betrag.\",\"hint\":\"Addiere zuerst Einnahmen und Ausgaben getrennt. Ziehe danach die Gesamtausgaben von den Gesamteinnahmen ab.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Posten\",\"Betrag (€)\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Taschengeld\",\"input\":false},{\"id\":\"a2\",\"text\":\"180\",\"input\":false}],[{\"id\":\"a3\",\"text\":\"Nebenjob\",\"input\":false},{\"id\":\"a4\",\"text\":\"25\",\"input\":false}],[{\"id\":\"a5\",\"text\":\"Geschenk\",\"input\":false},{\"id\":\"a6\",\"text\":\"20\",\"input\":false}],[{\"id\":\"a7\",\"text\":\"Gesamteinnahmen\",\"input\":false},{\"id\":\"a8\",\"text\":\"\",\"input\":true}],[{\"id\":\"a9\",\"text\":\"Freizeit\",\"input\":false},{\"id\":\"a10\",\"text\":\"75\",\"input\":false}],[{\"id\":\"a11\",\"text\":\"Handy\",\"input\":false},{\"id\":\"a12\",\"text\":\"35\",\"input\":false}],[{\"id\":\"a13\",\"text\":\"Fahrtkosten\",\"input\":false},{\"id\":\"a14\",\"text\":\"20\",\"input\":false}],[{\"id\":\"a15\",\"text\":\"Sonstiges\",\"input\":false},{\"id\":\"a16\",\"text\":\"15\",\"input\":false}],[{\"id\":\"a17\",\"text\":\"Gesamtausgaben\",\"input\":false},{\"id\":\"a18\",\"text\":\"\",\"input\":true}],[{\"id\":\"a19\",\"text\":\"Verbleibender Betrag\",\"input\":false},{\"id\":\"a20\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"a8\",\"accepted\":[\"225\"]},{\"id\":\"a18\",\"accepted\":[\"145\"]},{\"id\":\"a20\",\"accepted\":[\"80\"]}]},\"objective\":\"Einnahmen, Ausgaben und den verbleibenden Betrag berechnen.\",\"rationale\":\"Die drei gesuchten Werte ergeben sich aus getrennten Summen und einer anschließenden Differenz.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne reale Schülerdaten.\"}",
+      "updatedAt": "2026-10-25T10:35:13.931Z",
+      "id": "q002"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"budget-grid-sparanteil-03\",\"revision\":0,\"format\":\"grid\",\"title\":\"Sparanteil am Monatsbudget\",\"subject\":\"Wirtschaft\",\"grade\":\"7\",\"prompt\":\"Ein fiktives Monatsbudget beträgt 240 €. Nach den Ausgaben bleiben 60 € zum Sparen übrig. Markiere den Sparanteil am gesamten Monatsbudget.\",\"hint\":\"Alle Kästchen sind gleich groß. Markiere nur den Anteil, der dem Sparbetrag am gesamten Budget entspricht.\",\"maxPoints\":2,\"spec\":{\"rows\":4,\"columns\":8},\"solution\":{\"count\":8},\"objective\":\"Einen Sparbetrag als Anteil am gesamten Budget darstellen.\",\"rationale\":\"60 € von 240 € entsprechen einem Viertel des Monatsbudgets. Ein Viertel von 32 Kästchen sind 8 Kästchen.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne reale Schülerdaten.\"}",
+      "updatedAt": "2026-10-25T10:35:14.080Z",
+      "position": 3,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "type": "visual",
+      "text": "Ein fiktives Monatsbudget beträgt 240 €. Nach den Ausgaben bleiben 60 € zum Sparen übrig. Markiere den Sparanteil am gesamten Monatsbudget.",
+      "points": 2,
+      "id": "q003"
+    },
+    {
+      "points": 2,
+      "position": 4,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "text": "Das fiktive Monatseinkommen beträgt 300 €. Für feste Ausgaben werden 210 € benötigt. Außerdem sollen mindestens 30 € gespart werden. Markiere den möglichen Bereich für monatliche Freizeitausgaben.",
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:35:14.257Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"budget-range-freizeit-04\",\"revision\":0,\"format\":\"range\",\"title\":\"Budgetgrenze für Freizeit\",\"subject\":\"Wirtschaft\",\"grade\":\"7\",\"prompt\":\"Das fiktive Monatseinkommen beträgt 300 €. Für feste Ausgaben werden 210 € benötigt. Außerdem sollen mindestens 30 € gespart werden. Markiere den möglichen Bereich für monatliche Freizeitausgaben.\",\"hint\":\"Die beiden Grenzen gehören zum Bereich. Berücksichtige sowohl die festen Ausgaben als auch den Mindestbetrag zum Sparen.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":100,\"step\":10,\"majorStep\":20,\"unit\":\"€\",\"context\":\"numberline\",\"startInclusive\":true,\"endInclusive\":true},\"solution\":{\"start\":0,\"end\":60},\"objective\":\"Eine Budgetgrenze aus Einnahmen, festen Ausgaben und Sparziel bestimmen.\",\"rationale\":\"Nach festen Ausgaben und Mindestspareinlage bleiben höchstens 60 € für Freizeit übrig; negative Ausgaben sind nicht möglich.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne reale Schülerdaten.\"}",
+      "id": "q004"
+    },
+    {
+      "position": 5,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "text": "Übertrage die fiktiven monatlichen Ausgaben in das Säulendiagramm.",
+      "type": "visual",
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"budget-chart-ausgaben-05\",\"revision\":0,\"format\":\"chart\",\"title\":\"Fiktive monatliche Ausgaben\",\"subject\":\"Wirtschaft\",\"grade\":\"7\",\"prompt\":\"Übertrage die fiktiven monatlichen Ausgaben in das Säulendiagramm.\",\"hint\":\"Trage die Beträge in Euro bei den jeweils beschrifteten Ausgabenkategorien ein.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":160,\"step\":10,\"unit\":\"€\",\"categories\":[{\"id\":\"wohnen\",\"label\":\"Wohnen\",\"value\":120},{\"id\":\"essen\",\"label\":\"Essen\",\"value\":80},{\"id\":\"mobilitaet\",\"label\":\"Mobilität\",\"value\":50},{\"id\":\"freizeit\",\"label\":\"Freizeit\",\"value\":90},{\"id\":\"kleidung\",\"label\":\"Kleidung\",\"value\":40}]},\"solution\":{\"values\":{\"wohnen\":120,\"essen\":80,\"mobilitaet\":50,\"freizeit\":90,\"kleidung\":40}},\"objective\":\"Fiktive Ausgabenbeträge in einem Säulendiagramm darstellen.\",\"rationale\":\"Die Ausgabenkategorien werden mit ihren jeweiligen Monatsbeträgen abgebildet.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne reale Schülerdaten.\"}",
+      "updatedAt": "2026-10-25T10:35:14.387Z",
+      "id": "q005"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"budget-table-sparquote-06\",\"revision\":0,\"format\":\"table\",\"title\":\"Fiktive Sparanteile berechnen\",\"subject\":\"Wirtschaft\",\"grade\":\"7\",\"prompt\":\"Berechne für jeden fiktiven Monat den Sparanteil in Prozent.\",\"hint\":\"Teile den Sparbetrag durch die Einnahmen und rechne das Ergebnis in Prozent um.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Monat\",\"Einnahmen (€)\",\"Sparbetrag (€)\",\"Sparanteil (%)\"],\"rows\":[[{\"id\":\"b1\",\"text\":\"Januar\",\"input\":false},{\"id\":\"b2\",\"text\":\"200\",\"input\":false},{\"id\":\"b3\",\"text\":\"30\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true}],[{\"id\":\"b5\",\"text\":\"Februar\",\"input\":false},{\"id\":\"b6\",\"text\":\"250\",\"input\":false},{\"id\":\"b7\",\"text\":\"50\",\"input\":false},{\"id\":\"b8\",\"text\":\"\",\"input\":true}],[{\"id\":\"b9\",\"text\":\"März\",\"input\":false},{\"id\":\"b10\",\"text\":\"320\",\"input\":false},{\"id\":\"b11\",\"text\":\"80\",\"input\":false},{\"id\":\"b12\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"b4\",\"accepted\":[\"15\",\"15,0\",\"15.0\"]},{\"id\":\"b8\",\"accepted\":[\"20\",\"20,0\",\"20.0\"]},{\"id\":\"b12\",\"accepted\":[\"25\",\"25,0\",\"25.0\"]}]},\"objective\":\"Den Sparanteil als Prozentsatz des Einkommens berechnen.\",\"rationale\":\"Der Sparanteil wird jeweils als Verhältnis von Sparbetrag zu Einnahmen bestimmt.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne reale Schülerdaten.\"}",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:35:14.554Z",
+      "type": "visual",
+      "position": 6,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "text": "Berechne für jeden fiktiven Monat den Sparanteil in Prozent.",
+      "id": "q006"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"budget-grid-variable-ausgaben-07\",\"revision\":0,\"format\":\"grid\",\"title\":\"Anteil variabler Ausgaben\",\"subject\":\"Wirtschaft\",\"grade\":\"7\",\"prompt\":\"In einem fiktiven Monatsbudget entfallen 3/8 des gesamten Geldes auf variable Ausgaben. Markiere diesen Anteil im Raster.\",\"hint\":\"Alle Kästchen sind gleich groß. Markiere genau den angegebenen Bruchteil der Gesamtfläche.\",\"maxPoints\":2,\"spec\":{\"rows\":5,\"columns\":8},\"solution\":{\"count\":15},\"objective\":\"Einen Bruchteil eines Budgets als Flächenanteil darstellen.\",\"rationale\":\"Das Raster enthält 40 gleich große Kästchen. Drei Achtel davon entsprechen 15 Kästchen.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne reale Schülerdaten.\"}",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:35:14.707Z",
+      "type": "visual",
+      "text": "In einem fiktiven Monatsbudget entfallen 3/8 des gesamten Geldes auf variable Ausgaben. Markiere diesen Anteil im Raster.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "position": 7,
+      "id": "q007"
+    },
+    {
+      "updatedAt": "2026-10-25T10:35:14.852Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"budget-range-sparquote-08\",\"revision\":1,\"format\":\"range\",\"title\":\"Zulässiger Sparanteil\",\"subject\":\"Wirtschaft\",\"grade\":\"7\",\"prompt\":\"Für ein fiktives Budget gilt: Der Sparanteil soll mindestens 10 % und höchstens 20 % der monatlichen Einnahmen betragen. Markiere den zulässigen Bereich auf der Skala. Die Skala zeigt Anteile als Dezimalzahlen: 1 entspricht dem gesamten Einkommen.\",\"hint\":\"Beide Grenzwerte gehören zum zulässigen Bereich.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":1,\"step\":0.05,\"majorStep\":0.1,\"unit\":\"\",\"context\":\"numberline\",\"startInclusive\":true,\"endInclusive\":true},\"solution\":{\"start\":0.1,\"end\":0.2},\"objective\":\"Einen zulässigen Bereich für einen Sparanteil auf einer Skala markieren.\",\"rationale\":\"Die Prozentangaben werden als Dezimalwerte auf der Skala verortet: 10 % entsprechen 0,1 und 20 % entsprechen 0,2.\",\"sourceNote\":\"Eigenes fiktives Zahlenbeispiel ohne reale Schülerdaten.\"}",
+      "text": "Für ein fiktives Budget gilt: Der Sparanteil soll mindestens 10 % und höchstens 20 % der monatlichen Einnahmen betragen. Markiere den zulässigen Bereich auf der Skala. Die Skala zeigt Anteile als Dezimalzahlen: 1 entspricht dem gesamten Einkommen.",
+      "type": "visual",
+      "position": 8,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "points": 2,
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 8,
+      "reason": "Einheitenwechsel zwischen Prozent und Dezimalanteil ausdrücklich nennen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    }
+  ]
+}

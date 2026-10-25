@@ -1,0 +1,183 @@
+{
+  "pilotId": "P20",
+  "at": "2026-10-25T10:32:03.165Z",
+  "quiz": {
+    "gradeScaleId": "standard",
+    "grade": "10",
+    "rightsHold": false,
+    "resultMode": "points_grade",
+    "title": "Raumentwicklung und begründete Standortentscheidungen",
+    "audioAnswerQuestionCount": 0,
+    "solutionAudioQuestionCount": 0,
+    "published": false,
+    "qualityWarnings": [],
+    "generationStatus": "ready",
+    "isDeleted": false,
+    "ownerId": "gc-visual255-e2e",
+    "ended": false,
+    "contentLocale": "de-DE",
+    "createdAt": "2026-10-25T10:31:52.646Z",
+    "requiresSecureAssessmentRules": false,
+    "creationContext": {
+      "region": "Bayern",
+      "topic": "Raumentwicklung und begründete Entscheidungen: Fiktive Standort-/Umweltdaten mit Grenzen; zeitliche Entwicklung und belegte Standortentscheidungen",
+      "difficulty": "mittel bis anspruchsvoll",
+      "learningGoals": [],
+      "schoolType": "Mittelschule",
+      "contentLocale": "de-DE"
+    },
+    "qualityIssues": [],
+    "shuffleQuestions": false,
+    "pedagogicalPool": {
+      "status": "no_match",
+      "profileCount": 0,
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": []
+    },
+    "questionCount": 8,
+    "solutionAudioReady": true,
+    "subject": "Geschichte und Geografie",
+    "startMode": "student",
+    "description": "Viel Erfolg beim Test!",
+    "listeningOnlyQuestionCount": 0,
+    "shareEnabled": false,
+    "gradingLocale": "de-DE",
+    "sessionState": "open",
+    "gradeScaleSnapshot": {
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "id": "standard",
+      "name": "Standard"
+    },
+    "accessCode": "V5ABXKYP",
+    "updatedAt": "2026-10-25T10:31:54.138Z",
+    "audioReady": true,
+    "generationJobId": "457ff0a8eac7f2af2de735aef557a79be4028c99",
+    "totalPoints": 16,
+    "shuffleAnswers": false,
+    "showSolutions": true,
+    "localeContractVersion": 1,
+    "audioQuestionCount": 0,
+    "id": "V5ABXKYP"
+  },
+  "questions": [
+    {
+      "updatedAt": "2026-10-25T10:31:52.762Z",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"chart-beschaeftigung-ortsteile-0\",\"revision\":0,\"format\":\"chart\",\"title\":\"Beschäftigungsstruktur fiktiver Ortsteile\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"10\",\"prompt\":\"Übertrage die fiktiven Beschäftigungszahlen der drei Ortsteile in das Säulendiagramm. Verwende die Einheit Prozent.\",\"hint\":\"Trage für jede Kategorie den angegebenen Wert ein. Die Säulen werden in ganzen Prozentpunkten eingetragen.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":100,\"step\":1,\"unit\":\"%\",\"categories\":[{\"id\":\"industrie\",\"label\":\"Industriepark\",\"value\":42},{\"id\":\"dienstleistung\",\"label\":\"Zentrum\",\"value\":68},{\"id\":\"landwirtschaft\",\"label\":\"Außenraum\",\"value\":27}]},\"solution\":{\"values\":{\"industrie\":42,\"dienstleistung\":68,\"landwirtschaft\":27}},\"objective\":\"Daten aus einer fiktiven Tabelle in ein Säulendiagramm übertragen.\",\"rationale\":\"Die Werte werden den Kategorien eindeutig zugeordnet und als Säulen dargestellt.\",\"sourceNote\":\"Eigene fiktive Daten; keine realen Orte oder Personen.\"}",
+      "text": "Übertrage die fiktiven Beschäftigungszahlen der drei Ortsteile in das Säulendiagramm. Verwende die Einheit Prozent.",
+      "position": 1,
+      "type": "visual",
+      "id": "q001"
+    },
+    {
+      "type": "visual",
+      "position": 2,
+      "text": "Trage die drei geplanten Standorte in das Koordinatensystem ein: Wohngebiet W bei (−3|2), Gewerbegebiet G bei (2|−1) und Naturschutzfläche N bei (4|3).",
+      "updatedAt": "2026-10-25T10:31:52.916Z",
+      "points": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"coordinate-standorte-nutzungen-0\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Fiktive Standorte im Koordinatensystem\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"10\",\"prompt\":\"Trage die drei geplanten Standorte in das Koordinatensystem ein: Wohngebiet W bei (−3|2), Gewerbegebiet G bei (2|−1) und Naturschutzfläche N bei (4|3).\",\"hint\":\"Lies zuerst den x-Wert und danach den y-Wert ab. Setze jeden Punkt genau auf einen Rasterpunkt.\",\"maxPoints\":2,\"spec\":{\"mode\":\"points\",\"minX\":-5,\"maxX\":5,\"minY\":-4,\"maxY\":4,\"step\":1,\"labels\":[\"W\",\"G\",\"N\"]},\"solution\":{\"points\":[{\"x\":-3,\"y\":2},{\"x\":2,\"y\":-1},{\"x\":4,\"y\":3}]},\"objective\":\"Mehrere fiktive Standorte anhand geordneter Zahlenpaare in einem Koordinatensystem darstellen.\",\"rationale\":\"Jeder Standort wird durch seine eindeutige Lage aus x- und y-Koordinate bestimmt.\",\"sourceNote\":\"Eigenes fiktives Koordinatensystem ohne reale Raumdaten.\"}",
+      "id": "q002"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:31:53.166Z",
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"table-bevoelkerung-veraenderung-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Fiktive Bevölkerungsentwicklung berechnen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"10\",\"prompt\":\"Berechne die fehlenden Veränderungen in der Tabelle zur fiktiven Bevölkerungsentwicklung. Verwende die Regel: Veränderung = Einwohnerzahl 2025 − Einwohnerzahl 2010. Gib ganze Zahlen ein.\",\"hint\":\"Achte auf das Vorzeichen: Eine Abnahme ergibt einen negativen Wert. Die Einheit ist Einwohnerinnen und Einwohner.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Ortsteil\",\"Einwohnerzahl 2010\",\"Einwohnerzahl 2025\",\"Veränderung\"],\"rows\":[[{\"id\":\"o1\",\"text\":\"Nord\",\"input\":false},{\"id\":\"n1\",\"text\":\"1200\",\"input\":false},{\"id\":\"n2\",\"text\":\"1500\",\"input\":false},{\"id\":\"v1\",\"text\":\"\",\"input\":true}],[{\"id\":\"o2\",\"text\":\"Süd\",\"input\":false},{\"id\":\"s1\",\"text\":\"900\",\"input\":false},{\"id\":\"s2\",\"text\":\"780\",\"input\":false},{\"id\":\"v2\",\"text\":\"\",\"input\":true}],[{\"id\":\"o3\",\"text\":\"West\",\"input\":false},{\"id\":\"w1\",\"text\":\"1100\",\"input\":false},{\"id\":\"w2\",\"text\":\"1250\",\"input\":false},{\"id\":\"v3\",\"text\":\"150\",\"input\":false}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"v1\",\"accepted\":[\"300\"]},{\"id\":\"v2\",\"accepted\":[\"-120\"]}]},\"objective\":\"Eine zeitliche Bevölkerungsentwicklung aus fiktiven Raumdaten berechnen und Veränderungen mit Vorzeichen angeben.\",\"rationale\":\"Die fehlenden Werte sind durch die sichtbaren Anfangs- und Endwerte sowie die ausdrücklich angegebene Rechenregel eindeutig bestimmbar.\",\"sourceNote\":\"Eigene fiktive Bevölkerungsdaten; sie beschreiben keine reale Region.\"}",
+      "text": "Berechne die fehlenden Veränderungen in der Tabelle zur fiktiven Bevölkerungsentwicklung. Verwende die Regel: Veränderung = Einwohnerzahl 2025 − Einwohnerzahl 2010. Gib ganze Zahlen ein.",
+      "type": "visual",
+      "position": 3,
+      "id": "q003"
+    },
+    {
+      "updatedAt": "2026-10-25T10:31:53.335Z",
+      "type": "visual",
+      "text": "Markiere genau die zwei Textstellen, die den Bau eines neuen Betriebs am Standort Süd begründen.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"evidence-standort-sued-begruendung-0\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Belege für eine fiktive Standortentscheidung\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"10\",\"prompt\":\"Markiere genau die zwei Textstellen, die den Bau eines neuen Betriebs am Standort Süd begründen.\",\"hint\":\"Wähle nur Textstellen mit konkreten Standortvorteilen oder einer eingehaltenen Umweltgrenze.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Der Standort Süd liegt 700 Meter vom nächsten Wohngebiet entfernt.\"},{\"id\":\"s2\",\"text\":\"Am Standort Nord ist das Gelände bereits vollständig bebaut.\"},{\"id\":\"s3\",\"text\":\"Eine neue Zufahrtsstraße wäre am Standort Süd ohne Rodung möglich.\"},{\"id\":\"s4\",\"text\":\"Der Standort West liegt näher am Ortszentrum.\"},{\"id\":\"s5\",\"text\":\"Für den Betrieb werden an jedem Standort gleich viele Beschäftigte angenommen.\"}]},\"solution\":{\"selections\":[[\"s1\",\"s3\"]]},\"objective\":\"Begründungen für eine fiktive Standortentscheidung aus einem Sachtext belegen.\",\"rationale\":\"Die beiden ausgewählten Sätze nennen konkrete Vorteile des Standorts Süd und keine bloßen Vergleichsdaten.\",\"sourceNote\":\"Eigenständiger fiktiver Kurztext ohne reale Ortsangaben.\"}",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "position": 4,
+      "points": 2,
+      "id": "q004"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"chart-landnutzung-2025-0\",\"revision\":0,\"format\":\"chart\",\"title\":\"Fiktive Landnutzung im Jahr 2025\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"10\",\"prompt\":\"Übertrage die fiktiven Flächenanteile der Landnutzung im Jahr 2025 in das Säulendiagramm. Die Einheit ist Hektar.\",\"hint\":\"Übernimm die Werte aus der Datenauswahl. Jede Kategorie erhält genau eine Säule.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":500,\"step\":10,\"unit\":\"ha\",\"categories\":[{\"id\":\"siedlung\",\"label\":\"Siedlungsfläche\",\"value\":180},{\"id\":\"wald\",\"label\":\"Waldfläche\",\"value\":320},{\"id\":\"acker\",\"label\":\"Ackerfläche\",\"value\":450},{\"id\":\"gewaesser\",\"label\":\"Gewässerfläche\",\"value\":70}]},\"solution\":{\"values\":{\"siedlung\":180,\"wald\":320,\"acker\":450,\"gewaesser\":70}},\"objective\":\"Fiktive Flächendaten einer Raumnutzungskarte in ein Diagramm übertragen.\",\"rationale\":\"Die vier Flächenwerte werden korrekt und mit der passenden Einheit dargestellt.\",\"sourceNote\":\"Eigene fiktive Flächendaten; keine amtliche Statistik.\"}",
+      "points": 2,
+      "position": 5,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "text": "Übertrage die fiktiven Flächenanteile der Landnutzung im Jahr 2025 in das Säulendiagramm. Die Einheit ist Hektar.",
+      "updatedAt": "2026-10-25T10:31:53.482Z",
+      "id": "q005"
+    },
+    {
+      "type": "visual",
+      "text": "Markiere genau die zwei Sätze, die die Wahl des Standorts West für das fiktive Recyclingzentrum fachlich begründen.",
+      "position": 6,
+      "updatedAt": "2026-10-25T10:31:53.630Z",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"evidence-recyclingzentrum-west-0\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Eine fiktive Standortentscheidung begründen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"10\",\"prompt\":\"Markiere genau die zwei Sätze, die die Wahl des Standorts West für das fiktive Recyclingzentrum fachlich begründen.\",\"hint\":\"Wähle genau zwei vollständige Sätze aus. Achte auf Standortbedingungen und die Entwicklung über mehrere Jahre.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Im fiktiven Bezirk nimmt die Menge der getrennt gesammelten Wertstoffe seit 2022 jedes Jahr zu.\"},{\"id\":\"s2\",\"text\":\"Der fiktive Standort West liegt außerhalb der festgelegten Überschwemmungsfläche und ist über eine bestehende Hauptstraße erreichbar.\"},{\"id\":\"s3\",\"text\":\"Am fiktiven Standort Nord steht bereits ein ungenutztes Lagergebäude aus dem Jahr 1998.\"},{\"id\":\"s4\",\"text\":\"Für den fiktiven Standort West wird bis 2030 eine ausreichende Fläche für die erwartete Zunahme der Wertstoffmengen ausgewiesen.\"},{\"id\":\"s5\",\"text\":\"Der fiktive Standort Süd liegt am Rand eines Wohngebiets mit mehreren neu angelegten Spielplätzen.\"}]},\"solution\":{\"selections\":[[\"s2\",\"s4\"]]},\"objective\":\"Begründungen für eine fiktive raumbezogene Entscheidung aus kurzen Informationstexten herausarbeiten.\",\"rationale\":\"Die beiden ausgewählten Sätze nennen konkrete Standortvorteile und berücksichtigen zugleich die erwartete zeitliche Entwicklung.\",\"sourceNote\":\"Eigenes fiktives Daten- und Textbeispiel zur Standortplanung; vor Verwendung fachlich prüfen.\"}",
+      "id": "q006"
+    },
+    {
+      "position": 7,
+      "text": "Berechne die fehlenden Gesamtpunktzahlen in der fiktiven Bewertung zweier Trassenvarianten. Die höhere Gesamtpunktzahl zeigt die günstigere Variante.",
+      "type": "visual",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"table-trassenbewertung-fiktiv-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Fiktive Trassenbewertung\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"10\",\"prompt\":\"Berechne die fehlenden Gesamtpunktzahlen in der fiktiven Bewertung zweier Trassenvarianten. Die höhere Gesamtpunktzahl zeigt die günstigere Variante.\",\"hint\":\"Addiere für jede Variante die drei angegebenen Punktwerte. Höhere Punktzahlen bedeuten jeweils eine günstigere Bewertung.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Kriterium\",\"Trasse Ost\",\"Trasse West\"],\"rows\":[[{\"id\":\"k1\",\"text\":\"Anbindung an das Verkehrsnetz\",\"input\":false},{\"id\":\"o1\",\"text\":\"7\",\"input\":false},{\"id\":\"w1\",\"text\":\"6\",\"input\":false}],[{\"id\":\"k2\",\"text\":\"Baukosten\",\"input\":false},{\"id\":\"o2\",\"text\":\"5\",\"input\":false},{\"id\":\"w2\",\"text\":\"3\",\"input\":false}],[{\"id\":\"k3\",\"text\":\"Eingriff in die Natur\",\"input\":false},{\"id\":\"o3\",\"text\":\"2\",\"input\":false},{\"id\":\"w3\",\"text\":\"4\",\"input\":false}],[{\"id\":\"k4\",\"text\":\"Gesamtpunktzahl\",\"input\":false},{\"id\":\"o4\",\"text\":\"\",\"input\":true},{\"id\":\"w4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"o4\",\"accepted\":[\"14\"]},{\"id\":\"w4\",\"accepted\":[\"13\"]}]},\"objective\":\"Bewertungskriterien einer fiktiven raumplanerischen Entscheidung rechnerisch zusammenführen.\",\"rationale\":\"Die Gesamtpunktzahl ergibt sich eindeutig aus der Summe der drei sichtbaren Einzelbewertungen jeder Trassenvariante.\",\"sourceNote\":\"Eigenes fiktives Bewertungsmodell zur Raumentwicklung; die Punktwerte sind keine reale Planungsempfehlung.\"}",
+      "updatedAt": "2026-10-25T10:31:53.874Z",
+      "points": 2,
+      "id": "q007"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"evidence-zeitentwicklung-umweltgrenze-0\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Zeitliche Entwicklung und Umweltgrenze belegen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"10\",\"prompt\":\"Markiere genau die zwei Textstellen, die zeigen, dass die fiktive Planung eine zeitliche Entwicklung berücksichtigt und eine Umweltgrenze einhält.\",\"hint\":\"Suche eine Stelle mit einem Vergleich über mehrere Zeitpunkte und eine Stelle mit einer ausdrücklich genannten Grenze.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Im Jahr 2015 nutzten täglich 90 Personen den Bus, im Jahr 2025 waren es 150.\"},{\"id\":\"s2\",\"text\":\"Der geplante Weg soll an jedem Wochentag geöffnet sein.\"},{\"id\":\"s3\",\"text\":\"Die Baufläche endet an der markierten Grenze des Wasserschutzgebiets.\"},{\"id\":\"s4\",\"text\":\"Die neue Haltestelle erhält ein grünes Wartehäuschen.\"},{\"id\":\"s5\",\"text\":\"Für die Planung wurde ein einheitliches Kartenzeichen verwendet.\"}]},\"solution\":{\"selections\":[[\"s1\",\"s3\"]]},\"objective\":\"Zeitliche Entwicklungen und räumliche Umweltgrenzen als Belege in einem fiktiven Text erkennen.\",\"rationale\":\"S1 belegt die Veränderung über zwei Zeitpunkte, S3 die verbindliche räumliche Umweltgrenze.\",\"sourceNote\":\"Eigenständiger fiktiver Kurztext ohne reale Datenquellen.\"}",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "points": 2,
+      "updatedAt": "2026-10-25T10:31:54.017Z",
+      "type": "visual",
+      "text": "Markiere genau die zwei Textstellen, die zeigen, dass die fiktive Planung eine zeitliche Entwicklung berücksichtigt und eine Umweltgrenze einhält.",
+      "position": 8,
+      "id": "q008"
+    }
+  ]
+}

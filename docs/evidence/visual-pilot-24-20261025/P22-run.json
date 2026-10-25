@@ -1,0 +1,110 @@
+{
+  "id": "P22",
+  "row": {
+    "id": "P22",
+    "subject": "Wirtschaft",
+    "grade": 7,
+    "title": "Budget und Sparen",
+    "goal": "Fiktive monatliche Einnahmen und Ausgaben, Sparanteile und Budgetgrenzen auswerten",
+    "formats": [
+      "chart",
+      "table",
+      "grid",
+      "range"
+    ],
+    "requestId": "VIS24-20261025-22-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:34:26.343Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-22-A",
+    "subject": "Wirtschaft",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Budget und Sparen: Fiktive monatliche Einnahmen und Ausgaben, Sparanteile und Budgetgrenzen auswerten",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus chart, table, grid, range. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "4fdbfbeccb0495e97f17b80b1e4d8243eb851c37",
+  "dispatch": {
+    "jobId": "4fdbfbeccb0495e97f17b80b1e4d8243eb851c37"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:35:17.861Z",
+  "job": {
+    "generationMode": "generated",
+    "dispatchState": "enqueued",
+    "topic": "Budget und Sparen: Fiktive monatliche Einnahmen und Ausgaben, Sparanteile und Budgetgrenzen auswerten",
+    "stage": "ready",
+    "completedCount": 8,
+    "sourceQuizId": "",
+    "percent": 100,
+    "grade": "7",
+    "subject": "Wirtschaft",
+    "materials": [],
+    "qualityWarnings": [],
+    "audioTotal": 0,
+    "answerAudioTotal": 0,
+    "requestedCount": 8,
+    "audioCompleted": 0,
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": [],
+      "status": "no_match",
+      "profileCount": 0
+    },
+    "ownerId": "gc-visual255-e2e",
+    "imageTotal": 0,
+    "updatedAt": "2026-10-25T10:35:15.020Z",
+    "imageCompleted": 0,
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "solutionAudioCompleted": 0,
+    "status": "ready",
+    "createdAt": "2026-10-25T10:34:26.456Z",
+    "completedAt": "2026-10-25T10:35:15.020Z",
+    "solutionAudioTotal": 0,
+    "answerAudioCompleted": 0,
+    "qualityIssues": [],
+    "startedAt": "2026-10-25T10:34:26.857Z",
+    "input": {
+      "audioAnswerQuestionCount": 0,
+      "region": "Bayern",
+      "exactAudioCounts": false,
+      "difficulty": "mittel bis anspruchsvoll",
+      "pedagogicalContextKnown": true,
+      "grade": "7",
+      "audioQuestionCount": 0,
+      "audioMode": "none",
+      "allowImageChoices": false,
+      "exactImageCounts": false,
+      "count": 8,
+      "subject": "Wirtschaft",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus chart, table, grid, range. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "imageMode": "none",
+      "materialMode": "inspiration",
+      "maxVisualQuestions": 0,
+      "allowedTypes": [
+        "visual"
+      ],
+      "clientRequestId": "VIS24-20261025-22-A",
+      "points": 16,
+      "schoolType": "Mittelschule",
+      "topic": "Budget und Sparen: Fiktive monatliche Einnahmen und Ausgaben, Sparanteile und Budgetgrenzen auswerten",
+      "solutionAudioQuestionCount": 0
+    },
+    "quizId": "E5TSGNGB",
+    "requestId": "VIS24-20261025-22-A",
+    "id": "4fdbfbeccb0495e97f17b80b1e4d8243eb851c37"
+  },
+  "quizId": "E5TSGNGB"
+}
