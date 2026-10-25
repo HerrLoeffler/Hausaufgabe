@@ -143,8 +143,10 @@
 .topbar #gradecrewTourBtn { flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; width:auto; min-height:44px; padding:9px 13px; background:#edf3ff; color:#17479e; border:1px solid #c4d4ee; font-size:13px; white-space:nowrap; }
 .topbar #gradecrewTourBtn[hidden] { display:none; }
 .topbar #gradecrewTourBtn small { display:none; }
-#settingsView .settingsTutorialEntry { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:20px; }
-#settingsView .settingsTutorialEntry h2 { margin:0 0 6px; font-size:20px; }
-#settingsView .settingsTutorialEntry p { margin:0; color:var(--muted); }
-#settingsTutorialStart { min-height:44px; flex:0 0 auto; }
-@media(max-width:650px) { #settingsView .settingsTutorialEntry { align-items:flex-start; flex-direction:column; gap:12px; } }
+#settingsView .settingsTutorialEntry { display:grid; justify-items:center; gap:12px; margin-bottom:20px; padding:24px; text-align:center; }
+#settingsView .settingsTutorialEntry h2 { margin:0 0 4px; font-size:24px; }
+#settingsView .settingsTutorialEntry p { margin:0; max-width:620px; color:var(--muted); }
+#settingsView .settingsTutorialHeading p { font-size:14px; }
+#settingsView .settingsTutorialCrew { display:block; width:210px; max-width:100%; height:auto; object-fit:contain; }
+#settingsTutorialStart { min-height:44px; margin-top:2px; }
+@media(max-width:650px) { #settingsView .settingsTutorialEntry { padding:20px 16px; } }
