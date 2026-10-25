@@ -28,7 +28,7 @@ const hashes={};
 for(const name of ['index.html','app.mjs','api.mjs','model.mjs','network.mjs','delivery.mjs','diagrams.mjs','diagram-extras.mjs','brain.mjs','workshop.mjs','workshop-units.mjs','styles.css']){
  const data=await fs.readFile(path.join(root,'lerngehirn',name));const target=path.join(publicDir,'lerngehirn',name);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,data);hashes['lerngehirn/'+name]=digest(data);
 }
-const feature={project:site,sourceCommit,version:'learning-brain-20261021',files:hashes,scope:'Mathe/Deutsch5-10; text paths testable; media and content-review gates explicit'};
+const feature={project:site,sourceCommit,version:'learning-brain-56-20261025',files:hashes,scope:'Mathe/Deutsch5-6:241 child goals, personal evidence network,7workshops,14diagrams and real listening;16human-observation goals remain explicit;7-10legacycatalogue unchanged; content calibration open'};
 const featureBytes=JSON.stringify(feature,null,2)+'\n';await fs.writeFile(path.join(publicDir,'lerngehirn','release.json'),featureBytes);hashes['lerngehirn/release.json']=digest(featureBytes);
 const release={...baseline,files:{...baseline.files,...hashes},extensions:{...(baseline.extensions||{}),learningBrain:{sourceCommit,manifest:'lerngehirn/release.json'}}};
 await fs.writeFile(path.join(publicDir,'release.json'),JSON.stringify(release,null,2)+'\n');

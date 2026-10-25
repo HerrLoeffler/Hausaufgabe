@@ -33,3 +33,9 @@ test('detailed competencies use their own four demands and three prerequisite he
  assert.equal(P.plan({topic,phase:'help',supportStage:3}).demand,topic.learningPlan.help[2]);
  assert.equal(P.plan({topic,phase:'practice',level:0}).delivery,'visual');
 });
+
+test('a tool that is the actual skill action stays available on harder independent probes',()=>{
+ const topic=require('../lib/learning-brain/catalog').getCatalog().competencies.find(c=>c.didacticFamily==='angleDraw');
+ const p=P.plan({topic,phase:'practice',level:1});assert.equal(p.preferredTool,'angle-protractor');assert.equal(p.requiredTool,'angle-protractor');assert.equal(p.independent,true);
+ const help=P.plan({topic,phase:'help',supportStage:2});assert.equal(help.requiredTool,'none');
+});

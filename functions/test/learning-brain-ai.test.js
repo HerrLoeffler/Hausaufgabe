@@ -169,3 +169,9 @@ test('a finer degree scale is a real representation change while another angle o
  const x=mock([make(2),{approved:true,reason:'finer scale',demandAligned:true,progressionMeaningful:true}]);assert.equal((await x.ai.next(state,{})).task.workshop.step,2);
  const entry=make(1);entry.task.answer.values=['60'];entry.task.prompt='Stelle den Winkel auf 60° ein.';assert.throws(()=>cleanGenerated(entry,{...state,level:0}));
 });
+
+test('a deliberate retry preserves the previous private review critique instead of repeating the same broken draft',async()=>{
+ const requests=[],replies=[generated(),{approved:true,reason:'repaired'}];
+ const ai=createAI({client:{responses:{create:async request=>{requests.push(JSON.parse(request.input[1].content));return {status:'completed',output_text:JSON.stringify(replies.shift())};}}}});
+ await ai.next({...s,nextFailure:{stage:'candidate-validation',critique:'Keep the required degree-scale tool.'}},{});assert.equal(requests[0].repair.critique,'Keep the required degree-scale tool.');
+});
