@@ -120,3 +120,11 @@ test('review cannot approve a candidate while marking demand alignment false',as
  const x=mock([generated(),{approved:true,reason:'overshot',demandAligned:false,progressionMeaningful:true},generated(),{approved:true,reason:'still overshot',demandAligned:false,progressionMeaningful:true}]);
  await assert.rejects(x.ai.next(s,{}),e=>e.code==='unavailable');
 });
+
+test('a word choice has an explicitly validated open answer contract for the reviewer',async()=>{
+ const candidate=generated();candidate.task.input='choice';candidate.task.options=['links','rechts'];candidate.task.answer={kind:'open',values:['rechts']};
+ const requests=[],replies=[candidate,{approved:true,reason:'word choice valid',demandAligned:true,progressionMeaningful:true}];
+ const ai=createAI({client:{responses:{create:async request=>{requests.push(JSON.parse(request.input[1].content));return {status:'completed',output_text:JSON.stringify(replies.shift())};}}}});
+ await ai.next(s,{});assert.deepEqual(requests[1].renderedResponseContract,{input:'choice',answerKind:'open',choiceKeysMatch:true});
+ candidate.task.answer.values=[];assert.throws(()=>cleanGenerated(candidate,s));
+});
