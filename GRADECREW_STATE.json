@@ -2010,7 +2010,27 @@
       "human_teacher_acceptance": "pending",
       "physical_device_acceptance": "pending",
       "handoff": "workstreams/visual-pilot-24-20261025.md",
-      "next_action": "Teacher reviews representative tasks on test preview; then authorize separate integration onto current page."
+      "next_action": "Delegated research PDF fully analyze and map to existing task catalog; prepare selection/generation contract and small pilot plan. No broad implementation/paid generation. Teacher/device review can continue in parallel.",
+      "user_feedback_followup": {
+        "at": "2026-10-25",
+        "evidence_commit": "fda13a26d1c4b4cdeadd3689a1280cdd68beb765",
+        "hosting_commit": "731d97eb70c5a09142319268695e6063d4235b1b",
+        "backend_commit": "2ae8fb6b8545eac316fde1a41f08dc8ce67bdbd3",
+        "scope": "existing visual255 preview only",
+        "revised_test_codes": {
+          "P02": "C0E863A9",
+          "P04": "88C01170",
+          "P07": "52F21DC8"
+        },
+        "original_questions_preserved": 24,
+        "focused_tests": 34,
+        "additional_live_server_cases": 6,
+        "hosting_hashes": 180,
+        "private_viewer_public_status": 404,
+        "teacher_review": "local only:192task navigation, editable device drafts",
+        "physical_touch": "pending",
+        "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/fda13a26d1c4b4cdeadd3689a1280cdd68beb765/docs/evidence/visual-pilot-24-20261025/followup/REPORT.md"
+      }
     }
   ],
   "deployments": [
