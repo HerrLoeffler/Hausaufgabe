@@ -1,3 +1,4 @@
+import {extraDiagramSchema,validateExtraDiagram,renderExtraDiagram} from './diagram-extras.mjs';
 // Keep the bounded scene contract aligned with functions/lib/learning-brain/diagrams.js.
 const number=(minimum,maximum)=>({type:'number',minimum,maximum,description:'Endliche Zahl mit höchstens drei Nachkommastellen.'});
 const text=maxLength=>({type:'string',maxLength});
@@ -11,7 +12,7 @@ const variants={
  bars:{max:number(1,1000000),step:number(.1,1000000),bars:list(object({label:text(24),value:number(0,1000000)}),1,10)},
  'data-list':{values:list(number(-1000000,1000000),1,40)},
 };
-const diagramSchema={anyOf:Object.entries(variants).map(([kind,properties])=>object({kind:{type:'string',enum:[kind]},title:text(120),unit:text(16),...properties}))};
+const diagramSchema={anyOf:Object.entries(variants).map(([kind,properties])=>object({kind:{type:'string',enum:[kind]},title:text(120),unit:text(16),...properties})).concat(extraDiagramSchema.anyOf)};
 function validValue(value,schema){
  if(schema.type==='object')return value!==null&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).length===schema.required.length&&schema.required.every(key=>Object.prototype.hasOwnProperty.call(value,key)&&validValue(value[key],schema.properties[key]));
  if(schema.type==='array')return Array.isArray(value)&&value.length>=schema.minItems&&value.length<=schema.maxItems&&value.every(v=>validValue(v,schema.items));
@@ -30,6 +31,7 @@ function validNet(cells){
  return frames.size===6&&new Set([...frames.values()].map(f=>f.n.join(','))).size===6;
 }
 function validateDiagram(d){
+ if(extraDiagramSchema.anyOf.some(s=>s.properties.kind.enum[0]===d?.kind))return validateExtraDiagram(d);
  const schema=diagramSchema.anyOf.find(s=>s.properties.kind.enum[0]===d?.kind);if(!schema||!validValue(d,schema)||!d.title.trim())return null;
  const integerMultiple=(a,b)=>Math.abs(a/b-Math.round(a/b))<1e-8;
  if(d.kind==='coordinates'){
@@ -55,6 +57,7 @@ const label=(x,y,value,anchor='middle',extra='')=>`<text x="${f(x)}" y="${f(y)}"
 const line=(x1,y1,x2,y2,extra='')=>`<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" ${/\bstroke="/.test(extra)?'':'stroke="#245668"'} ${/\bstroke-width="/.test(extra)?'':'stroke-width="2"'} ${extra}/>`;
 const polygon=(points,fill='#d8edf0')=>`<polygon points="${points.map(([x,y])=>`${f(x)},${f(y)}`).join(' ')}" fill="${fill}" stroke="#245668" stroke-width="2"/>`;
 export function renderDiagram(input){
+ if(extraDiagramSchema.anyOf.some(s=>s.properties.kind.enum[0]===input?.kind))return renderExtraDiagram(input);
  const d=validateDiagram(input);if(!d)return '';
  const measure=n=>display(n)+(d.unit?' '+d.unit:'');let body='',description='';
  if(d.kind==='rectangle'){

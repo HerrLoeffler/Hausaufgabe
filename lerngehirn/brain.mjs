@@ -10,7 +10,7 @@ export function renderVisual(v){const strip=fractionStrip(v);if(!strip)return ty
 // Parse only bounded inline fractions. All pieces are escaped by formatMathText;
 // the model cannot provide tags, styles, URLs, or executable markup.
 export function mathText(value){
-  const text=String(value??'').replace(/\bfraction-board\b/g,'Bruchmodell').replace(/\bnumber-line\b/g,'Zahlenstrahl').replace(/\btext-workbench\b/g,'Textwerkstatt').replace(/\\\(([\s\S]*?)\\\)/g,'$1').replace(/\\\[([\s\S]*?)\\\]/g,'$1');
+  const text=String(value??'').replace(/\bcoordinate-plane\b/g,'Koordinatengitter').replace(/\bangle-protractor\b/g,'Winkelmesser').replace(/\bfraction-units\b/g,'Bruchstreifen').replace(/\bfraction-board\b/g,'Bruchmodell').replace(/\bnumber-line\b/g,'Zahlenstrahl').replace(/\btext-workbench\b/g,'Textwerkstatt').replace(/\\\(([\s\S]*?)\\\)/g,'$1').replace(/\\\[([\s\S]*?)\\\]/g,'$1');
   const pattern=/\\frac\{([^{}]{1,60})\}\{([^{}]{1,60})\}|(?<![\w/])(-?\d{1,6})\s*\/\s*(\d{1,6})(?![\w/])/g;
   let html='',cursor=0;
   for(const match of text.matchAll(pattern)){

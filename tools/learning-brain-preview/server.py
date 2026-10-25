@@ -44,7 +44,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         path=self.path.split('?')[0]
         if path=='/':self.send_response(302);self.send_header('Location','/lerngehirn/');self.end_headers();return
-        allowed={'/lerngehirn/','/lerngehirn/index.html','/lerngehirn/app.mjs','/lerngehirn/api.mjs','/lerngehirn/model.mjs','/lerngehirn/network.mjs','/lerngehirn/delivery.mjs','/lerngehirn/diagrams.mjs','/lerngehirn/brain.mjs','/lerngehirn/workshop.mjs','/lerngehirn/styles.css','/firebase-config.js','/shared/math-display.mjs'}
+        allowed={'/lerngehirn/','/lerngehirn/index.html','/lerngehirn/app.mjs','/lerngehirn/api.mjs','/lerngehirn/model.mjs','/lerngehirn/network.mjs','/lerngehirn/delivery.mjs','/lerngehirn/diagrams.mjs','/lerngehirn/diagram-extras.mjs','/lerngehirn/brain.mjs','/lerngehirn/workshop.mjs','/lerngehirn/workshop-units.mjs','/lerngehirn/styles.css','/firebase-config.js','/shared/math-display.mjs'}
         if path not in allowed:self.send_error(404);return
         super().do_GET()
     def do_POST(self):

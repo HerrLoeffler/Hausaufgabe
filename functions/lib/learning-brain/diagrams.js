@@ -1,4 +1,5 @@
 'use strict';
+const {extraDiagramSchema,validateExtraDiagram}=require('./diagram-extras');
 const number=(minimum,maximum)=>({type:'number',minimum,maximum,description:'Endliche Zahl mit höchstens drei Nachkommastellen.'});
 const text=maxLength=>({type:'string',maxLength});
 const object=properties=>({type:'object',additionalProperties:false,properties,required:Object.keys(properties)});
@@ -11,7 +12,7 @@ const variants={
  bars:{max:number(1,1000000),step:number(.1,1000000),bars:list(object({label:text(24),value:number(0,1000000)}),1,10)},
  'data-list':{values:list(number(-1000000,1000000),1,40)},
 };
-const diagramSchema={anyOf:Object.entries(variants).map(([kind,properties])=>object({kind:{type:'string',enum:[kind]},title:text(120),unit:text(16),...properties}))};
+const diagramSchema={anyOf:Object.entries(variants).map(([kind,properties])=>object({kind:{type:'string',enum:[kind]},title:text(120),unit:text(16),...properties})).concat(extraDiagramSchema.anyOf)};
 function validValue(value,schema){
  if(schema.type==='object')return value!==null&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).length===schema.required.length&&schema.required.every(key=>Object.prototype.hasOwnProperty.call(value,key)&&validValue(value[key],schema.properties[key]));
  if(schema.type==='array')return Array.isArray(value)&&value.length>=schema.minItems&&value.length<=schema.maxItems&&value.every(v=>validValue(v,schema.items));
@@ -30,6 +31,7 @@ function validNet(cells){
  return frames.size===6&&new Set([...frames.values()].map(f=>f.n.join(','))).size===6;
 }
 function validateDiagram(d){
+ if(extraDiagramSchema.anyOf.some(s=>s.properties.kind.enum[0]===d?.kind))return validateExtraDiagram(d);
  const schema=diagramSchema.anyOf.find(s=>s.properties.kind.enum[0]===d?.kind);if(!schema||!validValue(d,schema)||!d.title.trim())return null;
  const integerMultiple=(a,b)=>Math.abs(a/b-Math.round(a/b))<1e-8;
  if(d.kind==='coordinates'){
@@ -47,4 +49,17 @@ function validateDiagram(d){
  if(d.kind==='bars'&&(!integerMultiple(d.max,d.step)||d.max/d.step>12||d.max/d.step<2||d.bars.some(b=>!b.label.trim()||b.value>d.max)||new Set(d.bars.map(b=>b.label)).size!==d.bars.length))return null;
  return JSON.parse(JSON.stringify(d));
 }
-module.exports={diagramSchema,validateDiagram};
+function diagramFacts(input){
+ const d=validateDiagram(input);if(!d)return null;
+ if(d.kind==='area-grid')return {kind:d.kind,cells:d.cells.length,columns:d.columns,rows:d.rows};
+ if(d.kind==='unit-cubes')return {kind:d.kind,cubesPerLayer:d.length*d.width,layers:d.height,totalCubes:d.length*d.width*d.height};
+ if(d.kind==='fraction-area'){const whole=d.rows*d.columns,source=d.rows*d.selectedColumns,highlight=d.selectedRows*d.selectedColumns;return {kind:d.kind,wholeCells:whole,sourceCells:source,highlightedCells:highlight,fractionOfWhole:`${highlight}/${whole}`,fractionOfSource:`${highlight}/${source}`,equalGroups:d.mode==='equal-groups'?d.rows:null};}
+ if(d.kind==='rectangle')return {kind:d.kind,width:d.width,height:d.height,area:d.width*d.height,perimeter:2*(d.width+d.height)};
+ if(d.kind==='cuboid'||d.kind==='cuboid-net')return {kind:d.kind,length:d.length,width:d.width,height:d.height,volume:d.length*d.width*d.height,surface:2*(d.length*d.width+d.length*d.height+d.width*d.height),faceAreas:{A:d.length*d.height,B:d.width*d.height,C:d.length*d.height,D:d.width*d.height,E:d.length*d.width,F:d.length*d.width}};
+ if(d.kind==='circle')return {kind:d.kind,radius:d.radius,diameter:2*d.radius};
+ if(d.kind==='angle')return {kind:d.kind,degrees:d.degrees,classification:d.degrees<90?'spitz':d.degrees===90?'recht':'stumpf'};
+ if(d.kind==='bars')return {kind:d.kind,values:d.bars,sum:d.bars.reduce((n,b)=>n+b.value,0)};
+ if(d.kind==='data-list')return {kind:d.kind,count:d.values.length,sum:d.values.reduce((a,b)=>a+b,0),mean:d.values.reduce((a,b)=>a+b,0)/d.values.length};
+ return {kind:d.kind,canonicalScene:d};
+}
+module.exports={diagramSchema,validateDiagram,diagramFacts};

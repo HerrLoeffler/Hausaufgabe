@@ -609,6 +609,19 @@ define("expand", [
   "Nur eine einzelne kleine Addition aus dieser Summe lösen; anschließend zur Zählermultiplikation zurückkehren.",
 ], "fraction-board");
 
+define("angleRead", [
+  "Einen gut sichtbaren Winkel bis180 Grad bei vorgegebener Nullrichtung am Winkelmesser ablesen.",
+  "Die abgelesene Öffnung mit90 Grad vergleichen und die Einordnung als spitz, recht oder stumpf kurz begründen.",
+  "Eine konkrete falsche Skalenablesung anhand von Nullrichtung und Öffnung berichtigen; nicht nur erneut ablesen.",
+  "Eine neue begründete Entscheidung zwischen zwei konkurrierenden Ablesungen anhand derselben Öffnung treffen.",
+], ["Nur die Nullmarke am Ausgangsschenkel wählen; noch keinen Winkel messen.", "Nur die sichtbare Öffnung mit einer eingeblendeten rechten Ecke vergleichen.", "Nur den gemeinsamen Scheitel und einen Ausgangsschenkel benennen; dann zur Nullrichtung zurückkehren."], "none", "visual", "Exakter Winkel mit echter Gradskala und sichtbarer Nullrichtung; begründete Antworten brauchen keine Zentimetermessung am Bildschirm.");
+define("angleDraw", [
+  "Einen einfachen vorgegebenen Winkel mit genannter Nullrichtung durch Bewegen des zweiten Schenkels selbst einstellen.",
+  "Einen vorgegebenen Winkel an einer feineren ein- oder zweigradigen Skala ohne vorgegebenen Teilschritt selbst einstellen.",
+  "Einen bereits falsch eingestellten Winkel anhand der richtigen Nullrichtung gezielt korrigieren und die Korrektur kurz begründen.",
+  "Die fehlende Öffnung aus einem vorgegebenen Ergänzungswinkel zu180 Grad erschließen und als einen Winkel selbst einstellen.",
+], ["Nur einen rechten Winkel von90 Grad durch den zweiten Schenkel einstellen; andere Zielzahlen entfallen.", "Nur die vorgegebene Nullrichtung von einer Vierteldrehung unterscheiden.", "Nur den gemeinsamen Scheitel und einen Schenkel an der Darstellung benennen."], "angle-protractor", "visual", "Beweglicher zweiter Schenkel an echter Gradskala0bis180, gleiche Winkelgeometrie; digitales Einstellen ist kein Nachweis des Umgangs mit physischem Geodreieck.");
+
 function buildCompetencies(topics) {
   if (!Array.isArray(topics)) throw new TypeError("topics must be an array");
   const parents = topics.filter((t) => [5, 6].includes(t.grade) && t.track === "R" && ["math", "german"].includes(t.subject));
@@ -639,7 +652,7 @@ function buildCompetencies(topics) {
     const learningPlan = {
       levels: f.levels.map((s) => titlePrefix + s),
       help: f.help.map((s) => titlePrefix + s),
-      preferredTool: d.family === "volumeInverse" ? "none" : f.preferredTool,
+      preferredTool: d.family === "volumeInverse" ? "none" : d.family === "improper" ? "fraction-units" : d.family === "coordinates" && /eintragen|erzeugen|verbinden/.test(d.goal) ? "coordinate-plane" : f.preferredTool,
     };
     return {
       id, parentTopicId: p.id, title: d.title, goal: d.goal,

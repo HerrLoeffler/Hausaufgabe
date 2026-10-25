@@ -148,3 +148,16 @@ test('two rejected answer judgments still fail closed without inventing an appro
  const x=mock([grade,{approved:false,reason:'wrong feedback'},grade,{approved:false,reason:'still wrong'}]);
  await assert.rejects(x.ai.assess(s,'2/6'),e=>e.code==='unavailable'&&e.stage==='answer-review');assert.equal(x.count(),4);
 });
+
+test('new coordinate, angle and multiple-whole adapters survive the actual AI-to-public contract',()=>{
+ const cases=[
+  [{tool:'coordinate-plane',version:1,role:'answer',goal:'plot',instruction:'Setze A.',reason:'Platzierung prüfen',xMin:0,xMax:4,yMin:0,yMax:4,step:1,labels:['A'],initialPoints:[]},{kind:'open',values:['A:2|3']},{subject:'math',title:'Koordinaten setzen'}],
+  [{tool:'angle-protractor',version:1,role:'answer',goal:'set-angle',instruction:'Stelle den Winkel ein.',reason:'Öffnung einstellen',minimum:0,maximum:180,step:5,initialValue:0},{kind:'number',values:['45']},{subject:'math',title:'Winkel einstellen'}],
+  [{tool:'fraction-units',version:1,role:'answer',goal:'represent',instruction:'Markiere fünf Drittel.',reason:'Mehrere Ganze brauchen gleiche Einheiten',denominator:3,wholeCount:2},{kind:'rational',values:['5/3']},{subject:'math',title:'Unechte Brüche darstellen'}],
+ ];
+ for(const [workshop,answer,topic]of cases){const d=generated();d.task.input='workshop';d.task.workshop=workshop;d.task.answer=answer;const result=cleanGenerated(d,{...s,topic});assert.equal(result.task.workshop.tool,workshop.tool);assert.ok(!Object.hasOwn(result.task.workshop,'reason'));}
+});
+test('coordinate assessment honors the exact server-derived point result rather than a plausible invented approval',async()=>{
+ const x=mock([{outcome:'correct',short:'Richtig.',reason:'guess'}]);
+ await assert.rejects(x.ai.assess({...s,task:{...s.task,answer:{kind:'open',values:['A:2|3']}}},'A:3|2',{workshop:{tool:'coordinate-plane',exactResult:false}}),e=>e.code==='unavailable');assert.equal(x.count(),1);
+});
