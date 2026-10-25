@@ -24,7 +24,7 @@ test("actual generation handler connects constrained batches, validation, review
       ...constants, ...validation, ...schemas, ...prompts, HttpsError,
       generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, preparePedagogicalPool, variantPrompt,
       randomUUID: () => "test-request", cleanInput: data => data, sanitizeMaterials: () => [],
-      consumeQuota: async () => {}, materialInputs: async () => [], qualityMemoryPrompt: () => "",
+      consumeQuota: async () => {}, materialInputs: async () => [], learningPrompt: require("../lib/feedback-learning").learningPrompt, qualityMemoryPrompt: () => "",
       teacherQualityGuide: () => "",
       loadQualityMemory: async () => ({ negativeQuestions: [], memoryVersion: 2, stats: { total: 0 } }),
       structuredResponse: async ({ schema, schemaName, userPrompt }) => {
@@ -72,7 +72,7 @@ test("actual fresh variant generation replaces every source task, keeps 10 tasks
   const context = vm.createContext({ ...constants, ...validation, ...schemas, ...prompts, HttpsError, variantPrompt,
     generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, preparePedagogicalPool,
     randomUUID: () => "test-request", sanitizeMaterials: () => [], consumeQuota: async () => {}, materialInputs: async () => [],
-    qualityMemoryPrompt: () => "", teacherQualityGuide: () => "", loadQualityMemory: async () => ({ negativeQuestions: [], memoryVersion: 2, stats: { total: 0 } }),
+    learningPrompt: require("../lib/feedback-learning").learningPrompt, qualityMemoryPrompt: () => "", teacherQualityGuide: () => "", loadQualityMemory: async () => ({ negativeQuestions: [], memoryVersion: 2, stats: { total: 0 } }),
     structuredResponse: async ({ schemaName, userPrompt }) => {
       generated++; assert.equal(schemaName, "testify_test_v2"); assert.match(userPrompt, /Verbindliche Variantenpositionen/);
       return { data: { title: "Neue Prozentrechnung", subject: "Mathematik", grade: "7", questions: originals.map((q, i) => ({ ...q, text: `Ein Preis von ${200 + i * 20} Euro wird um 20 Prozent reduziert. Wie viele Euro beträgt der Rabatt?`, numericAnswer: (200 + i * 20) / 5, mediaIntent: { kind: "none" }, audioIntent: { kind: "none" } })) }, usage: { total_tokens: 20 } };

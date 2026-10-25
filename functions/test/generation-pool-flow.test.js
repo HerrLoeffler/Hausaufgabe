@@ -26,7 +26,7 @@ async function run(change = {}, broken = false, queued = false) {
     preparePedagogicalPool: data => preparePedagogicalPool(data, catalog),
     randomUUID: () => "pool-test", cleanSourceTest: () => null,
     sanitizeMaterials: () => [], materialInputs: async () => [], consumeQuota: async () => {},
-    qualityMemoryPrompt: () => "", teacherQualityGuide: () => "",
+    learningPrompt: require("../lib/feedback-learning").learningPrompt, qualityMemoryPrompt: () => "", teacherQualityGuide: () => "",
     loadQualityMemory: async () => ({ negativeQuestions: [], memoryVersion: 3, stats: { total: 0 } }),
     structuredResponse: async request => {
       calls.push(request);

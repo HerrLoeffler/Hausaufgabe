@@ -25,7 +25,14 @@ function createReviewService({store,projectId,now=Date.now,toTimestamp=value=>va
    const admin=profile?.role==='admin';
    if(!profile||profile.accountDeletionId||(profile.status&&profile.status!=='active')||(!admin&&(profile.role!=='teacher'||member?.enabled===false)))fail('permission-denied','Keine Berechtigung für Feedback.');
    const requireAdmin=()=>{if(!admin)fail('permission-denied','Nur der Administrator darf diese Aktion ausführen.');};
+   if(data.action==='reviewQuestionLearning'){requireAdmin();return require('./feedback-learning').reviewFeedbackLearning({tx,uid,data,now:now(),toTimestamp});}
    if(data.action==='recordQuestionFeedback')return require('./question-feedback').recordQuestionFeedback({tx,uid,admin,data,projectId,now:now(),toTimestamp});
+   if(data.action==='questionLearningDetails'){
+    requireAdmin();if(Object.keys(data).some(k=>!['action','ids'].includes(k))||!Array.isArray(data.ids)||data.ids.length>100)fail('invalid-argument','Höchstens100Bewertungen pro Abruf.');
+    const reports=[];for(const value of [...new Set(data.ids)]){const key=id(value),row=await tx.get('feedback/'+key);if(row?.category!=='ai_question')continue;
+     const feedback=require('./question-feedback').projectQuestionFeedback({...row,id:key});let reviewable=true;try{feedback.questionSnapshot=require('./question-feedback').snapshot(row.questionSnapshot);}catch{reviewable=false;}
+     reports.push({id:key,...require('./feedback-learning').learningProjection(row),reviewable,feedback});}return {reports,readOnly:true};
+   }
    if(data.action==='listQuestionFeedback'){
     requireAdmin();if(Object.keys(data).some(k=>!['action','cursor'].includes(k)))fail('invalid-argument','Unerwarteter Lesefilter.');
     const rows=await tx.list('feedback',{category:'ai_question',cursor:data.cursor?id(data.cursor):'',limit:100});

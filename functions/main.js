@@ -9,6 +9,7 @@ const { onDocumentWritten } = require("firebase-functions/v2/firestore");
 const { defineSecret } = require("firebase-functions/params");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { REGION, TEXT_MODEL } = require("./lib/constants");
+const {loadFeedbackLearningSafe,learningPrompt,recordLearningUseSafe}=require("./lib/feedback-learning");
 const { createAudioAsset } = require("./lib/audio-flow");
 const { requireAccountWrite } = require("./lib/account-state");
 const { requireAiUser } = require("./lib/access");
@@ -389,6 +390,7 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
   // A whole-test revision is a test-level paid operation and intentionally uses
   // the existing test quota instead of creating a second unlimited allowance.
   await consumeQuota(uid, "test");
+  const feedbackMemory = await loadFeedbackLearningSafe(getFirestore(), {subject:clean.test.subject,grade:clean.test.grade}, uid);
   try {
     const { data, usage } = await requestStructured(
       params => getOpenAI().responses.create(params, { timeout: 240000, maxRetries: 2 }),
@@ -398,7 +400,7 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
         reasoning: { effort: "medium" },
         input: [
           { role: "system", content: [{ type: "input_text", text: WHOLE_TEST_REVISION_SYSTEM }] },
-          { role: "user", content: [{ type: "input_text", text: wholeTestRevisionPrompt(clean) }] }
+          { role: "user", content: [{ type: "input_text", text: `${wholeTestRevisionPrompt(clean)}\n${learningPrompt(feedbackMemory)}` }] }
         ],
         text: {
           format: {
@@ -410,6 +412,7 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
         }
       }
     );
+    const feedbackLearning = feedbackMemory.learning?.sources?.length ? await recordLearningUseSafe(getFirestore(), feedbackMemory, {uid,operation:"reviseWholeTest"}) : {recorded:0};
     const result = finalizeWholeTestRevision(clean, data);
     await recordUsage(uid, "test", usage, {
       operation: "whole_test_revision",
@@ -426,7 +429,8 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
       ...result,
       meta: {
         model: TEXT_MODEL,
-        revisionVersion: REVISION_VERSION
+        revisionVersion: REVISION_VERSION,
+        feedbackLearning
       }
     };
   } catch (err) {

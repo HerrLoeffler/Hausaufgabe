@@ -230,3 +230,16 @@ test("confirmed task feedback is server-created and teacher-immutable; legacy an
   await assertSucceeds(getDoc(doc(admin,"feedback","confirmed-rating")));
   await assertSucceeds(updateDoc(doc(admin,"feedback","confirmed-rating"),{status:"working"}));
 });
+
+test("learning approvals and model-use receipts cannot be forged by any browser client", async () => {
+  await seed();const owner=env.authenticatedContext('owner').firestore(),admin=env.authenticatedContext('admin').firestore();
+  const row={category:'ai_question',userId:'owner',message:'Gute Aufgabe',testCode:quizId,verdict:'good',reason:'',teacherComment:'',action:'keep',questionSnapshot:{type:'single',text:'Welche Farbe?'},status:'new'};
+  await env.withSecurityRulesDisabled(c=>setDoc(doc(c.firestore(),'feedback','learning-row'),row));
+  for(const db of [owner,admin]){
+    await assertFails(setDoc(doc(db,'feedback','forged-approval'),{...row,sharedLearning:{decision:'approved'}}));
+    await assertFails(setDoc(doc(db,'feedback','forged-use'),{...row,learningUse:{personal:{at:123}}}));
+    await assertFails(updateDoc(doc(db,'feedback','learning-row'),{sharedLearning:{decision:'approved'}}));
+    await assertFails(updateDoc(doc(db,'feedback','learning-row'),{learningUse:{personal:{at:123}}}));
+  }
+  await assertSucceeds(updateDoc(doc(admin,'feedback','learning-row'),{status:'working'}));
+});

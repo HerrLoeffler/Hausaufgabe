@@ -120,11 +120,11 @@ function positiveShape(q = {}) {
     (q.imageChoices ? "image_choices" : q.imagePresent ? "ai_generated" : "none");
   return {
     type: String(q.type || "text").slice(0, 30),
-    points: Math.round((Number(q.points) || 1) * 2) / 2,
+    points: Number.isFinite(Number(q.points)) && Number(q.points) > 0 ? Math.round(Number(q.points) * 2) / 2 : 0,
     optionCount: Array.isArray(q.options) ? q.options.length : 0,
     textLength: textLengthBucket(q.text),
     hasPassage: Boolean(String(q.passage || "").trim()),
-    mediaKind: ["none", "ai_generated", "image_choices"].includes(kind) ? kind : "none"
+    mediaKind: ["none", "ai_generated", "image_choices", "unknown"].includes(kind) ? kind : "unknown"
   };
 }
 

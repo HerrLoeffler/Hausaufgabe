@@ -250,6 +250,7 @@ service cloud.firestore {
 
     match /feedback/{feedbackId} {
       allow create: if accountActive()
+                    && !request.resource.data.keys().hasAny(['sharedLearning', 'learningUse'])
                     && request.resource.data.get('feedbackSchemaVersion', 0) != 4
                     && request.resource.data.userId == request.auth.uid
                     && request.resource.data.message is string
@@ -272,8 +273,8 @@ service cloud.firestore {
                       )
                     );
       allow read, delete: if isAdmin();
-      allow update: if isAdmin()
-        || (
+      allow update: if !request.resource.data.diff(resource.data).affectedKeys().hasAny(['sharedLearning', 'learningUse'])
+        && (isAdmin() || (
           accountActive()
           && resource.data.get('feedbackSchemaVersion', 0) != 4
           && request.resource.data.get('feedbackSchemaVersion', 0) != 4
@@ -296,7 +297,7 @@ service cloud.firestore {
           && (request.resource.data.reason != 'other' || request.resource.data.teacherComment.size() > 0)
           && request.resource.data.get('action', '') in ['keep', 'replace', 'remove']
           && request.resource.data.get('status', '') in ['new', 'done']
-        );
+        ));
     }
 
     // BugOps summaries and internal markers remain server-only after cutover.
