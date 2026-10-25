@@ -10,8 +10,8 @@ function fixture() {
   const db = { doc: path => path, runTransaction: async run => {
     for (;;) {
       const version = revision, writes = [];
-      const result = await run({ get: async ref => ({ exists: records.has(ref), data: () => structuredClone(records.get(ref)) }),
-        set: (ref, value) => writes.push([ref, structuredClone(value)]), update: (ref, value) => writes.push([ref, { ...records.get(ref), ...structuredClone(value) }]) });
+      const result = await run({ get: async ref => ({ exists: records.has(ref), data: () => globalThis.structuredClone(records.get(ref)) }),
+        set: (ref, value) => writes.push([ref, globalThis.structuredClone(value)]), update: (ref, value) => writes.push([ref, { ...records.get(ref), ...globalThis.structuredClone(value) }]) });
       if (version !== revision) continue;
       if (writes.length) { for (const [ref, value] of writes) records.set(ref, value); revision++; }
       return result;
