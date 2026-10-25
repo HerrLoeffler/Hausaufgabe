@@ -60,6 +60,16 @@ try{
  assert.deepEqual(await page.evaluate(()=>V.collectVisualAnswer(document.querySelector('#test-labeling'))),{r1:secondLabelId});
  await labelSlot.focus();await page.keyboard.press('Space');
  assert.deepEqual(await page.evaluate(()=>V.collectVisualAnswer(document.querySelector('#test-labeling'))),{});
+ const hiddenGeometry=await page.evaluate(()=>{
+   const task=GC2.publicTask(GC2.example('labeling'));
+   task.spec.items[0].text='Kaiserkrönung Karls des Großen';
+   const section=document.querySelector('#test-labeling');section.style.display='none';
+   V.mountVisualQuestion(section,{type:'visual',visualTask:JSON.stringify(task)},{r1:task.spec.items[0].id});
+   section.style.display='';
+   const slot=section.querySelector('g[data-slot="r1"]');
+   return {width:Number(slot.querySelector('rect').getAttribute('width')),lineWidths:[...slot.querySelectorAll('tspan')].map(line=>line.getComputedTextLength())};
+ });
+ assert.ok(hiddenGeometry.lineWidths.length>=2&&hiddenGeometry.lineWidths.every(width=>width<=hiddenGeometry.width-12),JSON.stringify(hiddenGeometry));
 
  await page.locator('#test-grid [data-cell]').nth(0).tap();
  assert.deepEqual(await page.evaluate(()=>V.collectVisualAnswer(document.querySelector('#test-grid'))),[0]);

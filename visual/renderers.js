@@ -24,10 +24,11 @@ function slotText(el,label){
  const text=el.querySelector('text'),rect=el.querySelector('rect'),width=Number(rect.getAttribute('width'))-14;
  const x=Number(text.getAttribute('x')),centerY=Number(rect.getAttribute('y'))+22;
  const words=String(label).trim().split(/\s+/).filter(Boolean);
+ const style=getComputedStyle(text),measure=document.createElement('canvas').getContext('2d');
  let lines=[],fontSize=14;
- const fits=value=>{text.textContent=value;return text.getComputedTextLength()<=width;};
+ const fits=value=>measure.measureText(value).width<=width;
  for(const size of [14,13,12,11]){
-  fontSize=size;text.style.fontSize=`${size}px`;lines=[];let line='';
+  fontSize=size;text.style.fontSize=`${size}px`;measure.font=`${style.fontStyle} ${style.fontWeight} ${size}px ${style.fontFamily}`;lines=[];let line='';
   for(const word of words){
    const candidate=line?`${line} ${word}`:word;
    if(fits(candidate)){line=candidate;continue;}
