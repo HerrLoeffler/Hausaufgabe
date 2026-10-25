@@ -83,4 +83,24 @@ Prüfung: unabhängiger Read-only-Scope-Review angefordert als gpt-6.1-sol/mediu
 
 Remote-main c963c330c9b71ffec794ee0c0e349744ea06b8fb geprüft; neue Pilot-/TODO-/Prinzipienänderungen erhalten. Development-Status Run40189467911 / Job121157180252 success, relevante Logs gelesen: Primary test/visual-24-pilot-20261025, Integration feature/visual-prototype-ai-02-20261021, PR296; eigener Draft-PR290 bleibt Dokumentationsarbeit. Kein Eingriff in andere Owner, keine neue Task-/Budgethistorie. Verantwortlicher Forschungsfachchat wie bisher; Chat-Link unbekannt.
 
-Nächster Schritt: wenige kurze Einzelaufgaben mit vorgegebenem Material, zulässigen Antworten und Punkten ausarbeiten. Produktintegration/Import/Deploy nicht beauftragt. Releasezustand unverändert.
+Historischer Stand vor dem nachfolgenden Nutzerauftrag: wenige kurze Einzelaufgaben ausarbeiten; Produktintegration/Import/Deploy damals nicht beauftragt. Releasezustand unverändert.
+
+## Auftragserweiterung: PhET-Profile umsetzen und echt erproben · 25.10.2026
+
+Der Nutzer hat anschließend ausdrücklich angefordert, weitere PhET-Ideen und den vorhandenen Testseitenbestand zusammenzuführen und mit KI tatsächlich Tests zu erstellen. Damit ist die frühere reine Recherchegrenze für diesen begrenzten Zusatzauftrag erweitert. Die Grenze zu schnellen, individuell benotbaren Aufgaben bleibt verbindlich.
+
+**Gesicherte Implementierung:** [Draft-PR306](https://github.com/HerrLoeffler/Hausaufgabe/pull/306), Branch `feature/phet-short-profiles-20261025`, Commit `39303745c43cf1f7b97c219d5288de745ad7486d`. Basis und PR-Ziel sind der bestehende Primary Branch von PR296 (`fda13a26d1c4b4cdeadd3689a1280cdd68beb765`). Kein neuer Haupttask und keine zweite App. Dieser Recherche-PR290 enthält weiterhin nur Doku/Recherche; Runtime-Dateien liegen ausschließlich im gesonderten eng begrenzten PR306.
+
+Acht eigene opt-in Profile zu Brüchen, Funktionsmaschinen, festen Funktionspunkten, Verschiebungen, Reaktionskoeffizienten, Massenzahl/Ladung, Ohm und Mengen/Resten verwenden vorhandene Renderer. Der minimale gemeinsame Autorenprompt-Hook wahrt die konkreten Lehrerwünsche und den Emmi-Änderungsumfang. Keine Änderungen an Auth, Grader, aktiven Prüfungen oder den 192 bisherigen Pilotaufgaben.
+
+**Tatsächliche Prüfung:** 17 lokale Verhaltenstests bestanden auf Node24.22.1; acht Referenzen unabhängig handgerechnet, Code und Didaktik zweitgeprüft. Alternative Bruchmuster, richtige/falsche/leere Antworten, Teilpunkte, feste Koordinatenlabels, kleinste Koeffizienten, mA-Einheit und Lösungstrennung geprüft. Der Reviewfund zum typografischen Minus wurde innerhalb des neuen Atomprofils durch vorhandenen numerischen Wertvergleich behoben. Keine vollständige Repo-CI oder neue Providerqualität behauptet.
+
+**Bestandsbefund:** zwölf V2-Formate (`hotspot, labeling, scale, angle, grid, chart, connections, coordinate, evidence, range, table, correction`); die dreizehnte didaktische Kataloggruppe ist die separate V1-Mehrmarker-Zeitachse. PhET ist bislang Inspiration, kein eingebetteter universeller Simulator. V2 stammt laut geprüfter Übergabe aus `Downloads/GradeCrew_Prototyp_02`; ursprüngliche Anregungen auch ZUM/H5P/Moodle. Diese Feststellungen sind Code-/Übergabebefunde, keine Bestätigung des Ports8766.
+
+**Konkrete Grenze:** Browser-Anbindung an Martins lokalen Port8766 hier nicht verfügbar. Die bestehende Online-Vorschau und die öffentliche24er-Übersicht wurden geöffnet. Die Lehrkraftseite verlangt Anmeldung mit einem bereits dafür berechtigten Test-/Admin-Konto. Kein neuer Providerjob, Quiz oder Attempt in diesem Schritt gestartet; keine neuen Rechte, kein neues Deployment. Historische echte24er-KI-Läufe bleiben getrennte Evidenz.
+
+Main `ec388fcd835b87d8aa8653f9f0cae4c461408a2b`, aktueller Development-Status Run40194915817 und Primary-/Integrationsstände geprüft. Der Related Branch wird hier additiv registriert; Hauptowner und Integrationsziel bleiben erhalten. Direkte Nachricht/Steuerung des Fachchats „Erweiterte Aufgabentypen“ ist nicht verfügbar; PR/Repo-Übergabe ist der dauerhafte Abgleich, keine behauptete Chat-Zustellung.
+
+[Ausführliche Implementierungsübergabe](https://github.com/HerrLoeffler/Hausaufgabe/blob/39303745c43cf1f7b97c219d5288de745ad7486d/workstreams/phet-short-tests-20261025.md).
+
+**Nächster Schritt:** die bereits vorbereitete berechtigte Testanmeldung nutzen und genau KURZ-BRUCH (vier Aufgaben, acht Punkte) durch Remy, Emmi und den normalen Vorschau-Abgabeweg prüfen. Die vollständigen Lehrerwünsche funktionieren als Anfrage auf dem bestehenden Deploy; das qualifiziert noch nicht den neuen, undeployten globalen Prompthook.
