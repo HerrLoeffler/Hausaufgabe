@@ -644,7 +644,7 @@ Domainabhängigkeitgradecrew.de: keineNativeURLumstellungausunverifiziertemKaufh
 
 | Task | Auftrag | Gesicherter Umfang / Grenze | Nächster Schritt |
 |---|---|---|---|
-| GC-EXTENDED-QUESTION-TYPES-01 | Erkenntnisse aus visuellen Aufgaben, Designreview und PhET für künftige Testseiten verbindlich erhalten | Aufgabenprinzipien und Katalog mit 13 Interaktionsgruppen, 5 Experimentideen und 8 weiteren Methoden; Einstieg in AGENTS/START_HERE. Dokumentationskandidat, kein Generator-/Poolimport und kein Deploy. Bestehende Prototyp-/Issue255-/Adaptive-Nachweise getrennt referenziert. | Dokumentations-PR prüfen/in main integrieren; anschließend pro passender Testseitenaufgabe Katalog-IDs und echte Prüfbelege in der eigenen Übergabe verwenden. [Übergabe](workstreams/interactive-learning-principles-20261022.md). |
+| GC-EXTENDED-QUESTION-TYPES-01 | Gemeinsamer Aufgabenfundus und24 fächerübergreifende visuelle Probetests Klassen5–10 | FundusPR285 auf main.24 echte Tests/192 Aufgaben auf isolierter visual255-Testvorschau;63 Aufgaben korrigiert/präzisiert, unabhängige Volllektüre,120/120 Serverfälle,180 Dateihashes. Normales Staging/Schule/Production unverändert. [Runtime/EvidenzPR296](https://github.com/HerrLoeffler/Hausaufgabe/pull/296). | Lehrkraft- und Geräteerprobung anhand [Prüfübersicht](https://gradecrew-staging-2026--visual255-rjcwf436.web.app/pilot24/); danach gesonderte Integrationsfreigabe. [Übergabe](workstreams/visual-pilot-24-20261025.md). |
 
 
 ### 22.10.2026 · GC-IOS-02 / GC-RELEASE-06 · Secure auch fürs iPhone
