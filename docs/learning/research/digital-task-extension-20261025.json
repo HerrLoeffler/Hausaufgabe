@@ -1,0 +1,640 @@
+{
+  "metadata": {
+    "title": "GradeCrew Ergänzungsrecherche",
+    "date": "2026-10-25",
+    "status": "research_in_progress",
+    "baseline_ideas": 163,
+    "not_implemented": true,
+    "review": "Ausstehend: weitere Fachrecherche, Dublettenabgleich und abschließende Prüfung"
+  },
+  "sources": [
+    {
+      "id": "RNEW01",
+      "provider": "Cengage / SAM",
+      "title": "SAM Project Workflow",
+      "url": "https://help.cengage.com/sam/instructor/sam/project-workflow.html",
+      "verified_feature": "Lernende laden eine Startdatei herunter, bearbeiten sie in Microsoft Office und laden die bearbeitete Datei zur Bewertung hoch; einzelne Projektschritte werden im Bericht bewertet.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Offizielle öffentliche Dokumentation gelesen; kein angemeldeter Produktlauf. Eine Prüfung mit von GradeCrew veränderten Eingabedaten ist unser Vorschlag und keine hier belegte SAM-Funktion.",
+      "license_access": "Öffentliche Hilfe. Kommerzielles Produkt; keine Übernahme- oder Integrationsrechte aus der Dokumentation abgeleitet.",
+      "web_ref": "turn120view0"
+    },
+    {
+      "id": "RNEW02",
+      "provider": "Poulsen, Viswanathan, Herman, West / University of Illinois",
+      "title": "Proof Blocks: Autogradable Scaffolding Activities for Learning to Write Proofs",
+      "url": "https://arxiv.org/html/2106.11032v3",
+      "verified_feature": "Vorgegebene Beweiszeilen werden angeordnet; ein vom Autor definierter Abhängigkeitsgraph erlaubt unterschiedliche korrekte Reihenfolgen und automatische Rückmeldung.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Originalpublikation gelesen. Kein eigener Test und keine Übertragung der im Hochschulkontext diskutierten Wirkungen auf GradeCrew behauptet. Bewertbarkeit betrifft die vorbereiteten Bausteine, nicht beliebige freie Beweise.",
+      "license_access": "Öffentlich lesbare Publikation; konkrete Software-/Inhaltsrechte vor Übernahme separat prüfen.",
+      "web_ref": "turn120view2"
+    },
+    {
+      "id": "RNEW03",
+      "provider": "University of Cambridge / NRICH",
+      "title": "A Puzzling Cube",
+      "url": "https://nrich.maths.org/problems/puzzling-cube",
+      "verified_feature": "Aus mehreren Würfelansichten werden die Beziehungen der Flächen erschlossen und in ein Netz übertragen; interaktives Platzieren der Flächen und unterschiedliche mögliche Netze dokumentiert.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Originalaufgabe, Hinweise und Schülerlösungen gelesen; eingebettete Anwendung nicht praktisch bedient. Faltanimation und eigener Korrektor sind GradeCrew-Vorschläge.",
+      "license_access": "Öffentlich zugängliche Aufgabe; eigene Grafiken und Aufgaben verwenden, keine pauschale kommerzielle Übernahmelizenz angenommen.",
+      "web_ref": "turn120view3"
+    },
+    {
+      "id": "MNEW01",
+      "provider": "MIPAC",
+      "title": "Which One Doesn’t Belong?",
+      "url": "https://mipac.net/assessments/which-one-doesnt-belong",
+      "verified_feature": "Eigenes Assessment für Klasse 4: vier Figuren so klassifizieren und begründen, dass jede als Außenseiter gelten kann; eigenes Viererset erstellen; öffentliches Lehrkraft-Raster.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn107view0"
+    },
+    {
+      "id": "MNEW02",
+      "provider": "Open Middle",
+      "title": "Operations with Time",
+      "url": "https://www.openmiddle.com/operations-with-time-2/",
+      "verified_feature": "Ziffern 1–9 höchstens einmal einsetzen und spätestmögliche Uhrzeit erreichen; Hinweis und Musterlösung vorhanden.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn103view2"
+    },
+    {
+      "id": "MNEW03",
+      "provider": "Runestone Academy",
+      "title": "Parsons Problems — Author Guide",
+      "url": "https://runestone.academy/ns/books/published/authorguide/directives/parsons.html",
+      "verified_feature": "Codeblöcke anordnen, Einrückung bewerten, Distraktoren und gepaarte Alternativen; optionale Vereinfachung nach Fehlversuchen.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn103view1"
+    },
+    {
+      "id": "MNEW04",
+      "provider": "University of Canterbury / CS Unplugged",
+      "title": "Sorting networks — What’s it all about?",
+      "url": "https://www.csunplugged.org/en/topics/sorting-networks/whats-it-all-about/",
+      "verified_feature": "Vergleicher sortieren Zahlen parallel; Arbeitsmenge und parallele Schritte werden unterschieden; feste Eingangsanzahl und vollständige Ordnung nötig.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn103view5"
+    },
+    {
+      "id": "MNEW05",
+      "provider": "Google Creative Lab",
+      "title": "Teachable Machine 2.0 makes AI easier for everyone",
+      "url": "https://blog.google/innovation-and-ai/products/teachable-machine/",
+      "verified_feature": "Beispiele sammeln, Bild-/Ton-/Pose-Modell im Browser trainieren, testen und Beispiele ändern, Modell exportieren.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Originalbeitrag vom 07.11.2019 heute geöffnet; aktuelle Startseite durch Suche bestätigt, direkter Textextrakt leer. Keine Aussagen über aktuelle Preise oder Verfügbarkeit einzelner Exportziele.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn113view0"
+    },
+    {
+      "id": "MNEW06",
+      "provider": "NetLogo / Center for Connected Learning",
+      "title": "Segregation model",
+      "url": "https://ccl.netlogo.org/netlogo/models/Segregation",
+      "verified_feature": "Lokale Nachbarschaftspräferenz und Umzüge erzeugen globale Cluster; Dichte/Präferenz veränderbar, Nachbarschaft über Rand hinweg, Zeitverläufe angezeigt.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn103view8"
+    },
+    {
+      "id": "MNEW07",
+      "provider": "Concord Consortium / CREATE for STEM",
+      "title": "Getting Started with SageModeler",
+      "url": "https://sagemodeler.concord.org/getting-started/index.html",
+      "verified_feature": "Diagramm, statisches und dynamisches Modell; Collector merkt vorherigen Wert, Transfer verschiebt Mengen zwischen Collectors.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn103view7"
+    },
+    {
+      "id": "MNEW08",
+      "provider": "Concord Consortium / CREATE for STEM",
+      "title": "SageModeler Help",
+      "url": "https://sagemodeler.concord.org/help/index.html",
+      "verified_feature": "Semiquantitative Trends statt frei definierter Gleichungen; Collectors, Transfer-Ventile, CSV-Import; lokale Speicherung ohne Login.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Kostenfrei; Dokumentation nennt MIT für Anwendung und standardmäßig CC BY 4.0 für eigene Bildungsressourcen, sofern nicht anders vermerkt. Fremde Bilder/Materialien separat prüfen.",
+      "web_ref": "turn107view3"
+    },
+    {
+      "id": "MNEW09",
+      "provider": "RWTH Aachen / phyphox",
+      "title": "Experiment: Acoustic Stopwatch",
+      "url": "https://phyphox.org/wiki/index.php/Experiment:_Acoustic_Stopwatch",
+      "verified_feature": "Geräusche über Amplitudenschwelle starten/stoppen Timer; Dokumentation behandelt Echo, Mindestabstand, Hintergrundgeräusche und Schalllaufzeit.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn103view6"
+    },
+    {
+      "id": "MNEW10",
+      "provider": "Zooniverse",
+      "title": "Caesar: Classification and Decision Engine",
+      "url": "https://help.zooniverse.org/next-steps/caesar/",
+      "verified_feature": "Aggregiert mehrere Klassifikationen; Consensus-, Count- und weitere Reducer; Regeln können Objekte aussortieren oder zur weiteren Prüfung routen.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn107view4"
+    },
+    {
+      "id": "MNEW11",
+      "provider": "Zooniverse",
+      "title": "I’m worried I’m getting it wrong",
+      "url": "https://zooniverse.freshdesk.com/support/solutions/articles/44001770581-i-m-worried-i-m-getting-it-wrong-",
+      "verified_feature": "Mehrere Personen klassifizieren dasselbe Objekt; Ergebnisse werden gemeinsam ausgewertet, Unsicherheit kann im Projektforum diskutiert werden.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn107view2"
+    },
+    {
+      "id": "MNEW12",
+      "provider": "Andrew Stadel / Estimation 180",
+      "title": "Teacher Resources",
+      "url": "https://estimation180.com/teacher-resources/",
+      "verified_feature": "Öffentliche Ressourcen nennen Daily Log und Number Line – Range Building sowie aufeinander bezogene Höhenaufgaben.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Website verlinkt CC BY-NC-SA 3.0; damit kommerzielle Materialübernahme nicht pauschal freigegeben. Toolkit und Fremdinhalte separat prüfen.",
+      "web_ref": "turn107view5"
+    },
+    {
+      "id": "MNEW13",
+      "provider": "Creative Commons",
+      "title": "CC BY-NC-SA 3.0",
+      "url": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+      "verified_feature": "Lizenz des auf Estimation 180 gesetzten Lizenzlinks ist Attribution-NonCommercial-ShareAlike 3.0.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Dokumentierter Lizenztext; kein Nachweis, dass jedes Fremdmedium darunter fällt.",
+      "web_ref": "turn107view6"
+    }
+  ],
+  "ideas": [
+    {
+      "id": "NR01",
+      "title": "Eine funktionierende Tabelle als Antwort abgeben",
+      "subjects": [
+        "Informatik",
+        "Wirtschaft",
+        "Mathematik",
+        "Berufliche Bildung"
+      ],
+      "levels": [
+        "Sekundarstufe I",
+        "Sekundarstufe II",
+        "Berufsschule"
+      ],
+      "learning_goal": "Eine wiederverwendbare Berechnung mit Formeln und passenden Zellbezügen erstellen.",
+      "student_action": "Eine vorgegebene Tabellenstruktur bearbeiten, Formeln eintragen und auf weitere Zeilen übertragen; die Tabelle als strukturiertes Ergebnis abgeben.",
+      "example": "B2 enthält einen Grundpreis, C2 einen Rabatt als Dezimalzahl und F1 einen vorgegebenen Zuschlagsfaktor als Dezimalzahl. D2 soll den Endbetrag nach Rabatt und Zuschlag berechnen: B2*(1-C2)*(1+$F$1). Bei B2=100, C2=0,10 und F1=0,19 ergibt sich 107,10. Der Auftrag verlangt eine kopierbare Formel. Der Korrektor prüft zusätzlich andere Werte und die Formelübertragung nach D3; eine eingetragene Konstante 107,10 erfüllt den Auftrag nicht.",
+      "grading": {
+        "mode": "D",
+        "criteria": "Zulässige mathematisch gleichwertige Formeln akzeptieren; Ergebnis auf festgelegten Testdatensätzen, relative/absolute Bezüge beim Kopieren und Rundungsregel prüfen. Gestaltung nur bewerten, wenn ausdrücklich Lernziel.",
+        "boundary": "Robuste XLSX-Analyse und Formelberechnung müssen erst umgesetzt werden; gleiche Endwerte allein belegen keine richtige Formel. Nicht sämtliche Excel-Funktionen implizieren."
+      },
+      "feedback": "Zeige die erste Eingabeänderung oder Kopierzeile, bei der die Tabelle nicht mehr korrekt rechnet; Hinweis auf den betroffenen Zellbezug statt pauschaler Musterformel.",
+      "ai_requirements": [
+        "Startdaten und mindestens zwei unabhängige Testdatensätze",
+        "Formelraum und erlaubte Alternativen",
+        "Anforderungen an Zellbezüge ausdrücklich im Auftrag",
+        "Einheit und Rundungsregel",
+        "Dateiversion oder begrenztes Tabellen-Antwortmodell"
+      ],
+      "novelty_kind": "new_family",
+      "novelty_explanation": "Die Antwort ist ein ausführbares Arbeitsprodukt mit Formeln und Abhängigkeiten. VIS12 und MATH10 behandeln Tabellenwerte/Darstellungswechsel; CS04 prüft SQL-Ergebnismengen. Hier kommen Tabellenkalkulation, Kopiersemantik und Artefaktprüfung hinzu.",
+      "closest_existing_ids": [
+        "MATH10",
+        "CS04",
+        "SOC38"
+      ],
+      "source_ids": [
+        "RNEW01"
+      ],
+      "effort": "mittel für ein begrenztes Tabellenmodell; hoch für robuste externe XLSX-Abgaben",
+      "priority": "P1",
+      "limitations": "Zunächst festgelegter Formelumfang und synthetische Dateien. Plattform-/Office-Unterschiede, sichere Dateiverarbeitung und Feedback müssen qualifiziert werden. Kein fertiger Excel-Korrektor in GradeCrew behauptet."
+    },
+    {
+      "id": "NR02",
+      "title": "Beweisbausteine nach logischen Abhängigkeiten zusammensetzen",
+      "subjects": [
+        "Mathematik",
+        "Informatik"
+      ],
+      "levels": [
+        "Sekundarstufe I mit einfachen Zahlbegründungen",
+        "Sekundarstufe II"
+      ],
+      "learning_goal": "Erkennen, welche Aussagen eine Schlussfolgerung voraussetzt und wie ein tragfähiger Beweis aufgebaut ist.",
+      "student_action": "Aus vorgegebenen Zeilen einen Beweis zusammenstellen, ungeeignete Zeilen weglassen und zulässige Reihenfolgen nutzen.",
+      "example": "Beweise: Die Summe zweier gerader ganzer Zahlen ist gerade. Bausteine: a und b sind gerade; a=2m mit m ganzzahlig; b=2n mit n ganzzahlig; a+b=2m+2n; a+b=2(m+n); m+n ist ganzzahlig; also ist a+b gerade. Die Darstellungen von a und b dürfen in beliebiger Reihenfolge kommen. Ein Distraktor behauptet unnötig, m und n müssten positiv sein.",
+      "grading": {
+        "mode": "D",
+        "criteria": "Vorab fachlich geprüfter Abhängigkeitsgraph; alle korrekten topologischen Reihenfolgen akzeptieren. Ungeeignete Karten und fehlende notwendige Begründungen gezielt erkennen.",
+        "boundary": "Automatik gilt für den begrenzten geprüften Bausteinsatz; freie zusätzliche Beweise benötigen weitere fachliche Beurteilung."
+      },
+      "feedback": "Nenne die erste Aussage, deren Voraussetzung noch fehlt, und lasse die fehlende Verbindung ergänzen.",
+      "ai_requirements": [
+        "Geprüfte Aussage und Voraussetzungen",
+        "Bausteine mit eindeutiger Semantik",
+        "Abhängigkeitsgraph und zugelassene Alternativwege",
+        "Fachlich echte Distraktoren",
+        "Mehrere zulässige Reihenfolgen"
+      ],
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "Erweitert Reihenfolge/Argumentnetz um formale Voraussetzungen und mehrere gleichwertige Beweisordnungen; Nähe zu den neuen Parsons-Problemen bewusst als Untertyp ausgewiesen.",
+      "closest_existing_ids": [
+        "MATH11",
+        "MATH14",
+        "LANG45"
+      ],
+      "source_ids": [
+        "RNEW02"
+      ],
+      "effort": "mittel",
+      "priority": "P1",
+      "limitations": "Bausteine können Formulierungskompetenz entlasten, prüfen aber nicht das vollständige selbstständige Erfinden und Formulieren eines Beweises. Teilbeweise/Annahmen zunächst eng begrenzen."
+    },
+    {
+      "id": "NR03",
+      "title": "Körperansicht und Netz räumlich rekonstruieren",
+      "subjects": [
+        "Mathematik",
+        "Technik",
+        "Werken"
+      ],
+      "levels": [
+        "Grundschule ab geeigneter Raumvorstellung",
+        "Sekundarstufe I",
+        "Berufliche Grundlagen"
+      ],
+      "learning_goal": "Nachbarschaft, Gegenüberliegen und Orientierung beim Wechsel zwischen zweidimensionalem Netz und dreidimensionalem Körper erschließen.",
+      "student_action": "Flächen im Netz beschriften, eine räumliche Vorhersage festhalten und erst danach eine Faltung oder eine weitere Ansicht zur Kontrolle freigeben.",
+      "example": "Ein Würfelnetz besteht aus B–C–D in einer waagerechten Reihe, A direkt über C, E direkt unter C und F direkt unter E. Welche Fläche liegt nach dem Falten gegenüber C? Erwartet: F. Erweiterung: Aus drei Ansichten die beschrifteten Flächen auf ein zunächst leeres Netz übertragen.",
+      "grading": {
+        "mode": "D/H",
+        "criteria": "Nachbarschaften, Gegenflächen und Orientierung gegen ein exaktes geometrisches Modell prüfen; äquivalente Drehungen und erlaubte Netze akzeptieren. Räumliche Erklärung optional per Rubrik.",
+        "boundary": "Eine Animation darf die Lösung erst nach der eigenständigen Vorhersage zeigen. Mehrere visuell ähnliche, aber gespiegelte Anordnungen fachlich unterscheiden."
+      },
+      "feedback": "Zeige eine konflikthafte Kante oder ein falsch angenommenes Gegenflächenpaar; anschließend gezielte Dreh-/Faltansicht zur Prüfung.",
+      "ai_requirements": [
+        "Geometrisch valides Netz",
+        "Konsistent erzeugte Ansichten und Flächenmarken",
+        "Definition von erlaubten Rotationen/Spiegelungen",
+        "Getrennte Vorhersage- und Prüfphase",
+        "Bedienung per Tippen und Tastatur zusätzlich zum Ziehen"
+      ],
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "Neuer räumlicher Antwortvertrag: In MATH09 wird eine Konstruktion unter Ziehen invariant gehalten; hier werden 2D-Netz und 3D-Flächenbeziehungen rekonstruieren und geometrisch verglichen.",
+      "closest_existing_ids": [
+        "MATH09",
+        "SOC34",
+        "SUP10"
+      ],
+      "source_ids": [
+        "RNEW03"
+      ],
+      "effort": "mittel für Würfel; hoch für beliebige Körper",
+      "priority": "P1",
+      "limitations": "Zunächst wenige klar modellierte Körper; freie 3D-Modelle nicht pauschal automatisch bewerten. Die konkrete GradeCrew-Interaktion ist noch nicht gebaut."
+    },
+    {
+      "id": "NM01",
+      "title": "Vier Außenseiter – vier gültige Regeln",
+      "subjects": [
+        "Mathematik",
+        "Sachunterricht"
+      ],
+      "levels": [
+        "Grundschule 2–4",
+        "Sek I"
+      ],
+      "learning_goal": "Begriffe über wechselnde Merkmale abgrenzen.",
+      "student_action": "Für jedes der vier Objekte eine andere Regel formulieren, die genau dieses Objekt ausschließt; die übrigen drei müssen sie erfüllen.",
+      "example": "Zahlen 9, 16, 25, 36: 9 ist einstellig; 16 ist Zweierpotenz; 25 ist durch 5 teilbar; 36 ist durch 4 und 9 teilbar. Jede Regel trifft genau eine Zahl des Sets.",
+      "grading": "H: D prüft Regeln aus vorgegebenem Prädikatbaukasten gegen alle vier Zahlen; L prüft freie Regeln auf mathematische Gültigkeit und Passung.",
+      "feedback": "Für eine vermeintlich eindeutige Regel alle passenden Objekte markieren.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "neue_mechanik",
+      "novelty_explanation": "Im Altbestand fehlt die systematische Umkehr der Eindeutigkeitsannahme: jedes Objekt muss mit einer anderen tragfähigen Regel richtig sein. Mehr als Itemerstellung oder Gegenbeispiel.",
+      "closest_existing_ids": [
+        "CROSS07",
+        "MATH14"
+      ],
+      "source_ids": [
+        "MNEW01"
+      ],
+      "effort": "mittel",
+      "priority": "P1",
+      "limitations": "Keine bloßen Positions-/Farbmerkmale werten, wenn mathematische Merkmale Lernziel sind. Freie sinnvolle Zusatzregeln zulassen.",
+      "provenance": "Eigener GradeCrew-Entwurf auf Basis des dokumentierten Prinzips; kein behauptetes GradeCrew-/Anbieterfeature."
+    },
+    {
+      "id": "NM02",
+      "title": "Ziffernkarten erschöpfend einsetzen und Vollständigkeit nachweisen",
+      "subjects": [
+        "Mathematik"
+      ],
+      "levels": [
+        "Grundschule 3–4",
+        "Sek I"
+      ],
+      "learning_goal": "Lösungsräume systematisch durchlaufen und Vollständigkeit von bloßem Finden trennen.",
+      "student_action": "Ziffernkarten ohne Wiederholung einsetzen, alle Lösungen sammeln und begründen, weshalb keine fehlen.",
+      "example": "Nutze 1,2,3,4 je einmal in AB+CD=55. Es gibt acht geordnete Belegungen: Zehnerziffern sind 1/4 und Einerziffern 2/3 oder umgekehrt. Ohne Unterscheidung der Summanden vier Lösungen.",
+      "grading": "H: D enumeriert 24 Permutationen und vergleicht kanonische Lösungsmengen; L bewertet vollständige Fallaufteilung. Summandenvertauschung vorher regeln.",
+      "feedback": "Fehlende Fallklasse statt zufälliger weiterer Lösung anzeigen.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "starker_untertyp",
+      "novelty_explanation": "MATH15 optimiert ein räumliches Werkstück. Neu ist hier die endliche bijektive Kartenbelegung mit Mehrfachlösungen und Vollständigkeitszertifikat; nicht als völlig neue Constraint-Engine zählen.",
+      "closest_existing_ids": [
+        "MATH15",
+        "MATH01"
+      ],
+      "source_ids": [
+        "MNEW02"
+      ],
+      "effort": "mittel",
+      "priority": "P1",
+      "limitations": "Offene Mitte allein ist keine neue Mechanik. Nur mit Alllösungsauftrag/Vollständigkeitsnachweis als Ergänzung führen.",
+      "provenance": "Eigener GradeCrew-Entwurf auf Basis des dokumentierten Prinzips; kein behauptetes GradeCrew-/Anbieterfeature."
+    },
+    {
+      "id": "NM03",
+      "title": "Parsons-Puzzle mit semantischer Einrückung",
+      "subjects": [
+        "Informatik"
+      ],
+      "levels": [
+        "Sek I",
+        "Sek II"
+      ],
+      "learning_goal": "Programmstruktur rekonstruieren und unnötige Codezeilen ausschließen.",
+      "student_action": "Vorgegebene gemischte Codeblöcke auswählen, ordnen und einrücken; Hilfe verändert gezielt Blockgröße oder Distraktoren.",
+      "example": "Baue eine Summe positiver Listenelemente aus total=0, Schleife, if x>0, total+=x und Rückgabe; total=0 im Schleifenrumpf ist Distraktor.",
+      "grading": "D: AST-/Strukturregeln und Tests für leere, negative, gemischte Listen; mehrere semantisch gültige Reihenfolgen zulassen. Hilfestufe protokollieren.",
+      "feedback": "Zuerst falsch verschachtelten Block markieren; Hilfenutzung getrennt vom korrekten Endprodukt ausweisen.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "starker_untertyp",
+      "novelty_explanation": "CS01 legt bereits Codeblöcke. Ergänzung ist die eingeschränkte Rekonstruktion mit Distraktorbank und eigenständig geprüfter Einrückung samt regelbasiertem Abbau von Hürden.",
+      "closest_existing_ids": [
+        "CS01",
+        "CS03",
+        "CROSS08"
+      ],
+      "source_ids": [
+        "MNEW03"
+      ],
+      "effort": "mittel",
+      "priority": "P1",
+      "limitations": "Nicht als generisches neues Drag-and-drop zählen. Nur Reihenfolgenvergleich kann korrekte Alternativen fälschlich ablehnen.",
+      "provenance": "Eigener GradeCrew-Entwurf auf Basis des dokumentierten Prinzips; kein behauptetes GradeCrew-/Anbieterfeature."
+    },
+    {
+      "id": "NM04",
+      "title": "Sortiernetz: Arbeit und Zeit getrennt optimieren",
+      "subjects": [
+        "Informatik",
+        "Mathematik"
+      ],
+      "levels": [
+        "Grundschule 3–4 vereinfacht",
+        "Sek I"
+      ],
+      "learning_goal": "Parallele Abhängigkeiten von bloßer Anzahl der Operationen unterscheiden.",
+      "student_action": "Vergleicher auf parallele Ebenen legen, Zahlen durchlaufen lassen und alle Permutationen kleiner Netze prüfen.",
+      "example": "Vier Leitungen: Ebene 1 (1,2)/(3,4), Ebene 2 (1,3)/(2,4), Ebene 3 (2,3). Fünf Vergleiche, drei parallele Schritte; prüfen für alle 24 Permutationen von 1–4.",
+      "grading": "D: disjunkte Leitungsnutzung pro Ebene, fünf Vergleiche, Tiefe drei, sortierte Ausgabe aller 24 Permutationen; für weitere Werte Bereich/Ordnungsregeln spezifizieren.",
+      "feedback": "Kollision zweier Vergleicher auf derselben Leitung von falscher Sortierlogik unterscheiden.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "neue_mechanik",
+      "novelty_explanation": "CS02 zeigt Nebenläufigkeit und CS05 vergleicht Algorithmen. Neu ist die konstruktive Planung eines festen Datenflussnetzes unter zwei expliziten Kostenmaßen samt endlicher Exhaustivprüfung.",
+      "closest_existing_ids": [
+        "CS02",
+        "CS05"
+      ],
+      "source_ids": [
+        "MNEW04"
+      ],
+      "effort": "mittel bis hoch",
+      "priority": "P1",
+      "limitations": "Gleich lange Vergleiche und keine Kommunikationskosten sind Modellannahmen; keine reale Laufzeitbeschleunigung versprechen.",
+      "provenance": "Eigener GradeCrew-Entwurf auf Basis des dokumentierten Prinzips; kein behauptetes GradeCrew-/Anbieterfeature."
+    },
+    {
+      "id": "NM05",
+      "title": "Einen Klassifikator durch Daten statt Code reparieren",
+      "subjects": [
+        "Informatik",
+        "Biologie"
+      ],
+      "levels": [
+        "Grundschule 4 begleitet",
+        "Sek I",
+        "Sek II"
+      ],
+      "learning_goal": "Trainingsbeispiele, unabhängige Tests und unerwünschte Hintergrundmerkmale unterscheiden.",
+      "student_action": "Zwei Objektklassen labeln, trainieren, auf neuen Hintergründen testen; gezielt Trainingsdaten ändern und erneut prüfen.",
+      "example": "Baustein gegen Stift: Training zeigt Bausteine nur auf Blau, Stifte nur auf Rot. Test tauscht Hintergründe. Ergänze beide Klassen auf beiden Hintergründen und vergleiche eine getrennte Testserie.",
+      "grading": "H: D zählt Testfälle und Konfusionsmatrix aus gelieferten Vorhersagen; L bewertet Datentrennung und Fehlerhypothese. Kein Notenziel auf Modellgenauigkeit allein.",
+      "feedback": "Leistung pro Hintergrund/Klasse zeigen; zufällige Trainingsänderungen von hypothesengeleiteter Datenergänzung unterscheiden.",
+      "ai_requirements": "ML ist hier Lerngegenstand und für echtes Trainieren nötig; keine generative KI zur Benotung. KI-freie Vorhersagetabellen erlauben nur eine vorbereitete Analysevariante.",
+      "novelty_kind": "neue_mechanik",
+      "novelty_explanation": "MATH13 behandelt Stichproben; CS03 repariert Code. Hier verändern Lernende das Verhalten eines gelernten Modells über beschriftete Daten bei festem Programm.",
+      "closest_existing_ids": [
+        "MATH13",
+        "CS03",
+        "SOC12"
+      ],
+      "source_ids": [
+        "MNEW05"
+      ],
+      "effort": "hoch",
+      "priority": "P1",
+      "limitations": "Neue Trainings-/Testbilder strikt trennen; keine garantierte Verbesserung oder kalibrierte Wahrscheinlichkeiten behaupten; unkritische Objekte statt Personenbilder.",
+      "provenance": "Eigener GradeCrew-Entwurf auf Basis des dokumentierten Prinzips; kein behauptetes GradeCrew-/Anbieterfeature."
+    },
+    {
+      "id": "NM06",
+      "title": "Vom lokalen Agentenschritt zum unerwarteten Gesamtmuster",
+      "subjects": [
+        "Informatik",
+        "Mathematik",
+        "Naturwissenschaften"
+      ],
+      "levels": [
+        "Sek I",
+        "Sek II"
+      ],
+      "learning_goal": "Mikroregeln, Aktualisierungsreihenfolge und emergente Verteilungen unterscheiden.",
+      "student_action": "Lokale Agentenregel ausführen, globales Muster vorhersagen, gleiche Regel auf mehrere Startzustände anwenden und Verteilungen vergleichen.",
+      "example": "Farbfelder auf toroidal verbundenem Raster: Ein Agent bleibt bei mindestens 30 % gleichfarbigen besetzten Nachbarn; isolierte Agenten gelten ausdrücklich als zufrieden. Sonst zieht er nach einer festgelegten Regel um. Vergleiche lokale Zufriedenheit und globale Cluster.",
+      "grading": "H: D prüft Nachbarzählung und Einzelschritte bei fixiertem Start, Seed und Updateordnung; L beurteilt Verteilung mehrerer Läufe und Grenze der Übertragung.",
+      "feedback": "Ein korrektes lokales Prozent ist noch keine Vorhersage des globalen Anteils.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "neue_mechanik",
+      "novelty_explanation": "BIO05 modelliert Wirkungsnetze und CS01 einen Programmtrace. Hier entsteht die Makrogröße erst aus vielen interagierenden lokalen Einheiten; keine bloße neue Ökosystemgeschichte.",
+      "closest_existing_ids": [
+        "BIO05",
+        "CS01",
+        "MATH13"
+      ],
+      "source_ids": [
+        "MNEW06"
+      ],
+      "effort": "hoch",
+      "priority": "P2",
+      "limitations": "Eigene isolierte-Nachbarn-Regel explizit, nicht als NetLogo-Standard behaupten. Farbmodell erklärt keine gesellschaftliche Realität; stochastic Läufe nicht gegen einen einzigen Endzustand bewerten.",
+      "provenance": "Eigener GradeCrew-Entwurf auf Basis des dokumentierten Prinzips; kein behauptetes GradeCrew-/Anbieterfeature."
+    },
+    {
+      "id": "NM07",
+      "title": "Bestand und Zufluss: gleiches Inputniveau, andere Geschichte",
+      "subjects": [
+        "Naturwissenschaften",
+        "Mathematik"
+      ],
+      "levels": [
+        "Sek I",
+        "Sek II"
+      ],
+      "learning_goal": "Bestandsgröße und Änderungsrate durch Akkumulation trennen.",
+      "student_action": "Collector und Zu-/Abfluss bauen; kurze Flusspulse setzen und vorhersagen, ob der Bestand danach zurückkehrt.",
+      "example": "Eigene exakte GradeCrew-Simulation: Tank beginnt mit 10 L, ein Schritt dauert 1 min. Zufluss 3 L/min, Abfluss 1 L/min für 4 Schritte ergibt 18 L. Danach beide 1 L/min: Bestand bleibt 18 L, obwohl Nettofluss null ist.",
+      "grading": "H: D prüft in eigener diskreter Simulation Mengenbilanz und Einheiten; L prüft qualitative Stock–Flow-Erklärung in SageModeler.",
+      "feedback": "Nettofluss null bedeutet konstanter Bestand, nicht leerer Tank oder Rückkehr auf 10 L.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "starker_untertyp",
+      "novelty_explanation": "BIO05 enthält dynamische Pfade, PHY03 Energiebilanzen. Ergänzung ist das speichernde Zustandsmodell mit expliziter Stock–Flow-Verwechslung und Verlaufsgedächtnis.",
+      "closest_existing_ids": [
+        "BIO05",
+        "PHY03",
+        "CROSS05"
+      ],
+      "source_ids": [
+        "MNEW07",
+        "MNEW08"
+      ],
+      "effort": "mittel bis hoch",
+      "priority": "P1",
+      "limitations": "SageModeler ist semiquantitativ: exakte Literarithmetik ist eigene GradeCrew-Simulation und kein belegtes SageModeler-Feature. Behälter ausreichend groß, keine negativen Bestände zulassen.",
+      "provenance": "Eigener GradeCrew-Entwurf auf Basis des dokumentierten Prinzips; kein behauptetes GradeCrew-/Anbieterfeature."
+    },
+    {
+      "id": "NM08",
+      "title": "Messereignis und Sensorsignal zeitlich entkoppeln",
+      "subjects": [
+        "Physik",
+        "Informatik"
+      ],
+      "levels": [
+        "Sek I 9–10",
+        "Sek II"
+      ],
+      "learning_goal": "Messgerät-Trigger, reale Ereignisse und systematischen Zeitversatz unterscheiden.",
+      "student_action": "Audio-Zeitreihe mit Schwelle/Mindestabstand auswerten, falschen Trigger entfernen und Laufzeitkorrektur anwenden.",
+      "example": "Fall dauert modelliert 0,450 s. Mikrofon 0,50 m vom Startgeräusch und 2,00 m vom Aufprall; c=343 m/s. Gemessener Abstand ist 0,450+(2,00−0,50)/343≈0,45437 s. Korrigiere und trenne das von Echo-Fehltriggern.",
+      "grading": "H: D simuliert Trigger bei vorgegebener Amplitude/Blockierzeit und prüft Vorzeichen der Laufzeitkorrektur; L beurteilt realen Messaufbau.",
+      "feedback": "Positive Laufzeitdifferenz verlängert den Timer; eine höhere Schwelle beseitigt diesen geometrischen Versatz nicht.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "starker_untertyp",
+      "novelty_explanation": "PHY07 wertet Messstreuung aus, CS08 gestaltet Sensorzustände. Ergänzung ist eine durchgängige Messkette, die Schwellenereignis und physikalischen Zeitpunkt explizit auseinanderhält.",
+      "closest_existing_ids": [
+        "PHY07",
+        "CS08",
+        "MATH07"
+      ],
+      "source_ids": [
+        "MNEW09"
+      ],
+      "effort": "mittel",
+      "priority": "P2",
+      "limitations": "Zahlen sind synthetisch und akustische Quellen idealisiert; kein Millisekunden-Genauigkeitsversprechen für Schultelefone.",
+      "provenance": "Eigener GradeCrew-Entwurf auf Basis des dokumentierten Prinzips; kein behauptetes GradeCrew-/Anbieterfeature."
+    },
+    {
+      "id": "NM09",
+      "title": "Klassifikationen unabhängig sammeln, Konsens prüfen, Streitfälle eskalieren",
+      "subjects": [
+        "Biologie",
+        "Sachunterricht",
+        "Informatik"
+      ],
+      "levels": [
+        "Grundschule 3–4 begleitet",
+        "Sek I",
+        "Sek II"
+      ],
+      "learning_goal": "Gemeinsame Datenannotation von Mehrheitsentscheidung und fachlicher Wahrheit unterscheiden.",
+      "student_action": "Dasselbe Objekt erst unabhängig annotieren; Stimmen zusammenführen; nach Mindestzahl/Übereinstimmung freigeben oder zur Expertenprüfung routen.",
+      "example": "Eigenes Blattbild-Set: 10 unabhängige Urteile ergeben 6 gezähnt, 4 glatt. Eigene Freigaberegel verlangt mindestens 8 von 10; Objekt bleibt ungeklärt und erhält Detailprüfung.",
+      "grading": "H: D prüft Aggregation und Routingregel; L bewertet Bildmerkmale und fachliche Endentscheidung. Minderheitenantwort nicht automatisch als Fehler benoten.",
+      "feedback": "Übereinstimmung separat von Referenzrichtigkeit zeigen; ein verdecktes Blattmerkmal kann Mehrheitsfehler erzeugen.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "neue_mechanik",
+      "novelty_explanation": "CROSS10 erstellt Teamprodukte und MATH13 zieht Stichproben. Hier ist die unabhängige Mehrfachannotation desselben Objekts mit Unsicherheitsstatus und Prüfpfad der eigentliche Antworttyp.",
+      "closest_existing_ids": [
+        "CROSS10",
+        "MATH13",
+        "BIO01"
+      ],
+      "source_ids": [
+        "MNEW10",
+        "MNEW11"
+      ],
+      "effort": "mittel bis hoch",
+      "priority": "P1",
+      "limitations": "8/10 ist eigene didaktische Regel, kein universeller Zooniverse-Standard. Keine Live-Beiträge erforderlich; eigene/lizenzierte Bilder lokal nutzen, Referenzexpertise nicht voraussetzen.",
+      "provenance": "Eigener GradeCrew-Entwurf auf Basis des dokumentierten Prinzips; kein behauptetes GradeCrew-/Anbieterfeature."
+    },
+    {
+      "id": "NM10",
+      "title": "Schätzintervall vor Offenlegung verankern und verengen",
+      "subjects": [
+        "Mathematik",
+        "Sachunterricht"
+      ],
+      "levels": [
+        "Grundschule 2–4",
+        "Sek I"
+      ],
+      "learning_goal": "Größenordnung durch Referenzen begründen und Schätzbereich bei neuer Information aktualisieren.",
+      "student_action": "Bildmenge zunächst mit Unter-/Obergrenze und Bezugsmenge schätzen; nach Offenlegung eines referenzierten Teilbereichs Intervall revidieren.",
+      "example": "Eigenes Bild eines exakt konstruierten Sitzplans: 12 Reihen, davon zunächst nur 3 mit je 8 Stühlen sichtbar. Erste Schätzung mit Annahmen; später zeigen alle Reihen acht Plätze. Revision auf 96.",
+      "grading": "H: D prüft Ordnung der Grenzen und Rechnung bei vollständig offenem Raster; L bewertet vorherige Annahmen. Erster Schätzwert nicht allein nach Nähe zur späteren Wahrheit benoten.",
+      "feedback": "Getroffene und verworfene Annahmen nebeneinander zeigen; engeres Intervall muss durch Information gedeckt sein.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "starker_untertyp",
+      "novelty_explanation": "MATH07 behandelt instrumentelle Messintervalle, CROSS02 Entscheidungssicherheit. Ergänzung ist größenbezogene Schätzung mit sichtbarer Referenzmenge und verpflichtender Informationsrevision.",
+      "closest_existing_ids": [
+        "MATH07",
+        "CROSS02",
+        "MATH03"
+      ],
+      "source_ids": [
+        "MNEW12",
+        "MNEW13"
+      ],
+      "effort": "niedrig bis mittel",
+      "priority": "P2",
+      "limitations": "Aufeinanderfolgende Offenlegung und Intervallbenotung sind eigene Übertragung, kein dokumentiertes Plattformfeature. Bei unregelmäßigen Sitzplänen ist 12×8 ohne Zusatzannahme nicht gedeckt.",
+      "provenance": "Eigener GradeCrew-Entwurf auf Basis des dokumentierten Prinzips; kein behauptetes GradeCrew-/Anbieterfeature."
+    }
+  ]
+}

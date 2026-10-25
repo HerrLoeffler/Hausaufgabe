@@ -40,3 +40,11 @@ Die vorgeschlagenen 20 Referenzaufgaben pro Fachkontext ausarbeiten: MATH01, MAT
 ## Offene Grenzen
 
 Kein flächendeckendes Mapping sämtlicher Bundesländer, Jahrgänge und Ausbildungsberufe. Kein vollständiger Preis-/API-/Rechte-/Accessibility-Audit fremder Produkte und kein empirischer Wirksamkeitsnachweis. Quellenzugang und Verfügbarkeit können sich ändern; scoyo, Duolingo for Schools und fobizz sind mit aktuellem differenziertem Status erfasst. Fachliche Eindeutigkeit, sinnvolle Alternativen und offene Beurteilung nicht durch einen allgemeinen freien KI-Korrektor ersetzen.
+
+## Ergänzungsauftrag 25.10.2026 · laufender Zwischenstand
+
+Martin fragt nach konkreten bisherigen Aufgaben und weiteren neuen nutzbaren Formaten. Fortsetzung unter derselben Task-ID und PR290; nur Recherche/Dokumentation. Aktuelle main-Basis geprüft: `21723ad5cfe3fb8e4062280b2dc2b7fb476c1de3`. Bestehender PR290 ist gegenüber main divergiert (+2 eigene/-5 main-Commits); gemeinsame TODO-/Registry-Ergänzungen werden vor Abschluss additiv abgeglichen. Development-Status Run40183534335, Job121139415611 erfolgreich; relevante Logs gelesen. Primary bleibt `docs/visual-learning-principles-20261022`, laut Audit +0/-10. PR265/271/296 bearbeiten Prototypen und bleiben außerhalb dieser Recherche.
+
+Drei getrennte Fachrecherchen (MINT, Gesellschaft/Künste/Beruf, Sprache/Methoden) vergleichen Kandidaten gegen die 163 alten Entwürfe. Angefordert jeweils `gpt-6.1-sol`/`medium` für fachübergreifende Quellenarbeit; tatsächliche Provider-/Nutzungswerte unbekannt. Verantwortlicher Chat: bestehender Forschungsfachchat; Chat-Link unbekannt. Keine fremde aktive Schreibzuständigkeit übernommen.
+
+Zwischenstand: 13 Kandidaten aus MINT und Ergänzung (16 Quellenprofile), noch ohne vollständigen Querschnittsreview. Datei `docs/learning/research/digital-task-extension-20261025.json` ausdrücklich `research_in_progress`. Noch keine neue Gesamtzahl als final berichten. Nächster Schritt: weitere Fachbeiträge einlesen, neue Mechanik/Untertyp/Lernablauf getrennt zählen und Überschneidungen zusammenführen. Kein Code, Runtime-Poolimport oder Deploy.
