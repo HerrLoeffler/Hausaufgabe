@@ -1,0 +1,20 @@
+{
+  "scope": "local teacher review browser proof",
+  "mouseProtractorMoved": true,
+  "mouseProtractorRotated": true,
+  "toleranceBoundary": {
+    "target": 42,
+    "answer": 45,
+    "points": 2
+  },
+  "draftSaveNavigationReturn": true,
+  "temporaryTitleChangeRestored": true,
+  "chartKeyboardValue": 8,
+  "chartNumericalInputs": 0,
+  "physicalTouch": "not performed",
+  "screenshots": [
+    "outputs/visual-angle-direct-20261025.png",
+    "outputs/visual-claims-review-20261025.png",
+    "outputs/visual-chart-direct-20261025.png"
+  ]
+}
