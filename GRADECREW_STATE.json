@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "9497e756ed2defb4da6b05773146a19929101b3c",
+    "observed_integration_head": "f8274f06616f5db9a15597f37229a15bb9bfa2c6",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -624,6 +624,30 @@
       "origin": "https://gradecrew.de",
       "receipts": "workstreams/question-feedback-release-receipts-20261025.json",
       "stage": "production"
+    },
+    "public_homepage_release_20261025": {
+      "task_id": "GC-DESIGN-05",
+      "stage": "production",
+      "source": "f8274f06616f5db9a15597f37229a15bb9bfa2c6",
+      "tree": "328216887ae91bcf90114797acdfcbbd69de48d4",
+      "pr": 308,
+      "scope": "hosting_only",
+      "project": "hausaufgabe-staging",
+      "url": "https://gradecrew.de/",
+      "hosting_version": "d31f7449049ae2f7",
+      "verified_assets": 192,
+      "ci": {
+        "web": 40217985417,
+        "package": 40217985423,
+        "result": "success"
+      },
+      "tests": 409,
+      "backend_rules_auth_changed": false,
+      "physical_device_acceptance": "not_performed",
+      "handoff": "workstreams/homepage-release-20261025.md",
+      "receipts": "workstreams/homepage-release-receipts-20261025.json",
+      "question_creation_guide": "docs/learning/HOMEPAGE_QUESTION_CREATION.md",
+      "ai_blueprints_auto_loaded": false
     }
   },
   "production": {
@@ -1190,11 +1214,35 @@
       "staging": "hosting_hash_verified_111_files_exact_fb88_sha",
       "user_test": "not_performed",
       "handoff": "workstreams/design-startscreen-v1.md",
-      "next_action": "Startscreen Masterpiece v4 im verifizierten Preview auf Desktop/iPad/iPhone sowie DE/EN visuell abnehmen; Production unverändert.",
+      "next_action": "Martin prüft neue Homepage auf gradecrew.de am eigenen Gerät; automatische Erzeugung aller Demo-Widgets separat anbinden.",
       "masterpiece_branch": "feature/design-startscreen-masterpiece-v1",
       "masterpiece_merge": "7f464085e89bdb3ea331dfbc988decfa83bc59f6",
       "masterpiece_v4_merge": "fb88dfa7b7cbad49f93b4fc47e883c92fdcf0d41",
-      "masterpiece_v4_handoff": "workstreams/design-startscreen-multiai-v4.md"
+      "masterpiece_v4_handoff": "workstreams/design-startscreen-multiai-v4.md",
+      "public_homepage_release_20261025": {
+        "task_id": "GC-DESIGN-05",
+        "stage": "production",
+        "source": "f8274f06616f5db9a15597f37229a15bb9bfa2c6",
+        "tree": "328216887ae91bcf90114797acdfcbbd69de48d4",
+        "pr": 308,
+        "scope": "hosting_only",
+        "project": "hausaufgabe-staging",
+        "url": "https://gradecrew.de/",
+        "hosting_version": "d31f7449049ae2f7",
+        "verified_assets": 192,
+        "ci": {
+          "web": 40217985417,
+          "package": 40217985423,
+          "result": "success"
+        },
+        "tests": 409,
+        "backend_rules_auth_changed": false,
+        "physical_device_acceptance": "not_performed",
+        "handoff": "workstreams/homepage-release-20261025.md",
+        "receipts": "workstreams/homepage-release-receipts-20261025.json",
+        "question_creation_guide": "docs/learning/HOMEPAGE_QUESTION_CREATION.md",
+        "ai_blueprints_auto_loaded": false
+      }
     },
     {
       "id": "guardian-budget-pilot-v1",

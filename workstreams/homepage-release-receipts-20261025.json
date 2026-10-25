@@ -1,0 +1,33 @@
+{
+  "task": "GC-DESIGN-05",
+  "source": "f8274f06616f5db9a15597f37229a15bb9bfa2c6",
+  "tree": "328216887ae91bcf90114797acdfcbbd69de48d4",
+  "pr": 308,
+  "integration": "fast_forward_from_9497e756",
+  "ci": {
+    "web": 40217985417,
+    "package": 40217985423,
+    "result": "success"
+  },
+  "localTests": 409,
+  "preview": {
+    "project": "gradecrew-staging-2026",
+    "url": "https://gradecrew-staging-2026--homepage-20261025-pahfalxc.web.app/",
+    "attempts": 3,
+    "verifiedFiles": 192
+  },
+  "production": {
+    "project": "hausaufgabe-staging",
+    "url": "https://gradecrew.de/",
+    "hostingVersion": "d31f7449049ae2f7",
+    "attempt": 1,
+    "verifiedFiles": 192,
+    "scope": "hosting_only"
+  },
+  "userAuthorization": "bring unseren neuen startbildschirm auf gradecrew.de",
+  "review": "independent PASS with three reproduced P2 findings fixed and final narrow CSS follow-up reviewed",
+  "browser": "actual local/preview desktop, keyboard coordinate2/2, quadratic roots2/2, DE/EN, existing login/register screens;390x844browser frame verified; live homepage visible",
+  "physicalDevice": "not_performed",
+  "backendRulesAuthChanged": false,
+  "mailProviderCreated": false
+}
