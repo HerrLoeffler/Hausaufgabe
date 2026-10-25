@@ -135,7 +135,8 @@
         "feature/gate-e-load-test",
         "hardening/secure-preview-full-rc-check",
         "integration/secure-assessment-mobile-gc28",
-        "fix/mobile-review-release-audit"
+        "fix/mobile-review-release-audit",
+        "docs/security-key-followup-20261025"
       ]
     },
     {

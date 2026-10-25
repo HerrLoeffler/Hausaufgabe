@@ -668,3 +668,7 @@ GC-DOMAIN-01 · 22.10.2026 · **Web-Domainwechsel umgesetzt und technisch geprü
 
 
 GC-DOMAIN-01 · Webabschluss bestätigt: beide ZertifikateCERT_ACTIVE, alteSitzungnachneuemLogouterhalten. NativePR289integriert24c0f856nachvollständiggrünemCI39848507858; Secure/TeacherStore-URLsgespeichert. LaufendeTestFlightkettenSecure39851773269undTeacher39851773260beimAppowner; nochkeinUploadbehauptet, keineDuplikatstarts. [AktuelleBetriebsanleitung](docs/domain-gradecrew-de-20261022.md). Genauausstehend: dieseRelease-/Apple-Endbelegeabholen.
+
+
+## 25.10.2026 — GC-SECURITY-02: gezielte Konfigurations- und Nutzungsprüfung
+Bestehender Task fortgeführt; Untersuchung und Änderungsvorbereitung privat gesichert. Keine Produkt-/Cloud-/Credentialänderung, keine Änderung einer Release-Stufe. [Öffentliche, datenarme Übergabe](workstreams/security-key-followup-20261025.md). Nächster Schritt: bedingte Schutzänderungen erst nach Verbraucherabgleich und Kompatibilitätsnachweis ausführen; Kosten-/Nutzungsdetails bleiben außerhalb des öffentlichen Repositories.
