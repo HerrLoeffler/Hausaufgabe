@@ -26,9 +26,9 @@ test('production and separate staging package complete public information withou
     }
    }
    const home=await fs.readFile(path.join(publicDir,'index.html'),'utf8');
-   assert.match(home,/href="datenschutz.html"/);
-   assert.match(home,/href="impressum.html"/);
-   assert.match(home,/href="support.html"/);
+   assert.match(home,/href="\/?datenschutz.html"/);
+   assert.match(home,/href="\/?impressum.html"/);
+   assert.match(home,/href="\/?support.html"/);
   } finally {await fs.rm(destination,{recursive:true,force:true});}
  }
 });

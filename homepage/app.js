@@ -7,8 +7,8 @@ for (const [id,intent] of [['loginLink','login'],['registerLink','register']]) {
 }
 
 const copy = {
-  de:{studentEntry:'Schülerzugang',privacy:'Datenschutz',legal:'Impressum',tagline:'Tests. Einfach digital.',login:'Anmelden',register:'Konto erstellen',audience:'FÜR LEHRKRÄFTE ALLER SCHULFORMEN',hero:'Gute Tests<br>entstehen im Team.',lead:'<span>Deine Idee wird ein digitaler Test.</span><span>Die Crew hilft beim Erstellen, Verbessern und Auswerten.</span>',preview:'INTERAKTIVE VORSCHAU',testTitle:'GradeCrew Testübersicht'},
-  en:{studentEntry:'Student access',privacy:'Privacy',legal:'Legal notice',tagline:'Tests. Simply digital.',login:'Sign in',register:'Create account',audience:'FOR TEACHERS AT EVERY SCHOOL LEVEL',hero:'Great tests<br>take a team.',lead:'<span>Turn your idea into a digital test.</span><span>The crew helps you create, improve and review it.</span>',preview:'INTERACTIVE PREVIEW',testTitle:'GradeCrew Test Overview'}
+  de:{support:'Support',studentEntry:'Schülerzugang',privacy:'Datenschutz',legal:'Impressum',tagline:'Tests. Einfach digital.',login:'Anmelden',register:'Konto erstellen',audience:'FÜR LEHRKRÄFTE ALLER SCHULFORMEN',hero:'Gute Tests<br>entstehen im Team.',lead:'<span>Deine Idee wird ein digitaler Test.</span><span>Die Crew hilft beim Erstellen, Verbessern und Auswerten.</span>',preview:'INTERAKTIVE VORSCHAU',testTitle:'GradeCrew Testübersicht'},
+  en:{support:'Support',studentEntry:'Student access',privacy:'Privacy',legal:'Legal notice',tagline:'Tests. Simply digital.',login:'Sign in',register:'Create account',audience:'FOR TEACHERS AT EVERY SCHOOL LEVEL',hero:'Great tests<br>take a team.',lead:'<span>Turn your idea into a digital test.</span><span>The crew helps you create, improve and review it.</span>',preview:'INTERACTIVE PREVIEW',testTitle:'GradeCrew Test Overview'}
 };
 const tasks = [
   {id:'coordinate',subject:['Mathematik','Maths'],label:['Koordinaten','Coordinates'],title:['Setze A auf (−2 | 1) und B auf (2 | 3).','Plot A at (−2, 1) and B at (2, 3).']},
