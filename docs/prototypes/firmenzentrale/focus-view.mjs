@@ -48,7 +48,7 @@ export function mountFocus(container,{selected,child='',onDraft,brandIcon}){
  function showChild(c){
   const group=groupsFor(selected).find(g=>g.children.some(x=>x.id===c.id));
   A(panel,link('Alle Unterthemen',route(selected),'net-link focus-back'),E('p','inspector-kicker',group?.title||domain.label),E('h2','',c.title),E('p',`focus-status state-${c.state}`,statusLabels[c.state]),E('h3','','Hier fehlt noch'),E('p','inspector-copy',c.gap),E('h3','','Nächster Schritt'),E('p','inspector-copy focus-next',c.next),button('Aufgabe vorbereiten',()=>onDraft(domain,{scope:c.title,next:c.next,childWork:prepareChildWork(c)}),'net-action'));
-  const detail=A(E('details','inspector-evidence'),E('summary','','Stand & Abschlusskriterien'),E('h3','','Vorhanden'),E('p','inspector-copy',c.current),E('h3','','Erledigt, wenn …'));
+  const detail=A(E('details','inspector-evidence'),E('summary','','Stand & Abschlusskriterien'),E('h3','','Vorhanden'),E('p','inspector-copy',c.current),E('p','inspector-source',c.reviewLimit),E('h3','','Erledigt, wenn …'));
   const ul=E('ul','focus-acceptance');c.acceptance.forEach(t=>ul.append(E('li','',t)));A(detail,ul,E('h3','','Verantwortung'),E('p','inspector-copy',c.owner),E('p','inspector-copy','Fortschritt noch nicht messbar: Kriterien sind beschrieben, aber ihre Abnahme ist nicht hinterlegt.'));
   A(panel,detail,A(E('details','inspector-evidence'),E('summary','','Quelle & Priorität'),E('p','inspector-copy',`${priorityLabels[c.priority]} · ${c.why}`),E('p','inspector-source',c.source),E('p','inspector-copy',`Quellenstand: ${c.sourceDate}. Keine aktuelle Vollabnahme.`)),link('Bereichsakte',`#/arbeit/akte/${selected}`,'net-link inspector-open'));
  }

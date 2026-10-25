@@ -4,6 +4,7 @@ from pathlib import Path
 from .store import Store, now
 from .rpc import RPC
 from .sources import Sources
+from .releases import Releases
 
 def choose_model(brief):
  text=brief['title']+' '+brief['body']
@@ -19,6 +20,8 @@ class Service:
  def __init__(self, root, data_dir, binary=None, start=True):
   self.root=Path(root);self.store=Store(Path(data_dir));self.rpc=None;self.error='';self.ready=False;self.active=None;self.questions={};self.lock=threading.RLock();self.stop=threading.Event();self.models=[];self.version=None
   self.sources=Sources(self.store,None,self.root)
+  self.releases=Releases(self.store,self.root)
+  if start:self.releases.start()
   if start:threading.Thread(target=self.connect,args=(binary,),daemon=True).start()
  def connect(self,binary=None):
   try:
@@ -30,7 +33,7 @@ class Service:
    threading.Thread(target=self.loop,daemon=True).start()
   except Exception as e:self.error=str(e)[:500];self.ready=False
  def state(self):
-  return {'connected':self.ready and self.rpc is not None and self.rpc.process.poll() is None,'error':self.error,'version':self.version,'profile':'Analyse, Konzepte und Berichte. Produktcode, externe Nachrichten und Liveänderungen sind nicht freigegeben.','models':[{'id':m.get('id'),'model':m.get('model')} for m in self.models],'requests':[{k:v for k,v in r.items() if k!='context'} for r in self.store.list()],'sources':self.sources.public()}
+  return {'connected':self.ready and self.rpc is not None and self.rpc.process.poll() is None,'error':self.error,'version':self.version,'profile':'Analyse, Konzepte und Berichte. Produktcode, externe Nachrichten und Liveänderungen sind nicht freigegeben.','models':[{'id':m.get('id'),'model':m.get('model')} for m in self.models],'requests':[{k:v for k,v in r.items() if k!='context'} for r in self.store.list()],'sources':self.sources.public(),'releases':self.releases.public()}
  def submit(self,payload):
   # Existing ID can always be recovered, including while disconnected.
   try:
@@ -155,5 +158,5 @@ class Service:
     else:self.store.update(r['id'],status='unknown',error='Vorgang nach Dienstneustart nicht sicher abgeschlossen; kein zweiter Start.')
    except Exception as e:self.store.update(r['id'],status='unknown',error='Abgleich nicht möglich: '+str(e)[:300])
  def close(self):
-  self.stop.set()
+  self.stop.set();self.releases.close()
   if self.rpc:self.rpc.close()

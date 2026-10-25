@@ -36,6 +36,8 @@ class Handler(SimpleHTTPRequestHandler):
    if not isinstance(data,dict):raise ValueError('Objekt erwartet')
    if path=='/api/tasks':
     r=service.submit(data);return self.json({k:v for k,v in r.items() if k!='context'},202)
+   if path=='/api/release-review':return self.json(service.releases.review(data),201)
+   if path=='/api/releases/refresh':return self.json({'started':service.releases.refresh()},202)
    if path=='/api/refresh':return self.json({'started':service.sources.refresh()},202)
    if path=='/api/answer':service.answer(data.get('id'),data.get('answer'),data.get('callId'));return self.json({'ok':True})
    if path=='/api/cancel':service.cancel(data.get('id'));return self.json({'ok':True})

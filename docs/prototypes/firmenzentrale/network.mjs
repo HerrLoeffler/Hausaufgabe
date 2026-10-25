@@ -1,3 +1,4 @@
+import {areaStatus} from './company-status.mjs';
 import {domains} from './portfolio.mjs';
 const layout={
  strategy:[190,125,'Firma & Finanzierung'],governance:[580,75,'Recht & Datenschutz'],
@@ -8,19 +9,19 @@ const layout={
  native:[385,800,'iPhone · iPad · Secure']
 };
 const blockers={
- classroom:{status:'Engpass gemeldet',title:'Klassen-Zuweisung durchgängig prüfen',problem:'Der Fachchat meldet einen fehlgeschlagenen Start des neuen 2026-Dienstes. Der vollständige Zugang und die Secure-Zuweisung sind noch nicht abgenommen.',next:'Serverstart eingrenzen, echten Zugangsaufruf prüfen und danach die Testzuweisung bis zum Secure-Client abnehmen.',source:'GC · Schüler, Klassen & ASV · Bericht23.10.2026'},
+
  learning:{status:'Engpass gemeldet',title:'Lernpilot wieder betriebsfähig machen',problem:'Der adaptive Fachchat meldet Serverfehler in der isolierten Vorschau. Die Wiederverwendung des Aufgabenfundus ist noch nicht abschließend geprüft.',next:'Dienststart reparieren und den Lernpfad einschließlich Fundus-Wiederverwendung erneut prüfen.',source:'GC · Adaptives Lernen – Konzept & Realisierung · Bericht23.10.2026'},
  central:{status:'Ausführungsprofil begrenzt',title:'Codearbeit gesondert qualifizieren',problem:'Eingabe, Chatbearbeitung, Rückfrage und Bericht funktionieren lokal. Das geprüfte Profil verändert keine Produktdateien. Ein ausführendes Codeprofil fehlt.',next:'Analyseprofil abnehmen; Codearbeit mit isoliertem Checkout, Umfang und Reviewgates qualifizieren.',source:'GC-BRAIN-01 · echter Diagnoseauftrag25.10.2026'}
 };
 const stages={web:'Web-Kern dokumentiert',native:'Store-Abnahme offen',games:'Spielbare Prototypen',design:'Markenquelle vorhanden',operations:'Releases dokumentiert',customers:'Analytics-Kandidat offen',strategy:'Konzept & Gespräche',governance:'Klärungen offen'};
-export const nodes=domains.map(d=>({...d,x:layout[d.id][0],y:layout[d.id][1],label:layout[d.id][2],status:blockers[d.id]?.status||stages[d.id],blocker:blockers[d.id]||null}));
+export const nodes=domains.map(d=>({...d,x:layout[d.id][0],y:layout[d.id][1],label:layout[d.id][2],status:blockers[d.id]?.status||areaStatus[d.id].status,blocker:blockers[d.id]||null,built:areaStatus[d.id].built,next:[areaStatus[d.id].next]}));
 // Relations are explicit editorial projections with bounded scopes. They do not
 // propagate whole-product red/green status or represent measured live traffic.
 export const connections=[
- {id:'classroom-native',from:'classroom',to:'native',kind:'blocker',scope:'Secure-Testzuweisung',reason:'Die vollständige persönliche Klassen-/Schülerzuweisung braucht einen funktionierenden Classroom-Zugang. Betroffen ist dieser Anschluss, nicht die gesamte native App.',source:'GC-CLASSROOM-01 · Fachbericht23.10.2026 / ursprüngliche Classroom-Akte'},
+ {id:'classroom-native',from:'classroom',to:'native',kind:'requires',scope:'Secure-Geräteabnahme',reason:'Classroom ist auf2026 testbereit; Secure1221 wurde hochgeladen. Apple-Verarbeitung und vollständiger Ablauf auf echtem iPad sind noch zu prüfen.',source:'GC-CLASSROOM-01 · Fachabgleich25.10.2026 / Uploadlauf40186256526'},
  {id:'learning-web',from:'learning',to:'web',kind:'blocker',scope:'Freigabe des adaptiven Lernpiloten',reason:'Die gestörte isolierte Lernvorschau verhindert den aktuellen Nachweis der Lernpfade und des Fundus. Die bestehende normale Web-Testerstellung ist damit nicht pauschal blockiert.',source:'GC-ADAPTIVE-PRACTICE-01 · Fachbericht23.10.2026'},
  {id:'central-operations',from:'central',to:'operations',kind:'blocker',scope:'Automatische Code-Aufträge',reason:'Der lokale Chatweg liefert bereits Analysen und Berichte. Automatische Produktcodearbeit braucht zusätzlich ein qualifiziertes Schreib-/Reviewprofil; sie ist noch nicht freigegeben.',source:'GC-BRAIN-01 · Analyseprofil25.10.2026'},
- {id:'operations-classroom',from:'operations',to:'classroom',kind:'requires',scope:'2026-Dienststart',reason:'Der Classroom-Fachauftrag benötigt Diagnose und qualifizierten Start der betroffenen Serverversion. Zuständigkeit und Reparatur bleiben beim bestehenden Fachauftrag.',source:'Classroom Reparatur-/Monitorplan ·23.10.2026'},
+ {id:'operations-classroom',from:'operations',to:'classroom',kind:'requires',scope:'2026-Testabnahme',reason:'Der frühere Startfehler ist laut aktuellem Fachbericht behoben. Der nächste Nachweis ist die durchgängige persönliche Zuweisung bis zur quittierten iPad-Abgabe.',source:'GC-CLASSROOM-01 · Fachabgleich25.10.2026'},
  {id:'operations-learning',from:'operations',to:'learning',kind:'requires',scope:'Isolierter Lernserver',reason:'Für die erneute Pilotprüfung muss der Lernserver erreichbar sein. Eine neue Produktfreigabe folgt daraus noch nicht.',source:'GC-ADAPTIVE-PRACTICE-01 · Fachbericht23.10.2026'},
  {id:'learning-games',from:'learning',to:'games',kind:'requires',scope:'Geprüfte Aufgaben für Lernspiele',reason:'Der geplante Unterrichtseinsatz der Spiele braucht fachlich geeignete Aufgaben und eine begrenzte Abnahme je Spiel. Keine aktuelle pauschale Blockade aller Prototypen behauptet.',source:'Portfolio Games/Lernen · Synthese23.10.2026'},
  {id:'web-classroom',from:'web',to:'classroom',kind:'flow',scope:'Test → Klasse → Schüler',reason:'Erstellte Prüfungen sollen über Klassen und persönliche Schülerzugänge zugewiesen werden.',source:'GC-CLASSROOM-01 · Konzept und Aufgabenakte'},

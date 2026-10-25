@@ -1,0 +1,834 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-25T11:08:17.171787+00:00",
+  "environments": [
+    {
+      "id": "live",
+      "name": "Schul-Live",
+      "kind": "live",
+      "url": "https://gradecrew.de",
+      "purpose": "Öffentliche Schuloberfläche",
+      "area": "operations",
+      "project": "hausaufgabe-staging",
+      "expiresAt": null,
+      "aliases": [
+        "https://hausaufgabe-staging.web.app"
+      ],
+      "manifest": "/release.json",
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Kandidaten und fehlende Prüfungen unten ansehen.",
+      "baseline": {
+        "checkedAt": "2026-10-25T11:08:17.171787+00:00",
+        "commit": "78a2f9df4ab80efa7bca44c80a14f0afb9c9c28a",
+        "version": "2.3.1-gc45-rc1",
+        "project": "hausaufgabe-staging",
+        "environment": "production"
+      }
+    },
+    {
+      "id": "test2026",
+      "name": "Testsystem 2026",
+      "kind": "test",
+      "url": "https://gradecrew-staging-2026.web.app",
+      "purpose": "Getrennte Konten, Daten und Funktionen; Classroom und Lerngehirn",
+      "area": "classroom",
+      "project": "gradecrew-staging-2026",
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": "/release.json",
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Kandidaten und fehlende Prüfungen unten ansehen.",
+      "baseline": {
+        "checkedAt": "2026-10-25T11:08:17.432717+00:00",
+        "commit": "5490a5d166226f6f78f2624f2341e1137fa75099",
+        "version": "2.3.1-gc44",
+        "project": "gradecrew-staging-2026",
+        "environment": "staging"
+      }
+    },
+    {
+      "id": "visual255",
+      "name": "Neue Aufgaben · 24 Probetests",
+      "kind": "preview",
+      "url": "https://gradecrew-staging-2026--visual255-rjcwf436.web.app",
+      "purpose": "192 Aufgaben / zwölf Formate; Einstieg /pilot24/",
+      "area": "learning",
+      "project": "gradecrew-staging-2026",
+      "expiresAt": "2026-11-24T23:59:59+01:00",
+      "aliases": [],
+      "manifest": "/release.json",
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Kandidaten und fehlende Prüfungen unten ansehen.",
+      "baseline": {
+        "checkedAt": "2026-10-25T11:08:17.560689+00:00",
+        "commit": "a396feedccf0d41ecf48c0e23e3e99d53e1cbf3a",
+        "version": "2.3.1-gc45-rc1",
+        "project": "gradecrew-staging-2026",
+        "environment": "staging"
+      }
+    },
+    {
+      "id": "chapters",
+      "name": "Kapiteltests",
+      "kind": "preview",
+      "url": "https://gradecrew-staging-2026--chapters-20261020-w5x2v4cu.web.app",
+      "purpose": "Kapitelplanung und Antwortvergleich",
+      "area": "learning",
+      "project": "gradecrew-staging-2026",
+      "expiresAt": "2026-10-28T00:00:00+01:00",
+      "aliases": [],
+      "manifest": "/release.json",
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Kandidaten und fehlende Prüfungen unten ansehen."
+    },
+    {
+      "id": "math2026",
+      "name": "Mathe & Classroom",
+      "kind": "preview",
+      "url": "https://gradecrew-staging-2026--gradecrew-math-classroom-20261-gyuq6rlo.web.app",
+      "purpose": "Isolierte Gruppenrunden",
+      "area": "games",
+      "project": "gradecrew-staging-2026",
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": "/release.json",
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Kandidaten und fehlende Prüfungen unten ansehen."
+    },
+    {
+      "id": "math-old",
+      "name": "Mathe · frühere Schulvorschau",
+      "kind": "historical",
+      "url": "https://hausaufgabe-staging--gradecrew-math-classroom-20261016-5qhq3iqm.web.app",
+      "purpose": "Historischer Standort; nicht mit2026 gleichsetzen",
+      "area": "games",
+      "project": "hausaufgabe-staging",
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": "/release.json",
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Aktuellen Einsatz und gültige Testadresse mit zuständigem Fachchat klären."
+    },
+    {
+      "id": "journey",
+      "name": "Wissensreise",
+      "kind": "preview",
+      "url": "https://hausaufgabe-staging--gradecrew-wissensreise-20261014-tg3201gy.web.app",
+      "purpose": "Eigene Tests als Lernspiel; /learning.html",
+      "area": "games",
+      "project": "hausaufgabe-staging",
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": "/release.json",
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Kandidaten und fehlende Prüfungen unten ansehen."
+    },
+    {
+      "id": "rally",
+      "name": "Test-Rallye",
+      "kind": "historical",
+      "url": "https://hausaufgabe-staging--gradecrew-test-rallye-20261013-mzzqi6g9.web.app",
+      "purpose": "Lehrertests und Spielwertung; /test-rallye/",
+      "area": "games",
+      "project": "hausaufgabe-staging",
+      "expiresAt": "2026-10-20T23:37:00+02:00",
+      "aliases": [],
+      "manifest": "/release.json",
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Aktuellen Einsatz und gültige Testadresse mit zuständigem Fachchat klären."
+    },
+    {
+      "id": "binomial",
+      "name": "Fast Quiz · Binome",
+      "kind": "historical",
+      "url": "https://hausaufgabe-staging--gradecrew-binomial-20261012-y55vfkoh.web.app",
+      "purpose": "Klasse10; /fast-quiz/",
+      "area": "games",
+      "project": "hausaufgabe-staging",
+      "expiresAt": "2026-10-19T11:19:00+02:00",
+      "aliases": [],
+      "manifest": "/release.json",
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Aktuellen Einsatz und gültige Testadresse mit zuständigem Fachchat klären."
+    },
+    {
+      "id": "integration-old",
+      "name": "Frühere Integrationsvorschau",
+      "kind": "historical",
+      "url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
+      "purpose": "Historischer Integrationsstand; aktuelle Gültigkeit offen",
+      "area": "operations",
+      "project": "hausaufgabe-staging",
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": "/release.json",
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Aktuellen Einsatz und gültige Testadresse mit zuständigem Fachchat klären."
+    },
+    {
+      "id": "central-local",
+      "name": "Firmenzentrale",
+      "kind": "local",
+      "url": "http://127.0.0.1:8796",
+      "purpose": "Nur auf diesem Mac; Chatadresse, Laufzeit nicht automatisch geprüft",
+      "area": "central",
+      "project": null,
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": null,
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Aktuellen Einsatz und gültige Testadresse mit zuständigem Fachchat klären."
+    },
+    {
+      "id": "home-local",
+      "name": "Startseite",
+      "kind": "local",
+      "url": "http://127.0.0.1:8766",
+      "purpose": "Nur auf diesem Mac; Chatadresse, Laufzeit nicht automatisch geprüft",
+      "area": "design",
+      "project": null,
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": null,
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Aktuellen Einsatz und gültige Testadresse mit zuständigem Fachchat klären."
+    },
+    {
+      "id": "design-local",
+      "name": "Designkonzept",
+      "kind": "local",
+      "url": "http://127.0.0.1:8794",
+      "purpose": "Nur auf diesem Mac; Chatadresse, Laufzeit nicht automatisch geprüft",
+      "area": "design",
+      "project": null,
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": null,
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Aktuellen Einsatz und gültige Testadresse mit zuständigem Fachchat klären."
+    },
+    {
+      "id": "adaptive-local",
+      "name": "Lerngehirn-Prototyp",
+      "kind": "local",
+      "url": "http://127.0.0.1:8774",
+      "purpose": "Nur auf diesem Mac; Chatadresse, Laufzeit nicht automatisch geprüft",
+      "area": "learning",
+      "project": null,
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": null,
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Aktuellen Einsatz und gültige Testadresse mit zuständigem Fachchat klären."
+    },
+    {
+      "id": "feedback-local",
+      "name": "Feedback-Prototyp",
+      "kind": "local",
+      "url": "http://127.0.0.1:8779",
+      "purpose": "Nur auf diesem Mac; Chatadresse, Laufzeit nicht automatisch geprüft",
+      "area": "customers",
+      "project": null,
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": null,
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Aktuellen Einsatz und gültige Testadresse mit zuständigem Fachchat klären."
+    },
+    {
+      "id": "tasks-local",
+      "name": "Aufgaben-Prototyp",
+      "kind": "local",
+      "url": "http://127.0.0.1:8784",
+      "purpose": "Nur auf diesem Mac; Chatadresse, Laufzeit nicht automatisch geprüft",
+      "area": "learning",
+      "project": null,
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": null,
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Aktuellen Einsatz und gültige Testadresse mit zuständigem Fachchat klären."
+    },
+    {
+      "id": "escape-local",
+      "name": "Escape-Prototyp",
+      "kind": "local",
+      "url": "http://127.0.0.1:8819",
+      "purpose": "Nur auf diesem Mac; Chatadresse, Laufzeit nicht automatisch geprüft",
+      "area": "games",
+      "project": null,
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": null,
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Aktuellen Einsatz und gültige Testadresse mit zuständigem Fachchat klären."
+    },
+    {
+      "id": "secure2026",
+      "name": "Secure TestFlight · 2026",
+      "kind": "native",
+      "url": null,
+      "purpose": "Build1221 hochgeladen; Apple-Verarbeitung / Installation separat",
+      "area": "native",
+      "project": null,
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": null,
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Kandidaten und fehlende Prüfungen unten ansehen."
+    },
+    {
+      "id": "securestore",
+      "name": "Secure App Store",
+      "kind": "native",
+      "url": null,
+      "purpose": "Storebuild1192 eingereicht; Händlerprüfung läuft",
+      "area": "native",
+      "project": null,
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": null,
+      "source": "Chat-/PR-/Main-Abgleich25.10.2026",
+      "next": "Kandidaten und fehlende Prüfungen unten ansehen."
+    }
+  ],
+  "candidates": [
+    {
+      "id": "GC-VISUAL-PROTOTYPE-AI-02",
+      "name": "24 Probetests / neue Formate",
+      "area": "learning",
+      "task": "GC-VISUAL-PROTOTYPE-AI-02",
+      "owner": "Lernen / Aufgaben-Fachchat",
+      "pr": 296,
+      "prHead": "136cccc8fda00505f2ff0f3695c3cbb26f453958",
+      "sourceCommit": "a396feedccf0d41ecf48c0e23e3e99d53e1cbf3a",
+      "testEnvironment": "visual255",
+      "targetEnvironment": "live",
+      "components": [
+        "Hosting",
+        "16 visual255-Testfunktionen"
+      ],
+      "done": "192 Aufgaben gelesen;120 Server-/Resume-Fälle und180 Hostingdateien geprüft.",
+      "gap": "Lehrkraft-, Touch-/Screenreaderprüfung und Unterrichtseignung offen.",
+      "next": "Pro Fach repräsentative Aufgaben fachlich und auf Zielgeräten abnehmen.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "PR / abgegrenzte Nachweise",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/296"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "a396feedccf0d41ecf48c0e23e3e99d53e1cbf3a",
+        "evidence": "192 Aufgaben gelesen;120 Server-/Resume-Fälle und180 Hostingdateien geprüft."
+      },
+      "deployment": {
+        "sha": "a396feedccf0d41ecf48c0e23e3e99d53e1cbf3a",
+        "environment": "visual255",
+        "evidence": "PR296 / Pilotbericht"
+      },
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": true
+    },
+    {
+      "id": "GC-WEB-REPAIR-20261007",
+      "name": "Aufgabenfeedback vor Entfernen sichern",
+      "area": "customers",
+      "task": "GC-WEB-REPAIR-20261007",
+      "owner": "GC · Analytics",
+      "pr": 297,
+      "prHead": "e21269101f794c285e6a0a4d3665892c692cc497",
+      "sourceCommit": "e21269101f794c285e6a0a4d3665892c692cc497",
+      "testEnvironment": "test2026",
+      "targetEnvironment": "live",
+      "components": [
+        "Hosting",
+        "betroffene Backenddienste"
+      ],
+      "done": "PR297 zusammengeführt;287 Backend- und414 Web-/Connectortests laut Nachweis.",
+      "gap": "Kein Veröffentlichungsbeleg; tatsächliche historische Bewertungen nicht ausgewertet.",
+      "next": "Integrierten Kandidaten und Testdeploy festlegen; bestätigte Speicherung vor Entfernen prüfen.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "PR / abgegrenzte Nachweise",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/297"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "e21269101f794c285e6a0a4d3665892c692cc497",
+        "evidence": "PR297 zusammengeführt;287 Backend- und414 Web-/Connectortests laut Nachweis."
+      },
+      "deployment": null,
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": true
+    },
+    {
+      "id": "GC-CLASSROOM-01",
+      "name": "Persönliche Zuweisung bis Secure",
+      "area": "classroom",
+      "task": "GC-CLASSROOM-01",
+      "owner": "GC · Schüler, Klassen & ASV",
+      "pr": null,
+      "prHead": null,
+      "sourceCommit": "5490a5d166226f6f78f2624f2341e1137fa75099",
+      "testEnvironment": "test2026",
+      "targetEnvironment": "live",
+      "components": [
+        "Classroom Hosting",
+        "Classroom Backend",
+        "Secure1221"
+      ],
+      "done": "Classroom-Hosting vorhanden;718 Prüfungen laut Fachchat. Secure1221 hochgeladen.",
+      "gap": "Echter iPad-Prüfungsmodus, Offlineabgabe und Lehrer-Endstand offen.",
+      "next": "TestFlight1221-Verfügbarkeit prüfen und denselben zugewiesenen Test bis zur quittierten Abgabe abnehmen.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "Secure1221 Uploadlauf",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40186256526"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "5490a5d166226f6f78f2624f2341e1137fa75099",
+        "evidence": "Classroom-Hosting vorhanden;718 Prüfungen laut Fachchat. Secure1221 hochgeladen."
+      },
+      "deployment": {
+        "sha": "5490a5d166226f6f78f2624f2341e1137fa75099",
+        "environment": "test2026",
+        "evidence": "Classroom-Fachchat und Hostingmanifest"
+      },
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": true
+    },
+    {
+      "id": "GC-ADAPTIVE-PRACTICE-01",
+      "name": "Adaptives Lerngehirn",
+      "area": "learning",
+      "task": "GC-ADAPTIVE-PRACTICE-01",
+      "owner": "Lernen / Aufgaben-Fachchat",
+      "pr": 262,
+      "prHead": "b4e12a0bd323e70728d9bf0151ee12817dee8ac3",
+      "sourceCommit": "18905bb",
+      "testEnvironment": "test2026",
+      "targetEnvironment": "live",
+      "components": [
+        "/lerngehirn/ Hosting",
+        "Lern-Backend",
+        "StudentIdentity"
+      ],
+      "done": "Vier Lernmodelle;372 Backend- und62 UI-Tests laut Fachchat.",
+      "gap": "Dienststart fehlgeschlagen; Katalog und Profil HTTP500. Hosting und letzter guter Backendstand unterscheiden sich.",
+      "next": "Ursache anhand vorhandener Serverlogs eingrenzen; kein dritter blinder Deploy.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "PR / abgegrenzte Nachweise",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/262"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "18905bb",
+        "evidence": "Vier Lernmodelle;372 Backend- und62 UI-Tests laut Fachchat."
+      },
+      "deployment": null,
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": false
+    },
+    {
+      "id": "GC-CHAPTER-TESTS-01",
+      "name": "Kapiteltests und Antwortvergleich",
+      "area": "learning",
+      "task": "GC-CHAPTER-TESTS-01",
+      "owner": "Lernen / Aufgaben-Fachchat",
+      "pr": 254,
+      "prHead": "99158ff06f14ead012c85e14e5cc794a3b3f6d0a",
+      "sourceCommit": "261b78dd5ecd9841cc5913f9212cd54186eef284",
+      "testEnvironment": "chapters",
+      "targetEnvironment": "live",
+      "components": [
+        "Hosting",
+        "prepareQuickRemy",
+        "Assessment5b1c0737"
+      ],
+      "done": "559 Web-,298 Functions-,99 Assessmenttests;174 Hostingdateien im Receipt.",
+      "gap": "Reale KI-Planqualität, Wortmarkierung, Timer und physische iPadabnahme offen.",
+      "next": "Wortmarkierungsfehler reproduzieren; einen echten Kapiteltest fachlich prüfen.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "PR / abgegrenzte Nachweise",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/254"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "261b78dd5ecd9841cc5913f9212cd54186eef284",
+        "evidence": "559 Web-,298 Functions-,99 Assessmenttests;174 Hostingdateien im Receipt."
+      },
+      "deployment": null,
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": true
+    },
+    {
+      "id": "GC-ANALYTICS-01",
+      "name": "Datensparsame Lehrkraftmessung",
+      "area": "customers",
+      "task": "GC-ANALYTICS-01",
+      "owner": "GC · Analytics",
+      "pr": 263,
+      "prHead": "1b2fbdd14577e5646a1d57c1048623178ab1ff7a",
+      "sourceCommit": "1b2fbdd14577e5646a1d57c1048623178ab1ff7a",
+      "testEnvironment": "test2026",
+      "targetEnvironment": "live",
+      "components": [
+        "Hosting",
+        "betroffene Backenddienste"
+      ],
+      "done": "Code und CI geprüft; Messgates aus, V1-Dashboard vorbereitet.",
+      "gap": "Erlaubter Konfigurationsweg, eigenes Schulziel und V1-Ende-zu-Ende-Nachweis fehlen.",
+      "next": "Konfigurationsweg und Zweck-/Fristeninformation klären, danach selektiven Testfluss planen.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "PR / abgegrenzte Nachweise",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/263"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "1b2fbdd14577e5646a1d57c1048623178ab1ff7a",
+        "evidence": "Code und CI geprüft; Messgates aus, V1-Dashboard vorbereitet."
+      },
+      "deployment": null,
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": true
+    },
+    {
+      "id": "GC-MATH-CLASSROOM",
+      "name": "Mathe-Gruppenrunden",
+      "area": "games",
+      "task": "GC-MATH-CLASSROOM",
+      "owner": "Games-Fachchat",
+      "pr": 240,
+      "prHead": "0c8c88319d25a339008bbab20ed5504fe768ec03",
+      "sourceCommit": "0c8c88319d25a339008bbab20ed5504fe768ec03",
+      "testEnvironment": "math2026",
+      "targetEnvironment": "live",
+      "components": [
+        "Hosting",
+        "betroffene Backenddienste"
+      ],
+      "done": "Realer Quelltest und Wiederaufnahme dokumentiert.",
+      "gap": "Klasse, physische Geräte und Kamerascan offen.",
+      "next": "Aktuellen exakt getesteten Stand zuordnen und die offenen Nutzer-/Gerätefälle abnehmen.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "PR / abgegrenzte Nachweise",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/240"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "0c8c88319d25a339008bbab20ed5504fe768ec03",
+        "evidence": "Realer Quelltest und Wiederaufnahme dokumentiert."
+      },
+      "deployment": null,
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": false
+    },
+    {
+      "id": "GC-WISSENSREISE",
+      "name": "Wissensreise",
+      "area": "games",
+      "task": "GC-WISSENSREISE",
+      "owner": "Games-Fachchat",
+      "pr": 238,
+      "prHead": "ec7512600bf6d48541cb304d746dca96b78358b5",
+      "sourceCommit": "ec7512600bf6d48541cb304d746dca96b78358b5",
+      "testEnvironment": "journey",
+      "targetEnvironment": "live",
+      "components": [
+        "Hosting",
+        "betroffene Backenddienste"
+      ],
+      "done": "Automatik-/Browserprüfungen und11 Learningfunctions dokumentiert.",
+      "gap": "Angemeldete echte50-Fragen-Vorbereitung und Geräte offen.",
+      "next": "Aktuellen exakt getesteten Stand zuordnen und die offenen Nutzer-/Gerätefälle abnehmen.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "PR / abgegrenzte Nachweise",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/238"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "ec7512600bf6d48541cb304d746dca96b78358b5",
+        "evidence": "Automatik-/Browserprüfungen und11 Learningfunctions dokumentiert."
+      },
+      "deployment": null,
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": false
+    },
+    {
+      "id": "GC-GAMES-TEST-RALLYE-01",
+      "name": "Test-Rallye",
+      "area": "games",
+      "task": "GC-GAMES-TEST-RALLYE-01",
+      "owner": "Games-Fachchat",
+      "pr": 236,
+      "prHead": "797549374df908cb9fd212be14b86e58061b347b",
+      "sourceCommit": "797549374df908cb9fd212be14b86e58061b347b",
+      "testEnvironment": "rally",
+      "targetEnvironment": "live",
+      "components": [
+        "Hosting",
+        "betroffene Backenddienste"
+      ],
+      "done": "221 veröffentlichte Dateien und Schutzgrenzen geprüft.",
+      "gap": "Kanal abgelaufen; Lehrer→Schüler→Server-Endstand offen.",
+      "next": "Aktuellen exakt getesteten Stand zuordnen und die offenen Nutzer-/Gerätefälle abnehmen.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "PR / abgegrenzte Nachweise",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/236"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "797549374df908cb9fd212be14b86e58061b347b",
+        "evidence": "221 veröffentlichte Dateien und Schutzgrenzen geprüft."
+      },
+      "deployment": null,
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": false
+    },
+    {
+      "id": "GC-FASTQUIZ-BINOMIAL",
+      "name": "Fast Quiz · Binome",
+      "area": "games",
+      "task": "GC-FASTQUIZ-BINOMIAL",
+      "owner": "Games-Fachchat",
+      "pr": 224,
+      "prHead": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+      "sourceCommit": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+      "testEnvironment": "binomial",
+      "targetEnvironment": "live",
+      "components": [
+        "Hosting",
+        "betroffene Backenddienste"
+      ],
+      "done": "Echter Zweitab-Lauf mit synchronem Endstand geprüft.",
+      "gap": "Kanal abgelaufen; Kamerascan, Geräte und Klassenlast offen.",
+      "next": "Aktuellen exakt getesteten Stand zuordnen und die offenen Nutzer-/Gerätefälle abnehmen.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "PR / abgegrenzte Nachweise",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/224"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+        "evidence": "Echter Zweitab-Lauf mit synchronem Endstand geprüft."
+      },
+      "deployment": null,
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": false
+    },
+    {
+      "id": "GC-SECURE-KEYBOARD",
+      "name": "iPad-Startknopf bei offener Tastatur",
+      "area": "native",
+      "task": "GC-SECURE-KEYBOARD",
+      "owner": "Native / Classroom",
+      "pr": 294,
+      "prHead": "b156c122dc3243049fa1c9fc7fbedb85b8d249cb",
+      "sourceCommit": "b156c122dc3243049fa1c9fc7fbedb85b8d249cb",
+      "testEnvironment": "secure2026",
+      "targetEnvironment": "live",
+      "components": [
+        "Native Secure"
+      ],
+      "done": "Echte Simulator-XCUI-Tests auf iPad/iPhone, Hoch-/Querformat.",
+      "gap": "Nicht integriert; physische Geräte offen.",
+      "next": "Aktuellen exakt getesteten Stand zuordnen und die offenen Nutzer-/Gerätefälle abnehmen.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "PR / abgegrenzte Nachweise",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/294"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "b156c122dc3243049fa1c9fc7fbedb85b8d249cb",
+        "evidence": "Echte Simulator-XCUI-Tests auf iPad/iPhone, Hoch-/Querformat."
+      },
+      "deployment": null,
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": false
+    }
+  ],
+  "limits": [
+    "Öffentliche Manifeste belegen Hosting, keine vollständigen Backend- oder Geräteprüfungen.",
+    "Lokale Adressen sind gemeldete Prototypen; sie werden nicht automatisch aufgerufen.",
+    "Frühere Wilma-Adresse localhost:8796 kollidiert mit der Zentrale; gültige Adresse noch zuordnen.",
+    "Cloudchat-Inhalte teils gekürzt; weitere unbekannte Seiten sind über Quellenabgleich nachzutragen."
+  ],
+  "controls": {
+    "catalog": "https://github.com/HerrLoeffler/Hausaufgabe/blob/main/release-control/catalog.json",
+    "acceptance": "https://github.com/HerrLoeffler/Hausaufgabe/blob/main/release-control/acceptance.json"
+  }
+}

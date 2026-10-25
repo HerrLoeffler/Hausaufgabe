@@ -45,11 +45,14 @@ class Sources:
   records=[]
   for ident,t in found.items():
    prev=cached.get(ident)
-   if prev and prev.get('updatedAt')==t.get('updatedAt') and prev.get('complete') and prev.get('historyIndexed'):
+   if t.get('updatedAt') is None:
+    try:t['updatedAt']=self.rpc.call('thread/read',{'threadId':ident,'includeTurns':False}).get('thread',{}).get('updatedAt')
+    except Exception:pass
+   if prev and t.get('updatedAt') is not None and prev.get('updatedAt')==t.get('updatedAt') and prev.get('complete') and prev.get('historyIndexed'):
     records.append(prev);continue
    revision=digest([ident,t.get('updatedAt')]);entry=dict(t,revision=revision,historyIndexed=False,checkedAt=now(),pages=0,turns=0,messages=0,complete=False,excerpts=[])
    try:
-    cursor=None;seen=set()
+    cursor=None;seen=set();all_messages=[]
     for _ in range(200):
      result=self.rpc.call('thread/turns/list',{'threadId':ident,'limit':50,'cursor':cursor,'itemsView':'full'},timeout=60)
      entry['pages']+=1
@@ -64,11 +67,13 @@ class Sources:
         if text:messages.append((str(item.get('id') or digest([turn.get('id'),text])),text))
         # Keep only bounded recent evidence; no tool payloads or credentials in projection.
         if item.get('type')=='agentMessage' and len(entry['excerpts'])<3 and text:entry['excerpts'].append({'turnId':turn.get('id'),'text':text[:3000]})
-     self.store.index_messages(revision,ident,t['title'],messages)
+     all_messages.extend(messages)
      cursor=result.get('nextCursor')
      if not cursor:entry['complete']=True;entry['historyIndexed']=True;break
      if cursor in seen:raise RuntimeError('Wiederholter Verlaufscursor')
      seen.add(cursor)
+    revision=digest([ident,t.get('updatedAt'),all_messages]);entry['revision']=revision
+    self.store.index_messages(revision,ident,t['title'],all_messages)
     if not entry['complete']:entry['error']='Verlaufslimit erreicht'
    except Exception as e:entry['error']=str(e)[:300]
    records.append(entry)

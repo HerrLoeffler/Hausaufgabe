@@ -1,3 +1,4 @@
+import {companyAudit} from '../../docs/prototypes/firmenzentrale/company-status.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {domains} from '../../docs/prototypes/firmenzentrale/portfolio.mjs';
@@ -6,7 +7,7 @@ test('all existing subtopics have stable independent work records and bounded da
  assert.equal(typeof m.childrenFor,'function');
  const ids=[];
  for(const d of domains){const list=m.childrenFor(d.id);assert.ok(d.pieces.every(title=>list.some(c=>c.title===title)),d.id);
-  for(const c of list){ids.push(`${c.domainId}/${c.id}`);for(const f of ['id','domainId','title','state','priority','why','current','gap','next','owner','source','sourceDate'])assert.ok(c[f],`${d.id}/${c.id}: ${f}`);assert.ok(c.acceptance.length>0);assert.equal(c.progress,null);assert.equal(c.sourceDate,c.id==='erneuerungen'||d.id==='central'&&['chat','wissen'].includes(c.id)?'2026-10-25':'2026-10-23');}
+  for(const c of list){ids.push(`${c.domainId}/${c.id}`);for(const f of ['id','domainId','title','state','priority','why','current','gap','next','owner','source','sourceDate'])assert.ok(c[f],`${d.id}/${c.id}: ${f}`);assert.ok(c.acceptance.length>0);assert.equal(c.progress,null);assert.equal(c.sourceDate,companyAudit.updates[d.id+'/'+c.id]||c.id==='erneuerungen'||d.id==='central'&&['chat','wissen'].includes(c.id)?'2026-10-25':'2026-10-23');}
  }assert.equal(new Set(ids).size,ids.length);
 });
 test('each area becomes the center, all children are placed distinctly and deep links resolve safely',()=>{
@@ -14,7 +15,7 @@ test('each area becomes the center, all children are placed distinctly and deep 
  assert.equal(m.focusProjection('unknown').domain,null);assert.equal(m.focusProjection('design','missing').invalid,'child');assert.equal(m.focusProjection('design','missing').selected,null);
 });
 test('only specifically reported subtopics are blocked; new task technology has its own acceptance path',()=>{
- assert.equal(m.childrenFor('classroom').find(c=>c.id==='zuweisungen').state,'blocker');
+ assert.equal(m.childrenFor('classroom').find(c=>c.id==='zuweisungen').state,'review');
  assert.notEqual(m.childrenFor('classroom').find(c=>c.id==='asv').state,'blocker');
  const renew=m.childrenFor('learning').find(c=>c.id==='erneuerungen');assert.ok(renew);assert.match(renew.next,/Kandidat|Matrix/);assert.ok(renew.acceptance.some(t=>/Regression/i.test(t)));
  assert.equal(m.childrenFor('design').some(c=>c.state==='blocker'),false);

@@ -6,9 +6,9 @@ test('every network connection has direction, scope and source; no synthetic rel
  for(const e of m.connections){assert.ok(m.nodes.some(n=>n.id===e.from));assert.ok(m.nodes.some(n=>n.id===e.to));assert.ok(e.reason&&e.scope&&e.source);}
  assert.equal(m.nodes.some(n=>n.status==='production'),false);
 });
-test('a reported classroom dependency blocks the assignment scope, not the entire native product',()=>{
+test('resolved classroom runtime retains the outstanding device requirement',()=>{
  const impacted=m.affectedBy('classroom');
- assert.ok(impacted.some(e=>e.to==='native'&&/zuweisung/i.test(e.scope)));
+ assert.equal(impacted.length,0);assert.ok(m.connections.some(e=>e.from==='classroom'&&e.to==='native'&&e.kind==='requires'&&/Geräte/.test(e.scope)));
  assert.ok(impacted.every(e=>e.kind==='blocker'));
  assert.equal(m.affectedBy('design').length,0);
 });
