@@ -2640,7 +2640,7 @@
     "environment": "gradecrew-staging-2026",
     "scope": "first package: fraction-board, number-line, balance, text-workbench; shared demand plans, private evidence and reviewed owner pool",
     "hosting_source": "c44a67f7704158dc5dbaf2a87dc8acacd121edad",
-    "backend_source": "8ac816cd8f4dc78518643ca8f1979b2826366674",
+    "backend_source": "18905bb6eec6fc87669cd02c8b204de4a2b01579",
     "automated_tests": {
       "backend": 372,
       "ui": 62,
@@ -2648,14 +2648,19 @@
     },
     "verified_hosting_assets": 175,
     "real_browser": "balance repeated-error path and x4; text repeated-error path and correct ordered sentence; number-line API chain correct→harder→2 errors→microstep→original→fresh probe",
-    "remaining": "Restore own test runtime first: generic startup failure and HTTP500, cause unknown; final text rendering/reviewer fix18905bb not deployed. Then live pool reuse, normal student/Classroom access, timed physical cleanup, devices, retention/transfer and per-topic/Quali acceptance.",
+    "remaining": "Regular student/Classroom access, timed physical cleanup, devices, retention/transfer and per-topic/Quali acceptance remain open; one text-help test required deliberate retry after quality rejection.",
     "production_changed": false,
     "handoff": "workstreams/adaptive-practice-01.md",
     "stage": "staging_deployed",
     "app_integration": "draft PR262, not merged",
     "candidate_backend_source": "18905bb6eec6fc87669cd02c8b204de4a2b01579",
-    "candidate_backend_deploy": "19_and20_failed_cloud_run_startup",
-    "runtime_status": "blocked_http500_including_unchanged_catalog_and_profile",
-    "live_pool_reuse": "unverified_due_to_runtime_blocker"
+    "candidate_backend_deploy": "21_success_20261025",
+    "runtime_status": "ready_own_synthetic_preview_verified_20261025",
+    "live_pool_reuse": "verified_current_backend_reviewed-pool_then_actual_AI_assessment_and_harder_followup",
+    "ready_revisions": {
+      "start": "learningbrainstart-00020-tul",
+      "turn": "learningbrainturn-00021-les"
+    },
+    "recovery_evidence": "docs/learning-brain/evidence-recovery-20261025.json in AppPR262"
   }
 }
