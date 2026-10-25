@@ -15,7 +15,12 @@ const cookieName='__Host-gc-pupil';
 exports.classroomWeb=onRequest({region,timeoutSeconds:60,memory:'256MiB',invoker:'public'},async(req,res)=>{
  res.set('Cache-Control','no-store');res.set('Pragma','no-cache');res.set('X-Content-Type-Options','nosniff');
  try{
-  environment();const origin=req.get('origin');if(origin&&origin!=='https://gradecrew-staging-2026.web.app')throw new HttpsError('permission-denied','Unzulässige Herkunft.');if(req.method!=='POST'||origin!=='https://gradecrew-staging-2026.web.app')throw new HttpsError('permission-denied','Bitte die Schülerverwaltung über die 2026-Seite öffnen.');
+  environment();const origin=req.get('origin');if(origin&&origin!=='https://gradecrew-staging-2026.web.app')throw new HttpsError('permission-denied','Unzulässige Herkunft.');if(req.method==='OPTIONS'&&origin==='https://gradecrew-staging-2026.web.app'){
+   if(req.get('access-control-request-method')!=='POST')throw new HttpsError('permission-denied','Diese Methode ist nicht freigegeben.');
+   res.set('Access-Control-Allow-Origin',origin);res.set('Vary','Origin');res.set('Access-Control-Allow-Methods','POST');res.set('Access-Control-Allow-Headers','Authorization, Content-Type');res.status(204).send('');return;
+  }
+  if(req.method!=='POST'||origin!=='https://gradecrew-staging-2026.web.app')throw new HttpsError('permission-denied','Bitte die Schülerverwaltung über die 2026-Seite öffnen.');
+  res.set('Access-Control-Allow-Origin',origin);res.set('Vary','Origin');
   const command=req.body?.command,payload={...(req.body?.payload||{})};let uid=null;
   if(!['login','me','activity','logout','acknowledgeResume'].includes(command)){const authorization=req.get('authorization')||'';if(!authorization.startsWith('Bearer '))throw new HttpsError('unauthenticated','Bitte als Lehrkraft anmelden.');try{uid=(await getAuth().verifyIdToken(authorization.slice(7),true)).uid;}catch{throw new HttpsError('unauthenticated','Bitte erneut als Lehrkraft anmelden.');}}
   if(['me','activity','logout','acknowledgeResume'].includes(command)){if(Object.hasOwn(payload,'sessionToken'))throw new HttpsError('invalid-argument','Ungültige Sitzungsanfrage.');const cookies=Object.fromEntries(String(req.get('cookie')||'').split(';').map(s=>s.trim().split('=')));payload.sessionToken=cookies[cookieName];}

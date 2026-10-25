@@ -3,7 +3,7 @@ export function createOnlineClient({getToken,getAccountId,fetchImpl=globalThis.f
   const account=teacher?getAccountId?.():null;
   const check=()=>{if(teacher&&getAccountId&&getAccountId()!==account){const e=Error('Das Lehrkraftkonto wurde gewechselt. Bitte erneut öffnen.');e.code='account-changed';throw e;}};
   const headers={'Content-Type':'application/json'};if(teacher){const token=await getToken?.();if(!token)throw Error('Bitte als Lehrkraft anmelden.');check();headers.Authorization=`Bearer ${token}`;}
-  const response=await fetchImpl('/api/classroom/online',{method:'POST',headers,credentials:'same-origin',cache:'no-store',signal:AbortSignal.timeout(25000),body:JSON.stringify({command,payload:payload||{}})});
+  const response=await fetchImpl(teacher?'https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/classroomWeb':'/api/classroom/online',{method:'POST',headers,credentials:teacher?'omit':'same-origin',cache:'no-store',signal:AbortSignal.timeout(25000),body:JSON.stringify({command,payload:payload||{}})});
   check();let result;try{result=await response.json();}catch{const e=Error('Die Klassenverwaltung konnte nicht geladen werden. Bitte lade die Seite neu oder versuche es kurz später erneut.');e.code='invalid-response';throw e;}check();if(!response.ok){const e=Error(result.error?.message||'Die Schülerverwaltung ist gerade nicht erreichbar.');e.code=result.error?.code;throw e;}return result;
  }
  return {teacher:(command,payload)=>request(command,payload,true),pupil:(command,payload)=>request(command,payload,false)};
