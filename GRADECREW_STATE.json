@@ -1486,6 +1486,22 @@
         "handoff": "workstreams/feedback-gc39-release-20261013.md",
         "receipts": "workstreams/feedback-gc39-release-receipts-20261013.json",
         "user_test": "pending"
+      },
+      "question_feedback_candidate_20261025": {
+        "stage": "ci_green",
+        "branch": "fix/question-feedback-removal-20261025",
+        "pr": 297,
+        "commit": "e21269101f794c285e6a0a4d3665892c692cc497",
+        "tree": "eccfcd19bf84ee3b7df432e8a7fd6e3f45298cd5",
+        "ci_run": 40186371014,
+        "ci_result": "success",
+        "independent_review": "Spec and Standards re-review PASS; each 14 targeted tests independently run",
+        "live_records": "unknown; installed connector reads ET reviewNotes, not feedback/ai_question",
+        "deployment": "not_requested_not_performed",
+        "plugin_installation": "not_requested_not_performed",
+        "next_action": "Central assessment of reviewed isolated candidate; supported handler/plugin provision needs separate scope, then authorized historical read.",
+        "ci_job": 121147912016,
+        "rules_emulator": "new server-created/teacher-immutable/admin-readable task feedback cases passed in Node22/Java21 CI"
       }
     },
     {
