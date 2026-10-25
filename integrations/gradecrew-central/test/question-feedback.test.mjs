@@ -11,3 +11,7 @@ test('missing auth, wrong project, unsupported response and cycling cursor canno
  await assert.rejects(readQuestionFeedback({token:'t',fetchImpl:async()=>({ok:true,text:async()=>JSON.stringify({error:{status:'INVALID_ARGUMENT'}})})}),/bereitgestellt|abgelehnt/);
  await assert.rejects(readQuestionFeedback({token:'t',fetchImpl:async()=>response({sourceProject:'hausaufgabe-staging',environment:'production',reports:[],nextCursor:'same'})}),/Cursor/);
 });
+test('central reader retains explicit learning status and use timestamps without private audit actors',async()=>{
+ const r=await readQuestionFeedback({token:'t',fetchImpl:async()=>response({sourceProject:'hausaufgabe-staging',environment:'production',reports:[{id:'a',verdict:'good',personalLearningStatus:'applied',personalAppliedAt:100,sharedLearningStatus:'approved_pending_use',sharedAppliedAt:null,reviewEvidence:'Fachlich geprüft',reviewedBy:'PRIVATE',learningUse:{actor:'PRIVATE'}}]})});
+ assert.equal(r.reports[0].personalAppliedAt,100);assert.equal(r.reports[0].sharedLearningStatus,'approved_pending_use');assert.equal(r.reports[0].sharedAppliedAt,null);assert.equal(JSON.stringify(r).includes('PRIVATE'),false);
+});

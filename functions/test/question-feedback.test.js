@@ -30,9 +30,19 @@ test('admin-only paginated read projects historical records without profile or s
  const s=setup();s.rows.set('feedback/old',{category:'ai_question',verdict:'good',status:'done',testCode:'OLD',questionId:'old-q',questionSnapshot:{type:'text',text:'Alte Aufgabe',acceptedAnswers:['Lösung'],studentAnswers:['PRIVATE']},email:'PRIVATE',displayName:'PRIVATE'});
  await s.call('teacher',rating);await assert.rejects(s.call('teacher',{action:'listQuestionFeedback'}),{code:'permission-denied'});
  const r=await s.call('admin',{action:'listQuestionFeedback'});assert.equal(r.sourceProject,'hausaufgabe-staging');assert.equal(r.reports.length,2);assert.equal(r.reports.find(x=>x.id==='old').sourceProject,'unknown');
- assert.equal(JSON.stringify(r).includes('PRIVATE'),false);assert.equal(r.reports.find(x=>x.id==='old').processingEvidence,'unknown_legacy_status');
+ assert.equal(JSON.stringify(r).includes('PRIVATE'),false);assert.equal(r.reports.find(x=>x.id==='old').processingEvidence,'legacy_no_prior_evidence');
 });
 test('ordering alternatives remain Firestore-storable maps and no removal completion is invented',async()=>{
  const s=setup();const r=await s.call('teacher',{...rating,questionSnapshot:{type:'ordering',text:'Sortiere',items:['a','b'],acceptedOrders:[{indices:[1,0]}]}});
  const stored=s.rows.get('feedback/'+r.id);assert.deepEqual(stored.questionSnapshot.acceptedOrders,[{indices:[1,0]}]);assert.match(stored.message,/angefordert/);assert.equal(stored.message.includes('und entfernt'),false);
+});
+test('only admin may review shared learning and central projection reports pending use honestly',async()=>{
+ const s=setup();const saved=await s.call('teacher',rating);const review={action:'reviewQuestionLearning',id:saved.id,expectedSignature:require('../lib/feedback-learning').signalSignature(s.rows.get('feedback/'+saved.id)),decision:'approved',revision:0,evidence:'Die fehlerhafte Aufgabenformulierung ist fachlich geprüft.'};
+ await assert.rejects(s.call('teacher',review),{code:'permission-denied'});const done=await s.call('admin',review);assert.equal(done.learning.sharedLearningStatus,'approved_pending_use');
+ const r=await s.call('admin',{action:'listQuestionFeedback'});assert.equal(r.reports[0].sharedLearningStatus,'approved_pending_use');assert.equal(r.reports[0].personalAppliedAt,null);assert.equal(JSON.stringify(r).includes('reviewedBy'),false);
+});
+test('admin can read bounded learning statuses for loaded cards; teacher cannot batch-read others',async()=>{
+ const s=setup(),saved=await s.call('teacher',rating);await assert.rejects(s.call('teacher',{action:'questionLearningDetails',ids:[saved.id]}),{code:'permission-denied'});
+ const r=await s.call('admin',{action:'questionLearningDetails',ids:[saved.id]});assert.equal(r.reports.length,1);assert.equal(r.reports[0].personalLearningStatus,'eligible_no_evidence');assert.equal(r.reports[0].feedback.questionSnapshot.text,'Welche Zahl?');assert.match(r.reports[0].reviewSignalSignature,/^[a-f0-9]{64}$/);
+ await assert.rejects(s.call('admin',{action:'questionLearningDetails',ids:Array(101).fill(saved.id)}),{code:'invalid-argument'});
 });

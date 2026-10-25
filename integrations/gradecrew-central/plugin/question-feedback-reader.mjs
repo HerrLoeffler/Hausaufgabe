@@ -1,5 +1,5 @@
 const endpoint='https://europe-west1-hausaufgabe-staging.cloudfunctions.net/reviewMode';
-const fields=['id','testCode','questionId','questionPosition','questionType','verdict','reason','reasonCategory','teacherComment','action','status','appVersion','sourceRelease','sourceProject','environment','feedbackSchemaVersion','processingEvidence','reviewOutcome','createdAt'];
+const fields=['id','testCode','questionId','questionPosition','questionType','verdict','reason','reasonCategory','teacherComment','action','status','appVersion','sourceRelease','sourceProject','environment','feedbackSchemaVersion','processingEvidence','reviewOutcome','createdAt','learningVersion','personalLearningStatus','sharedLearningStatus','personalAppliedAt','sharedAppliedAt','personalAppliedOperation','sharedAppliedOperation','reviewEvidence','reviewRevision'];
 export async function readQuestionFeedback({token,cursor,fetchImpl=fetch,maxPages=20}={}){
  if(typeof token!=='string'||!token.trim())throw Error('Live-Anmeldung fehlt. Bitte gradecrew_live_feedback_connect verwenden.');
  if(!Number.isInteger(maxPages)||maxPages<1||maxPages>100)throw Error('Ungültige Seitengrenze.');
@@ -19,7 +19,7 @@ export async function readQuestionFeedback({token,cursor,fetchImpl=fetch,maxPage
   for(const row of result.reports){
    if(typeof row.id!=='string'||row.id.length>128||!['good','bad'].includes(row.verdict))throw Error('Ungültige Aufgabenrückmeldung.');
    if(seen.has(row.id))continue;seen.add(row.id);
-   const clean=Object.fromEntries(fields.filter(k=>(typeof row[k]==='string'&&row[k].length<=1000)||typeof row[k]==='number').map(k=>[k,row[k]]));
+   const clean=Object.fromEntries(fields.filter(k=>(typeof row[k]==='string'&&row[k].length<=1000)||typeof row[k]==='number'||['personalAppliedAt','sharedAppliedAt'].includes(k)&&row[k]===null).map(k=>[k,row[k]]));
    if(row.questionSnapshot&&typeof row.questionSnapshot.text==='string')clean.questionSnapshot={type:String(row.questionSnapshot.type||'').slice(0,30),text:row.questionSnapshot.text.slice(0,900)};
    reports.push(clean);
   }

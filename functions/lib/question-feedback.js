@@ -55,7 +55,7 @@ function projectQuestionFeedback(row){
  const result=Object.fromEntries(keep.filter(k=>typeof row[k]==='string'||typeof row[k]==='number').map(k=>[k,row[k]]));
  result.sourceProject=['hausaufgabe-staging','gradecrew-staging-2026','hausaufgabe-40294'].includes(row.sourceProject)?row.sourceProject:'unknown';
  result.environment=['production','staging'].includes(row.environment)?row.environment:'unknown';
- result.processingEvidence=row.feedbackSchemaVersion===4?'not_reviewed':'unknown_legacy_status';
+ Object.assign(result,require('./feedback-learning').learningProjection(row));
  if(row.reviewOutcome==='false_positive')result.reviewOutcome='false_positive';
  if(row.questionSnapshot&&typeof row.questionSnapshot.text==='string')result.questionSnapshot={type:String(row.questionSnapshot.type||'').slice(0,30),text:row.questionSnapshot.text.slice(0,900)};
  const t=row.createdAt;result.createdAt=typeof t?.toMillis==='function'?t.toMillis():typeof t==='number'?t:null;

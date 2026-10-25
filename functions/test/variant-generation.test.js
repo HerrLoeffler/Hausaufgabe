@@ -24,7 +24,7 @@ test("the actual variant handler constrains type and chosen image mode before ca
       questionSchema, questionSchemaForType, questionUserPrompt, normalizeQuestion, validateQuestion,
       requireAiUser: async () => ({ uid: "teacher" }), consumeQuota: async () => {},
       sanitizeMaterials: () => [], loadQualityMemory: async () => ({ negativeQuestions: [], memoryVersion: 3, stats: {} }),
-      qualityMemoryPrompt: () => "", teacherQualityGuide: () => "", variantRepeats: () => false, sameQuestion: () => false,
+      learningPrompt: require("../lib/feedback-learning").learningPrompt, qualityMemoryPrompt: () => "", teacherQualityGuide: () => "", variantRepeats: () => false, sameQuestion: () => false,
       structuredResponse: async ({ schema, userPrompt }) => {
         calls += 1;
         assert.deepEqual(schema.properties.type.enum, ["gapfill"]);
@@ -61,7 +61,7 @@ test("a rejected variant is shown to the next generation attempt", async () => {
     questionSchema, questionSchemaForType, questionUserPrompt, normalizeQuestion, validateQuestion,
     requireAiUser: async () => ({ uid: "teacher" }), consumeQuota: async () => {},
     sanitizeMaterials: () => [], loadQualityMemory: async () => ({ negativeQuestions: [], memoryVersion: 3, stats: {} }),
-    qualityMemoryPrompt: () => "", teacherQualityGuide: () => "",
+    learningPrompt: require("../lib/feedback-learning").learningPrompt, qualityMemoryPrompt: () => "", teacherQualityGuide: () => "",
     variantRepeats: (_old, candidate) => candidate.text === rejected.text, sameQuestion: () => false,
     structuredResponse: async ({ userPrompt }) => {
       prompts.push(userPrompt);

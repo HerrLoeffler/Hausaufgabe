@@ -4169,7 +4169,7 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
       toast("Rückmeldung gespeichert. Neue Aufgabe wird erstellt …");
       const instruction = `Erstelle eine neue, eigenständige Aufgabe. Fehler der bisherigen Aufgabe: ${label}. ${note} Vermeide denselben Fehler und prüfe die Lösung. Antwortoptionen müssen aus eindeutigem Text bestehen; bei Komma-Zählfragen dürfen noch keine Kommas im Beispielsatz stehen.`;
       await regenerateQuestionWithAi(q, index, { instruction, requireDifferent: true });
-    } else toast(reviewOutcome === "false_positive" ? "Fehlalarm gemeldet. Danke für die Korrektur." : verdict === "good" ? "Gute Aufgabe vermerkt." : "Problem gemeldet. Die Aufgabe bleibt zur Bearbeitung im Entwurf.");
+    } else toast(reviewOutcome === "false_positive" ? "Fehlalarm gemeldet. Danke für die Korrektur." : verdict === "good" ? "Gute Aufgabe gespeichert. Sie beeinflusst deine nächste passende Erstellung; gemeinsame Nutzung nach fachlicher Prüfung." : "Problem gemeldet. Die Aufgabe bleibt zur Bearbeitung im Entwurf.");
     return true;
   } catch (err) {
     console.error(err);
@@ -4185,7 +4185,7 @@ function toggleAiQualityPanel(node, q, index) {
   panel.className = "aiQualityPanel";
   const live = state.currentQuiz?.published && !state.currentQuiz?.ended;
   const canReplace = !live && !state.currentQuiz?.tutorialVersion;
-  panel.innerHTML = `<strong>☹ / 🗑 Rückmeldung zur Aufgabe</strong><p class="hint">Die Rückmeldung wird mit einem begrenzten Aufgabenausschnitt gespeichert. Ohne Schülerantworten. Entfernen gilt zunächst für diesen Entwurf.</p><label>Grund (freiwillig)<select class="aiQualityReason"><option value="">Ohne Grund / überspringen</option>${Object.entries(AI_QUALITY_REASONS).map(([key,label])=>`<option value="${escapeHtml(key)}">${escapeHtml(label)}</option>`).join("")}<option value="missing_audio">Höraufgabe fehlt</option><option value="wrong_language">Falsche Sprache</option></select></label><label>Kurzer Hinweis (freiwillig)<textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}${live ? "" : '<button class="button danger aiQualityRemove" type="button">Rückmeldung speichern &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
+  panel.innerHTML = `<strong>☹ / 🗑 Rückmeldung zur Aufgabe</strong><p class="hint">Die Rückmeldung wird mit einem begrenzten Aufgabenausschnitt gespeichert. Ohne Schülerantworten. Deine Bewertung beeinflusst die nächste passende Erstellung; gemeinsame Nutzung nach fachlicher Prüfung. Entfernen gilt zunächst für diesen Entwurf.</p><label>Grund (freiwillig)<select class="aiQualityReason"><option value="">Ohne Grund / überspringen</option>${Object.entries(AI_QUALITY_REASONS).map(([key,label])=>`<option value="${escapeHtml(key)}">${escapeHtml(label)}</option>`).join("")}<option value="missing_audio">Höraufgabe fehlt</option><option value="wrong_language">Falsche Sprache</option></select></label><label>Kurzer Hinweis (freiwillig)<textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}${live ? "" : '<button class="button danger aiQualityRemove" type="button">Rückmeldung speichern &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
   panel.querySelector(".aiQualityCancel").addEventListener("click", () => panel.remove());
   for (const [selector, action] of [[".aiQualityReport", "keep"], [".aiQualityReplace", "replace"], [".aiQualityRemove", "remove"]]) {
     panel.querySelector(selector)?.addEventListener("click", async () => {
@@ -8270,6 +8270,7 @@ async function loadAdminData(showToast = false) {
     state.adminQuizzes = quizzesSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
     state.adminAnnouncements = announcementsSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
     state.adminFeedback = feedbackSnap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
+    await loadQuestionLearningStatuses();
     state.adminFeedbackTotal = feedbackCountSnap.data().count;
     adminFeedbackCursor = feedbackSnap.docs.at(-1) || null;
     adminFeedbackHasMore = feedbackSnap.size === 200;
@@ -8316,6 +8317,7 @@ async function loadMoreAdminFeedback() {
     const known = new Set(state.adminFeedback.map(row => row.id));
     state.adminFeedback.push(...snapshot.docs.filter(d => !known.has(d.id)).map(d => ({ id: d.id, ...d.data() })));
     state.adminFeedback.sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
+    await loadQuestionLearningStatuses();
     adminFeedbackCursor = snapshot.docs.at(-1) || adminFeedbackCursor;
     adminFeedbackHasMore = snapshot.size === 200;
     renderAdminFeedback();
@@ -8895,6 +8897,46 @@ function renderBugOpsSummary() {
   </section>`;
 }
 
+function questionLearningSummary(learning) {
+  if (!learning) return "Verarbeitungsstatus bitte aktualisieren.";
+  const personal = learning.personalLearningStatus === "applied" ? `Persönlich bei einer KI-Erstellung berücksichtigt: ${fmtDate(learning.personalAppliedAt)}` : learning.personalLearningStatus === "not_eligible" ? "Kein persönliches Lernsignal." : "Persönlich vorgemerkt; noch kein belegter Einsatznachweis.";
+  const shared = ({pending_review:"Gemeinsame Nutzung: fachliche Prüfung ausstehend.",approved_pending_use:"Gemeinsam freigegeben; noch kein belegter Einsatznachweis.",rejected:"Für gemeinsame Nutzung verworfen.",review_outdated:"Bewertung geändert: gemeinsame Nutzung erneut prüfen.",applied:`Gemeinsam bei einer KI-Erstellung berücksichtigt: ${fmtDate(learning.sharedAppliedAt)}`})[learning.sharedLearningStatus] || "Gemeinsamer Verarbeitungsstatus bitte aktualisieren.";
+  return `${personal} ${shared}${learning.reviewable === false ? " Aufgabenkontext für eine fachliche Prüfung unvollständig; keine Freigabe möglich." : ""}`;
+}
+
+async function loadQuestionLearningStatuses() {
+  const uid = state.user?.uid;if (!isAdmin() || !uid) return;
+  const ids = state.adminFeedback.filter(f => f.category === "ai_question").map(f => f.id);
+  state.adminQuestionLearning ||= {};
+  try {
+    for (let offset = 0; offset < ids.length; offset += 100) {
+      const response = (await httpsCallable(getFunctions(app, "europe-west1"), "reviewMode")({action:"questionLearningDetails",ids:ids.slice(offset,offset+100)})).data;
+      if (state.user?.uid !== uid || !isAdmin()) return;
+      for (const report of response.reports) {
+        state.adminQuestionLearning[report.id] = report;
+        const row = state.adminFeedback.find(item => item.id === report.id);
+        if (row && report.feedback) Object.assign(row, report.feedback);
+      }
+    }
+    state.adminQuestionLearningUnavailable = false;
+  } catch {if (state.user?.uid === uid) state.adminQuestionLearningUnavailable = true;}
+}
+
+async function reviewQuestionLearning(button) {
+  if (!isAdmin()) return;const uid = state.user.uid,id = button.dataset.id;
+  const field = button.closest(".questionLearningReview").querySelector("textarea");const evidence = field.value.trim();
+  if (!evidence) return toast("Bitte die fachliche Prüfung kurz begründen.", "error");
+  button.disabled = true;
+  try {
+    const response = (await httpsCallable(getFunctions(app,"europe-west1"),"reviewMode")({action:"reviewQuestionLearning",id,decision:button.dataset.decision,revision:state.adminQuestionLearning?.[id]?.reviewRevision || 0,expectedSignature:state.adminQuestionLearning?.[id]?.reviewSignalSignature,evidence})).data;
+    if (state.user?.uid !== uid || !isAdmin()) return;
+    state.adminQuestionLearning ||= {};state.adminQuestionLearning[id] = response.learning;
+    state.adminLearningDrafts ||= {};delete state.adminLearningDrafts[id];field.value = evidence;
+    renderAdminFeedback();toast("Fachliche Lernentscheidung gespeichert. Der tatsächliche KI-Einsatz wird separat nachgewiesen.");
+  } catch {toast("Lernentscheidung nicht gespeichert. Bitte den Status aktualisieren; dein Text bleibt erhalten.","error");}
+  finally {button.disabled = false;}
+}
+
 function renderAdminFeedback(){
   const root=$("adminFeedbackList"); if(!root)return;
   const status=$("adminFeedbackFilter")?.value||"all";
@@ -8917,7 +8959,7 @@ function renderAdminFeedback(){
   const aiItems = list.filter(f => f.category === "ai_question" && f.reviewOutcome !== "false_positive");
   const reasonCounts = Object.entries(AI_QUALITY_REASONS).map(([key, label]) => ({ label, count: aiItems.filter(f => f.reason === key && f.verdict === "bad").length })).filter(item => item.count);
   const summary = aiItems.length || aiReviewFalsePositives.length ? `<div class="aiFeedbackSummary"><strong>KI-Aufgaben:</strong> ${aiItems.filter(f => f.verdict === "good").length} gut · ${aiItems.filter(f => f.verdict === "bad").length} problematisch · ${aiReviewFalsePositives.length} zurückgewiesene Prüferwarnungen${reasonCounts.length ? `<br>${reasonCounts.map(item => `${escapeHtml(item.label)}: ${item.count}`).join(" · ")}` : ""}</div>` : "";
-  const questionReviewNotice = aiItems.length ? `<p class="hint">Aufgabenbewertungen sind Produkthinweise. Neue Rückmeldungen werden fachlich geprüft; sie trainieren kein Modell. „Erledigt“ bei älteren grünen Bewertungen kann automatisch vergeben worden sein und belegt keine Verbesserung.</p>` : "";
+  const questionReviewNotice = aiItems.length ? `<p class="hint">Eigene Bewertungen wirken bei der nächsten passenden Erstellung als Präferenz oder Prüfhinweis. Gemeinsame Nutzung erfordert eine fachliche Prüfung. Ein Einsatznachweis belegt die Verwendung im KI-Auftrag, noch keine fachliche Verbesserung. Älteres „Erledigt“ ist kein solcher Nachweis. Kein Modelltraining. ${state.adminQuestionLearningUnavailable ? "Verarbeitungsstatus derzeit nicht abrufbar." : ""}</p><button type="button" class="button secondary refreshQuestionLearning">Lernstatus aktualisieren</button>` : "";
   const errorItems = list.filter(f => f.category === "app_error");
   const errorGroups = [...errorItems.reduce((map, item) => {
     const key = item.errorCode || "UNBEKANNT";
@@ -8929,16 +8971,33 @@ function renderAdminFeedback(){
   const rightsSummary = openRights ? `<div class="aiFeedbackSummary"><strong>${openRights} offene Rechtehinweis${openRights === 1 ? "" : "e"} – zeitnah prüfen und betroffene Zugänge bei begründetem Verdacht sperren.</strong></div>` : "";
   const grouped = groupErrors(list);
   const groupsHtml = grouped.length ? `<details class="card"><summary>Fehlergruppen · ${grouped.length}</summary>${grouped.slice(0, 30).map(g => `<button type="button" class="button secondary errorGroupFilter" data-fingerprint="${escapeHtml(g.fingerprint)}">${escapeHtml(g.fingerprint)} · ${g.reports} Meldungen · ${g.occurrences} Vorkommen · ${g.open} offen</button>`).join("")}</details>` : "";
+  state.adminLearningDrafts ||= {};
+  root.querySelectorAll(".learningEvidence").forEach(field => {state.adminLearningDrafts[field.dataset.id] = field.value;});
   root.innerHTML = renderBugOpsSummary() + rightsSummary + errorSummary + summary + questionReviewNotice + groupsHtml + (list.length ? list.map(f => {
     const q = f.questionSnapshot;
     const snapshot = f.category === "ai_question" && q ? `<div class="aiFeedbackSnapshot"><strong>Aufgabe ${Number(f.questionPosition) || "?"} · ${escapeHtml(q.type || "")}</strong><p>${escapeHtml(q.text || "")}</p>${(q.options || []).length ? `<small>Antworten: ${(q.options || []).map(o => `${escapeHtml(o.text || "")}${o.correct ? " ✓" : ""}`).join(" · ")}</small>` : ""}<small>Aktion: ${escapeHtml(({ keep: "behalten", replace: "ersetzen", remove: "entfernen" })[f.action] || "–")}${f.feedbackSchemaVersion === 4 && f.action === "remove" ? " angefordert · Entwurf separat speichern" : ""}${q.imagePresent ? " · Bild im Test vorhanden oder vorhanden gewesen" : ""}${f.promptVersion ? ` · Prompt ${escapeHtml(f.promptVersion)}` : ""}${f.model ? ` · Modell ${escapeHtml(f.model)}` : ""}</small></div>` : "";
+    const learning = state.adminQuestionLearning?.[f.id];
+    const reviewContext = learning?.reviewable && q ? [
+      q.acceptedAnswers?.length ? `Zugelassene Antworten: ${q.acceptedAnswers.join("; ")}` : "",
+      q.numericAnswer != null ? `Zahlenlösung: ${q.numericAnswer}` : "",
+      q.correctBoolean != null ? `Lösung: ${q.correctBoolean ? "richtig" : "falsch"}` : "",
+      q.pairs?.length ? `Zuordnungen: ${q.pairs.map(pair => `${pair.left} → ${pair.right}`).join("; ")}` : "",
+      q.groups?.length ? `Gruppen: ${q.groups.map(group => `${group.name}: ${group.items.join(", ")}`).join("; ")}` : "",
+      q.items?.length ? `Elemente: ${q.items.join("; ")}` : "",
+      q.acceptedOrders?.length ? `Zulässige Reihenfolgen (Positionen): ${q.acceptedOrders.map(order => (order.indices || []).map(i => i+1).join(" → ")).join("; ")}` : "",
+      q.passage ? `Textgrundlage: ${q.passage}` : "",
+      q.targetWords?.length ? `Zielwörter: ${q.targetWords.join(", ")}` : ""
+    ].filter(Boolean).map(line => `<p>${escapeHtml(line)}</p>`).join("") : "";
+    const learningHtml = f.category === "ai_question" ? `<div class="questionLearningReview"><p>${escapeHtml(questionLearningSummary(learning))}</p>${reviewContext ? `<details><summary>Lösungen und Aufgabenkontext prüfen</summary>${reviewContext}</details>` : ""}<label>Fachliche Prüfbegründung<textarea class="learningEvidence" data-id="${escapeHtml(f.id)}" maxlength="1000">${escapeHtml(state.adminLearningDrafts?.[f.id] ?? learning?.reviewEvidence ?? "")}</textarea></label><div class="actions"><button type="button" class="button secondary questionLearningDecision" data-id="${escapeHtml(f.id)}" data-decision="approved" ${!learning || learning.reviewable === false ? "disabled" : ""}>Für gemeinsame KI berücksichtigen</button><button type="button" class="button ghost questionLearningDecision" data-id="${escapeHtml(f.id)}" data-decision="rejected" ${!learning || learning.reviewable === false ? "disabled" : ""}>Nicht gemeinsam verwenden</button></div></div>` : "";
     const technical = f.category === "app_error" ? (f.technicalDetails || {}) : null;
     const errorSnapshot = technical ? `<div class="errorReportSnapshot"><div class="errorReportHeadline"><strong>${escapeHtml(f.errorCode || "Technischer Fehler")}</strong>${f.reportId ? `<span>${escapeHtml(f.reportId)}</span>` : ""}</div><p>${escapeHtml(f.action || "Unbekannte Aktion")}</p><small>${escapeHtml(technical.rawMessage || "Keine technische Fehlermeldung gespeichert.")}</small><div class="errorReportMeta"><span>Ansicht: ${escapeHtml(technical.view || "–")}</span><span>Phase: ${escapeHtml(technical.stage || "–")}</span><span>Aufgabe: ${escapeHtml(technical.questionPosition || "–")}</span><span>Fingerprint: ${escapeHtml(f.fingerprint || "–")}</span></div><button type="button" class="button secondary copyErrorReport" data-id="${escapeHtml(f.id)}">Fehlerbericht kopieren</button></div>` : "";
     const quiz = f.category === "rights" ? state.adminQuizzes.find(q => q.id === f.testCode) : null;
     const rightsAction = quiz ? `<div class="rightsReportActions"><button class="button ${quiz.rightsHold ? "secondary" : "danger"} rightsHoldToggle" type="button" data-code="${escapeHtml(quiz.id)}" data-hold="${quiz.rightsHold ? "false" : "true"}">${quiz.rightsHold ? "Sperre nach Klärung aufheben" : "Testzugang vorübergehend sperren"}</button></div>` : "";
-    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen" : f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.sourceProject ? ` · ${escapeHtml(f.sourceProject)}` : " · Herkunft nicht im Datensatz erfasst"}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}${errorSnapshot}${technical ? renderErrorResolution(f) : ""}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
+    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen" : f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.sourceProject ? ` · ${escapeHtml(f.sourceProject)}` : " · Herkunft nicht im Datensatz erfasst"}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}${learningHtml}${errorSnapshot}${technical ? renderErrorResolution(f) : ""}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
   }).join("") : `<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`);
   root.querySelectorAll(".errorGroupFilter, .bugOpsIncidentFilter").forEach(button => button.addEventListener("click", () => { $("adminFeedbackFingerprint").value = button.dataset.fingerprint; renderAdminFeedback(); }));
+  root.querySelectorAll(".questionLearningDecision").forEach(button => button.addEventListener("click", () => reviewQuestionLearning(button)));
+  root.querySelector(".refreshQuestionLearning")?.addEventListener("click", async () => {await loadQuestionLearningStatuses();renderAdminFeedback();});
   root.querySelectorAll(".saveErrorResolution").forEach(button => button.addEventListener("click", () => saveErrorResolution(button)));
   root.querySelectorAll(".feedbackStatus").forEach((sel)=>sel.addEventListener("change",()=>updateFeedbackStatus(sel.dataset.id,sel.value)));
   root.querySelectorAll(".copyErrorReport").forEach(button => button.addEventListener("click", () => {

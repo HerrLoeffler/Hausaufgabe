@@ -20,6 +20,7 @@ const { consumeQuota, recordUsage } = require("./lib/usage");
 const { materialInputs, sanitizeMaterials, deleteUploadedMaterials } = require("./lib/materials");
 const { validateAndRepairTest } = require("./lib/repair-test");
 const { MEMORY_VERSION, QUALITY_REASONS, reviewSchema, REVIEW_SYSTEM, feedbackMemory, qualityMemoryPrompt, reviewPrompt, normalizeReviewIssues, reviewAndRepairTest } = require("./lib/quality");
+const {loadFeedbackLearningSafe,learningPrompt,recordLearningUseSafe}=require("./lib/feedback-learning");
 const { purgeExpiredMaterials } = require("./lib/purge-materials");
 const { getOpenAI } = require("./lib/openai-client");
 const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
@@ -191,29 +192,7 @@ function teacherQualityGuide(memory = {}) {
 }
 
 async function loadQualityMemory(context = {}, uid = "") {
-  try {
-    // Good and bad ratings are aggregated across teachers. Teacher IDs are used only
-    // to count independent signals; names, emails and private comments are never loaded.
-    const reports = await getFirestore().collection("feedback")
-      .where("category", "==", "ai_question")
-      .select("category", "userId", "verdict", "reason", "questionSnapshot", "subject", "grade", "questionType", "promptVersion", "reviewOutcome", "reviewerReason", "feedbackSchemaVersion")
-      .get();
-    // V4 product feedback is collected for human review, not automatically reused as provider prompt material.
-    const entries = reports.docs.map(doc => doc.data()).filter(entry => entry.feedbackSchemaVersion !== 4);
-    const global = feedbackMemory(entries, context);
-    if (!uid) return global;
-    let teacherPreferences = "";
-    try {
-      const profile = await getFirestore().doc(`users/${uid}`).get();
-      teacherPreferences = String(profile.data()?.aiPreferences || "").slice(0, 1000);
-    } catch (err) { console.warn("Persönliche KI-Vorgaben konnten nicht geladen werden:", err?.code || err?.name); }
-    return { ...global, personal: feedbackMemory(entries.filter(entry => entry.userId === uid), context), teacherPreferences };
-  } catch (err) {
-    console.error("Bewertungsverlauf konnte nicht geladen werden:", err);
-    // Feedback is an aid to quality, not a prerequisite for a new test. The
-    // independent question review still runs, and the teacher sees a warning.
-    return { ...feedbackMemory([], context), unavailable: true };
-  }
+  return loadFeedbackLearningSafe(getFirestore(), context, uid);
 }
 
 async function reviewDraft(test, memory) {
@@ -312,7 +291,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     phase = "feedback";
     await onProgress("feedback", 10, "Aufgabenhinweise werden vorbereitet …");
     const memory = await loadQualityMemory({ subject: input.subject, grade: input.grade }, uid);
-    const memoryGuide = qualityMemoryPrompt(memory);
+    const memoryGuide = learningPrompt(memory);
     const personalGuide = teacherQualityGuide(memory);
     const generationPrompt = `${testUserPrompt(input)}${variantPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}${poolGuide}`;
     phase = "test-generation";
@@ -325,6 +304,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       return structuredResponse({ schema: testSchemaForRequest({ count: batch.count, allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none", allowAudio: batch.audioMode !== "none" }),
         schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}${variantPrompt(input, batch.batchOffset, batch.count)}\n${memoryGuide}${personalGuide}${priorContext}${poolGuide}`, content: materialContent });
     });
+    const feedbackLearning = memory.learning?.sources?.length ? await recordLearningUseSafe(getFirestore(), memory, {uid, operation: input.generationMode === "variant" ? "generateTestVariant" : "generateTest"}) : {recorded:0};
     const usage = { ...first.usage };
     const addUsage = next => {
       for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(next[key] || 0);
@@ -399,6 +379,8 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       qualityMemoryVersion: memory.memoryVersion,
       qualityMemoryUnavailable: Boolean(memory.unavailable),
       feedbackSignals: memory.stats?.total || 0,
+      feedbackLearningRecorded: feedbackLearning.recorded,
+      feedbackLearningUnavailable: Boolean(feedbackLearning.unavailable),
       positivePatterns: memory.positivePatterns?.length || 0,
       recurringRuleCandidates: memory.ruleCandidates?.length || 0,
       pedagogicalPool: pedagogicalPool.meta
@@ -415,6 +397,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
         fullRepair: result.fullRepair,
         qualityWarnings,
         qualityIssues,
+        feedbackLearning,
         pedagogicalPool: pedagogicalPool.meta
       }
     };
@@ -741,10 +724,11 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const basePrompt = questionUserPrompt({ mediaKind, audioKind, question, targetType, instruction: String(request.data?.instruction || "").slice(0, LIMITS.maxPromptChars), testContext: request.data?.testContext || {}, variant: Boolean(request.data?.variant), requireDifferent: Boolean(request.data?.requireDifferent) });
   const existing = Array.isArray(request.data?.testContext?.existingQuestions) ? request.data.testContext.existingQuestions.slice(0, LIMITS.maxQuestions) : [];
   const memory = await loadQualityMemory({ subject: request.data?.testContext?.subject || "", grade: request.data?.testContext?.grade || "", questionType: question.type || "" }, uid);
-  const memoryGuide = qualityMemoryPrompt(memory, { questionType: question.type || "" });
+  const memoryGuide = learningPrompt(memory);
   const prompt = `${basePrompt}${memoryGuide ? `\n${memoryGuide}` : ""}${teacherQualityGuide(memory)}`;
   const usage = {};
   let normalized, errors;
+  let feedbackLearning = {recorded:0};
   const maxAttempts = request.data?.variant || request.data?.requireDifferent ? 4 : 3;
   const variantSchema = targetType ? questionSchemaForType(targetType, { allowImages: request.data?.allowImages !== false, mediaKind, allowAudio: true, audioKind }) : request.data?.variant && QUESTION_TYPES.includes(question.type)
     ? questionSchemaForType(question.type, { allowImages: request.data?.allowImages !== false, mediaKind, allowAudio: true, audioKind })
@@ -760,6 +744,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
     }).slice(0, 2500) : "";
     const retryPrompt = `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors?.join(" ") || ""}${rejectedDraft ? `\nVerworfener Vorschlag (nicht wiederholen): ${rejectedDraft}` : ""}\nErstelle eine neue, geprüfte Aufgabe mit einem anderen Beispiel oder Kontext.`;
     const result = await structuredResponse({ schema: variantSchema, schemaName: request.data?.variant ? "testify_question_variant_v2" : "testify_question_v1", userPrompt: attempt ? retryPrompt : prompt });
+    if (attempt === 0 && memory.learning?.sources?.length) feedbackLearning = await recordLearningUseSafe(getFirestore(), memory, {uid, operation:"regenerateQuestion"});
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage[key] || 0);
     normalized = normalizeQuestion(result.data);
     errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds, requiredMediaKind: mediaKind, allowAudio: true, requiredAudioKind: audioKind });
@@ -778,7 +763,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   }
   await recordUsage(uid, "question", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: Boolean(errors.length), qualityMemoryVersion: memory.memoryVersion, feedbackSignals: memory.stats?.total || 0, positivePatterns: memory.positivePatterns?.length || 0, recurringRuleCandidates: memory.ruleCandidates?.length || 0 });
   if (errors.length) throw new HttpsError("failed-precondition", "Die neue Aufgabe ist nicht zuverlässig gültig.", { errors });
-  return { question: normalized, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION } };
+  return { question: normalized, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, feedbackLearning } };
   } catch (err) { throw reportAiError(err, "question-regeneration"); }
 });
 
