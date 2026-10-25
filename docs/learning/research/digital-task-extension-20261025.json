@@ -1,0 +1,2034 @@
+{
+  "metadata": {
+    "title": "GradeCrew – zusätzliche Aufgabenideen und Lernabläufe",
+    "date": "2026-10-25",
+    "status": "research_reviewed",
+    "baseline_idea_count": 163,
+    "baseline_sha256": "0659d980909125d62ab2f99f60f1b74da31ce904b04c56d8f7c6f0b0675bcc05",
+    "baseline_reference": "digital-task-market-20261022.json",
+    "candidate_count": 30,
+    "accepted_extension_count": 27,
+    "new_family_count": 7,
+    "strong_subtype_count": 17,
+    "learning_sequence_count": 3,
+    "source_profile_count": 40,
+    "counting_note": "27 Ergänzungen sind keine 27 neuen technischen Fragetypen. 7 Aufgabenfamilien, 17 fachliche Untertypen und 3 Lernabläufe. Neu bedeutet neu gegenüber dem 163er-Katalog und dem VIS/EXP/MOD-Fundus; nicht weltweit erfunden oder 2026 erstmals erschienen.",
+    "evidence_note": "Öffentliche Originalquellen/Projekt- und Produktdokumentation. Keine Konten, Volltests kostenpflichtiger Plattformen, Produktintegration oder empirische GradeCrew-Wirkungsstudie. SNEW10 und LNEW11 nur mit ausdrücklich eingeschränktem offiziellem Indexbeleg.",
+    "grading_definitions": {
+      "D": "Deterministisch mit begrenztem fachlichem Modell und geprüftem Schlüssel",
+      "H": "Geschlossene Teilprüfung plus offenes fachliches Urteil",
+      "L": "Offene fachliche Beurteilung anhand transparenter Kriterien; endgültige Bewertung gegebenenfalls durch Lehrkraft"
+    },
+    "category_labels": {
+      "new_family": "Neue Aufgabenfamilie",
+      "strong_subtype": "Fachliche Erweiterung",
+      "learning_sequence": "Neuer Lernablauf"
+    },
+    "recommended_prototype_ids": [
+      "NM01",
+      "NR02",
+      "NR03",
+      "NM03",
+      "NS02",
+      "NL04",
+      "NL05"
+    ],
+    "strategic_future_ids": [],
+    "implementation_status": "research_design_only",
+    "task_id": "GC-EXTENDED-QUESTION-TYPES-01",
+    "review_corrections": [
+      "NM01 Merkmal und Ausschlusslogik vereinheitlicht",
+      "NR01 Zuschlagssatz/führendes Gleichheitszeichen/zulässige Zellbezüge präzisiert",
+      "NR02 Ganzzahligkeitsabhängigkeit und falsche Positivitätsannahme präzisiert",
+      "NR03 Spiegelung über gefaltetes Modell prüfen",
+      "NL06 keine stabile Fehlvorstellung aus Zweitabstimmung ableiten",
+      "NM09 und NS09 fusioniert",
+      "NL08 und NS08 nicht neu gezählt",
+      "NM04/NM06/NS05 als Untertypen klassifiziert"
+    ],
+    "review_requested_model": "gpt-6.1-sol",
+    "review_requested_reasoning_effort": "medium",
+    "review_actual_provider_usage": "unknown",
+    "historical_recommended_prototype_ids": [
+      "NM01",
+      "NM02",
+      "NR02",
+      "NR03",
+      "NL01",
+      "NL03",
+      "NR01"
+    ],
+    "historical_strategic_future_ids": [
+      "NL02",
+      "NM05",
+      "NS03",
+      "NS06"
+    ],
+    "product_scope": {
+      "date": "2026-10-25",
+      "source": "explicit_user_clarification_after_research",
+      "goal": "Schnell erstellbare digitale Leistungsnachweise mit selbstständiger Bearbeitung, nachvollziehbaren Punkten und daraus berechenbarer Note.",
+      "applies_to": "Gesamter bisheriger Aufgabenfundus einschließlich 163 Basisentwürfen und 27 Ergänzungen; kein pauschaler Import.",
+      "interaction_rule": "Kurzer klarer Auftrag direkt im Test; vorgegebenes Material, wenige unmittelbare Eingaben, einfache Bedienung und keine externe Tool-/Projektkoordination.",
+      "excluded_workflows": [
+        "Excel-/Dateibearbeitung und -abgabe",
+        "Agenten unterrichten oder bedienen",
+        "Modelle trainieren",
+        "mehrstufige Werkzeug-/Projektarbeit",
+        "Gruppen-/Peer-/Diskussionsabläufe"
+      ],
+      "grading_rule": "Geprüfter Lösungsschlüssel oder transparente Kriterien, zulässige Alternativen und Teilpunkte; Punkte und bestehender Notenschlüssel nachvollziehbar. Offene Beurteilung nicht als deterministische Automatik ausgeben.",
+      "assessment_rule": "Eigenständige Prüfantwort; kein lösungsverratendes Feedback vor freigegebener Abgabe/Auflösung.",
+      "complexity_note": "Fachlicher Anspruch bleibt möglich; die Einschränkung betrifft Bedienung, Umfang und Ablauf. Fachthemen wie Excel bleiben mögliche kurze Frageinhalte.",
+      "status_labels": {
+        "core_bounded": "Für kurze Tests in begrenzter Form geeignet",
+        "conditional": "Nur stark vereinfacht; derzeit keine Formatpriorität",
+        "outside_quick_tests": "Außerhalb des aktuellen Testgenerator-Umfangs"
+      },
+      "counts": {
+        "core_bounded": 12,
+        "conditional": 6,
+        "outside_quick_tests": 9
+      },
+      "historical_priority_note": "Bestehende idea.priority beschreibt die frühere breite Recherche. quick_test_scope und die aktuellen recommended_prototype_ids haben Vorrang. Frühere XLSX-Ausgabe ist die breite Recherchefassung.",
+      "implementation_status": "documentation_only_no_runtime_import"
+    }
+  },
+  "sources": [
+    {
+      "id": "MNEW01",
+      "provider": "MIPAC",
+      "title": "Which One Doesn’t Belong?",
+      "url": "https://mipac.net/assessments/which-one-doesnt-belong",
+      "verified_feature": "Eigenes Assessment für Klasse 4: vier Figuren so klassifizieren und begründen, dass jede als Außenseiter gelten kann; eigenes Viererset erstellen; öffentliches Lehrkraft-Raster.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn107view0",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn121view0"
+    },
+    {
+      "id": "MNEW02",
+      "provider": "Open Middle",
+      "title": "Operations with Time",
+      "url": "https://www.openmiddle.com/operations-with-time-2/",
+      "verified_feature": "Ziffern 1–9 höchstens einmal einsetzen und spätestmögliche Uhrzeit erreichen; Hinweis und Musterlösung vorhanden.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn103view2",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn121view1"
+    },
+    {
+      "id": "MNEW03",
+      "provider": "Runestone Academy",
+      "title": "Parsons Problems — Author Guide",
+      "url": "https://runestone.academy/ns/books/published/authorguide/directives/parsons.html",
+      "verified_feature": "Codeblöcke anordnen, Einrückung bewerten, Distraktoren und gepaarte Alternativen; optionale Vereinfachung nach Fehlversuchen.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn103view1",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn121view2"
+    },
+    {
+      "id": "MNEW04",
+      "provider": "University of Canterbury / CS Unplugged",
+      "title": "Sorting networks — What’s it all about?",
+      "url": "https://www.csunplugged.org/en/topics/sorting-networks/whats-it-all-about/",
+      "verified_feature": "Vergleicher sortieren Zahlen parallel; Arbeitsmenge und parallele Schritte werden unterschieden; feste Eingangsanzahl und vollständige Ordnung nötig.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn103view5",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn124view1"
+    },
+    {
+      "id": "MNEW05",
+      "provider": "Google Creative Lab",
+      "title": "Teachable Machine 2.0 makes AI easier for everyone",
+      "url": "https://blog.google/innovation-and-ai/products/teachable-machine/",
+      "verified_feature": "Beispiele sammeln, Bild-/Ton-/Pose-Modell im Browser trainieren, testen und Beispiele ändern, Modell exportieren.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Originalbeitrag vom 07.11.2019 heute geöffnet; aktuelle Startseite durch Suche bestätigt, direkter Textextrakt leer. Keine Aussagen über aktuelle Preise oder Verfügbarkeit einzelner Exportziele.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn113view0",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn121view3"
+    },
+    {
+      "id": "MNEW06",
+      "provider": "NetLogo / Center for Connected Learning",
+      "title": "Segregation model",
+      "url": "https://ccl.netlogo.org/netlogo/models/Segregation",
+      "verified_feature": "Lokale Nachbarschaftspräferenz und Umzüge erzeugen globale Cluster; Dichte/Präferenz veränderbar, Nachbarschaft über Rand hinweg, Zeitverläufe angezeigt.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn103view8",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "MNEW07",
+      "provider": "Concord Consortium / CREATE for STEM",
+      "title": "Getting Started with SageModeler",
+      "url": "https://sagemodeler.concord.org/getting-started/index.html",
+      "verified_feature": "Diagramm, statisches und dynamisches Modell; Collector merkt vorherigen Wert, Transfer verschiebt Mengen zwischen Collectors.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn103view7",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn124view0"
+    },
+    {
+      "id": "MNEW08",
+      "provider": "Concord Consortium / CREATE for STEM",
+      "title": "SageModeler Help",
+      "url": "https://sagemodeler.concord.org/help/index.html",
+      "verified_feature": "Semiquantitative Trends statt frei definierter Gleichungen; Collectors, Transfer-Ventile, CSV-Import; lokale Speicherung ohne Login.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Kostenfrei; Dokumentation nennt MIT für Anwendung und standardmäßig CC BY 4.0 für eigene Bildungsressourcen, sofern nicht anders vermerkt. Fremde Bilder/Materialien separat prüfen.",
+      "web_ref": "turn107view3",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "MNEW09",
+      "provider": "RWTH Aachen / phyphox",
+      "title": "Experiment: Acoustic Stopwatch",
+      "url": "https://phyphox.org/wiki/index.php/Experiment:_Acoustic_Stopwatch",
+      "verified_feature": "Geräusche über Amplitudenschwelle starten/stoppen Timer; Dokumentation behandelt Echo, Mindestabstand, Hintergrundgeräusche und Schalllaufzeit.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn103view6",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "MNEW10",
+      "provider": "Zooniverse",
+      "title": "Caesar: Classification and Decision Engine",
+      "url": "https://help.zooniverse.org/next-steps/caesar/",
+      "verified_feature": "Aggregiert mehrere Klassifikationen; Consensus-, Count- und weitere Reducer; Regeln können Objekte aussortieren oder zur weiteren Prüfung routen.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn107view4",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn124view2"
+    },
+    {
+      "id": "MNEW11",
+      "provider": "Zooniverse",
+      "title": "I’m worried I’m getting it wrong",
+      "url": "https://zooniverse.freshdesk.com/support/solutions/articles/44001770581-i-m-worried-i-m-getting-it-wrong-",
+      "verified_feature": "Mehrere Personen klassifizieren dasselbe Objekt; Ergebnisse werden gemeinsam ausgewertet, Unsicherheit kann im Projektforum diskutiert werden.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Öffentlich lesbare Dokumentation; Übernahme-/Einbettungs- und kommerzielle Nutzungsrechte ungeklärt.",
+      "web_ref": "turn107view2",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "MNEW12",
+      "provider": "Andrew Stadel / Estimation 180",
+      "title": "Teacher Resources",
+      "url": "https://estimation180.com/teacher-resources/",
+      "verified_feature": "Öffentliche Ressourcen nennen Daily Log und Number Line – Range Building sowie aufeinander bezogene Höhenaufgaben.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Website verlinkt CC BY-NC-SA 3.0; damit kommerzielle Materialübernahme nicht pauschal freigegeben. Toolkit und Fremdinhalte separat prüfen.",
+      "web_ref": "turn107view5",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "MNEW13",
+      "provider": "Creative Commons",
+      "title": "CC BY-NC-SA 3.0",
+      "url": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+      "verified_feature": "Lizenz des auf Estimation 180 gesetzten Lizenzlinks ist Attribution-NonCommercial-ShareAlike 3.0.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentationsbefund, kein praktischer Produkttest; die GradeCrew-Aufgabe und ihre Bewertung sind eigene Übertragung.",
+      "license_access": "Dokumentierter Lizenztext; kein Nachweis, dass jedes Fremdmedium darunter fällt.",
+      "web_ref": "turn107view6",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "LNEW01",
+      "provider": "University of British Columbia",
+      "title": "ComPAIR – official repository",
+      "url": "https://github.com/ubc/compair",
+      "verified_feature": "Paare von Peerarbeiten vergleichen; Kriterien der Lehrkraft; optionale adaptive Scores können Folgepaarungen beeinflussen.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Dokumentation belegt Mechanik, keine Prüfung der Installation oder Zuverlässigkeit schulischer Noten.",
+      "license_access": "Öffentlich; Software GPL-3.0; Hosting und Betriebsaufwand separat.",
+      "web_ref": "turn110view0",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn123view0"
+    },
+    {
+      "id": "LNEW02",
+      "provider": "Vanderbilt University / OELE",
+      "title": "Betty’s Brain",
+      "url": "https://www.vanderbilt.edu/oele/bettys-brain/",
+      "verified_feature": "Lernende unterrichten einen Agenten durch kausales Modell; Agent beantwortet daraus Fragen und Tests; Fehler zeigen Modelllücken.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Originalprojekt behandelt naturwissenschaftliche Kausalmodelle. Übertragung auf Grammatikregeln ist eigene GradeCrew-Idee.",
+      "license_access": "Öffentliche Projekterklärung; keine offene Lizenz oder freie Schulbereitstellung abgeleitet.",
+      "web_ref": "turn110view2",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn123view1"
+    },
+    {
+      "id": "LNEW03",
+      "provider": "Lexical Computing / Sketch Engine",
+      "title": "SKELL – corpus tool for language learners",
+      "url": "https://www.sketchengine.eu/skell/",
+      "verified_feature": "Authentische Konkordanzen, bis zu 40 Beispielsätze, Kollokationen und automatisch ermittelte ähnliche Wörter; deSKELL verlinkt.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Automatisch extrahierte Beispiele und Wortähnlichkeit sind keine fehlerfreien Normurteile. Die induktive Aufgabenfolge ist eigener Entwurf.",
+      "license_access": "SKELL laut Anbieter ohne Registrierung und Zahlung; dies erteilt keine allgemeine Weiterveröffentlichungslizenz für Korpustexte.",
+      "web_ref": "turn110view1",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn123view2"
+    },
+    {
+      "id": "LNEW04",
+      "provider": "Concordia University / CTL",
+      "title": "Peer instruction",
+      "url": "https://www.concordia.ca/ctl/resources/teaching-pedagogy/active-learning/peer-instruction.html",
+      "verified_feature": "Individuell abstimmen, Antwort einem Partner erklären, erneut abstimmen.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Institutionelle Umsetzungshilfe belegt Ablauf; keine Wirksamkeitsgarantie für GradeCrew und kein Nachweis individuellen Transfers.",
+      "license_access": "Öffentliche Anleitung; keine offene Medienlizenz festgestellt.",
+      "web_ref": "turn110view4",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn123view3"
+    },
+    {
+      "id": "LNEW05",
+      "provider": "Perusall",
+      "title": "How to navigate Perusall with a keyboard and enable read-aloud",
+      "url": "https://support.perusall.com/hc/en-us/articles/360049314893-How-to-navigate-Perusall-with-a-keyboard-and-enable-read-aloud",
+      "verified_feature": "Textpassagen markieren und zugehörige Konversationen eröffnen; Konversationen und Antworten navigieren.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Belegt textverankerte Threads und Zugänglichkeitsfunktionen. Rollen, Lösungsklärung und Rubrik im Entwurf sind eigene Gestaltung.",
+      "license_access": "Öffentliche Hilfe; Nutzungskonto und Inhaltsrechte gesondert prüfen; keine kostenlose Vollnutzung unterstellt.",
+      "web_ref": "turn117view0",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "LNEW06",
+      "provider": "Universität Bremen / SZHB",
+      "title": "Placement test English (C-test)",
+      "url": "https://www.uni-bremen.de/en/language-centre-of-the-universities-in-the-land-of-bremen/languages-a-z/a-g/english/advice-and-placement-tests-english/placement-test-english-c-test",
+      "verified_feature": "Vier Kurztexte mit etwa 25 Lücken, erster/letzter Satz vollständig, ungefähr zweite Hälfte jedes zweiten Wortes gelöscht.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Konkrete lokale Testdurchführung, kein unmittelbar auf Schule übertragbarer Normwert.",
+      "license_access": "Beschreibung und Übungslink öffentlich; eigener Text und eigener Lösungsschlüssel empfohlen.",
+      "web_ref": "turn110view6",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "LNEW07",
+      "provider": "University of Minnesota / Autoren-Publikationsnachweis",
+      "title": "Discovery of Hidden Profiles by Decision-Making Groups: Solving a Problem Versus Making a Judgment",
+      "url": "https://experts.umn.edu/en/publications/discovery-of-hidden-profiles-by-decision-making-groups-solving-a-/",
+      "verified_feature": "Originalstudienabstract: Gruppen erhalten verteilte entscheidende Hinweise; individuelle Information und gemeinsame Lösung unterscheiden sich.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Öffentlich nur Abstract geprüft. Erwachsenengruppen, kein Schulplattformtest. Lernaufgabe und Informationsprotokoll sind eigene Ableitung.",
+      "license_access": "Öffentlicher Autoren-/Institutionsnachweis; Volltext und Nachnutzungsrechte nicht als offen belegt.",
+      "web_ref": "turn110view7",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "LNEW08",
+      "provider": "RetrievalPractice.org / Pooja K. Agarwal und Shana Carpenter",
+      "title": "Spacing",
+      "url": "https://www.retrievalpractice.org/spacing",
+      "verified_feature": "Abrufgelegenheiten über die Zeit verteilen; Forscherinnen stellen Praxisleitfaden bereit.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Keine universelle Intervallformel und keine validierte individuelle GradeCrew-Adaptivität belegt. Anpassungsregeln sind eigener Produktentwurf.",
+      "license_access": "Öffentliche Einführung und Leitfadenlink; keine allgemeine Nachnutzungslizenz unterstellt.",
+      "web_ref": "turn110view8",
+      "research_role": "supports_existing_or_screened_option"
+    },
+    {
+      "id": "LNEW09",
+      "provider": "Georgetown University / AELRC",
+      "title": "C-test Research Brief",
+      "url": "https://aelrc.georgetown.edu/resources/research-briefs/c-test-research-brief/",
+      "verified_feature": "Beschreibt C-Test als Rekonstruktion beschädigter Wörter; Entwicklung und Interpretation benötigen sorgfältige Validierung.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Forschungsüberblick ist Zusatzquelle zur Grenze diagnostischer Interpretation, keine Freigabe automatisch generierter Einstufungstests.",
+      "license_access": "Öffentlich; All Rights Reserved.",
+      "web_ref": "turn117view2",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "LNEW10",
+      "provider": "The Jigsaw Classroom / Methodenentwickler",
+      "title": "Overview",
+      "url": "https://www.jigsaw.org/overview/",
+      "verified_feature": "Expertenphase, Rückkehr in Stammgruppe und Vermittlung exklusiver Teilinformationen; anschließender Test.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Organisationsablauf; keine eigenständige neue Aufgabenfamilie gegenüber bestehendem Teamprodukt mit Transfer.",
+      "license_access": "Öffentlich; All Rights Reserved.",
+      "web_ref": "turn110view3",
+      "research_role": "supports_existing_or_screened_option"
+    },
+    {
+      "id": "LNEW11",
+      "provider": "University of Auckland / PeerWise",
+      "title": "Information for instructors",
+      "url": "https://peerwise.cs.auckland.ac.nz/docs/instructors/",
+      "verified_feature": "Offizieller Suchindex beschreibt von Lernenden erstellte, beantwortete, bewertete und diskutierte Multiple-Choice-Fragen.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Seite geöffnet, aber Redirect zur nicht abrufbaren Fakultätsseite; nur offizieller Indexbeleg. Deshalb nicht als tragender Beleg einer neuen Idee verwendet.",
+      "license_access": "Öffentlich indexierte Dokumentation; keine Nachnutzungslizenz festgestellt.",
+      "web_ref": "turn102search5",
+      "research_role": "supports_existing_or_screened_option"
+    },
+    {
+      "id": "SNEW01",
+      "provider": "Library of Congress",
+      "title": "What is By the People?",
+      "url": "https://ask.loc.gov/crowd/faq/401448",
+      "verified_feature": "Digitale Archivseiten transkribieren, durch andere Freiwillige prüfen und taggen; geprüfte Transkriptionen werden an loc.gov zurückgegeben. Ohne Konto transkribieren, Review/Tags mit Konto.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Öffentliche Primärdokumentation geöffnet; kein angemeldeter Produkttest, kein Nachweis einer identischen GradeCrew-Aufgabe.",
+      "license_access": "Öffentlich lesbar; konkrete Medien-, Code- und Integrationsrechte separat prüfen.",
+      "web_ref": "turn109view7",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn122view0"
+    },
+    {
+      "id": "SNEW02",
+      "provider": "Library of Congress",
+      "title": "Can volunteers use AI to create transcriptions?",
+      "url": "https://ask.loc.gov/crowd/faq/445582",
+      "verified_feature": "Originalhinweise warnen vor plausibel klingenden falschen Wörtern/Zeilen bei historischen Handschriften und verlangen gründliche Prüfung am Original.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Öffentliche Primärdokumentation geöffnet; kein angemeldeter Produkttest, kein Nachweis einer identischen GradeCrew-Aufgabe.",
+      "license_access": "Öffentlich lesbar; konkrete Medien-, Code- und Integrationsrechte separat prüfen.",
+      "web_ref": "turn109view8",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "SNEW03",
+      "provider": "OpenRefine",
+      "title": "Reconciling",
+      "url": "https://openrefine.org/docs/manual/reconciling",
+      "verified_feature": "Dokumentiert semi-automatischen Entitätenabgleich, Kandidaten, menschliche Freigabe, zusätzliche Eigenschaften und lokale Vergleichsdatensätze.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Öffentliche Primärdokumentation geöffnet; kein angemeldeter Produkttest, kein Nachweis einer identischen GradeCrew-Aufgabe.",
+      "license_access": "Öffentlich lesbar; konkrete Medien-, Code- und Integrationsrechte separat prüfen.",
+      "web_ref": "turn109view3",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn122view1"
+    },
+    {
+      "id": "SNEW04",
+      "provider": "Allmaps",
+      "title": "Get ready to use IIIF and Allmaps – Workshop 14.09.2026",
+      "url": "https://pages.allmaps.org/workshops/2026-open-science-week.html",
+      "verified_feature": "Bildpixel werden über gepaarte Ground Control Points geographischen Koordinaten zugeordnet; Anleitung verlangt räumlich verteilte, nicht kollineare Kontrollpunkte und zeigt Ergebnisvorschau.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Öffentliche Primärdokumentation geöffnet; kein angemeldeter Produkttest, kein Nachweis einer identischen GradeCrew-Aufgabe.",
+      "license_access": "Allmaps speichert Editor-Annotationen öffentlich; für Unterricht zunächst lokale/private eigene Nachbildung. IIIF-Zugang allein ist keine Bildnutzungslizenz.",
+      "web_ref": "turn109view4",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn122view2"
+    },
+    {
+      "id": "SNEW05",
+      "provider": "Allmaps",
+      "title": "Allmaps project documentation",
+      "url": "https://allmaps.org/",
+      "verified_feature": "Dokumentiert Georeference Annotation, Browser-Warping, JavaScript-Komponenten und veröffentlichte Georeferenzdaten unter CC0.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Öffentliche Primärdokumentation geöffnet; kein angemeldeter Produkttest, kein Nachweis einer identischen GradeCrew-Aufgabe.",
+      "license_access": "Metadaten CC0 laut Projekt; Code-Lizenz je gewählter Komponente prüfen; Bildrechte getrennt.",
+      "web_ref": "turn116view1",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "SNEW06",
+      "provider": "Nicky Case",
+      "title": "To Build a Better Ballot",
+      "url": "https://ncase.me/ballot/",
+      "verified_feature": "Original interaktiver Essay erlaubt Kandidaten/Wähler zu bewegen und sechs Wahlverfahren zu vergleichen; Sandbox verlinkt.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Geöffnetes Originalprojekt von 2016. Belegt Interaktion; politische Wertungen, empirische Generalisierungen und Ranking eines besten Wahlsystems werden nicht übernommen.",
+      "license_access": "Öffentlich nutzbar; Code-/Assetlizenz vor Übernahme prüfen.",
+      "web_ref": "turn109view5",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "SNEW07",
+      "provider": "DROG / University of Cambridge",
+      "title": "Bad News – Information Sheet for Educators",
+      "url": "https://www.getbadnews.com/wp-content/uploads/2022/05/Bad-News-Game-info-sheet-for-educators-English-1-1-2.pdf",
+      "verified_feature": "Originalhandreichung beschreibt Produzentenrolle, Reaktionen auf Text/Bild, Follower/Glaubwürdigkeit, sechs Manipulationsabzeichen, Paararbeit und Alter ab 14.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Handreichung geöffnet. Belegt beschriebene Mechanik; aktuelle App JS-extrahiert nur minimal. Keine Wirksamkeitsbehauptung und keine Behauptung offener eigener Texteingabe im Spiel.",
+      "license_access": "Handreichung nennt All rights reserved und verbietet kommerzielle Übernahme/Bearbeitung. Nur abstrakte Inspiration mit vollständig eigenen Materialien; Produktintegration gesondert klären.",
+      "web_ref": "turn118view0",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "SNEW08",
+      "provider": "Georgia Tech / EarSketch",
+      "title": "About EarSketch",
+      "url": "https://teachers.earsketch.org/about-us",
+      "verified_feature": "Code-to-compose mit Python/JavaScript, Loops, Beats, Effekten und mehrspuriger DAW.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Öffentliche Primärdokumentation geöffnet; kein angemeldeter Produkttest, kein Nachweis einer identischen GradeCrew-Aufgabe.",
+      "license_access": "Öffentliche Beschreibung; Material-/Samplelizenzen und Einbettung separat prüfen; eigene Samples für Entwurf.",
+      "web_ref": "turn109view2",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn124view3"
+    },
+    {
+      "id": "SNEW09",
+      "provider": "Kinovea",
+      "title": "Calibration mechanisms",
+      "url": "https://www.kinovea.org/help/en/measurement/calibration.html",
+      "verified_feature": "Linien- und Ebenenkalibrierung übersetzen Pixel in Realmaße. Messung muss in 2D-Ebene liegen; beliebige 3D-Bewegung ist damit nicht messbar.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Öffentliche Primärdokumentation geöffnet; kein angemeldeter Produkttest, kein Nachweis einer identischen GradeCrew-Aufgabe.",
+      "license_access": "Öffentlich lesbar; konkrete Medien-, Code- und Integrationsrechte separat prüfen.",
+      "web_ref": "turn109view6",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn122view3"
+    },
+    {
+      "id": "SNEW10",
+      "provider": "OSHA",
+      "title": "Hazard Identification Training Tool – Manual & Resources",
+      "url": "https://www.osha.gov/hazfinder/manual",
+      "verified_feature": "Offizieller Suchindex dokumentiert begrenzte Aktionen, Priorisierung, Wochenrunden, Erkennen/Mindern/Restzeit und wiederkehrende Gefahren bei ablaufender Wirkung. Konkrete Maßnahmen/Controls sind ausdrücklich nicht im Spiel enthalten.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Direktöffnung versucht, 403. Nur offizieller vollständiger Suchindex belegt Mechanik; kein Live-Spieltest. US-Kontext, keine Übertragung als deutsche Sicherheitsvorschrift.",
+      "license_access": "Öffentlich indexierte Behördendokumentation; eigene Lehrsimulation mit fachlich freigegebenen deutschen Betriebskarten, keine pauschale Übernahmelizenz bestätigt.",
+      "web_ref": "turn112search1",
+      "research_role": "supports_existing_or_screened_option"
+    },
+    {
+      "id": "SNEW11",
+      "provider": "Zooniverse",
+      "title": "Glossary",
+      "url": "https://help.zooniverse.org/glossary/",
+      "verified_feature": "Aggregation kombiniert voneinander unabhängige Klassifikationen desselben Subjects; Expert-Rolle kann Goldstandarddaten erzeugen.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Öffentliche Primärdokumentation geöffnet; kein angemeldeter Produkttest, kein Nachweis einer identischen GradeCrew-Aufgabe.",
+      "license_access": "Öffentlich lesbar; konkrete Medien-, Code- und Integrationsrechte separat prüfen.",
+      "web_ref": "turn112view2",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "SNEW12",
+      "provider": "Zooniverse",
+      "title": "How to create a project with our Project Builder",
+      "url": "https://help.zooniverse.org/getting-started/",
+      "verified_feature": "Dokumentiert Aufgabenworkflows, Markieren/Klassifizieren, Goldmodus, Roh-/aggregierte Datenexporte.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Öffentliche Primärdokumentation geöffnet; kein angemeldeter Produkttest, kein Nachweis einer identischen GradeCrew-Aufgabe.",
+      "license_access": "Öffentlich lesbar; konkrete Medien-, Code- und Integrationsrechte separat prüfen.",
+      "web_ref": "turn112view3",
+      "research_role": "supports_accepted_extension"
+    },
+    {
+      "id": "SNEW13",
+      "provider": "Gapminder",
+      "title": "About Dollar Street",
+      "url": "https://www.gapminder.org/dollar-street/about",
+      "verified_feature": "Fotos nach Haushaltsfunktion/Familie/Einkommensmaß getaggt; Vergleich entlang Kaufkraft-bereinigtem Konsum pro Erwachsenenäquivalent.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Öffentliche Primärdokumentation geöffnet; kein angemeldeter Produkttest, kein Nachweis einer identischen GradeCrew-Aufgabe.",
+      "license_access": "Bildlizenz über verlinkte CC-Lizenz/Einzelasset prüfen. Kein repräsentatives Bevölkerungsstichprobendesign aus Projektbeschreibung ableitbar.",
+      "web_ref": "turn116view2",
+      "research_role": "supports_existing_or_screened_option"
+    },
+    {
+      "id": "RNEW01",
+      "provider": "Cengage / SAM",
+      "title": "SAM Project Workflow",
+      "url": "https://help.cengage.com/sam/instructor/sam/project-workflow.html",
+      "verified_feature": "Lernende laden eine Startdatei herunter, bearbeiten sie in Microsoft Office und laden die bearbeitete Datei zur Bewertung hoch; einzelne Projektschritte werden im Bericht bewertet.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Offizielle öffentliche Dokumentation gelesen; kein angemeldeter Produktlauf. Eine Prüfung mit von GradeCrew veränderten Eingabedaten ist unser Vorschlag und keine hier belegte SAM-Funktion.",
+      "license_access": "Öffentliche Hilfe. Kommerzielles Produkt; keine Übernahme- oder Integrationsrechte aus der Dokumentation abgeleitet.",
+      "web_ref": "turn120view0",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn120view0"
+    },
+    {
+      "id": "RNEW02",
+      "provider": "Poulsen, Viswanathan, Herman, West / University of Illinois",
+      "title": "Proof Blocks: Autogradable Scaffolding Activities for Learning to Write Proofs",
+      "url": "https://arxiv.org/html/2106.11032v3",
+      "verified_feature": "Vorgegebene Beweiszeilen werden angeordnet; ein vom Autor definierter Abhängigkeitsgraph erlaubt unterschiedliche korrekte Reihenfolgen und automatische Rückmeldung.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Originalpublikation gelesen. Kein eigener Test und keine Übertragung der im Hochschulkontext diskutierten Wirkungen auf GradeCrew behauptet. Bewertbarkeit betrifft die vorbereiteten Bausteine, nicht beliebige freie Beweise.",
+      "license_access": "Öffentlich lesbare Publikation; konkrete Software-/Inhaltsrechte vor Übernahme separat prüfen.",
+      "web_ref": "turn120view2",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn120view2"
+    },
+    {
+      "id": "RNEW03",
+      "provider": "University of Cambridge / NRICH",
+      "title": "A Puzzling Cube",
+      "url": "https://nrich.maths.org/problems/puzzling-cube",
+      "verified_feature": "Aus mehreren Würfelansichten werden die Beziehungen der Flächen erschlossen und in ein Netz übertragen; interaktives Platzieren der Flächen und unterschiedliche mögliche Netze dokumentiert.",
+      "checked_date": "2026-10-25",
+      "evidence_boundary": "Originalaufgabe, Hinweise und Schülerlösungen gelesen; eingebettete Anwendung nicht praktisch bedient. Faltanimation und eigener Korrektor sind GradeCrew-Vorschläge.",
+      "license_access": "Öffentlich zugängliche Aufgabe; eigene Grafiken und Aufgaben verwenden, keine pauschale kommerzielle Übernahmelizenz angenommen.",
+      "web_ref": "turn120view3",
+      "research_role": "supports_accepted_extension",
+      "root_verified_web_ref": "turn120view3"
+    }
+  ],
+  "ideas": [
+    {
+      "id": "NR01",
+      "title": "Eine funktionierende Tabelle als Antwort abgeben",
+      "subjects": [
+        "Informatik",
+        "Wirtschaft",
+        "Mathematik",
+        "Berufliche Bildung"
+      ],
+      "levels": [
+        "Sekundarstufe I",
+        "Sekundarstufe II",
+        "Berufsschule"
+      ],
+      "learning_goal": "Eine wiederverwendbare Berechnung mit Formeln und passenden Zellbezügen erstellen.",
+      "student_action": "Eine vorgegebene Tabellenstruktur bearbeiten, Formeln eintragen und auf weitere Zeilen übertragen; die Tabelle als strukturiertes Ergebnis abgeben.",
+      "example": "B2 enthält einen Grundpreis, C2 einen Rabatt als Dezimalzahl und F1 einen vorgegebenen Zuschlagssatz als Dezimalzahl. D2 soll den Endbetrag nach Rabatt und Zuschlag berechnen: =B2*(1-C2)*(1+$F$1). Bei B2=100, C2=0,10 und F1=0,19 ergibt sich 107,10. Der Auftrag verlangt eine kopierbare Formel. Der Korrektor prüft zusätzlich andere Werte und die Formelübertragung nach D3; eine eingetragene Konstante 107,10 erfüllt den Auftrag nicht.",
+      "grading": {
+        "mode": "D",
+        "criteria": "Zulässige mathematisch gleichwertige Formeln akzeptieren; Ergebnis auf festgelegten Testdatensätzen, relative/absolute Bezüge beim Kopieren und Rundungsregel prüfen. Gestaltung nur bewerten, wenn ausdrücklich Lernziel. Bei ausschließlich vertikalem Kopieren ist auch F$1 zulässig; die Spaltenfixierung nicht ohne passenden Auftrag erzwingen. Anzeige mit zwei Nachkommastellen und tatsächliche Rundung als verschiedene Anforderungen behandeln.",
+        "boundary": "Robuste XLSX-Analyse und Formelberechnung müssen erst umgesetzt werden; gleiche Endwerte allein belegen keine richtige Formel. Nicht sämtliche Excel-Funktionen implizieren."
+      },
+      "feedback": "Zeige die erste Eingabeänderung oder Kopierzeile, bei der die Tabelle nicht mehr korrekt rechnet; Hinweis auf den betroffenen Zellbezug statt pauschaler Musterformel.",
+      "ai_requirements": "Keine KI zur Auswertung erforderlich. KI kann Aufgabenvarianten vorschlagen; Daten, zulässige Lösungen und den fachlichen Prüfvertrag vor Nutzung unabhängig prüfen.",
+      "novelty_kind": "new_family",
+      "novelty_explanation": "Die Antwort ist ein ausführbares Arbeitsprodukt mit Formeln und Abhängigkeiten. VIS12 und MATH10 behandeln Tabellenwerte/Darstellungswechsel; CS04 prüft SQL-Ergebnismengen. Hier kommen Tabellenkalkulation, Kopiersemantik und Artefaktprüfung hinzu.",
+      "closest_existing_ids": [
+        "MATH10",
+        "CS04",
+        "SOC38"
+      ],
+      "source_ids": [
+        "RNEW01"
+      ],
+      "effort": "mittel für ein begrenztes Tabellenmodell; hoch für robuste externe XLSX-Abgaben",
+      "priority": "P1",
+      "limitations": "Zunächst festgelegter Formelumfang und synthetische Dateien. Plattform-/Office-Unterschiede, sichere Dateiverarbeitung und Feedback müssen qualifiziert werden. Kein fertiger Excel-Korrektor in GradeCrew behauptet.",
+      "authoring_requirements": [
+        "Startdaten und mindestens zwei unabhängige Testdatensätze",
+        "Formelraum und erlaubte Alternativen",
+        "Anforderungen an Zellbezüge ausdrücklich im Auftrag",
+        "Einheit und Rundungsregel",
+        "Dateiversion oder begrenztes Tabellen-Antwortmodell"
+      ],
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Keine Bearbeitung oder Abgabe von Excel-/Tabellendateien; eigenständige praktische Probe außerhalb dieses Testgenerators.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NM01",
+      "title": "Vier Außenseiter – vier gültige Regeln",
+      "subjects": [
+        "Mathematik",
+        "Sachunterricht"
+      ],
+      "levels": [
+        "Grundschule 2–4",
+        "Sek I"
+      ],
+      "learning_goal": "Begriffe über wechselnde Merkmale abgrenzen.",
+      "student_action": "Für jedes Objekt ein fachliches Merkmal formulieren, das genau auf dieses Objekt zutrifft; die anderen drei erfüllen es nicht.",
+      "example": "Zahlen 9, 16, 25, 36: 9 ist einstellig; 16 ist Zweierpotenz; 25 ist durch 5 teilbar; 36 ist durch 4 und 9 teilbar. Jede Regel trifft genau eine Zahl des Sets.",
+      "grading": "H: D prüft Regeln aus vorgegebenem Prädikatbaukasten gegen alle vier Zahlen; L prüft freie Regeln auf mathematische Gültigkeit und Passung.",
+      "feedback": "Für eine vermeintlich eindeutige Regel alle passenden Objekte markieren.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "new_family",
+      "novelty_explanation": "Im Altbestand fehlt die systematische Umkehr der Eindeutigkeitsannahme: jedes Objekt muss mit einer anderen tragfähigen Regel richtig sein. Mehr als Itemerstellung oder Gegenbeispiel.",
+      "closest_existing_ids": [
+        "CROSS07",
+        "MATH14"
+      ],
+      "source_ids": [
+        "MNEW01"
+      ],
+      "effort": "mittel",
+      "priority": "P1",
+      "limitations": "Keine bloßen Positions-/Farbmerkmale werten, wenn mathematische Merkmale Lernziel sind. Freie sinnvolle Zusatzregeln zulassen.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Wenige vorgegebene Objekte und geprüfte Merkmalsauswahl; freie Alternativen nur mit transparenten Kriterien.",
+        "prototype_priority": 1
+      }
+    },
+    {
+      "id": "NM05",
+      "title": "Einen Klassifikator durch Daten statt Code reparieren",
+      "subjects": [
+        "Informatik",
+        "Biologie"
+      ],
+      "levels": [
+        "Grundschule 4 begleitet",
+        "Sek I",
+        "Sek II"
+      ],
+      "learning_goal": "Trainingsbeispiele, unabhängige Tests und unerwünschte Hintergrundmerkmale unterscheiden.",
+      "student_action": "Zwei Objektklassen labeln, trainieren, auf neuen Hintergründen testen; gezielt Trainingsdaten ändern und erneut prüfen.",
+      "example": "Baustein gegen Stift: Training zeigt Bausteine nur auf Blau, Stifte nur auf Rot. Test tauscht Hintergründe. Ergänze beide Klassen auf beiden Hintergründen und vergleiche eine getrennte Testserie.",
+      "grading": "H: D zählt Testfälle und Konfusionsmatrix aus gelieferten Vorhersagen; L bewertet Datentrennung und Fehlerhypothese. Kein Notenziel auf Modellgenauigkeit allein.",
+      "feedback": "Leistung pro Hintergrund/Klasse zeigen; zufällige Trainingsänderungen von hypothesengeleiteter Datenergänzung unterscheiden.",
+      "ai_requirements": "ML ist hier Lerngegenstand und für echtes Trainieren nötig; keine generative KI zur Benotung. KI-freie Vorhersagetabellen erlauben nur eine vorbereitete Analysevariante.",
+      "novelty_kind": "new_family",
+      "novelty_explanation": "MATH13 behandelt Stichproben; CS03 repariert Code. Hier verändern Lernende das Verhalten eines gelernten Modells über beschriftete Daten bei festem Programm.",
+      "closest_existing_ids": [
+        "MATH13",
+        "CS03",
+        "SOC12"
+      ],
+      "source_ids": [
+        "MNEW05"
+      ],
+      "effort": "hoch",
+      "priority": "P1",
+      "limitations": "Neue Trainings-/Testbilder strikt trennen; keine garantierte Verbesserung oder kalibrierte Wahrscheinlichkeiten behaupten; unkritische Objekte statt Personenbilder.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Daten sammeln, trainieren, testen und verbessern ist ein eigenständiges Projekt.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NS01",
+      "title": "Archivwerkstatt: transkribieren, unabhängig prüfen, freigeben",
+      "subjects": [
+        "Geschichte",
+        "Deutsch",
+        "Archiv-/Bibliotheksbildung"
+      ],
+      "levels": [
+        "Sek I höher",
+        "Sek II",
+        "Berufsschule"
+      ],
+      "learning_goal": "Ein aus einer Bildquelle erzeugtes Transkript nach expliziter Editionsregel zuverlässig prüfen und Unlesbarkeit erhalten.",
+      "student_action": "Historischen Faksimile-Ausschnitt zeilenweise transkribieren; unsichere Zeichen markieren; zweite Person prüft ohne Kenntnis der ersten Sicherheit; strittige Zeichen am Bild klären und Freigabe protokollieren.",
+      "example": "Eigene, als Lehrfaksimile gekennzeichnete Einkaufsliste von 1910 enthält „2 Pfund …“. Im Gegensatz zu einer Transkription „2 Pfund Zucker“ bleibt das letzte Wort im Bild unleserlich. Review darf „Zucker“ nicht bloß aus Plausibilität bestätigen.",
+      "grading": {
+        "mode": "H",
+        "D": "Zeilenabdeckung und festgelegte Normalisierungsregeln; Zeichenvergleich nur für lesbare, geprüfte Referenzstellen.",
+        "L": "Berechtigte Unsicherheitsmarkierung, Reviewbelege, regelgerechte Freigabe; plausible Lesarten akzeptieren."
+      },
+      "feedback": "Abweichende Zeichen samt Bildausschnitt statt kompletter Lösung zeigen; ungedeckte Ergänzungen und bewusst offengelassene Stellen trennen.",
+      "ai_requirements": "Keine KI notwendig. OCR/HTR allenfalls als sichtbar ungeprüfter Vorschlag; Original bleibt maßgeblich. Kein automatisches Erraten fehlender Wörter.",
+      "novelty_kind": "new_family",
+      "novelty_explanation": "SOC02 bewertet bereits vorhandene Quelleninformationen. Neu ist das Erzeugen eines prüfbaren Editionsprodukts aus dem Faksimile samt unabhängiger Review und Freigabestatus; CROSS10 allein fordert weder Unabhängigkeit noch Editionsregeln.",
+      "closest_existing_ids": [
+        "SOC02",
+        "CROSS10",
+        "LANG39"
+      ],
+      "source_ids": [
+        "SNEW01",
+        "SNEW02"
+      ],
+      "required_components": [
+        "zoombares Faksimile",
+        "Zeilenanker",
+        "Transkript/Unsicherheit",
+        "getrennte Reviewrolle",
+        "Diff/Freigabeprotokoll"
+      ],
+      "effort": "Mittel",
+      "priority": "P1",
+      "limitations": "Keine externen Archivbeiträge automatisch absenden. Authentische Quellen samt Rechten/Belastung prüfen; eigenes Lehrfaksimile nicht als historische Quelle ausgeben.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "conditional",
+        "rule": "Allenfalls sehr kurzer vorgegebener Ausschnitt mit Transkription; kein Peerreview-/Freigabeablauf. Derzeit keine neue Formatpriorität.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NS02",
+      "title": "Gleicher Name, andere Person: historische Datensätze verknüpfen",
+      "subjects": [
+        "Geschichte",
+        "Kunstgeschichte",
+        "Informatik",
+        "Kaufmännische Datenpflege"
+      ],
+      "levels": [
+        "Sek II",
+        "Berufsschule"
+      ],
+      "learning_goal": "Identität aus mehreren Merkmalen erschließen und falsche Zusammenführungen vermeiden.",
+      "student_action": "Zwei kleine Register abgleichen, Kandidaten für jeden Eintrag prüfen, verknüpfen/ablehnen/offenlassen, minimale Zusatzinformation anfordern; Auswirkungen einer falschen Fusion auf Auswertung erklären.",
+      "example": "Fiktive Werkstattliste: „J. Müller, Leipzig, 1892“; Kandidat A geboren 1870 in Leipzig, B geboren 1915 in Leipzig. B ist chronologisch ausgeschlossen; ohne weiteres Merkmal muss A noch nicht sicher gelten.",
+      "grading": {
+        "mode": "H",
+        "D": "Konsistenzregeln und sichere positive/negative Lehrfälle; falsche Fusion und korrektes Offenlassen getrennt ausweisen.",
+        "L": "Belegreichweite und sinnvoll gewählte Zusatzinformation."
+      },
+      "feedback": "Namensähnlichkeit, zeitliche Möglichkeit und Identitätsbeweis getrennt anzeigen. Nicht-Zuordnen kann eine gute Antwort sein.",
+      "ai_requirements": "Keine KI erforderlich. Optionales Kandidatenranking ist Vorschlag, keine Wahrheit; mit kuratiertem kleinen Register arbeiten.",
+      "novelty_kind": "new_family",
+      "novelty_explanation": "SOC02 ordnet Metadaten zu, CS06 entwirft Datenmodelle und SUP11 gleicht Lieferbelege ab. Hier werden mehrdeutige Entitäten über Datensätze aufgelöst, einschließlich ungelöstem Status und asymmetrischem Risiko falscher Fusion.",
+      "closest_existing_ids": [
+        "SOC02",
+        "CS06",
+        "SUP11"
+      ],
+      "source_ids": [
+        "SNEW03"
+      ],
+      "required_components": [
+        "Registertabellen",
+        "Kandidatenliste",
+        "ID-Verknüpfung",
+        "offen/abgelehnt",
+        "Zusatzmerkmalkarten"
+      ],
+      "effort": "Mittel",
+      "priority": "P1",
+      "limitations": "Keine reale Personendatenrecherche oder Wikidata-Änderung. Beispiel synthetisch; Scores unterschiedlicher Dienste nicht als gleiche Wahrscheinlichkeit behandeln.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Kleine vorgegebene Datensätze zuordnen, ausschließen oder als nicht entscheidbar kennzeichnen; keine Recherche.",
+        "prototype_priority": 5
+      }
+    },
+    {
+      "id": "NL01",
+      "title": "Zwei Arbeiten vergleichen und Qualitätsurteil kalibrieren",
+      "subjects": [
+        "Deutsch",
+        "Fremdsprachen",
+        "fächerübergreifend"
+      ],
+      "levels": [
+        "Sek I ab Klasse 7",
+        "Sek II",
+        "Berufsbildung"
+      ],
+      "learning_goal": "Kriterien an fremden Produkten unterscheiden und Urteilsgrenzen erkennen.",
+      "student_action": "Zwei anonymisierte Arbeiten unter EINEM Kriterium vergleichen; stärkere wählen oder Gleichstand begründen; zwei konkrete Stellen kontrastieren; nach Vergleichsrunden ein eigenes Qualitätsprinzip formulieren.",
+      "example": "Welcher von zwei Leserbriefen berücksichtigt den Einwand überzeugender? Markiere jeweils die entscheidende Passage; sprachliche Eleganz allein reicht nicht.",
+      "grading": "L/H: Begründung nach Kriterienbindung und Belegen beurteilen. Paarwahl nur bei fachlich kuratiertem Ankerpaar D; Peermehrheit und Ranking sind kein Goldstandard.",
+      "feedback": "Kontrastiere eigenes Urteil mit zwei begründeten Alternativurteilen; zeige ein bewusst ungleiches Ankerpaar zur Kalibrierung.",
+      "ai_requirements": "Keine generative KI erforderlich. Paarzuweisung, anonymisierte Versionen und Kriterien speichern; KI höchstens als begründeten Vorschlag für Rückmeldung verwenden.",
+      "novelty_kind": "new_family",
+      "novelty_explanation": "Primäre Lernleistung ist vergleichendes Qualitätsurteil über wechselnde fremde Arbeiten. Bestehende Revision und Übersetzungsvergleich enthalten keine verteilten Peer-Paarurteile oder Kalibrierung.",
+      "closest_existing_ids": [
+        "CROSS04",
+        "LANG32",
+        "LANG40"
+      ],
+      "source_ids": [
+        "LNEW01"
+      ],
+      "effort": "mittel; adaptive Paarung zusätzlich hoch",
+      "priority": "P1",
+      "limitations": "Nicht jede Aufgabe besitzt eindeutige Rangordnung. Vertraulichkeit, sprachliche Vorurteile und ungleiche Vergleichsnetze beachten; keine automatische Fachnote aus Siegquote.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Zwei kurze kuratierte Antworten unter genau einem Kriterium vergleichen; begrenzte Belegauswahl oder klar bewertbare Kurzbegründung.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NL02",
+      "title": "Einen begrenzten Lernagenten unterrichten und seinen Fehler erklären",
+      "subjects": [
+        "Deutsch",
+        "Fremdsprachen",
+        "Naturwissenschaften",
+        "fächerübergreifend",
+        "Mathematik"
+      ],
+      "levels": [
+        "Sek I ab Klasse 6",
+        "Sek II"
+      ],
+      "learning_goal": "Eine explizite Wissensstruktur so präzisieren, dass ein anderer Akteur daraus folgern kann.",
+      "student_action": "Agenten ausschließlich durch selbst gebaute Regeln oder ein Modell unterrichten; dessen Antwort vorhersagen; an einem unbekannten Test prüfen; fehlerhafte Ableitung auf eigene Regel zurückführen und Regel gezielt ändern.",
+      "example": "Ein Mini-Agent erhält Regeln zur Satzgliedprobe. Teste ihn an „Morgen fährt Lea nach Köln“, erkläre seine falsche Trennung und ergänze eine präzisere Regel mit Gegenprobe. Eigener alternativer Bruchfall: Ein begrenzter Regelagent wendet fälschlich „größerer Zähler bedeutet größerer Bruch“ auf 3/8 und 1/2 an. Die Lernenden ergänzen die Voraussetzung gleicher positiver Nenner und lehren einen Vergleich über gleichnamige Brüche; 1/2 wird zu 4/8. Der Agent darf ausschließlich aus dem gelehrten Regelbestand antworten.",
+      "grading": "H: Bei festem Regelinterpreten D für Ableitungen und unabhängige Testfälle; L für Güte, Reichweite und Grenzen der Erklärung. Modell darf mehrere korrekte Lösungen zulassen.",
+      "feedback": "Agent zeigt nachvollziehbare Regelkette. Rückmeldung lokalisiert den Wissenseintrag, der die Fehlantwort verursacht; neuer nicht vorab sichtbarer Test verhindert bloßes Nachbauen.",
+      "ai_requirements": "Vorzugsweise deterministischer Regel-/Graphinterpreter statt frei wissendem LLM. Bei Sprachagenten streng begrenztes Wissen und stabile Tests erforderlich; keine unbelegten Antworten aus allgemeinem Modellwissen.",
+      "novelty_kind": "new_family",
+      "novelty_explanation": "Lernende bearbeiten nicht nur eine Antwort oder Erklärung, sondern übernehmen Verantwortung für das testbare Wissen eines anderen Akteurs. Naturwissenschaftliches Originalprinzip, sprachliche Anwendung eigener Transfer.",
+      "closest_existing_ids": [
+        "LANG33",
+        "LANG45",
+        "CROSS03"
+      ],
+      "source_ids": [
+        "LNEW02"
+      ],
+      "effort": "hoch",
+      "priority": "P2",
+      "limitations": "Offene Sprachregeln sind oft nicht vollständig formalisiert; zuerst kleines explizites Regelsystem. Ein freier Chatbot, der ohnehin alles weiß, erfüllt den Mechanismus nicht.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Kein Agent unterrichten, bedienen, testen oder dessen Wissensmodell verwalten.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NR02",
+      "title": "Beweisbausteine nach logischen Abhängigkeiten zusammensetzen",
+      "subjects": [
+        "Mathematik",
+        "Informatik"
+      ],
+      "levels": [
+        "Sekundarstufe I mit einfachen Zahlbegründungen",
+        "Sekundarstufe II"
+      ],
+      "learning_goal": "Erkennen, welche Aussagen eine Schlussfolgerung voraussetzt und wie ein tragfähiger Beweis aufgebaut ist.",
+      "student_action": "Aus vorgegebenen Zeilen einen Beweis zusammenstellen, ungeeignete Zeilen weglassen und zulässige Reihenfolgen nutzen.",
+      "example": "Beweise: Die Summe zweier gerader ganzer Zahlen ist gerade. Bausteine: a und b sind gerade; a=2m mit m ganzzahlig; b=2n mit n ganzzahlig; a+b=2m+2n; a+b=2(m+n); m+n ist ganzzahlig; also ist a+b gerade. Die Darstellungen von a und b dürfen in beliebiger Reihenfolge kommen. Ein Distraktor macht die unzulässige Zusatzannahme, m und n müssten positiv sein.",
+      "grading": {
+        "mode": "D",
+        "criteria": "Vorab fachlich geprüfter Abhängigkeitsgraph; alle korrekten topologischen Reihenfolgen akzeptieren. Ungeeignete Karten und fehlende notwendige Begründungen gezielt erkennen. Die Ganzzahligkeit von m+n darf bereits nach den Definitionen von m und n und vor der Faktorisierung stehen.",
+        "boundary": "Automatik gilt für den begrenzten geprüften Bausteinsatz; freie zusätzliche Beweise benötigen weitere fachliche Beurteilung."
+      },
+      "feedback": "Nenne die erste Aussage, deren Voraussetzung noch fehlt, und lasse die fehlende Verbindung ergänzen.",
+      "ai_requirements": "Keine KI zur Auswertung erforderlich. KI kann Aufgabenvarianten vorschlagen; Daten, zulässige Lösungen und den fachlichen Prüfvertrag vor Nutzung unabhängig prüfen.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "Erweitert Reihenfolge/Argumentnetz um formale Voraussetzungen und mehrere gleichwertige Beweisordnungen; Nähe zu den neuen Parsons-Problemen bewusst als Untertyp ausgewiesen.",
+      "closest_existing_ids": [
+        "MATH11",
+        "MATH14",
+        "LANG45"
+      ],
+      "source_ids": [
+        "RNEW02"
+      ],
+      "effort": "mittel",
+      "priority": "P1",
+      "limitations": "Bausteine können Formulierungskompetenz entlasten, prüfen aber nicht das vollständige selbstständige Erfinden und Formulieren eines Beweises. Teilbeweise/Annahmen zunächst eng begrenzen.",
+      "authoring_requirements": [
+        "Geprüfte Aussage und Voraussetzungen",
+        "Bausteine mit eindeutiger Semantik",
+        "Abhängigkeitsgraph und zugelassene Alternativwege",
+        "Fachlich echte Distraktoren",
+        "Mehrere zulässige Reihenfolgen"
+      ],
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Wenige vorgegebene Beweis-/Rechenschritte auswählen und ordnen; mehrere fachlich gültige Reihenfolgen akzeptieren.",
+        "prototype_priority": 2
+      }
+    },
+    {
+      "id": "NR03",
+      "title": "Körperansicht und Netz räumlich rekonstruieren",
+      "subjects": [
+        "Mathematik",
+        "Technik",
+        "Werken"
+      ],
+      "levels": [
+        "Grundschule ab geeigneter Raumvorstellung",
+        "Sekundarstufe I",
+        "Berufliche Grundlagen"
+      ],
+      "learning_goal": "Nachbarschaft, Gegenüberliegen und Orientierung beim Wechsel zwischen zweidimensionalem Netz und dreidimensionalem Körper erschließen.",
+      "student_action": "Flächen im Netz beschriften, eine räumliche Vorhersage festhalten und erst danach eine Faltung oder eine weitere Ansicht zur Kontrolle freigeben.",
+      "example": "Ein Würfelnetz besteht aus B–C–D in einer waagerechten Reihe, A direkt über C, E direkt unter C und F direkt unter E. Welche Fläche liegt nach dem Falten gegenüber C? Erwartet: F. Erweiterung: Aus drei Ansichten die beschrifteten Flächen auf ein zunächst leeres Netz übertragen.",
+      "grading": {
+        "mode": "D/H",
+        "criteria": "Nachbarschaften, Gegenflächen und Orientierung gegen ein exaktes geometrisches Modell prüfen; äquivalente Drehungen und erlaubte Netze akzeptieren. Räumliche Erklärung optional per Rubrik.",
+        "boundary": "Eine Animation darf die Lösung erst nach der eigenständigen Vorhersage zeigen. Mehrere visuell ähnliche, aber gespiegelte Anordnungen fachlich unterscheiden. Gespiegelte 2D-Netze nicht pauschal verwerfen; entscheidend ist das tatsächlich gefaltete beschriftete Modell und die erlaubte Betrachtungsseite."
+      },
+      "feedback": "Zeige eine konflikthafte Kante oder ein falsch angenommenes Gegenflächenpaar; anschließend gezielte Dreh-/Faltansicht zur Prüfung.",
+      "ai_requirements": "Keine KI zur Auswertung erforderlich. KI kann Aufgabenvarianten vorschlagen; Daten, zulässige Lösungen und den fachlichen Prüfvertrag vor Nutzung unabhängig prüfen.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "Neuer räumlicher Antwortvertrag: In MATH09 wird eine Konstruktion unter Ziehen invariant gehalten; hier werden 2D-Netz und 3D-Flächenbeziehungen rekonstruieren und geometrisch verglichen.",
+      "closest_existing_ids": [
+        "MATH09",
+        "SOC34",
+        "SUP10"
+      ],
+      "source_ids": [
+        "RNEW03"
+      ],
+      "effort": "mittel für Würfel; hoch für beliebige Körper",
+      "priority": "P1",
+      "limitations": "Zunächst wenige klar modellierte Körper; freie 3D-Modelle nicht pauschal automatisch bewerten. Die konkrete GradeCrew-Interaktion ist noch nicht gebaut.",
+      "authoring_requirements": [
+        "Geometrisch valides Netz",
+        "Konsistent erzeugte Ansichten und Flächenmarken",
+        "Definition von erlaubten Rotationen/Spiegelungen",
+        "Getrennte Vorhersage- und Prüfphase",
+        "Bedienung per Tippen und Tastatur zusätzlich zum Ziehen"
+      ],
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Vorgegebenes Netz oder Ansichten: Gegenfläche bestimmen, passendes Netz auswählen oder wenige Flächen beschriften.",
+        "prototype_priority": 3
+      }
+    },
+    {
+      "id": "NM02",
+      "title": "Ziffernkarten erschöpfend einsetzen und Vollständigkeit nachweisen",
+      "subjects": [
+        "Mathematik"
+      ],
+      "levels": [
+        "Grundschule 3–4",
+        "Sek I"
+      ],
+      "learning_goal": "Lösungsräume systematisch durchlaufen und Vollständigkeit von bloßem Finden trennen.",
+      "student_action": "Ziffernkarten ohne Wiederholung einsetzen, alle Lösungen sammeln und begründen, weshalb keine fehlen.",
+      "example": "Nutze 1,2,3,4 je einmal in AB+CD=55. Es gibt acht geordnete Belegungen: Zehnerziffern sind 1/4 und Einerziffern 2/3 oder umgekehrt. Ohne Unterscheidung der Summanden vier Lösungen.",
+      "grading": "H: D enumeriert 24 Permutationen und vergleicht kanonische Lösungsmengen; L bewertet vollständige Fallaufteilung. Summandenvertauschung vorher regeln.",
+      "feedback": "Fehlende Fallklasse statt zufälliger weiterer Lösung anzeigen.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "MATH15 optimiert ein räumliches Werkstück. Neu ist hier die endliche bijektive Kartenbelegung mit Mehrfachlösungen und Vollständigkeitszertifikat; nicht als völlig neue Constraint-Engine zählen.",
+      "closest_existing_ids": [
+        "MATH15",
+        "MATH01"
+      ],
+      "source_ids": [
+        "MNEW02"
+      ],
+      "effort": "mittel",
+      "priority": "P1",
+      "limitations": "Offene Mitte allein ist keine neue Mechanik. Nur mit Alllösungsauftrag/Vollständigkeitsnachweis als Ergänzung führen.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Sehr kleiner Ziffernsatz und überschaubare Lösungsmenge; keine offene längere Such-/Projektphase.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NM03",
+      "title": "Parsons-Puzzle mit semantischer Einrückung",
+      "subjects": [
+        "Informatik"
+      ],
+      "levels": [
+        "Sek I",
+        "Sek II"
+      ],
+      "learning_goal": "Programmstruktur rekonstruieren und unnötige Codezeilen ausschließen.",
+      "student_action": "Vorgegebene gemischte Codeblöcke auswählen, ordnen und einrücken; Hilfe verändert gezielt Blockgröße oder Distraktoren.",
+      "example": "Baue eine Summe positiver Listenelemente aus total=0, Schleife, if x>0, total+=x und Rückgabe; total=0 im Schleifenrumpf ist Distraktor.",
+      "grading": "D: AST-/Strukturregeln und Tests für leere, negative, gemischte Listen; mehrere semantisch gültige Reihenfolgen zulassen. Hilfestufe protokollieren.",
+      "feedback": "Zuerst falsch verschachtelten Block markieren; Hilfenutzung getrennt vom korrekten Endprodukt ausweisen.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "CS01 legt bereits Codeblöcke. Ergänzung ist die eingeschränkte Rekonstruktion mit Distraktorbank und eigenständig geprüfter Einrückung samt regelbasiertem Abbau von Hürden.",
+      "closest_existing_ids": [
+        "CS01",
+        "CS03",
+        "CROSS08"
+      ],
+      "source_ids": [
+        "MNEW03"
+      ],
+      "effort": "mittel",
+      "priority": "P1",
+      "limitations": "Nicht als generisches neues Drag-and-drop zählen. Nur Reihenfolgenvergleich kann korrekte Alternativen fälschlich ablehnen.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Wenige vorgegebene Codebausteine ordnen/einrücken; keine eigene Entwicklungsumgebung oder Programmentwicklung.",
+        "prototype_priority": 4
+      }
+    },
+    {
+      "id": "NM04",
+      "title": "Sortiernetz: Arbeit und Zeit getrennt optimieren",
+      "subjects": [
+        "Informatik",
+        "Mathematik"
+      ],
+      "levels": [
+        "Grundschule 3–4 vereinfacht",
+        "Sek I"
+      ],
+      "learning_goal": "Parallele Abhängigkeiten von bloßer Anzahl der Operationen unterscheiden.",
+      "student_action": "Vergleicher auf parallele Ebenen legen, Zahlen durchlaufen lassen und alle Permutationen kleiner Netze prüfen.",
+      "example": "Vier Leitungen: Ebene 1 (1,2)/(3,4), Ebene 2 (1,3)/(2,4), Ebene 3 (2,3). Fünf Vergleiche, drei parallele Schritte; prüfen für alle 24 Permutationen von 1–4.",
+      "grading": "D: disjunkte Leitungsnutzung pro Ebene, fünf Vergleiche, Tiefe drei, sortierte Ausgabe aller 24 Permutationen; für weitere Werte Bereich/Ordnungsregeln spezifizieren.",
+      "feedback": "Kollision zweier Vergleicher auf derselben Leitung von falscher Sortierlogik unterscheiden.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "CS02 zeigt Nebenläufigkeit und CS05 vergleicht Algorithmen. Neu ist die konstruktive Planung eines festen Datenflussnetzes unter zwei expliziten Kostenmaßen samt endlicher Exhaustivprüfung.",
+      "closest_existing_ids": [
+        "CS02",
+        "CS05"
+      ],
+      "source_ids": [
+        "MNEW04"
+      ],
+      "effort": "mittel bis hoch",
+      "priority": "P1",
+      "limitations": "Gleich lange Vergleiche und keine Kommunikationskosten sind Modellannahmen; keine reale Laufzeitbeschleunigung versprechen.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "conditional",
+        "rule": "Nur ein vorgegebenes kleines Netz auswerten; eigene Konstruktion und Optimierung entfallen. Vorhandene Formate genügen zunächst.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NM06",
+      "title": "Vom lokalen Agentenschritt zum unerwarteten Gesamtmuster",
+      "subjects": [
+        "Informatik",
+        "Mathematik",
+        "Naturwissenschaften"
+      ],
+      "levels": [
+        "Sek I",
+        "Sek II"
+      ],
+      "learning_goal": "Mikroregeln, Aktualisierungsreihenfolge und emergente Verteilungen unterscheiden.",
+      "student_action": "Lokale Agentenregel ausführen, globales Muster vorhersagen, gleiche Regel auf mehrere Startzustände anwenden und Verteilungen vergleichen.",
+      "example": "Farbfelder auf toroidal verbundenem Raster: Ein Agent bleibt bei mindestens 30 % gleichfarbigen besetzten Nachbarn; isolierte Agenten gelten ausdrücklich als zufrieden. Sonst zieht er nach einer festgelegten Regel um. Vergleiche lokale Zufriedenheit und globale Cluster.",
+      "grading": "H: D prüft Nachbarzählung und Einzelschritte bei fixiertem Start, Seed und Updateordnung; L beurteilt Verteilung mehrerer Läufe und Grenze der Übertragung.",
+      "feedback": "Ein korrektes lokales Prozent ist noch keine Vorhersage des globalen Anteils.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "BIO05 modelliert Wirkungsnetze und CS01 einen Programmtrace. Hier entsteht die Makrogröße erst aus vielen interagierenden lokalen Einheiten; keine bloße neue Ökosystemgeschichte.",
+      "closest_existing_ids": [
+        "BIO05",
+        "CS01",
+        "MATH13"
+      ],
+      "source_ids": [
+        "MNEW06"
+      ],
+      "effort": "hoch",
+      "priority": "P2",
+      "limitations": "Eigene isolierte-Nachbarn-Regel explizit, nicht als NetLogo-Standard behaupten. Farbmodell erklärt keine gesellschaftliche Realität; stochastic Läufe nicht gegen einen einzigen Endzustand bewerten.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "conditional",
+        "rule": "Nur vorgegebene Zustände oder einen lokalen Schritt auswerten; keine Simulation aufbauen oder bedienen.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NM07",
+      "title": "Bestand und Zufluss: gleiches Inputniveau, andere Geschichte",
+      "subjects": [
+        "Naturwissenschaften",
+        "Mathematik"
+      ],
+      "levels": [
+        "Sek I",
+        "Sek II"
+      ],
+      "learning_goal": "Bestandsgröße und Änderungsrate durch Akkumulation trennen.",
+      "student_action": "Collector und Zu-/Abfluss bauen; kurze Flusspulse setzen und vorhersagen, ob der Bestand danach zurückkehrt.",
+      "example": "Eigene exakte GradeCrew-Simulation: Tank beginnt mit 10 L, ein Schritt dauert 1 min. Zufluss 3 L/min, Abfluss 1 L/min für 4 Schritte ergibt 18 L. Danach beide 1 L/min: Bestand bleibt 18 L, obwohl Nettofluss null ist.",
+      "grading": "H: D prüft in eigener diskreter Simulation Mengenbilanz und Einheiten; L prüft qualitative Stock–Flow-Erklärung in SageModeler.",
+      "feedback": "Nettofluss null bedeutet konstanter Bestand, nicht leerer Tank oder Rückkehr auf 10 L.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "BIO05 enthält dynamische Pfade, PHY03 Energiebilanzen. Ergänzung ist das speichernde Zustandsmodell mit expliziter Stock–Flow-Verwechslung und Verlaufsgedächtnis.",
+      "closest_existing_ids": [
+        "BIO05",
+        "PHY03",
+        "CROSS05"
+      ],
+      "source_ids": [
+        "MNEW07",
+        "MNEW08"
+      ],
+      "effort": "mittel bis hoch",
+      "priority": "P1",
+      "limitations": "SageModeler ist semiquantitativ: exakte Literarithmetik ist eigene GradeCrew-Simulation und kein belegtes SageModeler-Feature. Behälter ausreichend groß, keine negativen Bestände zulassen.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "conditional",
+        "rule": "Vorgegebene Bestands-/Flussdaten kurz berechnen; eigener Modellbau entfällt. Fachbeispiel für bestehende Formate.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NM08",
+      "title": "Messereignis und Sensorsignal zeitlich entkoppeln",
+      "subjects": [
+        "Physik",
+        "Informatik"
+      ],
+      "levels": [
+        "Sek I 9–10",
+        "Sek II"
+      ],
+      "learning_goal": "Messgerät-Trigger, reale Ereignisse und systematischen Zeitversatz unterscheiden.",
+      "student_action": "Audio-Zeitreihe mit Schwelle/Mindestabstand auswerten, falschen Trigger entfernen und Laufzeitkorrektur anwenden.",
+      "example": "Fall dauert modelliert 0,450 s. Mikrofon 0,50 m vom Startgeräusch und 2,00 m vom Aufprall; c=343 m/s. Gemessener Abstand ist 0,450+(2,00−0,50)/343≈0,45437 s. Korrigiere und trenne das von Echo-Fehltriggern.",
+      "grading": "H: D simuliert Trigger bei vorgegebener Amplitude/Blockierzeit und prüft Vorzeichen der Laufzeitkorrektur; L beurteilt realen Messaufbau.",
+      "feedback": "Positive Laufzeitdifferenz verlängert den Timer; eine höhere Schwelle beseitigt diesen geometrischen Versatz nicht.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "PHY07 wertet Messstreuung aus, CS08 gestaltet Sensorzustände. Ergänzung ist eine durchgängige Messkette, die Schwellenereignis und physikalischen Zeitpunkt explizit auseinanderhält.",
+      "closest_existing_ids": [
+        "PHY07",
+        "CS08",
+        "MATH07"
+      ],
+      "source_ids": [
+        "MNEW09"
+      ],
+      "effort": "mittel",
+      "priority": "P2",
+      "limitations": "Zahlen sind synthetisch und akustische Quellen idealisiert; kein Millisekunden-Genauigkeitsversprechen für Schultelefone.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Nur kompakte vorgegebene Messdaten auswerten; kein Sensorzugriff, eigener Messaufbau oder Messprogramm.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NM10",
+      "title": "Schätzintervall vor Offenlegung verankern und verengen",
+      "subjects": [
+        "Mathematik",
+        "Sachunterricht"
+      ],
+      "levels": [
+        "Grundschule 2–4",
+        "Sek I"
+      ],
+      "learning_goal": "Größenordnung durch Referenzen begründen und Schätzbereich bei neuer Information aktualisieren.",
+      "student_action": "Bildmenge zunächst mit Unter-/Obergrenze und Bezugsmenge schätzen; nach Offenlegung eines referenzierten Teilbereichs Intervall revidieren.",
+      "example": "Eigenes Bild eines exakt konstruierten Sitzplans: 12 Reihen, davon zunächst nur 3 mit je 8 Stühlen sichtbar. Erste Schätzung mit Annahmen; später zeigen alle Reihen acht Plätze. Revision auf 96.",
+      "grading": "H: D prüft Ordnung der Grenzen und Rechnung bei vollständig offenem Raster; L bewertet vorherige Annahmen. Erster Schätzwert nicht allein nach Nähe zur späteren Wahrheit benoten.",
+      "feedback": "Getroffene und verworfene Annahmen nebeneinander zeigen; engeres Intervall muss durch Information gedeckt sein.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "MATH07 behandelt instrumentelle Messintervalle, CROSS02 Entscheidungssicherheit. Ergänzung ist größenbezogene Schätzung mit sichtbarer Referenzmenge und verpflichtender Informationsrevision.",
+      "closest_existing_ids": [
+        "MATH07",
+        "CROSS02",
+        "MATH03"
+      ],
+      "source_ids": [
+        "MNEW12",
+        "MNEW13"
+      ],
+      "effort": "niedrig bis mittel",
+      "priority": "P2",
+      "limitations": "Aufeinanderfolgende Offenlegung und Intervallbenotung sind eigene Übertragung, kein dokumentiertes Plattformfeature. Bei unregelmäßigen Sitzplänen ist 12×8 ohne Zusatzannahme nicht gedeckt.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Vorgegebenes Bild und klare Bezugsgröße; begrenzte Antwort mit nachvollziehbarer Rechnung oder Annahme. Kein Erkundungsablauf.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NS03",
+      "title": "Historische Karte erst passend machen: Kontrollpunkte und Prüfort",
+      "subjects": [
+        "Geografie",
+        "Geschichte",
+        "Vermessung"
+      ],
+      "levels": [
+        "Sek I höher",
+        "Sek II",
+        "Berufsschule Geomatik"
+      ],
+      "learning_goal": "Kartenüberlagerung als begründetes Transformationsmodell verstehen und dessen Passung prüfen.",
+      "student_action": "Auf altem Plan und Referenzkarte stabile identische Orte paaren, Transformationsmodell ausführen, Fehler an einem vorher zurückgehaltenen Prüfort messen; schlechten Kontrollpunkt ersetzen und Verbesserung begründen.",
+      "example": "Eigener verformter Stadtplanausschnitt: drei nicht auf einer Geraden liegende unveränderte Kreuzungen dienen einer affinen Anpassung; der vierte bekannte Ort ist nur zur Prüfung vorgesehen. Eine verlegte Brücke ist als Kontrollpunkt ungeeignet.",
+      "grading": {
+        "mode": "H",
+        "D": "Paarzuordnung in kuratierten Fällen, Transformation und Abstand am unabhängigen Prüfort mit definiertem Koordinatensystem.",
+        "L": "Wahl stabiler Punkte, Interpretation verbleibender Verzerrung und Modellgrenze."
+      },
+      "feedback": "Fehler am nicht zum Fit verwendeten Ort zeigen; gute Passung an Trainingspunkten allein nicht als Nachweis ausgeben.",
+      "ai_requirements": "Keine KI nötig. Validierter Geometriekern; optionale Ortsvorschläge mit Herkunft und überprüfbaren Kartenankern.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "SOC10 schaltet bereits räumlich kompatible Layer. Hier stellen Lernende die räumliche Kompatibilität selbst her und validieren die Transformation an unabhängiger Evidenz; MATH09 prüft geometrische Konstruktionen, keine historische Kartenregistrierung.",
+      "closest_existing_ids": [
+        "SOC10",
+        "SOC09",
+        "MATH09"
+      ],
+      "source_ids": [
+        "SNEW04",
+        "SNEW05"
+      ],
+      "required_components": [
+        "Kartenpaar",
+        "Punktkorrespondenzen",
+        "Transformationskern",
+        "Prüfpunkte",
+        "Fehleranzeige"
+      ],
+      "effort": "Hoch",
+      "priority": "P1",
+      "limitations": "Zurückgehaltener Prüfort und Bewertung sind eigener Transfer, kein behaupteter Allmaps-Assessmentmodus. Allmaps-Editor veröffentlicht Edits; lokale Übungsumgebung bevorzugen. Historische Lageänderung und Kartierungsfehler nicht verwechseln.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Keine eigenständige Georeferenzierung, Transformationswerkzeuge oder Kontrollpunkt-Workflows.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NS04",
+      "title": "Wahlregel-Labor: gleicher Wählerwille, anderer Ausgang",
+      "subjects": [
+        "Politik",
+        "Ethik",
+        "Mathematik"
+      ],
+      "levels": [
+        "Sek I höher",
+        "Sek II"
+      ],
+      "learning_goal": "Ergebnisabhängigkeit von Aggregationsregeln durch selbst konstruierte Präferenzprofile nachweisen.",
+      "student_action": "Präferenzkarten einer fiktiven Wahl aufstellen, mehrere genau definierte Auszählregeln anwenden; Gegenfall zur Behauptung „Die Regel verändert nichts“ erzeugen und einen Wertkonflikt der Regeln erklären.",
+      "example": "Neun Stimmen: vier A>B>C, drei B>C>A, zwei C>B>A. Relative Mehrheit wählt A mit 4; B gewinnt paarweise gegen A mit 5:4 und gegen C mit 7:2. Gleiche Rangdaten, verschiedene Auswahlregel.",
+      "grading": {
+        "mode": "H",
+        "D": "Stimmenzählung, paarweise Matrix, Regelkonformität und tatsächlich unterschiedlicher Gewinner.",
+        "L": "Begründeter Kriterienvergleich; kein politisch erwünschter Gewinner als Note."
+      },
+      "feedback": "Eine konkrete Wechselursache im Präferenzprofil hervorheben; keine pauschale Empfehlung eines universell besten Verfahrens.",
+      "ai_requirements": "Keine KI nötig; deterministische Wahlalgorithmen mit expliziter Gleichstandsregel. KI darf nur erläutern, nicht Stimmen erfinden.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "SOC06 bildet Koalitionen aus gegebener Sitzverteilung und SOC05 prüft Institutionenwege. Hier ist die formale Aggregationsregel selbst Gegenstand und Lernende müssen ein Gegenbeispiel erzeugen. Überschneidung mit CS05 Gegenbeispielen ist bewusst: eigenständiger politischer Anwendungs-Untertyp.",
+      "closest_existing_ids": [
+        "SOC06",
+        "SOC05",
+        "CS05"
+      ],
+      "source_ids": [
+        "SNEW06"
+      ],
+      "required_components": [
+        "Präferenzmatrix",
+        "Regelumschalter",
+        "paarweise Vergleiche",
+        "Gegenbeispielprüfung"
+      ],
+      "effort": "Mittel",
+      "priority": "P1",
+      "limitations": "Regeln exakt definieren; Approval benötigt andere Eingabedaten als bloße Rangliste. Keine Realwahlergebnisse behaupten; Originalessay ist normativ und von 2016.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Kleine feste Tabelle nach vollständig vorgegebenen Regeln auswerten; kein Wahlregel-Labor bedienen.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NS05",
+      "title": "Desinformationslabor mit Rollenwechsel und Transferprüfung",
+      "subjects": [
+        "Politik",
+        "Medienbildung",
+        "Deutsch",
+        "Ethik"
+      ],
+      "levels": [
+        "ab 14",
+        "Sek I höher",
+        "Sek II"
+      ],
+      "learning_goal": "Manipulative Darstellung durch gezielten Eingriff erzeugen, erklären und an fremden Beispielen erkennen.",
+      "student_action": "Aus einer harmlosen fiktiven Meldung in geschlossener Lernumgebung eine vorgegebene Manipulationsoperation wählen/ausführen; Peer identifiziert Operation ohne Autorhinweis; anschließend sachliche Fassung und Erkennungshinweis erstellen.",
+      "example": "Fiktiver Schulgarten: „Eine Bank wird am Freitag repariert.“ Aus einem kuratierten Baukasten wird eine künstlich dramatisierende Überschrift gebaut; danach markiert die Gegenrolle Übertreibung und fehlenden Kontext, und der Autor stellt den gesicherten Informationsstand wieder her.",
+      "grading": {
+        "mode": "H",
+        "D": "Operation und kontrollierte Bausteinänderungen nach bekanntem Schlüssel.",
+        "L": "Erklärung der Täuschungswirkung, korrekte Reparatur und Erkennung am neuen Fall; keine Punkte für reale Reichweite."
+      },
+      "feedback": "Original, veränderter Informationsanteil und ausgelöste Interpretation gegenüberstellen; Wahrheit/Falschheit und manipulativen Stil auseinanderhalten.",
+      "ai_requirements": "Keine KI notwendig. Falls Textvorschläge: nur kuratierte harmlose fiktive Szenarien, vollständig als Übung markiert; keine realen Identitätsimitate.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "SOC08/LANG42 prüfen fremde Quellen, SOC07 kategorisiert Aussagen, CROSS07 erstellt Prüfitems. Neu ist der kontrollierte offensive Rollenwechsel mit anschließendem blindem Erkennungstest und Rückbau zur sachlichen Meldung; keine bloße Quellenkritikvariante.",
+      "closest_existing_ids": [
+        "SOC08",
+        "SOC07",
+        "LANG42",
+        "CROSS07"
+      ],
+      "source_ids": [
+        "SNEW07"
+      ],
+      "required_components": [
+        "geschlossener Meldungsbaukasten",
+        "Operationslog",
+        "verdeckter Peertest",
+        "Original-/Reparaturvergleich"
+      ],
+      "effort": "Mittel",
+      "priority": "P2",
+      "limitations": "Eigener harmloser Transfer; keine Übernahme von Bad-News-Texten/Bildern. Produkt-Handreichung ab 14. Keine Veröffentlichung manipulativer Inhalte, keine politische Zielgruppenansprache. Peer-Erkennungsquote allein beweist keinen nachhaltigen Lerngewinn.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "conditional",
+        "rule": "Nur vorgegebene Manipulation erkennen/korrigieren; keine eigene Produktions-, Rollenwechsel- oder Peerprüfphase.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NS06",
+      "title": "Musik als ausführbare Regel: generatives Arrangement",
+      "subjects": [
+        "Musik",
+        "Informatik",
+        "Medientechnik"
+      ],
+      "levels": [
+        "Sek I höher",
+        "Sek II",
+        "Berufsschule Medien"
+      ],
+      "learning_goal": "Musikalische Struktur als veränderbares Programm gestalten und musikalische Wirkung einer Regel nachvollziehen.",
+      "student_action": "Ein Arrangement über eigene Funktion/Schleife erzeugen; denselben Code mit zwei Parametern ausführen; vor Hören Struktur vorhersagen, resultierende Ereignisspur erklären und gezielt ändern.",
+      "example": "Eine Funktion fügt alle zwei Takte einen eigenen kurzen Klang ein; Parameter Dichte erzeugt im zweiten Durchlauf zusätzliche Antworten. Lernende sagen Einsatztakte voraus und zeigen, welche Regel den hörbaren Kontrast bewirkt.",
+      "grading": {
+        "mode": "H",
+        "D": "Ausführung, Einsatzzeiten, Wiederholungen und definierte Parameterwirkung anhand Ereignisdaten.",
+        "L": "Hörbarer Zielbezug und Erklärung, weshalb eine Regel musikalisch passend erscheint."
+      },
+      "feedback": "Codezeile, erzeugte Spur und hörbare Stelle verknüpfen; technisch korrekte Ausführung und musikalische Absicht getrennt rückmelden.",
+      "ai_requirements": "Keine generative KI nötig. Sichere Codeausführung, feste Audio-API und Ereignisexport; bei KI-Codevorschlägen eigener Vorhersage-/Erklärnachweis.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "SOC29 komponiert im Tonraster, SOC28 transformiert ein gegebenes Motiv, CS01 führt Schleifen aus. Neu ist die gemeinsame Bewertung von ausführbarem musikalischen Generator, parametrischem Variantenraum und hörbarer Gestaltung; als kombinierter Untertyp, nicht als völlig neue Programmierfamilie zählen.",
+      "closest_existing_ids": [
+        "SOC29",
+        "SOC28",
+        "CS01",
+        "SUP09"
+      ],
+      "source_ids": [
+        "SNEW08"
+      ],
+      "required_components": [
+        "Codeeditor/Sandbox",
+        "Audio-API",
+        "eigene Loops",
+        "Ereignisspur",
+        "Parametervergleich"
+      ],
+      "effort": "Hoch",
+      "priority": "P2",
+      "limitations": "Kein EarSketch-Autograding behauptet. Eigene Sample-Rechte klären; musikalischer Wert wird nicht allein aus bestandenen Codetests berechnet.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Musikalisches Arrangement programmieren, anhören und iterativ bearbeiten ist ein eigenständiges Projekt.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NS07",
+      "title": "Sportmessung: Video kalibrieren und Messung verwerfen dürfen",
+      "subjects": [
+        "Sport",
+        "Physik",
+        "Technik"
+      ],
+      "levels": [
+        "Sek I höher",
+        "Sek II",
+        "Berufsschule Sport/Medien"
+      ],
+      "learning_goal": "Aus Video eine begrenzt gültige Messreihe erzeugen und ungeeignete Aufnahmesituationen erkennen.",
+      "student_action": "Bekannte Referenzstrecke in derselben Bewegungsebene setzen, Zeitbasis prüfen, einen Punkt über mehrere Frames verfolgen, Weg/Zeit bestimmen; Aufnahme mit anderer Perspektive auf Messgültigkeit prüfen.",
+      "example": "Eigene Animation eines Balls rollt parallel zur Bildebene. Referenz 1,00 m entspricht 200 px; in 0,50 s bewegt sich der Ball 300 px: mittlere Geschwindigkeit 3,00 m/s. Ein Ball, der sich deutlich auf die Kamera zubewegt, wird mit dieser Linienkalibrierung nicht korrekt gemessen.",
+      "grading": {
+        "mode": "H",
+        "D": "Skalierung, Zeitdifferenz und mittlere Geschwindigkeit mit festgelegter Toleranz.",
+        "L": "Begründete Entscheidung über Kalibrierebene, Perspektive und geeignete/verwerfbare Messung."
+      },
+      "feedback": "Kalibrierfehler, Punktsetzfehler und echte Bewegungsunterschiede getrennt zeigen; fachlich richtige Ablehnung einer ungültigen Messung anerkennen.",
+      "ai_requirements": "Keine KI nötig. Manuelle Punktspur und geprüfter Messkern genügen; automatische Verfolgung nur mit Korrekturmöglichkeit. Keine Körper-/Gesundheitsdiagnose.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "SOC30 segmentiert Bewegungsphasen; SOC32 liest fertige Belastungsdaten; PHY01 vergleicht Bewegung und Graph. Hier erzeugen Lernende erst aus kalibrierten Pixel-/Zeitdaten physikalische Evidenz und beurteilen die Zulässigkeit der Messung.",
+      "closest_existing_ids": [
+        "SOC30",
+        "SOC32",
+        "PHY01",
+        "MATH07"
+      ],
+      "source_ids": [
+        "SNEW09"
+      ],
+      "required_components": [
+        "Video/Animation",
+        "Referenzlinie",
+        "Frame-/Zeitbasis",
+        "Punktspur",
+        "Messmodell/Toleranzen"
+      ],
+      "effort": "Mittel bis hoch",
+      "priority": "P1",
+      "limitations": "Kinovea dokumentiert 2D-Messung, keine beliebige 3D-Rekonstruktion. Keine Fitnessnote aus Videowerten; praktische Bewegungskompetenz bleibt separat. Animation oder rechtlich freigegebene Aufnahme verwenden.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "conditional",
+        "rule": "Allenfalls vorgegebene Frames mit Maßstab/Zeit auswerten; kein Video aufnehmen, kalibrieren oder verfolgen.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NL03",
+      "title": "Verteilte Hinweise gegen die vorschnelle Gruppenentscheidung auswerten",
+      "subjects": [
+        "Deutsch",
+        "Fremdsprachen",
+        "Gesellschaftswissenschaften",
+        "Berufsbildung"
+      ],
+      "levels": [
+        "Sek I ab Klasse 7",
+        "Sek II",
+        "Berufsbildung"
+      ],
+      "learning_goal": "Einzigartige relevante Information sammeln und eine anfängliche Präferenz evidenzbasiert revidieren.",
+      "student_action": "Drei Rollen erhalten gemeinsame und unterschiedliche Hinweise. Zunächst individuelle Entscheidung speichern; anschließend alle exklusiven Belege in eine Herkunftsmatrix einbringen; Gruppenentscheidung gegen Anfangsentscheidung erklären; individuell einen veränderten Hinweis auswerten.",
+      "example": "Drei Praktikumsbetriebe wirken zunächst unterschiedlich attraktiv. Nur durch Kombination von Arbeitszeiten, Fahrtmöglichkeiten und Betreuung erfüllt einer alle verbindlichen Bedingungen.",
+      "grading": "H: Bei kuratiertem Fall D für Bedingungserfüllung und Informationserfassung; L für Abwägung, Herkunftsnachweis und begründete Revision. Beiträge nicht nach Anzahl benoten.",
+      "feedback": "Zeige nach Abschluss, welcher selten geteilte Hinweis die Entscheidung tatsächlich verändert und welcher nur schon bekannte Information wiederholt.",
+      "ai_requirements": "Keine KI notwendig; eigene Rolle gegen Informationsleck schützen; Solver prüft vorab eindeutige oder bewusst mehrere zulässige Lösungen.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "LANG26 enthält bereits komplementäre Informationen. Zusätzlich werden geteilte und ungeteilte Belege so konstruiert, dass individuelle Plausibilität von der gemeinsam begründbaren Lösung abweicht; Informationspooling selbst wird überprüft. Daher keine neue Oberfamilie.",
+      "closest_existing_ids": [
+        "LANG26",
+        "CROSS10",
+        "SOC16"
+      ],
+      "source_ids": [
+        "LNEW07"
+      ],
+      "effort": "mittel bis hoch",
+      "priority": "P1",
+      "limitations": "Kein beliebiger Rückfragen-Dialog als Hidden Profile etikettieren. Alle exklusiven Hinweise müssen fachlich zugänglich sein; fehlende Teilnahme darf nicht die ganze Gruppe blockieren.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Keine Gruppenrollen, verteilten Hinweise, gemeinsame Entscheidung oder Koordinationsphase im individuellen Leistungsnachweis.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NL04",
+      "title": "Sprachregel aus authentischen Konkordanzen ableiten und an neuen Belegen prüfen",
+      "subjects": [
+        "Deutsch",
+        "DaZ",
+        "Englisch",
+        "weitere verfügbare Korpussprachen"
+      ],
+      "levels": [
+        "Sek I ab Klasse 7",
+        "Sek II",
+        "A2 mit Unterstützung bis C1"
+      ],
+      "learning_goal": "Sprachliche Muster aus Verwendungsdaten induktiv gewinnen und Geltungsbereich begrenzen.",
+      "student_action": "Vorhypothese notieren; mehrere authentische Belege gruppieren; Muster mit Gegenbeleg formulieren; frische zurückgehaltene Belege vorhersagen; eigenen Satz samt Belegbasis erstellen.",
+      "example": "Untersuche englische Belege für say und tell: Welche Ergänzungen folgen? Formuliere eine vorläufige Regel und prüfe sie an vier neuen Sätzen, einschließlich einer abweichenden Konstruktion.",
+      "grading": "H: Sortierung und Vorhersagen bei kuratierten Belegen D; L für Regel, Gegenbeleg und Reichweitengrenze. Reale Korpusabfrage ohne vollständigen Referenzraum nicht automatisch richtig/falsch bewerten.",
+      "feedback": "Vergleiche Regel mit zurückgehaltenen Belegen; fehlender Korpustreffer bedeutet nicht automatisch ungrammatisch.",
+      "ai_requirements": "KI nicht nötig für Recherche. Belege mit Fundstelle und Abrufstand speichern; KI darf Korpusbelege nicht erfinden oder als authentisch ausgeben.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "LANG34 vermittelt Kollokationen bereits. Neu ist der vollständige Forschungszyklus aus selbst ausgewählten authentischen Daten, induktiver Regel, Gegenbeleg und unabhängigem Test; nicht nur andere Oberfläche.",
+      "closest_existing_ids": [
+        "LANG34",
+        "LANG33",
+        "LANG05"
+      ],
+      "source_ids": [
+        "LNEW03"
+      ],
+      "effort": "mittel",
+      "priority": "P1",
+      "limitations": "Korpusverteilung ist keine Norm und Suchergebnisse sind gefiltert. Eine Handvoll Beispiele erlaubt keine Häufigkeitsaussage. Altersgeeignete Belege und Rechte vorab prüfen.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Wenige kuratierte Sprachbelege, begrenzte Regelwahl und neue Anwendungsfälle; keine Korpusrecherche.",
+        "prototype_priority": 6
+      }
+    },
+    {
+      "id": "NL05",
+      "title": "Beschädigten Lesetext nach C-Prinzip rekonstruieren",
+      "subjects": [
+        "Deutsch",
+        "DaZ",
+        "Fremdsprachen"
+      ],
+      "levels": [
+        "Sek I ab Klasse 7",
+        "Sek II",
+        "Berufsbildung; Niveau je Text"
+      ],
+      "learning_goal": "Wortbildung, Syntax und Textzusammenhang bei der Rekonstruktion gemeinsam nutzen.",
+      "student_action": "Kurzen zusammenhängenden Text mit intaktem Einleitungssatz lesen; systematisch entfernte zweite Worthälften ergänzen; anschließend zwei Entscheidungen mit Wortform und Kontext begründen.",
+      "example": "Eigener Kurztext über eine Klassenfahrt: ab Satz zwei wird ungefähr die Hälfte jedes zweiten Wortes entfernt; die übrigen Wörter und Wortanfänge bleiben erhalten.",
+      "grading": "H: Exakte zulässige Ergänzungen je Lücke D mit kuratierten Alternativen und Unicode-/Diakritikregeln; L für Begründungen. Ein Originalwort ist nicht automatisch die einzige gültige Ergänzung.",
+      "feedback": "Nach erstem Versuch grammatisch oder semantisch trennenden Kontext zeigen; fehlende Ergänzung nicht direkt als einzelnes Grammatikdefizit diagnostizieren.",
+      "ai_requirements": "KI kann eigene Texte entwerfen; Kürzung deterministisch. Lehrkraft prüft Mehrdeutigkeit, Textniveau und Schlüssel. Automatische CEFR-Einstufung ohne Validierung vermeiden.",
+      "novelty_kind": "strong_subtype",
+      "novelty_explanation": "Anders als Hörrekonstruktion LANG22 liegt beschädigter Schrifttext mit systematischer Redundanz vor; anders als LANG06/05 sind mehrere sprachliche Ebenen gleichzeitig erforderlich. Technisch weiter eine besondere Lückenantwort, keine neue Eingabekomponente.",
+      "closest_existing_ids": [
+        "LANG22",
+        "LANG05",
+        "LANG06",
+        "LANG13"
+      ],
+      "source_ids": [
+        "LNEW06",
+        "LNEW09"
+      ],
+      "effort": "niedrig bis mittel; valide Diagnostik hoch",
+      "priority": "P2",
+      "limitations": "Kein selbst generierter Einstufungstest mit validierten Normwerten gleichsetzen. Für reine Übung geeignet; Tastatur, Orthografie und Lesetempo beeinflussen Ergebnis.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Kurzer vorbereiteter Text mit wenigen Lücken und geprüften zulässigen Antworten; kein automatisches Einstufungsversprechen.",
+        "prototype_priority": 7
+      }
+    },
+    {
+      "id": "NM09",
+      "title": "Gemeinsam klassifizieren, Kriterien schärfen und Streitfälle weiterprüfen",
+      "subjects": [
+        "Biologie",
+        "Sachunterricht",
+        "Informatik",
+        "Geschichte",
+        "Kunst",
+        "Geografie",
+        "Sozialwissenschaften"
+      ],
+      "levels": [
+        "Grundschule 3–4 begleitet",
+        "Sek I",
+        "Sek II"
+      ],
+      "learning_goal": "Gemeinsame Datenannotation von Mehrheitsentscheidung und fachlicher Wahrheit unterscheiden.",
+      "student_action": "Dasselbe Objekt erst unabhängig annotieren; Stimmen zusammenführen; nach Mindestzahl/Übereinstimmung freigeben oder zur Expertenprüfung routen. Bei strittigen Grenzfällen den Kodierleitfaden präzisieren und an neuen Objekten erneut unabhängig anwenden.",
+      "example": "Eigenes Blattbild-Set: 10 unabhängige Urteile ergeben 6 gezähnt, 4 glatt. Eigene Freigaberegel verlangt mindestens 8 von 10; Objekt bleibt ungeklärt und erhält Detailprüfung. Zweiter Fachkontext: Historische Straßenbilder auf sichtbare öffentliche Sitzplätze prüfen; ein Fensterbrett verlangt eine ausdrückliche Abgrenzung. „Nicht erkennbar“ bleibt zulässig.",
+      "grading": "H: D prüft Aggregation und Routingregel; L bewertet Bildmerkmale und fachliche Endentscheidung. Minderheitenantwort nicht automatisch als Fehler benoten. Die Präzisierung des Kategoriensystems und ihre Bewährung an ungesehenen Fällen gesondert nach Rubrik beurteilen.",
+      "feedback": "Übereinstimmung separat von Referenzrichtigkeit zeigen; ein verdecktes Blattmerkmal kann Mehrheitsfehler erzeugen.",
+      "ai_requirements": "Keine KI notwendig; D-Regeln bzw. Lehrkraft-Raster reichen aus.",
+      "novelty_kind": "learning_sequence",
+      "novelty_explanation": "Neuer Lernablauf über bekannten Klassifikations-/Beobachtungsaufgaben: unabhängig kodieren, Abweichungen erklären, Kriterien überarbeiten, neue Fälle unabhängig prüfen und Ungeklärtes weiterleiten. Die beiden Fachentwürfe NM09 und NS09 werden genau einmal gezählt.",
+      "closest_existing_ids": [
+        "CROSS10",
+        "MATH13",
+        "BIO01",
+        "SOC03",
+        "CROSS07"
+      ],
+      "source_ids": [
+        "MNEW10",
+        "MNEW11",
+        "SNEW11",
+        "SNEW12"
+      ],
+      "effort": "mittel bis hoch",
+      "priority": "P1",
+      "limitations": "8/10 ist eigene didaktische Regel, kein universeller Zooniverse-Standard. Keine Live-Beiträge erforderlich; eigene/lizenzierte Bilder lokal nutzen, Referenzexpertise nicht voraussetzen. Eine höhere Übereinstimmung nach gemeinsamem Gespräch ist noch kein unabhängiger Kompetenznachweis.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "aliases": [
+        "NS09"
+      ],
+      "required_components": [
+        "blindes Mehrfachlabeling",
+        "Kodierleitfaden",
+        "Übereinstimmungsmatrix",
+        "strittige Fälle",
+        "neuer Validierungssatz",
+        "Konsensregel und Weiterprüfung"
+      ],
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Kein gemeinsames Annotieren, Konsensverfahren, Leitfadenrevision oder erneute Gruppenvalidierung.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NL06",
+      "title": "Erst abstimmen, dann begründet diskutieren, erneut entscheiden",
+      "subjects": [
+        "fächerübergreifend",
+        "Deutsch",
+        "Fremdsprachen"
+      ],
+      "levels": [
+        "Klasse 4 mit einfachen Konzepten",
+        "Sek I",
+        "Sek II",
+        "Berufsbildung"
+      ],
+      "learning_goal": "Eigene Konzeptvorstellung artikulieren und nach Gegenargumenten überprüfen.",
+      "student_action": "Individuelle Antwort verdeckt speichern; Partner mit abweichender Begründung diskutieren lassen; individuell erneut entscheiden und Änderungsgrund notieren; optional neues strukturgleiches Problem ohne Partner bearbeiten.",
+      "example": "Zwei Deutungen einer Pronomenreferenz: erst selbst wählen, dann die entscheidende Textstelle diskutieren; am neuen Absatz dieselbe Beziehung individuell erschließen.",
+      "grading": "H: Kuratierte Konzeptwahl D; Begründung L. Erst- und Zweitantwort getrennt; Verbesserungsquote keine individuelle Kompetenznote. Bei Literaturdeutung mehrere vertretbare Positionen zulassen.",
+      "feedback": "Antwortverteilung erst nach Einzelabgabe anzeigen. Lehrkraft sieht Hinweise auf wiederkehrende Begründungsmuster; Rückmeldung behandelt begründetes Beibehalten ebenso wie begründete Revision.",
+      "ai_requirements": "Keine KI nötig. Phasensperre, verdeckte Erstabgabe und Zuordnung unterstützen; KI darf aus Abstimmungen keine sichere Fehlvorstellungsdiagnose machen.",
+      "novelty_kind": "learning_sequence",
+      "novelty_explanation": "CROSS02 enthält Sicherheit, Begründung und Transfer; CROSS10 Gruppenarbeit. Neu ist kontrollierter sozialer Vorher–Nachher-Vergleich derselben Konzeptentscheidung vor Lösungsauflösung, nicht eine neue fachliche Antwortart.",
+      "closest_existing_ids": [
+        "CROSS02",
+        "CROSS10",
+        "LANG13"
+      ],
+      "source_ids": [
+        "LNEW04"
+      ],
+      "effort": "mittel",
+      "priority": "P1",
+      "limitations": "Mehr richtige Zweitantworten können auch Übernahme statt Verstehen sein; neues individuelles Problem stärkt die Interpretation. Minderheitspositionen nicht öffentlich beschämen.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Abstimmen, Partnerdiskussion und Wiederabstimmen sind Unterrichtsablauf; keine neue Prüfungsfunktion.",
+        "prototype_priority": null
+      }
+    },
+    {
+      "id": "NL07",
+      "title": "Textgebundene Verständnisfragen gemeinsam klären und mit Beleg abschließen",
+      "subjects": [
+        "Deutsch",
+        "DaZ",
+        "Fremdsprachen",
+        "alle textbasierten Fächer"
+      ],
+      "levels": [
+        "Sek I ab Klasse 6",
+        "Sek II",
+        "Berufsbildung"
+      ],
+      "learning_goal": "Auf konkrete Verständnisprobleme anderer eingehen und gemeinsame Leseklarheit herstellen.",
+      "student_action": "Unklare Passage markieren und präzise Frage stellen; jemand anderes antwortet mit Beleg oder Gegenbeispiel; Fragesteller erklärt abschließend, was geklärt ist und welche Unsicherheit bleibt.",
+      "example": "Bei einem Sachtext ist „das führt dazu“ unklar. Eine Person verankert die Frage am Ausdruck; eine andere rekonstruiert den Bezug anhand zweier Sätze; die fragende Person formuliert die Ursache-Folge-Beziehung neu.",
+      "grading": "L/H: Textbezug, begründete Antwort und nachvollziehbarer Klärungsabschluss nach Rubrik. D nur für vorhandene Verankerung/Abfolge; Anzahl, Länge, Likes und Lesezeit sind keine Kompetenznoten.",
+      "feedback": "Lehrkraft erhält ungelöste Fragen nach Textstelle; fachlich falsche Peerantworten bleiben bis zur Prüfung als ungeklärt markiert.",
+      "ai_requirements": "Keine KI nötig. Stabile Textanker, Rollen und Threadstatus erforderlich. KI kann offene Fragen clustern, muss Belegstellen erhalten und menschlich prüfbar bleiben.",
+      "novelty_kind": "learning_sequence",
+      "novelty_explanation": "LANG13 prüft individuellen Textbeleg, LANG14 selbst erstellte Fragen. Hier ist die Lernleistung wechselseitige Unterstützung an derselben Passage mit expliziter Rückmeldung des Fragestellers; kein bloßes Kommentarfenster.",
+      "closest_existing_ids": [
+        "LANG13",
+        "LANG14",
+        "CROSS04"
+      ],
+      "source_ids": [
+        "LNEW05"
+      ],
+      "effort": "mittel",
+      "priority": "P1",
+      "limitations": "Antwortqualität braucht fachliche Moderation. Eine akzeptierte Peerantwort kann falsch sein; soziale Zustimmung ist keine Wahrheitsprüfung. Gezielte Aufgabenrollen verhindern reine Pflichtkommentare.",
+      "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
+      "implementation_status": "research_design_only",
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Keine sozialen Kommentar-/Frage-/Antwortthreads als zusätzlicher Testablauf.",
+        "prototype_priority": null
+      }
+    }
+  ],
+  "not_counted_as_new": [
+    {
+      "id": "NL08",
+      "title": "Abrufen über mehrere Tage und auf neue Kontexte verteilen",
+      "disposition": "existing_extension",
+      "reason": "Verteiltes Wiederholen ist im bestehenden Fundus bereits unter MOD02 enthalten. Hier liegt eine nützliche Ausarbeitung/Quellenvertiefung vor, kein neuer Lernablauf.",
+      "existing_ids": [
+        "LANG04",
+        "CROSS02",
+        "CROSS03"
+      ],
+      "catalog_ids": [
+        "MOD02"
+      ],
+      "source_ids": [
+        "LNEW08"
+      ]
+    },
+    {
+      "id": "NS08",
+      "title": "Präventive Werkstattkontrolle über mehrere Schichten",
+      "disposition": "existing_extension",
+      "reason": "Wiederholte Kontrolle und Inspektionsbudget präzisieren bestehende Szenario-/Hygiene-/Verzweigungsaufgaben; der Leistungsgegenstand ist im aktuellen Entwurf noch nicht eigenständig genug.",
+      "existing_ids": [
+        "SOC35",
+        "CROSS06"
+      ],
+      "catalog_ids": [
+        "MOD05"
+      ],
+      "source_ids": [
+        "SNEW10"
+      ]
+    },
+    {
+      "id": "NS09",
+      "title": "Bildarchiv gemeinsam kodieren: Uneinigkeit als Datenproblem",
+      "disposition": "merged",
+      "reason": "Mit NM09 zu einem Lernablauf zusammengeführt; fachliches Beispiel, Kriterienrevision und Quellen bleiben erhalten.",
+      "merged_into": "NM09",
+      "source_ids": [
+        "SNEW11",
+        "SNEW12"
+      ]
+    }
+  ],
+  "screened_duplicates": [
+    {
+      "candidate": "phyphox-Pendelversuch mit neuem Sensor",
+      "closest_existing_ids": [
+        "PHY07"
+      ],
+      "reason": "Sensorwechsel allein ändert die bereits vorhandene Versuchs-/Verhältnisprüfung nicht."
+    },
+    {
+      "candidate": "SageModeler-Nahrungsnetz mit anderem Ökosystem",
+      "closest_existing_ids": [
+        "BIO05"
+      ],
+      "reason": "Nur Fachkontext und Oberfläche wechseln; keine neue Mechanik."
+    },
+    {
+      "candidate": "Hedy-Roboterlauf mit anderer Geschichte",
+      "closest_existing_ids": [
+        "CS01"
+      ],
+      "reason": "Schleife, Zustandsprotokoll und Reparatur bereits vorhanden."
+    },
+    {
+      "candidate": "Open-Middle-Ziffern einmal einsetzen und eine Lösung finden",
+      "closest_existing_ids": [
+        "MATH15"
+      ],
+      "reason": "Nur weiterer Constraint-Kontext; NM02 deshalb ausdrücklich als starken Untertyp mit vollständiger Lösungsmenge führen."
+    },
+    {
+      "candidate": "Teachable Machine Bild/Ton/Pose als drei Ideen",
+      "closest_existing_ids": [
+        "NM05"
+      ],
+      "reason": "Gleiche Daten-Trainieren-Testen-Mechanik; Modalitäten nicht dreifach zählen."
+    },
+    {
+      "candidate": "wodb.ca als aktuell nutzbare Materialquelle",
+      "closest_existing_ids": [],
+      "reason": "Am 25.10.2026 beim Öffnen geparkte Verkaufsdomain, nicht als aktive Sammlung empfehlen; MIPAC-Originalassessment als Ersatz.",
+      "url": "https://wodb.ca/",
+      "web_ref": "turn103view0"
+    },
+    {
+      "title": "PeerWise: Lernende erstellen, beantworten und kommentieren MC-Fragen",
+      "closest_existing_ids": [
+        "CROSS07",
+        "LANG14"
+      ],
+      "reason": "Erstellen und Peerprüfen bereits vorhanden; Community-Repositorium ist Produkt-/Kursablauf, keine ausreichend neue Lernaufgabe.",
+      "source_ids": [
+        "LNEW11"
+      ]
+    },
+    {
+      "title": "Jigsaw / Expertenpuzzle als zusätzliche Aufgabenfamilie",
+      "closest_existing_ids": [
+        "CROSS10",
+        "LANG26"
+      ],
+      "reason": "Experten-/Stammgruppenwechsel ist nützlicher Organisationsablauf, aber Teamprodukt plus individuelle Übertragung und komplementäre Rollen sind bereits enthalten. Als Option zu NL03 verwenden, nicht erneut zählen.",
+      "source_ids": [
+        "LNEW10"
+      ]
+    },
+    {
+      "title": "Talkwall: Beiträge auf gemeinsamer Tafel sammeln",
+      "closest_existing_ids": [
+        "CROSS10",
+        "LANG45"
+      ],
+      "reason": "Ohne spezifischen verbindlichen Schritt zur Überarbeitung kollektiver Erklärungen lediglich neue gemeinsame Oberfläche. Öffentlicher offizieller Indexbeleg recherchiert, Seitenabruf fehlgeschlagen; nicht als tragender Neubeleg aufgenommen."
+    },
+    {
+      "title": "H5P Interactive Book oder Essay als neue Aufgabenidee",
+      "closest_existing_ids": [
+        "LANG32",
+        "CROSS01"
+      ],
+      "reason": "Container-/Eingabekomponente allein erzeugt keine neue kognitive Handlung. Schlüsselworttreffer sind keine offene Textbewertung."
+    },
+    {
+      "title": "Lern-Escape-Room / Freischaltcode",
+      "closest_existing_ids": [
+        "CROSS06",
+        "CROSS10"
+      ],
+      "reason": "Nur dann inhaltlicher Mehrwert, wenn echte Wissensabhängigkeiten erforderlich sind; dazu im bestehenden Katalog bereits Szenario-/Teammechaniken. Dekorative Schlösser nicht zusätzlich zählen."
+    },
+    {
+      "title": "Ebbinghaus-Karteikarten als neue Aufgabenfamilie",
+      "closest_existing_ids": [
+        "LANG04",
+        "CROSS03"
+      ],
+      "reason": "Als zeitlicher Lernablauf NL08 dokumentiert; keine neue Antwort- oder Aufgabenfamilie und kein universeller Vergessenskurvenalgorithmus belegt."
+    },
+    {
+      "candidate": "Mission US / historisches Entscheidungsspiel",
+      "closest_existing_ids": [
+        "SOC04",
+        "CROSS06"
+      ],
+      "reason": "Rolle, damaliger Wissensstand, verzweigter Pfad und Folgenreflexion bereits ausdrücklich vorhanden. Neues Spiel/Thema allein kein Mehrwert."
+    },
+    {
+      "candidate": "LawCraft / Rule Play als weitere politische Entscheidung",
+      "closest_existing_ids": [
+        "SOC05",
+        "SOC06",
+        "SOC21",
+        "CROSS06"
+      ],
+      "reason": "Institutionenweg, Kompromiss, Wertkonflikt und Szenarioreflexion bereits vorhanden. Kein belegter zusätzlicher Lern-/Bewertungsmechanismus identifiziert."
+    },
+    {
+      "candidate": "Dollar Street: Haushaltsbilder statt Länderklischees",
+      "closest_existing_ids": [
+        "SOC12",
+        "MATH13",
+        "SOC03"
+      ],
+      "reason": "Quellenmaterial wertvoll; Vorhersage-Revisions- oder Stichprobendesign bereits vorhanden. Keine neue Familie. Als Materialergänzung zu bestehenden Aufgaben nutzen, nicht als zusätzliche Idee zählen.",
+      "source_ids": [
+        "SNEW13"
+      ]
+    },
+    {
+      "candidate": "TimelineJS / StoryMaps als weitere digitale Geschichte",
+      "closest_existing_ids": [
+        "SOC01",
+        "SOC09",
+        "SOC10",
+        "SOC24",
+        "LANG41"
+      ],
+      "reason": "Zeitachse, räumlicher Beleg, kuratorische Auswahl und Darstellungswechsel bereits vorhanden; neues Veröffentlichungswerkzeug begründet keinen neuen Aufgabentyp."
+    },
+    {
+      "candidate": "BandLab / Ensemble-Spurenvergleich",
+      "closest_existing_ids": [
+        "SOC29",
+        "SUP08",
+        "SUP09",
+        "SUP07"
+      ],
+      "reason": "Komposition, Formanalyse, Arrangementvergleich und gestalterische Revision bereits explizit erfasst. Code-als-Generator nur in NS06 mit zusätzlichem Nachweis aufgenommen."
+    },
+    {
+      "candidate": "Sportvideo annotieren oder Technikphase vergleichen",
+      "closest_existing_ids": [
+        "SOC30"
+      ],
+      "reason": "Identische Kernhandlung vorhanden. Nur metrische Kalibrierung und Gültigkeitsprüfung in NS07 erweitern die Mechanik substanziell."
+    },
+    {
+      "candidate": "KI-Antwort auf Fehler prüfen",
+      "reason": "Bereits LANG33 und CROSS04; kein neuer Typ allein durch die Herkunft der falschen Antwort."
+    },
+    {
+      "candidate": "Simulation mit Vorhersage und Erklärung",
+      "reason": "Bereits zahlreiche PHY/CHEM/BIO-Ideen und EXP03/EXP04; weitere Fachthemen nicht als neue Familie zählen."
+    }
+  ]
+}

@@ -2,6 +2,10 @@
 
 Stand 22.10.2026 · **GC-EXTENDED-QUESTION-TYPES-01**. Gilt für neue und überarbeitete GradeCrew-Testseiten, Aufgabenprototypen, Remy-/Emmi-Entwürfe und adaptive Übungen. Dieser Leitfaden sichert Erkenntnisse; er installiert keinen Generator, importiert keine Inhalte und erteilt keine Deploymentfreigabe. Martins aktueller Auftrag betrifft Testseiten, nicht kanonisches Staging oder Schul-Live.
 
+## Produktgrenze für den Testgenerator · Nutzerkorrektur 25.10.2026
+
+Ziel sind schnell erstellbare, selbstständig bearbeitbare digitale Leistungsnachweise mit nachvollziehbaren Punkten und einer daraus berechenbaren Note. Aufgaben dürfen fachlich anspruchsvoll sein; Bedienung und Ablauf bleiben einfach. Keine Excel-Dateibearbeitung/-abgabe, Agentenbedienung, Modelltrainingsprojekte oder Gruppen-/Peerworkflows als neue Testgenerator-Funktion empfehlen. Kurze Aufgaben zu diesen Fachthemen bleiben mit vorgegebenem Material möglich. Bestehende Auswahl-, Zuordnungs-, Markier-, Reihenfolge-, Zahlen- und begrenzte Texteingaben sowie passende direkte Grafikaufgaben bevorzugen. Geprüfte Schlüssel, zulässige Alternativen, Teilpunkte und offene Bewertungsgrenzen vorsehen. [Auswahlvertrag für den gesamten Recherchefundus](QUICK_ASSESSMENT_SCOPE_20261025.md). Diese Produktgrenze erteilt keine Implementierungs- oder Deployfreigabe und ändert keine getrennten Übungs-/Projektaufträge.
+
 ## Vor jeder passenden Aufgabe
 
 1. Lernziel, Zielgruppe und Modus benennen: Erkunden, unterstützt üben oder unabhängig prüfen.
