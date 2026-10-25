@@ -3,7 +3,14 @@ const test=require('node:test'),assert=require('node:assert/strict'),vm=require(
 const {QUALITY_REASONS}=require('../lib/quality');const {loadFeedbackLearningSafe,signalSignature,learningPrompt}=require('../lib/feedback-learning');
 const source=readFileSync(require.resolve('../index.js'),'utf8'),handler=source.slice(source.indexOf('function teacherQualityGuide('),source.indexOf('\nasync function reviewDraft('));
 const row=(id,uid,verdict)=>({id,category:'ai_question',userId:uid,testCode:'TEST1234',questionId:id,verdict,reason:'incorrect',subject:'Deutsch',grade:'5',questionType:'single',questionSnapshot:{type:'single',text:'PRIVATE TASK',points:1},createdAt:10,feedbackSchemaVersion:4});
-function setup(rows){const fields=[],profiles={alice:'Kurze Arbeitsaufträge',bob:'Mehr Alltagssprache'};const db={collection:()=>{const filters=[];const q={where:(key,_,value)=>{filters.push([key,value]);return q;},orderBy:()=>q,limit:()=>q,select:(...names)=>{fields.push(names);return q;},get:async()=>({docs:rows.filter(r=>filters.every(([key,value])=>key.split('.').reduce((o,k)=>o?.[k],r)===value)).map(r=>({id:r.id,data:()=>r}))})};return q;},doc:path=>({get:async()=>path.startsWith('feedback/')?({exists:true,data:()=>rows.find(r=>r.id===path.split('/')[1])}):({data:()=>({aiPreferences:profiles[path.split('/')[1]]})})})};const context=vm.createContext({getFirestore:()=>db,loadFeedbackLearningSafe,QUALITY_REASONS,console});vm.runInContext(handler,context);return {context,fields};}
+function setup(rows){
+ const fields=[],reads=[],profiles={alice:'Kurze Arbeitsaufträge',bob:'Mehr Alltagssprache'};
+ const nested=(row,key)=>key.split('.').reduce((o,k)=>o?.[k],row);
+ function project(row,names){if(!names)return row;const result={};for(const key of names){const value=nested(row,key);if(value===undefined)continue;const parts=key.split('.');let target=result;for(const part of parts.slice(0,-1))target=target[part]||={};target[parts.at(-1)]=value;}return result;}
+ const db={collection:()=>{const filters=[];let selected,cap=Infinity;const q={where:(key,_,value)=>{filters.push([key,value]);return q;},orderBy:()=>q,limit:n=>{cap=n;return q;},select:(...names)=>{selected=names;fields.push(names);return q;},get:async()=>({docs:rows.filter(r=>filters.every(([key,value])=>nested(r,key)===value)).sort((a,b)=>b.createdAt-a.createdAt).slice(0,cap).map(r=>({id:r.id,data:()=>project(r,selected)}))})};return q;},doc:path=>({get:async()=>{reads.push(path);return path.startsWith('feedback/')?({exists:rows.some(r=>r.id===path.split('/')[1]),data:()=>rows.find(r=>r.id===path.split('/')[1])}):({data:()=>({aiPreferences:profiles[path.split('/')[1]]})});}})};
+ const context=vm.createContext({getFirestore:()=>db,loadFeedbackLearningSafe,QUALITY_REASONS,console});vm.runInContext(handler,context);return {context,fields,reads};
+}
+
 test('actual loader gives own immediate signals and preferences; shared memory requires reviewed signal',async()=>{
  const own=row('a','alice','bad'),shared=row('b','bob','good');shared.sharedLearning={decision:'approved',revision:1,reviewSignature:signalSignature(shared)};const {context,fields}=setup([own,shared]);
  const alice=await context.loadQualityMemory({subject:'Deutsch',grade:'5'},'alice'),bob=await context.loadQualityMemory({subject:'Deutsch',grade:'5'},'bob');
@@ -14,4 +21,8 @@ test('new V4 rating affects own next prompt immediately while shared prompt rema
 });
 test('actual shared loader sees newer unapproved replacements and cannot resurrect old approved green',async()=>{
  const old=row('old','alice','good');old.questionId='same';old.sharedLearning={decision:'approved',revision:1,reviewSignature:signalSignature(old)};const next=row('new','alice','bad');next.questionId='same';next.createdAt=20;const {context}=setup([old,next]);const m=await context.loadQualityMemory({subject:'Deutsch'},'bob');assert.equal(m.stats.total,0);assert.doesNotMatch(learningPrompt(m),/gemeinsam/);
+});
+
+test('metadata projection and bounded hydration load only approved foreign snapshots',async()=>{
+ const unreviewed=row('unreviewed','alice','bad'),shared=row('shared','alice','good');shared.sharedLearning={decision:'approved',revision:1,reviewSignature:signalSignature(shared)};const {context,fields,reads}=setup([unreviewed,shared]);const m=await context.loadQualityMemory({subject:'Deutsch'},'bob');assert.equal(m.stats.total,1);assert.equal(fields[0].includes('questionSnapshot'),false);assert.ok(reads.includes('feedback/shared'));assert.equal(reads.includes('feedback/unreviewed'),false);assert.equal(JSON.stringify(m).includes('PRIVATE TASK'),false);
 });

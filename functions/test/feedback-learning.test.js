@@ -60,3 +60,6 @@ test('late receipt cannot move last-use time backwards and retry cannot count it
  const f=fixture([row('a','alice')]),db={runTransaction:f.transaction},older=learning.buildFeedbackLearning([...f.docs.values()],{},'alice'),newer=learning.buildFeedbackLearning([...f.docs.values()],{},'alice');
  await learning.recordLearningUse(db,newer,{uid:'alice',operation:'regenerateQuestion',at:200,toTimestamp:n=>n});await learning.recordLearningUse(db,older,{uid:'alice',operation:'generateTest',at:100,toTimestamp:n=>n});await learning.recordLearningUse(db,older,{uid:'alice',operation:'generateTest',at:100,toTimestamp:n=>n});const use=f.docs.get('feedback/a').learningUse.personal;assert.equal(use.at,200);assert.equal(use.operation,'regenerateQuestion');assert.equal(use.count,2);
 });
+test('unknown historical media and points never become a false no-image or one-point preference',()=>{
+ const r=row('a','alice','good');delete r.questionSnapshot.points;const prompt=learning.learningPrompt(learning.buildFeedbackLearning([r],{},'alice'));assert.doesNotMatch(prompt,/ohne Bild|1 P\./);
+});
