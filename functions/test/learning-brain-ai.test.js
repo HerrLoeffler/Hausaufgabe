@@ -137,3 +137,14 @@ test('an expansion probe cannot use value-only representation or accept the unex
  assert.equal(cleanGenerated(candidate,state).task.workshop.targetDenominator,15);
  candidate.task.input='text';candidate.task.workshop={tool:'none',version:1};candidate.task.answer.kind='rational';assert.throws(()=>cleanGenerated(candidate,state));
 });
+
+test('a rejected answer explanation is revised once and independently reviewed again',async()=>{
+ const x=mock([{outcome:'incorrect',short:'Du hast den Zähler geändert.',reason:'wrong diagnosis'}, {approved:false,reason:'Actually denominator changed'}, {outcome:'incorrect',short:'Du hast nur den Nenner geändert.',reason:'corrected diagnosis'}, {approved:true,reason:'consistent'}]);
+ const result=await x.ai.assess(s,'2/6');assert.equal(result.outcome,'incorrect');assert.match(result.short,/Nenner/);assert.equal(x.count(),4);
+});
+
+test('two rejected answer judgments still fail closed without inventing an approval',async()=>{
+ const grade={outcome:'incorrect',short:'Noch nicht richtig.',reason:'draft'};
+ const x=mock([grade,{approved:false,reason:'wrong feedback'},grade,{approved:false,reason:'still wrong'}]);
+ await assert.rejects(x.ai.assess(s,'2/6'),e=>e.code==='unavailable'&&e.stage==='answer-review');assert.equal(x.count(),4);
+});
