@@ -1,6 +1,6 @@
 # GradeCrew Firmenzentrale — lokale Arbeitsansicht
 
-Task GC-BRAIN-01. Umsetzung der klaren Navigation aus Masterplan 1.1. Diese Ansicht ist ein laufender, isolierter Frontendstand, keine fertig angeschlossene Firmenzentrale.
+Task GC-BRAIN-01. Lokale Firmenzentrale mit begrenztem Codex-Auftragsweg und Mac-App. Aktueller Stand: Abschnitt „Mac-App“ und die datierten Ergänzungen unten. Frühere Abschnitte dokumentieren die ursprüngliche Frontendphase; deren Aussagen zu noch fehlendem Chatanschluss sind durch die spätere Brokerimplementierung überholt. Keine vollständige produktive Firmen-V1.
 
 ## Starten
 
@@ -88,3 +88,28 @@ node --test tests/firmenzentrale/*.test.mjs
 ```
 
 Echter lokaler Durchstich und Grenzen: workstreams/gc-brain-implementation-20261022.md. Design/Plan: docs/superpowers/specs/2026-10-25-chatanschluss-design.md und docs/superpowers/plans/2026-10-25-chatanschluss.md. Offizielles Protokoll https://learn.chatgpt.com/docs/app-server, lokal qualifiziert gegen0.163.0-alpha.11.2. Experimentelle dynamische Werkzeuge/Umgebungsfelder benötigen dieselbe Hostqualifikation nach größeren CLI-Wechseln.
+
+
+## Mac-App · 25.10.2026
+
+Ein eigenständiges lokales Mac-Fenster mit dem bestehenden blauen Frontend. Erstes Paket für Apple Silicon, macOS13 oder neuer. Start per Doppelklick; Python und Webdienst liegen im Paket, Codex/ChatGPT mit bestehender Anmeldung bleibt für KI-Aufträge erforderlich. Keine zusätzlichen API-Schlüssel, kein Produktdeploy.
+
+Die App verbindet sich mit demselben privaten Datenordner auf Port8796. Gesendete Aufträge, Rückfragen und Berichte werden geteilt; ungesendete Entwürfe bleiben getrennt im Browser bzw. im persistenten App-Webspeicher. Das Paket enthält keine SQLite-Dateien, importierten Chats oder Berichte. Es ist an den beim Build gewählten lokalen Datenordner gebunden und darf nicht als Unternehmensdatenbackup verstanden werden.
+
+Fenster schließen oder Cmd+Q beendet die Darstellung. Der lokale Dienst bleibt für laufende Bearbeitungen aktiv. Beim Wiederöffnen wird er wiederverwendet; nach Mac-Neustart startet er beim nächsten Appöffnen. Kein Login-Autostart und kein automatischer Neustart unklarer Aufträge. Ein belegter fremder Port oder anderer Datenbestand führt zu einer lesbaren Fehlermeldung, niemals zum Abschießen eines fremden Prozesses. Neue Appversionen ersetzen keinen laufenden Dienst automatisch; bei Dienstupdates vorher offene Arbeit klären und den eindeutig zugehörigen Dienst kontrolliert beenden. Niemals den Datenordner löschen oder einen alten Snapshot darüberkopieren.
+
+Cmd+K sucht, Cmd+R lädt neu. Quellenlinks öffnen im Browser; Berichte lassen sich über den Mac-Speicherdialog exportieren. Ein Ladefehler bietet Wiederholen, ohne einen neuen Auftrag auszulösen.
+
+Reproduzierbarer lokaler Build (Pfade bewusst selbst angeben; vorhandenes Ziel wird nicht überschrieben):
+
+```sh
+python3 tools/build_firmenzentrale_mac.py \
+  --output "/ABSOLUTER/AUSGABEORDNER/GradeCrew Zentrale.app" \
+  --python-prefix "/ABSOLUTER/PFAD/ZU/PYTHON-3.12" \
+  --data-dir "/ABSOLUTER/PFAD/ZUM/BESTEHENDEN/DATENORDNER" \
+  --codex "/ABSOLUTER/PFAD/ZUM/CODEX-PROGRAMM"
+```
+
+Voraussetzungen für den Build: Xcode/Apple-Command-Line-Werkzeuge und eine relocierbare arm64CPython3.12-Distribution, deren benötigte Bibliotheken nur Apple-Systembibliotheken verwenden. Der Builder prüft Interpreter, Lizenz und grundlegende Laufzeitimporte; site-packages, Tests, Tk und Bytecode werden ausgelassen. Die Ausgabe ist lokal ad-hoc signiert, nicht notarisiert und nicht für eine öffentliche Installation freigegeben. Andere Macs, Intel-Macs und iPhone/iPad sind keine hier behauptete Abnahme.
+
+Native Quellen: tools/macos/. Startlogik: tools/central_desktop.py. Design/Abnahme: docs/superpowers/specs/2026-10-25-firmenzentrale-mac-design.md. Bestehende Analyse-/Berichtsgrenzen bleiben vollständig erhalten. Eine Mac-Hülle schaltet keine Codebearbeitung, E-Mail-Anbindung oder Livefreigabe frei.

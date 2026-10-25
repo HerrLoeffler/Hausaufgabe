@@ -6,6 +6,9 @@ on:
       - 'tests/firmenzentrale/**'
       - 'tools/central_runtime/**'
       - 'tools/serve_firmenzentrale.py'
+      - 'tools/central_desktop.py'
+      - 'tools/build_firmenzentrale_mac.py'
+      - 'tools/macos/**'
       - '.github/workflows/firmenzentrale-ui.yml'
   workflow_dispatch:
 permissions:
@@ -35,3 +38,15 @@ jobs:
         run: node --test tests/firmenzentrale/*.test.mjs
       - name: Test local broker without model calls or credentials
         run: python3 -m unittest discover -s tests/firmenzentrale -p 'test_*.py' -v
+
+  mac-shell:
+    runs-on: macos-14
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - name: Compile the native window and test navigation boundaries
+        run: |
+          swiftc -O tools/macos/NavigationPolicy.swift tools/macos/GradeCrewCentral.swift -o /tmp/GradeCrewCentral
+          swiftc tools/macos/NavigationPolicy.swift tests/firmenzentrale/NavigationPolicyTests.swift -o /tmp/NavigationPolicyTests
+          /tmp/NavigationPolicyTests
+          swiftc tools/macos/MakeIcon.swift -o /tmp/MakeIcon

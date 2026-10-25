@@ -4,6 +4,7 @@ from pathlib import Path
 from urllib.parse import urlsplit, unquote
 import argparse, fcntl, json, secrets
 from central_runtime.service import Service
+from central_desktop import identity
 ROOT=Path(__file__).resolve().parents[1]
 APP=ROOT/'docs/prototypes/firmenzentrale'
 
@@ -22,6 +23,7 @@ class Handler(SimpleHTTPRequestHandler):
  def do_GET(self):
   if not self.allowed():return self.json({'error':'Zugriff nur aus der lokalen Firmenzentrale'},403)
   path=urlsplit(self.path).path
+  if path=='/api/desktop-health':return self.json(identity(self.server.service.store.root))
   if path=='/api/session':return self.json({'token':self.server.token})
   if path=='/api/state':return self.json(self.server.service.state())
   if path.startswith('/api/'):return self.json({'error':'Nicht gefunden'},404)
