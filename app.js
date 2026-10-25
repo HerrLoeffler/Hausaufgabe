@@ -1,3 +1,5 @@
+let extendedPreview = false;
+let extendedVariant = 1;
 import { parseNumericAnswer, normalizeVisualTask, renderVisualEditor, mountVisualQuestion, collectVisualAnswer, decodeVisualAnswer, visualAnswered, evaluateVisual, visualSolution } from "./visual-tasks.mjs";
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
@@ -86,6 +88,8 @@ const aiApi = new Proxy(createAiClient(app, () => state.user?.uid || auth.curren
     const value = target[key];
     if (typeof value !== "function") return value;
     return (...args) => {
+      if (extendedPreview && key==='reviseWholeTest') return extendedCall('emmi',args[0]);
+      if (extendedPreview) throw new Error('Lokaler Formatprototyp: keine bezahlten KI- oder Firebaseaufrufe.');
       if (guestTourRepo) throw new Error("Im lokalen Tutorial sind KI- und Billing-Aufrufe gesperrt.");
       return value.apply(target, args);
     };
@@ -1532,6 +1536,7 @@ function openTemplateFromInput(value) {
 }
 
 async function loadDashboard() {
+  if(extendedPreview){const q=guestTourRepo?.getQuiz('TOURLOCAL');state.quizzes=q?[q]:[];state.aiJobs=[];showView('dashboardView');renderQuizList();renderAiJobs();return;}
   if (!state.user) return;
   const dashboardUid = state.user.uid;
   clearPublishSubscriptions();
@@ -2770,6 +2775,7 @@ async function openAiView() {
   renderAiJobs();
   if (firstAiGuideStep === "ai") setTimeout(() => renderFirstAiGuideStep("details"), 100);
   const notice = $("aiBetaNotice");
+  if(extendedPreview){for(const n of document.querySelectorAll('p,small')){if(n.textContent.includes('gehen an OpenAI'))n.textContent='Lokaler Prototyp: keine Übertragung an OpenAI oder Firebase.';if(n.textContent==='Kosten können für Tests, Bilder und Audio entstehen.')n.textContent='Die vorbereiteten Varianten erzeugen keine Providerkosten.';}notice.textContent='Drei vorbereitete Varianten mit je9Aufgaben und24Punkten. Keine KI-/Cloudverbindung.';notice.classList.remove('hidden');return;}
   if (crewTour?.creating) { notice.textContent = "Übung: vorbereitete Aufgaben, keine KI-Anfrage."; notice.classList.remove("hidden"); return; }
   try {
     notice.className = "aiStatusNotice";
@@ -2996,6 +3002,7 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
 }
 
 async function generateAiTestNative() {
+  if(extendedPreview){try{const response=await extendedCall('generate',{...collectAiRequest(),variant:extendedVariant});guestTourRepo=createLocalTourRepository();const code=guestTourRepo.create({...quizDefaults(),...response.test});guestTourRepo.save(code,{timeLimitMinutes:0,tutorialReady:true},guestTourRepo.getQuestions(code));await openEditor(code);toast('Vorbereitete Variante lokal geöffnet – kein KI-Aufruf.');}catch(error){toast(error.message,'error');}return;}
   if (crewTour?.active) {
     if (crewTour.creating) return crewTour.create();
     return toast("Folge zuerst dem aktuellen Schritt der Einführung.");
@@ -3676,6 +3683,7 @@ $("quizUseTimeLimit")?.addEventListener("change", (e) => {
 });
 $("quizTimeLimitMinutes")?.addEventListener("input", markDirty);
 $("previewBtn").addEventListener("click", async () => {
+  if(extendedPreview){if(await saveCurrentQuiz(false)){renderStudentQuiz(guestTourRepo.getQuiz(state.currentQuiz.id),guestTourRepo.getQuestions(state.currentQuiz.id),{ownerPreview:true});showView('studentView');}return;}
   const button = $("previewBtn");
   if (!state.currentQuiz || button.disabled) return;
   // Reserve the tab during the user gesture; a server save can outlive popup activation.
@@ -6183,6 +6191,7 @@ async function saveCurrentQuiz(showMessage = true) {
       audioReady: true, solutionAudioReady: true
     };
     guestTourRepo.save(code, patch, state.questions);
+    if(extendedPreview)await extendedCall('save',{quiz:guestTourRepo.getQuiz(code),questions:guestTourRepo.getQuestions(code)});
     state.currentQuiz = guestTourRepo.getQuiz(code);
     state.loadedQuestionIds = new Set(state.questions.map(q => q.id));
     $("editorHeading").textContent = patch.title;
@@ -6298,6 +6307,7 @@ async function publishCurrentQuiz() {
   if (state.currentQuiz?.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   if (!(await saveCurrentQuiz(false))) return;
   if (guestTourRepo) {
+    if(extendedPreview)await extendedCall('publish',{quiz:guestTourRepo.getQuiz(state.currentQuiz.id),questions:guestTourRepo.getQuestions(state.currentQuiz.id)});
     guestTourRepo.publish(state.currentQuiz.id);
     state.currentQuiz = guestTourRepo.getQuiz(state.currentQuiz.id);
     showPublish(state.currentQuiz.id);
@@ -6364,7 +6374,7 @@ $("releasePracticeSolutionsBtn")?.addEventListener("click", async () => {
 });
 
 $("backFromPublish").addEventListener("click", () => openEditor(state.currentQuiz?.id || $("publishedCode").textContent));
-$("openPublishedStudentBtn").addEventListener("click", () => loadStudentQuiz($("publishedCode").textContent));
+$("openPublishedStudentBtn").addEventListener("click", () => extendedPreview?location.assign('/secure-student.html?test=EXTENDED'):loadStudentQuiz($("publishedCode").textContent));
 $("copyCodeBtn").addEventListener("click", () => copyText($("publishedCode").textContent, "Testcode kopiert."));
 $("copyLinkBtn").addEventListener("click", () => copyText($("publishedLink").value, "Link kopiert."));
 
@@ -6382,8 +6392,8 @@ async function showPublish(code) {
     const quiz = guestTourRepo.getQuiz(code);
     if (!quiz) return;
     state.currentQuiz = quiz;
-    $("publishedCode").textContent = code;
-    $("publishedLink").value = guestCopy('localLink', 'Nur lokaler Übungstest – kein öffentlicher Link');
+    $("publishedCode").textContent = extendedPreview?"EXTENDED":code;
+    $("publishedLink").value = extendedPreview?location.origin+'/secure-student.html?test=EXTENDED':guestCopy('localLink', 'Nur lokaler Übungstest – kein öffentlicher Link');
     $("qrcode").textContent = guestCopy('noQr', 'Lokales Tutorial ohne QR-Zugang');
     $("teacherLivePanel")?.replaceChildren();
     showView('publishView');
@@ -7733,6 +7743,7 @@ async function openResults(code) {
     state.currentResultsQuiz = quiz;
     state.resultQuestions = guestTourRepo.getQuestions(code);
     state.submissions = guestTourRepo.getSubmissions(code);
+    if(extendedPreview){const snapshot=await extendedCall('results',{});state.submissions=snapshot.submissions;state.resultQuestions=snapshot.questions;state.currentResultsQuiz={...quiz,...snapshot.quiz};}
     $("resultsHeading").textContent = quiz.title;
     $("resultsMeta").textContent = guestCopy('resultsMeta', `${state.submissions.length} Übungsabgabe · ${quiz.totalPoints || 0} Punkte maximal · nur lokal`, { count: state.submissions.length, points: quiz.totalPoints || 0 });
     showView('resultsView');
@@ -7897,6 +7908,7 @@ async function saveReview(submissionId) {
   const scale = submission.gradeScaleSnapshot?.thresholds?.length === 6 ? submission.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
   const grade = gradeFromPercent(percent, scale);
   if (guestTourRepo) {
+    if(extendedPreview){await extendedCall('review',{submissionId,points:Object.fromEntries(Object.entries(grading).map(([id,g])=>[id,g.awardedPoints]))});await openResults(state.currentResultsQuiz.id);return;}
     guestTourRepo.grade(state.currentResultsQuiz.id, submissionId, {
       grading, totalPoints: total, maxPoints: max, percent, grade,
       gradeScaleSnapshot: scale, status: 'graded', reviewedBy: 'local-tour'
@@ -9323,6 +9335,17 @@ if (["production", "staging", "local-review"].includes(appEnvironment)) {
   });
   fetch("./release.json", {cache:"no-store"}).then(r => r.json()).then(r => { reviewBuild = r.commit || ""; }).catch(() => {});
   if (localReview) {
+    document.addEventListener('gradecrew:extended-start',async()=>{
+      if(appEnvironment!=='local-review')return;
+      extendedPreview=true;state.user={uid:'local-tour',email:'lokales-beispiel@example.invalid'};state.profile={role:'teacher',displayName:'Lokale Lehrkraft'};state.guestTourUid='local-tour';guestTourRepo=createLocalTourRepository();
+      const saved=await extendedCall('teacher',{});
+      if(saved.test){const code=guestTourRepo.create({...quizDefaults(),...saved.test});guestTourRepo.save(code,{timeLimitMinutes:0,tutorialReady:true},guestTourRepo.getQuestions(code));await openEditor(code);}else{await openAiView();prefillTutorialRequest();$('aiTopic').value='Visuelle Aufgaben';$('aiSubject').value='Fächerübergreifender Formatvergleich';$('aiGrade').value='5–10';$('aiSchoolType').value='Mittelschule';$('aiCount').value='9';$('aiPoints').value='24';}
+    });
+    document.addEventListener('gradecrew:extended-showcase',async event=>{
+      if(!extendedPreview||appEnvironment!=='local-review')return;
+      extendedVariant=[1,2,3].includes(Number(event.detail?.variant))?Number(event.detail.variant):1;
+      await openAiView();prefillTutorialRequest();$('aiTopic').value='Visuelle Aufgaben';$('aiSubject').value='Fächerübergreifender Formatvergleich';$('aiGrade').value='6';$('aiCount').value='9';$('aiPoints').value='24';$('aiImageQuestionCount').value='0';document.querySelectorAll('#aiTypeChecks input').forEach(c=>c.checked=true);await generateAiTestNative();
+    });
     let sceneWork = Promise.resolve();
     document.addEventListener("gradecrew:review-scene", event => {
       const scene = event.detail?.scene;
@@ -9358,3 +9381,5 @@ if (["production", "staging", "local-review"].includes(appEnvironment)) {
 }
 
 window.addEventListener("gradecrew:visual-note-saved",()=>toast("Screenshot-Hinweis in Feedback gespeichert."));
+
+async function extendedCall(action,data={}){const r=await fetch('/__extended/'+action,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const d=await r.json();if(!r.ok)throw Error(d.message||'Lokaler Beispielaufruf fehlgeschlagen.');return d;}
