@@ -691,12 +691,15 @@
     {
       "id": "extended-question-types-01",
       "title": "GC-EXTENDED-QUESTION-TYPES-01: interaktive Aufgaben und gemeinsamer Lernfundus",
-      "primaryBranch": "docs/visual-learning-principles-20261022",
-      "integrationTarget": "main",
+      "primaryBranch": "test/visual-24-pilot-20261025",
+      "integrationTarget": "feature/visual-prototype-ai-02-20261021",
       "state": "active",
-      "handoff": "workstreams/interactive-learning-principles-20261022.md",
+      "handoff": "workstreams/visual-pilot-24-20261025.md",
       "relatedBranches": [
-        "feature/extended-question-types-20261020"
+        "feature/extended-question-types-20261020",
+        "docs/visual-learning-principles-20261022",
+        "feature/visual-prototype-ai-02-20261021",
+        "fix/visual-editor-no-json-20261021"
       ]
     },
     {

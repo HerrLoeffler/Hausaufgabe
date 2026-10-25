@@ -1972,6 +1972,45 @@
         "apple_store_urls": "Secure6817526711 and Teacher6817547234 Support/Marketing/Privacy URLs saved to gradecrew.de and reload verified; no AppReview/contracts/labels changes"
       },
       "next_action": "Existing Native owner continues release chains Secure39851773269 and Teacher39851773260; collect upload/Apple receipts without duplicate starts, then update only that remaining acceptance scope."
+    },
+    {
+      "id": "extended-question-types-01",
+      "task_id": "GC-EXTENDED-QUESTION-TYPES-01",
+      "stage": "staging_deployed",
+      "scope": "isolated visual255 preview only; canonical staging/school/Production unchanged",
+      "branch": "test/visual-24-pilot-20261025",
+      "pr": 296,
+      "evidence_commit": "021ef5c2d4bee1daa6d353635ae18f63bbe28c50",
+      "deployed_local_commit": "a396feedccf0d41ecf48c0e23e3e99d53e1cbf3a",
+      "deployed_remote_tree": "62f9997587e35eeb0d69eed6d60e4176445d5fe5",
+      "preview_url": "https://gradecrew-staging-2026--visual255-rjcwf436.web.app/pilot24/",
+      "functions_codebases": [
+        "visual255-ai",
+        "visual255-assessment"
+      ],
+      "verification": {
+        "generated_tests": 24,
+        "questions": 192,
+        "content_amendments": 63,
+        "independent_content_review": 192,
+        "deterministic_checks": 1176,
+        "focused_regressions": 23,
+        "functions_tests": 293,
+        "assessment_tests": 97,
+        "live_server_cases": 120,
+        "live_server_passed": 120,
+        "resume_checks": 120,
+        "idempotence_checks": 24,
+        "hosting_hashes": 180,
+        "other_functions_unchanged": 46,
+        "browser_submission": "P05 lowercase error1/16 as expected"
+      },
+      "rules_changed": false,
+      "production": "unchanged",
+      "human_teacher_acceptance": "pending",
+      "physical_device_acceptance": "pending",
+      "handoff": "workstreams/visual-pilot-24-20261025.md",
+      "next_action": "Teacher reviews representative tasks on test preview; then authorize separate integration onto current page."
     }
   ],
   "deployments": [
