@@ -56,3 +56,7 @@ Quellen zum Nachlesen, keine importierten Assets: [ZUM Deutsch Lernen](https://d
 ## Einen Eintrag erweitern
 
 Bestehende ID fortführen; Lernziel/Zielgruppe, eigene Aufgabenidee, Interaktion, Antwort/Bewertung, Quelle/Version, Rechte bei Übernahme, Modus und Wiederverwendung nennen. Ergebnis nur mit Commit/Umgebung/Prüfbeleg aufwerten. Offene Risiken und genau nächsten Test festhalten. Bestandene technische Prüfung, fachliche Abnahme, tatsächlicher Geräteeinsatz und Lernwirksamkeit sind verschiedene Nachweise. Bestehende Task-/Budgethistorie erhalten.
+
+## GradeCrew-Homepage: kuratierte Beispiele und Erstellungsweise —25Oct2026
+
+Die freigegebene Startseite ist als öffentliches, lokal bewertetes Showcase auf gradecrew.de veröffentlicht (GC-DESIGN-05, f8274f06,Hosting-only). [Arbeitsweise und Grenzen](HOMEPAGE_QUESTION_CREATION.md), [zehn maschinenlesbare Baupläne](homepage-task-blueprints.v1.json), [Nachweise](../../workstreams/homepage-release-20261025.md). VIS08,MOD01,VIS02,VIS04,EXP05 undVIS07-Variante sind zugeordnet; Standardmarkierung/Gruppe/Reihenfolge nutzen vorhandene Typen. Das ist keine Zulassung zum pädagogischen Laufzeitpool und kein Nachweis, dass Remy alle Demo-Widgets produktiv erzeugt. Das getrennt belegte echte KI-Labor PR296 für die nächste Anbindung wiederverwenden.

@@ -1,0 +1,780 @@
+{
+  "task": "GC-DESIGN-05",
+  "origin": "https://gradecrew.de",
+  "commit": "f8274f06616f5db9a15597f37229a15bb9bfa2c6",
+  "project": "hausaufgabe-staging",
+  "environment": "production",
+  "verifiedFiles": 192,
+  "checkedAt": "2026-10-25T17:47:50.551Z",
+  "result": "all_hashes_match",
+  "files": [
+    {
+      "name": "admin-account-actions.mjs",
+      "sha256": "c3c109c3a4858530e9e3b46a95a32b2528ddc3027594924c66c7c5496b1fa65e"
+    },
+    {
+      "name": "admin-ai-access.js",
+      "sha256": "1416fd7a67b62d83bcdd1fd561d563db65b3b04120ff1114802c0ec4abca401b"
+    },
+    {
+      "name": "admin-log-tools.mjs",
+      "sha256": "ba2f4019c68c8ee957239fbaddc1b8a72dccbc8430592a94e187a1e684849c60"
+    },
+    {
+      "name": "admin-test-account-bootstrap.mjs",
+      "sha256": "92cbd1855f81db4330bc0ca5f802494e935f101d7da89b2dd69a37f3b3c9a3cd"
+    },
+    {
+      "name": "admin-test-account-controls.mjs",
+      "sha256": "906b392b750554dc5becc3a99c9a338100355c8a7c75ba2fba7ea4108378d335"
+    },
+    {
+      "name": "ai-client.js",
+      "sha256": "e97589ab159d8b76d3ffc00e69fa2dce6453e7e1b3272bb32cc126d61f1c9029"
+    },
+    {
+      "name": "ai-json-tools.js",
+      "sha256": "7bb7d12358f1eed10308d5ee48c5220cb63d4689fb3eaeac15782e8a1974ee04"
+    },
+    {
+      "name": "ai-review-state.js",
+      "sha256": "b6fc8559999014179c158c99c388f7f8f85e3785b35cc0a06d8cbd7d6fb6f6a1"
+    },
+    {
+      "name": "app.js",
+      "sha256": "a63e7be1b3ca96074a4b697e951c8b9978d55dde1d13db009b7ac4e5177d7713"
+    },
+    {
+      "name": "assessment-receipt-check.mjs",
+      "sha256": "71f52e5338738df7ab768fd3bf033438cfa171048fa03c5381ff2a91b34c88eb"
+    },
+    {
+      "name": "assets/gradecrew/brand-icon-v1.svg",
+      "sha256": "f37517983448f2c9043bdde4dad3c2a852c4609a87328fefd8e657127d05f5e2"
+    },
+    {
+      "name": "assets/gradecrew/brand-icon.svg",
+      "sha256": "f37517983448f2c9043bdde4dad3c2a852c4609a87328fefd8e657127d05f5e2"
+    },
+    {
+      "name": "assets/gradecrew/brand-primary-v1.svg",
+      "sha256": "755f94c0ecc23b02c110b04a95485cc17c0d8e98b07ac03d403de998c3f698a7"
+    },
+    {
+      "name": "assets/gradecrew/clay-coco-name.svg",
+      "sha256": "1a46e20e65f6ad58450e031710b6b5f50f4d4ed0c2a9999c95288a4762a3c3a7"
+    },
+    {
+      "name": "assets/gradecrew/clay-finale.svg",
+      "sha256": "e47ae7ca1b4a6c9fbd4cf91b0b7e1a409679be84bcdab70aa6176e7bd1b9a834"
+    },
+    {
+      "name": "assets/gradecrew/clay-introduce-emmi.svg",
+      "sha256": "bcaa36019ae01c58fc9ccaa49ac22cfaa86643f83c7260e2b7a5dbbbe0239caa"
+    },
+    {
+      "name": "assets/gradecrew/clay-introduce-remy.svg",
+      "sha256": "ceca068fba5989742314eed8e2008f5e9f814affe7987b500373f2eb3a0fb14d"
+    },
+    {
+      "name": "assets/gradecrew/clay-introduce-wilma.svg",
+      "sha256": "ed5dfeb675d65924abbd3ad1f1b9c0d6f42e34e8bf1f4103e4daa61a3207f5a5"
+    },
+    {
+      "name": "assets/gradecrew/clay-remy-writing.svg",
+      "sha256": "b6ec52048bac84ffcc5e21046e267ff6989192f094aed8ee1af89e24043c80c8"
+    },
+    {
+      "name": "assets/gradecrew/clay-retry.svg",
+      "sha256": "99242b01f6c9fec73431cb8b3941c4801d5fe4feec27dbfabbebdb064cd611c5"
+    },
+    {
+      "name": "assets/gradecrew/clay-save.svg",
+      "sha256": "d60c9c7701d90e96e03100300321ac3fd3e31ddec680780379f5922ca4a8de74"
+    },
+    {
+      "name": "assets/gradecrew/clay-thanks-emmi.svg",
+      "sha256": "0badb63aeca2d969ac738bfc0b105cafd1ec9a8cbd40f69af20cb85a570b374a"
+    },
+    {
+      "name": "assets/gradecrew/clay-thanks-remy.svg",
+      "sha256": "1b46b2fb0e4e82f7bc55af2432333dd2086c13366bec7d7c23c882303d0a36f8"
+    },
+    {
+      "name": "assets/gradecrew/clay-thanks-wilma.svg",
+      "sha256": "8d64dd425e86b062ef9a2c6d625b931042acee606d19d4794d75748f0ba09ce6"
+    },
+    {
+      "name": "assets/gradecrew/clay-wait.svg",
+      "sha256": "c41ee1fcbb6ee27116da4e1ae25dd7550330440b7c62bd6b3cf588ee20330198"
+    },
+    {
+      "name": "assets/gradecrew/clay-welcome.svg",
+      "sha256": "eaec2be5dfa28a16b4fdf187723e16c0879640c5eb326895fdd7f78aaaa7ed10"
+    },
+    {
+      "name": "assets/gradecrew/clay-your-turn.svg",
+      "sha256": "a932a9923b4f08cdd31b74bea5e832656f8d356118c0c17040c6b7b17d2ececc"
+    },
+    {
+      "name": "assets/gradecrew/coco-footer-glance-v4.png",
+      "sha256": "2dee5ea6314c02e1e20e7839450928c88366ad5481977f5bc211169e5ed2c17e"
+    },
+    {
+      "name": "assets/gradecrew/coco-footer-guide.png",
+      "sha256": "4412374a7da6817235156f05ef2596e5326c161cb23c21cac7251c6bf742aeb0"
+    },
+    {
+      "name": "assets/gradecrew/coco-footer-letter-c-v5.png",
+      "sha256": "9f71b95f96cefdf9fd3caccb7e583df20d2599820effaaa7c90f59e90e867184"
+    },
+    {
+      "name": "assets/gradecrew/coco-footer-run-10.png",
+      "sha256": "41e08ea22a8e9e499f7d5dc4549be4e80fc0b1f56eab14e43777f4ba5f75f560"
+    },
+    {
+      "name": "assets/gradecrew/coco-help-phone.png",
+      "sha256": "031ff6051c3953f3ce2f0b96af10b35850300a7d1d5abaff86e2255db744ccdd"
+    },
+    {
+      "name": "assets/gradecrew/coco-login-heart-17.png",
+      "sha256": "8633357fddd95a2878807f5075cca1a0195eed0d6a5a91032db9e922fae2f4ac"
+    },
+    {
+      "name": "assets/gradecrew/coco-workspace-greeting.svg",
+      "sha256": "afc67c5bef8b443610fb24ce13f790a0a3bb5e1af0d4ea459b8d5de564df5a56"
+    },
+    {
+      "name": "assets/gradecrew/crew-classroom-v3.webp",
+      "sha256": "fa907ee987c24844e0f3647b325122aaa8d3f7204385de452299bb5eb90dde4d"
+    },
+    {
+      "name": "assets/gradecrew/crew-classroom-wide-v4.png",
+      "sha256": "eaad8b8d81b19de8ebcfb326cc522af1e43aac3a56178e8231cb40692e9698a7"
+    },
+    {
+      "name": "assets/gradecrew/crew-dashboard-lineup-c-r-e-w-alpha.png",
+      "sha256": "a9c26c8475c3d4782e559c73f6a182b2850df9c01ddfc497060c21b81efe3da5"
+    },
+    {
+      "name": "assets/gradecrew/crew-lineup.svg",
+      "sha256": "82666c90e1251220a5a0c996a00a228e4a60af9fa44e95bfd484e6b446746128"
+    },
+    {
+      "name": "assets/gradecrew/cuddly-hedgehog.webp",
+      "sha256": "50b641f7248f66e4adad3b49ce0b008e9eeaaa6512493feb41b364de2babdcf2"
+    },
+    {
+      "name": "assets/gradecrew/demo-backpack.svg",
+      "sha256": "1f3487e436273acc4fe03a7b8e7b9576074126b66421519995a650f51ae7dae0"
+    },
+    {
+      "name": "assets/gradecrew/demo-books.svg",
+      "sha256": "2e42859dd4e5a36c0c0ba00302b06d6d99fe9f17c58384641d50617432a0dc51"
+    },
+    {
+      "name": "assets/gradecrew/demo-cat.svg",
+      "sha256": "52ac04794706a1aa303670c25f848782203b1b5a4eda013b4aa7ec9fa2a7ffe3"
+    },
+    {
+      "name": "assets/gradecrew/demo-crew.svg",
+      "sha256": "e47ae7ca1b4a6c9fbd4cf91b0b7e1a409679be84bcdab70aa6176e7bd1b9a834"
+    },
+    {
+      "name": "assets/gradecrew/demo-pencil.svg",
+      "sha256": "c76d9ecfa23ba9ac1dd59e6d76ea52e04777c48b5a0acfb734f5012f92dd756b"
+    },
+    {
+      "name": "assets/gradecrew/elephant-create-welcome.svg",
+      "sha256": "54172db52bb1b5ada13b8c1587d643a64a4c6617a30a797c3f31b48a6773c19a"
+    },
+    {
+      "name": "assets/gradecrew/elephant-create.svg",
+      "sha256": "54172db52bb1b5ada13b8c1587d643a64a4c6617a30a797c3f31b48a6773c19a"
+    },
+    {
+      "name": "assets/gradecrew/emmi-colors.png",
+      "sha256": "33f0631ca6a471510a2bd28c85f1fbc58d3995ac561931caf19c0ac037151bc5"
+    },
+    {
+      "name": "assets/gradecrew/emmi-footer-glance.png",
+      "sha256": "88ff79e7a7c9692c00c89d7b3a5127fefb5fb2bf818b3ab8d96ad45cdb3a5ca2"
+    },
+    {
+      "name": "assets/gradecrew/emmi-footer-improve.png",
+      "sha256": "b44ccc2ccd3ef4b624a5d7e3842901949261c8c0ebab3b3d84408e4d0c238613"
+    },
+    {
+      "name": "assets/gradecrew/emmi-footer-letter-e-v2.png",
+      "sha256": "edb0ba07b8948b2ca57bb453b0747bcc89be052b9a40d949d59f902079bfe011"
+    },
+    {
+      "name": "assets/gradecrew/emmi-footer-run-10.png",
+      "sha256": "399ddaccbdc7a747f4f06839afbd5d4ae9a7354171f961fe1a6e4f0f24386bd3"
+    },
+    {
+      "name": "assets/gradecrew/falcon-create.svg",
+      "sha256": "54172db52bb1b5ada13b8c1587d643a64a4c6617a30a797c3f31b48a6773c19a"
+    },
+    {
+      "name": "assets/gradecrew/fox-improve-welcome.svg",
+      "sha256": "bc5fe082e74c0b4bbc2cbcf6e0a5d32804f03bbfb378af1494249fb7f2194248"
+    },
+    {
+      "name": "assets/gradecrew/fox-improve.svg",
+      "sha256": "bc5fe082e74c0b4bbc2cbcf6e0a5d32804f03bbfb378af1494249fb7f2194248"
+    },
+    {
+      "name": "assets/gradecrew/owl-grade-welcome.svg",
+      "sha256": "7ac5dcbdff8cb8f492b45cbf79a680f295167014c60ce369a2d6c0a80c34089c"
+    },
+    {
+      "name": "assets/gradecrew/owl-grade.svg",
+      "sha256": "7ac5dcbdff8cb8f492b45cbf79a680f295167014c60ce369a2d6c0a80c34089c"
+    },
+    {
+      "name": "assets/gradecrew/penguin-guide-welcome.svg",
+      "sha256": "720825076b73028f91a5513be04199d4ccee83523c733a50b361ba3868abf3f1"
+    },
+    {
+      "name": "assets/gradecrew/penguin-guide.svg",
+      "sha256": "720825076b73028f91a5513be04199d4ccee83523c733a50b361ba3868abf3f1"
+    },
+    {
+      "name": "assets/gradecrew/penguin-icon.svg",
+      "sha256": "f37517983448f2c9043bdde4dad3c2a852c4609a87328fefd8e657127d05f5e2"
+    },
+    {
+      "name": "assets/gradecrew/remy-create-choice.png",
+      "sha256": "8236df87763031e4c2495948499423ad5b19c990b46a3ac417d59867ed40ed25"
+    },
+    {
+      "name": "assets/gradecrew/remy-footer-create.png",
+      "sha256": "3f4d65183f6f96e901e2c68cc2e385d6012c6a6d604fd8fd2125026991accf8c"
+    },
+    {
+      "name": "assets/gradecrew/remy-footer-letter-r-v4.png",
+      "sha256": "cea45164776b75d348738c64c50da94b8348cca37edf014632e0864ccf9a1204"
+    },
+    {
+      "name": "assets/gradecrew/remy-footer-run-10.png",
+      "sha256": "964761550ad20dbb728df6d719dedff93a06bebb6dc14c04f7247302e905d3b8"
+    },
+    {
+      "name": "assets/gradecrew/remy-microphone.png",
+      "sha256": "6152a5fa1a17558d4cdd07d948783e60560e54aa781717f95a94d631f404645b"
+    },
+    {
+      "name": "assets/gradecrew/remy-new-test-button.png",
+      "sha256": "a7c0188d01079e3c04719722c1e7541e0939afc1aacf47caa15b82a6766eeb6d"
+    },
+    {
+      "name": "assets/gradecrew/remy-new-test-tablet.png",
+      "sha256": "946db8428037934e04d1d92cbd9f02b7ab71bf98a9bfe11b56fd7c2237dd8c9e"
+    },
+    {
+      "name": "assets/gradecrew/remy-test-creation-typewriter.png",
+      "sha256": "3af4ee9699c2e7c17408e51fdc9ef6b31a91c194ccbb98319a7d4ae5204c9777"
+    },
+    {
+      "name": "assets/gradecrew/remy-test-input-microphone.png",
+      "sha256": "3a557063b8e1813564d51750d71d0de1d47b99a27cef3b2b89ba4fe7d0692cb1"
+    },
+    {
+      "name": "assets/gradecrew/trash-bin-3d.png",
+      "sha256": "30f5a4e6e96b8ba40b934153e6fc8418dfcbefb9088087b52b5e838fb258f9b7"
+    },
+    {
+      "name": "assets/gradecrew/wilma-footer-glance.png",
+      "sha256": "063f71185b3e111b93e49e67550b95d1d4cccfed35c8a6b893e81ba06b0e13b6"
+    },
+    {
+      "name": "assets/gradecrew/wilma-footer-grade.png",
+      "sha256": "23b9760322ec58c33d26e60daa7a6d18189e93bef70ca5f52dffe1bf21755baa"
+    },
+    {
+      "name": "assets/gradecrew/wilma-footer-letter-w-v2.png",
+      "sha256": "44e070666fbe25017ba477308bdd9a9f0e041bd9b495107a5be070531b6e3412"
+    },
+    {
+      "name": "assets/gradecrew/wilma-footer-run-10.png",
+      "sha256": "d90c7f6641ee5535b0c1361dac2edd296caf63e44488f5bee1fb7367bd1270b0"
+    },
+    {
+      "name": "assets/gradecrew/wilma-grading.png",
+      "sha256": "3d4a04beeff5e00060bb76b60f369d41cc576e893ffa74f87e93e50074026fc7"
+    },
+    {
+      "name": "assets/gradecrew/wilma-worksheet-flying.png",
+      "sha256": "fd542e361d1e553904f3dfba386281b33133deff2066b33af4c193d580a31c99"
+    },
+    {
+      "name": "assets/vendor/qrcodejs-1.0.0.min.js",
+      "sha256": "c541ef06327885a8415bca8df6071e14189b4855336def4f36db54bde8484f36"
+    },
+    {
+      "name": "assets/vendor/qrcodejs-LICENSE.txt",
+      "sha256": "aaa1f349028a59432eb00222b8ddfe4d2ccebdce04cf8348dcb8d41b7068107b"
+    },
+    {
+      "name": "auth-profile.js",
+      "sha256": "2b13f53d4c96b96839f3c6f9894d42931c925bff0ee8a963e5366fb8ca3af14b"
+    },
+    {
+      "name": "bug-ops.mjs",
+      "sha256": "3a31bc5d5837f8e1011c9549a263359aa0e40e525278a3d7f723dd3a0eecdd1a"
+    },
+    {
+      "name": "crew-assistant-core.js",
+      "sha256": "f0cf26d70360bcec18b6f53e0d53df23dba2c98283cd18cface98196b17d1f4f"
+    },
+    {
+      "name": "crew-assistant-core.mjs",
+      "sha256": "1e74b01574092a154173c2f7b6a10cf9ba8a3c1a7db32736f6820cd45cecacf6"
+    },
+    {
+      "name": "crew-assistant-ui.js",
+      "sha256": "97f15fb081926dc906c32d4273b53178156c1ca493dd0e3383ad69d21c433855"
+    },
+    {
+      "name": "crew-clay.css",
+      "sha256": "300abe24372f14580bd23cdd08bfd1acef12cc384e97df7ad26b85c977deba05"
+    },
+    {
+      "name": "crew-statistics-admin.mjs",
+      "sha256": "ed07439dbb6b8de23a3c21740a150463924916cc5ebe00b2e450c541853302f9"
+    },
+    {
+      "name": "crew-telemetry-client.mjs",
+      "sha256": "d121d6f7803b6a760f2a5828de934e97e107104e3e89f3605e93e80f2556c0b8"
+    },
+    {
+      "name": "crew-tour-gc22-polish.js",
+      "sha256": "14418c6b06b34caebada2d56a8a3b59f8787944a43f7b932dbfa752ab1280ed7"
+    },
+    {
+      "name": "crew-tour-gc23-polish.js",
+      "sha256": "d94cd189e073ad002e035b279a8b9e507009649a93c446bb227bdf52adad45c1"
+    },
+    {
+      "name": "crew-tour-gc24-polish.js",
+      "sha256": "79d7fe4e4f7153598a938214db52a57a4f6e2b55ea225c56905003367e2391b8"
+    },
+    {
+      "name": "crew-tour-gc25-final-polish.js",
+      "sha256": "08bbff0464fa3a8ec9b1851a09bf830a64e14f68a55683a24ac4f00fe3e2e9ff"
+    },
+    {
+      "name": "crew-tour-gc26-story-polish.js",
+      "sha256": "389360820edd9a2ca645d75e64b761129a9a2347f86de240836a29418d62a495"
+    },
+    {
+      "name": "crew-tour-hardening.js",
+      "sha256": "f04c85090e527e05d0e32d77e0bf984c4df5b2ea1c96836a1a711c6141b836a0"
+    },
+    {
+      "name": "crew-tour-responsive.js",
+      "sha256": "c1e14ba4868630292365093bc554f73bde4c77feebe5f4be4c57579ee72d56ca"
+    },
+    {
+      "name": "dashboard-tutorial-entry.mjs",
+      "sha256": "673d0b2a22d7c115cde050f5f3c6c8c05a6586db9ac7ae14637de0445c0c02cf"
+    },
+    {
+      "name": "datenschutz.html",
+      "sha256": "6625a70d1f81a1e1ba4a4756bb8adef6ee621951d6c9c029544808494ab79d84"
+    },
+    {
+      "name": "design-system.css",
+      "sha256": "e90ff189c94f78b9e94e98a9f9f91b35ecc17636deb8402dd709809d4b482437"
+    },
+    {
+      "name": "diagnostics.mjs",
+      "sha256": "491a00dae069be59461238049cd5f2da127113375702646598fd3a2264fc7b14"
+    },
+    {
+      "name": "editor-drafts.js",
+      "sha256": "fb9878791f73746ff9fc30a459aa58cbf6c1931a3c71d990e1776d3566f9396a"
+    },
+    {
+      "name": "emmi-whole-test-revision.mjs",
+      "sha256": "289cb86f25dd3b462d701d715024d38f35ec373c2e887dc27343440eb5e45d69"
+    },
+    {
+      "name": "firebase-config.js",
+      "sha256": "dd5268fcc28d360964924cd6fa2b7b374e19884d5e7e2dd2a1c06439a51c6a97"
+    },
+    {
+      "name": "first-guide-guard.js",
+      "sha256": "629a055c9c3c6f2f240054d5cf9f11c08c5fc21b89b9c43c0f42eac0c3e81b99"
+    },
+    {
+      "name": "first-guide-responsive.js",
+      "sha256": "f68655647b0167bf285e0bf84a2c58bcc0112c9a7993e497251fb20013c4a8be"
+    },
+    {
+      "name": "functions/lib/review-checks.json",
+      "sha256": "5bca50f071b3caacde48cc61a81bdd9d2ef373283c797013f94880e4d7444fec"
+    },
+    {
+      "name": "gate-e-lab.js",
+      "sha256": "b9dabb12a248d12ac50d712324c5d781acbf0fdd0d154242cfc74843fee8f8df"
+    },
+    {
+      "name": "generated/gradecrew-assets.js",
+      "sha256": "d4cfe1172ef99e2bb4b23c0132825c0470f1cf3b2f0818dead77dcde5f4cde08"
+    },
+    {
+      "name": "generated/gradecrew-design-tokens.css",
+      "sha256": "0971535f40fda6edd4a6d785d21abd38984b81f2e30b7c396b60d9a2e1378aa4"
+    },
+    {
+      "name": "gradecrew-auth-startscreen-polish.css",
+      "sha256": "26eb588b641dfdc2a5e5f54e6b09cc5bdf579c561b93e8c35d5498e343b33302"
+    },
+    {
+      "name": "gradecrew-auth-startscreen.css",
+      "sha256": "8ef7cc5fb3233932c0a8799a3dc7afa21f7306185f7c5a2ef78f597c5f1669de"
+    },
+    {
+      "name": "gradecrew-brand.css",
+      "sha256": "ef3c0522e6f8a208583e4e4441531fd9f72ca0d0f6287b9ca3c560e97fcef445"
+    },
+    {
+      "name": "gradecrew-brand.js",
+      "sha256": "0e89b0f1bb307bada5d4e37aee1a3eefd56355fd830a04c1c6103bbbfc0c5137"
+    },
+    {
+      "name": "gradecrew-dashboard-foundation.css",
+      "sha256": "7b14fe9825dc737d480c478dfaeeacc589c6c650d06326d192e36ca86ea5537c"
+    },
+    {
+      "name": "gradecrew-entry-flow.js",
+      "sha256": "a1cc1e4636bfc34d9f8626078c4544ff51fead4ce643dc37ac049e69e0255eeb"
+    },
+    {
+      "name": "gradecrew-hero-copy.mjs",
+      "sha256": "8f1d509e5ee61eb2b4ad501a7a6409c6347e63f7dd5c6b62ce1473f95bf36209"
+    },
+    {
+      "name": "gradecrew-hero-demo-flow.mjs",
+      "sha256": "a46eb5487afde88530ff821c6532edced973408a92cb146b62a6bbd967b5b84b"
+    },
+    {
+      "name": "gradecrew-hero-demo.mjs",
+      "sha256": "187e76a7854063e4c82cb92e2812f1c7e25fe783ae9bc463b236d8f3f038e255"
+    },
+    {
+      "name": "gradecrew-hero-scene.css",
+      "sha256": "319410a6e50d9d75b45622672214b95813e9f83ec1bc221c0d3ecf03757776af"
+    },
+    {
+      "name": "gradecrew-logo.css",
+      "sha256": "99ec4a2d7433b0b2d7e8d3ca6e5f4cef9b745b9d9aaa8f4b49d2ddf3f750945b"
+    },
+    {
+      "name": "gradecrew-tour-v7.js",
+      "sha256": "dbd7f83ff8ea82e52ba3d51f9ff843b8a23f1f499dd55ace0061aea2202450a0"
+    },
+    {
+      "name": "gradecrew-tour-v8.js",
+      "sha256": "451513df883bfc1621cf2b2731d5997e473fdebdbed0c9e3e3fbc008ace00241"
+    },
+    {
+      "name": "gradecrew-tour.css",
+      "sha256": "e60db036539575be85abb1631e3d0b367b8a2e2781e27ad8f8a928fb06914f55"
+    },
+    {
+      "name": "gradecrew-tour.js",
+      "sha256": "fcd850eff6bbed30746fa0d627fe01ecaced30b2c19c17eca42e2ef6ecb80a25"
+    },
+    {
+      "name": "gradecrew-workspace-upgrade.css",
+      "sha256": "b96b5fa478e18af7ded632545fa724cb8a9c9ce6af7822b91a799d0f965e9b7c"
+    },
+    {
+      "name": "gradecrew-workspace-upgrade.mjs",
+      "sha256": "b607330528f58e6392285ef584206925ccb3dc2563894fced5487d2e4ae1c81a"
+    },
+    {
+      "name": "guest-tour-port.mjs",
+      "sha256": "4dcba08385b10e6f9137c8200dbba9cb4bcae0cd7ecabb18b83776b3204b63d1"
+    },
+    {
+      "name": "homepage/app.js",
+      "sha256": "a56e4256c7f8a9ad556e5cbc6eaebad85e91ba5175c113fed0b0822953659163"
+    },
+    {
+      "name": "homepage/assets/brand-icon-v1.svg",
+      "sha256": "f37517983448f2c9043bdde4dad3c2a852c4609a87328fefd8e657127d05f5e2"
+    },
+    {
+      "name": "homepage/assets/brand-primary-v1.svg",
+      "sha256": "755f94c0ecc23b02c110b04a95485cc17c0d8e98b07ac03d403de998c3f698a7"
+    },
+    {
+      "name": "homepage/assets/colours-animals-atlas.png",
+      "sha256": "705f52799a7d0f9c1f0fed37e7f5743bca4302875b193d351edc0ab0b7f8d3ec"
+    },
+    {
+      "name": "homepage/assets/cosmos-botanical-v1.png",
+      "sha256": "933516049c325b931057a485a0ea1107f932abdf83d6772d3735cc4cb053c30e"
+    },
+    {
+      "name": "homepage/assets/crew-cutout-v2.png",
+      "sha256": "8c7d037baa5186f4b42390fea0dd1801e03023ae0688673fb9d815daa9048d1d"
+    },
+    {
+      "name": "homepage/assets/remy-gradecrew-de-v8.wav",
+      "sha256": "20a7959ce7b2eb2d1669dd9321a26631d231e79a9e6c082c984578927ea63af3"
+    },
+    {
+      "name": "homepage/assets/remy-gradecrew-en.mp3",
+      "sha256": "7480bf65a27403f48082483fbab0fd983f796a199692eacbaf992d972139b110"
+    },
+    {
+      "name": "homepage/entry-route.js",
+      "sha256": "ccdcc3ad967254bb2ea7836b732a2bdf0e8781b352ff3be8ca646a00552f56b9"
+    },
+    {
+      "name": "homepage/grading.mjs",
+      "sha256": "87a87bd164354368525be8e3987db197a831420646b9659cdb22b7b36e06462a"
+    },
+    {
+      "name": "homepage/illustrations.js",
+      "sha256": "42375aa0aad4e6d940d07a161c962c9bb77f5e86e8e50d653f76506372245949"
+    },
+    {
+      "name": "homepage/index.html",
+      "sha256": "e35ecad2427362f33cae681f29ca07a109a70ebe454868fd22d606333cdee0d7"
+    },
+    {
+      "name": "homepage/routing.mjs",
+      "sha256": "67eed08fb9149ac68cf4c07a8f186582b181dbdfffd2ae9838e8e75378c00647"
+    },
+    {
+      "name": "homepage/showcase-v5.css",
+      "sha256": "392c5c00a3ad8262f62ff823f538893ae5877062bcf0b9002d7bd33cf0ab5093"
+    },
+    {
+      "name": "homepage/showcase-v6.css",
+      "sha256": "c326a8bcf53b476139f184acf392ce940a257c568c16da454a248aee1e4dc9ba"
+    },
+    {
+      "name": "homepage/showcase-v7.css",
+      "sha256": "e299337c802c57c6851cb194d509d6a5e5fa06a3a85c91b98a8b7d2994abfbdc"
+    },
+    {
+      "name": "homepage/styles.css",
+      "sha256": "93209b8c15e76b3275f4dfb9de96eb6fcf9f3ab4408eab3fb193fed27fc3c6b6"
+    },
+    {
+      "name": "impressum.html",
+      "sha256": "abc2707cf3f734956b1bee1d12a2cef6a3ddb2b3f16895de7aacca8bdea5dd8d"
+    },
+    {
+      "name": "index.html",
+      "sha256": "8e12ffd4b6e4229e2e9b41b92c90e9c5612870b07e2fc58f078d775ca42b985c"
+    },
+    {
+      "name": "interface.js",
+      "sha256": "08cea481618116309fde7574962acc2720f48b04081ba31e41e0d1d87d27f094"
+    },
+    {
+      "name": "layout-enhancements.js",
+      "sha256": "66890a811ce7cce3b243bb454fb0b7636dd45cf79408b2a1b088a2d62b512917"
+    },
+    {
+      "name": "legal-content.de.json",
+      "sha256": "8a799779ec8532f9ed883bc6a8faac5c7c4f6c840902a2d51e197dff3832497b"
+    },
+    {
+      "name": "legal-pages.css",
+      "sha256": "bf95fe53b9d02b0c76169abb4ee47c5dd43b5056375e2cc89ce90d1e352f5a56"
+    },
+    {
+      "name": "mobile-viewport-polish.js",
+      "sha256": "69549f235189c55b1e36533ca3ef737ed93a54ffb6de7960fe5c43b4af119ad9"
+    },
+    {
+      "name": "ordering-grading.mjs",
+      "sha256": "acbc5795dbb7ab3c0f4fa7281cfeead2e5848658e255bcae1632a76bfa075ea1"
+    },
+    {
+      "name": "practice-solution-publication.mjs",
+      "sha256": "a8d5a16c9fa399f50227c8ffc716dcb9abe959100fc7c1afd10ea3a8a66f1e56"
+    },
+    {
+      "name": "question-feedback-client.mjs",
+      "sha256": "2a358874623ef347b3178e21a474255c0bc43c1c7c7d4f5948adb2f95077d85f"
+    },
+    {
+      "name": "quick-remy-bridge.js",
+      "sha256": "1dc07c6d018625547852ba65a60694f7416fa1449fc1fdb8c70fff61b23470d7"
+    },
+    {
+      "name": "remy-ai-help.js",
+      "sha256": "0f32731b2f00333595a9a0232777f81616f04abd56c4d0101f1a4d6d10645557"
+    },
+    {
+      "name": "review-capture.mjs",
+      "sha256": "654276ea4a9b9834005cbe7e5f2320ec5e5937164d85b1c27508675acb4b66cf"
+    },
+    {
+      "name": "review-mode.css",
+      "sha256": "9c8d41f8dd60073368fdf579334a220f84ac5fd11683c2dc12e3cf1ffc752fca"
+    },
+    {
+      "name": "review-mode.mjs",
+      "sha256": "687e54248970326167b646f8046d435a5b785a503a84382387dd768575e95782"
+    },
+    {
+      "name": "review-store.mjs",
+      "sha256": "f5e2902a98c22e5c3885133b884e300d41bf5434a239241c4b6df6510058f2a0"
+    },
+    {
+      "name": "secure-assessment-client.js",
+      "sha256": "c238fa03f62d6a560c7c1fad440dfaaf977e3ba85b10027f6148cafca9fc8254"
+    },
+    {
+      "name": "secure-assessment-teacher-polish.js",
+      "sha256": "9d3bb2dc37fba594a7f5169f1d23162fd2571378a2118eb5b0400e091e696ce2"
+    },
+    {
+      "name": "secure-audio-publication.mjs",
+      "sha256": "8353628c4a00bfb448ba3c159a1c04ce15685b515f0742b4d7c5d1735441cc07"
+    },
+    {
+      "name": "secure-deadline-guard.js",
+      "sha256": "4f8f7b5493fbedad68b011d6d55b96f41ba736165111a004cf1680f84d444850"
+    },
+    {
+      "name": "secure-draft-persistence.js",
+      "sha256": "2d6d137c2f089c489e4b9a28fc4ae6e4ce370b15ce15fac2c113ba6d3114a3a9"
+    },
+    {
+      "name": "secure-result-policy.js",
+      "sha256": "5132644a4ab93862e9906384f90418f8212c21b714b48db32719ae9e4eb0fbe5"
+    },
+    {
+      "name": "secure-solution-release.js",
+      "sha256": "3c0e4bafd9a2c152c43b471fd9ca00c2f63b736d213ebb601a594e584fae4e25"
+    },
+    {
+      "name": "secure-student-navigation.mjs",
+      "sha256": "c9b94f91cec38d27ab4f5c1b24babbc11d08a3ac9e154e70798e4a79bf47b9ec"
+    },
+    {
+      "name": "secure-student.css",
+      "sha256": "fdd7972aeecc4e8f572de8aa8df6494a0ad2a73327a05799cdb0f033ed130b67"
+    },
+    {
+      "name": "secure-student.html",
+      "sha256": "aabd1e2b44f912f4032effe054dbbabdf734954af93cfa6ceb74e03370f2f316"
+    },
+    {
+      "name": "secure-student.js",
+      "sha256": "b3627a9cd2f4f7983ede0de0c2de844aa499d5114c643488006af2c0ff730a38"
+    },
+    {
+      "name": "shared/i18n/assessment-locale-ui.mjs",
+      "sha256": "eff62eaebc21b580729547239f61e2ac99e682d40b505189280e4f830601a75f"
+    },
+    {
+      "name": "shared/i18n/assessment-locale.mjs",
+      "sha256": "643bb83f7001104019e80e9aa4797546097a8dd6f9dc9e2634a613f023c95d86"
+    },
+    {
+      "name": "shared/i18n/bootstrap.mjs",
+      "sha256": "81d5d57999cb27af6ecb07125012b2ec3a55bd7bbd467a7e6c2779c98a43f5f0"
+    },
+    {
+      "name": "shared/i18n/browser-runtime.mjs",
+      "sha256": "ab2524ea78c839ff7686cbad628553375efeb56306cad18b2a662a37f9563c93"
+    },
+    {
+      "name": "shared/i18n/extensions-en-GB-crew.mjs",
+      "sha256": "2328422c280fa8af3d547daee1563d671ce814204e1c3e025f5b47cfac72bbf5"
+    },
+    {
+      "name": "shared/i18n/i18n-core.mjs",
+      "sha256": "accf1184479991655c04011a41e3413f2214943298b8412ba38494ee33a998ec"
+    },
+    {
+      "name": "shared/i18n/messages-de-DE.mjs",
+      "sha256": "8144151bb1ac7a81b454c8aac52ebac2bfaf6367b5b0642116430b5c995014b6"
+    },
+    {
+      "name": "shared/i18n/messages-en-GB.mjs",
+      "sha256": "05d0e356e3f8d852aaf4c6fad8ecec598c3f1a9575c77b223ac62fae710dc917"
+    },
+    {
+      "name": "shared/math-display.mjs",
+      "sha256": "af6cf53f09043eaec31aa38ef33feb78c769ce30894a7c7a9132e04bfaffae4f"
+    },
+    {
+      "name": "staging-short-login.mjs",
+      "sha256": "b4cc09b67905d8d415c8caeea4ed3bc22a9865999c0d3f7f970771dda99fbfdf"
+    },
+    {
+      "name": "startup.js",
+      "sha256": "4bdb568d104e95558baf5d57c4478a9826ebb5ca248143d2110a022b42fbc476"
+    },
+    {
+      "name": "student-attempt-guard.js",
+      "sha256": "8ba825354c11192a38c4bc99a017e17d383bbace4846ff7138aa567e217613f6"
+    },
+    {
+      "name": "student-submit-confirm.mjs",
+      "sha256": "5a10c2408313cc5d9a12a82e6a4edf089596b74a3344544d51f3391b34e1bdb7"
+    },
+    {
+      "name": "styles.css",
+      "sha256": "0f802837ac2e6612023ee6c82ae4566fdc8f948d45d5eb571487862cb9ecb75c"
+    },
+    {
+      "name": "support.html",
+      "sha256": "8d30de7c8e3cb2ad3ba98937bf786416f24b06ca6987a6cb0cae00b4e07fa83f"
+    },
+    {
+      "name": "teacher-copy-polish.js",
+      "sha256": "eca1762162184197f8ae86bf12a13f98352f9de5695bd1809af9890d231ec27c"
+    },
+    {
+      "name": "tutorial-choice-v1.css",
+      "sha256": "3a985483241fcd51218731754d668040d4cf5ef87e536d401ecc58e355c6dd07"
+    },
+    {
+      "name": "tutorial-ordering-guard.js",
+      "sha256": "140b1ac6de4b54747c7d086c8f8681d3837e7289e142edcba564db90875af106"
+    },
+    {
+      "name": "tutorial-signins.mjs",
+      "sha256": "2ae6f8a95964497b64cda52512bb925063170e80d700d3359cf3ebc78e4e5611"
+    },
+    {
+      "name": "tutorial-variant-fallback.js",
+      "sha256": "80368103a145b146347f6a7514cc74a7806ce1ff0bdde2b457300698b9e1ae25"
+    },
+    {
+      "name": "ui-enhancements.js",
+      "sha256": "b166c5cdf4651da200b9fc520632d9f00303fef92980cacf6d579980a3e9f50a"
+    },
+    {
+      "name": "variant-enhancements.js",
+      "sha256": "3e882657500ba401977edda81cb8f9ddfd6e4de38769490413e2b0dca6c87f17"
+    },
+    {
+      "name": "visual-enhancements.js",
+      "sha256": "fe0b396052cba3993ecee3e01c311185842c9c7c96f332e374cb3ef098772187"
+    },
+    {
+      "name": "workspace.css",
+      "sha256": "85983ef15b3e25c203a6a7bfbd423ff40eecba8f9124936994f9bc73c798c836"
+    },
+    {
+      "name": "workspace.html",
+      "sha256": "eedb9b4a29e19610bec618d3aac7c8cfa7309eb5d55a4423efa8eb8f515e7785"
+    }
+  ]
+}
