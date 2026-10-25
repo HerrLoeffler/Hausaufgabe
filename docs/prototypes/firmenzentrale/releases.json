@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-25T11:08:17.171787+00:00",
+  "checkedAt": "2026-10-25T11:31:31.925702+00:00",
   "environments": [
     {
       "id": "live",
@@ -60,8 +60,8 @@
       "source": "Chat-/PR-/Main-Abgleich25.10.2026",
       "next": "Kandidaten und fehlende Prüfungen unten ansehen.",
       "baseline": {
-        "checkedAt": "2026-10-25T11:08:17.560689+00:00",
-        "commit": "a396feedccf0d41ecf48c0e23e3e99d53e1cbf3a",
+        "checkedAt": "2026-10-25T11:31:31.925702+00:00",
+        "commit": "731d97eb70c5a09142319268695e6063d4235b1b",
         "version": "2.3.1-gc45-rc1",
         "project": "gradecrew-staging-2026",
         "environment": "staging"
@@ -264,6 +264,20 @@
       "next": "Aktuellen Einsatz und gültige Testadresse mit zuständigem Fachchat klären."
     },
     {
+      "id": "pilot-review-local",
+      "name": "Aufgaben · Lehrkraft-Prüfansicht",
+      "kind": "local",
+      "url": "http://127.0.0.1:8897/tools/visual-pilot/?ansicht=pruefen",
+      "purpose": "192 Aufgaben schnell durchsehen und lokal als Entwurf bearbeiten; keine Veröffentlichung",
+      "area": "learning",
+      "project": null,
+      "expiresAt": null,
+      "aliases": [],
+      "manifest": null,
+      "source": "Fachchat25.10.2026 / PR296",
+      "next": "Korrigierte Aufgaben fachlich prüfen; lokale Entwürfe bewusst zur Umsetzung übergeben."
+    },
+    {
       "id": "secure2026",
       "name": "Secure TestFlight · 2026",
       "kind": "native",
@@ -300,16 +314,16 @@
       "task": "GC-VISUAL-PROTOTYPE-AI-02",
       "owner": "Lernen / Aufgaben-Fachchat",
       "pr": 296,
-      "prHead": "136cccc8fda00505f2ff0f3695c3cbb26f453958",
-      "sourceCommit": "a396feedccf0d41ecf48c0e23e3e99d53e1cbf3a",
+      "prHead": "fda13a26d1c4b4cdeadd3689a1280cdd68beb765",
+      "sourceCommit": "731d97eb70c5a09142319268695e6063d4235b1b",
       "testEnvironment": "visual255",
       "targetEnvironment": "live",
       "components": [
-        "Hosting",
-        "16 visual255-Testfunktionen"
+        "Hosting731d97eb",
+        "visual255-Backend2ae8fb6"
       ],
-      "done": "192 Aufgaben gelesen;120 Server-/Resume-Fälle und180 Hostingdateien geprüft.",
-      "gap": "Lehrkraft-, Touch-/Screenreaderprüfung und Unterrichtseignung offen.",
+      "done": "192 Aufgaben und 120 ursprüngliche Serverfälle; neue Fassung mit 34 gezielten Tests, 293 Backend- und 97 Assessmenttests sowie sechs zusätzlichen Serverfällen. Mausbedienung geprüft.",
+      "gap": "Physische Finger-/Screenreaderprüfung und menschliche Fachabnahme fehlen. Katalog-Konzeptauftrag noch nicht ausgewertet.",
       "next": "Pro Fach repräsentative Aufgaben fachlich und auf Zielgeräten abnehmen.",
       "checks": [
         {
@@ -329,15 +343,19 @@
         {
           "label": "PR / abgegrenzte Nachweise",
           "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/296"
+        },
+        {
+          "label": "Nachtests und Korrekturbericht",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/blob/fda13a26d1c4b4cdeadd3689a1280cdd68beb765/docs/evidence/visual-pilot-24-20261025/followup/REPORT.md"
         }
       ],
       "automated": {
         "status": "reported",
-        "sha": "a396feedccf0d41ecf48c0e23e3e99d53e1cbf3a",
+        "sha": "731d97eb70c5a09142319268695e6063d4235b1b",
         "evidence": "192 Aufgaben gelesen;120 Server-/Resume-Fälle und180 Hostingdateien geprüft."
       },
       "deployment": {
-        "sha": "a396feedccf0d41ecf48c0e23e3e99d53e1cbf3a",
+        "sha": "731d97eb70c5a09142319268695e6063d4235b1b",
         "environment": "visual255",
         "evidence": "PR296 / Pilotbericht"
       },
@@ -360,7 +378,7 @@
         "betroffene Backenddienste"
       ],
       "done": "PR297 zusammengeführt;287 Backend- und414 Web-/Connectortests laut Nachweis.",
-      "gap": "Kein Veröffentlichungsbeleg; tatsächliche historische Bewertungen nicht ausgewertet.",
+      "gap": "Veröffentlichung und bestätigte Verarbeitung der Rückmeldungen offen; historische Bewertungen wurden inzwischen gelesen.",
       "next": "Integrierten Kandidaten und Testdeploy festlegen; bestätigte Speicherung vor Entfernen prüfen.",
       "checks": [
         {
@@ -460,8 +478,8 @@
         "StudentIdentity"
       ],
       "done": "Vier Lernmodelle;372 Backend- und62 UI-Tests laut Fachchat.",
-      "gap": "Dienststart fehlgeschlagen; Katalog und Profil HTTP500. Hosting und letzter guter Backendstand unterscheiden sich.",
-      "next": "Ursache anhand vorhandener Serverlogs eingrenzen; kein dritter blinder Deploy.",
+      "gap": "Neuer Fachchat meldet abgeschlossene Nachtests; exakter Laufzeit-/Sourcebeleg gegenüber früherem Serverfehler noch zuzuordnen.",
+      "next": "Neue Nachtestbelege und tatsächlich erreichbare Version abgleichen, bevor der frühere Engpass geschlossen wird.",
       "checks": [
         {
           "id": "fachlich",
@@ -590,7 +608,7 @@
       "id": "GC-MATH-CLASSROOM",
       "name": "Mathe-Gruppenrunden",
       "area": "games",
-      "task": "GC-MATH-CLASSROOM",
+      "task": null,
       "owner": "Games-Fachchat",
       "pr": 240,
       "prHead": "0c8c88319d25a339008bbab20ed5504fe768ec03",
@@ -637,7 +655,7 @@
       "id": "GC-WISSENSREISE",
       "name": "Wissensreise",
       "area": "games",
-      "task": "GC-WISSENSREISE",
+      "task": null,
       "owner": "Games-Fachchat",
       "pr": 238,
       "prHead": "ec7512600bf6d48541cb304d746dca96b78358b5",
@@ -731,7 +749,7 @@
       "id": "GC-FASTQUIZ-BINOMIAL",
       "name": "Fast Quiz · Binome",
       "area": "games",
-      "task": "GC-FASTQUIZ-BINOMIAL",
+      "task": null,
       "owner": "Games-Fachchat",
       "pr": 224,
       "prHead": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
@@ -778,13 +796,13 @@
       "id": "GC-SECURE-KEYBOARD",
       "name": "iPad-Startknopf bei offener Tastatur",
       "area": "native",
-      "task": "GC-SECURE-KEYBOARD",
+      "task": null,
       "owner": "Native / Classroom",
       "pr": 294,
       "prHead": "b156c122dc3243049fa1c9fc7fbedb85b8d249cb",
       "sourceCommit": "b156c122dc3243049fa1c9fc7fbedb85b8d249cb",
       "testEnvironment": "secure2026",
-      "targetEnvironment": "live",
+      "targetEnvironment": "securestore",
       "components": [
         "Native Secure"
       ],
@@ -815,6 +833,100 @@
         "status": "reported",
         "sha": "b156c122dc3243049fa1c9fc7fbedb85b8d249cb",
         "evidence": "Echte Simulator-XCUI-Tests auf iPad/iPhone, Hoch-/Querformat."
+      },
+      "deployment": null,
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": false
+    },
+    {
+      "id": "GC-VISUAL-LABELS-300",
+      "name": "Beschriftungen und Zuordnungen",
+      "area": "design",
+      "task": "GC-VISUAL-PROTOTYPE-AI-02",
+      "owner": "GC · Design / Homepage-Fachchat",
+      "pr": 300,
+      "prHead": "1f63c959655866210942dad39ca36217d10dc7ab",
+      "sourceCommit": "1f63c959655866210942dad39ca36217d10dc7ab",
+      "testEnvironment": "home-local",
+      "targetEnvironment": "live",
+      "components": [
+        "Hosting / visuelle Renderer"
+      ],
+      "done": "Zwölf Formate, Tastatur, Umbruch und erneute Zuordnung im Browser geprüft.",
+      "gap": "PR300 hängt von PR265 ab; noch nicht veröffentlicht.",
+      "next": "Gestapelten Kandidaten mit PR265 integrieren und danach konkrete Testbereitstellung abnehmen.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "Änderung und Prüfungen",
+          "url": "https://github.com/HerrLoeffler/Hausaufgabe/pull/300"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "1f63c959655866210942dad39ca36217d10dc7ab",
+        "evidence": "Zwölf Formate, Tastatur, Umbruch und erneute Zuordnung im Browser geprüft."
+      },
+      "deployment": null,
+      "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",
+      "sourceConfirmed": true
+    },
+    {
+      "id": "GC-DESIGN-05",
+      "name": "Neue Homepage und Einstieg",
+      "area": "design",
+      "task": "GC-DESIGN-05",
+      "owner": "GC · Design / Homepage-Fachchat",
+      "pr": null,
+      "prHead": null,
+      "sourceCommit": "lokaler Showcase; exakte Produktversion offen",
+      "testEnvironment": "home-local",
+      "targetEnvironment": "live",
+      "components": [
+        "Homepage",
+        "Login / Onboarding",
+        "Audio"
+      ],
+      "done": "Lokale Homepage überarbeitet; sieben Bewertungsprüfungen und Browserprüfung dokumentiert.",
+      "gap": "Homepage noch nicht in Produkt eingebaut; Login, Audio und Maildienst/Absender für Onboarding offen.",
+      "next": "Maildienst klären, Homepage in begrenzten Testkandidaten integrieren und Login/Tutorial/Audio abnehmen.",
+      "checks": [
+        {
+          "id": "fachlich",
+          "label": "Fachliche Referenzfälle"
+        },
+        {
+          "id": "geraete",
+          "label": "Physische Zielgeräte"
+        },
+        {
+          "id": "regression",
+          "label": "Bestand und Fehlerwege"
+        }
+      ],
+      "evidence": [
+        {
+          "label": "Zuständigen Fachchat im Bereichsstand prüfen",
+          "url": "http://127.0.0.1:8796/#/arbeit/landkarte/design"
+        }
+      ],
+      "automated": {
+        "status": "reported",
+        "sha": "lokaler Showcase; exakte Produktversion offen",
+        "evidence": "Lokale Homepage überarbeitet; sieben Bewertungsprüfungen und Browserprüfung dokumentiert."
       },
       "deployment": null,
       "releasePreparation": "Integration, betroffene Komponenten, Rückfallplan und ausdrückliche Livefreigabe fehlen.",

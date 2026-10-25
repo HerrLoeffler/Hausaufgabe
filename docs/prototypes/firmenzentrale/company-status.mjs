@@ -1,12 +1,12 @@
 export const companyAudit = {
-  "checkedAt": "2026-10-25T11:08:17.158248+00:00",
+  "checkedAt": "2026-10-25T11:31:31.925702+00:00",
   "main": "41af350be3f99d7f6d6b2782ac56b3db2140171e",
   "scope": "38 bekannte Codex-Chats: jüngste Meldungen; Classroom/Native zusätzlich vertieft. 12 Cloudchats jüngster lesbarer Stand, teils gekürzt. Anhänge und gesamte historische Produktarbeit nicht vollständig abgenommen.",
   "areas": {
     "web": {
       "status": "Bestand + neue Kandidaten",
       "built": "Web ist auf gradecrew.de erreichbar. Neue Remy-Bedienung ist konzipiert; Wilma-Prüfprototyp und Aufgabenfeedback haben eigene Nachweise.",
-      "gap": "Konzept, lokaler Prototyp, integrierter Code und Veröffentlichung sind unterschiedliche Stände.",
+      "gap": "Konzept, lokaler Prototyp, integrierter Feedbackcode und tatsächliche Veröffentlichung unterscheiden; Verarbeitung von Feedback separat nachweisen.",
       "next": "Aufgabenfeedback am integrierten Stand dem Test- und Veröffentlichungsweg zuordnen.",
       "owner": "Web / Design / Analytics",
       "chats": [
@@ -23,13 +23,13 @@ export const companyAudit = {
         {
           "id": "01a15f1d-8adf-77e0-831d-f97cfcd0e5e2",
           "title": "GC · Nutzungsanalyse & PostHog – Umsetzung",
-          "updatedAt": 1792926494
+          "updatedAt": 1792927870
         }
       ],
       "links": [
         "https://github.com/HerrLoeffler/Hausaufgabe/pull/297"
       ],
-      "checkedAt": "2026-10-25T11:08:17.158248+00:00"
+      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
     },
     "classroom": {
       "status": "2026 testbereit",
@@ -48,7 +48,7 @@ export const companyAudit = {
         "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40186256526",
         "https://gradecrew-staging-2026.web.app/release.json"
       ],
-      "checkedAt": "2026-10-25T11:08:17.158248+00:00"
+      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
     },
     "native": {
       "status": "Apple- und Geräteprüfung offen",
@@ -72,7 +72,7 @@ export const companyAudit = {
         "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40186256526",
         "https://github.com/HerrLoeffler/Hausaufgabe/pull/294"
       ],
-      "checkedAt": "2026-10-25T11:08:17.158248+00:00"
+      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
     },
     "games": {
       "status": "Prototypen und Teststände",
@@ -103,24 +103,24 @@ export const companyAudit = {
         "https://github.com/HerrLoeffler/Hausaufgabe/pull/236",
         "https://github.com/HerrLoeffler/Hausaufgabe/pull/224"
       ],
-      "checkedAt": "2026-10-25T11:08:17.158248+00:00"
+      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
     },
     "learning": {
-      "status": "Lernserver blockiert",
-      "built": "24 Probetests mit 192 geprüften Aufgaben liegen auf visual255. Vier adaptive Lernmodelle und Kapiteltestkandidat sind gesichert.",
-      "gap": "Adaptiver Server liefert Fehler; Lehrkraft-/Geräteabnahme der neuen Formate fehlt. Materialarbeit ist pausiert.",
-      "next": "Adaptiven Serverfehler eingrenzen; unabhängig davon Probetests fachlich und auf Zielgeräten abnehmen.",
+      "status": "Neue Nachtests abgleichen",
+      "built": "24 Probetests samt Korrekturen liegen auf visual255; Mausbedienung geprüft. Adaptiver Fachchat meldet neue Nachtests abgeschlossen.",
+      "gap": "Letzter ausführlicher Runtimebeleg meldete Serverfehler; neuer Nachtestbericht muss mit Source/Deploy abgeglichen werden. Finger-/Fachabnahme der Formate offen.",
+      "next": "Neue adaptive Nachtests und Laufzeitnachweise zuordnen; korrigierte Probetests fachlich und auf Touchgeräten abnehmen.",
       "owner": "Lernen / Aufgabenformate / Kapiteltests",
       "chats": [
         {
           "id": "01a158f7-7f85-77e1-9448-b32682030c05",
           "title": "GC · Adaptives Lernen – Konzept & Realisierung",
-          "updatedAt": 1792744185
+          "updatedAt": 1792927886
         },
         {
           "id": "01a15a72-d74c-79a3-a180-2bd47a23d663",
           "title": "GC · Erweiterte Aufgabentypen – Plan…",
-          "updatedAt": 1792926482
+          "updatedAt": 1792927783
         },
         {
           "id": "01a1282d-7f9d-7ee3-b7a8-d0c0da8967c2",
@@ -138,13 +138,13 @@ export const companyAudit = {
         "https://github.com/HerrLoeffler/Hausaufgabe/pull/262",
         "https://github.com/HerrLoeffler/Hausaufgabe/pull/254"
       ],
-      "checkedAt": "2026-10-25T11:08:17.158248+00:00"
+      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
     },
     "design": {
       "status": "Konzept + lokale Vorschau",
-      "built": "Kanonische Marke vorhanden. Neuer Remy-Einstieg ist Konzept; Startseite wird lokal geprüft.",
-      "gap": "Neue Remy-Bedienung noch nicht umgesetzt. Audiointonation und echte Geräteabnahme nicht belegt.",
-      "next": "Remy-Konzept in abgegrenzte Umsetzung überführen und aktuellen lokalen Startseitenstand abnehmen.",
+      "built": "Startseite lokal überarbeitet und geprüft; Beschriftungskorrektur in PR300. Neuer Remy-Einstieg bleibt Konzept.",
+      "gap": "Homepage noch nicht integriert; PR300 hängt von PR265 ab. Maildienst/Absender für Onboarding noch zu klären.",
+      "next": "Maildienst klären und lokale Homepage mit Login, Audio und Tutorial in einen Testkandidaten integrieren.",
       "owner": "GC · Design / Startseite",
       "chats": [
         {
@@ -155,16 +155,16 @@ export const companyAudit = {
         {
           "id": "01a1638a-ad42-77d2-885a-77fd743f774f",
           "title": "GradeCrew-Design modernisieren",
-          "updatedAt": 1792926494
+          "updatedAt": 1792927880
         }
       ],
       "links": [],
-      "checkedAt": "2026-10-25T11:08:17.158248+00:00"
+      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
     },
     "operations": {
       "status": "Versionen getrennt belegt",
       "built": "gradecrew.de und alte Schuladresse liefern denselben Hostingstand. 2026 ist getrennt; visual255 besitzt einen eigenen Kandidaten.",
-      "gap": "Hostingmanifest beweist keine vollständige Backend-/Rules-/Gerätefreigabe. Mehrere Kandidaten warten auf Zuordnung.",
+      "gap": "Neue adaptive Nachtests und geänderte Aufgaben-Vorschau brauchen erneuten Versionsabgleich. Hosting allein belegt keine Backend-/Gerätefreigabe.",
       "next": "Seiten & Releases: zuerst fehlende Test-/Zielzuordnungen und abgelaufene Vorschauen klären.",
       "owner": "Technik / Release-Verantwortliche",
       "chats": [
@@ -176,54 +176,54 @@ export const companyAudit = {
         {
           "id": "01a158f7-7f85-77e1-9448-b32682030c05",
           "title": "GC · Adaptives Lernen – Konzept & Realisierung",
-          "updatedAt": 1792744185
+          "updatedAt": 1792927886
         }
       ],
       "links": [
         "https://gradecrew.de/release.json",
         "https://gradecrew-staging-2026.web.app/release.json"
       ],
-      "checkedAt": "2026-10-25T11:08:17.158248+00:00"
+      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
     },
     "customers": {
       "status": "Feedbackcode integriert",
-      "built": "Aufgabenfeedback PR297 ist zusammengeführt. Analytics PR263 ist ein separat geprüfter, deaktivierter Kandidat.",
-      "gap": "Veröffentlichung des Feedbackcodes und Analytics-Datenfluss fehlen; historische Livebewertungen sind nicht ausgewertet.",
-      "next": "Feedbackkandidat im Testsystem prüfen; Analytics-Konfigurationsweg und Zweckinformation separat klären.",
+      "built": "Aufgabenfeedback PR297 ist zusammengeführt. Historische Bewertungen wurden im Fachchat abgerufen; Analytics PR263 bleibt deaktiviert.",
+      "gap": "Veröffentlichung des neuen Feedbackwegs fehlt. Alter Status „erledigt“ beweist keine tatsächliche Verwendung durch die KI.",
+      "next": "Feedbackweg bis zur nachvollziehbaren Verarbeitung prüfen; Analytics-Konfiguration und echten Testfluss separat klären.",
       "owner": "GC · Analytics / Kunden",
       "chats": [
         {
           "id": "01a15f1d-8adf-77e0-831d-f97cfcd0e5e2",
           "title": "GC · Nutzungsanalyse & PostHog – Umsetzung",
-          "updatedAt": 1792926494
+          "updatedAt": 1792927870
         },
         {
           "id": "01a135dd-f37c-7e01-9f60-e197ebd1f6f0",
           "title": "GC · Investmentgespräch – Zentrale",
-          "updatedAt": 1792922371
+          "updatedAt": 1792926661
         }
       ],
       "links": [
         "https://github.com/HerrLoeffler/Hausaufgabe/pull/297",
         "https://github.com/HerrLoeffler/Hausaufgabe/pull/263"
       ],
-      "checkedAt": "2026-10-25T11:08:17.158248+00:00"
+      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
     },
     "strategy": {
       "status": "Entscheidungen offen",
       "built": "Finanzierung, Angebote und VIDIS-Prüfweg sind besprochen.",
       "gap": "Verbindliche Mittel, Prioritäten und Schul-Piloten sind nicht bestätigt; VIDIS ersetzt keine Finanzierung.",
-      "next": "Pilotumfang, Verantwortliche und Entscheidungstermine mit Finanzierung und VIDIS-Prüfweg getrennt festlegen.",
+      "next": "FWU-Ansprechpartner und Prüfliste für VIDIS klären; Pilotumfang, Verantwortliche und Finanzierung getrennt entscheiden.",
       "owner": "Unternehmensführung",
       "chats": [
         {
           "id": "01a135dd-f37c-7e01-9f60-e197ebd1f6f0",
           "title": "GC · Investmentgespräch – Zentrale",
-          "updatedAt": 1792922371
+          "updatedAt": 1792926661
         }
       ],
       "links": [],
-      "checkedAt": "2026-10-25T11:08:17.158248+00:00"
+      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
     },
     "governance": {
       "status": "Schul- und Anbieterbelege offen",
@@ -235,7 +235,7 @@ export const companyAudit = {
       "links": [
         "https://github.com/HerrLoeffler/Hausaufgabe/pull/259"
       ],
-      "checkedAt": "2026-10-25T11:08:17.158248+00:00"
+      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
     },
     "central": {
       "status": "Lokaler Arbeitsweg vorhanden",
@@ -247,7 +247,7 @@ export const companyAudit = {
       "links": [
         "https://github.com/HerrLoeffler/Hausaufgabe/pull/295"
       ],
-      "checkedAt": "2026-10-25T11:08:17.158248+00:00"
+      "checkedAt": "2026-10-25T11:31:31.925702+00:00"
     }
   },
   "updates": {
@@ -287,9 +287,9 @@ export const companyAudit = {
       "priority": "next"
     },
     "customers/feedback": {
-      "current": "Aufgabenfeedback PR297 ist zusammengeführt. Analytics PR263 ist ein separat geprüfter, deaktivierter Kandidat.",
-      "gap": "Veröffentlichung des Feedbackcodes und Analytics-Datenfluss fehlen; historische Livebewertungen sind nicht ausgewertet.",
-      "next": "Feedbackkandidat im Testsystem prüfen; Analytics-Konfigurationsweg und Zweckinformation separat klären.",
+      "current": "Aufgabenfeedback PR297 ist zusammengeführt. Historische Bewertungen wurden im Fachchat abgerufen; Analytics PR263 bleibt deaktiviert.",
+      "gap": "Veröffentlichung des neuen Feedbackwegs fehlt. Alter Status „erledigt“ beweist keine tatsächliche Verwendung durch die KI.",
+      "next": "Feedbackweg bis zur nachvollziehbaren Verarbeitung prüfen; Analytics-Konfiguration und echten Testfluss separat klären.",
       "state": "review",
       "priority": "next"
     },
@@ -336,31 +336,31 @@ export const companyAudit = {
       "priority": "next"
     },
     "web/formate-audio": {
-      "current": "24 Probetests mit 192 geprüften Aufgaben liegen auf visual255. Vier adaptive Lernmodelle und Kapiteltestkandidat sind gesichert.",
+      "current": "24 Probetests /192 Aufgaben; zusätzliche Korrekturen und ±3° Winkeltoleranz auf visual255. Mausbedienung und sechs neue Serverfälle geprüft.",
       "gap": "Neue Formate sind auf visual255, nicht automatisch auf der Schul-Liveseite.",
       "next": "Je Format fachliche Bewertung und Touch-/Audiofälle am exakten Pilotstand abnehmen.",
       "state": "review",
       "priority": "next"
     },
     "learning/erneuerungen": {
-      "current": "24 Probetests, 192 Aufgaben, zwölf Formate; 120 Server- und Resume-Fälle und Bestandsregressionen dokumentiert.",
-      "gap": "Lehrkraftprüfung, physische Geräte und Unterrichtswirkung fehlen.",
-      "next": "Repräsentativen Test pro Fach und Format fachlich prüfen; Fehler mit Kandidat und Regression protokollieren.",
+      "current": "24 Probetests /192 Aufgaben; zusätzliche Korrekturen und ±3° Winkeltoleranz auf visual255. Mausbedienung und sechs neue Serverfälle geprüft.",
+      "gap": "Physische Finger-/Screenreaderprüfung und menschliche Fachabnahme offen. Neuer Katalog-Konzeptauftrag noch nicht ausgewertet.",
+      "next": "Korrigierte Fassungen fachlich und per Touch prüfen; Aufgabenkatalog in bestehende Formatfamilien einordnen.",
       "state": "review",
       "priority": "next"
     },
     "learning/adaptiv": {
-      "current": "Vier adaptive Modelle entwickelt und automatisch geprüft; letzter Backendkorrekturstand nicht lauffähig.",
-      "gap": "Katalog/Profil HTTP500 und Cloud-Run-Startfehler; Fundus im echten Lernlauf nicht abgenommen.",
-      "next": "Vorhandene Start-/Serverprotokolle eingrenzen und erst nach belegter Reparatur denselben Lernfall wiederholen.",
-      "state": "blocker",
+      "current": "Vier adaptive Lernmodelle geprüft; aktueller Fachchat meldet Nachtests abgeschlossen und bereitet eine neue Sitzung vor.",
+      "gap": "Neuer Nachteststand gegenüber zuletzt dokumentiertem Serverfehler noch ohne zugeordneten Deploy-/Laufzeitbeleg.",
+      "next": "Neue Nachtest- und Versionsbelege des bestehenden Fachchats prüfen; danach denselben Lernlauf einschließlich Fundus abnehmen.",
+      "state": "clarify",
       "priority": "urgent"
     },
     "learning/fundus": {
-      "current": "Vier adaptive Modelle entwickelt und automatisch geprüft; letzter Backendkorrekturstand nicht lauffähig.",
-      "gap": "Katalog/Profil HTTP500 und Cloud-Run-Startfehler; Fundus im echten Lernlauf nicht abgenommen.",
-      "next": "Vorhandene Start-/Serverprotokolle eingrenzen und erst nach belegter Reparatur denselben Lernfall wiederholen.",
-      "state": "blocker",
+      "current": "Vier adaptive Lernmodelle geprüft; aktueller Fachchat meldet Nachtests abgeschlossen und bereitet eine neue Sitzung vor.",
+      "gap": "Neuer Nachteststand gegenüber zuletzt dokumentiertem Serverfehler noch ohne zugeordneten Deploy-/Laufzeitbeleg.",
+      "next": "Neue Nachtest- und Versionsbelege des bestehenden Fachchats prüfen; danach denselben Lernlauf einschließlich Fundus abnehmen.",
+      "state": "clarify",
       "priority": "urgent"
     },
     "learning/medien": {
@@ -420,24 +420,24 @@ export const companyAudit = {
       "priority": "next"
     },
     "design/crew": {
-      "current": "Kanonische Marke vorhanden. Neuer Remy-Einstieg ist Konzept; Startseite wird lokal geprüft.",
-      "gap": "Neue Remy-Bedienung noch nicht umgesetzt. Audiointonation und echte Geräteabnahme nicht belegt.",
-      "next": "Remy-Konzept in abgegrenzte Umsetzung überführen und aktuellen lokalen Startseitenstand abnehmen.",
+      "current": "Startseite lokal überarbeitet und geprüft; Beschriftungskorrektur in PR300. Neuer Remy-Einstieg bleibt Konzept.",
+      "gap": "Homepage noch nicht integriert; PR300 hängt von PR265 ab. Maildienst/Absender für Onboarding noch zu klären.",
+      "next": "Maildienst klären und lokale Homepage mit Login, Audio und Tutorial in einen Testkandidaten integrieren.",
       "state": "review",
       "priority": "next"
     },
     "design/dashboard": {
-      "current": "Kanonische Marke vorhanden. Neuer Remy-Einstieg ist Konzept; Startseite wird lokal geprüft.",
-      "gap": "Neue Remy-Bedienung noch nicht umgesetzt. Audiointonation und echte Geräteabnahme nicht belegt.",
-      "next": "Remy-Konzept in abgegrenzte Umsetzung überführen und aktuellen lokalen Startseitenstand abnehmen.",
+      "current": "Startseite lokal überarbeitet und geprüft; Beschriftungskorrektur in PR300. Neuer Remy-Einstieg bleibt Konzept.",
+      "gap": "Homepage noch nicht integriert; PR300 hängt von PR265 ab. Maildienst/Absender für Onboarding noch zu klären.",
+      "next": "Maildienst klären und lokale Homepage mit Login, Audio und Tutorial in einen Testkandidaten integrieren.",
       "state": "review",
       "priority": "next"
     },
     "operations/backend": {
-      "current": "Classroom ist laut aktuellem Fachbericht auf2026 testbereit.",
-      "gap": "Der adaptive Lernserver bleibt separat gestört.",
-      "next": "Nur den adaptiven Cloud-Run-Start und Katalog/Profilfehler eingrenzen.",
-      "state": "blocker",
+      "current": "Vier adaptive Lernmodelle geprüft; aktueller Fachchat meldet Nachtests abgeschlossen und bereitet eine neue Sitzung vor.",
+      "gap": "Neuer Nachteststand gegenüber zuletzt dokumentiertem Serverfehler noch ohne zugeordneten Deploy-/Laufzeitbeleg.",
+      "next": "Neue Nachtest- und Versionsbelege des bestehenden Fachchats prüfen; danach denselben Lernlauf einschließlich Fundus abnehmen.",
+      "state": "clarify",
       "priority": "urgent"
     },
     "customers/analytics": {
@@ -450,7 +450,7 @@ export const companyAudit = {
     "strategy/partner": {
       "current": "Finanzierung, Angebote und VIDIS-Prüfweg sind besprochen.",
       "gap": "Verbindliche Mittel, Prioritäten und Schul-Piloten sind nicht bestätigt; VIDIS ersetzt keine Finanzierung.",
-      "next": "Pilotumfang, Verantwortliche und Entscheidungstermine mit Finanzierung und VIDIS-Prüfweg getrennt festlegen.",
+      "next": "FWU-Ansprechpartner und Prüfliste für VIDIS klären; Pilotumfang, Verantwortliche und Finanzierung getrennt entscheiden.",
       "state": "clarify",
       "priority": "next"
     },
@@ -477,5 +477,5 @@ export const companyAudit = {
     }
   }
 };
-export const areaStatus = companyAudit.areas;
+export const areaStatus = Object.fromEntries(Object.entries(companyAudit.areas).map(([id,a])=>[id,{...a,main:companyAudit.main}]));
 export function auditChild(child){const a=areaStatus[child.domainId],u=companyAudit.updates[child.domainId+"/"+child.id];return {...child,...u,auditCheckedAt:companyAudit.checkedAt,source:u?`Bereichsabgleich25.10.2026 · ${a.owner}`:child.source,sourceDate:u?"2026-10-25":child.sourceDate,why:u?u.gap:child.why,reviewLimit:u?"Teilstand abgeglichen; Abschlusskriterien weiterhin einzeln prüfen.":"Im aktuellen Abgleich kein neuer belastbarer Einzelabschluss gefunden; bestehende Lücke bleibt offen."};}

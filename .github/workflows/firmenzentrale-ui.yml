@@ -28,6 +28,7 @@ jobs:
           node --check docs/prototypes/firmenzentrale/network-view.mjs
           node --check docs/prototypes/firmenzentrale/focus-view.mjs
           node --check docs/prototypes/firmenzentrale/runtime-view.mjs
+          node --check docs/prototypes/firmenzentrale/release-view.mjs
       - name: Test navigation, evidence and draft persistence
         run: node --test tests/firmenzentrale/*.test.mjs
       - name: Test local broker without model calls or credentials

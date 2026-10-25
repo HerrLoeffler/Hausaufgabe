@@ -97,10 +97,24 @@ Vorhandene App-Aufträge und ihre Versuchs-/Berichtsdaten bleiben erhalten. Kein
 
 ## 11. Ausführbare Schritte
 
-- [ ] Fachquellen und aktuelle öffentliche Releasebelege erfassen; Konflikte und Grenzen dokumentieren; Plan sichern.
-- [ ] Importfrische reparieren und testen; alle elf Bereiche und62 Unterthemen nachvollziehbar aktualisieren.
-- [ ] Umgebungs-/Kandidatenmodell, lesenden Abgleich und exakte Gatebindung implementieren und testen.
-- [ ] Privates Prüfjournal mit vorhandenen Zugriffsschutzgrenzen implementieren und testen.
-- [ ] Bereichsstand und „Seiten & Releases“ in die einheitliche Oberfläche einbauen; konkrete Arbeitsvorbereitung.
-- [ ] Browserprüfung Desktop/Mobil, Regression, private Datenprüfung und genaue Nachweise sichern.
-- [ ] Bestehenden DraftPR295 aktualisieren, exakte CI/Blobgleichheit prüfen; Live unverändert melden.
+- [x] Fachquellen und aktuelle öffentliche Releasebelege erfassen; Konflikte und Grenzen dokumentieren; Plan sichern.
+- [x] Importfrische reparieren und testen; alle elf Bereiche und62 Unterthemen nachvollziehbar aktualisieren.
+- [x] Umgebungs-/Kandidatenmodell, lesenden Abgleich und exakte Gatebindung implementieren und testen.
+- [x] Privates Prüfjournal mit vorhandenen Zugriffsschutzgrenzen implementieren und testen.
+- [x] Bereichsstand und „Seiten & Releases“ in die einheitliche Oberfläche einbauen; konkrete Arbeitsvorbereitung.
+- [x] Browserprüfung Desktop/Mobil, Regression, private Datenprüfung und genaue Nachweise sichern.
+- [x] Bestehenden DraftPR295 aktualisieren, exakte CI/Blobgleichheit prüfen; Live unverändert melden.
+
+## 12. Umgesetzter Stand und Betriebsvertrag
+
+Abgleich25.10.2026: alle38bekannten Codex-Chats erneut technisch lesbar; aktuelle Meldungen ausgewertet, Classroom/Native zusätzlich vertieft.12Cloudchats jüngster lesbarer Stand geprüft, teils gekürzt.11Bereiche,32gezielt aktualisierte Unterthemen; bei30weiteren kein neuer belastbarer Einzelabschluss. Historische Detailakten bleiben im Verlauf erhalten. Kein Versprechen einer vollständigen fachlichen Prüfung sämtlicher Anhänge und aller früheren Produktfassungen.
+
+Seitenregister:10bekannte öffentliche Umgebungen (einschließlich historischer),8lokale Vorschauen,2native Verteilungen.13Kandidaten einschließlich neuer Homepage und separatem Beschriftungs-PR300. Livealias wird nicht doppelt gezählt. Fünf alte Vorschau-Manifeste liefern404; dies beweist fehlenden Versionsnachweis, nicht automatisch den Ausfall sämtlicher Backenddienste.
+
+Nachgezogene Änderungen: Classroom2026 ist testbereit, Secure1221 Upload bestätigt, Store1192 separat; visual255 nun Hosting731d97eb mit Korrekturen und zusätzlicher Lehrkraft-Prüfansicht8897. Adaptive Nachtests laut neuem Fachchat abgeschlossen, aber genauer Source-/Runtimebeleg gegenüber früherem Serverfehler noch abzugleichen. Historische Aufgabenrückmeldungen im Fachchat inzwischen gelesen; keine privaten Feedbackinhalte übernommen.
+
+Der lokale Dienst liest öffentliche Hosting-Manifeste alle300Sekunden und zeigt Fehler/Veralterung. Chat-/PR-Änderungen erzeugen Prüfbedarf. Kuratierte Fachstände werden bewusst nicht aus beliebigem Chattext automatisch auf Grün gesetzt. Ein zuständiger Fachauftrag prüft die Differenz und aktualisiert Quelle/Kandidat samt Abschlusskriterien. Das lokale Prüfjournal ist append-only, quellgebunden und idempotent. Notizentwürfe/unklare Speicherkennungen bleiben im Browser erhalten. Produktversionen ohne verlässliche Bindung erlauben keine neue Abnahme.
+
+Ruling: CI-/Reviewbehauptungen aus PRs bleiben als dokumentierter Bericht markiert, soweit für den konkreten Produktcommit kein eigener aktueller Nachweis zugeordnet ist. Die Zentrale macht daraus keine automatische Veröffentlichungsempfehlung. Hosting, Backend, native Verteilung und tatsächliche menschliche Abnahme bleiben getrennt. Vollautomatische Produktarbeit, Kundeneingänge und eine globale Unternehmensfreigabe bleiben außerhalb dieser Lieferung.
+
+Prüfbelege:26JS-/Modelltests und22Python-Diensttests; Browserdesktop1280undMobil390ohne horizontalen Überlauf. Isolierter Journaltest Speichern→Reload, sichere Anzeige von Scripttext, Doppelklick ohne zweiten Eintrag; tatsächliche Aufträge2/2erhalten, jeweils1Versuch, kein neuer Modellturn. Detailauswahl führt mobil zum ausgewählten Inhalt. Ursprüngliche Marke/Blauhülle erhalten. Selbstreview, kein unabhängiger PASS. Finale CI-/SHA-Bezüge stehen im Abschluss dieser eigenen Übergabe und am PR295.

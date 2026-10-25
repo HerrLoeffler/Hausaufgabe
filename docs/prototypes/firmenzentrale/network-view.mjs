@@ -73,9 +73,10 @@ export function mountNetwork(container,{selected='',child='',onDraft,brandIcon})
    selectedEdge=null;
    panel.replaceChildren();
    if(!n){
-     A(panel,E('h2','','Wo es gerade hängt'),E('p','inspector-copy','3 gemeldete Engpässe · Bereich öffnen'));
+     A(panel,E('h2','','Wo es gerade hängt'),E('p','inspector-copy',`${nodes.filter(x=>x.blocker).length} belegte Ausführungsgrenze · weitere Abnahmen offen`));
      for(const item of nodes.filter(n=>n.blocker)){const b=button('',()=>{location.hash=`/arbeit/landkarte/${item.id}`;},'net-blocker-choice');A(b,E('span','issue-dot'),A(E('span'),E('strong','',item.label),E('small','',item.blocker.title)));panel.append(b);}
-     panel.append(E('p','inspector-foot','11 Bereiche · Verbindungen anklicken für Abhängigkeiten.'));return;
+     for(const id of ['learning','native','customers']){const item=nodes.find(x=>x.id===id);const b=button('',()=>{location.hash=`/arbeit/landkarte/${id}`;},'net-blocker-choice');A(b,A(E('span'),E('strong','',item.label),E('small','',item.next[0])));panel.append(b);}
+     panel.append(link('Alle Bereichsstände','#/arbeit/stand','net-link'),E('p','inspector-foot','11 Bereiche · Verbindungen anklicken für Abhängigkeiten.'));return;
    }
    A(panel,E('p','inspector-kicker','Ausgewählter Bereich'),E('h2','',n.label),E('p',n.blocker?'inspector-status issue':'inspector-status',n.status));
    if(n.blocker){A(panel,E('h3','','Hier hakt es'),E('p','inspector-copy',n.blocker.problem),E('h3','','Das muss erledigt werden'),E('p','inspector-copy',n.blocker.next),E('p','inspector-source',n.blocker.source));}

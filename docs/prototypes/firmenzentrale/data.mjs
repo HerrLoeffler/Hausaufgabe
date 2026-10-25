@@ -1,3 +1,4 @@
+import {companyAudit,areaStatus} from './company-status.mjs';
 // Preserved V3 snapshot at b912d03; no live feed.
 export const areas=[
   {
@@ -82,7 +83,7 @@ export const areas=[
     "scope": "Zwecke, Datenwege, Rollen, Löschung, Sicherheitsanforderungen und Vorfälle. Rechtliche und technische Fachrollen bleiben bei Bedarf getrennt."
   }
 ];
-export const topics=[
+const historicalTopics=[
   {
     "id": "GC-I18N-03",
     "aliases": [
@@ -679,3 +680,6 @@ export const topics=[
     ]
   }
 ];
+
+const auditedTopicKeys={'GC-I18N-03':'learning/sprachen','GC-CLASSROOM-01':'classroom/zuweisungen','GC-ADAPTIVE-PRACTICE-01':'learning/adaptiv','GC-VISUAL-PROTOTYPE-AI-02':'learning/erneuerungen'};
+export const topics=historicalTopics.map(t=>{const key=auditedTopicKeys[t.id],u=companyAudit.updates[key],a=areaStatus[key.split('/')[0]];return {...t,historicalTasks:t.tasks,statusLabel:u.state==='blocker'?'Engpass bestätigt · Abgleich25.10.':'Teilstand geprüft · Abnahme offen',summary:u.current,next:u.next,reason:u.gap,stage:u.current+' Offen: '+u.gap,conflict:'Fachabgleich25.10.2026. Neuere Chatmeldungen und Versionsänderungen stehen im Bereichsstand und unter Seiten & Releases. Historische Akte bleibt im Verlauf erhalten.',tasks:[{title:'Aktueller Bestand',state:'Fachabgleich25.10.2026',children:[['Belegt',u.current]]},{title:'Offene Prüfung',state:u.state==='blocker'?'Blockiert':'Abnahme offen',children:[['Lücke',u.gap],['Nächster Schritt',u.next]]}],sources:[{label:'Aktueller Bereichs-/Releaseabgleich',url:'https://github.com/HerrLoeffler/Hausaufgabe/pull/295',stamp:'25.10.2026'},...t.sources],history:[{title:'Fachabgleich25.10.2026',text:u.current+' Offen: '+u.gap},...t.history]};});

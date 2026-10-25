@@ -39,3 +39,14 @@ class ReleaseTests(unittest.TestCase):
   self.r.scan();a=self.r.public()['observations']['live']
   def fail(*args):raise ValueError('offline')
   self.r.fetch=fail;self.r.scan();b=self.r.public()['observations']['live'];self.assertEqual(a['lastSuccess'],b['lastSuccess']);self.assertEqual(b['lastGood']['commit'],'a'*40);self.assertTrue(b['error'])
+
+from central_runtime.releases import fetch_manifest, NoRedirect
+class NetworkBoundaryTests(unittest.TestCase):
+ def test_arbitrary_hosts_and_redirects_rejected_without_fetch(self):
+  for url in ['http://127.0.0.1/release.json','https://example.com/release.json','https://gradecrew.de/private','https://user:secret@gradecrew.de/release.json','https://gradecrew.de/release.json?token=x']:
+   with self.assertRaises(ValueError):fetch_manifest(url,'p')
+  with self.assertRaises(ValueError):NoRedirect().redirect_request(None,None,None,None,None,'https://127.0.0.1')
+ def test_allowed_hostname_cannot_resolve_to_private_address(self):
+  from unittest.mock import patch
+  with patch('central_runtime.releases.socket.getaddrinfo',return_value=[(2,1,6,'',('127.0.0.1',443))]):
+   with self.assertRaises(ValueError):fetch_manifest('https://gradecrew.de/release.json','p')

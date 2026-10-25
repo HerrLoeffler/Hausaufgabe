@@ -17,7 +17,7 @@ test('each area becomes the center, all children are placed distinctly and deep 
 test('only specifically reported subtopics are blocked; new task technology has its own acceptance path',()=>{
  assert.equal(m.childrenFor('classroom').find(c=>c.id==='zuweisungen').state,'review');
  assert.notEqual(m.childrenFor('classroom').find(c=>c.id==='asv').state,'blocker');
- const renew=m.childrenFor('learning').find(c=>c.id==='erneuerungen');assert.ok(renew);assert.match(renew.next,/Kandidat|Matrix/);assert.ok(renew.acceptance.some(t=>/Regression/i.test(t)));
+ const renew=m.childrenFor('learning').find(c=>c.id==='erneuerungen');assert.ok(renew);assert.match(renew.acceptance.join(' '),/Formatversion/);assert.ok(renew.acceptance.some(t=>/Regression/i.test(t)));
  assert.equal(m.childrenFor('design').some(c=>c.state==='blocker'),false);
 });
 test('focused filtering and search reach work details, empty matches stay empty',()=>{
