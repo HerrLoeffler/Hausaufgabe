@@ -20,6 +20,36 @@ function mount(host,q,initial,options={}){
 function svgStart(label,view='0 0 720 370'){return `<svg class="diagram" viewBox="${view}" xmlns="http://www.w3.org/2000/svg" aria-label="${esc(label)}">`;}
 function sceneRegion(q,id,body,bounds){const hot=q.format==='hotspot';return `<g ${hot?`data-hit="${id}" role="button" tabindex="${readOnly()?'-1':'0'}" aria-label="Bereich ${id.slice(1)} auswählen" aria-pressed="false" class="scene-hit"`:''}>${hot&&q.spec.scene==='plant'&&id==='r4'?`<rect x="257" y="277" width="143" height="79" fill="transparent"/>`:''}${hot&&q.spec.scene==='plant'&&id==='r2'?'<path d="M326 106C318 162 327 216 327 278" fill="none" stroke="transparent" stroke-width="23"/>':''}${body}${hot?`<rect class="selection-outline" x="${bounds[0]}" y="${bounds[1]}" width="${bounds[2]}" height="${bounds[3]}" rx="9"/>`:''}</g>`;}
 function slot(id,i,x,y,w=165){return `<g class="slot" data-slot="${id}" role="button" tabindex="${readOnly()?'-1':'0'}" aria-label="Feld ${i+1}: Begriff zuordnen"><rect x="${x}" y="${y}" width="${w}" height="44" rx="8"/><text x="${x+w/2}" y="${y+27}" text-anchor="middle" class="slot-text">${i+1} · Begriff wählen</text></g>`;}
+function slotText(el,label){
+ const text=el.querySelector('text'),rect=el.querySelector('rect'),width=Number(rect.getAttribute('width'))-14;
+ const x=Number(text.getAttribute('x')),centerY=Number(rect.getAttribute('y'))+22;
+ const words=String(label).trim().split(/\s+/).filter(Boolean);
+ let lines=[],fontSize=14;
+ const fits=value=>{text.textContent=value;return text.getComputedTextLength()<=width;};
+ for(const size of [14,13,12,11]){
+  fontSize=size;text.style.fontSize=`${size}px`;lines=[];let line='';
+  for(const word of words){
+   const candidate=line?`${line} ${word}`:word;
+   if(fits(candidate)){line=candidate;continue;}
+   if(line){lines.push(line);line='';}
+   if(fits(word)){line=word;continue;}
+   for(const char of [...word]){
+    if(line&&!fits(line+char)){lines.push(line);line='';}
+    line+=char;
+   }
+  }
+  if(line)lines.push(line);
+  if(lines.length<=3)break;
+ }
+ if(lines.length>3){
+  const visible=lines.slice(0,2),remaining=lines.slice(2).join(' ');let last=remaining;
+  while(last&&!fits(last+'…'))last=last.slice(0,-1);
+  lines=[...visible,last+'…'];
+ }
+ const step=fontSize+1,firstY=centerY-(lines.length-1)*step/2;
+ text.textContent='';text.setAttribute('dominant-baseline','middle');
+ lines.forEach((line,i)=>{const part=document.createElementNS('http://www.w3.org/2000/svg','tspan');part.setAttribute('x',String(x));part.setAttribute('y',String(firstY+i*step));part.textContent=line;text.append(part);});
+}
 function renderScene(q){
  const scene=q.spec.scene,labeling=q.format==='labeling';let html=svgStart(visualName(q));
  if(scene==='plant'){
@@ -107,9 +137,9 @@ function renderAngle(q){
  host.innerHTML=h;
  if(focusData.length){const next=[...host.querySelectorAll('[data-cell],[data-chip],[data-slot],[data-token],[data-node],[data-edge],[data-end],[data-point],[data-error-row],[data-coord],[data-chart-input],[data-surface],[data-bar]')].find(el=>focusData.every(([key,value])=>el.dataset[key]===value));next?.focus({preventScroll:true});}
  if(q.format==='hotspot')host.querySelectorAll('[data-hit]').forEach(el=>{const on=arr().includes(el.dataset.hit);el.classList.toggle('is-selected',on);el.setAttribute('aria-pressed',String(on));});
- if(q.format==='labeling')host.querySelectorAll('g[data-slot]').forEach(el=>{const val=obj()[el.dataset.slot],item=s.items.find(x=>x.id===val);el.classList.toggle('filled',!!item);el.querySelector('text').textContent=item?item.text:(s.regions.indexOf(el.dataset.slot)+1)+' · Begriff wählen';});
+ if(q.format==='labeling')host.querySelectorAll('g[data-slot]').forEach(el=>{const val=obj()[el.dataset.slot],item=s.items.find(x=>x.id===val),index=s.regions.indexOf(el.dataset.slot)+1;el.classList.toggle('filled',!!item);el.setAttribute('aria-label',item?`Feld ${index}: ${item.text}, zum Entfernen antippen`:`Feld ${index}: Begriff zuordnen`);slotText(el,item?item.text:`${index} · Begriff wählen`);});
  }
- function assign(id){if(!selected){const val=obj()[id];if(val)selected=val;draw();return;}const a={...obj()};for(const k of Object.keys(a))if(a[k]===selected)delete a[k];a[id]=selected;selected=null;emit(a);}
+ function assign(id){if(!selected){const a={...obj()};if(a[id]){delete a[id];emit(a);}else draw();return;}const a={...obj()};for(const k of Object.keys(a))if(a[k]===selected)delete a[k];a[id]=selected;selected=null;emit(a);}
  function click(e){if(readOnly())return;const el=e.target.closest('[data-hit],[data-chip],[data-slot],[data-cell],[data-token],[data-option],[data-node],[data-edge],[data-end],[data-point],[data-error-row]');if(!el)return;const d=el.dataset;
  if(d.hit)emit(arr().includes(d.hit)?[]:[d.hit]);else if(d.chip){selected=selected===d.chip?null:d.chip;draw();}else if(d.slot)assign(d.slot);else if(d.cell!==undefined){const i=Number(d.cell);emit(arr().includes(i)?arr().filter(x=>x!==i):[...arr(),i]);}else if(d.token)emit(arr().includes(d.token)?arr().filter(x=>x!==d.token):[...arr(),d.token]);else if(d.option)emit(q.format==='single'?[d.option]:arr().includes(d.option)?arr().filter(x=>x!==d.option):[...arr(),d.option]);else if(d.node){if(selected&&selected!==d.node){const pair=[selected,d.node],exists=arr().findIndex(e=>e[0]===pair[0]&&e[1]===pair[1]||!q.spec.directed&&e[0]===pair[1]&&e[1]===pair[0]);selected=null;emit(exists>=0?arr().filter((_,i)=>i!==exists):[...arr(),pair]);}else{selected=selected===d.node?null:d.node;draw();}}else if(d.edge!==undefined)emit(arr().filter((_,i)=>i!==Number(d.edge)));else if(d.end){activeEnd=d.end;draw();}else if(d.point!==undefined){activePoint=Number(d.point);draw();}else if(d.errorRow)emit({...obj(),id:d.errorRow});
  }
