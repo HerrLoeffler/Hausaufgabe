@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "750212e7a38df4d0bbce833d2ae46b3f8f8b2b68",
+    "observed_integration_head": "9497e756ed2defb4da6b05773146a19929101b3c",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -617,6 +617,13 @@
         ],
         "physical_device": "not_performed"
       }
+    },
+    "latest_authorized_production_update_20261025": {
+      "scope": "Task-rating capture, admin-only central reader and personal-immediate/shared-reviewed structured learning; not whole-project completion",
+      "commit": "9497e756ed2defb4da6b05773146a19929101b3c",
+      "origin": "https://gradecrew.de",
+      "receipts": "workstreams/question-feedback-release-receipts-20261025.json",
+      "stage": "production"
     }
   },
   "production": {
@@ -1486,6 +1493,58 @@
         "handoff": "workstreams/feedback-gc39-release-20261013.md",
         "receipts": "workstreams/feedback-gc39-release-receipts-20261013.json",
         "user_test": "pending"
+      },
+      "latest_question_feedback_20261025": {
+        "stage": "production",
+        "scope": "Task-rating capture, admin-only central reader and personal-immediate/shared-reviewed structured learning; not whole-project completion",
+        "branch": "fix/question-feedback-learning-20261025",
+        "integration_branch": "feature/gradecrew-app-integration",
+        "prs": [
+          297,
+          302
+        ],
+        "commit": "9497e756ed2defb4da6b05773146a19929101b3c",
+        "tree": "6df2507cf3c9fcd0b46e6cbf9a6f80ef170e8425",
+        "origin": "https://gradecrew.de",
+        "project": "hausaufgabe-staging",
+        "candidate_ci": 40190068197,
+        "merge_ci": 40190263340,
+        "public_files": 174,
+        "verified_files": 174,
+        "functions": [
+          "reviewMode",
+          "generateTest",
+          "processAiTestJob",
+          "regenerateQuestion",
+          "reviseWholeTest"
+        ],
+        "rules": "released; server-only sharedLearning/learningUse fields",
+        "indexes": "both READY",
+        "independent_review": "Spec and Standards PASS; exact tree6df2507c",
+        "personal_effect": "next suitable model request uses own structured signals; actual use recorded after model response",
+        "shared_effect": "only professionally approved signal version; pending/rejected ratings excluded",
+        "historical_feedback": {
+          "reports": 11,
+          "positive": 5,
+          "negative": 5,
+          "rejectedReviewerWarning": 1,
+          "pages": 1,
+          "truncated": false,
+          "read_at": "2026-10-25T11:55:24.772Z",
+          "prior_per_rating_use_evidence": "not_recorded"
+        },
+        "plugin_installation": "reviewed source/cache overlay installed; supported MCP read succeeded; new status fields load on next normal process start",
+        "unrelated_failed_check": {
+          "run": 40190263345,
+          "attempts": 2,
+          "scope": "unchanged local Workbench test temporary-file cleanup",
+          "not_in_production_manifest": true
+        },
+        "paid_model_test": "not_performed",
+        "physical_device_test": "not_performed",
+        "handoff": "workstreams/feedback-gc39-release-20261013.md",
+        "receipts": "workstreams/question-feedback-release-receipts-20261025.json",
+        "next_action": "Professional per-rating review of historical reports; then observe first normal user generation receipts. Fix unrelated Workbench cleanup test separately."
       }
     },
     {

@@ -520,7 +520,9 @@
         "fix/gc-startup-flash-20261013",
         "feature/practice-solution-release-20261013",
         "fix/gc-ai-01-generation-notes-20261013",
-        "fix/staging-feedback-images10-20261013"
+        "fix/staging-feedback-images10-20261013",
+        "fix/question-feedback-removal-20261025",
+        "fix/question-feedback-learning-20261025"
       ]
     },
     {

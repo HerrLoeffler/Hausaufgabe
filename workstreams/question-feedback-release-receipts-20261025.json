@@ -1,0 +1,52 @@
+{
+  "sourceCommit": "9497e756ed2defb4da6b05773146a19929101b3c",
+  "origin": "https://gradecrew.de",
+  "project": "hausaufgabe-staging",
+  "version": "2.3.1-gc45-rc1",
+  "files": 174,
+  "verified": 174,
+  "mismatches": [],
+  "verifiedAt": "2026-10-25T11:59:13.681241+00:00",
+  "functions": [
+    "reviewMode",
+    "generateTest",
+    "processAiTestJob",
+    "regenerateQuestion",
+    "reviseWholeTest"
+  ],
+  "functionDeploy": "success",
+  "indexes": "2 READY",
+  "rules": "released",
+  "historicalRead": {
+    "reports": 11,
+    "positive": 5,
+    "negative": 5,
+    "rejectedReviewerWarning": 1,
+    "pages": 1,
+    "truncated": false,
+    "readAt": "2026-10-25T11:55:24.772Z",
+    "priorPerRatingUseEvidence": "not_recorded"
+  },
+  "candidateCI": 40190068197,
+  "mergeCI": 40190263340,
+  "unrelatedWorkbenchFailure": {
+    "run": 40190263345,
+    "attempts": 2,
+    "path": "tools/dev-workbench/live-edit.test.mjs",
+    "cause": "Temporary test directory removed before asynchronous final job JSON persistence completed",
+    "changedByLearningPatch": false,
+    "productionManifestContainsWorkbench": false
+  },
+  "independentReview": {
+    "spec": "PASS final local4867c20d/tree6df2507c;19focused tests independently executed",
+    "standards": "PASS final local4867c20d/tree6df2507c;23focused tests independently executed"
+  },
+  "localTests": {
+    "functions": 312,
+    "webAndConnector": 417,
+    "reviewBoundary": 20
+  },
+  "pluginReaderSha256": "afe9535edeb368fe1141f1fb546e1bbef3bcee0a42ca7b0534433445f2167a9a",
+  "paidLiveModelTest": "not_performed",
+  "physicalDeviceTest": "not_performed"
+}
