@@ -1,5 +1,5 @@
 'use strict';
-const VERSION='competency-plan-20261025-v5';
+const VERSION='competency-plan-20261025-v6';
 function eligibility(t){
  if(t?.parentTopicId&&t.assessmentScope==='human-observation')return {available:false,reason:'Diese Fähigkeit zeigst du deiner Lehrkraft an deiner tatsächlichen Arbeit. Die verknüpften Vorbereitungsschritte kannst du hier üben; ein Texteingabefeld belegt diese Darbietung nicht.'};
  if(t?.parentTopicId&&[5,6].includes(t.grade||Number(t.id?.split(':')[1]))&&t.learningPlan?.levels?.length===4)return {available:true,reason:''};

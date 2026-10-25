@@ -40,7 +40,7 @@ test('help keeps the actual failed fraction-board subdivision visible for its ne
 });
 
 test('generator and reviewer receive the same explicit demand-increase contract after independent success',async()=>{
- const requests=[],replies=[generated(),{approved:true,reason:'valid'}];
+ const harder=generated();harder.task.prompt='Erweitere 2/3 auf den Nenner 9.';harder.task.answer.values=['6/9'];const requests=[],replies=[harder,{approved:true,reason:'valid'}];
  const ai=createAI({client:{responses:{create:async req=>{requests.push(JSON.parse(req.input[1].content));return {status:'completed',output_text:JSON.stringify(replies.shift())};}}}});
  await ai.next({...s,level:1,previousLevel:0},{});
  assert.equal(requests[0].requireDemandIncrease,true);assert.equal(requests[1].requireDemandIncrease,true);
@@ -108,4 +108,15 @@ test('listening has private source text while the public task exposes audio avai
 
 test('the listening transcript cannot leak through prompt, options or diagram labels',()=>{
  for(const field of ['prompt','options','diagram']){const d=generated();d.task.media={kind:'listen',script:'Am Morgen fährt Mia mit dem Bus zur Schule.'};if(field==='options')d.task.options=[d.task.media.script];else if(field==='diagram')d.task.diagram={kind:'data-list',title:d.task.media.script,unit:'',values:[1]};else d.task.prompt=d.task.media.script;assert.throws(()=>cleanGenerated(d,{...s,topic:{delivery:'listen'}}));}
+});
+
+test('a demand increase cannot be the same question with other numbers and unchanged answer support',async()=>{
+ const duplicate=generated(),repaired=generated();duplicate.task.prompt='Erweitere 3/5 mit 2.';duplicate.task.answer.values=['6/10'];repaired.task.prompt='Erweitere 2/3 auf den Nenner 9.';repaired.task.answer.values=['6/9'];
+ const x=mock([duplicate,repaired,{approved:true,reason:'factor now inferred',demandAligned:true,progressionMeaningful:true}]);
+ const state={...s,level:1,previousLevel:0,task:{...s.task,prompt:'Erweitere 2/3 mit 2.',input:'text'}};
+ const result=await x.ai.next(state,{});assert.equal(result.task.prompt,repaired.task.prompt);assert.equal(x.count(),3);
+});
+test('review cannot approve a candidate while marking demand alignment false',async()=>{
+ const x=mock([generated(),{approved:true,reason:'overshot',demandAligned:false,progressionMeaningful:true},generated(),{approved:true,reason:'still overshot',demandAligned:false,progressionMeaningful:true}]);
+ await assert.rejects(x.ai.next(s,{}),e=>e.code==='unavailable');
 });
