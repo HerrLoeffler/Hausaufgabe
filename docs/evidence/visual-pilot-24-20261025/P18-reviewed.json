@@ -184,12 +184,12 @@
     {
       "position": 4,
       "reason": "Keine nicht vorhandene Umordnungsfunktion als Prüfziel verlangen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 8,
       "reason": "Zwei Monate belegen keinen durchgehenden Jahresverlauf; gemessene Temperatur statt pauschaler Wärmebelastung benennen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

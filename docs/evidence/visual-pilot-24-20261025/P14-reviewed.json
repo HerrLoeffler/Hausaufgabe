@@ -184,7 +184,7 @@
     {
       "position": 8,
       "reason": "Umrechnungsformel bereitstellen; physikalische Umrechnung nicht als fiktive Regel darstellen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

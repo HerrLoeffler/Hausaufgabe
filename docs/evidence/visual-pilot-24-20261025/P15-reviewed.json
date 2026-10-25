@@ -193,17 +193,17 @@
     {
       "position": 1,
       "reason": "Säulendarstellung ausdrücklich nennen; kein kontinuierliches Liniendiagramm versprechen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 7,
       "reason": "Voraussetzungen der Arbeitsformel und je Messung konstante Kraft klarstellen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 8,
       "reason": "Bewegungsänderung folgt aus der resultierenden Gesamtkraft, nicht einer beliebigen Einzelkraft.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

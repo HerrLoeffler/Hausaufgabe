@@ -184,22 +184,22 @@
     {
       "position": 1,
       "reason": "Anforderung Klasse10 stärken: Funktionswert berechnen statt vorgegebenen Punkt nur übertragen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 2,
       "reason": "Funktionsbezug stärken: Beide Punkte selbst berechnen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 3,
       "reason": "Funktionsbezug stärken und automatische Verbindung verständlich benennen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 7,
       "reason": "Auftrag verlangt Liniendiagramm; vorhandenes chart ist Säulendiagramm.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

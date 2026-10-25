@@ -184,12 +184,12 @@
     {
       "position": 6,
       "reason": "Gleichwertige Fachbegriffe als gültige Alternativen zulassen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 8,
       "reason": "Großschreibung ist Lernziel; Kleinschreibung muss falsch bleiben.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

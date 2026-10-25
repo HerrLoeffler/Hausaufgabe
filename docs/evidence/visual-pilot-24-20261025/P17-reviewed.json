@@ -184,22 +184,22 @@
     {
       "position": 1,
       "reason": "Für den Klasse5-Kartenpilot positive Kartenkoordinaten verwenden.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 2,
       "reason": "Negative Koordinaten durch eine einfache Karte für Klasse5 ersetzen; Grafik und Schlüssel zusammen ändern.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 6,
       "reason": "Gängige gleichwertige Richtungsangaben zulassen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 7,
       "reason": "Vier Ortspositionen in einem positiven Kartenraster statt negativen mathematischen Koordinaten für Klasse5.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

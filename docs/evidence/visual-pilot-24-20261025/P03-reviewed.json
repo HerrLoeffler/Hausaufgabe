@@ -184,7 +184,7 @@
     {
       "position": 4,
       "reason": "Falscher Lösungswert: Aus (2,9) und (8,27) folgt y=3x+3, daher y(5)=18 statt15.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

@@ -184,12 +184,12 @@
     {
       "position": 5,
       "reason": "Ein Quellentext wird angekündigt, aber nicht mitgeliefert; die fiktiven Ausgangsdaten explizit nennen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 7,
       "reason": "Eine Aussage über1975 ist nicht automatisch eine damals entstandene Quelle; Entstehungszeit explizit machen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

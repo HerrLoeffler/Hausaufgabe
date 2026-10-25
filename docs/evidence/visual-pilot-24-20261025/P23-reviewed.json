@@ -184,12 +184,12 @@
     {
       "position": 4,
       "reason": "Zahlendarstellungen nicht durch exakten Textvergleich ablehnen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 6,
       "reason": "Algebraisch gleichwertige Kostenfunktionen können nicht fair als exakter Text benotet werden; Koeffizienten getrennt erfassen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

@@ -184,27 +184,27 @@
     {
       "position": 1,
       "reason": "Die Quelle belegt einen Beschluss, keine tatsächlich erfolgte Umsetzung.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 4,
       "reason": "Angeführte Argumente von nachgewiesener Kausalität unterscheiden.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 6,
       "reason": "Fachbegriffe ausdrücklich als begrenzte Antworten benennen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 7,
       "reason": "Nachprüfbarkeit statt pauschaler Zuverlässigkeit beurteilen und Antwortbegriffe nennen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 8,
       "reason": "Freie Umformulierung durch begrenzte fachliche Korrektur ersetzen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

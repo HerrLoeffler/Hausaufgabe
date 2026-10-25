@@ -184,27 +184,27 @@
     {
       "position": 2,
       "reason": "Der deutsche Hinweis übersetzt die gesuchte englische Uhrzeit und verrät damit die Antwort.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 5,
       "reason": "Zeitnotation und Umfang der Tätigkeitsantwort klären.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 6,
       "reason": "Viele richtige Aktivitätsformulierungen vermeiden; nur die eindeutig gefragten Ortsnamen verlangen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 7,
       "reason": "Die verlangte Ortsangabe und der gespeicherte ganze Mustersatz widersprechen sich.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 8,
       "reason": "Eindeutige Wortkorrektur statt einer sehr engen Liste vollständiger Sätze.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

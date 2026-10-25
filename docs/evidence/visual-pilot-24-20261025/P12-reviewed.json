@@ -184,22 +184,22 @@
     {
       "position": 1,
       "reason": "Nutzungs- und Teilungszahlen belegen nicht automatisch Beliebtheit oder Zustimmung.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 4,
       "reason": "Die grammatische Korrektur eindeutig auf die falsche Verbform begrenzen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 5,
       "reason": "Wörtliche kurze Textentnahme verlangen, keine offene sinngemäße Antwort automatisch vergleichen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 6,
       "reason": "Adverbkorrektur statt exakter Benotung eines vollständigen Satzes.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

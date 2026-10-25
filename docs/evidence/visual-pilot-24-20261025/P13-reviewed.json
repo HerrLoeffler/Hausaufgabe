@@ -184,17 +184,17 @@
     {
       "position": 3,
       "reason": "Fotosynthese findet auch in anderen grünen Teilen statt; Blätter als Hauptort abfragen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 6,
       "reason": "Freie Funktionsbeschreibungen nicht an zwei Mustersätzen messen; eindeutige Funktionsbegriffe vorgeben.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 7,
       "reason": "Samenbildung setzt Befruchtung voraus, nicht nur Bestäubung.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

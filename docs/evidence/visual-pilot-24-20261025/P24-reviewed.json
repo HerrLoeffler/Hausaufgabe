@@ -184,17 +184,17 @@
     {
       "position": 6,
       "reason": "Break-even je Produkt setzt getrennte Einprodukt-Szenarien voraus.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 7,
       "reason": "Geldbeträge numerisch bewerten und Auswahl eindeutig codieren, statt äquivalente Zahlen als exakte Texte zu vergleichen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 8,
       "reason": "Positive Deckungsbeiträge und Kapazität begründen die Entscheidung nur im begrenzten Modell ohne weitere Restriktionen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

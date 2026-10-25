@@ -5,5 +5,13 @@
   "readyQuestions": 192,
   "deterministicChecks": 1176,
   "technicalFailures": 0,
-  "finalAcceptance": "pending"
+  "finalAcceptance": "isolated test preview verified; teacher/device/classroom acceptance pending",
+  "onlineServerCases": 120,
+  "onlinePassed": 120,
+  "contentReviewed": 192,
+  "independentlyContentReviewed": 192,
+  "questionsAmended": 63,
+  "hostingFilesVerified": 180,
+  "canonicalStagingChanged": false,
+  "productionChanged": false
 }

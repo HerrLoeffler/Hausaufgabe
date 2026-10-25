@@ -184,17 +184,17 @@
     {
       "position": 1,
       "reason": "Monat ebenfalls Zeitangabe; geforderte Genauigkeit nennen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 4,
       "reason": "Last night erlaubt auch past progressive; geforderte Zeitform ausdrücklich begrenzen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 6,
       "reason": "Zeitformvorgabe explizit machen, statt zulässiges amerikanisches Simple Past bei already stillschweigend abzulehnen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

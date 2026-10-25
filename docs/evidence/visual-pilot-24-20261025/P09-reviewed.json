@@ -184,22 +184,22 @@
     {
       "position": 2,
       "reason": "Tageszeitzuordnung als vorgegebenen fiktiven Tagesablauf kennzeichnen, nicht als universelle Lebensgewohnheit.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 3,
       "reason": "Gezielte Verbkorrektur statt Benotung eines ganzen Satzes mit nur einer exakten Textvariante.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 7,
       "reason": "Verlangte Korrektur auf die eindeutig fehlerhafte Verbform begrenzen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 8,
       "reason": "Gleichwertige räumliche Präposition zulassen und mehrwortige Ortsangabe verständlich verlangen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

@@ -184,12 +184,12 @@
     {
       "position": 1,
       "reason": "Reihenfolge einer frei formulierten Viererliste darf die Bewertung nicht bestimmen; Größen einzeln klassifizieren.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 7,
       "reason": "Kontrollierter Temperaturversuch benötigt konstante Enzymmenge; Kategorien dürfen mehrfach verwendet werden.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }

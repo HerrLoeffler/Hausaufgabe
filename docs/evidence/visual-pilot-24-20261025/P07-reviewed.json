@@ -184,17 +184,17 @@
     {
       "position": 2,
       "reason": "Ganze Sätze können verschieden korrekt umgestellt werden; gezielt nur das fehlerhafte Verb berichtigen.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 5,
       "reason": "Freie Begründungen lassen sich nicht über eine endliche Liste von Mustersätzen fair bewerten.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     },
     {
       "position": 8,
       "reason": "Freie Beispielsätze durch Auswahl vollständiger Belege ersetzen; keine Musterprosa als einzige gültige Antwort.",
-      "runtimeStatus": "local reviewed draft; cloud update pending"
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
     }
   ]
 }
