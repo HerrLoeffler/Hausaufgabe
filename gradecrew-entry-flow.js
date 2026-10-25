@@ -12,6 +12,7 @@ const stateIds = Object.freeze({
   start: "gcEntryStart",
   login: "gcEntryLogin",
   register: "gcEntryRegister",
+  verify: "gcEntryVerify",
   reset: "gcEntryReset"
 });
 
@@ -49,6 +50,7 @@ function setState(next, { focus = true } = {}) {
     authView.dataset.entryRevision = String((Number(authView.dataset.entryRevision) || 0) + 1);
   }
   $("gcEntryLoginOpen")?.classList.toggle("hidden", next !== "start");
+  $("gcEntryRegisterOpen")?.classList.toggle("hidden", next !== "start");
   if (!focus) return;
   syncEntryIntent(next);
   requestAnimationFrame(() => {
@@ -247,6 +249,10 @@ function buildEntrySurface() {
       </div>
     </section>
 
+    <section id="gcEntryVerify" class="gcEntryState gcEntryAuth hidden" aria-hidden="true" aria-labelledby="verificationTitle">
+      <div class="gcEntryAuthPanel" id="emailVerificationHost"></div>
+    </section>
+
     <section id="gcEntryReset" class="gcEntryState gcEntryAuth hidden" aria-hidden="true" aria-labelledby="gcEntryResetTitle">
       <button type="button" class="gcEntryBack" id="gcEntryResetBack">← Zur Anmeldung</button>
       <div class="gcEntryAuthPanel">
@@ -292,6 +298,8 @@ function buildEntrySurface() {
     document.dispatchEvent(new document.defaultView.Event("gradecrew:start-guest-tour"));
   });
   $("gcEntryLoginOpen").addEventListener("click", showLogin);
+  $("gcEntryRegisterOpen")?.addEventListener("click", showRegister);
+  document.addEventListener("gradecrew:verify-email", () => setState("verify", {focus:false}));
   $("gcEntrySwitchRegister").addEventListener("click", showRegister);
   $("gcEntrySwitchLogin").addEventListener("click", showLogin);
   $("forgotBtn").addEventListener("click", showReset);

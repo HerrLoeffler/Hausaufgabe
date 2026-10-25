@@ -25,6 +25,7 @@ const files = [
   'assets/vendor/qrcodejs-1.0.0.min.js', 'assets/vendor/qrcodejs-LICENSE.txt'
 ];
 files.push(
+  'email-verification.mjs',
   'tutorial-signins.mjs', 'dashboard-tutorial-entry.mjs',
   'gradecrew-workspace-upgrade.mjs',
   'gradecrew-workspace-upgrade.css',

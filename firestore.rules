@@ -76,7 +76,9 @@ service cloud.firestore {
                     && request.resource.data.get('isTestAccount', false) == false
                     && request.resource.data.get('isTestAccountArchived', false) == false
                     && request.resource.data.get('role', 'teacher') == 'teacher'
-                    && request.resource.data.get('status', 'active') == 'active'
+                    && (request.resource.data.get('status', '') == 'pending_verification'
+                      || (request.auth.token.get('email_verified', false) == true
+                        && request.resource.data.get('status', '') == 'active'))
                     && request.resource.data.get('aiBetaEnabled', false) == false;
 
       allow get: if isAdmin() || (signedIn() && request.auth.uid == userId

@@ -23,6 +23,6 @@ for(const file of ['firestore.rules','firestore.secure-assessment.rules'])test(`
   const legacy=env.authenticatedContext('both').firestore();await assertFails(updateDoc(doc(legacy,'users','role'),{role:'admin'}));
   const suspended=env.authenticatedContext('suspended').firestore();await assertFails(updateDoc(doc(suspended,'users','suspended'),{status:'active'}));
   const deleted=env.authenticatedContext('deleted').firestore();await assertFails(setDoc(doc(deleted,'users','deleted'),{role:'teacher',status:'active'},{merge:true}));
-  const fresh=env.authenticatedContext('fresh').firestore();await assertSucceeds(setDoc(doc(fresh,'users','fresh'),{role:'teacher',status:'active',displayName:'Synthetic registered',email:'fresh@example.invalid',createdAt:serverTimestamp()}));await assertFails(updateDoc(doc(fresh,'users','fresh'),{role:'admin'}));
+  const fresh=env.authenticatedContext('fresh',{email_verified:true}).firestore();await assertSucceeds(setDoc(doc(fresh,'users','fresh'),{role:'teacher',status:'active',displayName:'Synthetic registered',email:'fresh@example.invalid',createdAt:serverTimestamp()}));await assertFails(updateDoc(doc(fresh,'users','fresh'),{role:'admin'}));
  }finally{await env.cleanup();}
 });

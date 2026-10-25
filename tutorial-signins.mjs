@@ -1,5 +1,5 @@
 // Onboarding preference only: never authorizes account or test access.
-const LIMIT = 6;
+const LIMIT = 8;
 const count = value => Number.isFinite(Number(value)) ? Math.min(LIMIT, Math.max(0, Math.trunc(Number(value)))) : 0;
 
 export function tutorialSignInPatch(profile, sessionHash) {
@@ -11,7 +11,7 @@ export function tutorialSignInPatch(profile, sessionHash) {
   return { crewTourSignInCount: Math.min(LIMIT, current + 1), crewTourSignInSessions: [...sessions, sessionHash].slice(-LIMIT) };
 }
 
-async function sessionHash(user) {
+export async function tutorialSessionHash(user) {
   const time = Date.parse(user?.metadata?.lastSignInTime || '');
   if (!user?.uid || !Number.isFinite(time)) return null;
   const bytes = new TextEncoder().encode(JSON.stringify([user.uid, time]));
@@ -19,7 +19,7 @@ async function sessionHash(user) {
   return [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, '0')).join('');
 }
 
-export async function recordTutorialSignIn({ user, db, ref, runTransaction, isCurrent = () => true, hash = sessionHash }) {
+export async function recordTutorialSignIn({ user, db, ref, runTransaction, isCurrent = () => true, hash = tutorialSessionHash }) {
   if (!user?.uid || !Number.isFinite(Date.parse(user.metadata?.lastSignInTime || '')) || !isCurrent()) return null;
   try {
     const key = await hash(user);

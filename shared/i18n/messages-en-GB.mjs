@@ -13,6 +13,7 @@ export const enGBMessages = Object.freeze({
   "common.retry": "Try again",
   "common.cancel": "Cancel",
   "common.save": "Save",
+  "auth.createAccount": "Create account",
   "nav.features": "Features",
   "nav.crew": "The Crew",
   "nav.teachers": "For teachers",

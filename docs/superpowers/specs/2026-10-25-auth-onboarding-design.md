@@ -1,0 +1,11 @@
+# GC-DESIGN-05: Einstieg, Tutorial und E-Mail-Code
+
+Martin hat am 25.10.2026 die blaue öffentliche Markenfläche mit hellen Arbeitsflächen sowie Anmelden/Konto erstellen bestätigt. Danach soll eine Tutorial-Auswahl erscheinen. Der sichtbare Crew-Einstieg endet nach sieben echten Anmeldungen; in den Einstellungen bleibt das Tutorial verfügbar. Neue Konten bestätigen ihre E-Mail mit einem eingegebenen Code. Es gibt noch keinen Maildienst; Einrichtung vorbereiten, keinen echten Versand behaupten.
+
+Ansätze: Vollblau war für die dichten Arbeitsansichten schwächer geeignet; ein weißer Innenbereich mit gemeinsamen Blau-Tokens wurde gewählt. Vorhandene Firebase-Anmeldung, Registerform und Crew-Tour bleiben die Grundlage. Eine neue Tour und eine reine UI-Bestätigung würden bestehende Abläufe duplizieren bzw. keine Zugangssperre liefern.
+
+Umsetzung: Die ersten sieben Anmeldungen bieten eine überspringbare Tutorial-Einladung; die Auswahl wird pro Konto und Auth-Sitzung nur einmal gezeigt, kein wiederholtes Angebot bei Dashboard-Navigation. Ab Anmeldung acht entfällt die auffällige Einladung samt Kopfbutton. Einstellungen bleiben dauerhaft erreichbar. Bestehende Konten behalten ihren Zugang.
+
+Neue selbstregistrierte Profile beginnen mit `status: pending_verification`. Firestore-Regeln verhindern aktives Self-Provisioning und Statusänderungen. Die bestehenden aktiven Kontoprüfungen sperren bis zur Bestätigung Daten-, KI- und Prüfungszugänge. Servercode versendet einen zufälligen sechsstelligen Code ausschließlich an die aktuelle Firebase-Kontoadresse; Gültigkeit zehn Minuten, fünf Versuche, 60 Sekunden Versandpause, begrenzte Stunden-/Tageskontingente einschließlich gehashter IP. Ein neuer Code ersetzt den alten. Nur HMAC des Codes wird gespeichert. Nach gültigem Code setzt ausschließlich der Server die gebundene Firebase-Adresse auf bestätigt und aktiviert das wartende Profil; gesperrte/gelöschte Konten werden nicht reaktiviert.
+
+Die Vorbereitung verwendet einen austauschbaren Resend-Adapter ohne neue Laufzeitbibliothek. Vor Auslieferung sind Mailkonto, bestätigte Absenderdomain, Secret-Manager-Einträge, getrennte Testkonfiguration und ein echter Empfangstest nötig. UI unterstützt DE/EN, einen einfügbaren/autofillfähigen Code, erneuten Versand und sichere Abmeldung. Production ist nicht freigegeben.

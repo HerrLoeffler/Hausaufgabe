@@ -88,8 +88,9 @@ export function installCrewTour(api) {
   const offered = new Set();
 
   let offerCard = null;
+  let loginOfferSession = "";
 
-  const offerKey = () => `${TOUR_VERSION}:${owner}:offer-handled`;
+  const offerKey = () => `${TOUR_VERSION}:${owner}:offer-handled${loginOfferSession ? ':' + loginOfferSession : ''}`;
 
   function removeOffer() {
     offerCard?.remove();
@@ -784,10 +785,11 @@ export function installCrewTour(api) {
     finally{clearTimeout(delay);if(token===run)busy=false;}
   }
 
-  function dashboard({ uid, firstVisit, completed = false, offerHandled = false, isAdmin = false }) {
+  function dashboard({ uid, firstVisit, completed = false, offerHandled = false, isAdmin = false, loginSession = "", signInCount = 0 }) {
     if (active) return;
     if (owner && owner !== uid) stop();
     owner = uid;
+    loginOfferSession = /^[a-f0-9]{64}$/.test(loginSession) ? loginSession : "";
     suppressLegacyGuides();
     removeOffer();
 
@@ -806,10 +808,11 @@ export function installCrewTour(api) {
 
     let done = completed;
     try { done = done || localStorage.getItem(doneKey()) === "done"; } catch {}
-    const handled = offerHandled || offerHandledLocally();
-    if (firstVisit && !isAdmin && !done && !handled && !offered.has(uid)) {
-      offered.add(uid);
-      setTimeout(() => { if (!active && api.isDashboard()) showOffer(); }, 250);
+    const handled = (!loginOfferSession && offerHandled) || offerHandledLocally();
+    const offerIdentity = `${uid}:${loginOfferSession}`;
+    if (firstVisit && Number(signInCount) < 8 && !isAdmin && !done && !handled && !offered.has(offerIdentity)) {
+      offered.add(offerIdentity);
+      setTimeout(() => { if (!active && api.uid() === uid && `${owner}:${loginOfferSession}` === offerIdentity && api.isDashboard()) showOffer(); }, 250);
     }
   }
 
