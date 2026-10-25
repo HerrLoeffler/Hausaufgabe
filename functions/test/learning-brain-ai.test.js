@@ -161,3 +161,11 @@ test('coordinate assessment honors the exact server-derived point result rather 
  const x=mock([{outcome:'correct',short:'Richtig.',reason:'guess'}]);
  await assert.rejects(x.ai.assess({...s,task:{...s.task,answer:{kind:'open',values:['A:2|3']}}},'A:3|2',{workshop:{tool:'coordinate-plane',exactResult:false}}),e=>e.code==='unavailable');assert.equal(x.count(),1);
 });
+
+test('a finer degree scale is a real representation change while another angle on the same scale is not',async()=>{
+ const make=step=>({task:{prompt:'Stelle den Winkel auf 64° ein.',contextText:'',input:'workshop',options:[],family:'winkel-einstellen',workshop:{tool:'angle-protractor',version:1,role:'answer',goal:'set-angle',instruction:'Stelle den zweiten Schenkel ein.',minimum:0,maximum:180,step,initialValue:0},answer:{kind:'number',values:['64']},rubric:'64 Grad'},explanation:'',visual:{kind:'none'}});
+ const topic={subject:'math',title:'Winkel einstellen',didacticFamily:'angleDraw'};
+ const state={...s,topic,level:1,previousLevel:0,task:{prompt:'Stelle den Winkel auf 60° ein.',input:'workshop',workshop:{tool:'angle-protractor',step:10}}};
+ const x=mock([make(2),{approved:true,reason:'finer scale',demandAligned:true,progressionMeaningful:true}]);assert.equal((await x.ai.next(state,{})).task.workshop.step,2);
+ const entry=make(1);entry.task.answer.values=['60'];entry.task.prompt='Stelle den Winkel auf 60° ein.';assert.throws(()=>cleanGenerated(entry,{...state,level:0}));
+});
