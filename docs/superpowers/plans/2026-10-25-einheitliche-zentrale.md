@@ -23,8 +23,10 @@ GC-BRAIN-01, gleicher Checkout/PR295, Original-Assets unverändert, keine Subage
 - [x] Gruppierung für alle elf Bereiche und kompakte Fokusinspektoren; Gruppenvollständigkeit und wahrheitsgetreue Statuszählung testen.
 - [x] Eingang/Quellen kürzen, Auftragsfilter und aufklappbare Einzelheiten; Ergebnis-/Rückfragefunktion bewahren.
 - [x] Desktop/Tablet/Mobil, Logo-/Rahmenmaße und Farben bei Seitenwechsel vergleichen; alle62Unterpunkte, Formulare und Quellenzugänge kontrollieren.
-- [ ] Bestehende Tests, eigene Übergabe, GitHub-Sicherung und exakte CI; Live bleibt unverändert.
+- [x] Bestehende Tests, eigene Übergabe, GitHub-Sicherung und exakte CI; Live bleibt unverändert.
 
 ## Prüfung
 
 21 JavaScript- und15 Pythonprüfungen bestanden. Zehn Arbeitsansichten mit gleicher Palette und identischen Desktopmaßen (Logo54px, Leiste84px, Kopf68px). Alle elf Bereiche im Browser geöffnet:24 Oberthemen,62 Unterthemen. Dringendfilter, konkrete Aufgabenvorbereitung, vorhandene Ergebnisberichte und Quellenzugang geprüft. Handy390px und Tablet768px ohne Dokumentüberlauf. Mobile Doppelliste entfernt; gruppierte Textlinks bleiben erreichbar. Keine neuen Modellaufträge oder Änderungen an Live. Finale GitHub-Sicherung/CI wird am bestehenden PR295 dokumentiert.
+
+GitHub-Codeabgabe28f69f18b6dc9023e0556c941f0686d2f8912bcc: UI40186554428, Handoff40186554617, DevelopmentStatus40186554453 jeweils success. Alle elf abgegebenen Dateien per Git-Blob-Hash identisch zum lokalen Commit13ea331. Abschließende Dokumentation auf demselben PR; die danach gültige finale SHA/CI steht in dessen Beschreibung.
