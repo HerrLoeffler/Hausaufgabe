@@ -1,3 +1,4 @@
+import {groupsFor,summarizeWork} from './hierarchy.mjs';
 import {focusProjection,filterChildren,prepareChildWork,statusLabels,priorityLabels} from './focus.mjs';
 import {nodes,edgesFor,clampZoom} from './network.mjs';
 const NS='http://www.w3.org/2000/svg';
@@ -19,7 +20,7 @@ export function mountFocus(container,{selected,child='',onDraft,brandIcon}){
  const changed=lastDomain!==selected;if(changed){zoom=1;offset={x:0,y:0};mode='all';query='';lastDomain=selected;}
  const root=E('section','nerve-center focus-center');
  const crumbs=A(E('nav','focus-crumbs'),link('Gesamtnetz','#/arbeit/landkarte'),E('span','','/'),link(domain.label,route(selected)));crumbs.setAttribute('aria-label','Position im Netz');if(p.selected)A(crumbs,E('span','','/'),E('span','',p.selected.title));root.append(crumbs);
- A(root,A(E('div','net-heading'),A(E('div'),E('h1','',domain.label),E('p','net-subtitle',`${p.children.length} Unterpunkte · Stand, offene Arbeit und nächste Schritte`)),link('Quellenstand & Lücken','#/arbeit/abdeckung','net-source-link')));
+ A(root,A(E('div','net-heading'),A(E('div'),E('h1','',domain.label),E('p','net-subtitle',`${groupsFor(selected).length} Oberthemen · ${p.children.length} Unterthemen`)),link('Stand & Quellen','#/arbeit/abdeckung','net-source-link')));
  if(p.invalid)root.append(E('p','focus-alert','Dieser Unterpunkt ist nicht bekannt. Die vorhandenen Unterpunkte des Bereichs stehen unten zur Auswahl.'));
  const toolbar=E('div','net-toolbar'),filters=E('div','net-filters'),filterButtons=[];
  filters.setAttribute('aria-label','Unterpunkte filtern');for(const[id,title]of [['all','Alle Unterpunkte'],['urgent','Dringend'],['review','Abnahme offen']]){const b=button(title,()=>{mode=id;update();});filterButtons.push([id,b]);filters.append(b);}
@@ -42,28 +43,34 @@ export function mountFocus(container,{selected,child='',onDraft,brandIcon}){
  A(controls,less,zoomLabel,more,button('Einpassen',()=>{zoom=1;offset={x:0,y:0};transform();}));
  const searchStatus=E('p','net-search-status');searchStatus.setAttribute('role','status');const reset=button('Filter zurücksetzen',()=>{mode='all';query='';search.value='';update();},'net-button focus-reset');
  A(stage,svg,controls,E('p','net-map-hint','Unterpunkt öffnen · Freie Fläche ziehen'),searchStatus,reset);A(layout,stage,panel);root.append(layout);
- const alternatives=E('div','focus-alternatives');alternatives.setAttribute('aria-label','Lesbare Unterpunktauswahl');const altElements=[];for(const c of p.children){const a=link('',route(selected,c.id),'focus-alt');A(a,E('strong','',c.title),E('span','',statusLabels[c.state]));if(p.selected?.id===c.id)a.setAttribute('aria-current','page');alternatives.append(a);altElements.push([c,a]);}layout.insertBefore(alternatives,panel);
- const note=E('p','net-evidence-note','Fachinventur23.10.2026 · Konzept-Ergänzung25.10.2026. Prioritäten sind Vorschläge, keine neue Firmenentscheidung. Speichen zeigen Zugehörigkeit. Vor tatsächlicher Arbeit aktuellen Stand prüfen.');root.append(note);container.append(root);
+ const note=E('p','net-evidence-note','Redaktioneller Stand: 23.–25.10.2026 · Prioritäten sind Vorschläge. Details und Quellen im Arbeitsblatt.');root.append(note);container.append(root);
  if(p.selected)showChild(p.selected);else showDomain();
  function showChild(c){
-  A(panel,link('Zur Bereichsübersicht',route(selected),'net-link focus-back'),E('p','inspector-kicker','Ausgewählter Unterpunkt'),E('h2','',c.title),E('p',`focus-status state-${c.state}`,statusLabels[c.state]),E('p','focus-priority',`${priorityLabels[c.priority]} · ${c.why}`),E('h3','','Nächster Arbeitsschritt'),E('p','inspector-copy focus-next',c.next),button('Arbeitsschritt vorbereiten',()=>onDraft(domain,{scope:c.title,next:c.next,childWork:prepareChildWork(c)}),'net-action'));
-  A(panel,E('h3','','Was bereits dokumentiert ist'),E('p','inspector-copy',c.current),E('h3','','Was noch fehlt'),E('p','inspector-copy',c.gap),E('h3','','Woran wir den Schritt abnehmen'));
-  const ul=E('ul','focus-acceptance');c.acceptance.forEach(t=>ul.append(E('li','',t)));A(panel,ul,E('h3','','Verantwortung'),E('p','inspector-copy',c.owner),A(E('details','inspector-evidence'),E('summary','','Quelle & Geltungsbereich'),E('p','inspector-source',c.source),E('p','inspector-copy',`Fachquellenstand: ${c.sourceDate}. Keine aktuelle Vollabnahme oder automatische Statusaktualisierung.`)),link('Vollständige Bereichsakte öffnen',`#/arbeit/akte/${selected}`,'net-link inspector-open'));
+  const group=groupsFor(selected).find(g=>g.children.some(x=>x.id===c.id));
+  A(panel,link('Alle Unterthemen',route(selected),'net-link focus-back'),E('p','inspector-kicker',group?.title||domain.label),E('h2','',c.title),E('p',`focus-status state-${c.state}`,statusLabels[c.state]),E('h3','','Hier fehlt noch'),E('p','inspector-copy',c.gap),E('h3','','Nächster Schritt'),E('p','inspector-copy focus-next',c.next),button('Aufgabe vorbereiten',()=>onDraft(domain,{scope:c.title,next:c.next,childWork:prepareChildWork(c)}),'net-action'));
+  const detail=A(E('details','inspector-evidence'),E('summary','','Stand & Abschlusskriterien'),E('h3','','Vorhanden'),E('p','inspector-copy',c.current),E('h3','','Erledigt, wenn …'));
+  const ul=E('ul','focus-acceptance');c.acceptance.forEach(t=>ul.append(E('li','',t)));A(detail,ul,E('h3','','Verantwortung'),E('p','inspector-copy',c.owner),E('p','inspector-copy','Fortschritt noch nicht messbar: Kriterien sind beschrieben, aber ihre Abnahme ist nicht hinterlegt.'));
+  A(panel,detail,A(E('details','inspector-evidence'),E('summary','','Quelle & Priorität'),E('p','inspector-copy',`${priorityLabels[c.priority]} · ${c.why}`),E('p','inspector-source',c.source),E('p','inspector-copy',`Quellenstand: ${c.sourceDate}. Keine aktuelle Vollabnahme.`)),link('Bereichsakte',`#/arbeit/akte/${selected}`,'net-link inspector-open'));
  }
  function showDomain(){
-  const urgent=p.children.filter(c=>c.priority==='urgent'),review=p.children.filter(c=>c.state==='review');
-  A(panel,E('p','inspector-kicker','Bereich im Mittelpunkt'),E('h2','',domain.label),E('p','inspector-copy',domain.goal),E('p','focus-summary',`${p.children.length} Unterpunkte · ${review.length} Abnahmen offen · ${urgent.length===1?'1 gemeldeter Engpass':`${urgent.length} gemeldete Engpässe`}`),E('h3','','Wo wir jetzt dran müssen'));
-  if(!urgent.length)panel.append(E('p','inspector-copy','Kein Engpass in dieser Erfassung gemeldet. Die offenen Abnahmen und Klärungen bleiben zu bearbeiten.'));
-  const order={urgent:0,next:1,planned:2};[...p.children].sort((a,b)=>order[a.priority]-order[b.priority]).forEach(c=>{const a=link('',route(selected,c.id),'focus-work-choice');A(a,E('small',`priority-${c.priority}`,priorityLabels[c.priority]),E('strong','',c.title),E('span','',c.next));panel.append(a);});
-  const relationships=A(E('details','inspector-evidence'),E('summary','','Abhängigkeiten zu anderen Bereichen'));
+  const counts=summarizeWork(p.children),stats=E('div','focus-counts');
+  for(const [value,singular,plural,cls] of [[counts.blocked,'Engpass','Engpässe','blocker'],[counts.review,'Abnahme','Abnahmen','review'],[counts.clarify,'Klärung','Klärungen','clarify']]){if(value)stats.append(A(E('span',`state-${cls}`),E('strong','',String(value)),document.createTextNode(' '+(value===1?singular:plural))));}
+  A(panel,E('h2','','Offene Arbeit'),stats);
+  if(!counts.blocked)panel.append(E('p','inspector-copy','Kein Engpass gemeldet. Offene Punkte unten prüfen.'));
+  for(const group of groupsFor(selected)){
+   const section=A(E('section','focus-group'),E('h3','',group.title));
+   for(const c of group.children){const a=link('',route(selected,c.id),'focus-work-choice');a.dataset.workItem=c.id;A(a,E('strong','',c.title),E('small',`state-${c.state}`,statusLabels[c.state]));section.append(a);}panel.append(section);
+  }
+  const relationships=A(E('details','inspector-evidence'),E('summary','','Abhängigkeiten'));
   for(const edge of edgesFor(selected)){const other=nodes.find(n=>n.id===(edge.from===selected?edge.to:edge.from));A(relationships,A(E('div','focus-relation'),E('strong','',`${edge.from===selected?'Wirkt auf':'Braucht'}: ${edge.scope}`),E('p','inspector-copy',edge.reason),E('p','inspector-source',edge.source),link(other.label,route(other.id))));}panel.append(relationships);
-  A(panel,A(E('details','inspector-evidence'),E('summary','','Dokumentierter Bereichsbestand'),E('p','inspector-copy',domain.built)),link('Vollständige Bereichsakte öffnen',`#/arbeit/akte/${selected}`,'net-link inspector-open'));
+  A(panel,A(E('details','inspector-evidence'),E('summary','','Ziel, Bestand & Fortschritt'),E('p','inspector-copy',domain.goal),E('p','inspector-copy',domain.built),E('p','inspector-copy','Keine Prozentzahl ohne vereinbarte und geprüfte Meilensteine. Die Zahlen oben zählen offene Unterthemen.')),link('Bereichsakte',`#/arbeit/akte/${selected}`,'net-link inspector-open'));
  }
  function update(){
   const hits=new Set(filterChildren(p.children,query,mode).map(c=>c.id));
   for(const[c,g]of childElements){g.setAttribute('visibility',hits.has(c.id)?'visible':'hidden');g.setAttribute('aria-hidden',String(!hits.has(c.id)));g.setAttribute('tabindex',hits.has(c.id)?'0':'-1');}
   for(const[c,line]of spokes)line.setAttribute('visibility',hits.has(c.id)?'visible':'hidden');
-  for(const[c,a]of altElements)a.hidden=!hits.has(c.id);
+  panel.querySelectorAll('[data-work-item]').forEach(a=>a.hidden=!hits.has(a.dataset.workItem));
+  panel.querySelectorAll('.focus-group').forEach(g=>g.hidden=![...g.querySelectorAll('[data-work-item]')].some(a=>!a.hidden));
   filterButtons.forEach(([id,b])=>b.setAttribute('aria-pressed',String(mode===id)));
   searchStatus.textContent=hits.size===0?'Keine passenden Unterpunkte. Filter oder Suche zurücksetzen.':query||mode!=='all'?`${hits.size} von ${p.children.length} Unterpunkten sichtbar`:'';reset.hidden=hits.size!==0;
  }

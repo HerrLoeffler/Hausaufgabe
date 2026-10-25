@@ -47,7 +47,7 @@ function navigation(){
     const a=link('',`#/${id}`,`nav-link ${route.page===id?'active':''}`);append(a,icon(id),el('span','',name));if(route.page===id)a.setAttribute('aria-current','page');$('#primary').append(a);
   }
   if(route.page==='arbeit'){
-    if(route.section!=='bereich')for(const [id,name] of [['landkarte','Projektlandkarte'],['abdeckung','Quellenabdeckung'],['themen','Detailakten'],['ziele','Ziele'],['qualitaet','Aufgabenqualität'],['bereich','Firmenbereiche'],['netz','Zusammenhänge']]){
+    if(route.section!=='bereich')for(const [id,name] of [['landkarte','Unternehmensnetz'],['abdeckung','Quellenabdeckung'],['themen','Detailakten'],['ziele','Ziele'],['qualitaet','Aufgabenqualität'],['netz','Beziehungen']]){
       const active=route.section===id||(!route.section&&id==='landkarte')||(route.section==='thema'&&id==='themen');
       const a=link(name,`#/arbeit/${id}${id==='bereich'?'/strategy':''}`,`sub-link ${active?'active':''}`);if(active)a.setAttribute('aria-current','page');$('#secondary').append(a);
     }
@@ -63,6 +63,8 @@ function navigation(){
   $('#breadcrumb').replaceChildren(link('Firmenzentrale','#/heute'),el('span','','/'),el('span','current',names[route.page]||'Heute'));
   if(route.section==='thema')$('#breadcrumb').append(el('span','','/'),el('span','current',topics.find(t=>t.id===route.id)?.title||'Thema'));
   if(route.section==='bereich')$('#breadcrumb').append(el('span','','/'),el('span','current',areaName(route.id)));
+  if(route.section==='landkarte'&&route.id){const d=domains.find(x=>x.id===route.id);if(d)$('#breadcrumb').append(el('span','','/'),link(d.name,`#/arbeit/landkarte/${d.id}`));}
+
 }
 
 function today(){
@@ -87,7 +89,7 @@ function portfolioDetail(){
  const detailed=topics.filter(t=>primaryDomain([t.title,t.id].join(' '))===d.id);if(detailed.length){c.append(section('Erhaltene Detailakten und geparkte Ideen'));detailed.forEach(t=>c.append(topicRow(t)));}if(d.id==='operations')c.append(pairs('Für spätere Entscheidungen erhalten',[['Lokale Modelle / Ollama','Archivierter Fachchat empfiehlt, zunächst den bestehenden KI-Zugang zu stabilisieren. Eigene Hardware/Offline-KI später bei konkretem Bedarf prüfen. Als Empfehlung erhalten, keine verbindliche Unternehmensentscheidung behauptet.']]));c.append(section('Hängt zusammen mit'));d.related.forEach(id=>{const related=domains.find(d=>d.id===id);if(related)c.append(link(related.name,`#/arbeit/landkarte/${id}`,'button secondary'));});
 }
 function coverageView(){
- const c=$('#content'),stats=coverage(inventory);append(c,head('Wie vollständig ist unser Überblick?','Sichtbarer Quellenstand statt einer behaupteten Vollanalyse.'));
+ const outer=$('#content'),stats=coverage(inventory),c=el('div');append(outer,head('Quellenabdeckung','Aktueller Abruf und erkennbare Lücken.'),append(el('details','compact-details'),el('summary','','Historische Inventur · 23.10.2026'),c));
  append(c,el('p','quality-summary',`Historische Inventur vom 23.10.2026: ${stats.chats} Chats erschlossen, ${stats.pages} API-Seiten und ${stats.turns} Turns erfasst. ${stats.partial} Chats sind nur teilweise oder nicht erreichbar. Die redaktionelle Gesamtauswertung ist offen.`),note(`${stats.branches} Remote-Branches bis Seite4, ${stats.prs} offene PRs und ${inventory.workstreams.length} Release-Registereinträge erfasst. Der Produktbaum enthält ${inventory.productTree.count} Einträge bei ${inventory.productTree.sha.slice(0,8)}; keine Vollcodeprüfung aller Branches.`));
  c.append(note(`${inventory.localCode?.length||0} lokale Git-Checkouts mit HEAD, Branch und versionierten Dateitypen erfasst. Historische Kopien sind keine zusätzlichen Produkte.`));const codeList=append(el('details','evidence-record'),el('summary','','Lokale Codebestände und exakte Stände'));for(const repo of inventory.localCode||[])codeList.append(append(el('article','source'),el('strong','',repo.path.split('/').at(-1)),el('small','',`${repo.branch} · ${repo.head.slice(0,12)} · ${repo.trackedFiles} versionierte Dateien`),el('span','source-path',repo.path),el('p','',Object.entries(repo.codeFileCounts).map(([k,v])=>`${v} ${k}`).join(' / '))));c.append(codeList);c.append(pairs('Zugriffsgrenzen',inventory.limits.map((s,i)=>[`Grenze ${i+1}`,s])));
  for(const t of inventory.chats)c.append(append(el('article','source'),el('strong','',t.title),el('small','',`${t.status} · ${t.pages} API-Seiten · ${t.turns} Turns`),el('span','source-path',t.id)));
@@ -138,27 +140,27 @@ function area(){
   const f=el('dl','facts');for(const[k,v]of [['Verantwortliche Rolle',a.owner],['Erwartete Ergebnisse',a.results]])f.append(append(el('div'),el('dt','',k),el('dd','',v)));append(c,f,section('Zugeordnete Arbeit',`${associated.length} Themen im übernommenen Quellenstand`),topicList(associated));
 }
 function knowledge(area,heading=true){
-  const c=$('#content');if(heading)c.append(head('Wissen, das bleibt.','Quellen, Entscheidungen und Gesprächsergebnisse bei der passenden Arbeit.'));
+  const c=$('#content');if(heading)c.append(head('Wissen','Quellen bei der passenden Arbeit finden.'));
   const input=el('input','filter-input');input.type='search';input.placeholder='Quelle oder Thema suchen';input.setAttribute('aria-label','Wissen durchsuchen');c.append(append(el('div','toolbar'),input));const list=el('div');c.append(list);
   const draw=()=>{list.replaceChildren();const q=input.value.trim().toLocaleLowerCase('de');let count=0;for(const t of searchTopics(topics,'',area||'all')){const matches=t.sources.filter(s=>`${t.title} ${s.label} ${s.url}`.toLocaleLowerCase('de').includes(q));if(matches.length){list.append(section(t.title));matches.forEach(s=>list.append(source(s)));count+=matches.length;}}if(!count)list.append(empty('Keine passende Quelle','In diesem Quellenstand gibt es dazu keinen Eintrag.'));};input.addEventListener('input',draw);draw();
 }
 function network(){const c=$('#content');append(c,head('So hängt die Arbeit zusammen.','Gemeinsame Ziele brauchen sichtbare Abhängigkeiten.'));const net=el('div','network'),seen=new Set();for(const t of topics)for(const[id,why]of t.links){const key=[t.id,id].sort().join(':');if(seen.has(key))continue;seen.add(key);const target=topics.find(x=>x.id===id);if(target)net.append(append(el('div','network-row'),link(t.title,`#/arbeit/thema/${t.id}`),el('span','','↔'),append(el('div'),link(target.title,`#/arbeit/thema/${id}`),el('p','',why))));}c.append(net);}
 function draftRow(d){return append(el('article','draft-row'),append(el('div'),el('h3','',d.title),el('p','',`${kindName[d.kind]||'Entwurf'} · ${areaName(d.area)} · lokal, nicht versendet`)),button('Öffnen',()=>openEditor(d)));}
 function inbox(){
-  const c=$('#content');append(c,head('Dein Eingang','Neue Anliegen sammeln und den nächsten Schritt vorbereiten.',button('+ Neu erfassen',()=>openEditor(),'button primary')));
+  const c=$('#content');append(c,head('Eingang','Aufträge, Rückfragen und Ergebnisse.'));
   runtimeOff=mountTasks(c,central);
   if(!draftsState.ok)c.append(el('p','error',draftsState.error));
   if(drafts.length){c.append(section('Lokale Entwürfe',`${drafts.length} erfasst · auf diesem Gerät gespeichert`));drafts.toReversed().forEach(d=>c.append(draftRow(d)));}
-  else c.append(empty('Platz für den nächsten Gedanken.','Erfasse eine Idee, einen Auftrag, ein Problem oder eine Kundenanfrage. Die Zuordnung kann später geändert werden.',button('Ersten Entwurf anlegen',()=>openEditor(),'button primary')));
-  const panel=el('div','panel');for(const [name,desc]of [['E-Mail','Kein Postfach verbunden. Nachrichten werden hier noch nicht abgerufen.'],['Kunden & Support','Kein Eingangskanal verbunden. Anfragen können als lokale Entwürfe erfasst werden.']])panel.append(append(el('article','channel'),append(el('div'),el('h3','',name),el('p','',desc)),label('Nicht verbunden')));append(c,append(el('section','detail-section'),section('Eingangskanäle'),panel));
+
+  const panel=el('div','panel');for(const [name,desc]of [['E-Mail','Kein Postfach verbunden. Nachrichten werden hier noch nicht abgerufen.'],['Kunden & Support','Kein Eingangskanal verbunden. Anfragen können als lokale Entwürfe erfasst werden.']])panel.append(append(el('article','channel'),append(el('div'),el('h3','',name),el('p','',desc)),label('Nicht verbunden')));append(c,append(el('details','compact-details'),el('summary','','Weitere Eingangskanäle · 2 nicht verbunden'),panel));
 }
-function connections(){const c=$('#content');append(c,head('Verbindungen & Datenstand','Erreichbare Quellen, letzte Prüfung und offene Grenzen.'),pairs('Arbeitsweise',[
+function connections(){const c=$('#content');append(c,head('Verbindungen','Quellenstand und offene Anbindungen.'),append(el('details','compact-details'),el('summary','','Was die Zentrale bereits kann'),pairs('Arbeitsweise',[
  ['Chat-Aufträge','Die bestehende Codex-Anmeldung verbindet diese lokale Zentrale mit echten Arbeitsverläufen. Das freigegebene Profil bearbeitet Analysen, Konzepte und Berichte; Produktcode und Liveänderungen sind gesperrt.'],
  ['Projektwissen','Codex-Quellen und GitHub werden alle fünf Minuten geprüft. Neue Quellen ändern fachliche Abnahmen nicht automatisch. Die redaktionelle Landkarte bleibt als datierter Stand erhalten.'],
  ['Entwürfe','Entwurf speichern sendet nichts. Erst Bearbeitung starten nimmt einen Auftrag in den dauerhaften lokalen Dienst auf.'],
  ['E-Mail und Kundenkanäle','Noch kein Postfach oder Supportkanal verbunden.'],
  ['Betrieb','Der Dienst muss auf diesem Mac laufen. Keine Mehrbenutzer- oder Cloudfreigabe. Ein Ergebnis ist keine Produktabnahme.']
- ]));runtimeOff=mountSources(c,central);}
+ ])));runtimeOff=mountSources(c,central);}
 
 function field(name,labelText,type,value,options){const l=el('label','field',labelText);let input;if(options){input=el('select');for(const [v,t]of options){const o=el('option','',t);o.value=v;input.append(o);}}else input=el(type==='textarea'?'textarea':'input');input.name=name;if(type!=='textarea'&&!options)input.type=type;input.value=value||'';l.append(input);return l;}
 function openEditor(d=null,preset={}){
@@ -166,7 +168,7 @@ function openEditor(d=null,preset={}){
   editingId=d?.id||null;const value={kind:'task',area:'strategy',title:'',body:'',...preset,...d};$('#dialog-title').textContent=d?'Entwurf bearbeiten':'Neu erfassen';$('#editor-message').textContent='';$('#editor-message').className='';
   const title=field('title','Titel','text',value.title);title.lastChild.maxLength=160;title.lastChild.required=true;
   const body=field('body','Beschreibung & gewünschtes Ergebnis','textarea',value.body);body.lastChild.maxLength=12000;
-  $('#editor-body').replaceChildren(title,append(el('div','field-pair'),field('kind','Art','select',value.kind,Object.entries(kindName)),field('area','Bereich','select',value.area,areas.map(a=>[a.id,a.name]))),body,el('p','help','Entwurf speichern bleibt ungesendet. Bearbeitung starten nutzt die bestehende Codex-Anmeldung für Analysen, Konzepte und Berichte. Produktcode und Live bleiben unverändert. Keine vertraulichen Kundendaten eingeben.'));
+  $('#editor-body').replaceChildren(title,append(el('div','field-pair'),field('kind','Art','select',value.kind,Object.entries(kindName)),field('area','Bereich','select',value.area,areas.map(a=>[a.id,a.name]))),body,el('p','help','Entwurf = nur speichern. Start = Analyse, Konzept oder Bericht bearbeiten lassen. Live bleibt unverändert.'));
   $('#save-draft').disabled=!draftsState.ok;
   if(!draftsState.ok){$('#editor-message').textContent=draftsState.error;$('#editor-message').className='error';}
   editorBaseline=JSON.stringify([...new FormData($('#editor-form'))]);closeRequested=false;
@@ -207,7 +209,7 @@ mobile.addEventListener('change',closeMenu);
 $('#menu').addEventListener('click',()=>{const open=$('#sidebar').classList.toggle('open');syncMenu();if(open)$('#primary a').focus();});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'&&!$('#editor').open){e.preventDefault();if(!$('#search-dialog').open)openSearch();}if(e.key==='Escape'&&$('#sidebar').classList.contains('open')){closeMenu();$('#menu').focus();}});
 document.addEventListener('click',e=>{if($('#sidebar').classList.contains('open')&&!$('#sidebar').contains(e.target)&&!$('#menu').contains(e.target))closeMenu();});
-function render(focus=true){runtimeOff();runtimeOff=()=>{};route=parseRoute(location.hash);document.body.classList.toggle('network-mode',route.page==='heute'||route.page==='arbeit'&&(!route.section||route.section==='landkarte'));navigation();$('#content').replaceChildren();if(route.page==='eingang')inbox();else if(route.page==='wissen')knowledge();else if(route.page==='verbindungen')connections();else if(route.page==='arbeit'){if(route.section==='akte')portfolioDetail();else if(route.section==='landkarte'&&route.id)today();else if(route.section==='abdeckung'){coverageView();runtimeOff=mountSources($('#content'),central);}else if(route.section==='thema')detail();else if(route.section==='ziele')goals();else if(route.section==='qualitaet')quality();else if(route.section==='bereich')area();else if(route.section==='netz')network();else if(route.section==='landkarte'||!route.section)today();else themes();}else today();if(route.section==='landkarte'&&route.id&&$('#content .focus-inspector'))runtimeOff=mountDomainSources($('#content .focus-inspector'),central,route.id,primaryDomain);document.title=`${$('#content h1')?.textContent||'Firmenzentrale'} · GradeCrew`;closeMenu();if(focus){$('#content').focus({preventScroll:true});window.scrollTo(0,0);}}
+function render(focus=true){runtimeOff();runtimeOff=()=>{};route=parseRoute(location.hash);navigation();$('#content').replaceChildren();if(route.page==='eingang')inbox();else if(route.page==='wissen')knowledge();else if(route.page==='verbindungen')connections();else if(route.page==='arbeit'){if(route.section==='akte')portfolioDetail();else if(route.section==='landkarte'&&route.id)today();else if(route.section==='abdeckung'){coverageView();runtimeOff=mountSources($('#content'),central);}else if(route.section==='thema')detail();else if(route.section==='ziele')goals();else if(route.section==='qualitaet')quality();else if(route.section==='bereich')area();else if(route.section==='netz')network();else if(route.section==='landkarte'||!route.section)today();else themes();}else today();if(route.section==='landkarte'&&route.id&&$('#content .focus-inspector'))runtimeOff=mountDomainSources($('#content .focus-inspector'),central,route.id,primaryDomain);document.title=`${$('#content h1')?.textContent||'Firmenzentrale'} · GradeCrew`;closeMenu();if(focus){$('#content').focus({preventScroll:true});window.scrollTo(0,0);}}
 window.addEventListener('hashchange',()=>render());
 window.addEventListener('storage',event=>{if(event.key==='gradecrew-company-personal-drafts-v1'){const latest=readDrafts(storage);if(!$('#editor').open){draftsState=latest;drafts=latest.items;render(false);}else notify('Entwürfe wurden in einer anderen Ansicht geändert.');}});
 render(false);

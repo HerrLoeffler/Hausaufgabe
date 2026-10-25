@@ -16,7 +16,7 @@ export function mountNetwork(container,{selected='',child='',onDraft,brandIcon})
  if(leaveFocus()){zoom=1;offset={x:0,y:0};mode='all';query='';}
  if(selected){container.append(E('p','focus-alert','Dieser Bereich ist nicht bekannt. Das Gesamtnetz steht zur Auswahl.'));selected='';}
  const selectedNode=byId(selected),root=E('section','nerve-center');
- const intro=A(E('div','net-heading'),A(E('div'),E('p','net-eyebrow','GradeCrew · Firmenzentrale'),E('h1','','Das Unternehmen als Netz.'),E('p','net-subtitle','Was zusammenläuft. Was voneinander abhängt. Was als Nächstes gelöst werden muss.')),link('Quellenstand & Lücken','#/arbeit/abdeckung','net-source-link'));
+ const intro=A(E('div','net-heading'),A(E('div'),E('h1','','Unternehmensnetz'),E('p','net-subtitle','Bereich öffnen. Engpass erkennen. Weiterarbeiten.')),link('Stand & Quellen','#/arbeit/abdeckung','net-source-link'));
  root.append(intro);
  const toolbar=E('div','net-toolbar'),filters=E('div','net-filters');filters.setAttribute('aria-label','Netz filtern');
  const filterButtons=[];
@@ -66,16 +66,16 @@ export function mountNetwork(container,{selected='',child='',onDraft,brandIcon})
  const searchStatus=E('p','net-search-status');searchStatus.setAttribute('role','status');
  A(stage,svg,controls,hint,searchStatus);A(layout,stage,panel);root.append(layout);
  const legend=E('div','net-legend');for(const[kind,name]of Object.entries(names)){const item=E('span','legend-'+kind);A(item,E('i'),document.createTextNode(name));legend.append(item);}root.append(legend);
- root.append(E('p','net-evidence-note','Quellenstand 23.10.2026. Gemeldete Engpässe sind keine Live-Messung. Gelb bezeichnet eine offene Voraussetzung, Violett eine Abstimmung. Keine Gesamtfreigabe aus Teilständen.'));
+ root.append(E('p','net-evidence-note','Redaktioneller Quellenstand: 23.–25.10.2026 · Keine Live-Messung.'));
  container.append(root);
  let selectedEdge=null,drag=null;
  function showNode(n){
    selectedEdge=null;
    panel.replaceChildren();
    if(!n){
-     A(panel,E('p','inspector-kicker','Nächster Hebel'),E('h2','','Wo es gerade hängt'),E('p','inspector-copy','Drei Engpässe sind im erfassten Stand gemeldet. Wähle einen, um betroffene Arbeit und den nächsten Schritt zu sehen.'));
+     A(panel,E('h2','','Wo es gerade hängt'),E('p','inspector-copy','3 gemeldete Engpässe · Bereich öffnen'));
      for(const item of nodes.filter(n=>n.blocker)){const b=button('',()=>{location.hash=`/arbeit/landkarte/${item.id}`;},'net-blocker-choice');A(b,E('span','issue-dot'),A(E('span'),E('strong','',item.label),E('small','',item.blocker.title)));panel.append(b);}
-     panel.append(E('p','inspector-foot','Das Netz zeigt konkrete Beziehungen zwischen allen elf Themenfeldern. Unklare Beziehungen sind als redaktionelle Zuordnung erkennbar.'));return;
+     panel.append(E('p','inspector-foot','11 Bereiche · Verbindungen anklicken für Abhängigkeiten.'));return;
    }
    A(panel,E('p','inspector-kicker','Ausgewählter Bereich'),E('h2','',n.label),E('p',n.blocker?'inspector-status issue':'inspector-status',n.status));
    if(n.blocker){A(panel,E('h3','','Hier hakt es'),E('p','inspector-copy',n.blocker.problem),E('h3','','Das muss erledigt werden'),E('p','inspector-copy',n.blocker.next),E('p','inspector-source',n.blocker.source));}

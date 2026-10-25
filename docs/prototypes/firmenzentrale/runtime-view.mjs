@@ -1,3 +1,4 @@
+import {taskBucket} from './hierarchy.mjs';
 import { baseline } from './baseline.mjs';
 // Same-origin client. User drafts are never automatically submitted.
 export class CentralClient {
@@ -21,17 +22,20 @@ const btn=(text,fn)=>{const b=el('button',text,'button secondary');b.type='butto
 const message=(box,error)=>{box.textContent=error.message||String(error);box.className='error';};
 export function mountTasks(parent,client){
  const wrap=el('section',undefined,'runtime-tasks'),intro=el('p','Aufträge werden auf diesem Mac gespeichert. Ergebnisse sind noch keine fachliche Abnahme.','info-note'),list=el('div'),error=el('p');wrap.append(el('h2','Aufträge & Ergebnisse'),intro,error,list);parent.insertBefore(wrap,parent.children[1]||null);
- const nodes=new Map();
+ const nodes=new Map(),filters=el('nav',undefined,'task-filters'),filterButtons=new Map(),empty=el('p','Keine Aufträge in dieser Ansicht.','info-note');let selected='all';filters.setAttribute('aria-label','Aufträge filtern');
+ const filterEntries=[['all','Alle'],['active','Läuft'],['questions','Rückfragen'],['results','Ergebnisse'],['attention','Prüfen']];
+ function filter(state){for(const [id,b] of filterButtons){const count=(state?.requests||[]).filter(r=>id==='all'||taskBucket(r.status)===id).length;b.textContent=filterEntries.find(x=>x[0]===id)[1]+' '+count;b.setAttribute('aria-pressed',String(id===selected));}let visible=0;for(const [id,node] of nodes){const r=state?.requests.find(r=>r.id===id);node.hidden=!r||(selected!=='all'&&taskBucket(r.status)!==selected);if(!node.hidden)visible++;}empty.hidden=visible>0;}
+ for(const [id,title] of filterEntries){const b=btn(title,()=>{selected=id;filter(client.state);});filterButtons.set(id,b);filters.append(b);}wrap.insertBefore(filters,list);wrap.append(empty);
  const off=client.subscribe((state,problem)=>{
   error.textContent=problem||(!state?.connected?state?.error||'Chatanschluss wird geprüft …':'');error.hidden=!error.textContent;
   for(const r of state?.requests||[]){
    let node=nodes.get(r.id);
    if(!node){
     node=el('article',undefined,'runtime-task panel');node.dataset.requestId=r.id;
-    const title=el('h3'),status=el('p',undefined,'runtime-status'),meta=el('p',undefined,'tiny'),details=el('details'),summary=el('summary','Ergebnis & Verlauf'),body=el('p',undefined,'runtime-text'),result=el('div',undefined,'runtime-text'),problem=el('p',undefined,'error'),report=el('pre',undefined,'runtime-report'),question=el('div'),controls=el('div',undefined,'toolbar');
-    details.append(summary,body,result,report,meta);node.append(title,status,problem,question,details,controls);node.parts={title,status,meta,body,result,problem,report,question,controls};nodes.set(r.id,node);list.append(node);
+    const title=el('h3'),status=el('p',undefined,'runtime-status'),meta=el('p',undefined,'tiny'),details=el('details'),summary=el('summary','Ergebnis öffnen'),body=el('p',undefined,'runtime-text'),result=el('div',undefined,'runtime-text'),problem=el('p',undefined,'error'),report=el('pre',undefined,'runtime-report'),question=el('div'),controls=el('div',undefined,'toolbar');
+    const context=el('details',undefined,'compact-details');context.append(el('summary','Auftrag & Nachweis'),body,meta);details.append(summary,result,report,context);const heading=el('div',undefined,'task-heading');heading.append(title,status);node.append(heading,problem,question,details,controls);node.parts={title,status,meta,body,result,problem,report,question,controls,context,details};nodes.set(r.id,node);list.append(node);
    }
-   const p=node.parts;p.title.textContent=r.title;p.status.textContent=statusName[r.status]||r.status;p.body.textContent=r.body;p.result.textContent=r.result;p.problem.textContent=r.error||'';p.problem.hidden=!r.error;p.report.textContent=r.report?.text||'';p.report.hidden=!r.report;
+   const p=node.parts;p.title.textContent=r.title;p.status.textContent=statusName[r.status]||r.status;p.status.dataset.state=taskBucket(r.status);p.body.textContent=r.body;p.result.textContent=r.result;p.result.hidden=!r.result;if(r.report&&p.result.parentNode!==p.context)p.context.append(p.result);else if(!r.report&&p.result.parentNode!==p.details)p.details.insertBefore(p.result,p.report);p.problem.textContent=r.error||'';p.problem.hidden=!r.error;p.report.textContent=r.report?.text||'';p.report.hidden=!r.report;node.querySelector('summary').textContent=r.status==='completed'?'Ergebnis öffnen':'Auftrag ansehen';
    p.meta.textContent=`${date(r.updatedAt)} · Versuch ${r.attempts} · ${r.model||'Modell noch nicht gewählt'}\nAuftrag ${r.id}\nChat ${r.threadId||'noch nicht zugeordnet'}\nTurn ${r.turnId||'noch nicht angenommen'}${r.report?'\nBericht SHA256 '+r.report.sha256:''}`;
    if(r.question&&p.question.dataset.callId!==r.question.callId){
     p.question.replaceChildren();p.question.dataset.callId=r.question.callId;const label=el('label',r.question.text,'field'),input=el('textarea');input.maxLength=8000;label.append(input);const err=el('p');const send=btn('Antwort senden',async()=>{send.disabled=true;try{await client.post('/api/answer',{id:r.id,callId:r.question.callId,answer:input.value});err.textContent='Antwort übermittelt.';}catch(e){message(err,e);send.disabled=false;}});p.question.append(label,send,err);node.querySelector('details').open=true;
@@ -43,29 +47,30 @@ export function mountTasks(parent,client){
    }
   }
   if(!state?.requests?.length)intro.textContent='Noch keine gestarteten Aufträge. Über „Neu erfassen“ eine Aufgabe eingeben und „Bearbeitung starten“ wählen.';
-  else intro.textContent=`${state.requests.length} gespeicherte Aufträge · Ergebnisse sind noch keine fachliche Abnahme.`;
+  else intro.textContent='Ergebnisse prüfen und anschließend fachlich abnehmen.';
+  filter(state);
  });return off;
 }
 export function mountSources(parent,client){
- const wrap=el('section',undefined,'runtime-sources panel'),status=el('p'),rows=el('div'),error=el('p');wrap.append(el('h2','Aktueller Ausgangsstand'),status,btn('Quellen jetzt prüfen',async()=>{try{await client.post('/api/refresh',{});status.textContent='Quellen werden geprüft …';}catch(e){message(error,e);}}),error,rows);parent.insertBefore(wrap,parent.children[1]||null);
+ const wrap=el('section',undefined,'runtime-sources panel'),status=el('p'),rows=el('div',undefined,'source-cards'),error=el('p');wrap.append(el('h2','Quellen'),status,btn('Quellen jetzt prüfen',async()=>{try{await client.post('/api/refresh',{});status.textContent='Quellen werden geprüft …';}catch(e){message(error,e);}}),error,rows);parent.insertBefore(wrap,parent.children[1]||null);
  const baselineDetails=el('details');baselineDetails.append(el('summary','Standpunkt null · 11 Bereiche · geprüft am 25.10.2026'),el('p','Zusammengeführter Ausgangspunkt aus erreichbaren Quellen und eigenen Prüfungen. Historische Produktmeldungen sind keine aktuelle Vollabnahme. Der ausführliche Analysebericht liegt im Eingang.','tiny'));
  for(const [title,stand,next] of baseline){const row=el('article',undefined,'aside-note');row.append(el('h3',title),el('p',stand),el('strong','Nächster Schritt'),el('p',next));baselineDetails.append(row);}wrap.append(baselineDetails);
  let last='';return client.subscribe((state,problem)=>{
-  status.textContent=problem||`${state?.sources?.refreshing?'Quellen werden eingelesen …':'Automatische Prüfung alle 5 Minuten'} · ${state?.connected?'Codex verbunden':'Codex nicht verbunden'}`;
+  status.textContent=problem||`${state?.sources?.refreshing?'Quellen werden eingelesen …':'Abgleich alle 5 Minuten'} · ${state?.connected?'Codex verbunden':'Codex nicht verbunden'}`;
   const sources=state?.sources;if(!sources||JSON.stringify(sources)===last)return;last=JSON.stringify(sources);rows.replaceChildren();
   for(const [id,title] of [['codex','Codex-Projektchats'],['github','GitHub-Projektstand'],['cloud','ChatGPT-Cloudchats']]){
-   const s=sources.sources[id],d=s?.data;const card=el('article',undefined,'aside-note');card.append(el('h3',title),el('p',`Letzter Erfolg: ${date(s?.lastSuccess)}`));
+   const s=sources.sources[id],d=s?.data;const card=el('article',undefined,'aside-note');card.append(el('h3',title),el('p',`Geprüft: ${date(s?.lastSuccess)}`,'tiny'));
    if(s?.error)card.append(el('p',s.error,'error'));
-   if(id==='codex'&&d){card.append(el('p',`${d.count} Chats · ${d.turns} Turns · ${d.complete} Verläufe technisch vollständig abgerufen`));const details=el('details');details.append(el('summary','Erfasste Chats und Lücken'));for(const t of d.chats||[])details.append(el('p',`${t.title} · ${t.turns} Turns · ${t.complete?'Abruf vollständig':t.error||'unvollständig'}`));card.append(details);}
+   if(id==='codex'&&d){card.append(el('p',`${d.complete} von ${d.count} Chats abgerufen`));const details=el('details');details.append(el('summary','Erfasste Chats und Lücken'));for(const t of d.chats||[])details.append(el('p',`${t.title} · ${t.turns} Turns · ${t.complete?'Abruf vollständig':t.error||'unvollständig'}`));card.append(details);}
    if(id==='github'&&d){
-    card.append(el('p',`${d.count} offene PRs · ${d.registryCount||0} registrierte Baustellen · main ${d.commit?.slice(0,10)}`));
+    card.append(el('p',`${d.count} offene PRs · ${d.registryCount||0} Baustellen`));
     const details=el('details');details.append(el('summary',`${d.workstreams?.length||0} Release-Arbeitsstände und nächste Schritte`));
     for(const w of d.workstreams||[]){const row=el('article',undefined,'aside-note');row.append(el('h4',w.title),el('p',`${w.stage} · ${w.owner}`),el('p',w.next));details.append(row);}card.append(details);
    }
-   if(id==='cloud')card.append(el('p',d?`${d.readable} von ${d.count} Chats erreichbar · ${d.turns} gelieferte Turns · teils gekürzte Nachrichten. Abruf über Desktopconnector, nicht automatisch.`:'Historische Inventur vorhanden; neuer Abruf über Desktopconnector ausstehend.'));
+   if(id==='cloud')card.append(el('p',d?`${d.readable} von ${d.count} Chats importiert · manuell, teils gekürzt`:'Historische Inventur vorhanden; neuer Abruf über Desktopconnector ausstehend.'));
    rows.append(card);
   }
-  for(const text of sources.limits)rows.append(el('p',text,'tiny'));
+  let limits=wrap.querySelector('.source-limits');if(!limits){limits=el('details',undefined,'source-limits');wrap.append(limits);}limits.replaceChildren(el('summary','Abdeckung & Grenzen'));for(const text of sources.limits)limits.append(el('p',text,'tiny'));
  });
 }
 
