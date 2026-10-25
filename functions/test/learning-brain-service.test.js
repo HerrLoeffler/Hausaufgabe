@@ -104,3 +104,48 @@ test('expired pending retry ends safely and clears context even when profile was
  const pending=await svc.turn('A',{sessionId:s.id,revision:1,eventId:'answer-expiry',action:'answer',answer:'private pupil answer'});time+=30*86400000+1;
  const ended=await svc.turn('A',{sessionId:s.id,revision:pending.revision,eventId:'retry-expiry',action:'retry-next'});assert.equal(ended.phase,'ended');assert.equal(calls,1);const stored=f.state.get('A').sessions[s.id];assert.equal(stored.nextContext,undefined);assert.equal(stored.nextFailure,undefined);assert.equal(stored.events.length,1);
 });
+function networkFixture(){
+ const state=new Map(),parent={id:'parent-six',title:'Brüche',subject:'math',grade:6,track:'R',area:'Brüche',modality:'text'};
+ const competencies=[{...parent,id:'base-six',parentTopicId:parent.id,assessmentScope:'digital',prerequisites:[]},{...parent,id:'next-six',parentTopicId:parent.id,assessmentScope:'digital',prerequisites:['base-six']},{...parent,id:'other-five',parentTopicId:'parent-five',grade:5,assessmentScope:'digital',prerequisites:[]},{...parent,id:'words-six',parentTopicId:'german-parent',title:'Wörter ordnen',subject:'german',assessmentScope:'digital',prerequisites:[]}];
+ const catalog={topics:[parent],competencies,version:'v',competencyVersion:'n'};let calls=0,failNext=false;
+ const dependencies={catalog,now:()=>1000,store:{transact:async(uid,fn)=>{const r=fn(globalThis.structuredClone(state.get(uid)));state.set(uid,globalThis.structuredClone(r.state));return r.result;}},ai:{assess:async()=>({outcome:'correct'}),next:async()=>{if(failNext)throw Error('offline');return {task:{id:'task-'+ ++calls,prompt:'Eine Aufgabe '+calls,family:calls%2?'compare':'explain',answer:{kind:'number',values:['2']}},explanation:'',visual:null};}}};
+ return {service:createService(dependencies),reload:()=>createService(dependencies),state,catalog,setFailure:v=>{failNext=v;}};
+}
+test('legacy parent starts route to an actual child; explicit child remains freely selectable',async()=>{
+ const f=networkFixture(),s=await f.service.start('A',{topicId:'parent-six',minutes:20,eventId:'net-parent-01'});assert.equal(s.topic.id,'base-six');
+ const free=await f.service.start('A',{topicId:'next-six',minutes:20,eventId:'net-child-01'});assert.equal(free.topic.id,'next-six');
+ const area=await f.service.start('A',{area:'Brüche',grade:6,subject:'math',minutes:20,eventId:'net-area-01'});assert.equal(area.topic.id,'base-six');
+});
+test('profiles expose context-filtered network and recommendations without transferring parent evidence',async()=>{
+ const f=networkFixture();await f.service.profile('A');const state=f.state.get('A');
+ state.topicEvents['parent-six']=Array.from({length:10},(_,i)=>({independent:true,correct:true,level:2,at:i,fingerprint:'old'+i,family:i%2?'x':'y',sessionId:i<5?'s1':'s2'}));
+ state.topicEvents['other-five']=[{independent:true,correct:false,at:999,fingerprint:'other'}];
+ const profile=await f.service.profile('A',{grade:6,subject:'german'});assert.equal(profile.learningNetwork.nodes.length,1);assert.equal(profile.learningNetwork.nodes[0].state,'unassessed');assert.deepEqual(profile.recommendations.map(r=>r.topicId),['words-six']);
+ const math=await f.service.profile('A',{subject:'math'});assert.equal(math.learningNetwork.nodes[0].evidence.independent,0);assert.equal(math.recommendations[0].topicId,'base-six');
+});
+test('child help evidence survives reload and duplicate retry without private content or foreign owner leakage',async()=>{
+ const f=networkFixture(),s=await f.service.start('A',{topicId:'base-six',minutes:20,eventId:'net-start-01'});f.setFailure(true);
+ const body={sessionId:s.id,revision:s.revision,eventId:'net-help-01',action:'question',question:'Private pupil question'};
+ const pending=await f.service.turn('A',body);assert.equal(pending.pendingNext,true);assert.deepEqual(await f.reload().turn('A',body),pending);
+ let profile=await f.reload().profile('A');assert.equal(profile.learningNetwork.nodes[0].state,'using-help');assert.equal(profile.learningNetwork.nodes[0].evidence.independent,0);assert.equal(f.state.get('A').topicEvents['base-six'].length,1);assert.equal(JSON.stringify(profile).includes('Private pupil'),false);
+ await assert.rejects(f.service.turn('B',{...body,eventId:'net-foreign-01'}),e=>e.code==='not-found');assert.equal((await f.service.profile('B')).learningNetwork.nodes[0].state,'unassessed');
+ f.setFailure(false);await f.reload().turn('A',{sessionId:s.id,revision:pending.revision,eventId:'net-retry-01',action:'retry-next'});assert.equal(f.state.get('A').topicEvents['base-six'].length,1);
+});
+test('existing active legacy parent sessions resume unchanged after competencies arrive',async()=>{
+ const f=fixture(),s=await f.service.start('A',{topicId:'math-r-6-1',minutes:20,eventId:'old-start-01'});
+ const service=createService({catalog:{topics:[s.topic],competencies:[{...s.topic,id:'new-child',parentTopicId:s.topic.id}]},now:()=>1000,store:{transact:async(uid,fn)=>{const r=fn(globalThis.structuredClone(f.state.get(uid)));f.state.set(uid,globalThis.structuredClone(r.state));return r.result;}},ai:{assess:async()=>({outcome:'correct'}),next:async()=>({task:{id:'new-task',prompt:'Weiter'},explanation:'',visual:null})}});
+ assert.equal((await service.profile('A')).activeSession.topic.id,'math-r-6-1');const result=await service.turn('A',{sessionId:s.id,revision:s.revision,eventId:'old-answer-01',action:'answer',answer:'2'});assert.equal(result.topic.id,'math-r-6-1');assert.equal(f.state.get('A').topicEvents['new-child'],undefined);
+});
+
+test('independent competency evidence accumulates across two sessions and reload without entering the parent',async()=>{
+ const f=networkFixture();
+ for(let round=0;round<2;round++){
+  let s=await f.reload().start('A',{topicId:'base-six',minutes:20,eventId:'mastery-start-'+round});
+  for(let i=0;i<5;i++)s=await f.reload().turn('A',{sessionId:s.id,revision:s.revision,eventId:'mastery-'+round+'-answer-'+i,action:'answer',answer:'2'});
+  await f.reload().turn('A',{sessionId:s.id,revision:s.revision,eventId:'mastery-finish-'+round,action:'finish'});
+ }
+ const profile=await f.reload().profile('A'),node=profile.learningNetwork.nodes.find(n=>n.id==='base-six');
+ assert.equal(node.state,'demonstrated');assert.equal(node.evidence.independent,10);assert.equal(node.evidence.correct,10);
+ assert.equal(profile.learningNetwork.nodes.find(n=>n.id==='next-six').state,'unassessed');assert.equal(f.state.get('A').topicEvents['parent-six'],undefined);
+ assert.equal((await f.reload().profile('B')).learningNetwork.nodes[0].evidence.independent,0);
+});

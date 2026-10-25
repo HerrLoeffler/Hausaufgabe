@@ -64,3 +64,12 @@ test('ten easy independent successes alone cannot establish a whole competency',
  events[8].level=2;events[9].level=2;assert.equal(projectSkill(events,20).status,'secure');
  const s=transition(start(),'answer',{outcome:'correct'});assert.equal(s.previousLevel,1);assert.equal(s.events[0].level,1);
 });
+test('help requests on competencies persist only public support metadata and never count as independent evidence',()=>{
+ const s=start();s.topic.parentTopicId='parent';
+ const helped=transition(s,'question',null,100);assert.equal(helped.events.length,1);assert.equal(helped.events[0].kind,'help-requested');assert.equal(helped.events[0].independent,false);
+ assert.equal(projectSkill(helped.events,200).independent,0);assert.equal(projectSkill(helped.events,200).correct,0);
+});
+test('preparation and human-observation evidence cannot certify original performance',()=>{
+ const events=Array.from({length:10},(_,i)=>({independent:true,correct:true,level:2,fingerprint:'scope'+i,family:i%2?'identify':'apply',sessionId:i<5?'s1':'s2',at:i}));
+ for(const assessmentScope of ['preparation','human-observation']){const evidence=projectSkill(events,20,{assessmentScope});assert.notEqual(evidence.status,'secure');assert.equal(evidence.reviewDue,false);assert.equal(evidence.nextReviewAt,null);}
+});

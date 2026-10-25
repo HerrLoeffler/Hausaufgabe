@@ -94,3 +94,18 @@ test('independent text reviewer receives the selectable tokens actually derived 
  await ai.next({...s,topic:{subject:'german',title:'Satzglieder'},task:null},{});
  assert.deepEqual(requests[1].renderedWorkshop.selectableTokens,['Am','Abend','liest','Mia','ein','Buch.']);assert.deepEqual(requests[1].candidate.task.workshop.tokens,[]);
 });
+
+
+test('listening has private source text while the public task exposes audio availability only',()=>{
+ const d=generated();d.task.media={kind:'listen',script:'Am Morgen fährt Mia mit dem Bus zur Schule.'};
+ const topic={...s.topic,delivery:'listen'};const task=cleanGenerated(d,{...s,topic}).task;
+ const {publicSession}=require('../lib/learning-brain/core');
+ const result=publicSession({...s,id:'audio',revision:1,deadline:Date.now()+1000,topic,task},Date.now());
+ assert.deepEqual(result.task.media,{kind:'listen',available:true});assert.ok(!JSON.stringify(result.task).includes('Bus'));
+ const noAudio=generated();assert.throws(()=>cleanGenerated(noAudio,{...s,topic}));
+ d.task.contextText=d.task.media.script;assert.throws(()=>cleanGenerated(d,{...s,topic}));
+});
+
+test('the listening transcript cannot leak through prompt, options or diagram labels',()=>{
+ for(const field of ['prompt','options','diagram']){const d=generated();d.task.media={kind:'listen',script:'Am Morgen fährt Mia mit dem Bus zur Schule.'};if(field==='options')d.task.options=[d.task.media.script];else if(field==='diagram')d.task.diagram={kind:'data-list',title:d.task.media.script,unit:'',values:[1]};else d.task.prompt=d.task.media.script;assert.throws(()=>cleanGenerated(d,{...s,topic:{delivery:'listen'}}));}
+});

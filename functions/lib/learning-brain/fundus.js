@@ -11,7 +11,7 @@ function createPool({store,now=Date.now}){
    if(!row)return null;return {task:{...globalThis.structuredClone(row.task),id:randomUUID(),generationSource:'reviewed-pool',poolRef:{key:k,id:row.fingerprint}},explanation:'',visual:row.visual||null};
   },
   async save(s,p,candidate,review){if(s.phase!=='practice'||review?.approved!==true||review.reusable!==true||candidate.explanation?.trim())return null;
-   const t=candidate.task;const task={prompt:t.prompt,contextText:t.contextText,input:t.input,options:t.options,family:t.family,workshop:t.workshop||null,answer:t.answer,rubric:t.rubric,demand:p};
+   const t=candidate.task;const task={prompt:t.prompt,contextText:t.contextText,input:t.input,options:t.options,family:t.family,workshop:t.workshop||null,media:t.media||null,diagram:t.diagram||null,answer:t.answer,rubric:t.rubric,demand:p};
    if(Buffer.byteLength(JSON.stringify(task))>15000)return null;
    const id=fingerprint(task),k=key(s,p);const existing=await store.list(k);if(existing.length>=32&&!existing.some(r=>r.fingerprint===id))return null;await store.put(k,id,{version:VERSION,fingerprint:id,task,visual:candidate.visual||null,createdAt:now(),expiresAt:now()+180*86400000,served:0,review:{approved:true,reusable:true,version:p.version}});return {key:k,id};
   }

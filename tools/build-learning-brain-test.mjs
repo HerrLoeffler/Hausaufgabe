@@ -25,7 +25,7 @@ for(let i=0;i<entries.length;i+=6)await Promise.all(entries.slice(i,i+6).map(asy
  const target=path.join(publicDir,name);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,data);
 }));
 const hashes={};
-for(const name of ['index.html','app.mjs','api.mjs','model.mjs','brain.mjs','workshop.mjs','styles.css']){
+for(const name of ['index.html','app.mjs','api.mjs','model.mjs','network.mjs','delivery.mjs','diagrams.mjs','brain.mjs','workshop.mjs','styles.css']){
  const data=await fs.readFile(path.join(root,'lerngehirn',name));const target=path.join(publicDir,'lerngehirn',name);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,data);hashes['lerngehirn/'+name]=digest(data);
 }
 const feature={project:site,sourceCommit,version:'learning-brain-20261021',files:hashes,scope:'Mathe/Deutsch5-10; text paths testable; media and content-review gates explicit'};

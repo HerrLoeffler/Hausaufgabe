@@ -1,5 +1,5 @@
 const local = ['localhost','127.0.0.1','[::1]'].includes(location.hostname);
-const methods = new Set(['learningBrainCatalog','learningBrainProfile','learningBrainStart','learningBrainTurn']);
+const methods = new Set(['learningBrainCatalog','learningBrainProfile','learningBrainStart','learningBrainTurn','learningBrainAudio']);
 let runtimePromise;
 async function runtime(){return runtimePromise ??= (async()=>{const [{initializeApp,getApps},authSdk,functionsSdk,{firebaseConfig}]=await Promise.all([import('https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js'),import('https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js'),import('https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js'),import('../firebase-config.js')]);const app=getApps()[0]||initializeApp(firebaseConfig);return {auth:authSdk.getAuth(app),functions:functionsSdk.getFunctions(app,'europe-west1'),authSdk,functionsSdk};})();}
 async function post(url,body){const response=await fetch(url,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});let result;try{result=await response.json();}catch{throw new Error('invalid-response');}if(!response.ok||result.error){const e=new Error('request-failed');e.code=result.error?.code||result.error||response.status;throw e;}return result;}

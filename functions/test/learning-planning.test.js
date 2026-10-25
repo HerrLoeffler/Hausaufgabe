@@ -25,3 +25,11 @@ test('fraction expansion help removes the whole-board demand and isolates smalle
  assert.match(demands[0].demand,/Zählerrechnung/);assert.match(demands[1].demand,/Addition/);assert.match(demands[2].demand,/einzelne/);
  assert.equal(demands.every(p=>p.preferredTool==='none'),true);assert.equal(new Set(demands.map(p=>p.demand)).size,3);
 });
+
+test('detailed competencies use their own four demands and three prerequisite help steps',()=>{
+ const topic={id:'math:6:R:example:k1',parentTopicId:'math:6:R:example',subject:'math',delivery:'visual',didacticFamily:'area',learningPlan:{levels:['Flächenfelder zählen.','Aus Reihen und Spalten bestimmen.','Eine fehlende Seitenlänge bestimmen.','Zwei Flächenmethoden begründen.'],help:['Eine Reihe zeigen.','Felder einer Reihe zählen.','Ein einzelnes Feld erkennen.'],preferredTool:'none'}};
+ assert.equal(P.eligibility(topic).available,true);
+ assert.equal(P.plan({topic,phase:'practice',level:2}).demand,topic.learningPlan.levels[2]);
+ assert.equal(P.plan({topic,phase:'help',supportStage:3}).demand,topic.learningPlan.help[2]);
+ assert.equal(P.plan({topic,phase:'practice',level:0}).delivery,'visual');
+});

@@ -12,8 +12,12 @@ function freezeTree(value) {
 }
 
 const {eligibility,plan}=require("./planning");
-const catalog = freezeTree({...data,version:data.version+"-workshop1",topics:data.topics.map(t=>({...t,practice:{...eligibility(t),preferredTool:plan({topic:t,phase:"practice",level:0}).preferredTool}}))});
-const topicsById = new Map(catalog.topics.map((topic) => [topic.id, topic]));
+const detailed=require("./competencies56").buildCompetencies(data.topics);
+const withPractice=t=>({...t,practice:{...eligibility(t),preferredTool:plan({topic:t,phase:"practice",level:0}).preferredTool}});
+const competencies=detailed.competencies.map(withPractice);
+const topics=data.topics.map(t=>{const children=competencies.filter(c=>c.parentTopicId===t.id);return children.length?{...t,practice:{available:children.some(c=>c.practice.available),reason:children.some(c=>c.practice.available)?"":"Die tatsächliche Arbeit wird gemeinsam mit deiner Lehrkraft beobachtet.",preferredTool:"none"}}:withPractice(t);});
+const catalog=freezeTree({...data,version:data.version+"-"+detailed.version,competencyVersion:detailed.version,coverage56:detailed.coverage56,competencies,topics});
+const topicsById = new Map([...catalog.topics,...catalog.competencies].map((topic) => [topic.id, topic]));
 
 function getCatalog() {
   return catalog;

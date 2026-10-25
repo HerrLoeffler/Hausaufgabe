@@ -10,6 +10,8 @@ const {getCatalog}=require('./catalog');
 const {createService,firestoreStore,LearningError}=require('./service');
 const {createAI}=require('./ai');
 const {firestorePool}=require('./fundus');
+const {createAudioAsset}=require('../audio-flow');
+const {createLearningMedia}=require('./media');
 const {requireLearningIdentity}=require('./contracts');
 const opts={region:REGION,timeoutSeconds:120,memory:'512MiB',enforceAppCheck:false,secrets:[defineSecret('OPENAI_API_KEY')]};
 function testProject(){if((process.env.GCLOUD_PROJECT||process.env.GOOGLE_CLOUD_PROJECT)!=='gradecrew-staging-2026')throw new HttpsError('failed-precondition','Das Lerngehirn ist nur in der getrennten Testumgebung verfügbar.');}
@@ -27,5 +29,15 @@ function handler(method){return onCall(opts,async request=>{
 });}
 module.exports={
  learningBrainCatalog:onCall({region:REGION,timeoutSeconds:30,memory:'256MiB'},async request=>{await identity(request);return getCatalog();}),
+ learningBrainAudio:onCall(opts,async request=>{
+ const uid=await identity(request),data=request.data||{};
+ if(data.uid||data.studentId||data.ownerUid)throw new HttpsError('invalid-argument','Es wird ausschließlich dein eigenes Profil verwendet.');
+ const db=getFirestore(),root=db.doc(`users/${uid}/aiRuntime/learningBrain`);
+ const media=createLearningMedia({load:async()=>{const snap=await root.get();return snap.data();},read:async key=>(await root.collection('media').doc(key).get()).data(),save:async(key,row)=>{
+ const existing=await root.collection('media').limit(60).get();
+ if(existing.size>=60){const batch=db.batch();existing.docs.filter(d=>d.data().expiresAt<=Date.now()).forEach(d=>batch.delete(d.ref));if(!existing.docs.some(d=>d.data().expiresAt<=Date.now()))throw new HttpsError('resource-exhausted','Bitte verwende zunächst die vorhandenen Hörtexte.');await batch.commit();}
+ await db.runTransaction(async tx=>{await requireAccountWrite(tx,db,uid);tx.set(root.collection('media').doc(key),row);});},synthesize:createAudioAsset});
+ try{return await media.audio(uid,data);}catch(error){if(error instanceof HttpsError)throw error;if(error instanceof LearningError)throw new HttpsError(error.code,error.message);throw new HttpsError('unavailable','Der Hörtext konnte noch nicht geladen werden. Bitte erneut versuchen.');}
+ }),
  learningBrainProfile:handler('profile'),learningBrainStart:handler('start'),learningBrainTurn:handler('turn')
 };

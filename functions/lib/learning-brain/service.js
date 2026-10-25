@@ -3,6 +3,7 @@ const {randomUUID,createHash}=require('node:crypto');
 const {observe}=require('./workshop');
 const {eligibility}=require('./planning');
 const {transition,projectSkill,publicSession}=require('./core');
+const {projectNetwork,chooseCompetency}=require('./network');
 class LearningError extends Error{constructor(code,message){super(message);this.code=code;}}
 const fail=(code,message)=>{throw new LearningError(code,message);};
 const id=value=>typeof value==='string'&&/^[a-zA-Z0-9_-]{8,100}$/.test(value);
@@ -30,16 +31,24 @@ function scrubExpiredContexts(state,time){
  return state;
 }
 function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
- const getTopic=topicId=>catalog.topics.find(t=>t.id===topicId);
+ const getTopic=topicId=>(catalog.competencies||[]).find(t=>t.id===topicId)||(catalog.topics||[]).find(t=>t.id===topicId);
  const seed=uid=>({learner:{id:uid,alias:'du',grade:6,track:'R'},sessions:{},requests:{},topicEvents:{},activeSessionId:null});
  const summary=s=>({text:`${s.events.filter(e=>e.independent&&e.correct).length} Aufgaben selbstständig richtig. ${s.events.filter(e=>!e.independent&&e.correct).length} mit Hilfe gelöst. Wir knüpfen beim nächsten Mal hier an.`});
  const project=state=>{
-  const skills=Object.entries(state.topicEvents).filter(([,events])=>events.length).map(([topicId,events])=>({topicId,...projectSkill(events,now())}));
-  const contextTopics=catalog.topics.filter(t=>t.grade===state.learner.grade&&t.track===state.learner.track&&eligibility(t).available);
-  const active=state.sessions[state.activeSessionId];
-  const recommendations=skills.filter(s=>s.status==='practicing'||s.reviewDue).map(s=>({topicId:s.topicId,title:getTopic(s.topicId)?.title||'',reason:s.reviewDue?'Zeit für eine neue Probe ohne Hilfe.':'Hier kannst du an deinen letzten Schritt anknüpfen.'}));
-  if(!recommendations.length)for(const subject of ['math','german']){const first=contextTopics.find(t=>t.subject===subject);if(first)recommendations.push({topicId:first.id,title:first.title,reason:'Starte mit einer ersten Probe. Dein Lernstand ist noch offen.'});}
-  return {learner:state.learner,skills,recommendations:recommendations.slice(0,8),activeSession:active&&active.phase!=='ended'?publicSession(active,now()):null,observationSummary:state.observationSummary||{attempts:0,lastAt:null},catalogVersion:catalog.version};
+  const time=now(),context={grade:state.learner.grade,track:state.learner.track,subject:state.learner.subject,activeSessionId:state.activeSessionId};
+  const skills=Object.entries(state.topicEvents).filter(([,events])=>events.length).map(([topicId,events])=>({topicId,...projectSkill(events,time,getTopic(topicId))}));
+  const contextTopics=(catalog.topics||[]).filter(t=>t.grade===context.grade&&t.track===context.track&&(!context.subject||t.subject===context.subject)&&eligibility(t).available);
+  const active=state.sessions[state.activeSessionId],learningNetwork=projectNetwork(catalog,state.topicEvents,state.sessions,time,context);
+  let recommendations=[];
+  if(learningNetwork.nodes.length){
+   const subjects=context.subject?[context.subject]:['math','german'];
+   for(const subject of subjects){const next=chooseCompetency(catalog,state.topicEvents,{...context,subject},time);if(next){const evidence=projectSkill(state.topicEvents[next.id]||[],time,next);recommendations.push({topicId:next.id,title:next.title,reason:evidence.reviewDue?'Zeit für eine neue Probe ohne Hilfe.':evidence.status==='unseen'?'Starte mit einer ersten Probe. Dein Lernstand ist noch offen.':'Hier kannst du an deinen letzten Schritt anknüpfen.'});}}
+  }else{
+   const allowed=new Set(contextTopics.map(t=>t.id));
+   recommendations=skills.filter(s=>allowed.has(s.topicId)&&(s.status==='practicing'||s.reviewDue)).map(s=>({topicId:s.topicId,title:getTopic(s.topicId)?.title||'',reason:s.reviewDue?'Zeit für eine neue Probe ohne Hilfe.':'Hier kannst du an deinen letzten Schritt anknüpfen.'}));
+   if(!recommendations.length)for(const subject of context.subject?[context.subject]:['math','german']){const first=contextTopics.find(t=>t.subject===subject);if(first)recommendations.push({topicId:first.id,title:first.title,reason:'Starte mit einer ersten Probe. Dein Lernstand ist noch offen.'});}
+  }
+  return {learner:state.learner,skills,recommendations:recommendations.slice(0,8),learningNetwork,activeSession:active&&active.phase!=='ended'?publicSession(active,time):null,observationSummary:state.observationSummary||{attempts:0,lastAt:null},catalogVersion:catalog.version};
  };
  async function profile(uid,data={}){return store.transact(uid,state=>{
   state=scrubExpiredContexts(state||seed(uid),now());
@@ -49,6 +58,7 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
    if(!['R','M'].includes(track))fail('invalid-argument','Bitte einen Bildungsgang auswählen.');
    state.learner={...state.learner,grade,track};
   }
+  if(data.subject!==undefined){if(!['math','german'].includes(data.subject))fail('invalid-argument','Bitte Mathematik oder Deutsch auswählen.');state.learner={...state.learner,subject:data.subject};}
   return {state,result:project(state)};
  },{allTopics:true});}
  async function operation(uid,kind,data){
@@ -62,13 +72,16 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
    let session;
    if(kind==='start'){
     let topic=getTopic(data.topicId);
+    if(topic&&!topic.parentTopicId&&[5,6].includes(topic.grade)&&(catalog.competencies||[]).some(t=>t.parentTopicId===topic.id)){topic=chooseCompetency(catalog,state.topicEvents,{grade:topic.grade,track:topic.track,subject:topic.subject,parentTopicId:topic.id},time);}
     if(!data.topicId&&typeof data.area==='string'&&data.area.length<=180){
      const grade=Number(data.grade),track=grade===10?'M':grade<7?'R':data.track;
-     const candidates=catalog.topics.filter(t=>t.area===data.area&&t.subject===data.subject&&t.grade===grade&&t.track===track&&eligibility(t).available);
+     const candidates=(catalog.topics||[]).filter(t=>t.area===data.area&&t.subject===data.subject&&t.grade===grade&&t.track===track&&eligibility(t).available);
      const learning=candidates.find(t=>projectSkill(state.topicEvents[t.id]||[],time).status==='practicing');
-     topic=learning||candidates.find(t=>projectSkill(state.topicEvents[t.id]||[],time).status!=='secure'&&(t.prerequisites||[]).every(p=>projectSkill(state.topicEvents[p]||[],time).status==='secure'))||candidates.find(t=>projectSkill(state.topicEvents[t.id]||[],time).status!=='secure')||candidates[0];
+     const hasChildren=[5,6].includes(grade)&&(catalog.competencies||[]).some(t=>t.grade===grade&&t.subject===data.subject&&t.area===data.area);
+     topic=hasChildren?chooseCompetency(catalog,state.topicEvents,{grade,track,subject:data.subject,area:data.area},time):learning||candidates.find(t=>projectSkill(state.topicEvents[t.id]||[],time).status!=='secure'&&(t.prerequisites||[]).every(p=>projectSkill(state.topicEvents[p]||[],time).status==='secure'))||candidates.find(t=>projectSkill(state.topicEvents[t.id]||[],time).status!=='secure')||candidates[0];
      if(topic)state.learner={...state.learner,grade,track};
     }
+    if(topic?.parentTopicId)state.learner={...state.learner,grade:topic.grade,track:topic.track,subject:topic.subject};
     if(!topic)fail('not-found','Für dieses Thema ist noch kein passender Übungsweg verfügbar.');
     if(!eligibility(topic).available)fail('failed-precondition',eligibility(topic).reason);
     const minutes=Number(data.minutes);if(!Number.isInteger(minutes)||minutes<1||minutes>60)fail('invalid-argument','Bitte 1 bis 60 Minuten wählen.');
