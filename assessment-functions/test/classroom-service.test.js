@@ -39,3 +39,5 @@ test('only owning teacher may request resume and only current assigned pupil may
  const p=`classroomSchools/teacher/assignments/${a.id}/participants/${f.p.id}`;f.docs.set(p,{...f.docs.get(p),attemptId:'done'});f.docs.set('quizzes/TEST2026/submissions/done',{status:'graded'});
  await assert.rejects(f.teacher('requestResume',{assignmentId:a.id,studentId:f.p.id,expectedGeneration:0,actionId:'help3'}),{code:'failed-precondition'});
 });
+
+test('a grouped printed pupil code signs into the existing identity without creating another account',async()=>{const f=await setup();const code=f.p.code.slice(0,4)+'-'+f.p.code.slice(4);const login=await f.student('login',{code,deviceMode:'shared'});assert.equal(login.student.id,f.p.id);assert.equal((await f.teacher('printCodes',{classId:f.c.id})).rows.find(p=>p.id===f.p.id).code,f.p.code);});
