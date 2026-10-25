@@ -76,6 +76,9 @@ function cleanGenerated(data,s,context={}){
  const diagram=t.diagram?.kind&&t.diagram.kind!=='none'?validateDiagram(t.diagram):null;
  if(t.diagram?.kind&&t.diagram.kind!=='none'&&!diagram)invalid('task.diagram','fachlich gültige maßstäbliche Darstellung',t.diagram);
  if(s.phase==='practice'&&s.topic.delivery==='visual'&&!workshop&&!visual&&!diagram)invalid('task.diagram','sichtbares Modell zum visuellen Lernziel',t.diagram);
+ if(s.topic.didacticFamily==='expand'&&s.phase==='practice'&&Number(s.level||0)<=1&&(t.answer.kind!=='exact-fraction'||workshop?.role==='answer'&&workshop.goal!=='equivalent')){
+  const e=new LearningError('unavailable','Die Erweiterungsaufgabe braucht die tatsächlich geforderte Bruchform.');e.stage='candidate-validation';e.critique='Bei Erweitern mit gegebenem Faktor in Level0/1 ist answer.kind=exact-fraction nötig; der ungekürzte erweiterte Bruch ist gefordert. Bei fraction-board als Antwort MUSS goal=equivalent mit targetDenominator=Ausgangsnenner mal Faktor gesetzt sein. goal=represent prüft nur den Wert und ist hier falsch. Bei Aufgabe ohne Werkstatt darf der ursprüngliche gekürzte Bruch nicht als Erweiterung akzeptiert werden.';throw e;
+ }
  if(t.input==='workshop'&&!workshop)throw new LearningError('unavailable','Das Werkzeug für diese Aufgabe fehlt.');
  return {task:{...t,diagram,workshop,toolDecision:workshop?{tool:workshop.tool,reason:String(t.workshop.reason||'').slice(0,600)}:null,id:randomUUID()},explanation:data.explanation,visual:workshop?null:visual};
 }

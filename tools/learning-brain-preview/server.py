@@ -39,7 +39,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff');super().end_headers()
     def output(self,status,body,cookie=False):
         data=json.dumps(body).encode();self.send_response(status);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(data)))
-        if cookie:self.send_header('Set-Cookie',f'gc_learning={STATE["cookie"]}; HttpOnly; SameSite=Strict; Path=/')
+        if cookie:self.send_header('Set-Cookie',f'gc_learning_{ARGS.port}={STATE["cookie"]}; HttpOnly; SameSite=Strict; Path=/')
         self.end_headers();self.wfile.write(data)
     def do_GET(self):
         path=self.path.split('?')[0]
@@ -56,7 +56,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             if self.path=='/api/session':
                 token();return self.output(200,{'authenticated':True,'user':{'uid':STATE['uid']},'mode':'test'},cookie=True)
             cookie=SimpleCookie(self.headers.get('Cookie',''))
-            if self.path!='/api/learning' or cookie.get('gc_learning') is None or not secrets.compare_digest(cookie['gc_learning'].value,STATE['cookie']):return self.output(403,{'error':{'code':'unauthenticated'}})
+            if self.path!='/api/learning' or cookie.get(f'gc_learning_{ARGS.port}') is None or not secrets.compare_digest(cookie[f'gc_learning_{ARGS.port}'].value,STATE['cookie']):return self.output(403,{'error':{'code':'unauthenticated'}})
             method=data.get('method')
             if method not in METHODS:return self.output(400,{'error':{'code':'invalid-argument'}})
             result=request_json(f'https://europe-west1-{PROJECT}.cloudfunctions.net/{method}',{'data':data.get('data',{})},{'Authorization':'Bearer '+token()})

@@ -128,3 +128,12 @@ test('a word choice has an explicitly validated open answer contract for the rev
  await ai.next(s,{});assert.deepEqual(requests[1].renderedResponseContract,{input:'choice',answerKind:'open',choiceKeysMatch:true});
  candidate.task.answer.values=[];assert.throws(()=>cleanGenerated(candidate,s));
 });
+
+test('an expansion probe cannot use value-only representation or accept the unexpanded form',()=>{
+ const candidate=generated();candidate.task.prompt='Erweitere 2/5 mit dem Faktor 3.';candidate.task.input='workshop';candidate.task.workshop={tool:'fraction-board',version:1,role:'answer',goal:'represent',numerator:2,denominator:5,targetDenominator:0,instruction:'Erweitere den Bruch.'};candidate.task.answer={kind:'rational',values:['6/15']};
+ const state={...s,topic:{subject:'math',title:'Erweitern',didacticFamily:'expand'},level:0};
+ assert.throws(()=>cleanGenerated(candidate,state));
+ candidate.task.workshop={...candidate.task.workshop,goal:'equivalent',targetDenominator:15};candidate.task.answer.kind='exact-fraction';
+ assert.equal(cleanGenerated(candidate,state).task.workshop.targetDenominator,15);
+ candidate.task.input='text';candidate.task.workshop={tool:'none',version:1};candidate.task.answer.kind='rational';assert.throws(()=>cleanGenerated(candidate,state));
+});
