@@ -1281,7 +1281,7 @@
       "staging": "gradecrew-staging-2026_only",
       "user_test": "synthetic_browser_and_actual_native_API_pass_physical_iPad_pending",
       "handoff": "workstreams/classroom-student-management-v1.md",
-      "next_action": "Follow single2026 candidate40186256526; confirm actual upload and Apple processing before asking to install direct-entry layout. Physical personal AAC acceptance remains pending.",
+      "next_action": "Install confirmed Apple-processed TestFlight1.0(1221); test personal code directly in right start card, then physical classroom AAC/submission acceptance. LIVE test-card link still separate pending web usability work.",
       "deployment_evidence": {
         "project": "gradecrew-staging-2026",
         "hosting_source": "5490a5d166226f6f78f2624f2341e1137fa75099",
@@ -1300,10 +1300,17 @@
         "native_candidate": {
           "run_id": 40186256526,
           "source": "507cecc74de1f217ddef6494066c54be0cef8caf",
-          "status": "in_progress",
-          "uploaded": false,
+          "status": "success_processed_internal_group_assigned",
+          "uploaded": true,
           "scope": "Direct personal code beside guest entry; existing model/auth/AAC unchanged",
-          "local_verification": "37Swift24Python;11phone UI/lifecycle; iPad direct andportrait UI; normal+stagingbuilds"
+          "local_verification": "37Swift24Python;11phone UI/lifecycle; iPad direct andportrait UI; normal+stagingbuilds",
+          "version": "1.0",
+          "build": 1221,
+          "apple_processed": true,
+          "internal_group": "GradeCrew Tester",
+          "device_installation_verified": false,
+          "upload_job_id": 121150211522,
+          "uploaded_at_utc": "2026-10-25T11:14:13Z"
         },
         "negative_checks": {
           "nonrecipient_assignment": "403_PERMISSION_DENIED",
