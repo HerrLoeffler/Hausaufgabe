@@ -78,7 +78,7 @@ function parseVisualTask(raw, { points } = {}) {
     if (spec.categories.some(category => typeof category.label !== "string" || !category.label.trim())) throw new Error("Diagrammbeschriftung fehlt.");
   }
   if (task.format === "connections") {
-    records(spec.nodes, "id label x y");
+    records(spec.nodes, "id label shortLabel x y");
     if (typeof spec.directed !== "boolean") throw new Error("Verbindungsrichtung fehlt.");
   }
   if (task.format === "evidence") records(spec.tokens, "id text");

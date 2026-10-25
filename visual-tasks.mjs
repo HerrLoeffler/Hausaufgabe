@@ -58,7 +58,7 @@ export function parseVisualTask(question, { publicOnly = false } = {}) {
   if(s.items)records(s.items,'id text');
   if(s.tokens)records(s.tokens,'id text');
   if(s.categories)records(s.categories,'id label value');
-  if(s.nodes)records(s.nodes,'id label x y');
+  if(s.nodes)records(s.nodes,'id label shortLabel x y');
   if(t.format==='correction')records(s.rows,'id text');
   if(t.format==='table'&&Array.isArray(s.rows))records(s.rows.flat(),'id text input');
   if(t.format==='table') {
