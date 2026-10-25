@@ -1,0 +1,143 @@
+{
+  "cases": 6,
+  "evidence": [
+    {
+      "pilot": "P02",
+      "quizId": "C0E863A9",
+      "angleOffset": 0,
+      "expected": 16,
+      "actual": 16,
+      "receipt": {
+        "submissionId": "a_fae6c0995121e1f2901b726f4992",
+        "attemptId": "a_fae6c0995121e1f2901b726f4992",
+        "status": "graded",
+        "needsReview": false,
+        "resultMode": "points_grade",
+        "submittedAtMillis": 1792927195291,
+        "solutionsConfigured": false,
+        "solutionReleaseMode": "exam_after_end",
+        "solutionsReleased": false,
+        "totalPoints": 16,
+        "maxPoints": 16,
+        "percent": 100,
+        "grade": 1
+      },
+      "solutionFreePaper": true
+    },
+    {
+      "pilot": "P02",
+      "quizId": "C0E863A9",
+      "angleOffset": 3,
+      "expected": 16,
+      "actual": 16,
+      "receipt": {
+        "submissionId": "a_616a291987e659e17531d382dcc0",
+        "attemptId": "a_616a291987e659e17531d382dcc0",
+        "status": "graded",
+        "needsReview": false,
+        "resultMode": "points_grade",
+        "submittedAtMillis": 1792927196036,
+        "solutionsConfigured": false,
+        "solutionReleaseMode": "exam_after_end",
+        "solutionsReleased": false,
+        "totalPoints": 16,
+        "maxPoints": 16,
+        "percent": 100,
+        "grade": 1
+      },
+      "solutionFreePaper": true
+    },
+    {
+      "pilot": "P02",
+      "quizId": "C0E863A9",
+      "angleOffset": -3,
+      "expected": 16,
+      "actual": 16,
+      "receipt": {
+        "submissionId": "a_77b4f1da16330ddeddc4d84d2eea",
+        "attemptId": "a_77b4f1da16330ddeddc4d84d2eea",
+        "status": "graded",
+        "needsReview": false,
+        "resultMode": "points_grade",
+        "submittedAtMillis": 1792927196735,
+        "solutionsConfigured": false,
+        "solutionReleaseMode": "exam_after_end",
+        "solutionsReleased": false,
+        "totalPoints": 16,
+        "maxPoints": 16,
+        "percent": 100,
+        "grade": 1
+      },
+      "solutionFreePaper": true
+    },
+    {
+      "pilot": "P02",
+      "quizId": "C0E863A9",
+      "angleOffset": 4,
+      "expected": 10,
+      "actual": 10,
+      "receipt": {
+        "submissionId": "a_b95078eeb65b94a1f0c4c72726f3",
+        "attemptId": "a_b95078eeb65b94a1f0c4c72726f3",
+        "status": "graded",
+        "needsReview": false,
+        "resultMode": "points_grade",
+        "submittedAtMillis": 1792927197434,
+        "solutionsConfigured": false,
+        "solutionReleaseMode": "exam_after_end",
+        "solutionsReleased": false,
+        "totalPoints": 10,
+        "maxPoints": 16,
+        "percent": 63,
+        "grade": 3
+      },
+      "solutionFreePaper": true
+    },
+    {
+      "pilot": "P04",
+      "quizId": "88C01170",
+      "angleOffset": 0,
+      "expected": 16,
+      "actual": 16,
+      "receipt": {
+        "submissionId": "a_48ebdb99010200b4851046d0980a",
+        "attemptId": "a_48ebdb99010200b4851046d0980a",
+        "status": "graded",
+        "needsReview": false,
+        "resultMode": "points_grade",
+        "submittedAtMillis": 1792927198067,
+        "solutionsConfigured": false,
+        "solutionReleaseMode": "exam_after_end",
+        "solutionsReleased": false,
+        "totalPoints": 16,
+        "maxPoints": 16,
+        "percent": 100,
+        "grade": 1
+      },
+      "solutionFreePaper": true
+    },
+    {
+      "pilot": "P07",
+      "quizId": "52F21DC8",
+      "angleOffset": 0,
+      "expected": 16,
+      "actual": 16,
+      "receipt": {
+        "submissionId": "a_da0ed79ca6853f8cb306b8f4fcad",
+        "attemptId": "a_da0ed79ca6853f8cb306b8f4fcad",
+        "status": "graded",
+        "needsReview": false,
+        "resultMode": "points_grade",
+        "submittedAtMillis": 1792927198667,
+        "solutionsConfigured": false,
+        "solutionReleaseMode": "exam_after_end",
+        "solutionsReleased": false,
+        "totalPoints": 16,
+        "maxPoints": 16,
+        "percent": 100,
+        "grade": 1
+      },
+      "solutionFreePaper": true
+    }
+  ]
+}

@@ -64,7 +64,8 @@
     "ended": false,
     "accessCode": "K9HEUB8X",
     "gradeScaleId": "standard",
-    "id": "K9HEUB8X"
+    "id": "52F21DC8",
+    "pilotRevisionOf": "K9HEUB8X"
   },
   "questions": [
     {
@@ -206,5 +207,6 @@
       "position": 4,
       "reason": "Behauptung und Begründung statt bedeutungsarmer Elementnummern benennen."
     }
-  ]
+  ],
+  "sourceQuizId": "K9HEUB8X"
 }

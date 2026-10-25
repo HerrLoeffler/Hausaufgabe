@@ -64,7 +64,8 @@
     "ended": false,
     "showSolutions": true,
     "subject": "Mathematik",
-    "id": "UXBCQ5FL"
+    "id": "C0E863A9",
+    "pilotRevisionOf": "UXBCQ5FL"
   },
   "questions": [
     {
@@ -193,5 +194,6 @@
       "position": 3,
       "reason": "Nutzerwunsch:3Grad Messspielraum in neuer Fassung; alte Versuche unverändert."
     }
-  ]
+  ],
+  "sourceQuizId": "UXBCQ5FL"
 }

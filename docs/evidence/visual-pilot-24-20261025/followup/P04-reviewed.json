@@ -64,7 +64,8 @@
       "status": "no_match"
     },
     "resultMode": "points_grade",
-    "id": "NLRVJTW8"
+    "id": "88C01170",
+    "pilotRevisionOf": "NLRVJTW8"
   },
   "questions": [
     {
@@ -211,5 +212,6 @@
       "position": 8,
       "reason": "Funktionswert und gemeinsame Belege in alltagssprachlicheren Schritten erklären."
     }
-  ]
+  ],
+  "sourceQuizId": "NLRVJTW8"
 }
