@@ -1,7 +1,7 @@
 {
   "at": "2026-10-25",
-  "reviewer": "Codex own content review; independent final review pending",
-  "scope": "All192 original questions and hints P01-P24 read; reviewed changes retained separately; independent review pending",
+  "reviewer": "Codex own full content review plus independent fresh-context gpt-6-astra/high review of all192 finaltasks at139eadc",
+  "scope": "All192 original and final questions/hints reviewed;2 Important final findings fixed with red-to-green content-fairness regression",
   "findings": [
     {
       "id": "F01",
@@ -110,7 +110,7 @@
     "P06": {
       "questionsRead": 8,
       "hintsRead": 8,
-      "state": "no concrete error found",
+      "state": "amended",
       "humanTeacherAcceptance": "not performed"
     },
     "P07": {
@@ -221,5 +221,25 @@
       "state": "amended",
       "humanTeacherAcceptance": "not performed"
     }
+  },
+  "independentReview": {
+    "critical": 0,
+    "important": 2,
+    "importantFixed": [
+      "P07Q2 targeted verb correction",
+      "P06Q2/Q5/Q6 equivalent Satzglied terminology"
+    ],
+    "minorDeferred": [
+      "P02 beta/gamma prompts versus fixed alpha rendererlabel",
+      "server runner compares ID, while cloud correction reload separately verifies full authored fields",
+      "higher-grade challenge mix needs human teacher acceptance"
+    ],
+    "declinedToJudge": [
+      "Remote/deploy checked by parent separately",
+      "Real120servercases pending",
+      "Physical touch/screenreader/devices pending",
+      "Official curriculum and learning outcomes untested",
+      "Production and canonical staging excluded"
+    ]
   }
 }

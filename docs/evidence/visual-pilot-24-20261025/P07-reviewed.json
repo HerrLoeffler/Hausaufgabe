@@ -82,7 +82,7 @@
       "id": "q001"
     },
     {
-      "visualTask": "{\"schemaVersion\":2,\"id\":\"sprachfehler-korrigieren-02\",\"revision\":0,\"format\":\"correction\",\"title\":\"Eine sprachliche Fehlerstelle korrigieren\",\"subject\":\"Deutsch\",\"grade\":\"9\",\"prompt\":\"Markiere die fehlerhafte Zeile und schreibe den Satz sprachlich richtig auf.\",\"hint\":\"Prüfe besonders, ob Satzgegenstand und Prädikat zusammenpassen.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"a\",\"text\":\"Die Redaktion prüft die Quellen sorgfältig.\"},{\"id\":\"b\",\"text\":\"Die neuen Regeln gilt ab Montag.\"},{\"id\":\"c\",\"text\":\"Der Artikel enthält ein nachvollziehbares Beispiel.\"},{\"id\":\"d\",\"text\":\"Die Schülerin erklärt den Ablauf sachlich und verständlich.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"b\",\"accepted\":[\"Die neuen Regeln gelten ab Montag.\"]},\"objective\":\"Einen sprachlich eindeutigen Fehler in einem sachlichen Satz erkennen und korrigieren.\",\"rationale\":\"Die Korrektur prüft die Übereinstimmung von Satzgegenstand und Prädikat in einem kurzen sachlichen Text.\",\"sourceNote\":\"Eigenes fiktives Unterrichtsbeispiel ohne externe Quelle.\"}",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"sprachfehler-korrigieren-02\",\"revision\":1,\"format\":\"correction\",\"title\":\"Eine sprachliche Fehlerstelle korrigieren\",\"subject\":\"Deutsch\",\"grade\":\"9\",\"prompt\":\"Markiere die Zeile mit der falschen Verbform. Trage nur die richtige Verbform anstelle von gilt ein.\",\"hint\":\"Prüfe die Übereinstimmung zwischen Subjekt und Verb.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"a\",\"text\":\"Die Redaktion prüft die Quellen sorgfältig.\"},{\"id\":\"b\",\"text\":\"Die neuen Regeln gilt ab Montag.\"},{\"id\":\"c\",\"text\":\"Der Artikel enthält ein nachvollziehbares Beispiel.\"},{\"id\":\"d\",\"text\":\"Die Schülerin erklärt den Ablauf sachlich und verständlich.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"b\",\"accepted\":[\"gelten\"]},\"objective\":\"Einen sprachlich eindeutigen Fehler in einem sachlichen Satz erkennen und korrigieren.\",\"rationale\":\"Die Korrektur prüft die Übereinstimmung von Satzgegenstand und Prädikat in einem kurzen sachlichen Text.\",\"sourceNote\":\"Eigenes fiktives Unterrichtsbeispiel ohne externe Quelle.\"}",
       "updatedAt": "2026-10-25T10:07:07.548Z",
       "aiOrigin": {
         "kind": "generated",
@@ -91,7 +91,7 @@
       },
       "position": 2,
       "points": 2,
-      "text": "Markiere die fehlerhafte Zeile und schreibe den Satz sprachlich richtig auf.",
+      "text": "Markiere die Zeile mit der falschen Verbform. Trage nur die richtige Verbform anstelle von gilt ein.",
       "type": "visual",
       "id": "q002"
     },
@@ -181,6 +181,11 @@
     }
   ],
   "corrections": [
+    {
+      "position": 2,
+      "reason": "Ganze Sätze können verschieden korrekt umgestellt werden; gezielt nur das fehlerhafte Verb berichtigen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    },
     {
       "position": 5,
       "reason": "Freie Begründungen lassen sich nicht über eine endliche Liste von Mustersätzen fair bewerten.",

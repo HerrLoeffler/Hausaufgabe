@@ -26,3 +26,12 @@ Ruling: Fiktive Geschichts- und Wirtschaftsdaten prüfen Methoden, keine histori
 Ruling: Keine neue Architektur und keine Regelnänderung; bestehende präfigierte Backendfunktionen werden nach Schlussreview gezielt aktualisiert — Produktintegration bleibt separat.
 
 Öffentlicher Linkverteiler tools/visual-pilot/build-hub.cjs vorbereitet: kopiert ausschließlich24Testlinks aus fertigen Runbelegen, keine Musterlösungen/Rohdaten. Wird nur in isoliertes visual255-Build mit geprüftem Manifest aufgenommen.
+
+## Schlussreview vor Bereitstellung
+24/24 Tests192Aufgaben;1176deterministischeChecks,23fokussierteRegressionen,293AI-Backendtestsund97Assessmenttestsgrün. Unabhängiger frischerReviewer(gpt-6-astra/high angefordert, tatsächlicheRuntimeunknown; explizite Skillvorgabe für einzigenSchlussreview) lasalle192Endfassungen:0kritisch,2wichtig. P07Q2offenerSatzvergleichundP06FachbegriffvariantenmitneuenRegressionenRED→GREENbehoben. KeinzweiterReviewbeauftragt. Minorverschoben:β/γ-Auftragbeiα-Renderer; vollständigePublic-Paper-ProjektionsgleichheitzusätzlichzuID-Check; gemischterAnspruchhöhererKlassen.
+Final: Ruling: Remote- und Deployzustand separat durch Elternagent geprüft; Reviewer hat bewusst keinen Netzaufruf gemacht — schützt Kosten und fremde Daten.
+Final: Ruling: Echte120Serverfälle werden jetzt separat ausgeführt; lokale Fälle allein sind kein Onlinebeleg.
+Final: Ruling: PhysischerTouch/Screenreader/Gerätegrößen und Lehrplan/Lernwirksamkeit bleiben offen — die technische Testfreigabe ersetzt keine menschliche Abnahme.
+Final: Ruling: Production und kanonisches Staging sind ausgeschlossen und werden nicht verändert.
+DevelopmentStatus40184814786/Job121143257052 gelesen: eigenerPR296undPR271/265 erkannt. Zielbranch weiterhin1ce20d9; PR271-UI-Fix bewusst wiederverwendet. Registry des eigenen Workstreams muss auf Pilotbranch nachgeführt werden. Quotas unverändert.24Generierungen,161Providerrequests,67interneAufgabenersetzungen,1042729Input/244582Outputtokens; Geldbetragunbekannt.
+NächsterSchritt: eigeneunveröffentlichteEntwürfekorrigieren, nurvisual255-AI/AssessmentausgeprüftemCodecommitbereitstellen;danach120AbgabenundBrowsernachweis.

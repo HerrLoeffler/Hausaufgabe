@@ -1,0 +1,200 @@
+{
+  "pilotId": "P06",
+  "at": "2026-10-25T10:04:35.155Z",
+  "quiz": {
+    "qualityWarnings": [],
+    "accessCode": "TZ26WDJR",
+    "solutionAudioReady": true,
+    "ended": false,
+    "audioAnswerQuestionCount": 0,
+    "creationContext": {
+      "schoolType": "Mittelschule",
+      "learningGoals": [],
+      "topic": "Satzbau und Textbelege: Satzglieder unterscheiden, kurze eigene Alltagstexte verstehen und Aussagen anhand vollständiger Textstellen belegen",
+      "contentLocale": "de-DE",
+      "difficulty": "mittel bis anspruchsvoll",
+      "region": "Bayern"
+    },
+    "startMode": "student",
+    "showSolutions": true,
+    "gradeScaleSnapshot": {
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "name": "Standard",
+      "id": "standard"
+    },
+    "updatedAt": "2026-10-25T10:04:27.835Z",
+    "solutionAudioQuestionCount": 0,
+    "ownerId": "gc-visual255-e2e",
+    "questionCount": 8,
+    "audioReady": true,
+    "gradingLocale": "de-DE",
+    "title": "Satzbau und Textbelege",
+    "shareEnabled": false,
+    "sessionState": "open",
+    "grade": "7",
+    "audioQuestionCount": 0,
+    "requiresSecureAssessmentRules": false,
+    "generationJobId": "c7a87efa9e6718773b39e0f4ea23fd8cf60b1fa5",
+    "shuffleQuestions": false,
+    "generationStatus": "ready",
+    "description": "Viel Erfolg beim Test!",
+    "subject": "Deutsch",
+    "rightsHold": false,
+    "contentLocale": "de-DE",
+    "listeningOnlyQuestionCount": 0,
+    "resultMode": "points_grade",
+    "qualityIssues": [],
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileCount": 0,
+      "profileIds": [],
+      "status": "no_match"
+    },
+    "isDeleted": false,
+    "totalPoints": 16,
+    "gradeScaleId": "standard",
+    "published": false,
+    "shuffleAnswers": false,
+    "localeContractVersion": 1,
+    "createdAt": "2026-10-25T10:04:26.222Z",
+    "id": "TZ26WDJR"
+  },
+  "questions": [
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "text": "Welche vollständige Textstelle belegt, wo Jona seinen Vortrag hält? Markiere genau einen Satz.",
+      "position": 1,
+      "points": 2,
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:04:26.378Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"textbeleg-vortrag-01\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Eine Textstelle als Beleg auswählen\",\"subject\":\"Deutsch\",\"grade\":\"7\",\"prompt\":\"Welche vollständige Textstelle belegt, wo Jona seinen Vortrag hält? Markiere genau einen Satz.\",\"hint\":\"Wähle den vollständigen Satz aus, der die gesuchte Information ausdrücklich nennt.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Nach der Pause legt Jona seine Karteikarten auf den Tisch.\"},{\"id\":\"s2\",\"text\":\"Im Klassenraum trägt er seinen Vortrag vor.\"},{\"id\":\"s3\",\"text\":\"Danach beantwortet er zwei Fragen aus der Gruppe.\"},{\"id\":\"s4\",\"text\":\"Auf dem Heimweg denkt er über seinen Vortrag nach.\"}]},\"solution\":{\"selections\":[[\"s2\"]]},\"objective\":\"Eine vollständige Textstelle als Beleg für eine ausdrücklich genannte Information auswählen.\",\"rationale\":\"Nur der zweite Satz nennt eindeutig den Ort, an dem Jona seinen Vortrag hält.\",\"sourceNote\":\"Eigenes fiktives Textmaterial ohne reale Personendaten; fachlich geprüft.\"}",
+      "id": "q001"
+    },
+    {
+      "text": "Ergänze in jeder Tabellenzeile die gesuchte Satzgliedart. Verwende Subjekt, Prädikat oder eine übliche Fachbezeichnung für eine Zeitangabe.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"satzglieder-tabelle-02\",\"revision\":1,\"format\":\"table\",\"title\":\"Satzgliedarten bestimmen\",\"subject\":\"Deutsch\",\"grade\":\"7\",\"prompt\":\"Ergänze in jeder Tabellenzeile die gesuchte Satzgliedart. Verwende Subjekt, Prädikat oder eine übliche Fachbezeichnung für eine Zeitangabe.\",\"hint\":\"Frage nach der Funktion des hervorgehobenen Satzteils. Verwende die üblichen Fachbegriffe.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Satz\",\"Gesuchter Satzteil\",\"Satzgliedart\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Der kleine Vogel singt.\",\"input\":false},{\"id\":\"a2\",\"text\":\"Der kleine Vogel\",\"input\":false},{\"id\":\"a3\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Lena öffnet vorsichtig das Fenster.\",\"input\":false},{\"id\":\"b2\",\"text\":\"öffnet\",\"input\":false},{\"id\":\"b3\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"Wir treffen uns nach dem Unterricht.\",\"input\":false},{\"id\":\"c2\",\"text\":\"nach dem Unterricht\",\"input\":false},{\"id\":\"c3\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a3\",\"accepted\":[\"Subjekt\"]},{\"id\":\"b3\",\"accepted\":[\"Prädikat\"]},{\"id\":\"c3\",\"accepted\":[\"Adverbiale Bestimmung der Zeit\",\"Temporaladverbial\",\"Zeitangabe\",\"Umstandsbestimmung der Zeit\",\"temporale adverbiale Bestimmung\"]}]},\"objective\":\"Satzglieder anhand ihrer Funktion im Satz bestimmen.\",\"rationale\":\"Die angegebenen Satzteile haben in ihrem jeweiligen Satz eindeutig die geforderte Satzgliedfunktion.\",\"sourceNote\":\"Eigenes fiktives Beispielsatzmaterial; fachlich geprüft.\"}",
+      "type": "visual",
+      "points": 2,
+      "position": 2,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "updatedAt": "2026-10-25T10:04:26.563Z",
+      "id": "q002"
+    },
+    {
+      "updatedAt": "2026-10-25T10:04:26.854Z",
+      "position": 3,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"textbeleg-einkauf-verarbeitung-03\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Handlungen im Alltag belegen\",\"subject\":\"Deutsch\",\"grade\":\"7\",\"prompt\":\"Welche zwei vollständigen Textstellen belegen, dass Elif die Zutaten einkauft und anschließend verarbeitet? Markiere genau zwei Sätze.\",\"hint\":\"Wähle genau zwei vollständige Sätze. Beide müssen einen Teil der Aussage unmittelbar belegen.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Nach der Schule wollte Elif für das Klassenfrühstück einen Obstsalat vorbereiten.\"},{\"id\":\"s2\",\"text\":\"Zuerst schrieb sie eine Einkaufsliste.\"},{\"id\":\"s3\",\"text\":\"Im Laden kaufte sie Äpfel und Trauben.\"},{\"id\":\"s4\",\"text\":\"Zu Hause wusch und schnitt sie das Obst.\"},{\"id\":\"s5\",\"text\":\"Am nächsten Morgen stellte sie die Schüssel auf den Tisch.\"}]},\"solution\":{\"selections\":[[\"s3\",\"s4\"]]},\"objective\":\"Zwei vollständige Textstellen als Belege für aufeinanderfolgende Alltagshandlungen auswählen.\",\"rationale\":\"Satz s3 belegt den Einkauf der Zutaten, Satz s4 deren anschließende Verarbeitung. Die übrigen Sätze nennen andere Handlungen oder Absichten.\",\"sourceNote\":\"Eigener fiktiver Kurztext ohne reale Personendaten.\"}",
+      "text": "Welche zwei vollständigen Textstellen belegen, dass Elif die Zutaten einkauft und anschließend verarbeitet? Markiere genau zwei Sätze.",
+      "type": "visual",
+      "points": 2,
+      "id": "q003"
+    },
+    {
+      "type": "visual",
+      "text": "Markiere genau den vollständigen Satz, in dem eine Ortsangabe vorkommt.",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "points": 2,
+      "position": 4,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"ortsangabe-alltagstext-04\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Eine Ortsangabe im Alltagstext erkennen\",\"subject\":\"Deutsch\",\"grade\":\"7\",\"prompt\":\"Markiere genau den vollständigen Satz, in dem eine Ortsangabe vorkommt.\",\"hint\":\"Wähle genau einen Satz aus. Markiere die vollständige Textstelle, nicht nur einzelne Wörter.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Nach dem Frühstück packt Nika ihr Heft ein.\"},{\"id\":\"s2\",\"text\":\"Danach ruft sie ihre Freundin an.\"},{\"id\":\"s3\",\"text\":\"Auf dem Sportplatz übt die Gruppe neue Würfe.\"},{\"id\":\"s4\",\"text\":\"Am Abend erzählt Nika von ihrem Training.\"}]},\"solution\":{\"selections\":[[\"s3\"]]},\"objective\":\"Eine Ortsangabe in einem kurzen Alltagstext erkennen und durch die vollständige Textstelle belegen.\",\"rationale\":\"Nur der dritte Satz enthält mit „Auf dem Sportplatz“ eine Ortsangabe. Die anderen Sätze enthalten keine Angabe des Ortes.\",\"sourceNote\":\"Eigenes fiktives Alltagstextbeispiel ohne reale Personendaten.\"}",
+      "updatedAt": "2026-10-25T10:04:27.020Z",
+      "id": "q004"
+    },
+    {
+      "position": 5,
+      "text": "In genau einer Zeile ist die Satzgliedbestimmung falsch. Markiere diese Zeile und trage die richtige Satzgliedart des gekennzeichneten Satzteils ein.",
+      "updatedAt": "2026-10-25T10:04:27.174Z",
+      "type": "visual",
+      "points": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"vollstaendige-saetze-satzglieder-ersatz-05\",\"revision\":1,\"format\":\"correction\",\"title\":\"Satzglieder in vollständigen Sätzen prüfen\",\"subject\":\"Deutsch\",\"grade\":\"7\",\"prompt\":\"In genau einer Zeile ist die Satzgliedbestimmung falsch. Markiere diese Zeile und trage die richtige Satzgliedart des gekennzeichneten Satzteils ein.\",\"hint\":\"Lies jede Zeile als vollständigen Satz. Prüfe, welche Funktion der gekennzeichnete Satzteil im Satz hat.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"r1\",\"text\":\"«Am frühen Morgen» fährt Mira mit dem Bus zur Bücherei. = Zeitangabe\"},{\"id\":\"r2\",\"text\":\"Mira leiht sich «einen Roman» aus. = Objekt\"},{\"id\":\"r3\",\"text\":\"«Vor der Bücherei» wartet ihr Bruder. = Ortsangabe\"},{\"id\":\"r4\",\"text\":\"Mira liest «leise» im Bus. = Prädikat\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"r4\",\"accepted\":[\"Adverbiale Bestimmung der Art und Weise\",\"Artangabe\",\"Modaladverbial\",\"Umstandsbestimmung der Art und Weise\",\"modale adverbiale Bestimmung\",\"Modalangabe\"]},\"objective\":\"Satzglieder in vollständigen Alltagssätzen unterscheiden und eine fehlerhafte Bestimmung fachsprachlich korrigieren.\",\"rationale\":\"Das Wort «leise» beschreibt, auf welche Weise Mira liest. Es ist daher eine adverbiale Bestimmung der Art und Weise und kein Prädikat.\",\"sourceNote\":\"Eigenes fiktives Beispielsatzmaterial ohne reale Schülerdaten; fachlich geprüft.\"}",
+      "id": "q005"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "type": "visual",
+      "position": 6,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"satzglieder-tabelle-06\",\"revision\":1,\"format\":\"table\",\"title\":\"Satzglieder im Alltagstext\",\"subject\":\"Deutsch\",\"grade\":\"7\",\"prompt\":\"Bestimme in jeder Zeile die Satzgliedart des angegebenen Satzteils.\",\"hint\":\"Achte darauf, ob der Satzteil eine Handlung, eine Person oder Sache, einen Ort oder einen Grund beziehungsweise Zweck bezeichnet.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Satz\",\"Angegebener Satzteil\",\"Satzgliedart\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Jonas trägt den schweren Rucksack.\",\"input\":false},{\"id\":\"a2\",\"text\":\"den schweren Rucksack\",\"input\":false},{\"id\":\"a3\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Wegen des Regens bleibt der Ball im Schuppen.\",\"input\":false},{\"id\":\"b2\",\"text\":\"Wegen des Regens\",\"input\":false},{\"id\":\"b3\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"Mara wartet vor dem Kino.\",\"input\":false},{\"id\":\"c2\",\"text\":\"vor dem Kino\",\"input\":false},{\"id\":\"c3\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a3\",\"accepted\":[\"Objekt\",\"Akkusativobjekt\"]},{\"id\":\"b3\",\"accepted\":[\"Adverbiale Bestimmung des Grundes\",\"Kausaladverbial\",\"Grundangabe\",\"Umstandsbestimmung des Grundes\",\"kausale adverbiale Bestimmung\"]},{\"id\":\"c3\",\"accepted\":[\"Adverbiale Bestimmung des Ortes\",\"Lokaladverbial\",\"Ortsangabe\",\"Umstandsbestimmung des Ortes\",\"lokale adverbiale Bestimmung\"]}]},\"objective\":\"Satzgliedfunktionen in unterschiedlichen Alltagssätzen unterscheiden.\",\"rationale\":\"Die Satzteile werden anhand ihrer Bedeutung und ihrer Funktion im jeweiligen Satz eindeutig als Objekt, Grundangabe oder Ortsangabe bestimmt.\",\"sourceNote\":\"Eigenes fiktives Beispielsatzmaterial; fachlich geprüft.\"}",
+      "text": "Bestimme in jeder Zeile die Satzgliedart des angegebenen Satzteils.",
+      "updatedAt": "2026-10-25T10:04:27.334Z",
+      "points": 2,
+      "id": "q006"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "position": 7,
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"satzglieder-faelle-korrektur-07\",\"revision\":0,\"format\":\"correction\",\"title\":\"Satzglieder nach ihrer Funktion bestimmen\",\"subject\":\"Deutsch\",\"grade\":\"7\",\"prompt\":\"In genau einer Zeile ist die Satzgliedbestimmung falsch. Markiere diese Zeile und trage die richtige Satzgliedart der gekennzeichneten Wortgruppe ein.\",\"hint\":\"Prüfe die gekennzeichnete Wortgruppe mit der passenden Frage zum Verb.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"z1\",\"text\":\"Am Samstag repariert Timo sein Fahrrad. – „sein Fahrrad“ = Akkusativobjekt\"},{\"id\":\"z2\",\"text\":\"Die Trainerin erklärt den Kindern die neue Übung. – „den Kindern“ = Dativobjekt\"},{\"id\":\"z3\",\"text\":\"Vor dem Training treffen sich alle auf dem Hof. – „auf dem Hof“ = Ortsangabe\"},{\"id\":\"z4\",\"text\":\"Mila schenkt ihrem Bruder ein Buch. – „ihrem Bruder“ = Akkusativobjekt\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"z4\",\"accepted\":[\"Dativobjekt\"]},\"objective\":\"Akkusativ- und Dativobjekte anhand ihrer Funktion im vollständigen Satz unterscheiden.\",\"rationale\":\"Die Wortgruppe „ihrem Bruder“ beantwortet die Frage „Wem schenkt Mila ein Buch?“. Sie ist daher ein Dativobjekt.\",\"sourceNote\":\"Eigenes fiktives Beispielsatzmaterial; fachlich geprüft.\"}",
+      "text": "In genau einer Zeile ist die Satzgliedbestimmung falsch. Markiere diese Zeile und trage die richtige Satzgliedart der gekennzeichneten Wortgruppe ein.",
+      "updatedAt": "2026-10-25T10:04:27.511Z",
+      "points": 2,
+      "id": "q007"
+    },
+    {
+      "type": "visual",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "In genau einer Zeile ist die Satzgliedbestimmung falsch. Markiere diese Zeile und trage die richtige Satzgliedart ein.",
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"satzglied-korrektur-08\",\"revision\":0,\"format\":\"correction\",\"title\":\"Eine Satzgliedbestimmung korrigieren\",\"subject\":\"Deutsch\",\"grade\":\"7\",\"prompt\":\"In genau einer Zeile ist die Satzgliedbestimmung falsch. Markiere diese Zeile und trage die richtige Satzgliedart ein.\",\"hint\":\"Prüfe den markierten Satzteil mit der passenden Frageprobe. Wähle genau eine fehlerhafte Zeile.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"a\",\"text\":\"Nach dem Training trinkt Yusuf „kaltes Wasser“. – „kaltes Wasser“ ist das Akkusativobjekt.\"},{\"id\":\"b\",\"text\":\"Die Nachbarin öffnet „das Fenster“. – „das Fenster“ ist das Dativobjekt.\"},{\"id\":\"c\",\"text\":\"Lena hilft „ihrem Bruder“. – „ihrem Bruder“ ist das Dativobjekt.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"b\",\"accepted\":[\"Akkusativobjekt\"]},\"objective\":\"Satzglieder anhand ihrer Funktion im Satz unterscheiden und eine falsche Bestimmung korrigieren.\",\"rationale\":\"„Das Fenster“ antwortet auf die Frage „Wen oder was öffnet die Nachbarin?“ und ist deshalb ein Akkusativobjekt. Die Bestimmungen in den beiden anderen Zeilen sind korrekt.\",\"sourceNote\":\"Eigene fiktive Beispielsätze ohne reale Personendaten.\"}",
+      "position": 8,
+      "updatedAt": "2026-10-25T10:04:27.706Z",
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 2,
+      "reason": "Übliche gleichwertige Satzgliedbegriffe zulassen; Antwortumfang ausdrücklich benennen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    },
+    {
+      "position": 5,
+      "reason": "Übliche gleichwertige Satzgliedbegriffe zulassen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    },
+    {
+      "position": 6,
+      "reason": "Gängige gleichwertige adverbiale Fachbegriffe ergänzen.",
+      "runtimeStatus": "local reviewed draft; cloud update pending"
+    }
+  ]
+}
