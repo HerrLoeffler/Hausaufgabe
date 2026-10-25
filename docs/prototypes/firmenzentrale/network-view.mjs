@@ -1,4 +1,5 @@
 import {nodes,connections,edgesFor,clampZoom,matchNodes} from './network.mjs';
+import {mountFocus,leaveFocus} from './focus-view.mjs';
 const NS='http://www.w3.org/2000/svg';
 const E=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 const A=(p,...children)=>{p.append(...children.filter(Boolean));return p;};
@@ -10,7 +11,10 @@ let zoom=1,offset={x:0,y:0},mode='all',query='';
 function button(text,fn,cls='net-button'){const n=E('button',cls,text);n.type='button';n.addEventListener('click',fn);return n;}
 function link(text,href,cls='net-link'){const n=E('a',cls,text);n.href=href;return n;}
 function activate(n,fn){n.addEventListener('click',fn);n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fn();}});}
-export function mountNetwork(container,{selected='',onDraft,brandIcon}){
+export function mountNetwork(container,{selected='',child='',onDraft,brandIcon}){
+ if(selected&&mountFocus(container,{selected,child,onDraft,brandIcon}))return;
+ if(leaveFocus()){zoom=1;offset={x:0,y:0};mode='all';query='';}
+ if(selected){container.append(E('p','focus-alert','Dieser Bereich ist nicht bekannt. Das Gesamtnetz steht zur Auswahl.'));selected='';}
  const selectedNode=byId(selected),root=E('section','nerve-center');
  const intro=A(E('div','net-heading'),A(E('div'),E('p','net-eyebrow','GradeCrew · Firmenzentrale'),E('h1','','Das Unternehmen als Netz.'),E('p','net-subtitle','Was zusammenläuft. Was voneinander abhängt. Was als Nächstes gelöst werden muss.')),link('Quellenstand & Lücken','#/arbeit/abdeckung','net-source-link'));
  root.append(intro);
