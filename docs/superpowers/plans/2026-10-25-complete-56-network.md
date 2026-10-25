@@ -58,3 +58,7 @@ Practice start accepts a competency ID through existing topicId. Starting a lega
 ## Existing decisions
 
 Use the current runtime and programme, not50 disconnected demos. Grade5/6 first; 7-10 catalogue remains untouched. No additional design approval is required for the already explicitly requested implementation; routine layout and stable skill-ID choices are root decisions within this contract.
+
+## Execution receipt
+
+Implemented all113existing5/6anchors as241childgoals,148prerequisites;225digitally scoped,16explicit human-observation leaves. Scoped content/network/UI workers and root integration are committed.7semanticworkshops/14boundeddiagrams, realaudio and owner-private reviewedreuse are present. Core review findings were repaired before test release. Fresh431Functions/92frontend/1preview-isolation checks and representative genuine AI/browser paths are captured in docs/learning-brain/evidence-full56-20261025.json. Teacher calibration of all225goals and actual device/classroom/retention gates remain open; no false full didactic approval. Exact runtime and hosting source identities are distinguished from branch heads.
