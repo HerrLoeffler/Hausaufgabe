@@ -63,6 +63,7 @@ import { installReviewMode } from "./review-mode.mjs";
 import { DEMO_TEST as REVIEW_DEMO_TEST } from "./gradecrew-tour-v8.js";
 import { createLocalTourRepository } from "./guest-tour-port.mjs";
 import { installCrewTour } from "./gradecrew-tour.js?v=2.3.1-gc21";
+import { createQuestionFeedbackClient } from "./question-feedback-client.mjs";
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
 fetch("./release.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(r => r && diagnostics.setRelease(r)).catch(() => {});
@@ -80,6 +81,10 @@ const secureAudioPublicationMessage = "Dieser Test enthält Audioantworten oder 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const questionFeedback = createQuestionFeedbackClient({project: firebaseConfig.projectId, api: async (data, scope) => {
+  if (auth.currentUser?.uid !== scope.uid || guestTourRepo) throw new Error("Das Feedbackkonto wurde gewechselt.");
+  return (await httpsCallable(getFunctions(app, "europe-west1"), "reviewMode", {timeout: 15000})({...data, actorUid: scope.uid})).data;
+}});
 const aiApi = new Proxy(createAiClient(app, () => state.user?.uid || auth.currentUser?.uid || ""), {
   get(target, key) {
     const value = target[key];
@@ -587,6 +592,7 @@ async function finishTeacherTour() {
 
 function showView(id) {
   diagnostics.record("view", { view: id });
+  if (id === "editorView") void refreshQuestionFeedbackNotice();
   if (id === "authView") document.dispatchEvent(new Event("gradecrew:signed-out"));
   if (id !== "publishView") clearPublishSubscriptions();
   if (id !== "studentView") clearStudentSubscriptions();
@@ -1229,6 +1235,7 @@ async function refreshTutorialSignIn(user, generation) {
 
 let authStateGeneration = 0;
 onAuthStateChanged(auth, async (user) => {
+  questionFeedback.setSession(null);
   const generation = ++authStateGeneration;
   quickRemyBridge.authChanged(user);
   if (guestTourRepo && !user) return;
@@ -1292,6 +1299,8 @@ onAuthStateChanged(auth, async (user) => {
     ? { state: "signedIn", accountLabel: String(state.profile?.displayName || user.displayName || user.email || "Angemeldet").trim().slice(0, 160), accountChanged }
     : { state: "signedOut" };
   window.GradeCrewNative?.setAuthState?.(nativeAuthState)?.catch(() => {});
+  questionFeedback.setSession(user?.uid || null);
+  if (user) void questionFeedback.flush().then(refreshQuestionFeedbackNotice).catch(() => {});
   setTeacherBar();
   if (["production", "staging"].includes(appEnvironment)) void reviewController?.setSession(user ? { uid: user.uid } : null);
   if (user && isAdmin()) void refreshBugOpsAttention({ notify: true });
@@ -3977,30 +3986,21 @@ function renderQuestions() {
     });
     node.querySelector(".aiEditQuestion")?.addEventListener("click", () => toggleQuestionAiPanel(node, q, index));
     node.querySelector(".aiVariantQuestion")?.addEventListener("click", () => openQuestionVariantDialog(q, index));
-    const canRate = isAdmin() || Boolean(q.aiOrigin);
-    for (const verdict of ["Good", "Bad"]) node.querySelector(`.aiFeedback${verdict}`)?.classList.toggle("hidden", !canRate);
+    const canRate = Boolean(state.user || guestTourRepo);
+    node.querySelector(".aiFeedbackGood")?.classList.toggle("hidden", !canRate);
+    node.querySelector(".aiFeedbackBad")?.classList.toggle("hidden", !canRate);
     node.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackSelected", q._aiFeedbackVerdict === "good");
     node.querySelector(".aiFeedbackGood")?.classList.toggle("aiFeedbackAccepted", Boolean(q.aiVariantKept && !q._aiFeedbackVerdict));
     if (q.aiVariantKept && !q._aiFeedbackVerdict) node.querySelector(".aiFeedbackGood")?.setAttribute("title", "Variante behalten · noch nicht ausdrücklich als gut bewertet");
     node.querySelector(".aiFeedbackBad")?.classList.toggle("aiFeedbackSelected", q._aiFeedbackVerdict === "bad");
     node.querySelector(".aiFeedbackGood")?.setAttribute("aria-pressed", String(q._aiFeedbackVerdict === "good"));
     node.querySelector(".aiFeedbackBad")?.setAttribute("aria-pressed", String(q._aiFeedbackVerdict === "bad"));
-    if (canRate) {
-      node.querySelector(".aiFeedbackGood")?.addEventListener("click", () => submitAiQuestionFeedback(q, index, { verdict: "good", action: "keep" }));
-      node.querySelector(".aiFeedbackBad")?.addEventListener("click", () => toggleAiQualityPanel(node, q, index));
-    }
-
-    node.querySelector(".deleteQuestion").disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
-    node.querySelector(".deleteQuestion").addEventListener("click", () => {
-      if (state.currentQuiz?.published && !state.currentQuiz?.ended) return;
-      if (confirm("Aufgabe löschen?")) {
-        state.questions.splice(index, 1);
-        renderQuestions();
-        markDirty();
-        focusEditorQuestion(Math.min(index, state.questions.length - 1));
-        if (typeof crewTour !== "undefined") crewTour?.notify("question-deleted", {quizId: state.currentQuiz?.id, questionId: q.id});
-      }
+    node.querySelector(".aiFeedbackGood")?.addEventListener("click", async event => {
+      const button = event.currentTarget;button.disabled = true;
+      try {await submitAiQuestionFeedback(q, index, {verdict: "good", action: "keep"});}
+      finally {button.disabled = false;}
     });
+    node.querySelector(".aiFeedbackBad")?.addEventListener("click", () => toggleAiQualityPanel(node, q, index));
 
     const imageEditor = document.createElement("div");
     imageEditor.className = "questionImageEditor";
@@ -4063,6 +4063,10 @@ function questionForAi(q) {
 }
 
 const AI_QUALITY_REASONS = Object.freeze({
+  content_wrong: "Fachlich falsch",
+  unclear: "Aufgabenstellung unklar",
+  answer_wrong: "Antwort oder Bewertung falsch",
+  off_topic: "Passt nicht zum Thema",
   incorrect: "Antwort stimmt nicht",
   ambiguous: "Aufgabe ist unklar",
   answer_leak: "Lösung wird bereits verraten",
@@ -4072,7 +4076,7 @@ const AI_QUALITY_REASONS = Object.freeze({
 });
 
 function aiQuestionFeedbackSnapshot(q) {
-  return {
+  const snapshot = {
     type: String(q.type || "").slice(0, 30), text: String(q.text || "").slice(0, 900), points: Number(q.points) || 1,
     options: (q.options || []).slice(0, 6).map(o => ({ text: String(o.text || "").slice(0, 180), correct: Boolean(o.correct) })),
     acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4).map(answer => String(answer).slice(0, 120)),
@@ -4080,13 +4084,17 @@ function aiQuestionFeedbackSnapshot(q) {
     pairs: (q.pairs || []).slice(0, 15).map(pair => ({ left: String(pair.left).slice(0, 180), right: String(pair.right).slice(0, 180) })),
     items: (q.items || []).slice(0, 20).map(item => String(item).slice(0, 180)),
     acceptedOrders: orderingVariantsForStorage(orderingVariants(q.acceptedOrders).slice(0, 12).map(order => order.slice(0, 20))),
-    groups: (q.groups || []).slice(0, 10).map(group => ({ name: String(group.name).slice(0, 100), items: (group.items || []).slice(0, 20).map(item => String(item).slice(0, 180)) })),
-    targetWords: (q.targetWords || []).slice(0, 30),
-    markGroups: (q.markGroups || []).slice(0, 4),
+    groups: (q.groups || []).slice(0, 5).map(group => ({ name: String(group.name).slice(0, 100), items: (group.items || []).slice(0, 10).map(item => String(item).slice(0, 120)) })),
+    targetWords: (q.targetWords || []).slice(0, 30).map(word => String(word).slice(0, 120)),
+    markGroups: (q.markGroups || []).slice(0, 4).map(group => ({name: String(group.name || "").slice(0,100), color: String(group.color || "").slice(0,30), words: (group.words || []).slice(0,30).map(word => String(word).slice(0,120))})),
     numericAnswer: q.type === "number" && Number.isFinite(Number(q.numericAnswer)) ? Number(q.numericAnswer) : null,
     passage: String(q.passage || "").slice(0, 600),
     imageChoices: Boolean(q.imageChoicesOnly), imagePresent: Boolean(getQuestionImageSrc(q) || q.options?.some(o => o.imageDataUrl))
   };
+  for (const key of ["markGroups", "groups", "targetWords", "pairs", "items", "acceptedOrders", "options", "acceptedAnswers"]) {
+    while (JSON.stringify(snapshot).length > 23000 && snapshot[key]?.length) snapshot[key].pop();
+  }
+  return snapshot;
 }
 
 async function submitTutorialQuestionFeedback(q, { verdict, reason, comment, action }) {
@@ -4111,9 +4119,8 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
     return false;
   }
   const note = String(comment || "").trim().slice(0, 500);
-  if (verdict === "bad" && (!Object.hasOwn(AI_QUALITY_REASONS, reason) || (reason === "other" && !note))) {
-    toast("Bitte einen Grund wählen und bei „Anderer Grund“ kurz beschreiben, was nicht passt.", "error");
-    return;
+  if (verdict === "bad" && reason && !Object.hasOwn(AI_QUALITY_REASONS, reason)) {
+    toast("Bitte einen gültigen Grund wählen oder überspringen.", "error");return false;
   }
   if (state.currentQuiz?.tutorialVersion) {
     return submitTutorialQuestionFeedback(q, { verdict, reason, comment: note, action });
@@ -4126,25 +4133,24 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
       grade: String($("quizGrade")?.value || state.currentQuiz.grade || "").trim().slice(0, 60)
     };
     const snapshot = aiQuestionFeedbackSnapshot(q);
-    const fingerprint = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(snapshot)));
-    const hash = Array.from(new Uint8Array(fingerprint)).slice(0, 10).map(byte => byte.toString(16).padStart(2, "0")).join("");
-    const id = `aiq-${feedbackQuizId}-${q.id}-${feedbackUid}-${hash}${reviewOutcome ? "-review-" + reviewerReason : ""}`;
-    const label = AI_QUALITY_REASONS[reason] || "";
-    const entry = {
-    userId: feedbackUid,
-    category: "ai_question", testCode: feedbackQuizId, questionId: q.id, questionPosition: index + 1,
-    ...feedbackContext,
-    questionType: String(q.type || "").slice(0, 30), feedbackSchemaVersion: 3,
-    message: reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen: " + qualityIssueShortLabel({ reason: reviewerReason }) : verdict === "good" ? "Gute Aufgabe – behalten." : `${label}${note ? `: ${note}` : ""}`,
-    verdict, reason, teacherComment: note, action, questionSnapshot: snapshot,
-    ...(reviewOutcome ? { reviewOutcome, reviewerReason } : {}),
-    model: String(q.aiOrigin?.model || "").slice(0, 60), promptVersion: String(q.aiOrigin?.promptVersion || "").slice(0, 60),
-    appVersion: APP_VERSION, environment: appEnvironment, status: reviewOutcome ? "new" : verdict === "good" ? "done" : "new", createdAt: serverTimestamp()
-    };
-    await setDoc(doc(db, "feedback", id), entry);
+    const questionAtSend = JSON.stringify(q);
+    const label = AI_QUALITY_REASONS[reason] || "Ohne Angabe";
+    const result = await questionFeedback.submit({testCode: feedbackQuizId, questionId: q.id, questionPosition: index + 1,
+      ...feedbackContext, verdict, reason, teacherComment: note, feedbackAction: action, questionSnapshot: snapshot,
+      model: String(q.aiOrigin?.model || "").slice(0,60), promptVersion: String(q.aiOrigin?.promptVersion || "").slice(0,60),
+      appVersion: APP_VERSION, sourceRelease: reviewBuild, draftOnly: state.newManualQuiz === true,
+      ...(reviewOutcome ? {reviewOutcome, reviewerReason} : {})});
+    void refreshQuestionFeedbackNotice();
+    if (!result.confirmed) {
+      toast("Rückmeldung lokal vorgemerkt – noch nicht online bestätigt. Die Aufgabe bleibt erhalten.", "error");return false;
+    }
     if (state.currentQuiz?.id !== feedbackQuizId || state.user?.uid !== feedbackUid) return false;
     index = state.questions.findIndex(item => item.id === q.id);
     if (index < 0) return false;
+    q = state.questions[index];
+    if (action !== "keep" && (JSON.stringify(q) !== questionAtSend || (state.currentQuiz.published && !state.currentQuiz.ended))) {
+      toast("Rückmeldung gespeichert. Die Aufgabe wurde inzwischen geändert oder veröffentlicht und bleibt erhalten.", "error");return false;
+    }
     q._aiFeedbackVerdict = reviewOutcome ? "" : verdict;
     if (!reviewOutcome && q.aiVariantKept) { q.aiVariantKept = false; markDirty(); }
     const card = document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
@@ -4155,7 +4161,10 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
     card?.querySelector(".aiFeedbackBad")?.setAttribute("aria-pressed", String(!reviewOutcome && verdict === "bad"));
     if (action === "remove") {
       state.questions.splice(index, 1);
-      renderQuestions(); markDirty(); toast("Rückmeldung gespeichert und Aufgabe entfernt. Bitte den Test speichern.");
+      renderQuestions(); markDirty();
+      focusEditorQuestion(Math.min(index, state.questions.length - 1));
+      if (typeof crewTour !== "undefined") crewTour?.notify("question-deleted", {quizId: feedbackQuizId, questionId: q.id});
+      toast("Rückmeldung online gespeichert und Aufgabe aus dem Entwurf entfernt. Bitte den Test speichern.");
     } else if (action === "replace") {
       toast("Rückmeldung gespeichert. Neue Aufgabe wird erstellt …");
       const instruction = `Erstelle eine neue, eigenständige Aufgabe. Fehler der bisherigen Aufgabe: ${label}. ${note} Vermeide denselben Fehler und prüfe die Lösung. Antwortoptionen müssen aus eindeutigem Text bestehen; bei Komma-Zählfragen dürfen noch keine Kommas im Beispielsatz stehen.`;
@@ -4164,7 +4173,7 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
     return true;
   } catch (err) {
     console.error(err);
-    toast("Aufgabenfeedback konnte nicht gespeichert werden.", "error");
+    toast("Rückmeldung nicht bestätigt. Die Aufgabe bleibt erhalten. Bitte erneut versuchen.", "error");
     return false;
   }
 }
@@ -4176,10 +4185,11 @@ function toggleAiQualityPanel(node, q, index) {
   panel.className = "aiQualityPanel";
   const live = state.currentQuiz?.published && !state.currentQuiz?.ended;
   const canReplace = !live && !state.currentQuiz?.tutorialVersion;
-  panel.innerHTML = `<strong>🙁 Was stimmt mit dieser Aufgabe nicht?</strong>${live ? "<p>Ein veröffentlichter Test kann hier nur bewertet werden.</p>" : ""}<label>Grund<select class="aiQualityReason"><option value="">Bitte wählen</option><option value="missing_audio">Höraufgabe fehlt</option><option value="wrong_language">Falsche Sprache</option>${Object.entries(AI_QUALITY_REASONS).map(([key, label]) => `<option value="${key}">${escapeHtml(label)}</option>`).join("")}</select></label><label>Hinweis zur Aufgabe <small>(optional, bei „Anderer Grund“ erforderlich)</small><textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}${live ? "" : '<button class="button danger aiQualityRemove" type="button">Melden &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
+  panel.innerHTML = `<strong>☹ / 🗑 Rückmeldung zur Aufgabe</strong><p class="hint">Die Rückmeldung wird mit einem begrenzten Aufgabenausschnitt gespeichert. Ohne Schülerantworten. Entfernen gilt zunächst für diesen Entwurf.</p><label>Grund (freiwillig)<select class="aiQualityReason"><option value="">Ohne Grund / überspringen</option>${Object.entries(AI_QUALITY_REASONS).map(([key,label])=>`<option value="${escapeHtml(key)}">${escapeHtml(label)}</option>`).join("")}<option value="missing_audio">Höraufgabe fehlt</option><option value="wrong_language">Falsche Sprache</option></select></label><label>Kurzer Hinweis (freiwillig)<textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}${live ? "" : '<button class="button danger aiQualityRemove" type="button">Rückmeldung speichern &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
   panel.querySelector(".aiQualityCancel").addEventListener("click", () => panel.remove());
   for (const [selector, action] of [[".aiQualityReport", "keep"], [".aiQualityReplace", "replace"], [".aiQualityRemove", "remove"]]) {
     panel.querySelector(selector)?.addEventListener("click", async () => {
+      if (action === "remove" && !confirm("Rückmeldung speichern und diese Aufgabe aus dem Entwurf entfernen?")) return;
       const buttons = panel.querySelectorAll("button");
       buttons.forEach(button => { button.disabled = true; });
       try {
@@ -4194,6 +4204,28 @@ function toggleAiQualityPanel(node, q, index) {
   node.querySelector(".questionGrid").after(panel);
   panel.querySelector(".aiQualityReason").focus();
 }
+
+async function refreshQuestionFeedbackNotice() {
+  const uid = state.user?.uid;if (!uid || guestTourRepo) return;
+  let notice = $("questionFeedbackPending");
+  if (!notice) {notice = document.createElement("div");notice.id = "questionFeedbackPending";notice.className = "card";notice.setAttribute("role", "status");$("questionList")?.before(notice);}
+  try {
+    const pending = await questionFeedback.pending();
+    if (state.user?.uid !== uid || guestTourRepo) return;
+    notice.replaceChildren();notice.hidden = !pending.length;if (!pending.length) return;
+    const text = document.createElement("p");text.textContent = `${pending.length} Aufgabenrückmeldung(en) warten auf Onlinebestätigung. Aufgaben wurden dafür nicht entfernt.`;
+    const retry = document.createElement("button");retry.type = "button";retry.className = "button secondary";retry.textContent = "Erneut übertragen";
+    retry.onclick = async () => {retry.disabled = true;try {await questionFeedback.flush();await refreshQuestionFeedbackNotice();toast("Übertragung geprüft. Aufgaben werden dabei nicht automatisch entfernt.");}catch {toast("Übertragung weiterhin ausstehend.", "error");}finally{retry.disabled = false;}};
+    notice.append(text,retry);
+    for (const record of pending.filter(record => record.terminal)) {
+      const line = document.createElement("p");line.textContent = `Aufgabe ${record.payload.questionPosition || "?"}: Rückmeldung abgelehnt. ${record.error || "Bitte Angaben prüfen."} `;
+      const discard = document.createElement("button");discard.type = "button";discard.className = "button ghost";discard.textContent = "Lokale Vormerkung verwerfen";
+      discard.onclick = async () => {if (state.user?.uid !== uid || !confirm("Nur diese lokale Vormerkung verwerfen? Die Aufgabe bleibt erhalten.")) return;await questionFeedback.discard(record.id);await refreshQuestionFeedbackNotice();};
+      line.append(discard);notice.append(line);
+    }
+  } catch {/* Submission reports storage errors directly; unrelated editor behavior stays available. */}
+}
+window.addEventListener("online", () => {if (state.user && !guestTourRepo) void questionFeedback.flush().then(refreshQuestionFeedbackNotice).catch(() => {});});
 
 async function createSimilarTest() {
   if (!state.currentQuiz || !state.questions.length) return toast("Für einen ähnlichen Test brauchst du mindestens eine Aufgabe.", "error");
@@ -8885,6 +8917,7 @@ function renderAdminFeedback(){
   const aiItems = list.filter(f => f.category === "ai_question" && f.reviewOutcome !== "false_positive");
   const reasonCounts = Object.entries(AI_QUALITY_REASONS).map(([key, label]) => ({ label, count: aiItems.filter(f => f.reason === key && f.verdict === "bad").length })).filter(item => item.count);
   const summary = aiItems.length || aiReviewFalsePositives.length ? `<div class="aiFeedbackSummary"><strong>KI-Aufgaben:</strong> ${aiItems.filter(f => f.verdict === "good").length} gut · ${aiItems.filter(f => f.verdict === "bad").length} problematisch · ${aiReviewFalsePositives.length} zurückgewiesene Prüferwarnungen${reasonCounts.length ? `<br>${reasonCounts.map(item => `${escapeHtml(item.label)}: ${item.count}`).join(" · ")}` : ""}</div>` : "";
+  const questionReviewNotice = aiItems.length ? `<p class="hint">Aufgabenbewertungen sind Produkthinweise. Neue Rückmeldungen werden fachlich geprüft; sie trainieren kein Modell. „Erledigt“ bei älteren grünen Bewertungen kann automatisch vergeben worden sein und belegt keine Verbesserung.</p>` : "";
   const errorItems = list.filter(f => f.category === "app_error");
   const errorGroups = [...errorItems.reduce((map, item) => {
     const key = item.errorCode || "UNBEKANNT";
@@ -8896,14 +8929,14 @@ function renderAdminFeedback(){
   const rightsSummary = openRights ? `<div class="aiFeedbackSummary"><strong>${openRights} offene Rechtehinweis${openRights === 1 ? "" : "e"} – zeitnah prüfen und betroffene Zugänge bei begründetem Verdacht sperren.</strong></div>` : "";
   const grouped = groupErrors(list);
   const groupsHtml = grouped.length ? `<details class="card"><summary>Fehlergruppen · ${grouped.length}</summary>${grouped.slice(0, 30).map(g => `<button type="button" class="button secondary errorGroupFilter" data-fingerprint="${escapeHtml(g.fingerprint)}">${escapeHtml(g.fingerprint)} · ${g.reports} Meldungen · ${g.occurrences} Vorkommen · ${g.open} offen</button>`).join("")}</details>` : "";
-  root.innerHTML = renderBugOpsSummary() + rightsSummary + errorSummary + summary + groupsHtml + (list.length ? list.map(f => {
+  root.innerHTML = renderBugOpsSummary() + rightsSummary + errorSummary + summary + questionReviewNotice + groupsHtml + (list.length ? list.map(f => {
     const q = f.questionSnapshot;
-    const snapshot = f.category === "ai_question" && q ? `<div class="aiFeedbackSnapshot"><strong>Aufgabe ${Number(f.questionPosition) || "?"} · ${escapeHtml(q.type || "")}</strong><p>${escapeHtml(q.text || "")}</p>${(q.options || []).length ? `<small>Antworten: ${(q.options || []).map(o => `${escapeHtml(o.text || "")}${o.correct ? " ✓" : ""}`).join(" · ")}</small>` : ""}<small>Aktion: ${escapeHtml(({ keep: "behalten", replace: "ersetzen", remove: "entfernen" })[f.action] || "–")}${q.imagePresent ? " · Bild im Test vorhanden oder vorhanden gewesen" : ""}${f.promptVersion ? ` · Prompt ${escapeHtml(f.promptVersion)}` : ""}${f.model ? ` · Modell ${escapeHtml(f.model)}` : ""}</small></div>` : "";
+    const snapshot = f.category === "ai_question" && q ? `<div class="aiFeedbackSnapshot"><strong>Aufgabe ${Number(f.questionPosition) || "?"} · ${escapeHtml(q.type || "")}</strong><p>${escapeHtml(q.text || "")}</p>${(q.options || []).length ? `<small>Antworten: ${(q.options || []).map(o => `${escapeHtml(o.text || "")}${o.correct ? " ✓" : ""}`).join(" · ")}</small>` : ""}<small>Aktion: ${escapeHtml(({ keep: "behalten", replace: "ersetzen", remove: "entfernen" })[f.action] || "–")}${f.feedbackSchemaVersion === 4 && f.action === "remove" ? " angefordert · Entwurf separat speichern" : ""}${q.imagePresent ? " · Bild im Test vorhanden oder vorhanden gewesen" : ""}${f.promptVersion ? ` · Prompt ${escapeHtml(f.promptVersion)}` : ""}${f.model ? ` · Modell ${escapeHtml(f.model)}` : ""}</small></div>` : "";
     const technical = f.category === "app_error" ? (f.technicalDetails || {}) : null;
     const errorSnapshot = technical ? `<div class="errorReportSnapshot"><div class="errorReportHeadline"><strong>${escapeHtml(f.errorCode || "Technischer Fehler")}</strong>${f.reportId ? `<span>${escapeHtml(f.reportId)}</span>` : ""}</div><p>${escapeHtml(f.action || "Unbekannte Aktion")}</p><small>${escapeHtml(technical.rawMessage || "Keine technische Fehlermeldung gespeichert.")}</small><div class="errorReportMeta"><span>Ansicht: ${escapeHtml(technical.view || "–")}</span><span>Phase: ${escapeHtml(technical.stage || "–")}</span><span>Aufgabe: ${escapeHtml(technical.questionPosition || "–")}</span><span>Fingerprint: ${escapeHtml(f.fingerprint || "–")}</span></div><button type="button" class="button secondary copyErrorReport" data-id="${escapeHtml(f.id)}">Fehlerbericht kopieren</button></div>` : "";
     const quiz = f.category === "rights" ? state.adminQuizzes.find(q => q.id === f.testCode) : null;
     const rightsAction = quiz ? `<div class="rightsReportActions"><button class="button ${quiz.rightsHold ? "secondary" : "danger"} rightsHoldToggle" type="button" data-code="${escapeHtml(quiz.id)}" data-hold="${quiz.rightsHold ? "false" : "true"}">${quiz.rightsHold ? "Sperre nach Klärung aufheben" : "Testzugang vorübergehend sperren"}</button></div>` : "";
-    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen" : f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}${errorSnapshot}${technical ? renderErrorResolution(f) : ""}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
+    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen" : f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.sourceProject ? ` · ${escapeHtml(f.sourceProject)}` : " · Herkunft nicht im Datensatz erfasst"}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${rightsAction}${snapshot}${errorSnapshot}${technical ? renderErrorResolution(f) : ""}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
   }).join("") : `<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`);
   root.querySelectorAll(".errorGroupFilter, .bugOpsIncidentFilter").forEach(button => button.addEventListener("click", () => { $("adminFeedbackFingerprint").value = button.dataset.fingerprint; renderAdminFeedback(); }));
   root.querySelectorAll(".saveErrorResolution").forEach(button => button.addEventListener("click", () => saveErrorResolution(button)));

@@ -27,6 +27,7 @@ on:
       - 'fix/visual-backlog-*'
       - 'fix/gc-security-*'
       - 'fix/staging-feedback-*'
+      - 'fix/question-feedback-*'
     # Documentation changes do not change the app/runtime candidate.
     paths-ignore:
       - '**.md'
@@ -204,6 +205,7 @@ jobs:
           node --check mobile-viewport-polish.js
           node --check tools/generate-gradecrew-design.mjs
           node --test gradecrew-design-foundation.test.mjs
+          node --test question-feedback-client.test.mjs question-feedback-editor.test.mjs
           node --test gradecrew-entry-bootstrap.test.mjs
           node --test gradecrew-brand-assets.test.mjs
           node --test first-guide-responsive.test.mjs crew-tour-responsive.test.mjs assessment-receipt-check.test.mjs

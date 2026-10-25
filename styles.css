@@ -415,3 +415,6 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 .legalSiteFooter nav{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 24px}
 .legalSiteFooter a{display:inline-flex;align-items:center;min-height:44px;color:#2858cd;text-underline-offset:3px}
 .legalSiteFooter a:focus-visible{outline:3px solid #2858cd;outline-offset:3px;border-radius:4px}
+
+/* One shared feedback/removal control keeps both symbols readable. */
+.questionActions .aiFeedbackBad.deleteQuestion { width: auto; min-width: 72px; white-space: nowrap; }

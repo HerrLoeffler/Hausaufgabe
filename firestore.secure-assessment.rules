@@ -250,6 +250,7 @@ service cloud.firestore {
 
     match /feedback/{feedbackId} {
       allow create: if accountActive()
+                    && request.resource.data.get('feedbackSchemaVersion', 0) != 4
                     && request.resource.data.userId == request.auth.uid
                     && request.resource.data.message is string
                     && request.resource.data.message.size() > 0
@@ -274,6 +275,8 @@ service cloud.firestore {
       allow update: if isAdmin()
         || (
           accountActive()
+          && resource.data.get('feedbackSchemaVersion', 0) != 4
+          && request.resource.data.get('feedbackSchemaVersion', 0) != 4
           && resource.data.get('category', '') == 'ai_question'
           && resource.data.userId == request.auth.uid
           && request.resource.data.userId == resource.data.userId

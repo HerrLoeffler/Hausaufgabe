@@ -27,6 +27,9 @@ test('real stdio MCP roundtrip lists UI tools and persists answer in the shared 
   assert(list.some(t=>t.name==='gradecrew_staging_connect'));
   assert(list.some(t=>t.name==='gradecrew_staging_disconnect'));
   assert(list.some(t=>t.name==='gradecrew_teacher_feedback'&&t.annotations.readOnlyHint));
+  assert(list.some(t=>t.name==='gradecrew_question_feedback'&&t.annotations.readOnlyHint));
+  const ratings=(await call('tools/call',{name:'gradecrew_question_feedback',arguments:{}})).result;
+  assert.equal(ratings.isError,true);assert.match(ratings.content[0].text,/Live-Anmeldung/);
   assert(list.some(t=>t.name==='gradecrew_live_feedback_connect'));
   const feedback=(await call('tools/call',{name:'gradecrew_teacher_feedback',arguments:{}})).result;
   assert.equal(feedback.isError,true);assert.match(feedback.content[0].text,/Live-Anmeldung/);
