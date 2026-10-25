@@ -1,20 +1,15 @@
 import {createRequire} from 'node:module';import {randomBytes,randomUUID} from 'node:crypto';import {makeVariation} from './variations.mjs';
 const require=createRequire(import.meta.url);const core=require('../../assessment-functions/lib/assessment-core.js');const decoder=require('../../assessment-functions/lib/teacher-answer-decoder.js');
 const clone=v=>structuredClone(v);
-export function createExtendedService({state={draft:null,published:null,attempts:{}},persist=async()=>{}}={}){
- const metadata=()=>({id:'EXTENDED',title:state.published.quiz.title,subject:state.published.quiz.subject,grade:state.published.quiz.grade,gradeScaleSnapshot:clone(state.published.quiz.gradeScaleSnapshot),description:'Lokaler Prototyp · vorbereitete Beispiele · keine echte Anmeldung oder Cloudabgabe',questionCount:state.published.questions.length,totalPoints:state.published.questions.reduce((n,q)=>n+q.points,0),timeLimitMinutes:0,startMode:'student',resultMode:'points_grade',showSolutions:false,sessionRunId:state.published.revision,published:true,ended:false});
+export function createExtendedService({state={draft:null,published:null,attempts:{}},persist=async()=>{},ai=null}={}){
+ const metadata=()=>({id:'EXTENDED',title:state.published.quiz.title,subject:state.published.quiz.subject,grade:state.published.quiz.grade,gradeScaleSnapshot:clone(state.published.quiz.gradeScaleSnapshot),description:'Lokaler Aufgabentest · Abgaben bleiben auf diesem Mac',questionCount:state.published.questions.length,totalPoints:state.published.questions.reduce((n,q)=>n+q.points,0),timeLimitMinutes:0,startMode:'student',resultMode:'points_grade',showSolutions:false,sessionRunId:state.published.revision,published:true,ended:false});
  const access=data=>{const a=state.attempts[data.attemptId];if(!a||!core.secureTokenMatches(data.attemptToken,a.tokenHash))throw Error('Lokaler Bearbeitungsversuch nicht berechtigt.');return a;};
  async function execute(action,data={}){
+  if(['ai-start','ai-status','ai-active'].includes(action)){if(!ai)throw Error('Die vorhandene Test-KI ist für diesen lokalen Start nicht aktiviert.');if(action==='ai-start'){try{return await ai.start(data);}catch(e){if(!state.aiJobs?.[data.requestId])e.code='invalid-argument';throw e;}}return action==='ai-status'?ai.status(data.requestId):{job:ai.active()};}
   if(action==='preview-grade'){
    return {grading:Object.fromEntries((data.questions||[]).map(q=>{const key=core.buildGradingKey(q,'local-preview'),r=core.gradeQuestion(key,data.answers?.[q.id]);return [q.id,{awarded:r.awardedPoints,max:r.maxPoints,needsReview:r.needsReview,correct:r.correct}];}))};
   }
-  if(action==='emmi'){
-   if(!data.test||!Array.isArray(data.test.questions))throw Error('Test fehlt.');
-   if(!/einfach|kürzer|klarer/i.test(data.instruction||''))throw Error('Die lokale Emmi-Simulation unterstützt nur „Einfacher formulieren“ und „Kürzer und klarer“. Kein KI-Aufruf.');
-   const next=clone(data.test);const changed=[];
-   next.questions.forEach((q,i)=>{if(q.type==='hotspot'){q.text=q.visual?.template==='room'?'Wähle das Fenster.':'Welcher Bereich nimmt Wasser aus dem Boden auf?';changed.push(i);}else if(q.type==='image-labeling'){q.text=q.visual?.template==='sentence'?'Welche Funktion haben die Satzbausteine? Ordne zu.':q.visual?.template==='receipt'?'Welche Angaben stehen auf dem Beleg? Ordne zu.':'Ordne jedem nummerierten Bereich den passenden Begriff zu.';changed.push(i);}});
-   return {test:next,changedIndices:changed,unchangedIndices:next.questions.map((_,i)=>i).filter(i=>!changed.includes(i)),lockedCount:0,invalidCount:0,meta:{model:'prepared-local-simulation',revisionVersion:'extended-prototype-v1'},simulated:true};
-  }
+  if(action==='emmi')throw Error('Bitte echte KI-Überarbeitung verwenden.');
   if(action==='teacher')return {test:state.draft};
   if(action==='generate'){
    if(data.count!==undefined&&data.count!==9||data.points!==undefined&&data.points!==24)throw Error('Die vorbereiteten Varianten haben je9Aufgaben und24Punkte.');

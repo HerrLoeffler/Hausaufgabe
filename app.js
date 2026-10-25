@@ -88,8 +88,9 @@ const aiApi = new Proxy(createAiClient(app, () => state.user?.uid || auth.curren
     const value = target[key];
     if (typeof value !== "function") return value;
     return (...args) => {
-      if (extendedPreview && key==='reviseWholeTest') return extendedCall('emmi',args[0]);
-      if (extendedPreview) throw new Error('Lokaler Formatprototyp: keine bezahlten KI- oder Firebaseaufrufe.');
+      if (extendedPreview && key==='reviseWholeTest') return runExtendedAi('revise',args[0]);
+      if (extendedPreview && key==='regenerateQuestion') return runExtendedAi('question',args[0]);
+      if (extendedPreview) throw new Error('In diesem Formatversuch sind Remy, Emmi und Einzelvarianten angebunden. Zusätzliche Medien- und andere KI-Funktionen sind hier noch nicht freigeschaltet.');
       if (guestTourRepo) throw new Error("Im lokalen Tutorial sind KI- und Billing-Aufrufe gesperrt.");
       return value.apply(target, args);
     };
@@ -2775,7 +2776,7 @@ async function openAiView() {
   renderAiJobs();
   if (firstAiGuideStep === "ai") setTimeout(() => renderFirstAiGuideStep("details"), 100);
   const notice = $("aiBetaNotice");
-  if(extendedPreview){for(const n of document.querySelectorAll('p,small')){if(n.textContent.includes('gehen an OpenAI'))n.textContent='Lokaler Prototyp: keine Übertragung an OpenAI oder Firebase.';if(n.textContent==='Kosten können für Tests, Bilder und Audio entstehen.')n.textContent='Die vorbereiteten Varianten erzeugen keine Providerkosten.';}notice.textContent='Drei vorbereitete Varianten mit je9Aufgaben und24Punkten. Keine KI-/Cloudverbindung.';notice.classList.remove('hidden');return;}
+  if(extendedPreview){for(const id of ['aiImageQuestionCount','aiAudioQuestionCount']){const card=$(id)?.closest('article.card');if(card)card.hidden=true;}for(const c of document.querySelectorAll('#aiTypeChecks input')){c.checked=c.value==='visual';c.disabled=true;}for(const n of document.querySelectorAll('p,small')){if(n.textContent==='Kosten können für Tests, Bilder und Audio entstehen.')n.textContent='Die Erstellung nutzt die vorhandene kostenpflichtige Test-KI.';if(n.textContent.includes('Nach dem Start schließt sich diese Ansicht automatisch.'))n.textContent='Der fertige KI-Test öffnet sich hier im Editor. Bei Unterbrechung: oben KI-Auftrag fortsetzen.';}notice.textContent='Echte GradeCrew-Test-KI: neue visuelle Aufgaben mit Remy erstellen und mit Emmi überarbeiten. Nutze Fach, Klasse und Thema; bis zu zwölf Aufgaben. Keine Schülerdaten eingeben. Kostenpflichtige Test-KI, Veröffentlichung und Abgaben bleiben lokal.';notice.classList.remove('hidden');return;}
   if (crewTour?.creating) { notice.textContent = "Übung: vorbereitete Aufgaben, keine KI-Anfrage."; notice.classList.remove("hidden"); return; }
   try {
     notice.className = "aiStatusNotice";
@@ -3002,7 +3003,7 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
 }
 
 async function generateAiTestNative() {
-  if(extendedPreview){try{const response=await extendedCall('generate',{...collectAiRequest(),variant:extendedVariant});guestTourRepo=createLocalTourRepository();const code=guestTourRepo.create({...quizDefaults(),...response.test});guestTourRepo.save(code,{timeLimitMinutes:0,tutorialReady:true},guestTourRepo.getQuestions(code));await openEditor(code);toast('Vorbereitete Variante lokal geöffnet – kein KI-Aufruf.');}catch(error){toast(error.message,'error');}return;}
+  if(extendedPreview){if(state.extendedAiRunning)return;const button=$('generateAiTestBtn');state.extendedAiRunning=true;try{const request={...collectAiRequest(),allowedTypes:['visual']};if(button)button.disabled=true;setAiProgress('Remy startet deinen KI-Auftrag …');const response=await runExtendedAi('generate',request,{onProgress:message=>setAiProgress(message)});await openExtendedGeneratedTest(response.test);toast('Neue KI-Aufgaben erstellt. Bitte Inhalt und Lösungen prüfen.');}catch(error){setAiProgress(error.message,true);toast(error.message,'error');}finally{state.extendedAiRunning=false;if(button)button.disabled=false;}return;}
   if (crewTour?.active) {
     if (crewTour.creating) return crewTour.create();
     return toast("Folge zuerst dem aktuellen Schritt der Einführung.");
@@ -9344,8 +9345,10 @@ if (["production", "staging", "local-review"].includes(appEnvironment)) {
     document.addEventListener('gradecrew:extended-showcase',async event=>{
       if(!extendedPreview||appEnvironment!=='local-review')return;
       extendedVariant=[1,2,3].includes(Number(event.detail?.variant))?Number(event.detail.variant):1;
-      await openAiView();prefillTutorialRequest();$('aiTopic').value='Visuelle Aufgaben';$('aiSubject').value='Fächerübergreifender Formatvergleich';$('aiGrade').value='6';$('aiCount').value='9';$('aiPoints').value='24';$('aiImageQuestionCount').value='0';document.querySelectorAll('#aiTypeChecks input').forEach(c=>c.checked=true);await generateAiTestNative();
+      await openAiView();prefillTutorialRequest();$('aiTopic').value='Visuelle Aufgaben';$('aiSubject').value='Fächerübergreifender Formatvergleich';$('aiGrade').value='6';$('aiCount').value='9';$('aiPoints').value='24';$('aiImageQuestionCount').value='0';document.querySelectorAll('#aiTypeChecks input').forEach(c=>c.checked=c.value==='visual');const response=await extendedCall('generate',{variant:extendedVariant});await openExtendedGeneratedTest(response.test);
     });
+    document.addEventListener('gradecrew:extended-ai',async()=>{if(!extendedPreview)return;await openAiView();$('aiSubject').value='Mathematik';$('aiGrade').value='6';$('aiTopic').value='Winkel, Koordinaten und Diagramme';$('aiCount').value='9';$('aiPoints').value='24';for(const id of ['aiImageQuestionCount','aiAudioQuestionCount','aiSolutionAudioQuestionCount','aiAudioAnswerQuestionCount'])if($(id))$(id).value='0';document.querySelectorAll('#aiTypeChecks input').forEach(c=>{c.checked=c.value==='visual';});setAiProgress('Fach, Klasse und Thema wählen, dann mit Remy neu erstellen.');});
+    document.addEventListener('gradecrew:extended-ai-resume',async()=>{if(!extendedPreview||state.extendedAiRunning)return;state.extendedAiRunning=true;try{const {kind,result}=await resumeExtendedAi({onProgress:message=>toast(message)});if(kind==='generate')await openExtendedGeneratedTest(result.test);else toast('Die Überarbeitung ist verfügbar. Nach einem Neuladen wird sie zum Schutz zwischenzeitlicher Änderungen nicht automatisch eingesetzt.','error');}catch(e){toast(e.message,'error');}finally{state.extendedAiRunning=false;}});
     let sceneWork = Promise.resolve();
     document.addEventListener("gradecrew:review-scene", event => {
       const scene = event.detail?.scene;
@@ -9383,3 +9386,8 @@ if (["production", "staging", "local-review"].includes(appEnvironment)) {
 window.addEventListener("gradecrew:visual-note-saved",()=>toast("Screenshot-Hinweis in Feedback gespeichert."));
 
 async function extendedCall(action,data={}){const r=await fetch('/__extended/'+action,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const d=await r.json();if(!r.ok)throw Error(d.message||'Lokaler Beispielaufruf fehlgeschlagen.');return d;}
+
+async function openExtendedGeneratedTest(test){guestTourRepo=createLocalTourRepository();const code=guestTourRepo.create({...quizDefaults(),...test});guestTourRepo.save(code,{timeLimitMinutes:0,tutorialReady:true},guestTourRepo.getQuestions(code));await openEditor(code);}
+
+async function runExtendedAi(...args){const m=await import('./tools/extended-preview/ai-client.mjs');return m.runExtendedAi(...args);}
+async function resumeExtendedAi(...args){const m=await import('./tools/extended-preview/ai-client.mjs');return m.resumeExtendedAi(...args);}
