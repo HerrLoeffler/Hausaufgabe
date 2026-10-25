@@ -652,3 +652,8 @@ Vier wiederverwendbare Modelle auf der getrennten Testseite: Brüche, Zahlenstra
 ### GC-ADAPTIVE-PRACTICE-01 Wiederherstellung25.10.
 
 Vorschau wieder benutzbar auf http://127.0.0.1:8775/lerngehirn/ mit verbundenem getrenntem Testkonto. LokalerServer neugestartet; kontrollierter Functions-Deploy21 auf geprüftem Code18905bb erfolgreich, Start00020-tul/Turn00021-les tatsächlichReady. Echte korrigierteTextauswahl falsch→gezielteHilfe→Original→richtig→neueProbe geprüft; ein ersterHilfekandidatbrauchteeinenbewusstenRetry. Fundusreuse reviewed-pool auf aktuellemBackend plus echteKI-Bewertung und anspruchsvollereFolgeprobe bestätigt.372Backend/62UI/scopedLintfrischgrün. KeinSchul-Live/Rules/IAM/Production-Eingriff, keine allgemeineSchülerfreigabe. Frühere Fehlversuche19/20 und unbewiesenehistorischeUrsacheerhalten. [Übergabe](workstreams/adaptive-practice-01.md).
+
+
+### GC-ADAPTIVE-PRACTICE-01 Focus5-9 and personal competency network,2026-10-25
+
+User clarified Math/German Mittelschule5-9, priority5/6, detailed subgoals and network for learners/teachers. Four concrete model paths verified; full catalogue is not content-approved. Personal topic evidence lists exist; dynamic fine-grained competency graph, separate microcompetency evidence and regular class/teacher overview remain open. Next: coherent5/6 coverage before systematic7-9 expansion. Current request is scope clarification, no new deployment. See workstreams/adaptive-practice-01.md.
