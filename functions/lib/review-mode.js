@@ -15,15 +15,22 @@ function regionValue(value) {
  if(x<0||y<0||width<=0||height<=0||x+width>1.000001||y+height>1.000001||sourceWidth<1||sourceHeight<1||sourceWidth>100000||sourceHeight>100000)fail('invalid-argument','Bereich liegt außerhalb der Seite.');
  return {x,y,width,height,sourceWidth,sourceHeight};
 }
-function createReviewService({store,projectId,now=Date.now}) {
+function createReviewService({store,projectId,now=Date.now,toTimestamp=value=>value}) {
  async function execute({uid,data={}}) {
   if(!['hausaufgabe-staging','gradecrew-staging-2026'].includes(projectId))fail('failed-precondition','Feedback nur in der ausdrücklich freigegebenen GradeCrew-Umgebung.');
   if(!uid)fail('unauthenticated','Bitte anmelden.');id(uid);
+  if(data.action==='recordQuestionFeedback'&&data.actorUid&&data.actorUid!==uid)fail('permission-denied','Das Feedbackkonto wurde gewechselt.');
   return store.transaction(async tx=>{
    const profile=await tx.get(`users/${uid}`),member=await tx.get(`reviewMembers/${uid}`);
    const admin=profile?.role==='admin';
    if(!profile||profile.accountDeletionId||(profile.status&&profile.status!=='active')||(!admin&&(profile.role!=='teacher'||member?.enabled===false)))fail('permission-denied','Keine Berechtigung für Feedback.');
    const requireAdmin=()=>{if(!admin)fail('permission-denied','Nur der Administrator darf diese Aktion ausführen.');};
+   if(data.action==='recordQuestionFeedback')return require('./question-feedback').recordQuestionFeedback({tx,uid,admin,data,projectId,now:now(),toTimestamp});
+   if(data.action==='listQuestionFeedback'){
+    requireAdmin();if(Object.keys(data).some(k=>!['action','cursor'].includes(k)))fail('invalid-argument','Unerwarteter Lesefilter.');
+    const rows=await tx.list('feedback',{category:'ai_question',cursor:data.cursor?id(data.cursor):'',limit:100});
+    return {sourceProject:projectId,environment:projectId==='hausaufgabe-staging'?'production':'staging',reports:rows.map(require('./question-feedback').projectQuestionFeedback),nextCursor:rows.length===100?rows.at(-1).id:null,readOnly:true};
+   }
    const quizAccess=async quizId=>{if(!quizId)return;const q=await tx.get(`quizzes/${id(quizId)}`);if(!q||(!admin&&q.ownerId!==uid))fail('permission-denied','Kein Zugriff auf diesen Test.');};
    const feedbackValue=n=>({category:'screenshot_error',message:n.text,userId:n.authorId,authorId:n.authorId,displayName:n.authorId===uid?optional(profile.displayName,200):'',status:'new',createdAt:n.createdAt,updatedAt:now(),testCode:n.quizId||'',environment:projectId==='hausaufgabe-staging'?'production':'staging',reviewNoteId:n.id,reviewArea:'visual-feedback',view:n.view,target:n.target,build:n.build,...(n.region?{region:n.region}:{})});
    async function ensureFeedback(n){if(n.area!=='visual-feedback'&&!(n.region&&!n.area))return false;const path=`feedback/visual-${n.id}`;if(await tx.get(path))return false;tx.set(path,feedbackValue(n));return true;}

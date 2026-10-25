@@ -197,7 +197,7 @@ for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey
   const tour = w.install(api);
   const noProvider = async () => { providers++; throw new Error('Tutorial reached a provider'); };
   Object.assign(w, {
-    state, crewTour: tour, $: el, db: {}, collection: (...args) => args, doc: () => ({ id: `new-${++nextId}` }),
+    state, crewTour: tour, confirm: () => true, $: el, db: {}, collection: (...args) => args, doc: () => ({ id: `new-${++nextId}` }),
     questionForAi: q => ({ ...q }), questionContext: () => ({ existingQuestions: [] }),
     // The import layer deliberately strips auxiliary metadata, as production does.
     normalizeImportedQuestion: q => ({ type: q.type, text: q.text, points: q.points, options: q.options }),

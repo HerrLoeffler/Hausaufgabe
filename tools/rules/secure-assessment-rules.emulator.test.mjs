@@ -214,3 +214,19 @@ test("secure assessment Firestore rules enforce the real access matrix", async t
 
   assert.ok(true);
 });
+
+test("confirmed task feedback is server-created and teacher-immutable; legacy and admin access remain", async () => {
+  await seed();
+  const owner = env.authenticatedContext("owner").firestore();
+  const admin = env.authenticatedContext("admin").firestore();
+  const row = {category:"ai_question",userId:"owner",message:"Gute Aufgabe",testCode:quizId,verdict:"good",reason:"",teacherComment:"",action:"keep",questionSnapshot:{type:"single",text:"Welche Farbe?"},status:"new"};
+  await assertSucceeds(setDoc(doc(owner,"feedback","legacy-rating"),row));
+  for (const db of [owner,admin]) await assertFails(setDoc(doc(db,"feedback","forged-confirmed"),{...row,feedbackSchemaVersion:4}));
+  await env.withSecurityRulesDisabled(context => setDoc(doc(context.firestore(),"feedback","confirmed-rating"),{...row,feedbackSchemaVersion:4,sourceProject:"hausaufgabe-staging"}));
+  await assertFails(updateDoc(doc(owner,"feedback","confirmed-rating"),{status:"done"}));
+  await assertFails(updateDoc(doc(owner,"feedback","confirmed-rating"),{feedbackSchemaVersion:3}));
+  await assertFails(updateDoc(doc(owner,"feedback","legacy-rating"),{feedbackSchemaVersion:4}));
+  await assertFails(getDoc(doc(owner,"feedback","confirmed-rating")));
+  await assertSucceeds(getDoc(doc(admin,"feedback","confirmed-rating")));
+  await assertSucceeds(updateDoc(doc(admin,"feedback","confirmed-rating"),{status:"working"}));
+});

@@ -17,3 +17,8 @@ Overlay des vorhandenen lokalen Plugins, kein zweiter Aufgaben- oder Feedbackspe
 Für das bestehende Plugin werden nur `plugin/mcp.mjs`, `plugin/project-reader.mjs`, `plugin/staging-login.mjs`, `plugin/live-feedback-login.mjs`, `plugin/teacher-feedback-reader.mjs` installiert. Quellinstallation und aktiver Cache müssen vorher abgeglichen und gesichert werden. Bestehende Koordination, Fragen, Aufgaben und lokale Daten bleiben erhalten. Dateisystemfreigabe ist auf diese konkreten Dateien zu begrenzen. Ein bereits laufender MCP-Prozess lädt den neuen Vertrag erst nach Neustart/Neuladen. Vorher gelten weiterhin seine alten Werkzeugbeschreibungen; diese dürfen nicht als Umweg für Live genutzt werden.
 
 Noch kein Installations-/Neustartnachweis allein aus diesen Quelldateien ableiten. Ein echter privater Abruf erfordert anschließend Martins Live-Adminanmeldung. Der Webserver muss den neuen geprüften `listTeacherFeedback`-Handler bereits bereitgestellt haben.
+
+## Aufgabenbewertungen – Kandidat25.10.2026
+`gradecrew_question_feedback` ergänzt den bestehenden Live-Adminlesepfad getrennt von ET. Es liest ausschließlich feedback/ai_question über reviewMode/listQuestionFeedback: Bewertungen, begrenzter Aufgabentext, Kategorien, Status und belegte Herkunft. Keine Lehrerprofile, Schülerantworten oder Lösungsschlüssel. Historische fehlende Herkunft bleibt unknown, alter done-Status ist kein Verbesserungsnachweis. Pagination und Fehler werden ausdrücklich gemeldet. Kein Ersatz eines fehlenden Handlers durch direkten Admin-/RESTzugriff.
+
+Nur Quellkandidat: vor separater Freigabe kein Backenddeploy oder Plugininstall/Reload. Vorhandene Anmeldung ist keine Deploymentfreigabe. Legacyhausaufgabe-40294 wird nicht angebunden oder migriert.

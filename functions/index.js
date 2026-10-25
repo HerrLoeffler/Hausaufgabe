@@ -196,9 +196,10 @@ async function loadQualityMemory(context = {}, uid = "") {
     // to count independent signals; names, emails and private comments are never loaded.
     const reports = await getFirestore().collection("feedback")
       .where("category", "==", "ai_question")
-      .select("category", "userId", "verdict", "reason", "questionSnapshot", "subject", "grade", "questionType", "promptVersion", "reviewOutcome", "reviewerReason")
+      .select("category", "userId", "verdict", "reason", "questionSnapshot", "subject", "grade", "questionType", "promptVersion", "reviewOutcome", "reviewerReason", "feedbackSchemaVersion")
       .get();
-    const entries = reports.docs.map(doc => doc.data());
+    // V4 product feedback is collected for human review, not automatically reused as provider prompt material.
+    const entries = reports.docs.map(doc => doc.data()).filter(entry => entry.feedbackSchemaVersion !== 4);
     const global = feedbackMemory(entries, context);
     if (!uid) return global;
     let teacherPreferences = "";

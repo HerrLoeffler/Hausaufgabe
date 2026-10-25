@@ -34,3 +34,9 @@ test("shared feedback is aggregated while each teacher receives only their own p
   assert.doesNotMatch(context.teacherQualityGuide(alice), /Mehr Alltagssprache/);
   assert.match(context.teacherQualityGuide(bob), /Mehr Alltagssprache/);
 });
+
+test('new V4 ratings stay in the human review inbox and are not reused as provider prompt examples',async()=>{
+ const rows=[{category:'ai_question',userId:'alice',verdict:'bad',reason:'incorrect',questionSnapshot:{text:'PRIVATE V4'},feedbackSchemaVersion:4},{category:'ai_question',userId:'alice',verdict:'good',questionSnapshot:{type:'single',text:'Legacy'},feedbackSchemaVersion:3}];
+ const context=vm.createContext({getFirestore:()=>({collection:()=>({where:()=>({select:()=>({get:async()=>({docs:rows.map(entry=>({data:()=>entry}))})})})})}),feedbackMemory,QUALITY_REASONS,console});
+ vm.runInContext(handler,context);const memory=await context.loadQualityMemory({subject:'Deutsch'});assert.equal(memory.stats.total,1);assert.equal(JSON.stringify(memory).includes('PRIVATE V4'),false);
+});
