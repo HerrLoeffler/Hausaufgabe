@@ -1,5 +1,7 @@
 # Ergänzungsrecherche: Prüfnotiz vom 25.10.2026
 
+**Nachtrag zur Produktgrenze (25.10.2026):** Die unten stehende fachliche Prüfung und der SHA-256 betreffen den Rechercheendstand vor Martins anschließender Einschränkung. Der aktualisierte JSON-Katalog ergänzt ausschließlich die aktuelle Produktauswahl, erhält alle 27 Ideen und 40 Quellen und ersetzt die breite Priorisierung. Die erste XLSX wurde nicht nachträglich zur Produktauswahlliste umgeschrieben. [Aktuelle Auswahlgrenze](../QUICK_ASSESSMENT_SCOPE_20261025.md).
+
 Task: GC-EXTENDED-QUESTION-TYPES-01. Endstand: `research_reviewed`; alle Ideen `research_design_only`.
 
 ## Neuheit und Zählung
@@ -39,3 +41,7 @@ Weitere eigene Beispiele zu Ziffernkombinationen (8 geordnete Lösungen), Sortie
 Öffentliche Originalseiten, Hersteller-/Projektunterlagen und Primärpublikationen. Quellenprofile unterscheiden dokumentiertes Merkmal, eigene Übertragung, Zugangs-/Nutzungsgrenzen und Rolle in der Recherche. SNEW10 und LNEW11 beruhen nur auf eingeschränkten offiziellen Indexbelegen und unterstützen ausdrücklich nicht neu gezählte Ansätze. 40 Profile sind nicht 40 einzigartige Anbieter. Keine Konten, kostenpflichtigen Produktvolltests oder übernommene Lehrwerks-/Medienbestände.
 
 Keine Runtime-/Import-/Generator-/Server-/Geräteprüfung dieser Entwürfe und kein empirischer GradeCrew-Wirksamkeitsnachweis. Technische Validierung eines Beispiels, fachliche Abnahme, tatsächlicher Unterrichtseinsatz und Lernwirksamkeit bleiben getrennte Nachweise. Angeforderte Reviewer-Konfiguration `gpt-6.1-sol`/`medium`; tatsächliche Provider-/Token-/Kostenwerte nicht separat bekannt.
+
+## Prüfung nach Nutzerkorrektur
+
+Unabhängiger Read-only-Abgleich der 27 Ideen mit dem Ziel schneller individueller benotbarer Leistungsnachweise. 12 core_bounded, 6 conditional, 9 outside_quick_tests; jede ID genau einmal. NR01/Exceldatei und NL02/Agentenbedienung ausdrücklich außerhalb, ebenso Modelltraining und kooperative Projektabläufe. Quellen, Titel, Originalbeispiele und frühere Neuheitszählung bleiben erhalten. Die historischen Prototypenlisten sind als historisch gesichert; aktuelle Prioritäten sind NM01/NR02/NR03/NM03/NS02/NL04/NL05. Strategische Zukunftsliste für komplexe Workflows ist leer. Product-scope-Annotationen sind Planungsdaten, kein Import- oder Bewertungsimplementierungsnachweis. Nur Dokumentations-/JSON-Prüfung, keine neue Runtime-CI oder erneute Artefaktprüfung behauptet.

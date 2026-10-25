@@ -2,6 +2,12 @@
 
 Stand 25.10.2026 · GC-EXTENDED-QUESTION-TYPES-01
 
+## Aktuelle Produktgrenze nach Nutzerkorrektur
+
+**Der Testgenerator soll schnelle, selbstständig bearbeitbare und nachvollziehbar benotbare digitale Leistungsnachweise erzeugen.** Excel-Dateibearbeitung, Agentenbedienung, Modelltraining, längere Werkzeug-/Projektabläufe und Gruppen-/Peerabläufe sind dafür ausgeschlossen. Diese Grenze gilt auch für den bisherigen 163er-Fundus. Die breiten Rechercheideen bleiben erhalten; sie sind keine Produkt-Roadmap.
+
+Maßgeblich: [Auswahlgrenze und Einstufung aller 27 Ideen](QUICK_ASSESSMENT_SCOPE_20261025.md). 12 Ideen sind in eng begrenzter Form geeignet, 6 nur deutlich vereinfacht, 9 außerhalb des aktuellen Testgenerator-Umfangs. Die frühere XLSX dokumentiert die breite Recherchefassung.
+
 ## Ergebnis
 
 Die Ergänzungsrecherche liefert **27 zusätzliche Vorschläge**: **7 neue Aufgabenfamilien, 17 fachliche Erweiterungen und 3 Lernabläufe**. Ausgangspunkt sind die 163 Entwürfe vom 22.10.2026 sowie der vorhandene Katalog mit VIS-, EXP- und MOD-Einträgen. 30 Kandidaten wurden zusammengeführt und unabhängig auf Neuheit geprüft. Zwei vertiefen vorhandene Ideen, ein weiterer wurde mit einer parallelen Idee fusioniert.
@@ -12,19 +18,17 @@ Die Ergänzungsrecherche liefert **27 zusätzliche Vorschläge**: **7 neue Aufga
 
 Die 40 Quellenprofile enthalten auch ergänzende Belege und bewusst nicht neu gezählte Verfahren. Sie entsprechen nicht 40 unterschiedlichen Anbietern. Die beschriebenen GradeCrew-Aufgaben sind eigene Entwürfe. Die Quelle dokumentiert jeweils nur das im Quellenprofil bezeichnete Merkmal.
 
-## Besonders geeignete nächste Prototypen
+## Aktuelle Auswahl für kurze Leistungsnachweise
 
-| ID | Vorschlag | Warum zuerst prüfen? |
-|---|---|---|
-| NM01 | Vier Außenseiter | Kleine Eingabe, fachlich vielfältige Begründungen, mehrere gültige Antworten. |
-| NM02 | Alle Ziffernlösungen finden | Kleiner exakt prüfbarer Lösungsraum mit echtem Vollständigkeitsauftrag. |
-| NR02 | Beweisbausteine | Bestehendes Ordnen erweitern; logische Voraussetzungen statt einer einzigen Musterreihenfolge. |
-| NR03 | Körper und Netz | Sichtbarer räumlicher Mehrwert; zunächst exakt modellierte Würfel. |
-| NL01 | Zwei Arbeiten vergleichen | Begründetes Qualitätsurteil an kuratierten Ankerpaaren erproben. |
-| NL03 | Verteilte Hinweise | Gemeinsames Problemlösen mit eigener Erstentscheidung und individuellem Transfer. |
-| NR01 | Funktionierende Tabelle abgeben | Direkter Nutzen für Informatik und berufliche Aufgaben; zunächst begrenzter Formelumfang. |
+- **NM01:** Wenige vorgegebene Objekte und geprüfte Merkmalsauswahl; freie Alternativen nur mit transparenten Kriterien.
+- **NR02:** Wenige vorgegebene Beweis-/Rechenschritte auswählen und ordnen; mehrere fachlich gültige Reihenfolgen akzeptieren.
+- **NR03:** Vorgegebenes Netz oder Ansichten: Gegenfläche bestimmen, passendes Netz auswählen oder wenige Flächen beschriften.
+- **NM03:** Wenige vorgegebene Codebausteine ordnen/einrücken; keine eigene Entwicklungsumgebung oder Programmentwicklung.
+- **NS02:** Kleine vorgegebene Datensätze zuordnen, ausschließen oder als nicht entscheidbar kennzeichnen; keine Recherche.
+- **NL04:** Wenige kuratierte Sprachbelege, begrenzte Regelwahl und neue Anwendungsfälle; keine Korpusrecherche.
+- **NL05:** Kurzer vorbereiteter Text mit wenigen Lücken und geprüften zulässigen Antworten; kein automatisches Einstufungsversprechen.
 
-Strategisch interessant, aber aufwendiger: einen begrenzten Agenten unterrichten (NL02), Klassifikatoren durch Trainingsdaten verbessern (NM05), Karten selbst georeferenzieren (NS03) und musikalische Programme entwickeln (NS06). Aufwandseinstufungen sind begründete Planungsschätzungen, keine gemessenen Entwicklungszeiten.
+Diese Auswahl ersetzt die frühere Prototypen- und Zukunftspriorisierung. Tabellen-/Agenten-/Trainings-/Gruppenwerkzeuge sind nicht als spätere Erweiterung dieses Auftrags vorgemerkt. [Vollständige Einordnung](QUICK_ASSESSMENT_SCOPE_20261025.md).
 
 ## Bewertung und KI-Rolle
 
@@ -37,6 +41,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 ### Neue Aufgabenfamilie
 
 #### NR01 · Eine funktionierende Tabelle als Antwort abgeben
+
+**Aktuelle Testgenerator-Auswahl:** Außerhalb des aktuellen Testgenerator-Umfangs. Keine Bearbeitung oder Abgabe von Excel-/Tabellendateien; eigenständige praktische Probe außerhalb dieses Testgenerators.
 
 **Fächer/Stufen:** Informatik; Wirtschaft; Mathematik; Berufliche Bildung · Sekundarstufe I; Sekundarstufe II; Berufsschule
 
@@ -62,6 +68,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NM01 · Vier Außenseiter – vier gültige Regeln
 
+**Aktuelle Testgenerator-Auswahl:** Für kurze Tests in begrenzter Form geeignet. Wenige vorgegebene Objekte und geprüfte Merkmalsauswahl; freie Alternativen nur mit transparenten Kriterien.
+
 **Fächer/Stufen:** Mathematik; Sachunterricht · Grundschule 2–4; Sek I
 
 **Lernziel:** Begriffe über wechselnde Merkmale abgrenzen.
@@ -85,6 +93,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 **Quellen:** [MNEW01: MIPAC](https://mipac.net/assessments/which-one-doesnt-belong)
 
 #### NM05 · Einen Klassifikator durch Daten statt Code reparieren
+
+**Aktuelle Testgenerator-Auswahl:** Außerhalb des aktuellen Testgenerator-Umfangs. Daten sammeln, trainieren, testen und verbessern ist ein eigenständiges Projekt.
 
 **Fächer/Stufen:** Informatik; Biologie · Grundschule 4 begleitet; Sek I; Sek II
 
@@ -110,6 +120,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NS01 · Archivwerkstatt: transkribieren, unabhängig prüfen, freigeben
 
+**Aktuelle Testgenerator-Auswahl:** Nur stark vereinfacht; derzeit keine Formatpriorität. Allenfalls sehr kurzer vorgegebener Ausschnitt mit Transkription; kein Peerreview-/Freigabeablauf. Derzeit keine neue Formatpriorität.
+
 **Fächer/Stufen:** Geschichte; Deutsch; Archiv-/Bibliotheksbildung · Sek I höher; Sek II; Berufsschule
 
 **Lernziel:** Ein aus einer Bildquelle erzeugtes Transkript nach expliziter Editionsregel zuverlässig prüfen und Unlesbarkeit erhalten.
@@ -133,6 +145,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 **Quellen:** [SNEW01: Library of Congress](https://ask.loc.gov/crowd/faq/401448); [SNEW02: Library of Congress](https://ask.loc.gov/crowd/faq/445582)
 
 #### NS02 · Gleicher Name, andere Person: historische Datensätze verknüpfen
+
+**Aktuelle Testgenerator-Auswahl:** Für kurze Tests in begrenzter Form geeignet. Kleine vorgegebene Datensätze zuordnen, ausschließen oder als nicht entscheidbar kennzeichnen; keine Recherche.
 
 **Fächer/Stufen:** Geschichte; Kunstgeschichte; Informatik; Kaufmännische Datenpflege · Sek II; Berufsschule
 
@@ -158,6 +172,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NL01 · Zwei Arbeiten vergleichen und Qualitätsurteil kalibrieren
 
+**Aktuelle Testgenerator-Auswahl:** Für kurze Tests in begrenzter Form geeignet. Zwei kurze kuratierte Antworten unter genau einem Kriterium vergleichen; begrenzte Belegauswahl oder klar bewertbare Kurzbegründung.
+
 **Fächer/Stufen:** Deutsch; Fremdsprachen; fächerübergreifend · Sek I ab Klasse 7; Sek II; Berufsbildung
 
 **Lernziel:** Kriterien an fremden Produkten unterscheiden und Urteilsgrenzen erkennen.
@@ -181,6 +197,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 **Quellen:** [LNEW01: University of British Columbia](https://github.com/ubc/compair)
 
 #### NL02 · Einen begrenzten Lernagenten unterrichten und seinen Fehler erklären
+
+**Aktuelle Testgenerator-Auswahl:** Außerhalb des aktuellen Testgenerator-Umfangs. Kein Agent unterrichten, bedienen, testen oder dessen Wissensmodell verwalten.
 
 **Fächer/Stufen:** Deutsch; Fremdsprachen; Naturwissenschaften; fächerübergreifend; Mathematik · Sek I ab Klasse 6; Sek II
 
@@ -208,6 +226,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NR02 · Beweisbausteine nach logischen Abhängigkeiten zusammensetzen
 
+**Aktuelle Testgenerator-Auswahl:** Für kurze Tests in begrenzter Form geeignet. Wenige vorgegebene Beweis-/Rechenschritte auswählen und ordnen; mehrere fachlich gültige Reihenfolgen akzeptieren.
+
 **Fächer/Stufen:** Mathematik; Informatik · Sekundarstufe I mit einfachen Zahlbegründungen; Sekundarstufe II
 
 **Lernziel:** Erkennen, welche Aussagen eine Schlussfolgerung voraussetzt und wie ein tragfähiger Beweis aufgebaut ist.
@@ -231,6 +251,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 **Quellen:** [RNEW02: Poulsen, Viswanathan, Herman, West / University of Illinois](https://arxiv.org/html/2106.11032v3)
 
 #### NR03 · Körperansicht und Netz räumlich rekonstruieren
+
+**Aktuelle Testgenerator-Auswahl:** Für kurze Tests in begrenzter Form geeignet. Vorgegebenes Netz oder Ansichten: Gegenfläche bestimmen, passendes Netz auswählen oder wenige Flächen beschriften.
 
 **Fächer/Stufen:** Mathematik; Technik; Werken · Grundschule ab geeigneter Raumvorstellung; Sekundarstufe I; Berufliche Grundlagen
 
@@ -256,6 +278,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NM02 · Ziffernkarten erschöpfend einsetzen und Vollständigkeit nachweisen
 
+**Aktuelle Testgenerator-Auswahl:** Für kurze Tests in begrenzter Form geeignet. Sehr kleiner Ziffernsatz und überschaubare Lösungsmenge; keine offene längere Such-/Projektphase.
+
 **Fächer/Stufen:** Mathematik · Grundschule 3–4; Sek I
 
 **Lernziel:** Lösungsräume systematisch durchlaufen und Vollständigkeit von bloßem Finden trennen.
@@ -279,6 +303,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 **Quellen:** [MNEW02: Open Middle](https://www.openmiddle.com/operations-with-time-2/)
 
 #### NM03 · Parsons-Puzzle mit semantischer Einrückung
+
+**Aktuelle Testgenerator-Auswahl:** Für kurze Tests in begrenzter Form geeignet. Wenige vorgegebene Codebausteine ordnen/einrücken; keine eigene Entwicklungsumgebung oder Programmentwicklung.
 
 **Fächer/Stufen:** Informatik · Sek I; Sek II
 
@@ -304,6 +330,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NM04 · Sortiernetz: Arbeit und Zeit getrennt optimieren
 
+**Aktuelle Testgenerator-Auswahl:** Nur stark vereinfacht; derzeit keine Formatpriorität. Nur ein vorgegebenes kleines Netz auswerten; eigene Konstruktion und Optimierung entfallen. Vorhandene Formate genügen zunächst.
+
 **Fächer/Stufen:** Informatik; Mathematik · Grundschule 3–4 vereinfacht; Sek I
 
 **Lernziel:** Parallele Abhängigkeiten von bloßer Anzahl der Operationen unterscheiden.
@@ -327,6 +355,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 **Quellen:** [MNEW04: University of Canterbury / CS Unplugged](https://www.csunplugged.org/en/topics/sorting-networks/whats-it-all-about/)
 
 #### NM06 · Vom lokalen Agentenschritt zum unerwarteten Gesamtmuster
+
+**Aktuelle Testgenerator-Auswahl:** Nur stark vereinfacht; derzeit keine Formatpriorität. Nur vorgegebene Zustände oder einen lokalen Schritt auswerten; keine Simulation aufbauen oder bedienen.
 
 **Fächer/Stufen:** Informatik; Mathematik; Naturwissenschaften · Sek I; Sek II
 
@@ -352,6 +382,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NM07 · Bestand und Zufluss: gleiches Inputniveau, andere Geschichte
 
+**Aktuelle Testgenerator-Auswahl:** Nur stark vereinfacht; derzeit keine Formatpriorität. Vorgegebene Bestands-/Flussdaten kurz berechnen; eigener Modellbau entfällt. Fachbeispiel für bestehende Formate.
+
 **Fächer/Stufen:** Naturwissenschaften; Mathematik · Sek I; Sek II
 
 **Lernziel:** Bestandsgröße und Änderungsrate durch Akkumulation trennen.
@@ -375,6 +407,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 **Quellen:** [MNEW07: Concord Consortium / CREATE for STEM](https://sagemodeler.concord.org/getting-started/index.html); [MNEW08: Concord Consortium / CREATE for STEM](https://sagemodeler.concord.org/help/index.html)
 
 #### NM08 · Messereignis und Sensorsignal zeitlich entkoppeln
+
+**Aktuelle Testgenerator-Auswahl:** Für kurze Tests in begrenzter Form geeignet. Nur kompakte vorgegebene Messdaten auswerten; kein Sensorzugriff, eigener Messaufbau oder Messprogramm.
 
 **Fächer/Stufen:** Physik; Informatik · Sek I 9–10; Sek II
 
@@ -400,6 +434,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NM10 · Schätzintervall vor Offenlegung verankern und verengen
 
+**Aktuelle Testgenerator-Auswahl:** Für kurze Tests in begrenzter Form geeignet. Vorgegebenes Bild und klare Bezugsgröße; begrenzte Antwort mit nachvollziehbarer Rechnung oder Annahme. Kein Erkundungsablauf.
+
 **Fächer/Stufen:** Mathematik; Sachunterricht · Grundschule 2–4; Sek I
 
 **Lernziel:** Größenordnung durch Referenzen begründen und Schätzbereich bei neuer Information aktualisieren.
@@ -423,6 +459,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 **Quellen:** [MNEW12: Andrew Stadel / Estimation 180](https://estimation180.com/teacher-resources/); [MNEW13: Creative Commons](https://creativecommons.org/licenses/by-nc-sa/3.0/)
 
 #### NS03 · Historische Karte erst passend machen: Kontrollpunkte und Prüfort
+
+**Aktuelle Testgenerator-Auswahl:** Außerhalb des aktuellen Testgenerator-Umfangs. Keine eigenständige Georeferenzierung, Transformationswerkzeuge oder Kontrollpunkt-Workflows.
 
 **Fächer/Stufen:** Geografie; Geschichte; Vermessung · Sek I höher; Sek II; Berufsschule Geomatik
 
@@ -448,6 +486,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NS04 · Wahlregel-Labor: gleicher Wählerwille, anderer Ausgang
 
+**Aktuelle Testgenerator-Auswahl:** Für kurze Tests in begrenzter Form geeignet. Kleine feste Tabelle nach vollständig vorgegebenen Regeln auswerten; kein Wahlregel-Labor bedienen.
+
 **Fächer/Stufen:** Politik; Ethik; Mathematik · Sek I höher; Sek II
 
 **Lernziel:** Ergebnisabhängigkeit von Aggregationsregeln durch selbst konstruierte Präferenzprofile nachweisen.
@@ -471,6 +511,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 **Quellen:** [SNEW06: Nicky Case](https://ncase.me/ballot/)
 
 #### NS05 · Desinformationslabor mit Rollenwechsel und Transferprüfung
+
+**Aktuelle Testgenerator-Auswahl:** Nur stark vereinfacht; derzeit keine Formatpriorität. Nur vorgegebene Manipulation erkennen/korrigieren; keine eigene Produktions-, Rollenwechsel- oder Peerprüfphase.
 
 **Fächer/Stufen:** Politik; Medienbildung; Deutsch; Ethik · ab 14; Sek I höher; Sek II
 
@@ -496,6 +538,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NS06 · Musik als ausführbare Regel: generatives Arrangement
 
+**Aktuelle Testgenerator-Auswahl:** Außerhalb des aktuellen Testgenerator-Umfangs. Musikalisches Arrangement programmieren, anhören und iterativ bearbeiten ist ein eigenständiges Projekt.
+
 **Fächer/Stufen:** Musik; Informatik; Medientechnik · Sek I höher; Sek II; Berufsschule Medien
 
 **Lernziel:** Musikalische Struktur als veränderbares Programm gestalten und musikalische Wirkung einer Regel nachvollziehen.
@@ -519,6 +563,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 **Quellen:** [SNEW08: Georgia Tech / EarSketch](https://teachers.earsketch.org/about-us)
 
 #### NS07 · Sportmessung: Video kalibrieren und Messung verwerfen dürfen
+
+**Aktuelle Testgenerator-Auswahl:** Nur stark vereinfacht; derzeit keine Formatpriorität. Allenfalls vorgegebene Frames mit Maßstab/Zeit auswerten; kein Video aufnehmen, kalibrieren oder verfolgen.
 
 **Fächer/Stufen:** Sport; Physik; Technik · Sek I höher; Sek II; Berufsschule Sport/Medien
 
@@ -544,6 +590,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NL03 · Verteilte Hinweise gegen die vorschnelle Gruppenentscheidung auswerten
 
+**Aktuelle Testgenerator-Auswahl:** Außerhalb des aktuellen Testgenerator-Umfangs. Keine Gruppenrollen, verteilten Hinweise, gemeinsame Entscheidung oder Koordinationsphase im individuellen Leistungsnachweis.
+
 **Fächer/Stufen:** Deutsch; Fremdsprachen; Gesellschaftswissenschaften; Berufsbildung · Sek I ab Klasse 7; Sek II; Berufsbildung
 
 **Lernziel:** Einzigartige relevante Information sammeln und eine anfängliche Präferenz evidenzbasiert revidieren.
@@ -568,6 +616,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NL04 · Sprachregel aus authentischen Konkordanzen ableiten und an neuen Belegen prüfen
 
+**Aktuelle Testgenerator-Auswahl:** Für kurze Tests in begrenzter Form geeignet. Wenige kuratierte Sprachbelege, begrenzte Regelwahl und neue Anwendungsfälle; keine Korpusrecherche.
+
 **Fächer/Stufen:** Deutsch; DaZ; Englisch; weitere verfügbare Korpussprachen · Sek I ab Klasse 7; Sek II; A2 mit Unterstützung bis C1
 
 **Lernziel:** Sprachliche Muster aus Verwendungsdaten induktiv gewinnen und Geltungsbereich begrenzen.
@@ -591,6 +641,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 **Quellen:** [LNEW03: Lexical Computing / Sketch Engine](https://www.sketchengine.eu/skell/)
 
 #### NL05 · Beschädigten Lesetext nach C-Prinzip rekonstruieren
+
+**Aktuelle Testgenerator-Auswahl:** Für kurze Tests in begrenzter Form geeignet. Kurzer vorbereiteter Text mit wenigen Lücken und geprüften zulässigen Antworten; kein automatisches Einstufungsversprechen.
 
 **Fächer/Stufen:** Deutsch; DaZ; Fremdsprachen · Sek I ab Klasse 7; Sek II; Berufsbildung; Niveau je Text
 
@@ -618,6 +670,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NM09 · Gemeinsam klassifizieren, Kriterien schärfen und Streitfälle weiterprüfen
 
+**Aktuelle Testgenerator-Auswahl:** Außerhalb des aktuellen Testgenerator-Umfangs. Kein gemeinsames Annotieren, Konsensverfahren, Leitfadenrevision oder erneute Gruppenvalidierung.
+
 **Fächer/Stufen:** Biologie; Sachunterricht; Informatik; Geschichte; Kunst; Geografie; Sozialwissenschaften · Grundschule 3–4 begleitet; Sek I; Sek II
 
 **Lernziel:** Gemeinsame Datenannotation von Mehrheitsentscheidung und fachlicher Wahrheit unterscheiden.
@@ -642,6 +696,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 
 #### NL06 · Erst abstimmen, dann begründet diskutieren, erneut entscheiden
 
+**Aktuelle Testgenerator-Auswahl:** Außerhalb des aktuellen Testgenerator-Umfangs. Abstimmen, Partnerdiskussion und Wiederabstimmen sind Unterrichtsablauf; keine neue Prüfungsfunktion.
+
 **Fächer/Stufen:** fächerübergreifend; Deutsch; Fremdsprachen · Klasse 4 mit einfachen Konzepten; Sek I; Sek II; Berufsbildung
 
 **Lernziel:** Eigene Konzeptvorstellung artikulieren und nach Gegenargumenten überprüfen.
@@ -665,6 +721,8 @@ KI kann geeignete Varianten, Texte und Rückmeldungsvorschläge erzeugen. Bei vi
 **Quellen:** [LNEW04: Concordia University / CTL](https://www.concordia.ca/ctl/resources/teaching-pedagogy/active-learning/peer-instruction.html)
 
 #### NL07 · Textgebundene Verständnisfragen gemeinsam klären und mit Beleg abschließen
+
+**Aktuelle Testgenerator-Auswahl:** Außerhalb des aktuellen Testgenerator-Umfangs. Keine sozialen Kommentar-/Frage-/Antwortthreads als zusätzlicher Testablauf.
 
 **Fächer/Stufen:** Deutsch; DaZ; Fremdsprachen; alle textbasierten Fächer · Sek I ab Klasse 6; Sek II; Berufsbildung
 
@@ -1178,8 +1236,10 @@ Weitere ausgeschiedene Kandidaten: zusätzliche Themenvarianten von Simulationen
 
 **Geprüft:** 2026-10-25
 
-## Prüfstand und nächste Umsetzung
+## Prüfstand und nächste fachliche Ausarbeitung
+
+**Aktuelle Nutzergrenze hat Vorrang:** nur kurze individuelle Prüfaufgaben gemäß [Auswahlvertrag](QUICK_ASSESSMENT_SCOPE_20261025.md). Keine neue Implementierung oder komplexe Projekt-/Werkzeugfunktion beauftragt.
 
 Quellen- und Aufgabenkennungen, alte Vergleichskennungen, 27er-Zählung und Referenzgruppen wurden technisch abgeglichen. Unabhängiger Neuheitsreview hat die Kandidaten neu klassifiziert und Dubletten entfernt. Die konkreten Zahlenbeispiele für Ziffernkarten, Sortiernetz, akustischen Zeitversatz, Tabellenformel, geraden Zahlbeweis, Würfelnetz, Wahlregelvergleich und Videomessung sind geprüft. Diese Inhaltsprüfung ist kein Test einer GradeCrew-Laufzeitimplementierung.
 
-Der nächste konkrete Schritt ist ein begrenzter Prototyp mit vollständigem Material, zugelassenen Antworten, geprüftem Korrektor oder Raster, Hinweisverlauf und Lehrkraftvorschau. Bestehende Interaktionen wiederverwenden. Forschungsdaten werden nicht automatisch in den freigegebenen Generator oder einen Leistungsnachweis importiert.
+Der nächste vorgeschlagene Schritt ist die fachliche Ausarbeitung weniger kurzer Einzelaufgaben mit vorgegebenem Material, zugelassenen Antworten, geprüftem Lösungsschlüssel oder Raster, Punkten und Lehrkraftvorschau. Bestehende Interaktionen wiederverwenden; keine lösungsverratenden Hilfen im laufenden Leistungsnachweis. Forschungsdaten werden nicht automatisch in den Generator importiert. Eine Implementierung ist durch diese Produktkorrektur nicht beauftragt.

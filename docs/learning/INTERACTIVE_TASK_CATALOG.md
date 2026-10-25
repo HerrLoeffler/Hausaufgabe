@@ -1,5 +1,7 @@
 # Aufgaben- und Methodenfundus
 
+**Aktuelle Nutzergrenze für den Testgenerator (25.10.2026):** kurze individuelle Aufgaben direkt im Test, einfache Bedienung und nachvollziehbare Punkte/Noten. Excel-Dateien, Agentenbedienung, Modelltraining und komplexe Projekt-/Gruppenabläufe sind keine empfohlenen Erweiterungen. Die [Auswahlgrenze](QUICK_ASSESSMENT_SCOPE_20261025.md) hat für die Produktauswahl Vorrang vor breiten Rechercheprioritäten.
+
 Task GC-EXTENDED-QUESTION-TYPES-01 · Stand 22.10.2026. Zusammen mit den [Grundsätzen](INTERACTIVE_TASK_PRINCIPLES.md) lesen. Fach-/Jahrgangsangaben unten sind Einsatzideen, keine amtliche Lehrplanzuordnung. Alle neuen Umsetzungen zunächst im beauftragten Testumfang; kein automatischer Staging-/Live-Import.
 
 ## Wiederverwendbare Interaktionen

@@ -26,19 +26,14 @@
     },
     "recommended_prototype_ids": [
       "NM01",
-      "NM02",
       "NR02",
       "NR03",
-      "NL01",
-      "NL03",
-      "NR01"
+      "NM03",
+      "NS02",
+      "NL04",
+      "NL05"
     ],
-    "strategic_future_ids": [
-      "NL02",
-      "NM05",
-      "NS03",
-      "NS06"
-    ],
+    "strategic_future_ids": [],
     "implementation_status": "research_design_only",
     "task_id": "GC-EXTENDED-QUESTION-TYPES-01",
     "review_corrections": [
@@ -53,7 +48,51 @@
     ],
     "review_requested_model": "gpt-6.1-sol",
     "review_requested_reasoning_effort": "medium",
-    "review_actual_provider_usage": "unknown"
+    "review_actual_provider_usage": "unknown",
+    "historical_recommended_prototype_ids": [
+      "NM01",
+      "NM02",
+      "NR02",
+      "NR03",
+      "NL01",
+      "NL03",
+      "NR01"
+    ],
+    "historical_strategic_future_ids": [
+      "NL02",
+      "NM05",
+      "NS03",
+      "NS06"
+    ],
+    "product_scope": {
+      "date": "2026-10-25",
+      "source": "explicit_user_clarification_after_research",
+      "goal": "Schnell erstellbare digitale Leistungsnachweise mit selbstständiger Bearbeitung, nachvollziehbaren Punkten und daraus berechenbarer Note.",
+      "applies_to": "Gesamter bisheriger Aufgabenfundus einschließlich 163 Basisentwürfen und 27 Ergänzungen; kein pauschaler Import.",
+      "interaction_rule": "Kurzer klarer Auftrag direkt im Test; vorgegebenes Material, wenige unmittelbare Eingaben, einfache Bedienung und keine externe Tool-/Projektkoordination.",
+      "excluded_workflows": [
+        "Excel-/Dateibearbeitung und -abgabe",
+        "Agenten unterrichten oder bedienen",
+        "Modelle trainieren",
+        "mehrstufige Werkzeug-/Projektarbeit",
+        "Gruppen-/Peer-/Diskussionsabläufe"
+      ],
+      "grading_rule": "Geprüfter Lösungsschlüssel oder transparente Kriterien, zulässige Alternativen und Teilpunkte; Punkte und bestehender Notenschlüssel nachvollziehbar. Offene Beurteilung nicht als deterministische Automatik ausgeben.",
+      "assessment_rule": "Eigenständige Prüfantwort; kein lösungsverratendes Feedback vor freigegebener Abgabe/Auflösung.",
+      "complexity_note": "Fachlicher Anspruch bleibt möglich; die Einschränkung betrifft Bedienung, Umfang und Ablauf. Fachthemen wie Excel bleiben mögliche kurze Frageinhalte.",
+      "status_labels": {
+        "core_bounded": "Für kurze Tests in begrenzter Form geeignet",
+        "conditional": "Nur stark vereinfacht; derzeit keine Formatpriorität",
+        "outside_quick_tests": "Außerhalb des aktuellen Testgenerator-Umfangs"
+      },
+      "counts": {
+        "core_bounded": 12,
+        "conditional": 6,
+        "outside_quick_tests": 9
+      },
+      "historical_priority_note": "Bestehende idea.priority beschreibt die frühere breite Recherche. quick_test_scope und die aktuellen recommended_prototype_ids haben Vorrang. Frühere XLSX-Ausgabe ist die breite Recherchefassung.",
+      "implementation_status": "documentation_only_no_runtime_import"
+    }
   },
   "sources": [
     {
@@ -602,7 +641,12 @@
         "Dateiversion oder begrenztes Tabellen-Antwortmodell"
       ],
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
-      "implementation_status": "research_design_only"
+      "implementation_status": "research_design_only",
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Keine Bearbeitung oder Abgabe von Excel-/Tabellendateien; eigenständige praktische Probe außerhalb dieses Testgenerators.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NM01",
@@ -635,7 +679,12 @@
       "limitations": "Keine bloßen Positions-/Farbmerkmale werten, wenn mathematische Merkmale Lernziel sind. Freie sinnvolle Zusatzregeln zulassen.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Wenige vorgegebene Objekte und geprüfte Merkmalsauswahl; freie Alternativen nur mit transparenten Kriterien.",
+        "prototype_priority": 1
+      }
     },
     {
       "id": "NM05",
@@ -670,7 +719,12 @@
       "limitations": "Neue Trainings-/Testbilder strikt trennen; keine garantierte Verbesserung oder kalibrierte Wahrscheinlichkeiten behaupten; unkritische Objekte statt Personenbilder.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Daten sammeln, trainieren, testen und verbessern ist ein eigenständiges Projekt.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NS01",
@@ -718,7 +772,12 @@
       "limitations": "Keine externen Archivbeiträge automatisch absenden. Authentische Quellen samt Rechten/Belastung prüfen; eigenes Lehrfaksimile nicht als historische Quelle ausgeben.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "conditional",
+        "rule": "Allenfalls sehr kurzer vorgegebener Ausschnitt mit Transkription; kein Peerreview-/Freigabeablauf. Derzeit keine neue Formatpriorität.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NS02",
@@ -765,7 +824,12 @@
       "limitations": "Keine reale Personendatenrecherche oder Wikidata-Änderung. Beispiel synthetisch; Scores unterschiedlicher Dienste nicht als gleiche Wahrscheinlichkeit behandeln.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Kleine vorgegebene Datensätze zuordnen, ausschließen oder als nicht entscheidbar kennzeichnen; keine Recherche.",
+        "prototype_priority": 5
+      }
     },
     {
       "id": "NL01",
@@ -801,7 +865,12 @@
       "limitations": "Nicht jede Aufgabe besitzt eindeutige Rangordnung. Vertraulichkeit, sprachliche Vorurteile und ungleiche Vergleichsnetze beachten; keine automatische Fachnote aus Siegquote.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Zwei kurze kuratierte Antworten unter genau einem Kriterium vergleichen; begrenzte Belegauswahl oder klar bewertbare Kurzbegründung.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NL02",
@@ -838,7 +907,12 @@
       "limitations": "Offene Sprachregeln sind oft nicht vollständig formalisiert; zuerst kleines explizites Regelsystem. Ein freier Chatbot, der ohnehin alles weiß, erfüllt den Mechanismus nicht.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Kein Agent unterrichten, bedienen, testen oder dessen Wissensmodell verwalten.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NR02",
@@ -882,7 +956,12 @@
         "Mehrere zulässige Reihenfolgen"
       ],
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
-      "implementation_status": "research_design_only"
+      "implementation_status": "research_design_only",
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Wenige vorgegebene Beweis-/Rechenschritte auswählen und ordnen; mehrere fachlich gültige Reihenfolgen akzeptieren.",
+        "prototype_priority": 2
+      }
     },
     {
       "id": "NR03",
@@ -928,7 +1007,12 @@
         "Bedienung per Tippen und Tastatur zusätzlich zum Ziehen"
       ],
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
-      "implementation_status": "research_design_only"
+      "implementation_status": "research_design_only",
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Vorgegebenes Netz oder Ansichten: Gegenfläche bestimmen, passendes Netz auswählen oder wenige Flächen beschriften.",
+        "prototype_priority": 3
+      }
     },
     {
       "id": "NM02",
@@ -960,7 +1044,12 @@
       "limitations": "Offene Mitte allein ist keine neue Mechanik. Nur mit Alllösungsauftrag/Vollständigkeitsnachweis als Ergänzung führen.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Sehr kleiner Ziffernsatz und überschaubare Lösungsmenge; keine offene längere Such-/Projektphase.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NM03",
@@ -993,7 +1082,12 @@
       "limitations": "Nicht als generisches neues Drag-and-drop zählen. Nur Reihenfolgenvergleich kann korrekte Alternativen fälschlich ablehnen.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Wenige vorgegebene Codebausteine ordnen/einrücken; keine eigene Entwicklungsumgebung oder Programmentwicklung.",
+        "prototype_priority": 4
+      }
     },
     {
       "id": "NM04",
@@ -1026,7 +1120,12 @@
       "limitations": "Gleich lange Vergleiche und keine Kommunikationskosten sind Modellannahmen; keine reale Laufzeitbeschleunigung versprechen.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "conditional",
+        "rule": "Nur ein vorgegebenes kleines Netz auswerten; eigene Konstruktion und Optimierung entfallen. Vorhandene Formate genügen zunächst.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NM06",
@@ -1061,7 +1160,12 @@
       "limitations": "Eigene isolierte-Nachbarn-Regel explizit, nicht als NetLogo-Standard behaupten. Farbmodell erklärt keine gesellschaftliche Realität; stochastic Läufe nicht gegen einen einzigen Endzustand bewerten.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "conditional",
+        "rule": "Nur vorgegebene Zustände oder einen lokalen Schritt auswerten; keine Simulation aufbauen oder bedienen.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NM07",
@@ -1096,7 +1200,12 @@
       "limitations": "SageModeler ist semiquantitativ: exakte Literarithmetik ist eigene GradeCrew-Simulation und kein belegtes SageModeler-Feature. Behälter ausreichend groß, keine negativen Bestände zulassen.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "conditional",
+        "rule": "Vorgegebene Bestands-/Flussdaten kurz berechnen; eigener Modellbau entfällt. Fachbeispiel für bestehende Formate.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NM08",
@@ -1130,7 +1239,12 @@
       "limitations": "Zahlen sind synthetisch und akustische Quellen idealisiert; kein Millisekunden-Genauigkeitsversprechen für Schultelefone.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Nur kompakte vorgegebene Messdaten auswerten; kein Sensorzugriff, eigener Messaufbau oder Messprogramm.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NM10",
@@ -1165,7 +1279,12 @@
       "limitations": "Aufeinanderfolgende Offenlegung und Intervallbenotung sind eigene Übertragung, kein dokumentiertes Plattformfeature. Bei unregelmäßigen Sitzplänen ist 12×8 ohne Zusatzannahme nicht gedeckt.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Vorgegebenes Bild und klare Bezugsgröße; begrenzte Antwort mit nachvollziehbarer Rechnung oder Annahme. Kein Erkundungsablauf.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NS03",
@@ -1213,7 +1332,12 @@
       "limitations": "Zurückgehaltener Prüfort und Bewertung sind eigener Transfer, kein behaupteter Allmaps-Assessmentmodus. Allmaps-Editor veröffentlicht Edits; lokale Übungsumgebung bevorzugen. Historische Lageänderung und Kartierungsfehler nicht verwechseln.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Keine eigenständige Georeferenzierung, Transformationswerkzeuge oder Kontrollpunkt-Workflows.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NS04",
@@ -1258,7 +1382,12 @@
       "limitations": "Regeln exakt definieren; Approval benötigt andere Eingabedaten als bloße Rangliste. Keine Realwahlergebnisse behaupten; Originalessay ist normativ und von 2016.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Kleine feste Tabelle nach vollständig vorgegebenen Regeln auswerten; kein Wahlregel-Labor bedienen.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NS05",
@@ -1306,7 +1435,12 @@
       "limitations": "Eigener harmloser Transfer; keine Übernahme von Bad-News-Texten/Bildern. Produkt-Handreichung ab 14. Keine Veröffentlichung manipulativer Inhalte, keine politische Zielgruppenansprache. Peer-Erkennungsquote allein beweist keinen nachhaltigen Lerngewinn.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "conditional",
+        "rule": "Nur vorgegebene Manipulation erkennen/korrigieren; keine eigene Produktions-, Rollenwechsel- oder Peerprüfphase.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NS06",
@@ -1354,7 +1488,12 @@
       "limitations": "Kein EarSketch-Autograding behauptet. Eigene Sample-Rechte klären; musikalischer Wert wird nicht allein aus bestandenen Codetests berechnet.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Musikalisches Arrangement programmieren, anhören und iterativ bearbeiten ist ein eigenständiges Projekt.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NS07",
@@ -1402,7 +1541,12 @@
       "limitations": "Kinovea dokumentiert 2D-Messung, keine beliebige 3D-Rekonstruktion. Keine Fitnessnote aus Videowerten; praktische Bewegungskompetenz bleibt separat. Animation oder rechtlich freigegebene Aufnahme verwenden.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "conditional",
+        "rule": "Allenfalls vorgegebene Frames mit Maßstab/Zeit auswerten; kein Video aufnehmen, kalibrieren oder verfolgen.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NL03",
@@ -1439,7 +1583,12 @@
       "limitations": "Kein beliebiger Rückfragen-Dialog als Hidden Profile etikettieren. Alle exklusiven Hinweise müssen fachlich zugänglich sein; fehlende Teilnahme darf nicht die ganze Gruppe blockieren.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Keine Gruppenrollen, verteilten Hinweise, gemeinsame Entscheidung oder Koordinationsphase im individuellen Leistungsnachweis.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NL04",
@@ -1476,7 +1625,12 @@
       "limitations": "Korpusverteilung ist keine Norm und Suchergebnisse sind gefiltert. Eine Handvoll Beispiele erlaubt keine Häufigkeitsaussage. Altersgeeignete Belege und Rechte vorab prüfen.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Wenige kuratierte Sprachbelege, begrenzte Regelwahl und neue Anwendungsfälle; keine Korpusrecherche.",
+        "prototype_priority": 6
+      }
     },
     {
       "id": "NL05",
@@ -1514,7 +1668,12 @@
       "limitations": "Kein selbst generierter Einstufungstest mit validierten Normwerten gleichsetzen. Für reine Übung geeignet; Tastatur, Orthografie und Lesetempo beeinflussen Ergebnis.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "core_bounded",
+        "rule": "Kurzer vorbereiteter Text mit wenigen Lücken und geprüften zulässigen Antworten; kein automatisches Einstufungsversprechen.",
+        "prototype_priority": 7
+      }
     },
     {
       "id": "NM09",
@@ -1570,7 +1729,12 @@
         "Konsensregel und Weiterprüfung"
       ],
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Kein gemeinsames Annotieren, Konsensverfahren, Leitfadenrevision oder erneute Gruppenvalidierung.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NL06",
@@ -1607,7 +1771,12 @@
       "limitations": "Mehr richtige Zweitantworten können auch Übernahme statt Verstehen sein; neues individuelles Problem stärkt die Interpretation. Minderheitspositionen nicht öffentlich beschämen.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Abstimmen, Partnerdiskussion und Wiederabstimmen sind Unterrichtsablauf; keine neue Prüfungsfunktion.",
+        "prototype_priority": null
+      }
     },
     {
       "id": "NL07",
@@ -1644,7 +1813,12 @@
       "limitations": "Antwortqualität braucht fachliche Moderation. Eine akzeptierte Peerantwort kann falsch sein; soziale Zustimmung ist keine Wahrheitsprüfung. Gezielte Aufgabenrollen verhindern reine Pflichtkommentare.",
       "provenance": "Eigener GradeCrew-Entwurf aus der Quellenrecherche. Die Quelle belegt nur den separat dokumentierten Befund. Keine implementierte GradeCrew-Funktion oder nachgewiesene Lernwirkung.",
       "implementation_status": "research_design_only",
-      "authoring_requirements": []
+      "authoring_requirements": [],
+      "quick_test_scope": {
+        "status": "outside_quick_tests",
+        "rule": "Keine sozialen Kommentar-/Frage-/Antwortthreads als zusätzlicher Testablauf.",
+        "prototype_priority": null
+      }
     }
   ],
   "not_counted_as_new": [

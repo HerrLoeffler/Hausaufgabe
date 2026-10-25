@@ -2,6 +2,10 @@
 
 Stand 22.10.2026 · **GC-EXTENDED-QUESTION-TYPES-01**. Gilt für neue und überarbeitete GradeCrew-Testseiten, Aufgabenprototypen, Remy-/Emmi-Entwürfe und adaptive Übungen. Dieser Leitfaden sichert Erkenntnisse; er installiert keinen Generator, importiert keine Inhalte und erteilt keine Deploymentfreigabe. Martins aktueller Auftrag betrifft Testseiten, nicht kanonisches Staging oder Schul-Live.
 
+## Produktgrenze für den Testgenerator · Nutzerkorrektur 25.10.2026
+
+Ziel sind schnell erstellbare, selbstständig bearbeitbare digitale Leistungsnachweise mit nachvollziehbaren Punkten und einer daraus berechenbaren Note. Aufgaben dürfen fachlich anspruchsvoll sein; Bedienung und Ablauf bleiben einfach. Keine Excel-Dateibearbeitung/-abgabe, Agentenbedienung, Modelltrainingsprojekte oder Gruppen-/Peerworkflows als neue Testgenerator-Funktion empfehlen. Kurze Aufgaben zu diesen Fachthemen bleiben mit vorgegebenem Material möglich. Bestehende Auswahl-, Zuordnungs-, Markier-, Reihenfolge-, Zahlen- und begrenzte Texteingaben sowie passende direkte Grafikaufgaben bevorzugen. Geprüfte Schlüssel, zulässige Alternativen, Teilpunkte und offene Bewertungsgrenzen vorsehen. [Auswahlvertrag für den gesamten Recherchefundus](QUICK_ASSESSMENT_SCOPE_20261025.md). Diese Produktgrenze erteilt keine Implementierungs- oder Deployfreigabe und ändert keine getrennten Übungs-/Projektaufträge.
+
 ## Vor jeder passenden Aufgabe
 
 1. Lernziel, Zielgruppe und Modus benennen: Erkunden, unterstützt üben oder unabhängig prüfen.
@@ -70,3 +74,7 @@ Beleg: [Prüfbericht der192 Aufgaben](https://github.com/HerrLoeffler/Hausaufgab
 - **Darstellung benennt die wirkliche Interaktion:** Säulenaufgabe nicht als Liniendiagramm bezeichnen; Uhrzeiten als HH:MM zeigen. Lange Grafikinhalte vollständig lesbar und auswählbar halten. Hinweise dürfen die Lösung nicht durch Übersetzung verraten.
 - **Generierungsqualität sichtbar machen:** Logische Tests, interne Modellaufrufe und Aufgabenersetzungen getrennt zählen. Diese Serie benötigte24 Erstellungen,161 interne Providerrequests und67 Ersetzungen;63 Aufgaben wurden anschließend korrigiert oder präzisiert. Daraus keine automatische Unterrichtsfreigabe ableiten.
 - **Nachweisstufen erhalten:** Die Serie besteht technische und echte Serverprüfungen in einer getrennten Testvorschau. Lehrkrafturteil, Gerätestest und Lernwirksamkeit bleiben eigene offene Nachweise. Vor der Produktintegration passende Aufgaben in der Zielklasse erproben.
+
+### Nach Nutzerprüfung der Testserie
+
+Fehlerstellen nicht im Arbeitsauftrag vorwegnehmen: „Berichtige das Verb“ ist sinnvoller als das gesuchte falsche Wort bereits zu nennen. Kurze Diagrammbeschriftungen bezeichnen die fachliche Rolle (z.B.Behauptung/Begründung), vollständige Texte bleiben verfügbar. Wenn die Lernhandlung das Einstellen einer Säule oder Anlegen eines Instruments ist, unnötige numerische Ersatzfelder vermeiden; direkte Bedienung und Tastaturalternative erhalten. Messabweichung passend zum Lernziel festlegen und Grenzfälle serverseitig prüfen;±3° ist hier der freigegebene Winkelpilot, kein pauschaler didaktischer Standard. Aufgaben nach Nutzerkritik verständlicher machen, statt bloß den ursprünglichen Entwurf im Chat zu erklären. [Erprobte Änderungen](https://github.com/HerrLoeffler/Hausaufgabe/blob/fda13a26d1c4b4cdeadd3689a1280cdd68beb765/docs/evidence/visual-pilot-24-20261025/followup/REPORT.md).

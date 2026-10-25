@@ -67,8 +67,20 @@ Aktuelle main-Basis für den Abschlusssnapshot: `41af350be3f99d7f6d6b2782ac56b3d
 
 Development-Status Run40183534335, Job121139415611 erfolgreich, relevante Logs gelesen. Dessen damaliger Snapshot führte noch den Dokumentationsbranch als Primary; die neuere main-Registry ist für aktuelle Zuständigkeit maßgeblich. PR265/271/296 bearbeiten Prototypen und bleiben außerhalb dieser Recherche. Die neuen Erkenntnisse aus 24 Probetests in `INTERACTIVE_TASK_PRINCIPLES.md` gelesen und unverändert erhalten. Gemeinsame TODO-/Registry-/Katalogänderungen additiv abgeglichen.
 
-### Nächster vorgeschlagener Schritt
+### Frühere Priorisierung vor Nutzerkorrektur (überholt)
 
 Sieben begrenzte Referenzaufgaben ausarbeiten: NM01 (vier Außenseiter), NM02 (alle Ziffernlösungen), NR02 (Beweisbausteine), NR03 (Körper und Netz), NL01 (vergleichendes Qualitätsurteil), NL03 (verteilte Hinweise), NR01 (funktionierende Tabelle). Je Lernziel, eigenes Material, zulässige Lösungen, Teilpunkte, Hilfen, zugängliche Bedienung und Lehrkraftvorschau festlegen. Strategisch später NL02 (lehrbarer Agent), NM05 (Trainingsdaten), NS03 (Georeferenzierung), NS06 (Musikcode). Das sind Priorisierungsvorschläge, keine allgemeine Implementierungs- oder Deployfreigabe.
 
 Recherche und Quellenbelege sind gesichert; unabhängige GradeCrew-Lernwirksamkeit, Unterrichtserprobung und technische Produktintegration stehen für diese neuen Entwürfe aus. Keine Änderung von Anwendungscode, Rules, Releasezustand, Laufzeit-Pool oder Deployment.
+
+## Nutzerkorrektur: kurze benotbare Leistungsnachweise · 25.10.2026
+
+Martin begrenzt den Aufgabenfundus ausdrücklich: schnelle digitale Leistungsnachweise mit nachvollziehbaren Punkten und Noten, einfache Bedienung, keine Excel-Dateibearbeitung, kein Agentenbetrieb und keine komplexen Projekte. Die breite vorherige Empfehlung war zu weit. [Verbindliche Auswahlgrenze](../docs/learning/QUICK_ASSESSMENT_SCOPE_20261025.md) gilt für beide Recherchepakete. 27 neue Ideen gesondert geprüft: 12 eng begrenzt geeignet, 6 nur deutlich vereinfacht, 9 außerhalb. JSON-Feld quick_test_scope hat Vorrang vor historischen Rechercheprioritäten. Frühere XLSX bleibt breite Recherchefassung; kein aktueller Einbauplan.
+
+Aktuelle Referenzkandidaten: NM01, NR02, NR03, NM03, NS02, NL04, NL05. Vorhandene kurze Fehlerkorrektur-, Beleg-, Diagramm-, Zuordnungs- und Rechenformate bleiben der Standard. Ausgeschlossene Agenten-, Exceldatei-, Modelltraining-, Georeferenzierungs-, Musikproduktions- und Gruppenworkflows nicht als automatische spätere Roadmap führen.
+
+Prüfung: unabhängiger Read-only-Scope-Review angefordert als gpt-6.1-sol/medium (bereichsübergreifende Abgrenzung); actual/Usage unbekannt. Alle 27 IDs klassifiziert, Quellen und Forschungszählung unverändert, historische Prioritäten erkennbar erhalten. Kein Runtime-Test nötig: ausschließlich Markdown/Recherche-JSON. Assurance: reine Produkt-/Dokumentationskorrektur ohne neue Datenflüsse, Berechtigungen oder Bewertungsimplementierung; operative SEC-/PRIV-Releaseprüfungen für diesen Diff nicht relevant, bei Umsetzung neu auswählen. Keine bestehende Kontrolle als erfüllt behauptet.
+
+Remote-main c963c330c9b71ffec794ee0c0e349744ea06b8fb geprüft; neue Pilot-/TODO-/Prinzipienänderungen erhalten. Development-Status Run40189467911 / Job121157180252 success, relevante Logs gelesen: Primary test/visual-24-pilot-20261025, Integration feature/visual-prototype-ai-02-20261021, PR296; eigener Draft-PR290 bleibt Dokumentationsarbeit. Kein Eingriff in andere Owner, keine neue Task-/Budgethistorie. Verantwortlicher Forschungsfachchat wie bisher; Chat-Link unbekannt.
+
+Nächster Schritt: wenige kurze Einzelaufgaben mit vorgegebenem Material, zulässigen Antworten und Punkten ausarbeiten. Produktintegration/Import/Deploy nicht beauftragt. Releasezustand unverändert.
