@@ -33,6 +33,44 @@ try{
  },questionTemplate);
  assert.deepEqual(editorSelection,{value:'visual',label:'Visuelle Interaktion',visualOptions:1});
 
+ // Long labels stay inside their SVG slots; an occupied slot can be cleared and reassigned.
+ await page.evaluate(()=>{
+   const task=GC2.publicTask(GC2.example('labeling'));
+   task.spec.items[0].text='Kaiserkrönung Karls des Großen';
+   task.spec.items[1].text='Attentat von Sarajevo';
+   V.mountVisualQuestion(document.querySelector('#test-labeling'),{type:'visual',visualTask:JSON.stringify(task)});
+ });
+ const labelSlot=page.locator('#test-labeling g[data-slot="r1"]');
+ const firstLabelId=await page.locator('#test-labeling [data-chip]').first().getAttribute('data-chip');
+ await page.locator('#test-labeling [data-chip]').first().click();
+ await labelSlot.click();
+ assert.deepEqual(await page.evaluate(()=>V.collectVisualAnswer(document.querySelector('#test-labeling'))),{r1:firstLabelId});
+ assert.match(await labelSlot.getAttribute('aria-label'),/Kaiserkrönung Karls des Großen/);
+ const labelGeometry=await labelSlot.evaluate(slot=>{
+   const rect=slot.querySelector('rect'),lines=[...slot.querySelectorAll('tspan')];
+   return {slotWidth:Number(rect.getAttribute('width')),lineWidths:lines.map(line=>line.getComputedTextLength()),lineCount:lines.length};
+ });
+ assert.ok(labelGeometry.lineCount>=2&&labelGeometry.lineCount<=3);
+ assert.ok(labelGeometry.lineWidths.every(width=>width<=labelGeometry.slotWidth-12),JSON.stringify(labelGeometry));
+ await labelSlot.click();
+ assert.deepEqual(await page.evaluate(()=>V.collectVisualAnswer(document.querySelector('#test-labeling'))),{});
+ const secondLabelId=await page.locator('#test-labeling [data-chip]').nth(1).getAttribute('data-chip');
+ await page.locator('#test-labeling [data-chip]').nth(1).click();
+ await labelSlot.focus();await page.keyboard.press('Enter');
+ assert.deepEqual(await page.evaluate(()=>V.collectVisualAnswer(document.querySelector('#test-labeling'))),{r1:secondLabelId});
+ await labelSlot.focus();await page.keyboard.press('Space');
+ assert.deepEqual(await page.evaluate(()=>V.collectVisualAnswer(document.querySelector('#test-labeling'))),{});
+ const hiddenGeometry=await page.evaluate(()=>{
+   const task=GC2.publicTask(GC2.example('labeling'));
+   task.spec.items[0].text='Kaiserkrönung Karls des Großen';
+   const section=document.querySelector('#test-labeling');section.style.display='none';
+   V.mountVisualQuestion(section,{type:'visual',visualTask:JSON.stringify(task)},{r1:task.spec.items[0].id});
+   section.style.display='';
+   const slot=section.querySelector('g[data-slot="r1"]');
+   return {width:Number(slot.querySelector('rect').getAttribute('width')),lineWidths:[...slot.querySelectorAll('tspan')].map(line=>line.getComputedTextLength())};
+ });
+ assert.ok(hiddenGeometry.lineWidths.length>=2&&hiddenGeometry.lineWidths.every(width=>width<=hiddenGeometry.width-12),JSON.stringify(hiddenGeometry));
+
  await page.locator('#test-grid [data-cell]').nth(0).tap();
  assert.deepEqual(await page.evaluate(()=>V.collectVisualAnswer(document.querySelector('#test-grid'))),[0]);
  // Instrument controls never populate the response or expose sought angle as text.
