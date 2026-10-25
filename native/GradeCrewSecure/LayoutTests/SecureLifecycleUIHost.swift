@@ -18,6 +18,7 @@ struct SecureLifecycleUIHost:View {
 }
 private final class SecureUIPendingStore:SecureAttemptPersistence {
     private var attempt:SecureAttemptIdentity? = {
+        if ProcessInfo.processInfo.arguments.contains("--secure-start-ui") { return nil }
         var value=SecureAttemptIdentity(code:"QA1234",name:"Synthetic pupil")
         value.attemptID="a_"+String(repeating:"1",count:28)
         return value

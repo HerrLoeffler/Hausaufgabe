@@ -1,13 +1,17 @@
 import SwiftUI
 
 private struct SecureEntryBrandHeader: View {
+    var compact:Bool = false
     var body: some View {
-        VStack(spacing:12) {
+        let layout:AnyLayout = compact ? AnyLayout(HStackLayout(spacing:12)) : AnyLayout(VStackLayout(spacing:12))
+        layout {
             Image("GradeCrewLogo").resizable().scaledToFit()
-                .frame(width:96,height:96).accessibilityHidden(true)
-            Text("GradeCrew").font(.largeTitle.bold())
-                .multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true)
-            Text("Secure").font(.title3.weight(.semibold)).foregroundStyle(SecureTheme.secondaryText)
+                .frame(width:compact ? 48 : 96,height:compact ? 48 : 96).accessibilityHidden(true)
+            VStack(spacing:compact ? 2 : 12) {
+                Text("GradeCrew").font(compact ? .title2.bold() : .largeTitle.bold())
+                    .multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true)
+                Text("Secure").font(compact ? .caption.weight(.semibold) : .title3.weight(.semibold)).foregroundStyle(SecureTheme.secondaryText)
+            }
         }.frame(maxWidth:.infinity).foregroundStyle(SecureTheme.text)
             .accessibilityElement(children:.combine).secureMeasure("brand",role:"center")
     }
@@ -26,16 +30,17 @@ struct SecureWelcomeFrame<Content:View>: View {
     @State private var focusedField:String?
 
     var entry:Bool = false
+    var maxWidth:CGFloat = SecureTheme.formWidth
     @ViewBuilder let content: () -> Content
     var body: some View {
         ScrollViewReader { proxy in
         ScrollView {
             VStack(spacing:!entry && heightClass == .compact ? 12 : 24) {
-                if entry { SecureEntryBrandHeader() } else if heightClass != .compact { SecureBrandHeader() }
+                if entry { SecureEntryBrandHeader(compact:heightClass == .compact) } else if heightClass != .compact { SecureBrandHeader() }
                 content()
                 if entry { SecureLegalLinks() }
                 Text(SecureReleaseEnvironment.projectID == "gradecrew-staging-2026" ? "Testumgebung" : "Schulversion").font(.footnote).foregroundStyle(SecureTheme.secondaryText)
-            }.padding(.vertical,!entry && heightClass == .compact ? 12 : 24).frame(maxWidth:SecureTheme.formWidth).secureMeasure("welcome",role:"center")
+            }.padding(.vertical,!entry && heightClass == .compact ? 12 : 24).frame(maxWidth:maxWidth).secureMeasure("welcome",role:"center")
                 .frame(maxWidth:.infinity).padding(.horizontal,16)
         }.scrollDismissesKeyboard(.interactively)
             .onPreferenceChange(SecureEntryFocusKey.self) { field in
@@ -100,3 +105,21 @@ private extension View {
             .id(id).accessibilityIdentifier(id).secureMeasure(id,role:"field")
     }
 }
+
+#if GRADECREW_STAGING
+struct SecureEntryColumns<Guest:View,Personal:View>:View {
+    @Environment(\.horizontalSizeClass) private var widthClass
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @ViewBuilder let guest:()->Guest
+    @ViewBuilder let personal:()->Personal
+    var body:some View {
+        let layout:AnyLayout = widthClass == .regular && !typeSize.isAccessibilitySize
+            ? AnyLayout(HStackLayout(alignment:.top,spacing:24))
+            : AnyLayout(VStackLayout(alignment:.leading,spacing:24))
+        layout {
+            guest().frame(maxWidth:.infinity,alignment:.topLeading)
+            personal().frame(maxWidth:.infinity,alignment:.topLeading)
+        }
+    }
+}
+#endif

@@ -27,14 +27,11 @@ struct SecureStagingScreen: View {
                     }
                 }
             } else {
-                SecureWelcomeFrame(entry:model.phase == .code || model.phase == .identity) {
+                SecureWelcomeFrame(entry:model.phase == .code || model.phase == .identity,maxWidth:welcomeWidth) {
                     #if GRADECREW_STAGING
                     Text("TESTUMGEBUNG 2026").font(.caption.bold()).foregroundStyle(SecureTheme.secondaryText)
                     #endif
                     if model.phase == .code || model.phase == .identity {
-                        #if GRADECREW_STAGING
-                        Button("Persönlicher Schülerzugang – Meine Tests") { model.cancelPersonalSelection();showPupilAccess=true }.buttonStyle(.borderedProminent)
-                        #endif
                         if model.personalSelection {
                             VStack(spacing:16) {
                                 Text(model.name).font(.headline)
@@ -44,9 +41,15 @@ struct SecureStagingScreen: View {
                                 Button("Andere zugewiesene Tests") { model.cancelPersonalSelection();showPupilAccess=true }
                             }
                         } else {
-                        SecureEntryView(code:$model.code,name:$model.name,busy:model.busy,message:model.message) {
-                            Task { await model.preflight(); if model.phase == .identity { confirmStart = true } }
+                        #if GRADECREW_STAGING
+                        SecureEntryColumns {
+                            guestEntry
+                        } personal: {
+                            SecurePupilAccessView(embedded:true,onSelect:selectPersonal)
                         }
+                        #else
+                        guestEntry
+                        #endif
                         }
                     } else { statusContent }
                 }
@@ -54,15 +57,7 @@ struct SecureStagingScreen: View {
         }
         .background(background.ignoresSafeArea()).foregroundStyle(SecureTheme.text).tint(blue).preferredColorScheme(.light)
         #if GRADECREW_STAGING
-        .sheet(isPresented:$showPupilAccess) { SecurePupilAccessView(renewing:model.canRenewPersonal) { launch in
-            if model.canRenewPersonal {
-                let problem=model.renewPersonalSession(launch)
-                if problem == nil {showPupilAccess=false;Task {await model.startOrRecover()}}
-                return problem
-            }
-            if await model.preparePersonal(launch) { showPupilAccess=false;confirmStart=true;return nil }
-            return model.message.isEmpty ? "Bitte zuerst den gespeicherten Versuch fortsetzen." : model.message
-        } }
+        .sheet(isPresented:$showPupilAccess) { SecurePupilAccessView(renewing:model.canRenewPersonal,onSelect:selectPersonal) }
         .onOpenURL { url in if url.scheme=="gradecrew-secure",url.host=="student",model.phase == .code { showPupilAccess=true } }
         #endif
         .alert("Hinweis der Lehrkraft",isPresented:Binding(get:{model.resumeNotice != nil},set:{_ in})) {
@@ -80,6 +75,29 @@ struct SecureStagingScreen: View {
             Button("Weiterarbeiten",role:.cancel) { model.cancelSubmitConfirmation() }
         }
     }
+    private var welcomeWidth:CGFloat {
+        #if GRADECREW_STAGING
+        return (model.phase == .code || model.phase == .identity) && !model.personalSelection ? 1080 : SecureTheme.formWidth
+        #else
+        return SecureTheme.formWidth
+        #endif
+    }
+    private var guestEntry:some View {
+        SecureEntryView(code:$model.code,name:$model.name,busy:model.busy,message:model.message) {
+            Task { await model.preflight(); if model.phase == .identity { confirmStart = true } }
+        }
+    }
+    #if GRADECREW_STAGING
+    private func selectPersonal(_ launch:SecureClassroomLaunch) async -> String? {
+        if model.canRenewPersonal {
+            let problem=model.renewPersonalSession(launch)
+            if problem == nil {showPupilAccess=false;Task {await model.startOrRecover()}}
+            return problem
+        }
+        if await model.preparePersonal(launch) {showPupilAccess=false;confirmStart=true;return nil}
+        return model.message.isEmpty ? "Bitte zuerst den gespeicherten Versuch fortsetzen." : model.message
+    }
+    #endif
     private var statusContent:some View {
         VStack(spacing:16) {
         if model.replacementReceipt != nil {

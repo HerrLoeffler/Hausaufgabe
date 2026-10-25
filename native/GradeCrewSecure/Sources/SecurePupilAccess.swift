@@ -47,29 +47,55 @@ struct SecurePupilAccessView:View {
  @StateObject private var pupil=SecurePupilAccessModel()
  @Environment(\.dismiss) private var dismiss
  var renewing=false
+ var embedded=false
  let onSelect:(SecureClassroomLaunch) async -> String?
- var body:some View {
-  NavigationStack {
-   ScrollView { VStack(alignment:.leading,spacing:20) {
-    if pupil.workspace != nil { workspaceContent } else { loginContent }
-    if !pupil.message.isEmpty { Text(pupil.message).foregroundStyle(.red) }
-    if pupil.busy { ProgressView() }
-   }.padding(24).frame(maxWidth:640).frame(maxWidth:.infinity) }
-   .simultaneousGesture(TapGesture().onEnded{pupil.noteActivity()})
-   .simultaneousGesture(DragGesture(minimumDistance:10).onChanged{_ in pupil.noteActivity()})
-   .background(SecureTheme.canvas).navigationTitle("Meine Tests")
-   .toolbar { ToolbarItem(placement:.topBarTrailing) { Button("Schließen") { dismiss() } } }
-   .task { await pupil.refresh();while !Task.isCancelled { try? await Task.sleep(for:.seconds(10));if !Task.isCancelled { await pupil.refresh() } } }
+ @ViewBuilder var body:some View {
+  Group {
+   if embedded {
+    panel.padding(24).background(SecureTheme.surface,in:RoundedRectangle(cornerRadius:24))
+   } else {
+    NavigationStack {
+     ScrollView { panel.padding(24).frame(maxWidth:640).frame(maxWidth:.infinity) }
+      .background(SecureTheme.canvas).navigationTitle("Meine Tests")
+      .toolbar { ToolbarItem(placement:.topBarTrailing) { Button("Schließen") { dismiss() } } }
+    }
+   }
   }
+  .task { await pupil.refresh();while !Task.isCancelled { try? await Task.sleep(for:.seconds(10));if !Task.isCancelled { await pupil.refresh() } } }
  }
+ private var panel:some View {
+  VStack(alignment:.leading,spacing:20) {
+   if pupil.workspace != nil { workspaceContent } else { loginContent }
+   if !pupil.message.isEmpty { Text(pupil.message).foregroundStyle(SecureTheme.errorText).fixedSize(horizontal:false,vertical:true) }
+   if pupil.busy { ProgressView() }
+  }
+  .frame(maxWidth:.infinity,alignment:.leading)
+  .simultaneousGesture(TapGesture().onEnded{pupil.noteActivity()})
+  .simultaneousGesture(DragGesture(minimumDistance:10).onChanged{_ in pupil.noteActivity()})
+ }
+ private var canLogin:Bool { !pupil.busy && !pupil.code.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty }
  private var loginContent:some View {
   VStack(alignment:.leading,spacing:20) {
-   Text("Dein persönlicher Schülerzugang").font(.title2.bold())
-   Text("Gib den achtstelligen Code von deiner Zugangskarte ein. Ein Testcode gehört in den bisherigen Testzugang.")
-   TextField("Persönlicher Schülercode",text:$pupil.code).textInputAutocapitalization(.characters).autocorrectionDisabled().textFieldStyle(.roundedBorder).privacySensitive()
+   Text(embedded ? "Du hast einen Account?" : "Dein persönlicher Schülerzugang").font(.title2.bold()).fixedSize(horizontal:false,vertical:true)
+   Text("Gib deinen persönlichen Code ein und öffne deine Tests.").fixedSize(horizontal:false,vertical:true)
+   VStack(alignment:.leading,spacing:8) {
+    Text("Persönlicher Schülercode").font(.headline)
+    TextField("Code von deiner Zugangskarte",text:$pupil.code).textInputAutocapitalization(.characters).autocorrectionDisabled()
+     .font(.title3).padding(.horizontal,14).padding(.vertical,12).frame(minHeight:52)
+     .background(SecureTheme.field,in:RoundedRectangle(cornerRadius:12))
+     .overlay(RoundedRectangle(cornerRadius:12).stroke(SecureTheme.border,lineWidth:1.5))
+     .accessibilityIdentifier("pupil.code").privacySensitive()
+     .submitLabel(.go).onSubmit { if !pupil.code.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty { Task { await pupil.login() } } }
+   }
    Picker("Dieses Gerät",selection:$pupil.deviceMode) { Text("Schulgerät / gemeinsam genutzt").tag("shared");Text("Mein Privatgerät").tag("personal") }.pickerStyle(.menu)
-   Text("Schulgerät: Nach 5 Minuten Pause ist der Schülerzugang gesperrt. Deine laufende Prüfung und gesicherten Antworten bleiben erhalten.").font(.footnote)
-   Button("Mit Schülercode anmelden") { Task { await pupil.login() } }.buttonStyle(.borderedProminent).disabled(pupil.busy||pupil.code.trimmingCharacters(in:.whitespacesAndNewlines).isEmpty)
+   Text("Auf Schulgeräten sperrt sich die Testübersicht nach 5 Minuten ohne Bedienung. Eine laufende Prüfung läuft weiter; deine Antworten bleiben erhalten.").font(.footnote).foregroundStyle(SecureTheme.secondaryText).fixedSize(horizontal:false,vertical:true)
+   Button { Task { await pupil.login() } } label: {
+    Text(pupil.busy ? "Anmeldung wird geprüft …" : "Mit Schülercode anmelden").font(.headline).fixedSize(horizontal:false,vertical:true)
+     .frame(maxWidth:.infinity,minHeight:52).padding(.horizontal,12).padding(.vertical,4)
+   }.buttonStyle(.plain).foregroundStyle(canLogin || pupil.busy ? SecureTheme.surface : SecureTheme.secondaryText)
+    .background(canLogin || pupil.busy ? SecureTheme.brand : SecureTheme.field,in:RoundedRectangle(cornerRadius:14))
+    .overlay(RoundedRectangle(cornerRadius:14).stroke(canLogin || pupil.busy ? SecureTheme.brand : SecureTheme.border,lineWidth:1))
+    .disabled(!canLogin)
   }
  }
  private var workspaceContent:some View {
@@ -99,7 +125,7 @@ struct SecurePupilAccessView:View {
     Button("Hinweis gelesen") {Task {await pupil.acknowledge(row)}}.disabled(pupil.busy)
    }
    if row["status"] as? String == "available" || (renewing && row["status"] as? String == "in_progress") {
-    Button(renewing ? "Diesen Zugang erneuern" : "Test öffnen") {Task {guard let launch=await pupil.currentLaunch(row) else{return};if let problem=await onSelect(launch) { pupil.message=problem } else { dismiss() } } }.buttonStyle(.borderedProminent)
+    Button(renewing ? "Diesen Zugang erneuern" : "Test öffnen") {Task {guard let launch=await pupil.currentLaunch(row) else{return};if let problem=await onSelect(launch) { pupil.message=problem } else if !embedded { dismiss() } } }.buttonStyle(.borderedProminent)
    }
    if row["status"] as? String == "in_progress" { Text("Bei einem gespeicherten Versuch: Schülerbereich schließen und auf diesem Gerät die Wiederaufnahme wählen. Falls der Versuch auf einem anderen Gerät begonnen wurde, bitte die Lehrkraft informieren.").font(.footnote) }
   }.padding().frame(maxWidth:.infinity,alignment:.leading).background(SecureTheme.surface,in:RoundedRectangle(cornerRadius:16))

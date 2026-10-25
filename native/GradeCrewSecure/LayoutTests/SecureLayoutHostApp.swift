@@ -3,7 +3,14 @@ import SwiftUI
     var body: some Scene {
         WindowGroup {
             if ProcessInfo.processInfo.arguments.contains("--secure-lifecycle-ui") { SecureLifecycleUIHost() }
-            else { Color.clear }
+            else {
+                #if GRADECREW_STAGING
+                if ProcessInfo.processInfo.arguments.contains("--secure-start-ui") { SecureLifecycleUIHost() }
+                else { Color.clear }
+                #else
+                Color.clear
+                #endif
+            }
         }
     }
 }
