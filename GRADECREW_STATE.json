@@ -2069,7 +2069,7 @@
       "human_teacher_acceptance": "pending",
       "physical_device_acceptance": "pending",
       "handoff": "workstreams/visual-pilot-24-20261025.md",
-      "next_action": "Delegated research PDF fully analyze and map to existing task catalog; prepare selection/generation contract and small pilot plan. No broad implementation/paid generation. Teacher/device review can continue in parallel.",
+      "next_action": "User tests real AI in localhost8784 laboratory; then continue queued research PDF and selection contract. No broad or duplicate paid generation.",
       "user_feedback_followup": {
         "at": "2026-10-25",
         "evidence_commit": "fda13a26d1c4b4cdeadd3689a1280cdd68beb765",
@@ -2089,6 +2089,30 @@
         "teacher_review": "local only:192task navigation, editable device drafts",
         "physical_touch": "pending",
         "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/fda13a26d1c4b4cdeadd3689a1280cdd68beb765/docs/evidence/visual-pilot-24-20261025/followup/REPORT.md"
+      },
+      "local_ai_laboratory": {
+        "date": "2026-10-25",
+        "scope": "localhost8784 only, existing isolated visual255 AI calls, no new cloud deployment",
+        "stage": "branch_only",
+        "evidence_commit": "a12ad7923c1a0144ed8a035d655b5b12d010646a",
+        "local_url": "http://127.0.0.1:8784/",
+        "real_generation": {
+          "questions": 9,
+          "points": 24,
+          "job_id": "8635d516530703b22ce3d4f805bd2b406e2377a2",
+          "browser_editor": "verified"
+        },
+        "real_whole_test_revision": {
+          "changed_questions": 9,
+          "points": 24,
+          "model": "gpt-5.6-luna",
+          "browser_saved": "verified"
+        },
+        "local_tests": 32,
+        "independent_review": "two recovery findings fixed with focused regression checks",
+        "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/a12ad7923c1a0144ed8a035d655b5b12d010646a/docs/evidence/local-prototype-ai-20261025/REPORT.md",
+        "production": "unchanged",
+        "physical_device_acceptance": "pending"
       }
     }
   ],
