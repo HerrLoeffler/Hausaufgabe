@@ -13,7 +13,7 @@ Nur Testprojekt `gradecrew-staging-2026`. Bestehender Lehrerlogin und ursprüngl
 
 ## Der vorbereitete neue Test
 
-Schule **SYSTEMTEST GradeCrew 2026**, Klasse **SYSTEMTEST 8b**, 24 fiktive Schüler. Der neue Test heißt **SYSTEMTEST · 24 Schüler · Secure 2026**, Testcode `66CCZ7JY`. Er wartet auf die Lehrkraft und hat absichtlich kein Zeitlimit, damit die Bereitstellung nicht vor dem Gerätetest abläuft.
+Schule **SYSTEMTEST GradeCrew 2026**, Klasse **SYSTEMTEST 8b**, 24 fiktive Schüler. Der neue Test heißt **SYSTEMTEST · 24 Schüler · Secure 2026**, Testcode `66CCZ7JY`. Beim letzten lesenden Check am 25.10. lief diese Runde bereits ohne Zeitlimit. Für einen erneuten Test des gemeinsamen Starts eine frische Runde veröffentlichen und der Klasse zuweisen; laufende Versuche und Antworten nicht zurücksetzen.
 
 **Wichtig:** Dieser Testcode ist kein persönlicher Schülercode. Zum persönlichen Zugang den achtstelligen Code der Zugangskarte von **Test Eins** verwenden. Codes gehören weder in Git noch in öffentliche Screenshots. Die Karte ist unter **Klassen → SYSTEMTEST 8b → Zugangskarten drucken** erreichbar; die Druckansichten sortieren nach Nachnamen.
 
