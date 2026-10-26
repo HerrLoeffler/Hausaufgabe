@@ -2223,10 +2223,10 @@
       "scope": "isolated visual255 preview only; canonical staging/school/Production unchanged",
       "branch": "test/visual-24-pilot-20261025",
       "pr": 296,
-      "evidence_commit": "021ef5c2d4bee1daa6d353635ae18f63bbe28c50",
+      "evidence_commit": "c3fb160be769cd939cf89d121d94f453f23ea6d3",
       "deployed_local_commit": "a396feedccf0d41ecf48c0e23e3e99d53e1cbf3a",
       "deployed_remote_tree": "62f9997587e35eeb0d69eed6d60e4176445d5fe5",
-      "preview_url": "https://gradecrew-staging-2026--visual255-rjcwf436.web.app/pilot24/",
+      "preview_url": "https://gradecrew-staging-2026--visual255-rjcwf436.web.app/aufgabenlabor/",
       "functions_codebases": [
         "visual255-ai",
         "visual255-assessment"
@@ -2253,7 +2253,7 @@
       "human_teacher_acceptance": "pending",
       "physical_device_acceptance": "pending",
       "handoff": "workstreams/visual-pilot-24-20261025.md",
-      "next_action": "Review local independent Dreisatz arrows and differentiation; reuse existing PR310 for normal test integration, no Production deployment.",
+      "next_action": "Martin uses the online lab and creates tasks in his existing authorized test account; record real content/usability feedback. Normal-test/Production integration remains separately owned.",
       "user_feedback_followup": {
         "at": "2026-10-25",
         "evidence_commit": "fda13a26d1c4b4cdeadd3689a1280cdd68beb765",
@@ -2374,6 +2374,54 @@
           "production": "unchanged",
           "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/5037935f3579ebb24d375a28833096975d9fd0e6/docs/evidence/local-prototype-ai-20261025/REPORT.md",
           "next": "Martin reviews local differentiation; existing PR310 owner handles normal-test integration"
+        },
+        "online_test_site": {
+          "date": "2026-10-26",
+          "stage": "staging_deployed",
+          "scope": "isolated visual255 preview only",
+          "url": "https://gradecrew-staging-2026--visual255-rjcwf436.web.app/aufgabenlabor/",
+          "teacher_url": "https://gradecrew-staging-2026--visual255-rjcwf436.web.app/",
+          "expires": "2026-11-25",
+          "hosting_local_commit": "f15d4feccf6a7067d4ba8af2f635cfc333977cd3",
+          "backend_local_commit": "499d2e681854fdb10f5366eb91c8f0622e0c4c97",
+          "evidence_commit": "c3fb160be769cd939cf89d121d94f453f23ea6d3",
+          "verified_hosting_files": 187,
+          "isolated_functions": 16,
+          "other_functions_source_hashes_unchanged": 64,
+          "actual_ai_tests": [
+            {
+              "code": "9PL3CW7L",
+              "job": "bed3dabdb8e56beb5b269dd438fe2acc0e0fed06",
+              "questions": 2,
+              "points": 7
+            },
+            {
+              "code": "HB7Y9W72",
+              "job": "332b2ba3f4f3a6759738fb15fafdb7c0e5e1127c",
+              "questions": 8,
+              "points": 16
+            },
+            {
+              "code": "K8WKRD3G",
+              "job": "67b8447b01cbffcd5712757d0933d98145b0bf48",
+              "questions": 4,
+              "points": 8
+            }
+          ],
+          "server_cases": 9,
+          "resume_and_idempotence": true,
+          "browser": "real authenticated edit/save/reload; real direct student submission6.5/7withonewrongoperator;solutionslocked",
+          "tests": {
+            "focused": 107,
+            "backend": 387,
+            "note": "overlap;do not add"
+          },
+          "old24links_preserved": true,
+          "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/c3fb160be769cd939cf89d121d94f453f23ea6d3/docs/evidence/online-visual-lab-20261026/REPORT.md",
+          "normal_staging_production_rules": "unchanged",
+          "human_acceptance": "pending",
+          "physical_touch_acceptance": "pending",
+          "live_emmi_request": "not_performed"
         }
       }
     },
