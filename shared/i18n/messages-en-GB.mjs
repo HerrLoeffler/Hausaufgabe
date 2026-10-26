@@ -447,6 +447,8 @@ export const enGBMessages = Object.freeze({
     "Ergebnisse": "Results",
     "Bearbeiten": "Edit",
     "Schülerlink": "Student link",
+    "Durchführung öffnen": "Open live session",
+    "Kein Limit": "No limit",
     "Minuten": "Minutes",
     "Beenden": "End",
     "Veröffentlichung umschalten": "Toggle publication",
