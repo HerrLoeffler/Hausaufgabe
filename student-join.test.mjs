@@ -10,6 +10,7 @@ const source=fs.readFileSync('secure-student.js','utf8').replace(/^import .*;\n/
 function runtime(t,search='',api={}){
  const dom=new JSDOM(html,{url:'https://gradecrew.de/secure-student.html'+search});t.after(()=>dom.window.close());
  const w=dom.window, calls=[];
+ w.localStorage.setItem("firebase:authUser:teacher","synthetic-teacher-session");
  // A real DOM with transport-only doubles; no Firebase auth or data APIs supplied.
  const location={search,href:'https://gradecrew.de/secure-student.html'+search,reload(){calls.push('reload')}};
  const context={document:w.document,location,URL,URLSearchParams,navigator:{onLine:true},initializeApp:()=>({}),firebaseConfig:{},createSecureAssessmentClient:()=>({getInfo:async code=>{calls.push(code);throw new Error('synthetic unavailable')},...api}),addEventListener:()=>{},setInterval:()=>1,clearInterval(){},console};
@@ -24,7 +25,7 @@ test('both homepage student links use the isolated current browser route',()=>{
  assert.ok(d.querySelector('.public-links a[data-i18n="studentEntry"]'));
 });
 test('code-free pupil entry stays public and never touches an existing teacher session',async t=>{
- const r=runtime(t);r.w.localStorage.setItem('firebase:authUser:teacher','synthetic-teacher-session');await flush();
+ const r=runtime(t);await flush();
  assert.equal(r.d.getElementById('secureJoin').classList.contains('hidden'),false);
  assert.equal(r.d.getElementById('secureError').classList.contains('hidden'),true);
  assert.deepEqual(r.calls,[]);
@@ -53,4 +54,11 @@ test('a failed request preserves the alias in the existing attempt record for re
  vm.createContext(ctx);vm.runInContext(fs.readFileSync('secure-assessment-client.js','utf8').replace(/^import .*;\n/gm,'').replace('export function createSecureAssessmentClient','function createSecureAssessmentClient')+'\nthis.client=createSecureAssessmentClient({});',ctx);
  await assert.rejects(()=>ctx.client.start('AB12CD34','SYN-03'));
  assert.equal(ctx.client.readSession('AB12CD34').studentName,'SYN-03');assert.equal(ctx.client.readSession('OTHER123'),null);assert.equal(store.get('firebase:authUser:teacher'),'unchanged');
+});
+test('the old workspace route actually selects teacher dashboard when authenticated and auth surface otherwise',async()=>{
+ const app=fs.readFileSync('app.js','utf8');const start=app.indexOf('  const params = new URLSearchParams(location.search);',app.indexOf('onAuthStateChanged(auth'));
+ const end=app.indexOf('// ---------- Dashboard ----------',start);const body=app.slice(start,end).replace(/\}\);\s*$/,'');
+ for(const user of [null,{uid:'synthetic-teacher'}]){
+  const seen=[];const ctx={URLSearchParams,location:{search:''},normalizeTemplateCode:()=>'',sessionStorage:{getItem:()=>null},PENDING_TEMPLATE_KEY:'unused',$:()=>null,loadDashboard:async()=>seen.push('dashboard'),showView:view=>seen.push(view),user};vm.createContext(ctx);await vm.runInContext('(async(user)=>{'+body+'})(user)',ctx);assert.deepEqual(seen,[user?'dashboard':'authView']);
+ }
 });
