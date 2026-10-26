@@ -1281,7 +1281,7 @@
       "staging": "gradecrew-staging-2026_only",
       "user_test": "user_confirmed_classes_visible;executor_real_teacher_LIVE_results_return_and_wide_grading_verified;physical_AAC_pending",
       "handoff": "workstreams/classroom-student-management-v1.md",
-      "next_action": "Confirm obsolete own2026run40405595287 cancelled, observe newLivecandidate40408087983, inspect exact selected project/sign/upload and Apple availability before device acceptance. Do not touch other TestApp40402049037. No web/backend deployment.",
+      "next_action": "Observe Live candidate40408087983 fourgates/sign/upload and Apple availability, then physical normal test. Oldown2026candidate40405595287cancelledconfirmed;no26upload. OtherTestApp40402049037untouched. No web/backend publication.",
       "deployment_evidence": {
         "project": "gradecrew-staging-2026",
         "hosting_source": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d",
@@ -1300,7 +1300,7 @@
           "source": "6f678263312cb295df3065c2e527f30e1994876c",
           "run_id": 40408087983,
           "run_number": 27,
-          "status": "pending",
+          "status": "queued",
           "uploaded": false,
           "release_target": "live",
           "firebase_project": "hausaufgabe-staging",
@@ -1373,7 +1373,7 @@
         "obsolete_2026_footer_candidate": {
           "source": "630236ad0b96af751a4a5151ba988076d1c2fb68",
           "run_id": 40405595287,
-          "status": "cancellation_requested_GitHub_UI_success;API_in_progress_until_confirmed",
+          "status": "completed_cancelled_confirmed",
           "reason": "Human changes regular app target back to gradecrew.de",
           "uploaded": false
         },
