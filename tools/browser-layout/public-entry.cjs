@@ -49,7 +49,7 @@ try{for(const [name,engine] of Object.entries({chromium,webkit})){
   await page.setViewportSize({width,height:width===2560?1316:900});
   await page.goto(url+'/workspace.html?intent='+intent);
   assert.equal(await page.locator('#authView > [hidden]').evaluate(e=>getComputedStyle(e).visibility),'hidden','cold paint guard');
-  assert.equal(await page.locator('#authView > [role=status]').isVisible(),true,'neutral loader stays available');
+  assert.equal(await page.locator('#authView > [role=status]').isVisible(),true,'neutral loader stays available');assert.equal(await page.locator('body > .topbar').isVisible(),false,'native header cannot flash before the shared frame');
   await page.evaluate(async()=>{const m=await import('/gradecrew-entry-flow.js');m.installGradeCrewEntryFlow();});
   assert.equal(await page.locator('#gcEntryStart').isVisible(),false,'retired hero must never appear behind an account screen');
   const section=page.locator('#gcEntry'+intent[0].toUpperCase()+intent.slice(1));
