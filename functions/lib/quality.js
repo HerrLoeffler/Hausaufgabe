@@ -1,6 +1,7 @@
 "use strict";
 
 const { validateAndRepairTest } = require("./repair-test");
+const { validateTest } = require("./validation");
 
 const MEMORY_VERSION = 3;
 
@@ -352,7 +353,16 @@ function questionForReview(q, index) {
   if (q.type === "text") { answerKey.acceptedAnswers = q.acceptedAnswers || []; answerKey.manualReview = Boolean(q.manualReview); }
   if (q.type === "visual") {
     const visual = require("./visual-task");
-    const task = visual.parseVisualTask(q.visualTask, { points: q.points });
+    let task;
+    try { task = visual.parseVisualTask(q.visualTask, { points: q.points }); }
+    catch {
+      // Keep local contract failures distinguishable from provider failures
+      // without logging the private task, answer key or parser input.
+      const error = new Error("Visuelle Aufgabe kann vor der Strukturreparatur nicht fachlich geprüft werden.");
+      error.code = "quality-review-invalid-visual";
+      error.diagnostic = { code: error.code, questionPosition: index + 1 };
+      throw error;
+    }
     studentView.visualTask = visual.core.publicTask(task);
     answerKey.visualTask = task;
   }
@@ -448,6 +458,12 @@ async function reviewAndRepairTest(test, options, { review, generateQuestion, re
     replaced += repaired.replaced;
     questionAttempts += repaired.questionAttempts;
     if (repaired.errors.length) {
+      // Full regeneration may leave a structurally invalid visual task. Its
+      // review projection cannot be built safely; keep the concrete validation
+      // errors so the caller rejects this draft instead of masking them as a
+      // provider failure. No unreviewed draft is released by this path.
+      const hardErrors = validateTest(draft, options);
+      if (hardErrors.length) return { test: draft, errors: hardErrors, issues: [], reviewPasses, replaced, questionAttempts };
       // A partial repair can replace some tasks. Old indices/texts must never
       // become warnings on the new content: independently review that draft.
       const remaining = normalizeReviewIssues(await review(draft), draft);

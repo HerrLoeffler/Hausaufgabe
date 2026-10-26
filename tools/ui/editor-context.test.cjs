@@ -65,6 +65,7 @@ return {id:f.name,storagePath:'aiUploads/teacher/'+f.name,mimeType:f.type,name:f
 }};
 w.$('aiMaterialConfirmed').checked=true;
 w.eval(fn('handleAiMaterialFiles'));
+w.eval(fs.readFileSync(require('node:path').join(__dirname,'../../interactive-task-authoring.mjs'),'utf8').replace(/^export /gm,''));
 w.eval(fn('collectAiRequest'));
 return w;
 }

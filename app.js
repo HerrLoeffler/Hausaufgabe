@@ -1,3 +1,5 @@
+import { chooseVisualFormat } from "./visual-format-choice.mjs";
+const visualConversions = new WeakSet();
 import { collectInteractiveFormats, resetInteractiveFormatChoices, syncInteractiveFormatChoices } from "./interactive-task-authoring.mjs";
 let extendedPreview = false;
 let extendedVariant = 1;
@@ -3745,7 +3747,7 @@ function newQuestion(type = "single", needsFirestoreId = true) {
 }
 
 function initializeTypeData(q, type) {
-  if (type === "visual" && !q.visualTask) { const task = globalThis.GC2.example("grid"); task.maxPoints = Number(q.points) || 1; q.visualTask = JSON.stringify(task); q.text ||= task.prompt; }
+  // An empty visual task is completed through the explicit AI format dialog.
   q.points = Math.max(0.5, round1(Number(q.points) || (type === "multi" ? 2 : 1)));
   if (["single", "multi", "dropdown"].includes(type)) {
     q.options = q.options?.length ? q.options : [{ text: "", correct: true }, { text: "", correct: false }];
@@ -4450,8 +4452,31 @@ function handleVariantKept(event) {
   renderQuestions();
 }
 
+async function requestVisualFormatChange(q, index, initialFormat = "grid") {
+  if (visualConversions.has(q) || q._typeChanging || !state.questions.includes(q)) return;
+  if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst.", "error");
+  if (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(state.currentQuiz?.id)) return toast("In deinen eigenen Tests passt Emmi das Format mit KI an.");
+  const target = { quizId: state.currentQuiz?.id, uid: tourUid(), reviewKey: questionReviewKey(q) };
+  visualConversions.add(q);
+  try {
+    const choice = await chooseVisualFormat({ initialFormat });
+    if (!choice) return;
+    if (target.quizId !== state.currentQuiz?.id || target.uid !== tourUid() || !state.questions.includes(q) || target.reviewKey !== questionReviewKey(q)) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
+    index = state.questions.indexOf(q);
+    const snapshot = deepClone(q); delete snapshot._typeVersions; delete snapshot._aiUndo; delete snapshot._typeChanging;
+    const versions = { ...(q._typeVersions || {}), [q.type]: snapshot };
+    const next = await regenerateQuestionWithAi(q, index, {
+      targetType: "visual", expectedVisualFormat: choice.format,
+      instruction: `Passe diese Aufgabe fachlich an das visuelle Format ${choice.format} an. Erhalte Lernziel, Testsprache und fachlichen Inhalt; nutze keine fachfremde Beispielaufgabe. Erstelle einen vollständigen Arbeitsauftrag, passende Darstellung und korrekte Lösung. Gewünschter Inhalt: ${choice.wish || "den vorhandenen Inhalt passend visualisieren"}.`
+    });
+    if (next && target.quizId === state.currentQuiz?.id && target.uid === tourUid() && state.questions.includes(next)) { next._typeVersions = versions; markDirty(); }
+    return next;
+  } finally { visualConversions.delete(q); renderQuestions(); }
+}
+
 async function changeQuestionType(q, index, targetType) {
   if (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(state.currentQuiz?.id)) return toast("Die Einführung nutzt vorbereitete Aufgaben. In deinen eigenen Tests passt Emmi den Typ mit KI an.");
+  if (targetType === "visual") return requestVisualFormatChange(q, index);
   if (q._typeChanging || q.type === targetType || !QUESTION_TYPES.some(([type]) => type === targetType)) return;
   if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst.", "error");
   if (!state.questions.includes(q)) return;
@@ -4475,7 +4500,7 @@ async function changeQuestionType(q, index, targetType) {
   } finally { delete q._typeChanging; renderQuestions(); }
 }
 
-async function regenerateQuestionWithAi(q, index, { instruction = "", variant = false, panel = null, requireDifferent = false, targetType = null } = {}) {
+async function regenerateQuestionWithAi(q, index, { instruction = "", variant = false, panel = null, requireDifferent = false, targetType = null, expectedVisualFormat = null } = {}) {
   if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst.", "error");
   if (!variant && !instruction) return toast("Bitte kurz beschreiben, was geändert werden soll.", "error");
   if (variant && state.questions.length >= 100) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
@@ -4485,10 +4510,12 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
   const old = deepClone(q); delete old._typeChanging; const card = panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
   card?.classList.add("questionAiBusy");
   try {
-    const response = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(target.quizId)) ? crewTour.preparedResponse(q, {variant}) : await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, targetType, testContext: questionContext(index), allowedTypes: targetType ? [targetType] : QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: false, materials: [] });
+    const response = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(target.quizId)) ? crewTour.preparedResponse(q, {variant}) : await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, targetType, ...(expectedVisualFormat ? { allowedVisualFormats: [expectedVisualFormat] } : {}), testContext: questionContext(index), allowedTypes: targetType ? [targetType] : QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: false, materials: [] });
     if (editorQuestionIndex(state, target) < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
     const report = { warnings: [], repairs: [] }; const next = normalizeImportedQuestion(response.question, index, report);
     if (targetType && next.type !== targetType) throw new Error("Die KI hat den gewünschten Aufgabentyp nicht erzeugt. Die bisherige Aufgabe bleibt erhalten.");
+    if (expectedVisualFormat && (next.type !== "visual" || JSON.parse(next.visualTask).format !== expectedVisualFormat)) throw new Error("Die KI hat das gewünschte visuelle Format nicht erzeugt. Die bisherige Aufgabe bleibt erhalten.");
+    if (expectedVisualFormat) { next.points = q.points; next.visualTask = normalizeVisualTask(next); }
     next.aiOrigin = { kind: variant ? "variant" : "regenerated", model: String(response?.meta?.model || q.aiOrigin?.model || ""), promptVersion: String(response?.meta?.promptVersion || q.aiOrigin?.promptVersion || "") };
     next.id = variant ? guestTourRepo ? `tour-edit-variant-${Date.now()}` : doc(collection(db, "quizzes", target.quizId, "questions")).id : q.id;
     next.position = variant ? index + 2 : q.position;
@@ -5686,7 +5713,7 @@ function renderGapColorEditor(container, q) {
 
 function renderAnswerEditor(container, q) {
   container.innerHTML = "";
-  if (q.type === "visual") { renderVisualEditor(container, q, refresh => { markDirty(); if (refresh) renderQuestions(); }); return; }
+  if (q.type === "visual") { renderVisualEditor(container, q, refresh => { markDirty(); if (refresh) renderQuestions(); }, { onFormatChange: format => requestVisualFormatChange(q, state.questions.indexOf(q), format) }); return; }
 
   if (["single", "multi", "dropdown"].includes(q.type)) {
     const info = document.createElement("p");
