@@ -418,3 +418,13 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 
 /* One shared feedback/removal control keeps both symbols readable. */
 .questionActions .aiFeedbackBad.deleteQuestion { width: auto; min-width: 72px; white-space: nowrap; }
+
+/* Scoped media editor controls: normal document flow and reachable touch targets. */
+.questionImageEditor .generateContextQuestionImage,.questionImageEditor .undoAiQuestionImage{min-height:44px;max-width:100%;white-space:normal;text-align:left}
+.imageGenerationNotice{display:block;color:#475467;line-height:1.5;margin:6px 0 10px;max-width:70ch}
+.questionAudioEditor .questionAudioSource{min-height:44px;max-width:100%;width:100%}
+.questionAudioEditor .questionAudioVisibility{margin:0;color:#344054;font-size:13px;line-height:1.5}
+.questionAudioEditor .questionAudioActions .miniButton,.questionAudioEditor .questionAudioEdit>summary,.questionAudioEditor .answerAudioPanel>summary{min-height:44px;box-sizing:border-box}
+.questionImageEditor button:focus-visible,.questionAudioEditor :is(button,select,textarea,summary):focus-visible{outline:3px solid #285ac9;outline-offset:3px}
+.questionAudioEditor .questionAudioScript[readonly]{background:#f2f5fa;color:#344054}
+@media(max-width:620px){.questionAudioEditor .questionAudioActions>.miniButton{width:100%}.questionImageEditor>.generateContextQuestionImage{width:100%}}

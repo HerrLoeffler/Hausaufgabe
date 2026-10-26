@@ -25,6 +25,7 @@ const { purgeExpiredMaterials } = require("./lib/purge-materials");
 const { getOpenAI } = require("./lib/openai-client");
 const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
 const { createVerifiedMedia } = require("./lib/media-flow");
+const { runMediaOperation } = require("./lib/media-operation");
 const { createAudioAsset } = require("./lib/audio-flow");
 const { classifyAiFailure } = require("./lib/ai-errors");
 const { normalizeRightsReport } = require("./lib/rights-report");
@@ -804,22 +805,31 @@ exports.generateQuestionAudio = onCall(callableOpts, async request => {
 exports.generateQuestionMedia = onCall(callableOpts, async request => {
   if (request.data?.purpose === "option") throw new HttpsError("invalid-argument", "Die KI erzeugt keine Antwortbilder mehr.");
   const { uid } = await requireAiUser(request).catch(err => { throw reportAiError(err, "image-access"); });
-  const quizId = String(request.data?.quizId || ""); const questionId = String(request.data?.questionId || "");
+  if (request.data?.requesterUid && request.data.requesterUid !== uid) throw new HttpsError("failed-precondition", "Das Konto wurde geändert. Bitte den Bildauftrag im ursprünglichen Konto prüfen.");
+  const quizId = String(request.data?.quizId || ""), questionId = String(request.data?.questionId || "");
   if (!/^[A-Z0-9_-]{4,40}$/i.test(quizId) || !/^[A-Z0-9_-]{4,80}$/i.test(questionId)) throw new HttpsError("invalid-argument", "Ungültige Test- oder Aufgaben-ID.");
-  const prompt = String(request.data?.prompt || "").slice(0, 3000); if (!prompt) throw new HttpsError("invalid-argument", "Bildbeschreibung fehlt.");
-  const maxBytes = 280 * 1024;
-  const expectedScene = String(request.data?.expectedScene || "").slice(0, 400);
+  const db = getFirestore();
+  const quizSnap = await db.collection("quizzes").doc(quizId).get();
+  const quiz = quizSnap.data();
+  if (!quizSnap.exists || quiz?.ownerId !== uid || quiz?.rightsHold) throw new HttpsError("permission-denied", "Auf diesen Test kann nicht zugegriffen werden.");
+  if (quiz.published === true && quiz.ended !== true) throw new HttpsError("failed-precondition", "Bilder können während eines laufenden veröffentlichten Tests nicht verändert werden.");
+  const operationId = String(request.data?.operationId || "");
+  const recoverOnly = request.data?.recoverOnly === true;
+  const prompt = String(request.data?.prompt || "").trim().slice(0, 3000);
+  if (!recoverOnly && !prompt) throw new HttpsError("invalid-argument", "Bildbeschreibung fehlt.");
+  if (recoverOnly && !operationId) throw new HttpsError("invalid-argument", "Bildauftrags-ID fehlt.");
+  const input = { uid, quizId, questionId, prompt, expectedScene: String(request.data?.expectedScene || "").slice(0, 400), question: request.data?.question || {}, testContext: request.data?.testContext || {}, questionText: String(request.data?.question?.text || ""), altText: "Abbildung zur Aufgabe", maxBytes: 280 * 1024 };
   try {
-    return await createVerifiedMedia({ uid, questionId, prompt, expectedScene, question: request.data?.question || {}, testContext: request.data?.testContext || {}, questionText: String(request.data?.question?.text || ""), altText: String(request.data?.altText || "").slice(0, 500), maxBytes });
+    if (operationId) return await runMediaOperation({ db, uid, operationId, scope: { quizId, questionId }, request: recoverOnly ? null : input }, createVerifiedMedia);
+    // Compatibility for older deployed clients; new editor always supplies an ID.
+    return await createVerifiedMedia(input);
   } catch (err) {
-    err.diagnostic = { ...err.diagnostic, question: questionSnapshot(request.data?.question || {}),
-      optionPosition: Number(request.data?.optionPosition) || null };
-    if (err?.code === "image-mismatch") {
-      throw reportAiError(new HttpsError("failed-precondition", `${err.message} Bitte erneut versuchen.`, {
-        reason: String(err.lastIssue || "").slice(0, 180), diagnostic: err.diagnostic
-      }), "image-review");
+    if (err.details?.mediaState) {
+      const code = ["invalid-argument", "not-found", "permission-denied", "failed-precondition", "aborted", "resource-exhausted"].includes(err.code) ? err.code : "unavailable";
+      throw reportAiError(new HttpsError(code, err.message, { operationId, mediaState: err.details.mediaState }), "image-operation");
     }
-    if (err instanceof HttpsError) throw reportAiError(err, "image-generation-or-review");
+    err.diagnostic = { ...err.diagnostic, question: questionSnapshot(request.data?.question || {}) };
+    if (err?.code === "image-mismatch") throw reportAiError(new HttpsError("failed-precondition", `${err.message} Bitte erneut versuchen.`, { reason: String(err.lastIssue || "").slice(0, 180), diagnostic: err.diagnostic }), "image-review");
     throw reportAiError(err, "image-generation-or-review");
   }
 });

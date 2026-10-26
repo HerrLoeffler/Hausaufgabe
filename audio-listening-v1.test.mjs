@@ -43,8 +43,8 @@ test("secure assessment sends audio but explicitly rejects transcript fields", (
 });
 
 test("audio UI is teacher-reviewable and student playback never autostarts", () => {
-  assert.match(app, /<details class="questionAudioEdit"><summary>Audio bearbeiten<\/summary>/);
-  assert.match(app, /Hörtext <small>privat · max\. 500 Zeichen/);
+  assert.match(app, /<details class="questionAudioEdit"><summary>Textquelle und Aufnahme bearbeiten<\/summary>/);
+  assert.match(app, /Sprechertext <small>nur für dich bearbeitbar · max\. 500 Zeichen/);
   assert.match(app, /audio\.controls = true/);
   assert.doesNotMatch(app, /\.autoplay\s*=\s*true|autoplay=/);
 });

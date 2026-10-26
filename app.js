@@ -4726,10 +4726,27 @@ function renderQuestionImageEditor(container, q) {
     remove.classList.add("dangerMini");
     actions.append(replace, shot, remove, file);
     container.appendChild(actions);
-    return;
   }
 
-  const open = makeMiniButton("+ Bild hinzufügen", () => {
+  const operation = imageEditorState().get(q);
+  let pending;
+  try { pending = sessionStorage.getItem(imageEditorKey(q)); } catch (_) { pending = null; }
+  const locked = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  const contextButton = makeMiniButton(pending ? "Bildergebnis prüfen" : getQuestionImageSrc(q) ? "Passendes Bild neu erstellen" : "Passendes Bild zur Aufgabe erstellen", () => generateAiImageForQuestion(q, container, { fromTask: true }));
+  contextButton.classList.add("generateContextQuestionImage");
+  contextButton.disabled = locked || Boolean(operation?.busy);
+  container.appendChild(contextButton);
+  const notice = document.createElement("small"); notice.className = "imageGenerationNotice"; notice.setAttribute("role", "status");
+  notice.textContent = operation?.busy ? "Bild wird erstellt. Die Aufgabe bleibt unverändert." : pending ? "Ein Bildauftrag ist gespeichert. Ergebnis prüfen startet keine neue Berechnung." : "KI-Illustration aus dieser Aufgabe. Frage und Antworten bleiben unverändert. Kostenpflichtig; keine personenbezogenen Angaben verwenden.";
+  container.appendChild(notice);
+  if (operation?.undo && operation.applied === imageEditorSnapshot(q)) {
+    const undo = makeMiniButton("Bildänderung rückgängig", () => {
+      if (state.currentQuiz?.published && !state.currentQuiz?.ended || operation.applied !== imageEditorSnapshot(q)) return;
+      restoreQuestionImage(q, operation.undo); operation.undo = null; markDirty(); renderQuestionImageEditor(container, q);
+    }); undo.classList.add("undoAiQuestionImage"); undo.disabled = locked; container.appendChild(undo);
+  }
+
+  const open = makeMiniButton(getQuestionImageSrc(q) ? "Andere Bildquelle wählen" : "+ Bild hinzufügen", () => {
     panel.classList.toggle("hidden");
     if (!panel.classList.contains("hidden")) panel.focus();
   });
@@ -4747,6 +4764,7 @@ function renderQuestionImageEditor(container, q) {
   file.className = "hidden";
   file.addEventListener("change", () => file.files?.[0] && uploadQuestionImage(file.files[0], q));
   actions.append(makeMiniButton("Datei auswählen", () => file.click()), makeMiniButton("Screenshot aufnehmen", () => captureScreenForQuestion(q)), file);
+  panel.querySelector(".generateAiQuestionImage").disabled = locked || Boolean(operation?.busy) || Boolean(pending);
   panel.querySelector(".generateAiQuestionImage")?.addEventListener("click", () => generateAiImageForQuestion(q, panel));
 
   ["dragenter", "dragover"].forEach((name) => panel.addEventListener(name, (e) => {
@@ -4773,39 +4791,86 @@ function renderQuestionImageEditor(container, q) {
   container.appendChild(panel);
 }
 
-async function generateAiImageForQuestion(q, panel) {
-  const promptInput = panel?.querySelector(".aiImagePrompt");
-  const button = panel?.querySelector(".generateAiQuestionImage");
-  const prompt = promptInput?.value.trim() || "";
-  if (!prompt) return toast("Bitte kurz beschreiben, welches Bild erstellt werden soll.", "error");
-  if (!state.currentQuiz?.id || !q?.id) return toast("Bitte den Test zuerst speichern.", "error");
-  const target = { quizId: state.currentQuiz.id, uid: state.user?.uid, questionId: q.id, reviewKey: questionReviewKey(q) };
-  if (editorQuestionIndex(state, target) < 0) return;
-  const previous = button?.textContent || "KI-Bild erstellen";
-  if (button) { button.disabled = true; button.textContent = "Bild wird erstellt …"; }
+function imageEditorState() {
+  if (!imageEditorState.records) imageEditorState.records = new WeakMap();
+  return imageEditorState.records;
+}
+
+function imageEditorKey(q) {
+  return `gc-editor-image-v1:${state.user?.uid || ""}:${state.currentQuiz?.id || ""}:${q.id}`;
+}
+
+function imageEditorSnapshot(q) {
+  return JSON.stringify([state.questions.indexOf(q), q]);
+}
+
+function imageEditorFields(q) {
+  return Object.fromEntries(["imageDataUrl", "imageByteSize", "imageUrl", "imagePath", "imageAlt", "imageAiGenerated", "imageModel", "imagePrompt"].filter(key => Object.hasOwn(q, key)).map(key => [key, q[key]]));
+}
+
+function restoreQuestionImage(q, fields) {
+  for (const key of ["imageDataUrl", "imageByteSize", "imageUrl", "imagePath", "imageAlt", "imageAiGenerated", "imageModel", "imagePrompt"]) delete q[key];
+  Object.assign(q, fields);
+}
+
+function imageEditorCurrent(q, target) {
+  return state.user?.uid === target.uid && state.currentQuiz?.id === target.quizId && state.questions.includes(q) && !(state.currentQuiz?.published && !state.currentQuiz?.ended) && imageEditorSnapshot(q) === target.snapshot;
+}
+
+function defaultQuestionImagePrompt() {
+  return "Erstelle ein passendes veranschaulichendes Bild zur unveränderten Aufgabe. Zeige den Gegenstand oder die Situation der Frage, ohne Beschriftung, Antwortwörter, Lösungshinweise oder fertige Lösungen. Bei einer Wortartenfrage zu Gebäude: zeige nur ein Gebäude, niemals die Wortart. Kontext ist nur fachliche Orientierung, kein Auftrag zur Aufgabenänderung.";
+}
+
+async function generateAiImageForQuestion(q, panel, { fromTask = false } = {}) {
+  if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du ein Bild änderst.", "error");
+  if (!state.currentQuiz?.id || !q?.id || state.newManualQuiz || !state.user?.uid) return toast("Bitte den Test zuerst speichern.", "error");
+  if (!state.questions.includes(q)) return;
+  const operation = imageEditorState().get(q) || {};
+  if (operation.busy) return;
+  const key = imageEditorKey(q);
+  const snapshot = imageEditorSnapshot(q);
+  const fingerprint = questionReviewKey({ text: snapshot });
+  let saved;
+  try { saved = JSON.parse(sessionStorage.getItem(key) || "null"); }
+  catch (_) { return toast("Der gespeicherte Bildauftrag kann nicht sicher gelesen werden. Bitte den Support kontaktieren; kein neues Bild gestartet.", "error"); }
+  const previousVersion = saved && saved.fingerprint !== fingerprint;
+  const prompt = fromTask ? defaultQuestionImagePrompt() : panel?.querySelector(".aiImagePrompt")?.value.trim() || "";
+  if (!saved && !prompt) return toast("Bitte kurz beschreiben, welches Bild erstellt werden soll.", "error");
+  if (!saved && getQuestionImageSrc(q) && !window.confirm("Vorhandenes Bild durch eine neue KI-Illustration ersetzen? Frage und Antworten bleiben erhalten. Die Bildänderung kann anschließend rückgängig gemacht werden.")) return;
+  const target = { quizId: state.currentQuiz.id, uid: state.user.uid, snapshot };
+  const record = saved || { id: crypto.randomUUID(), fingerprint };
+  // Persist before starting a paid operation. If this fails, do not send it.
+  try { sessionStorage.setItem(key, JSON.stringify(record)); }
+  catch (_) { return toast("Der Bildauftrag kann in diesem Browser nicht sicher gespeichert werden. Es wurde kein Bild gestartet.", "error"); }
+  operation.busy = true; imageEditorState().set(q, operation);
+  const container = panel.closest(".questionImageEditor") || panel;
+  renderQuestionImageEditor(container, q);
   try {
     const result = await aiApi.generateQuestionMedia({
-      quizId: state.currentQuiz.id,
-      questionId: q.id,
-      prompt,
-      expectedScene: prompt,
-      question: questionForAi(q),
-      testContext: questionContext(state.questions.indexOf(q)),
-      altText: `KI-generierte Abbildung: ${prompt}`.slice(0, 500)
+      quizId: target.quizId, questionId: q.id, requesterUid: target.uid, operationId: record.id, recoverOnly: Boolean(saved),
+      ...(!saved ? { prompt, expectedScene: prompt, question: questionForAi(q), testContext: questionContext(state.questions.indexOf(q)), altText: "Abbildung zur Aufgabe" } : {})
     });
     if (!result?.asset?.imageDataUrl) throw new Error("Die KI hat kein Bild zurückgegeben.");
-    if (editorQuestionIndex(state, target) < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Das Bild wurde nicht eingefügt.");
-    Object.assign(q, result.asset);
-    q.imageAlt = result.asset.imageAlt || `KI-generierte Abbildung: ${prompt}`.slice(0, 500);
-    markDirty();
-    const imageEditor = document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"] .questionImageEditor`);
-    if (imageEditor) renderQuestionImageEditor(imageEditor, q);
-    toast("KI-Bild eingefügt. Bitte kurz prüfen und den Test speichern.");
+    if (previousVersion) {
+      if (state.user?.uid === target.uid) sessionStorage.removeItem(key);
+      return toast("Das frühere Bildergebnis ist bestätigt und wurde verworfen, weil die Aufgabe geändert wurde. Für die neue Fassung kannst du jetzt ausdrücklich ein neues Bild erstellen.");
+    }
+    if (!imageEditorCurrent(q, target)) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Das Bild wurde nicht eingefügt; der Auftrag bleibt zur Prüfung gespeichert.");
+    operation.undo = imageEditorFields(q);
+    restoreQuestionImage(q, { ...imageEditorFields(result.asset), imageUrl: "", imagePath: "", imageAlt: result.asset.imageAlt || "Abbildung zur Aufgabe" });
+    operation.applied = imageEditorSnapshot(q);
+    sessionStorage.removeItem(key);
+    markDirty(); toast("KI-Bild eingefügt. Bitte prüfen und den Test speichern.");
   } catch (err) {
-    console.error(err);
-    showReportableError({ code: REPORTABLE_ERROR_CODES.aiEdit, message: aiFriendlyError(err, "KI-Bild konnte nicht erstellt werden."), error: err, action: "generate_editor_image", details: { questionType: q.type, promptLength: prompt.length } });
+    // Only a proven terminal failure permits an explicitly requested new attempt.
+    if (["failed", "expired"].includes(err?.details?.mediaState) && state.user?.uid === target.uid) sessionStorage.removeItem(key);
+    showReportableError({ code: REPORTABLE_ERROR_CODES.aiEdit, message: aiFriendlyError(err, "Bildergebnis noch nicht bestätigt. Ergebnis prüfen startet keine neue Berechnung."), error: err, action: "generate_editor_image", details: { questionType: q.type } });
   } finally {
-    if (button?.isConnected) { button.disabled = false; button.textContent = previous; }
+    operation.busy = false;
+    if (state.currentQuiz?.id === target.quizId && state.user?.uid === target.uid && state.questions.includes(q)) {
+      renderQuestionImageEditor(container, q);
+      container.querySelector(".undoAiQuestionImage, .generateContextQuestionImage")?.focus({ preventScroll: true });
+    }
   }
 }
 
@@ -5032,33 +5097,34 @@ function renderQuestionAudioEditor(container, q) {
   const hasAudio = Boolean(getQuestionAudioSrc(q));
   const hasScript = Boolean(String(q.audioScript || "").trim());
   const locked = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
-  const shortcuts = document.createElement("div");
-  shortcuts.className = "questionAudioQuickActions";
-  const speakTask = makeMiniButton("Frage vorlesen", () => generateAiAudioForQuestion(q, container, { fromTask: true }));
-  speakTask.classList.add("generateQuestionAudio");
-  speakTask.disabled = locked;
-  shortcuts.appendChild(speakTask);
-  if (questionHasAudioAnswerEntries(q)) {
-    const speakAnswers = makeMiniButton("Antworten als Höraufgabe", () => generateAiAnswerAudioForQuestion(q, container));
-    speakAnswers.classList.add("generateQuestionAnswerAudio");
-    speakAnswers.disabled = locked;
-    shortcuts.appendChild(speakAnswers);
-  }
   const details = document.createElement("section");
   details.className = "questionAudioPanel questionAudioMain";
   details.setAttribute("aria-label", "Audio zur Aufgabe");
-  details.innerHTML = `<div class="questionAudioHeading"><strong>Audio</strong><span class="questionAudioState">${hasAudio && !q.audioNeedsRegeneration ? "bereit" : hasScript ? "Audio erzeugen" : ""}</span></div>
+  details.innerHTML = `<div class="questionAudioHeading"><strong>Audio zur Aufgabe</strong><span class="questionAudioState">${hasAudio && !q.audioNeedsRegeneration ? "bereit" : hasScript ? "Audio erzeugen" : ""}</span></div>
     <div class="questionAudioBody">
       <div class="questionAudioPreview"></div>
       <small class="questionAudioInstructionWarning" role="status"></small>
-      <details class="questionAudioEdit"><summary>Audio bearbeiten</summary><div class="questionAudioEditBody">
-      <label class="stack compact"><span>Hörtext <small>privat · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="Text oder Dialog für die Aufnahme."></textarea></label>
+      <details class="questionAudioEdit"><summary>Textquelle und Aufnahme bearbeiten</summary><div class="questionAudioEditBody">
+      <label class="stack compact"><span>Textquelle für die Aufnahme</span><select class="questionAudioSource"><option value="task">Vorhandene Frage vertonen</option><option value="own">Eigenen Hörtext oder Dialog verwenden</option></select></label>
+      <p class="questionAudioVisibility"></p>
+      <label class="stack compact"><span>Sprechertext <small>nur für dich bearbeitbar · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="Text oder Dialog für die Aufnahme."></textarea></label>
       <div class="questionAudioActions"></div>
-      <small class="questionAudioDisclosure">Dieser Text bleibt für Schüler verborgen.</small>
+      <small class="questionAudioDisclosure">Schüler hören die Aufnahme. Den Sprechertext zeigen wir ihnen nicht zusätzlich an.</small>
       </div></details>
     </div>`;
   container.appendChild(details);
-  details.querySelector(".questionAudioEditBody").prepend(shortcuts);
+  const source = details.querySelector(".questionAudioSource");
+  source.value = hasScript || hasAudio ? "own" : "task";
+  source.disabled = locked;
+  const editing = details.querySelector(".questionAudioEdit");
+  editing.open = !hasAudio;
+  const visibility = details.querySelector(".questionAudioVisibility");
+  visibility.textContent = q.audioPresentation === "listening-only"
+    ? "Höraufgabe: Der Arbeitsauftrag im Feld Frage bleibt sichtbar. Den Hörtext gibt es für Schüler nur in der Aufnahme."
+    : "Die Frage bleibt für Schüler sichtbar. Die Aufnahme ergänzt die Aufgabe.";
+  if (typeof SECURE_AUDIO_PUBLICATION_ENABLED !== "undefined" && !SECURE_AUDIO_PUBLICATION_ENABLED && q.audioPresentation === "listening-only") {
+    visibility.textContent += " Dieser Hörmodus ist auf dieser Testumgebung noch nicht zur Veröffentlichung freigegeben.";
+  }
   const input = details.querySelector(".questionAudioScript");
   const instructionWarning = details.querySelector(".questionAudioInstructionWarning");
   const missingQuestion = q.audioPresentation === "listening-only" && !String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim();
@@ -5084,14 +5150,24 @@ function renderQuestionAudioEditor(container, q) {
     legacy.appendChild(copyInstruction);
     details.querySelector(".questionAudioEditBody").appendChild(legacy);
   }
-  input.value = String(q.audioScript || "");
+  const publicText = q.audioPresentation === "listening-only" ? String(q.audioInstruction ?? q.audioIntent?.instruction ?? "") : String(q.passage || q.text || "");
+  input.value = source.value === "task" ? publicText : String(q.audioScript || "");
+  input.readOnly = source.value === "task";
+  source.addEventListener("change", () => {
+    input.readOnly = source.value === "task";
+    input.value = source.value === "task" ? publicText : String(q.audioScript || "");
+    const generate = details.querySelector(".generateQuestionAudio");
+    if (generate) generate.disabled = locked || !input.value.trim();
+  });
   input.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
   input.addEventListener("input", event => {
     const next = String(event.target.value || "").slice(0, 500);
-    if (next === String(q.audioScript || "")) return;
+    if (source.value === "task" || next === String(q.audioScript || "")) return;
     cancelQuestionAudioOperation(q);
     q.audioScript = next;
-    q.audioNeedsRegeneration = Boolean(next);
+    q.audioNeedsRegeneration = Boolean(next) || hasAudio;
+    const generate = details.querySelector(".generateQuestionAudio");
+    if (generate) generate.disabled = locked || !next.trim();
     markDirty();
     const stateLabel = details.querySelector(".questionAudioState");
     if (stateLabel) stateLabel.textContent = next ? "Audio neu erzeugen" : "";
@@ -5120,9 +5196,9 @@ function renderQuestionAudioEditor(container, q) {
   }
 
   const actions = details.querySelector(".questionAudioActions");
-  const generate = makeMiniButton("Audio erzeugen", () => generateAiAudioForQuestion(q, container));
+  const generate = makeMiniButton(hasAudio ? "Aufgaben-Audio neu erzeugen" : "Aufgaben-Audio erzeugen", () => generateAiAudioForQuestion(q, container, { fromTask: source.value === "task", keepVisible: true, requireScript: source.value === "own" }));
   generate.classList.add("generateQuestionAudio");
-  generate.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
+  generate.disabled = locked || audioOperations().has(q) || !input.value.trim();
   actions.appendChild(generate);
   if (hasAudio || hasScript) {
     const remove = makeMiniButton("Audio entfernen", () => {
@@ -5141,8 +5217,13 @@ function renderQuestionAudioEditor(container, q) {
     const answerDetails = document.createElement("details");
     answerDetails.className = "questionAudioPanel answerAudioPanel";
     answerDetails.open = q.audioAnswerMode === "audio-only";
-    answerDetails.innerHTML = `<summary><span>🔊 Antwortmöglichkeiten vorlesen <small>(optional)</small></span><span class="questionAudioState">${q.audioAnswerMode === "audio-only" ? questionAnswerAudioReady(q) ? "bereit" : "Audio erzeugen" : ""}</span></summary><div class="questionAudioBody"><small>Die Antworttexte bleiben im Editor bearbeitbar. Schüler hören jede Auswahl einzeln; die richtigen Antworten bleiben verborgen.</small><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
+    answerDetails.innerHTML = `<summary><span>Antwortmöglichkeiten als Audio <small>(optional)</small></span><span class="questionAudioState">${q.audioAnswerMode === "audio-only" ? questionAnswerAudioReady(q) ? "bereit" : "Audio erzeugen" : ""}</span></summary><div class="questionAudioBody"><small>Schüler hören jede Antwortmöglichkeit einzeln. Die Antworttexte werden ihnen dabei nicht angezeigt; stattdessen sehen sie Antwortnummern. Hier bleiben die Texte bearbeitbar.</small><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
     container.appendChild(answerDetails);
+    if (typeof SECURE_AUDIO_PUBLICATION_ENABLED !== "undefined" && !SECURE_AUDIO_PUBLICATION_ENABLED) {
+      const gate = document.createElement("small"); gate.className = "aiInputError";
+      gate.textContent = "Antwortmöglichkeiten nur als Audio sind auf dieser Testumgebung noch nicht zur Veröffentlichung freigegeben.";
+      answerDetails.querySelector(".questionAudioBody").prepend(gate);
+    }
     const answerPreview = answerDetails.querySelector(".answerAudioPreview");
     questionAnswerAudioEntries(q).forEach((entry, index) => {
       const option = entry.asset || {};
@@ -5186,7 +5267,7 @@ function renderQuestionAudioEditor(container, q) {
       answerPreview.appendChild(row);
     });
     const answerActions = answerDetails.querySelector(".answerAudioActions");
-    const generateAnswers = makeMiniButton(q.audioAnswerMode === "audio-only" ? "Antwort-Audios neu erzeugen" : "Antwortmöglichkeiten vorlesen", () => generateAiAnswerAudioForQuestion(q, container));
+    const generateAnswers = makeMiniButton(q.audioAnswerMode === "audio-only" ? "Antwort-Audios neu erzeugen" : "Antwort-Audios erzeugen", () => generateAiAnswerAudioForQuestion(q, container));
     generateAnswers.classList.add("generateQuestionAnswerAudio");
     generateAnswers.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
     answerActions.appendChild(generateAnswers);
@@ -5274,7 +5355,7 @@ function renderQuestionAudioEditor(container, q) {
   }
 }
 
-async function generateAiAudioForQuestion(q, container, { fromTask = false } = {}) {
+async function generateAiAudioForQuestion(q, container, { fromTask = false, keepVisible = false, requireScript = false } = {}) {
   if (audioOperations().has(q)) return toast("Audio wird bereits erzeugt.");
   if (state.newManualQuiz) return toast("Bitte den neuen Test zuerst speichern. Danach kannst du KI-Audio erzeugen.", "error");
   if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Audio änderst.", "error");
@@ -5283,6 +5364,7 @@ async function generateAiAudioForQuestion(q, container, { fromTask = false } = {
   const originalPassage = String(q.passage || "");
   if (fromTask && !originalPublicQuestion) return toast("Die öffentliche Frage fehlt. Prüfe zuerst die ältere Fassung unter Audio bearbeiten.", "error");
   const originalScript = String(q.audioScript || "").replace(/\s+/g, " ").trim();
+  if (requireScript && !originalScript) return toast("Bitte einen eigenen Hörtext eintragen.", "error");
   const usesTaskText = fromTask || !originalScript;
   const script = fromTask && !q.passage ? originalPublicQuestion.replace(/\s+/g, " ").trim() : usesTaskText ? defaultQuestionAudioScript(q) : originalScript;
   if (!script) return toast("Die Aufgabe enthält noch keinen Text zum Vorlesen.", "error");
@@ -5303,7 +5385,7 @@ async function generateAiAudioForQuestion(q, container, { fromTask = false } = {
     if (operation.cancelled || !state.questions.includes(q) || state.currentQuiz?.id !== quizId || state.currentQuiz?.published && !state.currentQuiz?.ended || q.type !== questionType || String(q.audioScript || "").replace(/\s+/g, " ").trim() !== originalScript || q.audioPresentation !== originalPresentation || String(q.passage || "") !== originalPassage || (q.audioPresentation === "listening-only" ? String(q.audioInstruction ?? q.audioIntent?.instruction ?? "").trim() : String(q.text || "").trim()) !== originalPublicQuestion || !fromTask && usesTaskText && defaultQuestionAudioScript(q) !== script) return toast("Die Aufgabe wurde geändert oder geschlossen. Das Audio wurde nicht eingefügt.");
     Object.assign(q, result.asset);
     q.audioScript = script;
-    if (fromTask) {
+    if (fromTask && !keepVisible) {
       q.audioInstruction = originalPublicQuestion.slice(0, 1000);
       q.audioPresentation = q.passage || originalPublicQuestion.length > 1000 || ["gapfill", "markwords"].includes(q.type) ? "supplement" : "listening-only";
       const questionNode = container.closest(".questionCard");
