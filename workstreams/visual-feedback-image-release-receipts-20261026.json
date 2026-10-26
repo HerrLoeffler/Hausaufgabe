@@ -1,0 +1,77 @@
+{
+  "taskId": "GC-WEB-REPAIR-20261007",
+  "stage": "production",
+  "scope": "General feedback: select page region, automatic image preview, comment, send",
+  "origin": "https://gradecrew.de",
+  "project": "hausaufgabe-staging",
+  "baseline": "122c011cd5fba40a139be7a7426c49e400f93c82",
+  "source_commit": "3363841b0257f8d71017b9bdd58e7bed6d3a0857",
+  "tree": "1f99f5d9518da9ab7693a1096dfe8f5693f1f7d8",
+  "prs": [
+    326,
+    331
+  ],
+  "candidate": "d497ec51be759fc53ec5e6ac96c25fa9724a2585",
+  "ci": {
+    "run": 40408428810,
+    "jobs": [
+      121872110468,
+      121872110802
+    ],
+    "result": "success",
+    "merge_run": 40408719869,
+    "merge_status": "Node success; browser attempt1 failed reopening draft after reload; direct drag/render succeeded; fresh CUA reload restored image+text. One bounded browser retry requested to distinguish intermittent failure, original attempt retained.",
+    "merge_jobs": [
+      121873110478,
+      121873110904
+    ]
+  },
+  "verified_files": 206,
+  "verified_at": "2026-10-26T22:00:12.041Z",
+  "local_web_connector_tests": 611,
+  "independent_review": "bounded PASS on exact tree; three P2 reproduced and fixed; 19 reviewer tests and two boundary reproductions",
+  "browser": "Chromium/WebKit CI: drag, automatic selected pixel crop, comment, draft reload, offline retry, receipt, authorized private image read. CUA synthetic 150x80 selection, send and Admin read verified.",
+  "renderer": "vendored html2canvas1.4.1 MIT; local DOM raster, not guaranteed native screenshot pixel identity for every CSS feature",
+  "functions_rules_this_followup": "unchanged",
+  "previous_image_backend_release": {
+    "commit": "93df4eb03a3ea2a092c53b19c4a08e46b7ab8296",
+    "tree": "d89bfa251924098eac890b0db3637eef7aa98dc4",
+    "pr": 326,
+    "ci": [
+      40404565435,
+      40405242444
+    ],
+    "functions": [
+      "reviewMode",
+      "cleanupVisualFeedbackImages",
+      "purgeVisualFeedbackImagesOnAccountDeletion",
+      "purgeVisualFeedbackImageOnReportDeletion"
+    ],
+    "state": "all four deployed and ACTIVE",
+    "rules": "firestore.secure-assessment.rules compiled/released",
+    "storage_rules": "unchanged deny-all",
+    "image_retention_days": 90,
+    "orphan_retention_hours": 24,
+    "cleanup": "hourly; may delay after failure; reads expire at deadline",
+    "functions_attempts": [
+      {
+        "attempt": 1,
+        "result": "CLI stopped before upload/updates because deletion-trigger retry policy required acknowledgement"
+      },
+      {
+        "attempt": 2,
+        "result": "success; same four functions; force flag acknowledged idempotent retry policy only"
+      }
+    ],
+    "plugin": "two reviewed modules installed with backup; new image tool visible in fresh stdio process; current host catalog requires normal reload"
+  },
+  "rollback": {
+    "source": "122c011cd5fba40a139be7a7426c49e400f93c82",
+    "verified_files": 203
+  },
+  "private_production_image_smoke": "not performed; normal Admin connection only",
+  "physical_device_acceptance": "not performed",
+  "provider_calls": 0,
+  "legacy_project_changed": false,
+  "handoff": "workstreams/feedback-gc39-release-20261013.md"
+}
