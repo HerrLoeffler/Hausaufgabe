@@ -90,3 +90,12 @@ Nachweisstand: eigener PR296/Commit5037935f3579ebb24d375a28833096975d9fd0e6,65We
 ### Online-Nachweis der differenzierten Bausteine — 26.10.2026
 
 Derselbe Daten-/Hilfen-/Bewertungsvertrag wurde jetzt im getrennten [Online-KI-Labor](https://gradecrew-staging-2026--visual255-rjcwf436.web.app/aufgabenlabor/) tatsächlich von der bestehenden KI genutzt: direkter und umgekehrter Dreisatz, alle acht aktiven Formate und fächerübergreifende Tabellen/Koordinaten/Verbindungen, insgesamt14neueAufgaben. Richtige Zahlen erhalten weiter Punkte, wenn ein eigenständig bewertetes Rechenzeichen falsch ist; echter Browserbeleg6,5/7 statt7/7. Alle akzeptierten Varianten müssen dieselbe mathematische Beziehung erfüllen; nicht nur accepted[0] prüfen. Direkte Schülerlinks brauchen das explizite Layout unabhängig vom Lehrer-Laborflag. Originale KI-Ergebnisse und manuelle fachliche Ergänzungen getrennt dokumentieren. [Belege und Grenzen](https://github.com/HerrLoeffler/Hausaufgabe/blob/c3fb160be769cd939cf89d121d94f453f23ea6d3/docs/evidence/online-visual-lab-20261026/REPORT.md). Das ist ein technischer Erzeugungs-/Bedien-/Bewertungsnachweis, keine Unterrichtswirksamkeits- oder Productionfreigabe.
+
+
+### Echte KI Anpassung und große Testserien auf normalem Staging
+
+Ein bewusster Typ-/Unterformatwechsel fragt Format und optionalen Inhaltswunsch ab, bevor die bestehende KI startet. Beispiele erklären nur den Datenvertrag; sie ersetzen keine angeforderte neue Aufgabe. Original und Punkte bleiben bei Abbruch, Fehlern oder veralteten Ergebnissen erhalten. Zeichenvarianten der KI müssen auch nach einer Änderung der Hilfestufe weiter bearbeitbar sein.
+
+Eingabepräzision und sichtbares Raster getrennt begrenzen. Eine Prozent-/Preisachse darf viele erreichbare Eingabepositionen haben, während nur lesbare Hauptlinien gezeichnet werden. Strukturfehler vor Qualitätsprojektion melden, statt sie durch einen allgemeinen Folgefehler zu verdecken.
+
+Große Proben zusätzlich zu kleinen Vorführungen prüfen: echte Anzahl, Punktesumme, private Lösungen, Wiederaufnahme, doppelte Abgabe und feldweise Teilpunkte. Logische Aufträge, interne Providerrequests, Korrekturen und Laufzeit getrennt dokumentieren. Die jetzigen20/40-Proben mit60Aufgaben benötigten62interneProviderrequests und etwa6/14Minuten; daraus keine sofortige Erstellung oder allgemeine Lernwirksamkeit ableiten. Aktuelle Klassenraum- und Abgabelogik bei jeder Veröffentlichung tatsächlich erhalten. [Nachweis und Grenzen](../evidence/interactive-staging-repair-20261026/REPORT.md).

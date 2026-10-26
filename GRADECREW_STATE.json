@@ -77,7 +77,71 @@
         "functions": "18 selective updates;62 untouched",
         "user_test": "pending",
         "production": "excluded",
-        "later_hosting": "classroom22703241,212hashes;Remy204basefiles+18normalendpoints unchanged"
+        "later_hosting": "classroom22703241,212hashes;Remy204basefiles+18normalendpoints unchanged",
+        "stability_followup": {
+          "stage": "staging_deployed",
+          "scope": "normal gradecrew-staging-2026 only; Production excluded",
+          "pull_requests": [
+            320,
+            321
+          ],
+          "integration_commit": "4fe345c16d5778a93b077af4e775e7d3addbdb9e",
+          "ai_source": "f391040d10c54b69af33ef67c923d3f4b9c9bcdc",
+          "evidence_commit": "f4241d05995f2fbbd0d858d223de2daa3e8347a7",
+          "report": "docs/evidence/interactive-staging-repair-20261026/REPORT.md",
+          "formats": [
+            "hotspot",
+            "labeling",
+            "scale",
+            "angle",
+            "grid",
+            "connections",
+            "coordinate",
+            "table"
+          ],
+          "verification": {
+            "web_ui": 569,
+            "backend": 468,
+            "selective_functions": 18,
+            "other_functions_unchanged": 62,
+            "own_hosting_hashes": 215,
+            "later_hosting_hashes": 216,
+            "later_hosting_source": "aa62f3da1a7a1459fb8f485d43b746b5fb3ac93a",
+            "own_assets_and_picker_preserved": true,
+            "real_generation": [
+              {
+                "questions": 20,
+                "points": 60,
+                "quiz": "8LXU3NB8",
+                "job": "357e7b13ac4373f46f1901a68d1c882874b11a0d",
+                "seconds": 378,
+                "provider_requests": 20
+              },
+              {
+                "questions": 40,
+                "points": 100,
+                "quiz": "DHAXCRZP",
+                "job": "5bf34d1c809d907015e77817cd94f7c8894db1a4",
+                "seconds": 845,
+                "provider_requests": 42
+              }
+            ],
+            "real_UI_conversions": 2,
+            "server_points": [
+              60,
+              59.5,
+              0
+            ],
+            "resume_redaction_idempotence": true
+          },
+          "limitations": [
+            "large tests still6–14minutes and many repair calls; P1 optimization",
+            "exact original0602eab7trigger unproven",
+            "browser probe concurrently published; second save correctly blocked",
+            "teacher and physical-device acceptance pending"
+          ],
+          "production": "unchanged"
+        }
       }
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
@@ -800,7 +864,8 @@
         "backend_rules_accounts_changed": false,
         "live_browser": "2560 desktop scale verified; account Back and anonymous bare workspace return to root; retired scene display none; centered account heading; student Back clicked at390x844"
       }
-    }
+    },
+    "observedIntegrationHead": "4fe345c16d5778a93b077af4e775e7d3addbdb9e"
   },
   "production": {
     "project": "hausaufgabe-staging",
@@ -2587,7 +2652,7 @@
       "production": "unchanged",
       "teacher_acceptance": "pending",
       "physical_device_acceptance": "pending",
-      "next_action": "Martin tests normal Remy via canonical Staging login and creates subject/class-specific drafts. Keep local eight-format laboratory and visual255/remy26 history separate. No new preview required. Production remains excluded; future CI/deploy must preserve untargeted functions.",
+      "next_action": "Martin tests format/wish dialog on an unpublished draft; pre-create large presentation tests. Reduce repair count/latency without disabling validation; preserve current classroom Hosting/backend composition.",
       "historical_preview": {
         "preview_url": "https://gradecrew-staging-2026--remy26-mhohnhf1.web.app/workspace.html",
         "functions_codebases": [
@@ -2626,7 +2691,71 @@
       "integration_commit": "22fa3ec8cff23003e409c23c47a78323e3fa16f7",
       "canonical_url": "https://gradecrew-staging-2026.web.app/workspace.html",
       "deployed_source": "1cca66feba85bb94c931d1a41064cce16cbadd16",
-      "functions_selection": "12 normal AI +6 assessment lifecycle exports only;62 untargeted exports preserved"
+      "functions_selection": "12 normal AI +6 assessment lifecycle exports only;62 untargeted exports preserved",
+      "stability_followup_20261026": {
+        "stage": "staging_deployed",
+        "scope": "normal gradecrew-staging-2026 only; Production excluded",
+        "pull_requests": [
+          320,
+          321
+        ],
+        "integration_commit": "4fe345c16d5778a93b077af4e775e7d3addbdb9e",
+        "ai_source": "f391040d10c54b69af33ef67c923d3f4b9c9bcdc",
+        "evidence_commit": "f4241d05995f2fbbd0d858d223de2daa3e8347a7",
+        "report": "docs/evidence/interactive-staging-repair-20261026/REPORT.md",
+        "formats": [
+          "hotspot",
+          "labeling",
+          "scale",
+          "angle",
+          "grid",
+          "connections",
+          "coordinate",
+          "table"
+        ],
+        "verification": {
+          "web_ui": 569,
+          "backend": 468,
+          "selective_functions": 18,
+          "other_functions_unchanged": 62,
+          "own_hosting_hashes": 215,
+          "later_hosting_hashes": 216,
+          "later_hosting_source": "aa62f3da1a7a1459fb8f485d43b746b5fb3ac93a",
+          "own_assets_and_picker_preserved": true,
+          "real_generation": [
+            {
+              "questions": 20,
+              "points": 60,
+              "quiz": "8LXU3NB8",
+              "job": "357e7b13ac4373f46f1901a68d1c882874b11a0d",
+              "seconds": 378,
+              "provider_requests": 20
+            },
+            {
+              "questions": 40,
+              "points": 100,
+              "quiz": "DHAXCRZP",
+              "job": "5bf34d1c809d907015e77817cd94f7c8894db1a4",
+              "seconds": 845,
+              "provider_requests": 42
+            }
+          ],
+          "real_UI_conversions": 2,
+          "server_points": [
+            60,
+            59.5,
+            0
+          ],
+          "resume_redaction_idempotence": true
+        },
+        "limitations": [
+          "large tests still6–14minutes and many repair calls; P1 optimization",
+          "exact original0602eab7trigger unproven",
+          "browser probe concurrently published; second save correctly blocked",
+          "teacher and physical-device acceptance pending"
+        ],
+        "production": "unchanged"
+      }
     },
     {
       "id": "public-entry-release-20261026",

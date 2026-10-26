@@ -729,7 +729,10 @@
       "handoff": "workstreams/remy-interactive-tests-20261026.md",
       "relatedBranches": [
         "test/visual-24-pilot-20261025",
-        "feature/visual-prototype-ai-02-20261021"
+        "feature/visual-prototype-ai-02-20261021",
+        "fix/remy-visual-stability-20261026",
+        "fix/remy-classroom-preservation-20261026",
+        "docs/remy-stability-evidence-20261026"
       ]
     },
     {
