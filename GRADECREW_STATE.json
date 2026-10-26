@@ -2117,7 +2117,7 @@
       "human_teacher_acceptance": "pending",
       "physical_device_acceptance": "pending",
       "handoff": "workstreams/visual-pilot-24-20261025.md",
-      "next_action": "User tests real AI in localhost8784 laboratory; then continue queued research PDF and selection contract. No broad or duplicate paid generation.",
+      "next_action": "User reviews six multirow table examples and eight retained formats locally; then one small restricted AI probe, followed by queued research/selection concept. No mass generation.",
       "user_feedback_followup": {
         "at": "2026-10-25",
         "evidence_commit": "fda13a26d1c4b4cdeadd3689a1280cdd68beb765",
@@ -2160,7 +2160,38 @@
         "independent_review": "two recovery findings fixed with focused regression checks",
         "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/a12ad7923c1a0144ed8a035d655b5b12d010646a/docs/evidence/local-prototype-ai-20261025/REPORT.md",
         "production": "unchanged",
-        "physical_device_acceptance": "pending"
+        "physical_device_acceptance": "pending",
+        "reduced_scope": {
+          "date": "2026-10-26",
+          "source_commit": "2e540e2cff0e21a71c6e193d8032e153c6c268c3",
+          "scope": "localhost8784 only",
+          "allowed_formats": [
+            "hotspot",
+            "labeling",
+            "scale",
+            "angle",
+            "grid",
+            "connections",
+            "coordinate",
+            "table"
+          ],
+          "disabled_formats": [
+            "chart",
+            "evidence",
+            "range",
+            "correction"
+          ],
+          "source_pdf": "Prozentheft_Klasse_7_P_Dezimalzahl.pdf",
+          "pdf_pages": 8,
+          "table_examples": 6,
+          "points_per_cell": 0.5,
+          "local_tests": 50,
+          "browser": "eight-option menu and multirow table verified; prior drafts archived and recoverable",
+          "paid_provider_calls_this_change": 0,
+          "restricted_provider_probe": "pending",
+          "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/2e540e2cff0e21a71c6e193d8032e153c6c268c3/docs/evidence/local-prototype-ai-20261025/REPORT.md",
+          "production": "unchanged"
+        }
       }
     }
   ],
