@@ -173,5 +173,4 @@
 body{overflow:auto}.page{height:auto;min-height:100dvh;overflow:visible}
 .product-note{position:relative;z-index:6;max-width:960px;margin:10px auto 6px;padding:0 22px;color:#c6d9ec;text-align:center;font-size:11px;line-height:1.5}
 .public-links{position:relative;left:auto;bottom:auto;transform:none;justify-content:center;flex-wrap:wrap;white-space:normal;margin:0;padding:5px 16px 14px}
-@media(min-width:821px){.stage{height:calc(100dvh - 156px);min-height:480px}.showcase{max-height:calc(100dvh - 170px);min-height:400px}}
 @media(max-width:600px){.site-header{height:150px;grid-template-areas:"brand language" "login register" "student student";grid-template-rows:auto auto auto}.student-entry{grid-area:student;justify-self:stretch;min-height:40px;font-size:13px}.stage{height:calc(100dvh - 150px);min-height:500px}.product-note{font-size:11px}.public-links{font-size:11px;gap:14px}}
