@@ -110,6 +110,9 @@ jobs:
           node --check secure-assessment-teacher-polish.js
           node --check startup.js
 
+      - name: Test public teacher and student entries
+        run: node --test auth-brand-alignment.test.mjs student-join.test.mjs gradecrew-entry-bootstrap.test.mjs homepage-release.test.mjs auth-profile.test.cjs
+
       - name: Test shared internationalization boundary
         run: |
           node --check shared/i18n/i18n-core.mjs
@@ -294,3 +297,23 @@ jobs:
           grep -q 'secure-result-policy.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"
           grep -q 'gradecrew-staging-2026' "$BUILD_DIR/public/firebase-config.js"
+
+  public-layout:
+    name: Public entry layout (WebKit and Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - run: npm ci --prefix tools/browser-layout --no-audit --no-fund
+      - run: cd tools/browser-layout && npx playwright install --with-deps chromium webkit
+      - run: npm test --prefix tools/browser-layout
+        env:
+          GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-entry-layout
+          path: /tmp/gc-layout-evidence

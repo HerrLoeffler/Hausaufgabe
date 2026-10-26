@@ -147,7 +147,7 @@ export function createSecureAssessmentClient(firebaseApp) {
 
   async function start(rawQuizId, studentName) {
     const quizId = normalizeQuizId(rawQuizId);
-    const session = ensureSession(quizId);
+    const session = writeSession(quizId, { ...ensureSession(quizId), studentName: String(studentName || "").trim() });
     const response = await invoke(startCall, {
       quizId,
       studentName: String(studentName || "").trim(),

@@ -1,0 +1,90 @@
+/* Public entry: natural document flow, balanced Crew and compact working demo. */
+html{height:auto;min-height:100%;overflow-y:auto}
+body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
+.page{display:flex;flex-direction:column;height:auto;min-height:100dvh;overflow:visible}
+.site-header{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-areas:"brand student actions";gap:24px;width:100%;height:auto;min-height:88px;padding:18px clamp(20px,3vw,48px);box-sizing:border-box}
+.brand{grid-area:brand;justify-self:start;min-width:0}
+.student-entry{grid-area:student;justify-self:center;min-height:44px}
+.header-actions{grid-area:actions;display:flex;justify-self:end;align-items:center;gap:10px}
+.language,.login,.register{min-height:44px;box-sizing:border-box}
+.language .lang{min-width:36px;min-height:36px}
+.stage{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,560px);align-items:center;gap:clamp(28px,4vw,64px);width:100%;max-width:1320px;height:auto;min-height:0;flex:1;margin:0 auto;padding:24px clamp(20px,3vw,48px) 32px;box-sizing:border-box}
+.hero{position:relative;inset:auto;display:flex;flex-direction:column;width:100%;height:auto;min-width:0;min-height:0}
+.hero .eyebrow,.hero h1,.hero .lead{position:static;inset:auto;max-width:none;margin:0}
+.hero .eyebrow{font-size:11px;line-height:1.5;letter-spacing:.15em}
+.hero h1{font-size:clamp(35px,3.5vw,54px);line-height:1.12;letter-spacing:-.035em;margin-top:18px}
+.hero .lead{font-size:16px;line-height:1.6;margin-top:22px;max-width:35rem}
+.crew-wrap{position:relative;inset:auto;width:100%;height:auto;max-width:540px;aspect-ratio:3/2;margin:26px auto 0;transform:none}
+.crew-photo{width:100%;height:100%;object-fit:contain}
+.crew-names{position:relative;inset:auto;width:100%;height:24px;max-width:540px;margin:4px auto 0;font-size:12px}
+.showcase{position:relative;inset:auto;width:100%;max-width:560px;min-width:0;height:clamp(500px,68dvh,620px);min-height:0;transform:none;align-self:center;justify-self:center}
+.test-top{padding:20px 22px 10px}
+.test-top h2{font-size:22px;line-height:1.25}
+.test-summary{padding:0 22px 12px;font-size:13px}
+.overview-grid{margin:0 22px 10px;padding-bottom:12px;gap:5px}
+.overview-grid button{height:44px;min-height:44px;font-size:13px}
+.test-scroll #testContent{height:auto;min-height:100%;padding:8px 16px 16px;box-sizing:border-box;align-items:stretch}
+.test-scroll .task.featured{min-height:0;padding:18px;flex:none}
+.task.featured h4{font-size:18px;line-height:1.4;margin-bottom:16px}
+.task.featured .widget{flex:none;font-size:15px}
+.coordinate-layout svg[data-grid="coordinate"]{height:auto;width:100%;max-height:260px}
+.test-bottom{height:auto;min-height:64px;flex:0 0 auto;padding:12px 18px;box-sizing:border-box}
+.evaluate-button{min-height:44px;font-size:14px}
+.product-note{position:relative;max-width:960px;margin:12px auto 0;padding:0 24px;color:#d7e6f9;font-size:12px;line-height:1.6;text-align:center}
+.public-links{position:relative;inset:auto;transform:none;display:flex;justify-content:center;flex-wrap:wrap;gap:8px 20px;margin:0;padding:8px 20px 20px;white-space:normal;font-size:14px;line-height:1.5}
+.public-links a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 8px;color:#e3efff;text-decoration:underline;text-underline-offset:4px}
+.public-links a:focus-visible{outline:3px solid #b6d7ff;outline-offset:3px;border-radius:4px}
+@media(max-width:1000px){
+ .site-header{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand student" "actions actions";gap:10px 20px;padding:14px 24px}
+ .header-actions{justify-self:end}
+ .stage{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+ .hero h1{font-size:36px}.hero .lead{font-size:15px}
+ .test-top h2{font-size:19px}.test-mark{display:none}
+ .overview-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media(max-width:740px){
+ .site-header{padding:14px 16px;gap:10px}
+ .brand img{width:36px;height:36px}.brand strong{font-size:20px}.brand small{display:none}
+ .student-entry{font-size:13px;padding:0 12px}
+ .header-actions{justify-self:stretch;justify-content:space-between;gap:8px}
+ .login,.register{font-size:13px;padding:0 12px}
+ .stage{display:flex;flex-direction:column;gap:28px;padding:24px 16px 28px}
+ .hero{max-width:560px}.hero h1{font-size:clamp(34px,7vw,46px)}
+ .hero .lead{max-width:none;font-size:15px;line-height:1.6}
+ .crew-wrap{max-width:360px;margin-top:20px}.crew-names{max-width:360px;font-size:11px}
+ .showcase{height:560px;flex:none}
+ .test-top{padding:18px 18px 10px}.test-top h2{font-size:20px}
+ .test-summary{padding:0 18px 10px}.overview-grid{margin:0 18px 8px}
+ .test-scroll #testContent{padding:8px 12px 14px}.test-scroll .task.featured{padding:14px}
+ .task.featured h4{font-size:17px}.coordinate-layout svg[data-grid="coordinate"]{max-height:240px}
+ .product-note{font-size:12px}.public-links{font-size:14px;gap:6px 12px}
+}
+/* One document scroll: task text never sits underneath the task navigation. */
+.showcase{height:auto;min-height:520px}
+.test-shell{height:auto;min-height:520px}
+.test-scroll{flex:1 0 auto;overflow:visible;overscroll-behavior:auto;scroll-snap-type:none}
+.test-scroll #testContent{height:auto;min-height:0;display:block}
+.task-slide{height:auto;min-height:0;align-items:flex-start}
+.test-scroll .task.featured{height:auto;min-height:0;max-height:none;overflow:visible;scrollbar-gutter:auto}
+@media(max-width:740px){
+ .header-actions{justify-content:flex-end;flex-wrap:nowrap}
+ .language{flex:none;width:auto;max-width:88px;margin-right:auto;display:inline-flex;justify-content:center}
+ .hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:12px;align-items:start}
+ .hero .eyebrow{grid-column:1 / -1;grid-row:1;font-size:10px;letter-spacing:.09em}
+ .hero h1{grid-column:1;grid-row:2;font-size:clamp(24px,5.8vw,34px);margin-top:16px}
+ .hero .lead{grid-column:1;grid-row:3;font-size:13px;line-height:1.5;margin-top:16px}
+ .hero .crew-wrap{grid-column:2;grid-row:2 / 4;align-self:end;width:100%;height:200px;max-width:none;aspect-ratio:auto;margin:0}
+ .hero .crew-names{grid-column:2;grid-row:4;width:100%;height:18px;margin:0;font-size:9px}
+ .showcase,.test-shell{height:auto;min-height:520px}
+}
+.public-links{background:#071b3b;padding-bottom:max(20px,env(safe-area-inset-bottom))}
+@media(max-width:740px){
+ .site-header{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"brand language" "student student" "login register";gap:8px 10px}
+ .header-actions{display:contents}
+ .language{grid-area:language;justify-self:end;margin:0;width:auto;max-width:88px}
+ .login{grid-area:login;justify-self:stretch;text-align:center;justify-content:center}
+ .register{grid-area:register;justify-self:stretch;justify-content:center}
+ .student-entry{justify-self:center}
+ .hero .crew-names{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));font-size:9px;text-align:center}
+ .hero .crew-names span{position:static;transform:none}
+}

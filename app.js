@@ -1111,27 +1111,54 @@ async function touchLastActive(user, profile) {
 }
 
 // ---------- Auth / Landing ----------
+function setAuthFormPending(form, pending) {
+  form.setAttribute("aria-busy", String(pending));
+  const button = form.querySelector('button[type="submit"]');
+  if (button) button.disabled = pending;
+}
+
+function setAuthFormStatus(form, message, error = false) {
+  const status = form.querySelector(".gcAuthFormStatus");
+  if (!status) return;
+  status.textContent = message;
+  status.classList.toggle("error", error);
+  status.setAttribute("role", error ? "alert" : "status");
+}
+
 bindTabs(document.querySelector("#authView [role=tablist]"));
 
 $("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+  const form = e.currentTarget;
+  if (form.getAttribute("aria-busy") === "true") return;
+  setAuthFormPending(form, true);
+  setAuthFormStatus(form, "Anmeldung läuft …");
   try {
     await signInWithEmailAndPassword(auth, $("loginEmail").value.trim(), $("loginPassword").value);
     toast("Erfolgreich angemeldet.");
+    setAuthFormStatus(form, "");
   } catch (err) {
+    setAuthFormStatus(form, authMessage(err), true);
     toast(authMessage(err), "error");
+  } finally {
+    setAuthFormPending(form, false);
   }
 });
 
 $("registerForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+  const form = e.currentTarget;
+  if (form.getAttribute("aria-busy") === "true") return;
   const name = $("registerName").value.trim();
   const email = $("registerEmail").value.trim();
   const password = $("registerPassword").value;
   if (password !== $("registerPassword2").value) {
+    setAuthFormStatus(form, "Die Passwörter stimmen nicht überein.", true);
     toast("Die Passwörter stimmen nicht überein.", "error");
     return;
   }
+  setAuthFormPending(form, true);
+  setAuthFormStatus(form, "Konto wird erstellt …");
   try {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(cred.user, { displayName: name });
@@ -1147,8 +1174,12 @@ $("registerForm").addEventListener("submit", async (e) => {
       createdAt: serverTimestamp()
     });
     toast("Account erstellt.");
+    setAuthFormStatus(form, "");
   } catch (err) {
+    setAuthFormStatus(form, authMessage(err), true);
     toast(authMessage(err), "error");
+  } finally {
+    setAuthFormPending(form, false);
   }
 });
 
@@ -3018,10 +3049,10 @@ async function generateAiTestNative() {
 async function saveAiPreferences({ silent = false } = {}) {
   if (!state.user) throw new Error("Bitte zuerst anmelden.");
   const preferences = String($("aiPersonalPreferences")?.value || "").trim();
-  if (preferences.length > 1000) throw new Error("Bitte maximal 1000 Zeichen für dauerhafte KI-Vorgaben verwenden.");
+  if (preferences.length > 1000) throw new Error("Bitte maximal 1000 Zeichen für deine Vorlieben verwenden.");
   await updateDoc(doc(db, "users", state.user.uid), { aiPreferences: preferences });
   state.profile = { ...state.profile, aiPreferences: preferences };
-  if (!silent) toast("Deine KI-Vorgaben wurden gespeichert.");
+  if (!silent) toast("Deine Vorlieben wurden gespeichert.");
 }
 
 async function startAiCreationJob(request, { similar = false, sourceQuiz = null } = {}) {

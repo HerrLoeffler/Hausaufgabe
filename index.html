@@ -61,6 +61,7 @@
             <h2>Willkommen zurück</h2>
             <label>E-Mail<input id="loginEmail" type="email" autocomplete="email" required /></label>
             <label>Passwort<input id="loginPassword" type="password" autocomplete="current-password" required /></label>
+            <p id="loginStatus" class="gcAuthFormStatus" role="status" aria-live="polite"></p>
             <button class="button primary" type="submit">Anmelden</button>
             <button id="forgotBtn" class="linkButton" type="button">Passwort vergessen?</button>
           </form>
@@ -70,6 +71,7 @@
             <label>E-Mail<input id="registerEmail" type="email" autocomplete="email" required /></label>
             <label>Passwort<input id="registerPassword" type="password" minlength="6" autocomplete="new-password" required /></label>
             <label>Passwort wiederholen<input id="registerPassword2" type="password" minlength="6" autocomplete="new-password" required /></label>
+            <p id="registerStatus" class="gcAuthFormStatus" role="status" aria-live="polite"></p>
             <button class="button primary" type="submit">Account erstellen</button>
             <p class="hint">Dein Arbeitsbereich für Tests und Vorlagen.</p>
           </form>
@@ -325,6 +327,7 @@
             <label>Schulart<input id="aiSchoolType" type="text" value="Mittelschule" /></label>
             <label>Bundesland<input id="aiRegion" type="text" value="Bayern" /></label>
             <label class="span2">Thema<input id="aiTopic" type="text" placeholder="Zinsrechnung" /></label>
+            <label class="aiNotesField span2">Was soll der Test genau abfragen? <small>(optional)</small><textarea id="aiCustomNotes" rows="3" maxlength="6000" aria-label="Was soll der Test genau abfragen?" aria-describedby="aiCustomNotesHint" placeholder="z. B. Brüche kürzen und erweitern, mit einfachen Alltagsbeispielen. Keine Textaufgaben."></textarea><small id="aiCustomNotesHint">Deine Wünsche gelten nur für diesen Test. Du kannst sie auch diktieren.</small></label>
             <label>Aufgabenanzahl<input id="aiCount" type="number" min="1" max="100" value="10" /></label>
             <label>Schwierigkeit<select id="aiDifficulty"><option>leicht</option><option selected>mittel</option><option>anspruchsvoll</option><option>gemischt</option></select></label>
             <label>Gesamtpunkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label>
@@ -337,13 +340,12 @@
             <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
             <small class="hint aiReturnNote">Nach dem Start schließt sich diese Ansicht automatisch. Den fertigen Test findest du unter „Meine Tests“.</small>
           </div>
-          <details class="aiOptionalTestOptions"><summary>Aufgabentypen und Wünsche <small>optional</small></summary>
+          <details class="aiOptionalTestOptions"><summary>Aufgabentypen und Vorlieben <small>optional</small></summary>
           <details class="aiTypePicker"><summary>Aufgabentypen erlauben <span id="aiTypeCount">9 ausgewählt</span></summary>
             <div id="aiTypeChecks" class="typeCheckGrid"></div>
           </details>
-          <label class="aiNotesField">Eigene Wünsche <small>(optional)</small><textarea id="aiCustomNotes" rows="5" maxlength="6000" placeholder="z. B. anspruchsvolle Sachaufgaben, viele Zuordnungen, keine Babysätze …"></textarea></label>
-          <details class="gradecrewPreferenceDetails"><summary>Persönliche KI-Vorgaben <small>optional</small></summary><div class="gradecrewPreferenceBody">          <label class="aiNotesField">Vorgaben für meine Tests <small>(für künftige Tests)</small><textarea id="aiPersonalPreferences" rows="3" maxlength="1000" placeholder="z. B. klare Alltagssprache, lieber kurze Aufgaben, keine Fachwörter ohne Erklärung"></textarea></label>
-          <div class="aiPreferencesActions"><button id="saveAiPreferencesBtn" class="button secondary" type="button">Vorgaben speichern</button><small class="hint">Nur in deinem Profil gespeichert; bei KI-Erstellungen an OpenAI übermittelt. GradeCrew berücksichtigt zusätzlich deine Aufgabenbewertungen.</small></div></div></details>
+          <details class="gradecrewPreferenceDetails"><summary>Meine Vorlieben für künftige Tests <small>optional</small></summary><div class="gradecrewPreferenceBody">          <label class="aiNotesField">Was Remy grundsätzlich beachten soll <small>(für künftige Tests)</small><textarea id="aiPersonalPreferences" rows="3" maxlength="1000" placeholder="z. B. klare Alltagssprache, lieber kurze Aufgaben, keine Fachwörter ohne Erklärung"></textarea></label>
+          <div class="aiPreferencesActions"><button id="saveAiPreferencesBtn" class="button secondary" type="button">Vorlieben speichern</button><small class="hint">Diese Vorlieben bleiben in deinem Profil – auch für künftige Tests. Speichere sie hier oder starte einen Test; dabei werden sie ebenfalls gespeichert. Bei der Erstellung werden sie an OpenAI übermittelt. GradeCrew berücksichtigt zusätzlich deine Aufgabenbewertungen.</small></div></div></details>
           </details>
         </article>
         <div class="aiSideSteps">

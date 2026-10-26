@@ -35,7 +35,7 @@ function coach(w, title, text = 'Alt') {
 test('gc25 makes Remy own the material and preference language', async t => {
   const w = setup(t);
   await settle(w);
-  assert.match(w.document.querySelector('.gradecrewPreferenceDetails > summary').textContent, /Vorgaben für Remy/);
+  assert.match(w.document.querySelector('.gradecrewPreferenceDetails > summary').textContent, /Meine Vorlieben für künftige Tests/);
 
   const images = coach(w, 'Bilder plane ich direkt mit ein.');
   w.document.body.append(images);
@@ -47,7 +47,7 @@ test('gc25 makes Remy own the material and preference language', async t => {
   const prefs = coach(w, 'Noch ein Tipp für später.');
   w.document.body.append(prefs);
   await settle(w);
-  assert.match(prefs.querySelector('p').textContent, /Vorgaben für Remy/);
+  assert.match(prefs.querySelector('p').textContent, /Meine Vorlieben für künftige Tests/);
   assert.doesNotMatch(prefs.querySelector('p').textContent, /KI-Vorgaben/);
 });
 
@@ -61,7 +61,7 @@ test('gc25 also fixes the preference copy when gc23 changes the existing coach i
   prefs.querySelector('p').textContent = '„Eigene Wünsche“ gelten nur für diesen Test. Unter „Persönliche KI-Vorgaben“ kannst du dagegen Vorlieben hinterlegen.';
   await settle(w);
 
-  assert.match(prefs.querySelector('p').textContent, /Vorgaben für Remy/);
+  assert.match(prefs.querySelector('p').textContent, /Meine Vorlieben für künftige Tests/);
   assert.doesNotMatch(prefs.querySelector('p').textContent, /Persönliche KI-Vorgaben|persönliche Vorlieben/i);
 });
 

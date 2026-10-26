@@ -123,3 +123,15 @@ test('gc23 shows Crew finale first, then returns the viewport to free response i
   assert.ok(save.classList.contains('gc23SaveReviewFloating'));
   assert.ok(next.classList.contains('gc23FreeAnswerCoach'));
 });
+
+// Moving the test-specific wishes out of the accordion must not hide the next tutorial target.
+test('preference handoff reveals the saved-preferences summary while keeping its contents collapsed', async t => {
+  const w = fixture(t);
+  w.document.body.insertAdjacentHTML('beforeend', '<label><textarea id="aiCustomNotes"></textarea></label><details class="aiOptionalTestOptions"><summary>Optionen</summary><details class="gradecrewPreferenceDetails"><summary>Vorlieben</summary><textarea id="aiPersonalPreferences"></textarea></details></details>');
+  const tip = coach(w, 'Stopp – ein kleiner Unterschied!');
+  w.document.body.append(tip);
+  await settle(w);
+  tip.querySelector('.gcCoachNext').click();
+  assert.equal(w.document.querySelector('.aiOptionalTestOptions').open, true);
+  assert.equal(w.document.querySelector('.gradecrewPreferenceDetails').open, false);
+});

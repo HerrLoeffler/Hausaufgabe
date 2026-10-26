@@ -400,3 +400,20 @@ test('explicit English test language reaches the form and emits the locale chang
   await settle(w);acceptProposal(w);assert.equal(language.value,'en-GB');assert.equal(changed,'en-GB');
   assert.equal(w.GradeCrewI18n.locale,'de-DE');
 });
+
+// Regression: the live form must expose test-specific instructions without opening optional settings.
+test('actual Remy form keeps instructions next to the topic and adds dictation without an accordion', async t => {
+  const dom = new JSDOM(fs.readFileSync('index.html', 'utf8'), { url: 'https://example.test', runScripts: 'outside-only' });
+  t.after(() => dom.window.close());
+  const d = dom.window.document;
+  const field = d.getElementById('aiCustomNotes');
+  const label = field.closest('label');
+  assert.equal(label.previousElementSibling, d.getElementById('aiTopic').closest('label'));
+  assert.equal(field.closest('details'), null);
+  assert.equal(d.querySelectorAll('#aiCustomNotes').length, 1);
+  const w = setup(t);
+  w.document.querySelector('#aiTopic').closest('label').after(w.document.querySelector('#aiCustomNotes').closest('label'));
+  w.document.getElementById('gcRemyNotesMic').click();
+  assert.equal(w.document.getElementById('gcRemyNotesMic').type, 'button');
+  assert.ok(w.document.getElementById('gcRemyNotesMicStatus'));
+});

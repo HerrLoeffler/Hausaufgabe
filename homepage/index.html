@@ -12,7 +12,8 @@
   <link rel="stylesheet" href="/homepage/styles.css?v=15">
   <link rel="stylesheet" href="/homepage/showcase-v5.css?v=16">
   <link rel="stylesheet" href="/homepage/showcase-v6.css?v=2">
-  <link rel="stylesheet" href="/homepage/showcase-v7.css?v=4">
+  <link rel="stylesheet" href="/homepage/showcase-v7.css?v=student-join-20261026">
+  <link rel="stylesheet" href="/homepage/responsive-v9.css?v=20261026">
 </head>
 <body>
   <div class="page">
@@ -21,6 +22,7 @@
         <img src="/homepage/assets/brand-primary-v1.svg" alt="">
         <span><strong>GradeCrew</strong><small data-i18n="tagline">Tests. Einfach digital.</small></span>
       </a>
+      <a class="student-entry" href="/secure-student.html" data-i18n="studentEntry">Schülerzugang</a>
       <nav class="header-actions" aria-label="Navigation">
         <div class="language" role="group" aria-label="Language / Sprache">
           <button class="lang is-active" type="button" data-lang="de" aria-pressed="true">DE</button>
@@ -48,7 +50,7 @@
           </div>
           <div class="test-summary"><span id="currentMeta">Aufgabe 1 von 10</span></div>
           <nav id="overviewGrid" class="overview-grid" aria-label="Aufgaben 1 bis 10"></nav>
-          <div id="testScroll" class="test-scroll" role="region" aria-label="Interaktive Testübersicht" tabindex="0"><div id="testContent"></div></div>
+          <div id="testScroll" class="test-scroll" data-page-flow="true" role="region" aria-label="Interaktive Testübersicht" tabindex="0"><div id="testContent"></div></div>
           <section id="resultsPanel" class="results-panel" aria-label="Testergebnis" hidden>
             <div class="results-head"><strong id="resultsTitle">Beispielauswertung</strong><button type="button" id="resultsClose" aria-label="Ergebnis schließen">×</button></div>
             <div id="resultsBody" class="results-body"></div>
@@ -60,8 +62,9 @@
         </div>
       </section>
     </main>
-    <nav class="public-links" aria-label="Service"><a href="/workspace.html" data-i18n="studentEntry">Schülerzugang</a><a href="/datenschutz.html" data-i18n="privacy">Datenschutz</a><a href="/impressum.html" data-i18n="legal">Impressum</a><a href="/support.html" data-i18n="support">Support</a></nav>
+    <p class="product-note" data-i18n="productNote">Mit „Tests“ meinen wir digitale Aufgaben und Übungen. Die Lehrkraft entscheidet, ob und wie sie diese im Unterricht einsetzt und bewertet.</p>
+    <nav class="public-links" aria-label="Service"><a href="/datenschutz.html" data-i18n="privacy">Datenschutz</a><a href="/impressum.html" data-i18n="legal">Impressum</a><a href="/support.html" data-i18n="support">Support</a></nav>
   </div>
-  <script type="module" src="/homepage/app.js?v=24"></script>
+  <script type="module" src="/homepage/app.js?v=25"></script>
 </body>
 </html>

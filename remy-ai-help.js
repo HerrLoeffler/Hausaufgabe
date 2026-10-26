@@ -66,16 +66,17 @@ function ensurePanel() {
   const panel = document.createElement("section");
   panel.id = "gcRemyCreatePanel";
   panel.className = "gcRemyCreatePanel";
-  panel.setAttribute("aria-label", "Test mit Remy vorbereiten");
+  panel.setAttribute("aria-label", "Eckdaten mit Remy festlegen");
   panel.innerHTML = `
     <img class="gcRemyCreateMascot" src="assets/gradecrew/remy-test-input-microphone.png" width="64" height="68" alt="Remy mit Handmikrofon">
     <div class="gcRemyCreateBody">
-      <div class="gcRemyCreateHead"><strong>Remy</strong><span>Sag mir, welchen Test du brauchst.</span></div>
+      <div class="gcRemyCreateHead"><strong>Remy</strong><span>Welche Eckdaten hat dein Test?</span></div>
       <form id="gcRemyCreateForm" class="gcRemyCreateForm">
-        <button id="gcRemyCreateMic" class="gcRemyCreateMic" type="button" aria-label="Testwunsch diktieren" title="Diktieren">🎙</button>
-        <textarea id="gcRemyCreateInput" rows="2" maxlength="2500" placeholder="z. B. Englisch, 4. Klasse, Farben, leicht, 10 Aufgaben …"></textarea>
-        <button id="gcRemyCreateSend" class="gcRemyCreateSend" type="submit" aria-label="Übernehmen">➜</button>
+        <button id="gcRemyCreateMic" class="gcRemyCreateMic" type="button" aria-label="Eckdaten diktieren" title="Eckdaten diktieren">🎙</button>
+        <textarea id="gcRemyCreateInput" rows="2" maxlength="2500" aria-label="Eckdaten für deinen Test" aria-describedby="gcRemyCreateHint" placeholder="z. B. Mathematik, Klasse 7, Prozentrechnung, mittel, 10 Aufgaben"></textarea>
+        <button id="gcRemyCreateSend" class="gcRemyCreateSend" type="submit" aria-label="Eckdaten übernehmen">➜</button>
       </form>
+      <p id="gcRemyCreateHint" class="gcRemyCreateStatus">Hier nur die Eckdaten: Fach, Klasse, Thema, Schwierigkeit und Aufgabenanzahl. Was im Test genau drankommen soll, beschreibst du unten unter „Was soll der Test genau abfragen?“.</p>
       <div id="gcRemyCreateStatus" class="gcRemyCreateStatus" role="status" aria-live="polite" hidden></div>
       <div id="gcRemyOriginalWishAction" class="gcRemyOriginalWishAction" role="group" aria-label="Originalen Wunsch übernehmen"></div>
     </div>`;
@@ -104,7 +105,7 @@ function ensureNotesMic() {
   const heading = document.createElement("span");
   heading.className = "gcRemyNotesHead";
   const title = document.createElement("span");
-  title.textContent = "Eigene Wünsche";
+  title.textContent = "Was soll der Test genau abfragen?";
   const optional = label.querySelector("small");
   const mic = document.createElement("button");
   mic.id = "gcRemyNotesMic";
@@ -500,7 +501,7 @@ function updateMicState() {
     button?.classList.toggle("listening", listening);
     if (button) {
       button.textContent = listening ? "●" : "🎙";
-      button.setAttribute("aria-label", listening ? uiText("Diktat abbrechen", "Stop dictation") : id === "gcRemyNotesMic" ? uiText("Wünsche diktieren", "Dictate wishes") : uiText("Testwunsch diktieren", "Dictate test request"));
+      button.setAttribute("aria-label", listening ? uiText("Diktat abbrechen", "Stop dictation") : id === "gcRemyNotesMic" ? uiText("Wünsche diktieren", "Dictate wishes") : uiText("Eckdaten diktieren", "Dictate test details"));
       button.title = listening ? uiText("Diktat abbrechen", "Stop dictation") : uiText("Diktieren", "Dictate");
     }
   });

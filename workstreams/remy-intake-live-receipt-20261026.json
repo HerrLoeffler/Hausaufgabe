@@ -1,0 +1,23 @@
+{
+  "project": "hausaufgabe-staging",
+  "environment": "production",
+  "commit": "5f61f723c1b24d45996a77afbe40acc4ebb05cd3",
+  "hosting_version": "c7668d2a1d4493fc",
+  "origin": "https://gradecrew.de/",
+  "verified_files": 192,
+  "legacy_manifest_match": true,
+  "functions_rules_auth_database_changed": false,
+  "user_authorization": "Ja, auf gradecrew.de live veröffentlichen",
+  "prior_live_commit": "f8274f06616f5db9a15597f37229a15bb9bfa2c6",
+  "stage": "production",
+  "scope": "hosting_only",
+  "task_ids": [
+    "GC-DESIGN-02",
+    "GC-CREW-AI-04"
+  ],
+  "focused_local_tests": 114,
+  "independent_local_tests": 27,
+  "browser": "live guest form verified",
+  "physical_devices": "not_tested",
+  "coordination_record": "local task branch; not pushed to main"
+}

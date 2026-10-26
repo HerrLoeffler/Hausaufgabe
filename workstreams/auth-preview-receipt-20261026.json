@@ -1,0 +1,23 @@
+{
+  "stage": "staging_deployed",
+  "scope": "isolated_hosting_preview_only",
+  "project": "gradecrew-staging-2026",
+  "commit": "77428290bf66477efba8cf9ba59d113ed09c2b3c",
+  "origin": "https://gradecrew-staging-2026--auth-brand-20261026-vpjnmd0k.web.app/",
+  "build_file_count": 193,
+  "verified_http_files": [
+    "index.html",
+    "workspace.html",
+    "homepage/app.js",
+    "auth-brand-alignment.css",
+    "app.js",
+    "startup.js",
+    "gradecrew-entry-flow.js",
+    "shared/i18n/messages-en-GB.mjs",
+    "secure-student.js"
+  ],
+  "local_tests": 452,
+  "github_ci": "not_run_for_new_branch",
+  "production_changed_by_this_task": false,
+  "physical_device_test": false
+}

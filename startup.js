@@ -15,7 +15,8 @@ function installGradeCrewDesignStyles() {
     ["./gradecrew-auth-startscreen.css?v=4", "auth-startscreen-v4"],
     ["./gradecrew-auth-startscreen-polish.css?v=2", "auth-startscreen-polish-v2"],
     ["./gradecrew-hero-scene.css?v=3", "hero-scene-v3"],
-    ["./gradecrew-workspace-upgrade.css?v=2.3.1-gc45-rc1", "workspace-upgrade-v1"]
+    ["./gradecrew-workspace-upgrade.css?v=2.3.1-gc45-rc1", "workspace-upgrade-v1"],
+    ["./auth-brand-alignment.css?v=20261026", "auth-brand-alignment-20261026"]
   ];
   for (const [href, version] of styles) {
     if (document.querySelector(`link[data-gradecrew-design="${version}"]`)) continue;

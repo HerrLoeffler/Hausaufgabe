@@ -1,0 +1,13 @@
+{
+  "project": "gradecrew-staging-2026",
+  "commit": "b523fefda0ebbb8d673b7ba9959e0d09af549cf4",
+  "origin": "https://gradecrew-staging-2026--auth-brand-20261026-vpjnmd0k.web.app/",
+  "stage": "staging_deployed",
+  "scope": "isolated_hosting_preview_only",
+  "verified_files": 193,
+  "local_full_tests": 450,
+  "post_css_focused_tests": 20,
+  "github_ci": "not_run_new_branch",
+  "live_changed": false,
+  "functions_rules_auth_config_changed": false
+}

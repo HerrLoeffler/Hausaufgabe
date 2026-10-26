@@ -302,7 +302,7 @@ test('native auth intent opens the requested real form and keeps route context',
         await new Promise(resolve => w.setTimeout(resolve, 10));
         assert.equal(w.document.activeElement.id, 'registerName', 'registration opens with focus in its first field');
         assert.match(w.document.getElementById('gcEntryRegisterTitle').textContent, /Werde Teil der Crew\./);
-        assert.ok(w.document.querySelector('#gcEntryRegister img[src*="crew-classroom"]'));
+        assert.ok(w.document.querySelector('#gcEntryRegister img[src*="crew-cutout-v2"]'));
         w.document.querySelector('#gcEntryRegister [data-entry-back]').click();
         assert.equal(w.document.getElementById('authView').dataset.entryState, 'start');
         assert.equal(new URL(w.location.href).searchParams.has('intent'), false, 'back removes the login intent so refresh stays on the start');

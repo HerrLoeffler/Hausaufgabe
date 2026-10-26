@@ -54,14 +54,14 @@ function relabelRemyPreferences() {
   const summary = document.querySelector(".gradecrewPreferenceDetails > summary");
   if (summary && summary.dataset.gc25Remy !== "1") {
     summary.dataset.gc25Remy = "1";
-    summary.innerHTML = '<span class="gc25RemyPreferenceLabel">Vorgaben für Remy</span> <small>optional</small>';
+    summary.innerHTML = '<span class="gc25RemyPreferenceLabel">Meine Vorlieben für künftige Tests</span> <small>optional</small>';
   }
   const fieldLabel = document.querySelector(".gradecrewPreferenceDetails .aiNotesField");
   if (fieldLabel && fieldLabel.dataset.gc25Remy !== "1") {
     fieldLabel.dataset.gc25Remy = "1";
     for (const node of fieldLabel.childNodes) {
       if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-        node.textContent = "Was Remy bei meinen Tests beachten soll ";
+        node.textContent = "Was Remy grundsätzlich beachten soll ";
         break;
       }
     }
@@ -78,7 +78,7 @@ function patchPreferenceTip(coach) {
   if (coach.dataset.gc25PreferenceTip === "1") return;
   coach.dataset.gc25PreferenceTip = "1";
   const copy = paragraph(coach);
-  if (copy) copy.textContent = "„Eigene Wünsche“ gelten nur für diesen Test. Unter „Vorgaben für Remy“ kannst du mir dagegen dauerhaft mitgeben, was dir bei deinen künftigen Tests wichtig ist.";
+  if (copy) copy.textContent = "Die Angaben unter „Was soll der Test genau abfragen?“ gelten nur für diesen Test. Unter „Meine Vorlieben für künftige Tests“ kannst du mir dagegen dauerhaft mitgeben, was dir bei deinen künftigen Tests wichtig ist.";
 }
 
 function patchTestSettings(coach) {

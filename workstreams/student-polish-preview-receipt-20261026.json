@@ -1,0 +1,31 @@
+{
+  "preview": "https://gradecrew-staging-2026--student-entry-20261026-rajfogts.web.app/",
+  "source_commit": "d295f9a8",
+  "verification": [
+    {
+      "file": "secure-student.html",
+      "matches": true
+    },
+    {
+      "file": "secure-student.css",
+      "matches": true
+    },
+    {
+      "file": "secure-student.js",
+      "matches": true
+    },
+    {
+      "file": "shared/i18n/messages-en-GB.mjs",
+      "matches": true
+    },
+    {
+      "file": "assets/gradecrew/brand-icon-v1.svg",
+      "matches": true
+    },
+    {
+      "file": "release.json",
+      "matches": true
+    }
+  ],
+  "production_changed": false
+}

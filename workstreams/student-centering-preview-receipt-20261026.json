@@ -1,0 +1,25 @@
+{
+  "source_commit": "adfb3bed",
+  "preview": "https://gradecrew-staging-2026--student-entry-20261026-rajfogts.web.app/",
+  "http_matches": {
+    "secure-student.html": true,
+    "secure-student.css": true,
+    "shared/i18n/messages-en-GB.mjs": true,
+    "release.json": true
+  },
+  "browser": {
+    "tablet_center_offset_px": [
+      0,
+      0
+    ],
+    "desktop_and_390_intro_lines": 1,
+    "tested_widths": [
+      320,
+      390,
+      1024,
+      1280
+    ],
+    "small_height_fallback": "scrollable, no clipping"
+  },
+  "production_changed": false
+}

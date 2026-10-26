@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
-  <title>GradeCrew · Sicherer Test</title>
+  <title>GradeCrew · Schülerzugang</title>
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./design-system.css">
   <link rel="stylesheet" href="./gradecrew-brand.css">
@@ -13,13 +13,25 @@
 <body class="secureAssessmentPage">
   <header class="secureTopbar">
     <a class="secureBrand" href="./" aria-label="GradeCrew Startseite">
-      <img class="secureBrandMark" src="./assets/gradecrew/brand-icon.svg" width="38" height="38" alt="GradeCrew Logo">
+      <img class="secureBrandMark" src="./assets/gradecrew/brand-icon-v1.svg" width="38" height="38" alt="GradeCrew Logo">
       <span><strong>GradeCrew</strong><small>Sicherer Leistungsnachweis</small></span>
     </a>
     <span id="secureConnection" class="secureConnection" aria-live="polite">Verbindung wird geprüft …</span>
   </header>
 
   <main class="secureShell">
+    <section id="secureJoin" class="secureCard hidden" aria-labelledby="secureJoinTitle">
+      <h1 id="secureJoinTitle">Test oder Übung öffnen</h1>
+      <p>Gib deinen Testcode und Namen ein.</p>
+      <form id="secureJoinForm" class="secureStartForm" novalidate>
+        <label for="secureJoinCode">Testcode</label>
+        <input id="secureJoinCode" name="test" type="text" maxlength="32" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" required aria-describedby="secureJoinError" placeholder="z. B. K7M4X2PA">
+        <label for="secureJoinName">Dein Name</label>
+        <input id="secureJoinName" name="studentName" type="text" maxlength="120" autocomplete="off" required enterkeyhint="go" aria-describedby="secureJoinError" placeholder="Dein Name">
+        <p id="secureJoinError" class="secureInlineError" role="alert"></p>
+        <button class="button primary" type="submit">Zum Test</button>
+      </form>
+    </section>
     <section id="secureLoading" class="secureCard secureLoading" aria-live="polite">
       <span class="loadingDot"></span>
       <div><strong>Test wird geladen …</strong><small>Einen Moment bitte.</small></div>
@@ -32,9 +44,8 @@
       <div class="secureFacts" id="secureFacts"></div>
       <form id="secureStartForm" class="secureStartForm">
         <label>Wie dürfen wir dich nennen?
-          <input id="secureStudentName" type="text" maxlength="120" autocomplete="off" required placeholder="Name oder vereinbartes Kürzel">
+          <input id="secureStudentName" type="text" maxlength="120" autocomplete="off" required placeholder="Dein Name">
         </label>
-        <small>Du kannst aus Datenschutzgründen ein von deiner Lehrkraft vergebenes Kürzel verwenden.</small>
         <button id="secureStartBtn" class="button primary" type="submit">Test starten</button>
       </form>
     </section>
@@ -85,7 +96,7 @@
   <!-- Restore an unfinished attempt before the main student module reads its draft. -->
   <script type="module" src="./secure-draft-persistence.js"></script>
   <script type="module" src="./secure-student-navigation.mjs?v=1"></script>
-  <script type="module" src="./secure-student.js?v=2.3.1-gc45-rc1"></script>
+  <script type="module" src="./secure-student.js?v=student-join-20261026"></script>
   <script type="module" src="./secure-deadline-guard.js"></script>
   <script type="module" src="./secure-result-policy.js"></script>
   <script type="module" src="./secure-solution-release.js"></script>

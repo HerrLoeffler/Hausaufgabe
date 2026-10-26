@@ -101,9 +101,11 @@ function patchPreferencesCoach(coach) {
 
   continueButton.addEventListener("click", () => {
     ownWishes.classList.remove("gc23TutorialFocus");
+    const options = preferences.closest("details.aiOptionalTestOptions");
+    if (options) options.open = true;
     preferenceSummary.classList.add("gc23TutorialFocus");
     title.textContent = "Noch ein Tipp für später.";
-    copy.textContent = "„Eigene Wünsche“ gelten nur für diesen Test. Unter „Vorgaben für Remy“ kannst du dagegen Vorlieben hinterlegen, die GradeCrew bei deinen künftigen KI-Tests berücksichtigt.";
+    copy.textContent = "Die Angaben unter „Was soll der Test genau abfragen?“ gelten nur für diesen Test. Unter „Meine Vorlieben für künftige Tests“ kannst du dagegen Vorlieben hinterlegen, die GradeCrew bei deinen künftigen KI-Tests berücksichtigt.";
     continueButton.textContent = "Verstanden – weiter";
     continueButton.replaceWith(continueButton.cloneNode(true));
     const finalButton = coach.querySelector(".gcCoachNext");

@@ -7,8 +7,8 @@ for (const [id,intent] of [['loginLink','login'],['registerLink','register']]) {
 }
 
 const copy = {
-  de:{support:'Support',studentEntry:'Schülerzugang',privacy:'Datenschutz',legal:'Impressum',tagline:'Tests. Einfach digital.',login:'Anmelden',register:'Konto erstellen',audience:'FÜR LEHRKRÄFTE ALLER SCHULFORMEN',hero:'Gute Tests<br>entstehen im Team.',lead:'<span>Deine Idee wird ein digitaler Test.</span><span>Die Crew hilft beim Erstellen, Verbessern und Auswerten.</span>',preview:'INTERAKTIVE VORSCHAU',testTitle:'GradeCrew Testübersicht'},
-  en:{support:'Support',studentEntry:'Student access',privacy:'Privacy',legal:'Legal notice',tagline:'Tests. Simply digital.',login:'Sign in',register:'Create account',audience:'FOR TEACHERS AT EVERY SCHOOL LEVEL',hero:'Great tests<br>take a team.',lead:'<span>Turn your idea into a digital test.</span><span>The crew helps you create, improve and review it.</span>',preview:'INTERACTIVE PREVIEW',testTitle:'GradeCrew Test Overview'}
+  de:{productNote:'Mit „Tests“ meinen wir digitale Aufgaben und Übungen. Die Lehrkraft entscheidet, ob und wie sie diese im Unterricht einsetzt und bewertet.',support:'Support',studentEntry:'Schülerzugang',privacy:'Datenschutz',legal:'Impressum',tagline:'Tests. Einfach digital.',login:'Anmelden',register:'Konto erstellen',audience:'FÜR LEHRKRÄFTE ALLER SCHULFORMEN',hero:'Gute Tests<br>entstehen im Team.',lead:'<span>Deine Idee wird ein digitaler Test.</span><span>Die Crew hilft beim Erstellen, Verbessern und Auswerten.</span>',preview:'INTERAKTIVE VORSCHAU',testTitle:'GradeCrew Testübersicht'},
+  en:{productNote:'By “tests” we mean digital tasks and exercises. The teacher decides whether and how to use and assess them in class.',support:'Support',studentEntry:'Student access',privacy:'Privacy',legal:'Legal notice',tagline:'Tests. Simply digital.',login:'Sign in',register:'Create account',audience:'FOR TEACHERS AT EVERY SCHOOL LEVEL',hero:'Great tests<br>take a team.',lead:'<span>Turn your idea into a digital test.</span><span>The crew helps you create, improve and review it.</span>',preview:'INTERACTIVE PREVIEW',testTitle:'GradeCrew Test Overview'}
 };
 const tasks = [
   {id:'coordinate',subject:['Mathematik','Maths'],label:['Koordinaten','Coordinates'],title:['Setze A auf (−2 | 1) und B auf (2 | 3).','Plot A at (−2, 1) and B at (2, 3).']},
@@ -44,7 +44,7 @@ const lifeAlt = {
   butterfly:['Ausgewachsener Schmetterling','Adult butterfly']
 };
 
-let lang = 'de';
+let lang = /^en(?:-|$)/i.test(new URLSearchParams(location.search).get('lang') || '') ? 'en' : 'de';
 let active = 0;
 let currentPoint = 'A';
 let currentWordTool = 'noun';
@@ -163,6 +163,11 @@ function renderResults() {
 
 function render() {
   document.documentElement.lang=lang;
+  document.querySelectorAll('#loginLink,#registerLink,.student-entry').forEach(link=>{
+    const target=new URL(link.getAttribute('href'),location.href);
+    if(lang==='en')target.searchParams.set('lang','en');else target.searchParams.delete('lang');
+    link.href=target.pathname+target.search+target.hash;
+  });
   document.title=tr('GradeCrew · Testübersicht','GradeCrew · Test Overview');
   document.querySelector('.brand').setAttribute('aria-label',tr('GradeCrew Start','GradeCrew home'));
   document.querySelector('.crew-photo').alt=tr('Coco, Remy, Emmi und Wilma – die GradeCrew','Coco, Remy, Emmi and Wilma – the GradeCrew');
@@ -279,6 +284,7 @@ root.addEventListener('dragover',event=>{if(event.target.closest('[data-slot-kin
 root.addEventListener('drop',event=>{const slot=event.target.closest('[data-slot-kind]'),order=event.target.closest('[data-order-index]');if(!slot&&!order)return;event.preventDefault();const raw=event.dataTransfer.getData('text/plain');const split=raw.indexOf(':');const kind=raw.slice(0,split),id=raw.slice(split+1);if(slot&&kind===slot.dataset.slotKind)assignSlot(kind,slot.dataset.slot,id);if(order&&kind==='order')swapScenes(Number(id),Number(order.dataset.orderIndex))});
 
 scroller.addEventListener('wheel',event=>{
+  if(scroller.dataset.pageFlow==='true')return;
   const direction=Math.sign(event.deltaY);if(!direction)return;
   clearTimeout(wheelTimer);wheelTimer=setTimeout(()=>{wheelUsed=false;wheelSum=0},420);
   const canScroll=direction>0?scroller.scrollTop+scroller.clientHeight<scroller.scrollHeight-3:scroller.scrollTop>3;
@@ -287,8 +293,8 @@ scroller.addEventListener('wheel',event=>{
   wheelSum+=Math.abs(event.deltaY);
   if(wheelSum>=32){wheelUsed=true;wheelSum=0;go(active+direction)}
 },{passive:false});
-scroller.addEventListener('touchstart',event=>{if(event.target.closest('button,input,[draggable]'))return;touchY=event.touches[0]?.clientY??null},{passive:true});
-scroller.addEventListener('touchend',event=>{if(touchY===null)return;const delta=touchY-(event.changedTouches[0]?.clientY??touchY);touchY=null;if(Math.abs(delta)>65&&scroller.scrollHeight<=scroller.clientHeight+4)go(active+Math.sign(delta))},{passive:true});
+scroller.addEventListener('touchstart',event=>{if(scroller.dataset.pageFlow==='true')return;if(event.target.closest('button,input,[draggable]'))return;touchY=event.touches[0]?.clientY??null},{passive:true});
+scroller.addEventListener('touchend',event=>{if(scroller.dataset.pageFlow==='true')return;if(touchY===null)return;const delta=touchY-(event.changedTouches[0]?.clientY??touchY);touchY=null;if(Math.abs(delta)>65&&scroller.scrollHeight<=scroller.clientHeight+4)go(active+Math.sign(delta))},{passive:true});
 scroller.addEventListener('keydown',event=>{if(event.target!==scroller)return;if(event.key==='PageDown'||event.key==='ArrowDown'){event.preventDefault();go(active+1)}if(event.key==='PageUp'||event.key==='ArrowUp'){event.preventDefault();go(active-1)}});
 
 render();

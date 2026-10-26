@@ -46,3 +46,31 @@ html{scroll-padding-top:calc(var(--secure-header-height,88px) + var(--secure-nav
   .secureNavigationRow strong{font-size:13px}
   .secureNavigationRow button{padding:6px}
 }
+
+/* The code-entry screen has a quiet, centred identity; running tests keep their toolbar. */
+.secureEntryMode{position:relative;display:flex;flex-direction:column;justify-content:center;min-height:100vh;min-height:100dvh;box-sizing:border-box;padding:64px 0}
+.secureEntryMode .secureTopbar{position:static;display:flex;flex:0 0 auto;justify-content:center;min-height:0;padding:0 20px 24px;background:transparent;border:0}
+.secureEntryMode .secureBrand{gap:14px;border-radius:12px}
+.secureEntryMode .secureBrandMark{flex:0 0 68px;width:68px;height:68px}
+.secureEntryMode .secureBrand strong{font-size:30px;line-height:1.15;letter-spacing:-1px}
+.secureEntryMode .secureBrand small,.secureEntryMode .secureConnection{display:none}
+.secureEntryMode .secureTopbar .gradecrewLanguageControl{position:absolute;right:20px;top:16px;margin:0}
+.secureEntryMode .secureShell{flex:0 0 auto;width:100%;max-width:504px;box-sizing:border-box;margin:0 auto;padding:0 20px}
+.secureEntryMode #secureJoin{padding:32px;border-radius:24px;box-shadow:0 16px 48px rgba(23,32,51,.05)}
+.secureEntryMode #secureJoin h1{margin:0;text-align:center;font-size:28px;line-height:1.22;letter-spacing:-.7px}
+.secureEntryMode #secureJoin>p{margin:14px 0 0;text-align:center;font-size:16px;line-height:1.6;color:#526079;text-wrap:balance}
+.secureEntryMode #secureJoinForm{margin-top:28px;gap:8px}
+.secureEntryMode #secureJoinForm label{font-size:15px;line-height:1.4}
+.secureEntryMode #secureJoinForm label:not(:first-child){margin-top:12px}
+.secureEntryMode #secureJoinForm input{width:100%;min-height:52px;margin:0;padding:12px 14px;font-size:17px;border-radius:12px;box-sizing:border-box}
+.secureEntryMode #secureJoinForm .button{min-height:52px;margin-top:14px;font-size:17px;font-weight:750;border-radius:12px}
+.secureEntryMode #secureJoinError:empty{display:none}
+.secureEntryMode .secureBrand:focus-visible{outline:3px solid #2861dc;outline-offset:6px}
+@media(max-width:520px){
+ .secureEntryMode .secureTopbar{padding-top:0;padding-bottom:20px}
+ .secureEntryMode .secureShell{padding:0 16px}
+ .secureEntryMode #secureJoin{padding:26px 22px}
+ .secureEntryMode #secureJoin h1{font-size:25px}
+ .secureEntryMode .secureBrandMark{flex-basis:60px;width:60px;height:60px}
+ .secureEntryMode .secureBrand strong{font-size:28px}
+}

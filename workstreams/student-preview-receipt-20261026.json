@@ -1,0 +1,19 @@
+{
+  "stage": "staging_deployed",
+  "scope": "isolated_hosting_preview_only",
+  "project": "gradecrew-staging-2026",
+  "commit": "1e43488638616b572fa290231b44793275a803ec",
+  "origin": "https://gradecrew-staging-2026--student-entry-20261026-rajfogts.web.app/",
+  "build_file_count": 192,
+  "verified_http_files": [
+    "index.html",
+    "homepage/app.js",
+    "secure-student.html",
+    "secure-student.js",
+    "secure-assessment-client.js"
+  ],
+  "local_tests": 107,
+  "github_ci": "not_run_for_new_branch",
+  "production_changed_by_this_task": false,
+  "physical_device_test": false
+}

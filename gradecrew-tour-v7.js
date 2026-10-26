@@ -447,11 +447,11 @@ export function installCrewTour(api) {
   async function ghostFillNotes(token = run) {
     if (!owned() || token !== run) return;
     busy = true; stage = "form-filling";
-    coach("create", "Sag mir, was dir wichtig ist.", "Unter „Eigene Wünsche“ kannst du Niveau, Sprache, Schwerpunkt oder besondere Anforderungen genauer vorgeben.", { target: "#aiCustomNotes", body: '<div class="gcCoachStatus">Eigene Wünsche werden ergänzt …</div>' });
+    coach("create", "Sag mir, was dir wichtig ist.", "Unter „Was soll der Test genau abfragen?“ kannst du Niveau, Sprache, Schwerpunkt oder besondere Anforderungen genauer vorgeben.", { target: "#aiCustomNotes", body: '<div class="gcCoachStatus">Eigene Wünsche werden ergänzt …</div>' });
     await typeField("#aiCustomNotes", "Kurze, klare Aufgaben für die 4. Klasse Grundschule. Einfache Farben, Tiere und Schulsachen. Alle Arbeitsaufträge auf Englisch. Abwechslungsreiche Aufgabentypen.", "Eigene Wünsche werden ergänzt …", token, 28);
     if (!owned() || token !== run) return;
     busy = false; stage = "preferences";
-    coach("create", "Stopp – ein kleiner Unterschied!", "Die eigenen Wünsche gelten nur für diesen Test. Im Feld darunter kannst du später persönliche Vorlieben hinterlegen, die bei allen deinen KI-Tests berücksichtigt werden sollen.", {
+    coach("create", "Stopp – ein kleiner Unterschied!", "Die eigenen Wünsche gelten nur für diesen Test. Unter „Meine Vorlieben für künftige Tests“ kannst du später Vorlieben hinterlegen, die bei allen deinen KI-Tests berücksichtigt werden sollen.", {
       target:"#aiCustomNotes", button:"Verstanden – weiter", onButton:()=>{
         stage="form";
         coach("create", "Perfekt – alle nötigen Informationen sind eingetragen.", "Klicke jetzt auf „Test erstellen“. Ich bereite deinen Entwurf vor.", { target:"#generateAiTestBtn", interactiveTarget:true });
