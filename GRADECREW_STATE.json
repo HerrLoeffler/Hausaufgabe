@@ -2127,6 +2127,29 @@
         "handoff": "workstreams/feedback-gc39-release-20261013.md",
         "receipts": "workstreams/question-feedback-release-receipts-20261025.json",
         "next_action": "Professional per-rating review of historical reports; then observe first normal user generation receipts. Fix unrelated Workbench cleanup test separately."
+      },
+      "latest_publication_review_20261026": {
+        "task_id": "GC-WEB-REPAIR-20261007",
+        "stage": "production",
+        "scope": "Hosting-only publication review and consistent Publish label; not whole project",
+        "branch": "fix/audio-publish-review-live-20261026",
+        "commit": "122c011cd5fba40a139be7a7426c49e400f93c82",
+        "tree": "f4455d895bf09f5ec35d15f7a76a1347951ffe46",
+        "pr": 328,
+        "integrated_into": "feature/design-auth-student-20261026",
+        "candidate_ci": 40406219082,
+        "hosting_version": "fdbb3c0bbc3040a8",
+        "release_time": "2026-10-26T21:47:31.147Z",
+        "origins": [
+          "https://gradecrew.de",
+          "https://hausaufgabe-staging.web.app"
+        ],
+        "verified_manifest_files_per_origin": 203,
+        "handoff": "workstreams/publish-review-live-20261026.md",
+        "receipt": "workstreams/publish-review-live-receipt-20261026.json",
+        "user_test": "pending; public entry read-only smoke passed; real teacher publication/device acceptance not performed",
+        "unpublished_code_security_issue": "open with separate owner; no safety verdict",
+        "excluded_media_work": "separate unfinished WIP, not deployed"
       }
     },
     {
