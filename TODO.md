@@ -663,3 +663,6 @@ User clarified Math/German Mittelschule5-9, priority5/6, detailed subgoals and n
 - [x] Auf ausdrücklichen Folgeauftrag den vorhandenen5/6-Bestand113Anker→241Teilziele/148Voraussetzungen ausbauen;225digitaleZiele/16sichtbareBeobachtungsgrenzen,keinvorgetäuschterGesamtnachweis.
 - [x] Persönliches anklickbares Netz, sichereBeleglogik,7Werkzeuge/14Diagrammarten, echtesHören undbestehendeKI/Fundusreuse aufdergetrenntenTestseite umsetzen; realeRichtig-/Fehler-/Hilfen-/Rückkehrpfade selbstprüfen. Appnachweis docs/learning-brain/evidence-full56-20261025.json, Details inderbestehendenÜbergabe.
 - [ ] VollständigeLehrkraftkalibrierungaller225digitalenZiele,regulärerKlassenpilot/Identität/Rohdatenlöschung/Geräteabnahme.5–9insgesamtbleibtoffen;keineProductionfreigabe. PR262/253weiterDraft/unmerged;Task-IDundVersuchshistorieerhalten.
+
+- [x] GC-ADAPTIVE-PRACTICE-01 (26.10.): lokale Lerngehirn-Vorschau8775nach beendetem Server wieder geöffnet, gespeichertes Profil sichtbar; echte Startanfrage einmal13.08s (kein Durchschnitt). Kein neuer Clouddeploy.
+- [ ] GC-ADAPTIVE-PRACTICE-01: Antwortzeiten getrennt für Erzeugung/Bewertung/Gegenprüfung und Fundustreffer messen; Tempo nur bei gleichen fachlichen Qualitätsfällen verbessern. Bestehende passende Bilder/Interaktionen weiterverwenden. [Übergabe](workstreams/adaptive-practice-01.md).
