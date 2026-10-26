@@ -10,7 +10,7 @@ const secureRules = fs.readFileSync("firestore.secure-assessment.rules", "utf8")
 const assessmentCore = fs.readFileSync("assessment-functions/lib/assessment-core.js", "utf8");
 
 test("AI form and client expose listening-task generation", () => {
-  assert.match(html, /id="aiAudioQuestionCount"[^>]*max="5"/);
+  assert.match(html, /id="aiAudioQuestionCount"[^>]*max="100"/);
   assert.match(client, /generateQuestionAudio: call\("generateQuestionAudio"/);
   assert.match(app, /audioQuestionCount/);
 });

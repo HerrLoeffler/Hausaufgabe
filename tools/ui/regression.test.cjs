@@ -69,50 +69,16 @@ test('dashboard route focus hides only the programmatic heading ring', t => {
   assert.match(source('interface.js'), /target\.focus\(\{\s*preventScroll:\s*true\s*\}\)/);
 });
 
-test('AI material and audio options stay grouped and explain the two audio modes accessibly', t => {
-  const w = fixture(t);
-  const material = w.document.querySelector('.aiMaterialOptions');
-  const audio = w.document.querySelector('.aiAudioOptions');
-  assert.ok(material && audio);
-  assert.equal(material.contains(w.$('aiMaterialMode')), true);
-  assert.equal(material.contains(w.$('aiImageQuestionCount')), true);
-  assert.equal(audio.contains(w.$('aiAudioQuestionCount')), true);
-  assert.equal(audio.contains(w.$('aiAudioAnswerQuestionCount')), true);
-  assert.equal(w.$('aiAudioQuestionCount').max, '5');
-  assert.equal(w.$('aiAudioAnswerQuestionCount').max, '5');
-  const info = Array.from(audio.querySelectorAll('.aiFieldInfo'));
-  assert.equal(info.length, 2);
-  info[0].querySelector('summary').click();
-  assert.equal(info[0].open, true);
-  assert.match(info[0].textContent, /Nur hören/);
-  assert.match(info[1].textContent, /Antworttexte bleiben verborgen/);
-  assert.match(source('styles.css'), /aiFieldInfo:not\(\.aiInfoDismissed\):focus-within>span/);
-  const dismissal = fn('installAiInfoDismissal');
-  w.eval(`window.installAiInfoDismissal = (${dismissal}); window.installAiInfoDismissal();`);
-  const summary = info[0].querySelector('summary');
-  const outside = w.document.createElement('button');
-  w.document.body.append(outside);
-  outside.focus();
-  info[0].dispatchEvent(new w.Event('pointerenter'));
-  assert.equal(info[0].classList.contains('aiInfoHovered'), true);
-  w.document.body.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
-  assert.equal(info[0].open, false);
-  assert.equal(info[0].classList.contains('aiInfoDismissed'), true);
-  info[0].dispatchEvent(new w.Event('pointerleave'));
-  info[0].dispatchEvent(new w.Event('pointerenter'));
-  assert.equal(info[0].classList.contains('aiInfoDismissed'), false);
-  summary.click();
-  assert.equal(info[0].open, true);
-  summary.focus();
-  w.document.body.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
-  assert.equal(info[0].open, false);
-  assert.equal(info[0].classList.contains('aiInfoDismissed'), true);
-  info[0].dispatchEvent(new w.Event('pointerenter'));
-  assert.equal(info[0].classList.contains('aiInfoDismissed'), false);
-  summary.click();
-  assert.equal(info[0].open, true);
-  assert.equal(info[0].classList.contains('aiInfoDismissed'), false);
-  assert.match(source('app.js'), /audioQuestionCount, solutionAudioQuestionCount, audioAnswerQuestionCount/);
+test('creation separates source material from generated images and shows three audio examples', t => {
+  const w = fixture(t), view=w.document.getElementById('aiView');
+  const section=id=>w.$(id).closest('[data-creation-step]');
+  assert.equal(section('aiMaterialMode').dataset.creationStep,'2');
+  assert.equal(section('aiImageQuestionCount').dataset.creationStep,'3');
+  for(const id of ['aiAudioQuestionCount','aiAudioAnswerQuestionCount','aiFullAudioQuestionCount'])assert.equal(section(id).dataset.creationStep,'4');
+  assert.equal(view.querySelectorAll('.audioStudentExample').length,3);
+  assert.match(section('aiAudioQuestionCount').textContent,/Frage.*Antwort|Antwort.*Frage/s);
+  assert.equal(w.$('aiUploadLegalDetails').open,false);
+  assert.equal(w.$('aiMaterialConfirmed').checked,false);
 });
 
 test('dashboard duplicate action opens a keyboard accessible choice before copying', async t => {

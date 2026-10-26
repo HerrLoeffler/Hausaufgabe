@@ -13,7 +13,7 @@ const rules = fs.readFileSync("firestore.rules", "utf8");
 const secureRules = fs.readFileSync("firestore.secure-assessment.rules", "utf8");
 
 test("creation offers audio choices and retains hidden legacy solution data", () => {
-  assert.match(html, /id="aiAudioAnswerQuestionCount"[^>]*max="5"/);
+  assert.match(html, /id="aiAudioAnswerQuestionCount"[^>]*max="100"/);
   assert.match(html, /<label hidden>[^<]*<input id="aiSolutionAudioQuestionCount"/);
   assert.match(app, /solutionAudioQuestionCount/);
   assert.match(worker, /solutionAudioQuestionCount/);

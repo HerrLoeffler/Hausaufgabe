@@ -90,6 +90,7 @@ test('the spoken fractions request previews and applies listening audio and pers
 
 function installCollector(w) {
   const app = fs.readFileSync('app.js', 'utf8');
+  w.handleAiMaterialFiles = {pending:0}; w.GENERATED_MEDIA_MAX = 100;
   const start = app.indexOf('function collectAiRequest()');
   const end = app.indexOf('\n}', start) + 2;
   w.eval(`$ = id => document.getElementById(id); state = { aiMaterials: [] }; ${app.slice(start, end)}; window.collectAiRequest = collectAiRequest;`);
