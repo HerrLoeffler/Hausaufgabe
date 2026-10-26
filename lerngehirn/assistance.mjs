@@ -7,7 +7,7 @@ export function focusAttributes(assistance,...ids){return ids.some(id=>assistanc
 export function renderSourceText(text,assistance){
  let index=0;return String(text||'').split(/(\s+)/).map(token=>/^\s+$/.test(token)?token:`<span data-source-token="${index}"${focusAttributes(assistance,'token:'+index++)}>${mathText(token)}</span>`).join('');
 }
-export function renderFocusLabels(assistance){if(!assistance?.focusIds?.length)return '';const labels=assistance.focusIds.map(id=>assistance.regions?.find(r=>r.id===id)?.label).filter(Boolean);return labels.length?`<p class="help-focus-label"><strong>Schau hierhin:</strong> ${labels.map(esc).join(' · ')}</p>`:'';}
+export function renderFocusLabels(assistance){if(!assistance?.focusIds?.length)return '';const labels=assistance.focusIds.map(id=>assistance.regions?.find(r=>r.id===id)?.label).filter(Boolean);const compact=labels.length>2?['Die farbig markierten Stellen']:labels;return compact.length?`<p class="help-focus-label"><strong>Schau hierhin:</strong> ${compact.map(esc).join(' · ')}</p>`:'';}
 export function decorateWorkshop(html,assistance){
  // The workshop already owns interaction and values. Only decorate existing controls.
  let part=0;return html.replace(/<(button|span)\b[^>]*>/g,tag=>{
