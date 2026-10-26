@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-21",
+  "observed_at": "2026-10-26T22:03:14.195Z",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -1039,7 +1039,77 @@
         }
       }
     },
-    "observedIntegrationHead": "4fe345c16d5778a93b077af4e775e7d3addbdb9e"
+    "observedIntegrationHead": "4fe345c16d5778a93b077af4e775e7d3addbdb9e",
+    "latest_authorized_visual_feedback_update_20261026": {
+      "stage": "production",
+      "scope": "General feedback: select page region, automatic image preview, comment, send",
+      "branch": "fix/question-feedback-simple-20261026",
+      "integration_branch": "feature/design-auth-student-20261026",
+      "commit": "3363841b0257f8d71017b9bdd58e7bed6d3a0857",
+      "tree": "1f99f5d9518da9ab7693a1096dfe8f5693f1f7d8",
+      "prs": [
+        326,
+        331
+      ],
+      "ci": {
+        "run": 40408428810,
+        "jobs": [
+          121872110468,
+          121872110802
+        ],
+        "result": "success",
+        "merge_run": 40408719869,
+        "merge_status": "Node success; browser attempt1 failed reopening draft after reload; direct drag/render succeeded; fresh CUA reload restored image+text. One bounded browser retry requested to distinguish intermittent failure, original attempt retained.",
+        "merge_jobs": [
+          121873110478,
+          121873110904
+        ]
+      },
+      "verified_files": 206,
+      "project": "hausaufgabe-staging",
+      "origin": "https://gradecrew.de",
+      "private_image_backend": {
+        "commit": "93df4eb03a3ea2a092c53b19c4a08e46b7ab8296",
+        "tree": "d89bfa251924098eac890b0db3637eef7aa98dc4",
+        "pr": 326,
+        "ci": [
+          40404565435,
+          40405242444
+        ],
+        "functions": [
+          "reviewMode",
+          "cleanupVisualFeedbackImages",
+          "purgeVisualFeedbackImagesOnAccountDeletion",
+          "purgeVisualFeedbackImageOnReportDeletion"
+        ],
+        "state": "all four deployed and ACTIVE",
+        "rules": "firestore.secure-assessment.rules compiled/released",
+        "storage_rules": "unchanged deny-all",
+        "image_retention_days": 90,
+        "orphan_retention_hours": 24,
+        "cleanup": "hourly; may delay after failure; reads expire at deadline",
+        "functions_attempts": [
+          {
+            "attempt": 1,
+            "result": "CLI stopped before upload/updates because deletion-trigger retry policy required acknowledgement"
+          },
+          {
+            "attempt": 2,
+            "result": "success; same four functions; force flag acknowledged idempotent retry policy only"
+          }
+        ],
+        "plugin": "two reviewed modules installed with backup; new image tool visible in fresh stdio process; current host catalog requires normal reload"
+      },
+      "interaction": "Bereich auf Seite aufziehen → automatisches Bild → Kommentar → senden; ohne Editor/Schwärzen/Dateiauswahl/Bildschirmfreigabe",
+      "local_tests": 611,
+      "review": "bounded PASS on exact tree; three P2 reproduced and fixed; 19 reviewer tests and two boundary reproductions",
+      "private_live_smoke": "not performed",
+      "physical_device_test": "not performed",
+      "provider_calls": 0,
+      "handoff": "workstreams/feedback-gc39-release-20261013.md",
+      "receipt": "workstreams/visual-feedback-image-release-receipts-20261026.json",
+      "next_action": "Martin tests the simplified normal feedback flow on gradecrew.de; normal host connector reload/private Admin smoke remains separate. No new UI work or Admin reconnection requested."
+    }
   },
   "production": {
     "project": "hausaufgabe-staging",
@@ -1050,9 +1120,9 @@
     "legacy_project_changed": false,
     "url": "https://gradecrew.de/",
     "version": "2.3.1-gc45-rc1",
-    "source_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
-    "deployed_local_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
-    "tree": "198c33ca9d1193a65fd547131cf76979f373a3f8",
+    "source_commit": "3363841b0257f8d71017b9bdd58e7bed6d3a0857",
+    "deployed_local_commit": "3363841b0257f8d71017b9bdd58e7bed6d3a0857",
+    "tree": "1f99f5d9518da9ab7693a1096dfe8f5693f1f7d8",
     "user_acceptance": "current gc44 and new offline native policy physical acceptance pending",
     "alternate_urls": [
       "https://hausaufgabe-staging.web.app/"
@@ -1199,6 +1269,76 @@
           }
         }
       }
+    },
+    "latest_visual_feedback_images_20261026": {
+      "stage": "production",
+      "scope": "General feedback: select page region, automatic image preview, comment, send",
+      "branch": "fix/question-feedback-simple-20261026",
+      "integration_branch": "feature/design-auth-student-20261026",
+      "commit": "3363841b0257f8d71017b9bdd58e7bed6d3a0857",
+      "tree": "1f99f5d9518da9ab7693a1096dfe8f5693f1f7d8",
+      "prs": [
+        326,
+        331
+      ],
+      "ci": {
+        "run": 40408428810,
+        "jobs": [
+          121872110468,
+          121872110802
+        ],
+        "result": "success",
+        "merge_run": 40408719869,
+        "merge_status": "Node success; browser attempt1 failed reopening draft after reload; direct drag/render succeeded; fresh CUA reload restored image+text. One bounded browser retry requested to distinguish intermittent failure, original attempt retained.",
+        "merge_jobs": [
+          121873110478,
+          121873110904
+        ]
+      },
+      "verified_files": 206,
+      "project": "hausaufgabe-staging",
+      "origin": "https://gradecrew.de",
+      "private_image_backend": {
+        "commit": "93df4eb03a3ea2a092c53b19c4a08e46b7ab8296",
+        "tree": "d89bfa251924098eac890b0db3637eef7aa98dc4",
+        "pr": 326,
+        "ci": [
+          40404565435,
+          40405242444
+        ],
+        "functions": [
+          "reviewMode",
+          "cleanupVisualFeedbackImages",
+          "purgeVisualFeedbackImagesOnAccountDeletion",
+          "purgeVisualFeedbackImageOnReportDeletion"
+        ],
+        "state": "all four deployed and ACTIVE",
+        "rules": "firestore.secure-assessment.rules compiled/released",
+        "storage_rules": "unchanged deny-all",
+        "image_retention_days": 90,
+        "orphan_retention_hours": 24,
+        "cleanup": "hourly; may delay after failure; reads expire at deadline",
+        "functions_attempts": [
+          {
+            "attempt": 1,
+            "result": "CLI stopped before upload/updates because deletion-trigger retry policy required acknowledgement"
+          },
+          {
+            "attempt": 2,
+            "result": "success; same four functions; force flag acknowledged idempotent retry policy only"
+          }
+        ],
+        "plugin": "two reviewed modules installed with backup; new image tool visible in fresh stdio process; current host catalog requires normal reload"
+      },
+      "interaction": "Bereich auf Seite aufziehen → automatisches Bild → Kommentar → senden; ohne Editor/Schwärzen/Dateiauswahl/Bildschirmfreigabe",
+      "local_tests": 611,
+      "review": "bounded PASS on exact tree; three P2 reproduced and fixed; 19 reviewer tests and two boundary reproductions",
+      "private_live_smoke": "not performed",
+      "physical_device_test": "not performed",
+      "provider_calls": 0,
+      "handoff": "workstreams/feedback-gc39-release-20261013.md",
+      "receipt": "workstreams/visual-feedback-image-release-receipts-20261026.json",
+      "next_action": "Martin tests the simplified normal feedback flow on gradecrew.de; normal host connector reload/private Admin smoke remains separate. No new UI work or Admin reconnection requested."
     }
   },
   "automation": {
@@ -2150,6 +2290,76 @@
         "user_test": "pending; public entry read-only smoke passed; real teacher publication/device acceptance not performed",
         "unpublished_code_security_issue": "open with separate owner; no safety verdict",
         "excluded_media_work": "separate unfinished WIP, not deployed"
+      },
+      "latest_visual_feedback_images_20261026": {
+        "stage": "production",
+        "scope": "General feedback: select page region, automatic image preview, comment, send",
+        "branch": "fix/question-feedback-simple-20261026",
+        "integration_branch": "feature/design-auth-student-20261026",
+        "commit": "3363841b0257f8d71017b9bdd58e7bed6d3a0857",
+        "tree": "1f99f5d9518da9ab7693a1096dfe8f5693f1f7d8",
+        "prs": [
+          326,
+          331
+        ],
+        "ci": {
+          "run": 40408428810,
+          "jobs": [
+            121872110468,
+            121872110802
+          ],
+          "result": "success",
+          "merge_run": 40408719869,
+          "merge_status": "Node success; browser attempt1 failed reopening draft after reload; direct drag/render succeeded; fresh CUA reload restored image+text. One bounded browser retry requested to distinguish intermittent failure, original attempt retained.",
+          "merge_jobs": [
+            121873110478,
+            121873110904
+          ]
+        },
+        "verified_files": 206,
+        "project": "hausaufgabe-staging",
+        "origin": "https://gradecrew.de",
+        "private_image_backend": {
+          "commit": "93df4eb03a3ea2a092c53b19c4a08e46b7ab8296",
+          "tree": "d89bfa251924098eac890b0db3637eef7aa98dc4",
+          "pr": 326,
+          "ci": [
+            40404565435,
+            40405242444
+          ],
+          "functions": [
+            "reviewMode",
+            "cleanupVisualFeedbackImages",
+            "purgeVisualFeedbackImagesOnAccountDeletion",
+            "purgeVisualFeedbackImageOnReportDeletion"
+          ],
+          "state": "all four deployed and ACTIVE",
+          "rules": "firestore.secure-assessment.rules compiled/released",
+          "storage_rules": "unchanged deny-all",
+          "image_retention_days": 90,
+          "orphan_retention_hours": 24,
+          "cleanup": "hourly; may delay after failure; reads expire at deadline",
+          "functions_attempts": [
+            {
+              "attempt": 1,
+              "result": "CLI stopped before upload/updates because deletion-trigger retry policy required acknowledgement"
+            },
+            {
+              "attempt": 2,
+              "result": "success; same four functions; force flag acknowledged idempotent retry policy only"
+            }
+          ],
+          "plugin": "two reviewed modules installed with backup; new image tool visible in fresh stdio process; current host catalog requires normal reload"
+        },
+        "interaction": "Bereich auf Seite aufziehen → automatisches Bild → Kommentar → senden; ohne Editor/Schwärzen/Dateiauswahl/Bildschirmfreigabe",
+        "local_tests": 611,
+        "review": "bounded PASS on exact tree; three P2 reproduced and fixed; 19 reviewer tests and two boundary reproductions",
+        "private_live_smoke": "not performed",
+        "physical_device_test": "not performed",
+        "provider_calls": 0,
+        "handoff": "workstreams/feedback-gc39-release-20261013.md",
+        "receipt": "workstreams/visual-feedback-image-release-receipts-20261026.json",
+        "next_action": "Martin tests the simplified normal feedback flow on gradecrew.de; normal host connector reload/private Admin smoke remains separate. No new UI work or Admin reconnection requested."
       }
     },
     {
