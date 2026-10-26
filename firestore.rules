@@ -228,6 +228,8 @@ service cloud.firestore {
     // Feedback: Lehrkräfte können eigenes Feedback anlegen und die eigene KI-Bewertung ändern; nur Admins lesen/verwalten alle Einträge.
     match /feedback/{feedbackId} {
       allow create: if accountActive()
+                    && request.resource.data.get('category', '') != 'screenshot_error'
+                    && !request.resource.data.keys().hasAny(['attachment', 'captureSchemaVersion', 'captureContext'])
                     && request.resource.data.userId == request.auth.uid
                     && request.resource.data.message is string
                     && request.resource.data.message.size() > 0
@@ -249,7 +251,8 @@ service cloud.firestore {
                       )
                     );
       allow read, delete: if isAdmin();
-      allow update: if isAdmin()
+      allow update: if !request.resource.data.diff(resource.data).affectedKeys().hasAny(['attachment', 'captureSchemaVersion', 'captureContext', 'reviewNoteId'])
+        && isAdmin()
         || (
           accountActive()
           && resource.data.get('category', '') == 'ai_question'

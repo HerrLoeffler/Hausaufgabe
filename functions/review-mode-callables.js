@@ -20,6 +20,18 @@ exports.reviewMode=onCall({region:REGION,timeoutSeconds:30,memory:'256MiB',enfor
   for(const [path,value] of writes)transaction.set(db.doc(path),value);
   return result;
  })};
- try{return await createReviewService({store,toTimestamp:value=>Timestamp.fromMillis(value),projectId:process.env.GCLOUD_PROJECT||process.env.GOOGLE_CLOUD_PROJECT}).execute({uid:request.auth?.uid,data:request.data});}
- catch(error){if(['unauthenticated','permission-denied','invalid-argument','failed-precondition','aborted','already-exists'].includes(error.code))throw new HttpsError(error.code,error.message);throw new HttpsError('unavailable','Hinweise konnten gerade nicht gespeichert oder geladen werden.');}
+ try{
+  const service=createReviewService({store,toTimestamp:value=>Timestamp.fromMillis(value),projectId:process.env.GCLOUD_PROJECT||process.env.GOOGLE_CLOUD_PROJECT});
+  const uid=request.auth?.uid,data=request.data||{};if(data.actorUid&&data.actorUid!==uid)throw new HttpsError('permission-denied','Das Feedbackkonto wurde gewechselt.');
+  if(['uploadVisualImage','readVisualImage','deleteVisualImage'].includes(data.action)){
+   await service.execute({uid,data:{action:'access'}});
+   const images=require('./feedback-image-storage').imageStorage().service;
+   if(data.action==='uploadVisualImage')return await images.upload(uid,data);
+   const access=await service.execute({uid,data:{action:'visualImageAccess',id:data.id}});
+   if(data.action==='deleteVisualImage')return await images.remove(access);
+   return await images.read(access);
+  }
+  return await service.execute({uid,data});
+ }
+ catch(error){if(['unauthenticated','permission-denied','invalid-argument','failed-precondition','aborted','already-exists','resource-exhausted'].includes(error.code))throw new HttpsError(error.code,error.message);throw new HttpsError('unavailable','Hinweise konnten gerade nicht gespeichert oder geladen werden.');}
 });

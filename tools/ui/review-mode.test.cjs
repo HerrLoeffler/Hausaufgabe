@@ -80,19 +80,34 @@ test('compact staging mode syncs existing notes without installing the area-mark
  const {w}=await fixture(t,null,{compact:true});assert.equal(w.document.body.id,'gradecrewPage');await settle();assert.equal(w.document.querySelector('[data-review-region]'),null);assert.equal(w.document.querySelector('[data-review-mark]'),null);
 });
 
-test('compact feedback offers one annotation control, sends a visual note and removes it on logout',async t=>{
+test('compact feedback blocks text-only send when browser capture is unavailable and removes private UI on logout',async t=>{
  const {w,calls,controller}=await fixture(t,d=>d.action==='access'?{admin:false,catalog:{checks:[]}}:null,{compact:true,environment:'production'});
  w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};
- w.HTMLDialogElement.prototype.close=function(){this.dispatchEvent(new w.Event('close'));};
- w.document.body.getBoundingClientRect=()=>({left:0,top:0,width:1000,height:1000});
- const feedback=w.document.querySelector('[data-gradecrew-feedback]');assert.ok(feedback,'teacher can open feedback');
- assert.equal(w.document.querySelector('[data-review-toggle]'),null);
- feedback.click();const overlay=w.document.querySelector('.gcLocalCapture');assert.ok(overlay);
- overlay.dispatchEvent(new w.MouseEvent('pointerdown',{bubbles:true,clientX:100,clientY:100,button:0}));
- overlay.dispatchEvent(new w.MouseEvent('pointerup',{bubbles:true,clientX:300,clientY:300,button:0}));
- const input=w.document.querySelector('.gcLocalNote textarea');assert.ok(input);input.value='Diese Schrift ist abgeschnitten';
- w.document.querySelector('.gcLocalNote form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await settle();
- const sent=calls.find(c=>c.action==='create');assert.equal(sent.area,'visual-feedback');assert.equal(sent.text,input.value);assert.equal(sent.build,'test-build');
- assert.equal(calls.some(c=>['approve','batch','transition','check'].includes(c.action)),false);
- await controller.setSession(null);assert.equal(w.document.querySelector('[data-gradecrew-feedback]'),null);
+ w.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
+ await settle();const feedback=w.document.querySelector('[data-gradecrew-feedback]');assert.ok(feedback);feedback.click();await settle();
+ const form=w.document.querySelector('.gcLocalNote form');assert.ok(form);const input=form.querySelector('textarea');input.value='Diese Schrift ist abgeschnitten';form.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await settle();
+ assert.equal(calls.some(c=>c.action==='create'),false);assert.match(form.textContent,/Bild fehlt/);await controller.setSession(null);assert.equal(w.document.querySelector('[data-gradecrew-feedback]'),null);assert.equal(w.document.querySelector('.gcLocalNote'),null);
+});
+test('queued final pixels upload before create; offline retry preserves blob and immutable request',async t=>{
+ let fail=true;const {controller,calls,storage}=await fixture(t,async d=>{if(d.action==='uploadVisualImage'){if(fail)throw Error('Offline');return {imageId:'private-image'};}return null;},{compact:true});
+ const imageBlob=new Blob(['synthetic final raster'],{type:'image/jpeg'}),request={action:'create',area:'visual-feedback',captureSchemaVersion:2,clientRequestId:'frozen-report',text:'synthetic',imageBlob};
+ await storage.put('staging:admin:outbox',[request]);await controller.setSession({uid:'admin'});await settle();assert.equal(calls.some(c=>c.action==='create'),false);assert.equal((await storage.get('staging:admin:outbox'))[0].imageBlob.size,imageBlob.size);
+ fail=false;await controller.setSession({uid:'admin'});await settle();const sent=calls.find(c=>c.action==='create');assert.equal(sent.imageId,'private-image');assert.equal(sent.clientRequestId,'frozen-report');assert.equal(Object.hasOwn(sent,'imageBlob'),false);assert.deepEqual(await storage.get('staging:admin:outbox'),[]);
+});
+test('account switch while final image serializes cannot dispatch the previous account image or report',async t=>{
+ let account='A',release,start;const gate=new Promise(r=>release=r),started=new Promise(r=>start=r),dispatched=[];
+ const {controller,records}=await fixture(t,async data=>{dispatched.push({account,...data});if(data.action==='uploadVisualImage')return {imageId:'synthetic-image'};return null;});
+ await controller.setSession({uid:'A'});class SlowBlob extends Blob{async arrayBuffer(){start();await gate;return super.arrayBuffer();}}
+ records.set('staging:A:outbox',[{action:'create',captureSchemaVersion:2,clientRequestId:'one',text:'A-private-synthetic',imageBlob:new SlowBlob(['pixels'],{type:'image/jpeg'})}]);
+ const opening=controller.open();await started;account='B';await controller.setSession({uid:'B'});release();await opening;await settle();
+ assert.equal(dispatched.some(x=>x.account==='B'&&['uploadVisualImage','create'].includes(x.action)),false);assert.equal(records.get('staging:A:outbox').length,1);
+});
+test('image drafts save and reload when the browser rejects IndexedDB Blob values',async t=>{
+ const {w,controller,records,storage}=await fixture(t,null,{compact:true});
+ w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');};w.URL.createObjectURL=()=> 'blob:synthetic';w.URL.revokeObjectURL=()=>{};w.Image=class{naturalWidth=100;naturalHeight=80;async decode(){}};w.HTMLCanvasElement.prototype.getContext=()=>({fillRect(){},drawImage(){}});w.HTMLCanvasElement.prototype.toBlob=cb=>cb(new Blob(['final-pixels'],{type:'image/jpeg'}));
+ records.set('staging:admin:visual-draft',{clientRequestId:'bytes-draft',context:{view:'authView',build:'test'},text:'synthetic',imageBlob:new Blob(['pixels'],{type:'image/jpeg'})});
+ const originalPut=storage.put;storage.put=async(k,v)=>{if(v?.imageBlob instanceof Blob)throw Object.assign(Error('Blob serialization rejected'),{name:'UnknownError'});return originalPut(k,v);};
+ await controller.setSession({uid:'admin'});await settle();w.document.querySelector('[data-gradecrew-feedback]').click();await settle();[...w.document.querySelectorAll('button')].find(b=>b.textContent==='Entwurf sichern und schließen').click();await settle();
+ const draft=records.get('staging:admin:visual-draft');assert.equal(Object.hasOwn(draft,'imageBlob'),false);assert.ok(draft.imageBytes.byteLength);assert.equal(w.document.querySelector('dialog'),null);
+ await controller.setSession({uid:'admin'});await settle();w.document.querySelector('[data-gradecrew-feedback]').click();await settle();assert.ok(w.document.querySelector('.gcImageStage canvas'));
 });

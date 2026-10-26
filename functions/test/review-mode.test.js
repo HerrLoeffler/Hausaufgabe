@@ -9,7 +9,8 @@ function setup(projectId='hausaufgabe-staging') {
  const store={transaction:async fn=>fn({get:async k=>structuredClone(docs.get(k)||null),set:(k,v)=>docs.set(k,structuredClone(v)),list:async (collection,{owner,cursor='',limit=100}={})=>[...docs].filter(([k,v])=>k.startsWith(collection+'/')&&k.split('/').length===2&&(!owner||v.authorId===owner)&&k.split('/')[1]>cursor).sort().slice(0,limit).map(([k,v])=>({...structuredClone(v),id:k.split('/')[1]}))})};
  assert.equal(typeof createReviewService,'function','review service exists');
  const service=createReviewService({store,projectId,now:()=>12345});
- return {docs,call:(uid,data)=>service.execute({uid,data})};
+ const visual=async(uid,data)=>{const imageId=require('node:crypto').createHash('sha256').update(uid+':'+data.clientRequestId).digest('hex');docs.set('reviewImageLeases/'+imageId,{imageId,ownerId:uid,state:'ready',expiresAt:999999,width:100,height:80,size:400,contentType:'image/jpeg'});return service.execute({uid,data:{...data,captureSchemaVersion:2,imageId}});};
+ return {docs,visual,call:(uid,data)=>service.execute({uid,data})};
 }
 const note={action:'create',clientRequestId:'note-12345678',text:'Bitte den Text kürzen',target:'hero-title',view:'authView',build:'abc1234',locale:'de',scene:'welcome'};
 test('review denies anonymous, unknown roles, inactive accounts and the legacy project',async()=>{
@@ -75,7 +76,7 @@ test('region survives server persistence and malformed or changed replay is reje
 });
 
 test('visual feedback has its own batch and never mixes general notes or checks',async()=>{
- const s=setup();await s.call('admin',note);const {note:visual}=await s.call('admin',{...note,clientRequestId:'visual-1',area:'visual-feedback'});await s.call('teacher',{...note,clientRequestId:'teacher-visual',area:'visual-feedback'});
+ const s=setup();await s.call('admin',note);const {note:visual}=await s.visual('admin',{...note,clientRequestId:'visual-1',area:'visual-feedback'});await s.visual('teacher',{...note,clientRequestId:'teacher-visual',area:'visual-feedback'});
  const result=await s.call('admin',{action:'batch',area:'visual-feedback',authorId:'admin'});assert.deepEqual(result.notes.map(n=>n.id),[visual.id]);assert.deepEqual(result.checks,[]);
  const listed=await s.call('admin',{action:'list',area:'visual-feedback',authorId:'admin'});assert.equal(listed.notes.length,1);assert.deepEqual(listed.checks,[]);
  await assert.rejects(s.call('admin',{...note,clientRequestId:'bad-area',area:'technical-mix'}),{code:'invalid-argument'});
@@ -83,14 +84,14 @@ test('visual feedback has its own batch and never mixes general notes or checks'
 });
 
 test('frame notes arrive in Feedback/Screenshot-Fehler exactly once and old online frames are restored',async()=>{
- const s=setup();const {note:n}=await s.call('admin',{...note,area:'visual-feedback'});const path='feedback/visual-'+n.id;assert.equal(s.docs.get(path).category,'screenshot_error');assert.equal(s.docs.get(path).message,n.text);s.docs.delete(path);const r=await s.call('admin',{action:'syncVisualFeedback'});assert.equal(r.imported,1);s.docs.set(path,{...s.docs.get(path),status:'done'});await s.call('admin',{action:'syncVisualFeedback'});assert.equal(s.docs.get(path).status,'done');await assert.rejects(s.call('teacher',{action:'syncVisualFeedback'}),{code:'permission-denied'});
+ const s=setup();const {note:n}=await s.visual('admin',{...note,area:'visual-feedback'});const path='feedback/visual-'+n.id;assert.equal(s.docs.get(path).category,'screenshot_error');assert.equal(s.docs.get(path).message,n.text);s.docs.delete(path);const r=await s.call('admin',{action:'syncVisualFeedback'});assert.equal(r.imported,1);s.docs.set(path,{...s.docs.get(path),status:'done'});await s.call('admin',{action:'syncVisualFeedback'});assert.equal(s.docs.get(path).status,'done');await assert.rejects(s.call('teacher',{action:'syncVisualFeedback'}),{code:'permission-denied'});
  const generic=await s.call('admin',{...note,clientRequestId:'generic'});assert.equal(s.docs.has('feedback/visual-'+generic.note.id),false);
 });
 
 test('active teachers can submit compact feedback without individual enrollment on live and separate staging',async()=>{
  for(const project of ['hausaufgabe-staging','gradecrew-staging-2026']){
   const s=setup(project);s.docs.delete('reviewMembers/teacher');
-  const {note:n}=await s.call('teacher',{...note,area:'visual-feedback',authorRole:'admin',approval:'approved'});
+  const {note:n}=await s.visual('teacher',{...note,area:'visual-feedback',authorRole:'admin',approval:'approved'});
   assert.equal(n.authorRole,'teacher');assert.equal(n.approval,'pending');
   assert.equal((await s.call('admin',{action:'batch',area:'visual-feedback'})).notes.length,0);
   for(const action of ['batch','members','check','listTeacherFeedback'])await assert.rejects(s.call('teacher',{action}),{code:'permission-denied'});
@@ -99,7 +100,7 @@ test('active teachers can submit compact feedback without individual enrollment 
 });
 test('admin teacher-feedback read includes pending teacher notes and paginates across mixed authors',async()=>{
  const s=setup();s.docs.delete('reviewMembers/teacher');
- for(let i=0;i<108;i++)await s.call(i%2?'teacher':'admin',{...note,clientRequestId:'mixed-'+i,area:'visual-feedback'});
+ for(let i=0;i<108;i++)await s.visual(i%2?'teacher':'admin',{...note,clientRequestId:'mixed-'+i,area:'visual-feedback'});
  await s.call('teacher',{...note,clientRequestId:'general-note'});
  let cursor='',all=[],pages=0;
  do{const r=await s.call('admin',{action:'listTeacherFeedback',cursor});all.push(...r.notes);cursor=r.nextCursor||'';pages++;assert.equal(r.environment,'production');}while(cursor);
@@ -111,4 +112,18 @@ test('deleted or suspended teacher cannot submit feedback',async()=>{
  for(const profile of [{role:'teacher',status:'suspended'},{role:'teacher',status:'active',accountDeletionId:'operation'}]){
   s.docs.set('users/teacher',profile);await assert.rejects(s.call('teacher',{...note,area:'visual-feedback'}),{code:'permission-denied'});
  }
+});
+
+test('new visual reports require a committed private image, bind lease owner and request, preserve old reports',async()=>{
+ const s=setup();const visual={...note,area:'visual-feedback',target:'gradecrewPage'};
+ await assert.rejects(s.call('teacher',visual),{code:'failed-precondition'});
+ const imageId=require('node:crypto').createHash('sha256').update('teacher:'+note.clientRequestId).digest('hex');
+ const lease={imageId,ownerId:'other',state:'ready',expiresAt:999999,path:'private',width:100,height:80,contentType:'image/jpeg',size:400,sha256:'a'.repeat(64)};
+ s.docs.set('reviewImageLeases/'+imageId,lease);
+ await assert.rejects(s.call('teacher',{...visual,imageId,captureSchemaVersion:2}),{code:'permission-denied'});
+ lease.ownerId='teacher';s.docs.set('reviewImageLeases/'+imageId,lease);
+ const result=await s.call('teacher',{...visual,imageId,captureSchemaVersion:2});assert.equal(result.note.attachment.imageId,imageId);assert.equal(s.docs.get('reviewImageLeases/'+imageId).state,'attached');assert.equal(s.docs.get('feedback/visual-'+result.note.id).attachment.imageId,imageId);
+ await assert.rejects(s.call('other',{action:'visualImageAccess',id:result.note.id}),{code:'permission-denied'});
+ assert.equal((await s.call('admin',{action:'visualImageAccess',id:result.note.id})).ownerId,'teacher');
+ assert.equal((await s.call('teacher',{...visual,imageId,captureSchemaVersion:2})).note.id,result.note.id);
 });
