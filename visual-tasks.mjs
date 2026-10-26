@@ -1,6 +1,8 @@
+import {ARROW_MODES,configureDreisatz,dreisatzSettings} from './dreisatz.mjs';
 // Adapter for the approved Prototype 02. Tasks are data, never HTML or executable code.
 export const VISUAL_FORMATS = Object.freeze(['hotspot','labeling','scale','angle','grid','chart','connections','coordinate','evidence','range','table','correction']);
 const core = () => globalThis.GC2;
+const expandedDreisatz=new WeakSet();
 export function parseNumericAnswer(value) { return core().numeric(value); }
 const plain = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const fail = () => { throw new Error('Die visuelle Aufgabe ist unvollständig oder ungültig.'); };
@@ -38,7 +40,7 @@ function geometryKey(t) {
     default:fail();
   }
 }
-const specFields={hotspot:'scene regions maxSelections',labeling:'scene regions items',scale:'context min max step majorStep unit card',angle:'degrees instrument min max',grid:'rows columns',chart:'min max step unit categories',connections:'directed nodes',coordinate:'mode minX maxX minY maxY step labels',evidence:'tokens',range:'min max step majorStep unit context startInclusive endInclusive',table:'columns rows answerMode numericForm',correction:'rows answerMode numericForm caseSensitive'};
+const specFields={hotspot:'scene regions maxSelections',labeling:'scene regions items',scale:'context min max step majorStep unit card',angle:'degrees instrument min max',grid:'rows columns',chart:'min max step unit categories',connections:'directed nodes',coordinate:'mode minX maxX minY maxY step labels',evidence:'tokens',range:'min max step majorStep unit context startInclusive endInclusive',table:'columns rows answerMode numericForm layout',correction:'rows answerMode numericForm caseSensitive'};
 const solutionFields={hotspot:'regions text',labeling:'assignments',scale:'value tolerance',angle:'value tolerance',grid:'count',chart:'values',connections:'edges',coordinate:'points',evidence:'selections',range:'start end',table:'cells',correction:'rowId accepted'};
 function closed(value,fields){if(!plain(value)||Object.keys(value).some(key=>!fields.split(' ').includes(key)))fail();}
 export function parseVisualTask(question, { publicOnly = false } = {}) {
@@ -60,12 +62,13 @@ export function parseVisualTask(question, { publicOnly = false } = {}) {
   if(s.categories)records(s.categories,'id label value');
   if(s.nodes)records(s.nodes,'id label shortLabel x y');
   if(t.format==='correction')records(s.rows,'id text');
-  if(t.format==='table'&&Array.isArray(s.rows))records(s.rows.flat(),'id text input');
+  if(t.format==='table'&&Array.isArray(s.rows))records(s.rows.flat(),'id text input control');
   if(t.format==='table') {
+    if(!publicOnly)records(t.solution.cells,'id accepted answerMode');
     if(!Array.isArray(s.columns)||s.columns.length<2||s.columns.length>8||!s.columns.every(c=>typeof c==='string')||!Array.isArray(s.rows)||!s.rows.length||s.rows.length>20||s.rows.some(row=>!Array.isArray(row)||row.length!==s.columns.length||row.some(c=>!plain(c)||typeof c.id!=='string'||typeof c.text!=='string'||typeof c.input!=='boolean'))) fail();
     const cells=s.rows.flat(),ids=cells.map(c=>c.id);
     if(new Set(ids).size!==ids.length||!cells.some(c=>c.input)||!['numeric','text'].includes(s.answerMode)) fail();
-    if(!publicOnly&&(!Array.isArray(t.solution?.cells)||t.solution.cells.length!==cells.filter(c=>c.input).length||t.solution.cells.some(c=>!cells.some(v=>v.input&&v.id===c.id)||!Array.isArray(c.accepted)||!c.accepted.length||c.accepted.some(a=>typeof a!=='string'||(s.answerMode==='numeric'&&core().numeric(a)===null)))||new Set(t.solution.cells.map(c=>c.id)).size!==t.solution.cells.length)) fail();
+    if(!publicOnly&&(!Array.isArray(t.solution?.cells)||t.solution.cells.length!==cells.filter(c=>c.input).length||t.solution.cells.some(c=>!cells.some(v=>v.input&&v.id===c.id)||!Array.isArray(c.accepted)||!c.accepted.length||c.accepted.some(a=>typeof a!=='string'||((c.answerMode||s.answerMode)==='numeric'&&core().numeric(a)===null)))||new Set(t.solution.cells.map(c=>c.id)).size!==t.solution.cells.length)) fail();
   }
   try {
     const candidate=publicOnly?{...t,rationale:'Public geometry validation',solution:geometryKey(t)}:t;
@@ -91,7 +94,7 @@ export function evaluateVisual(q,value) {
   const result=core().grade(task,decodeVisualAnswer(value));
   return {awarded:result.points,max:result.maxPoints,needsReview:false,correct:result.correct};
 }
-export function visualSolution(q) { try{const t=parseVisualTask(q);if(t.format==='table')return t.solution.cells.map(cell=>{const ri=t.spec.rows.findIndex(row=>row.some(c=>c.id===cell.id)),ci=t.spec.rows[ri].findIndex(c=>c.id===cell.id);if(globalThis.document?.documentElement?.dataset.gradecrewLab==='true'&&globalThis.GCRenderer?.isDreisatzSpec?.(t.spec)){const label=ri===1?'Geteilt durch':ri===3?'Mal':(ri===2?'Zwischenschritt':'Ergebnis')+' · '+t.spec.columns[ci];return label+': '+cell.accepted.join(' / ');} return 'Zeile '+(ri+1)+' · '+t.spec.columns[ci]+': '+cell.accepted.join(' / ');}).join(' · ');return core().solutionText(t);}catch{return 'Aufgabe prüfen';} }
+export function visualSolution(q) { try{const t=parseVisualTask(q);if(t.format==='table')return t.solution.cells.map(cell=>{const ri=t.spec.rows.findIndex(row=>row.some(c=>c.id===cell.id)),ci=t.spec.rows[ri].findIndex(c=>c.id===cell.id);if(globalThis.document?.documentElement?.dataset.gradecrewLab==='true'&&globalThis.GCRenderer?.isDreisatzSpec?.(t.spec)){if(t.spec.layout==='dreisatz'){const side=ci<2?'Links':'Rechts',step=ri===1?'erster':'zweiter';return ([1,3].includes(ri)?side+' · '+step+' Rechenschritt'+([0,4].includes(ci)?' · Zeichen':''):(ri===0?'Ausgangswert':ri===2?'Zwischenschritt':'Ergebnis')+' · '+t.spec.columns[ci])+': '+cell.accepted.join(' / ');}const label=ri===1?'Geteilt durch':ri===3?'Mal':(ri===2?'Zwischenschritt':'Ergebnis')+' · '+t.spec.columns[ci];return label+': '+cell.accepted.join(' / ');} return 'Zeile '+(ri+1)+' · '+t.spec.columns[ci]+': '+cell.accepted.join(' / ');}).join(' · ');return core().solutionText(t);}catch{return 'Aufgabe prüfen';} }
 const controllers=new WeakMap();
 const mounted=new Set();
 let detachObserver;
@@ -125,9 +128,18 @@ export function renderVisualEditor(container, q, onChange, {formats=VISUAL_FORMA
   }
   select.value=task.format;formatLabel.append(select);
   if(document.documentElement.dataset.gradecrewLab==='true'&&task.format==='table'&&globalThis.GCRenderer?.isDreisatzSpec?.(task.spec)){container.closest('.questionCard')?.classList.add('gc-compact-dreisatz');const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Aufgabenart ändern';details.append(summary,formatLabel);container.append(details);}else container.append(formatLabel);
+  let settings;
+  if(document.documentElement.dataset.gradecrewLab==='true'&&task.spec.layout==='dreisatz'){
+    settings=document.createElement('details');settings.className='gc-dreisatz-settings';settings.open=expandedDreisatz.has(q);settings.addEventListener('toggle',()=>{if(settings.open)expandedDreisatz.add(q);else expandedDreisatz.delete(q);});container.append(settings);
+    const buildSettings=()=>{const current=dreisatzSettings(task);settings.replaceChildren();const summary=document.createElement('summary');summary.textContent='Hilfen und offene Felder anpassen';settings.append(summary);const grid=document.createElement('div');grid.className='settings-grid';settings.append(grid);
+      const apply=changes=>{try{task=configureDreisatz(task,changes);q.visualTask=JSON.stringify(task);q.points=task.maxPoints;expandedDreisatz.add(q);onChange(true);show();buildSettings();}catch(error){const p=document.createElement('p');p.setAttribute('role','alert');p.textContent=error.message;settings.append(p);}};
+      current.modes.forEach((mode,i)=>{const label=document.createElement('label');label.textContent=['Links · erster Pfeil','Rechts · erster Pfeil','Links · zweiter Pfeil','Rechts · zweiter Pfeil'][i];const select=document.createElement('select');for(const [value,text]of Object.entries(ARROW_MODES)){const option=document.createElement('option');option.value=value;option.textContent=text;select.append(option);}select.value=mode;select.addEventListener('change',()=>{const modes=[...current.modes];modes[i]=select.value;apply({modes});});label.append(select);grid.append(label);});
+      current.givens.forEach((given,i)=>{const label=document.createElement('label');label.className='given-toggle';const check=document.createElement('input');check.type='checkbox';check.checked=given;check.addEventListener('change',()=>{const givens=[...current.givens];givens[i]=check.checked;apply({givens});});label.append(check,document.createTextNode(['Ausgangswert','Zwischenschritt','Ergebnis'][Math.floor(i/2)]+' · '+current.labels[i%2]+' vorgeben'));grid.append(label);});
+    };buildSettings();
+  }
   const preview=document.createElement('div');container.append(preview);
   const solution=document.createElement('p');solution.className='hint';container.append(solution);
   function show(){mountVisualQuestion(preview,q);solution.textContent='Lösung: '+visualSolution(q);}
-  select.addEventListener('change',()=>{task=core().example(select.value);task.maxPoints=Number(q.points)||1;q.visualTask=JSON.stringify(task);q.text=task.prompt;onChange(true);show();});
+  select.addEventListener('change',()=>{settings?.remove();task=core().example(select.value);task.maxPoints=Number(q.points)||1;q.visualTask=JSON.stringify(task);q.text=task.prompt;onChange(true);show();});
   show();
 }
