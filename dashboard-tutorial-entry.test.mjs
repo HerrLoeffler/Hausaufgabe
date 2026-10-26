@@ -14,14 +14,14 @@ test('the same tutorial button moves before the account label and preserves its 
  assert.equal(b.parentElement,d.getElementById('userBar'));assert.equal(b.nextElementSibling,d.getElementById('userLabel'));
  b.click();assert.equal(starts,1);assert.equal(d.querySelector('.gcWorkspaceCrewEntry'),null);
 });
-for(const [count,visible] of [[0,true],[1,true],[5,true],[6,false],[99,false]])test(`header visibility for login count ${count}`,t=>{
+for(const [count,visible] of [[0,true],[1,true],[6,true],[7,true],[8,false],[99,false]])test(`header visibility for login count ${count}`,t=>{
  const {d,b}=setup(t);syncDashboardTutorialEntry(d,{enabled:true,dashboard:true,count});assert.equal(b.hidden,!visible);
  assert.ok(d.getElementById('settingsTutorialStart'),'permanent settings replay entry exists');
  assert.equal(d.getElementById('settingsTutorialStart').disabled,false);
 });
 test('leaving the dashboard, signing out and switching to a later-login account hide the entry',t=>{
  const {d,b}=setup(t);
- for(const state of [{enabled:true,dashboard:false,count:1},{enabled:false,dashboard:true,count:1},{enabled:true,dashboard:true,count:6}]){syncDashboardTutorialEntry(d,state);assert.equal(b.hidden,true);}
+ for(const state of [{enabled:true,dashboard:false,count:1},{enabled:false,dashboard:true,count:1},{enabled:true,dashboard:true,count:8}]){syncDashboardTutorialEntry(d,state);assert.equal(b.hidden,true);}
  syncDashboardTutorialEntry(d,{enabled:true,dashboard:true,count:1});assert.equal(b.hidden,false);
 });
 test('settings replay reaches the actual tour after six logins, without counting a new login',async t=>{

@@ -25,6 +25,7 @@ const files = [
   'assets/vendor/qrcodejs-1.0.0.min.js', 'assets/vendor/qrcodejs-LICENSE.txt'
 ];
 files.push(
+  'email-verification.mjs',
   'tutorial-signins.mjs', 'dashboard-tutorial-entry.mjs',
   'gradecrew-workspace-upgrade.mjs',
   'gradecrew-workspace-upgrade.css',
@@ -32,6 +33,7 @@ files.push(
   'gradecrew-hero-demo.mjs',
   'gradecrew-hero-demo-flow.mjs',
   'gradecrew-hero-scene.css',
+  'assets/gradecrew/crew-lineup-modern-cutout.png',
   'assets/gradecrew/crew-classroom-v3.webp', 'assets/gradecrew/crew-classroom-wide-v4.png',
   'assets/gradecrew/remy-test-creation-typewriter.png', 'assets/gradecrew/remy-test-input-microphone.png',
   'assets/gradecrew/cuddly-hedgehog.webp', 'assets/gradecrew/crew-dashboard-lineup-c-r-e-w-alpha.png',

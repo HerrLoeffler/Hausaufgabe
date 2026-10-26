@@ -15,15 +15,15 @@ function memory(profiles={a:{displayName:'A'}}) {
 }
 const record=(m,u,extra={})=>recordTutorialSignIn({user:u,db:m.db,ref:u?.uid,runTransaction:m.runTransaction,isCurrent:()=>true,...extra});
 
-test('first five logins and sixth produce a bounded account count without a raw history',()=>{
+test('seven visible logins and eighth produce a bounded account count without a raw history',()=>{
  let profile={};
- for(let i=1;i<=6;i++){
+ for(let i=1;i<=8;i++){
   const patch=tutorialSignInPatch(profile,session(i));profile={...profile,...patch};
   assert.equal(profile.crewTourSignInCount,i);
   assert.equal(profile.crewTourSignInSessions.length,i);
  }
- assert.equal(tutorialSignInPatch(profile,session(7)),null);
- assert.equal(profile.crewTourSignInCount,6);
+ assert.equal(tutorialSignInPatch(profile,session(9)),null);
+ assert.equal(profile.crewTourSignInCount,8);
 });
 test('refresh or duplicate auth callback does not count the same login twice',async()=>{
  const m=memory();await record(m,user());await record(m,user());

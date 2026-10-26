@@ -406,3 +406,38 @@ body.gcPublicHeroMode .shell {max-width:none;width:100%;padding-inline:0}
   #authView .gcHeroRoles { margin-top: -20px; }
   #authView .gcHeroTutorialEntry .button, #authView .gcHeroJoin .gcEntryJoinSubmit { background: var(--gc-colors-primary); border-color: var(--gc-colors-primary); }
 }
+
+/* Public account actions share a hierarchy; forms retain bright working surfaces. */
+.gcPublicEntryMode .topbar.gradecrewLanguageReady{grid-template-columns:auto minmax(0,1fr) auto auto auto;grid-template-areas:"brand nav language login register"}
+.gcPublicEntryMode .topbar>#gcEntryRegisterOpen{grid-area:register;justify-self:end}
+#gcEntryRegisterOpen{min-height:44px;padding:9px 16px;border:1px solid #285ac9;border-radius:10px;background:#285ac9;color:white;font:inherit;font-size:14px;font-weight:750;cursor:pointer}
+#gcEntryRegisterOpen:focus-visible{outline:3px solid #6c9ff3;outline-offset:3px}
+body:not(.gcPublicEntryMode) #gcEntryRegisterOpen{display:none}
+.gcPublicEntryMode #authView .gcEntryAuth{background:linear-gradient(125deg,#071b3b,#173e66);border-radius:22px;padding:24px;color:#fff}
+.gcPublicEntryMode #authView .gcEntryAuth .gcEntryAuthPanel{background:#fff;color:#202b3c;border-radius:18px;padding:clamp(20px,3vw,38px)}
+.gcPublicEntryMode #authView .gcEntryAuth .gcEntryBack{color:#fff}
+@media(max-width:900px){.gcPublicEntryMode .topbar.gradecrewLanguageReady{grid-template-columns:minmax(0,1fr) auto auto auto;grid-template-areas:"brand language login register"}}
+@media(max-width:620px){.gcPublicEntryMode .topbar.gradecrewLanguageReady{grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"brand brand language" "login register register"}.gcPublicEntryMode .topbar>#gcEntryLoginOpen{justify-self:start}.gcPublicEntryMode .topbar>#gcEntryRegisterOpen{justify-self:stretch;text-align:center}#authView .gcEntryAuth{padding:12px;border-radius:14px}}
+.gcPublicEntryMode #authView #gcEntryVerify{max-width:660px;margin:0 auto;display:flex;align-items:safe center;height:100%;padding:16px;overflow-y:auto}
+#authView #emailVerificationHost{width:100%;max-width:540px;margin:auto}
+.emailVerification h1{margin:0 0 14px;font-size:clamp(26px,3vw,36px);letter-spacing:-.035em}
+.emailVerification #verificationEmail{display:block;margin:8px 0 24px;overflow-wrap:anywhere;color:#285ac9}
+.emailVerification form{gap:14px}
+.emailVerification label{display:grid;gap:8px;font-size:13px;font-weight:650}
+.emailVerification #verificationCode{font-size:28px;letter-spacing:.22em;text-align:center;min-height:58px}
+.emailVerification #verificationStatus{min-height:42px;line-height:1.45;font-size:14px;margin-top:16px}
+.emailVerification #verificationSignOut{display:block;margin-top:20px}
+.emailVerification .hint{font-size:12px;line-height:1.5}
+
+.gcPublicEntryMode #authView #gcEntryVerify .gcEntryAuthPanel{padding:24px;margin-block:auto}
+.gcPublicEntryMode #authView #gcEntryVerify h1{font-size:30px;margin:0 0 10px}
+.gcPublicEntryMode #authView #gcEntryVerify #verificationIntro{margin:0 0 8px}
+.gcPublicEntryMode #authView #gcEntryVerify #verificationEmail{margin:6px 0 14px}
+.gcPublicEntryMode #authView #gcEntryVerify form{margin-top:14px;gap:10px}
+.gcPublicEntryMode #authView #gcEntryVerify #verificationStatus{margin:10px 0;min-height:36px}
+.gcPublicEntryMode #authView #gcEntryVerify #verificationHint{margin:6px 0 10px}
+.gcPublicEntryMode #authView #gcEntryVerify #verificationSignOut{margin-top:12px}
+@media(min-width:781px){
+ .gcPublicEntryMode #authView #registerForm{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+ .gcPublicEntryMode #authView #registerForm>button,.gcPublicEntryMode #authView #registerForm>.hint{grid-column:1/-1}
+}

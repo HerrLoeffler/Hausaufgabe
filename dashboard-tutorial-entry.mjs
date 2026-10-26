@@ -6,5 +6,5 @@ export function syncDashboardTutorialEntry(document, { enabled, dashboard, count
   if (!button || !userBar) return;
   const label = document.getElementById('userLabel');
   if (button.parentElement !== userBar || button.nextElementSibling !== label) userBar.insertBefore(button, label);
-  button.hidden = !enabled || !dashboard || Number(count) > 5;
+  button.hidden = !enabled || !dashboard || Number(count) > 7;
 }

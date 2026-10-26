@@ -47,6 +47,21 @@ async function flushOffer(w) {
   await new Promise(resolve => w.setTimeout(resolve, 280));
 }
 
+test('each of the first seven auth sessions offers a choice once; eighth uses settings',async t=>{
+ const w=fixture(t),api=adapter(w),tour=w.installTour(api);
+ tour.dashboard({uid:'teacher-a',firstVisit:true,loginSession:'a'.repeat(64),signInCount:6,offerHandled:true});
+ await flushOffer(w);assert.ok(w.document.getElementById('gradecrewTutorialOffer'));
+ w.document.querySelector('.gcTutorialOfferLater').click();
+ tour.dashboard({uid:'teacher-a',firstVisit:true,loginSession:'a'.repeat(64),signInCount:6});
+ await flushOffer(w);assert.equal(w.document.getElementById('gradecrewTutorialOffer'),null);
+ tour.dashboard({uid:'teacher-a',firstVisit:true,loginSession:'b'.repeat(64),signInCount:7});
+ await flushOffer(w);assert.ok(w.document.getElementById('gradecrewTutorialOffer'));
+ w.document.querySelector('.gcTutorialOfferLater').click();
+ tour.dashboard({uid:'teacher-a',firstVisit:true,loginSession:'c'.repeat(64),signInCount:8});
+ await flushOffer(w);assert.equal(w.document.getElementById('gradecrewTutorialOffer'),null);
+ assert.ok(w.document.getElementById('settingsTutorialStart'));
+});
+
 test("new teacher gets one strong choice instead of an automatic tour", async t => {
   const w = fixture(t);
   const api = adapter(w);
@@ -56,7 +71,12 @@ test("new teacher gets one strong choice instead of an automatic tour", async t 
   await flushOffer(w);
   const offer = w.document.getElementById("gradecrewTutorialOffer");
   assert.ok(offer, "one-time tutorial invitation is visible");
-  assert.match(offer.textContent, /5–7 Min/);
+  assert.match(offer.textContent, /6–7 Min/);
+  assert.doesNotMatch(offer.textContent, /Kosten|Tutorial starten|über „Tutorial“/i);
+  assert.match(offer.querySelector(".gcTutorialOfferStart").textContent, /^Crew kennenlernen/);
+  assert.match(offer.querySelector(".gcTutorialOfferLater").textContent, /über „Crew kennenlernen“/);
+  assert.equal(offer.querySelector("img").getAttribute("src"), "/assets/gradecrew/crew-lineup-modern-cutout.png");
+  assert.equal(w.document.getElementById("settingsTutorialStart").textContent, "Crew kennenlernen");
   assert.match(offer.textContent, /jederzeit abbrechen/i);
   assert.ok(w.document.getElementById("gradecrewTourBtn"), "manual tutorial entry remains visible");
 

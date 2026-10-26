@@ -53,6 +53,8 @@ export function createAiClient(app, getUid) {
   };
   const regenerateQuestion = call("regenerateQuestion", 180000, withInstructionLocale);
   const api = {
+    requestEmailVerificationCode: call("requestEmailVerificationCode", 30000),
+    confirmEmailVerificationCode: call("confirmEmailVerificationCode", 30000),
     reviewMode: call("reviewMode", 30000),
     status: call("getAiStatus", 30000),
     reportRightsIssue: call("reportRightsIssue", 30000),

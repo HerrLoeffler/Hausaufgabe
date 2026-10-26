@@ -44,8 +44,9 @@ import { parseJsonWithRepair } from "./ai-json-tools.js?v=2.3.0";
 import { createAiClient } from "./ai-client.js?v=2.3.1-gc43";
 import { createQuickRemyBridge } from "./quick-remy-bridge.js?v=2.3.1-gc43";
 import { publishAuthProfileForGeneration } from "./auth-profile.js?v=2.3.1-gc43";
-import { recordTutorialSignIn } from "./tutorial-signins.mjs?v=1";
-import { syncDashboardTutorialEntry } from "./dashboard-tutorial-entry.mjs?v=1";
+import { recordTutorialSignIn, tutorialSessionHash, tutorialSignInPatch } from "./tutorial-signins.mjs?v=2";
+import { syncDashboardTutorialEntry } from "./dashboard-tutorial-entry.mjs?v=2";
+import { installEmailVerification } from "./email-verification.mjs?v=1";
 import { draftKey, saveEditorDraft, readEditorDraft, removeEditorDraft, listEditorDrafts } from "./editor-drafts.js?v=2.3.1-gc2";
 import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQualityReviewReport, currentQualityIssues, questionReviewKey, editorQuestionIndex } from "./ai-review-state.js?v=2.3.1-gc2";
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";
@@ -1032,7 +1033,7 @@ function safeDialogClose(dialog) {
 }
 
 function setTeacherBar() {
-  const loggedIn = Boolean(state.user) && !new URLSearchParams(location.search).has("test");
+  const loggedIn = Boolean(state.user) && state.profile?.status !== "pending_verification" && !new URLSearchParams(location.search).has("test");
   $("userBar").classList.toggle("hidden", !loggedIn);
   syncDashboardTutorialEntry(document, { enabled: loggedIn && !guestTourRepo, dashboard: !$("dashboardView").classList.contains("hidden"), count: state.profile?.crewTourSignInCount });
   $("userLabel").textContent = state.profile?.displayName || state.user?.displayName || state.user?.email || "";
@@ -1082,7 +1083,7 @@ async function refreshBugOpsAttention({ notify = false } = {}) {
 }
 
 async function ensureProfileDefaults(user, profile) {
-  if (!user) return profile;
+  if (!user || profile?.status === "pending_verification") return profile;
   const ref = doc(db, "users", user.uid);
   const current = profile || {};
   const patch = {};
@@ -1112,6 +1113,18 @@ async function touchLastActive(user, profile) {
 
 // ---------- Auth / Landing ----------
 bindTabs(document.querySelector("#authView [role=tablist]"));
+let registrationSettled = null;
+let emailVerificationUI = null;
+function emailVerificationController() {
+  if (!emailVerificationUI) emailVerificationUI = installEmailVerification({document,getUser:()=>auth.currentUser,
+    requestCode:data=>aiApi.requestEmailVerificationCode(data),confirmCode:data=>aiApi.confirmEmailVerificationCode(data),
+    onSignOut:()=>signOut(auth),onVerified:async user=>{
+      if(auth.currentUser?.uid!==user.uid)return;
+      await user.reload();if(auth.currentUser?.uid!==user.uid)return;await user.getIdToken(true);
+      if(auth.currentUser?.uid===user.uid&&user.emailVerified)window.location.reload();
+    }});
+  return emailVerificationUI;
+}
 
 $("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -1125,6 +1138,7 @@ $("loginForm").addEventListener("submit", async (e) => {
 
 $("registerForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+  if (registrationSettled) return;
   const name = $("registerName").value.trim();
   const email = $("registerEmail").value.trim();
   const password = $("registerPassword").value;
@@ -1132,23 +1146,20 @@ $("registerForm").addEventListener("submit", async (e) => {
     toast("Die Passwörter stimmen nicht überein.", "error");
     return;
   }
+  let releaseRegistration;
+  registrationSettled = new Promise(resolve => {releaseRegistration=resolve;});
+  const submit = $("registerForm").querySelector('button[type="submit"]');
+  if(submit)submit.disabled=true;
   try {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(cred.user, { displayName: name });
-    await setDoc(doc(db, "users", cred.user.uid), {
-      displayName: name,
-      email,
-      role: "teacher",
-      status: "active",
-      lastActiveAt: serverTimestamp(),
-      appVersion: APP_VERSION,
-      settings: deepClone(DEFAULT_SETTINGS),
-      gradeScales: [deepClone(DEFAULT_SCALE)],
-      createdAt: serverTimestamp()
-    });
-    toast("Account erstellt.");
+    if(auth.currentUser?.uid!==cred.user.uid)return;
+    await emailVerificationController().requestFor(cred.user);
+    toast("Konto erstellt. Bitte bestätige deine E-Mail-Adresse.");
   } catch (err) {
     toast(authMessage(err), "error");
+  } finally {
+    releaseRegistration();registrationSettled=null;if(submit)submit.disabled=false;
   }
 });
 
@@ -1226,7 +1237,7 @@ function authMessage(err) {
 }
 
 async function refreshTutorialSignIn(user, generation) {
-  if (Number(state.profile?.crewTourSignInCount) >= 6) return;
+  if (Number(state.profile?.crewTourSignInCount) >= 8) return;
   const profile = await recordTutorialSignIn({ user, db, ref: doc(db, "users", user.uid), runTransaction, isCurrent: () => generation === authStateGeneration });
   if (!profile || generation !== authStateGeneration || state.user?.uid !== user.uid) return;
   state.profile = { ...state.profile, crewTourSignInCount: profile.crewTourSignInCount, crewTourSignInSessions: profile.crewTourSignInSessions };
@@ -1243,7 +1254,7 @@ onAuthStateChanged(auth, async (user) => {
   const accountChanged = state.user?.uid !== user?.uid;
   if (accountChanged) {
     window.GradeCrewNative?.setAuthState?.({ state: "checking" })?.catch(() => {});
-    document.dispatchEvent(new CustomEvent("gradecrew:account-changed"));
+    document.dispatchEvent(new CustomEvent("gradecrew:account-changed",{detail:{uid:user?.uid||null}}));
     adminAuditCursor = null;
     state.adminAudit = [];
     state.adminFeedback = [];
@@ -1261,6 +1272,8 @@ onAuthStateChanged(auth, async (user) => {
     $("reportableErrorHost")?.replaceChildren();
     $("variantBackgroundProgress")?.replaceChildren();
   }
+  if(user&&registrationSettled)await registrationSettled;
+  if(generation!==authStateGeneration)return;
   state.user = user;
   state.profile = null;
   if (user) {
@@ -1268,7 +1281,7 @@ onAuthStateChanged(auth, async (user) => {
       let profile = await publishAuthProfileForGeneration({
         readProfile: async () => {
           const snapshot = await getDoc(doc(db, "users", user.uid));
-          return snapshot.exists() ? snapshot.data() : { displayName: user.displayName || user.email };
+          return snapshot.exists() ? snapshot.data() : { displayName: user.displayName || user.email, status:"pending_verification" };
         },
         isCurrent: () => generation === authStateGeneration,
         publishProfile: value => { state.profile = value; }
@@ -1277,6 +1290,13 @@ onAuthStateChanged(auth, async (user) => {
       profile = await ensureProfileDefaults(user, profile);
       if (generation !== authStateGeneration) return;
       state.profile = profile;
+      if (profile.status === "pending_verification") {
+        setTeacherBar();showView("authView");
+        document.dispatchEvent(new Event("gradecrew:verify-email"));
+        emailVerificationController().show(user);
+        window.GradeCrewNative?.setAuthState?.({state:"signedOut"})?.catch(()=>{});
+        return;
+      }
       if (isSuspended(profile)) {
         toast("Dieser Account wurde vorübergehend gesperrt. Bitte wende dich an den Administrator.", "error");
         if (generation === authStateGeneration) await signOut(auth);
@@ -1284,6 +1304,12 @@ onAuthStateChanged(auth, async (user) => {
       }
       // This optional onboarding preference must not delay a successful sign-in.
       void refreshTutorialSignIn(user, generation);
+      let tutorialKey="";
+      try {tutorialKey=await tutorialSessionHash(user);}catch(_){}
+      if(generation!==authStateGeneration||state.user?.uid!==user.uid)return;
+      state.tutorialSessionKey=tutorialKey;
+      const onboardingPatch=tutorialSignInPatch(state.profile,state.tutorialSessionKey);
+      if(onboardingPatch)state.profile={...state.profile,...onboardingPatch};
       state.shownThisLogin = new Set();
       await touchLastActive(user, profile);
       if (generation !== authStateGeneration) return;
@@ -1564,7 +1590,7 @@ async function loadDashboard() {
       if (state.user?.uid !== dashboardUid || $("dashboardView").classList.contains("hidden")) return;
       if (!crewTour) crewTour = module.installCrewTour(makeTourApi());
       window.gradecrewPracticeReady = true;
-      crewTour.dashboard({uid: state.user.uid, firstVisit: true, completed: Boolean(state.profile?.crewTourCompletedAt), offerHandled: Boolean(state.profile?.crewTourOfferHandledAt) || Number(state.profile?.crewTourSignInCount) > 5, isAdmin: isAdmin()});
+      crewTour.dashboard({uid: state.user.uid, firstVisit: true, completed: Boolean(state.profile?.crewTourCompletedAt), loginSession:state.tutorialSessionKey,signInCount:state.profile?.crewTourSignInCount,offerHandled: Boolean(state.profile?.crewTourOfferHandledAt) || Number(state.profile?.crewTourSignInCount) > 7, isAdmin: isAdmin()});
       syncDashboardTutorialEntry(document, { enabled: true, dashboard: true, count: state.profile?.crewTourSignInCount });
     } catch (error) { console.warn("GradeCrew-Tutorial nicht verfügbar", error); }
     const tourOpened = crewTour?.active || maybeShowTeacherTour();

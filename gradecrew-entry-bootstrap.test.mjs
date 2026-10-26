@@ -363,15 +363,16 @@ test('password recovery uses the existing provider once, shows status and protec
   } finally { w.close(); }
 });
 
-test('registration submits to the existing Firebase provider and preserves the teacher profile contract', async () => {
+test('registration creates Auth identity and requests verification without writing an active profile', async () => {
   const dom = new JSDOM('<form id="loginForm"></form><form id="registerForm"><input id="registerName"><input id="registerEmail"><input id="registerPassword"><input id="registerPassword2"></form>');
   const w = dom.window;
-  const calls = [], writes = [], profiles = [];
+  const calls = [], writes = [], profiles = [], verifications=[];
   const source = fs.readFileSync('app.js', 'utf8');
   const handlers = source.slice(source.indexOf('// ---------- Auth / Landing ----------'), source.indexOf('$("logoutBtn").addEventListener'));
   const context = vm.createContext({ document: w.document, $: id => w.document.getElementById(id), bindTabs() {}, auth: {}, db: {},
-    createUserWithEmailAndPassword: async (...args) => { calls.push(args); return { user: { uid: 'synthetic-teacher' } }; },
+    createUserWithEmailAndPassword: async (...args) => { calls.push(args);const user={uid:'synthetic-teacher',email:args[1]};args[0].currentUser=user;return {user}; },
     updateProfile: async (...args) => profiles.push(args), setDoc: async (...args) => writes.push(args), doc: (...args) => args,
+    installEmailVerification:()=>({requestFor:async user=>verifications.push(user.uid)}),
     serverTimestamp: () => 'synthetic-time', APP_VERSION: 'test', DEFAULT_SETTINGS: {}, DEFAULT_SCALE: {}, deepClone: value => JSON.parse(JSON.stringify(value)),
     toast() {}, authMessage: () => 'Fehler' });
   try {
@@ -386,11 +387,8 @@ test('registration submits to the existing Firebase provider and preserves the t
     assert.equal(calls[0][1], 'teacher@example.test');
     assert.equal(calls[0][2], 'local-only');
     assert.equal(profiles[0][1].displayName, 'Test Teacher');
-    assert.equal(writes.length, 1);
-    assert.equal(writes[0][0][1], 'users');
-    assert.equal(writes[0][0][2], 'synthetic-teacher');
-    assert.equal(writes[0][1].role, 'teacher');
-    assert.equal(writes[0][1].status, 'active');
+    assert.equal(writes.length, 0);
+    assert.deepEqual(verifications,['synthetic-teacher']);
   } finally { w.close(); }
 });
 
