@@ -1,3 +1,4 @@
+import {mountPublicEntryShell,setPublicEntryShellVisible} from "./shared/public-entry-shell.mjs";
 import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js?v=1.2.0";
 import { translateTree } from "./shared/i18n/browser-runtime.mjs?v=3";
 import "./gradecrew-hero-copy.mjs?v=1";
@@ -59,7 +60,7 @@ function setState(next, { focus = true } = {}) {
     const target = next === "start" ? root?.querySelector("h1") : (root?.querySelector("[data-entry-autofocus]") || root?.querySelector("input:not([type=hidden])") || root?.querySelector("button, a[href]"));
     if (target && next === "start") target.tabIndex = -1;
     target?.focus?.({ preventScroll: true });
-    if (next !== "start") target?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+    if (next !== "start" && !document.body.classList.contains("gcUnifiedPublicShell")) target?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
   });
 }
 
@@ -171,6 +172,11 @@ function installPublicHeader() {
     body.classList.toggle("gcPublicEntryMode", !authView.classList.contains("hidden"));
     body.classList.toggle("gcModernAuthMode", !authView.classList.contains("hidden") && ["login", "register", "reset"].includes(authView.dataset.entryState));
     body.classList.toggle("gcPublicHeroMode", !authView.classList.contains("hidden") && authView.dataset.entryState === 'start');
+    if (window.location.pathname.endsWith("/workspace.html")) {
+      const visible = !authView.classList.contains("hidden") && ["login","register","reset"].includes(authView.dataset.entryState);
+      if (visible) mountPublicEntryShell(authView.ownerDocument,authView,["gcEntryLogin","gcEntryRegister","gcEntryReset"].map(id=>$(id)));
+      setPublicEntryShellVisible(authView.ownerDocument,visible);
+    }
   };
   syncMode();
   if (!authView.dataset.entryModeObserved) {

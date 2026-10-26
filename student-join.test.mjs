@@ -1,3 +1,4 @@
+import {mountPublicEntryShell,setPublicEntryShellVisible} from "./shared/public-entry-shell.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -14,7 +15,7 @@ function runtime(t,search='',api={},handoff=null){
  w.localStorage.setItem("firebase:authUser:teacher","synthetic-teacher-session");
  // A real DOM with transport-only doubles; no Firebase auth or data APIs supplied.
  const location={search,href:'https://gradecrew.de/secure-student.html'+search,reload(){calls.push('reload')}};
- const context={document:w.document,sessionStorage:w.sessionStorage,location,URL,URLSearchParams,navigator:{onLine:true},initializeApp:()=>({}),firebaseConfig:{},createSecureAssessmentClient:()=>({getInfo:async code=>{calls.push(code);throw new Error('synthetic unavailable')},...api}),addEventListener:w.addEventListener.bind(w),setInterval:()=>1,clearInterval(){},console};
+ const context={mountPublicEntryShell,setPublicEntryShellVisible,document:w.document,sessionStorage:w.sessionStorage,location,URL,URLSearchParams,navigator:{onLine:true},initializeApp:()=>({}),firebaseConfig:{},createSecureAssessmentClient:()=>({getInfo:async code=>{calls.push(code);throw new Error('synthetic unavailable')},...api}),addEventListener:w.addEventListener.bind(w),setInterval:()=>1,clearInterval(){},console};
  vm.runInNewContext(source,context);return {w,d:w.document,location,calls,context};
 }
 const flush=()=>new Promise(resolve=>setImmediate(resolve));

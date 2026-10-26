@@ -1,0 +1,57 @@
+{
+  "source_commit": "1951f1979378b0500329a3c5dac5e6bad6fc7f3e",
+  "previous_live": "91005cff96256e2f12f5562670bf0abfb8a1327d",
+  "project": "hausaufgabe-staging",
+  "url": "https://gradecrew.de/",
+  "scope": "Hosting-only correction of approved public entry: return routes, cold paint, wide desktop scale, centered headings and explicit student Back",
+  "attempt": 1,
+  "started_at": "2026-10-26T19:56:18.124995+00:00",
+  "ci_run": 40390661304,
+  "ci_jobs": [
+    121810476666,
+    121810477270
+  ],
+  "rollback_package": "/private/tmp/gc-auth-student-live-r2-20261026",
+  "status": "production_http_and_browser_verified",
+  "verified_at": "2026-10-26T19:57:20.958509+00:00",
+  "tree": "a2bbdaa678b4fbde82820e7f8c5dadc515b0d55a",
+  "origins": [
+    "https://gradecrew.de/",
+    "https://hausaufgabe-staging.web.app/"
+  ],
+  "verified_files_per_origin": 194,
+  "hash_failures": 0,
+  "local_tests": 462,
+  "packaging_tests": 12,
+  "browser_engines": [
+    "WebKit",
+    "Chromium"
+  ],
+  "browser_viewport_layouts": 36,
+  "task_layouts": 60,
+  "real_account_or_mail_actions": false,
+  "physical_device_test": false,
+  "backend_rules_accounts_changed": false,
+  "browser_live": {
+    "desktop_2560x1316": {
+      "stage_width": 2060,
+      "demo_width": 896.34375,
+      "heading_font": 80
+    },
+    "login_title": "center",
+    "retired_scene": "native hidden, display none",
+    "login_back": "actual click to current public root",
+    "anonymous_workspace": "actual redirect to current root after account state",
+    "student_back": "visible link, actual click to root",
+    "student_390x844": "visible, screenshot saved",
+    "english_return": "preview verified, locale event regression passed"
+  },
+  "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/8401999557bb00b1",
+  "hosting_release_time": "2026-10-26T19:56:28.246Z",
+  "ci": "success",
+  "phone_tablet_rules": "wide-scale rules start at1500px; approved smaller home composition retained",
+  "preview_channels_current": [
+    "auth-brand-20261026",
+    "student-entry-20261026"
+  ]
+}

@@ -41,19 +41,29 @@ try{for(const [name,engine] of Object.entries({chromium,webkit})){
  assert.equal(await grid.locator('circle').count(),2,'coordinate interaction');await page.locator('#evaluateBtn').click();assert.equal(await page.locator('#resultsPanel').isVisible(),true,'grading');await page.locator('#resultsClose').click();
  for(const [selector,target] of [['.public-links a[href="/datenschutz.html"]','/datenschutz.html'],['.public-links a[href="/impressum.html"]','/impressum.html'],['.public-links a[href="/support.html"]','/support.html']]){await page.locator(selector).click();assert.equal(new URL(page.url()).pathname,target);assert.ok((await page.locator('body').innerText()).length>100);await page.goto(url);}
 
+ function anchors(){const root=document.querySelector('[data-gc-public-page]');return Object.fromEntries(['.site-header .brand','.hero h1','.crew-photo','.showcase'].map(s=>{const r=root.querySelector(s).getBoundingClientRect();return[s,{x:r.x,y:r.y+scrollY,width:r.width,height:s==='.showcase'?0:r.height,font:getComputedStyle(root.querySelector(s)).font,strong:root.querySelector(s+' strong')?getComputedStyle(root.querySelector(s+' strong')).font:''}];}));}
+ const reference={};for(const width of [390,1024,2560]){await page.setViewportSize({width,height:width===2560?1316:900});await page.goto(url);await page.locator('#overviewGrid button').last().waitFor();await page.evaluate(()=>document.fonts.ready);await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));reference[width]=await page.evaluate(anchors);await page.screenshot({path:path.join(out,`${name}-frame-home-${width}.png`),fullPage:true});}
  // Account UI fixture: run the real entry module and CSS without starting Firebase or accounts.
  await page.route('**/startup.js*',route=>route.fulfill({contentType:'text/javascript',body:'/* UI-only fixture; no provider calls. */'}));
- for(const intent of ['login','register','reset']){
+ for(const width of [390,1024,2560])for(const intent of ['login','register','reset']){
+  await page.setViewportSize({width,height:width===2560?1316:900});
   await page.goto(url+'/workspace.html?intent='+intent);
   assert.equal(await page.locator('#authView > [hidden]').evaluate(e=>getComputedStyle(e).visibility),'hidden','cold paint guard');
-  assert.equal(await page.locator('#authView > [role=status]').isVisible(),true,'neutral loader stays available');
+  assert.equal(await page.locator('#authView > [role=status]').isVisible(),true,'neutral loader stays available');assert.equal(await page.locator('body > .topbar').isVisible(),false,'native header cannot flash before the shared frame');
   await page.evaluate(async()=>{const m=await import('/gradecrew-entry-flow.js');m.installGradeCrewEntryFlow();});
   assert.equal(await page.locator('#gcEntryStart').isVisible(),false,'retired hero must never appear behind an account screen');
   const section=page.locator('#gcEntry'+intent[0].toUpperCase()+intent.slice(1));
+  await section.waitFor({state:'visible'});await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+  await page.screenshot({path:path.join(out,`${name}-frame-${new URL(page.url()).searchParams.get("intent")||"student"}-${width}.png`),fullPage:true});const actual=await page.evaluate(anchors);for(const [selector,expected] of Object.entries(reference[width]))for(const k of ['x','y','width','height'])assert.ok(Math.abs(actual[selector][k]-expected[k])<2,`${name} ${intent} ${width} ${selector} ${k} moved: ${actual[selector][k]} vs ${expected[k]}; ${JSON.stringify(actual[selector])} vs ${JSON.stringify(expected)}`);
   assert.equal(await section.isVisible(),true,JSON.stringify(await section.evaluate(e=>{const out=[];for(let n=e;n;n=n.parentElement)out.push({id:n.id,hidden:n.hidden,display:getComputedStyle(n).display,visibility:getComputedStyle(n).visibility,rect:n.getBoundingClientRect().toJSON()});return out;})));
   assert.equal(await section.locator('h1').evaluate(e=>getComputedStyle(e).textAlign),'center','card title alignment');
   if(intent!=='reset'){await section.locator('[data-entry-back]').click();assert.equal(new URL(page.url()).pathname,'/','back to current homepage');}
  }
+
+ // Code-free student UI with transport-only doubles; no account or assessment request.
+ const student=fs.readFileSync(path.join(repo,'secure-student.js'),'utf8').replace(/^import .*;\n/gm,'');
+ await page.route('**/secure-student.js*',route=>route.fulfill({contentType:'text/javascript',body:'import {mountPublicEntryShell,setPublicEntryShellVisible} from "/shared/public-entry-shell.mjs"; const initializeApp=()=>({}),firebaseConfig={},createSecureAssessmentClient=()=>({});\n'+student}));
+ for(const width of [390,1024,2560]){await page.setViewportSize({width,height:width===2560?1316:900});await page.goto(url+'/secure-student.html?lang=de');await page.locator('#secureJoin').waitFor({state:'visible'});await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));await page.screenshot({path:path.join(out,`${name}-frame-${new URL(page.url()).searchParams.get("intent")||"student"}-${width}.png`),fullPage:true});const actual=await page.evaluate(anchors);for(const [selector,expected] of Object.entries(reference[width]))for(const k of ['x','y','width','height'])assert.ok(Math.abs(actual[selector][k]-expected[k])<2,`${name} student ${width} ${selector} ${k} moved: ${actual[selector][k]} vs ${expected[k]}`);}
  }finally{await browser.close();}}
  fs.writeFileSync(path.join(out,'layout-receipt.json'),JSON.stringify(evidence,null,2));console.log(`PASS ${evidence.length} WebKit/Chromium viewport layouts, 60 task layouts, DE/EN, coordinate/grading/legal clicks, account cold-paint guards and homepage returns`);
 }finally{server.close();}})().catch(e=>{console.error(e);process.exitCode=1});
