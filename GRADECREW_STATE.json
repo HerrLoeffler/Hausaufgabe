@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-26T23:05:51Z",
+  "observed_at": "2026-10-26T23:27:25Z",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -3621,10 +3621,14 @@
       "ci": "40413945177 native/phone/tablet success",
       "testflight_workflow_run": 40416694178,
       "testflight_build": "Teacher 0.2.0 (52)",
-      "testflight_status": "in_progress; upload and Apple processing unverified",
+      "testflight_status": "processed and available to existing internal tester group",
       "physical_device_acceptance": "pending",
       "handoff": "workstreams/teacher-auth-restore-20261026.md",
-      "next_action": "Verify exact TestFlight upload and Apple processing; then real login/restore on iPhone/iPad."
+      "next_action": "Physical iPhone/iPad installation and signed-in login, test list, publication toggle, trash, restart/restore acceptance; no App Store submission.",
+      "testflight_run_conclusion": "success",
+      "apple_build_id": "4caf3965-f136-4002-aa6b-ced633fdab95",
+      "apple_build_url": "https://appstoreconnect.apple.com/teams/d0d618ea-0473-441c-b669-ee875c408bc8/apps/6817547234/testflight/ios/4caf3965-f136-4002-aa6b-ced633fdab95",
+      "internal_group": "Grade Crew TesterL; 1 tester"
     }
   ],
   "deployments": [
@@ -4811,5 +4815,21 @@
       },
       "pricing_recheck": "0.00EUR_Germany_only1available174unavailable;paidAgreementNeu_unaccepted"
     }
+  },
+  "teacher_testflight_52_20261027": {
+    "task_id": "GC-IOS-02",
+    "app": "GradeCrew Teacher",
+    "version": "0.2.0",
+    "build": 52,
+    "bundle": "de.gradecrew",
+    "source_commit": "97cf926ee92519bc3457785e1f7b2d6212ad4879",
+    "workflow_run": 40416694178,
+    "workflow_conclusion": "success",
+    "apple_processing": "complete",
+    "availability": "internal TestFlight group Grade Crew TesterL, 1 tester",
+    "apple_build_id": "4caf3965-f136-4002-aa6b-ced633fdab95",
+    "physical_device_acceptance": "pending",
+    "app_store_submission": false,
+    "handoff": "workstreams/teacher-auth-restore-20261026.md"
   }
 }
