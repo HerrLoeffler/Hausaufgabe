@@ -1,0 +1,31 @@
+{
+  "task": "GC-TEACHER-INTRO-20261028",
+  "application": "Microsoft PowerPoint for Mac",
+  "openedWithoutRepair": true,
+  "qaCopy": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v6/build/native-qa-v6.pptx",
+  "finalSha256": "04ea33ce2139ab3986f13b2a186df61264815e6dbd459bdfe3694094018b4dbd",
+  "qaCopySha256AfterNativeRun": "04ea33ce2139ab3986f13b2a186df61264815e6dbd459bdfe3694094018b4dbd",
+  "unchanged": true,
+  "actualPresenterProofs": [
+    "native-3-step-1.png",
+    "native-3-step-2.png",
+    "native-3-step-3.png",
+    "native-3-step-4.png",
+    "native-3-step-5.png",
+    "native-5-step-1.png",
+    "native-5-step-2.png",
+    "native-5-step-3.png",
+    "native-5-step-4.png",
+    "native-11.png",
+    "native-12.png"
+  ],
+  "visuallyInspectedNativeChangedStates": [
+    "3/2 upper dictation",
+    "5/3 detailed wishes dictation",
+    "11 Games",
+    "12 planned learning network"
+  ],
+  "scope": "Changed phases on3/5 and two new static slides; prior V5 full28phase native proof remains separate. No new full29phase verification claim.",
+  "savedFromPowerPoint": false,
+  "date": "2026-10-26"
+}

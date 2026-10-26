@@ -1,0 +1,379 @@
+[
+  {
+    "slide": 3,
+    "step": 1,
+    "source": "12-live-neuer-test.png",
+    "physicalCrop": [
+      180,
+      228,
+      650,
+      80
+    ],
+    "file": "slide-3-step-1.png",
+    "sha256": "8262637d2351cba3a3a18bf404563c2be5c616eba158a8618f67095332a8d03b"
+  },
+  {
+    "slide": 3,
+    "step": 2,
+    "source": "21-live-remy-grundangaben-mikro.png",
+    "physicalCrop": [
+      108,
+      245,
+      960,
+      99
+    ],
+    "file": "slide-3-step-2.png",
+    "sha256": "bc038639559320480aec945124a509e5acef149165ad398f1385c90c048644ab"
+  },
+  {
+    "slide": 3,
+    "step": 3,
+    "source": "08-live-test-festlegen.png",
+    "physicalCrop": [
+      35,
+      180,
+      540,
+      90
+    ],
+    "file": "slide-3-step-3.png",
+    "sha256": "dd1b1f3d8d2c9c052e1a9366d85110fa6344f2b53bcae36beb5efd18caefbca1"
+  },
+  {
+    "slide": 3,
+    "step": 4,
+    "source": "08-live-test-festlegen.png",
+    "physicalCrop": [
+      35,
+      345,
+      540,
+      82
+    ],
+    "file": "slide-3-step-4.png",
+    "sha256": "8370782f7c85ef5e6a930b950681b12ceeb0c21011e46b0fe8f4823e2cb881cc"
+  },
+  {
+    "slide": 3,
+    "step": 5,
+    "source": "08-live-test-festlegen.png",
+    "physicalCrop": [
+      35,
+      430,
+      540,
+      82
+    ],
+    "file": "slide-3-step-5.png",
+    "sha256": "a51d381009271bab1dc38a0f79f783990862512ceed1e9f6410d1cb0d96aae18"
+  },
+  {
+    "slide": 4,
+    "step": 1,
+    "source": "10-live-material.png",
+    "physicalCrop": [
+      635,
+      216,
+      405,
+      84
+    ],
+    "file": "slide-4-step-1.png",
+    "sha256": "8298d2e2b7eb6ee6e0ac3ea986333bc0e10e5aee036b284726e50def26d2bc6a"
+  },
+  {
+    "slide": 4,
+    "step": 2,
+    "source": "10-live-material.png",
+    "physicalCrop": [
+      635,
+      351,
+      405,
+      150
+    ],
+    "file": "slide-4-step-2.png",
+    "sha256": "abff8843fb85443ac174a11a6f84dd175ddb812698fc25e1d9c7a6c23bead8ff"
+  },
+  {
+    "slide": 4,
+    "step": 3,
+    "source": "20-live-audio-optionen.png",
+    "physicalCrop": [
+      630,
+      168,
+      420,
+      90
+    ],
+    "file": "slide-4-step-3.png",
+    "sha256": "3aa7cdda65c8950955389a650876c3c2d463dd0a3dc014e126df15b6172e4e98"
+  },
+  {
+    "slide": 4,
+    "step": 4,
+    "source": "13-live-emmi-editor.png",
+    "physicalCrop": [
+      330,
+      650,
+      270,
+      90
+    ],
+    "file": "slide-4-step-4.png",
+    "sha256": "90bdc5a4fd62da8566854cdb33b5dcdd8eb9910bf71dd737094c1d88f41e13eb"
+  },
+  {
+    "slide": 5,
+    "step": 1,
+    "source": "20-live-audio-optionen.png",
+    "physicalCrop": [
+      630,
+      514,
+      420,
+      82
+    ],
+    "file": "slide-5-step-1.png",
+    "sha256": "79b9d22ea8a75696a4223a527c94d690a7fa461b4156bba0dc47f4a5ac7470f9"
+  },
+  {
+    "slide": 5,
+    "step": 2,
+    "source": "20-live-audio-optionen.png",
+    "physicalCrop": [
+      630,
+      620,
+      420,
+      85
+    ],
+    "file": "slide-5-step-2.png",
+    "sha256": "94c63cd0c3afdc4278da3e45c3fce3b71f23df693ab1f95e3ad3f99aab8413cd"
+  },
+  {
+    "slide": 5,
+    "step": 3,
+    "source": "22-live-wuensche-mikro.png",
+    "physicalCrop": [
+      52,
+      280,
+      510,
+      198
+    ],
+    "file": "slide-5-step-3.png",
+    "sha256": "64f9d4f19fd0c7e6704a046f7e958420e2f5452b48c79c0f4bd7ede4c2cd54a6"
+  },
+  {
+    "slide": 5,
+    "step": 4,
+    "source": "20-live-audio-optionen.png",
+    "physicalCrop": [
+      35,
+      75,
+      535,
+      65
+    ],
+    "file": "slide-5-step-4.png",
+    "sha256": "6d027797a61933b8083edb0851667612b0b449c128f67cd2c40dd60715146d58"
+  },
+  {
+    "slide": 6,
+    "step": 1,
+    "source": "13-live-emmi-editor.png",
+    "physicalCrop": [
+      855,
+      365,
+      215,
+      74
+    ],
+    "file": "slide-6-step-1.png",
+    "sha256": "c907b13e8ea043fecd5db4b77b94c8d3c84348b7eb6bb80a4a8725a0006df447"
+  },
+  {
+    "slide": 6,
+    "step": 2,
+    "source": "13-live-emmi-editor.png",
+    "physicalCrop": [
+      775,
+      563,
+      290,
+      91
+    ],
+    "file": "slide-6-step-2.png",
+    "sha256": "8d87fee8a208e36d7d03f259d87e27b1e17146fc9b0fcea35230d6152de78b75"
+  },
+  {
+    "slide": 6,
+    "step": 3,
+    "source": "13-live-emmi-editor.png",
+    "physicalCrop": [
+      645,
+      465,
+      420,
+      75
+    ],
+    "file": "slide-6-step-3.png",
+    "sha256": "54793e11b269f808510f8e8e8173724a676d0aacbf4401f2407dade8e9419d36"
+  },
+  {
+    "slide": 6,
+    "step": 4,
+    "source": "13-live-emmi-editor.png",
+    "physicalCrop": [
+      645,
+      465,
+      420,
+      75
+    ],
+    "file": "slide-6-step-4.png",
+    "sha256": "54793e11b269f808510f8e8e8173724a676d0aacbf4401f2407dade8e9419d36"
+  },
+  {
+    "slide": 6,
+    "step": 5,
+    "source": "13-live-emmi-editor.png",
+    "physicalCrop": [
+      640,
+      47,
+      245,
+      78
+    ],
+    "file": "slide-6-step-5.png",
+    "sha256": "2e57dac657f7d57c8efdf815cfce8436f20550720aad7a988bb317f082e11351"
+  },
+  {
+    "slide": 7,
+    "step": 1,
+    "source": "15-live-durchfuehrung.png",
+    "physicalCrop": [
+      40,
+      443,
+      240,
+      82
+    ],
+    "file": "slide-7-step-1.png",
+    "sha256": "2904ca17fe3ba6e281a142534552b0841da394181cc1b42f5fdeadeb665118be"
+  },
+  {
+    "slide": 7,
+    "step": 2,
+    "source": "15-live-durchfuehrung.png",
+    "physicalCrop": [
+      45,
+      519,
+      235,
+      114
+    ],
+    "file": "slide-7-step-2.png",
+    "sha256": "a0b7e5a5111f46c2408b556adc015f801e732b0b93d823355a7f184ad7e4003d"
+  },
+  {
+    "slide": 8,
+    "step": 1,
+    "source": "17-gradecrew-schuelerzugang.png",
+    "physicalCrop": [
+      1345,
+      510,
+      640,
+      205
+    ],
+    "file": "slide-8-step-1.png",
+    "sha256": "cdbabfbcaa25012ac1b73a9396a0ee15b387feee6df45debc9fbd376f8fe4671"
+  },
+  {
+    "slide": 8,
+    "step": 2,
+    "source": "16-live-schuelervorschau.png",
+    "physicalCrop": [
+      190,
+      320,
+      900,
+      180
+    ],
+    "file": "slide-8-step-2.png",
+    "sha256": "79228c2de8d9db07c1d83bbc9e73a146e0c45fe8c2e3a29e29be623c1558d541"
+  },
+  {
+    "slide": 8,
+    "step": 3,
+    "source": "16-live-schuelervorschau.png",
+    "physicalCrop": [
+      932,
+      145,
+      165,
+      65
+    ],
+    "file": "slide-8-step-3.png",
+    "sha256": "301cba779fec5c464ba7e00237cfd1551890e6fe295fa3a004009e47cf5b9dcc"
+  },
+  {
+    "slide": 9,
+    "step": 1,
+    "source": "14-live-einstellungen-auswertung.png",
+    "physicalCrop": [
+      30,
+      612,
+      260,
+      92
+    ],
+    "file": "slide-9-step-1.png",
+    "sha256": "6151c327d60491294f46b9fd0397b5185b49a64c48416218bcfce2130a18eb00"
+  },
+  {
+    "slide": 9,
+    "step": 2,
+    "source": "14-live-einstellungen-auswertung.png",
+    "physicalCrop": [
+      30,
+      700,
+      260,
+      80
+    ],
+    "file": "slide-9-step-2.png",
+    "sha256": "754fd157a8b1b781e5038712765b1665a6a046985388864397472b1611456f35"
+  },
+  {
+    "slide": 10,
+    "step": 1,
+    "source": "18-live-feedback-untenlinks.png",
+    "physicalCrop": [
+      8,
+      811,
+      94,
+      53
+    ],
+    "file": "slide-10-step-1.png",
+    "sha256": "a0c6b2269d468f98933aa9ad3c086ef6994970fbf5457a390e7bdab36005088e"
+  },
+  {
+    "slide": 10,
+    "step": 2,
+    "source": "18-live-feedback-untenlinks.png",
+    "physicalCrop": [
+      330,
+      340,
+      450,
+      110
+    ],
+    "file": "slide-10-step-2.png",
+    "sha256": "dd412df8a60157b497da837c2d47459c9dbbaf4e07974e83192eda5eff5e8da9"
+  },
+  {
+    "slide": 10,
+    "step": 3,
+    "source": "19-live-feedback-markierungsdialog.png",
+    "physicalCrop": [
+      345,
+      280,
+      410,
+      135
+    ],
+    "file": "slide-10-step-3.png",
+    "sha256": "06cea644aa179fa19113c6ddd463c3e9828f1c9c928446eaa4fb8b17610e6f69"
+  },
+  {
+    "slide": 10,
+    "step": 4,
+    "source": "19-live-feedback-markierungsdialog.png",
+    "physicalCrop": [
+      480,
+      410,
+      270,
+      53
+    ],
+    "file": "slide-10-step-4.png",
+    "sha256": "6bd95208a28810de416bcddf9a93fd2744e701c466c50d4b1ced60a877b7662e"
+  }
+]

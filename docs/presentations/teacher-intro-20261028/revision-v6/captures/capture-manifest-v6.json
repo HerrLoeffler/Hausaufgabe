@@ -1,0 +1,127 @@
+{
+  "taskID": "GC-TEACHER-INTRO-20261028",
+  "revision": "v6",
+  "createdAt": "2026-10-26T21:54:02.542027+00:00",
+  "scope": "Two actual speech-entry controls and one proven real game image. No live product edits.",
+  "captures": [
+    {
+      "file": "21-live-remy-grundangaben-mikro.jpg",
+      "sourceURL": "https://hausaufgabe-staging.web.app/",
+      "captureDate": "2026-10-26",
+      "environment": "school-live-legacy-host-existing-session",
+      "viewport": [
+        1101,
+        954
+      ],
+      "dimensions": [
+        1101,
+        876
+      ],
+      "physicalCrop": [
+        0,
+        78,
+        1101,
+        954
+      ],
+      "function": "Testwunsch diktieren – microphone for basic test request, e.g. subject/class/topic/count.",
+      "verification": "Saved final bitmap viewed locally; final rectangles independently corrected by deck author after bitmap view. No microphone recording activated; only visible control is proven.",
+      "rectangles_final_bitmap": {
+        "Testwunsch diktieren": [
+          118,
+          285,
+          43,
+          44
+        ],
+        "Testwunschfeld": [
+          170,
+          277,
+          838,
+          60
+        ],
+        "Übernehmen": [
+          1016,
+          285,
+          45,
+          44
+        ]
+      },
+      "limits": [
+        "Earlier y207/y201 rects in message were wrong; use these final corrected bitmap coordinates.",
+        "No actual speech recognition or microphone permission flow tested."
+      ]
+    },
+    {
+      "file": "22-live-wuensche-mikro.jpg",
+      "sourceURL": "https://hausaufgabe-staging.web.app/",
+      "captureDate": "2026-10-26",
+      "environment": "school-live-legacy-host-existing-session",
+      "viewport": [
+        1101,
+        954
+      ],
+      "dimensions": [
+        1101,
+        876
+      ],
+      "physicalCrop": [
+        0,
+        78,
+        1101,
+        954
+      ],
+      "function": "Wünsche diktieren – microphone beside optional own wishes.",
+      "verification": "Saved final bitmap viewed locally, deck author confirms lower microphone coordinates.",
+      "rectangles_final_bitmap": {
+        "Wünsche diktieren": [
+          234,
+          292,
+          34,
+          34
+        ],
+        "Eigene Wünsche": [
+          62,
+          333,
+          483,
+          134
+        ]
+      },
+      "limits": [
+        "No recording, provider call, save or generation activated."
+      ]
+    },
+    {
+      "file": "23-games-fastquiz-prototyp-20261014.jpg",
+      "sourceLocalFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-investment-20261019/assets-games-v5/fastquiz-binomial-gameplay-public.jpg",
+      "sourceURL": "https://hausaufgabe-staging--gradecrew-binomial-20261012-y55vfkoh.web.app/fast-quiz/",
+      "captureDate": "2026-10-14",
+      "environment": "historical-actual-staging-prototype-screenshot",
+      "dimensions": [
+        1280,
+        769
+      ],
+      "sha256": "14ad624019bb893fdedea969dec80dfcdb04b99724389a71294f8bc015c79f8c",
+      "verification": "Unchanged copied existing CUA screenshot, provenance.json explicitly identifies14October public solo practice. Viewed locally; no names, student list, QR or code.",
+      "releasedSourceSHA": "2e5f8b8e792da08a884dc9eb8f5bd2e9a0f087e5",
+      "previewExpiredAt": "2026-10-19T11:19:14+02:00",
+      "requiredLabel": "Games-Prototyp · Aufnahme14.10.2026",
+      "limits": [
+        "NOT current live evidence; expired preview must not be offered as working link.",
+        "No new game room/highscore/submission created."
+      ],
+      "rectangles_final_bitmap": {
+        "Spielaufgabe und vier Antworten": [
+          100,
+          281,
+          1080,
+          397
+        ],
+        "Zeit und Punkte": [
+          100,
+          194,
+          1080,
+          70
+        ]
+      }
+    }
+  ]
+}
