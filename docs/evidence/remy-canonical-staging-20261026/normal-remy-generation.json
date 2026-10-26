@@ -1,0 +1,186 @@
+{
+  "project": "gradecrew-staging-2026",
+  "url": "https://gradecrew-staging-2026.web.app/workspace.html",
+  "source": "1cca66feba85bb94c931d1a41064cce16cbadd16",
+  "quizId": "YN6HWE5T",
+  "normalEndpoints": true,
+  "generatedViaTeacherUI": true,
+  "questions": 6,
+  "points": 12,
+  "initial": [
+    {
+      "formats": [
+        {
+          "text": "Visuelle Interaktion",
+          "value": "visual"
+        },
+        {
+          "text": "Ereignisse auf der Zeitachse",
+          "value": "timeline"
+        }
+      ],
+      "prompt": "Ordne die fünf Ereignisse den passenden Jahreszahlen auf dem Zeitstrahl zu.",
+      "solution": "Lösung: 800: Karl der Große wird zum Kaiser gekrönt. · 1450: Der Buchdruck mit beweglichen Metalllettern verbreitet sich in Europa. · 1789: Die Französische Revolution beginnt. · 1914: Der Erste Weltkrieg beginnt. · 1989: Die Berliner Mauer fällt."
+    },
+    {
+      "formats": [
+        {
+          "text": "Visuelle Interaktion",
+          "value": "visual"
+        },
+        {
+          "text": "Punkte & Strecken",
+          "value": "coordinate"
+        }
+      ],
+      "prompt": "Trage die Punkte A und B in das Koordinatensystem ein.",
+      "solution": "Lösung: A(3 | 2); B(-2 | -3)"
+    },
+    {
+      "formats": [
+        {
+          "text": "Visuelle Interaktion",
+          "value": "visual"
+        },
+        {
+          "text": "Bildbereich anklicken",
+          "value": "hotspot"
+        }
+      ],
+      "prompt": "Klicke im Pflanzenbild auf die Wurzel.",
+      "solution": "Lösung: Wurzel"
+    },
+    {
+      "formats": [
+        {
+          "text": "Visuelle Interaktion",
+          "value": "visual"
+        },
+        {
+          "text": "Grafik beschriften",
+          "value": "labeling"
+        }
+      ],
+      "prompt": "Beschrifte die vier markierten Teile der Blütenpflanze.",
+      "solution": "Lösung: Feld 1: Blüte · Feld 2: Sprossachse · Feld 3: Blätter · Feld 4: Wurzel"
+    },
+    {
+      "formats": [
+        {
+          "text": "Visuelle Interaktion",
+          "value": "visual"
+        },
+        {
+          "text": "Winkel messen",
+          "value": "angle"
+        }
+      ],
+      "prompt": "Miss den Winkel α mit dem eingeblendeten Winkelmesser. Trage dein Ergebnis in Grad ein.",
+      "solution": "Lösung: 60° (±3°)"
+    },
+    {
+      "formats": [
+        {
+          "text": "Visuelle Interaktion",
+          "value": "visual"
+        },
+        {
+          "text": "Bilder in die richtige Reihenfolge",
+          "value": "sequence"
+        }
+      ],
+      "prompt": "Ordne die Entwicklung des Schmetterlings. Beginne mit dem Ei.",
+      "solution": "Lösung: Ei → Raupe → Puppe → Ausgewachsener Schmetterling"
+    }
+  ],
+  "reviewed": [
+    {
+      "formats": [
+        {
+          "text": "Visuelle Interaktion",
+          "value": "visual"
+        },
+        {
+          "text": "Ereignisse auf der Zeitachse",
+          "value": "timeline"
+        }
+      ],
+      "prompt": "Ordne die fünf Ereignisse den passenden Jahreszahlen auf dem Zeitstrahl zu.",
+      "solution": "Lösung: 800: Karl der Große wird zum Kaiser gekrönt. · 1450: Der Buchdruck mit beweglichen Metalllettern verbreitet sich in Europa. · 1789: Die Französische Revolution beginnt. · 1914: Der Erste Weltkrieg beginnt. · 1989: Die Berliner Mauer fällt."
+    },
+    {
+      "formats": [
+        {
+          "text": "Visuelle Interaktion",
+          "value": "visual"
+        },
+        {
+          "text": "Punkte & Strecken",
+          "value": "coordinate"
+        }
+      ],
+      "prompt": "Trage A(3 | 2) und B(−2 | −3) in das Koordinatensystem ein.",
+      "solution": "Lösung: A(3 | 2); B(-2 | -3)"
+    },
+    {
+      "formats": [
+        {
+          "text": "Visuelle Interaktion",
+          "value": "visual"
+        },
+        {
+          "text": "Bildbereich anklicken",
+          "value": "hotspot"
+        }
+      ],
+      "prompt": "Klicke im Pflanzenbild auf die Wurzel.",
+      "solution": "Lösung: Wurzel"
+    },
+    {
+      "formats": [
+        {
+          "text": "Visuelle Interaktion",
+          "value": "visual"
+        },
+        {
+          "text": "Grafik beschriften",
+          "value": "labeling"
+        }
+      ],
+      "prompt": "Beschrifte die vier markierten Teile der Blütenpflanze.",
+      "solution": "Lösung: Feld 1: Blüte · Feld 2: Sprossachse · Feld 3: Blätter · Feld 4: Wurzel"
+    },
+    {
+      "formats": [
+        {
+          "text": "Visuelle Interaktion",
+          "value": "visual"
+        },
+        {
+          "text": "Winkel messen",
+          "value": "angle"
+        }
+      ],
+      "prompt": "Miss den Winkel α mit dem eingeblendeten Winkelmesser. Trage dein Ergebnis in Grad ein.",
+      "solution": "Lösung: 60° (±3°)"
+    },
+    {
+      "formats": [
+        {
+          "text": "Visuelle Interaktion",
+          "value": "visual"
+        },
+        {
+          "text": "Bilder in die richtige Reihenfolge",
+          "value": "sequence"
+        }
+      ],
+      "prompt": "Ordne die Entwicklung des Schmetterlings. Beginne mit dem Ei.",
+      "solution": "Lösung: Ei → Raupe → Puppe → Ausgewachsener Schmetterling"
+    }
+  ],
+  "teacherAmendment": "AI omitted coordinate givens in prompt; teacher entered A(3 | 2), B(-2 | -3) and applied the structured editor before saving. Draft remains unpublished.",
+  "paidGenerationJobsThisStep": 1,
+  "paidGenerationJobsPriorStep": 1,
+  "jobId": "not available from visible UI"
+}

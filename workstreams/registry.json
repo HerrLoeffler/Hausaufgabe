@@ -725,7 +725,7 @@
       "title": "GC-EXTENDED-QUESTION-TYPES-01: gespeicherte Baupläne in normalem Remy",
       "primaryBranch": "feature/remy-interactive-tests-20261026",
       "integrationTarget": "feature/gradecrew-app-integration",
-      "state": "integration_ready",
+      "state": "integrated",
       "handoff": "workstreams/remy-interactive-tests-20261026.md",
       "relatedBranches": [
         "test/visual-24-pilot-20261025",

@@ -20,7 +20,7 @@
     "id": "staging-batch-2026-10-07-web-repair",
     "purpose": "Aktueller gemeinsamer GradeCrew-Web-Teststand mit Startscreen Masterpiece v4 Hosting-Polish, kontextbezogenen Crew-Assistenten V2, strukturierter Remy-Eingabe samt datensparsamer Nutzungs-/Qualitätsstatistik, Emmi, Tutorial V2 und bestehender Web-Kernfunktionalität, plus Audio Masterpiece V2 mit KI-Höraufgaben und sicher freigegebenem Lösungsaudio. Neu: bestätigte Hero-Klassenraumszene mit interaktiven Crew-Demos und bestehenden Einstiegshandlern.",
     "integration_branch": "feature/gradecrew-app-integration",
-    "observed_integration_head": "f8274f06616f5db9a15597f37229a15bb9bfa2c6",
+    "observed_integration_head": "22fa3ec8cff23003e409c23c47a78323e3fa16f7",
     "included_workstreams": [
       "crew-assistant",
       "contextual-crew-assistants-v2",
@@ -41,7 +41,8 @@
       "review-mode-20261007",
       "coco-support-memory-20261009",
       "pedagogical-pool-20261011",
-      "dashboard-ipad-tutorial-20261018"
+      "dashboard-ipad-tutorial-20261018",
+      "remy-interactive-authoring-20261026"
     ],
     "later_integrations_observed": [
       "AI-Kosten-/Memory-Integration liegt in der Elternkette des aktuellen Integrationsheads.",
@@ -68,7 +69,16 @@
       "production": "authorized_school_gc44_hosting_assets_verified_assessment7_feedback2_verified_20261018",
       "staging_assessment_functions": "success39156854952_receipt12147322047",
       "audio_v2_user_acceptance": "technical_staging_audio_start_and_resume_verified_29_questions; physical_device_acceptance_pending",
-      "canonical_hosting": "success39158573068_receipt12147573847_commit_7a18445f"
+      "canonical_hosting": "success39158573068_receipt12147573847_commit_7a18445f",
+      "remy_interactive_canonical_staging": {
+        "source": "1cca66feba85bb94c931d1a41064cce16cbadd16",
+        "project": "gradecrew-staging-2026",
+        "hosting": "205 hashes match",
+        "functions": "18 selective updates;62 untouched",
+        "user_test": "pending",
+        "production": "excluded",
+        "later_hosting": "classroom22703241,212hashes;Remy204basefiles+18normalendpoints unchanged"
+      }
     },
     "preview_url": "https://hausaufgabe-staging--gradecrew-app-integration-201hlnau.web.app",
     "preview_verified_files": 167,
@@ -2276,48 +2286,131 @@
       "task_id": "GC-EXTENDED-QUESTION-TYPES-01",
       "branch": "feature/remy-interactive-tests-20261026",
       "stage": "staging_deployed",
-      "scope": "Normal Remy UI in isolated remy26 preview only; not canonical staging or Production",
+      "scope": "Normal Remy AI and secure assessment on canonical gradecrew-staging-2026.web.app; gradecrew.de/hausaufgabe-staging unchanged",
       "pull_request": 310,
-      "observed_head": "6777b34cb1af06a2ebdc72943395252b6b343c8c",
+      "observed_head": "1cca66feba85bb94c931d1a41064cce16cbadd16",
       "handoff": "workstreams/remy-interactive-tests-20261026.md",
-      "preview_url": "https://gradecrew-staging-2026--remy26-mhohnhf1.web.app/workspace.html",
       "functions_codebases": [
-        "remy26-ai",
-        "remy26-assessment"
+        "ai",
+        "assessment"
       ],
-      "backend_source_local": "3a170cdbdfb40e734b338006eb351c58b2c2de35",
-      "hosting_source_local": "cfe468f8b02440db3e24b966f563d580d5b80eb2",
       "verification": {
-        "root_ui_tests": 464,
+        "root_ui_tests": 473,
         "functions_tests": 332,
         "assessment_tests": 101,
-        "independent_review": "UI and backend, five reproduced findings fixed and re-reviewed",
-        "real_ai_jobs": 1,
-        "real_ai_job_id": "4107be8859d80691d522c2010d262b42c6333279",
-        "synthetic_quiz": "BZFKMUEB",
-        "generated_formats": [
-          "timeline",
-          "coordinate",
-          "hotspot",
-          "labeling",
-          "angle",
-          "sequence"
-        ],
-        "live_server_cases": 6,
-        "browser": "normal generation, teacher edit/save, secure resume and full submission12/12",
+        "merge_review_tests": 29,
+        "merge_review": "no new findings, PR312 public pupil entry preserved",
         "ci": {
-          "head": "6777b34cb1af06a2ebdc72943395252b6b343c8c",
-          "test": 40354095390,
-          "package": 40354095198,
-          "bugops_server_rules": 40354095232,
+          "head": "1cca66feba85bb94c931d1a41064cce16cbadd16",
+          "test": 40381615600,
+          "package": 40381615766,
+          "bugops_server_rules": 40381615582,
           "conclusion": "success"
+        },
+        "hosting_hashes": 205,
+        "normal_ai_status": "enabled for active teacher test account",
+        "normal_ui_generation": {
+          "quiz": "YN6HWE5T",
+          "count": 6,
+          "points": 12,
+          "formats": [
+            "timeline",
+            "coordinate",
+            "hotspot",
+            "labeling",
+            "angle",
+            "sequence"
+          ],
+          "saved": "server confirmed",
+          "published": false,
+          "teacher_amendment": "coordinate givens added to prompt; teacher review still necessary",
+          "job_id": "not read from visible UI"
+        },
+        "new_paid_generation_jobs": 1,
+        "historical_paid_generation_jobs": 1,
+        "normal_server_cases": {
+          "fixture": "existing own BZFKMUEB",
+          "correct": 12,
+          "blank": 0,
+          "mixed": 6,
+          "wrong": 0,
+          "tolerance": 12,
+          "duplicate_cards": 0,
+          "public_redaction": true,
+          "resume": true,
+          "idempotent": true
+        },
+        "unchanged_live_origins": [
+          "https://gradecrew.de",
+          "https://hausaufgabe-staging.web.app"
+        ],
+        "report": "docs/evidence/remy-canonical-staging-20261026/deployment.json",
+        "later_additive_hosting": {
+          "at": "2026-10-26T19:11:49.972Z",
+          "newerHostingSource": "22703241c2534f9998f72379141e479805d2e119",
+          "hashesVerified": 212,
+          "preservedBaseFiles": 204,
+          "changedBaseFiles": [
+            "workspace.html"
+          ],
+          "additiveFiles": [
+            "classroom/online-client.mjs",
+            "classroom/online-workspace.mjs",
+            "classroom/online-workspace.css",
+            "classroom/exam-monitor.mjs",
+            "classroom/online-pupil-session.mjs",
+            "classroom/exam-replacement.mjs",
+            "classroom/access-print.mjs"
+          ],
+          "normalRemySource": "1cca66feba85bb94c931d1a41064cce16cbadd16",
+          "normalEndpointsUnchanged": 18,
+          "scope": "Independent classroom host addition preserves current Remy build; no rollback or overwrite performed."
         }
       },
       "rules_changed": false,
       "production": "unchanged",
       "teacher_acceptance": "pending",
       "physical_device_acceptance": "pending",
-      "next_action": "Review final PR310 CI and normal Remy preview; integrate with current release train only after fresh overlap check. Production needs explicit approval. Existing localhost8784 eight-format experiment and visual255 remain separate and unchanged."
+      "next_action": "Martin tests normal Remy via canonical Staging login and creates subject/class-specific drafts. Keep local eight-format laboratory and visual255/remy26 history separate. No new preview required. Production remains excluded; future CI/deploy must preserve untargeted functions.",
+      "historical_preview": {
+        "preview_url": "https://gradecrew-staging-2026--remy26-mhohnhf1.web.app/workspace.html",
+        "functions_codebases": [
+          "remy26-ai",
+          "remy26-assessment"
+        ],
+        "backend_source_local": "3a170cdbdfb40e734b338006eb351c58b2c2de35",
+        "hosting_source_local": "cfe468f8b02440db3e24b966f563d580d5b80eb2",
+        "verification": {
+          "root_ui_tests": 464,
+          "functions_tests": 332,
+          "assessment_tests": 101,
+          "independent_review": "UI and backend, five reproduced findings fixed and re-reviewed",
+          "real_ai_jobs": 1,
+          "real_ai_job_id": "4107be8859d80691d522c2010d262b42c6333279",
+          "synthetic_quiz": "BZFKMUEB",
+          "generated_formats": [
+            "timeline",
+            "coordinate",
+            "hotspot",
+            "labeling",
+            "angle",
+            "sequence"
+          ],
+          "live_server_cases": 6,
+          "browser": "normal generation, teacher edit/save, secure resume and full submission12/12",
+          "ci": {
+            "head": "6777b34cb1af06a2ebdc72943395252b6b343c8c",
+            "test": 40354095390,
+            "package": 40354095198,
+            "bugops_server_rules": 40354095232,
+            "conclusion": "success"
+          }
+        }
+      },
+      "integration_commit": "22fa3ec8cff23003e409c23c47a78323e3fa16f7",
+      "canonical_url": "https://gradecrew-staging-2026.web.app/workspace.html",
+      "deployed_source": "1cca66feba85bb94c931d1a41064cce16cbadd16",
+      "functions_selection": "12 normal AI +6 assessment lifecycle exports only;62 untargeted exports preserved"
     }
   ],
   "deployments": [
@@ -3023,11 +3116,16 @@
   "test_environment": {
     "project": "gradecrew-staging-2026",
     "url": "https://gradecrew-staging-2026.web.app/",
-    "version": "2.3.1-gc44",
+    "version": "2.3.1-gc45-rc1",
     "separate_auth_firestore_storage_functions": true,
-    "functions_active": 38,
+    "functions_active": 80,
     "automatic_deployment": "fail_closed_pending_STAGING2026_WIF_setup",
-    "manual_deployment": "verified"
+    "manual_deployment": "Remy18 targeted functions +205 base files verified; later independent classroom Hosting212 files preserves204 base files and augments workspace.html",
+    "deployed_source": "22703241c2534f9998f72379141e479805d2e119",
+    "integration_commit": "22fa3ec8cff23003e409c23c47a78323e3fa16f7",
+    "remy_interactive": "normal creation verified:6tasks/12points, YN6HWE5T; not preview-prefix routing",
+    "remy_runtime_source": "1cca66feba85bb94c931d1a41064cce16cbadd16",
+    "hosting_files_verified": 212
   },
   "school_release_20261018": {
     "handoff": "workstreams/live-staging-isolation-20261016.md",
