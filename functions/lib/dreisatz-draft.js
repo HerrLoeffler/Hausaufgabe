@@ -23,6 +23,8 @@ function materializeQuestion(raw,{index=0,contentLocale='de-DE',subject='Mathema
  if(draft.schemaVersion!=='dreisatz-draft-v1')return raw;
  const keys=['schemaVersion','problem','params','labels','helpLevel'];if(Object.keys(draft).some(k=>!keys.includes(k)))throw Error('Unbekannte Dreisatzdaten.');
  if(!Array.isArray(draft.labels)||draft.labels.length!==2||draft.labels.some(x=>typeof x!=='string'||!x.trim()||x.length>80)||!['guided','mixed','independent'].includes(draft.helpLevel))throw Error('Dreisatzangaben unvollständig.');
+ let labels=draft.labels.slice();
+ if(draft.problem.startsWith('percent_')){const percent=labels.map(label=>/(?:%|\bprozent(?:satz)?\b|\bpercent(?:age)?\b)/i.test(label));if(percent.filter(Boolean).length!==1)throw Error('Prozent- und Mengenspalte sind nicht eindeutig bezeichnet.');if(percent[1])labels.reverse();}
  const p=draft.params;if(!p||typeof p!=='object'||Array.isArray(p)||Object.values(p).some(v=>!finite(v)))throw Error('Dreisatzwerte prüfen.');
  const validFields={percent_value:['base','percent'],percent_base:['part','percent'],percent_rate:['base','part'],direct:['startLeft','startRight','endLeft','middleLeft'],inverse:['startLeft','startRight','endLeft','middleLeft']};
  const allowed=validFields[draft.problem];if(!allowed||Object.keys(p).some(k=>!allowed.includes(k))||allowed.filter(k=>k!=='middleLeft').some(k=>!Object.hasOwn(p,k)))throw Error('Dreisatzbeziehung fehlt.');
@@ -40,7 +42,7 @@ function materializeQuestion(raw,{index=0,contentLocale='de-DE',subject='Mathema
  if(halfRequired&&Math.abs(Number(raw.points)-open*.5)>1e-9)throw Error('Punkteauftrag passt nicht zu 0,5 Punkten je offenem Feld.');
  const english=contentLocale==='en-GB';const text=String(raw.text||'').trim().replace(/Jedes? (?:richtige |offene )?Feld (?:zählt|gibt) 0[,.]5 Punkte\.?/giu,'').trim();
  const base={...core.example('table'),id:'auto-'+createHash('sha256').update(VERSION+index+text+JSON.stringify(draft)).digest('hex').slice(0,20),prompt:text,title:text.slice(0,90),hint:'',objective:'Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.',rationale:'Werte und Rechenoperationen getrennt beurteilen.',sourceNote:'',subject,grade};
- const task=builder.createDreisatz(base,{labels:draft.labels,values,operations,...fields});
+ const task=builder.createDreisatz(base,{labels,values,operations,...fields});
  task.maxPoints=Number(raw.points);const per=task.maxPoints/task.solution.cells.length;
  task.hint=english?'Calculate along each arrow.':'Rechne entlang der Pfeile.';
  task.prompt=text+' '+(english?'Complete the values and the four calculation arrows. Use the intermediate value ':'Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert ')+String(mid).replace('.',english?'.':',')+'. '+(per===.5?(english?'Each field earns 0.5 points.':'Jedes richtige Feld zählt 0,5 Punkte.'):(english?'Partial credit is awarded for each correct field.':'Jedes richtige Feld erhält Teilpunkte.'));
