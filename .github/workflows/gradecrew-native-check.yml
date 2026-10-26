@@ -35,6 +35,7 @@ jobs:
         run: |
           python3 native/test_release_environments.py
           python3 native/GradeCrewTeacher/test_beta_environment.py
+          python3 native/GradeCrewTeacher/test_auth_restore_deadline.py
           python3 native/GradeCrewTeacher/test_navigation_policy.py
           python3 native/GradeCrewTeacher/test_native_bridge.py
           python3 native/GradeCrewTeacher/test_home_navigation_policy.py

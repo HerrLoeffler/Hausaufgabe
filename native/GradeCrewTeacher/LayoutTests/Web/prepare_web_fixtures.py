@@ -91,7 +91,7 @@ const offerHandledLocally=()=>true,offered=new Set();
         (output/name).write_text(source)
     for name in ['fixture.js','geometry-audit.js']:
         shutil.copyfile(HERE/name,output/name)
-    html=sources['index.html'].read_text()
+    html=sources['workspace.html'].read_text()
     head=re.search(r'<head>([\s\S]*?)</head>',html).group(1)
     head=re.sub(r'<script\b[\s\S]*?</script>','',head)
     # Match the deployed startup's exact stylesheet order after its static links.

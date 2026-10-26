@@ -6,6 +6,7 @@ struct GradeCrewAuthView: View {
     let loadError: String?
     let call: GradeCrewQuickRemyCall?
     let onRetry: () -> Void
+    var onBridgeReadyChanged: (Bool) -> Void = { _ in }
 
     @State private var mode: GradeCrewAuthInputPolicy.Mode = .login
     @State private var name = ""
@@ -86,6 +87,7 @@ struct GradeCrewAuthView: View {
             bridgeReady = false
             isPreparing = false
             isSubmitting = false
+            onBridgeReadyChanged(false)
         }
     }
 
@@ -203,6 +205,7 @@ struct GradeCrewAuthView: View {
         let generation = UUID()
         requestGeneration = generation
         bridgeReady = false
+        onBridgeReadyChanged(false)
         isSubmitting = false
         isPreparing = false
         guard loadError == nil, let call else { return }
@@ -215,6 +218,7 @@ struct GradeCrewAuthView: View {
                 switch result {
                 case .success(let response):
                     bridgeReady = response["status"] as? String == "ready"
+                    onBridgeReadyChanged(bridgeReady)
                     if !bridgeReady { workError = "Die Anmeldung ist noch nicht bereit. Bitte erneut verbinden." }
                 case .failure(let error): workError = error.localizedDescription
                 }
