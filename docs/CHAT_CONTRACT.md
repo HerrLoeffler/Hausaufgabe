@@ -8,6 +8,12 @@ Gilt für Produkt-, Design-, Spiele-, Infrastruktur- und Coding-Aufgaben, sobald
 3. Konkreten Auftrag einer vorhandenen Task-ID zuordnen oder eine neue anlegen. Zuständigkeit/Branch, Release Train und Überschneidungen prüfen.
 4. Vor neuer Arbeit feststellen, ob dieselbe Funktion bereits auf einem Feature-, Fix-, Lab-, Integrationsbranch oder offenen PR existiert.
 
+## Dispatch, Belegung und Transfer
+
+Vor jeder Fachzuweisung gelten die [verbindlichen Routing- und Auslastungsregeln](../AGENTS.md#fachchat-routing-auslastung-und-übergaben--gc-hooks-01-26102026). Pro Chat einen aktiven Prioritätsscope halten; unabhängige Folgeaufträge ausdrücklich als wartend oder einem geeigneten freien Fachchat zugeordnet dokumentieren. Blockierende Incidents nicht durch neue Feature-/Storefragen verdrängen.
+
+Die bestehende Aufgabenübergabe nennt Originaltask, Owner/Chat, Priorität, Aufnahmestatus und nächsten Schritt. Bei Transfer zusätzlich Checkpoint/Commit, Dirty-Dateien, Run-/Request-IDs, Versuche/Budget und Datei-/Hunkwriter-Abgleich sichern; bis zur bestätigten Schreibübernahme bleibt der neue Owner lesend. Nachricht zugestellt ist kein Nachweis für angenommen, gestartet oder fertig.
+
 ## Während der Arbeit
 - Neue relevante Wünsche, offene Fragen und Blocker in TODO.md aufnehmen, bevor der Chat endet. Ideen als Ideen kennzeichnen; abgelehnte Vorschläge nicht als beschlossene Aufgaben erfassen.
 - Technische/Produktentscheidungen und Begründung in der eigenen Workstream-Übergabe festhalten. Keine vollständigen Chatkopien, Zugangsdaten oder Schülerdaten ablegen.
