@@ -1275,16 +1275,16 @@
       "id": "classroom-student-management-v1",
       "task_id": "GC-CLASSROOM-01",
       "branch": "feature/classroom-integrated-preview-20261016",
-      "observed_head": "f30bf03e67a2a66b36fd6557e4c76faf90a72e09",
+      "observed_head": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d",
       "stage": "staging_deployed",
-      "ci": "web742_pass;native4preflight_gates_pass_attempt2;build_upload_running",
+      "ci": "web742_pass;native4preflight_and_build_upload_success_attempt2",
       "staging": "gradecrew-staging-2026_only",
       "user_test": "user_confirmed_classes_visible;executor_real_teacher_LIVE_results_return_and_wide_grading_verified;physical_AAC_pending",
       "handoff": "workstreams/classroom-student-management-v1.md",
-      "next_action": "Inspect native build/upload job121843636758 run40395762544 attempt2; then physical iPad AAC-end and restart acceptance. Current website compact help and real synthetic teacher restart verified.",
+      "next_action": "Confirm Apple processing/internal TestFlight availability for1.0(1232), then physical iPad AAC-end/restart acceptance. Print variants browserverified24pupils list1/cards12=2/cards6=4/single24.",
       "deployment_evidence": {
         "project": "gradecrew-staging-2026",
-        "hosting_source": "f30bf03e67a2a66b36fd6557e4c76faf90a72e09",
+        "hosting_source": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d",
         "hosting_hashes_verified": 216,
         "functions_ready": [
           "classroomweb-00007-ruf",
@@ -1299,15 +1299,19 @@
         "native_candidate": {
           "run_id": 40395762544,
           "source": "3015228848920e1230d7a6fcf5339140b2c2e14c",
-          "status": "attempt1_phone_failed;attempt2_all4_preflight_pass;build_upload_in_progress",
-          "uploaded": false,
+          "status": "attempt2_all5_jobs_success_uploaded_apple_processing_not_verified",
+          "uploaded": true,
           "phone_job_id": 121828238364,
           "phone_artifact_id": 12687486294,
           "local_verification": "38Swift24Python13integration;normal+stagingbuilds",
           "physical_apple_unlock_verified": false,
           "retry_phone_job_id": 121838619597,
           "retry_count": 1,
-          "upload_job_id": 121843636758
+          "upload_job_id": 121843636758,
+          "version": "1.0",
+          "build": 1232,
+          "apple_processed": null,
+          "uploaded_at_utc": "2026-10-26T21:13:47Z"
         },
         "negative_checks": {
           "nonrecipient_assignment": "403_PERMISSION_DENIED",
@@ -1316,8 +1320,9 @@
         },
         "original_assets_unchanged": 174,
         "print_pages_24_pupils": {
-          "list": 2,
-          "cards": 2,
+          "list": 1,
+          "cards12": 2,
+          "cards6": 4,
           "single": 24,
           "selected_pupil": 1
         },
@@ -1337,7 +1342,7 @@
           "upload_job_id": 121150211522,
           "uploaded_at_utc": "2026-10-25T11:14:13Z"
         },
-        "unrelated_assets_preserved": 212,
+        "unrelated_assets_preserved": 213,
         "access_card_branding": "one_loaded_existing_logo_per_card_4-4_display_no_rotation",
         "api_route_repair": "headers_only_e538c694d10cdf05_cloned37682e5dfb7e282b_then_guarded_brandingdeploy",
         "real_iPad_dual_entry_screenshot": "received25Oct_not_AAC_or_receiptproof",
@@ -1363,7 +1368,8 @@
         "teacher_navigation": "LIVE->results->wide original grading below table->same LIVE; 768/390 viewport no overflow",
         "development_status": "run40397952832 success; integration4fe345c16d; overlaps remain; no merge",
         "teacher_restart_proof": "actual teacher button -> generation+1 once -> old resume+submit replaced -> new attempt receipt -> pupil submitted -> teacher row Abgegeben; synthetic Pupil05",
-        "compact_help": "two short action sections; disabled reasons visible; confirmations only on click; offline details collapsed"
+        "compact_help": "two short action sections; disabled reasons visible; confirmations only on click; offline details collapsed",
+        "print_layout": "centered brand/name/class/code; no printed schoolyear;4options list/12/6/single;common short code hint;no code rotation"
       }
     },
     {
