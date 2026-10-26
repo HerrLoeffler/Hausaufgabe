@@ -1833,7 +1833,6 @@ function renderQuizList() {
     const moreActionsHtml = q.rightsHold ? "" : `<details class="quizMore"><summary>Weitere Aktionen</summary>
         <div class="quizActions secondaryQuizActions">
           <button class="button ghost duplicate">Duplizieren</button><button class="button ghost teacherShare">Mit Kollegen teilen</button>
-          ${q.published && !q.ended ? `<button class="button ghost end">Schülerzugang schließen</button>` : ""}
           ${q.ended ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
         </div>
       </details>`;
@@ -1881,7 +1880,6 @@ function renderQuizList() {
     card.querySelector(".studentShare")?.addEventListener("click", () => showPublish(q.id));
     card.querySelector(".teacherLiveOpen")?.addEventListener("click", () => showPublish(q.id));
     card.querySelector(".teacherShare")?.addEventListener("click", () => shareQuizTemplate(q.id));
-    card.querySelector(".end")?.addEventListener("click", () => endQuiz(q.id));
     card.querySelector(".reopen")?.addEventListener("click", () => reopenQuiz(q.id));
     card.querySelector(".remove").addEventListener("click", () => deleteQuiz(q.id));
     card.querySelector(".quizMore")?.addEventListener("keydown", event => {

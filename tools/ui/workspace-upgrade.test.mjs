@@ -80,17 +80,15 @@ test('the card trash action is icon-only, named for assistive tech and keeps del
   assert.equal(x.document.querySelector('#quizList .quizCard .quizStats div:last-child strong').textContent,'Student');
  }finally{delete globalThis.document;delete globalThis.NodeFilter;setActiveUiLocale('de-DE');x.close();}
 });
-test('the ending action says what stops, while preserving its existing handler',()=>{
+test('published cards use the publication switch without a duplicate end action',()=>{
  const x=setup();try {
   const published=[...x.document.querySelectorAll('#quizList .quizCard')].find(card=>card.dataset.quizId==='TWO');
-  const end=published.querySelector('.quizMore .end');
-  assert.equal(end.textContent,'Schülerzugang schließen');
-  end.click();assert.deepEqual(x.calls.at(-1),['endQuiz','TWO']);
-  registerCatalog('en-GB',enGBMessages);
-  globalThis.document=x.document;globalThis.NodeFilter=x.dom.window.NodeFilter;
-  setActiveUiLocale('en-GB');translateTree(x.$('dashboardView'));
-  assert.equal(end.textContent,'Close student access');
- }finally{delete globalThis.document;delete globalThis.NodeFilter;setActiveUiLocale('de-DE');x.close();}
+  assert.equal(published.querySelector('.quizMore .end'),null);
+  const toggle=published.querySelector('.dashboardPublishToggle');
+  assert.equal(toggle.checked,true);
+  toggle.checked=false;toggle.dispatchEvent(new x.dom.window.Event('change'));
+  assert.equal(x.calls.at(-1)[0],'publish');
+ }finally{x.close();}
 });
 test('only a published active test exposes the direct student link; teacher live opens the existing read-only view',()=>{
  const x=setup();try {

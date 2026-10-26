@@ -31,3 +31,10 @@
 - [x] Add failing card tests for a top-right trash action outside the closed disclosure and a clear end label; implement while preserving handlers and 44px target.
 - [x] Repeat 52-card Chromium/WebKit geometry and local root/UI/build checks.
 - [ ] Secure the follow-up on PR #329, refresh the handoff, and coordinate integration/preview with the release owner. PR update and combined local checks are done; GitHub mergeability discrepancy, exact CI/preview and release coordination remain.
+
+## User correction, 26 October
+
+- [x] Verify the publication switch calls the safe `endQuiz` lifecycle when turned off.
+- [x] Remove the duplicate lower end action and its now unused translation; keep the upper trash action and switch wiring.
+- [x] Recheck the card UI and browser layout with the corrected action set.
+- [ ] Update PR #329 and handoff; preview/integration remain with the release owner.
