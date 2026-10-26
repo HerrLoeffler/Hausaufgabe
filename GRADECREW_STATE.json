@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-26T22:03:14.195Z",
+  "observed_at": "2026-10-26T23:05:51Z",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -1120,10 +1120,10 @@
     "legacy_project_changed": false,
     "url": "https://gradecrew.de/",
     "version": "2.3.1-gc45-rc1",
-    "source_commit": "3363841b0257f8d71017b9bdd58e7bed6d3a0857",
-    "deployed_local_commit": "3363841b0257f8d71017b9bdd58e7bed6d3a0857",
-    "tree": "1f99f5d9518da9ab7693a1096dfe8f5693f1f7d8",
-    "user_acceptance": "current gc44 and new offline native policy physical acceptance pending",
+    "source_commit": "1429a92c3918bbb1194b9cead1ca0773f8452563",
+    "deployed_local_commit": "1429a92c3918bbb1194b9cead1ca0773f8452563",
+    "tree": "c9ae83a7471054f6cffb3a0283287cde96e98dce",
+    "user_acceptance": "Gradecrew.de compact test cards deployed and hash-verified; actual signed-in teacher and physical iPhone/iPad acceptance pending.",
     "alternate_urls": [
       "https://hausaufgabe-staging.web.app/"
     ],
@@ -1339,6 +1339,23 @@
       "handoff": "workstreams/feedback-gc39-release-20261013.md",
       "receipt": "workstreams/visual-feedback-image-release-receipts-20261026.json",
       "next_action": "Martin tests the simplified normal feedback flow on gradecrew.de; normal host connector reload/private Admin smoke remains separate. No new UI work or Admin reconnection requested."
+    },
+    "latest_test_cards_release_20261027": {
+      "task_id": "GC-TEST-CARDS-20261018",
+      "stage": "production",
+      "scope": "Compact test cards with top trash button and no duplicate end action; publication toggle retains active-student confirmation",
+      "url": "https://gradecrew.de/",
+      "project": "hausaufgabe-staging",
+      "environment": "production",
+      "source_commit": "1429a92c3918bbb1194b9cead1ca0773f8452563",
+      "tree": "c9ae83a7471054f6cffb3a0283287cde96e98dce",
+      "verified_files": 206,
+      "source_pr": 335,
+      "source_integration": "0e3ca103ed1fcb2b53cd53a72c0e290d17e157be",
+      "ci_run": 40411457753,
+      "physical_device_acceptance": "pending",
+      "functions_rules_changed": false,
+      "handoff": "workstreams/test-card-unification-20261018.md"
     }
   },
   "automation": {
@@ -3579,6 +3596,35 @@
       },
       "handoff": "workstreams/auth-brand-alignment-20261026.md",
       "next_action": "Release owner separately reconciles PR318 into newer Web staging. No additional live deploy required for this completed public-layout scope."
+    },
+    {
+      "id": "test-card-unification-20261018",
+      "task_id": "GC-TEST-CARDS-20261018",
+      "stage": "production",
+      "branch": "release/dashboard-cards-live-20261026",
+      "observed_head": "1429a92c3918bbb1194b9cead1ca0773f8452563",
+      "pull_request": 335,
+      "integration": "0e3ca103ed1fcb2b53cd53a72c0e290d17e157be",
+      "ci": "40411457753 success",
+      "production": "https://gradecrew.de/; 206/206 public hashes verified; Hosting-only",
+      "physical_device_acceptance": "pending",
+      "handoff": "workstreams/test-card-unification-20261018.md",
+      "next_action": "Real signed-in teacher acceptance on iPhone/iPad; no further web deploy needed."
+    },
+    {
+      "id": "teacher-auth-restore-20261026",
+      "task_id": "GC-IOS-02",
+      "stage": "integrated",
+      "branch": "feature/native-live-staging-20261018",
+      "observed_head": "97cf926ee92519bc3457785e1f7b2d6212ad4879",
+      "pull_request": 325,
+      "ci": "40413945177 native/phone/tablet success",
+      "testflight_workflow_run": 40416694178,
+      "testflight_build": "Teacher 0.2.0 (52)",
+      "testflight_status": "in_progress; upload and Apple processing unverified",
+      "physical_device_acceptance": "pending",
+      "handoff": "workstreams/teacher-auth-restore-20261026.md",
+      "next_action": "Verify exact TestFlight upload and Apple processing; then real login/restore on iPhone/iPad."
     }
   ],
   "deployments": [
