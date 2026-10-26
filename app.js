@@ -2741,6 +2741,7 @@ $("openGeminiBtn")?.addEventListener("click", () => openAiProvider("https://gemi
 $("generateAiTestBtn")?.addEventListener("click", generateAiTestNative);
 $("saveAiPreferencesBtn")?.addEventListener("click", () => saveAiPreferences());
 $("aiMaterialInput")?.addEventListener("change", handleAiMaterialFiles);
+installAiMaterialDropZone();
 $("aiTypeChecks")?.addEventListener("change", updateAiTypeCount);
 function installAiAnswerAudioField() {
   if ($("aiAudioAnswerQuestionCount")) return;
@@ -2768,6 +2769,7 @@ function updateAiTypeCount() {
 }
 
 function resetAiFormForNewTest() {
+  handleAiMaterialFiles.generation = (handleAiMaterialFiles.generation || 0) + 1;
   ["aiTopic", "aiCustomNotes"].forEach(id => { if ($(id)) $(id).value = ""; });
   ["aiCount", "aiPoints", "aiSchoolType", "aiRegion"].forEach(id => { const input = $(id); if (input) input.value = input.defaultValue; });
   ["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiSolutionAudioQuestionCount"].forEach(id => { if ($(id)) $(id).value = "0"; });
@@ -2956,26 +2958,89 @@ function renderAiMaterials() {
   });
 }
 
+function installAiMaterialDropZone() {
+  const zone = $("aiMaterialDropZone");
+  if (!zone || zone.dataset.dropBound) return;
+  zone.dataset.dropBound = "true";
+  let depth = 0;
+  const hasFiles = event => Array.from(event.dataTransfer?.types || []).includes("Files");
+  const clear = () => { depth = 0; zone.classList.remove("dragOver"); };
+  zone.addEventListener("dragenter", event => {
+    if (!hasFiles(event)) return;
+    event.preventDefault(); depth += 1; zone.classList.add("dragOver");
+  });
+  zone.addEventListener("dragover", event => { if (hasFiles(event)) { event.preventDefault(); event.dataTransfer.dropEffect = "copy"; } });
+  zone.addEventListener("dragleave", event => { if (!hasFiles(event)) return; depth = Math.max(0, depth - 1); if (!depth) clear(); });
+  zone.addEventListener("drop", event => {
+    if (!hasFiles(event)) return;
+    event.preventDefault(); clear();
+    const items = Array.from(event.dataTransfer.items || []).filter(item => item.kind === "file");
+    const directories = items.filter(item => item.webkitGetAsEntry?.()?.isDirectory);
+    if (directories.length) {
+      const message = "Ordner werden nicht unterstützt. Bitte die Dateien direkt auswählen oder hierher ziehen.";
+      toast(message, "error"); $("aiMaterialUploadStatus").textContent = message;
+    }
+    const files = items.length ? items.filter(item => !item.webkitGetAsEntry?.()?.isDirectory).map(item => item.getAsFile()).filter(Boolean) : Array.from(event.dataTransfer.files || []);
+    if (files.length) void handleAiMaterialFiles({ target: { files, value: "" } });
+  });
+  document.addEventListener("dragend", clear);
+  window.addEventListener("blur", clear);
+  // Prevent file drops from navigating away, while leaving text/URL drags alone.
+  document.addEventListener("dragover", event => { if (hasFiles(event)) event.preventDefault(); });
+  document.addEventListener("drop", event => {
+    if (!hasFiles(event)) return;
+    const handled = event.defaultPrevented; event.preventDefault(); clear();
+    if (!handled && !zone.contains(event.target)) toast("Bitte Dateien im Bereich Material hinzufügen ablegen.", "error");
+  });
+}
+
 async function handleAiMaterialFiles(event) {
   const files = Array.from(event.target.files || []);
   event.target.value = "";
-  if (files.length && !$("aiMaterialConfirmed").checked) {
+  if (!files.length) return;
+  if (!$("aiMaterialConfirmed").checked) {
     toast("Bitte zuerst die Prüfung von Daten und Nutzungsrechten bestätigen.", "error");
-    $("aiMaterialConfirmed").focus();
-    return;
+    $("aiMaterialConfirmed").focus(); return;
   }
-  for (const file of files) {
-    if (state.aiMaterials.length >= 10) { toast("Maximal zehn Materialien pro Generierung.", "error"); break; }
+  const uid = state.user?.uid;
+  const generation = handleAiMaterialFiles.generation || 0;
+  handleAiMaterialFiles.pending = (handleAiMaterialFiles.pending || 0) + 1;
+  const run = async () => {
+    const current = () => state.user?.uid === uid && (handleAiMaterialFiles.generation || 0) === generation;
+    if (!current()) return;
+    const messages = []; let added = 0, rejected = 0;
+    const status = $("aiMaterialUploadStatus");
+    const input = $("aiMaterialInput"); input.setAttribute("aria-busy", "true");
+    if (status) status.textContent = "Material wird hochgeladen …";
     try {
-      setAiProgress(`${file.name} wird hochgeladen …`);
-      const material = await aiApi.uploadMaterial(file, pct => setAiProgress(`${file.name} wird hochgeladen … ${pct}%`));
-      state.aiMaterials.push(material); renderAiMaterials();
-    } catch (err) { toast(aiFriendlyError(err, "Material konnte nicht hochgeladen werden."), "error"); }
-  }
-  setAiProgress();
+      for (const file of files) {
+        if (!current()) break;
+        if (!$("aiMaterialConfirmed").checked) { rejected += files.length - added - rejected; messages.push("Die Bestätigung wurde zurückgenommen. Keine weiteren Dateien hochgeladen."); break; }
+        if (state.aiMaterials.length >= 10) { rejected += files.length - added - rejected; messages.push("Maximal zehn Materialien pro Generierung."); break; }
+        try {
+          setAiProgress(`${file.name} wird hochgeladen …`);
+          const material = await aiApi.uploadMaterial(file, pct => { if (current()) setAiProgress(`${file.name} wird hochgeladen … ${pct}%`); });
+          if (!current()) { await aiApi.removeMaterial(material).catch(() => {}); break; }
+          state.aiMaterials.push(material); added += 1; renderAiMaterials();
+        } catch (err) { rejected += 1; messages.push(aiFriendlyError(err, "Material konnte nicht hochgeladen werden.")); }
+      }
+    } finally {
+      input.removeAttribute("aria-busy");
+      if (current()) {
+        setAiProgress();
+        const summary = `${added} Datei${added === 1 ? "" : "en"} hinzugefügt.${rejected ? ` ${rejected} nicht hinzugefügt. ${[...new Set(messages)].join(" ")}` : ""}`;
+        if (status) status.textContent = summary;
+        if (rejected) toast(summary, "error");
+      }
+    }
+  };
+  const queued = (handleAiMaterialFiles.queue || Promise.resolve()).then(run);
+  handleAiMaterialFiles.queue = queued.catch(() => {});
+  try { await queued; } finally { handleAiMaterialFiles.pending -= 1; }
 }
 
 function collectAiRequest() {
+  if (handleAiMaterialFiles.pending) throw new Error("Bitte warten, bis alle Materialdateien hochgeladen sind.");
   if (state.aiMaterials.length && !$("aiMaterialConfirmed").checked) throw new Error("Bitte die Prüfung der hochgeladenen Materialien bestätigen.");
   const allowedTypes = Array.from($("aiTypeChecks").querySelectorAll('input[type="checkbox"]:checked')).map(x => x.value);
   if (!$("aiTopic").value.trim()) throw new Error("Bitte ein Thema eingeben.");
@@ -4262,7 +4327,7 @@ async function createSimilarTest() {
   if (!state.currentQuiz || !state.questions.length) return toast("Für einen ähnlichen Test brauchst du mindestens eine Aufgabe.", "error");
   if (state.currentQuiz.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   if (state.isDirty) return toast("Bitte speichere zuerst deine Änderungen am Ausgangstest.", "error");
-  if (!confirm("Für einen ähnlichen Test werden die Texte, Antwortoptionen und Lösungen des Ausgangstests an OpenAI gesendet. Bitte prüfe vorher, dass sie keine personenbezogenen Daten oder nicht für externe KI freigegebenen Materialien enthalten. Test erstellen?")) return;
+  if (!confirm("Einen ähnlichen Test erstellen? Frage, Antwortmöglichkeiten und Lösungen dieses Tests werden dafür als Vorlage verwendet.")) return;
   const questions = state.questions;
   const imageQuestionCount = Math.min(5, questions.filter(q => getQuestionImageSrc(q)).length);
   const audioQuestionCount = Math.min(5, questions.filter(q => getQuestionAudioSrc(q)).length);
@@ -4737,7 +4802,7 @@ function renderQuestionImageEditor(container, q) {
   contextButton.disabled = locked || Boolean(operation?.busy);
   container.appendChild(contextButton);
   const notice = document.createElement("small"); notice.className = "imageGenerationNotice"; notice.setAttribute("role", "status");
-  notice.textContent = operation?.busy ? "Bild wird erstellt. Die Aufgabe bleibt unverändert." : pending ? "Ein Bildauftrag ist gespeichert. Ergebnis prüfen startet keine neue Berechnung." : "KI-Illustration aus dieser Aufgabe. Frage und Antworten bleiben unverändert. Kostenpflichtig; keine personenbezogenen Angaben verwenden.";
+  notice.textContent = operation?.busy ? "Bild wird erstellt. Die Aufgabe bleibt unverändert." : pending ? "Ein Bildauftrag ist gespeichert. Ergebnis prüfen startet keine neue Berechnung." : "KI-Illustration aus dieser Aufgabe. Frage und Antworten bleiben unverändert.";
   container.appendChild(notice);
   if (operation?.undo && operation.applied === imageEditorSnapshot(q)) {
     const undo = makeMiniButton("Bildänderung rückgängig", () => {
@@ -4756,7 +4821,7 @@ function renderQuestionImageEditor(container, q) {
   const panel = document.createElement("div");
   panel.className = "imageDropPanel hidden";
   panel.tabIndex = 0;
-  panel.innerHTML = `<strong>Bild einfügen</strong><p>Datei hier hineinziehen oder hier klicken und mit <kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>V</kbd> aus der Zwischenablage einfügen.</p><div class="imageActions"></div><div class="aiImageComposer"><div><strong>✨ Oder mit KI erzeugen</strong><small>Kurz beschreiben. Die Beschreibung geht an OpenAI; keine personenbezogenen Angaben. Kostenpflichtig.</small></div><textarea class="aiImagePrompt" rows="2" maxlength="900" placeholder="z. B. Ein Buch unter einem Tisch, ohne Beschriftung"></textarea><button class="button secondary generateAiQuestionImage" type="button">KI-Bild erstellen</button></div>`;
+  panel.innerHTML = `<strong>Bild einfügen</strong><p>Datei hier hineinziehen oder hier klicken und mit <kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>V</kbd> aus der Zwischenablage einfügen.</p><div class="imageActions"></div><div class="aiImageComposer"><div><strong>✨ Oder mit KI erzeugen</strong><small>Beschreibe dein gewünschtes Motiv.</small></div><textarea class="aiImagePrompt" rows="2" maxlength="900" placeholder="z. B. Ein Buch unter einem Tisch, ohne Beschriftung"></textarea><button class="button secondary generateAiQuestionImage" type="button">KI-Bild erstellen</button></div>`;
   const actions = panel.querySelector(".imageActions");
   const file = document.createElement("input");
   file.type = "file";
@@ -4801,7 +4866,11 @@ function imageEditorKey(q) {
 }
 
 function imageEditorSnapshot(q) {
-  return JSON.stringify([state.questions.indexOf(q), q]);
+  const stored = sanitizeQuestionForSave(q);
+  delete stored.position; delete stored.aiOrigin; delete stored.aiVariantKept;
+  const canonical = value => Array.isArray(value) ? value.map(canonical) : value && typeof value === "object" ? Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])])) : value;
+  const privateAudio = [q.audioScript, q.solutionAudioScript].map(value => String(value || "").replace(/\s+/g, " ").trim());
+  return JSON.stringify(canonical([state.questions.indexOf(q), stored, privateAudio, String(q.solutionAudioDataUrl || "")]));
 }
 
 function imageEditorFields(q) {
@@ -5150,7 +5219,7 @@ function renderQuestionAudioEditor(container, q) {
     legacy.appendChild(copyInstruction);
     details.querySelector(".questionAudioEditBody").appendChild(legacy);
   }
-  const publicText = q.audioPresentation === "listening-only" ? String(q.audioInstruction ?? q.audioIntent?.instruction ?? "") : String(q.passage || q.text || "");
+  const publicText = q.audioPresentation === "listening-only" ? String(q.audioInstruction ?? q.audioIntent?.instruction ?? "") : String(q.text || "");
   input.value = source.value === "task" ? publicText : String(q.audioScript || "");
   input.readOnly = source.value === "task";
   source.addEventListener("change", () => {
@@ -5217,7 +5286,7 @@ function renderQuestionAudioEditor(container, q) {
     const answerDetails = document.createElement("details");
     answerDetails.className = "questionAudioPanel answerAudioPanel";
     answerDetails.open = q.audioAnswerMode === "audio-only";
-    answerDetails.innerHTML = `<summary><span>Antwortmöglichkeiten als Audio <small>(optional)</small></span><span class="questionAudioState">${q.audioAnswerMode === "audio-only" ? questionAnswerAudioReady(q) ? "bereit" : "Audio erzeugen" : ""}</span></summary><div class="questionAudioBody"><small>Schüler hören jede Antwortmöglichkeit einzeln. Die Antworttexte werden ihnen dabei nicht angezeigt; stattdessen sehen sie Antwortnummern. Hier bleiben die Texte bearbeitbar.</small><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
+    answerDetails.innerHTML = `<summary><span>Antwortmöglichkeiten als Audio <small>(optional)</small></span><span class="questionAudioState">${q.audioAnswerMode === "audio-only" ? questionAnswerAudioReady(q) ? "bereit" : "Audio erzeugen" : ""}</span></summary><div class="questionAudioBody"><small>Schüler hören jede Antwortmöglichkeit einzeln. Die Antworttexte werden ihnen dabei nicht angezeigt. Hier bleiben die Texte bearbeitbar.</small><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
     container.appendChild(answerDetails);
     if (typeof SECURE_AUDIO_PUBLICATION_ENABLED !== "undefined" && !SECURE_AUDIO_PUBLICATION_ENABLED) {
       const gate = document.createElement("small"); gate.className = "aiInputError";
@@ -5366,7 +5435,7 @@ async function generateAiAudioForQuestion(q, container, { fromTask = false, keep
   const originalScript = String(q.audioScript || "").replace(/\s+/g, " ").trim();
   if (requireScript && !originalScript) return toast("Bitte einen eigenen Hörtext eintragen.", "error");
   const usesTaskText = fromTask || !originalScript;
-  const script = fromTask && !q.passage ? originalPublicQuestion.replace(/\s+/g, " ").trim() : usesTaskText ? defaultQuestionAudioScript(q) : originalScript;
+  const script = fromTask && (keepVisible || !q.passage) ? originalPublicQuestion.replace(/\s+/g, " ").trim() : usesTaskText ? defaultQuestionAudioScript(q) : originalScript;
   if (!script) return toast("Die Aufgabe enthält noch keinen Text zum Vorlesen.", "error");
   if (script.length > 500) return toast("Der Hörtext darf höchstens 500 Zeichen lang sein.", "error");
   if (!state.currentQuiz?.id || !q?.id) return toast("Audio kann dieser Aufgabe gerade nicht zugeordnet werden.", "error");
@@ -5401,6 +5470,8 @@ async function generateAiAudioForQuestion(q, container, { fromTask = false, keep
   } finally {
     if (audioOperations().get(q) === operation) audioOperations().delete(q);
     if (button?.isConnected) { button.disabled = false; button.textContent = previous; }
+    const currentButton = container.querySelector(".generateQuestionAudio");
+    if (currentButton && state.currentQuiz?.id === quizId && state.questions.includes(q)) currentButton.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended) || audioOperations().has(q) || !container.querySelector(".questionAudioScript")?.value.trim();
   }
 }
 

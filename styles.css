@@ -428,3 +428,12 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 .questionImageEditor button:focus-visible,.questionAudioEditor :is(button,select,textarea,summary):focus-visible{outline:3px solid #285ac9;outline-offset:3px}
 .questionAudioEditor .questionAudioScript[readonly]{background:#f2f5fa;color:#344054}
 @media(max-width:620px){.questionAudioEditor .questionAudioActions>.miniButton{width:100%}.questionImageEditor>.generateContextQuestionImage{width:100%}}
+
+.aiUploadBox.dragOver{border-color:#285ac9;background:#edf4ff;box-shadow:0 0 0 3px #285ac933}
+.aiUploadBox:focus-within{outline:3px solid #285ac9;outline-offset:3px}
+.aiUploadBox input[type=file]{max-width:100%;min-height:44px}
+#aiMaterialUploadStatus{overflow-wrap:anywhere;line-height:1.5}
+
+.aiUploadLegalDetails,.editorMediaPrivacyDetails{margin:10px 0;color:#475467;font-size:13px;line-height:1.5}
+.aiUploadLegalDetails>summary,.editorMediaPrivacyDetails>summary{cursor:pointer;min-height:44px;padding:10px 0;box-sizing:border-box}
+.aiUploadLegalDetails a,.editorMediaPrivacyDetails a{display:inline-block;min-height:44px;padding:10px 0}

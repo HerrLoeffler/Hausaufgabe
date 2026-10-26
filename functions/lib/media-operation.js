@@ -11,7 +11,7 @@ function privateResultStore() {
     read: async path => {
       try {
         const [metadata] = await bucket.file(path).getMetadata();
-        // Same seven-day cache retention enforced both here and by existing purge.
+        // Same configured cache retention enforced both here and by existing purge.
         const { RETENTION } = require("./constants");
         if (Date.parse(metadata.timeCreated) <= Date.now() - RETENTION.generatedMediaCacheDays * 86400000) return null;
         const [bytes] = await bucket.file(path).download();
@@ -63,7 +63,7 @@ async function runMediaOperation({ db, uid, operationId, request, scope, resultS
   if (!result?.asset?.imageDataUrl || Buffer.byteLength(JSON.stringify(result)) > 450 * 1024) {
     throw problem("failed-precondition", "Das Bildergebnis konnte nicht sicher übernommen werden. Es wird nicht erneut berechnet.", operationId, "unknown");
   }
-  // Use the already private, already purged seven-day image cache, not a new
+  // Use the already private, already purged configured image cache, not a new
   // unbounded Firestore copy of teacher text or paid image bytes.
   const scopeHash = createHash("sha256").update(uid).digest("hex").slice(0, 24);
   const resultPath = `aiGeneratedCache/${scopeHash}/operation-${operationId}.json`;

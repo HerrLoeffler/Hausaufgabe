@@ -316,8 +316,19 @@
       <div class="pageHead">
         <div class="aiPageIntro"><button id="backFromAi" class="linkButton left" type="button">← Zurück</button><div class="aiPageHeadContent"><div class="aiPageHeadText"><h1>Test mit Remy erstellen</h1><p>Remy erstellt deinen Test passend zu Thema und Klasse.</p></div><img class="aiPageRemyHero" src="assets/gradecrew/remy-test-creation-typewriter.png" width="112" height="114" alt="Remy an der Schreibmaschine"></div></div>
       </div>
+            <details id="aiUploadLegalDetails" class="aiUploadLegalDetails">
+              <summary>Datenschutz- und Rechte-Details</summary>
+              <div>
+<p>Thema, Wünsche und Uploads gehen an OpenAI. Bitte keine personenbezogenen Daten eingeben.</p>
+            <p id="aiMaterialRightsNotice">GradeCrew nutzt deine Materialien als Grundlage für die KI-gestützte Erstellung neuer Aufgaben. Lade nur Materialien hoch, die du für diesen Zweck verwenden und an den KI-Dienst übermitteln darfst. Prüfe die erzeugten Aufgaben vor der Veröffentlichung auch auf mögliche Übernahmen geschützter Inhalte.</p>
+<p>Thema, Wünsche, Aufgabenkontext und gespeicherte Vorlieben werden für die KI-Erstellung an OpenAI übermittelt. Das gilt auch für Aufgabenbilder und Audio. Bitte keine personenbezogenen Daten eingeben.</p>
+<small>Kosten können für Tests, Bilder und Audio entstehen.</small>
+                <p>Die Originaldatei wird vorübergehend in Firebase Storage gespeichert und für die Testerstellung an OpenAI übermittelt. Bitte auch Namen, Fotos und Dateimetadaten prüfen. Schulbuchseiten und Verlagsarbeitsblätter nicht hochladen, außer der Rechteinhaber hat die Verarbeitung durch einen externen KI-Dienst ausdrücklich erlaubt.</p>
+                <small>Originaldateien werden nach einem Erstellungsversuch entfernt. Ohne Erstellungsversuch werden Dateien beim täglichen Aufräumen gelöscht, sobald sie älter als 24 Stunden sind. OpenAI kann API-Inhalte standardmäßig bis zu 30 Tage in Sicherheitsprotokollen aufbewahren; Ausnahmen sind möglich.</small>
+              </div>
+            </details>
       <div id="aiBetaNotice" class="aiStatusNotice hidden"></div>
-      <p class="aiDataNote">Thema, Wünsche und Uploads gehen an OpenAI. Bitte keine personenbezogenen Daten eingeben.</p>
+      
       <div class="aiGrid">
         <article class="card">
           <div class="aiSectionTitle"><span aria-hidden="true">1</span><div><h2>Test festlegen</h2><p>Die wichtigsten Angaben für deinen Entwurf.</p></div></div>
@@ -336,7 +347,7 @@
           <div class="aiCoreActions">
             <p id="aiActiveJobsNotice" class="hint hidden" role="status"></p>
             <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
-            <small class="hint aiCostNote">Kosten können für Tests, Bilder und Audio entstehen.</small>
+            
             <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
             <small class="hint aiReturnNote">Nach dem Start schließt sich diese Ansicht automatisch. Den fertigen Test findest du unter „Meine Tests“.</small>
           </div>
@@ -345,7 +356,7 @@
             <div id="aiTypeChecks" class="typeCheckGrid"></div>
           </details>
           <details class="gradecrewPreferenceDetails"><summary>Meine Vorlieben für künftige Tests <small>optional</small></summary><div class="gradecrewPreferenceBody">          <label class="aiNotesField">Was Remy grundsätzlich beachten soll <small>(für künftige Tests)</small><textarea id="aiPersonalPreferences" rows="3" maxlength="1000" placeholder="z. B. klare Alltagssprache, lieber kurze Aufgaben, keine Fachwörter ohne Erklärung"></textarea></label>
-          <div class="aiPreferencesActions"><button id="saveAiPreferencesBtn" class="button secondary" type="button">Vorlieben speichern</button><small class="hint">Diese Vorlieben bleiben in deinem Profil – auch für künftige Tests. Speichere sie hier oder starte einen Test; dabei werden sie ebenfalls gespeichert. Bei der Erstellung werden sie an OpenAI übermittelt. GradeCrew berücksichtigt zusätzlich deine Aufgabenbewertungen.</small></div></div></details>
+          <div class="aiPreferencesActions"><button id="saveAiPreferencesBtn" class="button secondary" type="button">Vorlieben speichern</button><small class="hint">Diese Vorlieben bleiben in deinem Profil – auch für künftige Tests. Speichere sie hier oder starte einen Test; dabei werden sie ebenfalls gespeichert. GradeCrew berücksichtigt zusätzlich deine Aufgabenbewertungen.</small></div></div></details>
           </details>
         </article>
         <div class="aiSideSteps">
@@ -353,23 +364,18 @@
           <div class="aiSectionTitle"><span aria-hidden="true">2</span><div><h2>Material &amp; Bilder</h2><p>Optional ergänzen, was wirklich hilft.</p></div></div>
           <details class="aiOptionalMedia"><summary>Material oder Bilder hinzufügen <small>optional</small></summary>
           <div class="aiUploadNotice" id="aiUploadNotice">
-            <p id="aiMaterialRightsNotice">GradeCrew nutzt deine Materialien als Grundlage für die KI-gestützte Erstellung neuer Aufgaben. Lade nur Materialien hoch, die du für diesen Zweck verwenden und an den KI-Dienst übermitteln darfst. Prüfe die erzeugten Aufgaben vor der Veröffentlichung auch auf mögliche Übernahmen geschützter Inhalte.</p>
-            <label class="aiUploadConfirm"><input id="aiMaterialConfirmed" type="checkbox" /><span>Ich darf dieses Material speichern und an OpenAI übermitteln; es enthält keine personenbezogenen Daten.</span></label>
-            <details class="aiUploadLegalDetails">
-              <summary>Datenschutz &amp; Rechte – Details</summary>
-              <div>
-                <p>Die Originaldatei wird vorübergehend in Firebase Storage gespeichert und für die Testerstellung an OpenAI übermittelt. Bitte auch Namen, Fotos und Dateimetadaten prüfen. Schulbuchseiten und Verlagsarbeitsblätter nicht hochladen, außer der Rechteinhaber hat die Verarbeitung durch einen externen KI-Dienst ausdrücklich erlaubt.</p>
-                <small>Originaldateien werden nach einem Erstellungsversuch entfernt. Ohne Erstellungsversuch werden Dateien beim täglichen Aufräumen gelöscht, sobald sie älter als 24 Stunden sind. OpenAI kann API-Inhalte standardmäßig bis zu 30 Tage in Sicherheitsprotokollen aufbewahren; Ausnahmen sind möglich.</small>
-              </div>
-            </details>
+
+            <label class="aiUploadConfirm"><input id="aiMaterialConfirmed" aria-describedby="aiMaterialRightsNotice" type="checkbox" /><span>Ich darf dieses Material verwenden und speichern und habe die erforderlichen Rechte.</span></label>
+
           </div>
-          <label class="aiUploadBox" for="aiMaterialInput"><strong>Material hinzufügen</strong><span>PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 10 Dateien · max. 15 MB</span><input id="aiMaterialInput" type="file" multiple accept=".pdf,image/jpeg,image/png,image/webp,.txt,.csv,.docx,.pptx,.xlsx" /></label>
+          <label id="aiMaterialDropZone" class="aiUploadBox" for="aiMaterialInput"><strong>Dateien hierher ziehen oder auswählen</strong><span>PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 10 Dateien · max. 15 MB</span><input id="aiMaterialInput" aria-describedby="aiMaterialUploadStatus" type="file" multiple accept=".pdf,image/jpeg,image/png,image/webp,.txt,.csv,.docx,.pptx,.xlsx" /></label>
+          <p id="aiMaterialUploadStatus" class="hint" role="status" aria-live="polite"></p>
           <div id="aiMaterialList" class="aiMaterialList"></div>
           <section class="aiMaterialOptions" aria-labelledby="aiMaterialOptionsTitle">
             <h3 id="aiMaterialOptionsTitle">Material und Bilder</h3>
             <div class="stack compact aiOptionsBlock">
             <label>Material verwenden<select id="aiMaterialMode" disabled><option value="inspiration">Als Anregung</option><option value="only">Nur Inhalte aus dem Material</option></select></label>
-            <small class="hint">Nach dem Upload auswählbar. Hochgeladene Dateien werden an OpenAI übermittelt.</small>
+            <small class="hint">Nach dem Upload auswählbar.</small>
             <label>Aufgaben mit Bild (0–5)<input id="aiImageQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiImageCountHint" /></label>
             <p id="aiImageCountHint" class="hint" aria-live="polite"></p>
             </div>
@@ -413,6 +419,7 @@
           <div class="editorTitleRow">
             <button id="backFromEditor" class="linkButton left" type="button">← Zurück</button>
             <h1 id="editorHeading">Test bearbeiten</h1>
+<details class="editorMediaPrivacyDetails"><summary>Datenschutz- und Rechte-Details</summary><p>Für KI-Bilder und Audio werden Aufgabenkontext, Bildbeschreibung oder Sprechertext an OpenAI übermittelt. Verwende nur freigegebene Inhalte ohne personenbezogene Daten. Kosten können für Bilder und Audio entstehen.</p><a href="datenschutz.html" target="_blank" rel="noopener">Datenschutz lesen</a></details>
           </div>
           <p id="saveState" data-state="unsaved" role="status" aria-live="polite">Noch nicht gespeichert</p>
           <div id="similarTestProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
