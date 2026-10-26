@@ -7,7 +7,7 @@ import { formatMathText } from "./shared/math-display.mjs?v=1";
 const app = initializeApp(firebaseConfig, "gradecrew-secure-student");
 const api = createSecureAssessmentClient(app);
 const params = new URLSearchParams(location.search);
-const quizId = String(params.get("test") || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+const quizId = String(params.get("test") || "").trim();
 const $ = id => document.getElementById(id);
 
 let currentQuiz = null;
@@ -802,7 +802,8 @@ async function bootstrap() {
     showOnly("secureJoin");
     return;
   }
-  if (quizId.length < 4 || quizId.length > 16) {
+  const normalizedCode = quizId.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (normalizedCode.length < 4 || normalizedCode.length > 16) {
     showError(new Error("Der Testcode ist ungültig."), { retry: false });
     return;
   }

@@ -62,3 +62,11 @@ test('the old workspace route actually selects teacher dashboard when authentica
   const seen=[];const ctx={URLSearchParams,location:{search:''},normalizeTemplateCode:()=>'',sessionStorage:{getItem:()=>null},PENDING_TEMPLATE_KEY:'unused',$:()=>null,loadDashboard:async()=>seen.push('dashboard'),showView:view=>seen.push(view),user};vm.createContext(ctx);await vm.runInContext('(async(user)=>{'+body+'})(user)',ctx);assert.deepEqual(seen,[user?'dashboard':'authView']);
  }
 });
+test('direct lowercase or formatted old links retain the existing draft key after normalization at API boundary',async t=>{
+ for(const raw of ['ab12cd34','ab12-cd34']){
+  const r=runtime(t,'?test='+raw);await flush();vm.runInContext('currentAttempt={attemptId:"owned-attempt"};',r.context);
+  // The existing companion restores its volatile draft with the raw URL code.
+  const restoredKey=`gradecrew_secure_answers:v1:${raw}:owned-attempt`;
+  assert.equal(vm.runInContext('draftKey()',r.context),restoredKey);
+ }
+});
