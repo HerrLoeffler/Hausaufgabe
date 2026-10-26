@@ -83,6 +83,21 @@ test('an explicit first-task single image is budgeted in the first batch, not in
  const batches=planTestBatches(data);assert.equal(batches[0].imageQuestionCount,1);assert.equal(batches.reduce((n,b)=>n+b.imageQuestionCount,0),1);
  const p=planProgression(data);assert.ok(questionDemandErrors(number(1,1),0,p).some(e=>/Bild/.test(e)));
 });
+test('reserved first image leaves the full image and point budget intact across later batches',()=>{
+ const {planTestBatches}=require('../lib/test-batches');
+ for(const [count,imageQuestionCount] of [[25,3],[40,5]]){
+  const data={...input,count,points:count+0.5,exactImageCounts:true,imageQuestionCount,imageMode:'exact',notes:'Aufgabe 1: Single Choice mit einem Bild mit vier Obstsorten. Aufgabe 3: Dreisatz so einfach wie möglich.'};
+  const batches=planTestBatches(data);
+  assert.equal(batches[0].imageQuestionCount,1);
+  assert.equal(batches.reduce((sum,batch)=>sum+batch.imageQuestionCount,0),imageQuestionCount);
+  assert.equal(batches.reduce((sum,batch)=>sum+batch.points,0),data.points);
+  assert.ok(batches.slice(1).some(batch=>batch.imageQuestionCount>0));
+  for(const batch of batches){
+   assert.equal(batch.totalCount,count);
+   assert.equal(planProgression(batch).slots[0].position,batch.batchOffset+1);
+  }
+ }
+});
 test('contradictory fixed task demand or unavailable requested image is explicit before any paid call',()=>{
  assert.ok(planProgression({...input,difficulty:'leicht',notes:'Aufgabe 1: anspruchsvoll.'}).conflicts.length);
  assert.ok(planProgression({...input,imageMode:'none',imageQuestionCount:0,notes:'Aufgabe 1 mit einem Bild.'}).conflicts.length);
