@@ -7,7 +7,7 @@ import {firebaseConfig} from '../firebase-config.js?v=2.3.0';
 import {createOnlineClient,reconcileTeacherViews} from './online-client.mjs';
 import {createExamMonitor,installAssignedStartRoute} from './exam-monitor.mjs';
 import {createPupilSession} from './online-pupil-session.mjs';
-import {createReplacementForm} from './exam-replacement.mjs';
+import {mountReplacementHelp} from './exam-replacement.mjs';
 import {renderAccessPrintDocument,formatAccessCode,mountStudentAccessPanel,waitForAccessPrintAssets} from './access-print.mjs';
 // Additive 2026-only integration. Pupil sessions never call Firebase sign-in/out.
 if(location.hostname==='gradecrew-staging-2026.web.app'&&firebaseConfig.projectId==='gradecrew-staging-2026')install();
@@ -96,9 +96,8 @@ function install(){
   submit(f,'Geprüfte Entscheidung übernehmen',async()=>{await api.teacher('resolveSubmission',{assignmentId:assignment.id,attemptId:sub.attemptId,studentId:choice.value==='link'?person.value:undefined,disposition:choice.value,confirm:check.checked});d.close();await monitor?.refresh();});
  }
  function showAttemptHelp(row,assignment,round){
-  const help=dialog('Technische Hilfe'),intro=make('p','Die folgenden Aktionen betreffen ausschließlich diese Person und diesen Prüfungsversuch.');help.append(make('h3',row.name),intro);
-  const restart=make('section',undefined,{class:'gcHelpSection'});restart.append(make('h3','Test für diesen Schüler neu starten'),make('p','Nur bei einem technischen Problem: Der bisherige Versuch bleibt geschützt erhalten. Ein Ersatzversuch benötigt eine ausdrückliche Bestätigung. Die gemeinsame Prüfungszeit wird nicht verlängert.'));
-  if(row.attemptId&&row.status!=='submitted'&&round?.state!=='closed'){const replacement=make('section');restart.append(button('Neustart vorbereiten',()=>{createReplacementForm({host:replacement,api,row,assignment,round,onReleased:async()=>monitor?.refresh()});},true),replacement);}else restart.append(make('p',row.status==='submitted'?'Die Abgabe ist bereits eingegangen. Ein neuer Versuch wird hier nicht freigegeben.':!row.attemptId?'Diese Person hat noch keinen Versuch begonnen. Sie kann den zugewiesenen Test mit ihrem persönlichen Schülerzugang öffnen.':'Diese Prüfungsrunde ist geschlossen.'));
+  const help=dialog('Technische Hilfe');help.append(make('h3',row.name));
+  const restart=make('section',undefined,{class:'gcHelpSection'});mountReplacementHelp({host:restart,api,row,assignment,round,onReleased:async()=>monitor?.refresh()});
   const devicePanel=make('section',undefined,{class:'gcHelpSection'});mountDeviceHelp({host:devicePanel,row,assignment,api,onChanged:async()=>monitor?.refresh()});help.append(restart,devicePanel);activeDeviceHelp={host:devicePanel,assignment,studentId:row.studentId,key:JSON.stringify([row.deviceExit,row.deviceCapabilities?.exitProtocol])};help.addEventListener('close',()=>{if(activeDeviceHelp?.host===devicePanel)activeDeviceHelp=null;});
  }
  async function openPupil(){monitor?.dispose();monitor=null;generation++;pupilActive=true;previousViews=[...main.querySelectorAll('.view:not(.hidden)')].filter(v=>v!==view&&v!==studentView);hideOriginal();view.classList.add('hidden');nav.classList.add('hidden');doc.body.classList.add('gcOnlinePupilMode');studentView.classList.remove('hidden');studentView.replaceChildren(make('p','Schülerzugang wird geprüft …'));await pupilSession.restore();pupil=pupilSession.value;renderPupil();}
