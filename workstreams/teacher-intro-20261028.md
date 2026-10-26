@@ -76,3 +76,48 @@ Lokale v4-Historie: zwei früheVorschaubuilds (ein Textumbruch korrigiert), zwei
 ### Zustand und nächster Schritt
 
 LokalesArtefakt vollständig, Repo-Dokumentation branch_only. Kein CI-/Merge-/Deploy-/Gerätetestwechsel. Keine laufenden oder unklaren Jobs. Nächster Schritt: Martin öffnet `v4_final.pptx` auf seinem Präsentationsgerät und geht den Vortrag einmal durch. Dokumentationsintegration ist keine Voraussetzung für die lokaleNutzung.
+
+
+## 26.10.2026 — Revision v5 als echtes Screenshot-Tutorial
+
+Nutzerauftrag: aktuelle echte Websitebilder statt dominanter Illustration, rote editierbare Fokusmarkierungen, schrittweise per Mausklick eingeblendete/vergrößerte echte Ausschnitte, echte Appicons und praktische Führung durch Erstellung, Material/Audio, Emmi/Aufgabenbuttons, Schülerbearbeitung und Feedback untenlinks. Gleiche Task/Branch. Keine weitere Bildgenerierung.
+
+### Quellen und Datenschutz
+
+Basis: v4_final, SHA2561dc4185caccbe9cb3031ce1c7abbf78edb39e33a404bb1146990397e695290c5. Öffentlicher Einstieg und leerer Schülerzugang direkt gradecrew.de. Angemeldete Innensichten stammen aus dem tatsächlich genutzten Schul-Live hausaufgabe-staging.web.app,26.10.2026. Separates gradecrew-staging-2026 wurde nicht als Live ausgegeben oder in die finale Anleitung eingebaut. Sichtbarer UI-Footer nennt v2.3.1-gc45-rc1, kein daraus erfundener Commitbeleg.
+
+Capturefachagent tutorial_capture sicherte echte Aufnahmen ohne Testgenerierung/Veröffentlichung/Abgabe. Synthetische Formulare und eindeutig synthetischer beendeter SYSTEMTEST – Audiofreigabe. Die API-Clipannahme zur Headerentfernung erwies sich bei einigen Dateien als falsch. Deckautor/Root erkannten den weiterhin sichtbaren Kontokopf. Daraufhin wurden vor Einbettung die oberen78Pixel tatsächlich aus den Bitmaps entfernt. Vergrößerte Ausschnitte werden ebenfalls physisch als eigene sichere PNGs gespeichert. Private Bereiche nicht nur durch Shapes oder PPTX-Crop verdeckt. Keine Raw-Screenshotdatei im finalen ZIP. Screenshot09 war ungeeignet für Audio und wurde durch physisch headerfreie, tatsächlich geprüfte Aufnahme20 ersetzt. Feedback nutzt18/19 vom schwebenden Knopf, nicht die alternative Footerroute11.
+
+Originalicons durch crew_animation_art aus iOS Asset-Catalog-Ausgaben, beide1024×1024; Secure mit tatsächlichem Schlossbadge. Herkunft/Prüfsummen gesichert. Geräteillustration nur klein bei Apps. Keine neue Bild-/Voice-/Videogenerierung oder bezahlte Jobs für v5.
+
+### Ergebnis
+
+Lokaler Ordner: `/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5`
+- files/GradeCrew_Kollegium_20261028_v5_Tutorial.pptx
+- preview/kontaktbogen-v5.png und zehnFinal-PNGs
+- preview/slide-NN-step-N.png:28 einzelne Klickzustände
+- preview/native-final-N-step-N.png:28 echte PowerPoint-Beweisbilder, plus native-frames und native-klicknachweis-v5.png
+- build/build-v5.mjs, tutorial-config.json, prepare-captures.py, prepare-focus-crops.py, graft-cover.py, add-timing.py, finalize-v5.mjs
+- build/native-appear-timing.xml, native-fade-timing.xml, native-zoom-timing.xml: in PowerPoint selbst erzeugte Timingvorlagen
+- build/validation-v5.json, package-and-timing-checks.json, cover-preservation.json, native-powerpoint-qa.json, native-file-integrity.json
+- captures/capture-manifest.json, build/safe-captures.json, focus-crops.json, assets/app-icons/source-manifest.md
+
+FinalePPTX:22.220.504Bytes, SHA256 `09e479c12d78d01e15e75bf482d2ab1d60db965a301f38d3ef561d53f4db7d89`.
+
+Zehn Hauptfolien und zehn Notizteile. Folie1 unverändert, Folie2 mit Websiteadresse/Originalicons/Rollen. Folien3–10 enthalten28 native manuelle Klickphasen. Je Phase nur aktueller Fokus: rote editierbare Rahmen und kurze Callouts erscheinen, echter Ausschnitt zoomt ein, vorheriger Fokus verschwindet. Kein automatischer Screenshotfilm. Kleine Elemente maximal3,5fach, ganze Toolbar statt extrem vergrößerter Einzelicons. Emmi, Typ/Punkte, Smiley/Papierkorb, Überarbeiten/Variante und Speichern/Schüleransicht jeweils konkret fokussiert. Keine Modelltrainingszusage.
+
+### Tatsächliche Prüfung
+
+Paket/Layout/Arial/16:9/Folienzahl und ArtifactTool-Reimport PASS,0Findings/0Warnings. Acht animierte Folien,28 mainSeq-Klickphasen,28 Zoom-Effekte. Eindeutige Zeitknoten-IDs, sämtliche Shapeziele vorhanden, keine leere bldLst und keine automatische Folienzeit. Homepagehyperlink auf Folie2 vorhanden. Cover samt24 rekursiven XML-/Medien-/Notiz-/Masterabhängigkeiten bytegleich zur v4, PNGpixelgleich. Alle28 statischen Zustände visuell geprüft, die von Root konkret bemängelten Crops/Toolbarphasen gezielt korrigiert und akzeptiert.
+
+**Echter Native-Test:** zunächst getrennte Probe in Microsoft PowerPoint für Mac. Native Erscheinen/Verblassen/Zoom-Effekte über die Oberfläche erzeugt und deren OOXML als Vorlage extrahiert. Erste zusammengesetzte Probe meldete Inhaltsreparatur wegen leerer optionaler bldLst. Element weggelassen, anschließend Probe ohne Reparatur geöffnet und drei Klickzustände visuell bestätigt. Danach vollständige finaleV5 als bytegleiche QA-Kopie geöffnet: keine Reparaturmeldung, Folien3–10 mit Animation erkannt. In der Referentenansicht alle28 manuellen Klickphasen durchlaufen und jede per echter Appaufnahme gesichert. Repräsentative Endzustände3/4,6/4,8/2,10/4 visuell gelesen. QA-Kopie und finalePPTX nach dem Lauf weiterhin hashgleich. Die unveränderte finale Datei wurde nicht in PowerPoint überschrieben. Native-Testnachweis ist konkret und wird nicht aus XML-Prüfungen allein abgeleitet.
+
+### Grenzen und Versuchshistorie
+
+Kein sicher personenbezugsfreier Ergebnislistenscreenshot verfügbar. Folie9 zeigt deshalb die echten getrennten Ergebnis-/Lösungseinstellungen, keine erfundenen Schülerleistungen. Der abgeschlossene Systemtest wurde nicht erneut veröffentlicht. Teilen mit Code/Link/QR und die Abgabe-/Speicherbestätigung werden knapp erläutert; es wurde keine echte Schülerabgabe erzeugt. Die gezeigte Schüleransicht ist eine echte nicht speichernde Vorschau. Der gezeigte Pfeil ist die Aufgabennavigation und kein Abgabeknopf.
+
+V5-Versuche: erster generischer Bildcrop verzerrte den Detailausschnitt; vor finalem Build vollständig durch physische PNG-Crops ersetzt. Ein privater Kontokopf und falsche Audioaufnahme vor Einbettung erkannt/korrigiert. Erste isolierte Timingprobe reparaturbedürftig, deren Reparatur nicht als Endlösung übernommen; korrigierter Originalbaum und finaler Native-Lauf bestanden. Drei Gesamtbuildrunden für Inhalt/Croppräzisierungen, eine finaleV5-Validierung. Keine Wiederholung von Generierungs-/Deployjobs. Früherev3/v4-Historie, Task und Budget unverändert. Modell/Effort geerbt; tatsächlicheUsage/Kosten unknown, kein Modellwechsel.
+
+### Zustand und nächster Schritt
+
+LokalesArtefakt vollständig und nativ geprüft, Repo-Dokumentation branch_only auf bestehendem docs/teacher-intro-20261028. Kein Produktcode, keine CI-/Merge-/Deploy-/Releaseänderung. Keine laufenden oder unklaren Jobs. Nächster Schritt: Martin nutzt die finaleV5 im Vortrag und klickt die28 Fokusschritte im eigenen Tempo weiter.

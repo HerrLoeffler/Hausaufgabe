@@ -1,0 +1,518 @@
+[
+  {
+    "number": 3,
+    "title": "Einen Test erstellen",
+    "base": "12-live-neuer-test",
+    "phases": [
+      {
+        "label": "Mit Remy starten",
+        "file": "12-live-neuer-test",
+        "focus": [
+          65,
+          195,
+          970,
+          140
+        ],
+        "crop": [
+          180,
+          228,
+          650,
+          80
+        ]
+      },
+      {
+        "label": "Fach und Klasse wählen",
+        "file": "08-live-test-festlegen",
+        "focus": [
+          40,
+          184,
+          530,
+          84
+        ],
+        "crop": [
+          35,
+          180,
+          540,
+          90
+        ]
+      },
+      {
+        "label": "Thema eingeben",
+        "file": "08-live-test-festlegen",
+        "focus": [
+          40,
+          353,
+          530,
+          78
+        ],
+        "crop": [
+          35,
+          345,
+          540,
+          82
+        ]
+      },
+      {
+        "label": "Anzahl und Schwierigkeit festlegen",
+        "file": "08-live-test-festlegen",
+        "focus": [
+          40,
+          435,
+          530,
+          82
+        ],
+        "crop": [
+          35,
+          430,
+          540,
+          82
+        ]
+      }
+    ],
+    "note": "Neuer Test führt zur Auswahl Test mit Remy erstellen. Fach, Klasse und Thema festlegen, danach Aufgabenanzahl und Schwierigkeit. Die gezeigten Angaben Mathematik, Klasse7 und Prozentrechnung sind synthetisch. Wünsche, Material und Audio kommen vor dem Start der Erstellung hinzu. Kein Test wurde für diese Aufnahmen erzeugt."
+  },
+  {
+    "number": 4,
+    "title": "Material und Bilder",
+    "base": "10-live-material",
+    "phases": [
+      {
+        "label": "Rechte am Material bestätigen",
+        "file": "10-live-material",
+        "focus": [
+          635,
+          218,
+          405,
+          82
+        ],
+        "crop": [
+          635,
+          216,
+          405,
+          84
+        ]
+      },
+      {
+        "label": "Dateien auswählen",
+        "file": "10-live-material",
+        "focus": [
+          625,
+          335,
+          430,
+          180
+        ],
+        "crop": [
+          635,
+          351,
+          405,
+          150
+        ]
+      },
+      {
+        "label": "Anzahl der Bildaufgaben wählen",
+        "file": "20-live-audio-optionen",
+        "focus": [
+          635,
+          173,
+          408,
+          76
+        ],
+        "crop": [
+          630,
+          168,
+          420,
+          90
+        ]
+      },
+      {
+        "label": "Eigenes Bild zur Aufgabe hinzufügen",
+        "file": "13-live-emmi-editor",
+        "focus": [
+          330,
+          657,
+          265,
+          84
+        ],
+        "crop": [
+          330,
+          650,
+          270,
+          90
+        ]
+      }
+    ],
+    "note": "Nur Material verwenden, dessen Rechte und Übermittlung erlaubt sind, ohne personenbezogene Daten. Material hinzufügen unterstützt bis10Dateien. Die KI-Bildauswahl ist eine getrennte Option. Im späteren Editor kann über Bild hinzufügen ein eigenes Bild zur Aufgabe kommen. Weder Upload noch Bildgenerierung wurden ausgeführt."
+  },
+  {
+    "number": 5,
+    "title": "Höraufgaben und Wünsche",
+    "base": "20-live-audio-optionen",
+    "phases": [
+      {
+        "label": "Hörtext und Anzahl wählen",
+        "file": "20-live-audio-optionen",
+        "focus": [
+          635,
+          515,
+          408,
+          82
+        ],
+        "crop": [
+          630,
+          514,
+          420,
+          82
+        ]
+      },
+      {
+        "label": "Vorgelesene Antwortoptionen wählen",
+        "file": "20-live-audio-optionen",
+        "focus": [
+          635,
+          622,
+          408,
+          83
+        ],
+        "crop": [
+          630,
+          620,
+          420,
+          85
+        ]
+      },
+      {
+        "label": "Eigene Wünsche ergänzen",
+        "file": "20-live-audio-optionen",
+        "focus": [
+          55,
+          315,
+          500,
+          175
+        ],
+        "crop": [
+          55,
+          315,
+          500,
+          175
+        ]
+      },
+      {
+        "label": "Dann: Test erstellen",
+        "file": "20-live-audio-optionen",
+        "focus": [
+          43,
+          82,
+          520,
+          60
+        ],
+        "crop": [
+          35,
+          75,
+          535,
+          65
+        ]
+      }
+    ],
+    "note": "Audioauswahl und Anzahl vor dem Erstellen festlegen. Hörtext, vorgelesene Antwortoptionen oder beides sind möglich. Vorgelesene Antwortoptionen sind keine Aufnahme von Schülerantworten. Den privaten Hörtext später anhören und prüfen. Die notwendigen Informationen dürfen im Audio enthalten sein, während der sichtbare Arbeitsauftrag die erwartete Antwort nicht vorwegnehmen soll. Kein Audio wurde erzeugt."
+  },
+  {
+    "number": 6,
+    "title": "Emmi und Aufgaben bearbeiten",
+    "base": "13-live-emmi-editor",
+    "phases": [
+      {
+        "label": "Emmi überarbeitet den ganzen Test",
+        "file": "13-live-emmi-editor",
+        "focus": [
+          870,
+          376,
+          190,
+          53
+        ],
+        "crop": [
+          855,
+          365,
+          215,
+          74
+        ],
+        "extra": "Änderungswunsch im Emmi-Feld eingeben"
+      },
+      {
+        "label": "Aufgabentyp und Punkte ändern",
+        "file": "13-live-emmi-editor",
+        "focus": [
+          780,
+          570,
+          280,
+          81
+        ],
+        "crop": [
+          775,
+          563,
+          290,
+          91
+        ]
+      },
+      {
+        "label": "Aufgabe bewerten oder entfernen",
+        "file": "13-live-emmi-editor",
+        "focus": [
+          649,
+          475,
+          132,
+          53
+        ],
+        "crop": [
+          645,
+          465,
+          420,
+          75
+        ]
+      },
+      {
+        "label": "Einzelaufgabe überarbeiten oder variieren",
+        "file": "13-live-emmi-editor",
+        "focus": [
+          780,
+          475,
+          280,
+          53
+        ],
+        "crop": [
+          645,
+          465,
+          420,
+          75
+        ]
+      },
+      {
+        "label": "Speichern, dann Schüleransicht öffnen",
+        "file": "13-live-emmi-editor",
+        "focus": [
+          645,
+          58,
+          235,
+          57
+        ],
+        "crop": [
+          640,
+          47,
+          245,
+          78
+        ]
+      }
+    ],
+    "note": "Eindeutig synthetischer beendeter SYSTEMTEST – Audiofreigabe. Emmi-Feld betrifft den ganzen Test. Überarbeiten und Variante hinzufügen an einer Aufgabe betreffen die Einzelaufgabe. Typ und Punkte lassen sich direkt prüfen und ändern. Smileys bewerten die Aufgabe, der Papierkorb entfernt sie. Keine Zusage über Modelltraining oder automatische Reparatur. Vor Schüleransicht speichern. Keine Schaltfläche für Generierung oder Änderung wurde betätigt."
+  },
+  {
+    "number": 7,
+    "title": "Einstellungen und Teilen",
+    "base": "15-live-durchfuehrung",
+    "phases": [
+      {
+        "label": "Startmodus wählen",
+        "file": "15-live-durchfuehrung",
+        "focus": [
+          40,
+          445,
+          240,
+          80
+        ],
+        "crop": [
+          40,
+          443,
+          240,
+          82
+        ]
+      },
+      {
+        "label": "Zeitlimit bei Bedarf aktivieren",
+        "file": "15-live-durchfuehrung",
+        "focus": [
+          45,
+          519,
+          235,
+          114
+        ],
+        "crop": [
+          45,
+          519,
+          235,
+          114
+        ],
+        "extra": "Nach dem Veröffentlichen: Code, Link oder QR teilen"
+      }
+    ],
+    "note": "In den Test-Einstellungen Selbststart oder Lehrkraftstart wählen. Beim gemeinsamen Start wartet die Klasse im Warteraum. Zeitlimit optional aktivieren, bei Ablauf erfolgt automatische Abgabe. Nach Veröffentlichen können Code, Link oder QR geteilt werden. Der beendete Systemtest wurde nicht erneut geöffnet oder veröffentlicht, deshalb zeigt diese Folie die realen Einstellungsfelder und keine neue Veröffentlichung."
+  },
+  {
+    "number": 8,
+    "title": "Schülerzugang und Bearbeitung",
+    "base": "17-gradecrew-schuelerzugang",
+    "phases": [
+      {
+        "label": "Code und Namen eingeben",
+        "file": "17-gradecrew-schuelerzugang",
+        "focus": [
+          1345,
+          510,
+          835,
+          205
+        ],
+        "crop": [
+          1345,
+          510,
+          640,
+          205
+        ]
+      },
+      {
+        "label": "Aufgabe bearbeiten",
+        "file": "16-live-schuelervorschau",
+        "focus": [
+          195,
+          320,
+          890,
+          180
+        ],
+        "crop": [
+          190,
+          320,
+          900,
+          180
+        ]
+      },
+      {
+        "label": "Zur nächsten Aufgabe wechseln",
+        "file": "16-live-schuelervorschau",
+        "focus": [
+          935,
+          145,
+          160,
+          65
+        ],
+        "crop": [
+          932,
+          145,
+          165,
+          65
+        ],
+        "extra": "Am Ende abgeben und Speicherbestätigung abwarten"
+      }
+    ],
+    "note": "Der leere Zugang stammt direkt von gradecrew.de/secure-student.html. Teilnahme mit Code und Name oder vereinbartem Kürzel, ohne Schülerkonto. Das Aufgabenbild ist die echte nicht speichernde Schüleransicht des SYSTEMTESTs. Dort werden die Beispielwörter zugeordnet. Je nach Startmodus beginnt die Bearbeitung selbst oder nach Freigabe der Lehrkraft. Am Ende abgeben und Speicherbestätigung abwarten. Keine echte Schülerabgabe wurde erstellt; der gezeigte Pfeil führt zur nächsten Aufgabe und ist kein Abgabeknopf."
+  },
+  {
+    "number": 9,
+    "title": "Ergebnisanzeige und Lösungen",
+    "base": "14-live-einstellungen-auswertung",
+    "phases": [
+      {
+        "label": "Ergebnisanzeige auswählen",
+        "file": "14-live-einstellungen-auswertung",
+        "focus": [
+          30,
+          615,
+          260,
+          90
+        ],
+        "crop": [
+          30,
+          612,
+          260,
+          92
+        ]
+      },
+      {
+        "label": "Lösungen getrennt freigeben",
+        "file": "14-live-einstellungen-auswertung",
+        "focus": [
+          30,
+          701,
+          260,
+          90
+        ],
+        "crop": [
+          30,
+          700,
+          260,
+          80
+        ],
+        "extra": "Prüfung: nach Testende und Nachfrist\nÜbung: nach eigener Abgabe bei Freigabe"
+      }
+    ],
+    "note": "Die echten Test-Einstellungen zeigen Nach Abgabe und Lösungsfreigabe getrennt. Punkte, Prozent oder Note auswählen. Die Bewertung kann eine manuelle Nachprüfung brauchen. Lösungen in Prüfungen erst nach Testende und Nachfrist, in Übungen nach eigener Abgabe und nur bei Freigabe. Keine sicher personenbezugsfreie echte Ergebnisliste war verfügbar, deshalb wird hier keine Resultatliste oder erfundene Leistung gezeigt."
+  },
+  {
+    "number": 10,
+    "title": "Feedback unten links",
+    "base": "18-live-feedback-untenlinks",
+    "phases": [
+      {
+        "label": "Feedback unten links öffnen",
+        "file": "18-live-feedback-untenlinks",
+        "focus": [
+          8,
+          810,
+          95,
+          54
+        ],
+        "crop": [
+          8,
+          811,
+          94,
+          53
+        ]
+      },
+      {
+        "label": "Problemstelle als Rechteck ziehen",
+        "file": "18-live-feedback-untenlinks",
+        "focus": [
+          333,
+          340,
+          445,
+          108
+        ],
+        "crop": [
+          330,
+          340,
+          450,
+          110
+        ]
+      },
+      {
+        "label": "Beschreiben: Was ist dir aufgefallen?",
+        "file": "19-live-feedback-markierungsdialog",
+        "focus": [
+          355,
+          296,
+          392,
+          112
+        ],
+        "crop": [
+          345,
+          280,
+          410,
+          135
+        ]
+      },
+      {
+        "label": "Feedback senden",
+        "file": "19-live-feedback-markierungsdialog",
+        "focus": [
+          592,
+          413,
+          155,
+          49
+        ],
+        "crop": [
+          480,
+          410,
+          270,
+          53
+        ]
+      }
+    ],
+    "note": "Genau der schwebende Knopf unten links: Feedback öffnen, mit Maus/Finger ein Rechteck über der Problemstelle ziehen, im Dialog Was ist dir aufgefallen? beschreiben und Feedback senden. Ein einfacher Klick markiert die Stelle nicht. Keine Schülerdaten eintragen. Der aktuelle Weg speichert Markierung, Kommentar und Seitenkontext, keinen echten Pixel-Screenshot. Keine Meldung wurde versandt. Die alternative Footerroute ist nicht dargestellt."
+  }
+]

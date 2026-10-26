@@ -1,0 +1,123 @@
+{
+  "application": "Microsoft PowerPoint for Mac",
+  "file": "native-qa-v5.pptx",
+  "sourceSha256": "09e479c12d78d01e15e75bf482d2ab1d60db965a301f38d3ef561d53f4db7d89",
+  "openedWithoutRepair": true,
+  "presenterView": true,
+  "manualClicks": [
+    {
+      "slide": 3,
+      "step": 1
+    },
+    {
+      "slide": 3,
+      "step": 2
+    },
+    {
+      "slide": 3,
+      "step": 3
+    },
+    {
+      "slide": 3,
+      "step": 4
+    },
+    {
+      "slide": 4,
+      "step": 1
+    },
+    {
+      "slide": 4,
+      "step": 2
+    },
+    {
+      "slide": 4,
+      "step": 3
+    },
+    {
+      "slide": 4,
+      "step": 4
+    },
+    {
+      "slide": 5,
+      "step": 1
+    },
+    {
+      "slide": 5,
+      "step": 2
+    },
+    {
+      "slide": 5,
+      "step": 3
+    },
+    {
+      "slide": 5,
+      "step": 4
+    },
+    {
+      "slide": 6,
+      "step": 1
+    },
+    {
+      "slide": 6,
+      "step": 2
+    },
+    {
+      "slide": 6,
+      "step": 3
+    },
+    {
+      "slide": 6,
+      "step": 4
+    },
+    {
+      "slide": 6,
+      "step": 5
+    },
+    {
+      "slide": 7,
+      "step": 1
+    },
+    {
+      "slide": 7,
+      "step": 2
+    },
+    {
+      "slide": 8,
+      "step": 1
+    },
+    {
+      "slide": 8,
+      "step": 2
+    },
+    {
+      "slide": 8,
+      "step": 3
+    },
+    {
+      "slide": 9,
+      "step": 1
+    },
+    {
+      "slide": 9,
+      "step": 2
+    },
+    {
+      "slide": 10,
+      "step": 1
+    },
+    {
+      "slide": 10,
+      "step": 2
+    },
+    {
+      "slide": 10,
+      "step": 3
+    },
+    {
+      "slide": 10,
+      "step": 4
+    }
+  ],
+  "screenshots": "preview/native-final-<slide>-step-<step>.png",
+  "checkedAt": "2026-10-26T21:45:53.560Z"
+}
