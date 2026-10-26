@@ -18,7 +18,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: gradecrew-secure-aac-lab-testflight
+  group: gradecrew-secure-testflight-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   layout-native:
