@@ -28,3 +28,6 @@ export function installTabCapture(window){
  return {capture,dispose(){disposed=true;}};
 }
 export async function blobBase64(blob){const bytes=new Uint8Array(await blob.arrayBuffer());let s='';for(let i=0;i<bytes.length;i+=16384)s+=String.fromCharCode(...bytes.subarray(i,i+16384));return btoa(s);}
+// WebKit may reject Blob structured cloning in IndexedDB. Persist only the final JPEG bytes.
+export async function durableImageRecord(value){const {imageBlob,...record}=value;if(imageBlob)record.imageBytes=await imageBlob.arrayBuffer();return record;}
+export function restoreImageRecord(value){if(value?.imageBytes&&!value.imageBlob)return {...value,imageBlob:new Blob([value.imageBytes],{type:'image/jpeg'})};return value;}

@@ -102,3 +102,12 @@ test('account switch while final image serializes cannot dispatch the previous a
  const opening=controller.open();await started;account='B';await controller.setSession({uid:'B'});release();await opening;await settle();
  assert.equal(dispatched.some(x=>x.account==='B'&&['uploadVisualImage','create'].includes(x.action)),false);assert.equal(records.get('staging:A:outbox').length,1);
 });
+test('image drafts save and reload when the browser rejects IndexedDB Blob values',async t=>{
+ const {w,controller,records,storage}=await fixture(t,null,{compact:true});
+ w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');};w.URL.createObjectURL=()=> 'blob:synthetic';w.URL.revokeObjectURL=()=>{};w.Image=class{naturalWidth=100;naturalHeight=80;async decode(){}};w.HTMLCanvasElement.prototype.getContext=()=>({fillRect(){},drawImage(){}});w.HTMLCanvasElement.prototype.toBlob=cb=>cb(new Blob(['final-pixels'],{type:'image/jpeg'}));
+ records.set('staging:admin:visual-draft',{clientRequestId:'bytes-draft',context:{view:'authView',build:'test'},text:'synthetic',imageBlob:new Blob(['pixels'],{type:'image/jpeg'})});
+ const originalPut=storage.put;storage.put=async(k,v)=>{if(v?.imageBlob instanceof Blob)throw Object.assign(Error('Blob serialization rejected'),{name:'UnknownError'});return originalPut(k,v);};
+ await controller.setSession({uid:'admin'});await settle();w.document.querySelector('[data-gradecrew-feedback]').click();await settle();[...w.document.querySelectorAll('button')].find(b=>b.textContent==='Entwurf sichern und schließen').click();await settle();
+ const draft=records.get('staging:admin:visual-draft');assert.equal(Object.hasOwn(draft,'imageBlob'),false);assert.ok(draft.imageBytes.byteLength);assert.equal(w.document.querySelector('dialog'),null);
+ await controller.setSession({uid:'admin'});await settle();w.document.querySelector('[data-gradecrew-feedback]').click();await settle();assert.ok(w.document.querySelector('.gcImageStage canvas'));
+});

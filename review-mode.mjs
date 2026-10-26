@@ -1,4 +1,4 @@
-import {blobBase64} from './review-image.mjs';
+import {blobBase64,durableImageRecord,restoreImageRecord} from './review-image.mjs';
 import {installCompactCapture} from './review-capture.mjs';
 import {createReviewStorage} from './review-store.mjs';
 const labels={open:'Offen',working:'In Arbeit',review:'Zum Prüfen',done:'Erledigt',pending:'Wartet auf Freigabe',approved:'Freigegeben',rejected:'Abgelehnt',not_required:'Adminhinweis',passed:'Bestanden',failed:'Fehler',blocked:'Blockiert'};
@@ -23,7 +23,7 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
   const e=epoch;try{const access=await call({action:'access'});if(e!==epoch)return;admin=access.admin;catalog=access.catalog?.checks||[];
    if(compact){const draftKey=key('visual-draft'),outboxKey=key('outbox');
     const assertSession=()=>{if(e!==epoch)throw new Error('Konto wurde gewechselt.');};
-    compactCapture=installCompactCapture({document,saveNote:recordCompactNote,feedback:true,getContext,loadDraft:()=>storage.get(draftKey),saveDraft:value=>{assertSession();return storage.put(draftKey,value);},clearDraft:async requestId=>{assertSession();const draft=await storage.get(draftKey);assertSession();if(draft?.clientRequestId===requestId)await storage.remove(draftKey);assertSession();await updateQueue(outboxKey,current=>(current||[]).filter(n=>n.clientRequestId!==requestId));}});void sync();return;}
+    compactCapture=installCompactCapture({document,saveNote:recordCompactNote,feedback:true,getContext,loadDraft:async()=>restoreImageRecord(await storage.get(draftKey)),saveDraft:async value=>{assertSession();const record=await durableImageRecord(value);assertSession();return storage.put(draftKey,record);},clearDraft:async requestId=>{assertSession();const draft=await storage.get(draftKey);assertSession();if(draft?.clientRequestId===requestId)await storage.remove(draftKey);assertSession();await updateQueue(outboxKey,current=>(current||[]).filter(n=>n.clientRequestId!==requestId));}});void sync();return;}
 
    toggle=button('Seite überarbeiten',()=>void open(),{'data-review-toggle':'',class:'reviewToggle'});document.body.append(toggle);
   }catch{/* No access means no UI. Server remains authoritative. */}
@@ -33,7 +33,8 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
   const context=note.context;if(!context?.build)throw new Error('Version wird geladen. Bitte kurz warten.');
   if(!note.imageBlob)throw new Error('Bitte ein Screenshotbild beifügen.');
   const e=epoch,k=key('outbox');const payload={action:'create',clientRequestId:note.clientRequestId,...context,target:document.body.id||'gradecrewPage',text:note.text.trim(),area:'visual-feedback',captureSchemaVersion:2,captureContext:note.captureContext,...(note.region?{region:note.region}:{}),imageBlob:note.imageBlob};
-  await updateQueue(k,current=>(current||[]).some(n=>n.clientRequestId===payload.clientRequestId)?current:[...(current||[]),payload]);
+  const record=await durableImageRecord(payload);if(e!==epoch)throw new Error('Konto wurde gewechselt.');
+  await updateQueue(k,current=>(current||[]).some(n=>n.clientRequestId===payload.clientRequestId)?current:[...(current||[]),record]);
   if(e!==epoch)throw new Error('Konto wurde gewechselt.');await sync();
   const remaining=(await storage.get(k)||[]).find(n=>n.clientRequestId===payload.clientRequestId);
   if(remaining)throw new Error(remaining._error||'Lokal gesichert; Übertragung fehlgeschlagen. Bitte erneut speichern.');
@@ -98,7 +99,7 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
   try{let queue=await storage.get(k)||[];let sent;
    while((sent=queue.find(x=>!x._error))&&e===epoch){
     try{let request=sent;
-     if(sent.captureSchemaVersion===2){if(!sent.imageBlob)throw Object.assign(Error('Bildentwurf fehlt. Bitte Feedback mit Bild erneut verfassen.'),{code:'failed-precondition'});const base64=await blobBase64(sent.imageBlob);if(e!==epoch||actor!==uid)return;const image=await call({action:'uploadVisualImage',clientRequestId:sent.clientRequestId,base64},e,actor);if(e!==epoch||actor!==uid)return;request={...sent,imageId:image.imageId};delete request.imageBlob;}
+     if(sent.captureSchemaVersion===2){const raster=restoreImageRecord(sent).imageBlob;if(!raster)throw Object.assign(Error('Bildentwurf fehlt. Bitte Feedback mit Bild erneut verfassen.'),{code:'failed-precondition'});const base64=await blobBase64(raster);if(e!==epoch||actor!==uid)return;const image=await call({action:'uploadVisualImage',clientRequestId:sent.clientRequestId,base64},e,actor);if(e!==epoch||actor!==uid)return;request={...sent,imageId:image.imageId};delete request.imageBlob;delete request.imageBytes;}
      if(e!==epoch||actor!==uid)return;await call(request,e,actor);await updateQueue(k,current=>(current||[]).filter(x=>x.clientRequestId!==sent.clientRequestId));
      if(sent.captureSchemaVersion===2){const draftKey=key('visual-draft'),draft=await storage.get(draftKey);if(e===epoch&&draft?.clientRequestId===sent.clientRequestId)await storage.remove(draftKey);win.dispatchEvent(new win.CustomEvent('gradecrew:visual-confirmed',{detail:{clientRequestId:sent.clientRequestId}}));}}
     catch(err){if(e!==epoch)throw err;const code=String(err.code||'').replace('functions/','');
