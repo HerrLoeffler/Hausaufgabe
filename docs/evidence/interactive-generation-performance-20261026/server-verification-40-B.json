@@ -1,0 +1,41 @@
+{
+  "quizId": "VBNYCHVQ",
+  "results": [
+    {
+      "case": "correct",
+      "expected": 100,
+      "actual": 100,
+      "maxPoints": 100,
+      "resume": true,
+      "idempotent": true,
+      "solutionFreePaper": true
+    },
+    {
+      "case": "wrong_operator",
+      "expected": 99.5,
+      "actual": 99.5,
+      "maxPoints": 100,
+      "resume": true,
+      "idempotent": true,
+      "solutionFreePaper": true
+    },
+    {
+      "case": "wrong_number",
+      "expected": 99.5,
+      "actual": 99.5,
+      "maxPoints": 100,
+      "resume": true,
+      "idempotent": true,
+      "solutionFreePaper": true
+    },
+    {
+      "case": "blank",
+      "expected": 0,
+      "actual": 0,
+      "maxPoints": 100,
+      "resume": true,
+      "idempotent": true,
+      "solutionFreePaper": true
+    }
+  ]
+}

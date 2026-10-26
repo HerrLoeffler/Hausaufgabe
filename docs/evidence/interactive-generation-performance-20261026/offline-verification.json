@@ -8,6 +8,14 @@
     "status": "pass"
   },
   {
+    "file": "generation-40-B-tasks.json",
+    "quizId": "VBNYCHVQ",
+    "questions": 40,
+    "dreisatz": 40,
+    "independentChecks": 360,
+    "status": "pass"
+  },
+  {
     "file": "generation-6-tasks.json",
     "quizId": "F3FT79B2",
     "questions": 6,
