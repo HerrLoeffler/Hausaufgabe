@@ -1,0 +1,13 @@
+# GC-WEB-REPAIR-20261007 / GC-DESIGN-05 — öffentlicher Schülerbeitritt
+
+26.10.2026, bisheriger ausführender Web-/Releaseowner, über Zentrale01a10df6 beauftragt. Enger Humanauftrag: gradecrew.de oben und unten Schülerzugang, Browser-Testcode/Kürzel trotz Lehreranmeldung, ehrlicher Produkthinweis. Hosting-Live ausdrücklich für diesen Umfang autorisiert; keine Emmi-/Analytics-/Native-/Rules-/Backend-/402-Veröffentlichung. Angefordert Sol/medium (Routing/Sitzungstrennung); actual Runtime/Effort/Usage unknown.
+
+Aktueller main-Einstieg/AGENTS/STATE/TODO/Registry/Vertrag/Recovery und Assurance gelesen. Live und Integrationsquelle f8274f06616f5db9a15597f37229a15bb9bfa2c6 bestätigt. Aktueller Development Status40327954575 success. Offene AuthPR303/304 getrennt, HomepagePR308 integriert; Analytics263 nur lesen/erhalten. Eigener Checkout/Branch fix/homepage-student-join-20261026. Unfertige Emmi-Arbeit separat lokal663c135 gesichert, nicht hier übernehmen.
+
+Ursache: homepage/index.html unterer Schülerlink /workspace.html ohne Test/Intent. app.js onAuthStateChanged entscheidet bei fehlendem Testcode und vorhandener Lehreranmeldung loadDashboard(); ausgeloggt alte Heroentry. Oben fehlt Schülerlink. Existierende secure-student.html initialisiert eine getrennt benannte Firebase-App, nur Functions-Client, keine FirebaseAuth-Anmeldung/Logout; bestehender sicherer Browserpfad für Testcode und Kürzel. Tatsächlicher Livebrowser unterer Klick bestätigt alte Heroansicht ausgeloggt; eingeloggte Ursache durch echten Authcallback zusätzlich synthetisch zu reproduzieren. Keine realen Schüler-/Unterrichtstests ändern.
+
+Scope: HomepageLinks/Layout/Produkthinweis, codefreier Einstieg und Fehlerkorrektur auf bestehender Schülerseite; Kürzel im schon vorhandenen Attemptdatensatz vor Startversand erhalten. App/TeacherAuth und Server-/Solutionguards bleiben unverändert. Produkthinweis: „Mit ‚Tests‘ meinen wir digitale Aufgaben und Übungen. Die Lehrkraft entscheidet, ob und wie sie diese im Unterricht einsetzt und bewertet.“ Kein Rechtsausschluss, keine Änderung von Vertrags-/Datenschutzzwecken. Bestehende sichere Leistungsnachweise ausdrücklich weiterhin angeboten.
+
+Assurance: SEC06/07 Identität und Attemptgrenze, SEC14/15 Codevalidierung/TextDOM, PRIV07 minimale Kürzel, PRIV12 ehrliche Copy, PRIV14/15 mobile/Tastatur. Status zunächst nicht geprüft; Owner ausführender Webchat, unabhängiger Reviewer vorRelease. Keine neue Datenerhebung/SDK/Anbieter; bestehende Credential-/Speichergrenzen erhalten.
+
+Status branch_only, kein neuer Deploy. Nächster Schritt: rote Regressionen und minimale Korrektur. Plan docs/superpowers/plans/2026-10-26-student-join.md.
