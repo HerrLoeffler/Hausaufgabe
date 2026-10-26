@@ -731,6 +731,14 @@
         "test/visual-24-pilot-20261025",
         "feature/visual-prototype-ai-02-20261021"
       ]
+    },
+    {
+      "id": "public-entry-release-20261026",
+      "title": "Öffentliche Anmeldung und Schülerzugang live; Stagingintegration separat abgleichen",
+      "primaryBranch": "feature/design-auth-student-20261026",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "active",
+      "handoff": "workstreams/auth-brand-alignment-20261026.md"
     }
   ]
 }

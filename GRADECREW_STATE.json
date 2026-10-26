@@ -681,13 +681,77 @@
         "verified_asset_count": 192,
         "scope": "hosting_preview_only"
       },
-      "school_live": "not_deployed_by_this_task; parallel_Remy_live_commit_5f61f723c1b24d45996a77afbe40acc4ebb05cd3_observed; unpublished_source_guard",
+      "school_live": "production: reviewed combined code/name entry and responsive public UI released as 91005cff; Hosting-only",
       "release_owner_thread": "01a130fa-babb-7de3-bfeb-785499e7c061",
-      "next_action": "Designowner preserves published Remy source and reviewed join base, adds directly requested combined code/alias entry and separately scoped auth design; review/CI before authorized hosting release.",
+      "next_action": "Reconcile PR318 into the newer shared Web staging branch separately; no further live deploy required for this completed scope.",
       "verification": "583_local_web_tests; responsive_browser_390x844_and_1024x768; actual_synthetic_own_test_start_answer_reload_receipt; teacher_authenticated_UI_and_physical_device_acceptance_not_claimed",
       "handoff": "workstreams/homepage-student-join-20261026.md",
       "backend_rules_native_changed": false,
-      "emmi_included": false
+      "emmi_included": false,
+      "latest_ui_release": {
+        "task_ids": [
+          "GC-DESIGN-05",
+          "GC-WEB-REPAIR-20261007"
+        ],
+        "stage": "production",
+        "scope": "Hosting-only: public homepage layout, teacher login/register/reset, direct student entry",
+        "branch": "feature/design-auth-student-20261026",
+        "source_commit": "91005cff96256e2f12f5562670bf0abfb8a1327d",
+        "tree": "1eff26c85978175d1b5f08b13708341e33bb456c",
+        "pr": 318,
+        "ci_run": 40385917222,
+        "ci_jobs": [
+          121794004674,
+          121794005158
+        ],
+        "ci": "success",
+        "url": "https://gradecrew.de/",
+        "alternate_url": "https://hausaufgabe-staging.web.app/",
+        "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/a3aa9219579e37bb",
+        "deployed_at": "2026-10-26T19:23:45.144Z",
+        "verified_files_per_origin": 194,
+        "live_browser": "home 6 sizes; login/register/reset/student and EN checked; no real account/mail/student attempt",
+        "automated_browser": "30 WebKit/Chromium layouts + 60 task layouts; DE/EN, coordinates, grading and legal click paths",
+        "physical_device_acceptance": "not performed",
+        "backend_rules_accounts_changed": false,
+        "legacy_project_changed": false,
+        "handoff": "workstreams/auth-brand-alignment-20261026.md",
+        "receipt": "workstreams/auth-student-live-receipt-20261026.json",
+        "integration": "PR318 open with conflicts against newer staging-only interactive Remy; no force merge and no unrelated live rollout",
+        "next_action": "Reconcile PR318 into the newer shared Web staging branch separately; no further live deploy required for this completed scope."
+      }
+    },
+    "public_auth_student_release_20261026": {
+      "task_ids": [
+        "GC-DESIGN-05",
+        "GC-WEB-REPAIR-20261007"
+      ],
+      "stage": "production",
+      "scope": "Hosting-only: public homepage layout, teacher login/register/reset, direct student entry",
+      "branch": "feature/design-auth-student-20261026",
+      "source_commit": "91005cff96256e2f12f5562670bf0abfb8a1327d",
+      "tree": "1eff26c85978175d1b5f08b13708341e33bb456c",
+      "pr": 318,
+      "ci_run": 40385917222,
+      "ci_jobs": [
+        121794004674,
+        121794005158
+      ],
+      "ci": "success",
+      "url": "https://gradecrew.de/",
+      "alternate_url": "https://hausaufgabe-staging.web.app/",
+      "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/a3aa9219579e37bb",
+      "deployed_at": "2026-10-26T19:23:45.144Z",
+      "verified_files_per_origin": 194,
+      "live_browser": "home 6 sizes; login/register/reset/student and EN checked; no real account/mail/student attempt",
+      "automated_browser": "30 WebKit/Chromium layouts + 60 task layouts; DE/EN, coordinates, grading and legal click paths",
+      "physical_device_acceptance": "not performed",
+      "backend_rules_accounts_changed": false,
+      "legacy_project_changed": false,
+      "handoff": "workstreams/auth-brand-alignment-20261026.md",
+      "receipt": "workstreams/auth-student-live-receipt-20261026.json",
+      "integration": "PR318 open with conflicts against newer staging-only interactive Remy; no force merge and no unrelated live rollout",
+      "next_action": "Reconcile PR318 into the newer shared Web staging branch separately; no further live deploy required for this completed scope."
     }
   },
   "production": {
@@ -698,14 +762,46 @@
     "legacy_project": "hausaufgabe-40294",
     "legacy_project_changed": false,
     "url": "https://gradecrew.de/",
-    "version": "2.3.1-gc44",
-    "source_commit": "424473481a3bcb8818289f79f760772883f0492c",
-    "deployed_local_commit": "0de530730b78c25115f937ad224aab88ee22b650",
-    "tree": "c888657423cbba440545009c2ffebfe5405e8e65",
+    "version": "2.3.1-gc45-rc1",
+    "source_commit": "91005cff96256e2f12f5562670bf0abfb8a1327d",
+    "deployed_local_commit": "91005cff96256e2f12f5562670bf0abfb8a1327d",
+    "tree": "1eff26c85978175d1b5f08b13708341e33bb456c",
     "user_acceptance": "current gc44 and new offline native policy physical acceptance pending",
     "alternate_urls": [
       "https://hausaufgabe-staging.web.app/"
-    ]
+    ],
+    "latest_public_entry_release_20261026": {
+      "task_ids": [
+        "GC-DESIGN-05",
+        "GC-WEB-REPAIR-20261007"
+      ],
+      "stage": "production",
+      "scope": "Hosting-only: public homepage layout, teacher login/register/reset, direct student entry",
+      "branch": "feature/design-auth-student-20261026",
+      "source_commit": "91005cff96256e2f12f5562670bf0abfb8a1327d",
+      "tree": "1eff26c85978175d1b5f08b13708341e33bb456c",
+      "pr": 318,
+      "ci_run": 40385917222,
+      "ci_jobs": [
+        121794004674,
+        121794005158
+      ],
+      "ci": "success",
+      "url": "https://gradecrew.de/",
+      "alternate_url": "https://hausaufgabe-staging.web.app/",
+      "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/a3aa9219579e37bb",
+      "deployed_at": "2026-10-26T19:23:45.144Z",
+      "verified_files_per_origin": 194,
+      "live_browser": "home 6 sizes; login/register/reset/student and EN checked; no real account/mail/student attempt",
+      "automated_browser": "30 WebKit/Chromium layouts + 60 task layouts; DE/EN, coordinates, grading and legal click paths",
+      "physical_device_acceptance": "not performed",
+      "backend_rules_accounts_changed": false,
+      "legacy_project_changed": false,
+      "handoff": "workstreams/auth-brand-alignment-20261026.md",
+      "receipt": "workstreams/auth-student-live-receipt-20261026.json",
+      "integration": "PR318 open with conflicts against newer staging-only interactive Remy; no force merge and no unrelated live rollout",
+      "next_action": "Reconcile PR318 into the newer shared Web staging branch separately; no further live deploy required for this completed scope."
+    }
   },
   "automation": {
     "preview_deployment": "verified_hosting_current_eb80_candidate",
@@ -2411,6 +2507,52 @@
       "canonical_url": "https://gradecrew-staging-2026.web.app/workspace.html",
       "deployed_source": "1cca66feba85bb94c931d1a41064cce16cbadd16",
       "functions_selection": "12 normal AI +6 assessment lifecycle exports only;62 untargeted exports preserved"
+    },
+    {
+      "id": "public-entry-release-20261026",
+      "task_id": "GC-DESIGN-05",
+      "branch": "feature/design-auth-student-20261026",
+      "observed_head": "91005cff96256e2f12f5562670bf0abfb8a1327d",
+      "stage": "production",
+      "scope": "Hosting-only: public homepage layout, teacher login/register/reset, direct student entry",
+      "ci": {
+        "run": 40385917222,
+        "conclusion": "success"
+      },
+      "production": {
+        "task_ids": [
+          "GC-DESIGN-05",
+          "GC-WEB-REPAIR-20261007"
+        ],
+        "stage": "production",
+        "scope": "Hosting-only: public homepage layout, teacher login/register/reset, direct student entry",
+        "branch": "feature/design-auth-student-20261026",
+        "source_commit": "91005cff96256e2f12f5562670bf0abfb8a1327d",
+        "tree": "1eff26c85978175d1b5f08b13708341e33bb456c",
+        "pr": 318,
+        "ci_run": 40385917222,
+        "ci_jobs": [
+          121794004674,
+          121794005158
+        ],
+        "ci": "success",
+        "url": "https://gradecrew.de/",
+        "alternate_url": "https://hausaufgabe-staging.web.app/",
+        "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/a3aa9219579e37bb",
+        "deployed_at": "2026-10-26T19:23:45.144Z",
+        "verified_files_per_origin": 194,
+        "live_browser": "home 6 sizes; login/register/reset/student and EN checked; no real account/mail/student attempt",
+        "automated_browser": "30 WebKit/Chromium layouts + 60 task layouts; DE/EN, coordinates, grading and legal click paths",
+        "physical_device_acceptance": "not performed",
+        "backend_rules_accounts_changed": false,
+        "legacy_project_changed": false,
+        "handoff": "workstreams/auth-brand-alignment-20261026.md",
+        "receipt": "workstreams/auth-student-live-receipt-20261026.json",
+        "integration": "PR318 open with conflicts against newer staging-only interactive Remy; no force merge and no unrelated live rollout",
+        "next_action": "Reconcile PR318 into the newer shared Web staging branch separately; no further live deploy required for this completed scope."
+      },
+      "handoff": "workstreams/auth-brand-alignment-20261026.md",
+      "next_action": "Reconcile PR318 into the newer shared Web staging branch separately; no further live deploy required for this completed scope."
     }
   ],
   "deployments": [
