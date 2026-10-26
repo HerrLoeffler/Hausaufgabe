@@ -311,6 +311,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
+      - name: Trust the exact checked-out workspace in this isolated container
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/setup-node@v5
         with:
           node-version: '22'
