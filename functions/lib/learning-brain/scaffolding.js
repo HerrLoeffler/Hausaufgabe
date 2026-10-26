@@ -1,6 +1,6 @@
 'use strict';
 const clone=value=>globalThis.structuredClone(value);
-function sceneRegions(task={}){
+function sceneRegions(task={},observation=null){
  const regions=[],add=(id,label)=>{if(!regions.some(r=>r.id===id))regions.push({id,label:String(label).slice(0,100)});};
  const d=task.diagram,w=task.workshop;
  if(d){
@@ -20,7 +20,8 @@ function sceneRegions(task={}){
  if(w){
   add('shape','Dein vorhandenes Modell');
   if(w.tool==='fraction-board'||w.tool==='fraction-units'){
-   const parts=w.initialState?.parts||w.denominator;for(let i=0;i<Math.min(144,parts*(w.wholeCount||1));i++)add('part:'+i,'Teil '+(i+1));
+   const parts=observation?.tool===w.tool&&Number.isInteger(observation.final?.denominator)?observation.final.denominator:w.initialState?.parts||w.denominator;for(let i=0;i<Math.min(144,parts*(w.wholeCount||1));i++)add('part:'+i,`Dein Teil ${i+1} von ${parts}`);
+   if(w.tool==='fraction-board')for(let i=0;i<w.denominator;i++)add('reference-part:'+i,`Vorlage: Teil ${i+1} von ${w.denominator}`);
    for(let i=0;i<(w.wholeCount||1);i++)add('whole:'+i,'Ganzes '+(i+1));
    add('numerator','Zähler: wie viele Teile');add('denominator','Nenner: Teilung eines Ganzen');
   }
@@ -41,7 +42,7 @@ function anchoredCandidate(h,s,context={}){
  if(!['number','text','choice','workshop'].includes(h.input)||!Array.isArray(h.options)||h.options.length>6||h.options.some(x=>typeof x!=='string'||x.length>150))reject('Ungültiger Antwortweg der Hilfe.');
  if(!['number','rational','exact-fraction','open'].includes(h.answer?.kind)||!Array.isArray(h.answer.values)||s.phase!=='teacher'&&!h.answer.values.length||h.answer.values.length>12||h.answer.values.some(v=>typeof v!=='string'||v.length>300))reject('Der Hilfeschritt braucht einen prüfbaren Antwortschlüssel.');
  if(h.input==='choice'&&(h.options.length<2||h.answer.values.some(v=>!h.options.includes(v))))reject('Auswahl und Hilfefrage passen nicht zusammen.');
- const regions=sceneRegions(source),ids=new Set(regions.map(r=>r.id));
+ const regions=sceneRegions(source,context.workshop),ids=new Set(regions.map(r=>r.id));
  if(!Array.isArray(h.focusIds)||h.focusIds.length>12||h.focusIds.some(id=>!ids.has(id)))reject('Die Hilfe verweist auf eine nicht vorhandene region.');
  if(source.diagram?.kind==='area-grid'&&source.diagram.rows===1&&/ober(?:e|en|ste|sten)\s+Reihe/i.test(h.question+' '+h.explanation))reject('Sprich bei der einzigen Reihe von dieser Reihe, nicht von einer oberen Reihe.');
  if(h.input==='workshop'&&(!source.workshop||JSON.stringify(h.answer)!==JSON.stringify(source.answer)))reject('Der Antwortvertrag der Werkstatthandlung muss unverändert bleiben.');

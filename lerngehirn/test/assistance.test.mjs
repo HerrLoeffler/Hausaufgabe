@@ -27,3 +27,5 @@ test('area cell unit keeps singular Einheitsquadrat while physical units remain 
 });
 
 test('pending first help retains original source identity before assistance generation succeeds',()=>{const task={id:'same-board',workshop:{tool:'fraction-board',denominator:3},contextText:''};const before={id:'s',task};const pending={id:'s',task:null,originalTask:task,pendingNext:true};assert.equal(sourceKey(pending),sourceKey(before));assert.equal(sourceTask(pending).id,'same-board');});
+
+test('fraction own part focus is not also applied to differently sized reference pieces',async()=>{const {decorateWorkshop}=await import('../assistance.mjs');const html='<span class="workshop-piece"></span><button data-workshop-part="0" class="workshop-piece"></button>';const out=decorateWorkshop(html,{focusIds:['part:0']});assert.equal((out.match(/data-help-focus/g)||[]).length,1);assert.match(out,/<button[^>]*data-help-focus/);assert.doesNotMatch(out,/<span[^>]*data-help-focus/);});

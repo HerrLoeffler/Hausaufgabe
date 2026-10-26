@@ -24,3 +24,5 @@ test('coordinate support observation never overrides a scalar microquestion answ
   const result=await ai.assess({task:{input:'number',workshop:{tool:'coordinate-plane',role:'support'},answer:{kind:'number',values:['3']}}},answer,{workshop:{tool:'coordinate-plane',role:'support',exactResult}});assert.equal(result.outcome,outcome);assert.equal(requests[0].exactResult,answer==='3');
  }
 });
+
+test('fraction focus distinguishes current sixths from reference thirds',()=>{const task={workshop:{tool:'fraction-board',denominator:3}};const r=sceneRegions(task,{tool:'fraction-board',final:{denominator:6}});assert.equal(r.find(x=>x.id==='part:5').label,'Dein Teil 6 von 6');assert.equal(r.find(x=>x.id==='reference-part:1').label,'Vorlage: Teil 2 von 3');});

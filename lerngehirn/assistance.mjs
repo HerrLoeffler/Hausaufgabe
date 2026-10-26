@@ -15,7 +15,7 @@ export function decorateWorkshop(html,assistance){
   if(token)return tag.replace(/>$/,focusAttributes(assistance,'token:'+token[1])+'>');
   const cell=tag.match(/data-workshop-part="(\d+)"/);
   if(cell)return tag.replace(/>$/,focusAttributes(assistance,'part:'+cell[1])+'>');
-  if(/class="workshop-piece/.test(tag))return tag.replace(/>$/,focusAttributes(assistance,'part:'+part++)+'>');
+  if(/class="workshop-piece/.test(tag))return tag.replace(/>$/,focusAttributes(assistance,'reference-part:'+part++)+'>');
   return tag;
  });
 }
