@@ -2117,7 +2117,7 @@
       "human_teacher_acceptance": "pending",
       "physical_device_acceptance": "pending",
       "handoff": "workstreams/visual-pilot-24-20261025.md",
-      "next_action": "User reviews six multirow table examples and eight retained formats locally; then one small restricted AI probe, followed by queued research/selection concept. No mass generation.",
+      "next_action": "User reviews simplified Dreisatz; reuse existing PR310 for normal test integration and verify current eight formats plus varied image motifs,without a second generator or Production deployment.",
       "user_feedback_followup": {
         "at": "2026-10-25",
         "evidence_commit": "fda13a26d1c4b4cdeadd3689a1280cdd68beb765",
@@ -2191,6 +2191,27 @@
           "restricted_provider_probe": "pending",
           "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/2e540e2cff0e21a71c6e193d8032e153c6c268c3/docs/evidence/local-prototype-ai-20261025/REPORT.md",
           "production": "unchanged"
+        },
+        "simplified_dreisatz": {
+          "date": "2026-10-26",
+          "source_commit": "425f2159eda0f8ec3dea38693d8f6fc9dfa2ce27",
+          "scope": "localhost8784 only",
+          "layout": "two number columns,three value rows,direct operation arrows",
+          "response_ids_and_grading": "unchanged five fields,2.5points",
+          "tests": 57,
+          "browser": "actual compact view verified",
+          "h5p": "official capabilities checked,not integrated",
+          "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/425f2159eda0f8ec3dea38693d8f6fc9dfa2ce27/docs/evidence/local-prototype-ai-20261025/REPORT.md"
+        },
+        "homepage_task_requirement": {
+          "date": "2026-10-26",
+          "requirement": "Reuse successful homepage blueprints/renderers in normal tests,with varied coordinates/quadrants and suitable images/assignments",
+          "existing_implementation_pr": 310,
+          "existing_preview": "https://gradecrew-staging-2026--remy26-mhohnhf1.web.app/workspace.html",
+          "existing_test": "BZFKMUEB",
+          "read_only_receipt_verified": "12/12points,stored,solutions locked",
+          "new_generation_this_turn": 0,
+          "remaining": "qualify eight current lab formats and additional image motifs through existing PR310;no live integration claimed"
         }
       }
     },
