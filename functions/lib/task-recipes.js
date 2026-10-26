@@ -1,7 +1,7 @@
 'use strict';
 const {createHash}=require('node:crypto');
 const catalog=require('../data/interactive-task-blueprints.v1.json');
-const VERSION=createHash('sha256').update(JSON.stringify(catalog.authoringRecipes)+catalog.authoringRecipeVersion+['./visual/dreisatz-builder','./dreisatz-draft','./recipe-plan','./recipe-quality','./visual/core','./visual/legacy-core'].map(p=>require('node:fs').readFileSync(require.resolve(p),'utf8')).join('')).digest('hex').slice(0,16);
+const VERSION=createHash('sha256').update(JSON.stringify(catalog.authoringRecipes)+catalog.authoringRecipeVersion+['./visual/dreisatz-builder','./dreisatz-draft','./recipe-plan','./dreisatz-prompt','./recipe-quality','./visual/core','./visual/legacy-core'].map(p=>require('node:fs').readFileSync(require.resolve(p),'utf8')).join('')).digest('hex').slice(0,16);
 const norm=s=>String(s||'').normalize('NFD').replace(/\p{M}/gu,'').toLowerCase().replace(/ß/g,'ss');
 function selectTaskProfiles(context={},options={}){
  const types=options.allowedTypes||context.allowedTypes||[],formats=options.allowedVisualFormats||context.allowedVisualFormats||['hotspot','labeling','scale','angle','grid','connections','coordinate','table'];

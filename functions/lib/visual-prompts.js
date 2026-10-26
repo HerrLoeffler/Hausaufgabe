@@ -28,6 +28,6 @@ function visualRulesFor(formats) {
     return key[1].split("/").some(format => selected.has(format));
   });
   const data = [...selected].map(format => examples.find(e => e.format === format)).filter(Boolean);
-  return keep.join("\n") + "\nVollständige Datenform-Beispiele nur für die erlaubten Formate:\n" + JSON.stringify(data);
+  return keep.join("\n") + (selected.has('table')?'\n'+require('./dreisatz-prompt'):'') + "\nVollständige Datenform-Beispiele nur für die erlaubten Formate:\n" + JSON.stringify(data);
 }
 module.exports = { VISUAL_AUTHORING_RULES, visualRulesFor };
