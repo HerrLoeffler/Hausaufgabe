@@ -59,3 +59,12 @@ Zuerst vorhandene60Aufgaben offline verwenden. Danach höchstens zwei neue vergl
 ## Verbindliche Grenzen
 
 Nur separates Staging; Production ausgeschlossen. Alte gespeicherte Aufgaben bleiben lesbar, bestehende Lösungen/Bewertungen unverändert. Keine Regel-, Auth- oder Klassenraumänderung. Fehlerhafte oder unvollständige Tests niemals als fertig melden. Keine Rohtexte, Lösungen, Wünsche, Dateien oder Schülerdaten in neuer Laufzeittelemetrie. Rollen-, Budget-, Wiederaufnahme- und Releasegrenzen gelten weiter. Keine Umsetzung allein durch dieses Dokument freigegeben.
+
+
+## Verbindliche Nutzerergänzung: automatische fachliche Auswahl
+
+Martin verlangt, dass die Lehrkraft passende interaktive Formen nicht pro Aufgabe anklicken muss. Für normale Prozent-/Zuordnungs-/Dreisatzaufträge sollen qualifizierte Dreisatzrezepte standardmäßig berücksichtigt werden; bei anderen Fächern passend andere Formen. Eine reine Schlüsselwortzuordnung oder starre Formatquote genügt nicht. Formatwahl bleibt optionale Eingrenzung; explizite Ausschlüsse haben Vorrang.
+
+Das vorhandene Rezept-/Bauplanregister um Lernhandlungen, Voraussetzungen, Gegenfälle, unterstützte Daten/Medien, Builder, Bewertung, Version und echte Auswahltests erweitern. Nur qualifizierte Rezepte automatisch nutzen. Bestätigte Verbesserungen in Rezepten und Regressionen speichern; kein ungeprüftes Selbsttraining oder automatische pädagogische Poolzulassung. Auswahl und kompakte Inhaltsgenerierung innerhalb des vorhandenen Auftrags verbinden, keine zusätzliche KI-Abfrage je Aufgabe. [Ausführliche Regeln und Gegenfälle](../../learning/AUTOMATIC_TASK_SELECTION.md).
+
+Aktueller Befund: Visuelle Interaktion ist in Remy standardmäßig angehakt, alle acht Unterformate sind erlaubt. interactiveGuidance fordert passende Auswahl, besitzt aber noch keine hier qualifizierte Lernziel-/Gegenfallzuordnung. Diese Ergänzung ist eine neue verbindliche Abnahmeanforderung, keine Behauptung einer bereits ausgerollten Verbesserung.

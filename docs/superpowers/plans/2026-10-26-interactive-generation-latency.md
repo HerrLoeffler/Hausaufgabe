@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-Nur separates Staging; Production ausgeschlossen. Alte Aufgabenverträge, private Lösungen, feldweise Punkte, vier Pfeilmodi, sechs Zahlvorgaben, normaler Lehrkraftablauf und Klassenraum-Abgabe bleiben erhalten. Keine neue bezahlte Anfrage im Planungsauftrag. Keine Rohinhalte in Telemetrie. Keine Prüfungen zur Beschleunigung abschalten. Vor jeder Ausführung aktuelle Integration und tatsächlichen Hosting-/Functionsstand erneut prüfen; eine alte Quelle nicht über aktuelle Klassenraumänderungen veröffentlichen.
+Nur separates Staging; Production ausgeschlossen. Alte Aufgabenverträge, private Lösungen, feldweise Punkte, vier Pfeilmodi, sechs Zahlvorgaben, normaler Lehrkraftablauf und Klassenraum-Abgabe bleiben erhalten. Keine neue bezahlte Anfrage im Planungsauftrag. Keine Rohinhalte in Telemetrie. Keine Prüfungen zur Beschleunigung abschalten. Die normale Erstellung wählt passende qualifizierte Aufgabenrezepte selbst; kein zusätzlicher Formatklick je Aufgabe und keine neue KI-Anfrage je Einzelentscheidung. Vor jeder Ausführung aktuelle Integration und tatsächlichen Hosting-/Functionsstand erneut prüfen; eine alte Quelle nicht über aktuelle Klassenraumänderungen veröffentlichen.
 
 ## Review Focus
 
@@ -21,6 +21,22 @@ Nur separates Staging; Production ausgeschlossen. Alte Aufgabenverträge, privat
 - Zwei parallele Blöcke können dieselbe Aufgabe oder widersprüchliche Medienquoten liefern; globale Validierung erhalten.
 - Gleichwertige Operatoren, freie Operationen, Null/negative Werte und umgekehrter Dreisatz dürfen nicht versehentlich umgedeutet werden.
 - Timeout, unklarer Providerausgang oder Wiederaufnahme dürfen keinen zweiten bezahlten Auftrag und keine Veröffentlichung eines Teiltests auslösen.
+
+## Task0: Fachlich passende Rezepte automatisch auswählen
+
+**Files:** Vorhandenes functions/data/interactive-task-blueprints.v1.json und docs/learning/homepage-task-blueprints.v1.json bewusst synchron halten; functions/lib/interactive-authoring.js; functions/lib/prompts.js; functions/lib/schemas.js; functions/lib/ai-job.js; interactive-task-authoring.mjs. Neue Tests: functions/test/automatic-task-selection.test.js; bestehende interactive-authoring.test.js und interactive-authoring-ui.test.mjs. Keine bestehende Blueprint-ID umdeuten.
+
+**Interfaces:** selectTaskProfiles(context,{catalog,allowedTypes,allowedVisualFormats}) → begrenzte Liste qualifizierter Rezeptkandidaten mit Version, Lernhandlung, Voraussetzungen und Gegenfällen. validateTaskPlan(input,slots,profiles) prüft Eignung, ausdrückliche Ausschlüsse, Daten/Medien, Punkte und tatsächlich vorhandene Builder. Die konkreten Slotfelder mit Task3 gemeinsam festlegen; ein einziger gemeinsamer Vertrag statt paralleler Planstrukturen.
+
+- [ ] Die Anforderungen und Gegenfälle aus [AUTOMATIC_TASK_SELECTION.md](../../learning/AUTOMATIC_TASK_SELECTION.md) übernehmen. Der normale Einstieg braucht keinen zusätzlichen Formatklick; bestehende explizite Einschränkungen bleiben bindend.
+- [ ] Zuerst fehlschlagende Auswahltests: Prozentrechnung mit Lernziel mehrstufiger proportionaler Rechenweg → Dreisatzkandidat; Anteile darstellen → Raster; Werte verorten → Skala; umgekehrte Proportionalität → passendes Gegenlaufrezept. Derselbe Themenbegriff bei anderem Lernziel darf zu einem anderen Kandidaten führen.
+- [ ] Negative Fälle: „Satzglieder“ und „Satz des Pythagoras“ lösen keinen Dreisatz aus; Wahlanteile nicht allein wegen „Prozent“ als Dreisatz behandeln; unbekanntes Herz-/Blattquerschnittsmotiv nicht mit vorhandenen Pflanzenregionen erzeugen; ausgeschlossene table-/visual-Formate niemals erzwingen.
+- [ ] Vorhandene Rezeptdaten nur mit nachgewiesener Lernhandlung, prerequisites/whenNotToUse, unterstützt vorhandenen Buildern/Medien und Testfällen qualifizieren. Prototypenstatus und pädagogische Poolzulassung getrennt halten; keinen neuen konkurrierenden Wissenspool schaffen.
+- [ ] Innerhalb der bestehenden KI-Erstellung aus geeigneten Kandidaten wählen und den Slot vor Expansion validieren. Keine zusätzliche Planungsanfrage je Aufgabe und keine Pflichtzahl beliebiger interaktiver Aufgaben.
+- [ ] Normale UI-Regression: Standardauswahl erlaubt weiterhin alle acht qualifizierten Formate; keine neue Bedienpflicht. Fach-/Klassen-/Lernzielauftrag reicht. Manuelle Eingrenzung gilt auch für Reparaturen und Varianten.
+- [ ] Auswahlgrund/Rezeptversion ausschließlich in privaten Authoring-Metadaten sichern; alte Aufgaben bleiben unverändert lesbar. Keine neuen personenbezogenen Lernsignale oder automatisches Modelltraining.
+- [ ] Ausführen: node --test functions/test/automatic-task-selection.test.js functions/test/interactive-authoring.test.js interactive-authoring-ui.test.mjs. Danach direkte/umgekehrte Rechenwege und Bewertung aus Task2 prüfen.
+- [ ] Nachweis und verbleibende Grenzen im Workstream sichern. Erst bestätigte Änderungen über bestehende Feedback-/Reviewwege in die Rezepte übernehmen.
 
 ## Task1: Messung und gezielter Kontext
 
@@ -77,4 +93,4 @@ Nur separates Staging; Production ausgeschlossen. Alte Aufgabenverträge, privat
 
 ## Selbstprüfung und nächster Schritt
 
-Designziele sind den vier Aufgaben zugeordnet; externe Laufzeitmessung ist ausdrücklich von Offlineprüfungen getrennt. Keine Runtime wurde durch diesen Plan verändert. Nächster ausführbarer Schritt ist Task1: sichere Zeit-/Fehlerklassifizierung und ausgewählte Formatregeln samt Regressionstest. Task2/3 erst nach dessen Befund; bezahlte Vergleichsläufe erst nach vereinbartem Budget. Der genaue Anteil der bisherigen Fehlertypen bleibt bis zur Messung offen.
+Designziele sind Task0 bis Task4 zugeordnet; externe Laufzeitmessung ist ausdrücklich von Offlineprüfungen getrennt. Keine Runtime wurde durch diesen Plan verändert. Nächster ausführbarer Schritt ist die gemeinsame Eingangsstrecke aus Task0/Task1: Auswahltests und qualifizierte Rezeptkandidaten, sichere Zeit-/Fehlerklassifizierung und ausgewählte Formatregeln. Task2/3 erst nach dessen Befund; bezahlte Vergleichsläufe erst nach vereinbartem Budget. Der genaue Anteil der bisherigen Fehlertypen bleibt bis zur Messung offen.
