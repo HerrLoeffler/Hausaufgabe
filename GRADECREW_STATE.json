@@ -3016,6 +3016,49 @@
           "teacher and physical-device acceptance pending"
         ],
         "production": "unchanged"
+      },
+      "generation_latency_plan_20261026": {
+        "status": "documented_not_implemented",
+        "design": "docs/superpowers/specs/2026-10-26-interactive-generation-latency-design.md",
+        "plan": "docs/superpowers/plans/2026-10-26-interactive-generation-latency.md",
+        "baseline": {
+          "questions20_seconds": 378,
+          "questions40_seconds": 845,
+          "initial_generation_requests": [
+            1,
+            4
+          ],
+          "repair_attempts": [
+            17,
+            36
+          ],
+          "quality_reviews": [
+            2,
+            2
+          ],
+          "recorded_provider_responses": [
+            20,
+            42
+          ]
+        },
+        "recommended_order": [
+          "measure phase duration and safe error categories",
+          "scope prompts and preserve selected formats in repairs",
+          "compact Dreisatz drafts expanded by shared validated builder",
+          "bounded parallelism only after errors fall",
+          "limited comparable Staging pilot"
+        ],
+        "proposed_targets_not_achieved": {
+          "first_pass_structural_validity": 0.9,
+          "repair_attempts_max": [
+            4,
+            8
+          ],
+          "latency_reduction": 0.5
+        },
+        "runtime_changed": false,
+        "new_paid_requests": 0,
+        "next_step": "Task1 measurement and scoped format guidance; no implementation or paid pilot started by this planning request"
       }
     },
     {
