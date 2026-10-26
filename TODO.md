@@ -721,5 +721,5 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 
 ## GC-TEACHER-INTRO-20261028 — Kollegiumsvorstellung28.10.2026
 
-- [x] Lokale eigenständige PowerPoint mit10Folien, Originalcrew und editierbaren Beispielabläufen erstellt. Rund9Minuten mit Referentennotizen. Paket/Layout/Font/Artifact-Reimport bestanden, alleFolien visuell geprüft. KeinProdukt-/Release-/Deploywechsel. SHA256 `91dcd7c0f8933beaa3a4fa95e8d3c2c4b5d3eee711cc2f26a4d61bccfabf5160`. [Übergabe](workstreams/teacher-intro-20261028.md). Dokumentation auf `docs/teacher-intro-20261028`, branch_only, keinMerge erforderlich für lokaleNutzung.
-- [ ] Martin öffnet diePräsentation auf demVortragsgerät und geht sie einmal durch. KeineNativePowerPointabnahme behauptet.
+- [x] Lokale v4 auf Basis von Martins überarbeiteter PowerPoint fertig: Nutzerfolie1 samt XML/Medien/Notizen bytegleich erhalten, Folien2–10 klarer und bilddominant gestaltet. Sechs neue imagegen-Erklärbilder, kurze editierbare Bedienungstexte, zehnFolien/zehnNotizen für ca.9Minuten. Paket/Layout/Arial/Reimport0Findings und alle finalenFolien visuell geprüft; Rootabschlussreview bestätigt. FinalePPTX SHA256 `1dc4185caccbe9cb3031ce1c7abbf78edb39e33a404bb1146990397e695290c5`,19.373.690Bytes. [Übergabe](workstreams/teacher-intro-20261028.md). Dokumentation auf `docs/teacher-intro-20261028`, branch_only. Kein Produkt-/Release-/Deploywechsel.
+- [ ] Martin öffnet die Präsentation auf dem Vortragsgerät und geht sie einmal durch. Kein nativer PowerPointtest behauptet.
