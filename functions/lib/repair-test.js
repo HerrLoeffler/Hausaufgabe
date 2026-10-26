@@ -117,7 +117,7 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
     const candidates = issues
       .filter(({ index }) => (tried.get(index) || 0) < 3)
       .sort((a, b) => (tried.get(a.index) || 0) - (tried.get(b.index) || 0) || a.index - b.index);
-    const eligible = index => (tried.get(index) || 0) < 3 && (activeQuota.actual < activeQuota.target
+    const eligible = index => (tried.get(index) || 0) < 3 && !(activeQuota.field === "mediaIntent" && activeQuota.actual > activeQuota.target && options.progressionPlan?.reservedImages.includes(index+1)) && (activeQuota.actual < activeQuota.target
       ? test.questions[index][activeQuota.field]?.kind === "none"
       : test.questions[index][activeQuota.field]?.kind === "ai_generated");
     const quotaIssue = activeQuota ? candidates.find(({ index }) => eligible(index))
@@ -129,7 +129,7 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
     const { index } = issue;
     const original = test.questions[index];
     const slot = options.requireFreshVariant ? options.variantInput?.variantSlots?.[index] : null;
-    const mediaKind = slot?.mediaKind || (quotaIssue && activeQuota.field === "mediaIntent" ? (quota.actual < quota.target ? "ai_generated" : "none") : (original.mediaIntent?.kind || "none"));
+    const mediaKind = options.progressionPlan?.reservedImages.includes(index+1) ? "ai_generated" : slot?.mediaKind || (quotaIssue && activeQuota.field === "mediaIntent" ? (quota.actual < quota.target ? "ai_generated" : "none") : (original.mediaIntent?.kind || "none"));
     const audioKind = slot?.audioKind || (quotaIssue && activeQuota.field === "audioIntent" ? (listeningQuota.actual < listeningQuota.target ? "ai_generated" : "none") : (original.audioIntent?.kind || "none"));
     const priorAttempts = tried.get(index) || 0;
     tried.set(index, priorAttempts + 1);

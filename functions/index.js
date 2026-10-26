@@ -274,6 +274,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
   console.info("KI-Test-Anfrage gestartet:", { requestId });
   const input = cleanInput(data || {});
   const progressionPlan = planProgression(input);
+  if (progressionPlan?.conflicts.length) throw new HttpsError("invalid-argument", progressionPlan.conflicts.join(" "));
   if (!input.topic) throw new HttpsError("invalid-argument", "Bitte ein Thema angeben.");
   const materials = sanitizeMaterials(data?.materials, uid);
   if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");

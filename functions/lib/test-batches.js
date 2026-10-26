@@ -11,11 +11,12 @@ function planTestBatches(input, batchSize = 10) {
   const audioCount = input.exactAudioCounts ? input.audioQuestionCount : 0;
   const plannedAudio = input.audioMode === "none" ? 0 : audioCount;
   const plannedAnswerAudio = Number(input.audioAnswerQuestionCount || 0);
+  const progression = require("./demand-plan").planProgression(input);
   const batches = [];
   for (let offset = 0; offset < count; offset += size) {
     const end = Math.min(count, offset + size);
     const slots = input.generationMode === "variant" ? input.variantSlots.slice(offset, end) : null;
-    const images = slots ? slots.filter(slot => slot.mediaKind === "ai_generated").length : Math.floor(end * plannedImages / count) - Math.floor(offset * plannedImages / count);
+    const images = slots ? slots.filter(slot => slot.mediaKind === "ai_generated").length : progression?.reservedImages.length && !progression.conflicts.length ? progression.imagePositions.filter(position => position > offset && position <= end).length : Math.floor(end * plannedImages / count) - Math.floor(offset * plannedImages / count);
     const audios = slots ? slots.filter(slot => slot.audioKind === "ai_generated").length : Math.floor(end * plannedAudio / count) - Math.floor(offset * plannedAudio / count);
     const answerAudios = slots ? slots.filter(slot => slot.answerAudio).length : Math.floor(end * plannedAnswerAudio / count) - Math.floor(offset * plannedAnswerAudio / count);
     batches.push({ ...input, count: end - offset,

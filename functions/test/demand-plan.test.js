@@ -69,3 +69,21 @@ test('saved teacher creation context retains reviewed levels without enabling qu
 test('task numbers outside selected count are surfaced instead of silently discarded',()=>{
  const plan=planProgression({...input,count:3,notes:'Aufgabe 7 soll ein Bild enthalten.'});assert.match(progressionWarnings(plan).join(' '),/7.*außerhalb/);
 });
+test('numbered image/content wishes never bypass an explicit easy ceiling',()=>{
+ const p=planProgression({...input,difficulty:'leicht',notes:'Alle Aufgaben bitte einfach. Aufgabe 2 soll eine Bildfrage sein.'});assert.equal(p.maxLevel,1);assert.ok(questionDemandErrors(q(2,3),1,p).some(e=>/Gesamtniveau/.test(e)));
+});
+test('a local easy request is available to independent review and constrains its named slot',()=>{
+ const notes='Aufgabe 3: Dreisatz so einfach wie möglich.';const p=planProgression({...input,count:3,notes});
+ assert.equal(p.levels[2],1);assert.ok(questionDemandErrors(q(3,3),2,p).length);
+ assert.match(require('../lib/quality').reviewPrompt({questions:[number(1,1)],subject:'Mathe',grade:'7'},{},p),/Dreisatz so einfach wie möglich/);
+});
+test('an explicit first-task single image is budgeted in the first batch, not interpreted as four images',()=>{
+ const {planTestBatches}=require('../lib/test-batches');
+ const data={...input,count:25,points:25,exactImageCounts:true,imageQuestionCount:1,imageMode:'exact',notes:'Aufgabe 1: Single Choice mit einem Bild mit vier Obstsorten. Aufgabe 3: einfacher Dreisatz.'};
+ const batches=planTestBatches(data);assert.equal(batches[0].imageQuestionCount,1);assert.equal(batches.reduce((n,b)=>n+b.imageQuestionCount,0),1);
+ const p=planProgression(data);assert.ok(questionDemandErrors(number(1,1),0,p).some(e=>/Bild/.test(e)));
+});
+test('contradictory fixed task demand or unavailable requested image is explicit before any paid call',()=>{
+ assert.ok(planProgression({...input,difficulty:'leicht',notes:'Aufgabe 1: anspruchsvoll.'}).conflicts.length);
+ assert.ok(planProgression({...input,imageMode:'none',imageQuestionCount:0,notes:'Aufgabe 1 mit einem Bild.'}).conflicts.length);
+});
