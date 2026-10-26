@@ -149,7 +149,7 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
     await persist({record:kind!=='start'&&data.action!=='retry-next'});checkpointed=true;
     try{
      const generated=await ai.next(s,s.nextContext);
-     s.task=generated.task;s.explanation=generated.explanation;s.visual=generated.visual;s.assistance=generated.assistance||null;s.pendingNext=false;delete s.nextContext;delete s.nextFailure;
+     s.task=generated.task;s.explanation=generated.explanation;s.visual=generated.visual;s.assistance=generated.assistance||null;s=observeHelp(before,s,{action:'help-generated',now:time});s.pendingNext=false;delete s.nextContext;delete s.nextFailure;
     }catch(error){s.nextFailure={stage:String(error?.stage||error?.details?.incompleteReason||error?.details?.reason||'generation').slice(0,100),critique:String(error?.critique||error?.message||'').slice(0,800)};return await persist({release:true});}
    }
    return await persist({release:true,record:!checkpointed&&kind!=='start'&&data.action!=='retry-next'});

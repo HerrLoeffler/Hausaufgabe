@@ -68,3 +68,40 @@ test('aggregate summary exports counts and fixed reasons, no private text or ide
  for(const secret of ['private-pupil-session','privateUid','original','micro','secret','private-question','private-answer','fingerprint'])assert.equal(text.includes(secret),false,secret);
  assert.equal(summary.episodes,1);assert.equal(summary.reviewNeeded,1);assert.equal(summary.reasonCounts['repeated-help-requests'],1);
 });
+test('generated exact hint snapshot is private, allowlisted and tightly bounded',()=>{
+ let s=helped();s.explanation='e'.repeat(500);s.task={...s.task,prompt:'q'.repeat(400),answer:{values:['private-key']},rubric:'private-rubric'};
+ s.assistance={version:7,focusIds:[...Array(20)].map((_,i)=>'x'.repeat(90)+i),numberLabels:true,replyTo:'private-pupil-question',rawAnswer:'private-pupil-answer'};
+ s.question='private-pupil-question';s.answer='private-pupil-answer';
+ const next=observeHelp(s,s,{action:'help-generated',now:100});const e=next.helpEpisodes[0],snapshot=e.lastHelp;
+ assert.equal(snapshot.explanation.length,300);assert.equal(snapshot.question.length,240);
+ assert.equal(snapshot.focusIds.length,12);assert.ok(snapshot.focusIds.every(id=>id.length<=60));
+ assert.equal(snapshot.numberLabels,true);assert.equal(snapshot.version,7);
+ const serialized=JSON.stringify(snapshot);
+ for(const secret of ['private-key','private-rubric','private-pupil-question','private-pupil-answer','replyTo','answer','rubric'])assert.equal(serialized.includes(secret),false,secret);
+ assert.equal(e.requestCount,1);assert.equal(e.supportedSuccesses,0);
+ assert.equal(JSON.stringify(projectHelpEvidence([next])).includes('eeee'),false);
+});
+test('successful hint snapshot persists through completion and later distinct probe',()=>{
+ let s=helped();s.explanation='Zähle diese Reihe.';s.assistance={version:2,focusIds:['row:0'],numberLabels:true};
+ s=observeHelp(s,s,{action:'help-generated',now:100});const shown=globalThis.structuredClone(s.helpEpisodes[0].lastHelp);assert.equal(shown.explanation,'Zähle diese Reihe.');
+ s=step(s,'answer','correct','completion',{task:s.originalTask,explanation:'Versuche die Ausgangsaufgabe.',assistance:null});
+ assert.deepEqual(s.helpEpisodes[0].successfulHelp,shown);
+ s=step(s,'answer','correct','practice',{originalTask:null,task:task('probe')});
+ s=step(s,'answer','correct','practice',{task:task('next')});
+ assert.deepEqual(s.helpEpisodes[0].successfulHelp,shown);assert.equal(s.helpEpisodes[0].status,'promising-transfer');
+ assert.equal(s.helpEpisodes[0].retention,'open');
+});
+test('original task is never snapshotted as a hint, including stale explanation',()=>{
+ const initial=start();let s=step(initial,'help',null,'help',{originalTask:initial.task,explanation:'stale prior message'});
+ s=observeHelp(s,s,{action:'help-generated',now:100});assert.equal(s.helpEpisodes[0].lastHelp,undefined);
+ const plain=observeHelp(initial,initial,{action:'help-generated',now:100});assert.equal(plain.helpEpisodes.length,0);
+});
+test('snapshots keep only the most recent shown and successful hints per episode',()=>{
+ let s=helped();
+ for(let i=0;i<30;i++){
+  s={...s,task:task('hint'+i),explanation:'hint '+i,assistance:{version:i+1,focusIds:[]}};
+  s=observeHelp(s,s,{action:'help-generated',now:i});
+ }
+ const e=s.helpEpisodes[0];assert.equal(e.lastHelp.explanation,'hint 29');assert.equal(e.helpVersions.length,12);assert.equal(e.supportHistoryTruncated,true);
+ assert.equal(e.successfulHelp,undefined);assert.equal(Array.isArray(e.lastHelp),false);
+});

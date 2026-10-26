@@ -5,6 +5,7 @@ const MAX_EPISODES=20;
 const REASONS=['repeated-help-requests','repeated-supported-errors','completion-error','independent-probe-error','teacher-handoff'];
 const digest=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex').slice(0,24);
 const version=task=>{const value=task?.version||task?.workshop?.version||1;return typeof value==='number'&&Number.isFinite(value)?value:String(value).slice(0,80);};
+const shortText=(value,max)=>typeof value==='string'?value.slice(0,max):'';
 const count=value=>Math.max(0,Math.min(10000,Number.isFinite(value)?Math.floor(value):0));
 function reason(episode,code){
  if(!episode.reasonCodes.includes(code))episode.reasonCodes.push(code);
@@ -18,12 +19,14 @@ function rememberHelp(episode,session){
  if(!episode.helpVersions.some(v=>v.fingerprint===entry.fingerprint&&v.version===entry.version&&v.stage===entry.stage))episode.helpVersions.push(entry);
  if(episode.helpVersions.length>12)episode.supportHistoryTruncated=true;
  episode.helpVersions=episode.helpVersions.slice(-12);
+ episode.lastHelp={explanation:shortText(session.explanation,300),question:shortText(session.task.prompt,240),focusIds:(Array.isArray(session.assistance?.focusIds)?session.assistance.focusIds:[]).filter(id=>typeof id==='string').slice(0,12).map(id=>id.slice(0,60)),numberLabels:session.assistance?.numberLabels===true,version:version(session.assistance||session.task),stage:entry.stage};
 }
 // Called once for each accepted transition, before or after next-task generation.
 // All evidence stays on the existing private learner session. No answers are copied.
 function observeHelp(previousSession,nextSession,{action,assessment,now}={}){
  const next=globalThis.structuredClone(nextSession);
  next.helpEpisodes=globalThis.structuredClone(nextSession.helpEpisodes||previousSession?.helpEpisodes||[]).slice(-MAX_EPISODES);
+ if(action==='help-generated'){const episode=next.helpEpisodes.at(-1);if(episode&&!episode.closed)rememberHelp(episode,next);return next;}
  if(!previousSession||!['answer','help','question'].includes(action))return next;
  const previous=previousSession;
  const assessed=action==='answer'&&['correct','incorrect'].includes(assessment?.outcome);
@@ -57,7 +60,7 @@ function observeHelp(previousSession,nextSession,{action,assessment,now}={}){
  rememberHelp(episode,next);
  if(requesting){episode.requestCount=count(episode.requestCount)+1;if(episode.requestCount>=3)reason(episode,'repeated-help-requests');}
  if(assessed&&previous.phase==='help'){
-  if(assessment.outcome==='correct'){episode.supportedSuccesses=count(episode.supportedSuccesses)+1;episode.status='supported-success';}
+  if(assessment.outcome==='correct'){episode.supportedSuccesses=count(episode.supportedSuccesses)+1;episode.status='supported-success';if(episode.lastHelp)episode.successfulHelp=globalThis.structuredClone(episode.lastHelp);}
   else {episode.supportedErrors=count(episode.supportedErrors)+1;if(episode.supportedErrors>=2)reason(episode,'repeated-supported-errors');}
  }
  if(assessed&&previous.phase==='completion'){
