@@ -151,7 +151,7 @@ function cleanInput(data = {}) {
       (audioAnswerQuestionCount > 0 && !allowedTypes.some(type => (data.generationMode === "variant" ? ["single", "multi", "dropdown", "matching", "ordering", "grouping"] : ["single", "multi"]).includes(type)))) {
     throw new HttpsError("invalid-argument", "Bitte eine ganze Anzahl Audioantwort-Aufgaben und einen Auswahltyp wählen.");
   }
-  const fullAudioQuestionCount = Number(data.fullAudioQuestionCount || 0);
+  const fullAudioQuestionCount = Number(data.fullAudioQuestionCount ?? 0);
   if (!Number.isInteger(fullAudioQuestionCount) || fullAudioQuestionCount < 0 || fullAudioQuestionCount > count || fullAudioQuestionCount > audioQuestionCount || fullAudioQuestionCount > audioAnswerQuestionCount || fullAudioQuestionCount > count || fullAudioQuestionCount > 0 && data.generationMode === "variant") throw new HttpsError("invalid-argument", "Vollständige Audioaufgaben müssen innerhalb beider Audioanzahlen liegen (höchstens so viele wie Aufgaben).");
   const generatedImages = exactImageCounts ? imageQuestionCount : imageMode === "none" ? 0 : Math.min(count, Number(data.maxVisualQuestions) || 3);
   const audioTasks = audioQuestionCount + audioAnswerQuestionCount - fullAudioQuestionCount;

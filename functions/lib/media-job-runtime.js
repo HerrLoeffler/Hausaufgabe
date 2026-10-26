@@ -32,7 +32,14 @@ function createMediaJobRunner({ db, uid, jobId, jobRef, resultStore, retryFailed
     await guard();
     const operationId = createHash("sha256").update(`${jobId}:${kind}:${key}`).digest("hex");
     const result = await runMediaOperation({ db, uid, operationId, kind, resultStore, retryFailed: kind !== "plan" && retryFailed,
-      request: { quizId: jobId, questionId: key, input } }, async () => { await guard(); return generate(); });
+      request: { quizId: jobId, questionId: key, input } }, async () => {
+      try { await guard(); }
+      catch (error) {
+        error.details = { ...error.details, providerNotStarted: true, reason: "pre-provider-guard" };
+        throw error;
+      }
+      return generate();
+    });
     await guard();
     return result;
   }

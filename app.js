@@ -3074,7 +3074,9 @@ function collectAiRequest() {
   const count = Number($("aiCount").value);
   const points = Number($("aiPoints").value);
   const imageQuestionCount = Number($("aiImageQuestionCount").value);
-  const fullAudioQuestionCount = Number($("aiFullAudioQuestionCount")?.value || 0);
+  const fullAudioInput = $("aiFullAudioQuestionCount");
+  if (fullAudioInput && !fullAudioInput.value.trim()) throw new Error("Bitte die Anzahl vollständiger Audioaufgaben angeben (0 ist möglich).");
+  const fullAudioQuestionCount = Number(fullAudioInput?.value ?? 0);
   if (!Number.isInteger(fullAudioQuestionCount) || fullAudioQuestionCount < 0 || fullAudioQuestionCount > Math.min(Number($("aiCount").value), GENERATED_MEDIA_MAX)) throw new Error("Bitte eine ganze Anzahl vollständiger Audioaufgaben innerhalb der Aufgabenanzahl wählen.");
   const audioQuestionCount = Number($("aiAudioQuestionCount").value) + fullAudioQuestionCount;
   const solutionAudioQuestionCount = Number($("aiSolutionAudioQuestionCount").value);

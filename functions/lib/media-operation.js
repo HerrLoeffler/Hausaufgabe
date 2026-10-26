@@ -69,7 +69,7 @@ async function runMediaOperation({ db, uid, operationId, request, scope, resultS
   let result;
   try { result = await generate(request); }
   catch (error) {
-    const deferred = error.details?.providerNotStarted === true && error.details?.reason === "minute-limit";
+    const deferred = error.details?.providerNotStarted === true && ["minute-limit", "pre-provider-guard"].includes(error.details?.reason);
     const knownFailure = ["image-mismatch", "resource-exhausted", "invalid-argument", "failed-precondition"].includes(error.code);
     await ref.set({ ...record, state: deferred ? "deferred" : knownFailure ? "failed" : "unknown", updatedAt: new Date() });
     error.details = { ...error.details, operationId, mediaState: deferred ? "deferred" : knownFailure ? "failed" : "unknown" }; throw error;
