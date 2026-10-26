@@ -1,0 +1,195 @@
+{
+  "pilotId": "P19",
+  "at": "2026-10-25T10:30:10.304Z",
+  "quiz": {
+    "title": "Bevölkerung und Quellen vergleichen",
+    "grade": "9",
+    "gradeScaleSnapshot": {
+      "name": "Standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "id": "standard"
+    },
+    "contentLocale": "de-DE",
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileCount": 0,
+      "profileIds": [],
+      "status": "no_match"
+    },
+    "audioQuestionCount": 0,
+    "sessionState": "open",
+    "gradeScaleId": "standard",
+    "gradingLocale": "de-DE",
+    "audioAnswerQuestionCount": 0,
+    "localeContractVersion": 1,
+    "resultMode": "points_grade",
+    "startMode": "student",
+    "showSolutions": true,
+    "questionCount": 8,
+    "creationContext": {
+      "contentLocale": "de-DE",
+      "difficulty": "mittel bis anspruchsvoll",
+      "region": "Bayern",
+      "topic": "Bevölkerung und Quellen: Eigene fiktive Bevölkerungsstatistiken, Kartenregionen und zeitgenössische Kurzquellen vergleichen",
+      "schoolType": "Mittelschule",
+      "learningGoals": []
+    },
+    "qualityWarnings": [],
+    "solutionAudioReady": true,
+    "solutionAudioQuestionCount": 0,
+    "requiresSecureAssessmentRules": false,
+    "accessCode": "2EDP2TTW",
+    "rightsHold": false,
+    "updatedAt": "2026-10-25T10:30:07.266Z",
+    "published": false,
+    "generationStatus": "ready",
+    "description": "Viel Erfolg beim Test!",
+    "generationJobId": "0c553a825efec2a3b81ede8ac9c6a28ba83d9baa",
+    "shuffleQuestions": false,
+    "audioReady": true,
+    "ended": false,
+    "qualityIssues": [],
+    "shareEnabled": false,
+    "ownerId": "gc-visual255-e2e",
+    "createdAt": "2026-10-25T10:30:05.580Z",
+    "totalPoints": 16,
+    "subject": "Geschichte und Geografie",
+    "listeningOnlyQuestionCount": 0,
+    "shuffleAnswers": false,
+    "isDeleted": false,
+    "id": "2EDP2TTW"
+  },
+  "questions": [
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "text": "Übertrage die fiktiven Bevölkerungszahlen in das Säulendiagramm.",
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"bevoelkerung-chart-01\",\"revision\":0,\"format\":\"chart\",\"title\":\"Bevölkerungszahlen übertragen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"9\",\"prompt\":\"Übertrage die fiktiven Bevölkerungszahlen in das Säulendiagramm.\",\"hint\":\"Ordne jede Säule der richtigen Region zu und beachte die Einheit Tausend Einwohner.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":100,\"step\":10,\"unit\":\"Tausend Einwohner\",\"categories\":[{\"id\":\"a\",\"label\":\"Nordtal\",\"value\":70},{\"id\":\"b\",\"label\":\"Seeregion\",\"value\":40},{\"id\":\"c\",\"label\":\"Hügelland\",\"value\":90},{\"id\":\"d\",\"label\":\"Südmark\",\"value\":60}]},\"solution\":{\"values\":{\"a\":70,\"b\":40,\"c\":90,\"d\":60}},\"objective\":\"Fiktive Bevölkerungszahlen in einem Säulendiagramm darstellen.\",\"rationale\":\"Die gegebenen Werte werden den passenden Regionen zugeordnet und in ihrer Höhe dargestellt.\",\"sourceNote\":\"Eigenes fiktives Datenmaterial; keine realen Bevölkerungsdaten.\"}",
+      "position": 1,
+      "updatedAt": "2026-10-25T10:30:05.725Z",
+      "type": "visual",
+      "id": "q001"
+    },
+    {
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"bevoelkerungswachstum-scale-02\",\"revision\":0,\"format\":\"scale\",\"title\":\"Bevölkerungswachstum berechnen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"9\",\"prompt\":\"Eine fiktive Region hatte im Jahr 2000 insgesamt 40 000 Einwohnerinnen und Einwohner. Im Jahr 2020 waren es 50 000. Markiere auf dem Zahlenstrahl, um wie viel Prozent die Einwohnerzahl gestiegen ist.\",\"hint\":\"Berechne zuerst die Zunahme und beziehe sie anschließend auf die Einwohnerzahl des Jahres 2000. Markiere den passenden Teilstrich.\",\"maxPoints\":2,\"spec\":{\"context\":\"numberline\",\"min\":0,\"max\":50,\"step\":5,\"majorStep\":10,\"unit\":\"%\",\"card\":\"●\"},\"solution\":{\"value\":25,\"tolerance\":0.00001},\"objective\":\"Eine prozentuale Veränderung anhand fiktiver Bevölkerungszahlen berechnen und auf einer Skala darstellen.\",\"rationale\":\"Die Einwohnerzahl stieg um 10 000. Bezogen auf 40 000 entspricht das einer Zunahme von 25 Prozent.\",\"sourceNote\":\"Eigenes fiktives Datenmaterial; die Zahlen dienen ausschließlich diesem Test.\"}",
+      "updatedAt": "2026-10-25T10:30:05.922Z",
+      "position": 2,
+      "text": "Eine fiktive Region hatte im Jahr 2000 insgesamt 40 000 Einwohnerinnen und Einwohner. Im Jahr 2020 waren es 50 000. Markiere auf dem Zahlenstrahl, um wie viel Prozent die Einwohnerzahl gestiegen ist.",
+      "points": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q002"
+    },
+    {
+      "updatedAt": "2026-10-25T10:30:06.115Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "points": 2,
+      "text": "Welche zwei Sätze belegen, dass die Einwohnerzahl der Region Flusstal gestiegen ist? Markiere genau zwei Sätze.",
+      "position": 3,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"quelle-evidence-03\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Eine Kurzquelle als Beleg nutzen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"9\",\"prompt\":\"Welche zwei Sätze belegen, dass die Einwohnerzahl der Region Flusstal gestiegen ist? Markiere genau zwei Sätze.\",\"hint\":\"Wähle nur Sätze aus, die eine Einwohnerzahl oder eine Veränderung der Einwohnerzahl nennen.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Im Frühjahr wurden am Marktplatz neue Marktstände aufgestellt.\"},{\"id\":\"s2\",\"text\":\"Nach dem Bericht des Gemeinderats lebten 1990 etwa 41 000 Menschen im Flusstal.\"},{\"id\":\"s3\",\"text\":\"Viele Familien nutzten seit diesem Jahr den neuen Wanderweg am Fluss.\"},{\"id\":\"s4\",\"text\":\"Für 2020 nennt die Statistik bereits rund 72 000 Einwohnerinnen und Einwohner.\"},{\"id\":\"s5\",\"text\":\"Die Brücke über den Fluss wurde im Sommer repariert.\"}]},\"solution\":{\"selections\":[[\"s2\",\"s4\"]]},\"objective\":\"Explizite Belege für eine demografische Veränderung in einer Quelle erkennen.\",\"rationale\":\"Nur zwei Sätze nennen konkrete Einwohnerzahlen und ermöglichen den zeitlichen Vergleich.\",\"sourceNote\":\"Eigenständige fiktive Kurzquelle im Stil eines zeitgenössischen Gemeinderatsberichts.\"}",
+      "id": "q003"
+    },
+    {
+      "text": "Berechne für jede fiktive Kartenregion die Bevölkerungsdichte in Einwohnerinnen und Einwohnern pro km² und trage die Werte in die Tabelle ein.",
+      "position": 4,
+      "type": "visual",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:30:06.360Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"bevoelkerung-tabelle-dichte-04\",\"revision\":0,\"format\":\"table\",\"title\":\"Bevölkerungsdichte fiktiver Kartenregionen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"9\",\"prompt\":\"Berechne für jede fiktive Kartenregion die Bevölkerungsdichte in Einwohnerinnen und Einwohnern pro km² und trage die Werte in die Tabelle ein.\",\"hint\":\"Teile die Einwohnerzahl durch die Fläche. Runde nicht, wenn eine ganze Zahl entsteht.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Fiktive Kartenregion\",\"Einwohnerzahl\",\"Fläche in km²\",\"Bevölkerungsdichte in Einwohnerinnen und Einwohnern pro km²\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"Küstenmark\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"24 000\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"120\",\"input\":false},{\"id\":\"r1c4\",\"text\":\"\",\"input\":true}],[{\"id\":\"r2c1\",\"text\":\"Hügelland\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"18 000\",\"input\":false},{\"id\":\"r2c3\",\"text\":\"150\",\"input\":false},{\"id\":\"r2c4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"r1c4\",\"accepted\":[\"200\"]},{\"id\":\"r2c4\",\"accepted\":[\"120\"]}]},\"objective\":\"Bevölkerungszahlen und Flächenangaben zur Berechnung und zum Vergleich der Bevölkerungsdichte nutzen.\",\"rationale\":\"Die Bevölkerungsdichte wird berechnet, indem die Einwohnerzahl durch die Fläche in Quadratkilometern geteilt wird.\",\"sourceNote\":\"Eigene fiktive Statistik zu zwei fiktiven Kartenregionen.\"}",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q004"
+    },
+    {
+      "points": 2,
+      "text": "Übertrage diese fiktiven Beschäftigungsanteile in das Säulendiagramm: Landwirtschaft 20 %, Industrie 50 %, Dienstleistungen 30 %.",
+      "position": 5,
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:30:06.604Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"quelle-chart-05\",\"revision\":1,\"format\":\"chart\",\"title\":\"Angaben einer Kurzquelle darstellen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"9\",\"prompt\":\"Übertrage diese fiktiven Beschäftigungsanteile in das Säulendiagramm: Landwirtschaft 20 %, Industrie 50 %, Dienstleistungen 30 %.\",\"hint\":\"Ordne jeden Wert dem passenden Wirtschaftsbereich zu.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":100,\"step\":10,\"unit\":\"Prozent\",\"categories\":[{\"id\":\"a\",\"label\":\"Landwirtschaft\",\"value\":20},{\"id\":\"b\",\"label\":\"Industrie\",\"value\":50},{\"id\":\"c\",\"label\":\"Dienstleistungen\",\"value\":30}]},\"solution\":{\"values\":{\"a\":20,\"b\":50,\"c\":30}},\"objective\":\"Quantitative Angaben aus einer fiktiven Quelle in ein Diagramm übertragen.\",\"rationale\":\"Die drei im Quellentext genannten Wirtschaftsanteile werden den passenden Kategorien zugeordnet.\",\"sourceNote\":\"Fiktiver Quellentext: ‚In der Stadt Neuwerk arbeiteten im Jahr 2020 etwa 20 Prozent der Bevölkerung in der Landwirtschaft, 50 Prozent in der Industrie und 30 Prozent im Dienstleistungsbereich.‘\"}",
+      "id": "q005"
+    },
+    {
+      "type": "visual",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:30:06.826Z",
+      "text": "Vergleiche die beiden fiktiven Bevölkerungsquellen. Markiere auf der Zeitleiste den Zeitraum zwischen den Entstehungsjahren der Quellen.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"bevoelkerung-quellen-zeitraum-06\",\"revision\":0,\"format\":\"range\",\"title\":\"Entstehungszeit fiktiver Bevölkerungsquellen vergleichen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"9\",\"prompt\":\"Vergleiche die beiden fiktiven Bevölkerungsquellen. Markiere auf der Zeitleiste den Zeitraum zwischen den Entstehungsjahren der Quellen.\\n\\nQuelle A, erstellt 1880: Im Bezirk Sonnenfeld leben 12 400 Menschen. Viele Familien arbeiten in der Landwirtschaft.\\n\\nQuelle B, erstellt 1960: Im Bezirk Sonnenfeld leben 28 700 Menschen. Neue Fabriken bieten Arbeitsplätze.\",\"hint\":\"Beide Entstehungsjahre gehören zum markierten Zeitraum. Die Zeitleiste ist in 20-Jahres-Schritte eingeteilt.\",\"objective\":\"Zeitangaben aus fiktiven Quellen entnehmen und als Zeitraum auf einer Zeitleiste darstellen.\",\"rationale\":\"Die ausdrücklich genannten Entstehungsjahre 1880 und 1960 lassen sich eindeutig als Anfang und Ende des Zeitraums bestimmen.\",\"sourceNote\":\"Eigenes fiktives Beispiel mit zwei kurzen Bevölkerungsquellen; keine reale Statistik.\",\"spec\":{\"min\":1800,\"max\":2000,\"step\":20,\"majorStep\":40,\"unit\":\"Jahr\",\"context\":\"timeline\",\"startInclusive\":true,\"endInclusive\":true},\"solution\":{\"start\":1880,\"end\":1960},\"maxPoints\":2}",
+      "points": 2,
+      "position": 6,
+      "id": "q006"
+    },
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"quelle-evidence-07\",\"revision\":1,\"format\":\"evidence\",\"title\":\"Zeitgenössische Aussagen erkennen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"9\",\"prompt\":\"Markiere genau die zwei Textstellen, die als zeitgenössische Quellen Auskunft über das Wohnen im Jahr 1975 geben. Die Quellen sind fiktiv.\",\"hint\":\"Gesucht sind Angaben über das Wohnen, die ausdrücklich im Jahr1975 entstanden sind.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Fiktiver Zeitungsbericht, geschrieben 1975: Viele Familien wohnen in den neu errichteten Wohnungen am Bahnhof.\"},{\"id\":\"s2\",\"text\":\"Fiktiver Tourismusprospekt von 2026: Die Landschaft rund um Bergheim ist heute bei Wandernden beliebt.\"},{\"id\":\"s3\",\"text\":\"Eine Einwohnerin schrieb 1975, dass sich mehrere Haushalte eine Küche teilen mussten.\"},{\"id\":\"s4\",\"text\":\"Der Fluss ist ungefähr 80 Kilometer lang.\"},{\"id\":\"s5\",\"text\":\"Bergheim liegt in einer fiktiven Region im Süden des Landes.\"}]},\"solution\":{\"selections\":[[\"s1\",\"s3\"]]},\"objective\":\"Zeitgenössische Aussagen als passende Belege für eine historische Fragestellung auswählen.\",\"rationale\":\"Die beiden markierten Sätze beziehen sich direkt auf die Wohnsituation und stammen aus dem untersuchten Zeitraum.\",\"sourceNote\":\"Eigenständige fiktive Kurzquelle mit erfundenen Angaben und Ortsnamen.\"}",
+      "updatedAt": "2026-10-25T10:30:06.986Z",
+      "type": "visual",
+      "text": "Markiere genau die zwei Textstellen, die als zeitgenössische Quellen Auskunft über das Wohnen im Jahr 1975 geben. Die Quellen sind fiktiv.",
+      "position": 7,
+      "points": 2,
+      "id": "q007"
+    },
+    {
+      "position": 8,
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:30:07.149Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"bevoelkerung-quellen-vergleich-08\",\"revision\":0,\"format\":\"table\",\"title\":\"Fiktive Kurzquellen aus Kartenregionen vergleichen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"9\",\"prompt\":\"Vergleiche die Angaben in den fiktiven zeitgenössischen Kurzquellen. Trage für jede Kartenregion ein, ob die Einwohnerzahl im genannten Zeitraum zunahm oder abnahm.\",\"hint\":\"Vergleiche jeweils die ältere mit der jüngeren Einwohnerzahl. Verwende die Begriffe Zunahme oder Abnahme.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Fiktive Kartenregion\",\"Zeitgenössische Kurzquelle\",\"Veränderung der Einwohnerzahl\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"Hügelland\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"Im Bericht des Gemeinderats vom 1. Mai 1995 werden 18 400 Einwohnerinnen und Einwohner genannt. Für den 1. Mai 2005 weist das Register 21 100 Personen aus.\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"\",\"input\":true}],[{\"id\":\"r2c1\",\"text\":\"Küstenebene\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"Die örtliche Zeitung berichtet am 10. September 1988 von 32 700 Einwohnerinnen und Einwohnern. Im Bericht vom 10. September 1998 werden noch 29 900 Personen gezählt.\",\"input\":false},{\"id\":\"r2c3\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"r1c3\",\"accepted\":[\"Zunahme\",\"Bevölkerungszunahme\"]},{\"id\":\"r2c3\",\"accepted\":[\"Abnahme\",\"Bevölkerungsabnahme\"]}]},\"objective\":\"Bevölkerungsentwicklungen aus fiktiven zeitgenössischen Kurzquellen durch den Vergleich von Zahlen bestimmen.\",\"rationale\":\"In jeder Kurzquelle lassen sich ältere und jüngere Einwohnerzahl direkt vergleichen. Dadurch ist die Richtung der Veränderung eindeutig feststellbar.\",\"sourceNote\":\"Eigenes fiktives Datenmaterial; Regionen, Quellen und Zahlen sind frei erfunden und stellen keine realen Bevölkerungsdaten dar.\"}",
+      "text": "Vergleiche die Angaben in den fiktiven zeitgenössischen Kurzquellen. Trage für jede Kartenregion ein, ob die Einwohnerzahl im genannten Zeitraum zunahm oder abnahm.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "points": 2,
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 5,
+      "reason": "Ein Quellentext wird angekündigt, aber nicht mitgeliefert; die fiktiven Ausgangsdaten explizit nennen.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    },
+    {
+      "position": 7,
+      "reason": "Eine Aussage über1975 ist nicht automatisch eine damals entstandene Quelle; Entstehungszeit explizit machen.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
 import { mountVisualQuestion, collectVisualAnswer, visualAnswered } from "./visual-tasks.mjs";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { firebaseConfig } from "./firebase-config.js";
@@ -765,11 +766,11 @@ $("secureStartForm")?.addEventListener("submit", async event => {
   }
 });
 
-$("secureAssessmentForm")?.addEventListener("submit", event => {
+$("secureAssessmentForm")?.addEventListener("submit", async event => {
   event.preventDefault();
   const answers = collectAnswers();
   const open = currentPaper.filter(question => !answerIsComplete(question, answers[question.id])).length;
-  if (open && !confirm(`${open} ${open === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Trotzdem endgültig abgeben?`)) return;
+  if(open){const message=`${open} ${open === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Trotzdem endgültig abgeben?`;const approved=firebaseConfig.projectId==='local-review'?await requestStudentSubmitConfirmation(message):confirm(message);if(!approved)return;}
   void submitAssessment(false);
 });
 

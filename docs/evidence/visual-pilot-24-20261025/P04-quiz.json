@@ -1,0 +1,183 @@
+{
+  "pilotId": "P04",
+  "at": "2026-10-25T10:00:19.686Z",
+  "quiz": {
+    "gradeScaleSnapshot": {
+      "id": "standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "name": "Standard"
+    },
+    "subject": "Mathematik",
+    "generationStatus": "ready",
+    "listeningOnlyQuestionCount": 0,
+    "audioReady": true,
+    "audioQuestionCount": 0,
+    "startMode": "student",
+    "shuffleQuestions": false,
+    "rightsHold": false,
+    "ownerId": "gc-visual255-e2e",
+    "sessionState": "open",
+    "localeContractVersion": 1,
+    "qualityIssues": [],
+    "gradeScaleId": "standard",
+    "requiresSecureAssessmentRules": false,
+    "shuffleAnswers": false,
+    "audioAnswerQuestionCount": 0,
+    "generationJobId": "61b5b229a41340f32a97c3dca6c131720bf5816b",
+    "solutionAudioReady": true,
+    "title": "Lineare Funktionen und Dateninterpretation",
+    "grade": "10",
+    "solutionAudioQuestionCount": 0,
+    "creationContext": {
+      "contentLocale": "de-DE",
+      "schoolType": "Mittelschule",
+      "topic": "Lineare Funktionen und Dateninterpretation: Funktionswerte und Graphpunkte linearer Funktionen sowie begründete Diagrammaussagen",
+      "learningGoals": [],
+      "region": "Bayern",
+      "difficulty": "mittel bis anspruchsvoll"
+    },
+    "isDeleted": false,
+    "contentLocale": "de-DE",
+    "description": "Viel Erfolg beim Test!",
+    "createdAt": "2026-10-25T10:00:10.648Z",
+    "shareEnabled": false,
+    "qualityWarnings": [],
+    "gradingLocale": "de-DE",
+    "showSolutions": true,
+    "accessCode": "NLRVJTW8",
+    "totalPoints": 16,
+    "questionCount": 8,
+    "ended": false,
+    "updatedAt": "2026-10-25T10:00:14.144Z",
+    "published": false,
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "profileIds": [],
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match"
+    },
+    "resultMode": "points_grade",
+    "id": "NLRVJTW8"
+  },
+  "questions": [
+    {
+      "updatedAt": "2026-10-25T10:00:11.305Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"koordinaten-punkt-funktionswert-01\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Funktionswert als Graphpunkt\",\"subject\":\"Mathematik\",\"grade\":\"10\",\"prompt\":\"Trage den Punkt P(4 | 5) in das Koordinatensystem ein.\",\"hint\":\"Gehe zuerst zur x-Koordinate und dann zur y-Koordinate. Setze den Punkt genau auf einen Rasterpunkt.\",\"maxPoints\":2,\"spec\":{\"mode\":\"points\",\"minX\":-5,\"maxX\":7,\"minY\":-4,\"maxY\":8,\"step\":1,\"labels\":[\"P\"]},\"solution\":{\"points\":[{\"x\":4,\"y\":5}]},\"objective\":\"Einen Funktionswert als Koordinatenpunkt im Koordinatensystem darstellen.\",\"rationale\":\"Der Punkt wird durch seine x- und y-Koordinate eindeutig festgelegt.\",\"sourceNote\":\"Eigenständig erstellte Aufgabe mit fiktischen mathematischen Daten.\"}",
+      "text": "Trage den Punkt P in das Koordinatensystem ein.",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "points": 2,
+      "position": 1,
+      "id": "q001"
+    },
+    {
+      "updatedAt": "2026-10-25T10:00:11.471Z",
+      "points": 2,
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "text": "Trage die beiden Punkte in das Koordinatensystem ein.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"koordinaten-zwei-graphpunkte-02\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Zwei Punkte einer linearen Funktion\",\"subject\":\"Mathematik\",\"grade\":\"10\",\"prompt\":\"Trage die Punkte A(-3 | 7) und B(3 | -2) in das Koordinatensystem ein.\",\"hint\":\"Lies bei jedem Punkt zuerst die x-Koordinate und danach die y-Koordinate ab.\",\"maxPoints\":2,\"spec\":{\"mode\":\"points\",\"minX\":-5,\"maxX\":5,\"minY\":-4,\"maxY\":9,\"step\":1,\"labels\":[\"A\",\"B\"]},\"solution\":{\"points\":[{\"x\":-3,\"y\":7},{\"x\":3,\"y\":-2}]},\"objective\":\"Mehrere gegebene Graphpunkte in einem Koordinatensystem darstellen.\",\"rationale\":\"Beide Punkte werden jeweils durch ein geordnetes Zahlenpaar eindeutig bestimmt.\",\"sourceNote\":\"Eigenständig erstellte Aufgabe mit fiktischen mathematischen Daten.\"}",
+      "position": 2,
+      "id": "q002"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "position": 3,
+      "type": "visual",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:00:12.568Z",
+      "text": "Trage die Endpunkte der angegebenen Strecke in das Koordinatensystem ein.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"koordinaten-strecke-03\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Graphabschnitt einer linearen Funktion\",\"subject\":\"Mathematik\",\"grade\":\"10\",\"prompt\":\"Trage die Endpunkte C(-4 | -3) und D(5 | 6) ein. Die beiden Punkte bilden den dargestellten Graphabschnitt.\",\"hint\":\"Markiere beide Endpunkte genau. Die Verbindung zwischen ihnen wird anschließend angezeigt.\",\"maxPoints\":2,\"spec\":{\"mode\":\"segment\",\"minX\":-6,\"maxX\":7,\"minY\":-5,\"maxY\":8,\"step\":1,\"labels\":[\"C\",\"D\"]},\"solution\":{\"points\":[{\"x\":-4,\"y\":-3},{\"x\":5,\"y\":6}]},\"objective\":\"Die Endpunkte eines linearen Graphabschnitts im Koordinatensystem darstellen.\",\"rationale\":\"Ein Graphabschnitt ist durch seine beiden unterschiedlichen Endpunkte eindeutig festgelegt.\",\"sourceNote\":\"Eigenständig erstellte Aufgabe mit fiktischen mathematischen Daten.\"}",
+      "id": "q003"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"tabelle-funktionswerte-04\",\"revision\":0,\"format\":\"table\",\"title\":\"Funktionswerte berechnen\",\"subject\":\"Mathematik\",\"grade\":\"10\",\"prompt\":\"Ergänze die fehlenden y-Werte für die lineare Funktion y = 2x - 3.\",\"hint\":\"Setze jeden gegebenen x-Wert in den Funktionsterm ein. Trage die Ergebnisse als ganze Zahlen ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"x\",\"y = 2x - 3\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"-2\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"0\",\"input\":false},{\"id\":\"b2\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"3\",\"input\":false},{\"id\":\"c2\",\"text\":\"\",\"input\":true}],[{\"id\":\"d1\",\"text\":\"5\",\"input\":false},{\"id\":\"d2\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"a2\",\"accepted\":[\"-7\"]},{\"id\":\"b2\",\"accepted\":[\"-3\"]},{\"id\":\"c2\",\"accepted\":[\"3\"]},{\"id\":\"d2\",\"accepted\":[\"7\"]}]},\"objective\":\"Funktionswerte einer linearen Funktion berechnen.\",\"rationale\":\"Jeder y-Wert entsteht durch Einsetzen des zugehörigen x-Werts in den Funktionsterm.\",\"sourceNote\":\"Eigenständig erstellte Aufgabe mit fiktischen mathematischen Daten.\"}",
+      "type": "visual",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:00:12.731Z",
+      "position": 4,
+      "text": "Ergänze die fehlenden y-Werte der Tabelle.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "id": "q004"
+    },
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:00:13.142Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"tabelle-rueckwaertsfunktion-05\",\"revision\":0,\"format\":\"table\",\"title\":\"Zu vorgegebenen Funktionswerten passende x-Werte\",\"subject\":\"Mathematik\",\"grade\":\"10\",\"prompt\":\"Ergänze die fehlenden x-Werte für die lineare Funktion y = -0,5x + 4.\",\"hint\":\"Forme den Funktionsterm nach x um oder prüfe die Werte durch Einsetzen. Trage Dezimalzahlen mit Komma ein, falls nötig.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"x\",\"y = -0,5x + 4\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"\",\"input\":true},{\"id\":\"a2\",\"text\":\"6,5\",\"input\":false}],[{\"id\":\"b1\",\"text\":\"4\",\"input\":false},{\"id\":\"b2\",\"text\":\"2\",\"input\":false}],[{\"id\":\"c1\",\"text\":\"\",\"input\":true},{\"id\":\"c2\",\"text\":\"0\",\"input\":false}],[{\"id\":\"d1\",\"text\":\"-4\",\"input\":false},{\"id\":\"d2\",\"text\":\"6\",\"input\":false}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a1\",\"accepted\":[\"-5\"]},{\"id\":\"c1\",\"accepted\":[\"8\"]}]},\"objective\":\"Zu einem gegebenen Funktionswert den passenden x-Wert bestimmen.\",\"rationale\":\"Die fehlenden x-Werte lassen sich durch Umformen oder durch Rückwärtsprüfen des Funktionsterms eindeutig ermitteln.\",\"sourceNote\":\"Eigenständig erstellte Aufgabe mit fiktischen mathematischen Daten.\"}",
+      "position": 5,
+      "points": 2,
+      "text": "Ergänze die fehlenden x-Werte der Tabelle.",
+      "id": "q005"
+    },
+    {
+      "text": "Übertrage die Werte in ein Säulendiagramm.",
+      "updatedAt": "2026-10-25T10:00:13.625Z",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "position": 6,
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"diagramm-umsatz-06\",\"revision\":0,\"format\":\"chart\",\"title\":\"Monatliche Einnahmen darstellen\",\"subject\":\"Mathematik\",\"grade\":\"10\",\"prompt\":\"Übertrage die fiktiven monatlichen Einnahmen eines kleinen Betriebs in ein Säulendiagramm. Verwende die Einheit Tausend Euro.\",\"hint\":\"Erstelle für jede Kategorie eine Säule. Die Säulenhöhe soll genau dem angegebenen Wert entsprechen.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":100,\"step\":10,\"unit\":\"Tsd. Euro\",\"categories\":[{\"id\":\"jan\",\"label\":\"Januar\",\"value\":40},{\"id\":\"feb\",\"label\":\"Februar\",\"value\":60},{\"id\":\"mar\",\"label\":\"März\",\"value\":50},{\"id\":\"apr\",\"label\":\"April\",\"value\":80}]},\"solution\":{\"values\":{\"jan\":40,\"feb\":60,\"mar\":50,\"apr\":80}},\"objective\":\"Gegebene Daten maßstabsgerecht in ein Säulendiagramm übertragen.\",\"rationale\":\"Jede Säulenhöhe muss dem zugehörigen fiktiven Monatswert entsprechen.\",\"sourceNote\":\"Eigenständig erstellte Aufgabe mit ausdrücklich fiktiven Daten.\"}",
+      "id": "q006"
+    },
+    {
+      "text": "Übertrage die Daten in das Liniendiagramm.",
+      "updatedAt": "2026-10-25T10:00:13.774Z",
+      "points": 2,
+      "position": 7,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"diagramm-temperatur-07\",\"revision\":0,\"format\":\"chart\",\"title\":\"Temperaturverlauf darstellen\",\"subject\":\"Mathematik\",\"grade\":\"10\",\"prompt\":\"Übertrage die fiktiven Durchschnittstemperaturen einer Woche in ein Liniendiagramm. Verwende die Einheit Grad Celsius.\",\"hint\":\"Trage jeden Messwert bei der richtigen Kategorie ein. Die Reihenfolge der Wochentage ist vorgegeben.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":30,\"step\":5,\"unit\":\"°C\",\"categories\":[{\"id\":\"mo\",\"label\":\"Montag\",\"value\":10},{\"id\":\"di\",\"label\":\"Dienstag\",\"value\":15},{\"id\":\"mi\",\"label\":\"Mittwoch\",\"value\":15},{\"id\":\"do\",\"label\":\"Donnerstag\",\"value\":20},{\"id\":\"fr\",\"label\":\"Freitag\",\"value\":25}]},\"solution\":{\"values\":{\"mo\":10,\"di\":15,\"mi\":15,\"do\":20,\"fr\":25}},\"objective\":\"Eine geordnete Datenreihe in einem Liniendiagramm darstellen.\",\"rationale\":\"Die Lage jedes Punktes hängt vom richtigen Wochentag und vom zugehörigen Temperaturwert ab.\",\"sourceNote\":\"Eigenständig erstellte Aufgabe mit ausdrücklich fiktiven Daten.\"}",
+      "type": "visual",
+      "id": "q007"
+    },
+    {
+      "text": "Markiere genau die zwei Textstellen, die gemeinsam die Aussage belegen: Im Intervall von x = 2 bis x = 6 nimmt der Funktionswert um 12 Einheiten zu.",
+      "updatedAt": "2026-10-25T10:00:13.899Z",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "position": 8,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"funktionswerte-vergleich-belegen-08\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Eine Aussage zu Funktionswerten begründen\",\"subject\":\"Mathematik\",\"grade\":\"10\",\"prompt\":\"Markiere genau die zwei Textstellen, die gemeinsam die Aussage belegen: Im Intervall von x = 2 bis x = 6 nimmt der Funktionswert um 12 Einheiten zu.\",\"hint\":\"Wähle genau zwei Textstellen aus. Vergleiche die Funktionswerte an den beiden genannten x-Werten.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Für x = 0 beträgt der Funktionswert 5.\"},{\"id\":\"s2\",\"text\":\"Für x = 2 beträgt der Funktionswert 11.\"},{\"id\":\"s3\",\"text\":\"Für x = 4 beträgt der Funktionswert 17.\"},{\"id\":\"s4\",\"text\":\"Für x = 6 beträgt der Funktionswert 23.\"},{\"id\":\"s5\",\"text\":\"Für x = 8 beträgt der Funktionswert 29.\"}]},\"solution\":{\"selections\":[[\"s2\",\"s4\"]]},\"objective\":\"Eine Aussage über die Veränderung von Funktionswerten durch passende Datenstellen begründen.\",\"rationale\":\"Für die Veränderung im Intervall von x = 2 bis x = 6 werden die beiden zugehörigen Funktionswerte benötigt. Aus 23 - 11 = 12 folgt die angegebene Zunahme.\",\"sourceNote\":\"Eigenständig erstellte Aufgabe mit einer ausdrücklich fiktiven Datenreihe.\"}",
+      "type": "visual",
+      "points": 2,
+      "id": "q008"
+    }
+  ]
+}

@@ -1,0 +1,183 @@
+{
+  "pilotId": "P11",
+  "at": "2026-10-25T10:12:05.970Z",
+  "quiz": {
+    "subject": "Englisch",
+    "creationContext": {
+      "contentLocale": "de-DE",
+      "learningGoals": [],
+      "schoolType": "Mittelschule",
+      "difficulty": "mittel bis anspruchsvoll",
+      "topic": "Travel and communication: Eigene kurze englische Reiseinformationen und Dialoge, eindeutige Zeitformenfehler und Textbelege",
+      "region": "Bayern"
+    },
+    "solutionAudioQuestionCount": 0,
+    "audioAnswerQuestionCount": 0,
+    "ownerId": "gc-visual255-e2e",
+    "gradeScaleSnapshot": {
+      "id": "standard",
+      "name": "Standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ]
+    },
+    "audioReady": true,
+    "qualityWarnings": [],
+    "accessCode": "XH2JWU72",
+    "generationStatus": "ready",
+    "qualityIssues": [],
+    "listeningOnlyQuestionCount": 0,
+    "title": "Travel and Communication",
+    "rightsHold": false,
+    "isDeleted": false,
+    "localeContractVersion": 1,
+    "shuffleAnswers": false,
+    "shuffleQuestions": false,
+    "resultMode": "points_grade",
+    "startMode": "student",
+    "shareEnabled": false,
+    "solutionAudioReady": true,
+    "gradeScaleId": "standard",
+    "showSolutions": true,
+    "sessionState": "open",
+    "contentLocale": "de-DE",
+    "generationJobId": "e1ec0418f1068a5e94aeb28b17745790db509441",
+    "grade": "8",
+    "published": false,
+    "updatedAt": "2026-10-25T10:12:00.677Z",
+    "questionCount": 8,
+    "ended": false,
+    "requiresSecureAssessmentRules": false,
+    "description": "Viel Erfolg beim Test!",
+    "audioQuestionCount": 0,
+    "totalPoints": 16,
+    "createdAt": "2026-10-25T10:11:59.086Z",
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match",
+      "profileIds": []
+    },
+    "gradingLocale": "de-DE",
+    "id": "XH2JWU72"
+  },
+  "questions": [
+    {
+      "type": "visual",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:11:59.265Z",
+      "text": "Lies die fiktive Reiseinformation. Markiere genau den Satz, der zeigt, wann die Reise beginnt.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"evidence-travel-start-01\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Beginn einer Reise erkennen\",\"subject\":\"Englisch\",\"grade\":\"8\",\"prompt\":\"Lies die fiktive Reiseinformation. Markiere genau den Satz, der zeigt, wann die Reise beginnt.\",\"hint\":\"Wähle genau einen vollständigen Satz als Beleg.\",\"maxPoints\":2,\"objective\":\"Eine konkrete Zeitangabe in einer kurzen englischen Reiseinformation als Textbeleg erkennen.\",\"rationale\":\"Nur ein Satz nennt eindeutig den Beginn der Reise.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne reale Personen oder Quellen.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Our class trip to Dublin is in May.\"},{\"id\":\"s2\",\"text\":\"We leave Munich on Monday at 7:30 a.m.\"},{\"id\":\"s3\",\"text\":\"The flight is short and comfortable.\"},{\"id\":\"s4\",\"text\":\"Everyone brings a small backpack.\"}]},\"solution\":{\"selections\":[[\"s2\"]]}}",
+      "position": 1,
+      "points": 2,
+      "id": "q001"
+    },
+    {
+      "points": 2,
+      "type": "visual",
+      "position": 2,
+      "text": "Lies den fiktiven Chat. Markiere genau die beiden Sätze, die belegen, dass die Reise für morgen geplant ist.",
+      "updatedAt": "2026-10-25T10:11:59.431Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"evidence-chat-tomorrow-02\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Eine Reiseplanung belegen\",\"subject\":\"Englisch\",\"grade\":\"8\",\"prompt\":\"Lies den fiktiven Chat. Markiere genau die beiden Sätze, die belegen, dass die Reise für morgen geplant ist.\",\"hint\":\"Wähle genau zwei vollständige Sätze.\",\"maxPoints\":2,\"objective\":\"Mehrere passende Textbelege in einem kurzen englischen Dialog auswählen.\",\"rationale\":\"Zwei Äußerungen enthalten zusammen die eindeutigen Hinweise auf den Zeitpunkt der Reise.\",\"sourceNote\":\"Eigenes fiktives Chatbeispiel ohne reale Personen oder Quellen.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Hi, are you ready for the trip?\"},{\"id\":\"s2\",\"text\":\"Yes, we are leaving tomorrow morning.\"},{\"id\":\"s3\",\"text\":\"I packed my blue jacket.\"},{\"id\":\"s4\",\"text\":\"The train leaves at six tomorrow.\"},{\"id\":\"s5\",\"text\":\"See you at the station.\"}]},\"solution\":{\"selections\":[[\"s2\",\"s4\"]]}}",
+      "id": "q002"
+    },
+    {
+      "points": 2,
+      "type": "visual",
+      "position": 3,
+      "text": "Lies die fiktive englische Reiseinformation. Markiere genau den Satz, der belegt, dass die Unterkunft bereits bezahlt wurde.",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"evidence-travel-payment-08\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Einen Beleg in einer Reiseinformation finden\",\"subject\":\"Englisch\",\"grade\":\"8\",\"prompt\":\"Lies die fiktive englische Reiseinformation. Markiere genau den Satz, der belegt, dass die Unterkunft bereits bezahlt wurde.\",\"hint\":\"Lies jeden Satz sorgfältig und wähle genau eine Textstelle aus.\",\"maxPoints\":2,\"objective\":\"Eine eindeutige Information in einer kurzen englischen Reiseinformation durch einen passenden Textbeleg nachweisen.\",\"rationale\":\"Die Lernenden müssen die Aussage zur bereits erfolgten Zahlung erkennen und durch genau den passenden englischen Satz belegen.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne reale Personen oder Quellen.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Our train leaves at 6:40 on Friday.\"},{\"id\":\"s2\",\"text\":\"I have already paid for the small hostel room.\"},{\"id\":\"s3\",\"text\":\"The station is next to the city library.\"},{\"id\":\"s4\",\"text\":\"Please bring a raincoat for the walking tour.\"}]},\"solution\":{\"selections\":[[\"s2\"]]}}",
+      "updatedAt": "2026-10-25T10:11:59.578Z",
+      "id": "q003"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"correction-travel-planning-tense-04\",\"revision\":0,\"format\":\"correction\",\"title\":\"Eine Zeitform in einer Reiseplanung verbessern\",\"subject\":\"Englisch\",\"grade\":\"8\",\"prompt\":\"In genau einer Zeile ist die Zeitform unpassend. Markiere die fehlerhafte Zeile und verbessere sie.\",\"hint\":\"Achte auf die Zeitangaben und darauf, ob die Handlung abgeschlossen ist, gerade stattfindet oder geplant ist.\",\"maxPoints\":2,\"objective\":\"Einen eindeutigen Zeitformenfehler in einer kurzen englischen Reiseinformation erkennen und korrigieren.\",\"rationale\":\"Die Zeitangabe macht genau eine Zeitform unpassend; die übrigen Zeilen passen zu ihrer jeweiligen Bedeutung.\",\"sourceNote\":\"Eigenes fiktives Beispiel zu einer Reiseplanung ohne reale Personen oder Quellen.\",\"spec\":{\"rows\":[{\"id\":\"r1\",\"text\":\"Right now, I am checking in at the hotel.\"},{\"id\":\"r2\",\"text\":\"Every morning, the shuttle leaves at seven.\"},{\"id\":\"r3\",\"text\":\"Tomorrow, we are meeting our guide at the station.\"},{\"id\":\"r4\",\"text\":\"Last night, I am booking a room online.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"r4\",\"accepted\":[\"Last night, I booked a room online.\"]}}",
+      "points": 2,
+      "position": 4,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "In genau einer Zeile ist die Zeitform unpassend. Markiere die fehlerhafte Zeile und verbessere sie.",
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:11:59.755Z",
+      "id": "q004"
+    },
+    {
+      "updatedAt": "2026-10-25T10:11:59.911Z",
+      "points": 2,
+      "position": 5,
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "text": "Verbinde jede englische Frage mit der passenden Antwort. Jede Antwort wird genau einmal verwendet.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"connections-travel-qa-05\",\"revision\":0,\"format\":\"connections\",\"title\":\"Fragen und Antworten verbinden\",\"subject\":\"Englisch\",\"grade\":\"8\",\"prompt\":\"Verbinde jede englische Frage mit der passenden Antwort. Jede Antwort wird genau einmal verwendet.\",\"hint\":\"Verbinde jeweils eine Frage auf der linken Seite mit genau einer passenden Antwort auf der rechten Seite.\",\"maxPoints\":2,\"objective\":\"Kurze englische Reise- und Kommunikationsfragen passenden Antworten zuordnen.\",\"rationale\":\"Die drei Frage-Antwort-Paare unterscheiden sich eindeutig nach Inhalt und Funktion.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne reale Personen oder Quellen.\",\"spec\":{\"directed\":false,\"nodes\":[{\"id\":\"q1\",\"label\":\"Where does the train leave from?\",\"x\":120,\"y\":70},{\"id\":\"q2\",\"label\":\"When are you arriving?\",\"x\":120,\"y\":165},{\"id\":\"q3\",\"label\":\"How can I contact you?\",\"x\":120,\"y\":260},{\"id\":\"a1\",\"label\":\"You can text me this evening.\",\"x\":600,\"y\":70},{\"id\":\"a2\",\"label\":\"It leaves from platform four.\",\"x\":600,\"y\":165},{\"id\":\"a3\",\"label\":\"I am arriving on Friday.\",\"x\":600,\"y\":260}]},\"solution\":{\"edges\":[[\"q1\",\"a2\"],[\"q2\",\"a3\"],[\"q3\",\"a1\"]]}}",
+      "id": "q005"
+    },
+    {
+      "updatedAt": "2026-10-25T10:12:00.064Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"table-travel-message-tenses-06\",\"revision\":0,\"format\":\"table\",\"title\":\"Eine fiktive Reise-Nachricht ergänzen\",\"subject\":\"Englisch\",\"grade\":\"8\",\"prompt\":\"Ergänze die fehlenden englischen Verbformen in der fiktiven Reise-Nachricht.\",\"hint\":\"Achte auf die Zeitangaben im Satz. Schreibe jeweils die vollständige Verbform in die leere Zelle.\",\"maxPoints\":2,\"objective\":\"Das Present Perfect und das Simple Past in eindeutigen Reiseaussagen unterscheiden und korrekt bilden.\",\"rationale\":\"Die Signalwörter already und yesterday legen in den beiden eigenständigen Sätzen eindeutig die passende Zeitform fest.\",\"sourceNote\":\"Eigenes fiktives Nachrichtenbeispiel ohne reale Personen oder Quellen.\",\"spec\":{\"columns\":[\"Fiktive Reise-Nachricht\",\"Fehlende Verbform\"],\"rows\":[[{\"id\":\"t1\",\"text\":\"I ___ (pack) my passport already.\",\"input\":false},{\"id\":\"t2\",\"text\":\"\",\"input\":true}],[{\"id\":\"t3\",\"text\":\"We ___ (visit) the museum yesterday.\",\"input\":false},{\"id\":\"t4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"t2\",\"accepted\":[\"have packed\"]},{\"id\":\"t4\",\"accepted\":[\"visited\"]}]}}",
+      "position": 6,
+      "text": "Ergänze die fehlenden englischen Verbformen in der fiktiven Reise-Nachricht.",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "points": 2,
+      "id": "q006"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"evidence-clarification-07\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Um eine Erklärung bitten\",\"subject\":\"Englisch\",\"grade\":\"8\",\"prompt\":\"Lies den fiktiven Dialog. Markiere genau die Äußerung, mit der eine Person um eine Wiederholung oder Erklärung bittet.\",\"hint\":\"Wähle genau eine Äußerung.\",\"maxPoints\":2,\"objective\":\"Eine passende englische Kommunikationsfunktion in einem kurzen Dialog erkennen.\",\"rationale\":\"Nur eine Äußerung bittet ausdrücklich um eine Wiederholung oder Erklärung.\",\"sourceNote\":\"Eigenes fiktives Dialogbeispiel ohne reale Personen oder Quellen.\",\"spec\":{\"tokens\":[{\"id\":\"d1\",\"text\":\"The guide says that the castle is north of the town.\"},{\"id\":\"d2\",\"text\":\"Sorry, could you say that again, please?\"},{\"id\":\"d3\",\"text\":\"We have two hours before the bus leaves.\"},{\"id\":\"d4\",\"text\":\"I will take a photo of the map.\"}]},\"solution\":{\"selections\":[[\"d2\"]]}}",
+      "position": 7,
+      "type": "visual",
+      "text": "Lies den fiktiven Dialog. Markiere genau die Äußerung, mit der eine Person um eine Wiederholung oder Erklärung bittet.",
+      "updatedAt": "2026-10-25T10:12:00.227Z",
+      "points": 2,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q007"
+    },
+    {
+      "updatedAt": "2026-10-25T10:12:00.520Z",
+      "position": 8,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"connections-travel-reactions-08\",\"revision\":0,\"format\":\"connections\",\"title\":\"Reiseinformationen passend beantworten\",\"subject\":\"Englisch\",\"grade\":\"8\",\"prompt\":\"Verbinde jede englische Reiseinformation mit der passenden Reaktion. Jede Reaktion wird genau einmal verwendet.\",\"hint\":\"Achte darauf, ob die Information eine Verspätung, eine Ankunftszeit oder eine Bitte um Kontakt betrifft.\",\"maxPoints\":2,\"objective\":\"Auf kurze englische Reiseinformationen mit einer inhaltlich passenden Äußerung reagieren.\",\"rationale\":\"Jede Information verlangt eine eindeutig passende kommunikative Reaktion.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne reale Personen oder Quellen.\",\"spec\":{\"directed\":false,\"nodes\":[{\"id\":\"i1\",\"label\":\"The train is delayed by twenty minutes.\",\"x\":120,\"y\":70},{\"id\":\"i2\",\"label\":\"I am arriving at six o'clock.\",\"x\":120,\"y\":165},{\"id\":\"i3\",\"label\":\"Please send me the hotel address.\",\"x\":120,\"y\":260},{\"id\":\"r1\",\"label\":\"Sure, I will text it to you.\",\"x\":600,\"y\":70},{\"id\":\"r2\",\"label\":\"Thanks for telling me.\",\"x\":600,\"y\":165},{\"id\":\"r3\",\"label\":\"Great, I will meet you then.\",\"x\":600,\"y\":260}]},\"solution\":{\"edges\":[[\"i1\",\"r2\"],[\"i2\",\"r3\"],[\"i3\",\"r1\"]]}}",
+      "text": "Verbinde jede englische Reiseinformation mit der passenden Reaktion. Jede Reaktion wird genau einmal verwendet.",
+      "id": "q008"
+    }
+  ]
+}

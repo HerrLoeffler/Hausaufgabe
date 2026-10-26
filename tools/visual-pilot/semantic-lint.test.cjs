@@ -1,0 +1,3 @@
+'use strict';const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');const {scan}=require('./semantic-lint.cjs');
+const read=n=>JSON.parse(fs.readFileSync(__dirname+'/../../docs/evidence/visual-pilot-24-20261025/'+n));
+test('known original semantic mismatches are reported and reviewed versions resolve them',()=>{for(const[id,index,flag]of [['P07',4,'open_prose_exact_grader'],['P04',6,'line_chart_bar_renderer'],['P05',7,'case_goal_casefolded']]){assert(scan(read(id+'-quiz.json').questions[index]).includes(flag));assert(!scan(read(id+'-reviewed.json').questions[index]).includes(flag));}});

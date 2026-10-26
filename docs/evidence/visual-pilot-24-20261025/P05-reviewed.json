@@ -1,0 +1,195 @@
+{
+  "pilotId": "P05",
+  "at": "2026-10-25T09:57:00.511Z",
+  "quiz": {
+    "totalPoints": 16,
+    "ownerId": "gc-visual255-e2e",
+    "isDeleted": false,
+    "generationStatus": "ready",
+    "title": "Wortarten und Satzglieder erkennen",
+    "solutionAudioQuestionCount": 0,
+    "solutionAudioReady": true,
+    "creationContext": {
+      "learningGoals": [],
+      "contentLocale": "de-DE",
+      "difficulty": "leicht bis mittel",
+      "region": "Bayern",
+      "schoolType": "Mittelschule",
+      "topic": "Wortarten und einfache Satzglieder: Nomen, Verben und Adjektive sowie Subjekt und Prädikat an selbst erfundenen kurzen Sätzen erkennen"
+    },
+    "audioQuestionCount": 0,
+    "published": false,
+    "shareEnabled": false,
+    "audioReady": true,
+    "subject": "Deutsch",
+    "contentLocale": "de-DE",
+    "qualityWarnings": [],
+    "questionCount": 8,
+    "gradeScaleSnapshot": {
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "id": "standard",
+      "name": "Standard"
+    },
+    "listeningOnlyQuestionCount": 0,
+    "requiresSecureAssessmentRules": false,
+    "ended": false,
+    "localeContractVersion": 1,
+    "showSolutions": true,
+    "shuffleAnswers": false,
+    "generationJobId": "38e032343f094ff673481b141940258157d8b527",
+    "description": "Viel Erfolg beim Test!",
+    "updatedAt": "2026-10-25T09:56:51.210Z",
+    "accessCode": "W2QQ9K3A",
+    "resultMode": "points_grade",
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": [],
+      "profileCount": 0,
+      "status": "no_match"
+    },
+    "grade": "5",
+    "sessionState": "open",
+    "createdAt": "2026-10-25T09:56:49.588Z",
+    "gradingLocale": "de-DE",
+    "shuffleQuestions": false,
+    "rightsHold": false,
+    "gradeScaleId": "standard",
+    "startMode": "student",
+    "audioAnswerQuestionCount": 0,
+    "qualityIssues": [],
+    "id": "W2QQ9K3A"
+  },
+  "questions": [
+    {
+      "text": "Markiere genau den Satz, in dem ein Wort eine Eigenschaft näher beschreibt.",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T09:56:49.772Z",
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"evidence-eigenschaft-05-0\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Eine beschreibende Angabe finden\",\"subject\":\"Deutsch\",\"grade\":\"5\",\"prompt\":\"Markiere genau den Satz, in dem ein Wort eine Eigenschaft näher beschreibt.\",\"hint\":\"Lies alle Sätze aufmerksam. Wähle genau einen Satz aus.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Der Fuchs schleicht durch den Wald.\"},{\"id\":\"s2\",\"text\":\"Mila trägt einen roten Schal.\"},{\"id\":\"s3\",\"text\":\"Die Kinder lachen auf dem Schulhof.\"}]},\"solution\":{\"selections\":[[\"s2\"]]},\"objective\":\"Ein Adjektiv in einem kurzen Satz erkennen.\",\"rationale\":\"Nur im zweiten Satz beschreibt ein Wort eine Eigenschaft näher: Das Wort „roten“ kennzeichnet den Schal.\",\"sourceNote\":\"Eigenes Beispiel für diesen Test.\"}",
+      "points": 2,
+      "position": 1,
+      "id": "q001"
+    },
+    {
+      "updatedAt": "2026-10-25T09:56:49.973Z",
+      "points": 2,
+      "text": "Verbinde jedes Wort mit der passenden Wortart. Eine Verbindung führt jeweils vom Wort zur Wortart.",
+      "position": 2,
+      "type": "visual",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wortarten-connections-02\",\"revision\":0,\"format\":\"connections\",\"title\":\"Wortarten verbinden\",\"subject\":\"Deutsch\",\"grade\":\"5\",\"prompt\":\"Verbinde jedes Wort mit der passenden Wortart. Eine Verbindung führt jeweils vom Wort zur Wortart.\",\"hint\":\"Tippe zuerst ein Wort und dann die passende Wortart an.\",\"maxPoints\":2,\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"n1\",\"label\":\"Blume\",\"x\":100,\"y\":70},{\"id\":\"n2\",\"label\":\"rennt\",\"x\":100,\"y\":150},{\"id\":\"n3\",\"label\":\"fröhlich\",\"x\":100,\"y\":230},{\"id\":\"c1\",\"label\":\"Nomen\",\"x\":570,\"y\":70},{\"id\":\"c2\",\"label\":\"Verb\",\"x\":570,\"y\":150},{\"id\":\"c3\",\"label\":\"Adjektiv\",\"x\":570,\"y\":230}]},\"solution\":{\"edges\":[[\"n1\",\"c1\"],[\"n2\",\"c2\"],[\"n3\",\"c3\"]]},\"objective\":\"Wörter nach ihrer Wortart klassifizieren.\",\"rationale\":\"Die drei Wörter gehören jeweils eindeutig zu einer der drei vorgegebenen Wortarten.\",\"sourceNote\":\"Eigenes Beispiel für diesen Test.\"}",
+      "id": "q002"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"subjekt-evidence-03\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Ein zweigliedriges Subjekt finden\",\"subject\":\"Deutsch\",\"grade\":\"5\",\"prompt\":\"Markiere genau den Satz, in dem das Subjekt aus zwei Wörtern besteht.\",\"hint\":\"Wähle genau einen Satz aus.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Mia liest.\"},{\"id\":\"s2\",\"text\":\"Der Hund schläft.\"},{\"id\":\"s3\",\"text\":\"Heute regnet es.\"}]},\"solution\":{\"selections\":[[\"s2\"]]},\"objective\":\"Das Subjekt in einem kurzen Satz erkennen.\",\"rationale\":\"Im Satz „Der Hund schläft“ besteht das Subjekt „Der Hund“ aus zwei Wörtern.\",\"sourceNote\":\"Eigenes Beispiel für diesen Test.\"}",
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "text": "Markiere genau den Satz, in dem das Subjekt aus zwei Wörtern besteht.",
+      "position": 3,
+      "updatedAt": "2026-10-25T09:56:50.160Z",
+      "points": 2,
+      "id": "q003"
+    },
+    {
+      "position": 4,
+      "points": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "updatedAt": "2026-10-25T09:56:50.330Z",
+      "type": "visual",
+      "text": "Markiere genau das Prädikat im Satz.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"praedikat-evidence-04\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Das Prädikat finden\",\"subject\":\"Deutsch\",\"grade\":\"5\",\"prompt\":\"Markiere genau das Prädikat im Satz.\",\"hint\":\"Wähle genau ein Wort aus.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"t1\",\"text\":\"Die\"},{\"id\":\"t2\",\"text\":\"Katze\"},{\"id\":\"t3\",\"text\":\"jagt\"},{\"id\":\"t4\",\"text\":\"den\"},{\"id\":\"t5\",\"text\":\"Ball.\"}]},\"solution\":{\"selections\":[[\"t3\"]]},\"objective\":\"Das Prädikat in einem einfachen Satz erkennen.\",\"rationale\":\"„jagt“ beschreibt, was das Subjekt tut, und ist deshalb das Prädikat.\",\"sourceNote\":\"Eigenes Beispiel für diesen Test.\"}",
+      "id": "q004"
+    },
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"wortarten-correction-05\",\"revision\":0,\"format\":\"correction\",\"title\":\"Eine Wortart berichtigen\",\"subject\":\"Deutsch\",\"grade\":\"5\",\"prompt\":\"In genau einer Zeile ist die Wortart falsch angegeben. Markiere diese Zeile und trage die richtige Wortart ein.\",\"hint\":\"Prüfe die Bedeutung und die Wortart des angegebenen Wortes.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"r1\",\"text\":\"Sonne – Nomen\"},{\"id\":\"r2\",\"text\":\"läuft – Verb\"},{\"id\":\"r3\",\"text\":\"leise – Nomen\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"r3\",\"accepted\":[\"Adjektiv\"]},\"objective\":\"Eine falsche Zuordnung zu einer Wortart erkennen und verbessern.\",\"rationale\":\"„leise“ bezeichnet eine Eigenschaft und ist daher ein Adjektiv.\",\"sourceNote\":\"Eigenes Beispiel für diesen Test.\"}",
+      "text": "In genau einer Zeile ist die Wortart falsch angegeben. Markiere diese Zeile und trage die richtige Wortart ein.",
+      "type": "visual",
+      "position": 5,
+      "updatedAt": "2026-10-25T09:56:50.520Z",
+      "points": 2,
+      "id": "q005"
+    },
+    {
+      "text": "In genau einer Zeile ist die Bestimmung des Satzglieds falsch. Markiere die Zeile und trage die richtige Bestimmung ein.",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "updatedAt": "2026-10-25T09:56:50.679Z",
+      "points": 2,
+      "type": "visual",
+      "position": 6,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"satzglieder-correction-06\",\"revision\":1,\"format\":\"correction\",\"title\":\"Subjekt und Prädikat berichtigen\",\"subject\":\"Deutsch\",\"grade\":\"5\",\"prompt\":\"In genau einer Zeile ist die Bestimmung des Satzglieds falsch. Markiere die Zeile und trage die richtige Bestimmung ein.\",\"hint\":\"Frage: Wer oder was? Oder: Was tut das Subjekt?\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"r1\",\"text\":\"Die Kinder – Subjekt\"},{\"id\":\"r2\",\"text\":\"spielen – Prädikat\"},{\"id\":\"r3\",\"text\":\"im Garten – Prädikat\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"r3\",\"accepted\":[\"Ortsangabe\",\"adverbiale Bestimmung des Ortes\",\"Lokaladverbial\",\"lokale adverbiale Bestimmung\"]},\"objective\":\"Subjekt und Prädikat von einer weiteren Satzangabe unterscheiden.\",\"rationale\":\"„im Garten“ gibt den Ort an und ist kein Prädikat.\",\"sourceNote\":\"Eigenes Beispiel für diesen Test.\"}",
+      "id": "q006"
+    },
+    {
+      "points": 2,
+      "position": 7,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"satzglieder-connections-07\",\"revision\":0,\"format\":\"connections\",\"title\":\"Satzglieder zuordnen\",\"subject\":\"Deutsch\",\"grade\":\"5\",\"prompt\":\"Verbinde jeden Satz mit seinem Subjekt und seinem Prädikat. Eine Verbindung führt jeweils vom Satz zum passenden Satzglied.\",\"hint\":\"Jeder Satz erhält genau zwei Verbindungen: eine zum Subjekt und eine zum Prädikat.\",\"maxPoints\":2,\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"s1\",\"label\":\"Der Vogel singt.\",\"x\":100,\"y\":80},{\"id\":\"s2\",\"label\":\"Lena malt.\",\"x\":100,\"y\":220},{\"id\":\"a1\",\"label\":\"Der Vogel\", \"x\":360,\"y\":50},{\"id\":\"a2\",\"label\":\"singt\", \"x\":620,\"y\":50},{\"id\":\"a3\",\"label\":\"Lena\", \"x\":360,\"y\":250},{\"id\":\"a4\",\"label\":\"malt\", \"x\":620,\"y\":250}]},\"solution\":{\"edges\":[[\"s1\",\"a1\"],[\"s1\",\"a2\"],[\"s2\",\"a3\"],[\"s2\",\"a4\"]]},\"objective\":\"Subjekt und Prädikat in einfachen Sätzen bestimmen.\",\"rationale\":\"Jeder Satz wird eindeutig mit seinem handelnden Satzglied und der Handlung verbunden.\",\"sourceNote\":\"Eigenes Beispiel für diesen Test.\"}",
+      "type": "visual",
+      "text": "Verbinde jeden Satz mit seinem Subjekt und seinem Prädikat. Eine Verbindung führt jeweils vom Satz zum passenden Satzglied.",
+      "updatedAt": "2026-10-25T09:56:50.837Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q007"
+    },
+    {
+      "text": "In genau einer Zeile ist ein Nomen kleingeschrieben. Markiere diese Zeile und trage das Nomen in der richtigen Großschreibung ein.",
+      "type": "visual",
+      "points": 2,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "position": 8,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"nomen-grossschreibung-08\",\"revision\":1,\"format\":\"correction\",\"title\":\"Nomen richtig schreiben\",\"subject\":\"Deutsch\",\"grade\":\"5\",\"prompt\":\"In genau einer Zeile ist ein Nomen kleingeschrieben. Markiere diese Zeile und trage das Nomen in der richtigen Großschreibung ein.\",\"hint\":\"Prüfe die Nomen in allen drei Sätzen. Trage nur das zu korrigierende Wort ein.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"a\",\"text\":\"Die Katze schläft auf dem Sofa.\"},{\"id\":\"b\",\"text\":\"Der junge entdeckt einen Schatz.\"},{\"id\":\"c\",\"text\":\"Im Garten blüht eine Rose.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\",\"caseSensitive\":true},\"solution\":{\"rowId\":\"b\",\"accepted\":[\"Junge\"]},\"objective\":\"Ein Nomen in einem einfachen Satz erkennen und seine Großschreibung korrigieren.\",\"rationale\":\"In der zweiten Zeile ist „Junge“ ein Nomen und wird deshalb großgeschrieben.\",\"sourceNote\":\"Eigenes Beispiel für einen Deutschtest.\"}",
+      "updatedAt": "2026-10-25T09:56:51.032Z",
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 6,
+      "reason": "Gleichwertige Fachbegriffe als gültige Alternativen zulassen.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    },
+    {
+      "position": 8,
+      "reason": "Großschreibung ist Lernziel; Kleinschreibung muss falsch bleiben.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    }
+  ]
+}

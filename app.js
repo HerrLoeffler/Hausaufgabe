@@ -1,3 +1,6 @@
+import {ENABLED as hostedVisualLab,LAB_GUIDANCE as hostedLabGuidance} from './visual-lab.mjs';
+let extendedPreview = false;
+let extendedVariant = 1;
 import { parseNumericAnswer, normalizeVisualTask, renderVisualEditor, mountVisualQuestion, collectVisualAnswer, decodeVisualAnswer, visualAnswered, evaluateVisual, visualSolution } from "./visual-tasks.mjs";
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
@@ -86,6 +89,9 @@ const aiApi = new Proxy(createAiClient(app, () => state.user?.uid || auth.curren
     const value = target[key];
     if (typeof value !== "function") return value;
     return (...args) => {
+      if (extendedPreview && key==='reviseWholeTest') return runExtendedAi('revise',args[0]);
+      if (extendedPreview && key==='regenerateQuestion') return runExtendedAi('question',args[0]);
+      if (extendedPreview) throw new Error('In diesem Formatversuch sind Remy, Emmi und Einzelvarianten angebunden. Zusätzliche Medien- und andere KI-Funktionen sind hier noch nicht freigeschaltet.');
       if (guestTourRepo) throw new Error("Im lokalen Tutorial sind KI- und Billing-Aufrufe gesperrt.");
       return value.apply(target, args);
     };
@@ -1532,6 +1538,7 @@ function openTemplateFromInput(value) {
 }
 
 async function loadDashboard() {
+  if(extendedPreview){const q=guestTourRepo?.getQuiz('TOURLOCAL');state.quizzes=q?[q]:[];state.aiJobs=[];showView('dashboardView');renderQuizList();renderAiJobs();return;}
   if (!state.user) return;
   const dashboardUid = state.user.uid;
   clearPublishSubscriptions();
@@ -2770,6 +2777,8 @@ async function openAiView() {
   renderAiJobs();
   if (firstAiGuideStep === "ai") setTimeout(() => renderFirstAiGuideStep("details"), 100);
   const notice = $("aiBetaNotice");
+  if(hostedVisualLab){for(const c of document.querySelectorAll('#aiTypeChecks input')){c.checked=c.value==='visual';c.disabled=true;}for(const id of ['aiImageQuestionCount','aiAudioQuestionCount','aiSolutionAudioQuestionCount','aiAudioAnswerQuestionCount'])if($(id))$(id).value='0';notice.textContent='Online-Aufgabenlabor mit echter Remy-/Emmi-KI. Acht freigegebene visuelle Formate und differenzierbarer Dreisatz. Deine Entwürfe werden im angemeldeten Testkonto gespeichert. Bitte keine Schülerdaten eingeben.';notice.classList.remove('hidden');return;}
+  if(extendedPreview){for(const id of ['aiImageQuestionCount','aiAudioQuestionCount']){const card=$(id)?.closest('article.card');if(card)card.hidden=true;}for(const c of document.querySelectorAll('#aiTypeChecks input')){c.checked=c.value==='visual';c.disabled=true;}for(const n of document.querySelectorAll('p,small')){if(n.textContent==='Kosten können für Tests, Bilder und Audio entstehen.')n.textContent='Die Erstellung nutzt die vorhandene kostenpflichtige Test-KI.';if(n.textContent.includes('Nach dem Start schließt sich diese Ansicht automatisch.'))n.textContent='Der fertige KI-Test öffnet sich hier im Editor. Bei Unterbrechung: oben KI-Auftrag fortsetzen.';}notice.textContent='Echte GradeCrew-Test-KI: neue visuelle Aufgaben mit Remy erstellen und mit Emmi überarbeiten. Nutze Fach, Klasse und Thema; nur die acht ausgewählten Formate, bis zu zwölf Aufgaben. Tabellen können mehrere Eingabefelder mit Teilpunkten enthalten. Keine Schülerdaten eingeben. Kostenpflichtige Test-KI, Veröffentlichung und Abgaben bleiben lokal.';notice.classList.remove('hidden');return;}
   if (crewTour?.creating) { notice.textContent = "Übung: vorbereitete Aufgaben, keine KI-Anfrage."; notice.classList.remove("hidden"); return; }
   try {
     notice.className = "aiStatusNotice";
@@ -2952,6 +2961,7 @@ function collectAiRequest() {
   const solutionAudioQuestionCount = Number($("aiSolutionAudioQuestionCount").value);
   const answerInput = $("aiAudioAnswerQuestionCount");
   const audioAnswerQuestionCount = Number(answerInput?.value || 0);
+  if(hostedVisualLab&&(count>12||state.aiMaterials.length||imageQuestionCount||audioQuestionCount||solutionAudioQuestionCount||audioAnswerQuestionCount))throw new Error('Im Aufgabenlabor bitte1–12 visuelle Aufgaben ohne zusätzliche Medienaufträge verwenden.');
   if (!Number.isInteger(count) || count < 1 || count > 100) throw new Error("Bitte 1 bis 100 Aufgaben wählen.");
   if (!$("aiPoints").value.trim() || !Number.isFinite(points) || points < 0.5 || Math.abs(points * 2 - Math.round(points * 2)) > 1e-8) throw new Error("Bitte eine Gesamtpunktzahl in 0,5er-Schritten wählen.");
   if (points < count / 2) throw new Error(`Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
@@ -2966,7 +2976,7 @@ function collectAiRequest() {
   return {
     subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
     topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, points,
-    allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
+    allowedTypes:hostedVisualLab?['visual']:allowedTypes, notes: (hostedVisualLab?hostedLabGuidance+'\n':'')+($("aiCustomNotes")?.value.trim() || ""), materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
     imageMode: imageQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount: 0,
     audioQuestionCount, solutionAudioQuestionCount, audioAnswerQuestionCount
   };
@@ -2996,6 +3006,7 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
 }
 
 async function generateAiTestNative() {
+  if(extendedPreview){if(state.extendedAiRunning)return;const button=$('generateAiTestBtn');state.extendedAiRunning=true;try{const request={...collectAiRequest(),allowedTypes:['visual']};if(button)button.disabled=true;setAiProgress('Remy startet deinen KI-Auftrag …');const response=await runExtendedAi('generate',request,{onProgress:message=>setAiProgress(message)});await openExtendedGeneratedTest(response.test);toast('Neue KI-Aufgaben erstellt. Bitte Inhalt und Lösungen prüfen.');}catch(error){setAiProgress(error.message,true);toast(error.message,'error');}finally{state.extendedAiRunning=false;if(button)button.disabled=false;}return;}
   if (crewTour?.active) {
     if (crewTour.creating) return crewTour.create();
     return toast("Folge zuerst dem aktuellen Schritt der Einführung.");
@@ -3676,6 +3687,7 @@ $("quizUseTimeLimit")?.addEventListener("change", (e) => {
 });
 $("quizTimeLimitMinutes")?.addEventListener("input", markDirty);
 $("previewBtn").addEventListener("click", async () => {
+  if(extendedPreview){if(await saveCurrentQuiz(false)){renderStudentQuiz(guestTourRepo.getQuiz(state.currentQuiz.id),guestTourRepo.getQuestions(state.currentQuiz.id),{ownerPreview:true});showView('studentView');}return;}
   const button = $("previewBtn");
   if (!state.currentQuiz || button.disabled) return;
   // Reserve the tab during the user gesture; a server save can outlive popup activation.
@@ -5642,7 +5654,7 @@ function renderGapColorEditor(container, q) {
 
 function renderAnswerEditor(container, q) {
   container.innerHTML = "";
-  if (q.type === "visual") { renderVisualEditor(container, q, refresh => { markDirty(); if (refresh) renderQuestions(); }); return; }
+  if (q.type === "visual") { renderVisualEditor(container, q, refresh => { markDirty(); if (refresh) renderQuestions(); },(extendedPreview||hostedVisualLab)?{formats:state.extendedFormats}:{}); return; }
 
   if (["single", "multi", "dropdown"].includes(q.type)) {
     const info = document.createElement("p");
@@ -6183,6 +6195,7 @@ async function saveCurrentQuiz(showMessage = true) {
       audioReady: true, solutionAudioReady: true
     };
     guestTourRepo.save(code, patch, state.questions);
+    if(extendedPreview)await extendedCall('save',{quiz:guestTourRepo.getQuiz(code),questions:guestTourRepo.getQuestions(code)});
     state.currentQuiz = guestTourRepo.getQuiz(code);
     state.loadedQuestionIds = new Set(state.questions.map(q => q.id));
     $("editorHeading").textContent = patch.title;
@@ -6298,6 +6311,7 @@ async function publishCurrentQuiz() {
   if (state.currentQuiz?.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   if (!(await saveCurrentQuiz(false))) return;
   if (guestTourRepo) {
+    if(extendedPreview)await extendedCall('publish',{quiz:guestTourRepo.getQuiz(state.currentQuiz.id),questions:guestTourRepo.getQuestions(state.currentQuiz.id)});
     guestTourRepo.publish(state.currentQuiz.id);
     state.currentQuiz = guestTourRepo.getQuiz(state.currentQuiz.id);
     showPublish(state.currentQuiz.id);
@@ -6364,7 +6378,7 @@ $("releasePracticeSolutionsBtn")?.addEventListener("click", async () => {
 });
 
 $("backFromPublish").addEventListener("click", () => openEditor(state.currentQuiz?.id || $("publishedCode").textContent));
-$("openPublishedStudentBtn").addEventListener("click", () => loadStudentQuiz($("publishedCode").textContent));
+$("openPublishedStudentBtn").addEventListener("click", () => extendedPreview?location.assign('/secure-student.html?test=EXTENDED'):loadStudentQuiz($("publishedCode").textContent));
 $("copyCodeBtn").addEventListener("click", () => copyText($("publishedCode").textContent, "Testcode kopiert."));
 $("copyLinkBtn").addEventListener("click", () => copyText($("publishedLink").value, "Link kopiert."));
 
@@ -6382,8 +6396,8 @@ async function showPublish(code) {
     const quiz = guestTourRepo.getQuiz(code);
     if (!quiz) return;
     state.currentQuiz = quiz;
-    $("publishedCode").textContent = code;
-    $("publishedLink").value = guestCopy('localLink', 'Nur lokaler Übungstest – kein öffentlicher Link');
+    $("publishedCode").textContent = extendedPreview?"EXTENDED":code;
+    $("publishedLink").value = extendedPreview?location.origin+'/secure-student.html?test=EXTENDED':guestCopy('localLink', 'Nur lokaler Übungstest – kein öffentlicher Link');
     $("qrcode").textContent = guestCopy('noQr', 'Lokales Tutorial ohne QR-Zugang');
     $("teacherLivePanel")?.replaceChildren();
     showView('publishView');
@@ -7733,6 +7747,7 @@ async function openResults(code) {
     state.currentResultsQuiz = quiz;
     state.resultQuestions = guestTourRepo.getQuestions(code);
     state.submissions = guestTourRepo.getSubmissions(code);
+    if(extendedPreview){const snapshot=await extendedCall('results',{});state.submissions=snapshot.submissions;state.resultQuestions=snapshot.questions;state.currentResultsQuiz={...quiz,...snapshot.quiz};}
     $("resultsHeading").textContent = quiz.title;
     $("resultsMeta").textContent = guestCopy('resultsMeta', `${state.submissions.length} Übungsabgabe · ${quiz.totalPoints || 0} Punkte maximal · nur lokal`, { count: state.submissions.length, points: quiz.totalPoints || 0 });
     showView('resultsView');
@@ -7897,6 +7912,7 @@ async function saveReview(submissionId) {
   const scale = submission.gradeScaleSnapshot?.thresholds?.length === 6 ? submission.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
   const grade = gradeFromPercent(percent, scale);
   if (guestTourRepo) {
+    if(extendedPreview){await extendedCall('review',{submissionId,points:Object.fromEntries(Object.entries(grading).map(([id,g])=>[id,g.awardedPoints]))});await openResults(state.currentResultsQuiz.id);return;}
     guestTourRepo.grade(state.currentResultsQuiz.id, submissionId, {
       grading, totalPoints: total, maxPoints: max, percent, grade,
       gradeScaleSnapshot: scale, status: 'graded', reviewedBy: 'local-tour'
@@ -9323,6 +9339,21 @@ if (["production", "staging", "local-review"].includes(appEnvironment)) {
   });
   fetch("./release.json", {cache:"no-store"}).then(r => r.json()).then(r => { reviewBuild = r.commit || ""; }).catch(() => {});
   if (localReview) {
+    document.addEventListener('gradecrew:extended-start',async()=>{
+      if(appEnvironment!=='local-review')return;
+      state.extendedFormats=(await import('./tools/extended-preview/format-policy.mjs')).LAB_FORMATS;extendedPreview=true;state.user={uid:'local-tour',email:'lokales-beispiel@example.invalid'};state.profile={role:'teacher',displayName:'Lokale Lehrkraft'};state.guestTourUid='local-tour';guestTourRepo=createLocalTourRepository();
+      const saved=await extendedCall('teacher',{});if(saved.removedCount)toast(saved.removedCount+' Aufgaben aus ausgeschalteten Formaten ausgeblendet. Die bisherige Fassung bleibt gesichert.');
+      if(saved.test){const code=guestTourRepo.create({...quizDefaults(),...saved.test});guestTourRepo.save(code,{timeLimitMinutes:0,tutorialReady:true},guestTourRepo.getQuestions(code));await openEditor(code);}else{await openAiView();prefillTutorialRequest();$('aiTopic').value='Visuelle Aufgaben';$('aiSubject').value='Fächerübergreifender Formatvergleich';$('aiGrade').value='5–10';$('aiSchoolType').value='Mittelschule';$('aiCount').value='9';$('aiPoints').value='24';}
+    });
+    document.addEventListener('gradecrew:extended-showcase',async event=>{
+      if(!extendedPreview||appEnvironment!=='local-review')return;
+      extendedVariant=[1,2,3].includes(Number(event.detail?.variant))?Number(event.detail.variant):1;
+      await openAiView();prefillTutorialRequest();$('aiTopic').value='Visuelle Aufgaben';$('aiSubject').value='Fächerübergreifender Formatvergleich';$('aiGrade').value='6';$('aiCount').value='9';$('aiPoints').value='24';$('aiImageQuestionCount').value='0';document.querySelectorAll('#aiTypeChecks input').forEach(c=>c.checked=c.value==='visual');const response=await extendedCall('generate',{variant:extendedVariant,currentDraft:extendedCurrentDraft()});await openExtendedGeneratedTest(response.test);
+    });
+    document.addEventListener('gradecrew:extended-drafts',async()=>{if(!extendedPreview)return;try{const {drafts}=await extendedCall('drafts');showExtendedDrafts(drafts);}catch(e){toast(e.message,'error');}});
+    document.addEventListener('gradecrew:extended-tables',async()=>{if(!extendedPreview)return;try{const response=await extendedCall('table-examples',{currentDraft:extendedCurrentDraft()});await openExtendedGeneratedTest(response.test);}catch(e){toast(e.message,'error');}});
+    document.addEventListener('gradecrew:extended-ai',async()=>{if(!extendedPreview)return;await openAiView();$('aiSubject').value='Mathematik';$('aiGrade').value='6';$('aiTopic').value='Winkel, Koordinaten und Prozentrechnung';$('aiCount').value='9';$('aiPoints').value='24';for(const id of ['aiImageQuestionCount','aiAudioQuestionCount','aiSolutionAudioQuestionCount','aiAudioAnswerQuestionCount'])if($(id))$(id).value='0';document.querySelectorAll('#aiTypeChecks input').forEach(c=>{c.checked=c.value==='visual';});setAiProgress('Fach, Klasse und Thema wählen, dann mit Remy neu erstellen.');});
+    document.addEventListener('gradecrew:extended-ai-resume',async()=>{if(!extendedPreview||state.extendedAiRunning)return;state.extendedAiRunning=true;try{const recovered=await resumeExtendedAi({onProgress:message=>toast(message)});const m=await import('./tools/extended-preview/recovery-dialog.mjs');m.showRecoveredAi(recovered,{openTest:async test=>{if(state.currentQuiz&&!(await saveCurrentQuiz(false)))throw Error('Der aktuelle Entwurf konnte nicht gesichert werden.');await openExtendedGeneratedTest(test);},acknowledge:async id=>{const c=await import('./tools/extended-preview/ai-client.mjs');c.acknowledgeExtendedAi(id);}});}catch(e){toast(e.message,'error');}finally{state.extendedAiRunning=false;}});
     let sceneWork = Promise.resolve();
     document.addEventListener("gradecrew:review-scene", event => {
       const scene = event.detail?.scene;
@@ -9358,3 +9389,20 @@ if (["production", "staging", "local-review"].includes(appEnvironment)) {
 }
 
 window.addEventListener("gradecrew:visual-note-saved",()=>toast("Screenshot-Hinweis in Feedback gespeichert."));
+
+async function extendedCall(action,data={}){const r=await fetch('/__extended/'+action,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const d=await r.json();if(!r.ok)throw Error(d.message||'Lokaler Beispielaufruf fehlgeschlagen.');return d;}
+
+async function openExtendedGeneratedTest(test){guestTourRepo=createLocalTourRepository();const code=guestTourRepo.create({...quizDefaults(),...test});guestTourRepo.save(code,{timeLimitMinutes:0,tutorialReady:true},guestTourRepo.getQuestions(code));await openEditor(code);}
+
+async function runExtendedAi(...args){const m=await import('./tools/extended-preview/ai-client.mjs');return m.runExtendedAi(...args);}
+async function resumeExtendedAi(...args){const m=await import('./tools/extended-preview/ai-client.mjs');return m.resumeExtendedAi(...args);}
+
+function extendedCurrentDraft(){if(!state.currentQuiz||!state.questions?.length)return null;return {...deepClone(state.currentQuiz),title:$('quizTitle')?.value||state.currentQuiz.title,subject:$('quizSubject')?.value||state.currentQuiz.subject,grade:$('quizGrade')?.value||state.currentQuiz.grade,questions:deepClone(state.questions)};}
+function showExtendedDrafts(drafts){const dialog=document.createElement('dialog');dialog.style.cssText='max-width:700px;max-height:80vh;overflow:auto';const title=document.createElement('h2');title.textContent='Gesicherte Entwürfe';dialog.append(title);if(!drafts.length){const p=document.createElement('p');p.textContent='Noch keine früheren Entwürfe gesichert.';dialog.append(p);}for(const draft of drafts){const button=document.createElement('button');button.type='button';button.className='button secondary';button.style.cssText='display:block;margin:10px 0';button.textContent=draft.title+' · '+draft.questionCount+' Aufgaben · '+new Date(draft.at).toLocaleString('de-DE');button.addEventListener('click',async()=>{try{const r=await extendedCall('restore-draft',{id:draft.id,currentDraft:extendedCurrentDraft()});await openExtendedGeneratedTest(r.test);dialog.close();dialog.remove();}catch(e){toast(e.message,'error');}});dialog.append(button);}const close=document.createElement('button');close.type='button';close.className='button';close.textContent='Schließen';close.addEventListener('click',()=>{dialog.close();dialog.remove();});dialog.append(close);document.body.append(dialog);dialog.showModal();}
+
+// Explicit online preview activation keeps real authentication, storage and AI jobs.
+if(hostedVisualLab){
+ import('./tools/extended-preview/format-policy.mjs').then(m=>{state.extendedFormats=m.LAB_FORMATS;});
+ document.addEventListener('gradecrew:hosted-lab-ai',async()=>{if(!state.user||guestTourRepo)return toast('Bitte mit deinem freigegebenen Testkonto anmelden.','error');if(state.currentQuiz&&state.isDirty&&!(await saveCurrentQuiz(false)))return;await openAiView();$('aiSubject').value='Mathematik';$('aiGrade').value='7';$('aiTopic').value='Dreisatz und Prozentrechnung';$('aiCount').value='4';$('aiPoints').value='14';$('aiCustomNotes').value='Direkten und umgekehrten Dreisatz mit vier unabhängigen Rechenpfeilen erstellen. Unterschiedliche Hilfestufen links und rechts; auch Zeichen auswählen und ganze Rechnung frei.';});
+ document.addEventListener('gradecrew:hosted-lab-examples',async()=>{try{if(!state.user||guestTourRepo)throw Error('Bitte mit deinem freigegebenen Testkonto anmelden.');if(state.currentQuiz&&!(await saveCurrentQuiz(false)))return;const {makeTableExamples}=await import('./table-examples.mjs'),data=makeTableExamples(globalThis.GC2),{questions,...meta}=data;const {code}=await createQuizDocument({...meta,questionCount:questions.length,totalPoints:questions.reduce((s,q)=>s+q.points,0),showSolutions:false});const batch=writeBatch(db);questions.forEach((q,i)=>batch.set(doc(db,'quizzes',code,'questions','example-'+(i+1)),{...sanitizeQuestionForSave(q),updatedAt:serverTimestamp()}));await batch.commit();await openEditor(code);}catch(e){toast(e.message,'error');}});
+}

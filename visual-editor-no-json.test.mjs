@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createRequire} from 'node:module';
+const require=createRequire(import.meta.url);
+const {JSDOM}=require('jsdom');
+globalThis.GC2=require('./visual/core.js');
+const {renderVisualEditor,VISUAL_FORMATS,parseVisualTask}=await import('./visual-tasks.mjs');
+function editor(q,options){const d=new JSDOM('<main></main>');globalThis.document=d.window.document;globalThis.GCRenderer={mount(host,task){host.textContent=task.prompt;return {destroy(){},getAnswer(){return null;}};}};const host=document.querySelector('main');let changes=0;renderVisualEditor(host,q,()=>changes++,options);return {host,win:d.window,changes:()=>changes};}
+test('teacher sees preview and solution for every visual format without a raw-data editor',()=>{for(const format of VISUAL_FORMATS){const task=GC2.example(format),q={type:'visual',text:task.prompt,points:task.maxPoints,visualTask:JSON.stringify(task)},original=q.visualTask;const {host,win,changes}=editor(q);assert.equal(host.querySelector('textarea'),null,format);assert(!host.textContent.includes('Aufgabendaten (JSON)'));assert(!host.textContent.includes('Darstellung und Lösung bearbeiten'));assert(host.textContent.includes('Lösung:'));assert.equal(q.visualTask,original);const select=host.querySelector('select');select.value=format==='grid'?'angle':'grid';select.dispatchEvent(new win.Event('change'));assert.equal(parseVisualTask(q).format,select.value);assert.equal(changes(),1);}});
+test('invalid task gets a plain recovery message and never exposes its internal payload',()=>{const q={type:'visual',visualTask:'{"private":"broken task"'};const {host}=editor(q);assert.equal(host.querySelector('textarea'),null);assert(!host.textContent.includes(q.visualTask));assert.match(host.textContent,/Emmi/);assert.equal(q.visualTask,'{"private":"broken task"');});
+
+test('local laboratory menu restricts to eight while default renderer keeps historical contracts',async()=>{const {LAB_FORMATS}=await import('./tools/extended-preview/format-policy.mjs');const t=GC2.example('table'),q={type:'visual',points:t.maxPoints,visualTask:JSON.stringify(t)};const {host}=editor(q,{formats:LAB_FORMATS});assert.deepEqual([...host.querySelector('select').options].map(o=>o.value),LAB_FORMATS);assert.equal(editor(q).host.querySelector('select').options.length,12);});
+test('table solution labels use positions and column names instead of internal IDs',async()=>{const {makeTableExamples}=await import('./tools/extended-preview/table-examples.mjs');const {visualSolution}=await import('./visual-tasks.mjs');const solution=visualSolution(makeTableExamples().questions[1]);assert(!solution.includes('r2c4'));assert.match(solution,/Zeile 2 · Zahl links: 100/);});

@@ -1,0 +1,126 @@
+{
+  "quiz": {
+    "questionCount": 4,
+    "requiresSecureAssessmentRules": false,
+    "updatedAt": "2026-10-26T19:25:07.353Z",
+    "showSolutions": true,
+    "creationContext": {
+      "contentLocale": "de-DE",
+      "region": "Bayern",
+      "topic": "Sprachformen, Größenumrechnung und Mengen-Preis-Zusammenhänge",
+      "difficulty": "mittel",
+      "learningGoals": [],
+      "schoolType": "Mittelschule"
+    },
+    "qualityWarnings": [],
+    "totalPoints": 8,
+    "ended": false,
+    "published": false,
+    "qualityIssues": [],
+    "solutionAudioQuestionCount": 0,
+    "audioQuestionCount": 0,
+    "title": "Sprachformen, Größen und Preise",
+    "shuffleAnswers": false,
+    "isDeleted": false,
+    "listeningOnlyQuestionCount": 0,
+    "solutionAudioReady": true,
+    "contentLocale": "de-DE",
+    "shuffleQuestions": false,
+    "gradeScaleId": "standard",
+    "localeContractVersion": 1,
+    "resultMode": "points_grade",
+    "description": "Viel Erfolg beim Test!",
+    "createdAt": "2026-10-26T19:25:06.740Z",
+    "pedagogicalPool": {
+      "profileIds": [],
+      "profileCount": 0,
+      "status": "no_match",
+      "version": "gc-pedagogy-pool-v1"
+    },
+    "shareEnabled": false,
+    "subject": "Englisch / Natur und Technik / Wirtschaft",
+    "generationJobId": "67b8447b01cbffcd5712757d0933d98145b0bf48",
+    "ownerId": "gc-visual255-e2e",
+    "rightsHold": false,
+    "startMode": "student",
+    "gradeScaleSnapshot": {
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "name": "Standard",
+      "id": "standard"
+    },
+    "audioReady": true,
+    "accessCode": "K8WKRD3G",
+    "audioAnswerQuestionCount": 0,
+    "grade": "8",
+    "gradingLocale": "de-DE",
+    "sessionState": "open",
+    "generationStatus": "ready",
+    "id": "K8WKRD3G"
+  },
+  "questions": [
+    {
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"englisch-vergangenheitsformen-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Englische Vergangenheitsformen\",\"subject\":\"Englisch\",\"grade\":\"8\",\"prompt\":\"Ergänze die vier fehlenden englischen Vergangenheitsformen in der Tabelle.\",\"hint\":\"Trage jeweils die passende Form in der einfachen Vergangenheit ein.\",\"objective\":\"Unregelmäßige englische Verben in der einfachen Vergangenheit bilden.\",\"rationale\":\"Die Tabelle prüft die sichere Zuordnung von englischen Grundformen zu ihren Vergangenheitsformen.\",\"sourceNote\":\"Eigenständig erstellte Aufgabe.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Grundform\",\"Vergangenheitsform\"],\"rows\":[[{\"id\":\"verb1\",\"text\":\"go\",\"input\":false},{\"id\":\"past1\",\"text\":\"\",\"input\":true}],[{\"id\":\"verb2\",\"text\":\"be\",\"input\":false},{\"id\":\"past2\",\"text\":\"\",\"input\":true}],[{\"id\":\"verb3\",\"text\":\"have\",\"input\":false},{\"id\":\"past3\",\"text\":\"\",\"input\":true}],[{\"id\":\"verb4\",\"text\":\"see\",\"input\":false},{\"id\":\"past4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\"},\"solution\":{\"cells\":[{\"id\":\"past1\",\"accepted\":[\"went\"]},{\"id\":\"past2\",\"accepted\":[\"was\",\"were\"]},{\"id\":\"past3\",\"accepted\":[\"had\"]},{\"id\":\"past4\",\"accepted\":[\"saw\"]}]}}",
+      "position": 1,
+      "text": "Ergänze die vier fehlenden englischen Vergangenheitsformen in der Tabelle.",
+      "updatedAt": "2026-10-26T19:25:06.832Z",
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q001"
+    },
+    {
+      "points": 2,
+      "type": "visual",
+      "updatedAt": "2026-10-26T19:25:06.966Z",
+      "position": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"groessenumrechnung-tabelle-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Größen umrechnen\",\"subject\":\"Natur und Technik\",\"grade\":\"8\",\"prompt\":\"Wandle die angegebenen Größen in die jeweils geforderte Einheit um.\",\"hint\":\"Achte auf den Umrechnungsfaktor zwischen den Einheiten.\",\"objective\":\"Längen- und Masseneinheiten sicher umrechnen.\",\"rationale\":\"Die vier Tabellenfelder prüfen Umrechnungen zwischen benachbarten beziehungsweise gebräuchlichen Einheiten.\",\"sourceNote\":\"Eigenständig erstellte Aufgabe.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Ausgangswert\",\"Gesuchte Einheit\",\"Ergebnis\"],\"rows\":[[{\"id\":\"conv1a\",\"text\":\"4,2 m\",\"input\":false},{\"id\":\"conv1b\",\"text\":\"cm\",\"input\":false},{\"id\":\"conv1c\",\"text\":\"\",\"input\":true}],[{\"id\":\"conv2a\",\"text\":\"580 cm\",\"input\":false},{\"id\":\"conv2b\",\"text\":\"m\",\"input\":false},{\"id\":\"conv2c\",\"text\":\"\",\"input\":true}],[{\"id\":\"conv3a\",\"text\":\"3,5 kg\",\"input\":false},{\"id\":\"conv3b\",\"text\":\"g\",\"input\":false},{\"id\":\"conv3c\",\"text\":\"\",\"input\":true}],[{\"id\":\"conv4a\",\"text\":\"7500 g\",\"input\":false},{\"id\":\"conv4b\",\"text\":\"kg\",\"input\":false},{\"id\":\"conv4c\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"conv1c\",\"accepted\":[\"420\"]},{\"id\":\"conv2c\",\"accepted\":[\"5,8\",\"5.8\"]},{\"id\":\"conv3c\",\"accepted\":[\"3500\"]},{\"id\":\"conv4c\",\"accepted\":[\"7,5\",\"7.5\"]}]}}",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "Wandle die angegebenen Größen in die jeweils geforderte Einheit um.",
+      "id": "q002"
+    },
+    {
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"mengen-preis-koordinaten-0\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Mengen und Preise im Koordinatensystem\",\"subject\":\"Wirtschaft\",\"grade\":\"8\",\"prompt\":\"Stelle die vier Mengen-Preis-Paare als Punkte in einem Koordinatensystem dar. Auf der waagerechten Achse steht die Anzahl, auf der senkrechten Achse der Preis in Euro. Trage P₁(1|3), P₂(2|6), P₃(3|9) und P₄(4|12) ein.\",\"hint\":\"Lies zuerst die Anzahl auf der x-Achse und danach den Preis auf der y-Achse ab.\",\"objective\":\"Mengen-Preis-Paare in einem Koordinatensystem darstellen.\",\"rationale\":\"Die Aufgabe prüft, ob Mengen und die zugehörigen Preise als geordnete Zahlenpaare korrekt eingetragen werden.\",\"sourceNote\":\"Eigenständig erstellte Aufgabe.\",\"maxPoints\":2,\"spec\":{\"mode\":\"points\",\"minX\":0,\"maxX\":6,\"minY\":0,\"maxY\":12,\"step\":1,\"labels\":[\"P₁\",\"P₂\",\"P₃\",\"P₄\"]},\"solution\":{\"points\":[{\"x\":1,\"y\":3},{\"x\":2,\"y\":6},{\"x\":3,\"y\":9},{\"x\":4,\"y\":12}]}}",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "text": "Stelle die vier Mengen-Preis-Paare als Punkte in einem Koordinatensystem dar. Auf der waagerechten Achse steht die Anzahl, auf der senkrechten Achse der Preis in Euro. Trage P₁(1|3), P₂(2|6), P₃(3|9) und P₄(4|12) ein.",
+      "updatedAt": "2026-10-26T19:25:07.090Z",
+      "position": 3,
+      "type": "visual",
+      "id": "q003"
+    },
+    {
+      "updatedAt": "2026-10-26T19:25:07.238Z",
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"einkaufsvorgaenge-preise-0\",\"revision\":0,\"format\":\"connections\",\"title\":\"Mengen und Gesamtpreise verbinden\",\"subject\":\"Wirtschaft\",\"grade\":\"8\",\"prompt\":\"Verbinde jeden Einkaufsvorgang mit dem passenden Gesamtpreis. Jede Verbindung darf nur einmal verwendet werden.\",\"hint\":\"Verbinde jeweils die gesamte gekaufte Menge mit dem dazugehörigen Gesamtpreis.\",\"objective\":\"Gesamtpreise aus Menge und Stückpreis bestimmen und zuordnen.\",\"rationale\":\"Die Verbindungen prüfen, ob Mengen-Preis-Zusammenhänge durch Multiplikation des Stückpreises erkannt werden.\",\"sourceNote\":\"Eigenständig erstellte Aufgabe.\",\"maxPoints\":2,\"spec\":{\"directed\":false,\"nodes\":[{\"id\":\"buy1\",\"label\":\"2 Notizbücher à 2,50 €\",\"x\":110,\"y\":70},{\"id\":\"buy2\",\"label\":\"3 Trinkflaschen à 4,00 €\",\"x\":110,\"y\":145},{\"id\":\"buy3\",\"label\":\"5 Stifte à 1,20 €\",\"x\":110,\"y\":220},{\"id\":\"buy4\",\"label\":\"4 Hefter à 3,50 €\",\"x\":110,\"y\":285},{\"id\":\"price1\",\"label\":\"5,00 €\",\"x\":590,\"y\":70},{\"id\":\"price2\",\"label\":\"12,00 €\",\"x\":590,\"y\":145},{\"id\":\"price3\",\"label\":\"6,00 €\",\"x\":590,\"y\":220},{\"id\":\"price4\",\"label\":\"14,00 €\",\"x\":590,\"y\":285}]},\"solution\":{\"edges\":[[\"buy1\",\"price1\"],[\"buy2\",\"price2\"],[\"buy3\",\"price3\"],[\"buy4\",\"price4\"]]}}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "text": "Verbinde jeden Einkaufsvorgang mit dem passenden Gesamtpreis. Jede Verbindung darf nur einmal verwendet werden.",
+      "points": 2,
+      "position": 4,
+      "id": "q004"
+    }
+  ],
+  "errors": []
+}

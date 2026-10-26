@@ -1,0 +1,110 @@
+{
+  "id": "P06",
+  "row": {
+    "id": "P06",
+    "subject": "Deutsch",
+    "grade": 7,
+    "title": "Satzbau und Textbelege",
+    "goal": "Satzglieder unterscheiden, kurze eigene Alltagstexte verstehen und Aussagen anhand vollständiger Textstellen belegen",
+    "formats": [
+      "labeling",
+      "evidence",
+      "correction",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-06-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:00:19.687Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-06-A",
+    "subject": "Deutsch",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Satzbau und Textbelege: Satzglieder unterscheiden, kurze eigene Alltagstexte verstehen und Aussagen anhand vollständiger Textstellen belegen",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus labeling, evidence, correction, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "c7a87efa9e6718773b39e0f4ea23fd8cf60b1fa5",
+  "dispatch": {
+    "jobId": "c7a87efa9e6718773b39e0f4ea23fd8cf60b1fa5"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:04:35.026Z",
+  "job": {
+    "imageCompleted": 0,
+    "sourceQuizId": "",
+    "dispatchState": "enqueued",
+    "subject": "Deutsch",
+    "ownerId": "gc-visual255-e2e",
+    "answerAudioTotal": 0,
+    "input": {
+      "subject": "Deutsch",
+      "materialMode": "inspiration",
+      "imageMode": "none",
+      "exactImageCounts": false,
+      "maxVisualQuestions": 0,
+      "exactAudioCounts": false,
+      "points": 16,
+      "allowImageChoices": false,
+      "allowedTypes": [
+        "visual"
+      ],
+      "schoolType": "Mittelschule",
+      "audioMode": "none",
+      "difficulty": "mittel bis anspruchsvoll",
+      "audioAnswerQuestionCount": 0,
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus labeling, evidence, correction, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "audioQuestionCount": 0,
+      "clientRequestId": "VIS24-20261025-06-A",
+      "pedagogicalContextKnown": true,
+      "solutionAudioQuestionCount": 0,
+      "region": "Bayern",
+      "topic": "Satzbau und Textbelege: Satzglieder unterscheiden, kurze eigene Alltagstexte verstehen und Aussagen anhand vollständiger Textstellen belegen",
+      "grade": "7",
+      "count": 8
+    },
+    "qualityIssues": [],
+    "solutionAudioCompleted": 0,
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "profileIds": [],
+      "status": "no_match",
+      "version": "gc-pedagogy-pool-v1"
+    },
+    "imageTotal": 0,
+    "solutionAudioTotal": 0,
+    "updatedAt": "2026-10-25T10:04:27.975Z",
+    "audioCompleted": 0,
+    "requestedCount": 8,
+    "createdAt": "2026-10-25T10:00:19.768Z",
+    "audioTotal": 0,
+    "requestId": "VIS24-20261025-06-A",
+    "completedAt": "2026-10-25T10:04:27.975Z",
+    "materials": [],
+    "topic": "Satzbau und Textbelege: Satzglieder unterscheiden, kurze eigene Alltagstexte verstehen und Aussagen anhand vollständiger Textstellen belegen",
+    "grade": "7",
+    "quizId": "TZ26WDJR",
+    "generationMode": "generated",
+    "percent": 100,
+    "answerAudioCompleted": 0,
+    "qualityWarnings": [],
+    "stage": "ready",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "startedAt": "2026-10-25T10:00:21.131Z",
+    "completedCount": 8,
+    "status": "ready",
+    "id": "c7a87efa9e6718773b39e0f4ea23fd8cf60b1fa5"
+  },
+  "quizId": "TZ26WDJR"
+}

@@ -1,0 +1,110 @@
+{
+  "id": "P11",
+  "row": {
+    "id": "P11",
+    "subject": "Englisch",
+    "grade": 8,
+    "title": "Travel and communication",
+    "goal": "Eigene kurze englische Reiseinformationen und Dialoge, eindeutige Zeitformenfehler und Textbelege",
+    "formats": [
+      "evidence",
+      "table",
+      "correction",
+      "connections"
+    ],
+    "requestId": "VIS24-20261025-11-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:10:33.695Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-11-A",
+    "subject": "Englisch",
+    "grade": "8",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Travel and communication: Eigene kurze englische Reiseinformationen und Dialoge, eindeutige Zeitformenfehler und Textbelege",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus evidence, table, correction, connections. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "e1ec0418f1068a5e94aeb28b17745790db509441",
+  "dispatch": {
+    "jobId": "e1ec0418f1068a5e94aeb28b17745790db509441"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:12:05.824Z",
+  "job": {
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "audioCompleted": 0,
+    "quizId": "XH2JWU72",
+    "qualityWarnings": [],
+    "requestedCount": 8,
+    "sourceQuizId": "",
+    "audioTotal": 0,
+    "completedCount": 8,
+    "generationMode": "generated",
+    "completedAt": "2026-10-25T10:12:00.749Z",
+    "startedAt": "2026-10-25T10:10:34.213Z",
+    "materials": [],
+    "solutionAudioTotal": 0,
+    "grade": "8",
+    "qualityIssues": [],
+    "updatedAt": "2026-10-25T10:12:00.749Z",
+    "stage": "ready",
+    "answerAudioCompleted": 0,
+    "answerAudioTotal": 0,
+    "topic": "Travel and communication: Eigene kurze englische Reiseinformationen und Dialoge, eindeutige Zeitformenfehler und Textbelege",
+    "status": "ready",
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "status": "no_match",
+      "profileIds": [],
+      "version": "gc-pedagogy-pool-v1"
+    },
+    "ownerId": "gc-visual255-e2e",
+    "dispatchState": "enqueued",
+    "input": {
+      "exactAudioCounts": false,
+      "region": "Bayern",
+      "subject": "Englisch",
+      "audioMode": "none",
+      "difficulty": "mittel bis anspruchsvoll",
+      "solutionAudioQuestionCount": 0,
+      "imageMode": "none",
+      "grade": "8",
+      "maxVisualQuestions": 0,
+      "points": 16,
+      "count": 8,
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus evidence, table, correction, connections. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "allowedTypes": [
+        "visual"
+      ],
+      "clientRequestId": "VIS24-20261025-11-A",
+      "audioQuestionCount": 0,
+      "materialMode": "inspiration",
+      "exactImageCounts": false,
+      "topic": "Travel and communication: Eigene kurze englische Reiseinformationen und Dialoge, eindeutige Zeitformenfehler und Textbelege",
+      "schoolType": "Mittelschule",
+      "audioAnswerQuestionCount": 0,
+      "allowImageChoices": false,
+      "pedagogicalContextKnown": true
+    },
+    "solutionAudioCompleted": 0,
+    "requestId": "VIS24-20261025-11-A",
+    "percent": 100,
+    "imageCompleted": 0,
+    "createdAt": "2026-10-25T10:10:33.783Z",
+    "subject": "Englisch",
+    "imageTotal": 0,
+    "id": "e1ec0418f1068a5e94aeb28b17745790db509441"
+  },
+  "quizId": "XH2JWU72"
+}

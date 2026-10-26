@@ -1,0 +1,110 @@
+{
+  "id": "P08",
+  "row": {
+    "id": "P08",
+    "subject": "Deutsch",
+    "grade": 10,
+    "title": "Quellenkritik und Argumentationsanalyse",
+    "goal": "Eigene fiktive Quellen mit klaren Fakten nutzen, belegte Aussagen und Argumentationsbeziehungen prüfen",
+    "formats": [
+      "evidence",
+      "connections",
+      "table",
+      "correction"
+    ],
+    "requestId": "VIS24-20261025-08-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:07:18.615Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-08-A",
+    "subject": "Deutsch",
+    "grade": "10",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Quellenkritik und Argumentationsanalyse: Eigene fiktive Quellen mit klaren Fakten nutzen, belegte Aussagen und Argumentationsbeziehungen prüfen",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus evidence, connections, table, correction. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "8fec317b53bfa0a16250573d320349f102d18ccc",
+  "dispatch": {
+    "jobId": "8fec317b53bfa0a16250573d320349f102d18ccc"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:08:09.977Z",
+  "job": {
+    "grade": "10",
+    "audioTotal": 0,
+    "pedagogicalPool": {
+      "profileIds": [],
+      "status": "no_match",
+      "profileCount": 0,
+      "version": "gc-pedagogy-pool-v1"
+    },
+    "answerAudioCompleted": 0,
+    "status": "ready",
+    "stage": "ready",
+    "dispatchState": "enqueued",
+    "ownerId": "gc-visual255-e2e",
+    "generationMode": "generated",
+    "qualityIssues": [],
+    "subject": "Deutsch",
+    "audioCompleted": 0,
+    "imageTotal": 0,
+    "imageCompleted": 0,
+    "quizId": "R8DKGGLD",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "completedCount": 8,
+    "answerAudioTotal": 0,
+    "createdAt": "2026-10-25T10:07:18.715Z",
+    "startedAt": "2026-10-25T10:07:19.172Z",
+    "topic": "Quellenkritik und Argumentationsanalyse: Eigene fiktive Quellen mit klaren Fakten nutzen, belegte Aussagen und Argumentationsbeziehungen prüfen",
+    "updatedAt": "2026-10-25T10:08:05.051Z",
+    "solutionAudioCompleted": 0,
+    "percent": 100,
+    "input": {
+      "audioMode": "none",
+      "subject": "Deutsch",
+      "solutionAudioQuestionCount": 0,
+      "pedagogicalContextKnown": true,
+      "allowImageChoices": false,
+      "exactAudioCounts": false,
+      "materialMode": "inspiration",
+      "audioQuestionCount": 0,
+      "count": 8,
+      "imageMode": "none",
+      "difficulty": "mittel bis anspruchsvoll",
+      "maxVisualQuestions": 0,
+      "grade": "10",
+      "exactImageCounts": false,
+      "points": 16,
+      "clientRequestId": "VIS24-20261025-08-A",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus evidence, connections, table, correction. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "topic": "Quellenkritik und Argumentationsanalyse: Eigene fiktive Quellen mit klaren Fakten nutzen, belegte Aussagen und Argumentationsbeziehungen prüfen",
+      "schoolType": "Mittelschule",
+      "audioAnswerQuestionCount": 0,
+      "region": "Bayern",
+      "allowedTypes": [
+        "visual"
+      ]
+    },
+    "completedAt": "2026-10-25T10:08:05.051Z",
+    "requestedCount": 8,
+    "solutionAudioTotal": 0,
+    "materials": [],
+    "qualityWarnings": [],
+    "sourceQuizId": "",
+    "requestId": "VIS24-20261025-08-A",
+    "id": "8fec317b53bfa0a16250573d320349f102d18ccc"
+  },
+  "quizId": "R8DKGGLD"
+}

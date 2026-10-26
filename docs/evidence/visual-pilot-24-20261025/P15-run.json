@@ -1,0 +1,119 @@
+{
+  "id": "P15",
+  "row": {
+    "id": "P15",
+    "subject": "Natur und Technik",
+    "grade": 8,
+    "title": "Kraft, Bewegung und Energie",
+    "goal": "Einfache Messreihen zu Weg und Zeit, Energieübertragungen und begründete Aussagen anhand mitgelieferter Daten",
+    "formats": [
+      "chart",
+      "coordinate",
+      "table",
+      "connections"
+    ],
+    "requestId": "VIS24-20261025-15-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:16:53.510Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-15-A",
+    "subject": "Natur und Technik",
+    "grade": "8",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Kraft, Bewegung und Energie: Einfache Messreihen zu Weg und Zeit, Energieübertragungen und begründete Aussagen anhand mitgelieferter Daten",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus chart, coordinate, table, connections. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "a62b26abddd1ff04ef6e3943ea5dd0aa0d52bbd4",
+  "dispatch": {
+    "jobId": "a62b26abddd1ff04ef6e3943ea5dd0aa0d52bbd4"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:19:26.195Z",
+  "job": {
+    "pedagogicalPool": {
+      "status": "no_match",
+      "profileIds": [],
+      "profileCount": 0,
+      "version": "gc-pedagogy-pool-v1"
+    },
+    "qualityIssues": [
+      {
+        "questionPosition": 7,
+        "questionId": "q007",
+        "reason": "ambiguous",
+        "detail": "Die Aufgabe beschreibt einen Wagen, der mit einer konstanten Kraft gezogen wird, verwendet aber in den beiden Messungen unterschiedliche Kräfte von 6 N und 9 N."
+      }
+    ],
+    "solutionAudioCompleted": 0,
+    "input": {
+      "subject": "Natur und Technik",
+      "clientRequestId": "VIS24-20261025-15-A",
+      "audioQuestionCount": 0,
+      "maxVisualQuestions": 0,
+      "imageMode": "none",
+      "topic": "Kraft, Bewegung und Energie: Einfache Messreihen zu Weg und Zeit, Energieübertragungen und begründete Aussagen anhand mitgelieferter Daten",
+      "allowImageChoices": false,
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus chart, coordinate, table, connections. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "audioMode": "none",
+      "exactImageCounts": false,
+      "difficulty": "mittel bis anspruchsvoll",
+      "exactAudioCounts": false,
+      "points": 16,
+      "materialMode": "inspiration",
+      "audioAnswerQuestionCount": 0,
+      "region": "Bayern",
+      "count": 8,
+      "solutionAudioQuestionCount": 0,
+      "allowedTypes": [
+        "visual"
+      ],
+      "grade": "8",
+      "pedagogicalContextKnown": true,
+      "schoolType": "Mittelschule"
+    },
+    "startedAt": "2026-10-25T10:16:54.615Z",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "imageTotal": 0,
+    "topic": "Kraft, Bewegung und Energie: Einfache Messreihen zu Weg und Zeit, Energieübertragungen und begründete Aussagen anhand mitgelieferter Daten",
+    "percent": 100,
+    "quizId": "3XBSMR7M",
+    "updatedAt": "2026-10-25T10:19:18.530Z",
+    "audioCompleted": 0,
+    "imageCompleted": 0,
+    "requestId": "VIS24-20261025-15-A",
+    "sourceQuizId": "",
+    "grade": "8",
+    "requestedCount": 8,
+    "answerAudioCompleted": 0,
+    "completedAt": "2026-10-25T10:19:18.530Z",
+    "qualityWarnings": [
+      "Aufgabe 7: ambiguous: Die Aufgabe beschreibt einen Wagen, der mit einer konstanten Kraft gezogen wird, verwendet aber in den beiden Messungen unterschiedliche Kräfte von 6 N und 9 N."
+    ],
+    "stage": "ready",
+    "status": "ready",
+    "completedCount": 8,
+    "ownerId": "gc-visual255-e2e",
+    "materials": [],
+    "answerAudioTotal": 0,
+    "audioTotal": 0,
+    "subject": "Natur und Technik",
+    "dispatchState": "enqueued",
+    "generationMode": "generated",
+    "createdAt": "2026-10-25T10:16:53.600Z",
+    "solutionAudioTotal": 0,
+    "id": "a62b26abddd1ff04ef6e3943ea5dd0aa0d52bbd4"
+  },
+  "quizId": "3XBSMR7M"
+}

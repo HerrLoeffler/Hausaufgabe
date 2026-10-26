@@ -1,0 +1,1 @@
+import {createRequire} from 'node:module';import {makeTableExamples as make} from '../../table-examples.mjs';const require=createRequire(import.meta.url),core=require('../../visual/core.js');export function makeTableExamples(){return make(core);}

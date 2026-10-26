@@ -1,0 +1,190 @@
+{
+  "pilotId": "P03",
+  "at": "2026-10-25T09:59:17.809Z",
+  "quiz": {
+    "shuffleQuestions": false,
+    "sessionState": "open",
+    "showSolutions": true,
+    "questionCount": 8,
+    "rightsHold": false,
+    "audioReady": true,
+    "solutionAudioQuestionCount": 0,
+    "ended": false,
+    "generationStatus": "ready",
+    "gradingLocale": "de-DE",
+    "grade": "8",
+    "title": "Prozentrechnung und lineare Zusammenhänge",
+    "listeningOnlyQuestionCount": 0,
+    "pedagogicalPool": {
+      "status": "no_match",
+      "version": "gc-pedagogy-pool-v1",
+      "profileCount": 0,
+      "profileIds": []
+    },
+    "updatedAt": "2026-10-25T09:59:17.201Z",
+    "requiresSecureAssessmentRules": false,
+    "gradeScaleId": "standard",
+    "resultMode": "points_grade",
+    "accessCode": "KYZW8JL7",
+    "gradeScaleSnapshot": {
+      "id": "standard",
+      "name": "Standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ]
+    },
+    "solutionAudioReady": true,
+    "totalPoints": 16,
+    "creationContext": {
+      "difficulty": "mittel bis anspruchsvoll",
+      "learningGoals": [],
+      "topic": "Prozentrechnung und lineare Zusammenhänge: Prozentanteile, Tabellen und lineare Wertpaare sowie Intervalle",
+      "contentLocale": "de-DE",
+      "schoolType": "Mittelschule",
+      "region": "Bayern"
+    },
+    "shareEnabled": false,
+    "subject": "Mathematik",
+    "audioQuestionCount": 0,
+    "startMode": "student",
+    "published": false,
+    "contentLocale": "de-DE",
+    "description": "Viel Erfolg beim Test!",
+    "createdAt": "2026-10-25T09:59:15.667Z",
+    "ownerId": "gc-visual255-e2e",
+    "qualityIssues": [],
+    "qualityWarnings": [],
+    "shuffleAnswers": false,
+    "audioAnswerQuestionCount": 0,
+    "isDeleted": false,
+    "localeContractVersion": 1,
+    "generationJobId": "ce27b9d41330ce885a02a457e354e346fffe3107",
+    "id": "KYZW8JL7"
+  },
+  "questions": [
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "points": 2,
+      "position": 1,
+      "type": "visual",
+      "updatedAt": "2026-10-25T09:59:15.803Z",
+      "text": "Markiere 35 % der gleich großen Kästchen.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozentanteil-kaestchen-01\",\"revision\":0,\"format\":\"grid\",\"title\":\"35 Prozent darstellen\",\"subject\":\"Mathematik\",\"grade\":\"8\",\"prompt\":\"Markiere 35 % der gleich großen Kästchen.\",\"hint\":\"Markiere genau so viele Kästchen, wie dem angegebenen Prozentanteil entsprechen.\",\"maxPoints\":2,\"spec\":{\"rows\":4,\"columns\":5},\"solution\":{\"count\":7},\"objective\":\"Einen Prozentanteil als Teil einer Gesamtmenge darstellen.\",\"rationale\":\"35 % von 20 gleich großen Kästchen entsprechen 7 Kästchen.\",\"sourceNote\":\"Eigenes fiktives Aufgabenbeispiel ohne externe Daten.\"}",
+      "id": "q001"
+    },
+    {
+      "position": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozentanteil-kaestchen-02\",\"revision\":0,\"format\":\"grid\",\"title\":\"62,5 Prozent darstellen\",\"subject\":\"Mathematik\",\"grade\":\"8\",\"prompt\":\"Markiere 62,5 % der gleich großen Kästchen.\",\"hint\":\"Alle Kästchen sind gleich groß. Markiere den passenden Anteil der Gesamtfläche.\",\"maxPoints\":2,\"spec\":{\"rows\":4,\"columns\":4},\"solution\":{\"count\":10},\"objective\":\"Einen Prozentanteil als Teil einer Gesamtmenge darstellen.\",\"rationale\":\"62,5 % von 16 gleich großen Kästchen entsprechen 10 Kästchen.\",\"sourceNote\":\"Eigenes fiktives Aufgabenbeispiel ohne externe Daten.\"}",
+      "type": "visual",
+      "text": "Markiere 62,5 % der gleich großen Kästchen.",
+      "points": 2,
+      "updatedAt": "2026-10-25T09:59:15.968Z",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "id": "q002"
+    },
+    {
+      "position": 3,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozenttabelle-01\",\"revision\":0,\"format\":\"table\",\"title\":\"Prozentanteile berechnen\",\"subject\":\"Mathematik\",\"grade\":\"8\",\"prompt\":\"Ergänze die fehlenden Prozentanteile. Berechne jeweils den Anteil bezogen auf den Grundwert.\",\"hint\":\"Verwende die Beziehung: Prozentanteil = Grundwert · Prozentsatz.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Grundwert\",\"Prozentsatz\",\"Prozentanteil\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"240\",\"input\":false},{\"id\":\"a2\",\"text\":\"15 %\",\"input\":false},{\"id\":\"a3\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"80\",\"input\":false},{\"id\":\"b2\",\"text\":\"35 %\",\"input\":false},{\"id\":\"b3\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"360\",\"input\":false},{\"id\":\"c2\",\"text\":\"12,5 %\",\"input\":false},{\"id\":\"c3\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a3\",\"accepted\":[\"36\",\"36,0\"]},{\"id\":\"b3\",\"accepted\":[\"28\",\"28,0\"]},{\"id\":\"c3\",\"accepted\":[\"45\",\"45,0\"]}]},\"objective\":\"Prozentanteile aus Grundwert und Prozentsatz berechnen.\",\"rationale\":\"Die fehlenden Werte ergeben sich durch Multiplikation des Grundwerts mit dem Prozentsatz als Dezimalzahl.\",\"sourceNote\":\"Eigenes fiktives Aufgabenbeispiel ohne externe Daten.\"}",
+      "type": "visual",
+      "points": 2,
+      "updatedAt": "2026-10-25T09:59:16.223Z",
+      "text": "Ergänze die fehlenden Prozentanteile. Berechne jeweils den Anteil bezogen auf den Grundwert.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "id": "q003"
+    },
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "text": "Ergänze die fehlenden Werte der linearen Zuordnung. Die Zuordnung folgt einer linearen Regel.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"lineare-tabelle-01\",\"revision\":1,\"format\":\"table\",\"title\":\"Lineare Wertpaare ergänzen\",\"subject\":\"Mathematik\",\"grade\":\"8\",\"prompt\":\"Ergänze die fehlenden Werte der linearen Zuordnung. Die Zuordnung folgt einer linearen Regel.\",\"hint\":\"Untersuche, wie sich der zweite Wert verändert, wenn der erste Wert um 1 steigt.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"x\",\"y\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"0\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"2\",\"input\":false},{\"id\":\"b2\",\"text\":\"9\",\"input\":false}],[{\"id\":\"c1\",\"text\":\"5\",\"input\":false},{\"id\":\"c2\",\"text\":\"\",\"input\":true}],[{\"id\":\"d1\",\"text\":\"8\",\"input\":false},{\"id\":\"d2\",\"text\":\"27\",\"input\":false}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"a2\",\"accepted\":[\"3\"]},{\"id\":\"c2\",\"accepted\":[\"18\"]}]},\"objective\":\"Fehlende Wertpaare einer linearen Zuordnung bestimmen.\",\"rationale\":\"Die Wertpaare gehören zur linearen Regel y = 3x + 3.\",\"sourceNote\":\"Eigenes fiktives Aufgabenbeispiel ohne externe Daten.\"}",
+      "position": 4,
+      "points": 2,
+      "updatedAt": "2026-10-25T09:59:16.370Z",
+      "id": "q004"
+    },
+    {
+      "type": "visual",
+      "text": "Ein fiktiver Lieferservice ordnet jeder Entfernung einen Lieferpreis zu. Trage die Wertpaare A(1 | 3), B(3 | 7) und C(5 | 11) in das Koordinatensystem ein.",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "updatedAt": "2026-10-25T09:59:16.525Z",
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"lieferpreise-wertpaare-ersatz-05\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Fiktive Lieferpreise als Wertpaare\",\"subject\":\"Mathematik\",\"grade\":\"8\",\"prompt\":\"Ein fiktiver Lieferservice ordnet jeder Entfernung einen Lieferpreis zu. Trage die Wertpaare A(1 | 3), B(3 | 7) und C(5 | 11) in das Koordinatensystem ein.\",\"hint\":\"Lies jedes Wertpaar als (x | y): zuerst die waagerechte, dann die senkrechte Koordinate. Die Buchstaben A, B und C gehören in der angegebenen Reihenfolge zu den drei Wertpaaren.\",\"objective\":\"Geordnete Zahlenpaare in einem Koordinatensystem darstellen und Wertpaare eindeutig zuordnen.\",\"rationale\":\"Die drei fiktiven Wertpaare werden den beschrifteten Punkten A, B und C eindeutig zugeordnet und im Koordinatensystem eingetragen.\",\"sourceNote\":\"Eigenes fiktives Aufgabenbeispiel ohne externe Daten.\",\"spec\":{\"mode\":\"points\",\"minX\":0,\"maxX\":6,\"minY\":0,\"maxY\":13,\"step\":1,\"labels\":[\"A\",\"B\",\"C\"]},\"solution\":{\"points\":[{\"x\":1,\"y\":3},{\"x\":3,\"y\":7},{\"x\":5,\"y\":11}]},\"maxPoints\":2}",
+      "position": 5,
+      "id": "q005"
+    },
+    {
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "text": "Ergänze die fehlenden Endpreise der fiktiven Angebote. Berechne den Preis nach Abzug des angegebenen Rabatts.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"rabattpreise-tabelle-08\",\"revision\":0,\"format\":\"table\",\"title\":\"Fiktive Angebote mit Rabatt\",\"subject\":\"Mathematik\",\"grade\":\"8\",\"prompt\":\"Ergänze die fehlenden Endpreise der fiktiven Angebote. Berechne den Preis nach Abzug des angegebenen Rabatts.\",\"hint\":\"Berechne zuerst den Rabattbetrag und ziehe ihn vom ursprünglichen Preis ab. Trage die Endpreise als Dezimalzahlen in Euro ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Fiktives Angebot\",\"Ursprünglicher Preis in Euro\",\"Rabatt in Prozent\",\"Endpreis in Euro\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Notizbuch\",\"input\":false},{\"id\":\"a2\",\"text\":\"80,00\",\"input\":false},{\"id\":\"a3\",\"text\":\"15\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Rucksack\",\"input\":false},{\"id\":\"b2\",\"text\":\"120,00\",\"input\":false},{\"id\":\"b3\",\"text\":\"25\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"Taschenrechner\",\"input\":false},{\"id\":\"c2\",\"text\":\"64,00\",\"input\":false},{\"id\":\"c3\",\"text\":\"12,5\",\"input\":false},{\"id\":\"c4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"68\",\"68,00\",\"68.00\"]},{\"id\":\"b4\",\"accepted\":[\"90\",\"90,00\",\"90.00\"]},{\"id\":\"c4\",\"accepted\":[\"56\",\"56,00\",\"56.00\"]}]},\"objective\":\"Prozentuale Rabatte berechnen und in einer Tabelle anwenden.\",\"rationale\":\"Die Endpreise ergeben sich jeweils aus dem ursprünglichen Preis vermindert um den angegebenen prozentualen Rabatt.\",\"sourceNote\":\"Eigenes fiktives Aufgabenbeispiel ohne externe Quellen.\"}",
+      "points": 2,
+      "position": 6,
+      "updatedAt": "2026-10-25T09:59:16.681Z",
+      "id": "q006"
+    },
+    {
+      "points": 2,
+      "text": "Markiere auf dem Zahlenstrahl das geschlossene Intervall von 12 bis einschließlich 18.",
+      "updatedAt": "2026-10-25T09:59:16.836Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"intervall-zahlenstrahl-01\",\"revision\":0,\"format\":\"range\",\"title\":\"Ein Zahlenintervall markieren\",\"subject\":\"Mathematik\",\"grade\":\"8\",\"prompt\":\"Markiere auf dem Zahlenstrahl das geschlossene Intervall von 12 bis einschließlich 18.\",\"hint\":\"Beide Randwerte gehören zum markierten Bereich.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":20,\"step\":1,\"majorStep\":5,\"unit\":\"\",\"context\":\"numberline\",\"startInclusive\":true,\"endInclusive\":true},\"solution\":{\"start\":12,\"end\":18},\"objective\":\"Ein geschlossenes Intervall auf einem Zahlenstrahl darstellen.\",\"rationale\":\"Das Intervall umfasst alle Zahlen von 12 bis 18 einschließlich der beiden Grenzen.\",\"sourceNote\":\"Eigenes fiktives Aufgabenbeispiel ohne externe Daten.\"}",
+      "type": "visual",
+      "position": 7,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q007"
+    },
+    {
+      "updatedAt": "2026-10-25T09:59:16.984Z",
+      "position": 8,
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozentintervall-01\",\"revision\":0,\"format\":\"range\",\"title\":\"Ein Prozentintervall markieren\",\"subject\":\"Mathematik\",\"grade\":\"8\",\"prompt\":\"Markiere auf dem Zahlenstrahl das geschlossene Intervall von 25 % bis einschließlich 60 %.\",\"hint\":\"Der Zahlenstrahl ist in Prozent beschriftet. Beide Grenzen gehören zum Intervall.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":100,\"step\":5,\"majorStep\":25,\"unit\":\"%\",\"context\":\"numberline\",\"startInclusive\":true,\"endInclusive\":true},\"solution\":{\"start\":25,\"end\":60},\"objective\":\"Ein geschlossenes Intervall auf einer Prozentskala darstellen.\",\"rationale\":\"Das markierte Intervall reicht von 25 % bis 60 %, wobei beide Grenzwerte eingeschlossen sind.\",\"sourceNote\":\"Eigenes fiktives Aufgabenbeispiel ohne externe Daten.\"}",
+      "points": 2,
+      "text": "Markiere auf dem Zahlenstrahl das geschlossene Intervall von 25 % bis einschließlich 60 %.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 4,
+      "reason": "Falscher Lösungswert: Aus (2,9) und (8,27) folgt y=3x+3, daher y(5)=18 statt15.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    }
+  ]
+}

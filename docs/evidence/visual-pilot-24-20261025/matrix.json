@@ -1,0 +1,384 @@
+[
+  {
+    "id": "P01",
+    "subject": "Mathematik",
+    "grade": 5,
+    "title": "Brüche und Anteile im Alltag",
+    "goal": "Gleich große Teile eines Ganzen, einfache Brüche und Zuordnungen zwischen Anteil und Anzahl",
+    "formats": [
+      "grid",
+      "scale",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-01-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P02",
+    "subject": "Mathematik",
+    "grade": 6,
+    "title": "Winkel und Koordinaten",
+    "goal": "Winkel mit Winkelmesser messen, Punkte im ersten Quadranten setzen und einfache Messwerte darstellen",
+    "formats": [
+      "angle",
+      "coordinate",
+      "chart"
+    ],
+    "requestId": "VIS24-20261025-02-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P03",
+    "subject": "Mathematik",
+    "grade": 8,
+    "title": "Prozentrechnung und lineare Zusammenhänge",
+    "goal": "Prozentanteile, Tabellen und lineare Wertpaare sowie Intervalle",
+    "formats": [
+      "grid",
+      "table",
+      "coordinate",
+      "range"
+    ],
+    "requestId": "VIS24-20261025-03-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P04",
+    "subject": "Mathematik",
+    "grade": 10,
+    "title": "Lineare Funktionen und Dateninterpretation",
+    "goal": "Funktionswerte und Graphpunkte linearer Funktionen sowie begründete Diagrammaussagen",
+    "formats": [
+      "coordinate",
+      "table",
+      "chart",
+      "evidence"
+    ],
+    "requestId": "VIS24-20261025-04-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P05",
+    "subject": "Deutsch",
+    "grade": 5,
+    "title": "Wortarten und einfache Satzglieder",
+    "goal": "Nomen, Verben und Adjektive sowie Subjekt und Prädikat an selbst erfundenen kurzen Sätzen erkennen",
+    "formats": [
+      "labeling",
+      "connections",
+      "correction",
+      "evidence"
+    ],
+    "requestId": "VIS24-20261025-05-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P06",
+    "subject": "Deutsch",
+    "grade": 7,
+    "title": "Satzbau und Textbelege",
+    "goal": "Satzglieder unterscheiden, kurze eigene Alltagstexte verstehen und Aussagen anhand vollständiger Textstellen belegen",
+    "formats": [
+      "labeling",
+      "evidence",
+      "correction",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-06-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P07",
+    "subject": "Deutsch",
+    "grade": 9,
+    "title": "Argumente und sachliches Schreiben",
+    "goal": "Behauptung, Begründung und Beispiel in eigenen kurzen Texten unterscheiden; sprachlich eindeutige Fehler korrigieren",
+    "formats": [
+      "connections",
+      "evidence",
+      "correction",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-07-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P08",
+    "subject": "Deutsch",
+    "grade": 10,
+    "title": "Quellenkritik und Argumentationsanalyse",
+    "goal": "Eigene fiktive Quellen mit klaren Fakten nutzen, belegte Aussagen und Argumentationsbeziehungen prüfen",
+    "formats": [
+      "evidence",
+      "connections",
+      "table",
+      "correction"
+    ],
+    "requestId": "VIS24-20261025-08-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P09",
+    "subject": "Englisch",
+    "grade": 5,
+    "title": "Everyday English",
+    "goal": "Kurze selbst erfundene englische Sätze zu school and daily routines, räumliche Beziehungen und grundlegende Grammatik",
+    "formats": [
+      "labeling",
+      "connections",
+      "correction",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-09-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P10",
+    "subject": "Englisch",
+    "grade": 6,
+    "title": "A day out",
+    "goal": "Kurze englische Alltagsinformationen zu Uhrzeiten, Orten und Abläufen verstehen und sprachlich bearbeiten",
+    "formats": [
+      "scale",
+      "evidence",
+      "table",
+      "correction"
+    ],
+    "requestId": "VIS24-20261025-10-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P11",
+    "subject": "Englisch",
+    "grade": 8,
+    "title": "Travel and communication",
+    "goal": "Eigene kurze englische Reiseinformationen und Dialoge, eindeutige Zeitformenfehler und Textbelege",
+    "formats": [
+      "evidence",
+      "table",
+      "correction",
+      "connections"
+    ],
+    "requestId": "VIS24-20261025-11-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P12",
+    "subject": "Englisch",
+    "grade": 9,
+    "title": "Media and opinions",
+    "goal": "Eigene kurze englische Meldungen und Meinungen auswerten; Aussagen belegen und eindeutige Sprachfehler korrigieren",
+    "formats": [
+      "evidence",
+      "connections",
+      "correction",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-12-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P13",
+    "subject": "Natur und Technik",
+    "grade": 6,
+    "title": "Pflanzen und Wachstumsdaten",
+    "goal": "Pflanzenteile und ihre Funktionen, einfache selbst konstruierte Wachstumsdaten fachlich nutzen",
+    "formats": [
+      "labeling",
+      "hotspot",
+      "chart",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-13-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P14",
+    "subject": "Natur und Technik",
+    "grade": 7,
+    "title": "Temperatur und Messreihen",
+    "goal": "Temperaturskalen, Messwerttabellen und Diagramme in einfachen erfundenen Experimenten auswerten",
+    "formats": [
+      "scale",
+      "range",
+      "chart",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-14-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P15",
+    "subject": "Natur und Technik",
+    "grade": 8,
+    "title": "Kraft, Bewegung und Energie",
+    "goal": "Einfache Messreihen zu Weg und Zeit, Energieübertragungen und begründete Aussagen anhand mitgelieferter Daten",
+    "formats": [
+      "chart",
+      "coordinate",
+      "table",
+      "connections"
+    ],
+    "requestId": "VIS24-20261025-15-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P16",
+    "subject": "Natur und Technik",
+    "grade": 10,
+    "title": "Experimente und wissenschaftliche Aussagen",
+    "goal": "Kontrollierte Variablen, Messwertauswertung und Grenzen von Schlussfolgerungen an vollständigen fiktiven Versuchsdaten",
+    "formats": [
+      "table",
+      "chart",
+      "evidence",
+      "connections"
+    ],
+    "requestId": "VIS24-20261025-16-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P17",
+    "subject": "Geschichte und Geografie",
+    "grade": 5,
+    "title": "Karten, Richtungen und Zeitabstände",
+    "goal": "Fiktive Karte und ausdrücklich erfundene Orts-/Ereignisdaten; Himmelsrichtungen, Koordinaten und zeitliche Abstände",
+    "formats": [
+      "coordinate",
+      "scale",
+      "labeling",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-17-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P18",
+    "subject": "Geschichte und Geografie",
+    "grade": 7,
+    "title": "Stadtentwicklung und Klimadaten",
+    "goal": "Vollständig mitgelieferte fiktive Stadtdaten und monatliche Messwerte räumlich und zeitlich auswerten",
+    "formats": [
+      "scale",
+      "chart",
+      "table",
+      "evidence"
+    ],
+    "requestId": "VIS24-20261025-18-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P19",
+    "subject": "Geschichte und Geografie",
+    "grade": 9,
+    "title": "Bevölkerung und Quellen",
+    "goal": "Eigene fiktive Bevölkerungsstatistiken, Kartenregionen und zeitgenössische Kurzquellen vergleichen",
+    "formats": [
+      "chart",
+      "table",
+      "evidence",
+      "scale"
+    ],
+    "requestId": "VIS24-20261025-19-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P20",
+    "subject": "Geschichte und Geografie",
+    "grade": 10,
+    "title": "Raumentwicklung und begründete Entscheidungen",
+    "goal": "Fiktive Standort-/Umweltdaten mit Grenzen; zeitliche Entwicklung und belegte Standortentscheidungen",
+    "formats": [
+      "chart",
+      "coordinate",
+      "table",
+      "evidence"
+    ],
+    "requestId": "VIS24-20261025-20-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P21",
+    "subject": "Wirtschaft",
+    "grade": 6,
+    "title": "Einkaufen und Belege",
+    "goal": "Fiktive einfache Kassenbons, Preise und Mengen auswerten, Rechenfehler und Bestandteile erkennen",
+    "formats": [
+      "table",
+      "correction",
+      "labeling",
+      "chart"
+    ],
+    "requestId": "VIS24-20261025-21-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P22",
+    "subject": "Wirtschaft",
+    "grade": 7,
+    "title": "Budget und Sparen",
+    "goal": "Fiktive monatliche Einnahmen und Ausgaben, Sparanteile und Budgetgrenzen auswerten",
+    "formats": [
+      "chart",
+      "table",
+      "grid",
+      "range"
+    ],
+    "requestId": "VIS24-20261025-22-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P23",
+    "subject": "Wirtschaft",
+    "grade": 8,
+    "title": "Angebote und Kostenvergleich",
+    "goal": "Vollständig definierte fiktive Preisangebote, Stückpreise und lineare Kosten; keine Rechts-/Finanzberatung",
+    "formats": [
+      "table",
+      "coordinate",
+      "chart",
+      "correction"
+    ],
+    "requestId": "VIS24-20261025-23-A",
+    "count": 8,
+    "points": 16
+  },
+  {
+    "id": "P24",
+    "subject": "Wirtschaft",
+    "grade": 9,
+    "title": "Betriebliche Entscheidungen",
+    "goal": "Fiktive kleine Produktions- und Absatzdaten, Deckungsbeiträge mit gegebener Definition und belegte Entscheidungen",
+    "formats": [
+      "table",
+      "chart",
+      "evidence",
+      "coordinate"
+    ],
+    "requestId": "VIS24-20261025-24-A",
+    "count": 8,
+    "points": 16
+  }
+]
