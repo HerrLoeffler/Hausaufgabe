@@ -1275,17 +1275,17 @@
       "id": "classroom-student-management-v1",
       "task_id": "GC-CLASSROOM-01",
       "branch": "feature/classroom-integrated-preview-20261016",
-      "observed_head": "a5a0005ed0e67fb11ce90fe9703f0c0c8d707dd9",
+      "observed_head": "22703241c2534f9998f72379141e479805d2e119",
       "stage": "staging_deployed",
-      "ci": "local_727_tests_pass_native_all5_jobs_success",
+      "ci": "local_728_tests_pass_native_prior_all5_jobs_success",
       "staging": "gradecrew-staging-2026_only",
-      "user_test": "executor_synthetic_browser_print_verified_physical_iPad_AAC_pending",
+      "user_test": "user_confirmed_classes_visible_20261026;executor_Admin_7tests_2classes_verified;physical_iPad_AAC_pending",
       "handoff": "workstreams/classroom-student-management-v1.md",
-      "next_action": "User reloads2026 and verifies Classes/Students/monitor using stable direct teacher API. Existing physical AAC/receipt/offline acceptance and LIVE test-card link remain pending.66CCZ7JY is already running; use a fresh round for another common-start check.",
+      "next_action": "User confirms26Oct Classes visible in workspace.html. Preserve7Classroommodules andworkspace loader in futurepublishes. Physical personalAAC/receipt/offline acceptance andLIVEcardbutton remainpending.",
       "deployment_evidence": {
         "project": "gradecrew-staging-2026",
-        "hosting_source": "a5a0005ed0e67fb11ce90fe9703f0c0c8d707dd9",
-        "hosting_hashes_verified": 187,
+        "hosting_source": "22703241c2534f9998f72379141e479805d2e119",
+        "hosting_hashes_verified": 212,
         "functions_ready": [
           "classroomweb-00005-ram",
           "classroomaccess-00002-guj",
@@ -1352,7 +1352,10 @@
           "startAssessmentAttempt": "1d1084795981fabf5331d57e7b1b3fb95caaf751",
           "resumeAssessmentAttempt": "1d1084795981fabf5331d57e7b1b3fb95caaf751",
           "submitAssessmentAttempt": "1d1084795981fabf5331d57e7b1b3fb95caaf751"
-        }
+        },
+        "workspace_entry": "workspace.html?intent=login",
+        "workspace_205_base_assets_preserved": 204,
+        "homepage_and_original_login_app_config_unchanged": true
       }
     },
     {
