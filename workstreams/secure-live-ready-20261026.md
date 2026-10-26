@@ -1,0 +1,14 @@
+# GC-IOS-02 — regular Secure Live TestFlight candidate
+
+Human26Oct explicitly requests continue until both apps installable: normal Secure for gradecrew.de/Live and Secure Test for separate testsite. Branch feature/secure-live-ready-20261026, checkout /private/tmp/gc-secure-keyboard-20261022. Separate Test run40402049037 source9e444cb remains untouched. Existing Store app1192 Waiting for Review remains untouched. No paid agreement, App Review replacement or backend deployment.
+
+## Read-only release prerequisite finding
+Actual getAssessmentInfo on existing Live API with human-reported published code returns200, publishedtrue/endedfalse/teacherstart/two-minute duration/offlineRecovery1. No attempt started and no student data sent. Personal classroomAccess with empty me payload returns404 non-JSON (endpoint unavailable); this is not a valid personal-login path. Do NOT expose it in normal Live UI or silently deploy a server feature. Same source engine retained, but SecureLive only enables existing guest code/name flow; SecureStaging retains SECURE_PERSONAL_ACCESS. Test app functionality unchanged. Local configuration regression RED showed Live incorrectly enabled personal UI before flag removal.
+
+## Narrow release plan
+Remove only Live personal-access flag; keep same Secure engine, storage guard, icons, gradecrew.de public host and hausaufgabe-staging API, existingLive bundlede.gradecrew.secure/Keychain services and pending work. Add exact new Live candidate branch to existing protected full-matrix workflow and explicit target selector toLive only; unknown branches remainfailclosed. NewTest branch selector remains2026. Test newLive selector RED before implementation then full Python+Swift/Node and actual compiledLive build before reviewed immutable push. No arbitrary dispatch target or commonmain change. Separate Live upload can proceed to sameASC6817526711 as TestFlight without modifying submitted1192. Record actualrunID immediately and verify signing/profile/upload/processing/internaltester. Never derive availability from buildnumber/run alone.
+
+## Pending old Test2026 work
+Previous same-bundle test builds stored work in2026 namespaces. New regular Live detects pending identity/file and blocks newLive entry without sending/copying/clearing it. Existing previousTestFlightbuild can synchronize old work before returningLive. New Test app has separate bundle/sandbox/keychain and cannot automatically read oldsame-bundle work. Physical migrationacceptance remains distinct.
+
+Runtime model/effort unknown, inherited unchanged. No new budget/attempt family. Existing Source3015228/Classroom/Native history preserved; new branch does not alter Teacher handoff or active Classroom checkout.

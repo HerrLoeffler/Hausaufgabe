@@ -12,8 +12,8 @@ class VariantTests(unittest.TestCase):
   self.assertEqual(live['INFOPLIST_KEY_CFBundleDisplayName'],'GradeCrew Secure')
   self.assertNotEqual(live['ASSETCATALOG_COMPILER_APPICON_NAME'],test['ASSETCATALOG_COMPILER_APPICON_NAME'])
   project_configs={ns['objects'][k]['name']:ns['objects'][k]['buildSettings'] for k in ns['project_configs']}
-  for name in ('SecureLive','SecureStaging'):
-   self.assertIn('SECURE_PERSONAL_ACCESS',project_configs[name]['SWIFT_ACTIVE_COMPILATION_CONDITIONS'])
+  self.assertIn('SECURE_PERSONAL_ACCESS',project_configs['SecureStaging']['SWIFT_ACTIVE_COMPILATION_CONDITIONS'])
+  self.assertNotIn('SECURE_PERSONAL_ACCESS',project_configs['SecureLive']['SWIFT_ACTIVE_COMPILATION_CONDITIONS'],'Live classroom endpoint is not deployed; do not expose a broken login')
   for config in (live,test):
    self.assertEqual(config['TARGETED_DEVICE_FAMILY'],'1,2')
    self.assertEqual(config['CODE_SIGN_ENTITLEMENTS'],'Config/AACLab.entitlements')

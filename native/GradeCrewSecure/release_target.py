@@ -2,7 +2,7 @@
 import os
 
 def select(event, requested, ref=""):
-    if event == 'push' and ref == 'refs/heads/feature/native-live-staging-20261018':
+    if event == 'push' and ref in ('refs/heads/feature/native-live-staging-20261018','refs/heads/feature/secure-live-ready-20261026'):
         target='live'
     elif event == 'push' and ref in ('refs/heads/feature/classroom-secure-access-20261022','refs/heads/feature/secure-live-test-20261026'):
         target='staging2026'

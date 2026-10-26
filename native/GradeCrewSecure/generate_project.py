@@ -34,7 +34,7 @@ for name in ['Debug','Release','AACLab','AACLabDistribution','SecureStaging','Se
     project_configs.append(obj('project-'+name, isa='XCBuildConfiguration', name=name, buildSettings={
         'SDKROOT':'iphoneos','IPHONEOS_DEPLOYMENT_TARGET':'17.0','CLANG_ENABLE_MODULES':'YES',
         'SWIFT_VERSION':'5.0','SWIFT_OPTIMIZATION_LEVEL':'-Onone' if debug else '-O',
-        'SWIFT_ACTIVE_COMPILATION_CONDITIONS': {'AACLab':'DEBUG AAC_LAB','AACLabDistribution':'AAC_LAB','SecureStaging':'SECURE_STAGING GRADECREW_STAGING SECURE_PERSONAL_ACCESS','SecureLive':'SECURE_STAGING SECURE_PERSONAL_ACCESS','Debug':'DEBUG'}.get(name,''),
+        'SWIFT_ACTIVE_COMPILATION_CONDITIONS': {'AACLab':'DEBUG AAC_LAB','AACLabDistribution':'AAC_LAB','SecureStaging':'SECURE_STAGING GRADECREW_STAGING SECURE_PERSONAL_ACCESS','SecureLive':'SECURE_STAGING','Debug':'DEBUG'}.get(name,''),
         'DEBUG_INFORMATION_FORMAT':'dwarf' if debug else 'dwarf-with-dsym',
         'ENABLE_TESTABILITY':'YES' if debug else 'NO'}))
     settings={'PRODUCT_BUNDLE_IDENTIFIER':'de.gradecrew.secure','PRODUCT_NAME':'$(TARGET_NAME)',

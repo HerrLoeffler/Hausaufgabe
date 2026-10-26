@@ -23,3 +23,9 @@ class ReleaseTargetTests(unittest.TestCase):
   values=module.select('push','','refs/heads/feature/secure-live-test-20261026')
   self.assertEqual(values['SECURE_PROJECT'],'gradecrew-staging-2026')
   self.assertEqual(values['SECURE_CONFIGURATION'],'SecureStaging')
+
+ def test_explicit_live_candidate_branch_is_bound_to_live(self):
+  module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+  values=module.select('push','','refs/heads/feature/secure-live-ready-20261026')
+  self.assertEqual(values['SECURE_PROJECT'],'hausaufgabe-staging')
+  self.assertEqual(values['SECURE_CONFIGURATION'],'SecureLive')
