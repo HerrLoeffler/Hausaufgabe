@@ -48,7 +48,7 @@ enum GradeCrewBetaEnvironment {
     }
 
     static func homeURL(preference: String, version: String) -> URL {
-        appURL(preference: preference, version: version, intent: nil)
+        appURL(preference: preference, version: version, intent: "login")
     }
 
     static func signInURL(preference: String, version: String) -> URL {

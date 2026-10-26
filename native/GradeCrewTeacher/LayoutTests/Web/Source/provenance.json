@@ -1,156 +1,164 @@
 {
-  "release": "2.3.1-gc44",
-  "commit": "424473481a3bcb8818289f79f760772883f0492c",
+  "release": "2.3.1-gc45-rc1",
+  "commit": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d",
   "integrationURL": "https://gradecrew-staging-2026.web.app",
-  "verification": "Pinned from independently reviewed combined school source 424473481a3bcb8818289f79f760772883f0492c. Remote release-manifest and served-byte verification is required by verify_integration_source.py before CI layout checks.",
+  "verification": "Pinned from the current Test2026 release 5be513d6f8cc90520efb63ee3c0d4e878e84df2d. CI verifies the manifest and served bytes for every source before layout checks.",
   "files": {
-    "index.html": {
-      "sha256": "f95b2a403e0a309d08fb7d12a67fbcd6db6db78534af482f21709e663723aa61",
-      "origin": "integration release 2.3.1-gc44"
-    },
     "app.js": {
-      "sha256": "270c3a6796257d5454c11ee1caa96678876ff249a59433b8f16467c6166ef8f8",
-      "origin": "integration release 2.3.1-gc44"
+      "sha256": "5265185edada9d724cdd4505de77093b1d0f9e81db454ece4569d60376dd8654",
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "styles.css": {
-      "sha256": "b306d72d46d8063b8d9a00a270eb630413fe8d74ad55e0d5a8e272a662185a00",
-      "origin": "integration release 2.3.1-gc44"
+      "sha256": "0f802837ac2e6612023ee6c82ae4566fdc8f948d45d5eb571487862cb9ecb75c",
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "workspace.css": {
-      "sha256": "85983ef15b3e25c203a6a7bfbd423ff40eecba8f9124936994f9bc73c798c836",
-      "origin": "integration release 2.3.1-gc44"
+      "sha256": "48298f1a1eba731cfad079f49e219d72d70d90689e8d00a959d74397a57448da",
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "design-system.css": {
       "sha256": "e90ff189c94f78b9e94e98a9f9f91b35ecc17636deb8402dd709809d4b482437",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "gradecrew-brand.css": {
       "sha256": "ef3c0522e6f8a208583e4e4441531fd9f72ca0d0f6287b9ca3c560e97fcef445",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "crew-clay.css": {
       "sha256": "300abe24372f14580bd23cdd08bfd1acef12cc384e97df7ad26b85c977deba05",
-      "origin": "integration release 2.3.1-gc44",
+      "origin": "integration release 2.3.1-gc45-rc1",
       "repositoryPath": "crew-clay.css"
     },
     "review-mode.css": {
       "sha256": "9c8d41f8dd60073368fdf579334a220f84ac5fd11683c2dc12e3cf1ffc752fca",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "generated/gradecrew-assets.js": {
       "sha256": "d4cfe1172ef99e2bb4b23c0132825c0470f1cf3b2f0818dead77dcde5f4cde08",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "generated/gradecrew-design-tokens.css": {
       "sha256": "0971535f40fda6edd4a6d785d21abd38984b81f2e30b7c396b60d9a2e1378aa4",
-      "origin": "integration release 2.3.1-gc44",
+      "origin": "integration release 2.3.1-gc45-rc1",
       "repositoryPath": "generated/gradecrew-design-tokens.css"
     },
     "gradecrew-dashboard-foundation.css": {
       "sha256": "7b14fe9825dc737d480c478dfaeeacc589c6c650d06326d192e36ca86ea5537c",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "gradecrew-logo.css": {
       "sha256": "99ec4a2d7433b0b2d7e8d3ca6e5f4cef9b745b9d9aaa8f4b49d2ddf3f750945b",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "gradecrew-auth-startscreen.css": {
       "sha256": "8ef7cc5fb3233932c0a8799a3dc7afa21f7306185f7c5a2ef78f597c5f1669de",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "gradecrew-auth-startscreen-polish.css": {
       "sha256": "26eb588b641dfdc2a5e5f54e6b09cc5bdf579c561b93e8c35d5498e343b33302",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "gradecrew-hero-scene.css": {
       "sha256": "319410a6e50d9d75b45622672214b95813e9f83ec1bc221c0d3ecf03757776af",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "gradecrew-workspace-upgrade.css": {
       "sha256": "b96b5fa478e18af7ded632545fa724cb8a9c9ce6af7822b91a799d0f965e9b7c",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "gradecrew-workspace-upgrade.mjs": {
       "sha256": "b607330528f58e6392285ef584206925ccb3dc2563894fced5487d2e4ae1c81a",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "mobile-viewport-polish.js": {
       "sha256": "69549f235189c55b1e36533ca3ef737ed93a54ffb6de7960fe5c43b4af119ad9",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "startup.js": {
-      "sha256": "576b6933f94779e1467a90e0c3a4d34324ab4e69daea8cede56efe762560d0e5",
-      "origin": "integration release 2.3.1-gc44"
+      "sha256": "4bdb568d104e95558baf5d57c4478a9826ebb5ca248143d2110a022b42fbc476",
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "gradecrew-tour-v7.js": {
       "sha256": "dbd7f83ff8ea82e52ba3d51f9ff843b8a23f1f499dd55ace0061aea2202450a0",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "shared/i18n/i18n-core.mjs": {
       "sha256": "accf1184479991655c04011a41e3413f2214943298b8412ba38494ee33a998ec",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "shared/i18n/browser-runtime.mjs": {
       "sha256": "ab2524ea78c839ff7686cbad628553375efeb56306cad18b2a662a37f9563c93",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "shared/i18n/messages-de-DE.mjs": {
       "sha256": "8144151bb1ac7a81b454c8aac52ebac2bfaf6367b5b0642116430b5c995014b6",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "shared/i18n/messages-en-GB.mjs": {
-      "sha256": "a8de01c87ee6cd9eb97acfb01032d9b1dfccefcdb007416c5f30a08307f6d762",
-      "origin": "integration release 2.3.1-gc44"
+      "sha256": "05d0e356e3f8d852aaf4c6fad8ecec598c3f1a9575c77b223ac62fae710dc917",
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "shared/i18n/extensions-en-GB-crew.mjs": {
       "sha256": "2328422c280fa8af3d547daee1563d671ce814204e1c3e025f5b47cfac72bbf5",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "assets/gradecrew/brand-primary-v1.svg": {
       "sha256": "755f94c0ecc23b02c110b04a95485cc17c0d8e98b07ac03d403de998c3f698a7",
-      "origin": "integration release 2.3.1-gc44",
+      "origin": "integration release 2.3.1-gc45-rc1",
       "repositoryPath": "assets/gradecrew/brand-primary-v1.svg"
     },
     "assets/gradecrew/crew-dashboard-lineup-c-r-e-w-alpha.png": {
       "sha256": "a9c26c8475c3d4782e559c73f6a182b2850df9c01ddfc497060c21b81efe3da5",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "assets/gradecrew/fox-improve.svg": {
       "sha256": "bc5fe082e74c0b4bbc2cbcf6e0a5d32804f03bbfb378af1494249fb7f2194248",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "assets/gradecrew/owl-grade.svg": {
       "sha256": "7ac5dcbdff8cb8f492b45cbf79a680f295167014c60ce369a2d6c0a80c34089c",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "assets/gradecrew/penguin-icon.svg": {
       "sha256": "f37517983448f2c9043bdde4dad3c2a852c4609a87328fefd8e657127d05f5e2",
-      "origin": "integration release 2.3.1-gc44",
+      "origin": "integration release 2.3.1-gc45-rc1",
       "repositoryPath": "assets/gradecrew/brand-icon-v1.svg"
     },
     "assets/gradecrew/remy-new-test-button.png": {
       "sha256": "a7c0188d01079e3c04719722c1e7541e0939afc1aacf47caa15b82a6766eeb6d",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "assets/gradecrew/remy-new-test-tablet.png": {
       "sha256": "946db8428037934e04d1d92cbd9f02b7ab71bf98a9bfe11b56fd7c2237dd8c9e",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "assets/gradecrew/trash-bin-3d.png": {
       "sha256": "30f5a4e6e96b8ba40b934153e6fc8418dfcbefb9088087b52b5e838fb258f9b7",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "crew-assistant-ui.js": {
-      "sha256": "97f15fb081926dc906c32d4273b53178156c1ca493dd0e3383ad69d21c433855",
-      "origin": "integration release 2.3.1-gc44"
+      "sha256": "a480519ac04a4bbf6a718ca90c097fe1272c574fec848b31bd390a0c91b0abf5",
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "crew-assistant-core.mjs": {
-      "sha256": "7960e4a82bd65d167809f54c26b29f7fd86cb186df20a3bae163e9edeb69719e",
-      "origin": "integration release 2.3.1-gc44"
+      "sha256": "1e74b01574092a154173c2f7b6a10cf9ba8a3c1a7db32736f6820cd45cecacf6",
+      "origin": "integration release 2.3.1-gc45-rc1"
     },
     "assets/gradecrew/coco-help-phone.png": {
       "sha256": "031ff6051c3953f3ce2f0b96af10b35850300a7d1d5abaff86e2255db744ccdd",
-      "origin": "integration release 2.3.1-gc44"
+      "origin": "integration release 2.3.1-gc45-rc1"
+    },
+    "workspace.html": {
+      "sha256": "0eea996b9af728f3f0283b3e68303e692d6c1b35b9e5cf9c6d921720565f22ff",
+      "origin": "integration release 2.3.1-gc45-rc1"
+    },
+    "visual/visual.css": {
+      "sha256": "3645867d9098add1288185fff2556770b2ec309c566a65bd9cdae6ad9391fe5c",
+      "origin": "integration release 2.3.1-gc45-rc1"
+    },
+    "classroom/online-workspace.css": {
+      "sha256": "9496e694a3a39957e50f0be7c33bf08afba1edc7e91314b92bca0b81aa45c5d2",
+      "origin": "integration release 2.3.1-gc45-rc1"
     }
   }
 }
