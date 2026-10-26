@@ -70,7 +70,7 @@ final class CentralApp: NSObject, NSApplicationDelegate, NSWindowDelegate, WKNav
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
     @objc func about() {
         let alert = NSAlert(); alert.messageText = "GradeCrew Zentrale"
-        alert.informativeText = "Deine Firmenzentrale auf diesem Mac.\n\nAufträge und Ergebnisse bleiben im bisherigen lokalen Datenbestand. Der lokale Dienst arbeitet auch nach dem Schließen der App weiter. Für neue KI-Aufträge wird die bestehende Codex-Anmeldung verwendet.\n\nLokale Version 0.2 · Live bleibt unverändert."
+        alert.informativeText = "Deine Firmenzentrale auf diesem Mac.\n\nDu schreibst dein Anliegen in der Zentrale. Eigene Fachverläufe bearbeiten Analysen, Konzepte und Berichte; Rückfragen und Ergebnisse kommen hier zurück. Produktänderungen und Livefreigaben sind nicht enthalten.\n\nAufträge bleiben im lokalen Datenbestand. Der Dienst arbeitet nach dem Schließen des Fensters weiter und verwendet deine bestehende Codex-Anmeldung.\n\nLokale Version 0.3 · Live bleibt unverändert."
         alert.runModal()
     }
     func message(_ text: String, retryable: Bool) {

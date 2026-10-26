@@ -39,6 +39,8 @@ class Handler(SimpleHTTPRequestHandler):
    if self.headers.get_content_type()!='application/json':raise ValueError('JSON erwartet')
    data=json.loads(self.rfile.read(size));path=urlsplit(self.path).path;service=self.server.service
    if not isinstance(data,dict):raise ValueError('Objekt erwartet')
+   if path=='/api/intake':return self.json(service.intake.submit(data),201)
+   if path=='/api/intake/answer':return self.json(service.intake.router.answer(data))
    if path=='/api/work-items':return self.json(service.operations.create(data),201)
    if path=='/api/work-items/change':return self.json(service.operations.change(data))
    if path=='/api/work-items/decision':return self.json(service.operations.decide(data))

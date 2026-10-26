@@ -7,10 +7,13 @@ from .sources import Sources
 from .releases import Releases
 from .operations import Operations
 from .desktop_host import DesktopHost
+from .intake import Intake
+from .intake_routing import LocalCoordinator
 
 def choose_model(brief):
- text=brief['title']+' '+brief['body']
- return 'gpt-6.1-sol' if len(text)>2000 or re.search(r'standpunkt null|architektur|bereichsübergreifend|gesamtplan|gesamte firma',text,re.I) else 'gpt-6-luna'
+ if brief.get('context',{}).get('executionRole')=='coordination':return 'gpt-6-luna'
+ text=brief.get('context',{}).get('userIntent') or brief['title']+' '+brief['body']
+ return 'gpt-6.1-sol' if len(text)>2000 or re.search(r'standpunkt null|architektur|sicherheit|datenschutz|bereichsübergreifend|gesamtplan|gesamte firma',text,re.I) else 'gpt-6-luna'
 
 TERMINAL={'completed','failed','interrupted','unknown','cancelled'}
 def tool(name, description, properties, required):
@@ -25,6 +28,8 @@ class Service:
   self.releases=Releases(self.store,self.root)
   self.desktop_host=DesktopHost(self.store.root,binary) if start else None
   self.operations=Operations(self.store,self.root,host=self.desktop_host,start=start)
+  self.intake=Intake(self.store,host=self.desktop_host)
+  self.intake.router=LocalCoordinator(self.intake,self)
   if start:self.releases.start()
   if start:threading.Thread(target=self.connect,args=(binary,),daemon=True).start()
  def connect(self,binary=None):
@@ -33,12 +38,12 @@ class Service:
    self.models=self.rpc.call('model/list',{}).get('data',[])
    account=self.rpc.call('account/read',{}).get('account')
    if not account:raise RuntimeError('Codex ist nicht angemeldet. Bestehende Anmeldung in Codex prüfen.')
-   self.ready=True;self.operations.rpc=self.rpc;self.operations.refresh();self.reconcile();self.sources.refresh()
+   self.ready=True;self.intake.reader=self.rpc;self.operations.rpc=self.rpc;self.operations.refresh();self.reconcile();self.sources.refresh()
    threading.Thread(target=self.loop,daemon=True).start()
   except Exception as e:self.error=str(e)[:500];self.ready=False
  def state(self):
-  return {'connected':self.ready and self.rpc is not None and self.rpc.process.poll() is None,'error':self.error,'version':self.version,'profile':'Analyse, Konzepte und Berichte. Produktcode, externe Nachrichten und Liveänderungen sind nicht freigegeben.','models':[{'id':m.get('id'),'model':m.get('model')} for m in self.models],'requests':[{k:v for k,v in r.items() if k!='context'} for r in self.store.list()],'sources':self.sources.public(),'releases':self.releases.public(),'operations':self.operations.public()}
- def submit(self,payload):
+  return {'connected':self.ready and self.rpc is not None and self.rpc.process.poll() is None,'error':self.error,'version':self.version,'profile':'Analyse, Konzepte und Berichte. Produktcode, externe Nachrichten und Liveänderungen sind nicht freigegeben.','models':[{'id':m.get('id'),'model':m.get('model')} for m in self.models],'requests':[{k:v for k,v in r.items() if k!='context'} for r in self.store.list()],'sources':self.sources.public(),'releases':self.releases.public(),'operations':self.operations.public(),'intake':{'items':self.intake.items(),'connected':self.ready,'mode':'own-specialists','profile':'Analyse, Konzepte und quellengebundene Berichte. Produktänderungen und Livefreigaben sind nicht enthalten.'}}
+ def submit(self,payload,role=None,user_intent=None):
   # Existing ID can always be recovered, including while disconnected.
   try:
    existing=self.store.get(payload.get('requestId'));return self.store.create(payload,existing['context'])
@@ -50,6 +55,8 @@ class Service:
    blocked=[r for r in self.store.list() if r.get('conversationId')==payload['conversationId'] and r['status']=='unknown']
    if blocked:raise ValueError('Den vorherigen unklaren Vorgang zuerst abgleichen; kein neuer Start im selben Verlauf.')
   context=self.sources.context(payload.get('title',''),payload.get('area',''))
+  if role:context['executionRole']=role
+  if user_intent:context['userIntent']=user_intent
   if payload.get('workItemId'):
    work=self.operations.get(payload['workItemId'])
    if work['domainId']!=domain or work['topicId']!=topic:raise ValueError('Auftrag passt nicht zum gewählten Bereich')
@@ -58,7 +65,10 @@ class Service:
   return self.store.create(payload,context)
  def loop(self):
   next_refresh=time.monotonic()+300
+  next_intake=0
   while not self.stop.wait(1):
+   if time.monotonic()>=next_intake:
+    next_intake=time.monotonic()+5;threading.Thread(target=self.intake.tick,daemon=True).start()
    if not self.ready:continue
    if time.monotonic()>=next_refresh:self.sources.refresh();next_refresh=time.monotonic()+300
    with self.lock:
@@ -76,7 +86,7 @@ class Service:
    self.store.event(ident,'model_selection',{'requested':requested,'effort':'medium','reason':'bereichsübergreifende/umfangreiche Analyse' if requested=='gpt-6.1-sol' else 'begrenzter Routineauftrag'})
    cwd=self.store.root/'work'/ident;cwd.mkdir(parents=True,exist_ok=True)
    self.store.event(ident,'thread_intent',{'briefHash':r['briefHash']})
-   prior=next((p for p in self.store.list() if p['id']!=ident and r.get('conversationId') and p.get('conversationId')==r['conversationId'] and p['status']=='completed' and p.get('threadId')),None)
+   prior=next((p for p in self.store.list() if p['id']!=ident and r.get('conversationId') and p.get('conversationId')==r['conversationId'] and p.get('context',{}).get('executionRole')==r.get('context',{}).get('executionRole') and p['status']=='completed' and p.get('threadId')),None)
    if prior:
     result=self.rpc.call('thread/resume',{'threadId':prior['threadId'],'model':model,'sandbox':'read-only','approvalPolicy':'untrusted','environments':[]})
    else:

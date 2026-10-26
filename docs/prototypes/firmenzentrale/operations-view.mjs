@@ -3,12 +3,13 @@ import {areaStatus} from './company-status.mjs';
 import {taskView,workFor,ownerLoad,date,plainSummary} from './operations-model.mjs';
 import {el,add,link,button,field,details,textPair,act,chatLink} from './operations-ui.mjs';
 import {renderWorkDetail,renderAnalysis} from './operations-detail.mjs';
+import {renderIntake} from './intake-view.mjs';
 const domainName=id=>domains.find(d=>d.id===id)?.name||id;
 export function mountOperations(parent,client,{view='home',id='',topic=''}={}){
  const root=el('div',undefined,'operations');parent.append(root);let signature='',alive=true;const savedKey='gradecrew-work-fields-v1';let saved={};let storageError='';try{saved=JSON.parse(localStorage.getItem(savedKey)||'{}');if(!saved||typeof saved!=='object'||Array.isArray(saved))throw Error();}catch{storageError='Vorhandene Arbeitsentwürfe sind nicht lesbar und wurden nicht überschrieben.';}root.addEventListener('input',e=>{const key=e.target.dataset?.keep;if(!key||key.startsWith('gradecrew-analysis-draft:')||storageError)return;saved[key]=e.target.value;try{localStorage.setItem(savedKey,JSON.stringify(saved));}catch{storageError='Arbeitsentwurf konnte nicht gespeichert werden. Text vor dem Schließen kopieren.';}});const abort=new AbortController();
  const off=client.subscribe((state,problem)=>{
   const ops=state?.operations;if(!ops){root.replaceChildren(el('h1',view==='home'?'Deine Zentrale':'Arbeitsstand'),el('p',problem||'Auftragszuordnungen werden geladen …','ops-muted'));return;}
-  const token=JSON.stringify([ops.items.map(t=>[t.id,t.revision,t.acknowledgement?.itemId,t.observation?.lastMessage?.id,t.observation?.error,t.observation?.activity,taskView(t).stale]),ops.owners.map(o=>[o.id,o.title,o.lastMessage?.id,o.error,o.activity]),ops.host,state.requests?.map(r=>[r.id,r.updatedAt]),problem]);if(token===signature)return;signature=token;
+  const token=JSON.stringify([ops.items.map(t=>[t.id,t.revision,t.acknowledgement?.itemId,t.observation?.lastMessage?.id,t.observation?.error,t.observation?.activity,taskView(t).stale]),ops.owners.map(o=>[o.id,o.title,o.lastMessage?.id,o.error,o.activity]),ops.host,state.requests?.map(r=>[r.id,r.updatedAt]),state.intake,problem]);if(token===signature)return;signature=token;
   const drafts=[...Object.entries(saved).filter(([k])=>!k.startsWith('gradecrew-analysis-draft:')),...[...root.querySelectorAll('textarea,input,select')].filter(x=>x.dataset.keep&&!x.dataset.keep.startsWith('gradecrew-analysis-draft:')).map(x=>[x.dataset.keep,x.value])];const focus=root.contains(document.activeElement)?document.activeElement?.dataset.keep:null;
   root.replaceChildren();
   if(view==='task')renderWorkDetail(root,client,ops,id,{alive:()=>alive,signal:abort.signal});
@@ -16,7 +17,7 @@ export function mountOperations(parent,client,{view='home',id='',topic=''}={}){
   else if(view==='domain')renderDomain(root,ops,client,id,topic);
   else if(view==='domains')renderDomains(root,ops);
   else if(view==='all')renderAll(root,ops);
-  else renderHome(root,ops,client);document.title=(root.querySelector('h1')?.textContent||'Firmenzentrale')+' · GradeCrew';
+  else renderHome(root,ops,client,state.intake);document.title=(root.querySelector('h1')?.textContent||'Firmenzentrale')+' · GradeCrew';
   if(problem)root.prepend(el('p',problem,'error'));if(storageError)root.prepend(el('p',storageError,'error'));
   for(const [key,value] of drafts){const input=[...root.querySelectorAll('[data-keep]')].find(x=>x.dataset.keep===key);if(input){input.value=value;if(key===focus)input.focus({preventScroll:true});}}
  });return()=>{alive=false;abort.abort();off();};
@@ -26,8 +27,9 @@ function workRow(task){
  const v=taskView(task),owner=task.observation||{},a=link('',`#/arbeit/auftrag/${task.id}`,'ops-work-row');
  add(a,el('span',String(task.priority),'ops-priority'),add(el('div',undefined,'ops-work-main'),el('span',domainName(task.domainId),'ops-domain-label'),el('h3',task.title),el('p',plainSummary(task.next,145),'ops-next'),owner.lastMessage&&el('p','Zuletzt gemeldet: '+plainSummary(owner.lastMessage.text,135),'ops-last-note'),el('small',owner.title||'Chat noch nicht gelesen','ops-muted')),add(el('div',undefined,'ops-work-side'),el('span',v.state,'ops-status'),el('small',owner.lastMessage?'Meldung gelesen '+date(owner.readAt):'Aufnahme noch prüfen','ops-muted')));return a;
 }
-function renderHome(root,ops,client){
+function renderHome(root,ops,client,intake){
  heading(root,'Deine Zentrale','Was jetzt ansteht. Wer sich kümmert. Was du entscheiden kannst.',button('Stand prüfen',()=>client.post('/api/work-items/refresh',{}),'button secondary'));
+ renderIntake(root,client,intake);
  const layout=el('div',undefined,'ops-home-layout'),main=el('section'),aside=el('aside',undefined,'ops-human');
  add(main,el('h2','Als Nächstes'),el('p','Öffnen für Verlauf und nächste Handlung.','ops-muted'));
  const items=workFor(ops.items);items.slice(0,3).forEach(t=>main.append(workRow(t)));main.append(link('Alle Aufträge ansehen','#/arbeit/auftraege','ops-text-link'));
