@@ -24,6 +24,13 @@ async function ready() {
    let page;
    try {
     page = await browser.newPage({viewport:name==='webkit'?{width:390,height:844}:{width:1280,height:800}});
+    page.on('console',message=>{if(message.text().startsWith('GC_IMAGE_DIAG'))console.log(name+': '+message.text());});
+    await page.addInitScript(()=>{
+     const blob=HTMLCanvasElement.prototype.toBlob;
+     HTMLCanvasElement.prototype.toBlob=function(callback,...args){console.log('GC_IMAGE_DIAG export start '+this.width+'x'+this.height);return blob.call(this,value=>{console.log('GC_IMAGE_DIAG export done '+value?.size);callback(value);},...args);};
+     const put=IDBObjectStore.prototype.put;
+     IDBObjectStore.prototype.put=function(value,...args){console.log('GC_IMAGE_DIAG storage put '+(value?.imageBlob?.size||0));const request=put.call(this,value,...args);request.addEventListener('success',()=>console.log('GC_IMAGE_DIAG storage request success'));request.addEventListener('error',()=>console.log('GC_IMAGE_DIAG storage request error '+request.error?.name));request.transaction.addEventListener('complete',()=>console.log('GC_IMAGE_DIAG storage complete'));request.transaction.addEventListener('abort',()=>console.log('GC_IMAGE_DIAG storage abort '+request.transaction.error?.name));return request;};
+    });
     await page.goto('http://127.0.0.1:8781/');
     await page.getByRole('button',{name:'Exportpixel prüfen',exact:true}).click();
     await page.getByText(/Pixelprüfung bestanden/).waitFor();
