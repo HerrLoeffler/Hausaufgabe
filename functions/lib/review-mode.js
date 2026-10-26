@@ -95,7 +95,7 @@ function createReviewService({store,projectId,now=Date.now,toTimestamp=value=>va
      const lease=await tx.get('reviewImageLeases/'+noteId);
      if(!lease||lease.ownerId!==uid)fail('permission-denied','Bild gehört nicht zu diesem Hinweis.');
      if(!['ready','attached'].includes(lease.state)||lease.expiresAt<=now())fail('failed-precondition','Bild noch nicht übertragen oder abgelaufen.');
-     attachment={imageId:noteId,width:lease.width,height:lease.height,contentType:lease.contentType,size:lease.size,expiresAt:now()+90*86400000};
+     attachment={status:'available',imageId:noteId,width:lease.width,height:lease.height,contentType:lease.contentType,size:lease.size,expiresAt:now()+90*86400000};
      tx.set('reviewImageLeases/'+noteId,{...lease,state:'attached',expiresAt:attachment.expiresAt,cleanupAt:attachment.expiresAt});
     }
     const n={...(attachment?{attachment}:{}),id:noteId,clientRequestId,createFingerprint:fingerprint,...content,authorId:uid,authorRole:admin?'admin':'teacher',revision:1,contentRevision:1,approval:admin?'not_required':'pending',approvedContentRevision:admin?1:0,status:'open',createdAt:now(),updatedAt:now(),previewEvidence:'',acceptanceEvidence:'',deployedBuild:''};

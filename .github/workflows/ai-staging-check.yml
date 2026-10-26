@@ -307,6 +307,7 @@ jobs:
   public-layout:
     name: Public entry layout (WebKit and Chromium)
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.56.1-noble
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
@@ -314,7 +315,6 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci --prefix tools/browser-layout --no-audit --no-fund
-      - run: cd tools/browser-layout && npx playwright install --with-deps chromium webkit
       - run: npm ci --prefix functions --include=dev --no-audit --no-fund
       - run: node tools/browser-layout/feedback-images.cjs
         env:
