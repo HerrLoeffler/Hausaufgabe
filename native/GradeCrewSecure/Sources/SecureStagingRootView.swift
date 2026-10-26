@@ -29,7 +29,7 @@ struct SecureStagingScreen: View {
             } else {
                 SecureWelcomeFrame(entry:model.phase == .code || model.phase == .identity,maxWidth:welcomeWidth) {
                     #if GRADECREW_STAGING
-                    Text("TESTUMGEBUNG 2026").font(.caption.bold()).foregroundStyle(SecureTheme.secondaryText)
+                    Text("TESTUMGEBUNG").font(.caption.bold()).foregroundStyle(SecureTheme.secondaryText)
                     #endif
                     if model.phase == .code || model.phase == .identity {
                         if model.personalSelection {
@@ -41,7 +41,7 @@ struct SecureStagingScreen: View {
                                 Button("Andere zugewiesene Tests") { model.cancelPersonalSelection();showPupilAccess=true }
                             }
                         } else {
-                        #if GRADECREW_STAGING
+                        #if SECURE_PERSONAL_ACCESS || GRADECREW_STAGING
                         SecureEntryColumns {
                             guestEntry
                         } personal: {
@@ -56,9 +56,9 @@ struct SecureStagingScreen: View {
             }
         }
         .background(background.ignoresSafeArea()).foregroundStyle(SecureTheme.text).tint(blue).preferredColorScheme(.light)
-        #if GRADECREW_STAGING
+        #if SECURE_PERSONAL_ACCESS || GRADECREW_STAGING
         .sheet(isPresented:$showPupilAccess) { SecurePupilAccessView(renewing:model.canRenewPersonal,onSelect:selectPersonal) }
-        .onOpenURL { url in if url.scheme=="gradecrew-secure",url.host=="student",model.phase == .code { showPupilAccess=true } }
+        .onOpenURL { url in if url.scheme==SecureReleaseEnvironment.studentURLScheme,url.host=="student",model.phase == .code { showPupilAccess=true } }
         #endif
         .alert("Hinweis der Lehrkraft",isPresented:Binding(get:{model.resumeNotice != nil},set:{_ in})) {
             Button("Hinweis gelesen") {Task {await model.acknowledgeResumeNotice()}}
@@ -76,7 +76,7 @@ struct SecureStagingScreen: View {
         }
     }
     private var welcomeWidth:CGFloat {
-        #if GRADECREW_STAGING
+        #if SECURE_PERSONAL_ACCESS || GRADECREW_STAGING
         return (model.phase == .code || model.phase == .identity) && !model.personalSelection ? 1080 : SecureTheme.formWidth
         #else
         return SecureTheme.formWidth
@@ -87,7 +87,7 @@ struct SecureStagingScreen: View {
             Task { await model.preflight(); if model.phase == .identity { confirmStart = true } }
         }
     }
-    #if GRADECREW_STAGING
+    #if SECURE_PERSONAL_ACCESS || GRADECREW_STAGING
     private func selectPersonal(_ launch:SecureClassroomLaunch) async -> String? {
         if model.canRenewPersonal {
             let problem=model.renewPersonalSession(launch)
@@ -100,7 +100,11 @@ struct SecureStagingScreen: View {
     #endif
     private var statusContent:some View {
         VStack(spacing:16) {
-        if model.deviceExitPending {
+        if model.legacyTestWorkBlocked {
+            Text("Gespeicherte Test-Abgabe schützen").font(.title2.bold())
+            Text(model.message).fixedSize(horizontal:false,vertical:true)
+            Text("Die neue App „Secure Test“ hat einen eigenen Speicher. Eine alte Abgabe wird nicht automatisch dorthin übertragen.").font(.footnote)
+        } else if model.deviceExitPending {
             Text(model.message).fixedSize(horizontal:false,vertical:true)
             Button("Freigabe zur Fortsetzung prüfen") {Task {await model.resumeAfterDeviceExit()}}.buttonStyle(.borderedProminent).disabled(model.busy)
             Text("Deine Antworten bleiben auf diesem iPad. Lösche die App nicht. Bei einem eingefrorenen Gerät hilft die Lehrkraft mit der Gerätehilfe.").font(.footnote)
@@ -113,7 +117,7 @@ struct SecureStagingScreen: View {
             else if model.phase == .recovery || model.phase == .interrupted { Task { await model.startOrRecover() } }
         }
         .id(model.phase)
-        #if GRADECREW_STAGING
+        #if SECURE_PERSONAL_ACCESS || GRADECREW_STAGING
         if model.canRenewPersonal {Button("Persönlichen Schülerzugang erneuern") {showPupilAccess=true}.buttonStyle(.bordered)}
         #endif
         }

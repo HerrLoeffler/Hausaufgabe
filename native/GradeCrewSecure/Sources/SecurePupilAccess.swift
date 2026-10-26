@@ -1,6 +1,6 @@
 import SwiftUI
 import Security
-#if GRADECREW_STAGING
+#if SECURE_PERSONAL_ACCESS || GRADECREW_STAGING
 enum SecurePupilKeychain {
  static var lockKey:String { SecureReleaseEnvironment.attemptService+".pupil-requires-code" }
  static var query:[String:Any] {[kSecClass as String:kSecClassGenericPassword,kSecAttrService as String:SecureReleaseEnvironment.attemptService+".pupil-session",kSecAttrAccount as String:"pupil"]}

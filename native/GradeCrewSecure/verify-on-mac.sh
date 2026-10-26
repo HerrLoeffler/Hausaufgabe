@@ -22,8 +22,8 @@ import plistlib
 from pathlib import Path
 info = plistlib.loads(Path('DerivedData/Build/Products/SecureStaging-iphonesimulator/GradeCrewSecure.app/Info.plist').read_bytes())
 assert info.get('GradeCrewSecureMode') == 'staging-exam', 'Built app has no Staging mode'
-assert info.get('CFBundleIdentifier') == 'de.gradecrew.secure'
-assert info.get('CFBundleDisplayName') == 'GradeCrew Secure'
+assert info.get('CFBundleIdentifier') == 'de.gradecrew.secure.test2026'
+assert info.get('CFBundleDisplayName') == 'Secure Test'
 print('Built Staging configuration verified.')
 PY_CHECK
 python3 LayoutTests/run_layout_checks.py --output "${TMPDIR:-/private/tmp}/secure-layout-smoke-$(date +%s)" --suite smoke --layer all

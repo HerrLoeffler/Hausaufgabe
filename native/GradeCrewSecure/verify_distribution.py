@@ -5,10 +5,11 @@ import sys
 from pathlib import Path
 
 def validate(app, profile, info, team, mode="aac-lab"):
-    expected_name = 'GradeCrew Secure' if mode in ('staging-exam', 'live-exam') else 'GradeCrew AAC Lab'
+    expected_bundle = 'de.gradecrew.secure.test2026' if mode == 'staging-exam' else 'de.gradecrew.secure'
+    expected_name = 'Secure Test' if mode == 'staging-exam' else ('GradeCrew Secure' if mode == 'live-exam' else 'GradeCrew AAC Lab')
     if mode in ('staging-exam', 'live-exam') and info.get('GradeCrewSecureMode') != mode:
         raise ValueError('Expected Staging exam configuration')
-    if info.get('CFBundleIdentifier') != 'de.gradecrew.secure' or info.get('CFBundleDisplayName') != expected_name:
+    if info.get('CFBundleIdentifier') != expected_bundle or info.get('CFBundleDisplayName') != expected_name:
         raise ValueError('Expected isolated Secure AAC Lab, not another app')
     if mode in ('staging-exam', 'live-exam') and info.get('UIDeviceFamily') != [1, 2]:
         raise ValueError('Secure must support both iPhone and iPad')
@@ -17,7 +18,7 @@ def validate(app, profile, info, team, mode="aac-lab"):
             raise ValueError(f'AAC missing in {label}')
         if entitlements.get('com.apple.developer.team-identifier') != team:
             raise ValueError(f'Wrong team in {label}')
-        if entitlements.get('application-identifier', '').split('.', 1)[-1] != 'de.gradecrew.secure':
+        if entitlements.get('application-identifier', '').split('.', 1)[-1] != expected_bundle:
             raise ValueError(f'Wrong bundle in {label}')
         if entitlements.get('get-task-allow', False) is not False:
             raise ValueError(f'Debuggable {label} is not distribution signing')
@@ -34,4 +35,4 @@ if __name__ == '__main__':
     permission = 'com.apple.developer.automatic-assessment-configuration'
     print('AAC present:', {'signed_app': values[0].get(permission) is True, 'profile': values[1].get('Entitlements', {}).get(permission) is True})
     validate(*values, sys.argv[4], sys.argv[5] if len(sys.argv) > 5 else "aac-lab")
-    print('Signed AAC app and distribution profile verified for de.gradecrew.secure.')
+    print('Signed AAC app and distribution profile verified for '+values[2]['CFBundleIdentifier'])

@@ -30,10 +30,20 @@ class DistributionTests(unittest.TestCase):
         distribution.validate(app, profile, info, 'TESTTEAM01', 'live-exam')
     def test_staging_exam_requires_its_own_release_mode(self):
         app, profile, info = self.fixture()
-        info['CFBundleDisplayName'] = 'GradeCrew Secure'
+        info['CFBundleDisplayName'] = 'Secure Test'
+        info['CFBundleIdentifier'] = 'de.gradecrew.secure.test2026'
+        app['application-identifier'] = 'TESTTEAM01.de.gradecrew.secure.test2026'
+        profile['Entitlements']['application-identifier'] = app['application-identifier']
         with self.assertRaises(ValueError): distribution.validate(app, profile, info, 'TESTTEAM01', 'staging-exam')
         info['GradeCrewSecureMode'] = 'staging-exam'
         distribution.validate(app, profile, info, 'TESTTEAM01', 'staging-exam')
+
+    def test_test_variant_rejects_old_shared_bundle_and_live_profile(self):
+        app, profile, info = self.fixture()
+        info.update(CFBundleDisplayName='Secure Test', GradeCrewSecureMode='staging-exam')
+        with self.assertRaises(ValueError): distribution.validate(app, profile, info, 'TESTTEAM01', 'staging-exam')
+        info['CFBundleIdentifier']='de.gradecrew.secure.test2026'
+        with self.assertRaises(ValueError): distribution.validate(app, profile, info, 'TESTTEAM01', 'staging-exam')
 
     def test_live_exam_refuses_test_configuration(self):
         app, profile, info = self.fixture()

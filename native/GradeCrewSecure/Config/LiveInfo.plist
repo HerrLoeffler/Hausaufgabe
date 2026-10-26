@@ -2,6 +2,21 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>de.gradecrew.secure.student</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>gradecrew-secure</string>
+			</array>
+		</dict>
+	</array>
+	<key>GradeCrewProjectID</key>
+	<string>hausaufgabe-staging</string>
+	<key>GradeCrewPublicHost</key>
+	<string>gradecrew.de</string>
 	<key>GradeCrewSecureMode</key>
 	<string>live-exam</string>
 </dict>

@@ -5,12 +5,12 @@ private struct SecureEntryBrandHeader: View {
     var body: some View {
         let layout:AnyLayout = compact ? AnyLayout(HStackLayout(spacing:12)) : AnyLayout(VStackLayout(spacing:12))
         layout {
-            Image("GradeCrewLogo").resizable().scaledToFit()
+            Image(SecureReleaseEnvironment.isStaging ? "GradeCrewTestLogo" : "GradeCrewLogo").resizable().scaledToFit()
                 .frame(width:compact ? 48 : 96,height:compact ? 48 : 96).accessibilityHidden(true)
             VStack(spacing:compact ? 2 : 12) {
                 Text("GradeCrew").font(compact ? .title2.bold() : .largeTitle.bold())
                     .multilineTextAlignment(.center).fixedSize(horizontal:false,vertical:true)
-                Text("Secure").font(compact ? .caption.weight(.semibold) : .title3.weight(.semibold)).foregroundStyle(SecureTheme.secondaryText)
+                Text(SecureReleaseEnvironment.isStaging ? "Secure Test" : "Secure").font(compact ? .caption.weight(.semibold) : .title3.weight(.semibold)).foregroundStyle(SecureTheme.secondaryText)
             }
         }.frame(maxWidth:.infinity).foregroundStyle(SecureTheme.text)
             .accessibilityElement(children:.combine).secureMeasure("brand",role:"center")
@@ -106,7 +106,7 @@ private extension View {
     }
 }
 
-#if GRADECREW_STAGING
+#if SECURE_PERSONAL_ACCESS || GRADECREW_STAGING
 struct SecureEntryColumns<Guest:View,Personal:View>:View {
     @Environment(\.horizontalSizeClass) private var widthClass
     @Environment(\.dynamicTypeSize) private var typeSize

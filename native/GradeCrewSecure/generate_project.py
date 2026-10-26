@@ -34,7 +34,7 @@ for name in ['Debug','Release','AACLab','AACLabDistribution','SecureStaging','Se
     project_configs.append(obj('project-'+name, isa='XCBuildConfiguration', name=name, buildSettings={
         'SDKROOT':'iphoneos','IPHONEOS_DEPLOYMENT_TARGET':'17.0','CLANG_ENABLE_MODULES':'YES',
         'SWIFT_VERSION':'5.0','SWIFT_OPTIMIZATION_LEVEL':'-Onone' if debug else '-O',
-        'SWIFT_ACTIVE_COMPILATION_CONDITIONS': {'AACLab':'DEBUG AAC_LAB','AACLabDistribution':'AAC_LAB','SecureStaging':'SECURE_STAGING GRADECREW_STAGING','SecureLive':'SECURE_STAGING','Debug':'DEBUG'}.get(name,''),
+        'SWIFT_ACTIVE_COMPILATION_CONDITIONS': {'AACLab':'DEBUG AAC_LAB','AACLabDistribution':'AAC_LAB','SecureStaging':'SECURE_STAGING GRADECREW_STAGING SECURE_PERSONAL_ACCESS','SecureLive':'SECURE_STAGING SECURE_PERSONAL_ACCESS','Debug':'DEBUG'}.get(name,''),
         'DEBUG_INFORMATION_FORMAT':'dwarf' if debug else 'dwarf-with-dsym',
         'ENABLE_TESTABILITY':'YES' if debug else 'NO'}))
     settings={'PRODUCT_BUNDLE_IDENTIFIER':'de.gradecrew.secure','PRODUCT_NAME':'$(TARGET_NAME)',
@@ -55,9 +55,13 @@ for name in ['Debug','Release','AACLab','AACLabDistribution','SecureStaging','Se
         settings['CURRENT_PROJECT_VERSION']='2'
         if name=='AACLabDistribution': settings['MARKETING_VERSION']='0.2.0'
         if name in ('SecureStaging','SecureLive'):
-            settings['MARKETING_VERSION']=release_version if name=='SecureLive' else '0.2.3'
+            settings['MARKETING_VERSION']=release_version
             settings['INFOPLIST_KEY_CFBundleDisplayName']='GradeCrew Secure'
             settings['INFOPLIST_FILE']='Config/LiveInfo.plist' if name=='SecureLive' else 'Config/StagingInfo.plist'
+            if name=='SecureStaging':
+                settings['PRODUCT_BUNDLE_IDENTIFIER']='de.gradecrew.secure.test2026'
+                settings['INFOPLIST_KEY_CFBundleDisplayName']='Secure Test'
+                settings['ASSETCATALOG_COMPILER_APPICON_NAME']='TestAppIcon'
     target_configs.append(obj('target-'+name,isa='XCBuildConfiguration',name=name,buildSettings=settings))
 pl=obj('project-configs',isa='XCConfigurationList',buildConfigurations=project_configs,defaultConfigurationIsVisible='0',defaultConfigurationName='Release')
 tl=obj('target-configs',isa='XCConfigurationList',buildConfigurations=target_configs,defaultConfigurationIsVisible='0',defaultConfigurationName='Release')
