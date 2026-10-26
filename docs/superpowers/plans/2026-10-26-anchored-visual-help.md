@@ -59,3 +59,23 @@ Interface: observeHelp(previous,next,{action,assessment,now}) -> next; projectHe
 
 ## Evidence limits
 An answered helped check is supported progress, not independent competence. A later distinct correct probe is promising transfer, not causal proof that this hint works for everyone. Retention requires later independent evidence. Repeated requests without responses are requests, not math errors. The framework applies to all current validated task contracts; new future contracts must register semantic anchors and acceptance cases before claiming visual support.
+
+## Execution checkpoint — 26 October 2026
+
+Implemented source32/faa887a and source33/dd7e78b; UI7968c2b. First independent review corrected pending model loss, clarified the defensive coordinate scalar guard, separated reference thirds from current sixths, and stopped endless explicit stage3 requests. Private lastHelp/successfulHelp snapshots now retain the actual AI explanation/question/semantic focus without pupil-question/answer/solution-key fields. Owner-private only; retention/causality stay open.
+
+Fresh local acceptance449Functions tests,103frontend tests,7canonical legal/admin packaging tests, scoped ESLint and diffcheck pass. Runtime32Profile/Start/Turn and33Profile/Turn ready;34Start/Turn in progress to clarify real valid free exact-fraction responses for the counter-reviewer. All prior attempts retained. Hosting7968c2b preserves216existing test files; all13owned UI hashes match after publication.
+
+Genuine grid:5cells remain5through support1and2; second help numbered1–5and asks lastlabel. Pupilquestion'Was ist ein Einheitsquadrat?' gets direct explanation, focus on one sourcecell/unit and an answerable1-unit microquestion; correct1returns to exact original5; correct5starts a distinct6-cell partial-rectangle probe; correct6 is privately recorded as promising-transfer. Original-completed-with-help and supported-success remain separate, with repeated-request reviewNeeded preserved. Browser1280×720 showed diagram, help/question and controls together after compact correction. Original task drawer collapsed, no duplicate large scene.
+
+The first real fraction generation was rejected twice by a counter-reviewer incorrectly interpreting a text+exact-fraction field as a choice field. These are recorded failures, not successes. Source34 clarifies supported response contracts without bypassing key/subject correctness; actual fraction/text retest and final user screenshot still follow. No claim of perfect coverage of arbitrary future task formats, classroom effectiveness or global self-training.
+
+## Final integration findings
+
+Sources34/35 corrected contradictory counter-review format rules: typed exact fractions and numeric fraction options are actual validated UI contracts, not inherently invalid choice schemas. Source35 genuinely generated/approved3/7×2; help1retained3/7andfactor2, help2showed3×2=6and7×2=14in plain language. The first text candidate had mismatched selectable tokens and was rejected; a corrected source was accepted. Texthelp retained exactly'Der flinke Fuchs rennt.' and its workshop words. A real first text hint exposed internal'token:2' in pupil text; source36now rejects such internal anchor strings before display and regenerates/reviews a fresh candidate. Real second texthelp used normal words, no internal IDs.
+
+Two further correctness fixes are part of the final UI: a pupil enabling counting labels in independent practice first creates a real server help request, so revealed counts cannot silently count as independent mastery; and a changed AI microquestion starts with a fresh answer field, while the unsubmitted original draft remains in the collapsed original drawer. Matching original completion can restore that draft. Workshop action history remains preserved.
+
+Backend source36Turn28d71a7, source35Start e51a5c3, source33Profile dd7e78b; final UI efe8bbb. Final automated counts and concrete receipts are in evidence-anchored-help-20261026.json. No new integrations/production changes.
+
+Final verification:450Functions,107frontend,7legal/adminpackage and1localcookieisolationtestspass;scopedESLint/diffcheckpass. All14finalownedhostinghashesmatchsourceefe8bbb. Afterwrong999thegenuinefractionhelp3retained3/7×2andasksONLY7×2,withnumerator6alreadyprovided.Texthelp2usesordinarywordsexactlyonthesameFuchs-sentence,nointernalIDs. Thesearetechnicalrepresentativeacceptancecases,notaclassroomcalibrationofall225digitalgoals.

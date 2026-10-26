@@ -1,0 +1,511 @@
+{
+  "taskId": "GC-ADAPTIVE-PRACTICE-01",
+  "clientDate": "2026-10-26",
+  "scope": "Separated gradecrew-staging-2026 and localhost; synthetic accounts only. No production/rules/IAM/provider changes.",
+  "sources": {
+    "implementation32": "faa887aaaa5f1280d8b2f8b9c8b7953e171d5417",
+    "storedHintEvidence33": "dd7e78b6646225acc7fdb45531835706d18ce00f",
+    "responseContract35": "e51a5c37ad1451e2f66757bd3e005b349883f8cd",
+    "hosting": "efe8bbbfec707736b7462c4c546051eee63dd880",
+    "profile": "dd7e78b6646225acc7fdb45531835706d18ce00f",
+    "start": "e51a5c37ad1451e2f66757bd3e005b349883f8cd",
+    "turn": "28d71a7b204c8bea9300043d69a332cf3572be8a"
+  },
+  "checks": {
+    "functions": 450,
+    "frontend": 107,
+    "canonicalPackaging": 7,
+    "lint": "pass",
+    "diffCheck": "pass",
+    "freshCiReceipt": null,
+    "previewIsolation": 1
+  },
+  "runtime": [
+    {
+      "name": "learningBrainStart",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-26T22:06:49.850958413Z",
+      "build": "projects/840345136563/locations/europe-west1/builds/8ef80d88-a944-4a0b-ac09-2fd2324add8f",
+      "revision": "learningbrainstart-00033-dav"
+    },
+    {
+      "name": "learningBrainTurn",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-26T22:13:26.860924428Z",
+      "build": "projects/840345136563/locations/europe-west1/builds/1c178f33-b59c-43dc-b7fe-52e978dca66a",
+      "revision": "learningbrainturn-00036-jan"
+    },
+    {
+      "name": "learningBrainCatalog",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-25T13:19:40.688170018Z",
+      "build": "projects/840345136563/locations/europe-west1/builds/4b9b7627-e2da-4d72-905a-cefd7ae2598b",
+      "revision": "learningbraincatalog-00005-xot"
+    },
+    {
+      "name": "learningBrainProfile",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-26T21:55:48.057422446Z",
+      "build": "projects/840345136563/locations/europe-west1/builds/c53e2b0c-ab88-4c68-b666-9f7ec62433ff",
+      "revision": "learningbrainprofile-00012-mix"
+    }
+  ],
+  "hosting": {
+    "source": "efe8bbbfec707736b7462c4c546051eee63dd880",
+    "baselineFilesVerified": 230,
+    "checks": [
+      {
+        "path": "lerngehirn/index.html",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/app.mjs",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/assistance.mjs",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/api.mjs",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/model.mjs",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/network.mjs",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/delivery.mjs",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/diagrams.mjs",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/diagram-extras.mjs",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/brain.mjs",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/workshop.mjs",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/workshop-units.mjs",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/styles.css",
+        "status": 200,
+        "match": true
+      },
+      {
+        "path": "lerngehirn/release.json",
+        "status": 200,
+        "match": true
+      }
+    ]
+  },
+  "cases": {
+    "B-help32-grid": {
+      "events": 7,
+      "accepted": [
+        {
+          "action": "start",
+          "phase": "practice",
+          "pendingNext": false,
+          "prompt": "Wie viele Einheitsquadrate siehst du in der Reihe?",
+          "explanation": "",
+          "assistanceStage": null,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "help",
+          "phase": "help",
+          "pendingNext": false,
+          "prompt": "Wie viele Einheitsquadrate sind in der einzigen Reihe?",
+          "explanation": "Schau nur auf die einzige Reihe. Zähle jedes kleine Quadrat einmal von links nach rechts.",
+          "assistanceStage": 1,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "help",
+          "phase": "help",
+          "pendingNext": false,
+          "prompt": "Welche Zahl steht beim letzten Kästchen?",
+          "explanation": "Nummeriere die fünf Kästchen in der einzigen Reihe von links nach rechts mit 1, 2, 3, 4 und 5. Die letzte Zahl zeigt, wie viele es sind.",
+          "assistanceStage": 2,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "question",
+          "phase": "help",
+          "pendingNext": false,
+          "prompt": "Wie viele Flächeneinheiten zählt ein einzelnes Kästchen?",
+          "explanation": "Ein Einheitsquadrat ist ein kleines Kästchen. Es zählt genau 1 Flächeneinheit.",
+          "assistanceStage": 2,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "answer",
+          "phase": "completion",
+          "pendingNext": false,
+          "prompt": "Wie viele Einheitsquadrate siehst du in der Reihe?",
+          "explanation": "Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen.",
+          "assistanceStage": null,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "answer",
+          "phase": "practice",
+          "pendingNext": false,
+          "prompt": "Wie viele Einheitsquadrate hat das markierte Teilrechteck?",
+          "explanation": "",
+          "assistanceStage": null,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "answer",
+          "phase": "practice",
+          "pendingNext": false,
+          "prompt": "Wie viele Einheitsquadrate bedecken das ganze Rechteck?",
+          "explanation": "",
+          "assistanceStage": null,
+          "sameSourceDiagram": true
+        }
+      ],
+      "rejectedHttpCalls": 0
+    },
+    "B-help33-fraction": {
+      "events": 8,
+      "accepted": [
+        {
+          "action": "start",
+          "phase": "practice",
+          "pendingNext": true,
+          "prompt": null,
+          "explanation": "",
+          "assistanceStage": null,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "retry-next",
+          "phase": "practice",
+          "pendingNext": true,
+          "prompt": null,
+          "explanation": "",
+          "assistanceStage": null,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "retry-next",
+          "phase": "practice",
+          "pendingNext": true,
+          "prompt": null,
+          "explanation": "",
+          "assistanceStage": null,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "retry-next",
+          "phase": "practice",
+          "pendingNext": false,
+          "prompt": "Erweitere den Bruch 3/7 mit dem Faktor 2. Gib nur den erweiterten Bruch an.",
+          "explanation": "",
+          "assistanceStage": null,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "help",
+          "phase": "help",
+          "pendingNext": false,
+          "prompt": "Rechne bei 3/7 beide Zahlen mal 2. Welcher erweiterte Bruch entsteht?",
+          "explanation": "Beim Erweitern mal 2 rechnest du oben und unten mit 2: Zähler 3 · 2, Nenner 7 · 2.",
+          "assistanceStage": 1,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "help",
+          "phase": "help",
+          "pendingNext": false,
+          "prompt": "Wie lautet der erweiterte Bruch?",
+          "explanation": "Rechne getrennt: 3 · 2 = 6 und 7 · 2 = 14. Setze 6 oben und 14 unten in den Bruch.",
+          "assistanceStage": 2,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "answer",
+          "phase": "help",
+          "pendingNext": false,
+          "prompt": "Wie viel ist 7 · 2?",
+          "explanation": "Der Zähler ist schon berechnet: 3 · 2 = 6. Rechne jetzt nur den Nenner: 7 · 2.",
+          "assistanceStage": 3,
+          "sameSourceDiagram": true
+        }
+      ],
+      "rejectedHttpCalls": 1,
+      "finalVerified": {
+        "phase": "help",
+        "pendingNext": false,
+        "explanation": "Der Zähler ist schon berechnet: 3 · 2 = 6. Rechne jetzt nur den Nenner: 7 · 2.",
+        "feedback": {
+          "outcome": "incorrect",
+          "short": "Nicht richtig. Der erweiterte Bruch lautet 6/14."
+        },
+        "task": {
+          "id": "005bb3c6-299d-42b2-975f-da771d6fbd12",
+          "prompt": "Wie viel ist 7 · 2?",
+          "contextText": "Bruch: 3/7\nFaktor: 2",
+          "input": "number",
+          "options": [],
+          "workshop": null,
+          "diagram": null,
+          "media": null
+        },
+        "assistance": {
+          "version": 1,
+          "anchorTaskId": "005bb3c6-299d-42b2-975f-da771d6fbd12",
+          "stage": 3,
+          "focusIds": [
+            "token:1",
+            "token:3"
+          ],
+          "numberLabels": true,
+          "regions": [
+            {
+              "id": "token:0",
+              "label": "Wort 1: Bruch:"
+            },
+            {
+              "id": "token:1",
+              "label": "Wort 2: 3/7"
+            },
+            {
+              "id": "token:2",
+              "label": "Wort 3: Faktor:"
+            },
+            {
+              "id": "token:3",
+              "label": "Wort 4: 2"
+            }
+          ],
+          "replyTo": ""
+        }
+      }
+    },
+    "B-help34-text": {
+      "events": 4,
+      "accepted": [
+        {
+          "action": "start",
+          "phase": "practice",
+          "pendingNext": true,
+          "prompt": null,
+          "explanation": "",
+          "assistanceStage": null,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "retry-next",
+          "phase": "practice",
+          "pendingNext": false,
+          "prompt": "Markiere den Kern der Wortgruppe „Der flinke Fuchs“.",
+          "explanation": "",
+          "assistanceStage": null,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "help",
+          "phase": "help",
+          "pendingNext": false,
+          "prompt": "Markiere in „Der flinke Fuchs rennt.“ das wichtigste Nomen der Wortgruppe.",
+          "explanation": "Der Kern ist das wichtigste Nomen der Wortgruppe. Markiere token:2 „Fuchs“.",
+          "assistanceStage": 1,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "help",
+          "phase": "help",
+          "pendingNext": false,
+          "prompt": "Markiere im vorhandenen Satz das Wort „Fuchs“ als Kern der Wortgruppe.",
+          "explanation": "Prüfe die Wörter einzeln: „Der“ begleitet, „flinke“ beschreibt, „Fuchs“ benennt ein Tier. Dieses Nomen ist der Kern.",
+          "assistanceStage": 2,
+          "sameSourceDiagram": true
+        }
+      ],
+      "rejectedHttpCalls": 0,
+      "finalVerified": {
+        "phase": "help",
+        "pendingNext": false,
+        "explanation": "Prüfe die Wörter einzeln: „Der“ begleitet, „flinke“ beschreibt, „Fuchs“ benennt ein Tier. Dieses Nomen ist der Kern.",
+        "feedback": {
+          "outcome": "",
+          "short": ""
+        },
+        "task": {
+          "id": "71a045d0-fc59-40f0-be91-3e40c297e25c",
+          "prompt": "Markiere im vorhandenen Satz das Wort „Fuchs“ als Kern der Wortgruppe.",
+          "contextText": "Der flinke Fuchs rennt.",
+          "input": "workshop",
+          "options": [],
+          "workshop": {
+            "tool": "text-workbench",
+            "version": 1,
+            "role": "answer",
+            "goal": "text",
+            "instruction": "Markiere das wichtigste Nomen in der genannten Wortgruppe.",
+            "mode": "select",
+            "text": "Der flinke Fuchs rennt.",
+            "tokens": []
+          },
+          "diagram": null,
+          "media": null
+        },
+        "assistance": {
+          "version": 1,
+          "anchorTaskId": "71a045d0-fc59-40f0-be91-3e40c297e25c",
+          "stage": 2,
+          "focusIds": [
+            "token:2"
+          ],
+          "numberLabels": false,
+          "regions": [
+            {
+              "id": "shape",
+              "label": "Dein vorhandenes Modell"
+            },
+            {
+              "id": "token:0",
+              "label": "Wort 1: Der"
+            },
+            {
+              "id": "token:1",
+              "label": "Wort 2: flinke"
+            },
+            {
+              "id": "token:2",
+              "label": "Wort 3: Fuchs"
+            },
+            {
+              "id": "token:3",
+              "label": "Wort 4: rennt."
+            }
+          ],
+          "replyTo": ""
+        }
+      }
+    },
+    "A-help33-user": {
+      "events": 3,
+      "accepted": [
+        {
+          "action": "start",
+          "phase": "practice",
+          "pendingNext": false,
+          "prompt": "Wie viele Einheitsquadrate siehst du in der Reihe?",
+          "explanation": "",
+          "assistanceStage": null,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "help",
+          "phase": "help",
+          "pendingNext": false,
+          "prompt": "Wie viele Einheitsquadrate zählst du?",
+          "explanation": "Zähle die Kästchen in der einzigen Reihe von links nach rechts. Jedes Kästchen zählt genau einmal.",
+          "assistanceStage": 1,
+          "sameSourceDiagram": true
+        },
+        {
+          "action": "help",
+          "phase": "help",
+          "pendingNext": false,
+          "prompt": "Welche Zahl steht am letzten Kästchen?",
+          "explanation": "Nummeriere die Kästchen in der einzigen Reihe von links nach rechts: 1, 2, 3 und so weiter. Die Zahl am letzten Kästchen zeigt, wie viele es sind.",
+          "assistanceStage": 2,
+          "sameSourceDiagram": true
+        }
+      ],
+      "rejectedHttpCalls": 0
+    }
+  },
+  "privateHintEvidence": {
+    "phase": "practice",
+    "pendingNext": false,
+    "episode": {
+      "requestCount": "3",
+      "supportedSuccesses": "1",
+      "originalCompleted": true,
+      "independentSuccesses": "1",
+      "status": "promising-transfer",
+      "reviewNeeded": true,
+      "lastHelp": {
+        "explanation": "Ein Einheitsquadrat ist ein kleines Kästchen. Es zählt genau 1 Flächeneinheit.",
+        "question": "Wie viele Flächeneinheiten zählt ein einzelnes Kästchen?",
+        "focusIds": [
+          "cell:0:0",
+          "unit"
+        ],
+        "numberLabels": false,
+        "version": "1",
+        "stage": "2"
+      },
+      "successfulHelp": {
+        "explanation": "Ein Einheitsquadrat ist ein kleines Kästchen. Es zählt genau 1 Flächeneinheit.",
+        "question": "Wie viele Flächeneinheiten zählt ein einzelnes Kästchen?",
+        "focusIds": [
+          "cell:0:0",
+          "unit"
+        ],
+        "numberLabels": false,
+        "version": "1",
+        "stage": "2"
+      },
+      "reasonCodes": [
+        "repeated-help-requests"
+      ]
+    },
+    "nextFailure": null
+  },
+  "browser": {
+    "mainViewport": "1101x984",
+    "mainResponseControlsBottom": 620.61,
+    "otherVerifiedViewport": "1280x720",
+    "screenshot": "evidence/anchored-help-20261026/user-help.png"
+  },
+  "limits": [
+    "Representative genuine AI cases, not every225goal individually calibrated.",
+    "One supported success is not competence; promising transfer is not proven causality or retention.",
+    "Help snapshots/evidence remain bounded owner-private; no automatic cross-pupil/global model training or unreviewed promotion.",
+    "Future task formats require source and semantic-focus adapters; unsupported focus uses accessible labels rather than invented graphics.",
+    "Readable narrow screens, long texts, complex diagrams, zoom and keyboards may require scrolling; ordinary tested desktop step fits together.",
+    "Independent reviewer may still reject uncertain candidates; original fraction failures and rejected text draft retained.",
+    "PR262 remains Draft/unmerged; no fresh GitHub Actions result inferred from local checks."
+  ],
+  "laterFindings": [
+    "Numeric choices and typed exact fractions are supported by real UI, contradictory reviewer constraint corrected after real rejections.",
+    "An internal token:2 label was emitted by a real first text help; now blocked before display, corrected real second text help verified plain language.",
+    "After wrong999 on fraction source3/7×2, real stage3keeps3/7andfactor2, gives numerator6 and asks only7×2.",
+    "Counting annotation during practice now creates a server help request; a changed microquestion cannot inherit the original draft answer."
+  ]
+}
