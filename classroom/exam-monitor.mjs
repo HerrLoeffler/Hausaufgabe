@@ -15,7 +15,7 @@ export function monitorModel(result, serverNow) {
     remainingSeconds:round.deadlineAt?Math.max(0,Math.ceil((round.deadlineAt-serverNow)/1000)):null};
 }
 
-export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},onHelp=()=>{},onResolve=()=>{},now=Date.now}) {
+export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},onHelp=()=>{},onResolve=()=>{},onUpdated=()=>{},now=Date.now}) {
   const doc=host.ownerDocument;
   const el=(tag,text,attrs={})=>{const n=doc.createElement(tag);if(text!==undefined)n.textContent=text;for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);return n;};
   const action=(label,fn)=>{const b=el('button',label,{type:'button',class:'button ghost'});b.addEventListener('click',()=>void fn());return b;};
@@ -48,11 +48,11 @@ export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},on
       if(!record){const node=el('tr'),cells=Array.from({length:4},()=>el('td'));node.append(...cells);record={node,cells,row};record.help=action('Hilfe',()=>record.row.status==='submitted'?onOpenResults(record.row,latest.assignment):onHelp(record.row,latest.assignment,latest.round));cells[3].append(record.help);records.set(row.studentId,record);}
       record.row=row;if(!record.deviceHelp&&row.attemptId){record.deviceHelp=action('Gerätehilfe',()=>onHelp(record.row,latest.assignment,latest.round));record.cells[3].append(record.deviceHelp);}if(record.deviceHelp)record.deviceHelp.hidden=row.status!=='submitted';record.cells[0].textContent=row.name;record.cells[1].dataset.state=row.status;record.cells[1].textContent=(monitorLabels[row.status]||'Stand unbekannt')+(row.stale?' · Kein frisches Signal':'');
       if(row.deviceExit)record.cells[1].textContent+=' · '+(deviceExitLabels[row.deviceExit.state]||'Gerätefreigabe unbestätigt');
-      const actionLabels={pending:'Fortsetzungsbitte ausstehend',delivered:'Fortsetzungsbitte zugestellt',acknowledged:'Fortsetzung bestätigt',expired:'Fortsetzungsbitte abgelaufen'};if(row.resumeAction)record.cells[1].textContent+=' · '+(actionLabels[row.resumeAction.state]||'');
+      const actionLabels={pending:'Fortsetzungsbitte ausstehend',delivered:'Fortsetzungsbitte zugestellt',acknowledged:'Fortsetzung bestätigt',expired:'Fortsetzungsbitte abgelaufen'};if(row.resumeAction&&row.status!=='submitted')record.cells[1].textContent+=' · '+(actionLabels[row.resumeAction.state]||'');
       record.cells[2].textContent=row.lastSeenAt?new Date(row.lastSeenAt).toLocaleTimeString('de-DE'):'Noch kein Kontakt';record.help.textContent=row.status==='submitted'?'Ergebnis':'Hilfe';
       if(body.children[index]!==record.node)body.insertBefore(record.node,body.children[index]||null);
     }
-    applyFilter();
+    applyFilter();onUpdated(result);
   }
   async function requestStart(confirmed){
     if(disposed||starting||!latest||!connected)return;

@@ -30,7 +30,7 @@ const SPEC_FIELDS = {
   grid: "rows columns", chart: "min max step unit categories",
   connections: "directed nodes", coordinate: "mode minX maxX minY maxY step labels",
   evidence: "tokens", range: "min max step majorStep unit context startInclusive endInclusive",
-  table: "columns rows answerMode numericForm", correction: "rows answerMode numericForm caseSensitive",
+  table: "columns rows answerMode numericForm layout", correction: "rows answerMode numericForm caseSensitive",
   timeline: "min max unit ticks events", sequence: "family items"
 };
 const SOLUTION_FIELDS = {
@@ -92,7 +92,7 @@ function parseVisualTask(raw, { points } = {}) {
   if (task.format === "correction") records(spec.rows, "id text");
   if (task.format === "table") {
     if (!Array.isArray(spec.rows) || !spec.rows.every(Array.isArray)) throw new Error("Ungültige Tabelle.");
-    records(spec.rows.flat(), "id text input"); records(solution.cells, "id accepted");
+    records(spec.rows.flat(), "id text input control"); records(solution.cells, "id accepted answerMode");
     if (spec.rows.flat().some(cell => typeof cell.input !== "boolean" || typeof cell.text !== "string" || (cell.input && cell.text !== ""))) throw new Error("Tabellen-Eingabezellen müssen leer sein.");
     if (!spec.columns.every(column => typeof column === "string" && column.trim())) throw new Error("Tabellenspalten fehlen.");
   }

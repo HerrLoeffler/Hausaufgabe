@@ -49,6 +49,9 @@ async function runDeviceCommand({store,now,fail,command,data,uid,member}){
   if(!quiz||quiz.ownerId!==uid||!p||p.attemptId!==attemptId||p.generation!==data.expectedGeneration||!attempt?.classroom||attempt.classroom.studentId!==studentId||attempt.classroom.assignmentId!==assignmentId||attempt.classroom.generation!==p.generation)fail('aborted','Bitte den aktuellen Prüfungsversuch erneut prüfen.');
   let action;
   if(command==='requestDeviceExit'){
+   const prior=await tx.get(`${base}/deviceAudit/${actionId}_requestDeviceExit`);
+   if(prior){if(prior.actor!==uid||prior.studentId!==studentId||prior.attemptId!==attemptId||prior.generation!==p.generation||p.deviceExit?.actionId!==actionId)fail('aborted','Dieser Geräteauftrag wurde bereits verwendet. Bitte den aktuellen Stand prüfen.');return {action:p.deviceExit};}
+
    if(p.deviceCapabilities?.exitProtocol!==1)fail('failed-precondition','Dieses iPad hat die neue Gerätehilfe noch nicht bestätigt. Bitte zuerst den neuen Secure-Build installieren und mit diesem Versuch verbinden.');
    if(p.deviceExit?.actionId===actionId)return {action:p.deviceExit};
    if(p.deviceExit&&!['resume_allowed'].includes(p.deviceExit.state))fail('already-exists','Für dieses Gerät läuft bereits ein Freigabeauftrag.');

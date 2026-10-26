@@ -74,6 +74,8 @@ test('device release binds owning teacher and original attempt secret; an old AC
  await f.student('acknowledgeDeviceExit',{...d,actionId:'exit1',outcome:'ended'});
  assert.equal((await f.teacher('allowDeviceResume',args)).action.state,'resume_allowed');
  await assert.rejects(f.student('acknowledgeDeviceExit',{...d,actionId:'exit1',outcome:'failed'}),{code:'aborted'});
+ const second={...args,actionId:'exit2'};await f.teacher('requestDeviceExit',second);await f.student('deviceExitStatus',d);await f.student('acknowledgeDeviceExit',{...d,actionId:'exit2',outcome:'ended'});await f.teacher('allowDeviceResume',second);
+ await assert.rejects(f.teacher('requestDeviceExit',args),{code:'aborted'});
  const before=f.docs.get(base);f.docs.set(base,{...before,generation:1});await assert.rejects(f.student('deviceExitStatus',d),{code:'aborted'});
  assert.equal(f.docs.get('quizzes/TEST2026/attempts/device').status,'running');
 });
