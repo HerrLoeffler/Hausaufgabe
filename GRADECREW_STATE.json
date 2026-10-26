@@ -3146,7 +3146,7 @@
       "production": "unchanged",
       "teacher_acceptance": "pending",
       "physical_device_acceptance": "pending",
-      "next_action": "Martin tests format/wish dialog on an unpublished draft; pre-create large presentation tests. Reduce repair count/latency without disabling validation; preserve current classroom Hosting/backend composition.",
+      "next_action": "Martin reviews an own subject-specific creation on normal Staging and the prepared6/40tests before Wednesday. Continue P1 repair/cost reduction;20latency and repair targets not fully met. No Production release.",
       "historical_preview": {
         "preview_url": "https://gradecrew-staging-2026--remy26-mhohnhf1.web.app/workspace.html",
         "functions_codebases": [
@@ -3251,7 +3251,7 @@
         "production": "unchanged"
       },
       "generation_latency_plan_20261026": {
-        "status": "documented_not_implemented",
+        "status": "implemented_staging_pilot; targets_partially_met",
         "design": "docs/superpowers/specs/2026-10-26-interactive-generation-latency-design.md",
         "plan": "docs/superpowers/plans/2026-10-26-interactive-generation-latency.md",
         "baseline": {
@@ -3289,12 +3289,13 @@
           ],
           "latency_reduction": 0.5
         },
-        "runtime_changed": false,
-        "new_paid_requests": 0,
-        "next_step": "Task1 measurement and scoped format guidance; no implementation or paid pilot started by this planning request"
+        "runtime_changed": true,
+        "new_paid_requests": 4,
+        "next_step": "Martin reviews an own subject-specific creation on normal Staging and the prepared6/40tests before Wednesday. Continue P1 repair/cost reduction;20latency and repair targets not fully met. No Production release.",
+        "implementation_report": "docs/evidence/interactive-generation-performance-20261026/REPORT.md"
       },
       "automatic_task_selection_requirement": {
-        "status": "documented_not_implemented",
+        "status": "implemented_staging",
         "source": "Martin26Oct: appropriate formats regularly without per-taskclicks",
         "rules": "docs/learning/AUTOMATIC_TASK_SELECTION.md",
         "plan": "docs/superpowers/plans/2026-10-26-interactive-generation-latency.md#task0-fachlich-passende-rezepte-automatisch-auswählen",
@@ -3307,8 +3308,119 @@
           "validated builders and private grading",
           "no unreviewed selftraining or pool admission"
         ],
-        "new_paid_calls": 0,
-        "deployment": "none"
+        "new_paid_calls": 4,
+        "deployment": "normal gradecrew-staging-2026 only",
+        "implementation_report": "docs/evidence/interactive-generation-performance-20261026/REPORT.md"
+      },
+      "current_staging_source": "5e45e9df2449ca7e4c4b735ae754452a6f304ab7",
+      "automatic_recipes_followup_20261026": {
+        "stage": "staging_deployed",
+        "scope": "normal gradecrew-staging-2026 only; no Hosting/Rules/Assessment/Production deployment",
+        "pull_requests": [
+          334,
+          336
+        ],
+        "source": "5e45e9df2449ca7e4c4b735ae754452a6f304ab7",
+        "recipe_version": "b76dd6ea6094d0f0",
+        "evidence_commit": "9ff13e40cb6ac7016a6b8ef61058d4ca947ba6bf",
+        "report": "docs/evidence/interactive-generation-performance-20261026/REPORT.md",
+        "rules": "docs/learning/AUTOMATIC_TASK_SELECTION.md",
+        "selection": "nine versioned recipe profiles; per-goal suitable slots; existing explicit format restrictions preserved; no per-taskclick; no model training",
+        "quality": "base validation plus independent key-aware review and separate public-only blind solution; unresolved visual issues block ready; same configured provider, no Claude claim",
+        "qualification": "strict by default; same-version>=400attempts,95%WilsonLower>=.99,>=20approved unchanged tasks across>=3teachers,no approvedbad; then10%blind audit; unknown motifs remain strict",
+        "runs": [
+          {
+            "questions": 6,
+            "points": 15,
+            "job": "c27c7426ab5a87ffefc899a5e6355832dd09669b",
+            "quiz": "F3FT79B2",
+            "status": "ready",
+            "seconds": 74,
+            "provider_responses": 9,
+            "repair_attempts": 4
+          },
+          {
+            "questions": 20,
+            "points": 60,
+            "job": "0c4ae0651165901a5cf58d7d9f897e88841b3b60",
+            "quiz": "8TJ5PRHW",
+            "status": "ready",
+            "seconds": 226,
+            "provider_responses": 26,
+            "repair_attempts": 17
+          },
+          {
+            "questions": 40,
+            "points": 100,
+            "job": "be2a1b86f393ca02e73d2129054b0a99cc2c8043",
+            "status": "failed_quality_blocked",
+            "seconds": 377,
+            "provider_responses": 47,
+            "repair_attempts": 35,
+            "error_reference": "541a1847",
+            "root_cause": "percent/quantity labels reversed; concrete semantic adapter fix PR336"
+          },
+          {
+            "questions": 40,
+            "points": 100,
+            "job": "c2c92924761b1442572d08f6327bbb7c7c23941b",
+            "quiz": "VBNYCHVQ",
+            "status": "ready",
+            "seconds": 342,
+            "provider_responses": 35,
+            "repair_attempts": 25
+          }
+        ],
+        "verification": {
+          "backend_ui_tests": 365,
+          "assessment_tests": 136,
+          "independent_review": "four findings fixed with regression; one final branch reviewer",
+          "historical_dreisatz_roundtrip": 37,
+          "finished_tasks": 66,
+          "independent_offline_checks": 570,
+          "real_server_cases": 8,
+          "scores6": [
+            15,
+            14.5,
+            14.5,
+            0
+          ],
+          "scores40": [
+            100,
+            99.5,
+            99.5,
+            0
+          ],
+          "resume_redaction_idempotence": true,
+          "browser": "both direct/inverse tasks input, navigation and reload persistence verified; native confirm automation unresolved, no UI receipt claimed",
+          "last_deploy_functions": 3,
+          "other_functions_unchanged": 77,
+          "total_functions": 80
+        },
+        "budget_history": {
+          "logical_generation_jobs": 4,
+          "ready": 3,
+          "quality_blocked": 1,
+          "completed_provider_responses": 117,
+          "total_tokens": 1643150,
+          "extra_single_question_calls": 0,
+          "price": "unknown",
+          "http_transport_attempts": "not separately counted",
+          "history": "original baselines62providerresponses and2UIconversions preserved separately; exactlyone40B confirmation after proven bug, no blindretry"
+        },
+        "targets": {
+          "latency20_reduction_about": 0.4,
+          "latency40_reduction_about": 0.595,
+          "halving20": "not_met",
+          "halving40": "met_for_one_confirmation",
+          "repair_targets4_and8": "not_met_17_and25",
+          "success_99_percent": "not_established"
+        },
+        "teacher_acceptance": "pending",
+        "physical_device_acceptance": "pending",
+        "curriculum_scope": "new pilot class7; earlier5-10pilot separate",
+        "production": "unchanged",
+        "running_jobs": "none"
       }
     },
     {
