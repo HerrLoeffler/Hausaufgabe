@@ -25,7 +25,7 @@ for(let i=0;i<entries.length;i+=6)await Promise.all(entries.slice(i,i+6).map(asy
  const target=path.join(publicDir,name);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,data);
 }));
 const hashes={};
-for(const name of ['index.html','app.mjs','api.mjs','model.mjs','network.mjs','delivery.mjs','diagrams.mjs','diagram-extras.mjs','brain.mjs','workshop.mjs','workshop-units.mjs','styles.css']){
+for(const name of ['index.html','app.mjs','assistance.mjs','api.mjs','model.mjs','network.mjs','delivery.mjs','diagrams.mjs','diagram-extras.mjs','brain.mjs','workshop.mjs','workshop-units.mjs','styles.css']){
  const data=await fs.readFile(path.join(root,'lerngehirn',name));const target=path.join(publicDir,'lerngehirn',name);await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,data);hashes['lerngehirn/'+name]=digest(data);
 }
 const feature={project:site,sourceCommit,version:'learning-brain-56-20261025',files:hashes,scope:'Mathe/Deutsch5-6:241 child goals, personal evidence network,7workshops,14diagrams and real listening;16human-observation goals remain explicit;7-10legacycatalogue unchanged; content calibration open'};

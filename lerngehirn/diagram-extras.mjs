@@ -1,3 +1,4 @@
+import {focusAttributes} from './assistance.mjs';
 // Same bounded scene contract as functions/lib/learning-brain/diagram-extras.js.
 const number=(minimum,maximum)=>({type:'number',minimum,maximum,description:'Höchstens drei Nachkommastellen.'});
 const integer=(minimum,maximum)=>({type:'integer',minimum,maximum});
@@ -56,14 +57,16 @@ function solid(length,width,height,box,grid=false){
  }
  return {svg,x,y,w,h,dx,dy};
 }
-export function renderExtraDiagram(input){
+export function renderExtraDiagram(input,assistance={}){
  const d=validateExtraDiagram(input);if(!d)return '';
  const measure=v=>num(v)+(d.unit?' '+d.unit:'');let body='',height=460,description='',footer='';
  if(d.kind==='area-grid'){
-  const s=Math.min(420/d.columns,285/d.rows),left=(760-d.columns*s)/2,top=75;
+  const s=Math.min(420/d.columns,250/d.rows),left=(500-d.columns*s)/2,top=55;
+  height=top+d.rows*s+48;
   for(let y=0;y<d.rows;y++)for(let x=0;x<d.columns;x++)body+=rect(left+x*s,top+y*s,s,s,'#f6fafb',`data-grid-cell="${x},${y}"`);
-  for(const p of d.cells)body+=rect(left+p.x*s,top+p.y*s,s,s,'#75b5c1',`data-area-cell="${p.x},${p.y}"`);
-  body+=label(380,top+d.rows*s+28,d.unit?'Ein Kästchen: 1 '+d.unit:'Ein Kästchen: eine Flächeneinheit');description='Quadratisches Raster mit einer zusammenhängenden gefärbten Fläche. Nur die gefärbten Kästchen gehören zur markierten Figur.';
+  for(const p of d.cells)body+=rect(left+p.x*s,top+p.y*s,s,s,'#75b5c1',`data-area-cell="${p.x},${p.y}"${focusAttributes(assistance,`cell:${p.x}:${p.y}`,`row:${p.y}`,`column:${p.x}`,'shape')}`);
+  if(assistance.numberLabels)for(const [i,p]of [...d.cells].sort((a,b)=>a.y-b.y||a.x-b.x).entries())body+=label(left+(p.x+.5)*s,top+(p.y+.5)*s+5,i+1,Math.min(18,s*.48));
+  body+=label(250,top+d.rows*s+28,d.unit?'Ein Kästchen = 1 '+(/^Einheitsquadrate?$/i.test(d.unit)?'Einheitsquadrat':d.unit):'Ein Kästchen = eine Flächeneinheit');description='Quadratisches Raster mit einer zusammenhängenden gefärbten Fläche. Nur die gefärbten Kästchen gehören zur markierten Figur.';
  }
  if(d.kind==='unit-cubes'){
   height=Math.max(460,120+Math.ceil(d.height/2)*(45+Math.max(35,d.width*14)));
@@ -86,13 +89,14 @@ export function renderExtraDiagram(input){
  }
  if(d.kind==='fraction-area'){
   const left=150,top=90,w=460,h=260,cw=w/d.columns,ch=h/d.rows,colors=['#8fc9d8','#b9d7a7','#e2c69d','#c7b9df','#c6d4a4','#b1cfdf','#e1b7c0','#d4d8a0','#b7c1e2','#e3cda9','#a5d6c9','#d6b4d7'];
-  for(let y=0;y<d.rows;y++)for(let x=0;x<d.columns;x++)body+=rect(left+x*cw,top+y*ch,cw,ch,'#ffffff');
+  for(let y=0;y<d.rows;y++)for(let x=0;x<d.columns;x++)body+=rect(left+x*cw,top+y*ch,cw,ch,'#ffffff',`data-source-region="part:${y*d.columns+x}"`);
   for(let y=0;y<d.rows;y++){
    if(d.mode==='equal-groups')body+=`<g data-group="${y+1}">`;
    for(let x=0;x<d.selectedColumns;x++)body+=rect(left+x*cw,top+y*ch,cw,ch,d.mode==='equal-groups'?colors[y%colors.length]:'#b9dce7',`data-source-cell="${x},${y}"`);
    if(d.mode==='equal-groups')body+='</g>'+label(left+w+12,top+(y+.5)*ch+4,'Gruppe '+(y+1),11,'start');
   }
   if(d.mode==='part-of-part')for(let y=0;y<d.selectedRows;y++)for(let x=0;x<d.selectedColumns;x++)body+=rect(left+x*cw,top+y*ch,cw,ch,'#2f657c',`data-intersection-cell="${x},${y}"`);
+  for(let y=0;y<d.rows;y++)for(let x=0;x<d.columns;x++)if(focusAttributes(assistance,`part:${y*d.columns+x}`,'whole:0'))body+=rect(left+x*cw,top+y*ch,cw,ch,'none','data-help-focus="true"');
   body+=label(380,382,d.mode==='part-of-part'?'Hellblau: Ausgangsanteil · Dunkelblau: Teil davon':'Jede farbige Zeile zeigt eine gleich große Gruppe',15);description='Das umrandete Rechteck bleibt ein und dasselbe Ganze. Die Quelle umfasst die linken '+d.selectedColumns+' von '+d.columns+' Spalten.'+(d.mode==='part-of-part'?' Dunkel markiert sind davon '+d.selectedRows+' von '+d.rows+' gleich großen Zeilen.':' Die Quelle ist in '+d.rows+' gleich große Zeilengruppen aufgeteilt.');
  }
  if(d.kind==='segment-figure'){
@@ -100,8 +104,8 @@ export function renderExtraDiagram(input){
   const X=x=>left+(x-xmin)*s,Y=y=>top+(ymax-y)*s;
   if(d.grid){for(let x=xmin;x<=xmax;x++)body+=line(X(x),Y(ymin),X(x),Y(ymax),'opacity=".15"');for(let y=ymin;y<=ymax;y++)body+=line(X(xmin),Y(y),X(xmax),Y(y),'opacity=".15"');body+=line(X(xmin),Y(0),X(xmax),Y(0))+line(X(0),Y(ymin),X(0),Y(ymax))+label(X(xmax),Y(0)-10,d.unit?'x ('+d.unit+')':'x')+label(X(0)+10,Y(ymax)-12,d.unit?'y ('+d.unit+')':'y');for(let x=xmin;x<=xmax;x++)if((xmax-xmin<=16)||x%2===0)body+=label(X(x),Y(0)+16,num(x),10);for(let y=ymin;y<=ymax;y++)if(y!==0&&(ymax-ymin<=16||y%2===0))body+=label(X(0)-12,Y(y)+4,num(y),10);}
   const points=new Map(d.points.map(p=>[p.label,p]));for(const edge of d.segments){const a=points.get(edge.from),b=points.get(edge.to);body+=line(X(a.x),Y(a.y),X(b.x),Y(b.y),`data-segment="${edge.from}-${edge.to}"`);}
-  for(const p of d.points)body+=`<circle cx="${f(X(p.x))}" cy="${f(Y(p.y))}" r="4" fill="#bd5a38"/>`+label(X(p.x)+10,Y(p.y)-9,p.label,14,'start');
+  for(const p of d.points)body+=`<circle ${focusAttributes(assistance,`point:${p.label}`)} cx="${f(X(p.x))}" cy="${f(Y(p.y))}" r="4" fill="#bd5a38"/>`+label(X(p.x)+10,Y(p.y)-9,p.label,14,'start');
   description='Beschriftete Punkte mit exakt verbundenen Strecken. Horizontale und vertikale Einheiten sind gleich groß.';footer='Nutze die angegebenen Punkte und Eigenschaften; miss nicht am Bildschirm.';
  }
- return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 ${height}" role="img" aria-label="${esc(d.title+'. '+description)}" style="width:100%;max-width:760px;height:auto"><title>${esc(d.title)}</title><desc>${esc(description)}</desc>${d.title.match(/.{1,80}/g).map((part,i)=>label(380,28+i*20,part,17)).join('')}${body}${footer?label(380,height-16,footer,13):''}</svg>`;
+ return `<svg xmlns="http://www.w3.org/2000/svg" data-diagram-kind="${d.kind}" viewBox="0 0 ${d.kind==='area-grid'?500:760} ${height}" role="img" aria-label="${esc(d.title+'. '+description)}" style="width:100%;max-width:760px;height:auto"><title>${esc(d.title)}</title><desc>${esc(description)}</desc>${d.title.match(/.{1,80}/g).map((part,i)=>label(d.kind==='area-grid'?250:380,28+i*20,part,17)).join('')}${body}${footer?label(380,height-16,footer,13):''}</svg>`;
 }

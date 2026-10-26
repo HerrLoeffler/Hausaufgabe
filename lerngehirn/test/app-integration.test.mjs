@@ -9,6 +9,7 @@ import * as workshop from '../workshop.mjs';
 import * as network from '../network.mjs';
 import * as delivery from '../delivery.mjs';
 import * as diagrams from '../diagrams.mjs';
+import * as assistance from '../assistance.mjs';
 
 async function mount(activeSession,{turnResult,catalog={topics:[]},skills=[]}={}){
   const events=new Map(),calls=[];
@@ -17,14 +18,14 @@ async function mount(activeSession,{turnResult,catalog={topics:[]},skills=[]}={}
   const account={innerHTML:''};
   let onAuth,tick,hoverCell=null;
   const api={isLocal:false,watchAuth(listener){onAuth=listener;return ()=>{};},login:async()=>{},logout:async()=>{},async call(method,data){calls.push({method,data});if(method==='learningBrainCatalog')return catalog;if(method==='learningBrainTurn'&&turnResult)return typeof turnResult==='function'?turnResult(data):turnResult;if(method==='learningBrainProfile')return {learner:{alias:'du',grade:6,track:'R'},skills,recommendations:[],activeSession};throw new Error('Unexpected network call');}};
-  const imported={...api,...model,...brain,...workshop,...network,...delivery,...diagrams};
+  const imported={...api,...model,...brain,...workshop,...network,...delivery,...diagrams,...assistance};
   let source=await fs.readFile(new URL('../app.mjs',import.meta.url),'utf8');
   // Execute the real entry point with only its browser/provider boundaries replaced.
   source=source.replace(/^import \{([^}]+)\} from '[^']+';$/gm,(_,names)=>{for(const name of names.split(',').map(n=>n.trim()))assert.ok(name in imported,`entry point import ${name} exists`);return '';});
   vm.runInNewContext(source,{...imported,document:{elementFromPoint(){return hoverCell;},querySelector(selector){return selector==='#app'?app:account;},addEventListener(name,listener){events.set(name,listener);}},setInterval(fn){tick=fn;},URL,Date,crypto:webcrypto,console,FormData:class {get(){return null;}}},{filename:'lerngehirn/app.mjs'});
   onAuth({uid:'synthetic-b'});
   await new Promise(resolve=>setImmediate(resolve));
-  return {app,calls,pointer(type,index,pointerId=1){const cell=index===null?null:{dataset:{workshopPart:String(index)},disabled:false,closest(){return this;}};hoverCell=cell;events.get(type)({target:cell||{closest(){return null;}},button:0,isPrimary:true,pointerId,clientX:0,clientY:0,preventDefault(){}});},tick(){tick();},input(name,value,validity){events.get('input')({target:{name,value,validity}});},async submit(id){await events.get('submit')({preventDefault(){},target:{id}});},async board(type,value){await events.get('click')({detail:0,target:{closest(selector){return selector==='[data-workshop-part], [data-workshop-action]'?{dataset:type==='toggle-part'?{workshopPart:String(value)}:{workshopAction:type,value:String(value)},disabled:false}:null;}}});},async click(action,extra={}){await events.get('click')({target:{closest(){return {dataset:{action,...extra},disabled:false};}}});}};
+  return {app,calls,async auth(user){onAuth(user);await new Promise(resolve=>setImmediate(resolve));},pointer(type,index,pointerId=1){const cell=index===null?null:{dataset:{workshopPart:String(index)},disabled:false,closest(){return this;}};hoverCell=cell;events.get(type)({target:cell||{closest(){return null;}},button:0,isPrimary:true,pointerId,clientX:0,clientY:0,preventDefault(){}});},tick(){tick();},input(name,value,validity){events.get('input')({target:{name,value,validity}});},async submit(id){await events.get('submit')({preventDefault(){},target:{id}});},async board(type,value){await events.get('click')({detail:0,target:{closest(selector){return selector==='[data-workshop-part], [data-workshop-action]'?{dataset:type==='toggle-part'?{workshopPart:String(value)}:{workshopAction:type,value:String(value)},disabled:false}:null;}}});},async click(action,extra={}){await events.get('click')({target:{closest(){return {dataset:{action,...extra},disabled:false};}}});}};
 }
 
 test('Weiterlernen opens stored B07 with LaTex, correct feedback, absent original task and null visual without a network turn',async()=>{
@@ -81,3 +82,37 @@ const networkParent={id:'fractions',title:'Brüche verstehen',subject:'math',gra
 const networkCatalog={topics:[networkParent,{...networkParent,id:'speech',subject:'german'}],competencies:[{...networkParent,id:'part',parentTopicId:'fractions',title:'Anteile zeigen',goal:'Zeige einen Anteil.',prerequisites:[],assessmentScope:'digital'},{...networkParent,id:'compare',parentTopicId:'fractions',title:'Brüche vergleichen',goal:'Vergleiche zwei Brüche.',prerequisites:['part'],assessmentScope:'digital'},{...networkParent,id:'listen',parentTopicId:'speech',title:'Hören',goal:'Höre zu.',subject:'german',assessmentScope:'preparation',evidenceBoundary:'Gespräch mit der Lehrkraft nötig.',prerequisites:[]}]};
 test('5/6 opens real child network, changes view without calls, follows prerequisite and starts exact child',async()=>{const ui=await mount(null,{catalog:networkCatalog,skills:[{topicId:'fractions',status:'secure',independent:15,correct:15}]});assert.match(ui.app.innerHTML,/0 von 2 mit Lernbelegen/);await ui.click('subject',{subject:'math'});assert.match(ui.app.innerHTML,/Mein Lernnetz: Mathe/);assert.match(ui.app.innerHTML,/0 von 2 Lernzielen/);assert.doesNotMatch(ui.app.innerHTML,/Mehrfach selbstständig gezeigt/);const before=ui.calls.length;await ui.click('network-node',{node:'compare'});assert.match(ui.app.innerHTML,/Voraussetzung: Anteile zeigen/);await ui.click('network-mode',{mode:'list'});assert.match(ui.app.innerHTML,/class="network-list"/);await ui.click('network-node',{node:'part'});assert.match(ui.app.innerHTML,/data-action="start" data-topic="part"/);assert.equal(ui.calls.length,before);await ui.click('start',{topic:'part'});assert.equal(ui.calls.at(-1).method,'learningBrainStart');assert.equal(ui.calls.at(-1).data.topicId,'part');});
 test('network resume keeps pendingNext, retry revision and owner; subject change excludes other subject nodes',async()=>{const session={id:'personal-s',revision:9,phase:'practice',topic:{id:'compare',title:'Brüche vergleichen',subject:'math'},pendingNext:true,task:null,feedback:{short:'Gespeichert.'}};const ui=await mount(session,{catalog:networkCatalog});await ui.click('subject',{subject:'math'});await ui.click('network-node',{node:'compare'});assert.match(ui.app.innerHTML,/Gespeicherte Übung fortsetzen/);await ui.click('resume');assert.match(ui.app.innerHTML,/data-action="retry-next"/);await ui.click('retry-next');assert.equal(ui.calls.at(-1).data.sessionId,'personal-s');assert.equal(ui.calls.at(-1).data.revision,9);await ui.click('subject',{subject:'german'});assert.match(ui.app.innerHTML,/Mein Lernnetz: Deutsch/);assert.match(ui.app.innerHTML,/Gespräch mit der Lehrkraft nötig/);assert.doesNotMatch(ui.app.innerHTML,/data-node="part"/);assert.doesNotMatch(ui.app.innerHTML,/Schüler auswählen|Klassenliste/);});
+
+test('anchored help keeps exactly one source grid, draft, collapsed original prompt and question/reply together',async()=>{
+ const diagram={kind:'area-grid',title:'Unsere Figur',unit:'cm²',columns:4,rows:3,cells:[{x:0,y:0},{x:0,y:1},{x:1,y:1}]};
+ const base={id:'compact',revision:1,phase:'practice',topic:{title:'Flächen zählen'},task:{id:'source',prompt:'Wie groß ist die gefärbte Fläche?',contextText:'Zähle nur die gefärbte Figur.',input:'text',diagram}};
+ const helped={...base,revision:2,phase:'help',originalTask:base.task,task:{...base.task,prompt:'Wie viele gefärbte Kästchen siehst du in der ersten Zeile?'},explanation:'Schau zuerst auf die oberste Zeile.',assistance:{version:1,anchorTaskId:'source',stage:1,focusIds:['row:0'],regions:[{id:'row:0',label:'Erste Zeile'}],numberLabels:false,replyTo:'Wo fange ich an?'}};
+ const ui=await mount(base,{turnResult:helped});await ui.click('resume');ui.input('answer','Mein eigener Ansatz');ui.input('question','Wo fange ich an?');await ui.submit('question-form');
+ assert.equal([...ui.app.innerHTML.matchAll(/data-grid-cell=/g)].length,12);assert.equal([...ui.app.innerHTML.matchAll(/data-area-cell=/g)].length,3);
+ assert.match(ui.app.innerHTML,/<details class="original-task"><summary>Deine ursprüngliche Aufgabe/);assert.doesNotMatch(ui.app.innerHTML,/<aside class="coach"/);
+ assert.match(ui.app.innerHTML,/Mein eigener Ansatz<\/textarea>/);assert.match(ui.app.innerHTML,/Deine Antwort auf die Frage oben/);assert.match(ui.app.innerHTML,/class="learner-question"[\s\S]*Wo fange ich an\?[\s\S]*class="help-reply"[\s\S]*Schau zuerst/);
+ const before=ui.calls.length;await ui.click('count-along');assert.equal(ui.calls.length,before);assert.match(ui.app.innerHTML,/aria-pressed="true"/);assert.match(ui.app.innerHTML,/Mein eigener Ansatz<\/textarea>/);assert.equal([...ui.app.innerHTML.matchAll(/data-area-cell=/g)].length,3);
+ await ui.click('count-along');assert.match(ui.app.innerHTML,/data-action="count-along"[^>]*aria-pressed="false"/);
+});
+
+test('successful anchored help retains editable workshop history and never stacks a second source model',async()=>{
+ const task={id:'source-w',prompt:'Zeige einen Anteil.',input:'workshop',diagram:{kind:'rectangle',title:'Alternative',unit:'cm',width:4,height:2},workshop:{tool:'fraction-board',version:1,role:'answer',goal:'represent',numerator:1,denominator:3,targetDenominator:0,instruction:'Markiere.'}};
+ const base={id:'stable-w',revision:1,phase:'practice',task};const ui=await mount(base,{turnResult:{...base,revision:2,phase:'help',originalTask:task,task:{...task,prompt:'Was hast du markiert?',input:'text'},assistance:{version:1,anchorTaskId:task.id,stage:1,focusIds:['part:0'],regions:[{id:'part:0',label:'Erstes Teil'}],numberLabels:false,replyTo:''}}});
+ await ui.click('resume');await ui.board('toggle-part',0);await ui.click('help');assert.equal([...ui.app.innerHTML.matchAll(/data-workshop-view/g)].length,1);assert.doesNotMatch(ui.app.innerHTML,/data-shape="rectangle"/);assert.match(ui.app.innerHTML,/Zum Ausprobieren mit Hilfe/);ui.input('answer','Ein Teil');await ui.submit('answer-form');assert.deepEqual(ui.calls.at(-1).data.workshop.actions,[{type:'toggle-part',value:0}]);
+});
+
+test('local assistance question is cleared when account identity changes even for coinciding session ids',async()=>{
+ const base={id:'same-id',revision:1,phase:'practice',task:{id:'same-task',prompt:'Wie groß?',input:'text'}};
+ const ui=await mount(base,{turnResult:{...base,revision:2,phase:'help',explanation:'Betrachte die Aufgabe.'}});await ui.click('resume');ui.input('question','Meine private Frage');await ui.submit('question-form');assert.match(ui.app.innerHTML,/Meine private Frage/);
+ await ui.auth({uid:'another-learner'});await ui.click('resume');assert.doesNotMatch(ui.app.innerHTML,/Meine private Frage/);
+});
+
+test('changing the source resets count assistance rather than carrying labels to a new grid',async()=>{
+ const diagram={kind:'area-grid',title:'Figur',unit:'',columns:2,rows:2,cells:[{x:0,y:0}]},base={id:'change-source',revision:1,phase:'practice',task:{id:'task',prompt:'Zähle.',input:'text',diagram}};
+ const ui=await mount(base,{turnResult:{...base,revision:2,task:{...base.task,diagram:{...diagram,cells:[{x:0,y:0},{x:1,y:0}]}}}});await ui.click('resume');await ui.click('count-along');assert.match(ui.app.innerHTML,/data-action="count-along"[^>]*aria-pressed="true"/);await ui.click('help');assert.match(ui.app.innerHTML,/data-action="count-along"[^>]*aria-pressed="false"/);
+});
+
+test('plain text help displays original source words and numbers inline with semantic token focus',async()=>{
+ const original={id:'plain-source',prompt:'Berechne 24 + 18.',input:'text'},session={id:'plain',revision:2,phase:'help',originalTask:original,task:{...original,prompt:'Welche Zehner kannst du zuerst addieren?'},assistance:{version:1,anchorTaskId:original.id,stage:1,focusIds:['token:1'],regions:[{id:'token:1',label:'Die erste Zahl'}],numberLabels:false,replyTo:''},explanation:'Beginne bei den Zehnern.'};
+ const ui=await mount(session);await ui.click('resume');const sourceStage=ui.app.innerHTML.split('<div class="source-stage">')[1].split('<div class="workspace-response">')[0];assert.match(sourceStage,/class="context-text source-prompt"/);assert.match(sourceStage,/data-source-token="1" data-help-focus="true">24<\/span>/);assert.match(sourceStage,/data-source-token="3">18\.<\/span>/);assert.doesNotMatch(sourceStage,/Beginne bei den Zehnern/);assert.match(ui.app.innerHTML,/id="current-question">Welche Zehner kannst du zuerst addieren\?/);
+});

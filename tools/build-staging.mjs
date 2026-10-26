@@ -24,7 +24,7 @@ const files = [
   'secure-student.html', 'secure-student-navigation.mjs', 'secure-student.js', 'secure-student.css', 'secure-assessment-client.js', 'secure-draft-persistence.js', 'secure-deadline-guard.js', 'secure-result-policy.js', 'secure-solution-release.js',
   'assets/vendor/qrcodejs-1.0.0.min.js', 'assets/vendor/qrcodejs-LICENSE.txt'
 ];
-if (environment.projectId === 'gradecrew-staging-2026') files.push(...['index.html', 'app.mjs', 'api.mjs', 'model.mjs', 'network.mjs', 'delivery.mjs', 'diagrams.mjs', 'diagram-extras.mjs', 'brain.mjs', 'workshop.mjs', 'workshop-units.mjs', 'styles.css'].map(name => `lerngehirn/${name}`));
+if (environment.projectId === 'gradecrew-staging-2026') files.push(...['index.html', 'app.mjs','assistance.mjs', 'api.mjs', 'model.mjs', 'network.mjs', 'delivery.mjs', 'diagrams.mjs', 'diagram-extras.mjs', 'brain.mjs', 'workshop.mjs', 'workshop-units.mjs', 'styles.css'].map(name => `lerngehirn/${name}`));
 files.push(
   'tutorial-signins.mjs', 'dashboard-tutorial-entry.mjs',
   'gradecrew-workspace-upgrade.mjs',

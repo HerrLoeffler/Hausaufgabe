@@ -1,6 +1,7 @@
 'use strict';
 const {randomUUID,createHash}=require('node:crypto');
 const {observe}=require('./workshop');
+const {observeHelp,projectHelpEvidence}=require('./help-evidence');
 const {eligibility}=require('./planning');
 const {transition,projectSkill,publicSession}=require('./core');
 const {projectNetwork,chooseCompetency}=require('./network');
@@ -48,7 +49,7 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
    recommendations=skills.filter(s=>allowed.has(s.topicId)&&(s.status==='practicing'||s.reviewDue)).map(s=>({topicId:s.topicId,title:getTopic(s.topicId)?.title||'',reason:s.reviewDue?'Zeit für eine neue Probe ohne Hilfe.':'Hier kannst du an deinen letzten Schritt anknüpfen.'}));
    if(!recommendations.length)for(const subject of context.subject?[context.subject]:['math','german']){const first=contextTopics.find(t=>t.subject===subject);if(first)recommendations.push({topicId:first.id,title:first.title,reason:'Starte mit einer ersten Probe. Dein Lernstand ist noch offen.'});}
   }
-  return {learner:state.learner,skills,recommendations:recommendations.slice(0,8),learningNetwork,activeSession:active&&active.phase!=='ended'?publicSession(active,time):null,observationSummary:state.observationSummary||{attempts:0,lastAt:null},catalogVersion:catalog.version};
+  return {learner:state.learner,skills,recommendations:recommendations.slice(0,8),learningNetwork,activeSession:active&&active.phase!=='ended'?publicSession(active,time):null,helpQuality:projectHelpEvidence(state.sessions),observationSummary:state.observationSummary||{attempts:0,lastAt:null},catalogVersion:catalog.version};
  };
  async function profile(uid,data={}){return store.transact(uid,state=>{
   state=scrubExpiredContexts(state||seed(uid),now());
@@ -137,7 +138,8 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
    if(kind!=='start'&&data.action!=='retry-next'){
     assessment=data.action==='answer'?await ai.assess(s,learnerAnswer,{workshop}):null;
     if(data.action==='answer'&&(!assessment||!['correct','incorrect','unclear'].includes(assessment.outcome)))fail('internal','Die Antwort konnte noch nicht sicher geprüft werden. Bitte erneut versuchen.');
-    s=transition(s,data.action,assessment,time);if(assessment?.short)s.feedback.short=assessment.short;
+    if(['help','completion'].includes(s.phase)&&!s.assistance&&['help','question'].includes(data.action))s.originalTask=globalThis.structuredClone(s.task);
+    s=observeHelp(before,transition(s,data.action,assessment,time),{action:data.action,assessment,now:time});if(assessment?.short)s.feedback.short=assessment.short;
    }
    const needsNext=assessment?.outcome!=='unclear'&&(kind==='start'||data.action==='retry-next'||['practice','help','teacher'].includes(s.phase));
    s.revision+=1;
@@ -147,7 +149,7 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
     await persist({record:kind!=='start'&&data.action!=='retry-next'});checkpointed=true;
     try{
      const generated=await ai.next(s,s.nextContext);
-     s.task=generated.task;s.explanation=generated.explanation;s.visual=generated.visual;s.pendingNext=false;delete s.nextContext;delete s.nextFailure;
+     s.task=generated.task;s.explanation=generated.explanation;s.visual=generated.visual;s.assistance=generated.assistance||null;s.pendingNext=false;delete s.nextContext;delete s.nextFailure;
     }catch(error){s.nextFailure={stage:String(error?.stage||error?.details?.incompleteReason||error?.details?.reason||'generation').slice(0,100),critique:String(error?.critique||error?.message||'').slice(0,800)};return await persist({release:true});}
    }
    return await persist({release:true,record:!checkpointed&&kind!=='start'&&data.action!=='retry-next'});

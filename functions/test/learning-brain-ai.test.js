@@ -159,7 +159,7 @@ test('new coordinate, angle and multiple-whole adapters survive the actual AI-to
 });
 test('coordinate assessment honors the exact server-derived point result rather than a plausible invented approval',async()=>{
  const x=mock([{outcome:'correct',short:'Richtig.',reason:'guess'}]);
- await assert.rejects(x.ai.assess({...s,task:{...s.task,answer:{kind:'open',values:['A:2|3']}}},'A:3|2',{workshop:{tool:'coordinate-plane',exactResult:false}}),e=>e.code==='unavailable');assert.equal(x.count(),1);
+ await assert.rejects(x.ai.assess({...s,task:{...s.task,input:'workshop',workshop:{tool:'coordinate-plane',role:'answer'},answer:{kind:'open',values:['A:2|3']}}},'A:3|2',{workshop:{tool:'coordinate-plane',exactResult:false}}),e=>e.code==='unavailable');assert.equal(x.count(),1);
 });
 
 test('a finer degree scale is a real representation change while another angle on the same scale is not',async()=>{

@@ -6,7 +6,7 @@ function transition(previous,action,assessment,now=Date.now()){
  if(action==='finish'){s.phase='ended';return s;}
  if(action==='help'||action==='question'){
   if(s.topic.parentTopicId)s.events.push({kind:'help-requested',topicId:s.topic.id,sessionId:s.id,at:now,independent:false});
-  s.originalTask=s.originalTask||s.task;s.phase='help';s.supportStage=Math.max(1,s.supportStage||0);s.level=0;return s;
+  s.originalTask=s.originalTask||s.task;s.phase=action==='help'&&previous.phase==='help'&&previous.supportStage>=3?'teacher':'help';s.supportStage=action==='question'?Math.max(1,s.supportStage||0):Math.min(3,(s.supportStage||0)+1);s.level=0;return s;
  }
  if(!assessment||assessment.outcome==='unclear'){s.feedback={outcome:'unclear',short:'Das konnte ich noch nicht sicher einordnen. Bitte beschreibe deinen Schritt oder frage nach.'};return s;}
  const correct=assessment.outcome==='correct';
@@ -15,9 +15,9 @@ function transition(previous,action,assessment,now=Date.now()){
  }
  s.feedback={outcome:correct?'correct':'incorrect',short:correct?'Richtig. Jetzt folgt eine neue Probe.':'Wir schauen uns einen kleineren Schritt an.'};
  if(correct){
-  if(s.phase==='help'){s.phase='completion';s.task=s.originalTask;s.visual=null;s.feedback.short='Das klappt. Versuch jetzt deine Ausgangsaufgabe.';s.explanation='Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen.';return s;}
+  if(s.phase==='help'){s.phase='completion';s.task=s.originalTask;delete s.assistance;s.visual=null;s.feedback.short='Das klappt. Versuch jetzt deine Ausgangsaufgabe.';s.explanation='Versuche jetzt noch einmal deine Ausgangsaufgabe. Du darfst die Hilfe nutzen.';return s;}
   s.previousLevel=s.level||0;s.level=s.phase==='completion'?0:Math.min(3,(s.level||0)+1);
-  s.phase='practice';s.supportStage=0;s.originalTask=null;s.explanation='';s.visual=null;return s;
+  s.phase='practice';delete s.assistance;s.supportStage=0;s.originalTask=null;s.explanation='';s.visual=null;return s;
  }
  if(s.topic.parentTopicId&&(s.phase==='practice'||s.phase==='completion'))s.events.push({kind:'help-started',topicId:s.topic.id,sessionId:s.id,at:now,independent:false});
  s.originalTask=s.originalTask||s.task;
@@ -40,6 +40,6 @@ function projectSkill(events,now=Date.now(),topic={}){
 }
 function safeTask(task){return task?{id:task.id,prompt:task.prompt,contextText:task.contextText||'',input:task.input||'text',options:task.options||[],workshop:task.workshop||null,diagram:task.diagram||null,media:task.media?.kind==='listen'?{kind:'listen',available:true,...(task.media.compareTempo?{compareTempo:true}:{})}:null}:null;}
 function publicSession(s,now=Date.now()){
- return {id:s.id,revision:s.revision,topic:s.topic,phase:s.phase,task:s.pendingNext?null:safeTask(s.task),pendingNext:!!s.pendingNext,nextMessage:s.pendingNext?'Deine Antwort ist gespeichert. Der nächste Lernschritt konnte noch nicht bereitgestellt werden. Bitte versuche es erneut.':'',originalTask:safeTask(s.originalTask),explanation:s.explanation||'',visual:s.visual||null,feedback:s.feedback||{outcome:'',short:''},remainingSeconds:Math.max(0,Math.ceil((s.deadline-now)/1000)),summary:s.summary||null};
+ return {id:s.id,revision:s.revision,topic:s.topic,phase:s.phase,task:s.pendingNext?null:safeTask(s.task),pendingNext:!!s.pendingNext,nextMessage:s.pendingNext?'Deine Antwort ist gespeichert. Der nächste Lernschritt konnte noch nicht bereitgestellt werden. Bitte versuche es erneut.':'',originalTask:safeTask(s.originalTask),explanation:s.explanation||'',visual:s.visual||null,assistance:s.assistance||null,feedback:s.feedback||{outcome:'',short:''},remainingSeconds:Math.max(0,Math.ceil((s.deadline-now)/1000)),summary:s.summary||null};
 }
 module.exports={transition,projectSkill,publicSession,fingerprint};

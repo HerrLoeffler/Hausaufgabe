@@ -73,3 +73,5 @@ test('preparation and human-observation evidence cannot certify original perform
  const events=Array.from({length:10},(_,i)=>({independent:true,correct:true,level:2,fingerprint:'scope'+i,family:i%2?'identify':'apply',sessionId:i<5?'s1':'s2',at:i}));
  for(const assessmentScope of ['preparation','human-observation']){const evidence=projectSkill(events,20,{assessmentScope});assert.notEqual(evidence.status,'secure');assert.equal(evidence.reviewDue,false);assert.equal(evidence.nextReviewAt,null);}
 });
+
+test('fourth explicit request after three scaffold stages invites teacher rather than repeating stage3 forever',()=>{let s={id:'s',topic:{},phase:'practice',task:{id:'source'},supportStage:0,events:[]};for(let i=1;i<=3;i++){s=transition(s,'help',null,1000+i);assert.equal(s.phase,'help');assert.equal(s.supportStage,i);}s=transition(s,'help',null,1004);assert.equal(s.phase,'teacher');});
