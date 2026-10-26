@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-26T22:00:12.041Z",
+  "updatedAt": "2026-10-26T22:03:14.195Z",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -527,6 +527,8 @@
         "fix/staging-feedback-images10-20261013",
         "fix/question-feedback-removal-20261025",
         "fix/question-feedback-learning-20261025",
+        "fix/audio-publish-review-live-20261026",
+        "fix/audio-image-editor-live-20261026",
         "fix/question-feedback-images-20261026",
         "fix/question-feedback-simple-20261026"
       ]
