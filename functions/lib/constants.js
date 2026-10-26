@@ -17,13 +17,21 @@ const MATERIAL_MIME_TYPES = Object.freeze([
   "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 ]);
+const MEDIA_POLICY = Object.freeze({
+  version: 2,
+  maxGeneratedUnits: 100,
+  maxImageAttempts: 3,
+  maxTtsPerAudioTask: 5,
+  legacySolutionAudioLimit: 5,
+  maxJobHours: 6
+});
 const LIMITS = Object.freeze({
   maxQuestions: 100,
   maxPromptChars: 6000,
   maxMaterials: 10,
   maxMaterialBytes: 15 * 1024 * 1024,
-  maxVisualQuestions: 5,
-  maxAudioQuestions: 5,
+  maxVisualQuestions: 100,
+  maxAudioQuestions: 100,
   maxAudioScriptChars: 500,
   maxAudioBytes: 320 * 1024,
   testPerMinute: 3,
@@ -31,9 +39,9 @@ const LIMITS = Object.freeze({
   questionPerMinute: 12,
   questionPerDay: 300,
   imagePerMinute: 28,
-  imagePerDay: 80,
+  imagePerDay: 300,
   audioPerMinute: 20,
-  audioPerDay: 120,
+  audioPerDay: 500,
   materialPerMinute: 6,
   materialPerDay: 100,
   quickRemyPerMinute: 4,
@@ -54,5 +62,5 @@ const RETENTION = Object.freeze({
 
 module.exports = {
   REGION, TEXT_MODEL, IMAGE_MODEL, AUDIO_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION,
-  QUESTION_TYPES, MATERIAL_MIME_TYPES, LIMITS, RETENTION
+  QUESTION_TYPES, MATERIAL_MIME_TYPES, LIMITS, RETENTION, MEDIA_POLICY
 };

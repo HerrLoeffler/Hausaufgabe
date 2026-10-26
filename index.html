@@ -329,8 +329,8 @@
             </details>
       <div id="aiBetaNotice" class="aiStatusNotice hidden"></div>
       
-      <div class="aiGrid">
-        <article class="card">
+      <div class="aiGrid aiCreationFlow">
+        <article class="card" data-creation-step="1">
           <div class="aiSectionTitle"><span aria-hidden="true">1</span><div><h2>Test festlegen</h2><p>Die wichtigsten Angaben für deinen Entwurf.</p></div></div>
           <div class="formGrid2">
             <label>Fach<input id="aiSubject" type="text" placeholder="Mathematik" /></label>
@@ -344,13 +344,6 @@
             <label>Gesamtpunkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label>
           </div>
           <p id="aiPointsHint" class="hint" aria-live="polite"></p>
-          <div class="aiCoreActions">
-            <p id="aiActiveJobsNotice" class="hint hidden" role="status"></p>
-            <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
-            
-            <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
-            <small class="hint aiReturnNote">Nach dem Start schließt sich diese Ansicht automatisch. Den fertigen Test findest du unter „Meine Tests“.</small>
-          </div>
           <details class="aiOptionalTestOptions"><summary>Aufgabentypen und Vorlieben <small>optional</small></summary>
           <details class="aiTypePicker"><summary>Aufgabentypen erlauben <span id="aiTypeCount">9 ausgewählt</span></summary>
             <div id="aiTypeChecks" class="typeCheckGrid"></div>
@@ -359,10 +352,8 @@
           <div class="aiPreferencesActions"><button id="saveAiPreferencesBtn" class="button secondary" type="button">Vorlieben speichern</button><small class="hint">Diese Vorlieben bleiben in deinem Profil – auch für künftige Tests. Speichere sie hier oder starte einen Test; dabei werden sie ebenfalls gespeichert. GradeCrew berücksichtigt zusätzlich deine Aufgabenbewertungen.</small></div></div></details>
           </details>
         </article>
-        <div class="aiSideSteps">
-        <article class="card">
-          <div class="aiSectionTitle"><span aria-hidden="true">2</span><div><h2>Material &amp; Bilder</h2><p>Optional ergänzen, was wirklich hilft.</p></div></div>
-          <details class="aiOptionalMedia"><summary>Material oder Bilder hinzufügen <small>optional</small></summary>
+        <article class="card" data-creation-step="2">
+          <div class="aiSectionTitle"><span aria-hidden="true">2</span><div><h2>Material</h2><p>Optional: eigene Quellen als Grundlage verwenden.</p></div></div>
           <div class="aiUploadNotice" id="aiUploadNotice">
 
             <label class="aiUploadConfirm"><input id="aiMaterialConfirmed" aria-describedby="aiMaterialRightsNotice" type="checkbox" /><span>Ich darf dieses Material verwenden und speichern und habe die erforderlichen Rechte.</span></label>
@@ -371,45 +362,38 @@
           <label id="aiMaterialDropZone" class="aiUploadBox" for="aiMaterialInput"><strong>Dateien hierher ziehen oder auswählen</strong><span>PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 10 Dateien · max. 15 MB</span><input id="aiMaterialInput" aria-describedby="aiMaterialUploadStatus" type="file" multiple accept=".pdf,image/jpeg,image/png,image/webp,.txt,.csv,.docx,.pptx,.xlsx" /></label>
           <p id="aiMaterialUploadStatus" class="hint" role="status" aria-live="polite"></p>
           <div id="aiMaterialList" class="aiMaterialList"></div>
-          <section class="aiMaterialOptions" aria-labelledby="aiMaterialOptionsTitle">
-            <h3 id="aiMaterialOptionsTitle">Material und Bilder</h3>
-            <div class="stack compact aiOptionsBlock">
-            <label>Material verwenden<select id="aiMaterialMode" disabled><option value="inspiration">Als Anregung</option><option value="only">Nur Inhalte aus dem Material</option></select></label>
-            <small class="hint">Nach dem Upload auswählbar.</small>
-            <label>Aufgaben mit Bild (0–5)<input id="aiImageQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiImageCountHint" /></label>
-            <p id="aiImageCountHint" class="hint" aria-live="polite"></p>
-            </div>
-          </section>
-          </details>
+          <label>Material verwenden<select id="aiMaterialMode" disabled><option value="only" selected>Inhalt auf das Material beschränken</option><option value="inspiration">Material als Anregung verwenden</option></select></label>
+          <small class="hint">Ohne hochgeladene Quelle wird der Test aus deinen Angaben erstellt.</small>
         </article>
-        <article class="card">
-          <div class="aiSectionTitle"><span aria-hidden="true">3</span><div><h2>Audio</h2><p>Höraufgaben optional ergänzen.</p></div></div>
-          <details class="aiOptionalAudio"><summary>Höraufgaben festlegen <small>optional</small></summary>
-          <section class="aiAudioOptions" aria-labelledby="aiAudioOptionsTitle">
-            <h3 id="aiAudioOptionsTitle">Höraufgaben</h3>
-            <p class="hint">Lege fest, ob Aufgaben oder Antwortoptionen vorgelesen werden. Audio startet nicht automatisch und ist im Editor anhörbar.</p>
-            <div class="stack compact">
-              <div class="aiAudioOption">
-                <div class="aiAudioOptionLabel"><label for="aiAudioQuestionCount">Aufgaben mit Hörtext (0–5)</label>
-                  <details class="aiFieldInfo"><summary aria-label="Beispiel für Aufgaben mit Hörtext">ⓘ</summary><span>Beispiel: Die Klasse hört eine kurze Durchsage und beantwortet eine Frage. Bei „Nur hören“ ist die Aufgabenfassung nur im Audio; bei „mit sichtbarer Frage“ erscheint zusätzlich ein Fragetext.</span></details>
-                </div>
-                <input id="aiAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioCountHint" />
-                <p id="aiAudioCountHint" class="hint">Der Hörtext wird nicht automatisch abgespielt.</p>
-              </div>
-              <div class="aiAudioOption">
-                <div class="aiAudioOptionLabel"><label for="aiAudioAnswerQuestionCount">Aufgaben mit vorgelesenen Antwortoptionen (0–5)</label>
-                  <details class="aiFieldInfo"><summary aria-label="Beispiel für vorgelesene Antwortoptionen">ⓘ</summary><span>Beispiel: Eine Schülerin kann einzelne Antwortoptionen anhören und auswählen. Die Antworttexte bleiben verborgen; Arbeitsanweisung und Kategorien bleiben sichtbar.</span></details>
-                </div>
-                <input id="aiAudioAnswerQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioAnswerCountHint" />
-                <p id="aiAudioAnswerCountHint" class="hint">Antworttexte werden einzeln hörbar und bleiben für Schüler verborgen.</p>
-              </div>
-            </div>
-          </section>
-            <label hidden>Lösungen als Audio (Legacy)<input id="aiSolutionAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" /></label>
-            <p id="aiSolutionAudioCountHint" class="hint" hidden>Optional · wird erst nach Testende und Lösungsfreigabe abgespielt.</p>
-          </details>
+        <article class="card" data-creation-step="3">
+          <div class="aiSectionTitle"><span aria-hidden="true">3</span><div><h2>Bilder</h2><p>Optional: neue Illustrationen zu den Aufgaben erzeugen.</p></div></div>
+          <label>Generierte Aufgabenbilder (optional)<input id="aiImageQuestionCount" type="number" min="0" max="100" step="1" value="0" aria-describedby="aiImageCountHint" /></label>
+          <p id="aiImageCountHint" class="hint" aria-live="polite"></p>
+          <small class="hint">Quellfotos und eingescanntes Material lädst du im Abschnitt Material hoch.</small>
         </article>
-        </div>
+        <article class="card" data-creation-step="4">
+          <div class="aiSectionTitle"><span aria-hidden="true">4</span><div><h2>Audio</h2><p>Optional: wähle, was Schüler lesen und was sie hören.</p></div></div>
+          <div class="aiAudioOptions audioCreationCards">
+            <fieldset class="audioCreationChoice"><legend>Hörtext zur Aufgabe</legend><div class="audioStudentExample" aria-label="Beispiel für die Schüleransicht"><span class="audioExampleQuestion">Sichtbare Frage und Antworttexte</span><span class="audioExamplePlayer" aria-hidden="true">▶ ━━━━━</span><small>Das sehen Schüler: Sichtbare Frage und Antworttexte</small><small>Das hören Schüler: Hörtext oder Dialog zur Frage</small></div><label>Aufgaben mit Hörtext<input id="aiAudioQuestionCount" type="number" min="0" max="100" step="1" value="0" aria-describedby="aiAudioCountHint" /></label><p id="aiAudioCountHint" class="hint"></p></fieldset>
+            <fieldset class="audioCreationChoice"><legend>Antwortmöglichkeiten als Audio</legend><div class="audioStudentExample" aria-label="Beispiel für die Schüleransicht"><span class="audioExampleQuestion">Sichtbare Frage und Auswahlfelder</span><span class="audioExamplePlayer" aria-hidden="true">▶ ━━━━━</span><small>Das sehen Schüler: Sichtbare Frage und Auswahlfelder</small><small>Das hören Schüler: Jede Antwortoption einzeln</small></div><label>Aufgaben mit Audioantworten<input id="aiAudioAnswerQuestionCount" type="number" min="0" max="100" step="1" value="0" aria-describedby="aiAudioAnswerCountHint" /></label><p id="aiAudioAnswerCountHint" class="hint"></p></fieldset>
+            <fieldset class="audioCreationChoice"><legend>Aufgabe und Antworten als Audio</legend><div class="audioStudentExample" aria-label="Beispiel für die Schüleransicht"><span class="audioExampleQuestion">Kurzer Arbeitsauftrag und Auswahlfelder</span><span class="audioExamplePlayer" aria-hidden="true">▶ ━━━━━</span><small>Das sehen Schüler: Kurzer Arbeitsauftrag und Auswahlfelder</small><small>Das hören Schüler: Aufgabeninhalt und Frage; jede Antwortoption einzeln</small></div><label>Vollständige Audioaufgaben<input id="aiFullAudioQuestionCount" type="number" min="0" max="100" step="1" value="0" aria-describedby="aiFullAudioCountHint" /></label><p id="aiFullAudioCountHint" class="hint">Zählt gemeinsam als Aufgaben-Audio und Audioantworten. Bilder und Audioaufgaben dürfen zusammen die Aufgabenanzahl nicht überschreiten.</p></fieldset>
+          </div>
+          <p class="hint">Audio startet nicht automatisch. Alle Spuren kannst du im Editor anhören. Antwortoptionen sind keine Musterlösungen.</p>
+          <label hidden>Lösungen als Audio (Legacy)<input id="aiSolutionAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" /></label>
+          <p id="aiSolutionAudioCountHint" class="hint" hidden>Optional · wird erst nach Testende und Lösungsfreigabe abgespielt.</p>
+        </article>
+        <article class="card aiCreationFinish" data-creation-step="5">
+          <div class="aiSectionTitle"><span aria-hidden="true">5</span><div><h2>Test erstellen</h2><p>Deine Auswahl im Überblick.</p></div></div>
+          <p id="aiMediaBudgetHint" class="hint" role="status" aria-live="polite"></p>
+          <p id="aiCreationSummary" class="hint" role="status" aria-live="polite"></p>
+          <div class="aiCoreActions">
+            <p id="aiActiveJobsNotice" class="hint hidden" role="status"></p>
+            <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
+            
+            <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
+            <small class="hint aiReturnNote">Nach dem Start schließt sich diese Ansicht automatisch. Den fertigen Test findest du unter „Meine Tests“.</small>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -419,7 +403,7 @@
           <div class="editorTitleRow">
             <button id="backFromEditor" class="linkButton left" type="button">← Zurück</button>
             <h1 id="editorHeading">Test bearbeiten</h1>
-<details class="editorMediaPrivacyDetails"><summary>Datenschutz- und Rechte-Details</summary><p>Für KI-Bilder und Audio werden Aufgabenkontext, Bildbeschreibung oder Sprechertext an OpenAI übermittelt. Verwende nur freigegebene Inhalte ohne personenbezogene Daten. Kosten können für Bilder und Audio entstehen.</p><a href="datenschutz.html" target="_blank" rel="noopener">Datenschutz lesen</a></details>
+
           </div>
           <p id="saveState" data-state="unsaved" role="status" aria-live="polite">Noch nicht gespeichert</p>
           <div id="similarTestProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
@@ -439,6 +423,7 @@
           <button id="publishBtn" class="button primary" type="button">Veröffentlichen</button>
         </div>
       </div>
+      <details class="editorMediaPrivacyDetails"><summary>Datenschutz- und Rechte-Details</summary><p>Für KI-Bilder und Audio werden Aufgabenkontext, Bildbeschreibung oder Sprechertext an OpenAI übermittelt. Verwende nur freigegebene Inhalte ohne personenbezogene Daten. Kosten können für Bilder und Audio entstehen.</p><a href="datenschutz.html" target="_blank" rel="noopener">Datenschutz lesen</a></details>
       <div id="importReviewBanner" class="importReviewBanner hidden"></div>
       <section id="firstTestEditor" class="card firstTestGuide hidden" aria-label="Dein erster Test"></section>
       <div class="editorLayout">

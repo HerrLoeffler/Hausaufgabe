@@ -58,7 +58,7 @@ function fallbackQuestionText(text, intent = {}) {
   return `Beschreibung statt Bild: ${description}\n\n${sentence}`.trim();
 }
 
-async function storedAiQuestion(raw, index, { model, promptVersion, kind = "generated", generateMedia, generateAudio, onImage = async () => {}, onImageFallback = async () => {}, onAudio = async () => {}, onAudioFallback = async () => {} }) {
+async function storedAiQuestion(raw, index, { model, promptVersion, kind = "generated", strictMedia = false, generateMedia, generateAudio, onImage = async () => {}, onImageFallback = async () => {}, onAudio = async () => {}, onAudioFallback = async () => {} }) {
   const q = {
     type: raw.type, text: String(raw.text || "").trim(), points: Number(raw.points), position: index + 1,
     aiOrigin: { kind, model, promptVersion }
@@ -84,7 +84,7 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
       q.aiOrigin.mediaStatus = "ready";
       await onImage();
     } catch (err) {
-      if (isProgrammingMediaError(err)) throw err;
+      if (strictMedia || isProgrammingMediaError(err)) throw err;
       const reason = String(err?.lastIssue || err?.message || "Bild konnte nicht zuverlässig erzeugt werden.").slice(0, 500);
       q.text = fallbackQuestionText(q.text, intent);
       q.aiOrigin.mediaStatus = "omitted";
@@ -108,7 +108,7 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
       q.aiOrigin.audioStatus = "ready";
       await onAudio();
     } catch (err) {
-      if (isProgrammingMediaError(err)) throw err;
+      if (strictMedia || isProgrammingMediaError(err)) throw err;
       const reason = String(err?.message || "Audio konnte nicht erzeugt werden.").slice(0, 500);
       q.audioNeedsRegeneration = true;
       q.aiOrigin.audioStatus = "omitted";

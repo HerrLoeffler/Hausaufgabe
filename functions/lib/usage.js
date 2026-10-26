@@ -2,6 +2,7 @@
 const { HttpsError } = require("firebase-functions/v2/https");
 const { getFirestore, FieldValue, Timestamp } = require("firebase-admin/firestore");
 const { requireAccountWrite } = require("./account-state");
+const { consumeMediaReservation } = require("./media-reservations");
 const { LIMITS, RETENTION } = require("./constants");
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -40,11 +41,11 @@ function compactExtra(extra = {}) {
   return out;
 }
 
-async function consumeQuota(uid, kind) {
+async function consumeQuota(uid, kind, options = {}) {
   const limits = map[kind];
   if (!limits) throw new Error(`Unknown quota kind ${kind}`);
-  const db = getFirestore();
-  const nowDate = new Date();
+  const db = options.db || getFirestore();
+  const nowDate = options.now === undefined ? new Date() : new Date(options.now);
   const ref = db.doc(`users/${uid}/aiUsage/${dayKey(nowDate)}`);
   await db.runTransaction(async tx => {
     await requireAccountWrite(tx, db, uid);
@@ -53,8 +54,11 @@ async function consumeQuota(uid, kind) {
     const kindMinuteKey = `${kind}MinuteKey`;
     const daily = Number(data[`${kind}Count`] || 0);
     const burst = data[kindMinuteKey] === minute ? Number(data[`${kind}MinuteCount`] || 0) : 0;
-    if (daily >= limits[1] || burst >= limits[0]) throw new HttpsError("resource-exhausted", "KI-Limit erreicht. Bitte später erneut versuchen.");
+    if (daily >= limits[1]) throw new HttpsError("resource-exhausted", "Das KI-Tageslimit ist erreicht. Bitte morgen erneut versuchen.", { reason: "daily-limit", kind, providerNotStarted: true });
+    if (burst >= limits[0]) throw new HttpsError("resource-exhausted", "Die nächste Audiospur wartet auf das Minutenkontingent.", { reason: "minute-limit", kind, providerNotStarted: true, retryAt: Math.floor(nowDate.getTime() / 60000) * 60000 + 61000 });
+    const reservationPatch = await consumeMediaReservation(tx, db, { uid, jobId: options.reservationId, kind, quota: data, now: nowDate.getTime() });
     const patch = {
+      ...reservationPatch,
       updatedAt: Timestamp.now(),
       expiresAt: expiryTimestamp(RETENTION.aiQuotaDays, nowDate.getTime())
     };

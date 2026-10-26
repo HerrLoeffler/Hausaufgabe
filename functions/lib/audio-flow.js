@@ -23,7 +23,7 @@ async function synthesizeSpeech({ script, voice = DEFAULT_VOICE }, client = getO
     input: script,
     instructions: "Sprich exakt den bereitgestellten Hörtext in dessen Sprache. Natürlich, klar und schulgeeignet. Keine Einleitung, keine zusätzlichen Wörter, keine Geräusche oder Kommentare.",
     response_format: "mp3"
-  });
+  }, { maxRetries: 0 });
   return Buffer.from(await response.arrayBuffer());
 }
 

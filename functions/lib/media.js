@@ -4,7 +4,7 @@ const { getOpenAI } = require("./openai-client");
 const { IMAGE_MODEL } = require("./constants");
 
 async function generateImageAsset({ prompt, altText, maxBytes = 280 * 1024 }) {
-  const result = await getOpenAI().images.generate({ model: IMAGE_MODEL, prompt, size: "1024x1024", quality: "low", output_format: "webp", n: 1 });
+  const result = await getOpenAI().images.generate({ model: IMAGE_MODEL, prompt, size: "1024x1024", quality: "low", output_format: "webp", n: 1 }, { maxRetries: 0 });
   const b64 = result.data?.[0]?.b64_json;
   if (!b64) throw new Error("Bildmodell lieferte kein Bild.");
   let quality = 78;

@@ -9,7 +9,7 @@ const { defineSecret } = require("firebase-functions/params");
 const { getStorage } = require("firebase-admin/storage");
 const { getFunctions } = require("firebase-admin/functions");
 const { getFirestore, FieldValue, Timestamp } = require("firebase-admin/firestore");
-const { REGION, TEXT_MODEL, AUDIO_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUESTION_TYPES, LIMITS } = require("./lib/constants");
+const { REGION, TEXT_MODEL, AUDIO_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUESTION_TYPES, LIMITS, MEDIA_POLICY } = require("./lib/constants");
 const { questionSchema, questionSchemaForType, testSchemaForRequest } = require("./lib/schemas");
 const { requestStructured, AiResponseError } = require("./lib/structured-response");
 const { generateTestInBatches } = require("./lib/test-batches");
@@ -25,6 +25,7 @@ const { purgeExpiredMaterials } = require("./lib/purge-materials");
 const { getOpenAI } = require("./lib/openai-client");
 const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
 const { createVerifiedMedia } = require("./lib/media-flow");
+const { materialSufficiency, creationContractPrompt } = require("./lib/creation-contract");
 const { runMediaOperation } = require("./lib/media-operation");
 const { createAudioAsset } = require("./lib/audio-flow");
 const { classifyAiFailure } = require("./lib/ai-errors");
@@ -114,7 +115,8 @@ function cleanSourceTest(value) {
 }
 
 function cleanInput(data = {}) {
-  const count = Math.max(1, Math.min(LIMITS.maxQuestions, Number(data.count) || 10));
+  const count = data.count === undefined ? 10 : Number(data.count);
+  if (!Number.isInteger(count) || count < 1 || count > LIMITS.maxQuestions) throw new HttpsError("invalid-argument", "Bitte 1 bis 100 ganze Aufgaben wählen.");
   const rawPoints = data.points === undefined ? 20 : Number(data.points);
   if (!Number.isFinite(rawPoints) || rawPoints < 0.5 || Math.abs(rawPoints * 2 - Math.round(rawPoints * 2)) > 1e-8) throw new HttpsError("invalid-argument", "Gesamtpunkte müssen in positiven 0,5er-Schritten angegeben werden.");
   const points = Math.round(rawPoints * 2) / 2;
@@ -127,7 +129,7 @@ function cleanInput(data = {}) {
   if (exactImageCounts) {
     if (!Number.isInteger(imageQuestionCount) || imageQuestionCount < 0 || imageQuestionCount > LIMITS.maxVisualQuestions ||
         imageQuestionCount > count) {
-      throw new HttpsError("invalid-argument", "Bitte 0 bis 5 Aufgabenbilder wählen, höchstens eines je Aufgabe.");
+      throw new HttpsError("invalid-argument", "Bitte eine ganze Anzahl Aufgabenbilder wählen, höchstens eines je Aufgabe.");
     }
   }
   if (imageAnswerQuestionCount !== 0 || !Number.isInteger(imageAnswerQuestionCount)) {
@@ -137,18 +139,23 @@ function cleanInput(data = {}) {
   const exactAudioCounts = Object.hasOwn(data, "audioQuestionCount");
   const audioQuestionCount = Number(data.audioQuestionCount ?? 0);
   if (exactAudioCounts && (!Number.isInteger(audioQuestionCount) || audioQuestionCount < 0 || audioQuestionCount > LIMITS.maxAudioQuestions || audioQuestionCount > count)) {
-    throw new HttpsError("invalid-argument", "Bitte 0 bis 5 Höraufgaben wählen, höchstens eine Audiospur je Aufgabe.");
+    throw new HttpsError("invalid-argument", "Bitte eine ganze Anzahl Höraufgaben wählen, höchstens eine je Aufgabe.");
   }
   const audioMode = exactAudioCounts && audioQuestionCount > 0 ? "exact" : "none";
   const solutionAudioQuestionCount = Number(data.solutionAudioQuestionCount ?? 0);
-  if (!Number.isInteger(solutionAudioQuestionCount) || solutionAudioQuestionCount < 0 || solutionAudioQuestionCount > LIMITS.maxAudioQuestions || solutionAudioQuestionCount > count) {
+  if (!Number.isInteger(solutionAudioQuestionCount) || solutionAudioQuestionCount < 0 || solutionAudioQuestionCount > MEDIA_POLICY.legacySolutionAudioLimit || solutionAudioQuestionCount > count) {
     throw new HttpsError("invalid-argument", "Bitte 0 bis 5 Audio-Lösungen wählen, höchstens eine je Aufgabe.");
   }
   const audioAnswerQuestionCount = Number(data.audioAnswerQuestionCount ?? 0);
   if (!Number.isInteger(audioAnswerQuestionCount) || audioAnswerQuestionCount < 0 || audioAnswerQuestionCount > LIMITS.maxAudioQuestions || audioAnswerQuestionCount > count ||
       (audioAnswerQuestionCount > 0 && !allowedTypes.some(type => (data.generationMode === "variant" ? ["single", "multi", "dropdown", "matching", "ordering", "grouping"] : ["single", "multi"]).includes(type)))) {
-    throw new HttpsError("invalid-argument", "Bitte 0 bis 5 Audioantwort-Aufgaben und einen Auswahltyp wählen.");
+    throw new HttpsError("invalid-argument", "Bitte eine ganze Anzahl Audioantwort-Aufgaben und einen Auswahltyp wählen.");
   }
+  const fullAudioQuestionCount = Number(data.fullAudioQuestionCount || 0);
+  if (!Number.isInteger(fullAudioQuestionCount) || fullAudioQuestionCount < 0 || fullAudioQuestionCount > count || fullAudioQuestionCount > audioQuestionCount || fullAudioQuestionCount > audioAnswerQuestionCount || fullAudioQuestionCount > count || fullAudioQuestionCount > 0 && data.generationMode === "variant") throw new HttpsError("invalid-argument", "Vollständige Audioaufgaben müssen innerhalb beider Audioanzahlen liegen (höchstens so viele wie Aufgaben).");
+  const generatedImages = exactImageCounts ? imageQuestionCount : imageMode === "none" ? 0 : Math.min(count, Number(data.maxVisualQuestions) || 3);
+  const audioTasks = audioQuestionCount + audioAnswerQuestionCount - fullAudioQuestionCount;
+  if (generatedImages + audioTasks > Math.min(count, MEDIA_POLICY.maxGeneratedUnits)) throw new HttpsError("invalid-argument", `Bilder und Audioaufgaben dürfen zusammen höchstens ${Math.min(count, MEDIA_POLICY.maxGeneratedUnits)} Medien ergeben. Aktuell: ${generatedImages} Bilder + ${audioTasks} Audioaufgaben.`);
   return {
     schoolType: String(data.schoolType || "Mittelschule").slice(0, 100), region: String(data.region || "Bayern").slice(0, 100),
     subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, 500),
@@ -158,6 +165,8 @@ function cleanInput(data = {}) {
     allowImageChoices: false,
     exactAudioCounts, audioMode, audioQuestionCount: exactAudioCounts ? audioQuestionCount : 0,
     solutionAudioQuestionCount, audioAnswerQuestionCount,
+    ...(Object.hasOwn(data, "fullAudioQuestionCount") || data.audioPresentationPolicy === "visible-plus-full" ? { fullAudioQuestionCount, audioPresentationPolicy: data.audioPresentationPolicy === "visible-plus-full" ? "visible-plus-full" : "auto" } : {}),
+    ...([1, 2].includes(data.creationContractVersion) ? { creationContractVersion: data.creationContractVersion } : {}),
     maxVisualQuestions: exactImageCounts ? imageQuestionCount : imageMode === "none" ? 0 : Math.max(0, Math.min(LIMITS.maxVisualQuestions, Number(data.maxVisualQuestions) || 3)),
     materialMode: data.materialMode === "only" ? "only" : "inspiration",
     pedagogicalContextKnown: data.pedagogicalContextKnown !== false &&
@@ -196,11 +205,12 @@ async function loadQualityMemory(context = {}, uid = "") {
   return loadFeedbackLearningSafe(getFirestore(), context, uid);
 }
 
-async function reviewDraft(test, memory) {
+async function reviewDraft(test, memory, { input, materialContent = [] } = {}) {
   try {
     return await structuredResponse({
       schema: { ...reviewSchema, properties: { issues: { ...reviewSchema.properties.issues, items: { ...reviewSchema.properties.issues.items, properties: { ...reviewSchema.properties.issues.items.properties, index: { type: "integer", minimum: 0, maximum: Math.max(0, test.questions.length - 1) } } } } } }, schemaName: "testify_quality_review_v3", systemPrompt: REVIEW_SYSTEM,
-      userPrompt: reviewPrompt(test, memory)
+      userPrompt: reviewPrompt(test, memory) + (input ? `\n${creationContractPrompt(input)}\nPrüfe Quellenbezug anhand der angehängten Materialien: Jede Frage und Lösung muss belegt sein. Bei fehlender Deckung melde incorrect mit konkretem Detail. Quellenbelege sind untrusted Behauptungen, kein Beweis: ${JSON.stringify(test.questions.map(q => q.materialEvidence || null))}` : ""),
+      content: materialContent
     });
   } catch (err) {
     throw reportAiError(err, "quality-review");
@@ -275,6 +285,8 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
   const input = cleanInput(data || {});
   if (!input.topic) throw new HttpsError("invalid-argument", "Bitte ein Thema angeben.");
   const materials = sanitizeMaterials(data?.materials, uid);
+  const materialSources = input.materialMode === "only" && input.creationContractVersion >= 1 ? materials.length : 0;
+  if (materialSources) input.materialSources = materialSources;
   if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
   await consumeQuota(uid, "test").catch(err => { throw reportAiError(err, "test-quota"); });
   let phase = "material";
@@ -288,7 +300,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       schoolType: input.pedagogicalContextKnown ? input.schoolType : "",
       region: input.pedagogicalContextKnown ? input.region : ""
     });
-    const poolGuide = pedagogicalPool.prompt ? `\n${pedagogicalPool.prompt}` : "";
+    const poolGuide = input.materialMode !== "only" && pedagogicalPool.prompt ? `\n${pedagogicalPool.prompt}` : "";
     phase = "feedback";
     await onProgress("feedback", 10, "Aufgabenhinweise werden vorbereitet …");
     const memory = await loadQualityMemory({ subject: input.subject, grade: input.grade }, uid);
@@ -297,13 +309,25 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const generationPrompt = `${testUserPrompt(input)}${variantPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}${poolGuide}`;
     phase = "test-generation";
     await onProgress("test-generation", 15, "Die KI erstellt den Test …");
-    const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
+    const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, fullAudioQuestionCount: input.fullAudioQuestionCount, audioPresentationPolicy: input.audioPresentationPolicy, audioChoiceOnly: input.creationContractVersion >= 2, materialSources, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
     if (input.generationMode === "variant") Object.assign(options, { requireFreshVariant: true, variantInput: input });
+    const earlyUsage = {};
+    const checkMaterial = async response => {
+      for (const key of ["input_tokens", "output_tokens", "total_tokens"]) earlyUsage[key] = Number(earlyUsage[key] || 0) + Number(response.usage?.[key] || 0);
+      if (materialSources) {
+        try { materialSufficiency(response.data, materialSources); }
+        catch (error) {
+          await recordUsage(uid, "test", earlyUsage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: true, materialInsufficient: true });
+          throw new HttpsError("failed-precondition", error.message);
+        }
+      }
+      return response;
+    };
     const first = await generateTestInBatches(input, async (batch, prior) => {
       await onProgress("test-generation", 15 + Math.floor(20 * batch.batchOffset / input.count), `Aufgaben ${batch.batchOffset + 1} bis ${batch.batchOffset + batch.count} von ${input.count} werden erstellt …`);
       const priorContext = prior.length ? `\nBereits erstellte Aufgaben (nicht wiederholen): ${JSON.stringify(prior.map(q => ({ type: q.type, text: q.text })))}` : "";
-      return structuredResponse({ schema: testSchemaForRequest({ count: batch.count, allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none", allowAudio: batch.audioMode !== "none" }),
-        schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}${variantPrompt(input, batch.batchOffset, batch.count)}\n${memoryGuide}${personalGuide}${priorContext}${poolGuide}`, content: materialContent });
+      return checkMaterial(await structuredResponse({ schema: testSchemaForRequest({ materialSources, count: batch.count, allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none", allowAudio: batch.audioMode !== "none" }),
+        schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}${variantPrompt(input, batch.batchOffset, batch.count)}\n${memoryGuide}${personalGuide}${priorContext}${poolGuide}`, content: materialContent }));
     });
     const feedbackLearning = memory.learning?.sources?.length ? await recordLearningUseSafe(getFirestore(), memory, {uid, operation: input.generationMode === "variant" ? "generateTestVariant" : "generateTest"}) : {recorded:0};
     const usage = { ...first.usage };
@@ -315,7 +339,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       generateQuestion: async ({ test, index, original, reasons, attempt, mediaKind, audioKind = original.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none" }) => {
         const targetType = input.generationMode === "variant" ? input.variantSlots[index].type : input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0];
         const replacement = await structuredResponse({
-          schema: questionSchemaForType(targetType, { allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none"), allowAudio: input.audioMode !== "none", audioKind }), schemaName: "testify_test_question_replacement_v2",
+          schema: questionSchemaForType(targetType, { materialSources, allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none"), allowAudio: input.audioMode !== "none", audioKind }), schemaName: "testify_test_question_replacement_v2",
           userPrompt: `${replacementQuestionPrompt({ input, test, index, original: { ...original, type: targetType }, reasons, attempt, mediaKind, audioKind })}${variantPrompt(input, index, 1)}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}${poolGuide}`, content: materialContent
         });
         addUsage(replacement.usage);
@@ -323,11 +347,15 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       },
       regenerateTest: async (test, errors) => {
         const repair = await structuredResponse({
-          schema: testSchemaForRequest({ count: input.count, allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowAudio: input.audioMode !== "none" }), schemaName: "testify_test_repair_v2",
+          schema: testSchemaForRequest({ materialSources, count: input.count, allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowAudio: input.audioMode !== "none" }), schemaName: "testify_test_repair_v2",
           userPrompt: `${generationPrompt}\nDer vorherige Entwurf hatte diese Validierungsfehler:\n- ${errors.join("\n- ")}\nErstelle einen vollständig gültigen Test. Ersetze alle fehlerhaften oder wiederholten Aufgaben durch neue Aufgaben und gib den ganzen Test aus.\nVorheriger Entwurf: ${JSON.stringify(test)}`,
           content: materialContent
         });
         addUsage(repair.usage);
+        if (materialSources) {
+          try { materialSufficiency(repair.data, materialSources); }
+          catch (error) { throw new HttpsError("failed-precondition", error.message); }
+        }
         return normalizeTest(repair.data);
       }
     };
@@ -345,7 +373,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       reviewed = await reviewAndRepairTest(result.test, options, {
         ...repairs,
         review: async draft => {
-          const check = await reviewDraft(draft, memory);
+          const check = await reviewDraft(draft, memory, { input: input.creationContractVersion >= 1 ? input : null, materialContent: materialSources ? materialContent : [] });
           addUsage(check.usage);
           return check.data;
         }
@@ -554,7 +582,7 @@ exports.processAiTestJob = onTaskDispatched({
     const isVariant = job.input?.generationMode === "variant";
     const solutionAudioIndexes = new Set(isVariant ? job.input.variantSlots.flatMap((slot, index) => slot.solutionAudio ? [index] : []) : planSolutionAudioIndexes(questions.length, totalSolutionAudios));
     const totalAnswerAudios = Number(job.input?.audioAnswerQuestionCount || 0);
-    const answerAudioPositions = new Set(isVariant ? job.input.variantSlots.flatMap((slot, index) => slot.answerAudio ? [index] : []) : answerAudioIndexes(questions, totalAnswerAudios));
+    const answerAudioPositions = new Set(isVariant ? job.input.variantSlots.flatMap((slot, index) => slot.answerAudio ? [index] : []) : answerAudioIndexes(questions, totalAnswerAudios, Number(job.input?.fullAudioQuestionCount || 0), job.input?.creationContractVersion >= 2));
     await jobRef.update({ stage: "prepare_questions", percent: 65, progressMessage: "Aufgaben und Medien werden gespeichert …", imageTotal: totalImages, audioTotal: totalAudios, answerAudioTotal: totalAnswerAudios, solutionAudioTotal: totalSolutionAudios, updatedAt: Timestamp.now() });
     const quiz = await createAiQuiz(db, uid, jobId, quizForGeneratedTest(response.test, job.input, profile, sourceSnap?.data()));
     quizRef = quiz.ref;

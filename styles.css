@@ -437,3 +437,21 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 .aiUploadLegalDetails,.editorMediaPrivacyDetails{margin:10px 0;color:#475467;font-size:13px;line-height:1.5}
 .aiUploadLegalDetails>summary,.editorMediaPrivacyDetails>summary{cursor:pointer;min-height:44px;padding:10px 0;box-sizing:border-box}
 .aiUploadLegalDetails a,.editorMediaPrivacyDetails a{display:inline-block;min-height:44px;padding:10px 0}
+
+/* One creation flow, in the same order on desktop, tablet and phone. */
+#aiView .aiCreationFlow{grid-template-columns:minmax(0,1fr);max-width:1080px;margin:0 auto;gap:18px}
+#aiView .aiCreationFlow>.card{min-width:0}
+#aiView .audioCreationCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+#aiView .audioCreationChoice{min-width:0;margin:0;padding:14px;border:1px solid #c7d4e8;border-radius:14px;display:flex;flex-direction:column;gap:10px}
+#aiView .audioCreationChoice legend{font-weight:700;color:#253c61;padding:0 4px;font-size:15px}
+#aiView .audioStudentExample{display:grid;gap:7px;background:#f2f6fc;border-radius:10px;padding:10px;font-size:12px;line-height:1.45}
+#aiView .audioExampleQuestion{padding:7px;background:#fff;border:1px solid #d8e1ef;border-radius:8px;color:#344054}
+#aiView .audioExamplePlayer{background:#e1eafa;border-radius:16px;padding:6px 10px;color:#2457bd;font-weight:700}
+#aiView .audioCreationChoice>label{margin-top:auto}
+#aiView .aiCreationFinish .aiCoreActions{margin-top:10px}
+#aiView .gcRemyNotesMic{min-width:44px!important;min-height:44px!important}
+#aiView :is(input,select,textarea,button,summary){scroll-margin-block:24px}
+@media(max-width:860px){#aiView .audioCreationCards{grid-template-columns:1fr}}
+@media(max-width:540px){#aiView .formGrid2{grid-template-columns:1fr}#aiView .span2{grid-column:auto}#aiView .card{padding:16px}}
+#aiView .aiCreationFlow{grid-template-areas:none}
+#aiView .aiCreationFlow>.card{grid-area:auto;grid-column:auto;grid-row:auto}

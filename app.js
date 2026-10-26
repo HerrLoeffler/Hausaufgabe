@@ -1,6 +1,7 @@
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
 const APP_VERSION = "2.3.1-gc45-rc1";
+const GENERATED_MEDIA_MAX = 100;
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
@@ -2741,6 +2742,8 @@ $("openGeminiBtn")?.addEventListener("click", () => openAiProvider("https://gemi
 $("generateAiTestBtn")?.addEventListener("click", generateAiTestNative);
 $("saveAiPreferencesBtn")?.addEventListener("click", () => saveAiPreferences());
 $("aiMaterialInput")?.addEventListener("change", handleAiMaterialFiles);
+$("aiView")?.addEventListener("input", updateAiCreationSummary);
+$("aiView")?.addEventListener("change", updateAiCreationSummary);
 installAiMaterialDropZone();
 $("aiTypeChecks")?.addEventListener("change", updateAiTypeCount);
 function installAiAnswerAudioField() {
@@ -2760,7 +2763,7 @@ function installAiAnswerAudioField() {
   anchor.after(label, hint);
 }
 installAiAnswerAudioField();
-["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiSolutionAudioQuestionCount", "aiCount"].forEach(id => $(id)?.addEventListener("input", () => { updateAiImageControls(); updateAiAudioControls(); }));
+["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiFullAudioQuestionCount", "aiSolutionAudioQuestionCount", "aiCount"].forEach(id => $(id)?.addEventListener("input", () => { updateAiImageControls(); updateAiAudioControls(); }));
 ["aiCount", "aiPoints"].forEach(id => $(id)?.addEventListener("input", updateAiPointsControls));
 
 function updateAiTypeCount() {
@@ -2772,9 +2775,11 @@ function resetAiFormForNewTest() {
   handleAiMaterialFiles.generation = (handleAiMaterialFiles.generation || 0) + 1;
   ["aiTopic", "aiCustomNotes"].forEach(id => { if ($(id)) $(id).value = ""; });
   ["aiCount", "aiPoints", "aiSchoolType", "aiRegion"].forEach(id => { const input = $(id); if (input) input.value = input.defaultValue; });
-  ["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiSolutionAudioQuestionCount"].forEach(id => { if ($(id)) $(id).value = "0"; });
+  ["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiFullAudioQuestionCount", "aiSolutionAudioQuestionCount"].forEach(id => { if ($(id)) $(id).value = "0"; });
   const difficulty = $("aiDifficulty");
   if (difficulty) difficulty.value = [...difficulty.options].find(option => option.defaultSelected)?.value || "mittel";
+  if ($("aiMaterialMode")) $("aiMaterialMode").value = "only";
+  updateAiCreationSummary();
   document.dispatchEvent(new CustomEvent("gradecrew:ai-form-reset"));
 }
 
@@ -2786,7 +2791,7 @@ async function openAiView() {
   $("aiGrade").value = settings.defaultGrade || "";
   if ($("aiCustomNotes")) $("aiCustomNotes").value = "";
   if ($("aiPersonalPreferences")) $("aiPersonalPreferences").value = String(state.profile?.aiPreferences || "");
-  $("aiMaterialMode").value = "inspiration";
+  $("aiMaterialMode").value = "only";
   const root = $("aiTypeChecks");
   root.innerHTML = "";
   const types = [...QUESTION_TYPES.filter(([value]) => !["text", "number"].includes(value)), ...QUESTION_TYPES.filter(([value]) => ["text", "number"].includes(value))];
@@ -2858,16 +2863,33 @@ function setAiProgress(message = "", isError = false, percent = null, hint = "",
   box.classList.remove("hidden");
 }
 
+function updateAiCreationSummary() {
+  const node = $("aiCreationSummary");
+  if (!node) return;
+  const full = Number($("aiFullAudioQuestionCount")?.value || 0);
+  const material = state.aiMaterials.length ? `${state.aiMaterials.length} Materialquelle(n), ${$("aiMaterialMode").value === "only" ? "Inhalt auf Material beschränkt" : "als Anregung"}` : "ohne Material";
+  node.textContent = `${$("aiCount").value} Aufgaben · ${$("aiPoints").value} Punkte · ${material} · ${$("aiImageQuestionCount").value} Aufgabenbilder · ${$("aiAudioQuestionCount").value} Hörtexte · ${$("aiAudioAnswerQuestionCount").value} Aufgaben mit Audioantworten · ${full} vollständige Audioaufgaben`;
+  const units = Number($("aiImageQuestionCount").value) + Number($("aiAudioQuestionCount").value) + Number($("aiAudioAnswerQuestionCount").value) + full;
+  const max = Math.min(Number($("aiCount").value), GENERATED_MEDIA_MAX);
+  for (const id of ["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiFullAudioQuestionCount"]) if ($(id)) $(id).max = String(max);
+  const budget = $("aiMediaBudgetHint");
+  if (budget) {
+    budget.textContent = `${$("aiImageQuestionCount").value} Bilder + ${Number($("aiAudioQuestionCount").value) + Number($("aiAudioAnswerQuestionCount").value) + full} Audioaufgaben = ${units} von ${max}.`;
+    if (!Number.isInteger(units) || units > max || units < 0) budget.textContent += " Bitte die Medienauswahl anpassen; keine Menge wird automatisch gekürzt.";
+    budget.classList.toggle("aiInputError", !Number.isInteger(units) || units > max || units < 0);
+  }
+}
+
 function updateAiImageControls() {
   const imageInput = $("aiImageQuestionCount");
   const images = Number(imageInput.value);
   const count = Number($("aiCount").value);
-  const imageInvalid = !imageInput.value.trim() || !Number.isInteger(images) || images < 0 || images > 5;
+  const imageInvalid = !imageInput.value.trim() || !Number.isInteger(images) || images < 0 || images > Math.min(count, GENERATED_MEDIA_MAX);
   const combinedInvalid = !imageInvalid && Number.isInteger(count) && count >= 1 && images > count;
   const hint = $("aiImageCountHint");
   imageInput.setAttribute("aria-invalid", String(imageInvalid || combinedInvalid));
   const errors = [];
-  if (imageInvalid) errors.push("Für Aufgaben mit einem Bild bitte eine ganze Zahl von 0 bis 5 eingeben.");
+  if (imageInvalid) errors.push("Für Aufgabenbilder bitte eine ganze Zahl innerhalb der Aufgabenanzahl eingeben.");
   if (combinedInvalid) errors.push(`Bei ${count} Aufgaben sind höchstens ${count} Aufgabenbilder möglich.`);
   if (hint) {
     hint.textContent = errors.join(" ");
@@ -2881,18 +2903,19 @@ function updateAiAudioControls() {
   const answerInput = $("aiAudioAnswerQuestionCount");
   const solutionInput = $("aiSolutionAudioQuestionCount");
   if (!input) return;
-  const audio = Number(input.value);
+  const full = Number($("aiFullAudioQuestionCount")?.value || 0);
+  const audio = Number(input.value) + full;
   const solutionAudio = Number(solutionInput?.value);
   const count = Number($("aiCount")?.value);
-  const invalid = !input.value.trim() || !Number.isInteger(audio) || audio < 0 || audio > 5;
+  const invalid = !input.value.trim() || !Number.isInteger(audio) || audio < 0 || audio > Math.min(count, GENERATED_MEDIA_MAX);
   const combinedInvalid = !invalid && Number.isInteger(count) && count >= 1 && audio > count;
   input.setAttribute("aria-invalid", String(invalid || combinedInvalid));
   const hint = $("aiAudioCountHint");
   if (hint) {
     const errors = [];
-    if (invalid) errors.push("Für Höraufgaben bitte eine ganze Zahl von 0 bis 5 eingeben.");
+    if (invalid) errors.push("Für Höraufgaben bitte eine ganze Zahl innerhalb der Aufgabenanzahl eingeben.");
     if (combinedInvalid) errors.push(`Bei ${count} Aufgaben sind höchstens ${count} Höraufgaben möglich.`);
-    hint.textContent = errors.length ? errors.join(" ") : "Aufgaben werden vorgelesen · kein Autoplay · im Editor anhörbar.";
+    hint.textContent = errors.length ? errors.join(" ") : "Frage sichtbar, Hörtext anhörbar.";
     hint.classList.toggle("aiInputError", errors.length > 0);
   }
   if (solutionInput) {
@@ -2909,12 +2932,12 @@ function updateAiAudioControls() {
     }
   }
   if (answerInput) {
-    const answerCount = Number(answerInput.value);
-    const answerInvalid = !answerInput.value.trim() || !Number.isInteger(answerCount) || answerCount < 0 || answerCount > 5 || answerCount > count;
+    const answerCount = Number(answerInput.value) + full;
+    const answerInvalid = !answerInput.value.trim() || !Number.isInteger(answerCount) || answerCount < 0 || answerCount > Math.min(count, GENERATED_MEDIA_MAX) || answerCount > count;
     answerInput.setAttribute("aria-invalid", String(answerInvalid));
     const answerHint = $("aiAudioAnswerCountHint");
     if (answerHint) {
-      answerHint.textContent = answerInvalid ? "Bitte 0 bis 5 Audioantwort-Aufgaben wählen, höchstens so viele wie Aufgaben." : "Auswahloptionen werden einzeln hörbar und bleiben für Schüler als Text verborgen.";
+      answerHint.textContent = answerInvalid ? "Bitte eine ganze Anzahl Audioantwort-Aufgaben wählen, höchstens so viele wie Aufgaben." : "Auswahloptionen werden einzeln hörbar und bleiben für Schüler als Text verborgen.";
       answerHint.classList.toggle("aiInputError", answerInvalid);
     }
   }
@@ -2938,7 +2961,7 @@ function renderAiMaterials() {
   if (!root) return;
   root.innerHTML = "";
   $("aiMaterialMode").disabled = state.aiMaterials.length === 0;
-  if (!state.aiMaterials.length) $("aiMaterialMode").value = "inspiration";
+  updateAiCreationSummary();
   state.aiMaterials.forEach((m) => {
     const row = document.createElement("div"); row.className = "aiMaterialItem";
     const size = m.size ? `${Math.max(1, Math.round(m.size / 1024))} KB` : "";
@@ -3051,27 +3074,31 @@ function collectAiRequest() {
   const count = Number($("aiCount").value);
   const points = Number($("aiPoints").value);
   const imageQuestionCount = Number($("aiImageQuestionCount").value);
-  const audioQuestionCount = Number($("aiAudioQuestionCount").value);
+  const fullAudioQuestionCount = Number($("aiFullAudioQuestionCount")?.value || 0);
+  if (!Number.isInteger(fullAudioQuestionCount) || fullAudioQuestionCount < 0 || fullAudioQuestionCount > Math.min(Number($("aiCount").value), GENERATED_MEDIA_MAX)) throw new Error("Bitte eine ganze Anzahl vollständiger Audioaufgaben innerhalb der Aufgabenanzahl wählen.");
+  const audioQuestionCount = Number($("aiAudioQuestionCount").value) + fullAudioQuestionCount;
   const solutionAudioQuestionCount = Number($("aiSolutionAudioQuestionCount").value);
   const answerInput = $("aiAudioAnswerQuestionCount");
-  const audioAnswerQuestionCount = Number(answerInput?.value || 0);
+  const audioAnswerQuestionCount = Number(answerInput?.value || 0) + fullAudioQuestionCount;
   if (!Number.isInteger(count) || count < 1 || count > 100) throw new Error("Bitte 1 bis 100 Aufgaben wählen.");
   if (!$("aiPoints").value.trim() || !Number.isFinite(points) || points < 0.5 || Math.abs(points * 2 - Math.round(points * 2)) > 1e-8) throw new Error("Bitte eine Gesamtpunktzahl in 0,5er-Schritten wählen.");
   if (points < count / 2) throw new Error(`Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
-  if (!Number.isInteger(imageQuestionCount) || imageQuestionCount < 0 || imageQuestionCount > 5) throw new Error("Bitte 0 bis 5 Aufgaben mit einem Bild wählen.");
+  if (!Number.isInteger(imageQuestionCount) || imageQuestionCount < 0 || imageQuestionCount > Math.min(count, GENERATED_MEDIA_MAX)) throw new Error("Bitte eine ganze Anzahl Aufgabenbilder innerhalb der Aufgabenanzahl wählen.");
   if (imageQuestionCount > count) throw new Error("Bitte nicht mehr Aufgabenbilder als Aufgaben wählen.");
-  if (!Number.isInteger(audioQuestionCount) || audioQuestionCount < 0 || audioQuestionCount > 5) throw new Error("Bitte 0 bis 5 Höraufgaben wählen.");
+  if (!Number.isInteger(audioQuestionCount) || audioQuestionCount < 0 || audioQuestionCount > Math.min(count, GENERATED_MEDIA_MAX)) throw new Error("Bitte eine ganze Anzahl Höraufgaben innerhalb der Aufgabenanzahl wählen.");
   if (audioQuestionCount > count) throw new Error("Bitte nicht mehr Höraufgaben als Aufgaben wählen.");
   if (!Number.isInteger(solutionAudioQuestionCount) || solutionAudioQuestionCount < 0 || solutionAudioQuestionCount > 5) throw new Error("Bitte 0 bis 5 Audio-Lösungen wählen.");
   if (solutionAudioQuestionCount > count) throw new Error("Bitte nicht mehr Audio-Lösungen als Aufgaben wählen.");
-  if (!answerInput?.value.trim() || !Number.isInteger(audioAnswerQuestionCount) || audioAnswerQuestionCount < 0 || audioAnswerQuestionCount > 5 || audioAnswerQuestionCount > count) throw new Error("Bitte 0 bis 5 Aufgaben mit Audioantworten wählen.");
+  if (!answerInput?.value.trim() || !Number.isInteger(audioAnswerQuestionCount) || audioAnswerQuestionCount < 0 || audioAnswerQuestionCount > Math.min(count, GENERATED_MEDIA_MAX) || audioAnswerQuestionCount > count) throw new Error("Bitte eine ganze Anzahl Aufgaben mit Audioantworten innerhalb der Aufgabenanzahl wählen.");
   if (audioAnswerQuestionCount && !allowedTypes.some(type => ["single", "multi"].includes(type))) throw new Error("Für Audioantworten bitte Einzel- oder Mehrfachauswahl erlauben.");
+  const audioTasks = audioQuestionCount + audioAnswerQuestionCount - fullAudioQuestionCount;
+  if (imageQuestionCount + audioTasks > Math.min(count, GENERATED_MEDIA_MAX)) throw new Error(`Bilder und Audioaufgaben dürfen zusammen höchstens ${Math.min(count, GENERATED_MEDIA_MAX)} ergeben. Bitte die Auswahl anpassen.`);
   return {
     subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
     topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, points,
-    allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
+    allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: state.aiMaterials.length ? $("aiMaterialMode").value : "inspiration",
     imageMode: imageQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount: 0,
-    audioQuestionCount, solutionAudioQuestionCount, audioAnswerQuestionCount
+    audioQuestionCount, solutionAudioQuestionCount, audioAnswerQuestionCount, fullAudioQuestionCount, audioPresentationPolicy: "visible-plus-full", creationContractVersion: 2
   };
 }
 

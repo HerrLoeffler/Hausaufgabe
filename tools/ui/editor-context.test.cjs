@@ -53,7 +53,7 @@ function setup(t,existing=0){const dom=new JSDOM(fs.readFileSync(path.join(root,
 t.after(()=>dom.window.close());
 const w=dom.window;
 w.$=id=>w.document.getElementById(id);
-w.state={aiMaterials:Array.from({length:existing},(_,i)=>({id:'old'+i,storagePath:'aiUploads/teacher/old'+i,mimeType:'image/png',name:'old'}))};
+w.GENERATED_MEDIA_MAX=100;w.state={aiMaterials:Array.from({length:existing},(_,i)=>({id:'old'+i,storagePath:'aiUploads/teacher/old'+i,mimeType:'image/png',name:'old'}))};
 w.calls=[];
 w.messages=[];
 w.toast=(message)=>w.messages.push(message);
@@ -64,6 +64,7 @@ w.aiApi={uploadMaterial:async f=>{w.calls.push(f.name);
 return {id:f.name,storagePath:'aiUploads/teacher/'+f.name,mimeType:f.type,name:f.name};
 }};
 w.$('aiMaterialConfirmed').checked=true;
+w.eval(fn('updateAiCreationSummary'));
 w.eval(fn('handleAiMaterialFiles'));
 w.eval(fn('collectAiRequest'));
 return w;
