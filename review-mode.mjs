@@ -1,3 +1,4 @@
+import {blobBase64} from './review-image.mjs';
 import {installCompactCapture} from './review-capture.mjs';
 import {createReviewStorage} from './review-store.mjs';
 const labels={open:'Offen',working:'In Arbeit',review:'Zum Prüfen',done:'Erledigt',pending:'Wartet auf Freigabe',approved:'Freigegeben',rejected:'Abgelehnt',not_required:'Adminhinweis',passed:'Bestanden',failed:'Fehler',blocked:'Blockiert'};
@@ -14,26 +15,25 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
  const button=(text,fn,attrs={})=>{const b=el('button',text,{type:'button',...attrs});b.addEventListener('click',fn);return b;};
  function message(text,error=false){const n=root?.querySelector('[data-review-message]');if(n){n.textContent=text;n.classList.toggle('reviewError',error);}}
  function error(err){message(err?.message||'Aktion fehlgeschlagen. Bitte erneut versuchen.',true);}
- async function call(data){const e=epoch;const response=await api(data);if(e!==epoch)throw new Error('Konto wurde gewechselt.');return response;}
+ async function call(data,e=epoch,actor=uid){if(e!==epoch||actor!==uid)throw new Error('Konto wurde gewechselt.');const response=await api({...data,actorUid:actor});if(e!==epoch||actor!==uid)throw new Error('Konto wurde gewechselt.');return response;}
  function unmark(){marking=false;regionMode=false;const oldDrag=drag;drag=null;if(oldDrag?.pointerId!=null&&oldDrag.anchor.hasPointerCapture?.(oldDrag.pointerId))oldDrag.anchor.releasePointerCapture(oldDrag.pointerId);root?.querySelector('[data-review-region]')?.setAttribute('aria-pressed','false');root?.classList.remove('reviewPicking');document.documentElement.classList.remove('reviewMarking');root?.querySelector('[data-review-mark]')?.setAttribute('aria-pressed','false');}
  function close(){unmark();clearRegion();highlight?.classList.remove('reviewSelected');root?.remove();root=null;toggle?.focus();document.documentElement.classList.remove('reviewPanelOpen');}
  function dispose(){compactCapture?.dispose();compactCapture=null;portalObserver.disconnect();epoch++;close();toggle?.remove();toggle=null;uid='';document.removeEventListener('click',capture,true);document.removeEventListener('pointerdown',capture,true);document.removeEventListener('pointermove',capture,true);document.removeEventListener('pointerup',capture,true);document.removeEventListener('pointercancel',capture,true);win.removeEventListener('resize',paintRegion);win.removeEventListener('scroll',paintRegion,true);document.removeEventListener('keydown',capture,true);win.removeEventListener('online',online);}
  async function setSession(session){epoch++;compactCapture?.dispose();compactCapture=null;close();toggle?.remove();toggle=null;uid=session?.uid||'';selected=null;notes=[];checks=[];if(!uid)return;
   const e=epoch;try{const access=await call({action:'access'});if(e!==epoch)return;admin=access.admin;catalog=access.catalog?.checks||[];
-   if(compact){compactCapture=installCompactCapture({document,saveNote:recordCompactNote,feedback:true});void sync();return;}
+   if(compact){const draftKey=key('visual-draft'),outboxKey=key('outbox');
+    const assertSession=()=>{if(e!==epoch)throw new Error('Konto wurde gewechselt.');};
+    compactCapture=installCompactCapture({document,saveNote:recordCompactNote,feedback:true,getContext,loadDraft:()=>storage.get(draftKey),saveDraft:value=>{assertSession();return storage.put(draftKey,value);},clearDraft:async requestId=>{assertSession();const draft=await storage.get(draftKey);assertSession();if(draft?.clientRequestId===requestId)await storage.remove(draftKey);assertSession();await updateQueue(outboxKey,current=>(current||[]).filter(n=>n.clientRequestId!==requestId));}});void sync();return;}
+
    toggle=button('Seite überarbeiten',()=>void open(),{'data-review-toggle':'',class:'reviewToggle'});document.body.append(toggle);
   }catch{/* No access means no UI. Server remains authoritative. */}
  }
  async function recordCompactNote(note){
   if(!uid)throw new Error('Bitte anmelden.');
-  const context=getContext();if(!context.build)throw new Error('Version wird geladen. Bitte kurz warten.');
-  const region=note.region;const body=document.body;body.id ||= 'gradecrewPage';const r=body.getBoundingClientRect();
-  const clamp=(n)=>Math.max(0,Math.min(1,n));
-  const x=clamp((region.x-r.left)/r.width),y=clamp((region.y-r.top)/r.height);
-  const width=Math.min(region.width/r.width,1-x),height=Math.min(region.height/r.height,1-y);
-  if(width<=0||height<=0)throw new Error('Bitte einen Bereich innerhalb der Seite markieren.');
-  const e=epoch,k=key('outbox');const payload={action:'create',clientRequestId:note.clientRequestId,...context,target:body.id,text:note.text,area:'visual-feedback',region:{x,y,width,height,sourceWidth:r.width,sourceHeight:r.height}};
-  await updateQueue(k,current=>[...(current||[]).filter(n=>n.clientRequestId!==payload.clientRequestId),payload]);
+  const context=note.context;if(!context?.build)throw new Error('Version wird geladen. Bitte kurz warten.');
+  if(!note.imageBlob)throw new Error('Bitte ein Screenshotbild beifügen.');
+  const e=epoch,k=key('outbox');const payload={action:'create',clientRequestId:note.clientRequestId,...context,target:document.body.id||'gradecrewPage',text:note.text.trim(),area:'visual-feedback',captureSchemaVersion:2,captureContext:note.captureContext,...(note.region?{region:note.region}:{}),imageBlob:note.imageBlob};
+  await updateQueue(k,current=>(current||[]).some(n=>n.clientRequestId===payload.clientRequestId)?current:[...(current||[]),payload]);
   if(e!==epoch)throw new Error('Konto wurde gewechselt.');await sync();
   const remaining=(await storage.get(k)||[]).find(n=>n.clientRequestId===payload.clientRequestId);
   if(remaining)throw new Error(remaining._error||'Lokal gesichert; Übertragung fehlgeschlagen. Bitte erneut speichern.');
@@ -94,10 +94,13 @@ export function installReviewMode({document,api,getContext,storage=createReviewS
   try{await pendingWrites;await updateQueue(k,current=>[...(current||[]),payload]);if(e!==epoch)return;if(input.value.trim()===payload.text){input.value='';const draftKey=key('draft');pendingWrites=pendingWrites.catch(()=>{}).then(async()=>{const change=current=>current?.text?.trim()===payload.text?null:current;if(storage.update)return storage.update(draftKey,change);return storage.put(draftKey,change(await storage.get(draftKey)));});await pendingWrites;}message('Lokal gespeichert – wird übertragen');await sync();}catch(err){error(err);}
  }
  function sync(){const requestedEpoch=epoch;const next=syncTask.catch(()=>{}).then(()=>requestedEpoch===epoch?performSync():undefined);syncTask=next;return next;}
- async function performSync(){if(!uid)return;const e=epoch,k=key('outbox');
+ async function performSync(){if(!uid)return;const e=epoch,actor=uid,k=key('outbox');
   try{let queue=await storage.get(k)||[];let sent;
    while((sent=queue.find(x=>!x._error))&&e===epoch){
-    try{await call(sent);await updateQueue(k,current=>(current||[]).filter(x=>x.clientRequestId!==sent.clientRequestId));}
+    try{let request=sent;
+     if(sent.captureSchemaVersion===2){if(!sent.imageBlob)throw Object.assign(Error('Bildentwurf fehlt. Bitte Feedback mit Bild erneut verfassen.'),{code:'failed-precondition'});const base64=await blobBase64(sent.imageBlob);if(e!==epoch||actor!==uid)return;const image=await call({action:'uploadVisualImage',clientRequestId:sent.clientRequestId,base64},e,actor);if(e!==epoch||actor!==uid)return;request={...sent,imageId:image.imageId};delete request.imageBlob;}
+     if(e!==epoch||actor!==uid)return;await call(request,e,actor);await updateQueue(k,current=>(current||[]).filter(x=>x.clientRequestId!==sent.clientRequestId));
+     if(sent.captureSchemaVersion===2){const draftKey=key('visual-draft'),draft=await storage.get(draftKey);if(e===epoch&&draft?.clientRequestId===sent.clientRequestId)await storage.remove(draftKey);win.dispatchEvent(new win.CustomEvent('gradecrew:visual-confirmed',{detail:{clientRequestId:sent.clientRequestId}}));}}
     catch(err){if(e!==epoch)throw err;const code=String(err.code||'').replace('functions/','');
      if(!['permission-denied','invalid-argument','already-exists','failed-precondition'].includes(code))throw err;
      await updateQueue(k,current=>(current||[]).map(x=>x.clientRequestId===sent.clientRequestId?{...x,_error:err.message}:x));
