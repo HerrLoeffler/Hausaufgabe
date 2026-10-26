@@ -1,0 +1,41 @@
+{
+  "quizId": "9PL3CW7L",
+  "results": [
+    {
+      "kind": "correct",
+      "quizId": "9PL3CW7L",
+      "expected": 7,
+      "awarded": 7,
+      "max": 7,
+      "wrongOperatorTested": false,
+      "publicPaperSolutionFree": true,
+      "resumeIdentical": true,
+      "idempotent": true,
+      "at": "2026-10-26T19:24:10.712Z"
+    },
+    {
+      "kind": "one-wrong-operator",
+      "quizId": "9PL3CW7L",
+      "expected": 6.5,
+      "awarded": 6.5,
+      "max": 7,
+      "wrongOperatorTested": true,
+      "publicPaperSolutionFree": true,
+      "resumeIdentical": true,
+      "idempotent": true,
+      "at": "2026-10-26T19:24:11.958Z"
+    },
+    {
+      "kind": "blank",
+      "quizId": "9PL3CW7L",
+      "expected": 0,
+      "awarded": 0,
+      "max": 7,
+      "wrongOperatorTested": false,
+      "publicPaperSolutionFree": true,
+      "resumeIdentical": true,
+      "idempotent": true,
+      "at": "2026-10-26T19:24:13.174Z"
+    }
+  ]
+}

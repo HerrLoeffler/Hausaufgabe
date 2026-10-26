@@ -1,0 +1,182 @@
+{
+  "quiz": {
+    "audioReady": true,
+    "description": "Viel Erfolg beim Test!",
+    "shuffleQuestions": false,
+    "grade": "7",
+    "generationStatus": "ready",
+    "solutionAudioReady": true,
+    "audioAnswerQuestionCount": 0,
+    "contentLocale": "de-DE",
+    "qualityIssues": [],
+    "isDeleted": false,
+    "gradeScaleId": "standard",
+    "startMode": "student",
+    "listeningOnlyQuestionCount": 0,
+    "showSolutions": true,
+    "published": false,
+    "questionCount": 8,
+    "qualityWarnings": [],
+    "solutionAudioQuestionCount": 0,
+    "shareEnabled": false,
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match",
+      "profileIds": []
+    },
+    "sessionState": "open",
+    "ended": false,
+    "localeContractVersion": 1,
+    "subject": "Fächerübergreifend",
+    "gradeScaleSnapshot": {
+      "name": "Standard",
+      "id": "standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ]
+    },
+    "totalPoints": 16,
+    "generationJobId": "332b2ba3f4f3a6759738fb15fafdb7c0e5e1127c",
+    "updatedAt": "2026-10-26T19:24:29.375Z",
+    "resultMode": "points_grade",
+    "createdAt": "2026-10-26T19:24:27.794Z",
+    "gradingLocale": "de-DE",
+    "title": "Fächerübergreifender Vergleich visueller Aufgabenformate",
+    "rightsHold": false,
+    "audioQuestionCount": 0,
+    "creationContext": {
+      "region": "Bayern",
+      "learningGoals": [],
+      "topic": "Fächerübergreifender Vergleich der acht visuellen Aufgabenformate",
+      "difficulty": "mittel",
+      "schoolType": "Mittelschule",
+      "contentLocale": "de-DE"
+    },
+    "requiresSecureAssessmentRules": false,
+    "shuffleAnswers": false,
+    "accessCode": "HB7Y9W72",
+    "ownerId": "gc-visual255-e2e",
+    "id": "HB7Y9W72"
+  },
+  "questions": [
+    {
+      "position": 1,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"pflanzenteil-unterirdisch-hotspot-7\",\"revision\":0,\"format\":\"hotspot\",\"title\":\"Einen Pflanzenteil erkennen\",\"subject\":\"Biologie\",\"grade\":\"7\",\"prompt\":\"Klicke in der schematischen Zeichnung auf den Pflanzenteil, der unterhalb der Erdoberfläche liegt.\",\"hint\":\"Wähle genau einen Bereich aus. In der Zeichnung befinden sich Blüte und Blätter oberhalb der Erdoberfläche; der gesuchte Bereich liegt darunter.\",\"maxPoints\":2,\"spec\":{\"scene\":\"plant\",\"regions\":[\"r1\",\"r2\",\"r3\",\"r4\"],\"maxSelections\":1},\"solution\":{\"regions\":[\"r4\"],\"text\":\"Wurzel\"},\"objective\":\"Einen Pflanzenteil anhand seiner Lage in einer schematischen Darstellung erkennen.\",\"rationale\":\"Die Wurzel befindet sich bei einer Blütenpflanze unterhalb der Erdoberfläche und nimmt unter anderem Wasser sowie Mineralsalze auf.\",\"sourceNote\":\"Eigenständig erstellte schematische Darstellung einer Blütenpflanze mit eindeutig angeordneten Bereichen: Blüte oben, Sprossachse in der Mitte, Blätter seitlich und Wurzel unterhalb der Erdoberfläche.\"}",
+      "points": 2,
+      "type": "visual",
+      "updatedAt": "2026-10-26T19:24:28.078Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "text": "Klicke in der schematischen Zeichnung auf den Pflanzenteil, der unterhalb der Erdoberfläche liegt.",
+      "id": "q001"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"bluetenteile-beschriften-7-ersatz\",\"revision\":0,\"format\":\"labeling\",\"title\":\"Teile einer Blütenpflanze beschriften\",\"subject\":\"Biologie\",\"grade\":\"7\",\"prompt\":\"Beschrifte die vier markierten Teile der schematischen Blütenpflanze. Verwende jeden Begriff genau einmal.\",\"hint\":\"Ordne die Begriffe mithilfe der Lage und Form der markierten Pflanzenteile zu. Jeder Begriff darf nur einmal verwendet werden.\",\"maxPoints\":2,\"spec\":{\"scene\":\"plant\",\"regions\":[\"r1\",\"r2\",\"r3\",\"r4\"],\"items\":[{\"id\":\"l1\",\"text\":\"Blüte\"},{\"id\":\"l2\",\"text\":\"Sprossachse\"},{\"id\":\"l3\",\"text\":\"Blätter\"},{\"id\":\"l4\",\"text\":\"Wurzel\"}]},\"solution\":{\"assignments\":{\"r1\":\"l1\",\"r2\":\"l2\",\"r3\":\"l3\",\"r4\":\"l4\"}},\"objective\":\"Die Fachbegriffe für die vier Grundteile einer Blütenpflanze in einer schematischen Darstellung richtig zuordnen.\",\"rationale\":\"Die markierten Bereiche der Pflanzendarstellung sind eindeutig als Blüte, Sprossachse, Blätter und Wurzel erkennbar.\",\"sourceNote\":\"Eigenständig erstellte schematische Pflanzendarstellung mit vier eindeutig markierten Bereichen.\"}",
+      "points": 2,
+      "position": 2,
+      "updatedAt": "2026-10-26T19:24:28.255Z",
+      "type": "visual",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "Beschrifte die vier markierten Teile der schematischen Blütenpflanze. Verwende jeden Begriff genau einmal.",
+      "id": "q002"
+    },
+    {
+      "position": 3,
+      "points": 2,
+      "text": "Markiere auf dem Zeitstrahl das Jahr, in dem Christoph Kolumbus Amerika erreichte.",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "updatedAt": "2026-10-26T19:24:28.447Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"geschichte-kolumbus-zeitstrahl-7\",\"revision\":0,\"format\":\"scale\",\"title\":\"Ein historisches Ereignis zeitlich einordnen\",\"subject\":\"Geschichte\",\"grade\":\"7\",\"prompt\":\"Markiere auf dem Zeitstrahl das Jahr, in dem Christoph Kolumbus Amerika erreichte.\",\"hint\":\"Ordne das Ereignis mithilfe deiner historischen Kenntnisse ein.\",\"maxPoints\":2,\"spec\":{\"context\":\"timeline\",\"min\":1400,\"max\":1600,\"step\":1,\"majorStep\":50,\"unit\":\"Jahr\",\"card\":\"Ereignis\"},\"solution\":{\"value\":1492,\"tolerance\":0.4},\"objective\":\"Ein historisches Ereignis auf einem Zeitstrahl verorten.\",\"rationale\":\"Christoph Kolumbus erreichte Amerika im Jahr 1492.\",\"sourceNote\":\"Eigenständig formulierte historische Einordnungsaufgabe.\"}",
+      "id": "q003"
+    },
+    {
+      "position": 4,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"mathematik-winkel-messen-7\",\"revision\":0,\"format\":\"angle\",\"title\":\"Einen Winkel messen\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Miss den dargestellten Winkel mit dem Winkelmesser und trage dein Ergebnis in Grad ein.\",\"hint\":\"Lege den Winkelmesser mit seinem Mittelpunkt auf den Scheitelpunkt und beginne am passenden Schenkel bei 0°.\",\"maxPoints\":2,\"spec\":{\"degrees\":68,\"instrument\":\"aligned-protractor\",\"min\":0,\"max\":180},\"solution\":{\"value\":68,\"tolerance\":3},\"objective\":\"Die Größe eines Winkels mit einem Winkelmesser bestimmen.\",\"rationale\":\"Der dargestellte Winkel hat eine Größe von 68 Grad.\",\"sourceNote\":\"Eigenständig erstellte Winkelaufgabe mit deterministischer Darstellung.\"}",
+      "points": 2,
+      "type": "visual",
+      "text": "Miss den dargestellten Winkel mit dem Winkelmesser und trage dein Ergebnis in Grad ein.",
+      "updatedAt": "2026-10-26T19:24:28.622Z",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "id": "q004"
+    },
+    {
+      "points": 2,
+      "position": 5,
+      "updatedAt": "2026-10-26T19:24:28.814Z",
+      "type": "visual",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"mathematik-bruchanteil-raster-7\",\"revision\":0,\"format\":\"grid\",\"title\":\"Einen Bruch als Flächenanteil darstellen\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Markiere drei Fünftel der gleich großen Kästchen.\",\"hint\":\"Markiere genau den geforderten Anteil der gesamten Fläche.\",\"maxPoints\":2,\"spec\":{\"rows\":4,\"columns\":5},\"solution\":{\"count\":12},\"objective\":\"Einen Bruch als Anteil einer Fläche darstellen.\",\"rationale\":\"Das Raster enthält 20 Kästchen. Drei Fünftel von 20 sind 12 Kästchen.\",\"sourceNote\":\"Eigenständig erstelltes Raster ohne zusätzliches Bildmedium.\"}",
+      "text": "Markiere drei Fünftel der gleich großen Kästchen.",
+      "id": "q005"
+    },
+    {
+      "position": 6,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"deutsch-argumente-verkehr-inhaltsverzeichnis-7\",\"revision\":0,\"format\":\"connections\",\"title\":\"Behauptungen und Begründungen zuordnen\",\"subject\":\"Deutsch\",\"grade\":\"7\",\"prompt\":\"Ordne jede Behauptung der passenden Begründung zu. Der Pfeil zeigt von der Behauptung zur Begründung.\",\"hint\":\"Verbinde jede Behauptung genau einmal mit einer Begründung.\",\"maxPoints\":2,\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"b1\",\"label\":\"Behauptung: Ein Fahrrad kann für kurze Wege eine umweltfreundliche Wahl sein.\",\"x\":150,\"y\":80},{\"id\":\"b2\",\"label\":\"Behauptung: Ein Inhaltsverzeichnis erleichtert das Finden eines Kapitels.\",\"x\":150,\"y\":250},{\"id\":\"g1\",\"label\":\"Begründung: Während der Fahrt verbraucht ein Fahrrad keinen Kraftstoff.\",\"x\":570,\"y\":80},{\"id\":\"g2\",\"label\":\"Begründung: Es nennt die Kapitel und ihre Seitenzahlen.\",\"x\":570,\"y\":250}]},\"solution\":{\"edges\":[[\"b1\",\"g1\"],[\"b2\",\"g2\"]]},\"objective\":\"Behauptungen anhand ihrer sachlich passenden Begründungen zuordnen.\",\"rationale\":\"Jede Begründung erklärt genau die Aussage einer Behauptung.\",\"sourceNote\":\"Eigenständig formulierte Aufgabe zur Argumentationsstruktur.\"}",
+      "text": "Ordne jede Behauptung der passenden Begründung zu. Der Pfeil zeigt von der Behauptung zur Begründung.",
+      "points": 2,
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "updatedAt": "2026-10-26T19:24:28.979Z",
+      "id": "q006"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"koordinatensystem-punkte-de-7\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Punkte im Koordinatensystem\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Trage die Punkte D(-4 | 3) und E(2 | -1) in das Koordinatensystem ein.\",\"hint\":\"Lies bei jedem Punkt zuerst den x-Wert und danach den y-Wert ab. Setze beide Punkte genau auf Rasterpunkte.\",\"objective\":\"Geordnete Zahlenpaare in einem Koordinatensystem darstellen.\",\"rationale\":\"Die beiden Punkte sind durch ihre jeweils eindeutig angegebenen x- und y-Koordinaten bestimmt.\",\"sourceNote\":\"Eigenständig erstellte Koordinatenaufgabe auf einem ganzzahligen Raster.\",\"spec\":{\"mode\":\"points\",\"minX\":-6,\"maxX\":6,\"minY\":-5,\"maxY\":5,\"step\":1,\"labels\":[\"D\",\"E\"]},\"solution\":{\"points\":[{\"x\":-4,\"y\":3},{\"x\":2,\"y\":-1}]},\"maxPoints\":2}",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "points": 2,
+      "text": "Trage die Punkte D(-4 | 3) und E(2 | -1) in das Koordinatensystem ein.",
+      "position": 7,
+      "updatedAt": "2026-10-26T19:24:29.130Z",
+      "type": "visual",
+      "id": "q007"
+    },
+    {
+      "type": "visual",
+      "updatedAt": "2026-10-26T19:24:29.284Z",
+      "text": "Ergänze die vier fehlenden Fachbegriffe zu den Aufgaben der Zellbestandteile. Jeder richtige Begriff zählt 0,5 Punkte.",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"biologie-zellbestandteile-tabelle-7\",\"revision\":0,\"format\":\"table\",\"title\":\"Zellbestandteile und ihre Aufgaben\",\"subject\":\"Biologie\",\"grade\":\"7\",\"prompt\":\"Ergänze die vier fehlenden Fachbegriffe zu den Aufgaben der Zellbestandteile. Jeder richtige Begriff zählt 0,5 Punkte.\",\"hint\":\"Lies die jeweilige Aufgabe genau und trage den passenden Fachbegriff ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Aufgabe des Zellbestandteils\",\"Fachbegriff\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Enthält die Erbinformation und steuert viele Zellvorgänge.\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Wandelt Energie aus Nährstoffen in nutzbare Zellenergie um.\",\"input\":false},{\"id\":\"b2\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"Ist der Ort der Eiweißherstellung in der Zelle.\",\"input\":false},{\"id\":\"c2\",\"text\":\"\",\"input\":true}],[{\"id\":\"d1\",\"text\":\"Fängt Lichtenergie für die Fotosynthese auf.\",\"input\":false},{\"id\":\"d2\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a2\",\"accepted\":[\"Zellkern\"]},{\"id\":\"b2\",\"accepted\":[\"Mitochondrium\"]},{\"id\":\"c2\",\"accepted\":[\"Ribosom\"]},{\"id\":\"d2\",\"accepted\":[\"Chloroplast\"]}]},\"objective\":\"Zellbestandteile anhand ihrer grundlegenden Aufgaben erkennen und fachsprachlich benennen.\",\"rationale\":\"Jede Aufgabe beschreibt eindeutig einen grundlegenden Zellbestandteil.\",\"sourceNote\":\"Eigenständig erstellte Tabelle mit vier unabhängig bewertbaren Fachbegriffen.\"}",
+      "points": 2,
+      "position": 8,
+      "id": "q008"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,98 @@
+{
+  "quiz": {
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": [],
+      "status": "no_match",
+      "profileCount": 0
+    },
+    "accessCode": "9PL3CW7L",
+    "updatedAt": "2026-10-26T19:22:41.453Z",
+    "rightsHold": false,
+    "solutionAudioReady": true,
+    "gradeScaleSnapshot": {
+      "name": "Standard",
+      "id": "standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ]
+    },
+    "shareEnabled": false,
+    "creationContext": {
+      "learningGoals": [],
+      "region": "Bayern",
+      "topic": "Direkter und umgekehrter Dreisatz mit unabhängigen Rechenpfeilen",
+      "schoolType": "Mittelschule",
+      "contentLocale": "de-DE",
+      "difficulty": "mittel"
+    },
+    "sessionState": "open",
+    "isDeleted": false,
+    "generationStatus": "ready",
+    "subject": "Mathematik",
+    "localeContractVersion": 1,
+    "resultMode": "points_grade",
+    "gradeScaleId": "standard",
+    "title": "Direkter und umgekehrter Dreisatz",
+    "shuffleQuestions": false,
+    "audioAnswerQuestionCount": 0,
+    "published": false,
+    "totalPoints": 7,
+    "listeningOnlyQuestionCount": 0,
+    "audioQuestionCount": 0,
+    "requiresSecureAssessmentRules": false,
+    "grade": "7",
+    "qualityWarnings": [],
+    "questionCount": 2,
+    "solutionAudioQuestionCount": 0,
+    "ownerId": "gc-visual255-e2e",
+    "createdAt": "2026-10-26T19:22:40.933Z",
+    "audioReady": true,
+    "contentLocale": "de-DE",
+    "gradingLocale": "de-DE",
+    "ended": false,
+    "showSolutions": true,
+    "qualityIssues": [],
+    "generationJobId": "bed3dabdb8e56beb5b269dd438fe2acc0e0fed06",
+    "description": "Viel Erfolg beim Test!",
+    "startMode": "student",
+    "shuffleAnswers": false,
+    "id": "9PL3CW7L"
+  },
+  "questions": [
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "position": 1,
+      "updatedAt": "2026-10-26T19:22:41.113Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"direkter-dreisatz-rucksack-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Direkter Dreisatz: Prozentwert eines Rucksackpreises\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ein Sportgeschäft verkauft einen Rucksack für 360 €. Wie viel kosten 25 % dieses Preises? Ergänze die Dreisatz-Tabelle. Rechne im Zwischenschritt über 1 %. Die beiden Rechenpfeile jeder Zeile werden unabhängig voneinander ausgeführt. Jedes offene Feld zählt 0,5 Punkte.\",\"hint\":\"Trage Zahlen in die Zahlenfelder ein. In einem freien Rechenfeld notierst du die vollständige Rechnung mit Rechenzeichen und Zahl. Die Rechenzeichen und Zahlen der beiden Seiten werden getrennt bewertet.\",\"maxPoints\":3.5,\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Preis (€)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"100\",\"input\":false},{\"id\":\"r1c4\",\"text\":\"360\",\"input\":false},{\"id\":\"r1c5\",\"text\":\"\",\"input\":false},{\"id\":\"r1c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r2c1\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"\",\"input\":true},{\"id\":\"r2c3\",\"text\":\"\",\"input\":false},{\"id\":\"r2c4\",\"text\":\"\",\"input\":false},{\"id\":\"r2c5\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r3c1\",\"text\":\"\",\"input\":false},{\"id\":\"r3c2\",\"text\":\"\",\"input\":false},{\"id\":\"r3c3\",\"text\":\"\",\"input\":true},{\"id\":\"r3c4\",\"text\":\"\",\"input\":true},{\"id\":\"r3c5\",\"text\":\"\",\"input\":false},{\"id\":\"r3c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r4c1\",\"text\":\"\",\"input\":false},{\"id\":\"r4c2\",\"text\":\"\",\"input\":true,\"control\":\"operation\"},{\"id\":\"r4c3\",\"text\":\"\",\"input\":false},{\"id\":\"r4c4\",\"text\":\"\",\"input\":false},{\"id\":\"r4c5\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r5c1\",\"text\":\"\",\"input\":false},{\"id\":\"r5c2\",\"text\":\"\",\"input\":false},{\"id\":\"r5c3\",\"text\":\"25\",\"input\":false},{\"id\":\"r5c4\",\"text\":\"\",\"input\":true},{\"id\":\"r5c5\",\"text\":\"\",\"input\":false},{\"id\":\"r5c6\",\"text\":\"\",\"input\":false}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c3\",\"accepted\":[\"1\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c4\",\"accepted\":[\"3,6\",\"3.6\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"×25\",\"x25\",\"*25\"],\"answerMode\":\"operation\"},{\"id\":\"r4c6\",\"accepted\":[\"25\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"90\"],\"answerMode\":\"numeric\"}]},\"objective\":\"Eine direkte Zuordnung mithilfe des Dreisatzes über 1 % berechnen.\",\"rationale\":\"Prozentzahl und Preis verändern sich gleichsinnig. Die Werte werden zunächst auf 1 % und anschließend auf 25 % umgerechnet; die Rechenpfeile sind unabhängig voneinander zu bearbeiten.\",\"sourceNote\":\"Eigenständig erstellte Dreisatzaufgabe für die 7. Klasse.\"}",
+      "text": "Ein Sportgeschäft verkauft einen Rucksack für 360 €. Wie viel kosten 25 % dieses Preises? Ergänze die Dreisatz-Tabelle. Rechne im Zwischenschritt über 1 %. Die beiden Rechenpfeile jeder Zeile werden unabhängig voneinander ausgeführt. Jedes offene Feld zählt 0,5 Punkte.",
+      "type": "visual",
+      "points": 3.5,
+      "id": "q001"
+    },
+    {
+      "points": 3.5,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"umgekehrter-dreisatz-arbeit-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Umgekehrter Dreisatz: Arbeitszeit\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Vier Personen benötigen für dieselbe Arbeit 18 Stunden. Alle arbeiten gleich schnell. Wie lange benötigen zwölf Personen? Ergänze die Dreisatz-Tabelle. Rechne im Zwischenschritt über eine Person. Ergänze die Rechenzeichen und Zahlen an den offenen Pfeilen. Jedes offene Feld zählt 0,5 Punkte.\",\"hint\":\"Bei gleichbleibender Arbeit gilt: Mehr Personen benötigen weniger Zeit. Die beiden Pfeile jeder Zeile werden unabhängig voneinander berechnet.\",\"maxPoints\":3.5,\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Personen\",\"Zeit (h)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"i1r1c1\",\"text\":\"\",\"input\":false},{\"id\":\"i1r1c2\",\"text\":\"\",\"input\":false},{\"id\":\"i1r1c3\",\"text\":\"4\",\"input\":false},{\"id\":\"i1r1c4\",\"text\":\"18\",\"input\":false},{\"id\":\"i1r1c5\",\"text\":\"\",\"input\":false},{\"id\":\"i1r1c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"i1r2c1\",\"text\":\"\",\"input\":true,\"control\":\"operator\"},{\"id\":\"i1r2c2\",\"text\":\"\",\"input\":true},{\"id\":\"i1r2c3\",\"text\":\"\",\"input\":false},{\"id\":\"i1r2c4\",\"text\":\"\",\"input\":false},{\"id\":\"i1r2c5\",\"text\":\"×\",\"input\":false},{\"id\":\"i1r2c6\",\"text\":\"4\",\"input\":false}],[{\"id\":\"i1r3c1\",\"text\":\"\",\"input\":false},{\"id\":\"i1r3c2\",\"text\":\"\",\"input\":false},{\"id\":\"i1r3c3\",\"text\":\"\",\"input\":true},{\"id\":\"i1r3c4\",\"text\":\"\",\"input\":true},{\"id\":\"i1r3c5\",\"text\":\"\",\"input\":false},{\"id\":\"i1r3c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"i1r4c1\",\"text\":\"\",\"input\":false},{\"id\":\"i1r4c2\",\"text\":\"\",\"input\":true,\"control\":\"operation\"},{\"id\":\"i1r4c3\",\"text\":\"\",\"input\":false},{\"id\":\"i1r4c4\",\"text\":\"\",\"input\":false},{\"id\":\"i1r4c5\",\"text\":\"\",\"input\":false},{\"id\":\"i1r4c6\",\"text\":\"\",\"input\":true,\"control\":\"operation\"}],[{\"id\":\"i1r5c1\",\"text\":\"\",\"input\":false},{\"id\":\"i1r5c2\",\"text\":\"\",\"input\":false},{\"id\":\"i1r5c3\",\"text\":\"12\",\"input\":false},{\"id\":\"i1r5c4\",\"text\":\"\",\"input\":true},{\"id\":\"i1r5c5\",\"text\":\"\",\"input\":false},{\"id\":\"i1r5c6\",\"text\":\"\",\"input\":false}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"i1r2c1\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"i1r2c2\",\"accepted\":[\"4\"],\"answerMode\":\"numeric\"},{\"id\":\"i1r3c3\",\"accepted\":[\"1\"],\"answerMode\":\"numeric\"},{\"id\":\"i1r3c4\",\"accepted\":[\"72\"],\"answerMode\":\"numeric\"},{\"id\":\"i1r4c2\",\"accepted\":[\"×12\",\"x12\",\"*12\"],\"answerMode\":\"operation\"},{\"id\":\"i1r4c6\",\"accepted\":[\"÷12\",\":12\",\"/12\",\"geteilt durch 12\"],\"answerMode\":\"operation\"},{\"id\":\"i1r5c4\",\"accepted\":[\"6\"],\"answerMode\":\"numeric\"}]},\"objective\":\"Eine umgekehrte Zuordnung mithilfe des Dreisatzes über eine Person berechnen.\",\"rationale\":\"Bei gleichbleibender Arbeitsmenge bleibt das Produkt aus Personenzahl und Arbeitszeit konstant. Die Rechenpfeile werden unabhängig ausgeführt.\",\"sourceNote\":\"Eigenständig erstellte Dreisatzaufgabe für die 7. Klasse.\"}",
+      "position": 2,
+      "type": "visual",
+      "updatedAt": "2026-10-26T19:22:41.312Z",
+      "text": "Vier Personen benötigen für dieselbe Arbeit 18 Stunden. Alle arbeiten gleich schnell. Wie lange benötigen zwölf Personen? Ergänze die Dreisatz-Tabelle. Rechne im Zwischenschritt über eine Person. Ergänze die Rechenzeichen und Zahlen an den offenen Pfeilen. Jedes offene Feld zählt 0,5 Punkte.",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q002"
+    }
+  ],
+  "errors": []
+}

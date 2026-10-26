@@ -112,7 +112,7 @@ export function mountVisualQuestion(section, question, initial = null, options =
   let task;try { task=parseVisualTask(question,{publicOnly:true}); } catch(error) { const warning=document.createElement('p');warning.textContent=error.message;section.append(warning);return; }
   section.querySelector('.gc-visual')?.remove();
   const host=document.createElement('div');host.className='gc-visual renderer';section.append(host);
-  const controller=globalThis.GCRenderer.mount(host,task,decodeVisualAnswer(initial),{...options,compactDreisatz:document.documentElement.dataset.gradecrewLab==='true',onAnswer(answer){options.onAnswer?.(answer);section.dispatchEvent(new Event('input',{bubbles:true}));section.dispatchEvent(new Event('change',{bubbles:true}));}});
+  const controller=globalThis.GCRenderer.mount(host,task,decodeVisualAnswer(initial),{...options,compactDreisatz:task.spec.layout==='dreisatz'||document.documentElement.dataset.gradecrewLab==='true',onAnswer(answer){options.onAnswer?.(answer);section.dispatchEvent(new Event('input',{bubbles:true}));section.dispatchEvent(new Event('change',{bubbles:true}));}});
   controllers.set(section,controller);
   for(const entry of mounted)if(entry.section===section)mounted.delete(entry);
   watchDetach(section,controller);

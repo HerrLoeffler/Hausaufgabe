@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-26T19:25:16.618Z",
+  "origin": "https://gradecrew-staging-2026--visual255-rjcwf436.web.app",
+  "hostingCommit": "0278c7435fdb930f4f921ca4ac54395133793f1c",
+  "backendLocalCommit": "499d2e681854fdb10f5366eb91c8f0622e0c4c97",
+  "verifiedFiles": 186,
+  "isolatedFunctions": 16,
+  "otherFunctionsUnchanged": 64,
+  "endpointPrefix": "visual255",
+  "old24LinksPreserved": true,
+  "normalStagingProductionRulesChanged": false
+}
