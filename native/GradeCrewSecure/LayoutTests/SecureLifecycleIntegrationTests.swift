@@ -10,8 +10,13 @@ private final class SecureLifecycleHTTP:URLProtocol {
     static var failSubmission=false
     static var receiptPending=false
     static var sentAnswers:[Data]=[]
+    static var deviceAction:[String:Any]?
+    static var deviceUnavailable=false
+    static var deviceAckFails=false
+    static var deviceDelay:Double=0
+    static var deviceRequests=0
     static var submissions:Int { lock.lock();defer{lock.unlock()};return requests }
-    static func reset(){lock.lock();requests=0;readyBackend=false;failSubmission=false;receiptPending=false;sentAnswers=[];lock.unlock()}
+    static func reset(){lock.lock();requests=0;readyBackend=false;failSubmission=false;receiptPending=false;sentAnswers=[];deviceAction=nil;deviceUnavailable=false;deviceAckFails=false;deviceDelay=0;deviceRequests=0;lock.unlock()}
     override class func canInit(with request:URLRequest)->Bool { true }
     override class func canonicalRequest(for request:URLRequest)->URLRequest { request }
     override func startLoading(){
@@ -21,6 +26,19 @@ private final class SecureLifecycleHTTP:URLProtocol {
             let body=try! JSONSerialization.data(withJSONObject:["result":result])
             client?.urlProtocol(self,didReceive:HTTPURLResponse(url:request.url!,statusCode:200,httpVersion:nil,headerFields:nil)!,cacheStoragePolicy:.notAllowed)
             client?.urlProtocol(self,didLoad:body);client?.urlProtocolDidFinishLoading(self);return
+        }
+        if request.url?.lastPathComponent == "classroomAccess" {
+            Self.lock.lock();Self.deviceRequests+=1;Self.lock.unlock()
+            var bytes=request.httpBody ?? Data()
+            if bytes.isEmpty,let stream=request.httpBodyStream {stream.open();defer{stream.close()};var buffer=[UInt8](repeating:0,count:1024);while stream.hasBytesAvailable {let count=stream.read(&buffer,maxLength:buffer.count);if count<=0{break};bytes.append(buffer,count:count)}}
+            let object=(try? JSONSerialization.jsonObject(with:bytes)) as? [String:Any],command=(object?["data"] as? [String:Any])?["command"] as? String
+            if Self.deviceAckFails && command=="acknowledgeDeviceExit" {client?.urlProtocol(self,didFailWithError:URLError(.notConnectedToInternet));return}
+            let fail=Self.deviceUnavailable
+            let result:[String:Any]=["action":Self.deviceAction ?? NSNull(),"capability":"device_exit_v1"]
+            let body=try! JSONSerialization.data(withJSONObject:fail ? ["error":["status":"UNAVAILABLE","message":"offline"]] : ["result":result])
+            DispatchQueue.global().asyncAfter(deadline:.now()+Self.deviceDelay){[self] in
+                client?.urlProtocol(self,didReceive:HTTPURLResponse(url:request.url!,statusCode:fail ? 503:200,httpVersion:nil,headerFields:nil)!,cacheStoragePolicy:.notAllowed);client?.urlProtocol(self,didLoad:body);client?.urlProtocolDidFinishLoading(self)
+            };return
         }
         let submit=request.url?.lastPathComponent == "submitAssessmentAttempt"
         if submit { Self.lock.lock();Self.requests+=1;Self.lock.unlock() }
@@ -169,5 +187,42 @@ private final class SecureLifecycleMemoryStore:SecureAttemptPersistence {
         await model.submitConfirmed()
         XCTAssertEqual(SecureLifecycleHTTP.submissions,1)
         XCTAssertEqual(model.phase,.completed)
+    }
+
+    private func personalRecoveryStore(held:Bool=false)->SecureLifecycleMemoryStore {
+        let store=SecureLifecycleMemoryStore();var identity=SecureAttemptIdentity(code:"AB12CD",name:"Synthetic")
+        identity.attemptID="a_"+String(repeating:"1",count:28)
+        identity.classroom=SecureClassroomLaunch(quizID:"AB12CD",displayName:"Synthetic",assignmentID:"assigned",generation:0,sessionToken:String(repeating:"A",count:43),deviceMode:"shared",studentID:"pupil")
+        store.savedIdentity=identity
+        if held {store.savedWork.deviceExit=SecureDeviceExitAction(kind:"classroom_device_exit_v1",quizId:"AB12CD",assignmentId:"assigned",studentId:"pupil",attemptId:identity.attemptID!,generation:0,actionId:"exit1",state:"delivered")}
+        return store
+    }
+    func testReceivedSubmissionCompletesEvenWhenDeviceHoldWasPersisted() async throws {
+        SecureLifecycleHTTP.reset();let store=personalRecoveryStore(held:true),config=URLSessionConfiguration.ephemeral;config.protocolClasses=[SecureLifecycleHTTP.self]
+        let model=SecureExamCoordinator(api:SecureAssessmentAPI(session:URLSession(configuration:config)),store:store)
+        await model.startOrRecover();XCTAssertEqual(model.phase,.completed);XCTAssertNil(store.savedIdentity)
+    }
+    func testUnknownDeviceStatusNeverEntersAACWithoutVerifiedPermission() async throws {
+        SecureLifecycleHTTP.reset();SecureLifecycleHTTP.receiptPending=true;SecureLifecycleHTTP.deviceUnavailable=true
+        let store=personalRecoveryStore(),config=URLSessionConfiguration.ephemeral;config.protocolClasses=[SecureLifecycleHTTP.self]
+        let model=SecureExamCoordinator(api:SecureAssessmentAPI(session:URLSession(configuration:config)),store:store)
+        await model.startOrRecover();XCTAssertEqual(model.phase,.recovery);XCTAssertTrue(model.message.contains("Gerätestatus"),model.message);XCTAssertNotNil(store.savedIdentity)
+    }
+    func testRecoveryWaitsForTheSameInFlightDevicePoll() async throws {
+        SecureLifecycleHTTP.reset();SecureLifecycleHTTP.receiptPending=true;SecureLifecycleHTTP.deviceDelay=0.2
+        let store=personalRecoveryStore(),config=URLSessionConfiguration.ephemeral;config.protocolClasses=[SecureLifecycleHTTP.self]
+        SecureLifecycleHTTP.deviceAction=["kind":"classroom_device_exit_v1","quizId":"AB12CD","assignmentId":"assigned","studentId":"pupil","attemptId":store.savedIdentity!.attemptID!,"generation":0,"actionId":"exit1","state":"delivered"]
+        let model=SecureExamCoordinator(api:SecureAssessmentAPI(session:URLSession(configuration:config)),store:store)
+        let poll=Task {await model.pollDeviceControl()};try await Task.sleep(nanoseconds:30_000_000)
+        let started=Date();await model.startOrRecover();XCTAssertGreaterThan(Date().timeIntervalSince(started),0.12)
+        _=await poll.value;XCTAssertTrue(model.deviceExitPending);XCTAssertFalse(model.assessment.active)
+    }
+    func testFailedAppleConfirmationAndFailedACKNeverClaimReleasedDevice() async throws {
+        SecureLifecycleHTTP.reset();SecureLifecycleHTTP.deviceAckFails=true
+        let store=personalRecoveryStore(),config=URLSessionConfiguration.ephemeral;config.protocolClasses=[SecureLifecycleHTTP.self]
+        SecureLifecycleHTTP.deviceAction=["kind":"classroom_device_exit_v1","quizId":"AB12CD","assignmentId":"assigned","studentId":"pupil","attemptId":store.savedIdentity!.attemptID!,"generation":0,"actionId":"exit1","state":"delivered"]
+        let model=SecureExamCoordinator(api:SecureAssessmentAPI(session:URLSession(configuration:config)),store:store)
+        _=await model.pollDeviceControl();try await Task.sleep(nanoseconds:100_000_000)
+        XCTAssertFalse(model.message.contains("Das Gerät ist freigegeben"),model.message);XCTAssertTrue(model.message.contains("nicht bestätigt"),model.message)
     }
 }

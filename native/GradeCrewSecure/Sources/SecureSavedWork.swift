@@ -13,6 +13,7 @@ struct SecureSavedWork:Codable {
     var response:Data?
     var autoSubmitted=false
     var recoveryReason:String?
+    var deviceExit:SecureDeviceExitAction?
     var presentation:SecureExamPresentation?
     mutating func updatePresentation(_ candidate:SecureExamPresentation?,allowedIDs:Set<String>) {
         if let valid=candidate?.validated(allowedIDs:allowedIDs) { presentation=valid }

@@ -15,4 +15,18 @@ final class SecureReplacementPolicyTests:XCTestCase {
   XCTAssertNil(SecureResumeNotice.parse(action,generation:2,serverNow:2000))
   var read=action;read["acknowledgedAt"]=1500;XCTAssertNil(SecureResumeNotice.parse(read,generation:2,serverNow:1600))
  }
+
+ func testDeviceExitCannotTargetAnotherAttemptPersonOrGenerationAndPersistsWithAnswers() throws {
+  let a:[String:Any]=["kind":"classroom_device_exit_v1","quizId":"Q","assignmentId":"A","studentId":"S","attemptId":"attempt","generation":2,"actionId":"exit1","state":"delivered"]
+  let parsed=SecureDeviceExitAction.parse(a,quizID:"Q",attemptID:"attempt",assignmentID:"A",studentID:"S",generation:2)
+  XCTAssertNotNil(parsed)
+  for key in ["kind","quizId","assignmentId","studentId","attemptId","generation","actionId","state"] {var wrong=a;wrong[key]=nil;XCTAssertNil(SecureDeviceExitAction.parse(wrong,quizID:"Q",attemptID:"attempt",assignmentID:"A",studentID:"S",generation:2))}
+  XCTAssertNil(SecureDeviceExitAction.parse(a,quizID:"Q",attemptID:"other",assignmentID:"A",studentID:"S",generation:2))
+  XCTAssertNil(SecureDeviceExitAction.parse(a,quizID:"Q",attemptID:"attempt",assignmentID:"A",studentID:"other",generation:2))
+  XCTAssertNil(SecureDeviceExitAction.parse(a,quizID:"Q",attemptID:"attempt",assignmentID:"A",studentID:"S",generation:3))
+  var work=SecureSavedWork();work.deviceExit=parsed
+  _=work.answers.accept(revision:7,answers:Data("{\"q\":\"answer\"}".utf8))
+  let restored=try JSONDecoder().decode(SecureSavedWork.self,from:JSONEncoder().encode(work))
+  XCTAssertEqual(restored.deviceExit?.actionId,"exit1");XCTAssertEqual(restored.answers.revision,7);XCTAssertEqual(restored.answers.answers,work.answers.answers)
+ }
 }

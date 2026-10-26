@@ -26,6 +26,11 @@ final class SecureExamCoordinator: ObservableObject {
     weak var webView: WKWebView?
     private let api:SecureAssessmentAPI
     private let store:any SecureAttemptPersistence
+    private var deviceControlTimer:Timer?
+    private var deviceControlTask:Task<SecureDeviceControlState,Never>?
+    private var receiptChecks=0
+    private var endingDeviceControl=false
+    var deviceExitPending:Bool {work.deviceExit != nil}
     private var identity: SecureAttemptIdentity?
     private var selectedClassroom: SecureClassroomLaunch?
     var personalSelection: Bool { selectedClassroom != nil }
@@ -81,6 +86,9 @@ final class SecureExamCoordinator: ObservableObject {
                 message = "Ein gespeicherter Prüfungsversuch ist vorhanden. Stelle die Verbindung her und setze denselben Versuch fort."
             }
         } catch { phase = .recovery; message = error.localizedDescription }
+        deviceControlTimer=AssessmentLabTimer.schedule(every:3) { [weak self] in
+            Task { @MainActor in _ = await self?.pollDeviceControl() }
+        }
     }
     var restoredPresentation:SecureExamPresentation? { work.presentation }
     var pendingSubmission:Bool { work.answers.frozen != nil }
@@ -161,6 +169,12 @@ final class SecureExamCoordinator: ObservableObject {
             }
             // Resolve a lost submission response before requesting a new AAC session.
             if identity?.attemptID != nil, try await verifyIfSubmitted() { return }
+            if identity?.attemptID != nil, identity?.classroom != nil {
+                let control=await pollDeviceControl();try ensureCurrent(generation)
+                if control == .held {return}
+                if control == .unavailable {throw SecureAssessmentAPI.Failure(code:"DEVICE_CONTROL_UNAVAILABLE",message:"Der Gerätestatus konnte nicht sicher geprüft werden. Bitte die Verbindung herstellen und erneut versuchen. Das Gerät wird nicht erneut gesperrt.")}
+            }
+
             try ensureCurrent(generation)
             if work.answers.frozen != nil {
                 await sendFrozenSubmission()
@@ -193,6 +207,77 @@ final class SecureExamCoordinator: ObservableObject {
             message = error.localizedDescription
             scheduleRetry(after: error)
         }
+    }
+    // Independent of the exam timer: recovery and interrupted screens need the
+    // same authenticated escape route as an active paper.
+    @discardableResult func pollDeviceControl() async -> SecureDeviceControlState {
+        if let pending=deviceControlTask {return await pending.value}
+        let pending=Task {await performDeviceControlPoll()};deviceControlTask=pending
+        let result=await pending.value;deviceControlTask=nil;return result
+    }
+    private func performDeviceControlPoll() async -> SecureDeviceControlState {
+        guard replacementReceipt == nil else{return .held}
+        guard !operations.completionClaimed,receiptChecks==0,!submitting,phase != .submitting,phase != .verifying else{return .unavailable}
+        guard let saved=identity,let id=saved.attemptID,let binding=saved.classroom else{return .clear}
+        guard let student=binding.studentID,phase != .completed else{return .unavailable}
+        do {
+            let result=try await api.invoke("classroomAccess",data:["command":"deviceExitStatus","payload":["quizId":saved.code,"attemptId":id,"attemptToken":saved.token,"build":Bundle.main.object(forInfoDictionaryKey:"CFBundleVersion") as? String ?? "unknown"]])
+            guard identity?.clientID==saved.clientID,identity?.attemptID==id else{return .unavailable}
+            guard !operations.completionClaimed,receiptChecks==0,!submitting,phase != .submitting,phase != .verifying else{return .unavailable}
+            if try await receiveReplacement(result) {work.deviceExit=nil;try persist();return .held}
+            guard let value=result["action"] as? [String:Any] else {
+                guard result["action"] is NSNull,result["capability"] as? String == "device_exit_v1" else{return .unavailable}
+                return deviceExitPending ? .held : .clear
+            }
+            guard let action=SecureDeviceExitAction.parse(value,quizID:saved.code,attemptID:id,assignmentID:binding.assignmentID,studentID:student,generation:binding.generation) else{throw invalidResponse()}
+            if action.state=="resume_allowed" {
+                if deviceExitPending {message="Die Lehrkraft hat die Fortsetzung erlaubt. Tippe auf Fortsetzung prüfen; derselbe Versuch und deine Antworten bleiben erhalten."}
+                return deviceExitPending ? .held : .clear
+            }
+            let alreadyHeld=work.deviceExit?.actionId==action.actionId
+            work.deviceExit=action
+            if !alreadyHeld {
+                // Snapshots are continuously durable. Never wait for a hung
+                // renderer or replace its last saved answers with an empty set.
+                operations.invalidate();busy=false;submitting=false;polling=false
+                timer?.invalidate();timer=nil;retryTimer?.invalidate();retryTimer=nil
+                paper=nil;webView=nil;phase = .recovery
+            }
+            do {try persist()} catch {storageFailed=true;storageStatus=error.localizedDescription}
+            if action.state=="ended" {message="Die Lehrkraft hat den Prüfungsmodus beendet. Deine bisherigen Antworten bleiben auf diesem Gerät. Warte auf die Freigabe zur Fortsetzung.";return .held}
+            message="Die Lehrkraft hat die Gerätefreigabe angefordert. Apple beendet den Prüfungsmodus. Deine gesicherten Antworten bleiben erhalten."
+            if !endingDeviceControl {
+                endingDeviceControl=true
+                Task { [weak self] in
+                    guard let self else{return}
+                    let appleConfirmed=await self.assessment.endForDeviceControl() // Only didEnd confirms true.
+                    guard self.identity?.clientID==saved.clientID,self.work.deviceExit?.actionId==action.actionId else{self.endingDeviceControl=false;return}
+                    do {
+                        let ack=try await self.api.invoke("classroomAccess",data:["command":"acknowledgeDeviceExit","payload":["quizId":saved.code,"attemptId":id,"attemptToken":saved.token,"actionId":action.actionId,"outcome":appleConfirmed ? "ended":"failed"]])
+                        guard self.identity?.clientID==saved.clientID,self.work.deviceExit?.actionId==action.actionId else{self.endingDeviceControl=false;return}
+                        if let v=ack["action"] as? [String:Any],let confirmed=SecureDeviceExitAction.parse(v,quizID:saved.code,attemptID:id,assignmentID:binding.assignmentID,studentID:student,generation:binding.generation) {self.work.deviceExit=confirmed;try self.persist()}
+                        self.message=appleConfirmed ? "Der Prüfungsmodus ist beendet. Deine Antworten bleiben auf diesem Gerät. Die Lehrkraft muss die Fortsetzung erlauben." : "Apple hat das Ende auf diesem App-Start noch nicht bestätigt. Bitte das Gerät vor Ort mit der Lehrkraft prüfen. Deine Antworten bleiben erhalten."
+                    } catch {self.message=appleConfirmed ? "Das Gerät ist freigegeben; die Bestätigung an die Lehrkraft steht noch aus. Stelle die Verbindung wieder her. Deine Antworten bleiben erhalten." : "Apple hat das Ende nicht bestätigt; auch die Rückmeldung an die Lehrkraft ist noch ausstehend. Bitte Verbindung herstellen und das Gerät vor Ort prüfen. Deine Antworten bleiben erhalten."}
+                    self.endingDeviceControl=false
+                }
+            }
+            return .held
+        } catch {
+            if deviceExitPending {message="Die Freigabe zur Fortsetzung konnte nicht geprüft werden. Bitte Verbindung herstellen und die Lehrkraft informieren. Deine Antworten bleiben erhalten."}
+            return .unavailable
+        }
+    }
+    func resumeAfterDeviceExit() async {
+        guard !busy,!endingDeviceControl,let saved=identity,let held=work.deviceExit,let binding=saved.classroom,let student=binding.studentID,let id=saved.attemptID else{return}
+        busy=true;defer{busy=false}
+        do {
+            let result=try await api.invoke("classroomAccess",data:["command":"deviceExitStatus","payload":["quizId":saved.code,"attemptId":id,"attemptToken":saved.token,"build":Bundle.main.object(forInfoDictionaryKey:"CFBundleVersion") as? String ?? "unknown"]])
+            guard identity?.clientID==saved.clientID,work.deviceExit?.actionId==held.actionId else{return}
+            guard let v=result["action"] as? [String:Any],let action=SecureDeviceExitAction.parse(v,quizID:saved.code,attemptID:id,assignmentID:binding.assignmentID,studentID:student,generation:binding.generation),action.actionId==held.actionId,action.state=="resume_allowed" else{message="Die Lehrkraft hat die Fortsetzung noch nicht erlaubt.";return}
+            work.deviceExit=nil
+            do {try persist()} catch {work.deviceExit=held;throw error}
+            busy=false;await startOrRecover()
+        } catch {message=error.localizedDescription}
     }
     private func receiveNotice(_ result:[String:Any]) {
         guard let binding=identity?.classroom,let action=result["resumeAction"] as? [String:Any] else {resumeNotice=nil;return}
@@ -376,6 +461,7 @@ final class SecureExamCoordinator: ObservableObject {
         }
     }
     private func verifyIfSubmitted() async throws -> Bool {
+        receiptChecks+=1;defer{receiptChecks-=1}
         guard let id = identity?.attemptID else { return false }
         let generation = operations.generation
         if operations.completionClaimed { return true }

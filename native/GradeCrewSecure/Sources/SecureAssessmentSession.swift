@@ -10,6 +10,8 @@ final class SecureAssessmentSession: NSObject, ObservableObject, @preconcurrency
     private var session: AEAssessmentSession?
     private var startContinuation: CheckedContinuation<Void, Error>?
     private var endContinuations: [CheckedContinuation<Void, Never>] = []
+    private var deviceEndContinuations:[CheckedContinuation<Bool,Never>]=[]
+    private var appleEndConfirmed=false
     private var timeout: Timer?
 
     func begin() async throws {
@@ -20,6 +22,7 @@ final class SecureAssessmentSession: NSObject, ObservableObject, @preconcurrency
         try await withCheckedThrowingContinuation { continuation in
             startContinuation = continuation
             ending = false
+            appleEndConfirmed=false
             let next = AEAssessmentSession(configuration: AEAssessmentConfiguration())
             session = next
             next.delegate = self
@@ -43,6 +46,14 @@ final class SecureAssessmentSession: NSObject, ObservableObject, @preconcurrency
             if !ending { ending = true; session.end() }
         }
     }
+    func endForDeviceControl() async -> Bool {
+        active=false
+        guard let session else{return appleEndConfirmed}
+        return await withCheckedContinuation { continuation in
+            deviceEndContinuations.append(continuation)
+            if !ending {ending=true;session.end()}
+        }
+    }
     private func failStart(_ message: String) {
         timeout?.invalidate(); timeout = nil
         let continuation = startContinuation
@@ -63,6 +74,7 @@ final class SecureAssessmentSession: NSObject, ObservableObject, @preconcurrency
         self.session = nil
         active = false
         ending = false
+        finishDeviceEnd(false)
         finishEnd()
     }
     func assessmentSession(_ session: AEAssessmentSession, wasInterruptedWithError error: Error) {
@@ -81,7 +93,13 @@ final class SecureAssessmentSession: NSObject, ObservableObject, @preconcurrency
         ending = false
         failStart("Prüfungsmodus wurde vor dem Start beendet.")
         if unexpected { interrupted?() }
+        appleEndConfirmed=true
+        finishDeviceEnd(true)
         finishEnd()
+    }
+    private func finishDeviceEnd(_ confirmed:Bool) {
+        let waiting=deviceEndContinuations;deviceEndContinuations=[]
+        waiting.forEach{$0.resume(returning:confirmed)}
     }
     private func finishEnd() {
         let continuations = endContinuations

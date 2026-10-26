@@ -29,6 +29,21 @@ private final class ArchiveMemoryVault:SecureIdentityVault {
  func remove(_ account:String)throws{if failRemoval{throw NSError(domain:"vault",code:1)};values[account]=nil}
 }
 @MainActor final class SecureReplacementIntegrationTests:XCTestCase {
+ func testDeviceExitEndsOnlyMatchingAttemptAndKeepsDurableAnswersAcrossReopen() async throws {
+  let store=ReplacementMemoryStore(),config=URLSessionConfiguration.ephemeral;config.protocolClasses=[ReplacementHTTP.self]
+  let api=SecureAssessmentAPI(session:URLSession(configuration:config)),model=SecureExamCoordinator(api:api,store:store)
+  let binding=SecureClassroomLaunch(quizID:"AB12CD",displayName:"Test",assignmentID:"assigned",generation:0,sessionToken:String(repeating:"A",count:43),deviceMode:"shared",studentID:"pupil")
+  model.installLifecycleFixture(expired:false,classroom:binding);XCTAssertTrue(model.snapshot(revision:9,answers:["q0":"keep this answer"]))
+  let old=model.attemptID
+  let action:[String:Any]=["kind":"classroom_device_exit_v1","quizId":"AB12CD","assignmentId":"assigned","studentId":"pupil","attemptId":old,"generation":0,"actionId":"exit1","state":"delivered"]
+  ReplacementHTTP.response=["action":action]
+  await model.pollDeviceControl()
+  XCTAssertEqual(model.phase,.recovery);XCTAssertTrue(model.deviceExitPending);XCTAssertNil(model.paper)
+  XCTAssertEqual(store.answers.answers.revision,9);XCTAssertEqual(model.attemptID,old);XCTAssertNotNil(store.saved)
+  await model.startOrRecover();XCTAssertEqual(model.phase,.recovery);XCTAssertEqual(store.answers.answers.revision,9)
+  let reopened=SecureExamCoordinator(api:api,store:store);XCTAssertTrue(reopened.deviceExitPending);XCTAssertEqual(reopened.attemptID,old)
+ }
+
  func testReplacementRequiresExplicitAcceptanceAndArchiveFailureKeepsSavedAnswers() async throws {
   let store=ReplacementMemoryStore(),config=URLSessionConfiguration.ephemeral;config.protocolClasses=[ReplacementHTTP.self]
   let model=SecureExamCoordinator(api:SecureAssessmentAPI(session:URLSession(configuration:config)),store:store)

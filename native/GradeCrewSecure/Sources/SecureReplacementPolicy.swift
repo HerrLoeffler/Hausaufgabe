@@ -19,3 +19,20 @@ struct SecureResumeNotice {
   guard let id=value["id"] as? String,!id.isEmpty,(value["generation"] as? NSNumber)?.intValue==generation,let expiry=(value["expiresAt"] as? NSNumber)?.doubleValue,expiry>serverNow,(value["deliveredAt"] as? NSNumber)?.doubleValue != nil,!(value["acknowledgedAt"] is NSNumber) else{return nil};return .init(id:id,generation:generation)
  }
 }
+
+
+struct SecureDeviceExitAction:Codable {
+ let kind:String
+ let quizId:String
+ let assignmentId:String
+ let studentId:String
+ let attemptId:String
+ let generation:Int
+ let actionId:String
+ let state:String
+ static func parse(_ value:[String:Any],quizID:String,attemptID:String,assignmentID:String,studentID:String,generation:Int)->Self? {
+  guard let data=try? JSONSerialization.data(withJSONObject:value),let a=try? JSONDecoder().decode(Self.self,from:data),a.kind=="classroom_device_exit_v1",a.quizId==quizID,a.attemptId==attemptID,a.assignmentId==assignmentID,a.studentId==studentID,a.generation==generation,!a.actionId.isEmpty,["pending","delivered","ended","failed","resume_allowed"].contains(a.state) else{return nil};return a
+ }
+}
+
+enum SecureDeviceControlState { case clear, held, unavailable }
