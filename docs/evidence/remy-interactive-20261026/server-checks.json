@@ -1,0 +1,75 @@
+{
+  "project": "gradecrew-staging-2026",
+  "quizId": "BZFKMUEB",
+  "jobId": "4107be8859d80691d522c2010d262b42c6333279",
+  "formats": [
+    "timeline",
+    "coordinate",
+    "hotspot",
+    "labeling",
+    "angle",
+    "sequence"
+  ],
+  "results": [
+    {
+      "case": "correct",
+      "expected": 12,
+      "totalPoints": 12,
+      "maxPoints": 12,
+      "publicPaperSolutionFree": true,
+      "resumePaperUnchanged": true,
+      "idempotent": true,
+      "at": "2026-10-26T08:21:20.210Z"
+    },
+    {
+      "case": "blank",
+      "expected": 0,
+      "totalPoints": 0,
+      "maxPoints": 12,
+      "publicPaperSolutionFree": true,
+      "resumePaperUnchanged": true,
+      "idempotent": null,
+      "at": "2026-10-26T08:21:21.078Z"
+    },
+    {
+      "case": "mixed",
+      "expected": 6,
+      "totalPoints": 6,
+      "maxPoints": 12,
+      "publicPaperSolutionFree": true,
+      "resumePaperUnchanged": true,
+      "idempotent": null,
+      "at": "2026-10-26T08:21:21.769Z"
+    },
+    {
+      "case": "wrong",
+      "expected": 0,
+      "totalPoints": 0,
+      "maxPoints": 12,
+      "publicPaperSolutionFree": true,
+      "resumePaperUnchanged": true,
+      "idempotent": null,
+      "at": "2026-10-26T08:21:22.355Z"
+    },
+    {
+      "case": "tolerance",
+      "expected": 12,
+      "totalPoints": 12,
+      "maxPoints": 12,
+      "publicPaperSolutionFree": true,
+      "resumePaperUnchanged": true,
+      "idempotent": null,
+      "at": "2026-10-26T08:21:22.941Z"
+    },
+    {
+      "case": "duplicate-cards",
+      "expected": 0,
+      "totalPoints": 0,
+      "maxPoints": 12,
+      "publicPaperSolutionFree": true,
+      "resumePaperUnchanged": true,
+      "idempotent": null,
+      "at": "2026-10-26T08:21:23.585Z"
+    }
+  ]
+}

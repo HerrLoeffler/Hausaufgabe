@@ -13,5 +13,5 @@ Review focus: public-only solution stripping; extra/duplicate/partial answers; s
 - [x] Contract worker: add timeline/sequence to shared core/three server/client adapters, examples, grading, public validation and focused tests (fail before implementation).
 - [x] UI worker: reuse renderer with true scale timeline, reversible labels and sequence pictures, botanical plant art, keyboard and saved responses; focused DOM tests.
 - [x] Root: connect normal Remy picker, persisted request choices, bounded blueprint authoring guidance and output constraints; reconcile pre-existing UI fixtures against real code.
-- [ ] Run core/client/Functions/Assessment tests, packaging, browser actual teacher/student flow. Seek independent security/correctness review of exact candidate.
-- [ ] Secure PR/checkpoint and central task handoff; publish/test only approved separate staging scope if existing credentials allow; distinguish code/CI/staging/live AI proof/Production.
+- [x] Run core/client/Functions/Assessment tests, packaging, browser actual teacher/student flow. Seek independent security/correctness review of exact candidate.
+- [x] Secure PR/checkpoint and central task handoff; publish/test only approved separate staging scope if existing credentials allow; distinguish code/CI/staging/live AI proof/Production.

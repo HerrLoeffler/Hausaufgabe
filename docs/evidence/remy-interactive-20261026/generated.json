@@ -1,0 +1,120 @@
+{
+  "at": "2026-10-26T08:14:33.710Z",
+  "source": "3a170cdbdfb40e734b338006eb351c58b2c2de35",
+  "project": "gradecrew-staging-2026",
+  "quizId": "BZFKMUEB",
+  "jobId": "4107be8859d80691d522c2010d262b42c6333279",
+  "status": "ready",
+  "creationContext": {
+    "schoolType": "Mittelschule",
+    "topic": "Entdeckerrunde: Geschichte, Geometrie und Biologie",
+    "contentLocale": "de-DE",
+    "difficulty": "mittel",
+    "learningGoals": [],
+    "interactiveFormats": [
+      "timeline",
+      "coordinate",
+      "hotspot",
+      "labeling",
+      "angle",
+      "sequence"
+    ],
+    "interactiveAuthoringVersion": "homepage-blueprints-v1",
+    "region": "Bayern"
+  },
+  "allowedVisualFormats": [
+    "timeline",
+    "coordinate",
+    "hotspot",
+    "labeling",
+    "angle",
+    "sequence"
+  ],
+  "providerRequests": [],
+  "questions": [
+    {
+      "points": 2,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"geschichte-zeitleiste-7-1\",\"revision\":0,\"format\":\"timeline\",\"title\":\"Ereignisse auf der Zeitachse\",\"subject\":\"Fächerübergreifendes Lernen\",\"grade\":\"7\",\"prompt\":\"Ordne die fünf Ereignisse den passenden Zeitpunkten auf der Zeitleiste zu.\",\"hint\":\"Wähle eine Ereigniskarte und anschließend den passenden Zeitpunkt. Du kannst jede Zuordnung ändern.\",\"maxPoints\":2,\"spec\":{\"min\":700,\"max\":2050,\"unit\":\"Jahr\",\"ticks\":[{\"id\":\"t800\",\"value\":800,\"label\":\"800\"},{\"id\":\"t1450\",\"value\":1450,\"label\":\"um 1450\"},{\"id\":\"t1789\",\"value\":1789,\"label\":\"1789\"},{\"id\":\"t1914\",\"value\":1914,\"label\":\"1914\"},{\"id\":\"t1989\",\"value\":1989,\"label\":\"1989\"}],\"events\":[{\"id\":\"e-karl\",\"text\":\"Krönung Karls des Großen zum Kaiser\"},{\"id\":\"e-druck\",\"text\":\"Gutenbergs Erfindung des Buchdrucks mit beweglichen Lettern\"},{\"id\":\"e-revolution\",\"text\":\"Beginn der Französischen Revolution\"},{\"id\":\"e-ersterkrieg\",\"text\":\"Beginn des Ersten Weltkriegs\"},{\"id\":\"e-mauerfall\",\"text\":\"Fall der Berliner Mauer\"}]},\"solution\":{\"assignments\":{\"t800\":\"e-karl\",\"t1450\":\"e-druck\",\"t1789\":\"e-revolution\",\"t1914\":\"e-ersterkrieg\",\"t1989\":\"e-mauerfall\"}},\"objective\":\"Historische Ereignisse zeitlich richtig einordnen.\",\"rationale\":\"Die Ereignisse werden anhand ihrer historischen Zeitpunkte auf einer maßstäblichen Zeitachse zugeordnet.\",\"sourceNote\":\"Eigenständige Zeitleiste mit bekannten Ereignissen; der Zweite Weltkrieg ist nicht enthalten.\"}",
+      "text": "Ordne die fünf Ereignisse den passenden Zeitpunkten auf der Zeitleiste zu.",
+      "updatedAt": "2026-10-26T08:12:59.016Z",
+      "position": 1,
+      "id": "q001"
+    },
+    {
+      "position": 2,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "text": "Trage die Punkte A(−3 | 2) und B(4 | −1) in das Koordinatensystem ein.",
+      "points": 2,
+      "updatedAt": "2026-10-26T08:12:59.191Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"koordinaten-punkte-7-1\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Punkte im Koordinatensystem\",\"subject\":\"Fächerübergreifendes Lernen\",\"grade\":\"7\",\"prompt\":\"Trage die Punkte A(−3 | 2) und B(4 | −1) in das Koordinatensystem ein.\",\"hint\":\"Wähle jeweils den passenden Rasterpunkt. Die beiden Punkte werden nicht verbunden.\",\"maxPoints\":2,\"spec\":{\"mode\":\"points\",\"minX\":-5,\"maxX\":5,\"minY\":-4,\"maxY\":4,\"step\":1,\"labels\":[\"A\",\"B\"]},\"solution\":{\"points\":[{\"x\":-3,\"y\":2},{\"x\":4,\"y\":-1}]},\"objective\":\"Punkte mit vorgegebenen Koordinaten in ein Koordinatensystem eintragen.\",\"rationale\":\"Jeder Punkt wird durch seine x- und y-Koordinate eindeutig bestimmt.\",\"sourceNote\":\"Eigenständiges Koordinatensystem mit zwei Punkten ohne Verbindung.\"}",
+      "id": "q002"
+    },
+    {
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"pflanze-hotspot-wurzel-7-1\",\"revision\":0,\"format\":\"hotspot\",\"title\":\"Ein Pflanzenteil erkennen\",\"subject\":\"Fächerübergreifendes Lernen\",\"grade\":\"7\",\"prompt\":\"Klicke auf die Wurzel der gezeigten Blütenpflanze.\",\"hint\":\"Wähle genau einen Bereich der Pflanze aus. Du kannst deine Auswahl ändern.\",\"maxPoints\":2,\"spec\":{\"scene\":\"plant\",\"regions\":[\"r1\",\"r2\",\"r3\",\"r4\"],\"maxSelections\":1},\"solution\":{\"regions\":[\"r4\"],\"text\":\"Wurzel\"},\"objective\":\"Die Wurzel in einer schematischen Darstellung einer Blütenpflanze erkennen.\",\"rationale\":\"Die Wurzel liegt in der Darstellung unterhalb der Sprossachse und der Blätter.\",\"sourceNote\":\"Eigenständige schematische Darstellung einer Blütenpflanze ohne Beschriftungen.\"}",
+      "text": "Klicke auf die Wurzel der gezeigten Blütenpflanze.",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "points": 2,
+      "position": 3,
+      "updatedAt": "2026-10-26T08:12:59.329Z",
+      "id": "q003"
+    },
+    {
+      "updatedAt": "2026-10-26T08:12:59.482Z",
+      "points": 2,
+      "position": 4,
+      "type": "visual",
+      "text": "Beschrifte die vier markierten Teile der Blütenpflanze.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"pflanze-beschriftung-7-1\",\"revision\":0,\"format\":\"labeling\",\"title\":\"Eine Blütenpflanze beschriften\",\"subject\":\"Fächerübergreifendes Lernen\",\"grade\":\"7\",\"prompt\":\"Beschrifte die vier markierten Teile der Blütenpflanze.\",\"hint\":\"Ordne jeden Begriff genau einem markierten Bereich zu. Jeder Begriff wird einmal verwendet.\",\"maxPoints\":2,\"spec\":{\"scene\":\"plant\",\"regions\":[\"r1\",\"r2\",\"r3\",\"r4\"],\"items\":[{\"id\":\"l2\",\"text\":\"Sprossachse\"},{\"id\":\"l3\",\"text\":\"Blätter\"},{\"id\":\"l4\",\"text\":\"Wurzel\"},{\"id\":\"l1\",\"text\":\"Blüte\"}]},\"solution\":{\"assignments\":{\"r1\":\"l1\",\"r2\":\"l2\",\"r3\":\"l3\",\"r4\":\"l4\"}},\"objective\":\"Die grundlegenden Teile einer Blütenpflanze fachlich richtig benennen.\",\"rationale\":\"Die vier Begriffe werden den räumlich markierten Pflanzenteilen eindeutig zugeordnet.\",\"sourceNote\":\"Eigenständige schematische Darstellung einer Blütenpflanze mit vier Markierungsbereichen.\"}",
+      "id": "q004"
+    },
+    {
+      "type": "visual",
+      "text": "Miss den eingezeichneten Winkel mit dem ausgerichteten Winkelmesser. Trage das Ergebnis in Grad ein.",
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"winkel-messen-7-1\",\"revision\":0,\"format\":\"angle\",\"title\":\"Einen Winkel messen\",\"subject\":\"Fächerübergreifendes Lernen\",\"grade\":\"7\",\"prompt\":\"Miss den eingezeichneten Winkel mit dem ausgerichteten Winkelmesser. Trage das Ergebnis in Grad ein.\",\"hint\":\"Lies die Skala ab, die am rechten Schenkel bei 0° beginnt. Es gibt keine automatische Winkelanzeige.\",\"maxPoints\":2,\"spec\":{\"degrees\":68,\"instrument\":\"aligned-protractor\",\"min\":0,\"max\":180},\"solution\":{\"value\":68,\"tolerance\":3},\"objective\":\"Einen Winkel mit einem ausgerichteten Winkelmesser bestimmen.\",\"rationale\":\"Der Winkelmesser liegt bereits am Scheitelpunkt und an einem Schenkel an; dadurch kann der Winkel eindeutig abgelesen werden.\",\"sourceNote\":\"Eigenständige Winkeldarstellung mit ausgerichtetem Winkelmesser.\"}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-26T08:12:59.603Z",
+      "position": 5,
+      "id": "q005"
+    },
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "points": 2,
+      "position": 6,
+      "type": "visual",
+      "text": "Ordne die Entwicklung des Schmetterlings. Beginne beim Ei.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"schmetterling-entwicklungsfolge-7-1\",\"revision\":0,\"format\":\"sequence\",\"title\":\"Die Entwicklung eines Schmetterlings\",\"subject\":\"Fächerübergreifendes Lernen\",\"grade\":\"7\",\"prompt\":\"Ordne die Entwicklung des Schmetterlings. Beginne beim Ei.\",\"hint\":\"Bringe die vier Bildkarten in die richtige Reihenfolge.\",\"maxPoints\":2,\"spec\":{\"family\":\"butterfly\",\"items\":[{\"id\":\"card-puppe\",\"illustration\":\"chrysalis\",\"caption\":\"Puppe\"},{\"id\":\"card-ei\",\"illustration\":\"egg\",\"caption\":\"Ei\"},{\"id\":\"card-schmetterling\",\"illustration\":\"butterfly\",\"caption\":\"Schmetterling\"},{\"id\":\"card-raupe\",\"illustration\":\"caterpillar\",\"caption\":\"Raupe\"}]},\"solution\":{\"order\":[\"card-ei\",\"card-raupe\",\"card-puppe\",\"card-schmetterling\"]},\"objective\":\"Die Entwicklungsstadien eines Schmetterlings in die richtige Reihenfolge bringen.\",\"rationale\":\"Die vollständige Entwicklung verläuft vom Ei über Raupe und Puppe zum erwachsenen Schmetterling.\",\"sourceNote\":\"Eigenständige Bildfolge mit den vier festgelegten Entwicklungsstadien des Schmetterlings.\"}",
+      "updatedAt": "2026-10-26T08:12:59.711Z",
+      "id": "q006"
+    }
+  ]
+}
