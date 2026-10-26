@@ -1,0 +1,41 @@
+{
+  "quizId": "F3FT79B2",
+  "results": [
+    {
+      "case": "correct",
+      "expected": 15,
+      "actual": 15,
+      "maxPoints": 15,
+      "resume": true,
+      "idempotent": true,
+      "solutionFreePaper": true
+    },
+    {
+      "case": "wrong_operator",
+      "expected": 14.5,
+      "actual": 14.5,
+      "maxPoints": 15,
+      "resume": true,
+      "idempotent": true,
+      "solutionFreePaper": true
+    },
+    {
+      "case": "wrong_number",
+      "expected": 14.5,
+      "actual": 14.5,
+      "maxPoints": 15,
+      "resume": true,
+      "idempotent": true,
+      "solutionFreePaper": true
+    },
+    {
+      "case": "blank",
+      "expected": 0,
+      "actual": 0,
+      "maxPoints": 15,
+      "resume": true,
+      "idempotent": true,
+      "solutionFreePaper": true
+    }
+  ]
+}

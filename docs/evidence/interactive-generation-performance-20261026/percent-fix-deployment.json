@@ -1,0 +1,16 @@
+{
+  "project": "gradecrew-staging-2026",
+  "source": "5e45e9df2449ca7e4c4b735ae754452a6f304ab7",
+  "beforeCount": 80,
+  "afterCount": 80,
+  "changed": [
+    "generateTest",
+    "processAiTestJob",
+    "regenerateQuestion"
+  ],
+  "unchanged": 77,
+  "noCreatedDeleted": true,
+  "noHostingRulesAssessmentProduction": true,
+  "recipeVersion": "b76dd6ea6094d0f0",
+  "CI": "PR336 Node22 and BugOps successful"
+}

@@ -1,0 +1,66 @@
+{
+  "count": 40,
+  "points": 100,
+  "status": "failed",
+  "requestId": "GC-AUTO-RECIPES-20261026-40-A",
+  "input": {
+    "clientRequestId": "GC-AUTO-RECIPES-20261026-40-A",
+    "subject": "Mathematik",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Prozentrechnung: Grundwert, Prozentwert und Prozentsatz",
+    "count": 40,
+    "points": 100,
+    "difficulty": "mittel",
+    "allowedTypes": [
+      "visual"
+    ],
+    "allowedVisualFormats": [
+      "scale",
+      "coordinate",
+      "grid",
+      "table",
+      "connections"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "materials": [],
+    "materialMode": "inspiration",
+    "notes": "Nur die ausgewählten interaktiven Aufgaben. Fachlich passende abwechslungsreiche Prozentaufgaben, klare Aufträge mit allen Daten, ohne Lösungen im Auftrag. Keine Formatquote. Mehrere Tabellenaufgaben mit Dreisatz (spec.layout dreisatz), drei Zeilen und unabhängigen Rechenpfeilen links/rechts; direkte Zuordnung, verschiedene Hilfestufen und halbe Punkte pro Feld. Koordinatenaufgaben nur wenn fachlich sinnvoll; Prozent-/Preisachsen dürfen beispielsweise0bis100 und0bis400mitEingabeschritt1haben, beschrifte Achsen samt Einheiten. Keine künstlichen Bilder, keine Schülerdaten."
+  },
+  "startedAt": "2026-10-26T22:18:45.475Z",
+  "jobId": "be2a1b86f393ca02e73d2129054b0a99cc2c8043",
+  "stage": "failed",
+  "lastCheckedAt": "2026-10-26T22:25:02.464Z",
+  "errorReference": "541a1847",
+  "errorDetails": {
+    "errors": [
+      "Aufgabe 13: image_mismatch: Die Spaltenüberschriften sind vertauscht: In der Spalte „Menge (kg)“ steht 100 und in der Spalte „Anteil (%)“ steht 900, obwohl 100 % zur Menge von 900 kg gehören sollen.; incorrect: Unabhängig gelöste Schülerantwort passt nicht vollständig zur Bewertung."
+    ],
+    "diagnostic": {
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "stage": "quality-review",
+      "request": {
+        "topic": "Prozentrechnung: Grundwert, Prozentwert und Prozentsatz",
+        "difficulty": "mittel",
+        "imageMode": "none",
+        "allowedTypes": [
+          "visual"
+        ],
+        "subject": "Mathematik",
+        "count": 40,
+        "schoolType": "Mittelschule",
+        "grade": "7",
+        "region": "Bayern",
+        "points": 100
+      },
+      "materialCount": 0,
+      "schemaVersion": 1,
+      "jobId": "be2a1b86f393ca02e73d2129054b0a99cc2c8043",
+      "textModel": "gpt-5.6-luna"
+    },
+    "phase": "usage-log",
+    "reference": "541a1847"
+  }
+}

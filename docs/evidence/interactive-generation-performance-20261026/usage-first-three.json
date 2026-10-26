@@ -1,0 +1,663 @@
+[
+  {
+    "createdAt": "2026-10-26T22:17:57.598Z",
+    "failed": false,
+    "questionCount": 6,
+    "questionRepairAttempts": 4,
+    "replacedQuestions": 3,
+    "qualityReviewPasses": 2,
+    "fullRepair": false,
+    "totalTokens": 63576,
+    "inputTokens": 55330,
+    "outputTokens": 8246,
+    "providerRequests": [
+      {
+        "responseId": "resp_0516276f554b3211016adfd15002a087d2af11584530daac74",
+        "requestId": "req_42becb0751b24eee948503468aca58db",
+        "model": "gpt-5.6-luna",
+        "durationMs": 20953,
+        "phase": "testify_test_v2"
+      },
+      {
+        "responseId": "resp_043cd1600d478452016adfd164f0bc87d2bc32fc79b5ece02c",
+        "requestId": "req_5579b20fae7c4b8284a91775bfe9c4a5",
+        "model": "gpt-5.6-luna",
+        "durationMs": 16583,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_05825800cad6ade8016adfd164f02887d29fd3190559a5a223",
+        "requestId": "req_34c63c76f7874b2e91f870e569dfed1c",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6084,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_01e0875f65d53d89016adfd1758d9887d28367fddd48d5951e",
+        "requestId": "req_452e9fe2e25549b8a816285c0ede3b03",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5085,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0f43e4a673aef7c8016adfd17aa18087d2a8d9bb1306287008",
+        "requestId": "req_989695aabed040f38740ebd1e88c8c6f",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7658,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_001600acb5cf5718016adfd1824ad087d29850ba1a7857c31a",
+        "requestId": "req_881657dc6fa145f19dff5c1f41aaff6d",
+        "model": "gpt-5.6-luna",
+        "durationMs": 4638,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_052a50626bbd3a74016adfd186f10887d281365c646b6ea4bd",
+        "requestId": "req_4398aaf10f0d4e36bdab65624adcddc8",
+        "model": "gpt-5.6-luna",
+        "durationMs": 8073,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_090ebe40ec487a27016adfd18f0a9087d289f50e91044e3deb",
+        "requestId": "req_18ad5e99ffcf49bd89fa1ec328a6aec4",
+        "model": "gpt-5.6-luna",
+        "durationMs": 4250,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_016153bc28104edc016adfd18f0d4887d2aa990c5e4683cf61",
+        "requestId": "req_a23398f4bd9c45c2b51703fe057e011d",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6691,
+        "phase": "testify_recipe_blind_solution_v1"
+      }
+    ],
+    "errors": [],
+    "qualityWarnings": [
+      "Frühere Lehrerbewertungen waren bei dieser Erstellung nicht verfügbar. Bitte die Aufgaben besonders sorgfältig prüfen."
+    ],
+    "recipeSelection": {
+      "version": "2d90fb7ba684d0d0",
+      "recipeIds": [
+        "dreisatz-direct",
+        "dreisatz-inverse",
+        "plant-labels",
+        "plot-coordinates",
+        "part-whole-grid",
+        "concept-connections",
+        "multifield-table"
+      ],
+      "qualityMode": "strict",
+      "evaluatedTasks": 10,
+      "durationMs": 70372
+    }
+  },
+  {
+    "createdAt": "2026-10-26T22:22:25.509Z",
+    "failed": false,
+    "questionCount": 20,
+    "questionRepairAttempts": 17,
+    "replacedQuestions": 16,
+    "qualityReviewPasses": 4,
+    "fullRepair": false,
+    "totalTokens": 330506,
+    "inputTokens": 300850,
+    "outputTokens": 29656,
+    "providerRequests": [
+      {
+        "responseId": "resp_075bff1cd16cb2fb016adfd1c3b15487d2acc66e4697924453",
+        "requestId": "req_fc4be48abe0642018ebaa144cd532838",
+        "model": "gpt-5.6-luna",
+        "durationMs": 22763,
+        "phase": "testify_test_v2"
+      },
+      {
+        "responseId": "resp_0e0395d8e7f07034016adfd1da923487d2adbf46a3ef638cf4",
+        "requestId": "req_3b36ab19038548cebb1b0d6ae27e8e09",
+        "model": "gpt-5.6-luna",
+        "durationMs": 24851,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_0d7a04d2cd9a880b016adfd1da928487d280de788803ee0999",
+        "requestId": "req_c206d7e435ee4a129141eb402fa04573",
+        "model": "gpt-5.6-luna",
+        "durationMs": 25765,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_028491a6f3b23311016adfd1f491cc87d2a9087a1aac769f3f",
+        "requestId": "req_542ee8adbc6c485dab7d6f496172a96f",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6695,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_047bb805c6f58daa016adfd1fb22e887d2ad077a7c13079595",
+        "requestId": "req_042220033c844637ab0a5d13ad687b92",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7791,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_057d66674ba102ed016adfd202f0d087d2b10ac987d0ec90cc",
+        "requestId": "req_e528fcf3ee6644c9bd8aba7b6f30cdc7",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5402,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0a5ef8771112a1ab016adfd2085d8c87d28ca37dff62e8213e",
+        "requestId": "req_ee58ec884fee405ca6c1351b597c10e7",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7100,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_08f33f7898ada46d016adfd20f93d887d2a8248e3b29805217",
+        "requestId": "req_a37b99da9ccd4ad8be184d76845c36a7",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6641,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0b3244f27bc5162a016adfd216324887d2a15d27b959e868b0",
+        "requestId": "req_1f4cc12874fd461b8e0cf1d10ac119e7",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6801,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0ab94e1aedceb406016adfd21d52f887d290223611246f0be5",
+        "requestId": "req_51df4bb4ba174caaba2282d3cf2b4833",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7536,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_03145539d9411550016adfd22493d887d29801e61b1cb482fb",
+        "requestId": "req_b7813b522e614d05a4ecdb0904ec91a5",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5425,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_06e439110f712b0e016adfd22a108887d29210b7fec1d18377",
+        "requestId": "req_700df44c69cc452e8e2ff43f5fc72850",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6552,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0d873e0b531fceb8016adfd230a08c87d2a3bb11fd5af1c20e",
+        "requestId": "req_9d733a982ce0422788b6895638a587a7",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6946,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0c145e22032a5e88016adfd237a6bc87d2a9d0de1bb69a73f5",
+        "requestId": "req_8447edad10d849aca48d884f2f4fe45f",
+        "model": "gpt-5.6-luna",
+        "durationMs": 18611,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_028f950e95158f12016adfd237ab4487d2a72f3a5d690f2f5b",
+        "requestId": "req_f222911a767f420c97bbe41b106d7a55",
+        "model": "gpt-5.6-luna",
+        "durationMs": 16768,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_08a060db4349398d016adfd24a50a087d2a02ab3b8e6f41a68",
+        "requestId": "req_05fb04a50971466f9e9b25849fb754a0",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9507,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0185927f92e3afb5016adfd253d77087d2ab8c3f1c87dcfad4",
+        "requestId": "req_9d11eeadf6344ad98dbde8e3b26d9141",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9800,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0c9c61586b63ccde016adfd25dac1487d2ba3d88f8ca652634",
+        "requestId": "req_4597059c50394738b3a6eb542ccbc82d",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5890,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0b61d61cc50250a3016adfd263944c87d2bae7aa0bbbd88be6",
+        "requestId": "req_af81798fab0a49b4b68913ceda5ece2b",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6949,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0279fc3cd7512bb0016adfd26aa24087d2b07357d505afa86a",
+        "requestId": "req_863479ad4c634e0c8147e39da434fd2f",
+        "model": "gpt-5.6-luna",
+        "durationMs": 16308,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_0137a9a84a13e00d016adfd26a9ea887d2a726ed7a9b37c3b2",
+        "requestId": "req_7618a19e42074b50a0b9972c1726d739",
+        "model": "gpt-5.6-luna",
+        "durationMs": 10161,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_0cd6d28002b2c6ba016adfd27af6dc87d2adddcb80a27b7e82",
+        "requestId": "req_4196b9fc8b4a4041bf33b5001507911c",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5014,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0f6d6f7f33318f12016adfd28002c487d29a1788ec1562d8fc",
+        "requestId": "req_1aa7204bda644ba1ab8f03afe2372703",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6066,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_054ce8cf79ac9f63016adfd2861e3487d285b2b6bd04769a9c",
+        "requestId": "req_0019c5984e864df8a7f7a2d66a2927f8",
+        "model": "gpt-5.6-luna",
+        "durationMs": 8836,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0a9053f95a768e47016adfd28f04bc87d2add08bd8218d1cdf",
+        "requestId": "req_82cc05e4c36e476e9bb184360c457eea",
+        "model": "gpt-5.6-luna",
+        "durationMs": 18601,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_08d679b0b570bac3016adfd28f05a487d281987c22d6622ae4",
+        "requestId": "req_963774a8bfbe48a3a2744711f52fa3b3",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6814,
+        "phase": "testify_recipe_blind_solution_v1"
+      }
+    ],
+    "errors": [],
+    "qualityWarnings": [
+      "Frühere Lehrerbewertungen waren bei dieser Erstellung nicht verfügbar. Bitte die Aufgaben besonders sorgfältig prüfen."
+    ],
+    "recipeSelection": {
+      "version": "2d90fb7ba684d0d0",
+      "recipeIds": [
+        "dreisatz-direct"
+      ],
+      "qualityMode": "strict",
+      "evaluatedTasks": 37,
+      "durationMs": 222184
+    }
+  },
+  {
+    "createdAt": "2026-10-26T22:24:57.976Z",
+    "failed": true,
+    "questionCount": 40,
+    "questionRepairAttempts": 35,
+    "replacedQuestions": 35,
+    "qualityReviewPasses": 4,
+    "fullRepair": false,
+    "totalTokens": 712221,
+    "inputTokens": 661576,
+    "outputTokens": 50645,
+    "providerRequests": [
+      {
+        "responseId": "resp_0315833930323032016adfd1c7cf8887d2aedbf63abb766041",
+        "requestId": "req_fc133c516df149689fc6c9860fb50fee",
+        "model": "gpt-5.6-luna",
+        "durationMs": 15107,
+        "phase": "testify_test_v2"
+      },
+      {
+        "responseId": "resp_0a3ae5e760e5b3ce016adfd1c7d57887d2965a22d96db39ade",
+        "requestId": "req_d8db374ff268407ea8d013b8df74c396",
+        "model": "gpt-5.6-luna",
+        "durationMs": 15330,
+        "phase": "testify_test_v2"
+      },
+      {
+        "responseId": "resp_07ff8dc0882202e0016adfd1d72f2c87d28eeda085ba2a4d43",
+        "requestId": "req_eb0ce9fe5522464b8284d50d87cfcc50",
+        "model": "gpt-5.6-luna",
+        "durationMs": 16180,
+        "phase": "testify_test_v2"
+      },
+      {
+        "responseId": "resp_079c1169f13375e9016adfd1d7324487d2a7170e5d94bcc895",
+        "requestId": "req_1d31724dbefa444096e76633e333cc9a",
+        "model": "gpt-5.6-luna",
+        "durationMs": 14356,
+        "phase": "testify_test_v2"
+      },
+      {
+        "responseId": "resp_00670c7057ed267c016adfd1e78b7887d2b786b95344f525c7",
+        "requestId": "req_f10820f7a75f42739cab6c29a707e442",
+        "model": "gpt-5.6-luna",
+        "durationMs": 24255,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_0a6014cc5d302bab016adfd1e787e087d2a132e75190db5f2e",
+        "requestId": "req_2aad6280cbea4b128fee8e7659e4776a",
+        "model": "gpt-5.6-luna",
+        "durationMs": 35980,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_01ab9486784e13bd016adfd20bb5a487d298c886c24536ddbb",
+        "requestId": "req_868d422984094aec9ea44c9f20653469",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7504,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_042754a437b3f72f016adfd21352bc87d292df2b52718c2143",
+        "requestId": "req_f8ba91e5b60a4bcf8bdf266202ed010b",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5360,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0c06affc30d6bcd2016adfd218b9d087d2807cd2941007ef91",
+        "requestId": "req_285c996d729d4626af22d26b2441c4ee",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6478,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0e793ca8368e2695016adfd21f48c487d28dbb239d05948f11",
+        "requestId": "req_6d422b2d8b5f43258c555229994b373d",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5839,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0cfeffa7e70e8058016adfd225368c87d2a5fce1c9eca5fd28",
+        "requestId": "req_5b5433739a724b40b2e921dd095094a9",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5829,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0e8ea5018d6cfbb4016adfd22b184487d2a3bb6cbd430b1f21",
+        "requestId": "req_ae78c8785bd54d948dbe80e11a1d1ed7",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5008,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_02dc66477b7ccc3d016adfd230324487d29e1b0117e2ebd95c",
+        "requestId": "req_8218c0ace20a436c938070a6f1ad07c2",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5144,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_06d753d418f6491a016adfd23566c487d2a1aaeb3f15bfeabe",
+        "requestId": "req_5ae5f3879dcc4ed09f5a02823b8d3b7b",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5456,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0ab7b4978064b188016adfd23af14887d2a5ffa1280905dba8",
+        "requestId": "req_c1bbb97ef8b24a5aa5b457a29d2e9c06",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7073,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0d158602e8342227016adfd242182087d2b892f56c2ce32937",
+        "requestId": "req_299f989514b04ce79ce404b2955a2a5a",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9056,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0bc925dabef8d74b016adfd24b3e7487d2a32f30dcdcd8b768",
+        "requestId": "req_769de3166ba04e1c88ffc46f980cdefe",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7255,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0d2c0cbda1cc08a2016adfd2528ef887d280b39decf0fa830f",
+        "requestId": "req_cebb957f993648828d1cdc58b5c5a2eb",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6191,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0b0404e060cae089016adfd258d11087d28d6fb6d9653d1d61",
+        "requestId": "req_99ed23c27001494da3f19425385ce4ab",
+        "model": "gpt-5.6-luna",
+        "durationMs": 12040,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0d0531d75b5bb324016adfd264f4f887d2a2a066895c42ed3b",
+        "requestId": "req_6883a2b1e8b64fc583e9ba4fc775f3f5",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6286,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_05ae91bfd2ae419f016adfd26b61f487d2b1c898d8015ba63b",
+        "requestId": "req_c14e5bf29d0e420c87dab52adda36ed6",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9528,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0473041b40828b0a016adfd27502bc87d295121575adfe4967",
+        "requestId": "req_577b0cbfe70946adbb59b4e6fa87f3b5",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5822,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0cec63e5c75d97d4016adfd27ae97487d29dfc039fe8093b43",
+        "requestId": "req_68d31823183a4cbeb3115a1b8ecc38cf",
+        "model": "gpt-5.6-luna",
+        "durationMs": 10818,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_008aa3d024245b84016adfd285cbac87d299319ccec1fb29bb",
+        "requestId": "req_508500256538430f983fa6d8938d477e",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5094,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0a6f4638e0b4f478016adfd28afe4887d29f14db6e22212628",
+        "requestId": "req_a1c25ec20e8b4e07b4592f248bd5d193",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6451,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0263934dbcac0120016adfd291a75487d2995324037eea0619",
+        "requestId": "req_47a06a8c71064681be5e7048c988b99c",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7598,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_02e8177a467423e6016adfd29969d087d28b79aee10ad7a792",
+        "requestId": "req_91c4385a9e274acdbfc9a557b2e93d3a",
+        "model": "gpt-5.6-luna",
+        "durationMs": 25812,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_06ea1873c4f31b0c016adfd299576c87d28f65e3c0ca856542",
+        "requestId": "req_f593496401f14645aa8975ae1b96ffd3",
+        "model": "gpt-5.6-luna",
+        "durationMs": 26849,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_08b3ec5f98b8684d016adfd2b4712c87d28e20a490d71b9e4e",
+        "requestId": "req_261359e3f44d4b489b1f10990d99c6a1",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7039,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_073b343b9566e304016adfd2bb932087d29b5a206764fc642d",
+        "requestId": "req_98174d5cc1724eb1846625ad0f2bfa01",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7298,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0ebd0dfd12341721016adfd2c2ee4487d297bcc077d8a47a90",
+        "requestId": "req_08344ff07eab4b6fae9f5b843f4c4b3e",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7127,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0451ec65c5c544c4016adfd2ca320c87d2bab16556488c4e5d",
+        "requestId": "req_61c5d21262c94f06b2a081fb783edb46",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6988,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_067e5ccf1c93a46b016adfd2d13ff487d2bfea1d5917aabb47",
+        "requestId": "req_649d4448488f439db1f75e186364b73b",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5260,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0c8e965ba7a30b49016adfd2d6964887d2b1a3af311b198fd3",
+        "requestId": "req_557f5ce1360a4581a92259b93f74cbae",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5448,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_04a354e51d1328eb016adfd2dc1d2087d2abe7e4027b07a64a",
+        "requestId": "req_f245eec224c644ccbf0cb36ec24b3086",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5452,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_01bf7ebc617e1366016adfd2e1aebc87d2a81e7f9bbf619310",
+        "requestId": "req_01e271cc6d7b47789fba5621f2bc6dd7",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7157,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_00f0a0e3164104a0016adfd2e8dfb887d2b1b7b3a9ffc3708a",
+        "requestId": "req_6840853f009c4ae2a16f2a24b29d2185",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5083,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_004f907e1e590370016adfd2ee0a8c87d28f21c3c1862a01f4",
+        "requestId": "req_6dd9c079a3564dbca23b540ec637601e",
+        "model": "gpt-5.6-luna",
+        "durationMs": 8034,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0c2efca8ce35a675016adfd2f6503087d2ba1252255c4c204b",
+        "requestId": "req_e42f5353e3a04a7dac21a9673894c10a",
+        "model": "gpt-5.6-luna",
+        "durationMs": 19186,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_0d6d2a6135ffa68b016adfd2f64ba887d28bd93c98d54bdb6a",
+        "requestId": "req_9aebeec332a6417c991738041e61ac59",
+        "model": "gpt-5.6-luna",
+        "durationMs": 17559,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_0f301175b94e5e76016adfd309a1d487d2a335685ef4c6ec47",
+        "requestId": "req_55dcd9dbdfa248108f891af5b96373d7",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9590,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0283046afcd57218016adfd3136ad487d2b40ecb640aec739a",
+        "requestId": "req_a09a12e6a3444866b6bca2bd501f1002",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5483,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_053740be78d7d74f016adfd318d37087d29e4a2386b8087c26",
+        "requestId": "req_33fed1e515e046838afa6093e25cf34a",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6136,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0408a4f9a4682c71016adfd31f0c7c87d298ee940d87fe1ef6",
+        "requestId": "req_0848f6e9c65f47afb2f1a6f0c10d150f",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7865,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0f401434c2638b9a016adfd326fb6c87d2a1ea2a9abd1999e1",
+        "requestId": "req_bda33b89135c421596d738ee9f8fee57",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6430,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0714b2aadc86669a016adfd32dad1c87d28ec0fcd2e9204fa0",
+        "requestId": "req_4da302a84ec34e44b473e92d2eb0383b",
+        "model": "gpt-5.6-luna",
+        "durationMs": 12473,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_021cd68c5d44e24c016adfd32d9a3c87d2a718884408dfe35e",
+        "requestId": "req_09836077f9714bb0a059f5e7565fc799",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9528,
+        "phase": "testify_recipe_blind_solution_v1"
+      }
+    ],
+    "errors": [
+      "Aufgabe 13: image_mismatch: Die Spaltenüberschriften sind vertauscht: In der Spalte „Menge (kg)“ steht 100 und in der Spalte „Anteil (%)“ steht 900, obwohl 100 % zur Menge von 900 kg gehören sollen.; incorrect: Unabhängig gelöste Schülerantwort passt nicht vollständig zur Bewertung."
+    ],
+    "qualityWarnings": [],
+    "recipeSelection": {
+      "version": "2d90fb7ba684d0d0",
+      "recipeIds": [
+        "dreisatz-direct"
+      ],
+      "qualityMode": "strict",
+      "evaluatedTasks": 75,
+      "durationMs": 370527
+    }
+  }
+]

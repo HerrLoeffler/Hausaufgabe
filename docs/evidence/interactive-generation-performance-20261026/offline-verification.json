@@ -1,0 +1,18 @@
+[
+  {
+    "file": "generation-20-tasks.json",
+    "quizId": "8TJ5PRHW",
+    "questions": 20,
+    "dreisatz": 20,
+    "independentChecks": 180,
+    "status": "pass"
+  },
+  {
+    "file": "generation-6-tasks.json",
+    "quizId": "F3FT79B2",
+    "questions": 6,
+    "dreisatz": 2,
+    "independentChecks": 30,
+    "status": "pass"
+  }
+]

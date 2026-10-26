@@ -1,0 +1,120 @@
+{
+  "quizId": "F3FT79B2",
+  "title": "Rechenwege, Pflanzenteile und Beziehungen",
+  "questions": [
+    {
+      "authoringRecipe": {
+        "fingerprint": "4c0db5275ca179951f83371e8b3358665213ef916fd808805873e69967ad4e2e",
+        "id": "dreisatz-direct",
+        "version": "2d90fb7ba684d0d0"
+      },
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "position": 1,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-bf8387d2453b9e02d36d\",\"revision\":0,\"format\":\"table\",\"title\":\"Ein Rucksack kostet 250 €. Berechne mit einem Dreisatz, wie viel Euro 18 % dieses Preises \",\"subject\":\"Fächerübergreifend\",\"grade\":\"7\",\"prompt\":\"Ein Rucksack kostet 250 €. Berechne mit einem Dreisatz, wie viel Euro 18 % dieses Preises sind. Ergänze die Werte und die Rechenpfeile im Rechenweg. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":2.5,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Betrag (€)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"250\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"2,5\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":false,\"text\":\"18\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":false,\"text\":\"18\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"18\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"45\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c1\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c5\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "type": "visual",
+      "text": "Ein Rucksack kostet 250 €. Berechne mit einem Dreisatz, wie viel Euro 18 % dieses Preises sind. Ergänze die Werte und die Rechenpfeile im Rechenweg. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "updatedAt": "2026-10-26T22:17:58.016Z",
+      "points": 2.5,
+      "id": "q001"
+    },
+    {
+      "type": "visual",
+      "position": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "points": 2.5,
+      "updatedAt": "2026-10-26T22:17:58.146Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-dbaab761752dec031227\",\"revision\":0,\"format\":\"table\",\"title\":\"Für denselben Druckauftrag benötigen 3 gleich schnelle Drucker 24 Minuten. Wie viele Minut\",\"subject\":\"Fächerübergreifend\",\"grade\":\"7\",\"prompt\":\"Für denselben Druckauftrag benötigen 3 gleich schnelle Drucker 24 Minuten. Wie viele Minuten benötigen 8 gleich schnelle Drucker bei gleicher Arbeitsleistung? Ergänze den Rechenweg mit dem Zwischenwert für 1 Drucker. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":2.5,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Drucker\",\"Arbeitszeit (Minuten)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"3\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"24\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":false,\"text\":\"3\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"72\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r4c6\",\"input\":false,\"text\":\"8\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"8\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"9\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c5\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r2c6\",\"accepted\":[\"3\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c1\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c2\",\"accepted\":[\"8\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "authoringRecipe": {
+        "id": "dreisatz-inverse",
+        "version": "2d90fb7ba684d0d0",
+        "fingerprint": "93d9b9bdd4201f7db6f6bc1b7ae56d3b0dd8375c86d60a6065a63ead167a6ec0"
+      },
+      "text": "Für denselben Druckauftrag benötigen 3 gleich schnelle Drucker 24 Minuten. Wie viele Minuten benötigen 8 gleich schnelle Drucker bei gleicher Arbeitsleistung? Ergänze den Rechenweg mit dem Zwischenwert für 1 Drucker. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "id": "q002"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"bluetenpflanze-zuordnung-7\",\"revision\":0,\"format\":\"labeling\",\"title\":\"Fachbegriffe einer Blütenpflanze zuordnen\",\"subject\":\"Biologie\",\"grade\":\"7\",\"prompt\":\"Ordne die vier Fachbegriffe den markierten Bereichen der Blütenpflanze zu.\",\"hint\":\"Verwende jeden Begriff genau einmal. Du kannst deine Zuordnungen bis zur Abgabe ändern.\",\"maxPoints\":2.5,\"spec\":{\"scene\":\"plant\",\"regions\":[\"r1\",\"r2\",\"r3\",\"r4\"],\"items\":[{\"id\":\"l1\",\"text\":\"Blüte\"},{\"id\":\"l2\",\"text\":\"Sprossachse\"},{\"id\":\"l3\",\"text\":\"Blätter\"},{\"id\":\"l4\",\"text\":\"Wurzel\"}]},\"solution\":{\"assignments\":{\"r1\":\"l1\",\"r2\":\"l2\",\"r3\":\"l3\",\"r4\":\"l4\"}},\"objective\":\"Die grundlegenden Teile einer Blütenpflanze in einer Darstellung erkennen und fachsprachlich zuordnen.\",\"rationale\":\"Die Interaktion prüft, ob die Lernenden die vier Fachbegriffe den entsprechenden Bereichen einer Blütenpflanze zuordnen können.\",\"sourceNote\":\"Eigenes schematisches Pflanzenmotiv mit vier eindeutig markierten Bereichen.\"}",
+      "updatedAt": "2026-10-26T22:17:58.274Z",
+      "authoringRecipe": {
+        "fingerprint": "9005b13bd23e1500bf72c4f7881be180e52daa2f97eaa4f96a91f26ed55fb292",
+        "version": "2d90fb7ba684d0d0",
+        "id": "plant-labels"
+      },
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "position": 3,
+      "text": "Ordne die vier Fachbegriffe den markierten Bereichen der Blütenpflanze zu.",
+      "type": "visual",
+      "points": 2.5,
+      "id": "q003"
+    },
+    {
+      "authoringRecipe": {
+        "fingerprint": "02d42c4276813f05cda51b008a99b6851205b29fdaf47c4f4f9d7bf043a675c4",
+        "id": "plot-coordinates",
+        "version": "2d90fb7ba684d0d0"
+      },
+      "points": 2.5,
+      "updatedAt": "2026-10-26T22:17:58.391Z",
+      "type": "visual",
+      "text": "Trage die Punkte P und Q in das Koordinatensystem ein: P(−3|2) und Q(4|−1).",
+      "position": 4,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"koordinaten-pq-7\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Punkte im Koordinatensystem\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Trage die Punkte P und Q in das Koordinatensystem ein: P(−3|2) und Q(4|−1).\",\"hint\":\"Lies zuerst die x-Koordinate und danach die y-Koordinate ab.\",\"maxPoints\":2.5,\"spec\":{\"mode\":\"points\",\"minX\":-6,\"maxX\":6,\"minY\":-4,\"maxY\":4,\"step\":1,\"labels\":[\"P\",\"Q\"]},\"solution\":{\"points\":[{\"x\":-3,\"y\":2},{\"x\":4,\"y\":-1}]},\"objective\":\"Punkte anhand ihrer Koordinaten in einem Koordinatensystem eintragen.\",\"rationale\":\"Jede Koordinate bestimmt eindeutig die waagerechte und senkrechte Lage eines Punktes.\",\"sourceNote\":\"Eigenes Koordinatensystem mit ganzzahligem Eingaberaster.\"}",
+      "id": "q004"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"flaechenanteil-drei-fuenftel-7\",\"revision\":0,\"format\":\"grid\",\"title\":\"Einen Flächenanteil darstellen\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Markiere den Anteil 3/5 der gleich großen Kästchen.\",\"hint\":\"Alle Kästchen sind gleich groß. Jede Anordnung mit dem richtigen Anteil ist möglich.\",\"maxPoints\":2.5,\"spec\":{\"rows\":4,\"columns\":5},\"solution\":{\"count\":12},\"objective\":\"Einen Bruch als Anteil einer Gesamtfläche darstellen.\",\"rationale\":\"Bei 20 gleich großen Kästchen entsprechen drei Fünftel zwölf Kästchen.\",\"sourceNote\":\"Eigenes Raster aus 20 gleich großen Kästchen.\"}",
+      "type": "visual",
+      "authoringRecipe": {
+        "version": "2d90fb7ba684d0d0",
+        "id": "part-whole-grid",
+        "fingerprint": "8e66757ec3e237f9cd43d01813b6de38f7f3ed1de1d0e994ed6ab0a68cfd4010"
+      },
+      "updatedAt": "2026-10-26T22:17:58.511Z",
+      "text": "Markiere den Anteil 3/5 der gleich großen Kästchen.",
+      "points": 2.5,
+      "position": 5,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "id": "q005"
+    },
+    {
+      "points": 2.5,
+      "updatedAt": "2026-10-26T22:17:58.623Z",
+      "type": "visual",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "position": 6,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"satzglieder-zuordnen-7\",\"revision\":0,\"format\":\"connections\",\"title\":\"Satzglieder bestimmen\",\"subject\":\"Deutsch\",\"grade\":\"7\",\"prompt\":\"Verbinde jedes Satzglied mit der passenden Bezeichnung. Der Pfeil zeigt vom Satzglied zur Bezeichnung.\",\"hint\":\"Ordne jedes Satzglied genau einer Bezeichnung zu.\",\"maxPoints\":2.5,\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"s1\",\"label\":\"Am Morgen\",\"x\":120,\"y\":70},{\"id\":\"s2\",\"label\":\"fährt\",\"x\":120,\"y\":140},{\"id\":\"s3\",\"label\":\"der Bus\",\"x\":120,\"y\":210},{\"id\":\"s4\",\"label\":\"zur Schule\",\"x\":120,\"y\":280},{\"id\":\"k1\",\"label\":\"Zeitangabe\",\"x\":590,\"y\":70},{\"id\":\"k2\",\"label\":\"Prädikat\",\"x\":590,\"y\":140},{\"id\":\"k3\",\"label\":\"Subjekt\",\"x\":590,\"y\":210},{\"id\":\"k4\",\"label\":\"Ortsangabe\",\"x\":590,\"y\":280}]},\"solution\":{\"edges\":[[\"s1\",\"k1\"],[\"s2\",\"k2\"],[\"s3\",\"k3\"],[\"s4\",\"k4\"]]},\"objective\":\"Satzglieder in einem einfachen Aussagesatz bestimmen und zuordnen.\",\"rationale\":\"Die Satzglieder erfüllen unterschiedliche Funktionen: Zeitangabe, Prädikat, Subjekt und Ortsangabe.\",\"sourceNote\":\"Eigener Beispielsatz: Am Morgen fährt der Bus zur Schule.\"}",
+      "text": "Verbinde jedes Satzglied mit der passenden Bezeichnung. Der Pfeil zeigt vom Satzglied zur Bezeichnung.",
+      "authoringRecipe": {
+        "id": "concept-connections",
+        "fingerprint": "42f16bba1ace5aa31fc7e7ceee7f17bb0ce9720ab1e5c84e126313a44bca9e07",
+        "version": "2d90fb7ba684d0d0"
+      },
+      "id": "q006"
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "count": 6,
+  "points": 15,
+  "status": "ready",
+  "requestId": "GC-AUTO-RECIPES-20261026-6-A",
+  "input": {
+    "clientRequestId": "GC-AUTO-RECIPES-20261026-6-A",
+    "subject": "Fächerübergreifend",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Mathematik, Biologie und Deutsch: Rechenwege, Bild und Beziehungen",
+    "learningGoals": [
+      "Prozentwert mit Dreisatz berechnen",
+      "Umgekehrt proportionale Zuordnung mit Maschinen und Arbeitszeit berechnen",
+      "Pflanzenteile benennen",
+      "Punkte im Koordinatensystem eintragen",
+      "Anteile anschaulich im Raster darstellen",
+      "Satzglieder zuordnen"
+    ],
+    "count": 6,
+    "points": 15,
+    "allowedTypes": [
+      "single",
+      "multi",
+      "truefalse",
+      "gapfill",
+      "matching",
+      "ordering",
+      "grouping",
+      "number",
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "materials": [],
+    "materialMode": "inspiration",
+    "notes": "Sechs verschiedene Lernhandlungen, jeweils eine Aufgabe. Alltagsnahe eindeutige Angaben und Einheiten, neue Inhalte, keine Musterlösung im Auftrag. Keine zusätzliche Formatauswahl durch Lehrkraft."
+  },
+  "startedAt": "2026-10-26T22:16:44.709Z",
+  "jobId": "c27c7426ab5a87ffefc899a5e6355832dd09669b",
+  "stage": "ready",
+  "lastCheckedAt": "2026-10-26T22:18:07.822Z",
+  "errorReference": null,
+  "errorDetails": null,
+  "quizId": "F3FT79B2",
+  "completedAt": "2026-10-26T22:18:08.105Z",
+  "durationMs": 74026,
+  "pointSum": 15,
+  "recipeSelection": {
+    "evaluatedTasks": 10,
+    "version": "2d90fb7ba684d0d0",
+    "durationMs": 70469,
+    "qualityMode": "strict",
+    "recipeIds": [
+      "dreisatz-direct",
+      "dreisatz-inverse",
+      "plant-labels",
+      "plot-coordinates",
+      "part-whole-grid",
+      "concept-connections",
+      "multifield-table"
+    ]
+  },
+  "usage": {
+    "total_tokens": 63576,
+    "providerRequests": [
+      {
+        "responseId": "resp_0516276f554b3211016adfd15002a087d2af11584530daac74",
+        "requestId": "req_42becb0751b24eee948503468aca58db",
+        "model": "gpt-5.6-luna",
+        "durationMs": 20953,
+        "phase": "testify_test_v2"
+      },
+      {
+        "responseId": "resp_043cd1600d478452016adfd164f0bc87d2bc32fc79b5ece02c",
+        "requestId": "req_5579b20fae7c4b8284a91775bfe9c4a5",
+        "model": "gpt-5.6-luna",
+        "durationMs": 16583,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_05825800cad6ade8016adfd164f02887d29fd3190559a5a223",
+        "requestId": "req_34c63c76f7874b2e91f870e569dfed1c",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6084,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_01e0875f65d53d89016adfd1758d9887d28367fddd48d5951e",
+        "requestId": "req_452e9fe2e25549b8a816285c0ede3b03",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5085,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0f43e4a673aef7c8016adfd17aa18087d2a8d9bb1306287008",
+        "requestId": "req_989695aabed040f38740ebd1e88c8c6f",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7658,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_001600acb5cf5718016adfd1824ad087d29850ba1a7857c31a",
+        "requestId": "req_881657dc6fa145f19dff5c1f41aaff6d",
+        "model": "gpt-5.6-luna",
+        "durationMs": 4638,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_052a50626bbd3a74016adfd186f10887d281365c646b6ea4bd",
+        "requestId": "req_4398aaf10f0d4e36bdab65624adcddc8",
+        "model": "gpt-5.6-luna",
+        "durationMs": 8073,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_090ebe40ec487a27016adfd18f0a9087d289f50e91044e3deb",
+        "requestId": "req_18ad5e99ffcf49bd89fa1ec328a6aec4",
+        "model": "gpt-5.6-luna",
+        "durationMs": 4250,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_016153bc28104edc016adfd18f0d4887d2aa990c5e4683cf61",
+        "requestId": "req_a23398f4bd9c45c2b51703fe057e011d",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6691,
+        "phase": "testify_recipe_blind_solution_v1"
+      }
+    ],
+    "output_tokens": 8246,
+    "input_tokens": 55330
+  },
+  "qualityIssues": []
+}

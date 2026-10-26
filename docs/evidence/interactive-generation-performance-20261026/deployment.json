@@ -1,0 +1,55 @@
+{
+  "project": "gradecrew-staging-2026",
+  "source": "ecb82da0129f2e22dc2bd8d739b152d8704dd9e3",
+  "beforeCount": 80,
+  "afterCount": 80,
+  "selected": [
+    "generateTest",
+    "startAiTestJob",
+    "startAiTestVariantJob",
+    "processAiTestJob",
+    "regenerateQuestion",
+    "reviewMode"
+  ],
+  "changed": [
+    "generateTest",
+    "learningBrainStart",
+    "learningBrainTurn",
+    "processAiTestJob",
+    "regenerateQuestion",
+    "reviewMode",
+    "startAiTestJob",
+    "startAiTestVariantJob"
+  ],
+  "concurrentUnselectedChanges": [
+    "learningBrainStart",
+    "learningBrainTurn"
+  ],
+  "unchanged": 72,
+  "noCreatedDeleted": true,
+  "ownHashes": {
+    "generateTest": "b8d63f797a725835780f9f274b4f4acede51b35c",
+    "startAiTestJob": "b8d63f797a725835780f9f274b4f4acede51b35c",
+    "startAiTestVariantJob": "b8d63f797a725835780f9f274b4f4acede51b35c",
+    "processAiTestJob": "b8d63f797a725835780f9f274b4f4acede51b35c",
+    "regenerateQuestion": "b8d63f797a725835780f9f274b4f4acede51b35c",
+    "reviewMode": "8973666469edd99bfad09b104567fcadd6162436"
+  },
+  "sourcePreflight": {
+    "generateTest": "allJSandpackagefilesbyteequal4febase",
+    "reviewMode": "allJSandpackagefilesbyteequal4febase"
+  },
+  "hostingDeploy": false,
+  "productionDeploy": false,
+  "hostingObserved": {
+    "commit": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d",
+    "fileCount": 230
+  },
+  "checks": {
+    "backendUI": 363,
+    "assessment": 136,
+    "eslint": "pass",
+    "headCI": "b749ba5fd48462201881768d49e82fa334fe2b1a",
+    "PR": 334
+  }
+}

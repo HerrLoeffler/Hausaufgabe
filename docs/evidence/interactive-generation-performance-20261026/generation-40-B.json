@@ -1,0 +1,38 @@
+{
+  "count": 40,
+  "points": 100,
+  "status": "running",
+  "requestId": "GC-AUTO-RECIPES-20261026-40-B",
+  "input": {
+    "clientRequestId": "GC-AUTO-RECIPES-20261026-40-B",
+    "subject": "Mathematik",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Prozentrechnung: Grundwert, Prozentwert und Prozentsatz",
+    "count": 40,
+    "points": 100,
+    "difficulty": "mittel",
+    "allowedTypes": [
+      "visual"
+    ],
+    "allowedVisualFormats": [
+      "scale",
+      "coordinate",
+      "grid",
+      "table",
+      "connections"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "materials": [],
+    "materialMode": "inspiration",
+    "notes": "Nur die ausgewählten interaktiven Aufgaben. Fachlich passende abwechslungsreiche Prozentaufgaben, klare Aufträge mit allen Daten, ohne Lösungen im Auftrag. Keine Formatquote. Mehrere Tabellenaufgaben mit Dreisatz (spec.layout dreisatz), drei Zeilen und unabhängigen Rechenpfeilen links/rechts; direkte Zuordnung, verschiedene Hilfestufen und halbe Punkte pro Feld. Koordinatenaufgaben nur wenn fachlich sinnvoll; Prozent-/Preisachsen dürfen beispielsweise0bis100 und0bis400mitEingabeschritt1haben, beschrifte Achsen samt Einheiten. Keine künstlichen Bilder, keine Schülerdaten."
+  },
+  "startedAt": "2026-10-26T22:36:04.977Z",
+  "jobId": "c2c92924761b1442572d08f6327bbb7c7c23941b",
+  "stage": "quality-review",
+  "lastCheckedAt": "2026-10-26T22:38:21.775Z",
+  "errorReference": null,
+  "errorDetails": null
+}

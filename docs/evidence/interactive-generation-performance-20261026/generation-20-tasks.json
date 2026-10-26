@@ -1,0 +1,386 @@
+{
+  "quizId": "8TJ5PRHW",
+  "title": "Prozentrechnung: Grundwert, Prozentwert und Prozentsatz",
+  "questions": [
+    {
+      "points": 3,
+      "type": "visual",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "Ein Fahrrad kostet 480 €. Im Schlussverkauf wird es um 25 % günstiger. Bestimme den Rabattbetrag in Euro. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "position": 1,
+      "authoringRecipe": {
+        "fingerprint": "b95e5e551216ff521462532a01655698e075ba586d4b1d8ed1e8eb102967fefd",
+        "version": "2d90fb7ba684d0d0",
+        "id": "dreisatz-direct"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-dbe34757d67943047332\",\"revision\":0,\"format\":\"table\",\"title\":\"Ein Fahrrad kostet 480 €. Im Schlussverkauf wird es um 25 % günstiger. Bestimme den Rabatt\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ein Fahrrad kostet 480 €. Im Schlussverkauf wird es um 25 % günstiger. Bestimme den Rabattbetrag in Euro. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Rabattbetrag (€)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"480\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":true,\"text\":\"\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"4,8\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"25\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r3c3\",\"accepted\":[\"1\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"120\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"25\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"25\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "updatedAt": "2026-10-26T22:22:25.892Z",
+      "id": "q001"
+    },
+    {
+      "position": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-051e1898ba3c78805629\",\"revision\":0,\"format\":\"table\",\"title\":\"In einer Schule nehmen 18 % der 250 Schülerinnen und Schüler an einem Wettbewerb teil. Wie\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"In einer Schule nehmen 18 % der 250 Schülerinnen und Schüler an einem Wettbewerb teil. Wie viele Schülerinnen und Schüler sind das? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Anzahl (Schülerinnen und Schüler)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"250\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":true,\"text\":\"\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"2,5\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"18\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r3c3\",\"accepted\":[\"1\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"45\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"18\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"18\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "type": "visual",
+      "updatedAt": "2026-10-26T22:22:26.006Z",
+      "points": 3,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "text": "In einer Schule nehmen 18 % der 250 Schülerinnen und Schüler an einem Wettbewerb teil. Wie viele Schülerinnen und Schüler sind das? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "authoringRecipe": {
+        "id": "dreisatz-direct",
+        "fingerprint": "95b37a5e4dd43dd5d48012aa1e0c5dd7382a03b2f270f966b22a5df0f7f73498",
+        "version": "2d90fb7ba684d0d0"
+      },
+      "id": "q002"
+    },
+    {
+      "text": "Ein Pullover kostet ursprünglich 75 €. Der Preis wird um 20 % gesenkt. Wie groß ist die Preissenkung in Euro? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "type": "visual",
+      "updatedAt": "2026-10-26T22:22:26.134Z",
+      "points": 3,
+      "position": 3,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-18619b8c028367f983c7\",\"revision\":0,\"format\":\"table\",\"title\":\"Ein Pullover kostet ursprünglich 75 €. Der Preis wird um 20 % gesenkt. Wie groß ist die Pr\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ein Pullover kostet ursprünglich 75 €. Der Preis wird um 20 % gesenkt. Wie groß ist die Preissenkung in Euro? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Preissenkung (€)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"75\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":false,\"text\":\"100\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"0,75\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"20\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"15\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c1\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c2\",\"accepted\":[\"20\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c5\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c6\",\"accepted\":[\"20\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "authoringRecipe": {
+        "id": "dreisatz-direct",
+        "version": "2d90fb7ba684d0d0",
+        "fingerprint": "3c9f5931e3be7fa52779eb49345f359be00e2f98b1d1a461ff13376ddd2be8e2"
+      },
+      "id": "q003"
+    },
+    {
+      "points": 3,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "Von 320 kg gesammeltem Altpapier entfallen 35 % auf Zeitungen. Wie viel Kilogramm Zeitungen sind das? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "authoringRecipe": {
+        "version": "2d90fb7ba684d0d0",
+        "fingerprint": "a05e78cd827ce1e5aa35e8b47301db4916ce0af6edef94cddec38bbcf2e18f62",
+        "id": "dreisatz-direct"
+      },
+      "position": 4,
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-efb426b36cf0046663ef\",\"revision\":0,\"format\":\"table\",\"title\":\"Von 320 kg gesammeltem Altpapier entfallen 35 % auf Zeitungen. Wie viel Kilogramm Zeitunge\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Von 320 kg gesammeltem Altpapier entfallen 35 % auf Zeitungen. Wie viel Kilogramm Zeitungen sind das? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Masse der Zeitungen (kg)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"320\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"3,2\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":false,\"text\":\"35\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"35\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"112\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c1\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c5\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c6\",\"accepted\":[\"35\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "updatedAt": "2026-10-26T22:22:26.252Z",
+      "id": "q004"
+    },
+    {
+      "points": 3,
+      "position": 5,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-59b6f791ed3e02fac80d\",\"revision\":0,\"format\":\"table\",\"title\":\"Ein Tank fasst 60 Liter. Er ist zu 45 % gefüllt. Wie viele Liter befinden sich im Tank?\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ein Tank fasst 60 Liter. Er ist zu 45 % gefüllt. Wie viele Liter befinden sich im Tank? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Benzinmenge (Liter)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"60\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"0,6\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":false,\"text\":\"45\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"45\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"27\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c1\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c5\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"45\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "type": "visual",
+      "updatedAt": "2026-10-26T22:22:26.372Z",
+      "authoringRecipe": {
+        "id": "dreisatz-direct",
+        "version": "2d90fb7ba684d0d0",
+        "fingerprint": "d4826ac788a9c4827a190ac27293b1f3758ede9d2662327f7838e8465d2df002"
+      },
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "text": "Ein Tank fasst 60 Liter. Er ist zu 45 % gefüllt. Wie viele Liter befinden sich im Tank? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "id": "q005"
+    },
+    {
+      "updatedAt": "2026-10-26T22:22:26.488Z",
+      "position": 6,
+      "text": "Bei einem Schulfest werden insgesamt 800 Lose verkauft. 212 davon sind Gewinnlose. Welchem Prozentsatz entsprechen die Gewinnlose? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-38fd3c390dd5a553556c\",\"revision\":0,\"format\":\"table\",\"title\":\"Bei einem Schulfest werden insgesamt 800 Lose verkauft. 212 davon sind Gewinnlose. Welchem\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Bei einem Schulfest werden insgesamt 800 Lose verkauft. 212 davon sind Gewinnlose. Welchem Prozentsatz entsprechen die Gewinnlose? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Lose (Stück)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"800\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"8\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c4\",\"input\":false,\"text\":\"212\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c3\",\"accepted\":[\"26.5\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c5\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"26.5\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"26.5\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "points": 3,
+      "authoringRecipe": {
+        "id": "dreisatz-direct",
+        "fingerprint": "553179b3c47050d92fbbd9ecfdd3100ecc04bd2700cfc31febaf1917e572c6c2",
+        "version": "2d90fb7ba684d0d0"
+      },
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "id": "q006"
+    },
+    {
+      "text": "Ein Obsthof lagert insgesamt 960 Kisten. Davon enthalten 37,5 % Äpfel. Wie viele Kisten enthalten Äpfel? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-081376f4ee6dc13f9529\",\"revision\":0,\"format\":\"table\",\"title\":\"Ein Obsthof lagert insgesamt 960 Kisten. Davon enthalten 37,5 % Äpfel. Wie viele Kisten en\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ein Obsthof lagert insgesamt 960 Kisten. Davon enthalten 37,5 % Äpfel. Wie viele Kisten enthalten Äpfel? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Kisten\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"960\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":false,\"text\":\"100\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"9,6\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"37,5\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"360\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c1\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c2\",\"accepted\":[\"37.5\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c5\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c6\",\"accepted\":[\"37.5\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "points": 3,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "updatedAt": "2026-10-26T22:22:26.641Z",
+      "position": 7,
+      "authoringRecipe": {
+        "id": "dreisatz-direct",
+        "fingerprint": "7e742264ad3e925bb2f865b368991bbaadfd4778d74ec478fed5c985afd9e0b7",
+        "version": "2d90fb7ba684d0d0"
+      },
+      "id": "q007"
+    },
+    {
+      "authoringRecipe": {
+        "version": "2d90fb7ba684d0d0",
+        "fingerprint": "9bdbd8c44b2efa28ddafd2d0bf01e3ce08165f038807f3ee24301cb981063e5a",
+        "id": "dreisatz-direct"
+      },
+      "type": "visual",
+      "position": 8,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-5f2f497e3662d995887b\",\"revision\":0,\"format\":\"table\",\"title\":\"In einer Kiste liegen 28 rote Äpfel. Das sind 40 % aller Äpfel. Wie viele Äpfel liegen ins\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"In einer Kiste liegen 28 rote Äpfel. Das sind 40 % aller Äpfel. Wie viele Äpfel liegen insgesamt in der Kiste? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Anzahl der Äpfel\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"40\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"28\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":true,\"text\":\"\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"0,7\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r3c3\",\"accepted\":[\"1\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"70\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c2\",\"accepted\":[\"40\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"40\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "text": "In einer Kiste liegen 28 rote Äpfel. Das sind 40 % aller Äpfel. Wie viele Äpfel liegen insgesamt in der Kiste? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "points": 3,
+      "updatedAt": "2026-10-26T22:22:26.775Z",
+      "id": "q008"
+    },
+    {
+      "position": 9,
+      "updatedAt": "2026-10-26T22:22:26.893Z",
+      "text": "Ein Rabatt von 15 % entspricht 12 €. Wie hoch war der ursprüngliche Preis? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "points": 3,
+      "authoringRecipe": {
+        "version": "2d90fb7ba684d0d0",
+        "id": "dreisatz-direct",
+        "fingerprint": "398fba1c05d21bd13a7c7ac8385d6fdd2e709fe0877e07c0b1164e25c86c482a"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-4f0779bc48e948fa8440\",\"revision\":0,\"format\":\"table\",\"title\":\"Ein Rabatt von 15 % entspricht 12 €. Wie hoch war der ursprüngliche Preis?\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ein Rabatt von 15 % entspricht 12 €. Wie hoch war der ursprüngliche Preis? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Ursprünglicher Preis (€)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"15\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"12\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"0,8\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":false,\"text\":\"100\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"80\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c1\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c2\",\"accepted\":[\"15\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c5\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c6\",\"accepted\":[\"15\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "type": "visual",
+      "id": "q009"
+    },
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "points": 3,
+      "position": 10,
+      "text": "In einer Klasse sind 9 Kinder mit dem Fahrrad gekommen. Das entspricht 30 % der Klasse. Wie viele Kinder sind insgesamt in der Klasse? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "authoringRecipe": {
+        "fingerprint": "809bd34de655ffa9aa9c0425b898745ecb8ea7b0b6726726161008aea460bb20",
+        "id": "dreisatz-direct",
+        "version": "2d90fb7ba684d0d0"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-a66e6a363c94665149b3\",\"revision\":0,\"format\":\"table\",\"title\":\"In einer Klasse sind 9 Kinder mit dem Fahrrad gekommen. Das entspricht 30 % der Klasse. Wi\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"In einer Klasse sind 9 Kinder mit dem Fahrrad gekommen. Das entspricht 30 % der Klasse. Wie viele Kinder sind insgesamt in der Klasse? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Kinder insgesamt\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"30\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"9\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":false,\"text\":\"30\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"0,3\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"30\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c5\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c6\",\"accepted\":[\"30\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c1\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "updatedAt": "2026-10-26T22:22:27.023Z",
+      "id": "q010"
+    },
+    {
+      "position": 11,
+      "authoringRecipe": {
+        "id": "dreisatz-direct",
+        "version": "2d90fb7ba684d0d0",
+        "fingerprint": "7fdcd9a63257f7ad1e66b364bd50cd70717ad3ed1affc66a179263fa7086cbbf"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-e58743ae7c0af4e1b30e\",\"revision\":0,\"format\":\"table\",\"title\":\"Eine Jacke kostet 120 €. Zuerst wird der Preis um 15 % erhöht. Bestimme den Erhöhungsbetra\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Eine Jacke kostet 120 €. Zuerst wird der Preis um 15 % erhöht. Bestimme den Erhöhungsbetrag in Euro. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Erhöhungsbetrag (€)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"120\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":true,\"text\":\"\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"1,2\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"15\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r3c3\",\"accepted\":[\"1\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"18\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"15\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"15\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "points": 3,
+      "updatedAt": "2026-10-26T22:22:27.130Z",
+      "text": "Eine Jacke kostet 120 €. Zuerst wird der Preis um 15 % erhöht. Bestimme den Erhöhungsbetrag in Euro. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "id": "q011"
+    },
+    {
+      "authoringRecipe": {
+        "fingerprint": "5de71382939da1ce1ba85e4a4d9788e8efeacea939fdfbad6314bbe9c1252e19",
+        "version": "2d90fb7ba684d0d0",
+        "id": "dreisatz-direct"
+      },
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-eadf09c13c07e4965b4d\",\"revision\":0,\"format\":\"table\",\"title\":\"In einer Recyclinganlage werden insgesamt 750 kg Kunststoff verarbeitet. Davon entfallen 9\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"In einer Recyclinganlage werden insgesamt 750 kg Kunststoff verarbeitet. Davon entfallen 96 kg auf wiederverwertbaren Kunststoff. Welchem Prozentsatz der Gesamtmenge entsprechen die 96 kg? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Masse (kg)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"750\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"7,5\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c4\",\"input\":false,\"text\":\"96\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c3\",\"accepted\":[\"12.8\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c1\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"12.8\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"12.8\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "text": "In einer Recyclinganlage werden insgesamt 750 kg Kunststoff verarbeitet. Davon entfallen 96 kg auf wiederverwertbaren Kunststoff. Welchem Prozentsatz der Gesamtmenge entsprechen die 96 kg? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "updatedAt": "2026-10-26T22:22:27.236Z",
+      "position": 12,
+      "type": "visual",
+      "points": 3,
+      "id": "q012"
+    },
+    {
+      "points": 3,
+      "text": "In einer Bibliothek entsprechen 36 Sachbücher 24 % des gesamten Bücherbestands. Wie viele Bücher umfasst der gesamte Bestand? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Trage die fehlenden Werte und Rechenpfeile ein. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "updatedAt": "2026-10-26T22:22:27.351Z",
+      "authoringRecipe": {
+        "fingerprint": "2843bbc620100ae5e71d68581dbf10d8dadeed59f82f8624163a9eee60f66dd1",
+        "version": "2d90fb7ba684d0d0",
+        "id": "dreisatz-direct"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-8dbbcbd3087533ade5a3\",\"revision\":0,\"format\":\"table\",\"title\":\"In einer Bibliothek entsprechen 36 Sachbücher 24 % des gesamten Bücherbestands. Wie viele \",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"In einer Bibliothek entsprechen 36 Sachbücher 24 % des gesamten Bücherbestands. Wie viele Bücher umfasst der gesamte Bestand? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Trage die fehlenden Werte und Rechenpfeile ein. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozentsatz (%)\",\"Anzahl (Bücher)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"24\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"36\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"1,5\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":false,\"text\":\"100\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"150\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c1\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c2\",\"accepted\":[\"24\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c5\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c6\",\"accepted\":[\"24\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "position": 13,
+      "id": "q013"
+    },
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "text": "Bei einer Sammelaktion werden 84 kg Altkleider gesammelt. Das entspricht einem Anteil der insgesamt gesammelten 600 kg. Welchem Prozentsatz entsprechen die Altkleider? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 % und die vier Rechenpfeile. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "updatedAt": "2026-10-26T22:22:27.467Z",
+      "position": 14,
+      "authoringRecipe": {
+        "fingerprint": "0373c5afc0c3464679048a0eb2af7fde81501eb23cdfe769464186108e7e6d74",
+        "id": "dreisatz-direct",
+        "version": "2d90fb7ba684d0d0"
+      },
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-27c144bc27479730cfed\",\"revision\":0,\"format\":\"table\",\"title\":\"Bei einer Sammelaktion werden 84 kg Altkleider gesammelt. Das entspricht einem Anteil der \",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Bei einer Sammelaktion werden 84 kg Altkleider gesammelt. Das entspricht einem Anteil der insgesamt gesammelten 600 kg. Welchem Prozentsatz entsprechen die Altkleider? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 % und die vier Rechenpfeile. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Gesamtmenge (kg)\",\"Anteil (kg)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"600\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"6\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c4\",\"input\":false,\"text\":\"84\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c3\",\"accepted\":[\"14\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c5\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"14\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"14\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "points": 3,
+      "id": "q014"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "Ein Museum verkauft 640 Eintrittskarten. Davon gelten 12,5 % als ermäßigte Karten. Bestimme, wie viele ermäßigte Karten verkauft werden. Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "authoringRecipe": {
+        "fingerprint": "a86ff4cfa02410db0bf1ba640e8385ba595fddce9fddd3b699b609d79a940f26",
+        "id": "dreisatz-direct",
+        "version": "2d90fb7ba684d0d0"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-ea6ca7537d505a683b33\",\"revision\":0,\"format\":\"table\",\"title\":\"Ein Museum verkauft 640 Eintrittskarten. Davon gelten 12,5 % als ermäßigte Karten. Bestimm\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ein Museum verkauft 640 Eintrittskarten. Davon gelten 12,5 % als ermäßigte Karten. Bestimme, wie viele ermäßigte Karten verkauft werden. Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Eintrittskarten (Anzahl)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"640\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":false,\"text\":\"100\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"6,4\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"12,5\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"80\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c1\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c2\",\"accepted\":[\"12.5\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c5\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c6\",\"accepted\":[\"12.5\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "position": 15,
+      "type": "visual",
+      "points": 3,
+      "updatedAt": "2026-10-26T22:22:27.568Z",
+      "id": "q015"
+    },
+    {
+      "text": "Bei einer Ernte werden insgesamt 800 kg Kartoffeln eingelagert. Davon sind 136 kg für den Verkauf vorgesehen. Welchem Prozentsatz der Gesamtmenge entsprechen die Kartoffeln für den Verkauf? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "points": 3,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "updatedAt": "2026-10-26T22:22:27.665Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-83771ec78564a3a88e86\",\"revision\":0,\"format\":\"table\",\"title\":\"Bei einer Ernte werden insgesamt 800 kg Kartoffeln eingelagert. Davon sind 136 kg für den \",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Bei einer Ernte werden insgesamt 800 kg Kartoffeln eingelagert. Davon sind 136 kg für den Verkauf vorgesehen. Welchem Prozentsatz der Gesamtmenge entsprechen die Kartoffeln für den Verkauf? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozentsatz (%)\",\"Menge (kg)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"800\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"8\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c4\",\"input\":false,\"text\":\"136\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c3\",\"accepted\":[\"17\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c1\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"17\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"17\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "authoringRecipe": {
+        "version": "2d90fb7ba684d0d0",
+        "id": "dreisatz-direct",
+        "fingerprint": "8788e1687d470e806d1535dc4e4d1c91f74d4282dd307f6fc37a71d196af5cb6"
+      },
+      "position": 16,
+      "id": "q016"
+    },
+    {
+      "position": 17,
+      "updatedAt": "2026-10-26T22:22:27.767Z",
+      "text": "In einem Betrieb arbeiten 42 Personen in der Produktion. Das sind 70 % aller Beschäftigten. Wie viele Beschäftigte hat der Betrieb insgesamt? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-47d1d76ebe04754a642d\",\"revision\":0,\"format\":\"table\",\"title\":\"In einem Betrieb arbeiten 42 Personen in der Produktion. Das sind 70 % aller Beschäftigten\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"In einem Betrieb arbeiten 42 Personen in der Produktion. Das sind 70 % aller Beschäftigten. Wie viele Beschäftigte hat der Betrieb insgesamt? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Beschäftigte insgesamt\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"70\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"42\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"0,6\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":false,\"text\":\"100\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"60\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c1\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c2\",\"accepted\":[\"70\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c5\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c6\",\"accepted\":[\"70\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "type": "visual",
+      "points": 3,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "authoringRecipe": {
+        "fingerprint": "2920de69afd468c13b48630390060b7ee79d85cc10315be648b20bb9e5fb54e6",
+        "version": "2d90fb7ba684d0d0",
+        "id": "dreisatz-direct"
+      },
+      "id": "q017"
+    },
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "text": "In einem Sportverein sind 560 Mitglieder. Davon sind 17,5 % Jugendliche. Wie viele Jugendliche sind das? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "authoringRecipe": {
+        "fingerprint": "d624dd2869c3e51cdda289cebc7f9a0e0b084311ebc497472fa8fa337b7ee329",
+        "id": "dreisatz-direct",
+        "version": "2d90fb7ba684d0d0"
+      },
+      "position": 18,
+      "points": 3,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-d9396f0122671df72510\",\"revision\":0,\"format\":\"table\",\"title\":\"In einem Sportverein sind 560 Mitglieder. Davon sind 17,5 % Jugendliche. Wie viele Jugendl\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"In einem Sportverein sind 560 Mitglieder. Davon sind 17,5 % Jugendliche. Wie viele Jugendliche sind das? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Mitgliederzahl\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"560\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":false,\"text\":\"100\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"5,6\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"17,5\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"98\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c5\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c1\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c2\",\"accepted\":[\"17.5\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"17.5\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "updatedAt": "2026-10-26T22:22:27.868Z",
+      "id": "q018"
+    },
+    {
+      "updatedAt": "2026-10-26T22:22:27.975Z",
+      "type": "visual",
+      "position": 19,
+      "text": "Für 5 Hefte werden 7,50 € bezahlt. Wie viel kosten 8 Hefte, wenn der Stückpreis gleich bleibt? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-30dede3dfab4b47c9b87\",\"revision\":0,\"format\":\"table\",\"title\":\"Für 5 Hefte werden 7,50 € bezahlt. Wie viel kosten 8 Hefte, wenn der Stückpreis gleich ble\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Für 5 Hefte werden 7,50 € bezahlt. Wie viel kosten 8 Hefte, wenn der Stückpreis gleich bleibt? Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Anzahl der Hefte\",\"Preis (€)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"5\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"7,5\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":false,\"text\":\"5\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"1,5\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"8\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"12\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c2\",\"accepted\":[\"5\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c1\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c2\",\"accepted\":[\"8\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c5\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c6\",\"accepted\":[\"8\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "authoringRecipe": {
+        "fingerprint": "aac6404ae1af6424613c5016d4ec8b2b8ea415ddb3f4f146a227a8fe3bf18097",
+        "id": "dreisatz-direct",
+        "version": "2d90fb7ba684d0d0"
+      },
+      "points": 3,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q019"
+    },
+    {
+      "points": 3,
+      "authoringRecipe": {
+        "fingerprint": "2c7d33bec87712246aaba124076cd528a90aeb93ba308089121c2cef6e3b59ba",
+        "version": "2d90fb7ba684d0d0",
+        "id": "dreisatz-direct"
+      },
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "type": "visual",
+      "updatedAt": "2026-10-26T22:22:28.073Z",
+      "position": 20,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"auto-bee17d36f11c2eff3698\",\"revision\":0,\"format\":\"table\",\"title\":\"In einer Lieferung sind 520 kg Material. Davon entfallen 22,5 % auf Kunststoff. Wie viele \",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"In einer Lieferung sind 520 kg Material. Davon entfallen 22,5 % auf Kunststoff. Wie viele Kilogramm Kunststoff sind das? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne entlang der Pfeile.\",\"maxPoints\":3,\"objective\":\"Rechenweg einer proportionalen oder umgekehrt proportionalen Zuordnung anwenden.\",\"rationale\":\"Werte und Rechenoperationen getrennt beurteilen.\",\"sourceNote\":\"\",\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozent (%)\",\"Masse (kg)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"520\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":false,\"text\":\"5,2\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":false,\"text\":\"22,5\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":true,\"text\":\"\",\"control\":\"operator\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"22,5\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r5c4\",\"accepted\":[\"117\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c1\",\"accepted\":[\"÷\",\":\",\"/\",\"geteilt durch\"],\"answerMode\":\"text\"},{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c5\",\"accepted\":[\"×\",\"·\",\"*\",\"mal\",\"x\"],\"answerMode\":\"text\"},{\"id\":\"r4c6\",\"accepted\":[\"22.5\"],\"answerMode\":\"numeric\"}]},\"provenance\":{\"kind\":\"template\",\"offline\":true}}",
+      "text": "In einer Lieferung sind 520 kg Material. Davon entfallen 22,5 % auf Kunststoff. Wie viele Kilogramm Kunststoff sind das? Ergänze den Dreisatz-Rechenweg mit dem Zwischenwert 1 %. Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "id": "q020"
+    }
+  ]
+}
