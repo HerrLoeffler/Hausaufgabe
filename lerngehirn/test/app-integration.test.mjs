@@ -90,8 +90,8 @@ test('anchored help keeps exactly one source grid, draft, collapsed original pro
  const ui=await mount(base,{turnResult:helped});await ui.click('resume');ui.input('answer','Mein eigener Ansatz');ui.input('question','Wo fange ich an?');await ui.submit('question-form');
  assert.equal([...ui.app.innerHTML.matchAll(/data-grid-cell=/g)].length,12);assert.equal([...ui.app.innerHTML.matchAll(/data-area-cell=/g)].length,3);
  assert.match(ui.app.innerHTML,/<details class="original-task"><summary>Deine ursprüngliche Aufgabe/);assert.doesNotMatch(ui.app.innerHTML,/<aside class="coach"/);
- assert.match(ui.app.innerHTML,/Mein eigener Ansatz<\/textarea>/);assert.match(ui.app.innerHTML,/Deine Antwort auf die Frage oben/);assert.match(ui.app.innerHTML,/class="learner-question"[\s\S]*Wo fange ich an\?[\s\S]*class="help-reply"[\s\S]*Schau zuerst/);
- const before=ui.calls.length;await ui.click('count-along');assert.equal(ui.calls.length,before);assert.match(ui.app.innerHTML,/aria-pressed="true"/);assert.match(ui.app.innerHTML,/Mein eigener Ansatz<\/textarea>/);assert.equal([...ui.app.innerHTML.matchAll(/data-area-cell=/g)].length,3);
+ assert.match(ui.app.innerHTML,/Dein bisheriger Ansatz<\/strong><p>Mein eigener Ansatz<\/p>/);assert.match(ui.app.innerHTML,/<textarea id="answer-input"[^>]*><\/textarea>/);assert.match(ui.app.innerHTML,/Deine Antwort auf die Frage oben/);assert.match(ui.app.innerHTML,/class="learner-question"[\s\S]*Wo fange ich an\?[\s\S]*class="help-reply"[\s\S]*Schau zuerst/);
+ const before=ui.calls.length;await ui.click('count-along');assert.equal(ui.calls.length,before);assert.match(ui.app.innerHTML,/aria-pressed="true"/);assert.match(ui.app.innerHTML,/Dein bisheriger Ansatz<\/strong><p>Mein eigener Ansatz<\/p>/);assert.match(ui.app.innerHTML,/<textarea id="answer-input"[^>]*><\/textarea>/);assert.equal([...ui.app.innerHTML.matchAll(/data-area-cell=/g)].length,3);
  await ui.click('count-along');assert.match(ui.app.innerHTML,/data-action="count-along"[^>]*aria-pressed="false"/);
 });
 
@@ -118,3 +118,18 @@ test('plain text help displays original source words and numbers inline with sem
 });
 
 test('counting labels on an independent task first records real server help rather than silently inflating mastery',async()=>{const task={id:'count-source',prompt:'Zähle.',input:'number',diagram:{kind:'area-grid',title:'Reihe',unit:'',columns:3,rows:1,cells:[{x:0,y:0},{x:1,y:0},{x:2,y:0}]}},base={id:'count-evidence',revision:1,phase:'practice',task};const ui=await mount(base,{turnResult:{...base,revision:2,phase:'help',originalTask:task,assistance:{anchorTaskId:task.id,stage:1,focusIds:[],regions:[],numberLabels:false}}});await ui.click('resume');await ui.click('count-along');assert.equal(ui.calls.at(-1).method,'learningBrainTurn');assert.equal(ui.calls.at(-1).data.action,'help');assert.match(ui.app.innerHTML,/Mit Unterstützung/);assert.match(ui.app.innerHTML,/data-action="count-along"[^>]*aria-pressed="true"/);});
+
+test('same prompt/input preserves active draft, changed input does not place it into a microanswer',async()=>{
+ const task={id:'draft-source',prompt:'Wie viele?',input:'text'},base={id:'draft',revision:1,phase:'practice',task};let changeInput=false;
+ const ui=await mount(base,{turnResult:()=>({...base,revision:2,phase:'help',originalTask:task,task:{...task,input:changeInput?'number':'text'},assistance:{anchorTaskId:task.id}})});await ui.click('resume');ui.input('answer','Mein Ansatz');await ui.click('help');assert.match(ui.app.innerHTML,/Mein Ansatz<\/textarea>/);changeInput=true;await ui.click('help');assert.match(ui.app.innerHTML,/<textarea id="answer-input"[^>]*><\/textarea>/);
+});
+
+test('original unsubmitted draft restores only when returning to that original completion question',async()=>{
+ const task={id:'restore-source',prompt:'Berechne 24 + 18.',input:'text'},base={id:'restore',revision:1,phase:'practice',task};let completion=false;
+ const ui=await mount(base,{turnResult:()=>({...base,revision:completion?3:2,phase:completion?'completion':'help',originalTask:task,task:completion?task:{...task,prompt:'Welche Zehner addierst du?'},assistance:{anchorTaskId:task.id}})});await ui.click('resume');ui.input('answer','40 und 2');await ui.click('help');assert.match(ui.app.innerHTML,/Dein bisheriger Ansatz/);assert.match(ui.app.innerHTML,/<textarea id="answer-input"[^>]*><\/textarea>/);ui.input('answer','20 und 10');completion=true;await ui.submit('answer-form');assert.match(ui.app.innerHTML,/>40 und 2<\/textarea>/);
+});
+
+test('original source draft never crosses account identity or a changed source',async()=>{
+ const task={id:'scoped-source',prompt:'Berechne 24 + 18.',input:'text'},base={id:'scoped',revision:1,phase:'practice',task};let changed=false;
+ const ui=await mount(base,{turnResult:()=>({...base,revision:changed?3:2,phase:'help',originalTask:changed?{...task,id:'new-source',contextText:'Neue Zahlen'}:task,task:{...task,id:changed?'new-source':task.id,prompt:'Welche Zehner?'},assistance:{anchorTaskId:changed?'new-source':task.id}})});await ui.click('resume');ui.input('answer','Privater Ansatz');await ui.click('help');assert.match(ui.app.innerHTML,/Privater Ansatz/);changed=true;await ui.click('help');assert.doesNotMatch(ui.app.innerHTML,/Privater Ansatz/);await ui.auth({uid:'other-draft-owner'});await ui.click('resume');assert.doesNotMatch(ui.app.innerHTML,/Privater Ansatz/);
+});
