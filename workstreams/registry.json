@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-22",
+  "updatedAt": "2026-10-26",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -715,6 +715,18 @@
       "relatedBranches": [
         "feature/live-staging-domain-20261022",
         "feature/native-gradecrew-domain-20261022"
+      ]
+    },
+    {
+      "id": "remy-interactive-authoring-20261026",
+      "title": "GC-EXTENDED-QUESTION-TYPES-01: gespeicherte Baupläne in normalem Remy",
+      "primaryBranch": "feature/remy-interactive-tests-20261026",
+      "integrationTarget": "feature/gradecrew-app-integration",
+      "state": "integration_ready",
+      "handoff": "workstreams/remy-interactive-tests-20261026.md",
+      "relatedBranches": [
+        "test/visual-24-pilot-20261025",
+        "feature/visual-prototype-ai-02-20261021"
       ]
     }
   ]

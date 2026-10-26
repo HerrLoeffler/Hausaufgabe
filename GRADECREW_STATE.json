@@ -2193,6 +2193,54 @@
           "production": "unchanged"
         }
       }
+    },
+    {
+      "id": "remy-interactive-authoring-20261026",
+      "task_id": "GC-EXTENDED-QUESTION-TYPES-01",
+      "branch": "feature/remy-interactive-tests-20261026",
+      "stage": "staging_deployed",
+      "scope": "Normal Remy UI in isolated remy26 preview only; not canonical staging or Production",
+      "pull_request": 310,
+      "observed_head": "6777b34cb1af06a2ebdc72943395252b6b343c8c",
+      "handoff": "workstreams/remy-interactive-tests-20261026.md",
+      "preview_url": "https://gradecrew-staging-2026--remy26-mhohnhf1.web.app/workspace.html",
+      "functions_codebases": [
+        "remy26-ai",
+        "remy26-assessment"
+      ],
+      "backend_source_local": "3a170cdbdfb40e734b338006eb351c58b2c2de35",
+      "hosting_source_local": "cfe468f8b02440db3e24b966f563d580d5b80eb2",
+      "verification": {
+        "root_ui_tests": 464,
+        "functions_tests": 332,
+        "assessment_tests": 101,
+        "independent_review": "UI and backend, five reproduced findings fixed and re-reviewed",
+        "real_ai_jobs": 1,
+        "real_ai_job_id": "4107be8859d80691d522c2010d262b42c6333279",
+        "synthetic_quiz": "BZFKMUEB",
+        "generated_formats": [
+          "timeline",
+          "coordinate",
+          "hotspot",
+          "labeling",
+          "angle",
+          "sequence"
+        ],
+        "live_server_cases": 6,
+        "browser": "normal generation, teacher edit/save, secure resume and full submission12/12",
+        "ci": {
+          "head": "6777b34cb1af06a2ebdc72943395252b6b343c8c",
+          "test": 40354095390,
+          "package": 40354095198,
+          "bugops_server_rules": 40354095232,
+          "conclusion": "success"
+        }
+      },
+      "rules_changed": false,
+      "production": "unchanged",
+      "teacher_acceptance": "pending",
+      "physical_device_acceptance": "pending",
+      "next_action": "Review final PR310 CI and normal Remy preview; integrate with current release train only after fresh overlap check. Production needs explicit approval. Existing localhost8784 eight-format experiment and visual255 remain separate and unchanged."
     }
   ],
   "deployments": [
