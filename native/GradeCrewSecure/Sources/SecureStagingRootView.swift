@@ -54,10 +54,11 @@ struct SecureStagingScreen: View {
                     } else { statusContent }
                 }
             }
+            SecureVersionFooter()
         }
         .background(background.ignoresSafeArea()).foregroundStyle(SecureTheme.text).tint(blue).preferredColorScheme(.light)
         #if GRADECREW_STAGING
-        .sheet(isPresented:$showPupilAccess) { SecurePupilAccessView(renewing:model.canRenewPersonal,onSelect:selectPersonal) }
+        .sheet(isPresented:$showPupilAccess) { SecurePupilAccessView(renewing:model.canRenewPersonal,onSelect:selectPersonal).safeAreaInset(edge:.bottom) { SecureVersionFooter() } }
         .onOpenURL { url in if url.scheme=="gradecrew-secure",url.host=="student",model.phase == .code { showPupilAccess=true } }
         #endif
         .alert("Hinweis der Lehrkraft",isPresented:Binding(get:{model.resumeNotice != nil},set:{_ in})) {
@@ -118,5 +119,16 @@ struct SecureStagingScreen: View {
         #endif
         }
         }
+    }
+}
+
+struct SecureVersionFooter:View {
+    var body:some View {
+        Text(SecureReleaseEnvironment.versionLabel)
+            .font(.caption2.monospacedDigit()).foregroundStyle(SecureTheme.secondaryText)
+            .fixedSize(horizontal:false,vertical:true)
+            .padding(.horizontal,12).padding(.vertical,4)
+            .frame(maxWidth:.infinity).background(SecureTheme.canvas)
+            .accessibilityIdentifier("secure.app.version")
     }
 }

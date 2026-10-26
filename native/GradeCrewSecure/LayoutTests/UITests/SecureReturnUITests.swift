@@ -24,6 +24,11 @@ final class SecureReturnUITests:XCTestCase {
         XCTAssertTrue(guest.waitForExistence(timeout:10))
         XCTAssertTrue(personal.waitForExistence(timeout:5),"Personal code must be available without opening a sheet.")
         XCTAssertTrue(app.staticTexts["Du hast einen Account?"].exists)
+        let version=app.staticTexts["secure.app.version"]
+        XCTAssertTrue(version.exists)
+        XCTAssertTrue(version.label.hasPrefix("Version "))
+        XCTAssertTrue(version.label.contains("(Build "))
+        XCTAssertLessThanOrEqual(version.frame.maxY,app.frame.maxY,"Version must stay visible at the bottom.")
         print("DIRECT_ENTRY_FRAMES",app.frame,guest.frame,personal.frame)
         XCTAssertGreaterThanOrEqual(guest.frame.minX,app.frame.minX)
         XCTAssertLessThanOrEqual(personal.frame.maxX,app.frame.maxX-12,"Personal code must stay inside the screen.")
@@ -61,6 +66,7 @@ final class SecureReturnUITests:XCTestCase {
         let back=app.buttons["Zurück zum Start"]
         XCTAssertTrue(back.waitForExistence(timeout:15))
         XCTAssertTrue(back.isEnabled)
+        XCTAssertTrue(app.staticTexts["secure.app.version"].exists,"Version must also be visible after a test.")
         if UIDevice.current.userInterfaceIdiom == .phone, XCUIDevice.shared.orientation.isLandscape {
             XCTAssertTrue(back.isHittable,"The confirmed-return action must fit on a landscape phone without a scroll gesture.")
         }
