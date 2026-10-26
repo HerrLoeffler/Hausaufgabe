@@ -17,3 +17,9 @@ class ReleaseTargetTests(unittest.TestCase):
   self.assertEqual(module.select('push','','refs/heads/feature/classroom-secure-access-20261022')['SECURE_PROJECT'],'gradecrew-staging-2026')
   for ref in ('refs/heads/main','refs/heads/feature/classroom-secure-access-20261022-typo',''):
    with self.assertRaises(ValueError):module.select('push','staging2026',ref)
+
+ def test_isolated_variant_branch_can_only_build_new_test_app(self):
+  module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+  values=module.select('push','','refs/heads/feature/secure-live-test-20261026')
+  self.assertEqual(values['SECURE_PROJECT'],'gradecrew-staging-2026')
+  self.assertEqual(values['SECURE_CONFIGURATION'],'SecureStaging')
