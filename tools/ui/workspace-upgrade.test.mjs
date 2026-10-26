@@ -47,8 +47,8 @@ test('test cards keep the same primary actions and four stat slots across status
    assert.equal(card.querySelectorAll('.quizStats > div').length,4);
   }
   assert.equal(draft.querySelector('.studentShare'),null);
-  assert.ok(published.querySelector('.secondaryQuizActions .studentShare'));
-  assert.equal(published.querySelector('.primaryQuizActions .studentShare'),null);
+  assert.ok(published.querySelector('.quizCardQuickLinks .studentShare'));
+  assert.equal(published.querySelector('.secondaryQuizActions .studentShare'),null);
   published.querySelector('.studentShare').click();
   assert.deepEqual(x.calls.at(-1),['showPublish','TWO']);
   x.state.quizzes[0].timeLimitMinutes=15;x.state.quizzes[0].startMode='teacher';
@@ -58,11 +58,17 @@ test('test cards keep the same primary actions and four stat slots across status
   assert.deepEqual([...timed.querySelectorAll('.quizStats strong')].map(node=>node.textContent),['6','12','15','Lehrkraft']);
   assert.deepEqual([...ended.querySelectorAll('.quizStats strong')].map(node=>node.textContent),['4','8','–','Schüler']);
   assert.equal(ended.querySelector('.studentShare'),null);
+  assert.equal(ended.querySelector('.quizMore .reopen').textContent,'Veröffentlichen');
  }finally{x.close();}
 });
 test('the card trash action is icon-only, named for assistive tech and keeps deletion confirmation handler',()=>{
  const x=setup();try {
-  const button=x.document.querySelector('#quizList .quizDeleteButton');
+  const card=x.document.querySelector('#quizList .quizCard');
+  const button=card.querySelector('.quizCardHeading .quizDeleteButton');
+  assert.ok(button);
+  assert.equal(card.querySelector('.quizMore .quizDeleteButton'),null);
+  assert.equal(card.querySelector('.quizMore').open,false);
+  assert.equal(card.querySelectorAll('.quizDeleteButton').length,1);
   assert.equal(button.textContent.trim(),'');
   assert.equal(button.getAttribute('aria-label'),'Test in den Papierkorb');
   assert.equal(button.getAttribute('title'),'Test in den Papierkorb');
@@ -75,15 +81,61 @@ test('the card trash action is icon-only, named for assistive tech and keeps del
   assert.equal(x.document.querySelector('#quizList .quizCard .quizStats div:last-child strong').textContent,'Student');
  }finally{delete globalThis.document;delete globalThis.NodeFilter;setActiveUiLocale('de-DE');x.close();}
 });
+test('published cards use the publication switch without a duplicate end action',()=>{
+ const x=setup();try {
+  const published=[...x.document.querySelectorAll('#quizList .quizCard')].find(card=>card.dataset.quizId==='TWO');
+  assert.equal(published.querySelector('.quizMore .end'),null);
+  const toggle=published.querySelector('.dashboardPublishToggle');
+  assert.equal(toggle.checked,true);
+  toggle.checked=false;toggle.dispatchEvent(new x.dom.window.Event('change'));
+  assert.equal(x.calls.at(-1)[0],'publish');
+ }finally{x.close();}
+});
+test('only a published active test exposes the direct student link; teacher live opens the existing read-only view',()=>{
+ const x=setup();try {
+  const [draft,published]=x.state.quizzes;
+  published.startMode='teacher';published.sessionState='waiting';
+  x.state.quizzes.push({id:'RUN',title:'Gemeinsamer Test',subject:'Deutsch',grade:'7',questionCount:2,published:true,startMode:'teacher',sessionState:'running'});
+  x.state.quizzes.push({id:'END',title:'Beendet',subject:'Deutsch',grade:'7',questionCount:2,published:true,ended:true,startMode:'teacher'});
+  x.state.quizzes.push({id:'HOLD',title:'Gesperrt',subject:'Deutsch',grade:'7',questionCount:2,published:true,rightsHold:true,startMode:'teacher'});
+  vm.runInContext('renderQuizList()',x.context);x.api.refresh();
+  const cards=Object.fromEntries([...x.document.querySelectorAll('#quizList .quizCard')].map(card=>[card.dataset.quizId,card]));
+  for(const id of ['ONE','END','HOLD']) assert.equal(cards[id].querySelector('.studentShare'),null,id);
+  for(const id of ['TWO','RUN']) {
+   assert.ok(cards[id].querySelector('.quizCardQuickLinks .studentShare'),id);
+   assert.ok(cards[id].querySelector('.quizCardQuickLinks .teacherLiveOpen'),id);
+   cards[id].querySelector('.teacherLiveOpen').click();
+   assert.deepEqual(x.calls.at(-1),['showPublish',id]);
+  }
+  assert.equal(cards.ONE.querySelector('.teacherLiveOpen'),null);
+  assert.equal(cards.END.querySelector('.teacherLiveOpen'),null);
+  assert.equal(cards.HOLD.querySelector('.teacherLiveOpen'),null);
+  assert.equal(cards.HOLD.querySelector('.quizMore'),null);
+  assert.ok(cards.HOLD.querySelector('.quizCardHeading .quizDeleteButton'));
+  assert.equal(cards.TWO.querySelector('.teacherLiveOpen').textContent,'Durchführung öffnen');
+ }finally{x.close();}
+});
+test('opening more actions belongs to one card and leaves its neighbor closed',()=>{
+ const x=setup();try {
+  const [first,second]=x.document.querySelectorAll('#quizList .quizCard');
+  first.querySelector('.quizMore summary').click();
+  assert.equal(first.querySelector('.quizMore').open,true);
+  assert.equal(second.querySelector('.quizMore').open,false);
+  const action=first.querySelector('.quizMore .duplicate');action.focus();
+  action.dispatchEvent(new x.dom.window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+  assert.equal(first.querySelector('.quizMore').open,false);
+  assert.equal(x.document.activeElement,first.querySelector('.quizMore summary'));
+ }finally{x.close();}
+});
 test('card spacing remains a fixed four-column grid on desktop and two-column grid on phones',()=>{
  assert.match(workspaceCss,/\.quizStats\s*\{[^}]*grid-template-columns:\s*repeat\(4,minmax\(0,1fr\)\)/s);
  assert.match(workspaceCss,/@media \(max-width: 650px\)[\s\S]*\.quizStats\s*\{[^}]*grid-template-columns:\s*repeat\(2,minmax\(0,1fr\)\)/);
- assert.match(workspaceCss,/\.quizStats strong\s*\{[^}]*min-height:\s*2\.4em/s);
- assert.match(workspaceCss,/\.quizStats span\s*\{[^}]*min-height:\s*2\.4em/s);
+ assert.match(workspaceCss,/\.quizStats strong\s*\{[^}]*white-space:\s*nowrap/s);
+ assert.match(workspaceCss,/\.quizStats > div\s*\{[^}]*text-align:\s*center/s);
  assert.match(workspaceCss,/@media \(max-width: 650px\)[\s\S]*\.quizStats :is\(strong,span\)\s*\{[^}]*min-height:\s*0/s);
- assert.match(workspaceCss,/\.quizGrid\s*\{[^}]*align-items:\s*stretch/s);
- assert.match(workspaceCss,/\.primaryQuizActions\s*\{[^}]*margin-top:\s*auto/s);
- assert.match(workspaceCss,/\.quizDeleteButton\s*\{[^}]*width:\s*44px/s);
+ assert.match(workspaceCss,/\.quizGrid\s*\{[^}]*align-items:\s*start/s);
+ assert.match(workspaceCss,/\.primaryQuizActions\s*\{[^}]*margin-top:\s*0/s);
+ assert.match(workspaceCss,/\.quizCardHeading \.quizDeleteButton\s*\{[^}]*width:\s*44px/s);
 });
 test('a 70–95-character test title stays complete and keeps the same action structure',()=>{
  const x=setup();try {
@@ -100,6 +152,7 @@ test('a 70–95-character test title stays complete and keeps the same action st
 test('all visible card controls and metadata translate to English while authored titles stay unchanged',()=>{
  const x=setup();try {
   x.state.quizzes[0].timeLimitMinutes=15;x.state.quizzes[0].startMode='teacher';
+  x.state.quizzes[1].startMode='teacher';x.state.quizzes[1].sessionState='waiting';
   vm.runInContext('renderQuizList()',x.context);x.api.refresh();
   registerCatalog('en-GB',enGBMessages);
   registerSourcePatterns('en-GB',enGBSourcePatterns);
@@ -111,13 +164,14 @@ test('all visible card controls and metadata translate to English while authored
   assert.deepEqual([...draft.querySelectorAll('.primaryQuizActions button')].map(button=>button.textContent),['Edit','Results']);
   assert.deepEqual([...draft.querySelectorAll('.quizStats > div')].map(row=>row.querySelector('span').textContent),['Questions','Points','Minutes','Start']);
   assert.equal(draft.querySelector('.quizStats > div:last-child strong').textContent,'Teacher');
-  assert.equal(published.querySelector('.quizStats > div:nth-child(3) span').textContent,'No time limit');
-  assert.equal(published.querySelector('.studentShare').textContent,'Student link');
+  assert.equal(published.querySelector('.quizStats > div:nth-child(3) span').textContent,'No limit');
+  assert.equal(published.querySelector('.quizCardQuickLinks .studentShare').textContent,'Student link');
+  assert.equal(published.querySelector('.quizCardQuickLinks .teacherLiveOpen').textContent,'Open live session');
   assert.equal(published.querySelector('.quizMore summary').textContent,'More actions');
   assert.equal(published.querySelector('.quizDeleteButton').getAttribute('aria-label'),'Move test to trash');
   assert.equal(published.querySelector('.quizDeleteButton').getAttribute('title'),'Move test to trash');
   assert.equal(published.querySelector('.dashboardPublishToggle').getAttribute('aria-label'),'Toggle publication');
-  assert.equal(published.querySelector('.status').textContent,'Published');
+  assert.equal(published.querySelector('.status').textContent,'Waiting to start');
  }finally{delete globalThis.document;delete globalThis.NodeFilter;setActiveUiLocale('de-DE');x.close();}
 });
 test('Remy action and recycling bin stay grouped in the compact desktop and mobile header',()=>{

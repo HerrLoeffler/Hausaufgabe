@@ -26,6 +26,19 @@ const fixtures = [
   {id:'DEMO03',title:'Ein besonders langer Testtitel: '+ 'Wörter, Satzglieder und abwechslungsreiche Aufgaben für den Unterricht '.repeat(5),subject:'Deutsch',grade:'7',questionCount:10,totalPoints:30,ended:true,updatedAt:fixedNow-2000},
   {id:'DEMO04',title:'Ein Teilentwurf zum Prüfen',subject:'Englisch',grade:'6',questionCount:3,totalPoints:6,generationStatus:'failed',updatedAt:fixedNow-3000},
 ];
+const manyFixtures = Array.from({length:52},(_,index)=>{
+  const sample=fixtures[index%fixtures.length];
+  const status=index%6;
+  return {...sample,id:`DEMO${String(index+1).padStart(3,'0')}`,
+    title:index===17?'Wortarten, Satzglieder und Lesekompetenz – ein ausführlicher gemischter Test für die Klasse 8':sample.title,
+    published:status===0||status===2||status===3||status===4,
+    ended:status===4,
+    rightsHold:status===5,
+    generationStatus:null,
+    startMode:status===0||status===3?'teacher':'student',
+    sessionState:status===0?'waiting':status===3?'running':'open',
+    updatedAt:fixedNow-index*1000};
+});
 const jobs = [
   {id:'JOB1',status:'running',topic:'Rechnen mit Brüchen',percent:42,completedCount:5,requestedCount:12,progressMessage:'Aufgaben werden erstellt. Du kannst weiterarbeiten.',createdAt:fixedNow},
   {id:'JOB2',status:'failed',quizId:'DEMO04',topic:'Lokales Fehlerbeispiel: '+ 'Ein langer ursprünglicher Auftrag bleibt vollständig lesbar. '.repeat(6),progressMessage:'Dies ist ausschließlich eine lokale Fehlerdarstellung. '+ 'Zusätzlicher Diagnosekontext zum Prüfen der aufklappbaren Volltextanzeige. '.repeat(4),errorReference:'DEMO-LOCAL-ONLY',createdAt:fixedNow},
@@ -67,7 +80,7 @@ tutorial.onclick=()=>log('Nur Testvorschau: Crew-Tutorial starten');document.que
 const upgrade=installWorkspaceUpgrade(document);
 const scenario = () => {
  const selected=document.getElementById('previewScenario').value;
- state.quizzes=selected==='empty'?[]:fixtures;state.aiJobs=selected==='mixed'?jobs:[];
+ state.quizzes=selected==='empty'?[]:selected==='many'?manyFixtures:fixtures;state.aiJobs=selected==='mixed'?jobs:[];
  document.getElementById('quizFilter').value='all';document.getElementById('quizSearch').value=selected==='no-results'?'XYZ keine Treffer':'';
  render.renderQuizList();render.renderAiJobs();
  if(selected==='loading') {document.getElementById('quizList').innerHTML='<div class="card">Tests werden geladen …</div>';document.getElementById('emptyQuizState').classList.add('hidden');}
