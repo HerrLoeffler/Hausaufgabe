@@ -673,3 +673,8 @@ GC-DOMAIN-01 · 22.10.2026 · **Web-Domainwechsel umgesetzt und technisch geprü
 
 
 GC-DOMAIN-01 · Webabschluss bestätigt: beide ZertifikateCERT_ACTIVE, alteSitzungnachneuemLogouterhalten. NativePR289integriert24c0f856nachvollständiggrünemCI39848507858; Secure/TeacherStore-URLsgespeichert. LaufendeTestFlightkettenSecure39851773269undTeacher39851773260beimAppowner; nochkeinUploadbehauptet, keineDuplikatstarts. [AktuelleBetriebsanleitung](docs/domain-gradecrew-de-20261022.md). Genauausstehend: dieseRelease-/Apple-Endbelegeabholen.
+
+
+### 26.10.2026 · GC-WEB-REPAIR-20261007 / GC-DESIGN-05 · öffentlicher Schülerzugang
+
+PR312 integriert7cf4b3c, unabhängigerReviewPASS, KandidatenCI40354470360 und MergeCI40354956086 SUCCESS. Öffentlicher Schülerzugang oben/unten auf bestehender sicherer Browserseite; kein Schülerkonto/kein Logout. 583Webtests, Altlink-Draftkeyregression behoben; Vorschau b88d47b6 mit192/192Hashes bestätigt. [Übergabe](workstreams/homepage-student-join-20261026.md). **Noch nicht Live:** Vorabgleich fand bereits live Remyquelle5f61f723 (noch nicht GitHubabrufbar); veraltetenDeploy bewusst verhindert. AktiverDesignowner01a130fa übernimmt vorhandeneBasis für Martins ergänzten gemeinsamenCode/Kürzel-Einstieg/unterenButtonentfernen und separatbeauftragtesAuthdesign. NächsterSchritt dort: RemyLivequellstand sichern, gezielt kombinieren, exakteCI/Review/Hostingbelege; keinzweiterLive-Deployer. Emmi-WIP bleibtgetrennt.
