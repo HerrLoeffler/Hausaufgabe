@@ -6,7 +6,7 @@ const { variantQuestionErrors } = require("./test-variant");
 function questionIssues(test, options) {
   const questions = test.questions || [];
   return questions.flatMap((question, index) => {
-    const reasons = validateQuestion(question, options);
+    const reasons = [...validateQuestion(question, options), ...require("./demand-plan").questionDemandErrors(question,index,options.progressionPlan)];
     const prior = questions.findIndex((other, i) => i < index && (options.requireFreshVariant ? variantRepeats : sameQuestion)(other, question));
     if (prior >= 0) reasons.push(`Inhaltlich wie Aufgabe ${prior + 1}.`);
     if (options.referenceQuestions?.some(other => (options.requireFreshVariant ? variantRepeats : sameQuestion)(other, question))) reasons.push("Wiederholt den Ausgangstest.");
@@ -138,7 +138,7 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
     const candidate = normalizeQuestion(await generate({ test, index, original, mediaKind, audioKind, reasons: [...issue.reasons, ...(feedback.get(index) || []), ...(quotaReason ? [quotaReason] : [])], attempt: priorAttempts + 1 }));
     candidate.points = slot?.points ?? original.points;
 
-    const reasons = validateQuestion(candidate, options);
+    const reasons = [...validateQuestion(candidate, options), ...require("./demand-plan").questionDemandErrors(candidate,index,options.progressionPlan)];
     if (candidate.mediaIntent.kind !== mediaKind) reasons.push(`Die Bildart muss ${mediaKind} sein.`);
     if (candidate.audioIntent.kind !== audioKind) reasons.push(`Die Audioart muss ${audioKind} sein.`);
     const sceneOnlyRepair = issue.reasons.length > 0 && issue.reasons.every(reason =>

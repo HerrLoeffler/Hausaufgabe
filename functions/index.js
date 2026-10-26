@@ -13,6 +13,7 @@ const { REGION, TEXT_MODEL, AUDIO_MODEL, PROMPT_VERSION, AI_SCHEMA_VERSION, QUES
 const { questionSchema, questionSchemaForType, testSchemaForRequest } = require("./lib/schemas");
 const { requestStructured, AiResponseError } = require("./lib/structured-response");
 const { generateTestInBatches } = require("./lib/test-batches");
+const { planProgression, progressionWarnings } = require("./lib/demand-plan");
 const { preparePedagogicalPool } = require("./lib/pedagogical-pool");
 const { validateTest, validateQuestion, normalizeQuestion, sameQuestion, variantRepeats } = require("./lib/validation");
 const { requireAiUser } = require("./lib/access");
@@ -195,11 +196,11 @@ async function loadQualityMemory(context = {}, uid = "") {
   return loadFeedbackLearningSafe(getFirestore(), context, uid);
 }
 
-async function reviewDraft(test, memory) {
+async function reviewDraft(test, memory, progressionPlan) {
   try {
     return await structuredResponse({
       schema: { ...reviewSchema, properties: { issues: { ...reviewSchema.properties.issues, items: { ...reviewSchema.properties.issues.items, properties: { ...reviewSchema.properties.issues.items.properties, index: { type: "integer", minimum: 0, maximum: Math.max(0, test.questions.length - 1) } } } } } }, schemaName: "testify_quality_review_v3", systemPrompt: REVIEW_SYSTEM,
-      userPrompt: reviewPrompt(test, memory)
+      userPrompt: reviewPrompt(test, memory, progressionPlan)
     });
   } catch (err) {
     throw reportAiError(err, "quality-review");
@@ -272,6 +273,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
   const startedAt = Date.now();
   console.info("KI-Test-Anfrage gestartet:", { requestId });
   const input = cleanInput(data || {});
+  const progressionPlan = planProgression(input);
   if (!input.topic) throw new HttpsError("invalid-argument", "Bitte ein Thema angeben.");
   const materials = sanitizeMaterials(data?.materials, uid);
   if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
@@ -296,12 +298,12 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const generationPrompt = `${testUserPrompt(input)}${variantPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}${poolGuide}`;
     phase = "test-generation";
     await onProgress("test-generation", 15, "Die KI erstellt den Test …");
-    const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
+    const options = { progressionPlan, allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
     if (input.generationMode === "variant") Object.assign(options, { requireFreshVariant: true, variantInput: input });
     const first = await generateTestInBatches(input, async (batch, prior) => {
       await onProgress("test-generation", 15 + Math.floor(20 * batch.batchOffset / input.count), `Aufgaben ${batch.batchOffset + 1} bis ${batch.batchOffset + batch.count} von ${input.count} werden erstellt …`);
       const priorContext = prior.length ? `\nBereits erstellte Aufgaben (nicht wiederholen): ${JSON.stringify(prior.map(q => ({ type: q.type, text: q.text })))}` : "";
-      return structuredResponse({ schema: testSchemaForRequest({ count: batch.count, allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none", allowAudio: batch.audioMode !== "none" }),
+      return structuredResponse({ schema: testSchemaForRequest({ count: batch.count, progression: Boolean(progressionPlan), allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none", allowAudio: batch.audioMode !== "none" }),
         schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}${variantPrompt(input, batch.batchOffset, batch.count)}\n${memoryGuide}${personalGuide}${priorContext}${poolGuide}`, content: materialContent });
     });
     const feedbackLearning = memory.learning?.sources?.length ? await recordLearningUseSafe(getFirestore(), memory, {uid, operation: input.generationMode === "variant" ? "generateTestVariant" : "generateTest"}) : {recorded:0};
@@ -314,7 +316,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       generateQuestion: async ({ test, index, original, reasons, attempt, mediaKind, audioKind = original.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none" }) => {
         const targetType = input.generationMode === "variant" ? input.variantSlots[index].type : input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0];
         const replacement = await structuredResponse({
-          schema: questionSchemaForType(targetType, { allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none"), allowAudio: input.audioMode !== "none", audioKind }), schemaName: "testify_test_question_replacement_v2",
+          schema: questionSchemaForType(targetType, { progression: Boolean(progressionPlan), allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none"), allowAudio: input.audioMode !== "none", audioKind }), schemaName: "testify_test_question_replacement_v2",
           userPrompt: `${replacementQuestionPrompt({ input, test, index, original: { ...original, type: targetType }, reasons, attempt, mediaKind, audioKind })}${variantPrompt(input, index, 1)}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}${poolGuide}`, content: materialContent
         });
         addUsage(replacement.usage);
@@ -322,7 +324,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       },
       regenerateTest: async (test, errors) => {
         const repair = await structuredResponse({
-          schema: testSchemaForRequest({ count: input.count, allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowAudio: input.audioMode !== "none" }), schemaName: "testify_test_repair_v2",
+          schema: testSchemaForRequest({ count: input.count, progression: Boolean(progressionPlan), allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowAudio: input.audioMode !== "none" }), schemaName: "testify_test_repair_v2",
           userPrompt: `${generationPrompt}\nDer vorherige Entwurf hatte diese Validierungsfehler:\n- ${errors.join("\n- ")}\nErstelle einen vollständig gültigen Test. Ersetze alle fehlerhaften oder wiederholten Aufgaben durch neue Aufgaben und gib den ganzen Test aus.\nVorheriger Entwurf: ${JSON.stringify(test)}`,
           content: materialContent
         });
@@ -344,7 +346,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       reviewed = await reviewAndRepairTest(result.test, options, {
         ...repairs,
         review: async draft => {
-          const check = await reviewDraft(draft, memory);
+          const check = await reviewDraft(draft, memory, progressionPlan);
           addUsage(check.usage);
           return check.data;
         }
@@ -361,7 +363,9 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       reason: String(issue.reason || "other").slice(0, 30),
       detail: String(issue.detail || "").replace(/^[a-z_]+:\s*/i, "").slice(0, 1800)
     }));
+    const progressionSummary = progressionPlan && !hardErrors.length ? { version: progressionPlan.version, mode: progressionPlan.mode, levels: reviewed.test.questions.map(q => q.demand.level) } : null;
     const qualityWarnings = hardErrors.length ? [] : [
+      ...progressionWarnings(progressionPlan),
       ...(memory.unavailable ? ["Frühere Lehrerbewertungen waren bei dieser Erstellung nicht verfügbar. Bitte die Aufgaben besonders sorgfältig prüfen."] : []),
       ...qualityIssues.map(issue => `Aufgabe ${issue.questionPosition}: ${issue.reason}: ${issue.detail}`)
     ].slice(0, 10);
@@ -383,12 +387,14 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       feedbackLearningUnavailable: Boolean(feedbackLearning.unavailable),
       positivePatterns: memory.positivePatterns?.length || 0,
       recurringRuleCandidates: memory.ruleCandidates?.length || 0,
+      ...(progressionSummary ? { progression: progressionSummary } : {}),
       pedagogicalPool: pedagogicalPool.meta
     });
     if (hardErrors.length) throw new HttpsError("failed-precondition", "Der Test ist nach der automatischen Reparatur strukturell noch nicht gültig.", { errors: hardErrors.slice(0, 10) });
     return {
       test: reviewed.test,
       meta: {
+        ...(progressionSummary ? { progression: progressionSummary } : {}),
         model: TEXT_MODEL,
         promptVersion: PROMPT_VERSION,
         schemaVersion: AI_SCHEMA_VERSION,

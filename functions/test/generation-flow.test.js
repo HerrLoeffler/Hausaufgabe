@@ -21,7 +21,7 @@ test("actual generation handler connects constrained batches, validation, review
     let generated = 0, calls = 0, reviewed = 0, cleaned = 0;
     const usage = [], progress = [];
     const context = vm.createContext({
-      ...constants, ...validation, ...schemas, ...prompts, HttpsError,
+      ...require("../lib/demand-plan"),...constants, ...validation, ...schemas, ...prompts, HttpsError,
       generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, preparePedagogicalPool, variantPrompt,
       randomUUID: () => "test-request", cleanInput: data => data, sanitizeMaterials: () => [],
       consumeQuota: async () => {}, materialInputs: async () => [], learningPrompt: require("../lib/feedback-learning").learningPrompt, qualityMemoryPrompt: () => "",
@@ -34,7 +34,7 @@ test("actual generation handler connects constrained batches, validation, review
         const images = Number(userPrompt.match(/Exakt (\d+) Aufgabe/)?.[1] || 0);
         const questions = Array.from({ length: 10 }, (_, i) => {
           const n = ++generated;
-          return { type: i % 2 ? "truefalse" : "gapfill", text: i % 2 ? `Behauptung ${n}: Alle Sätze sind Fragen.` : `Rechne: ${n} plus 1 ergibt [${n + 1}].`, points: 1,
+          return { demand:{position:n,level:1+Math.round((n-1)*2/49),rationale:"Synthetic transport fixture for the declared grade context."}, type: i % 2 ? "truefalse" : "gapfill", text: i % 2 ? `Behauptung ${n}: Alle Sätze sind Fragen.` : `Rechne: ${n} plus 1 ergibt [${n + 1}].`, points: 1,
             ...(i % 2 ? { correctBoolean: false } : {}),
             mediaIntent: i < images ? { kind: "ai_generated", prompt: `Ein Hund neben einem Baum ${n}`, altText: "Hund" } : { kind: "none" } };
         });
@@ -69,7 +69,7 @@ test("actual fresh variant generation replaces every source task, keeps 10 tasks
   const input = buildVariantInput({ title: "Prozentrechnung", subject: "Mathematik", grade: "7" }, originals);
   const clean = source.slice(source.indexOf("function cleanSourceTest("), source.indexOf("async function structuredResponse("));
   let reviewed = 0, generated = 0;
-  const context = vm.createContext({ ...constants, ...validation, ...schemas, ...prompts, HttpsError, variantPrompt,
+  const context = vm.createContext({ ...require("../lib/demand-plan"),...constants, ...validation, ...schemas, ...prompts, HttpsError, variantPrompt,
     generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, preparePedagogicalPool,
     randomUUID: () => "test-request", sanitizeMaterials: () => [], consumeQuota: async () => {}, materialInputs: async () => [],
     learningPrompt: require("../lib/feedback-learning").learningPrompt, qualityMemoryPrompt: () => "", teacherQualityGuide: () => "", loadQualityMemory: async () => ({ negativeQuestions: [], memoryVersion: 2, stats: { total: 0 } }),

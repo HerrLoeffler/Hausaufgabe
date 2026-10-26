@@ -83,12 +83,13 @@ const TYPE_FIELDS = {
   gapfill: ["gapColors"], matching: ["pairs"], ordering: ["items", "acceptedOrders", "manualReview"], grouping: ["groups"],
   markwords: ["passage", "targetWords", "markGroups"], number: ["numericAnswer", "tolerance", "unit"]
 };
-function questionSchemaForType(type, { allowImages = true, mediaKind, allowAudio = true, audioKind } = {}) {
+function questionSchemaForType(type, { allowImages = true, mediaKind, allowAudio = true, audioKind, progression = false } = {}) {
   if (!QUESTION_TYPES.includes(type)) throw new TypeError("Unbekannter Aufgabentyp");
   const fields = ["type", "text", "points", ...TYPE_FIELDS[type], "mediaIntent", "audioIntent"];
   const properties = Object.fromEntries(fields.map(key => [key, JSON.parse(JSON.stringify(questionSchema.properties[key]))]));
   properties.type = { type: "string", enum: [type] };
   properties.text = { ...properties.text, ...NONEMPTY };
+  if (progression) { properties.demand = JSON.parse(JSON.stringify(require("./demand-plan").demandSchema)); fields.push("demand"); }
   const media = properties.mediaIntent;
   media.properties.kind.enum = mediaKind ? [mediaKind] : allowImages ? ["none", "ai_generated"] : ["none"];
   if (mediaKind === "ai_generated") media.properties.prompt = { ...NONEMPTY };
@@ -121,7 +122,7 @@ function questionSchemaForType(type, { allowImages = true, mediaKind, allowAudio
   }
   return { type: "object", additionalProperties: false, properties, required: fields };
 }
-function testSchemaForRequest({ count, allowedTypes = QUESTION_TYPES, allowImages = true, allowAudio = true } = {}) {
+function testSchemaForRequest({ count, allowedTypes = QUESTION_TYPES, allowImages = true, allowAudio = true, progression = false } = {}) {
   const types = [...new Set(allowedTypes)].filter(type => QUESTION_TYPES.includes(type));
   if (!types.length) throw new TypeError("Mindestens ein Aufgabentyp ist erforderlich");
   if (count !== undefined && (!Number.isInteger(count) || count < 1 || count > 100)) throw new RangeError("Ungültige Aufgabenanzahl");
@@ -130,7 +131,7 @@ function testSchemaForRequest({ count, allowedTypes = QUESTION_TYPES, allowImage
     properties: {
       title: { ...NONEMPTY }, subject: { type: "string" }, grade: { type: "string" }, description: { type: "string" },
       questions: { type: "array", minItems: count || 1, maxItems: count || 100,
-        items: { anyOf: types.map(type => questionSchemaForType(type, { allowImages, allowAudio })) } }
+        items: { anyOf: types.map(type => questionSchemaForType(type, { allowImages, allowAudio, progression })) } }
     },
     required: ["title", "subject", "grade", "description", "questions"]
   };

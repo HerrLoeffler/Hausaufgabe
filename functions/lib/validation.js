@@ -263,6 +263,7 @@ function validateTest(test, opts = {}) {
   if (!test || typeof test !== "object") return ["Test fehlt."];
   if (!normalizeText(test.title)) errors.push("Titel fehlt.");
   const qs = Array.isArray(test.questions) ? test.questions : [];
+  if (opts.progressionPlan) qs.forEach((q,i) => require("./demand-plan").questionDemandErrors(q,i,opts.progressionPlan).forEach(e => errors.push(`Aufgabe ${i+1}: ${e}`)));
   if (!qs.length || qs.length > LIMITS.maxQuestions) errors.push("Ungültige Aufgabenanzahl.");
   qs.forEach((q, i) => validateQuestion(q, opts).forEach(e => errors.push(`Aufgabe ${i + 1}: ${e}`)));
   for (let i = 0; i < qs.length; i += 1) {

@@ -5,6 +5,7 @@ const { validateAndRepairTest } = require("./repair-test");
 const MEMORY_VERSION = 3;
 
 const QUALITY_REASONS = Object.freeze({
+  difficulty: "Anforderungsniveau passt nicht zum Aufgabenplatz oder Ziel",
   incorrect: "fachlich falsche oder sinnlose Aufgaben",
   answer_leak: "Lösung wird in der Frage verraten",
   image_mismatch: "Bildbeschreibungen passen nicht zu Frage oder Antwort",
@@ -20,7 +21,7 @@ const reviewSchema = {
       type: "object", additionalProperties: false,
       properties: {
         index: { type: "integer" },
-        reason: { type: "string", enum: ["incorrect", "answer_leak", "image_mismatch", "ambiguous", "duplicate"] },
+        reason: { type: "string", enum: ["incorrect", "answer_leak", "image_mismatch", "ambiguous", "duplicate", "difficulty"] },
         detail: { type: "string" },
         evidence: { type: "string", description: "Bei answer_leak: wörtlicher Lösungshinweis aus studentView.text oder studentView.passage, sonst leer." },
         suggestedAcceptedOrder: { type: "array", items: { type: "integer", minimum: 0 }, description: "Nur bei ordering und einer sicher richtigen weiteren Reihenfolge: jeder nullbasierte Index genau einmal. Sonst []." }
@@ -370,9 +371,10 @@ function questionForReview(q, index) {
   return { index, type: q.type, studentView, answerKey, plannedImage: q.mediaIntent?.kind === "ai_generated" ? String(q.mediaIntent.prompt || "") : null };
 }
 
-function reviewPrompt(test, memory = {}) {
+function reviewPrompt(test, memory = {}, progressionPlan = null) {
   const memoryGuide = qualityMemoryPrompt(memory);
   const falseAlarms = (memory.reviewerFalsePositives || []).map(item => `${item.type}/${item.reason}: ${item.reports}`).join(", ");
+  const demandGuide = progressionPlan ? `\nAnforderungsplan: ${JSON.stringify(progressionPlan)}. Prüfe tatsächlichen Denkaufwand gegen den geplanten Aufgabenplatz, Fach, Klasse, Vorwissen, Hilfen, Anzahl verknüpfter Schritte und Transfer. Einfache Tests bleiben einfach. SingleChoice ist nicht automatisch leicht, Freitext nicht automatisch schwer, Punkte sind kein Schwierigkeitsmaß. demand.rationale ist eine zu prüfende Selbsteinschätzung, kein Beweis. Melde konkrete Abweichungen mit reason=difficulty und fachlicher Begründung; nicht bloß die Stufenzahl ändern. Feste Positionen und Kontextblöcke haben Vorrang, niemals zur Korrektur blind Aufgaben umsortieren. Bei Unsicherheit keine sichere Einstufung erfinden. Interne Einstufungen: ${JSON.stringify(test.questions.map((q,index)=>({index,demand:q.demand})))}` : "";
   return `Prüfe JEDE Aufgabe auf fachliche Richtigkeit, Eindeutigkeit, passende Lösungen und Dopplungen.
 studentView enthält die sichtbare Schüleransicht. audioTranscript ist der vollständige gesprochene Hörtext, den Lernende anhören können, kein sichtbarer Text und kein Lösungsschlüssel. Prüfe Hörverstehen anhand dieses Inhalts: grammatikalisch korrekte Ablenker sind nicht automatisch inhaltlich richtige Antworten. Ein fehlender oder nicht eindeutig lösbarer Hörtext bleibt ein Fehler. answerKey ist ausschließlich die interne Lösung, plannedImage eine noch nicht gerenderte Bildbeschreibung.
 Bei gapfill sind interne [Lösungen] leere Eingabefelder: KEIN answer_leak. Melde answer_leak ausschließlich mit einem wörtlichen evidence-Zitat aus studentView.text oder studentView.passage. Richtige Antwortoptionen, gesuchte Wörter im Markiertext und interne Lösungsfelder allein sind keine verratene Lösung.
@@ -380,7 +382,7 @@ Bei truefalse darf die Aussage absichtlich falsch sein, wenn correctBoolean fals
 Bei ordering werden Elemente gemischt, bei matching die rechten Antworten, bei grouping die Elemente ohne ihre Zuordnung gezeigt. Die interne Reihenfolge oder Gruppierung verrät keine Lösung.
 Prüfe bei Satzbau, ob jede zusätzlich akzeptierte Reihenfolge einen grammatikalisch sinnvollen Satz ergibt und ob eine naheliegende weitere richtige Variante fehlt. Wenn nur Grammatik verlangt ist, sind auch bedeutungsveränderte grammatikalisch richtige Sätze gültig. Prüfe vertauschbare attributive/prädikative Adjektive ausdrücklich: The purple cars are not hungry / The hungry cars are not purple. Melde fehlende acceptedOrders als konkrete unvollständige Lösung und gib bei einer sicher richtigen zusätzlichen Variante suggestedAcceptedOrder als nullbasierte Indizes aller Bausteine an. Bei jeder anderen Meldung oder Unsicherheit muss suggestedAcceptedOrder [] sein. Eine vorgeschlagene Variante wird der Lösung hinzugefügt und danach erneut unabhängig geprüft; sie ersetzt nicht die ganze Aufgabe. Wenn manualReview true ist, wird die Lehrerbewertung noch einmal geprüft; melde dennoch konkrete falsche Lösungsschlüssel.
 Kasus und Wortarten müssen aus dem Satzkontext eindeutig sein. „das Heft“ oder „die Kinder“ allein erlauben keine eindeutige Kasuszuordnung. Prüfe W-Fragen und Entscheidungsfragen getrennt. Bei Komma-Zählaufgaben darf die sichtbare Vorlage die gesuchten Kommas nicht bereits enthalten. Ein Standbild kann zeitliche Wiederholung wie „wieder“ nicht zuverlässig zeigen.
-Markiere nur konkrete belegbare Fehler, keine Geschmacksfragen. Beschreibe das Problem in einem vollständigen kurzen deutschen Satz. Indizes beginnen bei 0. evidence ist bei anderen Gründen leer.${memoryGuide ? `\n${memoryGuide}` : ""}${falseAlarms ? `\nVon Lehrkräften zurückgewiesene Prüferwarnungen (${falseAlarms}): prüfe sichtbare Belege besonders sorgfältig; leite daraus keine pauschale Ausnahme ab.` : ""}\nTest: ${JSON.stringify({ subject: test.subject, grade: test.grade, questions: test.questions.map(questionForReview) })}`;
+Markiere nur konkrete belegbare Fehler, keine Geschmacksfragen. Beschreibe das Problem in einem vollständigen kurzen deutschen Satz. Indizes beginnen bei 0. evidence ist bei anderen Gründen leer.${demandGuide}${memoryGuide ? `\n${memoryGuide}` : ""}${falseAlarms ? `\nVon Lehrkräften zurückgewiesene Prüferwarnungen (${falseAlarms}): prüfe sichtbare Belege besonders sorgfältig; leite daraus keine pauschale Ausnahme ab.` : ""}\nTest: ${JSON.stringify({ subject: test.subject, grade: test.grade, questions: test.questions.map(questionForReview) })}`;
 }
 
 function normalizeReviewIssues(response, test) {

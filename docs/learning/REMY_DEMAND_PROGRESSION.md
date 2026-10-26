@@ -1,0 +1,13 @@
+# Niedrigschwelliger Einstieg und zielgerechter Anforderungsverlauf
+
+GC-CREW-AI-02 / GC-WEB-REPAIR-20261007, Humanauftrag26.10.2026. Ergänzt die gemeinsamen Aufgabenprinzipien und den Methodenfundus; keine neue Prüfungsengine.
+
+Neue normale Remytests beginnen mit vertrautem niedrigschwelligem Einstieg. Anforderungen steigen nur passend zu Fach, Klasse, Vorwissen und ausgewähltem Gesamtziel. Ein einfacher Test bleibt einfach. Weder SingleChoice/Freitext noch Punktzahl sind Schwierigkeitsklassen. Denkaufwand entsteht etwa durch verknüpfte Schritte, wechselnde Darstellungen, Selbständigkeit und fachlich begründeten Transfer. Nicht jeder Test benötigt Transfer.
+
+Konkrete Inhalte/Positionswünsche, Chronologie und zusammenhängende Text-/Hör-/Kapitelblöcke haben Vorrang vor einer pauschalen globalen Ordnung. Varianten bewahren ihren Ausgangsvertrag. Bestehende gespeicherte oder veröffentlichte Aufgaben und Abgaben werden nicht verändert oder nachsortiert. Bei widersprüchlichen/außerhalbderAnzahlgenanntenWünschen konkreteHinweise anzeigen statt still übernehmen/verschweigen.
+
+Implementierungsvertrag remy-demand-v1: serverseitigerSlotplan mitprivater globalerPosition, Stufe1–3 undkurzerBegründung. Schema, Validator, gezieltebestehendeReparatur, unabhängigerbestehenderKIreview undFinalisierungbenutzendenselbenPlan. Stufe1vertrauterkurzerSchritt;2verknüpftebekannteSchritte/Darstellungswechsel;3selbständigerTransfer/mehrschrittigerAnsatz. DiessindbereichsabhängigeArbeitskategorien, keinewissenschaftlichvalidierteSchwierigkeitsskala. Fach-/KlassenkontextundHilfeninderReviewentscheidungberücksichtigen. KeineextraKIcallszurPlanung. EinzelneModellfehleinschätzungenbleibenmöglich; Etikett/FixturesbeweisenkeineLernwirksamkeit. UngeklärtefachlicheRestpunktebleibenLehrkraftprüfhinweise.
+
+Steuerbarkeit: Anzahl, Gesamtpunkte, erlaubteFormate undMedienquotensindbestehendeharteGrenzen. KonkreteFragetexte, genauviergenannteOptionen undBildobjektebleibenModellwünsche; genaueeinekorrekteSingleChoiceantwortwirdstrukturellvalidiert. EinBildmitvierObstsortenist einBild, keinVierbilderauftrag. Bildentstehung/-prüfung istseparaterfehlbarerKanal; keinezusätzlichenBildversucheausdiesemKonzept. KonkreteWünscheamverlässlichstenunverändertinEigeneWünscheschreibenundvorGenerierungdieKonfigurationkontrollieren; Sprach-/AssistenteninterpretationistkeingarantierterverlustfreierCompiler.
+
+NachweiseundGrenzen: workstreams/remy-difficulty-progression-20261026.md. Hosting-, KI-Functions-, Quellen- undAbnahmezuständegetrenntführen; vorhandeneMedien-/Auth-/Assessmentgatesnichtumgehen.

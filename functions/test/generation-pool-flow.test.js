@@ -17,11 +17,11 @@ const source = readFileSync(require.resolve("../index.js"), "utf8");
 const handler = source.slice(source.indexOf("async function generateTestForUser("), source.indexOf("\nexports.generateTest ="));
 const catalog = { version: "fixture-v1", profiles: [{ id: "pp-1234567890abcdef", subject: "Mathematik", schoolType: "Mittelschule", region: "Bayern", grades: [9], reviewStatus: "verified", mappingStatus: "confirmed", topics: ["prozent", "rabatt"], learningGoal: "Prozentwert in einem neuen Kaufkontext bestimmen.", taskPattern: "Eigenen Preis mit neuem Rabatt wählen.", qualityHints: ["Grundwert und Prozentwert unterscheiden."], modalities: ["text"], source: { contentId: "1234567890abcdef", page: 1 } }] };
 const input = { subject: "Mathematik", schoolType: "Mittelschule", region: "Bayern", grade: "9", topic: "Prozent und Rabatt", difficulty: "mittel", count: 1, points: 1, allowedTypes: ["number"], imageMode: "none", audioMode: "none", audioQuestionCount: 0, materialMode: "inspiration" };
-const q = { type: "number", text: "Ein Artikel kostet 80 Euro. Wie viele Euro entsprechen 25 Prozent davon?", numericAnswer: 20, tolerance: 0, unit: "Euro", points: 1, mediaIntent: { kind: "none" }, audioIntent: { kind: "none" } };
+const q = { demand:{position:1,level:1,rationale:"Bekannter Prozentwert im angegebenen Klassenkontext."}, type: "number", text: "Ein Artikel kostet 80 Euro. Wie viele Euro entsprechen 25 Prozent davon?", numericAnswer: 20, tolerance: 0, unit: "Euro", points: 1, mediaIntent: { kind: "none" }, audioIntent: { kind: "none" } };
 
 async function run(change = {}, broken = false, queued = false) {
   const calls = [], logs = []; let repairs = 0;
-  const context = vm.createContext({ ...constants, ...validation, ...schemas, ...prompts, HttpsError, variantPrompt,
+  const context = vm.createContext({ ...require("../lib/demand-plan"),...constants, ...validation, ...schemas, ...prompts, HttpsError, variantPrompt,
     generateTestInBatches, validateAndRepairTest, reviewAndRepairTest,
     preparePedagogicalPool: data => preparePedagogicalPool(data, catalog),
     randomUUID: () => "pool-test", cleanSourceTest: () => null,

@@ -23,7 +23,7 @@ function quizForGeneratedTest(test, input, profile = {}, sourceQuiz = null) {
   return {
     title, subject: String(input.generationMode === "variant" ? input.subject : test.subject || input.subject || ""),
     grade: String(input.generationMode === "variant" ? input.grade : test.grade || input.grade || ""),
-    creationContext: { schoolType: input.schoolType || "", region: input.region || "", topic: input.topic || "", difficulty: input.difficulty || "", learningGoals: input.learningGoals || [], contentLocale },
+    creationContext: { ...(test.questions?.length && test.questions.every(q => q.demand) ? { difficultyProgression: { version: require("./demand-plan").VERSION, mode: require("./demand-plan").planProgression(input)?.mode || "source-preserved", levels: test.questions.map(q => q.demand.level) } } : {}), schoolType: input.schoolType || "", region: input.region || "", topic: input.topic || "", difficulty: input.difficulty || "", learningGoals: input.learningGoals || [], contentLocale },
     description: String(isVariant ? sourceQuiz.description || "Viel Erfolg beim Test!" : settings.defaultDescription || "Viel Erfolg beim Test!"),
     contentLocale,
     gradingLocale,
