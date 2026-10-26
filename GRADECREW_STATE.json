@@ -648,6 +648,36 @@
       "receipts": "workstreams/homepage-release-receipts-20261025.json",
       "question_creation_guide": "docs/learning/HOMEPAGE_QUESTION_CREATION.md",
       "ai_blueprints_auto_loaded": false
+    },
+    "public_student_join_followup_20261026": {
+      "task_ids": [
+        "GC-WEB-REPAIR-20261007",
+        "GC-DESIGN-05"
+      ],
+      "stage": "integrated",
+      "branch": "fix/homepage-student-join-20261026",
+      "pr": 312,
+      "candidate": "b88d47b6af21610bfa2bcd827509312c53c2642d",
+      "integration": "7cf4b3c2340038fc3d538dcc98619c1c9aa32788",
+      "tree": "f13ce74fb1754172b86fc36c3b18faa0e443c4e7",
+      "candidate_ci": 40354470360,
+      "merge_ci": 40354956086,
+      "ci": "success",
+      "independent_review": "PASS_after_raw_URL_draft_key_regression_fix; final_CSS_deletion_reviewed",
+      "hosting_preview": {
+        "url": "https://gradecrew-staging-2026--student-join-20261026-mb5acfof.web.app/",
+        "commit": "b88d47b6af21610bfa2bcd827509312c53c2642d",
+        "version": "9d72beafc2aafea4",
+        "verified_asset_count": 192,
+        "scope": "hosting_preview_only"
+      },
+      "school_live": "not_deployed_by_this_task; parallel_Remy_live_commit_5f61f723c1b24d45996a77afbe40acc4ebb05cd3_observed; unpublished_source_guard",
+      "release_owner_thread": "01a130fa-babb-7de3-bfeb-785499e7c061",
+      "next_action": "Designowner preserves published Remy source and reviewed join base, adds directly requested combined code/alias entry and separately scoped auth design; review/CI before authorized hosting release.",
+      "verification": "583_local_web_tests; responsive_browser_390x844_and_1024x768; actual_synthetic_own_test_start_answer_reload_receipt; teacher_authenticated_UI_and_physical_device_acceptance_not_claimed",
+      "handoff": "workstreams/homepage-student-join-20261026.md",
+      "backend_rules_native_changed": false,
+      "emmi_included": false
     }
   },
   "production": {

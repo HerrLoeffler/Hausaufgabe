@@ -204,7 +204,10 @@
         "feature/design-startscreen-v1",
         "fix/staging-feedback-mobile-auth-20261012",
         "fix/staging-feedback-mobile-auth-ci-20261012",
-        "fix/gc-design-05-mobile-auth-20261012"
+        "fix/gc-design-05-mobile-auth-20261012",
+        "fix/homepage-student-join-20261026",
+        "fix/staging-feedback-student-join-ci-20261026",
+        "fix/staging-feedback-student-join-check-20261026"
       ]
     },
     {
