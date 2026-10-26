@@ -1281,7 +1281,7 @@
       "staging": "gradecrew-staging-2026_only",
       "user_test": "user_confirmed_classes_visible;executor_real_teacher_LIVE_results_return_and_wide_grading_verified;physical_AAC_pending",
       "handoff": "workstreams/classroom-student-management-v1.md",
-      "next_action": "Diagnose phone WebKit unresponsive during offline-recovery gate run40395762544; no upload yet. Then physical targeted AAC exit and full pupil receipt acceptance with new confirmed build.",
+      "next_action": "Native unchanged30152288 run40395762544 attempt2 phone121838619597 running after targeted original9 iPhone lifecycle tests PASS; inspect exact outcome/upload. Then physical iPad AAC acceptance; old1221 does not support device-end.",
       "deployment_evidence": {
         "project": "gradecrew-staging-2026",
         "hosting_source": "aa62f3da1a7a1459fb8f485d43b746b5fb3ac93a",
@@ -1299,12 +1299,14 @@
         "native_candidate": {
           "run_id": 40395762544,
           "source": "3015228848920e1230d7a6fcf5339140b2c2e14c",
-          "status": "phone_failed_three_ipad_gates_pass_upload_skipped",
+          "status": "attempt1_phone_failed;attempt2_phone_running_after_local9_lifecycle_pass;not_uploaded",
           "uploaded": false,
           "phone_job_id": 121828238364,
           "phone_artifact_id": 12687486294,
           "local_verification": "38Swift24Python13integration;normal+stagingbuilds",
-          "physical_apple_unlock_verified": false
+          "physical_apple_unlock_verified": false,
+          "retry_phone_job_id": 121838619597,
+          "retry_count": 1
         },
         "negative_checks": {
           "nonrecipient_assignment": "403_PERMISSION_DENIED",
