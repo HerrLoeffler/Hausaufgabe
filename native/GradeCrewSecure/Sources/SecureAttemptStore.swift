@@ -11,6 +11,7 @@ struct SecureAttemptIdentity: Codable {
     var startRequestSent: Bool?
 }
 protocol SecureAttemptPersistence {
+    func legacyTestWorkExists() throws -> Bool
     func identity() throws -> SecureAttemptIdentity?
     func work() throws -> SecureSavedWork
     func save(identity:SecureAttemptIdentity,work:SecureSavedWork) throws
@@ -18,6 +19,7 @@ protocol SecureAttemptPersistence {
     func archiveReplaced(identity:SecureAttemptIdentity,work:SecureSavedWork,receipt:SecureReplacementReceipt) throws
 }
 extension SecureAttemptPersistence {
+    func legacyTestWorkExists() throws -> Bool { false }
     func archiveReplaced(identity:SecureAttemptIdentity,work:SecureSavedWork,receipt:SecureReplacementReceipt) throws { throw NSError(domain:"GradeCrewSecureStorage",code:3,userInfo:[NSLocalizedDescriptionKey:"Der alte Prüfungsstand konnte nicht geschützt archiviert werden. Er bleibt erhalten."]) }
 }
 protocol SecureIdentityVault {
@@ -46,6 +48,16 @@ final class SecureAttemptStore:SecureAttemptPersistence {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent(SecureReleaseEnvironment.workDirectory+(namespace.isEmpty ? "" : "-"+namespace), isDirectory: true)
     }
     private var file: URL { directory.appendingPathComponent("answers.json") }
+    func legacyTestWorkExists() throws -> Bool {
+        // Preserve pending work from the historical 2026 build in this same app.
+        // Read only: do not migrate its identity or answers into the Live store.
+        guard !SecureReleaseEnvironment.isStaging else { return false }
+        let legacy=SecureKeychainIdentityVault(service:"de.gradecrew.secure.test2026-attempt-v1")
+        let pending=try legacy.read("identity") != nil
+        let oldFile=FileManager.default.urls(for:.applicationSupportDirectory,in:.userDomainMask)[0]
+            .appendingPathComponent("SecureTest2026",isDirectory:true).appendingPathComponent("answers.json")
+        return pending || FileManager.default.fileExists(atPath:oldFile.path)
+    }
     func identity() throws -> SecureAttemptIdentity? {
         guard let data=try vault.read("identity") else{return nil}
         return try JSONDecoder().decode(SecureAttemptIdentity.self,from:data)

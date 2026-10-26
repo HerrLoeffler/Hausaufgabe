@@ -5,7 +5,7 @@ def select(event, requested, ref=""):
     if event == 'push' and ref == 'refs/heads/feature/native-live-staging-20261018':
         target='live'
     elif event == 'push' and ref == 'refs/heads/feature/classroom-secure-access-20261022':
-        target='staging2026'
+        target='live'
     elif event == 'workflow_dispatch' and requested in ('live','staging2026'):
         target=requested
     else:

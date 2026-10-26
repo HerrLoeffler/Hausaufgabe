@@ -101,7 +101,10 @@ struct SecureStagingScreen: View {
     #endif
     private var statusContent:some View {
         VStack(spacing:16) {
-        if model.deviceExitPending {
+        if model.legacyTestWorkBlocked {
+            Text("Gespeicherte Test-Abgabe schützen").font(.title2.bold())
+            Text(model.message).fixedSize(horizontal:false,vertical:true)
+        } else if model.deviceExitPending {
             Text(model.message).fixedSize(horizontal:false,vertical:true)
             Button("Freigabe zur Fortsetzung prüfen") {Task {await model.resumeAfterDeviceExit()}}.buttonStyle(.borderedProminent).disabled(model.busy)
             Text("Deine Antworten bleiben auf diesem iPad. Lösche die App nicht. Bei einem eingefrorenen Gerät hilft die Lehrkraft mit der Gerätehilfe.").font(.footnote)

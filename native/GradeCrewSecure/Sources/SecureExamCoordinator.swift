@@ -21,6 +21,7 @@ final class SecureExamCoordinator: ObservableObject {
     @Published private(set) var paper: [String: Any]?
     @Published private(set) var busy = false
     @Published private(set) var storageFailed = false
+    @Published private(set) var legacyTestWorkBlocked = false
     @Published private(set) var answeredCount:Int?
     let assessment = SecureAssessmentSession()
     weak var webView: WKWebView?
@@ -77,6 +78,17 @@ final class SecureExamCoordinator: ObservableObject {
             self.timer?.invalidate()
         }
         do {
+            if try store.legacyTestWorkExists() {
+                legacyTestWorkBlocked=true;phase = .recovery
+                message="Auf diesem Gerät ist noch eine Prüfung aus der Testumgebung 2026 gespeichert. Bitte in TestFlight den bisherigen 2026-Build öffnen und die Abgabe mit Internet abschließen. Danach kannst du diese Schulversion verwenden. Lösche die App nicht; die Antworten bleiben erhalten."
+                return
+            }
+        } catch {
+            legacyTestWorkBlocked=true;phase = .recovery
+            message="Offene Abgaben aus der Testumgebung konnten nicht sicher geprüft werden. Bitte die Lehrkraft informieren und die App nicht löschen. Gespeicherte Antworten bleiben erhalten."
+            return
+        }
+        do {
             if let saved = try store.identity() {
                 identity = saved
                 work = try store.work()
@@ -124,6 +136,7 @@ final class SecureExamCoordinator: ObservableObject {
 #endif
     func cancelPersonalSelection() { guard identity == nil, !busy else { return };selectedClassroom=nil;phase = .code;code="";name="";message="" }
     func preflight() async {
+        guard !legacyTestWorkBlocked else { return }
         guard !busy, let normalized = SecureInputPolicy.code(code) else { message = "Bitte einen gültigen Testcode eingeben."; return }
         let generation = operations.generation
         busy = true; message = ""
@@ -143,6 +156,7 @@ final class SecureExamCoordinator: ObservableObject {
         } catch { guard operations.isCurrent(generation) else { return }; message = error.localizedDescription }
     }
     func startOrRecover() async {
+        guard !legacyTestWorkBlocked else { return }
         // A queued recovery task can run after a receipt has already completed
         // this attempt. It must not recreate an identity or re-enter AAC.
         guard replacementReceipt == nil, !busy, phase == .identity || phase == .recovery || phase == .interrupted else { return }

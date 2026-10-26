@@ -12,8 +12,8 @@ class ReleaseTargetTests(unittest.TestCase):
   with self.assertRaises(ValueError):module.select('workflow_dispatch','production-anywhere')
   with self.assertRaises(ValueError):module.select('unknown','live')
 
- def test_only_own_test_branch_push_selects_2026_and_unknown_push_fails_closed(self):
+ def test_classroom_branch_returns_to_live_and_unknown_push_fails_closed(self):
   module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
-  self.assertEqual(module.select('push','','refs/heads/feature/classroom-secure-access-20261022')['SECURE_PROJECT'],'gradecrew-staging-2026')
+  self.assertEqual(module.select('push','','refs/heads/feature/classroom-secure-access-20261022')['SECURE_PROJECT'],'hausaufgabe-staging')
   for ref in ('refs/heads/main','refs/heads/feature/classroom-secure-access-20261022-typo',''):
    with self.assertRaises(ValueError):module.select('push','staging2026',ref)
