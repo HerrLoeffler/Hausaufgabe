@@ -678,3 +678,10 @@ GC-DOMAIN-01 · Webabschluss bestätigt: beide ZertifikateCERT_ACTIVE, alteSitzu
 ### 26.10.2026 · GC-WEB-REPAIR-20261007 / GC-DESIGN-05 · öffentlicher Schülerzugang
 
 PR312 integriert7cf4b3c, unabhängigerReviewPASS, KandidatenCI40354470360 und MergeCI40354956086 SUCCESS. Öffentlicher Schülerzugang oben/unten auf bestehender sicherer Browserseite; kein Schülerkonto/kein Logout. 583Webtests, Altlink-Draftkeyregression behoben; Vorschau b88d47b6 mit192/192Hashes bestätigt. [Übergabe](workstreams/homepage-student-join-20261026.md). **Noch nicht Live:** Vorabgleich fand bereits live Remyquelle5f61f723 (noch nicht GitHubabrufbar); veraltetenDeploy bewusst verhindert. AktiverDesignowner01a130fa übernimmt vorhandeneBasis für Martins ergänzten gemeinsamenCode/Kürzel-Einstieg/unterenButtonentfernen und separatbeauftragtesAuthdesign. NächsterSchritt dort: RemyLivequellstand sichern, gezielt kombinieren, exakteCI/Review/Hostingbelege; keinzweiterLive-Deployer. Emmi-WIP bleibtgetrennt.
+
+
+### GC-EXTENDED-QUESTION-TYPES-01 — Foto-Dreisatz / Hilfestufen, 26.10.2026
+
+- [x] Lokal: vier unabhängige äußere Pfeile, vier Hilfestufen je Pfeil, sechs unabhängig vorgebbare Zahlen, direkter/umgekehrter Dreisatz; private feldweise Bewertung und dynamische0,5Punkte/Feld. PR296 Commit5037935f3579ebb24d375a28833096975d9fd0e6.65Web/Labor- und33Serverprüfungen; Paketbau183Dateien; tatsächliche Browserbedienung/Speichern/Neuladen; unabhängiger Review.
+- [x] Übertragbare Regeln im gemeinsamen Aufgabenfundus gesichert. Testseiten sollen denselben Daten-/Hilfen-/Bewertungsvertrag verwenden.
+- [ ] Martin prüft Hilfestufen lokal; bestehender Normaltest-Integrationsowner/PR310 qualifiziert Übernahme. Kein Cloud-/Productiondeploy und keine automatische KI-/Touchgeräte-Freigabe.
