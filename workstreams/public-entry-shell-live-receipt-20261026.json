@@ -1,0 +1,61 @@
+{
+  "task_ids": [
+    "GC-DESIGN-05",
+    "GC-WEB-REPAIR-20261007"
+  ],
+  "stage": "production",
+  "scope": "One approved homepage frame; only right-hand preview changes to login, register, reset or code-free student form. Stable logo/headline/Crew geometry and native-header cold-paint guards.",
+  "branch": "feature/design-auth-student-20261026",
+  "source_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+  "tree": "198c33ca9d1193a65fd547131cf76979f373a3f8",
+  "pr": 318,
+  "ci_run": 40398151816,
+  "ci_jobs": [
+    121836600210,
+    121836600618
+  ],
+  "ci": "success",
+  "url": "https://gradecrew.de/",
+  "alternate_url": "https://hausaufgabe-staging.web.app/",
+  "local_tests": 466,
+  "package_tests": 12,
+  "automated_browser": "36 WebKit/Chromium viewport layouts,60 task layouts; homepage/login/register/reset/student anchors compared at390/1024/2560px with <2px tolerance",
+  "live_browser": "Actual public start/login/register/reset/Back and student entry checked; same logo and Crew placement; DE/EN reload; no forms submitted",
+  "physical_device_acceptance": "not performed",
+  "backend_rules_accounts_changed": false,
+  "legacy_project_changed": false,
+  "handoff": "workstreams/auth-brand-alignment-20261026.md",
+  "receipt": "workstreams/public-entry-shell-live-receipt-20261026.json",
+  "integration": "PR318 open with conflicts against newer staging-only Remy; no force merge or unrelated rollout",
+  "next_action": "Release owner separately reconciles PR318 into newer Web staging. No additional live deploy required for this completed public-layout scope.",
+  "previous_source_commit": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+  "previous_release_receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
+  "attempt_history": [
+    {
+      "source": "d4a12c7f958ed4d56144bb433a12435db446ff4e",
+      "result": "preview and source checkpoint; account native header guard then added"
+    },
+    {
+      "source": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+      "ci": 40397264419,
+      "result": "live and197files/origin verified; final code-free student header guard then added",
+      "hosting_version": "785b6be343f6c971",
+      "deployed_at": "2026-10-26T20:39:58.183Z"
+    }
+  ],
+  "independent_review": "One P2 locale persistence finding repaired with storage/URL/event regression; no other important session/template/style-teardown findings.",
+  "provider_calls": 0,
+  "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/705033819f218bf7",
+  "deployed_at": "2026-10-26T20:46:29.756Z",
+  "verified_files_per_origin": 197,
+  "hash_verification": {
+    "https://gradecrew.de": {
+      "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+      "verified_files": 197
+    },
+    "https://hausaufgabe-staging.web.app": {
+      "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+      "verified_files": 197
+    }
+  }
+}

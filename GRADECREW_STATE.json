@@ -745,9 +745,9 @@
         "verified_asset_count": 192,
         "scope": "hosting_preview_only"
       },
-      "school_live": "production1951f197: code/name entry with visible Back and DE/EN homepage return",
+      "school_live": "productionf048ed1a: common approved homepage frame with code/name entry, Back and DE/EN; native cold header suppressed",
       "release_owner_thread": "01a130fa-babb-7de3-bfeb-785499e7c061",
-      "next_action": "Reconcile PR318 into the newer shared Web staging branch separately; no further live deploy required for this completed scope.",
+      "next_action": "Release owner separately reconciles PR318 into newer Web staging. No additional live deploy required for this completed public-layout scope.",
       "verification": "583_local_web_tests; responsive_browser_390x844_and_1024x768; actual_synthetic_own_test_start_answer_reload_receipt; teacher_authenticated_UI_and_physical_device_acceptance_not_claimed",
       "handoff": "workstreams/homepage-student-join-20261026.md",
       "backend_rules_native_changed": false,
@@ -758,34 +758,34 @@
           "GC-WEB-REPAIR-20261007"
         ],
         "stage": "production",
-        "scope": "Correction of approved public entry: public homepage returns, no retired hero during account paint, large desktop scale >=1500px, centered account introductions and visible student Back with DE/EN",
+        "scope": "One approved homepage frame; only right-hand preview changes to login, register, reset or code-free student form. Stable logo/headline/Crew geometry and native-header cold-paint guards.",
         "branch": "feature/design-auth-student-20261026",
-        "source_commit": "1951f1979378b0500329a3c5dac5e6bad6fc7f3e",
-        "tree": "a2bbdaa678b4fbde82820e7f8c5dadc515b0d55a",
+        "source_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+        "tree": "198c33ca9d1193a65fd547131cf76979f373a3f8",
         "pr": 318,
-        "ci_run": 40390661304,
+        "ci_run": 40398151816,
         "ci_jobs": [
-          121810476666,
-          121810477270
+          121836600210,
+          121836600618
         ],
         "ci": "success",
         "url": "https://gradecrew.de/",
         "alternate_url": "https://hausaufgabe-staging.web.app/",
-        "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/8401999557bb00b1",
-        "deployed_at": "2026-10-26T19:56:28.246Z",
-        "verified_files_per_origin": 194,
-        "live_browser": "2560 desktop scale verified; account Back and anonymous bare workspace return to root; retired scene display none; centered account heading; student Back clicked at390x844",
-        "automated_browser": "36 WebKit/Chromium viewport layouts, 60 task layouts, cold account paint and homepage return fixtures",
+        "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/705033819f218bf7",
+        "deployed_at": "2026-10-26T20:46:29.756Z",
+        "verified_files_per_origin": 197,
+        "live_browser": "Actual public start/login/register/reset/Back and student entry checked; same logo and Crew placement; DE/EN reload; no forms submitted",
+        "automated_browser": "36 WebKit/Chromium viewport layouts,60 task layouts; homepage/login/register/reset/student anchors compared at390/1024/2560px with <2px tolerance",
         "physical_device_acceptance": "not performed",
         "backend_rules_accounts_changed": false,
         "legacy_project_changed": false,
         "handoff": "workstreams/auth-brand-alignment-20261026.md",
-        "receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
-        "integration": "PR318 open with conflicts against newer staging-only interactive Remy; no force merge and no unrelated live rollout",
-        "next_action": "Reconcile PR318 into the newer shared Web staging branch separately; no further live deploy required for this completed scope.",
-        "local_tests": 462,
-        "previous_source_commit": "91005cff96256e2f12f5562670bf0abfb8a1327d",
-        "previous_release_receipt": "workstreams/auth-student-live-receipt-20261026.json",
+        "receipt": "workstreams/public-entry-shell-live-receipt-20261026.json",
+        "integration": "PR318 open with conflicts against newer staging-only Remy; no force merge or unrelated rollout",
+        "next_action": "Release owner separately reconciles PR318 into newer Web staging. No additional live deploy required for this completed public-layout scope.",
+        "local_tests": 466,
+        "previous_source_commit": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+        "previous_release_receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
         "followup_return_desktop": {
           "source_commit": "1951f1979378b0500329a3c5dac5e6bad6fc7f3e",
           "tree": "a2bbdaa678b4fbde82820e7f8c5dadc515b0d55a",
@@ -806,6 +806,93 @@
           "physical_device_acceptance": "not performed",
           "backend_rules_accounts_changed": false,
           "live_browser": "2560 desktop scale verified; account Back and anonymous bare workspace return to root; retired scene display none; centered account heading; student Back clicked at390x844"
+        },
+        "package_tests": 12,
+        "attempt_history": [
+          {
+            "source": "d4a12c7f958ed4d56144bb433a12435db446ff4e",
+            "result": "preview and source checkpoint; account native header guard then added"
+          },
+          {
+            "source": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+            "ci": 40397264419,
+            "result": "live and197files/origin verified; final code-free student header guard then added",
+            "hosting_version": "785b6be343f6c971",
+            "deployed_at": "2026-10-26T20:39:58.183Z"
+          }
+        ],
+        "independent_review": "One P2 locale persistence finding repaired with storage/URL/event regression; no other important session/template/style-teardown findings.",
+        "provider_calls": 0,
+        "hash_verification": {
+          "https://gradecrew.de": {
+            "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+            "verified_files": 197
+          },
+          "https://hausaufgabe-staging.web.app": {
+            "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+            "verified_files": 197
+          }
+        },
+        "followup_shared_frame": {
+          "task_ids": [
+            "GC-DESIGN-05",
+            "GC-WEB-REPAIR-20261007"
+          ],
+          "stage": "production",
+          "scope": "One approved homepage frame; only right-hand preview changes to login, register, reset or code-free student form. Stable logo/headline/Crew geometry and native-header cold-paint guards.",
+          "branch": "feature/design-auth-student-20261026",
+          "source_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+          "tree": "198c33ca9d1193a65fd547131cf76979f373a3f8",
+          "pr": 318,
+          "ci_run": 40398151816,
+          "ci_jobs": [
+            121836600210,
+            121836600618
+          ],
+          "ci": "success",
+          "url": "https://gradecrew.de/",
+          "alternate_url": "https://hausaufgabe-staging.web.app/",
+          "local_tests": 466,
+          "package_tests": 12,
+          "automated_browser": "36 WebKit/Chromium viewport layouts,60 task layouts; homepage/login/register/reset/student anchors compared at390/1024/2560px with <2px tolerance",
+          "live_browser": "Actual public start/login/register/reset/Back and student entry checked; same logo and Crew placement; DE/EN reload; no forms submitted",
+          "physical_device_acceptance": "not performed",
+          "backend_rules_accounts_changed": false,
+          "legacy_project_changed": false,
+          "handoff": "workstreams/auth-brand-alignment-20261026.md",
+          "receipt": "workstreams/public-entry-shell-live-receipt-20261026.json",
+          "integration": "PR318 open with conflicts against newer staging-only Remy; no force merge or unrelated rollout",
+          "next_action": "Release owner separately reconciles PR318 into newer Web staging. No additional live deploy required for this completed public-layout scope.",
+          "previous_source_commit": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+          "previous_release_receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
+          "attempt_history": [
+            {
+              "source": "d4a12c7f958ed4d56144bb433a12435db446ff4e",
+              "result": "preview and source checkpoint; account native header guard then added"
+            },
+            {
+              "source": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+              "ci": 40397264419,
+              "result": "live and197files/origin verified; final code-free student header guard then added",
+              "hosting_version": "785b6be343f6c971",
+              "deployed_at": "2026-10-26T20:39:58.183Z"
+            }
+          ],
+          "independent_review": "One P2 locale persistence finding repaired with storage/URL/event regression; no other important session/template/style-teardown findings.",
+          "provider_calls": 0,
+          "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/705033819f218bf7",
+          "deployed_at": "2026-10-26T20:46:29.756Z",
+          "verified_files_per_origin": 197,
+          "hash_verification": {
+            "https://gradecrew.de": {
+              "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+              "verified_files": 197
+            },
+            "https://hausaufgabe-staging.web.app": {
+              "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+              "verified_files": 197
+            }
+          }
         }
       }
     },
@@ -815,34 +902,34 @@
         "GC-WEB-REPAIR-20261007"
       ],
       "stage": "production",
-      "scope": "Correction of approved public entry: public homepage returns, no retired hero during account paint, large desktop scale >=1500px, centered account introductions and visible student Back with DE/EN",
+      "scope": "One approved homepage frame; only right-hand preview changes to login, register, reset or code-free student form. Stable logo/headline/Crew geometry and native-header cold-paint guards.",
       "branch": "feature/design-auth-student-20261026",
-      "source_commit": "1951f1979378b0500329a3c5dac5e6bad6fc7f3e",
-      "tree": "a2bbdaa678b4fbde82820e7f8c5dadc515b0d55a",
+      "source_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+      "tree": "198c33ca9d1193a65fd547131cf76979f373a3f8",
       "pr": 318,
-      "ci_run": 40390661304,
+      "ci_run": 40398151816,
       "ci_jobs": [
-        121810476666,
-        121810477270
+        121836600210,
+        121836600618
       ],
       "ci": "success",
       "url": "https://gradecrew.de/",
       "alternate_url": "https://hausaufgabe-staging.web.app/",
-      "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/8401999557bb00b1",
-      "deployed_at": "2026-10-26T19:56:28.246Z",
-      "verified_files_per_origin": 194,
-      "live_browser": "2560 desktop scale verified; account Back and anonymous bare workspace return to root; retired scene display none; centered account heading; student Back clicked at390x844",
-      "automated_browser": "36 WebKit/Chromium viewport layouts, 60 task layouts, cold account paint and homepage return fixtures",
+      "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/705033819f218bf7",
+      "deployed_at": "2026-10-26T20:46:29.756Z",
+      "verified_files_per_origin": 197,
+      "live_browser": "Actual public start/login/register/reset/Back and student entry checked; same logo and Crew placement; DE/EN reload; no forms submitted",
+      "automated_browser": "36 WebKit/Chromium viewport layouts,60 task layouts; homepage/login/register/reset/student anchors compared at390/1024/2560px with <2px tolerance",
       "physical_device_acceptance": "not performed",
       "backend_rules_accounts_changed": false,
       "legacy_project_changed": false,
       "handoff": "workstreams/auth-brand-alignment-20261026.md",
-      "receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
-      "integration": "PR318 open with conflicts against newer staging-only interactive Remy; no force merge and no unrelated live rollout",
-      "next_action": "Reconcile PR318 into the newer shared Web staging branch separately; no further live deploy required for this completed scope.",
-      "local_tests": 462,
-      "previous_source_commit": "91005cff96256e2f12f5562670bf0abfb8a1327d",
-      "previous_release_receipt": "workstreams/auth-student-live-receipt-20261026.json",
+      "receipt": "workstreams/public-entry-shell-live-receipt-20261026.json",
+      "integration": "PR318 open with conflicts against newer staging-only Remy; no force merge or unrelated rollout",
+      "next_action": "Release owner separately reconciles PR318 into newer Web staging. No additional live deploy required for this completed public-layout scope.",
+      "local_tests": 466,
+      "previous_source_commit": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+      "previous_release_receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
       "followup_return_desktop": {
         "source_commit": "1951f1979378b0500329a3c5dac5e6bad6fc7f3e",
         "tree": "a2bbdaa678b4fbde82820e7f8c5dadc515b0d55a",
@@ -863,6 +950,93 @@
         "physical_device_acceptance": "not performed",
         "backend_rules_accounts_changed": false,
         "live_browser": "2560 desktop scale verified; account Back and anonymous bare workspace return to root; retired scene display none; centered account heading; student Back clicked at390x844"
+      },
+      "package_tests": 12,
+      "attempt_history": [
+        {
+          "source": "d4a12c7f958ed4d56144bb433a12435db446ff4e",
+          "result": "preview and source checkpoint; account native header guard then added"
+        },
+        {
+          "source": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+          "ci": 40397264419,
+          "result": "live and197files/origin verified; final code-free student header guard then added",
+          "hosting_version": "785b6be343f6c971",
+          "deployed_at": "2026-10-26T20:39:58.183Z"
+        }
+      ],
+      "independent_review": "One P2 locale persistence finding repaired with storage/URL/event regression; no other important session/template/style-teardown findings.",
+      "provider_calls": 0,
+      "hash_verification": {
+        "https://gradecrew.de": {
+          "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+          "verified_files": 197
+        },
+        "https://hausaufgabe-staging.web.app": {
+          "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+          "verified_files": 197
+        }
+      },
+      "followup_shared_frame": {
+        "task_ids": [
+          "GC-DESIGN-05",
+          "GC-WEB-REPAIR-20261007"
+        ],
+        "stage": "production",
+        "scope": "One approved homepage frame; only right-hand preview changes to login, register, reset or code-free student form. Stable logo/headline/Crew geometry and native-header cold-paint guards.",
+        "branch": "feature/design-auth-student-20261026",
+        "source_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+        "tree": "198c33ca9d1193a65fd547131cf76979f373a3f8",
+        "pr": 318,
+        "ci_run": 40398151816,
+        "ci_jobs": [
+          121836600210,
+          121836600618
+        ],
+        "ci": "success",
+        "url": "https://gradecrew.de/",
+        "alternate_url": "https://hausaufgabe-staging.web.app/",
+        "local_tests": 466,
+        "package_tests": 12,
+        "automated_browser": "36 WebKit/Chromium viewport layouts,60 task layouts; homepage/login/register/reset/student anchors compared at390/1024/2560px with <2px tolerance",
+        "live_browser": "Actual public start/login/register/reset/Back and student entry checked; same logo and Crew placement; DE/EN reload; no forms submitted",
+        "physical_device_acceptance": "not performed",
+        "backend_rules_accounts_changed": false,
+        "legacy_project_changed": false,
+        "handoff": "workstreams/auth-brand-alignment-20261026.md",
+        "receipt": "workstreams/public-entry-shell-live-receipt-20261026.json",
+        "integration": "PR318 open with conflicts against newer staging-only Remy; no force merge or unrelated rollout",
+        "next_action": "Release owner separately reconciles PR318 into newer Web staging. No additional live deploy required for this completed public-layout scope.",
+        "previous_source_commit": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+        "previous_release_receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
+        "attempt_history": [
+          {
+            "source": "d4a12c7f958ed4d56144bb433a12435db446ff4e",
+            "result": "preview and source checkpoint; account native header guard then added"
+          },
+          {
+            "source": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+            "ci": 40397264419,
+            "result": "live and197files/origin verified; final code-free student header guard then added",
+            "hosting_version": "785b6be343f6c971",
+            "deployed_at": "2026-10-26T20:39:58.183Z"
+          }
+        ],
+        "independent_review": "One P2 locale persistence finding repaired with storage/URL/event regression; no other important session/template/style-teardown findings.",
+        "provider_calls": 0,
+        "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/705033819f218bf7",
+        "deployed_at": "2026-10-26T20:46:29.756Z",
+        "verified_files_per_origin": 197,
+        "hash_verification": {
+          "https://gradecrew.de": {
+            "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+            "verified_files": 197
+          },
+          "https://hausaufgabe-staging.web.app": {
+            "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+            "verified_files": 197
+          }
+        }
       }
     },
     "observedIntegrationHead": "4fe345c16d5778a93b077af4e775e7d3addbdb9e"
@@ -876,9 +1050,9 @@
     "legacy_project_changed": false,
     "url": "https://gradecrew.de/",
     "version": "2.3.1-gc45-rc1",
-    "source_commit": "1951f1979378b0500329a3c5dac5e6bad6fc7f3e",
-    "deployed_local_commit": "1951f1979378b0500329a3c5dac5e6bad6fc7f3e",
-    "tree": "a2bbdaa678b4fbde82820e7f8c5dadc515b0d55a",
+    "source_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+    "deployed_local_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+    "tree": "198c33ca9d1193a65fd547131cf76979f373a3f8",
     "user_acceptance": "current gc44 and new offline native policy physical acceptance pending",
     "alternate_urls": [
       "https://hausaufgabe-staging.web.app/"
@@ -889,34 +1063,34 @@
         "GC-WEB-REPAIR-20261007"
       ],
       "stage": "production",
-      "scope": "Correction of approved public entry: public homepage returns, no retired hero during account paint, large desktop scale >=1500px, centered account introductions and visible student Back with DE/EN",
+      "scope": "One approved homepage frame; only right-hand preview changes to login, register, reset or code-free student form. Stable logo/headline/Crew geometry and native-header cold-paint guards.",
       "branch": "feature/design-auth-student-20261026",
-      "source_commit": "1951f1979378b0500329a3c5dac5e6bad6fc7f3e",
-      "tree": "a2bbdaa678b4fbde82820e7f8c5dadc515b0d55a",
+      "source_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+      "tree": "198c33ca9d1193a65fd547131cf76979f373a3f8",
       "pr": 318,
-      "ci_run": 40390661304,
+      "ci_run": 40398151816,
       "ci_jobs": [
-        121810476666,
-        121810477270
+        121836600210,
+        121836600618
       ],
       "ci": "success",
       "url": "https://gradecrew.de/",
       "alternate_url": "https://hausaufgabe-staging.web.app/",
-      "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/8401999557bb00b1",
-      "deployed_at": "2026-10-26T19:56:28.246Z",
-      "verified_files_per_origin": 194,
-      "live_browser": "2560 desktop scale verified; account Back and anonymous bare workspace return to root; retired scene display none; centered account heading; student Back clicked at390x844",
-      "automated_browser": "36 WebKit/Chromium viewport layouts, 60 task layouts, cold account paint and homepage return fixtures",
+      "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/705033819f218bf7",
+      "deployed_at": "2026-10-26T20:46:29.756Z",
+      "verified_files_per_origin": 197,
+      "live_browser": "Actual public start/login/register/reset/Back and student entry checked; same logo and Crew placement; DE/EN reload; no forms submitted",
+      "automated_browser": "36 WebKit/Chromium viewport layouts,60 task layouts; homepage/login/register/reset/student anchors compared at390/1024/2560px with <2px tolerance",
       "physical_device_acceptance": "not performed",
       "backend_rules_accounts_changed": false,
       "legacy_project_changed": false,
       "handoff": "workstreams/auth-brand-alignment-20261026.md",
-      "receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
-      "integration": "PR318 open with conflicts against newer staging-only interactive Remy; no force merge and no unrelated live rollout",
-      "next_action": "Reconcile PR318 into the newer shared Web staging branch separately; no further live deploy required for this completed scope.",
-      "local_tests": 462,
-      "previous_source_commit": "91005cff96256e2f12f5562670bf0abfb8a1327d",
-      "previous_release_receipt": "workstreams/auth-student-live-receipt-20261026.json",
+      "receipt": "workstreams/public-entry-shell-live-receipt-20261026.json",
+      "integration": "PR318 open with conflicts against newer staging-only Remy; no force merge or unrelated rollout",
+      "next_action": "Release owner separately reconciles PR318 into newer Web staging. No additional live deploy required for this completed public-layout scope.",
+      "local_tests": 466,
+      "previous_source_commit": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+      "previous_release_receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
       "followup_return_desktop": {
         "source_commit": "1951f1979378b0500329a3c5dac5e6bad6fc7f3e",
         "tree": "a2bbdaa678b4fbde82820e7f8c5dadc515b0d55a",
@@ -937,6 +1111,93 @@
         "physical_device_acceptance": "not performed",
         "backend_rules_accounts_changed": false,
         "live_browser": "2560 desktop scale verified; account Back and anonymous bare workspace return to root; retired scene display none; centered account heading; student Back clicked at390x844"
+      },
+      "package_tests": 12,
+      "attempt_history": [
+        {
+          "source": "d4a12c7f958ed4d56144bb433a12435db446ff4e",
+          "result": "preview and source checkpoint; account native header guard then added"
+        },
+        {
+          "source": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+          "ci": 40397264419,
+          "result": "live and197files/origin verified; final code-free student header guard then added",
+          "hosting_version": "785b6be343f6c971",
+          "deployed_at": "2026-10-26T20:39:58.183Z"
+        }
+      ],
+      "independent_review": "One P2 locale persistence finding repaired with storage/URL/event regression; no other important session/template/style-teardown findings.",
+      "provider_calls": 0,
+      "hash_verification": {
+        "https://gradecrew.de": {
+          "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+          "verified_files": 197
+        },
+        "https://hausaufgabe-staging.web.app": {
+          "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+          "verified_files": 197
+        }
+      },
+      "followup_shared_frame": {
+        "task_ids": [
+          "GC-DESIGN-05",
+          "GC-WEB-REPAIR-20261007"
+        ],
+        "stage": "production",
+        "scope": "One approved homepage frame; only right-hand preview changes to login, register, reset or code-free student form. Stable logo/headline/Crew geometry and native-header cold-paint guards.",
+        "branch": "feature/design-auth-student-20261026",
+        "source_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+        "tree": "198c33ca9d1193a65fd547131cf76979f373a3f8",
+        "pr": 318,
+        "ci_run": 40398151816,
+        "ci_jobs": [
+          121836600210,
+          121836600618
+        ],
+        "ci": "success",
+        "url": "https://gradecrew.de/",
+        "alternate_url": "https://hausaufgabe-staging.web.app/",
+        "local_tests": 466,
+        "package_tests": 12,
+        "automated_browser": "36 WebKit/Chromium viewport layouts,60 task layouts; homepage/login/register/reset/student anchors compared at390/1024/2560px with <2px tolerance",
+        "live_browser": "Actual public start/login/register/reset/Back and student entry checked; same logo and Crew placement; DE/EN reload; no forms submitted",
+        "physical_device_acceptance": "not performed",
+        "backend_rules_accounts_changed": false,
+        "legacy_project_changed": false,
+        "handoff": "workstreams/auth-brand-alignment-20261026.md",
+        "receipt": "workstreams/public-entry-shell-live-receipt-20261026.json",
+        "integration": "PR318 open with conflicts against newer staging-only Remy; no force merge or unrelated rollout",
+        "next_action": "Release owner separately reconciles PR318 into newer Web staging. No additional live deploy required for this completed public-layout scope.",
+        "previous_source_commit": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+        "previous_release_receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
+        "attempt_history": [
+          {
+            "source": "d4a12c7f958ed4d56144bb433a12435db446ff4e",
+            "result": "preview and source checkpoint; account native header guard then added"
+          },
+          {
+            "source": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+            "ci": 40397264419,
+            "result": "live and197files/origin verified; final code-free student header guard then added",
+            "hosting_version": "785b6be343f6c971",
+            "deployed_at": "2026-10-26T20:39:58.183Z"
+          }
+        ],
+        "independent_review": "One P2 locale persistence finding repaired with storage/URL/event regression; no other important session/template/style-teardown findings.",
+        "provider_calls": 0,
+        "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/705033819f218bf7",
+        "deployed_at": "2026-10-26T20:46:29.756Z",
+        "verified_files_per_origin": 197,
+        "hash_verification": {
+          "https://gradecrew.de": {
+            "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+            "verified_files": 197
+          },
+          "https://hausaufgabe-staging.web.app": {
+            "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+            "verified_files": 197
+          }
+        }
       }
     }
   },
@@ -2761,11 +3022,11 @@
       "id": "public-entry-release-20261026",
       "task_id": "GC-DESIGN-05",
       "branch": "feature/design-auth-student-20261026",
-      "observed_head": "1951f1979378b0500329a3c5dac5e6bad6fc7f3e",
+      "observed_head": "f048ed1ae0afc976aed407195f95708731d5cd77",
       "stage": "production",
       "scope": "Hosting-only: public homepage layout, teacher login/register/reset, direct student entry",
       "ci": {
-        "run": 40390661304,
+        "run": 40398151816,
         "conclusion": "success"
       },
       "production": {
@@ -2774,34 +3035,34 @@
           "GC-WEB-REPAIR-20261007"
         ],
         "stage": "production",
-        "scope": "Correction of approved public entry: public homepage returns, no retired hero during account paint, large desktop scale >=1500px, centered account introductions and visible student Back with DE/EN",
+        "scope": "One approved homepage frame; only right-hand preview changes to login, register, reset or code-free student form. Stable logo/headline/Crew geometry and native-header cold-paint guards.",
         "branch": "feature/design-auth-student-20261026",
-        "source_commit": "1951f1979378b0500329a3c5dac5e6bad6fc7f3e",
-        "tree": "a2bbdaa678b4fbde82820e7f8c5dadc515b0d55a",
+        "source_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+        "tree": "198c33ca9d1193a65fd547131cf76979f373a3f8",
         "pr": 318,
-        "ci_run": 40390661304,
+        "ci_run": 40398151816,
         "ci_jobs": [
-          121810476666,
-          121810477270
+          121836600210,
+          121836600618
         ],
         "ci": "success",
         "url": "https://gradecrew.de/",
         "alternate_url": "https://hausaufgabe-staging.web.app/",
-        "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/8401999557bb00b1",
-        "deployed_at": "2026-10-26T19:56:28.246Z",
-        "verified_files_per_origin": 194,
-        "live_browser": "2560 desktop scale verified; account Back and anonymous bare workspace return to root; retired scene display none; centered account heading; student Back clicked at390x844",
-        "automated_browser": "36 WebKit/Chromium viewport layouts, 60 task layouts, cold account paint and homepage return fixtures",
+        "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/705033819f218bf7",
+        "deployed_at": "2026-10-26T20:46:29.756Z",
+        "verified_files_per_origin": 197,
+        "live_browser": "Actual public start/login/register/reset/Back and student entry checked; same logo and Crew placement; DE/EN reload; no forms submitted",
+        "automated_browser": "36 WebKit/Chromium viewport layouts,60 task layouts; homepage/login/register/reset/student anchors compared at390/1024/2560px with <2px tolerance",
         "physical_device_acceptance": "not performed",
         "backend_rules_accounts_changed": false,
         "legacy_project_changed": false,
         "handoff": "workstreams/auth-brand-alignment-20261026.md",
-        "receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
-        "integration": "PR318 open with conflicts against newer staging-only interactive Remy; no force merge and no unrelated live rollout",
-        "next_action": "Reconcile PR318 into the newer shared Web staging branch separately; no further live deploy required for this completed scope.",
-        "local_tests": 462,
-        "previous_source_commit": "91005cff96256e2f12f5562670bf0abfb8a1327d",
-        "previous_release_receipt": "workstreams/auth-student-live-receipt-20261026.json",
+        "receipt": "workstreams/public-entry-shell-live-receipt-20261026.json",
+        "integration": "PR318 open with conflicts against newer staging-only Remy; no force merge or unrelated rollout",
+        "next_action": "Release owner separately reconciles PR318 into newer Web staging. No additional live deploy required for this completed public-layout scope.",
+        "local_tests": 466,
+        "previous_source_commit": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+        "previous_release_receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
         "followup_return_desktop": {
           "source_commit": "1951f1979378b0500329a3c5dac5e6bad6fc7f3e",
           "tree": "a2bbdaa678b4fbde82820e7f8c5dadc515b0d55a",
@@ -2822,10 +3083,97 @@
           "physical_device_acceptance": "not performed",
           "backend_rules_accounts_changed": false,
           "live_browser": "2560 desktop scale verified; account Back and anonymous bare workspace return to root; retired scene display none; centered account heading; student Back clicked at390x844"
+        },
+        "package_tests": 12,
+        "attempt_history": [
+          {
+            "source": "d4a12c7f958ed4d56144bb433a12435db446ff4e",
+            "result": "preview and source checkpoint; account native header guard then added"
+          },
+          {
+            "source": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+            "ci": 40397264419,
+            "result": "live and197files/origin verified; final code-free student header guard then added",
+            "hosting_version": "785b6be343f6c971",
+            "deployed_at": "2026-10-26T20:39:58.183Z"
+          }
+        ],
+        "independent_review": "One P2 locale persistence finding repaired with storage/URL/event regression; no other important session/template/style-teardown findings.",
+        "provider_calls": 0,
+        "hash_verification": {
+          "https://gradecrew.de": {
+            "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+            "verified_files": 197
+          },
+          "https://hausaufgabe-staging.web.app": {
+            "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+            "verified_files": 197
+          }
+        },
+        "followup_shared_frame": {
+          "task_ids": [
+            "GC-DESIGN-05",
+            "GC-WEB-REPAIR-20261007"
+          ],
+          "stage": "production",
+          "scope": "One approved homepage frame; only right-hand preview changes to login, register, reset or code-free student form. Stable logo/headline/Crew geometry and native-header cold-paint guards.",
+          "branch": "feature/design-auth-student-20261026",
+          "source_commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+          "tree": "198c33ca9d1193a65fd547131cf76979f373a3f8",
+          "pr": 318,
+          "ci_run": 40398151816,
+          "ci_jobs": [
+            121836600210,
+            121836600618
+          ],
+          "ci": "success",
+          "url": "https://gradecrew.de/",
+          "alternate_url": "https://hausaufgabe-staging.web.app/",
+          "local_tests": 466,
+          "package_tests": 12,
+          "automated_browser": "36 WebKit/Chromium viewport layouts,60 task layouts; homepage/login/register/reset/student anchors compared at390/1024/2560px with <2px tolerance",
+          "live_browser": "Actual public start/login/register/reset/Back and student entry checked; same logo and Crew placement; DE/EN reload; no forms submitted",
+          "physical_device_acceptance": "not performed",
+          "backend_rules_accounts_changed": false,
+          "legacy_project_changed": false,
+          "handoff": "workstreams/auth-brand-alignment-20261026.md",
+          "receipt": "workstreams/public-entry-shell-live-receipt-20261026.json",
+          "integration": "PR318 open with conflicts against newer staging-only Remy; no force merge or unrelated rollout",
+          "next_action": "Release owner separately reconciles PR318 into newer Web staging. No additional live deploy required for this completed public-layout scope.",
+          "previous_source_commit": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+          "previous_release_receipt": "workstreams/public-entry-return-live-receipt-20261026.json",
+          "attempt_history": [
+            {
+              "source": "d4a12c7f958ed4d56144bb433a12435db446ff4e",
+              "result": "preview and source checkpoint; account native header guard then added"
+            },
+            {
+              "source": "e317fbcb2242bafe3a4a3cc5e30f3008da08105d",
+              "ci": 40397264419,
+              "result": "live and197files/origin verified; final code-free student header guard then added",
+              "hosting_version": "785b6be343f6c971",
+              "deployed_at": "2026-10-26T20:39:58.183Z"
+            }
+          ],
+          "independent_review": "One P2 locale persistence finding repaired with storage/URL/event regression; no other important session/template/style-teardown findings.",
+          "provider_calls": 0,
+          "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/705033819f218bf7",
+          "deployed_at": "2026-10-26T20:46:29.756Z",
+          "verified_files_per_origin": 197,
+          "hash_verification": {
+            "https://gradecrew.de": {
+              "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+              "verified_files": 197
+            },
+            "https://hausaufgabe-staging.web.app": {
+              "commit": "f048ed1ae0afc976aed407195f95708731d5cd77",
+              "verified_files": 197
+            }
+          }
         }
       },
       "handoff": "workstreams/auth-brand-alignment-20261026.md",
-      "next_action": "Reconcile PR318 into the newer shared Web staging branch separately; no further live deploy required for this completed scope."
+      "next_action": "Release owner separately reconciles PR318 into newer Web staging. No additional live deploy required for this completed public-layout scope."
     }
   ],
   "deployments": [
