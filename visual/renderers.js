@@ -5,6 +5,12 @@ const C=window.GC2;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=C.num;
 let mountSequence=0;
+function isDreisatzSpec(s){
+ if(!s||s.columns?.length!==4||s.rows?.length!==5||s.rows.some(r=>!Array.isArray(r)||r.length!==4)||s.columns[0]!=='Schritt'||s.columns[3]!=='Faktor'||s.rows[1][0].text!=='Beide Werte teilen durch'||s.rows[3][0].text!=='Beide Werte multiplizieren mit')return false;
+ const visible=(r,c)=>[0,2,4].includes(r)&&[1,2].includes(c)||[1,3].includes(r)&&c===3;
+ return s.rows.every((row,r)=>row.every((cell,c)=>!cell.input||visible(r,c)));
+}
+
 function mount(host,q,initial,options={}){
  let answer=initial==null?null:C.clone(initial),selected=null,activePoint=0,activeEnd='start',drag=null;
  const markerId='gc-visual-arrow-'+(++mountSequence);
@@ -89,6 +95,12 @@ function renderAngle(q){
  points.forEach((p,i)=>{if(C.numeric(p?.x)!==null&&C.numeric(p?.y)!==null)h+=`<circle cx="${px(p.x)}" cy="${py(p.y)}" r="7" fill="#285ac9" stroke="white" stroke-width="2"/><text x="${px(p.x)+11}" y="${py(p.y)-10}" font-size="15" fill="#285ac9">${esc(s.labels[i])}</text>`;});h+='</g><text x="650" y="360" fill="#536b8b">x</text><text x="78" y="40" fill="#536b8b">y</text></svg>';
  h+=`<div class="answer-tools">${s.labels.map((l,i)=>button(l+' setzen',`data-point="${i}"`,activePoint===i)).join('')}</div><div class="coordinate-inputs">${s.labels.map((l,i)=>`<div class="point-input"><b>${esc(l)}</b>${['x','y'].map(axis=>`<label class="field">${axis}<input data-coord="${i}" data-axis="${axis}" aria-label="${esc(l)} ${axis}" type="number" min="${axis==='x'?s.minX:s.minY}" max="${axis==='x'?s.maxX:s.maxY}" step="${s.step}" value="${esc(points[i]?.[axis]??'')}" ${disabled()}></label>`).join('')}</div>`).join('')}</div>`;return h;
  }
+ function dreisatz(){const s=q.spec;
+  const field=(cell,label)=>cell.input?`<input data-table="${esc(cell.id)}" aria-label="${esc(label)}" inputmode="decimal" autocomplete="off" type="text" value="${esc(obj()[cell.id]??'')}" ${disabled()}>`:`<span class="dreisatz-given">${esc(cell.text)}</span>`;
+  const values=(r,index)=>`<div class="dreisatz-values" role="group" aria-label="${['Ausgangswerte','Zwischenschritt','Ergebnis'][index]}">${[1,2].map(c=>`<div class="dreisatz-value">${field(s.rows[r][c],s.columns[c]+', '+['Ausgangswert','Zwischenschritt','Ergebnis'][index])}</div>`).join('')}</div>`;
+  const operation=(r,word)=>`<div class="dreisatz-operation"><span aria-hidden="true">↓</span><label><span>${word}</span>${field(s.rows[r][3],word+' – für beide Spalten')}</label><span aria-hidden="true">↓</span></div>`;
+  return `<div class="dreisatz-board"><div class="dreisatz-headings">${[1,2].map(c=>`<strong class="dreisatz-heading">${esc(s.columns[c])}</strong>`).join('')}</div>${values(0,0)}${operation(1,'geteilt durch')}${values(2,1)}${operation(3,'mal')}${values(4,2)}<p class="dreisatz-caption">Die Rechenpfeile gelten für beide Spalten. ${q.maxPoints===s.rows.flat().filter(c=>c.input).length*.5?'Jedes richtige Feld: 0,5 Punkte.':num(q.maxPoints)+' Punkte insgesamt.'}</p></div>`;
+ }
  function draw(){const active=document.activeElement,focusData=host.contains(active)?Object.entries(active.dataset||{}):[];let h='';const s=q.spec;
  switch(q.format){
  case'hotspot':case'labeling':h=(q.format==='labeling'?`<div class="chiptray">${s.items.map(i=>`<button type="button" class="chip${selectedClass(selected===i.id)}" data-chip="${esc(i.id)}" draggable="${!readOnly()}" ${disabled()} aria-pressed="${selected===i.id}">${esc(i.text)}</button>`).join('')}</div>`:'')+renderScene(q);if(q.format==='labeling')h+=`<div class="slot-list">${s.regions.map((id,i)=>button((i+1)+' · '+(s.items.find(x=>x.id===obj()[id])?.text||'Begriff wählen'),`data-slot="${id}"`,!!obj()[id])).join('')}</div>`;break;
@@ -100,7 +112,7 @@ function renderAngle(q){
  case'connections':h=connections();break;
  case'coordinate':h=coordinate();break;
  case'evidence':h=`<div class="passage" aria-label="Textbelege auswählen">${s.tokens.map((t,i)=>button(t.text,`data-token="${esc(t.id)}"`,arr().includes(t.id))).join('')}</div>`;break;
- case'table':h=`<div class="table-scroll"><table class="answer-table"><thead><tr>${s.columns.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${s.rows.map((row,ri)=>`<tr>${row.map((c,ci)=>`<td>${c.input?`<input data-table="${esc(c.id)}" aria-label="Zeile ${ri+1}, ${esc(s.columns[ci])}" type="text" value="${esc(obj()[c.id]??'')}" ${disabled()}>`:esc(c.text)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;break;
+ case'table':if(options.compactDreisatz&&isDreisatzSpec(s)){h=dreisatz();break;}h=`<div class="table-scroll"><table class="answer-table"><thead><tr>${s.columns.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${s.rows.map((row,ri)=>`<tr>${row.map((c,ci)=>`<td>${c.input?`<input data-table="${esc(c.id)}" aria-label="Zeile ${ri+1}, ${esc(s.columns[ci])}" type="text" value="${esc(obj()[c.id]??'')}" ${disabled()}>`:esc(c.text)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;break;
  case'correction':h=`<div class="passage">${s.rows.map((r,i)=>button(r.text,`data-error-row="${esc(r.id)}"`,obj().id===r.id)).join('')}</div><div class="answer-tools"><label class="field">Berichtigung<input data-correction-text type="text" value="${esc(obj().text??'')}" placeholder="Richtigen Wert oder Text eintragen" ${disabled()}></label></div>`;break;
  case'single':case'multi':h=`<div class="passage">${s.options.map(o=>button(o.text,`data-option="${esc(o.id)}"`,arr().includes(o.id))).join('')}</div>`;break;
  }
@@ -125,5 +137,5 @@ function renderAngle(q){
  host.addEventListener('dragstart',e=>{const chip=e.target.closest('[data-chip]');if(chip&&!readOnly()){selected=chip.dataset.chip;e.dataTransfer?.setData('text/plain',selected);}});host.addEventListener('dragover',e=>{if(e.target.closest('[data-slot]'))e.preventDefault();});host.addEventListener('drop',e=>{const slot=e.target.closest('[data-slot]');if(slot&&!readOnly()){e.preventDefault();assign(slot.dataset.slot);}});
  draw();return {destroy(){document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);document.removeEventListener('pointercancel',up);},getAnswer:()=>C.clone(answer)};
 }
-window.GCRenderer={mount,esc};
+window.GCRenderer={mount,esc,isDreisatzSpec};
 })();

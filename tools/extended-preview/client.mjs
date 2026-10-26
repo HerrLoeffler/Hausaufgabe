@@ -1,4 +1,5 @@
-const scopeStyle=document.createElement('style');scopeStyle.textContent='#gcRemyCreatePanel{display:none!important}';document.head.append(scopeStyle);
+document.documentElement.dataset.gradecrewLab='true';
+const scopeStyle=document.createElement('style');scopeStyle.textContent='#gcRemyCreatePanel{display:none!important}.gc-compact-dreisatz .questionImageEditor,.gc-compact-dreisatz .questionAudioEditor{display:none!important}';document.head.append(scopeStyle);
 const note=document.createElement('div');note.setAttribute('role','note');note.style.cssText='background:#edf0f7;color:#283e60;padding:10px 16px;font:14px system-ui;display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-bottom:1px solid #c6cfde';
 const text=document.createElement('span');text.textContent='GradeCrew · Aufgabenlabor · Test-KI wird geprüft';note.append(text);document.body.prepend(note);
 fetch('/__extended/status').then(r=>r.json()).then(s=>text.textContent=s.aiEnabled?'GradeCrew · Aufgabenlabor · echte Test-KI angebunden':'GradeCrew · Aufgabenlabor · KI für diesen Start deaktiviert').catch(()=>text.textContent='GradeCrew · Aufgabenlabor · Verbindung unterbrochen');

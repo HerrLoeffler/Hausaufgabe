@@ -84,3 +84,15 @@
 .gc-visual svg{width:100%;height:auto;display:block}.gc-visual [data-instrument]{touch-action:none;cursor:move}.gc-visual [data-protractor-mode]{cursor:grab}.gc-visual [data-surface],.gc-visual [data-bar]{touch-action:none}.gc-visual [data-instrument]:focus-visible{outline:3px solid #e3a855}.gc-visual .instrument-controls p{width:100%;margin:0}.gc-visual .instrument-controls input{max-width:140px}.gc-visual .field input{min-height:44px}.gc-visual .slot-list{display:grid}.gc-visual button:focus-visible,.gc-visual input:focus-visible,.gc-visual [role=button]:focus-visible,.gc-visual [role=slider]:focus-visible{outline:3px solid #e3a855;outline-offset:2px}@media(max-width:600px){.gc-visual .passage,.gc-visual .table-scroll{padding:14px}.gc-visual .grid-area{padding:16px;gap:5px}.gc-visual .gridcell{min-height:0}.gc-visual .answer-tools{padding:8px 12px 18px}.gc-visual .answer-table td,.gc-visual .answer-table th{padding:7px}}
 
 .gc-visual .node-legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:10px;margin:12px 0}.gc-visual .node-legend .answer-button{white-space:normal;overflow-wrap:anywhere;text-align:left;line-height:1.45;min-width:0;width:100%}
+/* Local laboratory Dreisatz: three value rows, operations between them. */
+.gc-visual .dreisatz-board{max-width:580px;margin:0 auto;padding:22px 26px;background:#fff}
+.gc-visual .dreisatz-headings,.gc-visual .dreisatz-values{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.gc-visual .dreisatz-heading{text-align:center;font-size:14px;padding:0 0 10px;color:#344963}
+.gc-visual .dreisatz-value{display:flex;align-items:center;justify-content:center;min-height:60px;border:1px solid #cbd8e9;border-radius:8px;background:#f0f5fc;font-size:23px;font-weight:650}
+.gc-visual .dreisatz-value input{box-sizing:border-box;width:100%;min-width:0;height:60px;text-align:center;border:2px solid #7c9dcc;border-radius:8px;background:#fff;color:#1f3554;font:inherit}
+.gc-visual .dreisatz-operation{display:flex;align-items:center;justify-content:space-evenly;gap:12px;padding:12px 0;color:#285ac9;font-size:25px}
+.gc-visual .dreisatz-operation label{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:650;color:#344963}
+.gc-visual .dreisatz-operation input{width:72px;min-width:0;height:42px;box-sizing:border-box;border:2px solid #7c9dcc;border-radius:7px;text-align:center;font:inherit;background:#fff;color:#1f3554}
+.gc-visual .dreisatz-board input:focus-visible{outline:3px solid #edb449;outline-offset:2px}
+.gc-visual .dreisatz-caption{font-size:12px;text-align:center;color:#566980;margin:16px 0 0;line-height:1.5}
+@media(max-width:520px){.gc-visual .dreisatz-board{padding:16px 12px}.gc-visual .dreisatz-headings,.gc-visual .dreisatz-values{gap:12px}.gc-visual .dreisatz-heading{font-size:12px}.gc-visual .dreisatz-value{font-size:20px}.gc-visual .dreisatz-operation{gap:6px}.gc-visual .dreisatz-operation label{font-size:13px}.gc-visual .dreisatz-operation input{width:60px}}

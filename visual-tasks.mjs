@@ -91,7 +91,7 @@ export function evaluateVisual(q,value) {
   const result=core().grade(task,decodeVisualAnswer(value));
   return {awarded:result.points,max:result.maxPoints,needsReview:false,correct:result.correct};
 }
-export function visualSolution(q) { try{return core().solutionText(parseVisualTask(q));}catch{return 'Aufgabe prüfen';} }
+export function visualSolution(q) { try{const t=parseVisualTask(q);if(t.format==='table')return t.solution.cells.map(cell=>{const ri=t.spec.rows.findIndex(row=>row.some(c=>c.id===cell.id)),ci=t.spec.rows[ri].findIndex(c=>c.id===cell.id);if(globalThis.document?.documentElement?.dataset.gradecrewLab==='true'&&globalThis.GCRenderer?.isDreisatzSpec?.(t.spec)){const label=ri===1?'Geteilt durch':ri===3?'Mal':(ri===2?'Zwischenschritt':'Ergebnis')+' · '+t.spec.columns[ci];return label+': '+cell.accepted.join(' / ');} return 'Zeile '+(ri+1)+' · '+t.spec.columns[ci]+': '+cell.accepted.join(' / ');}).join(' · ');return core().solutionText(t);}catch{return 'Aufgabe prüfen';} }
 const controllers=new WeakMap();
 const mounted=new Set();
 let detachObserver;
@@ -109,7 +109,7 @@ export function mountVisualQuestion(section, question, initial = null, options =
   let task;try { task=parseVisualTask(question,{publicOnly:true}); } catch(error) { const warning=document.createElement('p');warning.textContent=error.message;section.append(warning);return; }
   section.querySelector('.gc-visual')?.remove();
   const host=document.createElement('div');host.className='gc-visual renderer';section.append(host);
-  const controller=globalThis.GCRenderer.mount(host,task,decodeVisualAnswer(initial),{...options,onAnswer(answer){options.onAnswer?.(answer);section.dispatchEvent(new Event('input',{bubbles:true}));section.dispatchEvent(new Event('change',{bubbles:true}));}});
+  const controller=globalThis.GCRenderer.mount(host,task,decodeVisualAnswer(initial),{...options,compactDreisatz:document.documentElement.dataset.gradecrewLab==='true',onAnswer(answer){options.onAnswer?.(answer);section.dispatchEvent(new Event('input',{bubbles:true}));section.dispatchEvent(new Event('change',{bubbles:true}));}});
   controllers.set(section,controller);
   for(const entry of mounted)if(entry.section===section)mounted.delete(entry);
   watchDetach(section,controller);
@@ -123,7 +123,8 @@ export function renderVisualEditor(container, q, onChange, {formats=VISUAL_FORMA
     const warning=document.createElement('p');warning.setAttribute('role','alert');warning.textContent=error.message+' Bitte mit Emmi überarbeiten oder eine neue Aufgabe erstellen.';
     container.append(warning);return;
   }
-  select.value=task.format;formatLabel.append(select);container.append(formatLabel);
+  select.value=task.format;formatLabel.append(select);
+  if(document.documentElement.dataset.gradecrewLab==='true'&&task.format==='table'&&globalThis.GCRenderer?.isDreisatzSpec?.(task.spec)){container.closest('.questionCard')?.classList.add('gc-compact-dreisatz');const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Aufgabenart ändern';details.append(summary,formatLabel);container.append(details);}else container.append(formatLabel);
   const preview=document.createElement('div');container.append(preview);
   const solution=document.createElement('p');solution.className='hint';container.append(solution);
   function show(){mountVisualQuestion(preview,q);solution.textContent='Lösung: '+visualSolution(q);}
