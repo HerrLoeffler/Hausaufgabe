@@ -31,18 +31,25 @@ function planTestBatches(input, batchSize = 10) {
   return batches;
 }
 
-async function generateTestInBatches(input, generate) {
+async function generateTestInBatches(input, generate, { concurrency = 1 } = {}) {
+  if (![1,2].includes(concurrency)) throw new RangeError("Ungültige Parallelität");
   const batches = planTestBatches(input);
   const questions = [];
   const usage = {};
   let metadata;
-  for (const batch of batches) {
-    const result = await generate(batch, questions);
+  for (let offset=0;offset<batches.length;offset+=concurrency) {
+    const wave=batches.slice(offset,offset+concurrency);
+    const previous=questions.slice();
+    const settled=await Promise.allSettled(wave.map(batch=>generate(batch,previous)));
+    const failed=settled.find(r=>r.status==='rejected');
+    if(failed)throw failed.reason;
+    for(const {value:result} of settled){
     if (!Array.isArray(result?.data?.questions)) throw new Error("Die KI-Antwort enthält keine Aufgabenliste.");
     metadata ||= result.data;
     questions.push(...result.data.questions);
     if (result.usage?.providerRequests?.length) usage.providerRequests = [...(usage.providerRequests || []), ...result.usage.providerRequests].slice(-100);
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage?.[key] || 0);
+  }
   }
   return { data: { ...metadata, questions }, usage };
 }

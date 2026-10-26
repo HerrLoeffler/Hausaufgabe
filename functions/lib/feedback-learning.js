@@ -27,6 +27,7 @@ function relevant(row,context){const type=row.questionType||row.questionSnapshot
 function buildFeedbackLearning(rows,context={},uid=''){
  const current=latestFeedback(rows).filter(row=>relevant(row,context));const own=current.filter(r=>uid&&r.userId===uid).slice(0,50),shared=current.filter(approved).slice(0,50);
  const memory=feedbackMemory(shared.map(clean),context);memory.personal=feedbackMemory(own.map(clean),context);
+ memory.recipeEvidence=require("./recipe-quality").teacherEvidence(current,approved);
  // Raw negative examples and comments are deliberately never supplied to a provider.
  memory.negativeQuestions=[];memory.personal.negativeQuestions=[];
  memory.learning={version:VERSION,generationId:randomUUID(),sources:[...own.map(r=>({id:r.id,scope:'personal',signature:signature(r)})),...shared.map(r=>({id:r.id,scope:'shared',signature:signature(r),reviewRevision:r.sharedLearning.revision}))]};
@@ -39,7 +40,7 @@ function learningPrompt(memory={}){
  return lines.join('\n');
 }
 async function loadFeedbackLearning(db,context={},uid=''){
- const fields=['category','userId','testCode','questionId','verdict','reason','subject','grade','questionType','reviewOutcome','createdAt','feedbackSchemaVersion','sharedLearning.decision','sharedLearning.revision','sharedLearning.reviewSignature'];
+ const fields=['category','userId','testCode','questionId','verdict','reason','subject','grade','questionType','reviewOutcome','createdAt','feedbackSchemaVersion','sharedLearning.decision','sharedLearning.revision','sharedLearning.reviewSignature','authoringRecipe'];
  const base=()=>db.collection('feedback').where('category','==','ai_question');
  // The recent metadata window includes withdrawals/unapproved replacements. No unreviewed foreign task text is selected.
  const queries=[base().orderBy('createdAt','desc').limit(500).select(...fields)];if(uid)queries.push(base().where('userId','==',uid).orderBy('createdAt','desc').limit(100).select(...fields,'questionSnapshot'));

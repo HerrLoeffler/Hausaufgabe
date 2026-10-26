@@ -1,0 +1,47 @@
+{
+  "scope": "normal Staging, fresh synthetic UI draft in existing teacher account",
+  "callsPlannedMaximum": 2,
+  "callsStarted": 2,
+  "cancelVerified": true,
+  "original": "Berechne 25 % von 400 €.",
+  "points": 2.5,
+  "firstRequestedFormat": "table",
+  "firstWish": "Dreisatz mit vier unabhängigen Rechenpfeilen und fünf offenen Feldern à0,5P",
+  "status": "both_real_AI_conversions_successful",
+  "startedAt": "2026-10-26T20:22:40.861246+00:00",
+  "firstResult": {
+    "format": "table",
+    "layout": "dreisatz",
+    "points": 2.5,
+    "openFields": 5,
+    "independentArrows": 4,
+    "text": "25 % von 400 €, über 1 %",
+    "signsScored": true,
+    "save": "visible server saved confirmation"
+  },
+  "secondRequestedFormat": "coordinate",
+  "secondWish": "same25%of400, x0..100,y0..400,step1",
+  "secondStartedAt": "2026-10-26T20:25:54.298146+00:00",
+  "secondResult": {
+    "format": "coordinate",
+    "minX": 0,
+    "maxX": 100,
+    "minY": 0,
+    "maxY": 400,
+    "step": 1,
+    "solution": [
+      25,
+      100
+    ],
+    "points": 2.5,
+    "render": "bounded major ticks and empty student response inputs"
+  },
+  "secondSave": {
+    "status": "correctly_rejected_while_active",
+    "quizId": "DAL2769M",
+    "observedPublishedAt": "2026-10-26T20:26:24.095Z",
+    "publisher": "unknown; no explicit publication action for this quiz was recorded in this repair",
+    "savedServerQuestion": "first Dreisatz conversion remains unchanged",
+    "localSecondResult": "preserved in browser draft; active test not ended or overwritten"
+  }
+}

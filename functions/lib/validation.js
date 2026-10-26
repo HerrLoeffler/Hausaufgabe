@@ -271,6 +271,7 @@ function validateTest(test, opts = {}) {
   if (!qs.length || qs.length > LIMITS.maxQuestions) errors.push("Ungültige Aufgabenanzahl.");
   qs.forEach((q, i) => validateQuestion(q, opts).forEach(e => errors.push(`Aufgabe ${i + 1}: ${e}`)));
   for (let i = 0; i < qs.length; i += 1) {
+    for(const error of require('./recipe-plan').slotErrors(qs[i],opts.recipeSlots?.[i]))errors.push(`Aufgabe ${i+1}: ${error}`);
     const prior = qs.findIndex((q, j) => j < i && (opts.requireFreshVariant ? variantRepeats : sameQuestion)(q, qs[i]));
     if (prior >= 0) errors.push(`Aufgabe ${i + 1} wiederholt inhaltlich Aufgabe ${prior + 1}.`);
     if (Array.isArray(opts.referenceQuestions) && opts.referenceQuestions.some(q => (opts.requireFreshVariant ? variantRepeats : sameQuestion)(q, qs[i]))) errors.push(`Aufgabe ${i + 1} wiederholt eine Aufgabe des Ausgangstests.`);
