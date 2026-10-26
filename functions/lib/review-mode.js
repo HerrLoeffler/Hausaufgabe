@@ -19,7 +19,7 @@ function createReviewService({store,projectId,now=Date.now,toTimestamp=value=>va
  async function execute({uid,data={}}) {
   if(!['hausaufgabe-staging','gradecrew-staging-2026'].includes(projectId))fail('failed-precondition','Feedback nur in der ausdrücklich freigegebenen GradeCrew-Umgebung.');
   if(!uid)fail('unauthenticated','Bitte anmelden.');id(uid);
-  if(data.action==='recordQuestionFeedback'&&data.actorUid&&data.actorUid!==uid)fail('permission-denied','Das Feedbackkonto wurde gewechselt.');
+  if(data.actorUid&&data.actorUid!==uid)fail('permission-denied','Das Feedbackkonto wurde gewechselt.');
   return store.transaction(async tx=>{
    const profile=await tx.get(`users/${uid}`),member=await tx.get(`reviewMembers/${uid}`);
    const admin=profile?.role==='admin';
@@ -39,7 +39,10 @@ function createReviewService({store,projectId,now=Date.now,toTimestamp=value=>va
     return {sourceProject:projectId,environment:projectId==='hausaufgabe-staging'?'production':'staging',reports:rows.map(require('./question-feedback').projectQuestionFeedback),nextCursor:rows.length===100?rows.at(-1).id:null,readOnly:true};
    }
    const quizAccess=async quizId=>{if(!quizId)return;const q=await tx.get(`quizzes/${id(quizId)}`);if(!q||(!admin&&q.ownerId!==uid))fail('permission-denied','Kein Zugriff auf diesen Test.');};
-   const feedbackValue=n=>({category:'screenshot_error',message:n.text,userId:n.authorId,authorId:n.authorId,displayName:n.authorId===uid?optional(profile.displayName,200):'',status:'new',createdAt:n.createdAt,updatedAt:now(),testCode:n.quizId||'',environment:projectId==='hausaufgabe-staging'?'production':'staging',reviewNoteId:n.id,reviewArea:'visual-feedback',view:n.view,target:n.target,build:n.build,...(n.region?{region:n.region}:{})});
+   if(data.action==='visualImageAccess'){
+    const n=await tx.get('reviewNotes/'+id(data.id));if(!n||(!admin&&n.authorId!==uid))fail('permission-denied','Kein Zugriff auf diesen Hinweis.');await quizAccess(n.quizId);if(!n.attachment)fail('failed-precondition','Älterer Hinweis ohne Bild.');return {imageId:n.attachment.imageId,ownerId:n.authorId};
+   }
+   const feedbackValue=n=>({category:'screenshot_error',message:n.text,userId:n.authorId,authorId:n.authorId,displayName:n.authorId===uid?optional(profile.displayName,200):'',status:'new',createdAt:n.createdAt,updatedAt:now(),testCode:n.quizId||'',environment:projectId==='hausaufgabe-staging'?'production':'staging',reviewNoteId:n.id,reviewArea:'visual-feedback',view:n.view,target:n.target,build:n.build,...(n.region?{region:n.region}:{}),...(n.attachment?{attachment:n.attachment,captureSchemaVersion:2,captureContext:n.captureContext||null}:{})});
    async function ensureFeedback(n){if(n.area!=='visual-feedback'&&!(n.region&&!n.area))return false;const path=`feedback/visual-${n.id}`;if(await tx.get(path))return false;tx.set(path,feedbackValue(n));return true;}
    const action=data.action;
    if(action==='access')return {uid,admin,catalog};
@@ -80,9 +83,22 @@ function createReviewService({store,projectId,now=Date.now,toTimestamp=value=>va
     if(data.region!=null)content.region=regionValue(data.region);
     await quizAccess(content.quizId);
     if(content.quizId&&content.questionId&&!await tx.get(`quizzes/${content.quizId}/questions/${content.questionId}`))fail('permission-denied','Aufgabe gehört nicht zu diesem Test.');
+    if(data.captureSchemaVersion===2){
+     content.captureSchemaVersion=2;content.imageId=id(data.imageId);
+     if(data.captureContext){const c=data.captureContext;if(!['current-tab','manual-file'].includes(c.source)||!['viewportWidth','viewportHeight','scrollX','scrollY'].every(k=>Number.isFinite(c[k])&&Math.abs(c[k])<=1000000)||c.viewportWidth<1||c.viewportHeight<1)fail('invalid-argument','Ungültiger Bildkontext.');content.captureContext={source:c.source,viewportWidth:c.viewportWidth,viewportHeight:c.viewportHeight,scrollX:c.scrollX,scrollY:c.scrollY,regionSpace:'image'};}
+    }
     const fingerprint=hash(JSON.stringify(content)),old=await tx.get(`reviewNotes/${noteId}`);
     if(old){if(old.createFingerprint!==fingerprint)fail('already-exists','Diese Übertragung wurde bereits mit anderem Inhalt gespeichert.');await ensureFeedback(old);return {note:old};}
-    const n={id:noteId,clientRequestId,createFingerprint:fingerprint,...content,authorId:uid,authorRole:admin?'admin':'teacher',revision:1,contentRevision:1,approval:admin?'not_required':'pending',approvedContentRevision:admin?1:0,status:'open',createdAt:now(),updatedAt:now(),previewEvidence:'',acceptanceEvidence:'',deployedBuild:''};
+    let attachment;
+    if(content.area==='visual-feedback'){
+     if(content.captureSchemaVersion!==2||content.imageId!==noteId)fail('failed-precondition','Bitte ein Screenshotbild beifügen und vor dem Senden prüfen.');
+     const lease=await tx.get('reviewImageLeases/'+noteId);
+     if(!lease||lease.ownerId!==uid)fail('permission-denied','Bild gehört nicht zu diesem Hinweis.');
+     if(!['ready','attached'].includes(lease.state)||lease.expiresAt<=now())fail('failed-precondition','Bild noch nicht übertragen oder abgelaufen.');
+     attachment={status:'available',imageId:noteId,width:lease.width,height:lease.height,contentType:lease.contentType,size:lease.size,expiresAt:now()+90*86400000};
+     tx.set('reviewImageLeases/'+noteId,{...lease,state:'attached',expiresAt:attachment.expiresAt,cleanupAt:attachment.expiresAt});
+    }
+    const n={...(attachment?{attachment}:{}),id:noteId,clientRequestId,createFingerprint:fingerprint,...content,authorId:uid,authorRole:admin?'admin':'teacher',revision:1,contentRevision:1,approval:admin?'not_required':'pending',approvedContentRevision:admin?1:0,status:'open',createdAt:now(),updatedAt:now(),previewEvidence:'',acceptanceEvidence:'',deployedBuild:''};
     tx.set(`reviewNotes/${noteId}`,n);tx.set(`reviewNotes/${noteId}/history/1`,{action,actor:uid,at:now(),revision:1});await ensureFeedback(n);return {note:n};
    }
    if(action==='check'){

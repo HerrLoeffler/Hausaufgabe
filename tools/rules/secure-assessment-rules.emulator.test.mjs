@@ -243,3 +243,14 @@ test("learning approvals and model-use receipts cannot be forged by any browser 
   }
   await assertSucceeds(updateDoc(doc(admin,'feedback','learning-row'),{status:'working'}));
 });
+
+test('visual images and upload leases remain server-only; browser cannot forge image receipts',async()=>{
+ await seed();const owner=env.authenticatedContext('owner').firestore(),admin=env.authenticatedContext('admin').firestore(),anon=env.unauthenticatedContext().firestore();
+ await env.withSecurityRulesDisabled(c=>Promise.all([setDoc(doc(c.firestore(),'reviewImageLeases','private-image'),{ownerId:'owner',state:'attached'}),setDoc(doc(c.firestore(),'reviewNotes','private-note'),{authorId:'owner',text:'synthetic'})]));
+ for(const db of [owner,admin,anon]){for(const collection of ['reviewImageLeases','reviewNotes']){await assertFails(getDoc(doc(db,collection,collection==='reviewNotes'?'private-note':'private-image')));await assertFails(setDoc(doc(db,collection,'forged'),{ownerId:'owner'}));}}
+ const row={userId:'owner',category:'screenshot_error',message:'synthetic',status:'new'};
+ for(const db of [owner,admin])await assertFails(setDoc(doc(db,'feedback','forged-visual'),row));
+ await env.withSecurityRulesDisabled(c=>setDoc(doc(c.firestore(),'feedback','visual-real'),{...row,attachment:{imageId:'private-image'}}));
+ await assertFails(updateDoc(doc(admin,'feedback','visual-real'),{attachment:{imageId:'forged'}}));
+ await assertSucceeds(updateDoc(doc(admin,'feedback','visual-real'),{status:'working'}));
+});

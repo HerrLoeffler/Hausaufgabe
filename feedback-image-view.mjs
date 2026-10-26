@@ -1,0 +1,12 @@
+export function bindFeedbackImages({root,reports,api,getUid}){
+ const document=root.ownerDocument,win=document.defaultView,uid=getUid();
+ for(const host of root.querySelectorAll('[data-feedback-image]')){
+  const report=reports.find(r=>r.id===host.dataset.feedbackImage);if(!report)continue;
+  if(!report.attachment){host.textContent='Älterer markierter Hinweis ohne Bildaufnahme.';continue;}
+  if(report.attachment.status==='deleted'){host.textContent='Bildanlage gelöscht.';continue;}
+  if(report.attachment.status==='expired'||report.attachment.expiresAt<=Date.now()){host.textContent='Bildaufbewahrungsfrist abgelaufen.';continue;}
+  let generation=0;const noteId=report.reviewNoteId||report.id,read=document.createElement('button'),status=document.createElement('p');read.type='button';read.className='button secondary';read.textContent='Screenshot anzeigen';status.setAttribute('role','status');host.append(read,status);
+  read.onclick=async()=>{if(getUid()!==uid)return;const operation=++generation;read.disabled=true;try{const r=await api({action:'readVisualImage',id:noteId});if(!host.isConnected||getUid()!==uid||operation!==generation)return;if(r.contentType!=='image/jpeg'||typeof r.base64!=='string'||r.base64.length>2800000)throw Error('Ungültiges Bild.');const bytes=Uint8Array.from(atob(r.base64),c=>c.charCodeAt(0)),url=win.URL.createObjectURL(new win.Blob([bytes],{type:'image/jpeg'})),img=document.createElement('img');img.alt='Von der Lehrkraft geprüfte Screenshotanlage zur Fehlermeldung';img.style.cssText='display:block;max-width:100%;height:auto';img.onload=img.onerror=()=>win.URL.revokeObjectURL(url);img.src=url;host.querySelector('img')?.remove();host.append(img);status.textContent='Private Bildanlage · '+r.width+' × '+r.height+' Pixel';}catch(e){if(host.isConnected&&getUid()===uid)status.textContent=e.message||'Bild nicht verfügbar.';}finally{read.disabled=false;}};
+  const remove=document.createElement('button');remove.type='button';remove.className='button ghost';remove.textContent='Bildanlage löschen';host.append(remove);remove.onclick=async()=>{if(getUid()!==uid)return;if(!win.confirm('Bildanlage dauerhaft löschen? Der Hinweistext bleibt erhalten.'))return;++generation;remove.disabled=true;try{await api({action:'deleteVisualImage',id:noteId});if(host.isConnected&&getUid()===uid)host.replaceChildren(document.createTextNode('Bildanlage gelöscht.'));}catch(e){status.textContent=e.message;remove.disabled=false;}};
+ }
+}
