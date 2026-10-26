@@ -7,6 +7,7 @@ struct TeacherRootView: View {
     @State private var restoreDeadline = GradeCrewAuthRestoreDeadline()
     @State private var restoreTimeoutReported = false
     @State private var authFormPresented = false
+    @State private var authBridgeReady = false
     @State private var workspaceOpeningGeneration:Int?
     @State private var brandAnimationStartedAt = Date()
     @State private var loadError: String?
@@ -84,14 +85,16 @@ struct TeacherRootView: View {
             else { await monitorGenerationAudit() }
         }
         .task(id: "restore-\(auditKey)-\(reloadID)") {
-            if restoreTimeoutReported { loadError = nil; restoreTimeoutReported = false }
-            guard !homeNavigation.showsWorkspace, !authFormPresented else { restoreDeadline.finish(); return }
+            guard !homeNavigation.showsWorkspace, !authBridgeReady, !restoreTimeoutReported else {
+                restoreDeadline.finish()
+                return
+            }
             let ticket = restoreDeadline.begin(at: ProcessInfo.processInfo.systemUptime)
             do { try await Task.sleep(nanoseconds: UInt64(GradeCrewAuthRestoreDeadline.seconds * 1_000_000_000)) }
             catch { return }
             guard !Task.isCancelled,
                   restoreDeadline.expired(ticket, at: ProcessInfo.processInfo.systemUptime),
-                  !homeNavigation.showsWorkspace, !authFormPresented, loadError == nil else { return }
+                  !homeNavigation.showsWorkspace, !authBridgeReady, loadError == nil else { return }
             restoreTimeoutReported = true
             loadError = "Die Anmeldung hat nicht rechtzeitig geantwortet. Bitte prüfe die Verbindung und versuche es erneut. Deine gespeicherten Daten bleiben erhalten."
         }
@@ -174,7 +177,8 @@ struct TeacherRootView: View {
                 animationStartedAt: brandAnimationStartedAt,
                 loadError: loadError,
                 call: quickRemyCall,
-                onRetry: retryWorkspace
+                onRetry: retryWorkspace,
+                onBridgeReadyChanged: { authBridgeReady = $0 }
             )
         } else {
             switch authState {
@@ -232,6 +236,12 @@ struct TeacherRootView: View {
     }
 
     private func receiveAuthState(_ newState: GradeCrewNativeBridgePolicy.AuthState) {
+        // A foreground refresh alone cannot clear a reported failure. A later
+        // confirmed auth result may recover without forcing another reload.
+        if restoreTimeoutReported && newState != .checking {
+            restoreTimeoutReported = false
+            loadError = nil
+        }
         switch newState {
         case let .signedIn(_, changed):
             authFormPresented = false
@@ -302,6 +312,9 @@ struct TeacherRootView: View {
     private func retryWorkspace() {
         auditGeneration += 1
         restoreDeadline.finish()
+        restoreTimeoutReported = false
+        authBridgeReady = false
+        quickRemyCall = nil
         loadError = nil
         isLoading = true
         homeNavigation.beginAuthCheck()
@@ -317,6 +330,9 @@ struct TeacherRootView: View {
     private func reloadAndCloseDiagnostics() {
         auditGeneration += 1
         restoreDeadline.finish()
+        restoreTimeoutReported = false
+        authBridgeReady = false
+        quickRemyCall = nil
         loadError = nil
         isLoading = true
         homeNavigation.beginAuthCheck()
