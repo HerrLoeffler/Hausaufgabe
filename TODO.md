@@ -735,7 +735,8 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 ### GC-EXTENDED-QUESTION-TYPES-01 — automatische fachliche Formatauswahl
 
 - [x] Nutzeranforderung dauerhaft im [Regelwerk](docs/learning/AUTOMATIC_TASK_SELECTION.md), Aufgabenfundus und bestehenden [Latenzplan](docs/superpowers/plans/2026-10-26-interactive-generation-latency.md) verankert: passende Rezepte anhand Fach/Klasse/Lernziel verwenden, kein Formatklick je Aufgabe; Dreisatz regulär bei passenden Prozent-/Zuordnungsrechenwegen.
-- [ ] Task0/Task1 implementieren und positive/negative Auswahltests nachweisen; fachfremde Schlüsselworttreffer, unbekannte Bilder und ignorierte Ausschlüsse verhindern. Noch keine neue Runtime oder automatische Selbstlernaktivierung behaupten. Bestehender P1-Latenzauftrag und Versuchshistorie bleiben erhalten.
+- [x] Task0/Task1 und kompakte Dreisatzrezepte auf der Testseite umgesetzt: [PR334](https://github.com/HerrLoeffler/Hausaufgabe/pull/334), konkreter Spaltenfix [PR336](https://github.com/HerrLoeffler/Hausaufgabe/pull/336). 365 Backend-/UIprüfungen, 136 Assessmentprüfungen, echte6/20/40-Piloten und8Serverfälle. Auswahl-, Hilfe- und Bewertungsregeln sind dauerhaft gespeichert; zusätzliche blinde Lösungsprüfung für neue/unbewährte Aufgaben aktiv. [Bericht](docs/evidence/interactive-generation-performance-20261026/REPORT.md).
+- [ ] P1 bleibt: Ersatzversuche weiter senken (17/25 statt Ziel4/8). 20er3:46 statt6:18, 40er nach belegtem Spaltenfix5:42 statt14:05; erster40er korrekt gestoppt und vollständig dokumentiert. Halbierungsziel beim20er noch offen, keine99%-Quote. Martin prüft eigenen Fachauftrag und Geräte; Production unverändert.
 
 ## 26.10.2026 · GC-WEB-REPAIR-20261007 · Veröffentlichung prüfen
 

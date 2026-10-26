@@ -61,3 +61,5 @@ Eine Übergabe beantwortet kompakt:
 Ein Integrationsauftrag nennt Quellbranch und Zielbranch ausdrücklich. Direkt vor dem Merge erneut den Live Development Status und den Zielbranch prüfen. Überschneidungen sind Warnsignale, keine automatische Sperre; gemeinsame Dateien werden bewusst zusammengeführt.
 
 Production bleibt von dieser Koordinationsschicht vollständig getrennt und benötigt weiterhin ausdrückliche Freigabe.
+
+Aktueller Fachnachweis zu automatischen Aufgabenrezepten und strenger KI-Prüfung: [Remy-Aufgaben und Latenz](remy-interactive-tests-20261026.md), Task GC-EXTENDED-QUESTION-TYPES-01. Nur Testseite; technische Bereitstellung und echte Tests von Lehrer-/Geräteabnahme unterscheiden.

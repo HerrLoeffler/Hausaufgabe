@@ -1,12 +1,12 @@
 # Automatische Auswahl passender Aufgabenformen
 
-Task GC-EXTENDED-QUESTION-TYPES-01. Nutzeranforderung vom26.10.2026; verbindliche Anforderung für die bestehende Remy-/Latenzarbeit, noch kein Nachweis einer neuen Runtime.
+Task GC-EXTENDED-QUESTION-TYPES-01. Nutzeranforderung vom26.10.2026. Die nachfolgenden Regeln gelten dauerhaft; den aktuellen Implementierungs- und Teststand nennt der Abschnitt „Umsetzung und belegabhängige Qualitätskontrolle“.
 
 ## Lehrkraft nennt das Ziel
 
 Die normale Erstellung soll aus Fach, Klassenstufe, Thema, Lernziel und eventuellen Wünschen selbst passende bekannte Aufgabenformen verwenden. Die Lehrkraft muss nicht für jede Aufgabe ein interaktives Format anklicken. Der Formatwähler ist eine optionale Eingrenzung oder bewusste Übersteuerung. Explizite Ausschlüsse, Materialgrenzen, verfügbare Medien und Punkte bleiben bindend.
 
-Im geprüften bisherigen Remy-Code sind Visuelle Interaktion und alle acht aktiven Unterformate standardmäßig erlaubt. Die allgemeine passende Auswahl ist bereits im Prompt verlangt. Ein belastbares, systematisch geprüftes Auswahlregelwerk ist damit aber noch nicht nachgewiesen. Dieses Dokument behauptet keine neue Implementierung oder Selbstlernaktivierung.
+Im geprüften bisherigen Remy-Code sind Visuelle Interaktion und alle acht aktiven Unterformate standardmäßig erlaubt. Die allgemeine passende Auswahl ist bereits im Prompt verlangt. Dieser historische Ausgangsstand allein belegte noch kein systematisch geprüftes Auswahlregelwerk. Die unten dokumentierte neue Rezeptstrecke ist davon getrennt; automatisches Modelltraining wird nicht aktiviert.
 
 ## Aufgabenrezepte dauerhaft speichern
 
@@ -57,3 +57,33 @@ Das ist dauerhaftes Produktwissen und überprüfbare Wiederverwendung, keine Abh
 Ohne Formatklick muss die normale Remy-Erstellung die passenden Rezepte aus Fach-/Klassen-/Lernzielangaben nutzen. Positive und negative Fälle der Tabelle werden als automatisierte Auswahltests hinterlegt. Dazu jede Hilfestufe, direkter und umgekehrter Dreisatz, halbe Punkte, freie Operationen, vorhandene/fehlende Bilder und explizite Ausschlüsse prüfen.
 
 Die Aufgabe muss ohne technische Einzelkontrolle der Lehrkraft bedienbar und korrekt bewertbar sein. Das verlangt belastbare Standardprüfungen und nachgewiesene Fehlerreduktion; eine Zusage fehlerfreier beliebiger KI-Inhalte wird daraus nicht abgeleitet. Nächster Schritt ist die qualifizierte Auswahlstrecke im [bestehenden Umsetzungsplan](../superpowers/plans/2026-10-26-interactive-generation-latency.md), gemeinsam mit der dort beschriebenen Messung und Kontextbegrenzung.
+
+## Umsetzung und belegabhängige Qualitätskontrolle —26.10.2026
+
+PR334, integrierte Quelleecb82da, setzt die Auswahlstrecke für die getrennte Testumgebung um. Die neun Rezeptprofile liegen im vorhandenen Bauplanregister; Backend und Dokumentationskopie bleiben gleich. Explizite einzelne Lernziele werden separat berücksichtigt. Medien- und reine Materialaufträge sowie bestehende Varianten behalten ihren bisherigen Vertrag. Alle bisherigen Formatausschlüsse gelten weiter.
+
+Die KI liefert beim Dreisatz neue Kontexte, Ausgangsdaten, gesuchte Größe und Hilfestufe. Der gemeinsame geprüfte Baustein berechnet Werte und vier unabhängige Rechenpfeile und erzeugt das bestehende Tabellenformat. Feldvorgaben bleiben individuell editierbar. Zeichen vorgeben, Zeichen auswählen und Zahl eingeben oder ganze Rechnung eingeben sind getrennte Hilfen. Jedes offene Zeichen-/Zahlenfeld wird einzeln bewertet; ausdrücklich verlangte0,5Punkte proFeld müssen mit dem Gesamtbudget übereinstimmen. Widersprüche werden repariert oder abgelehnt.
+
+Für alle neuen oder unbekannten visuellen Konstruktionen bleiben Struktur-/Punkteprüfung und unabhängige Fachprüfung aktiv. Zusätzlich löst ein eigener KI-Aufruf die öffentliche Aufgabe ohne Musterlösung. Seine Antwort muss mit der gespeicherten Bewertung vereinbar sein. Fehlende Angaben, ungelöste Bewertungswidersprüche oder konkrete fachliche Fehler verhindern einen fertigen Test. Dies ist ein unabhängiger Kontext beim bestehenden OpenAI-Anbieter, keine behauptete zweite Anbieterintegration.
+
+Systemversuche und Ergebnisse werden ohne Schülerdaten versionsgebunden gespeichert, auch bei fehlgeschlagenen Jobs. Lehrerfeedback zählt nur über den bestehenden Bewertungs-/Freigabeweg und eine serverseitig bestätigte unveränderte Aufgabe. Freigegebenes negatives Feedback bleibt ein Veto. Unbekannte Konstruktionen können keine Erfolgsnachweise eines anderen Motivs übernehmen.
+
+Erst nach mindestens400Versuchen einer unveränderten Rezept-/Builder-/Bewertungsversion, einer unteren95%-Wilson-Grenze von mindestens99%,20bestätigten unterschiedlichen Aufgaben von mindestens3Lehrkräften und ohne bestätigten Fehler wird der zusätzliche blinde Lösungsversuch auf eine deterministische10%-Stichprobe reduziert. Struktur- und Fachprüfung entfallen dabei nicht. Neue Versionen beginnen wieder streng. Das ist eine konservative Freigaberegel, keine bereits erreichte Erfolgsquote; Martins99%/20%bleiben persönliche Einschätzungen.
+
+Geschwindigkeit entsteht vor allem durch kleinere Ausgabe, passende Regeln, weniger Reparaturen und maximalzweiunabhängigeBlöcke, nicht durch das Abschalten notwendiger Prüfungen. Reale Zeit-/Qualitätsbelege werden getrennt vom Implementierungsnachweis unterdocs/evidence/interactive-generation-performance-20261026gesichert.
+
+## Anwendung, Hilfen und Bewertung je Rezept
+
+|Rezept|Geeignet und benötigte Angaben|Mögliche Hilfe|Bewertungsvertrag|
+|---|---|---|---|
+|Dreisatz direkt|Prozentwert/Grundwert/Prozentsatz oder konstantes Verhältnis; zusammengehörige Ausgangswerte, Einheiten und Zwischenweg|Vier Pfeile unabhängig gegeben, Zeichen gegeben, Zeichen wählen oder Rechnung frei; sechs Zahlen einzeln vorgeben|Jedes offene Feld separat; feste Punktesumme; explizite Halbpunkte widerspruchsfrei; Prozentachse beim Prozentadapter links|
+|Dreisatz umgekehrt|Konstantes Produkt, gleiche Leistung und eindeutig zugeordnete Größen|Gleiche Hilfen, gegenläufige Rechnungen links/rechts|Produkt und alle vier Rechnungen prüfen; Zeichen/Zahl getrennt bewerten|
+|Flächenanteil|Gleich große Felder, Raster und darzustellender Bruch/Prozentsatz; Zielanzahl ganzzahlig erreichbar|Kleineres Raster und vertraute Brüche; keinen Zielzähler verraten|Gültige unterschiedliche Zellen und exakt passende Anzahl; keine behaupteten Zellteilpunkte|
+|Position auf Skala|Eindeutiger Wert, Einheiten, Grenzen und erreichbarer Eingabeschritt|Übersichtliche Hauptmarken, einfachere Schrittweite|Zahl innerhalb des Bereichs und der ausdrücklich gespeicherten Toleranz|
+|Pflanzenbeschriftung|Unterstützte unveränderte Pflanzengrafik, vier Fachbegriffe und vorhandene Regionen|Begriffe als Auswahl; keine frei erfundene Herz-/Blattquerschnittsgrafik|Eindeutige Zuordnung, Teilpunkte je korrekter Beschriftung|
+|Beziehungen verbinden|Benannte eindeutige Begriffe/Aussagen, passende Gegenstücke und klare Pfeilrichtung|Weniger Beziehungen und kurze vollständige Beschriftungen|Gültige Knotenpaare; korrekte Verbindungen anteilig, falsche Zusatzverbindungen mindern den Anteil|
+|Mehrfeldtabelle|Rechteckige Tabelle mit nötigen Bezugswerten, festen Eingabezellen, eindeutigen Lösungen|Werte gezielt vorgeben, einzelne statt aller Felder offen|Teilpunkte je Eingabezelle; Dezimal-/Bruch-/Textmodus passend zum Lernziel; keine offene Erklärung per starrem Textvergleich|
+|Winkel messen|Lesbare Geometrie, Winkelmesser und zulässiger Winkelbereich|Direktes Drehen/Verschieben, einfachere Winkel; keine digitale Musterlösung|Gemessener Wert mit gespeicherter Toleranz, bei neuen Aufgaben3Grad|
+|Punkte/Strecke im Koordinatensystem|Eindeutige Koordinaten/Endpunkte, Achsenbereiche, Labels und erreichbares Raster|Kleinere Bereiche/einfachere Punkte, alternative Zahleneingabe|Alle verlangten Punkte müssen passen; bei Strecke umgekehrte Endpunktreihenfolge erlaubt; keine behaupteten Punktteilpunkte|
+
+Hotspot/Bildbereich bleibt als erlaubtes Standardformat verfügbar, hat in dieser ersten automatischen Auswahlstrecke noch kein eigenes zusätzlich qualifiziertes Rezeptprofil. Andere passende bekannte Formen bleiben über den bisherigen Generator und die strenge Prüfung nutzbar. Die Tabelle beschreibt tatsächliche vorhandene Hilfen und Bewertung, keine versprochenen neuen Widgets. Neue fachliche Rezepte zuerst mit positiven/negativen Lösungs- und Bewertungsfällen qualifizieren.

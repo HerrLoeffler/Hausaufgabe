@@ -726,8 +726,8 @@
     },
     {
       "id": "remy-interactive-authoring-20261026",
-      "title": "GC-EXTENDED-QUESTION-TYPES-01: gespeicherte Baupläne in normalem Remy",
-      "primaryBranch": "feature/remy-interactive-tests-20261026",
+      "title": "GC-EXTENDED-QUESTION-TYPES-01: automatische Aufgabenrezepte und geprüfte Remy-Erstellung",
+      "primaryBranch": "feat/remy-auto-recipes-20261026",
       "integrationTarget": "feature/gradecrew-app-integration",
       "state": "integrated",
       "handoff": "workstreams/remy-interactive-tests-20261026.md",
@@ -736,7 +736,12 @@
         "feature/visual-prototype-ai-02-20261021",
         "fix/remy-visual-stability-20261026",
         "fix/remy-classroom-preservation-20261026",
-        "docs/remy-stability-evidence-20261026"
+        "docs/remy-stability-evidence-20261026",
+        "feature/remy-interactive-tests-20261026",
+        "feat/remy-auto-recipes-20261026",
+        "fix/remy-percent-labels-20261026",
+        "docs/remy-recipe-evidence-20261026",
+        "docs/remy-recipe-handoff-20261026"
       ]
     },
     {
