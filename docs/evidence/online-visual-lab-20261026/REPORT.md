@@ -32,3 +32,5 @@ Im tatsächlichen Online-Browser mit bestehender Anmeldung7Beispiele angelegt, P
 KI-Ausgaben bleiben prüfpflichtige Entwürfe. Neue tatsächliche Erstellung und Bewertung sind nachgewiesen; ein neuer Live-Emmi-Aufruf und ein physischer Touchgerätetest sind damit nicht belegt. Lernwirksamkeit im Unterricht bleibt offen.
 
 Abschließender öffentlicher Einstieg: https://gradecrew-staging-2026--visual255-rjcwf436.web.app/aufgabenlabor/ . Drei Karten und Lehrer-KI-Einstieg im echten Browser geladen. Aktuell187Dateien vollständig gegen Release-Manifest geprüft.
+
+Endgültiger Hostingstand f15d4feccf6a7067d4ba8af2f635cfc333977cd3,187Dateien live exakt verifiziert. Abschließend107fokussierteWeb/Labor/Vertragsprüfungen und387Backendtests auf dem finalen Code erfolgreich; Mengen überschneiden sich und werden nicht addiert. Vorschau bis25.11.2026 verfügbar. Keine Emmi-Neugenerierung zusätzlich gestartet.
