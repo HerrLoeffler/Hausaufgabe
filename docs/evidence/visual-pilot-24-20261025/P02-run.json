@@ -1,0 +1,109 @@
+{
+  "id": "P02",
+  "row": {
+    "id": "P02",
+    "subject": "Mathematik",
+    "grade": 6,
+    "title": "Winkel und Koordinaten",
+    "goal": "Winkel mit Winkelmesser messen, Punkte im ersten Quadranten setzen und einfache Messwerte darstellen",
+    "formats": [
+      "angle",
+      "coordinate",
+      "chart"
+    ],
+    "requestId": "VIS24-20261025-02-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T09:57:34.032Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-02-A",
+    "subject": "Mathematik",
+    "grade": "6",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Winkel und Koordinaten: Winkel mit Winkelmesser messen, Punkte im ersten Quadranten setzen und einfache Messwerte darstellen",
+    "count": 8,
+    "points": 16,
+    "difficulty": "leicht bis mittel",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus angle, coordinate, chart. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "2c820da1d9c3ba2f1af51cb47f5b413799d5f2b9",
+  "dispatch": {
+    "jobId": "2c820da1d9c3ba2f1af51cb47f5b413799d5f2b9"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T09:58:15.737Z",
+  "job": {
+    "generationMode": "generated",
+    "percent": 100,
+    "qualityIssues": [],
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "status": "ready",
+    "solutionAudioTotal": 0,
+    "sourceQuizId": "",
+    "stage": "ready",
+    "dispatchState": "enqueued",
+    "qualityWarnings": [],
+    "quizId": "UXBCQ5FL",
+    "createdAt": "2026-10-25T09:57:34.458Z",
+    "updatedAt": "2026-10-25T09:58:06.171Z",
+    "completedCount": 8,
+    "completedAt": "2026-10-25T09:58:06.171Z",
+    "ownerId": "gc-visual255-e2e",
+    "audioTotal": 0,
+    "startedAt": "2026-10-25T09:57:35.517Z",
+    "grade": "6",
+    "topic": "Winkel und Koordinaten: Winkel mit Winkelmesser messen, Punkte im ersten Quadranten setzen und einfache Messwerte darstellen",
+    "answerAudioTotal": 0,
+    "imageTotal": 0,
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match",
+      "profileCount": 0,
+      "profileIds": []
+    },
+    "solutionAudioCompleted": 0,
+    "subject": "Mathematik",
+    "requestedCount": 8,
+    "audioCompleted": 0,
+    "imageCompleted": 0,
+    "materials": [],
+    "input": {
+      "pedagogicalContextKnown": true,
+      "clientRequestId": "VIS24-20261025-02-A",
+      "materialMode": "inspiration",
+      "difficulty": "leicht bis mittel",
+      "solutionAudioQuestionCount": 0,
+      "audioQuestionCount": 0,
+      "points": 16,
+      "subject": "Mathematik",
+      "count": 8,
+      "grade": "6",
+      "audioAnswerQuestionCount": 0,
+      "allowedTypes": [
+        "visual"
+      ],
+      "exactAudioCounts": false,
+      "topic": "Winkel und Koordinaten: Winkel mit Winkelmesser messen, Punkte im ersten Quadranten setzen und einfache Messwerte darstellen",
+      "schoolType": "Mittelschule",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus angle, coordinate, chart. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "audioMode": "none",
+      "allowImageChoices": false,
+      "maxVisualQuestions": 0,
+      "exactImageCounts": false,
+      "imageMode": "none",
+      "region": "Bayern"
+    },
+    "answerAudioCompleted": 0,
+    "requestId": "VIS24-20261025-02-A",
+    "id": "2c820da1d9c3ba2f1af51cb47f5b413799d5f2b9"
+  },
+  "quizId": "UXBCQ5FL"
+}

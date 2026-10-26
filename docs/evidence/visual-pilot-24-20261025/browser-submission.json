@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-25T10:52:40.506Z",
+  "quizId": "W2QQ9K3A",
+  "case": "Only Q8 correct row but unchanged lowercase junge, others blank",
+  "expectedPoints": 1,
+  "maxPoints": 16,
+  "observedScreenshot": "Abgabe gespeichert; 1/16 Punkte; no solution release",
+  "reloaded": false,
+  "reloadGate": "Auto-review rejected optional reload due possible answer loss; omitted;120APIresume checks separately pass",
+  "submissionClick": "CDP timeout; no duplicate action; screenshot independently confirms server saved"
+}

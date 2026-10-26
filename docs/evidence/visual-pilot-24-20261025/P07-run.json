@@ -1,0 +1,110 @@
+{
+  "id": "P07",
+  "row": {
+    "id": "P07",
+    "subject": "Deutsch",
+    "grade": 9,
+    "title": "Argumente und sachliches Schreiben",
+    "goal": "Behauptung, Begründung und Beispiel in eigenen kurzen Texten unterscheiden; sprachlich eindeutige Fehler korrigieren",
+    "formats": [
+      "connections",
+      "evidence",
+      "correction",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-07-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:04:35.157Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-07-A",
+    "subject": "Deutsch",
+    "grade": "9",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Argumente und sachliches Schreiben: Behauptung, Begründung und Beispiel in eigenen kurzen Texten unterscheiden; sprachlich eindeutige Fehler korrigieren",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus connections, evidence, correction, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "5bd0e138ee9916acaa8fd9263afaf1f03bcd0291",
+  "dispatch": {
+    "jobId": "5bd0e138ee9916acaa8fd9263afaf1f03bcd0291"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:07:18.469Z",
+  "job": {
+    "imageTotal": 0,
+    "materials": [],
+    "solutionAudioCompleted": 0,
+    "solutionAudioTotal": 0,
+    "requestId": "VIS24-20261025-07-A",
+    "stage": "ready",
+    "subject": "Deutsch",
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": [],
+      "profileCount": 0,
+      "status": "no_match"
+    },
+    "ownerId": "gc-visual255-e2e",
+    "audioCompleted": 0,
+    "startedAt": "2026-10-25T10:04:35.777Z",
+    "imageCompleted": 0,
+    "audioTotal": 0,
+    "grade": "9",
+    "updatedAt": "2026-10-25T10:07:09.474Z",
+    "generationMode": "generated",
+    "status": "ready",
+    "createdAt": "2026-10-25T10:04:35.364Z",
+    "input": {
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus connections, evidence, correction, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "topic": "Argumente und sachliches Schreiben: Behauptung, Begründung und Beispiel in eigenen kurzen Texten unterscheiden; sprachlich eindeutige Fehler korrigieren",
+      "clientRequestId": "VIS24-20261025-07-A",
+      "allowImageChoices": false,
+      "audioQuestionCount": 0,
+      "region": "Bayern",
+      "points": 16,
+      "subject": "Deutsch",
+      "allowedTypes": [
+        "visual"
+      ],
+      "exactAudioCounts": false,
+      "imageMode": "none",
+      "grade": "9",
+      "solutionAudioQuestionCount": 0,
+      "difficulty": "mittel bis anspruchsvoll",
+      "pedagogicalContextKnown": true,
+      "audioAnswerQuestionCount": 0,
+      "exactImageCounts": false,
+      "count": 8,
+      "schoolType": "Mittelschule",
+      "maxVisualQuestions": 0,
+      "materialMode": "inspiration",
+      "audioMode": "none"
+    },
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "quizId": "K9HEUB8X",
+    "completedAt": "2026-10-25T10:07:09.474Z",
+    "percent": 100,
+    "completedCount": 8,
+    "answerAudioTotal": 0,
+    "dispatchState": "enqueued",
+    "qualityIssues": [],
+    "answerAudioCompleted": 0,
+    "topic": "Argumente und sachliches Schreiben: Behauptung, Begründung und Beispiel in eigenen kurzen Texten unterscheiden; sprachlich eindeutige Fehler korrigieren",
+    "sourceQuizId": "",
+    "requestedCount": 8,
+    "qualityWarnings": [],
+    "id": "5bd0e138ee9916acaa8fd9263afaf1f03bcd0291"
+  },
+  "quizId": "K9HEUB8X"
+}

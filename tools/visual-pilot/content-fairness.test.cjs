@@ -1,0 +1,5 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const {core}=require('../../assessment-functions/lib/visual-task.js');
+const task=(id,n)=>{const d=path.resolve(__dirname,'../../docs/evidence/visual-pilot-24-20261025'),f=fs.existsSync(path.join(d,id+'-reviewed.json'))?id+'-reviewed.json':id+'-quiz.json';return JSON.parse(JSON.parse(fs.readFileSync(path.join(d,f))).questions[n-1].visualTask);};
+test('targeted subject verb correction accepts only the requested verb',()=>{const t=task('P07',2);assert.match(t.prompt,/nur.*Verbform/);assert.equal(core.grade(t,{id:'b',text:'gelten'}).points,2);assert.equal(core.grade(t,{id:'b',text:'gilt'}).points,1);});
+test('common unambiguous Satzglied terminology is accepted',()=>{const t=task('P06',2),a=core.solutionResponse(t);a.c3='Umstandsbestimmung der Zeit';assert.equal(core.grade(t,a).points,2);const c=task('P06',5);assert.equal(core.grade(c,{id:'r4',text:'Umstandsbestimmung der Art und Weise'}).points,2);});

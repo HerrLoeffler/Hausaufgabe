@@ -1,0 +1,15 @@
+{
+  "pullRequest": 299,
+  "merged": true,
+  "mergeCommit": "41af350be3f99d7f6d6b2782ac56b3db2140171e",
+  "head": "35aeb89a4ec4f4f594f39b9b41dd85a9015d5e59",
+  "handoffCI": 40186767740,
+  "developmentStatusCI": 40186767743,
+  "bothCI": "success",
+  "freshMainReadsVerified": [
+    "docs/learning/INTERACTIVE_TASK_PRINCIPLES.md",
+    "workstreams/visual-pilot-24-20261025.md",
+    "GRADECREW_STATE.json"
+  ],
+  "runtimeMergedToMain": false
+}

@@ -1,0 +1,132 @@
+{
+  "pilotId": "P01",
+  "quizId": "AUMC64Q4",
+  "completedCases": 5,
+  "results": [
+    {
+      "pilotId": "P01",
+      "quizId": "AUMC64Q4",
+      "case": "correct",
+      "expectedPoints": 16,
+      "receipt": {
+        "submissionId": "a_7c02f82af8e74bf291142da75db9",
+        "attemptId": "a_7c02f82af8e74bf291142da75db9",
+        "status": "graded",
+        "needsReview": false,
+        "resultMode": "points_grade",
+        "submittedAtMillis": 1792925364479,
+        "solutionsConfigured": false,
+        "solutionReleaseMode": "exam_after_end",
+        "solutionsReleased": false,
+        "totalPoints": 16,
+        "maxPoints": 16,
+        "percent": 100,
+        "grade": 1
+      },
+      "resumePaperUnchanged": true,
+      "publicPaperSolutionFree": true,
+      "idempotent": true,
+      "at": "2026-10-25T10:49:24.871Z"
+    },
+    {
+      "pilotId": "P01",
+      "quizId": "AUMC64Q4",
+      "case": "mixed",
+      "expectedPoints": 8,
+      "receipt": {
+        "submissionId": "a_6a0c6cf7021bf3475c569a2230b3",
+        "attemptId": "a_6a0c6cf7021bf3475c569a2230b3",
+        "status": "graded",
+        "needsReview": false,
+        "resultMode": "points_grade",
+        "submittedAtMillis": 1792925365827,
+        "solutionsConfigured": false,
+        "solutionReleaseMode": "exam_after_end",
+        "solutionsReleased": false,
+        "totalPoints": 8,
+        "maxPoints": 16,
+        "percent": 50,
+        "grade": 4
+      },
+      "resumePaperUnchanged": true,
+      "publicPaperSolutionFree": true,
+      "idempotent": null,
+      "at": "2026-10-25T10:49:25.899Z"
+    },
+    {
+      "pilotId": "P01",
+      "quizId": "AUMC64Q4",
+      "case": "blank",
+      "expectedPoints": 0,
+      "receipt": {
+        "submissionId": "a_080ba52b2fbd07bb89ee200a9ba4",
+        "attemptId": "a_080ba52b2fbd07bb89ee200a9ba4",
+        "status": "graded",
+        "needsReview": false,
+        "resultMode": "points_grade",
+        "submittedAtMillis": 1792925366723,
+        "solutionsConfigured": false,
+        "solutionReleaseMode": "exam_after_end",
+        "solutionsReleased": false,
+        "totalPoints": 0,
+        "maxPoints": 16,
+        "percent": 0,
+        "grade": 6
+      },
+      "resumePaperUnchanged": true,
+      "publicPaperSolutionFree": true,
+      "idempotent": null,
+      "at": "2026-10-25T10:49:26.795Z"
+    },
+    {
+      "pilotId": "P01",
+      "quizId": "AUMC64Q4",
+      "case": "wrong",
+      "expectedPoints": 0,
+      "receipt": {
+        "submissionId": "a_3d9c4238f4763e0812e34edfca32",
+        "attemptId": "a_3d9c4238f4763e0812e34edfca32",
+        "status": "graded",
+        "needsReview": false,
+        "resultMode": "points_grade",
+        "submittedAtMillis": 1792925367592,
+        "solutionsConfigured": false,
+        "solutionReleaseMode": "exam_after_end",
+        "solutionsReleased": false,
+        "totalPoints": 0,
+        "maxPoints": 16,
+        "percent": 0,
+        "grade": 6
+      },
+      "resumePaperUnchanged": true,
+      "publicPaperSolutionFree": true,
+      "idempotent": null,
+      "at": "2026-10-25T10:49:27.653Z"
+    },
+    {
+      "pilotId": "P01",
+      "quizId": "AUMC64Q4",
+      "case": "alternative",
+      "expectedPoints": 16,
+      "receipt": {
+        "submissionId": "a_18a62c8c24a1418eb285425b6245",
+        "attemptId": "a_18a62c8c24a1418eb285425b6245",
+        "status": "graded",
+        "needsReview": false,
+        "resultMode": "points_grade",
+        "submittedAtMillis": 1792925368452,
+        "solutionsConfigured": false,
+        "solutionReleaseMode": "exam_after_end",
+        "solutionsReleased": false,
+        "totalPoints": 16,
+        "maxPoints": 16,
+        "percent": 100,
+        "grade": 1
+      },
+      "resumePaperUnchanged": true,
+      "publicPaperSolutionFree": true,
+      "idempotent": null,
+      "at": "2026-10-25T10:49:28.523Z"
+    }
+  ]
+}

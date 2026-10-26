@@ -1,0 +1,27 @@
+{
+  "pilotId": "P07",
+  "quizId": "K9HEUB8X",
+  "receipts": [
+    {
+      "position": 2,
+      "questionId": "q002",
+      "updated": true,
+      "at": "2026-10-25T10:45:54.686Z",
+      "reloadMatched": true
+    },
+    {
+      "position": 5,
+      "questionId": "q005",
+      "updated": true,
+      "at": "2026-10-25T10:45:54.892Z",
+      "reloadMatched": true
+    },
+    {
+      "position": 8,
+      "questionId": "q008",
+      "updated": true,
+      "at": "2026-10-25T10:45:55.183Z",
+      "reloadMatched": true
+    }
+  ]
+}

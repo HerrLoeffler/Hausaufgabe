@@ -1,0 +1,5 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+const input=JSON.parse(fs.readFileSync(__dirname+'/../../docs/evidence/visual-pilot-24-20261025/P05-quiz.json'));const original=input.questions[7];
+for(const codebase of ['functions','assessment-functions'])test(codebase+' preserves spelling in explicitly case-sensitive correction',()=>{const {parseVisualTask,core}=require('../../'+codebase+'/lib/visual-task.js');const task=JSON.parse(original.visualTask);task.spec.caseSensitive=true;const q=parseVisualTask(JSON.stringify(task));assert.equal(core.grade(q,{id:'b',text:'Junge'}).points,2);assert.equal(core.grade(q,{id:'b',text:'junge'}).points,1);assert.equal(core.grade(q,{id:'a',text:'Junge'}).points,0);});
+test('ordinary text classification remains case insensitive',()=>{const {core}=require('../../assessment-functions/lib/visual-task.js');const t=JSON.parse(input.questions[4].visualTask);assert.equal(core.grade(t,{id:t.solution.rowId,text:'adjektiv'}).points,2);});

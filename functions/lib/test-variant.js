@@ -1,6 +1,7 @@
 "use strict";
 const { HttpsError } = require("firebase-functions/v2/https");
 const { createHash } = require("node:crypto");
+const { parseVisualTask } = require("./visual-task");
 const { LIMITS, QUESTION_TYPES } = require("./constants");
 const { normalizeContentLocale } = require("./content-locale");
 const { hasAudioAnswerEntries } = require("./audio-answers");
@@ -24,7 +25,7 @@ function buildVariantInput(quiz, questions, privateAudios = new Map(), originalI
     const privateAudio = privateAudios.get(q.id) || {};
     const projection = {};
     // Explicit authoring allowlist: never copy attempts, asset bytes, release state or IDs.
-    for (const key of ["type", "text", "points", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "markGroups", "gapColors", "numericAnswer", "tolerance", "unit"]) {
+    for (const key of ["type", "text", "points", "acceptedAnswers", "manualReview", "correctBoolean", "pairs", "items", "acceptedOrders", "groups", "passage", "targetWords", "markGroups", "gapColors", "numericAnswer", "visualTask", "tolerance", "unit"]) {
       if (q[key] !== undefined) projection[key] = JSON.parse(JSON.stringify(q[key]));
     }
     if (q.options) projection.options = q.options.map(o => ({ text: text(o.text, 500), correct: o.correct === true }));
@@ -32,7 +33,7 @@ function buildVariantInput(quiz, questions, privateAudios = new Map(), originalI
     projection.audioIntent = hasAudio(q, privateAudio) ? { kind: "ai_generated", script: text(privateAudio.script || q.audioIntent?.script, LIMITS.maxAudioScriptChars), instruction: text(q.audioInstruction ?? q.audioIntent?.instruction, 1000).trim(), presentation: (q.audioPresentation || q.audioIntent?.presentation) === "listening-only" ? "listening-only" : "supplement" } : { kind: "none" };
     return projection;
   });
-  const variantSlots = sorted.map((q, i) => ({ type: q.type, points: Number(q.points), mediaKind: sourceQuestions[i].mediaIntent.kind,
+  const variantSlots = sorted.map((q, i) => ({ type: q.type, ...(q.type === "visual" ? {visualFormat:parseVisualTask(q.visualTask, {points:q.points}).format} : {}), points: Number(q.points), mediaKind: sourceQuestions[i].mediaIntent.kind,
     audioKind: sourceQuestions[i].audioIntent.kind, audioPresentation: sourceQuestions[i].audioIntent.presentation || "supplement",
     answerAudio: q.audioAnswerMode === "audio-only", solutionAudio: Boolean(privateAudios.get(q.id)?.solutionAudioDataUrl || privateAudios.get(q.id)?.solutionScript) }));
   const imageQuestionCount = variantSlots.filter(s => s.mediaKind === "ai_generated").length;
@@ -61,7 +62,7 @@ function buildVariantInput(quiz, questions, privateAudios = new Map(), originalI
     schoolType: field("schoolType", "nicht gespeichert – aus Ausgangstest ableiten"), region: field("region", "nicht gespeichert"),
     subject: field("subject", "aus Ausgangstest ableiten"), grade: field("grade", "aus Ausgangstest ableiten"), topic: field("topic", quiz.title || "Ausgangstest"),
     difficulty: field("difficulty", "gleiches Niveau wie Ausgangstest"), learningGoals,
-    count: sorted.length, points, allowedTypes: [...new Set(sorted.map(q => q.type))],
+    count: sorted.length, points, ...(variantSlots.some(s=>s.visualFormat) ? {allowedVisualFormats:[...new Set(variantSlots.map(s=>s.visualFormat).filter(Boolean))]} : {}), allowedTypes: [...new Set(sorted.map(q => q.type))],
     imageQuestionCount, imageAnswerQuestionCount: 0, audioQuestionCount, audioAnswerQuestionCount, solutionAudioQuestionCount,
     notes: `[[GRADECREW_CONTENT_LOCALE=${contentLocale}]]\nKompetenzen und Anspruch vollständig erhalten; ALLE Aufgaben mit neuen Beispielen, Zahlen oder Kontexten. Keine Aufgabe oder Medienbeschreibung übernehmen.\nLernziele als Referenzdaten: ${JSON.stringify(learningGoals).slice(0, 2000)}`,
     materialMode: "inspiration", sourceTest: { title: text(quiz.title, 150), questions: sourceQuestions }, variantSlots, variantQuizSettings, generationMode: "variant"
@@ -90,6 +91,10 @@ function variantQuestionErrors(question, index, input) {
   const errors = [];
   if (Number(question.points) !== slot.points) errors.push(`Punktwert muss ${slot.points} sein.`);
   if (question.type !== slot.type) errors.push(`Aufgabentyp muss ${slot.type} sein.`);
+  if (slot.visualFormat) {
+    try { if (parseVisualTask(question.visualTask, {points:question.points}).format !== slot.visualFormat) errors.push(`Visuelles Format muss ${slot.visualFormat} sein.`); }
+    catch { errors.push("Visuelles Format der Variantenposition ist ungültig."); }
+  }
   if (slot.answerAudio && !hasAudioAnswerEntries(question)) errors.push("Vorgelesene Antworten brauchen geeignete, vollständig neue Antwortinhalte.");
   if ((question.mediaIntent?.kind || "none") !== slot.mediaKind) errors.push(`Bildart muss ${slot.mediaKind} sein.`);
   if ((question.audioIntent?.kind || "none") !== slot.audioKind) errors.push(`Audioart muss ${slot.audioKind} sein.`);
@@ -104,7 +109,7 @@ function variantQuestionErrors(question, index, input) {
 function variantPrompt(input, offset = 0, count = input.count) {
   if (input.generationMode !== "variant") return "";
   const slots = input.variantSlots.slice(offset, offset + count);
-  return `\nVerbindliche Variantenpositionen als Referenzdaten: ${JSON.stringify(slots)}\nErzeuge für JEDE Position vollständig neue fachlich gleichwertige Inhalte. Behalte Aufgabentyp, Punktgewicht, Bildart, Audioart und Audiopräsentation je Position bei. Alle Bildprompts und Hörtexte müssen zur neuen Aufgabe passen und sich vom Ausgangstest unterscheiden. Vorgelesene Antworten erhalten neue passende Antwortinhalte. Keine fehlenden Medien durch Text ersetzen.`;
+  return `\nVerbindliche Variantenpositionen als Referenzdaten: ${JSON.stringify(slots)}\nErzeuge für JEDE Position vollständig neue fachlich gleichwertige Inhalte. Behalte Aufgabentyp einschließlich visualFormat je Position, Punktgewicht, Bildart, Audioart und Audiopräsentation je Position bei. Alle Bildprompts und Hörtexte müssen zur neuen Aufgabe passen und sich vom Ausgangstest unterscheiden. Vorgelesene Antworten erhalten neue passende Antwortinhalte. Keine fehlenden Medien durch Text ersetzen.`;
 }
 
 function requireVariantMediaReady(input, completed) {

@@ -7,9 +7,10 @@ function text(v,max,required=false){if(typeof v!=='string'||v.length>max||(requi
 function identifier(v){const value=text(v,128,true);if(!/^[\w-]+$/.test(value))fail('invalid-argument','Ungültige Feedbackkennung.');return value;}
 function snapshot(value){
  if(!value||typeof value!=='object'||Array.isArray(value))fail('invalid-argument','Aufgabenkontext fehlt.');
- const allowed=new Set(['type','text','points','options','acceptedAnswers','correctBoolean','pairs','items','acceptedOrders','groups','targetWords','markGroups','numericAnswer','passage','imageChoices','imagePresent']);
+ const allowed=new Set(['type','text','points','options','acceptedAnswers','correctBoolean','pairs','items','acceptedOrders','groups','targetWords','markGroups','numericAnswer','passage','imageChoices','imagePresent','visualTask']);
  if(Object.keys(value).some(k=>!allowed.has(k)))fail('invalid-argument','Unerlaubter Aufgabenkontext.');
  const clean={type:text(value.type,30,true),text:text(value.text,900),points:Number.isFinite(value.points)?value.points:1};
+ if(value.visualTask!==undefined){if(value.type!=='visual')fail('invalid-argument','Visueller Kontext passt nicht zum Aufgabentyp.');require('./visual-task').parseVisualTask(value.visualTask,{points:clean.points});clean.visualTask=value.visualTask;}
  const strings=(v,max,n)=>{if(!Array.isArray(v)||v.length>n)fail('invalid-argument','Ungültige Aufgabenliste.');return v.map(x=>text(x,max));};
  const objects=(v,n,keys,build)=>{if(!Array.isArray(v)||v.length>n)fail('invalid-argument','Ungültige Aufgabenliste.');return v.map(x=>{if(!x||typeof x!=='object'||Object.keys(x).some(k=>!keys.includes(k)))fail('invalid-argument','Unerlaubte Aufgabenfelder.');return build(x);});};
  if(value.options!==undefined)clean.options=objects(value.options,6,['text','correct'],x=>({text:text(x.text,180),correct:x.correct===true}));

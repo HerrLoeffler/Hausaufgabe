@@ -1,0 +1,110 @@
+{
+  "id": "P19",
+  "row": {
+    "id": "P19",
+    "subject": "Geschichte und Geografie",
+    "grade": 9,
+    "title": "Bevölkerung und Quellen",
+    "goal": "Eigene fiktive Bevölkerungsstatistiken, Kartenregionen und zeitgenössische Kurzquellen vergleichen",
+    "formats": [
+      "chart",
+      "table",
+      "evidence",
+      "scale"
+    ],
+    "requestId": "VIS24-20261025-19-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:28:07.514Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-19-A",
+    "subject": "Geschichte und Geografie",
+    "grade": "9",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Bevölkerung und Quellen: Eigene fiktive Bevölkerungsstatistiken, Kartenregionen und zeitgenössische Kurzquellen vergleichen",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus chart, table, evidence, scale. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "0c553a825efec2a3b81ede8ac9c6a28ba83d9baa",
+  "dispatch": {
+    "jobId": "0c553a825efec2a3b81ede8ac9c6a28ba83d9baa"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:30:10.069Z",
+  "job": {
+    "dispatchState": "enqueued",
+    "answerAudioTotal": 0,
+    "completedAt": "2026-10-25T10:30:07.334Z",
+    "status": "ready",
+    "qualityIssues": [],
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "stage": "ready",
+    "audioCompleted": 0,
+    "imageCompleted": 0,
+    "grade": "9",
+    "percent": 100,
+    "generationMode": "generated",
+    "sourceQuizId": "",
+    "qualityWarnings": [],
+    "createdAt": "2026-10-25T10:28:07.617Z",
+    "audioTotal": 0,
+    "input": {
+      "region": "Bayern",
+      "materialMode": "inspiration",
+      "audioMode": "none",
+      "exactImageCounts": false,
+      "clientRequestId": "VIS24-20261025-19-A",
+      "count": 8,
+      "allowImageChoices": false,
+      "subject": "Geschichte und Geografie",
+      "maxVisualQuestions": 0,
+      "points": 16,
+      "audioQuestionCount": 0,
+      "exactAudioCounts": false,
+      "solutionAudioQuestionCount": 0,
+      "difficulty": "mittel bis anspruchsvoll",
+      "allowedTypes": [
+        "visual"
+      ],
+      "grade": "9",
+      "imageMode": "none",
+      "audioAnswerQuestionCount": 0,
+      "pedagogicalContextKnown": true,
+      "schoolType": "Mittelschule",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus chart, table, evidence, scale. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "topic": "Bevölkerung und Quellen: Eigene fiktive Bevölkerungsstatistiken, Kartenregionen und zeitgenössische Kurzquellen vergleichen"
+    },
+    "startedAt": "2026-10-25T10:28:08.845Z",
+    "solutionAudioCompleted": 0,
+    "pedagogicalPool": {
+      "profileIds": [],
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match",
+      "profileCount": 0
+    },
+    "completedCount": 8,
+    "updatedAt": "2026-10-25T10:30:07.334Z",
+    "subject": "Geschichte und Geografie",
+    "answerAudioCompleted": 0,
+    "topic": "Bevölkerung und Quellen: Eigene fiktive Bevölkerungsstatistiken, Kartenregionen und zeitgenössische Kurzquellen vergleichen",
+    "quizId": "2EDP2TTW",
+    "ownerId": "gc-visual255-e2e",
+    "solutionAudioTotal": 0,
+    "materials": [],
+    "requestId": "VIS24-20261025-19-A",
+    "imageTotal": 0,
+    "requestedCount": 8,
+    "id": "0c553a825efec2a3b81ede8ac9c6a28ba83d9baa"
+  },
+  "quizId": "2EDP2TTW"
+}

@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "task": "GC-DESIGN-05",
+  "purpose": "Reference blueprints for AI-assisted authoring; NOT a production generation schema or admitted pedagogical pool",
+  "sourceBase": "9497e756ed2defb4da6b05773146a19929101b3c",
+  "generatorSource": [
+    "functions/lib/constants.js",
+    "functions/lib/schemas.js",
+    "functions/lib/prompts.js",
+    "functions/lib/pedagogical-pool.js"
+  ],
+  "tasks": [
+    {
+      "id": "coordinate",
+      "subject": "Mathematik",
+      "goal": "Punkte nach Koordinaten eintragen",
+      "catalogId": "VIS08",
+      "existingTypes": [],
+      "support": "custom_widget",
+      "interaction": "A blau, B orange; Rasterklick setzt ausschließlich den gewählten Punkt; keine Verbindung und keine Lösungsfelder.",
+      "rubric": "Je ein Punkt für A(-2,1) und B(2,3).",
+      "exampleSource": "homepage/app.js",
+      "gradingSource": "homepage/grading.mjs",
+      "defaultMaxPoints": 2
+    },
+    {
+      "id": "audio",
+      "subject": "Hören",
+      "goal": "Gesprochene Information wiedererkennen",
+      "catalogId": "MOD01",
+      "existingTypes": [
+        "single"
+      ],
+      "support": "existing_type_media",
+      "interaction": "Original-Remy-Aufnahme, wiederholbare Wiedergabe, kein Transkript und keine Bild-Antwort-Hilfe.",
+      "rubric": "Eine richtige Schreibweise: GradeCrew; 2 Punkte. Markenlogo verrät Lösung: Bedien-Demo, keine unabhängige Hörleistungsmessung.",
+      "exampleSource": "homepage/app.js",
+      "gradingSource": "homepage/grading.mjs",
+      "defaultMaxPoints": 2
+    },
+    {
+      "id": "markwords",
+      "subject": "Deutsch",
+      "goal": "Wortarten unterscheiden",
+      "catalogId": null,
+      "existingTypes": [
+        "markwords"
+      ],
+      "support": "existing_type",
+      "interaction": "Nomen, Verben, Adjektive mit unterscheidbaren Farben; Antippen ändert Zuordnung.",
+      "rubric": "Sieben Zielwörter; IDs und Übersetzung synchron halten.",
+      "exampleSource": "homepage/app.js",
+      "gradingSource": "homepage/grading.mjs",
+      "defaultMaxPoints": 2
+    },
+    {
+      "id": "equation",
+      "subject": "Mathematik",
+      "goal": "Quadratische Gleichung lösen",
+      "catalogId": null,
+      "existingTypes": [
+        "number",
+        "text"
+      ],
+      "support": "existing_type_adaptation",
+      "interaction": "Zwei Nullstellen eingeben; Reihenfolge gleichwertig, keine Lösung als Platzhalter.",
+      "rubric": "x²−5x+6: 2 und 3, je 1 Punkt; dieselbe Nullstelle nicht doppelt zählen. Zweiwert-UI ist nicht automatisch ein neues number-Schema.",
+      "exampleSource": "homepage/app.js",
+      "gradingSource": "homepage/grading.mjs",
+      "defaultMaxPoints": 2
+    },
+    {
+      "id": "plant",
+      "subject": "Biologie",
+      "goal": "Pflanzenteile räumlich zuordnen",
+      "catalogId": "VIS02",
+      "existingTypes": [],
+      "support": "custom_widget",
+      "interaction": "Botanisches Bild, eindeutige Führungslinien; Begriffe ablegen, entfernen, ändern.",
+      "rubric": "Blüte, Blatt, Stängel, Wurzel. labeling liegt in separaten Entwürfen265/300; keine Live-Generatorfreigabe.",
+      "exampleSource": "homepage/app.js",
+      "gradingSource": "homepage/grading.mjs",
+      "defaultMaxPoints": 2
+    },
+    {
+      "id": "history",
+      "subject": "Geschichte",
+      "goal": "Ereignisse zeitlich zuordnen",
+      "catalogId": "VIS04",
+      "existingTypes": [
+        "matching"
+      ],
+      "support": "existing_type_adaptation",
+      "interaction": "Illustrationen auswählen und Jahreszahl zuordnen; mittige Feldtexte, löschbare Belegungen. Schematische Zuordnungsleiste mit gleichen Slotabständen.",
+      "rubric": "800 Karl der Große; um1450 Buchdruck;1789 Bastille;1914 Sarajevo;1989 Mauerfall. Abstände stellen KEINE verstrichene Zeit maßstabsgetreu dar.",
+      "exampleSource": "homepage/app.js",
+      "gradingSource": "homepage/grading.mjs",
+      "defaultMaxPoints": 2
+    },
+    {
+      "id": "music",
+      "subject": "Musik",
+      "goal": "Instrumente in Familien einteilen",
+      "catalogId": null,
+      "existingTypes": [
+        "grouping"
+      ],
+      "support": "existing_type",
+      "interaction": "Nur Begriffe, keine verräterischen Bilder; entfernen/umgruppieren möglich.",
+      "rubric": "Saiten: Gitarre/Geige; Blas: Querflöte/Trompete; Schlag: Trommel/Xylofon.",
+      "exampleSource": "homepage/app.js",
+      "gradingSource": "homepage/grading.mjs",
+      "defaultMaxPoints": 2
+    },
+    {
+      "id": "circuit",
+      "subject": "Physik",
+      "goal": "Geschlossene Stromkreise erkennen",
+      "catalogId": "EXP05",
+      "existingTypes": [
+        "multi"
+      ],
+      "support": "existing_type_adaptation",
+      "interaction": "Vier eigene SVG-Schaltungen, zwei richtige; Lichtreaktion erst nach Prüfen. Keine freie Physiksimulation.",
+      "rubric": "A und D; zusätzlicher falscher Kreis darf kein Vollergebnis geben. SVG-Anschlüsse und Lösung gemeinsam prüfen.",
+      "exampleSource": "homepage/app.js",
+      "gradingSource": "homepage/grading.mjs",
+      "defaultMaxPoints": 2
+    },
+    {
+      "id": "butterfly",
+      "subject": "Biologie",
+      "goal": "Entwicklungsstadien ordnen",
+      "catalogId": null,
+      "existingTypes": [
+        "ordering"
+      ],
+      "support": "existing_type_adaptation",
+      "interaction": "Vier klar illustrierte Stadien, per Antippen/Tasten verschieben, keine versteckten Stadien.",
+      "rubric": "Ei→Raupe→Puppe→Schmetterling. Ohne Interaktion keine Antwort; reine Bildkarten-UI nicht als reguläre Medienfolge-Freigabe behaupten.",
+      "exampleSource": "homepage/app.js",
+      "gradingSource": "homepage/grading.mjs",
+      "defaultMaxPoints": 2
+    },
+    {
+      "id": "angleSet",
+      "subject": "Mathematik",
+      "goal": "Winkel mit Instrument einstellen",
+      "catalogId": "VIS07",
+      "existingTypes": [],
+      "support": "custom_widget",
+      "interaction": "Lesbare Skala und beweglicher Schenkel; Ziel60°, keine digitale Ist-Gradzahl. Katalog VIS07 beschreibt Messen; Einstellen ist begründete Variante.",
+      "rubric": "58–62° einschließlich richtig; 57/63 falsch. Unberührter Startzustand ist keine Antwort.",
+      "exampleSource": "homepage/app.js",
+      "gradingSource": "homepage/grading.mjs",
+      "defaultMaxPoints": 2
+    }
+  ]
+}

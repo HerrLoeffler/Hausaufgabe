@@ -1,3 +1,4 @@
+import { previewCallable } from "./visual-preview255.mjs";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
 import { getStorage, ref, uploadBytesResumable, deleteObject } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
 import {
@@ -47,7 +48,7 @@ export function createAiClient(app, getUid) {
   const functions = getFunctions(app, REGION);
   const storage = getStorage(app);
   const call = (name, timeoutMs = 180000, transform = payload => payload) => async (payload) => {
-    const fn = httpsCallable(functions, name, { timeout: timeoutMs });
+    const fn = httpsCallable(functions, previewCallable(name), { timeout: timeoutMs });
     const result = await fn(transform(payload || {}));
     return result.data;
   };

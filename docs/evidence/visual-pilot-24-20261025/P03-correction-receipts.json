@@ -1,0 +1,14 @@
+{
+  "pilotId": "P03",
+  "quizId": "KYZW8JL7",
+  "receipts": [
+    {
+      "position": 4,
+      "questionId": "q004",
+      "updated": false,
+      "alreadyApplied": true,
+      "at": "2026-10-25T10:45:52.117Z",
+      "reloadMatched": true
+    }
+  ]
+}

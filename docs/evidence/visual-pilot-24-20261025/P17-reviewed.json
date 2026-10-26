@@ -1,0 +1,205 @@
+{
+  "pilotId": "P17",
+  "at": "2026-10-25T10:24:43.351Z",
+  "quiz": {
+    "gradingLocale": "de-DE",
+    "subject": "Geschichte und Geografie",
+    "solutionAudioReady": true,
+    "createdAt": "2026-10-25T10:24:32.465Z",
+    "gradeScaleId": "standard",
+    "isDeleted": false,
+    "title": "Karten, Richtungen und Zeitabstände",
+    "grade": "5",
+    "published": false,
+    "gradeScaleSnapshot": {
+      "id": "standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "name": "Standard"
+    },
+    "questionCount": 8,
+    "listeningOnlyQuestionCount": 0,
+    "generationStatus": "ready",
+    "showSolutions": true,
+    "creationContext": {
+      "topic": "Karten, Richtungen und Zeitabstände: Fiktive Karte und ausdrücklich erfundene Orts-/Ereignisdaten; Himmelsrichtungen, Koordinaten und zeitliche Abstände",
+      "difficulty": "leicht bis mittel",
+      "region": "Bayern",
+      "schoolType": "Mittelschule",
+      "contentLocale": "de-DE",
+      "learningGoals": []
+    },
+    "requiresSecureAssessmentRules": false,
+    "ended": false,
+    "shuffleQuestions": false,
+    "shuffleAnswers": false,
+    "qualityWarnings": [],
+    "audioQuestionCount": 0,
+    "resultMode": "points_grade",
+    "rightsHold": false,
+    "localeContractVersion": 1,
+    "description": "Viel Erfolg beim Test!",
+    "shareEnabled": false,
+    "sessionState": "open",
+    "audioReady": true,
+    "solutionAudioQuestionCount": 0,
+    "updatedAt": "2026-10-25T10:24:34.002Z",
+    "pedagogicalPool": {
+      "profileIds": [],
+      "profileCount": 0,
+      "status": "no_match",
+      "version": "gc-pedagogy-pool-v1"
+    },
+    "audioAnswerQuestionCount": 0,
+    "contentLocale": "de-DE",
+    "accessCode": "KEVX5RVP",
+    "qualityIssues": [],
+    "startMode": "student",
+    "ownerId": "gc-visual255-e2e",
+    "generationJobId": "35633d98168c0e3b91e46074af73c114a965be6e",
+    "totalPoints": 16,
+    "id": "KEVX5RVP"
+  },
+  "questions": [
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "points": 2,
+      "text": "Trage den fiktiven Ort A mit den Koordinaten (3 | 2) in das Koordinatensystem ein.",
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"koordinaten-ort-a-0\",\"revision\":1,\"format\":\"coordinate\",\"title\":\"Einen fiktiven Ort eintragen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"5\",\"prompt\":\"Trage den fiktiven Ort A mit den Koordinaten (3 | 2) in das Koordinatensystem ein.\",\"hint\":\"Klicke genau auf den passenden Rasterpunkt.\",\"maxPoints\":2,\"spec\":{\"mode\":\"points\",\"minX\":0,\"maxX\":6,\"minY\":0,\"maxY\":5,\"step\":1,\"labels\":[\"A\"]},\"solution\":{\"points\":[{\"x\":3,\"y\":2}]},\"objective\":\"Einen Ort mithilfe eines Koordinatenpaares eintragen.\",\"rationale\":\"Die Lage des fiktiven Ortes wird durch den passenden Rasterpunkt dargestellt.\",\"sourceNote\":\"Eigenes Beispiel mit ausdrücklich fiktiven Ortsdaten.\"}",
+      "position": 1,
+      "updatedAt": "2026-10-25T10:24:32.616Z",
+      "id": "q001"
+    },
+    {
+      "updatedAt": "2026-10-25T10:24:32.781Z",
+      "points": 2,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"koordinaten-strecke-b-c-0\",\"revision\":1,\"format\":\"coordinate\",\"title\":\"Eine fiktive Strecke eintragen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"5\",\"prompt\":\"Eine fiktive Karte zeigt Norden oben. Trage die Endpunkte der Strecke B(1 | 1) und C(5 | 4) ein.\",\"hint\":\"Setze die beiden Punkte auf die passenden Rasterpunkte.\",\"maxPoints\":2,\"spec\":{\"mode\":\"segment\",\"minX\":0,\"maxX\":6,\"minY\":0,\"maxY\":5,\"step\":1,\"labels\":[\"B\",\"C\"]},\"solution\":{\"points\":[{\"x\":1,\"y\":1},{\"x\":5,\"y\":4}]},\"objective\":\"Zwei Punkte eines fiktiven Weges in einem Koordinatensystem darstellen.\",\"rationale\":\"Die beiden angegebenen Koordinaten legen die Endpunkte eindeutig fest.\",\"sourceNote\":\"Eigenes Beispiel mit ausdrücklich fiktiven Ortsdaten.\"}",
+      "text": "Eine fiktive Karte zeigt Norden oben. Trage die Endpunkte der Strecke B(1 | 1) und C(5 | 4) ein.",
+      "type": "visual",
+      "position": 2,
+      "id": "q002"
+    },
+    {
+      "type": "visual",
+      "text": "Markiere auf dem Zahlenstrahl die fiktive Entfernung von 650 Kilometern zwischen den Orten Nordtal und Südhafen.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"massstab-entfernung-650-0\",\"revision\":0,\"format\":\"scale\",\"title\":\"Eine fiktive Entfernung ablesen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"5\",\"prompt\":\"Markiere auf dem Zahlenstrahl die fiktive Entfernung von 650 Kilometern zwischen den Orten Nordtal und Südhafen.\",\"hint\":\"Wähle den passenden Teilstrich auf dem Zahlenstrahl.\",\"maxPoints\":2,\"spec\":{\"context\":\"numberline\",\"min\":0,\"max\":1000,\"step\":50,\"majorStep\":100,\"unit\":\"km\",\"card\":\"●\"},\"solution\":{\"value\":650,\"tolerance\":0.00001},\"objective\":\"Eine Entfernung auf einem Zahlenstrahl verorten.\",\"rationale\":\"Die Skala ermöglicht das genaue Einordnen der fiktiven Entfernung.\",\"sourceNote\":\"Eigenes Beispiel mit ausdrücklich fiktiven Ortsdaten.\"}",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "position": 3,
+      "points": 2,
+      "updatedAt": "2026-10-25T10:24:32.940Z",
+      "id": "q003"
+    },
+    {
+      "updatedAt": "2026-10-25T10:24:33.099Z",
+      "type": "visual",
+      "text": "Markiere auf dem Zeitstrahl das fiktive Jahr 725.",
+      "position": 4,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"zeitstrahl-fiktives-jahr-725-0\",\"revision\":0,\"format\":\"scale\",\"title\":\"Ein fiktives Jahr auf einem Zeitstrahl\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"5\",\"prompt\":\"Markiere auf dem Zeitstrahl das fiktive Jahr 725.\",\"hint\":\"Wähle den passenden Teilstrich auf dem Zeitstrahl.\",\"maxPoints\":2,\"spec\":{\"context\":\"timeline\",\"min\":500,\"max\":1000,\"step\":25,\"majorStep\":100,\"unit\":\"Jahr\",\"card\":\"●\"},\"solution\":{\"value\":725,\"tolerance\":0.00001},\"objective\":\"Ein Jahr auf einem Zeitstrahl verorten.\",\"rationale\":\"Die gleichmäßige Zeitskala macht die Lage des fiktiven Jahres eindeutig bestimmbar.\",\"sourceNote\":\"Eigenes Beispiel mit ausdrücklich fiktiven Ereignisdaten.\"}",
+      "points": 2,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q004"
+    },
+    {
+      "position": 5,
+      "updatedAt": "2026-10-25T10:24:33.252Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"zeitabstaende-fiktiver-ereignisse-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Zeitabstände fiktiver Ereignisse\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"5\",\"prompt\":\"Berechne die Zeitabstände zwischen den jeweils genannten fiktiven Ereignissen und ergänze die Tabelle.\",\"hint\":\"Ziehe jeweils die frühere Jahreszahl von der späteren ab. Trage ganze Zahlen ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Früheres Ereignis\",\"Späteres Ereignis\",\"Zeitabstand in Jahren\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"Brückenbau im Jahr 318\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"Sternwarte im Jahr 467\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"\",\"input\":true}],[{\"id\":\"r2c1\",\"text\":\"Marktgründung im Jahr 602\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"Stadtmauer im Jahr 755\",\"input\":false},{\"id\":\"r2c3\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"r1c3\",\"accepted\":[\"149\"]},{\"id\":\"r2c3\",\"accepted\":[\"153\"]}]},\"objective\":\"Zeitabstände zwischen fiktiven Jahreszahlen berechnen.\",\"rationale\":\"Die früheren und späteren Jahreszahlen sind in jeder Zeile vollständig angegeben. Dadurch lässt sich jeder Zeitabstand eindeutig durch Subtraktion bestimmen.\",\"sourceNote\":\"Eigenes Beispiel mit ausdrücklich fiktiven Ereignissen und Jahreszahlen.\"}",
+      "type": "visual",
+      "text": "Berechne die Zeitabstände zwischen den jeweils genannten fiktiven Ereignissen und ergänze die Tabelle.",
+      "points": 2,
+      "id": "q005"
+    },
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"fiktive-karte-himmelsrichtungen-0\",\"revision\":1,\"format\":\"table\",\"title\":\"Himmelsrichtungen auf einer fiktiven Karte\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"5\",\"prompt\":\"Ordne die beiden fiktiven Orte anhand der Kartenbeschreibung der passenden Himmelsrichtung zu.\",\"hint\":\"Auf der fiktiven Karte zeigt oben nach Norden und rechts nach Osten. Ergänze für jede Zeile eine Himmelsrichtung.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Kartenbeschreibung\",\"Himmelsrichtung\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Felsheim liegt auf der fiktiven Karte oberhalb von Flussruh.\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Seeburg liegt auf der fiktiven Karte links von Flussruh.\",\"input\":false},{\"id\":\"b2\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a2\",\"accepted\":[\"Norden\",\"Nord\",\"N\",\"nördlich\",\"im Norden\"]},{\"id\":\"b2\",\"accepted\":[\"Westen\",\"West\",\"W\",\"westlich\",\"im Westen\"]}]},\"objective\":\"Lagebeschreibungen auf einer fiktiven Karte den Himmelsrichtungen Norden und Westen zuordnen.\",\"rationale\":\"Die festgelegte Kartenorientierung und die eindeutigen Lagebeschreibungen ermöglichen jeweils genau eine passende Himmelsrichtung.\",\"sourceNote\":\"Eigene Aufgabe mit ausdrücklich fiktiven Ortsnamen und Kartendaten.\"}",
+      "updatedAt": "2026-10-25T10:24:33.510Z",
+      "points": 2,
+      "type": "visual",
+      "text": "Ordne die beiden fiktiven Orte anhand der Kartenbeschreibung der passenden Himmelsrichtung zu.",
+      "position": 6,
+      "id": "q006"
+    },
+    {
+      "updatedAt": "2026-10-25T10:24:33.663Z",
+      "points": 2,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "text": "Auf einer fiktiven Karte ist Norden oben. Trage die Orte A(1 | 4), B(5 | 4), C(5 | 1) und D(1 | 1) ein.",
+      "position": 7,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"koordinaten-vier-orte-0\",\"revision\":1,\"format\":\"coordinate\",\"title\":\"Vier fiktive Orte eintragen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"5\",\"prompt\":\"Auf einer fiktiven Karte ist Norden oben. Trage die Orte A(1 | 4), B(5 | 4), C(5 | 1) und D(1 | 1) ein.\",\"hint\":\"Setze jeden Ort auf den passenden Rasterpunkt.\",\"maxPoints\":2,\"spec\":{\"mode\":\"points\",\"minX\":0,\"maxX\":6,\"minY\":0,\"maxY\":5,\"step\":1,\"labels\":[\"A\",\"B\",\"C\",\"D\"]},\"solution\":{\"points\":[{\"x\":1,\"y\":4},{\"x\":5,\"y\":4},{\"x\":5,\"y\":1},{\"x\":1,\"y\":1}]},\"objective\":\"Mehrere Koordinatenpaare in einer Darstellung anwenden.\",\"rationale\":\"Die vier angegebenen Koordinaten bestimmen die Positionen der fiktiven Orte eindeutig.\",\"sourceNote\":\"Eigenes Beispiel mit ausdrücklich fiktiven Ortsdaten.\"}",
+      "id": "q007"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:24:33.823Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"zeitabstand-250-jahre-0\",\"revision\":0,\"format\":\"scale\",\"title\":\"Einen fiktiven Zeitabstand markieren\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"5\",\"prompt\":\"Markiere auf dem Zeitstrahl den zeitlichen Abstand von 250 Jahren zwischen den beiden fiktiven Ereignissen Torbau und Hafenfest.\",\"hint\":\"Wähle den passenden Teilstrich auf der Zeitskala.\",\"maxPoints\":2,\"spec\":{\"context\":\"timeline\",\"min\":0,\"max\":500,\"step\":25,\"majorStep\":100,\"unit\":\"Jahre\",\"card\":\"●\"},\"solution\":{\"value\":250,\"tolerance\":0.00001},\"objective\":\"Einen zeitlichen Abstand auf einer Skala verorten.\",\"rationale\":\"Der fiktive Zeitabstand wird auf der gleichmäßig eingeteilten Skala eindeutig markiert.\",\"sourceNote\":\"Eigenes Beispiel mit ausdrücklich fiktiven Ereignisdaten.\"}",
+      "position": 8,
+      "points": 2,
+      "text": "Markiere auf dem Zeitstrahl den zeitlichen Abstand von 250 Jahren zwischen den beiden fiktiven Ereignissen Torbau und Hafenfest.",
+      "type": "visual",
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 1,
+      "reason": "Für den Klasse5-Kartenpilot positive Kartenkoordinaten verwenden.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    },
+    {
+      "position": 2,
+      "reason": "Negative Koordinaten durch eine einfache Karte für Klasse5 ersetzen; Grafik und Schlüssel zusammen ändern.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    },
+    {
+      "position": 6,
+      "reason": "Gängige gleichwertige Richtungsangaben zulassen.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    },
+    {
+      "position": 7,
+      "reason": "Vier Ortspositionen in einem positiven Kartenraster statt negativen mathematischen Koordinaten für Klasse5.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    }
+  ]
+}

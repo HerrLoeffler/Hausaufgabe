@@ -1,0 +1,34 @@
+{
+  "pilotId": "P17",
+  "quizId": "KEVX5RVP",
+  "receipts": [
+    {
+      "position": 1,
+      "questionId": "q001",
+      "updated": true,
+      "at": "2026-10-25T10:46:02.503Z",
+      "reloadMatched": true
+    },
+    {
+      "position": 2,
+      "questionId": "q002",
+      "updated": true,
+      "at": "2026-10-25T10:46:02.702Z",
+      "reloadMatched": true
+    },
+    {
+      "position": 6,
+      "questionId": "q006",
+      "updated": true,
+      "at": "2026-10-25T10:46:02.922Z",
+      "reloadMatched": true
+    },
+    {
+      "position": 7,
+      "questionId": "q007",
+      "updated": true,
+      "at": "2026-10-25T10:46:03.112Z",
+      "reloadMatched": true
+    }
+  ]
+}

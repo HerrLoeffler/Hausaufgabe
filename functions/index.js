@@ -104,6 +104,7 @@ function cleanSourceTest(value) {
       groups: Array.isArray(q?.groups) ? q.groups.slice(0, 6).map(g => ({ name: String(g?.name || "").slice(0, 80), items: Array.isArray(g?.items) ? g.items.slice(0, 8).map(x => String(x).slice(0, 80)) : [] })) : [],
       passage: String(q?.passage || "").slice(0, 400),
       targetWords: Array.isArray(q?.targetWords) ? q.targetWords.slice(0, 8).map(x => String(x).slice(0, 80)) : [],
+      ...(q?.type === "visual" && typeof q.visualTask === "string" && q.visualTask.length <= 20000 ? { visualTask: q.visualTask } : {}),
       numericAnswer: Number.isFinite(Number(q?.numericAnswer)) ? Number(q.numericAnswer) : null,
       unit: String(q?.unit || "").slice(0, 30),
       mediaIntent: { kind: q?.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none" },
@@ -120,6 +121,9 @@ function cleanInput(data = {}) {
   if (points < count / 2) throw new HttpsError("invalid-argument", `Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
   const allowedTypes = Array.isArray(data.allowedTypes) ? data.allowedTypes.filter(t => QUESTION_TYPES.includes(t)) : [];
   if (!allowedTypes.length) throw new HttpsError("invalid-argument", "Mindestens ein Aufgabentyp ist erforderlich.");
+  let allowedVisualFormats;
+  try { allowedVisualFormats = require("./lib/interactive-authoring").normalizeAllowedVisualFormats(data.allowedVisualFormats, allowedTypes.includes("visual")); }
+  catch(error) { throw new HttpsError("invalid-argument", error.message); }
   const exactImageCounts = Object.hasOwn(data, "imageQuestionCount") || Object.hasOwn(data, "imageAnswerQuestionCount");
   const imageQuestionCount = Number(data.imageQuestionCount);
   const imageAnswerQuestionCount = Number(data.imageAnswerQuestionCount ?? 0);
@@ -152,7 +156,7 @@ function cleanInput(data = {}) {
     schoolType: String(data.schoolType || "Mittelschule").slice(0, 100), region: String(data.region || "Bayern").slice(0, 100),
     subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, 500),
     difficulty: String(data.difficulty || "mittel").slice(0, 50), count, points,
-    allowedTypes, notes: String(data.notes || "").slice(0, LIMITS.maxPromptChars), imageMode, exactImageCounts,
+    allowedTypes, ...(data.allowedVisualFormats !== undefined && allowedTypes.includes("visual") ? {allowedVisualFormats} : {}), notes: String(data.notes || "").slice(0, LIMITS.maxPromptChars), imageMode, exactImageCounts,
     imageQuestionCount: exactImageCounts ? imageQuestionCount : undefined, imageAnswerQuestionCount: exactImageCounts ? 0 : undefined,
     allowImageChoices: false,
     exactAudioCounts, audioMode, audioQuestionCount: exactAudioCounts ? audioQuestionCount : 0,
@@ -296,7 +300,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const generationPrompt = `${testUserPrompt(input)}${variantPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}${poolGuide}`;
     phase = "test-generation";
     await onProgress("test-generation", 15, "Die KI erstellt den Test …");
-    const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
+    const options = { allowedTypes: input.allowedTypes, allowedVisualFormats: input.allowedVisualFormats, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
     if (input.generationMode === "variant") Object.assign(options, { requireFreshVariant: true, variantInput: input });
     const first = await generateTestInBatches(input, async (batch, prior) => {
       await onProgress("test-generation", 15 + Math.floor(20 * batch.batchOffset / input.count), `Aufgaben ${batch.batchOffset + 1} bis ${batch.batchOffset + batch.count} von ${input.count} werden erstellt …`);
@@ -307,6 +311,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const feedbackLearning = memory.learning?.sources?.length ? await recordLearningUseSafe(getFirestore(), memory, {uid, operation: input.generationMode === "variant" ? "generateTestVariant" : "generateTest"}) : {recorded:0};
     const usage = { ...first.usage };
     const addUsage = next => {
+      if (next.providerRequests?.length) usage.providerRequests = [...(usage.providerRequests || []), ...next.providerRequests].slice(-100);
       for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(next[key] || 0);
     };
     const normalizeTest = data => ({ ...data, questions: (Array.isArray(data?.questions) ? data.questions : []).map(normalizeQuestion) });
@@ -392,6 +397,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
         model: TEXT_MODEL,
         promptVersion: PROMPT_VERSION,
         schemaVersion: AI_SCHEMA_VERSION,
+        usage,
         replacedQuestions: result.replaced + reviewed.replaced,
         qualityReviewPasses: reviewed.reviewPasses,
         fullRepair: result.fullRepair,
@@ -717,6 +723,9 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const targetType = request.data?.targetType;
   if (targetType != null && !QUESTION_TYPES.includes(targetType)) throw new HttpsError("invalid-argument", "Ungültiger Zieltyp.");
   const allowedTypes = targetType ? [targetType] : Array.isArray(request.data?.allowedTypes) ? request.data.allowedTypes.filter(t => QUESTION_TYPES.includes(t)) : QUESTION_TYPES;
+  let allowedVisualFormats;
+  try { allowedVisualFormats = require("./lib/interactive-authoring").revisionVisualFormats(request.data || {}, question, allowedTypes); }
+  catch (error) { throw new HttpsError("invalid-argument", error.message); }
   const materialIds = sanitizeMaterials(request.data?.materials, uid).map(m => m.id);
   const mediaKind = request.data?.mediaKind;
   if (mediaKind !== undefined && !["none", "ai_generated"].includes(mediaKind)) throw new HttpsError("invalid-argument", "Ungültige Bildauswahl.");
@@ -725,7 +734,8 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   const existing = Array.isArray(request.data?.testContext?.existingQuestions) ? request.data.testContext.existingQuestions.slice(0, LIMITS.maxQuestions) : [];
   const memory = await loadQualityMemory({ subject: request.data?.testContext?.subject || "", grade: request.data?.testContext?.grade || "", questionType: question.type || "" }, uid);
   const memoryGuide = learningPrompt(memory);
-  const prompt = `${basePrompt}${memoryGuide ? `\n${memoryGuide}` : ""}${teacherQualityGuide(memory)}`;
+  const interactiveGuide = require("./lib/interactive-authoring").interactiveGuidance({ allowedTypes, allowedVisualFormats });
+  const prompt = `${basePrompt}\n${interactiveGuide}${memoryGuide ? `\n${memoryGuide}` : ""}${teacherQualityGuide(memory)}`;
   const usage = {};
   let normalized, errors;
   let feedbackLearning = {recorded:0};
@@ -745,9 +755,10 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
     const retryPrompt = `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors?.join(" ") || ""}${rejectedDraft ? `\nVerworfener Vorschlag (nicht wiederholen): ${rejectedDraft}` : ""}\nErstelle eine neue, geprüfte Aufgabe mit einem anderen Beispiel oder Kontext.`;
     const result = await structuredResponse({ schema: variantSchema, schemaName: request.data?.variant ? "testify_question_variant_v2" : "testify_question_v1", userPrompt: attempt ? retryPrompt : prompt });
     if (attempt === 0 && memory.learning?.sources?.length) feedbackLearning = await recordLearningUseSafe(getFirestore(), memory, {uid, operation:"regenerateQuestion"});
+    if (result.usage.providerRequests?.length) usage.providerRequests = [...(usage.providerRequests || []), ...result.usage.providerRequests].slice(-100);
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage[key] || 0);
     normalized = normalizeQuestion(result.data);
-    errors = validateQuestion(normalized, { allowedTypes, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds, requiredMediaKind: mediaKind, allowAudio: true, requiredAudioKind: audioKind });
+    errors = validateQuestion(normalized, { allowedTypes, allowedVisualFormats, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds, requiredMediaKind: mediaKind, allowAudio: true, requiredAudioKind: audioKind });
     if (request.data?.variant) {
       if ([question, ...existing].some(other => variantRepeats(other, normalized))) errors.push("Die neue Variante ist der bestehenden Aufgabe noch zu ähnlich.");
     } else if (request.data?.requireDifferent) {
@@ -756,6 +767,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
     if (memory.negativeQuestions.some(other => sameQuestion(other, normalized))) errors.push("Die Aufgabe ähnelt einer zuvor als fehlerhaft bewerteten Aufgabe.");
     if (!errors.length) {
       const review = await reviewDraft({ subject: request.data?.testContext?.subject || "", grade: request.data?.testContext?.grade || "", questions: [normalized] }, memory);
+      if (review.usage.providerRequests?.length) usage.providerRequests = [...(usage.providerRequests || []), ...review.usage.providerRequests].slice(-100);
       for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(review.usage[key] || 0);
       errors.push(...normalizeReviewIssues(review.data, { questions: [normalized] }).map(issue => `Qualitätsprüfung: ${issue.detail}`));
     }
@@ -763,7 +775,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   }
   await recordUsage(uid, "question", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: Boolean(errors.length), qualityMemoryVersion: memory.memoryVersion, feedbackSignals: memory.stats?.total || 0, positivePatterns: memory.positivePatterns?.length || 0, recurringRuleCandidates: memory.ruleCandidates?.length || 0 });
   if (errors.length) throw new HttpsError("failed-precondition", "Die neue Aufgabe ist nicht zuverlässig gültig.", { errors });
-  return { question: normalized, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, feedbackLearning } };
+  return { question: normalized, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, feedbackLearning, usage } };
   } catch (err) { throw reportAiError(err, "question-regeneration"); }
 });
 

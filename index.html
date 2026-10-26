@@ -14,6 +14,11 @@
   <link rel="icon" href="assets/gradecrew/penguin-icon.svg" type="image/svg+xml" />
   <script src="assets/vendor/qrcodejs-1.0.0.min.js" defer></script>
 <link rel="stylesheet" href="review-mode.css">
+  <link rel="stylesheet" href="visual/visual.css">
+  <script src="visual/legacy-core.js"></script>
+  <script src="visual/core.js"></script>
+  <script src="visual/sequence-illustrations.js"></script>
+  <script src="visual/renderers.js"></script>
 </head>
 <body>
   <a class="skipLink" href="#mainContent">Zum Inhalt springen</a>
@@ -333,13 +338,20 @@
           <div class="aiCoreActions">
             <p id="aiActiveJobsNotice" class="hint hidden" role="status"></p>
             <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
-            <small class="hint aiCostNote">Kosten können für Tests, Bilder und Audio entstehen.</small>
+
             <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
             <small class="hint aiReturnNote">Nach dem Start schließt sich diese Ansicht automatisch. Den fertigen Test findest du unter „Meine Tests“.</small>
           </div>
           <details class="aiOptionalTestOptions"><summary>Aufgabentypen und Wünsche <small>optional</small></summary>
           <details class="aiTypePicker"><summary>Aufgabentypen erlauben <span id="aiTypeCount">9 ausgewählt</span></summary>
             <div id="aiTypeChecks" class="typeCheckGrid"></div>
+            <fieldset id="aiInteractiveFormats" class="interactiveFormatChoices"><legend>Interaktive Aufgaben</legend><p class="hint">Remy wählt passend zu Fach, Thema und Lernziel. Du kannst die Auswahl eingrenzen.</p><div class="interactiveFormatGrid">
+              <label><input type="checkbox" data-interactive-formats="timeline" checked> Zeitstrahl</label>
+              <label><input type="checkbox" data-interactive-formats="coordinate" checked> Koordinatensystem</label>
+              <label><input type="checkbox" data-interactive-formats="hotspot,labeling" checked> Im Bild markieren &amp; beschriften</label>
+              <label><input type="checkbox" data-interactive-formats="angle" checked> Winkel messen</label>
+              <label><input type="checkbox" data-interactive-formats="sequence" checked> Bildfolge ordnen</label>
+            </div></fieldset>
           </details>
           <label class="aiNotesField">Eigene Wünsche <small>(optional)</small><textarea id="aiCustomNotes" rows="5" maxlength="6000" placeholder="z. B. anspruchsvolle Sachaufgaben, viele Zuordnungen, keine Babysätze …"></textarea></label>
           <details class="gradecrewPreferenceDetails"><summary>Persönliche KI-Vorgaben <small>optional</small></summary><div class="gradecrewPreferenceBody">          <label class="aiNotesField">Vorgaben für meine Tests <small>(für künftige Tests)</small><textarea id="aiPersonalPreferences" rows="3" maxlength="1000" placeholder="z. B. klare Alltagssprache, lieber kurze Aufgaben, keine Fachwörter ohne Erklärung"></textarea></label>
@@ -495,7 +507,7 @@
         <label class="grow questionTextLabel"><span class="questionTextCaption">Frage</span><textarea class="qText" rows="2" placeholder="Frage eingeben …"></textarea></label>
         <label>Typ<select class="qType">
           <option value="single">Single Choice</option><option value="multi">Multiple Choice</option><option value="text">Freitext</option><option value="dropdown">Dropdown</option>
-          <option value="truefalse">Richtig / Falsch</option><option value="gapfill">Lückentext</option><option value="matching">Zuordnen</option><option value="ordering">Sortieren / Reihenfolge</option><option value="grouping">Gruppieren / Kategorien</option><option value="markwords">Wörter markieren</option><option value="number">Zahl / Rechenergebnis</option>
+          <option value="truefalse">Richtig / Falsch</option><option value="gapfill">Lückentext</option><option value="matching">Zuordnen</option><option value="ordering">Sortieren / Reihenfolge</option><option value="grouping">Gruppieren / Kategorien</option><option value="markwords">Wörter markieren</option><option value="number">Zahl / Rechenergebnis</option><option value="visual">Visuelle Interaktion</option>
         </select></label>
         <label class="pointsLabel">Punkte<input class="qPoints" type="number" min="0.5" step="0.5" value="1" /></label>
       </div>

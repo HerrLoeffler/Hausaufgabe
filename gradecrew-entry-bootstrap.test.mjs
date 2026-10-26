@@ -112,7 +112,7 @@ test('app bootstrap binds its real auth controls after public entry installation
     const { installGradeCrewEntryFlow } = await import('./gradecrew-entry-flow.js?v=7');
     assert.equal(installGradeCrewEntryFlow(), true);
     const appSource = fs.readFileSync('app.js', 'utf8');
-    const source = appSource.slice(0, appSource.indexOf('import { initializeApp')) + appSource.slice(appSource.indexOf('const diagnostics ='));
+    const source = appSource.slice(0, appSource.indexOf('import { initializeApp')).replace(/^import .*;\n/gm,'') + appSource.slice(appSource.indexOf('const diagnostics ='));
     const noop = () => {};
     const loginCalls = [];
     let guestStarts = 0;
@@ -122,7 +122,7 @@ test('app bootstrap binds its real auth controls after public entry installation
     let allowAnnouncementReads = false;
     const announcementReads = [];
     const forbidden = () => { forbiddenCalls += 1; throw new Error('Guest tutorial reached a provider'); };
-    const bindings = {
+    const bindings = { ...(await import("./interactive-task-authoring.mjs")),
       initializeApp: () => ({}), getAuth: () => ({}), getFirestore: () => ({}), createAiClient: () => new Proxy({}, { get: () => forbidden }), installReviewMode,
       firebaseSignIn: (...args) => { loginCalls.push(args); return Promise.resolve({ user: {} }); },
       createDiagnostics: () => ({ record: noop, setRelease: noop }), installDiagnostics: noop,

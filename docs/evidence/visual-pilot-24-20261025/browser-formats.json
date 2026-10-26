@@ -1,0 +1,66 @@
+{
+  "at": "2026-10-25T10:49:04.182Z",
+  "scope": "Local teacher viewer, rendering smoke only; interactions separately recorded",
+  "formats": [
+    {
+      "format": "grid",
+      "title": "Anteil als Fläche darstellen",
+      "controlsPresent": true
+    },
+    {
+      "format": "scale",
+      "title": "Die Hälfte auf dem Zahlenstrahl",
+      "controlsPresent": true
+    },
+    {
+      "format": "table",
+      "title": "Anteil und Anzahl zuordnen",
+      "controlsPresent": true
+    },
+    {
+      "format": "angle",
+      "title": "Einen Winkel messen",
+      "controlsPresent": true
+    },
+    {
+      "format": "coordinate",
+      "title": "Einen Punkt eintragen",
+      "controlsPresent": true
+    },
+    {
+      "format": "chart",
+      "title": "Messwerte als Säulen darstellen",
+      "controlsPresent": true
+    },
+    {
+      "format": "range",
+      "title": "Ein Zahlenintervall markieren",
+      "controlsPresent": true
+    },
+    {
+      "format": "evidence",
+      "title": "Eine Aussage zu Funktionswerten begründen",
+      "controlsPresent": true
+    },
+    {
+      "format": "connections",
+      "title": "Wortarten verbinden",
+      "controlsPresent": true
+    },
+    {
+      "format": "correction",
+      "title": "Eine Wortart berichtigen",
+      "controlsPresent": true
+    },
+    {
+      "format": "labeling",
+      "title": "Eine Blütenpflanze beschriften",
+      "controlsPresent": true
+    },
+    {
+      "format": "hotspot",
+      "title": "Wasseraufnahme der Pflanze",
+      "controlsPresent": true
+    }
+  ]
+}

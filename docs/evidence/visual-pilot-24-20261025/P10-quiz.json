@@ -1,0 +1,183 @@
+{
+  "pilotId": "P10",
+  "at": "2026-10-25T10:10:33.694Z",
+  "quiz": {
+    "shareEnabled": false,
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match",
+      "profileIds": [],
+      "profileCount": 0
+    },
+    "description": "Viel Erfolg beim Test!",
+    "questionCount": 8,
+    "showSolutions": true,
+    "audioAnswerQuestionCount": 0,
+    "shuffleQuestions": false,
+    "shuffleAnswers": false,
+    "gradingLocale": "de-DE",
+    "generationStatus": "ready",
+    "creationContext": {
+      "contentLocale": "de-DE",
+      "topic": "A day out: Kurze englische Alltagsinformationen zu Uhrzeiten, Orten und Abläufen verstehen und sprachlich bearbeiten",
+      "schoolType": "Mittelschule",
+      "difficulty": "leicht bis mittel",
+      "region": "Bayern",
+      "learningGoals": []
+    },
+    "updatedAt": "2026-10-25T10:10:32.516Z",
+    "audioQuestionCount": 0,
+    "resultMode": "points_grade",
+    "accessCode": "4Y3HHAM7",
+    "qualityWarnings": [],
+    "sessionState": "open",
+    "grade": "6",
+    "subject": "Englisch",
+    "ended": false,
+    "startMode": "student",
+    "solutionAudioQuestionCount": 0,
+    "solutionAudioReady": true,
+    "gradeScaleSnapshot": {
+      "name": "Standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "id": "standard"
+    },
+    "totalPoints": 16,
+    "generationJobId": "45ccea6cea37545b2585eb65d76420ab2fbc24fd",
+    "rightsHold": false,
+    "audioReady": true,
+    "requiresSecureAssessmentRules": false,
+    "gradeScaleId": "standard",
+    "published": false,
+    "ownerId": "gc-visual255-e2e",
+    "localeContractVersion": 1,
+    "qualityIssues": [],
+    "listeningOnlyQuestionCount": 0,
+    "contentLocale": "de-DE",
+    "createdAt": "2026-10-25T10:10:31.151Z",
+    "title": "A day out: Uhrzeiten, Orte und Abläufe",
+    "isDeleted": false,
+    "id": "4Y3HHAM7"
+  },
+  "questions": [
+    {
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:10:31.297Z",
+      "text": "Markiere auf dem Zahlenstrahl die Uhrzeit, zu der der Ausflug beginnt.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dayout-scale-start-0\",\"revision\":0,\"format\":\"scale\",\"title\":\"Startzeit eines Ausflugs\",\"subject\":\"Englisch\",\"grade\":\"6\",\"prompt\":\"Markiere auf dem Zahlenstrahl die Uhrzeit, zu der der Ausflug beginnt. Fiktive Information: The school trip starts at half past eight.\",\"hint\":\"Ordne die englische Zeitangabe der passenden Stelle zwischen 8:00 und 9:00 zu.\",\"maxPoints\":2,\"spec\":{\"context\":\"numberline\",\"min\":8,\"max\":9,\"step\":0.25,\"majorStep\":0.5,\"unit\":\"Uhr\",\"card\":\"●\"},\"solution\":{\"value\":8.5,\"tolerance\":0.1},\"objective\":\"Eine englische Zeitangabe auf einer Zeitskala verorten.\",\"rationale\":\"Die Zeitangabe half past eight entspricht 8:30 Uhr und kann auf dem Zahlenstrahl eindeutig markiert werden.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne externe Quelle.\"}",
+      "position": 1,
+      "points": 2,
+      "id": "q001"
+    },
+    {
+      "type": "visual",
+      "points": 2,
+      "position": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dayout-scale-arrival-0\",\"revision\":0,\"format\":\"scale\",\"title\":\"Ankunft am Museum\",\"subject\":\"Englisch\",\"grade\":\"6\",\"prompt\":\"Markiere auf der Zeitleiste die Uhrzeit, zu der die Gruppe am Museum ankommt. Fiktive Information: The group arrives at the museum at quarter past ten.\",\"hint\":\"Lies quarter past ten als eine Viertelstunde nach zehn Uhr.\",\"maxPoints\":2,\"spec\":{\"context\":\"timeline\",\"min\":10,\"max\":11,\"step\":0.25,\"majorStep\":0.5,\"unit\":\"Uhr\",\"card\":\"●\"},\"solution\":{\"value\":10.25,\"tolerance\":0.1},\"objective\":\"Eine englische Uhrzeit im Ablauf eines Tages verorten.\",\"rationale\":\"Quarter past ten bezeichnet 10:15 Uhr und ist auf der Zeitleiste eindeutig erreichbar.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne externe Quelle.\"}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:10:31.454Z",
+      "text": "Markiere auf der Zeitleiste die Uhrzeit, zu der die Gruppe am Museum ankommt.",
+      "id": "q002"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dayout-evidence-first-place-0\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Der erste Ort\",\"subject\":\"Englisch\",\"grade\":\"6\",\"prompt\":\"Markiere genau den Satz, der zeigt, wo die Gruppe zuerst hingeht. Fiktiver englischer Informationstext:\",\"hint\":\"Achte auf die Handlung am Anfang des Ablaufs.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"The trip starts at nine o'clock.\"},{\"id\":\"s2\",\"text\":\"First, the class visits the town museum.\"},{\"id\":\"s3\",\"text\":\"After lunch, they walk to the park.\"},{\"id\":\"s4\",\"text\":\"The bus takes them home at four.\"}]},\"solution\":{\"selections\":[[\"s2\"]]},\"objective\":\"Eine konkrete Ortsinformation aus einem kurzen englischen Text entnehmen.\",\"rationale\":\"Nur Satz s2 nennt den Ort des ersten Programmpunkts.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne externe Quelle.\"}",
+      "position": 3,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "points": 2,
+      "updatedAt": "2026-10-25T10:10:31.590Z",
+      "text": "Markiere genau den Satz, der zeigt, wo die Gruppe zuerst hingeht.",
+      "type": "visual",
+      "id": "q003"
+    },
+    {
+      "position": 4,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dayout-evidence-return-time-0\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Die Rückkehrzeit\",\"subject\":\"Englisch\",\"grade\":\"6\",\"prompt\":\"Markiere genau den Satz, der die Rückkehrzeit nennt. Fiktiver englischer Informationstext:\",\"hint\":\"Suche nach der Information über das Ende des Ausflugs.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"At ten o'clock, the group has a snack.\"},{\"id\":\"s2\",\"text\":\"Then they look at old maps.\"},{\"id\":\"s3\",\"text\":\"In the afternoon, they play outside.\"},{\"id\":\"s4\",\"text\":\"The bus arrives back at half past three.\"}]},\"solution\":{\"selections\":[[\"s4\"]]},\"objective\":\"Eine Zeitangabe zum Ende eines englischen Alltagsablaufs erkennen.\",\"rationale\":\"Nur Satz s4 nennt die Ankunftszeit des Busses zurück am Ausgangsort.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne externe Quelle.\"}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "text": "Markiere genau den Satz, der die Rückkehrzeit nennt.",
+      "updatedAt": "2026-10-25T10:10:31.740Z",
+      "type": "visual",
+      "points": 2,
+      "id": "q004"
+    },
+    {
+      "type": "visual",
+      "position": 5,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:10:31.952Z",
+      "text": "Ergänze die fehlenden Angaben in der Tabelle. Trage die passenden englischen Wörter oder Zeitangaben ein.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dayout-table-programme-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Ein Tagesprogramm ergänzen\",\"subject\":\"Englisch\",\"grade\":\"6\",\"prompt\":\"Ergänze die fehlenden Angaben in der Tabelle. Verwende die Informationen aus dem fiktiven Text: The class meets at eight o'clock. At half past nine, they visit the zoo. At one o'clock, they eat lunch.\",\"hint\":\"Übertrage die Informationen in der Reihenfolge des Tages. Schreibe die englischen Angaben ab.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Time\",\"Activity\"],\"rows\":[[{\"id\":\"a\",\"text\":\"8:00\",\"input\":false},{\"id\":\"b\",\"text\":\"meet\",\"input\":false}],[{\"id\":\"c\",\"text\":\"\",\"input\":true},{\"id\":\"d\",\"text\":\"visit the zoo\",\"input\":false}],[{\"id\":\"e\",\"text\":\"1:00\",\"input\":false},{\"id\":\"f\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"c\",\"accepted\":[\"9:30\",\"half past nine\"]},{\"id\":\"f\",\"accepted\":[\"eat lunch\",\"have lunch\"]}]},\"objective\":\"Zeit- und Ortsinformationen aus englischen Sätzen geordnet in eine Tabelle übertragen.\",\"rationale\":\"Die beiden fehlenden Angaben stehen eindeutig im Ausgangstext und passen zur jeweiligen Tabellenzeile.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne externe Quelle.\"}",
+      "points": 2,
+      "id": "q005"
+    },
+    {
+      "points": 2,
+      "text": "Ergänze die fehlenden Angaben in der Tabelle. Achte auf die Reihenfolge des Ablaufs.",
+      "position": 6,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "updatedAt": "2026-10-25T10:10:32.071Z",
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dayout-table-route-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Orte in der richtigen Reihenfolge\",\"subject\":\"Englisch\",\"grade\":\"6\",\"prompt\":\"Ergänze die fehlenden Angaben in der Tabelle. Fiktiver englischer Ablauf: First, the group goes to the library. Next, they have lunch in the park. Finally, they meet the bus at the station.\",\"hint\":\"First, next und finally zeigen die Reihenfolge an.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Order\",\"Place or activity\"],\"rows\":[[{\"id\":\"a\",\"text\":\"1\",\"input\":false},{\"id\":\"b\",\"text\":\"\",\"input\":true}],[{\"id\":\"c\",\"text\":\"2\",\"input\":false},{\"id\":\"d\",\"text\":\"have lunch in the park\",\"input\":false}],[{\"id\":\"e\",\"text\":\"3\",\"input\":false},{\"id\":\"f\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"b\",\"accepted\":[\"go to the library\",\"the library\"]},{\"id\":\"f\",\"accepted\":[\"meet the bus at the station\",\"the station\"]}]},\"objective\":\"Einen einfachen englischen Ablauf mit Orten und Tätigkeiten ordnen.\",\"rationale\":\"Die Signalwörter des Textes legen den ersten und dritten Programmpunkt eindeutig fest.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne externe Quelle.\"}",
+      "id": "q006"
+    },
+    {
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dayout-correction-place-0\",\"revision\":0,\"format\":\"correction\",\"title\":\"Eine Ortsangabe berichtigen\",\"subject\":\"Englisch\",\"grade\":\"6\",\"prompt\":\"Eine Zeile enthält eine falsche Ortsangabe. Markiere die fehlerhafte Zeile und trage die richtige englische Angabe ein. Fiktive Information: The group visits the castle in the morning, eats lunch in the park and sees a film at the cinema.\",\"hint\":\"Vergleiche jede Zeile mit der fiktiven Information.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"a\",\"text\":\"The group visits the castle in the morning.\"},{\"id\":\"b\",\"text\":\"They eat lunch at the cinema.\"},{\"id\":\"c\",\"text\":\"They see a film at the cinema.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"b\",\"accepted\":[\"They eat lunch in the park.\",\"They eat lunch in the park\"]},\"objective\":\"Eine falsche englische Ortsangabe erkennen und korrekt verbessern.\",\"rationale\":\"Nur die Ortsangabe in Zeile b widerspricht dem fiktiven Informationstext.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne externe Quelle.\"}",
+      "text": "Finde die fehlerhafte Zeile und verbessere die englische Information.",
+      "position": 7,
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "updatedAt": "2026-10-25T10:10:32.200Z",
+      "id": "q007"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dayout-correction-time-0\",\"revision\":0,\"format\":\"correction\",\"title\":\"Eine Zeitangabe berichtigen\",\"subject\":\"Englisch\",\"grade\":\"6\",\"prompt\":\"Eine Zeile enthält eine falsche Zeitangabe. Markiere die fehlerhafte Zeile und trage die richtige englische Angabe ein. Fiktive Information: The museum opens at ten o'clock, the group has lunch at twelve o'clock and the bus leaves at half past two.\",\"hint\":\"Vergleiche die Uhrzeiten in den drei Zeilen mit dem fiktiven Informationstext.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"a\",\"text\":\"The museum opens at ten o'clock.\"},{\"id\":\"b\",\"text\":\"The group has lunch at one o'clock.\"},{\"id\":\"c\",\"text\":\"The bus leaves at half past two.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"b\",\"accepted\":[\"The group has lunch at twelve o'clock.\",\"The group has lunch at 12 o'clock.\",\"The group has lunch at twelve.\"]},\"objective\":\"Eine falsche englische Zeitangabe erkennen und korrekt verbessern.\",\"rationale\":\"Nur Zeile b nennt eine andere Uhrzeit als der fiktive Informationstext.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne externe Quelle.\"}",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:10:32.418Z",
+      "position": 8,
+      "text": "Finde die fehlerhafte Zeile und verbessere die englische Zeitangabe.",
+      "type": "visual",
+      "id": "q008"
+    }
+  ]
+}

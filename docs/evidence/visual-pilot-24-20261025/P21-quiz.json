@@ -1,0 +1,183 @@
+{
+  "pilotId": "P21",
+  "at": "2026-10-25T10:34:26.342Z",
+  "quiz": {
+    "generationJobId": "11a0f1e9240d8e50e9a7058cd3a6938b668b0faa",
+    "sessionState": "open",
+    "startMode": "student",
+    "contentLocale": "de-DE",
+    "qualityIssues": [],
+    "qualityWarnings": [],
+    "isDeleted": false,
+    "audioQuestionCount": 0,
+    "description": "Viel Erfolg beim Test!",
+    "gradeScaleId": "standard",
+    "requiresSecureAssessmentRules": false,
+    "createdAt": "2026-10-25T10:34:16.542Z",
+    "published": false,
+    "solutionAudioReady": true,
+    "ended": false,
+    "gradeScaleSnapshot": {
+      "id": "standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "name": "Standard"
+    },
+    "audioAnswerQuestionCount": 0,
+    "creationContext": {
+      "learningGoals": [],
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "contentLocale": "de-DE",
+      "difficulty": "leicht bis mittel",
+      "topic": "Einkaufen und Belege: Fiktive einfache Kassenbons, Preise und Mengen auswerten, Rechenfehler und Bestandteile erkennen"
+    },
+    "listeningOnlyQuestionCount": 0,
+    "grade": "6",
+    "audioReady": true,
+    "rightsHold": false,
+    "shareEnabled": false,
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileCount": 0,
+      "status": "no_match",
+      "profileIds": []
+    },
+    "shuffleAnswers": false,
+    "localeContractVersion": 1,
+    "subject": "Wirtschaft",
+    "gradingLocale": "de-DE",
+    "accessCode": "HU2GJSBB",
+    "resultMode": "points_grade",
+    "generationStatus": "ready",
+    "title": "Einkaufen und Kassenbons",
+    "showSolutions": true,
+    "ownerId": "gc-visual255-e2e",
+    "questionCount": 8,
+    "totalPoints": 16,
+    "updatedAt": "2026-10-25T10:34:17.946Z",
+    "solutionAudioQuestionCount": 0,
+    "shuffleQuestions": false,
+    "id": "HU2GJSBB"
+  },
+  "questions": [
+    {
+      "updatedAt": "2026-10-25T10:34:16.663Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "type": "visual",
+      "text": "Berechne für jede Zeile den Gesamtpreis und ergänze die Tabelle.",
+      "position": 1,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"tabelle-gesamtpreise-01\",\"revision\":0,\"format\":\"table\",\"title\":\"Gesamtpreise berechnen\",\"subject\":\"Wirtschaft\",\"grade\":\"6\",\"prompt\":\"Berechne für jede Zeile den Gesamtpreis und ergänze die Tabelle.\",\"hint\":\"Multipliziere jeweils die Menge mit dem Einzelpreis. Trage die Ergebnisse als Dezimalzahlen in Euro ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Artikel\",\"Menge\",\"Einzelpreis\",\"Gesamtpreis\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Heft\",\"input\":false},{\"id\":\"a2\",\"text\":\"3\",\"input\":false},{\"id\":\"a3\",\"text\":\"1,20 €\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Stift\",\"input\":false},{\"id\":\"b2\",\"text\":\"2\",\"input\":false},{\"id\":\"b3\",\"text\":\"0,80 €\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"Radiergummi\",\"input\":false},{\"id\":\"c2\",\"text\":\"4\",\"input\":false},{\"id\":\"c3\",\"text\":\"0,50 €\",\"input\":false},{\"id\":\"c4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"3,60\",\"3.60\"]},{\"id\":\"b4\",\"accepted\":[\"1,60\",\"1.60\"]},{\"id\":\"c4\",\"accepted\":[\"2,00\",\"2.00\",\"2\"]}]},\"objective\":\"Mengen und Einzelpreise zu Gesamtpreisen verrechnen.\",\"rationale\":\"Die Gesamtpreise werden aus den gegebenen Mengen und Einzelpreisen berechnet.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne reale Verkaufsdaten.\"}",
+      "points": 2,
+      "id": "q001"
+    },
+    {
+      "type": "visual",
+      "text": "Berechne das Rückgeld für jeden fiktiven Einkauf und ergänze die Tabelle.",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "position": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"rueckgeld-tabelle-02\",\"revision\":0,\"format\":\"table\",\"title\":\"Rückgeld auf einem fiktiven Kassenbon berechnen\",\"subject\":\"Wirtschaft\",\"grade\":\"6\",\"prompt\":\"Berechne das Rückgeld für jeden fiktiven Einkauf und ergänze die Tabelle.\",\"hint\":\"Rückgeld = bezahlter Betrag − Gesamtbetrag. Gib Dezimalzahlen mit zwei Nachkommastellen ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Fiktiver Einkauf\",\"Gesamtbetrag\",\"Gezahlt\",\"Rückgeld\"],\"rows\":[[{\"id\":\"e1\",\"text\":\"Einkauf A\",\"input\":false},{\"id\":\"b1\",\"text\":\"6,40 €\",\"input\":false},{\"id\":\"z1\",\"text\":\"10,00 €\",\"input\":false},{\"id\":\"r1\",\"text\":\"\",\"input\":true}],[{\"id\":\"e2\",\"text\":\"Einkauf B\",\"input\":false},{\"id\":\"b2\",\"text\":\"8,75 €\",\"input\":false},{\"id\":\"z2\",\"text\":\"10,00 €\",\"input\":false},{\"id\":\"r2\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"r1\",\"accepted\":[\"3,60\",\"3.60\"]},{\"id\":\"r2\",\"accepted\":[\"1,25\",\"1.25\"]}]},\"objective\":\"Das Rückgeld aus Gesamtbetrag und bezahltem Betrag berechnen.\",\"rationale\":\"Das Rückgeld ergibt sich jeweils aus der Differenz zwischen dem bezahlten Betrag und dem Gesamtbetrag des fiktiven Einkaufs.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne reale Verkaufsdaten.\"}",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:34:16.851Z",
+      "id": "q002"
+    },
+    {
+      "points": 2,
+      "updatedAt": "2026-10-25T10:34:17.044Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "position": 3,
+      "text": "Auf dem fiktiven Kassenbon ist genau eine Rechenangabe falsch. Markiere die fehlerhafte Zeile und trage den richtigen Betrag ein.",
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"rabattbon-korrektur-03\",\"revision\":0,\"format\":\"correction\",\"title\":\"Einen rabattierten Kassenbon prüfen\",\"subject\":\"Wirtschaft\",\"grade\":\"6\",\"prompt\":\"Auf dem fiktiven Kassenbon ist genau eine Rechenangabe falsch. Markiere die fehlerhafte Zeile und trage den richtigen Betrag ein.\",\"hint\":\"Prüfe, ob der Betrag nach Abzug des Rabatts stimmt. Trage eine Dezimalzahl mit zwei Nachkommastellen ein.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"r1\",\"text\":\"Zwischensumme: 12,00 EUR\"},{\"id\":\"r2\",\"text\":\"Rabatt: 2,00 EUR\"},{\"id\":\"r3\",\"text\":\"Zu zahlen: 10,50 EUR\"},{\"id\":\"r4\",\"text\":\"Zahlungsart: BAR\"}],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"rowId\":\"r3\",\"accepted\":[\"10,00\",\"10.00\"]},\"objective\":\"Angaben auf einem fiktiven Kassenbon prüfen und einen einfachen Rechenfehler korrigieren.\",\"rationale\":\"Der zu zahlende Betrag ergibt sich aus der Zwischensumme abzüglich des Rabatts.\",\"sourceNote\":\"Eigener fiktiver Kassenbon mit Eurobeträgen; keine realen Daten.\"}",
+      "id": "q003"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"diagramm-mengen-04\",\"revision\":0,\"format\":\"chart\",\"title\":\"Einkaufsmengen darstellen\",\"subject\":\"Wirtschaft\",\"grade\":\"6\",\"prompt\":\"Übertrage die angegebenen Mengen in das Säulendiagramm.\",\"hint\":\"Stelle für jeden Artikel genau die angegebene Anzahl ein.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":10,\"step\":1,\"unit\":\"Stück\",\"categories\":[{\"id\":\"h\",\"label\":\"Hefte\",\"value\":4},{\"id\":\"s\",\"label\":\"Stifte\",\"value\":7},{\"id\":\"r\",\"label\":\"Radiergummis\",\"value\":3},{\"id\":\"l\",\"label\":\"Lineale\",\"value\":5}]},\"solution\":{\"values\":{\"h\":4,\"s\":7,\"r\":3,\"l\":5}},\"objective\":\"Mengenangaben aus einer Einkaufsliste in ein Diagramm übertragen.\",\"rationale\":\"Die Säulenhöhe muss für jeden Artikel der angegebenen Stückzahl entsprechen.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne reale Verkaufsdaten.\"}",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "position": 4,
+      "points": 2,
+      "updatedAt": "2026-10-25T10:34:17.214Z",
+      "type": "visual",
+      "text": "Übertrage die angegebenen Mengen in das Säulendiagramm.",
+      "id": "q004"
+    },
+    {
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:34:17.388Z",
+      "points": 2,
+      "text": "Berechne den fehlenden Einzelpreis und ergänze die Tabelle.",
+      "position": 5,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"tabelle-einzelpreise-05\",\"revision\":0,\"format\":\"table\",\"title\":\"Einzelpreise berechnen\",\"subject\":\"Wirtschaft\",\"grade\":\"6\",\"prompt\":\"Berechne den fehlenden Einzelpreis und ergänze die Tabelle.\",\"hint\":\"Teile den Gesamtpreis durch die Menge.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Artikel\",\"Menge\",\"Gesamtpreis\",\"Einzelpreis\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Bleistifte\",\"input\":false},{\"id\":\"a2\",\"text\":\"4\",\"input\":false},{\"id\":\"a3\",\"text\":\"2,40 €\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Marker\",\"input\":false},{\"id\":\"b2\",\"text\":\"3\",\"input\":false},{\"id\":\"b3\",\"text\":\"3,60 €\",\"input\":false},{\"id\":\"b4\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"Lineale\",\"input\":false},{\"id\":\"c2\",\"text\":\"2\",\"input\":false},{\"id\":\"c3\",\"text\":\"3,00 €\",\"input\":false},{\"id\":\"c4\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"0,60\",\"0.60\"]},{\"id\":\"b4\",\"accepted\":[\"1,20\",\"1.20\"]},{\"id\":\"c4\",\"accepted\":[\"1,50\",\"1.50\"]}]},\"objective\":\"Einen Einzelpreis aus Menge und Gesamtpreis bestimmen.\",\"rationale\":\"Der Einzelpreis wird durch Teilen des Gesamtpreises durch die Menge berechnet.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne reale Verkaufsdaten.\"}",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q005"
+    },
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:34:17.531Z",
+      "points": 2,
+      "text": "In genau einer Zeile ist der Endbetrag falsch. Markiere die Zeile und trage den richtigen Endbetrag ein.",
+      "position": 6,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"korrektur-endbetrag-06\",\"revision\":0,\"format\":\"correction\",\"title\":\"Den Endbetrag prüfen\",\"subject\":\"Wirtschaft\",\"grade\":\"6\",\"prompt\":\"In genau einer Zeile ist der Endbetrag falsch. Markiere die Zeile und trage den richtigen Endbetrag ein.\",\"hint\":\"Addiere die beiden angegebenen Preise jeder Zeile.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"e1\",\"text\":\"Heft 2,50 € + Stift 1,00 € = 3,50 €\"},{\"id\":\"e2\",\"text\":\"Block 1,80 € + Lineal 2,20 € = 4,00 €\"},{\"id\":\"e3\",\"text\":\"Mappe 3,40 € + Kleber 1,50 € = 5,40 €\"}],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"rowId\":\"e3\",\"accepted\":[\"4,90\",\"4.90\"]},\"objective\":\"Einen falschen Endbetrag durch Nachrechnen erkennen.\",\"rationale\":\"Die Summe aus 3,40 Euro und 1,50 Euro beträgt 4,90 Euro.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne reale Verkaufsdaten.\"}",
+      "type": "visual",
+      "id": "q006"
+    },
+    {
+      "position": 7,
+      "text": "Übertrage die Ausgaben der vier fiktiven Einkäufe in das Säulendiagramm.",
+      "type": "visual",
+      "points": 2,
+      "updatedAt": "2026-10-25T10:34:17.675Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"diagramm-ausgaben-07\",\"revision\":0,\"format\":\"chart\",\"title\":\"Ausgaben darstellen\",\"subject\":\"Wirtschaft\",\"grade\":\"6\",\"prompt\":\"Übertrage die Ausgaben der vier fiktiven Einkäufe in das Säulendiagramm.\",\"hint\":\"Stelle jede Säule auf den passenden Betrag in Euro ein.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":20,\"step\":1,\"unit\":\"€\",\"categories\":[{\"id\":\"a\",\"label\":\"Einkauf A\",\"value\":6},{\"id\":\"b\",\"label\":\"Einkauf B\",\"value\":12},{\"id\":\"c\",\"label\":\"Einkauf C\",\"value\":9},{\"id\":\"d\",\"label\":\"Einkauf D\",\"value\":15}]},\"solution\":{\"values\":{\"a\":6,\"b\":12,\"c\":9,\"d\":15}},\"objective\":\"Fiktive Geldbeträge in einem Säulendiagramm darstellen.\",\"rationale\":\"Jeder Säule wird der in der Einkaufsliste angegebene Betrag zugeordnet.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne reale Verkaufsdaten.\"}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q007"
+    },
+    {
+      "position": 8,
+      "text": "Auf dem fiktiven Kassenbon ist genau eine Preisangabe falsch geschrieben. Markiere die fehlerhafte Zeile und trage die korrekte Schreibweise ein.",
+      "points": 2,
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:34:17.833Z",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"fiktiver-kassenbon-preisangabe-08\",\"revision\":0,\"format\":\"correction\",\"title\":\"Preisangaben auf einem Kassenbon prüfen\",\"subject\":\"Wirtschaft\",\"grade\":\"6\",\"prompt\":\"Auf dem fiktiven Kassenbon ist genau eine Preisangabe falsch geschrieben. Markiere die fehlerhafte Zeile und trage die korrekte Schreibweise ein.\",\"hint\":\"Achte auf das Dezimaltrennzeichen und die Schreibweise des Geldbetrags.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"r1\",\"text\":\"Apfelsaft: 2,50 EUR\"},{\"id\":\"r2\",\"text\":\"Schulheft: 1,50, EUR\"},{\"id\":\"r3\",\"text\":\"Bananen: 0,80 EUR\"},{\"id\":\"r4\",\"text\":\"Joghurt: 0,65 EUR\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"r2\",\"accepted\":[\"1,50 EUR\"]},\"objective\":\"Eine fehlerhafte Schreibweise eines Geldbetrags auf einem fiktiven Kassenbon erkennen und korrigieren.\",\"rationale\":\"Die Lernenden prüfen die formale Schreibweise von Preisangaben mit Dezimalkomma und Währungsangabe.\",\"sourceNote\":\"Eigenes fiktives Beispiel ohne reale Verkaufsdaten.\"}",
+      "id": "q008"
+    }
+  ]
+}

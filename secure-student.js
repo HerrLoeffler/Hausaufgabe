@@ -1,3 +1,5 @@
+import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
+import { mountVisualQuestion, collectVisualAnswer, visualAnswered } from "./visual-tasks.mjs";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { createSecureAssessmentClient } from "./secure-assessment-client.js";
@@ -494,7 +496,8 @@ function renderMarkwords(section, question) {
 
 function renderQuestion(question, index) {
   const section = questionShell(question, index);
-  if (question.type === "single") renderOptions(section, question, false);
+  if (question.type === "visual") mountVisualQuestion(section, question);
+  else if (question.type === "single") renderOptions(section, question, false);
   else if (question.type === "multi") renderOptions(section, question, true);
   else if (question.type === "dropdown") renderDropdown(section, question);
   else if (question.type === "truefalse") {
@@ -523,6 +526,7 @@ function renderQuestion(question, index) {
 
 function collectQuestionAnswer(question, section) {
   if (!section) return null;
+  if (question.type === "visual") return collectVisualAnswer(section);
   if (["single", "truefalse"].includes(question.type)) return section.querySelector("input:checked")?.value || "";
   if (question.type === "multi") return [...section.querySelectorAll("input:checked")].map(input => input.value);
   if (["text", "number", "dropdown"].includes(question.type)) return section.querySelector("textarea,input,select")?.value || "";
@@ -545,6 +549,7 @@ function collectAnswers() {
 }
 
 function answerIsComplete(question, value) {
+  if (question.type === "visual") return visualAnswered(question, value);
   if (question.type === "ordering") return Array.isArray(value) && value.length === (question.items || []).length;
   if (question.type === "markwords" && (question.markGroups || []).length) return Boolean(value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length);
   if (["multi", "markwords"].includes(question.type)) return Array.isArray(value) && value.length > 0;
@@ -577,7 +582,9 @@ function applyDraft(draft) {
     if (value == null) continue;
     const section = document.querySelector(`.secureQuestion[data-qid="${CSS.escape(question.id)}"]`);
     if (!section) continue;
-    if (["single", "truefalse"].includes(question.type)) {
+    if (question.type === "visual") {
+      mountVisualQuestion(section, question, value);
+    } else if (["single", "truefalse"].includes(question.type)) {
       const input = [...section.querySelectorAll("input")].find(node => node.value === String(value));
       if (input) input.checked = true;
     } else if (question.type === "multi") {
@@ -767,11 +774,11 @@ $("secureStartForm")?.addEventListener("submit", async event => {
   }
 });
 
-$("secureAssessmentForm")?.addEventListener("submit", event => {
+$("secureAssessmentForm")?.addEventListener("submit", async event => {
   event.preventDefault();
   const answers = collectAnswers();
   const open = currentPaper.filter(question => !answerIsComplete(question, answers[question.id])).length;
-  if (open && !confirm(`${open} ${open === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Trotzdem endgültig abgeben?`)) return;
+  if(open){const message=`${open} ${open === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Trotzdem endgültig abgeben?`;const approved=firebaseConfig.projectId==='local-review'?await requestStudentSubmitConfirmation(message):confirm(message);if(!approved)return;}
   void submitAssessment(false);
 });
 

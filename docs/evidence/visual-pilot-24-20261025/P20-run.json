@@ -1,0 +1,110 @@
+{
+  "id": "P20",
+  "row": {
+    "id": "P20",
+    "subject": "Geschichte und Geografie",
+    "grade": 10,
+    "title": "Raumentwicklung und begründete Entscheidungen",
+    "goal": "Fiktive Standort-/Umweltdaten mit Grenzen; zeitliche Entwicklung und belegte Standortentscheidungen",
+    "formats": [
+      "chart",
+      "coordinate",
+      "table",
+      "evidence"
+    ],
+    "requestId": "VIS24-20261025-20-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:30:10.306Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-20-A",
+    "subject": "Geschichte und Geografie",
+    "grade": "10",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Raumentwicklung und begründete Entscheidungen: Fiktive Standort-/Umweltdaten mit Grenzen; zeitliche Entwicklung und belegte Standortentscheidungen",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus chart, coordinate, table, evidence. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "457ff0a8eac7f2af2de735aef557a79be4028c99",
+  "dispatch": {
+    "jobId": "457ff0a8eac7f2af2de735aef557a79be4028c99"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:32:03.024Z",
+  "job": {
+    "percent": 100,
+    "status": "ready",
+    "grade": "10",
+    "quizId": "V5ABXKYP",
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": [],
+      "status": "no_match",
+      "profileCount": 0
+    },
+    "completedAt": "2026-10-25T10:31:54.172Z",
+    "requestedCount": 8,
+    "audioCompleted": 0,
+    "startedAt": "2026-10-25T10:30:11.960Z",
+    "audioTotal": 0,
+    "imageCompleted": 0,
+    "answerAudioTotal": 0,
+    "updatedAt": "2026-10-25T10:31:54.172Z",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "qualityIssues": [],
+    "input": {
+      "audioMode": "none",
+      "difficulty": "mittel bis anspruchsvoll",
+      "audioQuestionCount": 0,
+      "count": 8,
+      "subject": "Geschichte und Geografie",
+      "topic": "Raumentwicklung und begründete Entscheidungen: Fiktive Standort-/Umweltdaten mit Grenzen; zeitliche Entwicklung und belegte Standortentscheidungen",
+      "allowImageChoices": false,
+      "grade": "10",
+      "imageMode": "none",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus chart, coordinate, table, evidence. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "allowedTypes": [
+        "visual"
+      ],
+      "region": "Bayern",
+      "materialMode": "inspiration",
+      "points": 16,
+      "solutionAudioQuestionCount": 0,
+      "maxVisualQuestions": 0,
+      "exactImageCounts": false,
+      "audioAnswerQuestionCount": 0,
+      "schoolType": "Mittelschule",
+      "pedagogicalContextKnown": true,
+      "clientRequestId": "VIS24-20261025-20-A",
+      "exactAudioCounts": false
+    },
+    "ownerId": "gc-visual255-e2e",
+    "completedCount": 8,
+    "stage": "ready",
+    "requestId": "VIS24-20261025-20-A",
+    "topic": "Raumentwicklung und begründete Entscheidungen: Fiktive Standort-/Umweltdaten mit Grenzen; zeitliche Entwicklung und belegte Standortentscheidungen",
+    "solutionAudioCompleted": 0,
+    "answerAudioCompleted": 0,
+    "solutionAudioTotal": 0,
+    "materials": [],
+    "dispatchState": "enqueued",
+    "sourceQuizId": "",
+    "generationMode": "generated",
+    "qualityWarnings": [],
+    "imageTotal": 0,
+    "createdAt": "2026-10-25T10:30:10.413Z",
+    "subject": "Geschichte und Geografie",
+    "id": "457ff0a8eac7f2af2de735aef557a79be4028c99"
+  },
+  "quizId": "V5ABXKYP"
+}

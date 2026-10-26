@@ -362,7 +362,7 @@ test('view navigation restores focus without interrupting an input or an open di
   w.refreshQuestionFeedbackNotice = () => {}; // Existing showView dependency; feedback has its own suite.
   w.eval(fn('showView'));
   w.$('loginEmail').focus();
-  w.showView('editorView');
+  w.refreshQuestionFeedbackNotice=()=>{};w.showView('editorView');
   await settle(35);
   assert.equal(w.document.activeElement, w.$('editorHeading'));
   w.$('quizTitle').focus();

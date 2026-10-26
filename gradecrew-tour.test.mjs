@@ -115,7 +115,7 @@ test('Public wrapper keeps live flags; Coco introduces Remy and onboarding never
     crewTour: tour, toast: () => {}, collectAiRequest: () => ({}),
     saveAiPreferences: async () => {}, startAiCreationJob: async () => providerCalls++
   });
-  w.eval(fn('generateAiTestNative'));
+  w.extendedPreview=false;w.eval(fn('generateAiTestNative'));
   assert.equal(tour.active, false);
   tour.start();
   assert.equal(tour.active, true);
@@ -213,7 +213,7 @@ for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey
     stopStudentTimer: () => {}, clearStudentSubscriptions: () => {}, readStoredTimer: () => null,
     setupStudentProgress: () => {}, startTimedStudentQuiz: () => {}, refreshStudentProgress: () => {}
   });
-  w.eval(['generateAiTestNative', 'renderVariantProgress', 'createQuestionVariants', 'applyPendingVariants',
+  w.extendedPreview=false;w.eval(['generateAiTestNative', 'renderVariantProgress', 'createQuestionVariants', 'applyPendingVariants',
     'handleVariantRequest', 'handleVariantKept', 'submitTutorialQuestionFeedback', 'submitAiQuestionFeedback', 'toggleAiQualityPanel', 'sanitizeQuestionForSave', 'studentOptionEntries', 'shuffled',
     'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'getQuestionAudioSrc', 'questionAnswerAudioEntries', 'questionHasAudioAnswerEntries', 'questionAnswerAudioReady', 'questionStudentAudioReady', 'audioOperations', 'makeDragItem', 'makeAudioDragItem', 'renderStudentQuiz'].map(fn).join('\n'));
   w.document.addEventListener('gradecrew:variant-request', w.handleVariantRequest);

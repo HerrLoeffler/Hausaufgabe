@@ -1,0 +1,110 @@
+{
+  "id": "P17",
+  "row": {
+    "id": "P17",
+    "subject": "Geschichte und Geografie",
+    "grade": 5,
+    "title": "Karten, Richtungen und Zeitabstände",
+    "goal": "Fiktive Karte und ausdrücklich erfundene Orts-/Ereignisdaten; Himmelsrichtungen, Koordinaten und zeitliche Abstände",
+    "formats": [
+      "coordinate",
+      "scale",
+      "labeling",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-17-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:22:50.868Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-17-A",
+    "subject": "Geschichte und Geografie",
+    "grade": "5",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Karten, Richtungen und Zeitabstände: Fiktive Karte und ausdrücklich erfundene Orts-/Ereignisdaten; Himmelsrichtungen, Koordinaten und zeitliche Abstände",
+    "count": 8,
+    "points": 16,
+    "difficulty": "leicht bis mittel",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus coordinate, scale, labeling, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "35633d98168c0e3b91e46074af73c114a965be6e",
+  "dispatch": {
+    "jobId": "35633d98168c0e3b91e46074af73c114a965be6e"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:24:43.198Z",
+  "job": {
+    "input": {
+      "grade": "5",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus coordinate, scale, labeling, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "audioQuestionCount": 0,
+      "clientRequestId": "VIS24-20261025-17-A",
+      "exactAudioCounts": false,
+      "schoolType": "Mittelschule",
+      "audioAnswerQuestionCount": 0,
+      "count": 8,
+      "allowImageChoices": false,
+      "subject": "Geschichte und Geografie",
+      "topic": "Karten, Richtungen und Zeitabstände: Fiktive Karte und ausdrücklich erfundene Orts-/Ereignisdaten; Himmelsrichtungen, Koordinaten und zeitliche Abstände",
+      "exactImageCounts": false,
+      "difficulty": "leicht bis mittel",
+      "solutionAudioQuestionCount": 0,
+      "maxVisualQuestions": 0,
+      "pedagogicalContextKnown": true,
+      "audioMode": "none",
+      "region": "Bayern",
+      "materialMode": "inspiration",
+      "points": 16,
+      "imageMode": "none",
+      "allowedTypes": [
+        "visual"
+      ]
+    },
+    "audioTotal": 0,
+    "updatedAt": "2026-10-25T10:24:34.041Z",
+    "ownerId": "gc-visual255-e2e",
+    "generationMode": "generated",
+    "dispatchState": "enqueued",
+    "subject": "Geschichte und Geografie",
+    "status": "ready",
+    "answerAudioTotal": 0,
+    "sourceQuizId": "",
+    "quizId": "KEVX5RVP",
+    "startedAt": "2026-10-25T10:22:51.450Z",
+    "completedCount": 8,
+    "qualityWarnings": [],
+    "grade": "5",
+    "materials": [],
+    "percent": 100,
+    "solutionAudioTotal": 0,
+    "imageTotal": 0,
+    "imageCompleted": 0,
+    "createdAt": "2026-10-25T10:22:50.982Z",
+    "completedAt": "2026-10-25T10:24:34.041Z",
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileCount": 0,
+      "status": "no_match",
+      "profileIds": []
+    },
+    "audioCompleted": 0,
+    "topic": "Karten, Richtungen und Zeitabstände: Fiktive Karte und ausdrücklich erfundene Orts-/Ereignisdaten; Himmelsrichtungen, Koordinaten und zeitliche Abstände",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "requestedCount": 8,
+    "requestId": "VIS24-20261025-17-A",
+    "qualityIssues": [],
+    "solutionAudioCompleted": 0,
+    "answerAudioCompleted": 0,
+    "stage": "ready",
+    "id": "35633d98168c0e3b91e46074af73c114a965be6e"
+  },
+  "quizId": "KEVX5RVP"
+}

@@ -1,3 +1,4 @@
+import { previewCallable } from "./visual-preview255.mjs";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js";
 
 const REGION = "europe-west1";
@@ -87,11 +88,11 @@ function normalizeCallableError(error) {
 
 export function createSecureAssessmentClient(firebaseApp) {
   const functions = getFunctions(firebaseApp, REGION);
-  const infoCall = httpsCallable(functions, "getAssessmentInfo");
-  const startCall = httpsCallable(functions, "startAssessmentAttempt");
-  const resumeCall = httpsCallable(functions, "resumeAssessmentAttempt");
-  const submitCall = httpsCallable(functions, "submitAssessmentAttempt");
-  const receiptCall = httpsCallable(functions, "getAssessmentReceipt");
+  const infoCall = httpsCallable(functions, previewCallable("getAssessmentInfo"));
+  const startCall = httpsCallable(functions, previewCallable("startAssessmentAttempt"));
+  const resumeCall = httpsCallable(functions, previewCallable("resumeAssessmentAttempt"));
+  const submitCall = httpsCallable(functions, previewCallable("submitAssessmentAttempt"));
+  const receiptCall = httpsCallable(functions, previewCallable("getAssessmentReceipt"));
 
   async function invoke(callable, data) {
     try {

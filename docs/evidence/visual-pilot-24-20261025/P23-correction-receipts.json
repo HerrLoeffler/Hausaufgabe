@@ -1,0 +1,20 @@
+{
+  "pilotId": "P23",
+  "quizId": "G9L3D46T",
+  "receipts": [
+    {
+      "position": 4,
+      "questionId": "q004",
+      "updated": true,
+      "at": "2026-10-25T10:46:05.667Z",
+      "reloadMatched": true
+    },
+    {
+      "position": 6,
+      "questionId": "q006",
+      "updated": true,
+      "at": "2026-10-25T10:46:05.857Z",
+      "reloadMatched": true
+    }
+  ]
+}

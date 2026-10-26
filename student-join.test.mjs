@@ -1,3 +1,4 @@
+import { previewCallable } from './visual-preview255.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -50,7 +51,7 @@ test('failed start keeps the alias and exposes a retry of the intro instead of c
 });
 test('a failed request preserves the alias in the existing attempt record for reload, isolated by test',async()=>{
  const store=new Map([['firebase:authUser:teacher','unchanged']]);
- const ctx={getFunctions:()=>({}),httpsCallable:()=>async()=>{throw new Error('offline')},localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)},crypto:{getRandomValues:a=>a.fill(7)},btoa:s=>Buffer.from(s,'binary').toString('base64')};
+ const ctx={previewCallable,getFunctions:()=>({}),httpsCallable:()=>async()=>{throw new Error('offline')},localStorage:{getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)},crypto:{getRandomValues:a=>a.fill(7)},btoa:s=>Buffer.from(s,'binary').toString('base64')};
  vm.createContext(ctx);vm.runInContext(fs.readFileSync('secure-assessment-client.js','utf8').replace(/^import .*;\n/gm,'').replace('export function createSecureAssessmentClient','function createSecureAssessmentClient')+'\nthis.client=createSecureAssessmentClient({});',ctx);
  await assert.rejects(()=>ctx.client.start('AB12CD34','SYN-03'));
  assert.equal(ctx.client.readSession('AB12CD34').studentName,'SYN-03');assert.equal(ctx.client.readSession('OTHER123'),null);assert.equal(store.get('firebase:authUser:teacher'),'unchanged');

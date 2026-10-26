@@ -1,0 +1,195 @@
+{
+  "pilotId": "P18",
+  "at": "2026-10-25T10:28:07.512Z",
+  "quiz": {
+    "gradeScaleId": "standard",
+    "listeningOnlyQuestionCount": 0,
+    "solutionAudioQuestionCount": 0,
+    "resultMode": "points_grade",
+    "contentLocale": "de-DE",
+    "ended": false,
+    "startMode": "student",
+    "sessionState": "open",
+    "totalPoints": 16,
+    "accessCode": "DPCQRGW9",
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match",
+      "profileIds": [],
+      "profileCount": 0
+    },
+    "shareEnabled": false,
+    "shuffleAnswers": false,
+    "qualityWarnings": [],
+    "creationContext": {
+      "learningGoals": [],
+      "contentLocale": "de-DE",
+      "region": "Bayern",
+      "difficulty": "mittel bis anspruchsvoll",
+      "topic": "Stadtentwicklung und Klimadaten: Vollständig mitgelieferte fiktive Stadtdaten und monatliche Messwerte räumlich und zeitlich auswerten",
+      "schoolType": "Mittelschule"
+    },
+    "audioReady": true,
+    "subject": "Geschichte und Geografie",
+    "updatedAt": "2026-10-25T10:27:57.772Z",
+    "grade": "7",
+    "gradeScaleSnapshot": {
+      "name": "Standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "id": "standard"
+    },
+    "gradingLocale": "de-DE",
+    "description": "Viel Erfolg beim Test!",
+    "questionCount": 8,
+    "generationJobId": "fcb7c3bedc973c2136c3fdd6d123fdd79b621d72",
+    "audioAnswerQuestionCount": 0,
+    "audioQuestionCount": 0,
+    "solutionAudioReady": true,
+    "requiresSecureAssessmentRules": false,
+    "shuffleQuestions": false,
+    "localeContractVersion": 1,
+    "qualityIssues": [],
+    "rightsHold": false,
+    "showSolutions": true,
+    "ownerId": "gc-visual255-e2e",
+    "published": false,
+    "createdAt": "2026-10-25T10:27:56.044Z",
+    "isDeleted": false,
+    "title": "Stadtentwicklung und Klimadaten in Fiktivstadt Nordtal",
+    "generationStatus": "ready",
+    "id": "DPCQRGW9"
+  },
+  "questions": [
+    {
+      "text": "Berechne den Mittelwert der Sonnenstunden im April für die vier Stadtteile der fiktiven Stadt Hohenbrück. Markiere das Ergebnis auf der Skala: Altstadt 142 Stunden, Wohnpark 156 Stunden, Gewerbegebiet 134 Stunden, Stadtrand 148 Stunden.",
+      "updatedAt": "2026-10-25T10:27:56.179Z",
+      "points": 2,
+      "position": 1,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"sonnenstunden-april-mittelwert-0\",\"revision\":0,\"format\":\"scale\",\"title\":\"Sonnenstunden räumlich vergleichen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"7\",\"prompt\":\"Berechne den Mittelwert der Sonnenstunden im April für die vier Stadtteile der fiktiven Stadt Hohenbrück. Markiere das Ergebnis auf der Skala: Altstadt 142 Stunden, Wohnpark 156 Stunden, Gewerbegebiet 134 Stunden, Stadtrand 148 Stunden.\",\"hint\":\"Addiere die vier Messwerte und teile die Summe durch die Anzahl der Stadtteile. Setze anschließend die Markierung auf den passenden Teilstrich.\",\"objective\":\"Räumlich unterschiedliche Klimamesswerte zusammenfassen und einen Mittelwert auf einer Skala verorten.\",\"rationale\":\"Die Aufgabe verbindet die Auswertung fiktiver Messwerte aus vier Stadtteilen mit der Darstellung des berechneten Mittelwerts auf einer Skala.\",\"sourceNote\":\"Eigenständig erstellte fiktive Messwerte für die Stadt Hohenbrück.\",\"spec\":{\"context\":\"numberline\",\"min\":100,\"max\":180,\"step\":5,\"majorStep\":20,\"unit\":\"Stunden\",\"card\":\"Sonnenstunden\"},\"solution\":{\"value\":145,\"tolerance\":0.01},\"maxPoints\":2}",
+      "id": "q001"
+    },
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "points": 2,
+      "text": "Übertrage die monatlichen Mitteltemperaturen der fiktiven Stadt Nordtal in das Säulendiagramm. Für Januar bis Juni gelten: Januar 1 °C, Februar 3 °C, März 7 °C, April 11 °C, Mai 16 °C, Juni 20 °C.",
+      "position": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"temperaturen-erste-jahreshaelfte-0\",\"revision\":0,\"format\":\"chart\",\"title\":\"Monatliche Mitteltemperaturen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"7\",\"prompt\":\"Übertrage die monatlichen Mitteltemperaturen der fiktiven Stadt Nordtal in das Säulendiagramm. Für Januar bis Juni gelten: Januar 1 °C, Februar 3 °C, März 7 °C, April 11 °C, Mai 16 °C, Juni 20 °C.\",\"hint\":\"Stelle für jeden Monat die passende Säulenhöhe in ganzen Grad Celsius ein.\",\"objective\":\"Monatliche Messwerte in einem Säulendiagramm darstellen.\",\"rationale\":\"Die Aufgabe prüft das zeitliche Übertragen einer Temperaturmessreihe in eine grafische Darstellung.\",\"sourceNote\":\"Eigenständig erstellte fiktive Monatsmittelwerte für Nordtal.\",\"spec\":{\"min\":0,\"max\":25,\"step\":1,\"unit\":\"°C\",\"categories\":[{\"id\":\"jan\",\"label\":\"Januar\",\"value\":1},{\"id\":\"feb\",\"label\":\"Februar\",\"value\":3},{\"id\":\"mrz\",\"label\":\"März\",\"value\":7},{\"id\":\"apr\",\"label\":\"April\",\"value\":11},{\"id\":\"mai\",\"label\":\"Mai\",\"value\":16},{\"id\":\"jun\",\"label\":\"Juni\",\"value\":20}]},\"solution\":{\"values\":{\"jan\":1,\"feb\":3,\"mrz\":7,\"apr\":11,\"mai\":16,\"jun\":20}},\"maxPoints\":2}",
+      "updatedAt": "2026-10-25T10:27:56.358Z",
+      "type": "visual",
+      "id": "q002"
+    },
+    {
+      "text": "Ergänze die fehlenden Werte in der Tabelle zur Entwicklung von Nordtal. Die angegebenen Flächen beziehen sich jeweils auf das bebaute Stadtgebiet.",
+      "updatedAt": "2026-10-25T10:27:56.573Z",
+      "position": 3,
+      "points": 2,
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"stadtflaeche-tabelle-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Wachstum des Stadtgebiets\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"7\",\"prompt\":\"Ergänze die fehlenden Werte in der Tabelle zur Entwicklung von Nordtal. Die angegebenen Flächen beziehen sich jeweils auf das bebaute Stadtgebiet.\",\"hint\":\"Berechne die fehlenden Werte aus den Angaben der jeweiligen Zeile. Gib ganze Zahlen ohne Einheit ein.\",\"objective\":\"Daten zur räumlichen Stadtentwicklung vergleichen und ergänzen.\",\"rationale\":\"Die Tabelle macht die zeitliche Ausdehnung des fiktiven Stadtgebiets rechnerisch vergleichbar.\",\"sourceNote\":\"Eigenständig erstellte fiktive Stadtentwicklungsdaten.\",\"spec\":{\"columns\":[\"Jahr\",\"Einwohnerzahl\",\"Bebaute Fläche in km²\",\"Einwohner je km²\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"1950\",\"input\":false},{\"id\":\"a2\",\"text\":\"18000\",\"input\":false},{\"id\":\"a3\",\"text\":\"6\",\"input\":false},{\"id\":\"a4\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"1980\",\"input\":false},{\"id\":\"b2\",\"text\":\"42000\",\"input\":false},{\"id\":\"b3\",\"text\":\"12\",\"input\":false},{\"id\":\"b4\",\"text\":\"3500\",\"input\":false}],[{\"id\":\"c1\",\"text\":\"2010\",\"input\":false},{\"id\":\"c2\",\"text\":\"66000\",\"input\":false},{\"id\":\"c3\",\"text\":\"22\",\"input\":false},{\"id\":\"c4\",\"text\":\"\",\"input\":true}],[{\"id\":\"d1\",\"text\":\"2025\",\"input\":false},{\"id\":\"d2\",\"text\":\"78000\",\"input\":false},{\"id\":\"d3\",\"text\":\"30\",\"input\":false},{\"id\":\"d4\",\"text\":\"2600\",\"input\":false}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"a4\",\"accepted\":[\"3000\"]},{\"id\":\"c4\",\"accepted\":[\"3000\"]}]},\"maxPoints\":2}",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q003"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"niederschlag-falkenau-0\",\"revision\":1,\"format\":\"chart\",\"title\":\"Niederschlag im Stadtpark\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"7\",\"prompt\":\"Übertrage die fiktiven Niederschlagsmesswerte von Falkenau in das Säulendiagramm. Die Monate sind bereits in zeitlicher Reihenfolge angeordnet.\",\"hint\":\"Wähle für jeden Monat die Säulenhöhe passend zur Skala in Millimetern.\",\"objective\":\"Monatliche Klimadaten zeitlich geordnet in einem Säulendiagramm darstellen.\",\"rationale\":\"Die Aufgabe prüft, ob Messwerte aus einer übersichtlichen Datensammlung korrekt und in der vorgegebenen zeitlichen Reihenfolge als Säulen dargestellt werden.\",\"sourceNote\":\"Eigenständig erstellte fiktive Messdaten für die Stadt Falkenau.\",\"spec\":{\"min\":0,\"max\":100,\"step\":10,\"unit\":\"mm\",\"categories\":[{\"id\":\"jan\",\"label\":\"Januar\",\"value\":30},{\"id\":\"feb\",\"label\":\"Februar\",\"value\":50},{\"id\":\"mar\",\"label\":\"März\",\"value\":40},{\"id\":\"apr\",\"label\":\"April\",\"value\":70}]},\"solution\":{\"values\":{\"jan\":30,\"feb\":50,\"mar\":40,\"apr\":70}},\"maxPoints\":2}",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "position": 4,
+      "points": 2,
+      "updatedAt": "2026-10-25T10:27:56.799Z",
+      "text": "Übertrage die fiktiven Niederschlagsmesswerte von Falkenau in das Säulendiagramm. Die Monate sind bereits in zeitlicher Reihenfolge angeordnet.",
+      "id": "q004"
+    },
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "updatedAt": "2026-10-25T10:27:56.982Z",
+      "points": 2,
+      "type": "visual",
+      "position": 5,
+      "text": "Markiere auf der Zeitskala das Jahr, in dem in der fiktiven Stadt Nordtal die erste Straßenbahnlinie eröffnet wurde. Die Stadtchronik nennt folgende Ereignisse: 1950 Eingemeindung des Dorfes Eichenhof, 1972 Eröffnung der ersten Straßenbahnlinie, 1998 Bau des neuen Krankenhauses, 2015 Eröffnung des Stadtparks.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"strassenbahn-zeitskala-0\",\"revision\":0,\"format\":\"scale\",\"title\":\"Ein Ereignis zeitlich einordnen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"7\",\"prompt\":\"Markiere auf der Zeitskala das Jahr, in dem in der fiktiven Stadt Nordtal die erste Straßenbahnlinie eröffnet wurde. Die Stadtchronik nennt folgende Ereignisse: 1950 Eingemeindung des Dorfes Eichenhof, 1972 Eröffnung der ersten Straßenbahnlinie, 1998 Bau des neuen Krankenhauses, 2015 Eröffnung des Stadtparks.\",\"hint\":\"Ordne das gesuchte Ereignis anhand der Chronik auf der Zeitskala ein.\",\"objective\":\"Ein Ereignis der Stadtgeschichte zeitlich auf einer Zeitskala verorten.\",\"rationale\":\"Die Aufgabe prüft die zeitliche Einordnung eines fiktiven stadtgeschichtlichen Ereignisses.\",\"sourceNote\":\"Eigenständig erstellte fiktive Stadtchronik von Nordtal.\",\"spec\":{\"context\":\"timeline\",\"min\":1940,\"max\":2020,\"step\":2,\"majorStep\":10,\"unit\":\"Jahr\",\"card\":\"Ereignis\"},\"solution\":{\"value\":1972,\"tolerance\":0.5},\"maxPoints\":2}",
+      "id": "q005"
+    },
+    {
+      "updatedAt": "2026-10-25T10:27:57.252Z",
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"flaechennutzung-stadtteile-0\",\"revision\":0,\"format\":\"chart\",\"title\":\"Versiegelte Flächen in Stadtteilen\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"7\",\"prompt\":\"Erstelle aus den Flächennutzungsdaten der vier fiktiven Stadtteile ein Säulendiagramm. Die Werte geben den Anteil an der jeweiligen Stadtteilfläche an: Altstadt 72 % versiegelte Fläche, Flussufer 38 %, Sonnenfeld 54 %, Waldhöhe 21 %.\",\"hint\":\"Übertrage jeden Prozentwert in die Säule des passenden Stadtteils.\",\"objective\":\"Räumlich unterschiedliche Flächennutzungsdaten in einem Diagramm darstellen.\",\"rationale\":\"Die Aufgabe macht Unterschiede zwischen Stadtteilen anhand eines einheitlichen Flächenmerkmals sichtbar.\",\"sourceNote\":\"Eigenständig erstellte fiktive Flächennutzungsdaten für Nordtal.\",\"spec\":{\"min\":0,\"max\":80,\"step\":1,\"unit\":\"%\",\"categories\":[{\"id\":\"alt\",\"label\":\"Altstadt\",\"value\":72},{\"id\":\"ufer\",\"label\":\"Flussufer\",\"value\":38},{\"id\":\"son\",\"label\":\"Sonnenfeld\",\"value\":54},{\"id\":\"wald\",\"label\":\"Waldhöhe\",\"value\":21}]},\"solution\":{\"values\":{\"alt\":72,\"ufer\":38,\"son\":54,\"wald\":21}},\"maxPoints\":2}",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "position": 6,
+      "points": 2,
+      "text": "Erstelle aus den Flächennutzungsdaten der vier fiktiven Stadtteile ein Säulendiagramm. Die Werte geben den Anteil an der jeweiligen Stadtteilfläche an: Altstadt 72 % versiegelte Fläche, Flussufer 38 %, Sonnenfeld 54 %, Waldhöhe 21 %.",
+      "id": "q006"
+    },
+    {
+      "position": 7,
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:27:57.413Z",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"temperaturvergleich-flussufer-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Temperaturunterschiede im Stadtgebiet\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"7\",\"prompt\":\"Ergänze die fehlenden Monatswerte der fiktiven Messstation am Flussufer von Nordtal. Der Temperaturunterschied ist jeweils die Differenz zwischen der Messung am Marktplatz und der Messung am Flussufer.\",\"hint\":\"Ziehe den Wert am Flussufer vom Wert am Marktplatz ab. Gib die Ergebnisse als ganze Zahlen ein.\",\"objective\":\"Monatliche Messwerte zweier Orte vergleichen und Differenzen berechnen.\",\"rationale\":\"Die Tabelle prüft die zeitliche und räumliche Auswertung eines fiktiven Temperaturvergleichs.\",\"sourceNote\":\"Eigenständig erstellte fiktive Messwerte zweier Messstationen in Nordtal.\",\"spec\":{\"columns\":[\"Monat\",\"Marktplatz in °C\",\"Flussufer in °C\",\"Unterschied in °C\"],\"rows\":[[{\"id\":\"j1\",\"text\":\"April\",\"input\":false},{\"id\":\"j2\",\"text\":\"18\",\"input\":false},{\"id\":\"j3\",\"text\":\"15\",\"input\":false},{\"id\":\"j4\",\"text\":\"\",\"input\":true}],[{\"id\":\"k1\",\"text\":\"Juli\",\"input\":false},{\"id\":\"k2\",\"text\":\"34\",\"input\":false},{\"id\":\"k3\",\"text\":\"29\",\"input\":false},{\"id\":\"k4\",\"text\":\"\",\"input\":true}],[{\"id\":\"l1\",\"text\":\"Oktober\",\"input\":false},{\"id\":\"l2\",\"text\":\"16\",\"input\":false},{\"id\":\"l3\",\"text\":\"14\",\"input\":false},{\"id\":\"l4\",\"text\":\"2\",\"input\":false}],[{\"id\":\"m1\",\"text\":\"Dezember\",\"input\":false},{\"id\":\"m2\",\"text\":\"4\",\"input\":false},{\"id\":\"m3\",\"text\":\"3\",\"input\":false},{\"id\":\"m4\",\"text\":\"1\",\"input\":false}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"j4\",\"accepted\":[\"3\"]},{\"id\":\"k4\",\"accepted\":[\"5\"]}]},\"maxPoints\":2}",
+      "points": 2,
+      "text": "Ergänze die fehlenden Monatswerte der fiktiven Messstation am Flussufer von Nordtal. Der Temperaturunterschied ist jeweils die Differenz zwischen der Messung am Marktplatz und der Messung am Flussufer.",
+      "id": "q007"
+    },
+    {
+      "position": 8,
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:27:57.599Z",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "points": 2,
+      "text": "Markiere genau zwei Textstellen: Eine zeigt einen räumlichen Temperaturunterschied im Juli, die andere einen Temperaturanstieg von April bis Juli an einer Messstation. Alle Daten stammen aus einer fiktiven Stadt.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"waermebelastung-lichtenau-evidenz-0\",\"revision\":1,\"format\":\"evidence\",\"title\":\"Wärmebelastung in der fiktiven Stadt Lichtenau\",\"subject\":\"Geschichte und Geografie\",\"grade\":\"7\",\"prompt\":\"Markiere genau zwei Textstellen: Eine zeigt einen räumlichen Temperaturunterschied im Juli, die andere einen Temperaturanstieg von April bis Juli an einer Messstation. Alle Daten stammen aus einer fiktiven Stadt.\",\"hint\":\"Wähle genau zwei vollständige Sätze aus. Beide müssen zur räumlichen oder zeitlichen Auswertung beitragen.\",\"objective\":\"Fiktive Klimadaten räumlich und zeitlich aus kurzen Textinformationen auswerten.\",\"rationale\":\"Die Lernenden verbinden einen räumlichen Vergleich zweier Messorte mit einer zeitlichen Entwicklung monatlicher Messwerte.\",\"sourceNote\":\"Eigenständig erstellte fiktive Stadtdaten und Messwerte der Stadt Lichtenau.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Lichtenau baute im Jahr 1985 ein neues Wohngebiet am nördlichen Stadtrand.\"},{\"id\":\"s2\",\"text\":\"Im Juli wurden auf dem versiegelten Marktplatz 29 °C und an der begrünten Flussaue 25 °C gemessen.\"},{\"id\":\"s3\",\"text\":\"An der Messstation in der Flussaue stieg die Monatsmitteltemperatur von 11 °C im April auf 20 °C im Juli.\"},{\"id\":\"s4\",\"text\":\"Die Stadtbibliothek liegt seit 2004 neben dem alten Rathaus.\"},{\"id\":\"s5\",\"text\":\"Im Stadtpark wurden im Juli 18 Millimeter Niederschlag gemessen.\"}]},\"solution\":{\"selections\":[[\"s2\",\"s3\"]]},\"maxPoints\":2}",
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 4,
+      "reason": "Keine nicht vorhandene Umordnungsfunktion als Prüfziel verlangen.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    },
+    {
+      "position": 8,
+      "reason": "Zwei Monate belegen keinen durchgehenden Jahresverlauf; gemessene Temperatur statt pauschaler Wärmebelastung benennen.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    }
+  ]
+}

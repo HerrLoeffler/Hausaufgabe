@@ -23,7 +23,7 @@ function quizForGeneratedTest(test, input, profile = {}, sourceQuiz = null) {
   return {
     title, subject: String(input.generationMode === "variant" ? input.subject : test.subject || input.subject || ""),
     grade: String(input.generationMode === "variant" ? input.grade : test.grade || input.grade || ""),
-    creationContext: { schoolType: input.schoolType || "", region: input.region || "", topic: input.topic || "", difficulty: input.difficulty || "", learningGoals: input.learningGoals || [], contentLocale },
+    creationContext: { ...(input.allowedTypes?.includes("visual") ? {interactiveFormats:input.allowedVisualFormats || [],interactiveAuthoringVersion:"homepage-blueprints-v1"} : {}), schoolType: input.schoolType || "", region: input.region || "", topic: input.topic || "", difficulty: input.difficulty || "", learningGoals: input.learningGoals || [], contentLocale },
     description: String(isVariant ? sourceQuiz.description || "Viel Erfolg beim Test!" : settings.defaultDescription || "Viel Erfolg beim Test!"),
     contentLocale,
     gradingLocale,
@@ -124,6 +124,7 @@ async function storedAiQuestion(raw, index, { model, promptVersion, kind = "gene
   if (q.type === "ordering") { q.items = raw.items; q.acceptedOrders = (raw.acceptedOrders || []).map(order => ({ indices: [...(Array.isArray(order) ? order : Array.isArray(order?.indices) ? order.indices : [])] })); q.manualReview = Boolean(raw.manualReview); }
   if (q.type === "grouping") q.groups = raw.groups;
   if (q.type === "markwords") { q.passage = raw.passage; q.targetWords = raw.targetWords; q.markGroups = raw.markGroups || []; }
+  if (q.type === "visual") { require("./visual-task").parseVisualTask(raw.visualTask, { points: q.points }); q.visualTask = raw.visualTask; }
   if (q.type === "number") { q.numericAnswer = raw.numericAnswer; q.tolerance = raw.tolerance; q.unit = raw.unit; }
   return q;
 }

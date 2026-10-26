@@ -1,0 +1,200 @@
+{
+  "pilotId": "P07",
+  "at": "2026-10-25T10:07:18.613Z",
+  "quiz": {
+    "ownerId": "gc-visual255-e2e",
+    "totalPoints": 16,
+    "audioReady": true,
+    "updatedAt": "2026-10-25T10:07:09.438Z",
+    "published": false,
+    "rightsHold": false,
+    "solutionAudioQuestionCount": 0,
+    "shuffleAnswers": false,
+    "qualityIssues": [],
+    "shareEnabled": false,
+    "resultMode": "points_grade",
+    "requiresSecureAssessmentRules": false,
+    "showSolutions": true,
+    "subject": "Deutsch",
+    "grade": "9",
+    "pedagogicalPool": {
+      "status": "no_match",
+      "version": "gc-pedagogy-pool-v1",
+      "profileCount": 0,
+      "profileIds": []
+    },
+    "listeningOnlyQuestionCount": 0,
+    "solutionAudioReady": true,
+    "startMode": "student",
+    "generationStatus": "ready",
+    "contentLocale": "de-DE",
+    "audioQuestionCount": 0,
+    "gradeScaleSnapshot": {
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "name": "Standard",
+      "id": "standard"
+    },
+    "localeContractVersion": 1,
+    "title": "Argumente erkennen und sachlich formulieren",
+    "description": "Viel Erfolg beim Test!",
+    "sessionState": "open",
+    "isDeleted": false,
+    "gradingLocale": "de-DE",
+    "qualityWarnings": [],
+    "audioAnswerQuestionCount": 0,
+    "createdAt": "2026-10-25T10:07:07.218Z",
+    "questionCount": 8,
+    "generationJobId": "5bd0e138ee9916acaa8fd9263afaf1f03bcd0291",
+    "shuffleQuestions": false,
+    "creationContext": {
+      "schoolType": "Mittelschule",
+      "learningGoals": [],
+      "difficulty": "mittel bis anspruchsvoll",
+      "region": "Bayern",
+      "contentLocale": "de-DE",
+      "topic": "Argumente und sachliches Schreiben: Behauptung, Begründung und Beispiel in eigenen kurzen Texten unterscheiden; sprachlich eindeutige Fehler korrigieren"
+    },
+    "ended": false,
+    "accessCode": "K9HEUB8X",
+    "gradeScaleId": "standard",
+    "id": "K9HEUB8X"
+  },
+  "questions": [
+    {
+      "points": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "text": "Markiere genau den Satz, der die zentrale Behauptung des kurzen Textes enthält.",
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:07:07.370Z",
+      "position": 1,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"argumente-behauptung-01\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Eine Behauptung erkennen\",\"subject\":\"Deutsch\",\"grade\":\"9\",\"prompt\":\"Markiere genau den Satz, der die zentrale Behauptung des kurzen Textes enthält.\",\"hint\":\"Wähle genau einen vollständigen Satz.\",\"maxPoints\":2,\"objective\":\"Eine Behauptung in einem kurzen argumentierenden Text erkennen.\",\"rationale\":\"Die Lernenden unterscheiden die zentrale Aussage von Begründungen, Beispielen und ergänzenden Informationen.\",\"sourceNote\":\"Eigenes fiktives Unterrichtsbeispiel.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Die Schule sollte einen festen wöchentlichen Projekttag einführen.\"},{\"id\":\"s2\",\"text\":\"So könnten die Jugendlichen selbstständig an einem Thema arbeiten.\"},{\"id\":\"s3\",\"text\":\"Zum Beispiel könnten sie einen Schulgarten planen.\"},{\"id\":\"s4\",\"text\":\"Der Unterricht beginnt an unserer Schule um acht Uhr.\"}]},\"solution\":{\"selections\":[[\"s1\"]]}}",
+      "id": "q001"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"sprachfehler-korrigieren-02\",\"revision\":1,\"format\":\"correction\",\"title\":\"Eine sprachliche Fehlerstelle korrigieren\",\"subject\":\"Deutsch\",\"grade\":\"9\",\"prompt\":\"Markiere die Zeile mit der falschen Verbform. Trage nur die richtige Verbform anstelle von gilt ein.\",\"hint\":\"Prüfe die Übereinstimmung zwischen Subjekt und Verb.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"a\",\"text\":\"Die Redaktion prüft die Quellen sorgfältig.\"},{\"id\":\"b\",\"text\":\"Die neuen Regeln gilt ab Montag.\"},{\"id\":\"c\",\"text\":\"Der Artikel enthält ein nachvollziehbares Beispiel.\"},{\"id\":\"d\",\"text\":\"Die Schülerin erklärt den Ablauf sachlich und verständlich.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"b\",\"accepted\":[\"gelten\"]},\"objective\":\"Einen sprachlich eindeutigen Fehler in einem sachlichen Satz erkennen und korrigieren.\",\"rationale\":\"Die Korrektur prüft die Übereinstimmung von Satzgegenstand und Prädikat in einem kurzen sachlichen Text.\",\"sourceNote\":\"Eigenes fiktives Unterrichtsbeispiel ohne externe Quelle.\"}",
+      "updatedAt": "2026-10-25T10:07:07.548Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "position": 2,
+      "points": 2,
+      "text": "Markiere die Zeile mit der falschen Verbform. Trage nur die richtige Verbform anstelle von gilt ein.",
+      "type": "visual",
+      "id": "q002"
+    },
+    {
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"argumente-beispiel-03\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Ein Beispiel erkennen\",\"subject\":\"Deutsch\",\"grade\":\"9\",\"prompt\":\"Markiere genau den Satz, der ein konkretes Beispiel für die Behauptung nennt.\",\"hint\":\"Wähle genau einen vollständigen Satz.\",\"maxPoints\":2,\"objective\":\"Ein konkretes Beispiel von Behauptung und Begründung unterscheiden.\",\"rationale\":\"Ein Beispiel macht eine allgemeine Aussage durch einen konkreten Einzelfall anschaulich.\",\"sourceNote\":\"Eigenes fiktives Unterrichtsbeispiel.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Pausenangebote können den Schulalltag abwechslungsreicher machen.\"},{\"id\":\"s2\",\"text\":\"Sie geben den Jugendlichen eine sinnvolle Beschäftigung.\"},{\"id\":\"s3\",\"text\":\"Zum Beispiel kann eine offene Tischtennisrunde in der Mittagspause angeboten werden.\"},{\"id\":\"s4\",\"text\":\"Die Mittagspause dauert an dieser Schule 45 Minuten.\"}]},\"solution\":{\"selections\":[[\"s3\"]]}}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:07:07.873Z",
+      "text": "Markiere genau den Satz, der ein konkretes Beispiel für die Behauptung nennt.",
+      "type": "visual",
+      "position": 3,
+      "id": "q003"
+    },
+    {
+      "points": 2,
+      "type": "visual",
+      "text": "Verbinde jede Behauptung mit der passenden Begründung. Der Pfeil zeigt von der Behauptung zur Begründung.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"argumente-zuordnung-04\",\"revision\":0,\"format\":\"connections\",\"title\":\"Behauptungen begründen\",\"subject\":\"Deutsch\",\"grade\":\"9\",\"prompt\":\"Verbinde jede Behauptung mit der passenden Begründung. Der Pfeil zeigt von der Behauptung zur Begründung.\",\"hint\":\"Verbinde jede linke Aussage genau einmal mit einer passenden rechten Aussage.\",\"maxPoints\":2,\"objective\":\"Passende Begründungen zu Behauptungen zuordnen.\",\"rationale\":\"Eine überzeugende Begründung muss inhaltlich genau zu ihrer Behauptung passen.\",\"sourceNote\":\"Eigenes fiktives Unterrichtsbeispiel.\",\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"b1\",\"label\":\"Die Schule sollte mehr Sitzplätze im Innenhof schaffen.\",\"x\":150,\"y\":70},{\"id\":\"b2\",\"label\":\"Die Klasse sollte ein Lesetagebuch führen.\",\"x\":150,\"y\":160},{\"id\":\"b3\",\"label\":\"Die Gemeinde sollte den Busverkehr am Morgen verbessern.\",\"x\":150,\"y\":250},{\"id\":\"r1\",\"label\":\"Dann könnten sich mehr Jugendliche in den Pausen dort aufhalten.\",\"x\":570,\"y\":70},{\"id\":\"r2\",\"label\":\"Dadurch lässt sich die eigene Lektüre genauer nachvollziehen.\",\"x\":570,\"y\":160},{\"id\":\"r3\",\"label\":\"So würden Schülerinnen und Schüler zuverlässiger zur Schule kommen.\",\"x\":570,\"y\":250}]},\"solution\":{\"edges\":[[\"b1\",\"r1\"],[\"b2\",\"r2\"],[\"b3\",\"r3\"]]}}",
+      "position": 4,
+      "updatedAt": "2026-10-25T10:07:08.222Z",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q004"
+    },
+    {
+      "type": "visual",
+      "text": "Ordne jede Aussage ein. Verwende genau einen dieser Begriffe: Behauptung, Begründung, Beispiel.",
+      "updatedAt": "2026-10-25T10:07:08.402Z",
+      "position": 5,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"begruendungen-eigenstaendig-05\",\"revision\":1,\"format\":\"table\",\"title\":\"Bestandteile eines Arguments\",\"subject\":\"Deutsch\",\"grade\":\"9\",\"prompt\":\"Ordne jede Aussage ein. Verwende genau einen dieser Begriffe: Behauptung, Begründung, Beispiel.\",\"hint\":\"Trage die Funktion der Aussage im Argument ein.\",\"maxPoints\":2,\"objective\":\"Bestandteile eines Arguments unterscheiden.\",\"rationale\":\"Bestandteile eines Arguments unterscheiden. Die Antwortform ist auf die beschriebene Leistung begrenzt.\",\"sourceNote\":\"Eigenes fiktives Unterrichtsbeispiel ohne fremde Quellen.\",\"spec\":{\"columns\":[\"Aussage\",\"Funktion\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Die Schule sollte mehr Fahrradständer aufstellen.\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Dann können mehr Jugendliche ihr Fahrrad sicher abstellen.\",\"input\":false},{\"id\":\"b2\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"Zum Beispiel könnten zehn neue Stellplätze neben dem Eingang entstehen.\",\"input\":false},{\"id\":\"c2\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a2\",\"accepted\":[\"Behauptung\"]},{\"id\":\"b2\",\"accepted\":[\"Begründung\"]},{\"id\":\"c2\",\"accepted\":[\"Beispiel\"]}]}}",
+      "points": 2,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "id": "q005"
+    },
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "updatedAt": "2026-10-25T10:07:08.573Z",
+      "position": 6,
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"sachlich-korrekt-fiktiver-schultext-06\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Sachliche Sätze erkennen\",\"subject\":\"Deutsch\",\"grade\":\"9\",\"prompt\":\"Markiere genau die zwei Sätze, die sachlich und sprachlich korrekt formuliert sind.\",\"hint\":\"Achte auf eine nüchterne Wortwahl und vollständige, grammatisch richtige Sätze.\",\"maxPoints\":2,\"objective\":\"Sachliche und sprachlich korrekte Formulierungen in kurzen eigenen Texten erkennen.\",\"rationale\":\"Die Aufgabe prüft, ob sachliche Wortwahl und sprachliche Richtigkeit voneinander unterschieden werden können.\",\"sourceNote\":\"Eigenes fiktives Unterrichtsbeispiel ohne reale Daten.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Die Schulbibliothek ist voll cool, weil jeder sie mag.\"},{\"id\":\"s2\",\"text\":\"Die neue Pausenregel verbessert die Stimmung, weil sie längere Erholungszeiten ermöglicht.\"},{\"id\":\"s3\",\"text\":\"Die Schülerinnen und Schüler nutzen die Bibliothek, weil dort ruhige Arbeitsplätze angeboten werden.\"},{\"id\":\"s4\",\"text\":\"Durch die Regel werden die Pausen leiser und die Schüler kann sich besser erholen.\"}]},\"solution\":{\"selections\":[[\"s2\",\"s3\"]]}}",
+      "type": "visual",
+      "text": "Markiere genau die zwei Sätze, die sachlich und sprachlich korrekt formuliert sind.",
+      "id": "q006"
+    },
+    {
+      "updatedAt": "2026-10-25T10:07:08.736Z",
+      "points": 2,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"tatsache-wertung-07\",\"revision\":0,\"format\":\"table\",\"title\":\"Tatsache oder Wertung unterscheiden\",\"subject\":\"Deutsch\",\"grade\":\"9\",\"prompt\":\"Ordne die beiden Aussagen aus dem fiktiven Schulprojekt ein. Trage in jede Eingabezelle „überprüfbare Tatsache“ oder „persönliche Wertung“ ein.\",\"hint\":\"Überlege, ob die Aussage mit überprüfbaren Informationen belegt werden kann oder eine persönliche Einschätzung enthält.\",\"maxPoints\":2,\"objective\":\"Überprüfbare Tatsachen und persönliche Wertungen in kurzen argumentativen Aussagen unterscheiden.\",\"rationale\":\"Die Aufgabe prüft, ob Lernende sachliche Informationen von subjektiven Einschätzungen unterscheiden können.\",\"sourceNote\":\"Eigenes fiktives Unterrichtsbeispiel ohne fremde Quellen.\",\"spec\":{\"columns\":[\"Aussage\",\"Einordnung\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"Der Schulhof des fiktiven Projekts hat zwölf Bäume.\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"Ein Schulhof mit zwölf Bäumen ist viel zu klein.\",\"input\":false},{\"id\":\"b2\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a2\",\"accepted\":[\"überprüfbare Tatsache\"]},{\"id\":\"b2\",\"accepted\":[\"persönliche Wertung\"]}]}}",
+      "type": "visual",
+      "text": "Ordne die beiden Aussagen aus dem fiktiven Schulprojekt ein. Trage in jede Eingabezelle „überprüfbare Tatsache“ oder „persönliche Wertung“ ein.",
+      "position": 7,
+      "id": "q007"
+    },
+    {
+      "updatedAt": "2026-10-25T10:07:09.083Z",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"beispiele-aus-angaben-08\",\"revision\":1,\"format\":\"evidence\",\"title\":\"Vollständige Belege auswählen\",\"subject\":\"Deutsch\",\"grade\":\"9\",\"prompt\":\"Markiere genau zwei vollständige Textstellen: eine zeigt die Nutzung der Bibliothek am späten Nachmittag; eine zeigt den geäußerten Wunsch nach mehr Schattenplätzen. Diese Daten geben einen Diskussionsanlass, beweisen aber nicht allein die Notwendigkeit einer Änderung.\",\"hint\":\"Alle Angaben sind erfunden. Wähle für jede Aussage genau einen Satz.\",\"maxPoints\":2,\"objective\":\"Aussagen mit vollständigen passenden Datenbelegen stützen und ihre Grenze beachten.\",\"rationale\":\"Aussagen mit vollständigen passenden Datenbelegen stützen und ihre Grenze beachten. Die Antwortform ist auf die beschriebene Leistung begrenzt.\",\"sourceNote\":\"Eigenes fiktives Unterrichtsbeispiel ohne reale Personen oder Quellen.\",\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"Die Bibliothek hat einen Eingang an der Südseite.\"},{\"id\":\"s2\",\"text\":\"An drei fiktiven Beobachtungstagen kamen zwischen 17 und 18 Uhr insgesamt 42 Personen in die Bibliothek.\"},{\"id\":\"s3\",\"text\":\"Die Befragung fand im Klassenraum statt.\"},{\"id\":\"s4\",\"text\":\"Bei der fiktiven Befragung wünschten sich 18 von 25 Jugendlichen einen weiteren Schattenplatz.\"},{\"id\":\"s5\",\"text\":\"Die Bibliothek bietet mehrere Zeitschriften an.\"}]},\"solution\":{\"selections\":[[\"s2\",\"s4\"]]}}",
+      "text": "Markiere genau zwei vollständige Textstellen: eine zeigt die Nutzung der Bibliothek am späten Nachmittag; eine zeigt den geäußerten Wunsch nach mehr Schattenplätzen. Diese Daten geben einen Diskussionsanlass, beweisen aber nicht allein die Notwendigkeit einer Änderung.",
+      "type": "visual",
+      "position": 8,
+      "points": 2,
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 2,
+      "reason": "Ganze Sätze können verschieden korrekt umgestellt werden; gezielt nur das fehlerhafte Verb berichtigen.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    },
+    {
+      "position": 5,
+      "reason": "Freie Begründungen lassen sich nicht über eine endliche Liste von Mustersätzen fair bewerten.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    },
+    {
+      "position": 8,
+      "reason": "Freie Beispielsätze durch Auswahl vollständiger Belege ersetzen; keine Musterprosa als einzige gültige Antwort.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    }
+  ]
+}

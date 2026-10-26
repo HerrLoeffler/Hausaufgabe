@@ -1,0 +1,109 @@
+{
+  "id": "P01",
+  "row": {
+    "id": "P01",
+    "subject": "Mathematik",
+    "grade": 5,
+    "title": "Brüche und Anteile im Alltag",
+    "goal": "Gleich große Teile eines Ganzen, einfache Brüche und Zuordnungen zwischen Anteil und Anzahl",
+    "formats": [
+      "grid",
+      "scale",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-01-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T09:54:40.298Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-01-A",
+    "subject": "Mathematik",
+    "grade": "5",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Brüche und Anteile im Alltag: Gleich große Teile eines Ganzen, einfache Brüche und Zuordnungen zwischen Anteil und Anzahl",
+    "count": 8,
+    "points": 16,
+    "difficulty": "leicht bis mittel",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus grid, scale, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "aeba56eee5d9f1102a2e8c273c40df4b21087785",
+  "dispatch": {
+    "jobId": "aeba56eee5d9f1102a2e8c273c40df4b21087785"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T09:55:48.095Z",
+  "job": {
+    "subject": "Mathematik",
+    "requestedCount": 8,
+    "startedAt": "2026-10-25T09:54:52.117Z",
+    "stage": "ready",
+    "qualityWarnings": [],
+    "audioCompleted": 0,
+    "requestId": "VIS24-20261025-01-A",
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "status": "no_match",
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": []
+    },
+    "ownerId": "gc-visual255-e2e",
+    "answerAudioTotal": 0,
+    "sourceQuizId": "",
+    "topic": "Brüche und Anteile im Alltag: Gleich große Teile eines Ganzen, einfache Brüche und Zuordnungen zwischen Anteil und Anzahl",
+    "materials": [],
+    "completedCount": 8,
+    "qualityIssues": [],
+    "input": {
+      "region": "Bayern",
+      "points": 16,
+      "allowImageChoices": false,
+      "schoolType": "Mittelschule",
+      "audioMode": "none",
+      "exactAudioCounts": false,
+      "allowedTypes": [
+        "visual"
+      ],
+      "solutionAudioQuestionCount": 0,
+      "subject": "Mathematik",
+      "difficulty": "leicht bis mittel",
+      "pedagogicalContextKnown": true,
+      "exactImageCounts": false,
+      "grade": "5",
+      "count": 8,
+      "audioAnswerQuestionCount": 0,
+      "imageMode": "none",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus grid, scale, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "clientRequestId": "VIS24-20261025-01-A",
+      "materialMode": "inspiration",
+      "audioQuestionCount": 0,
+      "topic": "Brüche und Anteile im Alltag: Gleich große Teile eines Ganzen, einfache Brüche und Zuordnungen zwischen Anteil und Anzahl",
+      "maxVisualQuestions": 0
+    },
+    "grade": "5",
+    "dispatchState": "enqueued",
+    "completedAt": "2026-10-25T09:55:38.615Z",
+    "status": "ready",
+    "quizId": "AUMC64Q4",
+    "audioTotal": 0,
+    "generationMode": "generated",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "imageCompleted": 0,
+    "imageTotal": 0,
+    "solutionAudioCompleted": 0,
+    "updatedAt": "2026-10-25T09:55:38.615Z",
+    "solutionAudioTotal": 0,
+    "createdAt": "2026-10-25T09:54:46.151Z",
+    "answerAudioCompleted": 0,
+    "percent": 100,
+    "id": "aeba56eee5d9f1102a2e8c273c40df4b21087785"
+  },
+  "quizId": "AUMC64Q4"
+}
