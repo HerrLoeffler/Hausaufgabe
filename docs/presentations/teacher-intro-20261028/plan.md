@@ -21,4 +21,4 @@ Abweichungvomv1-Plan: keineauthentifiziertenInnenscreenshots verfügbar. Klarety
 
 Quellenbasis: evidence/ist-stand-quellenbrief-20261026.md, datierteCodequelleninReferentennotizen. FrischerMain233656a6 enthält zusätzlich neuenöffentlichenRahmenf048ed1a ohneÄnderungderhiererläutertenKernabläufe. NeueMedienquote,3SchrittPublishundPixelFeedbackScreenshoterstbeauftragtundnichtalsverfügbargezeigt.
 
-Ausgaben: files/GradeCrew_Kollegium_20261028_v2.pptx, preview/kontaktbogen.png. Struktur/Layout/10Folien/Reimportgeprüft, visuelleEinzelprüfungallerPNGerfolgt. KeinNativePowerPointtest.
+Ausgaben: files/GradeCrew_Kollegium_20261028_v3.pptx, preview/kontaktbogen.png. Struktur/Layout/10Folien/Reimportgeprüft, visuelleEinzelprüfungallerPNGerfolgt. KeinNativePowerPointtest.

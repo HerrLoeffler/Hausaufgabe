@@ -16,12 +16,12 @@
 Neue editierbare 16:9-PPTX mit Originalzeichen und proportionaler Originalcrew, zehn Folien und Referentennotizen für rund neun Minuten. Durchgehendes synthetisches Beispiel Wasserkreislauf/Klasse5. Website, Lehrkräfte-App und Secure nach Rolle und Zugangsstand getrennt. Materialdateien und KI-Bildauswahl getrennt, Hörtext/Antwortoptionen präzise, Speichern/Schüleransicht, Startmodi, Code/Link/QR, Abgabebestätigung, Auswertung und separate Lösungsfreigabe sowie exakte Feedbackklickwörter enthalten.
 
 Lokaler Outputordner: /Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028
-- files/GradeCrew_Kollegium_20261028_v2.pptx
+- files/GradeCrew_Kollegium_20261028_v3.pptx
 - preview/kontaktbogen.png und slide-01.png bis slide-10.png
 - folienplan-v2-umgesetzt.md
-- build/build.mjs und build/validation-v2.json
+- build/build.mjs und build/validation-v3.json
 
-PPTX SHA256: 082d3a823f5059180d8606d3b35444fb2bb6b35f0008c38f10d4087ccdaf4d5c, 2963459 Bytes.
+PPTX SHA256: 91dcd7c0f8933beaa3a4fa95e8d3c2c4b5d3eee711cc2f26a4d61bccfabf5160, 2963512 Bytes.
 
 ## Quellen und Grenzen
 
@@ -33,8 +33,10 @@ Gezielter Quellenbrief vom26.10 auf1951f197 als Funktionsbasis. Frisch gelesener
 
 ## Versuchshistorie und Kosten
 
-Fünf lokale Build-/Finalisierungsversuche: erst falsche API-Eigenschaft fontFamily führte zu Aptos statt gewähltemArial, mit dokumentiertem typeface behoben. Zweiter Versuch scheiterte am fehlenden RUNTIME_NODE_MODULES für Reimport-Unterprozess; dritter mit gebündeltem Pfad bestanden. Nach kleiner Inhaltsrunde v2 zuerst vorhandener Receiptpfad zurückgewiesen; danach eigener validation-v2.json und erfolgreiche Finalisierung. Keine bezahlten Jobs, keine Request-ID oder Reservierung neu erzeugt. Modell/Effort requested: vomKoordinator geerbt, actual/Usage/Kosten unknown. Keine Modellwechsel.
+Sechs lokale Build-/Finalisierungsversuche: erst falsche API-Eigenschaft fontFamily führte zu Aptos statt gewähltemArial, mit dokumentiertem typeface behoben. Zweiter Versuch scheiterte am fehlenden RUNTIME_NODE_MODULES für Reimport-Unterprozess; dritter mit gebündeltem Pfad bestanden. Nach kleiner Inhaltsrunde v2 zuerst vorhandener Receiptpfad zurückgewiesen; danach eigener validation-v3.json und erfolgreiche Finalisierung. Keine bezahlten Jobs, keine Request-ID oder Reservierung neu erzeugt. Modell/Effort requested: vomKoordinator geerbt, actual/Usage/Kosten unknown. Keine Modellwechsel.
 
 ## Wiederaufnahme
 
 Kein laufender oder unklarer externer Vorgang. Artefakte lokal vorhanden, Quellen/Plan/Build und Dokumentationscheckpoint im Aufgabenbranch gesichert. Maßgeblich ist der ausgegebene PPTX-Hash. Nächster Schritt: Martin öffnet die PPTX auf dem Präsentationsgerät und geht den Vortrag einmal durch. Keine weitere Freigabeschleife als Voraussetzung für die lokale Lieferung.
+
+Finaler Rootreview: alle zehn sichtbaren Folien und beide Hyperlinks bestätigt. Notiz5 präzisiert: Hörtext ist privat als Text, gesuchte Informationen dürfen im Audio vorkommen. Finaler v3-Export erneut vollständig geprüft. Vorheriger Dokumentationscheckpoint325a86c04d4a03851251ee5b28859b893acaa6e2; finale Sicherung folgt als Nachfolgecommit auf demselben Branch.
