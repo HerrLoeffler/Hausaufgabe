@@ -80,13 +80,12 @@ test('compact staging mode syncs existing notes without installing the area-mark
  const {w}=await fixture(t,null,{compact:true});assert.equal(w.document.body.id,'gradecrewPage');await settle();assert.equal(w.document.querySelector('[data-review-region]'),null);assert.equal(w.document.querySelector('[data-review-mark]'),null);
 });
 
-test('compact feedback blocks text-only send when browser capture is unavailable and removes private UI on logout',async t=>{
+test('compact feedback starts with page selection and removes private UI on logout',async t=>{
  const {w,calls,controller}=await fixture(t,d=>d.action==='access'?{admin:false,catalog:{checks:[]}}:null,{compact:true,environment:'production'});
  w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};
  w.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');this.dispatchEvent(new w.Event('close'));};
  await settle();const feedback=w.document.querySelector('[data-gradecrew-feedback]');assert.ok(feedback);feedback.click();await settle();
- const form=w.document.querySelector('.gcLocalNote form');assert.ok(form);const input=form.querySelector('textarea');input.value='Diese Schrift ist abgeschnitten';form.dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));await settle();
- assert.equal(calls.some(c=>c.action==='create'),false);assert.match(form.textContent,/Bild fehlt/);await controller.setSession(null);assert.equal(w.document.querySelector('[data-gradecrew-feedback]'),null);assert.equal(w.document.querySelector('.gcLocalNote'),null);
+ assert.ok(w.document.querySelector('.gcLocalCapture'));assert.equal(w.document.querySelector('.gcLocalNote form'),null);assert.equal(calls.some(c=>c.action==='create'),false);await controller.setSession(null);assert.equal(w.document.querySelector('[data-gradecrew-feedback]'),null);assert.equal(w.document.querySelector('.gcLocalCapture'),null);
 });
 test('queued final pixels upload before create; offline retry preserves blob and immutable request',async t=>{
  let fail=true;const {controller,calls,storage}=await fixture(t,async d=>{if(d.action==='uploadVisualImage'){if(fail)throw Error('Offline');return {imageId:'private-image'};}return null;},{compact:true});
@@ -107,7 +106,7 @@ test('image drafts save and reload when the browser rejects IndexedDB Blob value
  w.HTMLDialogElement.prototype.showModal=function(){this.setAttribute('open','');};w.HTMLDialogElement.prototype.close=function(){this.removeAttribute('open');};w.URL.createObjectURL=()=> 'blob:synthetic';w.URL.revokeObjectURL=()=>{};w.Image=class{naturalWidth=100;naturalHeight=80;async decode(){}};w.HTMLCanvasElement.prototype.getContext=()=>({fillRect(){},drawImage(){}});w.HTMLCanvasElement.prototype.toBlob=cb=>cb(new Blob(['final-pixels'],{type:'image/jpeg'}));
  records.set('staging:admin:visual-draft',{clientRequestId:'bytes-draft',context:{view:'authView',build:'test'},text:'synthetic',imageBlob:new Blob(['pixels'],{type:'image/jpeg'})});
  const originalPut=storage.put;storage.put=async(k,v)=>{if(v?.imageBlob instanceof Blob)throw Object.assign(Error('Blob serialization rejected'),{name:'UnknownError'});return originalPut(k,v);};
- await controller.setSession({uid:'admin'});await settle();w.document.querySelector('[data-gradecrew-feedback]').click();await settle();[...w.document.querySelectorAll('button')].find(b=>b.textContent==='Entwurf sichern und schließen').click();await settle();
- const draft=records.get('staging:admin:visual-draft');assert.equal(Object.hasOwn(draft,'imageBlob'),false);assert.ok(draft.imageBytes.byteLength);assert.equal(w.document.querySelector('dialog'),null);
+ await controller.setSession({uid:'admin'});await settle();w.document.querySelector('[data-gradecrew-feedback]').click();await settle();const input=w.document.querySelector('textarea');input.value='Updated note';input.dispatchEvent(new w.Event('input'));await settle();
+ const draft=records.get('staging:admin:visual-draft');assert.equal(Object.hasOwn(draft,'imageBlob'),false);assert.ok(draft.imageBytes.byteLength);
  await controller.setSession({uid:'admin'});await settle();w.document.querySelector('[data-gradecrew-feedback]').click();await settle();assert.ok(w.document.querySelector('.gcImageStage canvas'));
 });
