@@ -2,7 +2,7 @@
 
 Zentrale Prioritäten und Releasezustände stehen auf aktuellem main.
 
-- [ ] GC-TEST-CARDS-20261018 / Dashboard-Testkarten: Martins Folgefeedback zu PR #329 umgesetzt. Papierkorb oben rechts ohne Aufklappen; „Beenden“ heißt verständlich „Schülerzugang schließen“. Lokale Tests/Browser/Build grün, GitHub-Update und Preview/Integration noch offen; Production unverändert. [Übergabe](workstreams/test-card-unification-20261018.md).
+- [ ] GC-TEST-CARDS-20261018 / Dashboard-Testkarten: Martins Folgefeedback in Entwurfs-PR #329 gesichert. Papierkorb oben rechts ohne Aufklappen; „Beenden“ heißt „Schülerzugang schließen“. Isolierter und mit Zielbranch kombinierter Stand lokal geprüft; GitHub meldet trotz nachweislich gemeinsamem Parent einen Mergekonflikt, vor Integration klären. Preview/CI/Production offen. [Übergabe](workstreams/test-card-unification-20261018.md).
 
 
 - [ ] GC-WEB-REPAIR-20261007 / mobile Schüler-Browseransicht: Abgabe nur am Testende, sticky Aufgabennavigation, echtes GC-Logo. Isolierter Branch fix/staging-feedback-mobile-student-20261019; lokale28/28 gezielte Tests und Chromium375/390/1280 grün. Review/CI/interne Testvorschau noch offen, kein Schul-/Live-Deploy. Übergabe: workstreams/mobile-student-chrome-20261019.md.

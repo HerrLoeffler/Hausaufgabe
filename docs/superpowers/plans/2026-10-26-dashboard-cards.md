@@ -30,4 +30,4 @@
 - [x] Verify `endQuiz` closes student access and preserves results; verify `deleteQuiz` confirms recoverable trash placement.
 - [x] Add failing card tests for a top-right trash action outside the closed disclosure and a clear end label; implement while preserving handlers and 44px target.
 - [x] Repeat 52-card Chromium/WebKit geometry and local root/UI/build checks.
-- [ ] Secure the follow-up on PR #329, refresh the handoff, and coordinate integration/preview with the release owner.
+- [ ] Secure the follow-up on PR #329, refresh the handoff, and coordinate integration/preview with the release owner. PR update and combined local checks are done; GitHub mergeability discrepancy, exact CI/preview and release coordination remain.
