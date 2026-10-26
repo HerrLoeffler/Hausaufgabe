@@ -1,3 +1,8 @@
+export function onlineTeacherEntry(files) {
+  if(Object.hasOwn(files,'workspace.html'))return 'workspace.html';
+  if(Object.hasOwn(files,'index.html'))return 'index.html';
+  throw Error('Teacher entry missing');
+}
 export function prepareOnlineIndex(html,{task,version}) {
   if(!/^[a-zA-Z0-9_-]+$/.test(version))throw Error('Invalid asset version');
   if(html.includes('classroom/online-workspace')){
