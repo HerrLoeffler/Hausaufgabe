@@ -34,7 +34,7 @@ test("stale solution audio is invalidated and publishing fails closed", () => {
   assert.match(main, /solutionNeedsRegeneration/);
   assert.match(main, /solutionDraft\.stale === true/);
   assert.match(app, /q\.solutionAudioNeedsRegeneration = true/);
-  assert.match(app, /solutionAudioReady === false/);
+  assert.match(app, /values\.showSolutions && !state\.questions\.every\(questionSolutionAudioReady\)/);
 });
 
 test("secure assessment attaches solution audio only after the existing solution gate", () => {

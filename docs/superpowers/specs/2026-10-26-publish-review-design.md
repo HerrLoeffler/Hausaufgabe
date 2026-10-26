@@ -1,0 +1,13 @@
+# Three-step publication review · GC-WEB-REPAIR-20261007
+
+Direct26Oct request, executed by publish_review_flow in an isolated Live91005cff checkout. Human authorized design+implementation without another approval loop.
+
+One compact native dialog: **1 Start & Zeit**, **2 Reihenfolge**, **3 Auswertung & Freigabe**. Every normal draft/reopen entry goes through the editor's current settings and same review. The share action of an already active test remains read-only. Back/next and labelled step progress retain choices. Only **Jetzt veröffentlichen** may publish. Changes update the editor's unsaved draft immediately, so cancel/Escape retain them for normal save/resume; no remote writes before final confirmation.
+
+Approaches: duplicating settings and mutations in dashboard was rejected (divergent stale settings); replacing the editor with a new full-page settings screen was rejected (large shared-file change). A focused native-dialog module with tiny common editor hooks best preserves existing validation, private audio guards and save semantics.
+
+Visual tokens reuse GradeCrew type, button and input styles; white #ffffff surface, navy #24334d text, blue #2563eb action, pale blue #edf4ff progress, grey #d8e1ee dividers, amber #fff4d6 deliberate practice warning. Left aligned compact settings; one active step, bottom actions outside scrolling body, width min(38rem,viewport), short-height/zoom flow. Native modal handles inert background and focus containment; explicit Escape cancellation and focus restore; DE/EN copy module.
+
+Step1 start mode and optional integer1–300 minute limit with matching countdown guidance. Step2 two shuffle options. Step3 saved/current grade scale (including original snapshot choice), result display, release mode/show-solutions; summary of steps1/2 and conscious checkbox if practice solutions become visible after own submission. Existing server practice prepare/revision/confirm contract remains, consuming explicit final-step acknowledgement rather than another dialog.
+
+Final action is single-flight. Recheck account/draft identity and server metadata revision before save. Retain existing validator and audio publication guards. Capture saved metadata revision and publish normal exams in a transaction, refusing changed/published/held records; practice uses existing server revision guard. Never overwrite active publication. Error retains settings and disables automatic/repeated final action: close/reopen re-reads actual state, resolving potentially ambiguous outcomes. No keys, rules, backend or audio authorization changes. No paid calls/deploy.

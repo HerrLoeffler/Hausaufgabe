@@ -449,7 +449,6 @@ export const enGBMessages = Object.freeze({
     "Schülerlink": "Student link",
     "Minuten": "Minutes",
     "Beenden": "End",
-    "Erneut öffnen": "Reopen",
     "Veröffentlichung umschalten": "Toggle publication",
     "Testergebnisse – Tabelle horizontal scrollbar": "Test results – horizontally scrollable table",
     "Vorlage wird geladen …": "Template is loading …",

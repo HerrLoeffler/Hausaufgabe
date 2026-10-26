@@ -9,7 +9,7 @@ const source = fs.readFileSync('crew-tour-gc24-polish.js', 'utf8');
 
 function setup(t) {
   const dom = new JSDOM(`<!doctype html><html><head></head><body>
-    <div id="quizList"><article class="quizCard"><button class="end">Beenden</button><button class="reopen">Erneut öffnen</button></article></div>
+    <div id="quizList"><article class="quizCard"><button class="end">Beenden</button><button class="reopen">Veröffentlichen</button></article></div>
     <button id="settingsTopBtn">Einstellungen</button>
     <section id="settingsView" class="hidden"><div class="settingsPageGrid"><article>Standardwerte</article><article>Notenschlüssel</article></div></section>
     <button id="backFromSettings">Zurück</button>

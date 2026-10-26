@@ -57,6 +57,8 @@ import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js";
 import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
 import { formatMathText } from "./shared/math-display.mjs?v=1";
 import { createPracticePublisher } from "./practice-solution-publication.mjs";
+import { requestPublishReview } from "./publish-review.mjs";
+import { publicationVersion, saveReviewedDraft, reviewedMetadataEqual, reviewedQuestionsEqual, resolveSavedPublicationVersion } from "./publish-review-state.mjs";
 import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
 import { dashboardPublicationAction, secureAudioPublicationBlocked as isSecureAudioPublicationBlocked } from "./secure-audio-publication.mjs?v=1";
 import { installReviewMode } from "./review-mode.mjs";
@@ -135,11 +137,12 @@ function getPracticePublisher() {
   }
   });
 }
-async function publishPracticeQuiz(quiz) {
+async function publishPracticeQuiz(quiz, { practiceAcknowledged = false, verifyPrepared } = {}) {
   const uid = state.user?.uid;
   const revision = draftRevision;
   return getPracticePublisher().publish(quiz, {
-    unchanged: () => state.user?.uid === uid && draftRevision === revision,
+    practiceAcknowledged, verifyPrepared,
+    unchanged: () => state.user?.uid === uid && state.currentQuiz?.id === quiz.id && draftRevision === revision && !state.isDirty,
     onChange: async () => {
       await openEditor(quiz.id);
       const field = $("quizSolutionReleaseMode");
@@ -1860,7 +1863,7 @@ function renderQuizList() {
           ${q.published && !q.ended && !q.rightsHold && !secureAudioPublicationBlocked(q) ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
           ${q.rightsHold ? "" : '<button class="button ghost duplicate">Duplizieren</button><button class="button ghost teacherShare">Mit Kollegen teilen</button>'}
           ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost end">Beenden</button>` : ""}
-          ${q.ended && !q.rightsHold ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
+          ${q.ended && !q.rightsHold ? `<button class="button ghost reopen">Veröffentlichen</button>` : ""}
           <button class="button danger remove quizDeleteButton" type="button" aria-label="Test in den Papierkorb" title="Test in den Papierkorb"><svg class="gcWorkspaceIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></svg></button>
         </div>
       </details>`;
@@ -1921,65 +1924,11 @@ async function applyDashboardPublication(q, toggle) {
     if (toggle) toggle.checked = true;
     return endQuiz(q.id);
   }
-  if (action === "noop") {
-    if (toggle) toggle.checked = false;
-    return;
-  }
-  if (wantsPublished && !await checkQuizAudioPublication(q)) {
-    if (toggle) toggle.checked = false;
-    return;
-  }
-  if (wantsPublished && q.audioReady === false) {
-    if (toggle) toggle.checked = false;
-    return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Öffne den Test und erzeuge es neu.", "error");
-  }
-  if (wantsPublished && q.showSolutions && q.solutionAudioReady === false) {
-    if (toggle) toggle.checked = false;
-    return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Öffne den Test und erzeuge sie neu oder entferne sie.", "error");
-  }
-  if (wantsPublished && Number(q.questionCount || 0) < 1) {
-    if (toggle) toggle.checked = false;
-    return toast("Füge zuerst mindestens eine Aufgabe hinzu.", "error");
-  }
-  if (wantsPublished && isAiReviewPending(q) && !confirm("Die KI-Prüfung dieses Entwurfs ist noch nicht abgeschlossen. Trotzdem veröffentlichen?")) {
-    if (toggle) toggle.checked = false;
-    return;
-  }
-  try {
-    if (wantsPublished) {
-      const practice = await publishPracticeQuiz(q);
-      if (practice === null) { if (toggle) toggle.checked = false; return; }
-      if (practice) {
-        Object.assign(q, practice, { published: true, ended: false });
-        toast("Test veröffentlicht."); renderQuizList(); renderAiJobs(); return;
-      }
-      const teacherMode = q.startMode === "teacher";
-      const runId = teacherMode ? randomId("run") : null;
-      const contentLocale = q.contentLocale || "de-DE";
-      const gradingLocale = q.gradingLocale || contentLocale;
-      const localeContractVersion = Number(q.localeContractVersion) || 1;
-      await updateDoc(doc(db, "quizzes", q.id), {
-        published: true, ended: false,
-        contentLocale, gradingLocale, localeContractVersion,
-        sessionState: teacherMode ? "waiting" : "open",
-        sessionRunId: runId, sessionStartedAt: null,
-        publishedAt: serverTimestamp(), updatedAt: serverTimestamp()
-      });
-      Object.assign(q, {
-        published: true, ended: false,
-        contentLocale, gradingLocale, localeContractVersion,
-        sessionState: teacherMode ? "waiting" : "open",
-        sessionRunId: runId, sessionStartedAt: null
-      });
-      toast("Test veröffentlicht.");
-    }
-    renderQuizList();
-    renderAiJobs();
-  } catch (err) {
-    console.error(err);
-    if (toggle) toggle.checked = !wantsPublished;
-    showReportableError({ code: REPORTABLE_ERROR_CODES.dataLoad, message: "Veröffentlichungsstatus konnte nicht geändert werden.", error: err, action: "dashboard_publish_toggle", details: { quizId: q.id, wantsPublished } });
-  }
+  if (toggle) toggle.checked = false;
+  if (action === "noop" || publicationReviewBusy) return;
+  // Load the actual draft (including local recovery) before reviewing settings.
+  await openEditor(q.id);
+  if (state.currentQuiz?.id === q.id) return publishCurrentQuiz();
 }
 
 function quizDefaults() {
@@ -2400,7 +2349,18 @@ async function endQuiz(code, { returnToEditor = false } = {}) {
       endedAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     });
-    if (state.currentQuiz?.id === code) state.currentQuiz = { ...state.currentQuiz, published: false, ended: true, sessionState: "ended" };
+    if (state.currentQuiz?.id === code) {
+      const uid = state.user?.uid, revision = draftRevision;
+      state.currentQuiz = { ...state.currentQuiz, published: false, ended: true, sessionState: "ended", updatedAt:serverTimestamp() };
+      const expected = { ...state.currentQuiz };
+      const expectedQuestions = state.questions.map((q,index) => ({id:q.id,data:{...sanitizeQuestionForSave(q),position:index+1}}));
+      const updatedAt = await resolveSavedPublicationVersion({
+        expected, expectedQuestions, read: () => getDoc(doc(db, "quizzes", code)),
+        readQuestions: async () => (await getDocs(collection(db, "quizzes", code, "questions"))).docs.map(q => ({id:q.id,data:q.data()})),
+        unchanged: () => state.user?.uid === uid && state.currentQuiz?.id === code && draftRevision === revision
+      });
+      state.currentQuiz.updatedAt = updatedAt;
+    }
     toast("Test beendet.");
     if (returnToEditor) {
       updateSummary();
@@ -2415,45 +2375,11 @@ async function endQuiz(code, { returnToEditor = false } = {}) {
 }
 
 async function reopenQuiz(code, { returnToEditor = false } = {}) {
-  try {
-    const current = state.quizzes.find((q) => q.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null) || {};
-    if (current.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
-    if (!await checkQuizAudioPublication({ ...current, id: code })) return;
-    if (current.audioReady === false) return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Öffne den Test und erzeuge es neu.", "error");
-    if (current.showSolutions && current.solutionAudioReady === false) return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Öffne den Test und erzeuge sie neu oder entferne sie.", "error");
-    if (current.solutionReleaseMode === "practice_after_submit") {
-      const practice = await publishPracticeQuiz({ ...current, id: code });
-      if (!practice) return;
-      if (state.currentQuiz?.id === code) Object.assign(state.currentQuiz, practice, { published: true, ended: false });
-      toast("Test wieder geöffnet.");
-      if (returnToEditor) { updateSummary(); updateEditorPublishControls(); showPublish(code); }
-      else await loadDashboard();
-      return;
-    }
-    const teacherMode = current.startMode === "teacher";
-    const runId = teacherMode ? randomId("run") : null;
-    await updateDoc(doc(db, "quizzes", code), {
-      published: true,
-      ended: false,
-      sessionState: teacherMode ? "waiting" : "open",
-      sessionRunId: runId,
-      sessionStartedAt: null,
-      reopenedAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    });
-    if (state.currentQuiz?.id === code) state.currentQuiz = { ...state.currentQuiz, published: true, ended: false, sessionState: teacherMode ? "waiting" : "open", sessionRunId: runId, sessionStartedAt: null };
-    toast("Test wieder geöffnet.");
-    if (returnToEditor) {
-      updateSummary();
-      updateEditorPublishControls();
-      showPublish(code);
-    } else {
-      await loadDashboard();
-    }
-  } catch (err) {
-    console.error(err);
-    toast("Test konnte nicht wieder geöffnet werden.", "error");
-  }
+  if (publicationReviewBusy) return;
+  const current = state.quizzes.find(q => q.id === code) || (state.currentQuiz?.id === code ? state.currentQuiz : null);
+  if (current?.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
+  if (!returnToEditor || state.currentQuiz?.id !== code) await openEditor(code);
+  if (state.currentQuiz?.id === code) return publishCurrentQuiz();
 }
 
 async function shareQuizTemplate(code) {
@@ -5965,11 +5891,12 @@ function updateEditorPublishControls() {
   if ($("shareTemplateBtn")) $("shareTemplateBtn").disabled = state.newManualQuiz || blocked;
   if ($("createSimilarTestBtn")) $("createSimilarTestBtn").disabled = state.newManualQuiz || blocked || state.aiStarting
     || state.aiJobs.filter(job => ["queued", "running"].includes(job.status)).length >= 2;
-  if ($("publishBtn")) { $("publishBtn").disabled = blocked; $("publishBtn").textContent = blocked ? "Zugang gesperrt" : ended ? "Erneut öffnen" : published ? "Schülerlink" : "Veröffentlichen"; }
+  if ($("publishBtn")) { $("publishBtn").disabled = blocked; $("publishBtn").textContent = blocked ? "Zugang gesperrt" : published ? "Schülerlink" : "Veröffentlichen"; }
 }
 
 let draftTimer = null;
 let draftRevision = 0;
+let publicationReviewBusy = false;
 
 function editorDraftSnapshot() {
   const quiz = state.currentQuiz;
@@ -6218,7 +6145,7 @@ function sanitizeQuestionForSave(q) {
   return base;
 }
 
-async function saveCurrentQuiz(showMessage = true) {
+async function saveCurrentQuiz(showMessage = true, publicationReview = null) {
   const error = validateQuiz();
   if (error) {
     toast(error, "error");
@@ -6253,6 +6180,7 @@ async function saveCurrentQuiz(showMessage = true) {
     let code = state.currentQuiz.id;
     const oldDraftId = code;
     const revisionAtSave = draftRevision;
+    const uidAtSave = state.user?.uid;
     const totalPoints = round1(state.questions.reduce((s, q) => s + (Number(q.points) || 0), 0));
     const selectedScaleId = $("quizGradeScale").value;
     const scaleChanged = selectedScaleId !== state.currentQuiz.gradeScaleId;
@@ -6304,33 +6232,52 @@ async function saveCurrentQuiz(showMessage = true) {
       code = created.code;
       state.currentQuiz = { ...created.quiz, ...patch, id: code };
       state.newManualQuiz = false;
-    } else await updateDoc(doc(db, "quizzes", code), patch);
+    } else if (!publicationReview) await updateDoc(doc(db, "quizzes", code), patch);
+    if (publicationReview) {
+      patch.publicationReviewNonce = publicationReview.nonce;
+      const uidAtSave = state.user?.uid;
+      await saveReviewedDraft({
+        run: callback => runTransaction(db, callback), ref: doc(db, "quizzes", code),
+        expectedVersion: publicationReview.expectedVersion, patch,
+        questions: state.questions.map((q, index) => ({ref:doc(db, "quizzes", code, "questions", q.id),data:{...sanitizeQuestionForSave(q),position:index + 1,updatedAt:serverTimestamp()}})),
+        removedRefs: [...state.loadedQuestionIds].filter(id => !state.questions.some(q => q.id === id)).map(id => doc(db, "quizzes", code, "questions", id)),
+        unchanged: () => state.user?.uid === uidAtSave && draftRevision === revisionAtSave
+      });
+    }
 
     const currentIds = new Set();
+    const savedQuestions = [];
     const audioDrafts = [];
     const solutionAudioDrafts = [];
     for (let i = 0; i < state.questions.length; i += 1) {
       const q = state.questions[i];
       q.position = i + 1;
       currentIds.add(q.id);
-      await setDoc(doc(db, "quizzes", code, "questions", q.id), {
-        ...sanitizeQuestionForSave(q),
-        position: q.position,
-        updatedAt: serverTimestamp()
-      });
+      const savedQuestion = { ...sanitizeQuestionForSave(q), position: q.position, updatedAt: serverTimestamp() };
+      savedQuestions.push({ id:q.id, data:savedQuestion });
+      if (!publicationReview) await setDoc(doc(db, "quizzes", code, "questions", q.id), savedQuestion);
       const audioScript = String(q.audioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
       if (audioScript) audioDrafts.push({ questionId: q.id, script: audioScript });
       const solutionAudioScript = String(q.solutionAudioScript || "").replace(/\s+/g, " ").trim().slice(0, 500);
       if (solutionAudioScript) solutionAudioDrafts.push({ questionId: q.id, script: solutionAudioScript, stale: q.solutionAudioNeedsRegeneration === true });
     }
     for (const oldId of state.loadedQuestionIds) {
-      if (!currentIds.has(oldId)) {
+      if (!publicationReview && !currentIds.has(oldId)) {
         await deleteDoc(doc(db, "quizzes", code, "questions", oldId));
       }
     }
     await aiApi.syncQuestionAudioDrafts({ quizId: code, drafts: audioDrafts, solutionDrafts: solutionAudioDrafts });
     state.loadedQuestionIds = currentIds;
     state.currentQuiz = { ...state.currentQuiz, ...patch };
+    if (!publicationReview) {
+      const expected = { ...state.currentQuiz };
+      const updatedAt = await resolveSavedPublicationVersion({
+        expected, expectedQuestions:savedQuestions, read: () => getDoc(doc(db, "quizzes", code)),
+        readQuestions: async () => (await getDocs(collection(db, "quizzes", code, "questions"))).docs.map(q => ({id:q.id,data:q.data()})),
+        unchanged: () => state.user?.uid === uidAtSave && state.currentQuiz?.id === code
+      });
+      state.currentQuiz.updatedAt = updatedAt;
+    }
     $("editorHeading").textContent = patch.title;
     if (draftRevision === revisionAtSave) markSaved();
     else markDirty();
@@ -6352,59 +6299,128 @@ async function saveCurrentQuiz(showMessage = true) {
   }
 }
 
+function readPublishReviewSettings() {
+  return {
+    startMode: $("quizStartMode").value,
+    timeLimitMinutes: $("quizUseTimeLimit").checked ? Number($("quizTimeLimitMinutes").value) : null,
+    shuffleQuestions: $("quizShuffleQuestions").checked, shuffleAnswers: $("quizShuffleAnswers").checked,
+    gradeScaleId: $("quizGradeScale").value, resultMode: $("quizResultMode").value,
+    solutionReleaseMode: $("quizSolutionReleaseMode").value, showSolutions: $("quizShowSolutions").checked
+  };
+}
+
+function applyPublishReviewSettings(values) {
+  for (const [name, id] of Object.entries({ startMode:"quizStartMode", gradeScaleId:"quizGradeScale", resultMode:"quizResultMode", solutionReleaseMode:"quizSolutionReleaseMode" })) $(id).value = values[name];
+  for (const [name, id] of Object.entries({ shuffleQuestions:"quizShuffleQuestions", shuffleAnswers:"quizShuffleAnswers", showSolutions:"quizShowSolutions" })) $(id).checked = Boolean(values[name]);
+  $("quizUseTimeLimit").checked = values.timeLimitMinutes !== null;
+  if (values.timeLimitMinutes !== null) $("quizTimeLimitMinutes").value = values.timeLimitMinutes;
+  $("quizTimeLimitWrap").classList.toggle("hidden", values.timeLimitMinutes === null);
+  updateTimeLimitHint();
+  markDirty();
+}
+
 async function publishCurrentQuiz() {
-  if (state.currentQuiz?.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
-  if (!(await saveCurrentQuiz(false))) return;
-  if (guestTourRepo) {
-    guestTourRepo.publish(state.currentQuiz.id);
-    state.currentQuiz = guestTourRepo.getQuiz(state.currentQuiz.id);
-    showPublish(state.currentQuiz.id);
-    return;
-  }
-  if (secureAudioPublicationBlocked(state.currentQuiz)) return toast(secureAudioPublicationMessage, "error");
-  if (state.currentQuiz.audioReady === false) return toast("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Erzeuge es vor dem Veröffentlichen neu.", "error");
-  if (state.currentQuiz.showSolutions && state.currentQuiz.solutionAudioReady === false) return toast("Mindestens eine Audio-Lösung ist noch nicht aktuell. Erzeuge sie neu oder entferne sie, bevor du veröffentlichst.", "error");
-  if (state.currentQuiz.published && !state.currentQuiz.ended) {
-    showPublish(state.currentQuiz.id);
-    return;
-  }
+  if (publicationReviewBusy || !state.currentQuiz) return;
+  if (state.currentQuiz.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
+  if (state.currentQuiz.published && !state.currentQuiz.ended) return showPublish(state.currentQuiz.id);
+  publicationReviewBusy = true;
+  const uid = state.user?.uid, quizId = state.currentQuiz.id;
+  let expectedDraftRevision = draftRevision, invalidated = false, publishedQuizId = null;
+  const sameDraft = () => state.user?.uid === uid && state.currentQuiz?.id === quizId && draftRevision === expectedDraftRevision && !invalidated;
   try {
-    const practice = await publishPracticeQuiz(state.currentQuiz);
-    if (practice === null) return;
-    if (practice) {
-      Object.assign(state.currentQuiz, practice, { published: true, ended: false });
-      state.pendingImportReport = null;
-      renderImportReviewBanner(); renderAiJobs(); updateSummary(); updateEditorPublishControls();
-      toast("Test veröffentlicht."); showPublish(state.currentQuiz.id); return;
+    let baseline = null;
+    if (!guestTourRepo && !state.newManualQuiz) {
+      const snap = await getDoc(doc(db, "quizzes", quizId));
+      if (!sameDraft()) return;
+      if (!snap.exists()) throw new Error("Dieser Test ist nicht mehr vorhanden.");
+      baseline = snap.data();
+      if (publicationVersion(state.currentQuiz) !== publicationVersion(baseline)) throw new Error("Der Test wurde seit dem Öffnen geändert. Lade ihn neu und prüfe deine lokalen Einstellungen.");
+      if (baseline.rightsHold) throw new Error("Dieser Test ist wegen eines Rechtehinweises gesperrt.");
+      if (baseline.published && !baseline.ended) return showPublish(quizId);
     }
-    const teacherMode = state.currentQuiz.startMode === "teacher";
-    const runId = teacherMode ? randomId("run") : null;
-    await updateDoc(doc(db, "quizzes", state.currentQuiz.id), {
-      published: true,
-      ended: false,
-      sessionState: teacherMode ? "waiting" : "open",
-      sessionRunId: runId,
-      sessionStartedAt: null,
-      publishedAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
+    await requestPublishReview({
+      settings: readPublishReviewSettings(),
+      returnFocus: $("publishBtn"),
+      scales: Array.from($("quizGradeScale").options, option => ({id:option.value, name:option.textContent})),
+      locale: document.documentElement.lang || "de",
+      aiReviewPending: isAiReviewPending(state.currentQuiz),
+      onChange: values => {
+        if (!sameDraft()) { invalidated = true; return; }
+        applyPublishReviewSettings(values);
+        expectedDraftRevision = draftRevision;
+      },
+      onPublish: async values => {
+        if (!sameDraft()) throw new Error("Der Entwurf oder das Konto wurde inzwischen geändert. Öffne den Check erneut.");
+        if (baseline) {
+          const latest = await getDoc(doc(db, "quizzes", quizId));
+          if (!sameDraft() || !latest.exists() || publicationVersion(latest.data()) !== publicationVersion(baseline)) throw new Error("Der Test wurde inzwischen auf einem anderen Gerät geändert. Lade ihn neu und prüfe deine lokalen Einstellungen.");
+        }
+        // Existing private audio guard remains authoritative, including old metadata.
+        if (!guestTourRepo && secureAudioPublicationBlocked(state.currentQuiz, state.questions)) throw new Error(secureAudioPublicationMessage);
+        if (!guestTourRepo && !state.questions.every(questionAllAudioReady)) throw new Error("Mindestens ein Frage- oder Antwortaudio fehlt oder ist veraltet. Erzeuge es vor dem Veröffentlichen neu.");
+        if (!guestTourRepo && values.showSolutions && !state.questions.every(questionSolutionAudioReady)) throw new Error("Mindestens eine Audio-Lösung ist noch nicht aktuell. Erzeuge sie neu oder entferne sie vor dem Veröffentlichen.");
+        const publicationNonce = randomId("publication-review");
+        if (!(await saveCurrentQuiz(false, {expectedVersion:baseline ? publicationVersion(baseline) : null, nonce:publicationNonce}))) throw new Error("Der Entwurf konnte nicht gespeichert werden. Prüfe die Aufgaben und speichere erneut.");
+        if (state.user?.uid !== uid || state.isDirty || (!state.newManualQuiz && state.currentQuiz?.id !== quizId && baseline)) throw new Error("Der Entwurf oder das Konto wurde während des Speicherns geändert.");
+        publishedQuizId = state.currentQuiz.id;
+        if (guestTourRepo) {
+          guestTourRepo.publish(state.currentQuiz.id);
+          state.currentQuiz = guestTourRepo.getQuiz(state.currentQuiz.id);
+        } else {
+          const savedQuizId = state.currentQuiz.id, savedDraftRevision = draftRevision;
+          const saved = await getDoc(doc(db, "quizzes", savedQuizId));
+          if (!saved.exists() || saved.data().publicationReviewNonce !== publicationNonce || !reviewedMetadataEqual(state.currentQuiz, saved.data()) || state.user?.uid !== uid || state.currentQuiz?.id !== savedQuizId || draftRevision !== savedDraftRevision || state.isDirty) throw new Error("Der gespeicherte Test konnte nicht sicher geprüft werden.");
+          await commitReviewedQuizPublication(saved.data(), values);
+        }
+        if (state.user?.uid !== uid || state.currentQuiz?.id !== publishedQuizId) return true;
+        state.pendingImportReport = null;
+        renderImportReviewBanner(); renderAiJobs(); updateSummary(); updateEditorPublishControls();
+        toast("Test veröffentlicht.");
+        // Close review and release its focus before changing the visible page.
+        return true;
+      }
+    }).then(confirmed => {
+      if (confirmed && state.user?.uid === uid && state.currentQuiz?.id === publishedQuizId) return showPublish(publishedQuizId);
+      if (!confirmed && state.user?.uid === uid && state.currentQuiz?.id === quizId) return persistEditorDraft();
     });
-    state.currentQuiz.published = true;
-    state.currentQuiz.ended = false;
-    state.currentQuiz.sessionState = teacherMode ? "waiting" : "open";
-    state.currentQuiz.sessionRunId = runId;
-    state.currentQuiz.sessionStartedAt = null;
-    state.pendingImportReport = null;
-    renderImportReviewBanner();
-    state.quizzes = state.quizzes.map(item => item.id === state.currentQuiz.id ? { ...item, published: true } : item);
-    renderAiJobs();
-    updateSummary();
-    updateEditorPublishControls();
-    toast("Test veröffentlicht.");
-    showPublish(state.currentQuiz.id);
   } catch (err) {
     console.error(err);
-    toast("Veröffentlichen fehlgeschlagen.", "error");
+    toast(err.message || "Veröffentlichungscheck konnte nicht geladen werden.", "error");
+  } finally { publicationReviewBusy = false; }
+}
+
+async function commitReviewedQuizPublication(saved, values) {
+  const quizId = state.currentQuiz.id, uid = state.user?.uid, revision = draftRevision;
+  const unchanged = () => state.user?.uid === uid && state.currentQuiz?.id === quizId && draftRevision === revision && !state.isDirty;
+  if (!unchanged()) throw new Error("Der Entwurf wurde inzwischen geändert.");
+  const expectedQuestions = state.questions.map(q => ({id:q.id, data:{...sanitizeQuestionForSave(q), position:q.position}}));
+  const verifyPrepared = async () => {
+    const [metadata, questions] = await Promise.all([
+      getDoc(doc(db, "quizzes", quizId)),
+      getDocs(collection(db, "quizzes", quizId, "questions"))
+    ]);
+    if (!unchanged() || !metadata.exists() || publicationVersion(metadata.data()) !== publicationVersion(saved) || !reviewedMetadataEqual(state.currentQuiz, metadata.data()) || !reviewedQuestionsEqual(expectedQuestions, questions.docs.map(q => ({id:q.id, data:q.data()})))) throw new Error("Der geprüfte Testinhalt wurde inzwischen geändert. Öffne den Check erneut.");
+  };
+  const practice = await publishPracticeQuiz(state.currentQuiz, { practiceAcknowledged: values.practiceAcknowledged === true, verifyPrepared });
+  if (practice === null) throw new Error("Die Übungsfreigabe wurde nicht bestätigt. Öffne den Check erneut.");
+  if (practice) {
+    if (state.user?.uid === uid && state.currentQuiz?.id === quizId) Object.assign(state.currentQuiz, practice, { published:true, ended:false });
+    return;
   }
+  const teacherMode = saved.startMode === "teacher", runId = teacherMode ? randomId("run") : null;
+  const patch = { published:true, ended:false, sessionState:teacherMode ? "waiting" : "open", sessionRunId:runId, sessionStartedAt:null, publishedAt:serverTimestamp(), updatedAt:serverTimestamp() };
+  await runTransaction(db, async transaction => {
+    const ref = doc(db, "quizzes", quizId), current = await transaction.get(ref);
+    if (!unchanged() || !current.exists() || publicationVersion(current.data()) !== publicationVersion(saved) || current.data().rightsHold || current.data().published && !current.data().ended) throw new Error("Der Test wurde inzwischen geändert oder veröffentlicht. Lade den aktuellen Stand neu.");
+    const questions = await Promise.all(expectedQuestions.map(async q => {
+      const snapshot = await transaction.get(doc(db, "quizzes", quizId, "questions", q.id));
+      return {id:q.id, data:snapshot.exists() ? snapshot.data() : {}};
+    }));
+    if (!unchanged() || !reviewedQuestionsEqual(expectedQuestions, questions)) throw new Error("Die geprüften Aufgaben wurden inzwischen geändert. Öffne den Check erneut.");
+    transaction.update(ref, patch);
+  });
+  if (state.user?.uid === uid && state.currentQuiz?.id === quizId) Object.assign(state.currentQuiz, patch);
+  state.quizzes = state.quizzes.map(item => item.id === quizId ? { ...item, ...patch } : item);
 }
 
 // ---------- Teilen / QR ----------

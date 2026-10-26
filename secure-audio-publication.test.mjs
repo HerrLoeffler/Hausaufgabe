@@ -34,39 +34,11 @@ test("frontend audio publication opens for verified Staging, while other project
     assert.equal(blocked, projectId !== 'hausaufgabe-staging');
   }
 });
-function publicationHarness(questions, { failRead = false } = {}) {
-  const writes = [];
-  const context = { state: { quizzes: [{ id: "TEST", published: false, ended: true }] }, db: {},
-    secureAudioPublicationBlocked, secureAudioPublicationMessage: "Private audio is not released",
-    collection: () => ({}), firestoreGetDocs: async () => {
-      if (failRead) throw new Error("offline");
-      return { docs: questions.map(q => ({ data: () => q })) };
-    }, toast() {}, showReportableError() {}, REPORTABLE_ERROR_CODES: { dataLoad: "load" },
-    randomId: () => "run", doc: () => ({}), serverTimestamp: () => "now",
-    updateDoc: async (_, patch) => writes.push(patch), loadDashboard: async () => {}, console };
-  vm.createContext(context);
-  const preflight = appSource.slice(appSource.indexOf("async function checkQuizAudioPublication("), appSource.indexOf("async function toggleDashboardPublished("));
-  const reopen = appSource.slice(appSource.indexOf("async function reopenQuiz("), appSource.indexOf("async function shareQuizTemplate("));
-  vm.runInContext(preflight + reopen, context);
-  return { context, writes };
-}
-
-test("reopening catches private question modes when older quiz metadata is absent", async () => {
-  for (const question of [{ audioPresentation: "listening-only" }, { audioAnswerMode: "audio-only" }]) {
-    const h = publicationHarness([question]);
-    await h.context.reopenQuiz("TEST");
-    assert.equal(h.writes.length, 0);
-  }
-});
-
-test("reopening supplementary audio works, but a failed preflight never changes publication", async () => {
-  const allowed = publicationHarness([{ audioPresentation: "supplement" }]);
-  await allowed.context.reopenQuiz("TEST");
-  assert.equal(allowed.writes.length, 1);
-  assert.equal(allowed.writes[0].published, true);
-  const failed = publicationHarness([], { failRead: true });
-  await failed.context.reopenQuiz("TEST");
-  assert.equal(failed.writes.length, 0);
+test("dashboard reopening delegates to common editor review and never publishes immediately", async () => {
+  const calls=[];
+  const context={publicationReviewBusy:false,state:{quizzes:[{id:'TEST',published:false,ended:true}]},openEditor:async id=>{calls.push(['open',id]);context.state.currentQuiz={id};},publishCurrentQuiz:async()=>calls.push(['review']),toast(){}};
+  vm.createContext(context);const start=appSource.indexOf('async function reopenQuiz(');vm.runInContext(appSource.slice(start,appSource.indexOf('\n}',start)+2),context);
+  await context.reopenQuiz('TEST');assert.deepEqual(calls,[['open','TEST'],['review']]);
 });
 
 test("publication remains locked throughout asynchronous preflight and rejects a second interaction", async () => {

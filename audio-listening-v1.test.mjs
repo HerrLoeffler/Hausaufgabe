@@ -31,7 +31,7 @@ test("teacher transcript is stored in a private subcollection, never in the publ
 });
 
 test("publication is fail-closed while listening audio is stale", () => {
-  assert.match(app, /state\.currentQuiz\.audioReady === false/);
+  assert.match(app, /state\.questions\.every\(questionAllAudioReady\)/);
   assert.match(app, /q\.audioNeedsRegeneration = true/);
   assert.match(app, /questionAudioReady/);
 });

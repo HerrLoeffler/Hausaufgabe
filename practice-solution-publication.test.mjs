@@ -1,3 +1,4 @@
+import {publicationVersion,reviewedMetadataEqual,reviewedQuestionsEqual} from './publish-review-state.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
@@ -72,37 +73,16 @@ test('visibility dialog supports explicit publish or settings change and restore
 import fs from 'node:fs';
 import vm from 'node:vm';
 const appSource = fs.readFileSync('app.js', 'utf8');
-function entrypoint(name, approve) {
-  const q = { ...quiz(), questionCount: 1, published: false, ended: false };
-  const writes = [], calls = [];
-  const publisher = createPracticePublisher({ confirm: async () => approve, call: async data => {
-    calls.push(data); return data.action === 'prepare' ? { revision: 'rev', needsConfirmation: true } : { published: true, sessionState: 'open' };
-  } });
-  const context = { state: { currentQuiz: q, quizzes: [q], questions: [] }, guestTourRepo: null,
-    dashboardPublicationAction: () => 'publish', checkQuizAudioPublication: async () => true,
-    isAiReviewPending: () => false, secureAudioPublicationBlocked: () => false,
-    saveCurrentQuiz: async () => true, publishPracticeQuiz: q => publisher.publish(q),
-    doc: () => ({}), db: {}, updateDoc: async (_, patch) => writes.push(patch), randomId: () => 'run', serverTimestamp: () => 'now',
-    renderQuizList() {}, renderAiJobs() {}, renderImportReviewBanner() {}, updateSummary() {}, updateEditorPublishControls() {},
-    showPublish() {}, toast() {}, showReportableError() {}, console };
-  vm.createContext(context);
-  const start = appSource.indexOf(`async function ${name}(`);
-  const end = name === 'applyDashboardPublication' ? appSource.indexOf('function quizDefaults(', start) : appSource.indexOf('$("releasePracticeSolutionsBtn")?.addEventListener', start);
-  vm.runInContext(appSource.slice(start, end), context);
-  return { context, q, writes, calls };
+function reviewedCommit(approve) {
+  const q = {...quiz(), published:false, ended:false};
+  const calls=[], writes=[];
+  const publisher=createPracticePublisher({confirm:async()=>{assert.fail('Final review acknowledgement must avoid a second confirmation');},call:async data=>{calls.push(data);return data.action==='prepare'?{revision:'rev',needsConfirmation:true}:{published:true};}});
+  const context={publicationVersion,reviewedMetadataEqual,reviewedQuestionsEqual,doc:()=>({}),collection:()=>({}),db:{},getDoc:async()=>({exists:()=>true,data:()=>q}),getDocs:async()=>({docs:[]}),state:{user:{uid:'U'},currentQuiz:q,isDirty:false,quizzes:[q],questions:[]},draftRevision:1,
+    publishPracticeQuiz:(q,options)=>publisher.publish(q,options),runTransaction:()=>assert.fail('Practice must use server authority'),console};
+  vm.createContext(context);const start=appSource.indexOf('async function commitReviewedQuizPublication(');vm.runInContext(appSource.slice(start,appSource.indexOf('\n}',start)+2),context);
+  return {context,q,calls,writes};
 }
-for (const name of ['applyDashboardPublication', 'publishCurrentQuiz']) {
-  test(`${name} blocks publication when visibility confirmation chooses settings change`, async () => {
-    const f = entrypoint(name, false);
-    await f.context[name](f.q, { checked: true });
-    assert.equal(f.writes.length, 0); assert.equal(f.calls.length, 1); assert.equal(f.q.published, false);
-  });
-  test(`${name} publishes confirmed practice through the authoritative callable`, async () => {
-    const f = entrypoint(name, true);
-    await f.context[name](f.q, { checked: true });
-    assert.equal(f.writes.length, 0); assert.equal(f.calls[1].action, 'publish'); assert.equal(f.q.published, true);
-  });
-}
+test('reviewed practice publication consumes final-step acknowledgement and server revision',async()=>{const f=reviewedCommit(true);await f.context.commitReviewedQuizPublication(f.q,{practiceAcknowledged:true});assert.equal(f.calls.length,2);assert.equal(f.calls[1].expectedRevision,'rev');assert.equal(f.calls[1].confirmAfterSubmit,true);assert.equal(f.q.published,true);});
 
 function studentSolutionUi(t) {
   const dom = new JSDOM('<div id="secureResult"><h1>Abgabe gespeichert</h1></div>', { url: 'https://example.test/' }); t.after(() => dom.window.close());
@@ -128,3 +108,4 @@ test('waiting practice never renders solutions from a receipt missing server aut
   assert.equal(f.doc.body.textContent.includes('NEVER_RENDER'), false);
   assert.equal(f.doc.body.textContent.includes('bis zum Testende'), false);
 });
+test('server prepare is verified against the reviewed draft before any practice publish',async()=>{const calls=[];let verified=0;const publisher=createPracticePublisher({call:async data=>{calls.push(data);return {revision:'server',needsConfirmation:true};},confirm:async()=>assert.fail('Explicit final acknowledgement was supplied')});await assert.rejects(publisher.publish(quiz(),{practiceAcknowledged:true,verifyPrepared:async()=>{verified++;throw new Error('reviewed draft changed');}}),/reviewed draft changed/);assert.equal(verified,1);assert.equal(calls.length,1);});

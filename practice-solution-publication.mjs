@@ -40,7 +40,7 @@ export function requestPracticeSolutionConfirmation({ doc = globalThis.document,
 
 export function createPracticePublisher({ call, confirm = requestPracticeSolutionConfirmation }) {
   const busy = new Set();
-  async function perform(quiz, action, { unchanged = () => true, onChange = () => {} } = {}) {
+  async function perform(quiz, action, { unchanged = () => true, onChange = () => {}, practiceAcknowledged = false, verifyPrepared = async () => {} } = {}) {
     if (busy.has(quiz.id)) return null;
     busy.add(quiz.id);
     try {
@@ -48,7 +48,11 @@ export function createPracticePublisher({ call, confirm = requestPracticeSolutio
         ? await call({ quizId: quiz.id, action: 'prepare' })
         : { revision: quiz.practiceSolutionRevision, needsConfirmation: true };
       if (!unchanged()) return null;
-      const approved = prepared.needsConfirmation === true ? await confirm({ release: action === 'release' }) : false;
+      if (action === 'publish') await verifyPrepared(prepared);
+      if (!unchanged()) return null;
+      const approved = prepared.needsConfirmation === true
+        ? (action === 'publish' && practiceAcknowledged === true || await confirm({ release: action === 'release' }))
+        : false;
       if (prepared.needsConfirmation && !approved) { await onChange(); return null; }
       if (!unchanged()) return null;
       return await call({ quizId: quiz.id, action, expectedRevision: prepared.revision, confirmAfterSubmit: approved });

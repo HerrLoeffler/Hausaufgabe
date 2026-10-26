@@ -46,7 +46,7 @@ const render = new Function('document','state','log','secureAudioPublicationBloc
  const renderFirstTestGuide=()=>{},updateEditorPublishControls=()=>{},renderVariantProgress=()=>{};
  const shouldShowAiJob=()=>true;
  const action=(name,id)=>log('Nur Testvorschau: '+name+' · '+(id||''));
- const openEditor=id=>action('Entwurf öffnen',id),openResults=id=>action('Ergebnisse',id),duplicateQuiz=id=>action('Duplizieren',id),showPublish=id=>action('Schülerlink',id),shareQuizTemplate=id=>action('Teilen',id),endQuiz=id=>action('Beenden',id),reopenQuiz=id=>action('Erneut öffnen',id),deleteQuiz=id=>action('Löschen',id),completeAiReview=id=>action('Prüfung abgeschlossen',id);
+ const openEditor=id=>action('Entwurf öffnen',id),openResults=id=>action('Ergebnisse',id),duplicateQuiz=id=>action('Duplizieren',id),showPublish=id=>action('Schülerlink',id),shareQuizTemplate=id=>action('Teilen',id),endQuiz=id=>action('Beenden',id),reopenQuiz=id=>action('Veröffentlichen',id),deleteQuiz=id=>action('Löschen',id),completeAiReview=id=>action('Prüfung abgeschlossen',id);
  const toggleDashboardPublished=(quiz,input)=>{input.checked=!!quiz.published;action('Veröffentlichung unverändert',quiz.id)};
  const dismissAiJob=job=>action('Ausblenden',job.id),showReportableError=()=>action('Problem melden');
  const REPORTABLE_ERROR_CODES={aiSimilar:'demo',aiCreate:'demo'};

@@ -1,3 +1,4 @@
+import { requestPublishReview } from './publish-review.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -123,6 +124,7 @@ test('app bootstrap binds its real auth controls after public entry installation
     const announcementReads = [];
     const forbidden = () => { forbiddenCalls += 1; throw new Error('Guest tutorial reached a provider'); };
     const bindings = {
+      requestPublishReview,
       initializeApp: () => ({}), getAuth: () => ({}), getFirestore: () => ({}), createAiClient: () => new Proxy({}, { get: () => forbidden }), installReviewMode,
       firebaseSignIn: (...args) => { loginCalls.push(args); return Promise.resolve({ user: {} }); },
       createDiagnostics: () => ({ record: noop, setRelease: noop }), installDiagnostics: noop,
@@ -215,6 +217,12 @@ test('app bootstrap binds its real auth controls after public entry installation
     assert.equal(faultyCard.querySelector('.aiQualityReplace'), null, 'the tutorial must not offer a replacement it cannot create');
     faultyCard.querySelector('.aiQualityCancel').click();
     w.document.getElementById('publishBtn').click();
+    await new Promise(resolve => setImmediate(resolve));
+    assert.ok(w.document.querySelector('dialog.publishReview'));
+    assert.equal(w.document.getElementById('publishView').classList.contains('hidden'), true);
+    w.document.querySelector('.publishReview [data-action=next]').click();
+    w.document.querySelector('.publishReview [data-action=next]').click();
+    w.document.querySelector('.publishReview [data-action=publish]').click();
     await new Promise(resolve => setImmediate(resolve));
     assert.equal(w.document.getElementById('publishView').classList.contains('hidden'), false);
     w.document.getElementById('openPublishedStudentBtn').click();

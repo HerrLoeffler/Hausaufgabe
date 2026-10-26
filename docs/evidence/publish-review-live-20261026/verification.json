@@ -1,0 +1,106 @@
+{
+  "task": "GC-WEB-REPAIR-20261007",
+  "owner": "publish_review_flow",
+  "code_sha": "c98dfcfa79501a7ff9d8455b0c463d0ce0511f7f",
+  "base_sha": "91005cff96256e2f12f5562670bf0abfb8a1327d",
+  "branch": "fix/publish-review-live-20261026",
+  "stage": "branch_only",
+  "cloud_writes": false,
+  "deployment": null,
+  "physical_device_test": null,
+  "verification": [
+    {
+      "command": "node --test *.test.mjs",
+      "pass": 403,
+      "fail": 0
+    },
+    {
+      "command": "node --experimental-vm-modules --test tools/ui/*.test.cjs tools/ui/*.test.mjs",
+      "pass": 155,
+      "fail": 0
+    },
+    {
+      "command": "node --test assessment-functions/test/*.test.js",
+      "pass": 90,
+      "fail": 0
+    },
+    {
+      "command": "node --test functions/test/*.test.js",
+      "pass": 312,
+      "fail": 0
+    },
+    {
+      "command": "node tools/browser-layout/publish-review.cjs",
+      "layout_steps": 42,
+      "engines": [
+        "Chromium1194",
+        "WebKit2215"
+      ],
+      "extra": [
+        "touch taps",
+        "Escape cancellation",
+        "explicit focus return",
+        "Tab containment",
+        "200%text",
+        "EN",
+        "final-only publication callback"
+      ],
+      "synthetic_local_only": true
+    },
+    {
+      "command": "node tools/build-staging.mjs /private/tmp/gc-publish-review-build-verified-20261026 staging",
+      "files": 197,
+      "result": "pass",
+      "is_deployment": false
+    },
+    {
+      "command": "node --input-type=module --check < app.js; git diff --check",
+      "result": "pass"
+    }
+  ],
+  "broad_auto_discovery": {
+    "command": "node --test",
+    "pass": 1094,
+    "fail": 35,
+    "limitations": "Auto-discovers unrelated loopback/stdio, Workbench VM, missing-emulator dependency, load CLI and review VM checks; this run lacked loopback privilege/experimental-vm-modules/emulator profile. Scoped UI rerun with correct flag and exact dependencies passes155. No all-repository-green claim.",
+    "failures": [
+      "local pairing accepts one authorized Live token without exposing it to MCP",
+      "Live role denial keeps the local connection unauthenticated",
+      "disconnect during the role check cannot restore a private session",
+      "real stdio MCP roundtrip lists UI tools and persists answer in the shared app",
+      "local pairing accepts one authorized Staging token without exposing it to MCP",
+      "Staging role denial keeps the local connection unauthenticated",
+      "disconnect during the role check cannot restore a private session",
+      "collapsed launcher has no effect on document flow; Escape cancels a free selection",
+      "the toolbar stays inside the active modal and returns to the page afterward",
+      "pointercancel leaves no draft, no note and no trapped selection",
+      "lost acknowledgement and retry reuse one ID and keep an offline copy until confirmed",
+      "CSS updates retain unsubmitted inputs and only replace local stylesheet URLs",
+      "screenshot capability failure still leaves a usable text prompt",
+      "cancelling an unfinished screen chooser cannot overwrite a later prompt",
+      "a local quota failure keeps the text and sends no unprotected request",
+      "primary AI send starts a live job immediately and exposes undo/redo in the small widget",
+      "free area selection opens the prompt without requesting screen capture",
+      "drawing sends arrow coordinates and a visual attachment with its text",
+      "tool menu opens expanded and speech transcription fills the active prompt",
+      "marking from a selected area keeps the draft text and original target",
+      "a captured screenshot opens the image editor and keeps the prompt while annotating",
+      "staging homepage preserves login handling while fixture preview keeps its review client",
+      "isolated loopback server enforces origins and serves Workbench APIs",
+      "tools/gate-e-load-test.mjs",
+      "tools/rules/admin-account-actions.emulator.test.cjs",
+      "tools/rules/admin-account-marking.emulator.test.mjs",
+      "tools/rules/admin-account-rules.emulator.test.mjs",
+      "tools/rules/admin-legacy-profile.emulator.test.mjs",
+      "tools/rules/admin-usage-deletion.emulator.test.cjs",
+      "tools/rules/bug-ops-rules.emulator.test.mjs",
+      "tools/rules/firestore-ordering-storage.test.mjs",
+      "tools/rules/remy-account-guards.emulator.test.cjs",
+      "tools/rules/secure-assessment-rules.emulator.test.mjs",
+      "tools/rules/secure-start.emulator.test.cjs",
+      "real app resumes editor, student, submit and finish scenes with isolated data"
+    ]
+  },
+  "review": "Independent parent/root review pending; source author self-check is not release approval",
+  "dependencies": "Node22.23.3 /private/tmp/gc-admin-toolchain/node/bin/node; exact package-lock matches reused via untracked symlinks: tools/ui jsdom26.1.0, tools/browser-layout playwright1.56.1, functions existing runtime. No installs."
+}
