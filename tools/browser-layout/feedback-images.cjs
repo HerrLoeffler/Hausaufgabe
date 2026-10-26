@@ -24,42 +24,25 @@ async function ready() {
    let page;
    try {
     page = await browser.newPage({viewport:name==='webkit'?{width:390,height:844}:{width:1280,height:800}});
-    page.on('console',message=>{if(message.text().startsWith('GC_IMAGE_DIAG'))console.log(name+': '+message.text());});
-    await page.addInitScript(()=>{
-     const blob=HTMLCanvasElement.prototype.toBlob;
-     HTMLCanvasElement.prototype.toBlob=function(callback,...args){console.log('GC_IMAGE_DIAG export start '+this.width+'x'+this.height);return blob.call(this,value=>{console.log('GC_IMAGE_DIAG export done '+value?.size);callback(value);},...args);};
-     const put=IDBObjectStore.prototype.put;
-     IDBObjectStore.prototype.put=function(value,...args){console.log('GC_IMAGE_DIAG storage put '+(value?.imageBlob?.size||0));const request=put.call(this,value,...args);request.addEventListener('success',()=>console.log('GC_IMAGE_DIAG storage request success'));request.addEventListener('error',()=>console.log('GC_IMAGE_DIAG storage request error '+request.error?.name));request.transaction.addEventListener('complete',()=>console.log('GC_IMAGE_DIAG storage complete'));request.transaction.addEventListener('abort',()=>console.log('GC_IMAGE_DIAG storage abort '+request.transaction.error?.name));return request;};
-    });
     await page.goto('http://127.0.0.1:8781/');
-    await page.getByRole('button',{name:'Exportpixel prüfen',exact:true}).click();
-    await page.getByText(/Pixelprüfung bestanden/).waitFor();
-    // This is a genuine browser screenshot of a synthetic page, not DOM reconstruction.
-    const screenshot = await page.screenshot();
-    await page.getByRole('button',{name:'Feedback mit Screenshot geben',exact:true}).click();
-    await page.locator('dialog[open]').waitFor({timeout:20000});
-    const chooserPromise = page.waitForEvent('filechooser');
-    await page.getByRole('button',{name:'Screenshot beifügen',exact:true}).click();
-    await (await chooserPromise).setFiles({name:'synthetic-browser-screenshot.png',mimeType:'image/png',buffer:screenshot});
-    await page.getByText('Bild beigefügt. Bitte private Inhalte vor dem Senden schwärzen.',{exact:true}).waitFor();
+    await page.locator('#sample').waitFor();
+    await page.getByRole('button',{name:'Feedback geben – Bereich markieren',exact:true}).click();
+    const bounds=await page.locator('#sample').boundingBox();
+    const x=bounds.x+8,y=bounds.y+8;
+    await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x+70,y+50,{steps:6});await page.mouse.up();
     await page.locator('.gcImageStage canvas').waitFor({state:'visible'});
-    await page.getByText('Bildbereich per Tastatur bearbeiten',{exact:true}).click();
-    for(const [label,value] of [['Links (Pixel)','0'],['Oben (Pixel)','0'],['Breite (Pixel)','300'],['Höhe (Pixel)','200']]) {
-     await page.getByLabel(label,{exact:true}).fill(value);
-    }
-    await page.getByRole('button',{name:'Bereich anwenden',exact:true}).click();
-    await page.getByText('Bereich dauerhaft geschwärzt.',{exact:true}).waitFor();
-    await page.getByRole('button',{name:'Entwurf sichern und schließen',exact:true}).click();
-    await page.locator('dialog[open]').waitFor({state:'detached'});
+    assert.equal(await page.locator('dialog select,dialog input[type=file],dialog details').count(),0);
+    await page.getByLabel('Was ist dir aufgefallen?',{exact:true}).fill('Synthetic selected area: clipped control');
+    // Wait for actual durable bytes, not a timer before reloading.
+    await page.waitForFunction(async()=>{const {createReviewStorage}=await import('/review-store.mjs');const d=await createReviewStorage().get('staging:preview-teacher:visual-draft');return d?.text==='Synthetic selected area: clipped control'&&d?.imageBytes?.byteLength>0;});
     await page.reload();
     await page.getByLabel('Offline simulieren',{exact:true}).check();
-    await page.getByRole('button',{name:'Feedback mit Screenshot geben',exact:true}).click();
+    await page.getByRole('button',{name:'Feedback geben – Bereich markieren',exact:true}).click();
     await page.locator('.gcImageStage canvas').waitFor({state:'visible'});
-    await page.getByLabel('Was ist dir aufgefallen?',{exact:true}).fill('Synthetic browser screenshot: clipped control');
     await page.getByRole('button',{name:'Feedback mit Bild senden',exact:true}).click();
     await page.getByText(/Lokal gesichert; Übertragung fehlgeschlagen/).waitFor();
     assert.equal(await page.locator('dialog[open]').count(),1);
-    await page.getByRole('button',{name:'Entwurf sichern und schließen',exact:true}).click();
+    await page.getByRole('button',{name:'Abbrechen',exact:true}).click();
     await page.locator('dialog[open]').waitFor({state:'detached'});
     await page.getByLabel('Offline simulieren',{exact:true}).uncheck();
     await page.reload();
@@ -72,11 +55,11 @@ async function ready() {
     const pixel = await img.evaluate(image => {
      const c=document.createElement('canvas');c.width=image.naturalWidth;c.height=image.naturalHeight;
      c.getContext('2d').drawImage(image,0,0);
-     return [...c.getContext('2d').getImageData(100,100,1,1).data];
+     return [...c.getContext('2d').getImageData(15,15,1,1).data];
     });
-    assert.ok(pixel.slice(0,3).every(v=>v<15),'redaction must survive real screenshot file, reload, upload, normalization and authorized read');
+    assert.ok(pixel[0]>180&&pixel[1]<70&&pixel[2]<70,'selected red page pixels must survive automatic capture, reload, upload and authorized image read');
     await page.screenshot({path:path.join(evidence,`feedback-image-${name}.png`),fullPage:true});
-    console.log(name+': actual screenshot file, final-pixel redaction, reload/offline retry, receipt and private Admin raster PASS');
+    console.log(name+': page drag, automatic cropped image, comment, reload/offline retry and private Admin image PASS');
    } catch(error) {
     if(page) {await page.screenshot({path:path.join(evidence,`feedback-image-${name}-failure.png`),fullPage:true}).catch(()=>{});console.error((await page.locator('body').innerText()).slice(-4000));}
     throw error;

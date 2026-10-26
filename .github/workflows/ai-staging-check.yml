@@ -247,7 +247,7 @@ jobs:
           test -f assets/gradecrew/demo-cat.svg
 
       - name: Review mode rights, outbox and isolated scenes
-        run: node --experimental-vm-modules --test tools/ui/review-mode.test.cjs tools/ui/teacher-feedback-end-to-end.test.cjs tools/ui/review-scenes.test.cjs tools/review-preview/server.test.mjs
+        run: node --experimental-vm-modules --test tools/ui/simple-feedback.test.cjs tools/ui/review-mode.test.cjs tools/ui/teacher-feedback-end-to-end.test.cjs tools/ui/review-scenes.test.cjs tools/review-preview/server.test.mjs
 
       - name: Admin account selection and confirmation regressions
         run: |
