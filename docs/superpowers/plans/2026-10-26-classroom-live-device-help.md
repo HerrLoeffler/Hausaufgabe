@@ -105,35 +105,35 @@ Neue Websitepakete werden vom tatsächlich ausgelieferten Dateimanifest gebaut. 
 
 ### Task1: Abgabeverknüpfung reparieren (zuerst)
 Files: assessment-functions/lib/secure-lifecycle.js, classroom-binding.js, dazu tatsächliche aktuelle Laufzeitabhängigkeiten und Handlerregressionen.
-- [ ] Failing regression: aktueller Deploy akzeptiert zugewiesenenGast bzw erzeugtungebundenenVersuch.
-- [ ] Aktuellen DeployQuellstand mitbestehendemClassroomAdapterzusammensetzen,neueVisualAufgabenbehalten.
-- [ ] Handlerprüfungen: gleicherSchüler/gleicheRunde nur einVersuch; echteSubmissionliefertKlassenstatussubmitted; fremderSchülerabgewiesen.
-- [ ] EigenerCheckpoint,gezielt2026Funktionen veröffentlichen,synthetischenE2E-Nachweis sichern; alteAbgaben nurlesen/erhalten.
+- [x] Failing regression: aktueller Deploy akzeptiert zugewiesenenGast bzw erzeugtungebundenenVersuch.
+- [x] Aktuellen DeployQuellstand mitbestehendemClassroomAdapterzusammensetzen,neueVisualAufgabenbehalten.
+- [x] Handlerprüfungen: gleicherSchüler/gleicheRunde nur einVersuch; echteSubmissionliefertKlassenstatussubmitted; fremderSchülerabgewiesen.
+- [x] EigenerCheckpoint,gezielt2026Funktionen veröffentlichen,synthetischenE2E-Nachweis sichern; alteAbgaben nurlesen/erhalten.
 
 ### Task2: Weblayout und LIVE-Einstieg
 Files: classroom/online-workspace.mjs/css,exam-monitor.mjs, neue kleine UI-Helfer falls nötig, tools/classroom-preview/build-online-2026.mjs.
-- [ ] RED für frischeaktuelleRundenwahl,Mehrklassenwahl,Konto/Rundenwechsel,Name/Klassenfilter.
-- [ ] FesteNavigation/Toolbar,Klassenöffnung,Schülersuche undLIVE-Testkartenbutton umsetzen.
-- [ ] MonitorKopf/Filter/Start/Hilfen gestalterisch vereinheitlichen,alteDruckwegeerhalten.
-- [ ] BrowserDesktop/Tablet/Mobil: Namen/Knöpfe lesbar,keinunerreichbarerDialog,Login/Originaltestsintakt.
+- [x] RED für frischeaktuelleRundenwahl,Mehrklassenwahl,Konto/Rundenwechsel,Name/Klassenfilter.
+- [x] FesteNavigation/Toolbar,Klassenöffnung,Schülersuche undLIVE-Testkartenbutton umsetzen.
+- [x] MonitorKopf/Filter/Start/Hilfen gestalterisch vereinheitlichen,alteDruckwegeerhalten.
+- [x] BrowserDesktop/Tablet/Mobil: Namen/Knöpfe lesbar,keinunerreichbarerDialog,Login/Originaltestsintakt.
 
 ### Task3: Authentifizierte Gerätehilfe
 Files: assessment-functions/lib/classroom-device-actions.js (neu),classroom-service.js,classroom-functions.js,classroom-binding.js, entsprechendeTests; WebHilfe undMonitor.
-- [ ] RED: Fremdlehrer,falscherVersuch,generation,token,Doppelklick,veralteteBestätigung,Receipt-Rennen.
-- [ ] requestDeviceExit,deviceExitStatus,acknowledgeDeviceExit,allowDeviceResume mitgenauerBindung undAudit umsetzen.
-- [ ] UIbestätigtPerson/Grund undzeigtangefordert/angekommen/beendet/fehlgeschlagen; Offlinehilfeeinbauen.
-- [ ] KeineRoles/Rules-Aufweichung,keinCodeindenLogs,keineMutationohneBerechtigung.
+- [x] RED: Fremdlehrer,falscherVersuch,generation,token,Doppelklick,veralteteBestätigung,Receipt-Rennen.
+- [x] requestDeviceExit,deviceExitStatus,acknowledgeDeviceExit,allowDeviceResume mitgenauerBindung undAudit umsetzen.
+- [x] UIbestätigtPerson/Grund undzeigtangefordert/angekommen/beendet/fehlgeschlagen; Offlinehilfeeinbauen.
+- [x] KeineRoles/Rules-Aufweichung,keinCodeindenLogs,keineMutationohneBerechtigung.
 
 ### Task4: Secure-App
 Files: SecureExamCoordinator.swift,SecureSavedWork.swift,SecureReplacementPolicy.swift oderneuePolicy,SecureStagingRootView.swift, Tests/BuildkonfigurationnachbestehenderStruktur.
-- [ ] RED: FreigabepayloadnurfüridentischenVersuch,gesicherteAntwortenerhalten,spätesCallbacktrifftkeinenneuenVersuch.
-- [ ] UnabhängigerStatusabrufauchbeiWiederherstellung,Ausblenden/Sichern/AACEnde/Bestätigung,gesperrteFortsetzungimplementieren.
-- [ ] PrüfungvorerneutemAACStartundbewussteFortsetzung desselbenVersuchs;AbgabeReceiptbleibtmaßgeblich.
+- [x] RED: FreigabepayloadnurfüridentischenVersuch,gesicherteAntwortenerhalten,spätesCallbacktrifftkeinenneuenVersuch.
+- [x] UnabhängigerStatusabrufauchbeiWiederherstellung,Ausblenden/Sichern/AACEnde/Bestätigung,gesperrteFortsetzungimplementieren.
+- [x] PrüfungvorerneutemAACStartundbewussteFortsetzung desselbenVersuchs;AbgabeReceiptbleibtmaßgeblich.
 - [ ] Swift/NativeBuild/Layout/Integrationprüfungen;ein2026TestFlightKandidat,BuildnummerausRunbelegen,nichtschätzen.
 
 ### Task5: Abschluss und gemeinsamer Test
-- [ ] Gesamtsuites,frischerbegrenzterGesamtReviewundbelegteFixes.
-- [ ] Hostingnur2026mitaktuellerVersionsLease,öffentlicheHashes;BackendrevisionenundQuellbezügegetrenntdokumentieren.
+- [x] Gesamtsuites,frischerbegrenzterGesamtReviewundbelegteFixes.
+- [x] Hostingnur2026mitaktuellerVersionsLease,öffentlicheHashes;BackendrevisionenundQuellbezügegetrenntdokumentieren.
 - [ ] Nutzergerät: persönlicherCode→LIVEwartend→gemeinsamerStart→Abgabe→Erledigt/Lehrerabgegeben→keinzweiterVersuch.
 - [ ] TechnischeHilfe: gezieltesiPadbeenden→Bestätigung→Fortsetzungerlauben→gleicherVersuch/Antworten;Offlinefallbleibtausdrücklichunbestätigt.
 - [ ] TODO/STATE/Handoffaktualisieren;keinephysischeAppleAbnahmebehauptenohneGerätebeleg.
@@ -153,3 +153,7 @@ Files: SecureExamCoordinator.swift,SecureSavedWork.swift,SecureReplacementPolicy
 - BestehenderreviewPanelrutschtwegenNamenskollisionmitreview-mode.cssrechtsalsFloatingPanel. GezielteIDgebundeneCSS-KorrekturverwendetdiebestehendeBewertungbreitunterderErgebnisliste;keineneueBewertungsengine.
 - PrüfhilfefürkritischeAntworten: vorhandenerRegistryWorkstreamfreetext-review/feature/freetext-review-priorityistblocked;aktuellenFREETEXT_REVIEW_STATUS.mdlesen,keinzweitesKIPrüfsystemnebendranbauen. EigentlicherRisikosortierungs-/WilmaAnschlussistgesonderterIntegrationsscope,keineautomatischeNotenänderung.
 - AAC-EndeohneAppleCallbackistkeinebestätigteEntsperrung. NachAppneustartohneaktuellesSessionobjektmeldetdieAppfehlendeBestätigung;keinErfolgaufgrundnil. BestehenderErsatzversuchkanneinenaltenunterbrochenenStandübergetypteReplacementReceiptablösenundgeschütztarchivieren;keineheimlicheAntwortlöschung.
+
+
+## Verifizierter Zwischenstand 26Oct2026
+Webaa62f3da/Backendba0b6af8 auf2026,216öffentlicheHashes,741Webtests. VierImportant-Reviewpunkte in einerRED/GREEN-Passagebehoben. OriginalbewertungunterTabelle,ZurückzumgleichenLIVE und768/390Viewporttatsächlichgeprüft. TestZwei-Demodatenexplizitnachverknüpft,Extraabgabeerhalten,erneuterStartabgewiesen. GeräteprotokollmitsynthetischemClientgeprüft,keinephysischeAppleAbnahme. Native30152288/run40395762544:3iPadGatesPASS,phonefailed(WebKitunresponsivebeimOffline-Recovery-Test),Uploadskipped. KeineBuildverfügbarkeitbehaupten;gezielteReproduktionläuft.
