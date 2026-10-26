@@ -27,8 +27,11 @@ test('submission is ordinary flow after every question, never sticky/fixed', () 
   assert.doesNotMatch(html, /secureSubmitBtn[^>]*disabled/);
 });
 test('real local GC logo is shared by loading/join/running/receipt states and included in build', () => {
-  assert.match(html, /<img class="secureBrandMark" src="\.\/assets\/gradecrew\/brand-icon\.svg"[^>]*alt="GradeCrew Logo"/);
-  assert.ok(fs.existsSync('assets/gradecrew/brand-icon.svg'));
+  const manifest = JSON.parse(fs.readFileSync('shared/gradecrew-design/assets.json', 'utf8'));
+  const logo = new JSDOM(html).window.document.querySelector('img.secureBrandMark');
+  assert.equal(logo.getAttribute('src'), `./${manifest.root}/${manifest.brand.icon}`);
+  assert.equal(logo.getAttribute('alt'), 'GradeCrew Logo');
+  assert.ok(fs.existsSync(`${manifest.root}/${manifest.brand.icon}`));
   const build = fs.readFileSync('tools/build-staging.mjs', 'utf8');
   assert.match(build, /name\.endsWith\('\.svg'\)/);
   assert.ok(build.includes("'secure-student-navigation.mjs'"));
