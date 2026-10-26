@@ -77,6 +77,9 @@ function fixture() {
     Date: class extends Date { static now() { return now; } },
     require: name => {
       if (name === './offline-recovery-policy') return require('../lib/offline-recovery-policy');
+      if (name === './assessment-run-id') return require('../lib/assessment-run-id');
+      if (name === './classroom-actions') return require('../lib/classroom-actions');
+      if (name === './classroom-binding') return require('../lib/classroom-binding');
       if (name === './observability') return require('../lib/observability');
       if (name === './audio-release-gate') return require('../lib/audio-release-gate');
       if (name === 'firebase-functions/logger') return { info() {}, warn() {}, error() {} };
@@ -89,7 +92,7 @@ function fixture() {
       throw Error(name);
     }
   };
-  vm.runInNewContext(fs.readFileSync(require.resolve('../lib/secure-lifecycle'), 'utf8'), context);
+  vm.runInNewContext(fs.readFileSync(process.env.GC_CLASSROOM_HANDLER_SOURCE || require.resolve('../lib/secure-lifecycle'), 'utf8'), context);
   const quizId = 'AUDIT1';
   const token = 'A'.repeat(43);
   const questions = [{ id: 'q1', position: 1, type: 'number', text: '2+2', points: 1, numericAnswer: 4 }];
@@ -497,4 +500,30 @@ test('missing immutable audio can be repaired on authenticated start retry only 
   f.docs.get(`quizzes/${f.quizId}/audioScripts/q1`).solutionAudioDataUrl = 'data:audio/wav;base64,TkVX';
   await f.start('repairmedia');
   assert.equal(f.docs.has('assessmentSolutionAssets/' + assetId), false);
+});
+
+function classroomFixture(){const f=fixture();const {hash}=require('../lib/classroom-service');const sessionToken='C'.repeat(43);f.docs.set('classroomQuizPolicies/'+f.quizId,{required:true,schoolId:'school',sessionRunId:'run1'});f.docs.set('classroomSessions/'+hash(sessionToken),{schoolId:'school',studentId:'pupil',deviceMode:'shared',lastActivity:f.now,expiresAt:f.now+300000,accessVersion:1});f.docs.set('classroomSchools/school/students/pupil',{firstName:'Test',lastName:'Eins',status:'active',accessVersion:1});f.docs.set('classroomSchools/school/assignments/assignment',{quizId:f.quizId,sessionRunId:'run1',recipientIds:['pupil']});const start=(client='classroom-client-0001')=>f.exports.startAssessmentAttempt(f.request({studentName:'FORGED',clientAttemptId:client,attemptToken:f.token,classroomSession:sessionToken,classroomAssignment:'assignment',classroomGeneration:0}));return {...f,startPersonal:start};}
+test('actual assessment handler blocks guest bypass and binds server pupil name to one attempt',async()=>{const f=classroomFixture();await assert.rejects(f.start('guest'),{code:'unauthenticated'});assert.equal([...f.docs.keys()].some(k=>k.includes('/attempts/')),false);const a=await f.startPersonal();const stored=f.docs.get(`quizzes/${f.quizId}/attempts/${a.attemptId}`);assert.equal(stored.studentName,'Test Eins');assert.equal(stored.classroom.studentId,'pupil');await assert.rejects(f.startPersonal('different-client-0001'),{code:'already-exists'});const submitted=await f.submit(a.attemptId);assert.equal(submitted.receipt.attemptId,a.attemptId);const saved=f.docs.get(`quizzes/${f.quizId}/submissions/${a.attemptId}`);assert.equal(saved.classroom.studentId,'pupil');assert.equal(saved.classroom.assignmentId,'assignment');});
+test('released replacement blocks old attempt submission and leaves old answers/attempt intact',async()=>{const f=classroomFixture();const a=await f.startPersonal();const path='classroomSchools/school/assignments/assignment/participants/pupil';f.docs.set(path,{generation:1,attemptId:null});await assert.rejects(f.submit(a.attemptId),{code:'failed-precondition'});assert.equal(f.docs.get(`quizzes/${f.quizId}/attempts/${a.attemptId}`).status,'running');assert.equal(f.docs.has(`quizzes/${f.quizId}/submissions/${a.attemptId}`),false);await assert.rejects(f.exports.resumeAssessmentAttempt(f.request({attemptId:a.attemptId,attemptToken:f.token})),{code:'failed-precondition'});});
+test('guest attempts started before a class assignment cannot resume or submit after its personal gate is enabled',async()=>{const f=fixture();const a=await f.start('prior-guest');f.docs.set('classroomQuizPolicies/'+f.quizId,{required:true,schoolId:'school',sessionRunId:'run1'});await assert.rejects(f.exports.resumeAssessmentAttempt(f.request({attemptId:a.attemptId,attemptToken:f.token})),{code:'permission-denied'});await assert.rejects(f.submit(a.attemptId),{code:'permission-denied'});assert.equal(f.docs.has(`quizzes/${f.quizId}/submissions/${a.attemptId}`),false);});
+test('personal gate also protects self-start rounds using the authoritative student epoch run id',async()=>{const f=fixture();Object.assign(f.docs.get(`quizzes/${f.quizId}`),{startMode:'student',publishedAt:f.now,sessionRunId:'author-ui-run'});f.docs.set('classroomQuizPolicies/'+f.quizId,{required:true,schoolId:'school',sessionRunId:`student_${f.now}`});await assert.rejects(f.start('guest'),{code:'unauthenticated'});});
+test('lost personal start response remains recoverable with the original attempt secret after login session expiry',async()=>{const f=classroomFixture();const first=await f.startPersonal();const {hash}=require('../lib/classroom-service');f.docs.get('classroomSessions/'+hash('C'.repeat(43))).expiresAt=f.now-1;const recovered=await f.startPersonal();assert.equal(recovered.attemptId,first.attemptId);await assert.rejects(f.startPersonal('new-client-after-expiry'),{code:'unauthenticated'});});
+
+test('explicit replacement returns typed receipt only with original attempt secret and never creates a submission',async()=>{const f=classroomFixture();const a=await f.startPersonal();const base='classroomSchools/school/assignments/assignment';f.docs.set(base+'/participants/pupil',{generation:1,attemptId:null});f.docs.set(base+'/replacements/'+a.attemptId,{studentId:'pupil',oldGeneration:0,generation:1,actionId:'release1',releasedAt:1000});const r=await f.exports.resumeAssessmentAttempt(f.request({attemptId:a.attemptId,attemptToken:f.token}));assert.equal(r.status,'replaced');assert.equal(r.replacementReceipt.oldAttemptId,a.attemptId);const submit=await f.submit(a.attemptId);assert.equal(submit.status,'replaced');assert.ok(!f.docs.has(`quizzes/${f.quizId}/submissions/${a.attemptId}`));await assert.rejects(f.exports.resumeAssessmentAttempt(f.request({attemptId:a.attemptId,attemptToken:'B'.repeat(43)})),{code:'permission-denied'});});
+
+
+test('a confirmed personal submission cannot be repeated from a new client attempt',async()=>{
+ const f=classroomFixture(),a=await f.startPersonal();await f.submit(a.attemptId);
+ const saved=f.docs.get(`quizzes/${f.quizId}/submissions/${a.attemptId}`);
+ assert.equal(saved.classroom.studentId,'pupil');
+ await assert.rejects(f.startPersonal('repeat-after-receipt1'),{code:'already-exists'});
+ assert.equal([...f.docs.keys()].filter(p=>p.includes('/submissions/')).length,1);
+});
+
+test('unresolved submissions from a lost Classroom deployment block another personal start without merging by name',async()=>{
+ const f=classroomFixture();f.docs.set(`quizzes/${f.quizId}/submissions/orphan`,{studentName:'Test Eins',sessionRunId:'run1',attemptId:'orphan',status:'graded'});
+ await assert.rejects(f.startPersonal(),{code:'failed-precondition'});
+ assert.equal([...f.docs.keys()].some(p=>p.includes('/attempts/')),false);
+ f.docs.get(`quizzes/${f.quizId}/submissions/orphan`).classroomResolution={disposition:'retained'};
+ const a=await f.startPersonal();assert.ok(a.attemptId);
 });
