@@ -1277,11 +1277,11 @@
       "branch": "feature/classroom-integrated-preview-20261016",
       "observed_head": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d",
       "stage": "staging_deployed",
-      "ci": "web742_pass;Secure1232_all5jobs_success_available;new_version_footer630236ad_local39Swift3UI2builds_pass_CI_pending",
+      "ci": "web742_pass;regularLiveSecure6f678263_local39Swift24Python16integration_2builds_PASS_CI40408087983pending",
       "staging": "gradecrew-staging-2026_only",
       "user_test": "user_confirmed_classes_visible;executor_real_teacher_LIVE_results_return_and_wide_grading_verified;physical_AAC_pending",
       "handoff": "workstreams/classroom-student-management-v1.md",
-      "next_action": "Observe existing footer candidate40405595287 without duplicate build; verify physical installed build and device control. Implement separate confirmed targeted teacher finish-and-submit command; current exit only suspends. No canonical Hosting deploy until full inventory+Wilma preservation guard.",
+      "next_action": "Confirm obsolete own2026run40405595287 cancelled, observe newLivecandidate40408087983, inspect exact selected project/sign/upload and Apple availability before device acceptance. Do not touch other TestApp40402049037. No web/backend deployment.",
       "deployment_evidence": {
         "project": "gradecrew-staging-2026",
         "hosting_source": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d",
@@ -1297,13 +1297,16 @@
         "teacher_original_tests_preserved": "existing teacher login/tests/editor preserved; user changes retained",
         "review_fixes": "four Important fixed RED_GREEN; whole web741_pass; no open review findings",
         "native_candidate": {
-          "source": "630236ad0b96af751a4a5151ba988076d1c2fb68",
-          "run_id": 40405595287,
-          "run_number": 26,
+          "source": "6f678263312cb295df3065c2e527f30e1994876c",
+          "run_id": 40408087983,
+          "run_number": 27,
           "status": "pending",
           "uploaded": false,
-          "scope": "Visible actual installed version/build footer in all root phases and personal sheet; no AAC or submission logic changes",
-          "local_verification": "39SwiftPASS;3actualphoneUIchecksPASS;normal+2026shippingbuildsSUCCESS",
+          "release_target": "live",
+          "firebase_project": "hausaufgabe-staging",
+          "public_host": "gradecrew.de",
+          "scope": "Human requested regular Secure back to gradecrew.de; preserve installed version footer, existing Live stores and protect pending historical2026 work",
+          "local_verification": "24Python39Swift16actualiPadintegrationPASS;bothenvironmentpoliciesPASS;Live+2026shippingbuildsSUCCESS;independentreview_noCriticalImportant",
           "physical_acceptance": false
         },
         "negative_checks": {
@@ -1366,7 +1369,15 @@
         "development_status": "run40397952832 success; integration4fe345c16d; overlaps remain; no merge",
         "teacher_restart_proof": "actual teacher button -> generation+1 once -> old resume+submit replaced -> new attempt receipt -> pupil submitted -> teacher row Abgegeben; synthetic Pupil05",
         "compact_help": "two short action sections; disabled reasons visible; confirmations only on click; offline details collapsed",
-        "print_layout": "centered brand/name/class/code; no printed schoolyear;4options list/12/6/single;common short code hint;no code rotation"
+        "print_layout": "centered brand/name/class/code; no printed schoolyear;4options list/12/6/single;common short code hint;no code rotation",
+        "obsolete_2026_footer_candidate": {
+          "source": "630236ad0b96af751a4a5151ba988076d1c2fb68",
+          "run_id": 40405595287,
+          "status": "cancellation_requested_GitHub_UI_success;API_in_progress_until_confirmed",
+          "reason": "Human changes regular app target back to gradecrew.de",
+          "uploaded": false
+        },
+        "live_readonly_test_probe": "gradecrew.de authenticated teacher52tests;QEG6RA6N teacher-start and75RPVJPE student-start getAssessmentInfo correcttitles/offlineRecovery1;noattempt/submission"
       }
     },
     {
