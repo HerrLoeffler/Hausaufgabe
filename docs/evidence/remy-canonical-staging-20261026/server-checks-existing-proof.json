@@ -1,0 +1,80 @@
+{
+  "project": "gradecrew-staging-2026",
+  "quizId": "BZFKMUEB",
+  "jobId": "4107be8859d80691d522c2010d262b42c6333279",
+  "formats": [
+    "timeline",
+    "coordinate",
+    "hotspot",
+    "labeling",
+    "angle",
+    "sequence"
+  ],
+  "results": [
+    {
+      "case": "correct",
+      "expected": 12,
+      "totalPoints": 12,
+      "maxPoints": 12,
+      "publicPaperSolutionFree": true,
+      "resumePaperUnchanged": true,
+      "idempotent": true,
+      "at": "2026-10-26T19:04:38.535Z"
+    },
+    {
+      "case": "blank",
+      "expected": 0,
+      "totalPoints": 0,
+      "maxPoints": 12,
+      "publicPaperSolutionFree": true,
+      "resumePaperUnchanged": true,
+      "idempotent": null,
+      "at": "2026-10-26T19:04:39.293Z"
+    },
+    {
+      "case": "mixed",
+      "expected": 6,
+      "totalPoints": 6,
+      "maxPoints": 12,
+      "publicPaperSolutionFree": true,
+      "resumePaperUnchanged": true,
+      "idempotent": null,
+      "at": "2026-10-26T19:04:39.954Z"
+    },
+    {
+      "case": "wrong",
+      "expected": 0,
+      "totalPoints": 0,
+      "maxPoints": 12,
+      "publicPaperSolutionFree": true,
+      "resumePaperUnchanged": true,
+      "idempotent": null,
+      "at": "2026-10-26T19:04:40.578Z"
+    },
+    {
+      "case": "tolerance",
+      "expected": 12,
+      "totalPoints": 12,
+      "maxPoints": 12,
+      "publicPaperSolutionFree": true,
+      "resumePaperUnchanged": true,
+      "idempotent": null,
+      "at": "2026-10-26T19:04:41.231Z"
+    },
+    {
+      "case": "duplicate-cards",
+      "expected": 0,
+      "totalPoints": 0,
+      "maxPoints": 12,
+      "publicPaperSolutionFree": true,
+      "resumePaperUnchanged": true,
+      "idempotent": null,
+      "at": "2026-10-26T19:04:41.744Z"
+    }
+  ],
+  "source": "1cca66feba85bb94c931d1a41064cce16cbadd16",
+  "endpointPrefix": "",
+  "normalAssessmentEndpoints": true,
+  "fixture": "Existing own synthetic BZFKMUEB reused; this is separate from new UI-generated draft YN6HWE5T. No new provider generation for these checks.",
+  "harnessRecovery": "First adapted QA call retained uppercase preview suffix and hit no existing normal endpoint; lowerCamelCase corrected, saved clientAttemptId retained."
+}

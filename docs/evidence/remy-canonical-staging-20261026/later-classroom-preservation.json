@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-26T19:11:49.972Z",
+  "newerHostingSource": "22703241c2534f9998f72379141e479805d2e119",
+  "hashesVerified": 212,
+  "preservedBaseFiles": 204,
+  "changedBaseFiles": [
+    "workspace.html"
+  ],
+  "additiveFiles": [
+    "classroom/online-client.mjs",
+    "classroom/online-workspace.mjs",
+    "classroom/online-workspace.css",
+    "classroom/exam-monitor.mjs",
+    "classroom/online-pupil-session.mjs",
+    "classroom/exam-replacement.mjs",
+    "classroom/access-print.mjs"
+  ],
+  "normalRemySource": "1cca66feba85bb94c931d1a41064cce16cbadd16",
+  "normalEndpointsUnchanged": 18,
+  "scope": "Independent classroom host addition preserves current Remy build; no rollback or overwrite performed."
+}

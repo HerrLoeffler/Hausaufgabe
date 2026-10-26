@@ -1,6 +1,14 @@
 # Interaktive Aufgaben mit Remy erstellen
 
-Stand26.10.2026 · GC-EXTENDED-QUESTION-TYPES-01 · PR310. Code und getrennte Testvorschau; noch kein Production-Release dieser Erweiterung.
+Stand26.10.2026 · GC-EXTENDED-QUESTION-TYPES-01 · PR310. Reguläres Staging mit echter KI; kein Production-Release dieser Erweiterung.
+
+## Aktuell: normale Staging-Seite mit echter KI
+
+Seit26.10.2026 ist diese Erweiterung regulär auf **https://gradecrew-staging-2026.web.app/** verfügbar. Mit dem bestehenden Stagingkonto anmelden → Neuer Test → Test mit Remy erstellen. Die normalen Endpunkte ohne remy26-/visual255-Präfix sind aktiv. PR310 wurde als22fa3ec8 integriert; veröffentlichter Quellstand1cca66fe,205Dateien verifiziert. Zwölf KI- und sechs Prüfungsfunktionen gezielt aktualisiert;62andere Cloudfunktionen erhalten. Ein anschließend ergänzter Klassenraum-Hostingstand22703241 (212Dateien) erhält die Remy-Basis und alle18Dienste; kein Rückrollen dieser parallelen Arbeit.
+
+Wichtig zur Namenszuordnung:hausaufgabe-staging.web.app ist inzwischen dieselbe Live-Installation wie gradecrew.de. Deshalb bleibt sie bei diesem ausdrücklich auf Tests begrenzten Auftrag unverändert. Die unabhängige reguläre Testumgebung ist gradecrew-staging-2026.
+
+Echter neuer KI-Auftrag über die normale Staging-Oberfläche:6Aufgaben/12Punkte, EntwurfYN6HWE5T. Alle sechs Unterformate vorhanden und serverseitig gespeichert. Eine fehlende Koordinatenvorgabe wurde bei der Lehrkraftprüfung ergänzt; KI-Erstellung ersetzt weiterhin keine fachliche Prüfung. Normale Serverauswertung separat mit eigenem bestehenden TestBZFKMUEB bestätigt (12/0/6/0/12/0). Vorherige Vorschau-/Versuchshistorie bleibt unten als historischer Nachweis erhalten. Kein erneuter Generatorstart zum Wiederaufnehmen eines vorhandenen Auftrags. [Aktueller Deploynachweis](../evidence/remy-canonical-staging-20261026/deployment.json).
 
 ## Als Lehrkraft
 

@@ -1,0 +1,31 @@
+{
+  "at": "2026-10-26T19:00:26.670Z",
+  "project": "gradecrew-staging-2026",
+  "url": "https://gradecrew-staging-2026.web.app/",
+  "source": "1cca66feba85bb94c931d1a41064cce16cbadd16",
+  "integration": "22fa3ec8cff23003e409c23c47a78323e3fa16f7",
+  "version": "2.3.1-gc45-rc1",
+  "hashesVerified": 205,
+  "previewEnabled": false,
+  "normalEndpoints": true,
+  "liveOriginsUnchanged": [
+    "https://gradecrew.de",
+    "https://hausaufgabe-staging.web.app"
+  ],
+  "functions": {
+    "project": "gradecrew-staging-2026",
+    "targeted": 18,
+    "targetedActive": 18,
+    "untargetedPreserved": 62,
+    "unexpected": [],
+    "newFunctions": []
+  },
+  "aiStatus": {
+    "at": "2026-10-26T18:55:34.951Z",
+    "project": "gradecrew-staging-2026",
+    "endpoint": "getAiStatus",
+    "enabled": true,
+    "role": "teacher",
+    "promptVersion": "testify-ai-v16"
+  }
+}
