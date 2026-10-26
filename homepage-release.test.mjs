@@ -19,7 +19,7 @@ test('the published homepage links to existing app and legal pages without a sec
  const d=new JSDOM(fs.readFileSync('homepage/index.html','utf8'),{url:'https://gradecrew.de/'}).window.document;
  assert.equal(d.getElementById('loginLink').getAttribute('href'),'/workspace.html?intent=login');
  assert.equal(d.getElementById('registerLink').getAttribute('href'),'/workspace.html?intent=register');
- for(const path of ['/workspace.html','/datenschutz.html','/impressum.html','/support.html'])assert.ok(d.querySelector(`a[href="${path}"]`));
+ for(const path of ['/secure-student.html','/datenschutz.html','/impressum.html','/support.html'])assert.ok(d.querySelector(`a[href="${path}"]`));
  assert.equal(d.querySelectorAll('[data-lang]').length,2);
  assert.equal(d.querySelectorAll('.crew-names span').length,4);
 });

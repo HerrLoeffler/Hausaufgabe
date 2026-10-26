@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
-  <title>GradeCrew · Sicherer Test</title>
+  <title>GradeCrew · Schülerzugang</title>
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./design-system.css">
   <link rel="stylesheet" href="./gradecrew-brand.css">
@@ -20,6 +20,19 @@
   </header>
 
   <main class="secureShell">
+    <section id="secureJoin" class="secureCard hidden" aria-labelledby="secureJoinTitle">
+      <div class="secureEyebrow">GradeCrew · Schülerzugang</div>
+      <h1 id="secureJoinTitle">Test oder Übung öffnen</h1>
+      <p>Gib den Testcode deiner Lehrkraft ein. Danach verwendest du dein vereinbartes Kürzel. Du brauchst kein Schülerkonto und keine App.</p>
+      <form id="secureJoinForm" class="secureStartForm" novalidate>
+        <label for="secureJoinCode">Testcode deiner Lehrkraft</label>
+        <input id="secureJoinCode" name="test" type="text" maxlength="32" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" required aria-describedby="secureJoinError" placeholder="z. B. K7M4X2PA">
+        <p id="secureJoinError" class="secureInlineError" role="alert"></p>
+        <button class="button primary" type="submit">Weiter zum Test</button>
+      </form>
+      <p class="hint">Ein Testcode gilt für den von deiner Lehrkraft freigegebenen Test. Er ist kein persönlicher Kontozugang.</p>
+      <a href="./" class="button secondary">Zur Startseite</a>
+    </section>
     <section id="secureLoading" class="secureCard secureLoading" aria-live="polite">
       <span class="loadingDot"></span>
       <div><strong>Test wird geladen …</strong><small>Einen Moment bitte.</small></div>
@@ -85,7 +98,7 @@
   <!-- Restore an unfinished attempt before the main student module reads its draft. -->
   <script type="module" src="./secure-draft-persistence.js"></script>
   <script type="module" src="./secure-student-navigation.mjs?v=1"></script>
-  <script type="module" src="./secure-student.js?v=2.3.1-gc45-rc1"></script>
+  <script type="module" src="./secure-student.js?v=student-join-20261026"></script>
   <script type="module" src="./secure-deadline-guard.js"></script>
   <script type="module" src="./secure-result-policy.js"></script>
   <script type="module" src="./secure-solution-release.js"></script>

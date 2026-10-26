@@ -27,7 +27,7 @@ function setConnection(online, text) {
 }
 
 function showOnly(id) {
-  ["secureLoading", "secureIntro", "secureWaiting", "secureAssessment", "secureResult", "secureError"]
+  ["secureJoin", "secureLoading", "secureIntro", "secureWaiting", "secureAssessment", "secureResult", "secureError"]
     .forEach(name => $(name)?.classList.toggle("hidden", name !== id));
 }
 
@@ -122,7 +122,7 @@ function fillIntro(quiz) {
   $("secureStartBtn").textContent = quiz.startMode === "teacher" ? "Ich bin bereit" : "Test starten";
 }
 
-function showError(error, { retry = true } = {}) {
+function showError(error, { retry = true, returnToIntro = false } = {}) {
   clearTimers();
   const host = $("secureError");
   host.replaceChildren();
@@ -138,9 +138,16 @@ function showError(error, { retry = true } = {}) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "button primary";
-    button.textContent = "Erneut versuchen";
-    button.addEventListener("click", () => location.reload());
+    button.textContent = returnToIntro ? "Zurück zur Eingabe" : "Erneut versuchen";
+    button.addEventListener("click", () => returnToIntro ? showOnly("secureIntro") : location.reload());
     host.appendChild(button);
+  }
+  if (!currentAttempt) {
+    const link = document.createElement("a");
+    link.href = "./secure-student.html";
+    link.className = "button secondary";
+    link.textContent = "Anderen Testcode eingeben";
+    host.appendChild(link);
   }
   showOnly("secureError");
 }
@@ -717,6 +724,7 @@ async function submitAssessment(autoSubmitted = false) {
 async function restoreOrShowIntro(info) {
   fillIntro(info.quiz);
   const stored = api.readSession(quizId);
+  if (stored?.studentName) $("secureStudentName").value = stored.studentName;
   if (!stored?.attemptId) {
     showOnly("secureIntro");
     return;
@@ -755,7 +763,7 @@ $("secureStartForm")?.addEventListener("submit", async event => {
   } catch (error) {
     button.disabled = false;
     button.textContent = currentQuiz?.startMode === "teacher" ? "Ich bin bereit" : "Test starten";
-    showError(error);
+    showError(error, { returnToIntro: true });
   }
 });
 
@@ -771,9 +779,32 @@ addEventListener("online", () => setConnection(true, "Verbunden"));
 addEventListener("offline", () => setConnection(false, "Offline"));
 addEventListener("beforeunload", saveDraft);
 
+$("secureJoinForm")?.addEventListener("submit", event => {
+  event.preventDefault();
+  const input = $("secureJoinCode");
+  const code = input.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (code.length < 4 || code.length > 16) {
+    $("secureJoinError").textContent = code ? "Der Testcode ist ungültig. Bitte prüfe ihn mit deiner Lehrkraft." : "Bitte gib den Testcode deiner Lehrkraft ein.";
+    input.setAttribute("aria-invalid", "true");
+    input.focus();
+    return;
+  }
+  const target = new URL("./secure-student.html", location.href);
+  target.search = "";
+  target.hash = "";
+  target.searchParams.set("test", code);
+  location.href = target.href;
+});
+
 async function bootstrap() {
   if (!quizId) {
-    showError(new Error("In diesem Link fehlt der Testcode."), { retry: false });
+    setConnection(navigator.onLine, "Schülerzugang");
+    showOnly("secureJoin");
+    return;
+  }
+  const normalizedCode = quizId.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (normalizedCode.length < 4 || normalizedCode.length > 16) {
+    showError(new Error("Der Testcode ist ungültig."), { retry: false });
     return;
   }
   setConnection(navigator.onLine, navigator.onLine ? "Prüfungsserver wird geprüft …" : "Offline");
