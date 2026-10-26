@@ -1,0 +1,262 @@
+[
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/01-homepage.jpg",
+    "sourceSha256": "062ff7310235545892d38bcd534693f688dfb46d496fb4f71b34b4f887957932",
+    "physicalCrop": [
+      0,
+      0,
+      2560,
+      1318
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/01-homepage.png",
+    "size": [
+      2560,
+      1318
+    ],
+    "safeSha256": "1841d641bfe27bf1ff77c5fdc1f3bbd7b0f740423296527bfed8c56a9be56d92"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/02-anmelden.jpg",
+    "sourceSha256": "2bcc78f6b71ab2a7e0e09ba29ca10735eb9eab391c7abf59e3825240021261e9",
+    "physicalCrop": [
+      0,
+      0,
+      2560,
+      1318
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/02-anmelden.png",
+    "size": [
+      2560,
+      1318
+    ],
+    "safeSha256": "8155854e3eea45ed6ff3dbbc180fd3639940545d39e0b2551d8caee7b374aef0"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/08-live-test-festlegen.jpg",
+    "sourceSha256": "f95e4db914647faa26e34008f33a6ab458abf01eeee0af5c829ee651e2f3e2dc",
+    "physicalCrop": [
+      0,
+      78,
+      1101,
+      878
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/08-live-test-festlegen.png",
+    "size": [
+      1101,
+      800
+    ],
+    "safeSha256": "02528b7aceb76d9235c07d6a1902cf4e3fb351e5a8f25a83788fde9a60d1b018"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/09-live-audio-wuensche.jpg",
+    "sourceSha256": "729b39fc7e81ac0ebaa4e8ab5635bd73a04ac9a65d810d6ea986193220b28e0a",
+    "physicalCrop": [
+      0,
+      0,
+      1101,
+      878
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/09-live-audio-wuensche.png",
+    "size": [
+      1101,
+      878
+    ],
+    "safeSha256": "430bcfe666f614c3664000300d2120fa115219a5e3f13549a2461627bfde349c"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/10-live-material.jpg",
+    "sourceSha256": "3da12e97237010ead3f417ab56a444a192c99273056c6668f15a3b68eeb5d5bc",
+    "physicalCrop": [
+      0,
+      78,
+      1101,
+      878
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/10-live-material.png",
+    "size": [
+      1101,
+      800
+    ],
+    "safeSha256": "4c3dc7a2fd3e4192340c91791215103acfd935a2909e74be9005693393808ee0"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/11-live-feedback.jpg",
+    "sourceSha256": "9b48238a406fb2ff0f00870525a8b31bd107aaf8208cd71fb0968c467e776a1c",
+    "physicalCrop": [
+      225,
+      155,
+      878,
+      797
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/11-live-feedback.png",
+    "size": [
+      653,
+      642
+    ],
+    "safeSha256": "4b9184a9cdaeee7f9b988641011e4d4be69e202f52f761d5bf7e5618c336082b"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/12-live-neuer-test.jpg",
+    "sourceSha256": "a6cba74e630885180b6f09d28fa9235428ee7849c75350434d75fe4639b81116",
+    "physicalCrop": [
+      0,
+      0,
+      1101,
+      878
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/12-live-neuer-test.png",
+    "size": [
+      1101,
+      878
+    ],
+    "safeSha256": "8a4839a519eb99f54407e41fcc75d3b7bc2e8cc62beca20302ad95b9a59b9929"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/13-live-emmi-editor.jpg",
+    "sourceSha256": "e054aba814ec3dcc6592416c11afd5d284231cb119557b7bfb1351eb9c8e96d9",
+    "physicalCrop": [
+      0,
+      78,
+      1101,
+      878
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/13-live-emmi-editor.png",
+    "size": [
+      1101,
+      800
+    ],
+    "safeSha256": "7b8482bfb193a29f335cea28faa6b454a7227216a6962fa07957a8d11a7d8b49"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/14-live-einstellungen-auswertung.jpg",
+    "sourceSha256": "c39b5e85f133fb5969a42ce077ddca52df33a42f0a578ebb1f6cf33930b82cd5",
+    "physicalCrop": [
+      0,
+      78,
+      1101,
+      878
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/14-live-einstellungen-auswertung.png",
+    "size": [
+      1101,
+      800
+    ],
+    "safeSha256": "58442d6b1bc1aeff0d7163365ff9e1c2b5002325eccb100e7400b3bf33f865b6"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/15-live-durchfuehrung.jpg",
+    "sourceSha256": "e5637719a891235a52e1112ef1330e4b5fe6f74898aed9baf2e2453905bde912",
+    "physicalCrop": [
+      0,
+      78,
+      1101,
+      878
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/15-live-durchfuehrung.png",
+    "size": [
+      1101,
+      800
+    ],
+    "safeSha256": "ab4b2241dfd825b225885fa6564480bc524067219bb24e1dd448881845039a32"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/16-live-schuelervorschau.jpg",
+    "sourceSha256": "81d714f382e1b4dd86cd24d195a85be1fabeacb88a818c72be0f271ea6682079",
+    "physicalCrop": [
+      0,
+      0,
+      1280,
+      720
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/16-live-schuelervorschau.png",
+    "size": [
+      1280,
+      720
+    ],
+    "safeSha256": "62e75d081c2454540f874f9abe5b68c89be153dfaa37351c8c4e09bd07dfe8e0"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/17-gradecrew-schuelerzugang.jpg",
+    "sourceSha256": "de2707b44b54dc6191882c38cd911b245c236bb9d5f6bbb52ad5c05e98bfc08c",
+    "physicalCrop": [
+      0,
+      0,
+      2560,
+      1318
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/17-gradecrew-schuelerzugang.png",
+    "size": [
+      2560,
+      1318
+    ],
+    "safeSha256": "c6e7d5a482237c76c8a9d7906d6f48f7ab67fbc888ebed7af309335d15a12340"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/18-live-feedback-untenlinks.jpg",
+    "sourceSha256": "16a9af578a579b9a7aacf2e7e9e0c39ca93c4bc0c65202c2ac0839337db914a1",
+    "physicalCrop": [
+      0,
+      0,
+      1101,
+      876
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/18-live-feedback-untenlinks.png",
+    "size": [
+      1101,
+      876
+    ],
+    "safeSha256": "d68498211be9db6c0405bd8bf634e3e69611e911ef1e5c867478a00263078606"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/19-live-feedback-markierungsdialog.jpg",
+    "sourceSha256": "2ab14222c3ee1551afc047d664bf592f5d4f99bd2a28e07d19f917584c8a1750",
+    "physicalCrop": [
+      0,
+      0,
+      1101,
+      876
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/19-live-feedback-markierungsdialog.png",
+    "size": [
+      1101,
+      876
+    ],
+    "safeSha256": "d538868e90de17538d3c6b926ba30e5e2a01bd7e5868703f5b8841652fb5f013"
+  },
+  {
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v5/captures/20-live-audio-optionen.jpg",
+    "sourceSha256": "bd1754b6ef9d8a2d6c349564a2b4da8f1482fd7e757d37699b0b73b7efa54e36",
+    "physicalCrop": [
+      0,
+      0,
+      1101,
+      876
+    ],
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/20-live-audio-optionen.png",
+    "size": [
+      1101,
+      876
+    ],
+    "safeSha256": "90ce70e1a4c089a8b16ed64abab51780da0e1f64f7373c0eeafa4bfed88fa9e9"
+  },
+  {
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/21-live-remy-grundangaben-mikro.png",
+    "size": [
+      1101,
+      876
+    ],
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v6/captures/21-live-remy-grundangaben-mikro.jpg",
+    "sourceOrigin": "https://hausaufgabe-staging.web.app/",
+    "physicalHeaderRemoval": true
+  },
+  {
+    "safeFile": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/safe/22-live-wuensche-mikro.png",
+    "size": [
+      1101,
+      876
+    ],
+    "source": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v6/captures/22-live-wuensche-mikro.jpg",
+    "sourceOrigin": "https://hausaufgabe-staging.web.app/",
+    "physicalHeaderRemoval": true
+  }
+]

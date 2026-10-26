@@ -1,0 +1,29 @@
+{
+  "task": "GC-TEACHER-INTRO-20261028",
+  "application": "Microsoft PowerPoint for Mac",
+  "openedWithoutRepair": true,
+  "qaCopy": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v7/build/native-qa-v7.pptx",
+  "finalSha256": "30c3a91dc81256ef345fb764693773db0c1577b5f07608620ccf2aa366c77fbc",
+  "qaCopySha256AfterNativeRun": "30c3a91dc81256ef345fb764693773db0c1577b5f07608620ccf2aa366c77fbc",
+  "unchanged": true,
+  "actualPresenterProofs": [
+    "native-3-step-1.png",
+    "native-3-step-2.png",
+    "native-3-step-3.png",
+    "native-3-step-4.png",
+    "native-3-step-5.png",
+    "native-3-step-6.png",
+    "native-3-step-7.png",
+    "native-6-step-1.png",
+    "native-6-step-2.png"
+  ],
+  "visuallyInspectedNativeChangedStates": [
+    "3/3 Testsprache",
+    "3/4 Fach Klasse Schulrahmen and long explanation",
+    "3/7 Gesamtpunkte",
+    "6/2 Einzelpunkte"
+  ],
+  "scope": "Changed relevant phases only. V5 full28phase and V6 changed-state native evidence retained separately; no new full31phase verification claim.",
+  "savedFromPowerPoint": false,
+  "date": "2026-10-26"
+}
