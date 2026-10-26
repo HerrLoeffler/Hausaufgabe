@@ -155,5 +155,238 @@
       "gradingSource": "homepage/grading.mjs",
       "defaultMaxPoints": 2
     }
+  ],
+  "authoringRecipeVersion": "auto-recipes-v1",
+  "authoringRecipes": [
+    {
+      "id": "dreisatz-direct",
+      "format": "table",
+      "builder": "dreisatz",
+      "goal": "Mehrstufige proportionale Prozent- und Zuordnungsrechnung",
+      "subjects": [
+        "mathematik",
+        "mathe"
+      ],
+      "match": [
+        "prozentrechnung",
+        "prozentwert",
+        "grundwert",
+        "prozentsatz",
+        "dreisatz",
+        "proportionale zuordnung"
+      ],
+      "exclude": [
+        "umgekehrt",
+        "antiproportional",
+        "wahl",
+        "wahlen",
+        "pythagoras",
+        "satzglieder"
+      ],
+      "required": [
+        "zwei zusammengehörige Ausgangswerte",
+        "definierter Zwischenweg",
+        "konstantes Verhältnis"
+      ],
+      "whenNotToUse": "Reine Begriffsfrage oder politische Interpretation von Wahlanteilen",
+      "qualification": "contract_verified",
+      "catalogId": "VIS12"
+    },
+    {
+      "id": "dreisatz-inverse",
+      "format": "table",
+      "builder": "dreisatz",
+      "goal": "Umgekehrt proportionale Größen über einen Zwischenweg berechnen",
+      "subjects": [
+        "mathematik",
+        "mathe"
+      ],
+      "match": [
+        "umgekehrt proportional",
+        "antiproportional"
+      ],
+      "exclude": [
+        "wahl",
+        "satzglieder"
+      ],
+      "required": [
+        "konstantes Produkt",
+        "ausdrücklich genannte gleiche Arbeitsleistung"
+      ],
+      "whenNotToUse": "Beliebige Größen ohne konstantes Produkt",
+      "qualification": "contract_verified",
+      "catalogId": "VIS12"
+    },
+    {
+      "id": "part-whole-grid",
+      "format": "grid",
+      "builder": "visual-v2",
+      "goal": "Einen Anteil eines gleichmäßig geteilten Ganzen anschaulich darstellen",
+      "subjects": [
+        "mathematik",
+        "mathe"
+      ],
+      "match": [
+        "anteil",
+        "bruch",
+        "raster",
+        "anschaulich"
+      ],
+      "exclude": [
+        "wahl",
+        "satzglieder"
+      ],
+      "required": [
+        "ganzzahlige passende Zellzahl",
+        "höchstens100gleicheZellen"
+      ],
+      "whenNotToUse": "Reiner mehrstufiger Geldrechenweg ohne Anteilvisualisierung",
+      "qualification": "contract_verified",
+      "catalogId": "VIS05"
+    },
+    {
+      "id": "value-on-scale",
+      "format": "scale",
+      "builder": "visual-v2",
+      "goal": "Werte auf einer maßstabsgetreuen Skala verorten",
+      "subjects": [
+        "mathematik",
+        "mathe",
+        "physik"
+      ],
+      "match": [
+        "skala",
+        "zahlenstrahl",
+        "verorten",
+        "temperatur"
+      ],
+      "exclude": [],
+      "required": [
+        "erreichbarer Wert",
+        "Einheit und Skala"
+      ],
+      "whenNotToUse": "Freie Erklärung oder Begründung",
+      "qualification": "contract_verified",
+      "catalogId": "VIS03"
+    },
+    {
+      "id": "plant-labels",
+      "format": "labeling",
+      "builder": "visual-v2",
+      "goal": "Pflanzenteile am vorhandenen Bild erkennen und benennen",
+      "subjects": [
+        "biologie",
+        "natur und technik"
+      ],
+      "match": [
+        "pflanzenteile",
+        "pflanze beschriften",
+        "blute wurzel"
+      ],
+      "exclude": [
+        "herz",
+        "blattquerschnitt",
+        "stomata"
+      ],
+      "required": [
+        "vorhandenes Pflanzenmotiv",
+        "Blüte,Sprossachse,Blätter,Wurzel als tatsächliche Regionen"
+      ],
+      "whenNotToUse": "Andere Organe oder erfundene Bildmotive",
+      "qualification": "contract_verified",
+      "catalogId": "VIS02"
+    },
+    {
+      "id": "concept-connections",
+      "format": "connections",
+      "builder": "visual-v2",
+      "goal": "Begriffe und fachliche Zusammenhänge eindeutig zuordnen",
+      "subjects": [],
+      "match": [
+        "zuordnen",
+        "zusammenhang",
+        "satzglieder",
+        "begriffe"
+      ],
+      "exclude": [
+        "pythagoras"
+      ],
+      "required": [
+        "eindeutige Beziehungen",
+        "lesbare Knoten"
+      ],
+      "whenNotToUse": "Freie Begründungen ohne endlichen Lösungsschlüssel",
+      "qualification": "contract_verified",
+      "catalogId": "VIS09"
+    },
+    {
+      "id": "multifield-table",
+      "format": "table",
+      "builder": "visual-v2",
+      "goal": "Mehrere eindeutige Angaben je Zeile ergänzen",
+      "subjects": [],
+      "match": [
+        "tabelle",
+        "einheiten",
+        "wortarten",
+        "satzglieder",
+        "daten ordnen"
+      ],
+      "exclude": [
+        "pythagoras"
+      ],
+      "required": [
+        "geschlossene Antwortfelder",
+        "klar genannte Einheiten/Kategorien"
+      ],
+      "whenNotToUse": "Offene freie Texte gegen wenige Musterantworten vergleichen",
+      "qualification": "contract_verified",
+      "catalogId": "VIS12"
+    },
+    {
+      "id": "measure-angle",
+      "format": "angle",
+      "builder": "visual-v2",
+      "goal": "Einen Winkel mit dem Winkelmesser bestimmen",
+      "subjects": [
+        "mathematik",
+        "mathe"
+      ],
+      "match": [
+        "winkel",
+        "messen"
+      ],
+      "exclude": [],
+      "required": [
+        "passende Geometrie",
+        "Messabweichung3Grad"
+      ],
+      "whenNotToUse": "Digitale Lösungszahl einstellen statt messen",
+      "qualification": "contract_verified",
+      "catalogId": "VIS07"
+    },
+    {
+      "id": "plot-coordinates",
+      "format": "coordinate",
+      "builder": "visual-v2",
+      "goal": "Punkte und Strecken in einem Koordinatensystem darstellen",
+      "subjects": [
+        "mathematik",
+        "mathe"
+      ],
+      "match": [
+        "koordinaten",
+        "quadranten",
+        "punkte setzen"
+      ],
+      "exclude": [],
+      "required": [
+        "eindeutige Achsen",
+        "Punkte oder berechenbare Werte im Auftrag"
+      ],
+      "whenNotToUse": "Unspezifische Grafik ohne nötige Koordinaten",
+      "qualification": "contract_verified",
+      "catalogId": "VIS08"
+    }
   ]
 }

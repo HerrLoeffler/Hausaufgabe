@@ -46,7 +46,9 @@ async function recordQuestionFeedback({tx,uid,admin,data,projectId,now,toTimesta
  const quiz=await tx.get('quizzes/'+testCode);
  if(quiz&&quiz.ownerId!==uid&&!admin||!quiz&&!clean.draftOnly)fail('permission-denied','Kein Zugriff auf den Test.');
  if(quiz?.published&&!quiz.ended&&clean.action!=='keep')fail('failed-precondition','Veröffentlichte Aufgaben können nur gemeldet werden.');
- tx.set(path,{...clean,category:'ai_question',feedbackSchemaVersion:4,userId:uid,sourceProject:projectId,environment:projectId==='hausaufgabe-staging'?'production':'staging',
+ let authoringRecipe;
+ if(quiz&&!clean.draftOnly&&clean.questionSnapshot.type==='visual'){const stored=await tx.get('quizzes/'+testCode+'/questions/'+questionId);if(stored?.authoringRecipe&&stored.authoringRecipe.fingerprint===require('./recipe-quality').fingerprint(clean.questionSnapshot))authoringRecipe=stored.authoringRecipe;}
+ tx.set(path,{...clean,...(authoringRecipe?{authoringRecipe}:{}),category:'ai_question',feedbackSchemaVersion:4,userId:uid,sourceProject:projectId,environment:projectId==='hausaufgabe-staging'?'production':'staging',
   message:clean.reviewOutcome?'Prüferwarnung zurückgewiesen':clean.verdict==='good'?'Gute Aufgabe – behalten.':`Aufgabe gemeldet${clean.action==='remove'?' · Entfernen aus dem Entwurf angefordert':''}${clean.reason?': '+clean.reason:''}${clean.teacherComment?' · '+clean.teacherComment:''}`,
   questionType:clean.questionSnapshot.type,payloadHash,createdAt:toTimestamp(now),status:'new',processingEvidence:'not_reviewed'});
  return {confirmed:true,duplicate:false,id:feedbackId,status:'new'};

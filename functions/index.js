@@ -23,7 +23,7 @@ const { MEMORY_VERSION, QUALITY_REASONS, reviewSchema, REVIEW_SYSTEM, feedbackMe
 const {loadFeedbackLearningSafe,learningPrompt,recordLearningUseSafe}=require("./lib/feedback-learning");
 const { purgeExpiredMaterials } = require("./lib/purge-materials");
 const { getOpenAI } = require("./lib/openai-client");
-const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
+const { SYSTEM, buildSystemPrompt, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
 const { createVerifiedMedia } = require("./lib/media-flow");
 const { createAudioAsset } = require("./lib/audio-flow");
 const { classifyAiFailure } = require("./lib/ai-errors");
@@ -38,6 +38,8 @@ const { createQuickRemyService } = require("./lib/quick-remy-flow");
 const { buildPrepareResult } = require("./lib/quick-remy-contract");
 const { loadVariantInput, variantPrompt, requireVariantMediaReady } = require("./lib/test-variant");
 
+const recipePlan = require('./lib/recipe-plan');
+const recipeQuality = require('./lib/recipe-quality');
 initializeApp();
 const OPENAI_API_KEY = defineSecret("OPENAI_API_KEY");
 const callableOpts = { region: REGION, secrets: [OPENAI_API_KEY], timeoutSeconds: 300, memory: "1GiB", enforceAppCheck: false };
@@ -156,6 +158,7 @@ function cleanInput(data = {}) {
   return {
     schoolType: String(data.schoolType || "Mittelschule").slice(0, 100), region: String(data.region || "Bayern").slice(0, 100),
     subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, 500),
+    learningGoals: Array.isArray(data.learningGoals) ? data.learningGoals.slice(0,12).map(x=>String(x).slice(0,250)) : [],
     difficulty: String(data.difficulty || "mittel").slice(0, 50), count, points,
     allowedTypes, ...(data.allowedVisualFormats !== undefined && allowedTypes.includes("visual") ? {allowedVisualFormats} : {}), notes: String(data.notes || "").slice(0, LIMITS.maxPromptChars), imageMode, exactImageCounts,
     imageQuestionCount: exactImageCounts ? imageQuestionCount : undefined, imageAnswerQuestionCount: exactImageCounts ? 0 : undefined,
@@ -282,6 +285,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
   if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
   await consumeQuota(uid, "test").catch(err => { throw reportAiError(err, "test-quota"); });
   let phase = "material";
+  const observations = new Map();
   try {
     await onProgress("material", 5, "Material wird eingelesen …");
     const materialContent = materials.length ? await materialInputs(materials, uid) : [];
@@ -298,37 +302,43 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const memory = await loadQualityMemory({ subject: input.subject, grade: input.grade }, uid);
     const memoryGuide = learningPrompt(memory);
     const personalGuide = teacherQualityGuide(memory);
-    const generationPrompt = `${testUserPrompt(input)}${variantPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}${poolGuide}`;
+    const plan = recipePlan.prepare(input);
+    const planGuide = recipePlan.planPrompt(plan);
+    const systemPrompt = buildSystemPrompt(input);
+    const blindCache = new Map();
+    const policies=input.allowedTypes.includes('visual')?await recipeQuality.loadPolicies(getFirestore(),memory.recipeEvidence):{};
+    const expand=(raw,index)=>{const q=recipePlan.materialize(raw,input,index,plan.slots[index]);if(q.type==='visual'){try{observations.set(recipeQuality.fingerprint(q),{recipe:recipeQuality.recipe(q),passed:false});}catch{const slot=plan.slots[index];if(slot?.recipeId)observations.set(createHash('sha256').update(JSON.stringify(raw)).digest('hex'),{recipe:{id:slot.recipeId,version:slot.recipeVersion},passed:false});}}return q;};
+    const generationPrompt = `${testUserPrompt(input)}${planGuide}${variantPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}${poolGuide}`;
     phase = "test-generation";
     await onProgress("test-generation", 15, "Die KI erstellt den Test …");
-    const options = { allowedTypes: input.allowedTypes, allowedVisualFormats: input.allowedVisualFormats, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
+    const options = { recipeSlots: plan.slots, allowedTypes: input.allowedTypes, allowedVisualFormats: input.allowedVisualFormats, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
     if (input.generationMode === "variant") Object.assign(options, { requireFreshVariant: true, variantInput: input });
     const first = await generateTestInBatches(input, async (batch, prior) => {
       await onProgress("test-generation", 15 + Math.floor(20 * batch.batchOffset / input.count), `Aufgaben ${batch.batchOffset + 1} bis ${batch.batchOffset + batch.count} von ${input.count} werden erstellt …`);
       const priorContext = prior.length ? `\nBereits erstellte Aufgaben (nicht wiederholen): ${JSON.stringify(prior.map(q => ({ type: q.type, text: q.text })))}` : "";
       return structuredResponse({ schema: testSchemaForRequest({ count: batch.count, allowedTypes: batch.allowedTypes, allowImages: batch.imageMode !== "none", allowAudio: batch.audioMode !== "none" }),
-        schemaName: "testify_test_v2", userPrompt: `${testUserPrompt(batch)}${variantPrompt(input, batch.batchOffset, batch.count)}\n${memoryGuide}${personalGuide}${priorContext}${poolGuide}`, content: materialContent });
-    });
+        schemaName: "testify_test_v2", systemPrompt, userPrompt: `${testUserPrompt(batch)}${recipePlan.planPrompt(plan,batch.batchOffset,batch.count)}${variantPrompt(input, batch.batchOffset, batch.count)}\n${memoryGuide}${personalGuide}${priorContext}${poolGuide}`, content: materialContent });
+    }, {concurrency:plan.profiles.length&&input.count>20?2:1});
     const feedbackLearning = memory.learning?.sources?.length ? await recordLearningUseSafe(getFirestore(), memory, {uid, operation: input.generationMode === "variant" ? "generateTestVariant" : "generateTest"}) : {recorded:0};
     const usage = { ...first.usage };
     const addUsage = next => {
       if (next.providerRequests?.length) usage.providerRequests = [...(usage.providerRequests || []), ...next.providerRequests].slice(-100);
       for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(next[key] || 0);
     };
-    const normalizeTest = data => ({ ...data, questions: (Array.isArray(data?.questions) ? data.questions : []).map(normalizeQuestion) });
+    const normalizeTest = data => ({ ...data, questions: (Array.isArray(data?.questions) ? data.questions : []).map((q,index)=>normalizeQuestion(expand(q,index))) });
     const repairs = {
       generateQuestion: async ({ test, index, original, reasons, attempt, mediaKind, audioKind = original.audioIntent?.kind === "ai_generated" ? "ai_generated" : "none" }) => {
         const targetType = input.generationMode === "variant" ? input.variantSlots[index].type : input.allowedTypes.includes(original.type) ? original.type : input.allowedTypes[0];
         const replacement = await structuredResponse({
-          schema: questionSchemaForType(targetType, { allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none"), allowAudio: input.audioMode !== "none", audioKind }), schemaName: "testify_test_question_replacement_v2",
-          userPrompt: `${replacementQuestionPrompt({ input, test, index, original: { ...original, type: targetType }, reasons, attempt, mediaKind, audioKind })}${variantPrompt(input, index, 1)}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}${poolGuide}`, content: materialContent
+          schema: questionSchemaForType(targetType, { allowImages: input.imageMode !== "none", mediaKind: mediaKind || (original.mediaIntent?.kind === "ai_generated" ? "ai_generated" : "none"), allowAudio: input.audioMode !== "none", audioKind }), schemaName: "testify_test_question_replacement_v2", systemPrompt,
+          userPrompt: `${replacementQuestionPrompt({ input, test, index, original: { ...original, type: targetType }, reasons, attempt, mediaKind, audioKind })}${recipePlan.planPrompt(plan,index,1)}${variantPrompt(input, index, 1)}\n${qualityMemoryPrompt(memory, { questionType: original.type })}${personalGuide}${poolGuide}`, content: materialContent
         });
         addUsage(replacement.usage);
-        return replacement.data;
+        return expand(replacement.data,index);
       },
       regenerateTest: async (test, errors) => {
         const repair = await structuredResponse({
-          schema: testSchemaForRequest({ count: input.count, allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowAudio: input.audioMode !== "none" }), schemaName: "testify_test_repair_v2",
+          schema: testSchemaForRequest({ count: input.count, allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowAudio: input.audioMode !== "none" }), schemaName: "testify_test_repair_v2", systemPrompt,
           userPrompt: `${generationPrompt}\nDer vorherige Entwurf hatte diese Validierungsfehler:\n- ${errors.join("\n- ")}\nErstelle einen vollständig gültigen Test. Ersetze alle fehlerhaften oder wiederholten Aufgaben durch neue Aufgaben und gib den ganzen Test aus.\nVorheriger Entwurf: ${JSON.stringify(test)}`,
           content: materialContent
         });
@@ -350,9 +360,16 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       reviewed = await reviewAndRepairTest(result.test, options, {
         ...repairs,
         review: async draft => {
-          const check = await reviewDraft(draft, memory);
+          const indices = draft.questions.flatMap((q,index)=>{if(q.type!=='visual')return [];const r=recipeQuality.recipe(q),key=recipeQuality.fingerprint(q),mode=policies[r.version+':'+r.id]?.mode||'strict';return !blindCache.has(key)&&(mode==='strict'||parseInt(key.slice(0,2),16)%10===0)?[index]:[];});
+          const [check, blind] = await Promise.all([
+            reviewDraft(draft, memory),
+            indices.length ? structuredResponse({schema:recipeQuality.blindSchema,schemaName:'testify_recipe_blind_solution_v1',systemPrompt:recipeQuality.BLIND_SYSTEM,userPrompt:JSON.stringify(recipeQuality.blindInput(draft,indices))}) : null
+          ]);
           addUsage(check.usage);
-          return check.data;
+          if(blind){addUsage(blind.usage);const issues=recipeQuality.checkBlind(draft,blind.data,indices);for(const index of indices){const q=draft.questions[index],fingerprint=recipeQuality.fingerprint(q),issue=issues.find(i=>i.index===index);blindCache.set(fingerprint,issue||null);observations.set(fingerprint,{recipe:recipeQuality.recipe(q),passed:!issue&&!check.data.issues?.some(i=>i.index===index)});}}
+          for(const [index,q]of draft.questions.entries()){if(q.type==='visual'){const key=recipeQuality.fingerprint(q),seen=observations.get(key);if(seen&&!indices.includes(index))seen.passed=!check.data.issues?.some(i=>i.index===index)&&!blindCache.get(key);}}
+          const strictIssues=draft.questions.flatMap((q,index)=>{const issue=q.type==='visual'?blindCache.get(recipeQuality.fingerprint(q)):null;return issue?[{...issue,index}]:[];});
+          return {issues:[...(check.data.issues||[]),...strictIssues]};
         }
       });
     } catch (err) {
@@ -361,6 +378,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     }
     phase = "usage-log";
     const hardErrors = validateTest(reviewed.test, options);
+    for(const issue of reviewed.issues||[])if(reviewed.test.questions[issue.index]?.type==='visual')hardErrors.push(`Aufgabe ${issue.index+1}: ${issue.detail}`);
     const qualityIssues = hardErrors.length ? [] : (reviewed.issues || []).map(issue => ({
       questionPosition: issue.index + 1,
       questionId: `q${String(issue.index + 1).padStart(3, "0")}`,
@@ -389,7 +407,8 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       feedbackLearningUnavailable: Boolean(feedbackLearning.unavailable),
       positivePatterns: memory.positivePatterns?.length || 0,
       recurringRuleCandidates: memory.ruleCandidates?.length || 0,
-      pedagogicalPool: pedagogicalPool.meta
+      pedagogicalPool: pedagogicalPool.meta,
+      recipeSelection: {version:recipeQuality.VERSION,recipeIds:plan.profiles.map(p=>p.id),qualityMode:Object.values(policies).some(p=>p.mode==="qualified")?"evidence_gated":"strict",evaluatedTasks:observations.size,durationMs:Date.now()-startedAt}
     });
     if (hardErrors.length) throw new HttpsError("failed-precondition", "Der Test ist nach der automatischen Reparatur strukturell noch nicht gültig.", { errors: hardErrors.slice(0, 10) });
     return {
@@ -405,13 +424,15 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
         qualityWarnings,
         qualityIssues,
         feedbackLearning,
-        pedagogicalPool: pedagogicalPool.meta
+        pedagogicalPool: pedagogicalPool.meta,
+        recipeSelection: {version:recipeQuality.VERSION,recipeIds:plan.profiles.map(p=>p.id),qualityMode:Object.values(policies).some(p=>p.mode==="qualified")?"evidence_gated":"strict",evaluatedTasks:observations.size,durationMs:Date.now()-startedAt}
       }
     };
   } catch (err) {
     console.warn("KI-Test-Anfrage gescheitert:", { requestId, phase, durationMs: Date.now() - startedAt, code: err?.code || err?.name || "unknown" });
     throw reportAiError(err, phase);
   } finally {
+    if(observations.size)await recipeQuality.recordEvidence(getFirestore(),uid+':'+requestId,observations).catch(err=>console.warn('Rezeptnachweis nicht gespeichert',{code:err.code||'unavailable'}));
     await deleteUploadedMaterials(materials);
   }
 }
@@ -561,7 +582,7 @@ exports.processAiTestJob = onTaskDispatched({
     const solutionAudioIndexes = new Set(isVariant ? job.input.variantSlots.flatMap((slot, index) => slot.solutionAudio ? [index] : []) : planSolutionAudioIndexes(questions.length, totalSolutionAudios));
     const totalAnswerAudios = Number(job.input?.audioAnswerQuestionCount || 0);
     const answerAudioPositions = new Set(isVariant ? job.input.variantSlots.flatMap((slot, index) => slot.answerAudio ? [index] : []) : answerAudioIndexes(questions, totalAnswerAudios));
-    await jobRef.update({ stage: "prepare_questions", percent: 65, progressMessage: "Aufgaben und Medien werden gespeichert …", imageTotal: totalImages, audioTotal: totalAudios, answerAudioTotal: totalAnswerAudios, solutionAudioTotal: totalSolutionAudios, updatedAt: Timestamp.now() });
+    await jobRef.update({ usage:response.meta.usage, recipeSelection:response.meta.recipeSelection, stage: "prepare_questions", percent: 65, progressMessage: "Aufgaben und Medien werden gespeichert …", imageTotal: totalImages, audioTotal: totalAudios, answerAudioTotal: totalAnswerAudios, solutionAudioTotal: totalSolutionAudios, updatedAt: Timestamp.now() });
     const quiz = await createAiQuiz(db, uid, jobId, quizForGeneratedTest(response.test, job.input, profile, sourceSnap?.data()));
     quizRef = quiz.ref;
     await jobRef.update({ quizId: quiz.code, updatedAt: Timestamp.now() });
@@ -754,11 +775,11 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
       passage: normalized.passage
     }).slice(0, 2500) : "";
     const retryPrompt = `${prompt}\nDer letzte Vorschlag hatte folgende Fehler: ${errors?.join(" ") || ""}${rejectedDraft ? `\nVerworfener Vorschlag (nicht wiederholen): ${rejectedDraft}` : ""}\nErstelle eine neue, geprüfte Aufgabe mit einem anderen Beispiel oder Kontext.`;
-    const result = await structuredResponse({ schema: variantSchema, schemaName: request.data?.variant ? "testify_question_variant_v2" : "testify_question_v1", userPrompt: attempt ? retryPrompt : prompt });
+    const result = await structuredResponse({ schema: variantSchema, schemaName: request.data?.variant ? "testify_question_variant_v2" : "testify_question_v1", systemPrompt:buildSystemPrompt({allowedTypes,allowedVisualFormats}), userPrompt: attempt ? retryPrompt : prompt });
     if (attempt === 0 && memory.learning?.sources?.length) feedbackLearning = await recordLearningUseSafe(getFirestore(), memory, {uid, operation:"regenerateQuestion"});
     if (result.usage.providerRequests?.length) usage.providerRequests = [...(usage.providerRequests || []), ...result.usage.providerRequests].slice(-100);
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(result.usage[key] || 0);
-    normalized = normalizeQuestion(result.data);
+    normalized = normalizeQuestion(recipePlan.materialize(result.data,{...request.data?.testContext,notes:request.data?.testContext?.notes},0));
     errors = validateQuestion(normalized, { allowedTypes, allowedVisualFormats, allowImages: request.data?.allowImages !== false, allowImageChoices: false, materialIds, requiredMediaKind: mediaKind, allowAudio: true, requiredAudioKind: audioKind });
     if (request.data?.variant) {
       if ([question, ...existing].some(other => variantRepeats(other, normalized))) errors.push("Die neue Variante ist der bestehenden Aufgabe noch zu ähnlich.");
@@ -771,6 +792,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
       if (review.usage.providerRequests?.length) usage.providerRequests = [...(usage.providerRequests || []), ...review.usage.providerRequests].slice(-100);
       for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(review.usage[key] || 0);
       errors.push(...normalizeReviewIssues(review.data, { questions: [normalized] }).map(issue => `Qualitätsprüfung: ${issue.detail}`));
+      if(normalized.type==='visual'){const blind=await structuredResponse({schema:recipeQuality.blindSchema,schemaName:'testify_recipe_blind_solution_v1',systemPrompt:recipeQuality.BLIND_SYSTEM,userPrompt:JSON.stringify(recipeQuality.blindInput({questions:[normalized]}))});if(blind.usage.providerRequests?.length)usage.providerRequests=[...(usage.providerRequests||[]),...blind.usage.providerRequests];for(const key of ['input_tokens','output_tokens','total_tokens'])usage[key]=Number(usage[key]||0)+Number(blind.usage[key]||0);errors.push(...recipeQuality.checkBlind({questions:[normalized]},blind.data).map(i=>i.detail));}
     }
     if (!errors.length) break;
   }

@@ -1,0 +1,39 @@
+{
+  "events": [
+    {
+      "questionCount": 20,
+      "model": "gpt-5.6-luna",
+      "inputTokens": 228068,
+      "outputTokens": 45829,
+      "totalTokens": 273897,
+      "providerRequestCount": 20,
+      "questionRepairAttempts": 17,
+      "replacedQuestions": 11,
+      "qualityReviewPasses": 2,
+      "fullRepair": false,
+      "failed": false,
+      "qualityWarnings": [
+        "Frühere Lehrerbewertungen waren bei dieser Erstellung nicht verfügbar. Bitte die Aufgaben besonders sorgfältig prüfen."
+      ],
+      "createdAt": "2026-10-26T20:22:25.805Z"
+    },
+    {
+      "questionCount": 40,
+      "model": "gpt-5.6-luna",
+      "inputTokens": 549912,
+      "outputTokens": 101046,
+      "totalTokens": 650958,
+      "providerRequestCount": 42,
+      "questionRepairAttempts": 36,
+      "replacedQuestions": 18,
+      "qualityReviewPasses": 2,
+      "fullRepair": false,
+      "failed": false,
+      "qualityWarnings": [
+        "Frühere Lehrerbewertungen waren bei dieser Erstellung nicht verfügbar. Bitte die Aufgaben besonders sorgfältig prüfen."
+      ],
+      "createdAt": "2026-10-26T20:30:17.463Z"
+    }
+  ],
+  "price": "not calculated; no unverified price assumptions"
+}

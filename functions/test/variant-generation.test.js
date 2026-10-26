@@ -18,7 +18,7 @@ test("the actual variant handler constrains type and chosen image mode before ca
     const replacement = { type: "gapfill", text: "Die Katze [schläft].", points: 1,
       mediaIntent: mediaKind === "none" ? { kind: "none" }
         : { kind: "ai_generated", prompt: "Eine schlafende Katze", altText: "Katze" } };
-    const context = vm.createContext({require: name => require(name.startsWith("./lib/") ? `../${name.slice(2)}` : name),
+    const context = vm.createContext({recipePlan:require("../lib/recipe-plan"),recipeQuality:require("../lib/recipe-quality"),buildSystemPrompt:require("../lib/prompts").buildSystemPrompt,require: name => require(name.startsWith("./lib/") ? `../${name.slice(2)}` : name),
       exports: {}, onCall: (_options, callback) => callback, callableOpts: {}, HttpsError,
       QUESTION_TYPES: ["gapfill", "truefalse"], LIMITS: { maxPromptChars: 1000, maxQuestions: 100 },
       questionSchema, questionSchemaForType, questionUserPrompt, normalizeQuestion, validateQuestion,
@@ -55,7 +55,7 @@ test("a rejected variant is shown to the next generation attempt", async () => {
   const accepted = { type: "single", text: "Welchen Wert hat 5 verdoppelt?", points: 1,
     options: [{ text: "10", correct: true }, { text: "15", correct: false }], mediaIntent: { kind: "none" } };
   const prompts = [];
-  const context = vm.createContext({require: name => require(name.startsWith("./lib/") ? `../${name.slice(2)}` : name),
+  const context = vm.createContext({recipePlan:require("../lib/recipe-plan"),recipeQuality:require("../lib/recipe-quality"),buildSystemPrompt:require("../lib/prompts").buildSystemPrompt,require: name => require(name.startsWith("./lib/") ? `../${name.slice(2)}` : name),
     exports: {}, onCall: (_options, callback) => callback, callableOpts: {}, HttpsError,
     QUESTION_TYPES: ["single"], LIMITS: { maxPromptChars: 1000, maxQuestions: 100 },
     questionSchema, questionSchemaForType, questionUserPrompt, normalizeQuestion, validateQuestion,

@@ -26,13 +26,15 @@ function parseStructuredResponse(response) {
     throw new AiResponseError("invalid-json", "Die KI hat kein vollständiges Datenformat geliefert.", response);
   }
 }
-async function requestStructured(create, request) {
+async function requestStructured(create, request, {now = Date.now} = {}) {
   const usage = {};
   for (let attempt = 0; attempt < 2; attempt += 1) {
+    const started = now();
     const response = await create(request);
+    const durationMs = Math.max(0, now() - started);
     if (response?.id || response?._request_id) {
       const safe = value => String(value || "").replace(/[^A-Za-z0-9_.:-]/g, "").slice(0, 180);
-      (usage.providerRequests ||= []).push({ responseId: safe(response.id), requestId: safe(response._request_id), model: safe(response.model || request.model) });
+      (usage.providerRequests ||= []).push({ responseId: safe(response.id), requestId: safe(response._request_id), model: safe(response.model || request.model), durationMs, phase: safe(request.text?.format?.name || "structured") });
     }
     for (const key of ["input_tokens", "output_tokens", "total_tokens"]) usage[key] = Number(usage[key] || 0) + Number(response?.usage?.[key] || 0);
     try { return { data: parseStructuredResponse(response), usage }; }

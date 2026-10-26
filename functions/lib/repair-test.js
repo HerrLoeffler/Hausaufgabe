@@ -7,7 +7,7 @@ const { variantQuestionErrors } = require("./test-variant");
 function questionIssues(test, options) {
   const questions = test.questions || [];
   return questions.flatMap((question, index) => {
-    const reasons = validateQuestion(question, options);
+    const reasons = [...validateQuestion(question, options),...require('./recipe-plan').slotErrors(question,options.recipeSlots?.[index])];
     const prior = questions.findIndex((other, i) => i < index && (options.requireFreshVariant ? variantRepeats : sameQuestion)(other, question));
     if (prior >= 0) reasons.push(`Inhaltlich wie Aufgabe ${prior + 1}.`);
     if (options.referenceQuestions?.some(other => (options.requireFreshVariant ? variantRepeats : sameQuestion)(other, question))) reasons.push("Wiederholt den Ausgangstest.");

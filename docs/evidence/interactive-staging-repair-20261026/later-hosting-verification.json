@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-26T20:37:18.086Z",
+  "currentHostingCommit": "aa62f3da1a7a1459fb8f485d43b746b5fb3ac93a",
+  "currentFiles": 216,
+  "allHashesMatch": true,
+  "failures": [],
+  "changedSinceOurRelease": [
+    "classroom/exam-monitor.mjs",
+    "classroom/online-workspace.css",
+    "classroom/online-workspace.mjs",
+    "classroom/workspace-controls.mjs",
+    "workspace.html"
+  ],
+  "addedSinceOurRelease": [
+    "classroom/device-help.mjs"
+  ],
+  "ownedAssetsPreserved": true,
+  "workspaceStatus": "requires picker check",
+  "interactivePickerPreserved": true
+}

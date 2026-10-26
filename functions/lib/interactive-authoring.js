@@ -28,4 +28,4 @@ function revisionVisualFormats(data, question, allowedTypes) {
   if (enabled && question.type === "visual") return [parseVisualTask(question.visualTask).format];
   return normalizeAllowedVisualFormats(undefined, enabled);
 }
-module.exports = { VERSION, normalizeAllowedVisualFormats, interactiveGuidance, revisionVisualFormats };
+module.exports = { ...require("./task-recipes"), VERSION, normalizeAllowedVisualFormats, interactiveGuidance, revisionVisualFormats };
