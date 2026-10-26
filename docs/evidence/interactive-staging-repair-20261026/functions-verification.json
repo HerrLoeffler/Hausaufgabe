@@ -1,0 +1,27 @@
+{
+  "before": 80,
+  "after": 80,
+  "added": [],
+  "removed": [],
+  "sourceHashesChanged": [
+    "configurePracticeSolutionRelease",
+    "crewAssistant",
+    "generateTest",
+    "getAiStatus",
+    "getAssessmentInfo",
+    "getAssessmentReceipt",
+    "getQuickRemySubmission",
+    "prepareQuickRemy",
+    "processAiTestJob",
+    "regenerateQuestion",
+    "resumeAssessmentAttempt",
+    "reviewMode",
+    "reviseWholeTest",
+    "startAiTestJob",
+    "startAiTestVariantJob",
+    "startAssessmentAttempt",
+    "submitAssessmentAttempt",
+    "submitQuickRemy"
+  ],
+  "unchanged": 62
+}

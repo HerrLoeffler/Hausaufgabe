@@ -13,7 +13,7 @@ Echter neuer KI-Auftrag über die normale Staging-Oberfläche:6Aufgaben/12Punkte
 ## Als Lehrkraft
 
 1. Neuer Test → Test mit Remy erstellen. Fach, Klasse, Thema, Anzahl und Punkte festlegen.
-2. Unter „Aufgabentypen und Wünsche“ die „Visuelle Interaktion“ erlauben. Die fünf Bereiche eingrenzen: Zeitstrahl, Koordinatensystem, Im Bild markieren & beschriften, Winkel messen, Bildfolge ordnen. Andere erlaubte Aufgabentypen können daneben weiter verwendet werden. Remy wählt passend zum Lernziel, keine automatische Pflichtquote.
+2. Unter „Aufgabentypen und Wünsche“ die „Visuelle Interaktion“ erlauben. Die acht aktiven Formate eingrenzen: Bildbereich anklicken, Grafik beschriften, Position auf einer Skala, Winkel messen, Flächenanteile markieren, Verbindungen/Pfeile, Punkte/Strecken und Tabelle vervollständigen. Historische Zeitstrahl-/Bildfolge-Aufgaben bleiben lesbar, gehören aber nicht zur aktuellen Standardauswahl. Andere erlaubte Aufgabentypen können daneben weiter verwendet werden. Remy wählt passend zum Lernziel, keine automatische Pflichtquote.
 3. Konkrete Wünsche nennen, z.B. „Eine Zeitachse mit vier historischen Ereignissen ohne verratene Jahreszahlen“ oder „Zwei Punkte im Koordinatensystem setzen, keine Verbindung“.
 4. Den gespeicherten Entwurf prüfen. Arbeitsauftrag im normalen Fragefeld ändern. „Aufgabe anpassen“ enthält die zum Format passenden Daten und Lösungen; „Änderungen übernehmen“ validiert sie gemeinsam. Ungültige Zwischenstände bleiben korrigierbar und überschreiben nicht die gültige Fassung. Punkte wie bei anderen Aufgaben ändern.
 5. In der Schüleransicht durchspielen. Erst danach veröffentlichen. Emmi und neue Varianten erhalten das bestehende interaktive Format; ein ausdrücklicher Typwechsel ist eine eigene bewusste Entscheidung.
@@ -28,7 +28,7 @@ Die Homepage-Interaktion „Winkel einstellen“ wird im normalen Aufgabenlabor 
 
 ## Format, Speicherung und Bewertung
 
-Alle fünf Bereiche verwenden den vorhandenen äußeren Typ visual und einen begrenzten visualTask-Datenstring. Daten sind keine ausführbaren HTML-/SVG-/JavaScript-Anweisungen. Die gewählten Unterformate stehen im Auftrag als allowedVisualFormats und in der creationContext.interactiveFormats des gespeicherten Tests. Batches/Reparatur erhalten die Auswahl, einzelne Überarbeitungen und vollständige neue Varianten bewahren das Unterformat je Position. Private Lösungen werden beim sicheren Teststart entfernt; der Server bewertet die abgegebenen Antworten gegen den eingefrorenen privaten Schlüssel.
+Alle visuellen Unterformate verwenden den vorhandenen äußeren Typ visual und einen begrenzten visualTask-Datenstring. Daten sind keine ausführbaren HTML-/SVG-/JavaScript-Anweisungen. Die gewählten Unterformate stehen im Auftrag als allowedVisualFormats und in der creationContext.interactiveFormats des gespeicherten Tests. Batches/Reparatur erhalten die Auswahl, einzelne Überarbeitungen und vollständige neue Varianten bewahren das Unterformat je Position. Private Lösungen werden beim sicheren Teststart entfernt; der Server bewertet die abgegebenen Antworten gegen den eingefrorenen privaten Schlüssel.
 
 - Zeitstrahl:2–6 Ereignisse und numerische Zeitpunkte. Echte maßstäbliche Abstände statt gleich weit verteilter Jahreszahlen. Ereigniskarten ohne verratene Jahreszahlen. Zuordnungen lassen sich entfernen und ändern, Teilpunkte pro richtiger Zuordnung. Doppelte/fremde Karten werden abgelehnt.
 - Koordinatensystem:1–4 Punkte oder zwei unterschiedliche Endpunkte einer Strecke; Raster und Lösung passen zusammen. Zwei einzelne Punkte brauchen keinen künstlichen „Verbinden“-Knopf. Setzen mit Maus/Touch, Tastatur oder leeren Zahlenfeldern; Farben unterscheiden die Punkte.
@@ -47,3 +47,14 @@ Ein echter Auftrag über die normale Remy-Oberfläche erzeugte6Aufgaben/12Punkte
 Serverprüfung:korrekt12/12,leer0/12,gemischt6/12,falsch0/12,Toleranzgrenze12/12,doppelte Karten0/12. Wiederaufnahme liefert unveränderte öffentliche Aufgaben; erneute Abgabe verändert das Ergebnis nicht. Öffentliche Aufgaben sind lösungsfrei. Nachweise unter docs/evidence/remy-interactive-20261026/. Private Versuchstoken bleiben ausschließlich im ignorierten .review-local/. Ein neues kostenpflichtiges KI-Starten ist für die Wiederaufnahme dieses Nachweises nicht nötig.
 
 Automatische Prüfung:464Root/UI/Integrationstests,332Functions-Tests,101Assessment-Tests,Functions ESLint sowie drei erfolgreiche GitHub-Prüfungen auf00dcd941. Zwei unabhängige Reviews fanden fünf reproduzierte Fehler, deren Korrekturen durch zunächst fehlschlagende und anschließend erfolgreiche Regressionstests gesichert sind. Noch keine Aussage über Production oder umfassende pädagogische Freigabe für alle Klassen/Fächer.
+
+
+## Typwechsel und differenzierter Dreisatz auf normalem Staging
+
+Stand 26.10.2026: Typ → Visuelle Interaktion öffnet einen Format-/Wunschdialog. Erst „Mit KI anpassen“ startet die vorhandene KI. Auch ein Unterformatwechsel erzeugt eine neue fachlich passende Aufgabe; kein Musterbeispiel wird als neues KI-Ergebnis eingesetzt. Abbrechen, Fehler oder veraltete Antworten erhalten die bisherige Aufgabe. Die aktuelle ursprüngliche Typfassung bleibt beim Zurückwechseln erhalten, ebenso die Punkte.
+
+Tabellen unterstützen den geprüften Dreisatz mit vier unabhängigen Pfeilen und individuell vorgegebenen Zahlen. Zeichen, Zahl oder ganze Rechnung können getrennt verlangt und bewertet werden; direkter und umgekehrter Dreisatz nutzen denselben Vertrag. Für andere Fächer bleibt die allgemeine Mehrfeldtabelle verfügbar. Das Datenmodell bestimmt die zulässige Darstellung und private Bewertung, die KI liefert passende Inhalte. Neue Darstellungen benötigen eigene geprüfte Verträge.
+
+Koordinatenschritt und gezeichnete Hauptlinien sind getrennt: Prozent-/Preisachsen0–100/0–400mitSchritt1 sind zulässig, ohne jede Eingabeposition als Linie zu zeichnen. Finite Grenzen und höchstens10.000Eingabeschritte bleiben geprüft.
+
+Echte normale Erstellungen mit20/60und40/100, zwei echte UI-Umwandlungen und Serverbewertung60/59,5/0 bestätigt. Größere Tests benötigen derzeit etwa6–14Minuten und viele automatische Reparaturen; vor einer Präsentation vorbereiten. Aktive veröffentlichte Tests bleiben unveränderlich. [Bericht und konkrete Grenzen](../evidence/interactive-staging-repair-20261026/REPORT.md). Production und physische Geräteabnahme sind damit nicht freigegeben.
