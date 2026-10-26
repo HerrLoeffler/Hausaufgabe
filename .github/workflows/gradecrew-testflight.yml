@@ -79,6 +79,7 @@ jobs:
         run: |
           python3 native/test_release_environments.py
           python3 native/GradeCrewTeacher/test_beta_environment.py
+          python3 native/GradeCrewTeacher/test_auth_restore_deadline.py
 
       - name: Test native navigation policy
         run: python3 native/GradeCrewTeacher/test_navigation_policy.py

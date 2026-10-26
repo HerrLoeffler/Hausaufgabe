@@ -57,6 +57,7 @@ enum GradeCrewBetaEnvironment {
 
     private static func appURL(preference: String, version: String, intent: String?) -> URL {
         var components = URLComponents(url: baseURL(for: preference), resolvingAgainstBaseURL: false)!
+        components.path = "/workspace.html"
         var items = [
             URLQueryItem(name: "gradecrewApp", value: "teacher"),
             URLQueryItem(name: "source", value: "ios"),

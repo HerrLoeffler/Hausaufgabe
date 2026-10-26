@@ -4,6 +4,8 @@ struct TeacherRootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage(GradeCrewBetaEnvironment.preferenceKey) private var previewPreference = ""
     @State private var isLoading = true
+    @State private var restoreDeadline = GradeCrewAuthRestoreDeadline()
+    @State private var restoreTimeoutReported = false
     @State private var authFormPresented = false
     @State private var workspaceOpeningGeneration:Int?
     @State private var brandAnimationStartedAt = Date()
@@ -80,6 +82,18 @@ struct TeacherRootView: View {
         .task(id: auditKey) {
             if homeNavigation.shouldOpenWorkspaceAutomatically { openWorkspace() }
             else { await monitorGenerationAudit() }
+        }
+        .task(id: "restore-\(auditKey)-\(reloadID)") {
+            if restoreTimeoutReported { loadError = nil; restoreTimeoutReported = false }
+            guard !homeNavigation.showsWorkspace, !authFormPresented else { restoreDeadline.finish(); return }
+            let ticket = restoreDeadline.begin(at: ProcessInfo.processInfo.systemUptime)
+            do { try await Task.sleep(nanoseconds: UInt64(GradeCrewAuthRestoreDeadline.seconds * 1_000_000_000)) }
+            catch { return }
+            guard !Task.isCancelled,
+                  restoreDeadline.expired(ticket, at: ProcessInfo.processInfo.systemUptime),
+                  !homeNavigation.showsWorkspace, !authFormPresented, loadError == nil else { return }
+            restoreTimeoutReported = true
+            loadError = "Die Anmeldung hat nicht rechtzeitig geantwortet. Bitte prüfe die Verbindung und versuche es erneut. Deine gespeicherten Daten bleiben erhalten."
         }
         .onChange(of: scenePhase) { phase in
             if phase == .active { auditRefresh += 1 }
@@ -195,7 +209,7 @@ struct TeacherRootView: View {
     }
 
     private var authRestoringScreen: some View {
-        GradeCrewAuthRestoringView(animationStartedAt: brandAnimationStartedAt) {
+        GradeCrewAuthRestoringView(animationStartedAt: brandAnimationStartedAt, isWaiting: loadError == nil) {
             if let loadError { connectionError(loadError) }
         }
     }
@@ -286,6 +300,8 @@ struct TeacherRootView: View {
     }
 
     private func retryWorkspace() {
+        auditGeneration += 1
+        restoreDeadline.finish()
         loadError = nil
         isLoading = true
         homeNavigation.beginAuthCheck()
@@ -299,6 +315,8 @@ struct TeacherRootView: View {
     }
 
     private func reloadAndCloseDiagnostics() {
+        auditGeneration += 1
+        restoreDeadline.finish()
         loadError = nil
         isLoading = true
         homeNavigation.beginAuthCheck()
