@@ -39,7 +39,7 @@ export function mountPublicEntryShell(doc,host,panels) {
  doc.defaultView.addEventListener('gradecrew:ui-locale-changed',locale);locale();
  // Paint only after the same homepage stylesheet stack has arrived.
  page.style.visibility='hidden';
- Promise.all(links.map(link=>new Promise(resolve=>{link.addEventListener('load',resolve,{once:true});link.addEventListener('error',resolve,{once:true});}))).then(()=>{pinPublicEntryFrame(doc,page);page.style.visibility='';});
+ Promise.all(links.map(link=>new Promise(resolve=>{link.addEventListener('load',resolve,{once:true});link.addEventListener('error',resolve,{once:true});}))).then(()=>{pinPublicEntryFrame(doc,page);page.style.visibility='';delete doc.documentElement.dataset.gcEntryPending;});
  return entry;
 }
 export function setPublicEntryShellVisible(doc,visible) {

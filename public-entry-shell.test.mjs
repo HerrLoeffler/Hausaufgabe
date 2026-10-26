@@ -19,3 +19,8 @@ test('public language choice persists, updates explicit URL language and notifie
  const dom=new JSDOM('<html lang="de"><body></body></html>',{url:'https://gradecrew.example/workspace.html?intent=login&lang=de&template=sample'});t.after(()=>dom.window.close());let notified='';dom.window.addEventListener('gradecrew:ui-locale-changed',e=>notified=e.detail.locale);
  selectPublicEntryLocale(dom.window.document,'en');assert.equal(dom.window.localStorage.getItem('gradecrew.uiLocale'),'en-GB');assert.equal(dom.window.document.documentElement.lang,'en-GB');assert.equal(notified,'en-GB');const url=new URL(dom.window.location.href);assert.equal(url.searchParams.get('lang'),'en');assert.equal(url.searchParams.get('template'),'sample');assert.equal(url.searchParams.get('intent'),'login');
 });
+
+test('code-free student entry suppresses native header before modules load, direct test entry stays native',t=>{
+ const html=fs.readFileSync('secure-student.html','utf8');
+ for(const [query,pending] of [['',true],['?test=K7M4X2PA',false]]){const dom=new JSDOM(html,{url:'https://gradecrew.example/secure-student.html'+query,runScripts:'dangerously'});t.after(()=>dom.window.close());assert.equal(dom.window.document.documentElement.dataset.gcEntryPending==='true',pending);}
+});
