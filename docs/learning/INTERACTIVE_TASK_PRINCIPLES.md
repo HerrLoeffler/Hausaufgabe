@@ -99,3 +99,10 @@ Ein bewusster Typ-/Unterformatwechsel fragt Format und optionalen Inhaltswunsch 
 Eingabepräzision und sichtbares Raster getrennt begrenzen. Eine Prozent-/Preisachse darf viele erreichbare Eingabepositionen haben, während nur lesbare Hauptlinien gezeichnet werden. Strukturfehler vor Qualitätsprojektion melden, statt sie durch einen allgemeinen Folgefehler zu verdecken.
 
 Große Proben zusätzlich zu kleinen Vorführungen prüfen: echte Anzahl, Punktesumme, private Lösungen, Wiederaufnahme, doppelte Abgabe und feldweise Teilpunkte. Logische Aufträge, interne Providerrequests, Korrekturen und Laufzeit getrennt dokumentieren. Die jetzigen20/40-Proben mit60Aufgaben benötigten62interneProviderrequests und etwa6/14Minuten; daraus keine sofortige Erstellung oder allgemeine Lernwirksamkeit ableiten. Aktuelle Klassenraum- und Abgabelogik bei jeder Veröffentlichung tatsächlich erhalten. [Nachweis und Grenzen](../evidence/interactive-staging-repair-20261026/REPORT.md).
+
+
+### Passende Aufgabenformen ohne Einzelklick auswählen
+
+Die Lehrkraft nennt Fach, Klasse, Thema und Lernziel; die normale Erstellung verwendet passende qualifizierte Aufgabenrezepte automatisch. Der Formatwähler ist eine optionale Eingrenzung, keine Pflicht pro Aufgabe. Dreisatz-geeignete proportionale Rechenwege bei Prozent-/Zuordnungsaufgaben regulär berücksichtigen; bei Anteilsverständnis, Verorten, Begriffen oder Bildern das jeweils passende vorhandene Rezept verwenden. Ein Themenwort allein entscheidet nicht. Explizite Ausschlüsse und fehlende Voraussetzungen beachten, keine fachfremde Formatquote.
+
+Erfahrungen dauerhaft als versionierte Anwendungsbedingungen, Gegenfälle, Builder-/Bewertungsverträge und Regressionstests sichern. Bestätigte Lehrkraftkorrekturen über vorhandene Feedback-/Reviewwege auswerten; keine ungeprüfte Selbstlernaktivierung. Die KI liefert neue Inhalte, der geprüfte Builder den genauen Aufbau und privaten Lösungsschlüssel. Technische Qualifikation, pädagogische Poolzulassung und Lernwirksamkeit bleiben getrennt. [Regeln, Beispiele und Abnahmekriterien](AUTOMATIC_TASK_SELECTION.md). Planungsstand; keine neue Runtime allein durch diese Dokumentation.

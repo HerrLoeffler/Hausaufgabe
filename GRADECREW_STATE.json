@@ -3059,6 +3059,23 @@
         "runtime_changed": false,
         "new_paid_requests": 0,
         "next_step": "Task1 measurement and scoped format guidance; no implementation or paid pilot started by this planning request"
+      },
+      "automatic_task_selection_requirement": {
+        "status": "documented_not_implemented",
+        "source": "Martin26Oct: appropriate formats regularly without per-taskclicks",
+        "rules": "docs/learning/AUTOMATIC_TASK_SELECTION.md",
+        "plan": "docs/superpowers/plans/2026-10-26-interactive-generation-latency.md#task0-fachlich-passende-rezepte-automatisch-auswählen",
+        "default_visual_already_enabled": true,
+        "qualified_semantic_selection_new_requirement": true,
+        "guardrails": [
+          "explicit restrictions win",
+          "no keyword-only routing",
+          "no unrelated format quota",
+          "validated builders and private grading",
+          "no unreviewed selftraining or pool admission"
+        ],
+        "new_paid_calls": 0,
+        "deployment": "none"
       }
     },
     {
