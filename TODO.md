@@ -666,3 +666,6 @@ User clarified Math/German Mittelschule5-9, priority5/6, detailed subgoals and n
 
 - [x] GC-ADAPTIVE-PRACTICE-01 (26.10.): lokale Lerngehirn-Vorschau8775nach beendetem Server wieder geöffnet, gespeichertes Profil sichtbar; echte Startanfrage einmal13.08s (kein Durchschnitt). Kein neuer Clouddeploy.
 - [ ] GC-ADAPTIVE-PRACTICE-01: Antwortzeiten getrennt für Erzeugung/Bewertung/Gegenprüfung und Fundustreffer messen; Tempo nur bei gleichen fachlichen Qualitätsfällen verbessern. Bestehende passende Bilder/Interaktionen weiterverwenden. [Übergabe](workstreams/adaptive-practice-01.md).
+
+- [x] GC-ADAPTIVE-PRACTICE-01 (26.10.): verankerte visuelle KI-Hilfe und kompakte Lernfläche auf getrennter Testseite veröffentlicht; gleiche Szene statt Ersatzaufgabe, Schritte/Rückfragen, gespeicherte konkrete Hilfen mit differenzierten Erfolgsbelegen.450Functions/107UI/7Paket/1Isolationgrün;echteRaster-,Bruch-undTextfolgen. [Übergabe](workstreams/adaptive-practice-01.md).
+- [ ] GC-ADAPTIVE-PRACTICE-01: Lehrkraftkalibrierung der Hilfen über225digitaleTeilziele und spätere anonymisierte/qualifizierteMehrschüler-Auswertung;keinautomatischesGlobaltrainingoderFreigabeausEinzeltreffern. NeueDarstellungstypennurmitkonkretenFokus-/Antwortverträgenqualifizieren.
