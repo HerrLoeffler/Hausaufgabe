@@ -1,7 +1,7 @@
 'use strict';
 const {createHash}=require('node:crypto');
 const catalog=require('../data/interactive-task-blueprints.v1.json');
-const VERSION=createHash('sha256').update(JSON.stringify(catalog.authoringRecipes)+catalog.authoringRecipeVersion+require('node:fs').readFileSync(require.resolve('./visual/dreisatz-builder'),'utf8')+require('node:fs').readFileSync(require.resolve('./dreisatz-draft'),'utf8')).digest('hex').slice(0,16);
+const VERSION=createHash('sha256').update(JSON.stringify(catalog.authoringRecipes)+catalog.authoringRecipeVersion+['./visual/dreisatz-builder','./dreisatz-draft','./recipe-plan','./recipe-quality','./visual/core','./visual/legacy-core'].map(p=>require('node:fs').readFileSync(require.resolve(p),'utf8')).join('')).digest('hex').slice(0,16);
 const norm=s=>String(s||'').normalize('NFD').replace(/\p{M}/gu,'').toLowerCase().replace(/ß/g,'ss');
 function selectTaskProfiles(context={},options={}){
  const types=options.allowedTypes||context.allowedTypes||[],formats=options.allowedVisualFormats||context.allowedVisualFormats||['hotspot','labeling','scale','angle','grid','connections','coordinate','table'];
@@ -18,10 +18,13 @@ function selectTaskProfiles(context={},options={}){
  }).filter(Boolean).sort((a,b)=>b.score-a.score||a.id.localeCompare(b.id)).slice(0,6);
 }
 function buildRecipePlan(input={}){
- const profiles=selectTaskProfiles(input),count=Number(input.count||0),units=Math.round(Number(input.points||0)*2);
+ let profiles=selectTaskProfiles(input);
+ const goalProfiles=(input.learningGoals||[]).flatMap(goal=>{const list=selectTaskProfiles({...input,topic:'',learningGoals:[goal]});return list.length?[{...list[0],goal}]:[];});
+ if(goalProfiles.length>1)profiles=[...new Map([...goalProfiles,...profiles].map(p=>[p.id,p])).values()];
+ const count=Number(input.count||0),units=Math.round(Number(input.points||0)*2);
  if(!Number.isInteger(count)||count<1||count>100||units<count)return {version:VERSION,profiles,slots:[]};
  // Goals, not arbitrary format quotas: only equally ranked learning actions share slots.
- const candidates=profiles.filter(p=>p.score>=((profiles[0]?.score||0)-3));
+ const candidates=goalProfiles.length>1?goalProfiles:profiles.filter(p=>p.score>=((profiles[0]?.score||0)-3));
  const slots=Array.from({length:count},(_,i)=>({index:i,points:(Math.floor((i+1)*units/count)-Math.floor(i*units/count))/2,...(candidates.length?{recipeId:candidates[i%candidates.length].id,recipeVersion:VERSION,goal:candidates[i%candidates.length].goal,format:candidates[i%candidates.length].format}:{}),variant:i}));
  return {version:VERSION,profiles,slots};
 }
