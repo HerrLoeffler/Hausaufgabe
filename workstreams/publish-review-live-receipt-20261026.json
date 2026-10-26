@@ -1,0 +1,63 @@
+{
+  "task_id": "GC-WEB-REPAIR-20261007",
+  "stage": "production",
+  "scope": "Hosting-only publication review and consistent Publish label; not whole project",
+  "source_commit": "122c011cd5fba40a139be7a7426c49e400f93c82",
+  "source_tree": "f4455d895bf09f5ec35d15f7a76a1347951ffe46",
+  "local_equivalent": "06e5494722dcc6d81557251f475fc8bef76d1410",
+  "pr": 328,
+  "integrated_into": "feature/design-auth-student-20261026",
+  "ci": {
+    "candidate": 40406219082,
+    "node_job": 121864537660,
+    "browser_job": 121864537202,
+    "admin": 40406228457,
+    "legal": 40406228335,
+    "result": "success"
+  },
+  "review": "independent publisher and merge-delta approved;39focusedtests rerun",
+  "local_tests": {
+    "root": 422,
+    "ui": 158,
+    "functions": 318,
+    "publisher_browser_layout_steps": 42
+  },
+  "hosting": {
+    "project": "hausaufgabe-staging",
+    "version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/fdbb3c0bbc3040a8",
+    "release": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/channels/live/releases/1793051251147000",
+    "release_time": "2026-10-26T21:47:31.147Z",
+    "manifest_files": 203,
+    "hosting_file_count": 206,
+    "additional_accounted_files": [
+      "release.json",
+      "__/firebase/init.js",
+      "__/firebase/init.json"
+    ],
+    "hash_checks": [
+      {
+        "origin": "https://gradecrew.de",
+        "source": "122c011cd5fba40a139be7a7426c49e400f93c82",
+        "verified_files": 203,
+        "https_certificate": "normal TLS validation passed"
+      },
+      {
+        "origin": "https://hausaufgabe-staging.web.app",
+        "source": "122c011cd5fba40a139be7a7426c49e400f93c82",
+        "verified_files": 203,
+        "https_certificate": "normal TLS validation passed"
+      }
+    ],
+    "removed_previous_files": []
+  },
+  "previous_live": "93df4eb03a3ea2a092c53b19c4a08e46b7ab8296",
+  "public_browser": "homepage/login form/student code+name form loaded without sign-in; no form submitted",
+  "physical_device_test": null,
+  "actual_firebase_publish_test": null,
+  "user_acceptance": "pending",
+  "provider_calls": 0,
+  "backend_rules_auth_accounts_attempts_changed_by_publisher": false,
+  "legacy_hausaufgabe_40294_changed": false,
+  "canonical_2026_wilma_changed": false,
+  "open_separate_issue": "Unpublished-code access report belongs to security owner; no safety verdict here."
+}
