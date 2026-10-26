@@ -55,3 +55,25 @@ test('unlinked submissions are visible to the owner and require explicit identit
  assert.equal((await f.student('login',{code:f.p.code})).assignments[0].status,'submitted');
  await assert.rejects(f.teacher('resolveSubmission',{assignmentId:a.id,attemptId:'orphan',studentId:f.p.id,disposition:'link',confirm:true}),{code:'failed-precondition'});
 });
+
+
+test('device release binds owning teacher and original attempt secret; an old ACK cannot reopen a resumed device',async()=>{
+ const f=await setup(),a=await f.teacher('assign',{quizId:'TEST2026',classId:f.c.id}),base=`classroomSchools/teacher/assignments/${a.id}/participants/${f.p.id}`;
+ const {tokenHash}=require('../lib/assessment-core'),token='Z'.repeat(43),binding={schoolId:'teacher',studentId:f.p.id,assignmentId:a.id,generation:0};
+ f.docs.set(base,{generation:0,attemptId:'device'});f.docs.set('quizzes/TEST2026/attempts/device',{quizId:'TEST2026',attemptId:'device',classroom:binding,status:'running'});f.docs.set('assessmentPrivate/TEST2026_device',{tokenHash:tokenHash(token)});
+ const args={assignmentId:a.id,studentId:f.p.id,attemptId:'device',expectedGeneration:0,actionId:'exit1',reason:'Technisches Problem',confirm:true};
+ await assert.rejects(f.teacher('requestDeviceExit',args),{code:'failed-precondition'});
+ await assert.rejects(f.student('deviceExitStatus',{quizId:'TEST2026',attemptId:'device',attemptToken:'X'.repeat(43),build:'next'}),{code:'permission-denied'});
+ await f.student('deviceExitStatus',{quizId:'TEST2026',attemptId:'device',attemptToken:token,build:'next'});
+ const action=await f.teacher('requestDeviceExit',args);assert.equal(action.action.state,'pending');
+ assert.deepEqual(await f.teacher('requestDeviceExit',args),action);
+ await assert.rejects(f.teacher('allowDeviceResume',args),{code:'failed-precondition'});
+ const d={quizId:'TEST2026',attemptId:'device',attemptToken:token,build:'next'};
+ assert.equal((await f.student('deviceExitStatus',d)).action.state,'delivered');
+ await assert.rejects(f.student('acknowledgeDeviceExit',{...d,actionId:'old',outcome:'ended'}),{code:'aborted'});
+ await f.student('acknowledgeDeviceExit',{...d,actionId:'exit1',outcome:'ended'});
+ assert.equal((await f.teacher('allowDeviceResume',args)).action.state,'resume_allowed');
+ await assert.rejects(f.student('acknowledgeDeviceExit',{...d,actionId:'exit1',outcome:'failed'}),{code:'aborted'});
+ const before=f.docs.get(base);f.docs.set(base,{...before,generation:1});await assert.rejects(f.student('deviceExitStatus',d),{code:'aborted'});
+ assert.equal(f.docs.get('quizzes/TEST2026/attempts/device').status,'running');
+});

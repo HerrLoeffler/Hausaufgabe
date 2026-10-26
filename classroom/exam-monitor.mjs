@@ -1,3 +1,4 @@
+import {deviceExitLabels} from './device-help.mjs';
 export const monitorLabels = Object.freeze({
   all:'Alle', not_joined:'Noch nicht beigetreten', ready:'Wartet',
   running:'Bearbeitet', submitted:'Abgegeben', attention:'Hinweise'
@@ -45,7 +46,8 @@ export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},on
     for(let index=0;index<m.rows.length;index++){
       const row=m.rows[index];let record=records.get(row.studentId);
       if(!record){const node=el('tr'),cells=Array.from({length:4},()=>el('td'));node.append(...cells);record={node,cells,row};record.help=action('Hilfe',()=>record.row.status==='submitted'?onOpenResults(record.row,latest.assignment):onHelp(record.row,latest.assignment,latest.round));cells[3].append(record.help);records.set(row.studentId,record);}
-      record.row=row;record.cells[0].textContent=row.name;record.cells[1].dataset.state=row.status;record.cells[1].textContent=(monitorLabels[row.status]||'Stand unbekannt')+(row.stale?' · Kein frisches Signal':'');
+      record.row=row;if(!record.deviceHelp&&row.attemptId){record.deviceHelp=action('Gerätehilfe',()=>onHelp(record.row,latest.assignment,latest.round));record.cells[3].append(record.deviceHelp);}if(record.deviceHelp)record.deviceHelp.hidden=row.status!=='submitted';record.cells[0].textContent=row.name;record.cells[1].dataset.state=row.status;record.cells[1].textContent=(monitorLabels[row.status]||'Stand unbekannt')+(row.stale?' · Kein frisches Signal':'');
+      if(row.deviceExit)record.cells[1].textContent+=' · '+(deviceExitLabels[row.deviceExit.state]||'Gerätefreigabe unbestätigt');
       const actionLabels={pending:'Fortsetzungsbitte ausstehend',delivered:'Fortsetzungsbitte zugestellt',acknowledged:'Fortsetzung bestätigt',expired:'Fortsetzungsbitte abgelaufen'};if(row.resumeAction)record.cells[1].textContent+=' · '+(actionLabels[row.resumeAction.state]||'');
       record.cells[2].textContent=row.lastSeenAt?new Date(row.lastSeenAt).toLocaleTimeString('de-DE'):'Noch kein Kontakt';record.help.textContent=row.status==='submitted'?'Ergebnis':'Hilfe';
       if(body.children[index]!==record.node)body.insertBefore(record.node,body.children[index]||null);

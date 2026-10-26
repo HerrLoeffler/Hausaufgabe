@@ -12,3 +12,15 @@ export function installLiveEntry(card,onOpen){
  b.addEventListener('click',()=>{if(b.disabled)return;b.disabled=true;Promise.resolve().then(onOpen).finally(()=>{b.disabled=false;});});
  (card.querySelector('.primaryQuizActions')||card).append(b);
 }
+export function installLiveResultsReturn({doc,getContext,getAccountId,onReturn}){
+ let dirty=false;
+ doc.addEventListener('input',event=>{if(event.target?.closest?.('#reviewPanel'))dirty=true;});
+ doc.addEventListener('click',event=>{
+  if(!event.target?.closest?.('#backFromResults'))return;
+  const context=getContext(),results=doc.getElementById('resultsView');if(!context||context.uid!==getAccountId()||results?.classList.contains('hidden'))return;
+  event.preventDefault();event.stopImmediatePropagation();
+  const panel=doc.getElementById('reviewPanel');
+  if(dirty&&!panel?.classList.contains('hidden')&&!doc.defaultView.confirm('Die Bewertung enthält noch nicht gespeicherte Änderungen. Trotzdem zur LIVE-Übersicht zurückgehen?'))return;
+  dirty=false;panel?.classList.add('hidden');onReturn(context);
+ },true);
+}

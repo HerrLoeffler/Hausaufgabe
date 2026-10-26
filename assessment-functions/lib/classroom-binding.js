@@ -27,6 +27,7 @@ async function checkClassroomAttempt({get,fail,attempt}){
  }
  const b=attempt.classroom,p=await get(`classroomSchools/${b.schoolId}/assignments/${b.assignmentId}/participants/${b.studentId}`);
  if(!p||p.attemptId!==attempt.attemptId||p.generation!==b.generation)fail('failed-precondition','Die Lehrkraft hat diesen Versuch ersetzt. Deine gesicherten Antworten bleiben erhalten; bitte wende dich an die Lehrkraft.');
+ if(p.deviceExit&&p.deviceExit.state!=='resume_allowed')fail('failed-precondition','Die Lehrkraft hat den Prüfungsmodus technisch unterbrochen. Die Antworten bleiben erhalten. Bitte die Freigabe zur Fortsetzung abwarten.');
 }
 module.exports={readClassroomStart,checkClassroomAttempt};
 // Returned only after the caller verified the ORIGINAL attempt token. A generic

@@ -527,3 +527,14 @@ test('unresolved submissions from a lost Classroom deployment block another pers
  f.docs.get(`quizzes/${f.quizId}/submissions/orphan`).classroomResolution={disposition:'retained'};
  const a=await f.startPersonal();assert.ok(a.attemptId);
 });
+
+
+test('technical device hold blocks resume and new submission but an already confirmed receipt remains authoritative',async()=>{
+ const f=classroomFixture(),a=await f.startPersonal(),path='classroomSchools/school/assignments/assignment/participants/pupil';
+ f.docs.get(path).deviceExit={state:'pending'};
+ await assert.rejects(f.exports.resumeAssessmentAttempt(f.request({attemptId:a.attemptId,attemptToken:f.token})),{code:'failed-precondition'});
+ await assert.rejects(f.submit(a.attemptId),{code:'failed-precondition'});
+ f.docs.get(path).deviceExit.state='resume_allowed';await f.submit(a.attemptId);
+ f.docs.get(path).deviceExit.state='pending';assert.equal((await f.receipt(a.attemptId)).receipt.attemptId,a.attemptId);
+ assert.equal((await f.submit(a.attemptId)).receipt.attemptId,a.attemptId);
+});
