@@ -14,7 +14,7 @@ export function monitorModel(result, serverNow) {
     remainingSeconds:round.deadlineAt?Math.max(0,Math.ceil((round.deadlineAt-serverNow)/1000)):null};
 }
 
-export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},onHelp=()=>{},now=Date.now}) {
+export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},onHelp=()=>{},onResolve=()=>{},now=Date.now}) {
   const doc=host.ownerDocument;
   const el=(tag,text,attrs={})=>{const n=doc.createElement(tag);if(text!==undefined)n.textContent=text;for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);return n;};
   const action=(label,fn)=>{const b=el('button',label,{type:'button',class:'button ghost'});b.addEventListener('click',()=>void fn());return b;};
@@ -28,7 +28,8 @@ export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},on
   const start=action('Test für alle starten',()=>requestStart(false));start.className='button primary';start.hidden=true;
   const confirmation=el('div',undefined,{class:'gcMonitorConfirm'});confirmation.hidden=true;
   const explain=el('p','„Bearbeitet“ ist der gemeldete Prüfungsstand. Ein fehlendes Signal bedeutet nicht, dass jemand nicht arbeitet.',{class:'gcMonitorUpdated'});
-  host.replaceChildren(heading,subtitle,roundLine,updated,warning,filters,start,confirmation,table,explain);
+  const unlinked=el('section',undefined,{class:'gcMonitorUnlinked'});unlinked.hidden=true;const tableScroll=el('div',undefined,{class:'gcMonitorTableScroll'});tableScroll.append(table);host.replaceChildren(heading,subtitle,roundLine,updated,warning,filters,start,confirmation,unlinked,tableScroll,explain);
+  let unlinkedKey='';
   for(const[key,label]of Object.entries(monitorLabels)){const b=action(label,()=>{filter=key;applyFilter();});b.dataset.filter=key;filters.append(b);filterButtons[key]=b;}
   function applyFilter(){for(const[key,b]of Object.entries(filterButtons))b.setAttribute('aria-pressed',String(key===filter));for(const r of records.values())r.node.hidden=filter!=='all'&&(filter==='attention'?!r.row.stale:r.row.status!==filter);}
   function render(result){
@@ -36,13 +37,15 @@ export function createExamMonitor({host,api,assignmentId,onOpenResults=()=>{},on
     heading.textContent=result.assignment.title;subtitle.textContent=`${result.assignment.className} · ${m.counts.all} erwartete Schüler:innen`;
     roundLine.textContent=m.round.state==='waiting'?'Warteraum: Die Lehrkraft gibt den Test gemeinsam frei.':m.round.state==='running'?`Prüfung läuft${m.remainingSeconds===null?' ohne Zeitlimit':` · ${Math.ceil(m.remainingSeconds/60)} Minuten verbleiben`}`:m.round.state==='closed'?'Diese Prüfungsrunde ist geschlossen.':'Der Test kann individuell gestartet werden.';
     updated.textContent=`Aktualisiert: ${new Date(now()).toLocaleTimeString('de-DE')}`;warning.hidden=true;
+    const orphanKey=JSON.stringify(result.unlinkedSubmissions||[]);if(orphanKey!==unlinkedKey){unlinkedKey=orphanKey;unlinked.replaceChildren();unlinked.hidden=!result.unlinkedSubmissions?.length;if(!unlinked.hidden){unlinked.append(el('h3',`${result.unlinkedSubmissions.length} gespeicherte Abgaben müssen zugeordnet werden`),el('p','Die Abgaben sind erhalten. Weitere neue Versuche dieser Runde sind bis zur Klärung gesperrt.'),action('Vorhandene Ergebnisse öffnen',()=>onOpenResults(null,latest.assignment)));for(const sub of result.unlinkedSubmissions)unlinked.append(action(`Abgabe prüfen: ${sub.name}`,()=>onResolve(sub,latest.assignment,latest.rows)));}}
+
     for(const[key,b]of Object.entries(filterButtons))b.textContent=`${monitorLabels[key]}: ${m.counts[key]}`;
     start.hidden=!m.canStart;start.disabled=starting;if(!m.canStart)confirmation.hidden=true;
     const ids=new Set(m.rows.map(r=>r.studentId));for(const[id,r]of records)if(!ids.has(id)){r.node.remove();records.delete(id);}
     for(let index=0;index<m.rows.length;index++){
       const row=m.rows[index];let record=records.get(row.studentId);
       if(!record){const node=el('tr'),cells=Array.from({length:4},()=>el('td'));node.append(...cells);record={node,cells,row};record.help=action('Hilfe',()=>record.row.status==='submitted'?onOpenResults(record.row,latest.assignment):onHelp(record.row,latest.assignment,latest.round));cells[3].append(record.help);records.set(row.studentId,record);}
-      record.row=row;record.cells[0].textContent=row.name;record.cells[1].textContent=(monitorLabels[row.status]||'Stand unbekannt')+(row.stale?' · Kein frisches Signal':'');
+      record.row=row;record.cells[0].textContent=row.name;record.cells[1].dataset.state=row.status;record.cells[1].textContent=(monitorLabels[row.status]||'Stand unbekannt')+(row.stale?' · Kein frisches Signal':'');
       const actionLabels={pending:'Fortsetzungsbitte ausstehend',delivered:'Fortsetzungsbitte zugestellt',acknowledged:'Fortsetzung bestätigt',expired:'Fortsetzungsbitte abgelaufen'};if(row.resumeAction)record.cells[1].textContent+=' · '+(actionLabels[row.resumeAction.state]||'');
       record.cells[2].textContent=row.lastSeenAt?new Date(row.lastSeenAt).toLocaleTimeString('de-DE'):'Noch kein Kontakt';record.help.textContent=row.status==='submitted'?'Ergebnis':'Hilfe';
       if(body.children[index]!==record.node)body.insertBefore(record.node,body.children[index]||null);

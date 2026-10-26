@@ -41,3 +41,17 @@ test('only owning teacher may request resume and only current assigned pupil may
 });
 
 test('a grouped printed pupil code signs into the existing identity without creating another account',async()=>{const f=await setup();const code=f.p.code.slice(0,4)+'-'+f.p.code.slice(4);const login=await f.student('login',{code,deviceMode:'shared'});assert.equal(login.student.id,f.p.id);assert.equal((await f.teacher('printCodes',{classId:f.c.id})).rows.find(p=>p.id===f.p.id).code,f.p.code);});
+
+
+test('unlinked submissions are visible to the owner and require explicit identity choice or retention',async()=>{
+ const f=await setup(),a=await f.teacher('assign',{quizId:'TEST2026',classId:f.c.id});
+ f.docs.set('quizzes/TEST2026/attempts/orphan',{quizId:'TEST2026',studentName:'Test Eins',sessionRunId:'round1',status:'submitted'});
+ f.docs.set('quizzes/TEST2026/submissions/orphan',{attemptId:'orphan',studentName:'Test Eins',sessionRunId:'round1',status:'graded',autoPoints:3});
+ assert.equal((await f.teacher('participants',{assignmentId:a.id})).unlinkedSubmissions.length,1);
+ await assert.rejects(f.teacher('resolveSubmission',{assignmentId:a.id,attemptId:'orphan',studentId:f.q.id,disposition:'link',confirm:true}),{code:'permission-denied'});
+ await f.teacher('resolveSubmission',{assignmentId:a.id,attemptId:'orphan',studentId:f.p.id,disposition:'link',confirm:true});
+ assert.equal((await f.teacher('participants',{assignmentId:a.id})).rows[0].status,'submitted');
+ assert.equal(f.docs.get('quizzes/TEST2026/submissions/orphan').autoPoints,3);
+ assert.equal((await f.student('login',{code:f.p.code})).assignments[0].status,'submitted');
+ await assert.rejects(f.teacher('resolveSubmission',{assignmentId:a.id,attemptId:'orphan',studentId:f.p.id,disposition:'link',confirm:true}),{code:'failed-precondition'});
+});

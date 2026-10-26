@@ -631,6 +631,12 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
 
     const classroom = await readClassroomStart({get: async path => (await tx.get(db.doc(path))).data(), fail: classroomFail, now: Date.now(), quizId, quiz: currentQuiz, attemptId: id, data: request.data || {}});
     if (classroom) studentName = classroom.studentName;
+    if (classroom) {
+      const submissions = await tx.get(db.collection(`quizzes/${quizId}/submissions`));
+      if (submissions.docs.some(s => {const v=s.data();return v.sessionRunId===effectiveRunId(currentQuiz,quizId)&&!v.classroom&&!v.classroomResolution;}))
+        throw new HttpsError('failed-precondition','Für diese Runde müssen vorhandene Abgaben zuerst von der Lehrkraft zugeordnet werden. Deine bisherigen Abgaben bleiben gespeichert.');
+    }
+
 
     // Quota/authentication must precede the expensive author-question query.
     const quota = await readStartQuota(request, quizId, tx);

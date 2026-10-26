@@ -1,0 +1,4 @@
+const test=require('node:test'),assert=require('node:assert/strict'),{JSDOM}=require('jsdom');
+test('LIVE entry is visible beside existing test actions and repeated decoration never duplicates it',async t=>{
+ const dom=new JSDOM('<article><div class="primaryQuizActions"><button>Bearbeiten</button><button>Ergebnisse</button></div></article>');t.after(()=>dom.window.close());const {installLiveEntry}=await import('../../classroom/workspace-controls.mjs');let calls=0,done;const pending=new Promise(r=>done=r),card=dom.window.document.querySelector('article');const open=()=>{calls++;return pending;};installLiveEntry(card,open);installLiveEntry(card,open);assert.equal(card.querySelectorAll('button').length,3);const b=card.querySelector('[data-online-live]');b.click();b.click();await Promise.resolve();assert.equal(calls,1);assert.equal(b.disabled,true);done();await Promise.resolve();await Promise.resolve();assert.match(b.textContent,/LIVE/);
+});

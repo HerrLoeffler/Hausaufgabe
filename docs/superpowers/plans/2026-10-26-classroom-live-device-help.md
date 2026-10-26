@@ -137,3 +137,11 @@ Files: SecureExamCoordinator.swift,SecureSavedWork.swift,SecureReplacementPolicy
 - [ ] Nutzergerät: persönlicherCode→LIVEwartend→gemeinsamerStart→Abgabe→Erledigt/Lehrerabgegeben→keinzweiterVersuch.
 - [ ] TechnischeHilfe: gezieltesiPadbeenden→Bestätigung→Fortsetzungerlauben→gleicherVersuch/Antworten;Offlinefallbleibtausdrücklichunbestätigt.
 - [ ] TODO/STATE/Handoffaktualisieren;keinephysischeAppleAbnahmebehauptenohneGerätebeleg.
+
+## Präzisierungen aus dem unabhängigen Builder-Check
+
+- Historische ungebundeneAbgaben blockieren neue persönlicheStarts der betroffenenRunde bis zur explizitenKlärung. resolveSubmission({assignmentId,attemptId,studentId?,disposition:'link'|'retain',confirm:true}) prüftOwner/Runde/Person undüberschreibtkeinbestehendesParticipantAttempt. AlleAntworten/Punktebleibenunverändert. ZusätzlicheVersuchewerdenausdrücklicherhalten.
+- GeräteAPI: teacher requestDeviceExit({assignmentId,studentId,attemptId,expectedGeneration,actionId,reason,confirm:true}); allowDeviceResume({assignmentId,studentId,attemptId,expectedGeneration,actionId,confirm:true}). Device deviceExitStatus({quizId,attemptId,attemptToken}) undacknowledgeDeviceExit({quizId,attemptId,attemptToken,actionId,outcome:'ended'|'failed'}). AlleRückgabenbindenquizId/assignmentId/studentId/attemptId/generation/actionId. EinPoll registriertFähigkeitexit_v1; ältereAppsbleibenexplizitohnebestätigteUnterstützung.
+- Zustände pending→delivered→ended|failed, ended→resume_allowed ausschließlichnachLehrerfreigabe. Solangepending/delivered/failed/ended: ServerblockiertPaper/Resume/weitereBearbeitung;vorhandeneReceiptbleibtabrufbar. ResumeüberholtkeineunbestätigteFreigabe. NeueActionIDerstnachvorigerbeendeter/resumierterAktion;staleACKwirkungslos.
+- PolltimeristunabhängigvomPrüfungstickundauchinrecovery/interruptedaktiv. KeinWartenaufRenderer: letztebereitsdauerhafteAntwortennutzen,Inhaltausblenden,AACbeenden;AppleCallbackabwartennurinasynchronemTask,StatusUIbleibtreaktiv. ErstCallbackdarfechteFreigabebestätigen. PersistenterExitMarkerblockiertautomatischenAACNeustartnachApprelaunch.
+- BackendKompositiontestetmain.js(daspackage.jsonMain),behältaktuelleVisual-/Gradingdateienhashgleich undprüftvorDeployallebetroffenenRevisionen/Quellgenerationen. ÄnderungenanFremdquellendürfennichtblindüberschriebenwerden.

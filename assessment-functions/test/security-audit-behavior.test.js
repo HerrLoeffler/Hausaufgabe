@@ -92,7 +92,7 @@ function fixture() {
       throw Error(name);
     }
   };
-  vm.runInNewContext(fs.readFileSync(require.resolve('../lib/secure-lifecycle'), 'utf8'), context);
+  vm.runInNewContext(fs.readFileSync(process.env.GC_CLASSROOM_HANDLER_SOURCE || require.resolve('../lib/secure-lifecycle'), 'utf8'), context);
   const quizId = 'AUDIT1';
   const token = 'A'.repeat(43);
   const questions = [{ id: 'q1', position: 1, type: 'number', text: '2+2', points: 1, numericAnswer: 4 }];
@@ -510,3 +510,20 @@ test('personal gate also protects self-start rounds using the authoritative stud
 test('lost personal start response remains recoverable with the original attempt secret after login session expiry',async()=>{const f=classroomFixture();const first=await f.startPersonal();const {hash}=require('../lib/classroom-service');f.docs.get('classroomSessions/'+hash('C'.repeat(43))).expiresAt=f.now-1;const recovered=await f.startPersonal();assert.equal(recovered.attemptId,first.attemptId);await assert.rejects(f.startPersonal('new-client-after-expiry'),{code:'unauthenticated'});});
 
 test('explicit replacement returns typed receipt only with original attempt secret and never creates a submission',async()=>{const f=classroomFixture();const a=await f.startPersonal();const base='classroomSchools/school/assignments/assignment';f.docs.set(base+'/participants/pupil',{generation:1,attemptId:null});f.docs.set(base+'/replacements/'+a.attemptId,{studentId:'pupil',oldGeneration:0,generation:1,actionId:'release1',releasedAt:1000});const r=await f.exports.resumeAssessmentAttempt(f.request({attemptId:a.attemptId,attemptToken:f.token}));assert.equal(r.status,'replaced');assert.equal(r.replacementReceipt.oldAttemptId,a.attemptId);const submit=await f.submit(a.attemptId);assert.equal(submit.status,'replaced');assert.ok(!f.docs.has(`quizzes/${f.quizId}/submissions/${a.attemptId}`));await assert.rejects(f.exports.resumeAssessmentAttempt(f.request({attemptId:a.attemptId,attemptToken:'B'.repeat(43)})),{code:'permission-denied'});});
+
+
+test('a confirmed personal submission cannot be repeated from a new client attempt',async()=>{
+ const f=classroomFixture(),a=await f.startPersonal();await f.submit(a.attemptId);
+ const saved=f.docs.get(`quizzes/${f.quizId}/submissions/${a.attemptId}`);
+ assert.equal(saved.classroom.studentId,'pupil');
+ await assert.rejects(f.startPersonal('repeat-after-receipt1'),{code:'already-exists'});
+ assert.equal([...f.docs.keys()].filter(p=>p.includes('/submissions/')).length,1);
+});
+
+test('unresolved submissions from a lost Classroom deployment block another personal start without merging by name',async()=>{
+ const f=classroomFixture();f.docs.set(`quizzes/${f.quizId}/submissions/orphan`,{studentName:'Test Eins',sessionRunId:'run1',attemptId:'orphan',status:'graded'});
+ await assert.rejects(f.startPersonal(),{code:'failed-precondition'});
+ assert.equal([...f.docs.keys()].some(p=>p.includes('/attempts/')),false);
+ f.docs.get(`quizzes/${f.quizId}/submissions/orphan`).classroomResolution={disposition:'retained'};
+ const a=await f.startPersonal();assert.ok(a.attemptId);
+});
