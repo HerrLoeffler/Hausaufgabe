@@ -1,0 +1,286 @@
+{
+  "quizId": "8LXU3NB8",
+  "title": "Prozentrechnung: Grundwert, Prozentwert und Prozentsatz",
+  "questions": [
+    {
+      "updatedAt": "2026-10-26T20:22:26.263Z",
+      "type": "visual",
+      "text": "Markiere 25 % auf dem Zahlenstrahl.",
+      "points": 3,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-skala-01\",\"revision\":0,\"format\":\"scale\",\"title\":\"Prozentsatz auf dem Zahlenstrahl\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Markiere 25 % auf dem Zahlenstrahl.\",\"hint\":\"Setze den Punkt genau auf den passenden Teilstrich.\",\"maxPoints\":3,\"spec\":{\"context\":\"numberline\",\"min\":0,\"max\":100,\"step\":1,\"majorStep\":10,\"unit\":\"%\",\"card\":\"●\"},\"solution\":{\"value\":25,\"tolerance\":0.4},\"objective\":\"Einen Prozentsatz auf einer Skala verorten.\",\"rationale\":\"Der Prozentsatz wird als Position auf dem Zahlenstrahl dargestellt.\",\"sourceNote\":\"Eigenes Beispiel zur Prozentrechnung.\"}",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "position": 1,
+      "id": "q001"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-dreisatz-sporthalle-04\",\"revision\":0,\"format\":\"table\",\"title\":\"Prozentwert mit dem Dreisatz berechnen\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ergänze den Dreisatz. Eine Sporthalle verbraucht im Winter 360 kWh Energie. Berechne, wie viel Energie 15 % davon entsprechen. Gehe über den Zwischenschritt 1 %. Jedes offene Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne in Pfeilrichtung von oben nach unten. Ergänze die Rechnung auf der Prozentsatzseite und auf der Energiemengenseite unabhängig voneinander.\",\"maxPoints\":3,\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozentsatz (%)\",\"Energiemenge (kWh)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"360\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":false,\"text\":\"1\"},{\"id\":\"r3c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"15\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c4\",\"accepted\":[\"3,6\",\"3.6\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"15\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"15\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"54\"],\"answerMode\":\"numeric\"}]},\"objective\":\"Den Prozentwert eines gegebenen Grundwerts mithilfe des Dreisatzes berechnen.\",\"rationale\":\"Die direkte Zuordnung führt vom Grundwert über 1 % zum gesuchten Prozentsatz. Beide Rechenpfeile werden unabhängig ergänzt, und der Prozentwert wird anschließend berechnet.\",\"sourceNote\":\"Eigenständig formulierte Aufgabe zur Prozentrechnung.\",\"provenance\":{\"kind\":\"original\"}}",
+      "updatedAt": "2026-10-26T20:22:26.502Z",
+      "points": 3,
+      "text": "Ergänze den Dreisatz. Eine Sporthalle verbraucht im Winter 360 kWh Energie. Berechne, wie viel Energie 15 % davon entsprechen. Gehe über den Zwischenschritt 1 %. Jedes offene Feld zählt 0,5 Punkte.",
+      "position": 2,
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "id": "q002"
+    },
+    {
+      "type": "visual",
+      "points": 3,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-26T20:22:26.707Z",
+      "text": "Stelle 40 % in einem Raster mit 20 gleich großen Feldern dar.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-raster-03\",\"revision\":0,\"format\":\"grid\",\"title\":\"Prozentanteil im Raster\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Stelle 40 % in einem Raster mit 20 gleich großen Feldern dar.\",\"hint\":\"Markiere genau den passenden Anteil der gleich großen Felder.\",\"maxPoints\":3,\"spec\":{\"rows\":4,\"columns\":5},\"solution\":{\"count\":8},\"objective\":\"Einen Prozentsatz als Flächenanteil darstellen.\",\"rationale\":\"40 % von 20 gleich großen Feldern entsprechen 8 Feldern.\",\"sourceNote\":\"Eigenes Beispiel zur Prozentrechnung.\"}",
+      "position": 3,
+      "id": "q003"
+    },
+    {
+      "text": "Ergänze die fehlenden Werte in der Tabelle.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-tabelle-04\",\"revision\":0,\"format\":\"table\",\"title\":\"Grundwert und Prozentwert\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ergänze die fehlenden Werte in der Tabelle.\",\"hint\":\"Berechne jede Zeile mithilfe der beiden gegebenen Angaben.\",\"maxPoints\":3,\"spec\":{\"columns\":[\"Grundwert\",\"Prozentsatz\",\"Prozentwert\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"200 €\",\"input\":false},{\"id\":\"a2\",\"text\":\"15 %\",\"input\":false},{\"id\":\"a3\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"\",\"input\":true},{\"id\":\"b2\",\"text\":\"20 %\",\"input\":false},{\"id\":\"b3\",\"text\":\"36 €\",\"input\":false}],[{\"id\":\"c1\",\"text\":\"80 kg\",\"input\":false},{\"id\":\"c2\",\"text\":\"\",\"input\":true},{\"id\":\"c3\",\"text\":\"12 kg\",\"input\":false}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a3\",\"accepted\":[\"30\"]},{\"id\":\"b1\",\"accepted\":[\"180\"]},{\"id\":\"c2\",\"accepted\":[\"15\"]}]},\"objective\":\"Grundwert, Prozentsatz und Prozentwert einander zuordnen.\",\"rationale\":\"In jeder Zeile lässt sich die fehlende Größe eindeutig berechnen.\",\"sourceNote\":\"Eigenes Beispiel zur Prozentrechnung.\"}",
+      "updatedAt": "2026-10-26T20:22:26.902Z",
+      "points": 3,
+      "position": 4,
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "id": "q004"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "Verbinde jede Größe mit ihrer passenden Berechnung.",
+      "points": 3,
+      "updatedAt": "2026-10-26T20:22:27.309Z",
+      "position": 5,
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-verbindungen-05\",\"revision\":0,\"format\":\"connections\",\"title\":\"Formeln der Prozentrechnung\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Verbinde jede Größe mit ihrer passenden Berechnung. Die Pfeile zeigen von der gesuchten Größe zur passenden Berechnung.\",\"hint\":\"Verbinde jeden Begriff genau einmal.\",\"maxPoints\":3,\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"g\",\"label\":\"Gesucht: Grundwert\",\"x\":110,\"y\":80},{\"id\":\"p\",\"label\":\"Gesucht: Prozentsatz\",\"x\":110,\"y\":180},{\"id\":\"w\",\"label\":\"Gesucht: Prozentwert\",\"x\":110,\"y\":280},{\"id\":\"f1\",\"label\":\"Prozentwert · 100 : Prozentsatz\",\"x\":500,\"y\":60},{\"id\":\"f2\",\"label\":\"Prozentwert · 100 : Grundwert\",\"x\":500,\"y\":160},{\"id\":\"f3\",\"label\":\"Grundwert · Prozentsatz : 100\",\"x\":500,\"y\":260}]},\"solution\":{\"edges\":[[\"g\",\"f1\"],[\"p\",\"f2\"],[\"w\",\"f3\"]]},\"objective\":\"Die drei Grundformeln der Prozentrechnung zuordnen.\",\"rationale\":\"Jede gesuchte Größe besitzt eine eindeutige Umstellungsformel.\",\"sourceNote\":\"Eigenes Beispiel zur Prozentrechnung.\"}",
+      "id": "q005"
+    },
+    {
+      "text": "Ergänze den Dreisatz: 45 % eines Betrags entsprechen 108 €. Bestimme den Grundwert über den Zwischenschritt 1 %. Jedes offene Feld zählt 0,5 Punkte.",
+      "points": 3,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "updatedAt": "2026-10-26T20:22:27.499Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dreisatz-grundwert-06\",\"revision\":0,\"format\":\"table\",\"title\":\"Den Grundwert mit dem Dreisatz bestimmen\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ergänze den Dreisatz: 45 % eines Betrags entsprechen 108 €. Bestimme den Grundwert über den Zwischenschritt 1 %. Jedes offene Feld zählt 0,5 Punkte.\",\"hint\":\"Führe beide Größen zuerst auf 1 % und danach auf 100 % zurück. Ergänze jede Rechnung und jede fehlende Zahl.\",\"maxPoints\":3,\"spec\":{\"layout\":\"dreisatz\",\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozentsatz (%)\",\"Prozentwert (€)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"45\",\"input\":false},{\"id\":\"r1c4\",\"text\":\"108\",\"input\":false},{\"id\":\"r1c5\",\"text\":\"\",\"input\":false},{\"id\":\"r1c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r2c1\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"\",\"input\":true},{\"id\":\"r2c3\",\"text\":\"\",\"input\":false},{\"id\":\"r2c4\",\"text\":\"\",\"input\":false},{\"id\":\"r2c5\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r3c1\",\"text\":\"\",\"input\":false},{\"id\":\"r3c2\",\"text\":\"\",\"input\":false},{\"id\":\"r3c3\",\"text\":\"\",\"input\":true},{\"id\":\"r3c4\",\"text\":\"\",\"input\":true},{\"id\":\"r3c5\",\"text\":\"\",\"input\":false},{\"id\":\"r3c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r4c1\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c2\",\"text\":\"\",\"input\":true},{\"id\":\"r4c3\",\"text\":\"\",\"input\":false},{\"id\":\"r4c4\",\"text\":\"\",\"input\":false},{\"id\":\"r4c5\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c6\",\"text\":\"100\",\"input\":false}],[{\"id\":\"r5c1\",\"text\":\"\",\"input\":false},{\"id\":\"r5c2\",\"text\":\"\",\"input\":false},{\"id\":\"r5c3\",\"text\":\"100\",\"input\":false},{\"id\":\"r5c4\",\"text\":\"\",\"input\":true},{\"id\":\"r5c5\",\"text\":\"\",\"input\":false},{\"id\":\"r5c6\",\"text\":\"\",\"input\":false}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"r2c2\",\"accepted\":[\"45\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"45\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c3\",\"accepted\":[\"1\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c4\",\"accepted\":[\"2,4\",\"2.4\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"240\"],\"answerMode\":\"numeric\"}]},\"objective\":\"Den Grundwert mit dem Dreisatz aus einem gegebenen Prozentsatz und Prozentwert bestimmen.\",\"rationale\":\"Prozentsatz und Prozentwert werden zunächst auf 1 % und anschließend auf 100 % zurückgeführt.\",\"sourceNote\":\"Eigenständig formulierte Prozentaufgabe ohne zusätzliche Medien.\"}",
+      "type": "visual",
+      "position": 6,
+      "id": "q006"
+    },
+    {
+      "position": 7,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dreisatz-wassertank-07\",\"revision\":0,\"format\":\"table\",\"title\":\"Dreisatz mit einer Wassermenge\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ergänze den Dreisatz: In einem Wassertank entsprechen 20 % einer Wassermenge von 45 Litern. Bestimme die Wassermenge für 1 % und für 100 %. Jedes offene Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne in jedem Pfeil von oben nach unten. Die Rechnungen links beziehen sich auf die Prozentsätze, die Rechnungen rechts auf die Wassermengen.\",\"maxPoints\":3,\"spec\":{\"layout\":\"dreisatz\",\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozentsatz (%)\",\"Wassermenge (l)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"20\",\"input\":false},{\"id\":\"r1c4\",\"text\":\"45\",\"input\":false},{\"id\":\"r1c5\",\"text\":\"\",\"input\":false},{\"id\":\"r1c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r2c1\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"\",\"input\":true},{\"id\":\"r2c3\",\"text\":\"\",\"input\":false},{\"id\":\"r2c4\",\"text\":\"\",\"input\":false},{\"id\":\"r2c5\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r3c1\",\"text\":\"\",\"input\":false},{\"id\":\"r3c2\",\"text\":\"\",\"input\":false},{\"id\":\"r3c3\",\"text\":\"\",\"input\":true},{\"id\":\"r3c4\",\"text\":\"\",\"input\":true},{\"id\":\"r3c5\",\"text\":\"\",\"input\":false},{\"id\":\"r3c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r4c1\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c2\",\"text\":\"\",\"input\":true},{\"id\":\"r4c3\",\"text\":\"\",\"input\":false},{\"id\":\"r4c4\",\"text\":\"\",\"input\":false},{\"id\":\"r4c5\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c6\",\"text\":\"100\",\"input\":false}],[{\"id\":\"r5c1\",\"text\":\"\",\"input\":false},{\"id\":\"r5c2\",\"text\":\"\",\"input\":false},{\"id\":\"r5c3\",\"text\":\"100\",\"input\":false},{\"id\":\"r5c4\",\"text\":\"\",\"input\":true},{\"id\":\"r5c5\",\"text\":\"\",\"input\":false},{\"id\":\"r5c6\",\"text\":\"\",\"input\":false}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"r2c2\",\"accepted\":[\"20\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"20\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c3\",\"accepted\":[\"1\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c4\",\"accepted\":[\"2,25\",\"2.25\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"225\"],\"answerMode\":\"numeric\"}]},\"objective\":\"Den Grundwert und den Prozentwert mithilfe einer direkten Zuordnung berechnen.\",\"rationale\":\"20 % entsprechen 45 Litern. Durch Teilen durch 20 erhält man 1 % mit 2,25 Litern; durch Multiplizieren mit 100 erhält man den Grundwert von 225 Litern.\",\"sourceNote\":\"Eigenständig formulierte Dreisatzaufgabe zur Prozentrechnung.\"}",
+      "updatedAt": "2026-10-26T20:22:27.661Z",
+      "text": "Ergänze den Dreisatz: In einem Wassertank entsprechen 20 % einer Wassermenge von 45 Litern. Bestimme die Wassermenge für 1 % und für 100 %. Jedes offene Feld zählt 0,5 Punkte.",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "points": 3,
+      "type": "visual",
+      "id": "q007"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "position": 8,
+      "text": "Ergänze den Dreisatz: Ein Rucksack kostet 240 €. Wie viel Euro sind 35 % des Preises? Jedes offene Feld zählt 0,5 Punkte.",
+      "points": 3,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dreisatz-prozentwert-35-von-240\",\"revision\":0,\"format\":\"table\",\"title\":\"Prozentwert mit Dreisatz bestimmen\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ergänze den Dreisatz: Ein Rucksack kostet 240 €. Wie viel Euro sind 35 % des Preises? Jedes offene Feld zählt 0,5 Punkte.\",\"hint\":\"Berechne zuerst den Wert von 1 %. Verwende danach den gegebenen Prozentsatz.\",\"maxPoints\":3,\"spec\":{\"layout\":\"dreisatz\",\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozentsatz (%)\",\"Preis (€)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"100\",\"input\":false},{\"id\":\"r1c4\",\"text\":\"240\",\"input\":false},{\"id\":\"r1c5\",\"text\":\"\",\"input\":false},{\"id\":\"r1c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r2c1\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"\",\"input\":true},{\"id\":\"r2c3\",\"text\":\"\",\"input\":false},{\"id\":\"r2c4\",\"text\":\"\",\"input\":false},{\"id\":\"r2c5\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r3c1\",\"text\":\"\",\"input\":false},{\"id\":\"r3c2\",\"text\":\"\",\"input\":false},{\"id\":\"r3c3\",\"text\":\"\",\"input\":true},{\"id\":\"r3c4\",\"text\":\"\",\"input\":true},{\"id\":\"r3c5\",\"text\":\"\",\"input\":false},{\"id\":\"r3c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r4c1\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c2\",\"text\":\"\",\"input\":true},{\"id\":\"r4c3\",\"text\":\"\",\"input\":false},{\"id\":\"r4c4\",\"text\":\"\",\"input\":false},{\"id\":\"r4c5\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c6\",\"text\":\"35\",\"input\":false}],[{\"id\":\"r5c1\",\"text\":\"\",\"input\":false},{\"id\":\"r5c2\",\"text\":\"\",\"input\":false},{\"id\":\"r5c3\",\"text\":\"35\",\"input\":false},{\"id\":\"r5c4\",\"text\":\"\",\"input\":true},{\"id\":\"r5c5\",\"text\":\"\",\"input\":false},{\"id\":\"r5c6\",\"text\":\"\",\"input\":false}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c3\",\"accepted\":[\"1\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c4\",\"accepted\":[\"2,4\",\"2.4\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"35\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"84\"],\"answerMode\":\"numeric\"}]},\"objective\":\"Den Prozentwert mithilfe des Dreisatzes bestimmen.\",\"rationale\":\"Der Preis für 1 % wird aus dem Grundwert berechnet und anschließend mit dem gegebenen Prozentsatz vervielfacht.\",\"sourceNote\":\"Eigenständig formulierte Aufgabe zur Prozentrechnung.\"}",
+      "updatedAt": "2026-10-26T20:22:27.825Z",
+      "id": "q008"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dreisatz-sachbuecher-09\",\"revision\":0,\"format\":\"table\",\"title\":\"Anteil der Sachbücher berechnen\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"In einer Klassenbibliothek stehen 50 Bücher. Davon sind 7 Sachbücher. Ergänze den Dreisatz und berechne, wie viel Prozent der Bücher Sachbücher sind. Jedes offene Feld zählt 0,5 Punkte.\",\"hint\":\"Gehe zuerst von 100 % auf 1 % und anschließend von 1 % auf den gesuchten Anteil. Rechne die beiden Seiten der Pfeile jeweils unabhängig.\",\"maxPoints\":3,\"spec\":{\"layout\":\"dreisatz\",\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozentsatz (%)\",\"Anzahl Bücher\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"100\",\"input\":false},{\"id\":\"r1c4\",\"text\":\"50\",\"input\":false},{\"id\":\"r1c5\",\"text\":\"\",\"input\":false},{\"id\":\"r1c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r2c1\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"\",\"input\":true},{\"id\":\"r2c3\",\"text\":\"\",\"input\":false},{\"id\":\"r2c4\",\"text\":\"\",\"input\":false},{\"id\":\"r2c5\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r3c1\",\"text\":\"\",\"input\":false},{\"id\":\"r3c2\",\"text\":\"\",\"input\":false},{\"id\":\"r3c3\",\"text\":\"1\",\"input\":false},{\"id\":\"r3c4\",\"text\":\"\",\"input\":true},{\"id\":\"r3c5\",\"text\":\"\",\"input\":false},{\"id\":\"r3c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r4c1\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c2\",\"text\":\"\",\"input\":true},{\"id\":\"r4c3\",\"text\":\"\",\"input\":false},{\"id\":\"r4c4\",\"text\":\"\",\"input\":false},{\"id\":\"r4c5\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r5c1\",\"text\":\"\",\"input\":false},{\"id\":\"r5c2\",\"text\":\"\",\"input\":false},{\"id\":\"r5c3\",\"text\":\"\",\"input\":true},{\"id\":\"r5c4\",\"text\":\"7\",\"input\":false},{\"id\":\"r5c5\",\"text\":\"\",\"input\":false},{\"id\":\"r5c6\",\"text\":\"\",\"input\":false}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c4\",\"accepted\":[\"0,5\",\"0.5\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"14\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"14\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c3\",\"accepted\":[\"14\"],\"answerMode\":\"numeric\"}]},\"objective\":\"Den Prozentsatz aus Grundwert und Prozentwert mithilfe des Dreisatzes bestimmen.\",\"rationale\":\"100 % entsprechen dem Gesamtwert. Durch Teilen durch 100 wird der Wert für 1 % bestimmt; durch Vervielfachen mit 14 ergibt sich der Anteil von 7 Büchern.\",\"sourceNote\":\"Eigenständig formulierte Aufgabe zur Prozentrechnung.\"}",
+      "points": 3,
+      "text": "In einer Klassenbibliothek stehen 50 Bücher. Davon sind 7 Sachbücher. Ergänze den Dreisatz und berechne, wie viel Prozent der Bücher Sachbücher sind. Jedes offene Feld zählt 0,5 Punkte.",
+      "type": "visual",
+      "updatedAt": "2026-10-26T20:22:27.998Z",
+      "position": 9,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q009"
+    },
+    {
+      "type": "visual",
+      "points": 3,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dreisatz-rabatt-grundwert-10\",\"revision\":0,\"format\":\"table\",\"title\":\"Dreisatz mit einem Rabatt\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ergänze den Dreisatz: Ein Rabatt von 20 % beträgt 18 €. Wie hoch war der ursprüngliche Preis? Jedes offene Feld zählt 0,5 Punkte.\",\"hint\":\"Führe beide Größen zuerst auf 1 % und danach auf 100 % zurück. Rechne die linke und die rechte Seite jeweils mit dem passenden Pfeil weiter.\",\"maxPoints\":3,\"spec\":{\"layout\":\"dreisatz\",\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Anteil (%)\",\"Betrag (€)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"20\",\"input\":false},{\"id\":\"r1c4\",\"text\":\"18\",\"input\":false},{\"id\":\"r1c5\",\"text\":\"\",\"input\":false},{\"id\":\"r1c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r2c1\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"\",\"input\":true},{\"id\":\"r2c3\",\"text\":\"\",\"input\":false},{\"id\":\"r2c4\",\"text\":\"\",\"input\":false},{\"id\":\"r2c5\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r3c1\",\"text\":\"\",\"input\":false},{\"id\":\"r3c2\",\"text\":\"\",\"input\":false},{\"id\":\"r3c3\",\"text\":\"1\",\"input\":false},{\"id\":\"r3c4\",\"text\":\"\",\"input\":true},{\"id\":\"r3c5\",\"text\":\"\",\"input\":false},{\"id\":\"r3c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r4c1\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c2\",\"text\":\"\",\"input\":true},{\"id\":\"r4c3\",\"text\":\"\",\"input\":false},{\"id\":\"r4c4\",\"text\":\"\",\"input\":false},{\"id\":\"r4c5\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r5c1\",\"text\":\"\",\"input\":false},{\"id\":\"r5c2\",\"text\":\"\",\"input\":false},{\"id\":\"r5c3\",\"text\":\"100\",\"input\":false},{\"id\":\"r5c4\",\"text\":\"\",\"input\":true},{\"id\":\"r5c5\",\"text\":\"\",\"input\":false},{\"id\":\"r5c6\",\"text\":\"\",\"input\":false}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"r2c2\",\"accepted\":[\"20\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"20\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c4\",\"accepted\":[\"0,9\",\"0.9\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"90\",\"90,0\",\"90.0\"],\"answerMode\":\"numeric\"}]},\"objective\":\"Den Grundwert mithilfe eines Dreisatzes aus einem bekannten Prozentsatz und Prozentwert bestimmen.\",\"rationale\":\"Der bekannte Rabatt entspricht 20 % des ursprünglichen Preises. Durch die Zwischenstufe 1 % lässt sich der zugehörige Betrag für 100 % berechnen.\",\"sourceNote\":\"Eigenständig formulierte Prozentaufgabe mit direkter Zuordnung zwischen Prozentsatz und Geldbetrag.\"}",
+      "position": 10,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-26T20:22:28.175Z",
+      "text": "Ergänze den Dreisatz: Ein Rabatt von 20 % beträgt 18 €. Wie hoch war der ursprüngliche Preis? Jedes offene Feld zählt 0,5 Punkte.",
+      "id": "q010"
+    },
+    {
+      "updatedAt": "2026-10-26T20:22:28.304Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-tabelle-11\",\"revision\":0,\"format\":\"table\",\"title\":\"Gemischte Prozentaufgaben\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ergänze die Tabelle. Berechne jeweils den fehlenden Wert.\",\"hint\":\"Verwende je nach Zeile die passende Formel für Grundwert, Prozentwert oder Prozentsatz.\",\"maxPoints\":3,\"spec\":{\"columns\":[\"Grundwert\",\"Prozentsatz\",\"Prozentwert\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"350 €\",\"input\":false},{\"id\":\"a2\",\"text\":\"12 %\",\"input\":false},{\"id\":\"a3\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"\",\"input\":true},{\"id\":\"b2\",\"text\":\"25 %\",\"input\":false},{\"id\":\"b3\",\"text\":\"50 kg\",\"input\":false}],[{\"id\":\"c1\",\"text\":\"240 m\",\"input\":false},{\"id\":\"c2\",\"text\":\"\",\"input\":true},{\"id\":\"c3\",\"text\":\"36 m\",\"input\":false}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a3\",\"accepted\":[\"42\"]},{\"id\":\"b1\",\"accepted\":[\"200\"]},{\"id\":\"c2\",\"accepted\":[\"15\"]}]},\"objective\":\"Prozentaufgaben mit unterschiedlichen gesuchten Größen lösen.\",\"rationale\":\"Die fehlende Größe wird aus den jeweils zwei gegebenen Größen bestimmt.\",\"sourceNote\":\"Eigenes Beispiel zur Prozentrechnung.\"}",
+      "points": 3,
+      "text": "Ergänze die Tabelle. Berechne jeweils den fehlenden Wert.",
+      "type": "visual",
+      "position": 11,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q011"
+    },
+    {
+      "updatedAt": "2026-10-26T20:22:28.438Z",
+      "type": "visual",
+      "points": 3,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-dreisatz-jugendverein-12\",\"revision\":0,\"format\":\"table\",\"title\":\"Dreisatz mit Prozenten\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"In einem Jugendverein sind 240 Mitglieder. 35 % der Mitglieder sind Jugendliche. Ergänze den Dreisatz und berechne, wie viele Jugendliche im Verein sind. Jedes offene Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne in Pfeilrichtung von oben nach unten. Die beiden Seiten des Dreisatzes werden unabhängig voneinander ergänzt.\",\"maxPoints\":3,\"spec\":{\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Anteil (%)\",\"Mitglieder\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c3\",\"input\":false,\"text\":\"100\"},{\"id\":\"r1c4\",\"input\":false,\"text\":\"240\"},{\"id\":\"r1c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r1c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r2c1\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r2c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r2c5\",\"input\":false,\"text\":\"÷\"},{\"id\":\"r2c6\",\"input\":true,\"text\":\"\"}],[{\"id\":\"r3c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c3\",\"input\":true,\"text\":\"\"},{\"id\":\"r3c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r3c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r3c6\",\"input\":false,\"text\":\"\"}],[{\"id\":\"r4c1\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c2\",\"input\":true,\"text\":\"\"},{\"id\":\"r4c3\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c4\",\"input\":false,\"text\":\"\"},{\"id\":\"r4c5\",\"input\":false,\"text\":\"×\"},{\"id\":\"r4c6\",\"input\":false,\"text\":\"35\"}],[{\"id\":\"r5c1\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c2\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c3\",\"input\":false,\"text\":\"35\"},{\"id\":\"r5c4\",\"input\":true,\"text\":\"\"},{\"id\":\"r5c5\",\"input\":false,\"text\":\"\"},{\"id\":\"r5c6\",\"input\":false,\"text\":\"\"}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\",\"layout\":\"dreisatz\"},\"solution\":{\"cells\":[{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c3\",\"accepted\":[\"1\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c4\",\"accepted\":[\"2,4\",\"2.4\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"35\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"84\"],\"answerMode\":\"numeric\"}]},\"objective\":\"Den Grundwert, den Prozentwert und den Prozentsatz in einer direkten Zuordnung miteinander verknüpfen.\",\"rationale\":\"Die Lernenden führen den Dreisatz über 1 % aus und bestimmen daraus den Prozentwert.\",\"sourceNote\":\"Eigenständig formulierte Aufgabe zur Prozentrechnung.\"}",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "text": "In einem Jugendverein sind 240 Mitglieder. 35 % der Mitglieder sind Jugendliche. Ergänze den Dreisatz und berechne, wie viele Jugendliche im Verein sind. Jedes offene Feld zählt 0,5 Punkte.",
+      "position": 12,
+      "id": "q012"
+    },
+    {
+      "text": "Stelle 65 % in einem Raster mit 20 gleich großen Feldern dar.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "position": 13,
+      "updatedAt": "2026-10-26T20:22:28.628Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-raster-13\",\"revision\":0,\"format\":\"grid\",\"title\":\"Prozentanteil darstellen\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Stelle 65 % in einem Raster mit 20 gleich großen Feldern dar.\",\"hint\":\"Markiere den passenden Anteil der gleich großen Felder.\",\"maxPoints\":3,\"spec\":{\"rows\":4,\"columns\":5},\"solution\":{\"count\":13},\"objective\":\"Einen Prozentsatz als Anteil einer Gesamtfläche darstellen.\",\"rationale\":\"65 % von 20 Feldern entsprechen 13 Feldern.\",\"sourceNote\":\"Eigenes Beispiel zur Prozentrechnung.\"}",
+      "type": "visual",
+      "points": 3,
+      "id": "q013"
+    },
+    {
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "position": 14,
+      "type": "visual",
+      "text": "Ergänze die Tabelle mit den fehlenden Prozentwerten.",
+      "points": 3,
+      "updatedAt": "2026-10-26T20:22:28.783Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-tabelle-14\",\"revision\":0,\"format\":\"table\",\"title\":\"Prozentwerte berechnen\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ergänze die Tabelle mit den fehlenden Prozentwerten.\",\"hint\":\"Berechne den Prozentwert mit Grundwert · Prozentsatz : 100.\",\"maxPoints\":3,\"spec\":{\"columns\":[\"Grundwert\",\"Prozentsatz\",\"Prozentwert\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"480 €\",\"input\":false},{\"id\":\"a2\",\"text\":\"5 %\",\"input\":false},{\"id\":\"a3\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"75 kg\",\"input\":false},{\"id\":\"b2\",\"text\":\"16 %\",\"input\":false},{\"id\":\"b3\",\"text\":\"\",\"input\":true}],[{\"id\":\"c1\",\"text\":\"900 m\",\"input\":false},{\"id\":\"c2\",\"text\":\"7 %\",\"input\":false},{\"id\":\"c3\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a3\",\"accepted\":[\"24\"]},{\"id\":\"b3\",\"accepted\":[\"12\"]},{\"id\":\"c3\",\"accepted\":[\"63\"]}]},\"objective\":\"Prozentwerte aus Grundwert und Prozentsatz berechnen.\",\"rationale\":\"Alle drei Zeilen verlangen dieselbe Grundformel mit unterschiedlichen Daten.\",\"sourceNote\":\"Eigenes Beispiel zur Prozentrechnung.\"}",
+      "id": "q014"
+    },
+    {
+      "position": 15,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "text": "Ergänze den Dreisatz: Von 360 kg Erde werden 22 % für ein Beet verwendet. Wie viele Kilogramm sind das? Jedes offene Feld zählt 0,5 Punkte.",
+      "updatedAt": "2026-10-26T20:22:28.908Z",
+      "points": 3,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dreisatz-erde-22-prozent\",\"revision\":0,\"format\":\"table\",\"title\":\"Dreisatz mit Erde\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ergänze den Dreisatz: Von 360 kg Erde werden 22 % für ein Beet verwendet. Wie viele Kilogramm sind das? Jedes offene Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne zuerst auf 1 % und danach auf 22 %. Führe die Rechnungen links und rechts jeweils unabhängig aus.\",\"maxPoints\":3,\"spec\":{\"layout\":\"dreisatz\",\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Anteil (%)\",\"Masse (kg)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"100\",\"input\":false},{\"id\":\"r1c4\",\"text\":\"360\",\"input\":false},{\"id\":\"r1c5\",\"text\":\"\",\"input\":false},{\"id\":\"r1c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r2c1\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"\",\"input\":true},{\"id\":\"r2c3\",\"text\":\"\",\"input\":false},{\"id\":\"r2c4\",\"text\":\"\",\"input\":false},{\"id\":\"r2c5\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r3c1\",\"text\":\"\",\"input\":false},{\"id\":\"r3c2\",\"text\":\"\",\"input\":false},{\"id\":\"r3c3\",\"text\":\"1\",\"input\":false},{\"id\":\"r3c4\",\"text\":\"\",\"input\":true},{\"id\":\"r3c5\",\"text\":\"\",\"input\":false},{\"id\":\"r3c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r4c1\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c2\",\"text\":\"\",\"input\":true},{\"id\":\"r4c3\",\"text\":\"\",\"input\":false},{\"id\":\"r4c4\",\"text\":\"\",\"input\":false},{\"id\":\"r4c5\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r5c1\",\"text\":\"\",\"input\":false},{\"id\":\"r5c2\",\"text\":\"\",\"input\":false},{\"id\":\"r5c3\",\"text\":\"22\",\"input\":false},{\"id\":\"r5c4\",\"text\":\"\",\"input\":true},{\"id\":\"r5c5\",\"text\":\"\",\"input\":false},{\"id\":\"r5c6\",\"text\":\"\",\"input\":false}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c4\",\"accepted\":[\"3,6\",\"3.6\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"22\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"22\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"79,2\",\"79.2\"],\"answerMode\":\"numeric\"}]},\"objective\":\"Einen Prozentwert mit dem Dreisatz über 1 % berechnen.\",\"rationale\":\"Die Masse steht in direkter Zuordnung zum prozentualen Anteil. Beide Rechenwege führen von 100 % über 1 % zu 22 %.\",\"sourceNote\":\"Eigenständig formulierte Prozentaufgabe mit konsistentem Dreisatz.\"}",
+      "id": "q015"
+    },
+    {
+      "updatedAt": "2026-10-26T20:22:29.032Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-skala-16\",\"revision\":0,\"format\":\"scale\",\"title\":\"Prozentsatz ablesen\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Markiere 35 % auf dem Zahlenstrahl von 0 % bis 100 %.\",\"hint\":\"Nutze die Einteilung in einzelne Prozentpunkte.\",\"maxPoints\":3,\"spec\":{\"context\":\"numberline\",\"min\":0,\"max\":100,\"step\":1,\"majorStep\":10,\"unit\":\"%\",\"card\":\"●\"},\"solution\":{\"value\":35,\"tolerance\":0.4},\"objective\":\"Einen Prozentsatz auf einer maßstäblichen Skala markieren.\",\"rationale\":\"Die gesuchte Position liegt bei 35 Prozentpunkten.\",\"sourceNote\":\"Eigenes Beispiel zur Prozentrechnung.\"}",
+      "type": "visual",
+      "points": 3,
+      "position": 16,
+      "text": "Markiere 35 % auf dem Zahlenstrahl von 0 % bis 100 %.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q016"
+    },
+    {
+      "position": 17,
+      "updatedAt": "2026-10-26T20:22:29.195Z",
+      "text": "Ergänze den Dreisatz: Bei einer Sammelaktion werden 250 kg Papier gesammelt. 18 % davon sind besonders sauber und können weiterverwendet werden. Wie viele Kilogramm sind das? Jedes offene Feld zählt 0,5 Punkte.",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"dreisatz-papier-17\",\"revision\":0,\"format\":\"table\",\"title\":\"Einen Prozentwert berechnen\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ergänze den Dreisatz: Bei einer Sammelaktion werden 250 kg Papier gesammelt. 18 % davon sind besonders sauber und können weiterverwendet werden. Wie viele Kilogramm sind das? Jedes offene Feld zählt 0,5 Punkte.\",\"hint\":\"Rechne zuerst auf 1 % und anschließend auf 18 % hoch. Ergänze beide Rechenpfeile unabhängig voneinander.\",\"maxPoints\":3,\"spec\":{\"layout\":\"dreisatz\",\"columns\":[\"Rechenzeichen links\",\"Zahl links\",\"Prozentsatz (%)\",\"Masse (kg)\",\"Rechenzeichen rechts\",\"Zahl rechts\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"100\",\"input\":false},{\"id\":\"r1c4\",\"text\":\"250\",\"input\":false},{\"id\":\"r1c5\",\"text\":\"\",\"input\":false},{\"id\":\"r1c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r2c1\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"\",\"input\":true},{\"id\":\"r2c3\",\"text\":\"\",\"input\":false},{\"id\":\"r2c4\",\"text\":\"\",\"input\":false},{\"id\":\"r2c5\",\"text\":\"÷\",\"input\":false},{\"id\":\"r2c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r3c1\",\"text\":\"\",\"input\":false},{\"id\":\"r3c2\",\"text\":\"\",\"input\":false},{\"id\":\"r3c3\",\"text\":\"1\",\"input\":false},{\"id\":\"r3c4\",\"text\":\"\",\"input\":true},{\"id\":\"r3c5\",\"text\":\"\",\"input\":false},{\"id\":\"r3c6\",\"text\":\"\",\"input\":false}],[{\"id\":\"r4c1\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c2\",\"text\":\"\",\"input\":true},{\"id\":\"r4c3\",\"text\":\"\",\"input\":false},{\"id\":\"r4c4\",\"text\":\"\",\"input\":false},{\"id\":\"r4c5\",\"text\":\"×\",\"input\":false},{\"id\":\"r4c6\",\"text\":\"\",\"input\":true}],[{\"id\":\"r5c1\",\"text\":\"\",\"input\":false},{\"id\":\"r5c2\",\"text\":\"\",\"input\":false},{\"id\":\"r5c3\",\"text\":\"18\",\"input\":false},{\"id\":\"r5c4\",\"text\":\"\",\"input\":true},{\"id\":\"r5c5\",\"text\":\"\",\"input\":false},{\"id\":\"r5c6\",\"text\":\"\",\"input\":false}]],\"answerMode\":\"text\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"r2c2\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r2c6\",\"accepted\":[\"100\"],\"answerMode\":\"numeric\"},{\"id\":\"r3c4\",\"accepted\":[\"2,5\",\"2.5\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c2\",\"accepted\":[\"18\"],\"answerMode\":\"numeric\"},{\"id\":\"r4c6\",\"accepted\":[\"18\"],\"answerMode\":\"numeric\"},{\"id\":\"r5c4\",\"accepted\":[\"45\"],\"answerMode\":\"numeric\"}]},\"objective\":\"Einen Prozentwert mithilfe des Dreisatzes berechnen.\",\"rationale\":\"Die Gesamtmasse entspricht 100 %. Über den Zwischenschritt 1 % wird der Anteil von 18 % bestimmt.\",\"sourceNote\":\"Eigenständig formulierte Aufgabe zur Prozentrechnung.\"}",
+      "type": "visual",
+      "points": 3,
+      "id": "q017"
+    },
+    {
+      "position": 18,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "text": "Stelle 75 % in einem Raster mit 20 gleich großen Feldern dar.",
+      "points": 3,
+      "type": "visual",
+      "updatedAt": "2026-10-26T20:22:29.338Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-raster-18\",\"revision\":0,\"format\":\"grid\",\"title\":\"Dreiviertel als Prozentsatz\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Stelle 75 % in einem Raster mit 20 gleich großen Feldern dar.\",\"hint\":\"Markiere genau drei Viertel aller Felder.\",\"maxPoints\":3,\"spec\":{\"rows\":4,\"columns\":5},\"solution\":{\"count\":15},\"objective\":\"Einen Prozentsatz als Flächenanteil darstellen.\",\"rationale\":\"75 % von 20 gleich großen Feldern entsprechen 15 Feldern.\",\"sourceNote\":\"Eigenes Beispiel zur Prozentrechnung.\"}",
+      "id": "q018"
+    },
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-verbindungen-19\",\"revision\":0,\"format\":\"connections\",\"title\":\"Grundwert, Prozentwert und Prozentsatz\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ordne die Begriffe ihren passenden Angaben zu. Die Pfeile zeigen vom Begriff zur passenden Beschreibung.\",\"hint\":\"Verbinde jeden Begriff genau einmal.\",\"maxPoints\":3,\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"a\",\"label\":\"Grundwert\",\"x\":110,\"y\":80},{\"id\":\"b\",\"label\":\"Prozentwert\",\"x\":110,\"y\":180},{\"id\":\"c\",\"label\":\"Prozentsatz\",\"x\":110,\"y\":280},{\"id\":\"d\",\"label\":\"das Ganze\",\"x\":500,\"y\":60},{\"id\":\"e\",\"label\":\"der Anteil\",\"x\":500,\"y\":160},{\"id\":\"f\",\"label\":\"der Anteil in Prozent\",\"x\":500,\"y\":260}]},\"solution\":{\"edges\":[[\"a\",\"d\"],[\"b\",\"e\"],[\"c\",\"f\"]]},\"objective\":\"Die Fachbegriffe der Prozentrechnung unterscheiden.\",\"rationale\":\"Grundwert, Prozentwert und Prozentsatz bezeichnen drei verschiedene Aspekte.\",\"sourceNote\":\"Eigenes Beispiel zur Prozentrechnung.\"}",
+      "points": 3,
+      "position": 19,
+      "text": "Ordne die Begriffe ihren passenden Angaben zu.",
+      "updatedAt": "2026-10-26T20:22:29.536Z",
+      "type": "visual",
+      "id": "q019"
+    },
+    {
+      "type": "visual",
+      "points": 3,
+      "position": 20,
+      "text": "Ergänze die Tabelle mit den fehlenden Angaben.",
+      "updatedAt": "2026-10-26T20:22:29.691Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"prozent-tabelle-20\",\"revision\":0,\"format\":\"table\",\"title\":\"Abschlussaufgabe Prozentrechnung\",\"subject\":\"Mathematik\",\"grade\":\"7\",\"prompt\":\"Ergänze die Tabelle mit den fehlenden Angaben.\",\"hint\":\"Wähle für jede Zeile die passende Formel und achte auf die Einheiten.\",\"maxPoints\":3,\"spec\":{\"columns\":[\"Grundwert\",\"Prozentsatz\",\"Prozentwert\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"640 €\",\"input\":false},{\"id\":\"a2\",\"text\":\"35 %\",\"input\":false},{\"id\":\"a3\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"\",\"input\":true},{\"id\":\"b2\",\"text\":\"18 %\",\"input\":false},{\"id\":\"b3\",\"text\":\"27 l\",\"input\":false}],[{\"id\":\"c1\",\"text\":\"150 kg\",\"input\":false},{\"id\":\"c2\",\"text\":\"\",\"input\":true},{\"id\":\"c3\",\"text\":\"45 kg\",\"input\":false}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"a3\",\"accepted\":[\"224\"]},{\"id\":\"b1\",\"accepted\":[\"150\"]},{\"id\":\"c2\",\"accepted\":[\"30\"]}]},\"objective\":\"Grundwert, Prozentwert und Prozentsatz sicher bestimmen.\",\"rationale\":\"Die drei Zeilen prüfen die drei möglichen gesuchten Größen.\",\"sourceNote\":\"Eigenes Beispiel zur Prozentrechnung.\"}",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q020"
+    }
+  ]
+}

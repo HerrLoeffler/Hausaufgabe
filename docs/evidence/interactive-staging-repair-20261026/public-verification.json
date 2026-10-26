@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-26T20:20:42.644Z",
+  "commit": "4fe345c16d5778a93b077af4e775e7d3addbdb9e",
+  "files": 215,
+  "failures": [],
+  "changedFiles": [
+    "app.js",
+    "dreisatz.mjs",
+    "visual-format-choice.mjs",
+    "visual-tasks.mjs",
+    "visual/core.js",
+    "visual/renderers.js",
+    "visual/visual.css",
+    "workspace.html"
+  ],
+  "baseHostingCommit": "f1bee9468d1b0d891fece610f20c11511d771f61",
+  "unchanged": 207
+}
