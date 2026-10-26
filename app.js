@@ -1829,14 +1829,24 @@ function renderQuizList() {
     const status = quizStatusMeta(q);
     const canShareStudentLink = q.published && !q.ended && !q.rightsHold && !secureAudioPublicationBlocked(q);
     const canOpenTeacherLive = canShareStudentLink && q.startMode === "teacher" && ["waiting", "running"].includes(q.sessionState);
+    const moreActionsHtml = q.rightsHold ? "" : `<details class="quizMore"><summary>Weitere Aktionen</summary>
+        <div class="quizActions secondaryQuizActions">
+          <button class="button ghost duplicate">Duplizieren</button><button class="button ghost teacherShare">Mit Kollegen teilen</button>
+          ${q.published && !q.ended ? `<button class="button ghost end">Schülerzugang schließen</button>` : ""}
+          ${q.ended ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
+        </div>
+      </details>`;
     const card = document.createElement("article");
     card.className = "card quizCard";
     card.dataset.quizId = q.id;
     card.innerHTML = `
       <div class="quizCardTop">
-        <div>
-          <h3>${escapeHtml(q.title || "Unbenannter Test")}</h3>
-          <div class="meta">${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · Code ${q.id}</div>
+        <div class="quizCardHeading">
+          <div class="quizCardIdentity">
+            <h3>${escapeHtml(q.title || "Unbenannter Test")}</h3>
+            <div class="meta">${escapeHtml(q.subject || "–")} · Klasse ${escapeHtml(q.grade || "–")} · Code ${q.id}</div>
+          </div>
+          <button class="button danger remove quizDeleteButton" type="button" aria-label="Test in den Papierkorb" title="Test in den Papierkorb"><svg class="gcWorkspaceIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></svg></button>
         </div>
         <div class="quizCardStatusGroup">
           <span class="status ${status.cls}">${status.label}</span>
@@ -1858,14 +1868,7 @@ function renderQuizList() {
         <button class="button primary edit">Bearbeiten</button>
         <button class="button secondary results">Ergebnisse</button>
       </div>
-      <details class="quizMore"><summary>Weitere Aktionen</summary>
-        <div class="quizActions secondaryQuizActions">
-          ${q.rightsHold ? "" : '<button class="button ghost duplicate">Duplizieren</button><button class="button ghost teacherShare">Mit Kollegen teilen</button>'}
-          ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost end">Beenden</button>` : ""}
-          ${q.ended && !q.rightsHold ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
-          <button class="button danger remove quizDeleteButton" type="button" aria-label="Test in den Papierkorb" title="Test in den Papierkorb"><svg class="gcWorkspaceIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></svg></button>
-        </div>
-      </details>`;
+      ${moreActionsHtml}`;
     card.querySelector(".dashboardPublishToggle")?.addEventListener("change", event => toggleDashboardPublished(q, event.currentTarget));
     card.querySelector(".edit").addEventListener("click", () => openEditor(q.id));
     card.querySelector(".results").addEventListener("click", () => openResults(q.id));
@@ -1880,7 +1883,7 @@ function renderQuizList() {
     card.querySelector(".end")?.addEventListener("click", () => endQuiz(q.id));
     card.querySelector(".reopen")?.addEventListener("click", () => reopenQuiz(q.id));
     card.querySelector(".remove").addEventListener("click", () => deleteQuiz(q.id));
-    card.querySelector(".quizMore").addEventListener("keydown", event => {
+    card.querySelector(".quizMore")?.addEventListener("keydown", event => {
       if (event.key !== "Escape" || !event.currentTarget.open) return;
       event.preventDefault();
       event.currentTarget.open = false;

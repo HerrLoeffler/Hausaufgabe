@@ -25,11 +25,13 @@ function measure(){
   }
   cards.forEach((card,index)=>{
     if(card.scrollWidth>card.clientWidth+1)errors.push(`card ${index} clipped`);
+    if(card.querySelectorAll('.quizCardHeading .quizDeleteButton').length!==1||card.querySelector('.quizMore .quizDeleteButton'))errors.push(`card ${index} trash placement`);
+    if(card.querySelector('.status.rightsHold')&&card.querySelector('.quizMore'))errors.push(`card ${index} empty rights-held menu`);
     for(const value of card.querySelectorAll('.quizStats strong')){
       const box=value.getBoundingClientRect(),cell=value.parentElement.getBoundingClientRect();
       if(box.width>cell.width+1||box.height>parseFloat(getComputedStyle(value).lineHeight)*1.5)errors.push(`stat ${index} wrapped`);
     }
-    for(const button of card.querySelectorAll('.quizCardQuickLinks button,.primaryQuizActions button,.quizMore summary')){
+    for(const button of card.querySelectorAll('.quizCardHeading .quizDeleteButton,.quizCardQuickLinks button,.primaryQuizActions button,.quizMore summary')){
       const r=button.getBoundingClientRect();
       if(r.height<43||r.left<card.getBoundingClientRect().left-1||r.right>card.getBoundingClientRect().right+1)errors.push(`target ${index} outside`);
     }
@@ -72,6 +74,8 @@ function measure(){
         assert.match(await page.locator('#previewLog').innerText(),/DEMO001/);
         await page.locator('#quizList .quizCard').first().locator('.studentShare').click();
         assert.match(await page.locator('#previewLog').innerText(),/DEMO001/);
+        await page.locator('#quizList .quizCard').first().locator('.quizCardHeading .quizDeleteButton').click();
+        assert.match(await page.locator('#previewLog').innerText(),/Löschen · DEMO001/);
       }finally{await browser.close();}
     }
     fs.writeFileSync(path.join(out,'receipt.json'),JSON.stringify(receipt,null,2));

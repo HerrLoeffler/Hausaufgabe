@@ -451,6 +451,7 @@ export const enGBMessages = Object.freeze({
     "Kein Limit": "No limit",
     "Minuten": "Minutes",
     "Beenden": "End",
+    "Schülerzugang schließen": "Close student access",
     "Erneut öffnen": "Reopen",
     "Veröffentlichung umschalten": "Toggle publication",
     "Testergebnisse – Tabelle horizontal scrollbar": "Test results – horizontally scrollable table",

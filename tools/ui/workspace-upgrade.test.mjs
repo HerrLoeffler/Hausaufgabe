@@ -62,7 +62,12 @@ test('test cards keep the same primary actions and four stat slots across status
 });
 test('the card trash action is icon-only, named for assistive tech and keeps deletion confirmation handler',()=>{
  const x=setup();try {
-  const button=x.document.querySelector('#quizList .quizDeleteButton');
+  const card=x.document.querySelector('#quizList .quizCard');
+  const button=card.querySelector('.quizCardHeading .quizDeleteButton');
+  assert.ok(button);
+  assert.equal(card.querySelector('.quizMore .quizDeleteButton'),null);
+  assert.equal(card.querySelector('.quizMore').open,false);
+  assert.equal(card.querySelectorAll('.quizDeleteButton').length,1);
   assert.equal(button.textContent.trim(),'');
   assert.equal(button.getAttribute('aria-label'),'Test in den Papierkorb');
   assert.equal(button.getAttribute('title'),'Test in den Papierkorb');
@@ -73,6 +78,18 @@ test('the card trash action is icon-only, named for assistive tech and keeps del
   setActiveUiLocale('en-GB');translateTree(x.$('dashboardView'));
   assert.equal(button.getAttribute('aria-label'),'Move test to trash');
   assert.equal(x.document.querySelector('#quizList .quizCard .quizStats div:last-child strong').textContent,'Student');
+ }finally{delete globalThis.document;delete globalThis.NodeFilter;setActiveUiLocale('de-DE');x.close();}
+});
+test('the ending action says what stops, while preserving its existing handler',()=>{
+ const x=setup();try {
+  const published=[...x.document.querySelectorAll('#quizList .quizCard')].find(card=>card.dataset.quizId==='TWO');
+  const end=published.querySelector('.quizMore .end');
+  assert.equal(end.textContent,'Schülerzugang schließen');
+  end.click();assert.deepEqual(x.calls.at(-1),['endQuiz','TWO']);
+  registerCatalog('en-GB',enGBMessages);
+  globalThis.document=x.document;globalThis.NodeFilter=x.dom.window.NodeFilter;
+  setActiveUiLocale('en-GB');translateTree(x.$('dashboardView'));
+  assert.equal(end.textContent,'Close student access');
  }finally{delete globalThis.document;delete globalThis.NodeFilter;setActiveUiLocale('de-DE');x.close();}
 });
 test('only a published active test exposes the direct student link; teacher live opens the existing read-only view',()=>{
@@ -94,6 +111,8 @@ test('only a published active test exposes the direct student link; teacher live
   assert.equal(cards.ONE.querySelector('.teacherLiveOpen'),null);
   assert.equal(cards.END.querySelector('.teacherLiveOpen'),null);
   assert.equal(cards.HOLD.querySelector('.teacherLiveOpen'),null);
+  assert.equal(cards.HOLD.querySelector('.quizMore'),null);
+  assert.ok(cards.HOLD.querySelector('.quizCardHeading .quizDeleteButton'));
   assert.equal(cards.TWO.querySelector('.teacherLiveOpen').textContent,'Durchführung öffnen');
  }finally{x.close();}
 });
@@ -117,7 +136,7 @@ test('card spacing remains a fixed four-column grid on desktop and two-column gr
  assert.match(workspaceCss,/@media \(max-width: 650px\)[\s\S]*\.quizStats :is\(strong,span\)\s*\{[^}]*min-height:\s*0/s);
  assert.match(workspaceCss,/\.quizGrid\s*\{[^}]*align-items:\s*start/s);
  assert.match(workspaceCss,/\.primaryQuizActions\s*\{[^}]*margin-top:\s*0/s);
- assert.match(workspaceCss,/\.quizDeleteButton\s*\{[^}]*width:\s*44px/s);
+ assert.match(workspaceCss,/\.quizCardHeading \.quizDeleteButton\s*\{[^}]*width:\s*44px/s);
 });
 test('a 70–95-character test title stays complete and keeps the same action structure',()=>{
  const x=setup();try {

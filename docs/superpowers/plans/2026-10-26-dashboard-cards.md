@@ -24,3 +24,10 @@
 - [x] Check 320/390/430, iPad portrait/landscape, desktop, open/closed menu, long titles and no horizontal overflow or overlap in Chromium/WebKit.
 - [x] Run focused and relevant root/UI tests, staging build, diff check; preserve exact results and remaining limits in the existing task handoff.
 - [ ] Commit and publish own branch; request independent review, then coordinate preview and any explicitly authorized Live release from exact source/asset manifest. Commits, GitHub PR #329 and review are done; preview and release coordination remain.
+
+## User follow-up, 26 October
+
+- [x] Verify `endQuiz` closes student access and preserves results; verify `deleteQuiz` confirms recoverable trash placement.
+- [x] Add failing card tests for a top-right trash action outside the closed disclosure and a clear end label; implement while preserving handlers and 44px target.
+- [x] Repeat 52-card Chromium/WebKit geometry and local root/UI/build checks.
+- [ ] Secure the follow-up on PR #329, refresh the handoff, and coordinate integration/preview with the release owner.
