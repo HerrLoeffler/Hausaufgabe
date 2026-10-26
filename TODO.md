@@ -717,3 +717,9 @@ Auf Martins ausdrücklichen Wunsch jetzt auf **https://gradecrew-staging-2026.we
 ### GC-DESIGN-05 — gemeinsamer öffentlicher Rahmen,26.10.2026
 
 Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei Homepage/Login/Register/Reset/Schülerzugang an denselben Positionen; nur der rechte Inhalt wechselt.466 Root-/UI-Tests,12 Paketprüfungen,36 Viewport- und60 Aufgabenlayouts sowie exakte Ankervergleiche grün. CI40398151816 grün;197Dateien je Live-Origin verifiziert. Backend/Rules/Konten unverändert; physische Geräteabnahme nicht behauptet. [Nachweis](workstreams/public-entry-shell-live-receipt-20261026.json). PR318 bleibt für gezielte Integration in den neueren Stagingbranch offen; kein Force-Merge und keine fremden Testfunktionen live übernehmen.
+
+
+## GC-TEACHER-INTRO-20261028 — Kollegiumsvorstellung28.10.2026
+
+- [x] Lokale eigenständige PowerPoint mit10Folien, Originalcrew und editierbaren Beispielabläufen erstellt. Rund9Minuten mit Referentennotizen. Paket/Layout/Font/Artifact-Reimport bestanden, alleFolien visuell geprüft. KeinProdukt-/Release-/Deploywechsel. SHA256 `082d3a823f5059180d8606d3b35444fb2bb6b35f0008c38f10d4087ccdaf4d5c`. [Übergabe](workstreams/teacher-intro-20261028.md). Dokumentation auf `docs/teacher-intro-20261028`, branch_only, keinMerge erforderlich für lokaleNutzung.
+- [ ] Martin öffnet diePräsentation auf demVortragsgerät und geht sie einmal durch. KeineNativePowerPointabnahme behauptet.

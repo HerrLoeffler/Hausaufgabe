@@ -742,6 +742,14 @@
       "integrationTarget": "feature/gradecrew-app-integration",
       "state": "active",
       "handoff": "workstreams/auth-brand-alignment-20261026.md"
+    },
+    {
+      "id": "teacher-intro-20261028",
+      "title": "GC-TEACHER-INTRO-20261028: lokale Kollegiums-PowerPoint",
+      "primaryBranch": "docs/teacher-intro-20261028",
+      "integrationTarget": "main",
+      "state": "integration_ready",
+      "handoff": "workstreams/teacher-intro-20261028.md"
     }
   ]
 }
