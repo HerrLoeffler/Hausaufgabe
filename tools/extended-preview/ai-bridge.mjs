@@ -1,3 +1,4 @@
+import {LAB_GUIDANCE,assertLabQuestions} from './format-policy.mjs';
 import {createRequire} from 'node:module';
 import {createHash,randomBytes} from 'node:crypto';
 const require=createRequire(import.meta.url);
@@ -6,9 +7,10 @@ const visual=require('../../visual/core.js');
 const ACTIVE=new Set(['dispatching','queued','running','uncertain']);
 const text=(v,n)=>String(v??'').trim().slice(0,n);
 const fingerprint=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
-const guidance='Nur neue visuelle Aufgaben mit type visual und gültigem visualTask. Wähle zum Fach und Lernziel passende verschiedene Formate. Alle nötigen Daten und eigene kurze Texte vollständig mitliefern. Keine realen Schülerdaten oder fremden Medien. Keine Lösung oder Fehlerstelle im Arbeitsauftrag verraten. Bei Verbindungen sinnvolle Namen wie Behauptung 1 und Begründung 1 statt Element. Für Winkel eine Toleranz von 3 Grad. Diagramme vollständig beschriften; keine vorausgefüllten Antworten. spec, solution und Aufgabenauftrag müssen fachlich übereinstimmen.';
+const guidance='Nur neue visuelle Aufgaben mit type visual und gültigem visualTask. Wähle zum Fach und Lernziel passende verschiedene Formate. Alle nötigen Daten und eigene kurze Texte vollständig mitliefern. Keine realen Schülerdaten oder fremden Medien. Keine Lösung oder Fehlerstelle im Arbeitsauftrag verraten. Bei Verbindungen sinnvolle Namen wie Behauptung 1 und Begründung 1 statt Element. Für Winkel eine Toleranz von 3 Grad. Alle Darstellungen vollständig beschriften; keine vorausgefüllten Antworten. spec, solution und Aufgabenauftrag müssen fachlich übereinstimmen.';
 function checkQuestions(questions,{count,points}={}){
  if(!Array.isArray(questions)||!questions.length||questions.length>12||count&&questions.length!==count)throw Error('Die KI-Aufgabenanzahl passt nicht zum Auftrag.');
+ assertLabQuestions(questions);
  const qs=structuredClone(questions).map((q,i)=>({...q,id:q.id||'ai-question-'+(i+1),position:i+1}));
  for(const q of qs){if(q.type!=='visual')throw Error('Die KI hat einen anderen Aufgabentyp geliefert.');const t=JSON.parse(q.visualTask);if(visual.validate(t).length||t.maxPoints!==q.points)throw Error('Eine visuelle KI-Aufgabe ist ungültig.');}
  if(points&&Math.abs(qs.reduce((s,q)=>s+q.points,0)-points)>.001)throw Error('Die KI-Punktzahl passt nicht zum Auftrag.');
@@ -22,17 +24,17 @@ function clean(kind,p={}){
   if(!Number.isFinite(points)||points<count*.5||points>60||points*2!==Math.round(points*2))throw Error('Bitte passende Punkte in halben Schritten bis 60 wählen.');
   if(!text(p.topic,500)||!text(p.subject,120)||!text(p.grade,30))throw Error('Fach, Klasse und Thema fehlen.');
   if(p.materials?.length||p.imageQuestionCount>0||p.audioQuestionCount>0||p.solutionAudioQuestionCount>0||p.audioAnswerQuestionCount>0)throw Error('Dieser Formatversuch nutzt visuelle Aufgaben ohne zusätzliche Medienaufträge oder Uploads.');
-  return {subject:text(p.subject,120),grade:text(p.grade,30),topic:text(p.topic,500),schoolType:text(p.schoolType,80)||'Mittelschule',region:text(p.region,80)||'Bayern',difficulty:text(p.difficulty,80)||'mittel',count,points,allowedTypes:['visual'],imageMode:'none',audioMode:'none',notes:text(p.notes,2400)+'\n'+guidance};
+  return {subject:text(p.subject,120),grade:text(p.grade,30),topic:text(p.topic,500),schoolType:text(p.schoolType,80)||'Mittelschule',region:text(p.region,80)||'Bayern',difficulty:text(p.difficulty,80)||'mittel',count,points,allowedTypes:['visual'],imageMode:'none',audioMode:'none',notes:text(p.notes,2400)+'\n'+guidance+'\n'+LAB_GUIDANCE};
  }
  if(kind==='revise'){
   const questions=checkQuestions(p.test?.questions);
   if(text(p.instruction,2400).length<3)throw Error('Bitte einen Überarbeitungswunsch eingeben.');
-  return {instruction:text(p.instruction,2400),test:{title:text(p.test.title,180),subject:text(p.test.subject,120),grade:text(p.test.grade,30),description:text(p.test.description,700),questions}};
+  return {instruction:LAB_GUIDANCE+'\n'+text(p.instruction,1400),test:{title:text(p.test.title,180),subject:text(p.test.subject,120),grade:text(p.test.grade,30),description:text(p.test.description,700),questions}};
  }
  if(kind==='question'){
   const [question]=checkQuestions([p.question]);
   if(p.targetType&&p.targetType!=='visual')throw Error('Hier werden ausschließlich die neuen visuellen Formate erprobt.');
-  return {question,instruction:text(p.instruction,2000)||'Erstelle eine fachlich passende neue Variante.',variant:Boolean(p.variant),requireDifferent:Boolean(p.requireDifferent),allowedTypes:['visual'],targetType:'visual',allowImages:false,allowImageChoices:false,testContext:{subject:text(p.testContext?.subject,120),grade:text(p.testContext?.grade,30),title:text(p.testContext?.title,180)},materials:[]};
+  return {question,instruction:LAB_GUIDANCE+'\n'+(text(p.instruction,1200)||'Erstelle eine fachlich passende neue Variante.'),variant:Boolean(p.variant),requireDifferent:Boolean(p.requireDifferent),allowedTypes:['visual'],targetType:'visual',allowImages:false,allowImageChoices:false,testContext:{subject:text(p.testContext?.subject,120),grade:text(p.testContext?.grade,30),title:text(p.testContext?.title,180)},materials:[]};
  }
  throw Error('Unbekannter KI-Auftrag.');
 }
@@ -77,6 +79,7 @@ export function createAiBridge({state,persist,call,read,uid}){
    }else if(['failed','error','cancelled','expired'].includes(job.status)){j.status='failed';j.message=text(typeof job.error==='string'?job.error:job.error?.message,350)||'Die Test-KI konnte den Auftrag nicht abschließen.';}
    await persist(state);
   }
+  if(j.status==='ready'){try{assertLabQuestions(j.result.test?.questions||[j.result.question]);}catch(e){j.status='failed';j.message=e.message;await persist(state);}}
   return view(j);
  }
  function active(){return Object.values(state.aiJobs).filter(j=>ACTIVE.has(j.status)||j.status==='ready').sort((a,b)=>b.startedAt.localeCompare(a.startedAt)).map(view)[0]||null;}

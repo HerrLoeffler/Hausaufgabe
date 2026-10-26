@@ -115,10 +115,10 @@ export function mountVisualQuestion(section, question, initial = null, options =
   watchDetach(section,controller);
   return controller;
 }
-export function renderVisualEditor(container, q, onChange) {
+export function renderVisualEditor(container, q, onChange, {formats=VISUAL_FORMATS}={}) {
   const formatLabel=document.createElement('label');formatLabel.textContent='Visuelle Interaktion';
   const select=document.createElement('select');
-  for(const format of VISUAL_FORMATS){const option=document.createElement('option');option.value=format;option.textContent=core().names[format];select.append(option);}
+  for(const format of formats.filter(f=>VISUAL_FORMATS.includes(f))){const option=document.createElement('option');option.value=format;option.textContent=core().names[format];select.append(option);}
   let task;try{task=parseVisualTask(q);}catch(error){
     const warning=document.createElement('p');warning.setAttribute('role','alert');warning.textContent=error.message+' Bitte mit Emmi überarbeiten oder eine neue Aufgabe erstellen.';
     container.append(warning);return;
