@@ -1,0 +1,456 @@
+{
+  "version": 1,
+  "capturedAt": "2026-10-26",
+  "source": {
+    "kind": "human_brief",
+    "conversationId": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+    "turnId": "01a179f0-125a-7a53-a3a8-7b8130c77890",
+    "at": "2026-10-26",
+    "label": "Martins Auftrag zur gezielten Chatsteuerung, 26.10.2026"
+  },
+  "owners": [
+    {
+      "id": "root",
+      "title": "GradeCrew Zentrale",
+      "conversationId": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+      "role": "coordinator",
+      "domains": [
+        "central"
+      ],
+      "scope": "Priorisieren, zuordnen, prüfen und Entscheidungen vorbereiten.",
+      "hostId": "local"
+    },
+    {
+      "id": "teacher",
+      "title": "GC · Lehrer-App – Anmeldehänger beheben",
+      "conversationId": "01a179f1-5182-7d51-987d-cc75e6e265f5",
+      "role": "implementer",
+      "domains": [
+        "native"
+      ],
+      "scope": "Nur den Anmeldestart der Lehrer-App übernehmen; gesicherten Native-Kandidaten prüfen.",
+      "hostId": "local"
+    },
+    {
+      "id": "remy",
+      "title": "GC · Remy – Testplanung & präzise Vorgaben",
+      "conversationId": "01a179f2-5821-7d52-a28f-87afcc93fb51",
+      "role": "implementer",
+      "domains": [
+        "web",
+        "learning"
+      ],
+      "scope": "Testplanung, Schwierigkeitsverlauf und genaue Aufgabenwünsche; Generatorübergabe zuerst.",
+      "hostId": "local"
+    },
+    {
+      "id": "native",
+      "title": "GC · iPhone & iPad",
+      "conversationId": "01a10c75-8912-7a12-98f0-c9e78064aa2c",
+      "role": "implementer",
+      "domains": [
+        "native"
+      ],
+      "scope": "Secure, getrennte Umgebungen, Queue und Apple-Verteilung. Teacher-Reparatur ist abgegeben.",
+      "hostId": "local"
+    },
+    {
+      "id": "editor",
+      "title": "GradeCrew-Workstreams nach Staging",
+      "conversationId": "01a15f06-837c-73b3-93fa-0d07a8104d3a",
+      "role": "implementer",
+      "domains": [
+        "web"
+      ],
+      "scope": "Editor, Material, Bilder, Audio und Veröffentlichungsvorbereitung. Remyplanung wird übergeben.",
+      "hostId": "local"
+    },
+    {
+      "id": "design",
+      "title": "GC · Design",
+      "conversationId": "01a130fa-babb-7de3-bfeb-785499e7c061",
+      "role": "implementer",
+      "domains": [
+        "design",
+        "web"
+      ],
+      "scope": "Homepage, Anmeldung/Registrierung und responsive Darstellung; Veröffentlichungsbelege separat.",
+      "hostId": "local"
+    },
+    {
+      "id": "feedback",
+      "title": "GC · Nutzungsanalyse & PostHog – Umsetzung",
+      "conversationId": "01a15f1d-8adf-77e0-831d-f97cfcd0e5e2",
+      "role": "implementer",
+      "domains": [
+        "customers"
+      ],
+      "scope": "Feedback, Smileys und Screenshotnachweise; Analytics nicht pauschal aktiviert.",
+      "hostId": "local"
+    },
+    {
+      "id": "classroom",
+      "title": "GC · Schüler, Klassen & ASV",
+      "conversationId": "01a10c7f-95f0-7360-a2e3-be5b970fbcb9",
+      "role": "implementer",
+      "domains": [
+        "classroom"
+      ],
+      "scope": "Zuweisungen, Klassen und Identitätsvertrag.",
+      "hostId": "local"
+    },
+    {
+      "id": "formats",
+      "title": "GC · Erweiterte Aufgabentypen – Plan & Umsetzung",
+      "conversationId": "01a15a72-d74c-79a3-a180-2bd47a23d663",
+      "role": "implementer",
+      "domains": [
+        "learning"
+      ],
+      "scope": "Aufgabenfundus, Pilotaufgaben und Winkelmesser; kein automatischer Livepool.",
+      "hostId": "local"
+    },
+    {
+      "id": "adaptive",
+      "title": "GC · Adaptives Lernen – Konzept & Realisierung",
+      "conversationId": "01a158f7-7f85-77e1-9448-b32682030c05",
+      "role": "implementer",
+      "domains": [
+        "learning"
+      ],
+      "scope": "Adaptive Lernpfade und Kompetenznetz mit eigenen Abnahmegates.",
+      "hostId": "local"
+    },
+    {
+      "id": "pilot",
+      "title": "GradeCrew-Design modernisieren",
+      "conversationId": "01a1638a-ad42-77d2-885a-77fd743f774f",
+      "role": "implementer",
+      "domains": [
+        "design"
+      ],
+      "scope": "Pilot-UX und konkrete Bedienfälle.",
+      "hostId": "local"
+    },
+    {
+      "id": "pedagogy",
+      "title": "GC · Pädagogisches Konzept",
+      "conversationId": "01a1280a-c9f4-73a3-a12a-7b2b93a5ba5a",
+      "role": "implementer",
+      "domains": [
+        "learning"
+      ],
+      "scope": "Pädagogische Konzepte und Fast-Grading-Ideen.",
+      "hostId": "local"
+    },
+    {
+      "id": "games",
+      "title": "GC · Games-Zentrale",
+      "conversationId": "01a11864-3ec7-7091-acc0-9ff292f530f3",
+      "role": "coordinator",
+      "domains": [
+        "games"
+      ],
+      "scope": "Spielübergreifend koordinieren, Umsetzung den jeweiligen Fachchats zuordnen.",
+      "hostId": "local"
+    },
+    {
+      "id": "brain",
+      "title": "GC · Firmenzentrale – Konzept & Bauplan",
+      "conversationId": "01a15f30-b738-7d50-8aa2-f34447eb5723",
+      "role": "implementer",
+      "domains": [
+        "central"
+      ],
+      "scope": "Alleiniger Writer der vorhandenen Firmenzentrale und Mac-App; PR295.",
+      "hostId": "local"
+    },
+    {
+      "id": "test-access",
+      "title": "GC · Testfreigabe – Codes & Zugriffsschutz",
+      "conversationId": "01a17a0e-363c-79e3-afcb-bc0b01f497a8",
+      "role": "implementer",
+      "domains": [
+        "web",
+        "classroom",
+        "governance"
+      ],
+      "scope": "Zugriffsschutz für unveröffentlichte Tests und Codes; Backend-/Umgebungs- und Writerabgleich zuerst. Keine bloße Beschriftungsänderung als Sicherheitsfix.",
+      "hostId": "local"
+    },
+    {
+      "id": "dashboard",
+      "title": "GC · Testübersicht – Karten & Aktionen",
+      "conversationId": "01a17a18-f62b-77f0-9f61-67858115ce79",
+      "role": "implementer",
+      "domains": [
+        "web"
+      ],
+      "scope": "Testübersicht: unabhängige Kartenhöhen, Schülerlink, Live-Durchführung und klare Aktionen. app.js zuerst mit Editor-Owner abgrenzen; keine Backendguards.",
+      "hostId": "local"
+    }
+  ],
+  "items": [
+    {
+      "key": "teacher-restore",
+      "externalTaskId": "GC-IOS-02",
+      "domainId": "native",
+      "topicId": "lehrer-app",
+      "title": "Lehrer-App wieder öffnen können",
+      "ownerId": "teacher",
+      "priority": 1,
+      "scope": "Nur der festhängende Anmeldestart der Lehrer-App. Secure/Store bleiben beim bisherigen Native-Chat.",
+      "next": "Gesicherten Einstiegskandidaten mit echter WebKit-Wiederherstellung prüfen; danach genauen installierbaren Build und iPad-Test klären.",
+      "gap": "Die Reparatur auf Martins iPad ist noch nicht bestätigt.",
+      "originTurnId": "01a179f1-5308-79b1-86a3-c7be13d5707a",
+      "acknowledgementItemId": "msg_0dba7e601223c3b2016adfbab99ca881918331cf5be83c00f8",
+      "acceptance": "Lehrer-App erreicht mit gültiger Sitzung die eigenen Tests; ohne Sitzung den Login; bei Fehlern einen verständlichen Wiederholungsweg.",
+      "decision": {
+        "question": "Welche Buildnummer zeigt die Lehrer-App auf deinem iPad?",
+        "why": "Damit der installierte Stand mit dem geprüften Kandidaten verglichen werden kann.",
+        "blocking": false,
+        "state": "open",
+        "source": {
+          "kind": "human_brief",
+          "conversationId": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+          "turnId": "01a179f0-125a-7a53-a3a8-7b8130c77890",
+          "at": "2026-10-26",
+          "label": "Martins Auftrag zur gezielten Chatsteuerung, 26.10.2026"
+        }
+      },
+      "environment": "native-teacher",
+      "release": {
+        "stage": "unknown",
+        "label": "Installierter Reparaturstand nicht bestätigt"
+      },
+      "source": {
+        "kind": "human_brief",
+        "conversationId": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+        "turnId": "01a179f0-125a-7a53-a3a8-7b8130c77890",
+        "at": "2026-10-26",
+        "label": "Martins Auftrag zur gezielten Chatsteuerung, 26.10.2026"
+      },
+      "handoffHistory": [
+        {
+          "at": "2026-10-26",
+          "label": "Zunächst beim bisherigen iPhone-/iPad-Chat; Lehrer-Störung konkurrierte mit Secure-/Storearbeit.",
+          "conversationId": "01a10c75-8912-7a12-98f0-c9e78064aa2c",
+          "source": "Martins Routingkorrektur und Übergabebrief der Hauptzentrale."
+        },
+        {
+          "at": "2026-10-26",
+          "label": "An den eigenen Lehrer-App-Fachchat übergeben. Gesicherten Native-Kandidaten übernehmen; keine Doppelwriter.",
+          "conversationId": "01a179f1-5182-7d51-987d-cc75e6e265f5",
+          "source": "Originalübergabe an den Lehrer-App-Chat; dessen konkrete Annahmemeldung wird gesondert gelesen."
+        }
+      ]
+    },
+    {
+      "key": "remy-planning",
+      "externalTaskId": null,
+      "domainId": "web",
+      "topicId": "remy",
+      "title": "Remy soll Aufgabenwünsche genau umsetzen",
+      "ownerId": "remy",
+      "priority": 2,
+      "scope": "Leichter Einstieg und sinnvoller Schwierigkeitsverlauf; feste Aufgabenpositionen bewahren. Keine parallelen Editoränderungen.",
+      "next": "Den gesicherten Difficulty-Kandidaten und die fünf gemeinsamen Generator-Dateien mit dem Editor-Owner abgrenzen.",
+      "gap": "Schreibgrenzen und gemeinsamer getesteter Kandidat sind noch zu klären.",
+      "originTurnId": "01a179f2-59b6-7440-b96a-e16e3844c66f",
+      "acknowledgementItemId": "msg_03c981c1e8c7db7f016adfbafc2f108191a024463517a2d243",
+      "acceptance": "Aufgabenposition, Wunschformat, Medienbudget und gewähltes Niveau bleiben nachvollziehbar erfüllt; Änderungen gelten nicht rückwirkend für vorhandene Tests.",
+      "environment": "not-selected",
+      "source": {
+        "kind": "human_brief",
+        "conversationId": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+        "turnId": "01a179f0-125a-7a53-a3a8-7b8130c77890",
+        "at": "2026-10-26",
+        "label": "Martins Auftrag zur gezielten Chatsteuerung, 26.10.2026"
+      }
+    },
+    {
+      "key": "editor-media",
+      "externalTaskId": null,
+      "domainId": "web",
+      "topicId": "emmi",
+      "title": "Material, Bilder und Audio im Editor ordnen",
+      "ownerId": "editor",
+      "priority": 3,
+      "scope": "Bestehende Editor-/Medienarbeit sichern. Unabhängige Remyplanung an den neuen Owner übergeben; keine weiteren Themen in denselben Auftrag stapeln.",
+      "next": "Gesicherten Editorstand, offene Punkte und die Übergabe der Generator-Dateien sichtbar abgleichen.",
+      "gap": "Welche Teiländerung gemeinsam geprüft und veröffentlicht ist, muss am konkreten Beleg unterschieden werden.",
+      "acceptance": "Material und Medien werden nachvollziehbar zugeordnet; Bilder plus Höraufgaben beachten die vereinbarte gemeinsame Quote.",
+      "environment": "not-selected",
+      "source": {
+        "kind": "human_brief",
+        "conversationId": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+        "turnId": "01a179f0-125a-7a53-a3a8-7b8130c77890",
+        "at": "2026-10-26",
+        "label": "Martins Auftrag zur gezielten Chatsteuerung, 26.10.2026"
+      },
+      "scopeItems": [
+        "Emmi: Bilder nachträglich und Bild-only",
+        "Material, Bilder, Audio und Ziehen/Ablegen",
+        "Gemeinsame Quote für Bilder und Höraufgaben",
+        "Dreistufiger Veröffentlichungsablauf und Beschriftung",
+        "Textbereinigung"
+      ]
+    },
+    {
+      "key": "feedback-capture",
+      "externalTaskId": null,
+      "domainId": "customers",
+      "topicId": "feedback",
+      "title": "Feedback mit echtem Screenshot nachvollziehen",
+      "ownerId": "feedback",
+      "priority": 4,
+      "scope": "Screenshotnachweis zu Kommentar, Markierung und Kontext ergänzen; Smiley-Daten getrennt halten.",
+      "next": "Capture-Pfad und sicheren Lesepfad mit tatsächlichem Bildnachweis prüfen.",
+      "gap": "Ein gespeicherter Markierungsrahmen beweist noch kein gespeichertes Screenshotbild.",
+      "acceptance": "Der konkrete Hinweis besitzt einen lesbaren Bildbeleg mit richtiger Umgebung und berechtigtem Zugriff.",
+      "environment": "school-live",
+      "source": {
+        "kind": "human_brief",
+        "conversationId": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+        "turnId": "01a179f0-125a-7a53-a3a8-7b8130c77890",
+        "at": "2026-10-26",
+        "label": "Martins Auftrag zur gezielten Chatsteuerung, 26.10.2026"
+      }
+    },
+    {
+      "key": "homepage-auth",
+      "externalTaskId": "GC-DESIGN-05",
+      "domainId": "design",
+      "topicId": "dashboard",
+      "title": "Anmeldung und Startseite auf allen Geräten prüfen",
+      "ownerId": "design",
+      "priority": 5,
+      "scope": "Homepage/Auth/Register/Reset/Schülerjoin, responsive Darstellung. Aktuelle gebundene Freigabe und Komponentenbelege beachten.",
+      "next": "Neueste Freigabe und aktuelle Hosting-/Gerätenachweise zusammen prüfen.",
+      "gap": "Eine frühere Vorschau oder eine Freigabe allein ist kein aktueller Veröffentlichungsnachweis.",
+      "acceptance": "Die gemeinsam freigegebene Version funktioniert in den vereinbarten Gerätewegen.",
+      "environment": "school-live",
+      "source": {
+        "kind": "human_brief",
+        "conversationId": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+        "turnId": "01a179f0-125a-7a53-a3a8-7b8130c77890",
+        "at": "2026-10-26",
+        "label": "Martins Auftrag zur gezielten Chatsteuerung, 26.10.2026"
+      }
+    },
+    {
+      "key": "brain-control",
+      "externalTaskId": "GC-BRAIN-01",
+      "domainId": "central",
+      "topicId": "auftraege",
+      "title": "Aufträge und zuständige Chats sichtbar steuern",
+      "ownerId": "brain",
+      "priority": 6,
+      "scope": "Bestehende Mac-App mit stabilen Zuordnungen, belegtem Verlauf und klaren Hostgrenzen überarbeiten.",
+      "next": "Lehrer-App-Vorgang durchgängig mit Annahme, aktuellem Schritt und offener Entscheidung anzeigen.",
+      "gap": "Gemeinsamer Desktop-Steueranschluss ist auf diesem Mac noch nicht erreichbar.",
+      "acceptance": "Wer arbeitet woran, was hängt und was braucht Martin sind ohne Technikbegriffe sichtbar.",
+      "environment": "local-central",
+      "source": {
+        "kind": "human_brief",
+        "conversationId": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+        "turnId": "01a179f0-125a-7a53-a3a8-7b8130c77890",
+        "at": "2026-10-26",
+        "label": "Martins Auftrag zur gezielten Chatsteuerung, 26.10.2026"
+      }
+    },
+    {
+      "key": "test-code-access",
+      "externalTaskId": null,
+      "domainId": "web",
+      "topicId": "pruefung",
+      "title": "Unveröffentlichte Tests vor Zugriff schützen",
+      "ownerId": "test-access",
+      "priority": 1,
+      "scope": "Gemeldeten Zugriff auf unveröffentlichte Testcodes auf der Testseite prüfen. Livebetroffenheit ist unbekannt; keine zweite Guardimplementierung durch den Editor-Owner.",
+      "next": "Exakten Zugriffsweg, Umgebung und aktuellen Backend-/Writerstand prüfen; danach den kleinsten abgesicherten Fix liefern.",
+      "gap": "Gemeldeter Vorfall auf der Testseite ist noch nicht mit einer geprüften Version abgeglichen. Livebetroffenheit ist unbekannt.",
+      "acceptance": "Ein unveröffentlichter Test kann über seinen Code nicht unberechtigt gestartet oder gelesen werden; veröffentlichte Tests behalten ihren erlaubten Zugang.",
+      "environment": "test-2026",
+      "source": {
+        "kind": "human_brief",
+        "conversationId": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+        "at": "2026-10-26",
+        "label": "Neuer P1-Auftrag zur Testfreigabe, 26.10.2026. Livebetroffenheit nicht bestätigt."
+      },
+      "originTurnId": "01a17a0e-3849-7251-be41-bb5868f643dc",
+      "acknowledgementItemId": "msg_023c43e3e0049761016adfc21e106881918a3c60e1f7ac1847",
+      "decision": {
+        "question": "Auf welcher Testseite war der unveröffentlichte Testcode erreichbar?",
+        "why": "URL, Code und erreichter Schritt helfen, den gemeldeten Zugriff genau zu prüfen. Der Quellabgleich kann parallel weiterlaufen.",
+        "blocking": false,
+        "state": "open",
+        "source": {
+          "conversationId": "01a17a0e-363c-79e3-afcb-bc0b01f497a8",
+          "turnId": "01a17a0e-3849-7251-be41-bb5868f643dc",
+          "itemId": "call_05dca66c9cda42a69cc38cfe00f31893",
+          "at": "2026-10-26"
+        }
+      }
+    },
+    {
+      "key": "secure-environments",
+      "externalTaskId": null,
+      "domainId": "native",
+      "topicId": "secure",
+      "title": "Secure für Live und Tests sauber trennen",
+      "ownerId": "native",
+      "priority": 6,
+      "scope": "Secure-Live/Test-Apps, getrennte Queue und Identitäten; Schülerkopf und Schlossicons; Apple-Verteilung. Teacher-Anmeldefix bleibt beim eigenen Fachchat.",
+      "next": "Live- und Testbuild samt Backendziel und erhaltener Queue je App nachweisen; Freigabe- und Gerätenachweise getrennt sichern.",
+      "gap": "Ein nicht gefundener Livecode auf einer Test-App beweist keinen Fehler des Livecodes. Verteil-/Gerätestände getrennt prüfen.",
+      "scopeItems": [
+        "Live/Test-Ziele und Queue",
+        "Schülerkopf und Schlossicons",
+        "Apple-Verteilung"
+      ],
+      "acceptance": "Jeder Build greift auf sein vereinbartes Ziel zu; Identitäten und ausstehende Abgaben bleiben getrennt und erhalten.",
+      "environment": "native-secure",
+      "source": {
+        "kind": "human_brief",
+        "conversationId": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+        "turnId": "01a179f0-125a-7a53-a3a8-7b8130c77890",
+        "at": "2026-10-26",
+        "label": "Martins Auftrag zur gezielten Chatsteuerung, 26.10.2026"
+      }
+    },
+    {
+      "key": "test-overview",
+      "externalTaskId": null,
+      "domainId": "web",
+      "topicId": "pruefung",
+      "title": "Testübersicht und Aktionen verständlicher machen",
+      "ownerId": "dashboard",
+      "priority": 5,
+      "scope": "Dashboardkarten und Aktionen nach dem gemeldeten Bedienproblem prüfen. Editor-Owner behält Publishdialog und Medien; Zugriffsschutz gehört dem Sicherheits-Fachchat.",
+      "next": "Zunächst app.js und die Schreibgrenzen mit dem Editor-Owner abgleichen, dann den begrenzten Karten-/Aktionsumfang übernehmen.",
+      "gap": "Beauftragung ist bekannt; Umsetzung und Liveabnahme sind nicht bestätigt.",
+      "acceptance": "Aufklappen streckt Nachbarkarten nicht; Schülerlink, Live-Durchführung und Startaktionen sind klar erreichbar.",
+      "environment": "not-selected",
+      "source": {
+        "kind": "human_brief",
+        "conversationId": "01a10df6-736b-7a62-bd38-2724cf254c2e",
+        "at": "2026-10-26",
+        "label": "Martins neuer Auftrag zur Testübersicht, 26.10.2026; nur initiale Zuordnung."
+      }
+    }
+  ],
+  "domainIds": [
+    "web",
+    "classroom",
+    "native",
+    "games",
+    "learning",
+    "design",
+    "operations",
+    "customers",
+    "strategy",
+    "governance",
+    "central"
+  ]
+}

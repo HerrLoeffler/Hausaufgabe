@@ -4,6 +4,7 @@ const central=new CentralClient();let runtimeOff=()=>{};
 import {areas,topics} from './data.mjs';
 import {domains,recordsFor,coverage,primaryDomain} from './portfolio.mjs';
 import {mountNetwork} from './network-view.mjs';
+import {mountOperations} from './operations-view.mjs';
 let inventory,brandManifest;
 try {
  const responses=await Promise.all([fetch('inventory.json'),fetch('/shared/gradecrew-design/assets.json')]);
@@ -44,21 +45,17 @@ function tabnav(entries,base,current){const n=el('nav','tabs');n.setAttribute('a
 
 function navigation(){
   $('#primary').replaceChildren();$('#secondary').replaceChildren();
-  for(const [id,name] of [['heute','Heute'],['eingang','Eingang'],['arbeit','Arbeit'],['wissen','Wissen']]){
+  for(const [id,name] of [['heute','Heute'],['eingang','Eingang'],['arbeit','Bereiche'],['wissen','Wissen']]){
     const a=link('',`#/${id}`,`nav-link ${route.page===id?'active':''}`);append(a,icon(id),el('span','',name));if(route.page===id)a.setAttribute('aria-current','page');$('#primary').append(a);
   }
   if(route.page==='arbeit'){
-    if(route.section!=='bereich')for(const [id,name] of [['landkarte','Unternehmensnetz'],['stand','Bereichsstand'],['releases','Seiten & Releases'],['abdeckung','Quellenabdeckung'],['themen','Detailakten'],['ziele','Ziele'],['qualitaet','Aufgabenqualität'],['netz','Beziehungen']]){
-      const active=route.section===id||(!route.section&&id==='landkarte')||(route.section==='thema'&&id==='themen');
-      const a=link(name,`#/arbeit/${id}${id==='bereich'?'/strategy':''}`,`sub-link ${active?'active':''}`);if(active)a.setAttribute('aria-current','page');$('#secondary').append(a);
+    for(const [id,name] of [['auftraege','Aufträge'],['bereiche','Bereiche'],['chats','Chats & Zuständigkeiten']]){
+      const active=route.section===id||(id==='auftraege'&&route.section==='auftrag')||(id==='bereiche'&&(!route.section||route.section==='bereich'));
+      const a=link(name,`#/arbeit/${id}`,`sub-link ${active?'active':''}`);if(active)a.setAttribute('aria-current','page');$('#secondary').append(a);
     }
-    if(route.section==='bereich'){
-      $('#secondary').append(link('← Arbeitsübersicht','#/arbeit','sub-link'));
-      $('#secondary').append(el('label','sub-label','Ausgewählter Bereich'));
-      const select=el('select','area-select');select.setAttribute('aria-label','Firmenbereich auswählen');areas.forEach(a=>{const o=el('option','',a.name);o.value=a.id;o.selected=a.id===route.id;select.append(o);});
-      select.addEventListener('change',()=>location.hash=`/arbeit/bereich/${select.value}`);$('#secondary').append(select);
-      for(const [id,name] of [['ueberblick','Überblick'],['themen','Themen'],['ziele','Ziele'],['wissen','Wissen']])$('#secondary').append(link(name,`#/arbeit/bereich/${route.id}/${id}`,`sub-link ${route.tab===id?'active':''}`));
-    }
+    const more=el('details','ops-nav-more');more.append(el('summary','','Weitere Ansichten'));
+    for(const [id,name] of [['landkarte','Unternehmensnetz'],['stand','Fachlicher Bereichsstand'],['releases','Seiten & Releases'],['abdeckung','Quellenabdeckung'],['themen','Detailakten'],['ziele','Ziele'],['qualitaet','Aufgabenqualität'],['netz','Beziehungen']])more.append(link(name,`#/arbeit/${id}`,'sub-link'));
+    $('#secondary').append(more);
   }
   const names={heute:'Heute',eingang:'Eingang',arbeit:'Arbeit',wissen:'Wissen',verbindungen:'Verbindungen'};
   $('#breadcrumb').replaceChildren(link('Firmenzentrale','#/heute'),el('span','','/'),el('span','current',names[route.page]||'Heute'));
@@ -199,7 +196,7 @@ $('#editor').addEventListener('cancel',event=>{if(editorDirty()){event.preventDe
 $('#editor-form').addEventListener('input',()=>{if(closeRequested){closeRequested=false;$('#editor-message').textContent='';}});
 window.addEventListener('beforeunload',event=>{if($('#editor').open&&editorDirty()){event.preventDefault();event.returnValue='';}});
 $('.skip').addEventListener('click',event=>{event.preventDefault();$('#content').focus();});
-$('#new-button').addEventListener('click',()=>openEditor());
+$('#new-button').textContent='+ Auftrag zuordnen';$('#new-button').addEventListener('click',()=>{location.hash='/arbeit/bereiche';});
 function search(){const results=$('#search-results'),q=$('#global-search').value;results.replaceChildren();const term=q.trim().toLocaleLowerCase('de');for(const d of domains){if(JSON.stringify([d,recordsFor(inventory,d.id)]).toLocaleLowerCase('de').includes(term)){const a=link(d.name,`#/arbeit/landkarte/${d.id}`,'source');a.addEventListener('click',()=>$('#search-dialog').close());results.append(a);}}const matches=searchTopics(topics,q);matches.forEach(t=>{const a=topicRow(t);a.addEventListener('click',()=>$('#search-dialog').close());results.append(a);});const locals=drafts.filter(d=>`${d.title} ${d.body}`.toLocaleLowerCase('de').includes(q.trim().toLocaleLowerCase('de')));locals.forEach(d=>results.append(button(`${d.title} · lokaler Entwurf`,()=>{$('#search-dialog').close();openEditor(d);},'source search-result')));if(!results.children.length)results.append(empty('Keine Treffer','Versuche einen anderen Begriff.'));}
 function openSearch(){$('#global-search').value='';search();$('#search-dialog').showModal();$('#global-search').focus();}
 $('#global-search').addEventListener('input',search);$('#search-button').addEventListener('click',openSearch);$('#close-search').addEventListener('click',()=>$('#search-dialog').close());
@@ -211,7 +208,7 @@ mobile.addEventListener('change',closeMenu);
 $('#menu').addEventListener('click',()=>{const open=$('#sidebar').classList.toggle('open');syncMenu();if(open)$('#primary a').focus();});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'&&!$('#editor').open){e.preventDefault();if(!$('#search-dialog').open)openSearch();}if(e.key==='Escape'&&$('#sidebar').classList.contains('open')){closeMenu();$('#menu').focus();}});
 document.addEventListener('click',e=>{if($('#sidebar').classList.contains('open')&&!$('#sidebar').contains(e.target)&&!$('#menu').contains(e.target))closeMenu();});
-function render(focus=true){runtimeOff();runtimeOff=()=>{};route=parseRoute(location.hash);navigation();$('#content').replaceChildren();if(route.page==='eingang')inbox();else if(route.page==='wissen')knowledge();else if(route.page==='verbindungen')connections();else if(route.page==='arbeit'){if(route.section==='releases')runtimeOff=mountReleases($('#content'),central,(id,brief)=>openEditor(null,{area:domains.find(x=>x.id===id)?.area||'tech',...brief}),{tab:route.id,area:route.tab==='ueberblick'?'all':route.tab});else if(route.section==='stand')runtimeOff=mountCompanyStatus($('#content'),central,(id,brief)=>openEditor(null,{area:domains.find(x=>x.id===id)?.area||'tech',...brief}));else if(route.section==='akte')portfolioDetail();else if(route.section==='landkarte'&&route.id)today();else if(route.section==='abdeckung'){coverageView();runtimeOff=mountSources($('#content'),central);}else if(route.section==='thema')detail();else if(route.section==='ziele')goals();else if(route.section==='qualitaet')quality();else if(route.section==='bereich')area();else if(route.section==='netz')network();else if(route.section==='landkarte'||!route.section)today();else themes();}else today();if(route.section==='landkarte'&&route.id&&$('#content .focus-inspector')){const off1=mountDomainSources($('#content .focus-inspector'),central,route.id,primaryDomain),off2=mountAreaAudit($('#content .focus-inspector'),central,route.id,route.tab!=='ueberblick');runtimeOff=()=>{off1();off2();};}document.title=`${$('#content h1')?.textContent||'Firmenzentrale'} · GradeCrew`;closeMenu();if(focus){$('#content').focus({preventScroll:true});window.scrollTo(0,0);}}
+function render(focus=true){runtimeOff();runtimeOff=()=>{};route=parseRoute(location.hash);navigation();$('#content').replaceChildren();if(route.page==='eingang')inbox();else if(route.page==='wissen')knowledge();else if(route.page==='verbindungen')connections();else if(route.page==='arbeit'){if(['auftrag','auftraege','chats','bereiche','bereich'].includes(route.section))runtimeOff=mountOperations($('#content'),central,{view:{auftrag:'task',auftraege:'all',chats:'owners',bereiche:'domains',bereich:'domain'}[route.section],id:route.id,topic:route.tab==='ueberblick'?'':route.tab});else if(route.section==='releases')runtimeOff=mountReleases($('#content'),central,(id,brief)=>openEditor(null,{area:domains.find(x=>x.id===id)?.area||'tech',...brief}),{tab:route.id,area:route.tab==='ueberblick'?'all':route.tab});else if(route.section==='stand')runtimeOff=mountCompanyStatus($('#content'),central,(id,brief)=>openEditor(null,{area:domains.find(x=>x.id===id)?.area||'tech',...brief}));else if(route.section==='akte')portfolioDetail();else if(route.section==='landkarte'&&route.id)today();else if(route.section==='abdeckung'){coverageView();runtimeOff=mountSources($('#content'),central);}else if(route.section==='thema')detail();else if(route.section==='ziele')goals();else if(route.section==='qualitaet')quality();else if(route.section==='bereich')area();else if(route.section==='netz')network();else if(route.section==='landkarte')today();else if(!route.section)runtimeOff=mountOperations($('#content'),central,{view:'domains'});else themes();}else runtimeOff=mountOperations($('#content'),central,{view:'home'});if(route.section==='landkarte'&&route.id&&$('#content .focus-inspector')){const off1=mountDomainSources($('#content .focus-inspector'),central,route.id,primaryDomain),off2=mountAreaAudit($('#content .focus-inspector'),central,route.id,route.tab!=='ueberblick');runtimeOff=()=>{off1();off2();};}document.title=`${$('#content h1')?.textContent||'Firmenzentrale'} · GradeCrew`;closeMenu();if(focus){$('#content').focus({preventScroll:true});window.scrollTo(0,0);}}
 window.addEventListener('hashchange',()=>render());
 window.addEventListener('storage',event=>{if(event.key==='gradecrew-company-personal-drafts-v1'){const latest=readDrafts(storage);if(!$('#editor').open){draftsState=latest;drafts=latest.items;render(false);}else notify('Entwürfe wurden in einer anderen Ansicht geändert.');}});
 render(false);

@@ -28,14 +28,17 @@ class Store:
   except (ValueError,TypeError,AttributeError):raise ValueError('Ungültige Auftragskennung')
   brief={k:payload.get(k,'') for k in ['title','body','area']}
   if any(not isinstance(v,str) for v in brief.values()) or not brief['title'].strip() or len(brief['title'])>160 or len(brief['body'])>12000 or len(brief['area'])>80:raise ValueError('Titel fehlt oder Text ist zu lang')
-  fp=digest(brief)
+  metadata={k:payload[k] for k in ['domainId','topicId','conversationId','workItemId'] if payload.get(k) is not None}
+  if any(not isinstance(v,str) or len(v)>180 for v in metadata.values()):raise ValueError('Ungültige Bereichszuordnung')
+  if metadata.get('conversationId') and metadata['conversationId']!='analysis:'+metadata.get('domainId','')+'/'+metadata.get('topicId',''):raise ValueError('Analyseverlauf passt nicht zum Bereich')
+  fp=digest([brief,metadata]) if metadata else digest(brief)
   with self.lock,self.db:
    row=self.db.execute('SELECT fingerprint,value FROM requests WHERE id=?',(ident,)).fetchone()
    if row:
     if row[0]!=fp:raise ValueError('Diese Kennung gehört bereits zu einem anderen Auftrag')
     return json.loads(row[1])
    if sum(r['status'] in ['queued','starting','running','waiting_user'] for r in self.list())>=10:raise ValueError('Warteschlange voll. Bitte laufende Aufgaben abwarten.')
-   value=dict(id=ident,**brief,context=context,briefHash=digest([brief,context]),status='queued',createdAt=now(),updatedAt=now(),threadId=None,turnId=None,attempts=0,result='',error='',question=None,report=None,usage=None,profile='Analyse und Bericht · keine Produktänderungen')
+   value=dict(id=ident,**brief,**metadata,context=context,briefHash=digest([brief,context]),status='queued',createdAt=now(),updatedAt=now(),threadId=None,turnId=None,attempts=0,result='',error='',question=None,report=None,usage=None,profile='Analyse und Bericht · keine Produktänderungen')
    self.db.execute('INSERT INTO requests VALUES(?,?,?)',(ident,fp,encode(value)));self._event(ident,'accepted',{'briefHash':value['briefHash']})
    return value
  def _event(self, ident, kind, data):self.db.execute('INSERT INTO events(request_id,at,kind,value) VALUES(?,?,?,?)',(ident,now(),kind,encode(data)))

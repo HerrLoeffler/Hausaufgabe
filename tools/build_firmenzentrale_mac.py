@@ -31,7 +31,7 @@ def build(output,python_prefix,data_dir,codex):
   if not license_file.is_file():raise ValueError('Python license missing')
   config={'dataDirectory':str(data_dir.resolve()),'codex':str(codex),'port':8796}
   (res/'application.json').write_text(json.dumps(config,indent=2)+'\n');os.chmod(res/'application.json',0o600)
-  plist={'CFBundleName':'GradeCrew Zentrale','CFBundleDisplayName':'GradeCrew Zentrale','CFBundleIdentifier':'de.gradecrew.central','CFBundleExecutable':'GradeCrewCentral','CFBundlePackageType':'APPL','CFBundleShortVersionString':'0.1.0','CFBundleVersion':'1','CFBundleIconFile':'AppIcon','LSMinimumSystemVersion':'13.0','NSHighResolutionCapable':True,'NSPrincipalClass':'NSApplication','NSAppTransportSecurity':{'NSAllowsLocalNetworking':True}}
+  plist={'CFBundleName':'GradeCrew Zentrale','CFBundleDisplayName':'GradeCrew Zentrale','CFBundleIdentifier':'de.gradecrew.central','CFBundleExecutable':'GradeCrewCentral','CFBundlePackageType':'APPL','CFBundleShortVersionString':'0.2.0','CFBundleVersion':'2','CFBundleIconFile':'AppIcon','LSMinimumSystemVersion':'13.0','NSHighResolutionCapable':True,'NSPrincipalClass':'NSApplication','NSAppTransportSecurity':{'NSAllowsLocalNetworking':True}}
   (contents/'Info.plist').write_bytes(plistlib.dumps(plist))
   cache=Path(tmp)/'module-cache';cache.mkdir()
   common=['xcrun','swiftc','-module-cache-path',str(cache),'-target','arm64-apple-macosx13.0']

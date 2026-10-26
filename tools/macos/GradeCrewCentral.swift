@@ -70,7 +70,7 @@ final class CentralApp: NSObject, NSApplicationDelegate, NSWindowDelegate, WKNav
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
     @objc func about() {
         let alert = NSAlert(); alert.messageText = "GradeCrew Zentrale"
-        alert.informativeText = "Deine Firmenzentrale auf diesem Mac.\n\nAufträge und Ergebnisse bleiben im bisherigen lokalen Datenbestand. Der lokale Dienst arbeitet auch nach dem Schließen der App weiter. Für neue KI-Aufträge wird die bestehende Codex-Anmeldung verwendet.\n\nLokale Version 0.1 · Live bleibt unverändert."
+        alert.informativeText = "Deine Firmenzentrale auf diesem Mac.\n\nAufträge und Ergebnisse bleiben im bisherigen lokalen Datenbestand. Der lokale Dienst arbeitet auch nach dem Schließen der App weiter. Für neue KI-Aufträge wird die bestehende Codex-Anmeldung verwendet.\n\nLokale Version 0.2 · Live bleibt unverändert."
         alert.runModal()
     }
     func message(_ text: String, retryable: Bool) {
@@ -119,7 +119,7 @@ final class CentralApp: NSObject, NSApplicationDelegate, NSWindowDelegate, WKNav
         switch destination(url, origin: base, userLink: action.navigationType == .linkActivated) {
         case .local: decisionHandler(action.shouldPerformDownload ? .download : .allow)
         case .download: decisionHandler(.download)
-        case .external: NSWorkspace.shared.open(url); decisionHandler(.cancel)
+        case .external, .chat: NSWorkspace.shared.open(url); decisionHandler(.cancel)
         case .deny: decisionHandler(.cancel)
         }
     }
@@ -127,7 +127,7 @@ final class CentralApp: NSObject, NSApplicationDelegate, NSWindowDelegate, WKNav
         guard let url = action.request.url, let base = origin else { return nil }
         switch destination(url, origin: base, userLink: action.navigationType == .linkActivated) {
         case .local: web.load(action.request)
-        case .external: NSWorkspace.shared.open(url)
+        case .external, .chat: NSWorkspace.shared.open(url)
         default: break
         }
         return nil

@@ -25,6 +25,9 @@ class Handler(SimpleHTTPRequestHandler):
   path=urlsplit(self.path).path
   if path=='/api/desktop-health':return self.json(identity(self.server.service.store.root))
   if path=='/api/session':return self.json({'token':self.server.token})
+  if path.startswith('/api/work-items/'):
+   try:return self.json(self.server.service.operations.detail(path.rsplit('/',1)[-1]))
+   except ValueError:return self.json({'error':'Auftrag nicht gefunden'},404)
   if path=='/api/state':return self.json(self.server.service.state())
   if path.startswith('/api/'):return self.json({'error':'Nicht gefunden'},404)
   return super().do_GET()
@@ -36,6 +39,16 @@ class Handler(SimpleHTTPRequestHandler):
    if self.headers.get_content_type()!='application/json':raise ValueError('JSON erwartet')
    data=json.loads(self.rfile.read(size));path=urlsplit(self.path).path;service=self.server.service
    if not isinstance(data,dict):raise ValueError('Objekt erwartet')
+   if path=='/api/work-items':return self.json(service.operations.create(data),201)
+   if path=='/api/work-items/change':return self.json(service.operations.change(data))
+   if path=='/api/work-items/decision':return self.json(service.operations.decide(data))
+   if path=='/api/work-items/progress':return self.json(service.operations.progress(data))
+   if path=='/api/work-items/prepare':return self.json(service.operations.prepare_handoff(data))
+   if path=='/api/work-items/dispatch':return self.json(service.operations.dispatch(data),202)
+   if path=='/api/work-items/refresh':return self.json({'started':service.operations.refresh(force=bool(data.get('force')))},202)
+   if path=='/api/desktop-host/reconnect':
+    if service.desktop_host:service.desktop_host.connect()
+    return self.json({'started':bool(service.desktop_host)},202)
    if path=='/api/tasks':
     r=service.submit(data);return self.json({k:v for k,v in r.items() if k!='context'},202)
    if path=='/api/release-review':return self.json(service.releases.review(data),201)

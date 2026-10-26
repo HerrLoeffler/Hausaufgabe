@@ -8,11 +8,12 @@ export class CentralClient {
   const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Central-Token':this.token},body:JSON.stringify(data)});
   const result=await r.json();if(!r.ok){if(r.status===403)this.token=null;throw Error(result.error||'Auftrag konnte nicht verarbeitet werden');}return result;
  }
- async poll(){
+ async refresh(){
   try{const r=await fetch('/api/state');if(!r.ok)throw Error();this.state=await r.json();this.error='';}
   catch{this.error='Lokaler Dienst nicht erreichbar. Letzter bekannter Stand bleibt sichtbar.';}
-  this.listeners.forEach(fn=>fn(this.state,this.error));this.timer=setTimeout(()=>this.poll(),document.hidden?12000:3000);
+  this.listeners.forEach(fn=>fn(this.state,this.error));
  }
+ async poll(){await this.refresh();this.timer=setTimeout(()=>this.poll(),document.hidden?12000:3000);}
  subscribe(fn){this.listeners.add(fn);fn(this.state,this.error);return()=>this.listeners.delete(fn);}
 }
 export const statusName={queued:'Angenommen',starting:'Wird gestartet',running:'In Bearbeitung',waiting_user:'Rückfrage',completed:'Ergebnis vorhanden',failed:'Fehlgeschlagen',interrupted:'Unterbrochen',unknown:'Abgleich nötig',cancelled:'Abgebrochen'};

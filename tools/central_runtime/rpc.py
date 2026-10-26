@@ -2,14 +2,14 @@
 import json, os, queue, shutil, subprocess, threading
 
 class RPC:
- def __init__(self, cwd, on_event, on_request, binary=None):
+ def __init__(self, cwd, on_event, on_request, binary=None,proxy=False):
   self.pending={};self.lock=threading.Lock();self.sequence=0;self.on_event=on_event;self.on_request=on_request
   binary=binary or shutil.which('codex')
   if not binary:raise RuntimeError('Codex ist auf diesem Rechner nicht erreichbar')
-  args=[binary,'app-server','--listen','stdio://']
+  args=[binary,'app-server','proxy'] if proxy else [binary,'app-server','--listen','stdio://']
   # Narrow this service only; do not edit user config or managed requirements.
   overrides={'features.shell_tool':False,'features.apps':False,'features.plugins':False,'features.remote_plugin':False,'features.multi_agent':False,'web_search':'disabled','mcp_servers':{},'notify':[]}
-  for key,value in overrides.items():args+=['-c',key+'='+ ('{}' if value=={} else json.dumps(value))]
+  for key,value in ({} if proxy else overrides).items():args+=['-c',key+'='+ ('{}' if value=={} else json.dumps(value))]
   self.process=subprocess.Popen(args,cwd=cwd,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,text=True,bufsize=1)
   threading.Thread(target=self._read,daemon=True).start()
   self.info=self.call('initialize',{'clientInfo':{'name':'gradecrew_central','title':'GradeCrew Firmenzentrale','version':'0.2'},'capabilities':{'experimentalApi':True}})
