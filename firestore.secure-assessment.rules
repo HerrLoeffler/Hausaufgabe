@@ -250,6 +250,8 @@ service cloud.firestore {
 
     match /feedback/{feedbackId} {
       allow create: if accountActive()
+                    && request.resource.data.get('category', '') != 'screenshot_error'
+                    && !request.resource.data.keys().hasAny(['attachment', 'captureSchemaVersion', 'captureContext'])
                     && !request.resource.data.keys().hasAny(['sharedLearning', 'learningUse'])
                     && request.resource.data.get('feedbackSchemaVersion', 0) != 4
                     && request.resource.data.userId == request.auth.uid
@@ -273,7 +275,8 @@ service cloud.firestore {
                       )
                     );
       allow read, delete: if isAdmin();
-      allow update: if !request.resource.data.diff(resource.data).affectedKeys().hasAny(['sharedLearning', 'learningUse'])
+      allow update: if !request.resource.data.diff(resource.data).affectedKeys().hasAny(['attachment', 'captureSchemaVersion', 'captureContext', 'reviewNoteId'])
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['sharedLearning', 'learningUse'])
         && (isAdmin() || (
           accountActive()
           && resource.data.get('feedbackSchemaVersion', 0) != 4

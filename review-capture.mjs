@@ -1,5 +1,7 @@
+import {installVisualFeedback} from './visual-feedback-capture.mjs';
 // Permission-gated compact annotation surface; never changes page geometry.
-export function installCompactCapture({document,saveNote,feedback=false}) {
+export function installCompactCapture({document,saveNote,feedback=false,...options}) {
+  if(feedback)return installVisualFeedback({document,saveNote,...options});
   const window=document.defaultView;
   const style=document.createElement('style');
   style.textContent='.gcLocalCapture{position:fixed;z-index:2147483000;inset:0;cursor:crosshair;touch-action:none}.gcLocalCaptureBox{position:absolute;border:2px solid #173f55;background:#173f5518;pointer-events:none}.gcLocalNote{border:1px solid #c9dce3;border-radius:16px;padding:20px;width:min(420px,calc(100vw - 32px));color:#173f55;background:white;box-shadow:0 12px 50px #173f5530}.gcLocalNote::backdrop{background:#173f5515}.gcLocalNote label{display:block;font:600 16px system-ui;margin-bottom:12px}.gcLocalNote textarea{width:100%;min-height:100px;border:1px solid #bacdd6;border-radius:8px;padding:10px;font:15px system-ui;resize:vertical}.gcLocalNoteActions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.gcLocalNote button{border:1px solid #bacdd6;border-radius:8px;padding:9px 14px;background:white;color:#173f55;font:600 13px system-ui}.gcLocalNote button[type=submit]{background:#173f55;color:white}';

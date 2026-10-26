@@ -449,6 +449,7 @@ module.exports = {
   ...existing,
   ...require("./admin-account-callables"),
   ...require("./review-mode-callables"),
+  ...require("./feedback-image-lifecycle"),
   aggregateBugFeedback,
   getBugOpsSummary,
   recordCrewTelemetry,

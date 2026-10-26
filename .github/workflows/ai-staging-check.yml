@@ -150,6 +150,12 @@ jobs:
           node --test secure-student-route.test.mjs
           node --test secure-firestore-rules.test.mjs
 
+      - name: Visual feedback raster and Storage boundary checks
+        run: |
+          node --test review-image.test.mjs feedback-image-view.test.mjs
+          cd tools/rules
+          node_modules/.bin/firebase emulators:exec --project demo-gc-visual-feedback --config ../../firebase.visual-feedback-emulator.json --only storage "node --test visual-feedback-storage.emulator.test.mjs"
+
       - name: Test secure Firestore rules in emulator
         run: npm run test:secure --prefix tools/rules
 
@@ -301,14 +307,20 @@ jobs:
   public-layout:
     name: Public entry layout (WebKit and Chromium)
     runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.56.1-noble
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
+      - name: Trust the exact checked-out workspace in this isolated container
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/setup-node@v5
         with:
           node-version: '22'
       - run: npm ci --prefix tools/browser-layout --no-audit --no-fund
-      - run: cd tools/browser-layout && npx playwright install --with-deps chromium webkit
+      - run: npm ci --prefix functions --include=dev --no-audit --no-fund
+      - run: node tools/browser-layout/feedback-images.cjs
+        env:
+          GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
       - run: npm test --prefix tools/browser-layout
         env:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
