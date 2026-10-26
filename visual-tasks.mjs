@@ -72,7 +72,7 @@ export function parseVisualTask(question, { publicOnly = false } = {}) {
   }
   try {
     const candidate=publicOnly?{...t,rationale:'Public geometry validation',solution:geometryKey(t)}:t;
-    if(core().validate(candidate).length) fail();
+    if(core().validate(candidate,{publicOnly}).length) fail();
   } catch { fail(); }
   return t;
 }

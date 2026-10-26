@@ -1,3 +1,4 @@
+import {ENABLED as hostedVisualLab,LAB_GUIDANCE as hostedLabGuidance} from './visual-lab.mjs';
 let extendedPreview = false;
 let extendedVariant = 1;
 import { parseNumericAnswer, normalizeVisualTask, renderVisualEditor, mountVisualQuestion, collectVisualAnswer, decodeVisualAnswer, visualAnswered, evaluateVisual, visualSolution } from "./visual-tasks.mjs";
@@ -2776,6 +2777,7 @@ async function openAiView() {
   renderAiJobs();
   if (firstAiGuideStep === "ai") setTimeout(() => renderFirstAiGuideStep("details"), 100);
   const notice = $("aiBetaNotice");
+  if(hostedVisualLab){for(const c of document.querySelectorAll('#aiTypeChecks input')){c.checked=c.value==='visual';c.disabled=true;}for(const id of ['aiImageQuestionCount','aiAudioQuestionCount','aiSolutionAudioQuestionCount','aiAudioAnswerQuestionCount'])if($(id))$(id).value='0';notice.textContent='Online-Aufgabenlabor mit echter Remy-/Emmi-KI. Acht freigegebene visuelle Formate und differenzierbarer Dreisatz. Deine Entwürfe werden im angemeldeten Testkonto gespeichert. Bitte keine Schülerdaten eingeben.';notice.classList.remove('hidden');return;}
   if(extendedPreview){for(const id of ['aiImageQuestionCount','aiAudioQuestionCount']){const card=$(id)?.closest('article.card');if(card)card.hidden=true;}for(const c of document.querySelectorAll('#aiTypeChecks input')){c.checked=c.value==='visual';c.disabled=true;}for(const n of document.querySelectorAll('p,small')){if(n.textContent==='Kosten können für Tests, Bilder und Audio entstehen.')n.textContent='Die Erstellung nutzt die vorhandene kostenpflichtige Test-KI.';if(n.textContent.includes('Nach dem Start schließt sich diese Ansicht automatisch.'))n.textContent='Der fertige KI-Test öffnet sich hier im Editor. Bei Unterbrechung: oben KI-Auftrag fortsetzen.';}notice.textContent='Echte GradeCrew-Test-KI: neue visuelle Aufgaben mit Remy erstellen und mit Emmi überarbeiten. Nutze Fach, Klasse und Thema; nur die acht ausgewählten Formate, bis zu zwölf Aufgaben. Tabellen können mehrere Eingabefelder mit Teilpunkten enthalten. Keine Schülerdaten eingeben. Kostenpflichtige Test-KI, Veröffentlichung und Abgaben bleiben lokal.';notice.classList.remove('hidden');return;}
   if (crewTour?.creating) { notice.textContent = "Übung: vorbereitete Aufgaben, keine KI-Anfrage."; notice.classList.remove("hidden"); return; }
   try {
@@ -2959,6 +2961,7 @@ function collectAiRequest() {
   const solutionAudioQuestionCount = Number($("aiSolutionAudioQuestionCount").value);
   const answerInput = $("aiAudioAnswerQuestionCount");
   const audioAnswerQuestionCount = Number(answerInput?.value || 0);
+  if(hostedVisualLab&&(count>12||state.aiMaterials.length||imageQuestionCount||audioQuestionCount||solutionAudioQuestionCount||audioAnswerQuestionCount))throw new Error('Im Aufgabenlabor bitte1–12 visuelle Aufgaben ohne zusätzliche Medienaufträge verwenden.');
   if (!Number.isInteger(count) || count < 1 || count > 100) throw new Error("Bitte 1 bis 100 Aufgaben wählen.");
   if (!$("aiPoints").value.trim() || !Number.isFinite(points) || points < 0.5 || Math.abs(points * 2 - Math.round(points * 2)) > 1e-8) throw new Error("Bitte eine Gesamtpunktzahl in 0,5er-Schritten wählen.");
   if (points < count / 2) throw new Error(`Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
@@ -2973,7 +2976,7 @@ function collectAiRequest() {
   return {
     subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
     topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, points,
-    allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
+    allowedTypes:hostedVisualLab?['visual']:allowedTypes, notes: (hostedVisualLab?hostedLabGuidance+'\n':'')+($("aiCustomNotes")?.value.trim() || ""), materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
     imageMode: imageQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount: 0,
     audioQuestionCount, solutionAudioQuestionCount, audioAnswerQuestionCount
   };
@@ -5651,7 +5654,7 @@ function renderGapColorEditor(container, q) {
 
 function renderAnswerEditor(container, q) {
   container.innerHTML = "";
-  if (q.type === "visual") { renderVisualEditor(container, q, refresh => { markDirty(); if (refresh) renderQuestions(); },extendedPreview?{formats:state.extendedFormats}:{}); return; }
+  if (q.type === "visual") { renderVisualEditor(container, q, refresh => { markDirty(); if (refresh) renderQuestions(); },(extendedPreview||hostedVisualLab)?{formats:state.extendedFormats}:{}); return; }
 
   if (["single", "multi", "dropdown"].includes(q.type)) {
     const info = document.createElement("p");
@@ -9396,3 +9399,10 @@ async function resumeExtendedAi(...args){const m=await import('./tools/extended-
 
 function extendedCurrentDraft(){if(!state.currentQuiz||!state.questions?.length)return null;return {...deepClone(state.currentQuiz),title:$('quizTitle')?.value||state.currentQuiz.title,subject:$('quizSubject')?.value||state.currentQuiz.subject,grade:$('quizGrade')?.value||state.currentQuiz.grade,questions:deepClone(state.questions)};}
 function showExtendedDrafts(drafts){const dialog=document.createElement('dialog');dialog.style.cssText='max-width:700px;max-height:80vh;overflow:auto';const title=document.createElement('h2');title.textContent='Gesicherte Entwürfe';dialog.append(title);if(!drafts.length){const p=document.createElement('p');p.textContent='Noch keine früheren Entwürfe gesichert.';dialog.append(p);}for(const draft of drafts){const button=document.createElement('button');button.type='button';button.className='button secondary';button.style.cssText='display:block;margin:10px 0';button.textContent=draft.title+' · '+draft.questionCount+' Aufgaben · '+new Date(draft.at).toLocaleString('de-DE');button.addEventListener('click',async()=>{try{const r=await extendedCall('restore-draft',{id:draft.id,currentDraft:extendedCurrentDraft()});await openExtendedGeneratedTest(r.test);dialog.close();dialog.remove();}catch(e){toast(e.message,'error');}});dialog.append(button);}const close=document.createElement('button');close.type='button';close.className='button';close.textContent='Schließen';close.addEventListener('click',()=>{dialog.close();dialog.remove();});dialog.append(close);document.body.append(dialog);dialog.showModal();}
+
+// Explicit online preview activation keeps real authentication, storage and AI jobs.
+if(hostedVisualLab){
+ import('./tools/extended-preview/format-policy.mjs').then(m=>{state.extendedFormats=m.LAB_FORMATS;});
+ document.addEventListener('gradecrew:hosted-lab-ai',async()=>{if(!state.user||guestTourRepo)return toast('Bitte mit deinem freigegebenen Testkonto anmelden.','error');if(state.currentQuiz&&state.isDirty&&!(await saveCurrentQuiz(false)))return;await openAiView();$('aiSubject').value='Mathematik';$('aiGrade').value='7';$('aiTopic').value='Dreisatz und Prozentrechnung';$('aiCount').value='4';$('aiPoints').value='14';$('aiCustomNotes').value='Direkten und umgekehrten Dreisatz mit vier unabhängigen Rechenpfeilen erstellen. Unterschiedliche Hilfestufen links und rechts; auch Zeichen auswählen und ganze Rechnung frei.';});
+ document.addEventListener('gradecrew:hosted-lab-examples',async()=>{try{if(!state.user||guestTourRepo)throw Error('Bitte mit deinem freigegebenen Testkonto anmelden.');if(state.currentQuiz&&!(await saveCurrentQuiz(false)))return;const {makeTableExamples}=await import('./table-examples.mjs'),data=makeTableExamples(globalThis.GC2),{questions,...meta}=data;const {code}=await createQuizDocument({...meta,questionCount:questions.length,totalPoints:questions.reduce((s,q)=>s+q.points,0),showSolutions:false});const batch=writeBatch(db);questions.forEach((q,i)=>batch.set(doc(db,'quizzes',code,'questions','example-'+(i+1)),{...sanitizeQuestionForSave(q),updatedAt:serverTimestamp()}));await batch.commit();await openEditor(code);}catch(e){toast(e.message,'error');}});
+}

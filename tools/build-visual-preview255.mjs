@@ -4,6 +4,9 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {PROJECT,AI_NAMES,ASSESSMENT_NAMES,previewCallable,previewAccountAllowed,PREVIEW_TEST_UID} from './visual-preview255-contract.mjs';
+import {VISUAL_LAB_AUTHORING_RULES} from './visual-lab-guide.mjs';
+import {LAB_FORMATS} from './extended-preview/format-policy.mjs';
+// visual-lab.mjs is packaged by the shared static builder; enabled only here.
 const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const allowedFn=previewAccountAllowed.toString().replaceAll('PREVIEW_TEST_UID',JSON.stringify(PREVIEW_TEST_UID));
 const dest=process.argv[2];
@@ -26,6 +29,9 @@ for(const [source,codebase,names] of [['functions','visual255-ai',AI_NAMES],['as
  await fs.writeFile(path.join(target,'preview255-main.cjs'),entry);
  await fs.symlink(path.join(root,source,'node_modules'),path.join(target,'node_modules'),'dir');
  if(source==='functions'){
+  await fs.writeFile(path.join(target,'lib/visual-prompts.js'),'"use strict"; module.exports={VISUAL_AUTHORING_RULES:'+JSON.stringify(VISUAL_LAB_AUTHORING_RULES)+'};\n');
+  const contract=path.join(target,'lib/visual-task.js');let contractText=await fs.readFile(contract,'utf8');contractText=contractText.replace('inspect(task);','inspect(task); if(!'+JSON.stringify(LAB_FORMATS)+'.includes(task.format)) throw new Error("Dieses Format ist im Aufgabenlabor nicht freigegeben.");');await fs.writeFile(contract,contractText);
+
   const access=path.join(target,'lib/access.js');let s=await fs.readFile(access,'utf8');const needle='const profile = snap.data() || {};';if(!s.includes(needle))throw Error('Access guard drift');s=s.replace(needle,needle+`\n  if(!(${allowedFn})(uid,profile)) throw new HttpsError("permission-denied", "Diese Erprobung benötigt ein freigegebenes Testkonto.");`);await fs.writeFile(access,s);
   const index=path.join(target,'index.js');s=await fs.readFile(index,'utf8');if(!s.includes('functions/processAiTestJob'))throw Error('Queue target drift');s=s.replace('functions/processAiTestJob','functions/visual255ProcessAiTestJob');await fs.writeFile(index,s);
  }else{
