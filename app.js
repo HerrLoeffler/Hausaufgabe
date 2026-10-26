@@ -1827,6 +1827,8 @@ function renderQuizList() {
 
   filtered.forEach((q) => {
     const status = quizStatusMeta(q);
+    const canShareStudentLink = q.published && !q.ended && !q.rightsHold && !secureAudioPublicationBlocked(q);
+    const canOpenTeacherLive = canShareStudentLink && q.startMode === "teacher" && ["waiting", "running"].includes(q.sessionState);
     const card = document.createElement("article");
     card.className = "card quizCard";
     card.dataset.quizId = q.id;
@@ -1845,10 +1847,11 @@ function renderQuizList() {
           </label>
         </div>
       </div>
+      ${canShareStudentLink ? `<div class="quizCardQuickLinks"><button class="button secondary studentShare" type="button">Schülerlink</button>${canOpenTeacherLive ? `<button class="button ghost teacherLiveOpen" type="button">Durchführung öffnen</button>` : ""}</div>` : ""}
       <div class="quizStats">
         <div><strong>${Number(q.questionCount || 0)}</strong><span>Aufgaben</span></div>
         <div><strong>${Number(q.totalPoints || 0)}</strong><span>Punkte</span></div>
-        ${Number(q.timeLimitMinutes) > 0 ? `<div><strong>${Number(q.timeLimitMinutes)}</strong><span>Minuten</span></div>` : `<div><strong>–</strong><span>Ohne Zeitlimit</span></div>`}
+        ${Number(q.timeLimitMinutes) > 0 ? `<div><strong>${Number(q.timeLimitMinutes)}</strong><span>Minuten</span></div>` : `<div><strong>–</strong><span>Kein Limit</span></div>`}
         <div><strong>${q.startMode === "teacher" ? "Lehrkraft" : "Schüler"}</strong><span>Start</span></div>
       </div>
       <div class="quizActions primaryQuizActions">
@@ -1857,7 +1860,6 @@ function renderQuizList() {
       </div>
       <details class="quizMore"><summary>Weitere Aktionen</summary>
         <div class="quizActions secondaryQuizActions">
-          ${q.published && !q.ended && !q.rightsHold && !secureAudioPublicationBlocked(q) ? `<button class="button ghost studentShare">Schülerlink</button>` : ""}
           ${q.rightsHold ? "" : '<button class="button ghost duplicate">Duplizieren</button><button class="button ghost teacherShare">Mit Kollegen teilen</button>'}
           ${q.published && !q.ended && !q.rightsHold ? `<button class="button ghost end">Beenden</button>` : ""}
           ${q.ended && !q.rightsHold ? `<button class="button ghost reopen">Erneut öffnen</button>` : ""}
@@ -1873,10 +1875,17 @@ function renderQuizList() {
       ({ close }) => duplicateQuiz(q.id, "emmi-variant", close)
     ));
     card.querySelector(".studentShare")?.addEventListener("click", () => showPublish(q.id));
+    card.querySelector(".teacherLiveOpen")?.addEventListener("click", () => showPublish(q.id));
     card.querySelector(".teacherShare")?.addEventListener("click", () => shareQuizTemplate(q.id));
     card.querySelector(".end")?.addEventListener("click", () => endQuiz(q.id));
     card.querySelector(".reopen")?.addEventListener("click", () => reopenQuiz(q.id));
     card.querySelector(".remove").addEventListener("click", () => deleteQuiz(q.id));
+    card.querySelector(".quizMore").addEventListener("keydown", event => {
+      if (event.key !== "Escape" || !event.currentTarget.open) return;
+      event.preventDefault();
+      event.currentTarget.open = false;
+      event.currentTarget.querySelector("summary").focus();
+    });
     list.appendChild(card);
   });
 }
