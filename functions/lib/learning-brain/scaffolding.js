@@ -39,6 +39,7 @@ function anchoredCandidate(h,s,context={}){
  const reject=message=>{const error=new Error(message);error.code='unavailable';error.stage='anchored-help-validation';error.critique=message;throw error;};
  if(!source?.id)reject('Die Hilfe benötigt eine gespeicherte Ausgangsaufgabe.');
  for(const [key,max]of [['explanation',300],['question',240],['rubric',1200]])if(typeof h?.[key]!=='string'||!h[key].trim()||h[key].length>max)reject('Ungültige kurze Hilfe: '+key);
+ if(/\b(?:token|cell|row|column|part|reference-part|whole|side|point):[a-z0-9]/i.test(h.explanation+' '+h.question))reject('Interne Fokus-IDs gehören nur in focusIds, niemals in die Erklärung oder Frage an das Kind. Verwende normale Wörter wie das dritte Wort, Zähler oder dieses Kästchen.');
  if(!['number','text','choice','workshop'].includes(h.input)||!Array.isArray(h.options)||h.options.length>6||h.options.some(x=>typeof x!=='string'||x.length>150))reject('Ungültiger Antwortweg der Hilfe.');
  if(!['number','rational','exact-fraction','open'].includes(h.answer?.kind)||!Array.isArray(h.answer.values)||s.phase!=='teacher'&&!h.answer.values.length||h.answer.values.length>12||h.answer.values.some(v=>typeof v!=='string'||v.length>300))reject('Der Hilfeschritt braucht einen prüfbaren Antwortschlüssel.');
  if(h.input==='choice'&&(h.options.length<2||h.answer.values.some(v=>!h.options.includes(v))))reject('Auswahl und Hilfefrage passen nicht zusammen.');

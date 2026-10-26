@@ -108,7 +108,7 @@ test('local assistance question is cleared when account identity changes even fo
 });
 
 test('changing the source resets count assistance rather than carrying labels to a new grid',async()=>{
- const diagram={kind:'area-grid',title:'Figur',unit:'',columns:2,rows:2,cells:[{x:0,y:0}]},base={id:'change-source',revision:1,phase:'practice',task:{id:'task',prompt:'Zähle.',input:'text',diagram}};
+ const diagram={kind:'area-grid',title:'Figur',unit:'',columns:2,rows:2,cells:[{x:0,y:0}]},base={id:'change-source',revision:1,phase:'help',task:{id:'task',prompt:'Zähle.',input:'text',diagram}};
  const ui=await mount(base,{turnResult:{...base,revision:2,task:{...base.task,diagram:{...diagram,cells:[{x:0,y:0},{x:1,y:0}]}}}});await ui.click('resume');await ui.click('count-along');assert.match(ui.app.innerHTML,/data-action="count-along"[^>]*aria-pressed="true"/);await ui.click('help');assert.match(ui.app.innerHTML,/data-action="count-along"[^>]*aria-pressed="false"/);
 });
 
@@ -116,3 +116,5 @@ test('plain text help displays original source words and numbers inline with sem
  const original={id:'plain-source',prompt:'Berechne 24 + 18.',input:'text'},session={id:'plain',revision:2,phase:'help',originalTask:original,task:{...original,prompt:'Welche Zehner kannst du zuerst addieren?'},assistance:{version:1,anchorTaskId:original.id,stage:1,focusIds:['token:1'],regions:[{id:'token:1',label:'Die erste Zahl'}],numberLabels:false,replyTo:''},explanation:'Beginne bei den Zehnern.'};
  const ui=await mount(session);await ui.click('resume');const sourceStage=ui.app.innerHTML.split('<div class="source-stage">')[1].split('<div class="workspace-response">')[0];assert.match(sourceStage,/class="context-text source-prompt"/);assert.match(sourceStage,/data-source-token="1" data-help-focus="true">24<\/span>/);assert.match(sourceStage,/data-source-token="3">18\.<\/span>/);assert.doesNotMatch(sourceStage,/Beginne bei den Zehnern/);assert.match(ui.app.innerHTML,/id="current-question">Welche Zehner kannst du zuerst addieren\?/);
 });
+
+test('counting labels on an independent task first records real server help rather than silently inflating mastery',async()=>{const task={id:'count-source',prompt:'Zähle.',input:'number',diagram:{kind:'area-grid',title:'Reihe',unit:'',columns:3,rows:1,cells:[{x:0,y:0},{x:1,y:0},{x:2,y:0}]}},base={id:'count-evidence',revision:1,phase:'practice',task};const ui=await mount(base,{turnResult:{...base,revision:2,phase:'help',originalTask:task,assistance:{anchorTaskId:task.id,stage:1,focusIds:[],regions:[],numberLabels:false}}});await ui.click('resume');await ui.click('count-along');assert.equal(ui.calls.at(-1).method,'learningBrainTurn');assert.equal(ui.calls.at(-1).data.action,'help');assert.match(ui.app.innerHTML,/Mit Unterstützung/);assert.match(ui.app.innerHTML,/data-action="count-along"[^>]*aria-pressed="true"/);});

@@ -26,3 +26,5 @@ test('coordinate support observation never overrides a scalar microquestion answ
 });
 
 test('fraction focus distinguishes current sixths from reference thirds',()=>{const task={workshop:{tool:'fraction-board',denominator:3}};const r=sceneRegions(task,{tool:'fraction-board',final:{denominator:6}});assert.equal(r.find(x=>x.id==='part:5').label,'Dein Teil 6 von 6');assert.equal(r.find(x=>x.id==='reference-part:1').label,'Vorlage: Teil 2 von 3');});
+
+test('internal visual region ids never appear in pupil-facing explanation or question',()=>{const s={phase:'help',task:source,originalTask:source};assert.throws(()=>anchoredCandidate({...hint(),explanation:'Zähle cell:0:0.'},s),/Interne Fokus-IDs/);assert.throws(()=>anchoredCandidate({...hint(),question:'Was ist token:2?'},s),/Interne Fokus-IDs/);});
