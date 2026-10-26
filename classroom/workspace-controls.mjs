@@ -7,6 +7,7 @@ export function currentAssignments(rows,quiz,accountId){
 }
 export function filterRoster(rows,query){const q=String(query||'').trim().toLocaleLowerCase('de');return rows.filter(r=>[r.firstName,r.lastName,r.className,r.year,r.title,r.subject].filter(Boolean).join(' ').toLocaleLowerCase('de').includes(q));}
 export function installLiveEntry(card,onOpen){
+ const publish=card.querySelector('.dashboardPublishToggle');if(publish&&!publish.checked){card.querySelector('[data-online-live]')?.remove();return;}
  if(card.querySelector('[data-online-live]'))return;
  const b=card.ownerDocument.createElement('button');b.type='button';b.className='button gcLiveEntry';b.dataset.onlineLive='';b.textContent='LIVE · Durchführung';b.setAttribute('aria-label','LIVE · Durchführung und Teilnehmer öffnen');
  b.addEventListener('click',()=>{if(b.disabled)return;b.disabled=true;Promise.resolve().then(onOpen).finally(()=>{b.disabled=false;});});
