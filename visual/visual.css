@@ -112,3 +112,33 @@
 .gc-visual .point-input:nth-child(2)>b{color:#c97725}
 .gc-visual [aria-disabled=true]{cursor:default}
 @media(max-width:600px){.gc-visual .sequence-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:0 12px 18px}.gc-visual .timeline-assignments{grid-template-columns:1fr;padding:0 12px 18px}.gc-visual .timeline-events{padding-inline:12px}}
+
+.gc-visual .dreisatz-board{max-width:580px;margin:0 auto;padding:22px 26px;background:#fff}
+.gc-visual .dreisatz-headings,.gc-visual .dreisatz-values{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.gc-visual .dreisatz-heading{text-align:center;font-size:14px;padding:0 0 10px;color:#344963}
+.gc-visual .dreisatz-value{display:flex;align-items:center;justify-content:center;min-height:60px;border:1px solid #cbd8e9;border-radius:8px;background:#f0f5fc;font-size:23px;font-weight:650}
+.gc-visual .dreisatz-value input{box-sizing:border-box;width:100%;min-width:0;height:60px;text-align:center;border:2px solid #7c9dcc;border-radius:8px;background:#fff;color:#1f3554;font:inherit}
+.gc-visual .dreisatz-operation{display:flex;align-items:center;justify-content:space-evenly;gap:12px;padding:12px 0;color:#285ac9;font-size:25px}
+.gc-visual .dreisatz-operation label{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:650;color:#344963}
+.gc-visual .dreisatz-operation input{width:72px;min-width:0;height:42px;box-sizing:border-box;border:2px solid #7c9dcc;border-radius:7px;text-align:center;font:inherit;background:#fff;color:#1f3554}
+.gc-visual .dreisatz-board input:focus-visible{outline:3px solid #edb449;outline-offset:2px}
+.gc-visual .dreisatz-caption{font-size:12px;text-align:center;color:#566980;margin:16px 0 0;line-height:1.5}
+@media(max-width:520px){.gc-visual .dreisatz-board{padding:16px 12px}.gc-visual .dreisatz-headings,.gc-visual .dreisatz-values{gap:12px}.gc-visual .dreisatz-heading{font-size:12px}.gc-visual .dreisatz-value{font-size:20px}.gc-visual .dreisatz-operation{gap:6px}.gc-visual .dreisatz-operation label{font-size:13px}.gc-visual .dreisatz-operation input{width:60px}}
+
+/* Independent calculations sit alongside their own column, never between both columns. */
+.gc-visual .dreisatz-board.independent{max-width:760px;padding:24px 130px}
+.gc-visual .independent .dreisatz-arrows{position:relative;height:72px}
+.gc-visual .dreisatz-side-arrow{position:absolute;top:-22px;bottom:-22px;width:126px;display:flex;align-items:center;gap:5px}
+.gc-visual .dreisatz-side-arrow.left{right:100%;padding-right:8px;flex-direction:row-reverse}
+.gc-visual .dreisatz-side-arrow.right{left:100%;padding-left:8px}
+.gc-visual .dreisatz-side-arrow svg{width:32px;height:100%;flex-shrink:0;overflow:visible;fill:none;stroke:#396ab7;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.gc-visual .dreisatz-side-arrow.right svg{transform:scaleX(-1)}
+.gc-visual .dreisatz-calculation{display:flex;align-items:center;gap:4px;min-width:0;font-size:16px;color:#284365}
+.gc-visual .dreisatz-calculation input,.gc-visual .dreisatz-calculation select{box-sizing:border-box;min-width:0;width:64px;height:44px;padding:3px;text-align:center;font:inherit;border:1.5px solid #7c9dcc;border-radius:7px;background:#fff;color:#1f3554}
+.gc-visual .dreisatz-calculation select{width:44px}
+.gc-visual .dreisatz-calculation input[inputmode=text]{width:88px}
+.gc-visual .dreisatz-calculation .dreisatz-given:empty{display:none}
+.gc-visual .dreisatz-board select:focus-visible{outline:3px solid #edb449;outline-offset:2px}
+.gc-dreisatz-settings{padding:14px;background:#f4f7fb;border:1px solid #d9e2ef;border-radius:10px;margin:12px 0}
+.gc-dreisatz-settings summary{font-weight:650;cursor:pointer}.gc-dreisatz-settings .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.gc-dreisatz-settings label{display:flex;flex-direction:column;gap:5px;font-size:13px}.gc-dreisatz-settings .given-toggle{flex-direction:row;align-items:center}.gc-dreisatz-settings select{min-height:44px;width:100%}
+@media(max-width:600px){.gc-visual .dreisatz-board.independent{padding:18px 82px}.gc-visual .dreisatz-side-arrow{width:80px;gap:2px}.gc-visual .dreisatz-side-arrow svg{width:19px}.gc-visual .dreisatz-calculation{flex-wrap:wrap;gap:2px;justify-content:center;font-size:14px}.gc-visual .dreisatz-calculation input{width:48px}.gc-visual .dreisatz-calculation select{width:48px}.gc-visual .dreisatz-calculation input[inputmode=text]{width:64px}.gc-visual .independent .dreisatz-headings,.gc-visual .independent .dreisatz-values{gap:10px}.gc-visual .independent .dreisatz-value{min-width:0;font-size:19px}.gc-visual .independent .dreisatz-value input{height:54px}.gc-visual .independent .dreisatz-caption{margin-left:-70px;margin-right:-70px}.gc-dreisatz-settings .settings-grid{grid-template-columns:1fr}}

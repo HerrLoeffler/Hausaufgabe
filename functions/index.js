@@ -55,8 +55,9 @@ function reportAiError(err, phase) {
   console.error("KI-Anfrage fehlgeschlagen:", {
     reference, phase, name: err?.name, status: err?.status, code: err?.code,
     providerRequestId: err?.request_id,
-    diagnostic: programmingError ? String(err.message || "").slice(0, 180) : undefined,
-    location: programmingError ? String(err.stack || "").split("\n").find(line => line.includes("/functions/"))?.trim() : undefined
+    diagnostic: err?.code === "quality-review-invalid-visual" ? err.diagnostic
+      : programmingError ? String(err.message || "").slice(0, 180) : undefined,
+    location: String(err?.stack || "").split("\n").find(line => line.includes("/functions/"))?.trim()?.slice(0, 300)
   });
   const mapped = classifyAiFailure(err);
   return new HttpsError(mapped.code, mapped.message, { reference, phase, diagnostic: err?.diagnostic || null });

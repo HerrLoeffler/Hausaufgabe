@@ -1,0 +1,495 @@
+[
+  {
+    "schemaVersion": 2,
+    "id": "table-part",
+    "revision": 0,
+    "format": "table",
+    "title": "Dreisatz: Prozentwert",
+    "subject": "Mathematik",
+    "grade": "7",
+    "prompt": "Wie viel sind 25 % von 400 €? Ergänze die Zahlen und die Rechenpfeile. Gehe im Zwischenschritt auf 1 %. Jedes richtige Feld zählt 0,5 Punkte.",
+    "hint": "Rechne in Pfeilrichtung von oben nach unten. Links und rechts können unterschiedliche Rechnungen stehen. Jedes offene Feld zählt 0,5 Punkte.",
+    "maxPoints": 2.5,
+    "objective": "Einfache Brüche in Dezimalzahlen umwandeln.",
+    "rationale": "Die Tabelle stellt zusammengehörige Darstellungen strukturiert gegenüber.",
+    "sourceNote": "Eigenes Laborbeispiel; didaktische Anregung: Prozentheft Klasse 7, Seiten 2/4–6. Keine neue KI-Erstellung.",
+    "spec": {
+      "columns": [
+        "Rechenzeichen links",
+        "Zahl links",
+        "Prozent (%)",
+        "Betrag (€)",
+        "Rechenzeichen rechts",
+        "Zahl rechts"
+      ],
+      "rows": [
+        [
+          {
+            "id": "r1c1",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r1c2",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r1c3",
+            "input": false,
+            "text": "100"
+          },
+          {
+            "id": "r1c4",
+            "input": false,
+            "text": "400"
+          },
+          {
+            "id": "r1c5",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r1c6",
+            "input": false,
+            "text": ""
+          }
+        ],
+        [
+          {
+            "id": "r2c1",
+            "input": false,
+            "text": "÷"
+          },
+          {
+            "id": "r2c2",
+            "input": true,
+            "text": ""
+          },
+          {
+            "id": "r2c3",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r2c4",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r2c5",
+            "input": false,
+            "text": "÷"
+          },
+          {
+            "id": "r2c6",
+            "input": false,
+            "text": "100"
+          }
+        ],
+        [
+          {
+            "id": "r3c1",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r3c2",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r3c3",
+            "input": true,
+            "text": ""
+          },
+          {
+            "id": "r3c4",
+            "input": true,
+            "text": ""
+          },
+          {
+            "id": "r3c5",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r3c6",
+            "input": false,
+            "text": ""
+          }
+        ],
+        [
+          {
+            "id": "r4c1",
+            "input": false,
+            "text": "×"
+          },
+          {
+            "id": "r4c2",
+            "input": true,
+            "text": ""
+          },
+          {
+            "id": "r4c3",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r4c4",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r4c5",
+            "input": false,
+            "text": "×"
+          },
+          {
+            "id": "r4c6",
+            "input": false,
+            "text": "25"
+          }
+        ],
+        [
+          {
+            "id": "r5c1",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r5c2",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r5c3",
+            "input": false,
+            "text": "25"
+          },
+          {
+            "id": "r5c4",
+            "input": true,
+            "text": ""
+          },
+          {
+            "id": "r5c5",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r5c6",
+            "input": false,
+            "text": ""
+          }
+        ]
+      ],
+      "answerMode": "text",
+      "numericForm": "decimal",
+      "layout": "dreisatz"
+    },
+    "solution": {
+      "cells": [
+        {
+          "id": "r3c3",
+          "accepted": [
+            "1"
+          ],
+          "answerMode": "numeric"
+        },
+        {
+          "id": "r3c4",
+          "accepted": [
+            "4"
+          ],
+          "answerMode": "numeric"
+        },
+        {
+          "id": "r5c4",
+          "accepted": [
+            "100"
+          ],
+          "answerMode": "numeric"
+        },
+        {
+          "id": "r2c2",
+          "accepted": [
+            "100"
+          ],
+          "answerMode": "numeric"
+        },
+        {
+          "id": "r4c2",
+          "accepted": [
+            "25"
+          ],
+          "answerMode": "numeric"
+        }
+      ]
+    },
+    "provenance": {
+      "kind": "template",
+      "offline": true
+    }
+  },
+  {
+    "schemaVersion": 2,
+    "id": "table-inverse",
+    "revision": 0,
+    "format": "table",
+    "title": "Umgekehrter Dreisatz",
+    "subject": "Mathematik",
+    "grade": "6",
+    "prompt": "Vier Personen brauchen für dieselbe Arbeit 12 Stunden. Alle arbeiten gleich schnell. Wie lange brauchen acht Personen? Ergänze den Weg über eine Person und die Rechnungen an den Pfeilen. Jedes offene Feld zählt 0,5 Punkte.",
+    "hint": "Rechne in Pfeilrichtung von oben nach unten. Links und rechts können unterschiedliche Rechnungen stehen. Jedes offene Feld zählt 0,5 Punkte.",
+    "maxPoints": 4,
+    "objective": "Einfache Brüche in Dezimalzahlen umwandeln.",
+    "rationale": "Die Tabelle stellt zusammengehörige Darstellungen strukturiert gegenüber.",
+    "sourceNote": "Eigenes schematisches Vorlagenbeispiel. Vor Verwendung fachlich prüfen.",
+    "spec": {
+      "columns": [
+        "Rechenzeichen links",
+        "Zahl links",
+        "Personen",
+        "Zeit (h)",
+        "Rechenzeichen rechts",
+        "Zahl rechts"
+      ],
+      "rows": [
+        [
+          {
+            "id": "r1c1",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r1c2",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r1c3",
+            "input": false,
+            "text": "4"
+          },
+          {
+            "id": "r1c4",
+            "input": false,
+            "text": "12"
+          },
+          {
+            "id": "r1c5",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r1c6",
+            "input": false,
+            "text": ""
+          }
+        ],
+        [
+          {
+            "id": "r2c1",
+            "input": true,
+            "text": "",
+            "control": "operator"
+          },
+          {
+            "id": "r2c2",
+            "input": true,
+            "text": ""
+          },
+          {
+            "id": "r2c3",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r2c4",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r2c5",
+            "input": false,
+            "text": "×"
+          },
+          {
+            "id": "r2c6",
+            "input": true,
+            "text": ""
+          }
+        ],
+        [
+          {
+            "id": "r3c1",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r3c2",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r3c3",
+            "input": true,
+            "text": ""
+          },
+          {
+            "id": "r3c4",
+            "input": true,
+            "text": ""
+          },
+          {
+            "id": "r3c5",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r3c6",
+            "input": false,
+            "text": ""
+          }
+        ],
+        [
+          {
+            "id": "r4c1",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r4c2",
+            "input": true,
+            "text": "",
+            "control": "operation"
+          },
+          {
+            "id": "r4c3",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r4c4",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r4c5",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r4c6",
+            "input": true,
+            "text": "",
+            "control": "operation"
+          }
+        ],
+        [
+          {
+            "id": "r5c1",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r5c2",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r5c3",
+            "input": false,
+            "text": "8"
+          },
+          {
+            "id": "r5c4",
+            "input": true,
+            "text": ""
+          },
+          {
+            "id": "r5c5",
+            "input": false,
+            "text": ""
+          },
+          {
+            "id": "r5c6",
+            "input": false,
+            "text": ""
+          }
+        ]
+      ],
+      "answerMode": "text",
+      "numericForm": "decimal",
+      "layout": "dreisatz"
+    },
+    "solution": {
+      "cells": [
+        {
+          "id": "r3c3",
+          "accepted": [
+            "1"
+          ],
+          "answerMode": "numeric"
+        },
+        {
+          "id": "r3c4",
+          "accepted": [
+            "48"
+          ],
+          "answerMode": "numeric"
+        },
+        {
+          "id": "r5c4",
+          "accepted": [
+            "6"
+          ],
+          "answerMode": "numeric"
+        },
+        {
+          "id": "r2c1",
+          "accepted": [
+            "÷",
+            ":",
+            "/",
+            "geteilt durch"
+          ],
+          "answerMode": "text"
+        },
+        {
+          "id": "r2c2",
+          "accepted": [
+            "4"
+          ],
+          "answerMode": "numeric"
+        },
+        {
+          "id": "r2c6",
+          "accepted": [
+            "4"
+          ],
+          "answerMode": "numeric"
+        },
+        {
+          "id": "r4c2",
+          "accepted": [
+            "×8"
+          ],
+          "answerMode": "operation"
+        },
+        {
+          "id": "r4c6",
+          "accepted": [
+            "÷8"
+          ],
+          "answerMode": "operation"
+        }
+      ]
+    },
+    "provenance": {
+      "kind": "template",
+      "offline": true
+    }
+  }
+]

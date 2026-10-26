@@ -244,3 +244,60 @@ test('listening review receives the complete audible context without treating it
   q.audioIntent.kind = 'none';
   assert.equal(Object.hasOwn(questionForReview(q, 0).studentView, 'audioTranscript'), false);
 });
+
+
+test("invalid visual full repair preserves structural errors instead of crashing independent review", async () => {
+  const original = { title: "Mathe", questions: [question(2)] };
+  const invalid = normalizeQuestion({ type: "visual", text: "Lies die Darstellung ab.", points: 1, visualTask: "{}" });
+  const failedRepair = { title: "Mathe", questions: [invalid] };
+  let reviews = 0;
+  const repairOptions = { ...options, allowedTypes: ["single", "visual"] };
+  const result = await reviewAndRepairTest(original, repairOptions, {
+    review: async draft => {
+      reviews += 1;
+      reviewPrompt(draft);
+      return { issues: [{ index: 0, reason: "incorrect", detail: "Die Lösung ist fachlich falsch." }] };
+    },
+    generateQuestion: async () => invalid,
+    regenerateTest: async () => failedRepair
+  });
+  assert.deepEqual(result.test, failedRepair);
+  assert.deepEqual(result.errors, validateTest(failedRepair, repairOptions));
+  assert.ok(result.errors.some(error => error.includes("visuell")));
+  assert.deepEqual(result.issues, []);
+  assert.equal(reviews, 1);
+  assert.equal(result.reviewPasses, 1);
+});
+
+test("a structurally valid partial repair is independently reviewed with current indices", async () => {
+  const initial = { title: "Mathe", questions: [question(2), question(3)] };
+  let reviews = 0;
+  const result = await reviewAndRepairTest(initial, { ...options, expectedCount: 2, targetPoints: 2 }, {
+    review: async draft => {
+      reviews += 1;
+      reviewPrompt(draft);
+      const index = draft.questions.findIndex(q => q.text === question(3).text);
+      return { issues: draft.questions.map((q, i) => ({ index: i, reason: "incorrect", detail: "Die Lösung ist fachlich falsch." })).filter(issue => reviews === 1 || issue.index === index) };
+    },
+    generateQuestion: async ({ index }) => index === 0 ? question(8) : question(3),
+    regenerateTest: async draft => draft
+  });
+  assert.equal(result.test.questions[0].text, question(8).text);
+  assert.equal(result.test.questions[1].text, question(3).text);
+  assert.equal(result.issues.length, 1);
+  assert.equal(result.issues[0].index, 1);
+  assert.equal(result.issues[0].text, question(3).text);
+  assert.equal(result.reviewPasses, 2);
+  assert.equal(reviews, 2);
+});
+
+
+test("invalid visual review projections expose only a safe local classification and position", () => {
+  assert.throws(() => questionForReview({ type: "visual", text: "PRIVATE TASK", visualTask: "{PRIVATE ANSWER", points: 1 }, 4), error => {
+    assert.equal(error.code, "quality-review-invalid-visual");
+    assert.deepEqual(error.diagnostic, { code: "quality-review-invalid-visual", questionPosition: 5 });
+    assert.equal(error.message.includes("PRIVATE"), false);
+    assert.equal(JSON.stringify(error).includes("PRIVATE"), false);
+    return true;
+  });
+});
