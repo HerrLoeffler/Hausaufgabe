@@ -23,4 +23,4 @@
 - [x] Watch the card CSS regression check fail before the fix; add a 52-card browser geometry check and update existing card CSS minimally.
 - [x] Check 320/390/430, iPad portrait/landscape, desktop, open/closed menu, long titles and no horizontal overflow or overlap in Chromium/WebKit.
 - [x] Run focused and relevant root/UI tests, staging build, diff check; preserve exact results and remaining limits in the existing task handoff.
-- [ ] Commit and push own branch; request independent review, then coordinate preview and any explicitly authorized Live release from exact source/asset manifest. Local commit and independent review are done; GitHub publication and release coordination remain.
+- [ ] Commit and publish own branch; request independent review, then coordinate preview and any explicitly authorized Live release from exact source/asset manifest. Commits, GitHub PR #329 and review are done; preview and release coordination remain.
