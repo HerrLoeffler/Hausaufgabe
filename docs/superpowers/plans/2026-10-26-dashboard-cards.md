@@ -37,4 +37,4 @@
 - [x] Verify the publication switch calls the safe `endQuiz` lifecycle when turned off.
 - [x] Remove the duplicate lower end action and its now unused translation; keep the upper trash action and switch wiring.
 - [x] Recheck the card UI and browser layout with the corrected action set.
-- [ ] Update PR #329 and handoff; preview/integration remain with the release owner.
+- [x] Update PR #329 and handoff with the corrected action set and exact local checks. Preview/integration remain with the release owner.
