@@ -1,3 +1,4 @@
+import {mountPublicEntryShell,setPublicEntryShellVisible} from "./shared/public-entry-shell.mjs";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { firebaseConfig } from "./firebase-config.js";
 import { createSecureAssessmentClient } from "./secure-assessment-client.js";
@@ -37,6 +38,8 @@ function setConnection(online, text) {
 
 function showOnly(id) {
   document.body.classList.toggle("secureEntryMode", id === "secureJoin");
+  if(id === "secureJoin") mountPublicEntryShell(document,document.body,[$("secureJoin")]);
+  setPublicEntryShellVisible(document,id === "secureJoin");
   ["secureJoin", "secureLoading", "secureIntro", "secureWaiting", "secureAssessment", "secureResult", "secureError"]
     .forEach(name => $(name)?.classList.toggle("hidden", name !== id));
 }

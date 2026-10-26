@@ -1,3 +1,4 @@
+import {mountPublicEntryShell,setPublicEntryShellVisible} from "./shared/public-entry-shell.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -9,7 +10,7 @@ const html=()=>fs.readFileSync('index.html','utf8');
 const settle=()=>new Promise(resolve=>setTimeout(resolve,10));
 function entry(t,intent='login'){
  const dom=new JSDOM(html(),{url:'https://gradecrew.example/workspace.html?intent='+intent,runScripts:'outside-only',pretendToBeVisual:true});t.after(()=>dom.window.close());const w=dom.window;
- w.scrollTo=()=>{};w.GRADECREW_ASSETS=GRADECREW_ASSETS;w.translateTree=()=>{};w.installHeroDemo=()=>{};
+ w.mountPublicEntryShell=mountPublicEntryShell;w.setPublicEntryShellVisible=setPublicEntryShellVisible;w.scrollTo=()=>{};w.GRADECREW_ASSETS=GRADECREW_ASSETS;w.translateTree=()=>{};w.installHeroDemo=()=>{};
  w.eval(fs.readFileSync('gradecrew-entry-flow.js','utf8').replace(/^import .*;\n/gm,'').replace(/^export /gm,''));
  const controls=['loginEmail','loginPassword','registerName','registerEmail','registerPassword','registerPassword2'];const originals=controls.map(id=>w.document.getElementById(id));w.installGradeCrewEntryFlow();return{w,d:w.document,controls,originals};
 }
