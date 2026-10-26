@@ -4,6 +4,8 @@ import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import { CREW_MEMBERS, patchSummary, resolveLocalCrewRequest } from './crew-assistant-core.mjs';
 
+import { collectInteractiveFormats } from './interactive-task-authoring.mjs';
+
 const require = createRequire(import.meta.url);
 const { JSDOM } = require('./tools/ui/node_modules/jsdom');
 const source = fs.readFileSync('remy-ai-help.js', 'utf8');
@@ -89,6 +91,7 @@ test('the spoken fractions request previews and applies listening audio and pers
 });
 
 function installCollector(w) {
+  w.collectInteractiveFormats = collectInteractiveFormats;
   const app = fs.readFileSync('app.js', 'utf8');
   const start = app.indexOf('function collectAiRequest()');
   const end = app.indexOf('\n}', start) + 2;

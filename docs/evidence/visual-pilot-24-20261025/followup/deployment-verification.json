@@ -1,0 +1,27 @@
+{
+  "at": "2026-10-25T11:22:33.190Z",
+  "hostingCommit": "731d97eb70c5a09142319268695e6063d4235b1b",
+  "files": 180,
+  "hashFailures": [],
+  "newLinks": true,
+  "publicPrivateViewerStatus": 404,
+  "oldQuestions": [
+    {
+      "id": "P02",
+      "quizId": "UXBCQ5FL",
+      "unchanged": true
+    },
+    {
+      "id": "P04",
+      "quizId": "NLRVJTW8",
+      "unchanged": true
+    },
+    {
+      "id": "P07",
+      "quizId": "K9HEUB8X",
+      "unchanged": true
+    }
+  ],
+  "noVisibleChartInputs": true,
+  "noVisibleInstrumentInputs": true
+}

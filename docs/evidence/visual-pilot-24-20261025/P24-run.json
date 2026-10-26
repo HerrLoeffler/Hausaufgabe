@@ -1,0 +1,110 @@
+{
+  "id": "P24",
+  "row": {
+    "id": "P24",
+    "subject": "Wirtschaft",
+    "grade": 9,
+    "title": "Betriebliche Entscheidungen",
+    "goal": "Fiktive kleine Produktions- und Absatzdaten, Deckungsbeiträge mit gegebener Definition und belegte Entscheidungen",
+    "formats": [
+      "table",
+      "chart",
+      "evidence",
+      "coordinate"
+    ],
+    "requestId": "VIS24-20261025-24-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:38:31.510Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-24-A",
+    "subject": "Wirtschaft",
+    "grade": "9",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Betriebliche Entscheidungen: Fiktive kleine Produktions- und Absatzdaten, Deckungsbeiträge mit gegebener Definition und belegte Entscheidungen",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus table, chart, evidence, coordinate. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "24ab5a395a799f83152d60d515e0e0b83f606bca",
+  "dispatch": {
+    "jobId": "24ab5a395a799f83152d60d515e0e0b83f606bca"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:40:58.700Z",
+  "job": {
+    "requestId": "VIS24-20261025-24-A",
+    "audioCompleted": 0,
+    "imageCompleted": 0,
+    "updatedAt": "2026-10-25T10:40:57.857Z",
+    "requestedCount": 8,
+    "imageTotal": 0,
+    "solutionAudioTotal": 0,
+    "solutionAudioCompleted": 0,
+    "grade": "9",
+    "qualityWarnings": [],
+    "input": {
+      "audioMode": "none",
+      "allowedTypes": [
+        "visual"
+      ],
+      "audioAnswerQuestionCount": 0,
+      "exactImageCounts": false,
+      "subject": "Wirtschaft",
+      "exactAudioCounts": false,
+      "solutionAudioQuestionCount": 0,
+      "materialMode": "inspiration",
+      "grade": "9",
+      "schoolType": "Mittelschule",
+      "count": 8,
+      "imageMode": "none",
+      "pedagogicalContextKnown": true,
+      "points": 16,
+      "allowImageChoices": false,
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus table, chart, evidence, coordinate. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "region": "Bayern",
+      "maxVisualQuestions": 0,
+      "clientRequestId": "VIS24-20261025-24-A",
+      "topic": "Betriebliche Entscheidungen: Fiktive kleine Produktions- und Absatzdaten, Deckungsbeiträge mit gegebener Definition und belegte Entscheidungen",
+      "audioQuestionCount": 0,
+      "difficulty": "mittel bis anspruchsvoll"
+    },
+    "dispatchState": "enqueued",
+    "percent": 100,
+    "status": "ready",
+    "sourceQuizId": "",
+    "startedAt": "2026-10-25T10:38:32.126Z",
+    "topic": "Betriebliche Entscheidungen: Fiktive kleine Produktions- und Absatzdaten, Deckungsbeiträge mit gegebener Definition und belegte Entscheidungen",
+    "createdAt": "2026-10-25T10:38:31.659Z",
+    "subject": "Wirtschaft",
+    "quizId": "DGEA9BMU",
+    "answerAudioTotal": 0,
+    "qualityIssues": [],
+    "completedAt": "2026-10-25T10:40:57.857Z",
+    "generationMode": "generated",
+    "audioTotal": 0,
+    "completedCount": 8,
+    "pedagogicalPool": {
+      "status": "no_match",
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": [],
+      "profileCount": 0
+    },
+    "stage": "ready",
+    "materials": [],
+    "answerAudioCompleted": 0,
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "ownerId": "gc-visual255-e2e",
+    "id": "24ab5a395a799f83152d60d515e0e0b83f606bca"
+  },
+  "quizId": "DGEA9BMU"
+}

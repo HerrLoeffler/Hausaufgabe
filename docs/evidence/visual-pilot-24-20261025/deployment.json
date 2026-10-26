@@ -1,0 +1,145 @@
+{
+  "project": "gradecrew-staging-2026",
+  "sourceLocalCommit": "a396feedccf0d41ecf48c0e23e3e99d53e1cbf3a",
+  "sourceRemoteCommit": "5302f8d8c5b4827355d40d12e9e568dcaf1d56ac",
+  "tree": "62f9997587e35eeb0d69eed6d60e4176445d5fe5",
+  "previewFunctions": [
+    {
+      "id": "visual255ConfigurePracticeSolutionRelease",
+      "codebase": "visual255-assessment",
+      "region": "europe-west1",
+      "hash": "242144e5d468da6c2eec25813379e7f528b94314",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255ConfigurePracticeSolutionRelease"
+    },
+    {
+      "id": "visual255CrewAssistant",
+      "codebase": "visual255-ai",
+      "region": "europe-west1",
+      "hash": "4548275754e04421b2b7c8fb4192d71697965de7",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255CrewAssistant"
+    },
+    {
+      "id": "visual255GenerateTest",
+      "codebase": "visual255-ai",
+      "region": "europe-west1",
+      "hash": "4548275754e04421b2b7c8fb4192d71697965de7",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255GenerateTest"
+    },
+    {
+      "id": "visual255GetAssessmentInfo",
+      "codebase": "visual255-assessment",
+      "region": "europe-west1",
+      "hash": "242144e5d468da6c2eec25813379e7f528b94314",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255GetAssessmentInfo"
+    },
+    {
+      "id": "visual255GetAssessmentReceipt",
+      "codebase": "visual255-assessment",
+      "region": "europe-west1",
+      "hash": "242144e5d468da6c2eec25813379e7f528b94314",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255GetAssessmentReceipt"
+    },
+    {
+      "id": "visual255GetQuickRemySubmission",
+      "codebase": "visual255-ai",
+      "region": "europe-west1",
+      "hash": "93245c70a3bcefa03d783d948a935427ec8fab91",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255GetQuickRemySubmission"
+    },
+    {
+      "id": "visual255PrepareQuickRemy",
+      "codebase": "visual255-ai",
+      "region": "europe-west1",
+      "hash": "4548275754e04421b2b7c8fb4192d71697965de7",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255PrepareQuickRemy"
+    },
+    {
+      "id": "visual255ProcessAiTestJob",
+      "codebase": "visual255-ai",
+      "region": "europe-west1",
+      "hash": "4548275754e04421b2b7c8fb4192d71697965de7",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255ProcessAiTestJob"
+    },
+    {
+      "id": "visual255RegenerateQuestion",
+      "codebase": "visual255-ai",
+      "region": "europe-west1",
+      "hash": "4548275754e04421b2b7c8fb4192d71697965de7",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255RegenerateQuestion"
+    },
+    {
+      "id": "visual255ResumeAssessmentAttempt",
+      "codebase": "visual255-assessment",
+      "region": "europe-west1",
+      "hash": "242144e5d468da6c2eec25813379e7f528b94314",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255ResumeAssessmentAttempt"
+    },
+    {
+      "id": "visual255ReviseWholeTest",
+      "codebase": "visual255-ai",
+      "region": "europe-west1",
+      "hash": "4548275754e04421b2b7c8fb4192d71697965de7",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255ReviseWholeTest"
+    },
+    {
+      "id": "visual255StartAiTestJob",
+      "codebase": "visual255-ai",
+      "region": "europe-west1",
+      "hash": "4548275754e04421b2b7c8fb4192d71697965de7",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255StartAiTestJob"
+    },
+    {
+      "id": "visual255StartAiTestVariantJob",
+      "codebase": "visual255-ai",
+      "region": "europe-west1",
+      "hash": "4548275754e04421b2b7c8fb4192d71697965de7",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255StartAiTestVariantJob"
+    },
+    {
+      "id": "visual255StartAssessmentAttempt",
+      "codebase": "visual255-assessment",
+      "region": "europe-west1",
+      "hash": "242144e5d468da6c2eec25813379e7f528b94314",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255StartAssessmentAttempt"
+    },
+    {
+      "id": "visual255SubmitAssessmentAttempt",
+      "codebase": "visual255-assessment",
+      "region": "europe-west1",
+      "hash": "242144e5d468da6c2eec25813379e7f528b94314",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255SubmitAssessmentAttempt"
+    },
+    {
+      "id": "visual255SubmitQuickRemy",
+      "codebase": "visual255-ai",
+      "region": "europe-west1",
+      "hash": "93245c70a3bcefa03d783d948a935427ec8fab91",
+      "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/visual255SubmitQuickRemy"
+    }
+  ],
+  "otherFunctionsCompared": 46,
+  "otherFunctionChanges": {},
+  "newFunctions": [],
+  "deletedFunctions": [],
+  "hosting": {
+    "status": "success",
+    "result": {
+      "gradecrew-staging-2026": {
+        "site": "gradecrew-staging-2026",
+        "url": "https://gradecrew-staging-2026--visual255-rjcwf436.web.app",
+        "version": "",
+        "expireTime": "2026-11-24T10:49:23.784034497Z"
+      }
+    }
+  },
+  "attempts": [
+    {
+      "number": 1,
+      "result": "source analysis stopped before updates: Node missing from child-process PATH"
+    },
+    {
+      "number": 2,
+      "result": "16 successful updates; same code; existing Node PATH supplied"
+    }
+  ]
+}

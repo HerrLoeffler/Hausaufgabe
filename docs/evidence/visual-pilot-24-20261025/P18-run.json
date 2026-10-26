@@ -1,0 +1,110 @@
+{
+  "id": "P18",
+  "row": {
+    "id": "P18",
+    "subject": "Geschichte und Geografie",
+    "grade": 7,
+    "title": "Stadtentwicklung und Klimadaten",
+    "goal": "Vollständig mitgelieferte fiktive Stadtdaten und monatliche Messwerte räumlich und zeitlich auswerten",
+    "formats": [
+      "scale",
+      "chart",
+      "table",
+      "evidence"
+    ],
+    "requestId": "VIS24-20261025-18-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:24:43.352Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-18-A",
+    "subject": "Geschichte und Geografie",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Stadtentwicklung und Klimadaten: Vollständig mitgelieferte fiktive Stadtdaten und monatliche Messwerte räumlich und zeitlich auswerten",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus scale, chart, table, evidence. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "fcb7c3bedc973c2136c3fdd6d123fdd79b621d72",
+  "dispatch": {
+    "jobId": "fcb7c3bedc973c2136c3fdd6d123fdd79b621d72"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:28:07.386Z",
+  "job": {
+    "answerAudioCompleted": 0,
+    "requestId": "VIS24-20261025-18-A",
+    "qualityWarnings": [],
+    "requestedCount": 8,
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "createdAt": "2026-10-25T10:24:43.442Z",
+    "grade": "7",
+    "ownerId": "gc-visual255-e2e",
+    "completedAt": "2026-10-25T10:27:57.838Z",
+    "pedagogicalPool": {
+      "profileIds": [],
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match",
+      "profileCount": 0
+    },
+    "qualityIssues": [],
+    "generationMode": "generated",
+    "imageTotal": 0,
+    "updatedAt": "2026-10-25T10:27:57.838Z",
+    "quizId": "DPCQRGW9",
+    "audioTotal": 0,
+    "dispatchState": "enqueued",
+    "imageCompleted": 0,
+    "completedCount": 8,
+    "subject": "Geschichte und Geografie",
+    "status": "ready",
+    "input": {
+      "maxVisualQuestions": 0,
+      "solutionAudioQuestionCount": 0,
+      "points": 16,
+      "schoolType": "Mittelschule",
+      "difficulty": "mittel bis anspruchsvoll",
+      "imageMode": "none",
+      "clientRequestId": "VIS24-20261025-18-A",
+      "audioMode": "none",
+      "allowedTypes": [
+        "visual"
+      ],
+      "exactImageCounts": false,
+      "materialMode": "inspiration",
+      "audioQuestionCount": 0,
+      "topic": "Stadtentwicklung und Klimadaten: Vollständig mitgelieferte fiktive Stadtdaten und monatliche Messwerte räumlich und zeitlich auswerten",
+      "exactAudioCounts": false,
+      "audioAnswerQuestionCount": 0,
+      "grade": "7",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus scale, chart, table, evidence. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "count": 8,
+      "region": "Bayern",
+      "subject": "Geschichte und Geografie",
+      "pedagogicalContextKnown": true,
+      "allowImageChoices": false
+    },
+    "stage": "ready",
+    "materials": [],
+    "sourceQuizId": "",
+    "startedAt": "2026-10-25T10:24:43.916Z",
+    "solutionAudioCompleted": 0,
+    "answerAudioTotal": 0,
+    "audioCompleted": 0,
+    "solutionAudioTotal": 0,
+    "topic": "Stadtentwicklung und Klimadaten: Vollständig mitgelieferte fiktive Stadtdaten und monatliche Messwerte räumlich und zeitlich auswerten",
+    "percent": 100,
+    "id": "fcb7c3bedc973c2136c3fdd6d123fdd79b621d72"
+  },
+  "quizId": "DPCQRGW9"
+}

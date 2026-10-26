@@ -1,3 +1,7 @@
+import { collectInteractiveFormats, resetInteractiveFormatChoices, syncInteractiveFormatChoices } from "./interactive-task-authoring.mjs";
+let extendedPreview = false;
+let extendedVariant = 1;
+import { parseNumericAnswer, normalizeVisualTask, renderVisualEditor, mountVisualQuestion, collectVisualAnswer, decodeVisualAnswer, visualAnswered, evaluateVisual, visualSolution } from "./visual-tasks.mjs";
 let cocoLastError = {uid:"",text:"",at:0};
 let cocoFocusedQuestion = {quizId:"",id:""};
 const APP_VERSION = "2.3.1-gc45-rc1";
@@ -90,6 +94,9 @@ const aiApi = new Proxy(createAiClient(app, () => state.user?.uid || auth.curren
     const value = target[key];
     if (typeof value !== "function") return value;
     return (...args) => {
+      if (extendedPreview && key==='reviseWholeTest') return runExtendedAi('revise',args[0]);
+      if (extendedPreview && key==='regenerateQuestion') return runExtendedAi('question',args[0]);
+      if (extendedPreview) throw new Error('In diesem Formatversuch sind Remy, Emmi und Einzelvarianten angebunden. Zusätzliche Medien- und andere KI-Funktionen sind hier noch nicht freigeschaltet.');
       if (guestTourRepo) throw new Error("Im lokalen Tutorial sind KI- und Billing-Aufrufe gesperrt.");
       return value.apply(target, args);
     };
@@ -193,7 +200,8 @@ const QUESTION_TYPES = [
   ["ordering", "Sortieren / Reihenfolge"],
   ["grouping", "Gruppieren / Kategorien"],
   ["markwords", "Wörter markieren"],
-  ["number", "Zahl / Rechenergebnis"]
+  ["number", "Zahl / Rechenergebnis"],
+  ["visual", "Visuelle Interaktion"]
 ];
 
 const state = {
@@ -1539,6 +1547,7 @@ function openTemplateFromInput(value) {
 }
 
 async function loadDashboard() {
+  if(extendedPreview){const q=guestTourRepo?.getQuiz('TOURLOCAL');state.quizzes=q?[q]:[];state.aiJobs=[];showView('dashboardView');renderQuizList();renderAiJobs();return;}
   if (!state.user) return;
   const dashboardUid = state.user.uid;
   clearPublishSubscriptions();
@@ -2732,6 +2741,7 @@ installAiAnswerAudioField();
 ["aiCount", "aiPoints"].forEach(id => $(id)?.addEventListener("input", updateAiPointsControls));
 
 function updateAiTypeCount() {
+  syncInteractiveFormatChoices(document);
   const selected = $("aiTypeChecks")?.querySelectorAll('input[type="checkbox"]:checked').length || 0;
   if ($("aiTypeCount")) $("aiTypeCount").textContent = `${selected} ausgewählt`;
 }
@@ -2765,6 +2775,7 @@ async function openAiView() {
     root.appendChild(item);
   });
   updateAiTypeCount();
+  resetInteractiveFormatChoices(document);
   renderAiMaterials();
   if ($("aiAudioQuestionCount")) $("aiAudioQuestionCount").value = "0";
   if ($("aiAudioAnswerQuestionCount")) $("aiAudioAnswerQuestionCount").value = "0";
@@ -2777,6 +2788,7 @@ async function openAiView() {
   renderAiJobs();
   if (firstAiGuideStep === "ai") setTimeout(() => renderFirstAiGuideStep("details"), 100);
   const notice = $("aiBetaNotice");
+  if(extendedPreview){for(const id of ['aiImageQuestionCount','aiAudioQuestionCount']){const card=$(id)?.closest('article.card');if(card)card.hidden=true;}for(const c of document.querySelectorAll('#aiTypeChecks input')){c.checked=c.value==='visual';c.disabled=true;}for(const n of document.querySelectorAll('p,small')){if(n.textContent==='Kosten können für Tests, Bilder und Audio entstehen.')n.textContent='Die Erstellung nutzt die vorhandene kostenpflichtige Test-KI.';if(n.textContent.includes('Nach dem Start schließt sich diese Ansicht automatisch.'))n.textContent='Der fertige KI-Test öffnet sich hier im Editor. Bei Unterbrechung: oben KI-Auftrag fortsetzen.';}notice.textContent='Echte GradeCrew-Test-KI: neue visuelle Aufgaben mit Remy erstellen und mit Emmi überarbeiten. Nutze Fach, Klasse und Thema; bis zu zwölf Aufgaben. Keine Schülerdaten eingeben. Kostenpflichtige Test-KI, Veröffentlichung und Abgaben bleiben lokal.';notice.classList.remove('hidden');return;}
   if (crewTour?.creating) { notice.textContent = "Übung: vorbereitete Aufgaben, keine KI-Anfrage."; notice.classList.remove("hidden"); return; }
   try {
     notice.className = "aiStatusNotice";
@@ -2973,7 +2985,7 @@ function collectAiRequest() {
   return {
     subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
     topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, points,
-    allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
+    allowedTypes, allowedVisualFormats:collectInteractiveFormats(document), notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: $("aiMaterialMode").value,
     imageMode: imageQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount: 0,
     audioQuestionCount, solutionAudioQuestionCount, audioAnswerQuestionCount
   };
@@ -3003,6 +3015,7 @@ async function applyGeneratedMedia(rawQuestion, q, code, questionId) {
 }
 
 async function generateAiTestNative() {
+  if(extendedPreview){if(state.extendedAiRunning)return;const button=$('generateAiTestBtn');state.extendedAiRunning=true;try{const request={...collectAiRequest(),allowedTypes:['visual']};if(button)button.disabled=true;setAiProgress('Remy startet deinen KI-Auftrag …');const response=await runExtendedAi('generate',request,{onProgress:message=>setAiProgress(message)});await openExtendedGeneratedTest(response.test);toast('Neue KI-Aufgaben erstellt. Bitte Inhalt und Lösungen prüfen.');}catch(error){setAiProgress(error.message,true);toast(error.message,'error');}finally{state.extendedAiRunning=false;if(button)button.disabled=false;}return;}
   if (crewTour?.active) {
     if (crewTour.creating) return crewTour.create();
     return toast("Folge zuerst dem aktuellen Schritt der Einführung.");
@@ -3132,6 +3145,7 @@ function normalizeQuestionTypeLoose(value) {
     ordering: "ordering", order: "ordering", sorting: "ordering", sortieren: "ordering", reihenfolge: "ordering",
     grouping: "grouping", group: "grouping", categorization: "grouping", kategorisieren: "grouping", gruppieren: "grouping",
     markwords: "markwords", highlightwords: "markwords", highlight: "markwords", woertermarkieren: "markwords", wortemarkieren: "markwords",
+    visual: "visual",
     number: "number", numeric: "number", zahl: "number", rechenaufgabe: "number", calculation: "number"
   };
   return map[token] || null;
@@ -3197,6 +3211,7 @@ function normalizeImportedQuestion(rawInput, index, report) {
   }
 
   const q = newQuestion(type, false);
+  if (type === "visual") q.visualTask = normalizeVisualTask({ ...raw, points: Number(raw.points) || 1 });
   const rawText = looseField(raw, ["text", "question", "prompt", "frage", "instruction", "aufgabe"], "");
   q.text = String(rawText || "").trim();
   // Only the explicit public field is imported; never promote a legacy private text.
@@ -3681,6 +3696,7 @@ $("quizUseTimeLimit")?.addEventListener("change", (e) => {
 });
 $("quizTimeLimitMinutes")?.addEventListener("input", markDirty);
 $("previewBtn").addEventListener("click", async () => {
+  if(extendedPreview){if(await saveCurrentQuiz(false)){renderStudentQuiz(guestTourRepo.getQuiz(state.currentQuiz.id),guestTourRepo.getQuestions(state.currentQuiz.id),{ownerPreview:true});showView('studentView');}return;}
   const button = $("previewBtn");
   if (!state.currentQuiz || button.disabled) return;
   // Reserve the tab during the user gesture; a server save can outlive popup activation.
@@ -3729,6 +3745,7 @@ function newQuestion(type = "single", needsFirestoreId = true) {
 }
 
 function initializeTypeData(q, type) {
+  if (type === "visual" && !q.visualTask) { const task = globalThis.GC2.example("grid"); task.maxPoints = Number(q.points) || 1; q.visualTask = JSON.stringify(task); q.text ||= task.prompt; }
   q.points = Math.max(0.5, round1(Number(q.points) || (type === "multi" ? 2 : 1)));
   if (["single", "multi", "dropdown"].includes(type)) {
     q.options = q.options?.length ? q.options : [{ text: "", correct: true }, { text: "", correct: false }];
@@ -3977,11 +3994,13 @@ function renderQuestions() {
     } else type.title = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(state.currentQuiz?.id)) ? "Die Einführung verwendet vorbereitete Aufgaben. Typwechsel ist in deinen eigenen Tests verfügbar." : "Emmi passt Inhalt und Lösungen mit KI an. Beim Zurückwechseln bleibt deine bisherige Fassung erhalten.";
     points.addEventListener("input", (e) => {
       q.points = Math.max(0.5, Number(e.target.value) || 1);
+      if (q.type === "visual") { try { q.visualTask = normalizeVisualTask(q); } catch {} }
       updateSummary();
       markDirty();
     });
     points.addEventListener("change", (e) => {
       q.points = Math.max(0.5, round1(Number(e.target.value) || 1));      e.target.value = q.points;
+      if (q.type === "visual") { try { q.visualTask = normalizeVisualTask(q); } catch {} }
       updateSummary();
     });
     node.querySelector(".aiEditQuestion")?.addEventListener("click", () => toggleQuestionAiPanel(node, q, index));
@@ -4042,7 +4061,7 @@ function questionContext(index) {
   return {
     title: state.currentQuiz?.title || $("quizTitle")?.value || "", subject: $("quizSubject")?.value || state.currentQuiz?.subject || "", grade: $("quizGrade")?.value || state.currentQuiz?.grade || "",
     contentLocale: state.currentQuiz?.contentLocale || "de-DE",
-    existingQuestions: others.map(q => ({ type: q.type, text: String(q.text || "").slice(0, 300), options: (q.options || []).map(o => ({ text: String(o.text || "").slice(0, 100), correct: Boolean(o.correct) })), acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4), numericAnswer: q.numericAnswer, unit: q.unit, mediaIntent: { kind: getQuestionImageSrc(q) ? "ai_generated" : "none" }, audioIntent: { kind: getQuestionAudioSrc(q) || q.audioScript ? "ai_generated" : "none", script: String(q.audioScript || "").slice(0, 500), reason: "" } }))
+    existingQuestions: others.map(q => ({ type: q.type, text: String(q.text || "").slice(0, 300), options: (q.options || []).map(o => ({ text: String(o.text || "").slice(0, 100), correct: Boolean(o.correct) })), acceptedAnswers: (q.acceptedAnswers || []).slice(0, 4), numericAnswer: q.numericAnswer, visualTask: q.visualTask, unit: q.unit, mediaIntent: { kind: getQuestionImageSrc(q) ? "ai_generated" : "none" }, audioIntent: { kind: getQuestionAudioSrc(q) || q.audioScript ? "ai_generated" : "none", script: String(q.audioScript || "").slice(0, 500), reason: "" } }))
   };
 }
 
@@ -4087,6 +4106,7 @@ function aiQuestionFeedbackSnapshot(q) {
     groups: (q.groups || []).slice(0, 5).map(group => ({ name: String(group.name).slice(0, 100), items: (group.items || []).slice(0, 10).map(item => String(item).slice(0, 120)) })),
     targetWords: (q.targetWords || []).slice(0, 30).map(word => String(word).slice(0, 120)),
     markGroups: (q.markGroups || []).slice(0, 4).map(group => ({name: String(group.name || "").slice(0,100), color: String(group.color || "").slice(0,30), words: (group.words || []).slice(0,30).map(word => String(word).slice(0,120))})),
+    ...(q.type === "visual" ? { visualTask:q.visualTask } : {}),
     numericAnswer: q.type === "number" && Number.isFinite(Number(q.numericAnswer)) ? Number(q.numericAnswer) : null,
     passage: String(q.passage || "").slice(0, 600),
     imageChoices: Boolean(q.imageChoicesOnly), imagePresent: Boolean(getQuestionImageSrc(q) || q.options?.some(o => o.imageDataUrl))
@@ -5666,6 +5686,7 @@ function renderGapColorEditor(container, q) {
 
 function renderAnswerEditor(container, q) {
   container.innerHTML = "";
+  if (q.type === "visual") { renderVisualEditor(container, q, refresh => { markDirty(); if (refresh) renderQuestions(); }); return; }
 
   if (["single", "multi", "dropdown"].includes(q.type)) {
     const info = document.createElement("p");
@@ -6113,6 +6134,7 @@ function validateQuiz() {
         if (q.markGroups.some(group => group.words.some(word => !tokenizeWords(q.passage).some(token => token.isWord && normalizeWord(token.text) === normalizeWord(word))))) return `Aufgabe ${i + 1}: Jedes Farbwort muss im Text vorkommen.`;
       }
     }
+    if (q.type === "visual") { try { normalizeVisualTask(q); } catch(e) { return `Aufgabe ${i + 1}: ${e.message}`; } }
     if (q.type === "number" && !Number.isFinite(Number(q.numericAnswer))) return `Aufgabe ${i + 1}: Das richtige Rechenergebnis fehlt.`;
   }
   return "";
@@ -6125,6 +6147,7 @@ function sanitizeQuestionForSave(q) {
     points: Math.max(0.5, round1(Number(q.points) || 1)),
     position: Number(q.position || 0)
   };
+  if (q.type === "visual") base.visualTask = normalizeVisualTask(q);
   if (q.aiVariantKept === true) base.aiVariantKept = true;
   if (q.aiOrigin?.kind) base.aiOrigin = { kind: String(q.aiOrigin.kind).slice(0, 30), model: String(q.aiOrigin.model || "").slice(0, 60), promptVersion: String(q.aiOrigin.promptVersion || "").slice(0, 60) };
   if (q.imageDataUrl) {
@@ -6204,6 +6227,7 @@ async function saveCurrentQuiz(showMessage = true) {
       audioReady: true, solutionAudioReady: true
     };
     guestTourRepo.save(code, patch, state.questions);
+    if(extendedPreview)await extendedCall('save',{quiz:guestTourRepo.getQuiz(code),questions:guestTourRepo.getQuestions(code)});
     state.currentQuiz = guestTourRepo.getQuiz(code);
     state.loadedQuestionIds = new Set(state.questions.map(q => q.id));
     $("editorHeading").textContent = patch.title;
@@ -6319,6 +6343,7 @@ async function publishCurrentQuiz() {
   if (state.currentQuiz?.rightsHold) return toast("Dieser Test ist wegen eines Rechtehinweises vorübergehend gesperrt.", "error");
   if (!(await saveCurrentQuiz(false))) return;
   if (guestTourRepo) {
+    if(extendedPreview)await extendedCall('publish',{quiz:guestTourRepo.getQuiz(state.currentQuiz.id),questions:guestTourRepo.getQuestions(state.currentQuiz.id)});
     guestTourRepo.publish(state.currentQuiz.id);
     state.currentQuiz = guestTourRepo.getQuiz(state.currentQuiz.id);
     showPublish(state.currentQuiz.id);
@@ -6385,7 +6410,7 @@ $("releasePracticeSolutionsBtn")?.addEventListener("click", async () => {
 });
 
 $("backFromPublish").addEventListener("click", () => openEditor(state.currentQuiz?.id || $("publishedCode").textContent));
-$("openPublishedStudentBtn").addEventListener("click", () => loadStudentQuiz($("publishedCode").textContent));
+$("openPublishedStudentBtn").addEventListener("click", () => extendedPreview?location.assign('/secure-student.html?test=EXTENDED'):loadStudentQuiz($("publishedCode").textContent));
 $("copyCodeBtn").addEventListener("click", () => copyText($("publishedCode").textContent, "Testcode kopiert."));
 $("copyLinkBtn").addEventListener("click", () => copyText($("publishedLink").value, "Link kopiert."));
 
@@ -6403,8 +6428,8 @@ async function showPublish(code) {
     const quiz = guestTourRepo.getQuiz(code);
     if (!quiz) return;
     state.currentQuiz = quiz;
-    $("publishedCode").textContent = code;
-    $("publishedLink").value = guestCopy('localLink', 'Nur lokaler Übungstest – kein öffentlicher Link');
+    $("publishedCode").textContent = extendedPreview?"EXTENDED":code;
+    $("publishedLink").value = extendedPreview?location.origin+'/secure-student.html?test=EXTENDED':guestCopy('localLink', 'Nur lokaler Übungstest – kein öffentlicher Link');
     $("qrcode").textContent = guestCopy('noQr', 'Lokales Tutorial ohne QR-Zugang');
     $("teacherLivePanel")?.replaceChildren();
     showView('publishView');
@@ -7080,7 +7105,9 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
       section.appendChild(audioBox);
     }
 
-    if (q.type === "text") {
+    if (q.type === "visual") {
+      mountVisualQuestion(section, q);
+    } else if (q.type === "text") {
       const inp = document.createElement("input");
       inp.type = "text";
       inp.name = q.id;
@@ -7343,6 +7370,7 @@ function setupStudentProgress(questions) {
 }
 
 function studentAnswerIsComplete(q, given) {
+  if (q.type === "visual") return visualAnswered(q, given);
   if (q.type === "text" || q.type === "number" || q.type === "dropdown" || q.type === "single" || q.type === "truefalse") return String(given ?? "").trim() !== "";
   if (q.type === "multi") return Array.isArray(given) && given.length > 0;
   if (q.type === "gapfill") return Array.isArray(given) && given.length > 0 && given.every((x) => String(x || "").trim() !== "");
@@ -7407,6 +7435,7 @@ function runStudentTimer(quiz, questions, startedAt, attemptLimitMinutes = null)
 function readStudentAnswer(q) {
   const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
   if (!section) return "";
+  if (q.type === "visual") return collectVisualAnswer(section);
   if (q.type === "multi") return Array.from(section.querySelectorAll(`input[name="${CSS.escape(q.id)}"]:checked`)).map((x) => x.value);
   if (["single", "truefalse"].includes(q.type)) return section.querySelector(`input[name="${CSS.escape(q.id)}"]:checked`)?.value ?? "";
   if (["text", "dropdown"].includes(q.type)) return section.querySelector(`[name="${CSS.escape(q.id)}"]`)?.value ?? "";
@@ -7435,6 +7464,7 @@ function readStudentAnswer(q) {
 }
 
 function evaluateAnswer(q, given) {
+  if (q.type === "visual") return evaluateVisual(q, given);
   const max = round1(Number(q.points) || 0);
   if (q.type === "text") {
     if (q.manualReview) return { awarded: 0, max, needsReview: true, correct: null };
@@ -7442,7 +7472,7 @@ function evaluateAnswer(q, given) {
     return { awarded: ok ? max : 0, max, needsReview: false, correct: ok };
   }
   if (q.type === "number") {
-    const value = Number(String(given || "").trim().replace(",", "."));
+    const value = parseNumericAnswer(given);
     const ok = Number.isFinite(value) && Math.abs(value - Number(q.numericAnswer)) <= Math.max(0, Number(q.tolerance) || 0) + 1e-9;
     return { awarded: ok ? max : 0, max, needsReview: false, correct: ok };
   }
@@ -7555,7 +7585,7 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
   let needsReview = false;
   for (const q of questions) {
     const given = readStudentAnswer(q);
-    answers[q.id] = given;
+    answers[q.id] = q.type === "visual" ? JSON.stringify(given) : given;
     const result = evaluateAnswer(q, given);
     grading[q.id] = {
       autoPoints: result.awarded,
@@ -7650,6 +7680,7 @@ async function submitStudentQuiz(e, quiz, questions, { force = false, autoSubmit
 }
 
 function answerDisplay(q, given, contentLocale) {
+  if (q.type === "visual") { const answer = decodeVisualAnswer(given); return answer == null ? "(leer)" : JSON.stringify(answer); }
   if (q.type === "text") return String(given || "(leer)");
   if (q.type === "number") return given === "" ? "(leer)" : `${given}${q.unit ? ` ${q.unit}` : ""}`;
   if (q.type === "truefalse") {
@@ -7687,6 +7718,7 @@ function answerDisplay(q, given, contentLocale) {
 }
 
 function correctDisplay(q, contentLocale) {
+  if (q.type === "visual") return visualSolution(q);
   if (q.type === "text") return q.manualReview ? "wird von der Lehrkraft geprüft" : (q.acceptedAnswers || []).join(", ");
   if (q.type === "number") return `${q.numericAnswer}${q.unit ? ` ${q.unit}` : ""}${Number(q.tolerance) ? ` (±${q.tolerance})` : ""}`;
   if (q.type === "truefalse") {
@@ -7747,6 +7779,7 @@ async function openResults(code) {
     state.currentResultsQuiz = quiz;
     state.resultQuestions = guestTourRepo.getQuestions(code);
     state.submissions = guestTourRepo.getSubmissions(code);
+    if(extendedPreview){const snapshot=await extendedCall('results',{});state.submissions=snapshot.submissions;state.resultQuestions=snapshot.questions;state.currentResultsQuiz={...quiz,...snapshot.quiz};}
     $("resultsHeading").textContent = quiz.title;
     $("resultsMeta").textContent = guestCopy('resultsMeta', `${state.submissions.length} Übungsabgabe · ${quiz.totalPoints || 0} Punkte maximal · nur lokal`, { count: state.submissions.length, points: quiz.totalPoints || 0 });
     showView('resultsView');
@@ -7911,6 +7944,7 @@ async function saveReview(submissionId) {
   const scale = submission.gradeScaleSnapshot?.thresholds?.length === 6 ? submission.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
   const grade = gradeFromPercent(percent, scale);
   if (guestTourRepo) {
+    if(extendedPreview){await extendedCall('review',{submissionId,points:Object.fromEntries(Object.entries(grading).map(([id,g])=>[id,g.awardedPoints]))});await openResults(state.currentResultsQuiz.id);return;}
     guestTourRepo.grade(state.currentResultsQuiz.id, submissionId, {
       grading, totalPoints: total, maxPoints: max, percent, grade,
       gradeScaleSnapshot: scale, status: 'graded', reviewedBy: 'local-tour'
@@ -9397,6 +9431,19 @@ if (["production", "staging", "local-review"].includes(appEnvironment)) {
   });
   fetch("./release.json", {cache:"no-store"}).then(r => r.json()).then(r => { reviewBuild = r.commit || ""; }).catch(() => {});
   if (localReview) {
+    document.addEventListener('gradecrew:extended-start',async()=>{
+      if(appEnvironment!=='local-review')return;
+      extendedPreview=true;state.user={uid:'local-tour',email:'lokales-beispiel@example.invalid'};state.profile={role:'teacher',displayName:'Lokale Lehrkraft'};state.guestTourUid='local-tour';guestTourRepo=createLocalTourRepository();
+      const saved=await extendedCall('teacher',{});
+      if(saved.test){const code=guestTourRepo.create({...quizDefaults(),...saved.test});guestTourRepo.save(code,{timeLimitMinutes:0,tutorialReady:true},guestTourRepo.getQuestions(code));await openEditor(code);}else{await openAiView();prefillTutorialRequest();$('aiTopic').value='Visuelle Aufgaben';$('aiSubject').value='Fächerübergreifender Formatvergleich';$('aiGrade').value='5–10';$('aiSchoolType').value='Mittelschule';$('aiCount').value='9';$('aiPoints').value='24';}
+    });
+    document.addEventListener('gradecrew:extended-showcase',async event=>{
+      if(!extendedPreview||appEnvironment!=='local-review')return;
+      extendedVariant=[1,2,3].includes(Number(event.detail?.variant))?Number(event.detail.variant):1;
+      await openAiView();prefillTutorialRequest();$('aiTopic').value='Visuelle Aufgaben';$('aiSubject').value='Fächerübergreifender Formatvergleich';$('aiGrade').value='6';$('aiCount').value='9';$('aiPoints').value='24';$('aiImageQuestionCount').value='0';document.querySelectorAll('#aiTypeChecks input').forEach(c=>c.checked=c.value==='visual');const response=await extendedCall('generate',{variant:extendedVariant});await openExtendedGeneratedTest(response.test);
+    });
+    document.addEventListener('gradecrew:extended-ai',async()=>{if(!extendedPreview)return;await openAiView();$('aiSubject').value='Mathematik';$('aiGrade').value='6';$('aiTopic').value='Winkel, Koordinaten und Diagramme';$('aiCount').value='9';$('aiPoints').value='24';for(const id of ['aiImageQuestionCount','aiAudioQuestionCount','aiSolutionAudioQuestionCount','aiAudioAnswerQuestionCount'])if($(id))$(id).value='0';document.querySelectorAll('#aiTypeChecks input').forEach(c=>{c.checked=c.value==='visual';});setAiProgress('Fach, Klasse und Thema wählen, dann mit Remy neu erstellen.');});
+    document.addEventListener('gradecrew:extended-ai-resume',async()=>{if(!extendedPreview||state.extendedAiRunning)return;state.extendedAiRunning=true;try{const recovered=await resumeExtendedAi({onProgress:message=>toast(message)});const m=await import('./tools/extended-preview/recovery-dialog.mjs');m.showRecoveredAi(recovered,{openTest:async test=>{if(state.currentQuiz&&!(await saveCurrentQuiz(false)))throw Error('Der aktuelle Entwurf konnte nicht gesichert werden.');await openExtendedGeneratedTest(test);},acknowledge:async id=>{const c=await import('./tools/extended-preview/ai-client.mjs');c.acknowledgeExtendedAi(id);}});}catch(e){toast(e.message,'error');}finally{state.extendedAiRunning=false;}});
     let sceneWork = Promise.resolve();
     document.addEventListener("gradecrew:review-scene", event => {
       const scene = event.detail?.scene;
@@ -9432,3 +9479,10 @@ if (["production", "staging", "local-review"].includes(appEnvironment)) {
 }
 
 window.addEventListener("gradecrew:visual-note-saved",()=>toast("Screenshot-Hinweis in Feedback gespeichert."));
+
+async function extendedCall(action,data={}){const r=await fetch('/__extended/'+action,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const d=await r.json();if(!r.ok)throw Error(d.message||'Lokaler Beispielaufruf fehlgeschlagen.');return d;}
+
+async function openExtendedGeneratedTest(test){guestTourRepo=createLocalTourRepository();const code=guestTourRepo.create({...quizDefaults(),...test});guestTourRepo.save(code,{timeLimitMinutes:0,tutorialReady:true},guestTourRepo.getQuestions(code));await openEditor(code);}
+
+async function runExtendedAi(...args){const m=await import('./tools/extended-preview/ai-client.mjs');return m.runExtendedAi(...args);}
+async function resumeExtendedAi(...args){const m=await import('./tools/extended-preview/ai-client.mjs');return m.resumeExtendedAi(...args);}

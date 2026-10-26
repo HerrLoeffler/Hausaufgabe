@@ -1,0 +1,205 @@
+{
+  "pilotId": "P09",
+  "at": "2026-10-25T10:09:52.346Z",
+  "quiz": {
+    "showSolutions": true,
+    "generationJobId": "7c145f8e2a3a1c4f98037e8940eab94a3193c583",
+    "audioAnswerQuestionCount": 0,
+    "description": "Viel Erfolg beim Test!",
+    "shuffleQuestions": false,
+    "title": "Everyday English: School and Daily Routines",
+    "grade": "5",
+    "generationStatus": "ready",
+    "listeningOnlyQuestionCount": 0,
+    "subject": "Englisch",
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match",
+      "profileIds": []
+    },
+    "localeContractVersion": 1,
+    "createdAt": "2026-10-25T10:09:41.064Z",
+    "gradingLocale": "de-DE",
+    "ended": false,
+    "sessionState": "open",
+    "shareEnabled": false,
+    "rightsHold": false,
+    "questionCount": 8,
+    "resultMode": "points_grade",
+    "isDeleted": false,
+    "requiresSecureAssessmentRules": false,
+    "totalPoints": 16,
+    "published": false,
+    "contentLocale": "de-DE",
+    "qualityIssues": [],
+    "qualityWarnings": [],
+    "startMode": "student",
+    "creationContext": {
+      "schoolType": "Mittelschule",
+      "topic": "Everyday English: Kurze selbst erfundene englische Sätze zu school and daily routines, räumliche Beziehungen und grundlegende Grammatik",
+      "region": "Bayern",
+      "difficulty": "leicht bis mittel",
+      "contentLocale": "de-DE",
+      "learningGoals": []
+    },
+    "audioQuestionCount": 0,
+    "audioReady": true,
+    "ownerId": "gc-visual255-e2e",
+    "accessCode": "NQS5LTM3",
+    "solutionAudioQuestionCount": 0,
+    "gradeScaleId": "standard",
+    "solutionAudioReady": true,
+    "shuffleAnswers": false,
+    "updatedAt": "2026-10-25T10:09:42.651Z",
+    "gradeScaleSnapshot": {
+      "id": "standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "name": "Standard"
+    },
+    "id": "NQS5LTM3"
+  },
+  "questions": [
+    {
+      "position": 1,
+      "text": "Ergänze die fehlenden Formen von „be“ in der Tabelle.",
+      "type": "visual",
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"table-be-forms-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Die Formen von be\",\"subject\":\"Englisch\",\"grade\":\"5\",\"prompt\":\"Ergänze die fehlenden Formen von „be“ in der Tabelle.\",\"hint\":\"Trage in jedes leere Feld genau ein englisches Wort ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Subjekt\",\"Form von be\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"I\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"am\",\"input\":false}],[{\"id\":\"r2c1\",\"text\":\"you\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"\",\"input\":true}],[{\"id\":\"r3c1\",\"text\":\"he\",\"input\":false},{\"id\":\"r3c2\",\"text\":\"is\",\"input\":false}],[{\"id\":\"r4c1\",\"text\":\"we\",\"input\":false},{\"id\":\"r4c2\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"r2c2\",\"accepted\":[\"are\"]},{\"id\":\"r4c2\",\"accepted\":[\"are\"]}]},\"objective\":\"Die grundlegenden Formen von „be“ den englischen Personalpronomen zuordnen.\",\"rationale\":\"Die Tabelle prüft die korrekte Verwendung von am, are und is bei einfachen englischen Sätzen.\",\"sourceNote\":\"Eigenständig erstellte, fiktive Unterrichtsaufgabe ohne fremde Quellen.\"}",
+      "updatedAt": "2026-10-25T10:09:41.214Z",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "id": "q001"
+    },
+    {
+      "updatedAt": "2026-10-25T10:09:41.386Z",
+      "text": "Für Sams fiktiven Schultag gilt: Er steht morgens auf, isst mittags zu Mittag und geht abends ins Bett. Verbinde jede englische Tätigkeit mit der zugehörigen englischen Tageszeit.",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "type": "visual",
+      "position": 2,
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"connections-daily-routine-0\",\"revision\":1,\"format\":\"connections\",\"title\":\"Tagesablauf verbinden\",\"subject\":\"Englisch\",\"grade\":\"5\",\"prompt\":\"Für Sams fiktiven Schultag gilt: Er steht morgens auf, isst mittags zu Mittag und geht abends ins Bett. Verbinde jede englische Tätigkeit mit der zugehörigen englischen Tageszeit.\",\"hint\":\"Verbinde jede Tätigkeit genau einmal. Die Pfeile zeigen von der Tätigkeit zur passenden Tageszeit.\",\"maxPoints\":2,\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"a\",\"label\":\"get up\",\"x\":120,\"y\":80},{\"id\":\"b\",\"label\":\"have lunch\",\"x\":120,\"y\":180},{\"id\":\"c\",\"label\":\"go to bed\",\"x\":120,\"y\":280},{\"id\":\"d\",\"label\":\"in the morning\",\"x\":560,\"y\":80},{\"id\":\"e\",\"label\":\"at midday\",\"x\":560,\"y\":180},{\"id\":\"f\",\"label\":\"in the evening\",\"x\":560,\"y\":280}]},\"solution\":{\"edges\":[[\"a\",\"d\"],[\"b\",\"e\"],[\"c\",\"f\"]]},\"objective\":\"Einfache englische Ausdrücke zum Tagesablauf zeitlich zuordnen.\",\"rationale\":\"Die gerichteten Verbindungen machen die eindeutigen Bedeutungsbeziehungen zwischen Tätigkeiten und Tageszeiten sichtbar.\",\"sourceNote\":\"Eigenständig erstellte, frei erfundene Unterrichtsaufgabe.\"}",
+      "id": "q002"
+    },
+    {
+      "updatedAt": "2026-10-25T10:09:41.576Z",
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"correction-be-forms-0\",\"revision\":1,\"format\":\"correction\",\"title\":\"Das Verb be richtig verwenden\",\"subject\":\"Englisch\",\"grade\":\"5\",\"prompt\":\"Finde die Zeile mit der falschen Form von be. Markiere die Zeile und trage nur die richtige Verbform ein.\",\"hint\":\"Markiere die fehlerhafte Zeile und trage nur die richtige Verbform ein.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"r1\",\"text\":\"I am at school.\"},{\"id\":\"r2\",\"text\":\"You is my friend.\"},{\"id\":\"r3\",\"text\":\"They are in the classroom.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"r2\",\"accepted\":[\"are\"]},\"objective\":\"Die Formen von be in einfachen Aussagesätzen korrekt verwenden.\",\"rationale\":\"Die Lernenden erkennen die falsche Zuordnung von Subjekt und Verb und berichtigen den Satz vollständig.\",\"sourceNote\":\"Eigenständig erstellte, frei erfundene Unterrichtsaufgabe.\"}",
+      "type": "visual",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "Finde die Zeile mit der falschen Form von be. Markiere die Zeile und trage nur die richtige Verbform ein.",
+      "position": 3,
+      "id": "q003"
+    },
+    {
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:09:41.833Z",
+      "points": 2,
+      "type": "visual",
+      "text": "Setze in jede Zeile das passende englische Hilfsverb ein.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"table-questions-do-does-0\",\"revision\":0,\"format\":\"table\",\"title\":\"Fragen mit do und does\",\"subject\":\"Englisch\",\"grade\":\"5\",\"prompt\":\"Setze in jede Zeile das passende englische Hilfsverb ein.\",\"hint\":\"Achte auf das Subjekt: you verwendet eine andere Form als ein Name.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Subjekt\",\"Fehlendes Hilfsverb\",\"Rest der Frage\",\"Kurze Antwort\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"you\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"\",\"input\":true},{\"id\":\"r1c3\",\"text\":\"have lunch at school?\",\"input\":false},{\"id\":\"r1c4\",\"text\":\"Yes, I do.\",\"input\":false}],[{\"id\":\"r2c1\",\"text\":\"Ben\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"\",\"input\":true},{\"id\":\"r2c3\",\"text\":\"get up early?\",\"input\":false},{\"id\":\"r2c4\",\"text\":\"No, he doesn't.\",\"input\":false}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"r1c2\",\"accepted\":[\"Do\",\"do\"]},{\"id\":\"r2c2\",\"accepted\":[\"Does\",\"does\"]}]},\"objective\":\"Die Hilfsverben do und does in einfachen Fragen im Simple Present passend zum Subjekt verwenden.\",\"rationale\":\"Die beiden Zeilen prüfen die Unterscheidung zwischen do bei you und does bei einer Person in der dritten Person Singular.\",\"sourceNote\":\"Eigenständig erstellte, frei erfundene Englischaufgabe ohne reale Schülerdaten.\"}",
+      "position": 4,
+      "id": "q004"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"connections-simple-present-daily-0\",\"revision\":0,\"format\":\"connections\",\"title\":\"Simple Present im Alltag\",\"subject\":\"Englisch\",\"grade\":\"5\",\"prompt\":\"Verbinde jedes englische Subjekt mit der passenden Verbgruppe im Simple Present. Der Pfeil zeigt vom Subjekt zur Verbgruppe.\",\"hint\":\"Achte darauf, ob das Verb bei he, she oder it ein -s erhält.\",\"maxPoints\":2,\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"n1\",\"label\":\"I\",\"x\":120,\"y\":80},{\"id\":\"n2\",\"label\":\"She\",\"x\":120,\"y\":220},{\"id\":\"n3\",\"label\":\"play football every day\",\"x\":560,\"y\":80},{\"id\":\"n4\",\"label\":\"walks to school every day\",\"x\":560,\"y\":220}]},\"solution\":{\"edges\":[[\"n1\",\"n3\"],[\"n2\",\"n4\"]]},\"objective\":\"Einfache Verbformen im Simple Present passend zu englischen Subjekten zuordnen.\",\"rationale\":\"Bei I steht die Grundform, bei she erhält das Verb in der dritten Person Singular die Endung -s.\",\"sourceNote\":\"Eigenständig erstellte, frei erfundene Unterrichtsaufgabe ohne reale Schülerdaten.\"}",
+      "position": 5,
+      "points": 2,
+      "text": "Verbinde jedes englische Subjekt mit der passenden Verbgruppe im Simple Present. Der Pfeil zeigt vom Subjekt zur Verbgruppe.",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:09:41.977Z",
+      "id": "q005"
+    },
+    {
+      "type": "visual",
+      "position": 6,
+      "text": "Verbinde jeden englischen Satz mit der passenden deutschen Übersetzung.",
+      "updatedAt": "2026-10-25T10:09:42.224Z",
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"connections-sentence-meaning-0\",\"revision\":0,\"format\":\"connections\",\"title\":\"Sätze verstehen\",\"subject\":\"Englisch\",\"grade\":\"5\",\"prompt\":\"Verbinde jeden englischen Satz mit der passenden deutschen Übersetzung.\",\"hint\":\"Jeder Satz wird genau einmal verbunden.\",\"maxPoints\":2,\"spec\":{\"directed\":true,\"nodes\":[{\"id\":\"a\",\"label\":\"I brush my teeth.\",\"x\":100,\"y\":80},{\"id\":\"b\",\"label\":\"We have English on Monday.\",\"x\":100,\"y\":180},{\"id\":\"c\",\"label\":\"The book is under the desk.\",\"x\":100,\"y\":280},{\"id\":\"d\",\"label\":\"Ich putze meine Zähne.\",\"x\":560,\"y\":80},{\"id\":\"e\",\"label\":\"Wir haben am Montag Englisch.\",\"x\":560,\"y\":180},{\"id\":\"f\",\"label\":\"Das Buch ist unter dem Schreibtisch.\",\"x\":560,\"y\":280}]},\"solution\":{\"edges\":[[\"a\",\"d\"],[\"b\",\"e\"],[\"c\",\"f\"]]},\"objective\":\"Kurze englische Sätze aus Tagesablauf, Schule und räumlichen Beziehungen verstehen.\",\"rationale\":\"Jeder englische Satz enthält eine klar zuordenbare Information ohne mehrdeutige Übersetzung.\",\"sourceNote\":\"Eigenständig erstellte, frei erfundene Unterrichtsaufgabe.\"}",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "id": "q006"
+    },
+    {
+      "updatedAt": "2026-10-25T10:09:42.386Z",
+      "points": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "position": 7,
+      "text": "Finde die Zeile mit der falschen Form von have. Markiere die Zeile und trage nur die richtige Verbform ein; got bleibt unverändert.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"correction-have-got-0\",\"revision\":1,\"format\":\"correction\",\"title\":\"have got richtig verwenden\",\"subject\":\"Englisch\",\"grade\":\"5\",\"prompt\":\"Finde die Zeile mit der falschen Form von have. Markiere die Zeile und trage nur die richtige Verbform ein; got bleibt unverändert.\",\"hint\":\"Trage nur die richtige Form des Verbs have ein.\",\"maxPoints\":2,\"spec\":{\"rows\":[{\"id\":\"r1\",\"text\":\"I have got a blue pen.\"},{\"id\":\"r2\",\"text\":\"She has got a new book.\"},{\"id\":\"r3\",\"text\":\"They has got two rulers.\"},{\"id\":\"r4\",\"text\":\"We have got English books.\"}],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"rowId\":\"r3\",\"accepted\":[\"have\"]},\"objective\":\"have got und has got in einfachen Aussagesätzen unterscheiden.\",\"rationale\":\"Die Aufgabe prüft die passende Form von have got bei unterschiedlichen Personalpronomen.\",\"sourceNote\":\"Eigenständig erstellte, frei erfundene Unterrichtsaufgabe.\"}",
+      "type": "visual",
+      "id": "q007"
+    },
+    {
+      "position": 8,
+      "points": 2,
+      "updatedAt": "2026-10-25T10:09:42.537Z",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"table-prepositions-0\",\"revision\":1,\"format\":\"table\",\"title\":\"Ortsangaben im Satz\",\"subject\":\"Englisch\",\"grade\":\"5\",\"prompt\":\"Ergänze jeweils die fehlende englische Ortsangabe in der Tabelle. Sie darf aus mehreren Wörtern bestehen.\",\"hint\":\"Schreibe jeweils nur die passende Präposition.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Englischer Satz\",\"Deutsche Bedeutung\",\"Fehlendes Wort\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"The pencil is ___ the book.\",\"input\":false},{\"id\":\"a2\",\"text\":\"Der Bleistift ist auf dem Buch.\",\"input\":false},{\"id\":\"a3\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"The bag is ___ the chair.\",\"input\":false},{\"id\":\"b2\",\"text\":\"Die Tasche ist neben dem Stuhl.\",\"input\":false},{\"id\":\"b3\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a3\",\"accepted\":[\"on\"]},{\"id\":\"b3\",\"accepted\":[\"next to\",\"beside\",\"by\"]}]},\"objective\":\"Häufige englische Präpositionen in einfachen Sätzen passend zur Bedeutung einsetzen.\",\"rationale\":\"Die deutschen Bedeutungen legen die jeweils richtige englische Ortsangabe eindeutig fest.\",\"sourceNote\":\"Eigenständig erstellte, frei erfundene Unterrichtsaufgabe.\"}",
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "text": "Ergänze jeweils die fehlende englische Ortsangabe in der Tabelle. Sie darf aus mehreren Wörtern bestehen.",
+      "type": "visual",
+      "id": "q008"
+    }
+  ],
+  "corrections": [
+    {
+      "position": 2,
+      "reason": "Tageszeitzuordnung als vorgegebenen fiktiven Tagesablauf kennzeichnen, nicht als universelle Lebensgewohnheit.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    },
+    {
+      "position": 3,
+      "reason": "Gezielte Verbkorrektur statt Benotung eines ganzen Satzes mit nur einer exakten Textvariante.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    },
+    {
+      "position": 7,
+      "reason": "Verlangte Korrektur auf die eindeutig fehlerhafte Verbform begrenzen.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    },
+    {
+      "position": 8,
+      "reason": "Gleichwertige räumliche Präposition zulassen und mehrwortige Ortsangabe verständlich verlangen.",
+      "runtimeStatus": "saved to own unpublished cloud draft; assessment deployment separately verified"
+    }
+  ]
+}

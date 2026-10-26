@@ -1,0 +1,1590 @@
+{
+  "at": "2026-10-25T10:42:30.242Z",
+  "scope": "Only synthetic account events since pilot start; correlate by time, no other work assumed",
+  "since": "2026-10-25T09:54:40.298Z",
+  "events": [
+    {
+      "id": "1qucKUsT9V0mY4VvyVf9",
+      "pedagogicalPool": {
+        "version": "gc-pedagogy-pool-v1",
+        "profileCount": 0,
+        "status": "no_match",
+        "profileIds": []
+      },
+      "expiresAt": "2026-11-24T10:10:31.038Z",
+      "positivePatterns": 0,
+      "kind": "test",
+      "recurringRuleCandidates": 0,
+      "qualityReviewPasses": 1,
+      "errors": [],
+      "outputTokens": 3969,
+      "providerRequests": [
+        {
+          "responseId": "resp_0ecb4fffe2699fcb016addd571679c87d28cea2ed17ca223b8",
+          "requestId": "req_1376e88dd94b4c45a08f3e1e81ef5ee7",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_02040e1bd7684d7d016addd59083a887d2950781d3fe1073b9",
+          "requestId": "req_54e61477bcd14293b806c2bcc004e910",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "feedbackSignals": 0,
+      "questionCount": 8,
+      "totalTokens": 15302,
+      "qualityMemoryVersion": 3,
+      "failed": false,
+      "createdAt": "2026-10-25T10:10:31.039Z",
+      "qualityMemoryUnavailable": false,
+      "inputTokens": 11333,
+      "questionRepairAttempts": 0,
+      "qualityWarnings": [],
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "model": "gpt-5.6-luna",
+      "replacedQuestions": 0,
+      "fullRepair": false
+    },
+    {
+      "id": "38MudAtyuByFc1HfnNRP",
+      "recurringRuleCandidates": 0,
+      "positivePatterns": 0,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "model": "gpt-5.6-luna",
+      "replacedQuestions": 2,
+      "pedagogicalPool": {
+        "profileCount": 0,
+        "status": "no_match",
+        "version": "gc-pedagogy-pool-v1",
+        "profileIds": []
+      },
+      "fullRepair": false,
+      "qualityMemoryUnavailable": false,
+      "expiresAt": "2026-11-24T09:56:49.184Z",
+      "questionRepairAttempts": 2,
+      "totalTokens": 30491,
+      "feedbackSignals": 0,
+      "providerRequests": [
+        {
+          "responseId": "resp_039d22d232a56585016addd2266c3487d2973f7a70a7182dab",
+          "requestId": "req_5952f10f30b94e419e53ac3cdfaa33bd",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0986f20c8adb3132016addd248cdf487d2a9c1f5ab79398aed",
+          "requestId": "req_bb889c2a26e544afb2c33600e041f8ab",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0bb599170b31bc7e016addd250098487d2bed23b3e0b3f2cf6",
+          "requestId": "req_971f30b0ccfb4dd8accea2d525806d6c",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_053c288503028984016addd25c673c87d2973e65f3ae20a89e",
+          "requestId": "req_4521e71f28d64d80a339d73e589ad123",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "failed": false,
+      "questionCount": 8,
+      "createdAt": "2026-10-25T09:56:49.184Z",
+      "inputTokens": 24508,
+      "errors": [],
+      "qualityReviewPasses": 1,
+      "kind": "test",
+      "outputTokens": 5983,
+      "qualityWarnings": [],
+      "qualityMemoryVersion": 3
+    },
+    {
+      "id": "3Gq7VbC6fjn0qVcBC7xN",
+      "qualityMemoryUnavailable": false,
+      "qualityMemoryVersion": 3,
+      "replacedQuestions": 0,
+      "expiresAt": "2026-11-24T09:58:04.317Z",
+      "qualityWarnings": [],
+      "questionCount": 8,
+      "errors": [],
+      "recurringRuleCandidates": 0,
+      "inputTokens": 10664,
+      "positivePatterns": 0,
+      "questionRepairAttempts": 0,
+      "kind": "test",
+      "feedbackSignals": 0,
+      "totalTokens": 13923,
+      "qualityReviewPasses": 1,
+      "fullRepair": false,
+      "createdAt": "2026-10-25T09:58:04.318Z",
+      "model": "gpt-5.6-luna",
+      "outputTokens": 3259,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "pedagogicalPool": {
+        "status": "no_match",
+        "version": "gc-pedagogy-pool-v1",
+        "profileIds": [],
+        "profileCount": 0
+      },
+      "failed": false,
+      "providerRequests": [
+        {
+          "responseId": "resp_044110d91e005d7c016addd2902fd087d2a3edd8d59bdc3a0a",
+          "requestId": "req_3d723bca0f684d928a2799b26837d75d",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_096d22579fbb1068016addd2a619b487d2bbfc433386ebca1f",
+          "requestId": "req_3ab8143ab49a4ed8950c9d4f281de2ad",
+          "model": "gpt-5.6-luna"
+        }
+      ]
+    },
+    {
+      "id": "6WU1oLdxu0PkSqIImLDG",
+      "qualityMemoryUnavailable": false,
+      "model": "gpt-5.6-luna",
+      "qualityWarnings": [],
+      "inputTokens": 30068,
+      "providerRequests": [
+        {
+          "responseId": "resp_02e9deebe55ec50b016addd2ba573c87d2b07b398cd291d88d",
+          "requestId": "req_ad30df86777248ccb348ff55fbbd5cf3",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0b123e7232b46dfe016addd2d3e8b887d295fa2b16b92a7fdf",
+          "requestId": "req_5df2982c4d8742abbfa0ffe13530c309",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0ff05c7ea2c7a462016addd2df8ad487d2838c36bc37c2a790",
+          "requestId": "req_f6afde2e55894177b42e1c6a27404446",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0afe78a07127ec9a016addd2e3ecec87d2b0299caae1a354aa",
+          "requestId": "req_22a30d2126dd42bc8cd7d8d11f759eba",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_04f84b8bf4de912e016addd2efde3087d2a8a284d8b642e702",
+          "requestId": "req_d3e5c6b215084b198ca2c470ab869859",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "expiresAt": "2026-11-24T09:59:15.532Z",
+      "failed": false,
+      "positivePatterns": 0,
+      "recurringRuleCandidates": 0,
+      "fullRepair": false,
+      "outputTokens": 6047,
+      "feedbackSignals": 0,
+      "errors": [],
+      "replacedQuestions": 2,
+      "qualityReviewPasses": 2,
+      "createdAt": "2026-10-25T09:59:15.532Z",
+      "questionCount": 8,
+      "totalTokens": 36115,
+      "questionRepairAttempts": 2,
+      "qualityMemoryVersion": 3,
+      "pedagogicalPool": {
+        "profileIds": [],
+        "version": "gc-pedagogy-pool-v1",
+        "status": "no_match",
+        "profileCount": 0
+      },
+      "kind": "test"
+    },
+    {
+      "id": "6l8oFrEcECiaG7TAglUU",
+      "questionCount": 8,
+      "recurringRuleCandidates": 0,
+      "inputTokens": 42172,
+      "createdAt": "2026-10-25T10:40:55.693Z",
+      "errors": [],
+      "outputTokens": 14217,
+      "feedbackSignals": 0,
+      "model": "gpt-5.6-luna",
+      "pedagogicalPool": {
+        "profileIds": [],
+        "profileCount": 0,
+        "version": "gc-pedagogy-pool-v1",
+        "status": "no_match"
+      },
+      "qualityMemoryVersion": 3,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "failed": false,
+      "qualityWarnings": [],
+      "positivePatterns": 0,
+      "qualityMemoryUnavailable": false,
+      "expiresAt": "2026-11-24T10:40:55.693Z",
+      "questionRepairAttempts": 3,
+      "replacedQuestions": 3,
+      "fullRepair": false,
+      "providerRequests": [
+        {
+          "responseId": "resp_02de5c8c49f9a1ba016adddc28bc4487d2887db2fb82ff0338",
+          "requestId": "req_05bcc592172a4162a3f30b413439db34",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_092fe18a3f5268c3016adddc552abc87d2934673dc57e46ec7",
+          "requestId": "req_bedcc199d5214ce4820a8ebd702adc27",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_00bf9d15de7af558016adddc6bfd5c87d2a61d227ee1d844aa",
+          "requestId": "req_3a765dca39fa41e7a80ad24ebe238679",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_01e2faab4862b9c9016adddc7daa1087d2ab63aefcb2b56a11",
+          "requestId": "req_92d169fc3b49406995ca3a653c33343d",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0c4011cbb258ab78016adddc883ab887d29cf2066588fe39d2",
+          "requestId": "req_041046af4dfd4b9181bcf0db5b3a1500",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_00e69bc5b48209bf016adddca2074887d29e865024feb1f7f3",
+          "requestId": "req_d89c7149f05a49098618fb91a2696e3d",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "qualityReviewPasses": 2,
+      "totalTokens": 56389,
+      "kind": "test"
+    },
+    {
+      "id": "8fjpaux0RN0fXRadmucB",
+      "totalTokens": 71376,
+      "errors": [],
+      "questionCount": 8,
+      "providerRequests": [
+        {
+          "responseId": "resp_0ab0481277e792ee016addd7171ba887d29e784447f8968000",
+          "requestId": "req_bc5788cf94984fe98d6c34238c3540ec",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_00e992cf7204a5f5016addd73f5e2c87d29731b2338148c651",
+          "requestId": "req_08707506588244278c3f61798fb8fa68",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_05a2c297a04e6b67016addd746a82087d29b9aec84c76e9455",
+          "requestId": "req_2947e91086b54755a0be376b36684f62",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0215132131930dac016addd752ef9487d2b741e38959e956f2",
+          "requestId": "req_3dd43edf7c9c45cfbd8f96b1622fdcab",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0bab6a7c2d646251016addd768ca5c87d2845476c971cd547f",
+          "requestId": "req_439b48650a1e4491abcc48740c77af64",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_09cafa160ac8ebef016addd774497087d294128a29a4678ce1",
+          "requestId": "req_87aa8290da5a42d5874ace83f85d6821",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0294b4c6c732e2c2016addd77e298487d2ae2e649739bfafbc",
+          "requestId": "req_c33e1d28124c44b7a57d8575ce7f5542",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0c4fc89f163b09ca016addd787ac2487d2bff55985c5759f82",
+          "requestId": "req_c41b231fe42847cc86a1954a68d21f3f",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0d05ef1b56f4df20016addd796f16087d292e15120826d6da0",
+          "requestId": "req_f50e372601bb4a8da9d263602432be4a",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "fullRepair": false,
+      "questionRepairAttempts": 4,
+      "qualityMemoryVersion": 3,
+      "qualityWarnings": [
+        "Aufgabe 7: ambiguous: Die Aufgabe beschreibt einen Wagen, der mit einer konstanten Kraft gezogen wird, verwendet aber in den beiden Messungen unterschiedliche Kräfte von 6 N und 9 N."
+      ],
+      "outputTokens": 13039,
+      "positivePatterns": 0,
+      "createdAt": "2026-10-25T10:19:16.482Z",
+      "replacedQuestions": 4,
+      "model": "gpt-5.6-luna",
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "failed": false,
+      "feedbackSignals": 0,
+      "kind": "test",
+      "qualityMemoryUnavailable": false,
+      "pedagogicalPool": {
+        "profileIds": [],
+        "version": "gc-pedagogy-pool-v1",
+        "profileCount": 0,
+        "status": "no_match"
+      },
+      "inputTokens": 58337,
+      "expiresAt": "2026-11-24T10:19:16.482Z",
+      "qualityReviewPasses": 4,
+      "recurringRuleCandidates": 0
+    },
+    {
+      "id": "HEzs2lGjPTP45Dge41wq",
+      "qualityMemoryUnavailable": false,
+      "qualityMemoryVersion": 3,
+      "providerRequests": [
+        {
+          "responseId": "resp_01f33633969fa363016addd2f6e1b487d2a80fd9afa1fd0517",
+          "requestId": "req_0e92b2ba9d2844328ca709ce873f2a87",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_03cbe69434a3aefb016addd312b59087d294f35ae32e6624a0",
+          "requestId": "req_ab2ccb936bf54cbfba0ebc1cb6b95a14",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0a03a956d78e48fc016addd318cd4487d2b2cc1512be9bbf9d",
+          "requestId": "req_a6bd32d4aa3243c8aeb6da58baac2f7c",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0a66a5e7ce0dce0d016addd3245a5887d29b94008e67bd4e1c",
+          "requestId": "req_5f7ce5ebe7434cfb8aa60ca9fe09e836",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "questionRepairAttempts": 1,
+      "pedagogicalPool": {
+        "profileCount": 0,
+        "profileIds": [],
+        "version": "gc-pedagogy-pool-v1",
+        "status": "no_match"
+      },
+      "totalTokens": 29062,
+      "expiresAt": "2026-11-24T10:00:10.157Z",
+      "questionCount": 8,
+      "failed": false,
+      "feedbackSignals": 0,
+      "positivePatterns": 0,
+      "replacedQuestions": 1,
+      "qualityReviewPasses": 2,
+      "createdAt": "2026-10-25T10:00:10.157Z",
+      "outputTokens": 5226,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "model": "gpt-5.6-luna",
+      "recurringRuleCandidates": 0,
+      "fullRepair": false,
+      "errors": [],
+      "qualityWarnings": [],
+      "kind": "test",
+      "inputTokens": 23836
+    },
+    {
+      "id": "KMzGdlo2owktjO5D2Bp6",
+      "qualityReviewPasses": 1,
+      "qualityMemoryUnavailable": false,
+      "outputTokens": 8997,
+      "fullRepair": false,
+      "pedagogicalPool": {
+        "profileIds": [],
+        "profileCount": 0,
+        "version": "gc-pedagogy-pool-v1",
+        "status": "no_match"
+      },
+      "providerRequests": [
+        {
+          "responseId": "resp_0a2e95f172a31828016addd50bda5087d28b4650c747d8633c",
+          "requestId": "req_e044bf43aef04fdc91dfb30fd5081363",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_022c386128343d17016addd527bbcc87d29adb11f94796de54",
+          "requestId": "req_fef7d2bfebbd4423ae26d91c49530bec",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_06d67dba2c737fc2016addd536834087d2be99ad24013f1751",
+          "requestId": "req_141ee1f5293449949c6437a2713dbc35",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0e999d443f4da695016addd548eb7487d2851741c22bc9fea3",
+          "requestId": "req_c3bd8f31a2734ba3a6750fba95edaddd",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_021b78b8c4cb3c72016addd553213487d2a1454fbbc0688693",
+          "requestId": "req_f1b956a8275c49af8c91e116cd7bb2bb",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_01b976a0f5e37c65016addd561ad3c87d2baa99c8c25a605e4",
+          "requestId": "req_70bab54bbdee4729bd617bee972bc878",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "kind": "test",
+      "totalTokens": 48054,
+      "replacedQuestions": 3,
+      "errors": [],
+      "positivePatterns": 0,
+      "feedbackSignals": 0,
+      "model": "gpt-5.6-luna",
+      "createdAt": "2026-10-25T10:09:40.873Z",
+      "questionCount": 8,
+      "failed": false,
+      "questionRepairAttempts": 4,
+      "recurringRuleCandidates": 0,
+      "qualityMemoryVersion": 3,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "inputTokens": 39057,
+      "expiresAt": "2026-11-24T10:09:40.873Z",
+      "qualityWarnings": []
+    },
+    {
+      "id": "OzkamkrSPQR4Q7FYw4iB",
+      "totalTokens": 57133,
+      "pedagogicalPool": {
+        "profileIds": [],
+        "version": "gc-pedagogy-pool-v1",
+        "status": "no_match",
+        "profileCount": 0
+      },
+      "positivePatterns": 0,
+      "qualityMemoryUnavailable": false,
+      "expiresAt": "2026-11-24T10:30:05.397Z",
+      "errors": [],
+      "questionCount": 8,
+      "recurringRuleCandidates": 0,
+      "kind": "test",
+      "fullRepair": false,
+      "providerRequests": [
+        {
+          "responseId": "resp_0870295f8b8ec383016addd9b9ac6087d293a2a3efccbf0edb",
+          "requestId": "req_02916e6c649b4d9894e42598936e626f",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0927eff505dd47d5016addd9db9bac87d2b66535d8ca9dbafc",
+          "requestId": "req_89ce5453c4524e91b703e0694d97893b",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_030a34bd0dfac4a9016addd9e6f68887d29581793a16132290",
+          "requestId": "req_907f4744eb0b4b2999a54662c0f8656c",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0e40994792521f68016addd9f8845c87d287f851921b0127db",
+          "requestId": "req_e7d00dce41bf42c5b293822367743b75",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_09cd0cd6d1d07e73016addda06767887d2b22abd6b578d21d8",
+          "requestId": "req_cb310f666e5548c5bb43e27db247778c",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_03c58c9b9036e41f016addda0fd61887d2bd890387913bd24a",
+          "requestId": "req_f93448a397dd401f824fecf24f543213",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_008aa4fdb32dfe72016addda21594487d2931fb0e524986bab",
+          "requestId": "req_2febe862fecf44fe8b99982c0ef1d6cb",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "feedbackSignals": 0,
+      "replacedQuestions": 4,
+      "failed": false,
+      "createdAt": "2026-10-25T10:30:05.397Z",
+      "questionRepairAttempts": 4,
+      "qualityMemoryVersion": 3,
+      "model": "gpt-5.6-luna",
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "inputTokens": 45978,
+      "qualityReviewPasses": 2,
+      "qualityWarnings": [],
+      "outputTokens": 11155
+    },
+    {
+      "id": "PO1mcnwT1N4H6mFL4Foj",
+      "outputTokens": 18480,
+      "qualityWarnings": [],
+      "failed": false,
+      "qualityReviewPasses": 4,
+      "replacedQuestions": 5,
+      "totalTokens": 88054,
+      "recurringRuleCandidates": 0,
+      "questionCount": 8,
+      "createdAt": "2026-10-25T10:22:42.283Z",
+      "feedbackSignals": 0,
+      "qualityMemoryUnavailable": false,
+      "questionRepairAttempts": 5,
+      "inputTokens": 69574,
+      "providerRequests": [
+        {
+          "responseId": "resp_0a5b625b4a64290a016addd7af9b8087d2bc63eb79a19bc958",
+          "requestId": "req_cefe69a51e19401d8a52fdd067f7403c",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_07ea9c5c3bc1fb06016addd7ddea1087d2b868da53264ff230",
+          "requestId": "req_d1f31160eed7453cbd9e18622b440fbe",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0229336f48e57d74016addd7f983dc87d2bd5c5da83d5f35a3",
+          "requestId": "req_e872b565058048889e6222a87ad40041",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0776bb8fd3a7da77016addd808aab487d2ac05656cdc1e02fa",
+          "requestId": "req_bd08c022cdf0463d87d2335293422826",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_05423cebaca644de016addd81ac14c87d29be93b40cd1a4c3b",
+          "requestId": "req_779241f6c0e54b8f8108547e012d0dab",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0c7f68be2f5c84ab016addd82a3f6c87d29fcbf82856eb9082",
+          "requestId": "req_01275648f38c493896d863eeab37dde9",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0e2f8727360c4f69016addd82f6c4c87d2ab36f7fc6390dbdf",
+          "requestId": "req_e633a8f270c14c078047e25009ea05d1",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_07b8420883c2681a016addd846d15c87d287906e0aad4949d9",
+          "requestId": "req_73bc5ba4a0274f0da81bb2a121016ab7",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0b3cb91b31f5f2ae016addd84ed78887d29d9fe175bc9184fd",
+          "requestId": "req_a2f687047db3471a9b4e7f4f13bde40d",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_01e849caa43001bd016addd863a74c87d2857c6eac1884541e",
+          "requestId": "req_2b6708b27a1f4978be95aad18876def4",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "errors": [],
+      "qualityMemoryVersion": 3,
+      "fullRepair": false,
+      "kind": "test",
+      "positivePatterns": 0,
+      "model": "gpt-5.6-luna",
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "expiresAt": "2026-11-24T10:22:42.282Z",
+      "pedagogicalPool": {
+        "version": "gc-pedagogy-pool-v1",
+        "profileCount": 0,
+        "profileIds": [],
+        "status": "no_match"
+      }
+    },
+    {
+      "id": "Pckt8NYkVefrhIax661t",
+      "feedbackSignals": 0,
+      "qualityReviewPasses": 3,
+      "positivePatterns": 0,
+      "qualityMemoryVersion": 3,
+      "createdAt": "2026-10-25T10:07:07.006Z",
+      "outputTokens": 14898,
+      "recurringRuleCandidates": 0,
+      "qualityMemoryUnavailable": false,
+      "inputTokens": 79115,
+      "providerRequests": [
+        {
+          "responseId": "resp_081dec57d1686dad016addd4344e7487d287193248216fbb71",
+          "requestId": "req_7e965b01f807403ab5e76f636c299fe6",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0a4e764831699ef9016addd458198087d2afc75f27a129d4ce",
+          "requestId": "req_7f440417d975452f839ab9073459f577",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0eb9584248a7d658016addd4602a8087d28151aefe42d93c06",
+          "requestId": "req_df828030a23649de859a1190b37efae6",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0a5494d986da37a9016addd46dc00887d2a8ec2cefe61e8351",
+          "requestId": "req_73197f2fa8204fb0b9b0e17fb8279763",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_020228b5a555e4cf016addd476bfb887d29ec56d9523aea887",
+          "requestId": "req_8f7b3dc5256a49d9b466111eb63f6796",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_022ea15e479dc4e7016addd4877cd487d2a3a6f6fd27f5e738",
+          "requestId": "req_96406d3702df4737b9c44d484a8dbab3",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_01345f0260d97595016addd48ed83087d292016ad98b0aefbf",
+          "requestId": "req_b4a8cda3242043958f7e59aec77115ae",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_03b02646f54b31e1016addd49f0c9c87d2b893cf830732c83f",
+          "requestId": "req_c30329749c304eecba18a18746c761c1",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_00ac627ee0b6a2e5016addd4ae2e0c87d29b97a5f1bf715e78",
+          "requestId": "req_e7d2d235afa2497895be96816033494e",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_068a08b59e82babf016addd4b38ad887d2a2566f96a19dea74",
+          "requestId": "req_6ec1009215d84fd3859f8e8e25ad330e",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0aae30db32368451016addd4bd96ac87d29c7e6e415c582d42",
+          "requestId": "req_bb0664176e2b4bdf9c5933e6c1625b5f",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_025b9de90cdc0b7e016addd4c6cd4087d2a82dc0d091b8fc03",
+          "requestId": "req_6da380500cc84d318dd44d9a0f64f435",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "questionCount": 8,
+      "pedagogicalPool": {
+        "version": "gc-pedagogy-pool-v1",
+        "status": "no_match",
+        "profileCount": 0,
+        "profileIds": []
+      },
+      "errors": [],
+      "model": "gpt-5.6-luna",
+      "kind": "test",
+      "qualityWarnings": [],
+      "replacedQuestions": 5,
+      "totalTokens": 94013,
+      "failed": false,
+      "expiresAt": "2026-11-24T10:07:07.005Z",
+      "fullRepair": false,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "questionRepairAttempts": 8
+    },
+    {
+      "id": "QOkOq00WlkefvtXvr9aj",
+      "expiresAt": "2026-11-24T10:15:41.772Z",
+      "positivePatterns": 0,
+      "questionRepairAttempts": 1,
+      "errors": [],
+      "model": "gpt-5.6-luna",
+      "qualityMemoryVersion": 3,
+      "qualityReviewPasses": 2,
+      "kind": "test",
+      "qualityMemoryUnavailable": false,
+      "fullRepair": false,
+      "recurringRuleCandidates": 0,
+      "qualityWarnings": [],
+      "providerRequests": [
+        {
+          "responseId": "resp_01b09d5242c1a650016addd69af1d487d2894da8430c950119",
+          "requestId": "req_a83f1ea8990e4b91a8c9755858a45288",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0c8b7762b15fca07016addd6b5603c87d2b259c2ca662ad252",
+          "requestId": "req_6c57943552564b3ab0b6e191800a49b9",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0df92707679208b5016addd6bd106487d2ae7a3a756bb4db9c",
+          "requestId": "req_18197b46367049fa86e64113e5f1a377",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0f8086f06930243c016addd6c7432887d296dc60f3001b269c",
+          "requestId": "req_41738f6413da433796b59dcd9ce6c5e0",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "replacedQuestions": 1,
+      "inputTokens": 22438,
+      "createdAt": "2026-10-25T10:15:41.772Z",
+      "failed": false,
+      "pedagogicalPool": {
+        "profileIds": [],
+        "version": "gc-pedagogy-pool-v1",
+        "status": "no_match",
+        "profileCount": 0
+      },
+      "totalTokens": 27575,
+      "feedbackSignals": 0,
+      "outputTokens": 5137,
+      "questionCount": 8
+    },
+    {
+      "id": "caIqWYFMR9WLzIjseySp",
+      "errors": [],
+      "qualityReviewPasses": 3,
+      "expiresAt": "2026-11-24T10:04:25.999Z",
+      "qualityWarnings": [],
+      "recurringRuleCandidates": 0,
+      "inputTokens": 113486,
+      "kind": "test",
+      "fullRepair": false,
+      "questionCount": 8,
+      "totalTokens": 136753,
+      "providerRequests": [
+        {
+          "responseId": "resp_09997cf6a00ed742016addd335a6b087d2b5ef36fc8bb991c3",
+          "requestId": "req_500308bd35204752bc4312adc8ec63d2",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_039cdb829ec24ff4016addd361864c87d2a5797439aa4c4744",
+          "requestId": "req_449a2941a58d49e5a37acad9c62a4645",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0b7c0eb920ba2223016addd36a8a5c87d2a4605df2fe12e86e",
+          "requestId": "req_4ff9eb72872b4c319e7f3a1e469005ad",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0272e2410e3ebc25016addd37550f887d280c9f7eb46050c8e",
+          "requestId": "req_6aa5797052b348f686c034f8ec167877",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0302eed5317ae4e6016addd37f640887d2b31730d5f6e144f4",
+          "requestId": "req_4a0c8b5166bf4ddaabf9d627ba8ba48f",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_06599802bd22e06b016addd38bee2c87d2a0ebce9aca2f2c00",
+          "requestId": "req_72d34f18a5ab4b829526761f58a6df4d",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0a95e43130b3a0f9016addd39a327487d2a6b16ca7ff3952ef",
+          "requestId": "req_9477e144e37b42dd96b8d0a02cc299e5",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0fc4ea19fa0f1548016addd3a5afe487d2b15f9ebaaa8bbfb2",
+          "requestId": "req_34ee9ead250848d4a0d988ac6edc2280",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0d117dca1f9077a2016addd3b7e9c887d297f0b2af10a69418",
+          "requestId": "req_a7bbea1fdfc34585bc131cc289236b68",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_00197f8b29ce8294016addd3c783dc87d2990342ce0a47bd02",
+          "requestId": "req_06b3ab1085794817a9c9dd6e469e1349",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_07652a9dd240519c016addd3cf8f9c87d28038c793598c678b",
+          "requestId": "req_86a2946475ce4095ab5b8d599273650f",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_02f6514fb34a8850016addd3e102fc87d286759bd3e3ee09f3",
+          "requestId": "req_c238d8ed6cff4277b04d510499075081",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0c330cae9a3baa01016addd3f0868487d2ba3445e7795fe9bc",
+          "requestId": "req_9d50752ce32a47dba529f66e399be1f4",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_01a765a5f721272d016addd3ffd6fc87d2b3f7d35a72813e3f",
+          "requestId": "req_571af2bdfa734db88b69f797faf840ef",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_093441171d980302016addd40d90a487d2980c54597e6ac9aa",
+          "requestId": "req_22b96f96b3c240dc809baaee7529e3f6",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_01c39fab6aa88dd5016addd41883d487d2976b346edb087cf1",
+          "requestId": "req_3562fc807c63470580d97d8a003e6abb",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0282cc1067494174016addd4252ce487d2b6ffa16d49b8d574",
+          "requestId": "req_f727a1581bd446b28e1bacc0b55d88e4",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "model": "gpt-5.6-luna",
+      "qualityMemoryVersion": 3,
+      "qualityMemoryUnavailable": false,
+      "pedagogicalPool": {
+        "version": "gc-pedagogy-pool-v1",
+        "status": "no_match",
+        "profileCount": 0,
+        "profileIds": []
+      },
+      "createdAt": "2026-10-25T10:04:25.999Z",
+      "questionRepairAttempts": 13,
+      "failed": false,
+      "outputTokens": 23267,
+      "feedbackSignals": 0,
+      "replacedQuestions": 7,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "positivePatterns": 0
+    },
+    {
+      "id": "egmTBtS5g6XzpnXxAwqV",
+      "questionCount": 8,
+      "expiresAt": "2026-11-24T10:31:52.463Z",
+      "feedbackSignals": 0,
+      "replacedQuestions": 3,
+      "positivePatterns": 0,
+      "qualityMemoryVersion": 3,
+      "providerRequests": [
+        {
+          "responseId": "resp_0c694ecfe6770707016addda34f89c87d2821e4a3e9bcf856e",
+          "requestId": "req_086266e3800f4d59a05b005998ef3640",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0a682ae0940e6513016addda58d41087d2a85d74cc9cee7ed9",
+          "requestId": "req_07197c65868f4f73a2bc4141a6da4034",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0d9fa2de0ab67b34016addda66281087d2a89ff74f52d8f0c1",
+          "requestId": "req_079ffd80c6fe4be1b4d8a8f2953b5575",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_03189ff08a305c5d016addda7336e487d2a22a1fed43d4250f",
+          "requestId": "req_67fca95ff99b477cabcd3d1eb0abd35c",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0548680c46e9e1ad016addda8044f087d293c63c0850ecc02f",
+          "requestId": "req_1c521c5851c34bf28f1e4ac29c35d0b1",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0bc1eb504bb78d48016addda911d8087d2acc42b0540545f29",
+          "requestId": "req_b22b8fc5b43349bda799ca2a9f42a307",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "errors": [],
+      "qualityMemoryUnavailable": false,
+      "inputTokens": 39885,
+      "pedagogicalPool": {
+        "profileIds": [],
+        "status": "no_match",
+        "profileCount": 0,
+        "version": "gc-pedagogy-pool-v1"
+      },
+      "createdAt": "2026-10-25T10:31:52.463Z",
+      "model": "gpt-5.6-luna",
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "qualityWarnings": [],
+      "fullRepair": false,
+      "totalTokens": 49171,
+      "outputTokens": 9286,
+      "qualityReviewPasses": 2,
+      "recurringRuleCandidates": 0,
+      "questionRepairAttempts": 3,
+      "kind": "test",
+      "failed": false
+    },
+    {
+      "id": "g5OCEmxSieNIKFrCCV0A",
+      "qualityWarnings": [],
+      "errors": [],
+      "outputTokens": 18076,
+      "positivePatterns": 0,
+      "createdAt": "2026-10-25T10:38:28.423Z",
+      "providerRequests": [
+        {
+          "responseId": "resp_00a99946fc6b82cd016adddb68119487d280dce872b74d350f",
+          "requestId": "req_2210afd7d2844991a24ad5783f30b40d",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_07569207a0de57be016adddb8c58c487d290923e574c81378f",
+          "requestId": "req_b375d21363af457d9bab059966b64c9e",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0d172cf434ed784e016adddb9c823087d296228518ffe077a4",
+          "requestId": "req_dffaa8d3ba5d47a0bd50c31f8ea08e18",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0f613a216eb2bc06016adddbb231d087d2b56f0e50902c0c43",
+          "requestId": "req_dc9da974df5d4c629398c59eef31996f",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_017af68a6ce49cb1016adddbc5f38c87d2b275343b2699f19f",
+          "requestId": "req_ff2c28874bff429a956cecc6330fad09",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_00e138fe3444ee94016adddbd4714487d2a521dbf9d0cae540",
+          "requestId": "req_58ac0ee3c04e4749afa45623bbf88b62",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0fabf25751d4e5d0016adddbe8a97487d28da1951688e77478",
+          "requestId": "req_13390fff93b74712ae1efaf4d5c6b8be",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_096b54fb47d77b2f016adddbf7f4ec87d28bdca49c7f7fe8dc",
+          "requestId": "req_c62208eee79c481d94d67a31133b6b36",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0566ec8430f0474c016adddc0b44e487d2836a824fe8ca0665",
+          "requestId": "req_5cdb95a8b2b64c2388699180fa9e081b",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0cb4c6af4bfca762016adddc19267487d2982ddf1461d923a1",
+          "requestId": "req_c5a6d9ee7df440e38ef375b9ebb96f03",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "fullRepair": false,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "inputTokens": 67630,
+      "qualityMemoryUnavailable": false,
+      "failed": false,
+      "totalTokens": 85706,
+      "feedbackSignals": 0,
+      "questionCount": 8,
+      "pedagogicalPool": {
+        "status": "no_match",
+        "version": "gc-pedagogy-pool-v1",
+        "profileIds": [],
+        "profileCount": 0
+      },
+      "questionRepairAttempts": 6,
+      "kind": "test",
+      "qualityMemoryVersion": 3,
+      "qualityReviewPasses": 3,
+      "expiresAt": "2026-11-24T10:38:28.423Z",
+      "model": "gpt-5.6-luna",
+      "recurringRuleCandidates": 0,
+      "replacedQuestions": 6
+    },
+    {
+      "id": "ilHR0NJqwPyb4S6aojvy",
+      "questionRepairAttempts": 3,
+      "providerRequests": [
+        {
+          "responseId": "resp_0142ac0336246589016addd59aa19c87d291503aa0b6119ad5",
+          "requestId": "req_bb253993851348cd9a8ee96d215398d5",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0c465dbbc3814fd9016addd5bb9c2487d2901cf86fd49b3d85",
+          "requestId": "req_b841314099c442abb62ca0876ee4173d",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0c6e558d61dad61b016addd5c4dfe887d2add33af67552ea63",
+          "requestId": "req_dbdd92e6e659423f94180c39b805ef3a",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0b33a9e57ed83d0f016addd5d18abc87d2b776a05f81924f7b",
+          "requestId": "req_010aa851db554989958bcb34281d435d",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_01923e1ee0588265016addd5dec25887d28f73ed3fa7d57951",
+          "requestId": "req_7d0b3ff3619d446f835d8ad2d6b47172",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0faa33433214c118016addd5e8e61087d28ccd6effa1315817",
+          "requestId": "req_2ac497ad2c744126801beea2df21c89d",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "failed": false,
+      "recurringRuleCandidates": 0,
+      "qualityMemoryUnavailable": false,
+      "qualityWarnings": [],
+      "qualityReviewPasses": 2,
+      "model": "gpt-5.6-luna",
+      "positivePatterns": 0,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "totalTokens": 46209,
+      "expiresAt": "2026-11-24T10:11:58.936Z",
+      "feedbackSignals": 0,
+      "errors": [],
+      "inputTokens": 37839,
+      "outputTokens": 8370,
+      "qualityMemoryVersion": 3,
+      "fullRepair": false,
+      "pedagogicalPool": {
+        "status": "no_match",
+        "profileCount": 0,
+        "profileIds": [],
+        "version": "gc-pedagogy-pool-v1"
+      },
+      "replacedQuestions": 3,
+      "kind": "test",
+      "createdAt": "2026-10-25T10:11:58.936Z",
+      "questionCount": 8
+    },
+    {
+      "id": "jEp6aem6Fqghn9dJO5eH",
+      "qualityMemoryUnavailable": false,
+      "feedbackSignals": 0,
+      "recurringRuleCandidates": 0,
+      "totalTokens": 53772,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "replacedQuestions": 2,
+      "outputTokens": 9677,
+      "qualityMemoryVersion": 3,
+      "fullRepair": false,
+      "kind": "test",
+      "expiresAt": "2026-11-24T10:24:32.185Z",
+      "qualityReviewPasses": 2,
+      "questionRepairAttempts": 4,
+      "failed": false,
+      "pedagogicalPool": {
+        "profileCount": 0,
+        "profileIds": [],
+        "version": "gc-pedagogy-pool-v1",
+        "status": "no_match"
+      },
+      "questionCount": 8,
+      "providerRequests": [
+        {
+          "responseId": "resp_02a8f7943450396a016addd87c06bc87d2aec917e2e96b6f6e",
+          "requestId": "req_7b9878aa8e14441cb3cca848a2892de7",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_086de84d08c4b13a016addd89e602887d2891068949e170d52",
+          "requestId": "req_92833dc4fe48485c90c254d07669bd9e",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0da5f739b7d84557016addd8a6106487d28ae15b9ab334b8ac",
+          "requestId": "req_7b823d5588cb422d8ad830989cad86ce",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0bb67c44e777f9b3016addd8ae146c87d2b4acb0546d84ed92",
+          "requestId": "req_732dcaed3f2f4f63a45ff4073bd19ce2",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0cc261dbb729afcf016addd8bdfe7887d2ac990f8ae3787121",
+          "requestId": "req_8e648bd232024366b4affef128ed6d29",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_08d58fee5b726cea016addd8cab60087d2a4eb93eb81be8e18",
+          "requestId": "req_57f3c26e8bdf493387b23dcede4bc137",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_05f6f7ab37de4a4d016addd8d94bac87d2815456ce98355a25",
+          "requestId": "req_a7ce30e854094befbcd2f30b6072f59f",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "model": "gpt-5.6-luna",
+      "qualityWarnings": [],
+      "errors": [],
+      "inputTokens": 44095,
+      "positivePatterns": 0,
+      "createdAt": "2026-10-25T10:24:32.186Z"
+    },
+    {
+      "id": "jSJbnz8D6lMRriLM3FA6",
+      "qualityMemoryUnavailable": false,
+      "qualityWarnings": [],
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "outputTokens": 4300,
+      "totalTokens": 26152,
+      "errors": [],
+      "fullRepair": false,
+      "qualityMemoryVersion": 3,
+      "createdAt": "2026-10-25T09:55:36.272Z",
+      "qualityReviewPasses": 2,
+      "failed": false,
+      "questionCount": 8,
+      "kind": "test",
+      "feedbackSignals": 0,
+      "questionRepairAttempts": 1,
+      "positivePatterns": 0,
+      "providerRequests": [
+        {
+          "responseId": "resp_081334a313a36917016addd1ee0ab087d2b4604e0b5b1980bf",
+          "requestId": "req_121f18b435d84b2d83aa1132ef73537f",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_01e9da60aedc6613016addd20790c887d2a48ffdb6db73681c",
+          "requestId": "req_6ad821b93e304ed3acb43508e438a74e",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0f50c13e37492f16016addd20ce53087d2975cf8802a475c0b",
+          "requestId": "req_037b20b191df4a9185483f9632df6087",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0f2066f41f70f349016addd215506487d29d1c45b4b9522da1",
+          "requestId": "req_853ac5e634ab41c8a2f9eb49f862cfb3",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "pedagogicalPool": {
+        "profileIds": [],
+        "profileCount": 0,
+        "version": "gc-pedagogy-pool-v1",
+        "status": "no_match"
+      },
+      "recurringRuleCandidates": 0,
+      "model": "gpt-5.6-luna",
+      "inputTokens": 21852,
+      "expiresAt": "2026-11-24T09:55:36.271Z",
+      "replacedQuestions": 1
+    },
+    {
+      "id": "kwF4LIj7V4tRZK0CyRKV",
+      "outputTokens": 14995,
+      "totalTokens": 93331,
+      "questionRepairAttempts": 8,
+      "qualityWarnings": [],
+      "kind": "test",
+      "model": "gpt-5.6-luna",
+      "qualityMemoryUnavailable": false,
+      "recurringRuleCandidates": 0,
+      "errors": [],
+      "qualityReviewPasses": 3,
+      "questionCount": 8,
+      "createdAt": "2026-10-25T10:14:46.517Z",
+      "replacedQuestions": 6,
+      "providerRequests": [
+        {
+          "responseId": "resp_05198d0b9a5157c3016addd5f743e887d289eb877090ddbe16",
+          "requestId": "req_b7e87e867641407a9f721afb68b52b72",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0e4432fdce6e2054016addd61443e487d2955c436a00690583",
+          "requestId": "req_81f9dd347e2940448ccfc42be606f6f2",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_064b4ec83bb8f1e5016addd61e52c087d285e01979c123ee1c",
+          "requestId": "req_b3b88936cf7541268bcd3ef83576c3d5",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_013d362b79756166016addd63c056c87d2811000a2f14f8bf1",
+          "requestId": "req_64eaf210e2c0489084f7be04e5f1114b",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_02615e9ca7d31d3a016addd646dff487d2bfe7e6d27fbf4c73",
+          "requestId": "req_cde6c625847841e690360b9f66f3f2aa",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0fcc45a338d3abf6016addd65162e087d2bccb96cfca7401c4",
+          "requestId": "req_44d78b02fe88478797d676b91251afc5",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_09e9f7a3e71b6987016addd65ec18c87d2a872092c981c9cc8",
+          "requestId": "req_9b8e3c772aeb4fe7a028d2a81871c692",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0e690756bcc10e29016addd66773b887d29f65be451fc6a98f",
+          "requestId": "req_ad421f2f736642428230b533e080db54",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0cec98ce35e5810b016addd676977c87d29ec2509a981d53fc",
+          "requestId": "req_ca45f8b86528471da37c29250cafe65c",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_05e6c51342763bda016addd67e167887d2884c480e71495942",
+          "requestId": "req_d2acc7061339405083ab623a8ff468c9",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0c741220de6a19cf016addd685351c87d28739993a27e3cecb",
+          "requestId": "req_ce2926bf334b4e4ea0c262ad2fcc0058",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_07968f08d2d812ff016addd6929d7c87d287ad1a4242616084",
+          "requestId": "req_57e5c0a945cf430888ff92ad42afe4bc",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "qualityMemoryVersion": 3,
+      "feedbackSignals": 0,
+      "pedagogicalPool": {
+        "version": "gc-pedagogy-pool-v1",
+        "status": "no_match",
+        "profileCount": 0,
+        "profileIds": []
+      },
+      "fullRepair": false,
+      "inputTokens": 78336,
+      "expiresAt": "2026-11-24T10:14:46.517Z",
+      "failed": false,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "positivePatterns": 0
+    },
+    {
+      "id": "qJNEahSk9RVjzW2Yu0YT",
+      "questionCount": 8,
+      "createdAt": "2026-10-25T10:27:55.902Z",
+      "fullRepair": false,
+      "qualityWarnings": [],
+      "kind": "test",
+      "positivePatterns": 0,
+      "inputTokens": 83498,
+      "failed": false,
+      "model": "gpt-5.6-luna",
+      "qualityReviewPasses": 4,
+      "providerRequests": [
+        {
+          "responseId": "resp_057dd40ceda25714016addd8ec8c2087d28415f7729d268f80",
+          "requestId": "req_fd555094a75243f6a49ce9e36aeb575c",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0cd02a5bf7f020ee016addd917c88087d29e2286b1bf612bbf",
+          "requestId": "req_eeb3484ce5bd44b3bf203c70adbf6cf4",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_09b1bd3ab1407f04016addd91f872c87d2b2877ba3ee305eba",
+          "requestId": "req_330349d7e9824b81ad3645bb4698980a",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0fef397b98dd5f6d016addd9377a5487d28787189e0e89a226",
+          "requestId": "req_8f8ca575674d4c1b90fa7ea7f280925f",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_031a0d0486f7194c016addd944d69087d2b173115c32c90c7b",
+          "requestId": "req_c4247abb1b614ab99f9564b5452d1a35",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0d4dd1f1a326eca7016addd94fc7d087d2a75c3bf1ec20ab5a",
+          "requestId": "req_eef388d3dcc14d3c9c03977d77f94acd",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0b18fc10b638f906016addd965c40c87d2b84972f95f7fd470",
+          "requestId": "req_2bbdf65af081474792b5e8afdc58abbe",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0f35ccfd9416db94016addd977dc4487d28154eb9ec2aca519",
+          "requestId": "req_4cf50f071ef0468da8d68c5e29785b4c",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_09379005ed31c2cb016addd98e4fec87d2adb8f55f50734ad6",
+          "requestId": "req_22b8eaad89cd44c1bb13d9f5e7d6b3ec",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0b185b9085446c84016addd999dd3887d2881776b549e1bc83",
+          "requestId": "req_53a5be2c12034edf9494d8ee772fb051",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0cdf223b55aa8e35016addd99e286487d2ba30de7b21d686c0",
+          "requestId": "req_6c159abbc62b40a78855a42bed7c6528",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_008fb9f43d6fac2f016addd9a958e087d2bf4fbe41ba8acb0d",
+          "requestId": "req_3476ed3cbff645f8ba25be4dda72b126",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "qualityMemoryUnavailable": false,
+      "questionRepairAttempts": 7,
+      "qualityMemoryVersion": 3,
+      "feedbackSignals": 0,
+      "expiresAt": "2026-11-24T10:27:55.902Z",
+      "errors": [],
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "replacedQuestions": 4,
+      "recurringRuleCandidates": 0,
+      "totalTokens": 101523,
+      "pedagogicalPool": {
+        "profileCount": 0,
+        "profileIds": [],
+        "status": "no_match",
+        "version": "gc-pedagogy-pool-v1"
+      },
+      "outputTokens": 18025
+    },
+    {
+      "id": "r86Z3PjjGc28ip5CMB5q",
+      "errors": [],
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "feedbackSignals": 0,
+      "providerRequests": [
+        {
+          "responseId": "resp_040c33fa9435f27c016adddb337c0087d2bd5f564661352589",
+          "requestId": "req_0678078ff4c34f8891218cab90cb900d",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0ecca3157b364c6f016adddb5ba14887d2b992ebb1314466ad",
+          "requestId": "req_34aa55678fcc4d3e8b90d2b03228df8d",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "qualityReviewPasses": 1,
+      "qualityMemoryUnavailable": false,
+      "expiresAt": "2026-11-24T10:35:13.506Z",
+      "positivePatterns": 0,
+      "kind": "test",
+      "pedagogicalPool": {
+        "version": "gc-pedagogy-pool-v1",
+        "profileIds": [],
+        "profileCount": 0,
+        "status": "no_match"
+      },
+      "qualityMemoryVersion": 3,
+      "fullRepair": false,
+      "outputTokens": 4797,
+      "totalTokens": 16732,
+      "questionCount": 8,
+      "model": "gpt-5.6-luna",
+      "questionRepairAttempts": 0,
+      "createdAt": "2026-10-25T10:35:13.506Z",
+      "recurringRuleCandidates": 0,
+      "qualityWarnings": [],
+      "failed": false,
+      "inputTokens": 11935,
+      "replacedQuestions": 0
+    },
+    {
+      "id": "sQTqsyNeKbTPre1bgPA4",
+      "pedagogicalPool": {
+        "status": "no_match",
+        "profileCount": 0,
+        "profileIds": [],
+        "version": "gc-pedagogy-pool-v1"
+      },
+      "failed": false,
+      "model": "gpt-5.6-luna",
+      "questionRepairAttempts": 1,
+      "qualityReviewPasses": 2,
+      "createdAt": "2026-10-25T10:16:47.430Z",
+      "feedbackSignals": 0,
+      "recurringRuleCandidates": 0,
+      "inputTokens": 23247,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "qualityMemoryVersion": 3,
+      "errors": [],
+      "kind": "test",
+      "totalTokens": 28752,
+      "positivePatterns": 0,
+      "fullRepair": false,
+      "qualityWarnings": [],
+      "qualityMemoryUnavailable": false,
+      "providerRequests": [
+        {
+          "responseId": "resp_0917980d6dc10758016addd6d8c3a087d2b754c84a2e594e9c",
+          "requestId": "req_ebb26a2176d547a0bebb52d362cd5f19",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_06624b1a7d0543e7016addd6f546b087d299f4e543b66011bf",
+          "requestId": "req_291bc5ad1a984348bdd04f9450ac4230",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_048e13de168b2fcf016addd6fd8f3087d2bd5de10031615d0a",
+          "requestId": "req_7e097186ee1843cd8a2a2838d43a07d5",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0950cca40bd3c91a016addd708f5cc87d2a2de9abffd1f6c83",
+          "requestId": "req_6f3d5f65c9164befb15126f14b408777",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "expiresAt": "2026-11-24T10:16:47.430Z",
+      "outputTokens": 5505,
+      "questionCount": 8,
+      "replacedQuestions": 1
+    },
+    {
+      "id": "tkYGb1ItrOY5IhxdQqLh",
+      "inputTokens": 51589,
+      "createdAt": "2026-10-25T10:34:16.393Z",
+      "outputTokens": 12847,
+      "questionCount": 8,
+      "kind": "test",
+      "qualityWarnings": [],
+      "failed": false,
+      "model": "gpt-5.6-luna",
+      "questionRepairAttempts": 4,
+      "qualityMemoryUnavailable": false,
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "expiresAt": "2026-11-24T10:34:16.393Z",
+      "positivePatterns": 0,
+      "replacedQuestions": 4,
+      "pedagogicalPool": {
+        "profileCount": 0,
+        "status": "no_match",
+        "profileIds": [],
+        "version": "gc-pedagogy-pool-v1"
+      },
+      "qualityReviewPasses": 3,
+      "recurringRuleCandidates": 0,
+      "errors": [],
+      "qualityMemoryVersion": 3,
+      "fullRepair": false,
+      "totalTokens": 64436,
+      "providerRequests": [
+        {
+          "responseId": "resp_0778f2f27ca38de1016adddaa5798c87d29e3298507c775da3",
+          "requestId": "req_32b8309da8014b0182a139aa0a8981aa",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0736818c6930deac016adddac76b5087d2be7fab5cd5627969",
+          "requestId": "req_40bd35320206429c9e5c04a295906dae",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0cfeda0efe6824cb016adddad922e087d28d7309eebdfddda7",
+          "requestId": "req_fa00525d50a14bcab438508c2eb9afa9",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_00ec2c6b03bffe92016adddae8120887d2a865a1ca8123407f",
+          "requestId": "req_9352396817844b2a9069f63bda266948",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_085a4ed62990eb1b016adddafe44d887d2b61bcebf974d2393",
+          "requestId": "req_b13c15113b164f6482da3a175d82ad0a",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_08d6421f18c9369c016adddb067eac87d2986eaf6e4fa97f75",
+          "requestId": "req_f240273744404d84bf0a0ee500b79266",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_020c5460bd2cb616016adddb0e8eac87d2aef448ab801cd21f",
+          "requestId": "req_0e6db68419314b50a5c31b5f0d376d82",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_044f257e8ff71496016adddb21cd0c87d28c075df88865e77f",
+          "requestId": "req_4ccf72439959434e83b95b2cdceecf5c",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "feedbackSignals": 0
+    },
+    {
+      "id": "uErEp2opeCjcanGUO0mj",
+      "inputTokens": 12257,
+      "createdAt": "2026-10-25T10:08:03.352Z",
+      "pedagogicalPool": {
+        "profileCount": 0,
+        "status": "no_match",
+        "version": "gc-pedagogy-pool-v1",
+        "profileIds": []
+      },
+      "questionCount": 8,
+      "fullRepair": false,
+      "questionRepairAttempts": 0,
+      "qualityMemoryVersion": 3,
+      "failed": false,
+      "feedbackSignals": 0,
+      "outputTokens": 5030,
+      "qualityMemoryUnavailable": false,
+      "kind": "test",
+      "expiresAt": "2026-11-24T10:08:03.352Z",
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "model": "gpt-5.6-luna",
+      "providerRequests": [
+        {
+          "responseId": "resp_04abb88da0f0d95d016addd4d7af0887d2989948185433d707",
+          "requestId": "req_d8b9a1d05b464f03ae89d642ca698d05",
+          "model": "gpt-5.6-luna"
+        },
+        {
+          "responseId": "resp_0a026e065f18dbe8016addd4f9e06487d2936f32700d43069b",
+          "requestId": "req_5672cecaff0a422c976635de74707bef",
+          "model": "gpt-5.6-luna"
+        }
+      ],
+      "positivePatterns": 0,
+      "replacedQuestions": 0,
+      "errors": [],
+      "recurringRuleCandidates": 0,
+      "totalTokens": 17287,
+      "qualityReviewPasses": 1,
+      "qualityWarnings": []
+    }
+  ],
+  "totals": {
+    "events": 24,
+    "inputTokens": 1042729,
+    "outputTokens": 244582,
+    "providerRequests": 161,
+    "replacedQuestions": 67,
+    "money": "unknown"
+  }
+}

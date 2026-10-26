@@ -1,4 +1,5 @@
 "use strict";
+const { QUESTION_TYPES } = require("./constants");
 
 const {
   normalizePrepareRequest,
@@ -44,7 +45,7 @@ function createQuickRemyService({ requireUser, consumeQuota, interpret, recordUs
     const result = await startJob(uid, {
       ...input.preparedRequest,
       clientRequestId: input.requestId,
-      allowedTypes: ["single", "multi", "text", "dropdown", "truefalse", "gapfill", "matching", "ordering", "grouping", "markwords", "number"],
+      allowedTypes: [...QUESTION_TYPES],
       points: input.preparedRequest.count,
       imageMode: "none"
     });

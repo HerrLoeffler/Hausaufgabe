@@ -75,6 +75,7 @@ async function logUsage(uid, kind, usage = {}, extra = {}) {
   const details = compactExtra(extra);
   const event = {
     ...details,
+    ...(Array.isArray(usage.providerRequests) ? { providerRequests: usage.providerRequests.slice(-100) } : {}),
     kind: String(kind || "unknown").slice(0, 80),
     ...numbers,
     createdAt: Timestamp.now(),

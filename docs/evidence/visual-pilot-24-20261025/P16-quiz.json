@@ -1,0 +1,183 @@
+{
+  "pilotId": "P16",
+  "at": "2026-10-25T10:22:50.867Z",
+  "quiz": {
+    "totalPoints": 16,
+    "listeningOnlyQuestionCount": 0,
+    "solutionAudioQuestionCount": 0,
+    "requiresSecureAssessmentRules": false,
+    "gradeScaleId": "standard",
+    "ended": false,
+    "shuffleAnswers": false,
+    "generationJobId": "333488666c1fab90ef5ac8d89ab3f02393b6491b",
+    "shuffleQuestions": false,
+    "isDeleted": false,
+    "rightsHold": false,
+    "sessionState": "open",
+    "createdAt": "2026-10-25T10:22:42.504Z",
+    "published": false,
+    "shareEnabled": false,
+    "updatedAt": "2026-10-25T10:22:44.320Z",
+    "generationStatus": "ready",
+    "contentLocale": "de-DE",
+    "audioReady": true,
+    "showSolutions": true,
+    "qualityIssues": [],
+    "grade": "10",
+    "accessCode": "RW2NRJ5R",
+    "subject": "Natur und Technik",
+    "title": "Experimente und wissenschaftliche Aussagen",
+    "localeContractVersion": 1,
+    "gradeScaleSnapshot": {
+      "id": "standard",
+      "name": "Standard",
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ]
+    },
+    "qualityWarnings": [],
+    "creationContext": {
+      "contentLocale": "de-DE",
+      "learningGoals": [],
+      "region": "Bayern",
+      "topic": "Experimente und wissenschaftliche Aussagen: Kontrollierte Variablen, Messwertauswertung und Grenzen von Schlussfolgerungen an vollständigen fiktiven Versuchsdaten",
+      "schoolType": "Mittelschule",
+      "difficulty": "mittel bis anspruchsvoll"
+    },
+    "solutionAudioReady": true,
+    "resultMode": "points_grade",
+    "startMode": "student",
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "status": "no_match",
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": []
+    },
+    "audioQuestionCount": 0,
+    "ownerId": "gc-visual255-e2e",
+    "description": "Viel Erfolg beim Test!",
+    "gradingLocale": "de-DE",
+    "audioAnswerQuestionCount": 0,
+    "questionCount": 8,
+    "id": "RW2NRJ5R"
+  },
+  "questions": [
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"nt10-rollen-versuch-01\",\"revision\":0,\"format\":\"table\",\"title\":\"Variablen im Versuch erkennen\",\"subject\":\"Natur und Technik\",\"grade\":\"10\",\"prompt\":\"Ordne im fiktiven Versuch die veränderte Größe, die gemessene Größe und die konstant gehaltenen Größen den passenden Rollen zu. Fiktive Versuchsdaten: Drei Gruppen von Kressepflanzen erhalten 0 g, 2 g oder 4 g Dünger. Wassermenge, Lichtdauer, Topfgröße und Pflanzenart bleiben gleich. Nach 14 Tagen wird die Pflanzenhöhe gemessen.\",\"hint\":\"Trage für jede Eingabezelle eine passende fachliche Bezeichnung ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Rolle\",\"Eintrag\"],\"rows\":[[{\"id\":\"r1\",\"text\":\"Veränderte Größe\",\"input\":false},{\"id\":\"a1\",\"text\":\"\",\"input\":true}],[{\"id\":\"r2\",\"text\":\"Gemessene Größe\",\"input\":false},{\"id\":\"a2\",\"text\":\"\",\"input\":true}],[{\"id\":\"r3\",\"text\":\"Konstant gehaltene Größen\",\"input\":false},{\"id\":\"a3\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"text\",\"numericForm\":\"any\"},\"solution\":{\"cells\":[{\"id\":\"a1\",\"accepted\":[\"Düngermenge\",\"Menge des Düngers\"]},{\"id\":\"a2\",\"accepted\":[\"Pflanzenhöhe\",\"Höhe der Pflanzen\"]},{\"id\":\"a3\",\"accepted\":[\"Wassermenge, Lichtdauer, Topfgröße und Pflanzenart\",\"Wassermenge; Lichtdauer; Topfgröße; Pflanzenart\"]}]},\"objective\":\"Unabhängige, abhängige und kontrollierte Variablen in einem Versuch unterscheiden.\",\"rationale\":\"Die Variablenrollen werden aus dem vollständigen Versuchsaufbau abgeleitet.\",\"sourceNote\":\"Eigenes Beispiel mit vollständig fiktiven Versuchsdaten.\"}",
+      "type": "visual",
+      "text": "Ordne im fiktiven Versuch die veränderte Größe, die gemessene Größe und die konstant gehaltenen Größen den passenden Rollen zu.",
+      "updatedAt": "2026-10-25T10:22:42.654Z",
+      "position": 1,
+      "points": 2,
+      "id": "q001"
+    },
+    {
+      "type": "visual",
+      "text": "Übertrage die fiktiven Messwerte in das Säulendiagramm.",
+      "position": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"nt10-saeulen-messwerte-02\",\"revision\":0,\"format\":\"chart\",\"title\":\"Messwerte als Säulendiagramm\",\"subject\":\"Natur und Technik\",\"grade\":\"10\",\"prompt\":\"Übertrage die fiktiven Messwerte in das Säulendiagramm. Die Zahlen geben die durchschnittliche Pflanzenhöhe nach 14 Tagen an.\",\"hint\":\"Ordne jede Säule der richtigen Düngermenge zu. Die Einheit ist Zentimeter.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":20,\"step\":1,\"unit\":\"cm\",\"categories\":[{\"id\":\"c0\",\"label\":\"0 g Dünger\",\"value\":8},{\"id\":\"c2\",\"label\":\"2 g Dünger\",\"value\":13},{\"id\":\"c4\",\"label\":\"4 g Dünger\",\"value\":15},{\"id\":\"c6\",\"label\":\"6 g Dünger\",\"value\":12}]},\"solution\":{\"values\":{\"c0\":8,\"c2\":13,\"c4\":15,\"c6\":12}},\"objective\":\"Gegebene Messwerte maßstabsgetreu in einem Säulendiagramm darstellen.\",\"rationale\":\"Die Daten werden ohne zusätzliche Schlussfolgerung in eine geeignete grafische Darstellung übertragen.\",\"sourceNote\":\"Eigenes Beispiel mit vollständig fiktiven Messwerten.\"}",
+      "updatedAt": "2026-10-25T10:22:42.845Z",
+      "points": 2,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "id": "q002"
+    },
+    {
+      "updatedAt": "2026-10-25T10:22:43.055Z",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"nt10-evidenz-keimrate-03\",\"revision\":0,\"format\":\"evidence\",\"title\":\"Messdaten als Beleg auswählen\",\"subject\":\"Natur und Technik\",\"grade\":\"10\",\"prompt\":\"Markiere genau die beiden Sätze, die die Aussage stützen, dass eine höhere Salzkonzentration in diesem Versuch mit einer geringeren Keimrate zusammenhing.\",\"hint\":\"Wähle nur Sätze aus, die konkrete fiktive Versuchsdaten oder einen direkten Vergleich nennen.\",\"maxPoints\":2,\"spec\":{\"tokens\":[{\"id\":\"s1\",\"text\":\"In jeder Schale lagen 20 Samen derselben fiktiven Pflanzenart.\"},{\"id\":\"s2\",\"text\":\"Bei 0,0 Prozent Salz keimten 18 von 20 Samen.\"},{\"id\":\"s3\",\"text\":\"Bei 1,0 Prozent Salz keimten nur 7 von 20 Samen.\"},{\"id\":\"s4\",\"text\":\"Alle Schalen standen während des Versuchs gleich lange im Licht.\"},{\"id\":\"s5\",\"text\":\"Die Keimlinge wurden nach sieben Tagen fotografiert.\"}]},\"solution\":{\"selections\":[[\"s2\",\"s3\"]]},\"objective\":\"Konkrete Messdaten als Beleg für eine fachliche Aussage identifizieren.\",\"rationale\":\"Die beiden Keimzahlen ermöglichen den direkten Vergleich der Salzkonzentrationen.\",\"sourceNote\":\"Eigenes Beispiel mit vollständig fiktiven Versuchsdaten.\"}",
+      "text": "Markiere genau die beiden Sätze, die die Aussage stützen, dass eine höhere Salzkonzentration in diesem Versuch mit einer geringeren Keimrate zusammenhing.",
+      "position": 3,
+      "points": 2,
+      "id": "q003"
+    },
+    {
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"nt10-spannweite-reaktionszeit-04\",\"revision\":0,\"format\":\"table\",\"title\":\"Messwerte aus einem fiktiven Versuch auswerten\",\"subject\":\"Natur und Technik\",\"grade\":\"10\",\"prompt\":\"Berechne für jede Temperatur die Spannweite der drei Messwerte. Die Spannweite ist die Differenz zwischen dem größten und dem kleinsten Messwert. Trage die Ergebnisse in Sekunden in die leeren Zellen ein.\",\"hint\":\"Subtrahiere in jeder Zeile den kleinsten Messwert vom größten Messwert.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Temperatur\",\"Messwert 1 (s)\",\"Messwert 2 (s)\",\"Messwert 3 (s)\",\"Spannweite (s)\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"20 °C\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"42\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"45\",\"input\":false},{\"id\":\"r1c4\",\"text\":\"43\",\"input\":false},{\"id\":\"r1c5\",\"text\":\"\",\"input\":true}],[{\"id\":\"r2c1\",\"text\":\"40 °C\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"31\",\"input\":false},{\"id\":\"r2c3\",\"text\":\"29\",\"input\":false},{\"id\":\"r2c4\",\"text\":\"34\",\"input\":false},{\"id\":\"r2c5\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"r1c5\",\"accepted\":[\"3\"]},{\"id\":\"r2c5\",\"accepted\":[\"5\"]}]},\"objective\":\"Die Spannweite wiederholter Messwerte berechnen und zur Beurteilung der Streuung nutzen.\",\"rationale\":\"Die Spannweite wird aus dem größten und dem kleinsten Messwert jeder Versuchsbedingung bestimmt.\",\"sourceNote\":\"Eigene fiktive Messdaten zu einem Versuch mit unterschiedlichen Temperaturen; keine realen Schülerdaten.\"}",
+      "points": 2,
+      "position": 4,
+      "updatedAt": "2026-10-25T10:22:43.236Z",
+      "text": "Berechne für jede Temperatur die Spannweite der drei Messwerte. Die Spannweite ist die Differenz zwischen dem größten und dem kleinsten Messwert. Trage die Ergebnisse in Sekunden in die leeren Zellen ein.",
+      "type": "visual",
+      "id": "q004"
+    },
+    {
+      "points": 2,
+      "position": 5,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"nt10-relative-aenderung-05\",\"revision\":0,\"format\":\"table\",\"title\":\"Absolute und relative Änderung auswerten\",\"subject\":\"Natur und Technik\",\"grade\":\"10\",\"prompt\":\"Werte die vollständigen fiktiven Versuchsdaten aus. Berechne die Verringerung der Reaktionszeit von Bedingung A zu Bedingung B einmal absolut in Sekunden und einmal relativ in Prozent. Trage beide Ergebnisse in die leeren Zellen ein.\",\"hint\":\"Für die relative Verringerung beziehst du die absolute Verringerung auf den Messwert von Bedingung A und gibst das Ergebnis in Prozent an.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Messgröße\",\"Bedingung A\",\"Bedingung B\",\"Auswertung\",\"Ergebnis\"],\"rows\":[[{\"id\":\"r1c1\",\"text\":\"Reaktionszeit in Sekunden\",\"input\":false},{\"id\":\"r1c2\",\"text\":\"40\",\"input\":false},{\"id\":\"r1c3\",\"text\":\"30\",\"input\":false},{\"id\":\"r1c4\",\"text\":\"absolute Verringerung in Sekunden\",\"input\":false},{\"id\":\"r1c5\",\"text\":\"\",\"input\":true}],[{\"id\":\"r2c1\",\"text\":\"Reaktionszeit in Sekunden\",\"input\":false},{\"id\":\"r2c2\",\"text\":\"40\",\"input\":false},{\"id\":\"r2c3\",\"text\":\"30\",\"input\":false},{\"id\":\"r2c4\",\"text\":\"relative Verringerung in Prozent\",\"input\":false},{\"id\":\"r2c5\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"r1c5\",\"accepted\":[\"10\",\"10,0\"]},{\"id\":\"r2c5\",\"accepted\":[\"25\",\"25,0\"]}]},\"objective\":\"Absolute und relative Änderungen aus vollständigen fiktiven Messdaten berechnen.\",\"rationale\":\"Die Aufgabe prüft, ob eine Messwertdifferenz korrekt bestimmt und anschließend auf den Referenzwert bezogen wird.\",\"sourceNote\":\"Eigenes Beispiel mit vollständig fiktiven Versuchsdaten zu einer Reaktionszeit.\"}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "text": "Werte die vollständigen fiktiven Versuchsdaten aus. Berechne die Verringerung der Reaktionszeit von Bedingung A zu Bedingung B einmal absolut in Sekunden und einmal relativ in Prozent. Trage beide Ergebnisse in die leeren Zellen ein.",
+      "type": "visual",
+      "updatedAt": "2026-10-25T10:22:43.466Z",
+      "id": "q005"
+    },
+    {
+      "points": 2,
+      "position": 6,
+      "updatedAt": "2026-10-25T10:22:43.727Z",
+      "type": "visual",
+      "text": "Berechne für jeden fiktiven Messwert die absolute Abweichung vom Referenzwert. Trage die Ergebnisse in Gramm in die leeren Zellen ein.",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"nt10-absolute-messabweichung-06\",\"revision\":0,\"format\":\"table\",\"title\":\"Absolute Messabweichungen bestimmen\",\"subject\":\"Natur und Technik\",\"grade\":\"10\",\"prompt\":\"Berechne für jeden fiktiven Messwert die absolute Abweichung vom Referenzwert. Trage die Ergebnisse in Gramm in die leeren Zellen ein.\",\"hint\":\"Verwende für jede Zeile die Differenz zwischen Messwert und Referenzwert ohne negatives Vorzeichen.\",\"maxPoints\":2,\"objective\":\"Absolute Abweichungen von Messwerten gegenüber einem Referenzwert berechnen.\",\"rationale\":\"Die Aufgabe prüft die Auswertung fiktiver Messdaten und die korrekte Bestimmung absoluter Abweichungen.\",\"sourceNote\":\"Eigenes Beispiel mit vollständig fiktiven Messwerten.\",\"spec\":{\"columns\":[\"Messgerät\",\"Referenzwert in g\",\"Messwert in g\",\"Absolute Abweichung in g\"],\"rows\":[[{\"id\":\"geraet_a\",\"text\":\"Messgerät A\",\"input\":false},{\"id\":\"referenz_a\",\"text\":\"25,0\",\"input\":false},{\"id\":\"messwert_a\",\"text\":\"24,6\",\"input\":false},{\"id\":\"abweichung_a\",\"text\":\"\",\"input\":true}],[{\"id\":\"geraet_b\",\"text\":\"Messgerät B\",\"input\":false},{\"id\":\"referenz_b\",\"text\":\"25,0\",\"input\":false},{\"id\":\"messwert_b\",\"text\":\"25,8\",\"input\":false},{\"id\":\"abweichung_b\",\"text\":\"\",\"input\":true}],[{\"id\":\"geraet_c\",\"text\":\"Messgerät C\",\"input\":false},{\"id\":\"referenz_c\",\"text\":\"25,0\",\"input\":false},{\"id\":\"messwert_c\",\"text\":\"24,9\",\"input\":false},{\"id\":\"abweichung_c\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"decimal\"},\"solution\":{\"cells\":[{\"id\":\"abweichung_a\",\"accepted\":[\"0,4\",\"0.4\"]},{\"id\":\"abweichung_b\",\"accepted\":[\"0,8\",\"0.8\"]},{\"id\":\"abweichung_c\",\"accepted\":[\"0,1\",\"0.1\"]}]}}",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "id": "q006"
+    },
+    {
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"nt10-aussagen-einordnen-07\",\"revision\":0,\"format\":\"connections\",\"title\":\"Aussagen zu fiktiven Versuchsdaten einordnen\",\"subject\":\"Natur und Technik\",\"grade\":\"10\",\"prompt\":\"Ordne die vier Aussagen anhand der vollständigen fiktiven Versuchsdaten jeweils einer fachlichen Einordnung zu. Verwende jede Verbindung genau einmal. Im Versuch wurde die Aktivität eines Enzyms bei pH 7 nach 10 Minuten gemessen; Temperatur und Enzymmenge waren die einzigen veränderten Bedingungen. Messwerte: 15 °C: 8 Einheiten, 20 °C: 14 Einheiten, 25 °C: 21 Einheiten, 30 °C: 19 Einheiten.\",\"hint\":\"Vergleiche jede Aussage mit allen angegebenen Messwerten. Berücksichtige auch, welche Temperaturbereiche tatsächlich untersucht wurden.\",\"maxPoints\":2,\"spec\":{\"directed\":false,\"nodes\":[{\"id\":\"s1\",\"label\":\"Im untersuchten Bereich stieg die Enzymaktivität von 15 °C bis 25 °C an.\",\"x\":100,\"y\":65},{\"id\":\"s2\",\"label\":\"Bei 30 °C war die Enzymaktivität höher als bei 25 °C.\",\"x\":100,\"y\":125},{\"id\":\"s3\",\"label\":\"Die optimale Temperatur des Enzyms liegt bei 40 °C.\",\"x\":100,\"y\":185},{\"id\":\"s4\",\"label\":\"Zwischen 15 °C und 30 °C verlief die Enzymaktivität durchgehend steigend.\",\"x\":100,\"y\":245},{\"id\":\"k1\",\"label\":\"Durch die Daten gestützt\",\"x\":560,\"y\":80},{\"id\":\"k2\",\"label\":\"Durch die Daten widerlegt\",\"x\":560,\"y\":160},{\"id\":\"k3\",\"label\":\"Nicht untersucht: außerhalb des geprüften Bereichs\",\"x\":560,\"y\":240}]},\"solution\":{\"edges\":[[\"s1\",\"k1\"],[\"s2\",\"k2\"],[\"s3\",\"k3\"],[\"s4\",\"k2\"]]},\"objective\":\"Aussagen anhand vollständiger fiktiver Messdaten prüfen und die Reichweite von Schlussfolgerungen beurteilen.\",\"rationale\":\"Die Messwerte stützen den Anstieg bis 25 °C, widerlegen die Aussagen über eine höhere Aktivität bei 30 °C sowie einen durchgehenden Anstieg und erlauben keine Aussage über die nicht geprüfte Temperatur 40 °C.\",\"sourceNote\":\"Eigenes Beispiel mit vollständig fiktiven Versuchsdaten.\"}",
+      "type": "visual",
+      "text": "Ordne die vier Aussagen anhand der vollständigen fiktiven Versuchsdaten jeweils einer fachlichen Einordnung zu. Verwende jede Verbindung genau einmal. Im Versuch wurde die Aktivität eines Enzyms bei pH 7 nach 10 Minuten gemessen; Temperatur und Enzymmenge waren die einzigen veränderten Bedingungen. Messwerte: 15 °C: 8 Einheiten, 20 °C: 14 Einheiten, 25 °C: 21 Einheiten, 30 °C: 19 Einheiten.",
+      "position": 7,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T10:22:43.890Z",
+      "id": "q007"
+    },
+    {
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"nt10-median-loesungszeit-08\",\"revision\":0,\"format\":\"table\",\"title\":\"Messwerte eines fiktiven Lösungsversuchs auswerten\",\"subject\":\"Natur und Technik\",\"grade\":\"10\",\"prompt\":\"Bestimme für jede Temperatur den Median der drei Messwerte. Trage die Ergebnisse in Sekunden in die leeren Zellen ein.\",\"hint\":\"Ordne die drei Messwerte gedanklich der Größe nach. Der mittlere Wert ist der Median. Gib ganze Zahlen ein.\",\"maxPoints\":2,\"spec\":{\"columns\":[\"Temperatur\",\"Messung 1 (s)\",\"Messung 2 (s)\",\"Messung 3 (s)\",\"Median (s)\"],\"rows\":[[{\"id\":\"a1\",\"text\":\"20 °C\",\"input\":false},{\"id\":\"a2\",\"text\":\"42\",\"input\":false},{\"id\":\"a3\",\"text\":\"38\",\"input\":false},{\"id\":\"a4\",\"text\":\"40\",\"input\":false},{\"id\":\"a5\",\"text\":\"\",\"input\":true}],[{\"id\":\"b1\",\"text\":\"40 °C\",\"input\":false},{\"id\":\"b2\",\"text\":\"25\",\"input\":false},{\"id\":\"b3\",\"text\":\"31\",\"input\":false},{\"id\":\"b4\",\"text\":\"28\",\"input\":false},{\"id\":\"b5\",\"text\":\"\",\"input\":true}]],\"answerMode\":\"numeric\",\"numericForm\":\"integer\"},\"solution\":{\"cells\":[{\"id\":\"a5\",\"accepted\":[\"40\"]},{\"id\":\"b5\",\"accepted\":[\"28\"]}]},\"objective\":\"Den Median wiederholter fiktiver Messwerte bestimmen und zur robusten Beschreibung einer Messreihe verwenden.\",\"rationale\":\"Die drei Messwerte jeder Temperaturbedingung sind vollständig angegeben. Der jeweils mittlere Wert nach dem Ordnen ist eindeutig bestimmbar.\",\"sourceNote\":\"Eigenes Beispiel mit vollständig fiktiven Messdaten zu einem Versuch mit einer Brausetablette. Vor Verwendung fachlich prüfen.\"}",
+      "type": "visual",
+      "text": "Bestimme für jede Temperatur den Median der drei Messwerte. Trage die Ergebnisse in Sekunden in die leeren Zellen ein.",
+      "position": 8,
+      "updatedAt": "2026-10-25T10:22:44.107Z",
+      "points": 2,
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "id": "q008"
+    }
+  ]
+}

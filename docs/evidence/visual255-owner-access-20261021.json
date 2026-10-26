@@ -1,0 +1,197 @@
+{
+  "project": "gradecrew-staging-2026",
+  "at": "2026-10-21T21:19:01.527Z",
+  "sourceCommit": "a18870f5086adaf3985c75d0070b22ddef2b84e2",
+  "ownAccount": {
+    "role": "teacher",
+    "status": "active"
+  },
+  "functions": [
+    {
+      "name": "visual255StartAssessmentAttempt",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:31.923597556Z",
+      "revision": "visual255startassessmentattempt-00002-dam",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255StartAssessmentAttempt/function-source.zip",
+        "generation": "1792617504226766"
+      }
+    },
+    {
+      "name": "visual255ProcessAiTestJob",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:44.541692461Z",
+      "revision": "visual255processaitestjob-00002-ciw",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255ProcessAiTestJob/function-source.zip",
+        "generation": "1792617514380283"
+      }
+    },
+    {
+      "name": "visual255StartAiTestVariantJob",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:43.168389858Z",
+      "revision": "visual255startaitestvariantjob-00002-roq",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255StartAiTestVariantJob/function-source.zip",
+        "generation": "1792617514348753"
+      }
+    },
+    {
+      "name": "visual255SubmitQuickRemy",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:36.798681655Z",
+      "revision": "visual255submitquickremy-00002-qun",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255SubmitQuickRemy/function-source.zip",
+        "generation": "1792617504474193"
+      }
+    },
+    {
+      "name": "visual255ReviseWholeTest",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:45.105408486Z",
+      "revision": "visual255revisewholetest-00002-yet",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255ReviseWholeTest/function-source.zip",
+        "generation": "1792617514478426"
+      }
+    },
+    {
+      "name": "visual255RegenerateQuestion",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:43.350656584Z",
+      "revision": "visual255regeneratequestion-00002-lev",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255RegenerateQuestion/function-source.zip",
+        "generation": "1792617514427780"
+      }
+    },
+    {
+      "name": "visual255GetQuickRemySubmission",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:33.713368697Z",
+      "revision": "visual255getquickremysubmission-00002-vis",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255GetQuickRemySubmission/function-source.zip",
+        "generation": "1792617466741129"
+      }
+    },
+    {
+      "name": "visual255StartAiTestJob",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:42.787858735Z",
+      "revision": "visual255startaitestjob-00002-doq",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255StartAiTestJob/function-source.zip",
+        "generation": "1792617514424647"
+      }
+    },
+    {
+      "name": "visual255ResumeAssessmentAttempt",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:32.911393335Z",
+      "revision": "visual255resumeassessmentattempt-00002-rus",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255ResumeAssessmentAttempt/function-source.zip",
+        "generation": "1792617504272676"
+      }
+    },
+    {
+      "name": "visual255SubmitAssessmentAttempt",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:32.659930726Z",
+      "revision": "visual255submitassessmentattempt-00002-rul",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255SubmitAssessmentAttempt/function-source.zip",
+        "generation": "1792617504469179"
+      }
+    },
+    {
+      "name": "visual255PrepareQuickRemy",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:33.083623646Z",
+      "revision": "visual255preparequickremy-00002-lej",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255PrepareQuickRemy/function-source.zip",
+        "generation": "1792617504514408"
+      }
+    },
+    {
+      "name": "visual255GetAssessmentReceipt",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:31.923189802Z",
+      "revision": "visual255getassessmentreceipt-00002-qif",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255GetAssessmentReceipt/function-source.zip",
+        "generation": "1792617504246900"
+      }
+    },
+    {
+      "name": "visual255GetAssessmentInfo",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:31.778715475Z",
+      "revision": "visual255getassessmentinfo-00002-yom",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255GetAssessmentInfo/function-source.zip",
+        "generation": "1792617504188712"
+      }
+    },
+    {
+      "name": "visual255ConfigurePracticeSolutionRelease",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:29.244445833Z",
+      "revision": "visual255configurepracticesolutionrelease-00002-luv",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255ConfigurePracticeSolutionRelease/function-source.zip",
+        "generation": "1792617466762138"
+      }
+    },
+    {
+      "name": "visual255CrewAssistant",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:35.143638270Z",
+      "revision": "visual255crewassistant-00002-peq",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255CrewAssistant/function-source.zip",
+        "generation": "1792617466685384"
+      }
+    },
+    {
+      "name": "visual255GenerateTest",
+      "state": "ACTIVE",
+      "updateTime": "2026-10-21T21:18:33.707729697Z",
+      "revision": "visual255generatetest-00002-ten",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "visual255GenerateTest/function-source.zip",
+        "generation": "1792617466761105"
+      }
+    }
+  ],
+  "expectedCount": 16,
+  "newAiCalls": 0,
+  "scope": "visual255-ai,visual255-assessment only; no Hosting deploy; no School Live operations",
+  "tests": {
+    "previewAccess": 4,
+    "functions": 293,
+    "assessment": 97,
+    "failed": 0
+  },
+  "authorization": "Explicit user consent in this task on 2026-10-21; only the verified own staging UID is added to the isolated preview allowlist."
+}

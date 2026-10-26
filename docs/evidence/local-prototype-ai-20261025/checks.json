@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-25",
+  "scope": "localhost8784 with existing isolated visual255 test AI",
+  "checks": [
+    {
+      "requestId": "b959edaf-4f74-4334-8332-683eb7d8ab56",
+      "kind": "generate",
+      "jobId": "8635d516530703b22ce3d4f805bd2b406e2377a2",
+      "quizId": "ZPCM3PFL",
+      "model": null,
+      "status": "ready",
+      "questionCount": 9,
+      "points": 24,
+      "solutionFreePaper": true,
+      "formats": [
+        "angle",
+        "coordinate",
+        "chart",
+        "connections",
+        "range",
+        "table",
+        "correction",
+        "grid",
+        "coordinate"
+      ],
+      "changedCount": null
+    },
+    {
+      "requestId": "7938a143-0160-439e-9ad8-d0d6b96355ed",
+      "kind": "revise",
+      "jobId": null,
+      "quizId": null,
+      "model": "gpt-5.6-luna",
+      "status": "ready",
+      "questionCount": 9,
+      "points": 24,
+      "solutionFreePaper": true,
+      "formats": [
+        "angle",
+        "coordinate",
+        "chart",
+        "connections",
+        "range",
+        "table",
+        "correction",
+        "grid",
+        "coordinate"
+      ],
+      "changedCount": 9
+    }
+  ]
+}

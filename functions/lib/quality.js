@@ -102,6 +102,7 @@ function questionSnapshotForMemory(q = {}) {
     targetWords: q.targetWords || [],
     markGroups: q.markGroups || [],
     gapColors: q.gapColors || [],
+    ...(q.type === "visual" ? { visualTask: q.visualTask } : {}),
     numericAnswer: q.numericAnswer,
     unit: q.unit || "",
     mediaIntent: { kind }
@@ -349,6 +350,12 @@ function questionForReview(q, index) {
   }
   if (q.type === "truefalse") { studentView.choices = ["Richtig", "Falsch"]; answerKey.correctBoolean = q.correctBoolean; }
   if (q.type === "text") { answerKey.acceptedAnswers = q.acceptedAnswers || []; answerKey.manualReview = Boolean(q.manualReview); }
+  if (q.type === "visual") {
+    const visual = require("./visual-task");
+    const task = visual.parseVisualTask(q.visualTask, { points: q.points });
+    studentView.visualTask = visual.core.publicTask(task);
+    answerKey.visualTask = task;
+  }
   if (q.type === "number") { studentView.unit = q.unit || ""; answerKey.numericAnswer = q.numericAnswer; answerKey.tolerance = q.tolerance || 0; }
   if (q.type === "markwords") { studentView.passage = q.passage || ""; studentView.markColors = (q.markGroups || []).map(({ name, color }) => ({ name, color })); answerKey.targetWords = q.targetWords || []; answerKey.markGroups = q.markGroups || []; }
   if (q.type === "ordering") { studentView.items = sorted(q.items || []); studentView.displayOrder = "shuffled"; answerKey.orderedItems = q.items || []; answerKey.acceptedOrders = q.acceptedOrders || []; answerKey.manualReview = Boolean(q.manualReview); }
@@ -377,6 +384,7 @@ function reviewPrompt(test, memory = {}) {
 studentView enthält die sichtbare Schüleransicht. audioTranscript ist der vollständige gesprochene Hörtext, den Lernende anhören können, kein sichtbarer Text und kein Lösungsschlüssel. Prüfe Hörverstehen anhand dieses Inhalts: grammatikalisch korrekte Ablenker sind nicht automatisch inhaltlich richtige Antworten. Ein fehlender oder nicht eindeutig lösbarer Hörtext bleibt ein Fehler. answerKey ist ausschließlich die interne Lösung, plannedImage eine noch nicht gerenderte Bildbeschreibung.
 Bei gapfill sind interne [Lösungen] leere Eingabefelder: KEIN answer_leak. Melde answer_leak ausschließlich mit einem wörtlichen evidence-Zitat aus studentView.text oder studentView.passage. Richtige Antwortoptionen, gesuchte Wörter im Markiertext und interne Lösungsfelder allein sind keine verratene Lösung.
 Bei truefalse darf die Aussage absichtlich falsch sein, wenn correctBoolean false ist. Prüfe die Übereinstimmung von Aussage und Lösung; melde nicht die falsche Aussage selbst als Fehler.
+Bei visual enthält studentView.visualTask nur die öffentliche v2-Darstellung. answerKey.visualTask enthält die private Lösung. Prüfe Rastergröße × Bruch, konsistente Messwerte, erreichbare Punkte, alternative passende Textbelege und eine einzige fehlerhafte Korrekturzeile. spec.degrees ist die notwendige gezeichnete Winkelgeometrie und kein digitaler Lösungshinweis. Ein vorhandener Winkelmesser dient zum Messen; keine automatische Gradzahl vor Abgabe. Prüfe bei Fachgrafiken ausschließlich die hinterlegten festen Pflanzen-, Satz- oder Belegbestandteile. Hinweise und Lernziel dürfen die gesuchte Antwort nicht vorwegnehmen.
 Bei ordering werden Elemente gemischt, bei matching die rechten Antworten, bei grouping die Elemente ohne ihre Zuordnung gezeigt. Die interne Reihenfolge oder Gruppierung verrät keine Lösung.
 Prüfe bei Satzbau, ob jede zusätzlich akzeptierte Reihenfolge einen grammatikalisch sinnvollen Satz ergibt und ob eine naheliegende weitere richtige Variante fehlt. Wenn nur Grammatik verlangt ist, sind auch bedeutungsveränderte grammatikalisch richtige Sätze gültig. Prüfe vertauschbare attributive/prädikative Adjektive ausdrücklich: The purple cars are not hungry / The hungry cars are not purple. Melde fehlende acceptedOrders als konkrete unvollständige Lösung und gib bei einer sicher richtigen zusätzlichen Variante suggestedAcceptedOrder als nullbasierte Indizes aller Bausteine an. Bei jeder anderen Meldung oder Unsicherheit muss suggestedAcceptedOrder [] sein. Eine vorgeschlagene Variante wird der Lösung hinzugefügt und danach erneut unabhängig geprüft; sie ersetzt nicht die ganze Aufgabe. Wenn manualReview true ist, wird die Lehrerbewertung noch einmal geprüft; melde dennoch konkrete falsche Lösungsschlüssel.
 Kasus und Wortarten müssen aus dem Satzkontext eindeutig sein. „das Heft“ oder „die Kinder“ allein erlauben keine eindeutige Kasuszuordnung. Prüfe W-Fragen und Entscheidungsfragen getrennt. Bei Komma-Zählaufgaben darf die sichtbare Vorlage die gesuchten Kommas nicht bereits enthalten. Ein Standbild kann zeitliche Wiederholung wie „wieder“ nicht zuverlässig zeigen.
@@ -394,7 +402,7 @@ function normalizeReviewIssues(response, test) {
       const view = questionForReview(test.questions[index], index).studentView;
       const normalize = value => String(value || "").replace(/\s+/g, " ").trim();
       const evidence = normalize(issue.evidence);
-      if (!evidence || ![view.text, view.passage].some(value => normalize(value).includes(evidence))) continue;
+      if (!evidence || ![view.text, view.passage, view.visualTask?.prompt, view.visualTask?.hint, view.visualTask?.title, view.visualTask?.objective, view.visualTask?.sourceNote].some(value => normalize(value).includes(evidence))) continue;
     }
     const rawDetail = String(issue?.detail || "").trim().slice(0, 900) || QUALITY_REASONS[reason] || "Qualitätsproblem";
     const question = test.questions[index];

@@ -1,0 +1,110 @@
+{
+  "id": "P09",
+  "row": {
+    "id": "P09",
+    "subject": "Englisch",
+    "grade": 5,
+    "title": "Everyday English",
+    "goal": "Kurze selbst erfundene englische Sätze zu school and daily routines, räumliche Beziehungen und grundlegende Grammatik",
+    "formats": [
+      "labeling",
+      "connections",
+      "correction",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-09-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:08:10.106Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-09-A",
+    "subject": "Englisch",
+    "grade": "5",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Everyday English: Kurze selbst erfundene englische Sätze zu school and daily routines, räumliche Beziehungen und grundlegende Grammatik",
+    "count": 8,
+    "points": 16,
+    "difficulty": "leicht bis mittel",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus labeling, connections, correction, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "7c145f8e2a3a1c4f98037e8940eab94a3193c583",
+  "dispatch": {
+    "jobId": "7c145f8e2a3a1c4f98037e8940eab94a3193c583"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:09:52.221Z",
+  "job": {
+    "quizId": "NQS5LTM3",
+    "completedCount": 8,
+    "generationMode": "generated",
+    "audioCompleted": 0,
+    "ownerId": "gc-visual255-e2e",
+    "requestedCount": 8,
+    "grade": "5",
+    "createdAt": "2026-10-25T10:08:10.261Z",
+    "solutionAudioTotal": 0,
+    "percent": 100,
+    "stage": "ready",
+    "requestId": "VIS24-20261025-09-A",
+    "answerAudioTotal": 0,
+    "completedAt": "2026-10-25T10:09:42.685Z",
+    "subject": "Englisch",
+    "qualityIssues": [],
+    "qualityWarnings": [],
+    "topic": "Everyday English: Kurze selbst erfundene englische Sätze zu school and daily routines, räumliche Beziehungen und grundlegende Grammatik",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "imageTotal": 0,
+    "audioTotal": 0,
+    "status": "ready",
+    "updatedAt": "2026-10-25T10:09:42.685Z",
+    "input": {
+      "clientRequestId": "VIS24-20261025-09-A",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus labeling, connections, correction, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "count": 8,
+      "region": "Bayern",
+      "exactAudioCounts": false,
+      "difficulty": "leicht bis mittel",
+      "solutionAudioQuestionCount": 0,
+      "topic": "Everyday English: Kurze selbst erfundene englische Sätze zu school and daily routines, räumliche Beziehungen und grundlegende Grammatik",
+      "points": 16,
+      "audioQuestionCount": 0,
+      "pedagogicalContextKnown": true,
+      "materialMode": "inspiration",
+      "allowedTypes": [
+        "visual"
+      ],
+      "schoolType": "Mittelschule",
+      "maxVisualQuestions": 0,
+      "imageMode": "none",
+      "audioAnswerQuestionCount": 0,
+      "grade": "5",
+      "subject": "Englisch",
+      "allowImageChoices": false,
+      "audioMode": "none",
+      "exactImageCounts": false
+    },
+    "answerAudioCompleted": 0,
+    "dispatchState": "enqueued",
+    "startedAt": "2026-10-25T10:08:11.356Z",
+    "materials": [],
+    "imageCompleted": 0,
+    "sourceQuizId": "",
+    "pedagogicalPool": {
+      "status": "no_match",
+      "profileCount": 0,
+      "version": "gc-pedagogy-pool-v1",
+      "profileIds": []
+    },
+    "solutionAudioCompleted": 0,
+    "id": "7c145f8e2a3a1c4f98037e8940eab94a3193c583"
+  },
+  "quizId": "NQS5LTM3"
+}

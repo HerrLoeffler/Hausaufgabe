@@ -1,6 +1,7 @@
 "use strict";
 
 const { normalizeQuestion, validateQuestion, validateTest, sameQuestion, variantRepeats } = require("./validation");
+const { withQuestionPoints } = require("./visual-task");
 const { variantQuestionErrors } = require("./test-variant");
 
 function questionIssues(test, options) {
@@ -63,7 +64,7 @@ function balanceTestPoints(test, targetPoints) {
       }
     }
   }
-  return { ...test, questions: test.questions.map((question, index) => ({ ...question, points: units[index] / 2 })) };
+  return { ...test, questions: test.questions.map((question, index) => withQuestionPoints(question, units[index] / 2)) };
 }
 
 // A model occasionally returns one or two extra tasks. Keep the requested image
@@ -136,7 +137,7 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
     attempts += 1;
     const quotaReason = quotaIssue ? activeQuota.field === "audioIntent" ? `Für diesen Test sind exakt ${listeningQuota.target} Höraufgaben erforderlich; erstelle diese Aufgabe mit audioIntent.kind=${audioKind}.` : `Für diesen Test sind exakt ${quota.target} Bildaufgaben erforderlich; erstelle diese Aufgabe mit mediaIntent.kind=${mediaKind}.` : "";
     const candidate = normalizeQuestion(await generate({ test, index, original, mediaKind, audioKind, reasons: [...issue.reasons, ...(feedback.get(index) || []), ...(quotaReason ? [quotaReason] : [])], attempt: priorAttempts + 1 }));
-    candidate.points = slot?.points ?? original.points;
+    Object.assign(candidate, withQuestionPoints(candidate, slot?.points ?? original.points));
 
     const reasons = validateQuestion(candidate, options);
     if (candidate.mediaIntent.kind !== mediaKind) reasons.push(`Die Bildart muss ${mediaKind} sein.`);
@@ -185,7 +186,7 @@ async function validateAndRepairTest(test, options, { generateQuestion, regenera
     const trimmed = trimSurplusQuestions(draft, options);
     options = trimmed.options;
     if (options.requireFreshVariant && trimmed.test.questions?.length === options.variantInput?.variantSlots?.length) {
-      return { ...trimmed.test, questions: trimmed.test.questions.map((question, index) => ({ ...question, points: options.variantInput.variantSlots[index].points })) };
+      return { ...trimmed.test, questions: trimmed.test.questions.map((question, index) => withQuestionPoints(question, options.variantInput.variantSlots[index].points)) };
     }
     return options.expectedCount && trimmed.test.questions?.length !== options.expectedCount
       ? trimmed.test : balanceTestPoints(trimmed.test, options.targetPoints);

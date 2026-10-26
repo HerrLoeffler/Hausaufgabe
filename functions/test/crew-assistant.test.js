@@ -112,3 +112,14 @@ test('Coco fallback retains bounded conversation context and only fixed navigati
   assert.equal(normalizeCrewResult({action:{type:'javascript:delete()'}}).action.type,'none');
 });
 test('Coco receives bounded observed UI state as data for contextual help',()=>{const r=cleanCrewRequest({text:'Warum klappt das nicht?',context:{screen:'editorView',isDirty:true,lastError:'Bitte erst speichern.'.repeat(100)}});assert.equal(r.context.localUnsaved,true);assert.ok(r.context.observedLastError.length<=300);});
+
+test("Remy accepts the visual family in its natural-language form patch", () => {
+  const types = require("../lib/constants").QUESTION_TYPES;
+  const patchSchema = crewAssistantSchema.properties.action.properties.patch.properties;
+  assert.deepEqual(patchSchema.allowedTypes.items.enum, types);
+  assert.equal(patchSchema.allowedTypes.maxItems, types.length);
+  assert.equal(patchSchema.excludeTypes.maxItems, types.length);
+  const result = normalizeCrewResult({reply:"Visuelle Aufgaben ergänzen",action:{type:"patch_ai_form",patch:{allowedTypes:["visual","number"],excludeTypes:["visual"]}}});
+  assert.deepEqual(result.action.patch.allowedTypes,["visual","number"]);
+  assert.deepEqual(result.action.patch.excludeTypes,["visual"]);
+});

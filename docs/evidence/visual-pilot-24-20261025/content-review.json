@@ -1,0 +1,245 @@
+{
+  "at": "2026-10-25",
+  "reviewer": "Codex own full content review plus independent fresh-context gpt-6-astra/high review of all192 finaltasks at139eadc",
+  "scope": "All192 original and final questions/hints reviewed;2 Important final findings fixed with red-to-green content-fairness regression",
+  "findings": [
+    {
+      "id": "F01",
+      "task": "P05Q8",
+      "severity": "important",
+      "issue": "Case-folded correction accepts unchanged wrong capitalization",
+      "fix": "Optional spec.caseSensitive; corrected pilot flag; red/green regression and local browser verified",
+      "cloud": "pending"
+    },
+    {
+      "id": "F02",
+      "task": "P03Q4",
+      "severity": "important",
+      "issue": "Two given points determine y=3x+3; y(5) must18, not15",
+      "fix": "Reviewed solution18; original retained",
+      "cloud": "pending"
+    },
+    {
+      "id": "F03",
+      "task": "P04Q7",
+      "severity": "important",
+      "issue": "Line graph requested while chart renderer draws bars",
+      "fix": "Reviewed prompt explicitly requests Säulendiagramm",
+      "cloud": "pending"
+    },
+    {
+      "id": "F04",
+      "task": "P05Q6",
+      "severity": "important",
+      "issue": "Common equivalent grammatical terms excluded",
+      "fix": "Added Lokaladverbial and equivalent terminology",
+      "cloud": "pending"
+    },
+    {
+      "id": "F05",
+      "task": "P04Q1–Q3",
+      "severity": "improvement",
+      "issue": "Simple coordinate transcription undershoots requested function learning goal for grade10",
+      "fix": "Calculate coordinates from explicit linear functions before plotting",
+      "cloud": "pending"
+    },
+    {
+      "id": "F06",
+      "task": "P07Q5/Q8,P08Q8 and language tasks",
+      "severity": "important",
+      "issue": "Unrestricted valid prose cannot be fairly assessed by finite exact accepted strings",
+      "fix": "Bounded classification/evidence/targeted correction; generator rules updated; no semantic AI grading claimed",
+      "cloud": "pending"
+    },
+    {
+      "id": "F07",
+      "task": "P08Q1",
+      "severity": "important",
+      "issue": "Source reports decision; prompt asserts implementation",
+      "fix": "Claim now asks about decision only",
+      "cloud": "pending"
+    },
+    {
+      "id": "F08",
+      "task": "P10Q1/Q2",
+      "severity": "important",
+      "issue": "Clock times rendered as decimal hours, e.g.10.5 Uhr",
+      "fix": "Renderer displays clock labels HH:MM and accessible value text; numeric contract unchanged; regression RED to GREEN",
+      "cloud": "pending"
+    },
+    {
+      "id": "F09",
+      "task": "long connections in P07,P08,P16",
+      "severity": "important",
+      "issue": "Long SVG labels extend beyond canvas",
+      "fix": "Short diagram labels plus complete wrapping selectable HTML legend; regression RED to GREEN and real browser 2/2 checked",
+      "cloud": "pending"
+    }
+  ],
+  "tests": {
+    "P01": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "no concrete error found",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P02": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "no concrete error found",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P03": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P04": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P05": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P06": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P07": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P08": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P09": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P10": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P11": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P12": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P13": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P14": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P15": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P16": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P17": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P18": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P19": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P20": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P21": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P22": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P23": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    },
+    "P24": {
+      "questionsRead": 8,
+      "hintsRead": 8,
+      "state": "amended",
+      "humanTeacherAcceptance": "not performed"
+    }
+  },
+  "independentReview": {
+    "critical": 0,
+    "important": 2,
+    "importantFixed": [
+      "P07Q2 targeted verb correction",
+      "P06Q2/Q5/Q6 equivalent Satzglied terminology"
+    ],
+    "minorDeferred": [
+      "P02 beta/gamma prompts versus fixed alpha rendererlabel",
+      "server runner compares ID, while cloud correction reload separately verifies full authored fields",
+      "higher-grade challenge mix needs human teacher acceptance"
+    ],
+    "declinedToJudge": [
+      "Remote/deploy checked by parent separately",
+      "Real120servercases pending",
+      "Physical touch/screenreader/devices pending",
+      "Official curriculum and learning outcomes untested",
+      "Production and canonical staging excluded"
+    ]
+  }
+}

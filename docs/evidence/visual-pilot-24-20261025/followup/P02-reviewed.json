@@ -1,0 +1,199 @@
+{
+  "pilotId": "P02",
+  "at": "2026-10-25T09:58:15.901Z",
+  "quiz": {
+    "generationStatus": "ready",
+    "updatedAt": "2026-10-25T09:58:06.133Z",
+    "sessionState": "open",
+    "solutionAudioReady": true,
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match",
+      "profileCount": 0,
+      "profileIds": []
+    },
+    "audioAnswerQuestionCount": 0,
+    "totalPoints": 16,
+    "listeningOnlyQuestionCount": 0,
+    "generationJobId": "2c820da1d9c3ba2f1af51cb47f5b413799d5f2b9",
+    "creationContext": {
+      "region": "Bayern",
+      "learningGoals": [],
+      "topic": "Winkel und Koordinaten: Winkel mit Winkelmesser messen, Punkte im ersten Quadranten setzen und einfache Messwerte darstellen",
+      "difficulty": "leicht bis mittel",
+      "contentLocale": "de-DE",
+      "schoolType": "Mittelschule"
+    },
+    "solutionAudioQuestionCount": 0,
+    "shareEnabled": false,
+    "grade": "6",
+    "contentLocale": "de-DE",
+    "audioReady": true,
+    "gradeScaleSnapshot": {
+      "thresholds": [
+        91,
+        77,
+        57,
+        39,
+        25,
+        0
+      ],
+      "id": "standard",
+      "name": "Standard"
+    },
+    "accessCode": "UXBCQ5FL",
+    "published": false,
+    "description": "Viel Erfolg beim Test!",
+    "gradeScaleId": "standard",
+    "qualityIssues": [],
+    "qualityWarnings": [],
+    "localeContractVersion": 1,
+    "createdAt": "2026-10-25T09:58:04.454Z",
+    "resultMode": "points_grade",
+    "gradingLocale": "de-DE",
+    "isDeleted": false,
+    "ownerId": "gc-visual255-e2e",
+    "title": "Winkel und Koordinaten",
+    "shuffleAnswers": false,
+    "startMode": "student",
+    "rightsHold": false,
+    "shuffleQuestions": false,
+    "questionCount": 8,
+    "audioQuestionCount": 0,
+    "requiresSecureAssessmentRules": false,
+    "ended": false,
+    "showSolutions": true,
+    "subject": "Mathematik",
+    "id": "C0E863A9",
+    "pilotRevisionOf": "UXBCQ5FL"
+  },
+  "questions": [
+    {
+      "text": "Miss den Winkel α mit dem eingeblendeten Winkelmesser. Trage dein Ergebnis in Grad ein.",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "updatedAt": "2026-10-25T09:58:04.694Z",
+      "type": "visual",
+      "position": 1,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"winkel-messen-1\",\"revision\":1,\"format\":\"angle\",\"title\":\"Einen Winkel messen\",\"subject\":\"Mathematik\",\"grade\":\"6\",\"prompt\":\"Miss den Winkel α mit dem eingeblendeten Winkelmesser. Trage dein Ergebnis in Grad ein.\",\"hint\":\"Verschiebe und drehe den Winkelmesser direkt im Bild. Lies den Winkel ab und trage den Messwert ein. Abweichungen bis3Grad werden akzeptiert.\",\"maxPoints\":2,\"spec\":{\"degrees\":42,\"instrument\":\"aligned-protractor\",\"min\":0,\"max\":180},\"solution\":{\"value\":42,\"tolerance\":3},\"objective\":\"Einen Winkel mit dem Winkelmesser messen.\",\"rationale\":\"Die Lernenden lesen den dargestellten Winkel mithilfe eines ausgerichteten Winkelmessers ab.\",\"sourceNote\":\"Eigenes schematisches Aufgabenbeispiel ohne externe Quelle.\"}",
+      "points": 2,
+      "id": "q001"
+    },
+    {
+      "position": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"winkel-messen-2\",\"revision\":1,\"format\":\"angle\",\"title\":\"Einen stumpfen Winkel messen\",\"subject\":\"Mathematik\",\"grade\":\"6\",\"prompt\":\"Miss den Winkel β mit dem eingeblendeten Winkelmesser. Trage dein Ergebnis in Grad ein.\",\"hint\":\"Verschiebe und drehe den Winkelmesser direkt im Bild. Lies den Winkel ab und trage den Messwert ein. Abweichungen bis3Grad werden akzeptiert.\",\"maxPoints\":2,\"spec\":{\"degrees\":126,\"instrument\":\"aligned-protractor\",\"min\":0,\"max\":180},\"solution\":{\"value\":126,\"tolerance\":3},\"objective\":\"Einen stumpfen Winkel mit dem Winkelmesser messen.\",\"rationale\":\"Die Lernenden unterscheiden einen stumpfen Winkel von einem spitzen Winkel und lesen seine Größe ab.\",\"sourceNote\":\"Eigenes schematisches Aufgabenbeispiel ohne externe Quelle.\"}",
+      "type": "visual",
+      "points": 2,
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated",
+        "model": "gpt-5.6-luna"
+      },
+      "updatedAt": "2026-10-25T09:58:04.846Z",
+      "text": "Miss den Winkel β mit dem eingeblendeten Winkelmesser. Trage dein Ergebnis in Grad ein.",
+      "id": "q002"
+    },
+    {
+      "position": 3,
+      "type": "visual",
+      "updatedAt": "2026-10-25T09:58:05.068Z",
+      "points": 2,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"winkel-messen-3\",\"revision\":1,\"format\":\"angle\",\"title\":\"Einen spitzen Winkel messen\",\"subject\":\"Mathematik\",\"grade\":\"6\",\"prompt\":\"Miss den Winkel γ mit dem eingeblendeten Winkelmesser. Trage dein Ergebnis in Grad ein.\",\"hint\":\"Verschiebe und drehe den Winkelmesser direkt im Bild. Lies den Winkel ab und trage den Messwert ein. Abweichungen bis3Grad werden akzeptiert.\",\"maxPoints\":2,\"spec\":{\"degrees\":78,\"instrument\":\"aligned-protractor\",\"min\":0,\"max\":180},\"solution\":{\"value\":78,\"tolerance\":3},\"objective\":\"Die Größe eines spitzen Winkels bestimmen.\",\"rationale\":\"Die Lernenden lesen eine weitere Winkeldarstellung sorgfältig und mit passender Skala ab.\",\"sourceNote\":\"Eigenes schematisches Aufgabenbeispiel ohne externe Quelle.\"}",
+      "text": "Miss den Winkel γ mit dem eingeblendeten Winkelmesser. Trage dein Ergebnis in Grad ein.",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "id": "q003"
+    },
+    {
+      "points": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna"
+      },
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"koordinaten-punkt-a\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Einen Punkt eintragen\",\"subject\":\"Mathematik\",\"grade\":\"6\",\"prompt\":\"Trage den Punkt A(2|5) in das Koordinatensystem ein.\",\"hint\":\"Gehe zuerst auf der x-Achse nach rechts und danach auf der y-Achse nach oben.\",\"maxPoints\":2,\"spec\":{\"mode\":\"points\",\"minX\":0,\"maxX\":6,\"minY\":0,\"maxY\":6,\"step\":1,\"labels\":[\"A\"]},\"solution\":{\"points\":[{\"x\":2,\"y\":5}]},\"objective\":\"Einen Punkt im ersten Quadranten eintragen.\",\"rationale\":\"Die Koordinaten werden als waagerechte und senkrechte Abstände vom Ursprung dargestellt.\",\"sourceNote\":\"Eigenes schematisches Aufgabenbeispiel ohne externe Quelle.\"}",
+      "position": 4,
+      "updatedAt": "2026-10-25T09:58:05.436Z",
+      "text": "Trage den Punkt A(2|5) in das Koordinatensystem ein.",
+      "id": "q004"
+    },
+    {
+      "updatedAt": "2026-10-25T09:58:05.566Z",
+      "text": "Trage den Punkt B(6|1) in das Koordinatensystem ein.",
+      "position": 5,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"koordinaten-punkt-b\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Koordinaten ablesen und setzen\",\"subject\":\"Mathematik\",\"grade\":\"6\",\"prompt\":\"Trage den Punkt B(6|1) in das Koordinatensystem ein.\",\"hint\":\"Die erste Zahl gibt die Bewegung nach rechts an, die zweite Zahl die Bewegung nach oben.\",\"maxPoints\":2,\"spec\":{\"mode\":\"points\",\"minX\":0,\"maxX\":7,\"minY\":0,\"maxY\":5,\"step\":1,\"labels\":[\"B\"]},\"solution\":{\"points\":[{\"x\":6,\"y\":1}]},\"objective\":\"Ein Zahlenpaar richtig auf ein Koordinatensystem übertragen.\",\"rationale\":\"Die Lernenden beachten die feste Reihenfolge x-Koordinate vor y-Koordinate.\",\"sourceNote\":\"Eigenes schematisches Aufgabenbeispiel ohne externe Quelle.\"}",
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "points": 2,
+      "id": "q005"
+    },
+    {
+      "points": 2,
+      "text": "Trage die beiden Endpunkte C(1|2) und D(5|4) ein und zeichne die Strecke CD.",
+      "updatedAt": "2026-10-25T09:58:05.713Z",
+      "aiOrigin": {
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "model": "gpt-5.6-luna",
+        "kind": "generated"
+      },
+      "position": 6,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"koordinaten-strecke-cd\",\"revision\":0,\"format\":\"coordinate\",\"title\":\"Eine Strecke einzeichnen\",\"subject\":\"Mathematik\",\"grade\":\"6\",\"prompt\":\"Trage die beiden Endpunkte C(1|2) und D(5|4) ein und zeichne die Strecke CD.\",\"hint\":\"Setze zuerst beide Punkte genau auf die passenden Rasterpunkte. Verbinde sie anschließend geradlinig.\",\"maxPoints\":2,\"spec\":{\"mode\":\"segment\",\"minX\":0,\"maxX\":6,\"minY\":0,\"maxY\":6,\"step\":1,\"labels\":[\"C\",\"D\"]},\"solution\":{\"points\":[{\"x\":1,\"y\":2},{\"x\":5,\"y\":4}]},\"objective\":\"Zwei Punkte im ersten Quadranten eintragen und verbinden.\",\"rationale\":\"Die Aufgabe verbindet das genaue Setzen von Koordinaten mit der Darstellung einer Strecke.\",\"sourceNote\":\"Eigenes schematisches Aufgabenbeispiel ohne externe Quelle.\"}",
+      "type": "visual",
+      "id": "q006"
+    },
+    {
+      "points": 2,
+      "type": "visual",
+      "aiOrigin": {
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2",
+        "kind": "generated"
+      },
+      "text": "Übertrage die fiktiven Messwerte in das Säulendiagramm. Die Einheit ist Zentimeter.",
+      "updatedAt": "2026-10-25T09:58:05.847Z",
+      "position": 7,
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"messwerte-saeulen-1\",\"revision\":0,\"format\":\"chart\",\"title\":\"Messwerte als Säulen darstellen\",\"subject\":\"Mathematik\",\"grade\":\"6\",\"prompt\":\"Übertrage die fiktiven Messwerte in das Säulendiagramm. Die Einheit ist Zentimeter.\",\"hint\":\"Stelle für jede Kategorie genau eine Säule auf die angegebene Höhe.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":10,\"step\":1,\"unit\":\"cm\",\"categories\":[{\"id\":\"p1\",\"label\":\"Strecke A\",\"value\":4},{\"id\":\"p2\",\"label\":\"Strecke B\",\"value\":7},{\"id\":\"p3\",\"label\":\"Strecke C\",\"value\":5}]},\"solution\":{\"values\":{\"p1\":4,\"p2\":7,\"p3\":5}},\"objective\":\"Fiktive Messwerte in einem Säulendiagramm darstellen.\",\"rationale\":\"Die Lernenden übertragen gegebene Zahlenwerte passend zu den Kategorien und zur Skala.\",\"sourceNote\":\"Fiktive Messwerte, eigens für diesen Test erstellt.\"}",
+      "id": "q007"
+    },
+    {
+      "position": 8,
+      "type": "visual",
+      "visualTask": "{\"schemaVersion\":2,\"id\":\"messwerte-saeulen-2\",\"revision\":0,\"format\":\"chart\",\"title\":\"Winkelmesswerte darstellen\",\"subject\":\"Mathematik\",\"grade\":\"6\",\"prompt\":\"Übertrage die fiktiven Messwerte in das Säulendiagramm. Die Einheit ist Grad.\",\"hint\":\"Achte auf die Skala und stelle für jeden Winkel eine Säule mit der passenden Höhe ein.\",\"maxPoints\":2,\"spec\":{\"min\":0,\"max\":100,\"step\":10,\"unit\":\"°\",\"categories\":[{\"id\":\"w1\",\"label\":\"Winkel α\",\"value\":30},{\"id\":\"w2\",\"label\":\"Winkel β\",\"value\":60},{\"id\":\"w3\",\"label\":\"Winkel γ\",\"value\":80},{\"id\":\"w4\",\"label\":\"Winkel δ\",\"value\":50}]},\"solution\":{\"values\":{\"w1\":30,\"w2\":60,\"w3\":80,\"w4\":50}},\"objective\":\"Fiktive Winkelmesswerte in einem Säulendiagramm darstellen.\",\"rationale\":\"Die Lernenden übertragen mehrere Messwerte in der vorgegebenen Reihenfolge und Einheit.\",\"sourceNote\":\"Fiktive Messwerte, eigens für diesen Test erstellt.\"}",
+      "points": 2,
+      "aiOrigin": {
+        "kind": "generated",
+        "model": "gpt-5.6-luna",
+        "promptVersion": "testify-ai-v17-visual-v2"
+      },
+      "updatedAt": "2026-10-25T09:58:06.029Z",
+      "text": "Übertrage die fiktiven Messwerte in das Säulendiagramm. Die Einheit ist Grad.",
+      "id": "q008"
+    }
+  ],
+  "followupChanges": [
+    {
+      "position": 1,
+      "reason": "Nutzerwunsch:3Grad Messspielraum in neuer Fassung; alte Versuche unverändert."
+    },
+    {
+      "position": 2,
+      "reason": "Nutzerwunsch:3Grad Messspielraum in neuer Fassung; alte Versuche unverändert."
+    },
+    {
+      "position": 3,
+      "reason": "Nutzerwunsch:3Grad Messspielraum in neuer Fassung; alte Versuche unverändert."
+    }
+  ],
+  "sourceQuizId": "UXBCQ5FL"
+}

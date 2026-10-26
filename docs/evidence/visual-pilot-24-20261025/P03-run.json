@@ -1,0 +1,110 @@
+{
+  "id": "P03",
+  "row": {
+    "id": "P03",
+    "subject": "Mathematik",
+    "grade": 8,
+    "title": "Prozentrechnung und lineare Zusammenhänge",
+    "goal": "Prozentanteile, Tabellen und lineare Wertpaare sowie Intervalle",
+    "formats": [
+      "grid",
+      "table",
+      "coordinate",
+      "range"
+    ],
+    "requestId": "VIS24-20261025-03-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T09:58:15.903Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-03-A",
+    "subject": "Mathematik",
+    "grade": "8",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Prozentrechnung und lineare Zusammenhänge: Prozentanteile, Tabellen und lineare Wertpaare sowie Intervalle",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus grid, table, coordinate, range. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "ce27b9d41330ce885a02a457e354e346fffe3107",
+  "dispatch": {
+    "jobId": "ce27b9d41330ce885a02a457e354e346fffe3107"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T09:59:17.653Z",
+  "job": {
+    "requestId": "VIS24-20261025-03-A",
+    "qualityIssues": [],
+    "requestedCount": 8,
+    "audioCompleted": 0,
+    "completedAt": "2026-10-25T09:59:17.238Z",
+    "input": {
+      "solutionAudioQuestionCount": 0,
+      "exactImageCounts": false,
+      "materialMode": "inspiration",
+      "exactAudioCounts": false,
+      "allowedTypes": [
+        "visual"
+      ],
+      "difficulty": "mittel bis anspruchsvoll",
+      "clientRequestId": "VIS24-20261025-03-A",
+      "allowImageChoices": false,
+      "audioAnswerQuestionCount": 0,
+      "audioQuestionCount": 0,
+      "pedagogicalContextKnown": true,
+      "points": 16,
+      "audioMode": "none",
+      "schoolType": "Mittelschule",
+      "region": "Bayern",
+      "subject": "Mathematik",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus grid, table, coordinate, range. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "imageMode": "none",
+      "topic": "Prozentrechnung und lineare Zusammenhänge: Prozentanteile, Tabellen und lineare Wertpaare sowie Intervalle",
+      "maxVisualQuestions": 0,
+      "grade": "8",
+      "count": 8
+    },
+    "dispatchState": "enqueued",
+    "materials": [],
+    "sourceQuizId": "",
+    "ownerId": "gc-visual255-e2e",
+    "subject": "Mathematik",
+    "imageCompleted": 0,
+    "startedAt": "2026-10-25T09:58:17.716Z",
+    "pedagogicalPool": {
+      "profileIds": [],
+      "profileCount": 0,
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match"
+    },
+    "answerAudioTotal": 0,
+    "completedCount": 8,
+    "grade": "8",
+    "status": "ready",
+    "topic": "Prozentrechnung und lineare Zusammenhänge: Prozentanteile, Tabellen und lineare Wertpaare sowie Intervalle",
+    "percent": 100,
+    "solutionAudioTotal": 0,
+    "generationMode": "generated",
+    "solutionAudioCompleted": 0,
+    "answerAudioCompleted": 0,
+    "quizId": "KYZW8JL7",
+    "updatedAt": "2026-10-25T09:59:17.238Z",
+    "audioTotal": 0,
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "stage": "ready",
+    "imageTotal": 0,
+    "createdAt": "2026-10-25T09:58:15.999Z",
+    "qualityWarnings": [],
+    "id": "ce27b9d41330ce885a02a457e354e346fffe3107"
+  },
+  "quizId": "KYZW8JL7"
+}

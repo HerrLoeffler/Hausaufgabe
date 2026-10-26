@@ -1,0 +1,110 @@
+{
+  "id": "P23",
+  "row": {
+    "id": "P23",
+    "subject": "Wirtschaft",
+    "grade": 8,
+    "title": "Angebote und Kostenvergleich",
+    "goal": "Vollständig definierte fiktive Preisangebote, Stückpreise und lineare Kosten; keine Rechts-/Finanzberatung",
+    "formats": [
+      "table",
+      "coordinate",
+      "chart",
+      "correction"
+    ],
+    "requestId": "VIS24-20261025-23-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:35:18.053Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-23-A",
+    "subject": "Wirtschaft",
+    "grade": "8",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Angebote und Kostenvergleich: Vollständig definierte fiktive Preisangebote, Stückpreise und lineare Kosten; keine Rechts-/Finanzberatung",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus table, coordinate, chart, correction. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "157f7523f06a10bc4d20d0cfa43c04aafd6bb84d",
+  "dispatch": {
+    "jobId": "157f7523f06a10bc4d20d0cfa43c04aafd6bb84d"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:38:31.333Z",
+  "job": {
+    "percent": 100,
+    "completedCount": 8,
+    "startedAt": "2026-10-25T10:35:19.602Z",
+    "qualityWarnings": [],
+    "imageTotal": 0,
+    "audioTotal": 0,
+    "requestId": "VIS24-20261025-23-A",
+    "stage": "ready",
+    "input": {
+      "exactAudioCounts": false,
+      "allowImageChoices": false,
+      "materialMode": "inspiration",
+      "clientRequestId": "VIS24-20261025-23-A",
+      "pedagogicalContextKnown": true,
+      "subject": "Wirtschaft",
+      "imageMode": "none",
+      "grade": "8",
+      "difficulty": "mittel bis anspruchsvoll",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus table, coordinate, chart, correction. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "audioAnswerQuestionCount": 0,
+      "count": 8,
+      "points": 16,
+      "topic": "Angebote und Kostenvergleich: Vollständig definierte fiktive Preisangebote, Stückpreise und lineare Kosten; keine Rechts-/Finanzberatung",
+      "region": "Bayern",
+      "audioQuestionCount": 0,
+      "solutionAudioQuestionCount": 0,
+      "maxVisualQuestions": 0,
+      "schoolType": "Mittelschule",
+      "allowedTypes": [
+        "visual"
+      ],
+      "exactImageCounts": false,
+      "audioMode": "none"
+    },
+    "requestedCount": 8,
+    "materials": [],
+    "grade": "8",
+    "quizId": "G9L3D46T",
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match",
+      "profileIds": [],
+      "profileCount": 0
+    },
+    "topic": "Angebote und Kostenvergleich: Vollständig definierte fiktive Preisangebote, Stückpreise und lineare Kosten; keine Rechts-/Finanzberatung",
+    "audioCompleted": 0,
+    "answerAudioTotal": 0,
+    "status": "ready",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "updatedAt": "2026-10-25T10:38:30.183Z",
+    "ownerId": "gc-visual255-e2e",
+    "completedAt": "2026-10-25T10:38:30.183Z",
+    "generationMode": "generated",
+    "dispatchState": "enqueued",
+    "createdAt": "2026-10-25T10:35:18.138Z",
+    "qualityIssues": [],
+    "solutionAudioCompleted": 0,
+    "solutionAudioTotal": 0,
+    "imageCompleted": 0,
+    "subject": "Wirtschaft",
+    "answerAudioCompleted": 0,
+    "sourceQuizId": "",
+    "id": "157f7523f06a10bc4d20d0cfa43c04aafd6bb84d"
+  },
+  "quizId": "G9L3D46T"
+}

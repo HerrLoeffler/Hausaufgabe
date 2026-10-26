@@ -4,11 +4,11 @@ const REGION = "europe-west1";
 const TEXT_MODEL = "gpt-5.6-luna";
 const IMAGE_MODEL = "gpt-image-2";
 const AUDIO_MODEL = "gpt-4o-mini-tts";
-const PROMPT_VERSION = "testify-ai-v16";
-const AI_SCHEMA_VERSION = 5;
+const PROMPT_VERSION = "testify-ai-v17-visual-v2";
+const AI_SCHEMA_VERSION = 6;
 const QUESTION_TYPES = Object.freeze([
   "single", "multi", "text", "dropdown", "truefalse", "gapfill",
-  "matching", "ordering", "grouping", "markwords", "number"
+  "matching", "ordering", "grouping", "markwords", "number", "visual"
 ]);
 const MATERIAL_MIME_TYPES = Object.freeze([
   "application/pdf", "image/jpeg", "image/png", "image/webp",

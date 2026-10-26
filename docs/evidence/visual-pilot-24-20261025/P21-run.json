@@ -1,0 +1,110 @@
+{
+  "id": "P21",
+  "row": {
+    "id": "P21",
+    "subject": "Wirtschaft",
+    "grade": 6,
+    "title": "Einkaufen und Belege",
+    "goal": "Fiktive einfache Kassenbons, Preise und Mengen auswerten, Rechenfehler und Bestandteile erkennen",
+    "formats": [
+      "table",
+      "correction",
+      "labeling",
+      "chart"
+    ],
+    "requestId": "VIS24-20261025-21-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:32:03.167Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-21-A",
+    "subject": "Wirtschaft",
+    "grade": "6",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Einkaufen und Belege: Fiktive einfache Kassenbons, Preise und Mengen auswerten, Rechenfehler und Bestandteile erkennen",
+    "count": 8,
+    "points": 16,
+    "difficulty": "leicht bis mittel",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus table, correction, labeling, chart. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "11a0f1e9240d8e50e9a7058cd3a6938b668b0faa",
+  "dispatch": {
+    "jobId": "11a0f1e9240d8e50e9a7058cd3a6938b668b0faa"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:34:26.174Z",
+  "job": {
+    "topic": "Einkaufen und Belege: Fiktive einfache Kassenbons, Preise und Mengen auswerten, Rechenfehler und Bestandteile erkennen",
+    "grade": "6",
+    "imageTotal": 0,
+    "answerAudioTotal": 0,
+    "quizId": "HU2GJSBB",
+    "qualityIssues": [],
+    "materials": [],
+    "percent": 100,
+    "requestId": "VIS24-20261025-21-A",
+    "status": "ready",
+    "solutionAudioTotal": 0,
+    "audioTotal": 0,
+    "dispatchState": "enqueued",
+    "generationMode": "generated",
+    "startedAt": "2026-10-25T10:32:04.901Z",
+    "qualityWarnings": [],
+    "completedCount": 8,
+    "completedAt": "2026-10-25T10:34:17.974Z",
+    "stage": "ready",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "imageCompleted": 0,
+    "solutionAudioCompleted": 0,
+    "input": {
+      "audioMode": "none",
+      "allowImageChoices": false,
+      "difficulty": "leicht bis mittel",
+      "allowedTypes": [
+        "visual"
+      ],
+      "maxVisualQuestions": 0,
+      "pedagogicalContextKnown": true,
+      "exactImageCounts": false,
+      "imageMode": "none",
+      "exactAudioCounts": false,
+      "region": "Bayern",
+      "materialMode": "inspiration",
+      "solutionAudioQuestionCount": 0,
+      "audioAnswerQuestionCount": 0,
+      "clientRequestId": "VIS24-20261025-21-A",
+      "audioQuestionCount": 0,
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus table, correction, labeling, chart. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "points": 16,
+      "schoolType": "Mittelschule",
+      "subject": "Wirtschaft",
+      "topic": "Einkaufen und Belege: Fiktive einfache Kassenbons, Preise und Mengen auswerten, Rechenfehler und Bestandteile erkennen",
+      "count": 8,
+      "grade": "6"
+    },
+    "sourceQuizId": "",
+    "createdAt": "2026-10-25T10:32:03.263Z",
+    "audioCompleted": 0,
+    "answerAudioCompleted": 0,
+    "updatedAt": "2026-10-25T10:34:17.974Z",
+    "pedagogicalPool": {
+      "version": "gc-pedagogy-pool-v1",
+      "profileCount": 0,
+      "profileIds": [],
+      "status": "no_match"
+    },
+    "ownerId": "gc-visual255-e2e",
+    "requestedCount": 8,
+    "subject": "Wirtschaft",
+    "id": "11a0f1e9240d8e50e9a7058cd3a6938b668b0faa"
+  },
+  "quizId": "HU2GJSBB"
+}

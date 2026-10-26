@@ -1,0 +1,110 @@
+{
+  "id": "P13",
+  "row": {
+    "id": "P13",
+    "subject": "Natur und Technik",
+    "grade": 6,
+    "title": "Pflanzen und Wachstumsdaten",
+    "goal": "Pflanzenteile und ihre Funktionen, einfache selbst konstruierte Wachstumsdaten fachlich nutzen",
+    "formats": [
+      "labeling",
+      "hotspot",
+      "chart",
+      "table"
+    ],
+    "requestId": "VIS24-20261025-13-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:14:49.774Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-13-A",
+    "subject": "Natur und Technik",
+    "grade": "6",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Pflanzen und Wachstumsdaten: Pflanzenteile und ihre Funktionen, einfache selbst konstruierte Wachstumsdaten fachlich nutzen",
+    "count": 8,
+    "points": 16,
+    "difficulty": "leicht bis mittel",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus labeling, hotspot, chart, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "93932c657effde4e218df72a2a9819a140d4ee92",
+  "dispatch": {
+    "jobId": "93932c657effde4e218df72a2a9819a140d4ee92"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:15:51.406Z",
+  "job": {
+    "requestId": "VIS24-20261025-13-A",
+    "pedagogicalPool": {
+      "profileCount": 0,
+      "profileIds": [],
+      "version": "gc-pedagogy-pool-v1",
+      "status": "no_match"
+    },
+    "input": {
+      "solutionAudioQuestionCount": 0,
+      "allowedTypes": [
+        "visual"
+      ],
+      "topic": "Pflanzen und Wachstumsdaten: Pflanzenteile und ihre Funktionen, einfache selbst konstruierte Wachstumsdaten fachlich nutzen",
+      "maxVisualQuestions": 0,
+      "pedagogicalContextKnown": true,
+      "grade": "6",
+      "count": 8,
+      "region": "Bayern",
+      "subject": "Natur und Technik",
+      "materialMode": "inspiration",
+      "difficulty": "leicht bis mittel",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus labeling, hotspot, chart, table. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "allowImageChoices": false,
+      "clientRequestId": "VIS24-20261025-13-A",
+      "schoolType": "Mittelschule",
+      "exactImageCounts": false,
+      "exactAudioCounts": false,
+      "audioMode": "none",
+      "points": 16,
+      "audioQuestionCount": 0,
+      "imageMode": "none",
+      "audioAnswerQuestionCount": 0
+    },
+    "materials": [],
+    "completedCount": 8,
+    "quizId": "5TLF5WTY",
+    "qualityIssues": [],
+    "status": "ready",
+    "percent": 100,
+    "dispatchState": "enqueued",
+    "solutionAudioTotal": 0,
+    "startedAt": "2026-10-25T10:14:50.393Z",
+    "generationMode": "generated",
+    "grade": "6",
+    "topic": "Pflanzen und Wachstumsdaten: Pflanzenteile und ihre Funktionen, einfache selbst konstruierte Wachstumsdaten fachlich nutzen",
+    "answerAudioCompleted": 0,
+    "qualityWarnings": [],
+    "ownerId": "gc-visual255-e2e",
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "subject": "Natur und Technik",
+    "imageCompleted": 0,
+    "updatedAt": "2026-10-25T10:15:43.659Z",
+    "imageTotal": 0,
+    "requestedCount": 8,
+    "createdAt": "2026-10-25T10:14:49.922Z",
+    "completedAt": "2026-10-25T10:15:43.659Z",
+    "audioCompleted": 0,
+    "sourceQuizId": "",
+    "stage": "ready",
+    "audioTotal": 0,
+    "answerAudioTotal": 0,
+    "solutionAudioCompleted": 0,
+    "id": "93932c657effde4e218df72a2a9819a140d4ee92"
+  },
+  "quizId": "5TLF5WTY"
+}

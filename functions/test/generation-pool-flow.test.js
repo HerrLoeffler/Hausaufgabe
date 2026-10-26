@@ -21,7 +21,7 @@ const q = { type: "number", text: "Ein Artikel kostet 80 Euro. Wie viele Euro en
 
 async function run(change = {}, broken = false, queued = false) {
   const calls = [], logs = []; let repairs = 0;
-  const context = vm.createContext({ ...constants, ...validation, ...schemas, ...prompts, HttpsError, variantPrompt,
+  const context = vm.createContext({ require: name => require(name.startsWith("./lib/") ? `../${name.slice(2)}` : name), ...constants, ...validation, ...schemas, ...prompts, HttpsError, variantPrompt,
     generateTestInBatches, validateAndRepairTest, reviewAndRepairTest,
     preparePedagogicalPool: data => preparePedagogicalPool(data, catalog),
     randomUUID: () => "pool-test", cleanSourceTest: () => null,

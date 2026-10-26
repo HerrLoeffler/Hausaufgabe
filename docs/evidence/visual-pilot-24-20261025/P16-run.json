@@ -1,0 +1,110 @@
+{
+  "id": "P16",
+  "row": {
+    "id": "P16",
+    "subject": "Natur und Technik",
+    "grade": 10,
+    "title": "Experimente und wissenschaftliche Aussagen",
+    "goal": "Kontrollierte Variablen, Messwertauswertung und Grenzen von Schlussfolgerungen an vollständigen fiktiven Versuchsdaten",
+    "formats": [
+      "table",
+      "chart",
+      "evidence",
+      "connections"
+    ],
+    "requestId": "VIS24-20261025-16-A",
+    "count": 8,
+    "points": 16
+  },
+  "startedAt": "2026-10-25T10:19:26.355Z",
+  "status": "ready",
+  "input": {
+    "clientRequestId": "VIS24-20261025-16-A",
+    "subject": "Natur und Technik",
+    "grade": "10",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Experimente und wissenschaftliche Aussagen: Kontrollierte Variablen, Messwertauswertung und Grenzen von Schlussfolgerungen an vollständigen fiktiven Versuchsdaten",
+    "count": 8,
+    "points": 16,
+    "difficulty": "mittel bis anspruchsvoll",
+    "allowedTypes": [
+      "visual"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus table, chart, evidence, connections. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen."
+  },
+  "jobId": "333488666c1fab90ef5ac8d89ab3f02393b6491b",
+  "dispatch": {
+    "jobId": "333488666c1fab90ef5ac8d89ab3f02393b6491b"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-25T10:22:50.705Z",
+  "job": {
+    "requestId": "VIS24-20261025-16-A",
+    "pedagogicalPool": {
+      "status": "no_match",
+      "profileCount": 0,
+      "profileIds": [],
+      "version": "gc-pedagogy-pool-v1"
+    },
+    "ownerId": "gc-visual255-e2e",
+    "generationMode": "generated",
+    "imageTotal": 0,
+    "completedCount": 8,
+    "audioCompleted": 0,
+    "solutionAudioTotal": 0,
+    "requestedCount": 8,
+    "answerAudioCompleted": 0,
+    "qualityIssues": [],
+    "quizId": "RW2NRJ5R",
+    "input": {
+      "imageMode": "none",
+      "subject": "Natur und Technik",
+      "grade": "10",
+      "difficulty": "mittel bis anspruchsvoll",
+      "audioAnswerQuestionCount": 0,
+      "audioMode": "none",
+      "audioQuestionCount": 0,
+      "allowImageChoices": false,
+      "region": "Bayern",
+      "exactImageCounts": false,
+      "pedagogicalContextKnown": true,
+      "maxVisualQuestions": 0,
+      "clientRequestId": "VIS24-20261025-16-A",
+      "topic": "Experimente und wissenschaftliche Aussagen: Kontrollierte Variablen, Messwertauswertung und Grenzen von Schlussfolgerungen an vollständigen fiktiven Versuchsdaten",
+      "materialMode": "inspiration",
+      "allowedTypes": [
+        "visual"
+      ],
+      "exactAudioCounts": false,
+      "schoolType": "Mittelschule",
+      "notes": "Ausschließlich 8 NEUE VISUELLE Aufgaben (type visual mit gültigem visualTask), keine klassischen Ersatztypen. Fachlich passende Formate aus table, chart, evidence, connections. Nutze mehrere passende Formate, aber keine unpassenden Pflichtbilder. Alle nötigen Daten und eigenen kurzen Texte vollständig mitliefern. Keine fremden Quellen oder realen Schülerdaten. Jede Aufgabe hat 2 Punkte, spec und solution bilden genau dieselbe Aufgabe ab. Messwinkel nicht im Auftrag verraten; keine vorausgefüllten Antworten, Hinweise ohne Lösung. Tabellenlücken leer. Reihenfolge von Zahlen/Kategorien und Einheit beachten. Bei englischen Aufgaben verständliches Englisch. Fiktive Daten ausdrücklich als solche nennen.",
+      "count": 8,
+      "solutionAudioQuestionCount": 0,
+      "points": 16
+    },
+    "subject": "Natur und Technik",
+    "createdAt": "2026-10-25T10:19:26.584Z",
+    "solutionAudioCompleted": 0,
+    "percent": 100,
+    "materials": [],
+    "startedAt": "2026-10-25T10:19:27.132Z",
+    "stage": "ready",
+    "dispatchState": "enqueued",
+    "completedAt": "2026-10-25T10:22:44.369Z",
+    "qualityWarnings": [],
+    "progressMessage": "Entwurf fertig. Bitte die Aufgaben prüfen.",
+    "topic": "Experimente und wissenschaftliche Aussagen: Kontrollierte Variablen, Messwertauswertung und Grenzen von Schlussfolgerungen an vollständigen fiktiven Versuchsdaten",
+    "audioTotal": 0,
+    "sourceQuizId": "",
+    "imageCompleted": 0,
+    "updatedAt": "2026-10-25T10:22:44.369Z",
+    "status": "ready",
+    "answerAudioTotal": 0,
+    "grade": "10",
+    "id": "333488666c1fab90ef5ac8d89ab3f02393b6491b"
+  },
+  "quizId": "RW2NRJ5R"
+}

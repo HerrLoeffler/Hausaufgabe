@@ -1,6 +1,7 @@
 "use strict";
 
 const { QUESTION_TYPES, LIMITS } = require("./constants");
+const { parseVisualTask } = require("./visual-task");
 const { hasAudioAnswerEntries } = require("./audio-answers");
 
 function roundHalf(value) { return Math.round(Number(value) * 2) / 2; }
@@ -38,6 +39,7 @@ function answerKey(q) {
   if (["single", "dropdown", "multi"].includes(q.type)) return (q.options || []).filter(o => o.correct).map(o => comparableAnswer(o.text)).sort().join("|");
   if (q.type === "text") return (q.acceptedAnswers || []).map(comparableAnswer).sort().join("|");
   if (q.type === "gapfill") return [...String(q.text || "").matchAll(/\[([^\]]+)\]/g)].map(m => comparable(m[1].split("|")[0])).join("|");
+  if (q.type === "visual") return String(q.visualTask || "");
   if (q.type === "number") return `${q.numericAnswer}:${comparable(q.unit)}`;
   return "";
 }
@@ -57,7 +59,7 @@ function sameQuestion(a, b) {
 
 function variantContentKey(q) {
   if (!q || typeof q !== "object") return "";
-  if (["single", "dropdown", "multi", "text", "gapfill", "number"].includes(q.type)) return answerKey(q);
+  if (["single", "dropdown", "multi", "text", "gapfill", "number", "visual"].includes(q.type)) return answerKey(q);
   if (q.type === "matching") return (q.pairs || [])
     .map(pair => `${comparableAnswer(pair?.left)}=>${comparableAnswer(pair?.right)}`)
     .filter(Boolean).sort().join("|");
@@ -94,7 +96,7 @@ function variantRepeats(a, b) {
   return contentA && contentB ? contentA === contentB : true;
 }
 
-function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true, requiredMediaKind, allowAudio = true, requiredAudioKind } = {}) {
+function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowedVisualFormats, allowImages = true, allowImageChoices = true, requiredMediaKind, allowAudio = true, requiredAudioKind } = {}) {
   const errors = [];
   if (!q || typeof q !== "object" || Array.isArray(q)) return ["Aufgabe fehlt."];
   if (!allowedTypes.includes(q.type)) errors.push(`Nicht erlaubter Aufgabentyp: ${q.type}`);
@@ -163,6 +165,9 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
       const targetSet = new Set(targets.map(word => normalizeText(word).toLocaleLowerCase("de")));
       if (assigned.size !== targetSet.size || [...assigned].some(word => !targetSet.has(word))) errors.push("Zielwörter und Farbgruppen müssen übereinstimmen.");
     }
+  }
+  if (q.type === "visual") {
+    try { const task = parseVisualTask(q.visualTask, { points: q.points }); if (allowedVisualFormats && !allowedVisualFormats.includes(task.format)) errors.push(`Visuelles Format ${task.format} ist nicht erlaubt.`); } catch (error) { errors.push(error.message); }
   }
   if (q.type === "number" && (q.numericAnswer === null || q.numericAnswer === undefined || typeof q.numericAnswer === "boolean" || !String(q.numericAnswer).trim() || !Number.isFinite(Number(q.numericAnswer)))) errors.push("Numerische Lösung fehlt.");
   if (q.type === "number" && /\b(?:wie viele|anzahl der)\s+komma(?:s|ta)?\b/i.test(q.text || "")) {
