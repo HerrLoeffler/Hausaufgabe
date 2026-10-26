@@ -30,3 +30,5 @@ Im tatsächlichen Online-Browser mit bestehender Anmeldung7Beispiele angelegt, P
 - Backendcode499d2e6,16präfigierteFunktionen aktualisiert.80Funktionen vorher/nachher,64andereSourcehashesunverändert. Hostingdateien vollständig perSHA256geprüft; endgültiger Hostingscope in deployment-verification.json. Frühere24Links erhalten. Keine Rules-/normaleStaging-/Productionänderung.
 
 KI-Ausgaben bleiben prüfpflichtige Entwürfe. Neue tatsächliche Erstellung und Bewertung sind nachgewiesen; ein neuer Live-Emmi-Aufruf und ein physischer Touchgerätetest sind damit nicht belegt. Lernwirksamkeit im Unterricht bleibt offen.
+
+Abschließender öffentlicher Einstieg: https://gradecrew-staging-2026--visual255-rjcwf436.web.app/aufgabenlabor/ . Drei Karten und Lehrer-KI-Einstieg im echten Browser geladen. Aktuell187Dateien vollständig gegen Release-Manifest geprüft.
