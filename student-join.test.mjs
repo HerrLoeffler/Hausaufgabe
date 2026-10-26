@@ -14,7 +14,7 @@ function runtime(t,search='',api={},handoff=null){
  w.localStorage.setItem("firebase:authUser:teacher","synthetic-teacher-session");
  // A real DOM with transport-only doubles; no Firebase auth or data APIs supplied.
  const location={search,href:'https://gradecrew.de/secure-student.html'+search,reload(){calls.push('reload')}};
- const context={document:w.document,sessionStorage:w.sessionStorage,location,URL,URLSearchParams,navigator:{onLine:true},initializeApp:()=>({}),firebaseConfig:{},createSecureAssessmentClient:()=>({getInfo:async code=>{calls.push(code);throw new Error('synthetic unavailable')},...api}),addEventListener:()=>{},setInterval:()=>1,clearInterval(){},console};
+ const context={document:w.document,sessionStorage:w.sessionStorage,location,URL,URLSearchParams,navigator:{onLine:true},initializeApp:()=>({}),firebaseConfig:{},createSecureAssessmentClient:()=>({getInfo:async code=>{calls.push(code);throw new Error('synthetic unavailable')},...api}),addEventListener:w.addEventListener.bind(w),setInterval:()=>1,clearInterval(){},console};
  vm.runInNewContext(source,context);return {w,d:w.document,location,calls,context};
 }
 const flush=()=>new Promise(resolve=>setImmediate(resolve));
@@ -98,4 +98,18 @@ test('entry alias is consumed once for its test, expires, and cannot replace an 
 test('the one-time student handoff preserves English UI without putting the alias in the address',async t=>{
  const r=runtime(t);await flush();r.d.documentElement.lang='en-GB';r.d.getElementById('secureJoinCode').value='AB12CD34';r.d.getElementById('secureJoinName').value='SYN-EN';r.d.getElementById('secureJoinForm').dispatchEvent(new r.w.Event('submit',{bubbles:true,cancelable:true}));
  const u=new URL(r.location.href);assert.equal(u.searchParams.get('lang'),'en');assert.equal(u.searchParams.get('test'),'AB12CD34');assert.equal(u.href.includes('SYN-EN'),false);
+});
+
+
+test('an anonymous plain workspace returns to the public homepage while account and tutorial routes stay intact',async()=>{
+ const app=fs.readFileSync('app.js','utf8'),start=app.indexOf('  const params = new URLSearchParams(location.search);',app.indexOf('onAuthStateChanged(auth')),end=app.indexOf('// ---------- Dashboard ----------',start),body=app.slice(start,end).replace(/\}\);\s*$/,'');
+ for(const [search,user,expected] of [['',null,'https://gradecrew.de/'],['?lang=en',null,'https://gradecrew.de/?lang=en'],['',{uid:'synthetic'},'dashboard'],['?intent=login',null,'authView'],['?firstGuide=1',null,'authView']]){
+ const seen=[],ctx={URL,URLSearchParams,location:{search,pathname:'/workspace.html',href:'https://gradecrew.de/workspace.html'+search,replace:v=>seen.push(v)},document:{documentElement:{lang:'de'}},normalizeTemplateCode:()=>'',sessionStorage:{getItem:()=>null},PENDING_TEMPLATE_KEY:'unused',$:()=>null,loadDashboard:async()=>seen.push('dashboard'),showView:v=>seen.push(v),user};vm.createContext(ctx);await vm.runInContext('(async(user)=>{'+body+'})(user)',ctx);assert.deepEqual(seen,[expected]);
+ }
+});
+
+
+test('both student homepage links keep the current UI language after switching languages',async t=>{
+ const r=runtime(t);await flush();
+ for(const [lang,expected] of [['en-GB','en'],['de-DE',null]]){r.d.documentElement.lang=lang;r.w.dispatchEvent(new r.w.Event('gradecrew:ui-locale-changed'));for(const link of r.d.querySelectorAll('.secureBrand,.secureEntryBack')){const u=new URL(link.href);assert.equal(u.pathname,'/');assert.equal(u.searchParams.get('lang'),expected);}}
 });

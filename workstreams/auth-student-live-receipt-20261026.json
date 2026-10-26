@@ -1,0 +1,82 @@
+{
+  "source_commit": "91005cff96256e2f12f5562670bf0abfb8a1327d",
+  "previous_live": "5f61f723c1b24d45996a77afbe40acc4ebb05cd3",
+  "project": "hausaufgabe-staging",
+  "url": "https://gradecrew.de/",
+  "scope": "hosting-only",
+  "attempt": 1,
+  "started_at": "2026-10-26T19:23:34.029146+00:00",
+  "ci_run": 40385917222,
+  "ci_jobs": [
+    121794004674,
+    121794005158
+  ],
+  "rollback_package": "/private/tmp/gc-remy-intake-production-20261026",
+  "status": "production_http_and_browser_verified",
+  "verified_at": "2026-10-26T19:24:27.519587+00:00",
+  "verified_files_per_origin": 194,
+  "origins": [
+    "https://gradecrew.de/",
+    "https://hausaufgabe-staging.web.app/"
+  ],
+  "hash_failures": 0,
+  "runtime_tree": "1eff26c85978175d1b5f08b13708341e33bb456c",
+  "backend_rules_accounts_changed": false,
+  "legacy_hausaufgabe_40294_changed": false,
+  "browser_live_verification": {
+    "home_sizes": [
+      [
+        320,
+        568
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        820,
+        1180
+      ],
+      [
+        1024,
+        768
+      ],
+      [
+        1366,
+        1024
+      ],
+      [
+        1280,
+        720
+      ]
+    ],
+    "layout_errors": 0,
+    "student_join": "code/name, empty validation, logo return verified",
+    "teacher_views": [
+      "login",
+      "register",
+      "reset"
+    ],
+    "english_reset": "verified",
+    "real_account_login_registration_reset_mail": "not_performed",
+    "physical_devices": "not_tested"
+  },
+  "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/a3aa9219579e37bb",
+  "hosting_release_time": "2026-10-26T19:23:45.144Z",
+  "local_root_ui_tests": 453,
+  "local_packaging_tests": 12,
+  "final_ci": "success",
+  "automated_layout_ci": {
+    "engines": [
+      "WebKit",
+      "Chromium"
+    ],
+    "viewport_layouts": 30,
+    "task_layouts": 60,
+    "legal_link_clicks": "passed",
+    "grading_keyboard_coordinates": "passed"
+  },
+  "independent_review": "auth/student clean; homepage runner path fixed RED→GREEN; stale logo test bound to manifest",
+  "public_pr": "https://github.com/HerrLoeffler/Hausaufgabe/pull/318",
+  "public_pr_integration": "open with conflicts against newer staging-only interactive Remy; no force merge"
+}

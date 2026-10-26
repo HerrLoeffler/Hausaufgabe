@@ -10,6 +10,15 @@ const params = new URLSearchParams(location.search);
 const quizId = String(params.get("test") || "").trim();
 const $ = id => document.getElementById(id);
 
+function syncStudentHomeLinks() {
+  const home = new URL("./", location.href);
+  if (/^en(?:-|$)/i.test(document.documentElement.lang)) home.searchParams.set("lang", "en");
+  document.querySelectorAll(".secureBrand,.secureEntryBack").forEach(link => { link.href = home.href; });
+}
+syncStudentHomeLinks();
+addEventListener("gradecrew:ui-locale-changed", syncStudentHomeLinks);
+
+
 let currentQuiz = null;
 let currentAttempt = null;
 let currentPaper = [];

@@ -88,3 +88,24 @@ body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
  .hero .crew-names{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));font-size:9px;text-align:center}
  .hero .crew-names span{position:static;transform:none}
 }
+
+/* Large desktop windows need their own scale; tablet and phone rules stay intact. */
+@media(min-width:1500px){
+ .site-header{min-height:104px;padding:22px clamp(40px,4vw,100px)}
+ .brand img{width:56px;height:56px}.brand strong{font-size:28px}.brand small{font-size:14px}
+ .student-entry,.login,.register{font-size:16px;min-height:48px;padding:0 22px}
+ .language .lang{min-height:40px;min-width:40px;font-size:14px}
+ .stage{max-width:2060px;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(52px,4.5vw,110px);padding:36px clamp(40px,4vw,100px) 44px}
+ .hero h1{font-size:clamp(54px,3.4vw,80px)}.hero .eyebrow{font-size:13px}
+ .hero .lead{max-width:680px;font-size:clamp(17px,1vw,21px)}
+ .crew-wrap,.crew-names{max-width:760px}.crew-names{font-size:16px;height:30px}
+ .showcase{max-width:none;min-height:600px}.test-shell{min-height:600px}
+ .test-top{padding:28px 30px 14px}.test-top h2{font-size:clamp(26px,1.4vw,34px)}
+ .test-summary{padding:0 30px 16px;font-size:16px}
+ .overview-grid{margin:0 30px 14px;gap:8px}.overview-grid button{height:48px;font-size:16px}
+ .test-scroll #testContent{padding:12px 24px 24px}.test-scroll .task.featured{padding:24px}
+ .task.featured h4{font-size:22px}.task.featured .widget{font-size:17px}
+ .coordinate-layout svg[data-grid="coordinate"]{max-height:360px}
+ .test-bottom{min-height:76px;padding:16px 28px}.evaluate-button{font-size:16px;min-height:48px}
+ .product-note{font-size:13px}.public-links{font-size:15px}
+}

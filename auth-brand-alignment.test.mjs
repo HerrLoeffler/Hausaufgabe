@@ -46,3 +46,15 @@ test('account headings, account switches and legal navigation all have English U
  const {enGBMessages}=await import('./shared/i18n/messages-en-GB.mjs');registerCatalog('en-GB',enGBMessages);setActiveUiLocale('en-GB');
  try {for(const label of ['Willkommen zurück in der Crew.','Werde Teil der Crew.','Konto erstellen','Neu bei GradeCrew?','Datenschutz','Impressum','E-Mail oder Kurzname'])assert.notEqual(translateSource(label),label,label);}finally{setActiveUiLocale('de-DE');}
 });
+
+
+test('workspace account screens keep the legacy scene natively hidden and link back to the public homepage',t=>{
+ const r=entry(t);const start=r.d.getElementById('gcEntryStart');
+ assert.equal(start.hidden,true);
+ assert.equal(r.d.getElementById('authView').dataset.entryReady,'true');
+ const back=r.d.querySelector('#gcEntryLogin [data-entry-back]');assert.equal(back.tagName,'A');assert.equal(new URL(back.href).pathname,'/');
+ r.d.documentElement.lang='en-GB';const event=new r.w.MouseEvent('click',{bubbles:true,cancelable:true});back.dispatchEvent(event);assert.equal(new URL(back.href).searchParams.get('lang'),'en');assert.equal(event.defaultPrevented,false);assert.equal(r.d.getElementById('authView').dataset.entryState,'login');
+});
+test('a plain workspace does not render the retired public hero while awaiting account state',t=>{
+ const r=entry(t,'');assert.equal(r.d.getElementById('authView').dataset.entryState,'login');assert.equal(r.d.getElementById('gcEntryStart').hidden,true);
+});

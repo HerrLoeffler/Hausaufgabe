@@ -21,7 +21,9 @@ function initialEntryState() {
   const params = new URLSearchParams(window.location.search);
   if (params.get("test") || params.get("preview") === "1") return "start";
   const intent = params.get("intent");
-  return ["login", "register", "reset"].includes(intent) ? intent : "start";
+  if (["login", "register", "reset"].includes(intent)) return intent;
+  if (window.location.pathname.endsWith("/workspace.html") && params.get("firstGuide") !== "1" && !params.has("mode")) return "login";
+  return "start";
 }
 
 function syncEntryIntent(next) {
@@ -40,6 +42,7 @@ function setState(next, { focus = true } = {}) {
     const section = $(id);
     if (!section) continue;
     const hidden = name !== next;
+    section.hidden = hidden;
     section.classList.toggle("hidden", hidden);
     section.setAttribute("aria-hidden", String(hidden));
   }
@@ -192,7 +195,7 @@ function buildEntrySurface() {
   Object.values(fragments).forEach(node => node?.remove());
 
   authView.innerHTML = `<div class="gcEntryShell">
-    <section id="gcEntryStart" class="gcEntryState gcEntryStart" aria-labelledby="gcEntryHeadline">
+    <section id="gcEntryStart" hidden class="gcEntryState gcEntryStart" aria-labelledby="gcEntryHeadline">
       <div class="gcHeroPage">
         <div class="gcHeroStage">
           <div class="gcHeroVisual"><img class="gcHeroArtwork" src="./assets/gradecrew/crew-classroom-wide-v4.png" width="1774" height="887" alt="" fetchpriority="high">
@@ -236,7 +239,7 @@ function buildEntrySurface() {
     </section>
 
     <section id="gcEntryLogin" class="gcEntryState gcEntryAuth hidden" aria-hidden="true" aria-labelledby="gcEntryLoginTitle">
-      <button type="button" class="gcEntryBack" data-entry-back>← Zurück</button>
+      <a href="./" class="gcEntryBack" data-entry-back>← Zurück</a>
       <div class="gcEntryLoginScene">
         <div class="gcEntryAuthPanel"><img src="${escapeHtml(GRADECREW_ASSETS.brand.icon)}" alt="" width="48" height="48"><span class="gcEntryEyebrow">GradeCrew</span><h1 id="gcEntryLoginTitle">Willkommen zurück in der Crew.</h1><p>Melde dich an und mach dort weiter, wo du aufgehört hast.</p><div id="gcEntryLoginTabHost" class="gcEntryCompatTabs"></div><div id="gcEntryLoginFormHost"></div><p class="gcEntrySwitch">Neu bei GradeCrew? <button type="button" id="gcEntrySwitchRegister">Konto erstellen</button></p></div>
         <div class="gcEntryAuthArtwork"><div class="gcAuthCrewCopy"><p>Deine Crew. Dein Unterricht.</p><h2>Gute Tests entstehen im Team.</h2><p>Erstellen, verbessern und auswerten – mit deiner Crew an deiner Seite.</p></div><img src="./homepage/assets/crew-cutout-v2.png" alt="Coco, Remy, Emmi und Wilma heißen dich in der Crew willkommen."></div>
@@ -244,7 +247,7 @@ function buildEntrySurface() {
     </section>
 
     <section id="gcEntryRegister" class="gcEntryState gcEntryAuth hidden" aria-hidden="true" aria-labelledby="gcEntryRegisterTitle">
-      <button type="button" class="gcEntryBack" data-entry-back>← Zurück</button>
+      <a href="./" class="gcEntryBack" data-entry-back>← Zurück</a>
       <div class="gcEntryLoginScene">
         <div class="gcEntryAuthPanel"><img src="${escapeHtml(GRADECREW_ASSETS.brand.icon)}" alt="" width="48" height="48"><span class="gcEntryEyebrow">GradeCrew</span><h1 id="gcEntryRegisterTitle">Werde Teil der Crew.</h1><p>Dein Konto für eigene Tests, neue Ideen und gemeinsame Lernmomente.</p><div id="gcEntryRegisterTabHost" class="gcEntryCompatTabs"></div><div id="gcEntryRegisterFormHost"></div><p class="gcEntrySwitch">Schon dabei? <button type="button" id="gcEntrySwitchLogin">Anmelden</button></p></div>
         <div class="gcEntryAuthArtwork"><div class="gcAuthCrewCopy"><p>Deine Crew. Dein Unterricht.</p><h2>Gute Tests entstehen im Team.</h2><p>Erstellen, verbessern und auswerten – mit deiner Crew an deiner Seite.</p></div><img src="./homepage/assets/crew-cutout-v2.png" alt="Coco, Remy, Emmi und Wilma heißen dich in der Crew willkommen."></div>
@@ -264,8 +267,6 @@ function buildEntrySurface() {
       </div>
     </section>
   </div>`;
-
-  installPublicHeader();
 
   $("gcEntryJoinHost").append(joinForm);
   const joinSubmit = joinForm.querySelector('button[type="submit"]');
@@ -301,7 +302,21 @@ function buildEntrySurface() {
   $("forgotBtn").addEventListener("click", showReset);
   $("gcEntryResetBack").addEventListener("click", showLogin);
   $("gcEntryResetLogin").addEventListener("click", showLogin);
-  authView.querySelectorAll("[data-entry-back]").forEach(button => button.addEventListener("click", showStart));
+  const home = new URL("./", window.location.href);
+  if (String(document.documentElement.lang).startsWith("en") || new URLSearchParams(window.location.search).get("lang")?.startsWith("en")) home.searchParams.set("lang", "en");
+  authView.querySelectorAll("[data-entry-back]").forEach(link => {
+    link.href = home.href;
+    link.addEventListener("click", event => {
+      if (window.location.pathname.endsWith("/workspace.html")) {
+        const target = new URL("./", window.location.href);
+        if (String(document.documentElement.lang).startsWith("en")) target.searchParams.set("lang", "en");
+        link.href = target.href;
+        return;
+      }
+      event.preventDefault();
+      showStart();
+    });
+  });
   installHeroDemo($("gcEntryStart"));
   translateTree(authView);
 
@@ -312,6 +327,8 @@ function buildEntrySurface() {
   loginForm.classList.toggle("hidden", initialState === "register");
   registerForm.classList.toggle("hidden", initialState !== "register");
   setState(initialState, { focus: false });
+  installPublicHeader();
+  authView.dataset.entryReady = "true";
   installHeroViewportFit(authView);
   return true;
 }

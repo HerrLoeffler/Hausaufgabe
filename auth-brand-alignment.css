@@ -76,3 +76,16 @@ body.gcModernAuthMode :focus-visible { outline:3px solid #80b4ff; outline-offset
 @media(prefers-reduced-motion:reduce) { body.gcModernAuthMode #authView button[type=submit]:disabled::before { animation:none; } }
 
 @media(max-width:360px) { body.gcModernAuthMode .topbar .brandCopy strong { font-size:18px; } body.gcModernAuthMode .topbar .brandCopy small { display:none; } }
+
+/* Card introductions are centred; field labels remain aligned for scanning. */
+body.gcModernAuthMode #authView .gcEntryAuthPanel h1,
+body.gcModernAuthMode #authView .gcEntryAuthPanel > p{text-align:center;text-wrap:balance}
+@media(min-width:1500px){
+ body.gcModernAuthMode .topbar{max-width:1720px;padding:22px 40px}
+ body.gcModernAuthMode #authView .gcEntryAuth{width:min(1480px,100%)}
+ body.gcModernAuthMode #authView .gcEntryLoginScene{grid-template-columns:minmax(0,1fr) minmax(440px,560px);gap:clamp(64px,5vw,120px)}
+ body.gcModernAuthMode #authView .gcEntryAuthPanel{padding:38px}
+ body.gcModernAuthMode #authView .gcAuthCrewCopy h2{max-width:660px;font-size:clamp(48px,3vw,68px)}
+ body.gcModernAuthMode #authView .gcAuthCrewCopy p{max-width:580px;font-size:18px}
+ body.gcModernAuthMode #authView .gcEntryAuthArtwork img{max-height:470px}
+}

@@ -1240,8 +1240,10 @@ $("joinForm").addEventListener("submit", (e) => {
 $("brandBtn").addEventListener("click", () => {
   clearPendingTemplate();
   const url = new URL(location.href);
+  if (!$("authView").classList.contains("hidden") && url.pathname.endsWith("/workspace.html")) url.pathname = "/";
   url.search = "";
   url.hash = "";
+  if (String(document.documentElement.lang).startsWith("en")) url.searchParams.set("lang", "en");
   location.href = url.toString();
 });
 
@@ -1370,7 +1372,11 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   if (user) await loadDashboard();
-  else showView("authView");
+  else if (location.pathname?.endsWith("/workspace.html") && !["login", "register", "reset"].includes(params.get("intent")) && !["firstGuide", "preview", "mode", "oobCode"].some(key => params.has(key))) {
+    const home = new URL("./", location.href);
+    if (params.get("lang")?.startsWith("en") || String(document.documentElement.lang).startsWith("en")) home.searchParams.set("lang", "en");
+    location.replace(home.href);
+  } else showView("authView");
 });
 
 // ---------- Dashboard ----------
