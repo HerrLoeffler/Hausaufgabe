@@ -597,3 +597,91 @@ body.gcAiCompact>.topbar{height:auto}
 /* Clear inherited viewport minimums when returning to the normal compact layout. */
 html body.gcAiCompact{height:var(--ai-screen-height,100dvh);min-height:0;max-height:var(--ai-screen-height,100dvh)}
 @media(max-width:999px){html body.gcAiCompact.gcAiShortViewport{height:auto;min-height:var(--ai-screen-height,100dvh);max-height:none}}
+
+/* Audio clarity follow-up: language beside Remy; one editor Audio disclosure. */
+#aiView .aiPageHeadContent{flex:1;min-width:0}
+#aiView .aiHeaderLanguage{margin-left:auto;min-width:0;max-width:190px}
+#aiView .aiHeaderLanguage .gradecrewAssessmentLocaleField{display:flex;align-items:center;gap:7px;border:0;padding:0;background:none;font-size:12px}
+#aiView .aiHeaderLanguage .gradecrewAssessmentLocaleField select{width:auto;max-width:150px;margin:0;min-height:44px}
+#aiView .aiHeaderLanguage .gradecrewAssessmentLocaleField .hint{display:none}
+#aiView .audioCreationChoice legend{font-weight:700;line-height:1.3;max-width:100%}
+#aiView .audioExampleAnswers{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#aiView .audioExampleAnswers>span{border:1px solid #d7e2f2;border-radius:9px;padding:8px;font-size:12px}
+#aiView .audioStudentExample .audioExamplePlayer{font-size:13px;line-height:1.4;padding:10px 12px;min-height:0}
+.questionAudioTab{border:1px solid #dbe4ef;border-radius:14px;background:#fbfdff;margin:10px 0}
+.questionAudioTab>summary{cursor:pointer;font-weight:700;padding:10px 13px;min-height:44px;box-sizing:border-box}
+.questionAudioTabBody{padding:0 10px 10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+.questionAudioTabBody>.questionAudioPanel{min-width:0;margin:0}
+.questionAudioTabBody>.solutionAudioPanel{grid-column:1/-1}
+.questionAudioTab .questionAudioBody{gap:7px}
+.questionAudioTab .questionAudioEditBody{gap:7px}
+.questionAudioTab .questionAudioEdit>summary{font-size:13px;padding:6px 0;min-height:44px}
+.questionAudioHelp{font-size:12px;color:#667085}
+.questionAudioHelp>summary{cursor:pointer;min-height:32px;width:32px;display:flex;align-items:center;justify-content:center;color:#2457bd;font-size:18px}
+.questionAudioHelp small,.questionAudioHelp p{font-size:12px;line-height:1.4}
+.questionAudioTab .answerAudioPreview .questionAudioPreview{display:grid;grid-template-columns:1fr;gap:5px;padding:6px 0}
+.questionAudioTab :is(button,summary,select,textarea):focus-visible{outline:3px solid #285ac9;outline-offset:2px}
+@media(max-width:999px){
+ #aiView .aiPageHeadContent{flex-wrap:wrap;gap:4px 8px}
+ #aiView .aiPageHeadText{flex:1 1 auto}
+ #aiView .aiHeaderLanguage .gradecrewAssessmentLocaleLabel{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ #aiView .aiHeaderLanguage .gradecrewAssessmentLocaleField select{max-width:125px;font-size:12px}
+}
+@media(max-width:700px){.questionAudioTabBody{grid-template-columns:1fr}}
+
+.questionOutlineItem.hasChanges{position:relative;border-color:#c07a20;background:#fff7e9;color:#75470f}
+.questionOutlineItem .questionChangeDot{position:absolute;top:-5px;right:-3px;font-size:12px;line-height:1;color:#a7600a;background:white;border-radius:50%;padding:2px}
+.questionChangeLegend{font-size:12px;color:#75470f;margin:8px 0}
+.questionChangedBadge{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;padding:2px 8px;border-radius:8px;background:#fff7e9;color:#75470f;font-size:12px}
+.questionChangedBadge button{min-height:44px;border:0;background:transparent;color:#75470f;text-decoration:underline;cursor:pointer;font:inherit}
+.questionChangedBadge button:focus-visible{outline:3px solid #285ac9;outline-offset:2px}
+@media(max-width:700px){.questionTop{flex-wrap:wrap}.questionChangedBadge{order:5;flex-basis:100%}}
+
+/* Match the complete, dynamically installed Remy surface as well as the core form. */
+#aiView .pageHead .aiPageHeadText p{display:none}
+#aiView .pageHead .aiPageHeadText h1{font-size:20px;line-height:1.15;margin:0}
+#aiView .pageHead .aiPageRemyHero{display:none}
+#aiView .aiPageIntro{gap:12px;width:100%}
+#aiView .aiHeaderLanguage{max-width:none;flex:0 0 auto}
+#aiView .aiHeaderLanguage .gradecrewAssessmentLocaleField select{width:150px}
+#aiView #gcRemyCreatePanel .gcRemyCreateHead,#aiView #gcRemyCreateHint{display:none}
+#aiView #gcRemyCreatePanel{padding:4px 8px}
+#aiView .aiCreationFlow>.aiCreationPanel{padding:10px}
+#aiView .aiSectionTitle{margin-bottom:4px}
+#aiView .aiNotesField #aiCustomNotes{height:44px;min-height:44px}
+#aiView .aiCreationFlow>.aiCreationFinish{min-height:64px;padding:6px 10px}
+#aiView .aiCreationFinish .aiCoreActions{padding:0;gap:0;min-height:0}
+#aiView .aiCreationFinish .aiCoreActions .aiStatusNotice:empty{display:none}
+#aiView .aiCreationFinish #aiCreationSummary{margin:0 0 2px}
+#aiView .aiHeaderLanguage .gradecrewAssessmentLocaleField{min-width:0}
+@media(max-width:999px){
+ #aiView .pageHead .aiPageHeadText h1{font-size:16px;line-height:1.2}
+ #aiView .aiPageHeadText{flex:1 1 130px}
+ #aiView .aiPageHeadContent{gap:4px;flex-wrap:nowrap}
+ #aiView .aiHeaderLanguage .gradecrewAssessmentLocaleField select{width:100px;max-width:100px}
+ #aiView .aiPageIntro{gap:6px}
+}
+
+#aiView .aiCreationFinish .aiCoreActions{margin:0}
+#aiView .aiCreationFinish .aiGenerateButton{margin:0}
+#aiView .aiCreationPanelBody{padding:0}
+#aiView .formGrid2{gap:6px}
+#aiView .aiHeaderLanguage .gradecrewAssessmentLocaleField{box-sizing:border-box}
+#aiView .aiPageHeadContent,#aiView .gcRemyCreateForm,#aiView .gcRemyCreateBody{min-width:0;max-width:100%}
+@media(max-width:999px){
+ #aiView>.pageHead .linkButton.left{margin:0}
+ #aiView>.pageHead{margin:0}
+ #aiView .aiPageHeadContent .aiPageHeadText{min-width:0}
+ body.gcAiCompact.gcAiShortViewport{padding-bottom:110px}
+ #aiView.aiShortViewport .aiCreationFlow>.aiCreationFinish{position:fixed;left:12px;right:12px;bottom:8px;z-index:30}
+}
+
+#aiView .aiHeaderLanguage .gradecrewAssessmentLocaleField{position:relative;width:100%;max-width:100%}
+#aiView .aiHeaderLanguage .gradecrewAssessmentLocaleField select{min-width:0;box-sizing:border-box;flex:1 1 0;max-width:100%}
+@media(max-width:999px){#aiView .aiHeaderLanguage{width:100px}}
+
+body.gcAiCompact #appFooter{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:0 8px;margin:0;min-height:44px}
+body.gcAiCompact #appFooter>span{display:none}
+body.gcAiCompact #appFooter .footerLink{min-height:44px;padding:4px;font-size:11px}
+#aiView .aiHeaderLanguage label.gradecrewAssessmentLocaleField{display:block}
+#aiView .aiHeaderLanguage .gradecrewAssessmentLocaleLabel{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}

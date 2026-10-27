@@ -55,6 +55,13 @@ function installStyles() {
     .gcRemyFilled{animation:gcRemyFilled 1.6s ease}.gcRemyFilled input,.gcRemyFilled select,.gcRemyFilled textarea{border-color:#5d8ce5!important;box-shadow:0 0 0 3px rgba(93,140,229,.12)!important}
     @keyframes gcRemyPulse{50%{transform:scale(.95);box-shadow:0 0 0 5px rgba(226,91,91,.12)}}@keyframes gcRemyFilled{0%,100%{background:transparent}30%{background:#f2f7ff}}
     @media(max-width:700px){#aiView .gcRemyCreatePanel{grid-template-columns:48px minmax(0,1fr);padding:12px}.gcRemyCreateMascot{width:48px;height:48px}.gcRemyCreateForm{grid-column:1 / -1;grid-template-columns:44px minmax(0,1fr) 44px}.gcRemyCreateHead{margin-top:4px}}
+    #aiView #gcRemyCreatePanel{flex:none;grid-template-columns:36px minmax(0,1fr);gap:8px;margin:0;padding:6px 10px;border-radius:12px;box-shadow:none}
+    #aiView #gcRemyCreatePanel .gcRemyCreateMascot{width:32px;height:36px}
+    #aiView #gcRemyCreatePanel .gcRemyCreateHead{margin:0 0 3px}
+    #aiView #gcRemyCreatePanel .gcRemyCreateHead strong{font-size:13px}
+    #aiView #gcRemyCreatePanel .gcRemyCreateForm textarea{height:44px;min-height:44px;padding:8px;resize:vertical}
+    #aiView #gcRemyCreatePanel .gcRemyCreateHead span{font-size:11px}
+    #aiView #gcRemyCreateHint{margin:2px 0 0;font-size:11px}
     @media(prefers-reduced-motion:reduce){.gcRemyCreateMic.listening,.gcRemyFilled{animation:none}}
   `;
   document.head.appendChild(style);
@@ -76,7 +83,7 @@ function ensurePanel() {
         <textarea id="gcRemyCreateInput" rows="2" maxlength="2500" aria-label="Eckdaten für deinen Test" aria-describedby="gcRemyCreateHint" placeholder="z. B. Mathematik, Klasse 7, Prozentrechnung, mittel, 10 Aufgaben"></textarea>
         <button id="gcRemyCreateSend" class="gcRemyCreateSend" type="submit" aria-label="Eckdaten übernehmen">➜</button>
       </form>
-      <p id="gcRemyCreateHint" class="gcRemyCreateStatus">Hier nur die Eckdaten: Fach, Klasse, Thema, Schwierigkeit und Aufgabenanzahl. Was im Test genau drankommen soll, beschreibst du unten unter „Was soll der Test genau abfragen?“.</p>
+      <p id="gcRemyCreateHint" class="gcRemyCreateStatus">Eckdaten diktieren oder eingeben. Wünsche zum Inhalt unter „Angaben“.</p>
       <div id="gcRemyCreateStatus" class="gcRemyCreateStatus" role="status" aria-live="polite" hidden></div>
       <div id="gcRemyOriginalWishAction" class="gcRemyOriginalWishAction" role="group" aria-label="Originalen Wunsch übernehmen"></div>
     </div>`;

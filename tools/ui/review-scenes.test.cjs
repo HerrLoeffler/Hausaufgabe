@@ -11,6 +11,7 @@ async function fixture(t){
  async function loadModule(name){
   let code;if(name.includes('gstatic.com')){name='/tools/review-preview/firebase-fixture.mjs';if(cache.has(name))return cache.get(name);}
   if(name==='/firebase-config.js')code='export const firebaseConfig={projectId:"local-review"};export const appEnvironment="local-review";';else code=await fs.readFile(path.join(root,name),'utf8');
+  if(name==='/app.js')code+='\nwindow.__editorTest={state,renderQuestions,markDirty};';
   const m=new vm.SourceTextModule(code,{context,identifier:name,initializeImportMeta:meta=>{meta.url='http://127.0.0.1:8768'+name;},importModuleDynamically:async(spec,parent)=>{const child=await linked(spec,parent);if(child.status==='unlinked')await child.link(linked);if(child.status==='linked')await child.evaluate();return child;}});cache.set(name,m);return m;
  }
  async function linked(spec,parent){const name=spec.startsWith('http')?spec:path.posix.resolve(path.posix.dirname(parent.identifier),spec);return moduleFor(name);}
@@ -27,3 +28,5 @@ test('real app resumes editor, student, submit and finish scenes with isolated d
  }
  assert.deepEqual(errors,[]);
 });
+
+test('background completion marks its task while another task keeps focus and unsaved input',async t=>{const {w,errors}=await fixture(t);w.document.dispatchEvent(new w.CustomEvent('gradecrew:review-scene',{detail:{scene:'editor'}}));await pause();const api=w.__editorTest;const first=api.state.questions[0],second=api.state.questions[1];assert.ok(second);const field=w.document.querySelectorAll('#questionList .qText')[1];field.value='MY UNSAVED SECOND TASK';field.dispatchEvent(new w.Event('input',{bubbles:true}));field.focus();api.markDirty(first,'Emmi');api.renderQuestions({onlyQuestionId:first.id});assert.equal(w.document.activeElement,field);assert.equal(field.value,'MY UNSAVED SECOND TASK');assert.equal(api.state.questions[1].text,'MY UNSAVED SECOND TASK');assert.ok(w.document.querySelector('#questionOutline .hasChanges'));assert.match(w.document.querySelector('.questionChangedBadge').textContent,/Geändert · prüfen/);w.document.querySelector('.questionChangedBadge button').click();assert.equal(w.document.querySelector('#questionOutline .hasChanges'),null);assert.deepEqual(errors,[]);});

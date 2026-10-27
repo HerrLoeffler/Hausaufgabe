@@ -2889,9 +2889,11 @@ function setAiProgress(message = "", isError = false, percent = null, hint = "",
 function updateAiCreationSummary() {
   const node = $("aiCreationSummary");
   if (!node) return;
-  const full = Number($("aiFullAudioQuestionCount")?.value || 0);
-  const material = state.aiMaterials.length ? `${state.aiMaterials.length} Materialquelle(n), ${$("aiMaterialMode").value === "only" ? "Inhalt auf Material beschränkt" : "als Anregung"}` : "ohne Material";
-  node.textContent = `${$("aiCount").value} Aufgaben · ${$("aiPoints").value} Punkte · ${material} · ${$("aiImageQuestionCount").value} Aufgabenbilder · ${$("aiAudioQuestionCount").value} Hörtexte · ${$("aiAudioAnswerQuestionCount").value} Aufgaben mit Audioantworten · ${full} vollständige Audioaufgaben`;
+  const parts = [`${$("aiCount").value} Aufgaben`, `${$("aiPoints").value} Punkte`];
+  if (state.aiMaterials.length) parts.push(`${state.aiMaterials.length} Materialquelle(n)`);
+  const media = [["aiImageQuestionCount", "Bilder"], ["aiAudioQuestionCount", "Hörtexte"], ["aiAudioAnswerQuestionCount", "Aufgaben mit Audioantworten"], ["aiFullAudioQuestionCount", "Aufgaben mit Aufgabe und Antworten als Audio"]];
+  for (const [id, label] of media) if (Number($(id)?.value) > 0) parts.push(`${$(id).value} ${label}`);
+  node.textContent = parts.join(" · ");
 }
 
 function updateAiImageControls() {
@@ -3571,11 +3573,11 @@ function syncQualityReport() {
   state.currentQuiz.qualityWarnings = [...(report.warnings || []), ...report.issues.map(issue => `Aufgabe ${issue.questionPosition}: ${issue.reason}: ${issue.detail}`)];
 }
 
-function resolveQualityIssues(questionId) {
+function resolveQualityIssues(questionId, { render = true } = {}) {
   if (!state.pendingImportReport) return;
   state.pendingImportReport.issues = (state.pendingImportReport.issues || []).filter(issue => issue.questionId !== questionId);
   syncQualityReport();
-  renderQuestions();
+  if (render) renderQuestions();
   markDirty();
 }
 
@@ -3596,6 +3598,65 @@ function renderQualityIssue(node, q, index) {
   node.querySelector(".questionTop").after(detail);
 }
 
+function questionChangeState() {
+  const owner = state.user?.uid || state.guestTourUid;
+  const quiz = state.currentQuiz?.id;
+  if (!owner || !quiz) return null;
+  const key = `gcQuestionChanges:${encodeURIComponent(owner)}:${encodeURIComponent(quiz)}`;
+  const stores = questionChangeState.stores ||= new Map();
+  if (!stores.has(key)) {
+    let records = Object.create(null);
+    try {
+      const saved = JSON.parse(localStorage.getItem(key) || "{}");
+      for (const [id, value] of Object.entries(saved).slice(0, 100)) {
+        if (value && Number.isSafeInteger(value.revision) && value.revision > 0) records[id] = { revision: value.revision, pending: value.pending === true, kind: ["Emmi", "Bild", "Audio"].includes(value.kind) ? value.kind : "Emmi" };
+      }
+    } catch (_) { /* The reminder remains available in memory if storage is unavailable. */ }
+    stores.set(key, { key, records });
+  }
+  return stores.get(key);
+}
+
+function persistQuestionChangeState(store) {
+  try { localStorage.setItem(store.key, JSON.stringify(store.records)); } catch (_) { /* No task content or media is stored here. */ }
+}
+
+function setQuestionChangePending(q, kind) {
+  const store = questionChangeState();
+  if (!store || !q?.id || !state.questions.includes(q)) return;
+  store.records[q.id] = { revision: (store.records[q.id]?.revision || 0) + 1, pending: true, kind };
+  persistQuestionChangeState(store);
+  renderQuestionChangeStatus(q);
+  renderQuestionOutline();
+}
+
+function renderQuestionChangeStatus(q) {
+  const card = [...document.querySelectorAll(".questionCard")].find(node => node.dataset.id === q.id);
+  if (!card) return;
+  card.querySelector(".questionChangedBadge")?.remove();
+  const store = questionChangeState();
+  const record = store?.records[q.id];
+  if (!record?.pending) return;
+  const badge = document.createElement("span");
+  badge.className = "questionChangedBadge";
+  const text = document.createElement("span");
+  text.textContent = "Geändert · prüfen";
+  text.title = `${record.kind} hat diese Aufgabe geändert.`;
+  const checked = document.createElement("button");
+  checked.type = "button";
+  checked.textContent = "Geprüft";
+  checked.setAttribute("aria-label", "Änderung dieser Aufgabe als geprüft bestätigen");
+  checked.addEventListener("click", () => {
+    if (questionChangeState() !== store || store.records[q.id]?.revision !== record.revision) return;
+    store.records[q.id].pending = false;
+    persistQuestionChangeState(store);
+    renderQuestionChangeStatus(q);
+    renderQuestionOutline();
+  });
+  badge.append(text, checked);
+  card.querySelector(".questionTop")?.appendChild(badge);
+}
+
 function renderQuestionOutline() {
   const host = $("questionOutline");
   if (!host) return;
@@ -3611,7 +3672,18 @@ function renderQuestionOutline() {
   }
   const hint = $("questionOrderHint");
   if (hint) hint.textContent = unlocked ? "Zwei Nummern antippen zum Tauschen oder eine Nummer an die gewünschte Stelle ziehen." : "";
-  host.innerHTML = state.questions.map((q, index) => `<button type="button" class="questionOutlineItem${activeQualityIssue(index) ? " hasIssue" : ""}${unlocked && state.questionOrderFrom === q.id ? " selectedForMove" : ""}" draggable="${unlocked}" data-position="${index + 1}" aria-label="Aufgabe ${index + 1}${unlocked ? ", zum Tauschen auswählen" : activeQualityIssue(index) ? ", Hinweis prüfen" : ""}"${unlocked ? ` aria-pressed="${state.questionOrderFrom === q.id}"` : ""}>${index + 1}${activeQualityIssue(index) ? " !" : ""}</button>`).join("");
+  const changed = questionChangeState()?.records || {};
+  let legend = $("questionChangeLegend");
+  if (!legend) { legend = document.createElement("p"); legend.id = "questionChangeLegend"; legend.className = "questionChangeLegend"; legend.setAttribute("role", "status"); host.after(legend); }
+  const pendingCount = state.questions.filter(q => changed[q.id]?.pending).length;
+  legend.hidden = pendingCount === 0;
+  legend.textContent = pendingCount ? `● Geändert · prüfen (${pendingCount})` : "";
+  host.innerHTML = state.questions.map((q, index) => {
+    const pending = changed[q.id]?.pending;
+    const issue = activeQualityIssue(index);
+    const label = `Aufgabe ${index + 1}${pending ? ", geändert, bitte prüfen" : ""}${issue ? ", Hinweis prüfen" : ""}${unlocked ? ", zum Tauschen auswählen" : ""}`;
+    return `<button type="button" class="questionOutlineItem${issue ? " hasIssue" : ""}${pending ? " hasChanges" : ""}${unlocked && state.questionOrderFrom === q.id ? " selectedForMove" : ""}" draggable="${unlocked}" data-position="${index + 1}" aria-label="${label}" title="${label}"${unlocked ? ` aria-pressed="${state.questionOrderFrom === q.id}"` : ""}>${index + 1}${issue ? " !" : ""}${pending ? '<span class="questionChangeDot" aria-hidden="true">●</span>' : ""}</button>`;
+  }).join("");
   const applyOrder = (from, to, swap) => {
     if (!unlocked || state.currentQuiz?.published && !state.currentQuiz?.ended || from < 0 || to < 0 || from === to) return;
     if (swap) [state.questions[from], state.questions[to]] = [state.questions[to], state.questions[from]];
@@ -4073,13 +4145,16 @@ function bindQuestionTextEditor(node, q) {
   };
 }
 
-function renderQuestions() {
+function renderQuestions({ onlyQuestionId = null } = {}) {
   $("editorView").dataset.quizId = state.currentQuiz?.id || "";
   $("editorView").dataset.ownerId = tourUid();
   $("editorView").dataset.variantAllowed = String(!state.newManualQuiz && !(state.currentQuiz?.published && !state.currentQuiz?.ended));
   const root = $("questionList");
-  root.innerHTML = "";
+  const oldCard = onlyQuestionId ? [...root.children].find(node => node.dataset.id === onlyQuestionId) : null;
+  if (!oldCard) onlyQuestionId = null;
+  if (!onlyQuestionId) root.innerHTML = "";
   state.questions.forEach((q, index) => {
+    if (onlyQuestionId && q.id !== onlyQuestionId) return;
     q.position = index + 1;
     const node = $("questionTemplate").content.firstElementChild.cloneNode(true);
     node.dataset.id = q.id;
@@ -4171,7 +4246,9 @@ function renderQuestions() {
     node.addEventListener("input", markAudioStaleAfterContentEdit, true);
     node.addEventListener("change", markAudioStaleAfterContentEdit, true);
     renderAnswerEditor(node.querySelector(".answerEditor"), q);
-    root.appendChild(node);
+    if (oldCard && onlyQuestionId) oldCard.replaceWith(node);
+    else root.appendChild(node);
+    renderQuestionChangeStatus(q);
   });
   updateSummary();
   syncQualityReport();
@@ -4471,6 +4548,7 @@ function applyPendingVariants() {
   const anchor = state.questions.findIndex(q => q.id === task.anchorId);
   state.questions.splice(anchor < 0 ? state.questions.length : anchor + 1, 0, ...next);
   task.anchorId = next.at(-1).id;
+  next.forEach(q => markDirty(q, "Emmi"));
   renderQuestions();
   markDirty();
   if (!task.running && !task.questions.length) state.variantTask = null;
@@ -4594,7 +4672,7 @@ async function changeQuestionType(q, index, targetType) {
     const label = QUESTION_TYPES.find(([type]) => type === targetType)?.[1] || targetType;
     const next = await regenerateQuestionWithAi(q, index, { targetType, instruction: `Wandle die Aufgabe in ${label} (${targetType}) um. Erhalte Lernziel, Testsprache und fachlichen Inhalt. Formuliere einen vollständigen Arbeitsauftrag, passende Antworten und korrekte Lösungen für den neuen Typ. Passe Bild und Hörtext an; keine Lösungen in sichtbaren Medien verraten.` });
     if (next && state.questions.includes(next)) { next._typeVersions = versions; markDirty(); }
-  } finally { delete q._typeChanging; renderQuestions(); }
+  } finally { delete q._typeChanging; if (state.questions.some(item => item.id === q.id)) renderQuestions({ onlyQuestionId: q.id }); }
 }
 
 async function regenerateQuestionWithAi(q, index, { instruction = "", variant = false, panel = null, requireDifferent = false, targetType = null } = {}) {
@@ -4626,8 +4704,8 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
     index = editorQuestionIndex(state, target);
     if (index < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
     if (variant) state.questions.splice(index + 1, 0, next);
-    else { state.questions[index] = next; resolveQualityIssues(q.id); }
-    renderQuestions(); markDirty(); toast(variant ? "Zusätzliche Variante hinzugefügt. Bitte speichern." : "Aufgabe überarbeitet.");
+    else { state.questions[index] = next; resolveQualityIssues(q.id, { render: false }); }
+    markDirty(next, "Emmi"); renderQuestions({ onlyQuestionId: variant ? null : next.id }); toast(variant ? "Zusätzliche Variante hinzugefügt. Bitte speichern." : "Aufgabe überarbeitet.");
     if (typeof crewTour !== "undefined") crewTour?.notify("edited", {quizId: target.quizId});
     return next;
   } catch (err) {
@@ -4975,7 +5053,7 @@ async function generateAiImageForQuestion(q, panel, { fromTask = false } = {}) {
     restoreQuestionImage(q, { ...imageEditorFields(result.asset), imageUrl: "", imagePath: "", imageAlt: result.asset.imageAlt || "Abbildung zur Aufgabe" });
     operation.applied = imageEditorSnapshot(q);
     sessionStorage.removeItem(key);
-    markDirty(); toast("KI-Bild eingefügt. Bitte prüfen und den Test speichern.");
+    markDirty(q, "Bild"); toast("KI-Bild eingefügt. Bitte prüfen und den Test speichern.");
   } catch (err) {
     // Only a proven terminal failure permits an explicitly requested new attempt.
     if (["failed", "expired"].includes(err?.details?.mediaState) && state.user?.uid === target.uid) sessionStorage.removeItem(key);
@@ -5218,7 +5296,15 @@ function createAnswerAudioRepairControl(q, container, entryKey, index) {
 }
 
 function renderQuestionAudioEditor(container, q) {
+  const previousTab = container.querySelector(".questionAudioTab");
+  const tabWasOpen = previousTab ? previousTab.open : true;
   container.innerHTML = "";
+  const audioTab = document.createElement("details");
+  audioTab.className = "questionAudioTab";
+  audioTab.open = tabWasOpen;
+  audioTab.innerHTML = '<summary>Audio</summary><div class="questionAudioTabBody"></div>';
+  container.appendChild(audioTab);
+  const tabBody = audioTab.querySelector(".questionAudioTabBody");
   const hasAudio = Boolean(getQuestionAudioSrc(q));
   const hasScript = Boolean(String(q.audioScript || "").trim());
   const locked = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
@@ -5229,15 +5315,15 @@ function renderQuestionAudioEditor(container, q) {
     <div class="questionAudioBody">
       <div class="questionAudioPreview"></div>
       <small class="questionAudioInstructionWarning" role="status"></small>
-      <details class="questionAudioEdit"><summary>Textquelle und Aufnahme bearbeiten</summary><div class="questionAudioEditBody">
-      <label class="stack compact"><span>Textquelle für die Aufnahme</span><select class="questionAudioSource"><option value="task">Vorhandene Frage vertonen</option><option value="own">Eigenen Hörtext oder Dialog verwenden</option></select></label>
-      <p class="questionAudioVisibility"></p>
-      <label class="stack compact"><span>Sprechertext <small>nur für dich bearbeitbar · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="Text oder Dialog für die Aufnahme."></textarea></label>
+      <details class="questionAudioEdit"><summary>Hörtext bearbeiten</summary><div class="questionAudioEditBody">
+      <label class="stack compact"><span>Was soll zu hören sein?</span><select class="questionAudioSource"><option value="task">Vorhandene Frage vertonen</option><option value="own">Eigener Hörtext oder Dialog</option></select></label>
+      <details class="questionAudioHelp"><summary aria-label="Hinweis zur Schüleransicht">ⓘ</summary><p class="questionAudioVisibility"></p><small>Den Hörtext sehen Schüler nicht zusätzlich als Text.</small></details>
+      <label class="stack compact"><span>Hörtext <small>nur für dich · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="Text oder Dialog für die Aufnahme."></textarea></label>
       <div class="questionAudioActions"></div>
-      <small class="questionAudioDisclosure">Schüler hören die Aufnahme. Den Sprechertext zeigen wir ihnen nicht zusätzlich an.</small>
+
       </div></details>
     </div>`;
-  container.appendChild(details);
+  tabBody.appendChild(details);
   const source = details.querySelector(".questionAudioSource");
   source.value = hasScript || hasAudio ? "own" : "task";
   source.disabled = locked;
@@ -5245,8 +5331,8 @@ function renderQuestionAudioEditor(container, q) {
   editing.open = !hasAudio;
   const visibility = details.querySelector(".questionAudioVisibility");
   visibility.textContent = q.audioPresentation === "listening-only"
-    ? "Höraufgabe: Der Arbeitsauftrag im Feld Frage bleibt sichtbar. Den Hörtext gibt es für Schüler nur in der Aufnahme."
-    : "Die Frage bleibt für Schüler sichtbar. Die Aufnahme ergänzt die Aufgabe.";
+    ? "Der Arbeitsauftrag bleibt sichtbar. Den Hörtext hören Schüler nur als Audio."
+    : "Die Frage bleibt sichtbar; das Audio ergänzt sie.";
   if (typeof SECURE_AUDIO_PUBLICATION_ENABLED !== "undefined" && !SECURE_AUDIO_PUBLICATION_ENABLED && q.audioPresentation === "listening-only") {
     visibility.textContent += " Dieser Hörmodus ist auf dieser Testumgebung noch nicht zur Veröffentlichung freigegeben.";
   }
@@ -5339,11 +5425,10 @@ function renderQuestionAudioEditor(container, q) {
   }
 
   if (questionHasAudioAnswerEntries(q)) {
-    const answerDetails = document.createElement("details");
+    const answerDetails = document.createElement("section");
     answerDetails.className = "questionAudioPanel answerAudioPanel";
-    answerDetails.open = q.audioAnswerMode === "audio-only";
-    answerDetails.innerHTML = `<summary><span>Antwortmöglichkeiten als Audio <small>(optional)</small></span><span class="questionAudioState">${q.audioAnswerMode === "audio-only" ? questionAnswerAudioReady(q) ? "bereit" : "Audio erzeugen" : ""}</span></summary><div class="questionAudioBody"><small>Schüler hören jede Antwortmöglichkeit einzeln. Die Antworttexte werden ihnen dabei nicht angezeigt. Hier bleiben die Texte bearbeitbar.</small><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
-    container.appendChild(answerDetails);
+    answerDetails.innerHTML = `<div class="questionAudioHeading"><strong>Antworten hören</strong><span class="questionAudioState">${q.audioAnswerMode === "audio-only" ? questionAnswerAudioReady(q) ? "bereit" : "Audio erzeugen" : ""}</span></div><div class="questionAudioBody"><details class="questionAudioHelp"><summary aria-label="Hinweis zu Audioantworten">ⓘ</summary><small>Antworttexte bleiben für Schüler verborgen. Jede Antwort ist einzeln hörbar; du kannst die Texte weiterhin bearbeiten.</small></details><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
+    tabBody.appendChild(answerDetails);
     if (typeof SECURE_AUDIO_PUBLICATION_ENABLED !== "undefined" && !SECURE_AUDIO_PUBLICATION_ENABLED) {
       const gate = document.createElement("small"); gate.className = "aiInputError";
       gate.textContent = "Antwortmöglichkeiten nur als Audio sind auf dieser Testumgebung noch nicht zur Veröffentlichung freigegeben.";
@@ -5422,7 +5507,7 @@ function renderQuestionAudioEditor(container, q) {
       <div class="questionAudioActions solutionAudioActions"></div>
       <small class="questionAudioDisclosure">Dieses Audio wird Schülern erst nach Testende und nur bei freigegebenen Lösungen angezeigt.</small>
     </div>`;
-  if (solutionHasAudio || solutionHasScript) container.appendChild(solutionDetails);
+  if (solutionHasAudio || solutionHasScript) tabBody.appendChild(solutionDetails);
   const solutionInput = solutionDetails.querySelector(".solutionAudioScript");
   solutionInput.value = String(q.solutionAudioScript || "");
   solutionInput.disabled = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
@@ -5517,7 +5602,7 @@ async function generateAiAudioForQuestion(q, container, { fromTask = false, keep
       if (questionNode) bindQuestionTextEditor(questionNode, q);
     }
     q.audioNeedsRegeneration = false;
-    markDirty();
+    markDirty(q, "Audio");
     renderQuestionAudioEditor(container, q);
     toast("Audio eingefügt. Bitte kurz anhören und den Test speichern.");
   } catch (err) {
@@ -5590,7 +5675,7 @@ async function generateAiAnswerAudioForQuestion(q, container, entryKey = null, f
       const record = answerAudioRepairState(q).get(entry.key);
       if (record) { record.invalid = false; record.recovered = true; }
     }
-    markDirty();
+    markDirty(q, "Audio");
     toast(entryKey === null ? "Antwort-Audios eingefügt. Bitte alle Optionen anhören und den Test speichern." : "Audiospur erneuert. Bitte kurz anhören und speichern.");
   } catch (err) {
     showReportableError({ code: REPORTABLE_ERROR_CODES.aiEdit, message: aiFriendlyError(err, "Antwort-Audios konnten nicht vollständig erstellt werden."), error: err, action: "generate_answer_audio", details: { questionType: q.type, optionCount: scripts.length } });
@@ -5622,7 +5707,7 @@ async function generateAiSolutionAudioForQuestion(q, container) {
     q.solutionAudioAiGenerated = result.asset.audioAiGenerated !== false;
     q.solutionAudioScript = script;
     q.solutionAudioNeedsRegeneration = false;
-    markDirty();
+    markDirty(q, "Audio");
     renderQuestionAudioEditor(container, q);
     toast("Audio-Lösung erzeugt. Sie bleibt bis zur Lösungsfreigabe geschützt.");
   } catch (err) {
@@ -6223,7 +6308,8 @@ async function persistEditorDraft() {
   }
 }
 
-function markDirty() {
+function markDirty(changedQuestion = null, kind = "") {
+  if (changedQuestion?.id && kind) setQuestionChangePending(changedQuestion, kind);
   state.isDirty = true;
   state.draftCheckpointSaved = false;
   draftRevision += 1;
@@ -9520,6 +9606,7 @@ async function handleEmmiWholeTestRequest(event) {
 
     state.emmiRevisionUndo = { quizId, uid, questions: previousQuestions, pendingImportReport: previousReport };
     state.questions = nextQuestions;
+    nextQuestions.forEach((q, index) => { if (!wholeTestRevisionLocked(previousQuestions[index]) && questionReviewKey(q) !== questionReviewKey(previousQuestions[index])) markDirty(q, "Emmi"); });
     renderQuestions();
     markDirty();
     const detail = {

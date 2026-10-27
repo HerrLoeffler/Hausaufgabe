@@ -24,7 +24,7 @@ test('decoded short speech is accepted but silent audio is rejected',async()=>{
 });
 test('outline stays navigation while locked and swaps selected tasks only after unlocking',()=>{
  const {JSDOM}=require('jsdom');const dom=new JSDOM('<button id="questionOrderLock"></button><div id="questionOrderHint"></div><nav id="questionOutline"></nav>');let navigated=0;
- const c=harness({$:id=>dom.window.document.getElementById(id),activeQualityIssue:()=>null,scrollToQualityIssue:()=>navigated++});c.state.questions=[{id:'a'},{id:'b'},{id:'c'}];vm.runInContext(fn('renderQuestionOutline','function scrollToQualityIssue'),c);
+ const c=harness({document:dom.window.document,questionChangeState:()=>null,$:id=>dom.window.document.getElementById(id),activeQualityIssue:()=>null,scrollToQualityIssue:()=>navigated++});c.state.questions=[{id:'a'},{id:'b'},{id:'c'}];vm.runInContext(fn('renderQuestionOutline','function scrollToQualityIssue'),c);
  c.renderQuestions=()=>c.renderQuestionOutline();c.renderQuestionOutline();dom.window.document.querySelector('[data-position="1"]').click();assert.equal(navigated,1);assert.equal(c.state.questions[0].id,'a');
  dom.window.document.getElementById('questionOrderLock').click();dom.window.document.querySelector('[data-position="1"]').click();dom.window.document.querySelector('[data-position="2"]').click();assert.deepEqual(c.state.questions.map(q=>q.id),['b','a','c']);assert.equal(navigated,1);
  c.state.currentQuiz={id:'other'};c.renderQuestionOutline();assert.equal(dom.window.document.getElementById('questionOrderLock').getAttribute('aria-pressed'),'false');dom.window.close();
@@ -95,3 +95,5 @@ assert.match(w.messages[0],/zehn|10/);
 }});
 
 }
+
+test('completed asynchronous type conversion refreshes only its own card',async()=>{const q={id:'q1',type:'single',text:'Original'};let finish;const renders=[];const c=harness({regenerateQuestionWithAi:()=>new Promise(r=>finish=r),renderQuestions:opts=>renders.push(opts)});c.state.questions=[q];vm.runInContext(fn('changeQuestionType','async function regenerateQuestionWithAi'),c);const pending=c.changeQuestionType(q,0,'gapfill');renders.length=0;finish(q);await pending;assert.equal(renders.length,1);assert.equal(renders[0].onlyQuestionId,'q1');});

@@ -86,7 +86,7 @@ test('one public question field replaces audio mode and duplicate field',async t
   const w=await harness(t);const q=question('multi');const container=w.document.createElement('div');w.renderQuestionAudioEditor(container,q);
   assert.equal(container.querySelector('.questionAudioPresentation'),null);
   assert.equal(container.querySelector('.questionAudioInstruction'),null);
-  assert.equal(container.querySelector('.questionAudioPreview').closest('details'),null);
+  assert.equal(container.querySelector('.questionAudioPreview').closest('details').className,'questionAudioTab');
   assert.equal(container.querySelector('.questionAudioEdit').open,false);
 });
 test('main question field edits public instruction without changing private legacy text',async t=>{

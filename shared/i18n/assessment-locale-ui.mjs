@@ -27,13 +27,13 @@ function localeFieldCopy() {
   return currentUiLocale() === "en-GB"
     ? {
         label: "Test language",
-        german: "German (Germany)",
+        german: "German",
         english: "English (UK)",
         hint: "Sets the language of questions and solutions. The GradeCrew interface can independently be German or English.",
       }
     : {
         label: "Testsprache",
-        german: "Deutsch (Deutschland)",
+        german: "Deutsch",
         english: "English (UK)",
         hint: "Legt die Sprache der Aufgaben und Lösungen fest. Die GradeCrew-Oberfläche kann unabhängig davon Deutsch oder Englisch sein.",
       };
@@ -90,7 +90,9 @@ function ensureAiControl() {
   const grid = $("#aiView .formGrid2");
   if (!grid || $("#aiContentLocale")) return;
   const field = createLocaleField("aiContentLocale", "aiContentLocaleHint");
-  grid.prepend(field);
+  const headerSlot = $("#aiContentLocaleSlot");
+  if (headerSlot) headerSlot.append(field);
+  else grid.prepend(field);
   const select = field.querySelector("select");
   select.value = pendingContentLocale;
   select.addEventListener("change", () => {
