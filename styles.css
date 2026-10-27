@@ -744,3 +744,11 @@ body.gcAiCompact.gcAiKeyboard{padding-bottom:calc(100dvh - var(--ai-screen-heigh
 
 /* Avoid Safari zooming the page when a touch keyboard focuses a small control. */
 @media(pointer:coarse){#aiView :is(input,textarea,select){font-size:16px!important}}
+
+.creationLegalFooter{display:contents}
+html body.gcAiCompact{width:100%;grid-template-columns:minmax(0,1fr)}
+body.gcAiCompact>.creationLegalFooter{grid-column:1;grid-row:3;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;min-width:0}
+body.gcAiCompact .creationLegalFooter :is(.legalSiteFooter,.rightsFooter){flex:0 1 auto;padding:2px 4px;min-width:0;max-width:100%;width:auto}
+#aiView .aiPageIntro{min-width:0}
+#aiView .aiPageHeadContent{min-width:0}
+#aiView .aiPageHeadText{min-width:80px}

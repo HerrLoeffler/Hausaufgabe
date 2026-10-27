@@ -80,7 +80,7 @@ function ensurePanel() {
       <div class="gcRemyCreateHead"><strong>Remy</strong><span>Welche Eckdaten hat dein Test?</span></div>
       <form id="gcRemyCreateForm" class="gcRemyCreateForm">
         <button id="gcRemyCreateMic" class="gcRemyCreateMic" type="button" aria-label="Eckdaten diktieren" title="Eckdaten diktieren">🎙</button>
-        <textarea id="gcRemyCreateInput" rows="2" maxlength="2500" aria-label="Eckdaten für deinen Test" aria-describedby="gcRemyCreateHint" placeholder="z. B. Mathematik, Klasse 7, Prozentrechnung, mittel, 10 Aufgaben"></textarea>
+        <textarea id="gcRemyCreateInput" rows="2" maxlength="2500" aria-label="Eckdaten für deinen Test" aria-describedby="gcRemyCreateHint" placeholder="Fach, Klasse, Thema …"></textarea>
         <button id="gcRemyCreateSend" class="gcRemyCreateSend" type="submit" aria-label="Eckdaten übernehmen">➜</button>
       </form>
       <p id="gcRemyCreateHint" class="gcRemyCreateStatus">Eckdaten diktieren oder eingeben. Wünsche zum Inhalt unter „Angaben“.</p>

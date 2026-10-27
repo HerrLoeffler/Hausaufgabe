@@ -7,3 +7,5 @@ Plan: Tastaturzustand Regression rot→kleine Korrektur→Web/Browser und synthe
 Stand lokal, noch nicht veröffentlicht. Inherited Modell actual unknown, kein Wechsel.
 
 Lokal633/633 Webprüfungen grün;46/46 Browserprüfungen einschließlich Fokus/Schreiben bei synthetisch verkleinertem visualViewport in390×844 und1024×768 sowie Rückkehr zum kompakten Modus. Touch-Eingaben16px verhindern zusätzlich Safari-Autozoom; diese letzte CSS-Regel wird mit demselben Browserlauf nochmals geprüft. Keine Aussage über echte iPad-Tastaturhardware. Weitere Featurearbeit ausgeschlossen.
+
+Visuelle Zusatzkontrolle fing eine durch einzeln platzierte Footer-Gridspalten zusammengedrückte mobile Breite ab, obwohl reine Overflowprüfungen grün waren. Footer nun in gemeinsamem neutralem Wrapper (außerhalb Erstellung display:contents), Erstellung explizit eine volle Gridspalte. Regression prüft zusätzlich volle Body-/Ansichtsbreite;633Web und46Browser grün. Finales WebKit-Handybild geprüft: volle Breite, lesbare Überschrift/Testsprache, separater Mikrofonknopf und gemeinsame Rechtszeile. Platzhalter gezielt gekürzt. Keine Liveübernahme des verworfenen7d96de0-Vorschaukandidaten.

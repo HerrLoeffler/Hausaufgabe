@@ -326,7 +326,7 @@
 
 
             <label class="span2">Thema<input id="aiTopic" type="text" placeholder="Zinsrechnung" /></label>
-            <label class="aiNotesField span2">Was soll der Test genau abfragen? <small>(optional)</small><textarea id="aiCustomNotes" rows="2" maxlength="6000" aria-label="Was soll der Test genau abfragen?" aria-describedby="aiCustomNotesHint" placeholder="z. B. Brüche kürzen und erweitern, mit einfachen Alltagsbeispielen. Keine Textaufgaben."></textarea><small id="aiCustomNotesHint">Deine Wünsche gelten nur für diesen Test. Du kannst sie auch diktieren.</small></label>
+            <label class="aiNotesField span2">Was soll der Test genau abfragen? <small>(optional)</small><textarea id="aiCustomNotes" rows="2" maxlength="6000" aria-label="Was soll der Test genau abfragen?" aria-describedby="aiCustomNotesHint" placeholder="z. B. Brüche kürzen, ohne Textaufgaben"></textarea><small id="aiCustomNotesHint">Deine Wünsche gelten nur für diesen Test. Du kannst sie auch diktieren.</small></label>
             <div class="aiMetrics span2"><label>Aufgaben<input id="aiCount" type="number" min="1" max="100" value="10" /></label>
             <label>Niveau<select id="aiDifficulty"><option>leicht</option><option selected>mittel</option><option>anspruchsvoll</option><option>gemischt</option></select></label>
             <label>Punkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label></div>
@@ -558,9 +558,11 @@
   </dialog>
 
   <footer id="appFooter" class="appFooter hidden"><span class="footerBrand">GradeCrew</span><span>·</span><span id="footerVersion">v2.3.1-gc45-rc1</span><span>·</span><button id="footerFeedbackBtn" class="footerLink" type="button">Feedback geben</button><span>·</span><button id="footerWhatsNewBtn" class="footerLink" type="button">Was ist neu?</button></footer>
+  <div class="creationLegalFooter">
   <footer class="legalSiteFooter"><nav aria-label="Rechtliches und Hilfe"><a href="datenschutz.html">Datenschutz</a><a href="impressum.html">Impressum</a><a href="support.html">Support</a></nav></footer>
   <footer class="appFooter rightsFooter"><button id="openRightsReport" class="footerLink" type="button">Inhalt melden</button></footer>
 
+  </div>
   <div id="startupNotice" class="startupNotice hidden" role="status" aria-live="polite"><span id="startupMessage"></span><button type="button" id="startupRetry" class="button secondary hidden">Erneut laden</button></div>
   <noscript><p class="startupNotice">Bitte JavaScript aktivieren, um GradeCrew zu verwenden.</p></noscript>
   <script type="module" src="startup.js?v=2.3.1-gc45-rc1"></script>
