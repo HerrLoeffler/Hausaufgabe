@@ -44,7 +44,7 @@
 #dashboardView.gcWorkspace .quizCard h3 { min-height: 2.7em; font-size: 20px; line-height: 1.35; overflow-wrap: anywhere; }
 #dashboardView.gcWorkspace .quizCard .meta { font-size: 12px; overflow-wrap: anywhere; }
 #dashboardView.gcWorkspace .quizCardStatusGroup { width: 100%; flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-#dashboardView.gcWorkspace .dashboardPublishControl { position: relative; font-size: 11px; min-height: 30px; }
+#dashboardView.gcWorkspace .dashboardPublishControl { position: relative; margin-left: auto; font-size: 11px; min-height: 30px; }
 #dashboardView.gcWorkspace .dashboardPublishControl input { width: 1px; height: 1px; margin: 0; clip-path: inset(50%); }
 #dashboardView.gcWorkspace .quizStats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); align-items: start; gap: 0; padding-block: 12px; }
 #dashboardView.gcWorkspace .quizStats strong { min-height: 0; font-size: clamp(14px,1.05vw,18px); line-height: 1.2; white-space: nowrap; overflow-wrap: normal; }

@@ -91,6 +91,22 @@ test('published cards use the publication switch without a duplicate end action'
   assert.equal(x.calls.at(-1)[0],'publish');
  }finally{x.close();}
 });
+test('the publication switch replaces the redundant published badge while other status hints remain',()=>{
+ const x=setup();try {
+  const [draft,published]=x.document.querySelectorAll('#quizList .quizCard');
+  assert.equal(draft.querySelector('.quizCardStatusGroup .status').textContent,'Entwurf');
+  assert.equal(published.querySelector('.quizCardStatusGroup .status'),null);
+  assert.equal(published.querySelector('.dashboardPublishControl > span').textContent,'Veröffentlicht');
+  assert.equal(published.querySelector('.dashboardPublishToggle').checked,true);
+  x.state.quizzes[1].startMode='teacher';
+  x.state.quizzes[1].sessionState='running';
+  vm.runInContext('renderQuizList()',x.context);x.api.refresh();
+  assert.equal(x.document.querySelector('[data-quiz-id="TWO"] .status').textContent,'Läuft');
+  x.state.quizzes[1].ended=true;
+  vm.runInContext('renderQuizList()',x.context);x.api.refresh();
+  assert.equal(x.document.querySelector('[data-quiz-id="TWO"] .status').textContent,'Beendet');
+ }finally{x.close();}
+});
 test('only a published active test exposes the direct student link; teacher live opens the existing read-only view',()=>{
  const x=setup();try {
   const [draft,published]=x.state.quizzes;
