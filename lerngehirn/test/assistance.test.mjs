@@ -29,3 +29,18 @@ test('area cell unit keeps singular Einheitsquadrat while physical units remain 
 test('pending first help retains original source identity before assistance generation succeeds',()=>{const task={id:'same-board',workshop:{tool:'fraction-board',denominator:3},contextText:''};const before={id:'s',task};const pending={id:'s',task:null,originalTask:task,pendingNext:true};assert.equal(sourceKey(pending),sourceKey(before));assert.equal(sourceTask(pending).id,'same-board');});
 
 test('fraction own part focus is not also applied to differently sized reference pieces',async()=>{const {decorateWorkshop}=await import('../assistance.mjs');const html='<span class="workshop-piece"></span><button data-workshop-part="0" class="workshop-piece"></button>';const out=decorateWorkshop(html,{focusIds:['part:0']});assert.equal((out.match(/data-help-focus/g)||[]).length,1);assert.match(out,/<button[^>]*data-help-focus/);assert.doesNotMatch(out,/<span[^>]*data-help-focus/);});
+
+test('line help visibly numbers the same intervals and marks endpoints without moving the pupil marker',async()=>{
+ const {createWorkshop,renderWorkshop}=await import('../workshop.mjs');
+ const state=createWorkshop({id:'line',workshop:{tool:'number-line',version:1,role:'support',goal:'locate',instruction:'Untersuche das Modell.',minimum:0,maximum:1,step:.25,initialValue:0,unit:''}});
+ const before=JSON.stringify(state),plain=renderWorkshop(state),help=renderWorkshop(state,false,{numberLabels:true,focusIds:['minimum','step']});
+ assert.equal(JSON.stringify(state),before);assert.equal((help.match(/data-interval-number=/g)||[]).length,4);assert.doesNotMatch(plain,/data-interval-number=/);
+ assert.match(help,/data-help-region="minimum" data-help-focus="true"/);assert.match(help,/data-help-region="step" data-help-focus="true"/);
+ assert.equal(help.match(/class="workshop-marker" d="[^"]+/)[0],plain.match(/class="workshop-marker" d="[^"]+/)[0]);
+});
+test('balance help marks actual pans and unknown terms while retaining equation and current weights',async()=>{
+ const {createWorkshop,renderWorkshop}=await import('../workshop.mjs');
+ const state=createWorkshop({id:'balance',workshop:{tool:'balance',version:1,role:'support',goal:'balance',instruction:'Untersuche das Modell.',leftCoefficient:2,leftConstant:3,rightCoefficient:0,rightConstant:11,minimum:0,maximum:100,step:1,initialValue:0}});
+ const before=JSON.stringify(state),help=renderWorkshop(state,false,{focusIds:['left','unknown']});
+ assert.equal(JSON.stringify(state),before);assert.match(help,/data-help-region="left" data-help-focus="true"/);assert.match(help,/data-help-region="unknown" data-help-focus="true"/);assert.match(help,/2·x<\/tspan> \+ 3/);assert.match(help,/x = 0: 3 &lt; 11/);
+});
