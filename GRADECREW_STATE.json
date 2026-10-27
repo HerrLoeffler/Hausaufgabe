@@ -2541,7 +2541,48 @@
               "limits_changed": false,
               "user_test": "physical-device acceptance pending",
               "handoff": "workstreams/media-inline-20261027.md",
-              "receipt": "workstreams/media-inline-live-receipt-20261027.json"
+              "receipt": "workstreams/media-inline-live-receipt-20261027.json",
+              "input_keyboard_followup": {
+                "stage": "production",
+                "scope": "Hosting-only keyboard visibility, wishes microphone and final creation labels/footer",
+                "commit": "f033f901080b91ef66b8e14e4dba94956ac396b1",
+                "tree": "c097c60c4a8b6b134c2c6d6dd49bd69da7ab1d2e",
+                "pr": 352,
+                "ci": {
+                  "run": 40589118100,
+                  "conclusion": "success",
+                  "local_checks": 633,
+                  "browser_checks": 46,
+                  "keyboard_proof": "synthetic visualViewport at390x844 and1024x768; input focus and visibility plus dismissal restoration",
+                  "review": "no concrete P1/P2 in keyboard/microphone diff;28 targeted regressions green; final footer width corrected and explicit width regressions passed"
+                },
+                "hosting": {
+                  "project": "hausaufgabe-staging",
+                  "version": "7395a9f6257a8772",
+                  "release_time": "2026-10-27T21:46:27.482Z",
+                  "origins": [
+                    {
+                      "origin": "https://gradecrew.de",
+                      "commit": "f033f901080b91ef66b8e14e4dba94956ac396b1",
+                      "files": 206,
+                      "verified": 206,
+                      "failed": []
+                    },
+                    {
+                      "origin": "https://hausaufgabe-staging.web.app",
+                      "commit": "f033f901080b91ef66b8e14e4dba94956ac396b1",
+                      "files": 206,
+                      "verified": 206,
+                      "failed": []
+                    }
+                  ]
+                },
+                "backend_changed": false,
+                "limits_changed": false,
+                "user_test": "physical iPad keyboard acceptance pending",
+                "handoff": "workstreams/final-input-20261027.md",
+                "receipt": "workstreams/final-input-live-receipt-20261027.json"
+              }
             }
           }
         }
