@@ -2411,6 +2411,39 @@
         "handoff": "workstreams/feedback-gc39-release-20261013.md",
         "receipt": "workstreams/visual-feedback-image-release-receipts-20261026.json",
         "next_action": "Martin tests the simplified normal feedback flow on gradecrew.de; normal host connector reload/private Admin smoke remains separate. No new UI work or Admin reconnection requested."
+      },
+      "latest_creation_surface_20261027": {
+        "task_id": "GC-WEB-REPAIR-20261007 / GC-AUDIO-01",
+        "stage": "production",
+        "scope": "Only approved creation surface/material contract/media editor, existing limits retained; not whole project",
+        "branch": "fix/audio-creation-surface-live-20261027",
+        "commit": "4b73e8b4523d60ff2beca87e11026ad94a0a1317",
+        "tree": "cccc87e8992f9d66b14b17748ece0409256f7de7",
+        "pr": 344,
+        "candidate_ci": 40554856821,
+        "project": "hausaufgabe-staging",
+        "hosting_version": "e4dddf79c2fc164a",
+        "release_time": "2026-10-27T17:58:38.373Z",
+        "origins": [
+          "https://gradecrew.de",
+          "https://hausaufgabe-staging.web.app"
+        ],
+        "verified_manifest_files_per_origin": 206,
+        "functions": [
+          "generateTest",
+          "startAiTestJob",
+          "processAiTestJob",
+          "generateQuestionMedia"
+        ],
+        "functions_hash": "e744c12b9b4a5ba682286dfc0ad64a745874d04c",
+        "unselected_functions_unchanged": 57,
+        "media_limits": "unchanged 5; image80/day28/min audio120/day20/min",
+        "excluded_wip": "N quota/raised caps/new job runtime remain unshipped in original branch",
+        "handoff": "workstreams/media-editor-live-20261027.md",
+        "receipt": "workstreams/media-editor-live-receipt-20261027.json",
+        "user_test": "pending; no paid provider or physical-device test",
+        "production_40294_changed": false,
+        "canonical_2026_changed": false
       }
     },
     {

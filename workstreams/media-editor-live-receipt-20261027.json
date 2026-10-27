@@ -1,0 +1,117 @@
+{
+  "task_ids": [
+    "GC-WEB-REPAIR-20261007",
+    "GC-AUDIO-01"
+  ],
+  "scope": "Five-section creation/source material/media editor; unchanged media and operator limits",
+  "source_commit": "4b73e8b4523d60ff2beca87e11026ad94a0a1317",
+  "tree": "cccc87e8992f9d66b14b17748ece0409256f7de7",
+  "local_equivalent": "ad4c66d3b5aa3066452e67a85a1156c8d88ceac7",
+  "pr": 344,
+  "ci": {
+    "run": 40554856821,
+    "jobs": [
+      122368058458,
+      122368058816
+    ],
+    "result": "success",
+    "legal": 40554861853
+  },
+  "hosting": {
+    "project": "hausaufgabe-staging",
+    "version": "e4dddf79c2fc164a",
+    "release": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/channels/live/releases/1793123918373000",
+    "release_time": "2026-10-27T17:58:38.373Z",
+    "preview": "https://hausaufgabe-staging--creation-4b73e8b-lirntloq.web.app",
+    "observed_at": "2026-10-27T17:58:59.196679+00:00",
+    "origins": [
+      {
+        "origin": "https://gradecrew.de",
+        "commit": "4b73e8b4523d60ff2beca87e11026ad94a0a1317",
+        "manifest_files": 206,
+        "verified": 206,
+        "failed": []
+      },
+      {
+        "origin": "https://hausaufgabe-staging.web.app",
+        "commit": "4b73e8b4523d60ff2beca87e11026ad94a0a1317",
+        "manifest_files": 206,
+        "verified": 206,
+        "failed": []
+      }
+    ],
+    "previous_source": "1269509e850d2a0f546c0bd0be366546d0c513d3",
+    "delta": {
+      "removed": [],
+      "added": [],
+      "changed": [
+        "app.js",
+        "shared/i18n/messages-en-GB.mjs",
+        "styles.css",
+        "workspace.html"
+      ]
+    }
+  },
+  "functions": {
+    "selected": [
+      {
+        "id": "generateTest",
+        "state": "ACTIVE",
+        "hash": "e744c12b9b4a5ba682286dfc0ad64a745874d04c"
+      },
+      {
+        "id": "startAiTestJob",
+        "state": "ACTIVE",
+        "hash": "e744c12b9b4a5ba682286dfc0ad64a745874d04c"
+      },
+      {
+        "id": "processAiTestJob",
+        "state": "ACTIVE",
+        "hash": "e744c12b9b4a5ba682286dfc0ad64a745874d04c"
+      },
+      {
+        "id": "generateQuestionMedia",
+        "state": "ACTIVE",
+        "hash": "e744c12b9b4a5ba682286dfc0ad64a745874d04c"
+      }
+    ],
+    "unselected_count": 57,
+    "unselected_changed": [],
+    "created": [],
+    "removed": []
+  },
+  "tests": {
+    "functions": 333,
+    "web_ui": 648,
+    "browser_checks": 38,
+    "eslint": "pass",
+    "independent_review": "two P1 reproduced RED-GREEN and fixed",
+    "paid_provider_calls": 0,
+    "physical_device": "not_performed",
+    "actual_teacher_creation": "not_performed"
+  },
+  "limits": {
+    "generated_images": 5,
+    "task_audio": 5,
+    "answer_audio_questions": 5,
+    "image_per_minute": 28,
+    "image_per_day": 80,
+    "audio_per_minute": 20,
+    "audio_per_day": 120,
+    "constants_byte_identical_to_base": true
+  },
+  "excluded": [
+    "combined N media quota",
+    "raised budgets",
+    "new queue/pacing/resume WIP",
+    "Rules/Auth/assessment migration",
+    "hausaufgabe-40294",
+    "canonical gradecrew-staging-2026/Wilma"
+  ],
+  "user_acceptance": "pending",
+  "public_browser_smoke": "homepage and login form loaded with no form submitted; preview student form loaded without login",
+  "deployed_source": {
+    "runtime_files": 56,
+    "mismatches": []
+  }
+}
