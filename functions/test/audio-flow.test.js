@@ -4,7 +4,19 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const { HttpsError } = require("firebase-functions/v2/https");
 const { LIMITS } = require("../lib/constants");
-const { cleanAudioScript, createAudioAsset } = require("../lib/audio-flow");
+const { cleanAudioScript, cleanSpeechFeedback, synthesizeSpeech, createAudioAsset } = require("../lib/audio-flow");
+
+test("teacher audio feedback is bounded and guides delivery without changing spoken words", async () => {
+  assert.equal(cleanSpeechFeedback("  Bitte  langsamer sprechen.  "), "Bitte langsamer sprechen.");
+  assert.throws(() => cleanSpeechFeedback("x".repeat(401)), error => error instanceof HttpsError && error.code === "invalid-argument");
+  let request;
+  await synthesizeSpeech({ script: "20 Prozent", deliveryFeedback: "Bitte langsamer sprechen." }, {
+    audio: { speech: { create: async input => { request = input; return { arrayBuffer: async () => Buffer.alloc(120) }; } } }
+  });
+  assert.equal(request.input, "20 Prozent");
+  assert.match(request.instructions, /Bitte langsamer sprechen\./);
+  assert.match(request.instructions, /exakt/i);
+});
 
 test("audio script is normalized and bounded", () => {
   assert.equal(cleanAudioScript("  Hallo   Welt.  "), "Hallo Welt.");

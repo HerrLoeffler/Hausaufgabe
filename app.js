@@ -4887,7 +4887,7 @@ async function reportMissingAnswerAudio(q, entryKey, reason, record) {
   finally { if (record.reporting === reporting) record.reporting = null; }
 }
 
-async function repairAnswerAudioTrack(q, container, entryKey, action) {
+async function repairAnswerAudioTrack(q, container, entryKey, action, feedback = "") {
   if (!state.questions.includes(q) || state.currentQuiz?.published && !state.currentQuiz?.ended) return;
   if (state.newManualQuiz || !state.currentQuiz?.id || !q?.id) return toast("Bitte den Test zuerst speichern.", "error");
   const records = answerAudioRepairState(q);
@@ -4931,7 +4931,7 @@ async function repairAnswerAudioTrack(q, container, entryKey, action) {
     }
     if (operation.cancelled || state.currentQuiz?.id !== quizId || state.user?.uid !== uid || !state.questions.includes(q) || state.currentQuiz?.published && !state.currentQuiz?.ended || questionAnswerAudioEntries(q).find(item => item.key === entryKey)?.sourceText !== entry.sourceText) return;
     if (audioOperations().get(q) === operation) audioOperations().delete(q);
-    await generateAiAnswerAudioForQuestion(q, container, entryKey);
+    await generateAiAnswerAudioForQuestion(q, container, entryKey, action === "regenerate" ? feedback : "");
     if (answerAudioClipStatus(questionAnswerAudioEntries(q).find(item => item.key === entryKey)) === "ready") { record.invalid = false; record.recovered = true; }
   } finally {
     record.busy = false;
@@ -4955,9 +4955,19 @@ function createAnswerAudioRepairControl(q, container, entryKey, index) {
   const choices = document.createElement("div"); choices.className = "answerAudioRepairChoices"; choices.hidden = true;
   choices.id = `audio-repair-${String(q.id).replace(/[^a-zA-Z0-9_-]/g, "")}-${entryKey}`;
   toggle.setAttribute("aria-controls", choices.id);
+  const feedbackLabel = document.createElement("label"); feedbackLabel.className = "answerAudioFeedbackLabel";
+  feedbackLabel.textContent = "Was passt am Audio nicht? (optional)";
+  const feedback = document.createElement("textarea"); feedback.className = "answerAudioFeedback";
+  feedback.rows = 3; feedback.maxLength = 400; feedback.disabled = Boolean(locked || busy);
+  feedback.placeholder = "z. B. langsamer sprechen oder die Zahl deutlicher betonen";
+  feedback.value = record.feedback || "";
+  feedback.addEventListener("input", () => { record.feedback = feedback.value; });
+  feedbackLabel.appendChild(feedback);
   for (const [action, text] of [["missing", "Audio fehlt – erzeugen"], ["regenerate", "Audio gefällt mir nicht – neu erzeugen"]]) {
     const button = document.createElement("button"); button.type = "button"; button.textContent = text; button.disabled = Boolean(locked || busy);
-    button.addEventListener("click", () => { void repairAnswerAudioTrack(q, container, entryKey, action); }); choices.appendChild(button);
+    button.addEventListener("click", () => { void repairAnswerAudioTrack(q, container, entryKey, action, feedback.value.trim()); });
+    if (action === "regenerate") choices.appendChild(feedbackLabel);
+    choices.appendChild(button);
   }
   toggle.addEventListener("click", () => { choices.hidden = !choices.hidden; toggle.setAttribute("aria-expanded", String(!choices.hidden)); if (!choices.hidden) choices.querySelector("button").focus(); });
   root.addEventListener("keydown", event => { if (event.key === "Escape") { choices.hidden = true; toggle.setAttribute("aria-expanded", "false"); toggle.focus(); } });
@@ -5283,7 +5293,7 @@ async function verifyGeneratedAudio(dataUrl) {
   } finally { await context.close(); }
 }
 
-async function generateAiAnswerAudioForQuestion(q, container, entryKey = null) {
+async function generateAiAnswerAudioForQuestion(q, container, entryKey = null, feedback = "") {
   if (audioOperations().has(q)) return toast("Audio wird bereits erzeugt.");
   if (state.newManualQuiz) return toast("Bitte den neuen Test zuerst speichern. Danach kannst du Antwortaudios erzeugen.", "error");
   if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst, bevor du Audio änderst.", "error");
@@ -5306,7 +5316,7 @@ async function generateAiAnswerAudioForQuestion(q, container, entryKey = null) {
     const assets = entries.map(entry => ({ ...(entry.asset || {}) }));
     for (const {index} of selected) {
       const questionId = `${String(q.id).slice(0, 70)}-a${index + 1}`;
-      const result = await aiApi.generateQuestionAudio({ quizId, questionId, script: scripts[index] });
+      const result = await aiApi.generateQuestionAudio({ quizId, questionId, script: scripts[index], ...(entryKey && feedback ? { feedback } : {}) });
       if (!String(result?.asset?.audioDataUrl || "").startsWith("data:audio/mpeg;base64,")) throw new Error(`Audio zu Antwort ${index + 1} fehlt.`);
       await verifyGeneratedAudio(result.asset.audioDataUrl);
       assets[index] = result.asset;

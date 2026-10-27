@@ -25,7 +25,7 @@ const { purgeExpiredMaterials } = require("./lib/purge-materials");
 const { getOpenAI } = require("./lib/openai-client");
 const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
 const { createVerifiedMedia } = require("./lib/media-flow");
-const { createAudioAsset } = require("./lib/audio-flow");
+const { createAudioAsset, cleanSpeechFeedback } = require("./lib/audio-flow");
 const { classifyAiFailure } = require("./lib/ai-errors");
 const { normalizeRightsReport } = require("./lib/rights-report");
 const { quizForGeneratedTest, storedAiQuestion, imageCount, audioCount } = require("./lib/ai-job");
@@ -789,13 +789,14 @@ exports.generateQuestionAudio = onCall(callableOpts, async request => {
     throw new HttpsError("invalid-argument", "Ungültige Test- oder Aufgaben-ID.");
   }
   const script = String(request.data?.script || "").normalize("NFKC").replace(/\s+/g, " ").trim();
+  const deliveryFeedback = cleanSpeechFeedback(request.data?.feedback);
   if (!script) throw new HttpsError("invalid-argument", "Hörtext fehlt.");
   const quizSnap = await getFirestore().collection("quizzes").doc(quizId).get();
   const quiz = quizSnap.data();
   if (!quizSnap.exists || quiz?.ownerId !== uid || quiz?.rightsHold) throw new HttpsError("permission-denied", "Auf diesen Test kann nicht zugegriffen werden.");
   if (quiz?.published === true && quiz?.ended !== true) throw new HttpsError("failed-precondition", "Audio kann während eines laufenden veröffentlichten Tests nicht verändert werden.");
   try {
-    return { asset: await createAudioAsset({ uid, questionId, script }) };
+    return { asset: await createAudioAsset({ uid, questionId, script, deliveryFeedback }) };
   } catch (err) {
     throw reportAiError(err, "audio-generation");
   }
