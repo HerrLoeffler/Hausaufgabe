@@ -752,3 +752,20 @@ body.gcAiCompact .creationLegalFooter :is(.legalSiteFooter,.rightsFooter){flex:0
 #aiView .aiPageIntro{min-width:0}
 #aiView .aiPageHeadContent{min-width:0}
 #aiView .aiPageHeadText{min-width:80px}
+
+/* Existing media stay visible; source and replacement options remain optional. */
+.questionMediaOptions>.questionImageEditor:has(>.questionImagePreview){flex:1 1 100%;width:100%}
+.questionMediaOptions .questionImagePreview{margin:6px 0;max-width:100%}
+.questionMediaOptions .questionImagePreview img{display:block;max-height:220px;max-width:100%;width:auto;object-fit:contain}
+.questionTaskAudioPreview{display:grid;gap:6px;min-width:0;width:100%;margin:4px 0}
+.questionTaskAudioPreview audio{display:block;width:100%;max-width:420px;height:42px}
+.questionTextMediaField{min-width:0;display:grid;gap:4px;align-self:start}
+.questionTextSourceEditor>summary,.answerTextSourceEditor>summary{display:flex;align-items:center;min-height:44px;cursor:pointer;color:#385478;font-size:12px;padding:4px 0}
+.questionTextSourceEditor>summary::before,.answerTextSourceEditor>summary::before{content:'▸';margin-right:6px}
+.questionTextSourceEditor[open]>summary::before,.answerTextSourceEditor[open]>summary::before{content:'▾'}
+.questionTextSourceEditor .questionTextLabel{display:flex;flex-direction:column;gap:5px}
+.questionMediaOptions .answerAudioAlwaysVisible{flex:1 1 100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr));gap:8px;min-width:0;width:100%}
+.questionMediaOptions .answerAudioAlwaysVisible .questionAudioPreview{padding:6px;border:1px solid #e2e8f0;border-radius:9px;background:#fbfdff;min-width:0;display:grid;gap:5px}
+.questionMediaOptions .answerAudioAlwaysVisible audio{width:100%;max-width:420px;height:42px;min-width:0}
+.answerTextSourceEditor{margin:4px 0}
+.questionTextSourceEditor>summary:focus-visible,.answerTextSourceEditor>summary:focus-visible{outline:3px solid #285ac9;outline-offset:2px}

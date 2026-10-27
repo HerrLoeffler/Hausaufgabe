@@ -4904,7 +4904,7 @@ function renderQuestionImageEditor(container, q) {
   imageMenu.className = "questionImageMenu";
   imageMenu.open = wasOpen;
   const summary = document.createElement("summary");
-  summary.textContent = getQuestionImageSrc(q) ? "Bild · vorhanden" : "Bild";
+  summary.textContent = getQuestionImageSrc(q) ? "Bild ändern" : "Bild";
   imageMenu.appendChild(summary);
   const imageBody = document.createElement("div");
   imageBody.className = "questionImageMenuBody";
@@ -4915,7 +4915,7 @@ function renderQuestionImageEditor(container, q) {
     const preview = document.createElement("div");
     preview.className = "questionImagePreview";
     preview.innerHTML = `<img src="${escapeHtml(getQuestionImageSrc(q))}" alt="${escapeHtml(q.imageAlt || "Abbildung zur Aufgabe")}">`;
-    imageBody.appendChild(preview);
+    container.insertBefore(preview, imageMenu);
 
     const alt = document.createElement("label");
     alt.className = "stack compact imageAltField";
@@ -5332,7 +5332,7 @@ function renderQuestionAudioEditor(container, q) {
   details.open = taskWasOpen;
   details.className = "questionAudioPanel questionAudioMain";
   details.setAttribute("aria-label", "Audio zur Aufgabe");
-  details.innerHTML = `<summary>Frage als Höraufgabe <span class="mediaPresent">${hasAudio ? "· vorhanden" : ""}</span><span class="questionAudioState">${hasAudio && !q.audioNeedsRegeneration ? "bereit" : hasScript ? "Audio erzeugen" : ""}</span></summary>
+  details.innerHTML = `<summary>${hasAudio ? "Aufgaben-Audio bearbeiten" : "Frage als Höraufgabe"}<span class="questionAudioState">${q.audioNeedsRegeneration ? "Audio prüfen" : ""}</span></summary>
     <div class="questionAudioBody">
       <div class="questionAudioPreview"></div>
       <small class="questionAudioInstructionWarning" role="status"></small>
@@ -5426,6 +5426,30 @@ function renderQuestionAudioEditor(container, q) {
     }
   }
 
+  const card = container.closest(".questionCard");
+  const questionLabel = card?.querySelector(".questionTextLabel");
+  let questionField = card?.querySelector(".questionTextMediaField");
+  if (hasAudio) {
+    preview.classList.add("questionTaskAudioPreview");
+    if (questionLabel && q.type !== "gapfill") {
+      if (!questionField) {
+        questionField = document.createElement("div");
+        questionField.className = "questionTextMediaField grow";
+        questionLabel.before(questionField);
+        const editSource = document.createElement("details");
+        editSource.className = "questionTextSourceEditor";
+        editSource.innerHTML = '<summary>Text bearbeiten</summary>';
+        questionField.appendChild(editSource);
+        editSource.appendChild(questionLabel);
+      }
+      questionField.querySelector(".questionTaskAudioPreview")?.remove();
+      questionField.prepend(preview);
+    } else tabBody.insertBefore(preview, details);
+  } else if (questionField && questionLabel) {
+    questionField.before(questionLabel);
+    questionField.remove();
+  }
+
   const actions = details.querySelector(".questionAudioActions");
   const generate = makeMiniButton(hasAudio ? "Aufgaben-Audio neu erzeugen" : "Aufgaben-Audio erzeugen", () => generateAiAudioForQuestion(q, container, { fromTask: source.value === "task", keepVisible: true, requireScript: source.value === "own" }));
   generate.classList.add("generateQuestionAudio");
@@ -5448,7 +5472,7 @@ function renderQuestionAudioEditor(container, q) {
     const answerDetails = document.createElement("details");
     answerDetails.open = answersWereOpen;
     answerDetails.className = "questionAudioPanel answerAudioPanel";
-    answerDetails.innerHTML = `<summary>Antworten als Höraufgabe <span class="questionAudioState">${q.audioAnswerMode === "audio-only" ? questionAnswerAudioReady(q) ? "bereit" : "Audio erzeugen" : ""}</span></summary><div class="questionAudioBody"><details class="questionAudioHelp"><summary aria-label="Hinweis zu Audioantworten">ⓘ</summary><small>Antworttexte bleiben für Schüler verborgen. Jede Antwort ist einzeln hörbar; du kannst die Texte weiterhin bearbeiten.</small></details><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
+    answerDetails.innerHTML = `<summary>${q.audioAnswerMode === "audio-only" ? "Antwort-Audios bearbeiten" : "Antworten als Höraufgabe"}<span class="questionAudioState">${q.audioAnswerMode === "audio-only" && !questionAnswerAudioReady(q) ? "Audio prüfen" : ""}</span></summary><div class="questionAudioBody"><details class="questionAudioHelp"><summary aria-label="Hinweis zu Audioantworten">ⓘ</summary><small>Antworttexte bleiben für Schüler verborgen. Jede Antwort ist einzeln hörbar; du kannst die Texte weiterhin bearbeiten.</small></details><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
     tabBody.appendChild(answerDetails);
     if (typeof SECURE_AUDIO_PUBLICATION_ENABLED !== "undefined" && !SECURE_AUDIO_PUBLICATION_ENABLED) {
       const gate = document.createElement("small"); gate.className = "aiInputError";
@@ -5461,7 +5485,7 @@ function renderQuestionAudioEditor(container, q) {
       const row = document.createElement("div");
       row.className = "questionAudioPreview";
       const label = document.createElement("span");
-      label.textContent = `Antwort ${index + 1}: ${entry.sourceText}`;
+      label.textContent = q.audioAnswerMode === "audio-only" ? `Antwort ${index + 1}` : `Antwort ${index + 1}: ${entry.sourceText}`;
       row.appendChild(label);
       if (String(option.audioDataUrl || "").startsWith("data:audio/")) {
         const player = document.createElement("audio");
@@ -5497,6 +5521,10 @@ function renderQuestionAudioEditor(container, q) {
       }
       answerPreview.appendChild(row);
     });
+    if (q.audioAnswerMode === "audio-only") {
+      answerPreview.classList.add("answerAudioAlwaysVisible");
+      tabBody.appendChild(answerPreview);
+    }
     const answerActions = answerDetails.querySelector(".answerAudioActions");
     const generateAnswers = makeMiniButton(q.audioAnswerMode === "audio-only" ? "Antwort-Audios neu erzeugen" : "Antwort-Audios erzeugen", () => generateAiAnswerAudioForQuestion(q, container));
     generateAnswers.classList.add("generateQuestionAnswerAudio");
@@ -5514,6 +5542,20 @@ function renderQuestionAudioEditor(container, q) {
       });
       answerActions.appendChild(removeAnswers);
     }
+  }
+
+  const answerEditor = card?.querySelector(".answerEditor");
+  let answerSource = card?.querySelector(".answerTextSourceEditor");
+  const audibleAnswers = answerEditor && q.audioAnswerMode === "audio-only" && questionAnswerAudioEntries(q).some(entry => String(entry.asset?.audioDataUrl || "").startsWith("data:audio/"));
+  if (answerEditor && audibleAnswers && !answerSource) {
+    answerSource = document.createElement("details");
+    answerSource.className = "answerTextSourceEditor";
+    answerSource.innerHTML = '<summary>Antworttexte bearbeiten</summary>';
+    answerEditor.before(answerSource);
+    answerSource.appendChild(answerEditor);
+  } else if (answerEditor && answerSource && q.audioAnswerMode !== "audio-only") {
+    answerSource.before(answerEditor);
+    answerSource.remove();
   }
 
   const solutionHasAudio = Boolean(getQuestionSolutionAudioSrc(q));
