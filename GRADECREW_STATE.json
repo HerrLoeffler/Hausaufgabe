@@ -2460,7 +2460,50 @@
           "user_test": "pending; synthetic Chromium/WebKit only",
           "short_viewport": "usable fields and sticky action; bounded scroll fallback below650px",
           "handoff": "workstreams/creation-compact-20261027.md",
-          "receipt": "workstreams/creation-compact-live-receipt-20261027.json"
+          "receipt": "workstreams/creation-compact-live-receipt-20261027.json",
+          "clarity_phone_followup": {
+            "stage": "production",
+            "scope": "Hosting only: complete mobile creation fit, clear audio and personal review markers",
+            "commit": "f589dd97e2859f9549b105f191aba9045b66e6d3",
+            "tree": "8061a7e2b1503f5abf0f528cca99d26d0587db91",
+            "pr": 348,
+            "ci": {
+              "run": 40583925143,
+              "attempt": 2,
+              "conclusion": "success",
+              "first_attempt": "Node and44media checks green; unrelated public reset-entry load timeout; targeted failed job rerun succeeded",
+              "local_web_checks": 631,
+              "browser_checks": 46,
+              "public_entry_followup": "36 viewport layouts,60 task layouts and account/legal interactions passed locally"
+            },
+            "hosting": {
+              "project": "hausaufgabe-staging",
+              "version": "d25510c881c79b99",
+              "release_time": "2026-10-27T21:11:51.645Z",
+              "origins": [
+                {
+                  "origin": "https://gradecrew.de",
+                  "commit": "f589dd97e2859f9549b105f191aba9045b66e6d3",
+                  "files": 206,
+                  "verified": 206,
+                  "failed": []
+                },
+                {
+                  "origin": "https://hausaufgabe-staging.web.app",
+                  "commit": "f589dd97e2859f9549b105f191aba9045b66e6d3",
+                  "files": 206,
+                  "verified": 206,
+                  "failed": []
+                }
+              ]
+            },
+            "backend_changed": false,
+            "limits_changed": false,
+            "user_test": "physical device acceptance pending",
+            "reminders": "local browser only; account/quiz/question scoped; explicit acknowledgement",
+            "handoff": "workstreams/audio-clarity-20261027.md",
+            "receipt": "workstreams/audio-clarity-live-receipt-20261027.json"
+          }
         }
       }
     },
