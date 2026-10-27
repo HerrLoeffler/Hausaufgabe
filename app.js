@@ -1505,6 +1505,7 @@ function installAiCompactCreation() {
     if (view.classList.contains("hidden")) return;
     const height = Math.min(window.innerHeight, window.visualViewport?.height || window.innerHeight);
     document.body.style.setProperty("--ai-screen-height", `${height}px`);
+    if (view.classList.contains("aiShortViewport") !== (height < 650)) view.classList.toggle("aiShortViewport", height < 650);
   };
   panels.forEach((panel, i) => panel.querySelector(".aiSectionToggle").addEventListener("click", () => {
     selected = i;
