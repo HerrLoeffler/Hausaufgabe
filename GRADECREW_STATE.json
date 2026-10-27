@@ -1120,10 +1120,10 @@
     "legacy_project_changed": false,
     "url": "https://gradecrew.de/",
     "version": "2.3.1-gc45-rc1",
-    "source_commit": "f1ebf07a9a8bd2731cc5edcd70ceec1fbde8e9cf",
-    "deployed_local_commit": "f1ebf07a9a8bd2731cc5edcd70ceec1fbde8e9cf",
-    "tree": "d43db542ad3e6c51fd37216df3fdcc2b8b2ee09a",
-    "user_acceptance": "Gradecrew.de compact test cards with one publication indicator deployed and hash-verified; actual signed-in teacher and physical iPhone/iPad acceptance pending.",
+    "source_commit": "1269509e850d2a0f546c0bd0be366546d0c513d3",
+    "deployed_local_commit": "1269509e850d2a0f546c0bd0be366546d0c513d3",
+    "tree": "d93d6af7cb8716266b54927edbf0cba46b44840c",
+    "user_acceptance": "Emmi answer-audio feedback and compact test cards deployed and hash-verified on gradecrew.de; actual signed-in audio quality and physical iPhone/iPad acceptance pending.",
     "alternate_urls": [
       "https://hausaufgabe-staging.web.app/"
     ],
@@ -1357,6 +1357,24 @@
       "physical_device_acceptance": "pending",
       "functions_rules_changed": false,
       "handoff": "workstreams/test-card-unification-20261018.md"
+    },
+    "latest_emmi_audio_feedback_release_20261027": {
+      "task_id": "GC-AUDIO-01",
+      "stage": "production",
+      "scope": "Teacher feedback for one Emmi answer-audio clip; optional speech-delivery hint, existing answer text and other clips preserved",
+      "url": "https://gradecrew.de/",
+      "project": "hausaufgabe-staging",
+      "source_commit": "1269509e850d2a0f546c0bd0be366546d0c513d3",
+      "tree": "d93d6af7cb8716266b54927edbf0cba46b44840c",
+      "verified_files": 206,
+      "source_pr": 342,
+      "ci_run": 40551229144,
+      "functions_scope": "functions:ai:generateQuestionAudio",
+      "functions_state": "ACTIVE",
+      "functions_hash": "1e18f6ab27cb89f82f79d8753b036d0ada07cd9c",
+      "paid_speech_smoke": "not_performed",
+      "physical_device_acceptance": "pending",
+      "handoff": "workstreams/emmi-answer-audio-feedback-20261027.md"
     }
   },
   "automation": {
@@ -1976,6 +1994,21 @@
       "user_test": "not_performed",
       "handoff": "workstreams/audio-masterpiece-v2.md",
       "next_action": "Audio V2 im Staging praktisch abnehmen: Test mit 3 Höraufgaben + 2 Audio-Lösungen erzeugen, Editor/Regeneration prüfen, Schülerweg ohne vorzeitige Lösung testen, danach Test beenden und Lösungsaudio kontrolliert freigeben."
+    },
+    {
+      "id": "emmi-answer-audio-feedback-20261027",
+      "task_id": "GC-AUDIO-01",
+      "stage": "production",
+      "branch": "feature/design-auth-student-20261026",
+      "observed_head": "1269509e850d2a0f546c0bd0be366546d0c513d3",
+      "pull_request": 342,
+      "integration": "1269509e850d2a0f546c0bd0be366546d0c513d3",
+      "ci": "40551229144 success; Node 22 and Chromium/WebKit",
+      "production": "https://gradecrew.de/; 206/206 public hashes verified; generateQuestionAudio ACTIVE",
+      "paid_speech_smoke": "not_performed",
+      "physical_device_acceptance": "pending",
+      "handoff": "workstreams/emmi-answer-audio-feedback-20261027.md",
+      "next_action": "Martin checks one existing answer audio with a short speech-delivery hint on gradecrew.de and listens to the regenerated clip; real iPhone/iPad acceptance remains open."
     },
     {
       "id": "posthog-staging-telemetry-v1",
