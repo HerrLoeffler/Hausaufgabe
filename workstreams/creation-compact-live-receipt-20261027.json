@@ -1,0 +1,51 @@
+{
+  "source_commit": "cedbcef012404694f1f2cbd566680f8e928c8d71",
+  "tree": "52d8c9a3c339b0e8a45113769cfc513b150686ec",
+  "task_id": "GC-WEB-REPAIR-20261007 / GC-AUDIO-01",
+  "scope": "Compact creation UI; Hosting only",
+  "pr": 346,
+  "ci": {
+    "run": 40567247184,
+    "conclusion": "success",
+    "local_web_checks": 654,
+    "synthetic_browser_checks": 44,
+    "engines": [
+      "Chromium",
+      "WebKit"
+    ]
+  },
+  "hosting": {
+    "project": "hausaufgabe-staging",
+    "version": "ca7e0f2779f56617",
+    "release_time": "2026-10-27T19:18:10.551Z",
+    "origins": [
+      {
+        "origin": "https://gradecrew.de",
+        "commit": "cedbcef012404694f1f2cbd566680f8e928c8d71",
+        "files": 206,
+        "verified": 206,
+        "failed": []
+      },
+      {
+        "origin": "https://hausaufgabe-staging.web.app",
+        "commit": "cedbcef012404694f1f2cbd566680f8e928c8d71",
+        "files": 206,
+        "verified": 206,
+        "failed": []
+      }
+    ]
+  },
+  "backend": {
+    "changed": false,
+    "before_after_metadata_equal": true,
+    "functions_count": 61
+  },
+  "limits_changed": false,
+  "account_configuration_changed": false,
+  "user_device_acceptance": "pending",
+  "limitations": [
+    "Below 650px viewport height, bounded scrolling preserves usable controls.",
+    "Narrow panel validation does not automatically switch to the affected panel."
+  ],
+  "paid_provider_requests": 0
+}

@@ -2443,7 +2443,25 @@
         "receipt": "workstreams/media-editor-live-receipt-20261027.json",
         "user_test": "pending; no paid provider or physical-device test",
         "production_40294_changed": false,
-        "canonical_2026_changed": false
+        "canonical_2026_changed": false,
+        "compact_layout_followup": {
+          "stage": "production",
+          "scope": "Hosting-only four compact sections/audio examples on demand; not whole project",
+          "branch": "fix/audio-creation-compact-20261027",
+          "commit": "cedbcef012404694f1f2cbd566680f8e928c8d71",
+          "tree": "52d8c9a3c339b0e8a45113769cfc513b150686ec",
+          "pr": 346,
+          "candidate_ci": 40567247184,
+          "hosting_version": "ca7e0f2779f56617",
+          "release_time": "2026-10-27T19:18:10.551Z",
+          "verified_manifest_files_per_origin": 206,
+          "backend_changed": false,
+          "limits_changed": false,
+          "user_test": "pending; synthetic Chromium/WebKit only",
+          "short_viewport": "usable fields and sticky action; bounded scroll fallback below650px",
+          "handoff": "workstreams/creation-compact-20261027.md",
+          "receipt": "workstreams/creation-compact-live-receipt-20261027.json"
+        }
       }
     },
     {
