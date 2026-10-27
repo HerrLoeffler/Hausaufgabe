@@ -2502,7 +2502,47 @@
             "user_test": "physical device acceptance pending",
             "reminders": "local browser only; account/quiz/question scoped; explicit acknowledgement",
             "handoff": "workstreams/audio-clarity-20261027.md",
-            "receipt": "workstreams/audio-clarity-live-receipt-20261027.json"
+            "receipt": "workstreams/audio-clarity-live-receipt-20261027.json",
+            "inline_editor_media_followup": {
+              "stage": "production",
+              "scope": "Hosting only: compact inline question media menus",
+              "commit": "ad36780c1238d4ba7ca6962ee6e248b0ee009f2a",
+              "tree": "5b9f15c0d74e376c719eb61c95566357b4278554",
+              "pr": 350,
+              "ci": {
+                "run": 40585686825,
+                "conclusion": "success",
+                "local_checks": 632,
+                "browser_checks": 44,
+                "independent_review": "no concrete P1/P2;29 targeted regressions passed"
+              },
+              "hosting": {
+                "project": "hausaufgabe-staging",
+                "version": "165f5e41eee2c86d",
+                "release_time": "2026-10-27T21:22:09.832Z",
+                "origins": [
+                  {
+                    "origin": "https://gradecrew.de",
+                    "commit": "ad36780c1238d4ba7ca6962ee6e248b0ee009f2a",
+                    "files": 206,
+                    "verified": 206,
+                    "failed": []
+                  },
+                  {
+                    "origin": "https://hausaufgabe-staging.web.app",
+                    "commit": "ad36780c1238d4ba7ca6962ee6e248b0ee009f2a",
+                    "files": 206,
+                    "verified": 206,
+                    "failed": []
+                  }
+                ]
+              },
+              "backend_changed": false,
+              "limits_changed": false,
+              "user_test": "physical-device acceptance pending",
+              "handoff": "workstreams/media-inline-20261027.md",
+              "receipt": "workstreams/media-inline-live-receipt-20261027.json"
+            }
           }
         }
       }
