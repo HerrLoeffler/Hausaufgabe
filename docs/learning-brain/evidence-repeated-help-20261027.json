@@ -1,0 +1,638 @@
+{
+  "taskId": "GC-ADAPTIVE-PRACTICE-01",
+  "date": "2026-10-27",
+  "environment": "gradecrew-staging-2026 only",
+  "status": "three representative model paths accepted after observed corrections; no blanket curriculum/efficacy claim",
+  "runtime": {
+    "startSource": "59c863da669ad45b1b71cb13cb024f8a143d2e29",
+    "turnSource": "a531687552e73e32f34f2ae1feb9e37f10ca11f9",
+    "hostingSource": "777b2134abdf57a9131ad640338dd691a5e6d039",
+    "functions": [
+      {
+        "name": "learningBrainStart",
+        "state": "ACTIVE",
+        "revision": "learningbrainstart-00037-den",
+        "updateTime": "2026-10-27T17:46:33.307663651Z",
+        "source": {
+          "storageSource": {
+            "bucket": "gcf-v2-sources-840345136563-europe-west1",
+            "object": "learningBrainStart/function-source.zip",
+            "generation": "1793123141580073"
+          }
+        },
+        "build": "projects/840345136563/locations/europe-west1/builds/6a3209b5-b3a6-494c-b965-685aed717ac2"
+      },
+      {
+        "name": "learningBrainTurn",
+        "state": "ACTIVE",
+        "revision": "learningbrainturn-00042-zat",
+        "updateTime": "2026-10-27T17:56:13.149237688Z",
+        "source": {
+          "storageSource": {
+            "bucket": "gcf-v2-sources-840345136563-europe-west1",
+            "object": "learningBrainTurn/function-source.zip",
+            "generation": "1793123695876298"
+          }
+        },
+        "build": "projects/840345136563/locations/europe-west1/builds/91335ef5-5093-4a16-bf0a-668c31da9d29"
+      }
+    ],
+    "hostingHashes": {
+      "checked": 14,
+      "allMatch": true,
+      "baselineFilesCheckedBeforeHosting": 230
+    },
+    "history": "Attempts1-42 preserved;37-42 all succeeded as deployments, pedagogical failures remain separately recorded. Profile remains source33; catalogue/audio unchanged."
+  },
+  "checks": {
+    "functions": {
+      "passed": 473,
+      "failed": 0
+    },
+    "ui": {
+      "passed": 109,
+      "failed": 0
+    },
+    "scopedESLint": "pass",
+    "gitDiffCheck": "pass",
+    "independentReview": "no remaining P1/P2 in reviewed changes; incidental article false positive reproduced and fixed; request-focus enum and post-action model retention checked",
+    "githubActions": "not claimed"
+  },
+  "liveCases": [
+    {
+      "case": "line",
+      "topicId": "BY-3dcd29f28ce3:math:6:R:v1:B04:k2",
+      "originalTask": {
+        "id": "e7db9abf-b0d3-4c7b-b29f-cfe46f96d16b",
+        "prompt": "Setze den Bruch 3/4 auf den Zahlenstrahl.",
+        "contextText": "Der Abschnitt von 0 bis 1 ist in 4 gleich große Abstände geteilt.",
+        "input": "workshop",
+        "options": [],
+        "workshop": {
+          "tool": "number-line",
+          "version": 1,
+          "role": "answer",
+          "goal": "locate",
+          "instruction": "Stelle den genannten Bruch auf dem Zahlenstrahl ein.",
+          "minimum": 0,
+          "maximum": 1,
+          "step": 0.25,
+          "initialValue": 0.25,
+          "unit": "Zahl"
+        },
+        "diagram": null,
+        "media": null
+      },
+      "steps": [
+        {
+          "step": 1,
+          "phase": "help",
+          "pending": false,
+          "feedback": {
+            "outcome": "incorrect",
+            "short": "Noch nicht richtig: 0 liegt am Anfang. Zähle die gleich großen Viertel-Abstände bis zum Bruch."
+          },
+          "explanation": "Schau zuerst nur auf einen einzelnen Abstand zwischen zwei Strichen. Der Abschnitt von 0 bis 1 hat vier gleich große Abstände.",
+          "question": "Wie groß ist ein einzelner Abstand?",
+          "input": "number",
+          "assistance": {
+            "version": 2,
+            "strategyId": "smaller-step",
+            "anchorTaskId": "e7db9abf-b0d3-4c7b-b29f-cfe46f96d16b",
+            "stage": 1,
+            "focusIds": [
+              "step"
+            ],
+            "numberLabels": true,
+            "regions": [
+              {
+                "id": "shape",
+                "label": "Dein vorhandenes Modell"
+              },
+              {
+                "id": "minimum",
+                "label": "Linker Skalenanfang"
+              },
+              {
+                "id": "maximum",
+                "label": "Rechter Skalenrand"
+              },
+              {
+                "id": "step",
+                "label": "Abstand zwischen zwei Strichen"
+              }
+            ],
+            "replyTo": ""
+          },
+          "sameModel": true,
+          "sameId": true,
+          "priorExperienceUsed": null
+        },
+        {
+          "step": 2,
+          "phase": "help",
+          "pending": false,
+          "feedback": {
+            "outcome": "incorrect",
+            "short": "Das ist nicht richtig. Teile die Strecke von 0 bis 1 in 4 gleiche Abstände."
+          },
+          "explanation": "Von 0 bis 1 gibt es 4 gleich große Abstände. Ein solcher Abstand ist genau ein Viertel des ganzen Abschnitts.",
+          "question": "Ist ein einzelner Abstand 0,25 oder 4?",
+          "input": "choice",
+          "assistance": {
+            "version": 2,
+            "strategyId": "count-along",
+            "anchorTaskId": "e7db9abf-b0d3-4c7b-b29f-cfe46f96d16b",
+            "stage": 2,
+            "focusIds": [
+              "step"
+            ],
+            "numberLabels": true,
+            "regions": [
+              {
+                "id": "shape",
+                "label": "Dein vorhandenes Modell"
+              },
+              {
+                "id": "minimum",
+                "label": "Linker Skalenanfang"
+              },
+              {
+                "id": "maximum",
+                "label": "Rechter Skalenrand"
+              },
+              {
+                "id": "step",
+                "label": "Abstand zwischen zwei Strichen"
+              }
+            ],
+            "replyTo": ""
+          },
+          "sameModel": true,
+          "sameId": true,
+          "priorExperienceUsed": {
+            "version": "1",
+            "patterns": "3",
+            "changeSuggested": false
+          }
+        },
+        {
+          "step": 3,
+          "phase": "help",
+          "pending": false,
+          "feedback": {
+            "outcome": "incorrect",
+            "short": "Nicht richtig: 4 gibt die Anzahl der Abstände an, nicht die Größe eines einzelnen Abstands."
+          },
+          "explanation": "Die 4 sagt, wie viele gleich große Abstände es von 0 bis 1 gibt. Sie beschreibt nicht die Größe eines einzelnen Abstands.",
+          "question": "Was zählt die 4?",
+          "input": "choice",
+          "assistance": {
+            "version": 2,
+            "strategyId": "contrast",
+            "anchorTaskId": "e7db9abf-b0d3-4c7b-b29f-cfe46f96d16b",
+            "stage": 3,
+            "focusIds": [
+              "step"
+            ],
+            "numberLabels": false,
+            "regions": [
+              {
+                "id": "shape",
+                "label": "Dein vorhandenes Modell"
+              },
+              {
+                "id": "minimum",
+                "label": "Linker Skalenanfang"
+              },
+              {
+                "id": "maximum",
+                "label": "Rechter Skalenrand"
+              },
+              {
+                "id": "step",
+                "label": "Abstand zwischen zwei Strichen"
+              }
+            ],
+            "replyTo": ""
+          },
+          "sameModel": true,
+          "sameId": true,
+          "priorExperienceUsed": {
+            "patterns": "3",
+            "changeSuggested": true,
+            "version": "1"
+          }
+        }
+      ]
+    },
+    {
+      "case": "balance",
+      "topicId": "BY-37af8b8c14a6:math:7:R:v1:lineare-gleichungen-umformen",
+      "originalTask": {
+        "id": "6845fcc5-795c-4f9c-ae48-993d349da1f4",
+        "prompt": "Stelle mit der Waage das Gleichgewicht her. Finde das Gewicht x.",
+        "contextText": "Links liegen 2 gleiche x-Gewichte und 3 Einheiten. Rechts liegen 11 Einheiten.",
+        "input": "workshop",
+        "options": [],
+        "workshop": {
+          "tool": "balance",
+          "version": 1,
+          "role": "answer",
+          "goal": "balance",
+          "instruction": "Verändere das x-Gewicht, bis beide Seiten gleich schwer sind.",
+          "leftCoefficient": 2,
+          "leftConstant": 3,
+          "rightCoefficient": 0,
+          "rightConstant": 11,
+          "minimum": 0,
+          "maximum": 100,
+          "step": 1,
+          "initialValue": 1
+        },
+        "diagram": null,
+        "media": null
+      },
+      "steps": [
+        {
+          "step": 1,
+          "phase": "help",
+          "pending": false,
+          "feedback": {
+            "outcome": "incorrect",
+            "short": "Noch nicht richtig: Bei x = 0 wiegt links 3, rechts 11. Die Waage ist nicht im Gleichgewicht."
+          },
+          "explanation": "Die Waage ist noch nicht im Gleichgewicht: Links liegen 3 bekannte Einheiten, rechts 11 bekannte Einheiten. Wir schauen zuerst nur auf die rechte Schale.",
+          "question": "Welche Zahl zeigt die bekannten Einheiten auf der rechten Schale?",
+          "input": "number",
+          "assistance": {
+            "version": 2,
+            "strategyId": "focus-one",
+            "anchorTaskId": "6845fcc5-795c-4f9c-ae48-993d349da1f4",
+            "stage": 1,
+            "focusIds": [
+              "right"
+            ],
+            "numberLabels": true,
+            "regions": [
+              {
+                "id": "shape",
+                "label": "Dein vorhandenes Modell"
+              },
+              {
+                "id": "left",
+                "label": "Linke Waagschale"
+              },
+              {
+                "id": "right",
+                "label": "Rechte Waagschale"
+              },
+              {
+                "id": "unknown",
+                "label": "Unbekanntes Gewicht"
+              }
+            ],
+            "replyTo": ""
+          },
+          "sameModel": true,
+          "sameId": true,
+          "priorExperienceUsed": null
+        },
+        {
+          "step": 2,
+          "phase": "help",
+          "pending": false,
+          "feedback": {
+            "outcome": "incorrect",
+            "short": "Die Zahl passt nicht. Zähle die bekannten Einheiten auf der rechten Schale."
+          },
+          "explanation": "Links gibt es zwei x-Gewichte und eine bekannte Zahl. Erkenne zuerst nur diese feste Zahl.",
+          "question": "Welche Zahl ist die bekannte Zahl links: 2, 3 oder 11?",
+          "input": "choice",
+          "assistance": {
+            "version": 2,
+            "strategyId": "contrast",
+            "anchorTaskId": "6845fcc5-795c-4f9c-ae48-993d349da1f4",
+            "stage": 2,
+            "focusIds": [
+              "left"
+            ],
+            "numberLabels": true,
+            "regions": [
+              {
+                "id": "shape",
+                "label": "Dein vorhandenes Modell"
+              },
+              {
+                "id": "left",
+                "label": "Linke Waagschale"
+              },
+              {
+                "id": "right",
+                "label": "Rechte Waagschale"
+              },
+              {
+                "id": "unknown",
+                "label": "Unbekanntes Gewicht"
+              }
+            ],
+            "replyTo": ""
+          },
+          "sameModel": true,
+          "sameId": true,
+          "priorExperienceUsed": {
+            "patterns": "2",
+            "version": "1",
+            "changeSuggested": true
+          }
+        },
+        {
+          "step": 3,
+          "phase": "help",
+          "pending": false,
+          "feedback": {
+            "outcome": "incorrect",
+            "short": "Nicht richtig: 2 zeigt, wie viele x-Gewichte links liegen, nicht die bekannte Zahl."
+          },
+          "explanation": "Schau nur auf die rechte Waagschale. Dort stehen bekannte Einheiten, keine x-Gewichte.",
+          "question": "Was liegt rechts: 11 Einheiten oder 2 x-Gewichte?",
+          "input": "choice",
+          "assistance": {
+            "version": 2,
+            "strategyId": "contrast",
+            "anchorTaskId": "6845fcc5-795c-4f9c-ae48-993d349da1f4",
+            "stage": 3,
+            "focusIds": [
+              "right"
+            ],
+            "numberLabels": false,
+            "regions": [
+              {
+                "id": "shape",
+                "label": "Dein vorhandenes Modell"
+              },
+              {
+                "id": "left",
+                "label": "Linke Waagschale"
+              },
+              {
+                "id": "right",
+                "label": "Rechte Waagschale"
+              },
+              {
+                "id": "unknown",
+                "label": "Unbekanntes Gewicht"
+              }
+            ],
+            "replyTo": ""
+          },
+          "sameModel": true,
+          "sameId": true,
+          "priorExperienceUsed": {
+            "changeSuggested": true,
+            "patterns": "3",
+            "version": "1"
+          }
+        }
+      ]
+    },
+    {
+      "case": "german",
+      "topicId": "BY-59e19c7b9df3:german:5:R:v1:wortarten-und-wortbildung:k1",
+      "originalTask": {
+        "id": "e6f5378d-1170-48e6-a7ce-703d6e9ce0a5",
+        "prompt": "Markiere das Verb im Satz.",
+        "contextText": "",
+        "input": "workshop",
+        "options": [],
+        "workshop": {
+          "tool": "text-workbench",
+          "version": 1,
+          "role": "answer",
+          "goal": "text",
+          "instruction": "Markiere das Verb.",
+          "mode": "select",
+          "text": "Mia liest ein Buch.",
+          "tokens": []
+        },
+        "diagram": null,
+        "media": null
+      },
+      "steps": [
+        {
+          "step": 1,
+          "phase": "help",
+          "pending": false,
+          "feedback": {
+            "outcome": "incorrect",
+            "short": "Nicht richtig: Du hast den Namen markiert. Suche im Satz das Tun-Wort."
+          },
+          "explanation": "Du hast ein Wort für eine Person markiert. Ein Verb sagt, was jemand tut. Prüfe zuerst, was das markierte Wort bezeichnet.",
+          "question": "Ist „Mia“ eine Person oder eine Handlung?",
+          "input": "choice",
+          "assistance": {
+            "version": 2,
+            "strategyId": "contrast",
+            "anchorTaskId": "e6f5378d-1170-48e6-a7ce-703d6e9ce0a5",
+            "stage": 1,
+            "focusIds": [
+              "token:0"
+            ],
+            "numberLabels": false,
+            "regions": [
+              {
+                "id": "shape",
+                "label": "Dein vorhandenes Modell"
+              },
+              {
+                "id": "token:0",
+                "label": "Wort 1: Mia"
+              },
+              {
+                "id": "token:1",
+                "label": "Wort 2: liest"
+              },
+              {
+                "id": "token:2",
+                "label": "Wort 3: ein"
+              },
+              {
+                "id": "token:3",
+                "label": "Wort 4: Buch."
+              }
+            ],
+            "replyTo": ""
+          },
+          "sameModel": true,
+          "sameId": true,
+          "priorExperienceUsed": null
+        },
+        {
+          "step": 2,
+          "phase": "help",
+          "pending": false,
+          "feedback": {
+            "outcome": "incorrect",
+            "short": "Das passt nicht. Überlege: Ist „Mia“ ein Name oder ein Tun?"
+          },
+          "explanation": "„Mia“ ist ein Name für eine Person. Ein Name ist keine Tätigkeit. Prüfe danach die anderen Wörter nach dem Kriterium: Was tut jemand?",
+          "question": "Ist „Mia“ ein Name oder eine Tätigkeit?",
+          "options": [
+            "Name",
+            "Tätigkeit"
+          ],
+          "input": "choice",
+          "assistance": {
+            "version": 2,
+            "strategyId": "contrast",
+            "anchorTaskId": "e6f5378d-1170-48e6-a7ce-703d6e9ce0a5",
+            "stage": 2,
+            "focusIds": [
+              "token:0"
+            ],
+            "numberLabels": false,
+            "regions": [
+              {
+                "id": "shape",
+                "label": "Dein vorhandenes Modell"
+              },
+              {
+                "id": "token:0",
+                "label": "Wort 1: Mia"
+              },
+              {
+                "id": "token:1",
+                "label": "Wort 2: liest"
+              },
+              {
+                "id": "token:2",
+                "label": "Wort 3: ein"
+              },
+              {
+                "id": "token:3",
+                "label": "Wort 4: Buch."
+              }
+            ],
+            "replyTo": ""
+          },
+          "sameModel": true,
+          "sameId": true,
+          "priorExperienceUsed": null
+        },
+        {
+          "step": 3,
+          "phase": "help",
+          "pending": false,
+          "feedback": {
+            "outcome": "incorrect",
+            "short": "Deine Auswahl passt nicht zur geforderten Einordnung."
+          },
+          "explanation": "Eine Tätigkeit sagt, was jemand tut. „Buch“ nennt aber keine Tätigkeit, sondern etwas. Prüfe dieses Wort zuerst.",
+          "question": "Ist „Buch“ eine Tätigkeit oder eine Sache?",
+          "options": [
+            "Tätigkeit",
+            "Sache"
+          ],
+          "input": "choice",
+          "assistance": {
+            "version": 2,
+            "strategyId": "focus-one",
+            "anchorTaskId": "e6f5378d-1170-48e6-a7ce-703d6e9ce0a5",
+            "stage": 3,
+            "focusIds": [
+              "token:3"
+            ],
+            "numberLabels": false,
+            "regions": [
+              {
+                "id": "shape",
+                "label": "Dein vorhandenes Modell"
+              },
+              {
+                "id": "token:0",
+                "label": "Wort 1: Mia"
+              },
+              {
+                "id": "token:1",
+                "label": "Wort 2: liest"
+              },
+              {
+                "id": "token:2",
+                "label": "Wort 3: ein"
+              },
+              {
+                "id": "token:3",
+                "label": "Wort 4: Buch."
+              }
+            ],
+            "replyTo": ""
+          },
+          "sameModel": true,
+          "sameId": true,
+          "priorExperienceUsed": {
+            "version": "1",
+            "patterns": "1",
+            "changeSuggested": true
+          }
+        }
+      ],
+      "resumedAfterSource42": true
+    }
+  ],
+  "liveAcceptance": {
+    "acceptedIncorrectTurns": 9,
+    "sameSourceIdsAndModels": true,
+    "noCompleteOriginalAnswerGivenInAcceptedHints": "manually inspected: no target0.75/x4/targetverb supplied as the worked answer",
+    "sourceProvenance": "Math cases executed on38. German first accepted help41; same-session second/third accepted help repaired42. Earlier technical failures remain in full traces, not counted as learner errors or successes.",
+    "balanceScope": "actual existing grade7R linear-equation balance, not a claim that every grade5 child task chooses a balance",
+    "germanDemandBoundary": "verb identification reduced to word-meaning classification with concrete support; both-option recognition reaches a lower floor, not an infinitely decreasing numerical difficulty score"
+  },
+  "feedbackLoop": {
+    "active": true,
+    "scope": "owner-private per exactgoal/tool/strategy",
+    "liveEvidence": "Later hints received prior patterns and changeSuggested=true across earlier sessions; final private hint context receipt saved without answer keys.",
+    "limits": {
+      "patterns": 64,
+      "events": 128,
+      "episodeLinks": 128
+    },
+    "supportedSuccessDistinctFromIndependent": true,
+    "preferAgainThreshold": {
+      "independentSuccesses": 2,
+      "episodes": 3,
+      "transferEpisodes": 2
+    },
+    "causalEffect": "unproven",
+    "retention": "unknown",
+    "crossLearnerTraining": false,
+    "globalTraining": false
+  },
+  "observedFailuresPreserved": [
+    "baseline full-coordinate/full-x/full-verb disclosure",
+    "37 line microquestion cycle and German missing key",
+    "38 German explanation named sought verb; target-only focus blocked",
+    "39 generic article-word false positive, fixed40",
+    "40 all offered options in private accepted-key list, fixed41",
+    "41 repeated forbidden focus generation, preconstrained42",
+    "separate A cold-start line generation invalid diagram twice; no learner response counted; opened an already tested new grid unit instead"
+  ],
+  "openWork": [
+    "teacher calibration of225digitalgoals",
+    "cold-start generation consistency across all goals, including the separately blocked A line candidate",
+    "actual classroom learning/retention evidence",
+    "teacher/class identity and overview",
+    "qualified cross-learner help promotion and physical deletion routine"
+  ],
+  "evidenceLocation": "work/GC-ADAPTIVE-PRACTICE-01-prototype/evidence/repeated-help-20261027 outsideGit: synthetic traces, matrix, runtime/deploy/test logs, screenshots",
+  "preview": "http://127.0.0.1:8775/lerngehirn/",
+  "boundaries": [
+    "noProduction/SchoolLive",
+    "noRules/IAM/provider/newKey",
+    "noMerge",
+    "noRealPupilData"
+  ],
+  "screenshots": [
+    "evidence/repeated-help-20261027/deutsch-help.png (outsideGit)"
+  ],
+  "visualInspection": "Original4words and focusedBuch remained visible beside one scalar choice response; full source verb not identified; source controls remain separate support."
+}
