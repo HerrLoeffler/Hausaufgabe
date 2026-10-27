@@ -35,3 +35,12 @@ test('a help choice needs a genuine alternative rather than marking every offere
  assert.throws(()=>anchoredCandidate(h,{phase:'help',originalTask:line,task:line}),/Alternative/);
  assert.doesNotThrow(()=>anchoredCandidate({...h,answer:{kind:'open',values:['Person']}},{phase:'help',originalTask:line,task:line}));
 });
+
+test('structured text-help generation only offers actual non-answer focus regions',async()=>{
+ const t={id:'text',input:'workshop',prompt:'Markiere das Verb.',contextText:'',options:[],family:'word',answer:{kind:'open',values:['liest']},rubric:'Verb markieren.',workshop:{tool:'text-workbench',version:1,role:'answer',goal:'text',instruction:'Markiere das Verb.',mode:'select',text:'Mia liest ein Buch.',tokens:[]}};
+ const hint={...scalar(),explanation:'Ein Verb sagt, was jemand tut. Prüfe zuerst den Namen.',question:'Nennt Mia eine Person oder eine Handlung?',input:'choice',options:['Person','Handlung'],answer:{kind:'open',values:['Person']},focusIds:['token:0']};let offered;
+ const replies=[hint,{approved:true,scaffolded:true,solutionRevealed:false,reason:'Kleinere Voraussetzung.'}];
+ const ai=createAI({client:{responses:{create:async req=>{if(req.text.format.name==='learning_help')offered=req.text.format.schema.properties.focusIds.items.enum;return {status:'completed',output_text:JSON.stringify(replies.shift())};}}}});
+ await ai.next({phase:'help',topic:{subject:'german',title:'Wortarten',goal:'Verb erkennen'},originalTask:t,task:t,supportStage:2},{});
+ assert.ok(offered.includes('token:0'));assert.ok(offered.includes('token:3'));assert.ok(!offered.includes('token:1'));
+});
