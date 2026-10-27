@@ -1504,8 +1504,11 @@ function installAiCompactCreation() {
   const fit = () => {
     if (view.classList.contains("hidden")) return;
     const height = Math.min(window.innerHeight, window.visualViewport?.height || window.innerHeight);
-    document.body.style.setProperty("--ai-screen-height", `${height}px`);
-    if (view.classList.contains("aiShortViewport") !== (height < 650)) view.classList.toggle("aiShortViewport", height < 650);
+    const editing = document.activeElement?.matches("textarea,input:not([type=checkbox]):not([type=file]),[contenteditable=true]");
+    const keyboard = editing && height < window.innerHeight - 100;
+    document.body.style.setProperty("--ai-screen-height", keyboard ? `${height}px` : "100dvh");
+    const shortKeyboard = keyboard && height < 650;
+    if (view.classList.contains("aiShortViewport") !== Boolean(shortKeyboard)) view.classList.toggle("aiShortViewport", Boolean(shortKeyboard));
   };
   panels.forEach((panel, i) => panel.querySelector(".aiSectionToggle").addEventListener("click", () => {
     selected = i;
