@@ -37,6 +37,8 @@ async function ready() {
     await page.waitForFunction(async()=>{const {createReviewStorage}=await import('/review-store.mjs');const d=await createReviewStorage().get('staging:preview-teacher:visual-draft');return d?.text==='Synthetic selected area: clipped control'&&d?.imageBytes?.byteLength>0;});
     await page.reload();
     await page.getByLabel('Offline simulieren',{exact:true}).check();
+    const savedDraft=await page.evaluate(async()=>{const {createReviewStorage}=await import('/review-store.mjs');const d=await createReviewStorage().get('staging:preview-teacher:visual-draft');return {bytes:d?.imageBytes?.byteLength||0,text:d?.text||'',buttonDisabled:document.querySelector('.gcFeedbackButton')?.disabled};});
+    console.log('Synthetic draft after reload:',JSON.stringify(savedDraft));
     await page.getByRole('button',{name:'Feedback geben – Bereich markieren',exact:true}).click();
     await page.locator('.gcImageStage canvas').waitFor({state:'visible'});
     await page.getByRole('button',{name:'Feedback mit Bild senden',exact:true}).click();
