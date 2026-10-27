@@ -2,6 +2,7 @@
 const {randomUUID,createHash}=require('node:crypto');
 const {observe}=require('./workshop');
 const {observeHelp,projectHelpEvidence}=require('./help-evidence');
+const {updateExperience,experienceFor}=require('./help-experience');
 const {eligibility}=require('./planning');
 const {transition,projectSkill,publicSession}=require('./core');
 const {projectNetwork,chooseCompetency}=require('./network');
@@ -111,9 +112,12 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
   let s=reservation.session,checkpointed=false;
   const before=globalThis.structuredClone(s),workshop=reservation.workshopEvidence;
   const learnerAnswer=s.task?.input==='workshop'&&workshop?workshop.answer:data.answer;
-  let assessment=null;
+  let assessment=null,generatedHelp=false;
   const persist=async({release=false,record=false}={})=>store.transact(uid,state=>{
    if(state?.lock?.ticket!==ticket)fail('aborted','Bitte den aktuellen Lernstand laden.');
+   if(record)state.helpExperience=updateExperience(state.helpExperience,before,s,{action:data.action,assessment,now:time,eventId:data.eventId});
+   if(s.pendingNext&&s.nextContext)s.nextContext.helpExperience=experienceFor(state.helpExperience,s.topic.id,null);
+   if(release&&generatedHelp&&!s.pendingNext&&s.phase==='help'&&s.assistance)state.helpExperience=updateExperience(state.helpExperience,before,s,{action:'help-generated',now:time,eventId:data.eventId});
    const previous=state.sessions[s.id],added=s.events.slice(previous?.events?.length||0);
    state.topicEvents[s.topic.id]=[...(state.topicEvents[s.topic.id]||[]),...added].slice(-60);
    state.sessions[s.id]=s;state.activeSessionId=s.id;
@@ -149,7 +153,7 @@ function createService({store,ai,catalog,now=Date.now,quota=async()=>{}}){
     await persist({record:kind!=='start'&&data.action!=='retry-next'});checkpointed=true;
     try{
      const generated=await ai.next(s,s.nextContext);
-     s.task=generated.task;s.explanation=generated.explanation;s.visual=generated.visual;s.assistance=generated.assistance||null;s=observeHelp(before,s,{action:'help-generated',now:time});s.pendingNext=false;delete s.nextContext;delete s.nextFailure;
+     s.task=generated.task;s.explanation=generated.explanation;s.visual=generated.visual;s.assistance=generated.assistance||null;generatedHelp=Boolean(s.assistance&&s.phase==='help');s=observeHelp(before,s,{action:'help-generated',now:time});s.pendingNext=false;delete s.nextContext;delete s.nextFailure;
     }catch(error){s.nextFailure={stage:String(error?.stage||error?.details?.incompleteReason||error?.details?.reason||'generation').slice(0,100),critique:String(error?.critique||error?.message||'').slice(0,800)};return await persist({release:true});}
    }
    return await persist({release:true,record:!checkpointed&&kind!=='start'&&data.action!=='retry-next'});

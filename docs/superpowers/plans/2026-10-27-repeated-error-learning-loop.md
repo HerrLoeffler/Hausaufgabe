@@ -1,0 +1,27 @@
+# Repeated error help and actual feedback loop — GC-ADAPTIVE-PRACTICE-01
+
+User-authorized continuation of PR262. Scope: actual number-line, balance and short German task with repeated wrong answers; retain source model, genuinely reduce the next action, avoid merely revealing the complete solution. Make stored help experience influence later assistance rather than leaving it as a passive log. Existing separated test project only; no production/rules/IAM/new providers/global training.
+
+## Observed baseline
+First real line task: set3/4on0..1, step0.25. Wrong0 produced full0.75in grading feedback and repeated the entire positioning action. Model parameters did remain unchanged. This is an observed failure, not a passing help test. Existing helpEpisodes store snapshots/outcome signals but AI next-help reads only current previousHelp, not evidence across sessions.
+
+## Implementation decisions
+1. Feedback after an incorrect answer identifies the obstacle without the complete target answer. Counterreview checks this, while retaining exact grading and accepted alternatives.
+2. Help has explicit strategyId: focus-one, smaller-step, count-along, contrast, check-prerequisite. A narrow prerequisite question or incomplete worked step replaces the whole original response demand; never highlight the complete correct text answer merely to copy it. Numberline: source scale/endpoints/step stay identical, isolate start/unit/interval counting before target placement. Balance: source equation stays identical, compare known quantities/equal actions or count one group before solving x. German: original text/tokens unchanged; explain criterion, narrow to a relevant phrase or contrast, no direct target-word giveaway as the sole help.
+3. Independent help reviewer must explicitly confirm meaningful scaffolding and flag complete solution disclosure. Source teacher handoff remains allowed after repeated supported errors; it is not a new test.
+4. Bounded private experience memory aggregates per exact goal/tool/strategy. Accepted events update once (answer and generated-hint phases deduped separately); technical retries/unclear responses do not count as learning failures. Supported success and later distinct independent transfer remain separate. Ambiguous multi-strategy transfer attribution stays unknown. At least2independent transfers across3episodes before cautiously preferring a pattern; >=2supported errors without transfer advises changing strategy. No permanent learner-style labels or causal guarantee.
+5. Experience summaries contain counts/identifiers/pattern advice, no pupil free text or private answer keys. AI must adapt a suggested method to CURRENT source data and independently validate it again. Same owner only, <=64patterns and <=128event markers. Other pupils' data, cross-class aggregation, global promotion/model-training remain a separate reviewed route.
+
+## Files and checks
+Root: ai.js/scaffolding.js/service.js/help-evidence.js integration and tests; worker: new help-experience.js with focused pure tests. No UI redesign unless a concrete observed defect requires it. Test failing cases first, then all Functions/UI/lint/packaging as relevant. Review affected transitions independently before test-only deployment. Preserve attempts1–36; next37. Push immutable source before release.
+
+## Real acceptance matrix
+For line/balance/German: genuine generated task with appropriate existing model; intentionally wrong response1; inspect help1; wrong2; inspect narrower help2; wrong3; inspect simplest help3 or appropriate teacher handoff. Save scene/config/identity comparison ignoring explicit role support. Confirm no new source quantities/text and no direct target marker/word/value is supplied as the only scaffold. Correct microstep -> original supported completion -> distinct independent probe where feasible. New session of the same goal must receive own experience summary, and repeated errors must yield change-strategy advice in private AI context. Technical rejections preserved, never declared learner errors.
+
+## Closure and limits
+Store exact executed cases and revisions, keep user preview usable. Report observed behavior and remaining didactic calibration honestly; no claim that aggregate counters prove efficacy, retention or perfect future AI behavior. A self-improving framework is experience -> guarded recommendation -> checked hint -> independent outcome -> revised experience, not automatic global retraining.
+
+## Pre-release evidence
+Baseline actually reproduced in all3families: line0repeated3times keptfullpositionresponseandrevealed0.75; balance0repeated3timeseventuallysaidsetx4; GermanwrongMia3timesexplicitlygave'liest'. Sourcegeometry/textremainedstable,butpedagogicalmicrostepcriterionfailed. Thesearekeptasfailures. Newguardseparatescurrentmicroanswerfromthewholemodel,preventstarget-onlytextfocusandrequiresaffirmativescaffolding/nocomplete-solutionreview.
+
+Independentreviewfoundoneusagecounterbug: an unclearanswercouldlooklikeanotherhintgeneration. Fixedbyanactualsuccessfulgenerationflagandregressiontest.469Functionsand107UItestsnowpass,scopedESLint/diffcheckpass. No newproductUIorhostingneeded. Nextreleaseattempt37updatesonlylearningBrainStart/Turnin gradecrew-staging-2026;remainingFunctionsandProductionunchanged. Real correctedmulti-errorcasesstillfollow,notclaimedfromunitchecks.

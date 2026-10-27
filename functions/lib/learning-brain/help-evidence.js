@@ -19,7 +19,7 @@ function rememberHelp(episode,session){
  if(!episode.helpVersions.some(v=>v.fingerprint===entry.fingerprint&&v.version===entry.version&&v.stage===entry.stage))episode.helpVersions.push(entry);
  if(episode.helpVersions.length>12)episode.supportHistoryTruncated=true;
  episode.helpVersions=episode.helpVersions.slice(-12);
- episode.lastHelp={explanation:shortText(session.explanation,300),question:shortText(session.task.prompt,240),focusIds:(Array.isArray(session.assistance?.focusIds)?session.assistance.focusIds:[]).filter(id=>typeof id==='string').slice(0,12).map(id=>id.slice(0,60)),numberLabels:session.assistance?.numberLabels===true,version:version(session.assistance||session.task),stage:entry.stage};
+ episode.lastHelp={explanation:shortText(session.explanation,300),question:shortText(session.task.prompt,240),focusIds:(Array.isArray(session.assistance?.focusIds)?session.assistance.focusIds:[]).filter(id=>typeof id==='string').slice(0,12).map(id=>id.slice(0,60)),numberLabels:session.assistance?.numberLabels===true,strategyId:['focus-one','smaller-step','count-along','contrast','check-prerequisite'].includes(session.assistance?.strategyId)?session.assistance.strategyId:'focus-one',version:version(session.assistance||session.task),stage:entry.stage};
 }
 // Called once for each accepted transition, before or after next-task generation.
 // All evidence stays on the existing private learner session. No answers are copied.

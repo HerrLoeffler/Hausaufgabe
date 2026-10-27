@@ -46,10 +46,17 @@ function anchoredCandidate(h,s,context={}){
  const regions=sceneRegions(source,context.workshop),ids=new Set(regions.map(r=>r.id));
  if(!Array.isArray(h.focusIds)||h.focusIds.length>12||h.focusIds.some(id=>!ids.has(id)))reject('Die Hilfe verweist auf eine nicht vorhandene region.');
  if(source.diagram?.kind==='area-grid'&&source.diagram.rows===1&&/ober(?:e|en|ste|sten)\s+Reihe/i.test(h.question+' '+h.explanation))reject('Sprich bei der einzigen Reihe von dieser Reihe, nicht von einer oberen Reihe.');
+ if(s.phase==='help'&&source.input==='workshop'&&h.input==='workshop')reject('Die Hilfe braucht eine kleinere Teilfrage statt erneut die vollständige ursprüngliche Werkstatthandlung abzufragen. Das Originalmodell bleibt als Unterstützung erhalten; input=number/text/choice verwenden.');
  if(h.input==='workshop'&&(!source.workshop||JSON.stringify(h.answer)!==JSON.stringify(source.answer)))reject('Der Antwortvertrag der Werkstatthandlung muss unverändert bleiben.');
+ if(s.phase==='help'&&source.workshop?.tool==='text-workbench'&&source.workshop.mode==='select'&&h.focusIds.length){
+  const tokens=source.workshop.text.trim().split(/\s+/),normalize=t=>String(t).normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N} ]/gu,'').trim();
+  const selected=h.focusIds.filter(id=>/^token:\d+$/.test(id)).map(id=>tokens[Number(id.slice(6))]).filter(Boolean);
+  if(selected.length&&selected.length===h.focusIds.length&&(source.answer?.values||[]).some(v=>normalize(v)===normalize(selected.join(' '))))reject('Die Markierung verrät bereits die vollständige Ziellösung. Markiere eine relevante Wortgruppe oder einen Vergleich, nicht nur das gesuchte Antwortwort.');
+ }
+ const strategyId=['focus-one','smaller-step','count-along','contrast','check-prerequisite'].includes(h.strategyId)?h.strategyId:'focus-one';
  const task={...clone(source),prompt:h.question,input:h.input,options:clone(h.options),answer:clone(h.answer),rubric:h.rubric,family:'anchored-help',generationSource:'live-ai-help'};
  if(task.workshop)task.workshop={...task.workshop,role:h.input==='workshop'?'answer':'support'};
  // IDs stay stable for the preserved manipulation. Session revision guards stale submissions.
- return {task,explanation:h.explanation,visual:null,assistance:{version:1,anchorTaskId:source.id,stage:Math.max(1,Math.min(3,s.supportStage||1)),focusIds:[...h.focusIds],numberLabels:h.numberLabels===true,regions,replyTo:String(context.question||s.assistance?.replyTo||'').slice(0,2000)}};
+ return {task,explanation:h.explanation,visual:null,assistance:{version:2,strategyId,anchorTaskId:source.id,stage:Math.max(1,Math.min(3,s.supportStage||1)),focusIds:[...h.focusIds],numberLabels:h.numberLabels===true,regions,replyTo:String(context.question||s.assistance?.replyTo||'').slice(0,2000)}};
 }
 module.exports={sceneRegions,anchoredCandidate};
