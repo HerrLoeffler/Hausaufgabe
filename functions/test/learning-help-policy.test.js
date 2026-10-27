@@ -23,3 +23,9 @@ test('text hint cannot name the entire sought selection as a worked answer even 
  assert.throws(()=>anchoredCandidate(h,{phase:'help',originalTask:t,task:t}),/Ziellösung/);
  assert.doesNotThrow(()=>anchoredCandidate({...h,explanation:'Ein Verb sagt, was jemand tut. Mia nennt eine Person.',question:'Nennt Mia eine Person oder eine Handlung?'},{phase:'help',originalTask:t,task:t}));
 });
+
+test('generic use of a short function word is not a disclosure of its selected occurrence',()=>{
+ const t={id:'article',input:'workshop',prompt:'Markiere den unbestimmten Artikel.',answer:{kind:'open',values:['ein']},workshop:{tool:'text-workbench',mode:'select',text:'Mia liest ein Buch.'}};
+ assert.doesNotThrow(()=>anchoredCandidate({...scalar(),explanation:'Ein Begleiter steht vor einem Nomen. Prüfe zuerst Mia: Das ist ein Name.',question:'Nennt Mia eine Person oder einen Gegenstand?',focusIds:['token:0']},{phase:'help',originalTask:t,task:t}));
+ assert.throws(()=>anchoredCandidate({...scalar(),explanation:'Schau zuerst auf Mia.',question:'Der gesuchte Artikel lautet ein. Kannst du ihn markieren?',focusIds:['token:0']},{phase:'help',originalTask:t,task:t}),/Ziellösung/);
+});

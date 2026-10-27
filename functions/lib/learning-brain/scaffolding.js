@@ -51,7 +51,10 @@ function anchoredCandidate(h,s,context={}){
  if(s.phase==='help'&&source.workshop?.tool==='text-workbench'&&source.workshop.mode==='select'){
   const tokens=source.workshop.text.trim().split(/\s+/),normalize=t=>String(t).normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N} ]/gu,'').trim();
   const phrase=t=>' '+String(t).normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim()+' ';
-  if((source.answer?.values||[]).some(v=>phrase(v).trim()&&phrase(h.explanation).includes(phrase(v))))reject('Die Erklärung nennt bereits die vollständige gesuchte Text-Ziellösung. Erkläre das Kriterium am falsch gewählten Wort oder einer Voraussetzung, ohne das richtige Suchwort vorzusagen.');
+  const roles=['verb','nomen','artikel','pronomen','adjektiv','adverb','präposition','konjunktion','antwort','lösung','wort','handlung','person'];
+  const quoted=[...h.explanation.matchAll(/["„“«»'‚‘]([^"„“«»'‚‘]+)["„“«»'‚‘]/gu)].map(m=>phrase(m[1]));
+  const explicit=(source.answer?.values||[]).some(v=>{const key=phrase(v).trim();if(!key)return false;const explanation=phrase(h.explanation),both=phrase(h.explanation+' '+h.question);return quoted.includes(phrase(v))||explanation.includes(' '+key+' als ')||roles.some(role=>['ist','lautet','heißt','heisst'].some(verb=>both.includes(' '+role+' '+verb+' '+key+' '))||['ist','zeigt','beschreibt','bezeichnet'].some(verb=>['','ein ','eine ','die ','das ','der '].some(article=>both.includes(' '+key+' '+verb+' '+article+role+' '))));});
+  if(explicit)reject('Die Hilfe nennt bereits die vollständige gesuchte Text-Ziellösung ausdrücklich als Antwort. Erkläre das Kriterium am falsch gewählten Wort oder einer Voraussetzung, ohne das richtige Suchwort vorzusagen.');
   const selected=h.focusIds.filter(id=>/^token:\d+$/.test(id)).map(id=>tokens[Number(id.slice(6))]).filter(Boolean);
   if(selected.length&&selected.length===h.focusIds.length&&(source.answer?.values||[]).some(v=>normalize(v)===normalize(selected.join(' '))))reject('Die Markierung verrät bereits die vollständige Ziellösung. Markiere eine relevante Wortgruppe oder einen Vergleich, nicht nur das gesuchte Antwortwort.');
  }
