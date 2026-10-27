@@ -1,0 +1,7 @@
+# GC-WEB-REPAIR-20261007 / GC-AUDIO-01 — vorhandene Medien direkt sichtbar
+
+Gleiche Task/Chat-ID01a15f06-837c-73b3-93fa-0d07a8104d3a, Basis Live f033f901 und main53719275. Nutzer hat nur1%Wochenbudget und wünscht zuerst Abbruchsicherung. Gewünschte kleine Editor-Korrektur: vorhandene Aufgabenbilder immer sichtbar; fertige Aufgaben-/Antwortaudios ohne Aufklappen sichtbar. Text über explizites Bearbeiten weiter zugänglich; Emmi-Überarbeiten erhalten. Keine Löschung von Text, keine neue Änderung des serverseitigen Schüler-/Bewertungsvertrags. Bestehende öffentliche Arbeitsaufträge für Hörverständnis bleiben erhalten.
+
+Plan:1 diesen Auftrag lokal/remote sichern,2 gezielte Regression und kleine Anzeigeänderung,3 bestehende Web/Browserprüfungen und begrenzte Review,4 nur mit exakterCI/Preview Hostingrelease gradecrew.de/hausaufgabe-staging samt206Dateinachweis. Keine Backend-/Rules-/Auth-/Quotaänderung oder andere Umgebung. Aktuelle Texte, Lösungen, offene Vorläufer und Versuche erhalten. Keine bezahlte Providerprobe. Teilstände committen/pushen, vor Veröffentlichung bisherigen Live-Stand behalten. Bei Abbruch hier fortsetzen statt Auftrag neu starten.
+
+Stand: Auftrag gesichert, Umsetzung noch offen. Nächster Schritt: Bildvorschau aus geschlossenem Menü herauslösen; Audioplayer direkt anzeigen und Texteditor bei fertigen Audios optional machen. Modell inherited, actual unknown, kein Wechsel.
