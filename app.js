@@ -1798,7 +1798,7 @@ function quizStatusMeta(q) {
   if (q.published && secureAudioPublicationBlocked(q)) return { label: "Audiofreigabe ausstehend", cls: "incomplete" };
   if (q.published && q.startMode === "teacher" && q.sessionState === "waiting") return { label: "Wartet auf Start", cls: "waiting" };
   if (q.published && q.startMode === "teacher" && q.sessionState === "running") return { label: "Läuft", cls: "running" };
-  if (q.published) return { label: "Veröffentlicht", cls: "published" };
+  if (q.published) return null;
   if (Number(q.questionCount || 0) === 0) return { label: "Unvollständig", cls: "incomplete" };
   return { label: "Entwurf", cls: "draft" };
 }
@@ -1852,7 +1852,7 @@ function renderQuizList() {
           <button class="button danger remove quizDeleteButton" type="button" aria-label="Test in den Papierkorb" title="Test in den Papierkorb"><svg class="gcWorkspaceIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></svg></button>
         </div>
         <div class="quizCardStatusGroup">
-          <span class="status ${status.cls}">${status.label}</span>
+          ${status ? `<span class="status ${status.cls}">${status.label}</span>` : ""}
           <label class="dashboardPublishControl" title="Test veröffentlichen oder sicher beenden">
             <span>Veröffentlicht</span>
             <input class="dashboardPublishToggle" type="checkbox" ${q.published && !q.ended && !q.rightsHold ? "checked" : ""} ${q.rightsHold ? "disabled" : ""} aria-label="Veröffentlichung umschalten">
