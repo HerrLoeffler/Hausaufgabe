@@ -48,8 +48,10 @@ function anchoredCandidate(h,s,context={}){
  if(source.diagram?.kind==='area-grid'&&source.diagram.rows===1&&/ober(?:e|en|ste|sten)\s+Reihe/i.test(h.question+' '+h.explanation))reject('Sprich bei der einzigen Reihe von dieser Reihe, nicht von einer oberen Reihe.');
  if(s.phase==='help'&&source.input==='workshop'&&h.input==='workshop')reject('Die Hilfe braucht eine kleinere Teilfrage statt erneut die vollständige ursprüngliche Werkstatthandlung abzufragen. Das Originalmodell bleibt als Unterstützung erhalten; input=number/text/choice verwenden.');
  if(h.input==='workshop'&&(!source.workshop||JSON.stringify(h.answer)!==JSON.stringify(source.answer)))reject('Der Antwortvertrag der Werkstatthandlung muss unverändert bleiben.');
- if(s.phase==='help'&&source.workshop?.tool==='text-workbench'&&source.workshop.mode==='select'&&h.focusIds.length){
+ if(s.phase==='help'&&source.workshop?.tool==='text-workbench'&&source.workshop.mode==='select'){
   const tokens=source.workshop.text.trim().split(/\s+/),normalize=t=>String(t).normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N} ]/gu,'').trim();
+  const phrase=t=>' '+String(t).normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim()+' ';
+  if((source.answer?.values||[]).some(v=>phrase(v).trim()&&phrase(h.explanation).includes(phrase(v))))reject('Die Erklärung nennt bereits die vollständige gesuchte Text-Ziellösung. Erkläre das Kriterium am falsch gewählten Wort oder einer Voraussetzung, ohne das richtige Suchwort vorzusagen.');
   const selected=h.focusIds.filter(id=>/^token:\d+$/.test(id)).map(id=>tokens[Number(id.slice(6))]).filter(Boolean);
   if(selected.length&&selected.length===h.focusIds.length&&(source.answer?.values||[]).some(v=>normalize(v)===normalize(selected.join(' '))))reject('Die Markierung verrät bereits die vollständige Ziellösung. Markiere eine relevante Wortgruppe oder einen Vergleich, nicht nur das gesuchte Antwortwort.');
  }

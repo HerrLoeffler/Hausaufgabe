@@ -16,3 +16,10 @@ test('accepted repeated failures feed changed strategy advice into later session
  await svc.start('A',{topicId:topic.id,eventId:'learn-start2',minutes:20});assert.equal(seen.at(-1).experience.strategies[0].advice,'change-strategy');assert.equal(seen.at(-1).experience.strategies[0].independentSuccesses,0);
  await svc.start('B',{topicId:topic.id,eventId:'learn-startB',minutes:20});assert.equal(seen.at(-1).experience.strategies.length,0);assert.equal(JSON.stringify(await svc.profile('A')).includes('helpExperience'),false);
 });
+
+test('text hint cannot name the entire sought selection as a worked answer even when focusing a contrast',()=>{
+ const t={id:'text',input:'workshop',prompt:'Markiere das Verb.',answer:{kind:'open',values:['liest']},workshop:{tool:'text-workbench',mode:'select',text:'Mia liest ein Buch.'}};
+ const h={...scalar(),explanation:'Vergleiche Mia als Person mit liest als Handlung.',focusIds:['token:0','token:1']};
+ assert.throws(()=>anchoredCandidate(h,{phase:'help',originalTask:t,task:t}),/Ziellösung/);
+ assert.doesNotThrow(()=>anchoredCandidate({...h,explanation:'Ein Verb sagt, was jemand tut. Mia nennt eine Person.',question:'Nennt Mia eine Person oder eine Handlung?'},{phase:'help',originalTask:t,task:t}));
+});
