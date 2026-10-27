@@ -458,3 +458,116 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 @media(max-width:540px){#aiView .formGrid2{grid-template-columns:1fr}#aiView .span2{grid-column:auto}#aiView .card{padding:16px}}
 #aiView .aiCreationFlow{grid-template-areas:none}
 #aiView .aiCreationFlow>.card{grid-area:auto;grid-column:auto;grid-row:auto}
+
+/* Compact creation: four areas read left-to-right; the action stays last. */
+body:has(#aiView:not(.hidden)) .shell{max-width:none;padding:12px 20px}
+#aiView:not(.hidden){display:flex;flex-direction:column;height:var(--ai-available,calc(100dvh - 180px));min-height:0;gap:8px}
+#aiView>.pageHead{margin:0;flex:none}
+#aiView .aiPageIntro{display:flex;align-items:center;gap:18px;max-width:none}
+#aiView .pageHead .linkButton.left{margin:0;min-height:44px;white-space:nowrap}
+#aiView .aiPageHeadContent{display:flex;align-items:center;gap:12px}
+#aiView .aiPageHeadText h1{font-size:22px;margin:0}
+#aiView .aiPageHeadText p{display:none}
+#aiView .aiPageRemyHero{width:48px;height:50px;flex-basis:48px}
+#aiView .aiCreationFlow{flex:1;min-height:0;width:100%;max-width:none;margin:0;display:grid;grid-template-columns:minmax(280px,1.65fr) minmax(180px,1.1fr) minmax(120px,.75fr) minmax(190px,1.1fr);grid-template-rows:minmax(0,1fr) auto;gap:12px;align-items:stretch}
+#aiView .aiCreationFlow>.aiCreationPanel{grid-column:var(--ai-panel);grid-row:1;padding:14px;display:flex;flex-direction:column;min-height:0}
+#aiView .aiSectionTitle{margin:0 0 10px;gap:8px;align-items:center}
+#aiView .aiSectionTitle>span{flex-basis:28px;width:28px;height:28px;border-radius:9px}
+#aiView .aiSectionTitle h2{margin:0;min-width:0;font-size:18px}
+#aiView .aiSectionToggle{border:0;background:none;color:inherit;font:inherit;font-weight:750;min-height:44px;padding:0;text-align:left;cursor:pointer}
+#aiView .aiCreationPanelBody{min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:2px}
+#aiView .formGrid2{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#aiView .formGrid2 label{font-size:12px;gap:3px;line-height:1.3}
+#aiView :is(input,select){min-height:44px;padding:7px 9px;font-size:14px}
+#aiView #aiCustomNotes{height:60px;min-height:60px;padding:8px;font-size:14px}
+#aiView #aiCustomNotesHint{display:none}
+#aiView .aiNotesField{margin:0}
+#aiView .aiOptionalTestOptions{margin-top:8px;padding:0 8px}
+#aiView .aiOptionalTestOptions>summary{min-height:44px;font-size:12px}
+#aiView .aiUploadConfirm{font-size:12px;line-height:1.4;padding:9px;gap:7px}
+#aiView .aiUploadBox{padding:12px 8px;gap:7px;font-size:12px}
+#aiView .aiUploadBox span{font-size:11px}
+#aiView .aiMaterialList{max-height:120px;overflow:auto}
+#aiView .aiCreationPanelBody>label{display:grid;gap:7px;font-size:12px}
+#aiView .aiCreationPanelBody>.hint:empty{display:none}
+#aiView .audioCreationCards{display:grid;grid-template-columns:1fr;gap:12px}
+#aiView .audioCreationChoice{position:relative;padding:8px;margin:0;border-radius:10px;gap:4px}
+#aiView .audioCreationChoice legend{font-size:13px}
+#aiView .aiAudioCountRow{display:flex;align-items:center;gap:8px}
+#aiView .aiAudioCountRow input{min-width:0;width:100%}
+#aiView .aiAudioPreviewButton{flex:0 0 44px;min-width:44px;min-height:44px;border:1px solid #d8e1ef;border-radius:10px;background:#edf4ff;color:#2457bd;font-size:20px;cursor:pointer}
+#aiView .audioCreationChoice>.hint:not(.aiInputError){display:none}
+#aiView .audioStudentExample{position:fixed;inset:auto;margin:0;width:min(280px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;padding:18px;background:white;color:#344054;border:1px solid #b8ccec;box-shadow:0 12px 40px #18203329;z-index:1000;font-size:13px}
+#aiView .audioStudentExample[hidden]{display:none!important}
+#aiView .audioStudentExample::backdrop{background:transparent}
+#aiView .aiAudioPreviewClose{position:absolute;top:2px;right:2px;width:36px;height:36px;border:0;background:none;font-size:22px;cursor:pointer}
+#aiView .audioStudentExample>strong{padding-right:28px}
+#aiView .aiCreationFlow>.aiCreationFinish{grid-column:1/-1;grid-row:2;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 14px;min-height:70px}
+#aiView .aiFinishMeta{min-width:0;flex:1}
+#aiView .aiCoreActions{margin:0;flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end}
+#aiView .aiGenerateButton{width:auto;min-height:48px;min-width:170px}
+#aiView .aiUploadLegalDetails{position:relative;margin:0;font-size:11px}
+#aiView .aiUploadLegalDetails>summary{min-height:32px;padding:6px 0;cursor:pointer}
+#aiView .aiUploadLegalDetails[open]>div{position:absolute;bottom:100%;left:0;width:min(600px,80vw);max-height:60dvh;overflow:auto;padding:16px;border:1px solid #c7d4e8;border-radius:12px;background:white;box-shadow:0 8px 28px #18203329;z-index:30}
+#aiView .aiStatusNotice{margin:0;padding:0;font-size:11px;min-height:0}
+#aiView :is(.aiSectionToggle,.aiAudioPreviewButton,.aiAudioPreviewClose):focus-visible{outline:3px solid #285ac9;outline-offset:2px}
+@media(max-width:999px){
+ body:has(#aiView:not(.hidden)) .shell{padding:8px 12px}
+ #aiView .aiCreationFlow{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:64px minmax(0,1fr) auto;gap:8px}
+ #aiView .aiCreationFlow>.aiCreationPanel{display:contents}
+ #aiView .aiCreationPanel>.aiSectionTitle{grid-column:var(--ai-panel);grid-row:1;flex-direction:column;gap:0;margin:0;padding:3px 0;border-radius:10px;background:#edf3fc}
+ #aiView .aiSectionTitle>span{display:none}
+ #aiView .aiSectionTitle h2{width:100%;font-size:13px;height:100%}
+ #aiView .aiSectionToggle{width:100%;height:100%;text-align:center;padding:6px}
+ #aiView .aiSectionToggle[aria-expanded=true]{background:#2457bd;color:white;border-radius:10px}
+ #aiView .aiCreationPanelBody{grid-column:1/-1;grid-row:2;background:white;border:1px solid #e6ebf2;border-radius:12px;padding:12px}
+ #aiView .aiCreationFlow>.aiCreationFinish{grid-row:3;padding:8px;gap:8px}
+ #aiView .aiGenerateButton{min-width:130px;font-size:12px;padding:9px}
+ #aiView #aiCreationSummary{font-size:10px;line-height:1.3}
+ #aiView .aiPageHeadText h1{font-size:18px}
+ #aiView .aiPageIntro{gap:12px}
+ #aiView .aiPageRemyHero{display:none}
+ #aiView .audioCreationCards{gap:8px}
+ #aiView .aiCreationPanelBody .audioStudentExample{background:white;padding:18px}
+}
+
+body:has(#aiView:not(.hidden)) .legalSiteFooter{padding:4px 12px}
+body:has(#aiView:not(.hidden)) .rightsFooter{padding:0 12px;min-height:44px}
+body:has(#aiView:not(.hidden)) .rightsFooter .footerLink{min-height:44px}
+
+#aiView .aiMetrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+#aiView .aiMetrics label{display:grid;gap:3px}
+
+#aiView .aiPageHeadContent .aiPageRemyHero{flex:0 0 48px;width:48px;height:50px}
+#aiView .aiAudioCountRow .sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+#aiView .aiNotesField{position:relative}
+#aiView .aiNotesField .gcRemyNotesHead{min-height:18px;font-size:11px}
+#aiView .aiNotesField .gcRemyNotesMic{position:absolute;right:4px;top:25px}
+#aiView .aiNotesField #aiCustomNotes{height:56px;min-height:56px;padding-right:52px}
+@media(max-width:999px){#aiView .aiPageHeadContent .aiPageRemyHero{display:none}}
+
+body:has(#aiView:not(.hidden)){display:grid;grid-template-columns:minmax(0,1fr) auto auto}
+body:has(#aiView:not(.hidden))>:is(.topbar,.shell){grid-column:1/-1;width:100%;min-width:0}
+body:has(#aiView:not(.hidden)) #appFooter{grid-row:3;grid-column:1;margin:0;padding:4px 12px;font-size:11px;min-width:0}
+body:has(#aiView:not(.hidden)) .legalSiteFooter{grid-row:3;grid-column:2;align-self:center;font-size:12px}
+body:has(#aiView:not(.hidden)) .rightsFooter{grid-row:3;grid-column:3;margin:0;align-self:center;font-size:11px}
+body:has(#aiView:not(.hidden)) .legalSiteFooter nav{gap:12px}
+#aiView .aiAudioPreviewClose{width:44px;height:44px}
+@media(max-width:999px){body:has(#aiView:not(.hidden)){grid-template-columns:minmax(0,1fr) auto}body:has(#aiView:not(.hidden)) #appFooter{grid-row:3;grid-column:1/-1}body:has(#aiView:not(.hidden)) .legalSiteFooter{grid-row:4;grid-column:1}body:has(#aiView:not(.hidden)) .rightsFooter{grid-row:4;grid-column:2}}
+
+#aiView .aiCreationPanelBody .aiUploadNotice{margin:0 0 8px;padding:0}
+#aiView .aiCreationPanelBody .aiUploadConfirm{padding:8px;font-size:12px;line-height:1.35;gap:6px}
+#aiView .aiCreationPanelBody .aiUploadBox{margin:0;padding:10px 8px;gap:6px;font-size:12px}
+#aiView .aiCreationPanelBody .aiUploadBox span{font-size:11px;line-height:1.35}
+@media(max-width:999px){#aiView .aiSectionToggle::before{content:attr(data-step) " ";font-weight:500;opacity:.8}}
+
+#aiView .aiCreationPanelBody .aiUploadBox{position:relative;min-height:88px;display:flex;flex-direction:column;justify-content:center}
+#aiView .aiCreationPanelBody .aiUploadBox input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+body:has(#aiView:not(.hidden))>.topbar{height:76px;min-height:76px;align-self:start}
+@media(max-width:999px){body:has(#aiView:not(.hidden))>.topbar{height:64px;min-height:64px}}
+
+/* Let the viewport grid allocate space; avoid measuring moving document offsets. */
+body:has(#aiView:not(.hidden)){height:var(--ai-screen-height,100dvh);grid-template-rows:76px minmax(0,1fr) auto}
+body:has(#aiView:not(.hidden))>.shell{grid-row:2;height:100%;min-height:0}
+body:has(#aiView:not(.hidden)) #aiView{height:100%;margin-top:0}
+@media(max-width:999px){body:has(#aiView:not(.hidden)){grid-template-rows:64px minmax(0,1fr) auto auto}}

@@ -18,6 +18,12 @@ export const enGBMessages = Object.freeze({
   "nav.teachers": "For teachers",
   "nav.help": "Help",
   ...source({
+    "Ohne Upload: Angaben verwenden.": "Without uploads: use your settings.",
+    "PDF, Bilder, Office · 10 Dateien · 15 MB": "PDF, images, Office · 10 files · 15 MB",
+    "Anzahl: Aufgabe hören (0–5)": "Count: question audio (0–5)", "Anzahl: Antworten hören (0–5)": "Count: answer audio (0–5)", "Anzahl: Beides hören (0–5)": "Count: both (0–5)",
+
+    "Angaben": "Details", "Weitere Angaben": "More settings", "Aufgabe hören": "Listen to the question", "Antworten hören": "Listen to the answers", "Beides hören": "Listen to both", "Frage und Antworten lesen": "Read the question and answers", "Frage lesen": "Read the question", "Kurzer Arbeitsauftrag": "Brief instructions", "Jede Antwort einzeln hören": "Listen to each answer", "Aufgabe und Antworten hören": "Listen to the question and answers", "Beispiel schließen": "Close example", "Beispiel: Aufgabe hören": "Example: listen to the question", "Beispiel: Antworten hören": "Example: listen to the answers", "Beispiel: Beides hören": "Example: listen to both",
+
     "Zählt gemeinsam als Aufgaben-Audio und Audioantworten. Insgesamt höchstens fünf je Audiobereich.": "Counts as both question audio and audio choices. At most five in each audio category overall.",
     "Bilder": "Images",
     "Test erstellen": "Create test",

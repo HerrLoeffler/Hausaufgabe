@@ -319,7 +319,45 @@
       <div class="pageHead">
         <div class="aiPageIntro"><button id="backFromAi" class="linkButton left" type="button">← Zurück</button><div class="aiPageHeadContent"><div class="aiPageHeadText"><h1>Test mit Remy erstellen</h1><p>Remy erstellt deinen Test passend zu Thema und Klasse.</p></div><img class="aiPageRemyHero" src="assets/gradecrew/remy-test-creation-typewriter.png" width="112" height="114" alt="Remy an der Schreibmaschine"></div></div>
       </div>
-            <details id="aiUploadLegalDetails" class="aiUploadLegalDetails">
+      <div class="aiGrid aiCreationFlow"><article class="card aiCreationPanel" data-creation-step="1" style="--ai-panel:1"><div class="aiSectionTitle"><span aria-hidden="true">1</span><h2><button class="aiSectionToggle" type="button" aria-expanded="true" data-step="1" aria-controls="aiCreationPanel1">Angaben</button></h2></div><div id="aiCreationPanel1" class="aiCreationPanelBody">
+          <div class="formGrid2">
+            <label>Fach<input id="aiSubject" type="text" placeholder="Mathematik" /></label>
+            <label>Klasse<input id="aiGrade" type="text" placeholder="9" /></label>
+
+
+            <label class="span2">Thema<input id="aiTopic" type="text" placeholder="Zinsrechnung" /></label>
+            <label class="aiNotesField span2">Was soll der Test genau abfragen? <small>(optional)</small><textarea id="aiCustomNotes" rows="2" maxlength="6000" aria-label="Was soll der Test genau abfragen?" aria-describedby="aiCustomNotesHint" placeholder="z. B. Brüche kürzen und erweitern, mit einfachen Alltagsbeispielen. Keine Textaufgaben."></textarea><small id="aiCustomNotesHint">Deine Wünsche gelten nur für diesen Test. Du kannst sie auch diktieren.</small></label>
+            <div class="aiMetrics span2"><label>Aufgaben<input id="aiCount" type="number" min="1" max="100" value="10" /></label>
+            <label>Niveau<select id="aiDifficulty"><option>leicht</option><option selected>mittel</option><option>anspruchsvoll</option><option>gemischt</option></select></label>
+            <label>Punkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label></div>
+          </div>
+          <p id="aiPointsHint" class="hint" aria-live="polite"></p>
+          <details class="aiOptionalTestOptions"><summary>Weitere Angaben <small>optional</small></summary><div class="formGrid2"><label>Schulart<input id="aiSchoolType" type="text" value="Mittelschule" /></label><label>Bundesland<input id="aiRegion" type="text" value="Bayern" /></label></div>
+          <details class="aiTypePicker"><summary>Aufgabentypen erlauben <span id="aiTypeCount">9 ausgewählt</span></summary>
+            <div id="aiTypeChecks" class="typeCheckGrid"></div>
+          </details>
+          <details class="gradecrewPreferenceDetails"><summary>Meine Vorlieben für künftige Tests <small>optional</small></summary><div class="gradecrewPreferenceBody">          <label class="aiNotesField">Was Remy grundsätzlich beachten soll <small>(für künftige Tests)</small><textarea id="aiPersonalPreferences" rows="3" maxlength="1000" placeholder="z. B. klare Alltagssprache, lieber kurze Aufgaben, keine Fachwörter ohne Erklärung"></textarea></label>
+          <div class="aiPreferencesActions"><button id="saveAiPreferencesBtn" class="button secondary" type="button">Vorlieben speichern</button><small class="hint">Diese Vorlieben bleiben in deinem Profil – auch für künftige Tests. Speichere sie hier oder starte einen Test; dabei werden sie ebenfalls gespeichert. GradeCrew berücksichtigt zusätzlich deine Aufgabenbewertungen.</small></div></div></details>
+          </details>
+        </div></article><article class="card aiCreationPanel" data-creation-step="2" style="--ai-panel:2"><div class="aiSectionTitle"><span aria-hidden="true">2</span><h2><button class="aiSectionToggle" type="button" aria-expanded="true" data-step="2" aria-controls="aiCreationPanel2">Material</button></h2></div><div id="aiCreationPanel2" class="aiCreationPanelBody">
+          <div class="aiUploadNotice" id="aiUploadNotice">
+
+            <label class="aiUploadConfirm"><input id="aiMaterialConfirmed" aria-describedby="aiMaterialRightsNotice" type="checkbox" /><span>Ich darf dieses Material verwenden und speichern und habe die erforderlichen Rechte.</span></label>
+
+          </div>
+          <label id="aiMaterialDropZone" class="aiUploadBox" for="aiMaterialInput"><strong>Dateien hierher ziehen oder auswählen</strong><span>PDF, Bilder, Office · 10 Dateien · 15 MB</span><input id="aiMaterialInput" aria-describedby="aiMaterialUploadStatus" type="file" multiple accept=".pdf,image/jpeg,image/png,image/webp,.txt,.csv,.docx,.pptx,.xlsx" /></label>
+          <p id="aiMaterialUploadStatus" class="hint" role="status" aria-live="polite"></p>
+          <div id="aiMaterialList" class="aiMaterialList"></div>
+          <label>Material verwenden<select id="aiMaterialMode" disabled><option value="only" selected>Inhalt auf das Material beschränken</option><option value="inspiration">Material als Anregung verwenden</option></select></label>
+          <small class="hint">Ohne Upload: Angaben verwenden.</small>
+        </div></article><article class="card aiCreationPanel" data-creation-step="3" style="--ai-panel:3"><div class="aiSectionTitle"><span aria-hidden="true">3</span><h2><button class="aiSectionToggle" type="button" aria-expanded="true" data-step="3" aria-controls="aiCreationPanel3">Bilder</button></h2></div><div id="aiCreationPanel3" class="aiCreationPanelBody">
+          <label>Generierte Aufgabenbilder (0–5)<input id="aiImageQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiImageCountHint" /></label>
+          <p id="aiImageCountHint" class="hint" aria-live="polite"></p>
+          <small class="hint">Quellfotos und eingescanntes Material lädst du im Abschnitt Material hoch.</small>
+        </div></article><article class="card aiCreationPanel" data-creation-step="4" style="--ai-panel:4"><div class="aiSectionTitle"><span aria-hidden="true">4</span><h2><button class="aiSectionToggle" type="button" aria-expanded="true" data-step="4" aria-controls="aiCreationPanel4">Audio</button></h2></div><div id="aiCreationPanel4" class="aiCreationPanelBody"><div class="aiAudioOptions audioCreationCards"><fieldset class="audioCreationChoice"><legend>Aufgabe hören</legend><div class="aiAudioCountRow"><label class="sr-only" for="aiAudioQuestionCount">Anzahl: Aufgabe hören (0–5)</label><input id="aiAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioCountHint" /><button class="aiAudioPreviewButton" type="button" aria-label="Beispiel: Aufgabe hören" aria-controls="aiAudioExample1" aria-expanded="false">ⓘ</button></div><p id="aiAudioCountHint" class="hint"></p><div id="aiAudioExample1" class="audioStudentExample" popover="auto" hidden role="dialog" aria-label="Beispiel: Aufgabe hören"><button class="aiAudioPreviewClose" type="button" aria-label="Beispiel schließen">×</button><strong>Aufgabe hören</strong><span class="audioExampleQuestion">Frage und Antworten lesen</span><span class="audioExamplePlayer" aria-hidden="true">▶ ━━━━━</span><span>① Antwort A ② Antwort B</span><small>Hörtext zur Aufgabe</small></div></fieldset><fieldset class="audioCreationChoice"><legend>Antworten hören</legend><div class="aiAudioCountRow"><label class="sr-only" for="aiAudioAnswerQuestionCount">Anzahl: Antworten hören (0–5)</label><input id="aiAudioAnswerQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioAnswerCountHint" /><button class="aiAudioPreviewButton" type="button" aria-label="Beispiel: Antworten hören" aria-controls="aiAudioExample2" aria-expanded="false">ⓘ</button></div><p id="aiAudioAnswerCountHint" class="hint"></p><div id="aiAudioExample2" class="audioStudentExample" popover="auto" hidden role="dialog" aria-label="Beispiel: Antworten hören"><button class="aiAudioPreviewClose" type="button" aria-label="Beispiel schließen">×</button><strong>Antworten hören</strong><span class="audioExampleQuestion">Frage lesen</span><span class="audioExamplePlayer" aria-hidden="true">▶ ━━━━━</span><span>① ▶ ━━━ ② ▶ ━━━</span><small>Jede Antwort einzeln hören</small></div></fieldset><fieldset class="audioCreationChoice"><legend>Beides hören</legend><div class="aiAudioCountRow"><label class="sr-only" for="aiFullAudioQuestionCount">Anzahl: Beides hören (0–5)</label><input id="aiFullAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiFullAudioCountHint" /><button class="aiAudioPreviewButton" type="button" aria-label="Beispiel: Beides hören" aria-controls="aiAudioExample3" aria-expanded="false">ⓘ</button></div><p id="aiFullAudioCountHint" class="hint"></p><div id="aiAudioExample3" class="audioStudentExample" popover="auto" hidden role="dialog" aria-label="Beispiel: Beides hören"><button class="aiAudioPreviewClose" type="button" aria-label="Beispiel schließen">×</button><strong>Beides hören</strong><span class="audioExampleQuestion">Kurzer Arbeitsauftrag</span><span class="audioExamplePlayer" aria-hidden="true">▶ ━━━━━</span><span>▶ Aufgabe ① ▶ ② ▶</span><small>Aufgabe und Antworten hören</small></div></fieldset></div><label hidden>Lösungen als Audio (Legacy)<input id="aiSolutionAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" /></label><p id="aiSolutionAudioCountHint" class="hint" hidden></p></div></article><article class="card aiCreationFinish" data-creation-step="5">
+
+          <div class="aiFinishMeta"><p id="aiCreationSummary" class="hint" role="status" aria-live="polite"></p>
+                      <details id="aiUploadLegalDetails" class="aiUploadLegalDetails">
               <summary>Datenschutz- und Rechte-Details</summary>
               <div>
 <p>Thema, Wünsche und Uploads gehen an OpenAI. Bitte keine personenbezogenen Daten eingeben.</p>
@@ -332,71 +370,14 @@
             </details>
       <div id="aiBetaNotice" class="aiStatusNotice hidden"></div>
 
-      <div class="aiGrid aiCreationFlow">
-        <article class="card" data-creation-step="1">
-          <div class="aiSectionTitle"><span aria-hidden="true">1</span><div><h2>Test festlegen</h2><p>Die wichtigsten Angaben für deinen Entwurf.</p></div></div>
-          <div class="formGrid2">
-            <label>Fach<input id="aiSubject" type="text" placeholder="Mathematik" /></label>
-            <label>Klasse<input id="aiGrade" type="text" placeholder="9" /></label>
-            <label>Schulart<input id="aiSchoolType" type="text" value="Mittelschule" /></label>
-            <label>Bundesland<input id="aiRegion" type="text" value="Bayern" /></label>
-            <label class="span2">Thema<input id="aiTopic" type="text" placeholder="Zinsrechnung" /></label>
-            <label class="aiNotesField span2">Was soll der Test genau abfragen? <small>(optional)</small><textarea id="aiCustomNotes" rows="3" maxlength="6000" aria-label="Was soll der Test genau abfragen?" aria-describedby="aiCustomNotesHint" placeholder="z. B. Brüche kürzen und erweitern, mit einfachen Alltagsbeispielen. Keine Textaufgaben."></textarea><small id="aiCustomNotesHint">Deine Wünsche gelten nur für diesen Test. Du kannst sie auch diktieren.</small></label>
-            <label>Aufgabenanzahl<input id="aiCount" type="number" min="1" max="100" value="10" /></label>
-            <label>Schwierigkeit<select id="aiDifficulty"><option>leicht</option><option selected>mittel</option><option>anspruchsvoll</option><option>gemischt</option></select></label>
-            <label>Gesamtpunkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label>
-          </div>
-          <p id="aiPointsHint" class="hint" aria-live="polite"></p>
-          <details class="aiOptionalTestOptions"><summary>Aufgabentypen und Vorlieben <small>optional</small></summary>
-          <details class="aiTypePicker"><summary>Aufgabentypen erlauben <span id="aiTypeCount">9 ausgewählt</span></summary>
-            <div id="aiTypeChecks" class="typeCheckGrid"></div>
-          </details>
-          <details class="gradecrewPreferenceDetails"><summary>Meine Vorlieben für künftige Tests <small>optional</small></summary><div class="gradecrewPreferenceBody">          <label class="aiNotesField">Was Remy grundsätzlich beachten soll <small>(für künftige Tests)</small><textarea id="aiPersonalPreferences" rows="3" maxlength="1000" placeholder="z. B. klare Alltagssprache, lieber kurze Aufgaben, keine Fachwörter ohne Erklärung"></textarea></label>
-          <div class="aiPreferencesActions"><button id="saveAiPreferencesBtn" class="button secondary" type="button">Vorlieben speichern</button><small class="hint">Diese Vorlieben bleiben in deinem Profil – auch für künftige Tests. Speichere sie hier oder starte einen Test; dabei werden sie ebenfalls gespeichert. GradeCrew berücksichtigt zusätzlich deine Aufgabenbewertungen.</small></div></div></details>
-          </details>
-        </article>
-        <article class="card" data-creation-step="2">
-          <div class="aiSectionTitle"><span aria-hidden="true">2</span><div><h2>Material</h2><p>Optional: eigene Quellen als Grundlage verwenden.</p></div></div>
-          <div class="aiUploadNotice" id="aiUploadNotice">
-
-            <label class="aiUploadConfirm"><input id="aiMaterialConfirmed" aria-describedby="aiMaterialRightsNotice" type="checkbox" /><span>Ich darf dieses Material verwenden und speichern und habe die erforderlichen Rechte.</span></label>
-
-          </div>
-          <label id="aiMaterialDropZone" class="aiUploadBox" for="aiMaterialInput"><strong>Dateien hierher ziehen oder auswählen</strong><span>PDF, Foto, Screenshot, Text, Word, PowerPoint oder Tabelle · max. 10 Dateien · max. 15 MB</span><input id="aiMaterialInput" aria-describedby="aiMaterialUploadStatus" type="file" multiple accept=".pdf,image/jpeg,image/png,image/webp,.txt,.csv,.docx,.pptx,.xlsx" /></label>
-          <p id="aiMaterialUploadStatus" class="hint" role="status" aria-live="polite"></p>
-          <div id="aiMaterialList" class="aiMaterialList"></div>
-          <label>Material verwenden<select id="aiMaterialMode" disabled><option value="only" selected>Inhalt auf das Material beschränken</option><option value="inspiration">Material als Anregung verwenden</option></select></label>
-          <small class="hint">Ohne hochgeladene Quelle wird der Test aus deinen Angaben erstellt.</small>
-        </article>
-        <article class="card" data-creation-step="3">
-          <div class="aiSectionTitle"><span aria-hidden="true">3</span><div><h2>Bilder</h2><p>Optional: neue Illustrationen zu den Aufgaben erzeugen.</p></div></div>
-          <label>Generierte Aufgabenbilder (0–5)<input id="aiImageQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiImageCountHint" /></label>
-          <p id="aiImageCountHint" class="hint" aria-live="polite"></p>
-          <small class="hint">Quellfotos und eingescanntes Material lädst du im Abschnitt Material hoch.</small>
-        </article>
-        <article class="card" data-creation-step="4">
-          <div class="aiSectionTitle"><span aria-hidden="true">4</span><div><h2>Audio</h2><p>Optional: wähle, was Schüler lesen und was sie hören.</p></div></div>
-          <div class="aiAudioOptions audioCreationCards">
-            <fieldset class="audioCreationChoice"><legend>Hörtext zur Aufgabe</legend><div class="audioStudentExample" aria-label="Beispiel für die Schüleransicht"><span class="audioExampleQuestion">Sichtbare Frage und Antworttexte</span><span class="audioExamplePlayer" aria-hidden="true">▶ ━━━━━</span><small>Das sehen Schüler: Sichtbare Frage und Antworttexte</small><small>Das hören Schüler: Hörtext oder Dialog zur Frage</small></div><label>Aufgaben mit Hörtext (0–5)<input id="aiAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioCountHint" /></label><p id="aiAudioCountHint" class="hint"></p></fieldset>
-            <fieldset class="audioCreationChoice"><legend>Antwortmöglichkeiten als Audio</legend><div class="audioStudentExample" aria-label="Beispiel für die Schüleransicht"><span class="audioExampleQuestion">Sichtbare Frage und Auswahlfelder</span><span class="audioExamplePlayer" aria-hidden="true">▶ ━━━━━</span><small>Das sehen Schüler: Sichtbare Frage und Auswahlfelder</small><small>Das hören Schüler: Jede Antwortoption einzeln</small></div><label>Aufgaben mit Audioantworten (0–5)<input id="aiAudioAnswerQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiAudioAnswerCountHint" /></label><p id="aiAudioAnswerCountHint" class="hint"></p></fieldset>
-            <fieldset class="audioCreationChoice"><legend>Aufgabe und Antworten als Audio</legend><div class="audioStudentExample" aria-label="Beispiel für die Schüleransicht"><span class="audioExampleQuestion">Kurzer Arbeitsauftrag und Auswahlfelder</span><span class="audioExamplePlayer" aria-hidden="true">▶ ━━━━━</span><small>Das sehen Schüler: Kurzer Arbeitsauftrag und Auswahlfelder</small><small>Das hören Schüler: Aufgabeninhalt und Frage; jede Antwortoption einzeln</small></div><label>Vollständige Audioaufgaben (0–5)<input id="aiFullAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" aria-describedby="aiFullAudioCountHint" /></label><p id="aiFullAudioCountHint" class="hint">Zählt gemeinsam als Aufgaben-Audio und Audioantworten. Insgesamt höchstens fünf je Audiobereich.</p></fieldset>
-          </div>
-          <p class="hint">Audio startet nicht automatisch. Alle Spuren kannst du im Editor anhören. Antwortoptionen sind keine Musterlösungen.</p>
-          <label hidden>Lösungen als Audio (Legacy)<input id="aiSolutionAudioQuestionCount" type="number" min="0" max="5" step="1" value="0" /></label>
-          <p id="aiSolutionAudioCountHint" class="hint" hidden>Optional · wird erst nach Testende und Lösungsfreigabe abgespielt.</p>
-        </article>
-        <article class="card aiCreationFinish" data-creation-step="5">
-          <div class="aiSectionTitle"><span aria-hidden="true">5</span><div><h2>Test erstellen</h2><p>Deine Auswahl im Überblick.</p></div></div>
-          <p id="aiCreationSummary" class="hint" role="status" aria-live="polite"></p>
-          <div class="aiCoreActions">
+</div><div class="aiCoreActions">
             <p id="aiActiveJobsNotice" class="hint hidden" role="status"></p>
             <div id="aiProgress" class="aiProgress hidden" role="status" aria-live="polite"></div>
 
             <button id="generateAiTestBtn" class="button primary aiGenerateButton" type="button">✨ Test erstellen</button>
-            <small class="hint aiReturnNote">Nach dem Start schließt sich diese Ansicht automatisch. Den fertigen Test findest du unter „Meine Tests“.</small>
+            <small class="hint aiReturnNote" hidden>Nach dem Start schließt sich diese Ansicht automatisch. Den fertigen Test findest du unter „Meine Tests“.</small>
           </div>
-        </article>
-      </div>
+        </article></div>
     </section>
 
     <section id="editorView" class="view hidden">

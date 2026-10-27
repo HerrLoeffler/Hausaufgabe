@@ -1489,6 +1489,77 @@ document.addEventListener('gradecrew:start-guest-tour', () => {
   crewTour.start();
 });
 
+function installAiCompactCreation() {
+  const view = document.getElementById("aiView");
+  if (!view || view.dataset.compactInstalled) return;
+  view.dataset.compactInstalled = "true";
+  const panels = [...view.querySelectorAll(".aiCreationPanel")];
+  const wide = window.matchMedia ? window.matchMedia("(min-width: 1000px)") : { get matches() { return window.innerWidth >= 1000; } };
+  let selected = 0;
+  const layout = () => panels.forEach((panel, i) => {
+    const visible = wide.matches || i === selected;
+    panel.querySelector(".aiCreationPanelBody").hidden = !visible;
+    panel.querySelector(".aiSectionToggle").setAttribute("aria-expanded", String(visible));
+  });
+  const fit = () => {
+    if (view.classList.contains("hidden")) return;
+    const height = Math.min(window.innerHeight, window.visualViewport?.height || window.innerHeight);
+    document.body.style.setProperty("--ai-screen-height", `${height}px`);
+  };
+  panels.forEach((panel, i) => panel.querySelector(".aiSectionToggle").addEventListener("click", () => {
+    selected = i;
+    layout();
+  }));
+  const closeExamples = () => view.querySelectorAll(".aiAudioPreviewButton").forEach(button => {
+    const example = document.getElementById(button.getAttribute("aria-controls"));
+    if (typeof example.hidePopover === "function" && example.matches(":popover-open")) example.hidePopover();
+    example.hidden = true;
+    button.setAttribute("aria-expanded", "false");
+  });
+  view.querySelectorAll(".aiAudioPreviewButton").forEach(button => {
+    const example = document.getElementById(button.getAttribute("aria-controls"));
+    let timer, pinned = false;
+    const open = () => {
+      pinned = false;
+      clearTimeout(timer);
+      closeExamples();
+      example.hidden = false;
+      if (typeof example.showPopover === "function") example.showPopover();
+      const anchor = button.getBoundingClientRect(), box = example.getBoundingClientRect();
+      example.style.left = `${Math.max(12, Math.min(anchor.right - box.width, window.innerWidth - box.width - 12))}px`;
+      example.style.top = `${Math.max(12, anchor.bottom + box.height + 12 <= window.innerHeight ? anchor.bottom + 6 : anchor.top - box.height - 6)}px`;
+      button.setAttribute("aria-expanded", "true");
+    };
+    const close = () => {
+      pinned = false;
+      clearTimeout(timer);
+      if (typeof example.hidePopover === "function" && example.matches(":popover-open")) example.hidePopover();
+      example.hidden = true;
+      button.setAttribute("aria-expanded", "false");
+    };
+    const later = () => { clearTimeout(timer); if (!pinned) timer = setTimeout(close, 180); };
+    button.addEventListener("pointerenter", event => { if (event.pointerType === "mouse") open(); });
+    button.addEventListener("pointerleave", later);
+    button.addEventListener("click", () => { if (example.hidden) { open(); pinned = true; } else if (!pinned) pinned = true; else close(); });
+    example.addEventListener("pointerenter", () => clearTimeout(timer));
+    example.addEventListener("pointerleave", later);
+    example.querySelector(".aiAudioPreviewClose").addEventListener("click", () => { close(); button.focus(); });
+    example.addEventListener("toggle", event => { if (event.newState === "closed") { example.hidden = true; button.setAttribute("aria-expanded", "false"); } });
+    example.addEventListener("keydown", event => { if (event.key === "Escape") { close(); button.focus(); } });
+  });
+  document.addEventListener("keydown", event => { if (event.key === "Escape") closeExamples(); });
+  document.addEventListener("pointerdown", event => { if (!event.target.closest(".audioStudentExample,.aiAudioPreviewButton")) closeExamples(); });
+  document.addEventListener("focusin", event => { if (!event.target.closest(".audioStudentExample,.aiAudioPreviewButton")) closeExamples(); });
+  window.addEventListener("resize", () => { layout(); requestAnimationFrame(fit); closeExamples(); });
+  window.visualViewport?.addEventListener("resize", () => requestAnimationFrame(fit));
+  new MutationObserver(() => { if (view.classList.contains("hidden")) closeExamples(); else { layout(); requestAnimationFrame(fit); } }).observe(view, { attributes: true, attributeFilter: ["class"] });
+
+  layout();
+  requestAnimationFrame(fit);
+  document.fonts?.ready.then(() => requestAnimationFrame(fit));
+}
+installAiCompactCreation();
+
 function installAiInfoDismissal() {
   document.querySelectorAll(".aiFieldInfo").forEach(details => {
     if (details.dataset.escapeDismissBound) return;
