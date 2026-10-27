@@ -1508,6 +1508,7 @@ function installAiCompactCreation() {
     const keyboard = editing && height < window.innerHeight - 100;
     document.body.style.setProperty("--ai-screen-height", keyboard ? `${height}px` : "100dvh");
     const shortKeyboard = keyboard && height < 650;
+    document.body.classList.toggle("gcAiShortViewport", Boolean(shortKeyboard));
     if (view.classList.contains("aiShortViewport") !== Boolean(shortKeyboard)) view.classList.toggle("aiShortViewport", Boolean(shortKeyboard));
   };
   panels.forEach((panel, i) => panel.querySelector(".aiSectionToggle").addEventListener("click", () => {
@@ -1556,10 +1557,14 @@ function installAiCompactCreation() {
   document.addEventListener("focusin", event => { if (!event.target.closest(".audioStudentExample,.aiAudioPreviewButton")) closeExamples(); });
   window.addEventListener("resize", () => { layout(); requestAnimationFrame(fit); closeExamples(); });
   window.visualViewport?.addEventListener("resize", () => requestAnimationFrame(fit));
-  new MutationObserver(() => { if (view.classList.contains("hidden")) closeExamples(); else { layout(); requestAnimationFrame(fit); } }).observe(view, { attributes: true, attributeFilter: ["class"] });
-
-  layout();
-  requestAnimationFrame(fit);
+  const syncVisibility = () => {
+    const active = !view.classList.contains("hidden");
+    document.body.classList.toggle("gcAiCompact", active);
+    if (!active) { document.body.classList.remove("gcAiShortViewport"); closeExamples(); }
+    else { layout(); requestAnimationFrame(fit); }
+  };
+  new MutationObserver(syncVisibility).observe(view, { attributes: true, attributeFilter: ["class"] });
+  syncVisibility();
   document.fonts?.ready.then(() => requestAnimationFrame(fit));
 }
 installAiCompactCreation();
