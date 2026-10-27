@@ -685,3 +685,5 @@ body.gcAiCompact #appFooter>span{display:none}
 body.gcAiCompact #appFooter .footerLink{min-height:44px;padding:4px;font-size:11px}
 #aiView .aiHeaderLanguage label.gradecrewAssessmentLocaleField{display:block}
 #aiView .aiHeaderLanguage .gradecrewAssessmentLocaleLabel{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+#aiView .aiOptionalTestOptions{margin-top:0}
