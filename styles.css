@@ -711,3 +711,36 @@ body.gcAiCompact #appFooter .footerLink{min-height:44px;padding:4px;font-size:11
 @media(max-width:700px){.questionMediaOptions{gap:4px 6px}.questionMediaOptions :is(.questionAudioPanel,.questionImageMenu)>summary{font-size:11px;padding:4px 7px}}
 
 .questionMediaOptions .questionAudioEditor,.questionMediaOptions .questionAudioTab{display:contents}
+
+/* Presentation closeout: clear labels, clean footer and usable onscreen keyboard. */
+#aiView .aiNotesField{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:4px 6px}
+#aiView .aiNotesField .gcRemyNotesHead{grid-column:1/-1;margin:0;min-height:16px}
+#aiView .aiNotesField #aiCustomNotes{grid-column:1;grid-row:2;min-width:0;padding-right:8px}
+#aiView .aiNotesField #gcRemyNotesMic{position:static;grid-column:2;grid-row:2;align-self:start;margin:0;border-radius:9px}
+#aiView .aiNotesField #gcRemyNotesMicStatus{grid-column:1/-1}
+#aiView .aiHeaderLanguage .gradecrewAssessmentLocaleLabel{position:static;width:auto;height:auto;overflow:visible;clip-path:none;white-space:normal;font-size:10px;line-height:1.2}
+#aiView .aiHeaderLanguage label.gradecrewAssessmentLocaleField{display:grid;gap:2px}
+body.gcAiCompact{grid-template-rows:auto minmax(0,1fr) auto}
+body.gcAiCompact #appFooter{display:none}
+body.gcAiCompact .legalSiteFooter{grid-row:3;grid-column:2;padding:2px 6px;margin:0;align-self:center}
+body.gcAiCompact .rightsFooter{grid-row:3;grid-column:3;padding:2px 6px;margin:0;align-self:center}
+body.gcAiCompact .legalSiteFooter nav{gap:10px;flex-wrap:wrap;justify-content:center}
+body.gcAiCompact .rightsFooter .footerLink{font-size:11px;min-height:44px}
+body.gcAiCompact.gcAiKeyboard{height:auto;min-height:100dvh;max-height:none;grid-template-rows:auto auto auto;padding-bottom:16px}
+body.gcAiCompact.gcAiKeyboard>.shell{height:auto;min-height:0}
+body.gcAiCompact.gcAiKeyboard #aiView{height:auto;min-height:0}
+body.gcAiCompact.gcAiKeyboard #aiView .aiCreationFlow{flex:none;grid-template-rows:auto auto;min-height:0}
+body.gcAiCompact.gcAiKeyboard #aiView .aiCreationPanelBody{overflow:visible;max-height:none;min-height:0}
+body.gcAiCompact.gcAiKeyboard #aiView .aiCreationFinish{position:static;box-shadow:none}
+body.gcAiCompact.gcAiKeyboard #aiView :is(input,textarea,select){font-size:16px;scroll-margin-block:70px}
+@media(max-width:999px){
+ body.gcAiCompact.gcAiKeyboard #aiView .aiCreationFlow{grid-template-rows:64px auto auto}
+ body.gcAiCompact .legalSiteFooter a{font-size:11px}
+ body.gcAiCompact .legalSiteFooter{padding-inline:4px}
+ body.gcAiCompact .rightsFooter{padding-inline:4px}
+}
+
+body.gcAiCompact.gcAiKeyboard{padding-bottom:calc(100dvh - var(--ai-screen-height,100dvh) + 32px)}
+
+/* Avoid Safari zooming the page when a touch keyboard focuses a small control. */
+@media(pointer:coarse){#aiView :is(input,textarea,select){font-size:16px!important}}

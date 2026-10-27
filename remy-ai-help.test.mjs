@@ -188,14 +188,14 @@ test('the main Remy microphone click sends speech to the test request field', t 
   assert.equal(notes.value, 'Nur für Eigene Wünsche');
 });
 
-test('the wishes microphone sits beside its optional label', t => {
+test('the wishes microphone has its own position beside the text field', t => {
   const w = setup(t);
   const mic = w.document.getElementById('gcRemyNotesMic');
-  const heading = mic.parentElement;
-  const optional = heading.querySelector('small');
-  assert.ok(optional);
-  assert.equal(optional.nextElementSibling, mic);
-  assert.notEqual(mic.style.marginLeft, 'auto');
+  const field = w.document.getElementById('aiCustomNotes');
+  assert.equal(field.nextElementSibling, mic);
+  assert.equal(mic.parentElement, field.parentElement);
+  assert.ok(field.parentElement.querySelector('.gcRemyNotesHead small'));
+  assert.equal(mic.style.width, '44px');
 });
 
 test('speech errors are visible and stopping or switching microphones preserves field text', async t => {

@@ -1505,7 +1505,24 @@ function installAiCompactCreation() {
     if (view.classList.contains("hidden")) return;
     const height = Math.min(window.innerHeight, window.visualViewport?.height || window.innerHeight);
     const editing = document.activeElement?.matches("textarea,input:not([type=checkbox]):not([type=file]),[contenteditable=true]");
-    const keyboard = editing && height < window.innerHeight - 100;
+    const keyboard = Boolean(editing && (height < window.innerHeight - 100 || window.innerHeight < 650 && window.matchMedia?.("(pointer: coarse)")?.matches));
+    document.body.classList.toggle("gcAiKeyboard", keyboard);
+    if (keyboard) requestAnimationFrame(() => {
+      const active = document.activeElement;
+      if (!view.contains(active) || !active.matches("input,textarea,[contenteditable=true]")) return;
+      const box = active.getBoundingClientRect();
+      const top = window.visualViewport?.offsetTop || 0;
+      if (box.top < top + 12 || box.bottom > top + height - 12) {
+        active.scrollIntoView({ block: "nearest", behavior: "auto" });
+        requestAnimationFrame(() => {
+          if (document.activeElement !== active || !document.body.classList.contains("gcAiKeyboard")) return;
+          const current = active.getBoundingClientRect();
+          const offset = window.visualViewport?.offsetTop || 0;
+          const delta = current.bottom > offset + height - 12 ? current.bottom - (offset + height - 12) : current.top < offset + 12 ? current.top - offset - 12 : 0;
+          if (delta) window.scrollBy({ top: delta, behavior: "auto" });
+        });
+      }
+    });
     document.body.style.setProperty("--ai-screen-height", `${keyboard ? height : window.innerHeight}px`);
     const shortKeyboard = (keyboard ? height : window.innerHeight) < 650;
     document.body.classList.toggle("gcAiShortViewport", Boolean(shortKeyboard));
@@ -1557,10 +1574,12 @@ function installAiCompactCreation() {
   document.addEventListener("focusin", event => { if (!event.target.closest(".audioStudentExample,.aiAudioPreviewButton")) closeExamples(); });
   window.addEventListener("resize", () => { layout(); fit(); closeExamples(); });
   window.visualViewport?.addEventListener("resize", fit);
+  view.addEventListener("focusin", fit);
+  view.addEventListener("focusout", () => requestAnimationFrame(fit));
   const syncVisibility = () => {
     const active = !view.classList.contains("hidden");
     document.body.classList.toggle("gcAiCompact", active);
-    if (!active) { document.body.classList.remove("gcAiShortViewport"); closeExamples(); }
+    if (!active) { document.body.classList.remove("gcAiShortViewport", "gcAiKeyboard"); closeExamples(); }
     else { layout(); fit(); }
   };
   new MutationObserver(syncVisibility).observe(view, { attributes: true, attributeFilter: ["class"] });

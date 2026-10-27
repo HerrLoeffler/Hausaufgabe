@@ -123,8 +123,9 @@ function ensureNotesMic() {
   mic.textContent = "🎙";
   heading.append(title);
   if (optional) heading.append(optional);
-  heading.append(mic);
+
   label.insertBefore(heading, field);
+  field.insertAdjacentElement("afterend", mic);
   Array.from(label.childNodes).forEach(node => {
     if (node !== heading && node.nodeType === Node.TEXT_NODE && node.textContent.trim()) node.remove();
   });
@@ -137,7 +138,7 @@ function ensureNotesMic() {
   label.append(status);
   mic.addEventListener("click", () => toggleDictation("aiCustomNotes"));
   Object.assign(heading.style, { display: "flex", alignItems: "center", gap: "7px" });
-  Object.assign(mic.style, { width: "34px", height: "34px", fontSize: "15px" });
+  Object.assign(mic.style, { width: "44px", height: "44px", fontSize: "16px" });
 }
 
 function currentContext() {
