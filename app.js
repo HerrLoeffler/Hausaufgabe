@@ -1506,7 +1506,7 @@ function installAiCompactCreation() {
     const height = Math.min(window.innerHeight, window.visualViewport?.height || window.innerHeight);
     const editing = document.activeElement?.matches("textarea,input:not([type=checkbox]):not([type=file]),[contenteditable=true]");
     const keyboard = editing && height < window.innerHeight - 100;
-    document.body.style.setProperty("--ai-screen-height", keyboard ? `${height}px` : "100dvh");
+    document.body.style.setProperty("--ai-screen-height", `${keyboard ? height : window.innerHeight}px`);
     const shortKeyboard = keyboard && height < 650;
     document.body.classList.toggle("gcAiShortViewport", Boolean(shortKeyboard));
     if (view.classList.contains("aiShortViewport") !== Boolean(shortKeyboard)) view.classList.toggle("aiShortViewport", Boolean(shortKeyboard));
@@ -1555,15 +1555,16 @@ function installAiCompactCreation() {
   document.addEventListener("keydown", event => { if (event.key === "Escape") closeExamples(); });
   document.addEventListener("pointerdown", event => { if (!event.target.closest(".audioStudentExample,.aiAudioPreviewButton")) closeExamples(); });
   document.addEventListener("focusin", event => { if (!event.target.closest(".audioStudentExample,.aiAudioPreviewButton")) closeExamples(); });
-  window.addEventListener("resize", () => { layout(); requestAnimationFrame(fit); closeExamples(); });
-  window.visualViewport?.addEventListener("resize", () => requestAnimationFrame(fit));
+  window.addEventListener("resize", () => { layout(); fit(); closeExamples(); });
+  window.visualViewport?.addEventListener("resize", fit);
   const syncVisibility = () => {
     const active = !view.classList.contains("hidden");
     document.body.classList.toggle("gcAiCompact", active);
     if (!active) { document.body.classList.remove("gcAiShortViewport"); closeExamples(); }
-    else { layout(); requestAnimationFrame(fit); }
+    else { layout(); fit(); }
   };
   new MutationObserver(syncVisibility).observe(view, { attributes: true, attributeFilter: ["class"] });
+  if (typeof ResizeObserver === "function") new ResizeObserver(fit).observe(document.documentElement);
   syncVisibility();
   document.fonts?.ready.then(() => requestAnimationFrame(fit));
 }
