@@ -1507,7 +1507,7 @@ function installAiCompactCreation() {
     const editing = document.activeElement?.matches("textarea,input:not([type=checkbox]):not([type=file]),[contenteditable=true]");
     const keyboard = editing && height < window.innerHeight - 100;
     document.body.style.setProperty("--ai-screen-height", `${keyboard ? height : window.innerHeight}px`);
-    const shortKeyboard = keyboard && height < 650;
+    const shortKeyboard = (keyboard ? height : window.innerHeight) < 650;
     document.body.classList.toggle("gcAiShortViewport", Boolean(shortKeyboard));
     if (view.classList.contains("aiShortViewport") !== Boolean(shortKeyboard)) view.classList.toggle("aiShortViewport", Boolean(shortKeyboard));
   };
