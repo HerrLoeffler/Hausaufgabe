@@ -4221,11 +4221,14 @@ function renderQuestions({ onlyQuestionId = null } = {}) {
 
     const imageEditor = document.createElement("div");
     imageEditor.className = "questionImageEditor";
-    node.querySelector(".answerEditor").before(imageEditor);
+    const mediaOptions = document.createElement("div");
+    mediaOptions.className = "questionMediaOptions";
+    node.querySelector(".answerEditor").before(mediaOptions);
+    mediaOptions.appendChild(imageEditor);
     renderQuestionImageEditor(imageEditor, q);
     const audioEditor = document.createElement("div");
     audioEditor.className = "questionAudioEditor";
-    node.querySelector(".answerEditor").before(audioEditor);
+    mediaOptions.appendChild(audioEditor);
     renderQuestionAudioEditor(audioEditor, q);
     const markAudioStaleAfterContentEdit = event => {
       if (event.target?.closest?.(".questionAudioEditor")) return;
@@ -4876,23 +4879,30 @@ async function uploadQuestionImage(blob, q) {
 }
 
 function renderQuestionImageEditor(container, q) {
+  const wasOpen = container.querySelector(".questionImageMenu")?.open || false;
   container.innerHTML = "";
-  const title = document.createElement("div");
-  title.className = "imageEditorTitle";
-  title.innerHTML = `<span class="labelLike">Bild zur Aufgabe <small>(optional)</small></span>`;
-  container.appendChild(title);
+  const imageMenu = document.createElement("details");
+  imageMenu.className = "questionImageMenu";
+  imageMenu.open = wasOpen;
+  const summary = document.createElement("summary");
+  summary.textContent = getQuestionImageSrc(q) ? "Bild · vorhanden" : "Bild";
+  imageMenu.appendChild(summary);
+  const imageBody = document.createElement("div");
+  imageBody.className = "questionImageMenuBody";
+  imageMenu.appendChild(imageBody);
+  container.appendChild(imageMenu);
 
   if (getQuestionImageSrc(q)) {
     const preview = document.createElement("div");
     preview.className = "questionImagePreview";
     preview.innerHTML = `<img src="${escapeHtml(getQuestionImageSrc(q))}" alt="${escapeHtml(q.imageAlt || "Abbildung zur Aufgabe")}">`;
-    container.appendChild(preview);
+    imageBody.appendChild(preview);
 
     const alt = document.createElement("label");
     alt.className = "stack compact imageAltField";
     alt.innerHTML = `<span>Bildbeschreibung <small>(optional)</small></span><input type="text" value="${escapeHtml(q.imageAlt || "")}" placeholder="z. B. Zimmer mit Tisch und Teddy">`;
     alt.querySelector("input").addEventListener("input", (e) => { q.imageAlt = e.target.value; markDirty(); });
-    container.appendChild(alt);
+    imageBody.appendChild(alt);
 
     const actions = document.createElement("div");
     actions.className = "imageActions";
@@ -4914,7 +4924,7 @@ function renderQuestionImageEditor(container, q) {
     });
     remove.classList.add("dangerMini");
     actions.append(replace, shot, remove, file);
-    container.appendChild(actions);
+    imageBody.appendChild(actions);
   }
 
   const operation = imageEditorState().get(q);
@@ -4924,28 +4934,22 @@ function renderQuestionImageEditor(container, q) {
   const contextButton = makeMiniButton(pending ? "Bildergebnis prüfen" : getQuestionImageSrc(q) ? "Passendes Bild neu erstellen" : "Passendes Bild zur Aufgabe erstellen", () => generateAiImageForQuestion(q, container, { fromTask: true }));
   contextButton.classList.add("generateContextQuestionImage");
   contextButton.disabled = locked || Boolean(operation?.busy);
-  container.appendChild(contextButton);
+  imageBody.appendChild(contextButton);
   const notice = document.createElement("small"); notice.className = "imageGenerationNotice"; notice.setAttribute("role", "status");
   notice.textContent = operation?.busy ? "Bild wird erstellt. Die Aufgabe bleibt unverändert." : pending ? "Ein Bildauftrag ist gespeichert. Ergebnis prüfen startet keine neue Berechnung." : "KI-Illustration aus dieser Aufgabe. Frage und Antworten bleiben unverändert.";
-  container.appendChild(notice);
+  imageBody.appendChild(notice);
   if (operation?.undo && operation.applied === imageEditorSnapshot(q)) {
     const undo = makeMiniButton("Bildänderung rückgängig", () => {
       if (state.currentQuiz?.published && !state.currentQuiz?.ended || operation.applied !== imageEditorSnapshot(q)) return;
       restoreQuestionImage(q, operation.undo); operation.undo = null; markDirty(); renderQuestionImageEditor(container, q);
-    }); undo.classList.add("undoAiQuestionImage"); undo.disabled = locked; container.appendChild(undo);
+    }); undo.classList.add("undoAiQuestionImage"); undo.disabled = locked; imageBody.appendChild(undo);
   }
 
-  const open = makeMiniButton(getQuestionImageSrc(q) ? "Andere Bildquelle wählen" : "+ Bild hinzufügen", () => {
-    panel.classList.toggle("hidden");
-    if (!panel.classList.contains("hidden")) panel.focus();
-  });
-  open.classList.add("imageAddButton");
-  container.appendChild(open);
 
   const panel = document.createElement("div");
-  panel.className = "imageDropPanel hidden";
+  panel.className = "imageDropPanel";
   panel.tabIndex = 0;
-  panel.innerHTML = `<strong>Bild einfügen</strong><p>Datei hier hineinziehen oder hier klicken und mit <kbd>Cmd</kbd>/<kbd>Strg</kbd> + <kbd>V</kbd> aus der Zwischenablage einfügen.</p><div class="imageActions"></div><div class="aiImageComposer"><div><strong>✨ Oder mit KI erzeugen</strong><small>Beschreibe dein gewünschtes Motiv.</small></div><textarea class="aiImagePrompt" rows="2" maxlength="900" placeholder="z. B. Ein Buch unter einem Tisch, ohne Beschriftung"></textarea><button class="button secondary generateAiQuestionImage" type="button">KI-Bild erstellen</button></div>`;
+  panel.innerHTML = `<p class="hint">Bilddatei hineinziehen oder aus der Zwischenablage einfügen.</p><div class="imageActions"></div><details class="imagePromptMenu"><summary>Eigenen Bildwunsch beschreiben</summary><div class="aiImageComposer"><textarea class="aiImagePrompt" rows="2" maxlength="900" placeholder="z. B. Ein Buch unter einem Tisch, ohne Beschriftung"></textarea><button class="button secondary generateAiQuestionImage" type="button">KI-Bild erstellen</button></div></details>`;
   const actions = panel.querySelector(".imageActions");
   const file = document.createElement("input");
   file.type = "file";
@@ -4977,7 +4981,7 @@ function renderQuestionImageEditor(container, q) {
       uploadQuestionImage(image, q);
     }
   });
-  container.appendChild(panel);
+  imageBody.appendChild(panel);
 }
 
 function imageEditorState() {
@@ -5296,39 +5300,36 @@ function createAnswerAudioRepairControl(q, container, entryKey, index) {
 }
 
 function renderQuestionAudioEditor(container, q) {
-  const previousTab = container.querySelector(".questionAudioTab");
-  const tabWasOpen = previousTab ? previousTab.open : true;
+  const taskWasOpen = container.querySelector(".questionAudioMain")?.open || false;
+  const answersWereOpen = container.querySelector(".answerAudioPanel")?.open || false;
   container.innerHTML = "";
-  const audioTab = document.createElement("details");
-  audioTab.className = "questionAudioTab";
-  audioTab.open = tabWasOpen;
-  audioTab.innerHTML = '<summary>Audio</summary><div class="questionAudioTabBody"></div>';
-  container.appendChild(audioTab);
-  const tabBody = audioTab.querySelector(".questionAudioTabBody");
+  const tabBody = document.createElement("div");
+  tabBody.className = "questionAudioTab";
+  container.appendChild(tabBody);
   const hasAudio = Boolean(getQuestionAudioSrc(q));
   const hasScript = Boolean(String(q.audioScript || "").trim());
   const locked = Boolean(state.currentQuiz?.published && !state.currentQuiz?.ended);
-  const details = document.createElement("section");
+  const details = document.createElement("details");
+  details.open = taskWasOpen;
   details.className = "questionAudioPanel questionAudioMain";
   details.setAttribute("aria-label", "Audio zur Aufgabe");
-  details.innerHTML = `<div class="questionAudioHeading"><strong>Audio zur Aufgabe</strong><span class="questionAudioState">${hasAudio && !q.audioNeedsRegeneration ? "bereit" : hasScript ? "Audio erzeugen" : ""}</span></div>
+  details.innerHTML = `<summary>Frage als Höraufgabe <span class="mediaPresent">${hasAudio ? "· vorhanden" : ""}</span><span class="questionAudioState">${hasAudio && !q.audioNeedsRegeneration ? "bereit" : hasScript ? "Audio erzeugen" : ""}</span></summary>
     <div class="questionAudioBody">
       <div class="questionAudioPreview"></div>
       <small class="questionAudioInstructionWarning" role="status"></small>
-      <details class="questionAudioEdit"><summary>Hörtext bearbeiten</summary><div class="questionAudioEditBody">
+      <div class="questionAudioEdit"><div class="questionAudioEditBody">
       <label class="stack compact"><span>Was soll zu hören sein?</span><select class="questionAudioSource"><option value="task">Vorhandene Frage vertonen</option><option value="own">Eigener Hörtext oder Dialog</option></select></label>
       <details class="questionAudioHelp"><summary aria-label="Hinweis zur Schüleransicht">ⓘ</summary><p class="questionAudioVisibility"></p><small>Den Hörtext sehen Schüler nicht zusätzlich als Text.</small></details>
       <label class="stack compact"><span>Hörtext <small>nur für dich · max. 500 Zeichen</small></span><textarea class="questionAudioScript" rows="3" maxlength="500" placeholder="Text oder Dialog für die Aufnahme."></textarea></label>
       <div class="questionAudioActions"></div>
 
-      </div></details>
+      </div></div>
     </div>`;
   tabBody.appendChild(details);
   const source = details.querySelector(".questionAudioSource");
   source.value = hasScript || hasAudio ? "own" : "task";
   source.disabled = locked;
   const editing = details.querySelector(".questionAudioEdit");
-  editing.open = !hasAudio;
   const visibility = details.querySelector(".questionAudioVisibility");
   visibility.textContent = q.audioPresentation === "listening-only"
     ? "Der Arbeitsauftrag bleibt sichtbar. Den Hörtext hören Schüler nur als Audio."
@@ -5425,9 +5426,10 @@ function renderQuestionAudioEditor(container, q) {
   }
 
   if (questionHasAudioAnswerEntries(q)) {
-    const answerDetails = document.createElement("section");
+    const answerDetails = document.createElement("details");
+    answerDetails.open = answersWereOpen;
     answerDetails.className = "questionAudioPanel answerAudioPanel";
-    answerDetails.innerHTML = `<div class="questionAudioHeading"><strong>Antworten hören</strong><span class="questionAudioState">${q.audioAnswerMode === "audio-only" ? questionAnswerAudioReady(q) ? "bereit" : "Audio erzeugen" : ""}</span></div><div class="questionAudioBody"><details class="questionAudioHelp"><summary aria-label="Hinweis zu Audioantworten">ⓘ</summary><small>Antworttexte bleiben für Schüler verborgen. Jede Antwort ist einzeln hörbar; du kannst die Texte weiterhin bearbeiten.</small></details><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
+    answerDetails.innerHTML = `<summary>Antworten als Höraufgabe <span class="questionAudioState">${q.audioAnswerMode === "audio-only" ? questionAnswerAudioReady(q) ? "bereit" : "Audio erzeugen" : ""}</span></summary><div class="questionAudioBody"><details class="questionAudioHelp"><summary aria-label="Hinweis zu Audioantworten">ⓘ</summary><small>Antworttexte bleiben für Schüler verborgen. Jede Antwort ist einzeln hörbar; du kannst die Texte weiterhin bearbeiten.</small></details><div class="answerAudioPreview"></div><div class="questionAudioActions answerAudioActions"></div></div>`;
     tabBody.appendChild(answerDetails);
     if (typeof SECURE_AUDIO_PUBLICATION_ENABLED !== "undefined" && !SECURE_AUDIO_PUBLICATION_ENABLED) {
       const gate = document.createElement("small"); gate.className = "aiInputError";

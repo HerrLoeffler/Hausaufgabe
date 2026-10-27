@@ -689,3 +689,25 @@ body.gcAiCompact #appFooter .footerLink{min-height:44px;padding:4px;font-size:11
 #aiView .aiOptionalTestOptions{margin-top:0}
 
 #aiView #aiCreationPanel1>.formGrid2{row-gap:2px}
+
+/* Media tools: quiet inline disclosures, expanded only on request. */
+.questionMediaOptions{display:flex;align-items:flex-start;flex-wrap:wrap;gap:6px 12px;margin:6px 0}
+.questionMediaOptions>.questionImageEditor,.questionMediaOptions>.questionAudioEditor{margin:0;min-width:0}
+.questionMediaOptions .questionAudioTab{display:flex;gap:6px 12px;flex-wrap:wrap;border:0;background:none;padding:0;margin:0}
+.questionMediaOptions :is(.questionAudioPanel,.questionImageMenu){border:0;background:none;margin:0;padding:0;min-width:0}
+.questionMediaOptions :is(.questionAudioPanel,.questionImageMenu)>summary{display:flex;align-items:center;gap:5px;cursor:pointer;list-style:none;min-height:44px;padding:4px 9px;border:1px solid #dce5f1;border-radius:8px;font-size:12px;font-weight:600;color:#385478}
+.questionMediaOptions :is(.questionAudioPanel,.questionImageMenu)>summary::before{content:'▸';font-size:12px}
+.questionMediaOptions :is(.questionAudioPanel,.questionImageMenu)[open]>summary::before{content:'▾'}
+.questionMediaOptions :is(.questionAudioPanel,.questionImageMenu)[open]{flex:1 1 320px;width:min(620px,100%)}
+.questionMediaOptions .questionAudioEditor:has(.questionAudioPanel[open]),.questionMediaOptions .questionImageEditor:has(.questionImageMenu[open]){flex:1 1 100%;width:100%}
+.questionMediaOptions .questionImageMenuBody,.questionMediaOptions .questionAudioBody{padding:10px;border:1px solid #e0e7f0;border-radius:10px;margin-top:5px;background:#fbfdff}
+.questionMediaOptions .imageDropPanel{padding:8px;margin:6px 0 0;border:0;background:none}
+.questionMediaOptions .imageGenerationNotice:empty{display:none}
+.questionMediaOptions .imageGenerationNotice{display:block;font-size:11px;margin-top:5px;color:#667085}
+.questionMediaOptions .imagePromptMenu>summary{min-height:44px;display:flex;align-items:center;font-size:13px;color:#385478;cursor:pointer}
+.questionMediaOptions .questionAudioTab .questionAudioEditBody{gap:6px}
+.questionMediaOptions .mediaPresent{font-size:11px;font-weight:400}
+.questionMediaOptions :is(summary,button,select,textarea):focus-visible{outline:3px solid #285ac9;outline-offset:2px}
+@media(max-width:700px){.questionMediaOptions{gap:4px 6px}.questionMediaOptions :is(.questionAudioPanel,.questionImageMenu)>summary{font-size:11px;padding:4px 7px}}
+
+.questionMediaOptions .questionAudioEditor,.questionMediaOptions .questionAudioTab{display:contents}
