@@ -43,6 +43,7 @@ function anchoredCandidate(h,s,context={}){
  if(!['number','text','choice','workshop'].includes(h.input)||!Array.isArray(h.options)||h.options.length>6||h.options.some(x=>typeof x!=='string'||x.length>150))reject('Ungültiger Antwortweg der Hilfe.');
  if(!['number','rational','exact-fraction','open'].includes(h.answer?.kind)||!Array.isArray(h.answer.values)||s.phase!=='teacher'&&!h.answer.values.length||h.answer.values.length>12||h.answer.values.some(v=>typeof v!=='string'||v.length>300))reject('Der Hilfeschritt braucht einen prüfbaren Antwortschlüssel.');
  if(h.input==='choice'&&(h.options.length<2||h.answer.values.some(v=>!h.options.includes(v))))reject('Auswahl und Hilfefrage passen nicht zusammen.');
+ if(h.input==='choice'&&!h.options.some(v=>!h.answer.values.includes(v)))reject('Die Hilfefrage braucht mindestens eine tatsächlich unzutreffende Alternative. Nicht alle angebotenen Optionen dürfen als korrekt im Schlüssel stehen.');
  const regions=sceneRegions(source,context.workshop),ids=new Set(regions.map(r=>r.id));
  if(!Array.isArray(h.focusIds)||h.focusIds.length>12||h.focusIds.some(id=>!ids.has(id)))reject('Die Hilfe verweist auf eine nicht vorhandene region.');
  if(source.diagram?.kind==='area-grid'&&source.diagram.rows===1&&/ober(?:e|en|ste|sten)\s+Reihe/i.test(h.question+' '+h.explanation))reject('Sprich bei der einzigen Reihe von dieser Reihe, nicht von einer oberen Reihe.');

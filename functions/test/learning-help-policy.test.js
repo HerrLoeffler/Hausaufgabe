@@ -29,3 +29,9 @@ test('generic use of a short function word is not a disclosure of its selected o
  assert.doesNotThrow(()=>anchoredCandidate({...scalar(),explanation:'Ein Begleiter steht vor einem Nomen. Prüfe zuerst Mia: Das ist ein Name.',question:'Nennt Mia eine Person oder einen Gegenstand?',focusIds:['token:0']},{phase:'help',originalTask:t,task:t}));
  assert.throws(()=>anchoredCandidate({...scalar(),explanation:'Schau zuerst auf Mia.',question:'Der gesuchte Artikel lautet ein. Kannst du ihn markieren?',focusIds:['token:0']},{phase:'help',originalTask:t,task:t}),/Ziellösung/);
 });
+
+test('a help choice needs a genuine alternative rather than marking every offered option correct',()=>{
+ const h={...scalar(),input:'choice',options:['Person','Handlung'],answer:{kind:'open',values:['Person','Handlung']}};
+ assert.throws(()=>anchoredCandidate(h,{phase:'help',originalTask:line,task:line}),/Alternative/);
+ assert.doesNotThrow(()=>anchoredCandidate({...h,answer:{kind:'open',values:['Person']}},{phase:'help',originalTask:line,task:line}));
+});
