@@ -34,7 +34,14 @@ async function ready() {
     assert.equal(await page.locator('dialog select,dialog input[type=file],dialog details').count(),0);
     await page.getByLabel('Was ist dir aufgefallen?',{exact:true}).fill('Synthetic selected area: clipped control');
     // Wait for actual durable bytes, not a timer before reloading.
-    await page.waitForFunction(async()=>{const {createReviewStorage}=await import('/review-store.mjs');const d=await createReviewStorage().get('staging:preview-teacher:visual-draft');return d?.text==='Synthetic selected area: clipped control'&&d?.imageBytes?.byteLength>0;});
+    let persistedDraft;
+    for(let attempt=0;attempt<100;attempt++){
+      persistedDraft=await page.evaluate(async()=>{const {createReviewStorage}=await import('/review-store.mjs');const d=await createReviewStorage().get('staging:preview-teacher:visual-draft');return {text:d?.text||'',bytes:d?.imageBytes?.byteLength||0};});
+      if(persistedDraft.text==='Synthetic selected area: clipped control'&&persistedDraft.bytes>0)break;
+      await new Promise(resolve=>setTimeout(resolve,100));
+    }
+    assert.equal(persistedDraft.text,'Synthetic selected area: clipped control');
+    assert.ok(persistedDraft.bytes>0,'image draft must be durably stored before reload');
     await page.reload();
     await page.getByLabel('Offline simulieren',{exact:true}).check();
     await page.getByRole('button',{name:'Feedback geben – Bereich markieren',exact:true}).click();

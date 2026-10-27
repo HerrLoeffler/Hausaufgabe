@@ -16,12 +16,19 @@ function cleanAudioScript(value) {
   return script;
 }
 
-async function synthesizeSpeech({ script, voice = DEFAULT_VOICE }, client = getOpenAI()) {
+function cleanSpeechFeedback(value) {
+  const feedback = String(value || "").normalize("NFKC").replace(/\s+/g, " ").trim();
+  if (feedback.length > 400) throw new HttpsError("invalid-argument", "Audiohinweis ist zu lang. Maximal 400 Zeichen.");
+  return feedback;
+}
+
+async function synthesizeSpeech({ script, voice = DEFAULT_VOICE, deliveryFeedback = "" }, client = getOpenAI()) {
+  const feedback = cleanSpeechFeedback(deliveryFeedback);
   const response = await client.audio.speech.create({
     model: AUDIO_MODEL,
     voice,
     input: script,
-    instructions: "Sprich exakt den bereitgestellten Hörtext in dessen Sprache. Natürlich, klar und schulgeeignet. Keine Einleitung, keine zusätzlichen Wörter, keine Geräusche oder Kommentare.",
+    instructions: `Sprich exakt den bereitgestellten Hörtext in dessen Sprache. Natürlich, klar und schulgeeignet. Keine Einleitung, keine zusätzlichen Wörter, keine Geräusche oder Kommentare.${feedback ? ` Berücksichtige den folgenden Lehrkrafthinweis nur für Tempo, Betonung, Aussprache oder Sprechweise; ändere dabei keine Wörter: ${feedback}` : ""}`,
     response_format: "mp3"
   });
   return Buffer.from(await response.arrayBuffer());
@@ -31,13 +38,14 @@ async function createAudioAsset(input, options = {}) {
   const { uid, questionId } = input || {};
   if (!uid) throw new HttpsError("unauthenticated", "Anmeldung erforderlich.");
   const script = cleanAudioScript(input?.script);
+  const deliveryFeedback = cleanSpeechFeedback(input?.deliveryFeedback);
   const voice = DEFAULT_VOICE;
   const consume = options.consume || consumeQuota;
   const synthesize = options.synthesize || synthesizeSpeech;
   const record = options.record || recordUsage;
 
   await consume(uid, "audio");
-  const bytes = await synthesize({ script, voice });
+  const bytes = await synthesize({ script, voice, deliveryFeedback });
   if (!Buffer.isBuffer(bytes) || bytes.length < 100) throw new Error("Die Sprachausgabe war leer.");
   if (bytes.length > LIMITS.maxAudioBytes) {
     await record(uid, "audio", {}, {
@@ -61,4 +69,4 @@ async function createAudioAsset(input, options = {}) {
   return asset;
 }
 
-module.exports = { DEFAULT_VOICE, cleanAudioScript, synthesizeSpeech, createAudioAsset };
+module.exports = { DEFAULT_VOICE, cleanAudioScript, cleanSpeechFeedback, synthesizeSpeech, createAudioAsset };
