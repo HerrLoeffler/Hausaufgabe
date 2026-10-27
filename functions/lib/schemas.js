@@ -83,7 +83,7 @@ const TYPE_FIELDS = {
   gapfill: ["gapColors"], matching: ["pairs"], ordering: ["items", "acceptedOrders", "manualReview"], grouping: ["groups"],
   markwords: ["passage", "targetWords", "markGroups"], number: ["numericAnswer", "tolerance", "unit"]
 };
-function questionSchemaForType(type, { allowImages = true, mediaKind, allowAudio = true, audioKind } = {}) {
+function questionSchemaForType(type, { allowImages = true, mediaKind, allowAudio = true, audioKind, materialSources = 0 } = {}) {
   if (!QUESTION_TYPES.includes(type)) throw new TypeError("Unbekannter Aufgabentyp");
   const fields = ["type", "text", "points", ...TYPE_FIELDS[type], "mediaIntent", "audioIntent"];
   const properties = Object.fromEntries(fields.map(key => [key, JSON.parse(JSON.stringify(questionSchema.properties[key]))]));
@@ -119,21 +119,30 @@ function questionSchemaForType(type, { allowImages = true, mediaKind, allowAudio
     properties.targetWords.minItems = 1;
     properties.targetWords.items = { ...NONEMPTY };
   }
+  if (materialSources > 0) {
+    properties.materialEvidence = { type: "object", additionalProperties: false, properties: { sourceIndex: { type: "integer", minimum: 1, maximum: materialSources }, support: { ...NONEMPTY, maxLength: 400 } }, required: ["sourceIndex", "support"] };
+    fields.push("materialEvidence");
+  }
   return { type: "object", additionalProperties: false, properties, required: fields };
 }
-function testSchemaForRequest({ count, allowedTypes = QUESTION_TYPES, allowImages = true, allowAudio = true } = {}) {
+function testSchemaForRequest({ count, allowedTypes = QUESTION_TYPES, allowImages = true, allowAudio = true, materialSources = 0 } = {}) {
   const types = [...new Set(allowedTypes)].filter(type => QUESTION_TYPES.includes(type));
   if (!types.length) throw new TypeError("Mindestens ein Aufgabentyp ist erforderlich");
   if (count !== undefined && (!Number.isInteger(count) || count < 1 || count > 100)) throw new RangeError("Ungültige Aufgabenanzahl");
-  return {
+  const schema = {
     type: "object", additionalProperties: false,
     properties: {
       title: { ...NONEMPTY }, subject: { type: "string" }, grade: { type: "string" }, description: { type: "string" },
-      questions: { type: "array", minItems: count || 1, maxItems: count || 100,
-        items: { anyOf: types.map(type => questionSchemaForType(type, { allowImages, allowAudio })) } }
+      questions: { type: "array", minItems: materialSources ? 0 : count || 1, maxItems: count || 100,
+        items: { anyOf: types.map(type => questionSchemaForType(type, { allowImages, allowAudio, materialSources })) } }
     },
     required: ["title", "subject", "grade", "description", "questions"]
   };
+  if (materialSources > 0) {
+    schema.properties.materialStatus = { type: "object", additionalProperties: false, properties: { sufficient: { type: "boolean" }, clarification: { type: "string", maxLength: 650 } }, required: ["sufficient", "clarification"] };
+    schema.required.push("materialStatus");
+  }
+  return schema;
 }
 const testSchema = testSchemaForRequest();
 

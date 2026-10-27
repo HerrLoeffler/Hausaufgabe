@@ -64,6 +64,7 @@ w.aiApi={uploadMaterial:async f=>{w.calls.push(f.name);
 return {id:f.name,storagePath:'aiUploads/teacher/'+f.name,mimeType:f.type,name:f.name};
 }};
 w.$('aiMaterialConfirmed').checked=true;
+w.eval(fn('updateAiCreationSummary'));
 w.eval(fn('handleAiMaterialFiles'));
 w.eval(fn('collectAiRequest'));
 return w;

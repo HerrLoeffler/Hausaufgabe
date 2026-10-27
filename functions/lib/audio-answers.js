@@ -27,11 +27,18 @@ function setAnswerAudioAssets(question, assets, { incomplete = false } = {}) {
   else question.audioAnswerItems = entries.map((entry, index) => ({ key: entry.key, sourceText: entry.sourceText, audioDataUrl: assets[index]?.audioDataUrl || "", audioNeedsRegeneration: incomplete }));
 }
 
-function answerAudioIndexes(questions, count) {
-  const eligible = questions.map((question, index) => hasAudioAnswerEntries(question) ? index : -1)
+function answerAudioIndexes(questions, count, fullCount = 0, distinctCategories = false) {
+  const eligible = questions.map((question, index) => hasAudioAnswerEntries(question) && (!distinctCategories || question.audioIntent?.kind !== "ai_generated" || question.audioIntent?.presentation === "listening-only") ? index : -1)
     .filter(index => index >= 0);
   if (!Number.isInteger(count) || count < 0 || count > 5 || count > eligible.length) {
     throw new RangeError("Für Audioantworten fehlen geeignete Auswahlaufgaben.");
+  }
+  if (fullCount) {
+    const full = eligible.filter(index => questions[index].audioIntent?.kind === "ai_generated" && questions[index].audioIntent?.presentation === "listening-only");
+    if (!Number.isInteger(fullCount) || fullCount < 0 || fullCount > count || full.length < fullCount) throw new RangeError("Für vollständige Audioaufgaben fehlen gemeinsame Hörtext-/Antwortaufgaben.");
+    const required = planSolutionAudioIndexes(full.length, fullCount).map(i => full[i]);
+    const remaining = eligible.filter(index => !required.includes(index));
+    return [...required, ...planSolutionAudioIndexes(remaining.length, count - fullCount).map(i => remaining[i])].sort((a, b) => a - b);
   }
   return planSolutionAudioIndexes(eligible.length, count).map(index => eligible[index]);
 }

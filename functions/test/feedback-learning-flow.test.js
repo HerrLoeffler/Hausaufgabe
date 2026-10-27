@@ -10,7 +10,7 @@ function report(id,owner,approved=false){const row={id,category:'ai_question',us
 function store(rows,broken=false){const docs=new Map(rows.map(row=>['feedback/'+row.id,row]));const db={runTransaction:async fn=>{if(broken)throw Error('database unavailable');return fn({get:async key=>docs.get(key)||null,set:(key,value)=>docs.set(key,value)});}};return {docs,db};}
 async function run(rows,uid='alice',{modelFails=false,dbFails=false,variant=false}={}){
  const {docs,db}=store(rows,dbFails),calls=[];const memory=learning.buildFeedbackLearning(rows,input,uid);
- const context=vm.createContext({...constants,...validation,...schemas,...prompts,...quality,...learning,HttpsError,generateTestInBatches,validateAndRepairTest,preparePedagogicalPool,variantPrompt,
+ const context=vm.createContext({ ...require("../lib/creation-contract"),...constants,...validation,...schemas,...prompts,...quality,...learning,HttpsError,generateTestInBatches,validateAndRepairTest,preparePedagogicalPool,variantPrompt,
  randomUUID:()=> 'synthetic-generation',cleanInput:d=>d,sanitizeMaterials:()=>[],consumeQuota:async()=>{},materialInputs:async()=>[],teacherQualityGuide:()=>'',loadQualityMemory:async()=>memory,getFirestore:()=>db,
  structuredResponse:async request=>{calls.push(request);assert.equal([...docs.values()].some(r=>r.learningUse),false,'receipt must follow first model reply');if(modelFails)throw Error('model unavailable');return {data:{title:'Prozent',subject:'Mathematik',grade:'9',questions:[question]},usage:{total_tokens:1}};},
  reviewDraft:async()=>({data:{issues:[]},usage:{}}),recordUsage:async()=>{},deleteUploadedMaterials:async()=>{},reportAiError:e=>e,console:{info(){},warn(){},error(){}}

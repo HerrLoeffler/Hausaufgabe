@@ -1,4 +1,5 @@
 "use strict";
+const { creationAudioErrors, materialEvidenceErrors } = require("./creation-contract");
 
 const { QUESTION_TYPES, LIMITS } = require("./constants");
 const { hasAudioAnswerEntries } = require("./audio-answers");
@@ -94,7 +95,7 @@ function variantRepeats(a, b) {
   return contentA && contentB ? contentA === contentB : true;
 }
 
-function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true, requiredMediaKind, allowAudio = true, requiredAudioKind } = {}) {
+function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true, allowImageChoices = true, requiredMediaKind, allowAudio = true, requiredAudioKind, materialSources = 0 } = {}) {
   const errors = [];
   if (!q || typeof q !== "object" || Array.isArray(q)) return ["Aufgabe fehlt."];
   if (!allowedTypes.includes(q.type)) errors.push(`Nicht erlaubter Aufgabentyp: ${q.type}`);
@@ -212,6 +213,7 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
     if (normalizeText(audio.instruction).length > 1000) errors.push("Der sichtbare Arbeitsauftrag ist zu lang (maximal 1000 Zeichen).");
     if (audio.presentation === "listening-only" && ["gapfill", "markwords"].includes(q.type)) errors.push("Nur-Hören-Modus ist für Textmarkierungs- und Lückenaufgaben nicht geeignet.");
   }
+  errors.push(...materialEvidenceErrors(q, materialSources));
   return errors;
 }
 
@@ -300,6 +302,7 @@ function validateTest(test, opts = {}) {
     const eligible = qs.filter(hasAudioAnswerEntries).length;
     if (eligible < opts.audioAnswerQuestionCount) errors.push(`Für ${opts.audioAnswerQuestionCount} Audioantworten fehlen geeignete Auswahlaufgaben.`);
   }
+  errors.push(...creationAudioErrors(test, opts));
   return errors;
 }
 

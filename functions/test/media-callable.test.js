@@ -1,0 +1,10 @@
+"use strict";
+const test=require("node:test"),assert=require("node:assert/strict"),vm=require("node:vm"),fs=require("node:fs");
+const {runMediaOperation}=require("../lib/media-operation"),database=require("./helpers/media-journal-db.cjs");
+const source=fs.readFileSync(require.resolve('../index.js'),'utf8');
+function harness(quiz={ownerId:'teacher'}){const db=database(),objects=new Map();let calls=0;db.collection=()=>({doc:()=>({get:async()=>({exists:Boolean(quiz),data:()=>quiz})})});class HttpsError extends Error{constructor(code,message,details){super(message);this.code=code;this.details=details;}}
+ const c=vm.createContext({exports:{},onCall:(_,f)=>f,callableOpts:{},HttpsError,requireAiUser:async()=>({uid:'teacher'}),getFirestore:()=>db,runMediaOperation:input=>runMediaOperation({...input,resultStore:{write:async(p,v)=>objects.set(p,v),read:async p=>objects.get(p)}},async()=>{calls++;return{asset:{imageDataUrl:'data:image/webp;base64,aW1hZ2U='}};}),createVerifiedMedia:async()=>{calls++;return{asset:{imageDataUrl:'data:image/webp;base64,aW1hZ2U='}};},questionSnapshot:q=>q,reportAiError:e=>e});vm.runInContext(source.slice(source.indexOf('exports.generateQuestionMedia =')),c);return{call:c.exports.generateQuestionMedia,calls:()=>calls};}
+const request={quizId:'TEST1234',questionId:'q001',requesterUid:'teacher',operationId:'image-operation-123',prompt:'Ein Gebäude'};
+test('actual callable recovers image without another paid call',async()=>{const h=harness();await h.call({data:request});await h.call({data:{...request,recoverOnly:true,prompt:undefined}});assert.equal(h.calls(),1);});
+for(const [name,quiz]of[['other owner',{ownerId:'other'}],['active exam',{ownerId:'teacher',published:true}],['rights hold',{ownerId:'teacher',rightsHold:true}]])test(`actual callable denies ${name} before generation/recovery`,async()=>{const h=harness(quiz);await assert.rejects(h.call({data:request}));assert.equal(h.calls(),0);});
+test('account switch cannot use old image request',async()=>{const h=harness();await assert.rejects(h.call({data:{...request,requesterUid:'other'}}));assert.equal(h.calls(),0);});

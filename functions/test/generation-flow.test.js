@@ -20,7 +20,7 @@ test("actual generation handler connects constrained batches, validation, review
   for (const pictureCount of [0, 5]) {
     let generated = 0, calls = 0, reviewed = 0, cleaned = 0;
     const usage = [], progress = [];
-    const context = vm.createContext({
+    const context = vm.createContext({ ...require("../lib/creation-contract"),
       ...constants, ...validation, ...schemas, ...prompts, HttpsError,
       generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, preparePedagogicalPool, variantPrompt,
       randomUUID: () => "test-request", cleanInput: data => data, sanitizeMaterials: () => [],
@@ -69,7 +69,7 @@ test("actual fresh variant generation replaces every source task, keeps 10 tasks
   const input = buildVariantInput({ title: "Prozentrechnung", subject: "Mathematik", grade: "7" }, originals);
   const clean = source.slice(source.indexOf("function cleanSourceTest("), source.indexOf("async function structuredResponse("));
   let reviewed = 0, generated = 0;
-  const context = vm.createContext({ ...constants, ...validation, ...schemas, ...prompts, HttpsError, variantPrompt,
+  const context = vm.createContext({ ...require("../lib/creation-contract"), ...constants, ...validation, ...schemas, ...prompts, HttpsError, variantPrompt,
     generateTestInBatches, validateAndRepairTest, reviewAndRepairTest, preparePedagogicalPool,
     randomUUID: () => "test-request", sanitizeMaterials: () => [], consumeQuota: async () => {}, materialInputs: async () => [],
     learningPrompt: require("../lib/feedback-learning").learningPrompt, qualityMemoryPrompt: () => "", teacherQualityGuide: () => "", loadQualityMemory: async () => ({ negativeQuestions: [], memoryVersion: 2, stats: { total: 0 } }),
