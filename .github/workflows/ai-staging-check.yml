@@ -74,7 +74,7 @@ jobs:
         run: npm ci --prefix tools/ui --no-audit --no-fund
 
       - name: Wilma teacher review contracts
-        run: node --test teacher-grading-summary.test.mjs teacher-review-write.test.mjs wilma-answer-review.test.mjs wilma-decision-client.test.mjs wilma-review-client.test.mjs tools/ui/wilma-inline.test.cjs
+        run: node --test teacher-grading-summary.test.mjs teacher-review-write.test.mjs wilma-answer-review.test.mjs wilma-decision-client.test.mjs wilma-review-client.test.mjs wilma-semantic-pending.test.mjs wilma-origin-scoring.test.mjs wilma-auto-review.test.mjs wilma-preview-gate.test.mjs tools/ui/wilma-inline.test.cjs
 
       - name: Practice solution publication tests
         run: node --test practice-solution-publication.test.mjs secure-offline-review-label.test.mjs
@@ -332,6 +332,9 @@ jobs:
       - run: node tools/browser-layout/media-creation.cjs
         env:
           GC_MEDIA_BROWSER_EVIDENCE: /tmp/gc-layout-evidence/media-creation
+      - run: node tools/browser-layout/wilma-review.cjs
+        env:
+          GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
       - run: npm test --prefix tools/browser-layout
         env:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence

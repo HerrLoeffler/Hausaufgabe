@@ -24,14 +24,18 @@ export function reviewItem(question, submission, parseGaps) {
   }
   const unknown = question.type === 'gapfill' && (!parts.length || parts.some(part => !part.known && !part.empty));
   const acceptedByRule=validScore&&grading.correct===true&&Number(grading.autoPoints)===max&&Number(rawPoints)===max;
-  const decided=confirmed||grading.needsReview===false||acceptedByRule;
-  const requiresReview=technical||deferred||!validScore||(!confirmed&&(!decided||(!acceptedByRule&&((question.type==='text'&&question.manualReview)||unknown))));
+  const emptyText=question.type==='text'&&!normalize(answer);
+  const emptyRule=emptyText&&validScore&&Number(rawPoints)===0;
+  const semanticPending=!confirmed&&!acceptedByRule&&((question.type==='text'&&!emptyText)||unknown);
+  const decided=confirmed||grading.needsReview===false||acceptedByRule||emptyRule;
+  const requiresReview=technical||deferred||!validScore||(!confirmed&&(!decided||semanticPending));
   const proposal = grading.reviewSuggestion;
   const validProposal = proposal && (Number.isFinite(proposal.points) || proposal.points===null && proposal.status==='ungradable') && (proposal.points===null || proposal.points >= 0 && proposal.points <= max && proposal.points * 2 % 1 === 0) && typeof proposal.reason === 'string';
   const spellingRisk=requiresReview&&validProposal&&proposal.source==="wilma-ai"&&proposal.points!==null&&proposal.points<max&&parts.some(part=>!part.empty&&!part.known&&part.expected.some(expected=>oneSpellingChange(part.value,expected)));
   const suggested = !technical && validProposal ? proposal.points : null;
   const awarded = Math.max(0, Math.min(max, number(grading.awardedPoints ?? grading.autoPoints)));
   return {question,submission,grading,answer,max,parts,technical,requiresReview,confirmed,deferred,
+    semanticPending,
     status:confirmed?'confirmed':deferred?'deferred':requiresReview?'open':'rule',awarded,
     suggested,spellingRisk,proposal:validProposal?proposal:null,needsAttention:requiresReview && (technical || spellingRisk || validProposal && proposal.source==="wilma-ai" && proposal.status!=="clear"),
     // Empty gaps score zero by the existing grading rule; unknown nonempty variants remain open.
