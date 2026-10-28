@@ -26,12 +26,15 @@
   "workstreams": [
     {
       "id": "gc-remy-points-20261028",
-      "title": "GC-REMY-POINTS-20261028: plan for fixed or automatically determined points",
+      "title": "GC-REMY-POINTS-20261028: Auto-Punkte bei neuen Remy-Tests live",
       "primaryBranch": "docs/remy-points-mode-plan-20261028",
       "integrationTarget": "main",
       "state": "active",
       "handoff": "workstreams/remy-points-mode-20261028.md",
-      "relatedBranches": []
+      "relatedBranches": [
+        "release/remy-auto-points-20261028",
+        "feat/remy-auto-points-20261028"
+      ]
     },
     {
       "id": "gc-pilot-funding-20261028",
