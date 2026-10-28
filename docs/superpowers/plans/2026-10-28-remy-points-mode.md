@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Lehrkräfte wählen bei neuen KI-Tests zwischen einer festen Gesamtpunktzahl und automatisch aus den Einzelaufgaben ermittelten Gesamtpunkten.
+**Goal:** Neue Remy-Tests starten standardmäßig mit automatisch aus den Einzelaufgaben ermittelten Gesamtpunkten. Lehrkräfte können mit dem kompakten Auto-Schalter auf eine feste Gesamtpunktzahl wechseln.
 
 **Architecture:** Ein explizites `pointsMode` trennt die zwei Verträge am Formular und an der Servergrenze. Der feste Pfad bleibt unverändert; der automatische Pfad verzichtet auf ein Zielbudget, verwendet die vorhandenen Einzelpunkte und summiert sie nach Prüfung/Reparatur. Entwurf, Editor und Veröffentlichung nutzen weiterhin die bestehenden Punktefelder.
 
@@ -17,7 +17,7 @@
 - Fest: `points` ist positiv, in 0,5er-Schritten und mindestens `count / 2`; bestehender Punktausgleich und exakte Schlussprüfung bleiben.
 - Automatisch: `points` fehlt; es gibt keine implizite Gesamtzahl und keinen Punktausgleich. Pro Aufgabe weiterhin mindestens 0,5 Punkte und 0,5er-Schritte.
 - Varianten/ähnliche Tests behalten die Punkte ihrer Vorlage. Bestehende Tests, Notenschlüssel, Bewertungen und Abgaben nicht migrieren oder umrechnen.
-- Keine neuen KI-Aufrufe für Punktvergabe; keine echte Providerprobe ohne gesonderten Testauftrag. Production nur mit ausdrücklicher Freigabe.
+- Keine neuen KI-Aufrufe für Punktvergabe; keine echte Providerprobe ohne gesonderten Testauftrag. Martins ausdrückliche Freigabe für gradecrew.de vom 28.10.2026 liegt vor; Funktionen vor Hosting ausrollen und beide Stufen nachweisen.
 - UI auf Deutsch und Englisch, Tastaturbedienung und bestehende veröffentlichungsnahe Entwurfsprüfung erhalten.
 
 ## Review Focus
@@ -32,7 +32,7 @@
 
 ## Dateigrenzen und Reihenfolge
 
-`index.html` enthält die Auswahl; `app.js` verwaltet Anzeige, Prüfung und Request. Ein kleiner neuer Helfer `functions/lib/points-mode.js` normalisiert nur den Punktevertrag; `functions/index.js` verwendet ihn beim Auftragsstart **und** bei der späteren Generierung. `functions/lib/test-batches.js`, `prompts.js`, `repair-test.js` und `validation.js` trennen die Punktepfade. Die vorhandenen Schemas für Einzelpunkte bleiben. Tests liegen neben den jeweiligen bestehenden Funktions- und UI-Tests. Kein Refactor des Bewertungsservers.
+`index.html` enthält die Auswahl; `app.js` verwaltet Anzeige, Prüfung und Request. `functions/index.js` normalisiert den Punktevertrag in `cleanInput` beim Auftragsstart **und** bei der späteren Generierung. `functions/lib/test-batches.js`, `prompts.js`, `repair-test.js` und `validation.js` trennen die Punktepfade. Die vorhandenen Schemas für Einzelpunkte bleiben. Tests liegen neben den jeweiligen bestehenden Funktions- und UI-Tests. Kein Refactor des Bewertungsservers.
 
 ### Task 1: Formular und eindeutiger Request
 
@@ -40,20 +40,20 @@
 
 **Interface:** `collectAiRequest()` liefert bei festem Modus `{pointsMode:"fixed", points:number, ...}` und bei Automodus `{pointsMode:"auto", ...}` ohne `points`-Eigenschaft.
 
-- [ ] Fehlenden UI-Test schreiben: Standard ist „Gesamtpunkte festlegen“; 20/35 erzeugt `fixed` und `points:35`; Umschalten auf automatisch erzeugt `auto` ohne `points`; zurückschalten stellt 35 wieder her. Leeres festes Feld startet keinen Job.
+- [ ] Fehlenden UI-Test schreiben: Standard ist blaues `Auto` mit Strich und `pointsMode:auto` ohne `points`; Ausschalten stellt den letzten festen Wert wieder her und erzeugt `fixed` mit Punktzahl. Leeres festes Feld startet keinen Job.
 - [ ] Fokussierten UI-Test ausführen und das erwartete Scheitern festhalten.
-- [ ] Zwei zugänglich beschriftete Auswahlfelder und Hinweis in `index.html` ergänzen; `app.js` bindet Anzeige, Validierung und Zusammenfassung an die Wahl. Das bestehende Zahlenfeld bleibt beim automatischen Modus inaktiv, sein Wert bleibt lokal erhalten.
+- [ ] Einen zugänglich beschrifteten kompakten Auto-Schalter in `index.html` ergänzen; aktiv ist er blau, das Punktefeld zeigt einen Strich. `app.js` bindet Anzeige, Validierung und Zusammenfassung an den Modus. Der feste Zahlenwert bleibt lokal erhalten.
 - [ ] Test erneut ausführen; DE/EN-Anzeige und Tastaturbedienung im vorhandenen Browserlauf prüfen. Commit für die UI-Scheibe.
 
 ### Task 2: Serververtrag und rückwärtskompatible Eingabe
 
-**Files:** Create `functions/lib/points-mode.js`, `functions/test/points-mode.test.js`; modify `functions/index.js` (`cleanInput`, Aufrufoptionen, Job-Eingabe).
+**Files:** Modify `functions/index.js` (`cleanInput`, Aufrufoptionen, Job-Eingabe) und ergänze gezielte Tests in `functions/test/audio-total-budget.test.js`.
 
-**Interface:** `normalizePointRequest({pointsMode, points, count, generationMode})` in `points-mode.js` liefert `{pointsMode:"fixed",points:number}` oder `{pointsMode:"auto"}` und wirft bei ungültiger Eingabe einen `HttpsError("invalid-argument", ...)`. `cleanInput(data)` übernimmt dieses Ergebnis. Der normalisierte Wert wird im persistierten Job und beim Resume identisch verwendet.
+**Interface:** `cleanInput(data)` liefert `{pointsMode:"fixed",points:number}` oder `{pointsMode:"auto"}` und wirft bei ungültiger Eingabe einen `HttpsError("invalid-argument", ...)`. Der normalisierte Wert wird im persistierten Job und beim Resume identisch verwendet.
 
 - [ ] Servertests für fehlenden Modus, explizit festes 20/35, automatisches 20 ohne `points`, widersprüchliches `auto` mit `points`, ungültigen Modus und `auto` bei Variante schreiben. Zweimalige Normalisierung der gespeicherten Eingabe muss denselben Wert liefern.
 - [ ] Diese Tests ausführen und erwartete Fehler prüfen.
-- [ ] `normalizePointRequest` implementieren und in `cleanInput` verwenden: alten Code nur für `fixed` ausführen; für `auto` `points` verbieten und nicht auf 20 zurückfallen; Variante `auto` zurückweisen. Keine Änderung an Medien-, Material- oder Aufgabenlimits.
+- [ ] `cleanInput` für beide Modi erweitern: alten Code nur für `fixed` ausführen; für `auto` `points` verbieten und nicht auf 20 zurückfallen; Variante `auto` zurückweisen. Keine Änderung an Medien-, Material- oder Aufgabenlimits.
 - [ ] Tests grün ausführen und prüfen, dass ein gespeicherter Autopunkt-Job beim Resume denselben Modus hat. Commit für den Serververtrag.
 
 ### Task 3: Generator ohne verstecktes Gesamtbudget
@@ -85,7 +85,7 @@
 - [ ] Aktuellen Entwicklungsstatus und Writerüberschneidungen zu `app.js`, `index.html`, `functions/index.js`, `prompts.js`, `repair-test.js`, `test-batches.js` vor Integration erneut prüfen. Vorhandene Audio-/Editoränderungen erhalten.
 - [ ] `cd functions && npm test && npm run check` sowie die relevanten Web-/Browserprüfungen auf dem exakten Commit ausführen. Synthetischer End-to-End-Fall für beide Modi, große Tests und Resume; keine bezahlten Provideraufrufe.
 - [ ] Unabhängige Prüfung auf Rückwärtskompatibilität, Punkteidentität, Notenschlüssel, Varianten und Veröffentlichung durchführen; Befunde beheben und exakte CI auf dem finalen SHA abwarten.
-- [ ] Vorschau mit Release- und Dateihashes prüfen. Live-Functions- und Hosting-Schritte getrennt planen und erst nach ausdrücklicher Freigabe für das Ziel ausführen. Danach Quelle/aktive Funktionen/Hosting erneut belegen; Lehrerabnahme am editierbaren Entwurf bleibt eigener Schritt.
+- [ ] Vorschau mit Release- und Dateihashes prüfen. Live-Funktionen nach der erteilten Freigabe gezielt zuerst ausrollen und aktive Hashes belegen; erst danach Hosting veröffentlichen. Anschließend Live-Manifest und Dateien verifizieren. Lehrerabnahme am editierbaren Entwurf bleibt eigener Schritt.
 - [ ] TODO, Übergabe und `GRADECREW_STATE.json` nur mit den wirklich erreichten Stufen aktualisieren. Im Abschlussbericht offene Fairnessgrenze nennen: Ohne zusätzliche fachliche Rubrikprüfung bleibt die automatische Gewichtung ein überprüfbarer KI-Vorschlag.
 
 ## Abnahmebeispiele
@@ -97,4 +97,4 @@
 
 ## Umsetzungshandoff
 
-Planstatus: nur geschrieben, nicht implementiert oder getestet. Bei Beginn einen frischen isolierten Checkout vom geprüften Zielbranch und eine eigene Übergabe verwenden. Vor jedem Deployment ist Martins ausdrückliche Freigabe erforderlich.
+Planstatus: Umsetzung in PR #377 auf dem aktuellen Live-Basiscommit und PR #376 für die spätere Integration; lokale Tests, unabhängiger Review und befristete Staging-Vorschau sind erfolgt. Release-Nachweise stehen in der Aufgabenübergabe. Martins ausdrückliche Live-Freigabe vom 28.10. liegt vor.
