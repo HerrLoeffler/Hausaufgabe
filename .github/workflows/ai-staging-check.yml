@@ -28,6 +28,7 @@ on:
       - 'fix/gc-security-*'
       - 'fix/staging-feedback-*'
       - 'fix/question-feedback-*'
+      - 'fix/wilma-*'
     # Documentation changes do not change the app/runtime candidate.
     paths-ignore:
       - '**.md'
@@ -70,6 +71,9 @@ jobs:
 
       - name: Install UI test dependencies
         run: npm ci --prefix tools/ui --no-audit --no-fund
+
+      - name: Wilma teacher review contracts
+        run: node --test teacher-grading-summary.test.mjs teacher-review-write.test.mjs wilma-answer-review.test.mjs wilma-decision-client.test.mjs wilma-review-client.test.mjs tools/ui/wilma-inline.test.cjs
 
       - name: Practice solution publication tests
         run: node --test practice-solution-publication.test.mjs secure-offline-review-label.test.mjs
