@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-28",
+  "app": "Microsoft PowerPoint for Mac",
+  "scope": "Representative native presentation test, not full slide-by-slide test",
+  "first_valid_v8": "Slides 2 and 7: onClickAppear viewed and screenshots saved",
+  "final_file": "Byte-identical QA copy opened without repair; slide 12 before/after native click viewed",
+  "final_slide_12": "One click reveals all three hands-on steps correctly",
+  "screenshots": [
+    "preview/native-02.png",
+    "preview/native-07.png",
+    "preview/native-final-12-before.png",
+    "preview/native-final-12-after.png"
+  ],
+  "final_sha256": "22b587dbc3dbbd7270bb7233130ff3148db2a79bc3ff16b95f51d8f688a0655f",
+  "final_file_saved_by_powerpoint": false
+}

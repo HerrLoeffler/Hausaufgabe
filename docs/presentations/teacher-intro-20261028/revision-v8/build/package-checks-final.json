@@ -1,0 +1,10 @@
+{
+  "file": "/Users/martin/.codex/.chatgpt-projects/g-p-6ab1877c30108191b2aabf44e8bf23e4/outputs/gradecrew-kollegium-20261028/revision-v8/files/GradeCrew_Kollegium_20261028_v8.pptx",
+  "sha256": "22b587dbc3dbbd7270bb7233130ff3148db2a79bc3ff16b95f51d8f688a0655f",
+  "bytes": 6445128,
+  "slides": 12,
+  "notes": 12,
+  "native_qa_copy_byte_identical": true,
+  "cover": "24 recursive parts byte-identical to V7; see cover-preservation.json",
+  "validation": "0 findings; see validation-v8-finalcheck.json"
+}
