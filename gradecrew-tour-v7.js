@@ -212,10 +212,9 @@ export function installCrewTour(api) {
     // Events from its shadow DOM are retargeted to this host at document level.
     if (node instanceof Element && (node.id === "gc-review-tool" || node.closest("#gc-review-tool"))) return true;
     if (isSubmitConfirmationNode(node)) return true;
-    if(isPublicationDialogNode(node)){
-      if(node.closest('[data-action="cancel"],[data-action="back"],.publishReviewDetails summary'))return true;
-      const label=node.closest('label');if(label?.querySelector('[name="practiceAcknowledged"],[name="aiReviewAcknowledged"]'))return true;
-    }
+    // This is the existing modal's local review step: retain its native Tab
+    // trap and editable settings. It is allowed only in the owned publish stage.
+    if(isPublicationDialogNode(node))return true;
     if (api.reviewControlsAllowed?.() && node instanceof Element && node.closest("[data-review-panel], [data-review-toggle], [aria-label=\"Lokale Prüfszenen\"]")) return true;
     if (root?.contains(node)) return true;
     if (targetInteractive && target?.contains(node)) return true;
@@ -317,7 +316,7 @@ export function installCrewTour(api) {
     const toggle=panel?.querySelector('.aiSectionToggle');
     if(toggle?.getAttribute('aria-expanded')==='false')toggle.click();
     // Resolve current DOM/layout before showing the next instruction.
-    if (scroll) queueMicrotask(() => target?.isConnected && (root?.classList.contains("gcCoachContext") ? root : target).scrollIntoView({ block: root?.classList.contains("gcCoachContext") ? "start" : "center", behavior: "auto" }));
+    if (scroll) queueMicrotask(() => target?.isConnected && (root?.classList.contains("gcCoachContext") ? root : target).scrollIntoView({ block: root?.classList.contains("gcCoachContext") ? "start" : "center", behavior: "instant" }));
     const move = () => schedulePlace();
     addEventListener("resize", move, { passive: true });
     addEventListener("scroll", move, { passive: true, capture: true });

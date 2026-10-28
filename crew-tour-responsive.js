@@ -1,10 +1,10 @@
-import { computeAdaptiveGuidePlan, isCompactGuideViewport } from "./first-guide-responsive.js?v=2.3.1-gc28-mobile";
+import { isCompactGuideViewport } from "./first-guide-responsive.js?v=2.3.1-gc28-mobile";
 
 const MARGIN = 12;
 let frame = 0;
 let settleTimers = [];
 let activeTarget = null;
-let placement = null;
+let activeCoach = null;
 let targetObserver = null;
 
 function viewportMetrics() {
@@ -40,6 +40,7 @@ function installStyles() {
   const style = document.createElement("style");
   style.dataset.gradecrewCrewTourResponsive = "1";
   style.textContent = `
+    html:has(body.gcRealTourActive),body.gcRealTourActive,body.gcRealTourActive *{scroll-behavior:auto!important}
     html:has(body.gcRealTourActive.gcTourFlow),body.gcRealTourActive.gcTourFlow{overflow:auto!important;overscroll-behavior:auto!important;touch-action:pan-y!important}
     .gcRealCoach.gcCoachFlow{position:relative!important;inset:auto!important;transform:none!important;translate:none!important;width:100%!important;max-width:100%!important;max-height:none!important;grid-column:1/-1;margin:12px 0!important;box-sizing:border-box;transition:none}
     dialog.publishReview .gcCoachPublish{margin:0 0 16px!important;padding:12px!important;border-radius:12px!important;border:1px solid #cddcfb!important;box-shadow:none!important;scroll-margin-top:0}
@@ -83,15 +84,16 @@ function installStyles() {
   document.head.appendChild(style);
 }
 
-function observeTarget(target) {
-  if (target === activeTarget) return;
+function observeTarget(target,coach=null) {
+  if (target === activeTarget && coach === activeCoach) return;
   activeTarget = target;
-  placement = null;
+  activeCoach = coach;
   targetObserver?.disconnect();
   targetObserver = null;
-  if (target && "ResizeObserver" in window) {
+  if ((target || coach) && "ResizeObserver" in window) {
     targetObserver = new ResizeObserver(settle);
-    targetObserver.observe(target);
+    if(target)targetObserver.observe(target);
+    if(coach)targetObserver.observe(coach);
   }
 }
 
@@ -145,13 +147,13 @@ export function layoutCrewCoach() {
   const viewport = viewportMetrics();
   if(!coach?.isConnected){observeTarget(null);document.body.classList.remove('gcTourFlow');return;}
   if(coach.classList.contains('gcCoachInlineStart')||coach.classList.contains('gc25InlineReviewCoach')||coach.classList.contains('gcCoachContext')){
-    resetCoach(coach);observeTarget(target);return;
+    resetCoach(coach);observeTarget(target,coach);return;
   }
   if(coach.classList.contains('gcCoachFlow')){
     if(target===activeTarget)return;
     coach.classList.remove('gcCoachFlow');coach.style.removeProperty('order');document.body.append(coach);
   }
-  document.body.classList.remove('gcTourFlow');installStyles();observeTarget(target);
+  document.body.classList.remove('gcTourFlow');installStyles();observeTarget(target,coach);
   if(coach.classList.contains('gcCoachCentered')||!target?.getClientRects().length){layoutCentered(coach,viewport);return;}
   coach.classList.add('gcResponsiveCoach');
   const compact=isCompactGuideViewport(viewport),width=Math.min(compact?560:360,viewport.width-MARGIN*2);

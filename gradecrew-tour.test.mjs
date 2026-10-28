@@ -306,6 +306,8 @@ for (const finishAction of ['create', 'settings', 'guest', 'publish-abort']) tes
     review.querySelector('.gcCoachClose').click();assert.equal(await publication,false);assert.equal(tour.active,false);assert.equal(w.document.querySelector('dialog.publishReview[open]'),null);assert.equal(w.document.querySelector('.gcRealCoach'),null);assert.equal(w.document.querySelector('.gcTourTarget'),null);assert.equal(w.document.body.classList.contains('gcTourFlow'),false);assert.equal(guestExits,1);tour.start();assert.ok(w.document.querySelector('.gcCrewIntroCoach'));return;
   }
   assert.equal(w.trustedInputBlocked('click',review.querySelector('[data-action=next]')),false,'new publication Next must remain operable');
+  assert.equal(w.trustedInputBlocked('keydown',review.querySelector('h3'),'Tab'),false,'initial native dialog heading can Tab into its real controls');
+  assert.equal(w.trustedInputBlocked('keydown',review.querySelector('[name=timeLimitMinutes]'),'2'),false,'settings remain editable inside the current modal');
   assert.equal(w.trustedInputBlocked('click',review.querySelector('[data-action=cancel]')),false,'publication cancel remains available');
   assert.equal(w.trustedInputBlocked('keydown',review.querySelector('[data-action=next]'),'Escape'),false,'Escape belongs to the publication dialog');
   review.querySelector('[data-action=cancel]').click();assert.equal(await publication,false);w.document.dispatchEvent(new w.Event('gradecrew:tour-anchor-refresh'));assert.equal(w.document.querySelector('.gcTourTarget').id,'publishBtn');
