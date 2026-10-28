@@ -14,6 +14,6 @@ Steps:
 1. [x] Add failing focused tests for authorization, classroom scoping, idempotent correction/undo, export history and integrity/missing-data statements.
 2. [x] Implement staging-only service and callable, use Firestore's default denial for private event subcollections, connect review save and export button without reshaping grading UI.
 3. [x] Build/export deterministic PDF and ZIP, inspect rendered PDF and re-open package/hash locally.
-4. [ ] Run focused tests and integration checks; create an isolated preview, PR, and handoff with exact evidence and remaining gates. Local preview and independent review complete; remote preview and PR pending. Wilma writer reconciliation blocks merge.
+4. [x] Run focused tests and integration checks; create an isolated local preview, Draft-PR #374, and handoff with exact evidence and remaining gates. Remote preview remains open. Wilma writer reconciliation blocks merge.
 
 Coordination: Wilma owns parallel grading work. Keep changes in new modules and minimal result-view hooks; reconcile against Wilma's merged patch before PR. No full staging Hosting or Functions deployment that could remove `/wilma/`.

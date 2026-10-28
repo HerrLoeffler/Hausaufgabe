@@ -4,6 +4,7 @@
 - Basis: `feature/gradecrew-app-integration` bei `5e45e9df2449ca7e4c4b735ae754452a6f304ab7`.
 - Eigener Zweig: `feature/gc-school-export-preview-20261028` im Worktree `implementation/gc-school-export-20261028`.
 - Vorgänger: Forschung und Gatevergleich in Draft-PR #366 (`GC-SCHOOL-READINESS-20261028`).
+- Entwurf zur Umsetzung: [Draft-PR #374](https://github.com/HerrLoeffler/Hausaufgabe/pull/374) gegen `feature/gradecrew-app-integration`, Remote-Commit `e00ac72cc1970d1c5c6cb87399df1c7bdd9b6aac`. Wegen fehlender Git-CLI-Anmeldung über die verbundene GitHub-Schnittstelle aus dem bytegleichen lokalen Tree `5f732858aa9815ba561f11281b353367fc9eefea` erstellt.
 - Plan: `docs/superpowers/plans/2026-10-28-school-export-preview.md`.
 
 ## Gelieferter Prototyp
@@ -24,7 +25,7 @@ Die lokale Vorschau verwendet ausschließlich synthetische GradeCrew-Aufgaben un
 
 ## Abgleich und offene Gates
 
-Unabhängiges Read-only-Review des ersten Commits `76256687` fand fehlende Synthetic-Schranke, Wiederholungs-/Reihenfolgebugs, einen leeren Snapshot ohne Lückenhinweis, einen Form-/Snapshot-Widerspruch und fehlende Hinweise für nicht unterstützte Medien. Diese Punkte wurden lokal korrigiert und neu getestet. **Merge weiterhin blockiert:** Firestore-Regeln und der alte Client erlauben direkte Bewertung ohne Ereignis; Wilmas inzwischen weiterentwickelter Zweig enthält einen eigenen transaktionalen Entscheid-Schreiber (`functions/lib/wilma/teacher-review-write.mjs`). Der hiesige Korrektur-Callable ist ausschließlich isolierter Testcode und darf nicht parallel zu Wilmas kanonischem Beleg integriert oder ausgerollt werden. Vor Merge muss er auf diesen einen Bewertungsweg umgestellt oder entfernt werden; die Exportabfrage muss Wilmas Ereignisschema aufnehmen. Danach ist ein frisches Review nötig.
+Unabhängiges Read-only-Review des ersten Commits `76256687` fand fehlende Synthetic-Schranke, Wiederholungs-/Reihenfolgebugs, einen leeren Snapshot ohne Lückenhinweis, einen Form-/Snapshot-Widerspruch und fehlende Hinweise für nicht unterstützte Medien. Diese Punkte wurden korrigiert und neu getestet. Das Review des Fix-Commits `592607fd` fand eine globale Zustandsänderung der Aufgabenliste und eine versehentliche Sperre für normale Klassenarbeiten; beides ist im lokalen Commit `48ffbfb9` behoben, Syntax und gezielter Vorschautest grün. **Merge weiterhin blockiert:** Firestore-Regeln und der alte Client erlauben direkte Bewertung ohne Ereignis; Wilmas inzwischen weiterentwickelter Zweig enthält einen eigenen transaktionalen Entscheid-Schreiber (`functions/lib/wilma/teacher-review-write.mjs`). Der hiesige Korrektur-Callable ist ausschließlich isolierter Testcode und darf nicht parallel zu Wilmas kanonischem Beleg integriert oder ausgerollt werden. Vor Merge muss er auf diesen einen Bewertungsweg umgestellt oder entfernt werden; die Exportabfrage muss Wilmas Ereignisschema aufnehmen. Danach ist ein frisches Review nötig.
 
 Es gibt noch keinen öffentlich erreichbaren Previewkanal und keinen echten Staging-Callable-Nachweis. Ein kanonischer Staging-Hosting-Deploy ist untersagt, weil `/wilma/` erhalten bleiben muss. Für eine Remote-Vorschau wären ein eigener Channel, eigene präfixierte Testfunctions und ein ausschließlich synthetisches Testkonto zu paketieren und vor Freigabe gezielt zu prüfen. Production bleibt ohne ausdrückliche Freigabe ausgeschlossen.
 
