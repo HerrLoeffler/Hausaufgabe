@@ -2,9 +2,11 @@
 
 const { createHash, createHmac, timingSafeEqual } = require("node:crypto");
 
+const visual = require("./visual-task");
+
 const SUPPORTED_TYPES = new Set([
   "single", "multi", "text", "dropdown", "truefalse", "gapfill",
-  "matching", "ordering", "grouping", "markwords", "number"
+  "matching", "ordering", "grouping", "markwords", "number", "visual"
 ]);
 
 function clampString(value, max = 500) {
@@ -196,6 +198,8 @@ function buildPublicQuestion(question, secret, { shuffleAnswers = false } = {}) 
     if (audioAnswers) q.audioAnswerMode = "audio-only";
     q.imageChoicesOnly = options.length >= 2 && options.every(option => option.image?.src) &&
       (question.imageChoicesOnly === true || (question.options || []).every(option => /^Abbildung:\s*/i.test(option.imageAlt || "")));
+  } else if (type === "visual") {
+    q.visualTask = visual.publicVisualTask(question.visualTask, { points: q.points });
   } else if (type === "number") {
     q.unit = clampString(question.unit, 60);
   } else if (type === "gapfill") {
@@ -257,6 +261,9 @@ function buildGradingKey(question, secret) {
     key.correctOptionIds = (Array.isArray(question.options) ? question.options : [])
       .map((option, index) => option?.correct ? opaqueId(secret, question.id, "option", index) : null)
       .filter(Boolean);
+  } else if (type === "visual") {
+    visual.parseVisualTask(question.visualTask, { points: key.points });
+    key.visualTask = question.visualTask;
   } else if (type === "text") {
     key.acceptedAnswers = (Array.isArray(question.acceptedAnswers) ? question.acceptedAnswers : [])
       .slice(0, 20).map(value => clampString(value, 1000));
@@ -336,6 +343,7 @@ function fingerprintQuestion(question) {
       imageDataUrl: String(option?.imageDataUrl || ""), imageUrl: String(option?.imageUrl || ""), imageAlt: String(option?.imageAlt || "")
     })) : [],
     acceptedAnswers: Array.isArray(question?.acceptedAnswers) ? question.acceptedAnswers.map(String) : [],
+    ...(question?.type === "visual" ? { visualTask: String(question.visualTask || "") } : {}),
     manualReview: question?.manualReview === true,
     numericAnswer: Number.isFinite(Number(question?.numericAnswer)) ? Number(question.numericAnswer) : null,
     tolerance: Number(question?.tolerance) || 0, unit: String(question?.unit || ""),
@@ -415,15 +423,21 @@ function gradeQuestion(key, given) {
   const max = round1(key.points);
   const type = key.type;
 
+  if (type === "visual") {
+    const task = visual.parseVisualTask(key.visualTask, { points: max });
+    const result = visual.core.grade(task, visual.decodeVisualAnswer(given));
+    return resultShape(max, result.points, false, result.correct);
+  }
   if (type === "text") {
+    if (!normalize(given)) return resultShape(max, 0, false, false);
     if (key.manualReview) return resultShape(max, 0, true, null);
     const ok = (key.acceptedAnswers || []).map(normalize).includes(normalize(given));
-    return resultShape(max, ok ? max : 0, false, ok);
+    return resultShape(max, ok ? max : 0, !ok, ok ? true : null);
   }
   if (type === "number") {
     const raw = String(given ?? "").trim();
     if (!raw) return resultShape(max, 0, false, false);
-    const value = Number(raw.replace(",", "."));
+    const value = visual.core.numeric(given);
     const ok = Number.isFinite(value) && Number.isFinite(key.numericAnswer) && Math.abs(value - key.numericAnswer) <= key.tolerance + 1e-9;
     return resultShape(max, ok ? max : 0, false, ok);
   }
@@ -436,13 +450,17 @@ function gradeQuestion(key, given) {
   if (type === "gapfill") {
     const values = Array.isArray(given) ? given : null;
     let good = 0;
+    let needsReview = false;
     (key.gaps || []).forEach((gap, index) => {
       const answer = values ? values[index] : given?.[gap.id];
-      if ((gap.acceptedAnswers || []).map(normalize).includes(normalize(answer))) good += 1;
+      const value = normalize(answer);
+      if (!value) return;
+      if ((gap.acceptedAnswers || []).map(normalize).includes(value)) good += 1;
+      else needsReview = true;
     });
     const total = (key.gaps || []).length;
     const awarded = round1((total ? good / total : 0) * max);
-    return resultShape(max, awarded, false, total > 0 && good === total);
+    return resultShape(max, awarded, needsReview, needsReview ? null : total > 0 && good === total);
   }
   if (type === "matching") {
     const map = given && typeof given === "object" && !Array.isArray(given) ? given : {};
@@ -532,7 +550,9 @@ function sanitizeAnswersForStorage(gradingKey, answers) {
   const allowed = new Map((Array.isArray(gradingKey) ? gradingKey : []).map(key => [key.id, key]));
   for (const [questionId, key] of allowed.entries()) {
     const value = source[questionId];
-    if (["single", "dropdown", "truefalse", "text", "number"].includes(key.type)) {
+    if (key.type === "visual") {
+      out[questionId] = visual.serializeVisualAnswer(value);
+    } else if (["single", "dropdown", "truefalse", "text", "number"].includes(key.type)) {
       out[questionId] = clampString(value, 4000);
     } else if (key.type === "markwords" && key.correctWordColors) {
       const map = value && typeof value === "object" && !Array.isArray(value) ? value : {};
@@ -569,7 +589,7 @@ function publicQuizMetadata(quiz, quizId) {
 
 function assertNoSolutionLeak(paper) {
   const forbiddenKeys = new Set([
-    "correct", "correctBoolean", "acceptedAnswers", "numericAnswer", "tolerance",
+    "solution", "review", "provenance", "rationale", "correct", "correctBoolean", "acceptedAnswers", "numericAnswer", "tolerance",
     "targetWords", "correctWordColors", "acceptedOrders", "gradingKey", "answerKey", "solutions",
     "audioScript", "transcript", "audioTranscript", "solutionAudioDataUrl", "solutionScript", "solutionAudioScript", "optionAudioScript"
   ]);
@@ -577,7 +597,10 @@ function assertNoSolutionLeak(paper) {
     if (!value || typeof value !== "object") return;
     for (const [key, child] of Object.entries(value)) {
       if (forbiddenKeys.has(key)) throw new Error(`Student paper contains forbidden field: ${key}`);
-      visit(child);
+      if (key === "visualTask" && typeof child === "string") {
+        if (child.length > visual.MAX_VISUAL_CHARS) throw new Error("Student visual task exceeds size limit");
+        visit(JSON.parse(child));
+      } else visit(child);
     }
   };
   visit(paper);
