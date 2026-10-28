@@ -105,3 +105,13 @@ test("programming errors in image handling are still surfaced", async () => {
     model: "model", promptVersion: "v15", generateMedia: async () => { throw new TypeError("kaputte Implementierung"); }
   }), error => error instanceof TypeError && error.diagnostic.questionPosition === 1);
 });
+
+test("new AI tests shuffle answers by default; saved source and legacy variant settings win", () => {
+  const fresh = quizForGeneratedTest({ title: "Fresh" }, {});
+  assert.equal(fresh.shuffleAnswers, true); assert.equal(fresh.shuffleQuestions, false); assert.equal(fresh.startMode, "student");
+  for (const shuffleAnswers of [false, true]) {
+    const saved = quizForGeneratedTest({ title: "Copy" }, {}, {}, { shuffleAnswers, startMode: "teacher", shuffleQuestions: true });
+    assert.equal(saved.shuffleAnswers, shuffleAnswers); assert.equal(saved.startMode, "teacher"); assert.equal(saved.shuffleQuestions, true);
+  }
+  assert.equal(quizForGeneratedTest({ title: "Legacy" }, { generationMode: "variant", variantQuizSettings: {} }).shuffleAnswers, false);
+});

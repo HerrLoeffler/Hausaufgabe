@@ -36,3 +36,16 @@ test('English labels, progress semantics and explicit cancel',async t=>{const f=
 test('pending AI review must be acknowledged consciously on final step',async t=>{const f=setup(t,{aiReviewPending:true});f.action('next').click();f.action('next').click();f.action('publish').click();await flush();assert.equal(f.calls.length,0);assert.ok(f.field('aiReviewAcknowledged'));f.change('aiReviewAcknowledged',true);f.action('publish').click();assert.equal(await f.pending,true);});
 test('Tab and Shift-Tab wrap among visible enabled controls inside the modal',async t=>{const f=setup(t);f.action('next').focus();f.action('next').dispatchEvent(new f.dom.window.KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true}));assert.equal(f.doc.activeElement,f.field('startMode'));f.field('startMode').dispatchEvent(new f.dom.window.KeyboardEvent('keydown',{key:'Tab',shiftKey:true,bubbles:true,cancelable:true}));assert.equal(f.doc.activeElement,f.action('next'));f.action('cancel').click();await f.pending;});
 test('disabled time limit explains start without promising a countdown',async t=>{const f=setup(t);f.change('useTimeLimit',false);assert.doesNotMatch(f.dialog.querySelector('.publishReviewHint').textContent,/Countdown/);assert.equal(f.changes.at(-1).timeLimitMinutes,null);f.action('cancel').click();await f.pending;});
+
+test('compact release details preserve timing and summary follows actual choices',async t=>{
+ const f=setup(t);f.action('next').click();f.action('next').click();
+ assert.equal(f.field('showSolutions').parentElement.textContent,'Lösungen freigeben');
+ const details=f.dialog.querySelector('details.publishReviewDetails');assert.ok(details);assert.equal(details.open,false);
+ assert.match(details.textContent,/Nachfrist/);
+ const text=()=>f.dialog.querySelector('[data-summary]').textContent;
+ assert.match(text(),/Lehrkraft startet für alle/);assert.match(text(),/10 min/);assert.match(text(),/Punkte \+ Prozent \+ Note/);assert.match(text(),/Nachfrist/);
+ f.change('solutionReleaseMode','practice_after_submit');assert.match(details.textContent,/eigenen Abgabe/);assert.doesNotMatch(details.textContent,/Nachfrist/);
+ f.change('startMode','student');f.change('timeLimitMinutes',5);f.change('shuffleAnswers',true);f.change('showSolutions',false);
+ assert.match(text(),/Schüler startet selbst/);assert.match(text(),/5 min/);assert.match(text(),/Antworten: gemischt/);assert.match(text(),/Lösungen verborgen/);
+ f.action('cancel').click();await f.pending;
+});

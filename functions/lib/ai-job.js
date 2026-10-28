@@ -34,7 +34,7 @@ function quizForGeneratedTest(test, input, profile = {}, sourceQuiz = null) {
     showSolutions: sourceQuiz?.showSolutions ?? Boolean(settings.defaultShowSolutions),
     timeLimitMinutes: sourceQuiz?.timeLimitMinutes || null,
     startMode: sourceQuiz?.startMode === "teacher" ? "teacher" : "student",
-    shuffleQuestions: Boolean(sourceQuiz?.shuffleQuestions), shuffleAnswers: Boolean(sourceQuiz?.shuffleAnswers),
+    shuffleQuestions: Boolean(sourceQuiz?.shuffleQuestions), shuffleAnswers: sourceQuiz ? Boolean(sourceQuiz.shuffleAnswers) : true,
     sessionState: "open", sessionRunId: null, sessionStartedAt: null,
     published: false, ended: false, isDeleted: false, rightsHold: false, shareEnabled: false,
     questionCount: 0, totalPoints: 0, generationStatus: "running"

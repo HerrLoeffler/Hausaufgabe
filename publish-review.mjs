@@ -24,10 +24,16 @@ const copy = {
   result:'Nach Abgabe',
   results:['Nur Abgabe bestätigen','Punkte anzeigen','Punkte + Prozent','Punkte + Prozent + Note'],
   release:'Lösungsfreigabe',
-  exam:'Prüfung – nach Testende und Nachfrist',
-  practice:'Übung – nach eigener Abgabe',
-  show:'Lösungen für diese Durchführung freigeben',
-  examHint:'Lösungen bleiben bis zum Testende und Ablauf der Nachfrist zurückgehalten. Aktiviere die Freigabe nur, wenn du diesen Test danach nicht unverändert mit einer weiteren Gruppe verwendest.',
+  exam:'Nach Testende',
+  practice:'Nach eigener Abgabe',
+  show:'Lösungen freigeben',
+  examHint:'Lösungen werden nach Testende und Nachfrist sichtbar.',
+  more:'Mehr erfahren',
+  releaseDetails:'Die Freigabe wartet auf Testende und Ablauf der Nachfrist. Nach der Freigabe ist dieser Test für eine weitere Gruppe möglicherweise bekannt.',
+  practiceDetails:'Nach der eigenen Abgabe werden Lösungen sichtbar, wenn du die Freigabe bestätigst. Der Test ist danach für eine weitere Gruppe möglicherweise bekannt.',
+  noSolutions:'Lösungen verborgen',
+  examSummary:'Lösungen nach Testende + Nachfrist',
+  practiceSummary:'Lösungen nach eigener Abgabe',
   independent:'Die Lösungsfreigabe ist unabhängig von der Punkte- und Notenanzeige.',
   warning:'Nach der Abgabe können Lernende die Lösungen anzeigen.',
   acknowledge:'Ich möchte Lösungen direkt nach der eigenen Abgabe freigeben.',
@@ -65,10 +71,16 @@ const copy = {
   result:'After submission',
   results:['Confirm submission only','Show points','Points + percentage','Points + percentage + grade'],
   release:'Solution release',
-  exam:'Exam – after test end and grace period',
-  practice:'Practice – after own submission',
-  show:'Release solutions for this session',
-  examHint:'Solutions are withheld until the test ends and the grace period expires. Only enable release if you will not reuse this unchanged test with another group.',
+  exam:'After test end',
+  practice:'After own submission',
+  show:'Release solutions',
+  examHint:'Solutions become visible after test end and the grace period.',
+  more:'Learn more',
+  releaseDetails:'Release waits until the test ends and the grace period expires. Once released, the test may be known to another group.',
+  practiceDetails:'Solutions become visible after each student submits if you confirm release. The test may then be known to another group.',
+  noSolutions:'Solutions hidden',
+  examSummary:'Solutions after test end + grace period',
+  practiceSummary:'Solutions after own submission',
   independent:'Solution release is independent of points and grades.',
   warning:'After submitting, students can view the solutions.',
   acknowledge:'I want to release solutions immediately after each student submits.',
@@ -115,9 +127,10 @@ export function requestPublishReview({ settings, scales = [], onChange = () => {
  field(panels[2],'gradeScaleId',c.scale,scales.map(s=>[s.id,s.name]));
  field(panels[2],'resultMode',c.result,['none','points','points_percent','points_grade'].map((v,i)=>[v,c.results[i]]));
  field(panels[2],'solutionReleaseMode',c.release,[['exam_after_end',c.exam],['practice_after_submit',c.practice]]);
- field(panels[2],'showSolutions',c.show,true);const releaseHint=el('p',null,'publishReviewHint');panels[2].append(releaseHint,el('p',c.independent,'publishReviewHint'));
+ field(panels[2],'showSolutions',c.show,true);const releaseHint=el('p',null,'publishReviewHint');panels[2].append(releaseHint);
+ const releaseDetails=el('details',null,'publishReviewDetails'),releaseDetailsText=el('p',null,'publishReviewHint');releaseDetails.append(el('summary',c.more),releaseDetailsText);panels[2].append(releaseDetails);
  const warning=el('div',null,'publishReviewWarning');warning.append(el('p',c.warning));field(warning,'practiceAcknowledged',c.acknowledge,true);panels[2].append(warning);
- const aiWarning=el('div',null,'publishReviewWarning');aiWarning.hidden=!aiReviewPending;field(aiWarning,'aiReviewAcknowledged',String(locale).startsWith('en')?'The AI review is still pending. I have checked this draft and want to publish it.':'Die KI-Prüfung ist noch offen. Ich habe den Entwurf geprüft und möchte ihn trotzdem veröffentlichen.',true);panels[2].append(aiWarning);
+ const aiWarning=el('div',null,'publishReviewWarning');aiWarning.hidden=!aiReviewPending;field(aiWarning,'aiReviewAcknowledged',String(locale).startsWith('en')?'AI review still pending. I have checked this test myself.':'KI-Prüfung noch offen. Ich habe den Test selbst geprüft.',true);panels[2].append(aiWarning);
  const summary=el('div',null,'publishReviewSummary');summary.dataset.summary='';panels[2].append(summary);
  const error=el('p',null,'publishReviewError');error.setAttribute('role','alert');body.append(error);
  const footer=el('footer',null,'publishReviewActions');const buttons={};for(const [name,text] of [['cancel',c.cancel],['back',c.back],['next',c.next],['publish',c.publish]]){const b=el('button',text,`button ${name==='next'||name==='publish'?'primary':'secondary'}`);b.type='button';b.dataset.action=name;buttons[name]=b;footer.append(b);}
@@ -130,9 +143,10 @@ export function requestPublishReview({ settings, scales = [], onChange = () => {
   buttons.back.hidden=step===0;buttons.next.hidden=step===2;buttons.publish.hidden=step!==2;
   timeWrap.hidden=!values.useTimeLimit;controls.timeLimitMinutes.disabled=!values.useTimeLimit||busy;
   startHint.textContent=values.startMode==='teacher'?(values.useTimeLimit?c.teacherHint:c.teacherNoTime):(values.useTimeLimit?c.studentHint:c.studentNoTime);
-  releaseHint.textContent=values.solutionReleaseMode==='exam_after_end'?c.examHint:'';releaseHint.hidden=values.solutionReleaseMode!=='exam_after_end';
+  releaseHint.textContent=values.solutionReleaseMode==='exam_after_end'?c.examHint:'';releaseHint.hidden=!values.showSolutions||values.solutionReleaseMode!=='exam_after_end';
+  releaseDetailsText.textContent=values.solutionReleaseMode==='practice_after_submit'?c.practiceDetails:c.releaseDetails;
   warning.hidden=!needsAcknowledgement();
-  summary.replaceChildren(el('strong',c.summary),el('span',`${values.startMode==='teacher'?c.teacher:c.student} · ${values.useTimeLimit?`${values.timeLimitMinutes} min`:c.unlimited}`),el('span',`${c.questions}: ${values.shuffleQuestions?c.mixed:c.saved} · ${c.answers}: ${values.shuffleAnswers?c.mixed:c.saved}`));
+  summary.replaceChildren(el('strong',c.summary),el('span',`${values.startMode==='teacher'?c.teacher:c.student} · ${values.useTimeLimit?`${values.timeLimitMinutes} min`:c.unlimited}`),el('span',`${c.questions}: ${values.shuffleQuestions?c.mixed:c.saved} · ${c.answers}: ${values.shuffleAnswers?c.mixed:c.saved}`),el('span',`${c.results[['none','points','points_percent','points_grade'].indexOf(values.resultMode)]||c.results[0]} · ${!values.showSolutions?c.noSolutions:values.solutionReleaseMode==='exam_after_end'?c.examSummary:c.practiceSummary}`));
   for(const b of Object.values(buttons))b.disabled=busy;
   buttons.publish.disabled=busy||failed;buttons.publish.textContent=busy?c.busy:c.publish;
   for(const input of Object.values(controls))input.disabled=busy;
@@ -147,7 +161,7 @@ export function requestPublishReview({ settings, scales = [], onChange = () => {
  dialog.addEventListener('close',()=>finish(false));
  dialog.addEventListener('keydown',event=>{
   if(event.key!=='Tab')return;
-  const focusable=[...dialog.querySelectorAll('input,select,button')].filter(n=>!n.disabled&&!n.closest('[hidden]'));
+  const focusable=[...dialog.querySelectorAll('input,select,button,summary')].filter(n=>!n.disabled&&!n.closest('[hidden]'));
   const first=focusable[0],last=focusable.at(-1),active=doc.activeElement;
   if(!first){event.preventDefault();return;}
   event.preventDefault();

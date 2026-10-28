@@ -2061,7 +2061,7 @@ function quizDefaults() {
     timeLimitMinutes: null,
     startMode: "student",
     shuffleQuestions: false,
-    shuffleAnswers: false,
+    shuffleAnswers: true,
     sessionState: "open",
     sessionRunId: null,
     sessionStartedAt: null,
@@ -7186,8 +7186,10 @@ function renderMatchingStudent(section, q) {
   const root = document.createElement("div");
   root.className = "interactionBox matchingBox";
   const bank = document.createElement("div");
-  bank.className = "dragBank";
-  bank.innerHTML = `<span class="dropHint">Zuordnungen</span>`;
+  bank.className = q.audioAnswerMode === "audio-only" ? "dragBank matchingAudioBank" : "dragBank";
+  bank.setAttribute("role", "group");
+  bank.setAttribute("aria-label", "Zuordnungen");
+  if (q.audioAnswerMode !== "audio-only") bank.innerHTML = `<span class="dropHint">Zuordnungen</span>`;
   const audioItems = new Map(questionAnswerAudioEntries(q).map(entry => [entry.key, entry]));
   if (q.audioAnswerMode === "audio-only" && !questionAnswerAudioReady(q)) { section.textContent = "Sprachnotizen fehlen oder sind veraltet."; return; }
   shuffled(q.pairs.map((p, idx) => ({ ...p, idx }))).forEach((p, shownIndex) => bank.appendChild(q.audioAnswerMode === "audio-only" ? makeAudioDragItem(`Sprachnotiz ${shownIndex + 1}`, p.idx, audioItems.get(`p${p.idx}`).asset.audioDataUrl) : makeDragItem(p.right, p.idx)));
