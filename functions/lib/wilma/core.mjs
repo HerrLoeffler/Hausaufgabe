@@ -26,7 +26,7 @@ export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmiss
   if(!Number.isFinite(maximum)||maximum<=0||maximum>100||maximum*2%1)fail(400,'Punkterahmen nicht unterstützt.');
   if(!data.expectedAnswers||typeof data.expectedAnswers!=='object')fail(400,'Antwortabgleich fehlt.');
   if(data.criteria!==undefined&&(typeof data.criteria!=='string'||data.criteria.length>2000))fail(400,'Bewertungsraster ist zu lang.');
-  const rubric=data.criteria?.trim()||q.reviewCriteria||q.acceptedAnswers||[];
+  const rubric=[data.criteria,q.reviewCriteria,q.acceptedAnswers].find(value=>typeof value==='string'?!!value.trim():Array.isArray(value)&&value.some(x=>String(x).trim()))||[];
   const accepted=[...q.text.matchAll(/\[([^\]]+)\]/g)].map(match=>match[1].split('|'));
   const direct=[],records=[],source=[];
   for(const [index,sid] of ids.entries()){
@@ -39,6 +39,7 @@ export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmiss
    source.push({id:sid,answer});
    if(sub.grading?.[questionId]?.reviewIssue==='incomplete-transfer'||requiresOriginalMedia(q)){direct.push({id:sid,points:null,status:'ungradable',reason:'Originalmaterial oder Übertragung prüfen.'});continue;}
    if(q.type==='text'&&!norm(answer)){direct.push({id:sid,points:0,status:'clear',reason:'Leer abgegeben.'});continue;}
+   if(q.type==='text'&&!rubric.length){direct.push({id:sid,points:null,status:'ungradable',reason:'Bewertungsraster fehlt. Bitte Kriterien ergänzen oder selbst bewerten.'});continue;}
    if(q.type==='gapfill'&&accepted.length){
     const values=Array.isArray(answer)?answer:[];
     const unknown=accepted.some((options,i)=>norm(values[i])&&!options.map(norm).includes(norm(values[i])));
