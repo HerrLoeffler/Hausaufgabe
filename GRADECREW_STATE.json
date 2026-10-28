@@ -3453,7 +3453,7 @@
       "production": "unchanged",
       "teacher_acceptance": "pending",
       "physical_device_acceptance": "pending",
-      "next_action": "Martin reviews an own subject-specific creation on normal Staging and the prepared6/40tests before Wednesday. Continue P1 repair/cost reduction;20latency and repair targets not fully met. No Production release.",
+      "next_action": "Specify a bounded general recipe/image-sequence extension: learning-action selection, typed assets, private sheet/server crops, actual-image review and secure ordering assessment. No implementation or new paid pilot in this planning turn; previous repair-cost/teacher/device work remains open.",
       "historical_preview": {
         "preview_url": "https://gradecrew-staging-2026--remy26-mhohnhf1.web.app/workspace.html",
         "functions_codebases": [
@@ -3728,6 +3728,22 @@
         "curriculum_scope": "new pilot class7; earlier5-10pilot separate",
         "production": "unchanged",
         "running_jobs": "none"
+      },
+      "planning_followup_20261028": {
+        "status": "proposal_documented; not_implemented",
+        "request": "Generalise goal-based recipes beyond percent problems; examine other task types and arbitrary image sequences, including one generated sheet split into panels.",
+        "source_review": "integration5e45e9d unchanged; existing sequence supports four cards in butterfly/water-cycle/plant-growth; currently not in active eight default formats; generated-image jobs bypass recipe planning; image route1024x1024low and postcompression unsuitable for small detailed panels without change.",
+        "proposal": "Use subject-independent learning actions plus subject-specific correctness contracts; reuse approved components, not freely generated executable widgets. Extend existing sequence with typed image assets; storyboard before generation; private master sheet, server-side crops before compression, neutral asset IDs and no original sheet/solution cues in student payload; independent per-panel and overall order checks, explicit start for cycles.",
+        "first_pilot_proposed": "three four-panel sequences acrossBiology/German/Physics; one master sheet per sequence, compare with existing illustrations; no paid pilot authorised or started in this planning turn",
+        "image_limits_in_reviewed_code": {
+          "generated_picture_questions_per_test": 5,
+          "image_generations_per_day_per_account": 80,
+          "provider_account_remaining": "not_checked"
+        },
+        "new_paid_calls": 0,
+        "runtime_changed": false,
+        "production": "unchanged",
+        "next": "Confirm the bounded sequence design and prepare implementation plan; preserve current Staging and prior attempt history."
       }
     },
     {
