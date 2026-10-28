@@ -1,0 +1,46 @@
+{
+  "taskId": "GC-ADAPTIVE-PRACTICE-01",
+  "purpose": "Restore existing presentation access only; no new features or paid model probes",
+  "checkedAtUtc": "2026-10-28T12:27:57.402735+00:00",
+  "checkedAtBerlin": "2026-10-28 13:27 CET",
+  "local": {
+    "url": "http://127.0.0.1:8775/lerngehirn/",
+    "scope": "only this Mac; loopback bind",
+    "http": 200,
+    "serverRestarted": true,
+    "execSession": 54544,
+    "authentication": "existing separated synthetic test account, server-side; no credential entry needed in local UI",
+    "visibleProof": "loaded own test profile, Mathe/Deutsch brain and learning observations; screenshot outsideGit"
+  },
+  "public": {
+    "url": "https://gradecrew-staging-2026.web.app/lerngehirn/",
+    "http": 200,
+    "scope": "existing shared separated test Hosting; not gradecrew.de/SchoolLive, no hosting changed",
+    "authentication": "test account sign-in required; no credentials published",
+    "manifest": "https://gradecrew-staging-2026.web.app/lerngehirn/release.json",
+    "source": "777b2134abdf57a9131ad640338dd691a5e6d039",
+    "manifestListedAssetsVerified": 13,
+    "allListedHashesMatch": true
+  },
+  "availableDemonstration": [
+    "Mathe/Deutsch5-6 personal brain and clickable detailed learning network",
+    "open/practicing/help/evidence/next-step states",
+    "7workshop models and14diagram types when selected by task; no new generation run today",
+    "existing realAI backend connection; prior accepted-error learning paths evidenced2026-10-27",
+    "private own-profile help experience and reviewed fundus reuse as previously implemented"
+  ],
+  "limits": [
+    "Expired prior20minuteunit not reset or extended; no new lesson or model call started",
+    "Historical473Functions/109UI and real AI flows are27October evidence, not rerun today",
+    "Cold-start line diagram case and225goal calibration remain open",
+    "Local server depends on this Mac staying running; public address requires test account",
+    "No deployment/Authdisable/Rules/IAM/backendmigration/newaccount/newprovider/productionchange"
+  ],
+  "sourceLocal": "113a1d5fe6a7fdf05738f61e5c8bd4da5b21b57c",
+  "sourceRemoteBeforeReceipt": "992738ffb68383453cda8cacc764978a0d2cfc17",
+  "existingPR": 262,
+  "releaseStageUnchanged": "existing separated test deployment; local recovery only",
+  "requestedRoutineModelEffort": "Luna/medium guideline; no supported in-turn switch attempted",
+  "actualRuntimeModelEffort": "unknown",
+  "next": "Present local homepage; user selects exercise when ready. Further rollout is separate."
+}
