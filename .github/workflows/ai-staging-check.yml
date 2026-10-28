@@ -21,6 +21,7 @@ on:
       - 'feature/review-mode-*'
       - 'feature/local-staging-*'
       - 'fix/audio-*'
+      - 'fix/material-upload-*'
       - 'feat/admin-account-*'
       - 'fix/admin-*'
       - 'feature/live-staging-*'
@@ -85,6 +86,9 @@ jobs:
         run: |
           bash -n tools/cloud-shell-runtime.sh deploy-app-integration-preview.sh cloud-shell-bootstrap.sh
           python3 -m unittest tools.test_cloud_shell_runtime -v
+
+      - name: Material upload Storage and Firestore access regressions
+        run: npx --prefix tools/rules firebase emulators:exec --project demo-gc-material-upload --config firebase.material-upload-emulator.json --only firestore,storage "node --test tools/rules/material-upload-storage.emulator.test.mjs"
 
       - name: Run unit tests
         working-directory: functions

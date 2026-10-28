@@ -80,7 +80,20 @@ export function createAiClient(app, getUid) {
     const id = randomId();
     const storagePath = `aiUploads/${uid}/${id}/${safeName(file.name)}`;
     const task = uploadBytesResumable(ref(storage, storagePath), file, { contentType: file.type, customMetadata: { ownerId: uid, materialId: id } });
-    await new Promise((resolve, reject) => task.on("state_changed", snap => onProgress(Math.round((snap.bytesTransferred / snap.totalBytes) * 100)), reject, resolve));
+    try {
+      await new Promise((resolve, reject) => task.on("state_changed", snap => onProgress(Math.round((snap.bytesTransferred / snap.totalBytes) * 100)), reject, resolve));
+    } catch (err) {
+      const code = String(err?.code || "storage/unknown");
+      const reference = code === "storage/unauthorized" ? "GC-UPLOAD-ACCESS" : code === "storage/unauthenticated" ? "GC-UPLOAD-AUTH" : "GC-UPLOAD-RETRY";
+      const message = code === "storage/unauthenticated"
+        ? "Datei nicht hochgeladen. Bitte neu anmelden und erneut versuchen."
+        : code === "storage/unauthorized"
+          ? "Datei nicht hochgeladen. Der Zugriff auf deinen Materialspeicher wurde abgelehnt. Bitte den Support kontaktieren."
+          : "Datei konnte nicht hochgeladen werden. Bitte erneut versuchen.";
+      const safeError = new Error(`${message} Referenz: ${reference}.`);
+      safeError.code = code;
+      throw safeError;
+    }
     return { id, storagePath, mimeType: file.type, name: file.name, size: file.size };
   }
   async function removeMaterial(material) {
