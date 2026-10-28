@@ -5,6 +5,30 @@ const { planTestBatches, generateTestInBatches } = require("../lib/test-batches"
 const { normalizeQuestion, validateTest } = require("../lib/validation");
 const { balanceTestPoints } = require("../lib/repair-test");
 const { storedAiQuestion } = require("../lib/ai-job");
+const { testUserPrompt } = require("../lib/prompts");
+
+test("automatic points leave every batch without a hidden total target", () => {
+  for (const count of [1, 10, 21, 50, 100]) {
+    const batches = planTestBatches({ count, pointsMode: "auto", imageMode: "none", audioMode: "none" });
+    assert.equal(batches.reduce((sum, batch) => sum + batch.count, 0), count);
+    assert.ok(batches.every(batch => batch.pointsMode === "auto" && batch.points === undefined));
+  }
+  const prompt = testUserPrompt({ schoolType: "Mittelschule", region: "Bayern", subject: "Deutsch", grade: "5", topic: "Satzbau", difficulty: "mittel", count: 10, pointsMode: "auto", allowedTypes: ["single"], imageMode: "none", audioMode: "none" });
+  assert.match(prompt, /Punkte.*Aufgabe|Aufgabe.*Punkte/i);
+  assert.doesNotMatch(prompt, /Gesamtpunkte: exakt|Gesamtpunkte:.*20/);
+});
+test("automatic points preserve Remy's individual weights and derive the final sum", async () => {
+  const output = await generateTestInBatches({ count: 21, pointsMode: "auto", imageMode: "none", audioMode: "none" }, async batch => ({
+    data: { title: "Punktebeispiel", questions: Array.from({ length: batch.count }, (_, index) => ({
+      type: "truefalse", text: `Aussage ${batch.batchOffset + index + 1}`, correctBoolean: true,
+      points: (batch.batchOffset + index) % 2 ? 1.5 : 0.5
+    })) }
+  }));
+  const draft = balanceTestPoints({ ...output.data, questions: output.data.questions.map(normalizeQuestion) }, undefined);
+  assert.deepEqual(validateTest(draft, { expectedCount: 21, allowedTypes: ["truefalse"] }), []);
+  assert.deepEqual(draft.questions.map(q => q.points), output.data.questions.map(q => q.points));
+  assert.equal(draft.questions.reduce((sum, q) => sum + q.points, 0), 20.5);
+});
 
 test("all sizes preserve count, half-step points and exact image allocation", () => {
   for (let count = 1; count <= 100; count++) for (let images = 0; images <= Math.min(5, count); images++) for (const points of [count / 2, count / 2 + 0.5, count + 3.5]) {

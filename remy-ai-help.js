@@ -152,7 +152,7 @@ function currentContext() {
       topic: $("#aiTopic")?.value || "",
       difficulty: $("#aiDifficulty")?.value || "",
       count: Number($("#aiCount")?.value) || null,
-      points: Number($("#aiPoints")?.value) || null,
+      points: $("#aiPointsAuto")?.getAttribute("aria-pressed") === "true" ? null : Number($("#aiPoints")?.value) || null,
       imageQuestionCount: Number($("#aiImageQuestionCount")?.value) || 0,
       fullAudioQuestionCount: Number($("#aiFullAudioQuestionCount")?.value) || 0,
       audioQuestionCount: Number($("#aiAudioQuestionCount")?.value) || 0,
@@ -435,6 +435,7 @@ function applyPatch(patch = {}) {
   setField("#aiDifficulty", patch.difficulty);
   setField("#aiCount", patch.count);
   setField("#aiPoints", patch.points);
+  if (patch.points !== undefined && patch.points !== null && $("#aiPointsAuto")?.getAttribute("aria-pressed") === "true") $("#aiPointsAuto").click();
   if (patch.imageQuestionCount !== undefined && patch.imageQuestionCount !== null) setField("#aiImageQuestionCount", patch.imageQuestionCount);
   if (patch.fullAudioQuestionCount !== undefined && patch.fullAudioQuestionCount !== null) setField("#aiFullAudioQuestionCount", patch.fullAudioQuestionCount);
   if (patch.audioQuestionCount !== undefined && patch.audioQuestionCount !== null) setField("#aiAudioQuestionCount", patch.audioQuestionCount);

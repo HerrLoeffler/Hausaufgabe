@@ -116,10 +116,13 @@ function cleanSourceTest(value) {
 
 function cleanInput(data = {}) {
   const count = Math.max(1, Math.min(LIMITS.maxQuestions, Number(data.count) || 10));
-  const rawPoints = data.points === undefined ? 20 : Number(data.points);
-  if (!Number.isFinite(rawPoints) || rawPoints < 0.5 || Math.abs(rawPoints * 2 - Math.round(rawPoints * 2)) > 1e-8) throw new HttpsError("invalid-argument", "Gesamtpunkte müssen in positiven 0,5er-Schritten angegeben werden.");
-  const points = Math.round(rawPoints * 2) / 2;
-  if (points < count / 2) throw new HttpsError("invalid-argument", `Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
+  const pointsMode = data.pointsMode === undefined ? "fixed" : data.pointsMode;
+  if (!["fixed", "auto"].includes(pointsMode) || data.generationMode === "variant" && pointsMode !== "fixed") throw new HttpsError("invalid-argument", "Ungültiger Punktemodus.");
+  if (pointsMode === "auto" && data.points !== undefined) throw new HttpsError("invalid-argument", "Bei automatischen Punkten darf keine Gesamtpunktzahl vorgegeben werden.");
+  const rawPoints = pointsMode === "fixed" ? data.points === undefined ? 20 : Number(data.points) : undefined;
+  if (pointsMode === "fixed" && (!Number.isFinite(rawPoints) || rawPoints < 0.5 || Math.abs(rawPoints * 2 - Math.round(rawPoints * 2)) > 1e-8)) throw new HttpsError("invalid-argument", "Gesamtpunkte müssen in positiven 0,5er-Schritten angegeben werden.");
+  const points = pointsMode === "fixed" ? Math.round(rawPoints * 2) / 2 : undefined;
+  if (pointsMode === "fixed" && points < count / 2) throw new HttpsError("invalid-argument", `Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
   const allowedTypes = Array.isArray(data.allowedTypes) ? data.allowedTypes.filter(t => QUESTION_TYPES.includes(t)) : [];
   if (!allowedTypes.length) throw new HttpsError("invalid-argument", "Mindestens ein Aufgabentyp ist erforderlich.");
   const exactImageCounts = Object.hasOwn(data, "imageQuestionCount") || Object.hasOwn(data, "imageAnswerQuestionCount");
@@ -159,7 +162,7 @@ function cleanInput(data = {}) {
   return {
     schoolType: String(data.schoolType || "Mittelschule").slice(0, 100), region: String(data.region || "Bayern").slice(0, 100),
     subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, 500),
-    difficulty: String(data.difficulty || "mittel").slice(0, 50), count, points,
+    difficulty: String(data.difficulty || "mittel").slice(0, 50), count, pointsMode, ...(pointsMode === "fixed" ? { points } : {}),
     allowedTypes, notes: String(data.notes || "").slice(0, LIMITS.maxPromptChars), imageMode, exactImageCounts,
     imageQuestionCount: exactImageCounts ? imageQuestionCount : undefined, imageAnswerQuestionCount: exactImageCounts ? 0 : undefined,
     allowImageChoices: false,
@@ -309,7 +312,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
     const generationPrompt = `${testUserPrompt(input)}${variantPrompt(input)}${memoryGuide ? `\n${memoryGuide}` : ""}${personalGuide}${poolGuide}`;
     phase = "test-generation";
     await onProgress("test-generation", 15, "Die KI erstellt den Test …");
-    const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, targetPoints: input.points, maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, fullAudioQuestionCount: input.fullAudioQuestionCount, audioPresentationPolicy: input.audioPresentationPolicy, materialSources, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
+    const options = { allowedTypes: input.allowedTypes, allowImages: input.imageMode !== "none", allowImageChoices: input.allowImageChoices, allowAudio: input.audioMode !== "none", materialIds, expectedCount: input.count, ...(input.pointsMode !== "auto" ? { targetPoints: input.points } : {}), maxVisualQuestions: input.maxVisualQuestions, imageQuestionCount: input.imageQuestionCount, imageAnswerQuestionCount: input.imageAnswerQuestionCount, audioQuestionCount: input.audioQuestionCount, audioAnswerQuestionCount: input.audioAnswerQuestionCount, fullAudioQuestionCount: input.fullAudioQuestionCount, audioPresentationPolicy: input.audioPresentationPolicy, materialSources, referenceQuestions: input.sourceTest?.questions, negativeQuestions: memory.negativeQuestions };
     if (input.generationMode === "variant") Object.assign(options, { requireFreshVariant: true, variantInput: input });
     const earlyUsage = {};
     const checkMaterial = async response => {

@@ -329,7 +329,7 @@
             <label class="aiNotesField span2">Wichtig: Was soll der Test genau abfragen?<textarea id="aiCustomNotes" rows="2" maxlength="6000" aria-label="Was soll der Test genau abfragen?" aria-describedby="aiCustomNotesHint" placeholder="z. B. Brüche kürzen, ohne Textaufgaben"></textarea><small id="aiCustomNotesHint">Nenne Inhalte, Schwerpunkte und Anforderungen.</small></label>
             <div class="aiMetrics span2"><label>Aufgaben<input id="aiCount" type="number" min="1" max="100" value="10" /></label>
             <label>Niveau<select id="aiDifficulty"><option>leicht</option><option selected>mittel</option><option>anspruchsvoll</option><option>gemischt</option></select></label>
-            <label>Punkte<input id="aiPoints" type="number" min="0.5" step="0.5" value="20" /></label></div>
+            <div class="aiPointsMetric"><span class="aiPointsLabel">Punkte</span><div class="aiPointsControl"><input id="aiPoints" type="number" min="0.5" step="0.5" value="20" aria-label="Feste Gesamtpunktzahl" /><span id="aiPointsAutoValue" aria-label="Punkte werden automatisch bestimmt">–</span><button id="aiPointsAuto" type="button" aria-pressed="true" title="Punkte automatisch bestimmen">Auto</button></div></div></div>
           </div>
           <p id="aiPointsHint" class="hint" aria-live="polite"></p>
           <details class="aiOptionalTestOptions"><summary>Weitere Angaben <small>optional</small></summary><div class="formGrid2"><label>Schulart<input id="aiSchoolType" type="text" value="Mittelschule" /></label><label>Bundesland<input id="aiRegion" type="text" value="Bayern" /></label></div>
