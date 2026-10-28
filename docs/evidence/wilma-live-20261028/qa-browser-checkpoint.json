@@ -1,0 +1,24 @@
+{
+  "source": "e6af8328d34833c78474db1fc7033c3e0875997e",
+  "fixture": "WILMAFULL20261028",
+  "checks": {
+    "normalTeacherWholeFormSave": "pass",
+    "staleSecondTabConflict": "pass",
+    "deferAndUndo": "pass",
+    "realProviderProposalNoAutoSave": "pass",
+    "exactRepeatCache": "pass: counter stayed3",
+    "confirmRecalculatesGrade": "pass",
+    "halfPointSaveAndUndo": "pass",
+    "nextSkipsClosedTask": "pass",
+    "synonym2of2": "pass",
+    "spelling1of2EmptyZero": "pass",
+    "flaggedFirst": "pass",
+    "twoAnswersOneProviderBatch": "pass: counter4",
+    "noOpenSummary": "pass"
+  },
+  "pending": [
+    "reload readback",
+    "tablet/mobile",
+    "Live backend/hosting"
+  ]
+}
