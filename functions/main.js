@@ -450,6 +450,7 @@ module.exports = {
   ...require("./admin-account-callables"),
   ...require("./review-mode-callables"),
   ...require("./feedback-image-lifecycle"),
+  ...require("./wilma-review-callables"),
   aggregateBugFeedback,
   getBugOpsSummary,
   recordCrewTelemetry,

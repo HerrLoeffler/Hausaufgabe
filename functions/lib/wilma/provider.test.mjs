@@ -1,0 +1,5 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {createWilmaProvider} from './provider.mjs';
+test('one explicit provider request, no storage or automatic paid retries',async()=>{let seen;const provider=createWilmaProvider({client:{responses:{create:async(...args)=>{seen=args;return {status:'completed',id:'req',model:'test',output:[{content:[{type:'output_text',text:'{"answers":[]}'}]}]};}}},model:'test',recordUsage:async()=>{}});const result=await provider({task:'Fiktiv'},{uid:'owner'});assert.equal(result.requestId,'req');assert.equal(seen[0].store,false);assert.deepEqual(seen[1],{timeout:120000,maxRetries:0});});
+test('partial provider response is not a grading proposal',async()=>{const provider=createWilmaProvider({client:{responses:{create:async()=>({status:'incomplete',output:[]})}},model:'test'});await assert.rejects(provider({},{}),/vollständig/);});
+test('refusal is not a grading proposal',async()=>{const provider=createWilmaProvider({client:{responses:{create:async()=>({status:'completed',output:[{content:[{type:'refusal'}]}]})}},model:'test'});await assert.rejects(provider({},{}),/Bewertung/);});

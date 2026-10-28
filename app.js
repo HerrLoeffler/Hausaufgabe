@@ -69,6 +69,13 @@ import { createLocalTourRepository } from "./guest-tour-port.mjs";
 import { installCrewTour } from "./gradecrew-tour.js?v=2.3.1-gc21";
 import { createQuestionFeedbackClient } from "./question-feedback-client.mjs";
 import {bindFeedbackImages} from './feedback-image-view.mjs';
+import {createWilmaDecisionClient} from './wilma-decision-client.mjs';
+import {canonicalDecisionState,canonicalJson,decisionQuestionSnapshot} from './wilma-decision-state.mjs';
+import {questionSnapshot} from './wilma-review-source.mjs';
+import {createWilmaReviewClient} from './wilma-review-client.mjs';
+import {installWilmaAnswerReview,reviewItem} from './wilma-answer-review.mjs';
+import {writeWholeTeacherReview} from './teacher-review-write.mjs';
+
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
 fetch("./release.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(r => r && diagnostics.setRelease(r)).catch(() => {});
@@ -1281,6 +1288,7 @@ onAuthStateChanged(auth, async (user) => {
   if (guestTourRepo && user) exitGuestTour();
   const accountChanged = state.user?.uid !== user?.uid;
   if (accountChanged) {
+    wilmaSavedOperations.clear();resetInlineReview();wilmaAnswerReview?.clear();
     window.GradeCrewNative?.setAuthState?.({ state: "checking" })?.catch(() => {});
     document.dispatchEvent(new CustomEvent("gradecrew:account-changed"));
     adminAuditCursor = null;
@@ -8261,17 +8269,71 @@ function submissionGrade(s) {
   const scoring = teacherGradingSummary(s);
   const savedGrade = s.grade !== null && s.grade !== "" ? Number(s.grade) : NaN;
   const hasSavedGrade = Number.isFinite(savedGrade) && savedGrade >= 1 && savedGrade <= 6;
-  if (!scoring.complete) return hasSavedGrade ? `${savedGrade} (vorläufig)` : "–";
+  if (!scoring.complete || (state.resultQuestions||[]).some(q=>reviewItem(q,s,parseGaps).requiresReview)) return hasSavedGrade ? `${savedGrade} (vorläufig)` : "–";
   if (hasSavedGrade) return savedGrade;
   const scale = s.gradeScaleSnapshot?.thresholds?.length === 6 ? s.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
   return gradeFromPercent(scoring.percent, scale);
 }
 
+let wilmaAnswerReview=null;
+const wilmaSavedOperations=new Map();
+async function requestWilma(data){
+  if(guestTourRepo||!state.user?.uid||state.currentResultsQuiz?.ownerId!==state.user.uid)throw new Error("Nur eigene Tests sind zugelassen.");
+  return (await httpsCallable(getFunctions(app,"europe-west1"),"reviewWilmaAnswers",{timeout:180000})(data)).data;
+}
+const persistWilmaDecision=createWilmaDecisionClient({getUid:()=>state.user?.uid?state.user.uid+":"+authStateGeneration:"",request:requestWilma});
+const reviewWithWilma=createWilmaReviewClient({request:data=>requestWilma({...data,action:'review'})});
+async function saveWilmaDecision({questionId,submissionId,decision,restore,expected}){
+  const quiz=state.currentResultsQuiz,uid=state.user?.uid,generation=authStateGeneration;
+  if(!quiz||quiz.ownerId!==uid||guestTourRepo)throw new Error("Kein Zugriff auf diese Abgabe.");
+  const key=uid+':'+quiz.id+':'+submissionId,last=wilmaSavedOperations.get(key);
+  const selected=restore?last?.questionId:questionId;
+  if(!selected||restore&&!last)throw new Error("Rückgängig-Beleg fehlt. Bitte Ergebnisse aktualisieren.");
+  const receipt=await persistWilmaDecision({quizId:quiz.id,submissionId,questionId:selected,questions:state.resultQuestions,expected,decision:restore?undefined:decision,undoOperationId:restore?last.operationId:undefined});
+  if(authStateGeneration!==generation||state.user?.uid!==uid||state.currentResultsQuiz?.id!==quiz.id)return;
+  wilmaSavedOperations.set(key,receipt);
+  state.submissions=state.submissions.map(s=>s.id===submissionId?{...s,...receipt.patch}:s);
+  renderResultsTable();
+}
+async function analyzeWilmaQuestion(questionId,criteria=""){
+  const quiz=state.currentResultsQuiz,uid=state.user?.uid,generation=authStateGeneration,question=state.resultQuestions.find(q=>q.id===questionId);
+  if(!quiz||!question||quiz.ownerId!==uid||guestTourRepo)throw new Error("Nur eigene Tests sind zugelassen.");
+  const questionVersion=questionSnapshot(question);
+  const candidates=state.submissions.filter(s=>{const item=reviewItem(question,s,parseGaps);return item.requiresReview&&!item.confirmed&&!item.technical;});
+  if(!candidates.length){toast("Keine offenen Antworten für Wilma.");return;}
+  for(let offset=0;offset<candidates.length;offset+=10){
+    if(authStateGeneration!==generation||state.user?.uid!==uid||state.currentResultsQuiz?.id!==quiz.id)throw new Error("Konto oder Test wurde gewechselt.");
+    const batch=candidates.slice(offset,offset+10),expectedAnswers=Object.fromEntries(batch.map(s=>[s.id,s.answers?.[questionId]??""]));
+    const receipt=await reviewWithWilma({quizId:quiz.id,questionId,expectedQuestion:questionVersion,maxPoints:Number(question.points),answerIds:batch.map(s=>s.id),expectedAnswers,criteria});
+    if(authStateGeneration!==generation||state.user?.uid!==uid||state.currentResultsQuiz?.id!==quiz.id||questionSnapshot(state.resultQuestions.find(q=>q.id===questionId)||{})!==questionVersion)throw new Error("Test oder Aufgabe wurde gewechselt; Vorschläge nicht übernommen.");
+    for(const proposal of receipt.answers){
+      const current=state.submissions.find(s=>s.id===proposal.id);
+      if(!current||JSON.stringify(current.answers?.[questionId]??"")!==JSON.stringify(expectedAnswers[proposal.id])||current.grading?.[questionId]?.reviewState==='confirmed')continue;
+      state.submissions=state.submissions.map(s=>s.id===proposal.id?{...s,grading:{...s.grading,[questionId]:{...s.grading?.[questionId],reviewSuggestion:{...proposal,source:'wilma-ai',requestId:receipt.requestId}}}}:s);
+    }
+  }
+  renderResultsTable();toast("Wilma geprüft. Auffällige Antworten zuerst.");
+}
+wilmaAnswerReview=installWilmaAnswerReview({document,
+  getContext:()=>{const allowed=!guestTourRepo&&state.user?.uid&&state.currentResultsQuiz?.ownerId===state.user.uid;return {quiz:allowed?state.currentResultsQuiz:null,questions:allowed?state.resultQuestions:[],submissions:allowed?state.submissions:[]};},
+  parseGaps,answerDisplay,correctDisplay,saveDecision:saveWilmaDecision,
+  openSubmission:id=>{wilmaAnswerReview.collapse();openReview(id);},beforeOpen:confirmDiscardInlineReview,notify:toast,analyzeQuestion:analyzeWilmaQuestion
+});
+
+function confirmDiscardInlineReview(){
+  const panel=$("reviewPanel"),scope=panel?.wilmaReviewScope;
+  if(scope&&!panel.classList.contains("hidden")){
+    const current=Array.from(panel.querySelectorAll('.manualPoints')).map(x=>x.value);
+    if(JSON.stringify(current)!==JSON.stringify(scope.points)&&!window.confirm("Ungespeicherte Punkte verwerfen?"))return false;
+  }
+  resetInlineReview();return true;
+}
 function resetInlineReview() {
   const panel = $("reviewPanel");
   const wrap = $("resultsTableWrap");
   if (!panel || !wrap) return;
   panel.classList.add("hidden");
+  panel.wilmaReviewScope=null;
   wrap.after(panel);
   wrap.querySelectorAll(".submissionReviewRow").forEach((row) => row.remove());
   wrap.querySelectorAll(".reviewBtn[aria-expanded]").forEach((button) => button.setAttribute("aria-expanded", "false"));
@@ -8297,6 +8359,7 @@ function placeInlineReview(id) {
 
 function renderResultsTable() {
   resetInlineReview();
+  wilmaAnswerReview?.refresh();
   const wrap = $("resultsTableWrap");
   if (!state.submissions.length) {
     wrap.innerHTML = `<div class="empty"><h2>Noch keine Abgaben</h2><p>Sobald Schüler den Test abgeben, erscheinen die Ergebnisse hier.</p></div>`;
@@ -8305,7 +8368,7 @@ function renderResultsTable() {
   let html = `<table class="resultTable"><thead><tr><th scope="col">Kürzel</th><th scope="col">Punkte</th><th scope="col">%</th><th scope="col">Note</th><th scope="col">Status</th><th scope="col">Dauer</th><th scope="col">Abgegeben</th><th scope="col"><span class="visuallyHidden">Aktionen</span></th></tr></thead><tbody>`;
   state.submissions.forEach((s) => {
     const duration = formatDuration(s.elapsedSeconds);
-    const scoringPending = !teacherGradingSummary(s).complete;
+    const scoringPending = !teacherGradingSummary(s).complete || (state.resultQuestions||[]).some(q=>reviewItem(q,s,parseGaps).requiresReview);
     const autoTag = s.autoSubmitted ? ` <span class="pill timedOut">Auto</span>` : "";
     const recoveryTag = s.recoveryReviewRequired ? ` <span class="pill review">${s.status === "review" ? "Nachübertragung · bitte prüfen" : "Nachübertragung geprüft"}</span>` : "";
     html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${scoringPending ? "review" : "graded"}">${scoringPending ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(s.studentName)}">Bewerten</button></td></tr>`;
@@ -8316,11 +8379,13 @@ function renderResultsTable() {
 }
 
 function openReview(id) {
+  if(wilmaAnswerReview?.isBusy()){toast("Bitte den laufenden Wilma-Vorgang abwarten.");return;}
   const s = state.submissions.find((x) => x.id === id);
   if (!s) return;
   const panel = $("reviewPanel");
   const returnFocus = document.activeElement;
   placeInlineReview(id);
+  panel.wilmaReviewScope={uid:state.user?.uid,quizId:state.currentResultsQuiz?.id,submissionId:id,state:canonicalDecisionState(s),quizUpdatedAt:canonicalJson(state.currentResultsQuiz?.updatedAt??null),questions:state.resultQuestions.map(q=>({id:q.id,version:decisionQuestionSnapshot(q)}))};
   panel.classList.remove("hidden");
   panel.setAttribute("aria-labelledby", "reviewHeading");
   panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2 id="reviewHeading" tabindex="-1">${escapeHtml(s.studentName)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div><div class="reviewHeader"><strong id="reviewTotal"></strong><button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
@@ -8384,6 +8449,9 @@ function openReview(id) {
     });
   });
   recompute();
+  panel.wilmaReviewScope.points=Array.from(panel.querySelectorAll('.manualPoints')).map(x=>x.value);
+  const openCount=state.resultQuestions.filter(q=>reviewItem(q,s,parseGaps).requiresReview).length;
+  if(openCount&&!guestTourRepo){const notice=document.createElement('div');notice.className='wilmaSheetNotice';notice.textContent=openCount+' Antworten offen';const link=document.createElement('button');link.type='button';link.className='button secondary';link.textContent='Zur Wilma-Prüfliste';link.addEventListener('click',()=>wilmaAnswerReview.openForQuestion(state.resultQuestions.find(q=>reviewItem(q,s,parseGaps).requiresReview)?.id));notice.append(link);panel.querySelector('.reviewHeader').after(notice);}
   $("closeReview").addEventListener("click", () => {
     resetInlineReview();
     const target = returnFocus?.isConnected && !returnFocus.closest(".hidden") && returnFocus !== document.body ? returnFocus : $("resultsHeading");
@@ -8431,7 +8499,7 @@ async function saveReview(submissionId) {
     return;
   }
   try {
-    await updateDoc(doc(db, "quizzes", state.currentResultsQuiz.id, "submissions", submissionId), {
+    await writeWholeTeacherReview({db,doc,runTransaction,scope:panel.wilmaReviewScope,getActor:()=>({uid:state.user?.uid,quizId:state.currentResultsQuiz?.id}),patch:{
       grading,
       totalPoints: total,
       maxPoints: max,
@@ -8441,13 +8509,13 @@ async function saveReview(submissionId) {
       status: "graded",
       reviewedAt: serverTimestamp(),
       reviewedBy: state.user.uid
-    });
+    }});
     toast("Bewertung gespeichert.");
     await openResults(state.currentResultsQuiz.id);
     crewTour?.notify("review-saved", {quizId: state.currentResultsQuiz.id, submissionId});
   } catch (err) {
     console.error(err);
-    toast("Bewertung konnte nicht gespeichert werden.", "error");
+    toast(err.message||"Bewertung konnte nicht gespeichert werden.", "error");
   }
 }
 

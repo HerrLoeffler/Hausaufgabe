@@ -1,3 +1,9 @@
+import {createWilmaDecisionClient} from './wilma-decision-client.mjs';
+import {canonicalDecisionState,canonicalJson,decisionQuestionSnapshot} from './wilma-decision-state.mjs';
+import {questionSnapshot} from './wilma-review-source.mjs';
+import {createWilmaReviewClient} from './wilma-review-client.mjs';
+import {installWilmaAnswerReview,reviewItem} from './wilma-answer-review.mjs';
+import {writeWholeTeacherReview} from './teacher-review-write.mjs';
 import {teacherGradingSummary} from './teacher-grading-summary.mjs';
 import { requestPublishReview } from './publish-review.mjs';
 import test from 'node:test';
@@ -125,7 +131,7 @@ test('app bootstrap binds its real auth controls after public entry installation
     const announcementReads = [];
     const forbidden = () => { forbiddenCalls += 1; throw new Error('Guest tutorial reached a provider'); };
     const bindings = {
-      requestPublishReview, teacherGradingSummary,
+      requestPublishReview, teacherGradingSummary,createWilmaDecisionClient,canonicalDecisionState,canonicalJson,decisionQuestionSnapshot,questionSnapshot,createWilmaReviewClient,installWilmaAnswerReview,reviewItem,writeWholeTeacherReview,
       initializeApp: () => ({}), getAuth: () => ({}), getFirestore: () => ({}), createAiClient: () => new Proxy({}, { get: () => forbidden }), installReviewMode,
       firebaseSignIn: (...args) => { loginCalls.push(args); return Promise.resolve({ user: {} }); },
       createDiagnostics: () => ({ record: noop, setRelease: noop }), installDiagnostics: noop,

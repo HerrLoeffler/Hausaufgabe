@@ -8,6 +8,7 @@ function privateResultStore() {
   const bucket = require("firebase-admin/storage").getStorage().bucket();
   return {
     write: async (path, value) => bucket.file(path).save(JSON.stringify(value), { resumable: false, metadata: { contentType: "application/json", cacheControl: "private, no-store" } }),
+    remove: async path => bucket.file(path).delete({ignoreNotFound:true}),
     read: async path => {
       try {
         const [metadata] = await bucket.file(path).getMetadata();
@@ -71,4 +72,4 @@ async function runMediaOperation({ db, uid, operationId, request, scope, resultS
   await ref.set({ ...record, state: "ready", resultPath, updatedAt: new Date() });
   return result;
 }
-module.exports = { runMediaOperation };
+module.exports = { runMediaOperation, privateResultStore };
