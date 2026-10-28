@@ -1,0 +1,10 @@
+{
+  "quizId": "YA572A9R",
+  "before": "Ordne die vier Bilder so, dass der Vorgang fachlich richtig dargestellt wird. Achte darauf, wie sich der feste Anteil und der flüssige Anteil verändern. Begründe anschließend deine Reihenfolge mit einer Beobachtung aus den Bildern.",
+  "after": "Die Bilder zeigen: Schmelzen eines Eiswürfels. Ordne die vier Bilder in die richtige zeitliche Reihenfolge. Jedes Bild gehört genau einmal in die Folge.",
+  "result": {
+    "updated": true,
+    "at": "2026-10-28T12:21:27.617Z"
+  },
+  "why": "Remove teacher/image-generation instructions from student task; preserve process direction and all images/order/points."
+}

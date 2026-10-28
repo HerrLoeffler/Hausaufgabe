@@ -84,6 +84,7 @@ export function parseVisualTask(question, { publicOnly = false } = {}) {
 export function normalizeVisualTask(question) {
   const task=parseVisualTask(question);
   task.maxPoints=Number(question.points)||task.maxPoints;
+  if(typeof question.text==='string'&&question.text.trim())task.prompt=question.text.trim();
   if(core().validate(task).length) fail();
   return JSON.stringify(task);
 }

@@ -1,0 +1,52 @@
+{
+  "results": [
+    {
+      "subject": "Biologie",
+      "quiz": "KPAWWW5Y",
+      "case": "correct",
+      "points": 2,
+      "maxPoints": 2,
+      "publicCards": 4,
+      "masterAbsent": true,
+      "solutionAbsent": true,
+      "resume": true,
+      "idempotent": true
+    },
+    {
+      "subject": "Biologie",
+      "quiz": "KPAWWW5Y",
+      "case": "partial",
+      "points": 1,
+      "maxPoints": 2,
+      "publicCards": 4,
+      "masterAbsent": true,
+      "solutionAbsent": true,
+      "resume": true,
+      "idempotent": true
+    },
+    {
+      "subject": "Biologie",
+      "quiz": "KPAWWW5Y",
+      "case": "wrong",
+      "points": 0,
+      "maxPoints": 2,
+      "publicCards": 4,
+      "masterAbsent": true,
+      "solutionAbsent": true,
+      "resume": true,
+      "idempotent": true
+    },
+    {
+      "subject": "Biologie",
+      "quiz": "KPAWWW5Y",
+      "case": "blank",
+      "points": 0,
+      "maxPoints": 2,
+      "publicCards": 4,
+      "masterAbsent": true,
+      "solutionAbsent": true,
+      "resume": true,
+      "idempotent": true
+    }
+  ]
+}

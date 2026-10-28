@@ -288,6 +288,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
   if(input.allowedVisualFormats?.length===1 && input.allowedVisualFormats[0]==='sequence' && input.allowedTypes.length===1 && input.allowedTypes[0]==='visual') {
     const result=await require('./lib/sequence-sheet').generateSequenceTest({...input,clientRequestId:requestId},{
       structured:params=>requestStructured(p=>getOpenAI().responses.create(p,{timeout:180000,maxRetries:0}),{model:TEXT_MODEL,store:false,reasoning:{effort:'medium'},input:[{role:'system',content:[{type:'input_text',text:params.systemPrompt}]},{role:'user',content:[{type:'input_text',text:params.userPrompt},...(params.content||[])]}],text:{format:{type:'json_schema',name:params.schemaName,strict:true,schema:params.schema}}}),onProgress,consumeImage:()=>consumeQuota(uid,'image'),
+      saveArtifact:async artifact=>{const ref=getFirestore().doc('aiJobs/'+createHash('sha256').update(uid+':'+requestId).digest('hex').slice(0,40));const snap=await ref.get();if(snap.exists&&snap.data().ownerId===uid&&snap.data().status==='running')await ref.update({sequenceDraft:artifact,updatedAt:Timestamp.now()});},
       record:(phase,usage,extra)=>recordUsage(uid,phase,usage,{...extra,requestId,recipe:'sequence-sheet-v1'}),
       generateMaster:async({prompt})=>{
         const response=await getOpenAI().images.generate({model:require('./lib/constants').IMAGE_MODEL,prompt,size:'2048x2048',quality:'medium',output_format:'webp',n:1},{timeout:360000,maxRetries:0});
@@ -697,7 +698,9 @@ exports.processAiTestJob = onTaskDispatched({
       questionPosition: activePosition, question: activeQuestion ? questionSnapshot(activeQuestion) : null,
       textModel: TEXT_MODEL, promptVersion: PROMPT_VERSION,
       request: requestSnapshot(job.input), materialCount: job.materials?.length || 0 };
-    const reported = err?.code === "image-mismatch"
+    const reported = err?.code === 'sequence-quality'
+      ? reportAiError(new HttpsError('failed-precondition',err.message,{reason:'sequence-quality',diagnostic:err.diagnostic}),'sequence-review')
+      : err?.code === "image-mismatch"
       ? reportAiError(new HttpsError("failed-precondition", `${err.message} Bitte erneut versuchen.`, {
         reason: String(err.lastIssue || "").slice(0, 180), diagnostic: err.diagnostic
       }), "image-review")

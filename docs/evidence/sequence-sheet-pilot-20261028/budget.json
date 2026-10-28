@@ -8,7 +8,7 @@
     "Physik"
   ],
   "maxMastersPerSequence": 2,
-  "maxMastersTotal": 6,
+  "maxMastersTotal": 7,
   "masterModel": "gpt-image-2",
   "textAndReviewModel": "existing TEXT_MODEL",
   "prior117Responses": "historical recipe pilot, separate; not reset",
@@ -29,6 +29,8 @@
   "source": "f8dcaebfbcbfa89b253243b2020cc2d43f671f51",
   "knownFailedJob": "cc5c56b67975b3b1ad3725aee6b7b5702b34bc78",
   "confirmation": "Exactly one Deutsch B job after concrete incidental-background review defect; one master only. Three scenarios, four logical jobs; max6masters preserved.",
-  "maxLogicalRequests": 4,
-  "currentKnownMasterResponses": 5
+  "maxLogicalRequests": 5,
+  "currentKnownMasterResponses": 5,
+  "secondKnownFailure": "f612d535626f13ff9dbe7dde5864dc2c9ed67946",
+  "ruling": "One final Deutsch C confirmation after genuine observed-caption mismatch. v1.2 repairs captions against actual pictures instead of regenerating for incidental details; private cropped draft retained. B pictures cannot be recovered because previous worker retained no asset. Exactly one extra master C, not a blind repeat; all A/B evidence preserved."
 }

@@ -1,0 +1,10 @@
+{
+  "quizId": "KPAWWW5Y",
+  "before": "Erstellt eine Vierbildfolge zur Keimung einer Bohne. Ordnet die vier Bilder in die richtige zeitliche Reihenfolge. Betrachtet dabei nur die sichtbaren Entwicklungsstadien. Achtet auf den durchsichtigen Becher, die feuchte Erde, die Wurzeln, den Spross und die Blätter. Im Bild dürfen keine Wörter, Zahlen, Pfeile oder Beschriftungen vorkommen.",
+  "after": "Die Bilder zeigen: Von der Bohne zur Jungpflanze. Ordne die vier Bilder in die richtige zeitliche Reihenfolge. Jedes Bild gehört genau einmal in die Folge.",
+  "result": {
+    "updated": true,
+    "at": "2026-10-28T12:21:26.853Z"
+  },
+  "why": "Remove teacher/image-generation instructions from student task; preserve process direction and all images/order/points."
+}
