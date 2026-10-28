@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "updatedAt": "2026-10-28T16:10:20.087Z",
+  "updatedAt": "2026-10-28T17:09:32.915Z",
   "canonicalBaseBranch": "main",
   "allowedStates": [
     "active",
@@ -24,6 +24,15 @@
     "v2."
   ],
   "workstreams": [
+    {
+      "id": "gc-remy-points-20261028",
+      "title": "GC-REMY-POINTS-20261028: plan for fixed or automatically determined points",
+      "primaryBranch": "docs/remy-points-mode-plan-20261028",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/remy-points-mode-20261028.md",
+      "relatedBranches": []
+    },
     {
       "id": "gc-pilot-funding-20261028",
       "title": "GC-PILOT-FUNDING-20261028: Pilotschulen und öffentliche Finanzierung (Recherche)",

@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="740" viewBox="0 0 1400 740" role="img" aria-labelledby="title desc">
+  <title id="title">GradeCrew Entwurf: Punktefeld mit Auto-Schalter</title>
+  <desc id="desc">Zwei Ansichten des Remy-Formulars: links feste 35 Punkte, rechts automatische Punktzahl. Beide zeigen den Auto-Schalter neben dem kleinen Punktefeld.</desc>
+  <defs>
+    <style>
+      .body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;fill:#25304b}.white{fill:#fff}
+      .muted{fill:#65718b}.blue{fill:#345bc4}.small{font-size:13px}.label{font-size:14px;font-weight:650}.heading{font-size:20px;font-weight:760}.field{fill:#fff;stroke:#d5dce9;stroke-width:1.5}.input{font-size:16px;font-weight:600}.fine{font-size:12px;fill:#6d7890}.state{font-size:15px;font-weight:700;fill:#41506d}
+    </style>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="5" stdDeviation="11" flood-color="#27416e" flood-opacity=".08"/></filter>
+  </defs>
+  <rect width="1400" height="740" fill="#f6f8fb"/>
+  <rect width="1400" height="76" fill="#fff"/>
+  <path d="M0 75.5H1400" stroke="#e6eaf2"/>
+  <rect x="44" y="19" width="38" height="38" rx="10" fill="#4d2dc2"/>
+  <text x="63" y="44" class="body white" font-weight="850" font-size="17" text-anchor="middle">GC</text>
+  <text x="97" y="35" class="body" font-size="20" font-weight="800">GradeCrew</text>
+  <text x="98" y="53" class="body muted" font-size="12">Tests. Einfach digital.</text>
+  <text x="50" y="123" class="body" font-size="16" font-weight="650" fill="#345bc4">← Zurück</text>
+  <text x="143" y="123" class="body" font-size="22" font-weight="780">Test mit Remy erstellen</text>
+  <text x="50" y="176" class="body state">Punkte selbst festlegen</text>
+  <text x="716" y="176" class="body state">Punkte von Remy bestimmen lassen</text>
+
+  <!-- Fixed state card -->
+  <rect x="44" y="195" width="632" height="477" rx="18" fill="#fff" stroke="#e2e7f0" filter="url(#shadow)"/>
+  <rect x="62" y="216" width="30" height="30" rx="8" fill="#edf2fc"/>
+  <text x="77" y="237" class="body blue" font-size="16" font-weight="800" text-anchor="middle">1</text>
+  <text x="103" y="238" class="body heading">Angaben</text>
+  <text x="62" y="281" class="body label">Fach</text>
+  <text x="374" y="281" class="body label">Klasse</text>
+  <rect x="62" y="290" width="294" height="47" rx="9" class="field"/>
+  <rect x="374" y="290" width="284" height="47" rx="9" class="field"/>
+  <text x="74" y="320" class="body input" fill="#5b6680">Mathematik</text>
+  <text x="388" y="320" class="body input">9</text>
+  <text x="62" y="366" class="body label">Thema</text>
+  <rect x="62" y="375" width="596" height="47" rx="9" class="field"/>
+  <text x="75" y="405" class="body input" fill="#5b6680">Zinsrechnung</text>
+  <text x="62" y="453" class="body label">Aufgaben</text>
+  <text x="266" y="453" class="body label">Niveau</text>
+  <text x="469" y="453" class="body label">Punkte</text>
+  <rect x="62" y="462" width="184" height="49" rx="9" class="field"/>
+  <rect x="266" y="462" width="184" height="49" rx="9" class="field"/>
+  <rect x="469" y="462" width="107" height="49" rx="9" class="field"/>
+  <rect x="584" y="462" width="74" height="49" rx="9" fill="#f7f9fd" stroke="#cbd6ed" stroke-width="1.5"/>
+  <text x="76" y="494" class="body input">20</text>
+  <text x="280" y="494" class="body input">mittel</text>
+  <text x="432" y="493" class="body muted" font-size="13">⌄</text>
+  <text x="482" y="494" class="body input">35</text>
+  <text x="621" y="493" class="body blue" font-size="14" font-weight="750" text-anchor="middle">Auto</text>
+  <text x="469" y="539" class="body fine">Zahl eingeben oder Auto wählen</text>
+  <rect x="62" y="570" width="596" height="44" rx="9" fill="#f4f7fd" stroke="#d8e0f0"/>
+  <text x="75" y="598" class="body" font-size="14" font-weight="650">Weitere Angaben</text>
+  <text x="644" y="598" class="body fine" text-anchor="end">optional</text>
+  <text x="62" y="648" class="body" font-size="14" font-weight="700">20 Aufgaben · 35 Punkte</text>
+
+  <!-- Auto state card -->
+  <rect x="710" y="195" width="632" height="477" rx="18" fill="#fff" stroke="#e2e7f0" filter="url(#shadow)"/>
+  <rect x="728" y="216" width="30" height="30" rx="8" fill="#edf2fc"/>
+  <text x="743" y="237" class="body blue" font-size="16" font-weight="800" text-anchor="middle">1</text>
+  <text x="769" y="238" class="body heading">Angaben</text>
+  <text x="728" y="281" class="body label">Fach</text>
+  <text x="1040" y="281" class="body label">Klasse</text>
+  <rect x="728" y="290" width="294" height="47" rx="9" class="field"/>
+  <rect x="1040" y="290" width="284" height="47" rx="9" class="field"/>
+  <text x="740" y="320" class="body input" fill="#5b6680">Mathematik</text>
+  <text x="1054" y="320" class="body input">9</text>
+  <text x="728" y="366" class="body label">Thema</text>
+  <rect x="728" y="375" width="596" height="47" rx="9" class="field"/>
+  <text x="741" y="405" class="body input" fill="#5b6680">Zinsrechnung</text>
+  <text x="728" y="453" class="body label">Aufgaben</text>
+  <text x="932" y="453" class="body label">Niveau</text>
+  <text x="1135" y="453" class="body label">Punkte</text>
+  <rect x="728" y="462" width="184" height="49" rx="9" class="field"/>
+  <rect x="932" y="462" width="184" height="49" rx="9" class="field"/>
+  <rect x="1135" y="462" width="107" height="49" rx="9" fill="#f5f7fb" stroke="#e2e7ef" stroke-width="1.5"/>
+  <rect x="1250" y="462" width="74" height="49" rx="9" fill="#345bc4"/>
+  <text x="742" y="494" class="body input">20</text>
+  <text x="946" y="494" class="body input">mittel</text>
+  <text x="1098" y="493" class="body muted" font-size="13">⌄</text>
+  <text x="1148" y="494" class="body muted" font-size="19">–</text>
+  <text x="1287" y="493" class="body white" font-size="14" font-weight="750" text-anchor="middle">Auto</text>
+  <text x="1135" y="539" class="body fine">Remy vergibt die Punkte</text>
+  <rect x="728" y="570" width="596" height="44" rx="9" fill="#f4f7fd" stroke="#d8e0f0"/>
+  <text x="741" y="598" class="body" font-size="14" font-weight="650">Weitere Angaben</text>
+  <text x="1310" y="598" class="body fine" text-anchor="end">optional</text>
+  <text x="728" y="648" class="body" font-size="14" font-weight="700">20 Aufgaben · Punkte automatisch</text>
+
+  <text x="700" y="716" class="body fine" text-anchor="middle">Visueller Prototyp nach dem aktuellen GradeCrew-Formular · keine Änderung an gradecrew.de</text>
+</svg>
