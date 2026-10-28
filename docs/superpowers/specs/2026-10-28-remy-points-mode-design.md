@@ -1,15 +1,12 @@
 # Remy: Wahl zwischen fester und automatisch bestimmter Punktzahl
 
-**Task:** GC-REMY-POINTS-20261028 · Produktentwurf, noch keine Implementierung  
+**Task:** GC-REMY-POINTS-20261028 · Produktentwurf; Umsetzung in PR #377 (Live-Basis) und PR #376 (Integration)  
 **Stand:** 28.10.2026 · Grundlage: belegter Functions-Release `26ed109c`, öffentliches Hosting `89aaea9e`  
 **Ziel:** Lehrkräfte können vor der KI-Erstellung entweder eine feste Gesamtpunktzahl eingeben oder Remy passende Punkte pro Aufgabe und daraus die Gesamtpunktzahl bestimmen lassen.
 
 ## Nutzerablauf
 
-Im Formular „Test erstellen“ steht eine zweifache Wahl bei „Punkte“:
-
-1. **Gesamtpunkte festlegen** (Standard für neue und bestehende Abläufe): Das bisherige Zahlenfeld ist aktiv, voreingestellt mit 20. Bei 20 Aufgaben und 35 Punkten muss der fertige Entwurf weiterhin genau 35 Punkte haben.
-2. **Punkte automatisch bestimmen**: Das Zahlenfeld ist inaktiv und wird nicht an den Server gesendet. Ein kurzer Hinweis erklärt: „Remy vergibt Punkte passend zu den Aufgaben. Du kannst alle Punkte vor dem Veröffentlichen prüfen und ändern.“ Der fertige Entwurf zeigt die ermittelte Summe und die Punkte jeder Aufgabe.
+Im Formular „Test erstellen“ steht bei „Punkte“ ein kompakter **Auto**-Schalter direkt neben dem Punktefeld. Bei neuen Tests ist Auto standardmäßig aktiv und blau markiert; statt einer Zahl steht ein Strich im inaktiven Feld. Beim Ausschalten erscheint die feste Zahl (zunächst 20), die sich in 0,5er-Schritten ändern lässt. Ein zuvor eingegebener fester Wert bleibt beim erneuten Umschalten erhalten. Der fertige Entwurf zeigt die Summe und die Punkte jeder Aufgabe.
 
 Die Wahl wird vor dem Start in der Anforderungszusammenfassung angezeigt. Beim Wechsel zwischen den Modi bleibt eine eingegebene feste Zahl im Formular erhalten. Die Lehrkraft sieht vor Veröffentlichung den vollständigen Entwurf und kann bestehende Punktefelder bearbeiten; die Summe aktualisiert sich dabei. Ein bereits vorhandener Test oder eine aus ihm erzeugte Variante behält seinen bisherigen Punktevertrag.
 
@@ -26,7 +23,7 @@ Die Wahl wird vor dem Start in der Anforderungszusammenfassung angezeigt. Beim W
 - Keine neue KI-Runde nur für Punkte. Der Modus nutzt den bestehenden Generierungs- und Reparaturauftrag; Testbudget und Versuchsverlauf bleiben erhalten.
 - Ähnliche Tests/Varianten übernehmen weiter die Punkte der Vorlage. `pointsMode: "auto"` ist nur bei einer neuen freien Testerstellung zulässig.
 - Alte Clients und gespeicherte Jobs ohne `pointsMode` laufen wie bisher im festen Modus. Ein Automodus darf `points` nicht stillschweigend als 20 interpretieren. Widersprüchliche Eingaben (`auto` plus feste Zahl) werden eindeutig zurückgewiesen.
-- Produktionsveröffentlichung braucht eine eigene Freigabe. Vorher erfolgen isolierter Branch, Verhaltenstests, unabhängige Prüfung und Vorschau.
+- Martin hat am 28.10.2026 die Veröffentlichung auf gradecrew.de ausdrücklich beauftragt. Isolierter Branch, Verhaltenstests, unabhängige Prüfung, Staging-Vorschau und gezielte Funktionsfreigabe gehen dem Hosting-Release voraus. Die drei KI-Funktionen müssen vor der neuen Oberfläche aktiv sein, damit ein alter Server Auto-Anfragen nicht als 20-Punkte-Auftrag deutet.
 
 ## Ansätze und Entscheidung
 
@@ -34,6 +31,6 @@ Die Wahl wird vor dem Start in der Anforderungszusammenfassung angezeigt. Beim W
 
 Eine bloße Schaltfläche, die intern trotzdem 20 oder die zuvor eingegebene Summe an den Server schickt, erfüllt das Ziel nicht. Ein zweiter Generator oder eine neue Bewertungsengine würde Aufwand und Risiko ohne nötigen Nutzen erhöhen. Eine separate KI-Nachbewertung pro Aufgabe ist für diese erste Fassung ebenfalls nicht erforderlich: Lehrkräfte prüfen den editierbaren Entwurf. Bei später belegten Fairnessproblemen kann eine eigene Rubrikprüfung ergänzt werden.
 
-## Offener fachlicher Rest
+## Fachliche Abnahme
 
-Die Bedienbezeichnung und der Standard sind hier als Vorschlag festgelegt, damit die Umsetzung planbar ist. Vor dem Coding kann Martin den Wortlaut ändern. Ein Pilot sollte prüfen, ob die automatisch vergebenen Punkte bei gemischten Aufgaben für Lehrkräfte nachvollziehbar sind; das ist eine Nutzerabnahme und kein CI-Ergebnis.
+Martin hat Blau, den kompakten Auto-Schalter und Auto als Standard bestätigt. Nach dem Livegang sollte eine Lehrkraft einen erzeugten Entwurf mit gemischten Aufgaben darauf prüfen, ob die Einzelpunkte didaktisch nachvollziehbar sind; das ist eine Nutzerabnahme und kein CI-Ergebnis.
