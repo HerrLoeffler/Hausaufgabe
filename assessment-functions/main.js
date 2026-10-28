@@ -8,7 +8,8 @@ if (process.env.GCLOUD_PROJECT === "gradecrew-staging-2026") console.info("GC-CL
 module.exports = {
   ...require("./lib/secure-lifecycle"),
   ...require("./lib/cleanup"),
-  ...require("./lib/classroom-functions")
+  ...require("./lib/classroom-functions"),
+  ...require("./lib/school-export-functions")
 };
 
 if (process.env.GCLOUD_PROJECT === "gradecrew-staging-2026") console.info("GC-CLASSROOM-01 startup: exports loaded");

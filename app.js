@@ -70,6 +70,7 @@ import { DEMO_TEST as REVIEW_DEMO_TEST } from "./gradecrew-tour-v8.js";
 import { createLocalTourRepository } from "./guest-tour-port.mjs";
 import { installCrewTour } from "./gradecrew-tour.js?v=2.3.1-gc21";
 import { createQuestionFeedbackClient } from "./question-feedback-client.mjs";
+import { downloadSchoolPackage } from "./school-work-export.mjs";
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
 fetch("./release.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(r => r && diagnostics.setRelease(r)).catch(() => {});
@@ -7798,6 +7799,8 @@ function renderStudentResult(quiz, questions, answers, grading, points, maxPoint
 // ---------- Ergebnisse / manuelle Bewertung ----------
 $("refreshResultsBtn").addEventListener("click", () => state.currentResultsQuiz && openResults(state.currentResultsQuiz.id));
 $("exportResultsBtn").addEventListener("click", exportResultsCsv);
+const schoolExportPreviewEnabled = () => extendedPreview || (appEnvironment === "staging" && new URLSearchParams(location.search).get("schoolExportPreview") === "1");
+const schoolPreviewSubmission = submission => extendedPreview || (submission?.classroom && state.currentResultsQuiz?.schoolExportSynthetic === true);
 
 async function openResults(code) {
   if (guestTourRepo) {
@@ -7858,23 +7861,53 @@ function renderResultsTable() {
     const duration = formatDuration(s.elapsedSeconds);
     const autoTag = s.autoSubmitted ? ` <span class="pill timedOut">Auto</span>` : "";
     const recoveryTag = s.recoveryReviewRequired ? ` <span class="pill review">${s.status === "review" ? "Nachübertragung · bitte prüfen" : "Nachübertragung geprüft"}</span>` : "";
-    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${s.status === "review" ? "review" : "graded"}">${s.status === "review" ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(s.studentName)}">Bewerten</button></td></tr>`;
+    const schoolExport = schoolExportPreviewEnabled() && schoolPreviewSubmission(s) ? ` <button class="button secondary schoolExportBtn" data-id="${escapeHtml(s.id)}" aria-label="Arbeit exportieren: ${escapeHtml(s.studentName)}">Arbeit exportieren</button>` : "";
+    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${s.status === "review" ? "review" : "graded"}">${s.status === "review" ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(s.studentName)}">Bewerten</button>${schoolExport}</td></tr>`;
   });
   html += "</tbody></table>";
   wrap.innerHTML = html;
-  wrap.querySelectorAll(".reviewBtn").forEach((btn) => btn.addEventListener("click", () => openReview(btn.dataset.id)));
+  wrap.querySelectorAll(".reviewBtn").forEach((btn) => btn.addEventListener("click", () => openSchoolReview(btn.dataset.id)));
+  wrap.querySelectorAll(".schoolExportBtn").forEach((btn) => btn.addEventListener("click", () => exportSchoolWork(btn.dataset.id, btn)));
 }
 
-function openReview(id) {
+async function openSchoolReview(submissionId) {
+  const submission = state.submissions.find(item => item.id === submissionId);
+  if (!schoolExportPreviewEnabled() || !submission?.classroom || extendedPreview) { openReview(submissionId); return; }
+  if (!schoolPreviewSubmission(submission)) { openReview(submissionId); return; }
+  try {
+    const record = (await httpsCallable(getFunctions(app, "europe-west1"), "schoolExportWork", { timeout: 60000 })({ quizId: state.currentResultsQuiz.id, submissionId })).data;
+    if (!record.questions?.length || record.questions.some(item => item.source !== "submission-snapshot")) throw Error("Der eingefrorene Aufgabenstand fehlt. Bewertung über diesen Testpfad gesperrt.");
+    openReview(submissionId, record.questions.map(item => ({ id: item.id, ...item.data })));
+  } catch (error) { console.error(error); toast(error?.message || "Die Arbeit konnte nicht geladen werden.", "error"); }
+}
+
+async function exportSchoolWork(submissionId, button) {
+  if (!schoolExportPreviewEnabled() || !state.currentResultsQuiz || !state.submissions.some(s => s.id === submissionId)) return;
+  button.disabled = true;
+  try {
+    const record = extendedPreview
+      ? await extendedCall("school-export", { submissionId })
+      : (await httpsCallable(getFunctions(app, "europe-west1"), "schoolExportWork", { timeout: 60000 })({ quizId: state.currentResultsQuiz.id, submissionId })).data;
+    const receipt = await downloadSchoolPackage(record);
+    toast(receipt.valid ? "Arbeit und Prüfbeleg heruntergeladen. Paketdateien geprüft." : "Paketprüfung fehlgeschlagen.", receipt.valid ? "success" : "error");
+  } catch (error) {
+    console.error(error);
+    toast("Die Arbeit konnte nicht exportiert werden: " + (error?.message || "Unbekannter Fehler"), "error");
+  } finally { button.disabled = false; }
+}
+
+function openReview(id, questions = state.resultQuestions) {
   const s = state.submissions.find((x) => x.id === id);
   if (!s) return;
   const panel = $("reviewPanel");
   const returnFocus = document.activeElement;
   panel.classList.remove("hidden");
   panel.setAttribute("aria-labelledby", "reviewHeading");
-  panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2 id="reviewHeading" tabindex="-1">${escapeHtml(s.studentName)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div><div class="reviewHeader"><strong id="reviewTotal"></strong><button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
+  const auditReason = schoolExportPreviewEnabled() && schoolPreviewSubmission(s) ? `<label for="schoolReviewReason">Grund der Korrektur<input id="schoolReviewReason" type="text" maxlength="500" value="Manuelle Nachprüfung" required></label>` : "";
+  const undoButton = schoolExportPreviewEnabled() && (s.reviewCount || s.reviewedBy) && s.schoolReviewLastKind !== "undo" ? `<button id="undoSchoolReview" class="button secondary" type="button">Letzte Korrektur zurücknehmen</button>` : "";
+  panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2 id="reviewHeading" tabindex="-1">${escapeHtml(s.studentName)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div>${auditReason}<div class="reviewHeader"><strong id="reviewTotal"></strong>${undoButton}<button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
   const root = $("reviewQuestions");
-  state.resultQuestions.forEach((q, i) => {
+  questions.forEach((q, i) => {
     const g = s.grading?.[q.id] || { awardedPoints: 0, maxPoints: Number(q.points) || 0 };
     const div = document.createElement("div");
     div.className = "reviewQuestion";
@@ -7914,11 +7947,11 @@ function openReview(id) {
 
   const recompute = () => {
     const pts = Array.from(panel.querySelectorAll(".manualPoints")).reduce((sum, x) => {
-      const q = state.resultQuestions.find((item) => item.id === x.dataset.qid);
+      const q = questions.find((item) => item.id === x.dataset.qid);
       const max = Number(q?.points || 0);
       return sum + Math.max(0, Math.min(max, round1(Number(x.value) || 0)));
     }, 0);
-    const max = state.resultQuestions.reduce((sum, q) => sum + Number(q.points || 0), 0);
+    const max = questions.reduce((sum, q) => sum + Number(q.points || 0), 0);
     const pc = max ? Math.round((pts / max) * 100) : 0;
     const scale = s.gradeScaleSnapshot?.thresholds?.length === 6 ? s.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
     $("reviewTotal").textContent = `${round1(pts)}/${round1(max)} Punkte · ${pc}% · Note ${gradeFromPercent(pc, scale)}`;
@@ -7926,7 +7959,7 @@ function openReview(id) {
   panel.querySelectorAll(".manualPoints").forEach((x) => {
     x.addEventListener("input", recompute);
     x.addEventListener("change", () => {
-      const q = state.resultQuestions.find((item) => item.id === x.dataset.qid);
+      const q = questions.find((item) => item.id === x.dataset.qid);
       const max = round1(Number(q?.points || 0));
       x.value = Math.max(0, Math.min(max, round1(Number(x.value) || 0)));
       recompute();
@@ -7939,13 +7972,30 @@ function openReview(id) {
     target.tabIndex = target.tabIndex < 0 ? -1 : target.tabIndex;
     target.focus({ preventScroll: true });
   });
-  $("saveReview").addEventListener("click", () => saveReview(s.id));
+  $("saveReview").addEventListener("click", () => saveReview(s.id, questions));
+  $("undoSchoolReview")?.addEventListener("click", () => undoSchoolReview(s.id));
   $("reviewHeading").focus({ preventScroll: true });
   panel.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
   if (typeof crewTour !== "undefined") crewTour?.notify("review-opened", {quizId: state.currentResultsQuiz?.id, submissionId:id});
 }
 
-async function saveReview(submissionId) {
+async function undoSchoolReview(submissionId) {
+  const button = $("undoSchoolReview");
+  if (!button || !schoolExportPreviewEnabled() || !state.currentResultsQuiz) return;
+  const typed = $("schoolReviewReason")?.value.trim() || "";
+  const reason = typed === "Manuelle Nachprüfung" ? "Rücknahme der letzten Korrektur" : typed;
+  if (reason.length < 4) { toast("Bitte einen Rücknahmegrund angeben.", "error"); return; }
+  const operationId = button.dataset.operationId ||= `op_${crypto.randomUUID().replaceAll("-", "")}`;
+  button.disabled = true;
+  try {
+    if (extendedPreview) await extendedCall("undo", { submissionId, operationId, reason });
+    else await httpsCallable(getFunctions(app, "europe-west1"), "schoolUndoReview", { timeout: 60000 })({ quizId: state.currentResultsQuiz.id, submissionId, operationId, reason });
+    toast("Letzte Korrektur mit Rücknahmebeleg zurückgenommen.");
+    await openResults(state.currentResultsQuiz.id);
+  } catch (error) { console.error(error); toast("Rücknahme fehlgeschlagen: " + (error?.message || "Unbekannter Fehler"), "error"); button.disabled = false; }
+}
+
+async function saveReview(submissionId, questions = state.resultQuestions) {
   const panel = $("reviewPanel");
   const submission = state.submissions.find((x) => x.id === submissionId);
   if (!submission) return;
@@ -7953,7 +8003,7 @@ async function saveReview(submissionId) {
   let total = 0;
   let max = 0;
   panel.querySelectorAll(".manualPoints").forEach((inp) => {
-    const q = state.resultQuestions.find((x) => x.id === inp.dataset.qid);
+    const q = questions.find((x) => x.id === inp.dataset.qid);
     const qMax = Number(q?.points || 0);
     const awarded = Math.max(0, Math.min(qMax, round1(Number(inp.value) || 0)));
     grading[inp.dataset.qid] = {
@@ -7970,8 +8020,12 @@ async function saveReview(submissionId) {
   const percent = max ? Math.round((total / max) * 100) : 0;
   const scale = submission.gradeScaleSnapshot?.thresholds?.length === 6 ? submission.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
   const grade = gradeFromPercent(percent, scale);
+  const audited = schoolExportPreviewEnabled() && schoolPreviewSubmission(submission);
+  const reason = audited ? $("schoolReviewReason")?.value.trim() : "";
+  if (audited && (!reason || reason.length < 4)) { toast("Bitte einen Korrekturgrund angeben.", "error"); $("schoolReviewReason")?.focus(); return; }
+  const operationId = audited ? ($("saveReview").dataset.operationId ||= `op_${crypto.randomUUID().replaceAll("-", "")}`) : null;
   if (guestTourRepo) {
-    if(extendedPreview){await extendedCall('review',{submissionId,points:Object.fromEntries(Object.entries(grading).map(([id,g])=>[id,g.awardedPoints]))});await openResults(state.currentResultsQuiz.id);return;}
+    if(extendedPreview){await extendedCall('review',{submissionId,operationId,reason,points:Object.fromEntries(Object.entries(grading).map(([id,g])=>[id,g.awardedPoints]))});await openResults(state.currentResultsQuiz.id);return;}
     guestTourRepo.grade(state.currentResultsQuiz.id, submissionId, {
       grading, totalPoints: total, maxPoints: max, percent, grade,
       gradeScaleSnapshot: scale, status: 'graded', reviewedBy: 'local-tour'
@@ -7981,6 +8035,12 @@ async function saveReview(submissionId) {
     return;
   }
   try {
+    if (audited) {
+      await httpsCallable(getFunctions(app, "europe-west1"), "schoolSaveReview", { timeout: 60000 })({ quizId: state.currentResultsQuiz.id, submissionId, operationId, reason, points: Object.fromEntries(Object.entries(grading).map(([id, g]) => [id, g.awardedPoints])) });
+      toast("Bewertung mit Korrekturbeleg gespeichert.");
+      await openResults(state.currentResultsQuiz.id);
+      return;
+    }
     await updateDoc(doc(db, "quizzes", state.currentResultsQuiz.id, "submissions", submissionId), {
       grading,
       totalPoints: total,
@@ -9468,6 +9528,11 @@ if (["production", "staging", "local-review"].includes(appEnvironment)) {
       if(!extendedPreview||appEnvironment!=='local-review')return;
       extendedVariant=[1,2,3].includes(Number(event.detail?.variant))?Number(event.detail.variant):1;
       await openAiView();prefillTutorialRequest();$('aiTopic').value='Visuelle Aufgaben';$('aiSubject').value='Fächerübergreifender Formatvergleich';$('aiGrade').value='6';$('aiCount').value='9';$('aiPoints').value='24';$('aiImageQuestionCount').value='0';document.querySelectorAll('#aiTypeChecks input').forEach(c=>c.checked=c.value==='visual');const response=await extendedCall('generate',{variant:extendedVariant});await openExtendedGeneratedTest(response.test);
+    });
+    document.addEventListener('gradecrew:extended-results', async () => {
+      if (!extendedPreview || !state.currentQuiz?.id) return;
+      try { await openResults(state.currentQuiz.id); }
+      catch (error) { toast(error.message || 'Arbeiten konnten nicht geladen werden.', 'error'); }
     });
     document.addEventListener('gradecrew:extended-ai',async()=>{if(!extendedPreview)return;await openAiView();$('aiSubject').value='Mathematik';$('aiGrade').value='6';$('aiTopic').value='Winkel, Koordinaten und Diagramme';$('aiCount').value='9';$('aiPoints').value='24';for(const id of ['aiImageQuestionCount','aiAudioQuestionCount','aiSolutionAudioQuestionCount','aiAudioAnswerQuestionCount'])if($(id))$(id).value='0';document.querySelectorAll('#aiTypeChecks input').forEach(c=>{c.checked=c.value==='visual';});setAiProgress('Fach, Klasse und Thema wählen, dann mit Remy neu erstellen.');});
     document.addEventListener('gradecrew:extended-ai-resume',async()=>{if(!extendedPreview||state.extendedAiRunning)return;state.extendedAiRunning=true;try{const recovered=await resumeExtendedAi({onProgress:message=>toast(message)});const m=await import('./tools/extended-preview/recovery-dialog.mjs');m.showRecoveredAi(recovered,{openTest:async test=>{if(state.currentQuiz&&!(await saveCurrentQuiz(false)))throw Error('Der aktuelle Entwurf konnte nicht gesichert werden.');await openExtendedGeneratedTest(test);},acknowledge:async id=>{const c=await import('./tools/extended-preview/ai-client.mjs');c.acknowledgeExtendedAi(id);}});}catch(e){toast(e.message,'error');}finally{state.extendedAiRunning=false;}});

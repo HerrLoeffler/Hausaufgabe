@@ -15,7 +15,7 @@ if ((await fs.readdir(output)).length) throw new Error('Build directory must be 
 const config = await fs.readFile(path.join(root, environment.configFile), 'utf8');
 if (!config.includes(`projectId: "${environment.projectId}"`) || !config.includes(`appEnvironment = "${environment.name}"`)) throw new Error('Firebase configuration contradicts the explicit release environment.');
 const files = [
-  'question-feedback-client.mjs', 'legal-content.de.json', 'legal-pages.css',
+  'question-feedback-client.mjs', 'school-work-export.mjs', 'legal-content.de.json', 'legal-pages.css',
   'visual-preview255.mjs', 'tools/extended-preview/client.mjs', 'tools/extended-preview/ai-client.mjs', 'tools/extended-preview/recovery-dialog.mjs', 'visual-tasks.mjs', 'visual-format-choice.mjs', 'dreisatz.mjs', 'shared/dreisatz-builder.js', 'visual/authoring-fields.mjs', 'visual/core.js', 'visual/legacy-core.js', 'visual/sequence-illustrations.js', 'visual/assets/cosmos-botanical-v1.png', 'visual/renderers.js', 'interactive-task-authoring.mjs', 'visual/visual.css',
   'review-capture.mjs', 'review-mode.mjs', 'review-store.mjs', 'review-mode.css', 'functions/lib/review-checks.json',
   'diagnostics.mjs', 'admin-log-tools.mjs', 'bug-ops.mjs', 'student-submit-confirm.mjs', 'practice-solution-publication.mjs', 'secure-audio-publication.mjs', 'guest-tour-port.mjs', 'index.html', 'startup.js', 'staging-short-login.mjs', 'gradecrew-entry-flow.js', 'shared/math-display.mjs', 'shared/i18n/i18n-core.mjs', 'shared/i18n/browser-runtime.mjs', 'shared/i18n/messages-de-DE.mjs', 'shared/i18n/messages-en-GB.mjs', 'shared/i18n/extensions-en-GB-crew.mjs', 'shared/i18n/assessment-locale.mjs', 'shared/i18n/assessment-locale-ui.mjs', 'shared/i18n/bootstrap.mjs', 'app.js', 'interface.js', 'styles.css', 'generated/gradecrew-design-tokens.css', 'generated/gradecrew-assets.js', 'design-system.css', 'gradecrew-brand.css', 'gradecrew-logo.css', 'crew-clay.css', 'workspace.css', 'gradecrew-dashboard-foundation.css', 'gradecrew-auth-startscreen.css', 'gradecrew-auth-startscreen-polish.css', 'gradecrew-tour.css', 'tutorial-choice-v1.css',
@@ -23,7 +23,9 @@ const files = [
   'layout-enhancements.js', 'variant-enhancements.js', 'tutorial-variant-fallback.js', 'admin-ai-access.js',
   'editor-drafts.js', 'ai-review-state.js', 'ordering-grading.mjs', 'secure-assessment-teacher-polish.js',
   'secure-student.html', 'secure-student-navigation.mjs', 'secure-student.js', 'secure-student.css', 'secure-assessment-client.js', 'secure-draft-persistence.js', 'secure-deadline-guard.js', 'secure-result-policy.js', 'secure-solution-release.js',
-  'assets/vendor/qrcodejs-1.0.0.min.js', 'assets/vendor/qrcodejs-LICENSE.txt'
+  'assets/vendor/qrcodejs-1.0.0.min.js', 'assets/vendor/qrcodejs-LICENSE.txt',
+  'assets/vendor/pdf-lib-1.17.1.min.js', 'assets/vendor/pdf-lib-LICENSE.md',
+  'assets/vendor/jszip-3.10.1.min.js', 'assets/vendor/jszip-LICENSE.markdown'
 ];
 files.push(
   'tutorial-signins.mjs', 'dashboard-tutorial-entry.mjs',

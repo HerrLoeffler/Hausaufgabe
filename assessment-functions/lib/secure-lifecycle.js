@@ -861,6 +861,28 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
     const secureAnswers = sanitizeAnswersForStorage(gradingKey, request.data?.answers);
     const result = gradeSubmission(gradingKey, secureAnswers);
     const teacherAnswers = decodeSubmissionAnswersFromShape(decoderShape, secureAnswers, paperSecret);
+    // Personal classroom work keeps the exact authoring bytes that were valid
+    // for this attempt. The owner may edit an ended quiz later; export must not
+    // silently substitute those newer questions for the submitted work.
+    let schoolQuestionSnapshots = [];
+    let questionSnapshotMissingReason = null;
+    if (attempt.classroom) {
+      const questionSnaps = await tx.get(db.collection(`quizzes/${quizId}/questions`).orderBy("position"));
+      const snapshotBytes = questionSnaps.docs.reduce((sum, doc) => sum + Buffer.byteLength(JSON.stringify(doc.data())) + 1024, 0);
+      if (!questionSnaps.docs.length || questionSnaps.docs.length > 100 || snapshotBytes > 4_000_000) {
+        questionSnapshotMissingReason = "unavailable-or-too-large";
+      } else {
+        const currentQuestions = questionSnaps.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        try {
+          const currentContract = buildAssessmentContract(currentQuestions, paperSecret, {
+            shuffleQuestions: privateData.shuffleQuestions === true,
+            shuffleAnswers: privateData.shuffleAnswers === true
+          });
+          if (!privateData.authoringFingerprint || currentContract.authoringFingerprint !== privateData.authoringFingerprint) questionSnapshotMissingReason = "authoring-changed-during-attempt";
+          else schoolQuestionSnapshots = questionSnaps.docs;
+        } catch { questionSnapshotMissingReason = "authoring-changed-during-attempt"; }
+      }
+    }
     const scale = attempt.gradeScaleSnapshot?.thresholds?.length === 6 ? attempt.gradeScaleSnapshot : gradingScaleSnapshot(quiz);
     const needsReview = result.needsReview || recovery?.review === true;
     const grade = needsReview ? null : gradeFromPercent(result.percent, scale.thresholds);
@@ -894,10 +916,19 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
       autoSubmitted,
       lateSeconds,
       secureAssessmentVersion: 2,
+      ...(schoolQuestionSnapshots.length ? { questionSnapshotVersion: 1, questionSnapshotCount: schoolQuestionSnapshots.length } : {}),
+      ...(questionSnapshotMissingReason ? { questionSnapshotMissingReason } : {}),
       secureAnswerDigest: sha256(JSON.stringify(secureAnswers)),
       submittedAt
     };
     tx.create(sRef, submission);
+    for (const question of schoolQuestionSnapshots) {
+      tx.create(db.doc(`quizzes/${quizId}/submissions/${id}/questionSnapshots/${question.id}`), {
+        data: { id: question.id, ...question.data() },
+        recordedAtMillis: nowMillis,
+        schemaVersion: 1
+      });
+    }
     tx.update(aRef, {
       status: "submitted",
       submittedAt,

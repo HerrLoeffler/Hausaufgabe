@@ -1,5 +1,5 @@
 import {createRequire} from 'node:module';import {randomBytes,randomUUID} from 'node:crypto';import {makeVariation} from './variations.mjs';
-const require=createRequire(import.meta.url);const core=require('../../assessment-functions/lib/assessment-core.js');const decoder=require('../../assessment-functions/lib/teacher-answer-decoder.js');
+const require=createRequire(import.meta.url);const core=require('../../assessment-functions/lib/assessment-core.js');const decoder=require('../../assessment-functions/lib/teacher-answer-decoder.js');const schoolExport=require('../../assessment-functions/lib/school-export-core.js');
 const clone=v=>structuredClone(v);
 export function createExtendedService({state={draft:null,published:null,attempts:{}},persist=async()=>{},ai=null}={}){
  const metadata=()=>({id:'EXTENDED',title:state.published.quiz.title,subject:state.published.quiz.subject,grade:state.published.quiz.grade,gradeScaleSnapshot:clone(state.published.quiz.gradeScaleSnapshot),description:'Lokaler Aufgabentest · Abgaben bleiben auf diesem Mac',questionCount:state.published.questions.length,totalPoints:state.published.questions.reduce((n,q)=>n+q.points,0),timeLimitMinutes:0,startMode:'student',resultMode:'points_grade',showSolutions:false,sessionRunId:state.published.revision,published:true,ended:false});
@@ -25,15 +25,41 @@ export function createExtendedService({state={draft:null,published:null,attempts
   }
   if(action==='review'){
    const a=state.attempts[data.submissionId];if(!a?.receipt||a.revision!==state.published?.revision)throw Error('Keine aktuelle lokale Abgabe.');
+   if(typeof data.operationId!=='string'||!/^op_[a-f0-9]{32}$/.test(data.operationId)||typeof data.reason!=='string'||data.reason.trim().length<4)throw Error('Bitte einen Korrekturgrund angeben.');
+   const existing=(a.reviewHistory||[]).find(event=>event.id===data.operationId);if(existing)return {saved:true,repeated:true};
    const keys=a.contract.gradingKey;const points=data.points;
    if(!points||Object.keys(points).length!==keys.length||keys.some(k=>!Number.isFinite(points[k.id])||points[k.id]<0||points[k.id]>k.points||points[k.id]*2!==Math.round(points[k.id]*2)))throw Error('Ungültige Korrekturpunkte.');
-   a.reviewHistory=[...(a.reviewHistory||[]),{at:new Date().toISOString(),actor:'local-example-teacher',previousPoints:a.receipt.totalPoints}];
+   const before={grading:clone(a.result.grading),totalPoints:a.result.totalPoints,maxPoints:a.result.maxPoints,percent:a.result.percent,grade:a.receipt.grade,status:a.receipt.needsReview?'review':'graded'};
    for(const k of keys)a.result.grading[k.id]={...a.result.grading[k.id],awardedPoints:points[k.id],needsReview:false};
    a.result.totalPoints=Object.values(points).reduce((n,v)=>n+v,0);a.result.percent=Math.round(a.result.totalPoints/a.result.maxPoints*100);a.result.needsReview=false;
-   a.receipt={...a.receipt,...a.result,grade:core.gradeFromPercent(a.result.percent,a.quiz.gradeScaleSnapshot?.thresholds),localBreakdown:Object.values(a.result.grading).map((g,i)=>({number:i+1,points:g.awardedPoints,max:g.maxPoints}))};await persist(state);return {saved:true};
+   a.receipt={...a.receipt,...a.result,grade:core.gradeFromPercent(a.result.percent,a.quiz.gradeScaleSnapshot?.thresholds),localBreakdown:Object.values(a.result.grading).map((g,i)=>({number:i+1,points:g.awardedPoints,max:g.maxPoints}))};
+   const after={grading:clone(a.result.grading),totalPoints:a.result.totalPoints,maxPoints:a.result.maxPoints,percent:a.result.percent,grade:a.receipt.grade,status:'graded'};
+   a.reviewHistory=[...(a.reviewHistory||[]),{id:data.operationId,kind:'review',atMillis:Date.now(),actorUid:'local-example-teacher',reason:data.reason.trim(),before,after}];
+   await persist(state);return {saved:true};
+  }
+  if(action==='school-export'){
+   const a=state.attempts[data.submissionId];if(!a?.receipt||a.revision!==state.published?.revision)throw Error('Keine aktuelle lokale Abgabe.');
+   const submission={studentName:a.studentName,answers:decoder.decodeSubmissionAnswersFromShape(decoder.buildTeacherDecoderShape(a.questions),a.answers,a.secret),grading:a.result.grading,totalPoints:a.result.totalPoints,maxPoints:a.result.maxPoints,percent:a.result.percent,grade:a.receipt.grade,gradeScaleSnapshot:a.quiz.gradeScaleSnapshot,status:a.result.needsReview?'review':'graded',secureAssessmentVersion:2,questionSnapshotVersion:1,startedAtServerMillis:null};
+   const questions=a.questions.map(q=>({id:q.id,data:q,source:'submission-snapshot',recordedAtMillis:Date.parse(a.submittedAt)}));
+   const record=schoolExport.buildExportRecord({quizId:'EXTENDED',submissionId:a.id,quiz:a.quiz,submission,questions,events:a.reviewHistory||[],exportedAtMillis:Date.now()});
+   record.gaps.push({field:'serverSubmissionReceipt',reason:'local-synthetic-preview-only'});
+   return record;
+  }
+  if(action==='undo'){
+   const a=state.attempts[data.submissionId];if(!a?.receipt||a.revision!==state.published?.revision)throw Error('Keine aktuelle lokale Abgabe.');
+   if(typeof data.operationId!=='string'||!/^op_[a-f0-9]{32}$/.test(data.operationId)||typeof data.reason!=='string'||data.reason.trim().length<4)throw Error('Bitte einen Rücknahmegrund angeben.');
+   const existing=(a.reviewHistory||[]).find(event=>event.id===data.operationId);if(existing)return {saved:true,repeated:true};
+   const latest=a.reviewHistory?.at(-1);if(!latest||latest.kind==='undo')throw Error('Keine letzte Korrektur zum Zurücknehmen.');
+   if(JSON.stringify(a.result.grading)!==JSON.stringify(latest.after.grading)||a.result.totalPoints!==latest.after.totalPoints)throw Error('Bewertung inzwischen geändert. Bitte neu laden.');
+   const before=clone(latest.after);
+   a.result.grading=clone(latest.before.grading);a.result.totalPoints=latest.before.totalPoints;a.result.maxPoints=latest.before.maxPoints;a.result.percent=latest.before.percent;a.result.needsReview=latest.before.status==='review';
+   a.receipt={...a.receipt,...a.result,grade:latest.before.grade};
+   const after=clone(latest.before);
+   a.reviewHistory.push({id:data.operationId,kind:'undo',undoOf:latest.id,atMillis:Date.now(),actorUid:'local-example-teacher',reason:data.reason.trim(),before,after});
+   await persist(state);return {saved:true};
   }
   if(action==='results'){
-   const submissions=Object.values(state.attempts).filter(a=>a.receipt&&a.revision===state.published?.revision).map(a=>({id:a.id,studentName:a.studentName,answers:decoder.decodeSubmissionAnswersFromShape(decoder.buildTeacherDecoderShape(a.questions),a.answers,a.secret),...a.receipt,...a.result,status:'graded',submittedAtLocal:a.submittedAt}));return {submissions,questions:state.published?.questions||[],quiz:state.published?.quiz||null};
+   const submissions=Object.values(state.attempts).filter(a=>a.receipt&&a.revision===state.published?.revision).map(a=>({id:a.id,studentName:a.studentName,answers:decoder.decodeSubmissionAnswersFromShape(decoder.buildTeacherDecoderShape(a.questions),a.answers,a.secret),...a.receipt,...a.result,status:'graded',submittedAtLocal:a.submittedAt,reviewCount:a.reviewHistory?.length||0,schoolReviewLastKind:a.reviewHistory?.at(-1)?.kind||null}));return {submissions,questions:state.published?.questions||[],quiz:state.published?.quiz||null};
   }
   if(!state.published)throw Error('Zuerst den lokalen Beispieltest im Editor veröffentlichen.');
   if(action==='getAssessmentInfo')return {quiz:metadata()};
