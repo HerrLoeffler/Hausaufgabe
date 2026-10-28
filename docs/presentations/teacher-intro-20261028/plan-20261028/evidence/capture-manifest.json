@@ -1,0 +1,28 @@
+[
+  {
+    "file": "remy-current-headerfree.png",
+    "date": "2026-10-28",
+    "origin": "https://gradecrew.de/workspace.html",
+    "sha256": "73816bf0a2fff844541b854e575705b52bced1c1846b880fdb0a94905745c5bc",
+    "size": [
+      1200,
+      737
+    ],
+    "physicalHeaderRemoval": 92,
+    "syntheticOnly": true,
+    "purpose": "current UI planning evidence, no generation or write"
+  },
+  {
+    "file": "emmi-current-headerfree.png",
+    "date": "2026-10-28",
+    "origin": "https://gradecrew.de/workspace.html",
+    "sha256": "414c3fcb553db0cda337d8a5777dd7e6790deab4bb086941fc716b0318b9ce9b",
+    "size": [
+      1200,
+      737
+    ],
+    "physicalHeaderRemoval": 92,
+    "syntheticOnly": true,
+    "purpose": "current UI planning evidence, no generation or write"
+  }
+]
