@@ -1,5 +1,7 @@
 # GradeCrew – gemeinsame To-do-Liste
 
+- [x] **GC-AUDIO-01 · Vorhandene Medien direkt sichtbar:** PR354/14a91188 live auf beiden bestehenden Adressen; Bilder direkt eingeblendet, Aufgaben-/Antwortplayer ohne Aufklappen; Quelltexte weiter bearbeitbar, Emmi erhalten.634 lokale+48 Browserprüfungen, exakteCI40592803399 grün, Hosting4ef1c1b6b4e993ae,206/206Dateien je Adresse. Geräteabnahme offen. [Übergabe](workstreams/visible-media-20261027.md).
+
 ## 27.10.2026 — Kompakte Tests auf gradecrew.de und Lehrer-App für iPhone/iPad
 
 - [x] **GC-AUDIO-01 · Emmi-Audiohinweis auf gradecrew.de:** Beim einzelnen Antwort-Audio kann die Lehrkraft jetzt bis zu 400 Zeichen dazu schreiben, was an Tempo, Betonung, Aussprache oder Sprechweise nicht passt. Der Hinweis geht nur in die Neuerzeugung dieser Spur; Antworttext und andere Spuren bleiben. [PR342](https://github.com/HerrLoeffler/Hausaufgabe/pull/342) integriert als `1269509e`; exakte [CI 40551229144](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40551229144) einschließlich Chromium/WebKit grün. Nur `generateQuestionAudio` im Liveprojekt aktualisiert und ACTIVE; Hosting auf [gradecrew.de](https://gradecrew.de/) mit 206/206 Hashes geprüft. Kein bezahlter Hörversuch oder physischer Gerätetest; [Übergabe](workstreams/emmi-answer-audio-feedback-20261027.md).

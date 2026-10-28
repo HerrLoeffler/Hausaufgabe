@@ -2581,7 +2581,50 @@
                 "limits_changed": false,
                 "user_test": "physical iPad keyboard acceptance pending",
                 "handoff": "workstreams/final-input-20261027.md",
-                "receipt": "workstreams/final-input-live-receipt-20261027.json"
+                "receipt": "workstreams/final-input-live-receipt-20261027.json",
+                "visible_media_followup": {
+                  "stage": "production",
+                  "task_id": "GC-WEB-REPAIR-20261007 / GC-AUDIO-01",
+                  "scope": "Hosting-only directly visible existing image/task/answer audio in teacher editor",
+                  "commit": "14a9118868b329e7a4a7c53f451123c40b90b8e5",
+                  "tree": "cc76f7d61443222ddec33a92914f5a3c90768bfe",
+                  "pr": 354,
+                  "ci": {
+                    "run": 40592803399,
+                    "conclusion": "success",
+                    "local_checks": 634,
+                    "browser_checks": 48,
+                    "independent_review": "no concrete P1/P2;30 targeted regressions passed"
+                  },
+                  "hosting": {
+                    "project": "hausaufgabe-staging",
+                    "version": "4ef1c1b6b4e993ae",
+                    "release_time": "2026-10-27T22:13:53.062Z",
+                    "origins": [
+                      {
+                        "origin": "https://gradecrew.de",
+                        "commit": "14a9118868b329e7a4a7c53f451123c40b90b8e5",
+                        "files": 206,
+                        "verified": 206,
+                        "failed": []
+                      },
+                      {
+                        "origin": "https://hausaufgabe-staging.web.app",
+                        "commit": "14a9118868b329e7a4a7c53f451123c40b90b8e5",
+                        "files": 206,
+                        "verified": 206,
+                        "failed": []
+                      }
+                    ]
+                  },
+                  "backend_changed": false,
+                  "limits_changed": false,
+                  "provider_calls": 0,
+                  "physical_device_acceptance": "pending",
+                  "recovery_checkpoint": "3468ba19df4b2832382ac9bcecd55d4085570979",
+                  "handoff": "workstreams/visible-media-20261027.md",
+                  "receipt": "workstreams/visible-media-live-receipt-20261027.json"
+                }
               }
             }
           }
