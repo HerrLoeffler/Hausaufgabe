@@ -2,6 +2,7 @@
 
 const { normalizeQuestion, validateQuestion, validateTest, sameQuestion, variantRepeats } = require("./validation");
 const { variantQuestionErrors } = require("./test-variant");
+const { normalizeCreationAudioPresentation } = require("./creation-contract");
 
 function questionIssues(test, options) {
   const questions = test.questions || [];
@@ -156,7 +157,7 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
     if (options.negativeQuestions?.some(other => sameQuestion(other, candidate))) reasons.push("Die neue Aufgabe ähnelt einer als fehlerhaft bewerteten Aufgabe.");
     if (options.reviewIssues?.some(issue => issue.index === index && String(issue.text || "").trim() === candidate.text)) reasons.push("Die neue Aufgabe wiederholt die bemängelte Fragestellung.");
     if (!reasons.length) {
-      const next = { ...test, questions: test.questions.map((question, i) => i === index ? candidate : question) };
+      const next = normalizeCreationAudioPresentation({ ...test, questions: test.questions.map((question, i) => i === index ? candidate : question) }, options);
       const nextQuota = imageQuota(next, options);
       const nextListeningQuota = audioQuota(next, options);
       reasons.push(...globalIssues(next, options).filter(error => {
@@ -182,7 +183,7 @@ async function validateAndRepairTest(test, options, { generateQuestion, regenera
     ? maxQuestionAttempts
     : Math.min(100, Math.max(8, expectedCount * 2));
   const prepare = draft => {
-    const trimmed = trimSurplusQuestions(draft, options);
+    const trimmed = trimSurplusQuestions(normalizeCreationAudioPresentation(draft, options), options);
     options = trimmed.options;
     if (options.requireFreshVariant && trimmed.test.questions?.length === options.variantInput?.variantSlots?.length) {
       return { ...trimmed.test, questions: trimmed.test.questions.map((question, index) => ({ ...question, points: options.variantInput.variantSlots[index].points })) };
