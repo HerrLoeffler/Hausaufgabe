@@ -2733,6 +2733,99 @@
         "material_emphasis": "proposal only; not implemented",
         "handoff": "workstreams/publish-clarity-20261028.md",
         "receipt": "workstreams/publish-clarity-live-receipt-20261028.json"
+      },
+      "two_audio_creation_20261028": {
+        "scope": "New creation only: combined mode disabled, two modes share min(5,N); saved media unchanged",
+        "task_id": "GC-AUDIO-01 / GC-WEB-REPAIR-20261007",
+        "stage": "production",
+        "source_commit": "26ed109c33145880d94cbf64bfa40c5e25251d68",
+        "source_tree": "983226aca3caae08f1e26d0a6c0f9195d3663880",
+        "pr": 362,
+        "ci": {
+          "run": 40687646178,
+          "result": "success",
+          "legal_run": 40687655206,
+          "functions_tests": 344,
+          "web_ui_tests": 642,
+          "browser_checks": 48
+        },
+        "hosting": {
+          "project": "hausaufgabe-staging",
+          "version": "f5ba2057ee988cfb",
+          "release_time": "2026-10-28T12:30:56.169Z",
+          "origins": [
+            {
+              "origin": "https://gradecrew.de",
+              "commit": "26ed109c33145880d94cbf64bfa40c5e25251d68",
+              "files": 206,
+              "verified": 206,
+              "failed": []
+            },
+            {
+              "origin": "https://hausaufgabe-staging.web.app",
+              "commit": "26ed109c33145880d94cbf64bfa40c5e25251d68",
+              "files": 206,
+              "verified": 206,
+              "failed": [],
+              "bounded_retry": {
+                "initial_failed_paths": [
+                  "assets/vendor/qrcodejs-1.0.0.min.js"
+                ],
+                "remaining": []
+              }
+            }
+          ],
+          "preview": [
+            {
+              "origin": "https://hausaufgabe-staging--two-audio-26ed-5sdrg0i4.web.app",
+              "commit": "26ed109c33145880d94cbf64bfa40c5e25251d68",
+              "files": 206,
+              "verified": 206,
+              "failed": []
+            }
+          ]
+        },
+        "functions": {
+          "changed": [
+            {
+              "id": "crewAssistant",
+              "state": "ACTIVE",
+              "hash": "d92cdfac2de48721a8908d77410107914e222ce2"
+            },
+            {
+              "id": "generateTest",
+              "state": "ACTIVE",
+              "hash": "d92cdfac2de48721a8908d77410107914e222ce2"
+            },
+            {
+              "id": "processAiTestJob",
+              "state": "ACTIVE",
+              "hash": "d92cdfac2de48721a8908d77410107914e222ce2"
+            },
+            {
+              "id": "startAiTestJob",
+              "state": "ACTIVE",
+              "hash": "d92cdfac2de48721a8908d77410107914e222ce2"
+            }
+          ],
+          "unchanged": 57
+        },
+        "live_form": {
+          "origin": "https://gradecrew.de/workspace.html",
+          "modes": [
+            "Aufgabe hören",
+            "Antworten hören"
+          ],
+          "combined_input_present": false
+        },
+        "provider_calls": 0,
+        "active_saved_tests_migrated": false,
+        "auth_rules_limits_increased": false,
+        "other_environment_changed": false,
+        "physical_device_acceptance": "pending",
+        "interpretation": "Two new-creation audio modes share min(5,N) tasks; combined new requests disabled; existing combined media unchanged.",
+        "handoff": "workstreams/two-audio-modes-20261028.md",
+        "receipt": "workstreams/two-audio-modes-live-receipt-20261028.json"
       }
     },
     {
