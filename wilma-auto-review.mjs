@@ -28,7 +28,7 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
    if(!ctx.actor||!ctx.quiz||!enabled(ctx))return Promise.resolve();
    const jobs=ctx.questions.flatMap(q=>['text','gapfill'].includes(q.type)?ctx.submissions.filter(s=>{
     const row=reviewItem(q,s,parseGaps);
-    return ['submitted','review','graded'].includes(s.status)&&row.requiresReview&&row.semanticPending&&!row.confirmed&&!row.deferred&&!row.technical&&row.proposal?.source!=='wilma-ai';
+    return ['submitted','review','graded'].includes(s.status)&&row.requiresReview&&row.semanticPending&&!row.confirmed&&!row.deferred&&!row.technical&&!row.sourceIssue&&row.proposal?.source!=='wilma-ai';
    }).map(s=>({q,s,key:identity(ctx,q,s)})):[]).filter(job=>!attempted.has(job.key));
    if(!jobs.length)return Promise.resolve();
    const priorFailure=failedByActor.get(ctx.actor);

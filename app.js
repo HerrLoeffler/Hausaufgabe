@@ -8317,6 +8317,7 @@ async function saveWilmaDecision({questionId,submissionId,decision,restore,expec
   if(authStateGeneration!==generation||state.user?.uid!==uid||state.currentResultsQuiz?.id!==quiz.id)return;
   wilmaSavedOperations.set(key,receipt);
   state.submissions=state.submissions.map(s=>s.id===submissionId?{...s,...receipt.patch}:s);
+  wilmaAutoReview?.clear(); // Rehydrate unchanged cached proposals after an authoritative point/undo patch.
   renderResultsTable();
 }
 async function analyzeWilmaQuestion(questionId,criteria="",onlySubmissionId=null){
