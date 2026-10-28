@@ -772,3 +772,10 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 
 - [x] Vorhandenen Bildfolgen-/Rezeptcode und Bildroute geprüft; Gesamtbild-Zuschnitt, Grenzen und sichere Weiterentwicklung im [bestehenden Regelwerk](docs/learning/AUTOMATIC_TASK_SELECTION.md#28102026-fachübergreifende-rezepte-und-flexible-bildfolgen--entwurf) und [Handoff](workstreams/remy-interactive-tests-20261026.md) dokumentiert. Kein neuer KI-Aufruf oder Deploy.
 - [ ] Lernhandlungen fachübergreifend mit eigenen Daten-/Bewertungsverträgen erweitern; Bilderzeugungsaufträge an Rezeptplanung anbinden. Bestehende Bildfolge über feste vier Karten/drei Familien hinaus mit geprüften Bildassets erweitern. Zuerst drei Vierbildfolgen als begrenzten Pilot planen: privates Gesamtbild, serverseitige Ausschnitte, tatsächliche Bildprüfung, eindeutige Reihenfolge und sichere serverseitige Bewertung. Limits nicht ohne gemessenen Bedarf anheben; Production ausgeschlossen.
+
+
+### GC-EXTENDED-QUESTION-TYPES-01 — echter Bildfolgen-Pilot verfügbar,28.10.2026
+
+- [x] Freie KI-Wunscheingabe und drei fächerübergreifende Vierkartenbeispiele auf [isolierter Testseite](https://gradecrew-staging-2026--sequence28-hxbbyqtu.web.app/bildfolgen/) veröffentlicht. Private Master, echte serverseitige Ausschnitte, zwei tatsächliche Bild-/Lösungsprüfungen, Bildbeschreibung gezielt reparierbar. [Bericht](https://github.com/HerrLoeffler/Hausaufgabe/blob/b861fd1ebc482b88ed86fb389ec39639676bbe51/docs/evidence/sequence-sheet-pilot-20261028/REPORT.md).
+- [x] Zwölf echte Serverfälle und369Backend-/136Assessment-/15visuelle Tests; Browserformular, Editoränderung, Maus/Tastatur/Reload. Fünf logische Jobs,3bereit/2kontrolliertblockiert,7Bildaufrufe; keine99%-Freigabe.210Hostingdateien verifiziert.
+- [ ] Martin beschreibt eigenen freien Wunsch und prüft Lernziel/Bilder/Lösung; danach physische Touch-/Lehrerprobe und weitere begrenzte Fachfälle. Allgemeine automatische Auswahl, Kreisfolgen und kanonischer/Production-Rollout bleiben offen. Keine weiteren bezahlten Proben allein wegen Chatwiederaufnahme.

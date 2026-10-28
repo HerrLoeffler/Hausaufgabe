@@ -3903,6 +3903,45 @@
         "runtime_changed": false,
         "production": "unchanged",
         "next": "Confirm the bounded sequence design and prepare implementation plan; preserve current Staging and prior attempt history."
+      },
+      "image_sequence_pilot_20261028": {
+        "stage": "staging_deployed",
+        "scope": "isolated sequence28 Hosting preview and16prefixed Functions only; not canonical Staging or Production",
+        "source": "207dbc64d2045e11ede8fa42281d7c4adf965d0d",
+        "hosting_source": "a8187beb8cba6a120e7a3addd6534eac28cd0f4d",
+        "evidence_commit": "b861fd1ebc482b88ed86fb389ec39639676bbe51",
+        "code_pr": 361,
+        "code_integrated": false,
+        "url": "https://gradecrew-staging-2026--sequence28-hxbbyqtu.web.app/bildfolgen/",
+        "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/b861fd1ebc482b88ed86fb389ec39639676bbe51/docs/evidence/sequence-sheet-pilot-20261028/REPORT.md",
+        "tests": {
+          "backend": 369,
+          "assessment": 136,
+          "visual": 15,
+          "server_cases": 12,
+          "hosting_files": 210
+        },
+        "real_runs": {
+          "scenarios": 3,
+          "jobs": 5,
+          "ready": 3,
+          "blocked": 2,
+          "master_images": 7,
+          "structured_responses": 19,
+          "recorded_tokens": 70522,
+          "price": "unknown"
+        },
+        "quizzes": {
+          "biology": "KPAWWW5Y",
+          "german": "M56XGEZZ",
+          "physics": "YA572A9R"
+        },
+        "quality": "requiredState separate from illustration; actual-image content review plus public-only blind solution; observed captions can be corrected without changing pictures/key; unknown motifs remain strict",
+        "teacher_acceptance": "pending",
+        "physical_touch_acceptance": "pending",
+        "additional_UI_submission_receipt": "not_observed_after_interruption; twelve separate server receipts verified",
+        "production": "unchanged",
+        "next_action": "Martin tests one own free request and reviews educational fit; then bounded subject/device validation before considering normal Staging integration."
       }
     },
     {
