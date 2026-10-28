@@ -3,8 +3,10 @@ const { creationAudioPlan } = require("./creation-contract");
 
 function planTestBatches(input, batchSize = 10) {
   const count = input.count;
-  const units = Math.round(input.points * 2);
-  if (!Number.isInteger(count) || count < 1 || count > 100 || !Number.isFinite(units) || units < count) throw new RangeError("Ungültige Testgröße oder Punkte");
+  const automatic = input.pointsMode === "auto";
+  const units = automatic ? undefined : Math.round(input.points * 2);
+  if (!Number.isInteger(count) || count < 1 || count > 100 || !automatic && (!Number.isFinite(units) || units < count)) throw new RangeError("Ungültige Testgröße oder Punkte");
+  if (automatic && input.points !== undefined) throw new RangeError("Automatische Punkte dürfen keine Zielsumme enthalten");
   if (!Number.isInteger(batchSize) || batchSize < 1) throw new RangeError("Ungültige Blockgröße");
   const size = count > 20 ? batchSize : count;
   const imageCount = input.exactImageCounts ? input.imageQuestionCount : input.maxVisualQuestions || 0;
@@ -22,7 +24,7 @@ function planTestBatches(input, batchSize = 10) {
     const audios = audioPlan ? inBatch(audioPlan.taskIndexes, offset, end) : slots ? slots.filter(slot => slot.audioKind === "ai_generated").length : Math.floor(end * plannedAudio / count) - Math.floor(offset * plannedAudio / count);
     const answerAudios = audioPlan ? inBatch(audioPlan.answerIndexes, offset, end) : slots ? slots.filter(slot => slot.answerAudio).length : Math.floor(end * plannedAnswerAudio / count) - Math.floor(offset * plannedAnswerAudio / count);
     batches.push({ ...input, count: end - offset,
-      points: slots ? slots.reduce((sum, slot) => sum + slot.points, 0) : (Math.floor(end * units / count) - Math.floor(offset * units / count)) / 2,
+      ...(automatic ? {} : { points: slots ? slots.reduce((sum, slot) => sum + slot.points, 0) : (Math.floor(end * units / count) - Math.floor(offset * units / count)) / 2 }),
       ...(input.exactImageCounts || slots ? { exactImageCounts: true, imageQuestionCount: images, imageAnswerQuestionCount: 0 } : {}),
       ...(input.exactAudioCounts || slots ? { exactAudioCounts: true, audioQuestionCount: audios } : {}),
       audioAnswerQuestionCount: answerAudios,
