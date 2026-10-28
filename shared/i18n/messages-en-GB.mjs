@@ -18,6 +18,11 @@ export const enGBMessages = Object.freeze({
   "nav.teachers": "For teachers",
   "nav.help": "Help",
   ...source({
+    "Wichtig: Was soll der Test genau abfragen?": "Important: what exactly should this test cover?",
+    "Nenne Inhalte, Schwerpunkte und Anforderungen.": "Describe content, priorities and requirements.",
+    "Fach, Klasse, Aufgaben, Punkte, Medien …": "Subject, year, questions, points, media …",
+    "Rahmendaten oben · Thema und Inhalte unter „Angaben“.": "Basic settings above · topic and content under Details.",
+
     "Ohne Upload: Angaben verwenden.": "Without uploads: use your settings.",
     "PDF, Bilder, Office · 10 Dateien · 15 MB": "PDF, images, Office · 10 files · 15 MB",
     "Anzahl: Aufgabe hören (0–5)": "Count: question audio (0–5)", "Anzahl: Antworten hören (0–5)": "Count: answer audio (0–5)", "Anzahl: Beides hören (0–5)": "Count: both (0–5)",
@@ -807,6 +812,10 @@ export const enGBMessages = Object.freeze({
 });
 
 export const enGBSourcePatterns = Object.freeze([
+  { pattern: /^Bilder \(max\. (\d+) Aufgaben\)$/, replacement: "Images (max. $1 questions)" },
+  { pattern: /^Audio: je Bereich max\. (\d+) Aufgaben$/, replacement: "Audio: max. $1 questions per category" },
+  { pattern: /^(\d+) Audioaufgaben$/, replacement: "$1 audio questions" },
+
   { pattern: /^Schön, dass du da bist, (.+)\.$/, replacement: "Great to have you here, $1." },
   { pattern: /^farben · keine Daten gespeichert$/, replacement: "colours · no data saved" },
   { pattern: /^tiere · keine Daten gespeichert$/, replacement: "animals · no data saved" },

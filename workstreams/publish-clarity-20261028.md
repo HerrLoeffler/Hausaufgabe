@@ -13,3 +13,10 @@ Assurance scope: preserve existing server validation, solution/end+grace/AI-revi
 Next: bounded independent review; source checkpoint/PR, exactCI, narrow worker default plus Hosting preview/hash verification, then both existing Live addresses. Physical device acceptance remains Martin's; synthetic browser proof is not a physical iPad test.
 
 Independent review foundP2: static More-details text described exam grace period in practice mode. Fixed with mode-specificDE/EN explanation and regression; required acknowledgement retained. No otherP1/P2. Matching browser now8layouts+tap-assignment pass acrossChromium/WebKit. No provider calls.
+
+
+## Consolidated small wording follow-up after green checkpoint9fc6f36e
+
+No release of9fc yet; exactCI on that checkpoint succeeded and retained. Latest delegated corrections consolidated before one final release: prominent wishes label/help (still not required), remove redundant no-upload/source-photo prose, top Remy guides basicsettings while topic/content below; technical parser continues accepting explicit topic in old input, no new recognition/model pipeline. Existing lower content microphone retained. Dynamic truthful limits: imagesmaxmin(5,N); audio percategorymaxmin(5,N), no false global5promise. Combined audio counts once in task-count summary. Actual failed request4task+4answer-2full=6distinctquestions;5is perchannel, notTTS-tracklimit, and not cause of finalhidden-count error. No limit increased or changed. Existing size/layout retained, summary contrast improved only.
+
+Material emphasis remains IDEA ONLY, not implemented: calm optional inline text “Mit deinem Unterrichtsmaterial wird der Test gezielter. Lade z. B. Hefteinträge oder Arbeitsblätter hoch.” No popup, layoutchange, strict-mode or rights changes. Current material selector stays disabled without upload and strict-first with material. This is guidance, not guaranteed exactness for unreadable material.

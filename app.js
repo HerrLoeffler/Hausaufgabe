@@ -2910,8 +2910,15 @@ function updateAiCreationSummary() {
   if (!node) return;
   const parts = [`${$("aiCount").value} Aufgaben`, `${$("aiPoints").value} Punkte`];
   if (state.aiMaterials.length) parts.push(`${state.aiMaterials.length} Materialquelle(n)`);
-  const media = [["aiImageQuestionCount", "Bilder"], ["aiAudioQuestionCount", "Hörtexte"], ["aiAudioAnswerQuestionCount", "Aufgaben mit Audioantworten"], ["aiFullAudioQuestionCount", "Aufgaben mit Aufgabe und Antworten als Audio"]];
-  for (const [id, label] of media) if (Number($(id)?.value) > 0) parts.push(`${$(id).value} ${label}`);
+  const images = Number($("aiImageQuestionCount")?.value || 0);
+  const audio = ["aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiFullAudioQuestionCount"].reduce((sum, id) => sum + Number($(id)?.value || 0), 0);
+  if (images > 0) parts.push(`${images} Bilder`);
+  if (audio > 0) parts.push(`${audio} Audioaufgaben`);
+  const count = Number($("aiCount").value), max = Number.isInteger(count) && count > 0 ? Math.min(5, count) : 5;
+  const imageLabel = $("aiImageQuotaLabel"), audioLabel = $("aiAudioQuotaLabel");
+  if (imageLabel) imageLabel.textContent = `Bilder (max. ${max} Aufgaben)`;
+  if (audioLabel) audioLabel.textContent = `Audio: je Bereich max. ${max} Aufgaben`;
+
   node.textContent = parts.join(" · ");
 }
 
