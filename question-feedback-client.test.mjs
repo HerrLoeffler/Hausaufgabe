@@ -9,9 +9,9 @@ test('offline rating is durable and retries exact ID after reload without automa
  client=createQuestionFeedbackClient({storage:store,api,project:'gradecrew-staging-2026'});client.setSession('one');online=true;
  await client.flush();assert.equal((await client.pending()).length,0);const retry=await client.submit(payload);assert.equal(retry.confirmed,true);assert.equal(sent[0].clientRequestId,sent[1].clientRequestId);assert.equal(sent.length,2);
 });
-test('two accounts and projects never share queue or late UI acknowledgement',async()=>{
- const store=storage();let resolve;const client=createQuestionFeedbackClient({storage:store,project:'hausaufgabe-staging',api:()=>new Promise(r=>resolve=r)});client.setSession('one');
- const task=client.submit(payload);for(let i=0;i<100&&!resolve;i++)await new Promise(r=>setImmediate(r));assert.equal(typeof resolve,'function');client.setSession('two');resolve({confirmed:true,id:'saved'});assert.equal((await task).confirmed,false);assert.equal((await client.pending()).length,0);
+test('two accounts and projects never share queue or late UI acknowledgement',{timeout:5000},async()=>{
+ const store=storage();let resolve,markStarted;const started=new Promise(r=>markStarted=r);const client=createQuestionFeedbackClient({storage:store,project:'hausaufgabe-staging',api:()=>new Promise(r=>{resolve=r;markStarted();})});client.setSession('one');
+ const task=client.submit(payload);await started;assert.equal(typeof resolve,'function');client.setSession('two');resolve({confirmed:true,id:'saved'});assert.equal((await task).confirmed,false);assert.equal((await client.pending()).length,0);
  const other=createQuestionFeedbackClient({storage:store,project:'gradecrew-staging-2026',api:async()=>{throw Error('offline');}});other.setSession('one');assert.equal((await other.pending()).length,0);
 });
 test('storage failure never pretends feedback was secured',async()=>{
