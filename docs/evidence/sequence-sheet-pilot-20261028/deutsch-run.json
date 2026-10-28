@@ -1,15 +1,15 @@
 {
   "case": "deutsch",
-  "requestId": "GC-SEQ28-deutsch-B",
-  "status": "failed",
+  "requestId": "GC-SEQ28-deutsch-C",
+  "status": "ready",
   "imageAttempts": 1,
-  "reason": "One confirmation after concrete incidental-background/teacher-prompt defect; old A preserved",
-  "preparedAt": "2026-10-28T12:20:00Z",
+  "reason": "One final confirmation of observed-caption repair; A/B retained; source207dbc64",
+  "preparedAt": "2026-10-28T12:30:00Z",
   "input": {
     "subject": "Deutsch",
     "grade": "5",
     "topic": "Vier Bilder als Grundlage einer kurzen Vorgangsbeschreibung: Ein Kind baut einen Schneemann. Zeige die sichtbaren Bauphasen, sodass man sie eindeutig ordnen und danach einen zusammenhängenden Text schreiben kann. Derselbe Garten und dasselbe Kind, keine Schrift oder Nummern, genau vier deutlich verschiedene Bilder.",
-    "clientRequestId": "GC-SEQ28-deutsch-B",
+    "clientRequestId": "GC-SEQ28-deutsch-C",
     "count": 1,
     "points": 2,
     "sequenceImageAttempts": 1,
@@ -24,82 +24,114 @@
     "materials": [],
     "notes": "Nur die gewollte fachliche Bildfolge. Eindeutiger Start und Zielzustand; keine Reihenfolgehinweise in Bild oder Bildunterschriften. Keine persönlichen Daten."
   },
-  "startedAt": "2026-10-28T12:22:37.687Z",
-  "jobId": "f612d535626f13ff9dbe7dde5864dc2c9ed67946",
-  "stage": "failed",
-  "updatedAt": "2026-10-28T12:24:01.771Z",
-  "error": "Die KI-Erstellung konnte wegen eines technischen Fehlers nicht abgeschlossen werden. Bitte erneut versuchen.",
-  "errorReference": "ff1d94ea",
-  "diagnostic": {
-    "schemaVersion": 1,
-    "promptVersion": "testify-ai-v17-visual-v2",
-    "stage": "sequence_review",
-    "jobId": "f612d535626f13ff9dbe7dde5864dc2c9ed67946",
-    "materialCount": 0,
-    "request": {
-      "subject": "Deutsch",
-      "imageMode": "none",
-      "difficulty": "mittel",
-      "allowedTypes": [
-        "visual"
-      ],
-      "topic": "Vier Bilder als Grundlage einer kurzen Vorgangsbeschreibung: Ein Kind baut einen Schneemann. Zeige die sichtbaren Bauphasen, sodass man sie eindeutig ordnen und danach einen zusammenhängenden Text schreiben kann. Derselbe Garten und dasselbe Kind, keine Schrift oder Nummern, genau vier deutlich verschiedene Bilder.",
-      "count": 1,
-      "region": "Bayern",
-      "grade": "5",
-      "points": 2,
-      "schoolType": "Mittelschule"
-    },
-    "recipe": "sequence-sheet-v1.1",
-    "textModel": "gpt-5.6-luna",
+  "startedAt": "2026-10-28T12:32:08.273Z",
+  "jobId": "0120ada4a48bb913f92a092d111cfd6c86a0e78e",
+  "stage": "ready",
+  "updatedAt": "2026-10-28T12:33:54.020Z",
+  "quizId": "M56XGEZZ",
+  "durationSeconds": 106,
+  "recipeSelection": {
+    "formats": [
+      "sequence"
+    ],
+    "version": "sequence-sheet-v1.2",
     "evidence": [
       {
         "question": 1,
         "attempt": 1,
-        "accepted": false,
+        "accepted": true,
         "content": {
-          "valid": false,
+          "valid": true,
           "unambiguous": true,
           "cards": [
             {
-              "id": "c14d6023aff974f9b",
+              "id": "c40040c44e6f24337",
               "valid": true,
-              "detail": "Das Bild zeigt die erste Bauphase eindeutig: Das Kind rollt eine große Schneekugel. Weitere Schneemannteile sind nicht vorhanden; Garten, Kind und Kleidung stimmen mit den übrigen Bildern überein."
+              "detail": "Das Kind rollt eine einzelne kleine Schneekugel über den verschneiten Boden. Weitere Schneekugeln oder ein Schneemann sind nicht sichtbar.",
+              "caption": "Ein Kind rollt eine einzelne kleine Schneekugel durch einen verschneiten Garten."
             },
             {
-              "id": "c3f03a959792a4e62",
+              "id": "cc1f8dec437784350",
               "valid": true,
-              "detail": "Das Bild zeigt eindeutig zwei übereinanderliegende Schneekugeln, während das Kind eine kleinere Kugel formt. Die Szene ist vollständig und klar von den anderen Phasen unterscheidbar."
+              "detail": "Das Kind setzt eine kleinere Schneekugel auf eine große Schneekugel. Es sind genau zwei Schneekugeln sichtbar; ein Kopf oder Schmuck fehlt.",
+              "caption": "Ein Kind setzt eine kleinere Schneekugel auf eine große Schneekugel."
             },
             {
-              "id": "c965c1972fa474cb6",
-              "valid": false,
-              "detail": "Die sichtbare Szene zeigt zwar drei übereinanderliegende Schneekugeln und das Kind mit einer Karotte. Entgegen der Beschreibung sind auf der obersten Kugel jedoch bereits deutlich zwei schwarze Augen zu sehen. Der geforderte Zustand 'Augen ... fehlen noch' ist daher im tatsächlichen Bild nicht erfüllt."
+              "id": "c4679c62fb6ed4d11",
+              "valid": true,
+              "detail": "Das Kind hält eine kleine Schneekugel auf einem Körper aus zwei größeren Schneekugeln. Der dreiteilige Schneemann ist noch ohne Gesicht und Kleidung.",
+              "caption": "Ein Kind setzt eine kleine Schneekugel auf einen Körper aus zwei größeren Schneekugeln."
             },
             {
-              "id": "c7fc581b8905e48cb",
+              "id": "cb5fc38b93e144933",
               "valid": true,
-              "detail": "Das Bild zeigt eindeutig den fertigen Schneemann mit Augen, Karottennase, Mund, Knöpfen, Zweigarmen und Schal sowie das danebenstehende Kind. Die wesentliche Szene ist vollständig sichtbar."
+              "detail": "Das Kind steht neben einem vollständig aufgebauten Schneemann mit Augen, Karottennase, Knöpfen und einem Schal.",
+              "caption": "Ein Kind steht neben einem fertigen Schneemann mit Augen, Karottennase, Knöpfen und Schal."
             }
           ],
-          "reason": "Die vier Bilder sind anhand der sichtbaren Bauphasen eindeutig ordbar: große Kugel rollen, zwei Kugeln und kleine Kugel formen, drei Kugeln mit Karotte, fertiger Schneemann. Die Bildfolge ist jedoch nicht vollständig korrekt umgesetzt, weil Karte c965c1972fa474cb6 entgegen ihrer Beschreibung bereits Augen zeigt. Die öffentlichen Bildunterschriften enthalten keine unzulässigen Reihenfolgehinweise oder Nummerierungen."
+          "reason": "Alle vier tatsächlich sichtbaren Bilder zeigen eindeutig unterscheidbare Bauzustände: eine einzelne Schneekugel, zwei gestapelte Schneekugeln, einen ungeschmückten dreiteiligen Schneemann und den geschmückten fertigen Schneemann. Die Reihenfolge ist fachlich eindeutig, die wesentlichen Szenen sind vollständig sichtbar, und Garten sowie Kind bleiben konsistent. Es gibt keine Schrift, Nummern, Pfeile oder abgeschnittenen wesentlichen Inhalte. Titel und Arbeitsauftrag nennen den Vorgang und verlangen die zeitliche Ordnung, ohne die Lösung durch eine Zustandsaufzählung vorwegzunehmen."
         },
         "blind": {
           "order": [
-            "c14d6023aff974f9b",
-            "c3f03a959792a4e62",
-            "c965c1972fa474cb6",
-            "c7fc581b8905e48cb"
+            "c40040c44e6f24337",
+            "cc1f8dec437784350",
+            "c4679c62fb6ed4d11",
+            "cb5fc38b93e144933"
           ],
           "unambiguous": true,
-          "reason": "Zuerst rollt das Kind eine große Schneekugel. Danach ist der Schneemann aus zwei Kugeln aufgebaut und die dritte Kugel wird gerollt. Anschließend setzt das Kind die Nase ein; zuletzt ist der fertige Schneemann vollständig geschmückt."
+          "reason": "Zuerst formt der Junge eine Schneekugel, dann setzt er die nächste Kugel auf die große Kugel. Danach fügt er die dritte Kugel als Kopf hinzu und schmückt schließlich den fertigen Schneemann."
         },
+        "captionRepairs": [
+          {
+            "id": "cc1f8dec437784350",
+            "before": "Ein Kind baut aus zwei Schneekugeln einen zweistöckigen Schneekörper.",
+            "after": "Ein Kind setzt eine kleinere Schneekugel auf eine große Schneekugel."
+          },
+          {
+            "id": "cb5fc38b93e144933",
+            "before": "Ein Kind steht neben einem fertigen Schneemann mit Karottennase, Augen, Knöpfen und Schal.",
+            "after": "Ein Kind steht neben einem fertigen Schneemann mit Augen, Karottennase, Knöpfen und Schal."
+          },
+          {
+            "id": "c40040c44e6f24337",
+            "before": "Ein Kind rollt eine kleine Schneekugel durch einen verschneiten Garten.",
+            "after": "Ein Kind rollt eine einzelne kleine Schneekugel durch einen verschneiten Garten."
+          }
+        ],
         "cardByteSizes": [
-          22646,
-          22192,
-          24048,
-          25626
+          23390,
+          24772,
+          22984,
+          24622
         ]
+      }
+    ]
+  },
+  "usage": {
+    "total_tokens": 6050,
+    "output_tokens": 1605,
+    "input_tokens": 4445,
+    "providerRequests": [
+      {
+        "responseId": "resp_0084097387aff6bc016ae1eb4b260487d29526df59a7387aeb",
+        "requestId": "req_08219a3b5ef342aa9b27562bc2b530f7",
+        "model": "gpt-5.6-luna",
+        "durationMs": 8655,
+        "phase": "sequence_storyboard_v1"
+      },
+      {
+        "responseId": "resp_0e9f1caf0e175c71016ae1eb8ae90487d2a47f5079852b90fc",
+        "requestId": "req_96ddae48ff614910b0e045453b41e366",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7028,
+        "phase": "sequence_content_review_v1"
+      },
+      {
+        "responseId": "resp_0d99336da98eebda016ae1eb92099887d2836d5f608895fcfd",
+        "requestId": "req_1d4b91f6a5584078bbea0b53ba9f411f",
+        "model": "gpt-5.6-luna",
+        "durationMs": 3739,
+        "phase": "sequence_blind_solution_v1"
       }
     ]
   }

@@ -1,0 +1,512 @@
+{
+  "logicalJobs": 5,
+  "readyJobs": 3,
+  "qualityBlockedJobs": 2,
+  "completedImageCalls": 7,
+  "completedStructuredResponses": 19,
+  "recordedTokens": 70522,
+  "price": "unknown",
+  "imageProviderRequestIds": "not separately retained by initial wrapper; logical IDs/master hashes and image usage retained",
+  "events": [
+    {
+      "kind": "sequence_content_review_v1",
+      "requestId": "GC-SEQ28-deutsch-A",
+      "model": null,
+      "inputTokens": 2020,
+      "outputTokens": 887,
+      "totalTokens": 2907,
+      "providerRequests": [
+        {
+          "responseId": "resp_0c7c15bb355a21bb016ae1e6b49e9c87d28f71faebb8577d68",
+          "requestId": "req_ba0a48473a194ce991467c36f30b3be7",
+          "model": "gpt-5.6-luna",
+          "durationMs": 9941,
+          "phase": "sequence_content_review_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:12:46.362Z"
+    },
+    {
+      "kind": "sequence_image",
+      "requestId": "GC-SEQ28-deutsch-A",
+      "model": "gpt-image-2",
+      "inputTokens": 699,
+      "outputTokens": 3568,
+      "totalTokens": 4267,
+      "providerRequests": [],
+      "masterSha256": "4eca6d522da7c78c81e83529ac6c9912d72847cd2510b8306c754abde2a086e3",
+      "attempt": 2,
+      "createdAt": "2026-10-28T12:13:37.725Z"
+    },
+    {
+      "kind": "test",
+      "requestId": "sequence28-14cdf0d8-cd7a-45d2-9",
+      "model": null,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "providerRequests": [],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:11:30.314Z"
+    },
+    {
+      "kind": "sequence_storyboard_v1",
+      "requestId": "GC-SEQ28-deutsch-C",
+      "model": null,
+      "inputTokens": 503,
+      "outputTokens": 695,
+      "totalTokens": 1198,
+      "providerRequests": [
+        {
+          "responseId": "resp_0084097387aff6bc016ae1eb4b260487d29526df59a7387aeb",
+          "requestId": "req_08219a3b5ef342aa9b27562bc2b530f7",
+          "model": "gpt-5.6-luna",
+          "durationMs": 8655,
+          "phase": "sequence_storyboard_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:32:19.579Z"
+    },
+    {
+      "kind": "sequence_content_review_v1",
+      "requestId": "GC-SEQ28-physik-A",
+      "model": null,
+      "inputTokens": 2667,
+      "outputTokens": 920,
+      "totalTokens": 3587,
+      "providerRequests": [
+        {
+          "responseId": "resp_0c8b98ff24590d0c016ae1e74a82ac87d2993dc8132eca01d1",
+          "requestId": "req_30cfffae7bf849fa9c99c019018878c0",
+          "model": "gpt-5.6-luna",
+          "durationMs": 11310,
+          "phase": "sequence_content_review_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:15:17.652Z"
+    },
+    {
+      "kind": "sequence_content_review_v1",
+      "requestId": "GC-SEQ28-deutsch-A",
+      "model": null,
+      "inputTokens": 1945,
+      "outputTokens": 1017,
+      "totalTokens": 2962,
+      "providerRequests": [
+        {
+          "responseId": "resp_0898a09487a5a623016ae1e6f68dac87d2a65d51a53ce6dced",
+          "requestId": "req_493d8d546f6d4767bc9b3250142fde1e",
+          "model": "gpt-5.6-luna",
+          "durationMs": 12760,
+          "phase": "sequence_content_review_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:13:55.153Z"
+    },
+    {
+      "kind": "sequence_content_review_v1",
+      "requestId": "GC-SEQ28-deutsch-C",
+      "model": null,
+      "inputTokens": 2375,
+      "outputTokens": 643,
+      "totalTokens": 3018,
+      "providerRequests": [
+        {
+          "responseId": "resp_0e9f1caf0e175c71016ae1eb8ae90487d2a47f5079852b90fc",
+          "requestId": "req_96ddae48ff614910b0e045453b41e366",
+          "model": "gpt-5.6-luna",
+          "durationMs": 7028,
+          "phase": "sequence_content_review_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:33:21.740Z"
+    },
+    {
+      "kind": "sequence_blind_solution_v1",
+      "requestId": "GC-SEQ28-deutsch-C",
+      "model": null,
+      "inputTokens": 1567,
+      "outputTokens": 267,
+      "totalTokens": 1834,
+      "providerRequests": [
+        {
+          "responseId": "resp_0d99336da98eebda016ae1eb92099887d2836d5f608895fcfd",
+          "requestId": "req_1d4b91f6a5584078bbea0b53ba9f411f",
+          "model": "gpt-5.6-luna",
+          "durationMs": 3739,
+          "phase": "sequence_blind_solution_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:33:25.642Z"
+    },
+    {
+      "kind": "sequence_content_review_v1",
+      "requestId": "GC-SEQ28-physik-A",
+      "model": null,
+      "inputTokens": 2691,
+      "outputTokens": 597,
+      "totalTokens": 3288,
+      "providerRequests": [
+        {
+          "responseId": "resp_0d82e30ad331348f016ae1e78bb9f087d298c4c34c35de3f4a",
+          "requestId": "req_3df58ae0a8ef4c3295e9fd978583e6ff",
+          "model": "gpt-5.6-luna",
+          "durationMs": 7075,
+          "phase": "sequence_content_review_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:16:18.607Z"
+    },
+    {
+      "kind": "sequence_blind_solution_v1",
+      "requestId": "GC-SEQ28-physik-A",
+      "model": null,
+      "inputTokens": 2288,
+      "outputTokens": 198,
+      "totalTokens": 2486,
+      "providerRequests": [
+        {
+          "responseId": "resp_09eae647780f9f0a016ae1e792d4e487d2bcb1d2f6d6591be0",
+          "requestId": "req_9f7592b98592486387e07ef68d538ba0",
+          "model": "gpt-5.6-luna",
+          "durationMs": 2791,
+          "phase": "sequence_blind_solution_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:16:21.498Z"
+    },
+    {
+      "kind": "sequence_storyboard_v1",
+      "requestId": "GC-SEQ28-physik-A",
+      "model": null,
+      "inputTokens": 390,
+      "outputTokens": 766,
+      "totalTokens": 1156,
+      "providerRequests": [
+        {
+          "responseId": "resp_04fc27a0d74a7011016ae1e711fbec87d28759e22ef1caf034",
+          "requestId": "req_214efef8271544a1bba642a7f2b993a0",
+          "model": "gpt-5.6-luna",
+          "durationMs": 7454,
+          "phase": "sequence_storyboard_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:14:17.299Z"
+    },
+    {
+      "kind": "sequence_blind_solution_v1",
+      "requestId": "GC-SEQ28-deutsch-A",
+      "model": null,
+      "inputTokens": 1393,
+      "outputTokens": 277,
+      "totalTokens": 1670,
+      "providerRequests": [
+        {
+          "responseId": "resp_0bf25ced5bb295e3016ae1e703698887d2832f903b6295dce1",
+          "requestId": "req_bed473563b314d4387e7260447a60828",
+          "model": "gpt-5.6-luna",
+          "durationMs": 4051,
+          "phase": "sequence_blind_solution_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:13:59.320Z"
+    },
+    {
+      "kind": "sequence_image",
+      "requestId": "GC-SEQ28-deutsch-B",
+      "model": "gpt-image-2",
+      "inputTokens": 334,
+      "outputTokens": 3568,
+      "totalTokens": 3902,
+      "providerRequests": [],
+      "masterSha256": "4660684e4eba863877c5aa3cce9a99dc0c4fdf5944f7fc44c28544bd2b3af7e5",
+      "attempt": 1,
+      "createdAt": "2026-10-28T12:23:40.047Z"
+    },
+    {
+      "kind": "sequence_image",
+      "requestId": "GC-SEQ28-deutsch-A",
+      "model": "gpt-image-2",
+      "inputTokens": 375,
+      "outputTokens": 3568,
+      "totalTokens": 3943,
+      "providerRequests": [],
+      "masterSha256": "edb563b62576a17a02bd225ba89f527f82db15d2b2a4a37ea2e2a8f2acb13aff",
+      "attempt": 1,
+      "createdAt": "2026-10-28T12:12:32.578Z"
+    },
+    {
+      "kind": "sequence_blind_solution_v1",
+      "requestId": "GC-SEQ28-deutsch-A",
+      "model": null,
+      "inputTokens": 1467,
+      "outputTokens": 282,
+      "totalTokens": 1749,
+      "providerRequests": [
+        {
+          "responseId": "resp_0ede1bba8af7d9e6016ae1e6be98cc87d2a8b10acc08ba94c2",
+          "requestId": "req_b827380c35a94fbc9d4afbc80f1ce7c2",
+          "model": "gpt-5.6-luna",
+          "durationMs": 3884,
+          "phase": "sequence_blind_solution_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:12:50.337Z"
+    },
+    {
+      "kind": "sequence_storyboard_v1",
+      "requestId": "sequence28-14cdf0d8-cd7a-45d2-9",
+      "model": null,
+      "inputTokens": 363,
+      "outputTokens": 857,
+      "totalTokens": 1220,
+      "providerRequests": [
+        {
+          "responseId": "resp_0a7c7ce28f6f5ffd016ae1e6313d3087d2aa572feedb67b4c5",
+          "requestId": "req_538bd3e3df4f4385960eac425f1769c7",
+          "model": "gpt-5.6-luna",
+          "durationMs": 7764,
+          "phase": "sequence_storyboard_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:10:32.796Z"
+    },
+    {
+      "kind": "sequence_storyboard_v1",
+      "requestId": "GC-SEQ28-deutsch-B",
+      "model": null,
+      "inputTokens": 415,
+      "outputTokens": 923,
+      "totalTokens": 1338,
+      "providerRequests": [
+        {
+          "responseId": "resp_0931c27c7119b4f9016ae1e911cbb087d29c8fb28de5b31aa4",
+          "requestId": "req_07e8e98dd23b4c27a1aa0aa8288dd09f",
+          "model": "gpt-5.6-luna",
+          "durationMs": 10148,
+          "phase": "sequence_storyboard_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:22:51.763Z"
+    },
+    {
+      "kind": "sequence_content_review_v1",
+      "requestId": "GC-SEQ28-deutsch-B",
+      "model": null,
+      "inputTokens": 2203,
+      "outputTokens": 1334,
+      "totalTokens": 3537,
+      "providerRequests": [
+        {
+          "responseId": "resp_032d8af13641e57b016ae1e94fe01c87d2ac44826f81d1f7e6",
+          "requestId": "req_8804b0ce812242c2aba9afc147f4e004",
+          "model": "gpt-5.6-luna",
+          "durationMs": 14032,
+          "phase": "sequence_content_review_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:23:57.739Z"
+    },
+    {
+      "kind": "sequence_image",
+      "requestId": "GC-SEQ28-physik-A",
+      "model": "gpt-image-2",
+      "inputTokens": 269,
+      "outputTokens": 3568,
+      "totalTokens": 3837,
+      "providerRequests": [],
+      "masterSha256": "8bc662937feeeb4af8fad5747880ffa69e573954f599978d5f0f8f465840c64c",
+      "attempt": 1,
+      "createdAt": "2026-10-28T12:15:03.539Z"
+    },
+    {
+      "kind": "sequence_image",
+      "requestId": "sequence28-14cdf0d8-cd7a-45d2-9",
+      "model": "gpt-image-2",
+      "inputTokens": 335,
+      "outputTokens": 3568,
+      "totalTokens": 3903,
+      "providerRequests": [],
+      "masterSha256": "f6c6f06dc8c38faa9c616deedb8cf82ff2967ef0fc4e49d6307fba1b23a306a6",
+      "attempt": 1,
+      "createdAt": "2026-10-28T12:11:16.321Z"
+    },
+    {
+      "kind": "test",
+      "requestId": "GC-SEQ28-physik-A",
+      "model": null,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "providerRequests": [],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:16:21.582Z"
+    },
+    {
+      "kind": "sequence_image",
+      "requestId": "GC-SEQ28-deutsch-C",
+      "model": "gpt-image-2",
+      "inputTokens": 351,
+      "outputTokens": 3568,
+      "totalTokens": 3919,
+      "providerRequests": [],
+      "masterSha256": "0a7095c73488098322c8c7689360c4e21fefe900c145a8e23b035f72b96daa7f",
+      "attempt": 1,
+      "createdAt": "2026-10-28T12:33:09.329Z"
+    },
+    {
+      "kind": "sequence_image",
+      "requestId": "GC-SEQ28-physik-A",
+      "model": "gpt-image-2",
+      "inputTokens": 522,
+      "outputTokens": 3568,
+      "totalTokens": 4090,
+      "providerRequests": [],
+      "masterSha256": "5e2d56b5f5cdfaaaf914eb114e70435dec718603e944fdf17d55121a94d3b917",
+      "attempt": 2,
+      "createdAt": "2026-10-28T12:16:08.992Z"
+    },
+    {
+      "kind": "sequence_blind_solution_v1",
+      "requestId": "sequence28-14cdf0d8-cd7a-45d2-9",
+      "model": null,
+      "inputTokens": 1558,
+      "outputTokens": 181,
+      "totalTokens": 1739,
+      "providerRequests": [
+        {
+          "responseId": "resp_007c8410ad42c623016ae1e66fc9ac87d2825fc45216dbdc0d",
+          "requestId": "req_10efde5ec49141bda66799d31d25f62c",
+          "model": "gpt-5.6-luna",
+          "durationMs": 2588,
+          "phase": "sequence_blind_solution_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:11:30.240Z"
+    },
+    {
+      "kind": "test",
+      "requestId": "GC-SEQ28-deutsch-C",
+      "model": null,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "totalTokens": 0,
+      "providerRequests": [],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:33:25.874Z"
+    },
+    {
+      "kind": "sequence_blind_solution_v1",
+      "requestId": "GC-SEQ28-physik-A",
+      "model": null,
+      "inputTokens": 2272,
+      "outputTokens": 563,
+      "totalTokens": 2835,
+      "providerRequests": [
+        {
+          "responseId": "resp_027d4cdbd6e11877016ae1e755db0c87d2896ea7ef2a567132",
+          "requestId": "req_d31b7b58718544129f7032bb34d67cdc",
+          "model": "gpt-5.6-luna",
+          "durationMs": 6828,
+          "phase": "sequence_blind_solution_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:15:24.556Z"
+    },
+    {
+      "kind": "sequence_content_review_v1",
+      "requestId": "sequence28-14cdf0d8-cd7a-45d2-9",
+      "model": null,
+      "inputTokens": 2067,
+      "outputTokens": 661,
+      "totalTokens": 2728,
+      "providerRequests": [
+        {
+          "responseId": "resp_0dd929c1f21577d5016ae1e66841c087d2afe80c5ea1622ad9",
+          "requestId": "req_d192112dde1c48a9aa8d8cfabb6d91a2",
+          "model": "gpt-5.6-luna",
+          "durationMs": 7432,
+          "phase": "sequence_content_review_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:11:27.554Z"
+    },
+    {
+      "kind": "sequence_storyboard_v1",
+      "requestId": "GC-SEQ28-deutsch-A",
+      "model": null,
+      "inputTokens": 377,
+      "outputTokens": 1191,
+      "totalTokens": 1568,
+      "providerRequests": [
+        {
+          "responseId": "resp_00c3018fe5ac9a9a016ae1e677c04887d29b994e92f882db1b",
+          "requestId": "req_a3ea62b342a94c4f939b1a508aa8726b",
+          "model": "gpt-5.6-luna",
+          "durationMs": 11658,
+          "phase": "sequence_storyboard_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:11:47.273Z"
+    },
+    {
+      "kind": "sequence_blind_solution_v1",
+      "requestId": "GC-SEQ28-deutsch-B",
+      "model": null,
+      "inputTokens": 1572,
+      "outputTokens": 269,
+      "totalTokens": 1841,
+      "providerRequests": [
+        {
+          "responseId": "resp_0573329111eb2e26016ae1e95e017c87d2a13270b7fc06dd40",
+          "requestId": "req_d972a8fd84654ab38c4cb7b6fca4182e",
+          "model": "gpt-5.6-luna",
+          "durationMs": 3504,
+          "phase": "sequence_blind_solution_v1"
+        }
+      ],
+      "masterSha256": null,
+      "attempt": null,
+      "createdAt": "2026-10-28T12:24:01.373Z"
+    }
+  ]
+}

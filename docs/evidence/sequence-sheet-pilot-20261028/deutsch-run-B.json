@@ -1,0 +1,106 @@
+{
+  "case": "deutsch",
+  "requestId": "GC-SEQ28-deutsch-B",
+  "status": "failed",
+  "imageAttempts": 1,
+  "reason": "One confirmation after concrete incidental-background/teacher-prompt defect; old A preserved",
+  "preparedAt": "2026-10-28T12:20:00Z",
+  "input": {
+    "subject": "Deutsch",
+    "grade": "5",
+    "topic": "Vier Bilder als Grundlage einer kurzen Vorgangsbeschreibung: Ein Kind baut einen Schneemann. Zeige die sichtbaren Bauphasen, sodass man sie eindeutig ordnen und danach einen zusammenh\u00e4ngenden Text schreiben kann. Derselbe Garten und dasselbe Kind, keine Schrift oder Nummern, genau vier deutlich verschiedene Bilder.",
+    "clientRequestId": "GC-SEQ28-deutsch-B",
+    "count": 1,
+    "points": 2,
+    "sequenceImageAttempts": 1,
+    "allowedTypes": [
+      "visual"
+    ],
+    "allowedVisualFormats": [
+      "sequence"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "materials": [],
+    "notes": "Nur die gewollte fachliche Bildfolge. Eindeutiger Start und Zielzustand; keine Reihenfolgehinweise in Bild oder Bildunterschriften. Keine pers\u00f6nlichen Daten."
+  },
+  "startedAt": "2026-10-28T12:22:37.687Z",
+  "jobId": "f612d535626f13ff9dbe7dde5864dc2c9ed67946",
+  "stage": "failed",
+  "updatedAt": "2026-10-28T12:24:01.771Z",
+  "error": "Die KI-Erstellung konnte wegen eines technischen Fehlers nicht abgeschlossen werden. Bitte erneut versuchen.",
+  "errorReference": "ff1d94ea",
+  "diagnostic": {
+    "schemaVersion": 1,
+    "promptVersion": "testify-ai-v17-visual-v2",
+    "stage": "sequence_review",
+    "jobId": "f612d535626f13ff9dbe7dde5864dc2c9ed67946",
+    "materialCount": 0,
+    "request": {
+      "subject": "Deutsch",
+      "imageMode": "none",
+      "difficulty": "mittel",
+      "allowedTypes": [
+        "visual"
+      ],
+      "topic": "Vier Bilder als Grundlage einer kurzen Vorgangsbeschreibung: Ein Kind baut einen Schneemann. Zeige die sichtbaren Bauphasen, sodass man sie eindeutig ordnen und danach einen zusammenh\u00e4ngenden Text schreiben kann. Derselbe Garten und dasselbe Kind, keine Schrift oder Nummern, genau vier deutlich verschiedene Bilder.",
+      "count": 1,
+      "region": "Bayern",
+      "grade": "5",
+      "points": 2,
+      "schoolType": "Mittelschule"
+    },
+    "recipe": "sequence-sheet-v1.1",
+    "textModel": "gpt-5.6-luna",
+    "evidence": [
+      {
+        "question": 1,
+        "attempt": 1,
+        "accepted": false,
+        "content": {
+          "valid": false,
+          "unambiguous": true,
+          "cards": [
+            {
+              "id": "c14d6023aff974f9b",
+              "valid": true,
+              "detail": "Das Bild zeigt die erste Bauphase eindeutig: Das Kind rollt eine gro\u00dfe Schneekugel. Weitere Schneemannteile sind nicht vorhanden; Garten, Kind und Kleidung stimmen mit den \u00fcbrigen Bildern \u00fcberein."
+            },
+            {
+              "id": "c3f03a959792a4e62",
+              "valid": true,
+              "detail": "Das Bild zeigt eindeutig zwei \u00fcbereinanderliegende Schneekugeln, w\u00e4hrend das Kind eine kleinere Kugel formt. Die Szene ist vollst\u00e4ndig und klar von den anderen Phasen unterscheidbar."
+            },
+            {
+              "id": "c965c1972fa474cb6",
+              "valid": false,
+              "detail": "Die sichtbare Szene zeigt zwar drei \u00fcbereinanderliegende Schneekugeln und das Kind mit einer Karotte. Entgegen der Beschreibung sind auf der obersten Kugel jedoch bereits deutlich zwei schwarze Augen zu sehen. Der geforderte Zustand 'Augen ... fehlen noch' ist daher im tats\u00e4chlichen Bild nicht erf\u00fcllt."
+            },
+            {
+              "id": "c7fc581b8905e48cb",
+              "valid": true,
+              "detail": "Das Bild zeigt eindeutig den fertigen Schneemann mit Augen, Karottennase, Mund, Kn\u00f6pfen, Zweigarmen und Schal sowie das danebenstehende Kind. Die wesentliche Szene ist vollst\u00e4ndig sichtbar."
+            }
+          ],
+          "reason": "Die vier Bilder sind anhand der sichtbaren Bauphasen eindeutig ordbar: gro\u00dfe Kugel rollen, zwei Kugeln und kleine Kugel formen, drei Kugeln mit Karotte, fertiger Schneemann. Die Bildfolge ist jedoch nicht vollst\u00e4ndig korrekt umgesetzt, weil Karte c965c1972fa474cb6 entgegen ihrer Beschreibung bereits Augen zeigt. Die \u00f6ffentlichen Bildunterschriften enthalten keine unzul\u00e4ssigen Reihenfolgehinweise oder Nummerierungen."
+        },
+        "blind": {
+          "order": [
+            "c14d6023aff974f9b",
+            "c3f03a959792a4e62",
+            "c965c1972fa474cb6",
+            "c7fc581b8905e48cb"
+          ],
+          "unambiguous": true,
+          "reason": "Zuerst rollt das Kind eine gro\u00dfe Schneekugel. Danach ist der Schneemann aus zwei Kugeln aufgebaut und die dritte Kugel wird gerollt. Anschlie\u00dfend setzt das Kind die Nase ein; zuletzt ist der fertige Schneemann vollst\u00e4ndig geschm\u00fcckt."
+        },
+        "cardByteSizes": [
+          22646,
+          22192,
+          24048,
+          25626
+        ]
+      }
+    ]
+  }
+}

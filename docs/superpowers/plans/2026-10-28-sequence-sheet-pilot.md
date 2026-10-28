@@ -1,6 +1,6 @@
 # Bildfolgen-Pilot Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Freie Lehrereingabe erzeugt eine fachlich geprüfte Vierkarten-Bildfolge in einem echten GradeCrew-Test.
 **Architecture:** Bestehender Job-, Editor- und Prüfungsablauf in isoliertem sequence28-Staging. KI plant vier Szenen, erzeugt ein privates Gesamtbild; Sharp schneidet vor Kompression vier Karten aus. Zwei separate KI-Prüfungen prüfen Bildinhalt und lösen die gemischte Folge ohne Schlüssel.
@@ -24,23 +24,26 @@
 ### Task 1: Geschlossener Kartenvertrag und vorhandener Renderer
 **Files:** visual/core.js, visual/renderers.js, visual-tasks.mjs; Funktionen-/Assessment-Kopien; functions/test/sequence-sheet.test.js.
 **Interface:** sequence spec family=generated-four, items[{id,caption,imageDataUrl}], private solution.order; je Karte maximal36000Zeichen, nur RIFF/WEBP, Gesamtvertrag180000Zeichen.
-- [ ] RED: vier Karten, öffentliche Redaktion, volle/teilweise/falsche Bewertung, MIME/Größe/Extrafelder und Legacy testen.
-- [ ] Implementieren und dieselben Tests GREEN ausführen.
-- [ ] Zwischencommit mit Übergabe sichern.
+- [x] RED: vier Karten, öffentliche Redaktion, volle/teilweise/falsche Bewertung, MIME/Größe/Extrafelder und Legacy testen.
+- [x] Implementieren und dieselben Tests GREEN ausführen.
+- [x] Zwischencommit mit Übergabe sichern.
 
 ### Task 2: Echte KI und freier Wunsch im bestehenden Jobablauf
 **Files:** functions/lib/sequence-sheet.js, functions/index.js, visual-format-choice.mjs, tools/build-visual-preview255.mjs, tools/sequence-pilot/*.
 **Interface:** generateSequenceTest(input,{structured,generateMaster,consumeImage,onProgress,record}) -> {test,meta}; nur explizite sequence-Auswahl nutzt diese Route, sonst bestehender Ablauf.
-- [ ] RED: Anfragedaten, Cropgeometrie, private Masterhaltung, Shuffle, ablehnende Reviews und begrenzte Wiederholung testen.
-- [ ] Implementieren: vierteiliger KI-Plan,2048²Master, vier echte WebP-Ausschnitte, unabhängige Inhaltsprüfung und schlüssellose Reihenfolgelösung. Bestehende Quoten/Nutzungsnachweise verwenden.
-- [ ] Freies Wunschformular mit bestehender Anmeldung, Jobfortschritt und Wiederaufnahme; erzeugten Test im normalen Editor öffnen. Formatänderung ebenfalls mit echter KI.
-- [ ] GREEN: gezielte Tests und bestehende relevante Web-/Functions-/Assessment-Prüfungen.
-- [ ] Gesamtänderung einmal unabhängig prüfen; konkrete Fehler beheben.
+- [x] RED: Anfragedaten, Cropgeometrie, private Masterhaltung, Shuffle, ablehnende Reviews und begrenzte Wiederholung testen.
+- [x] Implementieren: vierteiliger KI-Plan,2048²Master, vier echte WebP-Ausschnitte, unabhängige Inhaltsprüfung und schlüssellose Reihenfolgelösung. Bestehende Quoten/Nutzungsnachweise verwenden.
+- [x] Freies Wunschformular mit bestehender Anmeldung, Jobfortschritt und Wiederaufnahme; erzeugten Test im normalen Editor öffnen. Formatänderung ebenfalls mit echter KI.
+- [x] GREEN: gezielte Tests und bestehende relevante Web-/Functions-/Assessment-Prüfungen.
+- [x] Gesamtänderung einmal unabhängig prüfen; konkrete Fehler beheben.
 
 ### Task 3: Isoliert veröffentlichen, drei echte Fachproben und Belege
 **Files:** docs/evidence/sequence-sheet-pilot-20261028/*, workstreams/remy-interactive-tests-20261026.md; aktuelles main TODO/STATE nur eigener Eintrag.
-- [ ] Frische Development-/Deployprüfung und reviewbaren Quellcommit sichern.
-- [ ] Nur benannte sequence28-Functions und Hosting-Vorschau veröffentlichen, alle anderen Quellen unverändert belegen.
-- [ ] Biologie/Deutsch/Physik je eine freie Eingabe: ein Bild pro Folge, vier Ausschnitte, beide echten KI-Prüfungen. Fehlversuche erhalten und konkrete Fehler beheben.
-- [ ] Öffentliche Redaktion, Bewertung, Speichern/Wiederaufnahme und Bedienung prüfen; Screenshots sichern.
-- [ ] Bericht, Rezepterkenntnisse, Job-/Provider-IDs, Grenzen und nächsten Schritt dauerhaft sichern.
+- [x] Frische Development-/Deployprüfung und reviewbaren Quellcommit sichern.
+- [x] Nur benannte sequence28-Functions und Hosting-Vorschau veröffentlichen, alle anderen Quellen unverändert belegen.
+- [x] Biologie/Deutsch/Physik je eine freie Eingabe: ein Bild pro Folge, vier Ausschnitte, beide echten KI-Prüfungen. Fehlversuche erhalten und konkrete Fehler beheben.
+- [x] Öffentliche Redaktion, Bewertung, Speichern/Wiederaufnahme und Bedienung prüfen; Screenshots sichern.
+- [x] Bericht, Rezepterkenntnisse, Job-/Provider-IDs, Grenzen und nächsten Schritt dauerhaft sichern.
+
+## Ausführungsgrenzen
+Einzelne synchrone Regeneration zugunsten dauerhaftem Hintergrundauftrag zurückgestellt. Drei Szenarien benötigten fünf logische Jobs/sechs zunächst budgetierte, danach genau sieben tatsächliche Master; konkrete A/B-Fehler, Erweiterungsgrund und Nutzungszahlen stehen im Bericht. Physische Touch-/Lehrerabnahme offen; keine99%-Freigabe. Hosting abschließend separat verifiziert.

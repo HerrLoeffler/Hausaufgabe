@@ -47,6 +47,102 @@
       "solutionAbsent": true,
       "resume": true,
       "idempotent": true
+    },
+    {
+      "subject": "Deutsch",
+      "quiz": "M56XGEZZ",
+      "case": "correct",
+      "points": 2,
+      "maxPoints": 2,
+      "publicCards": 4,
+      "masterAbsent": true,
+      "solutionAbsent": true,
+      "resume": true,
+      "idempotent": true
+    },
+    {
+      "subject": "Deutsch",
+      "quiz": "M56XGEZZ",
+      "case": "partial",
+      "points": 1,
+      "maxPoints": 2,
+      "publicCards": 4,
+      "masterAbsent": true,
+      "solutionAbsent": true,
+      "resume": true,
+      "idempotent": true
+    },
+    {
+      "subject": "Deutsch",
+      "quiz": "M56XGEZZ",
+      "case": "wrong",
+      "points": 0,
+      "maxPoints": 2,
+      "publicCards": 4,
+      "masterAbsent": true,
+      "solutionAbsent": true,
+      "resume": true,
+      "idempotent": true
+    },
+    {
+      "subject": "Deutsch",
+      "quiz": "M56XGEZZ",
+      "case": "blank",
+      "points": 0,
+      "maxPoints": 2,
+      "publicCards": 4,
+      "masterAbsent": true,
+      "solutionAbsent": true,
+      "resume": true,
+      "idempotent": true
+    },
+    {
+      "subject": "Physik",
+      "quiz": "YA572A9R",
+      "case": "correct",
+      "points": 2,
+      "maxPoints": 2,
+      "publicCards": 4,
+      "masterAbsent": true,
+      "solutionAbsent": true,
+      "resume": true,
+      "idempotent": true
+    },
+    {
+      "subject": "Physik",
+      "quiz": "YA572A9R",
+      "case": "partial",
+      "points": 1,
+      "maxPoints": 2,
+      "publicCards": 4,
+      "masterAbsent": true,
+      "solutionAbsent": true,
+      "resume": true,
+      "idempotent": true
+    },
+    {
+      "subject": "Physik",
+      "quiz": "YA572A9R",
+      "case": "wrong",
+      "points": 0,
+      "maxPoints": 2,
+      "publicCards": 4,
+      "masterAbsent": true,
+      "solutionAbsent": true,
+      "resume": true,
+      "idempotent": true
+    },
+    {
+      "subject": "Physik",
+      "quiz": "YA572A9R",
+      "case": "blank",
+      "points": 0,
+      "maxPoints": 2,
+      "publicCards": 4,
+      "masterAbsent": true,
+      "solutionAbsent": true,
+      "resume": true,
+      "idempotent": true
     }
   ]
 }
