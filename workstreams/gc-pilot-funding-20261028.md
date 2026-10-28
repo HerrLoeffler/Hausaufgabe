@@ -8,7 +8,7 @@
 - Aufgabenbranch: docs/gc-pilot-funding-20261028
 - Basiscommit: main@b16cfcdf45acb1ff796d63db8cfcbe974a4831ea (28.10.2026, 12:38 UTC)
 - Integrationsziel: main (nur Dokumentation; keine Produkt-Release-Stufe)
-- PR: noch keiner
+- PR: https://github.com/HerrLoeffler/Hausaufgabe/pull/364
 - Betroffene Dateien: docs/research/gc-pilot-funding-20261028.md, workstreams/gc-pilot-funding-20261028.md, TODO.md, workstreams/registry.json
 - Überschneidungen: GC-FINANCE-BAYSTARTUP-20261008 betrifft private BayStartUP-Finanzvorlage und bleibt unverändert; GC-LAUNCH-CONTROLS-01-PRIVACY ist separate Produkt-/Rechtskontrolle.
 
@@ -43,7 +43,7 @@ Martin/zentraler Owner wählt eine interessierte Schule und beantwortet die sieb
 ## Wiederaufnahme nach Abbruch
 
 - Letzter gesicherter Teilschritt: Bericht-Checkpoint 28.10.2026, Commit 6da31d47fdff93f85375029220cb0ef8da48b114.
-- Gepushter Codecommit / Remote-Branch: Dokumentation auf docs/gc-pilot-funding-20261028; **kein Codecommit**.
+- Gepushter Codecommit / Remote-Branch: Dokumentation auf docs/gc-pilot-funding-20261028; PR #364 offen; **kein Codecommit**.
 - Ungesicherte Änderungen / Checkout-Pfad: keine Repo-Checkoutänderungen; lokale Berichtskopie im Projekt-Workspace.
 - Laufende oder unklare Vorgänge: keine.
 - Bereits ausgeführte externe Aktionen / Kostenreservierungen: nur lesende Web-/GitHub-Recherche und Dokumentationsbranch; keine Kosten.
