@@ -1,0 +1,21 @@
+{
+  "commit": "8188aa050d6bc7c398555f82583991ae1c69d97a",
+  "success": true,
+  "ci": {
+    "id": 40781192342,
+    "jobs": [
+      {
+        "id": 123143000161,
+        "name": "Public entry layout (WebKit and Chromium)",
+        "conclusion": "success"
+      },
+      {
+        "id": 123143000466,
+        "name": "Node 22 tests",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "browserScenarios": 36,
+  "artifact": 12857621795
+}

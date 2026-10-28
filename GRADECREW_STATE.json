@@ -4228,20 +4228,20 @@
       "stage": "production",
       "scope": "Existing teacher inline correction and class-wide Wilma answer review; no media integration",
       "handoff": "workstreams/wilma-live-grading-20261028.md",
-      "source_commit": "469ec66a172997e8cdddc83cdd0add05b40afa1e",
-      "tree": "79d6661798ec609f844b70f53bbe8de7265e00d6",
-      "integration_commit": "02fc3fea742f446731c59d7dc56d8784dd101d6c",
-      "pull_request": 381,
+      "source_commit": "8188aa050d6bc7c398555f82583991ae1c69d97a",
+      "tree": "6e3a13deef5ce3fa0806803ff408f75d42c3bc65",
+      "integration_commit": "e4d55fb79e0160580941e52d59b571f0121db194",
+      "pull_request": 385,
       "hosting": {
         "project": "hausaufgabe-staging",
-        "version": "bd28ca8fe8d3c4b0",
+        "version": "989462a70c8f1b03",
         "origins": [
           "https://gradecrew.de",
           "https://hausaufgabe-staging.web.app"
         ],
         "verified_files_per_origin": 214,
         "mismatches": 0,
-        "preserved_hosting_files": 206,
+        "preserved_hosting_files": 214,
         "preserved_current_remy_points": true,
         "restored_safe_upload_error_client": true
       },
@@ -4255,7 +4255,7 @@
         "other_functions_or_rules_changed_by_wilma": false
       },
       "ci": {
-        "run": 40740487910,
+        "run": 40781192342,
         "result": "success",
         "jobs": [
           "Node22",
@@ -4278,7 +4278,7 @@
         "live_new_request_cap": 7,
         "no_second_provider_or_model_self_training": true
       },
-      "next_action": "Current manual Wilma Live469ec remains; human tests semantic Stage preview. Separately decide minimal origin rollout with fresh environment-specific source preservation, then general automation gates.",
+      "next_action": "Martin reloads normal Live correction view; future releases preserve tab containment. Semantic PR383 and Assessment origin remain separate; no general automatic real-data processing.",
       "semantic_preview": {
         "stage": "staging_deployed",
         "source": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
@@ -4309,6 +4309,31 @@
           "legacy manual batch cache/automatic single-job reconciliation before shared rollout"
         ],
         "report": "docs/evidence/wilma-semantic-20261028/REPORT.md"
+      },
+      "previous_live_source": "469ec66a172997e8cdddc83cdd0add05b40afa1e",
+      "layout_repair": {
+        "scope": "layout_only_no_scoring_AI_backend_changes",
+        "stage": "production",
+        "runtime_files": [
+          "wilma-answer-review.css",
+          "wilma-answer-review.mjs"
+        ],
+        "browser_cases": 36,
+        "widths": [
+          320,
+          390,
+          768,
+          1024,
+          1280,
+          1440,
+          1920,
+          2560
+        ],
+        "zoom": "200%",
+        "review": "independent narrow PASS no P0-P2;8 module tests",
+        "report": "docs/evidence/wilma-layout-live-20261028/REPORT.md",
+        "physical_device": "not_tested",
+        "real_grades_changed": false
       }
     }
   ],
