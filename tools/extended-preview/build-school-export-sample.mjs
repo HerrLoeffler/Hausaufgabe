@@ -1,0 +1,25 @@
+import { mkdir, writeFile } from 'node:fs/promises';
+import { webcrypto } from 'node:crypto';
+import { createRequire } from 'node:module';
+import { createExtendedService } from './service.mjs';
+import { makeVariation } from './variations.mjs';
+import { buildSchoolPackage } from '../../school-work-export.mjs';
+
+const require = createRequire(import.meta.url);
+const PDFLib = require('../../assets/vendor/pdf-lib-1.17.1.min.js');
+const JSZip = require('../../assets/vendor/jszip-3.10.1.min.js');
+const service = createExtendedService();
+const synthetic = makeVariation(1);
+await service.execute('publish', { quiz: synthetic, questions: synthetic.questions });
+const token = 'x'.repeat(40);
+const started = await service.execute('startAssessmentAttempt', { studentName: 'Testkind A', clientAttemptId: 'school-export-sample-0001', attemptToken: token });
+await service.execute('submitAssessmentAttempt', { attemptId: started.attemptId, attemptToken: token, answers: {} });
+const points = Object.fromEntries(synthetic.questions.map(question => [question.id, 0]));
+await service.execute('review', { submissionId: started.attemptId, operationId: 'op_1234567890abcdef1234567890abcdef', reason: 'Synthetische Nachprüfung', points });
+const record = await service.execute('school-export', { submissionId: started.attemptId });
+const output = await buildSchoolPackage(record, { PDFLib, JSZip, cryptoApi: webcrypto });
+await mkdir(new URL('../../output/pdf/', import.meta.url), { recursive: true });
+await writeFile(new URL('../../output/pdf/school-export-synthetic.pdf', import.meta.url), output.pdf);
+await writeFile(new URL('../../output/school-export-synthetic.zip', import.meta.url), output.bytes);
+await writeFile(new URL('../../output/school-export-synthetic-receipt.json', import.meta.url), JSON.stringify(output.receipt, null, 2) + '\n');
+console.log(JSON.stringify({ pdfBytes: output.pdf.length, zipBytes: output.bytes.length, checkedFiles: output.receipt.checkedFiles, valid: output.receipt.valid }));

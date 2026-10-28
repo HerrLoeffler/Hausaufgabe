@@ -1,0 +1,33 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { createExtendedService } from './service.mjs';
+import { makeVariation } from './variations.mjs';
+
+test('existing local teacher result creates one synthetic correction event and exports frozen questions', async () => {
+  const service = createExtendedService();
+  const variation = makeVariation(1);
+  await service.execute('publish', { quiz: variation, questions: variation.questions });
+  const token = 'x'.repeat(40);
+  const started = await service.execute('startAssessmentAttempt', { studentName: 'Testkind', clientAttemptId: 'synthetic-client-0001', attemptToken: token });
+  await service.execute('submitAssessmentAttempt', { attemptId: started.attemptId, attemptToken: token, answers: {} });
+  const points = Object.fromEntries(variation.questions.map(question => [question.id, 0]));
+  const operationId = 'op_1234567890abcdef1234567890abcdef';
+  await service.execute('review', { submissionId: started.attemptId, operationId, reason: 'Beispielprüfung', points });
+  const repeated = await service.execute('review', { submissionId: started.attemptId, operationId, reason: 'Beispielprüfung', points });
+  assert.equal(repeated.repeated, true);
+  const record = await service.execute('school-export', { submissionId: started.attemptId });
+  assert.equal(record.questions.length, variation.questions.length);
+  assert.equal(record.questions[0].source, 'submission-snapshot');
+  assert.equal(record.events.length, 1);
+  assert.equal(record.events[0].before.totalPoints >= 0, true);
+  assert.equal(record.events[0].reason, 'Beispielprüfung');
+  assert.equal(record.gaps.some(gap => gap.field === 'serverSubmissionReceipt'), true);
+  const undoId = 'op_abcdef1234567890abcdef1234567890';
+  await service.execute('undo', { submissionId: started.attemptId, operationId: undoId, reason: 'Beispielkorrektur zurückgenommen' });
+  const undoRepeat = await service.execute('undo', { submissionId: started.attemptId, operationId: undoId, reason: 'Beispielkorrektur zurückgenommen' });
+  assert.equal(undoRepeat.repeated, true);
+  const undone = await service.execute('school-export', { submissionId: started.attemptId });
+  assert.equal(undone.events.length, 2);
+  assert.equal(undone.events[1].kind, 'undo');
+  assert.equal(undone.submission.totalPoints, record.events[0].before.totalPoints);
+});
