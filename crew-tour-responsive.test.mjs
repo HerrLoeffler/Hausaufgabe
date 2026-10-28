@@ -34,3 +34,17 @@ test('inline gc27 task/help and review coaches survive compact and keyboard layo
     dom.window.close();
   }
 });
+
+test('coach candidates clamp only across their edge and never over the actual create button',()=>{
+ assert.equal(typeof module.computeCrewCoachPlacement,'function');
+ const viewport={left:0,top:0,width:1280,height:720};
+ const target={left:1079,right:1249,top:589.25,bottom:637.25,width:170,height:48};
+ const p=module.computeCrewCoachPlacement({viewport,target,width:360,height:221.921875});
+ assert.ok(p);assert.ok(p.left+360<=1268&&p.top+221.921875<=708);
+ assert.ok(p.left+360<=target.left-14||p.left>=target.right+14||p.top+221.921875<=target.top-14||p.top>=target.bottom+14);
+});
+test('no room returns a flow requirement instead of clamping a coach over a large target',()=>{
+ assert.equal(typeof module.computeCrewCoachPlacement,'function');
+ const p=module.computeCrewCoachPlacement({viewport:{left:30,top:50,width:320,height:280},target:{left:42,right:338,top:62,bottom:318,width:296,height:256},width:296,height:140});
+ assert.equal(p,null);
+});

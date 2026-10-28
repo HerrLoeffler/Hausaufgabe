@@ -3,6 +3,7 @@ import { orderingVariants, orderingVariantsForStorage } from './ordering-grading
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
+import { requestPublishReview } from './publish-review.mjs';
 import { requestStudentSubmitConfirmation } from './student-submit-confirm.mjs';
 import { assessmentContentLabels } from './shared/i18n/assessment-locale.mjs';
 import { createLocalTourRepository } from './guest-tour-port.mjs';
@@ -141,7 +142,7 @@ test('Public wrapper keeps live flags; Coco introduces Remy and onboarding never
   assert.equal(providerCalls, 1, 'ordinary creation still reaches its normal backend');
 });
 
-for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey: variant, practice feedback, assessment and ${finishAction} finish`, async t => {
+for (const finishAction of ['create', 'settings', 'guest', 'publish-abort']) test(`Public journey: variant, practice feedback, assessment and ${finishAction} finish`, async t => {
   const w = fixture(t, { publicEntry: true });
   const nativeTimeout = w.setTimeout.bind(w);
   w.setTimeout = (callback, delay, ...args) => nativeTimeout(callback, Math.min(delay, 2), ...args);
@@ -150,10 +151,10 @@ for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey
   let guestExits = 0;
   api.completeTour = async () => { completions++; };
   api.startNewTest = () => { newTests++; };
-  api.isGuest = () => finishAction === 'guest';
+  api.isGuest = () => ['guest','publish-abort'].includes(finishAction);
   api.exitTour = () => { guestExits++; };
   let nextId = 0, providers = 0, persistedDraft;
-  const guestRepo = finishAction === 'guest' ? createLocalTourRepository() : null;
+  const guestRepo = ['guest','publish-abort'].includes(finishAction) ? createLocalTourRepository() : null;
   const state = { user: { uid: api.uid() }, currentQuiz: { id: 'DEMO1', published: false, tutorialVersion: 'v8' }, questions: [] };
   const feedbackWrites = [];
   api.checkDemo = () => state.questions.length === 10 ? null : 'Expected ten questions';
@@ -296,7 +297,22 @@ for (const finishAction of ['create', 'settings', 'guest']) test(`Public journey
   assert.match(w.document.querySelector('.gcRealCoach h2').textContent, /Danke, Emmi/);
   next();next();next(); // Coco thanks Emmi, introduces Wilma, Wilma explains settings.
   assert.match(w.document.querySelector('.gcRealCoach').textContent, /Mischen/);
-  next(); tour.notify('published', { quizId: 'DEMO1' });
+  next();
+  const openReview=()=>requestPublishReview({doc:w.document,settings:{startMode:'student',timeLimitMinutes:1,shuffleQuestions:false,shuffleAnswers:false,gradeScaleId:'',resultMode:'points',solutionReleaseMode:'exam_after_end',showSolutions:false},onPublish:async()=>true});
+  let publication=openReview();w.document.dispatchEvent(new w.Event('gradecrew:tour-anchor-refresh'));
+  let review=w.document.querySelector('dialog.publishReview[open]');
+  if(finishAction==='publish-abort'){
+    await until(()=>review.querySelector('.gcCoachClose'),'publication tutorial exit control');
+    review.querySelector('.gcCoachClose').click();assert.equal(await publication,false);assert.equal(tour.active,false);assert.equal(w.document.querySelector('dialog.publishReview[open]'),null);assert.equal(w.document.querySelector('.gcRealCoach'),null);assert.equal(w.document.querySelector('.gcTourTarget'),null);assert.equal(w.document.body.classList.contains('gcTourFlow'),false);assert.equal(guestExits,1);tour.start();assert.ok(w.document.querySelector('.gcCrewIntroCoach'));return;
+  }
+  assert.equal(w.trustedInputBlocked('click',review.querySelector('[data-action=next]')),false,'new publication Next must remain operable');
+  assert.equal(w.trustedInputBlocked('click',review.querySelector('[data-action=cancel]')),false,'publication cancel remains available');
+  assert.equal(w.trustedInputBlocked('keydown',review.querySelector('[data-action=next]'),'Escape'),false,'Escape belongs to the publication dialog');
+  review.querySelector('[data-action=cancel]').click();assert.equal(await publication,false);w.document.dispatchEvent(new w.Event('gradecrew:tour-anchor-refresh'));assert.equal(w.document.querySelector('.gcTourTarget').id,'publishBtn');
+  publication=openReview();
+  for(const action of ['next','back','next','next','publish']){w.document.dispatchEvent(new w.Event('gradecrew:tour-anchor-refresh'));review=w.document.querySelector('dialog.publishReview[open]');const control=review.querySelector(`[data-action=${action}]`);assert.equal(w.trustedInputBlocked('click',control),false,action+' allowed at active publication step');control.click();}
+  assert.equal(await publication,true);
+  tour.notify('published', { quizId: 'DEMO1' });
   if (finishAction === 'guest') assert.match(w.document.querySelector('.gcRealCoach').textContent, /ohne öffentlichen Link/);
   w.renderStudentQuiz({ ...persistedDraft, id: 'DEMO1', startMode: 'student' }, state.questions);
   assert.equal(w.document.querySelectorAll('.studentQuestion').length, 10);
@@ -683,4 +699,13 @@ test('manual confirmation cannot submit after its student form is replaced', asy
   approve(true);
   await pending;
   assert.equal(writes, 0);
+});
+
+test('tour rebinds a replaced real control while keeping unrelated trusted input blocked',t=>{
+ const w=fixture(t),api=adapter(w),tour=w.install(api);tour.start();w.document.querySelector('.gcCoachNext').click();
+ const old=w.document.getElementById('newQuizBtn'),replacement=old.cloneNode(true);replacement.classList.remove('gcTourTarget');old.replaceWith(replacement);
+ w.document.dispatchEvent(new w.Event('gradecrew:tour-anchor-refresh'));
+ assert.ok(replacement.classList.contains('gcTourTarget'));assert.equal(w.trustedInputBlocked('click',replacement),false);assert.equal(w.trustedInputBlocked('click',w.document.getElementById('trashBtn')),true);
+ w.document.body.classList.add('gcTourFlow');assert.equal(w.trustedInputBlocked('wheel',w.document.body),false);assert.equal(w.trustedInputBlocked('keydown',w.document.body,'PageDown'),false);assert.equal(w.trustedInputBlocked('click',w.document.body),true);
+ tour.stop();assert.equal(w.document.body.classList.contains('gcTourFlow'),false);
 });
