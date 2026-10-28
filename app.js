@@ -5432,14 +5432,10 @@ function renderQuestionAudioEditor(container, q) {
         questionField = document.createElement("div");
         questionField.className = "questionTextMediaField grow";
         questionLabel.before(questionField);
-        const editSource = document.createElement("details");
-        editSource.className = "questionTextSourceEditor";
-        editSource.innerHTML = '<summary>Text bearbeiten</summary>';
-        questionField.appendChild(editSource);
-        editSource.appendChild(questionLabel);
+        questionField.appendChild(questionLabel);
       }
       questionField.querySelector(".questionTaskAudioPreview")?.remove();
-      questionField.prepend(preview);
+      questionField.appendChild(preview);
     } else tabBody.insertBefore(preview, details);
   } else if (questionField && questionLabel) {
     questionField.before(questionLabel);
