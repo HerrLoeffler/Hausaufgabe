@@ -18,16 +18,16 @@ Belastbare Entscheidungsvorlage und ausführliche offizielle Quellenrecherche f�
 
 ## Akzeptanzkriterien / Stand
 
-- Aktuelle Programmpage und Fristen geprüft; 2026-Medien-/KI-Frist 31.10., 2027-Vierz-Säulen-Modell, Start?Zuschuss! 25.11.–10.01., laufender Innovationsgutschein, BayTOU, kommunale und Stiftungspfade sowie Nicht-Passung historischer Programme dokumentiert.
+- Aktuelle Programmpage und Fristen geprüft; 2026-Medien-/KI-Frist 31.10., 2027-Vier-Säulen-Modell, Start?Zuschuss! 25.11.–10.01., laufender Innovationsgutschein, BayTOU, kommunale und Stiftungspfade sowie Nicht-Passung historischer Programme dokumentiert.
 - Zuständigkeit Schulleitung/Schulaufwandsträger/Schulamt nach Originalquellen getrennt.
 - Datenschutz-Pilotaussage korrigiert; AVV, Pseudonymisierung, KI-Unterauftragnehmer, DSFA-Prüfung und Erhebungsgenehmigung eingeordnet.
 - Vorschlag für realen Pilot, Vertragsmodelle, 30-Tage-Plan und fehlende Martin-Angaben vorhanden.
-- **Bericht:** [docs/research/gc-pilot-funding-20261028.md](../docs/research/gc-pilot-funding-20261028.md).
+- **Entscheidungsvorlage:** [docs/research/gc-pilot-funding-20261028-decision.md](../docs/research/gc-pilot-funding-20261028-decision.md).\n- **Quellenbericht:** [docs/research/gc-pilot-funding-20261028.md](../docs/research/gc-pilot-funding-20261028.md).
 
 ## Zwischenstand / Nachweise
 
 - Lokal geändert: Recherchekopie unter Projekt-Workspace analysis/GC-PILOT-FUNDING-20261028/REPORT.md; keine Produktdatei.
-- Auf GitHub gesichert: erster Berichts-Checkpoint docs/research/gc-pilot-funding-20261028.md, Commit 6da31d47fdff93f85375029220cb0ef8da48b114; weitere Dokumentationscommits siehe Branch.
+- Auf GitHub gesichert: Berichts-Checkpoint 6da31d47fdff93f85375029220cb0ef8da48b114; erweiterter Bericht 45ce55527b64e6da71f69f9761c720516fe8297d; Entscheidungsvorlage 65ecbed914edef5b491d4e2d482bc2bf39d04274.
 - Geprüft: GitHub-Datei nach Upload wieder gelesen (34.249 Zeichen, Blob 5d24dec7c1e8992ae01ece39fed6df707154b407); Originalquellen am 28.10.2026 im Bericht verlinkt.
 - Deployed / Gerätetest: nicht relevant; keine Produktänderung.
 - Laufende oder unklare Vorgänge: keine externen Anträge/Kontakte, keine kostenpflichtigen Aufrufe oder Reservierungen.
