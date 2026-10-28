@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+let summary;try{({teacherGradingSummary:summary}=await import('./teacher-grading-summary.mjs'));}catch{}
+const base=()=>({status:'review',grade:null,totalPoints:3,maxPoints:4,percent:75,grading:{a:{awardedPoints:2,autoPoints:2,maxPoints:2,needsReview:false,correct:true},b:{awardedPoints:1,autoPoints:1,maxPoints:2,needsReview:false,correct:false}}});
+test('vollständig regelbewertet braucht trotz altem review-Status keine Bestätigungen',()=>{const s=base();assert.equal(summary(s).complete,true);assert.equal(summary(s).percent,75);assert.equal(s.status,'review');});
+test('auch eindeutig falsche regelbewertete Antwort ist fertig bewertet',()=>{const s=base();s.grading.b.awardedPoints=0;s.grading.b.autoPoints=0;s.totalPoints=2;assert.equal(summary(s).complete,true);});
+test('akzeptierter vollständiger Satzbau braucht keine pauschale Nachprüfung',()=>{const s=base();s.grading.a.needsReview=true;assert.equal(summary(s).complete,true);});
+test('fehlende Freitextpunkte bleiben offen, keine Null wird als Endnote gerechnet',()=>{const s=base();Object.assign(s.grading.b,{needsReview:true,correct:null,awardedPoints:0,autoPoints:0});s.totalPoints=2;assert.equal(summary(s).complete,false);assert.equal(summary(s).pendingCount,1);});
+test('Lehrkraft-Zurückstellung bleibt auch bei vorhandenen Punkten offen',()=>{const s=base();s.grading.a.reviewState='deferred';assert.equal(summary(s).complete,false);});
+test('technische Nachübertragung blockiert weiterhin endgültige Note',()=>{const s=base();s.recoveryReviewRequired=true;assert.equal(summary(s).complete,false);s.status='graded';s.reviewedAt=123;assert.equal(summary(s).complete,true);});
+test('unvollständige Punkte oder Summenkonflikt geben keine falsche Endnote',()=>{for(const value of [null,NaN,Infinity,-1,5]){const s=base();s.grading.a.awardedPoints=value;assert.equal(summary(s).complete,false);}const s=base();s.totalPoints=4;assert.equal(summary(s).complete,false);});
+test('bestätigte Punkte bleiben entschieden ohne gespeicherte Antwort aufzurufen',()=>{const s=base();Object.assign(s.grading.a,{needsReview:true,reviewState:'confirmed',correct:null});assert.equal(summary(s).complete,true);});
+test('offener Übertragungsfehler wird niemals durch correct true übergangen',()=>{const s=base();s.grading.a.reviewIssue='incomplete-transfer';assert.equal(summary(s).complete,false);});
+test('fehlende Bewertungen und Nullpunkte-Test erzeugen keine neue finale Note',()=>{const s=base();s.grading={};assert.equal(summary(s).complete,false);s.totalPoints=0;s.maxPoints=0;assert.equal(summary(s).complete,false);});

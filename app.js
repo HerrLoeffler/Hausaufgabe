@@ -4,6 +4,8 @@ const APP_VERSION = "2.3.1-gc45-rc1";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
+import { teacherGradingSummary } from "./teacher-grading-summary.mjs?v=20261028";
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import {
   getAuth,
@@ -1421,6 +1423,7 @@ function makeTourApi() {
 }
 
 function exitGuestTour() {
+  resetInlineReview();
   crewTour?.stop();
   stopStudentTimer();
   clearPublishSubscriptions();
@@ -8255,13 +8258,45 @@ async function openResults(code) {
 }
 
 function submissionGrade(s) {
-  if (s.status === "review") return "–";
-  if (Number.isFinite(Number(s.grade)) && Number(s.grade) >= 1 && Number(s.grade) <= 6) return Number(s.grade);
+  const scoring = teacherGradingSummary(s);
+  const savedGrade = s.grade !== null && s.grade !== "" ? Number(s.grade) : NaN;
+  const hasSavedGrade = Number.isFinite(savedGrade) && savedGrade >= 1 && savedGrade <= 6;
+  if (!scoring.complete) return hasSavedGrade ? `${savedGrade} (vorläufig)` : "–";
+  if (hasSavedGrade) return savedGrade;
   const scale = s.gradeScaleSnapshot?.thresholds?.length === 6 ? s.gradeScaleSnapshot : getQuizScale(state.currentResultsQuiz);
-  return gradeFromPercent(Number(s.percent || 0), scale);
+  return gradeFromPercent(scoring.percent, scale);
+}
+
+function resetInlineReview() {
+  const panel = $("reviewPanel");
+  const wrap = $("resultsTableWrap");
+  if (!panel || !wrap) return;
+  panel.classList.add("hidden");
+  wrap.after(panel);
+  wrap.querySelectorAll(".submissionReviewRow").forEach((row) => row.remove());
+  wrap.querySelectorAll(".reviewBtn[aria-expanded]").forEach((button) => button.setAttribute("aria-expanded", "false"));
+}
+
+function placeInlineReview(id) {
+  resetInlineReview();
+  const wrap = $("resultsTableWrap");
+  const button = Array.from(wrap.querySelectorAll(".reviewBtn")).find((item) => item.dataset.id === id);
+  const row = button?.closest("tr");
+  if (!row) return;
+  const detail = document.createElement("tr");
+  detail.className = "submissionReviewRow";
+  const cell = document.createElement("td");
+  cell.className = "submissionReviewCell";
+  cell.colSpan = row.cells.length;
+  cell.appendChild($("reviewPanel"));
+  detail.appendChild(cell);
+  row.after(detail);
+  button.setAttribute("aria-expanded", "true");
+  button.setAttribute("aria-controls", "reviewPanel");
 }
 
 function renderResultsTable() {
+  resetInlineReview();
   const wrap = $("resultsTableWrap");
   if (!state.submissions.length) {
     wrap.innerHTML = `<div class="empty"><h2>Noch keine Abgaben</h2><p>Sobald Schüler den Test abgeben, erscheinen die Ergebnisse hier.</p></div>`;
@@ -8270,9 +8305,10 @@ function renderResultsTable() {
   let html = `<table class="resultTable"><thead><tr><th scope="col">Kürzel</th><th scope="col">Punkte</th><th scope="col">%</th><th scope="col">Note</th><th scope="col">Status</th><th scope="col">Dauer</th><th scope="col">Abgegeben</th><th scope="col"><span class="visuallyHidden">Aktionen</span></th></tr></thead><tbody>`;
   state.submissions.forEach((s) => {
     const duration = formatDuration(s.elapsedSeconds);
+    const scoringPending = !teacherGradingSummary(s).complete;
     const autoTag = s.autoSubmitted ? ` <span class="pill timedOut">Auto</span>` : "";
     const recoveryTag = s.recoveryReviewRequired ? ` <span class="pill review">${s.status === "review" ? "Nachübertragung · bitte prüfen" : "Nachübertragung geprüft"}</span>` : "";
-    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${s.status === "review" ? "review" : "graded"}">${s.status === "review" ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(s.studentName)}">Bewerten</button></td></tr>`;
+    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${scoringPending ? "review" : "graded"}">${scoringPending ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(s.studentName)}">Bewerten</button></td></tr>`;
   });
   html += "</tbody></table>";
   wrap.innerHTML = html;
@@ -8284,6 +8320,7 @@ function openReview(id) {
   if (!s) return;
   const panel = $("reviewPanel");
   const returnFocus = document.activeElement;
+  placeInlineReview(id);
   panel.classList.remove("hidden");
   panel.setAttribute("aria-labelledby", "reviewHeading");
   panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2 id="reviewHeading" tabindex="-1">${escapeHtml(s.studentName)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div><div class="reviewHeader"><strong id="reviewTotal"></strong><button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
@@ -8348,7 +8385,7 @@ function openReview(id) {
   });
   recompute();
   $("closeReview").addEventListener("click", () => {
-    panel.classList.add("hidden");
+    resetInlineReview();
     const target = returnFocus?.isConnected && !returnFocus.closest(".hidden") && returnFocus !== document.body ? returnFocus : $("resultsHeading");
     target.tabIndex = target.tabIndex < 0 ? -1 : target.tabIndex;
     target.focus({ preventScroll: true });
@@ -8424,7 +8461,7 @@ function exportResultsCsv() {
   state.submissions.forEach((s) => {
     const r = [s.studentName];
     state.resultQuestions.forEach((q) => r.push(answerDisplay(q, s.answers?.[q.id], state.currentResultsQuiz?.contentLocale)));
-    r.push(s.totalPoints, s.maxPoints, s.percent, s.status === "review" ? "" : submissionGrade(s), s.status, formatDuration(s.elapsedSeconds), s.autoSubmitted ? "Ja" : "Nein", fmtDate(s.submittedAt || s.submittedAtLocal));
+    r.push(s.totalPoints, s.maxPoints, s.percent, submissionGrade(s), s.status, formatDuration(s.elapsedSeconds), s.autoSubmitted ? "Ja" : "Nein", fmtDate(s.submittedAt || s.submittedAtLocal));
     rows.push(r);
   });
   const csv = rows.map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(";")).join("\n");

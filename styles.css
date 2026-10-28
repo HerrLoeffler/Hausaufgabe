@@ -786,3 +786,7 @@ body.gcAiCompact .creationLegalFooter :is(.legalSiteFooter,.rightsFooter){flex:0
 
 #aiAudioBudgetStatus{display:block;font-size:10px;line-height:1.1;font-weight:400;color:inherit}
 @media(max-width:1100px){#aiAudioQuotaLabel{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}#aiAudioBudgetStatus{font-size:9px}}
+
+/* Inline correction keeps the selected student in context. */
+#resultsTableWrap .submissionReviewCell{padding:0;background:var(--card)}
+#resultsTableWrap .submissionReviewCell>.reviewPanel{margin:0;border:0;border-radius:0;box-shadow:none}

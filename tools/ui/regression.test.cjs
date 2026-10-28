@@ -29,6 +29,8 @@ function fixture(t) {
   w.HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', ''); };
   w.HTMLDialogElement.prototype.close = function () { this.removeAttribute('open'); this.dispatchEvent(new w.Event('close')); };
   w.HTMLElement.prototype.scrollIntoView = function () {};
+  w.eval(source('teacher-grading-summary.mjs').replace(/^export /gm, ''));
+  w.eval(fn('resetInlineReview') + '\n' + fn('placeInlineReview'));
   w.eval(source('interface.js').replace(/^export /gm, ''));
   return w;
 }
