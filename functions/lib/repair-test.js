@@ -137,7 +137,7 @@ async function replaceInvalidQuestions(test, options, generate, maxAttempts = 8)
     attempts += 1;
     const quotaReason = quotaIssue ? activeQuota.field === "audioIntent" ? `Für diesen Test sind exakt ${listeningQuota.target} Höraufgaben erforderlich; erstelle diese Aufgabe mit audioIntent.kind=${audioKind}.` : `Für diesen Test sind exakt ${quota.target} Bildaufgaben erforderlich; erstelle diese Aufgabe mit mediaIntent.kind=${mediaKind}.` : "";
     const candidate = normalizeQuestion(await generate({ test, index, original, mediaKind, audioKind, reasons: [...issue.reasons, ...(feedback.get(index) || []), ...(quotaReason ? [quotaReason] : [])], attempt: priorAttempts + 1 }));
-    candidate.points = slot?.points ?? original.points;
+    if (options.pointsMode !== "auto") candidate.points = slot?.points ?? original.points;
 
     const reasons = validateQuestion(candidate, options);
     if (candidate.mediaIntent.kind !== mediaKind) reasons.push(`Die Bildart muss ${mediaKind} sein.`);

@@ -537,6 +537,14 @@ body.gcAiCompact .rightsFooter .footerLink{min-height:44px}
 
 #aiView .aiMetrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 #aiView .aiMetrics label{display:grid;gap:3px}
+#aiView .aiPointsMetric{display:grid;gap:3px;min-width:0}
+#aiView .aiPointsControl{display:flex;align-items:stretch;gap:5px;min-width:0}
+#aiView .aiPointsControl input{min-width:0;flex:1}
+#aiView #aiPointsAutoValue{display:grid;place-items:center;min-width:0;flex:1;border:1px solid #c9d7e7;border-radius:8px;color:#5d6d80;background:#f5f8fc}
+#aiView #aiPointsAutoValue[hidden],#aiView #aiPoints[hidden]{display:none}
+#aiView #aiPointsAuto{padding:0 10px;border:1px solid #91a8c3;border-radius:8px;background:#fff;color:#274b75;font:inherit;font-weight:700;cursor:pointer}
+#aiView #aiPointsAuto[aria-pressed="true"]{background:#1866b3;border-color:#1866b3;color:#fff}
+#aiView #aiPointsAuto:focus-visible{outline:3px solid #f0b429;outline-offset:2px}
 
 #aiView .aiPageHeadContent .aiPageRemyHero{flex:0 0 48px;width:48px;height:50px}
 #aiView .aiAudioCountRow .sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}

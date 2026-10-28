@@ -4,6 +4,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const { validateTest, normalizeQuestion } = require("../lib/validation");
 const { balanceTestPoints, validateAndRepairTest } = require("../lib/repair-test");
+const { replacementQuestionPrompt } = require("../lib/prompts");
 
 function question(n, kind = "none") {
   return normalizeQuestion({
@@ -13,6 +14,28 @@ function question(n, kind = "none") {
   });
 }
 const options = count => ({ allowedTypes: ["single", "text"], allowImages: true, allowImageChoices: false, expectedCount: count, targetPoints: count, imageQuestionCount: 0, imageAnswerQuestionCount: 0 });
+
+test("automatic replacement keeps its own valid points and recalculates the total", async () => {
+  const original = { ...question(1), points: 4, options: [{ text: "2", correct: true }, { text: "2", correct: false }] };
+  const result = await validateAndRepairTest({ title: "Auto", questions: [original] }, {
+    ...options(1), pointsMode: "auto", targetPoints: undefined
+  }, {
+    generateQuestion: async () => ({ ...question(20), points: 0.5 }),
+    regenerateTest: async () => { throw new Error("A local replacement is sufficient"); }
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.test.questions[0].points, 0.5);
+  assert.equal(result.test.questions.reduce((sum, q) => sum + q.points, 0), 0.5);
+});
+
+test("automatic replacement prompt does not lock the old question's points", () => {
+  const prompt = replacementQuestionPrompt({
+    input: { pointsMode: "auto", subject: "Mathe", grade: "5", schoolType: "Mittelschule", topic: "Addieren", difficulty: "leicht", allowedTypes: ["single"], materialMode: "inspiration" },
+    test: { questions: [] }, index: 0, original: { ...question(1), points: 4 }, reasons: ["Ungültige Antwortoptionen"], attempt: 1, mediaKind: "none", audioKind: "none"
+  });
+  assert.match(prompt, /Punkte.*neue Aufgabe|neue Aufgabe.*Punkte/i);
+  assert.doesNotMatch(prompt, /Verbindlich: Punkte 4|"points":4/);
+});
 
 test("RPT-MUXC8FM3: replace duplicate 14 and keep exactly five listening tasks without full regeneration", async () => {
   const questions = Array.from({ length: 20 }, (_, i) => question(i + 1));
