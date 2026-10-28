@@ -2902,7 +2902,17 @@
         "no_provider_calls": true,
         "handoff": "workstreams/material-upload-access-20261028.md",
         "receipt": "workstreams/material-upload-live-receipt-20261028.json",
-        "next_action": "Colleague retries material selection; coordinated Wilma full release must preserve ai-client.js SHA256 and new Storage rules. PR371 remains held."
+        "next_action": "Upload works after later Remy release; colleague retries file selection. Sole next Hosting promoter Wilma owner01a1280a must preserve merged Remy+Wilma+PR379 safe upload error copy (regressed byPR377); no further Uploadowner deploy. PR371 remains held.",
+        "later_hosting_observed": {
+          "commit": "21d1e4b1714b70e69a75185a20908652621c96b7",
+          "pr": 377,
+          "version": "6f6e15ccf832db5e",
+          "release_time": "2026-10-28T17:54:33.023Z",
+          "storage_rule_fix_retained": true,
+          "upload_error_privacy_copy_regressed": true,
+          "real_teacher_pdf_png_recheck": "2026-10-28T17:57:20.042Z",
+          "all_fixtures_cleaned": true
+        }
       }
     },
     {

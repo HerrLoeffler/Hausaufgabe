@@ -132,5 +132,71 @@
   "user_document_read": false,
   "functions_firestore_iam_deployed": false,
   "other_environments_changed": false,
-  "held_editor_pr": 371
+  "held_editor_pr": 371,
+  "later_hosting_observation": {
+    "source": "21d1e4b1714b70e69a75185a20908652621c96b7",
+    "source_pr": 377,
+    "source_branch": "release/remy-auto-points-20261028",
+    "hosting": {
+      "channel": "sites/hausaufgabe-staging/channels/live",
+      "releaseTime": "2026-10-28T17:54:33.023Z",
+      "version": "sites/hausaufgabe-staging/versions/6f6e15ccf832db5e"
+    },
+    "upload_error_privacy_copy_overwritten": true,
+    "storage_rules_still_match": true,
+    "real_live_recheck": {
+      "project": "hausaufgabe-staging",
+      "mode": "after21",
+      "checkedAt": "2026-10-28T17:57:20.042Z",
+      "checks": [
+        {
+          "name": "normal signup and own teacher profile",
+          "pass": true
+        },
+        {
+          "name": "own application/pdf upload",
+          "pass": true
+        },
+        {
+          "name": "own image/png upload",
+          "pass": true
+        },
+        {
+          "name": "existing object overwrite",
+          "denied": true,
+          "code": "storage/unauthorized"
+        },
+        {
+          "name": "foreign UID upload",
+          "denied": true,
+          "code": "storage/unauthorized"
+        },
+        {
+          "name": "invalid MIME upload",
+          "denied": true,
+          "code": "storage/unauthorized"
+        },
+        {
+          "name": "unauthenticated upload",
+          "denied": true,
+          "code": "storage/unauthorized"
+        },
+        {
+          "name": "unauthenticated read",
+          "denied": true,
+          "code": "storage/unauthorized"
+        }
+      ],
+      "cleanup": [
+        "synthetic object removed",
+        "synthetic object removed",
+        "synthetic profile removed",
+        "synthetic Auth account removed"
+      ],
+      "providerCalls": 0,
+      "personalFileRead": false
+    },
+    "followup_owner": "01a1280a-c9f4-73a3-a12a-7b2b93a5ba5a",
+    "no_further_deploy_by_upload_owner": true
+  }
 }
