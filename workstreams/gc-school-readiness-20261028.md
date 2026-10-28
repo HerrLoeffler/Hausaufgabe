@@ -21,3 +21,9 @@ Belegte Machbarkeit für schulische GradeCrew-Nutzung, Datenstandorte, Export/Ab
 4. Dokumentations-PR prüfen und integrieren; Produktarbeit braucht gesonderten konkreten Auftrag und Freigaben.
 
 **Genau nächster Schritt:** Schul-/Trägeranforderung und technische Dienstinventarliste in einem gemeinsamen Entscheidungsblatt vervollständigen; daraus die Export-MVP-Spezifikation und das separate KI-Gate ableiten.
+
+## Fortsetzung 28.10.2026 · EU-only/IONOS-Frage
+
+Martin fragt nach einem Umzug auf „alle in Europa“, IONOS-Server, Entwicklungsort, ChatGPT-Europa, weiteren KIs und Paddy-Vergleich. Entscheidung noch offen; kein Auftrag zur Durchführung/Production. Lesende Prüfung: offizielle Paddy-FAQ/Datenschutzhinweise/Löschfristen, IONOS Model Hub, Firebase-Standort, OpenAI-EU-API/ChatGPT Enterprise/Edu, Claude Bedrock und Google EU-Endpunkte. Befund/Nachweise im Berichtsnachtrag. Modell/Aufwand für diesen Turn nicht separat angefordert; Runtimewert unknown. Keine bezahlten Provideraufrufe, Änderungen an Produktcode, CI, Integration, Staging oder Production.
+
+Offen (Owner): Martin/Schule definiert striktes EU-/DE-only und Pilotstufe; Betreiber belegt aktuelle Datenflüsse, AVV, Unterauftragnehmer, Regions-/Log-/Backup-/Supportorte; Fachchat bewertet synthetischen IONOS-/Regionalmodell-Pilot nach Qualität und Aufwand; Schul-DSB/Träger entscheidet über Zulässigkeit. Genau nächster Schritt: einseitige Standort- und Datenfluss-Matrix für die bestehende Live-Architektur vervollständigen und damit den Pilotumfang festlegen.
