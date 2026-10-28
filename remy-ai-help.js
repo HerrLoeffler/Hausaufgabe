@@ -154,6 +154,7 @@ function currentContext() {
       count: Number($("#aiCount")?.value) || null,
       points: Number($("#aiPoints")?.value) || null,
       imageQuestionCount: Number($("#aiImageQuestionCount")?.value) || 0,
+      fullAudioQuestionCount: Number($("#aiFullAudioQuestionCount")?.value) || 0,
       audioQuestionCount: Number($("#aiAudioQuestionCount")?.value) || 0,
       audioAnswerQuestionCount: Number($("#aiAudioAnswerQuestionCount")?.value) || 0,
       solutionAudioQuestionCount: Number($("#aiSolutionAudioQuestionCount")?.value) || 0
@@ -282,7 +283,20 @@ function applyTypePatch(patch) {
   if (changed) highlightField(root.closest("details") || root);
 }
 
+function validAudioPatch(patch = {}) {
+  const names = [["audioQuestionCount", "aiAudioQuestionCount"], ["audioAnswerQuestionCount", "aiAudioAnswerQuestionCount"], ["fullAudioQuestionCount", "aiFullAudioQuestionCount"]];
+  const values = names.map(([key, id]) => Number(patch[key] ?? $(`#${id}`)?.value ?? 0));
+  if (values[2] !== 0) { setStatus(uiText("Der Kombimodus ist für neue Tests ausgeschaltet.", "Combined audio is disabled for new tests."), "error"); return false; }
+  const count = Number(patch.count ?? $("#aiCount")?.value), limit = Number.isInteger(count) && count > 0 ? Math.min(5, count) : 5;
+  if (values.some(value => !Number.isInteger(value) || value < 0) || values.reduce((sum, value) => sum + value, 0) > limit) {
+    setStatus(uiText(`Zusammen sind maximal ${limit} Audioaufgaben möglich.`, `Choose no more than ${limit} audio questions in total.`), "error");
+    return false;
+  }
+  return true;
+}
+
 function stagePatch(patch = {}, options = {}) {
+  if (!validAudioPatch(patch)) return false;
   if (pendingProposal) return;
   const panel = $("#gcRemyCreatePanel");
   if (!panel) return applyPatch(patch);
@@ -372,7 +386,7 @@ function stagePatch(patch = {}, options = {}) {
       else if (typeof accepted[key] === "number") accepted[key] = Number(input.value);
       else accepted[key] = input.value.trim();
     });
-    if (!canApplyPatchNotes(accepted)) return;
+    if (!canApplyPatchNotes(accepted) || !validAudioPatch(accepted)) return;
     pendingProposal = null;
     proposal.remove();
     applyPatch(accepted);
@@ -410,6 +424,7 @@ function offerOriginalWish(text, reply = "") {
 }
 
 function applyPatch(patch = {}) {
+  if (!validAudioPatch(patch)) return false;
   if (!canApplyPatchNotes(patch)) return false;
   if (["de-DE", "en-GB"].includes(patch.contentLocale)) setField("#aiContentLocale", patch.contentLocale);
   setField("#aiSubject", patch.subject);
@@ -421,6 +436,7 @@ function applyPatch(patch = {}) {
   setField("#aiCount", patch.count);
   setField("#aiPoints", patch.points);
   if (patch.imageQuestionCount !== undefined && patch.imageQuestionCount !== null) setField("#aiImageQuestionCount", patch.imageQuestionCount);
+  if (patch.fullAudioQuestionCount !== undefined && patch.fullAudioQuestionCount !== null) setField("#aiFullAudioQuestionCount", patch.fullAudioQuestionCount);
   if (patch.audioQuestionCount !== undefined && patch.audioQuestionCount !== null) setField("#aiAudioQuestionCount", patch.audioQuestionCount);
   if (patch.audioAnswerQuestionCount !== undefined && patch.audioAnswerQuestionCount !== null) setField("#aiAudioAnswerQuestionCount", patch.audioAnswerQuestionCount);
   if (patch.solutionAudioQuestionCount !== undefined && patch.solutionAudioQuestionCount !== null) setField("#aiSolutionAudioQuestionCount", patch.solutionAudioQuestionCount);
@@ -475,10 +491,12 @@ async function submitRequest() {
       return;
     }
     if (local.handled) {
+      if (local.reason === "audio-mode-unavailable") { setStatus(local.reply, "error"); return; }
       recordRemyMetric("local_response", { inputMode: mode, source: "local", latencyMs: performance.now() - startedAt });
       if (!offerOriginalWish(text, local.reply)) setStatus(local.reply || uiText("Sag mir kurz, welchen Test du brauchst.", "Tell me briefly what test you need."));
       return;
     }
+    if (!validAudioPatch({})) return;
     recordRemyMetric("ai_fallback_started", { inputMode: mode, source: "ai" });
     const result = await callRemyAi(text);
     if (result.action?.type === "patch_ai_form") {

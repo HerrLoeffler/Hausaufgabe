@@ -15,7 +15,7 @@ function startFixture(previous = null) {
   const jobs = [], enqueued = [], loaded = [];
   const sourceRef = { get: async () => ({ exists: true, data: () => ({ ownerId: "teacher" }) }) };
   const db = { doc: () => sourceRef, collection: () => ({ doc: id => ({ id, get: async () => ({ data: () => previous || {} }) }) }) };
-  const context = vm.createContext({ ...require("../lib/constants"), ...variants, HttpsError, createHash,
+  const context = vm.createContext({ ...require("../lib/creation-contract"), ...require("../lib/constants"), ...variants, HttpsError, createHash,
     getFirestore: () => db, randomUUID: () => "generated-request", Timestamp: { now: () => ({}) }, aiJobLock: () => ({}),
     sanitizeMaterials: () => [], requireAccountWrite: async () => {},
     loadVariantInput: async (_db, uid, id) => { loaded.push([uid, id]); return blueprint(); },

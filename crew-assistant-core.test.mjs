@@ -56,7 +56,7 @@ test("quantities inside a preference cannot swallow the remaining personal wishe
     ["Mathe Klasse 5 Thema Brüche gerne zwei Audios und Beispiele aus dem Schulgarten", /Beispiele aus dem Schulgarten/],
     ["Mathe Klasse 5 Thema Brüche gerne mit Piraten, zwei Bilder und kleinen Geschichten", /Piraten[\s\S]*kleinen Geschichten/],
     ["Mathe Klasse 5 Thema Brüche gerne mit Piraten und kleinen Geschichten, zwei Bilder", /Piraten und kleinen Geschichten/],
-    ["Mathe Klasse 5 Thema Brüche gerne sieben Audios und Beispiele aus dem Schulgarten", /sieben Audios und Beispiele aus dem Schulgarten/i]
+    ["Mathe Klasse 5 Thema Brüche gerne sieben Audios und Beispiele aus dem Schulgarten", /Beispiele aus dem Schulgarten/i]
   ]) assert.match(parseTestRequest(text).notes, notes, text);
 });
 
@@ -386,3 +386,5 @@ test('Coco routes a remembered cat image to evidence-based test search', () => {
   assert.match(result.action.query,/Katzenbild/);
 });
 test('Coco sends questions about existing work to contextual help instead of generic Remy creation',()=>{for(const text of ['Welchen Test habe ich gerade geöffnet?','Wie viele Aufgaben hat mein Test?','Warum kann ich den Test nicht veröffentlichen?','Which test is currently open?']){const r=resolveLocalCrewRequest({crewId:'coco',text,context:{screen:'editorView'},locale:'de-DE'});assert.equal(r.handled,false,text);}});
+
+test("over-budget spoken audio is preserved as explicit quantity for rejection, never silently clamped",()=>{assert.equal(parseTestRequest("Mathe Klasse 5 Thema Brüche gerne sieben Audios und Beispiele aus dem Schulgarten").audioQuestionCount,7);});

@@ -12,7 +12,7 @@ function planTestBatches(input, batchSize = 10) {
   const audioCount = input.exactAudioCounts ? input.audioQuestionCount : 0;
   const plannedAudio = input.audioMode === "none" ? 0 : audioCount;
   const plannedAnswerAudio = Number(input.audioAnswerQuestionCount || 0);
-  const audioPlan = (input.fullAudioQuestionCount > 0 || input.creationContractVersion === 1) && input.generationMode !== "variant" ? creationAudioPlan(input) : null;
+  const audioPlan = (input.fullAudioQuestionCount > 0 || input.creationContractVersion === 1 || input.audioPresentationPolicy === "visible-plus-full") && input.generationMode !== "variant" ? creationAudioPlan(input) : null;
   const inBatch = (indexes, start, end) => indexes.filter(i => i >= start && i < end).length;
   const batches = [];
   for (let offset = 0; offset < count; offset += size) {

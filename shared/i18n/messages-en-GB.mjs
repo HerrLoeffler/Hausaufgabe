@@ -18,6 +18,9 @@ export const enGBMessages = Object.freeze({
   "nav.teachers": "For teachers",
   "nav.help": "Help",
   ...source({
+    "Der Kombimodus ist für neue Tests ausgeschaltet.": "Combined audio is disabled for new tests.",
+    "Alten Kombiwert abwählen": "Clear the old combined-audio selection",
+    "Bitte eine ganze Zahl von 0 bis 5 eingeben.": "Enter a whole number from 0 to 5.",
     "Wichtig: Was soll der Test genau abfragen?": "Important: what exactly should this test cover?",
     "Nenne Inhalte, Schwerpunkte und Anforderungen.": "Describe content, priorities and requirements.",
     "Fach, Klasse, Aufgaben, Punkte, Medien …": "Subject, year, questions, points, media …",
@@ -812,6 +815,9 @@ export const enGBMessages = Object.freeze({
 });
 
 export const enGBSourcePatterns = Object.freeze([
+  { pattern: /^insgesamt max\. (\d+) Aufgaben$/, replacement: "max. $1 questions in total" },
+  { pattern: /^(\d+) von (\d+) Audioaufgaben$/, replacement: "$1 of $2 audio questions" },
+  { pattern: /^Zusammen sind maximal (\d+) Audioaufgaben möglich\.$/, replacement: "Choose no more than $1 audio questions in total." },
   { pattern: /^Bilder \(max\. (\d+) Aufgaben\)$/, replacement: "Images (max. $1 questions)" },
   { pattern: /^max\. (\d+) je Bereich$/, replacement: "max. $1 per category" },
   { pattern: /^(\d+) Audioaufgaben$/, replacement: "$1 audio questions" },

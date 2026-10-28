@@ -418,3 +418,11 @@ test('actual Remy form keeps instructions next to the topic and adds dictation w
   assert.equal(w.document.getElementById('gcRemyNotesMic').type, 'button');
   assert.ok(w.document.getElementById('gcRemyNotesMicStatus'));
 });
+
+test('spoken two audio modes share a total budget and combined mode is blocked before paid fallback', async t=>{
+ const w=setup(t),d=w.document;d.getElementById('aiCount').value='20';let calls=0;w.httpsCallable=()=>async()=>{calls++;return{data:{}}};
+ const send=async text=>{d.getElementById('gcRemyCreateInput').value=text;d.getElementById('gcRemyCreateForm').dispatchEvent(new w.Event('submit',{cancelable:true,bubbles:true}));await settle(w);};
+ await send('Mathematik Klasse 7, 20 Aufgaben, fünf Aufgaben hören, fünf Antworten hören');assert.match(d.getElementById('gcRemyCreateStatus').textContent,/Zusammen sind maximal 5/);assert.equal(d.getElementById('gcRemyProposal'),null);assert.equal(calls,0);
+ await send('Mathematik Klasse 7, 20 Aufgaben, ein beides hören');assert.match(d.getElementById('gcRemyCreateStatus').textContent,/Kombimodus/);assert.equal(d.getElementById('gcRemyProposal'),null);assert.equal(calls,0);
+ await send('Mathematik Klasse 7, 20 Aufgaben, zwei Aufgaben hören, drei Antworten hören');acceptProposal(w);assert.equal(d.getElementById('aiAudioQuestionCount').value,'2');assert.equal(d.getElementById('aiAudioAnswerQuestionCount').value,'3');assert.equal(calls,0);
+});

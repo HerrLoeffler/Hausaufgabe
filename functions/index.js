@@ -25,7 +25,7 @@ const { purgeExpiredMaterials } = require("./lib/purge-materials");
 const { getOpenAI } = require("./lib/openai-client");
 const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
 const { createVerifiedMedia } = require("./lib/media-flow");
-const { materialSufficiency, creationContractPrompt } = require("./lib/creation-contract");
+const { materialSufficiency, creationContractPrompt, audioTaskLimitErrors } = require("./lib/creation-contract");
 const { runMediaOperation } = require("./lib/media-operation");
 const { createAudioAsset, cleanSpeechFeedback } = require("./lib/audio-flow");
 const { classifyAiFailure } = require("./lib/ai-errors");
@@ -135,6 +135,9 @@ function cleanInput(data = {}) {
     throw new HttpsError("invalid-argument", "Die KI erstellt keine Bildantworten mehr. Bitte nur Aufgabenbilder wählen.");
   }
   const imageMode = exactImageCounts ? (imageQuestionCount ? "exact" : "none") : data.imageMode === "none" ? "none" : "sparse";
+  if (Number(data.fullAudioQuestionCount || 0) !== 0 || data.generationMode === "variant" && data.variantSlots?.some(slot => slot.audioKind === "ai_generated" && slot.answerAudio)) throw new HttpsError("invalid-argument", "Der Kombimodus ist für neue Tests ausgeschaltet. Bestehende Tests bleiben erhalten.");
+  const audioBudgetErrors = audioTaskLimitErrors({ ...data, count });
+  if (audioBudgetErrors.length) throw new HttpsError("invalid-argument", audioBudgetErrors[0]);
   const exactAudioCounts = Object.hasOwn(data, "audioQuestionCount");
   const audioQuestionCount = Number(data.audioQuestionCount ?? 0);
   if (exactAudioCounts && (!Number.isInteger(audioQuestionCount) || audioQuestionCount < 0 || audioQuestionCount > LIMITS.maxAudioQuestions || audioQuestionCount > count)) {
@@ -162,7 +165,7 @@ function cleanInput(data = {}) {
     allowImageChoices: false,
     exactAudioCounts, audioMode, audioQuestionCount: exactAudioCounts ? audioQuestionCount : 0,
     solutionAudioQuestionCount, audioAnswerQuestionCount,
-    ...(Object.hasOwn(data, "fullAudioQuestionCount") || data.audioPresentationPolicy === "visible-plus-full" ? { fullAudioQuestionCount, audioPresentationPolicy: data.audioPresentationPolicy === "visible-plus-full" ? "visible-plus-full" : "auto" } : {}),
+    fullAudioQuestionCount: 0, audioPresentationPolicy: data.generationMode === "variant" ? "auto" : "visible-plus-full",
     ...(data.creationContractVersion === 1 ? { creationContractVersion: 1 } : {}),
     maxVisualQuestions: exactImageCounts ? imageQuestionCount : imageMode === "none" ? 0 : Math.max(0, Math.min(LIMITS.maxVisualQuestions, Number(data.maxVisualQuestions) || 3)),
     materialMode: data.materialMode === "only" ? "only" : "inspiration",
@@ -579,7 +582,7 @@ exports.processAiTestJob = onTaskDispatched({
     const isVariant = job.input?.generationMode === "variant";
     const solutionAudioIndexes = new Set(isVariant ? job.input.variantSlots.flatMap((slot, index) => slot.solutionAudio ? [index] : []) : planSolutionAudioIndexes(questions.length, totalSolutionAudios));
     const totalAnswerAudios = Number(job.input?.audioAnswerQuestionCount || 0);
-    const answerAudioPositions = new Set(isVariant ? job.input.variantSlots.flatMap((slot, index) => slot.answerAudio ? [index] : []) : answerAudioIndexes(questions, totalAnswerAudios, Number(job.input?.fullAudioQuestionCount || 0), job.input?.creationContractVersion === 1));
+    const answerAudioPositions = new Set(isVariant ? job.input.variantSlots.flatMap((slot, index) => slot.answerAudio ? [index] : []) : answerAudioIndexes(questions, totalAnswerAudios, Number(job.input?.fullAudioQuestionCount || 0), (job.input?.creationContractVersion === 1 || job.input?.audioPresentationPolicy === "visible-plus-full")));
     await jobRef.update({ stage: "prepare_questions", percent: 65, progressMessage: "Aufgaben und Medien werden gespeichert …", imageTotal: totalImages, audioTotal: totalAudios, answerAudioTotal: totalAnswerAudios, solutionAudioTotal: totalSolutionAudios, updatedAt: Timestamp.now() });
     const quiz = await createAiQuiz(db, uid, jobId, quizForGeneratedTest(response.test, job.input, profile, sourceSnap?.data()));
     quizRef = quiz.ref;

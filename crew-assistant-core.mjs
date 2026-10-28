@@ -325,22 +325,30 @@ function parseTestRequest(input = "") {
   if (imageQuestionCount !== undefined) patch.imageQuestionCount = imageQuestionCount;
 
   const audioQuestionCount = extractNumber(numericText, [
+    /\b(\d{1,2})\s+(?:aufgaben?|fragen?)\s+hören\b/i,
     /\b(\d{1,2})\s*(?:audios|audioaufgaben|audio[- ]?clips?)\b/i,
     /\b(\d{1,2})\s+audio\b(?![-\s]*(?:antwort|option|lösun|loesun|erklär|erklaer|answer|solution|explanation))/i,
     /\b(?:davon\s+)?(\d{1,2})\s*(?:hör|hoer)\s*(?:aufgaben?|fragen?)\b/i,
     /\b(\d{1,2})\s*(?:aufgaben?|fragen?)\s+mit\s+(?:audio(?![-\s]?(?:antwort|option|lösun|loesun|answer|solution))|hörtext|hoertext)\b/i,
     /\b(?:of\s+those\s+)?(\d{1,2})\s*(?:listening|audio)\s+(?:questions?|tasks?)\b/i,
     /\b(\d{1,2})\s+(?:questions?|tasks?)\s+(?:with\s+audio|using\s+audio)\b/i
-  ], 0, 5);
+  ], 0, 100);
   if (audioQuestionCount !== undefined) patch.audioQuestionCount = audioQuestionCount;
 
   const audioAnswerQuestionCount = extractNumber(numericText, [
+    /\b(\d{1,2})\s+antworten\s+hören\b/i,
     /\b(\d{1,2})\s+(?:mit|with)\s+(?:vorgelesenen?|gesprochenen?|spoken|read[- ]?out)\s+(?:antwortmöglichkeiten|antwortoptionen|antworten|answer\s+options?|answers?)\b/i,
     /\b(?:davon\s+)?(\d{1,2})\s*(?:aufgaben?|fragen?|questions?|tasks?)\s+(?:mit|with)\s+(?:allen?\s+)?(?:vorgelesenen?|gesprochenen?|spoken|read[- ]?out|audio[- ]?)\s*(?:antwortmöglichkeiten|antwortoptionen|antworten|answer\s+options?|answers?)\b/i,
     /\b(?:davon\s+)?(\d{1,2})\s*(?:aufgaben?|fragen?)\s+mit\s+sprachnotizen\s+als\s+lösungen\b/i,
     /\b(?:davon\s+)?(\d{1,2})\s*(?:aufgaben?|fragen?)\s*,?\s+bei\s+denen\s+(?:alle\s+)?(?:antwortmöglichkeiten|antwortoptionen|antworten)\s+vorgelesen\b/i
-  ], 0, 5);
+  ], 0, 100);
   if (audioAnswerQuestionCount !== undefined) patch.audioAnswerQuestionCount = audioAnswerQuestionCount;
+
+  const fullAudioQuestionCount = extractNumber(numericText, [
+    /\b(\d{1,2})\s+(?:beides\s+hören|(?:aufgabe[n]?\s+und\s+antworten)\s+hören|vollständige[nr]?\s+audioaufgaben)/i,
+    /\b(\d{1,2})\s+(?:full|complete)\s+audio\s+(?:questions?|tasks?)/i
+  ], 0, 100);
+  if (fullAudioQuestionCount !== undefined) patch.fullAudioQuestionCount = fullAudioQuestionCount;
 
   // In creation, “audio solutions” means selectable spoken answers unless
   // the request explicitly describes a released explanation after the test.
@@ -447,6 +455,7 @@ function resolveLocalCrewRequest({ crewId = "coco", text = "", context = {}, loc
 
   const patch = parseTestRequest(normalized);
   if (member.id === "remy" && Object.keys(patch).length) {
+    if (Number(patch.fullAudioQuestionCount || 0) > 0) return { handled: true, reason: "audio-mode-unavailable", reply: english ? "Combined audio is disabled for new tests. Choose question audio or answer audio." : "Der Kombimodus ist für neue Tests ausgeschaltet. Wähle Aufgabe hören oder Antworten hören.", action: { type: "none" } };
     const summary = patchSummary(patch, normalizedLocale);
     return {
       handled: true,

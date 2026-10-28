@@ -2917,7 +2917,9 @@ function updateAiCreationSummary() {
   const count = Number($("aiCount").value), max = Number.isInteger(count) && count > 0 ? Math.min(5, count) : 5;
   const imageLabel = $("aiImageQuotaLabel"), audioLabel = $("aiAudioQuotaLabel");
   if (imageLabel) imageLabel.textContent = `Bilder (max. ${max} Aufgaben)`;
-  if (audioLabel) audioLabel.textContent = `max. ${max} je Bereich`;
+  if (audioLabel) audioLabel.textContent = `insgesamt max. ${max} Aufgaben`;
+  const audioStatus = $("aiAudioBudgetStatus");
+  if (audioStatus) audioStatus.textContent = `${audio} von ${max} Audioaufgaben`;
 
   node.textContent = parts.join(" · ");
 }
@@ -2941,48 +2943,30 @@ function updateAiImageControls() {
 }
 
 function updateAiAudioControls() {
-  const input = $("aiAudioQuestionCount");
-  const answerInput = $("aiAudioAnswerQuestionCount");
-  const solutionInput = $("aiSolutionAudioQuestionCount");
-  if (!input) return;
-  const full = Number($("aiFullAudioQuestionCount")?.value || 0);
-  const audio = Number(input.value) + full;
-  const solutionAudio = Number(solutionInput?.value);
-  const count = Number($("aiCount")?.value);
-  const invalid = !input.value.trim() || !Number.isInteger(audio) || audio < 0 || audio > 5;
-  const combinedInvalid = !invalid && Number.isInteger(count) && count >= 1 && audio > count;
-  input.setAttribute("aria-invalid", String(invalid || combinedInvalid));
-  const hint = $("aiAudioCountHint");
-  if (hint) {
-    const errors = [];
-    if (invalid) errors.push("Für Höraufgaben bitte eine ganze Zahl von 0 bis 5 eingeben.");
-    if (combinedInvalid) errors.push(`Bei ${count} Aufgaben sind höchstens ${count} Höraufgaben möglich.`);
-    hint.textContent = errors.length ? errors.join(" ") : "Frage sichtbar, Hörtext anhörbar.";
-    hint.classList.toggle("aiInputError", errors.length > 0);
-  }
-  if (solutionInput) {
-    const solutionInvalid = !solutionInput.value.trim() || !Number.isInteger(solutionAudio) || solutionAudio < 0 || solutionAudio > 5;
-    const solutionCombinedInvalid = !solutionInvalid && Number.isInteger(count) && count >= 1 && solutionAudio > count;
-    solutionInput.setAttribute("aria-invalid", String(solutionInvalid || solutionCombinedInvalid));
-    const solutionHint = $("aiSolutionAudioCountHint");
-    if (solutionHint) {
-      const errors = [];
-      if (solutionInvalid) errors.push("Für Audio-Lösungen bitte eine ganze Zahl von 0 bis 5 eingeben.");
-      if (solutionCombinedInvalid) errors.push(`Bei ${count} Aufgaben sind höchstens ${count} Audio-Lösungen möglich.`);
-      solutionHint.textContent = errors.length ? errors.join(" ") : "Optional · wird erst nach Testende und Lösungsfreigabe abgespielt.";
-      solutionHint.classList.toggle("aiInputError", errors.length > 0);
-    }
-  }
-  if (answerInput) {
-    const answerCount = Number(answerInput.value) + full;
-    const answerInvalid = !answerInput.value.trim() || !Number.isInteger(answerCount) || answerCount < 0 || answerCount > 5 || answerCount > count;
-    answerInput.setAttribute("aria-invalid", String(answerInvalid));
-    const answerHint = $("aiAudioAnswerCountHint");
-    if (answerHint) {
-      answerHint.textContent = answerInvalid ? "Bitte 0 bis 5 Audioantwort-Aufgaben wählen, höchstens so viele wie Aufgaben." : "Auswahloptionen werden einzeln hörbar und bleiben für Schüler als Text verborgen.";
-      answerHint.classList.toggle("aiInputError", answerInvalid);
-    }
-  }
+  const ids = ["aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiFullAudioQuestionCount"];
+  const fields = ids.map(id => $(id));
+  const values = fields.map(field => Number(field?.value || 0));
+  const count = Number($("aiCount")?.value), limit = Number.isInteger(count) && count > 0 ? Math.min(5, count) : 5;
+  const invalid = fields.map((field, i) => Boolean(field) && ((i !== 2 && !field.value.trim()) || !Number.isInteger(values[i]) || values[i] < 0 || values[i] > 5));
+  const total = values.reduce((sum, value) => sum + value, 0);
+  const staleCombined = values[2] !== 0;
+  const over = !invalid.some(Boolean) && total > limit;
+  fields.forEach((field, i) => { if (!field) return; field.setAttribute("aria-invalid", String(invalid[i] || over)); field.max = String(Math.max(0, limit - values.reduce((sum, value, j) => sum + (i === j ? 0 : value), 0))); });
+  ["aiAudioCountHint", "aiAudioAnswerCountHint"].forEach((id, i) => {
+    const hint = $(id); if (!hint) return;
+    hint.textContent = i === 0 && over ? `Zusammen sind maximal ${limit} Audioaufgaben möglich.` : invalid[i] ? "Bitte eine ganze Zahl von 0 bis 5 eingeben." : "";
+    hint.classList.toggle("aiInputError", Boolean(hint.textContent));
+  });
+  if (invalid[2]) { const hint = $("aiAudioCountHint"); if (hint) { hint.textContent = "Bitte eine ganze Zahl von 0 bis 5 eingeben."; hint.classList.add("aiInputError"); } }
+  let reset = $("aiClearOldCombinedAudio");
+  if (staleCombined) {
+    const hint = $("aiAudioCountHint");
+    if (hint) { hint.textContent = "Der Kombimodus ist für neue Tests ausgeschaltet."; hint.classList.add("aiInputError"); }
+    if (!reset && hint) { reset = document.createElement("button"); reset.id = "aiClearOldCombinedAudio"; reset.type = "button"; reset.className = "button secondary"; reset.textContent = "Alten Kombiwert abwählen"; hint.after(reset); reset.addEventListener("click", () => { if (fields[2]) { fields[2].value = "0"; fields[2].dispatchEvent(new Event("input", { bubbles: true })); } updateAiAudioControls(); updateAiCreationSummary(); }); }
+  } else reset?.remove();
+  const status = $("aiAudioBudgetStatus"); if (status) status.textContent = `${total} von ${limit} Audioaufgaben`;
+  const solution = $("aiSolutionAudioQuestionCount"), solutionHint = $("aiSolutionAudioCountHint");
+  if (solution) { const value = Number(solution.value), bad = !solution.value.trim() || !Number.isInteger(value) || value < 0 || value > limit; solution.setAttribute("aria-invalid", String(bad)); if (solutionHint) { solutionHint.textContent = bad ? "Bitte 0 bis 5 Audio-Lösungen wählen, höchstens so viele wie Aufgaben." : ""; solutionHint.classList.toggle("aiInputError", bad); } }
 }
 
 function updateAiPointsControls() {
@@ -3118,12 +3102,14 @@ function collectAiRequest() {
   const imageQuestionCount = Number($("aiImageQuestionCount").value);
   const fullInput = $("aiFullAudioQuestionCount");
   const fullAudioQuestionCount = Number(fullInput?.value ?? 0);
-  if (fullInput && !fullInput.value.trim()) throw new Error("Bitte eine ganze Anzahl vollständiger Audioaufgaben eingeben (0 ist möglich).");
   for (const [id, label] of [["aiAudioQuestionCount", "Höraufgaben"], ["aiAudioAnswerQuestionCount", "Audioantworten"]]) {
     const value = Number($(id)?.value);
     if (!$(id)?.value.trim() || !Number.isInteger(value) || value < 0 || value > 5) throw new Error(`Bitte eine ganze Anzahl ${label} von 0 bis 5 wählen.`);
   }
+  if (fullAudioQuestionCount !== 0) throw new Error("Der Kombimodus ist für neue Tests ausgeschaltet. Bitte den alten Kombiwert abwählen.");
   if (!Number.isInteger(fullAudioQuestionCount) || fullAudioQuestionCount < 0 || fullAudioQuestionCount > 5) throw new Error("Bitte 0 bis 5 vollständige Audioaufgaben wählen.");
+  const audioTaskTotal = Number($("aiAudioQuestionCount").value) + Number($("aiAudioAnswerQuestionCount").value) + fullAudioQuestionCount;
+  if (audioTaskTotal > Math.min(5, count)) throw new Error(`Zusammen sind maximal ${Math.min(5, count)} Audioaufgaben möglich.`);
   const audioQuestionCount = Number($("aiAudioQuestionCount").value) + fullAudioQuestionCount;
   const solutionAudioQuestionCount = Number($("aiSolutionAudioQuestionCount").value);
   const answerInput = $("aiAudioAnswerQuestionCount");

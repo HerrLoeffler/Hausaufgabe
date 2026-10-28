@@ -8,7 +8,7 @@ const question = n => normalizeQuestion({ type: "single", text: `Welche Zahl fol
 const clone = value => JSON.parse(JSON.stringify(value));
 const draft = () => ({ title: "Zahlen", questions: Array.from({ length: 20 }, (_, i) => question(i + 1)) });
 const options = { expectedCount: 20, targetPoints: 20, allowedTypes: ["single"], allowImages: false, allowAudio: true,
-  audioQuestionCount: 4, audioAnswerQuestionCount: 4, fullAudioQuestionCount: 2, audioPresentationPolicy: "visible-plus-full" };
+  audioQuestionCount: 4, audioAnswerQuestionCount: 3, fullAudioQuestionCount: 2, audioPresentationPolicy: "visible-plus-full" };
 const noProvider = { generateQuestion: async () => { throw Error("Unnecessary paid question repair"); }, regenerateTest: async () => { throw Error("Unnecessary paid full repair"); } };
 
 test("f382ba09 contract: excess hidden question becomes visible before review without regenerating content", async () => {
@@ -33,7 +33,7 @@ test("explicit zero demotes hidden audio; legacy presentation remains untouched"
   const input = draft();
   const zero = await validateAndRepairTest(input, { ...options, audioAnswerQuestionCount: 0, fullAudioQuestionCount: 0 }, noProvider);
   assert.equal(zero.test.questions.filter(q => q.audioIntent.presentation === "listening-only").length, 0);
-  const legacy = { ...options }; delete legacy.audioPresentationPolicy; delete legacy.fullAudioQuestionCount;
+  const legacy = { ...options }; delete legacy.audioPresentationPolicy; delete legacy.fullAudioQuestionCount; legacy.audioAnswerQuestionCount = 1;
   const result = await validateAndRepairTest(input, legacy, noProvider);
   assert.deepEqual(result.test, input);
 });

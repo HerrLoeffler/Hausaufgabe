@@ -783,3 +783,6 @@ body.gcAiCompact .creationLegalFooter :is(.legalSiteFooter,.rightsFooter){flex:0
 
 #aiView #aiCreationSummary{font-weight:650;color:#29466b}
 #aiAudioQuotaLabel{display:block;font-size:10px;line-height:1.1;font-weight:400;color:inherit}
+
+#aiAudioBudgetStatus{display:block;font-size:10px;line-height:1.1;font-weight:400;color:inherit}
+@media(max-width:1100px){#aiAudioQuotaLabel{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}#aiAudioBudgetStatus{font-size:9px}}

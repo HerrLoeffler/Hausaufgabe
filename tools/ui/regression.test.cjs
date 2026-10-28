@@ -69,13 +69,13 @@ test('dashboard route focus hides only the programmatic heading ring', t => {
   assert.match(source('interface.js'), /target\.focus\(\{\s*preventScroll:\s*true\s*\}\)/);
 });
 
-test('creation separates source material from generated images and shows three audio examples', t => {
+test('creation separates source material from generated images and shows two audio examples', t => {
   const w = fixture(t), view=w.document.getElementById('aiView');
   const section=id=>w.$(id).closest('[data-creation-step]');
   assert.equal(section('aiMaterialMode').dataset.creationStep,'2');
   assert.equal(section('aiImageQuestionCount').dataset.creationStep,'3');
-  for(const id of ['aiAudioQuestionCount','aiAudioAnswerQuestionCount','aiFullAudioQuestionCount'])assert.equal(section(id).dataset.creationStep,'4');
-  assert.equal(view.querySelectorAll('.audioStudentExample').length,3);
+  for(const id of ['aiAudioQuestionCount','aiAudioAnswerQuestionCount'])assert.equal(section(id).dataset.creationStep,'4');
+  assert.equal(view.querySelectorAll('.audioStudentExample').length,2);
   assert.match(section('aiAudioQuestionCount').textContent,/Frage.*Antwort|Antwort.*Frage/s);
   assert.equal(w.$('aiUploadLegalDetails').open,false);
   assert.equal(w.$('aiMaterialConfirmed').checked,false);
