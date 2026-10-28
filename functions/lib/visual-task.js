@@ -4,13 +4,14 @@
 // Kept in each independently deployed codebase; never evaluate task markup.
 const core = require("./visual/core");
 const VISUAL_FORMATS = Object.freeze(core.formats.filter(format => !["single", "multi", "number"].includes(format)));
-const MAX_VISUAL_CHARS = 20000;
+const MAX_VISUAL_CHARS = 180000;
 const plain = value => value !== null && typeof value === "object" && !Array.isArray(value);
 const safeId = value => typeof value === "string" && /^[A-Za-z0-9_-]{1,60}$/.test(value) && !["__proto__", "prototype", "constructor"].includes(value);
 function keys(value, allowed, label) {
   if (!plain(value) || Object.keys(value).some(key => !allowed.split(" ").includes(key))) throw new Error(`Ungültige Felder: ${label}.`);
 }
-function inspect(value, depth = 0) {
+function inspect(value, depth = 0, imageField = false) {
+  if (imageField) { if(typeof value !== "string" || value.length > 36000 || !/^data:image\/webp;base64,[A-Za-z0-9+/]+={0,2}$/.test(value)) throw new Error("Ungültige Bildkarte."); return; }
   if (depth > 8) throw new Error("Visuelle Aufgabe ist zu stark verschachtelt.");
   if (typeof value === "string" && (value.length > 4000 || /[<>]|(?:javascript|data|vbscript):/i.test(value))) throw new Error("Markup oder unsicherer Text in visueller Aufgabe.");
   if (typeof value === "number" && !Number.isFinite(value)) throw new Error("Ungültige Zahl.");
@@ -20,7 +21,7 @@ function inspect(value, depth = 0) {
   } else if (plain(value)) {
     for (const [key, child] of Object.entries(value)) {
       if (!safeId(key)) throw new Error("Unsicherer Feldname.");
-      inspect(child, depth + 1);
+      inspect(child, depth + 1, key === "imageDataUrl");
     }
   }
 }
@@ -43,6 +44,7 @@ function parseVisualTask(raw, { points } = {}) {
   if (typeof raw !== "string" || !raw || raw.length > MAX_VISUAL_CHARS) throw new Error("Visuelle Aufgabe muss begrenzter JSON-Text sein.");
   let task;
   try { task = JSON.parse(raw); } catch { throw new Error("Visuelle Aufgabe enthält ungültiges JSON."); }
+  if(task.format !== "sequence" && raw.length > 20000) throw new Error("Visuelle Aufgabe ist zu groß.");
   inspect(task);
   keys(task, "schemaVersion id revision format title subject grade prompt hint maxPoints objective rationale sourceNote spec solution provenance review", "Aufgabe");
   if (!VISUAL_FORMATS.includes(task.format) || !safeId(task.id) || !Number.isInteger(task.revision) || task.revision < 0 || task.revision > 1000000) throw new Error("Ungültiges visuelles Format oder ID.");
@@ -79,7 +81,7 @@ function parseVisualTask(raw, { points } = {}) {
     records(spec.ticks, "id value label");
     records(spec.events, "id text");
   }
-  if (task.format === "sequence") records(spec.items, "id illustration caption");
+  if (task.format === "sequence") records(spec.items, spec.family === "generated-four" ? "id caption imageDataUrl" : "id illustration caption");
   if (task.format === "chart") {
     records(spec.categories, "id label value");
     if (spec.categories.some(category => typeof category.label !== "string" || !category.label.trim())) throw new Error("Diagrammbeschriftung fehlt.");

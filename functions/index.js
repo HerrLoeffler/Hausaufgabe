@@ -157,7 +157,7 @@ function cleanInput(data = {}) {
   }
   return {
     schoolType: String(data.schoolType || "Mittelschule").slice(0, 100), region: String(data.region || "Bayern").slice(0, 100),
-    subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, 500),
+    subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, allowedVisualFormats?.length===1 && allowedVisualFormats[0]==='sequence' ? 1200 : 500),
     learningGoals: Array.isArray(data.learningGoals) ? data.learningGoals.slice(0,12).map(x=>String(x).slice(0,250)) : [],
     difficulty: String(data.difficulty || "mittel").slice(0, 50), count, points,
     allowedTypes, ...(data.allowedVisualFormats !== undefined && allowedTypes.includes("visual") ? {allowedVisualFormats} : {}), notes: String(data.notes || "").slice(0, LIMITS.maxPromptChars), imageMode, exactImageCounts,
@@ -284,6 +284,19 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
   const materials = sanitizeMaterials(data?.materials, uid);
   if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
   await consumeQuota(uid, "test").catch(err => { throw reportAiError(err, "test-quota"); });
+  if(input.allowedVisualFormats?.length===1 && input.allowedVisualFormats[0]==='sequence' && input.allowedTypes.length===1 && input.allowedTypes[0]==='visual') {
+    const result=await require('./lib/sequence-sheet').generateSequenceTest({...input,clientRequestId:requestId},{
+      structured:structuredResponse,onProgress,consumeImage:()=>consumeQuota(uid,'image'),
+      record:(phase,usage,extra)=>recordUsage(uid,phase,usage,{...extra,requestId,recipe:'sequence-sheet-v1'}),
+      generateMaster:async({prompt})=>{
+        const response=await getOpenAI().images.generate({model:require('./lib/constants').IMAGE_MODEL,prompt,size:'2048x2048',quality:'medium',output_format:'webp',n:1},{timeout:360000,maxRetries:0});
+        if(!response.data?.[0]?.b64_json)throw Error('Bildmodell lieferte keine Bildtafel.');
+        return {bytes:Buffer.from(response.data[0].b64_json,'base64'),usage:response.usage||{},requestId:response._request_id||'',model:require('./lib/constants').IMAGE_MODEL};
+      }
+    });
+    await recordUsage(uid,'test',{}, {requestId,recipe:'sequence-sheet-v1',imageQuestions:input.count,phaseTotals:result.meta.usage});
+    return result;
+  }
   let phase = "material";
   const observations = new Map();
   try {
@@ -748,6 +761,13 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   let allowedVisualFormats;
   try { allowedVisualFormats = require("./lib/interactive-authoring").revisionVisualFormats(request.data || {}, question, allowedTypes); }
   catch (error) { throw new HttpsError("invalid-argument", error.message); }
+  if(allowedTypes.length===1 && allowedTypes[0]==='visual' && allowedVisualFormats?.length===1 && allowedVisualFormats[0]==='sequence') {
+    const ctx=request.data?.testContext||{};
+    const result=await generateTestForUser(uid,{subject:ctx.subject||'Fachübergreifend',grade:ctx.grade||'6',topic:String(request.data?.instruction||question.text||'').slice(0,1200),count:1,points:2,allowedTypes:['visual'],allowedVisualFormats:['sequence'],imageMode:'none',audioMode:'none',notes:'Erstelle eine neue Bildfolge zum Inhalt der bisherigen Aufgabe: '+String(question.text||'').slice(0,1200)});
+    const next=result.test.questions[0],task=JSON.parse(next.visualTask);const points=Number(question.points);
+    if(!Number.isFinite(points)||points<=0||points>20)throw new HttpsError('invalid-argument','Punktzahl muss zwischen0,5und20liegen.');
+    task.maxPoints=points;next.points=points;next.visualTask=JSON.stringify(task);return {question:next,meta:result.meta};
+  }
   const materialIds = sanitizeMaterials(request.data?.materials, uid).map(m => m.id);
   const mediaKind = request.data?.mediaKind;
   if (mediaKind !== undefined && !["none", "ai_generated"].includes(mediaKind)) throw new HttpsError("invalid-argument", "Ungültige Bildauswahl.");

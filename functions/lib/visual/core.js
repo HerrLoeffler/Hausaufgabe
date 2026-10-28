@@ -14,6 +14,7 @@ const inRange=(v,min,max)=>Number.isFinite(v)&&v>=min-1e-8&&v<=max+1e-8;
 const safeId=value=>typeof value==='string'&&/^[A-Za-z0-9_-]{1,60}$/.test(value)&&!['__proto__','prototype','constructor'].includes(value);
 const closedFields=(value,fields)=>plain(value)&&Object.keys(value).every(key=>fields.split(' ').includes(key));
 const safeText=value=>typeof value==='string'&&value.trim().length>0&&value.length<=4000&&!(/[<>]|(?:javascript|data|vbscript):/i.test(value));
+function safeCardImage(value){if(typeof value!=='string'||value.length>36000||!/^data:image\/webp;base64,[A-Za-z0-9+/]+={0,2}$/.test(value))return false;try{const b=globalThis.atob(value.slice(23));return b.slice(0,4)==='RIFF'&&b.slice(8,12)==='WEBP';}catch{return false;}}
 const sequenceFamilies=Object.freeze({butterfly:['egg','caterpillar','chrysalis','butterfly'],'water-cycle':['evaporation','condensation','precipitation','collection'],'plant-growth':['seed','germination','seedling','flowering']});
 function timelineAnswer(s,answer){if(!plain(answer)||Object.keys(answer).length>s.ticks.length||!Object.keys(answer).every(id=>s.ticks.some(t=>t.id===id)))return false;const values=Object.values(answer).filter(v=>v!==null);return values.every(id=>safeId(id)&&s.events.some(e=>e.id===id))&&new Set(values).size===values.length;}
 function sequenceAnswer(s,answer){if(!Array.isArray(answer)||answer.length>s.items.length)return false;const values=Array.from(answer);return values.every(id=>safeId(id)&&s.items.some(item=>item.id===id))&&new Set(values).size===values.length;}
@@ -88,8 +89,8 @@ function validate(q,{publicOnly=false}={}){
  }
  case 'sequence':{
   check(closedFields(s,'family items')&&closedFields(a,'order'),'Bilderfolgenfelder ungültig.');
-  check(typeof s.family==='string'&&Object.hasOwn(sequenceFamilies,s.family),'Unbekannte Bilderfamilie.');
-  check(arr(s.items,4,4)&&ids(s.items)&&s.items.every(item=>closedFields(item,'id illustration caption')&&safeId(item.id)&&safeText(item.caption)&&sequenceFamilies[s.family]?.includes(item.illustration))&&new Set(s.items.map(item=>item.illustration)).size===4,'Bilderfolge benötigt vier unterschiedliche Bilder ihrer Familie.');
+  check(typeof s.family==='string'&&(Object.hasOwn(sequenceFamilies,s.family)||s.family==='generated-four'),'Unbekannte Bilderfamilie.');
+  check(arr(s.items,4,4)&&ids(s.items)&&s.items.every(item=>safeId(item.id)&&safeText(item.caption)&&(s.family==='generated-four'?closedFields(item,'id caption imageDataUrl')&&safeCardImage(item.imageDataUrl):closedFields(item,'id illustration caption')&&sequenceFamilies[s.family]?.includes(item.illustration)))&&(s.family==='generated-four'||new Set(s.items.map(item=>item.illustration)).size===4),'Bilderfolge benötigt vier gültige Karten.');
   check(arr(a.order,4,4)&&equalSet(a.order,s.items.map(item=>item.id)),'Bilderfolgenlösung muss jedes Bild genau einmal enthalten.');break;
  }
  case 'hotspot':case 'labeling':{
