@@ -286,7 +286,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
   await consumeQuota(uid, "test").catch(err => { throw reportAiError(err, "test-quota"); });
   if(input.allowedVisualFormats?.length===1 && input.allowedVisualFormats[0]==='sequence' && input.allowedTypes.length===1 && input.allowedTypes[0]==='visual') {
     const result=await require('./lib/sequence-sheet').generateSequenceTest({...input,clientRequestId:requestId},{
-      structured:structuredResponse,onProgress,consumeImage:()=>consumeQuota(uid,'image'),
+      structured:params=>requestStructured(p=>getOpenAI().responses.create(p,{timeout:180000,maxRetries:0}),{model:TEXT_MODEL,store:false,reasoning:{effort:'medium'},input:[{role:'system',content:[{type:'input_text',text:params.systemPrompt}]},{role:'user',content:[{type:'input_text',text:params.userPrompt},...(params.content||[])]}],text:{format:{type:'json_schema',name:params.schemaName,strict:true,schema:params.schema}}}),onProgress,consumeImage:()=>consumeQuota(uid,'image'),
       record:(phase,usage,extra)=>recordUsage(uid,phase,usage,{...extra,requestId,recipe:'sequence-sheet-v1'}),
       generateMaster:async({prompt})=>{
         const response=await getOpenAI().images.generate({model:require('./lib/constants').IMAGE_MODEL,prompt,size:'2048x2048',quality:'medium',output_format:'webp',n:1},{timeout:360000,maxRetries:0});
@@ -761,13 +761,6 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   let allowedVisualFormats;
   try { allowedVisualFormats = require("./lib/interactive-authoring").revisionVisualFormats(request.data || {}, question, allowedTypes); }
   catch (error) { throw new HttpsError("invalid-argument", error.message); }
-  if(allowedTypes.length===1 && allowedTypes[0]==='visual' && allowedVisualFormats?.length===1 && allowedVisualFormats[0]==='sequence') {
-    const ctx=request.data?.testContext||{};
-    const result=await generateTestForUser(uid,{subject:ctx.subject||'Fachübergreifend',grade:ctx.grade||'6',topic:String(request.data?.instruction||question.text||'').slice(0,1200),count:1,points:2,allowedTypes:['visual'],allowedVisualFormats:['sequence'],imageMode:'none',audioMode:'none',notes:'Erstelle eine neue Bildfolge zum Inhalt der bisherigen Aufgabe: '+String(question.text||'').slice(0,1200)});
-    const next=result.test.questions[0],task=JSON.parse(next.visualTask);const points=Number(question.points);
-    if(!Number.isFinite(points)||points<=0||points>20)throw new HttpsError('invalid-argument','Punktzahl muss zwischen0,5und20liegen.');
-    task.maxPoints=points;next.points=points;next.visualTask=JSON.stringify(task);return {question:next,meta:result.meta};
-  }
   const materialIds = sanitizeMaterials(request.data?.materials, uid).map(m => m.id);
   const mediaKind = request.data?.mediaKind;
   if (mediaKind !== undefined && !["none", "ai_generated"].includes(mediaKind)) throw new HttpsError("invalid-argument", "Ungültige Bildauswahl.");

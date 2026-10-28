@@ -15,7 +15,7 @@ if(!dest||!path.isAbsolute(dest))throw Error('Absolute empty output required');
 await fs.mkdir(dest,{recursive:true});if((await fs.readdir(dest)).length)throw Error('Output must be empty');
 execFileSync(process.execPath,['tools/build-staging.mjs',dest,'staging'],{cwd:root,stdio:'inherit'});
 const web=path.join(dest,'public');
-if(prefix==='sequence28'){await fs.cp(path.join(root,'tools/sequence-pilot'),path.join(web,'bildfolgen'),{recursive:true});const choice=path.join(web,'visual-format-choice.mjs');let text=await fs.readFile(choice,'utf8');text=text.replace("'coordinate','table']","'coordinate','table','sequence']").replace("table:'Tabelle ergänzen'","table:'Tabelle ergänzen',sequence:'Bildfolge mit KI'");await fs.writeFile(choice,text);}
+if(prefix==='sequence28')await fs.cp(path.join(root,'tools/sequence-pilot'),path.join(web,'bildfolgen'),{recursive:true});
 await fs.copyFile(path.join(root,'visual-preview255.mjs'),path.join(web,'visual-preview255.mjs'));
 const previewConfig=await fs.readFile(path.join(web,'visual-preview255.mjs'),'utf8');
 await fs.writeFile(path.join(web,'visual-preview255.mjs'),previewConfig.replace('ENABLED = false','ENABLED = true').replaceAll("'visual255'",JSON.stringify(prefix)));
