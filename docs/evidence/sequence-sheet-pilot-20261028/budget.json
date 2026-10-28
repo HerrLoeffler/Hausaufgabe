@@ -1,0 +1,36 @@
+{
+  "task": "GC-EXTENDED-QUESTION-TYPES-01",
+  "scope": "sequence28 isolated staging only",
+  "plannedLogicalRequests": 3,
+  "plannedSubjects": [
+    "Biologie",
+    "Deutsch",
+    "Physik"
+  ],
+  "maxMastersPerSequence": 2,
+  "maxMastersTotal": 7,
+  "masterModel": "gpt-image-2",
+  "textAndReviewModel": "existing TEXT_MODEL",
+  "prior117Responses": "historical recipe pilot, separate; not reset",
+  "biologie": {
+    "entry": "real teacher UI /bildfolgen",
+    "status": "prepared_for_one_click",
+    "wish": "Keimung einer Bohne, vier sichtbare Phasen, Klasse6"
+  },
+  "deutsch": {
+    "entry": "existing authenticated callable",
+    "status": "prepared"
+  },
+  "physik": {
+    "entry": "existing authenticated callable",
+    "status": "prepared"
+  },
+  "unknownOutcomePolicy": "Preserve IDs; no new logical request or duplicate image generation after uncertain dispatch.",
+  "source": "f8dcaebfbcbfa89b253243b2020cc2d43f671f51",
+  "knownFailedJob": "cc5c56b67975b3b1ad3725aee6b7b5702b34bc78",
+  "confirmation": "Exactly one Deutsch B job after concrete incidental-background review defect; one master only. Three scenarios, four logical jobs; max6masters preserved.",
+  "maxLogicalRequests": 5,
+  "currentKnownMasterResponses": 5,
+  "secondKnownFailure": "f612d535626f13ff9dbe7dde5864dc2c9ed67946",
+  "ruling": "One final Deutsch C confirmation after genuine observed-caption mismatch. v1.2 repairs captions against actual pictures instead of regenerating for incidental details; private cropped draft retained. B pictures cannot be recovered because previous worker retained no asset. Exactly one extra master C, not a blind repeat; all A/B evidence preserved."
+}

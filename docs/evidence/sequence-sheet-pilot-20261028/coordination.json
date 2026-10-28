@@ -1,0 +1,21 @@
+{
+  "task": "GC-EXTENDED-QUESTION-TYPES-01",
+  "code_pr": 361,
+  "code_state": "draft; not integrated into canonical runtime",
+  "documentation_pr": 365,
+  "documentation_head": "1a8b51618e678dfdbe42bfc53cdda7323fe85689",
+  "documentation_merge": "0d28149286bbff3eec5a5a1a0a884e9d8d47a27a",
+  "checks": {
+    "live_audit": 40723386290,
+    "handoff": 40723386328,
+    "conclusion": "success"
+  },
+  "scope": "Only own sequence28 Hosting and prefixed backend; main receives recipes, TODO, release followup and handoff only",
+  "hosting_source": "a8187beb8cba6a120e7a3addd6534eac28cd0f4d",
+  "backend_source": "207dbc64d2045e11ede8fa42281d7c4adf965d0d",
+  "evidence": "b861fd1ebc482b88ed86fb389ec39639676bbe51",
+  "human_teacher_acceptance": "pending",
+  "physical_touch_acceptance": "pending",
+  "paid_jobs_active": 0,
+  "new_paid_calls_after_resume": 0
+}

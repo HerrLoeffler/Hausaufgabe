@@ -1,0 +1,126 @@
+{
+  "case": "biologie",
+  "entry": "real_teacher_UI",
+  "requestId": "sequence28-14cdf0d8-cd7a-45d2-9",
+  "jobId": "417051f2f65bb434e6fb3770b05773f80de99401",
+  "status": "ready",
+  "startedAt": "2026-10-28T12:10:23.275Z",
+  "input": {
+    "points": 2,
+    "exactImageCounts": false,
+    "audioQuestionCount": 0,
+    "count": 1,
+    "allowedVisualFormats": [
+      "sequence"
+    ],
+    "allowImageChoices": false,
+    "audioMode": "none",
+    "subject": "Biologie",
+    "materialMode": "inspiration",
+    "learningGoals": [],
+    "notes": "Vier eindeutig unterscheidbare Bilder, keine Lösungshinweise in Bildern oder Beschriftungen.",
+    "audioAnswerQuestionCount": 0,
+    "schoolType": "Mittelschule",
+    "allowedTypes": [
+      "visual"
+    ],
+    "maxVisualQuestions": 0,
+    "difficulty": "mittel",
+    "exactAudioCounts": false,
+    "region": "Bayern",
+    "pedagogicalContextKnown": false,
+    "imageMode": "none",
+    "solutionAudioQuestionCount": 0,
+    "topic": "Vier Bilder zur Keimung einer Bohne: vom Samen bis zur Jungpflanze mit den ersten Laubblättern. Gleicher durchsichtiger Becher und gleiche Perspektive, damit Wurzeln und Spross erkennbar sind. Die Bilder sollen nur sichtbare Entwicklungsstadien zeigen, ohne Worte oder Nummern.",
+    "grade": "6",
+    "clientRequestId": "sequence28-14cdf0d8-cd7a-45d2-9"
+  },
+  "stage": "ready",
+  "updatedAt": "2026-10-28T12:11:34.596Z",
+  "quizId": "KPAWWW5Y",
+  "durationSeconds": 72,
+  "recipeSelection": {
+    "version": "sequence-sheet-v1",
+    "evidence": [
+      {
+        "question": 1,
+        "attempt": 1,
+        "accepted": true,
+        "content": {
+          "valid": true,
+          "unambiguous": true,
+          "cards": [
+            {
+              "id": "cfa9b4c7e5c434980",
+              "valid": true,
+              "detail": "Das tatsächliche Bild zeigt eine aufgequollene Bohne im durchsichtigen Becher mit feuchter Erde und einer kurzen hellen Keimwurzel. Keine Wörter, Zahlen, Pfeile oder Beschriftungen; kein relevanter Inhalt ist abgeschnitten."
+            },
+            {
+              "id": "c0b4f00db3de74cfc",
+              "valid": true,
+              "detail": "Das tatsächliche Bild zeigt eine kleine Jungpflanze mit deutlich sichtbarer Wurzel, zwei unteren Keimblättern und darüber ausgebildeten ersten echten Laubblättern. Becher, Perspektive, Erde und Hintergrund sind konsistent; keine verräterischen Hinweise oder Randinhalte."
+            },
+            {
+              "id": "ceac12b40a2c84d8d",
+              "valid": true,
+              "detail": "Das tatsächliche Bild zeigt eine verlängerte Wurzel, einen grünen Spross an der Erdoberfläche und zwei Keimblätter. Das Entwicklungsstadium ist klar vom vorherigen und folgenden Stadium unterscheidbar; keine Texte, Zahlen, Pfeile oder Beschriftungen."
+            },
+            {
+              "id": "cfac89980454448c1",
+              "valid": true,
+              "detail": "Das tatsächliche Bild zeigt eine unveränderte Bohne in der feuchten Erde ohne sichtbare Wurzel, Spross oder Blätter. Becher, Perspektive und Hintergrund stimmen mit den übrigen Bildern überein; kein wichtiger Inhalt ist abgeschnitten."
+            }
+          ],
+          "reason": "Alle vier tatsächlichen Bilder entsprechen den geplanten Entwicklungsstadien: unveränderte Bohne, Bohne mit kurzer Keimwurzel, Spross mit Keimblättern und Jungpflanze mit ersten echten Laubblättern. Die Stadien sind fachlich korrekt, visuell eindeutig und in der vorgegebenen Reihenfolge lösbar. Die öffentlich sichtbaren Bildunterschriften enthalten keine Reihenfolgehinweise oder Nummerierungen."
+        },
+        "blind": {
+          "order": [
+            "cfac89980454448c1",
+            "cfa9b4c7e5c434980",
+            "ceac12b40a2c84d8d",
+            "c0b4f00db3de74cfc"
+          ],
+          "unambiguous": true,
+          "reason": "Die sichtbare Entwicklung zeigt nacheinander die unveränderte Bohne, die austretende Wurzel, den jungen Spross mit ersten Blättern und schließlich die entwickelte Pflanze mit stark verzweigtem Wurzelsystem und mehreren Blättern."
+        },
+        "cardByteSizes": [
+          23596,
+          21136,
+          23960,
+          23184
+        ]
+      }
+    ],
+    "formats": [
+      "sequence"
+    ]
+  },
+  "usage": {
+    "output_tokens": 1699,
+    "providerRequests": [
+      {
+        "responseId": "resp_0a7c7ce28f6f5ffd016ae1e6313d3087d2aa572feedb67b4c5",
+        "requestId": "req_538bd3e3df4f4385960eac425f1769c7",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7764,
+        "phase": "sequence_storyboard_v1"
+      },
+      {
+        "responseId": "resp_0dd929c1f21577d5016ae1e66841c087d2afe80c5ea1622ad9",
+        "requestId": "req_d192112dde1c48a9aa8d8cfabb6d91a2",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7432,
+        "phase": "sequence_content_review_v1"
+      },
+      {
+        "responseId": "resp_007c8410ad42c623016ae1e66fc9ac87d2825fc45216dbdc0d",
+        "requestId": "req_10efde5ec49141bda66799d31d25f62c",
+        "model": "gpt-5.6-luna",
+        "durationMs": 2588,
+        "phase": "sequence_blind_solution_v1"
+      }
+    ],
+    "total_tokens": 5687,
+    "input_tokens": 3988
+  }
+}

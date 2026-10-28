@@ -1,0 +1,131 @@
+{
+  "jobId": "cc5c56b67975b3b1ad3725aee6b7b5702b34bc78",
+  "errorReference": "d4bed299",
+  "errorCode": "unavailable",
+  "progressMessage": "Die KI-Erstellung konnte wegen eines technischen Fehlers nicht abgeschlossen werden. Bitte erneut versuchen.",
+  "errorDetails": {
+    "reference": "d4bed299",
+    "phase": "background-test",
+    "diagnostic": {
+      "evidence": [
+        {
+          "question": 1,
+          "attempt": 1,
+          "accepted": false,
+          "content": {
+            "valid": false,
+            "unambiguous": true,
+            "cards": [
+              {
+                "id": "cb9458b2c641847e8",
+                "valid": false,
+                "detail": "Die geplante Bauphase ist korrekt dargestellt: drei Schneekugeln, keine Dekoration und das Kind mit Karotte. Allerdings ist die im Gesamtauftrag geforderte kleine Gartenhütte im Bild nicht sichtbar."
+              },
+              {
+                "id": "cb6f98cb2700e434a",
+                "valid": false,
+                "detail": "Die geplante Anfangsphase ist korrekt dargestellt: Das Kind rollt einen einzelnen kleinen Schneeball, ohne weitere Kugeln oder Schneemann. Die geforderte kleine Gartenhütte ist jedoch im Bild nicht sichtbar."
+              },
+              {
+                "id": "c5bfa16d8c54e421b",
+                "valid": false,
+                "detail": "Der fertige Schneemann mit Karottennase, Augen, Knöpfen, Zweigarmen und Schal ist korrekt dargestellt. Die geforderte kleine Gartenhütte ist jedoch im Bild nicht sichtbar."
+              },
+              {
+                "id": "cd1f71c5a9afa4644",
+                "valid": false,
+                "detail": "Die geplante Phase mit zwei aufeinandergesetzten Schneekugeln ist korrekt dargestellt. Die geforderte kleine Gartenhütte ist jedoch im Bild nicht sichtbar."
+              }
+            ],
+            "reason": "Die vier tatsächlichen Bilder zeigen eine klar erkennbare und eindeutig lösbare Reihenfolge; auch die Bildausschnitte und die übrigen Gartenelemente sind weitgehend konsistent. Dennoch fehlt in allen vier Bildern die ausdrücklich geforderte kleine Gartenhütte. Damit zeigen die Karten nicht vollständig die vorgegebene gemeinsame Szene und müssen abgelehnt werden. Die sichtbaren Bildunterschriften enthalten keine verbotenen Reihenfolgehinweise oder Nummerierungen."
+          },
+          "blind": {
+            "order": [
+              "cb6f98cb2700e434a",
+              "cd1f71c5a9afa4644",
+              "cb9458b2c641847e8",
+              "c5bfa16d8c54e421b"
+            ],
+            "unambiguous": true,
+            "reason": "Die sichtbaren Bauphasen ergeben eindeutig: zuerst wird eine kleine Schneekugel gerollt, dann auf einen größeren Schneeball gesetzt, anschließend entsteht der dreiteilige Schneemann mit Karottennase und zuletzt wird er vollständig mit Gesicht, Armen, Schal und Knöpfen geschmückt."
+          },
+          "cardByteSizes": [
+            25564,
+            20008,
+            20012,
+            19394
+          ]
+        },
+        {
+          "question": 1,
+          "attempt": 2,
+          "accepted": false,
+          "content": {
+            "valid": false,
+            "unambiguous": false,
+            "cards": [
+              {
+                "id": "c9851e2e19ebf4e42",
+                "valid": true,
+                "detail": "Die Karte zeigt tatsächlich ein Kind, das einen einzelnen kleinen Schneeball mit beiden Händen bearbeitet. Es sind keine weiteren Schneekugeln oder Schneemannteile erkennbar. Garten, Bildausschnitt und Kleidung passen zur Vorgabe."
+              },
+              {
+                "id": "c19a6d52cbaf64a3a",
+                "valid": true,
+                "detail": "Die Karte zeigt zwei aufeinandergesetzte Schneekugeln, wobei das Kind die kleinere Kugel an die größere setzt. Es sind keine dritte Kugel und keine Dekoration erkennbar. Der feste Bildausschnitt und die Gestaltung sind konsistent."
+              },
+              {
+                "id": "c25d72f9da8404269",
+                "valid": false,
+                "detail": "Die Karte zeigt zwar drei Schneekugeln und eine Karotte, aber der Schneemann hat bereits deutlich sichtbare Zweigarme. Laut Vorgabe darf er in dieser Bauphase noch keine Arme oder andere Verzierungen haben. Damit stimmt die geplante Szene nicht exakt."
+              },
+              {
+                "id": "ce127d5e071014987",
+                "valid": true,
+                "detail": "Die Karte zeigt den fertigen Schneemann mit Karottennase, dunklen Augen und Knöpfen, Zweigarmen und buntem Schal. Das Kind steht daneben. Bildausschnitt, Garten und Kleidung bleiben konsistent."
+              }
+            ],
+            "reason": "Die Bildfolge ist wegen Karte c25d72f9da840426 nicht vollständig korrekt und daher nicht eindeutig gemäß Vorgabe lösbar: In der dritten Bauphase sind entgegen der Beschreibung bereits Zweigarme vorhanden. Die öffentlich sichtbaren Bildunterschriften enthalten keine verbotenen Reihenfolgehinweise oder Nummerierungen."
+          },
+          "blind": {
+            "order": [
+              "c9851e2e19ebf4e42",
+              "c19a6d52cbaf64a3a",
+              "c25d72f9da8404269",
+              "ce127d5e071014987"
+            ],
+            "unambiguous": true,
+            "reason": "Die sichtbaren Bauphasen verlaufen eindeutig vom Rollen einer kleinen Schneekugel über das Aufsetzen und Ausrichten der Kugeln, das Hinzufügen der Karottennase bis zum vollständig geschmückten Schneemann."
+          },
+          "cardByteSizes": [
+            23384,
+            21386,
+            21858,
+            23276
+          ]
+        }
+      ],
+      "materialCount": 0,
+      "textModel": "gpt-5.6-luna",
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "stage": "sequence_review",
+      "recipe": "sequence-sheet-v1",
+      "schemaVersion": 1,
+      "jobId": "cc5c56b67975b3b1ad3725aee6b7b5702b34bc78",
+      "request": {
+        "count": 1,
+        "points": 2,
+        "subject": "Deutsch",
+        "region": "Bayern",
+        "schoolType": "Mittelschule",
+        "topic": "Vier Bilder als Grundlage einer kurzen Vorgangsbeschreibung: Ein Kind baut einen Schneemann. Zeige die sichtbaren Bauphasen, sodass man sie eindeutig ordnen und danach einen zusammenhängenden Text schreiben kann. Derselbe Garten und dasselbe Kind, keine Schrift oder Nummern, genau vier deutlich verschiedene Bilder.",
+        "allowedTypes": [
+          "visual"
+        ],
+        "difficulty": "mittel",
+        "grade": "5",
+        "imageMode": "none"
+      }
+    }
+  }
+}

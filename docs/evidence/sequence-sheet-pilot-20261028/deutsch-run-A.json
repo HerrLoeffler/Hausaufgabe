@@ -1,0 +1,30 @@
+{
+  "case": "deutsch",
+  "requestId": "GC-SEQ28-deutsch-A",
+  "status": "failed",
+  "preparedAt": "2026-10-28T12:11:34.832Z",
+  "input": {
+    "subject": "Deutsch",
+    "grade": "5",
+    "topic": "Vier Bilder als Grundlage einer kurzen Vorgangsbeschreibung: Ein Kind baut einen Schneemann. Zeige die sichtbaren Bauphasen, sodass man sie eindeutig ordnen und danach einen zusammenh\u00e4ngenden Text schreiben kann. Derselbe Garten und dasselbe Kind, keine Schrift oder Nummern, genau vier deutlich verschiedene Bilder.",
+    "clientRequestId": "GC-SEQ28-deutsch-A",
+    "count": 1,
+    "points": 2,
+    "allowedTypes": [
+      "visual"
+    ],
+    "allowedVisualFormats": [
+      "sequence"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "materials": [],
+    "notes": "Nur die gewollte fachliche Bildfolge. Eindeutiger Start und Zielzustand; keine Reihenfolgehinweise in Bild oder Bildunterschriften. Keine pers\u00f6nlichen Daten."
+  },
+  "startedAt": "2026-10-28T12:11:34.832Z",
+  "jobId": "cc5c56b67975b3b1ad3725aee6b7b5702b34bc78",
+  "stage": "failed",
+  "updatedAt": "2026-10-28T12:14:09.117Z",
+  "errorReference": "d4bed299",
+  "diagnostic": null
+}

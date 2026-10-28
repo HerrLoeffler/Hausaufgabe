@@ -1,0 +1,176 @@
+{
+  "case": "physik",
+  "requestId": "GC-SEQ28-physik-A",
+  "status": "ready",
+  "preparedAt": "2026-10-28T12:14:09.118Z",
+  "input": {
+    "subject": "Physik",
+    "grade": "7",
+    "topic": "Vier Bilder zeigen, wie ein einzelner Eiswürfel in einer transparenten Schale bei Zimmertemperatur vollständig schmilzt. Die vier sichtbaren Zustände sollen eindeutig geordnet werden können: immer weniger festes Eis, entsprechend mehr flüssiges Wasser. Gleiche Perspektive und Schale, keine Beschriftung, keine Uhrzeiten und keine anderen Vorgänge.",
+    "clientRequestId": "GC-SEQ28-physik-A",
+    "count": 1,
+    "points": 2,
+    "allowedTypes": [
+      "visual"
+    ],
+    "allowedVisualFormats": [
+      "sequence"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "materials": [],
+    "notes": "Nur die gewollte fachliche Bildfolge. Eindeutiger Start und Zielzustand; keine Reihenfolgehinweise in Bild oder Bildunterschriften. Keine persönlichen Daten."
+  },
+  "startedAt": "2026-10-28T12:14:09.118Z",
+  "jobId": "ccafc93d27b6c37dd68d5a5fc07c20e8464c92d9",
+  "stage": "ready",
+  "updatedAt": "2026-10-28T12:16:31.970Z",
+  "quizId": "YA572A9R",
+  "durationSeconds": 143,
+  "recipeSelection": {
+    "version": "sequence-sheet-v1",
+    "formats": [
+      "sequence"
+    ],
+    "evidence": [
+      {
+        "question": 1,
+        "attempt": 1,
+        "accepted": false,
+        "content": {
+          "valid": false,
+          "unambiguous": false,
+          "cards": [
+            {
+              "id": "cf612ebd58aa6411c",
+              "valid": false,
+              "detail": "Der kantige Eiswürfel ist zwar klar sichtbar und es ist keine deutliche Wassermenge erkennbar. Hinter dem vorderen Würfel ist jedoch ein weiterer transparenter, eisähnlicher Körper bzw. ein abweichender Bildbestandteil sichtbar. Dadurch zeigt die Karte nicht eindeutig nur den beschriebenen vollständig erhaltenen einzelnen Eiswürfel."
+            },
+            {
+              "id": "c2f093858fb564a25",
+              "valid": true,
+              "detail": "Das Bild zeigt einen deutlich abgerundeten, kleineren Eiswürfel in einer transparenten Schale mit sichtbarer flacher Wassermenge. Die geplante Szene ist vollständig und klar erkennbar."
+            },
+            {
+              "id": "cd6fa7338febd4f60",
+              "valid": true,
+              "detail": "Das Bild zeigt ein sehr kleines, unregelmäßig geformtes Eisstück in einer deutlich größeren Wassermenge. Der Zustand ist klar von den übrigen Karten unterscheidbar."
+            },
+            {
+              "id": "cad462e3f2b234641",
+              "valid": true,
+              "detail": "Das Bild zeigt eine zusammenhängende klare Wassermenge mit sichtbarer Oberfläche in der Schale; festes Eis ist nicht erkennbar. Die geplante Endszene ist eindeutig dargestellt."
+            }
+          ],
+          "reason": "Die fachliche Reihenfolge der drei eindeutig erkennbaren Zustände wäre plausibel: vollständig erhaltenes Eis, kleineres abgerundetes Eis mit etwas Wasser, sehr kleines Eisstück in viel Wasser, danach nur Wasser. Die erste Karte enthält jedoch einen sichtbaren zusätzlichen bzw. uneindeutigen eisähnlichen Bildbestandteil hinter dem Würfel und erfüllt damit nicht zweifelsfrei die exakt geplante Einzelszene. Die öffentlichen Bildunterschriften enthalten keine unzulässigen Reihenfolgehinweise oder Nummerierungen."
+        },
+        "blind": {
+          "order": [
+            "cf612ebd58aa6411c",
+            "c2f093858fb564a25",
+            "cd6fa7338febd4f60",
+            "cad462e3f2b234641"
+          ],
+          "unambiguous": false,
+          "reason": "Als Schmelzfolge nimmt der feste Anteil sichtbar ab: großer Eiswürfel, kleinerer Eiswürfel, kleiner Eisrest, schließlich nur Flüssigkeit. Die Bilder zeigen jedoch nicht, ob der Vorgang Schmelzen oder umgekehrtes Gefrieren ist; daher wäre auch die umgekehrte Reihenfolge fachlich möglich."
+        },
+        "cardByteSizes": [
+          24186,
+          19526,
+          20880,
+          22138
+        ]
+      },
+      {
+        "question": 1,
+        "attempt": 2,
+        "accepted": true,
+        "content": {
+          "valid": true,
+          "unambiguous": true,
+          "cards": [
+            {
+              "id": "c1d3a8171f4724d73",
+              "valid": true,
+              "detail": "Das Bild zeigt einen vollständig erhaltenen, kantigen Eiswürfel mit ebenen Flächen in einer transparenten, sichtbar trockenen Schale. Es sind keine verräterischen Texte, Nummern oder Pfeile und keine Nachbarszenen zu sehen."
+            },
+            {
+              "id": "c511d0dbf0cea46c5",
+              "valid": true,
+              "detail": "Das Bild zeigt einen deutlich abgerundeten, kleineren Eiswürfel in einer transparenten Schale mit klar erkennbarer flacher Wassermenge. Der Zustand ist eindeutig vom vollständigen Würfel und vom fast geschmolzenen Eisstück unterscheidbar."
+            },
+            {
+              "id": "cba4dd4f120c747d8",
+              "valid": true,
+              "detail": "Das Bild zeigt ein sehr kleines, unregelmäßig geformtes verbleibendes Eisstück in einer deutlich größeren Wassermenge. Der feste Anteil ist eindeutig geringer als auf den vorherigen Bildern."
+            },
+            {
+              "id": "c9a3eef2ee8a94363",
+              "valid": true,
+              "detail": "Das Bild zeigt eine transparente Schale mit zusammenhängender sichtbarer Wassermenge und ohne erkennbares festes Eis. Damit ist der Endzustand eindeutig dargestellt."
+            }
+          ],
+          "reason": "Alle vier tatsächlichen Bilder zeigen die geplanten Schmelzstadien ohne abgeschnittene wesentliche Inhalte, Randartefakte, Kontinuitätsfehler oder verräterische Beschriftungen. Die fachlich eindeutige Reihenfolge lautet c1d3a8171f4724d73, c511d0dbf0cea46c5, cba4dd4f120c747d8, c9a3eef2ee8a94363: Der feste Anteil nimmt ab, während der flüssige Anteil zunimmt."
+        },
+        "blind": {
+          "order": [
+            "c1d3a8171f4724d73",
+            "c511d0dbf0cea46c5",
+            "cba4dd4f120c747d8",
+            "c9a3eef2ee8a94363"
+          ],
+          "unambiguous": true,
+          "reason": "Der feste Anteil wird Schritt für Schritt kleiner, während der flüssige Anteil zunimmt: vom vollständig festen Eiswürfel über den teilweise geschmolzenen Würfel und den kleinen Eisrest bis zum vollständig flüssigen Wasser."
+        },
+        "cardByteSizes": [
+          16536,
+          19930,
+          18770,
+          17288
+        ]
+      }
+    ]
+  },
+  "usage": {
+    "providerRequests": [
+      {
+        "responseId": "resp_04fc27a0d74a7011016ae1e711fbec87d28759e22ef1caf034",
+        "requestId": "req_214efef8271544a1bba642a7f2b993a0",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7454,
+        "phase": "sequence_storyboard_v1"
+      },
+      {
+        "responseId": "resp_0c8b98ff24590d0c016ae1e74a82ac87d2993dc8132eca01d1",
+        "requestId": "req_30cfffae7bf849fa9c99c019018878c0",
+        "model": "gpt-5.6-luna",
+        "durationMs": 11310,
+        "phase": "sequence_content_review_v1"
+      },
+      {
+        "responseId": "resp_027d4cdbd6e11877016ae1e755db0c87d2896ea7ef2a567132",
+        "requestId": "req_d31b7b58718544129f7032bb34d67cdc",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6828,
+        "phase": "sequence_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_0d82e30ad331348f016ae1e78bb9f087d298c4c34c35de3f4a",
+        "requestId": "req_3df58ae0a8ef4c3295e9fd978583e6ff",
+        "model": "gpt-5.6-luna",
+        "durationMs": 7075,
+        "phase": "sequence_content_review_v1"
+      },
+      {
+        "responseId": "resp_09eae647780f9f0a016ae1e792d4e487d2bcb1d2f6d6591be0",
+        "requestId": "req_9f7592b98592486387e07ef68d538ba0",
+        "model": "gpt-5.6-luna",
+        "durationMs": 2791,
+        "phase": "sequence_blind_solution_v1"
+      }
+    ],
+    "output_tokens": 3044,
+    "input_tokens": 10308,
+    "total_tokens": 13352
+  }
+}

@@ -8,7 +8,8 @@ const expandedDreisatz=new WeakSet();
 export function parseNumericAnswer(value) { return core().numeric(value); }
 const plain = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const fail = () => { throw new Error('Die visuelle Aufgabe ist unvollständig oder ungültig.'); };
-function checkTree(x, depth = 0) {
+function checkTree(x, depth = 0, imageField = false) {
+  if(imageField){if(typeof x!=="string"||x.length>36000||!/^data:image\/webp;base64,[A-Za-z0-9+/]+={0,2}$/.test(x))fail();return;}
   if (depth > 8) fail();
   if (typeof x === 'number' && (!Number.isFinite(x) || Math.abs(x)>1e7)) fail();
   if (typeof x === 'string' && (x.length > 4000 || /[<>]|(?:javascript|data|vbscript):/i.test(x))) fail();
@@ -18,7 +19,7 @@ function checkTree(x, depth = 0) {
     for(const [key,value] of Object.entries(x)) {
       if(!/^[A-Za-z0-9_-]{1,60}$/.test(key)||['__proto__','constructor','prototype'].includes(key)) fail();
       if(key==='id' && (typeof value!=='string'||! /^[a-zA-Z0-9_-]{1,60}$/.test(value))) fail();
-      checkTree(value,depth+1);
+      checkTree(value,depth+1,key==='imageDataUrl');
     }
   }
 }
@@ -49,7 +50,7 @@ const solutionFields={hotspot:'regions text',labeling:'assignments',scale:'value
 function closed(value,fields){if(!plain(value)||Object.keys(value).some(key=>!fields.split(' ').includes(key)))fail();}
 export function parseVisualTask(question, { publicOnly = false } = {}) {
   const json=question?.visualTask;
-  if(typeof json!=='string'||json.length>20000) fail();
+  if(typeof json!=='string'||json.length>180000) fail();
   let t;try { t=JSON.parse(json); } catch { fail(); }
   if(!plain(t)||!VISUAL_FORMATS.includes(t.format)||!plain(t.spec)) fail();
   checkTree(t);
@@ -61,7 +62,7 @@ export function parseVisualTask(question, { publicOnly = false } = {}) {
   const s=t.spec;
   if(Object.hasOwn(s,'caseSensitive')&&typeof s.caseSensitive!=='boolean')fail();
   const records=(values,fields)=>{if(!Array.isArray(values))fail();values.forEach(v=>closed(v,fields));};
-  if(s.items)records(s.items,t.format==='sequence'?'id illustration caption':'id text');
+  if(s.items)records(s.items,t.format==='sequence'?(s.family==='generated-four'?'id caption imageDataUrl':'id illustration caption'):'id text');
   if(t.format==='timeline'){records(s.ticks,'id value label');records(s.events,'id text');}
   if(s.tokens)records(s.tokens,'id text');
   if(s.categories)records(s.categories,'id label value');
@@ -83,6 +84,7 @@ export function parseVisualTask(question, { publicOnly = false } = {}) {
 export function normalizeVisualTask(question) {
   const task=parseVisualTask(question);
   task.maxPoints=Number(question.points)||task.maxPoints;
+  if(typeof question.text==='string'&&question.text.trim())task.prompt=question.text.trim();
   if(core().validate(task).length) fail();
   return JSON.stringify(task);
 }

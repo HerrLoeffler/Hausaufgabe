@@ -157,7 +157,8 @@ function cleanInput(data = {}) {
   }
   return {
     schoolType: String(data.schoolType || "Mittelschule").slice(0, 100), region: String(data.region || "Bayern").slice(0, 100),
-    subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, 500),
+    subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, allowedVisualFormats?.length===1 && allowedVisualFormats[0]==='sequence' ? 1200 : 500),
+    ...(allowedVisualFormats?.length===1 && allowedVisualFormats[0]==='sequence' ? {sequenceImageAttempts:data.sequenceImageAttempts===1?1:2} : {}),
     learningGoals: Array.isArray(data.learningGoals) ? data.learningGoals.slice(0,12).map(x=>String(x).slice(0,250)) : [],
     difficulty: String(data.difficulty || "mittel").slice(0, 50), count, points,
     allowedTypes, ...(data.allowedVisualFormats !== undefined && allowedTypes.includes("visual") ? {allowedVisualFormats} : {}), notes: String(data.notes || "").slice(0, LIMITS.maxPromptChars), imageMode, exactImageCounts,
@@ -284,6 +285,20 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
   const materials = sanitizeMaterials(data?.materials, uid);
   if (input.materialMode === "only" && !materials.length) throw new HttpsError("invalid-argument", "Für Inhalte ausschließlich aus Material bitte zuerst Material hochladen.");
   await consumeQuota(uid, "test").catch(err => { throw reportAiError(err, "test-quota"); });
+  if(input.allowedVisualFormats?.length===1 && input.allowedVisualFormats[0]==='sequence' && input.allowedTypes.length===1 && input.allowedTypes[0]==='visual') {
+    const result=await require('./lib/sequence-sheet').generateSequenceTest({...input,clientRequestId:requestId},{
+      structured:params=>requestStructured(p=>getOpenAI().responses.create(p,{timeout:180000,maxRetries:0}),{model:TEXT_MODEL,store:false,reasoning:{effort:'medium'},input:[{role:'system',content:[{type:'input_text',text:params.systemPrompt}]},{role:'user',content:[{type:'input_text',text:params.userPrompt},...(params.content||[])]}],text:{format:{type:'json_schema',name:params.schemaName,strict:true,schema:params.schema}}}),onProgress,consumeImage:()=>consumeQuota(uid,'image'),
+      saveArtifact:async artifact=>{const ref=getFirestore().doc('aiJobs/'+createHash('sha256').update(uid+':'+requestId).digest('hex').slice(0,40));const snap=await ref.get();if(snap.exists&&snap.data().ownerId===uid&&snap.data().status==='running')await ref.update({sequenceDraft:artifact,updatedAt:Timestamp.now()});},
+      record:(phase,usage,extra)=>recordUsage(uid,phase,usage,{...extra,requestId,recipe:'sequence-sheet-v1'}),
+      generateMaster:async({prompt})=>{
+        const response=await getOpenAI().images.generate({model:require('./lib/constants').IMAGE_MODEL,prompt,size:'2048x2048',quality:'medium',output_format:'webp',n:1},{timeout:360000,maxRetries:0});
+        if(!response.data?.[0]?.b64_json)throw Error('Bildmodell lieferte keine Bildtafel.');
+        return {bytes:Buffer.from(response.data[0].b64_json,'base64'),usage:response.usage||{},requestId:response._request_id||'',model:require('./lib/constants').IMAGE_MODEL};
+      }
+    });
+    await recordUsage(uid,'test',{}, {requestId,recipe:'sequence-sheet-v1',imageQuestions:input.count,phaseTotals:result.meta.usage});
+    return result;
+  }
   let phase = "material";
   const observations = new Map();
   try {
@@ -683,7 +698,9 @@ exports.processAiTestJob = onTaskDispatched({
       questionPosition: activePosition, question: activeQuestion ? questionSnapshot(activeQuestion) : null,
       textModel: TEXT_MODEL, promptVersion: PROMPT_VERSION,
       request: requestSnapshot(job.input), materialCount: job.materials?.length || 0 };
-    const reported = err?.code === "image-mismatch"
+    const reported = err?.code === 'sequence-quality'
+      ? reportAiError(new HttpsError('failed-precondition',err.message,{reason:'sequence-quality',diagnostic:err.diagnostic}),'sequence-review')
+      : err?.code === "image-mismatch"
       ? reportAiError(new HttpsError("failed-precondition", `${err.message} Bitte erneut versuchen.`, {
         reason: String(err.lastIssue || "").slice(0, 180), diagnostic: err.diagnostic
       }), "image-review")
@@ -740,7 +757,7 @@ exports.purgeRightsReportRates = onSchedule({ schedule: "every day 04:00", timeZ
 
 exports.regenerateQuestion = onCall(callableOpts, async request => {
   try {
-  const { uid } = await requireAiUser(request); await consumeQuota(uid, "question");
+  const { uid } = await requireAiUser(request);
   const question = request.data?.question; if (!question) throw new HttpsError("invalid-argument", "Aufgabe fehlt.");
   const targetType = request.data?.targetType;
   if (targetType != null && !QUESTION_TYPES.includes(targetType)) throw new HttpsError("invalid-argument", "Ungültiger Zieltyp.");
@@ -748,6 +765,11 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   let allowedVisualFormats;
   try { allowedVisualFormats = require("./lib/interactive-authoring").revisionVisualFormats(request.data || {}, question, allowedTypes); }
   catch (error) { throw new HttpsError("invalid-argument", error.message); }
+  if(question.type==='visual' && allowedVisualFormats?.length===1 && allowedVisualFormats[0]==='sequence') {
+    const previous=require('./lib/visual-task').parseVisualTask(question.visualTask);
+    if(previous.spec.family==='generated-four')throw new HttpsError('failed-precondition','Neue KI-Bildfolgen bitte im Bildfolgen-Pilot mit deinem Wunsch erstellen. Hier kannst du den Auftrag bearbeiten oder in ein anderes Format umwandeln.');
+  }
+  await consumeQuota(uid, "question");
   const materialIds = sanitizeMaterials(request.data?.materials, uid).map(m => m.id);
   const mediaKind = request.data?.mediaKind;
   if (mediaKind !== undefined && !["none", "ai_generated"].includes(mediaKind)) throw new HttpsError("invalid-argument", "Ungültige Bildauswahl.");
