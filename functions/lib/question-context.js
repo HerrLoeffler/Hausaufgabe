@@ -17,7 +17,7 @@ function semanticValue(value, depth = 0) {
   return undefined;
 }
 function taskContext(question = {}, testContext = {}) {
-  const q = Object.fromEntries(QUESTION_FIELDS.filter(k => question[k] !== undefined).map(k => [k,semanticValue(k==='visualTask' ? require('./visual-task').parseVisualTask(question[k]) : question[k])]));
+  const q = Object.fromEntries(QUESTION_FIELDS.filter(k => question[k] !== undefined).map(k => [k,semanticValue(k==='visualTask' ? JSON.stringify(require('./visual-task').parseVisualTask(question[k]),(key,value)=>key==='imageDataUrl'?undefined:value) : question[k])]));
   const test = Object.fromEntries(['title','subject','grade','topic','difficulty','contentLocale','schoolType','region'].filter(k => testContext[k] !== undefined).map(k => [k,semanticValue(testContext[k])]));
   return {question:q,test};
 }

@@ -753,7 +753,7 @@ exports.purgeRightsReportRates = onSchedule({ schedule: "every day 04:00", timeZ
 
 exports.regenerateQuestion = onCall(callableOpts, async request => {
   try {
-  const { uid } = await requireAiUser(request); await consumeQuota(uid, "question");
+  const { uid } = await requireAiUser(request);
   const question = request.data?.question; if (!question) throw new HttpsError("invalid-argument", "Aufgabe fehlt.");
   const targetType = request.data?.targetType;
   if (targetType != null && !QUESTION_TYPES.includes(targetType)) throw new HttpsError("invalid-argument", "Ungültiger Zieltyp.");
@@ -761,6 +761,11 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
   let allowedVisualFormats;
   try { allowedVisualFormats = require("./lib/interactive-authoring").revisionVisualFormats(request.data || {}, question, allowedTypes); }
   catch (error) { throw new HttpsError("invalid-argument", error.message); }
+  if(question.type==='visual' && allowedVisualFormats?.length===1 && allowedVisualFormats[0]==='sequence') {
+    const previous=require('./lib/visual-task').parseVisualTask(question.visualTask);
+    if(previous.spec.family==='generated-four')throw new HttpsError('failed-precondition','Neue KI-Bildfolgen bitte im Bildfolgen-Pilot mit deinem Wunsch erstellen. Hier kannst du den Auftrag bearbeiten oder in ein anderes Format umwandeln.');
+  }
+  await consumeQuota(uid, "question");
   const materialIds = sanitizeMaterials(request.data?.materials, uid).map(m => m.id);
   const mediaKind = request.data?.mediaKind;
   if (mediaKind !== undefined && !["none", "ai_generated"].includes(mediaKind)) throw new HttpsError("invalid-argument", "Ungültige Bildauswahl.");
