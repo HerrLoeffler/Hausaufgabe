@@ -2818,6 +2818,12 @@ function installAiAnswerAudioField() {
 installAiAnswerAudioField();
 ["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiFullAudioQuestionCount", "aiSolutionAudioQuestionCount", "aiCount"].forEach(id => $(id)?.addEventListener("input", () => { updateAiImageControls(); updateAiAudioControls(); }));
 ["aiCount", "aiPoints"].forEach(id => $(id)?.addEventListener("input", updateAiPointsControls));
+$("aiPointsAuto")?.addEventListener("click", () => {
+  const button = $("aiPointsAuto");
+  button.setAttribute("aria-pressed", String(button.getAttribute("aria-pressed") !== "true"));
+  updateAiPointsControls();
+  if (button.getAttribute("aria-pressed") !== "true") $("aiPoints").focus();
+});
 
 function updateAiTypeCount() {
   const selected = $("aiTypeChecks")?.querySelectorAll('input[type="checkbox"]:checked').length || 0;
@@ -2828,6 +2834,8 @@ function resetAiFormForNewTest() {
   handleAiMaterialFiles.generation = (handleAiMaterialFiles.generation || 0) + 1;
   ["aiTopic", "aiCustomNotes"].forEach(id => { if ($(id)) $(id).value = ""; });
   ["aiCount", "aiPoints", "aiSchoolType", "aiRegion"].forEach(id => { const input = $(id); if (input) input.value = input.defaultValue; });
+  $("aiPointsAuto")?.setAttribute("aria-pressed", "true");
+  updateAiPointsControls();
   ["aiImageQuestionCount", "aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiFullAudioQuestionCount", "aiSolutionAudioQuestionCount"].forEach(id => { if ($(id)) $(id).value = "0"; });
   const difficulty = $("aiDifficulty");
   if (difficulty) difficulty.value = [...difficulty.options].find(option => option.defaultSelected)?.value || "mittel";
@@ -2919,7 +2927,7 @@ function setAiProgress(message = "", isError = false, percent = null, hint = "",
 function updateAiCreationSummary() {
   const node = $("aiCreationSummary");
   if (!node) return;
-  const parts = [`${$("aiCount").value} Aufgaben`, `${$("aiPoints").value} Punkte`];
+  const parts = [`${$("aiCount").value} Aufgaben`, $("aiPointsAuto")?.getAttribute("aria-pressed") === "true" ? "Punkte automatisch" : `${$("aiPoints").value} Punkte`];
   if (state.aiMaterials.length) parts.push(`${state.aiMaterials.length} Materialquelle(n)`);
   const images = Number($("aiImageQuestionCount")?.value || 0);
   const audio = ["aiAudioQuestionCount", "aiAudioAnswerQuestionCount", "aiFullAudioQuestionCount"].reduce((sum, id) => sum + Number($(id)?.value || 0), 0);
@@ -2983,6 +2991,16 @@ function updateAiAudioControls() {
 function updateAiPointsControls() {
   const input = $("aiPoints");
   const hint = $("aiPointsHint");
+  const automatic = $("aiPointsAuto")?.getAttribute("aria-pressed") === "true";
+  input.disabled = automatic;
+  input.hidden = automatic;
+  $("aiPointsAutoValue").hidden = !automatic;
+  if (automatic) {
+    input.setAttribute("aria-invalid", "false");
+    if (hint) { hint.textContent = ""; hint.classList.remove("aiInputError"); }
+    updateAiCreationSummary();
+    return;
+  }
   const count = Number($("aiCount").value);
   const points = Number(input.value);
   const invalid = !input.value.trim() || !Number.isFinite(points) || points < 0.5 || Math.abs(points * 2 - Math.round(points * 2)) > 1e-8 || (Number.isInteger(count) && count > 0 && points < count / 2);
@@ -2991,6 +3009,7 @@ function updateAiPointsControls() {
     hint.textContent = invalid ? `Bitte eine Gesamtpunktzahl in 0,5er-Schritten wählen${Number.isInteger(count) && count > 0 ? `; bei ${count} Aufgaben mindestens ${count / 2} Punkte` : ""}.` : "Jede Aufgabe erhält mindestens 0,5 Punkte.";
     hint.classList.toggle("aiInputError", invalid);
   }
+  updateAiCreationSummary();
 }
 
 function renderAiMaterials() {
@@ -3109,6 +3128,7 @@ function collectAiRequest() {
   if (!$("aiAudioQuestionCount")?.value.trim()) throw new Error("Bitte die Anzahl der Höraufgaben angeben (0 ist möglich).");
   if (!$("aiSolutionAudioQuestionCount")?.value.trim()) throw new Error("Bitte die Anzahl der Audio-Lösungen angeben (0 ist möglich).");
   const count = Number($("aiCount").value);
+  const pointsMode = $("aiPointsAuto")?.getAttribute("aria-pressed") === "true" ? "auto" : "fixed";
   const points = Number($("aiPoints").value);
   const imageQuestionCount = Number($("aiImageQuestionCount").value);
   const fullInput = $("aiFullAudioQuestionCount");
@@ -3126,8 +3146,8 @@ function collectAiRequest() {
   const answerInput = $("aiAudioAnswerQuestionCount");
   const audioAnswerQuestionCount = Number(answerInput?.value || 0) + fullAudioQuestionCount;
   if (!Number.isInteger(count) || count < 1 || count > 100) throw new Error("Bitte 1 bis 100 Aufgaben wählen.");
-  if (!$("aiPoints").value.trim() || !Number.isFinite(points) || points < 0.5 || Math.abs(points * 2 - Math.round(points * 2)) > 1e-8) throw new Error("Bitte eine Gesamtpunktzahl in 0,5er-Schritten wählen.");
-  if (points < count / 2) throw new Error(`Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
+  if (pointsMode === "fixed" && (!$("aiPoints").value.trim() || !Number.isFinite(points) || points < 0.5 || Math.abs(points * 2 - Math.round(points * 2)) > 1e-8)) throw new Error("Bitte eine Gesamtpunktzahl in 0,5er-Schritten wählen.");
+  if (pointsMode === "fixed" && points < count / 2) throw new Error(`Bei ${count} Aufgaben sind mindestens ${count / 2} Gesamtpunkte nötig.`);
   if (!Number.isInteger(imageQuestionCount) || imageQuestionCount < 0 || imageQuestionCount > 5) throw new Error("Bitte 0 bis 5 Aufgaben mit einem Bild wählen.");
   if (imageQuestionCount > count) throw new Error("Bitte nicht mehr Aufgabenbilder als Aufgaben wählen.");
   if (!Number.isInteger(audioQuestionCount) || audioQuestionCount < 0 || audioQuestionCount > 5) throw new Error("Bitte 0 bis 5 Höraufgaben wählen.");
@@ -3139,7 +3159,7 @@ function collectAiRequest() {
   if (audioQuestionCount + audioAnswerQuestionCount - fullAudioQuestionCount > count) throw new Error("Die gewählten Audioaufgaben überschreiten die Aufgabenanzahl. Bitte die Audiokategorien verringern.");
   return {
     subject: $("aiSubject").value.trim(), grade: $("aiGrade").value.trim(), schoolType: $("aiSchoolType").value.trim() || "Mittelschule", region: $("aiRegion").value.trim() || "Bayern",
-    topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, points,
+    topic: $("aiTopic").value.trim(), difficulty: $("aiDifficulty").value, count, pointsMode, ...(pointsMode === "fixed" ? { points } : {}),
     allowedTypes, notes: $("aiCustomNotes")?.value.trim() || "", materials: state.aiMaterials.map(({ id, storagePath, mimeType, name }) => ({ id, storagePath, mimeType, name })), materialMode: state.aiMaterials.length ? $("aiMaterialMode").value : "inspiration",
     imageMode: imageQuestionCount ? "exact" : "none", imageQuestionCount, imageAnswerQuestionCount: 0,
     audioQuestionCount, solutionAudioQuestionCount, audioAnswerQuestionCount, fullAudioQuestionCount, audioPresentationPolicy: "visible-plus-full", creationContractVersion: 1
@@ -3243,7 +3263,7 @@ function generateAiPrompt() {
   }
   const customNotes = $("aiCustomNotes")?.value.trim() || "";
   const customBlock = customNotes ? `\n\nZusätzliche Wünsche der Lehrkraft:\n${customNotes}` : "";
-  const prompt = `WICHTIG: Antworte ausschließlich mit einem einzigen gültigen JSON-Objekt. Keine Einleitung, keine Erklärung, kein Markdown und keine Markdown-Codeblöcke.\n\nDu erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}\n- Erlaubte Aufgabentypen: ${types.join(", ")}${customBlock}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n7. Verwende für JSON-Schlüssel und Textwerte ausschließlich gerade ASCII-Anführungszeichen " (U+0022). Verwende niemals typografische Anführungszeichen wie „ “ ” als JSON-Begrenzungszeichen. Typografische Anführungszeichen dürfen nur innerhalb eines Textwerts als normaler Inhalt vorkommen.\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]." Optional "gapColors": ["blue", "", "orange"] passend zu den Lücken in Reihenfolge; nur wenn Farben didaktisch helfen und keine Lösung verraten.\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren", "targetWords": ["Zielwort1","Zielwort2"] und optional "markGroups": [{"name":"Nomen","color":"blue","words":["Igel"]},{"name":"Adjektive","color":"orange","words":["kleine"]},{"name":"Verben","color":"green","words":["schläft"]}]. Bei Wortarten gern farbig markieren lassen; jedes Zielwort gehört genau zu einer Farbgruppe und kommt als ganzes Wort im Text vor.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.\n\nABSCHLUSSREGEL: Deine gesamte Antwort muss direkt mit { beginnen und mit } enden. Schreibe davor und danach nichts.`;
+  const prompt = `WICHTIG: Antworte ausschließlich mit einem einzigen gültigen JSON-Objekt. Keine Einleitung, keine Erklärung, kein Markdown und keine Markdown-Codeblöcke.\n\nDu erstellst einen direkt importierbaren Schultest als JSON.\n\nRahmen:\n- Schulart: ${$("aiSchoolType").value.trim() || "Mittelschule"}\n- Bundesland: ${$("aiRegion").value.trim() || "Bayern"}\n- Fach: ${$("aiSubject").value.trim() || "nicht angegeben"}\n- Klassenstufe: ${$("aiGrade").value.trim() || "nicht angegeben"}\n- Thema: ${$("aiTopic").value.trim()}\n- Schwierigkeit: ${$("aiDifficulty").value}\n- ca. ${Number($("aiCount").value) || 10} Aufgaben\n${$("aiPointsAuto")?.getAttribute("aria-pressed") === "true" ? "- Punkte passend zu den bewertbaren Antworten und Lösungsschritten je Aufgabe vergeben; keine Zielsumme" : `- Gesamtpunkte ca. ${Number($("aiPoints").value) || 20}`}\n- Erlaubte Aufgabentypen: ${types.join(", ")}${customBlock}\n\nWichtig:\n1. Inhaltlich passend zur genannten Schulart, Klassenstufe und zum Thema.\n2. Klare, altersgerechte Formulierungen.\n3. Keine Aufgaben, deren Lösung vom aktuellen Tagesgeschehen abhängt.\n4. Gib AUSSCHLIESSLICH gültiges JSON zurück, keine Markdown-Codeblöcke und keine Erklärung.\n5. Verwende exakt eines der unten beschriebenen Formate pro Aufgabe.\n6. Punkte dürfen nur in 0,5er-Schritten vergeben werden (z. B. 0,5 / 1 / 1,5 / 2).\n7. Verwende für JSON-Schlüssel und Textwerte ausschließlich gerade ASCII-Anführungszeichen " (U+0022). Verwende niemals typografische Anführungszeichen wie „ “ ” als JSON-Begrenzungszeichen. Typografische Anführungszeichen dürfen nur innerhalb eines Textwerts als normaler Inhalt vorkommen.\n\nGesamtformat:\n{\n  "title": "Titel des Tests",\n  "subject": "Fach",\n  "grade": "Klasse",\n  "description": "Kurzer Hinweis für Schüler",\n  "questions": [ ... ]\n}\n\nGemeinsame Felder jeder Aufgabe:\n{ "type": "...", "text": "...", "points": 1 }\n\nTypen:\n- single / dropdown: zusätzlich "options": [{"text":"...","correct":true}, ...], exakt eine richtige Antwort.\n- multi: "options": [{"text":"...","correct":true/false}, ...], mindestens eine richtige Antwort.\n- text: "acceptedAnswers": ["Antwort", "Alternative"], optional "manualReview": false.\n- truefalse: "correctBoolean": true oder false.\n- gapfill: Schreibe die Lösungen direkt in eckige Klammern im Feld text, Alternativen mit |. Beispiel: "Die Hauptstadt ist [München|Muenchen]." Optional "gapColors": ["blue", "", "orange"] passend zu den Lücken in Reihenfolge; nur wenn Farben didaktisch helfen und keine Lösung verraten.\n- matching: "pairs": [{"left":"Begriff","right":"Zuordnung"}, ...].\n- ordering: "items": ["erster Schritt", "zweiter Schritt", ...] bereits in richtiger Reihenfolge.\n- grouping: "groups": [{"name":"Nomen","items":["Haus","Schule"]},{"name":"Verben","items":["gehen"]}].\n- markwords: "text" ist die Arbeitsanweisung, zusätzlich "passage": "Text zum Markieren", "targetWords": ["Zielwort1","Zielwort2"] und optional "markGroups": [{"name":"Nomen","color":"blue","words":["Igel"]},{"name":"Adjektive","color":"orange","words":["kleine"]},{"name":"Verben","color":"green","words":["schläft"]}]. Bei Wortarten gern farbig markieren lassen; jedes Zielwort gehört genau zu einer Farbgruppe und kommt als ganzes Wort im Text vor.\n- number: zusätzlich "numericAnswer": 20, "tolerance": 0.01, optional "unit": "€".\n\nAchte darauf, dass Punkte, Lösungen und Aufgaben fachlich zueinander passen.\n\nABSCHLUSSREGEL: Deine gesamte Antwort muss direkt mit { beginnen und mit } enden. Schreibe davor und danach nichts.`;
   $("aiPromptOutput").value = prompt;
   toast("Prompt erzeugt.");
 }
