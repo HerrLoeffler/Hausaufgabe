@@ -332,6 +332,9 @@ jobs:
       - run: node tools/browser-layout/media-creation.cjs
         env:
           GC_MEDIA_BROWSER_EVIDENCE: /tmp/gc-layout-evidence/media-creation
+      - run: node tools/browser-layout/wilma-review.cjs
+        env:
+          GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
       - run: npm test --prefix tools/browser-layout
         env:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
