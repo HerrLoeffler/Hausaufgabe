@@ -813,7 +813,7 @@ export const enGBMessages = Object.freeze({
 
 export const enGBSourcePatterns = Object.freeze([
   { pattern: /^Bilder \(max\. (\d+) Aufgaben\)$/, replacement: "Images (max. $1 questions)" },
-  { pattern: /^Audio: je Bereich max\. (\d+) Aufgaben$/, replacement: "Audio: max. $1 questions per category" },
+  { pattern: /^max\. (\d+) je Bereich$/, replacement: "max. $1 per category" },
   { pattern: /^(\d+) Audioaufgaben$/, replacement: "$1 audio questions" },
 
   { pattern: /^Schön, dass du da bist, (.+)\.$/, replacement: "Great to have you here, $1." },

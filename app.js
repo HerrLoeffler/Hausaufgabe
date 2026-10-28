@@ -2917,7 +2917,7 @@ function updateAiCreationSummary() {
   const count = Number($("aiCount").value), max = Number.isInteger(count) && count > 0 ? Math.min(5, count) : 5;
   const imageLabel = $("aiImageQuotaLabel"), audioLabel = $("aiAudioQuotaLabel");
   if (imageLabel) imageLabel.textContent = `Bilder (max. ${max} Aufgaben)`;
-  if (audioLabel) audioLabel.textContent = `Audio: je Bereich max. ${max} Aufgaben`;
+  if (audioLabel) audioLabel.textContent = `max. ${max} je Bereich`;
 
   node.textContent = parts.join(" · ");
 }

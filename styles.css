@@ -782,4 +782,4 @@ body.gcAiCompact .creationLegalFooter :is(.legalSiteFooter,.rightsFooter){flex:0
 .publishReviewDetails summary:focus-visible{outline:2px solid var(--primary);outline-offset:3px}
 
 #aiView #aiCreationSummary{font-weight:650;color:#29466b}
-#aiAudioQuotaLabel{display:block;font-size:11px;line-height:1.3;margin-bottom:5px;color:#52647a}
+#aiAudioQuotaLabel{display:block;font-size:10px;line-height:1.1;font-weight:400;color:inherit}
