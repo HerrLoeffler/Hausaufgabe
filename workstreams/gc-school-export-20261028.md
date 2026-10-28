@@ -4,7 +4,7 @@
 - Basis: `feature/gradecrew-app-integration` bei `5e45e9df2449ca7e4c4b735ae754452a6f304ab7`.
 - Eigener Zweig: `feature/gc-school-export-preview-20261028` im Worktree `implementation/gc-school-export-20261028`.
 - Vorgänger: Forschung und Gatevergleich in Draft-PR #366 (`GC-SCHOOL-READINESS-20261028`).
-- Entwurf zur Umsetzung: [Draft-PR #374](https://github.com/HerrLoeffler/Hausaufgabe/pull/374) gegen `feature/gradecrew-app-integration`, Remote-Commit `e00ac72cc1970d1c5c6cb87399df1c7bdd9b6aac`. Wegen fehlender Git-CLI-Anmeldung über die verbundene GitHub-Schnittstelle aus dem bytegleichen lokalen Tree `5f732858aa9815ba561f11281b353367fc9eefea` erstellt.
+- Entwurf zur Umsetzung: [Draft-PR #374](https://github.com/HerrLoeffler/Hausaufgabe/pull/374) gegen `feature/gradecrew-app-integration`. Der Implementierungs-Commit `e00ac72cc1970d1c5c6cb87399df1c7bdd9b6aac` wurde wegen fehlender Git-CLI-Anmeldung über die verbundene GitHub-Schnittstelle aus dem bytegleichen lokalen Tree `5f732858aa9815ba561f11281b353367fc9eefea` erstellt; der aktuelle PR-Kopf enthält danach ergänzte Übergabeangaben.
 - Plan: `docs/superpowers/plans/2026-10-28-school-export-preview.md`.
 
 ## Gelieferter Prototyp
