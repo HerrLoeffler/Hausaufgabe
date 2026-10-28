@@ -308,7 +308,7 @@ jobs:
     name: Public entry layout (WebKit and Chromium)
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.56.1-noble
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
       - name: Trust the exact checked-out workspace in this isolated container
@@ -327,6 +327,10 @@ jobs:
       - run: npm test --prefix tools/browser-layout
         env:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
+      - name: Full current tutorial clicks, touch, focus and hit tests
+        run: node tools/browser-layout/tutorial.cjs
+        env:
+          GC_TUTORIAL_EVIDENCE: /tmp/gc-layout-evidence/tutorial
       - uses: actions/upload-artifact@v4
         if: always()
         with:

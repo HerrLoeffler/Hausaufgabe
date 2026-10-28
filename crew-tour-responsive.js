@@ -47,6 +47,8 @@ function installStyles() {
     dialog.publishReview .gcCoachPublish h2{font-size:18px}
     dialog.publishReview .gcCoachPublish p{font-size:13px;margin:8px 0 0}
     dialog.publishReview .gcCoachPublish>small{display:none}
+    .gcRealTourActive :is(button,a,input[type=submit]).gcTourTarget{min-height:44px!important;min-width:44px!important}
+    .gcRealCoach .gcEditArrow{width:32px;height:32px;justify-self:center;align-self:center}
     .gcRealCoach .gcCoachClose{display:grid!important;place-items:center;width:44px;height:44px;min-height:44px;top:4px;right:4px}
     .gcRealCoach .gcCoachIdentity{padding-right:28px}
     .gcRealCoach.gcResponsiveCoach {
