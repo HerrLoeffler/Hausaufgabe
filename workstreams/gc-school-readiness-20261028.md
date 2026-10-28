@@ -12,7 +12,7 @@ Belegte Machbarkeit für schulische GradeCrew-Nutzung, Datenstandorte, Export/Ab
 - Codeprüfung ausschließlich lesend: Firestore-Assessment-Abgabe/Receipt, CSV, manuelle Updatebewertung, OpenAI-Client/Modelle, PostHog-Staginggate und vorhandener Restorebericht. Kein Deploy oder Modellaufruf.
 - Lokaler `git fetch` in einer alten Doku-Arbeitskopie scheiterte wegen DNS; GitHub-Connector funktionierte. Alte Kopie nicht für aktuellen main ausgegeben. Keine Daten/Secrets in Bericht.
 - Modell/Aufwand: vom Fachchat nicht separat angefordert; tatsächlich beobachteter Runtimewert `unknown`. Schwierigkeit: rechtlich/architektonische Analyse. Keine Umschaltung innerhalb aktiver Aufgabe.
-- Verifikationsstand: Dokument und Quellen manuell gegengeprüft; keine CI/Tests für diese reine Recherche. Branch-only; PR/Integration/Release noch separat nachtragen. Keine laufenden externen Requests/IDs, außer hier genannten GitHub-Dokumentationsmutationen; Budget/Versuche für bezahlte Provider unverändert (0 neue Aufrufe).
+- Verifikationsstand: Dokument und Quellen manuell gegengeprüft; keine CI/Tests für diese reine Recherche. Branch-only; Draft-PR #366 offen, nicht integriert, kein CI-/Release-/Deploynachweis. PR vor Abschluss auf drei Dokumente geprüft. Keine laufenden externen Requests/IDs, außer hier genannten GitHub-Dokumentationsmutationen; Budget/Versuche für bezahlte Provider unverändert (0 neue Aufrufe).
 
 ## Offen
 1. Schulart, Träger, Verantwortlicher, Pilotstufe und amtliche Verwaltungsablage.
