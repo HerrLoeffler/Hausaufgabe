@@ -1,0 +1,18 @@
+# GC-WEB-REPAIR-20261007 / GC-AUDIO-01 — vorhandene Medien direkt sichtbar
+
+Gleiche Task/Chat-ID01a15f06-837c-73b3-93fa-0d07a8104d3a, Basis Live f033f901 und main53719275. Nutzer hat nur1%Wochenbudget und wünscht zuerst Abbruchsicherung. Gewünschte kleine Editor-Korrektur: vorhandene Aufgabenbilder immer sichtbar; fertige Aufgaben-/Antwortaudios ohne Aufklappen sichtbar. Text über explizites Bearbeiten weiter zugänglich; Emmi-Überarbeiten erhalten. Keine Löschung von Text, keine neue Änderung des serverseitigen Schüler-/Bewertungsvertrags. Bestehende öffentliche Arbeitsaufträge für Hörverständnis bleiben erhalten.
+
+Plan:1 diesen Auftrag lokal/remote sichern,2 gezielte Regression und kleine Anzeigeänderung,3 bestehende Web/Browserprüfungen und begrenzte Review,4 nur mit exakterCI/Preview Hostingrelease gradecrew.de/hausaufgabe-staging samt206Dateinachweis. Keine Backend-/Rules-/Auth-/Quotaänderung oder andere Umgebung. Aktuelle Texte, Lösungen, offene Vorläufer und Versuche erhalten. Keine bezahlte Providerprobe. Teilstände committen/pushen, vor Veröffentlichung bisherigen Live-Stand behalten. Bei Abbruch hier fortsetzen statt Auftrag neu starten.
+
+Stand: Auftrag gesichert, Umsetzung noch offen. Nächster Schritt: Bildvorschau aus geschlossenem Menü herauslösen; Audioplayer direkt anzeigen und Texteditor bei fertigen Audios optional machen. Modell inherited, actual unknown, kein Wechsel.
+
+Umgesetzt: Bildvorschau außerhalb geschlossenem Änderungsmenü. Aufgabenplayer direkt im Fragebereich; bisheriger Text in Text-bearbeiten-Disclosure, DOM/Fokus bei Teilneuzeichnung erhalten. Antwortplayer direkt sichtbar mit neutralen Nummern; vorhandene Antworttexte/Korrektheits-/Kategorieeditoren über Antworttexte bearbeiten unverändert erreichbar. Entfernen des Audiomodus stellt Texteditor wieder direkt her. Keine Inhalts-/Schülerprojektionsänderung.634Webprüfungen grün einschließlich inhaltsgleicherVorher/Nachher-Snapshots und Wiederherstellung. Browserprüfung nutzt vorhandene lokale MP3 für2direkt hörbare Antwortspuren, keine Providerprobe. Fehler einer Bildsichtbarkeitsassertion nach Undo eingegrenzt: Prüfung vor Undo platziert; keine Produktassertion entfernt.
+
+
+## Verifiziert und veröffentlicht
+
+PR354 integriert als14a9118868b329e7a4a7c53f451123c40b90b8e5, Baumcc76f7d61443222ddec33a92914f5a3c90768bfe. Exakte CI40592803399 erfolgreich (Node22 und Chromium/WebKit).634 lokale Prüfungen,48 Browserprüfungen; unabhängige begrenzte Review ohne konkrete P1/P2,30 gezielte Regressionen erfolgreich. Vorhandene lokale MP3, keine Provideraufrufe.
+
+Preview visible-14a9118 verifiziert und danach Hosting-only nach Live geklont: hausaufgabe-staging, Version4ef1c1b6b4e993ae, Release2026-10-27T22:13:53.062Z. Beide Adressen gradecrew.de und hausaufgabe-staging.web.app jeweils206/206Dateien SHA256 geprüft. Keine Änderung Backend/Rules/Auth/Grenzen/anderen Umgebungen. Quellen bleiben gespeichert, über Text bearbeiten / Antworttexte bearbeiten zugänglich; Schülerprojektion unverändert. Physische Geräteabnahme steht aus.
+
+Abbruchsicherung zuerst als3468ba19df4b2832382ac9bcecd55d4085570979 remote gesichert. Temporäre lokale Verzeichnisse nach Unterbrechung nicht mehr vorhanden; Quellbranch/PR354 und beide aktuellen Live-Manifest-SHAs erneut bestätigt. Ehemals nur lokaler Dokumentationscommitb73c080 war nicht gepusht; diese fünf gezielten Dokumentationsdateien anhand gesicherter Nachweise wiederhergestellt, kein erneuter Code-/Provider-/Deploystart. Nächster Schritt: Martin lädt Seite neu und prüft vorhandene Medien am Gerät. Separat gemeldete AI-CREATE-001 Referenzf382ba09 ist kein als behoben bestätigter Teil dieser Darstellungskorrektur.
