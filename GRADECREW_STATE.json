@@ -2850,6 +2850,69 @@
         "live_deployed": false,
         "next_action": "Wait for coordinated Wilma phase2 release and actual current Live manifest; then integrate and Hosting-only promote. Do not deploy private/unready Wilma frontend or repeat backend/IAM calls.",
         "handoff": "workstreams/visible-media-20261027.md"
+      },
+      "material_upload_access_20261028": {
+        "stage": "production",
+        "branch": "fix/material-upload-access-20261028",
+        "pr": 379,
+        "source_commit": "63eda0c86d679117c59efc657b6fc2ac329a1f2f",
+        "integration_commit": "ccb8f72abfbe6e6ee110765a98a6de24620a278f",
+        "source_tree": "c4a8eaf881db9da63c53de91b55c6c97138078a5",
+        "ci": 40739180659,
+        "rules": {
+          "release": "projects/hausaufgabe-staging/releases/firebase.storage/hausaufgabe-staging.firebasestorage.app",
+          "ruleset": "projects/hausaufgabe-staging/rulesets/082283c2-97c9-42af-99a3-d15b11260a78",
+          "updatedAt": "2026-10-28T17:52:07.033534Z",
+          "sha256": "0c439eefbb42918d5b291186d838b9f0f5ee0a4c8b39529b5c064c360a1723fe",
+          "sourceMatch": true
+        },
+        "hosting": {
+          "channel": "sites/hausaufgabe-staging/channels/live",
+          "releaseTime": "2026-10-28T17:52:56.146Z",
+          "version": "sites/hausaufgabe-staging/versions/b2405ff5a984cd39"
+        },
+        "verified_origins": [
+          {
+            "origin": "https://gradecrew.de",
+            "matched": 207,
+            "files": 207
+          },
+          {
+            "origin": "https://hausaufgabe-staging.web.app",
+            "matched": 207,
+            "files": 207
+          }
+        ],
+        "real_new_teacher_uploads": [
+          "PDF",
+          "PNG"
+        ],
+        "negative_guards_verified": [
+          "overwrite",
+          "foreign_uid",
+          "invalid_mime",
+          "unauthenticated_upload",
+          "unauthenticated_read"
+        ],
+        "fixtures_cleaned": true,
+        "preserved_web_files": 206,
+        "changed_web_files": [
+          "ai-client.js"
+        ],
+        "no_provider_calls": true,
+        "handoff": "workstreams/material-upload-access-20261028.md",
+        "receipt": "workstreams/material-upload-live-receipt-20261028.json",
+        "next_action": "Upload works after later Remy release; colleague retries file selection. Sole next Hosting promoter Wilma owner01a1280a must preserve merged Remy+Wilma+PR379 safe upload error copy (regressed byPR377); no further Uploadowner deploy. PR371 remains held.",
+        "later_hosting_observed": {
+          "commit": "21d1e4b1714b70e69a75185a20908652621c96b7",
+          "pr": 377,
+          "version": "6f6e15ccf832db5e",
+          "release_time": "2026-10-28T17:54:33.023Z",
+          "storage_rule_fix_retained": true,
+          "upload_error_privacy_copy_regressed": true,
+          "real_teacher_pdf_png_recheck": "2026-10-28T17:57:20.042Z",
+          "all_fixtures_cleaned": true
+        }
       }
     },
     {
