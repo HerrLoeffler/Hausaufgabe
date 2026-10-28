@@ -1,0 +1,23 @@
+{
+  "commit": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
+  "success": true,
+  "ci": {
+    "id": 40750389678,
+    "head_sha": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/40750389678",
+    "jobs": [
+      {
+        "id": 123035223427,
+        "name": "Public entry layout (WebKit and Chromium)",
+        "conclusion": "success"
+      },
+      {
+        "id": 123035223729,
+        "name": "Node 22 tests",
+        "conclusion": "success"
+      }
+    ]
+  }
+}

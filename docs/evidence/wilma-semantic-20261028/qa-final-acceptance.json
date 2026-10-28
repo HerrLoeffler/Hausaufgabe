@@ -1,0 +1,69 @@
+{
+  "project": "gradecrew-staging-2026",
+  "providerCount": 6,
+  "legacyJobsUnchanged": true,
+  "submissions": {
+    "a": {
+      "points": 19.5,
+      "grade": 1,
+      "status": "graded",
+      "revision": 7,
+      "q20": {
+        "autoPoints": 0,
+        "reviewState": "confirmed",
+        "needsReview": false,
+        "awardedPoints": 0.5,
+        "maxPoints": 1
+      }
+    },
+    "b": {
+      "points": 19,
+      "grade": null,
+      "status": "review",
+      "revision": 2,
+      "q20": {
+        "autoPoints": 0,
+        "maxPoints": 1,
+        "awardedPoints": 0,
+        "needsReview": false
+      }
+    },
+    "c": {
+      "points": 20,
+      "grade": null,
+      "status": "graded",
+      "revision": 0,
+      "q20": {
+        "maxPoints": 1,
+        "awardedPoints": 1,
+        "autoPoints": 1,
+        "needsReview": false
+      }
+    },
+    "d": {
+      "points": 19,
+      "grade": null,
+      "status": "graded",
+      "revision": 0,
+      "q20": {
+        "needsReview": false,
+        "awardedPoints": 0,
+        "autoPoints": 0,
+        "maxPoints": 1
+      }
+    },
+    "e": {
+      "points": 19.5,
+      "grade": null,
+      "status": "graded",
+      "revision": 0,
+      "q20": {
+        "awardedPoints": 0.5,
+        "autoPoints": 0,
+        "needsReview": false,
+        "maxPoints": 1,
+        "reviewState": "confirmed"
+      }
+    }
+  }
+}

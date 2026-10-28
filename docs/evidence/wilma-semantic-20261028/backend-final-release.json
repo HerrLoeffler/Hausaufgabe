@@ -1,0 +1,16 @@
+{
+  "name": "projects/gradecrew-staging-2026/locations/europe-west1/functions/reviewWilmaAnswers",
+  "state": "ACTIVE",
+  "url": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/reviewWilmaAnswers",
+  "service": "projects/gradecrew-staging-2026/locations/europe-west1/services/reviewwilmaanswers",
+  "revision": "reviewwilmaanswers-00007-giq",
+  "build": "projects/840345136563/locations/europe-west1/builds/fd939dfb-a06a-409f-a533-773cea97cd6d",
+  "labels": {
+    "gradecrew-commit": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
+    "deployment-tool": "gradecrew-wilma-pilot",
+    "firebase-functions-codebase": "ai",
+    "wilma-mode": "persistent-decisions",
+    "deployment-callable": "true"
+  },
+  "updateTime": "2026-10-28T19:08:51.856397955Z"
+}

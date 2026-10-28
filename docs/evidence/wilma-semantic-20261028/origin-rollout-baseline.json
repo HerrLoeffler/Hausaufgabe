@@ -1,0 +1,46 @@
+{
+  "gradecrew-staging-2026": {
+    "name": "projects/gradecrew-staging-2026/locations/europe-west1/functions/submitAssessmentAttempt",
+    "state": "ACTIVE",
+    "revision": "submitassessmentattempt-00013-zel",
+    "updateTime": "2026-10-26T20:29:28.323078444Z",
+    "labels": {
+      "firebase-functions-hash": "997fc7d465097d00bd740f86a86dcbb53e45787a",
+      "deployment-tool": "cli-firebase",
+      "deployment-callable": "true",
+      "firebase-functions-codebase": "assessment"
+    },
+    "sourceZipSha256": "324a33e3a3d3d3d6c7217ad34d57eb3523c4e866237f7787d501383969459cac",
+    "compared": [
+      "index.js",
+      "lib/assessment-core.js",
+      "package.json",
+      "package-lock.json"
+    ],
+    "candidateDifferentFiles": [
+      "lib/assessment-core.js"
+    ]
+  },
+  "hausaufgabe-staging": {
+    "name": "projects/hausaufgabe-staging/locations/europe-west1/functions/submitAssessmentAttempt",
+    "state": "ACTIVE",
+    "revision": "submitassessmentattempt-00053-how",
+    "updateTime": "2026-10-18T20:11:43.738607426Z",
+    "labels": {
+      "firebase-functions-hash": "b3bb25d271ba476327d2fa60af7bce83bdeba021",
+      "deployment-tool": "cli-firebase",
+      "deployment-callable": "true",
+      "firebase-functions-codebase": "assessment"
+    },
+    "sourceZipSha256": "406973a2b7ea1ed47e25cb5bd331d66b10096602982fb6928f222c8f992b8bb3",
+    "compared": [
+      "index.js",
+      "lib/assessment-core.js",
+      "package.json",
+      "package-lock.json"
+    ],
+    "candidateDifferentFiles": [
+      "lib/assessment-core.js"
+    ]
+  }
+}
