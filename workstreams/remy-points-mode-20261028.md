@@ -13,6 +13,10 @@
 
 Neue freie Remy-Tests senden `pointsMode: "auto"` ohne `points`. Remy vergibt pro Aufgabe gültige 0,5er-Punkte nach bewertbaren Antworten und Lösungsschritten; auch nach einer Ersatzaufgabe bleibt deren neu vergebener Punktwert erhalten. Die Endsumme wird aus den fertigen Aufgaben gebildet. Alter Client/Job ohne Modus sowie Varianten bleiben bei festen Punkten. Hosting wurde erst nach dem nachgewiesenen Live-Funktionsupdate veröffentlicht, weil der alte Server eine fehlende Zielsumme sonst still als 20 interpretiert hätte.
 
+## Paralleler Live-Release und Korrektur
+
+Nach diesem Hosting-Deploy wurde ein zeitlicher Konflikt mit einem kurz zuvor veröffentlichten Material-Upload-Hotfix (PR #379) erkannt: Das aktuelle Live-Manifest `21d1e4b1` enthält für `ai-client.js` noch SHA-256 `e97589ab159d8b76d3ffc00e69fa2dce6453e7e1b3272bb32cc126d61f1c9029` statt des Hotfix-Hashes `5fa432ba75d18e5b0fbf5d8757f4d904fdd434d30c93cb1f2cb028fa149c509b`. Die Storage-Regeln des Hotfixes blieben aktiv. Der Wilma-/App-Owner arbeitet bereits an einem gemeinsamen Folgerelease mit Wilma, Upload-Hotfix und Auto-Punkten. Bis zu dessen geprüftem Abschluss kein weiterer paralleler Hosting-Deploy aus diesem Remy-Branch. Der Remy-Live-Stand ist funktional veröffentlicht, aber der Upload-Hinweis muss im Folgerelease wiederhergestellt und danach öffentlich geprüft werden.
+
 ## Offen
 
 Eine Lehrkraft sollte nach einem echten erzeugten Entwurf prüfen, ob die KI-Gewichtung bei gemischten Aufgaben didaktisch passend ist, und sie bei Bedarf vor Veröffentlichung ändern. Dieser menschliche Qualitätsschritt ist kein automatischer Test. Die beiden PRs bleiben als Review-/Integrationsnachweise offen; die Dokumentations-PR #372 enthält den aktualisierten Plan und Prototyp.
