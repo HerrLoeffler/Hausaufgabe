@@ -2826,6 +2826,30 @@
         "interpretation": "Two new-creation audio modes share min(5,N) tasks; combined new requests disabled; existing combined media unchanged.",
         "handoff": "workstreams/two-audio-modes-20261028.md",
         "receipt": "workstreams/two-audio-modes-live-receipt-20261028.json"
+      },
+      "visible_question_audio_20261028": {
+        "stage": "ci_green",
+        "branch": "fix/audio-question-visible-20261028",
+        "pr": 371,
+        "source_commit": "420f5f8988c2220485544e1ae3fb488af7e440e2",
+        "source_tree": "755016aa05ee48af06d4328423fa5974ebfdd4da",
+        "preserved_integration": "ecded465b402a2d9680576b0213ee996d9fbe835",
+        "ci": 40732435329,
+        "checks": {
+          "targeted": 31,
+          "web_ui": 693,
+          "media_browser": 48,
+          "independent_review": "no P1/P2"
+        },
+        "preview": {
+          "channel": "visible-question-420f",
+          "version": "02d695420b2bb90d",
+          "matched_files": 214,
+          "total_files": 214
+        },
+        "live_deployed": false,
+        "next_action": "Wait for coordinated Wilma phase2 release and actual current Live manifest; then integrate and Hosting-only promote. Do not deploy private/unready Wilma frontend or repeat backend/IAM calls.",
+        "handoff": "workstreams/visible-media-20261027.md"
       }
     },
     {
