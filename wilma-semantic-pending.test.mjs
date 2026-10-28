@@ -18,3 +18,4 @@ test('confirming one answer cannot finalize another unmatched text as zero',()=>
  const patch=applyAnswerDecision({question,questions:[question,q2],submission:s,parseGaps:()=>[],decision:{status:'confirmed',points:.5},gradeFromPercent:()=>5,scale:{thresholds:[91,77,57,39,25,0]}});
  assert.equal(patch.grade,null);assert.equal(patch.status,'review');assert.equal(patch.grading.q2.needsReview,true);assert.equal(patch.grading.q.awardedPoints,.5);
 });
+for(const [scope,reviewItem] of [['client',clientItem],['server',serverItem]])test(scope+': accepted legacy client answer without correct flag stays automatic',()=>{const s=base(' MAIN DOOR ');s.grading.q={autoPoints:1,awardedPoints:1,maxPoints:1,needsReview:false};const item=reviewItem(question,s,()=>[]);assert.equal(item.requiresReview,false);assert.equal(item.semanticPending,false);});

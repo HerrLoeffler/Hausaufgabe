@@ -23,7 +23,8 @@ export function reviewItem(question, submission, parseGaps) {
     parts = gaps.map((gap, i) => ({index:i, value:Array.isArray(answer) ? answer[i] : undefined, empty:!normalize(Array.isArray(answer)?answer[i]:undefined), known:Array.isArray(answer) && !!normalize(answer[i]) && gap.answers.map(normalize).includes(normalize(answer[i])), expected:gap.answers}));
   }
   const unknown = question.type === 'gapfill' && (!parts.length || parts.some(part => !part.known && !part.empty));
-  const acceptedByRule=validScore&&grading.correct===true&&Number(grading.autoPoints)===max&&Number(rawPoints)===max;
+  const knownText=question.type==='text'&&!!normalize(answer)&&(question.acceptedAnswers||[]).map(normalize).includes(normalize(answer));
+  const acceptedByRule=validScore&&(grading.correct===true||knownText||parts.length>0&&parts.every(part=>part.known))&&Number(grading.autoPoints)===max&&Number(rawPoints)===max;
   const emptyText=question.type==='text'&&!normalize(answer);
   const emptyRule=emptyText&&validScore&&Number(rawPoints)===0;
   const semanticPending=!confirmed&&!acceptedByRule&&((question.type==='text'&&!emptyText)||unknown);

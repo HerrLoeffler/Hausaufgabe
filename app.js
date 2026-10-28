@@ -1289,7 +1289,7 @@ onAuthStateChanged(auth, async (user) => {
   if (guestTourRepo && user) exitGuestTour();
   const accountChanged = state.user?.uid !== user?.uid;
   if (accountChanged) {
-    wilmaSavedOperations.clear();wilmaAutoReview?.clear();wilmaPreparation.clear();resetInlineReview();wilmaAnswerReview?.clear();
+    wilmaSavedOperations.clear();wilmaReviewGeneration++;wilmaAutoReview?.clear({resetSession:true});wilmaPreparation.clear();resetInlineReview();wilmaAnswerReview?.clear();
     window.GradeCrewNative?.setAuthState?.({ state: "checking" })?.catch(() => {});
     document.dispatchEvent(new CustomEvent("gradecrew:account-changed"));
     adminAuditCursor = null;
@@ -8248,7 +8248,7 @@ $("refreshResultsBtn").addEventListener("click", () => state.currentResultsQuiz 
 $("exportResultsBtn").addEventListener("click", exportResultsCsv);
 
 async function openResults(code) {
-  wilmaAutoReview?.clear();wilmaPreparation.clear();
+  wilmaReviewGeneration++;wilmaAutoReview?.clear();wilmaPreparation.clear();
   if (guestTourRepo) {
     const quiz = guestTourRepo.getQuiz(code);
     if (!quiz) return;
@@ -8298,7 +8298,7 @@ function submissionGrade(s) {
   return gradeFromPercent(scoring.percent, scale);
 }
 
-let wilmaAnswerReview=null,wilmaAutoReview=null;
+let wilmaAnswerReview=null,wilmaAutoReview=null,wilmaReviewGeneration=0;
 const wilmaPreparation=new Map();
 const wilmaSavedOperations=new Map();
 async function requestWilma(data){
@@ -8320,16 +8320,16 @@ async function saveWilmaDecision({questionId,submissionId,decision,restore,expec
   renderResultsTable();
 }
 async function analyzeWilmaQuestion(questionId,criteria="",onlySubmissionId=null){
-  const quiz=state.currentResultsQuiz,uid=state.user?.uid,generation=authStateGeneration,question=state.resultQuestions.find(q=>q.id===questionId);
+  const quiz=state.currentResultsQuiz,uid=state.user?.uid,generation=authStateGeneration,reviewGeneration=wilmaReviewGeneration,question=state.resultQuestions.find(q=>q.id===questionId);
   if(!quiz||!question||quiz.ownerId!==uid||guestTourRepo)throw new Error("Nur eigene Tests sind zugelassen.");
   const questionVersion=questionSnapshot(question);
   const candidates=state.submissions.filter(s=>{const item=reviewItem(question,s,parseGaps);return (!onlySubmissionId||s.id===onlySubmissionId)&&item.requiresReview&&!item.confirmed&&!item.technical;});
   if(!candidates.length){toast("Keine offenen Antworten für Wilma.");return;}
   for(let offset=0;offset<candidates.length;offset+=10){
-    if(authStateGeneration!==generation||state.user?.uid!==uid||state.currentResultsQuiz?.id!==quiz.id)throw new Error("Konto oder Test wurde gewechselt.");
+    if(wilmaReviewGeneration!==reviewGeneration||authStateGeneration!==generation||state.user?.uid!==uid||state.currentResultsQuiz?.id!==quiz.id)throw Object.assign(new Error("Konto oder Test wurde gewechselt."),{code:"wilma-context-changed"});
     const batch=candidates.slice(offset,offset+10),expectedAnswers=Object.fromEntries(batch.map(s=>[s.id,s.answers?.[questionId]??""]));
     const receipt=await reviewWithWilma({quizId:quiz.id,questionId,expectedQuestion:questionVersion,maxPoints:Number(question.points),answerIds:batch.map(s=>s.id),expectedAnswers,criteria});
-    if(authStateGeneration!==generation||state.user?.uid!==uid||state.currentResultsQuiz?.id!==quiz.id||questionSnapshot(state.resultQuestions.find(q=>q.id===questionId)||{})!==questionVersion)throw new Error("Test oder Aufgabe wurde gewechselt; Vorschläge nicht übernommen.");
+    if(wilmaReviewGeneration!==reviewGeneration||authStateGeneration!==generation||state.user?.uid!==uid||state.currentResultsQuiz?.id!==quiz.id||questionSnapshot(state.resultQuestions.find(q=>q.id===questionId)||{})!==questionVersion)throw Object.assign(new Error("Test oder Aufgabe wurde gewechselt; Vorschläge nicht übernommen."),{code:"wilma-context-changed"});
     for(const proposal of receipt.answers){
       const current=state.submissions.find(s=>s.id===proposal.id);
       if(!current||JSON.stringify(current.answers?.[questionId]??"")!==JSON.stringify(expectedAnswers[proposal.id])||current.grading?.[questionId]?.reviewState==='confirmed')continue;
@@ -8348,7 +8348,7 @@ function wilmaAutomaticPreview(ctx=wilmaReviewContext()){
 wilmaAutoReview=createWilmaAutoReview({getContext:wilmaReviewContext,parseGaps,enabled:wilmaAutomaticPreview,maxRequests:2,
   analyzeAnswer:({questionId,submissionId})=>analyzeWilmaQuestion(questionId,'',submissionId),
   onState:state=>{wilmaPreparation.set(state.questionId+':'+state.submissionId,state);wilmaAnswerReview?.refresh();},
-  onIdle:()=>wilmaAnswerReview?.refresh({resort:true})
+  onIdle:()=>{wilmaAnswerReview?.refresh({resort:true});void wilmaAutoReview?.run();}
 });
 wilmaAnswerReview=installWilmaAnswerReview({document,
   getContext:wilmaReviewContext,
