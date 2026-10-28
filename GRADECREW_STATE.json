@@ -4272,7 +4272,7 @@
         "live_provider_calls_by_this_QA": 0
       },
       "pilot": {
-        "staging_requests_started": 4,
+        "staging_requests_started": 7,
         "staging_cap": 7,
         "legacy_jobs_preserved": true,
         "live_new_request_cap": 7,
@@ -4334,6 +4334,57 @@
         "report": "docs/evidence/wilma-layout-live-20261028/REPORT.md",
         "physical_device": "not_tested",
         "real_grades_changed": false
+      },
+      "submission_stage_20261029": {
+        "stage": "staging_deployed",
+        "source_commit": "747401d0acc8cd9aadfdb096794c2c981e45f33b",
+        "tree": "a499b51c73489f2d2aeef69cec947cfbc81857fd",
+        "pr": 387,
+        "pr_state": "draft_stage_only_do_not_merge_entire_composition_to_live",
+        "url": "https://gradecrew-staging-2026.web.app/wilma/?intent=login",
+        "hosting": "6fc0af374a768244",
+        "verified_runtime_files": 215,
+        "preserved_other_hosting_files": 449,
+        "origin": {
+          "function": "submitAssessmentAttempt",
+          "revision": "submitassessmentattempt-00014-kex",
+          "active_source_only_core_changed": true,
+          "preserved_other_runtime_files": 21,
+          "preserved_other_functions": 95
+        },
+        "ci": 40784002403,
+        "tests": {
+          "web_ui": 718,
+          "functions": 416,
+          "assessment": 144,
+          "independent_review": 97,
+          "browser_cases": 36
+        },
+        "synthetic_actual_submission_cases": 5,
+        "actual_teacher_UI": "confirm/change/defer/undo/cache/close/full reload passed",
+        "actual_AI": {
+          "new_provider_requests": 1,
+          "fictional_text": "front",
+          "suggested_points": 0.5,
+          "proposal_alone_did_not_change_points": true
+        },
+        "persistent_final_points": [
+          4.5,
+          6,
+          5,
+          7,
+          5
+        ],
+        "max_points": 7,
+        "pilot_started": 7,
+        "pilot_cap": 7,
+        "pilot_history_preserved": true,
+        "live_changed": false,
+        "physical_ipad": "not_tested",
+        "long_text_paid_AI": "not_performed; existing pilot exhausted",
+        "general_live_automatic": "off; concrete budget/data-owner/minimal origin review gates remain",
+        "report": "docs/evidence/wilma-submission-staging-20261029/REPORT.md",
+        "next_action": "Martin checks compact normal Stage UI and specifies concrete budget; then bounded long-text AI QA and separately reviewed minimal Live promotion"
       }
     }
   ],

@@ -183,3 +183,11 @@ Physisches iPad und Martins konkreteangemeldeteKorrekturansicht bleiben menschli
 SemantischeStagingvorschau61a,APIbudget6/7 undgetrennterOriginplanunverändert. KeineautomatischePrüfungechterAntwortenfreigeschaltet.
 NächsterSchritt: Martin lädt die normaleKorrekturseiteeinmalneu;beiweitererAbweichungkonkreteOrigin/Viewportprüfen. SpäterePromoterbewahren2geänderteWilma-Dateien.
 
+
+## Abgabeweg und kompakte Oberfläche auf Staging tatsächlich geprüft —29.10.2026
+Quelle747401d0/Treea499b51c, DraftPR387 Stage-only; nicht vollständige Classroom-/Visualkomposition auf Live mergen. Stufe staging_deployed, bisheriger Live8188 unverändert.
+submitAssessmentAttempt ACTIVE00014-kex; exaktaktivesStageZIP+Coretext/Lückenpolicy,21andereRuntimefilesund95andereFunctions unverändert. Hosting6fc0af374a768244:215/215 öffentlicheRuntimehashes,449andereDateien+Config erhalten. reviewWilmaAnswers bleibt00007-giq.
+Fünf echtefiktive Start/Submit/Receipt/Repeatflüsse auf WILMAFLOW261029 erfolgreich: unbekannterText/Lücke/langesErklären→review/keineEndnote;leereAntworten→Regel0;akzeptiert→bekanntePunkte;Bruch/Visual/Leakguards/Idempotenz erhalten. NormaleLehrerUI:singleWilmaöffnen/ZurÜbersicht,doppelteTabelleaus,InlinebestätigungC/D,echterAI-VorschlagA0,5P,Bestätigen/Plus/Undo/Später/Cache/Reload tatsächlichgeprüft. PersistenzA4,5/B6/C5/D7/E5von7. Vorschlagallein ließA4/7reviewunverändert.
+Stagebudget6→7/7,ein neuerProviderrequest,alteJobserhalten,keinReset/Erhöhen. Konkrete monatlicheLivekostengrenze asynchronangefragtundnochoffen. EchteAIlangtextprobe/Qualitätskorpus/physischesiPad nochoffen;keine99%-Behauptung.
+CI40784002403beideJobsgrün;718Web/416Functions/144Assessment+97unabhängigeTests/keinewichtigenBefunde;36Browserfälle. ErsterfiktiverCode17ZeichenvorStartabgewiesen;Fixturegeschlossenundgültigangelegt,VersuchshistoriekeinProduktfix.
+[Bericht](../docs/evidence/wilma-submission-staging-20261029/REPORT.md). Aufgabenplanbereits docs/superpowers/plans/2026-10-28-wilma-submission-stage.md. NächsterSchritt: menschlicheStageabnahme+konkretesBudget;danachbegrenzteLangtext-KI-ProbenundgetrennteMinimal-Livepromotion mitaktuellerBaseline/Review/CI. Medienbestandausgeschlossen.

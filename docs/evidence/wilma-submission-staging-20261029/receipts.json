@@ -1,0 +1,204 @@
+{
+  "origin-release": {
+    "name": "projects/gradecrew-staging-2026/locations/europe-west1/functions/submitAssessmentAttempt",
+    "state": "ACTIVE",
+    "labels": {
+      "firebase-functions-codebase": "assessment",
+      "gradecrew-commit": "747401d0acc8cd9aadfdb096794c2c981e45f33b",
+      "deployment-tool": "cli-firebase",
+      "deployment-callable": "true"
+    },
+    "updateTime": "2026-10-28T23:03:16.732037293Z",
+    "revision": "submitassessmentattempt-00014-kex",
+    "build": "projects/840345136563/locations/europe-west1/builds/2f1cc23a-a8b4-4f1d-ad82-10ef296e6e16"
+  },
+  "hosting-verification": {
+    "project": "gradecrew-staging-2026",
+    "url": "https://gradecrew-staging-2026.web.app/wilma/",
+    "source": "747401d0acc8cd9aadfdb096794c2c981e45f33b",
+    "version": "sites/gradecrew-staging-2026/versions/6fc0af374a768244",
+    "verifiedFiles": 215,
+    "mismatches": [],
+    "preservedOutsidePreview": 449,
+    "originalConfigPreserved": true,
+    "liveChanged": false
+  },
+  "flow-submissions": {
+    "project": "gradecrew-staging-2026",
+    "quiz": "WILMAFLOW261029",
+    "cases": {
+      "A": {
+        "attemptId": "a_4c67a4fe3f9636a87f7e927ed671",
+        "storedPoints": 4,
+        "maxPoints": 7,
+        "reviewPending": true,
+        "grade": null,
+        "receiptWithholdsPendingPoints": true,
+        "idempotent": true,
+        "visualAndFractionPreserved": true,
+        "solutionLeak": false
+      },
+      "B": {
+        "attemptId": "a_a7851950538291d2688a61e9a517",
+        "storedPoints": 6,
+        "maxPoints": 7,
+        "reviewPending": false,
+        "grade": 2,
+        "receiptWithholdsPendingPoints": false,
+        "idempotent": true,
+        "visualAndFractionPreserved": true,
+        "solutionLeak": false
+      },
+      "C": {
+        "attemptId": "a_e546754258351f15bd6dae2fa751",
+        "storedPoints": 5,
+        "maxPoints": 7,
+        "reviewPending": true,
+        "grade": null,
+        "receiptWithholdsPendingPoints": true,
+        "idempotent": true,
+        "visualAndFractionPreserved": true,
+        "solutionLeak": false
+      },
+      "D": {
+        "attemptId": "a_88160dc1b137cb97e2e60f8e9b1c",
+        "storedPoints": 6,
+        "maxPoints": 7,
+        "reviewPending": true,
+        "grade": null,
+        "receiptWithholdsPendingPoints": true,
+        "idempotent": true,
+        "visualAndFractionPreserved": true,
+        "solutionLeak": false
+      },
+      "E": {
+        "attemptId": "a_83ce3541d8e738100c581a6f6a80",
+        "storedPoints": 5,
+        "maxPoints": 7,
+        "reviewPending": false,
+        "grade": 3,
+        "receiptWithholdsPendingPoints": false,
+        "idempotent": true,
+        "visualAndFractionPreserved": true,
+        "solutionLeak": false
+      }
+    },
+    "providerCalls": 0,
+    "fictionalRoundClosed": true
+  },
+  "teacher-persistence": {
+    "project": "gradecrew-staging-2026",
+    "quiz": "WILMAFLOW261029",
+    "fictionalOnly": true,
+    "savedRows": {
+      "A": {
+        "points": 4.5,
+        "maxPoints": 7,
+        "grade": 3,
+        "status": "graded"
+      },
+      "B": {
+        "points": 6,
+        "maxPoints": 7,
+        "grade": 2,
+        "status": "graded"
+      },
+      "C": {
+        "points": 5,
+        "maxPoints": 7,
+        "grade": 3,
+        "status": "graded"
+      },
+      "D": {
+        "points": 7,
+        "maxPoints": 7,
+        "grade": 1,
+        "status": "graded"
+      },
+      "E": {
+        "points": 5,
+        "maxPoints": 7,
+        "grade": 3,
+        "status": "graded"
+      }
+    },
+    "confirmedThroughOrdinaryTeacherUI": true,
+    "realStudentResultsChanged": false
+  },
+  "ai-proposal-does-not-save-points": {
+    "providerStarted": 7,
+    "storedPointsAfterAIProposal": {
+      "integerValue": "4"
+    },
+    "statusAfterAIProposal": {
+      "stringValue": "review"
+    },
+    "gradeAfterAIProposal": {
+      "nullValue": null
+    }
+  },
+  "preservation-proof": {
+    "project": "gradecrew-staging-2026",
+    "functions": 96,
+    "onlyChangedFunction": [
+      "submitAssessmentAttempt"
+    ],
+    "unchangedFunctions": 95,
+    "started": 7,
+    "capUnchanged": 7,
+    "legacyJobsUnchanged": true,
+    "hosting": {
+      "project": "gradecrew-staging-2026",
+      "url": "https://gradecrew-staging-2026.web.app/wilma/",
+      "source": "747401d0acc8cd9aadfdb096794c2c981e45f33b",
+      "version": "sites/gradecrew-staging-2026/versions/6fc0af374a768244",
+      "verifiedFiles": 215,
+      "mismatches": [],
+      "preservedOutsidePreview": 449,
+      "originalConfigPreserved": true,
+      "liveChanged": false
+    },
+    "liveChanged": false
+  },
+  "ci-proof": {
+    "commit": "747401d0acc8cd9aadfdb096794c2c981e45f33b",
+    "success": true,
+    "ci": {
+      "id": 40784002403,
+      "head_sha": "747401d0acc8cd9aadfdb096794c2c981e45f33b",
+      "jobs": [
+        {
+          "id": 123152520946,
+          "name": "Node 22 tests",
+          "conclusion": "success"
+        },
+        {
+          "id": 123152521360,
+          "name": "Public entry layout (WebKit and Chromium)",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "localTests": {
+      "webUI": 718,
+      "functions": 416,
+      "assessment": 144
+    }
+  },
+  "review-proof": {
+    "commit": "747401d0acc8cd9aadfdb096794c2c981e45f33b",
+    "tree": "a499b51c73489f2d2aeef69cec947cfbc81857fd",
+    "reviewer": "wilma_live_phase1_review",
+    "focusedTests": 97,
+    "importantFindingsRemaining": 0,
+    "scope": "actual active Stage ZIP22 runtime files/21 identical; core text+gaps; actual main->lifecycle; compact UI/open-consent/closing/auth/budget; no cloud/provider calls"
+  },
+  "fixture-correction": {
+    "oldQuiz": "WILMAFLOW20261029",
+    "newQuiz": "WILMAFLOW261029",
+    "reason": "Test harness code exceeded actual secure entry 16-character limit",
+    "oldFixtureClosed": true,
+    "oldAttemptPhasesAllPlanned": true,
+    "providerCalls": 0
+  }
+}
