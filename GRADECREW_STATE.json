@@ -4278,7 +4278,38 @@
         "live_new_request_cap": 7,
         "no_second_provider_or_model_self_training": true
       },
-      "next_action": "Martin tests own Live account and iPad; retain all Wilma modules in later releases. Broader AI access requires a separate pilot budget/quality decision."
+      "next_action": "Current manual Wilma Live469ec remains; human tests semantic Stage preview. Separately decide minimal origin rollout with fresh environment-specific source preservation, then general automation gates.",
+      "semantic_preview": {
+        "stage": "staging_deployed",
+        "source": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
+        "pr": 383,
+        "integrated": false,
+        "url": "https://gradecrew-staging-2026.web.app/wilma-review-preview/?intent=login",
+        "hosting": "c5fed68056cc2c46",
+        "verified_assets": 215,
+        "preserved_other_assets": 448,
+        "backend_revision": "reviewwilmaanswers-00007-giq",
+        "ci": 40750389678,
+        "local_tests": {
+          "web_ui": 705,
+          "functions": 416,
+          "assessment_core": 16
+        },
+        "independent_review": "final_delta50_PASS;previous63_PASS;origin88_readonly_PASS_content_unchanged46a_to61a",
+        "synthetic_acceptance": "teacher confirm/change/defer/Undo/cache hydration/next response/full reload passed;A19.5/20 grade1,Bopen;CDEunchanged",
+        "provider_count": 6,
+        "pilot_cap": 7,
+        "pilot_history_preserved": true,
+        "physical_ipad": "not_tested",
+        "assessment_deployed": false,
+        "live_changed": false,
+        "gates": [
+          "separate minimal submitAssessmentAttempt source composition/CI/review/deploy and synthetic submission acceptance;preserve newer Stage visual support",
+          "school/data-owner scope and concrete monetary/input-token limits before general automatic real data processing",
+          "legacy manual batch cache/automatic single-job reconciliation before shared rollout"
+        ],
+        "report": "docs/evidence/wilma-semantic-20261028/REPORT.md"
+      }
     }
   ],
   "deployments": [

@@ -1,0 +1,17 @@
+{
+  "reviewedRemote": "46a843197fdd04d046cf5f1b34c057077876abd0",
+  "finalRemote": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
+  "assessmentDirectoryDelta": false,
+  "blobIdentity": {
+    "assessment-functions/index.js": {
+      "d21d2ec7": "b50b9a76a9fa423b1cb19186d40571d9fd83de17",
+      "43a6fbbf": "b50b9a76a9fa423b1cb19186d40571d9fd83de17"
+    },
+    "assessment-functions/lib/assessment-core.js": {
+      "d21d2ec7": "64983efef64aba91c2c4529c3b2ec81b0617e392",
+      "43a6fbbf": "64983efef64aba91c2c4529c3b2ec81b0617e392"
+    }
+  },
+  "callChain": "submitAssessmentAttempt -> gradeSubmission -> gradeQuestion; needsReview -> grade:null/status:review; same files on both sources",
+  "deployment": false
+}
