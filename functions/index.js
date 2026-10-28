@@ -158,6 +158,7 @@ function cleanInput(data = {}) {
   return {
     schoolType: String(data.schoolType || "Mittelschule").slice(0, 100), region: String(data.region || "Bayern").slice(0, 100),
     subject: String(data.subject || "").slice(0, 120), grade: String(data.grade || "").slice(0, 60), topic: String(data.topic || "").trim().slice(0, allowedVisualFormats?.length===1 && allowedVisualFormats[0]==='sequence' ? 1200 : 500),
+    ...(allowedVisualFormats?.length===1 && allowedVisualFormats[0]==='sequence' ? {sequenceImageAttempts:data.sequenceImageAttempts===1?1:2} : {}),
     learningGoals: Array.isArray(data.learningGoals) ? data.learningGoals.slice(0,12).map(x=>String(x).slice(0,250)) : [],
     difficulty: String(data.difficulty || "mittel").slice(0, 50), count, points,
     allowedTypes, ...(data.allowedVisualFormats !== undefined && allowedTypes.includes("visual") ? {allowedVisualFormats} : {}), notes: String(data.notes || "").slice(0, LIMITS.maxPromptChars), imageMode, exactImageCounts,

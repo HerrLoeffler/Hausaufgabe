@@ -1,0 +1,200 @@
+{
+  "project": "gradecrew-staging-2026",
+  "source": "f8dcaebfbcbfa89b253243b2020cc2d43f671f51",
+  "localSource": "bcd8451",
+  "url": "https://gradecrew-staging-2026--sequence28-hxbbyqtu.web.app/bildfolgen/",
+  "newFunctions": [
+    {
+      "name": "sequence28ConfigurePracticeSolutionRelease",
+      "hash": "28321385f04d189c4ce49890b760c1ad3b9b1efd",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28ConfigurePracticeSolutionRelease/function-source.zip",
+          "generation": "1793189260605253"
+        }
+      }
+    },
+    {
+      "name": "sequence28CrewAssistant",
+      "hash": "b1ed4234db6559ae086ac8b812acbf0a6557cbf3",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28CrewAssistant/function-source.zip",
+          "generation": "1793189260489110"
+        }
+      }
+    },
+    {
+      "name": "sequence28GenerateTest",
+      "hash": "b1ed4234db6559ae086ac8b812acbf0a6557cbf3",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28GenerateTest/function-source.zip",
+          "generation": "1793189261425811"
+        }
+      }
+    },
+    {
+      "name": "sequence28GetAssessmentInfo",
+      "hash": "28321385f04d189c4ce49890b760c1ad3b9b1efd",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28GetAssessmentInfo/function-source.zip",
+          "generation": "1793189308009928"
+        }
+      }
+    },
+    {
+      "name": "sequence28GetAssessmentReceipt",
+      "hash": "28321385f04d189c4ce49890b760c1ad3b9b1efd",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28GetAssessmentReceipt/function-source.zip",
+          "generation": "1793189308116786"
+        }
+      }
+    },
+    {
+      "name": "sequence28GetQuickRemySubmission",
+      "hash": "60db49ad659cb725ae50f231400a5b2c788c7bd9",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28GetQuickRemySubmission/function-source.zip",
+          "generation": "1793189260583778"
+        }
+      }
+    },
+    {
+      "name": "sequence28PrepareQuickRemy",
+      "hash": "b1ed4234db6559ae086ac8b812acbf0a6557cbf3",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28PrepareQuickRemy/function-source.zip",
+          "generation": "1793189338226567"
+        }
+      }
+    },
+    {
+      "name": "sequence28ProcessAiTestJob",
+      "hash": "b1ed4234db6559ae086ac8b812acbf0a6557cbf3",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28ProcessAiTestJob/function-source.zip",
+          "generation": "1793189339240380"
+        }
+      }
+    },
+    {
+      "name": "sequence28RegenerateQuestion",
+      "hash": "b1ed4234db6559ae086ac8b812acbf0a6557cbf3",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28RegenerateQuestion/function-source.zip",
+          "generation": "1793189339302224"
+        }
+      }
+    },
+    {
+      "name": "sequence28ResumeAssessmentAttempt",
+      "hash": "28321385f04d189c4ce49890b760c1ad3b9b1efd",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28ResumeAssessmentAttempt/function-source.zip",
+          "generation": "1793189308005385"
+        }
+      }
+    },
+    {
+      "name": "sequence28ReviseWholeTest",
+      "hash": "b1ed4234db6559ae086ac8b812acbf0a6557cbf3",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28ReviseWholeTest/function-source.zip",
+          "generation": "1793189339252387"
+        }
+      }
+    },
+    {
+      "name": "sequence28StartAiTestJob",
+      "hash": "b1ed4234db6559ae086ac8b812acbf0a6557cbf3",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28StartAiTestJob/function-source.zip",
+          "generation": "1793189339196376"
+        }
+      }
+    },
+    {
+      "name": "sequence28StartAiTestVariantJob",
+      "hash": "b1ed4234db6559ae086ac8b812acbf0a6557cbf3",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28StartAiTestVariantJob/function-source.zip",
+          "generation": "1793189339153654"
+        }
+      }
+    },
+    {
+      "name": "sequence28StartAssessmentAttempt",
+      "hash": "28321385f04d189c4ce49890b760c1ad3b9b1efd",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28StartAssessmentAttempt/function-source.zip",
+          "generation": "1793189308024881"
+        }
+      }
+    },
+    {
+      "name": "sequence28SubmitAssessmentAttempt",
+      "hash": "28321385f04d189c4ce49890b760c1ad3b9b1efd",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28SubmitAssessmentAttempt/function-source.zip",
+          "generation": "1793189308081365"
+        }
+      }
+    },
+    {
+      "name": "sequence28SubmitQuickRemy",
+      "hash": "60db49ad659cb725ae50f231400a5b2c788c7bd9",
+      "source": {
+        "storageSource": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "sequence28SubmitQuickRemy/function-source.zip",
+          "generation": "1793189338331464"
+        }
+      }
+    }
+  ],
+  "originalFunctions": 80,
+  "originalSourcesUnchanged": true,
+  "canonicalHostingChanged": false,
+  "rulesChanged": false,
+  "productionChanged": false,
+  "hostingReceipt": {
+    "status": "success",
+    "result": {
+      "gradecrew-staging-2026": {
+        "site": "gradecrew-staging-2026",
+        "url": "https://gradecrew-staging-2026--sequence28-hxbbyqtu.web.app",
+        "version": "",
+        "expireTime": "2026-11-27T12:07:26.229927229Z"
+      }
+    }
+  }
+}
