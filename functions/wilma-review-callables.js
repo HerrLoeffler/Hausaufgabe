@@ -9,10 +9,11 @@ const {consumeQuota,recordUsage}=require("./lib/usage");
 const {getOpenAI}=require("./lib/openai-client");
 const {privateResultStore}=require("./lib/media-operation");
 const {REGION,TEXT_MODEL}=require("./lib/constants");
+const {wilmaDeploymentProject}=require("./lib/wilma-project");
 const OPENAI_API_KEY=defineSecret("OPENAI_API_KEY");
 const statusCodes={400:"invalid-argument",401:"unauthenticated",403:"permission-denied",409:"failed-precondition",429:"resource-exhausted",503:"unavailable"};
 async function handler(request){
-  const projectId=process.env.GCLOUD_PROJECT||process.env.GOOGLE_CLOUD_PROJECT;
+  const projectId=wilmaDeploymentProject();
   if(!["hausaufgabe-staging","gradecrew-staging-2026"].includes(projectId))throw new HttpsError("failed-precondition","Wilma: Projekt nicht zugelassen.");
   const bearer=request.rawRequest?.headers?.authorization;
   if(!request.auth?.uid||typeof bearer!=="string"||!bearer.startsWith("Bearer "))throw new HttpsError("unauthenticated","Bitte anmelden.");

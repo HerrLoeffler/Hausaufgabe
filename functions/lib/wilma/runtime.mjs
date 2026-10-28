@@ -27,7 +27,7 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
   await db.runTransaction(tx=>checkedProfile(tx));
   const load=async path=>{const snap=await db.doc(path).get();return snap.exists?snap.data():null;};
   const cachePath=fingerprint=>`aiGeneratedCache/${digest(uid).slice(0,24)}/wilma-${fingerprint}.json`;
-  const budget=db.doc('_wilmaPilotPrivate/'+(projectId==='hausaufgabe-staging'?'live-v1':'regular-staging-v1'));
+  const budget=db.doc('_wilmaPilotPrivate/'+(projectId==='hausaufgabe-staging'?'live-v1':'budget-v1'));
   const review=createReviewService({projectId,
    loadQuiz:quiz=>load('quizzes/'+quiz),loadQuestion:(quiz,q)=>load(`quizzes/${quiz}/questions/${q}`),loadSubmission:(quiz,sid)=>load(`quizzes/${quiz}/submissions/${sid}`),
    readCache:async fingerprint=>{
@@ -46,7 +46,7 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
      if(job.exists)fail(409,'Dieser Prüflauf wurde bereits gestartet. Bitte Ergebnis aktualisieren; kein automatischer Neuversuch.');
      if((counter.data()?.started||0)>=aiRequestCap)fail(429,'Das begrenzte Wilma-Testkontingent ist aufgebraucht. Manuelles Bewerten bleibt möglich.');
      tx.create(ref,{uid,phase:'started',createdAt:now(),fingerprint});
-     tx.set(budget,{started:(counter.data()?.started||0)+1,updatedAt:now()});
+     tx.set(budget,{...counter.data(),started:(counter.data()?.started||0)+1,updatedAt:now()});
     });
    },
    finish:async(fingerprint,info)=>{
