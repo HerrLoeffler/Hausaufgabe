@@ -1,5 +1,8 @@
 # GradeCrew – gemeinsame To-do-Liste
 
+- [x] **GC-AUDIO-01 · f382ba09:** Überzählige ausgeblendete Fragen vor Prüfung/Reparatur sichtbar normalisiert; keine fehlenden Audioaufgaben erfunden. PR356/875c9422,337Functionschecks+exakteCI40677985171 grün, zweiGeneratorFunctions ACTIVE/ec0f48bc,59unverändert. Kein Providerretry; alte Versuchshistorie erhalten. [Beleg](workstreams/audio-presentation-incident-20261028.md).
+- [ ] **Nachgelagerte enge UI-Wünsche:** Veröffentlichungsdialog kürzen und tatsächliche Einstellungen zusammenfassen; neue Tests Antworten mischen+Selbststart alsStandard, gespeicherte Wahl erhalten. Audio-Zuordnung: redundantes sichtbares „Zuordnungen“ im Pool entfernen, responsive gleichbreite Audiokarten, zugänglichen Namen/Bedienung erhalten. Nach Incidentfix, kein zweiter Writer.
+
 - [x] **GC-AUDIO-01 · Vorhandene Medien direkt sichtbar:** PR354/14a91188 live auf beiden bestehenden Adressen; Bilder direkt eingeblendet, Aufgaben-/Antwortplayer ohne Aufklappen; Quelltexte weiter bearbeitbar, Emmi erhalten.634 lokale+48 Browserprüfungen, exakteCI40592803399 grün, Hosting4ef1c1b6b4e993ae,206/206Dateien je Adresse. Geräteabnahme offen. [Übergabe](workstreams/visible-media-20261027.md).
 
 ## 27.10.2026 — Kompakte Tests auf gradecrew.de und Lehrer-App für iPhone/iPad

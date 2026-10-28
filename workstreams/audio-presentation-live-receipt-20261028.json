@@ -1,0 +1,33 @@
+{
+  "source_commit": "875c94229c520563bd7a0208fdb8f7b96b0d97e8",
+  "tree": "0a4677a78a408f95e8d1bddece5882659e61ba2b",
+  "ci": 40677985171,
+  "ci_result": "success",
+  "tests": 337,
+  "pr": 356,
+  "changed_functions": [
+    {
+      "id": "generateTest",
+      "state": "ACTIVE",
+      "hash": "ec0f48bcba212b7fc36158be0c2451ea99b823d7"
+    },
+    {
+      "id": "processAiTestJob",
+      "state": "ACTIVE",
+      "hash": "ec0f48bcba212b7fc36158be0c2451ea99b823d7"
+    }
+  ],
+  "unchanged_functions": 59,
+  "hosting_changed": false,
+  "provider_calls": 0,
+  "attempts": [
+    {
+      "attempt": 1,
+      "outcome": "empty CLI result; both hashes unchanged, no pending cloud operation"
+    },
+    {
+      "attempt": 2,
+      "outcome": "both selected functions update successful; complete runtime PATH used"
+    }
+  ]
+}
