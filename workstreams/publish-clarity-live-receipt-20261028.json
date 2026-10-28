@@ -1,0 +1,62 @@
+{
+  "task_id": "GC-WEB-REPAIR-20261007 / GC-AUDIO-01",
+  "source_commit": "cf19d994cc1183bd165d7f434f4ac53a8615d3bc",
+  "source_tree": "ed16fd004088a7d65c5338a913d3d770266bdd4c",
+  "pr": 359,
+  "ci": {
+    "run": 40682700374,
+    "result": "success",
+    "web_checks": 639,
+    "functions_checks": 338,
+    "media_browser_checks": 48,
+    "publish_browser_checks": 42,
+    "matching_browser_checks": 8
+  },
+  "hosting": {
+    "project": "hausaufgabe-staging",
+    "version": "5427c9ae25cca621",
+    "origins": [
+      {
+        "origin": "https://gradecrew.de",
+        "commit": "cf19d994cc1183bd165d7f434f4ac53a8615d3bc",
+        "files": 206,
+        "verified": 206,
+        "failed": []
+      },
+      {
+        "origin": "https://hausaufgabe-staging.web.app",
+        "commit": "cf19d994cc1183bd165d7f434f4ac53a8615d3bc",
+        "files": 206,
+        "verified": 206,
+        "failed": []
+      }
+    ],
+    "preview": [
+      {
+        "origin": "https://hausaufgabe-staging--publish-cf19-0r2o1nf2.web.app",
+        "commit": "cf19d994cc1183bd165d7f434f4ac53a8615d3bc",
+        "files": 206,
+        "verified": 206,
+        "failed": []
+      }
+    ],
+    "release_time": "2026-10-28T11:54:00.219Z",
+    "version_name": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/5427c9ae25cca621"
+  },
+  "functions": {
+    "changed": [
+      {
+        "id": "processAiTestJob",
+        "state": "ACTIVE",
+        "hash": "8094de3c5e77881e644955da3aaeb0668b81a95d"
+      }
+    ],
+    "unchanged": 60,
+    "incident_direct_generator_preserved": true
+  },
+  "provider_calls": 0,
+  "rules_auth_limits_changed": false,
+  "other_environment_changed": false,
+  "physical_device_acceptance": "pending",
+  "material_emphasis": "proposal only; not implemented"
+}
