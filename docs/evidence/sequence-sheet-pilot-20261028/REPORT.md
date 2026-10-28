@@ -56,3 +56,11 @@ Nur die Pilotadresse unterstützt `generated-four`; nicht über die kanonische T
 Qualifiziert sind zunächst **vier Karten und klar gerichtete lineare Abläufe**. Beliebig viele Karten, mehrere akzeptierte Kreisfolgen, gemischte automatische Bildfolgenauswahl, zusätzliche Bildanbieter und flächige Lehrerfreigabe sind nicht durch diesen Pilot bewiesen. Beschreibungen und Bildreihenfolgen brauchen weiterhin Lehrerprüfung. Drei gelungene Beispiele begründen weder99%Zuverlässigkeit noch eine Unterrichtswirkung oder Geräteabnahme.
 
 Nächster Schritt: Martin beschreibt auf der Pilotseite einen eigenen fachlichen Wunsch und prüft Darstellung, Lernziel und Lösung. Danach begrenzte weitere Fach-/Geräteproben, bevor eine Integration in normales Staging überhaupt entschieden wird. Kein Production-Rollout.
+
+## Gesicherter Abschluss nach Präsentationsunterbrechung
+
+Die vollständige Übersicht wurde separat als Hostingstand a8187beb8cba6a120e7a3addd6534eac28cd0f4d veröffentlicht; Backend bleibt207dbc64d2045e11ede8fa42281d7c4adf965d0d(v1.2). Alle Dateien der Vorschau wurden gegen den Releasebeleg geprüft (deployment-final.json). Browser zeigt alle drei öffentlichen Probelinks und das vorhandene Testkonto-Login; browser-overview.png hält den Stand fest. Die zusätzliche Schüler-UI-Abgabe vor Unterbrechung hat keinen gesicherten sichtbaren Receiptnachweis und wird nicht zu den zwölf bestandenen Serverfällen hinzugerechnet. Kein Wiederholungsstart und keine weitere bezahlte KI-Erzeugung nach Wiederaufnahme.
+
+![Drei KI-Bildfolgen und Zugang für eigene Wünsche](browser-overview.png)
+
+![Echte Deutsch-Bildkarten im Schülerablauf](browser-deutsch.png)
