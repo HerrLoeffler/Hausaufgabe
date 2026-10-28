@@ -1,0 +1,19 @@
+{
+  "hostingVersion": "sites/hausaufgabe-staging/versions/bd28ca8fe8d3c4b0",
+  "preservedFiles": 206,
+  "originalHashesUnchanged": true,
+  "origins": [
+    {
+      "origin": "https://gradecrew.de",
+      "commit": "469ec66a172997e8cdddc83cdd0add05b40afa1e",
+      "verifiedFiles": 214,
+      "mismatches": []
+    },
+    {
+      "origin": "https://hausaufgabe-staging.web.app",
+      "commit": "469ec66a172997e8cdddc83cdd0add05b40afa1e",
+      "verifiedFiles": 214,
+      "mismatches": []
+    }
+  ]
+}

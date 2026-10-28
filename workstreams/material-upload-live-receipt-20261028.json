@@ -1,0 +1,202 @@
+{
+  "source_commit": "63eda0c86d679117c59efc657b6fc2ac329a1f2f",
+  "source_tree": "c4a8eaf881db9da63c53de91b55c6c97138078a5",
+  "source_pr": 379,
+  "integration_commit": "ccb8f72abfbe6e6ee110765a98a6de24620a278f",
+  "ci": 40739180659,
+  "rules": {
+    "release": "projects/hausaufgabe-staging/releases/firebase.storage/hausaufgabe-staging.firebasestorage.app",
+    "ruleset": "projects/hausaufgabe-staging/rulesets/082283c2-97c9-42af-99a3-d15b11260a78",
+    "updatedAt": "2026-10-28T17:52:07.033534Z",
+    "sha256": "0c439eefbb42918d5b291186d838b9f0f5ee0a4c8b39529b5c064c360a1723fe",
+    "sourceMatch": true
+  },
+  "hosting": {
+    "channel": "sites/hausaufgabe-staging/channels/live",
+    "releaseTime": "2026-10-28T17:52:56.146Z",
+    "version": "sites/hausaufgabe-staging/versions/b2405ff5a984cd39"
+  },
+  "preview": {
+    "origin": "https://hausaufgabe-staging--upload-access-63ed-1d0jimk8.web.app",
+    "commit": "63eda0c86d679117c59efc657b6fc2ac329a1f2f",
+    "expectedCommit": "63eda0c86d679117c59efc657b6fc2ac329a1f2f",
+    "files": 207,
+    "matched": 207,
+    "failures": [],
+    "readRetries": []
+  },
+  "live_origins": [
+    {
+      "origin": "https://gradecrew.de",
+      "commit": "63eda0c86d679117c59efc657b6fc2ac329a1f2f",
+      "expectedCommit": "63eda0c86d679117c59efc657b6fc2ac329a1f2f",
+      "files": 207,
+      "matched": 207,
+      "failures": [],
+      "readRetries": []
+    },
+    {
+      "origin": "https://hausaufgabe-staging.web.app",
+      "commit": "63eda0c86d679117c59efc657b6fc2ac329a1f2f",
+      "expectedCommit": "63eda0c86d679117c59efc657b6fc2ac329a1f2f",
+      "files": 207,
+      "matched": 207,
+      "failures": [],
+      "readRetries": []
+    }
+  ],
+  "live_before": {
+    "project": "hausaufgabe-staging",
+    "mode": "before",
+    "checkedAt": "2026-10-28T17:48:49.031Z",
+    "checks": [
+      {
+        "name": "normal signup and own teacher profile",
+        "pass": true
+      },
+      {
+        "name": "own PDF before rules fix",
+        "denied": true,
+        "code": "storage/unauthorized"
+      }
+    ],
+    "cleanup": [
+      "synthetic profile removed",
+      "synthetic Auth account removed"
+    ],
+    "providerCalls": 0,
+    "personalFileRead": false
+  },
+  "live_after": {
+    "project": "hausaufgabe-staging",
+    "mode": "after",
+    "checkedAt": "2026-10-28T17:52:26.739Z",
+    "checks": [
+      {
+        "name": "normal signup and own teacher profile",
+        "pass": true
+      },
+      {
+        "name": "own application/pdf upload",
+        "pass": true
+      },
+      {
+        "name": "own image/png upload",
+        "pass": true
+      },
+      {
+        "name": "existing object overwrite",
+        "denied": true,
+        "code": "storage/unauthorized"
+      },
+      {
+        "name": "foreign UID upload",
+        "denied": true,
+        "code": "storage/unauthorized"
+      },
+      {
+        "name": "invalid MIME upload",
+        "denied": true,
+        "code": "storage/unauthorized"
+      },
+      {
+        "name": "unauthenticated upload",
+        "denied": true,
+        "code": "storage/unauthorized"
+      },
+      {
+        "name": "unauthenticated read",
+        "denied": true,
+        "code": "storage/unauthorized"
+      }
+    ],
+    "cleanup": [
+      "synthetic object removed",
+      "synthetic object removed",
+      "synthetic profile removed",
+      "synthetic Auth account removed"
+    ],
+    "providerCalls": 0,
+    "personalFileRead": false
+  },
+  "local_checks": {
+    "web_ui": 663,
+    "storage_firestore_emulator": 5,
+    "targeted_upload_ui": 9,
+    "independent_security_review": "No concrete P1/P2"
+  },
+  "preserved_web_files": 206,
+  "only_changed_web_file": "ai-client.js",
+  "ai_client_sha256": "5fa432ba75d18e5b0fbf5d8757f4d904fdd434d30c93cb1f2cb028fa149c509b",
+  "provider_calls": 0,
+  "user_document_read": false,
+  "functions_firestore_iam_deployed": false,
+  "other_environments_changed": false,
+  "held_editor_pr": 371,
+  "later_hosting_observation": {
+    "source": "21d1e4b1714b70e69a75185a20908652621c96b7",
+    "source_pr": 377,
+    "source_branch": "release/remy-auto-points-20261028",
+    "hosting": {
+      "channel": "sites/hausaufgabe-staging/channels/live",
+      "releaseTime": "2026-10-28T17:54:33.023Z",
+      "version": "sites/hausaufgabe-staging/versions/6f6e15ccf832db5e"
+    },
+    "upload_error_privacy_copy_overwritten": true,
+    "storage_rules_still_match": true,
+    "real_live_recheck": {
+      "project": "hausaufgabe-staging",
+      "mode": "after21",
+      "checkedAt": "2026-10-28T17:57:20.042Z",
+      "checks": [
+        {
+          "name": "normal signup and own teacher profile",
+          "pass": true
+        },
+        {
+          "name": "own application/pdf upload",
+          "pass": true
+        },
+        {
+          "name": "own image/png upload",
+          "pass": true
+        },
+        {
+          "name": "existing object overwrite",
+          "denied": true,
+          "code": "storage/unauthorized"
+        },
+        {
+          "name": "foreign UID upload",
+          "denied": true,
+          "code": "storage/unauthorized"
+        },
+        {
+          "name": "invalid MIME upload",
+          "denied": true,
+          "code": "storage/unauthorized"
+        },
+        {
+          "name": "unauthenticated upload",
+          "denied": true,
+          "code": "storage/unauthorized"
+        },
+        {
+          "name": "unauthenticated read",
+          "denied": true,
+          "code": "storage/unauthorized"
+        }
+      ],
+      "cleanup": [
+        "synthetic object removed",
+        "synthetic object removed",
+        "synthetic profile removed",
+        "synthetic Auth account removed"
+      ],
+      "providerCalls": 0,
+      "personalFileRead": false
+    },
+    "followup_owner": "01a1280a-c9f4-73a3-a12a-7b2b93a5ba5a",
+    "no_further_deploy_by_upload_owner": true
+  }
+}

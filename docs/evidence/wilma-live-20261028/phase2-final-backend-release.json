@@ -1,0 +1,15 @@
+{
+  "name": "projects/hausaufgabe-staging/locations/europe-west1/functions/reviewWilmaAnswers",
+  "state": "ACTIVE",
+  "url": "https://europe-west1-hausaufgabe-staging.cloudfunctions.net/reviewWilmaAnswers",
+  "service": "projects/hausaufgabe-staging/locations/europe-west1/services/reviewwilmaanswers",
+  "revision": "reviewwilmaanswers-00002-hut",
+  "build": "projects/950775032930/locations/europe-west1/builds/d7b2401e-b925-40ec-871f-eb727c3c41a1",
+  "labels": {
+    "firebase-functions-codebase": "ai",
+    "gradecrew-commit": "e6af8328d34833c78474db1fc7033c3e0875997e",
+    "deployment-tool": "gradecrew-authorized-wilma",
+    "deployment-callable": "true"
+  },
+  "updateTime": "2026-10-28T17:52:46.916369636Z"
+}

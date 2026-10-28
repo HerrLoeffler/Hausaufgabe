@@ -2826,6 +2826,93 @@
         "interpretation": "Two new-creation audio modes share min(5,N) tasks; combined new requests disabled; existing combined media unchanged.",
         "handoff": "workstreams/two-audio-modes-20261028.md",
         "receipt": "workstreams/two-audio-modes-live-receipt-20261028.json"
+      },
+      "visible_question_audio_20261028": {
+        "stage": "ci_green",
+        "branch": "fix/audio-question-visible-20261028",
+        "pr": 371,
+        "source_commit": "420f5f8988c2220485544e1ae3fb488af7e440e2",
+        "source_tree": "755016aa05ee48af06d4328423fa5974ebfdd4da",
+        "preserved_integration": "ecded465b402a2d9680576b0213ee996d9fbe835",
+        "ci": 40732435329,
+        "checks": {
+          "targeted": 31,
+          "web_ui": 693,
+          "media_browser": 48,
+          "independent_review": "no P1/P2"
+        },
+        "preview": {
+          "channel": "visible-question-420f",
+          "version": "02d695420b2bb90d",
+          "matched_files": 214,
+          "total_files": 214
+        },
+        "live_deployed": false,
+        "next_action": "Wait for coordinated Wilma phase2 release and actual current Live manifest; then integrate and Hosting-only promote. Do not deploy private/unready Wilma frontend or repeat backend/IAM calls.",
+        "handoff": "workstreams/visible-media-20261027.md"
+      },
+      "material_upload_access_20261028": {
+        "stage": "production",
+        "branch": "fix/material-upload-access-20261028",
+        "pr": 379,
+        "source_commit": "63eda0c86d679117c59efc657b6fc2ac329a1f2f",
+        "integration_commit": "ccb8f72abfbe6e6ee110765a98a6de24620a278f",
+        "source_tree": "c4a8eaf881db9da63c53de91b55c6c97138078a5",
+        "ci": 40739180659,
+        "rules": {
+          "release": "projects/hausaufgabe-staging/releases/firebase.storage/hausaufgabe-staging.firebasestorage.app",
+          "ruleset": "projects/hausaufgabe-staging/rulesets/082283c2-97c9-42af-99a3-d15b11260a78",
+          "updatedAt": "2026-10-28T17:52:07.033534Z",
+          "sha256": "0c439eefbb42918d5b291186d838b9f0f5ee0a4c8b39529b5c064c360a1723fe",
+          "sourceMatch": true
+        },
+        "hosting": {
+          "channel": "sites/hausaufgabe-staging/channels/live",
+          "releaseTime": "2026-10-28T17:52:56.146Z",
+          "version": "sites/hausaufgabe-staging/versions/b2405ff5a984cd39"
+        },
+        "verified_origins": [
+          {
+            "origin": "https://gradecrew.de",
+            "matched": 207,
+            "files": 207
+          },
+          {
+            "origin": "https://hausaufgabe-staging.web.app",
+            "matched": 207,
+            "files": 207
+          }
+        ],
+        "real_new_teacher_uploads": [
+          "PDF",
+          "PNG"
+        ],
+        "negative_guards_verified": [
+          "overwrite",
+          "foreign_uid",
+          "invalid_mime",
+          "unauthenticated_upload",
+          "unauthenticated_read"
+        ],
+        "fixtures_cleaned": true,
+        "preserved_web_files": 206,
+        "changed_web_files": [
+          "ai-client.js"
+        ],
+        "no_provider_calls": true,
+        "handoff": "workstreams/material-upload-access-20261028.md",
+        "receipt": "workstreams/material-upload-live-receipt-20261028.json",
+        "next_action": "Upload works after later Remy release; colleague retries file selection. Sole next Hosting promoter Wilma owner01a1280a must preserve merged Remy+Wilma+PR379 safe upload error copy (regressed byPR377); no further Uploadowner deploy. PR371 remains held.",
+        "later_hosting_observed": {
+          "commit": "21d1e4b1714b70e69a75185a20908652621c96b7",
+          "pr": 377,
+          "version": "6f6e15ccf832db5e",
+          "release_time": "2026-10-28T17:54:33.023Z",
+          "storage_rule_fix_retained": true,
+          "upload_error_privacy_copy_regressed": true,
+          "real_teacher_pdf_png_recheck": "2026-10-28T17:57:20.042Z",
+          "all_fixtures_cleaned": true
+        }
       }
     },
     {
@@ -4133,6 +4220,65 @@
       "apple_build_id": "4caf3965-f136-4002-aa6b-ced633fdab95",
       "apple_build_url": "https://appstoreconnect.apple.com/teams/d0d618ea-0473-441c-b669-ee875c408bc8/apps/6817547234/testflight/ios/4caf3965-f136-4002-aa6b-ced633fdab95",
       "internal_group": "Grade Crew TesterL; 1 tester"
+    },
+    {
+      "id": "wilma-live-grading-20261028",
+      "task_id": "GC-PEDAGOGY-KB-01",
+      "branch": "fix/wilma-live-combined-20261028",
+      "stage": "production",
+      "scope": "Existing teacher inline correction and class-wide Wilma answer review; no media integration",
+      "handoff": "workstreams/wilma-live-grading-20261028.md",
+      "source_commit": "469ec66a172997e8cdddc83cdd0add05b40afa1e",
+      "tree": "79d6661798ec609f844b70f53bbe8de7265e00d6",
+      "integration_commit": "02fc3fea742f446731c59d7dc56d8784dd101d6c",
+      "pull_request": 381,
+      "hosting": {
+        "project": "hausaufgabe-staging",
+        "version": "bd28ca8fe8d3c4b0",
+        "origins": [
+          "https://gradecrew.de",
+          "https://hausaufgabe-staging.web.app"
+        ],
+        "verified_files_per_origin": 214,
+        "mismatches": 0,
+        "preserved_hosting_files": 206,
+        "preserved_current_remy_points": true,
+        "restored_safe_upload_error_client": true
+      },
+      "backend": {
+        "function": "reviewWilmaAnswers",
+        "source_commit": "e6af8328d34833c78474db1fc7033c3e0875997e",
+        "revision": "reviewwilmaanswers-00002-hut",
+        "state": "ACTIVE",
+        "specific_browser_invoker_human_approved": true,
+        "anonymous_request": "401 UNAUTHENTICATED",
+        "other_functions_or_rules_changed_by_wilma": false
+      },
+      "ci": {
+        "run": 40740487910,
+        "result": "success",
+        "jobs": [
+          "Node22",
+          "WebKit and Chromium"
+        ]
+      },
+      "acceptance": {
+        "staging": "passed with ordinary teacher: full-form save, stale-tab rejection, confirm/change/defer/undo, real AI, cache, reload, CSV",
+        "fictional_submissions": 5,
+        "focused_tests": 105,
+        "independent_merge_tests": 46,
+        "live_authenticated_positive": "not performed; accessible Live tab still login",
+        "physical_ipad": "not performed",
+        "live_provider_calls_by_this_QA": 0
+      },
+      "pilot": {
+        "staging_requests_started": 4,
+        "staging_cap": 7,
+        "legacy_jobs_preserved": true,
+        "live_new_request_cap": 7,
+        "no_second_provider_or_model_self_training": true
+      },
+      "next_action": "Martin tests own Live account and iPad; retain all Wilma modules in later releases. Broader AI access requires a separate pilot budget/quality decision."
     }
   ],
   "deployments": [
