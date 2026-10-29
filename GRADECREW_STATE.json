@@ -4385,6 +4385,22 @@
         "general_live_automatic": "off; concrete budget/data-owner/minimal origin review gates remain",
         "report": "docs/evidence/wilma-submission-staging-20261029/REPORT.md",
         "next_action": "Martin checks compact normal Stage UI and specifies concrete budget; then bounded long-text AI QA and separately reviewed minimal Live promotion"
+      },
+      "budget_decision_20261029": {
+        "currency": "EUR",
+        "monthly_total_ceiling": 20,
+        "scope": "Wilma API costs overall; shared total, not per teacher",
+        "human_authorized": true,
+        "implemented": false,
+        "request_cap_still": 7,
+        "cap_not_reset": true,
+        "next_action": "Implement server-side monetary reservation and settled usage accounting before increasing pilot or enabling general Live automatic reviews."
+      },
+      "confirmed_answer_fundus_requirement": {
+        "requested": true,
+        "implemented": false,
+        "existing_cache": "Exact review receipt reuse only; not a teacher-validated cross-submission learning fundus",
+        "policy": "Teacher-confirmed answers scoped to exact question, rubric/version and context; mismatches or ambiguity require API/teacher. No 100% free-text correctness guarantee; no self-training or shared student answer pool activated."
       }
     }
   ],
