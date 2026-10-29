@@ -277,5 +277,75 @@
     "budgetReservations": 0,
     "targetPointsUnchanged": true,
     "teacherConfirmationStillRequired": true
+  },
+  "followup_backend_54f": {
+    "backend-verification.json": {
+      "project": "hausaufgabe-staging",
+      "functions": [
+        {
+          "function": "reviewWilmaAnswers",
+          "revision": "reviewwilmaanswers-00004-nuz",
+          "sourceZipSha256": "3b319fa9a1ae9c03c2ab45ea1349e4ba002109a3bd1b96fd7ef01b2dda9e2602"
+        },
+        {
+          "function": "submitAssessmentAttempt",
+          "revision": "submitassessmentattempt-00055-pur",
+          "sourceZipSha256": "8e95916ccec3893dff116452b087696d5f2f8809b569858cf9305ff68e5543a7"
+        }
+      ],
+      "otherFunctionsPreserved": 60,
+      "rulesUnchanged": true,
+      "stageReviewUnchanged": true
+    },
+    "actual-rule-submission.json": {
+      "quiz": "WILMARULE261029",
+      "attemptId": "a_431b0af860781f7c3b09a67ec022",
+      "realStudentSubmit": true,
+      "singleChoice": {
+        "maxPoints": 1,
+        "needsReview": false,
+        "correct": true,
+        "autoPoints": 1,
+        "awardedPoints": 1
+      },
+      "acceptedFreeText": {
+        "awardedPoints": 1,
+        "autoPoints": 1,
+        "needsReview": true,
+        "maxPoints": 1,
+        "correct": true
+      },
+      "status": "review",
+      "grade": null,
+      "pendingPointsHiddenInReceipt": true,
+      "providerCallsBySubmission": 0
+    },
+    "ci-final-54f.json": {
+      "source": "54f7004ac200f224ab886fe019ccbbef1a431e38",
+      "run": 40957792218,
+      "node_job": 123742312334,
+      "node_result": "success",
+      "wilma_browser_cases": 36,
+      "browser_job": 123742311750,
+      "browser_result": "failure",
+      "failure": "Tutorial finale Next y562.234..606.234 viewport568, all3hitsfalse, coach169.765..661.234; PAGEERROR[]",
+      "tutorial_runtime": "c35 composition, not new ec7 owner fix",
+      "hosting_published": false
+    },
+    "review-proof.json": {
+      "commit": "54f7004ac200f224ab886fe019ccbbef1a431e38",
+      "importantFindingsRemaining": 0,
+      "reviewer": "wilma_live_budget_fundus_review_20261029",
+      "scope": "Automatic visible owned results proposals, accepted rules before API, new text confirmation and legacy preservation; workflow-only successor has identical runtime.",
+      "fixedFinding": "P2 historical accepted text reopened by temporary review status in decision recalc; needsReviewfalse boundary, client/server and actual decision regression.",
+      "verification": {
+        "rootUI": 560,
+        "functions": 464,
+        "assessment": 94,
+        "exactWilmaCICommand": 124,
+        "independentFocused": 53,
+        "independentNegative": 16
+      }
+    }
   }
 }
