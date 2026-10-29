@@ -44,6 +44,11 @@ function installStyles() {
       background:#fbfffd!important;
       scroll-margin-block:180px
     }
+    .gcRealCoach.gc23FinaleCoach{
+      position:relative!important;inset:auto!important;transform:none!important;translate:none!important;
+      width:100%!important;max-width:760px!important;max-height:none!important;
+      margin:0 0 18px!important;box-sizing:border-box
+    }
     .gc23FinaleResult{
       margin:14px 0 4px;padding:12px 14px;border:1px solid #cce2d7;border-radius:13px;
       background:#f3faf6;color:#315b50;font-size:13px;line-height:1.5
@@ -231,7 +236,16 @@ function patchReviewCoach(coach) {
 
   clearReviewPresentation();
   finaleCard.classList.add("gc23ReviewFocus");
-  finaleCard.scrollIntoView({ block: "center", behavior: "instant" });
+  // Keep the real Next beside this scene: scrolling the large finale image
+  // used to strand a flow-positioned coach above the entire review panel.
+  coach.classList.remove("gcCoachFlow", "gcResponsiveCoach");
+  coach.classList.add("gcCoachContext", "gc23FinaleCoach");
+  document.body.classList.remove("gcTourFlow");
+  document.body.classList.add("gcTourContext");
+  finaleCard.before(coach);
+  const revealCoach = () => coach.isConnected && coach.scrollIntoView({ block: "start", behavior: "instant" });
+  revealCoach();
+  requestAnimationFrame(revealCoach);
   const points = Math.max(0, Math.min(2, Number(finaleInput.value) || 0));
 
   const nextButton = originalButton.cloneNode(true);
