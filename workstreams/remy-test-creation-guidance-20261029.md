@@ -1,6 +1,6 @@
 # GC-WEB-REPAIR-20261007 · Remy: Material und Lernziele verständlich machen
 
-**Stand 29.10.2026: Idee und Umsetzungsplan, nicht beschlossen und nicht implementiert.** Fachzuständigkeit: Remy-Testerstellung / präzise Vorgaben. Bezug: [bestehende kompakte Erstellungsoberfläche](../../workstreams/creation-compact-20261027.md), [Auto-Punkte-Übergabe](../../workstreams/remy-points-mode-20261028.md) in der noch offenen Dokumentations-PR #372. Keine Freigabe für Code, Testaufrufe mit KI oder Deployment aus diesem Plan.
+**Stand 29.10.2026: Idee und Umsetzungsplan, nicht beschlossen und nicht implementiert.** Fachzuständigkeit: Remy-Testerstellung / präzise Vorgaben. Bezug: [bestehende kompakte Erstellungsoberfläche](creation-compact-20261027.md), [Auto-Punkte-Dokumentations-PR #372](https://github.com/HerrLoeffler/Hausaufgabe/pull/372). Keine Freigabe für Code, Testaufrufe mit KI oder Deployment aus diesem Plan.
 
 ## Ziel und belegter Iststand
 
