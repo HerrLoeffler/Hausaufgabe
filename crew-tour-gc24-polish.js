@@ -142,9 +142,11 @@ function patchFinish(coach) {
   const elapsed = match?.[1] || "kurzer Zeit";
   copy.innerHTML = `<span class="gc24TimeHero"><span>In</span><strong>${elapsed}</strong><span>hast du deinen ersten GradeCrew-Test einmal komplett erlebt.</span></span><span class="gc24FinishLead">Du hast erstellt, überarbeitet, selbst getestet und bewertet. Viel Spaß beim Erkunden von GradeCrew!</span>`;
 
-  primary.textContent = "Eigenen Test erstellen";
-
   const oldButtons = [...choices.querySelectorAll("button")];
+  // V7 offers account settings only to signed-in teachers. Preserve the guest
+  // sign-in/exit handlers rather than opening a hidden account page after exit.
+  if (!oldButtons.some(button => /Einstellungen kurz kennenlernen/.test(button.textContent || ""))) return;
+  primary.textContent = "Eigenen Test erstellen";
   const plainFinish = oldButtons.find(button => /Tour abschließen/i.test(button.textContent || ""));
   const finishAction = plainFinish?.onclick ? plainFinish.onclick.bind(plainFinish) : null;
   choices.replaceChildren();

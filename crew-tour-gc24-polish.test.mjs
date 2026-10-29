@@ -92,3 +92,20 @@ test('gc24 removes obsolete end and reopen card actions', t => {
   assert.equal(w.document.querySelector('#quizList .quizCard .end'), null);
   assert.equal(w.document.querySelector('#quizList .quizCard .reopen'), null);
 });
+
+test('guest finish preserves sign-in and plain exit without opening account settings', async t => {
+  const w = setup(t);
+  let signIns = 0, exits = 0;
+  const node = coach(w, 'Super – du gehörst jetzt zur Crew!', `<p>In 4:12 Minuten hast du alles erlebt.</p><button class="gcCoachNext">Zur Anmeldung</button><div class="gcFinishChoices"><button>Tour abschließen</button></div>`);
+  node.querySelector('.gcCoachNext').onclick = () => { signIns++; };
+  node.querySelector('.gcFinishChoices button').onclick = () => { exits++; };
+  w.document.body.append(node);
+  await settle(w);
+  assert.equal(node.querySelector('.gcCoachNext').textContent, 'Zur Anmeldung');
+  assert.doesNotMatch(node.textContent, /allgemeinen Einstellungen/);
+  node.querySelector('.gcCoachNext').click();
+  node.querySelector('.gcFinishChoices button').click();
+  assert.equal(signIns, 1);
+  assert.equal(exits, 1);
+  assert.equal(w.document.getElementById('settingsView').classList.contains('hidden'), true);
+});

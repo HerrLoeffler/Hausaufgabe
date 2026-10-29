@@ -44,6 +44,25 @@ function installStyles() {
       background:#fbfffd!important;
       scroll-margin-block:180px
     }
+    .gcRealCoach.gc23FinaleCoach{
+      position:relative!important;inset:auto!important;transform:none!important;translate:none!important;
+      width:100%!important;max-width:760px!important;max-height:none!important;
+      margin:0 0 18px!important;box-sizing:border-box;scroll-margin-block:12px!important
+    }
+    /* Inline review lives in a table row in the real app. During these two
+       guided scenes reserve viewport width rather than the table's 840px. */
+    body.gcRealTourActive #resultsTableWrap:has(.gc23FinaleCoach,.gc25InlineReviewCoach) .resultTable,
+    body.gcRealTourActive #resultsTableWrap:has(.gc23FinaleCoach,.gc25InlineReviewCoach) tbody,
+    body.gcRealTourActive #resultsTableWrap:has(.gc23FinaleCoach,.gc25InlineReviewCoach) .submissionReviewRow,
+    body.gcRealTourActive #resultsTableWrap:has(.gc23FinaleCoach,.gc25InlineReviewCoach) .submissionReviewCell{
+      display:block!important;min-width:0!important;width:100%!important;box-sizing:border-box
+    }
+    body.gcRealTourActive #resultsTableWrap:has(.gc23FinaleCoach,.gc25InlineReviewCoach) thead,
+    body.gcRealTourActive #resultsTableWrap:has(.gc23FinaleCoach,.gc25InlineReviewCoach) tbody>tr:not(.submissionReviewRow){display:none!important}
+    body.gcRealTourActive #resultsTableWrap:has(.gc23FinaleCoach,.gc25InlineReviewCoach) .reviewQuestion img{max-width:100%!important;height:auto!important}
+    .gcRealCoach:is(.gc23FinaleCoach,.gc25InlineReviewCoach) .gcCoachClose{
+      position:fixed!important;top:12px!important;right:12px!important;z-index:2147482001
+    }
     .gc23FinaleResult{
       margin:14px 0 4px;padding:12px 14px;border:1px solid #cce2d7;border-radius:13px;
       background:#f3faf6;color:#315b50;font-size:13px;line-height:1.5
@@ -216,6 +235,39 @@ function patchFreeAnswerCoach(coach) {
   queueMicrotask(() => freeCard.isConnected && freeCard.scrollIntoView({ block: "center", behavior: "instant" }));
 }
 
+// Review images and asynchronous review controls can grow above the finale.
+// Stabilise only this initial arrival; genuine reading/input releases the anchor.
+function anchorInitialReview(coach, scope) {
+  let frame = 0, closed = false;
+  const reveal = () => {
+    frame = 0;
+    if (!coach.isConnected) { cleanup(); return; }
+    coach.scrollIntoView({ block: "start", behavior: "instant" });
+  };
+  const schedule = () => { if (!closed && !frame) frame = requestAnimationFrame(reveal); };
+  const inputEvents = ["wheel", "touchstart", "pointerdown", "keydown"];
+  const cleanup = () => {
+    if (closed) return;
+    closed = true;
+    cancelAnimationFrame(frame);
+    observer?.disconnect();
+    inputEvents.forEach(type => document.removeEventListener(type, cleanup, true));
+    document.removeEventListener("gradecrew:tour-step", cleanup);
+    document.removeEventListener("gradecrew:tutorial-aborted", cleanup);
+    document.removeEventListener("gradecrew:account-changed", cleanup);
+  };
+  const observer = typeof ResizeObserver === "function" ? new ResizeObserver(schedule) : null;
+  observer?.observe(scope);
+  observer?.observe(coach);
+  inputEvents.forEach(type => document.addEventListener(type, cleanup, { capture: true, passive: true }));
+  document.addEventListener("gradecrew:tour-step", cleanup, { once: true });
+  document.addEventListener("gradecrew:tutorial-aborted", cleanup, { once: true });
+  document.addEventListener("gradecrew:account-changed", cleanup, { once: true });
+  reveal();
+  schedule();
+  return cleanup;
+}
+
 function patchReviewCoach(coach) {
   if (coach.dataset.gc23Review === "1") return;
   coach.dataset.gc23Review = "1";
@@ -231,7 +283,15 @@ function patchReviewCoach(coach) {
 
   clearReviewPresentation();
   finaleCard.classList.add("gc23ReviewFocus");
-  finaleCard.scrollIntoView({ block: "center", behavior: "instant" });
+  // Keep the real Next beside this scene: scrolling the large finale image
+  // used to strand a flow-positioned coach above the entire review panel.
+  coach.classList.remove("gcCoachFlow", "gcResponsiveCoach");
+  coach.classList.add("gcCoachContext", "gc23FinaleCoach");
+  document.body.classList.remove("gcTourFlow");
+  document.body.classList.add("gcTourContext");
+  document.documentElement.classList.remove("gcTourScrollLocked");
+  finaleCard.before(coach);
+  const releaseArrival = anchorInitialReview(coach, finaleCard.parentElement);
   const points = Math.max(0, Math.min(2, Number(finaleInput.value) || 0));
 
   const nextButton = originalButton.cloneNode(true);
@@ -244,6 +304,7 @@ function patchReviewCoach(coach) {
   coach.insertBefore(result, nextButton);
   nextButton.textContent = "Weiter zur freien Antwort";
   nextButton.addEventListener("click", () => {
+    releaseArrival();
     finaleCard.classList.remove("gc23ReviewFocus");
     originalButton.click();
     // V7 briefly targets the save button while opening the next scene. Move the
