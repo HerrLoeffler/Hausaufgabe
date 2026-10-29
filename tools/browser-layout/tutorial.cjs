@@ -54,10 +54,11 @@ try{for(const [name,engine,size,touch] of [['chromium',chromium],['webkit',webki
     const close=page.locator('.gcRealCoach .gcCoachClose');
     async function closeVisible(){return close.evaluate(e=>{const r=e.getBoundingClientRect(),h=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return r.top>=0&&r.bottom<=innerHeight&&r.left>=0&&r.right<=innerWidth&&(h===e||e.contains(h));});}
     assert.ok(await closeVisible(),'Finale X must be reachable on arrival without test scroll');
-    const y=await page.evaluate(()=>scrollY);await page.mouse.move(size.width/2,size.height/2);await page.mouse.wheel(0,220);await page.waitForTimeout(200);
-    assert.ok((await page.evaluate(()=>scrollY))>y+40,'Finale must permit actual wheel scrolling without programmatic rescue');
+    const scroll=await page.evaluate(()=>({y:scrollY,remaining:document.documentElement.scrollHeight-innerHeight-scrollY}));
+    const delta=scroll.remaining>60?180:-180;await page.mouse.move(size.width/2,size.height/2);await page.mouse.wheel(0,delta);await page.waitForTimeout(200);
+    assert.ok(Math.abs((await page.evaluate(()=>scrollY))-scroll.y)>40,'Finale must permit actual wheel scrolling without programmatic rescue');
     assert.ok(await closeVisible(),'Finale X must remain visible while reading the task');
-    await page.mouse.wheel(0,-220);await page.waitForTimeout(200);
+    await page.mouse.wheel(0,-delta);await page.waitForTimeout(200);
   }
   const key=JSON.stringify(state);if(key===last)continue;
   const nameInput=page.locator('.gcNamePrompt input');let keyboardProbe=false;if(await nameInput.isVisible()){await nameInput.fill('DEMO');if(touch&&size.width<500){await page.setViewportSize({width:size.width,height:Math.min(400,size.height)});await assertClear(nameInput,'keyboard-shrink name input');keyboardProbe=true;}}
