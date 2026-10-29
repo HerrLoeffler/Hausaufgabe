@@ -1,0 +1,282 @@
+{
+  "hosting-verification": {
+    "project": "gradecrew-staging-2026",
+    "url": "https://gradecrew-staging-2026.web.app/wilma/",
+    "source": "d7ddeafaf35f5c91849ee6516a7e0ab4811ca3ea",
+    "version": "sites/gradecrew-staging-2026/versions/8b6154420ead9ecb",
+    "verifiedFiles": 215,
+    "mismatches": [],
+    "preservedOutsidePreview": 449,
+    "originalConfigPreserved": true,
+    "liveChanged": false
+  },
+  "source-composition": {
+    "source": "d7ddeafaf35f5c91849ee6516a7e0ab4811ca3ea",
+    "changed": [
+      "wilma-review-callables.js",
+      "lib/wilma/core.mjs",
+      "lib/wilma/decision.mjs",
+      "lib/wilma/provider.mjs",
+      "lib/wilma/runtime.mjs"
+    ],
+    "added": [
+      "lib/wilma/budget.mjs",
+      "lib/wilma/fundus.mjs"
+    ],
+    "otherArchiveEntriesPreserved": 63,
+    "zipSha256": "ecd33154caafc0e0419a104112557dab6623a37f486b2aff1714531af36fe54f"
+  },
+  "origin-release": {
+    "name": "projects/gradecrew-staging-2026/locations/europe-west1/functions/reviewWilmaAnswers",
+    "state": "ACTIVE",
+    "labels": {
+      "wilma-mode": "persistent-decisions",
+      "deployment-callable": "true",
+      "gradecrew-commit": "d7ddeafaf35f5c91849ee6516a7e0ab4811ca3ea",
+      "deployment-tool": "gradecrew-wilma-pilot",
+      "firebase-functions-codebase": "ai"
+    },
+    "updateTime": "2026-10-29T08:01:54.067111149Z",
+    "revision": "reviewwilmaanswers-00008-yiv",
+    "build": "projects/840345136563/locations/europe-west1/builds/37f6a3bf-170f-4f7b-85ed-b86e6b648445"
+  },
+  "ci-proof": {
+    "commit": "d7ddeafaf35f5c91849ee6516a7e0ab4811ca3ea",
+    "success": true,
+    "ci": {
+      "id": 40838683129,
+      "jobs": [
+        {
+          "id": 123329491394,
+          "name": "WebKit and Chromium",
+          "conclusion": "success"
+        },
+        {
+          "id": 123329491677,
+          "name": "Node22",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "localTests": {
+      "functions": 449,
+      "webUi": 748,
+      "focusedReview": 90,
+      "schedulerReview": 16
+    }
+  },
+  "review-proof": {
+    "commit": "d7ddeafaf35f5c91849ee6516a7e0ab4811ca3ea",
+    "focusedTests": 90,
+    "schedulerTests": 16,
+    "importantFindingsRemaining": 0,
+    "threeReviewFindingsReproducedAndFixed": true,
+    "reviewedLocalCommits": [
+      "c1676060",
+      "758f9350"
+    ],
+    "realFirestoreContentionPending": false,
+    "realFirestoreContentionProof": "contention-proof.json"
+  },
+  "contention-proof": {
+    "project": "gradecrew-staging-2026",
+    "qaDocument": "_wilmaPilotPrivate/qa-rest-contention-20261029",
+    "realFirestoreTransactions": true,
+    "transport": "official Firestore REST transaction API",
+    "concurrentRequests": 2,
+    "accepted": 1,
+    "blocked": 1,
+    "upperCeilingMicros": 20000000,
+    "providerCalls": 0,
+    "actualMonthlyBudgetChanged": false,
+    "SDKHarnessAttempt": "custom credential rejected; alternate authClient stalled, interrupted before completion; private QA namespace only"
+  },
+  "live-ceiling-proof": {
+    "project": "hausaufgabe-staging",
+    "revision": "reviewwilmaanswers-00002-hut",
+    "sourceSha256": "a7e9867c9506c9c768bb8a95af5a6b35977e65011be60ec945bd44da788be5dd",
+    "unchangedPilotCap": 7,
+    "model": "gpt-5.6-luna",
+    "includedStageAllowanceMicros": 1750000,
+    "liveMutation": false
+  },
+  "legacy-migration-proof": {
+    "project": "gradecrew-staging-2026",
+    "month": "2026-10",
+    "previousConservativeAllowanceMicros": 3500000,
+    "newConservativeAllowanceMicros": 17500000,
+    "additionalAllowanceMicros": 14000000,
+    "chargedUsageCeilingMicros": 2088,
+    "reservedMicrosPreserved": 0,
+    "spentMicrosAfter": 17502088,
+    "frozenHistoricalStageRequests": 7,
+    "includedUnchangedLiveRequestCeiling": 7,
+    "notAnInvoiceCharge": true,
+    "providerCalls": 0,
+    "casUpdateTimeChecked": true,
+    "legacyCounterReset": false,
+    "liveChanged": false
+  },
+  "usage-proof": {
+    "project": "gradecrew-staging-2026",
+    "newPaidRequests": 2,
+    "jobs": [
+      {
+        "phase": "completed",
+        "costReservation": {
+          "version": "luna-eur-ceiling-20261029",
+          "month": "2026-10",
+          "inputBound": 10753,
+          "outputBound": 4500,
+          "maxMicros": 37753
+        },
+        "costSettled": true,
+        "usage": {
+          "input_tokens": 576,
+          "output_tokens": 62
+        }
+      },
+      {
+        "phase": "completed",
+        "costReservation": {
+          "version": "luna-eur-ceiling-20261029",
+          "month": "2026-10",
+          "inputBound": 10372,
+          "outputBound": 4500,
+          "maxMicros": 37372
+        },
+        "costSettled": true,
+        "usage": {
+          "input_tokens": 492,
+          "output_tokens": 108
+        }
+      }
+    ],
+    "usageAccountingCeilingMicros": 2088,
+    "unusedReservationsReleased": true,
+    "invoiceAmountClaimed": false
+  },
+  "acceptance-proof": {
+    "project": "gradecrew-staging-2026",
+    "quiz": "WILMAFUND261029",
+    "newPaidRequests": 2,
+    "historicalStartedBefore": 7,
+    "cumulativeStartedAfter": 9,
+    "fundusReuseCounterBefore": 8,
+    "fundusReuseCounterAfter": 8,
+    "fundusProposalDoesNotWritePoints": true,
+    "teacherConfirmedFinalPoints": [
+      2,
+      2,
+      1,
+      0
+    ],
+    "correctionUndoAndWholeFormRegistration": true,
+    "privateFundusEntries": 2,
+    "conservativeUsageMicros": 2088,
+    "legacyAllowanceMicros": 17500000,
+    "limitMicros": 20000000,
+    "liveChanged": false
+  },
+  "preservation-proof": {
+    "project": "gradecrew-staging-2026",
+    "functions": 96,
+    "onlyChangedFunction": [
+      "reviewWilmaAnswers"
+    ],
+    "unchangedFunctions": 95,
+    "started": 9,
+    "monthlyLimitEuros": 20,
+    "activePolicy": "monthlyConservativeReservation",
+    "livePilotCapUnchanged": 7,
+    "legacyJobsUnchanged": true,
+    "hosting": {
+      "project": "gradecrew-staging-2026",
+      "url": "https://gradecrew-staging-2026.web.app/wilma/",
+      "source": "d7ddeafaf35f5c91849ee6516a7e0ab4811ca3ea",
+      "version": "sites/gradecrew-staging-2026/versions/8b6154420ead9ecb",
+      "verifiedFiles": 215,
+      "mismatches": [],
+      "preservedOutsidePreview": 449,
+      "originalConfigPreserved": true,
+      "liveChanged": false
+    },
+    "liveChanged": false,
+    "liveManifestUnchanged": true
+  },
+  "rules-readonly-proof": {
+    "project": "gradecrew-staging-2026",
+    "release": "projects/gradecrew-staging-2026/releases/cloud.firestore",
+    "ruleset": "projects/gradecrew-staging-2026/rulesets/1b6b4ae4-855f-4f3a-829c-db6f657f53a2",
+    "files": [
+      {
+        "name": "firestore.secure-assessment.rules",
+        "sha256": "737024f660784f35e52532828e5a5ecf091ee3462b0a4284307b67f4fcf7624d"
+      }
+    ],
+    "rulesChanged": false
+  },
+  "fictional-round-closed": {
+    "quiz": "WILMAFUND261029",
+    "closed": true,
+    "onlyOwnFictionalFixture": true
+  },
+  "finalBackend": {
+    "source-composition": {
+      "source": "2d65b1f78eb9934dacf6f049339ed1a49efcbfe0",
+      "changed": [
+        "lib/wilma/budget.mjs",
+        "lib/wilma/runtime.mjs"
+      ],
+      "added": [],
+      "otherArchiveEntriesPreserved": 68,
+      "zipSha256": "3a495c3156a34e67f80430c2d8460b9e46ea5eff9f1df64f6cc355f57a1ed4b1"
+    },
+    "origin-release": {
+      "name": "projects/gradecrew-staging-2026/locations/europe-west1/functions/reviewWilmaAnswers",
+      "state": "ACTIVE",
+      "labels": {
+        "deployment-tool": "gradecrew-wilma-pilot",
+        "firebase-functions-codebase": "ai",
+        "wilma-mode": "persistent-decisions",
+        "deployment-callable": "true",
+        "gradecrew-commit": "2d65b1f78eb9934dacf6f049339ed1a49efcbfe0"
+      },
+      "updateTime": "2026-10-29T08:16:05.265733513Z",
+      "revision": "reviewwilmaanswers-00009-yey",
+      "build": "projects/840345136563/locations/europe-west1/builds/6362abdd-9ba7-422e-9fb7-e731d14d5403"
+    },
+    "ci-proof": {
+      "commit": "2d65b1f78eb9934dacf6f049339ed1a49efcbfe0",
+      "success": true,
+      "ci": {
+        "id": 40840355920,
+        "jobs": [
+          {
+            "id": 123334937702,
+            "name": "WebKit and Chromium",
+            "conclusion": "success"
+          },
+          {
+            "id": 123334937980,
+            "name": "Node22",
+            "conclusion": "success"
+          }
+        ]
+      },
+      "localTests": {
+        "functions": 453,
+        "webUi": 748,
+        "focusedReview": 94,
+        "schedulerReview": 16
+      }
+    },
+    "review-proof": {
+      "commit": "2d65b1f78eb9934dacf6f049339ed1a49efcbfe0",
+      "importantFindingsRemaining": 0,
+      "focusedTests": 94,
+      "schedulerTests": 16,
+      "financialMigrationReviewed": true
+    }
+  }
+}
