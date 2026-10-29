@@ -554,6 +554,10 @@ GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://g
 
 ## GC-PEDAGOGY-KB-01 Aufgabenpool-Anbindung
 
+**Wilma Live29.10. – Backend veröffentlicht, Abschluss noch offen:** Quelle606d8a2a/PR396, Review00003-roy und Submit00054-mep ACTIVE;60andereFunctions/Rules erhalten. Gemeinsame20EUR-Grenze durch vorhandeneStage-Livereserve undLive8,75EUR-Teilcap; kein zweiterTopf/Reset. EchtefiktiveA: KI2/2, erstnachBestätigungdauerhaft2/2/Note1, einFundusbeleg; genau1API/1056MikroEURCeiling. Bidentischabgegeben,Reuse/Frontendnochzuprüfen. BrowserzugriffnachUnterbrechunginWorkaus;Aktivierungangefragt. Hostingnoch552b; Browsergate/Tutorialabgleichoffen. [Beleg](docs/evidence/wilma-budget-fundus-live-20261029/REPORT.md).
+
+
+
 **Wilma29.10. umgesetzt:**20EUR-KI-Monatssperre und privater bestätigter Fundus aufStaging aktiv. Backend2d65b1f7/00009-yey,Hostingd7ddeafa/8b615442,PR390Stage-only. EchteFreitexttests:A2/2,BidentischAusFundus2/2ohneweiterenOpenAI-Aufruf,Cabweichend1/2,Lleer0/2; Lehrerbestätigung/Korrektur/Undo/Vollformular/Reload geprüft. Genau2neueProviderrequests(Historie7→9),konservativeUsage0,002088EUR;Altreserve17,50EUR ist keineRechnung.453Functions/748Web undunabhängige94+16Tests,exakteCI40840355920grün;95andereFunctions/449Hostingdateien+Config erhalten. Live8188 unverändert. [Bericht](docs/evidence/wilma-budget-fundus-20261029/REPORT.md). Fundus zunächst gleicherTest/Aufgabe/Raster/Antwort;breiterQualitätskorpus undphysischesiPad nochseparat.
 
 
