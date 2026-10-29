@@ -51,7 +51,7 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
       const current=getContext().submissions.find(x=>x.id===s.id);
       if(current.grading?.[q.id]?.reviewState==='confirmed')continue;
       if(!current.grading?.[q.id]?.reviewSuggestion)throw Error('Kein sicher zugeordneter KI-Vorschlag.');
-      if(current.grading?.[q.id]?.reviewSuggestion?.origin==='teacher-fundus')reserved.delete(key);
+      if(['teacher-fundus','accepted-rule'].includes(current.grading?.[q.id]?.reviewSuggestion?.origin))reserved.delete(key);
       emit('proposal',current.grading?.[q.id]?.reviewSuggestion?.origin==='teacher-fundus'?'Aus deinem Fundus · bitte bestätigen.':'KI-Vorschlag bereit · bitte prüfen.');
      }catch(error){
       if(freeOnly){emit('pending','Keine bestätigte Bewertung im Fundus. Bitte selbst prüfen.');continue;}

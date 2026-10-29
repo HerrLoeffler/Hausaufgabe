@@ -7944,9 +7944,8 @@ function evaluateAnswer(q, given) {
   const max = round1(Number(q.points) || 0);
   if (q.type === "text") {
     if (!normalize(given)) return { awarded: 0, max, needsReview: false, correct: false };
-    if (q.manualReview) return { awarded: 0, max, needsReview: true, correct: null };
     const ok = (q.acceptedAnswers || []).map(normalize).includes(normalize(given));
-    return { awarded: ok ? max : 0, max, needsReview: !ok, correct: ok ? true : null };
+    return { awarded: ok ? max : 0, max, needsReview: true, correct: ok ? true : null };
   }
   if (q.type === "number") {
     const value = Number(String(given || "").trim().replace(",", "."));
@@ -8325,17 +8324,17 @@ async function saveWilmaDecision({questionId,submissionId,decision,restore,expec
   wilmaAutoReview?.clear(); // Rehydrate unchanged cached proposals after an authoritative point/undo patch.
   renderResultsTable();
 }
-async function analyzeWilmaQuestion(questionId,criteria="",onlySubmissionId=null,allowPaid=true){
+async function analyzeWilmaQuestion(questionId,criteria="",onlySubmissionId=null,allowPaid=true,mustRemainVisible=false){
   const quiz=state.currentResultsQuiz,uid=state.user?.uid,generation=authStateGeneration,reviewGeneration=wilmaReviewGeneration,question=state.resultQuestions.find(q=>q.id===questionId);
   if(!quiz||!question||quiz.ownerId!==uid||guestTourRepo)throw new Error("Nur eigene Tests sind zugelassen.");
   const questionVersion=questionSnapshot(question);
   const candidates=state.submissions.filter(s=>{const item=reviewItem(question,s,parseGaps);return (!onlySubmissionId||s.id===onlySubmissionId)&&item.requiresReview&&!item.confirmed&&!item.technical;});
   if(!candidates.length){toast("Keine offenen Antworten für Wilma.");return;}
   for(let offset=0;offset<candidates.length;offset+=10){
-    if(wilmaReviewGeneration!==reviewGeneration||authStateGeneration!==generation||state.user?.uid!==uid||state.currentResultsQuiz?.id!==quiz.id)throw Object.assign(new Error("Konto oder Test wurde gewechselt."),{code:"wilma-context-changed"});
+    if(mustRemainVisible&&!wilmaAutomaticPreview()||wilmaReviewGeneration!==reviewGeneration||authStateGeneration!==generation||state.user?.uid!==uid||state.currentResultsQuiz?.id!==quiz.id)throw Object.assign(new Error("Konto oder Test wurde gewechselt."),{code:"wilma-context-changed"});
     const batch=candidates.slice(offset,offset+10),expectedAnswers=Object.fromEntries(batch.map(s=>[s.id,s.answers?.[questionId]??""]));
     const receipt=await reviewWithWilma({quizId:quiz.id,questionId,expectedQuestion:questionVersion,maxPoints:Number(question.points),answerIds:batch.map(s=>s.id),expectedAnswers,criteria,allowPaid});
-    if(wilmaReviewGeneration!==reviewGeneration||authStateGeneration!==generation||state.user?.uid!==uid||state.currentResultsQuiz?.id!==quiz.id||questionSnapshot(state.resultQuestions.find(q=>q.id===questionId)||{})!==questionVersion)throw Object.assign(new Error("Test oder Aufgabe wurde gewechselt; Vorschläge nicht übernommen."),{code:"wilma-context-changed"});
+    if(mustRemainVisible&&!wilmaAutomaticPreview()||wilmaReviewGeneration!==reviewGeneration||authStateGeneration!==generation||state.user?.uid!==uid||state.currentResultsQuiz?.id!==quiz.id||questionSnapshot(state.resultQuestions.find(q=>q.id===questionId)||{})!==questionVersion)throw Object.assign(new Error("Test oder Aufgabe wurde gewechselt; Vorschläge nicht übernommen."),{code:"wilma-context-changed"});
     for(const proposal of receipt.answers){
       const current=state.submissions.find(s=>s.id===proposal.id);
       if(!current||JSON.stringify(current.answers?.[questionId]??"")!==JSON.stringify(expectedAnswers[proposal.id])||current.grading?.[questionId]?.reviewState==='confirmed')continue;
@@ -8349,10 +8348,11 @@ function wilmaReviewContext(){
   return {actor:allowed?state.user.uid+':'+authStateGeneration:'',quiz:allowed?state.currentResultsQuiz:null,questions:allowed?state.resultQuestions:[],submissions:allowed?state.submissions:[]};
 }
 function wilmaAutomaticPreview(ctx=wilmaReviewContext()){
-  return (firebaseConfig.projectId==='hausaufgabe-staging'||firebaseConfig.projectId==='gradecrew-staging-2026'&&['/wilma/','/wilma-review-preview/'].some(path=>location.pathname.startsWith(path)))&&!!ctx.actor&&!!ctx.quiz?.id&&!!wilmaAnswerReview?.isExpanded?.()&&wilmaReviewOpenConsent.has(ctx.actor+':'+ctx.quiz.id);
+  if(firebaseConfig.projectId==='hausaufgabe-staging'){const results=document.getElementById('resultsView');return !!ctx.actor&&!!ctx.quiz?.id&&!!results&&!results.classList.contains('hidden');}
+  return (firebaseConfig.projectId==='gradecrew-staging-2026'&&['/wilma/','/wilma-review-preview/'].some(path=>location.pathname.startsWith(path)))&&!!ctx.actor&&!!ctx.quiz?.id&&!!wilmaAnswerReview?.isExpanded?.()&&wilmaReviewOpenConsent.has(ctx.actor+':'+ctx.quiz.id);
 }
 wilmaAutoReview=createWilmaAutoReview({getContext:wilmaReviewContext,parseGaps,enabled:wilmaAutomaticPreview,maxRequests:2,allowFreeLookups:firebaseConfig.projectId==='hausaufgabe-staging',serverBudgeted:firebaseConfig.projectId==='hausaufgabe-staging',
-  analyzeAnswer:({questionId,submissionId,allowPaid=true})=>analyzeWilmaQuestion(questionId,'',submissionId,allowPaid),
+  analyzeAnswer:({questionId,submissionId,allowPaid=true})=>analyzeWilmaQuestion(questionId,'',submissionId,allowPaid,true),
   onState:state=>{wilmaPreparation.set(state.questionId+':'+state.submissionId,state);wilmaAnswerReview?.refresh();},
   onIdle:()=>{wilmaAnswerReview?.refresh({resort:true});void wilmaAutoReview?.run();}
 });

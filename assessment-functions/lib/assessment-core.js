@@ -417,9 +417,8 @@ function gradeQuestion(key, given) {
 
   if (type === "text") {
     if (!normalize(given)) return resultShape(max, 0, false, false);
-    if (key.manualReview) return resultShape(max, 0, true, null);
     const ok = (key.acceptedAnswers || []).map(normalize).includes(normalize(given));
-    return resultShape(max, ok ? max : 0, !ok, ok ? true : null);
+    return resultShape(max, ok ? max : 0, true, ok ? true : null);
   }
   if (type === "number") {
     const raw = String(given ?? "").trim();

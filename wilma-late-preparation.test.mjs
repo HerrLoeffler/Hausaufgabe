@@ -22,3 +22,8 @@ test('server undo patch rehydrates the existing proposal without another paid pr
  vm.runInNewContext(saveCode+';this.save=saveWilmaDecision;',context);await context.save({submissionId:'s',restore:{},expected:s});await pending;
  assert.ok(state.submissions[0].grading.q.reviewSuggestion,'authoritative point patch must not leave an already checked answer looking unexamined');assert.equal(state.submissions[0].grading.q.awardedPoints,0);assert.equal(transports,2);assert.equal(paid,1);
 });
+test('automatic results preparation cannot repaint a view after the teacher leaves it',async()=>{
+ let finish,started,visible=true;const wait=new Promise(r=>finish=r),begun=new Promise(r=>started=r);const q={id:'q',type:'text',text:'Begründe ein Halb',points:2,reviewCriteria:['Begründung']};const s={id:'s',status:'review',answers:{q:'Zwei gleich große Teile'},grading:{q:{awardedPoints:0,maxPoints:2,needsReview:true}}};let renders=0;
+ const ctx={state:{user:{uid:'owner'},currentResultsQuiz:{id:'own',ownerId:'owner'},resultQuestions:[q],submissions:[s]},authStateGeneration:1,wilmaReviewGeneration:1,guestTourRepo:null,questionSnapshot,reviewItem,parseGaps:()=>[],reviewWithWilma:async()=>{started();return wait;},wilmaAutomaticPreview:()=>visible,renderResultsTable:()=>renders++,toast:()=>{}};
+ vm.runInNewContext(code+';this.run=analyzeWilmaQuestion;',ctx);const pending=ctx.run('q','',s.id,true,true);await begun;visible=false;finish({answers:[{id:'s',points:2,status:'clear',reason:'Passend'}],requestId:'fictitious'});await assert.rejects(pending,/gewechselt|geändert/);assert.equal(renders,0);assert.equal(s.grading.q.reviewSuggestion,undefined);
+});

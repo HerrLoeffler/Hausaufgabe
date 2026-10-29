@@ -5,7 +5,7 @@ const evaluate=new Function('normalize','round1','parseGaps',code+';return evalu
 for(const [label,grade] of [['browser',evaluate],['secure-server',gradeQuestion]]){
  const q={type:'text',points:1,acceptedAnswers:['front door'],manualReview:false};
  test(label+' nonempty mismatch needs semantic review',()=>{assert.equal(grade(q,'front Tür').needsReview,true);assert.equal(grade(q,'front').needsReview,true);});
- test(label+' accepted match remains deterministic',()=>{assert.equal(grade(q,'front door').needsReview,false);});
+ test(label+' accepted text gives deterministic provisional points pending confirmation',()=>{assert.equal(grade(q,'front door').needsReview,true);});
  test(label+' blank text zero does not require AI even on manual text',()=>{assert.equal(grade({...q,manualReview:true},'   ').needsReview,false);});
  const gaps={type:'gapfill',points:2,text:'Das ist [Verb|Zeitwort] und [Adjektiv].',gaps:[{id:'g1',acceptedAnswers:['Verb','Zeitwort']},{id:'g2',acceptedAnswers:['Adjektiv']}]};
  test(label+' unknown nonempty gap stays open and keeps the known partial point',()=>{const result=grade(gaps,['Verb','Eigenschaft']);assert.equal(result.needsReview,true);assert.equal((result.autoPoints??result.awarded),1);assert.equal(result.correct,null);});

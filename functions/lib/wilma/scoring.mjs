@@ -26,7 +26,7 @@ export function reviewItem(question, submission, parseGaps) {
   }
   const unknown = question.type === 'gapfill' && (!parts.length || parts.some(part => !part.known && !part.empty));
   const knownText=question.type==='text'&&!!normalize(answer)&&(question.acceptedAnswers||[]).map(normalize).includes(normalize(answer));
-  const acceptedByRule=validScore&&(grading.correct===true||knownText||parts.length>0&&parts.every(part=>part.known))&&Number(grading.autoPoints)===max&&Number(rawPoints)===max;
+  const acceptedByRule=validScore&&!explicitlyOpen&&(question.type!=='text'||grading.needsReview===false)&&(grading.correct===true||knownText||parts.length>0&&parts.every(part=>part.known))&&Number(grading.autoPoints)===max&&Number(rawPoints)===max;
   const emptyText=question.type==='text'&&!normalize(answer);
   const emptyRule=emptyText&&validScore&&Number(rawPoints)===0;
   const semanticPending=!confirmed&&!acceptedByRule&&((question.type==='text'&&!emptyText)||unknown);

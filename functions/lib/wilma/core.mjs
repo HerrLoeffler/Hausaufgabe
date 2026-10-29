@@ -49,6 +49,7 @@ export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmiss
    }
    const learned=await readFundus({quizId,questionId,quiz,q,answer,criteria:data.criteria});
    if(learned){direct.push({...learned,id:sid});continue;}
+   if(q.type==='text'&&Array.isArray(q.acceptedAnswers)&&q.acceptedAnswers.some(value=>norm(value)===norm(answer))){direct.push({id:sid,points:maximum,status:'clear',origin:'accepted-rule',reason:'Entspricht der hinterlegten Lösung · bitte bestätigen.'});continue;}
    records.push({id:'a'+index,sourceId:sid,answer});
   }
   const task={task:q.text,maximum,rubric:q.type==='gapfill'?{criteria:rubric,acceptedGaps:accepted}:rubric,answers:records.map(({id,answer})=>({id,answer}))};
