@@ -146,5 +146,214 @@
         "grade": null
       }
     }
+  },
+  "automatic-proposals-checkpoint": {
+    "source": "54f7004ac200f224ab886fe019ccbbef1a431e38",
+    "tree": "4bed5a4854118df7922a263db6a28771b3f7fe59",
+    "ci": 40957792218,
+    "ci_state": "in_progress_at_checkpoint",
+    "hosting_changed": false,
+    "policy_deployed": false,
+    "local_tests": {
+      "root_ui": 560,
+      "functions": 464,
+      "assessment": 94,
+      "ci_command": 124
+    },
+    "review": {
+      "important_findings_remaining": 0,
+      "focused": 53,
+      "negative": 16,
+      "legacy_decision_repro_fixed": true
+    }
+  },
+  "snapshot-after-martin-b-proposal-screenshot.json": {
+    "project": "hausaufgabe-staging",
+    "phase": "after-martin-b-proposal-screenshot",
+    "started": 1,
+    "legacyJobsHash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "ledger": {
+      "updatedAt": 1793305800283,
+      "limitMicros": 8750000,
+      "pricingVersion": "luna-eur-ceiling-20261029",
+      "spentMicros": 1056,
+      "currency": "EUR",
+      "reservedMicros": 0,
+      "accountedRequests": 1
+    },
+    "fundusEntries": [
+      {
+        "version": 1,
+        "key": "ab4ac2d286f05fdc34753ee41b59c27ec595571498e0892f8476ff83ec2ffcd6",
+        "quizId": "WILMALIVE261029",
+        "questionId": "q1",
+        "submissionId": "a_e6119225b9ece469ba066e1fa865",
+        "points": 2,
+        "createdAt": 1793308160781,
+        "expiresAt": 1801084160781,
+        "multipleSources": true,
+        "conflict": false
+      }
+    ],
+    "rows": {
+      "A": {
+        "status": "graded",
+        "totalPoints": 2,
+        "maxPoints": 2,
+        "grade": 1
+      },
+      "B": {
+        "status": "graded",
+        "totalPoints": 2,
+        "maxPoints": 2,
+        "grade": 1
+      },
+      "L": {
+        "status": "graded",
+        "totalPoints": 0,
+        "maxPoints": 2,
+        "grade": 6
+      }
+    }
+  },
+  "snapshot-blank-live-verified.json": {
+    "project": "hausaufgabe-staging",
+    "phase": "blank-live-verified",
+    "started": 1,
+    "legacyJobsHash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "ledger": {
+      "updatedAt": 1793305800283,
+      "reservedMicros": 0,
+      "currency": "EUR",
+      "pricingVersion": "luna-eur-ceiling-20261029",
+      "spentMicros": 1056,
+      "limitMicros": 8750000,
+      "accountedRequests": 1
+    },
+    "fundusEntries": [
+      {
+        "version": 1,
+        "key": "ab4ac2d286f05fdc34753ee41b59c27ec595571498e0892f8476ff83ec2ffcd6",
+        "quizId": "WILMALIVE261029",
+        "questionId": "q1",
+        "submissionId": "a_32cd84da1b2a2015be7a3f1b914a",
+        "points": 2,
+        "createdAt": 1793305821722,
+        "expiresAt": 1801081821722,
+        "multipleSources": false,
+        "conflict": false
+      }
+    ],
+    "rows": {
+      "A": {
+        "status": "graded",
+        "totalPoints": 2,
+        "maxPoints": 2,
+        "grade": 1
+      },
+      "B": {
+        "status": "review",
+        "totalPoints": 0,
+        "maxPoints": 2,
+        "grade": null
+      },
+      "L": {
+        "status": "graded",
+        "totalPoints": 0,
+        "maxPoints": 2,
+        "grade": 6
+      }
+    }
+  },
+  "fundus-readcheck-proof.json": {
+    "project": "hausaufgabe-staging",
+    "quiz": "WILMALIVE261029",
+    "method": "Read-only integration check: exact deployed core/fundus functions with actual persisted own fictitious Live documents; not an authenticated HTTP or browser acceptance test.",
+    "source": "606d8a2a3d6be29ee1ddf27f8445b06e277f90f5",
+    "points": 2,
+    "origin": "teacher-fundus",
+    "requestId": null,
+    "providerCalls": 0,
+    "budgetReservations": 0,
+    "targetPointsUnchanged": true,
+    "teacherConfirmationStillRequired": true
+  },
+  "followup_backend_54f": {
+    "backend-verification.json": {
+      "project": "hausaufgabe-staging",
+      "functions": [
+        {
+          "function": "reviewWilmaAnswers",
+          "revision": "reviewwilmaanswers-00004-nuz",
+          "sourceZipSha256": "3b319fa9a1ae9c03c2ab45ea1349e4ba002109a3bd1b96fd7ef01b2dda9e2602"
+        },
+        {
+          "function": "submitAssessmentAttempt",
+          "revision": "submitassessmentattempt-00055-pur",
+          "sourceZipSha256": "8e95916ccec3893dff116452b087696d5f2f8809b569858cf9305ff68e5543a7"
+        }
+      ],
+      "otherFunctionsPreserved": 60,
+      "rulesUnchanged": true,
+      "stageReviewUnchanged": true
+    },
+    "actual-rule-submission.json": {
+      "quiz": "WILMARULE261029",
+      "attemptId": "a_431b0af860781f7c3b09a67ec022",
+      "realStudentSubmit": true,
+      "singleChoice": {
+        "maxPoints": 1,
+        "needsReview": false,
+        "correct": true,
+        "autoPoints": 1,
+        "awardedPoints": 1
+      },
+      "acceptedFreeText": {
+        "awardedPoints": 1,
+        "autoPoints": 1,
+        "needsReview": true,
+        "maxPoints": 1,
+        "correct": true
+      },
+      "status": "review",
+      "grade": null,
+      "pendingPointsHiddenInReceipt": true,
+      "providerCallsBySubmission": 0
+    },
+    "ci-final-54f.json": {
+      "source": "54f7004ac200f224ab886fe019ccbbef1a431e38",
+      "run": 40957792218,
+      "node_job": 123742312334,
+      "node_result": "success",
+      "wilma_browser_cases": 36,
+      "browser_job": 123742311750,
+      "browser_result": "failure",
+      "failure": "Tutorial finale Next y562.234..606.234 viewport568, all3hitsfalse, coach169.765..661.234; PAGEERROR[]",
+      "tutorial_runtime": "c35 composition, not new ec7 owner fix",
+      "hosting_published": false
+    },
+    "review-proof.json": {
+      "commit": "54f7004ac200f224ab886fe019ccbbef1a431e38",
+      "importantFindingsRemaining": 0,
+      "reviewer": "wilma_live_budget_fundus_review_20261029",
+      "scope": "Automatic visible owned results proposals, accepted rules before API, new text confirmation and legacy preservation; workflow-only successor has identical runtime.",
+      "fixedFinding": "P2 historical accepted text reopened by temporary review status in decision recalc; needsReviewfalse boundary, client/server and actual decision regression.",
+      "verification": {
+        "rootUI": 560,
+        "functions": 464,
+        "assessment": 94,
+        "exactWilmaCICommand": 124,
+        "independentFocused": 53,
+        "independentNegative": 16
+      }
+    },
+    "fictional_rounds_closed": {
+      "quizzes": [
+        "WILMALIVE261029",
+        "WILMARULE261029"
+      ],
+      "results_retained": true,
+      "grading_untouched": true
+    }
   }
 }

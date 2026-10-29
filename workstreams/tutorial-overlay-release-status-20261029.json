@@ -121,14 +121,14 @@
       "GC-DESIGN-05B",
       "GC-WEB-REPAIR-20261007"
     ],
-    "stage": "staging_deployed",
+    "stage": "integrated",
     "preview_only": true,
     "source_commit": "ec7cdd012a463a196a38cce25781158c735f8da2",
     "runtime_reviewed_source": "ec7cdd012a463a196a38cce25781158c735f8da2",
     "branch": "fix/tutorial-finale-20261029",
     "pr": 397,
     "ci_run": 40957517336,
-    "ci": "pending_exact_full_browser_matrix",
+    "ci": "success",
     "preview": "https://gradecrew-staging-2026--tutorial-finale-20261029-76o51voa.web.app/workspace.html?firstGuide=1",
     "preview_verified_files": 214,
     "changed_runtime": [
@@ -144,7 +144,7 @@
     "browser_session": "disabled_in_Work_settings",
     "provider_calls": 0,
     "backend_rules_accounts_changed": false,
-    "next_action": "Wait for exact rerun of CI40951057150, then preserve current live bytes under fresh CAS before any scoped Hosting promotion; do not deploy a whole old branch.",
+    "next_action": "Await direct human approval for this exact ec7 Hosting-only publication. Live remains552b. If approved, fresh CAS and two-module promotion, then both origins214hashes. Do not publish through another writer.",
     "attempt_history": [
       "552b red arrival:Next y=-1617; previous scrollIntoViewIfNeeded test masked bug.",
       "92d6 corrected desktop, mobile320 exposed table840px; no deploy.",
@@ -156,11 +156,22 @@
       "c35 CI40953153079:13 full routes pass; flow coach inserted after test centring on LinuxWebKit320, bottom624,85%hitfalse. Not treated as mere1px; no release.",
       "927d2876: test-only pre-scroll180ms placement wait; WebKit320 first, all18 remain. Independent narrow review no newP0–P2; fixed wait alone is not universal stability proof. LocalWebKit320 full52actions passes; exactCI40954841990 pending.",
       "927 CI40954841990:all9WebKit journeys pass, then Chromium320 genuine raw finale Nexty749 at568 viewport, hitsfalse. No release/waiver.",
-      "ec7cdd01:ResizeObserver maintains only initial review arrival against late layout growth, releases on first user input or step/abort/account change and explicitly before Next.699 root/UI + critical320 both engines + controlled360pxReflow pass; independent10tests no newP0-P2. ExactCI40957517336 and full local matrix running; preview214/214verified."
+      "ec7cdd01:ResizeObserver maintains only initial review arrival against late layout growth, releases on first user input or step/abort/account change and explicitly before Next.699 root/UI + critical320 both engines + controlled360pxReflow pass; independent10tests no newP0-P2. ExactCI40957517336 and full local matrix running; preview214/214verified.",
+      "ec7 exactCI40957517336 success:Node22 and all18 full browser journeys. PR397 mergedb8458c1d. One attempted live command rejected by automatic approval review BEFORE process start because exact ec7 Production approval missing; no CLI/receipt, no retry/workaround. Direct human approval question pending."
     ],
     "previous_ci_run": 40954841990,
     "previous_ci_result": "All nine WebKit journeys passed; Chromium320 raw finale arrival blocked, coach y356 and Next y749 due late review layout growth. Genuine runtime blocker; not waived.",
     "prepared_package": "/private/tmp/gc-finale-production-ec7-20261029",
-    "global_close_in_free_student_answering": "open_separate_followup: V7 student-started hides coach, so coach-local X not proven/present during free answering. Escape path exists. Do not claim every-phase Always-X acceptance."
+    "global_close_in_free_student_answering": "open_separate_followup: V7 student-started hides coach, so coach-local X not proven/present during free answering. Escape path exists. Do not claim every-phase Always-X acceptance.",
+    "ci_jobs": [
+      123741337963,
+      123741337206
+    ],
+    "browser_artifact": 12935855733,
+    "integration_commit": "b8458c1dc0e3e8fe1f926f1adb9e609134cbf5b5",
+    "integration_target": "feature/design-auth-student-20261026",
+    "production_cli_started": false,
+    "approval": "required_for_exact_ec7_deployment",
+    "approval_review": "Rejected before process start: fix was authorised, but clear approval for this exact ec7 Production publication was not present. No workaround or indirect execution attempted."
   }
 }
