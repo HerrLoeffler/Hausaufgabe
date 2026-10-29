@@ -2628,6 +2628,12 @@ function clearTemplateUrlAndDashboard() {
 async function importSharedTemplate() {
   const source = state.currentSharedTemplate;
   if (!source?.quiz || !state.user || importSharedTemplate.pending) return;
+  if (source.importAttempt && source.importAttempt.uid !== state.user.uid) return;
+  if (source.importAttempt && !source.importAttempt.code) {
+    toast("Das Ergebnis der Übernahme ist unklar. Bitte unter Meine Tests prüfen, bevor du sie erneut startest.", "error");
+    clearTemplateUrlAndDashboard();
+    return;
+  }
   importSharedTemplate.pending = true;
   const uid = state.user.uid;
   const current = () => state.user?.uid === uid && state.currentSharedTemplate === source;
@@ -2672,12 +2678,17 @@ async function importSharedTemplate() {
       audioReady: source.questions.every(q => !Boolean(q.audioDataUrl) && questionAudioReady(q) && questionAnswerAudioReady(q))
     };
     if (!current()) return;
-    const { code: newCode } = await createQuizDocument(base);
+    const attempt = source.importAttempt || (source.importAttempt = { uid, code: "", questionIds: [] });
+    if (!attempt.code) attempt.code = (await createQuizDocument(base)).code;
+    const newCode = attempt.code;
     if (!current()) return;
     for (let i = 0; i < source.questions.length; i += 1) {
       if (!current()) return;
       const original = source.questions[i];
-      const ref = doc(collection(db, "quizzes", newCode, "questions"));
+      const ref = attempt.questionIds[i]
+        ? doc(db, "quizzes", newCode, "questions", attempt.questionIds[i])
+        : doc(collection(db, "quizzes", newCode, "questions"));
+      attempt.questionIds[i] = ref.id;
       const copy = sanitizeQuestionForSave({ ...deepClone(original), id: ref.id, position: i + 1 });
       await setDoc(ref, { ...copy, position: i + 1, updatedAt: serverTimestamp() });
     }
@@ -2691,10 +2702,11 @@ async function importSharedTemplate() {
     await openEditor(newCode);
   } catch (err) {
     console.error(err);
-    toast("Vorlage konnte nicht kopiert werden.", "error");
+    const partial = Boolean(source.importAttempt?.code);
+    toast(partial ? "Die Kopie ist noch unvollständig. Du kannst die Übernahme in denselben Entwurf fortsetzen." : "Das Ergebnis der Übernahme ist unklar. Bitte unter Meine Tests prüfen, bevor du sie erneut startest.", "error");
     if (btn) {
       btn.disabled = false;
-      btn.textContent = "Als Kopie zu meinen Tests hinzufügen";
+      btn.textContent = partial ? "Angefangene Kopie fortsetzen" : "Unter Meine Tests prüfen";
     }
   } finally {
     importSharedTemplate.pending = false;
