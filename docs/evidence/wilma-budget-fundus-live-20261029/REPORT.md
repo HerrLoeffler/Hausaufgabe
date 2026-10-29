@@ -21,3 +21,5 @@ AutomatischbeimÖffneneigenersichtbarerErgebnisse; keinzusätzlicherAufgaben-KIs
 Folgebackend54f7004a jetzt tatsächlich Production: Review00004-nuz/Submit00055-pur ACTIVE, genaueZIPs undErhalt60andererFunctions/Rules/Stage verifiziert. Echte fiktive WILMARULE261029-Abgabe: SingleChoice1/1automatisch, exakterFreitext1/1vorläufig+needsReviewtrue, GesamtgradeNULL, SchülerreceiptverbirgtPendingpunkte, keinAPI. Hostingweiter552b; automatische Vorbereitung imFrontend nochunveröffentlicht. CI40957792218Node/124WilmaVerträge/36WilmaBrowserszenariengrün, Gesamtlayoutrotimc35Tutorial. NeuerOwnerfixec7/CI40957517336nochlaufend; keinBlindrerun/keinHosting.
 
 Neuer Regeltest und Backend-ZIP/CI/Reviewbeleg stehen separat in receipts.json unter followup_backend_54f; ältere606d-Belege bleiben als Historie erhalten. C/D bereits normalabgegeben ohneAPI, nochkeineAuto-Prüfung/Bestätigung durchgeführt. KeineFreigabehistorie oderBudgets zurückgesetzt.
+
+Beide eigenen fiktiven Testrunden WILMALIVE261029/WILMARULE261029 nach den Abgaben geschlossen; Ergebnisse und offene Lehrerprüfungen bleiben erhalten. Keine Bewertungen verändert.

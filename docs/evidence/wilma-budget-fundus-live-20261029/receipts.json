@@ -346,6 +346,14 @@
         "independentFocused": 53,
         "independentNegative": 16
       }
+    },
+    "fictional_rounds_closed": {
+      "quizzes": [
+        "WILMALIVE261029",
+        "WILMARULE261029"
+      ],
+      "results_retained": true,
+      "grading_untouched": true
     }
   }
 }
