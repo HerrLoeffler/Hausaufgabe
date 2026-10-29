@@ -84,6 +84,18 @@ Martins feste Regel: Zentralen koordinieren ausschließlich. Die zunächst für 
 - Technische Hook-Sperren sind noch nicht installiert oder qualifiziert. Die Rollenregel gilt als beschlossene Nutzeranweisung; Dokumentation ist kein Runtime-Durchsetzungsnachweis. Details und nächster Schritt: [GC-HOOKS-01-Übergabe im gesonderten PR184](https://github.com/HerrLoeffler/Hausaufgabe/blob/cfe75f60e9bc1a10e07b8066a31dbe10f050e801/workstreams/codex-lifecycle-hooks-20261010.md).
 
 
+## Fachchat-Routing, Auslastung und Übergaben — GC-HOOKS-01, 26.10.2026
+
+Verbindliche Nutzerentscheidung: Unabhängige Themen auf geeignete Fachchats verteilen und deren tatsächliche Belegung vor jedem Dispatch prüfen. Zentralen koordinieren weiterhin ausschließlich.
+
+- Vor Dispatch passenden bestehenden Fachchat, aktuellen Auftrag/Scope, Last, Owner und belegten Arbeitsstand prüfen. Ein laufender Chat erhält nicht fortlaufend unabhängige Zusatzaufträge; einen passenden unbelasteten bestehenden Fachchat nutzen oder bei ausdrücklicher menschlicher Autorisierung einen neuen vollständig einweisen. Diese Regel startet keine Chats automatisch.
+- Je Fachchat gilt ein aktiver Prioritätsscope. Weitere Aufträge mit Task-ID, Priorität und Aufnahmestatus ausdrücklich als wartend führen; keine implizite Annahme durch Nachrichtenzustellung. Blockierende Incidents behalten Vorrang und werden nicht durch Feature-, Store- oder Statusfragen verdrängt. Eine notwendige Umpriorisierung mit Grund und gesichertem Zwischenstand dokumentieren.
+- Transfer erst nach gesichertem Checkpoint: ursprüngliche Task-ID, alter/neuer Owner, Checkout/Branch/Commit, ungesicherte Dateien, konkrete nächste Arbeit, laufende/unklare Run-/Request-IDs, Versuchshistorie, Budget und Grenzen übergeben. Laufende externe Vorgänge abgleichen und weiter beobachten; keinen zweiten Versuch erzeugen.
+- Vor Schreibübernahme betroffene Dateien/Hunks und andere Writer abgleichen, bisherigen schreibenden Owner eindeutig ablösen und Aufnahme bestätigen. Bis dahin arbeitet der empfangende Chat nur lesend; keine Doppelwriter oder parallele Reparatur desselben Auftrags.
+- Owner/Chat, Originaltask, Priorität, Aufnahmestatus und genau einen nächsten Schritt in der vorhandenen Aufgabenübergabe dauerhaft nachvollziehbar halten; die gemeinsame TODO-Zuordnung gezielt nachführen. Zustellung, wartend, angenommen, in Arbeit, blockiert und Ergebnis belegt getrennt führen. Eine zugestellte Nachricht belegt weder Start noch Fertigstellung.
+
+Die operative Auftrags-/Chatübersicht in der Firmenzentrale bleibt beim bestehenden GC-BRAIN-01-Builder. Diese Governance-Regel ist keine Hook-, Scheduler- oder Runtime-Durchsetzung und erweitert keine Produktions-, Budget- oder Versandfreigabe.
+
 ## Adaptive Modell-/Aufwandswahl — GC-HOOKS-01, 10.10.2026
 
 Verbindliche Nutzerleitlinie für alle GradeCrew-/Games-Zentralen und ihre Fachaufträge: Modell und Denkaufwand pro Arbeitsschritt wählen, nicht pauschal `gpt-6.1-sol high`. Nur auf dem jeweiligen Host tatsächlich verfügbare Modelle/Aufwände verwenden. Dieses Startschema belegt weder gleiche Qualität noch konkrete Preise:
