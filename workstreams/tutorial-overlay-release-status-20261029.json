@@ -123,12 +123,12 @@
     ],
     "stage": "staging_deployed",
     "preview_only": true,
-    "source_commit": "c35f1ed4178c57b8fd02326135cd7e42ef8c2d29",
+    "source_commit": "927d2876ca6f5c88f63ba50acaa9db7cb9af52c6",
     "runtime_reviewed_source": "3d5f6eff8af7781bea9167e84567ca3fd794d387",
     "branch": "fix/tutorial-finale-20261029",
     "pr": 397,
-    "ci_run": 40953153079,
-    "ci": "pending_exact_full_browser_matrix",
+    "ci_run": 40954841990,
+    "ci": "pending_narrow_webkit_first",
     "preview": "https://gradecrew-staging-2026--tutorial-finale-20261029-76o51voa.web.app/workspace.html?firstGuide=1",
     "preview_verified_files": 214,
     "changed_runtime": [
@@ -152,10 +152,13 @@
       "3d5f6eff fixes guest boundary;697 then698 root/UI tests passed. Two WebKit page-end scroll probes required test-only direction correction.",
       "cd238fd6 changes only scroll probe. CI40951057150 Node22 success; browser internal WebKit error before tutorial at registration navigation; failed job rerun once. No blind product retry.",
       "40951057150 attempt2:13 full journeys passed, then unrelated LinuxWebKit320 large choice-card border1px outside viewport, five actual hitpoints free. No new runtime error found.",
-      "c35f1ed4: ordinary test action scroll uses block:center. Independent test review prefers exact centring to loosening tolerance. Raw finale arrival remains before any test scroll; localWebKit320 full52actions passes. ExactCI40953153079 pending. Runtime bytes unchanged3d5f6eff."
+      "c35f1ed4: ordinary test action scroll uses block:center. Independent test review prefers exact centring to loosening tolerance. Raw finale arrival remains before any test scroll; localWebKit320 full52actions passes. ExactCI40953153079 pending. Runtime bytes unchanged3d5f6eff.",
+      "c35 CI40953153079:13 full routes pass; flow coach inserted after test centring on LinuxWebKit320, bottom624,85%hitfalse. Not treated as mere1px; no release.",
+      "927d2876: test-only pre-scroll180ms placement wait; WebKit320 first, all18 remain. Independent narrow review no newP0–P2; fixed wait alone is not universal stability proof. LocalWebKit320 full52actions passes; exactCI40954841990 pending."
     ],
-    "previous_ci_run": 40951057150,
-    "previous_ci_result": "Node22 success; browser attempt1 internal WebKit registration-load error before tour; attempt2 thirteen full routes passed, then create choice bottom569px at568px viewport with all five hits clear. Strict test now centres ordinary action targets;0.5px tolerance and raw finale arrival unchanged.",
-    "prepared_package": "/private/tmp/gc-finale-production-c35-20261029"
+    "previous_ci_run": 40953153079,
+    "previous_ci_result": "Thirteen full routes passed; LinuxWebKit320 create choice shifted after test scroll because first flow coach was inserted afterward (target bottom624,85%hitfalse). Test helper now waits180ms before ordinary scrolling; no runtime change.",
+    "prepared_package": "/private/tmp/gc-finale-production-927-20261029",
+    "global_close_in_free_student_answering": "open_separate_followup: V7 student-started hides coach, so coach-local X not proven/present during free answering. Escape path exists. Do not claim every-phase Always-X acceptance."
   }
 }
