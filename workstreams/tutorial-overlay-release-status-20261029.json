@@ -139,7 +139,7 @@
     "production_changed": false,
     "live_last_observed_source": "552b02be0f483f5430ff949d8f2744fb25b124f0",
     "local_root_ui_tests": 699,
-    "local_browser_matrix": "Current ec7 critical Chromium320 and WebKit320 full52 actions pass; controlled360px late-review reflow full52 actions passes; current full18 local matrix running. Older18-route proof is not claimed for changed ec7 runtime.",
+    "local_browser_matrix": "Exact ec7 runtime:18 complete Chromium/WebKit journeys ×52 actions=936;320/390 phones,820/1180 tablets,1280/1366/1758/1920 desktop,390x400 short height. Raw finale arrival before test scroll, wheel/X, free-response save, both guest finish routes, abort/restart and zero transport writes. Additional controlled360px late-review growth full journey passes.",
     "independent_runtime_review": "ec7cdd01:10 gc23/gc24 focused tests independently passed, no new P0-P2; observer cleanup/input/step/abort/account scope reviewed.",
     "browser_session": "disabled_in_Work_settings",
     "provider_calls": 0,
