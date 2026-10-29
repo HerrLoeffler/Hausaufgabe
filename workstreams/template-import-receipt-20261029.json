@@ -1,0 +1,149 @@
+{
+  "source_commit": "aadf611860488044469d6d91f86f0925465b0879",
+  "source_tree": "1c01dc5ebbda3de6025ff98308a5b8891fe4b55f",
+  "integration_commit": "477552e65f0db66ef7804aaa6fb1e4dc89a441dc",
+  "source_pr": 392,
+  "ci": 40862207436,
+  "checks": {
+    "targeted": 9,
+    "web_ui": 704,
+    "browser": 12,
+    "independent_review": "no P1/P2, including retry follow-up"
+  },
+  "preview": {
+    "origin": "https://hausaufgabe-staging--template-aadf-4pqd9cac.web.app",
+    "commit": "aadf611860488044469d6d91f86f0925465b0879",
+    "expectedCommit": "aadf611860488044469d6d91f86f0925465b0879",
+    "files": 214,
+    "matched": 214,
+    "failures": [],
+    "readRetries": []
+  },
+  "actual_sdk_candidate_proof": {
+    "handlerAppSha256": "fc833adabe26129219fb32d3210cd6a05bd443d97a060372914b8e8b9ea58f22",
+    "executedHandlers": "local final candidate against actual Live SDK/rules, before deployment",
+    "checkedAt": "2026-10-29T11:01:26.716Z",
+    "liveSource": "8188aa050d6bc7c398555f82583991ae1c69d97a",
+    "checks": [
+      {
+        "name": "owner shares draft and gets explicit template code",
+        "pass": true
+      },
+      {
+        "name": "fresh teacher reads shared draft and author questions",
+        "pass": true
+      },
+      {
+        "name": "import owns independent saved/reloaded copy, no submissions or names",
+        "pass": true
+      },
+      {
+        "name": "copy edit leaves source unchanged",
+        "pass": true
+      },
+      {
+        "name": "revoked share rejected",
+        "pass": true
+      },
+      {
+        "name": "active assessment questions remain inaccessible to colleague",
+        "pass": true
+      },
+      {
+        "name": "raw leading V preservation",
+        "pass": true
+      },
+      {
+        "name": "prefixed template query URL",
+        "pass": true
+      }
+    ],
+    "errors": [
+      {
+        "code": "permission-denied",
+        "message": "Missing or insufficient permissions."
+      },
+      {
+        "code": "permission-denied",
+        "message": "Missing or insufficient permissions."
+      }
+    ],
+    "cleanup": {
+      "documentsRemoved": 7,
+      "syntheticAccountsRemoved": 2
+    },
+    "realUserTestRead": false,
+    "providerCalls": 0
+  },
+  "original_basic_flow": {
+    "checkedAt": "2026-10-29T10:47:32.940Z",
+    "liveSource": "8188aa050d6bc7c398555f82583991ae1c69d97a",
+    "checks": [
+      {
+        "name": "owner shares draft and gets explicit template code",
+        "pass": true
+      },
+      {
+        "name": "fresh teacher reads shared draft and author questions",
+        "pass": true
+      },
+      {
+        "name": "import owns independent saved/reloaded copy, no submissions or names",
+        "pass": true
+      },
+      {
+        "name": "copy edit leaves source unchanged",
+        "pass": true
+      },
+      {
+        "name": "revoked share rejected",
+        "pass": true
+      },
+      {
+        "name": "active assessment questions remain inaccessible to colleague",
+        "pass": true
+      },
+      {
+        "name": "raw leading V preservation",
+        "pass": false
+      },
+      {
+        "name": "prefixed template query URL",
+        "pass": false
+      }
+    ],
+    "errors": [
+      {
+        "code": "permission-denied",
+        "message": "Missing or insufficient permissions."
+      },
+      {
+        "code": "permission-denied",
+        "message": "Missing or insufficient permissions."
+      }
+    ],
+    "cleanup": {
+      "documentsRemoved": 7,
+      "syntheticAccountsRemoved": 2
+    },
+    "realUserTestRead": false,
+    "providerCalls": 0,
+    "executedHandlers": "Original8188 handler; reconstructed from captured tool output because candidate receipt reused its temp filename"
+  },
+  "live_deployed": false,
+  "promotion_started": false,
+  "promotion_blocker": {
+    "kind": "automatic approval review rejected Live Hosting clone",
+    "reason": "No unambiguous explicit trusted user approval for this exact public Live release; potential service impact",
+    "no_bypass_or_retry": true
+  },
+  "expected_live_base": "8188aa050d6bc7c398555f82583991ae1c69d97a",
+  "only_runtime_file": "app.js",
+  "preserved_runtime_files": 213,
+  "firebase_config_unchanged": true,
+  "provider_calls": 0,
+  "real_colleague_test_read": false,
+  "colleague_incident_cause": "not identified; exact link/code/symptom pending via Zentrale",
+  "rules_functions_auth_iam_deploy": false,
+  "next_action": "Obtain explicit human approval for this exact gradecrew.de Hosting release, then fresh Live preflight and single clone; no rerun of completed provider-free tests unless source changes."
+}

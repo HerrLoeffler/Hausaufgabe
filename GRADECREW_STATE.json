@@ -2913,6 +2913,37 @@
           "real_teacher_pdf_png_recheck": "2026-10-28T17:57:20.042Z",
           "all_fixtures_cleaned": true
         }
+      },
+      "template_import_20261029": {
+        "stage": "integrated",
+        "branch": "fix/template-import-live-20261029",
+        "source_commit": "aadf611860488044469d6d91f86f0925465b0879",
+        "source_tree": "1c01dc5ebbda3de6025ff98308a5b8891fe4b55f",
+        "integration_commit": "477552e65f0db66ef7804aaa6fb1e4dc89a441dc",
+        "pr": 392,
+        "ci": 40862207436,
+        "checks": {
+          "targeted": 9,
+          "web_ui": 704,
+          "browser": 12,
+          "independent_review": "no P1/P2"
+        },
+        "preview": {
+          "channel": "template-aadf",
+          "version": "e9c565155ce847be",
+          "files": 214,
+          "matched": 214,
+          "url": "https://hausaufgabe-staging--template-aadf-4pqd9cac.web.app"
+        },
+        "live_deployed": false,
+        "live_promotion_started": false,
+        "blocker": "Automatic approval review rejected public Live overwrite: explicit trusted human approval required for this exact release. No retry/bypass.",
+        "colleague_case": "Exact link/code/symptom pending via Zentrale; cause not established. Basic synthetic two-teacher import succeeds on current Live.",
+        "unchanged_backend": true,
+        "provider_calls": 0,
+        "handoff": "workstreams/template-import-20261029.md",
+        "receipt": "workstreams/template-import-receipt-20261029.json",
+        "next_action": "Ask human approval for exact aadf Hosting-only release on gradecrew.de; after approval freshly reconcile Live8188 or newer before one clone and both-origin hashes. Do not repeat completed tests unless source changes."
       }
     },
     {
