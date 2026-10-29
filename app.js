@@ -8351,7 +8351,7 @@ function wilmaReviewContext(){
 function wilmaAutomaticPreview(ctx=wilmaReviewContext()){
   return (firebaseConfig.projectId==='hausaufgabe-staging'||firebaseConfig.projectId==='gradecrew-staging-2026'&&['/wilma/','/wilma-review-preview/'].some(path=>location.pathname.startsWith(path)))&&!!ctx.actor&&!!ctx.quiz?.id&&!!wilmaAnswerReview?.isExpanded?.()&&wilmaReviewOpenConsent.has(ctx.actor+':'+ctx.quiz.id);
 }
-wilmaAutoReview=createWilmaAutoReview({getContext:wilmaReviewContext,parseGaps,enabled:wilmaAutomaticPreview,maxRequests:2,allowFreeLookups:firebaseConfig.projectId==='hausaufgabe-staging',
+wilmaAutoReview=createWilmaAutoReview({getContext:wilmaReviewContext,parseGaps,enabled:wilmaAutomaticPreview,maxRequests:2,allowFreeLookups:firebaseConfig.projectId==='hausaufgabe-staging',serverBudgeted:firebaseConfig.projectId==='hausaufgabe-staging',
   analyzeAnswer:({questionId,submissionId,allowPaid=true})=>analyzeWilmaQuestion(questionId,'',submissionId,allowPaid),
   onState:state=>{wilmaPreparation.set(state.questionId+':'+state.submissionId,state);wilmaAnswerReview?.refresh();},
   onIdle:()=>{wilmaAnswerReview?.refresh({resort:true});void wilmaAutoReview?.run();}

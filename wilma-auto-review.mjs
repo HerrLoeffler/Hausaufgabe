@@ -3,7 +3,7 @@ import {questionSnapshot} from './wilma-review-source.mjs';
 
 // Preparation only: the existing host owns auth, persistent cache and quota.
 // Two NEW identities per tab/auth session; exact cached identities can reload.
-export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enabled=()=>false,onState=()=>{},onIdle=()=>{},maxRequests=2,allowFreeLookups=false}) {
+export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enabled=()=>false,onState=()=>{},onIdle=()=>{},maxRequests=2,allowFreeLookups=false,serverBudgeted=false}) {
  if(!Number.isInteger(maxRequests)||maxRequests<1||maxRequests>2)throw Error('Automatische Testvorschau: höchstens zwei neue Prüfläufe pro Sitzung.');
  let generation=0,running=null;
  const attempted=new Set(),reservedByActor=new Map(),failedByActor=new Map();
@@ -42,8 +42,8 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
      const emit=(phase,message='')=>{if(same(epoch,ctx,q,s,key))onState({questionId:q.id,submissionId:s.id,phase,message});};
      attempted.add(key);
      if(!hasRubric(q)){emit('blocked','Bewertungsraster fehlt. Bitte selbst prüfen.');continue;}
-     const freeOnly=allowFreeLookups&&(reserved.size>=maxRequests||failedByActor.has(ctx.actor));
-     if(!freeOnly&&!reserved.has(key)&&reserved.size>=maxRequests){emit('pending','Prüfung ausstehend · Testlimit erreicht.');continue;}
+     const freeOnly=allowFreeLookups&&(!serverBudgeted&&reserved.size>=maxRequests||failedByActor.has(ctx.actor));
+     if(!serverBudgeted&&!freeOnly&&!reserved.has(key)&&reserved.size>=maxRequests){emit('pending','Prüfung ausstehend · Testlimit erreicht.');continue;}
      if(!freeOnly)reserved.add(key);emit('running','KI-Prüfung läuft …');
      try{
       await analyzeAnswer({questionId:q.id,submissionId:s.id,...(allowFreeLookups?{allowPaid:!freeOnly}:{})});
