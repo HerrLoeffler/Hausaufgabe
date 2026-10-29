@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark"><meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>GradeCrew Firmenzentrale</title><link rel="stylesheet" href="style.css?v=20261025-unified1">
+<link rel="stylesheet" href="unified.css?v=20261025-unified1">
+<link rel="stylesheet" href="operations.css?v=20261026">
+</head>
+<body class="central-app">
+<a class="skip" href="#content">Zum Inhalt</a>
+<div class="shell">
+<aside id="sidebar" class="sidebar" aria-label="Navigation">
+<a class="brand" href="#/heute"><span class="brandmark" aria-hidden="true">gc</span><span>GradeCrew<small>Firmenzentrale</small></span></a>
+<button id="close-menu" class="icon-button menu-close" aria-label="Navigation schließen">×</button>
+<nav id="primary" aria-label="Hauptnavigation"></nav>
+<div class="sidebar-bottom"><a href="#/verbindungen" class="settings-link"><span aria-hidden="true">⌘</span> Verbindungen</a><div class="profile"><span class="avatar">ML</span><span>Martin<small>Unternehmensführung</small></span></div></div>
+</aside>
+<div class="workspace"><header class="topbar"><button id="menu" class="icon-button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="sidebar">☰</button><div id="breadcrumb" class="breadcrumb"></div><div class="top-actions"><button id="search-button" class="search-trigger"><span aria-hidden="true">⌕</span> Alles durchsuchen <kbd>⌘ K</kbd></button><button id="new-button" class="button primary">+ Neu erfassen</button></div></header><nav id="secondary" aria-label="Arbeitsansichten"></nav>
+<main id="content" tabindex="-1"></main>
+<footer class="footnote"><span><i class="status-dot"></i> Lokaler Arbeitsstand · Verbindung wird geprüft</span><a href="#/verbindungen">Stand &amp; Verbindungen</a></footer>
+</div></div>
+<dialog id="editor" aria-labelledby="dialog-title"><form id="editor-form"><header class="dialog-head"><h2 id="dialog-title">Neu erfassen</h2><button type="button" id="close-editor" class="icon-button" aria-label="Dialog schließen">×</button></header><div id="editor-body"></div><div id="editor-message" role="status"></div><footer class="dialog-foot"><button type="button" id="download-draft" class="button secondary">Text herunterladen</button><button type="submit" id="save-draft" class="button primary">Entwurf speichern</button></footer></form></dialog>
+<dialog id="search-dialog" aria-labelledby="search-title"><div class="dialog-head"><h2 id="search-title">In der Firma suchen</h2><button id="close-search" class="icon-button" aria-label="Suche schließen">×</button></div><label class="search-box"><span class="sr-only">Suchbegriff</span><input id="global-search" type="search" placeholder="Thema, Aufgabe, Quelle oder Entscheidung …" autocomplete="off"></label><div id="search-results"></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="app.mjs?v=20261025-unified1"></script>
+</body></html>

@@ -1,0 +1,16 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {candidateState,environmentState,areaFreshness} from '../../docs/prototypes/firmenzentrale/release-model.mjs';
+const sha='a'.repeat(40),c={id:'c',sourceCommit:sha,sourceConfirmed:true,testEnvironment:'test',checks:[{id:'device'}],automated:{status:'passed',sha},releasePreparation:'offen'};
+test('old evidence never approves another version',()=>{const r=candidateState(c,{test:{lastGood:{commit:sha},lastSuccess:new Date().toISOString()}},[{candidate:'c',sha:'b'.repeat(40),environment:'test',check:'device',result:'passed'}]);assert.equal(r.checks[0].result,'pending');assert.equal(r.ready,false);assert.equal(r.live,false);});
+test('failed refresh invalidates deployment gate and later failure wins',()=>{const rows=['passed','failed'].map(result=>({candidate:'c',sha,environment:'test',check:'device',result}));const r=candidateState(c,{test:{lastGood:{commit:sha},lastSuccess:new Date().toISOString(),error:'offline'}},rows);assert.equal(r.deployed,false);assert.equal(r.checks[0].result,'failed');});
+test('expired previews and source changes remain explicit',()=>{assert.equal(environmentState({kind:'preview',expiresAt:'2020-01-01'},{}).kind,'expired');assert.equal(areaFreshness({chats:[{id:'x',updatedAt:1}]},{sources:{codex:{data:{chats:[{id:'x',updatedAt:2,complete:true}]}}}}).kind,'changed');});
+test('old manifest is never current',()=>{assert.equal(environmentState({kind:'test'},{lastGood:{commit:sha},lastSuccess:'2020-01-01'}).kind,'stale');});
+
+test('expired channel and mismatched CI cannot become ready',()=>{const candidate={...c,automated:{status:'passed',sha:'b'.repeat(40)},releasePreparation:''};const obs={test:{lastGood:{commit:sha},lastSuccess:new Date().toISOString()},__environments:[{id:'test',kind:'preview',expiresAt:'2020-01-01'}]};const r=candidateState(candidate,obs,[{candidate:'c',sha,environment:'test',check:'device',result:'passed'}]);assert.equal(r.automated,false);assert.equal(r.deployed,false);assert.equal(r.ready,false);});
+
+test('backend receipt is never compared as a hosting commit and published hosting is explicit',()=>{
+ const obs={test:{lastGood:{commit:sha},lastSuccess:new Date().toISOString()}};
+ const backend=candidateState({...c,sourceComponent:'backend'},obs);assert.equal(backend.deployed,false);assert.equal(backend.label,'Komponenten belegt · Abnahme offen');
+ const published=candidateState({...c,published:true,publication:{commit:sha}},obs);assert.equal(published.live,true);assert.equal(published.ready,false);
+ assert.equal(candidateState({...c,published:true,publication:{commit:sha}},{}).live,false);
+});
