@@ -99,6 +99,7 @@ test('gc23 shows Crew finale first, then returns the viewport to free response i
   save.textContent = 'Bewertung speichern';
   w.document.body.append(save);
 
+  w.document.documentElement.classList.add('gcTourScrollLocked');
   const first = coach(w, 'Automatisch, wo es eindeutig ist – du entscheidest beim Rest.', 'Schau dir Aufgabe 5 an.');
   const original = first.querySelector('.gcCoachNext');
   original.addEventListener('click', () => {
@@ -111,7 +112,12 @@ test('gc23 shows Crew finale first, then returns the viewport to free response i
 
   assert.equal(first.querySelector('h2').textContent, 'Erst unser Crew-Finale.');
   assert.match(first.querySelector('.gc23FinaleResult').textContent, /1,5 von 2 Punkten/);
-  assert.equal(w.document.getElementById('finale').dataset.scrolled, '1');
+  assert.equal(w.document.documentElement.classList.contains('gcTourScrollLocked'), false);
+  assert.equal(first.nextElementSibling, w.document.getElementById('finale'));
+  assert.ok(first.classList.contains('gcCoachContext'));
+  assert.ok(w.document.body.classList.contains('gcTourContext'));
+  assert.equal(first.dataset.scrolled, '1');
+  assert.equal(w.document.getElementById('finale').dataset.scrolled, undefined);
 
   first.querySelector('.gcCoachNext').click();
   await settle(w);
