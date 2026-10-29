@@ -4272,13 +4272,15 @@
         "live_provider_calls_by_this_QA": 0
       },
       "pilot": {
-        "staging_requests_started": 7,
-        "staging_cap": 7,
+        "staging_requests_started": 9,
+        "staging_cap": null,
         "legacy_jobs_preserved": true,
         "live_new_request_cap": 7,
-        "no_second_provider_or_model_self_training": true
+        "no_second_provider_or_model_self_training": true,
+        "staging_cap_legacy_requests": 7,
+        "staging_monthly_budget_eur": 20
       },
-      "next_action": "Martin reloads normal Live correction view; future releases preserve tab containment. Semantic PR383 and Assessment origin remain separate; no general automatic real-data processing.",
+      "next_action": "Martin tests own Stage cases; Production remains explicitly excluded.",
       "semantic_preview": {
         "stage": "staging_deployed",
         "source": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
@@ -4391,16 +4393,70 @@
         "monthly_total_ceiling": 20,
         "scope": "Wilma API costs overall; shared total, not per teacher",
         "human_authorized": true,
-        "implemented": false,
-        "request_cap_still": 7,
+        "implemented": true,
+        "request_cap_still": null,
         "cap_not_reset": true,
-        "next_action": "Implement server-side monetary reservation and settled usage accounting before increasing pilot or enabling general Live automatic reviews."
+        "next_action": "Human Stage acceptance; Live remains unchanged and requires separate shared-budget promotion.",
+        "legacy_request_cap": 7
       },
       "confirmed_answer_fundus_requirement": {
         "requested": true,
-        "implemented": false,
-        "existing_cache": "Exact review receipt reuse only; not a teacher-validated cross-submission learning fundus",
-        "policy": "Teacher-confirmed answers scoped to exact question, rubric/version and context; mismatches or ambiguity require API/teacher. No 100% free-text correctness guarantee; no self-training or shared student answer pool activated."
+        "implemented": true,
+        "existing_cache": "Existing exact AI receipt cache preserved; new teacher-confirmed fundus active on Stage",
+        "policy": "Exact owner/test/question/snapshot/answer only, fresh valid source confirmation; 90day expiry, no cross-test transfer or self-training."
+      },
+      "budget_fundus_stage": {
+        "stage": "staging_deployed",
+        "branch": "fix/wilma-budget-fundus-20261029",
+        "pr": 390,
+        "source_commit": "2d65b1f78eb9934dacf6f049339ed1a49efcbfe0",
+        "tree": "fd60392c0c931cc3a3f9c8ffa2829092a7649f54",
+        "backend_revision": "reviewwilmaanswers-00009-yey",
+        "hosting_source": "d7ddeafaf35f5c91849ee6516a7e0ab4811ca3ea",
+        "hosting_version": "8b6154420ead9ecb",
+        "verified_hosting_assets": 215,
+        "preserved_hosting_assets": 449,
+        "preserved_other_functions": 95,
+        "live_changed": false,
+        "monthly_ceiling_eur": 20,
+        "budget_basis": "conservative EUR accounting ceiling; pre-reserve upper bound, settle complete usage, unknown keeps hold",
+        "month_zone": "Europe/Berlin",
+        "october_legacy_allowance_eur": 17.5,
+        "future_month_live_allowance_eur": 8.75,
+        "invoice_cost_claimed": false,
+        "new_paid_requests": 2,
+        "new_usage_ceiling_micros": 2088,
+        "cumulative_stage_requests": 9,
+        "history_preserved": true,
+        "fundus": "private exact same teacher/test/question/rubric/answer; confirmation verified against source; no raw answer copy; teacher confirms suggested points",
+        "actual_synthetic_points": [
+          2,
+          2,
+          1,
+          0
+        ],
+        "max_points": 2,
+        "actual_teacher_tests": "confirm, fundus reuse0paid, changed answer falls back, correction, Undo, whole-form learn, full reload",
+        "ci": 40840355920,
+        "local_tests": {
+          "functions": 453,
+          "web_ui": 748
+        },
+        "independent_tests": {
+          "focused": 94,
+          "scheduler": 16,
+          "important_findings": 0
+        },
+        "real_firestore_contention": "2 concurrent /1allowed /1blocked in private fictional QA dataset; no real budget exhaustion",
+        "rules_changed": false,
+        "physical_ipad": "not_tested",
+        "report": "docs/evidence/wilma-budget-fundus-20261029/REPORT.md",
+        "remaining": [
+          "broader quality corpus and teacher/physical device acceptance",
+          "same-test-only fundus; sticky conflicts need new rubric/explicit future resolution",
+          "pricing review before27Jan2027; future Live budget must not create another EUR20 allowance"
+        ],
+        "next_action": "Martin tests own Stage cases; Production remains explicitly excluded."
       }
     }
   ],
