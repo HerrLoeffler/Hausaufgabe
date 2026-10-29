@@ -123,12 +123,12 @@
     ],
     "stage": "staging_deployed",
     "preview_only": true,
-    "source_commit": "cd238fd6a1c469f04f10d89724a1559b02ab958e",
+    "source_commit": "c35f1ed4178c57b8fd02326135cd7e42ef8c2d29",
     "runtime_reviewed_source": "3d5f6eff8af7781bea9167e84567ca3fd794d387",
     "branch": "fix/tutorial-finale-20261029",
     "pr": 397,
-    "ci_run": 40951057150,
-    "ci": "browser_retry_pending_after_webkit_internal_navigation_error",
+    "ci_run": 40953153079,
+    "ci": "pending_exact_full_browser_matrix",
     "preview": "https://gradecrew-staging-2026--tutorial-finale-20261029-76o51voa.web.app/workspace.html?firstGuide=1",
     "preview_verified_files": 214,
     "changed_runtime": [
@@ -150,7 +150,12 @@
       "92d6 corrected desktop, mobile320 exposed table840px; no deploy.",
       "38305aff contains review+scroll+X, guest second finish exposed gc24 hidden settings route; no deploy.",
       "3d5f6eff fixes guest boundary;697 then698 root/UI tests passed. Two WebKit page-end scroll probes required test-only direction correction.",
-      "cd238fd6 changes only scroll probe. CI40951057150 Node22 success; browser internal WebKit error before tutorial at registration navigation; failed job rerun once. No blind product retry."
-    ]
+      "cd238fd6 changes only scroll probe. CI40951057150 Node22 success; browser internal WebKit error before tutorial at registration navigation; failed job rerun once. No blind product retry.",
+      "40951057150 attempt2:13 full journeys passed, then unrelated LinuxWebKit320 large choice-card border1px outside viewport, five actual hitpoints free. No new runtime error found.",
+      "c35f1ed4: ordinary test action scroll uses block:center. Independent test review prefers exact centring to loosening tolerance. Raw finale arrival remains before any test scroll; localWebKit320 full52actions passes. ExactCI40953153079 pending. Runtime bytes unchanged3d5f6eff."
+    ],
+    "previous_ci_run": 40951057150,
+    "previous_ci_result": "Node22 success; browser attempt1 internal WebKit registration-load error before tour; attempt2 thirteen full routes passed, then create choice bottom569px at568px viewport with all five hits clear. Strict test now centres ordinary action targets;0.5px tolerance and raw finale arrival unchanged.",
+    "prepared_package": "/private/tmp/gc-finale-production-c35-20261029"
   }
 }
