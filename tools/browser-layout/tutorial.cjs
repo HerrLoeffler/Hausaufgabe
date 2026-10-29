@@ -61,7 +61,7 @@ try{for(const [name,engine,size,touch] of [['chromium',chromium],['webkit',webki
   }
   const key=JSON.stringify(state);if(key===last)continue;
   const nameInput=page.locator('.gcNamePrompt input');let keyboardProbe=false;if(await nameInput.isVisible()){await nameInput.fill('DEMO');if(touch&&size.width<500){await page.setViewportSize({width:size.width,height:Math.min(400,size.height)});await assertClear(nameInput,'keyboard-shrink name input');keyboardProbe=true;}}
-  const next=state.stage==='finish'&&[320,1180].includes(size.width)?page.getByRole('button',{name:'Zu den allgemeinen Einstellungen',exact:true}):page.locator('.gcRealCoach .gcCoachNext').filter({visible:true}).first();
+  const next=state.stage==='finish'&&[320,1180].includes(size.width)?page.locator('.gcFinishChoices').getByRole('button',{name:'Tour abschließen',exact:true}):page.locator('.gcRealCoach .gcCoachNext').filter({visible:true}).first();
   const target=page.locator('.gcTourTarget:is(button,a,input[type=submit])').filter({visible:true}).first();
   const chosen=await next.count()?next:target;
   if(await chosen.count()&&await chosen.isEnabled()){await clickChecked(chosen,state.stage+' '+state.title+' '+state.target);if(keyboardProbe)await page.setViewportSize(size);last=key;}
