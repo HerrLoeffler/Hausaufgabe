@@ -550,6 +550,9 @@ GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://g
 
 ## GC-PEDAGOGY-KB-01 Aufgabenpool-Anbindung
 
+**Entscheidung29.10.:** Martin genehmigt **20EUR/Monat Wilma-API insgesamt** und fordert einen Fundus lehrkraftbestätigter Bewertungen zur Wiederverwendung ohne API. Budget ist beschlossen, harte monetäre Sperre und Fundus sind noch zu implementieren; bisheriger7-Aufrufe-Pilot nicht erhöht/zurückgesetzt. Bestehender identischer Prüfbelegcache ist noch kein allgemeiner Lernfundus. Exakte Aufgabe/Raster/Version/Kontext binden; keine100%-Freitextgarantie. [Übergabe](workstreams/wilma-live-grading-20261028.md).
+
+
 **Wilma-Abgabeweg29.10.:** normaler Staging-Einstieg `/wilma/` jetzt Quelle747401d0/DraftPR387 (Stage-only), Hosting6fc0af374a768244/215Runtimehashes und submitAssessmentAttempt00014-kex tatsächlich geprüft. Fünf echtefiktiveAbgaben, Freitext-/Lückenreview, Lehrerbestätigen/Ändern/Zurückstellen/Undo/Cache/Reload bestanden; eine echteKI-Probe0,5P, Punkte erst nach Bestätigung. Stagepilot7/7 unverändert begrenzt; weitere neueKI-Proben benötigen Budgetentscheidung. Live8188 unverändert. [Nachweis](docs/evidence/wilma-submission-staging-20261029/REPORT.md). Offen: Langtext-KI-Qualitätskorpus, physischesiPad/Lehrerabnahme, konkreteKosten-/Dateneignergates und getrennte minimaleLivepromotion.
 
 
