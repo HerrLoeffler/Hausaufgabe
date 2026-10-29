@@ -4733,6 +4733,39 @@
           "pricing review before27Jan2027; future Live budget must not create another EUR20 allowance"
         ],
         "next_action": "Martin tests own Stage cases; Production remains explicitly excluded."
+      },
+      "budget_fundus_live": {
+        "stage": "production",
+        "scope": "Backend only; compact Hosting promotion and complete authenticated reuse acceptance remain outstanding.",
+        "branch": "fix/wilma-budget-fundus-live-20261029",
+        "pr": 396,
+        "source_commit": "606d8a2a3d6be29ee1ddf27f8445b06e277f90f5",
+        "tree": "3c3c8e8ccbc2ff657a80cc143e05c95c4697e917",
+        "backend_revision": "reviewwilmaanswers-00003-roy",
+        "submit_revision": "submitassessmentattempt-00054-mep",
+        "other_functions_preserved": 60,
+        "rules_changed": false,
+        "hosting_changed": false,
+        "live_monthly_share_eur": 8.75,
+        "shared_stage_live_monthly_ceiling_eur": 20,
+        "budget_partition": "Existing Stage EUR20 ledger already withholds EUR8.75 for Live; effective Stage spend <=EUR11.25 plus Live <=EUR8.75. No second EUR20 allowance, no history reset.",
+        "provider_calls": 1,
+        "usage_accounting_ceiling_micros": 1056,
+        "fictional_live_acceptance": "A actual student submit -> real AI 2/2 suggestion while stored0/review/no grade; teacher confirmation persists2/2/grade1 and creates private Fundus evidence. Identical B submitted; reuse pending.",
+        "ci": {
+          "run": 40948746575,
+          "node_job": 123710891458,
+          "node_result": "success",
+          "browser_job": 123710890875,
+          "browser_result": "pending; previous exact candidate's Wilma36 passed, unrelated WebKit320 tutorial bottom569>568 failed; retained, sent to tutorial owner."
+        },
+        "review": "193 focused +3 host/cache/actor; final29 scheduler +3 error/refresh cases; no P0-P2",
+        "blockers": [
+          "Browser control disabled in Work after interruption; user asked to re-enable. No auth bypass.",
+          "Hosting awaits exact browser gate and fresh tutorial release reconciliation."
+        ],
+        "report": "docs/evidence/wilma-budget-fundus-live-20261029/REPORT.md",
+        "next_action": "Reconcile browser consent and final Browser CI/tutorial source, then promote only four Wilma runtime files and finish B/C/L/D fictional reuse/Undo/reload checks."
       }
     }
   ],

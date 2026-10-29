@@ -1,0 +1,150 @@
+{
+  "backend-verification.json": {
+    "project": "hausaufgabe-staging",
+    "functions": [
+      {
+        "function": "reviewWilmaAnswers",
+        "revision": "reviewwilmaanswers-00003-roy",
+        "sourceZipSha256": "23c42df37c85bb90a731745cba1a2e52a935359e1fc5c843384d6fc0f76129a3"
+      },
+      {
+        "function": "submitAssessmentAttempt",
+        "revision": "submitassessmentattempt-00054-mep",
+        "sourceZipSha256": "3231935509b7733c5239f94f04aacfa492ce2170186a4fad5bd722401c6a3c54"
+      }
+    ],
+    "otherFunctionsPreserved": 60,
+    "rulesUnchanged": true,
+    "stageReviewUnchanged": true
+  },
+  "review-proof.json": {
+    "commit": "606d8a2a3d6be29ee1ddf27f8445b06e277f90f5",
+    "tree": "3c3c8e8ccbc2ff657a80cc143e05c95c4697e917",
+    "importantFindingsRemaining": 0,
+    "focusedTests": 193,
+    "additionalHostCacheActorChecks": 3,
+    "reviewer": "wilma_live_budget_fundus_review_20261029",
+    "fixed": "P2 free fundus after paid/session/month guards, RED_GREEN25",
+    "finalNarrowTests": 29,
+    "negativeFailureRefreshChecks": 3,
+    "liveOnlyServerBudgetFlag": true
+  },
+  "contention-proof.json": {
+    "project": "hausaufgabe-staging",
+    "qaDocument": "_wilmaPilotPrivate/qa-live-fundus-contention-20261029",
+    "realFirestoreTransactions": true,
+    "transport": "official Firestore REST transaction API",
+    "concurrentRequests": 2,
+    "accepted": 1,
+    "blocked": 1,
+    "upperCeilingMicros": 8750000,
+    "providerCalls": 0,
+    "actualMonthlyBudgetChanged": false
+  },
+  "rules-before.json": {
+    "ruleset": "projects/hausaufgabe-staging/rulesets/915c7259-2293-419b-8518-105b8e0d1b56",
+    "files": [
+      {
+        "name": "firestore.secure-assessment.rules",
+        "sha256": "2aa440bc3d0db1d5a5e1b8dcbf174bb936cb80b2533f59ae083097ceeb3b0b9c"
+      }
+    ]
+  },
+  "backend-ci-gate.json": {
+    "source": "606d8a2a3d6be29ee1ddf27f8445b06e277f90f5",
+    "run": 40948746575,
+    "nodeJob": 123710891458,
+    "nodeResult": "success",
+    "browserStatusAtBackendStart": "in_progress",
+    "scope": "Both backend functions only; all Node/rules/backend tests completed; browser gate remains separate for Hosting."
+  },
+  "snapshot-before-provider.json": {
+    "project": "hausaufgabe-staging",
+    "phase": "before-provider",
+    "started": 0,
+    "legacyJobsHash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "ledger": null,
+    "fundusEntries": [],
+    "rows": {}
+  },
+  "snapshot-resumed-after-interruption.json": {
+    "project": "hausaufgabe-staging",
+    "phase": "resumed-after-interruption",
+    "started": 1,
+    "legacyJobsHash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "ledger": {
+      "limitMicros": 8750000,
+      "accountedRequests": 1,
+      "spentMicros": 1056,
+      "pricingVersion": "luna-eur-ceiling-20261029",
+      "reservedMicros": 0,
+      "currency": "EUR",
+      "updatedAt": 1793305800283
+    },
+    "fundusEntries": [
+      {
+        "version": 1,
+        "key": "ab4ac2d286f05fdc34753ee41b59c27ec595571498e0892f8476ff83ec2ffcd6",
+        "quizId": "WILMALIVE261029",
+        "questionId": "q1",
+        "submissionId": "a_32cd84da1b2a2015be7a3f1b914a",
+        "points": 2,
+        "createdAt": 1793305821722,
+        "expiresAt": 1801081821722,
+        "multipleSources": false,
+        "conflict": false
+      }
+    ],
+    "rows": {
+      "A": {
+        "status": "graded",
+        "totalPoints": 2,
+        "maxPoints": 2,
+        "grade": 1
+      }
+    }
+  },
+  "snapshot-b-submitted-no-ai.json": {
+    "project": "hausaufgabe-staging",
+    "phase": "b-submitted-no-ai",
+    "started": 1,
+    "legacyJobsHash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "ledger": {
+      "reservedMicros": 0,
+      "updatedAt": 1793305800283,
+      "currency": "EUR",
+      "spentMicros": 1056,
+      "limitMicros": 8750000,
+      "accountedRequests": 1,
+      "pricingVersion": "luna-eur-ceiling-20261029"
+    },
+    "fundusEntries": [
+      {
+        "version": 1,
+        "key": "ab4ac2d286f05fdc34753ee41b59c27ec595571498e0892f8476ff83ec2ffcd6",
+        "quizId": "WILMALIVE261029",
+        "questionId": "q1",
+        "submissionId": "a_32cd84da1b2a2015be7a3f1b914a",
+        "points": 2,
+        "createdAt": 1793305821722,
+        "expiresAt": 1801081821722,
+        "multipleSources": false,
+        "conflict": false
+      }
+    ],
+    "rows": {
+      "A": {
+        "status": "graded",
+        "totalPoints": 2,
+        "maxPoints": 2,
+        "grade": 1
+      },
+      "B": {
+        "status": "review",
+        "totalPoints": 0,
+        "maxPoints": 2,
+        "grade": null
+      }
+    }
+  }
+}
