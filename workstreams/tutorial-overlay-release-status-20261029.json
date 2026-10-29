@@ -4,7 +4,7 @@
     "GC-DESIGN-05B",
     "GC-WEB-REPAIR-20261007"
   ],
-  "stage": "integrated",
+  "stage": "production",
   "source_commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
   "tree": "fe43aa1134f390a857ea20bfadd9d1d21ddc0a38",
   "pr": 394,
@@ -19,11 +19,10 @@
   "browser_artifact": 12894152174,
   "preview": "https://gradecrew-staging-2026--tutorial-live-20261029-71rdg84c.web.app/workspace.html?firstGuide=1",
   "preview_verified_files": 214,
-  "production_commit_still": "8188aa050d6bc7c398555f82583991ae1c69d97a",
-  "production_changed": false,
-  "production_cli_started": false,
-  "approval_review": "Hosting command rejected before execution: explicit human permission for this concrete live publication required; no workaround/retry.",
-  "human_permission": "pending_async_question",
+  "production_changed": true,
+  "production_cli_started": true,
+  "approval_review": "Initial command denied before execution; no bypass. After direct human approval, one actual Hosting-only CLI execution completed successfully.",
+  "human_permission": "2026-10-29: direct user reply 'ja' to concrete tutorial Live publication question; asks for whole-tour iPhone/iPad coverage",
   "preserved_runtime_files": 210,
   "changed_runtime": [
     "crew-tour-hardening.js",
@@ -40,7 +39,7 @@
   "canonical_2026_changed": false,
   "physical_device_acceptance": "not_performed",
   "handoff": "workstreams/gc-design-05b-guest-tour-20261006.md",
-  "next_action": "After explicit human live approval, fresh CAS against current public manifests, deploy only exact552b tutorial hosting candidate, verify214 hashes per origin and actual live click. Do not publish merged pending template-import app changes.",
+  "next_action": "Martin checks the published tutorial on physical iPhone/iPad; no additional technical publication from this task. Next release owner must preserve552b tutorial files and CAS against fresh Live; pending template import remains separate.",
   "attempt_history": [
     {
       "source": "4763bcd202fcd360ad90b975bdfd52f311e00797",
@@ -50,6 +49,70 @@
     {
       "source": "552b02be0f483f5430ff949d8f2744fb25b124f0",
       "result": "full CI success; intended hosting execution rejected before process start; awaiting human permission"
+    },
+    {
+      "source": "552b02be0f483f5430ff949d8f2744fb25b124f0",
+      "result": "After direct human yes: one actual Hosting-only publication succeeded; both origins214/214 hashes verified; real live click five hit points free and local10-question exercise reached",
+      "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/59e0537e80452a02"
     }
-  ]
+  ],
+  "previous_production_commit": "8188aa050d6bc7c398555f82583991ae1c69d97a",
+  "production_commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
+  "hosting": {
+    "hostingVersion": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/59e0537e80452a02",
+    "releaseTime": "2026-10-29T20:08:43.898Z",
+    "releaseName": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/channels/live/releases/1793304523898000",
+    "hashes": {
+      "https://gradecrew.de": {
+        "commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
+        "verifiedFiles": 214,
+        "mismatches": []
+      },
+      "https://hausaufgabe-staging.web.app": {
+        "commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
+        "verifiedFiles": 214,
+        "mismatches": []
+      }
+    }
+  },
+  "live_hit_test": {
+    "button": {
+      "bottom": 635.25,
+      "height": 44,
+      "left": 1109.109375,
+      "right": 1249,
+      "top": 591.25,
+      "width": 139.890625,
+      "x": 1109.109375,
+      "y": 591.25
+    },
+    "coach": {
+      "bottom": 708.28125,
+      "height": 246.28125,
+      "left": 735,
+      "right": 1095,
+      "top": 462,
+      "width": 360,
+      "x": 735,
+      "y": 462
+    },
+    "hits": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "viewport": [
+      1280,
+      720
+    ]
+  },
+  "live_click_next_state": {
+    "view": "editorView",
+    "heading": "Übung · Meine erste GradeCrew-Reise",
+    "coach": "Danke, Remy!",
+    "question_count": 10,
+    "local_exercise": true
+  }
 }
