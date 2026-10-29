@@ -927,14 +927,29 @@ function clamp(n, min, max) {
 const PENDING_TEMPLATE_KEY = "lernplattformPendingTemplate";
 
 function normalizeTemplateCode(value) {
-  const raw = String(value || "").trim();
+  let raw = String(value || "").replace(/[\u200B\uFEFF]/g, "").trim();
   if (!raw) return "";
   try {
     const url = new URL(raw, location.href);
-    const fromUrl = url.searchParams.get("template");
-    if (fromUrl) return String(fromUrl).toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (url.searchParams.has("template")) raw = String(url.searchParams.get("template") || "");
+    else if (/[/?#:]|^https?/i.test(raw)) return "";
+  } catch { return ""; }
+  raw = raw.replace(/[\u2010-\u2015\u2212]/g, "-").trim().toUpperCase();
+  if (!/^[A-Z0-9\s-]+$/.test(raw)) return "";
+  return raw.replace(/^V[\s-]+/, "").replace(/[\s-]/g, "");
+}
+
+function templateInputError(value) {
+  try {
+    const url = new URL(String(value || "").trim(), location.href);
+    if (url.searchParams.has("test") && !url.searchParams.has("template")) return "Das ist ein Schülerzugang. Bitte die Lehrkraft um den Vorlagen-Link oder den Code mit V- bitten.";
+    if (!url.searchParams.has("template")) return "";
+    const stage = url.hostname.startsWith("gradecrew-staging-2026") && /\.(web\.app|firebaseapp\.com)$/.test(url.hostname);
+    const live = ["gradecrew.de", "www.gradecrew.de", "hausaufgabe-staging.web.app", "hausaufgabe-staging.firebaseapp.com"].includes(url.hostname);
+    if (stage && firebaseConfig.projectId === "hausaufgabe-staging") return "Dieser Link gehört zur getrennten Testumgebung 2026. Bitte eine Vorlagenfreigabe von gradecrew.de verwenden.";
+    if (live && firebaseConfig.projectId === "gradecrew-staging-2026") return "Dieser Link gehört zur Live-Umgebung gradecrew.de. Bitte die Vorlage dort übernehmen.";
   } catch {}
-  return raw.toUpperCase().replace(/^V[\s-]*/, "").replace(/[^A-Z0-9]/g, "");
+  return "";
 }
 
 function rememberPendingTemplate(code) {
@@ -1677,6 +1692,8 @@ function openCreateView() {
 }
 
 function openTemplateFromInput(value) {
+  const inputError = templateInputError(value);
+  if (inputError) return toast(inputError, "error");
   const code = normalizeTemplateCode(value);
   if (!code || code.length < 4 || code.length > 16) {
     toast("Bitte einen gültigen Freigabelink oder Vorlagencode eingeben.", "error");
@@ -2512,6 +2529,11 @@ async function shareQuizTemplate(code) {
       const saved = await saveCurrentQuiz(false);
       if (!saved) return;
     }
+    const snapshot = await getDoc(doc(db, "quizzes", code));
+    if (!snapshot.exists()) return toast("Dieser Test ist nicht mehr verfügbar.", "error");
+    const current = snapshot.data();
+    if (current.rightsHold || current.isDeleted) return toast("Dieser Test kann derzeit nicht als Vorlage freigegeben werden.", "error");
+    if (current.published && !current.ended) return toast("Der Test läuft noch. Bitte zuerst duplizieren und den neuen Entwurf als Vorlage freigeben.", "error");
     await updateDoc(doc(db, "quizzes", code), {
       shareEnabled: true,
       sharedAt: serverTimestamp(),
@@ -2521,7 +2543,7 @@ async function shareQuizTemplate(code) {
     openShareDialog(code);
   } catch (err) {
     console.error(err);
-    toast("Vorlage konnte nicht freigegeben werden. Prüfe nach dem Deploy die Firestore-Regeln.", "error");
+    toast("Vorlage konnte nicht freigegeben werden. Bitte später erneut versuchen. Referenz: GC-TEMPLATE-SHARE.", "error");
   }
 }
 
@@ -2549,14 +2571,21 @@ $("shareDialog")?.addEventListener("click", (e) => {
 });
 
 async function loadSharedTemplate(code) {
+  const uid = state.user?.uid;
+  const request = {};
+  loadSharedTemplate.request = request;
+  const current = () => state.user?.uid === uid && loadSharedTemplate.request === request;
+  state.currentSharedTemplate = null;
   showView("templateView");
   $("templateCard").innerHTML = `<div>Vorlage wird geladen …</div>`;
   try {
     const snap = await getDoc(doc(db, "quizzes", code));
+    if (!current()) return;
     if (!snap.exists()) throw new Error("Diese Vorlage existiert nicht mehr.");
     const quiz = { id: code, ...snap.data() };
     if (!quiz.shareEnabled && quiz.ownerId !== state.user?.uid) throw new Error("Die Freigabe dieser Vorlage wurde deaktiviert.");
     const qs = await getDocs(query(collection(db, "quizzes", code, "questions"), orderBy("position")));
+    if (!current()) return;
     const questions = qs.docs.map((d) => ({ id: d.id, ...d.data() }));
     state.currentSharedTemplate = { quiz, questions };
     const timeInfo = Number(quiz.timeLimitMinutes) > 0 ? ` · ${Number(quiz.timeLimitMinutes)} Min. Zeitlimit` : "";
@@ -2575,8 +2604,14 @@ async function loadSharedTemplate(code) {
     $("cancelTemplateCopy").addEventListener("click", clearTemplateUrlAndDashboard);
     $("importTemplateCopy").addEventListener("click", importSharedTemplate);
   } catch (err) {
+    if (!current()) return;
+    state.currentSharedTemplate = null;
     console.error(err);
-    $("templateCard").innerHTML = `<h1>Vorlage nicht verfügbar</h1><p>${escapeHtml(err.message || "Die Vorlage konnte nicht geladen werden.")}</p><button id="templateErrorBack" class="button primary" type="button">Zu meinen Tests</button>`;
+    const message = err?.code === "permission-denied"
+      ? "Die Vorlage ist nicht freigegeben oder der Test läuft noch. Bitte die Lehrkraft um einen freigegebenen Entwurf bitten."
+      : err?.code === "unavailable" ? "Die Verbindung ist gerade nicht verfügbar. Bitte erneut versuchen."
+        : err?.code ? "Die Vorlage konnte nicht geladen werden. Bitte Link und Konto prüfen. Referenz: GC-TEMPLATE-LOAD." : err.message || "Die Vorlage konnte nicht geladen werden.";
+    $("templateCard").innerHTML = `<h1>Vorlage nicht verfügbar</h1><p>${escapeHtml(message)}</p><button id="templateErrorBack" class="button primary" type="button">Zu meinen Tests</button>`;
     $("templateErrorBack")?.addEventListener("click", clearTemplateUrlAndDashboard);
   }
 }
@@ -2592,7 +2627,16 @@ function clearTemplateUrlAndDashboard() {
 
 async function importSharedTemplate() {
   const source = state.currentSharedTemplate;
-  if (!source?.quiz || !state.user) return;
+  if (!source?.quiz || !state.user || importSharedTemplate.pending) return;
+  if (source.importAttempt && source.importAttempt.uid !== state.user.uid) return;
+  if (source.importAttempt && !source.importAttempt.code) {
+    toast("Das Ergebnis der Übernahme ist unklar. Bitte unter Meine Tests prüfen, bevor du sie erneut startest.", "error");
+    clearTemplateUrlAndDashboard();
+    return;
+  }
+  importSharedTemplate.pending = true;
+  const uid = state.user.uid;
+  const current = () => state.user?.uid === uid && state.currentSharedTemplate === source;
   const btn = $("importTemplateCopy");
   if (btn) {
     btn.disabled = true;
@@ -2633,13 +2677,22 @@ async function importSharedTemplate() {
       requiresSecureAssessmentRules: source.questions.some(q => q.audioAnswerMode === "audio-only" || q.audioPresentation === "listening-only"),
       audioReady: source.questions.every(q => !Boolean(q.audioDataUrl) && questionAudioReady(q) && questionAnswerAudioReady(q))
     };
-    const { code: newCode } = await createQuizDocument(base);
+    if (!current()) return;
+    const attempt = source.importAttempt || (source.importAttempt = { uid, code: "", questionIds: [] });
+    if (!attempt.code) attempt.code = (await createQuizDocument(base)).code;
+    const newCode = attempt.code;
+    if (!current()) return;
     for (let i = 0; i < source.questions.length; i += 1) {
+      if (!current()) return;
       const original = source.questions[i];
-      const ref = doc(collection(db, "quizzes", newCode, "questions"));
+      const ref = attempt.questionIds[i]
+        ? doc(db, "quizzes", newCode, "questions", attempt.questionIds[i])
+        : doc(collection(db, "quizzes", newCode, "questions"));
+      attempt.questionIds[i] = ref.id;
       const copy = sanitizeQuestionForSave({ ...deepClone(original), id: ref.id, position: i + 1 });
       await setDoc(ref, { ...copy, position: i + 1, updatedAt: serverTimestamp() });
     }
+    if (!current()) return;
     const url = new URL(location.href);
     url.searchParams.delete("template");
     history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
@@ -2649,11 +2702,14 @@ async function importSharedTemplate() {
     await openEditor(newCode);
   } catch (err) {
     console.error(err);
-    toast("Vorlage konnte nicht kopiert werden.", "error");
+    const partial = Boolean(source.importAttempt?.code);
+    toast(partial ? "Die Kopie ist noch unvollständig. Du kannst die Übernahme in denselben Entwurf fortsetzen." : "Das Ergebnis der Übernahme ist unklar. Bitte unter Meine Tests prüfen, bevor du sie erneut startest.", "error");
     if (btn) {
       btn.disabled = false;
-      btn.textContent = "Als Kopie zu meinen Tests hinzufügen";
+      btn.textContent = partial ? "Angefangene Kopie fortsetzen" : "Unter Meine Tests prüfen";
     }
+  } finally {
+    importSharedTemplate.pending = false;
   }
 }
 

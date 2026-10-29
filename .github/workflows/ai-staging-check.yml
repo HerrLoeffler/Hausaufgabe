@@ -22,6 +22,7 @@ on:
       - 'feature/local-staging-*'
       - 'fix/audio-*'
       - 'fix/material-upload-*'
+      - 'fix/template-*'
       - 'feat/admin-account-*'
       - 'fix/admin-*'
       - 'feature/live-staging-*'
@@ -329,6 +330,9 @@ jobs:
       - run: node tools/browser-layout/feedback-images.cjs
         env:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
+      - run: node tools/browser-layout/template-import.cjs
+        env:
+          GC_TEMPLATE_EVIDENCE: /tmp/gc-layout-evidence/template-import
       - run: node tools/browser-layout/media-creation.cjs
         env:
           GC_MEDIA_BROWSER_EVIDENCE: /tmp/gc-layout-evidence/media-creation
