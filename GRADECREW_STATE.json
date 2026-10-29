@@ -4757,12 +4757,12 @@
           "node_job": 123710891458,
           "node_result": "success",
           "browser_job": 123710890875,
-          "browser_result": "pending; previous exact candidate's Wilma36 passed, unrelated WebKit320 tutorial bottom569>568 failed; retained, sent to tutorial owner."
+          "browser_result": "failure: Wilma36 scenarios passed; tutorial WebKit320x568 create-choice bottom569>568, all hit points true. Retained exact logs; tutorial owner via Zentrale."
         },
         "review": "193 focused +3 host/cache/actor; final29 scheduler +3 error/refresh cases; no P0-P2",
         "blockers": [
           "Browser control disabled in Work after interruption; user asked to re-enable. No auth bypass.",
-          "Hosting awaits exact browser gate and fresh tutorial release reconciliation."
+          "Hosting waits corrected, independently checked tutorial composition: exact source606d Browser CI failed at WebKit320 tutorial step."
         ],
         "report": "docs/evidence/wilma-budget-fundus-live-20261029/REPORT.md",
         "next_action": "Reconcile browser consent and final Browser CI/tutorial source, then promote only four Wilma runtime files and finish B/C/L/D fictional reuse/Undo/reload checks."

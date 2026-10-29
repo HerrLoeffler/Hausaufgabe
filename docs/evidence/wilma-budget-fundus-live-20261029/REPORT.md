@@ -10,3 +10,7 @@ Quelle606d8a2a3d6be29ee1ddf27f8445b06e277f90f5; Tree3c3c8e8ccbc2ff657a80cc143e05
 Eigene fiktive Daten, keine echten Schülerbewertungen geändert. TestWILMALIVE261029. B noch nicht geprüft/erneut bestätigt. Browser deaktiviert; kein API-Erfolg oder Hostingdeploy für offene Schritte behauptet.
 
 Anlage receipts.json enthält ausschließlich gesicherte eigene QA-/Versions-/Budgetmetadaten. Tokens und echte Kontodaten ausgeschlossen. Weitere Details in der bestehenden Workstreamübergabe.
+
+## Finaler CI-Nachweis dieses Kandidaten
+
+Run40948746575: Node22/Rules/Backend erfolgreich, Browserjob123710890875 fehlgeschlagen.36Wilmaszenarien und11Tutorialreisen mitje52Klicks erfolgreich; dannWebKit320×568: create-choice bottom569 bei viewport568 (alle5Trefferpunktefrei, keinSeitenfehler). Kein grünerGesamt-CI-Beleg. KeineHostingpromotion aus606d. TechnischerTutorialowner überZentrale informiert; neueQuelle92d nochungeprüft/nichtübernommen. Browserkontrolle weiterdisabled, Nutzeraktivierungpending.
