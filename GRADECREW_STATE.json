@@ -1117,116 +1117,23 @@
         "GC-WEB-REPAIR-20261007"
       ],
       "stage": "production",
-      "source_commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-      "tree": "fe43aa1134f390a857ea20bfadd9d1d21ddc0a38",
-      "pr": 394,
-      "integration_commit": "7a98896319431d8031aa08d7a0eabad06b127edd",
-      "integration_target": "feature/design-auth-student-20261026",
-      "ci_run": 40865432156,
-      "ci_jobs": [
-        123418885991,
-        123418886438
-      ],
+      "source_commit": "ec7cdd012a463a196a38cce25781158c735f8da2",
+      "pr": 397,
+      "integration_commit": "b8458c1dc0e3e8fe1f926f1adb9e609134cbf5b5",
+      "ci_run": 40957517336,
       "ci": "success",
-      "browser_artifact": 12894152174,
-      "preview": "https://gradecrew-staging-2026--tutorial-live-20261029-71rdg84c.web.app/workspace.html?firstGuide=1",
-      "preview_verified_files": 214,
+      "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/a30cfc3667882e2d",
+      "release_time": "2026-10-29T21:53:35.119Z",
+      "verified_files_per_origin": 214,
       "production_changed": true,
-      "production_cli_started": true,
-      "approval_review": "Initial command denied before execution; no bypass. After direct human approval, one actual Hosting-only CLI execution completed successfully.",
-      "human_permission": "2026-10-29: direct user reply 'ja' to concrete tutorial Live publication question; asks for whole-tour iPhone/iPad coverage",
-      "preserved_runtime_files": 210,
       "changed_runtime": [
-        "crew-tour-hardening.js",
-        "crew-tour-responsive.js",
-        "gradecrew-tour-v7.js",
-        "gradecrew-tour.js"
+        "crew-tour-gc23-polish.js",
+        "crew-tour-gc24-polish.js"
       ],
-      "local_web_ui_tests": 727,
-      "independent_focused_tests": 25,
-      "full_browser_matrix": "Chromium/WebKit ×1280x720,1366x768,1920x1080,320x568,390x844,820x1180,1180x820,390x400:16 full journeys ×52 real actions, plus native modal Tab/Space, abort/restart and no transport writes. 320 reduced motion; viewport shrink/orientation; not physical device/keyboard/OS zoom.",
-      "manual_browser": "Live1280: button covered, three hits on coach paragraph. Preview same journey: five button-centre/edge-centre hits clear; real click reaches local exercise editor/Danke Remy.",
-      "provider_calls": 0,
-      "backend_rules_quota_changed": false,
-      "canonical_2026_changed": false,
-      "physical_device_acceptance": "not_performed",
-      "handoff": "workstreams/gc-design-05b-guest-tour-20261006.md",
-      "next_action": "Martin checks the published tutorial on physical iPhone/iPad; no additional technical publication from this task. Next release owner must preserve552b tutorial files and CAS against fresh Live; pending template import remains separate.",
-      "attempt_history": [
-        {
-          "source": "4763bcd202fcd360ad90b975bdfd52f311e00797",
-          "ci": 40729563058,
-          "result": "failed browser: fully hittable settings Next edge top=-0.109375 CSSpx. Geometric tolerance0.5px only; actual hit tests remain strict. Preview only; no live."
-        },
-        {
-          "source": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-          "result": "full CI success; intended hosting execution rejected before process start; awaiting human permission"
-        },
-        {
-          "source": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-          "result": "After direct human yes: one actual Hosting-only publication succeeded; both origins214/214 hashes verified; real live click five hit points free and local10-question exercise reached",
-          "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/59e0537e80452a02"
-        }
-      ],
-      "previous_production_commit": "8188aa050d6bc7c398555f82583991ae1c69d97a",
-      "production_commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-      "hosting": {
-        "hostingVersion": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/59e0537e80452a02",
-        "releaseTime": "2026-10-29T20:08:43.898Z",
-        "releaseName": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/channels/live/releases/1793304523898000",
-        "hashes": {
-          "https://gradecrew.de": {
-            "commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-            "verifiedFiles": 214,
-            "mismatches": []
-          },
-          "https://hausaufgabe-staging.web.app": {
-            "commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-            "verifiedFiles": 214,
-            "mismatches": []
-          }
-        }
-      },
-      "live_hit_test": {
-        "button": {
-          "bottom": 635.25,
-          "height": 44,
-          "left": 1109.109375,
-          "right": 1249,
-          "top": 591.25,
-          "width": 139.890625,
-          "x": 1109.109375,
-          "y": 591.25
-        },
-        "coach": {
-          "bottom": 708.28125,
-          "height": 246.28125,
-          "left": 735,
-          "right": 1095,
-          "top": 462,
-          "width": 360,
-          "x": 735,
-          "y": 462
-        },
-        "hits": [
-          true,
-          true,
-          true,
-          true,
-          true
-        ],
-        "viewport": [
-          1280,
-          720
-        ]
-      },
-      "live_click_next_state": {
-        "view": "editorView",
-        "heading": "Übung · Meine erste GradeCrew-Reise",
-        "coach": "Danke, Remy!",
-        "question_count": 10,
-        "local_exercise": true
-      }
+      "preserved_runtime_files": 212,
+      "approval": "direct_human_yes_for_exact_ec7",
+      "receipt": "workstreams/tutorial-overlay-release-status-20261029.json",
+      "next_action": "Martin reloads and checks the published tutorial on physical iPhone/iPad. Next promoter must CAS against ec7 or newer and preserve both tutorial modules. Global X during free student answering remains separate."
     }
   },
   "production": {
@@ -1501,116 +1408,23 @@
         "GC-WEB-REPAIR-20261007"
       ],
       "stage": "production",
-      "source_commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-      "tree": "fe43aa1134f390a857ea20bfadd9d1d21ddc0a38",
-      "pr": 394,
-      "integration_commit": "7a98896319431d8031aa08d7a0eabad06b127edd",
-      "integration_target": "feature/design-auth-student-20261026",
-      "ci_run": 40865432156,
-      "ci_jobs": [
-        123418885991,
-        123418886438
-      ],
+      "source_commit": "ec7cdd012a463a196a38cce25781158c735f8da2",
+      "pr": 397,
+      "integration_commit": "b8458c1dc0e3e8fe1f926f1adb9e609134cbf5b5",
+      "ci_run": 40957517336,
       "ci": "success",
-      "browser_artifact": 12894152174,
-      "preview": "https://gradecrew-staging-2026--tutorial-live-20261029-71rdg84c.web.app/workspace.html?firstGuide=1",
-      "preview_verified_files": 214,
+      "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/a30cfc3667882e2d",
+      "release_time": "2026-10-29T21:53:35.119Z",
+      "verified_files_per_origin": 214,
       "production_changed": true,
-      "production_cli_started": true,
-      "approval_review": "Initial command denied before execution; no bypass. After direct human approval, one actual Hosting-only CLI execution completed successfully.",
-      "human_permission": "2026-10-29: direct user reply 'ja' to concrete tutorial Live publication question; asks for whole-tour iPhone/iPad coverage",
-      "preserved_runtime_files": 210,
       "changed_runtime": [
-        "crew-tour-hardening.js",
-        "crew-tour-responsive.js",
-        "gradecrew-tour-v7.js",
-        "gradecrew-tour.js"
+        "crew-tour-gc23-polish.js",
+        "crew-tour-gc24-polish.js"
       ],
-      "local_web_ui_tests": 727,
-      "independent_focused_tests": 25,
-      "full_browser_matrix": "Chromium/WebKit ×1280x720,1366x768,1920x1080,320x568,390x844,820x1180,1180x820,390x400:16 full journeys ×52 real actions, plus native modal Tab/Space, abort/restart and no transport writes. 320 reduced motion; viewport shrink/orientation; not physical device/keyboard/OS zoom.",
-      "manual_browser": "Live1280: button covered, three hits on coach paragraph. Preview same journey: five button-centre/edge-centre hits clear; real click reaches local exercise editor/Danke Remy.",
-      "provider_calls": 0,
-      "backend_rules_quota_changed": false,
-      "canonical_2026_changed": false,
-      "physical_device_acceptance": "not_performed",
-      "handoff": "workstreams/gc-design-05b-guest-tour-20261006.md",
-      "next_action": "Martin checks the published tutorial on physical iPhone/iPad; no additional technical publication from this task. Next release owner must preserve552b tutorial files and CAS against fresh Live; pending template import remains separate.",
-      "attempt_history": [
-        {
-          "source": "4763bcd202fcd360ad90b975bdfd52f311e00797",
-          "ci": 40729563058,
-          "result": "failed browser: fully hittable settings Next edge top=-0.109375 CSSpx. Geometric tolerance0.5px only; actual hit tests remain strict. Preview only; no live."
-        },
-        {
-          "source": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-          "result": "full CI success; intended hosting execution rejected before process start; awaiting human permission"
-        },
-        {
-          "source": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-          "result": "After direct human yes: one actual Hosting-only publication succeeded; both origins214/214 hashes verified; real live click five hit points free and local10-question exercise reached",
-          "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/59e0537e80452a02"
-        }
-      ],
-      "previous_production_commit": "8188aa050d6bc7c398555f82583991ae1c69d97a",
-      "production_commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-      "hosting": {
-        "hostingVersion": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/59e0537e80452a02",
-        "releaseTime": "2026-10-29T20:08:43.898Z",
-        "releaseName": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/channels/live/releases/1793304523898000",
-        "hashes": {
-          "https://gradecrew.de": {
-            "commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-            "verifiedFiles": 214,
-            "mismatches": []
-          },
-          "https://hausaufgabe-staging.web.app": {
-            "commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-            "verifiedFiles": 214,
-            "mismatches": []
-          }
-        }
-      },
-      "live_hit_test": {
-        "button": {
-          "bottom": 635.25,
-          "height": 44,
-          "left": 1109.109375,
-          "right": 1249,
-          "top": 591.25,
-          "width": 139.890625,
-          "x": 1109.109375,
-          "y": 591.25
-        },
-        "coach": {
-          "bottom": 708.28125,
-          "height": 246.28125,
-          "left": 735,
-          "right": 1095,
-          "top": 462,
-          "width": 360,
-          "x": 735,
-          "y": 462
-        },
-        "hits": [
-          true,
-          true,
-          true,
-          true,
-          true
-        ],
-        "viewport": [
-          1280,
-          720
-        ]
-      },
-      "live_click_next_state": {
-        "view": "editorView",
-        "heading": "Übung · Meine erste GradeCrew-Reise",
-        "coach": "Danke, Remy!",
-        "question_count": 10,
-        "local_exercise": true
-      }
+      "preserved_runtime_files": 212,
+      "approval": "direct_human_yes_for_exact_ec7",
+      "receipt": "workstreams/tutorial-overlay-release-status-20261029.json",
+      "next_action": "Martin reloads and checks the published tutorial on physical iPhone/iPad. Next promoter must CAS against ec7 or newer and preserve both tutorial modules. Global X during free student answering remains separate."
     },
     "tutorial_finale_repair_20261029": {
       "task_ids": [
@@ -1618,8 +1432,8 @@
         "GC-DESIGN-05B",
         "GC-WEB-REPAIR-20261007"
       ],
-      "stage": "integrated",
-      "preview_only": true,
+      "stage": "production",
+      "preview_only": false,
       "source_commit": "ec7cdd012a463a196a38cce25781158c735f8da2",
       "runtime_reviewed_source": "ec7cdd012a463a196a38cce25781158c735f8da2",
       "branch": "fix/tutorial-finale-20261029",
@@ -1633,15 +1447,15 @@
         "crew-tour-gc24-polish.js"
       ],
       "preserved_other_files": 212,
-      "production_changed": false,
-      "live_last_observed_source": "552b02be0f483f5430ff949d8f2744fb25b124f0",
+      "production_changed": true,
+      "live_last_observed_source": "ec7cdd012a463a196a38cce25781158c735f8da2",
       "local_root_ui_tests": 699,
       "local_browser_matrix": "Exact ec7 runtime:18 complete Chromium/WebKit journeys ×52 actions=936;320/390 phones,820/1180 tablets,1280/1366/1758/1920 desktop,390x400 short height. Raw finale arrival before test scroll, wheel/X, free-response save, both guest finish routes, abort/restart and zero transport writes. Additional controlled360px late-review growth full journey passes.",
       "independent_runtime_review": "ec7cdd01:10 gc23/gc24 focused tests independently passed, no new P0-P2; observer cleanup/input/step/abort/account scope reviewed.",
       "browser_session": "disabled_in_Work_settings",
       "provider_calls": 0,
       "backend_rules_accounts_changed": false,
-      "next_action": "Await direct human approval for this exact ec7 Hosting-only publication. Live remains552b. If approved, fresh CAS and two-module promotion, then both origins214hashes. Do not publish through another writer.",
+      "next_action": "Martin reloads and checks the published tutorial on physical iPhone/iPad. Next promoter must CAS against ec7 or newer and preserve both tutorial modules. Global X during free student answering remains separate.",
       "attempt_history": [
         "552b red arrival:Next y=-1617; previous scrollIntoViewIfNeeded test masked bug.",
         "92d6 corrected desktop, mobile320 exposed table840px; no deploy.",
@@ -1654,7 +1468,8 @@
         "927d2876: test-only pre-scroll180ms placement wait; WebKit320 first, all18 remain. Independent narrow review no newP0–P2; fixed wait alone is not universal stability proof. LocalWebKit320 full52actions passes; exactCI40954841990 pending.",
         "927 CI40954841990:all9WebKit journeys pass, then Chromium320 genuine raw finale Nexty749 at568 viewport, hitsfalse. No release/waiver.",
         "ec7cdd01:ResizeObserver maintains only initial review arrival against late layout growth, releases on first user input or step/abort/account change and explicitly before Next.699 root/UI + critical320 both engines + controlled360pxReflow pass; independent10tests no newP0-P2. ExactCI40957517336 and full local matrix running; preview214/214verified.",
-        "ec7 exactCI40957517336 success:Node22 and all18 full browser journeys. PR397 mergedb8458c1d. One attempted live command rejected by automatic approval review BEFORE process start because exact ec7 Production approval missing; no CLI/receipt, no retry/workaround. Direct human approval question pending."
+        "ec7 exactCI40957517336 success:Node22 and all18 full browser journeys. PR397 mergedb8458c1d. One attempted live command rejected by automatic approval review BEFORE process start because exact ec7 Production approval missing; no CLI/receipt, no retry/workaround. Direct human approval question pending.",
+        "After explicit direct human approval for exact ec7:one actual Hosting-only CLI execution Exit0. Initial immediate manifest read still differed; subsequent canonical no-cache reads matched both sources and214/214filehashes perOrigin. First read-only version lookup failed, second succeeded. No redeploy. Hosting a30cfc3667882e2d released2026-10-29T21:53:35.119Z."
       ],
       "previous_ci_run": 40954841990,
       "previous_ci_result": "All nine WebKit journeys passed; Chromium320 raw finale arrival blocked, coach y356 and Next y749 due late review layout growth. Genuine runtime blocker; not waived.",
@@ -1667,9 +1482,71 @@
       "browser_artifact": 12935855733,
       "integration_commit": "b8458c1dc0e3e8fe1f926f1adb9e609134cbf5b5",
       "integration_target": "feature/design-auth-student-20261026",
-      "production_cli_started": false,
-      "approval": "required_for_exact_ec7_deployment",
-      "approval_review": "Rejected before process start: fix was authorised, but clear approval for this exact ec7 Production publication was not present. No workaround or indirect execution attempted."
+      "production_cli_started": true,
+      "approval": "direct_human_yes_for_exact_ec7",
+      "approval_review": "Previous command rejected before process start; after direct human approval, exactly one actual Hosting-only deployment completed. No workaround or duplicate deployment.",
+      "human_permission": "2026-10-29 direct reply in this chat: Ja, diesen Fix jetzt live veröffentlichen",
+      "previous_production_commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
+      "production_commit": "ec7cdd012a463a196a38cce25781158c735f8da2",
+      "hosting": {
+        "version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/a30cfc3667882e2d",
+        "releaseTime": "2026-10-29T21:53:35.119Z",
+        "releaseName": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/channels/live/releases/1793310815119000"
+      },
+      "live_hashes": [
+        {
+          "origin": "https://gradecrew.de",
+          "commit": "ec7cdd012a463a196a38cce25781158c735f8da2",
+          "verifiedFiles": 214,
+          "mismatches": []
+        },
+        {
+          "origin": "https://hausaufgabe-staging.web.app",
+          "commit": "ec7cdd012a463a196a38cce25781158c735f8da2",
+          "verifiedFiles": 214,
+          "mismatches": []
+        }
+      ],
+      "release_receipt": {
+        "source": "ec7cdd012a463a196a38cce25781158c735f8da2",
+        "previousLive": "552b02be0f483f5430ff949d8f2744fb25b124f0",
+        "ciRun": 40957517336,
+        "ciAttempt": 1,
+        "pr": 397,
+        "integration": "b8458c1dc0e3e8fe1f926f1adb9e609134cbf5b5",
+        "runtimeChanged": [
+          "crew-tour-gc23-polish.js",
+          "crew-tour-gc24-polish.js"
+        ],
+        "otherFilesPreserved": 212,
+        "startedAt": "2026-10-29T21:53:24.158645+00:00",
+        "hostingOnly": true,
+        "outcome": "verified",
+        "cliExit": 0,
+        "hashes": [
+          {
+            "origin": "https://gradecrew.de",
+            "commit": "ec7cdd012a463a196a38cce25781158c735f8da2",
+            "verifiedFiles": 214,
+            "mismatches": []
+          },
+          {
+            "origin": "https://hausaufgabe-staging.web.app",
+            "commit": "ec7cdd012a463a196a38cce25781158c735f8da2",
+            "verifiedFiles": 214,
+            "mismatches": []
+          }
+        ],
+        "initial_postcheck": "Initial immediate manifest still differed; subsequent canonical no-cache reads matched both sources. No redeploy.",
+        "hosting": {
+          "version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/a30cfc3667882e2d",
+          "releaseTime": "2026-10-29T21:53:35.119Z",
+          "releaseName": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/channels/live/releases/1793310815119000"
+        },
+        "finishedAt": "2026-10-29T21:55:58.786061+00:00",
+        "humanApproval": "Direct human reply in this chat: Ja, diesen Fix jetzt live veröffentlichen",
+        "statusLookup": "First read-only channel-list lookup failed; second succeeded. No redeploy."
+      }
     }
   },
   "automation": {
@@ -2467,13 +2344,29 @@
       "repair_head": "4db28b0198004110c0e2940dc4426a0bb995443a",
       "preview_receipt": 11448542523,
       "latest_overlay_repair": {
+        "task_ids": [
+          "GC-TUTORIAL-01",
+          "GC-DESIGN-05B",
+          "GC-WEB-REPAIR-20261007"
+        ],
         "stage": "production",
-        "source_commit": "552b02be0f483f5430ff949d8f2744fb25b124f0",
-        "ci_run": 40865432156,
-        "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/59e0537e80452a02",
+        "source_commit": "ec7cdd012a463a196a38cce25781158c735f8da2",
+        "pr": 397,
+        "integration_commit": "b8458c1dc0e3e8fe1f926f1adb9e609134cbf5b5",
+        "ci_run": 40957517336,
+        "ci": "success",
+        "hosting_version": "projects/hausaufgabe-staging/sites/hausaufgabe-staging/versions/a30cfc3667882e2d",
+        "release_time": "2026-10-29T21:53:35.119Z",
+        "verified_files_per_origin": 214,
         "production_changed": true,
-        "approval": "direct_human_yes_20261029",
-        "receipt": "workstreams/tutorial-overlay-release-status-20261029.json"
+        "changed_runtime": [
+          "crew-tour-gc23-polish.js",
+          "crew-tour-gc24-polish.js"
+        ],
+        "preserved_runtime_files": 212,
+        "approval": "direct_human_yes_for_exact_ec7",
+        "receipt": "workstreams/tutorial-overlay-release-status-20261029.json",
+        "next_action": "Martin reloads and checks the published tutorial on physical iPhone/iPad. Next promoter must CAS against ec7 or newer and preserve both tutorial modules. Global X during free student answering remains separate."
       }
     },
     {
