@@ -1,4 +1,5 @@
 import {createHash} from 'node:crypto';
+import {fundusEvidence} from './fundus.mjs';
 import {ReviewError} from './core.mjs';
 import {reviewItem} from './scoring.mjs';
 import {canonicalJson as json,canonicalDecisionState,decisionQuestionSnapshot} from './decision-state.mjs';
@@ -77,6 +78,8 @@ export function createDecisionService({projectId,transact,now=Date.now}){
    const revision=(current.wilmaDecisionRevision||0)+1;
    const patch={...recalc(current,grading,questions,selectScale(current,quiz,profile)),wilmaDecisionRevision:revision,wilmaLastOperationId:operationId,wilmaLastQuestionId:questionId,reviewedAt:now(),reviewedBy:uid};
    const receipt={operationId,questionId,submissionId,revision,patch};
+   const evidence=!data.undoOperationId&&data.decision?.status==='confirmed'?fundusEvidence({quizId,questionId,quiz,q,submission:{...current,...patch},submissionId,now:now()}):null;
+   if(evidence&&store.prepareFundus)await store.prepareFundus(evidence);
    store.writeSubmission(quizId,submissionId,patch);
    store.createOperation(opKey(operationId),{uid,quizId,submissionId,questionId,requestHash,questionsHash:hash(data.expectedQuestions),before,afterState:decisionState({...current,...patch}),receipt,createdAt:now(),action:data.undoOperationId?'undo':data.decision.status});
    return receipt;
