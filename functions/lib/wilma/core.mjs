@@ -6,7 +6,7 @@ const norm=value=>String(value??'').normalize('NFKC').trim().toLocaleLowerCase('
 export class ReviewError extends Error{constructor(code,message){super(message);this.httpStatus=code;}}
 function fail(code,message){throw new ReviewError(code,message);}
 function id(value){if(typeof value!=='string'||! /^[A-Za-z0-9_-]{1,100}$/.test(value))fail(400,'Ungültige Testkennung.');return value;}
-export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmission,reserve,finish,provider,readCache=async()=>null}){
+export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmission,reserve,finish,provider,readCache=async()=>null,readFundus=async()=>null,allowCustomCriteria=true}){
  if(!['gradecrew-staging-2026','hausaufgabe-staging'].includes(projectId))throw new Error('Wilma ist für dieses Cloudprojekt nicht zugelassen.');
  const memory=new Map();
  return async({uid,data})=>{
@@ -26,6 +26,7 @@ export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmiss
   if(!Number.isFinite(maximum)||maximum<=0||maximum>100||maximum*2%1)fail(400,'Punkterahmen nicht unterstützt.');
   if(!data.expectedAnswers||typeof data.expectedAnswers!=='object')fail(400,'Antwortabgleich fehlt.');
   if(data.criteria!==undefined&&(typeof data.criteria!=='string'||data.criteria.length>2000))fail(400,'Bewertungsraster ist zu lang.');
+  if(!allowCustomCriteria&&typeof data.criteria==='string'&&data.criteria.trim())fail(400,'Bitte das Raster zuerst in der Aufgabe speichern.');
   const rubric=[data.criteria,q.reviewCriteria,q.acceptedAnswers].find(value=>typeof value==='string'?!!value.trim():Array.isArray(value)&&value.some(x=>String(x).trim()))||[];
   const accepted=[...q.text.matchAll(/\[([^\]]+)\]/g)].map(match=>match[1].split('|'));
   const direct=[],records=[],source=[];
@@ -46,20 +47,23 @@ export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmiss
     if(!unknown){const points=Math.round(accepted.filter((options,i)=>norm(values[i])&&options.map(norm).includes(norm(values[i]))).length/accepted.length*maximum*10)/10;
      if(points*2%1===0){direct.push({id:sid,points,status:'clear',reason:'Bekannte Begriffe; leere Lücken zählen 0 Punkte.'});continue;}}
    }
+   const learned=await readFundus({quizId,questionId,quiz,q,answer,criteria:data.criteria});
+   if(learned){direct.push({...learned,id:sid});continue;}
    records.push({id:'a'+index,sourceId:sid,answer});
   }
   const task={task:q.text,maximum,rubric:q.type==='gapfill'?{criteria:rubric,acceptedGaps:accepted}:rubric,answers:records.map(({id,answer})=>({id,answer}))};
   const fingerprint=digest({version:"wilma-live-20261028-v1",uid,quizId,questionId,snapshot,task,source});
   const revision=digest({question:q,source,rubric});
   if(!records.length)return {answers:direct,revision,questionSnapshot:snapshot,source:'wilma-ai',requestId:null};
-  if(memory.has(fingerprint))return {...memory.get(fingerprint),cached:true};
+  const freshDirect=receipt=>({...receipt,answers:[...receipt.answers.filter(row=>!direct.some(current=>current.id===row.id)),...direct],cached:true});
+  if(memory.has(fingerprint))return freshDirect(memory.get(fingerprint));
   const cached=await readCache(fingerprint);
   if(cached){
    validateWilmaReceipt(cached,{answerIds:ids,maxPoints:maximum});
    if(cached.questionSnapshot!==snapshot)fail(409,'Gespeicherter Vorschlag gehört zu einer anderen Aufgabenfassung.');
-   return {...cached,cached:true};
+   return freshDirect(cached);
   }
-  await reserve(fingerprint);
+  await reserve(fingerprint,task);
   try{
    const result=await provider(task);
    const clean=validateWilmaReceipt({source:'wilma-ai',answers:result.answers},{answerIds:records.map(row=>row.id),maxPoints:maximum});

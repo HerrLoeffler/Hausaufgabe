@@ -8556,6 +8556,10 @@ async function saveReview(submissionId) {
       reviewedBy: state.user.uid
     }});
     toast("Bewertung gespeichert.");
+    if(typeof app!=="undefined"&&app.options?.projectId==="gradecrew-staging-2026"){
+      try{await requestWilma({action:'learn',quizId:panel.wilmaReviewScope.quizId,submissionId,expectedQuestionStates:Object.fromEntries(state.resultQuestions.filter(q=>['text','gapfill'].includes(q.type)).map(q=>[q.id,questionSnapshot(q)])),expectedAnswers:submission.answers||{}});}
+      catch{toast("Bewertung gespeichert. Fundus konnte noch nicht aktualisiert werden.","error");}
+    }
     await openResults(state.currentResultsQuiz.id);
     crewTour?.notify("review-saved", {quizId: state.currentResultsQuiz.id, submissionId});
   } catch (err) {
