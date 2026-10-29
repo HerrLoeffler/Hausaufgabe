@@ -1,6 +1,6 @@
 import {createHash} from 'node:crypto';
 import {createReviewService,ReviewError} from './core.mjs';
-import {quoteReview,reserveBalance,settleBalance,LEGACY_HOLD_MICROS,LIVE_PILOT_ALLOWANCE_MICROS,MODEL} from './budget.mjs';
+import {quoteReview,reserveBalance,settleBalance,normalizeLegacyAllowance,MODEL} from './budget.mjs';
 import {questionSnapshot} from './source.mjs';
 import {fundusKey,fundusEvidence,readEvidence,mergeEvidence} from './fundus.mjs';
 import {createDecisionService} from './decision.mjs';
@@ -88,7 +88,7 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
      const ref=privateDoc('wilma-reviews',fingerprint),job=await tx.get(ref),counter=await tx.get(budget);
      if(job.exists)fail(409,'Dieser Prüflauf wurde bereits gestartet. Bitte Ergebnis aktualisieren; kein automatischer Neuversuch.');
      let monthly,next;
-     if(quote){monthly=db.doc('_wilmaPilotPrivate/month-'+quote.month);const old=(await tx.get(monthly)).data();const ledger=old||{spentMicros:LIVE_PILOT_ALLOWANCE_MICROS+(quote.month==='2026-10'?(counter.data()?.started||0)*LEGACY_HOLD_MICROS:0),reservedMicros:0};next=reserveBalance(ledger,quote);}
+     if(quote){monthly=db.doc('_wilmaPilotPrivate/month-'+quote.month);const old=(await tx.get(monthly)).data();const ledger=normalizeLegacyAllowance(old,quote.month);next=reserveBalance(ledger,quote);}
      if(!monthlyBudget&&(counter.data()?.started||0)>=aiRequestCap)fail(429,'Das begrenzte Wilma-Testkontingent ist aufgebraucht. Manuelles Bewerten bleibt möglich.');
      tx.create(ref,{uid,phase:'started',createdAt:now(),fingerprint,...(quote?{costReservation:quote,costSettled:false}:{})});
      if(quote)tx.set(monthly,{...next,currency:'EUR',limitMicros:20000000,pricingVersion:quote.version,updatedAt:now()});

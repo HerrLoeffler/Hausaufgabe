@@ -1,7 +1,7 @@
 import {readFileSync} from 'node:fs';
 const overhead=Buffer.byteLength(readFileSync(new URL('./system.json',import.meta.url)))+Buffer.byteLength(readFileSync(new URL('./schema.json',import.meta.url)))+8192;
 export const MONTHLY_MICROS=20000000;
-export const LEGACY_HOLD_MICROS=250000;
+export const LEGACY_HOLD_MICROS=1250000;
 // Live retains its separate seven-request pilot; reserve its complete possible
 // cost here instead of silently giving Stage an additional EUR20 allowance.
 export const LIVE_PILOT_ALLOWANCE_MICROS=7*LEGACY_HOLD_MICROS;
@@ -21,4 +21,21 @@ export function settleBalance(ledger,quote,usage){
  validBalance(ledger);
  if(!usage||!integer(usage.input_tokens)||!integer(usage.output_tokens)||usage.input_tokens>quote.inputBound||usage.output_tokens>quote.outputBound||ledger.reservedMicros<quote.maxMicros)throw Error('Wilma-Verbrauch unklar; Kostenreservierung bleibt bestehen.');
  return {...ledger,reservedMicros:ledger.reservedMicros-quote.maxMicros,spentMicros:ledger.spentMicros+usage.input_tokens+usage.output_tokens*6};
+}
+
+// Seven Stage calls predate the monetary policy. Freeze that baseline instead
+// of recharging the cumulative request counter on later deployments.
+export function normalizeLegacyAllowance(ledger,month){
+ const target=LIVE_PILOT_ALLOWANCE_MICROS+(month==='2026-10'?7*LEGACY_HOLD_MICROS:0);
+ if(!ledger)return {spentMicros:target,reservedMicros:0,legacyAllowanceMicros:target};
+ validBalance(ledger);
+ if(ledger.legacyAllowanceMicros!==undefined){
+  if(ledger.legacyAllowanceMicros!==target||ledger.spentMicros<target)throw Error('Wilma-Altreserve unklar. Manuell bewerten.');
+  return ledger;
+ }
+ const previousAllowance=month==='2026-10'?3500000:1750000;
+ if(ledger.spentMicros<previousAllowance)throw Error('Wilma-Altreserve unklar. Manuell bewerten.');
+ const next={...ledger,spentMicros:ledger.spentMicros+target-previousAllowance,legacyAllowanceMicros:target};
+ if(next.spentMicros+next.reservedMicros>MONTHLY_MICROS)throw Object.assign(Error('Wilmas Monatslimit von 20 € ist erreicht. Fundus und manuelles Bewerten bleiben verfügbar.'),{httpStatus:429});
+ return next;
 }
