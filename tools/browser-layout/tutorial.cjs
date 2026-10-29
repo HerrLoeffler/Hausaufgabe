@@ -48,13 +48,20 @@ try{for(const [name,engine,size,touch] of [['chromium',chromium],['webkit',webki
   }
   if(state.title==='Erst unser Crew-Finale.'){
     await page.waitForTimeout(180);
-    const arrival=await page.locator('.gcRealCoach .gcCoachNext').evaluate(e=>{const r=e.getBoundingClientRect();return {rect:r.toJSON(),visible:r.top>=-.5&&r.bottom<=innerHeight+.5,hits:[.2,.5,.8].map(x=>{const h=document.elementFromPoint(r.left+r.width*x,r.top+r.height/2);return h===e||e.contains(h);}),coach:e.closest('.gcRealCoach').getBoundingClientRect().toJSON(),scrollY,body:document.body.className};});
+    const arrival=await page.locator('.gcRealCoach .gcCoachNext').evaluate(e=>{const r=e.getBoundingClientRect();return {rect:r.toJSON(),visible:r.top>=-.5&&r.bottom<=innerHeight+.5&&r.left>=-.5&&r.right<=innerWidth+.5,hits:[.2,.5,.8].map(x=>{const h=document.elementFromPoint(r.left+r.width*x,r.top+r.height/2);return h===e||e.contains(h);}),coach:e.closest('.gcRealCoach').getBoundingClientRect().toJSON(),scrollY,body:document.body.className};});
     fs.writeFileSync(path.join(out,name+'-finale-arrival.json'),JSON.stringify(arrival,null,2));await page.screenshot({path:path.join(out,name+'-finale-arrival.png')});
     assert.ok(arrival.visible&&arrival.hits.every(Boolean),'Crew finale must expose its real Next on arrival without test-driven scroll: '+JSON.stringify(arrival));
+    const close=page.locator('.gcRealCoach .gcCoachClose');
+    async function closeVisible(){return close.evaluate(e=>{const r=e.getBoundingClientRect(),h=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return r.top>=0&&r.bottom<=innerHeight&&r.left>=0&&r.right<=innerWidth&&(h===e||e.contains(h));});}
+    assert.ok(await closeVisible(),'Finale X must be reachable on arrival without test scroll');
+    const y=await page.evaluate(()=>scrollY);await page.mouse.move(size.width/2,size.height/2);await page.mouse.wheel(0,220);await page.waitForTimeout(200);
+    assert.ok((await page.evaluate(()=>scrollY))>y+40,'Finale must permit actual wheel scrolling without programmatic rescue');
+    assert.ok(await closeVisible(),'Finale X must remain visible while reading the task');
+    await page.mouse.wheel(0,-220);await page.waitForTimeout(200);
   }
   const key=JSON.stringify(state);if(key===last)continue;
   const nameInput=page.locator('.gcNamePrompt input');let keyboardProbe=false;if(await nameInput.isVisible()){await nameInput.fill('DEMO');if(touch&&size.width<500){await page.setViewportSize({width:size.width,height:Math.min(400,size.height)});await assertClear(nameInput,'keyboard-shrink name input');keyboardProbe=true;}}
-  const next=page.locator('.gcRealCoach .gcCoachNext').filter({visible:true}).first();
+  const next=state.stage==='finish'&&[320,1180].includes(size.width)?page.getByRole('button',{name:'Zu den allgemeinen Einstellungen',exact:true}):page.locator('.gcRealCoach .gcCoachNext').filter({visible:true}).first();
   const target=page.locator('.gcTourTarget:is(button,a,input[type=submit])').filter({visible:true}).first();
   const chosen=await next.count()?next:target;
   if(await chosen.count()&&await chosen.isEnabled()){await clickChecked(chosen,state.stage+' '+state.title+' '+state.target);if(keyboardProbe)await page.setViewportSize(size);last=key;}
