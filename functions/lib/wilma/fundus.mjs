@@ -19,3 +19,9 @@ export function readEvidence(evidence,args){
  if(!current||current.key!==evidence.key||current.points!==evidence.points)return null;
  return {points:evidence.points,status:'clear',reason:'Aus deinem Fundus · von dir für dieselbe Antwort und Aufgabe bestätigt.',origin:'teacher-fundus'};
 }
+
+export function mergeEvidence(evidence,old){
+ const multipleSources=!!old?.multipleSources||!!old&&old.submissionId!==evidence.submissionId;
+ const conflict=!!old?.conflict||!!old&&old.points!==evidence.points&&multipleSources;
+ return {...evidence,multipleSources,conflict};
+}

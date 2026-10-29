@@ -2,7 +2,7 @@ import {createHash} from 'node:crypto';
 import {createReviewService,ReviewError} from './core.mjs';
 import {quoteReview,reserveBalance,settleBalance,LEGACY_HOLD_MICROS,LIVE_PILOT_ALLOWANCE_MICROS,MODEL} from './budget.mjs';
 import {questionSnapshot} from './source.mjs';
-import {fundusKey,fundusEvidence,readEvidence} from './fundus.mjs';
+import {fundusKey,fundusEvidence,readEvidence,mergeEvidence} from './fundus.mjs';
 import {createDecisionService} from './decision.mjs';
 const fail=(status,message)=>{throw new ReviewError(status,message);};
 const digest=value=>createHash('sha256').update(value).digest('hex');
@@ -32,7 +32,7 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
      const evidence=fundusEvidence({quizId:data.quizId,questionId:q.id,quiz,q,submission,submissionId:data.submissionId,now:now()});
      if(evidence){const ref=privateDoc('wilma-fundus',evidence.key);const old=(await tx.get(ref)).data();entries.push({ref,evidence,old});}
     }
-    for(const {ref,evidence,old} of entries)tx.set(ref,{...evidence,conflict:!!old?.conflict||!!old&&old.submissionId!==evidence.submissionId&&old.points!==evidence.points});
+    for(const {ref,evidence,old} of entries)tx.set(ref,mergeEvidence(evidence,old));
     return {learned:entries.length};
    });
   }
@@ -43,7 +43,7 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
     getSubmission:async(quiz,sid)=>{const snap=await tx.get(db.doc(`quizzes/${quiz}/submissions/${sid}`));return snap.exists?snap.data():null;},
     getQuestions:async quiz=>{const snap=await tx.get(db.collection(`quizzes/${quiz}/questions`));return snap.docs.map(doc=>({id:doc.id,...doc.data()}));},
     getOperation:async id=>{const snap=await tx.get(privateDoc('wilma-decisions',id));return snap.exists?snap.data():null;},
-    ...(monthlyBudget?{prepareFundus:async evidence=>{const ref=privateDoc('wilma-fundus',evidence.key);const old=(await tx.get(ref)).data();tx.set(ref,{...evidence,conflict:!!old?.conflict||!!old&&old.submissionId!==evidence.submissionId&&old.points!==evidence.points});}}:{}),
+    ...(monthlyBudget?{prepareFundus:async evidence=>{const ref=privateDoc('wilma-fundus',evidence.key);const old=(await tx.get(ref)).data();tx.set(ref,mergeEvidence(evidence,old));}}:{}),
     writeSubmission:(quiz,sid,patch)=>tx.update(db.doc(`quizzes/${quiz}/submissions/${sid}`),patch),
     createOperation:(id,operation)=>tx.create(privateDoc('wilma-decisions',id),operation)
    }))});
@@ -63,7 +63,7 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
     const next=settleBalance(ledger,job.costReservation,usage);tx.set(monthly,{...next,updatedAt:now()});tx.update(ref,{costSettled:true,usage:{input_tokens:usage.input_tokens,output_tokens:usage.output_tokens}});
    });
   };
-  const review=createReviewService({projectId,
+  const review=createReviewService({projectId,allowCustomCriteria:!monthlyBudget,
    loadQuiz:quiz=>load('quizzes/'+quiz),loadQuestion:(quiz,q)=>load(`quizzes/${quiz}/questions/${q}`),loadSubmission:(quiz,sid)=>load(`quizzes/${quiz}/submissions/${sid}`),
    readFundus:async args=>{
     if(!monthlyBudget||typeof args.criteria==='string'&&args.criteria.trim())return null;
