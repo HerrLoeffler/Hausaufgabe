@@ -416,9 +416,10 @@ function gradeQuestion(key, given) {
   const type = key.type;
 
   if (type === "text") {
+    if (!normalize(given)) return resultShape(max, 0, false, false);
     if (key.manualReview) return resultShape(max, 0, true, null);
     const ok = (key.acceptedAnswers || []).map(normalize).includes(normalize(given));
-    return resultShape(max, ok ? max : 0, false, ok);
+    return resultShape(max, ok ? max : 0, !ok, ok ? true : null);
   }
   if (type === "number") {
     const raw = String(given ?? "").trim();
@@ -436,13 +437,17 @@ function gradeQuestion(key, given) {
   if (type === "gapfill") {
     const values = Array.isArray(given) ? given : null;
     let good = 0;
+    let needsReview = false;
     (key.gaps || []).forEach((gap, index) => {
       const answer = values ? values[index] : given?.[gap.id];
-      if ((gap.acceptedAnswers || []).map(normalize).includes(normalize(answer))) good += 1;
+      const value = normalize(answer);
+      if (!value) return;
+      if ((gap.acceptedAnswers || []).map(normalize).includes(value)) good += 1;
+      else needsReview = true;
     });
     const total = (key.gaps || []).length;
     const awarded = round1((total ? good / total : 0) * max);
-    return resultShape(max, awarded, false, total > 0 && good === total);
+    return resultShape(max, awarded, needsReview, needsReview ? null : total > 0 && good === total);
   }
   if (type === "matching") {
     const map = given && typeof given === "object" && !Array.isArray(given) ? given : {};

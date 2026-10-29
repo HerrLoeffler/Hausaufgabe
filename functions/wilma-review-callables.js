@@ -22,7 +22,7 @@ async function handler(request){
   if(identity.uid!==request.auth.uid)throw new HttpsError("unauthenticated","Konto stimmt nicht überein.");
   const {createTeacherWilmaRuntime}=await import("./lib/wilma/runtime.mjs");
   const {createWilmaProvider}=await import("./lib/wilma/provider.mjs");
-  const runtime=createTeacherWilmaRuntime({projectId,db:getFirestore(),requireTeacher:requireAiUser,requireAccountWrite,consumeQuota,resultStore:privateResultStore(),provider:async(task,actor)=>createWilmaProvider({client:getOpenAI(),model:TEXT_MODEL,recordUsage})(task,actor)});
+  const runtime=createTeacherWilmaRuntime({projectId,monthlyBudget:true,model:TEXT_MODEL,db:getFirestore(),requireTeacher:requireAiUser,requireAccountWrite,consumeQuota,resultStore:privateResultStore(),provider:async(task,actor)=>createWilmaProvider({client:getOpenAI(),model:TEXT_MODEL,recordUsage})(task,actor)});
   try{return await runtime(request);}catch(error){
     if(error instanceof HttpsError)throw error;
     const code=statusCodes[error.httpStatus]||"unavailable";

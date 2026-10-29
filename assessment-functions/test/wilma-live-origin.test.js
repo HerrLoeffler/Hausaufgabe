@@ -1,0 +1,4 @@
+const test=require('node:test'),assert=require('node:assert/strict');const {gradeQuestion}=require('../lib/assessment-core');
+test('nonempty unknown vocabulary is reviewable, with no false final zero',()=>{const r=gradeQuestion({type:'text',points:1,acceptedAnswers:['key scene']},'last act');assert.equal(r.needsReview,true);assert.equal(r.correct,null);assert.equal(r.awardedPoints,0);});
+test('empty manual free text is a rule zero without AI',()=>{const r=gradeQuestion({type:'text',points:2,manualReview:true},'  ');assert.equal(r.needsReview,false);assert.equal(r.awardedPoints,0);});
+test('partial gap answers keep exact points and unknown nonempty gap open',()=>{const r=gradeQuestion({type:'gapfill',points:2,gaps:[{id:'g0',acceptedAnswers:['Verb']},{id:'g1',acceptedAnswers:['Adjektiv']}]},['Verb','Eigenschaftswort']);assert.equal(r.awardedPoints,1);assert.equal(r.needsReview,true);});
