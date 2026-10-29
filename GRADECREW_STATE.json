@@ -4774,13 +4774,13 @@
       },
       "budget_fundus_live": {
         "stage": "production",
-        "scope": "Backend monthly ceiling/Fundus active; real exact-answer reuse proven. Latest automatic proposal/new free-text confirmation candidate not deployed.",
+        "scope": "Backend monthly ceiling/Fundus and new text teacher-confirmation policy active; automatic frontend preparation not published.",
         "branch": "fix/wilma-budget-fundus-live-20261029",
         "pr": 396,
-        "source_commit": "606d8a2a3d6be29ee1ddf27f8445b06e277f90f5",
-        "tree": "3c3c8e8ccbc2ff657a80cc143e05c95c4697e917",
-        "backend_revision": "reviewwilmaanswers-00003-roy",
-        "submit_revision": "submitassessmentattempt-00054-mep",
+        "source_commit": "54f7004ac200f224ab886fe019ccbbef1a431e38",
+        "tree": "4bed5a4854118df7922a263db6a28771b3f7fe59",
+        "backend_revision": "reviewwilmaanswers-00004-nuz",
+        "submit_revision": "submitassessmentattempt-00055-pur",
         "other_functions_preserved": 60,
         "rules_changed": false,
         "hosting_changed": false,
@@ -4791,11 +4791,12 @@
         "usage_accounting_ceiling_micros": 1056,
         "fictional_live_acceptance": "A real submit -> AI proposal -> teacher-confirmed2/2/grade1. B exact answer -> human screenshot2/2 proposal -> persisted2/2/grade1 with started1 unchanged. L empty real submit ->0/2/grade6 without review/API.",
         "ci": {
-          "run": 40948746575,
-          "node_job": 123710891458,
+          "run": 40957792218,
+          "node_job": 123742312334,
           "node_result": "success",
-          "browser_job": 123710890875,
-          "browser_result": "failure: Wilma36 scenarios passed; tutorial WebKit320x568 create-choice bottom569>568, all hit points true. Retained exact logs; tutorial owner via Zentrale."
+          "wilma_browser_cases": 36,
+          "browser_job": 123742311750,
+          "browser_result": "failure: c35 Tutorial finale Next562..606 exceeds568 viewport, all3hitpointsfalse, no PageErrors; new ec7 owner fix pending."
         },
         "review": "193 focused +3 host/cache/actor; final29 scheduler +3 error/refresh cases; no P0-P2",
         "blockers": [
@@ -4810,7 +4811,7 @@
           "tree": "4bed5a4854118df7922a263db6a28771b3f7fe59",
           "pr": 396,
           "ci_run": 40957792218,
-          "ci_status": "in_progress_at_checkpoint",
+          "ci_status": "Node success; browser failure in separate c35 Tutorial;36Wilma cases passed",
           "policy": "Prepare on visible owned results without separate KI start. Accepted rules/fresh teacher fundus before provider. All new nonempty text needs teacher confirmation, blanks rule0. Historical completed grades preserved.",
           "local_tests": {
             "root_ui": 560,
@@ -4824,8 +4825,21 @@
             "important_findings_remaining": 0,
             "legacy_reopen_repro_fixed": true
           },
-          "deployed": false
-        }
+          "deployed": false,
+          "backend_policy_deployed": true
+        },
+        "fictional_rule_acceptance": {
+          "quiz": "WILMARULE261029",
+          "real_student_submission": true,
+          "single_choice_points": 1,
+          "single_choice_needs_review": false,
+          "accepted_text_points": 1,
+          "accepted_text_needs_review": true,
+          "overall_grade": null,
+          "receipt_hides_pending_points": true,
+          "provider_calls": 0
+        },
+        "remaining_fictional_cases": "C partial and D repeated actual submissions pending0/2/no grade. Provider counter remains1,spent1056micros,reserved0. No additional AI automatically starts on submission; latest frontend not yet published."
       }
     }
   ],
