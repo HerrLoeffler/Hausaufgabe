@@ -50,7 +50,8 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
       const current=getContext().submissions.find(x=>x.id===s.id);
       if(current.grading?.[q.id]?.reviewState==='confirmed')continue;
       if(!current.grading?.[q.id]?.reviewSuggestion)throw Error('Kein sicher zugeordneter KI-Vorschlag.');
-      emit('proposal','KI-Vorschlag bereit · bitte prüfen.');
+      if(current.grading?.[q.id]?.reviewSuggestion?.origin==='teacher-fundus')reserved.delete(key);
+      emit('proposal',current.grading?.[q.id]?.reviewSuggestion?.origin==='teacher-fundus'?'Aus deinem Fundus · bitte bestätigen.':'KI-Vorschlag bereit · bitte prüfen.');
      }catch(error){
       if(error?.code!=='wilma-context-changed'&&getContext().actor===ctx.actor){
        const quota=/resource-exhausted/.test(error?.code||'')||/limit|kontingent|quota/i.test(error?.message||'');
