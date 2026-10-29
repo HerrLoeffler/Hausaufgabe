@@ -547,7 +547,67 @@
       "browser_job": 123749820174,
       "browser_result": "success"
     },
-    "human_live_start_acceptance": "pending",
-    "human_tutorial_approval": "Ja, diesen Tutorial-Fix zusätzlich live veröffentlichen"
+    "human_live_start_acceptance": "passed",
+    "human_tutorial_approval": "Ja, diesen Tutorial-Fix zusätzlich live veröffentlichen",
+    "actual-human-auto-acceptance.json": {
+      "project": "hausaufgabe-staging",
+      "quiz": "WILMALIVE261029",
+      "humanReport": "Ja, die Vorschläge erscheinen automatisch",
+      "method": "Human normal signed-in results opening without KI-start, plus read-only verification of actual private completed request receipts and persisted teacher confirmations. No agent browser inspection or extra provider call.",
+      "paidCases": [
+        "A",
+        "C"
+      ],
+      "noPaidRequestFor": [
+        "B",
+        "D",
+        "L"
+      ],
+      "actualCompletedProviderReceipts": [
+        {
+          "cases": [
+            {
+              "case": "C",
+              "points": 1,
+              "status": "clear"
+            }
+          ],
+          "phase": "completed",
+          "costSettled": true,
+          "inputTokens": 492,
+          "outputTokens": 105
+        },
+        {
+          "cases": [
+            {
+              "case": "A",
+              "points": 2,
+              "status": "clear"
+            }
+          ],
+          "phase": "completed",
+          "costSettled": true,
+          "inputTokens": 576,
+          "outputTokens": 80
+        }
+      ],
+      "C": {
+        "points": 1,
+        "grade": 4,
+        "confirmed": true
+      },
+      "D": {
+        "points": 2,
+        "grade": 1,
+        "confirmed": true
+      },
+      "knownAnswerHasNoAcceptedRule": true,
+      "fundusReuseInference": "D receives2 without any provider receipt for D, exact same answer as existing confirmed A/B and no acceptedAnswers rule; deployed core uses confirmed fundus before provider.",
+      "monthlyCounter": 2,
+      "spentCeilingMicros": 2178,
+      "reservedMicros": 0,
+      "extraProviderCallsByVerification": 0,
+      "writesByVerification": 0
+    }
   }
 }

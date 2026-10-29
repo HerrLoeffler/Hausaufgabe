@@ -1,6 +1,6 @@
 # Wilma: automatische Vorschläge, 20-Euro-Grenze und bestätigter Fundus
 
-Task GC-PEDAGOGY-KB-01 · Auf Production veröffentlicht am 29.10.2026. Die abschließende menschliche Abnahme des automatischen Starts steht noch aus.
+Task GC-PEDAGOGY-KB-01 · Auf Production veröffentlicht am 29.10.2026. Der automatische Start wurde direkt vom Menschen bestätigt und anhand der tatsächlichen Belege lesend nachgeprüft.
 
 ## Verhalten
 
@@ -25,12 +25,12 @@ Es wurden ausschließlich fiktive Tests verwendet; echte Schülerbewertungen bli
 - **WILMALIVE261029, A:** Normale Abgabe, echte KI mit 2/2-Punktevorschlag bei weiterhin gespeicherten 0 Punkten und offener Prüfung. Erst die Lehrerbestätigung speicherte 2/2 und Note1 und erzeugte einen Fundusbeleg.
 - **B, identische Antwort:** Das menschliche Bildschirmbild zeigte den 2/2-Vorschlag. Anschließend waren 2/2 und Note1 dauerhaft gespeichert, während der Providerzähler bei1 blieb. Die Wiederverwendung ohne weiteren API-Aufruf ist damit belegt.
 - **L, leere Antwort:** Normale Abgabe mit 0/2, Note6 und ohne zusätzliche Prüfung oder API.
-- **C, Teilantwort, und D, identische Antwort:** Normal abgegeben; vor dem abschließenden UI-Test weiterhin offen mit 0/2 und ohne Note. Der automatische Start im neuen Livefrontend ist vom Menschen noch zu bestätigen.
+- **C, Teilantwort, und D, identische Antwort:** Martin bestätigt, dass die Vorschläge ohne KI-Start erscheinen. C erhielt per API1/2 und ist bestätigt mit Note4 gespeichert. D erhielt2/2 ohne API und ist bestätigt mit Note1 gespeichert. In den zwei tatsächlichen Providerbelegen kommen nur A und C vor; kein bezahlter Beleg enthält B, D oder L.
 - **WILMARULE261029:** Eine neue echte Abgabe belegt die Auswahlantwort mit 1/1 und needsReview=false sowie den exakt richtigen Freitext „Verb“ mit vorläufig 1/1 und needsReview=true. Die Gesamtnote bleibt leer; der Schülerbeleg zeigt keine offenen Punkte. Kein API-Aufruf.
 
 Eine zusätzliche reine Leseintegration des tatsächlich veröffentlichten Kerns an den fiktiven Dokumenten ergab teacher-fundus, requestId=null, Provider0 und Reservierung0. Dieser Lesecheck allein ist kein authentifizierter HTTP-Nachweis.
 
-Beide eigenen Eingaberunden sind geschlossen; Ergebnisse und offene Lehrerprüfungen bleiben erhalten. Nach dem Hostingdeploy standen unverändert ein Providerstart, 1056MikroEUR konservative Verbrauchsobergrenze und keine offene Reservierung. Die Veröffentlichung änderte keine Punkte.
+Beide eigenen Eingaberunden sind geschlossen; Ergebnisse und offene Lehrerprüfungen bleiben erhalten. Unmittelbar nach Hosting standen unverändert ein Providerstart und1056MikroEUR konservative Verbrauchsobergrenze. Nach dem menschlichen Automatiktest sind es genau zwei Providerstarts und2178MikroEUR bei weiterhin null offener Reservierung. Bestätigte Punkte änderten sich nur durch die menschlichen Entscheidungen. Der prüfende Lesecheck erzeugte keine weitere API-Anfrage oder Schreiboperation.
 
 ## Geld und Grenzen
 
@@ -38,4 +38,4 @@ Die gemeinsame Monatsgrenze beträgt 20EUR: Staging hält bereits 8,75EUR für L
 
 Vor einem API-Aufruf wird eine konservative Obergrenze reserviert. Vollständige Nutzungsdaten erlauben die Abrechnung; bei unbekanntem Verbrauch bleibt die Reserve erhalten. Private Fundusbelege gelten 90Tage und nur für denselben Eigentümer, Test, Aufgabenstand, Bewertungsmaßstab und dieselbe Antwort. Sie enthalten keine zusätzliche Rohtextkopie und dienen keinem Training über andere Tests.
 
-Der automatische Start und die restlichen Korrektur-/Undo-/Reload-Schritte im neuen Livefrontend stehen noch als menschliche Abnahme aus. Die Browserkontrolle im Host war nicht verfügbar und wurde nicht umgangen. Es gibt keinen physischen iPad-Nachweis. Code-, CI- und Hostingnachweise sind keine pauschale Messung einer 99-Prozent-Bewertungsqualität.
+Der automatische Start und die anschließenden gespeicherten Bestätigungen sind durch tatsächlichen menschlichen Gebrauch angenommen. Weiterführende Live-Korrektur/Undo/Reload-Schritte über die vorhandene Stage-Abnahme und automatisierten Verträge hinaus bleiben getrennte Nacharbeit. Die Browserkontrolle im Host war nicht verfügbar und wurde nicht umgangen. Es gibt keinen physischen iPad-Nachweis. Code-, CI- und Hostingnachweise sind keine pauschale Messung einer 99-Prozent-Bewertungsqualität.
