@@ -1,10 +1,10 @@
-import { computeAdaptiveGuidePlan, isCompactGuideViewport } from "./first-guide-responsive.js?v=2.3.1-gc28-mobile";
+import { isCompactGuideViewport } from "./first-guide-responsive.js?v=2.3.1-gc28-mobile";
 
 const MARGIN = 12;
 let frame = 0;
 let settleTimers = [];
 let activeTarget = null;
-let placement = null;
+let activeCoach = null;
 let targetObserver = null;
 
 function viewportMetrics() {
@@ -40,6 +40,18 @@ function installStyles() {
   const style = document.createElement("style");
   style.dataset.gradecrewCrewTourResponsive = "1";
   style.textContent = `
+    html:has(body.gcRealTourActive),body.gcRealTourActive,body.gcRealTourActive *{scroll-behavior:auto!important}
+    html:has(body.gcRealTourActive.gcTourFlow),body.gcRealTourActive.gcTourFlow{overflow:auto!important;overscroll-behavior:auto!important;touch-action:pan-y!important}
+    .gcRealCoach.gcCoachFlow{position:relative!important;inset:auto!important;transform:none!important;translate:none!important;width:100%!important;max-width:100%!important;max-height:none!important;grid-column:1/-1;margin:12px 0!important;box-sizing:border-box;transition:none}
+    dialog.publishReview .gcCoachPublish{margin:0 0 16px!important;padding:12px!important;border-radius:12px!important;border:1px solid #cddcfb!important;box-shadow:none!important;scroll-margin-top:0}
+    dialog.publishReview .gcCoachPublish .gcCoachIdentity img{width:42px!important;height:46px!important}
+    dialog.publishReview .gcCoachPublish h2{font-size:18px}
+    dialog.publishReview .gcCoachPublish p{font-size:13px;margin:8px 0 0}
+    dialog.publishReview .gcCoachPublish>small{display:none}
+    .gcRealTourActive :is(button,a,input[type=submit]).gcTourTarget{min-height:44px!important;min-width:44px!important}
+    .gcRealCoach .gcEditArrow{width:32px;height:32px;justify-self:center;align-self:center}
+    .gcRealCoach .gcCoachClose{display:grid!important;place-items:center;width:44px;height:44px;min-height:44px;top:4px;right:4px}
+    .gcRealCoach .gcCoachIdentity{padding-right:28px}
     .gcRealCoach.gcResponsiveCoach {
       box-sizing: border-box !important;
       overflow-y: auto !important;
@@ -47,6 +59,7 @@ function installStyles() {
       -webkit-overflow-scrolling: touch;
       transform: none !important;
       margin: 0 !important;
+      transition:none!important;
       padding-bottom: max(17px, env(safe-area-inset-bottom, 0px)) !important;
     }
     .gcRealCoach.gcResponsiveCoach .gcCoachNext,
@@ -71,15 +84,16 @@ function installStyles() {
   document.head.appendChild(style);
 }
 
-function observeTarget(target) {
-  if (target === activeTarget) return;
+function observeTarget(target,coach=null) {
+  if (target === activeTarget && coach === activeCoach) return;
   activeTarget = target;
-  placement = null;
+  activeCoach = coach;
   targetObserver?.disconnect();
   targetObserver = null;
-  if (target && "ResizeObserver" in window) {
+  if ((target || coach) && "ResizeObserver" in window) {
     targetObserver = new ResizeObserver(settle);
-    targetObserver.observe(target);
+    if(target)targetObserver.observe(target);
+    if(coach)targetObserver.observe(coach);
   }
 }
 
@@ -103,69 +117,53 @@ function layoutCentered(coach, viewport) {
   coach.style.top = `${Math.round(viewport.top + Math.max(MARGIN, (viewport.height - height) / 2))}px`;
 }
 
+// Clamp across an edge only: clamping toward the target was the old overlap bug.
+export function computeCrewCoachPlacement({viewport,target,width,height,margin=MARGIN,gap=14}) {
+  const left=viewport.left+margin,top=viewport.top+margin,right=viewport.left+viewport.width-margin,bottom=viewport.top+viewport.height-margin;
+  if(width>right-left||height>bottom-top)return null;
+  const clamp=(n,min,max)=>Math.max(min,Math.min(n,max));
+  const x=clamp(target.left+(target.width-width)/2,left,right-width);
+  const y=clamp(target.top+(target.height-height)/2,top,bottom-height);
+  const candidates=[{left:target.right+gap,top:y},{left:target.left-width-gap,top:y},{left:x,top:target.bottom+gap},{left:x,top:target.top-height-gap}];
+  return candidates.find(c=>c.left>=left&&c.top>=top&&c.left+width<=right&&c.top+height<=bottom)||null;
+}
+
+function flowCoach(coach,target) {
+  const anchor=target.closest('.questionCard,.aiCreationPanel,.aiCreationFinish,.card')||target.closest('section.view')||target;
+  // Reserve actual document space rather than covering a control on small screens.
+  if(!anchor.parentElement||anchor.contains(coach))return;
+  resetCoach(coach);
+  coach.classList.add('gcCoachFlow');
+  coach.dataset.gcPlacement='flow';
+  coach.style.order=getComputedStyle(anchor).order;
+  anchor.before(coach);
+  document.body.classList.add('gcTourFlow');
+}
+
 export function layoutCrewCoach() {
-  const coach = document.querySelector(".gcRealCoach");
-  const target = document.querySelector(".gcRealTourActive .gcTourTarget");
+  document.dispatchEvent(new window.Event('gradecrew:tour-anchor-refresh'));
+  const coach = document.querySelector('.gcRealCoach');
+  const target = document.querySelector('.gcRealTourActive .gcTourTarget');
   const viewport = viewportMetrics();
-
-  if (!coach || !coach.isConnected) {
-    observeTarget(null);
-    return;
+  if(!coach?.isConnected){observeTarget(null);document.body.classList.remove('gcTourFlow');return;}
+  if(coach.classList.contains('gcCoachInlineStart')||coach.classList.contains('gc25InlineReviewCoach')||coach.classList.contains('gcCoachContext')){
+    resetCoach(coach);observeTarget(target,coach);return;
   }
-
-  // Inline scenes and gc27 task/help sections intentionally stay in document flow.
-  if (coach.classList.contains("gcCoachInlineStart") || coach.classList.contains("gc25InlineReviewCoach") || coach.classList.contains("gcCoachContext")) {
-    resetCoach(coach);
-    observeTarget(target);
-    return;
+  if(coach.classList.contains('gcCoachFlow')){
+    if(target===activeTarget)return;
+    coach.classList.remove('gcCoachFlow');coach.style.removeProperty('order');document.body.append(coach);
   }
-
-  if (!isCompactGuideViewport(viewport)) {
-    coach.classList.remove("gcResponsiveCoach");
-    coach.removeAttribute("data-gc-placement");
-    coach.style.removeProperty("max-height");
-    coach.style.removeProperty("overflow-y");
-    observeTarget(target);
-    return;
-  }
-
-  installStyles();
-  observeTarget(target);
-
-  if (coach.classList.contains("gcCoachCentered") || !target || !target.getClientRects().length) {
-    layoutCentered(coach, viewport);
-    return;
-  }
-
-  coach.classList.add("gcResponsiveCoach");
-  const width = Math.min(560, viewport.width - MARGIN * 2);
-  coach.style.width = `${Math.max(1, width)}px`;
-  coach.style.left = `${Math.round(viewport.left + (viewport.width - width) / 2)}px`;
-  const maxHeight = Math.max(130, Math.min(360, viewport.height * (viewport.height < 520 ? 0.38 : 0.44)));
-  coach.style.maxHeight = `${Math.min(maxHeight, viewport.height - MARGIN * 2)}px`;
-  coach.style.top = `${viewport.top + MARGIN}px`;
-
-  const targetRect = (target.closest(".variantReviewBar") || target).getBoundingClientRect();
-  const coachHeight = Math.min(coach.getBoundingClientRect().height, maxHeight);
-  if (!placement) {
-    placement = targetRect.top + targetRect.height / 2 >= viewport.top + viewport.height / 2 ? "top" : "bottom";
-  }
-  const plan = computeAdaptiveGuidePlan({
-    viewport,
-    target: { top: targetRect.top, height: targetRect.height },
-    cardHeight: coachHeight,
-    placement,
-    margin: MARGIN,
-    gap: 14
-  });
-
-  coach.dataset.gcPlacement = plan.placement;
-  coach.style.top = `${Math.round(plan.cardTop)}px`;
-
-  if (Math.abs(plan.scrollDelta) > 1) {
-    window.scrollBy({ top: plan.scrollDelta, left: 0, behavior: "auto" });
-    window.requestAnimationFrame(schedule);
-  }
+  document.body.classList.remove('gcTourFlow');installStyles();observeTarget(target,coach);
+  if(coach.classList.contains('gcCoachCentered')||!target?.getClientRects().length){layoutCentered(coach,viewport);return;}
+  coach.classList.add('gcResponsiveCoach');
+  const compact=isCompactGuideViewport(viewport),width=Math.min(compact?560:360,viewport.width-MARGIN*2);
+  coach.style.width=Math.max(1,width)+'px';
+  coach.style.maxHeight=Math.max(1,Math.min(viewport.height-MARGIN*2,compact?Math.min(360,viewport.height*.44):viewport.height-MARGIN*2))+'px';
+  const targetRect=(target.closest('.variantReviewBar')||target).getBoundingClientRect();
+  const rect=coach.getBoundingClientRect();
+  const plan=computeCrewCoachPlacement({viewport,target:targetRect,width:rect.width,height:rect.height});
+  if(!plan){flowCoach(coach,target);return;}
+  coach.dataset.gcPlacement='floating';coach.style.left=Math.round(plan.left)+'px';coach.style.top=Math.round(plan.top)+'px';
 }
 
 export function installCrewTourResponsiveLayout() {
@@ -181,6 +179,7 @@ export function installCrewTourResponsiveLayout() {
     bodyObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
   }
 
+  document.addEventListener("gradecrew:tour-layout", schedule);
   document.addEventListener("click", settle, true);
   document.addEventListener("focusin", settle, true);
   window.addEventListener("resize", settle, { passive: true });

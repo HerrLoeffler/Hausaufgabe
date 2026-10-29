@@ -77,6 +77,7 @@ export function installCrewTour(api) {
   let root = null;
   let target = null;
   let targetInteractive = false;
+  let targetSpec = null;
   let freeRegion = null;
   let targetCleanup = null;
   let timer = 0;
@@ -160,6 +161,7 @@ export function installCrewTour(api) {
     targetCleanup = null;
     target?.classList.remove("gcTourTarget", "gcTourDeleteTarget");
     target = null;
+    targetSpec = null;
     targetInteractive = false;
     cancelAnimationFrame(frame);
     frame = 0;
@@ -175,10 +177,11 @@ export function installCrewTour(api) {
     clearTarget();
     root?.remove();
     root = null;
-    document.body.classList.remove("gcCoachVisible", "gcTourInlineStart", "gcTourInlineReview", "gcTourContext");
+    document.body.classList.remove("gcCoachVisible", "gcTourInlineStart", "gcTourInlineReview", "gcTourContext", "gcTourFlow");
   }
 
   function stop({ done = false } = {}) {
+    if(stage==='publish')document.querySelector('dialog.publishReview[open]')?.dispatchEvent(new Event('cancel',{cancelable:true}));
     ++run;
     active = false;
     busy = false;
@@ -199,12 +202,19 @@ export function installCrewTour(api) {
       Boolean(node.closest("dialog.studentSubmitConfirm[open]"));
   }
 
+  function isPublicationDialogNode(node) {
+    return stage==='publish'&&node instanceof Element&&Boolean(node.closest('dialog.publishReview[open]'));
+  }
+
   function isAllowedNode(node) {
     if (!(node instanceof Node)) return false;
     // The local developer tool is deliberately available at every tutorial step.
     // Events from its shadow DOM are retargeted to this host at document level.
     if (node instanceof Element && (node.id === "gc-review-tool" || node.closest("#gc-review-tool"))) return true;
     if (isSubmitConfirmationNode(node)) return true;
+    // This is the existing modal's local review step: retain its native Tab
+    // trap and editable settings. It is allowed only in the owned publish stage.
+    if(isPublicationDialogNode(node))return true;
     if (api.reviewControlsAllowed?.() && node instanceof Element && node.closest("[data-review-panel], [data-review-toggle], [aria-label=\"Lokale Prüfszenen\"]")) return true;
     if (root?.contains(node)) return true;
     if (targetInteractive && target?.contains(node)) return true;
@@ -224,7 +234,7 @@ export function installCrewTour(api) {
     if (!owned() || !event.isTrusted) return;
     // A whitelisted submit button must be allowed to submit its own form.
     if (event.type === "submit" && targetInteractive && target?.form === event.target) return;
-    if ((root?.classList.contains("gcCoachInlineStart") || (document.body.classList.contains("gcTourInlineReview") || document.body.classList.contains("gcTourContext"))) && ["touchstart", "touchmove", "wheel"].includes(event.type)) return;
+    if ((root?.classList.contains("gcCoachInlineStart") || (document.body.classList.contains("gcTourInlineReview") || document.body.classList.contains("gcTourContext") || document.body.classList.contains("gcTourFlow"))) && ["touchstart", "touchmove", "wheel"].includes(event.type)) return;
     if (isAllowedNode(event.target)) return;
     event.preventDefault();
     event.stopPropagation();
@@ -235,6 +245,7 @@ export function installCrewTour(api) {
   function blockKeyboard(event) {
     if (!owned() || !event.isTrusted) return;
     if (isSubmitConfirmationNode(event.target)) return;
+    if(isPublicationDialogNode(event.target)&&event.key==='Escape')return;
     if (event.key === "Escape") {
       event.preventDefault();
       event.stopPropagation();
@@ -243,7 +254,7 @@ export function installCrewTour(api) {
       return;
     }
     if (event.metaKey || event.ctrlKey || event.altKey) return;
-    if ((document.body.classList.contains("gcTourInlineReview") || document.body.classList.contains("gcTourContext")) && ["ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown"].includes(event.key)) return;
+    if ((document.body.classList.contains("gcTourInlineReview") || document.body.classList.contains("gcTourContext") || document.body.classList.contains("gcTourFlow")) && ["ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown"].includes(event.key)) return;
     if (isAllowedNode(event.target)) return;
     if (["Tab", "Enter", " ", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Home", "End", "PageUp", "PageDown", "Backspace", "Delete", "Escape"].includes(event.key) || event.key.length === 1) {
       event.preventDefault();
@@ -257,10 +268,18 @@ export function installCrewTour(api) {
   ["pointerdown", "pointerup", "mousedown", "mouseup", "click", "dblclick", "contextmenu", "submit"].forEach(type => document.addEventListener(type, blockOutsideTour, true));
   ["touchstart", "touchmove", "wheel"].forEach(type => document.addEventListener(type, blockOutsideTour, { capture: true, passive: false }));
   document.addEventListener("keydown", blockKeyboard, true);
+  document.addEventListener('gradecrew:tour-anchor-refresh',()=>{
+    syncPublicationCoach();
+    if(!owned()||!root?.isConnected||!targetSpec||target?.isConnected)return;
+    const spec=targetSpec;
+    if($(spec.selector))setTarget(spec.selector,{...spec,scroll:false});
+  });
 
   function place() {
     frame = 0;
     if (!root?.isConnected || root.classList.contains("gcCoachInlineStart") || root.classList.contains("gc25InlineReviewCoach") || root.classList.contains("gcCoachContext")) return;
+    // The responsive module owns all floating placement, including desktop.
+    if(window.__gradecrewCrewTourResponsiveInstalled){document.dispatchEvent(new Event('gradecrew:tour-layout'));return;}
     const rect = root.getBoundingClientRect();
     const margin = 18;
     if (root.classList.contains("gcCoachCentered") || !target?.isConnected) {
@@ -286,14 +305,18 @@ export function installCrewTour(api) {
 
   function setTarget(selectorOrNode, { interactive = false, onClick = null, deleteTarget = false, scroll = true } = {}) {
     clearTarget();
+    targetSpec = typeof selectorOrNode === "string" ? {selector:selectorOrNode,interactive,onClick,deleteTarget} : null;
     target = typeof selectorOrNode === "string" ? $(selectorOrNode) : selectorOrNode;
     targetInteractive = Boolean(target && interactive);
     if (!target) { schedulePlace(); return null; }
     target.classList.add("gcTourTarget");
     if (deleteTarget) target.classList.add("gcTourDeleteTarget");
     for (let parent = target.parentElement; parent; parent = parent.parentElement) if (parent.tagName === "DETAILS") parent.open = true;
-    // Move gently to the next context; inline task steps also allow manual scrolling.
-    if (scroll) queueMicrotask(() => target?.isConnected && (root?.classList.contains("gcCoachContext") ? root : target).scrollIntoView({ block: root?.classList.contains("gcCoachContext") ? "start" : "center", behavior: globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ? "instant" : "smooth" }));
+    const panel=target.closest('.aiCreationPanel');
+    const toggle=panel?.querySelector('.aiSectionToggle');
+    if(toggle?.getAttribute('aria-expanded')==='false')toggle.click();
+    // Resolve current DOM/layout before showing the next instruction.
+    if (scroll) queueMicrotask(() => target?.isConnected && (root?.classList.contains("gcCoachContext") ? root : target).scrollIntoView({ block: root?.classList.contains("gcCoachContext") ? "start" : "center", behavior: "instant" }));
     const move = () => schedulePlace();
     addEventListener("resize", move, { passive: true });
     addEventListener("scroll", move, { passive: true, capture: true });
@@ -354,7 +377,7 @@ export function installCrewTour(api) {
         if (origin.isConnected) origin.replaceWith(save);
         else origin.remove();
         save.classList.remove("gc23SaveReviewFloating");
-        document.body.classList.remove("gcTourInlineReview", "gcTourContext");
+        document.body.classList.remove("gcTourInlineReview", "gcTourContext", "gcTourFlow");
       };
     }
     const context = target?.closest("#questionList .questionCard") || (selector === "#aiCustomNotes" ? target?.closest("label") || target : null);
@@ -680,8 +703,28 @@ export function installCrewTour(api) {
     stage="settings"; api.showSettings();
     coach("grade","So ist unser Probetest eingestellt.","Eine Minute Zeit, Start durch die Testperson und feste Aufgabenreihenfolge. Nach der Abgabe siehst du Punkte, Note und Lösungen. „Mischen“ würde die Reihenfolge von Aufgaben oder Antworten verändern – das ist hier ausgeschaltet. Weitere Einstellungen kannst du später in Ruhe ansehen.",{target:"#editorView .editorSettingsDisclosure",button:"Weiter zur Freigabe",onButton:()=>{
       const issue=api.checkDemo(); if(issue)return error(issue,showSettingsStep);
-      stage="publish"; coach("grade","Schwupps – dein Test ist bereit!","Klicke auf „Veröffentlichen“. Erst dann entsteht der Zugang für deine Klasse.",{target:"#publishBtn",interactiveTarget:true});
+      showPublishStep();
     }});
+  }
+
+  function showPublishStep(){
+    stage='publish';coach('grade','Schwupps – dein Test ist bereit!','Klicke auf „Veröffentlichen“. Im nächsten Fenster schauen wir Start, Reihenfolge und Auswertung gemeinsam an.',{target:'#publishBtn',interactiveTarget:true});
+  }
+
+  function syncPublicationCoach(){
+    if(!owned()||stage!=='publish')return;
+    const dialog=document.querySelector('dialog.publishReview[open]');
+    if(!dialog){if(root?.classList.contains('gcCoachPublish'))showPublishStep();return;}
+    const step=dialog.dataset.step||'1';
+    if(root?.dataset.gcPublishStep===step)return;
+    const action=step==='3'?'publish':'next';
+    const control=dialog.querySelector(`[data-action="${action}"]`);
+    const body=dialog.querySelector('.publishReviewBody');
+    if(!body||!control)return;
+    const copy={1:['Start und Zeit','Für unsere Übung startet die Testperson selbst. Die eine Minute bleibt eingestellt. Schau dir die Angaben an und gehe mit „Weiter“ zum nächsten Schritt.'],2:['Die Reihenfolge bleibt gleich','Für unsere gemeinsame Übung bleiben Aufgaben und Antworten in der gespeicherten Reihenfolge. Mit „Weiter“ geht es zur Auswertung.'],3:['Die Freigabe kurz prüfen',api.isGuest?.()?'Hier siehst du Auswertung und Lösungsfreigabe. In dieser Gastübung entsteht kein öffentlicher Test. Bestätige anschließend mit „Jetzt veröffentlichen“.':'Hier siehst du Auswertung und Lösungsfreigabe. Prüfe die Angaben und bestätige anschließend mit „Jetzt veröffentlichen“.']}[step];
+    const node=coach('grade',copy[0],copy[1],{target:control,interactiveTarget:true,className:'gcCoachPublish gcCoachContext'});
+    if(!node)return;
+    node.dataset.gcPublishStep=step;body.prepend(node);document.body.classList.add('gcTourContext');
   }
 
   function askName() {

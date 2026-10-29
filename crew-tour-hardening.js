@@ -102,6 +102,7 @@ function installCrewTourHardening() {
     if (document.body.classList.contains("gcTourAnswering") &&
         event.target instanceof Element &&
         event.target.closest("dialog.studentSubmitConfirm[open]")) return;
+    if(event.target instanceof Element&&event.target.closest('dialog.publishReview[open]')&&document.querySelector('.gcRealCoach[data-tour-stage="publish"]'))return;
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation?.();
