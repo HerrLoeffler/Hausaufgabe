@@ -4688,47 +4688,43 @@
       },
       "budget_fundus_live": {
         "stage": "production",
-        "scope": "Backend monthly ceiling/Fundus and new text teacher-confirmation policy active; automatic frontend preparation not published.",
+        "scope": "Production backend ceiling/Fundus/text-confirmation and automatic own-results frontend; human automatic-start, persisted confirmation and no-API reuse accepted.",
         "branch": "fix/wilma-budget-fundus-live-20261029",
         "pr": 396,
-        "source_commit": "54f7004ac200f224ab886fe019ccbbef1a431e38",
-        "tree": "4bed5a4854118df7922a263db6a28771b3f7fe59",
+        "source_commit": "69414965b345881a8e66e55b6b76b2dd982dec41",
+        "tree": "a6dc1a9c95e2e86e0251086b85dcf98e8ae198da",
         "backend_revision": "reviewwilmaanswers-00004-nuz",
         "submit_revision": "submitassessmentattempt-00055-pur",
         "other_functions_preserved": 60,
         "rules_changed": false,
-        "hosting_changed": false,
+        "hosting_changed": true,
         "live_monthly_share_eur": 8.75,
         "shared_stage_live_monthly_ceiling_eur": 20,
         "budget_partition": "Existing Stage EUR20 ledger already withholds EUR8.75 for Live; effective Stage spend <=EUR11.25 plus Live <=EUR8.75. No second EUR20 allowance, no history reset.",
-        "provider_calls": 1,
-        "usage_accounting_ceiling_micros": 1056,
-        "fictional_live_acceptance": "A real submit -> AI proposal -> teacher-confirmed2/2/grade1. B exact answer -> human screenshot2/2 proposal -> persisted2/2/grade1 with started1 unchanged. L empty real submit ->0/2/grade6 without review/API.",
+        "provider_calls": 2,
+        "usage_accounting_ceiling_micros": 2178,
+        "fictional_live_acceptance": "A/B real paid proposal and exact no-paid reuse confirmed2/2; L blank0/2; C automatically prepared by API1/2 and teacher-confirmed persisted grade4; D automatically reused2/2 without API and teacher-confirmed grade1. Human explicitly reports suggestions appeared without KI-start. Only A/C have actual provider receipts,2 in total.",
         "ci": {
-          "run": 40957792218,
-          "node_job": 123742312334,
+          "run": 40959952965,
+          "node_job": 123749819925,
           "node_result": "success",
-          "wilma_browser_cases": 36,
-          "browser_job": 123742311750,
-          "browser_result": "failure: c35 Tutorial finale Next562..606 exceeds568 viewport, all3hitpointsfalse, no PageErrors; new ec7 owner fix pending."
+          "browser_job": 123749820174,
+          "browser_result": "success"
         },
         "review": "193 focused +3 host/cache/actor; final29 scheduler +3 error/refresh cases; no P0-P2",
-        "blockers": [
-          "BrowserLib still reports global Work browser disabled despite site AlwaysAllow; no bypass or new agent UI evidence.",
-          "Hosting gate awaits independently verified Tutorial runtime composition; previous full browser CI failed; latest exact Wilma CI pending."
-        ],
+        "blockers": [],
         "report": "docs/evidence/wilma-budget-fundus-live-20261029/REPORT.md",
-        "next_action": "Finish exact CI and verified Tutorial composition, minimally promote new policy backend and four Wilma frontend files preserving all current foreign bytes, then authenticate/reload/correction/Undo acceptance.",
+        "next_action": "Use on own live tests; broaden quality corpus and device/optional UI acceptance without further paid fictitious probes in this QA round.",
         "automatic_proposals_candidate": {
-          "stage": "branch_only",
-          "source": "54f7004ac200f224ab886fe019ccbbef1a431e38",
-          "tree": "4bed5a4854118df7922a263db6a28771b3f7fe59",
+          "stage": "production",
+          "source": "69414965b345881a8e66e55b6b76b2dd982dec41",
+          "tree": "a6dc1a9c95e2e86e0251086b85dcf98e8ae198da",
           "pr": 396,
-          "ci_run": 40957792218,
-          "ci_status": "Node success; browser failure in separate c35 Tutorial;36Wilma cases passed",
+          "ci_run": 40959952965,
+          "ci_status": "Node and Browser success",
           "policy": "Prepare on visible owned results without separate KI start. Accepted rules/fresh teacher fundus before provider. All new nonempty text needs teacher confirmation, blanks rule0. Historical completed grades preserved.",
           "local_tests": {
-            "root_ui": 560,
+            "root_ui": 561,
             "functions": 464,
             "assessment": 94,
             "wilma_ci_command": 124
@@ -4739,8 +4735,11 @@
             "important_findings_remaining": 0,
             "legacy_reopen_repro_fixed": true
           },
-          "deployed": false,
-          "backend_policy_deployed": true
+          "deployed": true,
+          "backend_policy_deployed": true,
+          "hosting_version": "69a993a0fd01dd38",
+          "human_live_automatic_start": "passed: direct human reply plus private completed receipt/confirmation verification",
+          "integration_review_tests": 250
         },
         "fictional_rule_acceptance": {
           "quiz": "WILMARULE261029",
@@ -4753,7 +4752,57 @@
           "receipt_hides_pending_points": true,
           "provider_calls": 0
         },
-        "remaining_fictional_cases": "C partial and D repeated actual submissions pending0/2/no grade. Provider counter remains1,spent1056micros,reserved0. No additional AI automatically starts on submission; latest frontend not yet published."
+        "remaining_fictional_cases": "All A/B/C/D/L final; closed input rounds retained. WILMARULE exact-text provisional review case additionally verified in real submission; optional broader UI/device acceptance remains.",
+        "backend_source_commit": "54f7004ac200f224ab886fe019ccbbef1a431e38",
+        "hosting": {
+          "project": "hausaufgabe-staging",
+          "source_commit": "69414965b345881a8e66e55b6b76b2dd982dec41",
+          "version": "69a993a0fd01dd38",
+          "verified_files_per_origin": 215,
+          "preserved_hosting_files": 213,
+          "config_preserved": true,
+          "preserved_tutorial_source": "ec7cdd012a463a196a38cce25781158c735f8da2",
+          "runtime_files": [
+            "app.js",
+            "wilma-answer-review.css",
+            "wilma-answer-review.mjs",
+            "wilma-auto-review.mjs"
+          ]
+        },
+        "acceptance": {
+          "human_automatic_start": true,
+          "persisted_C": {
+            "points": 1,
+            "max": 2,
+            "grade": 4,
+            "confirmed": true
+          },
+          "persisted_D": {
+            "points": 2,
+            "max": 2,
+            "grade": 1,
+            "confirmed": true
+          },
+          "actual_paid_cases": [
+            "A",
+            "C"
+          ],
+          "no_paid_request_cases": [
+            "B",
+            "D",
+            "L"
+          ],
+          "paid_probe_count": 2,
+          "reserved_micros": 0,
+          "teacher_signed_in_role": "existing Martin account; no ordinary-teacher role claim for this Live test",
+          "agent_browser_inspection": false,
+          "physical_ipad": "not tested",
+          "extra_provider_calls_by_readcheck": 0
+        },
+        "remaining": [
+          "Broader teacher quality corpus; no measured99% claim.",
+          "Physical device acceptance and further targeted Live correction/Undo/reload checks beyond existing Stage acceptance and automated contracts."
+        ]
       }
     }
   ],

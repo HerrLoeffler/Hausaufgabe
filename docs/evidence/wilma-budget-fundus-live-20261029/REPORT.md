@@ -1,25 +1,41 @@
-# Wilma Live:20EUR, Fundus und automatische Vorschläge
+# Wilma: automatische Vorschläge, 20-Euro-Grenze und bestätigter Fundus
 
-Task GC-PEDAGOGY-KB-01. Backend606d aufProduction, automatische Vorschläge54f7004a nochKandidat.
+Task GC-PEDAGOGY-KB-01 · Auf Production veröffentlicht am 29.10.2026. Der automatische Start wurde direkt vom Menschen bestätigt und anhand der tatsächlichen Belege lesend nachgeprüft.
 
-Wilma29.10.: LiveB2/2-Vorschlag durch Humanbild und anschließend persistierte2/2/Note1 bei unverändert1Providerstart nachgewiesen; LeerfallL0/Note6 ohneAPI. Automatische Vorbereitung beim Öffnen eigener Ergebnisse und Lehrerbestätigung für neue nichtleere Freitexte lokal/remote54f7004a vorbereitet;560Root/UI,464Functions,94Assessment,124CI-Verträge und unabhängiger Nachreview grün. Noch kein Deploy dieser Präzisierung; Hosting552b/backend606d. ExakteCI40957792218 läuft; Tutorialowner neuerRuntimefixec7c nochseparatinPrüfung. KeinevolleLive-/Geräteabnahme behauptet.
+## Verhalten
 
-Backend606d: reviewwilmaanswers-00003-roy undsubmitassessmentattempt-00054-mep ACTIVE.60andereFunctions/Rules erhalten. Global20EUR mittelsStage11,25+Live8,75, keineHistorienlöschung. Liveprovider1/1056MikroEURCeiling/reserved0. Eigene fiktiveTests, keineechtenSchülerbewertungen geändert.
+Beim Öffnen eigener sichtbarer Ergebnisse bereitet Wilma Vorschläge ohne zusätzlichen KI-Start vor. Auswahl- und Zahlenaufgaben werden weiterhin nach festen Regeln bewertet. Bei Freitext kommen frische bestätigte Antworten und exakt akzeptierte Lösungen vor einem API-Aufruf. Neue nichtleere Freitexte bleiben auch bei einer passenden Musterlösung bis zur Lehrerbestätigung offen. Leere Antworten zählen nach der Regel null Punkte.
 
-A wurde normalabgegeben, KI2/2vorerst0/review, Bestätigungpersistiert2/2/Note1. BidenteAntwort wurde normalabgegeben, Humanbild zeigt2/2-Vorschlag; spätereCloudlesung bestätigtBgraded2/2/Note1 undCounterunverändert1. Zusätzlich reineLeseintegration des exaktdeployedKerns anaktuellenfiktivenDokumenten ergibtteacher-fundus/requestIdnull/Provider0/Reservierung0; dieseLeseintegrationalleinistKEINHTTPbeleg. Lleer realabgegeben0/2/Note6 ohneReview/API.
+Bestätigte Punkte und historische abgeschlossene Bewertungen bleiben erhalten. Ungeprüfte KI-Vorschläge werden weder als bestätigte Bewertung gelernt noch als endgültige Note freigegeben.
 
-## Aktueller Folgeauftrag
+## Veröffentlichung und Prüfung
 
-AutomatischbeimÖffneneigenersichtbarerErgebnisse; keinzusätzlicherAufgaben-KIstart. BekannteRegeln undfrischebestätigteAntwortenvorProvider. Neue nichtleereFreitexteimmerLehrerbestätigung, auchRegelvorschlag. Leertextregel0, historischefertigeBewertungenbleibenerhalten. Lokal560Root/UI+464Functions+94Assessment;124engeWilma-CI-Verträge. UnabhängigerNachreview53Tests+16Negativfälle, behobenesLegacy-ReopenP2 undechtesDecisionservice-Repro. Remote54f7004a/Tree4bed5a48/PR396. NochkeinFolgeDeploy.
+Frontend: `69414965b345881a8e66e55b6b76b2dd982dec41`, Tree `a6dc1a9c95e2e86e0251086b85dcf98e8ae198da`, PR396. Hosting: `69a993a0fd01dd38`. Auf gradecrew.de und hausaufgabe-staging.web.app stimmen jeweils 215/215 Laufzeitdateien. 213 vorhandene Dateien und die Hostingkonfiguration sind erhalten. Geändert wurden vier Wilma-Dateien und das Manifest.
 
-## CI und Grenzen
+Der separat freigegebene Tutorialstand ec7 bleibt in beiden Dateien erhalten. Sein Hostingnachweis a30cfc wurde vorab mit dem tatsächlichen Cloudstand und eigenen Hashprüfungen abgeglichen. Das Backend bleibt auf 54f: Review00004-nuz und Submit00055-pur sind ACTIVE; 60 andere Functions, Regeln und Staging blieben erhalten. Für 694 war kein neuer Backenddeploy nötig.
 
-40948746575 und40954819216:Node/Rules/Backend und36WilmaBrowserszenariengrün, GesamtBrowserCIrotimTutorial. Tutorial92740954841990roheFinaleankunftNexty749..793bei568Viewport; kein1px-Flake. NeuerOwnerRuntimefixec7c wirdseparatgeprüft. Exact54fCI40957792218laufendzumCheckpoint; keinGesamtgrünbehauptet. Hostingweiter552b, frischerCASmussgc23+gc24undandereAssetsbewahren. BrowserLibglobalWorkdisabled trotzAlwaysAllow; keinBrowserfallback/Authbypass, keinphysischeriPadnachweis. EigeneC/D/Korrektur/Undo/ReloadaufletztemLiveUIundTestschließungnochzuprüfen.
+Die exakte CI40959952965 ist erfolgreich: Node123749819925 und Browser123749820174. Lokal bestanden 561 Root/UI-, 464 Functions- und 94 Assessmenttests sowie die 124 Wilma-CI-Verträge. Der unabhängige Integrationsreview bestand mit 250 Tests. Ein zuvor gefundener Fehler beim Wiederöffnen historischer Freitexte wurde mit Client-, Server- und Entscheidungsservice-Regressionsfällen behoben und unabhängig nachgeprüft.
 
-## Nachträglich verifiziert: Freitextpflicht im Live-Abgabeweg
+Frühere gescheiterte Tutorialprüfungen bleiben als Versuchshistorie erhalten. Es wurden keine Freigaben umgangen oder unveränderte fehlerhafte Läufe blind wiederholt.
 
-Folgebackend54f7004a jetzt tatsächlich Production: Review00004-nuz/Submit00055-pur ACTIVE, genaueZIPs undErhalt60andererFunctions/Rules/Stage verifiziert. Echte fiktive WILMARULE261029-Abgabe: SingleChoice1/1automatisch, exakterFreitext1/1vorläufig+needsReviewtrue, GesamtgradeNULL, SchülerreceiptverbirgtPendingpunkte, keinAPI. Hostingweiter552b; automatische Vorbereitung imFrontend nochunveröffentlicht. CI40957792218Node/124WilmaVerträge/36WilmaBrowserszenariengrün, Gesamtlayoutrotimc35Tutorial. NeuerOwnerfixec7/CI40957517336nochlaufend; keinBlindrerun/keinHosting.
+## Echte eigene Live-Testdaten
 
-Neuer Regeltest und Backend-ZIP/CI/Reviewbeleg stehen separat in receipts.json unter followup_backend_54f; ältere606d-Belege bleiben als Historie erhalten. C/D bereits normalabgegeben ohneAPI, nochkeineAuto-Prüfung/Bestätigung durchgeführt. KeineFreigabehistorie oderBudgets zurückgesetzt.
+Es wurden ausschließlich fiktive Tests verwendet; echte Schülerbewertungen blieben unverändert.
 
-Beide eigenen fiktiven Testrunden WILMALIVE261029/WILMARULE261029 nach den Abgaben geschlossen; Ergebnisse und offene Lehrerprüfungen bleiben erhalten. Keine Bewertungen verändert.
+- **WILMALIVE261029, A:** Normale Abgabe, echte KI mit 2/2-Punktevorschlag bei weiterhin gespeicherten 0 Punkten und offener Prüfung. Erst die Lehrerbestätigung speicherte 2/2 und Note1 und erzeugte einen Fundusbeleg.
+- **B, identische Antwort:** Das menschliche Bildschirmbild zeigte den 2/2-Vorschlag. Anschließend waren 2/2 und Note1 dauerhaft gespeichert, während der Providerzähler bei1 blieb. Die Wiederverwendung ohne weiteren API-Aufruf ist damit belegt.
+- **L, leere Antwort:** Normale Abgabe mit 0/2, Note6 und ohne zusätzliche Prüfung oder API.
+- **C, Teilantwort, und D, identische Antwort:** Martin bestätigt, dass die Vorschläge ohne KI-Start erscheinen. C erhielt per API1/2 und ist bestätigt mit Note4 gespeichert. D erhielt2/2 ohne API und ist bestätigt mit Note1 gespeichert. In den zwei tatsächlichen Providerbelegen kommen nur A und C vor; kein bezahlter Beleg enthält B, D oder L.
+- **WILMARULE261029:** Eine neue echte Abgabe belegt die Auswahlantwort mit 1/1 und needsReview=false sowie den exakt richtigen Freitext „Verb“ mit vorläufig 1/1 und needsReview=true. Die Gesamtnote bleibt leer; der Schülerbeleg zeigt keine offenen Punkte. Kein API-Aufruf.
+
+Eine zusätzliche reine Leseintegration des tatsächlich veröffentlichten Kerns an den fiktiven Dokumenten ergab teacher-fundus, requestId=null, Provider0 und Reservierung0. Dieser Lesecheck allein ist kein authentifizierter HTTP-Nachweis.
+
+Beide eigenen Eingaberunden sind geschlossen; Ergebnisse und offene Lehrerprüfungen bleiben erhalten. Unmittelbar nach Hosting standen unverändert ein Providerstart und1056MikroEUR konservative Verbrauchsobergrenze. Nach dem menschlichen Automatiktest sind es genau zwei Providerstarts und2178MikroEUR bei weiterhin null offener Reservierung. Bestätigte Punkte änderten sich nur durch die menschlichen Entscheidungen. Der prüfende Lesecheck erzeugte keine weitere API-Anfrage oder Schreiboperation.
+
+## Geld und Grenzen
+
+Die gemeinsame Monatsgrenze beträgt 20EUR: Staging hält bereits 8,75EUR für Live zurück. Damit sind effektiv höchstens 11,25EUR auf Staging und 8,75EUR auf Live möglich. Es gibt keinen zweiten 20-Euro-Topf und keine gelöschte Verbrauchshistorie.
+
+Vor einem API-Aufruf wird eine konservative Obergrenze reserviert. Vollständige Nutzungsdaten erlauben die Abrechnung; bei unbekanntem Verbrauch bleibt die Reserve erhalten. Private Fundusbelege gelten 90Tage und nur für denselben Eigentümer, Test, Aufgabenstand, Bewertungsmaßstab und dieselbe Antwort. Sie enthalten keine zusätzliche Rohtextkopie und dienen keinem Training über andere Tests.
+
+Der automatische Start und die anschließenden gespeicherten Bestätigungen sind durch tatsächlichen menschlichen Gebrauch angenommen. Weiterführende Live-Korrektur/Undo/Reload-Schritte über die vorhandene Stage-Abnahme und automatisierten Verträge hinaus bleiben getrennte Nacharbeit. Die Browserkontrolle im Host war nicht verfügbar und wurde nicht umgangen. Es gibt keinen physischen iPad-Nachweis. Code-, CI- und Hostingnachweise sind keine pauschale Messung einer 99-Prozent-Bewertungsqualität.

@@ -355,5 +355,259 @@
       "results_retained": true,
       "grading_untouched": true
     }
+  },
+  "production_frontend_694": {
+    "hosting-verification.json": {
+      "project": "hausaufgabe-staging",
+      "source": "69414965b345881a8e66e55b6b76b2dd982dec41",
+      "hosting": "sites/hausaufgabe-staging/versions/69a993a0fd01dd38",
+      "origins": [
+        {
+          "origin": "https://gradecrew.de/",
+          "matched": 215,
+          "total": 215
+        },
+        {
+          "origin": "https://hausaufgabe-staging.web.app/",
+          "matched": 215,
+          "total": 215
+        }
+      ],
+      "preservedFiles": 213,
+      "configPreserved": true
+    },
+    "hosting-review-proof.json": {
+      "commit": "69414965b345881a8e66e55b6b76b2dd982dec41",
+      "tree": "a6dc1a9c95e2e86e0251086b85dcf98e8ae198da",
+      "importantFindingsRemaining": 0,
+      "combinedRootUI": 561,
+      "independentIntegrationTests": 250,
+      "reviewer": "wilma_live_budget_fundus_review_20261029",
+      "ownerSource": "ec7cdd012a463a196a38cce25781158c735f8da2",
+      "ownerCI": 40957517336,
+      "ownerCIResult": "Node and Browser success",
+      "backendSource": "54f7004ac200f224ab886fe019ccbbef1a431e38",
+      "backendChangedSince54f": false,
+      "hostingAllowedRuntimeFiles": [
+        "app.js",
+        "wilma-answer-review.mjs",
+        "wilma-answer-review.css",
+        "wilma-auto-review.mjs"
+      ]
+    },
+    "owner-baseline-verification.json": {
+      "ownerSource": "ec7cdd012a463a196a38cce25781158c735f8da2",
+      "ownerHosting": "sites/hausaufgabe-staging/versions/a30cfc3667882e2d",
+      "ownerReceiptVerified": true,
+      "ownCanonicalChecks": [
+        {
+          "origin": "https://gradecrew.de",
+          "commit": "ec7cdd012a463a196a38cce25781158c735f8da2",
+          "checkedRuntime": [
+            "app.js",
+            "crew-tour-gc23-polish.js",
+            "crew-tour-gc24-polish.js"
+          ],
+          "hashesMatch": true
+        },
+        {
+          "origin": "https://hausaufgabe-staging.web.app",
+          "commit": "ec7cdd012a463a196a38cce25781158c735f8da2",
+          "checkedRuntime": [
+            "app.js",
+            "crew-tour-gc23-polish.js",
+            "crew-tour-gc24-polish.js"
+          ],
+          "hashesMatch": true
+        }
+      ],
+      "noParallelHostingOperation": true
+    },
+    "backend-verification.json": {
+      "project": "hausaufgabe-staging",
+      "functions": [
+        {
+          "function": "reviewWilmaAnswers",
+          "revision": "reviewwilmaanswers-00004-nuz",
+          "sourceZipSha256": "3b319fa9a1ae9c03c2ab45ea1349e4ba002109a3bd1b96fd7ef01b2dda9e2602"
+        },
+        {
+          "function": "submitAssessmentAttempt",
+          "revision": "submitassessmentattempt-00055-pur",
+          "sourceZipSha256": "8e95916ccec3893dff116452b087696d5f2f8809b569858cf9305ff68e5543a7"
+        }
+      ],
+      "otherFunctionsPreserved": 60,
+      "rulesUnchanged": true,
+      "stageReviewUnchanged": true
+    },
+    "actual-rule-submission.json": {
+      "quiz": "WILMARULE261029",
+      "attemptId": "a_431b0af860781f7c3b09a67ec022",
+      "realStudentSubmit": true,
+      "singleChoice": {
+        "maxPoints": 1,
+        "needsReview": false,
+        "correct": true,
+        "autoPoints": 1,
+        "awardedPoints": 1
+      },
+      "acceptedFreeText": {
+        "awardedPoints": 1,
+        "autoPoints": 1,
+        "needsReview": true,
+        "maxPoints": 1,
+        "correct": true
+      },
+      "status": "review",
+      "grade": null,
+      "pendingPointsHiddenInReceipt": true,
+      "providerCallsBySubmission": 0
+    },
+    "closed-fictional-rounds.json": [
+      {
+        "quiz": "WILMALIVE261029",
+        "closed": true,
+        "resultsRetained": true,
+        "gradingNotTouched": true
+      },
+      {
+        "quiz": "WILMARULE261029",
+        "closed": true,
+        "resultsRetained": true,
+        "gradingNotTouched": true
+      }
+    ],
+    "snapshot-after-auto-hosting.json": {
+      "project": "hausaufgabe-staging",
+      "phase": "after-auto-hosting",
+      "started": 1,
+      "legacyJobsHash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "ledger": {
+        "accountedRequests": 1,
+        "currency": "EUR",
+        "reservedMicros": 0,
+        "updatedAt": 1793305800283,
+        "pricingVersion": "luna-eur-ceiling-20261029",
+        "spentMicros": 1056,
+        "limitMicros": 8750000
+      },
+      "fundusEntries": [
+        {
+          "version": 1,
+          "key": "ab4ac2d286f05fdc34753ee41b59c27ec595571498e0892f8476ff83ec2ffcd6",
+          "quizId": "WILMALIVE261029",
+          "questionId": "q1",
+          "submissionId": "a_e6119225b9ece469ba066e1fa865",
+          "points": 2,
+          "createdAt": 1793308160781,
+          "expiresAt": 1801084160781,
+          "multipleSources": true,
+          "conflict": false
+        }
+      ],
+      "rows": {
+        "A": {
+          "status": "graded",
+          "totalPoints": 2,
+          "maxPoints": 2,
+          "grade": 1
+        },
+        "B": {
+          "status": "graded",
+          "totalPoints": 2,
+          "maxPoints": 2,
+          "grade": 1
+        },
+        "C": {
+          "status": "review",
+          "totalPoints": 0,
+          "maxPoints": 2,
+          "grade": null
+        },
+        "L": {
+          "status": "graded",
+          "totalPoints": 0,
+          "maxPoints": 2,
+          "grade": 6
+        },
+        "D": {
+          "status": "review",
+          "totalPoints": 0,
+          "maxPoints": 2,
+          "grade": null
+        }
+      }
+    },
+    "ci": {
+      "source": "69414965b345881a8e66e55b6b76b2dd982dec41",
+      "run": 40959952965,
+      "node_job": 123749819925,
+      "node_result": "success",
+      "browser_job": 123749820174,
+      "browser_result": "success"
+    },
+    "human_live_start_acceptance": "passed",
+    "human_tutorial_approval": "Ja, diesen Tutorial-Fix zusätzlich live veröffentlichen",
+    "actual-human-auto-acceptance.json": {
+      "project": "hausaufgabe-staging",
+      "quiz": "WILMALIVE261029",
+      "humanReport": "Ja, die Vorschläge erscheinen automatisch",
+      "method": "Human normal signed-in results opening without KI-start, plus read-only verification of actual private completed request receipts and persisted teacher confirmations. No agent browser inspection or extra provider call.",
+      "paidCases": [
+        "A",
+        "C"
+      ],
+      "noPaidRequestFor": [
+        "B",
+        "D",
+        "L"
+      ],
+      "actualCompletedProviderReceipts": [
+        {
+          "cases": [
+            {
+              "case": "C",
+              "points": 1,
+              "status": "clear"
+            }
+          ],
+          "phase": "completed",
+          "costSettled": true,
+          "inputTokens": 492,
+          "outputTokens": 105
+        },
+        {
+          "cases": [
+            {
+              "case": "A",
+              "points": 2,
+              "status": "clear"
+            }
+          ],
+          "phase": "completed",
+          "costSettled": true,
+          "inputTokens": 576,
+          "outputTokens": 80
+        }
+      ],
+      "C": {
+        "points": 1,
+        "grade": 4,
+        "confirmed": true
+      },
+      "D": {
+        "points": 2,
+        "grade": 1,
+        "confirmed": true
+      },
+      "knownAnswerHasNoAcceptedRule": true,
+      "fundusReuseInference": "D receives2 without any provider receipt for D, exact same answer as existing confirmed A/B and no acceptedAnswers rule; deployed core uses confirmed fundus before provider.",
+      "monthlyCounter": 2,
+      "spentCeilingMicros": 2178,
+      "reservedMicros": 0,
+      "extraProviderCallsByVerification": 0,
+      "writesByVerification": 0
+    }
   }
 }
