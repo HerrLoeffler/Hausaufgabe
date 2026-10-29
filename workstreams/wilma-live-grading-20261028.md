@@ -84,3 +84,13 @@ Eigenes echtes LiveB inzwischen durch HumanScreenshot als2/2Vorschlag und anschl
 CIe77340954819216:Nodegrün,36WilmaBrowserszenariengrün, gesamterBrowserjob rot imseparatenTutorial. Tutorial92740954841990ebenfallsrot, keine blindeWiederholung/keineFreigabefiktion. Hosting weiterhin552b; Backend606d.
 
 Nachreview: historischer acceptedText wurde bei Entscheidungsrecalc mit temporärstatusreview fälschlichgeöffnet. Regression Client/Server zuerstrot; acceptedByRule bindetjetzt needsReviewfalse stattGesamtstatusgraded, währendneueAbgaben needsReviewtrue setzen. EchterDecisionservicefall dauerhaft ergänzt. Reviewer53Tests+16Negativfälle+echtesRepro grün, keineoffenenP0–P2. GesamterRoot/UIstand560grün; vollständigeFunctions/Assessment nachletztemRepro erneutgeprüft.
+
+
+## Folgebackend54f tatsächlich Production ·29.10.2026
+Remote54f7004a/Tree4bed5a48; CI40957792218Node123742312334grün inkl124Wilma-Verträge/Rules/Backend;36WilmaBrowserszenariengrün, Gesamtlayoutjob123742311750rot inunverändertemc35Tutorial: roheFinaleNext562..606beiViewport568,Coach169..661,hitsfalse,keinePageErrors. Nichtwiederholt; neuerOwnerRuntimeec7+exakteCI40957517336ausstehend. KeinHostingstart.
+Review00004-nuz(Build040ed803-5c4c-4708-a39a-1e72634a22cb)undSubmit00055-pur(Build7448607d-6e56-4d67-88e4-c201227e0355)ACTIVE. ExakteZIP3b319fa9..e2602/8e95916c..43a7, nurcore/scoringundAssessmenttextgeändert;60andereFunctions/Rules/Stage00009erhalten. TatsächlicheigenerRegeltestWILMARULE261029normalabgegeben:SingleChoice1/1needsReviewfalse;exakterFreitextVerb1/1needsReviewtrue;Gesamtstatusreview/gradeNULL;PendingpunkteimSchülerreceiptverborgen;keinProvider. Aktivebelegeartifacts/wilma-auto-proposals-live-20261029.
+EigeneCTeilantwort undDidenteAntwort imbestehendenWILMALIVE261029normalabgegeben,beidepending0/2/gradeNULL;A/Bfertig2/2,Lleer0/2. Counterunverändert1/spent1056/reserved0,keinAPIbeiAbgabe. BrowserweiterglobaleWork-Sperre,nichtumgangen. Ausstehend:OwnerfinalTutorial/GesamtkompositionCI,4WilmaHostingdateien+ManifestaufFrischclone/CAS,UI-Auto-PrüfungC/DundKorrektur/Undo/Reload/Testschließung;keineAbgabenwiederholen.
+
+
+## Verifizierte Tutorialkomposition ec7 ·29.10.
+Owner ec7cdd012a463a196a38cce25781158c735f8da2 hat exakteCI40957517336 komplettgrün: Node123741337963 undBrowser123741337206. Exakt6Ownerdateien übernommen; gegenübervorherigemc35 ändernnur gc23Runtime/test undtutorial.cjs, gc24weiterunverändert3d5. EigenerRoot/UI-NachlaufundengerIntegrationsreview; genaueKompositionsCI folgt. Backend54f bleibtbytegleich; keinerneuterBackenddeploy nötig. Hostingnachwievorunveröffentlicht, nur4WilmaDateien+ManifestaufFrischclone/CAS,beideOwnerTutorialpfadeerhalten.

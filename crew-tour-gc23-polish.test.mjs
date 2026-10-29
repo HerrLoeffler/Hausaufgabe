@@ -13,7 +13,7 @@ function fixture(t) {
   });
   const w = dom.window;
   t.after(() => w.close());
-  w.HTMLElement.prototype.scrollIntoView = function () { this.dataset.scrolled = '1'; };
+  w.HTMLElement.prototype.scrollIntoView = function () { this.dataset.scrolled = '1'; this.dataset.scrollCount = String(Number(this.dataset.scrollCount || 0) + 1); };
   w.eval(source.replace(/^export /gm, ''));
   return w;
 }
@@ -140,4 +140,36 @@ test('preference handoff reveals the saved-preferences summary while keeping its
   tip.querySelector('.gcCoachNext').click();
   assert.equal(w.document.querySelector('.aiOptionalTestOptions').open, true);
   assert.equal(w.document.querySelector('.gradecrewPreferenceDetails').open, false);
+});
+
+
+test('finale arrival follows late review layout once, then releases on reading or abort', async t => {
+  const w = fixture(t);
+  const observers = [];
+  w.ResizeObserver = class {
+    constructor(callback) { this.callback = callback; this.disconnected = false; observers.push(this); }
+    observe() {}
+    disconnect() { this.disconnected = true; }
+  };
+  w.document.body.insertAdjacentHTML('beforeend', '<div id="reviewQuestions"><div class="reviewQuestion">10. Crew-Finale<input class="manualPoints" value="1"></div></div>');
+  const first = coach(w, 'Automatisch, wo es eindeutig ist – du entscheidest beim Rest.');
+  w.document.body.append(first);
+  await settle(w);
+  await new Promise(resolve => w.setTimeout(resolve, 20));
+  const before = Number(first.dataset.scrollCount);
+  observers[0].callback();
+  await new Promise(resolve => w.setTimeout(resolve, 20));
+  assert.ok(Number(first.dataset.scrollCount) > before, 'late image/control growth keeps the actual guide in view');
+  w.document.dispatchEvent(new w.Event('wheel', { bubbles: true }));
+  assert.equal(observers[0].disconnected, true, 'reading releases the initial anchor');
+  const after = first.dataset.scrollCount;
+  observers[0].callback();
+  await new Promise(resolve => w.setTimeout(resolve, 20));
+  assert.equal(first.dataset.scrollCount, after, 'no forced recenter after user scroll');
+  first.remove();
+  const second = coach(w, 'Automatisch, wo es eindeutig ist – du entscheidest beim Rest.');
+  w.document.body.append(second);
+  await settle(w);
+  w.document.dispatchEvent(new w.Event('gradecrew:tutorial-aborted'));
+  assert.equal(observers[1].disconnected, true, 'abort releases pending placement observers');
 });

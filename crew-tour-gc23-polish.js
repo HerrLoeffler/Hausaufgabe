@@ -235,6 +235,39 @@ function patchFreeAnswerCoach(coach) {
   queueMicrotask(() => freeCard.isConnected && freeCard.scrollIntoView({ block: "center", behavior: "instant" }));
 }
 
+// Review images and asynchronous review controls can grow above the finale.
+// Stabilise only this initial arrival; genuine reading/input releases the anchor.
+function anchorInitialReview(coach, scope) {
+  let frame = 0, closed = false;
+  const reveal = () => {
+    frame = 0;
+    if (!coach.isConnected) { cleanup(); return; }
+    coach.scrollIntoView({ block: "start", behavior: "instant" });
+  };
+  const schedule = () => { if (!closed && !frame) frame = requestAnimationFrame(reveal); };
+  const inputEvents = ["wheel", "touchstart", "pointerdown", "keydown"];
+  const cleanup = () => {
+    if (closed) return;
+    closed = true;
+    cancelAnimationFrame(frame);
+    observer?.disconnect();
+    inputEvents.forEach(type => document.removeEventListener(type, cleanup, true));
+    document.removeEventListener("gradecrew:tour-step", cleanup);
+    document.removeEventListener("gradecrew:tutorial-aborted", cleanup);
+    document.removeEventListener("gradecrew:account-changed", cleanup);
+  };
+  const observer = typeof ResizeObserver === "function" ? new ResizeObserver(schedule) : null;
+  observer?.observe(scope);
+  observer?.observe(coach);
+  inputEvents.forEach(type => document.addEventListener(type, cleanup, { capture: true, passive: true }));
+  document.addEventListener("gradecrew:tour-step", cleanup, { once: true });
+  document.addEventListener("gradecrew:tutorial-aborted", cleanup, { once: true });
+  document.addEventListener("gradecrew:account-changed", cleanup, { once: true });
+  reveal();
+  schedule();
+  return cleanup;
+}
+
 function patchReviewCoach(coach) {
   if (coach.dataset.gc23Review === "1") return;
   coach.dataset.gc23Review = "1";
@@ -258,9 +291,7 @@ function patchReviewCoach(coach) {
   document.body.classList.add("gcTourContext");
   document.documentElement.classList.remove("gcTourScrollLocked");
   finaleCard.before(coach);
-  const revealCoach = () => coach.isConnected && coach.scrollIntoView({ block: "start", behavior: "instant" });
-  revealCoach();
-  requestAnimationFrame(revealCoach);
+  const releaseArrival = anchorInitialReview(coach, finaleCard.parentElement);
   const points = Math.max(0, Math.min(2, Number(finaleInput.value) || 0));
 
   const nextButton = originalButton.cloneNode(true);
@@ -273,6 +304,7 @@ function patchReviewCoach(coach) {
   coach.insertBefore(result, nextButton);
   nextButton.textContent = "Weiter zur freien Antwort";
   nextButton.addEventListener("click", () => {
+    releaseArrival();
     finaleCard.classList.remove("gc23ReviewFocus");
     originalButton.click();
     // V7 briefly targets the save button while opening the next scene. Move the
