@@ -1,0 +1,388 @@
+{
+  "KURZ-BRUCH": {
+    "schemaVersion": 2,
+    "id": "reference-fraction",
+    "revision": 0,
+    "format": "grid",
+    "title": "Gleichwertigen Anteil darstellen",
+    "subject": "Mathematik",
+    "grade": "6",
+    "prompt": "Stelle 3/4 in diesem in acht gleich große Felder geteilten Ganzen dar.",
+    "hint": "Tippe Felder an. Jede passende Anordnung ist erlaubt.",
+    "maxPoints": 2,
+    "objective": "Einen Bruch in einer anders unterteilten Fläche darstellen.",
+    "rationale": "Bewertet wird der Anteil unabhängig vom gewählten Zellmuster.",
+    "sourceNote": "Eigenes synthetisches Prüfbeispiel; didaktisch von PhET angeregt.",
+    "spec": {
+      "rows": 2,
+      "columns": 4
+    },
+    "solution": {
+      "count": 6
+    },
+    "provenance": {
+      "kind": "template",
+      "offline": true
+    }
+  },
+  "KURZ-FUNKTION": {
+    "schemaVersion": 2,
+    "id": "reference-function",
+    "revision": 0,
+    "format": "table",
+    "title": "Eine Rechenregel anwenden",
+    "subject": "Mathematik",
+    "grade": "6",
+    "prompt": "Die Maschine multipliziert zuerst mit 3 und zieht anschließend 2 ab. Ergänze die Ausgabe für die Eingabe 5 als ganze Zahl.",
+    "hint": "Trage eine ganze Zahl ein.",
+    "maxPoints": 2,
+    "objective": "Eine ausdrücklich geordnete Rechenregel anwenden.",
+    "rationale": "Die Ausgabe zeigt, ob beide Operationen in der angegebenen Reihenfolge angewendet wurden.",
+    "sourceNote": "Eigenes synthetisches Prüfbeispiel; didaktisch von PhET angeregt.",
+    "spec": {
+      "columns": [
+        "Eingabe",
+        "Ausgabe"
+      ],
+      "rows": [
+        [
+          {
+            "id": "in",
+            "text": "5",
+            "input": false
+          },
+          {
+            "id": "out",
+            "text": "",
+            "input": true
+          }
+        ]
+      ],
+      "answerMode": "numeric",
+      "numericForm": "integer"
+    },
+    "solution": {
+      "cells": [
+        {
+          "id": "out",
+          "accepted": [
+            "13"
+          ]
+        }
+      ]
+    },
+    "provenance": {
+      "kind": "template",
+      "offline": true
+    }
+  },
+  "KURZ-GERADE": {
+    "schemaVersion": 2,
+    "id": "reference-line",
+    "revision": 0,
+    "format": "coordinate",
+    "title": "Punkte einer linearen Funktion",
+    "subject": "Mathematik",
+    "grade": "8",
+    "prompt": "Für y = 2x − 1: Setze Punkt A an die Stelle mit x = 0 und Punkt B an die Stelle mit x = 2.",
+    "hint": "Wähle A und B jeweils am passenden Rasterpunkt.",
+    "maxPoints": 2,
+    "objective": "Funktionswerte berechnen und als geordnete Punkte darstellen.",
+    "rationale": "Die beiden ausdrücklich verlangten Stellen ergeben eindeutige Koordinaten.",
+    "sourceNote": "Eigenes synthetisches Prüfbeispiel; didaktisch von PhET angeregt.",
+    "spec": {
+      "mode": "points",
+      "minX": -3,
+      "maxX": 4,
+      "minY": -4,
+      "maxY": 6,
+      "step": 1,
+      "labels": [
+        "A",
+        "B"
+      ]
+    },
+    "solution": {
+      "points": [
+        {
+          "x": 0,
+          "y": -1
+        },
+        {
+          "x": 2,
+          "y": 3
+        }
+      ]
+    },
+    "provenance": {
+      "kind": "template",
+      "offline": true
+    }
+  },
+  "KURZ-VEKTOR": {
+    "schemaVersion": 2,
+    "id": "reference-vector",
+    "revision": 0,
+    "format": "coordinate",
+    "title": "Gemeinsamen Endpunkt bestimmen",
+    "subject": "Mathematik",
+    "grade": "7",
+    "prompt": "Starte im Ursprung. Gehe zuerst 3 nach rechts und 1 nach oben, anschließend 1 nach links und 2 nach oben. Setze den gemeinsamen Endpunkt E.",
+    "hint": "Setze genau einen Punkt.",
+    "maxPoints": 2,
+    "objective": "Zwei gerichtete Verschiebungen komponentenweise zusammensetzen.",
+    "rationale": "Nur der Endpunkt wird abgegeben und bewertet.",
+    "sourceNote": "Eigenes synthetisches Prüfbeispiel; didaktisch von PhET angeregt.",
+    "spec": {
+      "mode": "points",
+      "minX": -5,
+      "maxX": 5,
+      "minY": -5,
+      "maxY": 5,
+      "step": 1,
+      "labels": [
+        "E"
+      ]
+    },
+    "solution": {
+      "points": [
+        {
+          "x": 2,
+          "y": 3
+        }
+      ]
+    },
+    "provenance": {
+      "kind": "template",
+      "offline": true
+    }
+  },
+  "KURZ-REAKTION": {
+    "schemaVersion": 2,
+    "id": "reference-reaction",
+    "revision": 0,
+    "format": "table",
+    "title": "Reaktionsgleichung ausgleichen",
+    "subject": "NT",
+    "grade": "8",
+    "prompt": "Gleiche H₂ + O₂ → H₂O aus. Trage die kleinsten positiven ganzen Koeffizienten ein. Trage auch eine benötigte 1 ausdrücklich ein.",
+    "hint": "Die Formelindizes bleiben unverändert.",
+    "maxPoints": 3,
+    "objective": "Die Erhaltung der Atome durch passende Koeffizienten darstellen.",
+    "rationale": "Die drei getrennt bewerteten Koeffizienten erhalten jeweils einen Punkt.",
+    "sourceNote": "Eigenes synthetisches Prüfbeispiel; didaktisch von PhET angeregt.",
+    "spec": {
+      "columns": [
+        "vor H₂",
+        "vor O₂",
+        "vor H₂O"
+      ],
+      "rows": [
+        [
+          {
+            "id": "h2",
+            "text": "",
+            "input": true
+          },
+          {
+            "id": "o2",
+            "text": "",
+            "input": true
+          },
+          {
+            "id": "h2o",
+            "text": "",
+            "input": true
+          }
+        ]
+      ],
+      "answerMode": "numeric",
+      "numericForm": "integer"
+    },
+    "solution": {
+      "cells": [
+        {
+          "id": "h2",
+          "accepted": [
+            "2"
+          ]
+        },
+        {
+          "id": "o2",
+          "accepted": [
+            "1"
+          ]
+        },
+        {
+          "id": "h2o",
+          "accepted": [
+            "2"
+          ]
+        }
+      ]
+    },
+    "provenance": {
+      "kind": "template",
+      "offline": true
+    }
+  },
+  "KURZ-ATOM": {
+    "schemaVersion": 2,
+    "id": "reference-atom",
+    "revision": 0,
+    "format": "table",
+    "title": "Massenzahl und Nettoladung",
+    "subject": "NT",
+    "grade": "9",
+    "prompt": "Ein Teilchen enthält 6 Protonen, 8 Neutronen und 7 Elektronen. Ergänze Massenzahl und Nettoladung. Gib die Ladung als ganze Zahl in Einheiten der Elementarladung an.",
+    "hint": "Trage in jedes Feld eine ganze Zahl ein.",
+    "maxPoints": 2,
+    "objective": "Massenzahl und Nettoladung aus Teilchenzahlen bestimmen.",
+    "rationale": "Beide unabhängigen Größen werden mit jeweils einem Punkt bewertet.",
+    "sourceNote": "Eigenes synthetisches Prüfbeispiel; didaktisch von PhET angeregt.",
+    "spec": {
+      "columns": [
+        "Massenzahl",
+        "Nettoladung in Elementarladungen"
+      ],
+      "rows": [
+        [
+          {
+            "id": "mass",
+            "text": "",
+            "input": true
+          },
+          {
+            "id": "charge",
+            "text": "",
+            "input": true
+          }
+        ]
+      ],
+      "answerMode": "numeric",
+      "numericForm": "any"
+    },
+    "solution": {
+      "cells": [
+        {
+          "id": "mass",
+          "accepted": [
+            "14"
+          ]
+        },
+        {
+          "id": "charge",
+          "accepted": [
+            "-1"
+          ]
+        }
+      ]
+    },
+    "provenance": {
+      "kind": "template",
+      "offline": true
+    }
+  },
+  "KURZ-OHM": {
+    "schemaVersion": 2,
+    "id": "reference-ohm",
+    "revision": 0,
+    "format": "scale",
+    "title": "Stromstärke einstellen",
+    "subject": "NT",
+    "grade": "8",
+    "prompt": "An einem idealen ohmschen Widerstand von 300 Ω liegt eine Spannung von 6 V an. Stelle die Stromstärke auf der Skala in mA ein.",
+    "hint": "Die Skala verwendet mA.",
+    "maxPoints": 2,
+    "objective": "Das Ohmsche Gesetz anwenden und Ampere in Milliampere umrechnen.",
+    "rationale": "Die feste Einheit und erreichbare Skala ergeben einen eindeutigen Zahlenwert.",
+    "sourceNote": "Eigenes synthetisches Prüfbeispiel; didaktisch von PhET angeregt.",
+    "spec": {
+      "context": "numberline",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "majorStep": 10,
+      "unit": "mA",
+      "card": "Stromstärke"
+    },
+    "solution": {
+      "value": 20,
+      "tolerance": 0
+    },
+    "provenance": {
+      "kind": "template",
+      "offline": true
+    }
+  },
+  "KURZ-MENGEN": {
+    "schemaVersion": 2,
+    "id": "reference-stock",
+    "revision": 0,
+    "format": "table",
+    "title": "Pakete und Reste",
+    "subject": "Mathematik",
+    "grade": "5",
+    "prompt": "Für ein Paket braucht man 2 rote und 1 blaue Karte. Vorhanden sind 7 rote und 4 blaue Karten. Ergänze die größtmögliche Anzahl vollständiger Pakete und die übrigen Karten.",
+    "hint": "Trage ganze Zahlen ein.",
+    "maxPoints": 3,
+    "objective": "Eine begrenzende Vorratsmenge und die verbleibenden Restmengen bestimmen.",
+    "rationale": "Paketanzahl und beide Restmengen werden mit jeweils einem Punkt bewertet.",
+    "sourceNote": "Eigenes synthetisches Prüfbeispiel; didaktisch von PhET angeregt.",
+    "spec": {
+      "columns": [
+        "Pakete",
+        "Rote Karten übrig",
+        "Blaue Karten übrig"
+      ],
+      "rows": [
+        [
+          {
+            "id": "packets",
+            "text": "",
+            "input": true
+          },
+          {
+            "id": "red",
+            "text": "",
+            "input": true
+          },
+          {
+            "id": "blue",
+            "text": "",
+            "input": true
+          }
+        ]
+      ],
+      "answerMode": "numeric",
+      "numericForm": "integer"
+    },
+    "solution": {
+      "cells": [
+        {
+          "id": "packets",
+          "accepted": [
+            "3"
+          ]
+        },
+        {
+          "id": "red",
+          "accepted": [
+            "1"
+          ]
+        },
+        {
+          "id": "blue",
+          "accepted": [
+            "1"
+          ]
+        }
+      ]
+    },
+    "provenance": {
+      "kind": "template",
+      "offline": true
+    }
+  }
+}
+
