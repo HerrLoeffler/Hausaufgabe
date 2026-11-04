@@ -823,3 +823,7 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 
 
 - [ ] **GC-TUTORIAL-01 · X während freier Schüler-Bearbeitung:** Separat offen. V7 versteckt beim Schülerstart den Coach; vorhandenesX wird nur am Coach erzeugt. Keine durchgehendeAlways-X-Abnahme behaupten. Finale-/freieKorrektur-X im begrenzten Fix geprüft; globaleAbbruch-/Schülerzustände gesondert.
+
+## GC-BILLING-PLAN-01 — Gratisversion, Preise, Schullizenzen und Abrechnung
+
+- [ ] **plan_only / Recherche beauftragt:** Drei Gratisvarianten, Vollkosten-/Preisszenarien, PSP-/MoR-Vergleich, Zahlungs-/Rechteablauf, Rechnungen DE/EU/B2G, Apple-Einordnung und grober+detaillierter Umsetzungsplan. Keine Preisentscheidung oder Implementierung aus dem Bericht ableiten. [Handoff](workstreams/billing-research-20261104.md). Eigener Dokumentationsbranch docs/billing-research-20261104, aktuelle Basis e4109f9; keine Liveänderung.
