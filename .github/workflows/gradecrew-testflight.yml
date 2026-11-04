@@ -71,6 +71,11 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
+      - name: Cache pinned npm downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-${{ runner.arch }}-npm-${{ hashFiles('tools/ui/package-lock.json') }}
       - name: Install pinned DOM test dependency
         run: npm ci --prefix tools/ui
         env:
