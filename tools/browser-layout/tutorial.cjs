@@ -17,7 +17,31 @@ function inspect(){const t=document.querySelector('.gcTourTarget'),c=document.qu
 (async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const url='http://127.0.0.1:'+server.address().port;
 try{for(const [name,engine,size,touch] of [['webkit',webkit],['chromium',chromium]].filter(([n])=>!process.env.GC_TUTORIAL_ENGINE||process.env.GC_TUTORIAL_ENGINE===n).flatMap(([engineName,engine])=>[[320,568,true],[1758,961,false],[1280,720,false],[1366,768,false],[1920,1080,false],[390,844,true],[820,1180,true],[1180,820,true],[390,400,true]].filter(([w,h])=>!process.env.GC_TUTORIAL_SIZE||process.env.GC_TUTORIAL_SIZE===w+'x'+h).map(([width,height,touch])=>[engineName+'-'+width+'x'+height,engine,{width,height},touch])) .sort((a,b)=>(a[2].width===320?0:1)-(b[2].width===320?0:1))){
  const browser=await engine.launch({headless:true});const context=await browser.newContext({viewport:size,hasTouch:touch,reducedMotion:size.width===320?'reduce':'no-preference'});const page=await context.newPage();const errors=[];page.on('dialog',async d=>{if(d.type()==='confirm'&&/Rückmeldung speichern und diese Aufgabe/.test(d.message()))await d.accept();else await d.dismiss();});page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'||m.type()==='warning')errors.push(m.text());});
- await context.addInitScript(()=>{window.__tutorialTransportWrites=[];const native=setTimeout;window.setTimeout=(fn,ms,...args)=>native(fn,ms>0&&ms<5000?Math.min(ms,40):ms,...args);});
+ await context.addInitScript(({delayWarningLayout})=>{
+  window.__tutorialTransportWrites=[];const native=setTimeout;
+  window.setTimeout=(fn,ms,...args)=>native(fn,ms>0&&ms<5000?Math.min(ms,40):ms,...args);
+  if(delayWarningLayout){
+   const frame=window.requestAnimationFrame.bind(window),cancel=window.cancelAnimationFrame.bind(window);
+   const pending=new Map();let releaseAt=0,sequence=0;
+   window.requestAnimationFrame=callback=>{
+    const id=++sequence,entry={frame:0,timer:0};pending.set(id,entry);
+    const invoke=timestamp=>{
+     if(!pending.has(id))return;
+     if(document.querySelector('.gcRealCoach')?.dataset.tourStage==='second-warning'){
+      if(!releaseAt)releaseAt=performance.now()+650;
+      const remaining=releaseAt-performance.now();
+      if(remaining>0){entry.timer=native(()=>{entry.timer=0;entry.frame=frame(invoke);},remaining);return;}
+     }
+     pending.delete(id);callback(timestamp);
+    };
+    entry.frame=frame(invoke);return id;
+   };
+   window.cancelAnimationFrame=id=>{
+    const entry=pending.get(id);if(!entry)return;
+    cancel(entry.frame);clearTimeout(entry.timer);pending.delete(id);
+   };
+  }
+ },{delayWarningLayout:size.width===1366&&size.height===768});
  await context.route('**/*',route=>{const u=new URL(route.request().url());if(u.hostname==='www.gstatic.com'&&u.pathname.endsWith('.js'))return route.fulfill({contentType:'text/javascript',body:sdk});if(u.origin!==url)return route.abort();return route.continue();});
  try{
  const steps=[];
@@ -75,6 +99,6 @@ try{for(const [name,engine,size,touch] of [['webkit',webkit],['chromium',chromiu
  fs.writeFileSync(path.join(out,name+'-journey.json'),JSON.stringify({finished,steps,errors},null,2));await page.screenshot({path:path.join(out,name+'-journey.png'),fullPage:true});assert.ok(finished,'journey stuck '+JSON.stringify(await page.evaluate(inspect))+' / '+await page.locator('.gcRealCoach').allTextContents());
  const journeyWrites=await page.evaluate(()=>window.__tutorialTransportWrites);assert.deepEqual(journeyWrites,[],'the complete first journey made no provider/account/data write attempts');
  await page.locator('#gcEntryLogin').waitFor({state:'visible'});await page.goto(url+'/workspace.html?firstGuide=1&lang=de');await page.waitForFunction(()=>document.getElementById('aiView')?.dataset.compactInstalled==='true');await clickChecked(page.locator('#gcEntryTutorialStart'),'restart tutorial');await clickChecked(page.locator('.gcRealCoach .gcCoachClose'),'abort tutorial');await page.locator('#gcEntryLogin').waitFor({state:'visible'});assert.equal(await page.locator('.gcRealCoach,.gcTourTarget').count(),0,'exit clears all coach and target nodes');
- const restartWrites=await page.evaluate(()=>window.__tutorialTransportWrites);assert.deepEqual(restartWrites,[],'no provider or account/data writes after restart');fs.writeFileSync(path.join(out,name+'-journey.json'),JSON.stringify({finished,steps,nativeTabs,journeyWrites,restartWrites,errors},null,2));console.log(name+' full tutorial passed '+steps.length+' actual clicks');
+ const restartWrites=await page.evaluate(()=>window.__tutorialTransportWrites);assert.deepEqual(restartWrites,[],'no provider or account/data writes after restart');assert.deepEqual(errors,[],'the full tutorial and restart must not report browser errors');fs.writeFileSync(path.join(out,name+'-journey.json'),JSON.stringify({finished,steps,nativeTabs,journeyWrites,restartWrites,errors},null,2));console.log(name+' full tutorial passed '+steps.length+' actual clicks');
  }catch(e){await page.screenshot({path:path.join(out,name+'-failure.png'),fullPage:true});console.error('LAYOUT',JSON.stringify(await page.evaluate(()=>{const c=document.querySelector('.gcRealCoach'),out=[];for(let n=c;n;n=n.parentElement){const s=getComputedStyle(n);out.push({tag:n.tagName,id:n.id,classes:n.className,rect:n.getBoundingClientRect().toJSON(),client:n.clientHeight,scroll:n.scrollHeight,overflow:s.overflow,height:s.height,position:s.position});}return {ancestors:out,viewport:{width:innerWidth,height:innerHeight,vv:visualViewport?.height},scrollY};})));console.error('PAGE ERRORS',errors);console.error((await page.locator('#startupNotice').innerText()).slice(0,1500));throw e;}finally{await browser.close();}
 }}finally{server.close();}})().catch(e=>{console.error(e);process.exitCode=1});
