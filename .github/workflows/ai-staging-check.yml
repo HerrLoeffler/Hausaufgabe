@@ -31,6 +31,7 @@ on:
       - 'fix/staging-feedback-*'
       - 'fix/question-feedback-*'
       - 'fix/wilma-*'
+      - 'fix/actions-cost-web-*'
     # Documentation changes do not change the app/runtime candidate.
     paths-ignore:
       - '**.md'
@@ -40,6 +41,11 @@ on:
 
 permissions:
   contents: read
+
+# Supersede only read-only push checks; manual qualification stays independent.
+concurrency:
+  group: ai-staging-check-${{ github.event_name }}-${{ github.event_name == 'push' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 jobs:
   test:
@@ -56,7 +62,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: functions/package-lock.json
+          cache-dependency-path: |
+            functions/package-lock.json
+            assessment-functions/package-lock.json
+            tools/ui/package-lock.json
+            tools/rules/package-lock.json
 
       - name: Use Java 21 for Firebase emulators
         uses: actions/setup-java@v5
@@ -213,7 +223,6 @@ jobs:
           node --check gradecrew-brand.js
           node --check layout-enhancements.js
           node --check variant-enhancements.js
-          node --check tutorial-variant-fallback.js
           node --check admin-ai-access.js
           node --check editor-drafts.js
           node --check ai-review-state.js
@@ -270,12 +279,6 @@ jobs:
       - name: Verify live feedback connector without private accounts
         run: node --test integrations/gradecrew-central/test/*.test.mjs
 
-      - name: Verify isolated release targets
-        run: node --test tools/environments.test.mjs tools/release-environments.test.mjs tools/deploy-release.test.mjs
-
-      - name: Verify live feedback connector without private accounts
-        run: node --test integrations/gradecrew-central/test/*.test.mjs
-
       - name: Smoke test staging build
         run: |
           BUILD_DIR="$(mktemp -d)"
@@ -325,6 +328,10 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            tools/browser-layout/package-lock.json
+            functions/package-lock.json
       - run: npm ci --prefix tools/browser-layout --no-audit --no-fund
       - run: npm ci --prefix functions --include=dev --no-audit --no-fund
       - run: node tools/browser-layout/feedback-images.cjs
