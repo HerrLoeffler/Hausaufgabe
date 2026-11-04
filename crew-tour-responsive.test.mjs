@@ -48,3 +48,35 @@ test('no room returns a flow requirement instead of clamping a coach over a larg
  const p=module.computeCrewCoachPlacement({viewport:{left:30,top:50,width:320,height:280},target:{left:42,right:338,top:62,bottom:318,width:296,height:256},width:296,height:140});
  assert.equal(p,null);
 });
+
+test('a new warning coach is placed before any animation frame can run', () => {
+ const dom=new JSDOM('<body class="gcRealTourActive"><div class="gcTourTarget"></div><aside class="gcRealCoach"><button>Hinweis öffnen</button></aside></body>',{pretendToBeVisual:true});
+ const w=dom.window,coach=w.document.querySelector('aside'),target=w.document.querySelector('.gcTourTarget');
+ const previous=Object.fromEntries(['window','document','isCompactGuideViewport','MutationObserver'].map(k=>[k,globalThis[k]]));
+ const observers=[];
+ class TrackedObserver extends w.MutationObserver {constructor(callback){super(callback);observers.push(this);}}
+ Object.assign(globalThis,{window:w,document:w.document,isCompactGuideViewport,MutationObserver:TrackedObserver});
+ const frames=[];w.requestAnimationFrame=fn=>{frames.push(fn);return frames.length;};
+ Object.defineProperties(w,{innerWidth:{value:1366},innerHeight:{value:768}});
+ target.getClientRects=()=>[target.getBoundingClientRect()];
+ target.getBoundingClientRect=()=>({left:21,top:180,right:185,bottom:500,width:164,height:320});
+ coach.getBoundingClientRect=()=>({left:21,top:8211,right:381,bottom:8508,width:360,height:297});
+ let refreshes=0;w.document.addEventListener('gradecrew:tour-anchor-refresh',()=>refreshes++);
+ try {
+  module.installCrewTourResponsiveLayout();
+  assert.equal(coach.style.top,'','the scheduled frame has deliberately not run');
+  w.document.dispatchEvent(new w.CustomEvent('gradecrew:tour-step',{detail:{stage:'second-warning'}}));
+  assert.equal(coach.dataset.gcPlacement,'floating','a new real step must synchronously place its coach');
+  const top=Number.parseFloat(coach.style.top),left=Number.parseFloat(coach.style.left);
+  assert.ok(top>=12&&top+297<=756,'the next control cannot inherit the body-end position');
+  assert.ok(left>=12&&left+360<=1354);
+  assert.ok(frames.length>0,'later responsive settling remains scheduled');
+  assert.equal(refreshes,0,'initial placement must not re-enter unfinished publication setup');
+  module.layoutCrewCoach();
+  assert.equal(refreshes,1,'ordinary layout still refreshes rerendered anchors');
+ } finally {
+  observers.forEach(observer=>observer.disconnect());
+  dom.window.close();
+  for(const [k,v] of Object.entries(previous))v===undefined?delete globalThis[k]:globalThis[k]=v;
+ }
+});

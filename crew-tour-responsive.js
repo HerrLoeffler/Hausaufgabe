@@ -140,8 +140,8 @@ function flowCoach(coach,target) {
   document.body.classList.add('gcTourFlow');
 }
 
-export function layoutCrewCoach() {
-  document.dispatchEvent(new window.Event('gradecrew:tour-anchor-refresh'));
+export function layoutCrewCoach({refreshAnchor=true}={}) {
+  if(refreshAnchor)document.dispatchEvent(new window.Event('gradecrew:tour-anchor-refresh'));
   const coach = document.querySelector('.gcRealCoach');
   const target = document.querySelector('.gcRealTourActive .gcTourTarget');
   const viewport = viewportMetrics();
@@ -180,6 +180,11 @@ export function installCrewTourResponsiveLayout() {
   }
 
   document.addEventListener("gradecrew:tour-layout", schedule);
+  // A new fixed coach has top/left:auto until placed. Do not expose its
+  // static position at the document end while animation frames are busy.
+  // The controller is still finishing this step (including publication setup).
+  // Refreshing its anchor here could recursively create that same coach.
+  document.addEventListener("gradecrew:tour-step", () => layoutCrewCoach({refreshAnchor:false}));
   document.addEventListener("click", settle, true);
   document.addEventListener("focusin", settle, true);
   window.addEventListener("resize", settle, { passive: true });
