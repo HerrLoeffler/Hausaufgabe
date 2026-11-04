@@ -22,3 +22,8 @@
 ## Wiederaufnahme
 
 Letzter gesicherter Schritt: Einstieg, Scope und Bestandsabgleich. Laufende externe Produkt-/Payment-/KIvorgänge durch diesen Auftrag: keine. Vor Wiederholung die eigenen Commits/PRs und /tmp/gc-billing-source sowie /tmp/gc-billing-development-status.* abgleichen. Fremde Jobs nicht neu starten. Nächster Schritt: Primärquellen und Codebefunde in docs/billing/2026-11-04-entscheidungsbericht.md ausarbeiten, anschließend Quellen-/Zahlen-/Vollständigkeitsprüfung und gesicherten PR erstellen.
+
+## Zwischenstand 04.11.2026 — Bericht Teil 1
+
+Abschnitte1–7 lokal ausgearbeitet: belegter Source-/Hostingstand, drei Gratisansätze, konkrete Starter-/Plusbeispiele, nachvollziehbare Kostensensitivität, vier Zahlungswege und Zustandsdiagramm/-tabelle. Werte ausdrücklich Vorschläge. Neue wichtige externe Befunde: Apple-EUbedingungen seit01Oct2026; TTSabschaltung06Jan2027; Stripe erzeugt strukturierte E-Rechnungen nicht automatisch. Keine APIgenerierungen/Zahlungen.
+Remotecheckpoint f5f7512153c42388f4a37b5026b0c22f73209eef ist inhaltlich gleich lokalem a23ce5a, Tree4991635b. Shellpush war mangels Credentials nicht möglich; verbundener GitHub-Connector sicherte Dokumentation mit normalem Fast-forward. Kein Auth-/Secretwechsel. Nächster Schritt: Architektur, deutsche Rechnungspflichten/Apple, Adminbetrieb und genaue Umsetzung/Abnahmematrix ergänzen.
