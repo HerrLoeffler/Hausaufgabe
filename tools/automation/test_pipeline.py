@@ -16,6 +16,71 @@ from tools.automation import delivery
 FRESH_DOCUMENTS = e.fresh_documents
 
 A, B, C = 'a'*40, 'b'*40, 'c'*40
+
+
+class WebEnvironmentValidationTests(unittest.TestCase):
+    """Run the fixed profile's target checks without installing or deploying anything."""
+
+    GATE_SCRIPT = '''#!/usr/bin/env bash
+PROJECT_ID="gradecrew-staging-2026"
+PRODUCTION_ID="hausaufgabe-staging"
+CHANNEL="gate-e-lab"
+if [[ "$PROJECT_ID" == "$PRODUCTION_ID" ]]; then
+  exit 1
+fi
+firebase hosting:channel:deploy "$CHANNEL" --project "$PROJECT_ID"
+'''
+    CONFIG = 'projectId: "gradecrew-staging-2026"\nexport const appEnvironment = "staging";\n'
+
+    def run_target_checks(self, gate_script=None, config=None):
+        profile = (Path(__file__).with_name('validate-web.sh')).read_text()
+        gate_checks = profile.split('bash -n deploy-gate-e-preview.sh\n', 1)[1].split(
+            '# Check legacy browser app syntax', 1)[0]
+        # The build target check is the final part of the fixed validation profile.
+        build_checks = profile.split(
+            '''grep -q 'secure-solution-release.js' "$BUILD_DIR/public/secure-student.html"\n''', 1)[1]
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / 'deploy-gate-e-preview.sh').write_text(
+                self.GATE_SCRIPT if gate_script is None else gate_script)
+            (root / 'public').mkdir()
+            (root / 'public/firebase-config.js').write_text(
+                self.CONFIG if config is None else config)
+            return subprocess.run(['bash', '-euo', 'pipefail', '-c', gate_checks + build_checks],
+                                  cwd=root, env={**os.environ, 'BUILD_DIR': str(root)},
+                                  capture_output=True, text=True)
+
+    def test_current_separate_staging_contract_is_accepted(self):
+        result = self.run_target_checks()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_live_legacy_unknown_and_missing_gate_targets_are_rejected(self):
+        for target in ['hausaufgabe-staging', 'hausaufgabe-40294', 'unknown', '']:
+            with self.subTest(target=target):
+                result = self.run_target_checks(gate_script=self.GATE_SCRIPT.replace(
+                    'PROJECT_ID="gradecrew-staging-2026"', f'PROJECT_ID="{target}"'))
+                self.assertNotEqual(result.returncode, 0)
+
+    def test_gate_must_keep_live_identity_guard_channel_and_hosting_only_scope(self):
+        for script in [
+            self.GATE_SCRIPT.replace('PRODUCTION_ID="hausaufgabe-staging"', 'PRODUCTION_ID="other"'),
+            self.GATE_SCRIPT.replace('if [[ "$PROJECT_ID" == "$PRODUCTION_ID" ]]; then\n  exit 1\nfi\n', ''),
+            self.GATE_SCRIPT.replace('CHANNEL="gate-e-lab"', 'CHANNEL="live"'),
+            self.GATE_SCRIPT.replace('hosting:channel:deploy', 'deploy'),
+            self.GATE_SCRIPT + 'firebase deploy --only functions\n',
+        ]:
+            with self.subTest(script=script):
+                self.assertNotEqual(self.run_target_checks(gate_script=script).returncode, 0)
+
+    def test_build_must_identify_staging_environment_and_exact_separate_project(self):
+        for config in [
+            self.CONFIG.replace('gradecrew-staging-2026', target)
+            for target in ['hausaufgabe-staging', 'hausaufgabe-40294', 'unknown', '']
+        ] + [self.CONFIG.replace('"staging"', '"production"'),
+             self.CONFIG.replace('export const appEnvironment = "staging";\n', '')]:
+            with self.subTest(config=config):
+                self.assertNotEqual(self.run_target_checks(config=config).returncode, 0)
+
 TASK = {'id': 'pilot-ui', 'base_sha': A, 'base_branch': p.WEB, 'risk': 'web-ui',
         'goal': 'Make coach copy clearer', 'acceptance': 'Manual next stays available', 'constraints': 'Preserve all other flows',
         'allowed_files': ['coach.js'], 'context_files': ['coach.css'], 'validation_profile': 'web-combined-v1', 'max_cost_usd': 16.5}
@@ -161,6 +226,21 @@ class ContractTests(unittest.TestCase):
 
 
 class ModelTests(unittest.TestCase):
+    def setUp(self):
+        # Exercise mocked provider behavior at the last qualified test date.
+        # Replace only this module's clock, never the process/production clock.
+        clock = patch.object(m, 'dt', wraps=dt)
+        self.clock = clock.start()
+        self.addCleanup(clock.stop)
+        self.clock.date.today.return_value = dt.date(2026, 11, 2)
+
+    def test_expired_qualification_blocks_before_provider_transport(self):
+        self.clock.date.today.return_value = dt.date(2026, 11, 3)
+        with patch.object(m.urllib.request, 'urlopen') as send:
+            with self.assertRaisesRegex(ValueError, 'Pricing qualification expired'):
+                m.call('build', 'Implement', {}, p.CANDIDATE_SCHEMA)
+            send.assert_not_called()
+
     def response(self, role, result):
         spec=p.MODELS[role]
         if spec['provider']=='openai':
@@ -698,6 +778,19 @@ class DeploymentTests(unittest.TestCase):
 
 
 class AdmissionTests(unittest.TestCase):
+    def setUp(self):
+        clock = patch.object(admission, 'dt', wraps=dt)
+        self.clock = clock.start()
+        self.addCleanup(clock.stop)
+        self.clock.date.today.return_value = dt.date(2026, 11, 2)
+
+    def test_expired_qualification_blocks_before_admission_api(self):
+        self.clock.date.today.return_value = dt.date(2026, 11, 3)
+        with patch.dict(os.environ, {'GITHUB_REPOSITORY': g.REPO, 'GITHUB_REF': 'refs/heads/main'}), patch.object(admission, 'api') as api:
+            with self.assertRaisesRegex(ValueError, 'qualification expired'):
+                admission.main()
+            api.assert_not_called()
+
     def test_admission_is_one_exact_task_and_preserves_other_grants(self):
         other=ROW|{'id':'other','taskId':'other-task','enabled':False,'execution':'legacy-worker'}
         policy={'schemaVersion':1,'enabled':False,'maxAttemptsPerStage':2,'automaticProduction':False,'workstreams':[other]}
