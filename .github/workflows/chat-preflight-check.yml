@@ -1,0 +1,26 @@
+name: Chat preflight offline checks
+
+on:
+  pull_request:
+    paths:
+      - "tools/chat-preflight/**"
+      - "docs/automation/chat-preflight-20261011/**"
+      - "workstreams/chat-preflight-20261011.md"
+      - ".github/workflows/chat-preflight-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  offline-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out candidate without persisted credentials
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Run deterministic offline regression tests
+        run: python3 -B tools/chat-preflight/test_preflight.py
+      - name: Check candidate syntax
+        run: python3 -m py_compile tools/chat-preflight/preflight.py tools/chat-preflight/test_preflight.py
