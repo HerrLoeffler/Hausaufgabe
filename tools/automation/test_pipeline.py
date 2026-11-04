@@ -161,6 +161,21 @@ class ContractTests(unittest.TestCase):
 
 
 class ModelTests(unittest.TestCase):
+    def setUp(self):
+        # Exercise mocked provider behavior at the last qualified test date.
+        # Replace only this module's clock, never the process/production clock.
+        clock = patch.object(m, 'dt', wraps=dt)
+        self.clock = clock.start()
+        self.addCleanup(clock.stop)
+        self.clock.date.today.return_value = dt.date(2026, 11, 2)
+
+    def test_expired_qualification_blocks_before_provider_transport(self):
+        self.clock.date.today.return_value = dt.date(2026, 11, 3)
+        with patch.object(m.urllib.request, 'urlopen') as send:
+            with self.assertRaisesRegex(ValueError, 'Pricing qualification expired'):
+                m.call('build', 'Implement', {}, p.CANDIDATE_SCHEMA)
+            send.assert_not_called()
+
     def response(self, role, result):
         spec=p.MODELS[role]
         if spec['provider']=='openai':
@@ -698,6 +713,19 @@ class DeploymentTests(unittest.TestCase):
 
 
 class AdmissionTests(unittest.TestCase):
+    def setUp(self):
+        clock = patch.object(admission, 'dt', wraps=dt)
+        self.clock = clock.start()
+        self.addCleanup(clock.stop)
+        self.clock.date.today.return_value = dt.date(2026, 11, 2)
+
+    def test_expired_qualification_blocks_before_admission_api(self):
+        self.clock.date.today.return_value = dt.date(2026, 11, 3)
+        with patch.dict(os.environ, {'GITHUB_REPOSITORY': g.REPO, 'GITHUB_REF': 'refs/heads/main'}), patch.object(admission, 'api') as api:
+            with self.assertRaisesRegex(ValueError, 'qualification expired'):
+                admission.main()
+            api.assert_not_called()
+
     def test_admission_is_one_exact_task_and_preserves_other_grants(self):
         other=ROW|{'id':'other','taskId':'other-task','enabled':False,'execution':'legacy-worker'}
         policy={'schemaVersion':1,'enabled':False,'maxAttemptsPerStage':2,'automaticProduction':False,'workstreams':[other]}
