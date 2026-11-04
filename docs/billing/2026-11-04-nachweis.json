@@ -1,0 +1,58 @@
+{
+  "task": "GC-BILLING-PLAN-01",
+  "status": "plan_only",
+  "verified_at_utc": "2026-11-04T17:43:59.669155+00:00",
+  "base_main": "e4109f9fe04bed8cb05a90ba58531ac2be22e63a",
+  "branch": "docs/billing-research-20261104",
+  "draft_pr": 411,
+  "scope": "documentation_only",
+  "checks": {
+    "sections_1_to_17": true,
+    "future_acceptance_cases_50": true,
+    "effort_range_39_66": true,
+    "relative_links": true,
+    "markdown_fences": true,
+    "registry_unique": true,
+    "state_unmodified": true,
+    "cost_scenarios": true,
+    "starter_cost": true,
+    "diff_whitespace": true
+  },
+  "report_sha256": "436c3a0795ad3588ddee8ea977e4dbbd775620e2800216a332d0fdd800d024e7",
+  "plan_sha256": "0207d879511aa7f98f0bf7a3fa32dcc778a9b0f892b4c8a45b9dd43848873f40",
+  "words_report": 11960,
+  "words_plan": 1991,
+  "unique_links_report": 71,
+  "public_manifest_observations": {
+    "live": {
+      "project": "hausaufgabe-staging",
+      "environment": "production",
+      "commit": "69414965b345881a8e66e55b6b76b2dd982dec41"
+    },
+    "staging": {
+      "project": "gradecrew-staging-2026",
+      "environment": "staging",
+      "commit": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d"
+    }
+  },
+  "manifest_limitation": "public hosting metadata only; no new full deployment/functions/rules/device verification",
+  "initial_open_pr_count": 99,
+  "existing_billing_title_head_matches": [],
+  "development_audit_pr_lookup": "skipped without GITHUB_TOKEN; supplemented by public GitHub API",
+  "product_payment_device_acceptance_cases_executed": 0,
+  "paid_provider_generations": 0,
+  "new_provider_accounts_or_keys": 0,
+  "emails_sent": 0,
+  "deployments": 0,
+  "runtime_model_effort": "unknown",
+  "requested_model_effort": "Sol/high",
+  "runtime_cost_usage": "unknown",
+  "subagents": 0,
+  "human_decisions_pending": [
+    "D1_offer",
+    "D2_seller_tax_provider",
+    "D3_distribution_apple"
+  ],
+  "legal_tax_approval": "not_provided",
+  "source_date": "2026-11-04"
+}

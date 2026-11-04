@@ -1,6 +1,6 @@
 # GC-BILLING-PLAN-01 — Gratisversion, Preise, Lizenzen und Abrechnung
 
-- Status: **plan_only**, Recherche läuft; kein Implementierungs-/Verkaufs-/Deployauftrag.
+- Status: **plan_only**, Recherche und Plan geliefert; kein Implementierungs-/Verkaufs-/Deployauftrag.
 - Verantwortlicher Fachchat: ausdrücklich von GradeCrew-Zentrale 01a10df6-736b-7a62-bd38-2724cf254c2e delegierter Billing-Recherchechat; eigener Chat-Link unbekannt.
 - Branch: docs/billing-research-20261104; Basis main e4109f9fe04bed8cb05a90ba58531ac2be22e63a; Integrationsziel main ausschließlich Dokumentation.
 - Scope: eigene Recherche, Entscheidungsbericht und ausführbarer Folgeplan; TODO/Registry-Deltas im eigenen PR. Produktcode, Konten, Keys, Preise, Verträge, Mails und Deploys ausgeschlossen. sources/ unverändert.
@@ -27,3 +27,23 @@ Letzter gesicherter Schritt: Einstieg, Scope und Bestandsabgleich. Laufende exte
 
 Abschnitte1–7 lokal ausgearbeitet: belegter Source-/Hostingstand, drei Gratisansätze, konkrete Starter-/Plusbeispiele, nachvollziehbare Kostensensitivität, vier Zahlungswege und Zustandsdiagramm/-tabelle. Werte ausdrücklich Vorschläge. Neue wichtige externe Befunde: Apple-EUbedingungen seit01Oct2026; TTSabschaltung06Jan2027; Stripe erzeugt strukturierte E-Rechnungen nicht automatisch. Keine APIgenerierungen/Zahlungen.
 Remotecheckpoint f5f7512153c42388f4a37b5026b0c22f73209eef ist inhaltlich gleich lokalem a23ce5a, Tree4991635b. Shellpush war mangels Credentials nicht möglich; verbundener GitHub-Connector sicherte Dokumentation mit normalem Fast-forward. Kein Auth-/Secretwechsel. Nächster Schritt: Architektur, deutsche Rechnungspflichten/Apple, Adminbetrieb und genaue Umsetzung/Abnahmematrix ergänzen.
+
+
+## Lieferung / Entscheidungsfront —04.11.2026
+
+- Bericht: [docs/billing/2026-11-04-entscheidungsbericht.md](../docs/billing/2026-11-04-entscheidungsbericht.md),17Abschnitte, kurze Martinempfehlung und ausführliche eigene Bewertung;71unterschiedliche Quellenlinks vor abschließender Zählung, amtliche/Anbieterprimärquellen und feste Repo-SHAs.
+- Detaillierter Folgeplan: [2026-11-04-billing.md](../docs/superpowers/plans/2026-11-04-billing.md),Dateikarte/P0–P8/Abhängigkeiten/Owner/Testbelege;39–66Personentage unter klarem V1-Scope.50konkrete künftige Abnahmefälle M01–M50 im Bericht. **Nicht ausgeführt.**
+- Empfehlung bleibt Vorschlag:3erStarter ohne Zeitablauf/Kreditkarte,ein persönlicherTarif und separater Schuljahresweg,StripePSP beiDE/Schulfokus,MoR bei internationalemSchwerpunkt;12,90/129EUR nur Hypothese,Schulpreisbeispiele zeigen Margenrisiko. Kein Humanvotum erfunden.
+- D1 Angebot,D2 Verkäufer/Steuer/Anbieter,D3 Web/Schule/Applepriorität bleiben offen beim Nutzer;F1/F2Recherche geliefert, tatsächliche private Ist-/Steuer-/Vertrags-/ASCdaten ausdrücklich unbekannt.
+- Qualifizierte Prüfstellen: Steuerberatung für USt/Rechnung/Archiv,Rechtsberatung für Verbraucher-/digitale Dienstleistung/Schulvertrag,vorhandenerPrivacy-/Schulowner für Rollen/Transfers und Nativeowner für Apple. Keine Rechts-/Datenschutzgarantie.
+- Dokumentations-PR: https://github.com/HerrLoeffler/Hausaufgabe/pull/411 (draft). RemoteTeil1Commit9c3d556b3c0fbcb38194155a37da51903b6c8699; finalen Head/Tree im PR lesen. Keine Integration/Merge ausgeführt.
+- VorFinalisierung frischerFetch: main weiterhin e4109f9, eigener Remote9c3d556b. Fremde neue Tutorial-/CIbranches erkannt und unberührt; gemeinsameTODO/Registry nur additiverDeltavorschlag im eigenenPR.
+- Geprüft:17Berichtsabschnitte,50eindeutige Matrix-IDs,lokaleDokumentlinks,JSON/Registryeindeutig,Aufwandssummen und Kostentabellen separat nachgerechnet;git diff --check. Keine Anwendungs-/Payment-/Geräte-/Providerproben. Abschließendes Dokumentationsreceipt unter docs/billing/2026-11-04-nachweis.json.
+- Status getrennt: Dokumentationbranch_only/plan_only; CI separat am aktuellenHead prüfen. Produktcode nicht verändert; Integration/Staginghosting/Functions/Rules/Nutzertest/Production aus diesem Auftrag **keine**. GRADECREW_STATE nicht geändert, weil kein Produktreleasestufenwechsel.
+- Runtime weiterunknown, angefordertSol/high; keine Unteragenten oder direkten bezahlten Modellcalls; keine neue Kostenreservierung und keine Kundenmails/Schülerdatenabfrage.
+
+## Wiederaufnahme / genau nächster Schritt
+
+In eigenemisoliertenCheckout billing-research-20261104; lokale und Connectorcommits können bei identischemTreeverschiedeneSHAs besitzen. Vor Fortsetzung RemotePR411 und aktuellenmain neu lesen, nicht blind erneut sichern/integrieren. Shellpush scheiterte ausschließlich an fehlenderGitanmeldung; Connector erfolgreich. Keine Secrets dafür angefordert/geändert. AutomatischePRchecks können unabhängig laufen; vor Wiederholung frischenRunstatus prüfen,keine manuelle Actions-/Paidreview-Schleife gestartet.
+
+**Genau ein nächster autorisierbarer Schritt:** Nach Martins echten AntwortenD1–D3 das PaketP0mit tatsächlichen Kosten-/Verkäufer-/Rechnungs-/Applebelegen konkretisieren. Produktumsetzung/Echtgeld/Production benötigt neuenkonkretenAuftrag. Dokumentationsintegration beim bestehendenIntegrationsowner;Registry bleibt activefür offeneProduktentscheidung,keinImplementierungsfortschrittbehauptet.
