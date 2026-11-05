@@ -772,6 +772,15 @@
       "integrationTarget": "feature/gradecrew-app-integration",
       "state": "active",
       "handoff": "workstreams/auth-brand-alignment-20261026.md"
+    },
+    {
+      "id": "billing-research-20261104",
+      "title": "GC-BILLING-PLAN-01: Gratisversion, Preise, Schullizenzen und Abrechnung — plan_only",
+      "primaryBranch": "docs/billing-research-20261104",
+      "integrationTarget": "main",
+      "state": "active",
+      "handoff": "workstreams/billing-research-20261104.md",
+      "relatedBranches": []
     }
   ]
 }

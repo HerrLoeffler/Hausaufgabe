@@ -823,3 +823,8 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 
 
 - [ ] **GC-TUTORIAL-01 · X während freier Schüler-Bearbeitung:** Separat offen. V7 versteckt beim Schülerstart den Coach; vorhandenesX wird nur am Coach erzeugt. Keine durchgehendeAlways-X-Abnahme behaupten. Finale-/freieKorrektur-X im begrenzten Fix geprüft; globaleAbbruch-/Schülerzustände gesondert.
+
+## GC-BILLING-PLAN-01 — Gratisversion, Preise, Schullizenzen und Abrechnung
+
+- [x] **plan_only / Recherche und Plan geliefert:** [Entscheidungsbericht](docs/billing/2026-11-04-entscheidungsbericht.md) mit drei Gratisvarianten, Kosten-/Preisszenarien, PSP/MoR, Zahlungs-/Rechtezuständen, Rechnung DE/EU/B2G, aktueller Apple-Einordnung und50geplanten Abnahmefällen; [Detailplan](docs/superpowers/plans/2026-11-04-billing.md),39–66PT unter benannten Annahmen. [Draft-PR411](https://github.com/HerrLoeffler/Hausaufgabe/pull/411), eigener Dokumentationsbranch docs/billing-research-20261104; [Handoff](workstreams/billing-research-20261104.md). Nur Recherche abgeschlossen, kein Produkt/Preis/Deploy.
+- [ ] **Entscheidung offen:** Martin entscheidet Gratis-/Preishypothese, tatsächlichen Verkäufer-/Steuer-/Rechnungsweg und Web/Schule/Apppriorität (D1–D3). DanachP0konkret beauftragen; keine Kontoeröffnung, Echtgeld-/Preisaktivierung oder Implementierung aus diesem Plan ableiten.
