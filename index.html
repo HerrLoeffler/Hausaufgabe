@@ -262,6 +262,7 @@
 
       <section id="adminPanelFeedback" class="adminPanel hidden" role="tabpanel" aria-labelledby="adminTabFeedback" tabindex="0">
         <div class="card adminToolbar">
+          <label>Bereich<select id="adminFeedbackView"><option value="technical">Technische Fehler</option><option value="quality">Qualitätsfeedback / Lernsignale</option><option value="all">Alle Rückmeldungen</option></select></label>
           <label class="searchField">Feedback durchsuchen<input id="adminFeedbackSearch" type="search" placeholder="Name, E-Mail, Nachricht oder Testcode …" /></label>
           <label>Kategorie<select id="adminFeedbackCategory"><option value="all">Alle Kategorien</option><option value="rights">Rechtehinweise</option><option value="ai_question">KI-Aufgaben</option><option value="app_error">Technische Fehler</option><option value="screenshot_error">Visuelle Hinweise</option><option value="bug">Fehler</option><option value="idea">Wunsch / Idee</option><option value="question">Frage</option><option value="other">Sonstiges</option></select></label>
           <label>Status<select id="adminFeedbackFilter"><option value="all">Alle Status</option><option value="new">Neu</option><option value="working">In Bearbeitung</option><option value="done">Erledigt</option></select></label>
@@ -277,6 +278,7 @@
         </div><button class="button secondary" id="adminFeedbackReset" type="button">Zusatzfilter zurücksetzen</button></details>
         <div class="actions"><span id="adminFeedbackCount" role="status"></span><button type="button" id="adminFeedbackExport" class="button secondary">Gefilterte Diagnose exportieren</button><button type="button" id="adminFeedbackMore" class="button secondary">Ältere Meldungen laden</button></div>
         <p class="hint">BugOps bündelt gleiche technische Meldungen zu Incidents. Der Diagnoseexport enthält technische Abläufe und Untersuchungsnotizen; Kontaktdaten und Aufgabeninhalte werden ausgelassen. Freitextnotizen vor dem Weitergeben prüfen.</p>
+        <p id="adminFeedbackViewHint" class="hint" role="status"></p>
         <div id="adminFeedbackList" class="feedbackList"></div>
       </section>
 
