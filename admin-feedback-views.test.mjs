@@ -64,6 +64,7 @@ test('real admin renderer separates inboxes, retains all feedback and links tech
  assert.equal(w.$('adminFeedbackFingerprint').value,'');
  change('adminFeedbackView','all');assert.equal(ids().length,rows.length);
  change('adminFeedbackCategory','screenshot_error');assert.deepEqual(ids(),['image']);
+ w.$('adminFeedbackFingerprint').value='old-fingerprint';w.$('adminFeedbackAction').value='generate_test';w.$('adminFeedbackSeverity').value='error';
  change('adminFeedbackCategory','ai_question');assert.equal(w.$('adminFeedbackView').value,'quality');
  assert.equal(ids().length,3);
  w.document.querySelector('.relatedTechnicalFeedback').click();

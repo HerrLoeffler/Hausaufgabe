@@ -8845,7 +8845,14 @@ $("adminFeedbackView")?.addEventListener("change", () => {
 });
 $("adminFeedbackCategory")?.addEventListener("change", () => {
   const category = $("adminFeedbackCategory").value;
-  if (category !== "all" && $("adminFeedbackView")) $("adminFeedbackView").value = category === "ai_question" ? "quality" : ["app_error", "bug"].includes(category) ? "technical" : "all";
+  if (category !== "all" && $("adminFeedbackView")) {
+    const nextView = category === "ai_question" ? "quality" : ["app_error", "bug"].includes(category) ? "technical" : "all";
+    if (nextView !== $("adminFeedbackView").value || nextView === "quality") {
+      for (const id of ["adminFeedbackFingerprint", "adminFeedbackAction"]) if ($(id)) $(id).value = "";
+      if ($("adminFeedbackSeverity")) $("adminFeedbackSeverity").value = "all";
+    }
+    $("adminFeedbackView").value = nextView;
+  }
   renderAdminFeedback();
 });
 $("adminFeedbackFilter")?.addEventListener("change", renderAdminFeedback);
