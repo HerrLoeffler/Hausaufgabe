@@ -1,0 +1,39 @@
+{
+  "status": "illustrative-proposal-not-implemented",
+  "schemaVersion": "proposal-0",
+  "scenarioDefinitionId": "example-reference-scene",
+  "scenarioRevision": "example-r1",
+  "runtimeProfile": "web-first-runtime-to-be-qualified",
+  "assetVersion": "example-assets-v1",
+  "mappingVersion": "example-mapper-v1",
+  "purpose": "practice-requires-explicit-server-policy",
+  "durationTargetMinutes": 15,
+  "layoutVariant": "reviewed-reference-a",
+  "stations": [
+    {
+      "templateId": "select-mark-reviewed",
+      "questionRef": "example-q-deutsch",
+      "directPanelAvailable": true
+    },
+    {
+      "templateId": "order-reviewed",
+      "questionRef": "example-q-satz",
+      "directPanelAvailable": true
+    },
+    {
+      "templateId": "measure-number-reviewed",
+      "questionRef": "example-q-mathe",
+      "wholeLitres": 1,
+      "scaleDivisions": 10,
+      "directPanelAvailable": true
+    },
+    {
+      "templateId": "match-reviewed",
+      "questionRef": "example-q-zuordnung",
+      "directPanelAvailable": true
+    }
+  ],
+  "attemptBinding": "instantiated-server-side-after-start-from-own-public-paper",
+  "answerBinding": "own-opaque-paper-ids-only",
+  "feedbackPolicy": "server-authorized-proposal-not-current-api"
+}
