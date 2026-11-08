@@ -4804,6 +4804,32 @@
           "Physical device acceptance and further targeted Live correction/Undo/reload checks beyond existing Stage acceptance and automated contracts."
         ]
       }
+    },
+    {
+      "id": "billing-research-20261104",
+      "task_id": "GC-BILLING-PLAN-01",
+      "branch": "docs/billing-research-20261104",
+      "stage": "staging_deployed",
+      "verification_scope": "inert_workspace_ui_preview_only; no_auth_payment_backend",
+      "integration": "not_merged; isolated_preview_only",
+      "source_commit": "ddf3045bc2d1b2e1cb46a5867f8ceecb00705c9e",
+      "owner": "Billing-Fachchat",
+      "handoff": "workstreams/billing-research-20261104.md",
+      "staging": {
+        "project": "gradecrew-staging-2026",
+        "channel": "billing-plan-01",
+        "url": "https://gradecrew-staging-2026--billing-plan-01-o0aafic4.web.app",
+        "version": "sites/gradecrew-staging-2026/versions/909ec58c7f756344",
+        "receipt": "docs/billing/sandbox-v1/preview-deploy-2026-11-08.json",
+        "verified_files": 21,
+        "functions_changed": false,
+        "rules_changed": false,
+        "auth_changed": false,
+        "database_data_changed": false
+      },
+      "user_test": "automated desktop/mobile UI navigation only; no human payment test",
+      "production": "unchanged_by_this_task",
+      "next_action": "Existing Stripe sandbox binding through secure operator connection; real Auth/server/payment implementation remains open."
     }
   ],
   "deployments": [

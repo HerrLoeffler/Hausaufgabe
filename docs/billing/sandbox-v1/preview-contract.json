@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "task": "GC-BILLING-PLAN-01",
+  "pr": 411,
+  "status": "ui_preview_only",
+  "productCodePrepared": false,
+  "buildOutputExists": true,
+  "previewExists": true,
+  "previewUrl": "https://gradecrew-staging-2026--billing-plan-01-o0aafic4.web.app",
+  "target": {
+    "projectId": "gradecrew-staging-2026",
+    "channelNameProposed": "billing-plan-01",
+    "channelExistenceVerified": true,
+    "exactOrigin": "https://gradecrew-staging-2026--billing-plan-01-o0aafic4.web.app",
+    "overwriteCanonicalHosting": false,
+    "forbiddenProjects": [
+      "hausaufgabe-staging",
+      "hausaufgabe-40294"
+    ],
+    "forbiddenOrigins": [
+      "https://gradecrew.de",
+      "https://gradecrew-staging-2026.web.app"
+    ],
+    "expireTime": "2026-11-15T23:02:04.146041Z"
+  },
+  "baseline": {
+    "sourceCommit": "80c845796fcb1efc324b1a266944a13bb06d7334",
+    "publicLiveFilesVerified": 215,
+    "publicStageFilesVerified": 230,
+    "receipt": "../2026-11-08-web-baseline.json",
+    "warning": "UI source only: never serve copied production Firebase config; public hashes do not prove backend deployment."
+  },
+  "provider": {
+    "requiredMode": "stripe_test",
+    "configurationVerified": false,
+    "checkoutEnabled": false,
+    "expectedAccountBindingVerified": false,
+    "secretReferencesVerified": false,
+    "liveObjectsAllowed": false,
+    "fakePaidFallbackAllowed": false,
+    "createAccountsKeysContractsAllowed": false,
+    "currentPreparationMayCreateProviderObjects": false,
+    "note": "Stage inventory verified: no existing Stripe/PayPal binding; external account existence unknown. UI preview has no provider/Auth/database connection.",
+    "stageSecretBindingPresent": false,
+    "externalStripeAccountExistence": "not_inspected",
+    "stageInventoryVerified": true
+  },
+  "proposedTestParameters": {
+    "approvedCustomerPricing": false,
+    "currency": "eur",
+    "monthlyAmountMinor": 100,
+    "starterUnits": 3,
+    "periodUnits": 12,
+    "graceHours": 72,
+    "reservationTimeoutMinutes": 10,
+    "reconcileIntervalMinutes": 15,
+    "starterExpires": false,
+    "periodRollover": false
+  },
+  "data": {
+    "namespace": "billingSandboxes/v1",
+    "existingLiveAccountAllowed": false,
+    "copyCustomerOrStudentDataAllowed": false,
+    "serverClaimAndAllowlistRequired": true,
+    "directClientBillingWritesAllowed": false,
+    "emailVerificationConfigured": null,
+    "verifiedEmailRequiredWhenConfigured": true,
+    "endToEndSignupProofRequiresRealVerificationIfEnabled": true,
+    "previewAuthenticationEnabled": false,
+    "previewDatabaseConnectionEnabled": false,
+    "emailVerificationNote": "Firebase email/password and default email sender configured in Stage; delivery and verification not tested.",
+    "emailPasswordAndDefaultSenderConfigured": true
+  },
+  "generation": {
+    "maxSuccessfulUiFixtureCreations": 1,
+    "fixtureLabel": "Beispieltest — ohne KI erzeugt",
+    "paidAiCallsAllowed": false,
+    "allExistingCostRoutesRequireServerDenialForSandboxActor": true,
+    "failedCreationConsumesUnit": false,
+    "localFixtureIsStripeEvidence": false
+  },
+  "completion": {
+    "requiredCases": 24,
+    "casesExecuted": 0,
+    "stripePaymentVerified": false,
+    "signedWebhookVerified": false,
+    "serverEntitlementVerified": false,
+    "canonicalHostingUnchangedVerifiedAfterDeploy": true,
+    "stageAComplete": false,
+    "stageBRealMoneyAuthorized": false,
+    "uiPreviewFilesVerified": 21,
+    "desktopAndMobileUiVerified": true
+  },
+  "nextStep": "Securely connect an existing Stripe sandbox/account without creating accounts or keys; then implement isolated server guards and actual Auth/payment flow. Current preview stays data-free and disabled.",
+  "previewUiCodePrepared": true
+}
