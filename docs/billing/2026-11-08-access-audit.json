@@ -1,0 +1,89 @@
+{
+  "task": "GC-BILLING-PLAN-01",
+  "observedAtUtc": "2026-11-08T22:56:13.677849+00:00",
+  "project": "gradecrew-staging-2026",
+  "accessSource": "existing_local_firebase_cli_session",
+  "credentialsCreated": false,
+  "credentialFileChanged": false,
+  "credentialValuesExported": false,
+  "secretValuesRead": false,
+  "projectActive": true,
+  "currentOperatorRole": "roles/owner",
+  "hostingPermissions": [
+    "cloudfunctions.functions.list",
+    "firebasehosting.sites.get",
+    "firebasehosting.sites.update",
+    "secretmanager.secrets.list"
+  ],
+  "secretInventory": {
+    "secretNames": [
+      "OPENAI_API_KEY"
+    ],
+    "nextPageTokenPresent": false
+  },
+  "database": {
+    "name": "projects/gradecrew-staging-2026/databases/(default)",
+    "locationId": "eur3",
+    "type": "FIRESTORE_NATIVE",
+    "databaseEdition": "STANDARD"
+  },
+  "functions": {
+    "v2Count": 96,
+    "v2Complete": true,
+    "v1Count": 0,
+    "paymentNamedFunctions": [],
+    "paymentEnvironmentOrSecretReferences": []
+  },
+  "auth": {
+    "emailPasswordEnabled": true,
+    "emailSendingMethod": "DEFAULT",
+    "realMailDeliveryTested": false
+  },
+  "existingChannelsBefore": [
+    {
+      "name": "projects/gradecrew-staging-2026/sites/gradecrew-staging-2026/channels/live",
+      "url": "https://gradecrew-staging-2026.web.app",
+      "expireTime": null,
+      "releaseVersion": "projects/gradecrew-staging-2026/sites/gradecrew-staging-2026/versions/8b6154420ead9ecb"
+    },
+    {
+      "name": "projects/gradecrew-staging-2026/sites/gradecrew-staging-2026/channels/sequence28",
+      "url": "https://gradecrew-staging-2026--sequence28-hxbbyqtu.web.app",
+      "expireTime": "2026-11-27T16:04:26.985437343Z",
+      "releaseVersion": "projects/gradecrew-staging-2026/sites/gradecrew-staging-2026/versions/3c250828627267e0"
+    },
+    {
+      "name": "projects/gradecrew-staging-2026/sites/gradecrew-staging-2026/channels/visual255",
+      "url": "https://gradecrew-staging-2026--visual255-rjcwf436.web.app",
+      "expireTime": "2026-11-25T19:32:44.277632711Z",
+      "releaseVersion": "projects/gradecrew-staging-2026/sites/gradecrew-staging-2026/versions/e9901724cc2f672d"
+    }
+  ],
+  "stripe": {
+    "stageSecretBindingPresent": false,
+    "stagePaymentBackendPresent": false,
+    "localCliConfigFound": false,
+    "connectedPluginPresent": false,
+    "availableUninstalledPluginFound": true,
+    "externalAccountExistence": "not_inspected",
+    "secretManagerInventoryComplete": true
+  },
+  "attempts": [
+    {
+      "check": "project_level_permission_query",
+      "result": "two_400_invalid_resource_permission_names; no_mutation; not_an_authorization_failure"
+    },
+    {
+      "check": "corrected_permission_query",
+      "result": "200; hosting_site_update_confirmed"
+    }
+  ],
+  "changesAtThisCheckpoint": {
+    "hosting": false,
+    "functions": false,
+    "rules": false,
+    "auth": false,
+    "databaseData": false
+  },
+  "nextStep": "Deploy data-free UI preview only on own channel; no Auth/Stripe SDK or database connection. Real payment flow waits for existing Stripe sandbox connection."
+}
