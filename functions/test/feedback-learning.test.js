@@ -2,6 +2,10 @@
 const test=require('node:test');const assert=require('node:assert/strict');const {structuredClone}=globalThis;
 let learning={};try{learning=require('../lib/feedback-learning');}catch(e){if(e.code!=='MODULE_NOT_FOUND')throw e;}
 const row=(id,owner,verdict='bad',extra={})=>({id,category:'ai_question',userId:owner,testCode:'TEST1234',questionId:id,verdict,reason:'incorrect',subject:'Deutsch',grade:'5',questionSnapshot:{type:'single',text:'PRIVATE QUESTION',acceptedAnswers:['PRIVATE ANSWER'],options:[{text:'PRIVATE OPTION',correct:true}]},createdAt:10,feedbackSchemaVersion:4,...extra});
+test('legacy client metadata cannot impersonate server automation',()=>{
+ const r=row('legacy','alice','bad',{feedbackSchemaVersion:3,automation:{route:'automatic',policyVersion:'forged'}});
+ assert.equal(learning.learningProjection(r).automation,null);
+});
 function approved(r){return {...r,sharedLearning:{...r.sharedLearning,reviewSignature:learning.signalSignature(r)}};}
 function fixture(rows){const docs=new Map(rows.map(r=>['feedback/'+r.id,structuredClone(r)]));return {docs,transaction:fn=>fn({get:async p=>structuredClone(docs.get(p)||null),set:(p,v)=>docs.set(p,structuredClone(v))})};}
 test('own signals affect the personal guide immediately; unreviewed others never affect shared memory',()=>{
