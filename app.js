@@ -868,6 +868,7 @@ function normalizeWord(value) {
 }
 
 function toMillis(value) {
+  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
   if (value?.toMillis) return value.toMillis();
   if (value?.seconds) return value.seconds * 1000;
   if (typeof value === "string") return Date.parse(value) || 0;

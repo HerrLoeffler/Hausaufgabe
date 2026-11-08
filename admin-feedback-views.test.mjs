@@ -72,3 +72,15 @@ test('real admin renderer separates inboxes, retains all feedback and links tech
  assert.equal(w.state.adminFeedback.length,rows.length);assert.equal(writes,0);
  w.close();
 });
+
+test('real date helpers display numeric callable timestamps and preserve Firestore timestamps',()=>{
+ const from=source.indexOf('function toMillis('),to=source.indexOf('\nfunction formatDuration(',from);
+ const context=vm.createContext({});vm.runInContext(source.slice(from,to),context);
+ const ms=1794051597091;
+ assert.equal(context.toMillis(ms),ms);
+ assert.equal(context.fmtDate(ms),new Date(ms).toLocaleString('de-DE'));
+ assert.equal(context.toMillis({toMillis:()=>ms}),ms);
+ assert.equal(context.toMillis({seconds:1794051597}),1794051597000);
+ for(const missing of [undefined,null,NaN,Infinity,-Infinity])assert.equal(context.toMillis(missing),0);
+ assert.equal(context.fmtDate(null),'–');
+});
