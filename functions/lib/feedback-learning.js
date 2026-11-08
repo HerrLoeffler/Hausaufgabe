@@ -14,7 +14,8 @@ function usable(row){return row?.category==='ai_question'&&['good','bad'].includ
 function clean(row){
  const q=row.questionSnapshot||{},candidateType=q.type||row.questionType,type=TYPES.has(candidateType)?candidateType:'Aufgabe';
  const mediaKind=q.imageChoices===true||q.mediaIntent?.kind==='image_choices'?'image_choices':q.imagePresent===true||q.mediaIntent?.kind==='ai_generated'?'ai_generated':q.imagePresent===false||q.mediaIntent?.kind==='none'?'none':'unknown';
- const reason=({content_wrong:'incorrect',answer_wrong:'incorrect',unclear:'ambiguous',off_topic:'other'})[row.reason]||row.reason;
+ const verifiedReason=approved(row)&&row.sharedLearning?.mode==='automatic_structural'?row.sharedLearning.verifiedReason:row.reason;
+ const reason=({content_wrong:'incorrect',answer_wrong:'incorrect',unclear:'ambiguous',off_topic:'other'})[verifiedReason]||verifiedReason;
  return {category:'ai_question',userId:row.userId,verdict:row.verdict,reason:REASONS.has(reason)?reason:'other',subject:String(row.subject||'').slice(0,120),grade:String(row.grade||'').slice(0,60),questionType:type,
  questionSnapshot:{type,text:'x'.repeat(Math.min(900,String(q.text||'').length)),points:Number.isFinite(q.points)&&q.points>0&&q.points<=100?q.points:0,options:Array.from({length:Math.min(6,Array.isArray(q.options)?q.options.length:0)},()=>({text:'',correct:false})),imagePresent:q.imagePresent===true||q.mediaIntent?.kind==='ai_generated',imageChoices:q.imageChoices===true||q.mediaIntent?.kind==='image_choices',passage:q.passage?'x':'',mediaIntent:{kind:mediaKind}}};
 }
@@ -55,7 +56,7 @@ function learningProjection(row){
  const sig=signature(row),personal=row.learningUse?.personal,shared=row.learningUse?.shared,decision=row.sharedLearning?.decision;
  const ownUsed=personal?.signature===sig&&personal.version===VERSION,sharedUsed=shared?.signature===sig&&shared.version===VERSION&&shared.reviewRevision===row.sharedLearning?.revision&&approved(row);
  return {reviewSignalSignature:sig,learningVersion:VERSION,personalLearningStatus:!usable(row)?'not_eligible':ownUsed?'applied':'eligible_no_evidence',sharedLearningStatus:decision==='rejected'?'rejected':decision==='approved'?(!approved(row)?'review_outdated':sharedUsed?'applied':'approved_pending_use'):'pending_review',
- personalAppliedAt:ownUsed?millis(personal.at)||null:null,sharedAppliedAt:sharedUsed?millis(shared.at)||null:null,personalAppliedOperation:ownUsed?String(personal.operation||''): '',sharedAppliedOperation:sharedUsed?String(shared.operation||''):'',reviewEvidence:String(row.sharedLearning?.evidence||'').slice(0,1000),reviewRevision:Number(row.sharedLearning?.revision)||0,
+ personalAppliedAt:ownUsed?millis(personal.at)||null:null,sharedAppliedAt:sharedUsed?millis(shared.at)||null:null,personalAppliedOperation:ownUsed?String(personal.operation||''): '',sharedAppliedOperation:sharedUsed?String(shared.operation||''):'',reviewEvidence:String(row.sharedLearning?.evidence||'').slice(0,1000),reviewRevision:Number(row.sharedLearning?.revision)||0,sharedReviewMode:row.sharedLearning?.mode==='automatic_structural'?'automatic_structural':'manual',
  processingEvidence:ownUsed||sharedUsed?'model_prompt_use_recorded':row.feedbackSchemaVersion===4?'no_model_use_receipt':'legacy_no_prior_evidence',
  ...(row.automation?{automation:{route:row.automation.route,reasonCode:row.automation.reasonCode,policyVersion:row.automation.policyVersion,ruleIds:row.automation.ruleIds||[],processedAt:millis(row.automation.processedAt)||null}}:{})};
 }

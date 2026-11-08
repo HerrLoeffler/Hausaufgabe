@@ -44,6 +44,7 @@ test('admin distinguishes automatic existing-rule handling from human help and n
  const automatic=summary()({...base,automation:{route:'automatic',policyVersion:'common-quality-v1',ruleIds:['visible-answer'],reasonCode:'existing_rule_covers_finding'}});
  assert.match(automatic,/Automatisch.*bestehende Regel/);assert.match(automatic,/common-quality-v1/);assert.doesNotMatch(automatic,/Gemeinsam freigegeben/);
  assert.match(summary()({...base,automation:{route:'human',policyVersion:'common-quality-v1',reasonCode:'context_incomplete'}}),/Deine Prüfung nötig.*Aufgabenkontext/);
+ assert.match(summary()({...base,sharedLearningStatus:'approved_pending_use',sharedReviewMode:'automatic_structural',automation:{route:'automatic',policyVersion:'common-quality-v1',ruleIds:['visible-answer']}}),/Automatisch gemeinsam freigegeben; noch kein belegter Einsatznachweis/);
  assert.doesNotMatch(summary()(base),/Automatisch/);
 });
 

@@ -8,13 +8,21 @@ function setup(projectId='hausaufgabe-staging'){
  const service=createReviewService({store:{transaction:fn=>fn(tx)},projectId,now:()=>12345});return {rows,call:(uid,data)=>service.execute({uid,data})};
 }
 const rating={action:'recordQuestionFeedback',clientRequestId:'rating-one',testCode:'MINE1234',questionId:'q1',questionPosition:1,verdict:'bad',reason:'unclear',teacherComment:'',feedbackAction:'remove',questionSnapshot:{type:'single',text:'Welche Zahl?',points:1,options:[{text:'2',correct:true}]},appVersion:'test-v1',sourceRelease:'a'.repeat(40)};
-test('new feedback is automatically routed only for a demonstrable existing rule, never a novel global approval',async()=>{
+test('new feedback automatically approves only a demonstrable existing structural rule and influences shared checks',async()=>{
  const s=setup();const input={...rating,reason:'answer_leak',questionSnapshot:{type:'single',text:'Choose the English colour word for the colour of a tree trunk: “brown”.',options:[{text:'brown',correct:true},{text:'blue',correct:false}]}};
  const saved=await s.call('teacher',input),row=s.rows.get('feedback/'+saved.id);
  assert.equal(row.automation?.route,'automatic');assert.deepEqual(row.automation.ruleIds,['visible-answer']);assert.equal(row.automation.policyVersion,'common-quality-v1');
- assert.equal(row.sharedLearning,undefined);assert.equal(row.learningUse,undefined);
- const projection=(await s.call('admin',{action:'listQuestionFeedback'})).reports[0];assert.equal(projection.automation.route,'automatic');assert.equal(projection.sharedLearningStatus,'pending_review');
+ assert.equal(row.sharedLearning?.decision,'approved');assert.equal(row.sharedLearning.mode,'automatic_structural');assert.equal(row.learningUse,undefined);
+ const projection=(await s.call('admin',{action:'listQuestionFeedback'})).reports[0];assert.equal(projection.automation.route,'automatic');assert.equal(projection.sharedLearningStatus,'approved_pending_use');
+ const memory=require('../lib/feedback-learning').buildFeedbackLearning([{...row,id:saved.id}],{},'other-teacher');assert.equal(memory.stats.total,1);assert.match(require('../lib/feedback-learning').learningPrompt(memory),/Lösung wird in der Frage verraten/);
  const before=structuredClone(row.automation);await s.call('teacher',input);assert.deepEqual(s.rows.get('feedback/'+saved.id).automation,before);
+});
+test('an automatically verified empty-reason report gains only its proven reason, never raw comments or foreign task text',async()=>{
+ const s=setup();const saved=await s.call('teacher',{...rating,reason:'',questionSnapshot:{type:'single',text:'Choose the English colour word for the colour of a tree trunk: “brown”.',options:[{text:'brown',correct:true},{text:'blue',correct:false}]}});
+ const row=s.rows.get('feedback/'+saved.id);assert.equal(row.reason,'');assert.equal(row.sharedLearning?.verifiedReason,'answer_leak');
+ const memory=require('../lib/feedback-learning').buildFeedbackLearning([{...row,id:saved.id}],{},'other-teacher');assert.equal(memory.stats.total,1);assert.doesNotMatch(require('../lib/feedback-learning').learningPrompt(memory),/brown|tree trunk/);
+ const changed={...row,id:saved.id,questionSnapshot:{...row.questionSnapshot,text:'Changed'}};assert.equal(require('../lib/feedback-learning').buildFeedbackLearning([changed],{},'other-teacher').stats.total,0);
+ await assert.rejects(s.call('teacher',{...rating,clientRequestId:'forged-approval',sharedLearning:{decision:'approved',mode:'automatic_structural'}}),{code:'invalid-argument'});
 });
 test('unclear, conflicting, duplicate, media-dependent and warning feedback requires human help; old records stay untouched',async()=>{
  const s=setup();s.rows.set('feedback/legacy',{category:'ai_question',verdict:'bad',status:'done'});

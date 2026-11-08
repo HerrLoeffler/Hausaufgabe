@@ -8,7 +8,7 @@
 **Spec:** docs/superpowers/specs/2026-11-08-common-quality-automation-design.md
 
 ## Global Constraints
-Keine Altbewertung freigeben; keine neuen Fachregeln aus Freitext; keine zusätzlichen KI-Aufrufe zur Meldungsklassifikation; keine Rollen-/Rules-/Quotaänderung; aktuelle Livebytes außerhalb enger Änderungen erhalten.
+Keine Altbewertung freigeben; neue gemeinsame automatische Freigabe nur für passend nachgewiesene bestehende Strukturregel, mit Signatur/Revision/Audit und festem geprüftem Grund; keine neuen Fachregeln aus Freitext; keine zusätzlichen KI-Aufrufe zur Meldungsklassifikation; keine Rollen-/Rules-/Quotaänderung; aktuelle Livebytes außerhalb enger Änderungen erhalten.
 
 ## Review Focus
 Antwortleck vs erlaubter Lesekontext; äquivalente Brüche vs explizite Darstellungsanforderung; false_positive und leere Snapshots; Promptinhalt bei allen Erstellungswegen; ehrlicher Speicher-/Validierungsbeleg nach Modellantwort.
