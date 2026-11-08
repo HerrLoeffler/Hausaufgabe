@@ -398,7 +398,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       ...(memory.unavailable ? ["Frühere Lehrerbewertungen waren bei dieser Erstellung nicht verfügbar. Bitte die Aufgaben besonders sorgfältig prüfen."] : []),
       ...qualityIssues.map(issue => `Aufgabe ${issue.questionPosition}: ${issue.reason}: ${issue.detail}`)
     ].slice(0, 10);
-    const commonRules = ruleReceipt(reviewed.test.questions, input.generationMode === "variant" ? "generateTestVariant" : "generateTest");
+    const commonRules = ruleReceipt(reviewed.test.questions, input.generationMode === "variant" ? "generateTestVariant" : "generateTest", {generationId:memory.learning?.generationId});
     const commonRulesUsageStored = await recordUsage(uid, "test", usage, {
       commonRules,
       model: TEXT_MODEL,
@@ -800,7 +800,7 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
     }
     if (!errors.length) break;
   }
-  const commonRules = ruleReceipt(normalized, "regenerateQuestion");
+  const commonRules = ruleReceipt(normalized, "regenerateQuestion", {generationId:memory.learning?.generationId});
   const commonRulesUsageStored = await recordUsage(uid, "question", usage, { commonRules, model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: Boolean(errors.length), qualityMemoryVersion: memory.memoryVersion, feedbackSignals: memory.stats?.total || 0, positivePatterns: memory.positivePatterns?.length || 0, recurringRuleCandidates: memory.ruleCandidates?.length || 0 });
   if (errors.length) throw new HttpsError("failed-precondition", "Die neue Aufgabe ist nicht zuverlässig gültig.", { errors });
   return { question: normalized, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, feedbackLearning, commonRules, commonRulesUsageStored: commonRulesUsageStored === true } };

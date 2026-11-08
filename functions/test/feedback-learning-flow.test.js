@@ -29,6 +29,7 @@ test('usage storage failure stays explicit without losing the valid generated ta
 });
 test('actual generation prompt changes immediately for own rating and writes evidence only after model reply',async()=>{
  const baseline=await run([]);assert.ok(baseline.result);const rated=await run([report('own','alice')]);assert.ok(rated.result);assert.match(rated.calls[0].userPrompt,/Bewertungsgedächtnis persönlich: 1/);assert.doesNotMatch(rated.calls[0].userPrompt,/PRIVATE/);assert.equal(rated.docs.get('feedback/own').learningUse.personal.operation,'generateTest');assert.equal(rated.result.meta.feedbackLearning.recorded,1);
+ assert.equal(rated.result.meta.commonRules.generationId,rated.docs.get('feedback/own').learningUse.personal.generationId);
 });
 test('actual generation isolates teachers and uses shared signals only after explicit review',async()=>{
  const privateSignal=await run([report('own','alice')],'bob');assert.doesNotMatch(privateSignal.calls[0].userPrompt,/Bewertungsgedächtnis/);
@@ -57,6 +58,7 @@ for(const [name,invoke] of [['single-task variant',runRegeneration],['whole-test
  test(`actual ${name} rule receipt hashes the returned questions`,async()=>{
   const r=await invoke();assert.ok(r.result,r.error?.message);const qs=r.result.question?[r.result.question]:r.result.test.questions;
   const expected=require('../lib/common-quality-rules').ruleReceipt(qs,'ignored');assert.equal(r.result.meta.commonRules?.questionsSha256,expected.questionsSha256);
+  assert.equal(r.result.meta.commonRules.generationId,r.docs.get('feedback/own').learningUse.personal.generationId);
  });
  test(`actual ${name} prompt uses own signal and records only after model reply`,async()=>{
   const r=await invoke({baseline:process.env.GC_LEARNING_BASELINE==='1'});assert.ok(r.result,r.error?.message);const prompt=r.calls[0].userPrompt||r.calls[0].input.find(item=>item.role==='user').content[0].text;assert.match(prompt,/Bewertungsgedächtnis persönlich: 1/);assert.doesNotMatch(prompt,/PRIVATE/);assert.equal(r.docs.get('feedback/own').learningUse.personal.operation,name==='single-task variant'?'regenerateQuestion':'reviseWholeTest');assert.equal(r.result.meta.feedbackLearning.recorded,1);

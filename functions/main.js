@@ -415,7 +415,7 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
     );
     const feedbackLearning = feedbackMemory.learning?.sources?.length ? await recordLearningUseSafe(getFirestore(), feedbackMemory, {uid,operation:"reviseWholeTest"}) : {recorded:0};
     const result = finalizeWholeTestRevision(clean, data);
-    const commonRules = ruleReceipt(result.test.questions, "reviseWholeTest");
+    const commonRules = ruleReceipt(result.test.questions, "reviseWholeTest", {generationId:feedbackMemory.learning?.generationId});
     const commonRulesUsageStored = await recordUsage(uid, "test", usage, {
       commonRules,
       operation: "whole_test_revision",
