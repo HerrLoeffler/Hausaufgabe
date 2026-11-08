@@ -49,3 +49,10 @@ export function supportExport(rows) {
       createdAtMillis: logMillis(r.createdAt), occurrences: occurrences(r), diagnostics: r.technicalDetails?.diagnostics || null,
       serverReference: r.technicalDetails?.serverReference || '', resolution: r.resolution || null })) };
 }
+
+// A read-only projection: feedback persistence and retention are independent of inbox views.
+export function filterFeedbackByView(rows, view = 'technical') {
+  if (view === 'all') return [...rows];
+  if (view === 'quality') return rows.filter(row => row.category === 'ai_question');
+  return rows.filter(row => row.category === 'app_error' || row.category === 'bug');
+}

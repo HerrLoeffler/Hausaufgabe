@@ -53,7 +53,7 @@ import { isAiReviewPending, shouldShowAiJob, parseStoredQualityIssue, buildQuali
 import { validOrder, acceptedOrderingOrders, gradeOrdering, orderingNeedsReview, orderingVariants, orderingVariantsForStorage } from "./ordering-grading.mjs?v=2.3.1-gc29-storage1";
 import { scrollBehavior, selectTab, bindTabs, focusView, setSaveState, installWorkspaceInteractions } from "./interface.js?v=2.3.1-gc2";
 import { createDiagnostics, installDiagnostics, redactTechnicalText, diagnosticSeverity } from "./diagnostics.mjs";
-import { filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
+import { filterFeedbackByView, filterLogs, groupErrors, supportExport } from "./admin-log-tools.mjs";
 import { buildBugIncidents, bugOpsOverview } from "./bug-ops.mjs";
 import { GRADECREW_ASSETS } from "./generated/gradecrew-assets.js";
 import { assessmentContentLabels } from "./shared/i18n/assessment-locale.mjs?v=3";
@@ -868,6 +868,7 @@ function normalizeWord(value) {
 }
 
 function toMillis(value) {
+  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
   if (value?.toMillis) return value.toMillis();
   if (value?.seconds) return value.seconds * 1000;
   if (typeof value === "string") return Date.parse(value) || 0;
@@ -8837,7 +8838,24 @@ $("adminTestOwnerFilter")?.addEventListener("change", renderAdminTests);
 $("adminTestPeriodFilter")?.addEventListener("change", renderAdminTests);
 $("exportAdminTestsBtn")?.addEventListener("click", exportAdminTestsCsv);
 $("adminFeedbackSearch")?.addEventListener("input", renderAdminFeedback);
-$("adminFeedbackCategory")?.addEventListener("change", renderAdminFeedback);
+$("adminFeedbackView")?.addEventListener("change", () => {
+  if ($("adminFeedbackCategory")) $("adminFeedbackCategory").value = "all";
+  for (const id of ["adminFeedbackFingerprint", "adminFeedbackAction"]) if ($(id)) $(id).value = "";
+  if ($("adminFeedbackSeverity")) $("adminFeedbackSeverity").value = "all";
+  renderAdminFeedback();
+});
+$("adminFeedbackCategory")?.addEventListener("change", () => {
+  const category = $("adminFeedbackCategory").value;
+  if (category !== "all" && $("adminFeedbackView")) {
+    const nextView = category === "ai_question" ? "quality" : ["app_error", "bug"].includes(category) ? "technical" : "all";
+    if (nextView !== $("adminFeedbackView").value || nextView === "quality") {
+      for (const id of ["adminFeedbackFingerprint", "adminFeedbackAction"]) if ($(id)) $(id).value = "";
+      if ($("adminFeedbackSeverity")) $("adminFeedbackSeverity").value = "all";
+    }
+    $("adminFeedbackView").value = nextView;
+  }
+  renderAdminFeedback();
+});
 $("adminFeedbackFilter")?.addEventListener("change", renderAdminFeedback);
 for (const id of ["adminFeedbackEnvironment", "adminFeedbackSeverity", "adminFeedbackVersion", "adminFeedbackFrom", "adminFeedbackTo", "adminFeedbackSort", "adminFeedbackAction", "adminFeedbackFingerprint"]) {
   $(id)?.addEventListener("input", renderAdminFeedback);
@@ -9526,10 +9544,17 @@ function renderBugOpsSummary() {
 }
 
 function questionLearningSummary(learning) {
-  if (!learning) return "Verarbeitungsstatus bitte aktualisieren.";
-  const personal = learning.personalLearningStatus === "applied" ? `Persönlich bei einer KI-Erstellung berücksichtigt: ${fmtDate(learning.personalAppliedAt)}` : learning.personalLearningStatus === "not_eligible" ? "Kein persönliches Lernsignal." : "Persönlich vorgemerkt; noch kein belegter Einsatznachweis.";
-  const shared = ({pending_review:"Gemeinsame Nutzung: fachliche Prüfung ausstehend.",approved_pending_use:"Gemeinsam freigegeben; noch kein belegter Einsatznachweis.",rejected:"Für gemeinsame Nutzung verworfen.",review_outdated:"Bewertung geändert: gemeinsame Nutzung erneut prüfen.",applied:`Gemeinsam bei einer KI-Erstellung berücksichtigt: ${fmtDate(learning.sharedAppliedAt)}`})[learning.sharedLearningStatus] || "Gemeinsamer Verarbeitungsstatus bitte aktualisieren.";
-  return `${personal} ${shared}${learning.reviewable === false ? " Aufgabenkontext für eine fachliche Prüfung unvollständig; keine Freigabe möglich." : ""}`;
+  if (!learning) return "Bewertung gespeichert. Verarbeitungsstatus bitte aktualisieren.";
+  const use = (scope, label) => {
+    const at = learning[`${scope}AppliedAt`], operation = learning[`${scope}AppliedOperation`];
+    const detail = [at ? fmtDate(at) : "", operation || "", learning.learningVersion || ""].filter(Boolean).join(" · ");
+    return at && operation && learning.learningVersion
+      ? `${label} bei einer KI-Erstellung berücksichtigt: ${detail}.`
+      : `${label}: Nutzung gemeldet, Einsatznachweis unvollständig (Zeit, Operation oder Version fehlt).${detail ? ` ${detail}.` : ""}`;
+  };
+  const personal = learning.personalLearningStatus === "applied" ? use("personal", "Persönlich") : learning.personalLearningStatus === "not_eligible" ? "Kein persönliches Lernsignal." : "Persönlich vorgemerkt; noch kein belegter Einsatznachweis.";
+  const shared = ({pending_review:"Gemeinsame Nutzung: fachliche Prüfung ausstehend.",approved_pending_use:"Gemeinsam freigegeben; noch kein belegter Einsatznachweis.",rejected:"Für gemeinsame Nutzung verworfen.",review_outdated:"Bewertung geändert: gemeinsame Nutzung erneut prüfen.",applied:use("shared", "Gemeinsam")})[learning.sharedLearningStatus] || "Gemeinsamer Verarbeitungsstatus bitte aktualisieren.";
+  return `Bewertung gespeichert. ${personal} ${shared}${learning.reviewable === false ? " Aufgabenkontext für eine fachliche Prüfung unvollständig; keine Freigabe möglich." : ""}`;
 }
 
 async function loadQuestionLearningStatuses() {
@@ -9570,7 +9595,12 @@ function renderAdminFeedback(){
   const status=$("adminFeedbackFilter")?.value||"all";
   const category=$("adminFeedbackCategory")?.value||"all";
   const term=normalize($("adminFeedbackSearch")?.value||"");
-  const list = filterLogs(state.adminFeedback, {
+  const view = $("adminFeedbackView")?.value || "technical";
+  if ($("adminFeedbackViewHint")) $("adminFeedbackViewHint").textContent = view === "quality"
+    ? "Positive und negative Aufgabenbewertungen werden gespeichert und automatisch als persönliche Lernsignale berücksichtigt. Gemeinsame Nutzung und tatsächlicher Einsatz sind je Bewertung nachgewiesen oder als offen markiert."
+    : view === "all" ? "Alle Rückmeldungen einschließlich Aufgabenbewertungen, visuellen Hinweisen und Rechtehinweisen. Es wird nichts ausgeblendet oder gelöscht."
+    : "Technische Fehlermeldungen. Aufgaben-Smileys findest du unter Qualitätsfeedback / Lernsignale; visuelle und weitere Hinweise unter Alle Rückmeldungen.";
+  const list = filterLogs(filterFeedbackByView(state.adminFeedback, view), {
     status, category, term, environment: $("adminFeedbackEnvironment")?.value,
     severity: $("adminFeedbackSeverity")?.value, version: $("adminFeedbackVersion")?.value,
     action: $("adminFeedbackAction")?.value, fingerprint: $("adminFeedbackFingerprint")?.value,
@@ -9601,7 +9631,7 @@ function renderAdminFeedback(){
   const groupsHtml = grouped.length ? `<details class="card"><summary>Fehlergruppen · ${grouped.length}</summary>${grouped.slice(0, 30).map(g => `<button type="button" class="button secondary errorGroupFilter" data-fingerprint="${escapeHtml(g.fingerprint)}">${escapeHtml(g.fingerprint)} · ${g.reports} Meldungen · ${g.occurrences} Vorkommen · ${g.open} offen</button>`).join("")}</details>` : "";
   state.adminLearningDrafts ||= {};
   root.querySelectorAll(".learningEvidence").forEach(field => {state.adminLearningDrafts[field.dataset.id] = field.value;});
-  root.innerHTML = renderBugOpsSummary() + rightsSummary + errorSummary + summary + questionReviewNotice + groupsHtml + (list.length ? list.map(f => {
+  root.innerHTML = (view !== "quality" ? renderBugOpsSummary() : "") + rightsSummary + errorSummary + summary + questionReviewNotice + groupsHtml + (list.length ? list.map(f => {
     const q = f.questionSnapshot;
     const snapshot = f.category === "ai_question" && q ? `<div class="aiFeedbackSnapshot"><strong>Aufgabe ${Number(f.questionPosition) || "?"} · ${escapeHtml(q.type || "")}</strong><p>${escapeHtml(q.text || "")}</p>${(q.options || []).length ? `<small>Antworten: ${(q.options || []).map(o => `${escapeHtml(o.text || "")}${o.correct ? " ✓" : ""}`).join(" · ")}</small>` : ""}<small>Aktion: ${escapeHtml(({ keep: "behalten", replace: "ersetzen", remove: "entfernen" })[f.action] || "–")}${f.feedbackSchemaVersion === 4 && f.action === "remove" ? " angefordert · Entwurf separat speichern" : ""}${q.imagePresent ? " · Bild im Test vorhanden oder vorhanden gewesen" : ""}${f.promptVersion ? ` · Prompt ${escapeHtml(f.promptVersion)}` : ""}${f.model ? ` · Modell ${escapeHtml(f.model)}` : ""}</small></div>` : "";
     const learning = state.adminQuestionLearning?.[f.id];
@@ -9621,10 +9651,19 @@ function renderAdminFeedback(){
     const errorSnapshot = technical ? `<div class="errorReportSnapshot"><div class="errorReportHeadline"><strong>${escapeHtml(f.errorCode || "Technischer Fehler")}</strong>${f.reportId ? `<span>${escapeHtml(f.reportId)}</span>` : ""}</div><p>${escapeHtml(f.action || "Unbekannte Aktion")}</p><small>${escapeHtml(technical.rawMessage || "Keine technische Fehlermeldung gespeichert.")}</small><div class="errorReportMeta"><span>Ansicht: ${escapeHtml(technical.view || "–")}</span><span>Phase: ${escapeHtml(technical.stage || "–")}</span><span>Aufgabe: ${escapeHtml(technical.questionPosition || "–")}</span><span>Fingerprint: ${escapeHtml(f.fingerprint || "–")}</span></div><button type="button" class="button secondary copyErrorReport" data-id="${escapeHtml(f.id)}">Fehlerbericht kopieren</button></div>` : "";
     const quiz = f.category === "rights" ? state.adminQuizzes.find(q => q.id === f.testCode) : null;
     const rightsAction = quiz ? `<div class="rightsReportActions"><button class="button ${quiz.rightsHold ? "secondary" : "danger"} rightsHoldToggle" type="button" data-code="${escapeHtml(quiz.id)}" data-hold="${quiz.rightsHold ? "false" : "true"}">${quiz.rightsHold ? "Sperre nach Klärung aufheben" : "Testzugang vorübergehend sperren"}</button></div>` : "";
-    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen" : f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.sourceProject ? ` · ${escapeHtml(f.sourceProject)}` : " · Herkunft nicht im Datensatz erfasst"}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div><select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select></div><p>${escapeHtml(f.message || "")}</p>${f.category === "screenshot_error" ? `<div data-feedback-image="${escapeHtml(f.id)}"></div>` : ""}${rightsAction}${snapshot}${learningHtml}${errorSnapshot}${technical ? renderErrorResolution(f) : ""}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
+    return `<article class="card feedbackItem"><div class="feedbackTop"><div><span class="eyebrow">${escapeHtml(feedbackCategoryLabel(f.category))}${f.category === "ai_question" ? ` · ${f.reviewOutcome === "false_positive" ? "Prüferwarnung zurückgewiesen" : f.verdict === "good" ? "🙂 gut" : "🙁 schlecht"}` : ""}</span><h3>${escapeHtml(f.displayName || f.email || "Lehrkraft")}</h3><small>${escapeHtml(fmtDate(f.createdAt))}${f.sourceProject ? ` · ${escapeHtml(f.sourceProject)}` : " · Herkunft nicht im Datensatz erfasst"}${f.testCode ? ` · Test ${escapeHtml(f.testCode)}` : ""}</small></div>${f.category === "ai_question" ? `<small>Bewertung gespeichert</small>` : `<select class="feedbackStatus" data-id="${escapeHtml(f.id)}"><option value="new" ${f.status === "new" ? "selected" : ""}>Neu</option><option value="working" ${f.status === "working" ? "selected" : ""}>In Bearbeitung</option><option value="done" ${f.status === "done" ? "selected" : ""}>Erledigt</option></select>`}</div><p>${escapeHtml(f.message || "")}</p>${f.category === "screenshot_error" ? `<div data-feedback-image="${escapeHtml(f.id)}"></div>` : ""}${rightsAction}${snapshot}${f.category === "ai_question" ? `<small>Grund: ${escapeHtml(AI_QUALITY_REASONS[f.reason] || f.reason || "Nicht angegeben")} · Fach: ${escapeHtml(f.subject || "Nicht erfasst")} · Klasse: ${escapeHtml(f.grade || "Nicht erfasst")}</small>${f.testCode ? `<button type="button" class="button ghost relatedTechnicalFeedback" data-code="${escapeHtml(f.testCode)}">Technische Meldungen zu diesem Test ansehen</button>` : ""}` : ""}${learningHtml}${errorSnapshot}${technical ? renderErrorResolution(f) : ""}<details><summary>Supportinformationen</summary><div class="supportMeta"><span>E-Mail: ${escapeHtml(f.email || "–")}</span><span>Version: ${escapeHtml(f.appVersion || "–")}</span><span>Umgebung: ${escapeHtml(f.environment || "–")}</span><span>Browser: ${escapeHtml(f.userAgent || "–")}</span>${technical ? `<span>Provider-Code: ${escapeHtml(technical.providerCode || "–")}</span><span>Viewport: ${escapeHtml(technical.viewport || "–")}</span><span>Online: ${technical.online === false ? "nein" : "ja"}</span><span>Client-Zeit: ${escapeHtml(technical.occurredAtClient || "–")}</span>` : ""}</div>${technical?.stack ? `<pre class="supportStack">${escapeHtml(technical.stack)}</pre>` : ""}</details></article>`;
   }).join("") : `<div class="emptyInline">Kein Feedback für diese Filter gefunden.</div>`);
   bindFeedbackImages({root,reports:list,api:async data=>(await httpsCallable(getFunctions(app,"europe-west1"),"reviewMode")(data)).data,getUid:()=>state.user?.uid});
   root.querySelectorAll(".errorGroupFilter, .bugOpsIncidentFilter").forEach(button => button.addEventListener("click", () => { $("adminFeedbackFingerprint").value = button.dataset.fingerprint; renderAdminFeedback(); }));
+  root.querySelectorAll(".relatedTechnicalFeedback").forEach(button => button.addEventListener("click", () => {
+    if ($("adminFeedbackView")) $("adminFeedbackView").value = "technical";
+    if ($("adminFeedbackCategory")) $("adminFeedbackCategory").value = "all";
+    if ($("adminFeedbackFilter")) $("adminFeedbackFilter").value = "all";
+    $("adminFeedbackSearch").value = button.dataset.code;
+    for (const id of ["adminFeedbackFingerprint", "adminFeedbackAction"]) if ($(id)) $(id).value = "";
+    if ($("adminFeedbackSeverity")) $("adminFeedbackSeverity").value = "all";
+    renderAdminFeedback();
+  }));
   root.querySelectorAll(".questionLearningDecision").forEach(button => button.addEventListener("click", () => reviewQuestionLearning(button)));
   root.querySelector(".refreshQuestionLearning")?.addEventListener("click", async () => {await loadQuestionLearningStatuses();renderAdminFeedback();});
   root.querySelectorAll(".saveErrorResolution").forEach(button => button.addEventListener("click", () => saveErrorResolution(button)));
