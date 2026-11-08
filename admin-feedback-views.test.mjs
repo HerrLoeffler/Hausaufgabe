@@ -25,6 +25,10 @@ test('view scopes compose with existing filters and fail safe for unknown view v
  const filtered=logs.filterLogs(logs.filterFeedbackByView(rows,'quality'),{term:'bad'});
  assert.deepEqual(filtered.map(r=>r.id),['bad']);
 });
+test('human-help inbox includes unresolved legacy and new human cases, excluding automatically covered and decided cases',()=>{
+ const cases=[{id:'old',category:'ai_question'}, {id:'human',category:'ai_question',automation:{route:'human'}}, {id:'auto',category:'ai_question',automation:{route:'automatic'}}, {id:'decided',category:'ai_question',automation:{route:'human'},sharedLearningStatus:'approved_pending_use'}, {id:'tech',category:'app_error'}];
+ assert.deepEqual(logs.filterFeedbackByView(cases,'quality-human').map(x=>x.id),['old','human']);
+});
 const source=fs.readFileSync('app.js','utf8');
 function summary(){const from=source.indexOf('function questionLearningSummary('),to=source.indexOf('\nasync function loadQuestionLearningStatuses',from);const context=vm.createContext({fmtDate:v=>'DATE'+v});vm.runInContext(source.slice(from,to),context);return context.questionLearningSummary;}
 test('legacy applied marker with missing time or operation is explicitly incomplete',()=>{
@@ -34,6 +38,13 @@ test('legacy applied marker with missing time or operation is explicitly incompl
 test('complete evidence includes operation and version without claiming improved correctness',()=>{
  const text=summary()({personalLearningStatus:'applied',personalAppliedAt:123,personalAppliedOperation:'generateTest',learningVersion:'task-feedback-v1',sharedLearningStatus:'pending_review'});
  assert.match(text,/DATE123/);assert.match(text,/generateTest/);assert.match(text,/task-feedback-v1/);assert.doesNotMatch(text,/fachlich verbessert/);
+});
+test('admin distinguishes automatic existing-rule handling from human help and never calls it global approval',()=>{
+ const base={personalLearningStatus:'eligible_no_evidence',sharedLearningStatus:'pending_review'};
+ const automatic=summary()({...base,automation:{route:'automatic',policyVersion:'common-quality-v1',ruleIds:['visible-answer'],reasonCode:'existing_rule_covers_finding'}});
+ assert.match(automatic,/Automatisch.*bestehende Regel/);assert.match(automatic,/common-quality-v1/);assert.doesNotMatch(automatic,/Gemeinsam freigegeben/);
+ assert.match(summary()({...base,automation:{route:'human',policyVersion:'common-quality-v1',reasonCode:'context_incomplete'}}),/Deine Prüfung nötig.*Aufgabenkontext/);
+ assert.doesNotMatch(summary()(base),/Automatisch/);
 });
 
 test('real admin renderer separates inboxes, retains all feedback and links technical context',async()=>{
@@ -62,6 +73,8 @@ test('real admin renderer separates inboxes, retains all feedback and links tech
  assert.equal(w.document.querySelector('#syntheticBugOps'),null);
  assert.equal(w.document.querySelectorAll('.feedbackStatus').length,0);
  assert.equal(w.$('adminFeedbackFingerprint').value,'');
+ change('adminFeedbackView','quality-human');assert.deepEqual(ids(),['ok','bad','warn']);
+ assert.equal(w.document.querySelector('#syntheticBugOps'),null);
  change('adminFeedbackView','all');assert.equal(ids().length,rows.length);
  change('adminFeedbackCategory','screenshot_error');assert.deepEqual(ids(),['image']);
  w.$('adminFeedbackFingerprint').value='old-fingerprint';w.$('adminFeedbackAction').value='generate_test';w.$('adminFeedbackSeverity').value='error';

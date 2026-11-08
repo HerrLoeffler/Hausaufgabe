@@ -21,6 +21,7 @@ const { materialInputs, sanitizeMaterials, deleteUploadedMaterials } = require("
 const { validateAndRepairTest } = require("./lib/repair-test");
 const { MEMORY_VERSION, QUALITY_REASONS, reviewSchema, REVIEW_SYSTEM, feedbackMemory, qualityMemoryPrompt, reviewPrompt, normalizeReviewIssues, reviewAndRepairTest } = require("./lib/quality");
 const {loadFeedbackLearningSafe,learningPrompt,recordLearningUseSafe}=require("./lib/feedback-learning");
+const {ruleReceipt}=require("./lib/common-quality-rules");
 const { purgeExpiredMaterials } = require("./lib/purge-materials");
 const { getOpenAI } = require("./lib/openai-client");
 const { SYSTEM, testUserPrompt, questionUserPrompt, replacementQuestionPrompt } = require("./lib/prompts");
@@ -397,7 +398,9 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
       ...(memory.unavailable ? ["Frühere Lehrerbewertungen waren bei dieser Erstellung nicht verfügbar. Bitte die Aufgaben besonders sorgfältig prüfen."] : []),
       ...qualityIssues.map(issue => `Aufgabe ${issue.questionPosition}: ${issue.reason}: ${issue.detail}`)
     ].slice(0, 10);
-    await recordUsage(uid, "test", usage, {
+    const commonRules = ruleReceipt(reviewed.test.questions, input.generationMode === "variant" ? "generateTestVariant" : "generateTest");
+    const commonRulesUsageStored = await recordUsage(uid, "test", usage, {
+      commonRules,
       model: TEXT_MODEL,
       promptVersion: PROMPT_VERSION,
       questionCount: reviewed.test.questions.length,
@@ -430,6 +433,8 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
         qualityWarnings,
         qualityIssues,
         feedbackLearning,
+        commonRules,
+        commonRulesUsageStored: commonRulesUsageStored === true,
         pedagogicalPool: pedagogicalPool.meta
       }
     };
@@ -676,10 +681,12 @@ exports.processAiTestJob = onTaskDispatched({
       requiresSecureAssessmentRules: totalAnswerAudios > 0 || questions.some(q => q.audioIntent?.kind === "ai_generated" && q.audioIntent?.presentation === "listening-only"),
       solutionAudioQuestionCount: totalSolutionAudios, solutionAudioReady,
       qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [],
+      commonRules: response.meta.commonRules || null, commonRulesUsageStored: response.meta.commonRulesUsageStored === true,
       pedagogicalPool: response.meta.pedagogicalPool, updatedAt: Timestamp.now() });
     await jobRef.update({ status: "ready", stage: "ready", percent: 100,
       progressMessage: "Entwurf fertig. Bitte die Aufgaben prüfen.", completedAt: Timestamp.now(), updatedAt: Timestamp.now(),
       qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [],
+      commonRules: response.meta.commonRules || null, commonRulesUsageStored: response.meta.commonRulesUsageStored === true,
       pedagogicalPool: response.meta.pedagogicalPool });
     console.info("KI-Hintergrundauftrag fertig:", { jobId, quizId: quiz.code, questionCount: questions.length });
   } catch (err) {
@@ -793,9 +800,10 @@ exports.regenerateQuestion = onCall(callableOpts, async request => {
     }
     if (!errors.length) break;
   }
-  await recordUsage(uid, "question", usage, { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: Boolean(errors.length), qualityMemoryVersion: memory.memoryVersion, feedbackSignals: memory.stats?.total || 0, positivePatterns: memory.positivePatterns?.length || 0, recurringRuleCandidates: memory.ruleCandidates?.length || 0 });
+  const commonRules = ruleReceipt(normalized, "regenerateQuestion");
+  const commonRulesUsageStored = await recordUsage(uid, "question", usage, { commonRules, model: TEXT_MODEL, promptVersion: PROMPT_VERSION, failed: Boolean(errors.length), qualityMemoryVersion: memory.memoryVersion, feedbackSignals: memory.stats?.total || 0, positivePatterns: memory.positivePatterns?.length || 0, recurringRuleCandidates: memory.ruleCandidates?.length || 0 });
   if (errors.length) throw new HttpsError("failed-precondition", "Die neue Aufgabe ist nicht zuverlässig gültig.", { errors });
-  return { question: normalized, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, feedbackLearning } };
+  return { question: normalized, meta: { model: TEXT_MODEL, promptVersion: PROMPT_VERSION, feedbackLearning, commonRules, commonRulesUsageStored: commonRulesUsageStored === true } };
   } catch (err) { throw reportAiError(err, "question-regeneration"); }
 });
 

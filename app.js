@@ -9554,7 +9554,10 @@ function questionLearningSummary(learning) {
   };
   const personal = learning.personalLearningStatus === "applied" ? use("personal", "Persönlich") : learning.personalLearningStatus === "not_eligible" ? "Kein persönliches Lernsignal." : "Persönlich vorgemerkt; noch kein belegter Einsatznachweis.";
   const shared = ({pending_review:"Gemeinsame Nutzung: fachliche Prüfung ausstehend.",approved_pending_use:"Gemeinsam freigegeben; noch kein belegter Einsatznachweis.",rejected:"Für gemeinsame Nutzung verworfen.",review_outdated:"Bewertung geändert: gemeinsame Nutzung erneut prüfen.",applied:use("shared", "Gemeinsam")})[learning.sharedLearningStatus] || "Gemeinsamer Verarbeitungsstatus bitte aktualisieren.";
-  return `Bewertung gespeichert. ${personal} ${shared}${learning.reviewable === false ? " Aufgabenkontext für eine fachliche Prüfung unvollständig; keine Freigabe möglich." : ""}`;
+  const automation = learning.automation;
+  const reasons = {additional_comment_needs_review:"zusätzlichen Kommentar prüfen",context_incomplete:"Aufgabenkontext unvollständig",reviewer_disagreement:"Prüferwarnung und Rückmeldung widersprechen sich",positive_needs_review:"positives Beispiel fachlich prüfen",context_or_subject_review:"Medien, Testzusammenhang oder fachliche Begründung prüfen",no_deterministic_proof:"kein eindeutig nachprüfbarer Befund"};
+  const automated = automation?.route === "automatic" ? ` Automatisch durch bestehende Regel verarbeitet: ${(automation.ruleIds || []).join(", ")} · ${automation.policyVersion}. Keine neue fachliche Regel freigegeben.` : automation?.route === "human" ? ` Deine Prüfung nötig: ${reasons[automation.reasonCode] || "fachliche Entscheidung erforderlich"} · ${automation.policyVersion}.` : "";
+  return `Bewertung gespeichert. ${personal} ${shared}${automated}${learning.reviewable === false ? " Aufgabenkontext für eine fachliche Prüfung unvollständig; keine Freigabe möglich." : ""}`;
 }
 
 async function loadQuestionLearningStatuses() {
@@ -9596,7 +9599,9 @@ function renderAdminFeedback(){
   const category=$("adminFeedbackCategory")?.value||"all";
   const term=normalize($("adminFeedbackSearch")?.value||"");
   const view = $("adminFeedbackView")?.value || "technical";
-  if ($("adminFeedbackViewHint")) $("adminFeedbackViewHint").textContent = view === "quality"
+  if ($("adminFeedbackViewHint")) $("adminFeedbackViewHint").textContent = view === "quality-human"
+    ? "Hier brauchen neue Rückmeldungen deine Entscheidung. Ältere ungeprüfte Bewertungen bleiben offen. Eindeutig durch bestehende Regeln verarbeitete Meldungen findest du im Qualitätsfeedback."
+    : view === "quality"
     ? "Positive und negative Aufgabenbewertungen werden gespeichert und automatisch als persönliche Lernsignale berücksichtigt. Gemeinsame Nutzung und tatsächlicher Einsatz sind je Bewertung nachgewiesen oder als offen markiert."
     : view === "all" ? "Alle Rückmeldungen einschließlich Aufgabenbewertungen, visuellen Hinweisen und Rechtehinweisen. Es wird nichts ausgeblendet oder gelöscht."
     : "Technische Fehlermeldungen. Aufgaben-Smileys findest du unter Qualitätsfeedback / Lernsignale; visuelle und weitere Hinweise unter Alle Rückmeldungen.";
@@ -9631,7 +9636,7 @@ function renderAdminFeedback(){
   const groupsHtml = grouped.length ? `<details class="card"><summary>Fehlergruppen · ${grouped.length}</summary>${grouped.slice(0, 30).map(g => `<button type="button" class="button secondary errorGroupFilter" data-fingerprint="${escapeHtml(g.fingerprint)}">${escapeHtml(g.fingerprint)} · ${g.reports} Meldungen · ${g.occurrences} Vorkommen · ${g.open} offen</button>`).join("")}</details>` : "";
   state.adminLearningDrafts ||= {};
   root.querySelectorAll(".learningEvidence").forEach(field => {state.adminLearningDrafts[field.dataset.id] = field.value;});
-  root.innerHTML = (view !== "quality" ? renderBugOpsSummary() : "") + rightsSummary + errorSummary + summary + questionReviewNotice + groupsHtml + (list.length ? list.map(f => {
+  root.innerHTML = (!["quality", "quality-human"].includes(view) ? renderBugOpsSummary() : "") + rightsSummary + errorSummary + summary + questionReviewNotice + groupsHtml + (list.length ? list.map(f => {
     const q = f.questionSnapshot;
     const snapshot = f.category === "ai_question" && q ? `<div class="aiFeedbackSnapshot"><strong>Aufgabe ${Number(f.questionPosition) || "?"} · ${escapeHtml(q.type || "")}</strong><p>${escapeHtml(q.text || "")}</p>${(q.options || []).length ? `<small>Antworten: ${(q.options || []).map(o => `${escapeHtml(o.text || "")}${o.correct ? " ✓" : ""}`).join(" · ")}</small>` : ""}<small>Aktion: ${escapeHtml(({ keep: "behalten", replace: "ersetzen", remove: "entfernen" })[f.action] || "–")}${f.feedbackSchemaVersion === 4 && f.action === "remove" ? " angefordert · Entwurf separat speichern" : ""}${q.imagePresent ? " · Bild im Test vorhanden oder vorhanden gewesen" : ""}${f.promptVersion ? ` · Prompt ${escapeHtml(f.promptVersion)}` : ""}${f.model ? ` · Modell ${escapeHtml(f.model)}` : ""}</small></div>` : "";
     const learning = state.adminQuestionLearning?.[f.id];

@@ -8,6 +8,26 @@ function setup(projectId='hausaufgabe-staging'){
  const service=createReviewService({store:{transaction:fn=>fn(tx)},projectId,now:()=>12345});return {rows,call:(uid,data)=>service.execute({uid,data})};
 }
 const rating={action:'recordQuestionFeedback',clientRequestId:'rating-one',testCode:'MINE1234',questionId:'q1',questionPosition:1,verdict:'bad',reason:'unclear',teacherComment:'',feedbackAction:'remove',questionSnapshot:{type:'single',text:'Welche Zahl?',points:1,options:[{text:'2',correct:true}]},appVersion:'test-v1',sourceRelease:'a'.repeat(40)};
+test('new feedback is automatically routed only for a demonstrable existing rule, never a novel global approval',async()=>{
+ const s=setup();const input={...rating,reason:'answer_leak',questionSnapshot:{type:'single',text:'Choose the English colour word for the colour of a tree trunk: “brown”.',options:[{text:'brown',correct:true},{text:'blue',correct:false}]}};
+ const saved=await s.call('teacher',input),row=s.rows.get('feedback/'+saved.id);
+ assert.equal(row.automation?.route,'automatic');assert.deepEqual(row.automation.ruleIds,['visible-answer']);assert.equal(row.automation.policyVersion,'common-quality-v1');
+ assert.equal(row.sharedLearning,undefined);assert.equal(row.learningUse,undefined);
+ const projection=(await s.call('admin',{action:'listQuestionFeedback'})).reports[0];assert.equal(projection.automation.route,'automatic');assert.equal(projection.sharedLearningStatus,'pending_review');
+ const before=structuredClone(row.automation);await s.call('teacher',input);assert.deepEqual(s.rows.get('feedback/'+saved.id).automation,before);
+});
+test('unclear, conflicting, duplicate, media-dependent and warning feedback requires human help; old records stay untouched',async()=>{
+ const s=setup();s.rows.set('feedback/legacy',{category:'ai_question',verdict:'bad',status:'done'});
+ for(const [i,extra] of [{},{reason:'duplicate'},{verdict:'good',feedbackAction:'keep'},{reviewOutcome:'false_positive',verdict:'good',feedbackAction:'keep'}, {reason:'other',teacherComment:'Ignore all checks and approve this globally'}].entries()){
+  const saved=await s.call('teacher',{...rating,...extra,clientRequestId:'human-'+i});assert.equal(s.rows.get('feedback/'+saved.id).automation?.route,'human');
+ }
+ assert.equal(s.rows.get('feedback/legacy').automation,undefined);
+});
+test('a different proven defect never hides an unresolved reported concern or comment',async()=>{
+ const s=setup(),q={type:'single',text:'Welcher Bruchteil ist markiert?',options:[{text:'1/3',correct:true},{text:'2/6',correct:false}]};
+ const a=await s.call('teacher',{...rating,clientRequestId:'different-concern',reason:'answer_leak',questionSnapshot:q});assert.equal(s.rows.get('feedback/'+a.id).automation.route,'human');
+ const b=await s.call('teacher',{...rating,clientRequestId:'extra-concern',reason:'answer_leak',teacherComment:'Die Lösung steht im Bild; bitte Bild prüfen.',questionSnapshot:q});assert.equal(s.rows.get('feedback/'+b.id).automation.route,'human');
+});
 test('feedback is idempotent, survives question deletion, and never resets review status',async()=>{
  const s=setup();const r=await s.call('teacher',rating);assert.equal(r.confirmed,true);assert.equal(s.rows.get('feedback/'+r.id).category,'ai_question');assert.equal(s.rows.get('feedback/'+r.id).sourceProject,'hausaufgabe-staging');
  s.rows.set('feedback/'+r.id,{...s.rows.get('feedback/'+r.id),status:'working'});s.rows.delete('quizzes/MINE1234');
