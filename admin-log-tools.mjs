@@ -55,7 +55,7 @@ export function filterFeedbackByView(rows, view = 'technical') {
   if (view === 'all') return [...rows];
   if (view === 'quality') return rows.filter(row => row.category === 'ai_question');
   if (view === 'quality-human') return rows.filter(row => row.category === 'ai_question'
-    && !(row.feedbackSchemaVersion === 4 && row.automation?.route === 'automatic')
+    && (row.sharedLearningStatus === 'review_outdated' || !(row.feedbackSchemaVersion === 4 && row.automation?.route === 'automatic'))
     && !['approved_pending_use', 'applied', 'rejected', 'approved'].includes(row.sharedLearningStatus || row.sharedLearning?.decision));
   return rows.filter(row => row.category === 'app_error' || row.category === 'bug');
 }

@@ -26,8 +26,8 @@ test('view scopes compose with existing filters and fail safe for unknown view v
  assert.deepEqual(filtered.map(r=>r.id),['bad']);
 });
 test('human-help inbox includes unresolved legacy and new human cases, excluding automatically covered and decided cases',()=>{
- const cases=[{id:'old',category:'ai_question'}, {id:'human',category:'ai_question',feedbackSchemaVersion:4,automation:{route:'human'}}, {id:'auto',category:'ai_question',feedbackSchemaVersion:4,automation:{route:'automatic'}}, {id:'decided',category:'ai_question',automation:{route:'human'},sharedLearningStatus:'approved_pending_use'}, {id:'legacy-field',category:'ai_question',automation:{route:'automatic'}}, {id:'tech',category:'app_error'}];
- assert.deepEqual(logs.filterFeedbackByView(cases,'quality-human').map(x=>x.id),['old','human','legacy-field']);
+ const cases=[{id:'old',category:'ai_question'}, {id:'human',category:'ai_question',feedbackSchemaVersion:4,automation:{route:'human'}}, {id:'auto',category:'ai_question',feedbackSchemaVersion:4,automation:{route:'automatic'}}, {id:'decided',category:'ai_question',automation:{route:'human'},sharedLearningStatus:'approved_pending_use'}, {id:'legacy-field',category:'ai_question',automation:{route:'automatic'}}, {id:'outdated',category:'ai_question',feedbackSchemaVersion:4,automation:{route:'automatic'},sharedLearningStatus:'review_outdated'}, {id:'tech',category:'app_error'}];
+ assert.deepEqual(logs.filterFeedbackByView(cases,'quality-human').map(x=>x.id),['old','human','legacy-field','outdated']);
 });
 const source=fs.readFileSync('app.js','utf8');
 function summary(){const from=source.indexOf('function questionLearningSummary('),to=source.indexOf('\nasync function loadQuestionLearningStatuses',from);const context=vm.createContext({fmtDate:v=>'DATE'+v});vm.runInContext(source.slice(from,to),context);return context.questionLearningSummary;}
@@ -45,6 +45,8 @@ test('admin distinguishes automatic existing-rule handling from human help and n
  assert.match(automatic,/Automatisch.*bestehende Regel/);assert.match(automatic,/common-quality-v1/);assert.doesNotMatch(automatic,/Gemeinsam freigegeben/);
  assert.match(summary()({...base,automation:{route:'human',policyVersion:'common-quality-v1',reasonCode:'context_incomplete'}}),/Deine Prüfung nötig.*Aufgabenkontext/);
  assert.match(summary()({...base,sharedLearningStatus:'approved_pending_use',sharedReviewMode:'automatic_structural',automation:{route:'automatic',policyVersion:'common-quality-v1',ruleIds:['visible-answer']}}),/Automatisch gemeinsam freigegeben; noch kein belegter Einsatznachweis/);
+ assert.doesNotMatch(summary()({...base,sharedLearningStatus:'rejected',automation:{route:'human',reasonCode:'context_incomplete'}}),/Deine Prüfung nötig/);
+ assert.doesNotMatch(summary()({...base,sharedLearningStatus:'rejected',automation:{route:'automatic',ruleIds:['visible-answer'],policyVersion:'common-quality-v1'}}),/wird gemeinsam berücksichtigt/);
  assert.doesNotMatch(summary()(base),/Automatisch/);
 });
 
