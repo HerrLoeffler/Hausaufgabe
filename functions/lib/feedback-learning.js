@@ -40,7 +40,7 @@ function learningPrompt(memory={}){
  return lines.join('\n');
 }
 async function loadFeedbackLearning(db,context={},uid=''){
- const fields=['category','userId','testCode','questionId','verdict','reason','subject','grade','questionType','reviewOutcome','createdAt','feedbackSchemaVersion','sharedLearning.decision','sharedLearning.revision','sharedLearning.reviewSignature'];
+ const fields=['category','userId','testCode','questionId','verdict','reason','subject','grade','questionType','reviewOutcome','createdAt','feedbackSchemaVersion','sharedLearning.decision','sharedLearning.revision','sharedLearning.reviewSignature','sharedLearning.mode','sharedLearning.verifiedReason'];
  const base=()=>db.collection('feedback').where('category','==','ai_question');
  // The recent metadata window includes withdrawals/unapproved replacements. No unreviewed foreign task text is selected.
  const queries=[base().orderBy('createdAt','desc').limit(500).select(...fields)];if(uid)queries.push(base().where('userId','==',uid).orderBy('createdAt','desc').limit(100).select(...fields,'questionSnapshot'));
