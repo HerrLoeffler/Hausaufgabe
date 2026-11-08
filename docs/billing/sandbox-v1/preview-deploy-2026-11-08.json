@@ -1,0 +1,135 @@
+{
+  "task": "GC-BILLING-PLAN-01",
+  "project": "gradecrew-staging-2026",
+  "channel": "billing-plan-01",
+  "sourceCommit": "ddf3045bc2d1b2e1cb46a5867f8ceecb00705c9e",
+  "mode": "ui_preview_only",
+  "startedAtUtc": "2026-11-08T22:58:53.006965+00:00",
+  "steps": [
+    {
+      "step": "preflight",
+      "canonical": {
+        "stageHostingVersion": "sites/gradecrew-staging-2026/versions/8b6154420ead9ecb",
+        "stagePublicManifestSha256": "c0cb4b3c57875e022353fddad21a7732c1775b8c1b48a2dc37972935bc442866",
+        "productionPublicManifestSha256": "31de4d6cd8e6a3a9e05ab1610348d1250dc33e7006877022a51b3ecebc9af9c8"
+      }
+    },
+    {
+      "step": "channel_created",
+      "name": "sites/gradecrew-staging-2026/channels/billing-plan-01",
+      "url": "https://gradecrew-staging-2026--billing-plan-01-o0aafic4.web.app",
+      "expireTime": null
+    },
+    {
+      "step": "version_created",
+      "name": "sites/gradecrew-staging-2026/versions/909ec58c7f756344",
+      "status": "CREATED"
+    },
+    {
+      "step": "files_registered",
+      "total": 21,
+      "uploads": 4
+    },
+    {
+      "step": "files_uploaded",
+      "count": 4
+    },
+    {
+      "step": "version_finalized",
+      "name": "sites/gradecrew-staging-2026/versions/909ec58c7f756344"
+    },
+    {
+      "step": "released",
+      "release": "sites/gradecrew-staging-2026/channels/billing-plan-01/releases/1794178741229000",
+      "releaseTime": "2026-11-08T22:59:01.229Z"
+    },
+    {
+      "step": "verified",
+      "url": "https://gradecrew-staging-2026--billing-plan-01-o0aafic4.web.app",
+      "files": 21,
+      "canonicalHostingUnchanged": true
+    },
+    {
+      "step": "preview_expiry_set",
+      "expireTime": "2026-11-15T23:02:04.146041Z"
+    }
+  ],
+  "previewUrl": "https://gradecrew-staging-2026--billing-plan-01-o0aafic4.web.app",
+  "version": "sites/gradecrew-staging-2026/versions/909ec58c7f756344",
+  "release": "sites/gradecrew-staging-2026/channels/billing-plan-01/releases/1794178741229000",
+  "expireTime": "2026-11-15T23:02:04.146041Z",
+  "files": {
+    "/assets/gradecrew/fox-improve.svg": "bc5fe082e74c0b4bbc2cbcf6e0a5d32804f03bbfb378af1494249fb7f2194248",
+    "/assets/gradecrew/owl-grade.svg": "7ac5dcbdff8cb8f492b45cbf79a680f295167014c60ce369a2d6c0a80c34089c",
+    "/assets/gradecrew/penguin-guide.svg": "720825076b73028f91a5513be04199d4ccee83523c733a50b361ba3868abf3f1",
+    "/assets/gradecrew/penguin-icon.svg": "f37517983448f2c9043bdde4dad3c2a852c4609a87328fefd8e657127d05f5e2",
+    "/assets/gradecrew/remy-new-test-button.png": "a7c0188d01079e3c04719722c1e7541e0939afc1aacf47caa15b82a6766eeb6d",
+    "/assets/gradecrew/remy-new-test-tablet.png": "946db8428037934e04d1d92cbd9f02b7ab71bf98a9bfe11b56fd7c2237dd8c9e",
+    "/assets/gradecrew/trash-bin-3d.png": "30f5a4e6e96b8ba40b934153e6fc8418dfcbefb9088087b52b5e838fb258f9b7",
+    "/auth-brand-alignment.css": "715d97944c64ae7b8cd7186832a442d3f6cab95fcde97262e57bca6e25e6da6c",
+    "/billing-preview.css": "51af99757b92787cdb1923c44303f19167e7c07abfc98e4fc3b18d1eef007966",
+    "/billing-preview.mjs": "96b93b9d5520df2088373b39da79237f1bdcdb7128c723f353b950ba4d726a20",
+    "/crew-clay.css": "300abe24372f14580bd23cdd08bfd1acef12cc384e97df7ad26b85c977deba05",
+    "/design-system.css": "e90ff189c94f78b9e94e98a9f9f91b35ecc17636deb8402dd709809d4b482437",
+    "/gradecrew-brand.css": "ef3c0522e6f8a208583e4e4441531fd9f72ca0d0f6287b9ca3c560e97fcef445",
+    "/index.html": "2df0c90da6a5e7745cffd16af122692520387b7f20301329a70dd4e8223c5e24",
+    "/publish-review.css": "c5ba3c1831a5017caad9f6d436301fc07a1fd0b15899117ccbfe2e170507b678",
+    "/release.json": "a59e8f631b79e9263067118fffc306b14f5f299b3ff42dc0940b4f08b0d5744e",
+    "/review-mode.css": "e9bdb463098a7883a072e83309741bc6ba7e439853270564cb9e6416d9cf641e",
+    "/styles.css": "616df389b04a1f4604c0eedb5296132efbe03af6c5c051191eb3a2f62a938f80",
+    "/wilma-answer-review.css": "67077e9862dad8f5aa6a3ca8fdd107d2dbf620f6dd4a06d698aab9bb9fde86db",
+    "/workspace.css": "85983ef15b3e25c203a6a7bfbd423ff40eecba8f9124936994f9bc73c798c836",
+    "/workspace.html": "2df0c90da6a5e7745cffd16af122692520387b7f20301329a70dd4e8223c5e24"
+  },
+  "filesVerified": 21,
+  "headersVerified": {
+    "Content-Security-Policy": "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'none'; form-action 'none'; frame-src 'none'; frame-ancestors 'none'; worker-src 'none'; object-src 'none'; base-uri 'none'"
+  },
+  "canonicalBefore": {
+    "stageHostingVersion": "sites/gradecrew-staging-2026/versions/8b6154420ead9ecb",
+    "stagePublicManifestSha256": "c0cb4b3c57875e022353fddad21a7732c1775b8c1b48a2dc37972935bc442866",
+    "productionPublicManifestSha256": "31de4d6cd8e6a3a9e05ab1610348d1250dc33e7006877022a51b3ecebc9af9c8"
+  },
+  "canonicalAfter": {
+    "stageHostingVersion": "sites/gradecrew-staging-2026/versions/8b6154420ead9ecb",
+    "stagePublicManifestSha256": "c0cb4b3c57875e022353fddad21a7732c1775b8c1b48a2dc37972935bc442866",
+    "productionPublicManifestSha256": "31de4d6cd8e6a3a9e05ab1610348d1250dc33e7006877022a51b3ecebc9af9c8"
+  },
+  "canonicalHostingUnchanged": true,
+  "functionsChanged": false,
+  "rulesChanged": false,
+  "authChanged": false,
+  "databaseDataChanged": false,
+  "stripeCalls": 0,
+  "finishedAtUtc": "2026-11-08T22:59:08.376058+00:00",
+  "liveChangedBeforeOurDeployment": {
+    "commit": "6eee0a5def9c429c072a4464d485e81d2634e4f7",
+    "manifestSha256": "31de4d6cd8e6a3a9e05ab1610348d1250dc33e7006877022a51b3ecebc9af9c8",
+    "changedFromPinnedBaseline": [
+      "app.js"
+    ]
+  },
+  "liveDifferenceNote": "Only app.js changed between earlier UI baseline and deployment preflight; product JS is absent from this inert preview. No production mutation by this task.",
+  "browserVerification": {
+    "desktopNavigation": "passed",
+    "mobile390x844": "passed",
+    "actualAuthOrPaymentTested": false,
+    "fixtureTestsCreated": 0,
+    "screenshotDeliveredSeparately": true
+  },
+  "documentationValidation": {
+    "verifiedAtUtc": "2026-11-08T23:05:45.958092+00:00",
+    "relativeLinks": 11,
+    "contractStateAndReceiptConsistent": true,
+    "onlyOwnReleaseStateAdded": true,
+    "diffWhitespace": true,
+    "localBuilderTestsPassed": 4,
+    "localTestsRunBeforeDeployment": true,
+    "stageAPaymentCasesExecuted": 0,
+    "sha256": {
+      "docs/billing/sandbox-v1/preview-contract.json": "040ee34d98b8c98341cd673bc4e608d12814f652f010e9b40095b0a342b46e21",
+      "docs/billing/2026-11-09-zahlungsarten-betrieb.md": "7064dcfcf41a5357874551fc3d6bf28be9c175f7caf67fea6b733ac3c11bdafb"
+    },
+    "historicalPlanContractReceipt": "2026-11-08-plan-nachweis.json applies to contract at PR head 5815c0d; this snapshot supersedes that initial plan-only state."
+  }
+}

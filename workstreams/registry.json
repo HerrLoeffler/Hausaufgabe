@@ -775,7 +775,7 @@
     },
     {
       "id": "billing-research-20261104",
-      "title": "GC-BILLING-PLAN-01: enger Web-Sandboxplan reviewbar; kein Previewdeploy — plan_only",
+      "title": "GC-BILLING-PLAN-01: datenlose UI-Vorschau deployed; Stripe-Testbindung/Payment offen",
       "primaryBranch": "docs/billing-research-20261104",
       "integrationTarget": "main",
       "state": "active",
