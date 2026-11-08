@@ -25,7 +25,9 @@ function questionFindings(q={}, {snapshot=false}={}){
   // or colour-word selection is demonstrable; merely occurring in text is not.
   const answer=text.match(/(?:richtige Antwort(?: lautet| ist)?|correct answer(?: is)?|choose the English colou?r word[^:]{0,160})\s*:\s*[„“"'«]([^„“”"'»]+)[“”"'»][.!?]?\s*$/iu);
   if(answer&&correct.some(o=>norm(o.text)===norm(answer[1])))add('visible-answer','Die Aufgabenstellung nennt die gesuchte Antwort bereits ausdrücklich.');
-  if(/bruch|fraction|anteil/iu.test(text)&&!/(?:ohne\s+(?:zu\s+)?kürzen|ungekürzt|gekürzt|nicht\s+kürzen|unreduced|reduced|simplest\s+form|without\s+(?:reducing|simplifying))/iu.test(text)){
+  // Only this closed wording establishes a pure share-value question. Other
+  // fraction tasks may deliberately constrain numerator, denominator or form.
+  if(/^(?:welcher Bruchteil ist (?:markiert|eingefärbt|gefärbt)|what fraction is (?:shaded|colou?red))\s*\?$/iu.test(text.trim())){
    const keys=correct.map(o=>fraction(o.text)).filter(Boolean);
    if(opts.some(o=>!o.correct&&keys.includes(fraction(o.text))&&fraction(o.text)!==null))add('fraction-equivalence','Eine als falsch markierte Bruchantwort ist wertgleich zur richtigen Antwort.');
   }

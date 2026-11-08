@@ -20,6 +20,10 @@ test('explicit fully reduced fraction representation remains valid',()=>{
  assert.deepEqual(errors(choice('Welcher Bruch ist vollständig gekürzt?',[['1/2',true],['2/4',false]])),[]);
  assert.deepEqual(errors(choice('Which fraction is in simplest form?',[['1/2',true],['2/4',false]])),[]);
 });
+test('fraction representation constraints are never confused with pure value equality',()=>{
+ assert.deepEqual(errors(choice('Welcher Bruch ist gleich 1/3 und hat den Nenner 6?',[['2/6',true],['1/3',false]])),[]);
+ assert.deepEqual(errors(choice('Which fraction has the smallest sum of numerator and denominator?',[['1/2',true],['2/4',false]])),[]);
+});
 test('a listening instruction needs a listening intent, while ordinary text reading does not',()=>{
  assert.ok(errors(choice('Höre den Text. Welches Wort hörst du?',[['rot',true],['blau',false]])).some(x=>x.ruleId==='media-ready'));
  const q=choice('Höre den Text. Welche Farbe wird genannt?',[['rot',true],['blau',false]]);q.audioIntent={kind:'ai_generated',script:'Die Farbe ist rot.'};assert.deepEqual(errors(q),[]);
