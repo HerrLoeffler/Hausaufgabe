@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "task": "GC-BILLING-PLAN-01",
+  "pr": 411,
+  "status": "plan_only",
+  "productCodePrepared": false,
+  "buildOutputExists": false,
+  "previewExists": false,
+  "previewUrl": null,
+  "target": {
+    "projectId": "gradecrew-staging-2026",
+    "channelNameProposed": "billing-plan-01",
+    "channelExistenceVerified": false,
+    "exactOrigin": null,
+    "overwriteCanonicalHosting": false,
+    "forbiddenProjects": ["hausaufgabe-staging", "hausaufgabe-40294"],
+    "forbiddenOrigins": ["https://gradecrew.de", "https://gradecrew-staging-2026.web.app"]
+  },
+  "baseline": {
+    "sourceCommit": "80c845796fcb1efc324b1a266944a13bb06d7334",
+    "publicLiveFilesVerified": 215,
+    "publicStageFilesVerified": 230,
+    "receipt": "../2026-11-08-web-baseline.json",
+    "warning": "UI source only: never serve copied production Firebase config; public hashes do not prove backend deployment."
+  },
+  "provider": {
+    "requiredMode": "stripe_test",
+    "configurationVerified": false,
+    "checkoutEnabled": false,
+    "expectedAccountBindingVerified": false,
+    "secretReferencesVerified": false,
+    "liveObjectsAllowed": false,
+    "fakePaidFallbackAllowed": false,
+    "createAccountsKeysContractsAllowed": false,
+    "currentPreparationMayCreateProviderObjects": false,
+    "note": "Existing provider inventory unknown. Test customer/price/webhook objects require the expressly begun A3 sandbox run; never create accounts or keys."
+  },
+  "proposedTestParameters": {
+    "approvedCustomerPricing": false,
+    "currency": "eur",
+    "monthlyAmountMinor": 100,
+    "starterUnits": 3,
+    "periodUnits": 12,
+    "graceHours": 72,
+    "reservationTimeoutMinutes": 10,
+    "reconcileIntervalMinutes": 15,
+    "starterExpires": false,
+    "periodRollover": false
+  },
+  "data": {
+    "namespace": "billingSandboxes/v1",
+    "existingLiveAccountAllowed": false,
+    "copyCustomerOrStudentDataAllowed": false,
+    "serverClaimAndAllowlistRequired": true,
+    "directClientBillingWritesAllowed": false,
+    "emailVerificationConfigured": null,
+    "verifiedEmailRequiredWhenConfigured": true,
+    "endToEndSignupProofRequiresRealVerificationIfEnabled": true
+  },
+  "generation": {
+    "maxSuccessfulUiFixtureCreations": 1,
+    "fixtureLabel": "Beispieltest — ohne KI erzeugt",
+    "paidAiCallsAllowed": false,
+    "allExistingCostRoutesRequireServerDenialForSandboxActor": true,
+    "failedCreationConsumesUnit": false,
+    "localFixtureIsStripeEvidence": false
+  },
+  "completion": {
+    "requiredCases": 24,
+    "casesExecuted": 0,
+    "stripePaymentVerified": false,
+    "signedWebhookVerified": false,
+    "serverEntitlementVerified": false,
+    "canonicalHostingUnchangedVerifiedAfterDeploy": false,
+    "stageAComplete": false,
+    "stageBRealMoneyAuthorized": false
+  },
+  "nextStep": "A0: existing operator verifies Stage deployment access, namespace and server guard coverage, existing Stripe test-account/secret bindings and email capability read-only; no secret values in chat."
+}

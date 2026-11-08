@@ -1,0 +1,42 @@
+{
+  "task": "GC-BILLING-PLAN-01",
+  "status": "plan_only",
+  "verifiedAtUtc": "2026-11-08T22:40:45.562406+00:00",
+  "baseMain": "020f6f3e21bcfff738d572ab7f00019f3dc6f9e3",
+  "pr": 411,
+  "localChecks": {
+    "packageIdsA0ToA6": true,
+    "uniqueCasesQ01ToQ24": true,
+    "relativeLinksChecked": 7,
+    "jsonContractAndRegistry": true,
+    "effortExactPT": [
+      8,
+      12.5
+    ],
+    "effortRoundedPT": [
+      8,
+      13
+    ],
+    "baselineArithmetic": true,
+    "diffWhitespace": true
+  },
+  "sha256": {
+    "docs/superpowers/plans/2026-11-08-billing-web-sandbox.md": "e735ed5399da84c54b7fcf049a777386c52379cfb4d0262728092287949ff325",
+    "docs/billing/sandbox-v1/preview-contract.json": "3b4a4cb4f12ad1880963d9382238468fe556562ece5ff681ef6b9d1f2d5a2341",
+    "docs/billing/2026-11-08-web-baseline.json": "fa0e3b22f1198d789eedfcb44a30c51cb07e9ad6ef41cedf31f5255bf33cedb3"
+  },
+  "productCodeChanged": false,
+  "buildOutputExists": false,
+  "previewUrl": null,
+  "deployments": 0,
+  "providerObjectsCreated": 0,
+  "providerCallsOrPaidGenerations": 0,
+  "paymentAcceptanceCasesExecuted": 0,
+  "subagents": 0,
+  "limitations": [
+    "Existing Stripe account and Cloud secret/IAM inventory unverified; no nonexistence claim.",
+    "Public asset hashes do not verify deployed Functions or Rules.",
+    "No Stage A acceptance case run; new cases and future implementation files are proposals.",
+    "PR checks must be read at final remote commit separately."
+  ]
+}
