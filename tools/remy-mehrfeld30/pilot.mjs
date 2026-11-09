@@ -91,7 +91,7 @@ async function rate(verdict,reason='',comment=''){
     return;
   }
   rating=true;
-  $('good').disabled=$('bad').disabled=true;
+  for(const id of ['good','bad','seed','last'])$(id).disabled=true;
   try{
     save('pending-rating',payload);
     const result=await api(payload);
@@ -109,7 +109,7 @@ async function rate(verdict,reason='',comment=''){
       message(e.message||'Rückmeldung noch nicht bestätigt.');
     }
   }finally{
-    rating=false;$('good').disabled=$('bad').disabled=false;
+    rating=false;for(const id of ['good','bad','seed','last'])$(id).disabled=false;
   }
 }
 $('prev').onclick=()=>step(index-1);

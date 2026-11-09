@@ -1,0 +1,34 @@
+{
+  "project": "gradecrew-staging-2026",
+  "scope": "isolated_preview_only",
+  "source": "bcafd321f30d0e65518535f0d64e1aa63dd0950e",
+  "hosting": {
+    "channel": "remy-mehrfeld30",
+    "url": "https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/",
+    "expiresAt": "2026-12-09T21:32:15.398158503Z",
+    "verifiedSha256": {
+      "index.html": "8199a9ac006d563a541dd2e5ae0e12a0c9226809bffbab96524a86e14da289d5",
+      "pilot.css": "1b82d48a5dd116f81692dceed5201c2a17b4e0cfefbc19d6aabae3b25a02e148",
+      "pilot.mjs": "80eb54ceaad91d0b5a963698c815e295e5fb6a5e6f09441cd2716cc68c7908de",
+      "firebase-config.js": "be50a258fe5d6f0c9ddf6e3a9f1ddfd369c7c0623e3a434427189bdd89d80cf8",
+      "visual/visual.css": "fba37d5355d43a1a0a24217b60f036414cd45ab5fe633e027d039fab1b5e0bf5",
+      "visual/core.js": "cf4ea8cd0a3915bf0978312e4166238c0ab68703ba9160a1517fbaca91587548",
+      "visual/legacy-core.js": "412d66b342e5c38d984000b6ea320afc54d286507052a040e9bd7543b5c91d86",
+      "visual/renderers.js": "6a96bdd138bc71f91b64eeed454bb66adcbc297302d8915d04930881affd32d3"
+    }
+  },
+  "functions": {
+    "before": 96,
+    "after": 97,
+    "originalsUnchanged": 96,
+    "added": [
+      {
+        "name": "remyMehrfeld30Review",
+        "region": "europe-west1",
+        "status": "ACTIVE",
+        "uri": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/remyMehrfeld30Review",
+        "sourceHash": "3e1237d6d888b1c46117ce935a28600044ec23f0"
+      }
+    ]
+  }
+}

@@ -2,21 +2,20 @@
 const {initializeApp}=require('firebase-admin/app');
 const {getFirestore,FieldValue}=require('firebase-admin/firestore');
 const {onCall,HttpsError}=require('firebase-functions/v2/https');
-const {quizCode,canReview,ownsPilotJob,present,feedback,score}=require('./review.cjs');
+const {quizCode,seedOwner,canReview,ownsPilotJob,ownsSeedJob,present,feedback,score}=require('./review.cjs');
 const seed=require('./seed.json');
 const app=initializeApp();
 const db=getFirestore(app);
-const seedOwner='gc-visual255-e2e';
 
 async function loadQuiz(quizId,uid){
   if(typeof quizId!=='string'||!quizCode.test(quizId))throw new HttpsError('invalid-argument','Ungültiger Testcode.');
-  const group=seed.find(entry=>entry.quizId===quizId)?.group;
   const quiz=(await db.doc('quizzes/'+quizId).get()).data();
-  if(!quiz||quiz.published||quiz.isDeleted||quiz.rightsHold||quiz.ownerId!==(group?seedOwner:uid))
+  if(!quiz||quiz.published||quiz.isDeleted||quiz.rightsHold||!(/^[a-f0-9]{40}$/.test(quiz.generationJobId||'')))
     throw new HttpsError('permission-denied','Diese Aufgabe ist für dieses Labor nicht verfügbar.');
-  if(group)return group;
-  if(!/^[a-f0-9]{40}$/.test(quiz.generationJobId||''))throw new HttpsError('permission-denied','Kein Laborauftrag.');
+  const entry=seed.find(row=>row.jobId===quiz.generationJobId);
+  if(quiz.ownerId!==(entry?seedOwner:uid))throw new HttpsError('permission-denied','Kein eigener Laborauftrag.');
   const job=(await db.doc('aiJobs/'+quiz.generationJobId).get()).data();
+  if(entry&&ownsSeedJob(job,entry)&&job.quizId===quizId)return entry.group;
   if(!ownsPilotJob(job,uid,quizId))throw new HttpsError('permission-denied','Kein eigener Laborauftrag.');
   return 'eigener';
 }
@@ -30,7 +29,8 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
   const owner=db.collection('remyMehrfeld30Reviewers').doc(uid);
   const latest=owner.collection('ratings');
   if(data.action==='list'){
-    const quizIds=data.quizId?[data.quizId]:seed.map(x=>x.quizId);
+    const quizIds=data.quizId?[data.quizId]:(await db.getAll(...seed.map(row=>db.doc('aiJobs/'+row.jobId))))
+      .flatMap((snap,i)=>{const job=snap.data();return ownsSeedJob(job,seed[i])?[job.quizId]:[];});
     const rows=(await Promise.all(quizIds.map(async quizId=>{
       const group=await loadQuiz(quizId,uid);
       const questions=await db.collection('quizzes/'+quizId+'/questions').orderBy('position').limit(30).get();

@@ -13,10 +13,10 @@ const seed=[];
 for(const group of groups){
   const file=path.join(root,'docs/evidence/remy-mehrfeld30-20261109',group+'.json');
   const receipt=JSON.parse(await fs.readFile(file,'utf8'));
-  if(receipt.status==='ready'&&/^[A-Z0-9]{8}$/.test(receipt.quizId)&&receipt.count===(group==='gegenprobe'?6:8))
-    seed.push({group,quizId:receipt.quizId});
+  if(receipt.group!==group||!(/^[a-f0-9]{40}$/.test(receipt.jobId||''))||receipt.requestId!=='gc-remy-mehrfeld30-20261109-'+group)
+    throw Error('Auftragsbeleg für '+group+' fehlt.');
+  seed.push({group,jobId:receipt.jobId,requestId:receipt.requestId});
 }
-if(!seed.length)throw Error('Kein bestätigter Entwurf für den Teststapel.');
 const web=path.join(dest,'public'),backend=path.join(dest,'functions'),ui=path.join(web,'remy-labor');
 await fs.mkdir(ui,{recursive:true});
 await fs.mkdir(path.join(ui,'visual'));
@@ -41,4 +41,4 @@ await json(path.join(dest,'firebase.json'),{
 });
 const files=['index.html','pilot.css','pilot.mjs','firebase-config.js','visual/visual.css','visual/core.js','visual/legacy-core.js','visual/renderers.js'];
 await json(path.join(dest,'hosting-hashes.json'),Object.fromEntries(await Promise.all(files.map(async file=>[file,createHash('sha256').update(await fs.readFile(path.join(ui,file))).digest('hex')]))));
-console.log('Preview nur für gradecrew-staging-2026 · '+seed.length+' bestätigte Gruppen');
+console.log('Preview nur für gradecrew-staging-2026 · '+seed.length+' gebundene Gruppen');

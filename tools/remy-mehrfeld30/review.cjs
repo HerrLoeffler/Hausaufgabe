@@ -5,12 +5,16 @@ const {core,parseVisualTask}=require('../../functions/lib/visual-task');
 const reasons=new Set(['','format','fachlich','auftrag','loesung','bewertung','anderes']);
 const digest=data=>createHash('sha256').update(JSON.stringify(data)).digest('hex');
 const quizCode=/^[A-Z0-9]{8}$/;
+const seedOwner='gc-visual255-e2e';
 function canReview(uid,profile={}){
   return !!uid && ['teacher','admin'].includes(profile.role) && (!profile.status||profile.status==='active') &&
-    (profile.role==='admin'||uid==='gc-visual255-e2e'||uid==='8bStKRCHSOcxHp3xEDER0pUP0z53');
+    (profile.role==='admin'||uid===seedOwner||uid==='8bStKRCHSOcxHp3xEDER0pUP0z53');
 }
 function ownsPilotJob(job,uid,quizId){
   return job?.ownerId===uid && job.status==='ready' && job.quizId===quizId && /^mehrfeld30-wish-[a-z0-9-]+$/.test(job.requestId||'');
+}
+function ownsSeedJob(job,entry){
+  return job?.ownerId===seedOwner && job.status==='ready' && job.requestId===entry.requestId && quizCode.test(job.quizId||'');
 }
 function present(quizId,group,q){
   const points=Number(q.points);
@@ -35,4 +39,4 @@ function score(q,answer){
   }
   return Number.isInteger(answer)&&q.options[answer]?.correct===true?q.points:0;
 }
-module.exports={quizCode,canReview,ownsPilotJob,present,feedback,score};
+module.exports={quizCode,seedOwner,canReview,ownsPilotJob,ownsSeedJob,present,feedback,score};

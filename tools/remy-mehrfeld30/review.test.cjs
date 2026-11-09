@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {canReview, feedback, present, ownsPilotJob, score}=require('./review.cjs');
+const {canReview, feedback, present, ownsPilotJob, ownsSeedJob, score}=require('./review.cjs');
 const {core}=require('../../functions/lib/visual-task');
 test('pilot access requires an active existing allowed test teacher',()=>{
   assert.equal(canReview('gc-visual255-e2e',{role:'teacher'}),true);
@@ -31,4 +31,13 @@ test('visual projection carries no solution and foreign or ordinary jobs are exc
   assert.equal(ownsPilotJob(j,'u','ABCDEF23'),true);
   assert.equal(ownsPilotJob(j,'other','ABCDEF23'),false);
   assert.equal(ownsPilotJob({...j,requestId:'normal'},'u','ABCDEF23'),false);
+});
+
+test('seed jobs may be listed only after the exact synthetic job is ready',()=>{
+  const entry={jobId:'id',requestId:'gc-remy-mehrfeld30-20261109-physik'};
+  const job={ownerId:'gc-visual255-e2e',quizId:'ABCDEF23',requestId:entry.requestId,status:'ready'};
+  assert.equal(ownsSeedJob(job,entry),true);
+  assert.equal(ownsSeedJob({...job,status:'running'},entry),false);
+  assert.equal(ownsSeedJob({...job,ownerId:'another-owner'},entry),false);
+  assert.equal(ownsSeedJob({...job,requestId:'unexpected'},entry),false);
 });
