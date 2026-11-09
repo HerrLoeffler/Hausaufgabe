@@ -827,3 +827,8 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 ### 09.11.2026 · GC-WEB-REPAIR-20261007 · großer Live-Auftrag
 
 - [ ] Speicherabbruch bei einem Auftrag mit 50 Aufgaben in der fachlichen Prüfung absichern. Ursache im zugeordneten Worker-Aufruf bestätigt. [Live-PR415](https://github.com/HerrLoeffler/Hausaufgabe/pull/415) und [Staging-PR416](https://github.com/HerrLoeffler/Hausaufgabe/pull/416) lokal geprüft. Staging-CI grün und Worker auf Staging aktiv. Ausstehend sind Live-Freigabe und ein echter Lastnachweis mit 50 Aufgaben. [Übergabe](workstreams/remy-interactive-tests-20261026.md).
+
+## GC-EXTENDED-QUESTION-TYPES-01 · Mehrfeld-Fundus (09.11.2026)
+
+- [x] Zwölf versionierte Referenz- und Prüffälle mit Rückmeldestruktur vorbereitet. Fünf Mathefälle offline mit vorhandenem Dreisatz-Baustein geprüft. [Fundus und Belege](docs/learning/mehrfeld-fundus/README.md).
+- [ ] Auf isolierter Testseite zunächst Mathe und einen fachfremden Pfeiltyp mit frischen KI-Ausgaben prüfen. Lehrkrafturteile versionsgebunden erfassen und anhand zurückgehaltener Fälle messen. Keine Freigabe aus den Seed-Daten ableiten.
