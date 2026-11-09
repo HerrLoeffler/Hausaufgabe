@@ -14,15 +14,15 @@ Keine Altbewertung freigeben; neue gemeinsame automatische Freigabe nur für pas
 Antwortleck vs erlaubter Lesekontext; äquivalente Brüche vs explizite Darstellungsanforderung; false_positive und leere Snapshots; Promptinhalt bei allen Erstellungswegen; ehrlicher Speicher-/Validierungsbeleg nach Modellantwort.
 
 ### Task 1 Regeln und Gegenbeispiele
-- [ ] Tests für Antwortleck und erlaubte Lücken/Lesekontexte, Bruchäquivalenz, fehlenden Hörkanal, Permafrostdefinition und URL schreiben und rot ausführen.
-- [ ] functions/lib/common-quality-rules.js implementieren; Prompts und validateQuestion anbinden; neue und bestehende Tests grün.
+- [x] Tests für Antwortleck und erlaubte Lücken/Lesekontexte, Bruchäquivalenz, fehlenden Hörkanal, Permafrostdefinition und URL schreiben und rot ausführen.
+- [x] functions/lib/common-quality-rules.js implementieren; Prompts und validateQuestion anbinden; neue und bestehende Tests grün.
 ### Task 2 Automatische Meldungseinordnung
-- [ ] Tests für bekannten belegbaren Fehler, Smileys ohne Grund, fehlenden Kontext, Freitextinjektion, Dublette, Wiederholung/Idempotenz und unberührte Altbewertungen rot.
-- [ ] Klassifikation beim recordQuestionFeedback speichern; bestehende Adminprojektion erweitert; alle bestehenden Berechtigungen unverändert.
+- [x] Tests für bekannten belegbaren Fehler, Smileys ohne Grund, fehlenden Kontext, Freitextinjektion, Dublette, Wiederholung/Idempotenz und unberührte Altbewertungen rot.
+- [x] Klassifikation beim recordQuestionFeedback speichern; bestehende Adminprojektion erweitert; alle bestehenden Berechtigungen unverändert.
 ### Task 3 Anwendungsbeleg und Adminoberfläche
-- [ ] Tests für Anwendungsbeleg nach Antwort, Hashbindung, gleiche Kennung in Antwort/Usage, Hilfe-/Automatikdarstellung rot.
-- [ ] Bestehende Erstellungswege mit gemeinsamem Beleg versehen; Speicherung im bestehenden aiEvent; lesbare Admineinordnung.
+- [x] Tests für Anwendungsbeleg nach Antwort, Hashbindung, gleiche Kennung in Antwort/Usage, Hilfe-/Automatikdarstellung rot.
+- [x] Bestehende Erstellungswege mit gemeinsamem Beleg versehen; Speicherung im bestehenden aiEvent; lesbare Admineinordnung.
 ### Task 4 Veröffentlichung und echter Nachweis
-- [ ] Gesamtchecks und unabhängiger enger Review; exakte CI. Aktuelle Hosting-/Functions-Stände sichern, nur autorisierte betroffene Functions und Hostingdateien veröffentlichen.
-- [ ] Neue fiktive Aufgabe über normalen angemeldeten Adminweg erzeugen, Regelbeleg und gespeicherten Nutzungsbeleg abgleichen; gezielte fiktive Meldung prüft Automatik/Hilfebedarf. Keine Kundendaten oder zusätzliche Globalsignale erzeugen.
-- [ ] Produktionsbelege und Grenzen dokumentieren; offene Altbewertungen bleiben offen.
+- [x] Gesamtchecks und unabhängiger enger Review; exakte CI. Aktuelle Hosting-/Functions-Stände sichern, nur autorisierte betroffene Functions und Hostingdateien veröffentlichen.
+- [x] Neue fiktive Aufgabe über normalen angemeldeten Adminweg erzeugen, Regelbeleg und gespeicherten Nutzungsbeleg abgleichen; gezielte fiktive Meldung prüft Automatik/Hilfebedarf. Keine Kundendaten oder zusätzliche Globalsignale erzeugen.
+- [x] Produktionsbelege und Grenzen dokumentieren; offene Altbewertungen bleiben offen.
