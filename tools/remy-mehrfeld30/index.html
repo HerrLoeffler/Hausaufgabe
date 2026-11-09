@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>GradeCrew · Remy Aufgabenlabor</title>
+<link rel="stylesheet" href="./visual/visual.css">
+<link rel="stylesheet" href="./pilot.css">
+</head>
+<body>
+<main>
+<header><p class="eyebrow">GRADECREW · TESTSEITE</p><h1>Remy Aufgabenlabor</h1><p>Probiere Aufgaben aus und zeig Remy, welche davon für deinen Unterricht passen.</p></header>
+<form id="login" hidden><h2>Mit dem Testkonto anmelden</h2>
+  <label>E-Mail<input name="email" type="email" autocomplete="username" required></label>
+  <label>Passwort<input name="password" type="password" autocomplete="current-password" required></label>
+  <button>Anmelden</button>
+</form>
+<div id="workspace" hidden>
+  <div class="bar"><button id="seed" class="secondary">Erste 30 Aufgaben</button><button id="last" class="secondary" hidden>Eigener Stapel</button><button id="logout" class="secondary">Abmelden</button></div>
+  <details id="wishPanel">
+    <summary>Neue Aufgaben mit KI erstellen</summary>
+    <form id="wish">
+      <div class="fields"><label>Fach<input name="subject" value="Mathematik" maxlength="60" required></label>
+      <label>Klasse<select name="grade"><option>5</option><option>6</option><option selected>7</option><option>8</option><option>9</option><option>10</option></select></label>
+      <label>Aufgaben<select name="count"><option>3</option><option>5</option></select></label></div>
+      <label>Was soll deine Klasse üben?<textarea name="wish" rows="3" maxlength="1000" required placeholder="Zum Beispiel: Umgekehrter Dreisatz mit Rechenpfeilen und unterschiedlichen Hilfen."></textarea></label>
+      <button id="generate">Mit KI erstellen</button>
+      <button type="button" id="resume" class="secondary" hidden>Auftrag erneut prüfen</button>
+    </form>
+  </details>
+  <section id="review" hidden>
+    <div class="bar split"><div><p class="eyebrow" id="group"></p><h2 id="position" tabindex="-1"></h2></div><span id="progress"></span></div>
+    <progress id="meter" max="30" value="0" aria-label="Bereits gesichtete Aufgaben"></progress>
+    <p id="prompt" class="prompt"></p>
+    <div id="answer" class="gc-visual renderer"></div>
+    <div class="bar"><button class="secondary" id="scoreButton">Probe auswerten</button><span id="score" role="status"></span></div>
+    <div class="bar"><button class="good" id="good">🙂 Gut</button><button class="bad" id="bad">🙁 Überarbeiten</button><span id="verdict"></span></div>
+    <form id="feedback" hidden>
+      <label>Was passt nicht? <select name="reason">
+        <option value="">Ohne Grund</option><option value="format">Falsches Format</option><option value="fachlich">Fachlicher Fehler</option>
+        <option value="auftrag">Auftrag unklar</option><option value="loesung">Lösung nicht eindeutig</option><option value="bewertung">Bewertung falsch</option><option value="anderes">Anderes</option>
+      </select></label>
+      <label>Hinweis (freiwillig)<input name="comment" maxlength="500"></label>
+      <button>Rückmeldung speichern</button><button type="button" id="cancel" class="secondary">Abbrechen</button>
+    </form>
+    <nav class="bar split" aria-label="Aufgaben wechseln"><button class="secondary" id="prev">← Zurück</button><button class="secondary" id="next">Weiter →</button></nav>
+  </section>
+</div>
+<p id="status" role="status" aria-live="polite"></p>
+</main>
+<script src="./visual/legacy-core.js"></script>
+<script src="./visual/core.js"></script>
+<script src="./visual/renderers.js"></script>
+<script type="module" src="./pilot.mjs"></script>
+</body>
+</html>

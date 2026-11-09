@@ -1,0 +1,111 @@
+{
+  "group": "umgekehrt",
+  "requestId": "gc-remy-mehrfeld30-20261109-umgekehrt",
+  "input": {
+    "clientRequestId": "gc-remy-mehrfeld30-20261109-umgekehrt",
+    "subject": "Mathematik",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Umgekehrt proportionaler Dreisatz",
+    "learningGoals": [
+      "Umgekehrt proportionale Zuordnung mit Dreisatz über die Einheit berechnen."
+    ],
+    "notes": "Ausschließlich umgekehrter Dreisatz mit gegenläufigen Rechenpfeilen. Fester Arbeitsumfang und identische Leistung pro Gerät oder Person. Acht verschiedene Kontexte, keine Vermischung mit direktem Dreisatz.",
+    "count": 8,
+    "points": 20,
+    "allowedTypes": [
+      "visual"
+    ],
+    "allowedVisualFormats": [
+      "table"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "materials": [],
+    "materialMode": "inspiration"
+  },
+  "status": "ready",
+  "startedAt": "2026-11-09T21:25:22.203Z",
+  "jobId": "dccae4d79bec35deb77099b28eef347655e326d3",
+  "stage": "ready",
+  "errorReference": null,
+  "errorDetails": null,
+  "usage": {
+    "total_tokens": 69672,
+    "providerRequests": [
+      {
+        "responseId": "resp_064f90cca522a6b3016af23a51cd1c87d2a04c3c016b2a5299",
+        "requestId": "req_4b3c25eff95a4689a97372a10b53c1aa",
+        "model": "gpt-5.6-luna",
+        "durationMs": 20044,
+        "phase": "testify_test_v2"
+      },
+      {
+        "responseId": "resp_033b5450d416a51a016af23a6472ec87d2ba03ee35b0112fab",
+        "requestId": "req_82671469d5ae4786a7c4d0f38d57c116",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9303,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_0540bd090b3d57ac016af23a646afc87d288c64237c090fb4d",
+        "requestId": "req_a740d8e0077c42ccb8bc0697cc0a2ce6",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9683,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_0f06907daf8b2bd0016af23a6e267487d28e38721d98c10d56",
+        "requestId": "req_d9525abf43fa44f48551982c7cb3cf67",
+        "model": "gpt-5.6-luna",
+        "durationMs": 8243,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0a187e959a595586016af23a76676087d294b96beb979f7639",
+        "requestId": "req_1401ec236451412d92786a523a83a648",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6106,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0566bd20025816fa016af23a7c87c487d2993b72d01029f248",
+        "requestId": "req_45a43e3ec4ac4fe18deac87421446ea4",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9323,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_01c902b40a1e9856016af23a85e89087d2a60a40c58b509ef6",
+        "requestId": "req_035b8d0b81334dcf80b83307ece0fd0c",
+        "model": "gpt-5.6-luna",
+        "durationMs": 16649,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_08125312955f26a3016af23a85eca087d293d211987a20644f",
+        "requestId": "req_fd6d3c1f34e046bf817a5ee1fd2e92f6",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5121,
+        "phase": "testify_recipe_blind_solution_v1"
+      }
+    ],
+    "input_tokens": 60318,
+    "output_tokens": 9354
+  },
+  "completedAt": "2026-11-09T21:26:48.304Z",
+  "quizId": "G2S53A9M",
+  "count": 8,
+  "pointSum": 20,
+  "layouts": [
+    "dreisatz",
+    "dreisatz",
+    "dreisatz",
+    "dreisatz",
+    "dreisatz",
+    "dreisatz",
+    "dreisatz",
+    "dreisatz"
+  ]
+}

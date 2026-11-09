@@ -1,0 +1,220 @@
+[
+  {
+    "group": "direkt",
+    "position": 1,
+    "type": "visual",
+    "points": 2.5,
+    "version": "86495029a0209104777e590c4d1854de70b86b84cff6ebde1db966606033c2ce",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "direkt",
+    "position": 2,
+    "type": "visual",
+    "points": 2.5,
+    "version": "3af49a4c477215066cf3f5b3841734ce9dff1df8a9d44dac60e40ce8ba445274",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "direkt",
+    "position": 3,
+    "type": "visual",
+    "points": 2.5,
+    "version": "018ff611db624768567fe14121b155a1e286ad754355f438e7aeec808dddc79c",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "direkt",
+    "position": 4,
+    "type": "visual",
+    "points": 2.5,
+    "version": "8292ea073b99ab3a88b8e608d6dcfcd2a4aab08b27ca4f364593c56e7ae18ed0",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "direkt",
+    "position": 5,
+    "type": "visual",
+    "points": 2.5,
+    "version": "567e56478dfe6eca40d5c27aafd96fa18ba1f13482d2a1bae0fdca5050c8deaa",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "direkt",
+    "position": 6,
+    "type": "visual",
+    "points": 2.5,
+    "version": "d5731cda6d43c8e56ff07a10dd36a0f5ee9e653329fc646b3bac2cadfd82d6f9",
+    "flags": [],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "direkt",
+    "position": 7,
+    "type": "visual",
+    "points": 2.5,
+    "version": "2fac949e5b7593b324119d2e9b10fcf241be5e8f76358a791dfa41fff3ad6390",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "direkt",
+    "position": 8,
+    "type": "visual",
+    "points": 2.5,
+    "version": "fc95ff3f2518428dc24bd4a9622827d20f1f1188e4076273e099d5afff7fc82e",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "umgekehrt",
+    "position": 1,
+    "type": "visual",
+    "points": 2.5,
+    "version": "db14526904cdee6cc2baf51d4d392535827844bf63b82e369f118980365875e1",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "umgekehrt",
+    "position": 2,
+    "type": "visual",
+    "points": 2.5,
+    "version": "4b40cf2dd82bb057e9b8306c40a2b777d2e7244d1aaf5fde1bcd0c58eca4e1a5",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "umgekehrt",
+    "position": 3,
+    "type": "visual",
+    "points": 2.5,
+    "version": "575511298d30c607fd43d51ca3f32a66243a3db23f499249086515a748865472",
+    "flags": [],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "umgekehrt",
+    "position": 4,
+    "type": "visual",
+    "points": 2.5,
+    "version": "6e28782f0a03e80b4d25d5b7cec6347379f22838aacfe3e93e0b3344b7157de7",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "umgekehrt",
+    "position": 5,
+    "type": "visual",
+    "points": 2.5,
+    "version": "db7cf540ec3f3ed70cb2ed6c5e058504c05e2aa79683a74a9a29e02a66f9365b",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "umgekehrt",
+    "position": 6,
+    "type": "visual",
+    "points": 2.5,
+    "version": "ad19259b5a071b464f6188d7d80002ca8d45b088e5190f054f6cfaa7a8968d6d",
+    "flags": [],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "umgekehrt",
+    "position": 7,
+    "type": "visual",
+    "points": 2.5,
+    "version": "35ab749061f6b841832007b8916d0fed90658bb9fa6fa0972b6b5027e14c7a84",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "umgekehrt",
+    "position": 8,
+    "type": "visual",
+    "points": 2.5,
+    "version": "54144a4fddc5e2c34a69eb07e9a64f92544d97b809504c43a13c36f5d1fdab35",
+    "flags": [
+      "auftrag-nennt-vorgegebene-pfeile"
+    ],
+    "layout": "dreisatz"
+  },
+  {
+    "group": "gegenprobe",
+    "position": 1,
+    "type": "single",
+    "points": 2.5,
+    "version": "68447ad6a5c07bbd7cc51e3d2a08668c8f59349c668b663851202fb5b3391d50",
+    "flags": []
+  },
+  {
+    "group": "gegenprobe",
+    "position": 2,
+    "type": "single",
+    "points": 2.5,
+    "version": "6574af0159fe37723ad16dc57658765e9fa183dacf6ee0117324d8b4cf2ef6a9",
+    "flags": []
+  },
+  {
+    "group": "gegenprobe",
+    "position": 3,
+    "type": "single",
+    "points": 2.5,
+    "version": "9966e5170ee0e8b9b547c42b1259ffa33d8c59c42d75889824b5a89e63e59b3c",
+    "flags": []
+  },
+  {
+    "group": "gegenprobe",
+    "position": 4,
+    "type": "single",
+    "points": 2.5,
+    "version": "9f382dc114610c069a215ac6c956a7a8baed3378fce12324433187521071e5f4",
+    "flags": []
+  },
+  {
+    "group": "gegenprobe",
+    "position": 5,
+    "type": "single",
+    "points": 2.5,
+    "version": "654c629bb65760516dc9048b0019181dabe9f5c1b051297c863496c251d6f7bb",
+    "flags": []
+  },
+  {
+    "group": "gegenprobe",
+    "position": 6,
+    "type": "single",
+    "points": 2.5,
+    "version": "8f69c0d9320dd7698b81705badb840f62014feedb1c0359e4614ab57ddd1ceea",
+    "flags": []
+  }
+]

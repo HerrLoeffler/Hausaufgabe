@@ -1,0 +1,393 @@
+{
+  "schemaVersion": 1,
+  "corpusVersion": "mehrfeld-v1",
+  "locale": "de-DE",
+  "status": "pilot_seed",
+  "cases": [
+    {
+      "id": "M01",
+      "partition": "reference",
+      "subject": "Mathematik",
+      "grade": 7,
+      "learningGoal": "Einen Prozentwert über 1 % berechnen.",
+      "task": "Wie viel sind 25 % von 400 €? Rechne über 1 %. Ergänze die offenen Felder.",
+      "expectedRecipe": "dreisatz-direct",
+      "rationale": "Ein fester Grundwert liefert ein konstantes Verhältnis.",
+      "draft": {
+        "schemaVersion": "dreisatz-draft-v1",
+        "problem": "percent_value",
+        "params": {
+          "base": 400,
+          "percent": 25
+        },
+        "labels": [
+          "Anteil (%)",
+          "Betrag (€)"
+        ],
+        "helpLevel": "guided"
+      },
+      "expected": {
+        "values": [
+          100,
+          400,
+          1,
+          4,
+          25,
+          100
+        ],
+        "arrows": [
+          "÷ 100",
+          "÷ 100",
+          "× 25",
+          "× 25"
+        ],
+        "maxPoints": 2.5,
+        "pointsPerOpenField": 0.5
+      },
+      "revision": 1
+    },
+    {
+      "id": "M02",
+      "partition": "reference",
+      "subject": "Mathematik",
+      "grade": 6,
+      "learningGoal": "Vom Preis einer Packung auf den Preis mehrerer gleicher Packungen schließen.",
+      "task": "Vier gleiche Packungen kosten zusammen 6 €. Jede Packung kostet gleich viel. Was kosten zehn Packungen? Rechne über eine Packung und ergänze die offenen Felder.",
+      "expectedRecipe": "dreisatz-direct",
+      "rationale": "Konstanter Stückpreis, keine Grundgebühr.",
+      "draft": {
+        "schemaVersion": "dreisatz-draft-v1",
+        "problem": "direct",
+        "params": {
+          "startLeft": 4,
+          "startRight": 6,
+          "endLeft": 10
+        },
+        "labels": [
+          "Packungen",
+          "Preis (€)"
+        ],
+        "helpLevel": "mixed"
+      },
+      "expected": {
+        "values": [
+          4,
+          6,
+          1,
+          1.5,
+          10,
+          15
+        ],
+        "arrows": [
+          "÷ 4",
+          "÷ 4",
+          "× 10",
+          "× 10"
+        ],
+        "maxPoints": 2.5,
+        "pointsPerOpenField": 0.5
+      },
+      "revision": 1
+    },
+    {
+      "id": "M03",
+      "partition": "reference",
+      "subject": "Mathematik",
+      "grade": 7,
+      "learningGoal": "Eine umgekehrt proportionale Zuordnung über die Einheit berechnen.",
+      "task": "Drei gleich schnelle Drucker erledigen einen Druckauftrag in 24 Minuten. Die Arbeit lässt sich gleichmäßig verteilen, alle Drucker laufen gleichzeitig und es gibt keine Rüstzeit. Wie lange brauchen acht Drucker? Rechne über einen Drucker. Ergänze die offenen Zahlen und Pfeilfelder.",
+      "expectedRecipe": "dreisatz-inverse",
+      "rationale": "Der Arbeitsumfang bleibt bei gleicher Leistung konstant. Die Operationen laufen gegenläufig.",
+      "draft": {
+        "schemaVersion": "dreisatz-draft-v1",
+        "problem": "inverse",
+        "params": {
+          "startLeft": 3,
+          "startRight": 24,
+          "endLeft": 8
+        },
+        "labels": [
+          "Drucker",
+          "Zeit (min)"
+        ],
+        "helpLevel": "mixed"
+      },
+      "expected": {
+        "values": [
+          3,
+          24,
+          1,
+          72,
+          8,
+          9
+        ],
+        "arrows": [
+          "÷ 3",
+          "× 3",
+          "× 8",
+          "÷ 8"
+        ],
+        "maxPoints": 2.5,
+        "pointsPerOpenField": 0.5
+      },
+      "revision": 1
+    },
+    {
+      "id": "F01",
+      "partition": "reference",
+      "subject": "Biologie",
+      "grade": 7,
+      "learningGoal": "Beobachtete Schritte der Keimung in Fachsprache beschreiben.",
+      "task": "Im Keimversuch beobachtest du zwei Veränderungen. A: Eine weiße Spitze tritt aus der Samenschale und wächst nach unten. B: Oberhalb der Keimblätter entfaltet sich ein weiteres grünes Blattpaar. Ergänze für A und B je einen Begriff aus der Wortliste: Keimwurzel, Laubblätter, Blüte.",
+      "expectedRecipe": "mehrfeld-beobachtung-begriff",
+      "rationale": "Jeder Pfeil verbindet eine Beobachtung mit dem passenden Begriff. Die Pfeile stehen für Zuordnung.",
+      "expected": {
+        "links": [
+          [
+            "A",
+            "Keimwurzel"
+          ],
+          [
+            "B",
+            "Laubblätter"
+          ]
+        ],
+        "pointsPerOpenField": 0.5,
+        "maxPoints": 1
+      },
+      "revision": 1
+    },
+    {
+      "id": "F02",
+      "partition": "reference",
+      "subject": "Deutsch",
+      "grade": 6,
+      "learningGoal": "Zeitformwechsel und passende Verbformen erkennen.",
+      "task": "Setze „ich gehe“ und „wir sehen“ ins Präteritum. Trage jeweils die Verbform ohne Pronomen ein.",
+      "expectedRecipe": "mehrfeld-umformung",
+      "rationale": "Jeder Pfeil steht für dieselbe grammatische Umformung. Die Person bleibt gleich.",
+      "expected": {
+        "links": [
+          [
+            "ich gehe",
+            "ging"
+          ],
+          [
+            "wir sehen",
+            "sahen"
+          ]
+        ],
+        "pointsPerOpenField": 0.5,
+        "maxPoints": 1
+      },
+      "revision": 1
+    },
+    {
+      "id": "F03",
+      "partition": "reference",
+      "subject": "Physik",
+      "grade": 6,
+      "learningGoal": "Schmelzen und Erstarren an Zustandswechseln unterscheiden.",
+      "task": "Wasser wechselt zwischen fest und flüssig. Trage an beiden Pfeilen den Fachbegriff für den Übergang ein.",
+      "expectedRecipe": "mehrfeld-uebergang",
+      "rationale": "Die Pfeilrichtung entscheidet über den Fachbegriff.",
+      "expected": {
+        "links": [
+          [
+            "fest",
+            "flüssig",
+            "Schmelzen"
+          ],
+          [
+            "flüssig",
+            "fest",
+            "Erstarren"
+          ]
+        ],
+        "pointsPerOpenField": 0.5,
+        "maxPoints": 1
+      },
+      "revision": 1
+    },
+    {
+      "id": "M04",
+      "partition": "evaluation",
+      "subject": "Mathematik",
+      "grade": 7,
+      "learningGoal": "Den Grundwert über 1 % berechnen.",
+      "task": "18 Liter sind 30 % des Tankinhalts. Wie viel fasst der Tank? Rechne über 1 %. Ergänze die offenen Felder.",
+      "expectedRecipe": "dreisatz-direct",
+      "rationale": "Prozentanteil und Liter gehören paarweise zusammen.",
+      "draft": {
+        "schemaVersion": "dreisatz-draft-v1",
+        "problem": "percent_base",
+        "params": {
+          "part": 18,
+          "percent": 30
+        },
+        "labels": [
+          "Anteil (%)",
+          "Tankinhalt (l)"
+        ],
+        "helpLevel": "independent"
+      },
+      "expected": {
+        "values": [
+          30,
+          18,
+          1,
+          0.6,
+          100,
+          60
+        ],
+        "arrows": [
+          "÷ 30",
+          "÷ 30",
+          "× 100",
+          "× 100"
+        ],
+        "maxPoints": 2.5,
+        "pointsPerOpenField": 0.5
+      },
+      "revision": 1
+    },
+    {
+      "id": "M05",
+      "partition": "evaluation",
+      "subject": "Mathematik",
+      "grade": 8,
+      "learningGoal": "Die Dauer bei festem Arbeitsumfang berechnen.",
+      "task": "Sechs gleich starke Pumpen leeren ein Becken in 15 Minuten. Die Leistung pro Pumpe bleibt gleich, alle starten gleichzeitig. Wie lange brauchen zehn Pumpen für dasselbe Becken? Rechne über eine Pumpe.",
+      "expectedRecipe": "dreisatz-inverse",
+      "rationale": "Beide Zahlenpaare müssen dasselbe Produkt ergeben.",
+      "draft": {
+        "schemaVersion": "dreisatz-draft-v1",
+        "problem": "inverse",
+        "params": {
+          "startLeft": 6,
+          "startRight": 15,
+          "endLeft": 10
+        },
+        "labels": [
+          "Pumpen",
+          "Zeit (min)"
+        ],
+        "helpLevel": "guided"
+      },
+      "expected": {
+        "values": [
+          6,
+          15,
+          1,
+          90,
+          10,
+          9
+        ],
+        "arrows": [
+          "÷ 6",
+          "× 6",
+          "× 10",
+          "÷ 10"
+        ],
+        "maxPoints": 2.5,
+        "pointsPerOpenField": 0.5
+      },
+      "revision": 1
+    },
+    {
+      "id": "N01",
+      "partition": "evaluation",
+      "subject": "Mathematik",
+      "grade": 7,
+      "learningGoal": "Eine Größe bei einer Grundgebühr und variablem Preis bestimmen.",
+      "task": "Eine Taxifahrt kostet 4 € Grundgebühr plus 2 € pro Kilometer. Wie viel kosten 8 km?",
+      "expectedRecipe": null,
+      "rationale": "Die Grundgebühr macht die Zuordnung nicht proportional. Eine Rechnung oder Wertetabelle passt.",
+      "expected": {
+        "reject": [
+          "dreisatz-direct",
+          "dreisatz-inverse"
+        ],
+        "answer": 20,
+        "unit": "€",
+        "errorTag": "wrong_relation"
+      },
+      "revision": 1
+    },
+    {
+      "id": "N02",
+      "partition": "evaluation",
+      "subject": "Mathematik",
+      "grade": 7,
+      "learningGoal": "Die Bedeutung einer Prozentangabe erklären.",
+      "task": "Was bedeutet die Aussage „25 % der Klasse kommen mit dem Rad“? Erkläre in eigenen Worten.",
+      "expectedRecipe": null,
+      "rationale": "Das Lernziel ist Deutung. Es gibt keine zu berechnende Größe.",
+      "expected": {
+        "reject": [
+          "dreisatz-direct",
+          "dreisatz-inverse"
+        ],
+        "errorTag": "wrong_learning_goal"
+      },
+      "revision": 1
+    },
+    {
+      "id": "N03",
+      "partition": "evaluation",
+      "subject": "Geschichte",
+      "grade": 7,
+      "learningGoal": "Historische Ursachen mit Material belegen.",
+      "task": "Nenne zwei Gründe für den Beginn der Industrialisierung in Großbritannien und belege sie mit dem bereitgestellten Material.",
+      "expectedRecipe": null,
+      "rationale": "Ein starres Schema mit genau einem Lösungsweg würde begründete Alternativen ausschließen.",
+      "expected": {
+        "reject": [
+          "mehrfeld-uebergang",
+          "dreisatz-direct",
+          "dreisatz-inverse"
+        ],
+        "errorTag": "ambiguous_key"
+      },
+      "revision": 1
+    },
+    {
+      "id": "Q01",
+      "partition": "evaluation",
+      "subject": "Mathematik",
+      "grade": 7,
+      "learningGoal": "Beim Druckerproblem die tatsächlich offenen Felder ergänzen.",
+      "task": "Ergänze die Werte und die vier Rechenpfeile. Verwende als Zwischenwert 1. Jedes richtige Feld zählt 0,5 Punkte.",
+      "expectedRecipe": "dreisatz-inverse",
+      "rationale": "Das Layout passt, aber der Auftrag zählt vorgegebene Pfeile als zu ergänzen und nennt den sichtbaren Zwischenwert noch einmal.",
+      "source": "Nachstellung des Nutzer-Screenshots vom 09.11.2026 ohne Bilddatei.",
+      "observed": {
+        "givens": [
+          3,
+          24,
+          1,
+          72,
+          8,
+          null
+        ],
+        "arrowModes": [
+          "given",
+          "select",
+          "select",
+          "given"
+        ],
+        "maxPoints": 2.5
+      },
+      "expected": {
+        "rejectCandidate": true,
+        "openArrowCount": 2,
+        "openFieldCount": 5,
+        "answer": 9,
+        "errorTag": "instruction_layout_mismatch",
+        "correctedInstruction": "Ergänze die offenen Rechenzeichen, Zahlen an den Pfeilen und die gesuchte Arbeitszeit. Jedes richtige Eingabefeld zählt 0,5 Punkte."
+      },
+      "revision": 1
+    }
+  ],
+  "teacherReviews": []
+}
