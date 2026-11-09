@@ -2,6 +2,32 @@
 
 Task GC-BILLING-PLAN-01 · Quellenstand08/09Nov2026 · Ergänzung zum [engen Webplan](../superpowers/plans/2026-11-08-billing-web-sandbox.md). Diese Erklärung aktiviert keine Zahlungsart und erteilt keine Echtgeld-/Konto-/Keyfreigabe.
 
+## Anbieterempfehlung und Gebühren am 9. November 2026
+
+PayPal und klassische SEPA-Überweisung sind Anforderungen von Martin. Für den deutschen GradeCrew-Webstart empfehle ich **Stripe mit Checkout, Billing und Invoicing**. Bewertet sind Zahlungsarten, Abo- und Rechnungsbetrieb, Kosten und Anschluss an den vorhandenen Testplan.
+
+| Anbieter | Eignung | Begründung |
+|---|---:|---|
+| Stripe | **9/10** | Gehosteter Checkout, Abo-Rechnungen, Zahlungsausfälle, Kundenportal und automatische Zuordnung von Überweisungen zu Rechnungen bilden einen gemeinsamen Ablauf. Der vorhandene Sandboxplan passt dazu. Die Zusatzgebühren für Billing und Invoicing erhöhen die laufenden Kosten. PayPal-Folgezahlungen und SEPA-Überweisungen müssen für das konkrete Konto verfügbar sein. |
+| Mollie | **8/10** | Deckt PayPal, Karte, SEPA-Lastschrift und klassische Überweisung ab. Die Gebührenbeispiele fallen niedriger aus. Subscriptions und Invoicing stehen zur Verfügung. Beim vorhandenen GradeCrew-Plan müssten wir Abo-, Portal- und Rechnungsschritte auf Mollie abbilden. Die erweiterte Zuordnung von Überweisungen mit fehlender Referenz oder abweichendem Betrag samt eigener IBAN ist laut Dokumentation noch im Rollout. |
+
+[Stripe-Abos](https://docs.stripe.com/billing/subscriptions/overview) · [Stripe-Überweisungen auf Rechnungen](https://docs.stripe.com/invoicing/bank-transfer) · [Mollie Recurring](https://docs.mollie.com/docs/recurring-payments) · [Mollie Invoicing](https://docs.mollie.com/docs/invoicing) · [Mollie-Überweisungsabgleich](https://docs.mollie.com/docs/bank-transfer-matching)
+
+| Methode | Stripe-Zahlungsgebühr | Mollie-Zahlungsgebühr | Beispiel Stripe / Mollie |
+|---|---|---|---|
+| EWR-Karte im Standard- bzw. Verbraucherkartentarif | 1,5 % + 0,25 € | 1,8 % + 0,25 € | 10 € Monatsabo: **0,47 € / 0,43 €** |
+| PayPal | PayPal-Gebühr + 0,2 % + 0,10 € | PayPal-Gebühr + 0,10 € | 10 € Monatsabo: **ca. 0,88 € / 0,79 €** |
+| SEPA-Lastschrift | 0,35 € | 0,35 € | 10 € Monatsabo: **0,42 € / 0,35 €** |
+| Klassische SEPA-Überweisung | 0,5 %, höchstens 5 € Zahlungsgebühr | 0,25 € | 300 € einmalige Rechnung: **2,70 € / 0,25 € reine Mollie-Zahlungsgebühr** |
+
+Die Stripe-Beispiele enthalten **0,7 % Billing** beim Abo oder **0,4 % Invoicing Starter** bei der einmaligen Rechnung. Die 5-€-Grenze betrifft allein die Stripe-Zahlungsgebühr für die Überweisung. Die Mollie-Spalte rechnet mit den veröffentlichten Transaktionsgebühren. Die PayPal-Beispiele setzen für beide denselben deutschen Checkout-Standard von 2,99 % + 0,39 € an. Individuelle Konditionen, Währungsumrechnung, Rückbuchungen und Zusatzprodukte können die Kosten ändern. Die Beträge von 10 € und 300 € sind Rechenbeispiele. [Stripe-Zahlungspreise](https://stripe.com/de/pricing/local-payment-methods) · [Stripe Billing](https://stripe.com/de/billing/pricing) · [Stripe Invoicing](https://stripe.com/de/invoicing/pricing) · [Mollie-Preise Deutschland](https://www.mollie.com/de/pricing) · [PayPal-Händlergebühren](https://www.paypal.com/de/business/paypal-business-fees)
+
+Für Privatabos empfehle ich **PayPal, Visa/Mastercard, Apple Pay und Google Pay** bei geeignetem Gerät und Konto, ergänzt um SEPA-Lastschrift. Für größere Einzelkäufe oder Schullizenzen eignet sich eine Rechnung mit **klassischer Überweisung per IBAN**. Ein Überweisungszahler stößt die Zahlung selbst an. Automatische Verlängerungen per Bankeinzug laufen über die separat autorisierte SEPA-Lastschrift. PayPal, Rechnung, Lastschrift und Karten gehören laut EHI für das Jahr 2025 zu den meistgenutzten Verfahren nach Umsatz im deutschen Onlinehandel. [Stripe-Wallets](https://docs.stripe.com/payments/wallets) · [EHI Online-Payment](https://www.ehi.org/presse/smartphone-statt-portemonnaie-mobile-payment-boomt/)
+
+**Anschluss an GradeCrew.** Sobald ein vorhandener Stripe-Testzugang bereitsteht, verbinden wir ihn über den serverseitigen Secret Manager im isolierten Testprojekt. „Abo abschließen“ erzeugt für das angemeldete Konto eine gehostete Checkout-Sitzung mit dem serverseitig hinterlegten Preis. PayPal verbindet der Betreiber im Stripe-Dashboard mit dem vorhandenen PayPal-Geschäftskonto und prüft die Zulassung für Folgeabbuchungen. Für die Überweisungsoption erstellt GradeCrew eine einmalige Rechnung, der Stripe eine virtuelle IBAN und Zahlungsanweisungen zuordnet. Die Live-Freigabe für deutsche SEPA-Überweisungen kann zusätzliche Händlerangaben erfordern. GradeCrew verlängert oder aktiviert den Zugang erst, wenn das Backend die Anbieterbestätigung und die Zuordnung zu Konto, Rechnung und Tarif geprüft hat. In den Einstellungen führt ein geschützter Link zum Kundenportal. [PayPal-Aktivierung](https://docs.stripe.com/payments/paypal/activate) · [PayPal-Folgezahlungen](https://docs.stripe.com/payments/paypal) · [Überweisungen auf Rechnungen](https://docs.stripe.com/invoicing/bank-transfer) · [Deutsche Händlerprüfung](https://support.stripe.com/questions/bank-transfers-onboarding-requirements-in-germany) · [Stripe-Webhooks](https://docs.stripe.com/billing/subscriptions/webhooks)
+
+Der nächste Schritt ist der Zugang zu einer vorhandenen Stripe-Sandbox. Der Testumfang umfasst danach einen vollständigen Aboablauf mit PayPal einschließlich Folgezahlung sowie eine separat bestätigte Überweisungsrechnung. Die frühere Aufwandsschätzung von 8–13 Personentagen gilt für den engeren Testdurchstich. Die zusätzlichen Methodenabnahmen und die spätere Händlerfreigabe werden separat geschätzt.
+
 ## Tatsächlich geprüft und vorbereitet
 
 Vorhandener Stagezugang funktioniert. Hostingrechte und vollständiges Secret-/Functionsinventar im Testprojekt sind nachgewiesen: nur der Name OPENAI_API_KEY als Secret, keine Stripe-/PayPal-Secretreferenz und keine Zahlungsfunktion. Kein Secretwert gelesen. Externes Stripe-/PayPalkonto selbst nicht eingesehen; es kann unabhängig davon bereits existieren. Firebase Email/Password und Standardmailversand sind konfiguriert, echte Zustellung nicht getestet. Details im [Zugangsreceipt](2026-11-08-access-audit.json).
