@@ -33,7 +33,7 @@ const copy=(source,target)=>fs.copyFile(path.join(root,source),target);
 for(const name of ['index.html','pilot.css','pilot.mjs'])await copy('tools/remy-mehrfeld30/'+name,path.join(ui,name));
 for(const name of ['visual.css','core.js','legacy-core.js','renderers.js'])await copy('visual/'+name,path.join(ui,'visual',name));
 await copy('firebase-config.staging.js',path.join(ui,'firebase-config.js'));
-for(const name of ['server.cjs','review.cjs'])await copy('tools/remy-mehrfeld30/'+name,path.join(backend,'tools/remy-mehrfeld30',name));
+for(const name of ['server.cjs','review.cjs','round-two.cjs'])await copy('tools/remy-mehrfeld30/'+name,path.join(backend,'tools/remy-mehrfeld30',name));
 await copy('functions/lib/visual-task.js',path.join(backend,'functions/lib/visual-task.js'));
 for(const name of ['core.js','legacy-core.js'])await copy('functions/lib/visual/'+name,path.join(backend,'functions/lib/visual',name));
 const json=(file,value)=>fs.writeFile(file,JSON.stringify(value,null,2)+'\n');

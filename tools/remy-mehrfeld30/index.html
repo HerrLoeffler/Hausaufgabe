@@ -17,7 +17,7 @@
   <button>Anmelden</button>
 </form>
 <div id="workspace" hidden>
-  <div class="bar"><button id="seed" class="secondary">Erste 30 Aufgaben</button><button id="last" class="secondary" hidden>Eigener Stapel</button><button id="logout" class="secondary">Abmelden</button></div>
+  <div class="bar"><button id="roundTwo">Runde 2 · 12 neue Ideen</button><button id="seed" class="secondary">Runde 1 · 30 KI-Aufgaben</button><button id="last" class="secondary" hidden>Eigener Stapel</button><button id="logout" class="secondary">Abmelden</button></div>
   <details id="wishPanel">
     <summary>Neue Aufgaben mit KI erstellen</summary>
     <form id="wish">
@@ -32,6 +32,7 @@
   <section id="review" hidden>
     <div class="bar split"><div><p class="eyebrow" id="group"></p><h2 id="position" tabindex="-1"></h2></div><span id="progress"></span></div>
     <progress id="meter" max="30" value="0" aria-label="Bereits gesichtete Aufgaben"></progress>
+    <h3 id="taskTitle" hidden></h3>
     <p id="prompt" class="prompt"></p>
     <div id="answer" class="gc-visual renderer"></div>
     <div class="bar"><button class="secondary" id="scoreButton">Probe auswerten</button><span id="score" role="status"></span></div>

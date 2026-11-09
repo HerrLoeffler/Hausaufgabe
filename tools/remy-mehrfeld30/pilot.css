@@ -24,3 +24,14 @@ progress{width:100%;height:12px;accent-color:#234d9e}
 .choice{display:flex;gap:12px;align-items:start;padding:8px 12px;border:1px solid #d6e0f1;border-radius:9px;font-weight:500}
 .choice input{width:auto;margin:6px 0 0}
 #status{white-space:pre-wrap;color:#24436f}
+#taskTitle{margin:20px 0 0;font-size:1.25rem}
+.flow-preview h4{font-size:.9rem;margin:14px 0 7px;color:#315184}
+.flow-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0 14px}
+.flow-node,.flow-field{border:1px solid #d0def3;border-radius:10px;padding:9px 11px;background:#eff4fc;max-width:100%;overflow-wrap:anywhere}
+.flow-field{margin:0;background:#fff;border-color:#94acd7;font-size:.87rem;min-width:120px}
+.flow-field input,.flow-field select{min-height:38px;font-size:.95rem}
+.flow-arrow{font-size:.8rem;font-weight:650;display:flex;align-items:center;gap:4px;max-width:100%;color:#244f9c}
+.flow-symbol{font-size:1.55rem;line-height:1}
+.flow-branch{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:15px;align-items:center;margin:12px 0}
+.flow-branches{border-left:2px solid #94acd7;padding-left:13px}
+@media(max-width:620px){.flow-branch{grid-template-columns:minmax(0,1fr);gap:4px;justify-items:start}.flow-branches{margin-left:12px}}

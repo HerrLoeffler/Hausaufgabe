@@ -10,6 +10,7 @@ const api=async data=>(await httpsCallable(fn,'remyMehrfeld30Review',{timeout:40
 const start=async data=>(await httpsCallable(fn,'sequence28StartAiTestJob',{timeout:70000})(data)).data;
 const $=id=>document.getElementById(id);
 const message=text=>{$('status').textContent=text;};
+const ROUND_TWO='REMYRND2';
 const groupNames={direkt:'Direkter Dreisatz',umgekehrt:'Umgekehrter Dreisatz',physik:'Physik · Übergänge',gegenprobe:'Gegenprobe · Formatwahl',eigener:'Dein KI-Stapel'};
 let uid='',tasks=[],index=0,answer=null,renderer=null,stack='seed',expected=30,epoch=0,rating=false,watching=false;
 
@@ -22,11 +23,58 @@ function save(name,data){
   else localStorage.setItem(key(name),JSON.stringify(data));
 }
 function fields(task){return {quizId:task.quizId,id:task.id,version:task.version};}
+function mountDiagram(host,diagram){
+  host.classList.add('flow-preview');
+  answer=Object.create(null);
+  const fields=new Map(diagram.fields.map(f=>[f.id,f]));
+  const root=document.createElement('div'),branches=document.createElement('div');
+  root.className='flow-branch';branches.className='flow-branches';
+  if(diagram.branchRoot){
+    const label=document.createElement('strong');
+    label.className='flow-node';label.textContent=diagram.branchRoot;
+    root.append(label,branches);host.append(root);
+  }
+  for(const [pathIndex,path] of diagram.paths.entries()){
+    const heading=document.createElement('h4'),line=document.createElement('div');
+    heading.textContent=path.title;
+    line.className='flow-line';
+    for(const step of path.steps){
+      if(Object.hasOwn(step,'field')){
+        const def=fields.get(step.field),label=document.createElement('label');
+        const input=document.createElement(def.mode==='choice'?'select':'input');
+        label.className='flow-field';
+        label.textContent=def.label;
+        if(def.mode==='choice'){
+          for(const choice of ['',...def.options]){
+            const option=document.createElement('option');
+            option.value=choice;option.textContent=choice||'Bitte wählen';
+            input.append(option);
+          }
+        }else{
+          input.type='text';input.maxLength=120;input.autocomplete='off';
+          if(def.mode==='number')input.inputMode='decimal';
+        }
+        input.addEventListener('input',()=>{answer[def.id]=input.value;});
+        label.append(input);line.append(label);
+      }else if(Object.hasOwn(step,'arrow')){
+        const edge=document.createElement('span'),symbol=document.createElement('span');
+        edge.className='flow-arrow';symbol.className='flow-symbol';symbol.textContent='→';
+        if(step.arrow)edge.append(document.createTextNode(step.arrow));
+        edge.append(symbol);line.append(edge);
+      }else{
+        const node=document.createElement('span');node.className='flow-node';node.textContent=step.label;
+        line.append(node);
+      }
+    }
+    (diagram.branchRoot&&pathIndex<2?branches:host).append(heading,line);
+  }
+}
 function render(moveFocus=false){
   renderer?.destroy?.();
   renderer=null;
   const old=$('answer'),host=old.cloneNode(false);
   old.replaceWith(host);
+  host.classList.remove('flow-preview');
   $('score').textContent='';
   $('feedback').hidden=true;
   $('feedback').reset();
@@ -35,7 +83,9 @@ function render(moveFocus=false){
   if(!task)return;
   answer=null;
   const rated=tasks.filter(t=>t.review).length;
-  $('group').textContent=groupNames[task.group]||task.group;
+  $('group').textContent=task.subject?task.subject+' · '+task.shape:(groupNames[task.group]||task.group);
+  $('taskTitle').hidden=!task.heading;
+  $('taskTitle').textContent=task.heading||'';
   $('position').textContent='Aufgabe '+(index+1)+' von '+tasks.length;
   $('progress').textContent=rated+' von '+tasks.length+' bewertet';
   $('meter').max=tasks.length;
@@ -44,7 +94,8 @@ function render(moveFocus=false){
   $('verdict').textContent=task.review?.verdict==='good'?'Als gut gespeichert':task.review?.verdict==='bad'?'Zur Überarbeitung markiert':'Noch offen';
   $('prev').disabled=index===0;
   $('next').disabled=index===tasks.length-1;
-  if(task.visual)renderer=globalThis.GCRenderer.mount(host,task.visual,null,{onAnswer:value=>{answer=value;}});
+  if(task.diagram)mountDiagram(host,task.diagram);
+  else if(task.visual)renderer=globalThis.GCRenderer.mount(host,task.visual,null,{onAnswer:value=>{answer=value;}});
   else task.options.forEach((text,i)=>{
     const label=document.createElement('label'),radio=document.createElement('input');
     label.className='choice';
@@ -69,7 +120,7 @@ async function load(quizId=null){
     const firstOpen=tasks.findIndex(t=>!t.review);
     index=stored>=0?stored:Math.max(0,firstOpen);
     render();
-    message(quizId?'Dein Stapel ist bereit.':tasks.length===expected?'Der erste Stapel ist bereit.':tasks.length+' von '+expected+' Aufgaben sind derzeit verfügbar.');
+    message(quizId===ROUND_TWO?'Runde 2 zeigt redaktionell entworfene Aufgaben.':quizId?'Dein Stapel ist bereit.':tasks.length===expected?'Der erste Stapel ist bereit.':tasks.length+' von '+expected+' Aufgaben sind derzeit verfügbar.');
   }catch(e){
     if(epoch===requestEpoch&&uid===owner)message(e.message||'Der Stapel konnte nicht geladen werden.');
   }
@@ -91,7 +142,7 @@ async function rate(verdict,reason='',comment=''){
     return;
   }
   rating=true;
-  for(const id of ['good','bad','seed','last'])$(id).disabled=true;
+  for(const id of ['good','bad','seed','roundTwo','last'])$(id).disabled=true;
   try{
     save('pending-rating',payload);
     const result=await api(payload);
@@ -109,7 +160,7 @@ async function rate(verdict,reason='',comment=''){
       message(e.message||'Rückmeldung noch nicht bestätigt.');
     }
   }finally{
-    rating=false;for(const id of ['good','bad','seed','last'])$(id).disabled=false;
+    rating=false;for(const id of ['good','bad','seed','roundTwo','last'])$(id).disabled=false;
   }
 }
 $('prev').onclick=()=>step(index-1);
@@ -129,6 +180,7 @@ $('scoreButton').onclick=async()=>{
   finally{$('scoreButton').disabled=false;}
 };
 $('seed').onclick=()=>load();
+$('roundTwo').onclick=()=>load(ROUND_TWO);
 $('last').onclick=()=>load(saved('last'));
 $('logout').onclick=()=>signOut(auth);
 $('login').onsubmit=async e=>{
@@ -200,7 +252,9 @@ onAuthStateChanged(auth,async user=>{
   }
   if(uid!==owner)return;
   const previous=saved('stack');
-  await load(previous&&previous!=='seed'?previous:null);
+  const showNewRound=!saved('seen-round-two')&&(!previous||previous==='seed');
+  if(showNewRound)save('seen-round-two',true);
+  await load(showNewRound?ROUND_TWO:previous&&previous!=='seed'?previous:null);
   if(uid!==owner)return;
   if(saved('job')?.id)void watch();
 });
