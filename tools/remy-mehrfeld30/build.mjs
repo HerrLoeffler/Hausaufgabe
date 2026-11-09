@@ -8,14 +8,21 @@ const [dest,dep]=process.argv.slice(2);
 if(!dest||!path.isAbsolute(dest)||!dep||!path.isAbsolute(dep))throw Error('Absolutes Ausgabe- und Modulverzeichnis angeben.');
 await fs.mkdir(dest,{recursive:true});
 if((await fs.readdir(dest)).length)throw Error('Ausgabeverzeichnis muss leer sein.');
-const groups=['direkt','umgekehrt','physik','gegenprobe'];
+const evidence=path.join(root,'docs/evidence/remy-mehrfeld30-20261109');
+const physics=JSON.parse(await fs.readFile(path.join(evidence,'physik.json'),'utf8'));
+const physicsGroups=physics.status==='failed'?['physik-uebergaenge','physik-beobachtungen']:['physik'];
+const groups=['direkt','umgekehrt',...physicsGroups,'gegenprobe'];
 const seed=[];
 for(const group of groups){
-  const file=path.join(root,'docs/evidence/remy-mehrfeld30-20261109',group+'.json');
+  const file=path.join(evidence,group+'.json');
   const receipt=JSON.parse(await fs.readFile(file,'utf8'));
   if(receipt.group!==group||!(/^[a-f0-9]{40}$/.test(receipt.jobId||''))||receipt.requestId!=='gc-remy-mehrfeld30-20261109-'+group)
     throw Error('Auftragsbeleg für '+group+' fehlt.');
-  seed.push({group,jobId:receipt.jobId,requestId:receipt.requestId});
+  // The existing Remy worker limits client request IDs to 40 characters.
+  const requestId=receipt.requestId.slice(0,40);
+  const expectedId=createHash('sha256').update('gc-visual255-e2e:'+requestId).digest('hex').slice(0,40);
+  if(receipt.jobId!==expectedId)throw Error('Auftrags-ID passt nicht zum synthetischen Konto: '+group);
+  seed.push({group:group.startsWith('physik-')?'physik':group,jobId:receipt.jobId,requestId});
 }
 const web=path.join(dest,'public'),backend=path.join(dest,'functions'),ui=path.join(web,'remy-labor');
 await fs.mkdir(ui,{recursive:true});

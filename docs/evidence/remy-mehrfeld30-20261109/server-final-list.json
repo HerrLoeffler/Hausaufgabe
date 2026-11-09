@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-11-09T21:43:04.400Z",
+  "count": 30,
+  "expected": 30,
+  "byGroup": {
+    "direkt": 8,
+    "umgekehrt": 8,
+    "physik": 8,
+    "gegenprobe": 6
+  },
+  "projectionSolutionFree": true,
+  "syntheticRatingPreserved": true
+}

@@ -30,5 +30,13 @@
         "sourceHash": "3e1237d6d888b1c46117ce935a28600044ec23f0"
       }
     ]
+  },
+  "finalFunctions": {
+    "source": "4c593cc9407d0b078d707b7db861e3dd79f07b2b",
+    "hash": "f369a94e372bba00db62bc0d70af107e9e3fc3fa",
+    "status": "ACTIVE",
+    "scope": "review callable manifest only",
+    "otherFunctionsUnchanged": 96,
+    "hostingHashesMatchInitial": true
   }
 }

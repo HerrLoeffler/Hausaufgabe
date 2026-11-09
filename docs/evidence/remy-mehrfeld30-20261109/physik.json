@@ -25,12 +25,41 @@
     "materials": [],
     "materialMode": "inspiration"
   },
-  "status": "running",
+  "status": "failed",
   "startedAt": "2026-11-09T21:26:59.437Z",
   "jobId": "b8442b707ecf06bea4ba2448172dc93dd3fa2812",
-  "stage": "quality-review",
-  "errorReference": null,
-  "errorDetails": null,
+  "stage": "failed",
+  "errorReference": "68792cf0",
+  "errorDetails": {
+    "phase": "usage-log",
+    "diagnostic": {
+      "jobId": "b8442b707ecf06bea4ba2448172dc93dd3fa2812",
+      "schemaVersion": 1,
+      "materialCount": 0,
+      "request": {
+        "grade": "7",
+        "schoolType": "Mittelschule",
+        "allowedTypes": [
+          "visual"
+        ],
+        "imageMode": "none",
+        "region": "Bayern",
+        "subject": "Physik",
+        "difficulty": "mittel",
+        "count": 8,
+        "points": 20,
+        "topic": "Aggregatzustände und gerichtete Übergänge"
+      },
+      "promptVersion": "testify-ai-v17-visual-v2",
+      "stage": "quality-review",
+      "textModel": "gpt-5.6-luna"
+    },
+    "errors": [
+      "Aufgabe 4 wiederholt inhaltlich Aufgabe 1.",
+      "Aufgabe 8 wiederholt inhaltlich Aufgabe 7."
+    ],
+    "reference": "68792cf0"
+  },
   "usage": null,
   "completedAt": null
 }

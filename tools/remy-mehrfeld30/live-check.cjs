@@ -20,6 +20,17 @@ async function call(data,token){
   assert.equal(list.expected,30);
   assert.ok(list.tasks.every(task=>!task.visual||!Object.hasOwn(task.visual,'solution')));
   assert.ok(list.tasks.every(task=>task.options.every(o=>typeof o==='string')));
+  if(process.argv.includes('--list-only')){
+    const byGroup={};
+    for(const task of list.tasks)byGroup[task.group]=(byGroup[task.group]||0)+1;
+    assert.equal(list.tasks.length,30);
+    assert.deepEqual(byGroup,{direkt:8,umgekehrt:8,physik:8,gegenprobe:6});
+    assert.equal(list.tasks[0].review?.verdict,'bad');
+    const receipt={checkedAt:new Date().toISOString(),count:list.tasks.length,expected:list.expected,byGroup,projectionSolutionFree:true,syntheticRatingPreserved:true};
+    fs.writeFileSync(dest+'server-final-list.json',JSON.stringify(receipt,null,2)+'\n');
+    console.log(JSON.stringify(receipt));
+    return;
+  }
   const task=list.tasks[0];
   const q=JSON.parse(fs.readFileSync(dest+'direkt-tasks.private.json')).questions.find(q=>q.id===task.id);
   const privateTask=parseVisualTask(q.visualTask,{points:q.points});

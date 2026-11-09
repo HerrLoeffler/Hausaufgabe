@@ -170,6 +170,78 @@
     "layout": "dreisatz"
   },
   {
+    "group": "physik-uebergaenge",
+    "position": 1,
+    "type": "visual",
+    "points": 2.5,
+    "version": "37b58a3ec3030d92d76dbf57bc63cff8cd01b01b84c4fff98e497b91e09362ed",
+    "flags": [],
+    "layout": "table"
+  },
+  {
+    "group": "physik-uebergaenge",
+    "position": 2,
+    "type": "visual",
+    "points": 2.5,
+    "version": "24fe49698763e5f6ab6cedfe6abd7188824a18893388007f44c887acc491e701",
+    "flags": [],
+    "layout": "table"
+  },
+  {
+    "group": "physik-uebergaenge",
+    "position": 3,
+    "type": "visual",
+    "points": 2.5,
+    "version": "2ff1073f297092de404fc1a2f1d5a84b1ca50ecfb8d7542d989242e848a030d0",
+    "flags": [],
+    "layout": "table"
+  },
+  {
+    "group": "physik-uebergaenge",
+    "position": 4,
+    "type": "visual",
+    "points": 2.5,
+    "version": "5ed87b32bc0f68dd93dccbe33011e7ce696e084c2b8d0e9ec809d801eb061de5",
+    "flags": [],
+    "layout": "table"
+  },
+  {
+    "group": "physik-beobachtungen",
+    "position": 1,
+    "type": "visual",
+    "points": 2.5,
+    "version": "e7d9341268776bbc804cfcc4f5ca465b872709fff05034a3888912164e12fbcc",
+    "flags": [],
+    "layout": "table"
+  },
+  {
+    "group": "physik-beobachtungen",
+    "position": 2,
+    "type": "visual",
+    "points": 2.5,
+    "version": "956de70d2f43da499a97f11eeb8d3de74f9304c91b624ddf819643c822030d9d",
+    "flags": [],
+    "layout": "table"
+  },
+  {
+    "group": "physik-beobachtungen",
+    "position": 3,
+    "type": "visual",
+    "points": 2.5,
+    "version": "87ac27dbb1c2df092d059540daf7e06fcbae375a6af1b3b649f6f86bad74a0b6",
+    "flags": [],
+    "layout": "table"
+  },
+  {
+    "group": "physik-beobachtungen",
+    "position": 4,
+    "type": "visual",
+    "points": 2.5,
+    "version": "5cabb930f1570a9fce1fbb82af24621404cf7752f2853d13a4fbfa674b9cae42",
+    "flags": [],
+    "layout": "table"
+  },
+  {
     "group": "gegenprobe",
     "position": 1,
     "type": "single",

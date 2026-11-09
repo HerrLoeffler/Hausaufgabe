@@ -5,9 +5,10 @@ const path=require('node:path');
 const {core,parseVisualTask}=require('../../functions/lib/visual-task');
 const {dreisatzSettings}=require('../../functions/lib/visual/dreisatz-builder');
 const {present,score}=require('./review.cjs');
+const {sameQuestion}=require('../../functions/lib/validation');
 const dest=path.resolve('./docs/evidence/remy-mehrfeld30-20261109');
-const results=[];
-for(const group of ['direkt','umgekehrt','physik','gegenprobe']){
+const results=[],physicsQuestions=[];
+for(const group of ['direkt','umgekehrt','physik','physik-uebergaenge','physik-beobachtungen','gegenprobe']){
   const file=path.join(dest,group+'-tasks.private.json');
   if(!fs.existsSync(file))continue;
   const {quizId,questions}=JSON.parse(fs.readFileSync(file));
@@ -28,7 +29,11 @@ for(const group of ['direkt','umgekehrt','physik','gegenprobe']){
         if(settings.modes.some(x=>x==='given')&&/vier Rechenpfeile/i.test(q.text))row.flags.push('auftrag-nennt-vorgegebene-pfeile');
         if(/0[,.]5 Punkte/i.test(q.text)&&Math.abs(task.solution.cells.length*.5-q.points)>1e-9)row.flags.push('halbpunkte');
       }else if(group==='direkt'||group==='umgekehrt')row.flags.push('kein-dreisatz');
-      if(group==='physik'&&task.spec.layout==='dreisatz')row.flags.push('dreisatz-in-physik');
+      if(group.startsWith('physik')){
+        if(task.spec.layout==='dreisatz')row.flags.push('dreisatz-in-physik');
+        if(physicsQuestions.some(prior=>sameQuestion(prior,q)))row.flags.push('physik-wiederholung');
+        physicsQuestions.push(q);
+      }
     }else{
       assert.equal(safe.options.length,q.options.length);
       assert.ok(safe.options.every(o=>typeof o==='string'));
