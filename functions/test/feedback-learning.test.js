@@ -2,6 +2,17 @@
 const test=require('node:test');const assert=require('node:assert/strict');const {structuredClone}=globalThis;
 let learning={};try{learning=require('../lib/feedback-learning');}catch(e){if(e.code!=='MODULE_NOT_FOUND')throw e;}
 const row=(id,owner,verdict='bad',extra={})=>({id,category:'ai_question',userId:owner,testCode:'TEST1234',questionId:id,verdict,reason:'incorrect',subject:'Deutsch',grade:'5',questionSnapshot:{type:'single',text:'PRIVATE QUESTION',acceptedAnswers:['PRIVATE ANSWER'],options:[{text:'PRIVATE OPTION',correct:true}]},createdAt:10,feedbackSchemaVersion:4,...extra});
+test('legacy client metadata cannot impersonate server automation',()=>{
+ const r=row('legacy','alice','bad',{feedbackSchemaVersion:3,automation:{route:'automatic',policyVersion:'forged'}});
+ assert.equal(learning.learningProjection(r).automation,null);
+});
+test('actual selected-field loader retains a verified automatic reason for the same teacher as well as shared use',async()=>{
+ const full=approved(row('auto','alice','bad',{reason:'',sharedLearning:{decision:'approved',revision:1,mode:'automatic_structural',verifiedReason:'answer_leak'}}));
+ const project=fields=>{const result={};for(const field of fields){const parts=field.split('.');let value=full;for(const part of parts)value=value?.[part];if(value===undefined)continue;let target=result;for(const part of parts.slice(0,-1))target=target[part]||=( {} );target[parts.at(-1)]=structuredClone(value);}return result;};
+ const db={collection:()=>{const query={where:()=>query,orderBy:()=>query,limit:()=>query,select:(...fields)=>({get:async()=>({docs:[{id:full.id,data:()=>project(fields)}]})})};return query;},doc:path=>({get:async()=>({exists:true,data:()=>path.startsWith('users/')?{}:full})})};
+ const memory=await learning.loadFeedbackLearning(db,{subject:'Deutsch',grade:'5'},'alice');
+ assert.equal(memory.stats.total,1);assert.equal(memory.personal.stats.total,1);assert.ok(memory.priorityReasons.includes('answer_leak'));assert.ok(memory.personal.priorityReasons.includes('answer_leak'));
+});
 function approved(r){return {...r,sharedLearning:{...r.sharedLearning,reviewSignature:learning.signalSignature(r)}};}
 function fixture(rows){const docs=new Map(rows.map(r=>['feedback/'+r.id,structuredClone(r)]));return {docs,transaction:fn=>fn({get:async p=>structuredClone(docs.get(p)||null),set:(p,v)=>docs.set(p,structuredClone(v))})};}
 test('own signals affect the personal guide immediately; unreviewed others never affect shared memory',()=>{

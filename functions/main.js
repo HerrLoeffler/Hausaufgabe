@@ -10,6 +10,7 @@ const { defineSecret } = require("firebase-functions/params");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { REGION, TEXT_MODEL } = require("./lib/constants");
 const {loadFeedbackLearningSafe,learningPrompt,recordLearningUseSafe}=require("./lib/feedback-learning");
+const {ruleReceipt}=require("./lib/common-quality-rules");
 const { createAudioAsset } = require("./lib/audio-flow");
 const { requireAccountWrite } = require("./lib/account-state");
 const { requireAiUser } = require("./lib/access");
@@ -414,7 +415,9 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
     );
     const feedbackLearning = feedbackMemory.learning?.sources?.length ? await recordLearningUseSafe(getFirestore(), feedbackMemory, {uid,operation:"reviseWholeTest"}) : {recorded:0};
     const result = finalizeWholeTestRevision(clean, data);
-    await recordUsage(uid, "test", usage, {
+    const commonRules = ruleReceipt(result.test.questions, "reviseWholeTest", {generationId:feedbackMemory.learning?.generationId});
+    const commonRulesUsageStored = await recordUsage(uid, "test", usage, {
+      commonRules,
       operation: "whole_test_revision",
       revisionVersion: REVISION_VERSION,
       questionCount: clean.test.questions.length,
@@ -430,7 +433,9 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
       meta: {
         model: TEXT_MODEL,
         revisionVersion: REVISION_VERSION,
-        feedbackLearning
+        feedbackLearning,
+        commonRules,
+        commonRulesUsageStored: commonRulesUsageStored === true
       }
     };
   } catch (err) {

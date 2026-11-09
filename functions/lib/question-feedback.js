@@ -45,9 +45,18 @@ async function recordQuestionFeedback({tx,uid,admin,data,projectId,now,toTimesta
  const quiz=await tx.get('quizzes/'+testCode);
  if(quiz&&quiz.ownerId!==uid&&!admin||!quiz&&!clean.draftOnly)fail('permission-denied','Kein Zugriff auf den Test.');
  if(quiz?.published&&!quiz.ended&&clean.action!=='keep')fail('failed-precondition','Veröffentlichte Aufgaben können nur gemeldet werden.');
- tx.set(path,{...clean,category:'ai_question',feedbackSchemaVersion:4,userId:uid,sourceProject:projectId,environment:projectId==='hausaufgabe-staging'?'production':'staging',
+ const stored={...clean,category:'ai_question',feedbackSchemaVersion:4,userId:uid,sourceProject:projectId,environment:projectId==='hausaufgabe-staging'?'production':'staging',
   message:clean.reviewOutcome?'Prüferwarnung zurückgewiesen':clean.verdict==='good'?'Gute Aufgabe – behalten.':`Aufgabe gemeldet${clean.action==='remove'?' · Entfernen aus dem Entwurf angefordert':''}${clean.reason?': '+clean.reason:''}${clean.teacherComment?' · '+clean.teacherComment:''}`,
-  questionType:clean.questionSnapshot.type,payloadHash,createdAt:toTimestamp(now),status:'new',processingEvidence:'not_reviewed'});
+  questionType:clean.questionSnapshot.type,payloadHash,createdAt:toTimestamp(now),status:'new',processingEvidence:'not_reviewed',
+  automation:require('./common-quality-rules').classifyFeedback(clean,{at:toTimestamp(now)})};
+ if(stored.automation.route==='automatic'){
+  const verifiedReason=stored.automation.ruleIds.includes('visible-answer')?'answer_leak':'ambiguous';
+  stored.sharedLearning={decision:'approved',mode:'automatic_structural',revision:1,verifiedReason,ruleIds:stored.automation.ruleIds,
+   evidence:'Automatisch nachgewiesener struktureller Befund einer bestehenden geprüften Regel; keine neue fachliche Behauptung.',
+   reviewedBy:'system:common-quality-v1',reviewedAt:toTimestamp(now),reviewSignature:require('./feedback-learning').signalSignature(stored)};
+  tx.set('adminAudit/feedback-learning-'+feedbackId+'-auto-1',{action:'feedback_learning_auto_reviewed',actorId:'system:common-quality-v1',createdAt:toTimestamp(now),details:{feedbackId,decision:'approved',ruleIds:stored.automation.ruleIds,revision:1}});
+ }
+ tx.set(path,stored);
  return {confirmed:true,duplicate:false,id:feedbackId,status:'new'};
 }
 function projectQuestionFeedback(row){

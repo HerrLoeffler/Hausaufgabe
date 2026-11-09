@@ -30,6 +30,7 @@ on:
       - 'fix/staging-feedback-*'
       - 'fix/question-feedback-*'
       - 'fix/wilma-*'
+      - 'codex/common-quality-*'
     # Documentation changes do not change the app/runtime candidate.
     paths-ignore:
       - '**.md'

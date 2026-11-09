@@ -213,6 +213,7 @@ function validateQuestion(q, { allowedTypes = QUESTION_TYPES, allowImages = true
     if (normalizeText(audio.instruction).length > 1000) errors.push("Der sichtbare Arbeitsauftrag ist zu lang (maximal 1000 Zeichen).");
     if (audio.presentation === "listening-only" && ["gapfill", "markwords"].includes(q.type)) errors.push("Nur-Hören-Modus ist für Textmarkierungs- und Lückenaufgaben nicht geeignet.");
   }
+  errors.push(...require("./common-quality-rules").questionFindings(q).map(f => `[${f.ruleId}] ${f.message}`));
   errors.push(...materialEvidenceErrors(q, materialSources));
   return errors;
 }

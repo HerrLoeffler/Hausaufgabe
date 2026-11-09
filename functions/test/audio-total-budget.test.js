@@ -2,7 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
 const contracts=require('../lib/creation-contract'),constants=require('../lib/constants'),{HttpsError}=require('firebase-functions/v2/https');
 const source=fs.readFileSync(require.resolve('../index.js'),'utf8');
-const c=vm.createContext({...contracts,...constants,HttpsError,cleanSourceTest:()=>null});vm.runInContext(source.slice(source.indexOf('function cleanInput('),source.indexOf('\nasync function structuredResponse(')),c);
+const c=vm.createContext({...require("../lib/common-quality-rules"),...contracts,...constants,HttpsError,cleanSourceTest:()=>null});vm.runInContext(source.slice(source.indexOf('function cleanInput('),source.indexOf('\nasync function structuredResponse(')),c);
 const request=(a,b,f,n=20)=>({topic:'Fixture',count:n,points:n,allowedTypes:['single'],imageQuestionCount:Math.min(5,n),audioQuestionCount:a+f,audioAnswerQuestionCount:b+f,fullAudioQuestionCount:f,creationContractVersion:1,audioPresentationPolicy:'visible-plus-full'});
 test('three exclusive audio categories share five tasks; combined counts once, images remain separate',()=>{for(const [a,b,f]of [[2,3,0],[5,0,0],[0,5,0]])assert.doesNotThrow(()=>c.cleanInput(request(a,b,f)));for(const [a,b,f,n]of [[5,5,0,20],[3,3,0,20],[2,1,0,2]])assert.throws(()=>c.cleanInput(request(a,b,f,n)),/Zusammen sind maximal.*Audioaufgaben/);});
 test('batch planning and final validation enforce the same audio budget',()=>{assert.throws(()=>contracts.creationAudioPlan(request(3,3,0)),/Zusammen sind maximal/);assert.ok(contracts.creationAudioErrors({questions:[]},{...request(3,3,0),expectedCount:20}).some(e=>/Zusammen sind maximal/.test(e)));});

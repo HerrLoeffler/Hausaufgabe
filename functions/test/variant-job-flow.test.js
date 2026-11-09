@@ -66,7 +66,7 @@ async function workerFixture({ failImage = false, heldSource = false } = {}) {
   const context = vm.createContext({ ...require("../lib/constants"), ...variants, ...require("../lib/ai-job"), ...require("../lib/solution-audio"), ...require("../lib/audio-answers"), HttpsError, require: name => require(name.startsWith("./lib/") ? `../${name.slice(2)}` : name),
     exports: {}, OPENAI_API_KEY: "mock-secret-reference", onTaskDispatched: (_options, fn) => fn, getFirestore: () => db, Timestamp: { now: () => ({ synthetic: true }) },
     requireAiUser: async () => ({ profile: {} }),
-    generateTestForUser: async () => ({ test: { title: "Neue Variante", questions: [generated] }, meta: {} }),
+    generateTestForUser: async () => ({ test: { title: "Neue Variante", questions: [generated] }, meta: {commonRules:{version:'common-quality-v1',generationId:'synthetic-rule-use'},commonRulesUsageStored:true} }),
     createAiQuiz: async (_db, _uid, _jobId, base) => { quizBases.push(base); return { code: "NEWCODE1", ref: quizRef }; },
     createVerifiedMedia: async (_input, options) => { calls.push("image"); assert.equal(await options.cacheLoad({}), null); assert.equal(await options.cacheSave({}), false); if (failImage) throw new Error("Synthetic unavailable image"); return { asset: { imageDataUrl: "new-image" } }; },
     createAudioAsset: async ({ questionId, script }) => { calls.push({ questionId, script }); return { audioDataUrl: "data:audio/mpeg;base64,AAAA", audioAiGenerated: true }; },
@@ -89,6 +89,10 @@ test("actual worker creates a separate private draft with fresh images, heard an
   assert.match(privateAudio.script, /New heard/); assert.equal(privateAudio.solutionAudioDataUrl, "data:audio/mpeg;base64,AAAA");
   assert.equal(f.calls.filter(c => typeof c === "object").length, 4); // question + 2 answers + protected solution
   assert.equal(f.calls.at(-1), "released");
+});
+test('queued worker preserves common-rule evidence on both the resulting draft and job',async()=>{
+ const f=await workerFixture();assert.equal(f.current.commonRules?.generationId,'synthetic-rule-use');
+ assert.equal(f.quizUpdates.at(-1).commonRules?.generationId,'synthetic-rule-use');assert.equal(f.current.commonRulesUsageStored,true);
 });
 test("actual worker never reports an image fallback as a completed fresh variant", async () => {
   const f = await workerFixture({ failImage: true });
