@@ -826,4 +826,4 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 
 ### 09.11.2026 · GC-WEB-REPAIR-20261007 · großer Live-Auftrag
 
-- [ ] Speicherabbruch bei einem Auftrag mit 50 Aufgaben in der fachlichen Prüfung absichern. Ursache im zugeordneten Worker-Aufruf bestätigt. [Live-PR415](https://github.com/HerrLoeffler/Hausaufgabe/pull/415) und [Staging-PR416](https://github.com/HerrLoeffler/Hausaufgabe/pull/416) lokal geprüft. Staging-CI und Bereitstellung separat belegen, Live-Freigabe separat. [Übergabe](workstreams/remy-interactive-tests-20261026.md).
+- [ ] Speicherabbruch bei einem Auftrag mit 50 Aufgaben in der fachlichen Prüfung absichern. Ursache im zugeordneten Worker-Aufruf bestätigt. [Live-PR415](https://github.com/HerrLoeffler/Hausaufgabe/pull/415) und [Staging-PR416](https://github.com/HerrLoeffler/Hausaufgabe/pull/416) lokal geprüft. Staging-CI grün und Worker auf Staging aktiv. Ausstehend sind Live-Freigabe und ein echter Lastnachweis mit 50 Aufgaben. [Übergabe](workstreams/remy-interactive-tests-20261026.md).
