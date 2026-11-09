@@ -4,6 +4,6 @@ GC-EXTENDED-QUESTION-TYPES-01. Im bestehenden isolierten Labor eine getrennte Re
 
 Zwölf redaktionell entworfene Aufgaben über mehrere Fächer. Variiere die Lernhandlung, etwa Regeln wechseln, Ursachen verknüpfen, eine Verzweigung auswerten, Signale in einer Kette verfolgen und konkrete Pfeile beschriften. Auswahl für feste Begriffssätze, Eingabe für Ergebnisse, gerichtete Verbindung für Beziehungen. Keine neue bezahlte Serienerstellung. Die Vorschau dient als Gegenprobe für die spätere automatische Rezeptwahl.
 
-- [ ] Daten, Lösungsschutz und Bewertung im vorhandenen Laboradapter ergänzen.
-- [ ] Zweite Runde im Browser öffnen; Rückmeldungen nach Konto und Version wie bisher speichern.
-- [ ] Lokal alle Referenzen prüfen. Nur isolierten Review-Callable und bestehenden Previewkanal veröffentlichen. Beide Runden getrennt und altes Testurteil nach dem Update lesen.
+- [x] Daten, Lösungsschutz und Bewertung im vorhandenen Laboradapter ergänzen.
+- [x] Zweite Runde im Browser öffnen; Rückmeldungen nach Konto und Version wie bisher speichern.
+- [x] Lokal alle Referenzen prüfen. Nur isolierten Review-Callable und bestehenden Previewkanal veröffentlichen. Beide Runden getrennt und altes Testurteil nach dem Update lesen.

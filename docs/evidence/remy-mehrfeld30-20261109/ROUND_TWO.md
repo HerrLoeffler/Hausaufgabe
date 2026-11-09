@@ -22,3 +22,9 @@ Runde 2 umfasst zwölf redaktionell entworfene Referenzen aus elf Fächern und f
 Pfeile zeigen je nach Fach Rechenoperation, Richtung, Signalübertragung, Zuordnung oder Übergang. Dropdowns sind für feste Begriffssätze, Zahlenfelder für berechenbare Werte und Freitext für produktive Formulierungen vorgesehen. Je richtigem Eingabefeld gibt es 0,5 Punkte. Zwei Aufgaben verwenden den bestehenden Renderer zum Zeichnen von Verbindungen. Die übrigen zehn verwenden einen gemeinsamen Datenvertrag für beschriftete Pfeile und Mehrfeldpfade.
 
 Die neue Runde hat eigene Aufgaben-IDs, Positionsspeicher und Bewertungsfingerabdrücke. Der ursprüngliche KI-Stapel und der freie KI-Wunsch bleiben im selben Labor erreichbar. Kein zusätzlicher bezahlter KI-Auftrag. Die zwölf Referenzen sind Testentwürfe; sie wurden nicht automatisch als Lehrkraftfreigabe oder als neue produktive Remy-Rezepte übernommen. Die nächste Rezeptprüfung sollte pro Lernhandlung mit einem eigenen Gegenbeispiel arbeiten und die Treffer je Rezept getrennt zählen.
+
+## Bereitstellung und Nachweis
+
+[Remy-Aufgabenlabor](https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/), bestehender isolierter Kanal, Quelle 5a8a383. Acht Hostingdateien mit Hash abgeglichen. Nur die bereits getrennte Bewertungsfunktion und der Vorschaukanal wurden aktualisiert. Zwölf lokale Tests grün. Synthetische Serverprobe: beide Stapel mit 30 und 12 Fällen, Schlüssel bleiben serverseitig, Voll-/Teilantwort 1,5 bzw. 0,5 Punkte, neues und altes Urteil erhalten. Im bereits angemeldeten Browser erschienen das Fahrkartenbeispiel, seine zwei Zahlenfelder und das Dropdown. Beim Wechsel zurück zeigte Runde 1 weiterhin 23/30 Bewertungen und Aufgabe 24; anschließend wurde Runde 2 wieder geöffnet.
+
+[Deploybeleg](round-two-deployment.json) · [Serverprobe](round-two-server.json). Noch offen: Lehrkraftfeedback zur zweiten Runde und spätere Übernahme geeigneter Rezepte in Remys freie Erstellung.
