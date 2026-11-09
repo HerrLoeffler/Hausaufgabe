@@ -4,7 +4,7 @@ Task GC-BILLING-PLAN-01 · Quellenstand08/09Nov2026 · Ergänzung zum [engen Web
 
 ## Anbieterempfehlung und Gebühren am 9. November 2026
 
-PayPal und klassische SEPA-Überweisung sind Anforderungen von Martin. Für den deutschen GradeCrew-Webstart empfehle ich **Stripe mit Checkout, Billing und Invoicing**. Bewertet sind Zahlungsarten, Abo- und Rechnungsbetrieb, Kosten und Anschluss an den vorhandenen Testplan.
+PayPal und klassische SEPA-Überweisung sind Anforderungen von Martin. Martin hat **Stripe** für den GradeCrew-Webweg gewählt. Die Bewertung vergleicht Zahlungsarten, Abo- und Rechnungsbetrieb, Kosten und Anschluss an den vorhandenen Testplan. [Einrichtung der Stripe-Sandbox und Finanzbetrieb](2026-11-09-stripe-sandbox-und-finanzbetrieb.md)
 
 | Anbieter | Eignung | Begründung |
 |---|---:|---|
