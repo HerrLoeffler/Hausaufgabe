@@ -827,3 +827,14 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 ### 09.11.2026 · GC-WEB-REPAIR-20261007 · großer Live-Auftrag
 
 - [ ] Speicherabbruch bei einem Auftrag mit 50 Aufgaben in der fachlichen Prüfung absichern. Ursache im zugeordneten Worker-Aufruf bestätigt. [Live-PR415](https://github.com/HerrLoeffler/Hausaufgabe/pull/415) und [Staging-PR416](https://github.com/HerrLoeffler/Hausaufgabe/pull/416) lokal geprüft. Staging-CI grün und Worker auf Staging aktiv. Ausstehend sind Live-Freigabe und ein echter Lastnachweis mit 50 Aufgaben. [Übergabe](workstreams/remy-interactive-tests-20261026.md).
+
+## GC-EXTENDED-QUESTION-TYPES-01 · Mehrfeld-Fundus (09.11.2026)
+
+- [x] Zwölf versionierte Referenz- und Prüffälle mit Rückmeldestruktur vorbereitet. Fünf Mathefälle offline mit vorhandenem Dreisatz-Baustein geprüft. [Fundus und Belege](docs/learning/mehrfeld-fundus/README.md).
+- [ ] Auf isolierter Testseite zunächst Mathe und einen fachfremden Pfeiltyp mit frischen KI-Ausgaben prüfen. Lehrkrafturteile versionsgebunden erfassen und anhand zurückgehaltener Fälle messen. Keine Freigabe aus den Seed-Daten ableiten.
+- [ ] Martins Vorschlag: getrennte Remy-Testseite mit freiem Wunsch, Aufgabenstapel und Smiley-Sichtung. Entscheidungsvorschlag: 30 Fälle in einer ersten Runde, bis 500 in späteren Runden. Vor Umsetzung Umfang und Budget des echten KI-Piloten festlegen.
+- [x] Remy-Aufgabenlabor im isolierten Firebase-Kanal bereitgestellt. Vier echte Aufträge mit insgesamt 30 Zielaufgaben gestartet. Gespeicherte Smileys, Zugriff und Probeauswertung am Server synthetisch bestätigt. [Pilot #419](https://github.com/HerrLoeffler/Hausaufgabe/pull/419).
+- [x] Alle 30 Aufgaben auf der isolierten Testseite bestätigt. Der erste Physikauftrag wurde wegen Wiederholungen verworfen; zwei Viereraufträge füllten die fehlenden Plätze. [Prüfbericht](https://github.com/HerrLoeffler/Hausaufgabe/blob/dcec1c877590293f407475b02320b64e3a6ce42c/docs/evidence/remy-mehrfeld30-20261109/REPORT.md).
+- [ ] Lehrkraftsichtung und Einordnung der Smileys. Besonders auf Formatwahl, sichtbare Pfeile und tatsächlich offene Felder achten.
+- [x] Zweite, getrennte Runde mit zwölf Referenzen aus elf Fächern veröffentlicht und technisch geprüft. Alle 23 bisherigen Bewertungen erhalten. [Runde-2-Nachweis](https://github.com/HerrLoeffler/Hausaufgabe/blob/e125f993064b7348a3d4c08b2cd7e0a6bb3be411/docs/evidence/remy-mehrfeld30-20261109/ROUND_TWO.md).
+- [ ] Geeignete Muster nach Lehrkraftsichtung in die freie KI-Erstellung übernehmen und separat prüfen.

@@ -4237,6 +4237,37 @@
         "production": "unchanged",
         "next": "Confirm the bounded sequence design and prepare implementation plan; preserve current Staging and prior attempt history."
       },
+      "mehrfeld30_pilot_20261109": {
+        "round_two_20261109": {
+          "stage": "staging_deployed",
+          "scope": "isolated_preview_only",
+          "source": "5a8a383a756677c8e9bec5fe1ce389fef9e32f0c",
+          "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/e125f993064b7348a3d4c08b2cd7e0a6bb3be411/docs/evidence/remy-mehrfeld30-20261109/ROUND_TWO.md",
+          "reference_tasks": 12,
+          "teacher_first_round_ratings_preserved": 23,
+          "additional_paid_ai_jobs": 0,
+          "teacher_acceptance": "pending",
+          "next_action": "Review which learning actions to promote to free Remy generation."
+        },
+        "stage": "staging_deployed",
+        "scope": "isolated_preview_only",
+        "runtime_integrated": false,
+        "url": "https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/",
+        "hosting_channel": "remy-mehrfeld30",
+        "deployed_source": "bcafd321f30d0e65518535f0d64e1aa63dd0950e",
+        "pull_request": 419,
+        "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/dcec1c877590293f407475b02320b64e3a6ce42c/docs/evidence/remy-mehrfeld30-20261109/REPORT.md",
+        "target_tasks": 30,
+        "logical_jobs": 6,
+        "teacher_acceptance": "pending",
+        "production": false,
+        "next_action": "Teacher reviews the 30 candidates and groups feedback before changing the recipe.",
+        "ready_tasks": 30,
+        "rejected_job": "68792cf0",
+        "provider_responses": 88,
+        "recorded_tokens": 590626,
+        "final_functions_source": "4c593cc9407d0b078d707b7db861e3dd79f07b2b"
+      },
       "image_sequence_pilot_20261028": {
         "stage": "staging_deployed",
         "scope": "isolated sequence28 Hosting preview and16prefixed Functions only; not canonical Staging or Production",
