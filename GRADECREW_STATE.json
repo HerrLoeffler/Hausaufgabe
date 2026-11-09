@@ -4031,6 +4031,24 @@
         ],
         "production": "unchanged"
       },
+      "worker_memory_incident_20261109": {
+        "stage": "staging_deployed",
+        "incident": "50-question Live job exceeded the 1024 MiB worker limit during quality review",
+        "live_pull_request": 415,
+        "live_candidate": "426ccdeab060405b404210f9cae82ee904814ea9",
+        "live_active_source": "1c8b5463431d8ffa770cda9030d4a435d66fb62c",
+        "staging_pull_request": 416,
+        "staging_candidate": "2b58dda2626d6b946a0829000d6f57a6fc2bd745",
+        "staging_ci_run": 42612315738,
+        "staging_project": "gradecrew-staging-2026",
+        "staging_worker_hash": "c346a841aa46ff0d59a26be6c3fbb950269183f1",
+        "staging_other_functions_unchanged": 95,
+        "live_ci_run": 42612743908,
+        "local_functions_tests": { "live": 485, "staging": 363 },
+        "scope": "processAiTestJob only; 2048 MiB; one job per instance; queue cap two",
+        "production_approved": false,
+        "handoff": "workstreams/remy-interactive-tests-20261026.md"
+      },
       "generation_latency_plan_20261026": {
         "status": "implemented_staging_pilot; targets_partially_met",
         "design": "docs/superpowers/specs/2026-10-26-interactive-generation-latency-design.md",
