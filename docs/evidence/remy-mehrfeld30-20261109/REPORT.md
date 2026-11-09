@@ -1,8 +1,21 @@
 # Remy Aufgabenlabor · erster Stapel
 
-**Task:** GC-EXTENDED-QUESTION-TYPES-01. **Freigabe:** Martin, 09.11.2026, getrennte Testseite und ein erster 30er-Stapel mit echter KI.  
-**Vorschau:** https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/  
+**Task:** GC-EXTENDED-QUESTION-TYPES-01. **Freigabe:** Martin, 09.11.2026, getrennte Testseite und ein erster 30er-Stapel mit echter KI.
+**Vorschau:** https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/
 **Vorschau läuft ab:** 09.12.2026, 22:32 Uhr MEZ.
+
+## Tatsächlicher Auftragsstand
+
+| Gruppe | Beauftragt | Gespeichert | Zustand | Providerantworten | Tokens |
+| --- | ---: | ---: | --- | ---: | ---: |
+| Direkter Dreisatz | 8 | 8 | bereit | 9 | 76389 |
+| Umgekehrter Dreisatz | 8 | 8 | bereit | 8 | 69672 |
+| Physik · Übergänge | 8 | 0 | fachliche Prüfung | offen | offen |
+| Gegenproben | 6 | 6 | bereit | 2 | 7759 |
+
+30 beauftragte Fälle in vier echten Aufträgen. 22 gespeicherte Aufgaben zum Zeitpunkt dieses Berichts. Für die abgeschlossenen Jobs wurden 19 Providerantworten und 153820 Tokens erfasst. Betrag unbekannt. Kein fünfter Auftrag.
+
+Der Physikauftrag ist separat an seine gespeicherte ID gebunden. Das Labor lädt ihn bei erneutem Öffnen des Stapels, sobald der vorhandene Job den Zustand „bereit“ erreicht. Bis dahin stehen die übrigen Aufgaben zur Sichtung bereit.
 
 ## Bedienung
 
