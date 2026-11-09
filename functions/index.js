@@ -543,7 +543,9 @@ async function createAiQuiz(db, ownerId, jobId, base) {
 }
 
 exports.processAiTestJob = onTaskDispatched({
-  region: REGION, secrets: [OPENAI_API_KEY], memory: "1GiB", timeoutSeconds: 1800,
+  // Large drafts and media processing need memory headroom. Keep independent
+  // jobs in separate instances so they cannot exhaust a shared memory limit.
+  region: REGION, secrets: [OPENAI_API_KEY], memory: "2GiB", concurrency: 1, timeoutSeconds: 1800,
   retryConfig: { maxAttempts: 1 }, rateLimits: { maxConcurrentDispatches: 2 }
 }, async request => {
   const jobId = String(request.data?.jobId || "");
