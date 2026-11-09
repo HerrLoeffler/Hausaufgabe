@@ -495,7 +495,7 @@ test('grading keeps the question image, names the points field and restores focu
   w.getQuizScale = () => ({});
   w.gradeFromPercent = () => 2;
   w.eval(source('wilma-decision-state.mjs').replace(/^export /gm,'')+';Object.assign(window,{canonicalDecisionState,canonicalJson,decisionQuestionSnapshot});');
-  w.wilmaAnswerReview=null;w.reviewItem=()=>({requiresReview:false});w.parseGaps=()=>[];
+  w.wilmaAnswerReview=null;w.wilmaAutoReview=null;w.reviewItem=()=>({requiresReview:false});w.parseGaps=()=>[];
   w.eval(fn('openReview'));
   w.openReview('s1');
   assert.equal(w.document.activeElement, w.$('reviewHeading'));

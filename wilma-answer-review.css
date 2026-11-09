@@ -6,9 +6,21 @@
 .wilmaCriteriaLabel{display:block;font-size:11px;margin:8px 0;max-width:620px}.wilmaCriteriaLabel textarea{margin-top:5px;font-size:12px;padding:7px}.wilmaDemoNotice a{color:var(--primary);font-weight:600}.wilmaReviewHead{flex-wrap:wrap}.wilmaReviewHead .secondary{white-space:nowrap}.wilmaReviewHead small:empty{display:none}
 @media(pointer:coarse){.wilmaReviewHead .button{min-height:44px}}
 .wilmaSheetNotice{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:8px 11px;background:var(--soft);border-radius:8px;margin:10px 0;font-size:12px}.wilmaSheetNotice .button{font-size:11px;min-height:36px;padding:7px 10px}
-/* Keep every task inside the centred correction card, including wide screens. */
+/* Keep long classes inside their own keyboard/touch scroll strip. */
 #wilmaAnswerReview,.wilmaListWorkspace,.wilmaTaskContext{min-width:0;max-width:100%}
-.wilmaTaskTabs{width:100%;min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;padding:2px 2px 7px}
+.wilmaTaskTabs{width:100%;max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;padding:2px 2px 7px}
 .wilmaTaskTabs button{flex:0 0 auto;min-width:112px;max-width:180px;scroll-snap-align:start;white-space:normal;overflow-wrap:anywhere}
 .wilmaTaskTabs:focus-visible{outline:3px solid #7fb0ef;outline-offset:2px}
-@media(max-width:600px){.wilmaTaskTabs button{min-width:104px;max-width:140px}}
+.wilmaOneQuestion strong,.wilmaOneQuestion p,.wilmaRowReason p{overflow-wrap:anywhere}
+.wilmaReviewHead .secondary{white-space:normal;max-width:240px}
+.wilmaAnswerRow:focus-visible{outline:3px solid #7fb0ef;outline-offset:-3px}
+@media(max-width:600px){.wilmaTaskTabs button{min-width:104px;max-width:140px}.wilmaReviewHead{gap:7px}.wilmaReviewHead .secondary{max-width:100%;flex-basis:100%}}
+
+.wilmaOneQuestion{max-height:min(28vh,240px);overflow-y:auto;overscroll-behavior:contain}
+
+.wilmaListTools label{min-width:0;max-width:100%;flex-wrap:wrap}.wilmaListTools select{max-width:100%}.wilmaRowStepper{flex-wrap:wrap}
+
+/* One focused correction workspace; closing returns to the normal class overview. */
+#wilmaAnswerReview:not([hidden])[data-expanded="true"] + #resultsTableWrap{display:none}
+#wilmaAnswerReview[data-expanded="false"] .wilmaReviewHead{padding:8px 12px}
+#wilmaAnswerReview[data-expanded="false"] .wilmaReviewHead>img{width:26px;height:30px;flex-basis:26px}

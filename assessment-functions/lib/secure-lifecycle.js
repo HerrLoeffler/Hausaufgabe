@@ -30,6 +30,10 @@ const logger = require("firebase-functions/logger");
 const { observeAssessment } = require("./observability");
 const observed = (action, handler) => observeAssessment(action, handler, { logger, HttpsError });
 
+const {assessmentRunId}=require("./assessment-run-id");
+const { readClassroomStart, checkClassroomAttempt, readReplacementReceipt } = require("./classroom-binding");
+const { attemptResumeAction } = require("./classroom-actions");
+const classroomFail = (code, message) => { throw new HttpsError(code, message); };
 const REGION = "europe-west1";
 const callableOpts = {
   region: REGION,
@@ -255,17 +259,7 @@ function sessionMode(quiz) {
   return quiz.startMode === "teacher" ? "teacher" : "student";
 }
 
-function effectiveRunId(quiz, quizId) {
-  if (sessionMode(quiz) === "teacher") {
-    const explicit = String(quiz.sessionRunId || "").trim();
-    if (!explicit) throw new HttpsError("failed-precondition", "Die gemeinsame Testrunde ist unvollständig. Bitte den Test erneut veröffentlichen.");
-    return explicit;
-  }
-  const epochs = [quiz.reopenedAt, quiz.publishedAt].map(toMillis).filter(Number.isFinite);
-  const epoch = epochs.length ? Math.max(...epochs) : toMillis(quiz.createdAt);
-  const seed = Number.isFinite(epoch) ? String(epoch) : sha256(`${quizId}:${String(quiz.accessCode || "")}`).slice(0, 20);
-  return `student_${seed}`;
-}
+function effectiveRunId(quiz, quizId) { return assessmentRunId(quiz, quizId, classroomFail); }
 
 function publicQuizState(quiz, quizId) {
   return {
@@ -584,7 +578,7 @@ exports.getAssessmentInfo = onCall(callableOpts, observed("getAssessmentInfo", a
 
 exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentAttempt", async request => {
   const quizId = cleanQuizId(request.data?.quizId);
-  const studentName = cleanStudentName(request.data?.studentName);
+  let studentName = cleanStudentName(request.data?.studentName);
   const clientAttemptId = cleanClientAttemptId(request.data?.clientAttemptId);
   const attemptToken = cleanAttemptToken(request.data?.attemptToken);
   const db = getFirestore();
@@ -596,7 +590,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
   const aRef = attemptRef(quizId, id);
   const pRef = assessmentPrivateRef(quizId, id);
   // Only the final, committed callback result may escape a transaction retry.
-  const { storedAttempt, storedPrivate, currentQuiz, newContract, solutionAssets } = await db.runTransaction(async tx => {
+  const { storedAttempt, storedPrivate, currentQuiz, newContract, solutionAssets, replacementReceipt } = await db.runTransaction(async tx => {
     const quizSnap = await tx.get(quizRef);
     const existingAttempt = await tx.get(aRef);
     const existingPrivate = await tx.get(pRef);
@@ -613,6 +607,10 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       const storedAttempt = existingAttempt.data();
       const storedPrivate = existingPrivate.data();
       assertAttemptToken(storedPrivate, attemptToken);
+      const replacementReceipt = await readReplacementReceipt({get: async path => (await tx.get(db.doc(path))).data(),attempt:storedAttempt,now:Date.now()});
+      if(replacementReceipt)return {storedAttempt,storedPrivate,currentQuiz,newContract:null,solutionAssets:[],replacementReceipt};
+      await checkClassroomAttempt({get: async path => (await tx.get(db.doc(path))).data(), fail: classroomFail, attempt: storedAttempt});
+      if (storedAttempt.classroom) studentName = storedAttempt.studentName;
       if (String(storedAttempt.studentName || "") !== studentName) {
         throw new HttpsError("permission-denied", "Dieser Bearbeitungsversuch wurde bereits mit einem anderen Kürzel gestartet.");
       }
@@ -630,6 +628,15 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       }
       return { storedAttempt, storedPrivate, currentQuiz, newContract: null, solutionAssets };
     }
+
+    const classroom = await readClassroomStart({get: async path => (await tx.get(db.doc(path))).data(), fail: classroomFail, now: Date.now(), quizId, quiz: currentQuiz, attemptId: id, data: request.data || {}});
+    if (classroom) studentName = classroom.studentName;
+    if (classroom) {
+      const submissions = await tx.get(db.collection(`quizzes/${quizId}/submissions`));
+      if (submissions.docs.some(s => {const v=s.data();return v.sessionRunId===effectiveRunId(currentQuiz,quizId)&&!v.classroom&&!v.classroomResolution;}))
+        throw new HttpsError('failed-precondition','Für diese Runde müssen vorhandene Abgaben zuerst von der Lehrkraft zugeordnet werden. Deine bisherigen Abgaben bleiben gespeichert.');
+    }
+
 
     // Quota/authentication must precede the expensive author-question query.
     const quota = await readStartQuota(request, quizId, tx);
@@ -682,6 +689,7 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       questionCount: newContract.paper.length,
       maxPoints: newContract.gradingKey.reduce((sum, key) => sum + Number(key.points || 0), 0),
       secureAssessmentVersion: 2,
+      ...(classroom ? {classroom: classroom.metadata, lastSeenAt: Timestamp.now()} : {}),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now()
     };
@@ -704,12 +712,14 @@ exports.startAssessmentAttempt = onCall(callableOpts, observed("startAssessmentA
       updatedAt: Timestamp.now()
     };
     assertPrivatePayloadSafe(privateData);
+    if (classroom?.needsWrite) tx.set(db.doc(classroom.path), classroom.participant);
     tx.set(quota.ref, quota.data, { merge: true });
     tx.create(aRef, created);
     tx.create(pRef, privateData);
     return { storedAttempt: created, storedPrivate: privateData, currentQuiz, newContract, solutionAssets: audioSnapshot.assets };
   });
 
+  if(replacementReceipt)return {status:'replaced',attemptId:id,replacementReceipt};
   await persistSolutionAssets(quizId, solutionAssets);
 
   if (storedAttempt.status === "submitted") {
@@ -748,6 +758,9 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, observed("resumeAssessmen
     };
   }
 
+  const replacementReceipt=await readReplacementReceipt({get: async path => (await db.doc(path).get()).data(),attempt,now:Date.now()});
+  if(replacementReceipt)return {status:'replaced',attemptId:id,replacementReceipt};
+  await checkClassroomAttempt({get: async path => (await db.doc(path).get()).data(), fail: classroomFail, attempt});
   if (stateOnly) validateSubmissionWindow(initialQuiz, attempt, Date.now());
   else validateQuizOpen(initialQuiz);
   assertSameRun(attempt, initialQuiz, quizId);
@@ -788,7 +801,9 @@ exports.resumeAssessmentAttempt = onCall(callableOpts, observed("resumeAssessmen
     const questions = await readQuestions(quizId);
     paper = contractForQuestions(questions, privateData).paper;
   }
-  return attemptPublicState(attempt, currentQuiz, paper);
+  if (attempt.classroom && Date.now() - toMillis(attempt.lastSeenAt) >= 10000) await aRef.update({lastSeenAt: Timestamp.now()});
+  const resumeAction = await attemptResumeAction({transaction: fn => db.runTransaction(tx => fn({get: async path => (await tx.get(db.doc(path))).data(), set: (path,value) => tx.set(db.doc(path),value)})), attempt, now: Date.now(), ackId: request.data?.acknowledgeResume, fail: classroomFail});
+  return {...attemptPublicState(attempt, currentQuiz, paper), ...(resumeAction ? {resumeAction} : {})};
 }));
 
 exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmentAttempt", async request => {
@@ -815,6 +830,9 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
       return { submission: { id: existingSubmission.id, ...existingSubmission.data() }, quiz: quizSnap.exists ? quizSnap.data() : null, privateData };
     }
     if (!quizSnap.exists) throw new HttpsError("not-found", "Dieser Test existiert nicht mehr.");
+    const replacementReceipt=await readReplacementReceipt({get:async path=>(await tx.get(db.doc(path))).data(),attempt,now:Date.now()});
+    if(replacementReceipt)return {replacementReceipt};
+    await checkClassroomAttempt({get: async path => (await tx.get(db.doc(path))).data(), fail: classroomFail, attempt});
     const quiz = quizSnap.data();
     const nowMillis = Date.now();
     const startedAtMillis = toMillis(attempt.startedAt);
@@ -853,6 +871,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
     const submission = {
       attemptId: id,
       studentName: attempt.studentName,
+      ...(attempt.classroom ? {classroom: attempt.classroom} : {}),
       answers: teacherAnswers,
       grading: result.grading,
       autoPoints: result.autoPoints,
@@ -895,6 +914,7 @@ exports.submitAssessmentAttempt = onCall(callableOpts, observed("submitAssessmen
     });
     return { submission, quiz, privateData };
   });
+  if(receiptContext.replacementReceipt)return {status:'replaced',attemptId:id,replacementReceipt:receiptContext.replacementReceipt};
   return { receipt: await buildReleasedReceipt(quizId, receiptContext.submission, receiptContext.quiz, receiptContext.privateData) };
 }));
 
