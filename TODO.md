@@ -832,3 +832,4 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 
 - [x] Zwölf versionierte Referenz- und Prüffälle mit Rückmeldestruktur vorbereitet. Fünf Mathefälle offline mit vorhandenem Dreisatz-Baustein geprüft. [Fundus und Belege](docs/learning/mehrfeld-fundus/README.md).
 - [ ] Auf isolierter Testseite zunächst Mathe und einen fachfremden Pfeiltyp mit frischen KI-Ausgaben prüfen. Lehrkrafturteile versionsgebunden erfassen und anhand zurückgehaltener Fälle messen. Keine Freigabe aus den Seed-Daten ableiten.
+- [ ] Martins Vorschlag: getrennte Remy-Testseite mit freiem Wunsch, Aufgabenstapel und Smiley-Sichtung. Entscheidungsvorschlag: 30 Fälle in einer ersten Runde, bis 500 in späteren Runden. Vor Umsetzung Umfang und Budget des echten KI-Piloten festlegen.
