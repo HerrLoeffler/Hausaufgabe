@@ -4245,14 +4245,17 @@
         "hosting_channel": "remy-mehrfeld30",
         "deployed_source": "bcafd321f30d0e65518535f0d64e1aa63dd0950e",
         "pull_request": 419,
-        "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/05d09aa0396a02758d85cf9c7047c702ff677c82/docs/evidence/remy-mehrfeld30-20261109/REPORT.md",
+        "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/dcec1c877590293f407475b02320b64e3a6ce42c/docs/evidence/remy-mehrfeld30-20261109/REPORT.md",
         "target_tasks": 30,
-        "logical_jobs": 4,
-        "ready_tasks_at_checkpoint": 22,
-        "physics_job_at_checkpoint": "running quality-review",
+        "logical_jobs": 6,
         "teacher_acceptance": "pending",
         "production": false,
-        "next_action": "Read the existing physics job without redispatch. Teacher reviews available cases and records smileys by version."
+        "next_action": "Teacher reviews the 30 candidates and groups feedback before changing the recipe.",
+        "ready_tasks": 30,
+        "rejected_job": "68792cf0",
+        "provider_responses": 88,
+        "recorded_tokens": 590626,
+        "final_functions_source": "4c593cc9407d0b078d707b7db861e3dd79f07b2b"
       },
       "image_sequence_pilot_20261028": {
         "stage": "staging_deployed",
