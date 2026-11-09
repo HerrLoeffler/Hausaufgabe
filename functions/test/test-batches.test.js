@@ -44,28 +44,32 @@ test("all sizes preserve count, half-step points and exact image allocation", ()
     }
   }
 });
-test("50-task generation assembles and stores the draft with zero, one and five images", async () => {
-  for (const images of [0, 1, 5]) {
-    const input = { count: 50, points: 40, exactImageCounts: true, imageQuestionCount: images, imageMode: images ? "exact" : "none" };
-    let calls = 0, imageCalls = 0;
-    const output = await generateTestInBatches(input, async (batch, prior) => {
-      assert.equal(prior.length, batch.batchOffset); calls++;
-      return { data: { title: "Satzbaustelle", subject: "Deutsch", grade: "5", description: "",
-        questions: Array.from({ length: batch.count }, (_, i) => ({ type: "truefalse", text: `Aussage ${batch.batchOffset + i + 1}: Ein Satz enthält Satzglieder.`, points: 1, correctBoolean: false,
-          mediaIntent: i < batch.imageQuestionCount ? { kind: "ai_generated", prompt: "Ein Baum", altText: "Baum" } : { kind: "none" } })) }, usage: { total_tokens: 10 } };
-    });
-    const draft = balanceTestPoints({ ...output.data, questions: output.data.questions.map(normalizeQuestion) }, 40);
-    assert.deepEqual(validateTest(draft, { expectedCount: 50, targetPoints: 40, imageQuestionCount: images, imageAnswerQuestionCount: 0 }), []);
-    const stored = [];
-    for (let i = 0; i < draft.questions.length; i++) stored.push(await storedAiQuestion(draft.questions[i], i, {
-      model: "mock", promptVersion: "v14", generateMedia: async () => { imageCalls++; return { imageDataUrl: "data:image/webp;base64,abc" }; }
-    }));
-    assert.equal(calls, 5); assert.equal(output.usage.total_tokens, 50);
-    assert.equal(imageCalls, images); assert.equal(stored.length, 50);
-    assert.ok(stored.every(q => q.correctBoolean === false));
-  }
-});
-
+for (const { count, points, expectedCalls } of [
+  { count: 10, points: 8, expectedCalls: 1 },
+  { count: 50, points: 40, expectedCalls: 5 }
+]) {
+  test(`${count}-task generation assembles and stores the draft with zero, one and five images`, async () => {
+    for (const images of [0, 1, 5]) {
+      const input = { count, points, exactImageCounts: true, imageQuestionCount: images, imageMode: images ? "exact" : "none" };
+      let calls = 0, imageCalls = 0;
+      const output = await generateTestInBatches(input, async (batch, prior) => {
+        assert.equal(prior.length, batch.batchOffset); calls++;
+        return { data: { title: "Satzbaustelle", subject: "Deutsch", grade: "5", description: "",
+          questions: Array.from({ length: batch.count }, (_, i) => ({ type: "truefalse", text: `Aussage ${batch.batchOffset + i + 1}: Ein Satz enthält Satzglieder.`, points: 1, correctBoolean: false,
+            mediaIntent: i < batch.imageQuestionCount ? { kind: "ai_generated", prompt: "Ein Baum", altText: "Baum" } : { kind: "none" } })) }, usage: { total_tokens: 10 } };
+      });
+      const draft = balanceTestPoints({ ...output.data, questions: output.data.questions.map(normalizeQuestion) }, points);
+      assert.deepEqual(validateTest(draft, { expectedCount: count, targetPoints: points, imageQuestionCount: images, imageAnswerQuestionCount: 0 }), []);
+      const stored = [];
+      for (let i = 0; i < draft.questions.length; i++) stored.push(await storedAiQuestion(draft.questions[i], i, {
+        model: "mock", promptVersion: "v14", generateMedia: async () => { imageCalls++; return { imageDataUrl: "data:image/webp;base64,abc" }; }
+      }));
+      assert.equal(calls, expectedCalls); assert.equal(output.usage.total_tokens, expectedCalls * 10);
+      assert.equal(imageCalls, images); assert.equal(stored.length, count);
+      assert.ok(stored.every(q => q.correctBoolean === false));
+    }
+  });
+}
 
 test("100-task generation is split into ten bounded batches", async () => {
   const input = { count: 100, points: 50, exactImageCounts: true, imageQuestionCount: 5, imageMode: "exact" };
