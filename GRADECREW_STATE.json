@@ -4237,6 +4237,23 @@
         "production": "unchanged",
         "next": "Confirm the bounded sequence design and prepare implementation plan; preserve current Staging and prior attempt history."
       },
+      "mehrfeld30_pilot_20261109": {
+        "stage": "staging_deployed",
+        "scope": "isolated_preview_only",
+        "runtime_integrated": false,
+        "url": "https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/",
+        "hosting_channel": "remy-mehrfeld30",
+        "deployed_source": "bcafd321f30d0e65518535f0d64e1aa63dd0950e",
+        "pull_request": 419,
+        "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/05d09aa0396a02758d85cf9c7047c702ff677c82/docs/evidence/remy-mehrfeld30-20261109/REPORT.md",
+        "target_tasks": 30,
+        "logical_jobs": 4,
+        "ready_tasks_at_checkpoint": 22,
+        "physics_job_at_checkpoint": "running quality-review",
+        "teacher_acceptance": "pending",
+        "production": false,
+        "next_action": "Read the existing physics job without redispatch. Teacher reviews available cases and records smileys by version."
+      },
       "image_sequence_pilot_20261028": {
         "stage": "staging_deployed",
         "scope": "isolated sequence28 Hosting preview and16prefixed Functions only; not canonical Staging or Production",
