@@ -4,20 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>GradeCrew · Remy Aufgabenlabor</title>
+<title>GradeCrew · Kreativlabor</title>
 <link rel="stylesheet" href="./visual/visual.css">
 <link rel="stylesheet" href="./pilot.css">
 </head>
 <body>
 <main>
-<header><p class="eyebrow">GRADECREW · TESTSEITE</p><h1>Remy Aufgabenlabor</h1><p>Probiere Aufgaben aus und zeig Remy, welche davon für deinen Unterricht passen.</p></header>
+<header><p class="eyebrow">GRADECREW · TESTSEITE</p><h1>Kreativlabor</h1><p>Entdecke mit Remy neue Aufgaben. Die Formate sind in Erprobung und können noch Fehler enthalten. Prüfe Entwürfe vor dem Einsatz im Unterricht.</p></header>
 <form id="login" hidden><h2>Mit dem Testkonto anmelden</h2>
   <label>E-Mail<input name="email" type="email" autocomplete="username" required></label>
   <label>Passwort<input name="password" type="password" autocomplete="current-password" required></label>
   <button>Anmelden</button>
 </form>
 <div id="workspace" hidden>
-  <div class="bar"><button id="roundFive">Runde 5 · Tonhöhen setzen</button><button id="roundFour" class="secondary">Runde 4 · Rhythmus hören</button><button id="roundThree" class="secondary">Runde 3 · Quellen, Labyrinth, Noten</button><button id="roundTwo" class="secondary">Runde 2 · 12 neue Ideen</button><button id="seed" class="secondary">Runde 1 · 30 KI-Aufgaben</button><button id="last" class="secondary" hidden>Eigener Stapel</button><button id="logout" class="secondary">Abmelden</button></div>
+  <div class="bar"><button id="mixed">Kreativmix · 30 Aufgaben</button><button id="roundFive" class="secondary">Runde 5 · Tonhöhen setzen</button><button id="roundFour" class="secondary">Runde 4 · Rhythmus hören</button><button id="roundThree" class="secondary">Runde 3 · Quellen, Labyrinth, Noten</button><button id="roundTwo" class="secondary">Runde 2 · 12 neue Ideen</button><button id="seed" class="secondary">Runde 1 · 30 KI-Aufgaben</button><button id="last" class="secondary" hidden>Eigener Stapel</button><button id="logout" class="secondary">Abmelden</button></div>
   <details id="recipePanel">
     <summary>Remy · neues Format aus freiem Wunsch</summary>
     <form id="recipeWish">
@@ -43,6 +43,7 @@
   <section id="review" hidden>
     <div class="bar split"><div><p class="eyebrow" id="group"></p><h2 id="position" tabindex="-1"></h2></div><span id="progress"></span></div>
     <progress id="meter" max="30" value="0" aria-label="Bereits gesichtete Aufgaben"></progress>
+    <label id="jumpLabel" hidden>Direkt zu einer Aufgabe <select id="jump"></select></label>
     <h3 id="taskTitle" hidden></h3>
     <p id="prompt" class="prompt"></p>
     <div id="answer" class="gc-visual renderer"></div>
@@ -63,6 +64,7 @@
 </main>
 <script src="./visual/legacy-core.js"></script>
 <script src="./visual/core.js"></script>
+<script src="./visual/sequence-illustrations.js"></script>
 <script src="./visual/renderers.js"></script>
 <script type="module" src="./pilot.mjs"></script>
 </body>

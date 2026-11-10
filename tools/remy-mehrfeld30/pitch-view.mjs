@@ -14,7 +14,7 @@ function clef(){
   const path=document.createElementNS(ns,'path');
   path.setAttribute('d','M19 82c-12 1-13-13-3-15 8-2 11 7 5 10 8-4 7-13 5-22L18 18c-2-9 2-17 7-15 6 4 3 16-2 25C17 39 5 43 5 55c0 11 9 17 21 14 11-2 15-13 8-20-7-7-18-1-17 8 1 4 3 6 5 7');
   path.setAttribute('fill','none');path.setAttribute('stroke','currentColor');
-  path.setAttribute('stroke-width','3.3');path.setAttribute('stroke-linecap','round');
+  path.setAttribute('stroke-width','4.4');path.setAttribute('stroke-linecap','round');
   svg.append(path);
   return svg;
 }

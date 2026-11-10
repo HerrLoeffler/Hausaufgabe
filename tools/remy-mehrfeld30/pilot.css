@@ -66,7 +66,7 @@ progress{width:100%;height:12px;accent-color:#234d9e}
 .pitch-staff-name{font-size:.72rem}
 .pitch-clef-body{position:relative;grid-row:2 / span 9;display:grid;grid-template-rows:repeat(9,var(--pitch-step))}
 .pitch-clef svg{position:absolute;height:calc(var(--pitch-step)*11.55);width:46px;left:12px;top:calc(var(--pitch-step)*-.22);pointer-events:none}
-.pitch-line{background:linear-gradient(transparent calc(50% - .5px),#6a80a2 calc(50% - .5px),#6a80a2 calc(50% + .5px),transparent calc(50% + .5px))}
+.pitch-line{background:linear-gradient(transparent calc(50% - 1px),#405678 calc(50% - 1px),#405678 calc(50% + 1px),transparent calc(50% + 1px))}
 .pitch-hit{position:relative;margin:0;display:grid;place-items:center;cursor:pointer}
 .pitch-hit:hover,.pitch-hit:focus-within{box-shadow:inset 0 0 0 2px #d59033;background-color:#fff3db}
 .pitch-hit input{position:absolute;opacity:0;width:1px;height:1px;margin:0}

@@ -10,10 +10,18 @@ const {recipeCode,examples,build}=require('./recipe-three.cjs');
 const {generate,wishPrefix,requestIdPattern}=require('./generate-three.cjs');
 const {rhythmCode,rhythmExamples,buildRhythm,makeAudio}=require('./rhythm.cjs');
 const {pitchCode,pitchExamples,buildPitch}=require('./pitch.cjs');
+const {mixedDeck,mixedCode}=require('./mix.cjs');
 const pitchDeck=pitchExamples.map(raw=>buildPitch(raw));
 const rhythmDeck=rhythmExamples.map(raw=>buildRhythm(raw));
 const secret=defineSecret('OPENAI_API_KEY');
 const roundThree=examples.map(raw=>build(raw));
+const referenceDecks=new Map([
+  [roundTwoCode,{group:'runde2',tasks:roundTwo}],
+  [recipeCode,{group:'runde3',tasks:roundThree}],
+  [rhythmCode,{group:'runde4',tasks:rhythmDeck}],
+  [pitchCode,{group:'runde5',tasks:pitchDeck}],
+  [mixedCode,{group:'mix',tasks:mixedDeck.map(row=>row.q)}]
+]);
 const app=initializeApp();
 const db=getFirestore(app);
 
@@ -40,25 +48,19 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
   const latest=owner.collection('ratings');
   if(data.action==='generateRecipe')return generate({db,owner,uid,data,secret});
   const isWish=typeof data.quizId==='string'&&data.quizId.startsWith(wishPrefix);
-  let references=null;
-  if(data.quizId===recipeCode)references=roundThree;
-  else if(data.quizId===rhythmCode)references=rhythmDeck;
-  else if(data.quizId===pitchCode)references=pitchDeck;
-  else if(isWish){
+  const staticDeck=referenceDecks.get(data.quizId);
+  let references=staticDeck?.tasks,referenceGroup=staticDeck?.group;
+  if(isWish){
     const id=data.quizId.slice(wishPrefix.length);
     if(!requestIdPattern.test(id))throw new HttpsError('invalid-argument','Ungültiger Auftrag.');
     const draft=(await owner.collection('recipeDrafts').doc(id).get()).data();
     if(draft?.status!=='ready')throw new HttpsError('failed-precondition','Der eigene Auftrag ist noch nicht bereit.');
     references=[draft.q];
+    referenceGroup='eigener';
   }
   if(data.action==='list'){
     if(references){
-      const rows=references.map(q=>present(data.quizId,isWish?'eigener':data.quizId===pitchCode?'runde5':data.quizId===rhythmCode?'runde4':'runde3',q));
-      const notes=await db.getAll(...rows.map(task=>latest.doc(task.version)));
-      return {tasks:rows.map((task,i)=>({...task,review:notes[i].data()||null})),expected:rows.length};
-    }
-    if(data.quizId===roundTwoCode){
-      const rows=roundTwo.map(q=>present(roundTwoCode,'runde2',q));
+      const rows=references.map(q=>present(data.quizId,referenceGroup,q));
       const notes=await db.getAll(...rows.map(task=>latest.doc(task.version)));
       return {tasks:rows.map((task,i)=>({...task,review:notes[i].data()||null})),expected:rows.length};
     }
@@ -75,9 +77,8 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
   }
   if(!['rate','score','listenRhythm'].includes(data.action)||typeof data.id!=='string'||!(/^[A-Za-z0-9_-]{1,100}$/.test(data.id)))
     throw new HttpsError('invalid-argument','Ungültige Laboranfrage.');
-  const reference=data.quizId===roundTwoCode;
-  const group=references?(isWish?'eigener':data.quizId===pitchCode?'runde5':data.quizId===rhythmCode?'runde4':'runde3'):reference?'runde2':await loadQuiz(data.quizId,uid);
-  const raw=references?references.find(q=>q.id===data.id):reference?roundTwo.find(q=>q.id===data.id):(await db.doc('quizzes/'+data.quizId+'/questions/'+data.id).get()).data();
+  const group=referenceGroup||await loadQuiz(data.quizId,uid);
+  const raw=references?references.find(q=>q.id===data.id):(await db.doc('quizzes/'+data.quizId+'/questions/'+data.id).get()).data();
   if(!raw)throw new HttpsError('not-found','Aufgabe fehlt.');
   const q={...raw,id:data.id};
   const task=present(data.quizId,group,q);

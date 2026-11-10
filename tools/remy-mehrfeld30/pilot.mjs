@@ -13,7 +13,7 @@ const api=async data=>(await httpsCallable(fn,'remyMehrfeld30Review',{timeout:40
 const start=async data=>(await httpsCallable(fn,'sequence28StartAiTestJob',{timeout:70000})(data)).data;
 const $=id=>document.getElementById(id);
 const message=text=>{$('status').textContent=text;};
-const ROUND_TWO='REMYRND2',ROUND_THREE='REMYRND3',ROUND_FOUR='REMYRND4',ROUND_FIVE='REMYRND5';
+const ROUND_TWO='REMYRND2',ROUND_THREE='REMYRND3',ROUND_FOUR='REMYRND4',ROUND_FIVE='REMYRND5',MIXED='REMYMIX6';
 const groupNames={direkt:'Direkter Dreisatz',umgekehrt:'Umgekehrter Dreisatz',physik:'Physik · Übergänge',gegenprobe:'Gegenprobe · Formatwahl',eigener:'Dein KI-Stapel'};
 let uid='',tasks=[],index=0,answer=null,renderer=null,stack='seed',expected=30,epoch=0,rating=false,watching=false;
 
@@ -89,6 +89,7 @@ function render(moveFocus=false){
   $('taskTitle').hidden=!task.heading;
   $('taskTitle').textContent=task.heading||'';
   $('position').textContent='Aufgabe '+(index+1)+' von '+tasks.length;
+  $('jump').value=String(index);
   $('progress').textContent=rated+' von '+tasks.length+' bewertet';
   $('meter').max=tasks.length;
   $('meter').value=rated;
@@ -121,13 +122,19 @@ async function load(quizId=null){
     if(epoch!==requestEpoch||uid!==owner)return;
     tasks=result.tasks;expected=result.expected;
     stack=quizId||'seed';
+    $('jumpLabel').hidden=stack!==MIXED;
+    if(stack===MIXED)$('jump').replaceChildren(...tasks.map((task,i)=>{
+      const option=document.createElement('option');
+      option.value=String(i);option.textContent=(i+1)+' · '+(task.heading||task.subject);
+      return option;
+    }));
     save('stack',stack);
     const savedVersion=saved('position:'+stack);
     const stored=tasks.findIndex(t=>t.version===savedVersion);
     const firstOpen=tasks.findIndex(t=>!t.review);
     index=stored>=0?stored:Math.max(0,firstOpen);
     render();
-    message(quizId===ROUND_FIVE?'Zwei Aufgaben zum Setzen von Tonhöhen.':quizId===ROUND_FOUR?'Drei Hörbeispiele mit verschiedenen Hilfen.':quizId===ROUND_THREE?'Runde 3 zeigt die überarbeiteten Beispiele.':quizId===ROUND_TWO?'Runde 2 zeigt redaktionell entworfene Aufgaben.':quizId?'Dein Stapel ist bereit.':tasks.length===expected?'Der erste Stapel ist bereit.':tasks.length+' von '+expected+' Aufgaben sind derzeit verfügbar.');
+    message(quizId===MIXED?'Kreativmix · 30 redaktionell entworfene Aufgaben.':quizId===ROUND_FIVE?'Zwei Aufgaben zum Setzen von Tonhöhen.':quizId===ROUND_FOUR?'Drei Hörbeispiele mit verschiedenen Hilfen.':quizId===ROUND_THREE?'Runde 3 zeigt die überarbeiteten Beispiele.':quizId===ROUND_TWO?'Runde 2 zeigt redaktionell entworfene Aufgaben.':quizId?'Dein Stapel ist bereit.':tasks.length===expected?'Der erste Stapel ist bereit.':tasks.length+' von '+expected+' Aufgaben sind derzeit verfügbar.');
   }catch(e){
     if(epoch===requestEpoch&&uid===owner)message(e.message||'Der Stapel konnte nicht geladen werden.');
   }
@@ -149,7 +156,7 @@ async function rate(verdict,reason='',comment=''){
     return;
   }
   rating=true;
-  for(const id of ['good','bad','seed','roundTwo','roundThree','roundFour','roundFive','last'])$(id).disabled=true;
+  for(const id of ['good','bad','seed','roundTwo','roundThree','roundFour','roundFive','mixed','jump','last'])$(id).disabled=true;
   try{
     save('pending-rating',payload);
     const result=await api(payload);
@@ -167,7 +174,7 @@ async function rate(verdict,reason='',comment=''){
       message(e.message||'Rückmeldung noch nicht bestätigt.');
     }
   }finally{
-    rating=false;for(const id of ['good','bad','seed','roundTwo','roundThree','roundFour','roundFive','last'])$(id).disabled=false;
+    rating=false;for(const id of ['good','bad','seed','roundTwo','roundThree','roundFour','roundFive','mixed','jump','last'])$(id).disabled=false;
   }
 }
 $('prev').onclick=()=>step(index-1);
@@ -201,6 +208,8 @@ $('roundTwo').onclick=()=>load(ROUND_TWO);
 $('roundThree').onclick=()=>load(ROUND_THREE);
 $('roundFour').onclick=()=>load(ROUND_FOUR);
 $('roundFive').onclick=()=>load(ROUND_FIVE);
+$('mixed').onclick=()=>load(MIXED);
+$('jump').onchange=()=>step(Number($('jump').value));
 $('last').onclick=()=>load(saved('last'));
 $('logout').onclick=()=>signOut(auth);
 $('login').onsubmit=async e=>{
