@@ -554,3 +554,5 @@ Durable local evidence: analysis/GC-WEB-REPAIR-20261007-ADMIN/feedback-followup-
 
 
 GC-CLASSROOM-01 Vorführung28.10.2026: öffentliche2026Login-/Schülercodeform undModule erreichbar; ältere synthetische lokaleDemo8782 neu gestartet (nur dieserMac), lokaleBeispielanmeldung/Klassen/ASVSteuerung sichtbar geprüft. Keine neueCloudbereitstellung; authentifizierterCloudflow heute nicht erneut geprüft. Details in bestehender Classroomübergabe.
+
+- [ ] **GC-CLASSROOM-01 · Schulpilot, 10.11.2026.** Schüler-Webroute auf 2026 liefert HTTP 404. Nach Diagnose der Hosting-Route und synthetischem Schülerlogin folgen Online-Kollegiumseinladung, minimaler CSV-Import und Pilotabnahme. [Plan](docs/superpowers/plans/2026-11-10-classroom-schulpilot.md).
