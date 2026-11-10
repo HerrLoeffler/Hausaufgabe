@@ -46,6 +46,7 @@ Kurz berichten: Änderung, Branch/Commit, tatsächlich ausgeführte Prüfungen, 
 - Vor Änderungen an der Liste Remote-Stand erneut lesen; nur betroffene Aufgaben ändern und parallele Ergänzungen erhalten. Details und Zwischenstände weiterhin in eigener Workstream-Übergabe führen.
 
 ## Pflicht zur Dokumentation aller Chats
+- Bei jeder Änderung an der Oberfläche gilt die [Layout-Abnahme der Design Bible](design/GRADECREW_DESIGN_BIBLE.md#layout-abnahme). Vor der Übergabe die betroffenen Zustände auf schmalem Handy, Tablet und Desktop im Browser prüfen.
 - docs/CHAT_CONTRACT.md gilt auch für reine Design-, Produkt- und Planungschats. Auftrag einer Task-ID zuordnen, neue Wünsche/Blocker erfassen, Entscheidungen und Gründe in der passenden Übergabe sichern.
 - Vor Abschluss oder Aufgabenwechsel TODO.md und Workstream aktualisieren; Commit, echte Prüfungen, offene Punkte und nächsten ausführbaren Schritt nennen. Ohne Schreibzugriff eine kopierbare Übergabe liefern und fehlende Speicherung ausdrücklich melden.
 
