@@ -22,7 +22,39 @@ test('Schülerwechsel erhält genau ein Formular und verändert keine Bewertunge
 test('Schließen entfernt Detailzeile und gibt Fokus zurück',t=>{const w=setup(t);const b=w.document.querySelector('.reviewBtn');b.focus();w.openReview('s1');w.$('closeReview').click();assert.equal(w.document.querySelectorAll('.submissionReviewRow').length,0);assert.ok(w.$('reviewPanel').classList.contains('hidden'));assert.equal(w.document.activeElement,b);assert.equal(b.getAttribute('aria-expanded'),'false');});
 test('Tabellenaktualisierung löscht das wiederverwendete Formular nicht',t=>{const w=setup(t);const p=w.$('reviewPanel');w.openReview('s1');w.renderResultsTable();assert.equal(w.$('reviewPanel'),p);assert.equal(w.document.querySelectorAll('.submissionReviewRow').length,0);assert.ok(p.classList.contains('hidden'));w.openReview('s2');assert.equal(w.$('reviewHeading').textContent,'Fiktiv B');});
 test('Speichern verwendet denselben Vertrag und nur die gewählte Abgabe',async t=>{const w=setup(t);const calls=[];w.db={};w.doc=(...args)=>args;w.serverTimestamp=()=>123;w.updateDoc=async(ref,patch)=>calls.push({ref,patch});w.toast=()=>{};w.openResults=async()=>w.renderResultsTable();w.openReview('s1');w.document.querySelector('.manualPoints').value='2.5';await w.saveReview('s1');assert.equal(calls.length,1);assert.equal(calls[0].ref.at(-1),'s1');assert.equal(calls[0].patch.grading.q1.awardedPoints,2.5);assert.equal(w.state.submissions[1].grading.q1.awardedPoints,0);assert.ok(w.$('reviewPanel'));});
-test('Gasttour verlassen erhält den Formularanker für spätere Korrekturen',t=>{const w=setup(t);w.openReview('s1');const original=w.$('reviewPanel');const retained=w.state;const students=retained.submissions,questions=retained.resultQuestions;for(const id of ['editorHeading','resultsMeta','editorView']){const x=w.document.createElement('div');x.id=id;w.document.body.append(x);}for(const key of ['stopStudentTimer','clearPublishSubscriptions','clearStudentSubscriptions','showView'])w[key]=()=>{};w.draftTimer=null;w.studentConfirmationPending=new Map();w.studentSubmissionBusy=new Set();w.completedStudentSubmissions=new Set();w.eval(fn('exitGuestTour'));assert.doesNotThrow(()=>w.exitGuestTour());assert.equal(w.$('reviewPanel'),original);assert.ok(original.classList.contains('hidden'));w.state.submissions=students;w.state.resultQuestions=questions;w.state.currentResultsQuiz={id:'qtest'};w.renderResultsTable();w.openReview('s2');assert.equal(w.$('reviewHeading').textContent,'Fiktiv B');});
+test('Gasttour verlassen schließt den Aufgabendialog und erhält den Formularanker', t => {
+  const w = setup(t);
+  w.openReview('s1');
+  const original = w.$('reviewPanel');
+  const { submissions: students, resultQuestions: questions } = w.state;
+  for (const id of ['editorHeading', 'resultsMeta', 'editorView']) {
+    const element = w.document.createElement('div');
+    element.id = id;
+    w.document.body.append(element);
+  }
+  for (const key of ['stopStudentTimer', 'clearPublishSubscriptions', 'clearStudentSubscriptions', 'showView']) w[key] = () => {};
+  w.draftTimer = null;
+  w.studentConfirmationPending = new Map();
+  w.studentSubmissionBusy = new Set();
+  w.completedStudentSubmissions = new Set();
+  w.questionActionDialogs = 'dialog.questionActionDialog[open], dialog.variantRequestDialog[open], dialog.questionVariantDialog[open]';
+  const dialog = w.document.createElement('dialog');
+  dialog.className = 'questionActionDialog';
+  dialog.open = true;
+  dialog.close = () => { dialog.open = false; };
+  w.document.body.append(dialog);
+  w.eval([fn('closeQuestionActionDialogs'), fn('exitGuestTour')].join('\n'));
+  assert.doesNotThrow(() => w.exitGuestTour());
+  assert.equal(dialog.open, false);
+  assert.equal(w.$('reviewPanel'), original);
+  assert.ok(original.classList.contains('hidden'));
+  w.state.submissions = students;
+  w.state.resultQuestions = questions;
+  w.state.currentResultsQuiz = { id: 'qtest' };
+  w.renderResultsTable();
+  w.openReview('s2');
+  assert.equal(w.$('reviewHeading').textContent, 'Fiktiv B');
+});
 
 test('Ergebnisliste zeigt automatische Note trotz altem Reviewstatus sofort',t=>{const w=setup(t);const a=w.state.submissions[0];a.grading.q1={awardedPoints:3,autoPoints:3,maxPoints:3,needsReview:false,correct:true};a.totalPoints=3;a.percent=100;w.renderResultsTable();const row=w.document.querySelector('.reviewBtn').closest('tr');assert.equal(row.cells[3].textContent,'1');assert.equal(row.cells[4].textContent,'Bewertet');assert.equal(a.status,'review');});
 test('offene Freitextpunkte erzeugen keine Note aus der vorläufigen Null',t=>{const w=setup(t);const row=w.document.querySelector('.reviewBtn').closest('tr');assert.equal(row.cells[3].textContent,'–');assert.equal(row.cells[4].textContent,'Prüfen');w.state.submissions[0].grade=2;w.renderResultsTable();assert.equal(w.document.querySelector('.reviewBtn').closest('tr').cells[3].textContent,'2 (vorläufig)');});
