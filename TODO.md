@@ -826,4 +826,5 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 
 ### 09.11.2026 · GC-WEB-REPAIR-20261007 · großer Live-Auftrag
 
-- [ ] Speicherabbruch bei einem Auftrag mit 50 Aufgaben in der fachlichen Prüfung absichern. Ursache im zugeordneten Worker-Aufruf bestätigt. [Live-PR415](https://github.com/HerrLoeffler/Hausaufgabe/pull/415) und [Staging-PR416](https://github.com/HerrLoeffler/Hausaufgabe/pull/416) lokal geprüft. Staging-CI grün und Worker auf Staging aktiv. Ausstehend sind Live-Freigabe und ein echter Lastnachweis mit 50 Aufgaben. [Übergabe](workstreams/remy-interactive-tests-20261026.md).
+- [x] Speicherlimit und Parallelität des Live-Workers angepasst und verifiziert. Seit 10.11.2026 bedient `processaitestjob-00090-sed` den gesamten Worker-Traffic mit 2 GiB und einem Auftrag je Instanz. [Nachweis](workstreams/remy-interactive-tests-20261026.md).
+- [ ] Echten Lastnachweis mit 50 Aufgaben separat erbringen. Der gemeldete Kundenauftrag wurde nicht erneut gestartet.

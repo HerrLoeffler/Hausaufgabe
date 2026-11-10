@@ -4032,11 +4032,12 @@
         "production": "unchanged"
       },
       "worker_memory_incident_20261109": {
-        "stage": "staging_deployed",
+        "stage": "production",
         "incident": "50-question Live job exceeded the 1024 MiB worker limit during quality review",
         "live_pull_request": 415,
         "live_candidate": "426ccdeab060405b404210f9cae82ee904814ea9",
-        "live_active_source": "1c8b5463431d8ffa770cda9030d4a435d66fb62c",
+        "live_previous_source": "1c8b5463431d8ffa770cda9030d4a435d66fb62c",
+        "live_active_source": "426ccdeab060405b404210f9cae82ee904814ea9",
         "staging_pull_request": 416,
         "staging_candidate": "2b58dda2626d6b946a0829000d6f57a6fc2bd745",
         "staging_ci_run": 42612315738,
@@ -4046,7 +4047,15 @@
         "live_ci_run": 42612743908,
         "local_functions_tests": { "live": 485, "staging": 363 },
         "scope": "processAiTestJob only; 2048 MiB; one job per instance; queue cap two",
-        "production_approved": false,
+        "production_approved": true,
+        "live_deployed_on": "2026-11-10",
+        "live_revision": "processaitestjob-00090-sed",
+        "live_traffic_percent": 100,
+        "live_other_functions_unchanged": 61,
+        "live_matched_source_files": 143,
+        "live_source_generation": "1794313232457984",
+        "live_source_zip_sha256": "baad5b4b0a84912f7a917da1e7488b950272b070f8825c54480f109f392ca3fb",
+        "live_50_question_load_test": "pending",
         "handoff": "workstreams/remy-interactive-tests-20261026.md"
       },
       "generation_latency_plan_20261026": {
