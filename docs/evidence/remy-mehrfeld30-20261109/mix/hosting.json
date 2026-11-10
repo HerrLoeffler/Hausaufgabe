@@ -1,0 +1,24 @@
+{
+  "project": "gradecrew-staging-2026",
+  "channel": "remy-mehrfeld30",
+  "url": "https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/",
+  "expiresAt": "2026-12-10T13:44:03.988707745Z",
+  "localRuntimeCommit": "b66ba71",
+  "functionHash": "b6b25f67b4fb59f0e7101feff28c7ef658164f7b",
+  "otherFunctionsUnchanged": 96,
+  "assets": {
+    "index.html": "99da485ae163dbac650abc8f5024ac005dffff508c870c70f60287726038e421",
+    "pilot.css": "30361891f7daa9acc16f5f87d26016350bd74bd59889552dcb56873e42fb575c",
+    "pilot.mjs": "dfd450a5ae63ab4766aa046ea4618980311ec737c011621829eab19bdef0eb11",
+    "recipe-view.mjs": "79feaa91f1a88039570b03680a2bef2f61bc29e34b3a9546e8178d0ff69432d9",
+    "rhythm-view.mjs": "87f7dfc8a92a9cfc1a67cc6ddb1ece25873d4dd92c7dcdee0105e886faa522c6",
+    "pitch-view.mjs": "e25edba3ab661c79903c3368b892427d5a45933e2e5e7c7e853dc3bab26af092",
+    "firebase-config.js": "be50a258fe5d6f0c9ddf6e3a9f1ddfd369c7c0623e3a434427189bdd89d80cf8",
+    "visual/visual.css": "fba37d5355d43a1a0a24217b60f036414cd45ab5fe633e027d039fab1b5e0bf5",
+    "visual/core.js": "cf4ea8cd0a3915bf0978312e4166238c0ab68703ba9160a1517fbaca91587548",
+    "visual/legacy-core.js": "412d66b342e5c38d984000b6ea320afc54d286507052a040e9bd7543b5c91d86",
+    "visual/renderers.js": "4b38dce54d62abc58c181f456154982c77dc9a91697d139a77e216288adf1822",
+    "visual/sequence-illustrations.js": "1009287a33dc6794ff699f73b2badd379774b835bb82b03ccd41d30f53ed278f",
+    "visual/assets/cosmos-botanical-v1.png": "933516049c325b931057a485a0ea1107f932abdf83d6772d3735cc4cb053c30e"
+  }
+}

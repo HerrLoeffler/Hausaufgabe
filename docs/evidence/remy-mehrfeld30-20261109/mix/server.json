@@ -1,0 +1,196 @@
+{
+  "at": "2026-11-10T13:44:25.129Z",
+  "earlierDeckSizes": [
+    30,
+    12,
+    3,
+    3,
+    2
+  ],
+  "syntheticRatingsPreserved": true,
+  "anonymousDenied": true,
+  "cases": [
+    {
+      "id": "mix-depth",
+      "recipe": "scale",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-pitch-pair",
+      "recipe": "pitch",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-bahnarchiv",
+      "recipe": "sources",
+      "full": 1.5,
+      "blank": 0
+    },
+    {
+      "id": "mix-drones",
+      "recipe": "coordinate",
+      "full": 1.5,
+      "blank": 0
+    },
+    {
+      "id": "mix-mosaic",
+      "recipe": "grid",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-robot",
+      "recipe": "maze",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-pflanzenteil",
+      "recipe": "hotspot",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-hoerleicht",
+      "recipe": "rhythm",
+      "full": 0.5,
+      "blank": 0,
+      "wav": true
+    },
+    {
+      "id": "mix-mauer",
+      "recipe": "timeline",
+      "full": 1.5,
+      "blank": 0
+    },
+    {
+      "id": "mix-trennen",
+      "recipe": "diagram",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-rampe",
+      "recipe": "angle",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-notenwerte",
+      "recipe": "music",
+      "full": 1.5,
+      "blank": 0
+    },
+    {
+      "id": "mix-satzbau",
+      "recipe": "labeling",
+      "full": 2,
+      "blank": 0
+    },
+    {
+      "id": "mix-falter",
+      "recipe": "sequence",
+      "full": 2,
+      "blank": 0
+    },
+    {
+      "id": "mix-lauf",
+      "recipe": "table",
+      "full": 1.5,
+      "blank": 0
+    },
+    {
+      "id": "mix-strom",
+      "recipe": "connections",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-ph",
+      "recipe": "scale",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-englisch",
+      "recipe": "diagram",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-drinks",
+      "recipe": "dreisatz",
+      "full": 2.5,
+      "blank": 0
+    },
+    {
+      "id": "mix-pitch-sequence",
+      "recipe": "pitch",
+      "full": 2.5,
+      "blank": 0
+    },
+    {
+      "id": "mix-bruecke",
+      "recipe": "coordinate",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-kassenbeleg",
+      "recipe": "hotspot",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-hoerschwer",
+      "recipe": "rhythm",
+      "full": 1,
+      "blank": 0,
+      "wav": true
+    },
+    {
+      "id": "mix-reaktion",
+      "recipe": "timeline",
+      "full": 1.5,
+      "blank": 0
+    },
+    {
+      "id": "mix-abstimmung",
+      "recipe": "diagram",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-solar",
+      "recipe": "grid",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-schulmuseum",
+      "recipe": "sources",
+      "full": 1.5,
+      "blank": 0
+    },
+    {
+      "id": "mix-pflanzengrafik",
+      "recipe": "labeling",
+      "full": 2,
+      "blank": 0
+    },
+    {
+      "id": "mix-stumpf",
+      "recipe": "angle",
+      "full": 1,
+      "blank": 0
+    },
+    {
+      "id": "mix-wasserkreislauf",
+      "recipe": "sequence",
+      "full": 2,
+      "blank": 0
+    }
+  ]
+}
