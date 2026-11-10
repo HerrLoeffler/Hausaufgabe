@@ -146,3 +146,7 @@ Der zuvor gestartete OAuth-Vorgang endete mit `timed out waiting for OAuth callb
 ### Kostenlose Freigaben und spätere Rabattaktionen
 
 Martin fragt nach der steuerlichen Abgrenzung von kostenlosen Kolleg:innen-Zugängen und 100-%-Rabatten und möchte Rabattcodes mit Dauer für spätere Creator-Aktionen einplanen. [Ergänzung im Zugangsplan](../docs/billing/2026-11-10-konto-und-zugangsplan.md#kostenlose-freigaben-aktionscodes-und-creator-kampagnen): manuelle Freigabe für echte Gratis-Piloten, Stripe-Coupons und Aktionscodes für Rabatte im persönlichen Monatsabo. Einlösefenster, Rabattdauer, Creator-Zuordnung und bezahlte Abschlüsse bleiben getrennt. Eine bestätigte 0-€-Aktionsperiode ist kein Zahlungseingang. Vereinbarte Gegenleistungen vorab steuerlich prüfen. Kampagnenumfang und konkrete Konditionen sind Vorschläge für einen späteren Ausbauschritt. Keine Stripe-Objekte und keine Releaseänderung.
+
+### Bestätigung und erneute Sandbox-Freigabe
+
+Martin bestätigt kostenlose Premium-Freigaben für Kolleg:innen und spätere Rabattcodes über Stripe. Sein Stripe-Freigabedialog zeigt die dedizierte Umgebung **GradeCrew sandbox**. Die Codex-Anmeldung wurde erneut gestartet. Der erste Schritt ist ein Lesezugriff ausschließlich auf diese Sandbox. Sobald die Rückmeldung ankommt, Verbindung und Umgebung prüfen und den offiziellen Stripe-Planer aufrufen. Allgemeiner Testmodus und Live-Konto sind nicht Teil der Freigabe.
