@@ -832,4 +832,5 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 
 ### 10.11.2026 · GC-WEB-REPAIR-20261007 · Dialoge für Aufgabenaktionen
 
-- [ ] Dialoge auf der [Staging-Vorschau](https://gradecrew-staging-2026--q-actions-ee8ba45-nhr3l5hc.web.app/workspace.html?intent=login) abnehmen. [PR421](https://github.com/HerrLoeffler/Hausaufgabe/pull/421) und Nachweise in der [Übergabe](workstreams/feedback-gc39-release-20261013.md).
+- [x] **production, nur Hosting:** Aufgabendialoge und Diktat auf gradecrew.de und alter Webadresse. Chrome-Mikrofon auf Vorschau bestätigt. Finaler Diktat-Stopp und Handy-/iPad-Layout im Browser geprüft. [PR421](https://github.com/HerrLoeffler/Hausaufgabe/pull/421) und [Nachweise](workstreams/feedback-gc39-release-20261013.md).
+- [ ] Diktat auf echtem Handy und iPad in der Live-Webseite kurz prüfen.
