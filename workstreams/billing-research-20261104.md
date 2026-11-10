@@ -179,3 +179,18 @@ Der PayPal-Checkout mit fiktivem Käufer wurde auf Stripes PayPal-Testzahlungsse
 | Automatische Verlängerung · `subscription_cycle` | [N9WDQPG9-0002](https://dashboard.stripe.com/acct_1UYUaw1l0zkqOtXr/test/invoices/in_1UaHvT1l0zkqOtXrbPjcXAU0) | 10.12.2026, 17:25:08 |
 
 Nach der Erstzahlung führte der Stripe-Checkout zur statischen GradeCrew-Vorschau zurück. Die Rückleitung belegt den Browserpfad. Ein GradeCrew-Backend für signierte Stripe-Ereignisse und automatische Rechtewechsel fehlt weiterhin. Der separate Stripe-Test der Schulrechnung mit 10,00 € und 20,00 € bleibt offen. Keine neuen Konten, API-Schlüssel, Echtgeldzahlungen oder Releaseänderungen.
+
+### Schulrechnung mit zwei simulierten Überweisungen
+
+Martin hat den 10-€-/20-€-Test ausschließlich für **GradeCrew sandbox** beauftragt. Bestehender Schreibzugriff bestätigte `livemode=false`. Im [Rechnungsabgleich der Sandbox](https://dashboard.stripe.com/acct_1UYUaw1l0zkqOtXr/test/settings/billing/invoice) wurde die automatische Teilzuordnung aktiviert. Der automatische Verzicht auf offene Restbeträge blieb aus.
+
+Die [Stripe-Testrechnung N9WDQPG9-0003](https://dashboard.stripe.com/acct_1UYUaw1l0zkqOtXr/test/invoices/in_1UaI1M1l0zkqOtXrWUYCFcFP) über 30,00 € wurde für einen neuen fiktiven Stripe-Kundendatensatz angelegt und zur Zahlung geöffnet. Die deutsche EUR-Überweisung war die einzige Zahlungsmethode. Die Rechnung wurde nicht versendet, die automatische Rechnungsfortschreibung blieb aus. Im Dashboard simulierte die Funktion „Fund cash balance (test only)“ beide Eingänge einzeln mit `N9WDQPG9-0003` im Verwendungszweck.
+
+| Zeitpunkt (UTC) | Nachweis |
+| --- | --- |
+| Vor dem Eingang | Rechnung `open`, 0,00 € bezahlt, 30,00 € offen |
+| 16:36:59 · erster Eingang | 10,00 € auf dem Kundenguthaben, Rechnung weiterhin `open`, 0,00 € bezahlt und 30,00 € offen. Guthabenbuchung `ccsbtxn_1UaI2Z1l0zkqOtXry50Mmpir`. |
+| 16:38:24 · zweiter Eingang | Weitere 20,00 € mit derselben Referenz, Guthabenbuchung `ccsbtxn_1UaI3w1l0zkqOtXrHDtkHwDZ`. |
+| 16:38:25 · vollständiger Ausgleich | Stripe ordnete automatisch 30,00 € dem Zahlungsversuch `pi_3UaI1v1l0zkqOtXr1xvtsWEJ` der Rechnung zu. Rechnung `paid`, 30,00 € bezahlt, 0,00 € offen, 0,00 € Guthaben. Ausgleichsbuchung `ccsbtxn_1UaI3x1l0zkqOtXrwU8u8XfE`. |
+
+Der [Stripe-Guthabenverlauf](https://dashboard.stripe.com/acct_1UYUaw1l0zkqOtXr/test/customers/cus_VbV1BPjRtIX3c2/cash_balance_transactions/eur) zeigt zwei Eingänge und eine automatische Zuordnung über 30,00 € mit „Matched by: Payment value“. Dieser Test belegt den gemeinsamen Abgleich bei voller Deckung. Die erste Teilzahlung wurde im Test separat nur im Kundenguthaben angezeigt. Kein manueller Ausgleich und keine Markierung als bezahlt. Der Logo-Entwurf bleibt ein separater Musterbeleg. Kein Echtgeld, keine neuen Anbieterzugänge, kein Liveeingriff, kein Deploy. Nächster offener Produktschritt ist die isolierte serverseitige Anbindung mit signierten Stripe-Ereignissen für den Rechtewechsel.
