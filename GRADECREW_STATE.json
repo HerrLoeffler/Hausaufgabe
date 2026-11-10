@@ -2371,6 +2371,22 @@
     },
     {
       "id": "web-repair-20261007",
+      "question_action_dialogs_20261110": {
+        "stage": "staging_deployed",
+        "scope": "isolated Hosting preview in gradecrew-staging-2026",
+        "pull_request": 421,
+        "commit": "51de65aa039e1d1b2fc1b46271526f605aba0676",
+        "preview_commit": "ee8ba455bb0b3a3758393a90d0e00c765be18523",
+        "preview_url": "https://gradecrew-staging-2026--q-actions-ee8ba45-nhr3l5hc.web.app",
+        "preview_expires_at": "2026-11-17T12:41:54.250821178Z",
+        "hosting_version": "9928f70aa07547b3",
+        "verified_files": 215,
+        "local_web_tests": 559,
+        "local_ui_tests": 215,
+        "ci_run": 42818673661,
+        "production_approved": false,
+        "handoff": "workstreams/feedback-gc39-release-20261013.md"
+      },
       "integration_branch": "feature/gradecrew-app-integration",
       "student_private_audio_release_enabled": false,
       "stage": "staging_deployed",

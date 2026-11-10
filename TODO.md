@@ -828,3 +828,8 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 
 - [x] Speicherlimit und Parallelität des Live-Workers angepasst und verifiziert. Seit 10.11.2026 bedient `processaitestjob-00090-sed` den gesamten Worker-Traffic mit 2 GiB und einem Auftrag je Instanz. [Nachweis](workstreams/remy-interactive-tests-20261026.md).
 - [ ] Echten Lastnachweis mit 50 Aufgaben separat erbringen. Der gemeldete Kundenauftrag wurde nicht erneut gestartet.
+
+
+### 10.11.2026 · GC-WEB-REPAIR-20261007 · Dialoge für Aufgabenaktionen
+
+- [ ] Dialoge auf der [Staging-Vorschau](https://gradecrew-staging-2026--q-actions-ee8ba45-nhr3l5hc.web.app/workspace.html?intent=login) abnehmen. [PR421](https://github.com/HerrLoeffler/Hausaufgabe/pull/421) und Nachweise in der [Übergabe](workstreams/feedback-gc39-release-20261013.md).
