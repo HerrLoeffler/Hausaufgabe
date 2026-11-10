@@ -1,0 +1,64 @@
+{
+  "group": "gegenprobe",
+  "requestId": "gc-remy-mehrfeld30-20261109-gegenprobe",
+  "input": {
+    "clientRequestId": "gc-remy-mehrfeld30-20261109-gegenprobe",
+    "subject": "Mathematik",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Wann ist der Dreisatz geeignet?",
+    "learningGoals": [
+      "Proportionalität und umgekehrte Proportionalität von ungeeigneten Modellierungen unterscheiden."
+    ],
+    "notes": "Sechs Single-Choice-Aufgaben, bei denen Dreisatz nicht passt. Je zwei Fälle mit Grundgebühr, reine Prozentdeutung und zeitabhängige oder ungleichmäßige Leistung. Korrekte Alternative und fachlichen Grund in der richtigen Option nennen, Ablenkungen plausibel, keine Dreisatzgrafik.",
+    "count": 6,
+    "points": 15,
+    "allowedTypes": [
+      "single"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "materials": [],
+    "materialMode": "inspiration"
+  },
+  "status": "ready",
+  "startedAt": "2026-11-09T21:28:47.368Z",
+  "jobId": "ac4684b137b8d4e66d1532a433427b0b126c6da5",
+  "stage": "ready",
+  "errorReference": null,
+  "errorDetails": null,
+  "usage": {
+    "output_tokens": 3007,
+    "providerRequests": [
+      {
+        "responseId": "resp_09b9d86c8b51ee11016af23b107f9887d28ecdab5b8de08b68",
+        "requestId": "req_0738eb75b64e48ca8f3bc0a715151092",
+        "model": "gpt-5.6-luna",
+        "durationMs": 22619,
+        "phase": "testify_test_v2"
+      },
+      {
+        "responseId": "resp_01461af127b0dfef016af23b27235087d2b12cb8652d8e896d",
+        "requestId": "req_776046613e374bf2ba7fda873cb0c5af",
+        "model": "gpt-5.6-luna",
+        "durationMs": 2484,
+        "phase": "testify_quality_review_v3"
+      }
+    ],
+    "total_tokens": 7759,
+    "input_tokens": 4752
+  },
+  "completedAt": "2026-11-09T21:29:14.573Z",
+  "quizId": "QQ8XMHCK",
+  "count": 6,
+  "pointSum": 15,
+  "layouts": [
+    "single",
+    "single",
+    "single",
+    "single",
+    "single",
+    "single"
+  ]
+}

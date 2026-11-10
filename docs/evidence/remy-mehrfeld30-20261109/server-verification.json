@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-11-09T21:33:26.278Z",
+  "project": "gradecrew-staging-2026",
+  "count": 22,
+  "expected": 30,
+  "anonymousDenied": true,
+  "projectionSolutionFree": true,
+  "score": {
+    "complete": 2.5,
+    "blank": 0
+  },
+  "staleRatingRejected": true,
+  "goodAndBadStored": true,
+  "reviewPersistedAfterList": true,
+  "duplicateEventReplayed": true,
+  "reviewAccount": "synthetic"
+}

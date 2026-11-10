@@ -1,0 +1,55 @@
+{
+  "requestId": "034aac69-526e-4595-a72c-b8891b09d141",
+  "wish": "Meine siebte Klasse soll an drei kurzen erfundenen Quellen über einen historischen Hafen erkennen, welche Aussage sich wirklich belegen lässt. Die Themen sollen Abfahrt, Handel und Eintritt sein.",
+  "status": "ready",
+  "quizId": "wish3:034aac69-526e-4595-a72c-b8891b09d141",
+  "task": {
+    "quizId": "wish3:034aac69-526e-4595-a72c-b8891b09d141",
+    "group": "eigener",
+    "id": "wish",
+    "type": "recipe",
+    "text": "Lies links die Quellen und rechts die Aussagen. Klicke zuerst eine Quelle an, dann die Aussage, die sie direkt belegt. Verbinde jede Quelle genau einmal.",
+    "points": 1.5,
+    "heading": "Spuren im Hafenarchiv",
+    "subject": "Geschichte · Quellen verbinden",
+    "recipe": {
+      "recipe": "sources",
+      "sources": [
+        {
+          "id": "s34be2775f531",
+          "text": "Im Abfahrtsbuch des Hafens von Lichtenau steht: „Am 14. Mai 1782 legte die Galeone Morgenstern um sechs Uhr ab.“"
+        },
+        {
+          "id": "sde97de94b9f6",
+          "text": "Eine Händlerliste von 1782 nennt für das Schiff Morgenstern 40 Fässer Olivenöl und 12 Ballen Wolle."
+        },
+        {
+          "id": "sf6c113fcec05",
+          "text": "Auf einer hölzernen Hafentafel steht: „Eintritt zum Kai: zwei Kupfermünzen.“"
+        }
+      ],
+      "claims": [
+        {
+          "id": "c29cf240a0c7a",
+          "text": "Die Morgenstern transportierte Olivenöl und Wolle."
+        },
+        {
+          "id": "caf98b78d021f",
+          "text": "Die Morgenstern verließ den Hafen am 14. Mai 1782 um sechs Uhr."
+        },
+        {
+          "id": "cf9b2cc2dd0e5",
+          "text": "Der Eintritt zum Kai kostete zwei Kupfermünzen."
+        }
+      ]
+    },
+    "options": [],
+    "version": "50bc945bcb1430a8f46e13549c8a40ece729e8771aaa7c4e50a1a9faedc9b89b",
+    "review": null
+  },
+  "verified": {
+    "complete": 1.5,
+    "partial": 1,
+    "method": "human read of public source snippets and claims"
+  }
+}

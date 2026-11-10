@@ -1,0 +1,128 @@
+{
+  "group": "physik-uebergaenge",
+  "requestId": "gc-remy-mehrfeld30-20261109-physik-uebergaenge",
+  "input": {
+    "clientRequestId": "gc-remy-mehrfeld30-20261109-physik-uebergaenge",
+    "subject": "Physik",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Vier unterscheidbare Phasenübergänge in Experimenten",
+    "learningGoals": [
+      "Fachbegriffe in Mehrfeldtabellen zu unterschiedlichen gerichteten Zustandsübergängen eintragen."
+    ],
+    "notes": "Vier normale Mehrfeldtabellen, kein Dreisatz. Unverwechselbare Ziele je Aufgabe: 1 Schmelzen und Erstarren von Wasser, 2 Verdunsten und Kondensieren im Wasserkreislauf, 3 Sublimieren von Trockeneis und Resublimieren bei Reif, 4 Stoffzustände vor und nach dem Abkühlen von Wachs aus Beobachtungen bestimmen. Keine Aufgabe wiederholt dieselbe Lückenkombination. Ausgangszustand → Endzustand deutlich zeigen. Je 2–5 Lücken.",
+    "count": 4,
+    "points": 10,
+    "allowedTypes": [
+      "visual"
+    ],
+    "allowedVisualFormats": [
+      "table"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "materials": [],
+    "materialMode": "inspiration"
+  },
+  "status": "ready",
+  "startedAt": "2026-11-09T21:39:55.360Z",
+  "jobId": "21b5317cd7c6ef44ec005b5c83f2794952f60781",
+  "stage": "ready",
+  "errorReference": null,
+  "errorDetails": null,
+  "usage": {
+    "total_tokens": 54197,
+    "providerRequests": [
+      {
+        "responseId": "resp_0d92f8070897668b016af23dadd7d087d2ae32e1108631f79b",
+        "requestId": "req_c44edebf81ec47c380d30e87fecdf32c",
+        "model": "gpt-5.6-luna",
+        "durationMs": 31732,
+        "phase": "testify_test_v2"
+      },
+      {
+        "responseId": "resp_0faffbf850699421016af23dcda04487d299c8ad1c84a57a9e",
+        "requestId": "req_b1b079b51ec24903a42c01c119de111b",
+        "model": "gpt-5.6-luna",
+        "durationMs": 10251,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_0f44ae29fef2cca1016af23dcd9f1087d2ac9780df29d02463",
+        "requestId": "req_afeef3f56eea495598c193d68122c7e0",
+        "model": "gpt-5.6-luna",
+        "durationMs": 4468,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_0f40c18465d3c2c8016af23dd7e03c87d2bf8abbfbe0389c32",
+        "requestId": "req_713d479073c547af93c0fa9924edf035",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9685,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0dae1d4dbfc646be016af23de191a487d2bf08a23a72f2edc4",
+        "requestId": "req_87b3142f8ea949ea9bc4fe0ec2dd393c",
+        "model": "gpt-5.6-luna",
+        "durationMs": 17301,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_05e4344c9f9c8e3d016af23df2eb2c87d2903266bdb67c10c2",
+        "requestId": "req_0cff74d496384b6995b19d2550b42891",
+        "model": "gpt-5.6-luna",
+        "durationMs": 5796,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_0aa3fcf919a71536016af23df2e1f087d2b196129f567acc75",
+        "requestId": "req_bdc71692cbaf4de780e3c84e7ef847f9",
+        "model": "gpt-5.6-luna",
+        "durationMs": 2666,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_09e9a56c130b098c016af23df8aff487d2ad0ab9733bcceec1",
+        "requestId": "req_89f7787edc7848168d0399b8ffc21320",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9383,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0efd85cdaa57b767016af23e020f2c87d287b00777d19709dd",
+        "requestId": "req_3722a8cf5d824387aca216337e54e2d9",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9917,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0fbbff65a4c3538b016af23e0bfcf087d2a9c4b0e1f89b91ea",
+        "requestId": "req_c41009329484467f92e9657aa6b8bd2f",
+        "model": "gpt-5.6-luna",
+        "durationMs": 2275,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_0e208b5cc694daa5016af23e0c047c87d280614c74353e79f3",
+        "requestId": "req_fdb0f31a1b304b0d8badec7056ec2753",
+        "model": "gpt-5.6-luna",
+        "durationMs": 2661,
+        "phase": "testify_recipe_blind_solution_v1"
+      }
+    ],
+    "output_tokens": 12275,
+    "input_tokens": 41922
+  },
+  "completedAt": "2026-11-09T21:41:35.563Z",
+  "quizId": "9K4GSP3L",
+  "count": 4,
+  "pointSum": 10,
+  "layouts": [
+    "table",
+    "table",
+    "table",
+    "table"
+  ]
+}
