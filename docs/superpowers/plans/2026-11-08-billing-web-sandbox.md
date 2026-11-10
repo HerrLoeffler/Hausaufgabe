@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task within the existing authorization. Steps use checkbox (`- [ ]`) syntax for tracking. Derselbe Fachchat führt aus; keine Unteragenten, kein neuer Chat. Dieses Dokument erteilt keine Echtgeld-, Konto-, Key-, Vertrags- oder Productionfreigabe.
 
+> **Aktuelle Produktvorgabe vom 10.11.2026.** Der [Konto- und Zugangsplan](../../billing/2026-11-10-konto-und-zugangsplan.md) ersetzt in diesem älteren Plan den Vorschlag von drei durch fünf Startereinheiten und den Nur-Lesen-Zustand für bestehende Free-Tests durch Bearbeitungszugriff. A1 erwartet einmalig fünf statt zehn Einheiten. A2 erwartet nach einer erfolgreichen neuen Speicherung vier verbleibende Einheiten. Löschen ändert den Verbrauch nicht. Die UI-Abnahme mit höchstens einem synthetischen Test und die 72-Stunden-Testnachfrist gelten fort. Schulzahlung und Adminzugang werden in separaten Paketen des neuen Plans abgenommen.
+
 **Goal:** Im vorhandenen GradeCrew-Web einen persönlichen Testzugang von Anmeldung über echte Stripe-Testzahlung bis zu Ablauf und Nur-Lesen nachweisen; zuerst einen prüfbaren kleinen Plan und eine ehrlich ausgewiesene Testseitenvorbereitung liefern.
 
 **Architecture:** Aktueller ausgelieferter Webrahmen, Firebase Auth und bestehender Editor bleiben die Oberfläche. Ein separater Billing-Sandbox-Codebereich verarbeitet ausschließlich Stripe-Testobjekte und schreibt serverseitig Berechtigungen und Kontingente. Ein eigener Hosting-Vorschaukanal nutzt ausschließlich das Testprojekt; dessen gemeinsam genutzte Dienste benötigen zusätzlich echte Zugriffsgrenzen.
