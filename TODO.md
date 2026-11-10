@@ -838,3 +838,4 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 - [ ] Lehrkraftsichtung und Einordnung der Smileys. Besonders auf Formatwahl, sichtbare Pfeile und tatsächlich offene Felder achten.
 - [x] Zweite, getrennte Runde mit zwölf Referenzen aus elf Fächern veröffentlicht und technisch geprüft. Alle 23 bisherigen Bewertungen erhalten. [Runde-2-Nachweis](https://github.com/HerrLoeffler/Hausaufgabe/blob/e125f993064b7348a3d4c08b2cd7e0a6bb3be411/docs/evidence/remy-mehrfeld30-20261109/ROUND_TWO.md).
 - [ ] Geeignete Muster nach Lehrkraftsichtung in die freie KI-Erstellung übernehmen und separat prüfen.
+- [x] Runde 2: Browser-Auswertung repariert. Alle zwölf Fälle durch Firebase-Aufruf geprüft, echte Dropdown-Probe 1/1, alle zwölf Lehrkrafturteile erhalten. [Nachweis](https://github.com/HerrLoeffler/Hausaufgabe/blob/ad8d57389623abe6d2802ea8301f44fb22a4c125/docs/evidence/remy-mehrfeld30-20261109/ROUND_TWO.md).

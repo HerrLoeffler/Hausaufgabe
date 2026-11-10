@@ -4239,6 +4239,7 @@
       },
       "mehrfeld30_pilot_20261109": {
         "round_two_20261109": {
+          "scoring_fix_20261110": {"scope":"isolated_staging_hosting_only","source":"009952ec6776274b75967fc8326049cd0e500c72","browser_cases":12,"ratings_preserved":12,"report":"https://github.com/HerrLoeffler/Hausaufgabe/blob/ad8d57389623abe6d2802ea8301f44fb22a4c125/docs/evidence/remy-mehrfeld30-20261109/ROUND_TWO.md"},
           "stage": "staging_deployed",
           "scope": "isolated_preview_only",
           "source": "5a8a383a756677c8e9bec5fe1ce389fef9e32f0c",
