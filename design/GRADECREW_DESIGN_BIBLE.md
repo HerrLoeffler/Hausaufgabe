@@ -26,6 +26,12 @@ Leitprinzip: **Ruhe → Fokus → Persönlichkeit → Feedback.**
 14. Modals sparsam; Inline-Bearbeitung, Sidepanel, Dropdown oder Toast bevorzugen, wenn sie den Kontext erhalten.
 15. Bestehende funktionierende Prüfungs-, Security-, Upload-, PDF/Bild-, Tutorial- und Bewertungslogik darf durch visuelle Arbeit nicht stillschweigend verändert werden.
 
+### Layout-Abnahme
+
+- Felder, Texte und Aktionen folgen gemeinsamen Kanten und einem klaren Raster. Gleichrangige Buttons haben dieselbe Höhe und dort, wo sie eine Reihe bilden, dieselbe Breite. Abstände innerhalb einer Gruppe und zwischen Gruppen sind jeweils konsistent.
+- Am Handy ordnen sich Gruppen in klare Reihen oder Spalten um. Lange Beschriftungen dürfen umbrechen, alle Aktionen bleiben sichtbar oder erreichbar. Die Hauptaktion bleibt erkennbar. Destruktive Aktionen bekommen einen bewusst abgesetzten Platz im selben Raster.
+- Vor der Übergabe im Browser mit realistischen Inhalten auf schmalem Handy, Tablet und Desktop prüfen. Dazu gehören lange Texte, geöffnete Menüs und Dialoge, Tastaturfokus und Meldungen im laufenden Ablauf. Auffällige Kanten, ungleiche Buttonreihen oder abgeschnittene Inhalte vor der Vorschau korrigieren.
+
 ## 3. Visuelle Hierarchie
 
 ### Ebene A – Arbeitsfläche
