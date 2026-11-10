@@ -172,6 +172,11 @@ function stopDictation() {
   updateMicState(target, false);
 }
 
+function finishDictation(target) {
+  stopDictation();
+  setDictationStatus(target, "Diktat beendet.");
+}
+
 function appendDictatedText(input, transcript) {
   const separator = input.value && !/\s$/.test(input.value) ? " " : "";
   const addition = separator + transcript;
@@ -245,6 +250,7 @@ function startRecognitionCycle() {
     if (recognition !== active || dictationTarget !== target) return;
     recognition = null;
     if (!targetActive()) return stopDictation();
+    if (!keepListening) return finishDictation(target);
     restartTimer = window.setTimeout(startRecognitionCycle, 180);
   });
 
@@ -258,12 +264,18 @@ function startRecognitionCycle() {
 
 function toggleDictation(target) {
   if (!target.input || !target.button || target.input.disabled) return;
-  const sameField = dictationTarget?.input === target.input;
-  if (keepListening) stopDictation();
-  if (sameField) {
-    setDictationStatus(target, "Diktat beendet.");
+  if (dictationTarget?.input === target.input) {
+    if (!keepListening) return;
+    if (!target.dialog || !recognition) return finishDictation(target);
+    keepListening = false;
+    window.clearTimeout(stopTimer);
+    stopTimer = window.setTimeout(() => finishDictation(target), 3000);
+    setDictationStatus(target, "Diktat wird abgeschlossen …");
+    try { recognition.stop(); }
+    catch (_) { finishDictation(target); }
     return;
   }
+  if (dictationTarget) stopDictation();
   if (!speechConstructor()) {
     if (target.dialog) return offerKeyboardDictation(target);
     setDictationStatus(target, "Diktieren wird von diesem Browser nicht unterstützt.", "error");

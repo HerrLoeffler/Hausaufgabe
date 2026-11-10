@@ -122,3 +122,15 @@ for (const local of [false, true]) {
     assert.equal(mic.getAttribute("aria-pressed"), "false");
   });
 }
+
+test("explicit microphone stop keeps the final phrase and does not restart", t => {
+  const { attempts, input, mic, status } = dictationFixture(t, false);
+  mic.click();
+  mic.click();
+  attempts[0].emit("result", { resultIndex: 0, results: [Object.assign([{ transcript: "letzter Satz" }], { isFinal: true })] });
+  attempts[0].emit("end");
+  assert.equal(input.value, "Mein Hinweis letzter Satz");
+  assert.equal(attempts.length, 1);
+  assert.equal(status.textContent, "Diktat beendet.");
+  assert.equal(mic.getAttribute("aria-pressed"), "false");
+});
