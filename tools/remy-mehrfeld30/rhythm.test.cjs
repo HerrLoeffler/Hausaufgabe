@@ -44,3 +44,14 @@ test('odd WAV data length is padded without changing the sample count',()=>{
   assert.equal(wav.readUInt32LE(4),wav.length-8);
   assert.equal(wav.at(-1),0);
 });
+test('the feedback-adjusted tone is softer in pitch with the same timing and expected rest',()=>{
+  const q=buildRhythm({...rhythmExamples[2],bpm:60});
+  const {audioBase64,cues}=makeAudio(q);
+  const wave=Buffer.from(audioBase64,'base64');
+  const start=44+Math.round(4.15*8000),end=start+800;
+  let cycles=0;
+  for(let i=start+1;i<end;i++)if(wave[i-1]<128&&wave[i]>=128)cycles++;
+  assert.ok(cycles>=25&&cycles<=28, String(cycles));
+  assert.deepEqual(cues,[{id:'g0',at:5},{id:'g1',at:6.5}]);
+  assert.deepEqual(q.solution,{g0:'r2',g1:'n1'});
+});

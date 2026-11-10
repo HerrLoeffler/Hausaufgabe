@@ -7,6 +7,8 @@ const {publicRecipe,scoreRecipe}=require('./recipe-three.cjs');
 
 const {publicRhythm,scoreRhythm}=require('./rhythm.cjs');
 
+const {publicPitch,scorePitch}=require('./pitch.cjs');
+
 const reasons=new Set(['','format','fachlich','auftrag','loesung','bewertung','anderes']);
 const digest=data=>createHash('sha256').update(JSON.stringify(data)).digest('hex');
 const quizCode=/^[A-Z0-9]{8}$/;
@@ -23,6 +25,7 @@ function ownsSeedJob(job,entry){
 }
 function present(quizId,group,q){
   const points=Number(q.points);
+  if(q.type==='pitch')return {quizId,group,id:q.id,type:q.type,text:q.text,points,heading:q.heading,subject:q.subject,pitch:publicPitch(q),options:[],version:digest([quizId,q])};
   if(q.type==='rhythm')return {quizId,group,id:q.id,type:q.type,text:q.text,points,heading:q.heading,subject:q.subject,rhythm:publicRhythm(q),options:[],version:digest([quizId,q])};
   if(q.type==='recipe')return {quizId,group,id:q.id,type:q.type,text:q.text,points,heading:q.heading,subject:q.subject,recipe:publicRecipe(q),options:[],version:digest([quizId,q])};
   if(q.type==='diagram')return {quizId,group,id:q.id,type:q.type,text:q.text,points,heading:q.heading,subject:q.subject,shape:q.shape,diagram:projectDiagram(q),options:[],version:digest([quizId,q])};
@@ -41,6 +44,7 @@ function feedback(task,data){
   return {version:task.version,verdict:data.verdict,reason:data.reason??'',comment:(data.comment??'').trim()};
 }
 function score(q,answer){
+  if(q.type==='pitch')return scorePitch(q,answer);
   if(q.type==='rhythm')return scoreRhythm(q,answer);
   if(q.type==='recipe')return scoreRecipe(q,answer);
   if(q.type==='diagram')return scoreDiagram(q,answer);

@@ -52,20 +52,20 @@ function makeAudio(q){
   function tone(start,length,freq,gain,click=false){
     const offset=Math.round(start*rate),size=Math.min(Math.round(length*rate),samples-offset);
     for(let i=0;i<size;i++){
-      const t=i/rate,env=click?Math.exp(-5*i/size):Math.min(1,i/40,(size-i)/95);
-      const v=Math.sin(2*Math.PI*freq*t)+(click?0:.15*Math.sin(4*Math.PI*freq*t));
+      const t=i/rate,env=click?Math.exp(-5*i/size):Math.min(1,i/40,(size-i)/95)*(.73+.27*Math.exp(-5*t));
+      const v=Math.sin(2*Math.PI*freq*t)+(click?0:.24*Math.sin(4*Math.PI*freq*t)+.07*Math.sin(6*Math.PI*freq*t));
       const at=44+offset+i;
       wave[at]=Math.max(0,Math.min(255,Math.round(wave[at]+gain*v*env)));
     }
   }
-  for(let i=0;i<meter;i++)tone(i*beat,.045,i?1250:1650,37,true);
-  if(pulse)for(let i=0;i<meter;i++)tone((meter+i)*beat,.035,i?1250:1650,15,true);
+  for(let i=0;i<meter;i++)tone(i*beat,.045,i?490:620,34,true);
+  if(pulse)for(let i=0;i<meter;i++)tone((meter+i)*beat,.035,i?490:620,14,true);
   let used=0;
   const cues=[];
   for(const [i,event] of events.entries()){
     const at=meter*beat+used*eighth;
     if(gapIds[i])cues.push({id:gapIds[i],at});
-    if(event[0]==='n')tone(at,ticks(event)*eighth*.88,520,69);
+    if(event[0]==='n')tone(at,ticks(event)*eighth*.88,261.63,69);
     used+=ticks(event);
   }
   return {audioBase64:wave.toString('base64'),cues,duration:samples/rate};
