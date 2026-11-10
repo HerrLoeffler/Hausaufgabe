@@ -842,4 +842,5 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 - [x] Runde 3 auf der isolierten Testseite: klare Quellenzuordnung, grafisches Labyrinth und einsetzbare Noten. Drei echte freie Wünsche und ihre Bewertung bestätigt. [Nachweis](https://github.com/HerrLoeffler/Hausaufgabe/blob/43a6ffe4b2fa05ee12f4626316af71bf2addef50/docs/evidence/remy-mehrfeld30-20261109/RECIPES_THREE.md).
 - [ ] Lehrkraftsichtung und nächstes Rezept auswählen. Ideen: Rhythmus nach Gehör, fairer Versuch, Entscheidungsbaum, Karte/Zeit, Quellenkritik und Kräfte.
 - [x] Runde 4 im isolierten Labor: Rhythmus hören, Noten/Pausen einsetzen und drei Hilfestufen. Zwei echte freie Wünsche, WAV und Punkte bestätigt. [Nachweis](https://github.com/HerrLoeffler/Hausaufgabe/blob/67f44501caa1591072038f4343501b9f8d991e65/docs/evidence/remy-mehrfeld30-20261109/RHYTHM.md).
-- [ ] Tonhöhen auf Linien und in Zwischenräumen einsetzen, zum Beispiel G und A im Violinschlüssel. Eigener Rezeptentwurf.
+- [x] Tonhöhen setzen im isolierten Labor: G/A, ganze Tonfolge und zwei echte freie Wünsche geprüft. Rhythmusklang nach Feedback weicher, Bewertung erhalten. [Nachweis](https://github.com/HerrLoeffler/Hausaufgabe/blob/2c3dbb37989f11ebda8968a71fbe8d6989311593/docs/evidence/remy-mehrfeld30-20261109/PITCH.md).
+- [ ] Lehrkraftsichtung der Tonhöhen und des weicheren Rhythmusklangs.
