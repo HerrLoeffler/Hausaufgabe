@@ -33,6 +33,24 @@ test('remove cancellation does not submit; optional reason and green rating work
  assert.equal(dialog.querySelector('.aiQualityReason').value,'');dialog.querySelector('.aiQualityRemove').click();await new Promise(r=>setImmediate(r));assert.equal(calls,0);assert.equal(w.state.questions.length,1);
  assert.equal(await w.submitAiQuestionFeedback(q,0,{verdict:'good',action:'keep'}),true);assert.equal(calls,1);assert.equal(q._aiFeedbackVerdict,'good');dom.window.close();
 });
+test('feedback offers five optional reasons and preserves the grouped media context', async () => {
+  const {dom,w,q,card}=fixture();
+  let payload;
+  w.questionFeedback.submit=async data=>{payload=data;return {confirmed:true};};
+  w.openQuestionFeedbackDialog(card.querySelector('.aiFeedbackBad'),q,0);
+  const dialog=w.document.querySelector('dialog.aiQualityPanel[open]');
+  const reason=dialog.querySelector('.aiQualityReason');
+  assert.deepEqual(Array.from(reason.options, option=>option.value), ['', 'content_wrong', 'incorrect', 'unclear', 'media_language', 'other']);
+  assert.equal(dialog.querySelector('details'),null);
+  reason.value='media_language';
+  dialog.querySelector('.aiQualityComment').value='Audio fehlt';
+  dialog.querySelector('.aiQualityReport').click();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(payload.reason,'other');
+  assert.equal(payload.teacherComment,'Bild, Audio oder Sprache: Audio fehlt');
+  assert.equal(w.state.questions.length,1);
+  dom.window.close();
+});
 test('a dialog never moves the previous account’s technical reports into the active account',()=>{
  const {dom,w,q,card}=fixture();
  let migrations=0;

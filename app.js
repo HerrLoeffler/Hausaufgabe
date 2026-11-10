@@ -4533,14 +4533,19 @@ function createQuestionActionDialog(trigger, q, index, { title, kind, actionSele
 function openQuestionFeedbackDialog(trigger, q, index) {
   const live = state.currentQuiz?.published && !state.currentQuiz?.ended;
   const canReplace = !live && !state.currentQuiz?.tutorialVersion;
-  const reasons = Object.entries(AI_QUALITY_REASONS).map(([key, label]) => `<option value="${escapeHtml(key)}">${escapeHtml(label)}</option>`).join("");
   const actionDialog = createQuestionActionDialog(trigger, q, index, {
     title: "Rückmeldung zur Aufgabe", kind: "aiQualityPanel", actionSelector: ".aiFeedbackBad",
-    fields: `<label>Grund <span class="optionalLabel">optional</span><select class="aiQualityReason" autofocus><option value="">Ohne Grund</option>${reasons}<option value="missing_audio">Höraufgabe fehlt</option><option value="wrong_language">Falsche Sprache</option></select></label>
+    fields: `<label>Grund <span class="optionalLabel">optional</span><select class="aiQualityReason" autofocus>
+      <option value="">Ohne Grund</option>
+      <option value="content_wrong">Fachlich falsch</option>
+      <option value="incorrect">Lösung oder Bewertung falsch</option>
+      <option value="unclear">Unklar formuliert</option>
+      <option value="media_language">Bild, Audio oder Sprache</option>
+      <option value="other">Anderer Grund</option>
+    </select></label>
       <label>Kurzer Hinweis <span class="optionalLabel">optional</span><textarea class="aiQualityComment" rows="2" maxlength="500" placeholder="Was ist falsch oder unklar?"></textarea></label>
-      <details class="questionActionPrivacy"><summary>Was wird gespeichert?</summary><p class="hint">Die Rückmeldung wird mit einem begrenzten Aufgabenausschnitt gespeichert. Ohne Schülerantworten. Deine Bewertung beeinflusst die nächste passende Erstellung; gemeinsame Nutzung nach fachlicher Prüfung.</p></details>
-      <div class="actions questionActionButtons"><button class="button ghost aiQualityCancel questionActionCancel" type="button">Abbrechen</button><button class="button secondary aiQualityReport" type="button">Nur melden</button>${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}</div>
-      ${live ? "" : '<div class="questionActionDanger"><button class="button danger aiQualityRemove" type="button">Rückmeldung speichern &amp; entfernen</button><small>Entfernt die Aufgabe aus diesem Entwurf.</small></div>'}`
+      <div class="actions questionActionButtons${canReplace ? " questionActionButtonsThree" : ""}"><button class="button ghost aiQualityCancel questionActionCancel" type="button">Abbrechen</button><button class="button secondary aiQualityReport" type="button">Nur melden</button>${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}</div>
+      ${live ? "" : '<div class="questionActionDanger"><button class="button danger aiQualityRemove" type="button">Rückmeldung speichern &amp; entfernen</button></div>'}`
   });
   if (!actionDialog) return;
   const { dialog, run, show } = actionDialog;
@@ -4548,7 +4553,7 @@ function openQuestionFeedbackDialog(trigger, q, index) {
     dialog.querySelector(selector)?.addEventListener("click", () => {
       if (action === "remove" && !confirm("Rückmeldung speichern und diese Aufgabe aus dem Entwurf entfernen?")) return;
       const selection = dialog.querySelector(".aiQualityReason").value;
-      const preset = { missing_audio: "Höraufgabe fehlt", wrong_language: "Falsche Sprache" }[selection];
+      const preset = selection === "media_language" ? "Bild, Audio oder Sprache" : "";
       const comment = dialog.querySelector(".aiQualityComment").value;
       void run("Rückmeldung wird gespeichert …", ({ question, index: position }) => submitAiQuestionFeedback(question, position, {
         verdict: "bad", reason: preset ? "other" : selection, comment: preset ? `${preset}${comment ? ": " + comment : ""}` : comment, action
