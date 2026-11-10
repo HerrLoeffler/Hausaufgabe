@@ -193,24 +193,36 @@ dialog.shareDialog.questionActionDialog {
 .questionActionDialog .questionActionButtonsThree {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-.questionActionDialog .questionActionButtons .button,
-.questionActionDialog .questionActionDanger .button {
+.questionActionDialog .questionActionButtonsSingle {
+  grid-template-columns: minmax(0, 1fr);
+}
+.questionActionDialog .questionActionButtons .button {
   width: 100%;
   min-width: 0;
   white-space: normal;
 }
-.questionActionDanger {
-  border-top: 1px solid var(--line, #dde1e6);
-  padding-top: 12px;
+.questionActionText { display: grid; gap: 6px; }
+.questionActionInputRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px;
 }
+.questionActionDialog .questionActionMic {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 8px;
+  font-size: 1.125rem;
+}
+.questionActionMic.listening { color: #a53528; border-color: #e25b5b; }
+.questionActionMicStatus { color: var(--muted); }
 .questionActionStatus { margin: 0; }
 .questionActionErrors:empty { display: none; }
 .questionActionErrors .reportableErrorCard { max-width: 100%; }
 @media (max-width: 460px) {
-  .questionActionDialog .questionActionButtonsThree {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .questionActionDialog.aiQualityPanel .questionActionButtons {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .questionActionButtonsThree .aiQualityReplace { grid-column: 1 / -1; }
 }
 
 .variantRequestDialog::backdrop { background: rgb(15 23 42 / 42%); backdrop-filter: blur(3px); }

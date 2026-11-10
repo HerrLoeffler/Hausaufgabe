@@ -7,6 +7,7 @@ let restartTimer = null;
 let stopTimer = null;
 let dictationBase = "";
 let dictationFinal = "";
+let dictationTarget = null;
 
 const $ = selector => document.querySelector(selector);
 
@@ -127,21 +128,34 @@ function setBusy(next) {
   if (input) input.disabled = busy;
   $("#emmiWholeTestMic")?.toggleAttribute("disabled", busy);
   document.querySelectorAll(".emmiWholeTestChip").forEach(button => { button.disabled = busy; });
-  if (busy) stopDictation();
+  if (busy && !dictationTarget?.dialog) stopDictation();
 }
 
 function speechConstructor() {
   return window.SpeechRecognition || window.webkitSpeechRecognition || null;
 }
 
-function updateMicState() {
-  const button = $("#emmiWholeTestMic");
-  button?.classList.toggle("listening", keepListening);
-  if (button) button.textContent = keepListening ? "●" : "🎙";
+function updateMicState(target, listening) {
+  const button = target?.button;
+  if (!button) return;
+  button.classList.toggle("listening", listening);
+  button.textContent = listening ? "●" : "🎙";
+  button.setAttribute("aria-pressed", String(listening));
+  button.setAttribute("aria-label", listening ? "Diktat beenden" : target.label);
+}
+
+function setDictationStatus(target, message, type) {
+  if (!target.dialog) return setStatus(message, type);
+  if (!target.dialog.open) return;
+  const status = target.dialog.querySelector(".questionActionMicStatus");
+  status.textContent = message;
+  status.hidden = !message;
 }
 
 function stopDictation() {
+  const target = dictationTarget;
   keepListening = false;
+  dictationTarget = null;
   window.clearTimeout(restartTimer);
   window.clearTimeout(stopTimer);
   restartTimer = null;
@@ -149,77 +163,119 @@ function stopDictation() {
   const active = recognition;
   recognition = null;
   try { active?.stop(); } catch (_) {}
-  updateMicState();
+  updateMicState(target, false);
+}
+
+function appendDictatedText(input, transcript) {
+  const separator = input.value && !/\s$/.test(input.value) ? " " : "";
+  const addition = separator + transcript;
+  const remaining = input.maxLength < 0 ? addition.length : Math.max(0, input.maxLength - input.value.length);
+  input.value += addition.slice(0, remaining).trimEnd();
+  input.dispatchEvent(new Event("input", { bubbles: true }));
 }
 
 function startRecognitionCycle() {
-  if (!keepListening || recognition) return;
+  const target = dictationTarget;
+  if (!keepListening || recognition || !target) return;
+  const targetActive = () => target.input.isConnected && !target.input.disabled && (!target.dialog || target.dialog.open);
+  if (!targetActive()) return stopDictation();
   const SpeechRecognition = speechConstructor();
   if (!SpeechRecognition) {
     stopDictation();
-    setStatus("Diktieren wird von diesem Browser nicht unterstützt.", "error");
+    setDictationStatus(target, "Diktieren wird von diesem Browser nicht unterstützt.", "error");
     return;
   }
 
   const active = new SpeechRecognition();
   recognition = active;
-  active.lang = "de-DE";
-  active.interimResults = true;
+  active.lang = target.dialog && document.documentElement.lang.startsWith("en") ? "en-GB" : "de-DE";
+  active.interimResults = !target.dialog;
   active.continuous = true;
   active.maxAlternatives = 1;
 
   active.addEventListener("result", event => {
+    if (recognition !== active || dictationTarget !== target || !targetActive()) return;
     let interim = "";
+    const final = [];
     for (let index = event.resultIndex; index < event.results.length; index += 1) {
       const transcript = String(event.results[index][0]?.transcript || "").trim();
       if (!transcript) continue;
-      if (event.results[index].isFinal) dictationFinal = `${dictationFinal} ${transcript}`.trim();
+      if (event.results[index].isFinal) final.push(transcript);
       else interim = `${interim} ${transcript}`.trim();
     }
-    const input = $("#emmiWholeTestInstruction");
-    if (input) {
-      input.value = [dictationBase, dictationFinal, interim].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
-      input.dispatchEvent(new Event("input", { bubbles: true }));
+    if (target.dialog) {
+      if (final.length) appendDictatedText(target.input, final.join(" "));
+      return;
     }
+    if (final.length) dictationFinal = [dictationFinal, ...final].filter(Boolean).join(" ");
+    target.input.value = [dictationBase, dictationFinal, interim].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+    target.input.dispatchEvent(new Event("input", { bubbles: true }));
   });
 
   active.addEventListener("error", event => {
-    if (["not-allowed", "service-not-allowed", "audio-capture"].includes(event.error)) {
-      keepListening = false;
-      setStatus("Ich bekomme gerade keinen Mikrofonzugriff.", "error");
-    }
+    if (recognition !== active || dictationTarget !== target) return;
+    const messages = {
+      "not-allowed": "Mikrofonzugriff blockiert. Prüfe die Browserberechtigung.",
+      "service-not-allowed": "Mikrofonzugriff blockiert. Prüfe die Browserberechtigung.",
+      "audio-capture": "Das Mikrofon ist gerade nicht verfügbar.",
+      network: "Die Spracherkennung hat keine Verbindung. Dein Text bleibt erhalten.",
+      "no-speech": "Ich habe nichts verstanden. Du kannst es erneut versuchen."
+    };
+    stopDictation();
+    setDictationStatus(target, messages[event.error] || "Diktat beendet. Dein Text bleibt erhalten.", "error");
   });
 
   active.addEventListener("end", () => {
-    if (recognition === active) recognition = null;
-    if (!keepListening) return updateMicState();
+    if (recognition !== active || dictationTarget !== target) return;
+    recognition = null;
+    if (!targetActive()) return stopDictation();
     restartTimer = window.setTimeout(startRecognitionCycle, 180);
   });
 
   try { active.start(); }
   catch (_) {
-    recognition = null;
-    if (keepListening) restartTimer = window.setTimeout(startRecognitionCycle, 300);
+    stopDictation();
+    setDictationStatus(target, "Das Diktat konnte nicht gestartet werden. Bitte versuche es erneut.", "error");
   }
 }
 
-function toggleDictation() {
-  if (keepListening) return stopDictation();
-  if (!speechConstructor()) {
-    setStatus("Diktieren wird von diesem Browser nicht unterstützt.", "error");
+function toggleDictation(target) {
+  if (!target.input || !target.button || target.input.disabled) return;
+  const sameField = dictationTarget?.input === target.input;
+  if (keepListening) stopDictation();
+  if (sameField) {
+    setDictationStatus(target, "Diktat beendet.");
     return;
   }
-  const input = $("#emmiWholeTestInstruction");
-  dictationBase = String(input?.value || "").trim();
+  if (!speechConstructor()) {
+    setDictationStatus(target, "Diktieren wird von diesem Browser nicht unterstützt.", "error");
+    return;
+  }
+  dictationTarget = target;
+  dictationBase = target.input.value.trim();
   dictationFinal = "";
   keepListening = true;
-  updateMicState();
-  setStatus("Ich höre zu …");
+  updateMicState(target, true);
+  setDictationStatus(target, "Ich höre zu …");
   startRecognitionCycle();
-  stopTimer = window.setTimeout(() => {
+  if (dictationTarget === target) stopTimer = window.setTimeout(() => {
     stopDictation();
-    if ($("#emmiWholeTestInstruction")?.value.trim()) setStatus("Diktat übernommen.");
+    setDictationStatus(target, "Diktat beendet.");
   }, 60000);
+}
+
+function handleQuestionDictationClick(event) {
+  const button = event.target.closest?.(".questionActionMic");
+  const dialog = button?.closest("dialog.questionActionDialog[open]");
+  if (!dialog) return;
+  toggleDictation({
+    dialog, button, input: button.closest(".questionActionInputRow")?.querySelector("textarea"),
+    label: dialog.classList.contains("aiQualityPanel") ? "Hinweis diktieren" : "Änderungswunsch diktieren"
+  });
+}
+
+function stopQuestionDictation(event) {
+  if (dictationTarget?.dialog === event.target) stopDictation();
 }
 
 function submitRevision(input) {
@@ -249,7 +305,8 @@ function bindPanel(panel) {
     input.focus();
   }));
   panel.querySelector("#emmiWholeTestRun")?.addEventListener("click", () => submitRevision(input));
-  panel.querySelector("#emmiWholeTestMic")?.addEventListener("click", toggleDictation);
+  const mic = panel.querySelector("#emmiWholeTestMic");
+  mic?.addEventListener("click", () => toggleDictation({ input, button: mic, label: "Wunsch diktieren" }));
   input?.addEventListener("keydown", event => {
     if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
       event.preventDefault();
@@ -304,6 +361,9 @@ function start() {
   syncVisibility();
   const editor = $("#editorView");
   if (editor) new MutationObserver(syncVisibility).observe(editor, { attributes: true, attributeFilter: ["class"] });
+  document.addEventListener("click", handleQuestionDictationClick);
+  document.addEventListener("close", stopQuestionDictation, true);
+  document.addEventListener("gradecrew:question-dictation-stop", stopQuestionDictation);
   document.addEventListener("gradecrew:emmi-whole-test-result", handleResult);
   document.addEventListener("gradecrew:emmi-whole-test-error", handleError);
   document.addEventListener("gradecrew:emmi-whole-test-undone", handleUndone);

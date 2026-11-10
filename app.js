@@ -4510,11 +4510,12 @@ function createQuestionActionDialog(trigger, q, index, { title, kind, actionSele
     const current = currentQuestion();
     if (!current) return showStatus("Die Aufgabe wurde inzwischen geändert. Bitte öffne das Fenster erneut.");
     pendingQuestionActions.add(key);
+    dialog.dispatchEvent(new Event("gradecrew:question-dictation-stop", { bubbles: true }));
     const enabled = [...form.querySelectorAll("button:not(.questionActionClose, .questionActionCancel), textarea, select")].filter(control => !control.disabled);
     enabled.forEach(control => { control.disabled = true; });
     const cancelButton = form.querySelector(".questionActionCancel");
-    const cancelLabel = cancelButton.textContent;
-    cancelButton.textContent = "Schließen";
+    const cancelLabel = cancelButton?.textContent;
+    if (cancelButton) cancelButton.textContent = "Schließen";
     showStatus(message ? `${message} Der Vorgang läuft weiter, wenn du das Fenster schließt.` : "");
     try {
       const result = await onAction(current);
@@ -4522,12 +4523,20 @@ function createQuestionActionDialog(trigger, q, index, { title, kind, actionSele
       else if (dialog.open) showStatus(failure);
     } finally {
       pendingQuestionActions.delete(key);
-      cancelButton.textContent = cancelLabel;
+      if (cancelButton) cancelButton.textContent = cancelLabel;
       enabled.forEach(control => { control.disabled = false; });
     }
   };
   const show = () => { document.body.append(dialog); dialog.showModal(); };
   return { dialog, form, show, run, showStatus };
+}
+
+function questionActionTextField({ id, label, textarea, micLabel }) {
+  return `<div class="questionActionText">
+    <label for="${id}">${label}</label>
+    <div class="questionActionInputRow">${textarea}<button type="button" class="button secondary questionActionMic" aria-label="${micLabel}" aria-pressed="false" title="Diktieren">🎙</button></div>
+    <small class="questionActionMicStatus" role="status" hidden></small>
+  </div>`;
 }
 
 function openQuestionFeedbackDialog(trigger, q, index) {
@@ -4543,9 +4552,16 @@ function openQuestionFeedbackDialog(trigger, q, index) {
       <option value="media_language">Bild, Audio oder Sprache</option>
       <option value="other">Anderer Grund</option>
     </select></label>
-      <label>Kurzer Hinweis <span class="optionalLabel">optional</span><textarea class="aiQualityComment" rows="2" maxlength="500" placeholder="Was ist falsch oder unklar?"></textarea></label>
-      <div class="actions questionActionButtons${canReplace ? " questionActionButtonsThree" : ""}"><button class="button ghost aiQualityCancel questionActionCancel" type="button">Abbrechen</button><button class="button secondary aiQualityReport" type="button">Nur melden</button>${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}</div>
-      ${live ? "" : '<div class="questionActionDanger"><button class="button danger aiQualityRemove" type="button">Rückmeldung speichern &amp; entfernen</button></div>'}`
+      ${questionActionTextField({
+        id: "questionActionComment", label: 'Kurzer Hinweis <span class="optionalLabel">optional</span>',
+        textarea: '<textarea id="questionActionComment" class="aiQualityComment" rows="2" maxlength="500" placeholder="Was ist falsch oder unklar?"></textarea>',
+        micLabel: "Hinweis diktieren"
+      })}
+      <div class="actions questionActionButtons${live ? " questionActionButtonsSingle" : canReplace ? " questionActionButtonsThree" : ""}">
+        <button class="button secondary aiQualityReport" type="button">Nur melden</button>
+        ${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}
+        ${live ? "" : '<button class="button danger aiQualityRemove" type="button">Rückmeldung speichern &amp; entfernen</button>'}
+      </div>`
   });
   if (!actionDialog) return;
   const { dialog, run, show } = actionDialog;
@@ -4607,7 +4623,11 @@ async function createSimilarTest() {
 function openQuestionRevisionDialog(trigger, q, index) {
   const actionDialog = createQuestionActionDialog(trigger, q, index, {
     title: "Aufgabe überarbeiten", kind: "questionAiPanel", actionSelector: ".aiEditQuestion",
-    fields: `<label>Was soll anders werden?<textarea rows="2" autofocus placeholder="z. B. andere Zahlen oder kürzere Sätze"></textarea></label>
+    fields: `${questionActionTextField({
+      id: "questionActionInstruction", label: "Was soll anders werden?",
+      textarea: '<textarea id="questionActionInstruction" rows="2" autofocus placeholder="z. B. andere Zahlen oder kürzere Sätze"></textarea>',
+      micLabel: "Änderungswunsch diktieren"
+    })}
       <div class="questionAiChips" aria-label="Schnellvorschläge"></div>
       <div class="actions questionActionButtons"><button type="button" class="button ghost aiCancel questionActionCancel">Abbrechen</button><button type="submit" class="button primary aiApply">Überarbeitung erstellen</button></div>`
   });

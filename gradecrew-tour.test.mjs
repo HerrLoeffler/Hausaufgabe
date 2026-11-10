@@ -217,7 +217,7 @@ for (const finishAction of ['create', 'settings', 'guest', 'publish-abort']) tes
     setupStudentProgress: () => {}, startTimedStudentQuiz: () => {}, refreshStudentProgress: () => {}
   });
   w.eval(['generateAiTestNative', 'renderVariantProgress', 'createQuestionVariants', 'applyPendingVariants',
-    'handleVariantRequest', 'handleVariantKept', 'submitTutorialQuestionFeedback', 'submitAiQuestionFeedback', 'closeQuestionActionDialogs', 'createQuestionActionDialog', 'openQuestionFeedbackDialog', 'sanitizeQuestionForSave', 'studentOptionEntries', 'shuffled',
+    'handleVariantRequest', 'handleVariantKept', 'submitTutorialQuestionFeedback', 'submitAiQuestionFeedback', 'closeQuestionActionDialogs', 'createQuestionActionDialog', 'questionActionTextField', 'openQuestionFeedbackDialog', 'sanitizeQuestionForSave', 'studentOptionEntries', 'shuffled',
     'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'getQuestionAudioSrc', 'questionAnswerAudioEntries', 'questionHasAudioAnswerEntries', 'questionAnswerAudioReady', 'questionStudentAudioReady', 'audioOperations', 'makeDragItem', 'makeAudioDragItem', 'renderStudentQuiz'].map(fn).join('\n'));
   w.document.addEventListener('gradecrew:variant-request', w.handleVariantRequest);
   w.document.addEventListener('gradecrew:variant-kept', w.handleVariantKept);

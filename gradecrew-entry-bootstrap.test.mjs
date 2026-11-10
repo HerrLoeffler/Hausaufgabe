@@ -218,7 +218,7 @@ test('app bootstrap binds its real auth controls after public entry installation
     assert.equal(w.document.querySelectorAll('#questionList .questionCard').length, 1);
     assert.equal(w.document.querySelector('#questionList .qText').value, 'Dog?');
     assert.equal(forbiddenCalls, 0, 'opening either dialog performs no provider operation');
-    reportDialog.querySelector('.aiQualityCancel').click();
+    reportDialog.querySelector('.questionActionClose').click();
     assert.equal(w.document.activeElement, reportTrigger);
     editTrigger.click();
     const editPanel = w.document.querySelector('dialog.questionAiPanel[open]');
@@ -244,7 +244,7 @@ test('app bootstrap binds its real auth controls after public entry installation
     const faultyDialog = w.document.querySelector('dialog.aiQualityPanel[open][data-question-id="tutorial-9"]');
     assert.ok(faultyDialog, 'feedback is bound to the selected task');
     assert.equal(faultyDialog.querySelector('.aiQualityReplace'), null, 'the tutorial must not offer a replacement it cannot create');
-    faultyDialog.querySelector('.aiQualityCancel').click();
+    faultyDialog.querySelector('.questionActionClose').click();
     w.document.getElementById('publishBtn').click();
     await new Promise(resolve => setImmediate(resolve));
     assert.ok(w.document.querySelector('dialog.publishReview'));
