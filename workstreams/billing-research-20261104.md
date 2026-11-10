@@ -150,3 +150,9 @@ Martin fragt nach der steuerlichen Abgrenzung von kostenlosen Kolleg:innen-Zugä
 ### Bestätigung und erneute Sandbox-Freigabe
 
 Martin bestätigt kostenlose Premium-Freigaben für Kolleg:innen und spätere Rabattcodes über Stripe. Sein Stripe-Freigabedialog zeigt die dedizierte Umgebung **GradeCrew sandbox**. Die Codex-Anmeldung wurde erneut gestartet. Der erste Schritt ist ein Lesezugriff ausschließlich auf diese Sandbox. Sobald die Rückmeldung ankommt, Verbindung und Umgebung prüfen und den offiziellen Stripe-Planer aufrufen. Allgemeiner Testmodus und Live-Konto sind nicht Teil der Freigabe.
+
+### Sandbox-Verbindung und Stripe-Planer bestätigt
+
+Die zuvor vorbereitete Freigabe lief vor der Rückmeldung ab. Eine neue Freigabe mit längerer Frist wurde in Chrome als ausschließlich **GradeCrew sandbox · Read** vorbereitet und von Martin bestätigt. Codex erhielt die Erfolgsrückmeldung. Stripe listet danach genau ein autorisiertes Konto, **GradeCrew sandbox**, `livemode=false`. Der offizielle Stripe-Planer wurde in diesem Kontext mit GradeCrew, Payments/Billing/Invoicing, PayPal-Abo und deutscher SEPA-Schulrechnung aufgerufen. Neun passende Entscheidungen zurückgegeben, Anbieterstatus `accepted`. Zwei Baupläne für Abo-Checkout und Kundenportal. Die Invoicing-Empfehlung stammt aus dem Entscheidungsbaum. Die Stripe-Tax-Entscheidung bleibt mangels bestätigter Live-Steuerdaten offen. [Ergebnis und Anpassungen für GradeCrew](../docs/billing/2026-11-09-stripe-sandbox-und-finanzbetrieb.md#bestätigter-stripe-plan-für-gradecrew).
+
+Nächster technischer Schritt ist die Umsetzung und Abnahme des isolierten Testwegs nach A0, mit serverseitigem Testtarif, geprüfter Käuferbindung und Testrechnung. Diese Verbindung gibt Codex Lesezugriff und verbindet kein GradeCrew-Backend. Keine Testzahlung, Stripe-Schreibaktion, neue API-Schlüssel oder Änderung der Release-Stufe.
