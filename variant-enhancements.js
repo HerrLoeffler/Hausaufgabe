@@ -117,9 +117,11 @@ function openRequestDialog(button) {
     return;
   }
 
-  document.querySelector("dialog.variantRequestDialog")?.remove();
+  const questionDialogs = "dialog.questionActionDialog[open], dialog.variantRequestDialog[open], dialog.questionVariantDialog[open]";
+  document.querySelectorAll(questionDialogs).forEach(openDialog => closeDialog(openDialog));
   const dialog = document.createElement("dialog");
   dialog.className = "shareDialog variantRequestDialog";
+  dialog.dataset.questionId = meta.id;
   dialog.setAttribute("aria-labelledby", "variantRequestTitle");
   dialog.innerHTML = `
     <form class="stack compact">
@@ -142,7 +144,13 @@ function openRequestDialog(button) {
     event.preventDefault();
     cancel();
   });
-  dialog.addEventListener("close", () => dialog.remove());
+  dialog.addEventListener("close", () => {
+    dialog.remove();
+    if (!document.querySelector(questionDialogs)) {
+      const target = button.isConnected ? button : cardById(meta.id)?.querySelector(".aiVariantQuestion");
+      target?.focus({ preventScroll: true });
+    }
+  });
   dialog.querySelector("form")?.addEventListener("submit", event => {
     event.preventDefault();
     const form = event.currentTarget;

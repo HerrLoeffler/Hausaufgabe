@@ -70,7 +70,7 @@ export function polishAiEditLabels(root = document) {
     button.textContent = english ? "✨ Improve" : "✨ Überarbeiten";
     button.title = english ? "Improve question" : "Aufgabe überarbeiten";
   });
-  root.querySelectorAll?.(".questionAiPanel > strong").forEach(label => {
+  root.querySelectorAll?.(".questionAiPanel > strong, .questionAiPanel .questionActionTitle").forEach(label => {
     label.textContent = english ? "✨ Improve question" : "✨ Aufgabe überarbeiten";
   });
   root.querySelectorAll?.(".questionAiPanel .aiApply").forEach(button => {

@@ -170,6 +170,61 @@ body:has(#studentView:not(.hidden)) .rightsFooter { display: none; }
 /* Native dialogs stay in the viewport, including when the mobile keyboard opens. */
 dialog.shareDialog { position: fixed; inset: 0; margin: auto; max-height: calc(100dvh - 32px); overflow: auto; overscroll-behavior: contain; }
 dialog.shareDialog.gradecrewVariantDialog, dialog.shareDialog.variantRequestDialog { width: min(520px, calc(100vw - 32px)); padding: 24px; }
+dialog.shareDialog.questionActionDialog {
+  width: min(520px, calc(100vw - 28px));
+  max-height: calc(100dvh - 28px);
+  margin: auto;
+  padding: clamp(16px, 4vw, 24px);
+  overflow: auto;
+  border: 0;
+  background: var(--surface, #fff);
+}
+.questionActionDialog .variantRequestHead { margin-bottom: 0; }
+.questionActionDialog label { margin: 0; }
+.questionActionDialog textarea { width: 100%; min-height: 64px; resize: vertical; }
+.questionActionDialog .questionAiChips { margin: 0; }
+.questionActionDialog .questionActionButtons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 8px;
+  margin: 0;
+}
+.questionActionDialog .questionActionButtonsThree {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.questionActionDialog .questionActionButtonsSingle {
+  grid-template-columns: minmax(0, 1fr);
+}
+.questionActionDialog .questionActionButtons .button {
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+.questionActionText { display: grid; gap: 6px; }
+.questionActionInputRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px;
+}
+.questionActionDialog .questionActionMic {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 8px;
+  font-size: 1.125rem;
+}
+.questionActionMic.listening { color: #a53528; border-color: #e25b5b; }
+.questionActionMicStatus { color: var(--muted); }
+.questionActionStatus { margin: 0; }
+.questionActionErrors:empty { display: none; }
+.questionActionErrors .reportableErrorCard { max-width: 100%; }
+@media (max-width: 460px) {
+  .questionActionDialog.aiQualityPanel .questionActionButtons {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .variantRequestDialog::backdrop { background: rgb(15 23 42 / 42%); backdrop-filter: blur(3px); }
 .variantRequestHead { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 8px; }
 .variantRequestHead > div { min-width: 0; padding-right: 40px; }

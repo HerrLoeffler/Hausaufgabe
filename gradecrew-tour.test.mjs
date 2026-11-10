@@ -175,7 +175,7 @@ for (const finishAction of ['create', 'settings', 'guest', 'publish-abort']) tes
       };
       if (q.aiOrigin) {
         card.querySelector('.aiFeedbackGood').onclick = () => w.submitAiQuestionFeedback(q, index, { verdict:'good' });
-        card.querySelector('.aiFeedbackBad').onclick = () => w.toggleAiQualityPanel(card, q, index);
+        card.querySelector('.aiFeedbackBad').onclick = event => w.openQuestionFeedbackDialog(event.currentTarget, q, index);
       }
       host.append(card);
       const button = w.document.createElement('button'); button.className = 'questionOutlineItem'; button.dataset.position = String(index + 1); outline.append(button);
@@ -198,7 +198,9 @@ for (const finishAction of ['create', 'settings', 'guest', 'publish-abort']) tes
   const tour = w.install(api);
   const noProvider = async () => { providers++; throw new Error('Tutorial reached a provider'); };
   Object.assign(w, {
-    state, crewTour: tour, confirm: () => true, $: el, db: {}, collection: (...args) => args, doc: () => ({ id: `new-${++nextId}` }),
+    state, crewTour: tour, confirm: () => true, $: el, db: {},
+    questionActionDialogs: 'dialog.questionActionDialog[open], dialog.variantRequestDialog[open]', pendingQuestionActions: new Set(),
+    questionReviewKey: q => JSON.stringify(q), collection: (...args) => args, doc: () => ({ id: `new-${++nextId}` }),
     questionForAi: q => ({ ...q }), questionContext: () => ({ existingQuestions: [] }),
     // The import layer deliberately strips auxiliary metadata, as production does.
     normalizeImportedQuestion: q => ({ type: q.type, text: q.text, points: q.points, options: q.options }),
@@ -215,7 +217,7 @@ for (const finishAction of ['create', 'settings', 'guest', 'publish-abort']) tes
     setupStudentProgress: () => {}, startTimedStudentQuiz: () => {}, refreshStudentProgress: () => {}
   });
   w.eval(['generateAiTestNative', 'renderVariantProgress', 'createQuestionVariants', 'applyPendingVariants',
-    'handleVariantRequest', 'handleVariantKept', 'submitTutorialQuestionFeedback', 'submitAiQuestionFeedback', 'toggleAiQualityPanel', 'sanitizeQuestionForSave', 'studentOptionEntries', 'shuffled',
+    'handleVariantRequest', 'handleVariantKept', 'submitTutorialQuestionFeedback', 'submitAiQuestionFeedback', 'closeQuestionActionDialogs', 'createQuestionActionDialog', 'questionActionTextField', 'openQuestionFeedbackDialog', 'sanitizeQuestionForSave', 'studentOptionEntries', 'shuffled',
     'renderGapfillStudent', 'renderOrderingStudent', 'renderMarkwordsStudent', 'tokenizeWords', 'getQuestionImageSrc', 'getQuestionAudioSrc', 'questionAnswerAudioEntries', 'questionHasAudioAnswerEntries', 'questionAnswerAudioReady', 'questionStudentAudioReady', 'audioOperations', 'makeDragItem', 'makeAudioDragItem', 'renderStudentQuiz'].map(fn).join('\n'));
   w.document.addEventListener('gradecrew:variant-request', w.handleVariantRequest);
   w.document.addEventListener('gradecrew:variant-kept', w.handleVariantKept);

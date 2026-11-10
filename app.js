@@ -607,6 +607,7 @@ async function finishTeacherTour() {
 function showView(id) {
   diagnostics.record("view", { view: id });
   if (id === "editorView") void refreshQuestionFeedbackNotice();
+  else closeQuestionActionDialogs();
   if (id === "authView") document.dispatchEvent(new Event("gradecrew:signed-out"));
   if (id !== "publishView") clearPublishSubscriptions();
   if (id !== "studentView") clearStudentSubscriptions();
@@ -678,8 +679,8 @@ function ensureReportableErrorHost() {
   return host;
 }
 
-function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message = "Etwas hat nicht funktioniert.", error = null, action = "unknown", details = {} } = {}) {
-  const host = ensureReportableErrorHost();
+function showReportableError({ code = REPORTABLE_ERROR_CODES.unexpected, message = "Etwas hat nicht funktioniert.", error = null, action = "unknown", details = {}, reportHost = null } = {}) {
+  const host = reportHost?.isConnected ? reportHost : ensureReportableErrorHost();
   const rawMessage = redactTechnicalText(error?.message || error || "", 1800);
   const providerCode = String(error?.code || error?.status || "").slice(0, 160);
   const stack = redactTechnicalText(error?.stack || "", 7000);
@@ -1311,6 +1312,7 @@ onAuthStateChanged(auth, async (user) => {
     $("variantBackgroundProgress")?.replaceChildren();
   }
   state.user = user;
+  if (accountChanged) closeQuestionActionDialogs();
   state.profile = null;
   if (user) {
     try {
@@ -1444,7 +1446,7 @@ function exitGuestTour() {
   studentConfirmationPending.clear();
   studentSubmissionBusy.clear();
   completedStudentSubmissions.clear();
-  document.querySelectorAll('dialog.variantRequestDialog').forEach(dialog => dialog.remove());
+  closeQuestionActionDialogs();
   for (const id of ['studentQuizCard', 'resultsTableWrap', 'reviewPanel', 'questionList', 'questionOutline', 'publishedCode', 'qrcode', 'teacherLivePanel', 'variantBackgroundProgress', 'similarTestProgress', 'importReviewBanner']) {
     $(id)?.replaceChildren();
   }
@@ -4246,8 +4248,8 @@ function renderQuestions({ onlyQuestionId = null } = {}) {
       q.points = Math.max(0.5, round1(Number(e.target.value) || 1));      e.target.value = q.points;
       updateSummary();
     });
-    node.querySelector(".aiEditQuestion")?.addEventListener("click", () => toggleQuestionAiPanel(node, q, index));
-    node.querySelector(".aiVariantQuestion")?.addEventListener("click", () => openQuestionVariantDialog(q, index));
+    node.querySelector(".aiEditQuestion")?.addEventListener("click", event => openQuestionRevisionDialog(event.currentTarget, q, index));
+    node.querySelector(".aiVariantQuestion")?.addEventListener("click", event => openQuestionVariantDialog(q, index, event.currentTarget));
     const canRate = Boolean(state.user || guestTourRepo);
     node.querySelector(".aiFeedbackGood")?.classList.toggle("hidden", !canRate);
     node.querySelector(".aiFeedbackBad")?.classList.toggle("hidden", !canRate);
@@ -4262,7 +4264,7 @@ function renderQuestions({ onlyQuestionId = null } = {}) {
       try {await submitAiQuestionFeedback(q, index, {verdict: "good", action: "keep"});}
       finally {button.disabled = false;}
     });
-    node.querySelector(".aiFeedbackBad")?.addEventListener("click", () => toggleAiQualityPanel(node, q, index));
+    node.querySelector(".aiFeedbackBad")?.addEventListener("click", event => openQuestionFeedbackDialog(event.currentTarget, q, index));
 
     const imageEditor = document.createElement("div");
     imageEditor.className = "questionImageEditor";
@@ -4445,31 +4447,136 @@ async function submitAiQuestionFeedback(q, index, { verdict, reason = "", commen
   }
 }
 
-function toggleAiQualityPanel(node, q, index) {
-  const current = node.querySelector(".aiQualityPanel");
-  if (current) { current.remove(); return; }
-  const panel = document.createElement("div");
-  panel.className = "aiQualityPanel";
+const questionActionDialogs = "dialog.questionActionDialog[open], dialog.variantRequestDialog[open], dialog.questionVariantDialog[open]";
+const pendingQuestionActions = new Set();
+
+function closeQuestionActionDialogs() {
+  document.querySelectorAll(questionActionDialogs).forEach(dialog => dialog.close());
+}
+
+function createQuestionActionDialog(trigger, q, index, { title, kind, actionSelector, fields }) {
+  const quizId = state.currentQuiz?.id;
+  const uid = tourUid();
+  const questionId = q.id;
+  const key = JSON.stringify([uid, quizId, questionId]);
+  if (pendingQuestionActions.has(key)) {
+    toast("Für diese Aufgabe läuft bereits eine Aktion.");
+    return null;
+  }
+
+  closeQuestionActionDialogs();
+  const dialog = document.createElement("dialog");
+  dialog.className = `shareDialog questionActionDialog ${kind}`;
+  dialog.dataset.questionId = questionId;
+  dialog.setAttribute("aria-labelledby", "questionActionTitle");
+  dialog.setAttribute("aria-describedby", "questionActionTarget");
+  dialog.innerHTML = `<form class="stack compact">
+    <div class="variantRequestHead"><div><h2 id="questionActionTitle" class="questionActionTitle">${title}</h2><span id="questionActionTarget">Aufgabe ${index + 1}</span></div>
+      <button type="button" class="variantRequestClose questionActionClose" aria-label="Schließen">×</button>
+    </div>
+    ${fields}
+    <p class="questionActionStatus" role="status" hidden></p>
+    <div class="questionActionErrors" aria-live="assertive"></div>
+  </form>`;
+  const form = dialog.querySelector("form");
+  const reviewKey = questionReviewKey(q);
+  const sameEditor = () => state.currentQuiz?.id === quizId && tourUid() === uid && !$("editorView").classList.contains("hidden");
+  const showStatus = message => {
+    const status = dialog.querySelector(".questionActionStatus");
+    status.textContent = message;
+    status.hidden = !message;
+  };
+  const currentQuestion = () => {
+    if (!sameEditor()) return null;
+    const position = state.questions.findIndex(item => item.id === questionId);
+    if (position < 0 || questionReviewKey(state.questions[position]) !== reviewKey) return null;
+    return { question: state.questions[position], index: position };
+  };
+
+  form.addEventListener("submit", event => event.preventDefault());
+  dialog.querySelectorAll(".questionActionClose, .questionActionCancel").forEach(button => button.addEventListener("click", () => dialog.close()));
+  dialog.addEventListener("cancel", event => { event.preventDefault(); dialog.close(); });
+  dialog.addEventListener("close", () => {
+    const errors = dialog.querySelector(".questionActionErrors");
+    if (tourUid() === uid && errors.childElementCount) ensureReportableErrorHost().prepend(...errors.children);
+    dialog.remove();
+    if (!sameEditor() || document.querySelector(questionActionDialogs)) return;
+    const card = $("questionList").querySelector(`.questionCard[data-id="${CSS.escape(questionId)}"]`);
+    const button = trigger.isConnected ? trigger : card?.querySelector(actionSelector);
+    button?.focus({ preventScroll: true });
+  });
+  const run = async (message, onAction, failure) => {
+    if (pendingQuestionActions.has(key)) return;
+    const current = currentQuestion();
+    if (!current) return showStatus("Die Aufgabe wurde inzwischen geändert. Bitte öffne das Fenster erneut.");
+    pendingQuestionActions.add(key);
+    dialog.dispatchEvent(new Event("gradecrew:question-dictation-stop", { bubbles: true }));
+    const enabled = [...form.querySelectorAll("button:not(.questionActionClose, .questionActionCancel), textarea, select")].filter(control => !control.disabled);
+    enabled.forEach(control => { control.disabled = true; });
+    const cancelButton = form.querySelector(".questionActionCancel");
+    const cancelLabel = cancelButton?.textContent;
+    if (cancelButton) cancelButton.textContent = "Schließen";
+    showStatus(message ? `${message} Der Vorgang läuft weiter, wenn du das Fenster schließt.` : "");
+    try {
+      const result = await onAction(current);
+      if (result && dialog.open) dialog.close();
+      else if (dialog.open) showStatus(failure);
+    } finally {
+      pendingQuestionActions.delete(key);
+      if (cancelButton) cancelButton.textContent = cancelLabel;
+      enabled.forEach(control => { control.disabled = false; });
+    }
+  };
+  const show = () => { document.body.append(dialog); dialog.showModal(); };
+  return { dialog, form, show, run, showStatus };
+}
+
+function questionActionTextField({ id, label, textarea, micLabel }) {
+  return `<div class="questionActionText">
+    <label for="${id}">${label}</label>
+    <div class="questionActionInputRow">${textarea}<button type="button" class="button secondary questionActionMic" aria-label="${micLabel}" aria-pressed="false" title="Diktieren">🎙</button></div>
+    <small class="questionActionMicStatus" role="status" hidden></small>
+  </div>`;
+}
+
+function openQuestionFeedbackDialog(trigger, q, index) {
   const live = state.currentQuiz?.published && !state.currentQuiz?.ended;
   const canReplace = !live && !state.currentQuiz?.tutorialVersion;
-  panel.innerHTML = `<strong>☹ / 🗑 Rückmeldung zur Aufgabe</strong><p class="hint">Die Rückmeldung wird mit einem begrenzten Aufgabenausschnitt gespeichert. Ohne Schülerantworten. Deine Bewertung beeinflusst die nächste passende Erstellung; gemeinsame Nutzung nach fachlicher Prüfung. Entfernen gilt zunächst für diesen Entwurf.</p><label>Grund (freiwillig)<select class="aiQualityReason"><option value="">Ohne Grund / überspringen</option>${Object.entries(AI_QUALITY_REASONS).map(([key,label])=>`<option value="${escapeHtml(key)}">${escapeHtml(label)}</option>`).join("")}<option value="missing_audio">Höraufgabe fehlt</option><option value="wrong_language">Falsche Sprache</option></select></label><label>Kurzer Hinweis (freiwillig)<textarea class="aiQualityComment" maxlength="500" placeholder="Was genau ist falsch oder unklar?"></textarea></label><div class="aiQualityActions"><button class="button secondary aiQualityReport" type="button">Nur melden</button>${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}${live ? "" : '<button class="button danger aiQualityRemove" type="button">Rückmeldung speichern &amp; entfernen</button>'}<button class="button ghost aiQualityCancel" type="button">Abbrechen</button></div>`;
-  panel.querySelector(".aiQualityCancel").addEventListener("click", () => panel.remove());
+  const actionDialog = createQuestionActionDialog(trigger, q, index, {
+    title: "Rückmeldung zur Aufgabe", kind: "aiQualityPanel", actionSelector: ".aiFeedbackBad",
+    fields: `<label>Grund <span class="optionalLabel">optional</span><select class="aiQualityReason" autofocus>
+      <option value="">Ohne Grund</option>
+      <option value="content_wrong">Fachlich falsch</option>
+      <option value="incorrect">Lösung oder Bewertung falsch</option>
+      <option value="unclear">Unklar formuliert</option>
+      <option value="media_language">Bild, Audio oder Sprache</option>
+      <option value="other">Anderer Grund</option>
+    </select></label>
+      ${questionActionTextField({
+        id: "questionActionComment", label: 'Kurzer Hinweis <span class="optionalLabel">optional</span>',
+        textarea: '<textarea id="questionActionComment" class="aiQualityComment" rows="2" maxlength="500" placeholder="Was ist falsch oder unklar?"></textarea>',
+        micLabel: "Hinweis diktieren"
+      })}
+      <div class="actions questionActionButtons${live ? " questionActionButtonsSingle" : canReplace ? " questionActionButtonsThree" : ""}">
+        <button class="button secondary aiQualityReport" type="button">Nur melden</button>
+        ${canReplace ? '<button class="button primary aiQualityReplace" type="button">Melden &amp; neu erstellen</button>' : ""}
+        ${live ? "" : '<button class="button danger aiQualityRemove" type="button">Rückmeldung speichern &amp; entfernen</button>'}
+      </div>`
+  });
+  if (!actionDialog) return;
+  const { dialog, run, show } = actionDialog;
   for (const [selector, action] of [[".aiQualityReport", "keep"], [".aiQualityReplace", "replace"], [".aiQualityRemove", "remove"]]) {
-    panel.querySelector(selector)?.addEventListener("click", async () => {
+    dialog.querySelector(selector)?.addEventListener("click", () => {
       if (action === "remove" && !confirm("Rückmeldung speichern und diese Aufgabe aus dem Entwurf entfernen?")) return;
-      const buttons = panel.querySelectorAll("button");
-      buttons.forEach(button => { button.disabled = true; });
-      try {
-        const selection = panel.querySelector(".aiQualityReason").value;
-        const preset = { missing_audio: "Höraufgabe fehlt", wrong_language: "Falsche Sprache" }[selection];
-        const comment = panel.querySelector(".aiQualityComment").value;
-        const saved = await submitAiQuestionFeedback(q, index, { verdict: "bad", reason: preset ? "other" : selection, comment: preset ? `${preset}${comment ? ": " + comment : ""}` : comment, action });
-        if (saved) panel.remove();
-      } finally { buttons.forEach(button => { button.disabled = false; }); }
+      const selection = dialog.querySelector(".aiQualityReason").value;
+      const preset = selection === "media_language" ? "Bild, Audio oder Sprache" : "";
+      const comment = dialog.querySelector(".aiQualityComment").value;
+      void run("Rückmeldung wird gespeichert …", ({ question, index: position }) => submitAiQuestionFeedback(question, position, {
+        verdict: "bad", reason: preset ? "other" : selection, comment: preset ? `${preset}${comment ? ": " + comment : ""}` : comment, action
+      }), "Rückmeldung oder Änderung noch nicht bestätigt. Prüfe den Hinweis im Editor oder versuche es erneut.");
     });
   }
-  node.querySelector(".questionGrid").after(panel);
-  panel.querySelector(".aiQualityReason").focus();
+  show();
 }
 
 async function refreshQuestionFeedbackNotice() {
@@ -4513,18 +4620,43 @@ async function createSimilarTest() {
   await startAiCreationJob(request, { similar: true, sourceQuiz: state.currentQuiz });
 }
 
-function toggleQuestionAiPanel(node, q, index) {
-  let panel = node.querySelector(".questionAiPanel");
-  if (panel) { panel.remove(); return; }
-  panel = document.createElement("div"); panel.className = "questionAiPanel";
-  panel.innerHTML = `<strong>✨ Aufgabe mit KI bearbeiten</strong><textarea placeholder="Was soll anders werden? z. B. schwieriger, längere Sätze, andere Zahlen, weniger offensichtliche Antworten …"></textarea><div class="questionAiChips"></div><div class="questionAiActions"><button type="button" class="button primary aiApply">Änderung erstellen</button><button type="button" class="button secondary aiCancel">Abbrechen</button></div>`;
-  const chips = ["Einfacher", "Schwieriger", "Kürzer", "Anderes Beispiel", "Neue Zahlen", "Antwortoptionen verbessern"];
-  const input = panel.querySelector("textarea");
-  chips.forEach(label => { const b = makeMiniButton(label, () => { input.value = label; input.focus(); }); panel.querySelector(".questionAiChips").appendChild(b); });
-  if (q._aiUndo) { const undo = makeMiniButton("↶ Letzte KI-Änderung rückgängig", () => { const old = deepClone(q._aiUndo); old._aiUndo = null; state.questions[index] = old; renderQuestions(); markDirty(); }); panel.querySelector(".questionAiChips").appendChild(undo); }
-  panel.querySelector(".aiCancel").addEventListener("click", () => panel.remove());
-  panel.querySelector(".aiApply").addEventListener("click", () => regenerateQuestionWithAi(q, index, { instruction: input.value.trim(), panel }));
-  node.querySelector(".questionGrid").after(panel); input.focus();
+function openQuestionRevisionDialog(trigger, q, index) {
+  const actionDialog = createQuestionActionDialog(trigger, q, index, {
+    title: "Aufgabe überarbeiten", kind: "questionAiPanel", actionSelector: ".aiEditQuestion",
+    fields: `${questionActionTextField({
+      id: "questionActionInstruction", label: "Was soll anders werden?",
+      textarea: '<textarea id="questionActionInstruction" rows="2" autofocus placeholder="z. B. andere Zahlen oder kürzere Sätze"></textarea>',
+      micLabel: "Änderungswunsch diktieren"
+    })}
+      <div class="questionAiChips" aria-label="Schnellvorschläge"></div>
+      <div class="actions questionActionButtons"><button type="button" class="button ghost aiCancel questionActionCancel">Abbrechen</button><button type="submit" class="button primary aiApply">Überarbeitung erstellen</button></div>`
+  });
+  if (!actionDialog) return;
+  const { dialog, form, run, show, showStatus } = actionDialog;
+  const input = dialog.querySelector("textarea");
+  const chips = dialog.querySelector(".questionAiChips");
+  for (const label of ["Einfacher", "Schwieriger", "Kürzer", "Anderes Beispiel", "Neue Zahlen", "Antwortoptionen verbessern"]) {
+    chips.append(makeMiniButton(label, () => { input.value = label; input.focus(); }));
+  }
+  if (q._aiUndo) chips.append(makeMiniButton("↶ Letzte KI-Änderung rückgängig", () => {
+    void run("", ({ question, index: position }) => {
+      if (!question._aiUndo) return false;
+      const previous = deepClone(question._aiUndo);
+      previous._aiUndo = null;
+      state.questions[position] = previous;
+      renderQuestions();
+      markDirty();
+      return true;
+    }, "Die frühere Fassung ist nicht mehr verfügbar.");
+  }));
+  form.addEventListener("submit", () => {
+    const instruction = input.value.trim();
+    if (!instruction) { showStatus("Bitte beschreibe kurz, was anders werden soll."); input.focus(); return; }
+    void run("Emmi überarbeitet die Aufgabe …", ({ question, index: position }) => regenerateQuestionWithAi(question, position, {
+      instruction, panel: dialog
+    }), "Die Überarbeitung wurde nicht übernommen. Du kannst den Wunsch ändern oder es erneut versuchen.");
+  });
+  show();
   if (typeof crewTour !== "undefined") crewTour?.notify("edit-opened", {quizId: state.currentQuiz?.id});
 }
 
@@ -4532,12 +4664,13 @@ function defaultVariantMediaKind(q) {
   return getQuestionImageSrc(q) ? "ai_generated" : "none";
 }
 
-function openQuestionVariantDialog(q, index) {
+function openQuestionVariantDialog(q, index, trigger) {
   if (state.newManualQuiz) return toast("Bitte den Test zuerst speichern. Danach kannst du Varianten hinzufügen.");
   if (state.aiVariantsRunning || state.variantTask?.questions?.length) return toast("Bitte die laufenden Varianten abwarten oder die fertigen Varianten übernehmen.");
   const available = Math.min(5, 100 - state.questions.length);
   if (available < 1) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
   const dialog = document.createElement("dialog");
+  closeQuestionActionDialogs();
   dialog.className = "shareDialog questionVariantDialog";
   dialog.setAttribute("aria-label", "Varianten hinzufügen");
   dialog.innerHTML = `<form class="stack compact"><h2>Varianten hinzufügen</h2>
@@ -4550,7 +4683,10 @@ function openQuestionVariantDialog(q, index) {
   const form = dialog.querySelector("form");
   form.elements.mediaKind.value = defaultVariantMediaKind(q);
   dialog.querySelector(".variantCancel").addEventListener("click", () => dialog.close());
-  dialog.addEventListener("close", () => dialog.remove());
+  dialog.addEventListener("close", () => {
+    dialog.remove();
+    if (!document.querySelector(questionActionDialogs) && trigger?.isConnected) trigger.focus({ preventScroll: true });
+  });
   form.addEventListener("submit", event => {
     event.preventDefault();
     if (state.aiVariantsRunning) return;
@@ -4730,7 +4866,9 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
   if (q.imageChoicesOnly || q.options?.some(option => option.imageDataUrl)) return toast("Aufgaben mit bestehenden Bildantworten bitte manuell bearbeiten. Die KI erzeugt keine neuen Bildantworten.", "error");
   const target = { quizId: state.currentQuiz?.id, uid: tourUid(), questionId: q.id, reviewKey: questionReviewKey(q) };
   if (editorQuestionIndex(state, target) < 0) return;
-  const old = deepClone(q); delete old._typeChanging; const card = panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
+  const old = deepClone(q); delete old._typeChanging;
+  const card = panel?.matches("dialog") ? null : panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
+  if (card?.classList.contains("questionAiBusy")) return;
   card?.classList.add("questionAiBusy");
   try {
     const response = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(target.quizId)) ? crewTour.preparedResponse(q, {variant}) : await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, targetType, testContext: questionContext(index), allowedTypes: targetType ? [targetType] : QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: false, materials: [] });
@@ -4757,6 +4895,7 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
     if (typeof crewTour !== "undefined") crewTour?.notify("edited", {quizId: target.quizId});
     return next;
   } catch (err) {
+    if (tourUid() !== target.uid || state.currentQuiz?.id !== target.quizId) return;
     console.error(err);
     const friendly = aiFriendlyError(err, variant ? "Variante konnte nicht erstellt werden." : "Aufgabe konnte nicht überarbeitet werden.");
     showReportableError({
@@ -4764,6 +4903,7 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
       message: friendly,
       error: err,
       action: variant ? "add_ai_variant" : "edit_question_with_ai",
+      reportHost: panel?.querySelector(".questionActionErrors"),
       details: {
         questionPosition: index + 1,
         questionType: String(q?.type || ""),
