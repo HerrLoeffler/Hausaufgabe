@@ -1,0 +1,46 @@
+{
+  "requestId": "bc2fa93c-1602-45c8-94f9-24b88c297861",
+  "wish": "Eine leichte Aufgabe für Klasse 5: Die Kinder setzen G und A einzeln auf die richtige Linie oder in den richtigen Zwischenraum im Violinschlüssel. Bitte mit einem Orientierungshinweis.",
+  "status": "ready",
+  "quizId": "wish3:bc2fa93c-1602-45c8-94f9-24b88c297861",
+  "task": {
+    "quizId": "wish3:bc2fa93c-1602-45c8-94f9-24b88c297861",
+    "group": "eigener",
+    "id": "wish",
+    "type": "pitch",
+    "text": "Setze G und A auf die passende Linie oder in den passenden Zwischenraum. Der Ton über jeder Spalte sagt dir, welche Note dorthin gehört.",
+    "points": 1,
+    "heading": "G und A im Violinschlüssel",
+    "subject": "Musik · Tonhöhen im Violinschlüssel",
+    "pitch": {
+      "notes": [
+        {
+          "id": "p0",
+          "label": "G"
+        },
+        {
+          "id": "p1",
+          "label": "A"
+        }
+      ],
+      "guided": true
+    },
+    "options": [],
+    "version": "1518df425ebd3502dd9a8624c2df38808776db4d48fca5b8934ce6747dc0afd5",
+    "review": null
+  },
+  "verified": {
+    "labels": [
+      "G",
+      "A"
+    ],
+    "positions": [
+      2,
+      3
+    ],
+    "full": 1,
+    "wrongAdjacentPosition": 0.5,
+    "blank": 0,
+    "stableIdReplayed": true
+  }
+}
