@@ -563,6 +563,8 @@ GC-POCOCK-RESEARCH-01 · tatsächlicher Dokumentationsreceipt: [PR194](https://g
 
 ## GC-PEDAGOGY-KB-01 Aufgabenpool-Anbindung
 
+- [ ] **Planungswunsch vom 10.11.2026 · Langtext, Handschrift und Bewertungsraster:** Getippte Aufsätze mit Wilma-Vorschlägen und Lehrkraftfreigabe zuerst, danach private Fotoabgabe und separat geprüfte Abschrift. Übung und formellen Leistungsnachweis getrennt freigeben. [Technische Entscheidungen und Pilot](workstreams/wilma-live-grading-20261028.md#10112026--planungswunsch-langtext-und-handschrift).
+
 **Historischer Wilma-Zwischenstand606d abgelöst:** Backend54f und Frontend694 sind inzwischen veröffentlicht; automatischer Start und Wiederverwendung ohne API wurden angenommen. Die früheren Teilbelege bleiben in der [Versuchshistorie](docs/evidence/wilma-budget-fundus-live-20261029/receipts.json) erhalten.
 
 
