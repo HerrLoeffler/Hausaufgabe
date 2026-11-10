@@ -69,3 +69,56 @@ test('large format context is bounded and accepted by the real server snapshot v
  const {dom,w,q}=fixture();q.groups=Array.from({length:10},()=>({name:'G',items:Array(20).fill('x'.repeat(180))}));q.targetWords=Array(40).fill('x'.repeat(500));q.markGroups=Array.from({length:6},()=>({name:'M',color:'red',words:Array(50).fill('x'.repeat(400)),extra:'must not leave browser'}));
  const clean=w.aiQuestionFeedbackSnapshot(q);assert.ok(JSON.stringify(clean).length<=23000);assert.doesNotThrow(()=>snapshot(JSON.parse(JSON.stringify(clean))));assert.equal(JSON.stringify(clean).includes('must not leave'),false);dom.window.close();
 });
+
+const dictationSource = fs.readFileSync("emmi-whole-test-revision.mjs", "utf8");
+
+function dictationFixture(t, local) {
+  const { dom, w: window, q, card } = fixture();
+  t.after(() => dom.window.close());
+  window.openQuestionFeedbackDialog(card.querySelector(".aiFeedbackBad"), q, 0);
+  const attempts = [];
+  class Recognition extends window.EventTarget {
+    start() { attempts.push(this); }
+    stop() {}
+    emit(type, fields) {
+      this.dispatchEvent(Object.assign(new window.Event(type), fields));
+    }
+  }
+  if (local) Recognition.prototype.processLocally = false;
+  window.SpeechRecognition = Recognition;
+  window.eval(dictationSource);
+  const input = window.document.querySelector(".questionActionDialog textarea");
+  const mic = window.document.querySelector(".questionActionMic");
+  const status = window.document.querySelector(".questionActionMicStatus");
+  input.value = "Mein Hinweis";
+  return { window, attempts, input, mic, status };
+}
+
+test("network failure offers an explicit local retry and preserves existing text", t => {
+  const { attempts, input, mic, status } = dictationFixture(t, true);
+  mic.click();
+  attempts[0].emit("error", { error: "network" });
+  assert.equal(attempts.length, 1);
+  assert.match(status.textContent, /erneut.*lokal/i);
+  mic.click();
+  assert.equal(attempts[1].processLocally, true);
+  attempts[0].emit("result", { resultIndex: 0, results: [Object.assign([{ transcript: "spät" }], { isFinal: true })] });
+  attempts[1].emit("result", { resultIndex: 0, results: [Object.assign([{ transcript: "ergänzt" }], { isFinal: true })] });
+  assert.equal(input.value, "Mein Hinweis ergänzt");
+});
+
+for (const local of [false, true]) {
+  test(`unavailable ${local ? "local language" : "browser speech service"} focuses the text field for keyboard dictation`, t => {
+    const { window, attempts, input, mic, status } = dictationFixture(t, local);
+    mic.click();
+    attempts[0].emit("error", { error: "network" });
+    if (local) {
+      mic.click();
+      attempts[1].emit("error", { error: "language-not-supported" });
+    }
+    assert.match(status.textContent, /Diktierfunktion deiner Tastatur/);
+    assert.equal(window.document.activeElement, input);
+    assert.equal(input.value, "Mein Hinweis");
+    assert.equal(mic.getAttribute("aria-pressed"), "false");
+  });
+}

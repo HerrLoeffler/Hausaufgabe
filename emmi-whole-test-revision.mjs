@@ -8,6 +8,7 @@ let stopTimer = null;
 let dictationBase = "";
 let dictationFinal = "";
 let dictationTarget = null;
+const localDictationFields = new WeakSet();
 
 const $ = selector => document.querySelector(selector);
 
@@ -152,6 +153,11 @@ function setDictationStatus(target, message, type) {
   status.hidden = !message;
 }
 
+function offerKeyboardDictation(target) {
+  setDictationStatus(target, "Browser-Diktat nicht verfügbar. Nutze die Diktierfunktion deiner Tastatur oder tippe weiter.", "error");
+  if (target.dialog.open && !target.input.disabled) target.input.focus();
+}
+
 function stopDictation() {
   const target = dictationTarget;
   keepListening = false;
@@ -188,6 +194,7 @@ function startRecognitionCycle() {
 
   const active = new SpeechRecognition();
   recognition = active;
+  if (localDictationFields.has(target.input)) active.processLocally = true;
   active.lang = target.dialog && document.documentElement.lang.startsWith("en") ? "en-GB" : "de-DE";
   active.interimResults = !target.dialog;
   active.continuous = true;
@@ -214,6 +221,16 @@ function startRecognitionCycle() {
 
   active.addEventListener("error", event => {
     if (recognition !== active || dictationTarget !== target) return;
+    stopDictation();
+    if (target.dialog && targetActive() && (event.error === "network" || event.error === "language-not-supported")) {
+      if (event.error === "network" && "processLocally" in active && !active.processLocally) {
+        localDictationFields.add(target.input);
+        setDictationStatus(target, "Der Diktierdienst ist nicht erreichbar. Tippe erneut aufs Mikrofon, um es lokal zu versuchen.", "error");
+      } else {
+        offerKeyboardDictation(target);
+      }
+      return;
+    }
     const messages = {
       "not-allowed": "Mikrofonzugriff blockiert. Prüfe die Browserberechtigung.",
       "service-not-allowed": "Mikrofonzugriff blockiert. Prüfe die Browserberechtigung.",
@@ -221,7 +238,6 @@ function startRecognitionCycle() {
       network: "Die Spracherkennung hat keine Verbindung. Dein Text bleibt erhalten.",
       "no-speech": "Ich habe nichts verstanden. Du kannst es erneut versuchen."
     };
-    stopDictation();
     setDictationStatus(target, messages[event.error] || "Diktat beendet. Dein Text bleibt erhalten.", "error");
   });
 
@@ -235,6 +251,7 @@ function startRecognitionCycle() {
   try { active.start(); }
   catch (_) {
     stopDictation();
+    if (target.dialog && active.processLocally) return offerKeyboardDictation(target);
     setDictationStatus(target, "Das Diktat konnte nicht gestartet werden. Bitte versuche es erneut.", "error");
   }
 }
@@ -248,6 +265,7 @@ function toggleDictation(target) {
     return;
   }
   if (!speechConstructor()) {
+    if (target.dialog) return offerKeyboardDictation(target);
     setDictationStatus(target, "Diktieren wird von diesem Browser nicht unterstützt.", "error");
     return;
   }
