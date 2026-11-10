@@ -25,7 +25,6 @@ function save(name,data){
 function fields(task){return {quizId:task.quizId,id:task.id,version:task.version};}
 function mountDiagram(host,diagram){
   host.classList.add('flow-preview');
-  answer=Object.create(null);
   const fields=new Map(diagram.fields.map(f=>[f.id,f]));
   const root=document.createElement('div'),branches=document.createElement('div');
   root.className='flow-branch';branches.className='flow-branches';
@@ -54,7 +53,7 @@ function mountDiagram(host,diagram){
           input.type='text';input.maxLength=120;input.autocomplete='off';
           if(def.mode==='number')input.inputMode='decimal';
         }
-        input.addEventListener('input',()=>{answer[def.id]=input.value;});
+        input.dataset.diagramField=def.id;
         label.append(input);line.append(label);
       }else if(Object.hasOwn(step,'arrow')){
         const edge=document.createElement('span'),symbol=document.createElement('span');
@@ -172,12 +171,22 @@ $('feedback').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);voi
 $('scoreButton').onclick=async()=>{
   const task=tasks[index],owner=uid;
   if(!task)return;
+  const submission=task.diagram
+    ?Object.fromEntries([...$('answer').querySelectorAll('[data-diagram-field]')].map(input=>[input.dataset.diagramField,input.value]))
+    :answer;
+  const current=()=>uid===owner&&tasks[index]===task;
+  const output=$('score');
+  output.textContent='Wird ausgewertet …';
   $('scoreButton').disabled=true;
   try{
-    const result=await api({action:'score',...fields(task),answer});
-    if(uid===owner&&tasks[index]===task)$('score').textContent=result.points+' von '+result.maxPoints+' Punkten';
-  }catch(e){if(uid===owner)message(e.message);}
-  finally{$('scoreButton').disabled=false;}
+    const result=await api({action:'score',...fields(task),answer:submission});
+    if(current()){
+      const number=new Intl.NumberFormat('de-DE');
+      output.textContent=number.format(result.points)+' von '+number.format(result.maxPoints)+' Punkten';
+    }
+  }catch{
+    if(current())output.textContent='Die Auswertung war nicht möglich. Bitte erneut versuchen.';
+  }finally{$('scoreButton').disabled=false;}
 };
 $('seed').onclick=()=>load();
 $('roundTwo').onclick=()=>load(ROUND_TWO);

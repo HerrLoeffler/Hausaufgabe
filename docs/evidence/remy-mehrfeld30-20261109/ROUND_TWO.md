@@ -28,3 +28,11 @@ Die neue Runde hat eigene Aufgaben-IDs, Positionsspeicher und Bewertungsfingerab
 [Remy-Aufgabenlabor](https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/), bestehender isolierter Kanal, Quelle 5a8a383. Acht Hostingdateien mit Hash abgeglichen. Nur die bereits getrennte Bewertungsfunktion und der Vorschaukanal wurden aktualisiert. Zwölf lokale Tests grün. Synthetische Serverprobe: beide Stapel mit 30 und 12 Fällen, Schlüssel bleiben serverseitig, Voll-/Teilantwort 1,5 bzw. 0,5 Punkte, neues und altes Urteil erhalten. Im bereits angemeldeten Browser erschienen das Fahrkartenbeispiel, seine zwei Zahlenfelder und das Dropdown. Beim Wechsel zurück zeigte Runde 1 weiterhin 23/30 Bewertungen und Aufgabe 24; anschließend wurde Runde 2 wieder geöffnet.
 
 [Deploybeleg](round-two-deployment.json) · [Serverprobe](round-two-server.json). Noch offen: Lehrkraftfeedback zur zweiten Runde und spätere Übernahme geeigneter Rezepte in Remys freie Erstellung.
+
+## 10.11.2026 · Auswertung im Browser repariert
+
+Martin bewertete alle zwölf Aufgaben. Bei den zehn Mehrfeldaufgaben verhinderte ein Antwortobjekt ohne Prototyp nach der ersten Eingabe den Firebase-Aufruf. Der Firebase-Encoder nutzt `hasOwnProperty` am Objekt. Die erste Serverprobe hatte den fehlerhaften Browserpfad umgangen. Das Auswerten liest jetzt die aktuellen Formularwerte und übergibt ein gewöhnliches Objekt. Bei Verbindungsfehlern erscheint ein Hinweis neben dem Button.
+
+Der neue DOM-Test reproduzierte die fehlende Anfrage auf dem alten Stand. Danach prüfte er alle zwölf Aufgaben über die tatsächliche Oberfläche und das Firebase SDK mit kontrollierter Netzantwort, einschließlich Dropdowns, freiem Text, Zahlen, Verbindungen und Fehleranzeige. 13 Tests bestanden. Im isolierten Vorschaukanal wurde ausschließlich die Browserdatei aktualisiert. Acht Hashes abgeglichen. Im angemeldeten Browser ergaben zwei ausgefüllte Dropdowns beim Rauchmelder 1 von 1 Punkten, und 12/12 Smileys blieben sichtbar. [Auslieferungsbeleg](round-two-score-fix.json).
+
+Die zwölf Urteile teilen sich in sieben „Gut“ und fünf „Überarbeiten“. Vor der fachlichen Nutzung die Urteile vom technischen Fehler trennen. Als eigenständige Gestaltungshinweise bleiben ein klarerer Quellenauftrag, ein Bild für das Labyrinth und echte auswählbare Noten für den Musiktakt festgehalten.
