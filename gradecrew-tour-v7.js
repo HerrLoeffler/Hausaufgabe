@@ -380,7 +380,8 @@ export function installCrewTour(api) {
         document.body.classList.remove("gcTourInlineReview", "gcTourContext", "gcTourFlow");
       };
     }
-    const context = target?.closest("#questionList .questionCard") || (selector === "#aiCustomNotes" ? target?.closest("label") || target : null);
+    const actionForm = target?.closest("dialog.questionActionDialog[open]")?.querySelector("form");
+    const context = actionForm || target?.closest("#questionList .questionCard") || (selector === "#aiCustomNotes" ? target?.closest("label") || target : null);
     if (context?.parentElement) {
       root.classList.add("gcCoachContext");
       root.dataset.tourContext = stage;
@@ -551,7 +552,7 @@ export function installCrewTour(api) {
   }
 
   async function prepareEditPanel() {
-    const panel = $(".questionAiPanel"); const input = panel?.querySelector("textarea"); const apply = panel?.querySelector(".aiApply");
+    const panel = $("dialog.questionAiPanel[open]"); const input = panel?.querySelector("textarea"); const apply = panel?.querySelector(".aiApply");
     if (!panel || !input || !apply) return error("Das Überarbeitungsfeld wurde nicht gefunden.", showEditStep);
     const token = run; busy = true;
     coach("improve", "So gibst du der KI deinen Wunsch.", "Wir möchten nur die Sprache ändern. Schau zu – der Wunsch wird direkt eingetragen.", { target: input, body: '<div class="gcCoachStatus">Änderungswunsch wird eingetragen …</div>' });
@@ -689,7 +690,7 @@ export function installCrewTour(api) {
 
   async function showBadFeedbackPanel() {
     const token = run; stage = "feedback-panel";
-    const panel = await waitForElement(`#questionList .questionCard[data-id="${CSS.escape(faultyId)}"] .aiQualityPanel`);
+    const panel = await waitForElement(`dialog.aiQualityPanel[open][data-question-id="${CSS.escape(faultyId)}"]`);
     if (!owned() || token !== run) return;
     if (!panel) return error("Das Rückmeldefeld ist noch nicht geöffnet.", showBadFeedbackStep);
     const reason = panel.querySelector(".aiQualityReason");
