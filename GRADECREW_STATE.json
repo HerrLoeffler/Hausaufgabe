@@ -4238,6 +4238,20 @@
         "next": "Confirm the bounded sequence design and prepare implementation plan; preserve current Staging and prior attempt history."
       },
       "mehrfeld30_pilot_20261109": {
+        "kreativlabor_mix_20261110": {
+          "stage": "isolated_test_preview",
+          "date": "2026-11-10",
+          "runtime_pr": 419,
+          "runtime_commit": "dfaf6875b2f48386afdab6843f2e750df925befa",
+          "tasks": 30,
+          "recipes": 17,
+          "subjects": 15,
+          "local_tests_passed": 30,
+          "server_full_and_blank_verified": 30,
+          "provider_requests": 0,
+          "free_wish_routing": "not wired into mixed-deck eligibility rules",
+          "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/dfaf6875b2f48386afdab6843f2e750df925befa/docs/evidence/remy-mehrfeld30-20261109/KREATIVLABOR.md"
+        },
         "pitch_round_five_20261110": {
           "stage": "staging_deployed",
           "scope": "isolated_preview_only",
