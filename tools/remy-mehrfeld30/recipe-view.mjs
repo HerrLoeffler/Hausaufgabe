@@ -14,7 +14,7 @@ function selectButton(label,click){
 function pressOnly(buttons,selected){
   for(const button of buttons)button.setAttribute('aria-pressed',String(button===selected));
 }
-function note(value){
+export function note(value){
   const svg=document.createElementNS(svgNS,'svg');
   svg.setAttribute('viewBox','0 0 36 48');
   svg.setAttribute('role','img');

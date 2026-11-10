@@ -9,7 +9,7 @@ test('source links, pictured maze and graphical notes each produce their own ful
   try{
     const doc=dom.window.document,host=doc.querySelector('main');
     const source=fs.readFileSync(path.join(__dirname,'recipe-view.mjs'),'utf8');
-    const mount=new Function('document',source.replace('export function mountRecipe','function mountRecipe')+'\nreturn mountRecipe;')(doc);
+    const mount=new Function('document',source.replaceAll('export function','function')+'\nreturn mountRecipe;')(doc);
     for(const raw of examples){
       const q=build(raw);let answer={};host.replaceChildren();
       mount(host,publicRecipe(q),next=>{answer=next;});

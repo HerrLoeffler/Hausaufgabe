@@ -53,3 +53,9 @@ progress{width:100%;height:12px;accent-color:#234d9e}
 .recipe-notes{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .recipe-notes button{display:inline-flex;align-items:center;gap:5px;margin:0}
 @media(max-width:600px){.recipe-maze-grid{grid-template-columns:1fr}.recipe-source-grid button{font-size:.85rem;padding:6px}}
+#answer audio{width:min(100%,32rem);display:block;margin:10px 0 14px}
+#answer audio[hidden]{display:none}
+.rhythm-staff{gap:5px;margin:14px 0;overflow-x:auto}
+.rhythm-staff svg,.rhythm-staff .rhythm-gap{flex:none}
+.rhythm-hidden{width:24px;text-align:center;color:#778aa8;font-size:1.5rem}
+.rhythm-now{outline:3px solid #b86a10;outline-offset:2px;background:#ffefc4}

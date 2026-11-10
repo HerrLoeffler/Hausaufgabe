@@ -4,6 +4,7 @@ import {getFirestore,doc,getDoc} from 'https://www.gstatic.com/firebasejs/12.4.0
 import {getFunctions,httpsCallable} from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js';
 import {firebaseConfig} from './firebase-config.js';
 import {mountRecipe} from './recipe-view.mjs';
+import {mountRhythm} from './rhythm-view.mjs';
 
 if(firebaseConfig.projectId!=='gradecrew-staging-2026')throw Error('Dieses Labor läuft nur im Testprojekt.');
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),fn=getFunctions(app,'europe-west1');
@@ -11,7 +12,7 @@ const api=async data=>(await httpsCallable(fn,'remyMehrfeld30Review',{timeout:40
 const start=async data=>(await httpsCallable(fn,'sequence28StartAiTestJob',{timeout:70000})(data)).data;
 const $=id=>document.getElementById(id);
 const message=text=>{$('status').textContent=text;};
-const ROUND_TWO='REMYRND2',ROUND_THREE='REMYRND3';
+const ROUND_TWO='REMYRND2',ROUND_THREE='REMYRND3',ROUND_FOUR='REMYRND4';
 const groupNames={direkt:'Direkter Dreisatz',umgekehrt:'Umgekehrter Dreisatz',physik:'Physik · Übergänge',gegenprobe:'Gegenprobe · Formatwahl',eigener:'Dein KI-Stapel'};
 let uid='',tasks=[],index=0,answer=null,renderer=null,stack='seed',expected=30,epoch=0,rating=false,watching=false;
 
@@ -94,7 +95,8 @@ function render(moveFocus=false){
   $('verdict').textContent=task.review?.verdict==='good'?'Als gut gespeichert':task.review?.verdict==='bad'?'Zur Überarbeitung markiert':'Noch offen';
   $('prev').disabled=index===0;
   $('next').disabled=index===tasks.length-1;
-  if(task.recipe)mountRecipe(host,task.recipe,value=>{answer=value;});
+  if(task.rhythm)renderer=mountRhythm(host,task.rhythm,()=>api({action:'listenRhythm',...fields(task)}),value=>{answer=value;});
+  else if(task.recipe)mountRecipe(host,task.recipe,value=>{answer=value;});
   else if(task.diagram)mountDiagram(host,task.diagram);
   else if(task.visual)renderer=globalThis.GCRenderer.mount(host,task.visual,null,{onAnswer:value=>{answer=value;}});
   else task.options.forEach((text,i)=>{
@@ -109,6 +111,8 @@ function render(moveFocus=false){
 }
 async function load(quizId=null){
   const requestEpoch=++epoch,owner=uid;
+  renderer?.destroy?.();
+  renderer=null;
   $('review').hidden=true;
   try{
     const result=await api({action:'list',...(quizId?{quizId}:{})});
@@ -121,7 +125,7 @@ async function load(quizId=null){
     const firstOpen=tasks.findIndex(t=>!t.review);
     index=stored>=0?stored:Math.max(0,firstOpen);
     render();
-    message(quizId===ROUND_THREE?'Runde 3 zeigt die überarbeiteten Beispiele.':quizId===ROUND_TWO?'Runde 2 zeigt redaktionell entworfene Aufgaben.':quizId?'Dein Stapel ist bereit.':tasks.length===expected?'Der erste Stapel ist bereit.':tasks.length+' von '+expected+' Aufgaben sind derzeit verfügbar.');
+    message(quizId===ROUND_FOUR?'Drei Hörbeispiele mit verschiedenen Hilfen.':quizId===ROUND_THREE?'Runde 3 zeigt die überarbeiteten Beispiele.':quizId===ROUND_TWO?'Runde 2 zeigt redaktionell entworfene Aufgaben.':quizId?'Dein Stapel ist bereit.':tasks.length===expected?'Der erste Stapel ist bereit.':tasks.length+' von '+expected+' Aufgaben sind derzeit verfügbar.');
   }catch(e){
     if(epoch===requestEpoch&&uid===owner)message(e.message||'Der Stapel konnte nicht geladen werden.');
   }
@@ -143,7 +147,7 @@ async function rate(verdict,reason='',comment=''){
     return;
   }
   rating=true;
-  for(const id of ['good','bad','seed','roundTwo','roundThree','last'])$(id).disabled=true;
+  for(const id of ['good','bad','seed','roundTwo','roundThree','roundFour','last'])$(id).disabled=true;
   try{
     save('pending-rating',payload);
     const result=await api(payload);
@@ -161,7 +165,7 @@ async function rate(verdict,reason='',comment=''){
       message(e.message||'Rückmeldung noch nicht bestätigt.');
     }
   }finally{
-    rating=false;for(const id of ['good','bad','seed','roundTwo','roundThree','last'])$(id).disabled=false;
+    rating=false;for(const id of ['good','bad','seed','roundTwo','roundThree','roundFour','last'])$(id).disabled=false;
   }
 }
 $('prev').onclick=()=>step(index-1);
@@ -193,6 +197,7 @@ $('scoreButton').onclick=async()=>{
 $('seed').onclick=()=>load();
 $('roundTwo').onclick=()=>load(ROUND_TWO);
 $('roundThree').onclick=()=>load(ROUND_THREE);
+$('roundFour').onclick=()=>load(ROUND_FOUR);
 $('last').onclick=()=>load(saved('last'));
 $('logout').onclick=()=>signOut(auth);
 $('login').onsubmit=async e=>{

@@ -8,6 +8,8 @@ const seed=require('./seed.json');
 const {roundTwo,roundTwoCode}=require('./round-two.cjs');
 const {recipeCode,examples,build}=require('./recipe-three.cjs');
 const {generate,wishPrefix,requestIdPattern}=require('./generate-three.cjs');
+const {rhythmCode,rhythmExamples,buildRhythm,makeAudio}=require('./rhythm.cjs');
+const rhythmDeck=rhythmExamples.map(raw=>buildRhythm(raw));
 const secret=defineSecret('OPENAI_API_KEY');
 const roundThree=examples.map(raw=>build(raw));
 const app=initializeApp();
@@ -38,6 +40,7 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
   const isWish=typeof data.quizId==='string'&&data.quizId.startsWith(wishPrefix);
   let references=null;
   if(data.quizId===recipeCode)references=roundThree;
+  else if(data.quizId===rhythmCode)references=rhythmDeck;
   else if(isWish){
     const id=data.quizId.slice(wishPrefix.length);
     if(!requestIdPattern.test(id))throw new HttpsError('invalid-argument','Ungültiger Auftrag.');
@@ -47,7 +50,7 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
   }
   if(data.action==='list'){
     if(references){
-      const rows=references.map(q=>present(data.quizId,isWish?'eigener':'runde3',q));
+      const rows=references.map(q=>present(data.quizId,isWish?'eigener':data.quizId===rhythmCode?'runde4':'runde3',q));
       const notes=await db.getAll(...rows.map(task=>latest.doc(task.version)));
       return {tasks:rows.map((task,i)=>({...task,review:notes[i].data()||null})),expected:rows.length};
     }
@@ -67,15 +70,19 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
     const notes=await db.getAll(...rows.map(task=>latest.doc(task.version)));
     return {tasks:rows.map((task,i)=>({...task,review:notes[i].data()||null})),expected:data.quizId?rows.length:30};
   }
-  if(!['rate','score'].includes(data.action)||typeof data.id!=='string'||!(/^[A-Za-z0-9_-]{1,100}$/.test(data.id)))
+  if(!['rate','score','listenRhythm'].includes(data.action)||typeof data.id!=='string'||!(/^[A-Za-z0-9_-]{1,100}$/.test(data.id)))
     throw new HttpsError('invalid-argument','Ungültige Laboranfrage.');
   const reference=data.quizId===roundTwoCode;
-  const group=references?(isWish?'eigener':'runde3'):reference?'runde2':await loadQuiz(data.quizId,uid);
+  const group=references?(isWish?'eigener':data.quizId===rhythmCode?'runde4':'runde3'):reference?'runde2':await loadQuiz(data.quizId,uid);
   const raw=references?references.find(q=>q.id===data.id):reference?roundTwo.find(q=>q.id===data.id):(await db.doc('quizzes/'+data.quizId+'/questions/'+data.id).get()).data();
   if(!raw)throw new HttpsError('not-found','Aufgabe fehlt.');
   const q={...raw,id:data.id};
   const task=present(data.quizId,group,q);
   if(task.version!==data.version)throw new HttpsError('failed-precondition','Die Aufgabe hat sich geändert. Bitte lade sie neu.');
+  if(data.action==='listenRhythm'){
+    if(q.type!=='rhythm')throw new HttpsError('failed-precondition','Diese Aufgabe hat keinen Hörrhythmus.');
+    return makeAudio(q);
+  }
   if(data.action==='score'){
     if(JSON.stringify(data.answer??null).length>5000)throw new HttpsError('invalid-argument','Die Eingabe ist zu lang.');
     return {points:score(q,data.answer),maxPoints:task.points};
