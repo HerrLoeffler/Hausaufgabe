@@ -2,9 +2,14 @@
 const {initializeApp}=require('firebase-admin/app');
 const {getFirestore,FieldValue}=require('firebase-admin/firestore');
 const {onCall,HttpsError}=require('firebase-functions/v2/https');
+const {defineSecret}=require('firebase-functions/params');
 const {quizCode,seedOwner,canReview,ownsPilotJob,ownsSeedJob,present,feedback,score}=require('./review.cjs');
 const seed=require('./seed.json');
 const {roundTwo,roundTwoCode}=require('./round-two.cjs');
+const {recipeCode,examples,build}=require('./recipe-three.cjs');
+const {generate,wishPrefix,requestIdPattern}=require('./generate-three.cjs');
+const secret=defineSecret('OPENAI_API_KEY');
+const roundThree=examples.map(raw=>build(raw));
 const app=initializeApp();
 const db=getFirestore(app);
 
@@ -20,7 +25,7 @@ async function loadQuiz(quizId,uid){
   if(!ownsPilotJob(job,uid,quizId))throw new HttpsError('permission-denied','Kein eigener Laborauftrag.');
   return 'eigener';
 }
-exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeoutSeconds:40},async request=>{
+exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeoutSeconds:80,secrets:[secret]},async request=>{
   if((app.options.projectId||process.env.GCLOUD_PROJECT)!=='gradecrew-staging-2026')throw new HttpsError('failed-precondition','Nur im GradeCrew-Testprojekt verfügbar.');
   const uid=request.auth?.uid;
   if(!uid)throw new HttpsError('unauthenticated','Bitte mit deinem Testkonto anmelden.');
@@ -29,7 +34,23 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
   const data=request.data||{};
   const owner=db.collection('remyMehrfeld30Reviewers').doc(uid);
   const latest=owner.collection('ratings');
+  if(data.action==='generateRecipe')return generate({db,owner,uid,data,secret});
+  const isWish=typeof data.quizId==='string'&&data.quizId.startsWith(wishPrefix);
+  let references=null;
+  if(data.quizId===recipeCode)references=roundThree;
+  else if(isWish){
+    const id=data.quizId.slice(wishPrefix.length);
+    if(!requestIdPattern.test(id))throw new HttpsError('invalid-argument','Ungültiger Auftrag.');
+    const draft=(await owner.collection('recipeDrafts').doc(id).get()).data();
+    if(draft?.status!=='ready')throw new HttpsError('failed-precondition','Der eigene Auftrag ist noch nicht bereit.');
+    references=[draft.q];
+  }
   if(data.action==='list'){
+    if(references){
+      const rows=references.map(q=>present(data.quizId,isWish?'eigener':'runde3',q));
+      const notes=await db.getAll(...rows.map(task=>latest.doc(task.version)));
+      return {tasks:rows.map((task,i)=>({...task,review:notes[i].data()||null})),expected:rows.length};
+    }
     if(data.quizId===roundTwoCode){
       const rows=roundTwo.map(q=>present(roundTwoCode,'runde2',q));
       const notes=await db.getAll(...rows.map(task=>latest.doc(task.version)));
@@ -49,8 +70,8 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
   if(!['rate','score'].includes(data.action)||typeof data.id!=='string'||!(/^[A-Za-z0-9_-]{1,100}$/.test(data.id)))
     throw new HttpsError('invalid-argument','Ungültige Laboranfrage.');
   const reference=data.quizId===roundTwoCode;
-  const group=reference?'runde2':await loadQuiz(data.quizId,uid);
-  const raw=reference?roundTwo.find(q=>q.id===data.id):(await db.doc('quizzes/'+data.quizId+'/questions/'+data.id).get()).data();
+  const group=references?(isWish?'eigener':'runde3'):reference?'runde2':await loadQuiz(data.quizId,uid);
+  const raw=references?references.find(q=>q.id===data.id):reference?roundTwo.find(q=>q.id===data.id):(await db.doc('quizzes/'+data.quizId+'/questions/'+data.id).get()).data();
   if(!raw)throw new HttpsError('not-found','Aufgabe fehlt.');
   const q={...raw,id:data.id};
   const task=present(data.quizId,group,q);

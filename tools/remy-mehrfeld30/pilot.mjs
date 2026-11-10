@@ -3,6 +3,7 @@ import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from 'htt
 import {getFirestore,doc,getDoc} from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js';
 import {getFunctions,httpsCallable} from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-functions.js';
 import {firebaseConfig} from './firebase-config.js';
+import {mountRecipe} from './recipe-view.mjs';
 
 if(firebaseConfig.projectId!=='gradecrew-staging-2026')throw Error('Dieses Labor läuft nur im Testprojekt.');
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),fn=getFunctions(app,'europe-west1');
@@ -10,7 +11,7 @@ const api=async data=>(await httpsCallable(fn,'remyMehrfeld30Review',{timeout:40
 const start=async data=>(await httpsCallable(fn,'sequence28StartAiTestJob',{timeout:70000})(data)).data;
 const $=id=>document.getElementById(id);
 const message=text=>{$('status').textContent=text;};
-const ROUND_TWO='REMYRND2';
+const ROUND_TWO='REMYRND2',ROUND_THREE='REMYRND3';
 const groupNames={direkt:'Direkter Dreisatz',umgekehrt:'Umgekehrter Dreisatz',physik:'Physik · Übergänge',gegenprobe:'Gegenprobe · Formatwahl',eigener:'Dein KI-Stapel'};
 let uid='',tasks=[],index=0,answer=null,renderer=null,stack='seed',expected=30,epoch=0,rating=false,watching=false;
 
@@ -82,7 +83,7 @@ function render(moveFocus=false){
   if(!task)return;
   answer=null;
   const rated=tasks.filter(t=>t.review).length;
-  $('group').textContent=task.subject?task.subject+' · '+task.shape:(groupNames[task.group]||task.group);
+  $('group').textContent=task.subject?[task.subject,task.shape].filter(Boolean).join(' · '):(groupNames[task.group]||task.group);
   $('taskTitle').hidden=!task.heading;
   $('taskTitle').textContent=task.heading||'';
   $('position').textContent='Aufgabe '+(index+1)+' von '+tasks.length;
@@ -93,7 +94,8 @@ function render(moveFocus=false){
   $('verdict').textContent=task.review?.verdict==='good'?'Als gut gespeichert':task.review?.verdict==='bad'?'Zur Überarbeitung markiert':'Noch offen';
   $('prev').disabled=index===0;
   $('next').disabled=index===tasks.length-1;
-  if(task.diagram)mountDiagram(host,task.diagram);
+  if(task.recipe)mountRecipe(host,task.recipe,value=>{answer=value;});
+  else if(task.diagram)mountDiagram(host,task.diagram);
   else if(task.visual)renderer=globalThis.GCRenderer.mount(host,task.visual,null,{onAnswer:value=>{answer=value;}});
   else task.options.forEach((text,i)=>{
     const label=document.createElement('label'),radio=document.createElement('input');
@@ -119,7 +121,7 @@ async function load(quizId=null){
     const firstOpen=tasks.findIndex(t=>!t.review);
     index=stored>=0?stored:Math.max(0,firstOpen);
     render();
-    message(quizId===ROUND_TWO?'Runde 2 zeigt redaktionell entworfene Aufgaben.':quizId?'Dein Stapel ist bereit.':tasks.length===expected?'Der erste Stapel ist bereit.':tasks.length+' von '+expected+' Aufgaben sind derzeit verfügbar.');
+    message(quizId===ROUND_THREE?'Runde 3 zeigt die überarbeiteten Beispiele.':quizId===ROUND_TWO?'Runde 2 zeigt redaktionell entworfene Aufgaben.':quizId?'Dein Stapel ist bereit.':tasks.length===expected?'Der erste Stapel ist bereit.':tasks.length+' von '+expected+' Aufgaben sind derzeit verfügbar.');
   }catch(e){
     if(epoch===requestEpoch&&uid===owner)message(e.message||'Der Stapel konnte nicht geladen werden.');
   }
@@ -141,7 +143,7 @@ async function rate(verdict,reason='',comment=''){
     return;
   }
   rating=true;
-  for(const id of ['good','bad','seed','roundTwo','last'])$(id).disabled=true;
+  for(const id of ['good','bad','seed','roundTwo','roundThree','last'])$(id).disabled=true;
   try{
     save('pending-rating',payload);
     const result=await api(payload);
@@ -159,7 +161,7 @@ async function rate(verdict,reason='',comment=''){
       message(e.message||'Rückmeldung noch nicht bestätigt.');
     }
   }finally{
-    rating=false;for(const id of ['good','bad','seed','roundTwo','last'])$(id).disabled=false;
+    rating=false;for(const id of ['good','bad','seed','roundTwo','roundThree','last'])$(id).disabled=false;
   }
 }
 $('prev').onclick=()=>step(index-1);
@@ -190,6 +192,7 @@ $('scoreButton').onclick=async()=>{
 };
 $('seed').onclick=()=>load();
 $('roundTwo').onclick=()=>load(ROUND_TWO);
+$('roundThree').onclick=()=>load(ROUND_THREE);
 $('last').onclick=()=>load(saved('last'));
 $('logout').onclick=()=>signOut(auth);
 $('login').onsubmit=async e=>{
@@ -246,12 +249,54 @@ $('wish').onsubmit=e=>{
     notes:'Verwende Mehrfeldtabellen oder Pfeile, wenn sie zum Lernziel passen. Bei ungeeignetem Lernziel wähle eine andere zulässige Darstellung. Keine Bilder oder Audios.'};
   save('job',{input});message('Remy startet den Auftrag …');void watch(true);
 };
+let recipeBusy=false;
+async function runRecipe(){
+  const pending=saved('recipe-job'),owner=uid;
+  if(!pending||recipeBusy||!owner)return;
+  recipeBusy=true;$('generateRecipe').disabled=true;$('resumeRecipe').disabled=true;
+  const status=$('recipeStatus');
+  status.textContent='Remy erstellt eine Aufgabe …';
+  try{
+    const result=(await httpsCallable(fn,'remyMehrfeld30Review',{timeout:85000})({action:'generateRecipe',...pending})).data;
+    if(uid!==owner)return;
+    if(result.status==='ready'){
+      save('recipe-job',null);save('last-recipe',result.quizId);$('lastRecipe').hidden=false;
+      status.textContent='Deine Aufgabe ist bereit.';await load(result.quizId);
+    }else if(result.status==='failed'){
+      save('recipe-job',null);status.textContent=result.message;
+    }else status.textContent='Der Auftrag läuft. Prüfe später denselben Auftrag.';
+  }catch(error){
+    if(uid===owner){
+      if(['functions/resource-exhausted','functions/invalid-argument','functions/permission-denied'].includes(error.code))save('recipe-job',null);
+      status.textContent=error.message||'Der Auftrag ist noch nicht bestätigt.';
+    }
+  }finally{
+    recipeBusy=false;
+    if(uid===owner){
+      const pending=!!saved('recipe-job');
+      $('generateRecipe').disabled=pending;$('resumeRecipe').hidden=!pending;$('resumeRecipe').disabled=false;
+    }
+  }
+}
+$('recipeWish').onsubmit=e=>{
+  e.preventDefault();
+  if(!uid||saved('recipe-job'))return;
+  const wish=String(new FormData(e.target).get('wish')||'').trim();
+  if(wish.length<8)return;
+  save('recipe-job',{requestId:crypto.randomUUID(),wish});void runRecipe();
+};
+$('resumeRecipe').onclick=()=>runRecipe();
+$('lastRecipe').onclick=()=>load(saved('last-recipe'));
 onAuthStateChanged(auth,async user=>{
   epoch++;uid=user?.uid||'';tasks=[];render();message('');
   $('login').hidden=!!uid;$('workspace').hidden=!uid;
   if(!uid)return;
   const owner=uid;
   $('last').hidden=!saved('last');
+  $('lastRecipe').hidden=!saved('last-recipe');
+  $('resumeRecipe').hidden=!saved('recipe-job');
+  $('generateRecipe').disabled=!!saved('recipe-job');
+  $('recipeStatus').textContent='';
   $('resume').hidden=!saved('job');
   $('generate').disabled=!!saved('job');
   const pending=saved('pending-rating');

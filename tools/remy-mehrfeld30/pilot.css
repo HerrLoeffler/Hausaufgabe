@@ -35,3 +35,21 @@ progress{width:100%;height:12px;accent-color:#234d9e}
 .flow-branch{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:15px;align-items:center;margin:12px 0}
 .flow-branches{border-left:2px solid #94acd7;padding-left:13px}
 @media(max-width:620px){.flow-branch{grid-template-columns:minmax(0,1fr);gap:4px;justify-items:start}.flow-branches{margin-left:12px}}
+.recipe-source-grid,.recipe-maze-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.recipe-source-grid button{display:block;width:100%;margin:6px 0;text-align:left}
+.recipe-status{font-weight:650}
+.recipe-board{padding:12px;border-radius:12px;margin:8px 0}
+.recipe-board h4{margin:0 0 8px}
+.recipe-board button{margin:4px}
+#answer button[aria-pressed=true]{outline:3px solid #2058b9;outline-offset:1px}
+.maze-picture{display:grid;grid-template-columns:repeat(5,1fr);width:min(100%,210px);margin:0 0 8px;border:1px solid #657c9f}
+.maze-picture span{display:grid;place-items:center;aspect-ratio:1;border:1px solid #c6d4ea;font-size:1.25rem;font-weight:750}
+.maze-wall{color:#fff;background:#506488}
+.maze-path{background:#f2f7ff}
+.maze-mouse{background:#ffdd8b;color:#182d58}
+.recipe-staff{display:flex;align-items:center;gap:10px;min-height:56px;padding:0 8px;background:repeating-linear-gradient(to bottom,transparent 0 6px,#9aabc8 6px 7px) center / 100% 35px no-repeat}
+.recipe-staff svg,.recipe-notes svg{width:32px;height:43px;vertical-align:middle}
+.recipe-note-slot{display:grid;place-items:center;min-width:36px;min-height:44px;border:2px dashed #829aca;background:#f4f8ff}
+.recipe-notes{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.recipe-notes button{display:inline-flex;align-items:center;gap:5px;margin:0}
+@media(max-width:600px){.recipe-maze-grid{grid-template-columns:1fr}.recipe-source-grid button{font-size:.85rem;padding:6px}}

@@ -3,6 +3,8 @@ const {createHash}=require('node:crypto');
 const {core,parseVisualTask}=require('../../functions/lib/visual-task');
 const {projectDiagram,scoreDiagram}=require('./round-two.cjs');
 
+const {publicRecipe,scoreRecipe}=require('./recipe-three.cjs');
+
 const reasons=new Set(['','format','fachlich','auftrag','loesung','bewertung','anderes']);
 const digest=data=>createHash('sha256').update(JSON.stringify(data)).digest('hex');
 const quizCode=/^[A-Z0-9]{8}$/;
@@ -19,6 +21,7 @@ function ownsSeedJob(job,entry){
 }
 function present(quizId,group,q){
   const points=Number(q.points);
+  if(q.type==='recipe')return {quizId,group,id:q.id,type:q.type,text:q.text,points,heading:q.heading,subject:q.subject,recipe:publicRecipe(q),options:[],version:digest([quizId,q])};
   if(q.type==='diagram')return {quizId,group,id:q.id,type:q.type,text:q.text,points,heading:q.heading,subject:q.subject,shape:q.shape,diagram:projectDiagram(q),options:[],version:digest([quizId,q])};
   if(!['single','visual'].includes(q.type)||!Number.isFinite(points)||points<=0)throw Error('Aufgabe wird im Labor nicht unterstützt.');
   const visual=q.type==='visual'?core.publicTask(parseVisualTask(q.visualTask,{points})):null;
@@ -35,6 +38,7 @@ function feedback(task,data){
   return {version:task.version,verdict:data.verdict,reason:data.reason??'',comment:(data.comment??'').trim()};
 }
 function score(q,answer){
+  if(q.type==='recipe')return scoreRecipe(q,answer);
   if(q.type==='diagram')return scoreDiagram(q,answer);
   if(q.type==='visual'){
     const task=parseVisualTask(q.visualTask,{points:q.points});

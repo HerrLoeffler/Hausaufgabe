@@ -17,7 +17,18 @@
   <button>Anmelden</button>
 </form>
 <div id="workspace" hidden>
-  <div class="bar"><button id="roundTwo">Runde 2 · 12 neue Ideen</button><button id="seed" class="secondary">Runde 1 · 30 KI-Aufgaben</button><button id="last" class="secondary" hidden>Eigener Stapel</button><button id="logout" class="secondary">Abmelden</button></div>
+  <div class="bar"><button id="roundThree">Runde 3 · Quellen, Labyrinth, Noten</button><button id="roundTwo" class="secondary">Runde 2 · 12 neue Ideen</button><button id="seed" class="secondary">Runde 1 · 30 KI-Aufgaben</button><button id="last" class="secondary" hidden>Eigener Stapel</button><button id="logout" class="secondary">Abmelden</button></div>
+  <details id="recipePanel">
+    <summary>Remy · neues Format aus freiem Wunsch</summary>
+    <form id="recipeWish">
+      <label>Was soll die Aufgabe üben?<textarea name="wish" rows="3" minlength="8" maxlength="1000" required placeholder="Zum Beispiel: Ein 3/4-Takt für Klasse 6, in den jeweils eine Note eingesetzt wird."></textarea></label>
+      <p>Im Pilot verfügbar: Quellen zuordnen, Labyrinth und Notenwerte.</p>
+      <button id="generateRecipe">Mit KI erstellen</button>
+      <button type="button" id="resumeRecipe" class="secondary" hidden>Auftrag prüfen</button>
+      <button type="button" id="lastRecipe" class="secondary" hidden>Letzte Aufgabe öffnen</button>
+      <p id="recipeStatus" role="status"></p>
+    </form>
+  </details>
   <details id="wishPanel">
     <summary>Neue Aufgaben mit KI erstellen</summary>
     <form id="wish">
