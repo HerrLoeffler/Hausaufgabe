@@ -163,7 +163,8 @@ test('fallback variant dialog has one wish field and carries its own instruction
   w.toast = () => {};
   const requests = [];
   w.createQuestionVariants = (q, options) => requests.push(options);
-  w.eval(fn('openQuestionVariantDialog'));
+  w.questionActionDialogs = 'dialog.questionActionDialog[open], dialog.variantRequestDialog[open], dialog.questionVariantDialog[open]';
+  w.eval([fn('closeQuestionActionDialogs'), fn('openQuestionVariantDialog')].join('\n'));
   for (const wish of ['Schwieriger', '']) {
     w.openQuestionVariantDialog({ id: 'q1' }, 0);
     const dialog = w.document.querySelector('dialog.questionVariantDialog');
@@ -328,7 +329,8 @@ test('view navigation restores focus without interrupting an input or an open di
   w.state = { user: null, profile: null };
   w.syncDashboardTutorialEntry = () => {}; // Existing showView dependency; tutorial behavior has its own suite.
   w.refreshQuestionFeedbackNotice = () => {}; // Existing dependency; feedback has its own tests (PR312 fixture fix).
-  w.eval(fn('showView'));
+  w.questionActionDialogs = 'dialog.questionActionDialog[open], dialog.variantRequestDialog[open], dialog.questionVariantDialog[open]';
+  w.eval([fn('closeQuestionActionDialogs'), fn('showView')].join('\n'));
   w.$('loginEmail').focus();
   w.showView('editorView');
   await settle(35);
