@@ -71,6 +71,7 @@ import { createLocalTourRepository } from "./guest-tour-port.mjs";
 import { installCrewTour } from "./gradecrew-tour.js?v=2.3.1-gc21";
 import { createQuestionFeedbackClient } from "./question-feedback-client.mjs";
 import { downloadSchoolPackage } from "./school-work-export.mjs";
+import { downloadSchoolClassPackage } from "./school-class-export.mjs";
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
 fetch("./release.json", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(r => r && diagnostics.setRelease(r)).catch(() => {});
@@ -7856,7 +7857,9 @@ function renderResultsTable() {
     wrap.innerHTML = `<div class="empty"><h2>Noch keine Abgaben</h2><p>Sobald Schüler den Test abgeben, erscheinen die Ergebnisse hier.</p></div>`;
     return;
   }
-  let html = `<table class="resultTable"><thead><tr><th scope="col">Kürzel</th><th scope="col">Punkte</th><th scope="col">%</th><th scope="col">Note</th><th scope="col">Status</th><th scope="col">Dauer</th><th scope="col">Abgegeben</th><th scope="col"><span class="visuallyHidden">Aktionen</span></th></tr></thead><tbody>`;
+  const classExportReady = schoolExportPreviewEnabled() && state.submissions.length <= 40 && state.submissions.every(schoolPreviewSubmission);
+  const anySchoolExport = schoolExportPreviewEnabled() && state.submissions.some(schoolPreviewSubmission);
+  let html = `${anySchoolExport ? `<div class="resultsExportToolbar">${classExportReady ? '<button class="button secondary" id="schoolClassExportBtn" type="button">Klassenmappe mit Einzelarbeiten exportieren · Testdaten</button>' : '<p class="hint">Für eine Klassenmappe müssen alle Arbeiten zum selben freigegebenen Test gehören; höchstens 40 Arbeiten pro Paket.</p>'}<a href="./school-export-check.html" target="_blank" rel="noopener">Exportpaket auf dem eigenen Gerät prüfen</a><p class="hint">Nur technische Vorschau. Die Schule bestimmt die geschützte Ablage und gegebenenfalls die Verschlüsselung.</p></div>` : ''}<table class="resultTable"><thead><tr><th scope="col">Kürzel</th><th scope="col">Punkte</th><th scope="col">%</th><th scope="col">Note</th><th scope="col">Status</th><th scope="col">Dauer</th><th scope="col">Abgegeben</th><th scope="col"><span class="visuallyHidden">Aktionen</span></th></tr></thead><tbody>`;
   state.submissions.forEach((s) => {
     const duration = formatDuration(s.elapsedSeconds);
     const autoTag = s.autoSubmitted ? ` <span class="pill timedOut">Auto</span>` : "";
@@ -7868,6 +7871,7 @@ function renderResultsTable() {
   wrap.innerHTML = html;
   wrap.querySelectorAll(".reviewBtn").forEach((btn) => btn.addEventListener("click", () => openSchoolReview(btn.dataset.id)));
   wrap.querySelectorAll(".schoolExportBtn").forEach((btn) => btn.addEventListener("click", () => exportSchoolWork(btn.dataset.id, btn)));
+  wrap.querySelector("#schoolClassExportBtn")?.addEventListener("click", event => exportSchoolClass(event.currentTarget));
 }
 
 async function openSchoolReview(submissionId) {
@@ -7894,6 +7898,30 @@ async function exportSchoolWork(submissionId, button) {
     console.error(error);
     toast("Die Arbeit konnte nicht exportiert werden: " + (error?.message || "Unbekannter Fehler"), "error");
   } finally { button.disabled = false; }
+}
+
+async function exportSchoolClass(button) {
+  const quizId = state.currentResultsQuiz?.id;
+  const submissions = [...state.submissions];
+  if (!schoolExportPreviewEnabled() || !quizId || !submissions.length || submissions.length > 40 || !submissions.every(schoolPreviewSubmission)) return;
+  button.disabled = true;
+  const oldLabel = button.textContent;
+  try {
+    const records = [];
+    for (const [index, submission] of submissions.entries()) {
+      button.textContent = `Einzelarbeit ${index + 1} von ${submissions.length} prüfen …`;
+      const record = extendedPreview
+        ? await extendedCall("school-export", { submissionId: submission.id })
+        : (await httpsCallable(getFunctions(app, "europe-west1"), "schoolExportWork", { timeout: 60000 })({ quizId, submissionId: submission.id })).data;
+      records.push(record);
+    }
+    button.textContent = "Klassenmappe prüfen …";
+    const receipt = await downloadSchoolClassPackage(records);
+    toast(`${receipt.checkedWorks} Einzelarbeiten technisch geprüft. Schulimport und Verschlüsselung stehen noch aus.`, "success");
+  } catch (error) {
+    console.error(error);
+    toast("Die Klassenmappe konnte nicht vollständig exportiert werden: " + (error?.message || "Unbekannter Fehler"), "error");
+  } finally { button.textContent = oldLabel; button.disabled = false; }
 }
 
 function openReview(id, questions = state.resultQuestions) {

@@ -1,10 +1,10 @@
 const encoder = new TextEncoder();
 
-function safePdfText(font, value) {
+function safePdfText(font, value, onFallback) {
   let out = '';
   for (const char of String(value ?? '')) {
     if (char === '\n' || char === '\r' || char === '\t') { out += char === '\t' ? '  ' : char; continue; }
-    try { font.encodeText(char); out += char; } catch { out += '?'; }
+    try { font.encodeText(char); out += char; } catch { out += '?'; onFallback(); }
   }
   return out;
 }
@@ -17,11 +17,12 @@ async function makePdf(record, PDFLib) {
   const regular = await document.embedFont(StandardFonts.Helvetica);
   const bold = await document.embedFont(StandardFonts.HelveticaBold);
   const width = 595.28, height = 841.89, margin = 47;
+  let unsupportedChars = false;
   let page, y;
   const nextPage = () => { page = document.addPage([width, height]); y = height - margin; page.drawText('GradeCrew · Testexport · keine Archivfreigabe', { x: margin, y: 23, size: 8, font: regular, color: rgb(.35,.4,.48) }); };
   const line = (value, { strong = false, size = 10, gap = 3 } = {}) => {
     const font = strong ? bold : regular;
-    const text = safePdfText(font, value).replace(/\r/g, '');
+    const text = safePdfText(font, value, () => { unsupportedChars = true; }).replace(/\r/g, '');
     const max = width - margin * 2;
     for (const paragraph of text.split('\n')) {
       let current = '';
@@ -79,8 +80,9 @@ async function makePdf(record, PDFLib) {
   section('Nicht erfasste Angaben');
   if (!record.gaps.length) line('Keine bekannten Lücken.');
   for (const gap of record.gaps) line(`${gap.field}: ${gap.reason}`);
+  if (unsupportedChars) line('Einige Zeichen konnten im PDF nicht dargestellt werden. Originaltext steht in work.json.');
   line('Die vollständigen Daten und Anlagen stehen in work.json und assets/ im ZIP. Dieser Beleg bestätigt keine schulrechtliche Archivierung.');
-  return new Uint8Array(await document.save());
+  return { bytes: new Uint8Array(await document.save()), unsupportedChars };
 }
 
 function safeAssetName(kind, mime, questionIndex, assetIndex) {
@@ -121,7 +123,9 @@ export async function buildSchoolPackage(record, { PDFLib, JSZip, cryptoApi = gl
   if (media.files.reduce((sum, item) => sum + item.bytes.length, 0) > 8_000_000) throw Error('Die Medien sind für diesen Testexport zu groß.');
   const visualGaps = record.questions.flatMap((question, index) => question.data?.visualTask ? [{ field: `questions[${index}].visualTask`, reason: 'interactive-diagram-described-only-in-pdf' }] : []);
   const enriched = { ...record, gaps: [...record.gaps, ...media.missing, ...visualGaps] };
-  const pdf = await makePdf(enriched, PDFLib);
+  const rendered = await makePdf(enriched, PDFLib);
+  if (rendered.unsupportedChars) enriched.gaps.push({ field: 'work.pdf', reason: 'unsupported-characters-see-work-json' });
+  const pdf = rendered.bytes;
   const work = encoder.encode(JSON.stringify(enriched, null, 2) + '\n');
   const zip = new JSZip();
   const files = [{ name: 'work.json', bytes: work }, { name: 'work.pdf', bytes: pdf }, ...media.files];
@@ -138,18 +142,34 @@ export async function buildSchoolPackage(record, { PDFLib, JSZip, cryptoApi = gl
 }
 
 export async function verifySchoolPackage(bytes, { JSZip, cryptoApi = globalThis.crypto }) {
+  if (!(bytes instanceof Uint8Array) || bytes.length > 32_000_000 || !cryptoApi?.subtle) throw Error('Paketprüfung fehlgeschlagen: Paketgröße');
   const reopened = await JSZip.loadAsync(bytes);
+  if (Object.keys(reopened.files).length > 1001) throw Error('Paketprüfung fehlgeschlagen: zu viele Dateien');
   const manifestFile = reopened.file('manifest.json');
   if (!manifestFile) throw Error('Paketprüfung fehlgeschlagen: manifest.json');
+  if (manifestFile._data?.uncompressedSize > 1_000_000) throw Error('Paketprüfung fehlgeschlagen: Manifestgröße');
   const rawManifest = await manifestFile.async('uint8array');
+  if (rawManifest.length > 1_000_000) throw Error('Paketprüfung fehlgeschlagen: Manifestgröße');
   const checkedManifest = JSON.parse(new TextDecoder().decode(rawManifest));
-  if (checkedManifest.schema !== 'gradecrew.school-work-package' || checkedManifest.schemaVersion !== 1 || !Array.isArray(checkedManifest.files)) throw Error('Paketprüfung fehlgeschlagen: Manifestformat');
+  if (checkedManifest.schema !== 'gradecrew.school-work-package' || checkedManifest.schemaVersion !== 1 || !Array.isArray(checkedManifest.files) || checkedManifest.files.length > 1000) throw Error('Paketprüfung fehlgeschlagen: Manifestformat');
+  const expected = new Set(['manifest.json']);
+  let totalBytes = 0;
   for (const entry of checkedManifest.files) {
-    if (!/^(work\.(?:json|pdf)|assets\/[A-Za-z0-9_-]+\.(?:png|jpg|webp|mp3|wav|ogg))$/.test(entry.path)) throw Error('Paketprüfung fehlgeschlagen: Dateipfad');
+    if (!entry || typeof entry.path !== 'string' || !/^(work\.(?:json|pdf)|assets\/[A-Za-z0-9_-]+\.(?:png|jpg|webp|mp3|wav|ogg))$/.test(entry.path) || expected.has(entry.path)) throw Error('Paketprüfung fehlgeschlagen: Dateipfad');
+    if (!Number.isSafeInteger(entry.bytes) || entry.bytes < 0 || entry.bytes > 16_000_000 || typeof entry.sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(entry.sha256)) throw Error('Paketprüfung fehlgeschlagen: Dateiangabe');
+    expected.add(entry.path);
+    totalBytes += entry.bytes;
+    if (totalBytes > 24_000_000) throw Error('Paketprüfung fehlgeschlagen: Gesamtgröße');
+    if (reopened.file(entry.path)?._data?.uncompressedSize !== entry.bytes) throw Error(`Paketprüfung fehlgeschlagen: Dateigröße ${entry.path}`);
     const value = await reopened.file(entry.path)?.async('uint8array');
     if (!value || value.length !== entry.bytes || await hash(value, cryptoApi) !== entry.sha256) throw Error(`Paketprüfung fehlgeschlagen: ${entry.path}`);
   }
-  return { schema: 'gradecrew.school-work-verification', schemaVersion: 1, verifiedAtMillis: Date.now(), manifestSha256: await hash(rawManifest, cryptoApi), checkedFiles: checkedManifest.files.length, valid: true };
+  if (!expected.has('work.json') || !expected.has('work.pdf')) throw Error('Paketprüfung fehlgeschlagen: Pflichtdatei');
+  const actual = Object.values(reopened.files).filter(file => !file.dir).map(file => file.name);
+  if (actual.length !== expected.size || actual.some(path => !expected.has(path))) throw Error('Paketprüfung fehlgeschlagen: zusätzliche Datei');
+  const work = JSON.parse(await reopened.file('work.json').async('string'));
+  if (work?.schema !== 'gradecrew.school-work-export' || work.schemaVersion !== 1 || work.exportedAtMillis !== checkedManifest.exportedAtMillis || !work.submission?.id || !work.quiz?.id) throw Error('Paketprüfung fehlgeschlagen: Arbeitsdaten');
+  return { schema: 'gradecrew.school-work-verification', schemaVersion: 1, verifiedAtMillis: Date.now(), packageSha256: await hash(bytes, cryptoApi), manifestSha256: await hash(rawManifest, cryptoApi), checkedFiles: checkedManifest.files.length, valid: true };
 }
 
 async function loadVendor(src, globalName) {
