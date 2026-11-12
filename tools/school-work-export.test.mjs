@@ -22,6 +22,7 @@ test('package includes PDF, JSON, private media, manifest and a verified receipt
   const result = await buildSchoolPackage(input, { PDFLib, JSZip, cryptoApi: webcrypto });
   assert.equal(result.receipt.valid, true);
   assert.equal(result.receipt.checkedFiles, 3);
+  assert.match(result.receipt.packageSha256, /^[a-f0-9]{64}$/);
   const pdf = await PDFLib.PDFDocument.load(result.pdf);
   assert.ok(pdf.getPageCount() >= 1);
   const zip = await JSZip.loadAsync(result.bytes);
@@ -39,7 +40,26 @@ test('changed file fails verification against the original manifest', async () =
   const zip = await JSZip.loadAsync(result.bytes);
   zip.file('work.json', 'changed');
   const changed = await zip.generateAsync({ type: 'uint8array' });
-  await assert.rejects(verifySchoolPackage(changed, { JSZip, cryptoApi: webcrypto }), /Paketprüfung fehlgeschlagen: work.json/);
+  await assert.rejects(verifySchoolPackage(changed, { JSZip, cryptoApi: webcrypto }), /Paketprüfung fehlgeschlagen: (?:Dateigröße )?work.json/);
+});
+
+test('an extra ZIP entry is rejected even when the manifest files are intact', async () => {
+  const result = await buildSchoolPackage(input, { PDFLib, JSZip, cryptoApi: webcrypto });
+  const zip = await JSZip.loadAsync(result.bytes);
+  zip.file('unexpected.txt', 'not part of the pupil record');
+  const changed = await zip.generateAsync({ type: 'uint8array' });
+  await assert.rejects(verifySchoolPackage(changed, { JSZip, cryptoApi: webcrypto }), /zusätzliche Datei/);
+});
+
+test('a manifest without the original work is rejected', async () => {
+  const result = await buildSchoolPackage(input, { PDFLib, JSZip, cryptoApi: webcrypto });
+  const zip = await JSZip.loadAsync(result.bytes);
+  const manifest = JSON.parse(await zip.file('manifest.json').async('string'));
+  manifest.files = manifest.files.filter(file => file.path !== 'work.json');
+  zip.remove('work.json');
+  zip.file('manifest.json', JSON.stringify(manifest));
+  const changed = await zip.generateAsync({ type: 'uint8array' });
+  await assert.rejects(verifySchoolPackage(changed, { JSZip, cryptoApi: webcrypto }), /Pflichtdatei/);
 });
 
 test('unsupported but valid audio data is disclosed instead of silently omitted', async () => {
@@ -49,4 +69,14 @@ test('unsupported but valid audio data is disclosed instead of silently omitted'
   const zip = await JSZip.loadAsync(result.bytes);
   const work = JSON.parse(await zip.file('work.json').async('string'));
   assert.ok(work.gaps.some(gap => gap.field.endsWith('audioDataUrl') && gap.reason === 'unsupported-inline-media-type'));
+});
+
+test('characters unavailable in the PDF font remain in JSON and create a visible gap', async () => {
+  const variant = structuredClone(input);
+  variant.submission.answers.q1 = 'Die Antwort enthält ein Symbol 🧮';
+  const result = await buildSchoolPackage(variant, { PDFLib, JSZip, cryptoApi: webcrypto });
+  const zip = await JSZip.loadAsync(result.bytes);
+  const work = JSON.parse(await zip.file('work.json').async('string'));
+  assert.equal(work.submission.answers.q1, 'Die Antwort enthält ein Symbol 🧮');
+  assert.ok(work.gaps.some(gap => gap.field === 'work.pdf' && gap.reason === 'unsupported-characters-see-work-json'));
 });

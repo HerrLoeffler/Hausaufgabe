@@ -418,3 +418,4 @@ button.createChoiceCard{cursor:pointer}.createChoiceCard:hover{transform:transla
 
 /* One shared feedback/removal control keeps both symbols readable. */
 .questionActions .aiFeedbackBad.deleteQuestion { width: auto; min-width: 72px; white-space: nowrap; }
+.resultsExportToolbar{display:grid;justify-items:start;gap:8px;padding:14px;border-bottom:1px solid var(--line);background:#f8fafc}.resultsExportToolbar .button{max-width:100%;white-space:normal;text-align:left}.resultsExportToolbar .hint{max-width:70ch;line-height:1.45;color:#475467}

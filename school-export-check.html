@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>GradeCrew · Exportpaket prüfen</title>
+  <link rel="stylesheet" href="./school-export-check.css">
+  <script src="./assets/vendor/jszip-3.10.1.min.js" defer></script>
+  <script type="module" src="./school-export-check.mjs"></script>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">GradeCrew · Schulübergabe</p>
+    <h1>Exportpaket prüfen</h1>
+    <p>Diese Prüfung liest die ausgewählten Dateien nur auf diesem Gerät. Sie lädt weder Schülerarbeiten noch Prüfdaten hoch.</p>
+    <form id="checkForm">
+      <label for="packageFile">Einzelarbeit oder Klassenmappe als ZIP</label>
+      <input id="packageFile" type="file" accept=".zip,application/zip" required>
+      <label for="receiptFile">Getrennter Prüfbeleg als JSON <span>(empfohlen)</span></label>
+      <input id="receiptFile" type="file" accept=".json,application/json">
+      <button type="submit">Paket prüfen</button>
+    </form>
+    <div id="status" role="status" aria-live="polite"></div>
+    <section id="result" hidden>
+      <h2>Prüfergebnis</h2>
+      <dl id="facts"></dl>
+      <div id="workList"></div>
+      <p class="notice">Die technische Prüfung bestätigt weder die Herkunft ohne getrennt abgeglichenen Beleg noch den Upload in ein Schulsystem. Die Schule prüft Ablage, Leserechte und Aufbewahrung selbst.</p>
+    </section>
+  </main>
+</body>
+</html>
