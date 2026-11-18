@@ -872,3 +872,7 @@ Martins Rückmeldung vom 18.11.2026: Gemeinsamer Baustein mit variabler Anordnun
 - [x] Acht echte gemischte Wünsche: sechs Fachaufgaben, eine Rückfrage und eine Empfehlung. Dreisatz nur bei passender Beziehung.4/8Erstversuche; Fehler verbessert und Historie erhalten; anschließend8ready. Zusätzlicher freier Englischwunsch imBrowserkorrektbewertet.
 - [x] EigeneRückmeldung atomargespeichert undim echtenFolgeauftrag samtStrukturabgerufen.63Tests,Server-/Browsernachweis,14Hostinghashes,97andereFunctionsunverändert.37Providercalls,berechnet0,064848USD,0offen. [Bericht](https://github.com/HerrLoeffler/Hausaufgabe/blob/b3d1cd078bfde382c1ac65c68df89b09a6248013/docs/evidence/fields-arrows8-20261118/REPORT.md).
 - [ ] Martin bewertet eigene gemischteWünsche mitGrün/Rot undkurzenNotizen; echtesMikrofon/SprachdienstundTouchprüfen. Prüfer gegenbestätigteLehrkrafturteilekalibrieren. Keinallgemeiner99-%-Nachweis,keinenormaleTest-/Productionintegration. RuntimePR419/DokuPR418bleibenDraft.
+
+
+- [x] **GC-EXTENDED-QUESTION-TYPES-01 · Laborzugang18.11:** expliziteFreigabe fürbestätigtesaktivesBestandskonto gespeichert;64Tests,Testlogin8Aufgaben,Selbstfreigabe403,97andereFunctionsunverändert. NurTestbackend. [Beleg](https://github.com/HerrLoeffler/Hausaufgabe/blob/752d4652ea5318f70ea61d07143c423eb70dfb31/docs/evidence/fields-arrows8-20261118/access-followup.json).
+- [ ] **GC-EXTENDED-QUESTION-TYPES-01:** MartinmeldetsichimLaborabundmitgewähltemBestandskontoneuan; tatsächlichenZugangbestätigen.

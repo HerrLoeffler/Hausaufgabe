@@ -4239,6 +4239,19 @@
       },
       "mehrfeld30_pilot_20261109": {
         "fields_arrows_20261118": {
+          "access_followup_20261118": {
+            "stage": "staging_deployed",
+            "scope": "isolated lab only",
+            "source": "11a530ba8c781e32fc7941506bb3cb3707770070",
+            "function_hash": "31d2ca77a33e42b2a2599977c0259240ddb8a1e4",
+            "explicit_existing_teacher_grant_verified": true,
+            "profile_roles_changed": false,
+            "tests": 64,
+            "other_functions_unchanged": 97,
+            "client_self_grant_denied": true,
+            "user_relogin": "pending",
+            "evidence_commit": "752d4652ea5318f70ea61d07143c423eb70dfb31"
+          },
           "task_id": "GC-EXTENDED-QUESTION-TYPES-01",
           "stage": "staging_deployed",
           "scope": "isolated remy-mehrfeld30 preview only",
