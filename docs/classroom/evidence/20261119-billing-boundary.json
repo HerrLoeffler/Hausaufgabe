@@ -1,0 +1,22 @@
+{
+  "taskId": "GC-CLASSROOM-01",
+  "date": "2026-11-19",
+  "relatedWorkstream": "GC-BILLING-PLAN-01",
+  "sourceCommitVerifiedOnGithub": "6ad3367d7564658f3385827c376f27b280c65f56",
+  "ownerReportedDeployment": {
+    "functions": {
+      "billingPilot": "00003-kog",
+      "billingPayments": "00002-rux",
+      "billingStripeWebhook": "00002-tud"
+    },
+    "previewChannel": "billing-product",
+    "hostingVersion": "b007208e3e47b0f1",
+    "canonicalStageHostingUnchanged": "4916e09a92376424",
+    "existing51SourceAndConfigPreserved": true,
+    "testAccountGlobalRole": "teacher",
+    "testAdministratorChoice": "pending human selection",
+    "exampleDiscountsActivated": false
+  },
+  "verificationBoundary": "Source commit read back; deployment details are owner receipts, not a new Classroom cloud audit.",
+  "classroomScope": "No Classroom deployment or school/ASV mutation in this update. Preserve separate Billing sources/channel during future CSV work."
+}
