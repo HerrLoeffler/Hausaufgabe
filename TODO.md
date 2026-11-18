@@ -904,3 +904,9 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 - [x] Signierter Upload im bestehenden Lauf44404250305 erfolgreich: **Secure 1.0 (1321)**, AAC in App und Profil geprüft;18Nov22:19:59UTC, DeliveryUUID3499124c-8a8b-41a9-afcc-327e5e1f834d. Ausgewählte App-Store-Version1293 und Secure Test1241 nicht geändert. [Nachweise](workstreams/secure-phone-compact-20261118.md).
 - [x] **1321 in TestFlight verfügbar:** Martin bestätigt nach der vorigen1313-Anzeige ausdrücklich „1321 jetzt da“.
 - [ ] Martin prüft den neuen kompakten Build am Gerät. Keine physische Abnahme allein aus Simulator- oder Serverprüfungen ableiten.
+
+### GC-IOS-02 / GC-RELEASE-06 · einheitliches Secure-Logo in der App · 18.11.2026
+
+- [x] Unterschied nach Nutzerscreenshot reproduziert: AppIcon war bereits die freigegebene durch-C-Schlossgrafik, das In-App-Logo noch der alte runde Badge. PR446 integriert als `82dba253`; beide Live-Bilddateien nutzen jetzt exakt die freigegebene Quelle. Separate Test-Identität und Layout erhalten.
+- [x] Verhaltenstest zuerst rot, danach31Python/29JS erfolgreich; native Vorschau40/40 und Lifecycle/Abgabe/Rückkehr grün, Bild visuell geprüft. Enger unabhängiger Review ohne Blocker.
+- [ ] Release44412446551: alle iPadgates grün; ein iPhone-Webfall zunächst nicht rechtzeitig bereit, Upload korrekt gesperrt. Lokaler unveränderter Gegenlauf216/12/6grün; genau ein gezielter Phone-Retry135195505743/attempt2 ist bei unverändertem Code vollständig grün. Alle Matrixgates bestanden; signierter/AAC-geprüfter **Secure1.0(1332)**-Upload135203252701 erfolgreich am18Nov23:28:34UTC. Tatsächliche1332-Verfügbarkeit noch offen;1321 hat noch das bisherige Einstiegslogo. Keine weitere Buildwiederholung oder AppStore-Revieweinreichung. [Übergabe](workstreams/secure-entry-logo-20261118.md).
