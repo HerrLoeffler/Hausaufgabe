@@ -1,0 +1,48 @@
+{
+  "phase": "dev0",
+  "strategyHint": "",
+  "comparisons": [
+    {
+      "baseline": {
+        "total": 20,
+        "ready": 20,
+        "firstPass": 16,
+        "rejected": 0,
+        "pending": 0
+      },
+      "candidate": {
+        "total": 20,
+        "ready": 19,
+        "firstPass": 13,
+        "rejected": 1,
+        "pending": 0
+      },
+      "regressions": [
+        "base"
+      ],
+      "effectiveRecipeChanged": true,
+      "improved": false
+    },
+    {
+      "baseline": {
+        "total": 20,
+        "ready": 20,
+        "firstPass": 16,
+        "rejected": 0,
+        "pending": 0
+      },
+      "candidate": {
+        "total": 20,
+        "ready": 19,
+        "firstPass": 11,
+        "rejected": 1,
+        "pending": 0
+      },
+      "regressions": [
+        "base"
+      ],
+      "effectiveRecipeChanged": true,
+      "improved": false
+    }
+  ]
+}

@@ -1,37 +1,46 @@
 {
-  "at": "2026-11-18T19:08:40.586Z",
+  "at": "2026-11-18T19:31:52.541Z",
   "session": "auto-recipes-20261118-v1",
-  "status": "running",
+  "status": "completed",
   "modelWeightsTrained": false,
   "humanApproved": false,
-  "totalCalls": 42,
-  "spentMicros": 91894,
-  "reservedMicros": 46058,
-  "inputTokens": 49842,
-  "outputTokens": 10972,
+  "totalCalls": 319,
+  "spentMicros": 723030,
+  "reservedMicros": 0,
+  "inputTokens": 401882,
+  "outputTokens": 83478,
   "models": [
     "gpt-6.2-sol",
-    "gpt-6-luna",
-    null
+    "gpt-6-luna"
   ],
   "phases": [
     {
       "phase": "dev0",
       "metrics": {
         "total": 20,
-        "ready": 10,
-        "firstPass": 8,
-        "rejected": 10,
-        "pending": 10
+        "ready": 20,
+        "firstPass": 16,
+        "rejected": 0,
+        "pending": 0
       },
       "strategyHint": "",
       "cases": [
         {
           "id": "arguments",
           "family": "arguments",
-          "status": "pending",
+          "status": "ready",
           "attempt": 1,
-          "adversary": null,
+          "kind": "mapping",
+          "adversary": {
+            "clarityScore": 4,
+            "appropriate": true,
+            "qVersion": "78eeb60830e45378d6fb2a8183134b0b4f3065156d9bfbbcf5732c37e3b32a01",
+            "at": "2026-11-18T19:09:03.483Z",
+            "concreteIssue": "Die Zuordnung ist über die Volltexte eindeutig: 1 → B, 2 → A, 3 → C. Es sind keine Pfeile vorgegeben. Lediglich die Kurzlabels sind mit „Behauptu“ und „Begründu“ unsauber abgeschnitten.",
+            "passed": true,
+            "leaksAnswer": false,
+            "solvable": true
+          },
           "errors": []
         },
         {
@@ -41,56 +50,105 @@
           "attempt": 1,
           "kind": "direct",
           "adversary": {
-            "leaksAnswer": false,
-            "solvable": true,
-            "qVersion": "37ea6e6e4aace07956df0574efba6acd98e2c971486fda77c0fa1c578323950f",
-            "passed": true,
-            "appropriate": true,
-            "concreteIssue": "Kein belegbarer Fehler: 64 ÷ 20 ergibt 3,20 €, und von 1 % zu 100 % wird in beiden Spalten mit 100 multipliziert. Der Gesamtbetrag von 320 € bleibt offen. Die vorgegebenen ersten Pfeile bieten eine passende Einstiegshilfe, und die beiden Zielpfeile werden getrennt ergänzt.",
             "clarityScore": 5,
-            "at": "2026-11-18T19:07:00.826Z"
+            "qVersion": "37ea6e6e4aace07956df0574efba6acd98e2c971486fda77c0fa1c578323950f",
+            "appropriate": true,
+            "at": "2026-11-18T19:07:00.826Z",
+            "passed": true,
+            "concreteIssue": "Kein belegbarer Fehler: 64 ÷ 20 ergibt 3,20 €, und von 1 % zu 100 % wird in beiden Spalten mit 100 multipliziert. Der Gesamtbetrag von 320 € bleibt offen. Die vorgegebenen ersten Pfeile bieten eine passende Einstiegshilfe, und die beiden Zielpfeile werden getrennt ergänzt.",
+            "leaksAnswer": false,
+            "solvable": true
           },
           "errors": []
         },
         {
           "id": "biology",
           "family": "biology",
-          "status": "pending",
+          "status": "ready",
           "attempt": 1,
-          "adversary": null,
+          "kind": "chain",
+          "adversary": {
+            "solvable": true,
+            "clarityScore": 5,
+            "leaksAnswer": false,
+            "passed": true,
+            "at": "2026-11-18T19:09:00.953Z",
+            "concreteIssue": "Kein belegbarer Fehler: Mund → Speiseröhre → Magen → Dünndarm → Dickdarm ist für Klasse 7 eine fachlich richtige Vereinfachung. Die Pfeile folgen der Transportrichtung. Die Ablenker sind thematisch plausibel, passen aber nicht an die jeweilige Stelle.",
+            "qVersion": "445b6fcbbff75c7c37fa854acef0d74ee1b884130fc307e9849cf51de61a353f",
+            "appropriate": true
+          },
           "errors": []
         },
         {
           "id": "branch",
           "family": "branch",
-          "status": "pending",
+          "status": "ready",
           "attempt": 1,
-          "adversary": null,
+          "kind": "branch",
+          "adversary": {
+            "qVersion": "f1aeefdfe2ef4a7f60f17a44099f8fbb88d476d26b52c3b37e94a95fcadfb319",
+            "at": "2026-11-18T19:09:13.206Z",
+            "leaksAnswer": false,
+            "appropriate": true,
+            "concreteIssue": "Kein belegbarer Fehler: „carry“ ist der gemeinsame Ausgangspunkt. Die zwei eindeutig beschrifteten Pfade führen zu je einem offenen Feld: „carried“ im Simple Past und „carries“ in der dritten Person Singular im Simple Present. Keine der beiden Lösungen wird vorgegeben.",
+            "solvable": true,
+            "clarityScore": 5,
+            "passed": true
+          },
           "errors": []
         },
         {
           "id": "english",
           "family": "english",
-          "status": "generated",
+          "status": "ready",
           "attempt": 1,
           "kind": "chain",
-          "adversary": null,
+          "adversary": {
+            "leaksAnswer": false,
+            "passed": true,
+            "solvable": true,
+            "clarityScore": 5,
+            "concreteIssue": "Kein Fehler: Jedes Ausgangsverb ist über einen mit „Simple Past“ beschrifteten Pfeil eindeutig mit einem eigenen Textfeld verbunden. Die gesuchten Formen (took, made, came) werden in der Aufgabe nicht vorweggenommen.",
+            "at": "2026-11-18T19:08:43.738Z",
+            "appropriate": true,
+            "qVersion": "8e34ad2fca1d79425625cb2a251de83e9f50683f77ca0f3bc7416184968c91af"
+          },
           "errors": []
         },
         {
           "id": "essay",
           "family": "open-writing",
-          "status": "pending",
+          "status": "ready",
           "attempt": 1,
-          "adversary": null,
+          "kind": "decline",
+          "adversary": {
+            "concreteIssue": "Kein belegbarer Fehler: Die Antwort erklärt, warum eine einzige exakte Wortlösung nicht zu einer persönlichen Stellungnahme passt. Die offene Alternative lässt die Position frei und nennt klare Bewertungskriterien, ohne eine Meinung vorzugeben.",
+            "at": "2026-11-18T19:09:24.776Z",
+            "qVersion": "11c1f77138d5fb77b676333e3b9d897e00a428b0885127dbf832388147c7ff26",
+            "appropriate": true,
+            "passed": true,
+            "leaksAnswer": false,
+            "clarityScore": 5,
+            "solvable": true
+          },
           "errors": []
         },
         {
           "id": "fee",
           "family": "base-fee",
-          "status": "pending",
+          "status": "ready",
           "attempt": 2,
-          "adversary": null,
+          "kind": "chain",
+          "adversary": {
+            "leaksAnswer": false,
+            "solvable": true,
+            "clarityScore": 5,
+            "at": "2026-11-18T19:08:49.888Z",
+            "passed": true,
+            "appropriate": true,
+            "concreteIssue": "Kein belegbarer Fehler: 5 × 2 = 10 Euro Rundenpreis, danach 10 + 6 = 16 Euro Gesamtpreis. Die beiden Zahlenfelder stehen in der gewünschten Reihenfolge, und kein Ergebnis ist vorgegeben.",
+            "qVersion": "f99f77ad03dcafcddfc382b1b6883333d986e8f65fefe73f75860197612abe38"
+          },
           "errors": []
         },
         {
@@ -101,12 +159,12 @@
           "kind": "direct",
           "adversary": {
             "appropriate": true,
-            "at": "2026-11-18T19:07:59.885Z",
-            "concreteIssue": "Kein belegbarer Fehler: 7 ÷ 2 ergibt 3,5 km für 1 cm; mit dem offenen Faktor 6 ergeben sich 21 km. Die vorgegebenen Zahlen bleiben erhalten. Der linke Pfeil gibt eine passende Hilfe: Sein Faktor lässt sich wegen des festen Maßstabs auf den separat auszufüllenden rechten Pfeil übertragen.",
             "solvable": true,
-            "leaksAnswer": false,
+            "concreteIssue": "Kein belegbarer Fehler: 7 ÷ 2 ergibt 3,5 km für 1 cm; mit dem offenen Faktor 6 ergeben sich 21 km. Die vorgegebenen Zahlen bleiben erhalten. Der linke Pfeil gibt eine passende Hilfe: Sein Faktor lässt sich wegen des festen Maßstabs auf den separat auszufüllenden rechten Pfeil übertragen.",
             "clarityScore": 5,
+            "at": "2026-11-18T19:07:59.885Z",
             "qVersion": "3bd06d1dced5770041ffac6fb5f28c3d95218f3fee4ce539934efbb88e0ba3b1",
+            "leaksAnswer": false,
             "passed": true
           },
           "errors": []
@@ -114,9 +172,19 @@
         {
           "id": "missing",
           "family": "missing-data",
-          "status": "pending",
+          "status": "ready",
           "attempt": 1,
-          "adversary": null,
+          "kind": "clarify",
+          "adversary": {
+            "appropriate": true,
+            "solvable": true,
+            "at": "2026-11-18T19:09:11.324Z",
+            "qVersion": "e2c2212ade9daa007204cb1e76b5e92408570f931a358181fac6a5fe7e5f5bf0",
+            "concreteIssue": "Kein Fehler: Die Rückfrage ist klar und fragt genau einen notwendigen Gesichtspunkt ab, nämlich das Lernziel. Das fehlende Material muss bei der ausdrücklich gewünschten einzelnen Rückfrage noch nicht erfragt werden.",
+            "leaksAnswer": false,
+            "clarityScore": 5,
+            "passed": true
+          },
           "errors": []
         },
         {
@@ -126,14 +194,14 @@
           "attempt": 1,
           "kind": "direct",
           "adversary": {
-            "qVersion": "5e29f491279c0530998f1e140af0c6d867430afbfcddc2d2cae90170cd29a1b4",
-            "clarityScore": 5,
+            "solvable": true,
+            "passed": true,
+            "leaksAnswer": false,
+            "concreteIssue": "Kein belegbarer Fehler: Der vorgegebene Schritt ÷ 4 führt zu 0,25 l Sirup für 1 l Wasser. Danach ergibt × 14 in beiden Spalten die Zielzeile mit 3,5 l Sirup. Die Pfeile sind je Spalte separat ausfüllbar; der vorgegebene erste Schritt ist eine passende Hilfe und verrät kein gesuchtes Feld.",
             "appropriate": true,
             "at": "2026-11-18T19:08:14.501Z",
-            "concreteIssue": "Kein belegbarer Fehler: Der vorgegebene Schritt ÷ 4 führt zu 0,25 l Sirup für 1 l Wasser. Danach ergibt × 14 in beiden Spalten die Zielzeile mit 3,5 l Sirup. Die Pfeile sind je Spalte separat ausfüllbar; der vorgegebene erste Schritt ist eine passende Hilfe und verrät kein gesuchtes Feld.",
-            "solvable": true,
-            "leaksAnswer": false,
-            "passed": true
+            "clarityScore": 5,
+            "qVersion": "5e29f491279c0530998f1e140af0c6d867430afbfcddc2d2cae90170cd29a1b4"
           },
           "errors": []
         },
@@ -144,31 +212,51 @@
           "attempt": 1,
           "kind": "direct",
           "adversary": {
+            "solvable": true,
             "leaksAnswer": false,
             "passed": true,
-            "solvable": true,
-            "appropriate": true,
-            "at": "2026-11-18T19:08:00.828Z",
             "concreteIssue": "Kein belegbarer Fehler: Rechts ergeben sich 26 ÷ 2 = 13 km und 13 × 7 = 91 km. Der linke Pfeil mit × 7 gibt einen passenden Hinweis auf den offenen rechten Faktor, ohne die gesuchte Strecke vorwegzunehmen. Die gegebenen Zahlen bleiben erhalten, und beide Spalten haben eigene Pfeile.",
+            "clarityScore": 5,
+            "appropriate": true,
             "qVersion": "6645ee35f0025d405077b2a222d4d60462edd51892e3c57108cc41405132d0bb",
-            "clarityScore": 5
+            "at": "2026-11-18T19:08:00.828Z"
           },
           "errors": []
         },
         {
           "id": "negative",
           "family": "signed-chain",
-          "status": "pending",
+          "status": "ready",
           "attempt": 1,
-          "adversary": null,
+          "kind": "chain",
+          "adversary": {
+            "clarityScore": 5,
+            "appropriate": true,
+            "passed": true,
+            "qVersion": "1334fb6f8ddfd1677fb4af65b66bbd6c55a2a0f4a724ea3a2cb2ba1809e2e036",
+            "leaksAnswer": false,
+            "concreteIssue": "Die beschriftete Rechenkette führt eindeutig von 3 °C über eine Änderung um −8 Grad zum offenen Zahlenfeld. Das Ergebnis −5 °C wird in der Aufgabe nicht vorweggenommen.",
+            "solvable": true,
+            "at": "2026-11-18T19:09:38.600Z"
+          },
           "errors": []
         },
         {
           "id": "nonlinear",
           "family": "nonlinear",
-          "status": "pending",
+          "status": "ready",
           "attempt": 1,
-          "adversary": null,
+          "kind": "chain",
+          "adversary": {
+            "concreteIssue": "Das einzige offene Zahlenfeld ist eindeutig: 6 · 6 = 36 cm². Die Formel ermöglicht auch die verlangte Prüfung: Die Seitenlänge wächst um den Faktor 1,5, die Fläche aber um den Faktor 2,25. Ein einfacher proportionaler Dreisatz passt daher nicht. Dafür ist kein weiteres Zahlenfeld nötig.",
+            "passed": true,
+            "appropriate": true,
+            "solvable": true,
+            "clarityScore": 5,
+            "at": "2026-11-18T19:09:26.519Z",
+            "leaksAnswer": false,
+            "qVersion": "a43d1c45082f66d39baf2a0594bef2b8817072e977461b24e4a7ae442e7013ef"
+          },
           "errors": []
         },
         {
@@ -178,14 +266,14 @@
           "attempt": 2,
           "kind": "direct",
           "adversary": {
-            "solvable": true,
-            "at": "2026-11-18T19:07:18.119Z",
             "qVersion": "8046784f2a3c5066d36b0f2b0b4fd8380d7dbcb4aa9199a33a72705a7c7b2faf",
-            "leaksAnswer": false,
-            "concreteIssue": "Die Aufgabe ist lösbar: Rechts ergeben sich 3 € und 36 €, die beiden offenen Pfeilfaktoren sind jeweils 12. Die Hilfestufe ist passend, da der Rechenweg über 1 % vorgegeben ist, ohne offene Felder vorwegzunehmen. Die Anweisung „Ergänze den Rechenweg über 1 in der linken Spalte“ ist etwas missverständlich, weil auch rechts ein Pfeilfaktor fehlt. Klarer wäre: „Ergänze alle offenen Felder in beiden Spalten.“",
-            "passed": true,
             "clarityScore": 4,
-            "appropriate": true
+            "appropriate": true,
+            "at": "2026-11-18T19:07:18.119Z",
+            "leaksAnswer": false,
+            "solvable": true,
+            "concreteIssue": "Die Aufgabe ist lösbar: Rechts ergeben sich 3 € und 36 €, die beiden offenen Pfeilfaktoren sind jeweils 12. Die Hilfestufe ist passend, da der Rechenweg über 1 % vorgegeben ist, ohne offene Felder vorwegzunehmen. Die Anweisung „Ergänze den Rechenweg über 1 in der linken Spalte“ ist etwas missverständlich, weil auch rechts ein Pfeilfaktor fehlt. Klarer wäre: „Ergänze alle offenen Felder in beiden Spalten.“",
+            "passed": true
           },
           "errors": []
         },
@@ -196,14 +284,14 @@
           "attempt": 1,
           "kind": "direct",
           "adversary": {
-            "clarityScore": 5,
-            "leaksAnswer": false,
-            "at": "2026-11-18T19:07:31.046Z",
+            "concreteIssue": "Kein belegbarer Fehler: 14 € ÷ 4 ergibt 3,50 € pro Heft, und beide unteren Pfeile benötigen den Faktor 9. Damit kosten 9 Hefte 31,50 €. Die getrennten Pfeile und die vorgegebenen Divisionen bieten eine passende Hilfe, ohne die gesuchten Preise vorwegzunehmen.",
             "solvable": true,
+            "at": "2026-11-18T19:07:31.046Z",
             "passed": true,
             "appropriate": true,
-            "concreteIssue": "Kein belegbarer Fehler: 14 € ÷ 4 ergibt 3,50 € pro Heft, und beide unteren Pfeile benötigen den Faktor 9. Damit kosten 9 Hefte 31,50 €. Die getrennten Pfeile und die vorgegebenen Divisionen bieten eine passende Hilfe, ohne die gesuchten Preise vorwegzunehmen.",
-            "qVersion": "e62a556f4ef5ce85798a50be56e3401391b9c19a032b7a132317c1e8441622dd"
+            "qVersion": "e62a556f4ef5ce85798a50be56e3401391b9c19a032b7a132317c1e8441622dd",
+            "clarityScore": 5,
+            "leaksAnswer": false
           },
           "errors": []
         },
@@ -214,14 +302,14 @@
           "attempt": 1,
           "kind": "inverse",
           "adversary": {
-            "clarityScore": 5,
-            "appropriate": true,
-            "at": "2026-11-18T19:08:28.827Z",
             "solvable": true,
             "leaksAnswer": false,
             "concreteIssue": "Kein belegbarer Fehler. Rechts ergibt sich zunächst 9 × 40 = 360 h. Der offene Pfeil ist ÷ 60, sodass die gesuchte Fahrzeit 6 h beträgt. Die vorgegebenen Pfeile stützen den Rechenweg, ohne eines der offenen Felder vorwegzunehmen.",
+            "clarityScore": 5,
+            "qVersion": "259020814ad73d57d13459be3e32920179343e330098c764137353501825d1b5",
             "passed": true,
-            "qVersion": "259020814ad73d57d13459be3e32920179343e330098c764137353501825d1b5"
+            "at": "2026-11-18T19:08:28.827Z",
+            "appropriate": true
           },
           "errors": []
         },
@@ -233,13 +321,13 @@
           "kind": "direct",
           "adversary": {
             "solvable": true,
-            "qVersion": "8eac7c7d0228ad311a3d3a2fc1b1b9a266dacee0ea2e5b3b19a59fe184408c47",
-            "leaksAnswer": false,
-            "clarityScore": 5,
-            "concreteIssue": "Kein belegbarer Fehler: 450 ÷ 6 = 75 g, danach 75 × 8 = 600 g. Die getrennten Spaltenpfeile und die vorgegebenen Rechenschritte bieten eine passende Hilfe; der letzte rechte Pfeil und beide gesuchten Mehlmengen bleiben offen.",
-            "at": "2026-11-18T19:07:47.247Z",
             "appropriate": true,
-            "passed": true
+            "passed": true,
+            "concreteIssue": "Kein belegbarer Fehler: 450 ÷ 6 = 75 g, danach 75 × 8 = 600 g. Die getrennten Spaltenpfeile und die vorgegebenen Rechenschritte bieten eine passende Hilfe; der letzte rechte Pfeil und beide gesuchten Mehlmengen bleiben offen.",
+            "clarityScore": 5,
+            "leaksAnswer": false,
+            "qVersion": "8eac7c7d0228ad311a3d3a2fc1b1b9a266dacee0ea2e5b3b19a59fe184408c47",
+            "at": "2026-11-18T19:07:47.247Z"
           },
           "errors": []
         },
@@ -251,22 +339,32 @@
           "kind": "inverse",
           "adversary": {
             "clarityScore": 5,
+            "solvable": true,
             "concreteIssue": "Kein belegbarer Fehler. Die vorgegebenen Pfeile führen korrekt zur Zwischenzeile: links 3 ÷ 3 = 1, rechts 30 × 3 = 90. Im zweiten Schritt müssen die Lernenden selbst links × 5 und rechts ÷ 5 wählen und die Reichweite von 18 Tagen berechnen. Die Hilfe zeigt den ersten Schritt, ohne ein gesuchtes Feld vorwegzunehmen.",
             "appropriate": true,
-            "passed": true,
             "qVersion": "1de03c2be7d86bf0c390f1ab49f5965c908e3f8305e9f9c15651fd9cfe8f8563",
             "at": "2026-11-18T19:08:31.177Z",
-            "leaksAnswer": false,
-            "solvable": true
+            "passed": true,
+            "leaksAnswer": false
           },
           "errors": []
         },
         {
           "id": "time",
           "family": "additive-time",
-          "status": "pending",
-          "attempt": 1,
-          "adversary": null,
+          "status": "ready",
+          "attempt": 2,
+          "kind": "chain",
+          "adversary": {
+            "concreteIssue": "Kein belegbarer Fehler: 08:20 plus 45 Minuten ergibt 09:05. Der Pfeil gibt die Fahrtdauer korrekt an, und genau eine der drei Optionen im Format HH:MM ist richtig.",
+            "appropriate": true,
+            "solvable": true,
+            "passed": true,
+            "clarityScore": 5,
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:09:43.978Z",
+            "qVersion": "369cb64100b17f0f8f0c03f1bbd871e75e5fa519c116b5a01ae4a6bc656c0fe7"
+          },
           "errors": []
         },
         {
@@ -276,22 +374,1381 @@
           "attempt": 1,
           "kind": "inverse",
           "adversary": {
-            "qVersion": "36c7204650fdcb0cb7f545a5ad811b47767a3d321974f5e420cbfa22e58417ad",
+            "clarityScore": 5,
+            "appropriate": true,
+            "solvable": true,
+            "concreteIssue": "Kein belegbarer Fehler. Die vorgegebenen Pfeile führen zur Zwischenzeit 28 × 3 = 84 Minuten und lassen den letzten rechten Pfeil (÷ 7) sowie die Zielzeit (12 Minuten) offen. Die erste Pfeilstufe zeigt die gegenläufigen Rechenoperationen als passende Hilfe für Klasse 7.",
             "passed": true,
             "at": "2026-11-18T19:08:13.409Z",
+            "qVersion": "36c7204650fdcb0cb7f545a5ad811b47767a3d321974f5e420cbfa22e58417ad",
+            "leaksAnswer": false
+          },
+          "errors": []
+        }
+      ]
+    },
+    {
+      "phase": "dev1",
+      "metrics": {
+        "total": 20,
+        "ready": 19,
+        "firstPass": 13,
+        "rejected": 1,
+        "pending": 0
+      },
+      "strategyHint": "Verwende für Kurzlabels vollständige, ungekürzte Wörter; kürze sie nicht mitten im Wort ab.",
+      "cases": [
+        {
+          "id": "arguments",
+          "family": "arguments",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "mapping",
+          "adversary": {
+            "passed": true,
+            "at": "2026-11-18T19:12:25.440Z",
+            "appropriate": true,
+            "concreteIssue": "Die Zuordnung ist eindeutig: Fristgerechte Rückgabe ermöglicht die weitere Ausleihe, saubere und trockene Aufbewahrung schützt die Seiten, und die Erfassung des Ausweises macht die Ausleihe nachvollziehbar. Alle sechs Texte sind vorhanden, und keine Pfeile sind vorgegeben. Nur die Kurzlabels „Behauptu“ und „Begründu“ wirken abgeschnitten.",
+            "clarityScore": 4,
+            "solvable": true,
+            "qVersion": "e6d894d8d6e5a4efc42d75ccae8f6fa2d9829c14b96e0c6b6205975be96e6cc3",
+            "leaksAnswer": false
+          },
+          "errors": []
+        },
+        {
+          "id": "base",
+          "family": "percent-base",
+          "status": "rejected",
+          "attempt": 3,
+          "kind": "direct",
+          "adversary": null,
+          "errors": [
+            "Der Auftrag verändert oder verliert Angaben des Wunsches."
+          ]
+        },
+        {
+          "id": "biology",
+          "family": "biology",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
             "leaksAnswer": false,
+            "at": "2026-11-18T19:12:05.786Z",
+            "solvable": true,
+            "qVersion": "79798ddfe3c4aac1072a093cc5e27b9bd60f63aff3b3df9f412f4b54b49e7781",
+            "clarityScore": 5,
+            "appropriate": true,
+            "passed": true,
+            "concreteIssue": "Die Lücken sind eindeutig: Mund → Speiseröhre → Magen → Dünndarm → Dickdarm. Die Pfeile zeigen in Transportrichtung. Luftröhre und Kehlkopf sind plausible Verwechslungen; Dickdarm und Speiseröhre gehören zum Verdauungstrakt, stehen aber nicht direkt nach dem Magen. Der Rachen darf im ausdrücklich vereinfachten Weg fehlen."
+          },
+          "errors": []
+        },
+        {
+          "id": "branch",
+          "family": "branch",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "branch",
+          "adversary": {
+            "leaksAnswer": false,
+            "concreteIssue": "Kein belegbarer Fehler: Beide Pfade gehen von „carry“ aus und führen zu je einem offenen Feld. Die Beschriftungen verlangen eindeutig „carried“ bzw. „carries“, ohne die Formen vorzugeben.",
+            "qVersion": "0928a0c221c758edfe881b28ec284534be29f19d07c8ba3a179b558e35784df0",
+            "passed": true,
+            "appropriate": true,
+            "solvable": true,
+            "at": "2026-11-18T19:12:42.694Z",
+            "clarityScore": 5
+          },
+          "errors": []
+        },
+        {
+          "id": "english",
+          "family": "english",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "passed": true,
+            "qVersion": "dfa97c2203549c1db1c3bc06b78ec09c35efe2483269393137d08ff7b150cfce",
+            "clarityScore": 5,
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:11:43.845Z",
+            "solvable": true,
+            "concreteIssue": "Kein belegbarer Fehler: Jedes der drei sichtbaren Ausgangsverben ist über den fachlich passenden Pfeil „Simple Past bilden“ mit einem eigenen Eingabefeld verbunden. Die Lösungen took, made und came sind eindeutig und werden in der Aufgabe nicht vorweggenommen.",
+            "appropriate": true
+          },
+          "errors": []
+        },
+        {
+          "id": "essay",
+          "family": "open-writing",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "decline",
+          "adversary": {
+            "passed": true,
+            "solvable": true,
+            "leaksAnswer": false,
+            "concreteIssue": "Kein belegbarer Fehler: Die Antwort erklärt, warum feste Felder mit einer einzigen exakten Wortlösung für eine persönliche Stellungnahme ungeeignet sind. Sie schlägt einen offenen Schreibauftrag mit eigener Position, Begründung und Beispiel vor und nennt passende Bewertungskriterien, ohne eine Position vorzugeben.",
+            "qVersion": "9b275af79acb4605cf7b786fcfe52ce0d9b715c6332ebf7a8a31f165b02ff360",
+            "clarityScore": 5,
+            "appropriate": true,
+            "at": "2026-11-18T19:12:53.636Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "fee",
+          "family": "base-fee",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "chain",
+          "adversary": {
+            "clarityScore": 5,
+            "leaksAnswer": false,
+            "passed": true,
+            "at": "2026-11-18T19:11:51.316Z",
+            "qVersion": "03cfd008e11956728cbae8b8cb62b4c49ad08ad0b92322619cfd6c42092b3e2d",
+            "concreteIssue": "Die Rechenkette enthält genau zwei offene Zahlenfelder in der gewünschten Reihenfolge: zuerst 5 × 2 € = 10 €, dann nach Addition des Grundpreises 10 € + 6 € = 16 €. Keines der beiden Ergebnisse wird vorgegeben.",
+            "appropriate": true,
+            "solvable": true
+          },
+          "errors": []
+        },
+        {
+          "id": "map",
+          "family": "scale",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "leaksAnswer": false,
+            "concreteIssue": "Kein belegbarer Fehler: 7 ÷ 2 ergibt 3,5 km für 1 cm. Von der Zwischen- zur Zielzeile ist in beiden Spalten der Faktor 6 einzutragen; damit ergeben sich 21 km. Die vorgegebenen Divisionspfeile sind eine passende Hilfe und füllen kein gesuchtes Feld aus.",
+            "appropriate": true,
+            "qVersion": "e913dd00b1b0562b37b34f078e34a991c07ec1103722843d626b41cd5cf699a2",
+            "passed": true,
+            "solvable": true,
+            "at": "2026-11-18T19:11:03.168Z",
+            "clarityScore": 5
+          },
+          "errors": []
+        },
+        {
+          "id": "missing",
+          "family": "missing-data",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "clarify",
+          "adversary": {
+            "leaksAnswer": false,
+            "qVersion": "7098fd739f43a8e1161b7ef99c264082eacaaca191a1223b3697b1db184f125e",
+            "solvable": true,
+            "clarityScore": 5,
+            "concreteIssue": "Die Rückfrage klärt genau einen fehlenden Gesichtspunkt: das Lernziel. Dass sie nicht zugleich nach dem Material fragt, entspricht dem Wunsch nach genau einer Rückfrage.",
+            "at": "2026-11-18T19:12:33.295Z",
+            "appropriate": true,
+            "passed": true
+          },
+          "errors": []
+        },
+        {
+          "id": "mix",
+          "family": "mixture",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "concreteIssue": "Kein belegbarer Fehler: Über 1 l Wasser ergeben sich zunächst 0,25 l und dann für 14 l Wasser 3,5 l Sirup. Die vorgegebenen linken Pfeile sind eine passende Rechenhilfe; die rechten Pfeile und beide gesuchten Sirupmengen bleiben offen.",
+            "solvable": true,
+            "appropriate": true,
+            "qVersion": "52da3ab7253170979ffb3e2d4137043adf1a036a8662f49d8d787adada5d17dc",
+            "at": "2026-11-18T19:11:17.338Z",
+            "leaksAnswer": false,
+            "passed": true,
+            "clarityScore": 5
+          },
+          "errors": []
+        },
+        {
+          "id": "motion",
+          "family": "physics",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "appropriate": true,
+            "at": "2026-11-18T19:11:04.400Z",
+            "concreteIssue": "Kein belegbarer Fehler: Die gegebenen Zahlen bleiben erhalten. Die Pfeile sind spaltenweise getrennt, und die vorgegebenen linken Faktoren dienen als Hilfe, ohne die gesuchte Strecke anzugeben. Rechts ergibt sich 26 ÷ 2 = 13 km und anschließend 13 × 7 = 91 km.",
+            "solvable": true,
+            "leaksAnswer": false,
+            "clarityScore": 5,
+            "passed": true,
+            "qVersion": "c954a48cf6cde706ee23c92c6acbf390572b3f5a7616b36c892002403c6aaad3"
+          },
+          "errors": []
+        },
+        {
+          "id": "negative",
+          "family": "signed-chain",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "chain",
+          "adversary": {
+            "at": "2026-11-18T19:19:17.489Z",
+            "qVersion": "2437e05a9daf8cbf303fa86c3319901047f3b2e9f95e3abcab3cc5b2240a21fe",
+            "leaksAnswer": false,
+            "concreteIssue": "Die beschriftete Rechenkette zeigt den Startwert 3 °C und die Abnahme um 8 °C. Daraus folgt 3 − 8 = −5; der gesuchte Zahlenwert wird nicht vorgegeben.",
+            "passed": true,
+            "solvable": true,
+            "clarityScore": 5,
+            "appropriate": true
+          },
+          "errors": []
+        },
+        {
+          "id": "nonlinear",
+          "family": "nonlinear",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "chain",
+          "adversary": {
+            "appropriate": true,
+            "qVersion": "1f4c1ff15563137b5cd0cad66e80436f9101f878e7cf92c85630757e0b713bb6",
+            "solvable": true,
+            "concreteIssue": "Genau ein Zahlenfeld ist offen. Der Rechenweg führt über 6 × 6 zu 36 cm², ohne das Ergebnis vorzugeben. Die Aufgabe erklärt korrekt, warum ein einfacher proportionaler Dreisatz mit der Seitenlänge nicht passt.",
+            "leaksAnswer": false,
+            "clarityScore": 5,
+            "passed": true,
+            "at": "2026-11-18T19:19:02.679Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "percent",
+          "family": "percent",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "concreteIssue": "Die Hilfestufe ist passend: Die linken Pfeile geben den Rechenweg vor, die rechten werden separat ergänzt. Rechts ergeben sich 3 € für 1 % und 36 € für 12 %; beide Beträge bleiben offen. Die Formulierung „ein Losverkauf kostet insgesamt 300 Euro“ ist etwas unklar, weil offenbleibt, ob Kosten oder Einnahmen gemeint sind. Für die Rechnung ist der Grundwert dennoch eindeutig angegeben.",
+            "solvable": true,
+            "appropriate": true,
+            "qVersion": "7e92e92131df2bb58876ea65ad8433e941783298f64e83df0f8713b64b9f6aca",
+            "at": "2026-11-18T19:10:00.898Z",
+            "clarityScore": 4,
+            "leaksAnswer": false,
+            "passed": true
+          },
+          "errors": []
+        },
+        {
+          "id": "price",
+          "family": "unit-price",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "leaksAnswer": false,
+            "clarityScore": 4,
+            "at": "2026-11-18T19:10:29.335Z",
+            "appropriate": true,
+            "qVersion": "81a6c0eb63f9846eaa7ef03fe5c3b59f9ff765c7c94527beda29191a574e739d",
+            "concreteIssue": "Die Anweisung „Ergänze den Rechenweg über 1 in der linken Spalte“ ist missverständlich: Links ist bereits alles ausgefüllt; die vier offenen Felder stehen rechts. Die Pfeile sind fachlich korrekt: 14 : 4 = 3,50 € und 3,50 × 9 = 31,50 €. Die gegebenen linken Faktoren sind eine passende Hilfe und verraten den Zielpreis nicht.",
+            "solvable": true,
+            "passed": true
+          },
+          "errors": []
+        },
+        {
+          "id": "rate",
+          "family": "inverse-rate",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "inverse",
+          "adversary": {
+            "leaksAnswer": false,
+            "passed": true,
+            "clarityScore": 5,
+            "qVersion": "98cc5b57216cb7000fe544ff90581ec3bc203b98a1351164e928747d1c489a46",
+            "concreteIssue": "Kein belegbarer Fehler: Die Strecke beträgt 360 km. Rechts führen × 40 zu 360 h bei 1 km/h und ÷ 60 zu 6 h bei 60 km/h. Die vorgegebenen linken Pfeile unterstützen den Rechenweg über 1, ohne die rechten Rechenoperationen oder die gesuchten Zeiten vorzugeben.",
+            "appropriate": true,
+            "solvable": true,
+            "at": "2026-11-18T19:11:30.703Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "recipe",
+          "family": "recipe",
+          "status": "ready",
+          "attempt": 3,
+          "kind": "direct",
+          "adversary": {
+            "leaksAnswer": false,
+            "clarityScore": 4,
+            "concreteIssue": "„Ergänze den Rechenweg über 1 in der linken Spalte“ kann so verstanden werden, dass nur links etwas einzutragen ist. Tatsächlich sind in beiden Spalten Felder offen. Die Tabelle macht den Auftrag dennoch lösbar: Rechts ergeben sich 75 g und 600 g, beide offenen Pfeile lauten × 8. Die vorgegebenen ÷-6-Pfeile sind eine passende Hilfe und verraten kein gesuchtes Feld.",
+            "passed": true,
+            "at": "2026-11-18T19:10:48.617Z",
+            "appropriate": true,
+            "qVersion": "c620bca5262f1894928e334132abcbd700e498f43394dd036aea6c82ecf54d7a",
+            "solvable": true
+          },
+          "errors": []
+        },
+        {
+          "id": "supply",
+          "family": "inverse-supply",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "inverse",
+          "adversary": {
+            "qVersion": "4dc34b38b398dbad1fc6f12d4c22fbb03ab6f085a9668d6316ebc7b7167df224",
+            "solvable": true,
+            "concreteIssue": "Kein belegbarer Fehler: Der Vorrat beträgt 90 kg. Bei 1 kg pro Tag reicht er 90 Tage, bei 5 kg pro Tag 18 Tage. Die offenen Pfeilfaktoren sind jeweils 5; die vorgegebenen Rechenzeichen stimmen in beiden Spalten. Die Hilfe zeigt den ersten Rechenschritt, ohne ein offenes Feld auszufüllen.",
+            "leaksAnswer": false,
+            "passed": true,
+            "appropriate": true,
+            "clarityScore": 5,
+            "at": "2026-11-18T19:11:30.885Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "time",
+          "family": "additive-time",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "appropriate": true,
+            "at": "2026-11-18T19:19:13.724Z",
+            "passed": true,
+            "concreteIssue": "08:20 plus 45 Minuten ergibt 09:05. Genau eine der drei Optionen ist richtig, alle stehen im Format HH:MM, und der Pfeil nennt den Rechenschritt, ohne das Ergebnis zu verraten.",
+            "leaksAnswer": false,
+            "clarityScore": 5,
+            "solvable": true,
+            "qVersion": "74ef2c62b98b84f9e956969966324effdf50aba80ccd00a63b98eb086565c7a9"
+          },
+          "errors": []
+        },
+        {
+          "id": "work",
+          "family": "inverse-work",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "inverse",
+          "adversary": {
+            "leaksAnswer": false,
+            "qVersion": "bdef11dce3f3cd8ecf51e25e89aa474532f7eb5824045af37543d3f9f3b09257",
+            "at": "2026-11-18T19:11:16.098Z",
+            "solvable": true,
+            "clarityScore": 5,
+            "concreteIssue": "Kein belegbarer Fehler: Ein Drucker benötigt 28 × 3 = 84 Minuten, sieben benötigen 84 ÷ 7 = 12 Minuten. Die vorgegebenen Pfeile helfen beim Ansatz, ohne die offenen Zeiten oder die gesuchte Pfeiloperation zu verraten.",
+            "appropriate": true,
+            "passed": true
+          },
+          "errors": []
+        }
+      ]
+    },
+    {
+      "phase": "dev2",
+      "metrics": {
+        "total": 20,
+        "ready": 19,
+        "firstPass": 11,
+        "rejected": 1,
+        "pending": 0
+      },
+      "strategyHint": "Formuliere den Arbeitsauftrag bei zweispaltigen Rechenwegen anhand der tatsächlich offenen Zahlen- und Pfeilfelder. Nenne nur Spalten mit offenen Feldern als auszufüllen und beziehe beide Spalten ein, wenn in beiden etwas fehlt.",
+      "cases": [
+        {
+          "id": "arguments",
+          "family": "arguments",
+          "status": "ready",
+          "attempt": 3,
+          "kind": "mapping",
+          "adversary": {
+            "at": "2026-11-18T19:22:32.362Z",
+            "leaksAnswer": false,
+            "clarityScore": 4,
+            "concreteIssue": "Die Zuordnung ist eindeutig: 1 → A, 2 → C, 3 → B. Alle Texte sind sichtbar, und es sind keine Pfeile vorgegeben. Die Pfeilrichtung ist aus „Verbinde jede Behauptung mit der Begründung“ ableitbar, wäre aber mit „Ziehe den Pfeil von der Behauptung zur passenden Begründung“ klarer. Die Kurzlabels „Behauptu“ und „Begründu“ wirken abgeschnitten.",
+            "passed": true,
+            "solvable": true,
+            "appropriate": true,
+            "qVersion": "3f011ebd61450fa8683f092420efba34c91546160b02d294fe7408ae122d2aaa"
+          },
+          "errors": []
+        },
+        {
+          "id": "base",
+          "family": "percent-base",
+          "status": "ready",
+          "attempt": 3,
+          "kind": "direct",
+          "adversary": {
+            "at": "2026-11-18T19:19:54.416Z",
+            "leaksAnswer": true,
+            "clarityScore": 4,
+            "qVersion": "6c3ddf51c78ab50b4c5ebc5d3b0dcd67452ba7665170709bf3a5e3568ded25d1",
+            "appropriate": false,
+            "passed": false,
+            "solvable": true,
+            "concreteIssue": "Die Beträge sind eindeutig: 3,20 € und 320 €. Der offene rechte Pfeil ist jedoch durch den vollständig vorgegebenen linken Parallelpfeil bereits verraten: Von 1 % zu 100 % wird in beiden Spalten mit 100 multipliziert. Außerdem fordert der Text zum Ergänzen in der linken Spalte auf, obwohl dort kein Feld offen ist."
+          },
+          "errors": []
+        },
+        {
+          "id": "biology",
+          "family": "biology",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "chain",
+          "adversary": {
+            "qVersion": "693db58125071545b696252926b095eaca72544378fe0709266dd5b50ae548e4",
+            "leaksAnswer": false,
+            "concreteIssue": "Kein belegbarer Fehler: Im vereinfachten Nahrungsweg folgt auf den Mund die Speiseröhre und auf den Magen der Dünndarm. Alle Pfeile zeigen zur jeweils nächsten Station. Die Ablenker sind plausibel, passen aber nicht an die jeweilige Stelle: Die Luftröhre ist ein Atemweg, Leber und Bauchspeicheldrüse werden nicht von Nahrung durchlaufen, und der Blinddarm gehört zum Dickdarm.",
+            "passed": true,
+            "clarityScore": 5,
+            "solvable": true,
+            "appropriate": true,
+            "at": "2026-11-18T19:22:13.596Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "branch",
+          "family": "branch",
+          "status": "ready",
+          "attempt": 3,
+          "kind": "branch",
+          "adversary": {
+            "qVersion": "f8c04e6ed6979f410819f6e18bd8902b97a0d2aea359b0db1f490db436f86e82",
+            "at": "2026-11-18T19:22:53.625Z",
+            "clarityScore": 5,
+            "appropriate": true,
+            "passed": true,
+            "concreteIssue": "Kein belegbarer Fehler: Vom gemeinsamen Ausgangsverb „carry“ führen zwei eindeutig beschriftete Pfade zu je einem offenen Wortfeld. Die gesuchten Formen sind „carried“ und „carries“; keine davon steht in der öffentlichen Aufgabe.",
+            "solvable": true,
+            "leaksAnswer": false
+          },
+          "errors": []
+        },
+        {
+          "id": "english",
+          "family": "english",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "solvable": true,
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:21:49.492Z",
+            "clarityScore": 5,
+            "concreteIssue": "Kein belegbarer Fehler: Jedes der drei sichtbaren Ausgangsverben ist über den fachlich passenden Pfeil „Simple Past bilden“ mit einem eigenen Textfeld verbunden. Die eindeutigen Lösungen (took, made, came) werden in der Schüleransicht nicht verraten.",
+            "qVersion": "0ffa6b5dcfd28e60aada4e7e84bc24eecc00874fc0bfc3a5dfe8a18b6f268767",
+            "passed": true,
+            "appropriate": true
+          },
+          "errors": []
+        },
+        {
+          "id": "essay",
+          "family": "open-writing",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "decline",
+          "adversary": {
+            "appropriate": true,
+            "passed": true,
+            "solvable": true,
+            "at": "2026-11-18T19:23:02.889Z",
+            "qVersion": "c9d5108421bce086d2372c9aac41a49b11f725aefd237147cb2a546f7e93aa91",
+            "concreteIssue": "Kein belegbarer Fehler: Feste Felder und Pfeile mit einer einzigen Wortlösung passen nicht, weil unterschiedliche persönliche Sichtweisen überzeugend begründet werden können. Die offene Schreibaufgabe lässt die Position frei und fordert mit einem eigenen Beispiel und dem Eingehen auf eine andere Meinung eine nachvollziehbare Begründung.",
+            "leaksAnswer": false,
+            "clarityScore": 5
+          },
+          "errors": []
+        },
+        {
+          "id": "fee",
+          "family": "base-fee",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "qVersion": "783303cca46928291842b53b32a656d8a4306e66a6f60f1a8724869407733667",
+            "solvable": true,
+            "leaksAnswer": false,
+            "concreteIssue": "Die Rechenkette hat genau zwei offene Zahlenfelder in der gewünschten Reihenfolge: zuerst 5 × 2 = 10 Euro für die Zusatzrunden, dann 10 + 6 = 16 Euro insgesamt. Die Pfeile nennen die passenden Rechenoperationen, ohne die Ergebnisse vorzugeben.",
+            "at": "2026-11-18T19:21:49.392Z",
+            "passed": true,
+            "appropriate": true,
+            "clarityScore": 5
+          },
+          "errors": []
+        },
+        {
+          "id": "map",
+          "family": "scale",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "direct",
+          "adversary": {
+            "concreteIssue": "Kein belegbarer Fehler: Die vorgegebene 1 ist eine passende Rechenhilfe. In beiden Spalten ist der erste Pfeil „÷ 2“ und der zweite „× 6“. Rechts ergeben sich 3,5 km und 21 km. Alle vorgegebenen Zahlen bleiben erhalten, und die vier Pfeile haben getrennte Eingabefelder.",
+            "solvable": true,
+            "clarityScore": 5,
+            "leaksAnswer": false,
+            "qVersion": "b30526b15f40ac57b8d4b73f444992694c17e5dadb644cf6f0726570dadd7d15",
+            "passed": true,
+            "at": "2026-11-18T19:20:56.173Z",
+            "appropriate": true
+          },
+          "errors": []
+        },
+        {
+          "id": "missing",
+          "family": "missing-data",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "clarify",
+          "adversary": {
+            "at": "2026-11-18T19:22:40.630Z",
+            "passed": true,
+            "leaksAnswer": false,
+            "qVersion": "385ff74c9e37a3c0a4efecde8a469d46198d8e2d51a073ff3ea3b4785420f4ec",
+            "concreteIssue": "Die Rückfrage ist direkt beantwortbar und klärt genau einen notwendigen Gesichtspunkt: das fehlende Lernziel. Dass sie nicht zugleich nach dem Material fragt, entspricht dem Wunsch nach genau einer Rückfrage.",
+            "solvable": true,
+            "clarityScore": 5,
+            "appropriate": true
+          },
+          "errors": []
+        },
+        {
+          "id": "mix",
+          "family": "mixture",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "appropriate": true,
+            "concreteIssue": "Links ist kein Zahlenfeld offen, obwohl der Text zum Ergänzen in beiden Zahlenspalten auffordert. Links fehlt nur der Pfeilfaktor 14. Rechts ergeben sich 0,25 l in der Zwischenzeile und mit × 14 schließlich 3,5 l Sirup. Die vorgegebenen ÷-4-Pfeile sind eine passende Hilfe und verraten kein gesuchtes Feld.",
+            "clarityScore": 4,
+            "leaksAnswer": false,
+            "qVersion": "c964e9f6be5da916e1bc05b30764e3d0682754294054b77ef795755eb29a8f4c",
+            "passed": true,
+            "solvable": true,
+            "at": "2026-11-18T19:21:11.220Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "motion",
+          "family": "physics",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "direct",
+          "adversary": {
+            "solvable": true,
+            "leaksAnswer": false,
+            "qVersion": "f4344c4c91c4bc4359fc820c42181911af8ab45b423d6dd08d4fcf642b1dbde9",
+            "passed": true,
+            "at": "2026-11-18T19:20:55.818Z",
+            "appropriate": true,
+            "concreteIssue": "Die Formulierung „Ergänze den Rechenweg über 1 in der linken Spalte“ ist etwas missverständlich, weil dort alle Zahlen bereits eingetragen sind und nur die Pfeile fehlen. Die Aufgabe bleibt eindeutig lösbar: In beiden Spalten lauten die Pfeile ÷ 2 und × 7; rechts fehlen 13 km und 91 km. Die vorgegebene 1 ist eine passende Hilfe und verrät kein gesuchtes Feld.",
+            "clarityScore": 4
+          },
+          "errors": []
+        },
+        {
+          "id": "negative",
+          "family": "signed-chain",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "clarityScore": 5,
+            "passed": true,
+            "leaksAnswer": false,
+            "qVersion": "a3e24fc752c0221dcb2494dc92ca0f4c25926922a98ee03046fdc0ba1efff96c",
+            "appropriate": true,
+            "at": "2026-11-18T19:23:16.351Z",
+            "concreteIssue": "Die Rechenkette gibt den Startwert und den Temperaturabfall eindeutig an: 3 − 8 = −5. Das beschriftete Zahlenfeld für die neue Temperatur bleibt offen.",
+            "solvable": true
+          },
+          "errors": []
+        },
+        {
+          "id": "nonlinear",
+          "family": "nonlinear",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "qVersion": "0fae2c5a3334dd60be672f88e7e2662b7c7aabf4a6117e7c1127ec5f2603bc32",
+            "appropriate": true,
+            "clarityScore": 5,
+            "passed": true,
+            "concreteIssue": "Kein belegbarer Fehler: Die Flächenformel führt eindeutig zu 6 · 6 = 36 cm². Genau ein Zahlenfeld bleibt offen, ohne dass sein Wert verraten wird. Der proportionale Dreisatz passt nicht, da die Fläche quadratisch mit der Seitenlänge wächst.",
+            "solvable": true,
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:23:04.762Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "percent",
+          "family": "percent",
+          "status": "ready",
+          "attempt": 3,
+          "kind": "direct",
+          "adversary": {
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:20:00.875Z",
+            "appropriate": true,
+            "passed": true,
+            "qVersion": "ea26e85be9ab925d1fb8630ece71058f9cb8a37bfd32354da42d7ac04525fa2d",
+            "concreteIssue": "Die Aufgabe ist eindeutig lösbar: Rechts ergeben sich 3 € und 36 €, und in beide unteren Pfeile gehört der Faktor 12. Die vorgegebenen Pfeile zur 1-%-Zeile sind eine passende Hilfe. Die Zusatzanweisung zum Rechenweg „über 1“ in der linken Spalte ist redundant und etwas missverständlich, da dort nur noch der Faktor im unteren Pfeil fehlt.",
+            "clarityScore": 4,
+            "solvable": true
+          },
+          "errors": []
+        },
+        {
+          "id": "price",
+          "family": "unit-price",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "appropriate": true,
+            "passed": true,
+            "at": "2026-11-18T19:20:15.626Z",
+            "concreteIssue": "Die Rechnung ist eindeutig: 14 ÷ 4 = 3,50 € und 3,50 × 9 = 31,50 €. Beide offenen Pfeilfaktoren sind 9 und stehen in getrennten Feldern. Die vorgegebenen ÷-4-Pfeile sind eine passende Hilfe. Nur die Aufforderung „Ergänze den Rechenweg über 1 in der linken Spalte“ ist etwas missverständlich, weil die 1 bereits eingetragen ist und auch rechts Lücken zu füllen sind.",
+            "leaksAnswer": false,
+            "clarityScore": 4,
+            "solvable": true,
+            "qVersion": "3ebba785606c06ab77f11b4cf218158fc32fedfadd3477305e7125f7576e4742"
+          },
+          "errors": []
+        },
+        {
+          "id": "rate",
+          "family": "inverse-rate",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "inverse",
+          "adversary": {
+            "at": "2026-11-18T19:21:26.294Z",
+            "clarityScore": 4,
+            "leaksAnswer": false,
+            "solvable": true,
+            "passed": true,
+            "concreteIssue": "Die Pfeile sind fachlich korrekt: Rechts ergibt 9 × 40 = 360 h bei 1 km/h; der offene Pfeil ist ÷ 60 und führt zu 6 h. Die vorgegebenen Pfeile sind eine passende Hilfe und verraten kein offenes Feld. Nur die Aufforderung, in beiden Spalten offene Felder zu ergänzen, ist irreführend: Alle offenen Felder stehen rechts.",
+            "appropriate": true,
+            "qVersion": "ce4dadfb1386f6f4c6574080e11849da0c2fb3a4eeab10bf0d9557f618e81f1c"
+          },
+          "errors": []
+        },
+        {
+          "id": "recipe",
+          "family": "recipe",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "direct",
+          "adversary": {
+            "clarityScore": 5,
+            "passed": true,
+            "appropriate": true,
+            "at": "2026-11-18T19:20:27.778Z",
+            "leaksAnswer": false,
+            "solvable": true,
+            "qVersion": "31fb846520d3d108e02e69c238f96026b65d5adfded5b58ba02dd09ab1ec4895",
+            "concreteIssue": "Kein belegbarer Fehler: In beiden Spalten führt der erste Pfeil mit ÷ 6 zur Zeile für eine Portion (75 g), der zweite mit × 8 zur Zielzeile (600 g). Jeder Pfeil hat ein eigenes Eingabefeld. Die vorgegebene 1 ist eine sinnvolle Hilfe für Klasse 7 und verrät keinen gesuchten Wert."
+          },
+          "errors": []
+        },
+        {
+          "id": "supply",
+          "family": "inverse-supply",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "inverse",
+          "adversary": {
+            "at": "2026-11-18T19:21:38.485Z",
+            "clarityScore": 5,
+            "concreteIssue": "Kein belegbarer Fehler: Die vorgegebenen Zahlen bleiben erhalten, und die Pfeile wirken jeweils innerhalb ihrer Spalte. Rechts ergeben sich zunächst 90 Tage und dann mit ÷ 5 die gesuchten 18 Tage. Die vorgegebenen Pfeile helfen beim Einstieg, ohne ein offenes Feld vorwegzunehmen.",
+            "appropriate": true,
+            "qVersion": "af3bbd33f5b97b68c4b2b0e7a6fc7e9dc3e0138946b621ae18525a17424f87f5",
+            "solvable": true,
+            "passed": true,
+            "leaksAnswer": false
+          },
+          "errors": []
+        },
+        {
+          "id": "time",
+          "family": "additive-time",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "leaksAnswer": false,
+            "clarityScore": 5,
+            "appropriate": true,
+            "qVersion": "168249927ecbf00f4154fe819a267ded46c49103047d6e9036d7d47cb07294e0",
+            "passed": true,
+            "solvable": true,
+            "concreteIssue": "Kein belegbarer Fehler: Der Ablauf zeigt die Abfahrt und die Fahrtdauer. Das Auswahlfeld enthält drei verschiedene Uhrzeiten im Format HH:MM; nur 09:05 ergibt sich aus 08:20 plus 45 Minuten.",
+            "at": "2026-11-18T19:23:16.806Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "work",
+          "family": "inverse-work",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "inverse",
+          "adversary": {
+            "qVersion": "d767a0ef3d003eacc8704d10f9f6d861ee947578e236f47e78e1d08de784c43f",
+            "appropriate": true,
+            "solvable": true,
+            "concreteIssue": "Kein belegbarer Fehler: Die vorgegebenen linken Pfeile stützen den Rechenweg über einen Drucker, ohne die rechten Pfeile vorwegzunehmen. Rechts ergibt sich mit × 3 zunächst 84 min und mit ÷ 7 anschließend 12 min.",
+            "clarityScore": 5,
+            "leaksAnswer": false,
+            "passed": true,
+            "at": "2026-11-18T19:21:05.444Z"
+          },
+          "errors": []
+        }
+      ]
+    },
+    {
+      "phase": "test0",
+      "metrics": {
+        "total": 20,
+        "ready": 19,
+        "firstPass": 13,
+        "rejected": 1,
+        "pending": 0
+      },
+      "strategyHint": "",
+      "cases": [
+        {
+          "id": "arguments",
+          "family": "arguments",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "mapping",
+          "adversary": {
+            "qVersion": "466d6212a0406c24f080a7dc83e53ac5337283f888de55b7a5968d830d20c08c",
+            "clarityScore": 4,
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:25:56.375Z",
+            "passed": true,
+            "concreteIssue": "Alle drei Zuordnungen sind eindeutig (1→A, 2→C, 3→B), und keine ist vorgegeben. Die Kurzlabels „Behauptu“ und „Begründu“ sind allerdings abgeschnitten.",
+            "solvable": true,
+            "appropriate": true
+          },
+          "errors": []
+        },
+        {
+          "id": "base",
+          "family": "percent-base",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "leaksAnswer": false,
+            "solvable": true,
+            "passed": true,
+            "concreteIssue": "„Prozentwert und Geldbetrag stehen in einem konstanten Verhältnis“ bezeichnet die Spalten ungenau: Proportional sind hier der Prozentsatz links und der zugehörige Betrag rechts. Der Rechenweg bleibt eindeutig: 81 € ÷ 30 = 2,70 €; mit × 100 auf beiden Seiten ergibt sich der Grundwert von 270 €. Die vorgegebenen ersten Pfeile sind eine passende Hilfe und verraten kein gesuchtes Feld.",
+            "appropriate": true,
+            "clarityScore": 4,
+            "qVersion": "aa1e96a69eb93888d9e0647ac584c885f7ccc783da22c34bb1ae25c8c0f1d080",
+            "at": "2026-11-18T19:23:26.571Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "biology",
+          "family": "biology",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "qVersion": "8be8b19081c69d4a95efe213f61fb1928751650060f59c7293003f949f995e23",
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:25:56.303Z",
+            "appropriate": true,
+            "passed": true,
+            "clarityScore": 5,
+            "solvable": true,
+            "concreteIssue": "Die Flussrichtung ist im vereinfachten Schema eindeutig: Herz → Arterien → Kapillaren → Venen → Herz. Die Ablenker sind Stationen des Blutkreislaufs, passen aber nicht an die jeweilige Stelle. Zum Sauerstoffgehalt wird keine Aussage gemacht."
+          },
+          "errors": []
+        },
+        {
+          "id": "branch",
+          "family": "branch",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "branch",
+          "adversary": {
+            "leaksAnswer": false,
+            "qVersion": "53ae0e6faf8a22a908b3982203906cac023c8988bdbee63dd5923f8cd2bbd9f7",
+            "at": "2026-11-18T19:26:14.167Z",
+            "concreteIssue": "Kein belegbarer Fehler: Beide Pfade gehen von „study“ aus und verlangen je eine eindeutig bestimmte Form („studied“ bzw. „studies“). Keine der beiden Lösungen steht in der Schüleransicht.",
+            "passed": true,
+            "appropriate": true,
+            "clarityScore": 5,
+            "solvable": true
+          },
+          "errors": []
+        },
+        {
+          "id": "english",
+          "family": "english",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "appropriate": true,
+            "qVersion": "012a5802e42214b595089dc35955c5538175d166f16c026475d97ce755da5713",
+            "at": "2026-11-18T19:25:43.244Z",
+            "clarityScore": 5,
+            "concreteIssue": "Kein Fehler: Rise → rose, choose → chose und buy → bought sind eindeutig. Jedes sichtbare Ausgangsverb ist über einen mit „Simple Past“ beschrifteten Pfeil mit einem eigenen Eingabefeld verbunden. Keine der gesuchten Formen ist vorgegeben.",
+            "leaksAnswer": false,
+            "solvable": true,
+            "passed": true
+          },
+          "errors": []
+        },
+        {
+          "id": "essay",
+          "family": "open-writing",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "decline",
+          "adversary": {
+            "at": "2026-11-18T19:26:24.517Z",
+            "clarityScore": 5,
+            "leaksAnswer": false,
+            "passed": true,
+            "qVersion": "01bbb09cf670d571d867a7ce855a756670710d98d32387b41dec027c776820f0",
+            "solvable": true,
+            "concreteIssue": "Kein belegbarer Fehler: Der Text erklärt, warum feste Felder und Pfeile mit einer einzigen exakten Wortlösung nicht zu einer persönlichen Stellungnahme passen. Die offene Alternative lässt unterschiedliche Positionen zu und bewertet stattdessen die Nachvollziehbarkeit der Begründung. Als begründete Alternative erfüllt der Text den Prüfauftrag.",
+            "appropriate": true
+          },
+          "errors": []
+        },
+        {
+          "id": "fee",
+          "family": "base-fee",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "clarityScore": 5,
+            "appropriate": true,
+            "qVersion": "738e91f6d196bf6ce8c4ac5b4ccfc2efa234d2ee6c922c7d8ab879a5fd8a4f42",
+            "concreteIssue": "Die Rechenkette führt eindeutig von 4 × 3 = 12 Euro Zeitpreis zu 12 + 5 = 17 Euro Gesamtpreis. Beide Zahlenfelder bleiben offen, und die Pfeile geben die passenden Rechenoperationen an.",
+            "passed": true,
+            "leaksAnswer": false,
+            "solvable": true,
+            "at": "2026-11-18T19:25:42.294Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "map",
+          "family": "scale",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "direct",
+          "adversary": {
+            "passed": true,
+            "qVersion": "faa84d634ca318c43fa9d3c35daa232fc56e935232b84467ab209f873b15abe3",
+            "leaksAnswer": false,
+            "concreteIssue": "Kein belegbarer Fehler: In beiden Spalten führen die Pfeile zuerst mit ÷ 3 und dann mit × 7 zum Ziel. Rechts ergeben sich 4 km und 28 km. Die vorgegebene 1 bietet eine passende Hilfe, ohne ein gesuchtes Feld zu verraten.",
+            "appropriate": true,
+            "solvable": true,
+            "clarityScore": 5,
+            "at": "2026-11-18T19:25:03.378Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "missing",
+          "family": "missing-data",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "clarify",
+          "adversary": {
+            "qVersion": "70391ef407592abbd24d3fd83257fae93466462c38d0ba6bf0b018993da1215a",
+            "leaksAnswer": false,
+            "clarityScore": 5,
+            "appropriate": true,
+            "at": "2026-11-18T19:26:05.037Z",
+            "concreteIssue": "Die Rückfrage klärt genau einen entscheidenden Punkt: welche Größe unverändert bleibt. Sie setzt keine bestimmte Größe voraus und täuscht ohne diese Angabe keinen eindeutigen Rechenweg vor.",
+            "passed": true,
+            "solvable": true
+          },
+          "errors": []
+        },
+        {
+          "id": "mix",
+          "family": "mixture",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "at": "2026-11-18T19:25:18.026Z",
+            "solvable": true,
+            "leaksAnswer": false,
+            "concreteIssue": "Die gegebenen Zahlen bleiben erhalten, und jede Spalte hat eigene Rechenpfeile. Die vorgegebene Division durch 8 ist eine passende Teilhilfe: Die Lernenden berechnen noch 0,25 l Sirup für 1 l Wasser, tragen in beiden Spalten den Faktor 18 ein und ermitteln 4,5 l Sirup.",
+            "clarityScore": 5,
+            "qVersion": "da6ff2d20bf82c45ececa6ab09a4aaf6e0e461b788c3433ce4fec1365a6bc18b",
+            "passed": true,
+            "appropriate": true
+          },
+          "errors": []
+        },
+        {
+          "id": "motion",
+          "family": "physics",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "direct",
+          "adversary": {
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:25:04.904Z",
+            "clarityScore": 5,
+            "concreteIssue": "Kein belegbarer Fehler: In beiden Spalten führt „÷ 3“ zur Zwischenzeile und „× 5“ zur Zielzeile. Rechts ergeben sich 14 km und 70 km. Die vorgegebene 1 ist eine passende Hilfe für Klasse 7 und verrät kein gesuchtes Feld; alle vier Pfeilfelder sind separat auszufüllen.",
+            "solvable": true,
+            "passed": true,
+            "appropriate": true,
+            "qVersion": "5ec413a4835b9f0010a6ab71f7e78d210a7348bf0e0af823e0389db926e2c1af"
+          },
+          "errors": []
+        },
+        {
+          "id": "negative",
+          "family": "signed-chain",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "solvable": true,
+            "passed": true,
+            "appropriate": true,
+            "concreteIssue": "Kein belegbarer Fehler: Die beschriftete Rechenkette zeigt den Startwert −4 °C und den Anstieg um 7 °C. Die neue Temperatur (+3 °C) ist eindeutig berechenbar und bleibt als Zahlenfeld offen.",
+            "leaksAnswer": false,
+            "clarityScore": 5,
+            "at": "2026-11-18T19:26:46.367Z",
+            "qVersion": "95b57ad00b8ee16663228344501aeb4a422303371178f35ad3382af9a2d871a5"
+          },
+          "errors": []
+        },
+        {
+          "id": "nonlinear",
+          "family": "nonlinear",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "chain",
+          "adversary": {
+            "solvable": true,
+            "at": "2026-11-18T19:26:35.727Z",
+            "passed": true,
+            "clarityScore": 5,
+            "appropriate": true,
+            "leaksAnswer": false,
+            "qVersion": "ca21882b136e691479e6b8d4590c1036c60bb88381d0def0b15abf5b6dcf3b69",
+            "concreteIssue": "Kein belegbarer Fehler: Aus 5 × 5 ergeben sich 25 cm² für das einzige offene Zahlenfeld, ohne dass der Wert vorgegeben wird. Die Aufgabe erklärt korrekt, warum ein proportionaler Dreisatz nicht passt: Die Fläche wächst quadratisch mit der Seitenlänge."
+          },
+          "errors": []
+        },
+        {
+          "id": "percent",
+          "family": "percent",
+          "status": "ready",
+          "attempt": 3,
+          "kind": "direct",
+          "adversary": {
+            "qVersion": "d249afe6bb0c803e0df667f12ea43ba5db62bfcf38aef00d1c78c4ffd2c2b5d9",
+            "appropriate": true,
+            "clarityScore": 4,
+            "at": "2026-11-18T19:23:58.183Z",
+            "concreteIssue": "Die Aufforderung, den Rechenweg „in der linken Spalte“ zu ergänzen, ist zu eng: Auch rechts sind ein Rechenpfeil und zwei Betragsfelder offen. Die Tabelle selbst macht das erkennbar. Die Aufgabe ist eindeutig lösbar: Links fehlt der Faktor 18, rechts ergeben sich 3,60 €, der Pfeil × 18 und 64,80 €. Die vorgegebenen ÷-100-Pfeile sind eine passende Hilfe und verraten kein offenes Feld.",
+            "leaksAnswer": false,
+            "passed": true,
+            "solvable": true
+          },
+          "errors": []
+        },
+        {
+          "id": "price",
+          "family": "unit-price",
+          "status": "ready",
+          "attempt": 3,
+          "kind": "direct",
+          "adversary": {
+            "passed": false,
+            "qVersion": "4af585b4aad13740b5704732ea8d16f8798d1d78299e477ead0afe300ca5bbc7",
+            "leaksAnswer": true,
+            "concreteIssue": "Die Aufgabe ist lösbar: Ein Heft kostet 3,50 €, zehn Hefte kosten 35 €. Die vorgegebenen linken Pfeile „÷ 6“ und „× 10“ verraten jedoch genau die beiden rechts gesuchten Operationen. Die Preise werden nicht verraten, aber die Pfeile sind so nicht unabhängig zu ergänzen. Außerdem fordert der Text zum Ergänzen in der linken Spalte auf, obwohl dort kein Feld offen ist.",
+            "appropriate": false,
+            "clarityScore": 4,
+            "solvable": true,
+            "at": "2026-11-18T19:24:36.053Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "rate",
+          "family": "inverse-rate",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "inverse",
+          "adversary": {
+            "at": "2026-11-18T19:25:31.784Z",
+            "solvable": true,
+            "appropriate": true,
+            "concreteIssue": "Kein belegbarer Fehler: Bei fester Strecke ergibt der vorgegebene erste Schritt rechts 6 × 50 = 300 h. Im zweiten Schritt wird links mit 75 multipliziert und rechts durch 75 geteilt, sodass die gesuchte Fahrzeit 4 h beträgt. Die getrennten Pfeile sind fachlich richtig; die Hilfestufe zeigt den ersten Schritt, ohne eines der offenen Felder vorwegzunehmen.",
+            "passed": true,
+            "qVersion": "9f7e51d4adbd420984a63ac5985087d96160570a3a0f270249980508ec74f659",
+            "clarityScore": 5,
+            "leaksAnswer": false
+          },
+          "errors": []
+        },
+        {
+          "id": "recipe",
+          "family": "recipe",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "direct",
+          "adversary": {
+            "at": "2026-11-18T19:24:20.343Z",
+            "solvable": true,
+            "appropriate": true,
+            "clarityScore": 4,
+            "passed": true,
+            "qVersion": "e9a548f5d5b0cc9fc6729433d8b243853f05acd1dabd2cc68bbc099b6178deaa",
+            "leaksAnswer": false,
+            "concreteIssue": "Der Rechenweg ist eindeutig: In beiden Spalten zuerst durch 4 teilen, dann mit 10 multiplizieren. Das ergibt 70 g für eine und 700 g für zehn Portionen. Die vorgegebene 1 ist eine passende Hilfe und verrät kein gesuchtes Feld. Nur die Formulierung „in der linken Spalte“ kann kurz irritieren, weil auch rechts Werte und Pfeile zu ergänzen sind."
+          },
+          "errors": []
+        },
+        {
+          "id": "supply",
+          "family": "inverse-supply",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "inverse",
+          "adversary": {
+            "at": "2026-11-18T19:25:31.715Z",
+            "qVersion": "fd36aa12bd0223cb064720139819adff7ae8b4d4c65c9f987e91636c60d8b68f",
+            "appropriate": true,
+            "passed": true,
+            "leaksAnswer": false,
+            "clarityScore": 4,
+            "concreteIssue": "„Ein Vorrat wird jeden Tag vollständig … verbraucht“ klingt so, als sei der gesamte Vorrat nach einem Tag aufgebraucht. Klarer wäre: „Jeden Tag wird dieselbe Menge aus dem Vorrat entnommen.“ Die Angaben und Pfeile sind ansonsten stimmig: Bei 1 kg pro Tag reicht der Vorrat 96 Tage; der letzte rechte Pfeil ist ÷ 6 und führt zu 16 Tagen.",
+            "solvable": true
+          },
+          "errors": []
+        },
+        {
+          "id": "time",
+          "family": "additive-time",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "concreteIssue": "Kein belegbarer Fehler: 09:10 plus 35 Minuten ergibt 09:45. Das Auswahlfeld enthält genau drei unterschiedliche Uhrzeiten im Format HH:MM, von denen nur 09:45 korrekt ist. Der Pfeil beschreibt den Rechenschritt, ohne das Ergebnis vorwegzunehmen.",
+            "at": "2026-11-18T19:26:47.076Z",
+            "passed": true,
+            "solvable": true,
+            "appropriate": true,
+            "clarityScore": 5,
+            "qVersion": "6363d4ab3e2275cae88bfca2bbc83f93ea38a48f2a4d188ad95c61bb66ed0a02",
+            "leaksAnswer": false
+          },
+          "errors": []
+        },
+        {
+          "id": "work",
+          "family": "inverse-work",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "inverse",
+          "adversary": {
+            "passed": true,
+            "qVersion": "290385ce65b9b3c2bcc89d64fb1989e344072704b5b1541e0c453d1cfbf14971",
+            "leaksAnswer": false,
+            "concreteIssue": "Kein belegbarer Fehler: Die vorgegebenen Pfeile führen korrekt von 4 auf 1 Drucker und von 30 auf 120 Minuten. Für 10 Drucker muss rechts noch selbstständig „÷ 10“ ergänzt werden; das ergibt 12 Minuten. Die Hilfe zeigt den ersten Rechenschritt, ohne ein offenes Feld vorwegzunehmen.",
+            "solvable": true,
+            "clarityScore": 5,
+            "at": "2026-11-18T19:25:19.007Z",
+            "appropriate": true
+          },
+          "errors": []
+        }
+      ]
+    },
+    {
+      "phase": "final",
+      "metrics": {
+        "total": 10,
+        "ready": 10,
+        "firstPass": 8,
+        "rejected": 0,
+        "pending": 0
+      },
+      "strategyHint": "",
+      "cases": [
+        {
+          "id": "final-1",
+          "family": "biology",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "concreteIssue": "Die Flussrichtung ist im vereinfachten Schema eindeutig: Herz → Arterien → Kapillaren → Venen → Herz. Die Ablenker sind Stationen des Blutkreislaufs, passen aber nicht an die jeweilige Stelle. Zum Sauerstoffgehalt wird keine Aussage gemacht.",
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:25:56.303Z",
+            "solvable": true,
+            "qVersion": "8be8b19081c69d4a95efe213f61fb1928751650060f59c7293003f949f995e23",
+            "passed": true,
+            "appropriate": true,
+            "clarityScore": 5
+          },
+          "errors": []
+        },
+        {
+          "id": "final-10",
+          "family": "additive-time",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "solvable": true,
+            "qVersion": "6363d4ab3e2275cae88bfca2bbc83f93ea38a48f2a4d188ad95c61bb66ed0a02",
+            "leaksAnswer": false,
+            "passed": true,
+            "concreteIssue": "Kein belegbarer Fehler: 09:10 plus 35 Minuten ergibt 09:45. Das Auswahlfeld enthält genau drei unterschiedliche Uhrzeiten im Format HH:MM, von denen nur 09:45 korrekt ist. Der Pfeil beschreibt den Rechenschritt, ohne das Ergebnis vorwegzunehmen.",
+            "clarityScore": 5,
+            "at": "2026-11-18T19:26:47.076Z",
+            "appropriate": true
+          },
+          "errors": []
+        },
+        {
+          "id": "final-2",
+          "family": "branch",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "branch",
+          "adversary": {
+            "appropriate": true,
+            "concreteIssue": "Kein belegbarer Fehler: Beide Pfade gehen von „study“ aus und verlangen je eine eindeutig bestimmte Form („studied“ bzw. „studies“). Keine der beiden Lösungen steht in der Schüleransicht.",
+            "clarityScore": 5,
+            "solvable": true,
+            "qVersion": "53ae0e6faf8a22a908b3982203906cac023c8988bdbee63dd5923f8cd2bbd9f7",
+            "passed": true,
+            "at": "2026-11-18T19:26:14.167Z",
+            "leaksAnswer": false
+          },
+          "errors": []
+        },
+        {
+          "id": "final-3",
+          "family": "english",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "passed": true,
+            "appropriate": true,
+            "solvable": true,
+            "qVersion": "012a5802e42214b595089dc35955c5538175d166f16c026475d97ce755da5713",
+            "clarityScore": 5,
+            "concreteIssue": "Kein Fehler: Rise → rose, choose → chose und buy → bought sind eindeutig. Jedes sichtbare Ausgangsverb ist über einen mit „Simple Past“ beschrifteten Pfeil mit einem eigenen Eingabefeld verbunden. Keine der gesuchten Formen ist vorgegeben.",
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:25:43.244Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "final-4",
+          "family": "base-fee",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "clarityScore": 5,
+            "solvable": true,
+            "qVersion": "738e91f6d196bf6ce8c4ac5b4ccfc2efa234d2ee6c922c7d8ab879a5fd8a4f42",
+            "appropriate": true,
+            "at": "2026-11-18T19:25:42.294Z",
+            "concreteIssue": "Die Rechenkette führt eindeutig von 4 × 3 = 12 Euro Zeitpreis zu 12 + 5 = 17 Euro Gesamtpreis. Beide Zahlenfelder bleiben offen, und die Pfeile geben die passenden Rechenoperationen an.",
+            "leaksAnswer": false,
+            "passed": true
+          },
+          "errors": []
+        },
+        {
+          "id": "final-5",
+          "family": "scale",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "direct",
+          "adversary": {
+            "qVersion": "faa84d634ca318c43fa9d3c35daa232fc56e935232b84467ab209f873b15abe3",
             "solvable": true,
             "clarityScore": 5,
             "appropriate": true,
-            "concreteIssue": "Kein belegbarer Fehler. Die vorgegebenen Pfeile führen zur Zwischenzeit 28 × 3 = 84 Minuten und lassen den letzten rechten Pfeil (÷ 7) sowie die Zielzeit (12 Minuten) offen. Die erste Pfeilstufe zeigt die gegenläufigen Rechenoperationen als passende Hilfe für Klasse 7."
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:25:03.378Z",
+            "concreteIssue": "Kein belegbarer Fehler: In beiden Spalten führen die Pfeile zuerst mit ÷ 3 und dann mit × 7 zum Ziel. Rechts ergeben sich 4 km und 28 km. Die vorgegebene 1 bietet eine passende Hilfe, ohne ein gesuchtes Feld zu verraten.",
+            "passed": true
+          },
+          "errors": []
+        },
+        {
+          "id": "final-6",
+          "family": "inverse-rate",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "inverse",
+          "adversary": {
+            "appropriate": true,
+            "clarityScore": 5,
+            "at": "2026-11-18T19:25:31.784Z",
+            "qVersion": "9f7e51d4adbd420984a63ac5985087d96160570a3a0f270249980508ec74f659",
+            "solvable": true,
+            "leaksAnswer": false,
+            "passed": true,
+            "concreteIssue": "Kein belegbarer Fehler: Bei fester Strecke ergibt der vorgegebene erste Schritt rechts 6 × 50 = 300 h. Im zweiten Schritt wird links mit 75 multipliziert und rechts durch 75 geteilt, sodass die gesuchte Fahrzeit 4 h beträgt. Die getrennten Pfeile sind fachlich richtig; die Hilfestufe zeigt den ersten Schritt, ohne eines der offenen Felder vorwegzunehmen."
+          },
+          "errors": []
+        },
+        {
+          "id": "final-7",
+          "family": "arguments",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "mapping",
+          "adversary": {
+            "clarityScore": 4,
+            "appropriate": true,
+            "passed": true,
+            "at": "2026-11-18T19:25:56.375Z",
+            "concreteIssue": "Alle drei Zuordnungen sind eindeutig (1→A, 2→C, 3→B), und keine ist vorgegeben. Die Kurzlabels „Behauptu“ und „Begründu“ sind allerdings abgeschnitten.",
+            "solvable": true,
+            "qVersion": "466d6212a0406c24f080a7dc83e53ac5337283f888de55b7a5968d830d20c08c",
+            "leaksAnswer": false
+          },
+          "errors": []
+        },
+        {
+          "id": "final-8",
+          "family": "mixture",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "concreteIssue": "Die gegebenen Zahlen bleiben erhalten, und jede Spalte hat eigene Rechenpfeile. Die vorgegebene Division durch 8 ist eine passende Teilhilfe: Die Lernenden berechnen noch 0,25 l Sirup für 1 l Wasser, tragen in beiden Spalten den Faktor 18 ein und ermitteln 4,5 l Sirup.",
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:25:18.026Z",
+            "passed": true,
+            "solvable": true,
+            "qVersion": "da6ff2d20bf82c45ececa6ab09a4aaf6e0e461b788c3433ce4fec1365a6bc18b",
+            "clarityScore": 5,
+            "appropriate": true
+          },
+          "errors": []
+        },
+        {
+          "id": "final-9",
+          "family": "signed-chain",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": {
+            "clarityScore": 5,
+            "concreteIssue": "Kein belegbarer Fehler: Die beschriftete Rechenkette zeigt den Startwert −4 °C und den Anstieg um 7 °C. Die neue Temperatur (+3 °C) ist eindeutig berechenbar und bleibt als Zahlenfeld offen.",
+            "appropriate": true,
+            "solvable": true,
+            "qVersion": "95b57ad00b8ee16663228344501aeb4a422303371178f35ad3382af9a2d871a5",
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:26:46.367Z",
+            "passed": true
           },
           "errors": []
         }
       ]
     }
   ],
-  "comparisons": [],
-  "transfer": null,
-  "selectedPhase": null,
-  "finalCount": 0
+  "comparisons": [
+    {
+      "baseline": {
+        "total": 20,
+        "ready": 20,
+        "firstPass": 16,
+        "rejected": 0,
+        "pending": 0
+      },
+      "candidate": {
+        "total": 20,
+        "ready": 19,
+        "firstPass": 13,
+        "rejected": 1,
+        "pending": 0
+      },
+      "regressions": [
+        "base"
+      ],
+      "effectiveRecipeChanged": true,
+      "improved": false
+    },
+    {
+      "baseline": {
+        "total": 20,
+        "ready": 20,
+        "firstPass": 16,
+        "rejected": 0,
+        "pending": 0
+      },
+      "candidate": {
+        "total": 20,
+        "ready": 19,
+        "firstPass": 11,
+        "rejected": 1,
+        "pending": 0
+      },
+      "regressions": [
+        "base"
+      ],
+      "effectiveRecipeChanged": true,
+      "improved": false
+    }
+  ],
+  "transfer": {
+    "baseline": {
+      "pending": 0,
+      "firstPass": 13,
+      "rejected": 1,
+      "ready": 19,
+      "total": 20
+    },
+    "regressions": [],
+    "candidate": null,
+    "controlOnly": true
+  },
+  "selectedPhase": "dev0",
+  "finalCount": 10
 }

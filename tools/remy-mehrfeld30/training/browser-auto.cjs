@@ -32,12 +32,18 @@ const root=path.resolve(__dirname,'../../../docs/evidence/autonomous-recipes-202
   }
   const layouts=[];
   for(const [width,height]of [[1280,1000],[820,1180],[360,900]]){
-   await page.setViewportSize({width,height});await page.locator('#jump').selectOption(String(Math.min(4,listed.length-1)));
+   await page.setViewportSize({width,height});for(let item=0;item<listed.length;item++){await page.locator('#jump').selectOption(String(item));
    const size=await page.evaluate(()=>({body:document.documentElement.scrollWidth,controls:[...document.querySelectorAll('#answer input,#answer select')].map(el=>({left:el.getBoundingClientRect().left,right:el.getBoundingClientRect().right}))}));
-   assert.ok(size.body<=width+2,'Body overflow '+width);assert.ok(size.controls.every(x=>x.left>=0&&x.right<=width+1),'Reachable fields '+width);layouts.push({width,...size});
+   assert.ok(size.body<=width+2,'Body overflow '+width);assert.ok(size.controls.every(x=>x.left>=0&&x.right<=width+1),'Reachable fields '+width);layouts.push({width,item,...size});}
    await page.screenshot({path:'/private/tmp/gc-auto-final-'+width+'.png',fullPage:true});
   }
-  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(root,'browser-verification.json'),JSON.stringify({at:new Date().toISOString(),scored,layouts,actualUI:true,publicKeysRedacted:true,physicalTouchTested:false,pageErrors:errors},null,2)+'\n');
+  const mapping=finalCases.find(c=>c.plan.kind==='mapping');assert.ok(mapping);
+  const roleQ=require('./graph.cjs').buildGraph({...mapping.plan,sourceRole:'Behauptung',targetRole:'Begründung'},{id:'role-fixture'});
+  const roleView=require('../review.cjs').present('fixture','fixture',roleQ).visual;
+  await page.evaluate(task=>{const host=document.querySelector('#answer');host.classList.remove('flow-preview');host.replaceChildren();window.GCRenderer.mount(host,task,null,{onAnswer:()=>{}});},roleView);
+  const legend=await page.locator('.node-legend').innerText();assert.match(legend,/Behauptung 1/);assert.match(legend,/Begründung A/);
+  for(const [width,height]of [[1280,1000],[820,1180],[360,900]]){await page.setViewportSize({width,height});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2));}
+  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(root,'browser-verification.json'),JSON.stringify({at:new Date().toISOString(),scored,layouts,actualUI:true,publicKeysRedacted:true,roleLabelFixtureVerified:true,physicalTouchTested:false,pageErrors:errors},null,2)+'\n');
   console.log(JSON.stringify({scored:scored.length,layouts:layouts.map(x=>x.width),allScoresVerified:true}));
  }finally{await browser.close();}
 })().catch(e=>{console.error(e.stack);process.exitCode=1;});

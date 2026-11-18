@@ -2,8 +2,8 @@
   "runId": "auto-recipes-20261118-v1-dev0",
   "quizId": "training:auto-recipes-20261118-v1-dev0",
   "expected": 20,
-  "status": "running",
-  "spentMicros": 154733,
+  "status": "evaluated",
+  "spentMicros": 155950,
   "reservedMicros": 0,
   "limitMicros": 5000000,
   "cases": [

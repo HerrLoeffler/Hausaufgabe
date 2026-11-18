@@ -3,7 +3,7 @@
   "quizId": "training:auto-recipes-20261118-v1-dev1",
   "expected": 20,
   "status": "running",
-  "spentMicros": 136374,
+  "spentMicros": 159424,
   "reservedMicros": 0,
   "limitMicros": 5000000,
   "cases": [
@@ -46,7 +46,7 @@
     },
     {
       "id": "essay",
-      "status": "pending",
+      "status": "ready",
       "family": "open-writing",
       "attempt": 1,
       "errors": []
@@ -88,16 +88,16 @@
     },
     {
       "id": "negative",
-      "status": "pending",
+      "status": "ready",
       "family": "signed-chain",
-      "attempt": 1,
+      "attempt": 2,
       "errors": []
     },
     {
       "id": "nonlinear",
-      "status": "pending",
+      "status": "ready",
       "family": "nonlinear",
-      "attempt": 1,
+      "attempt": 2,
       "errors": []
     },
     {
@@ -137,7 +137,7 @@
     },
     {
       "id": "time",
-      "status": "pending",
+      "status": "ready",
       "family": "additive-time",
       "attempt": 1,
       "errors": []

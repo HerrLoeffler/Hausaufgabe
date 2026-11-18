@@ -59,3 +59,14 @@ test('a compact two-column arithmetic draft expands deterministically to four ac
  const p={kind:'direct',relationship:'direct',a:'100',b:'240',c:'15',constantRate:true,labels:['Prozent (%)','Betrag (€)'],title:'Prozentwert',subject:'Mathematik',text:'Zeichne zwei Pfeile und fülle die zweite Zeile.',intermediateMode:'fixed',arrowModes:['factor','factor']};
  const q=buildGraph(p,{id:'compact'});assert.equal(score(q,graphAnswer(q)),q.points);assert.doesNotMatch(q.text,/Zeichne zwei|zweite Zeile/);assert.match(q.text,/240/);
 });
+test('the deterministic scaffold instruction never demands entries in a fully given left column',()=>{
+ const p={kind:'direct',relationship:'direct',a:'20',b:'64',c:'100',constantRate:true,labels:['Prozent (%)','Betrag (€)'],title:'Grundwert',subject:'Mathematik',text:'20 Prozent eines Geldbetrags sind 64 Euro. Bestimme den ganzen Betrag.',intermediateMode:'fixed',arrowModes:['given','given','given','free']};
+ const q=buildGraph(p,{id:'given-left'}),task=JSON.parse(q.visualTask);
+ assert.equal(task.spec.rows.filter((r,i)=>i%2===0).every(r=>!r[2].input),true);
+ assert.doesNotMatch(q.text,/Ergänze den Rechenweg über .*in der linken Spalte/);
+ assert.equal(task.prompt,q.text);assert.equal(score(q,graphAnswer(q)),q.points);
+});
+test('mapping role labels keep complete words such as Behauptung and Begründung',()=>{
+ const p={kind:'mapping',title:'Zuordnen',subject:'Deutsch',text:'Verbinde die Behauptungen mit passenden Begründungen.',reason:'Zuordnung',sourceRole:'Behauptung',targetRole:'Begründung',nodes:[{id:'a',role:'source',label:'Mehr Bäume'},{id:'b',role:'source',label:'Mehr Busse'},{id:'c',role:'target',label:'Mehr Schatten'},{id:'d',role:'target',label:'Weniger Wartezeit'}],links:[{from:'a',to:'c'},{from:'b',to:'d'}]};
+ const task=JSON.parse(buildGraph(p,{id:'labels'}).visualTask);assert.equal(task.spec.nodes[0].shortLabel,'Behauptung 1');assert.equal(task.spec.nodes[2].shortLabel,'Begründung A');
+});

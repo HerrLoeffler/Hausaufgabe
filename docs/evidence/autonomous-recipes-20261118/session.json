@@ -1,10 +1,10 @@
 {
   "id": "auto-recipes-20261118-v1",
-  "status": "running",
-  "spentMicros": 91894,
-  "reservedMicros": 46058,
+  "status": "completed",
+  "spentMicros": 723030,
+  "reservedMicros": 0,
   "limitMicros": 5000000,
-  "finalQuizId": null,
-  "finalCount": 0,
+  "finalQuizId": "training:auto-recipes-20261118-v1-final",
+  "finalCount": 10,
   "modelWeightsTrained": false
 }

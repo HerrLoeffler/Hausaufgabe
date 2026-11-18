@@ -1,0 +1,151 @@
+{
+  "runId": "auto-recipes-20261118-v1-test0",
+  "quizId": "training:auto-recipes-20261118-v1-test0",
+  "expected": 20,
+  "status": "running",
+  "spentMicros": 179178,
+  "reservedMicros": 0,
+  "limitMicros": 5000000,
+  "cases": [
+    {
+      "id": "arguments",
+      "status": "ready",
+      "family": "arguments",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "base",
+      "status": "ready",
+      "family": "percent-base",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "biology",
+      "status": "ready",
+      "family": "biology",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "branch",
+      "status": "ready",
+      "family": "branch",
+      "attempt": 2,
+      "errors": []
+    },
+    {
+      "id": "english",
+      "status": "ready",
+      "family": "english",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "essay",
+      "status": "ready",
+      "family": "open-writing",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "fee",
+      "status": "ready",
+      "family": "base-fee",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "map",
+      "status": "ready",
+      "family": "scale",
+      "attempt": 2,
+      "errors": []
+    },
+    {
+      "id": "missing",
+      "status": "ready",
+      "family": "missing-data",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "mix",
+      "status": "ready",
+      "family": "mixture",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "motion",
+      "status": "ready",
+      "family": "physics",
+      "attempt": 2,
+      "errors": []
+    },
+    {
+      "id": "negative",
+      "status": "ready",
+      "family": "signed-chain",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "nonlinear",
+      "status": "ready",
+      "family": "nonlinear",
+      "attempt": 2,
+      "errors": []
+    },
+    {
+      "id": "percent",
+      "status": "ready",
+      "family": "percent",
+      "attempt": 3,
+      "errors": []
+    },
+    {
+      "id": "price",
+      "status": "ready",
+      "family": "unit-price",
+      "attempt": 3,
+      "errors": []
+    },
+    {
+      "id": "rate",
+      "status": "ready",
+      "family": "inverse-rate",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "recipe",
+      "status": "ready",
+      "family": "recipe",
+      "attempt": 2,
+      "errors": []
+    },
+    {
+      "id": "supply",
+      "status": "ready",
+      "family": "inverse-supply",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "time",
+      "status": "ready",
+      "family": "additive-time",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "work",
+      "status": "ready",
+      "family": "inverse-work",
+      "attempt": 1,
+      "errors": []
+    }
+  ]
+}

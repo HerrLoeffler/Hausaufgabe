@@ -13,6 +13,7 @@ function text(value,max=500){
   if(typeof value!=='string'||!value.trim()||value.length>max)throw Error('Text fehlt oder ist zu lang.');
   return value.trim();
 }
+const roleWord=(value,fallback)=>{let label='';for(const word of String(value||fallback).trim().split(/\s+/)){const next=label?label+' '+word:word;if(next.length>10)break;label=next;}return label||fallback;};
 function buildGraph(plan,{id,modes}={}){
   if(['direct','inverse'].includes(plan.kind)){
     let arrows=modes||plan.arrowModes,content=plan;
@@ -25,6 +26,8 @@ function buildGraph(plan,{id,modes}={}){
     if(plan.intermediateMode!=='choice'){
       const task=JSON.parse(q.visualTask),cell=task.spec.rows[2][2],answer=task.solution.cells.find(x=>x.id===cell.id);
       cell.input=false;cell.text=answer.accepted[0];task.solution.cells=task.solution.cells.filter(x=>x.id!==cell.id);
+      q.text=content.text+' Ergänze die offenen Zahlenfelder und Rechenpfeile. Die gegebenen Werte bleiben stehen. Verwende mal oder geteilt durch in Pfeilrichtung. Jedes offene Feld zählt 0,5 Punkte.';
+      task.prompt=q.text;task.objective=q.text;
       q.points=task.maxPoints=task.solution.cells.length*.5;q.visualTask=JSON.stringify(task);
     }
     return q;
@@ -39,8 +42,8 @@ function buildGraph(plan,{id,modes}={}){
     const refs=new Map(nodes.map(n=>[n.id,key(id+':'+n.id+':'+text(n.label,250))]));
     if(plan.links?.length!==sources.length||new Set(plan.links.map(e=>e.from)).size!==sources.length||new Set(plan.links.map(e=>e.to)).size!==targets.length||
       plan.links.some(e=>!sources.some(n=>n.id===e.from)||!targets.some(n=>n.id===e.to)))throw Error('Eine eindeutige gerichtete 1:1-Zuordnung angeben.');
-    const arranged=[...sources.map((n,i)=>({...n,x:150,y:75+i*105,shortLabel:(plan.sourceRole||'Start').slice(0,8)+' '+(i+1)})),
-      ...[...targets].sort((a,b)=>refs.get(a.id).localeCompare(refs.get(b.id))).map((n,i)=>({...n,x:570,y:75+i*105,shortLabel:(plan.targetRole||'Ziel').slice(0,8)+' '+String.fromCharCode(65+i)}))];
+    const arranged=[...sources.map((n,i)=>({...n,x:150,y:75+i*105,shortLabel:roleWord(plan.sourceRole,'Start')+' '+(i+1)})),
+      ...[...targets].sort((a,b)=>refs.get(a.id).localeCompare(refs.get(b.id))).map((n,i)=>({...n,x:570,y:75+i*105,shortLabel:roleWord(plan.targetRole,'Ziel')+' '+String.fromCharCode(65+i)}))];
     const t={...core.example('connections'),id,title:q.heading,subject:q.subject,prompt:q.text,objective:q.text,maxPoints:sources.length*.5,
       rationale:'Inhaltlich bestimmte Beziehungen werden zugeordnet.',spec:{directed:true,nodes:arranged.map(n=>({id:refs.get(n.id),label:n.label,shortLabel:n.shortLabel,x:n.x,y:n.y}))},
       solution:{edges:plan.links.map(e=>[refs.get(e.from),refs.get(e.to)])}};
