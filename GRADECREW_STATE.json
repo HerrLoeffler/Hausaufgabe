@@ -2371,6 +2371,25 @@
     },
     {
       "id": "web-repair-20261007",
+      "web_batch_20261118": {
+        "stage": "staging_deployed",
+        "scope": "isolated Hosting; student progress, Wilma UI and simulated Emmi examples",
+        "branch": "fix/staging-feedback-web-batch-20261118",
+        "pull_request": 427,
+        "commit": "50a0a2e7637a9ccfab9d952113082ee976ff3646",
+        "preview_url": "https://gradecrew-staging-2026--web18-50a0a2e-szlbahxy.web.app/preview.html",
+        "preview_expires_at": "2026-11-25T13:42:24.325087457Z",
+        "hosting_version": "2f0b6d089d16a5d4",
+        "verified_files": 223,
+        "local_web_ui_tests": 832,
+        "local_functions_tests": 492,
+        "ci_run": 44316275229,
+        "shared_computer": "diagnosed; plan awaiting approval",
+        "navigation_sidebar": "concept awaiting approval",
+        "emmi_scoped_backend": "not deployed; free capability gate blocks unsupported calls",
+        "production_approved": false,
+        "handoff": "workstreams/feedback-gc39-release-20261013.md"
+      },
       "question_action_dialogs_20261110": {
         "stage": "production",
         "scope": "Hosting only, gradecrew.de and legacy web origin",
