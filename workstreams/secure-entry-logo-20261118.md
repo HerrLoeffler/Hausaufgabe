@@ -11,3 +11,6 @@ Quelle: bestehender Releasebranch feature/secure-live-ready-20261026@f5721de36c6
 Nächster Schritt: native Bildvorschau prüfen, dann genau einen neuen gated Secure-Live-TestFlight-Lauf über normale Integration starten. Keinen AppStoreReviewversand und keine separate Secure-Test-Auslieferung.
 
 Native Vorschau auf schmaler320pt-Ansicht und Tablet geprüft:40/40 Layoutfälle sowie bestehende Lifecycle-/Abgabe-/Rückkehrprüfungen erfolgreich. Gerendertes Einstiegsbild zeigt die gewählte durch-C-Identität. Geometrie und Labels unverändert. Als nächster Schritt normale Integration vonPR446 und genau ein vorhandener Releaseworkflow; Upload weiterhin noch nicht gestartet.
+
+## Integriert; neuer einzelner Release läuft
+PR446normalintegriertals82dba253bd64b907c1977f500835173f17929102. Tatsächlicher automatischer TestFlight-Lauf44412446551/run33/attempt1 gestartet, Quelleexakt82dba253. VierbestehendeMatrixgatesunverändertvorSigning/Upload;keinweitererDispatch. NochkeinneuerUpload oderVerfügbarkeitsbeleg.1321istweiterdervomNutzerbestätigtevorigeBuild. NächsterSchritt: vorhandenenRunbisGates/signiertemUploadverfolgen,keinenDoppelbuild.
