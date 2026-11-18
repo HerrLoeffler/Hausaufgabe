@@ -6,10 +6,10 @@ class TestDatabase{
   snapshot(path){return {id:path.split('/').at(-1),exists:this.docs.has(path),data:()=>structuredClone(this.docs.get(path))};}
   write(path,value,merge){this.docs.set(path,merge?{...this.docs.get(path),...structuredClone(value)}:structuredClone(value));}
   collection(path){
-    const db=this,filters=[];
+    const db=this,filters=[];let ordering;
     const query={where:(field,op,value)=>{if(op!=='==')throw Error(op);filters.push([field,value]);return query;},
-      limit:n=>{query.n=n;return query;},get:async()=>({docs:[...db.docs.keys()].filter(p=>p.startsWith(path+'/')&&p.split('/').length===path.split('/').length+1)
-        .map(p=>db.snapshot(p)).filter(s=>filters.every(([k,v])=>s.data()[k]===v)).slice(0,query.n||1000)})};
+      orderBy:(field,dir)=>{ordering={field,dir};return query;},limit:n=>{query.n=n;return query;},get:async()=>({docs:[...db.docs.keys()].filter(p=>p.startsWith(path+'/')&&p.split('/').length===path.split('/').length+1)
+        .map(p=>db.snapshot(p)).filter(s=>filters.every(([k,v])=>s.data()[k]===v)).sort((a,b)=>ordering?(ordering.dir==='desc'?-1:1)*((a.data()[ordering.field]||0)-(b.data()[ordering.field]||0)):0).slice(0,query.n||1000)})};
     return query;
   }
   batch(){

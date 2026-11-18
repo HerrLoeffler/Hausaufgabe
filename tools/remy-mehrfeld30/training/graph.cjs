@@ -7,6 +7,7 @@ const {checkCandidate}=require('./checker.cjs');
 const {calculateBinary}=require('./oracle.cjs');
 const profile=require('./graph-profile.cjs');
 const normalize=value=>String(value).trim().toLowerCase().replace(/[.!?]+$/,'').replace(/\s+/g,' ');
+const numeric=value=>{try{return calculateBinary({op:'add',left:value,right:'0'});}catch{return null;}};
 const key=value=>'g'+createHash('sha256').update(value).digest('hex').slice(0,14);
 function text(value,max=500){
   if(typeof value!=='string'||!value.trim()||value.length>max)throw Error('Text fehlt oder ist zu lang.');
@@ -33,10 +34,13 @@ function buildGraph(plan,{id,modes}={}){
   }
   if(!['chain','branch'].includes(plan.kind)||!Array.isArray(plan.paths)||plan.paths.length<1||plan.paths.length>4||
     !Array.isArray(plan.fields)||plan.fields.length<1||plan.fields.length>8)throw Error('Eine unterstützte Anordnung mit offenen Feldern angeben.');
-  const fields=plan.fields.map(f=>{
+  const refs=new Map();
+  const fields=plan.fields.map((f,index)=>{
     if(!/^[a-zA-Z][a-zA-Z0-9_-]{0,39}$/.test(f.id)||!['number','text','choice'].includes(f.mode)||f.accepted?.length!==1)throw Error('Klares Feld mit einer kanonischen Antwort angeben.');
     const accepted=[text(f.accepted[0],120)];
-    const field={id:f.id,label:text(f.label,70),mode:f.mode,accepted};
+    if(f.mode==='number')accepted[0]=calculateBinary({op:'add',left:accepted[0],right:'0'});
+    refs.set(f.id,'f'+(index+1));
+    const field={id:refs.get(f.id),label:text(f.label,70),mode:f.mode,accepted};
     if(f.mode==='choice'){
       if(!Array.isArray(f.options)||f.options.length<2||f.options.length>6||new Set(f.options.map(normalize)).size!==f.options.length||
         !f.options.includes(accepted[0]))throw Error('Auswahlfeld mit unterschiedlichen Optionen angeben.');
@@ -45,12 +49,12 @@ function buildGraph(plan,{id,modes}={}){
     if(f.mode==='number'&&calculateBinary(f.calculation)!==accepted[0].replace(',','.'))throw Error('Unabhängige Rechnung stimmt nicht mit dem Feld überein.');
     return field;
   });
-  if(new Set(fields.map(f=>f.id)).size!==fields.length)throw Error('Feld-IDs müssen eindeutig sein.');
+  if(refs.size!==fields.length)throw Error('Feld-IDs müssen eindeutig sein.');
   const used=[];
   const paths=plan.paths.map(p=>{
     if(!Array.isArray(p.steps)||p.steps.length<3||p.steps.length>12||!p.steps.some(s=>s.type==='arrow'))throw Error('Pfad mit beschriftetem Pfeil angeben.');
     return {title:text(p.title,100),steps:p.steps.map(s=>{
-      if(s.type==='field'){if(!fields.some(f=>f.id===s.fieldId))throw Error('Unbekanntes Feld.');used.push(s.fieldId);return {field:s.fieldId};}
+      if(s.type==='field'){if(!refs.has(s.fieldId))throw Error('Unbekanntes Feld.');used.push(refs.get(s.fieldId));return {field:refs.get(s.fieldId)};}
       if(s.type==='arrow')return {arrow:text(s.text,100)};
       if(s.type==='text')return {label:text(s.text,250)};
       throw Error('Unbekannter Baustein.');
@@ -67,7 +71,7 @@ function graphAnswer(q){
 }
 function visibleGraph(q){
   if(q.type==='diagram')return {title:q.heading,text:q.text,...projectDiagram(q)};
-  if(q.type==='notice')return {title:q.heading,text:q.text,responseType:q.notice.kind};
+  if(q.type==='notice')return {title:q.heading,text:q.text};
   if(JSON.parse(q.visualTask).format==='connections'){
     const t=core.publicTask(JSON.parse(q.visualTask));
     return {title:q.heading,text:q.text,nodes:t.spec.nodes,directed:true};
@@ -86,7 +90,7 @@ function checkGraph(plan,judge,expected,q){
   if(q.type==='diagram'){
     const answers=judge.answers||[];
     if(answers.length!==q.fields.length||new Set(answers.map(a=>a.id)).size!==q.fields.length||
-      q.fields.some(f=>!answers.some(a=>a.id===f.id&&normalize(a.value)===normalize(f.accepted[0]))))
+      q.fields.some(f=>!answers.some(a=>a.id===f.id&&(f.mode==='number'?numeric(a.value)===numeric(f.accepted[0]):normalize(a.value)===normalize(f.accepted[0])))))
       errors.push('Unabhängige Lösungen und Feldantworten stimmen nicht überein.');
     if(expected?.answers&&expected.answers.map(normalize).sort().join('|')!==q.fields.map(f=>normalize(f.accepted[0])).sort().join('|'))
       errors.push('Die Referenzantworten des Prüfwunsches wurden verändert.');

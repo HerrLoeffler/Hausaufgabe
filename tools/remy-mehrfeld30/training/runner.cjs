@@ -122,8 +122,13 @@ async function stepCase({db,uid,data,secret,client}){
       const recipe=(await db.doc('taskLearningRecipes/'+run.recipeVersion).get()).data();
       // Only the signed-in teacher's explicit judgments and fixed test feedback are eligible.
       const learned=await db.collection('taskLearningExamples').where('ownerId','==',uid).where('reviewerId','==',uid).where('recipeVersion','==',run.recipeVersion).limit(30).get();
-      const examples=learned.docs.map(s=>s.data()).filter(x=>x.recipeVersion===run.recipeVersion&&x.humanVerdict&&x.reviewerId===uid)
-        .slice(-6).map(x=>({wish:x.wish,decision:x.kind,verdict:x.humanVerdict,reason:x.humanComment||'',structure:x.blueprint||null}));
+      const memory=await db.collection('taskLearningTeacherMemory/'+uid+'/examples').orderBy('reviewedAt','desc').limit(100).get();
+      const words=text=>new Set(String(text).toLowerCase().match(/[\p{L}\p{N}]+/gu)||[]),wanted=words(c.wish);
+      const relevance=x=>{const terms=words(x.wish);return [...wanted].filter(w=>terms.has(w)).length/Math.max(1,wanted.size);};
+      const byId=new Map([...learned.docs,...memory.docs].map(d=>[d.id,d.data()]));
+      const examples=[...byId.values()].filter(x=>x.ownerId===uid&&x.recipeVersion===run.recipeVersion&&x.humanVerdict&&x.reviewerId===uid)
+        .sort((a,b)=>relevance(b)-relevance(a)||(Date.parse(b.reviewedAt)||Number(b.reviewedAt)||0)-(Date.parse(a.reviewedAt)||Number(a.reviewedAt)||0)).slice(0,6)
+        .map(x=>({wish:x.wish,decision:x.kind,verdict:x.humanVerdict,reason:x.humanComment||'',structure:x.blueprint||null}));
       const response=await providerCall({db,runId:run.id,stepId,phase,secret,client,
         version:run.recipeVersion,input:{wish:c.wish,recipe:{prerequisites:recipe.prerequisites,exclusions:recipe.exclusions,rules:recipe.generationRules},
           requiredModes:c.modes||null,teacherExamples:examples,repair:c.repairNotes||''}});
@@ -248,20 +253,33 @@ function solutionDisplay(q){
     return {label:rows[row]+' · '+columns[column],value:String(value).replace('.',',')};
   });
 }
-async function recordTrainingFeedback({db,uid,quizId,q,data}){
+async function recordTrainingFeedback({db,uid,quizId,q,data,event,latest,rating}){
   const id=quizId.slice(PREFIX.length),run=await getRun(db,id,uid);
   const ref=db.doc(runRef(db,id).path+'/cases/'+q.id),c=(await ref.get()).data();
   if(c?.status!=='ready')return;
   const example=db.doc('taskLearningExamples/'+digest([id,q.id,c.attempt,uid]));
   const review=db.doc(ref.path+'/teacherReviews/'+data.eventId);
   const value={reviewerId:uid,version:data.version,verdict:data.verdict,reason:data.reason||'',comment:data.comment||'',createdAt:now()};
-  await db.runTransaction(async tx=>{
+  return db.runTransaction(async tx=>{
     const prior=await tx.get(review);
-    if(prior.exists)return;
+    const existing=event?await tx.get(event):null;
+    const previous=latest?await tx.get(latest):null;
+    if(existing?.exists){
+      if(existing.data().version!==data.version)throw new HttpsError('failed-precondition','Rückmeldungs-ID bereits belegt.');
+      return {rating:previous?.data()||rating};
+    }
+    if(prior.exists)return {rating:previous?.data()||rating};
+    if(event){
+      const saved={...rating,quizId,questionId:q.id,group:'training',updatedAt:now()};
+      tx.create(event,saved);tx.set(latest,saved);
+    }
     tx.create(review,value);
-    tx.set(example,{ownerId:uid,reviewerId:uid,runId:id,caseId:q.id,attempt:c.attempt,recipeVersion:run.recipeVersion,family:c.family,
+    const learned={ownerId:uid,reviewerId:uid,runId:id,caseId:q.id,attempt:c.attempt,recipeVersion:run.recipeVersion,family:c.family,
       kind:c.plan.kind,wish:c.wish,blueprint:c.plan,taskVersion:data.version,systemStatus:'checked',humanVerdict:data.verdict,humanComment:data.comment||'',
-      humanReason:data.reason||'',reviewedAt:now()});
+      humanReason:data.reason||'',reviewedAt:now()};
+    tx.set(example,learned);
+    tx.set(db.doc('taskLearningTeacherMemory/'+uid+'/examples/'+example.id),learned);
+    return {rating:rating||value};
   });
 }
 async function handleTraining(input){

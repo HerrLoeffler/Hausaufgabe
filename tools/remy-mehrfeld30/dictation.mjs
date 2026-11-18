@@ -1,10 +1,10 @@
 export function attachDictation({window,button,input,status,onChange=()=>{},instruction='Danach kannst du speichern.'}){
-  let active=null,session=0,timer=null,finish=null;
+  let active=null,session=0,timer=null,finish=null,stopping=null;
   const label=button.textContent;
   function idle(){
     window.clearTimeout(timer);timer=null;active=null;
     button.textContent=label;button.setAttribute('aria-pressed','false');
-    if(finish){finish();finish=null;}
+    if(finish){finish();finish=null;}stopping=null;
   }
   function cancel(){
     const previous=active;session++;idle();
@@ -12,12 +12,16 @@ export function attachDictation({window,button,input,status,onChange=()=>{},inst
   }
   function stop(){
     if(!active)return Promise.resolve();
-    return new Promise(resolve=>{
-      finish=resolve;
+    if(stopping)return stopping;
+    let resolveStop;stopping=new Promise(resolve=>{resolveStop=resolve;});
+    const pending=stopping;
+    {
+      finish=resolveStop;
       window.clearTimeout(timer);
       timer=window.setTimeout(()=>{const previous=active;session++;idle();try{previous?.abort();}catch{}},1000);
       try{active.stop();}catch{idle();}
-    });
+    }
+    return pending;
   }
   function start(){
     const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;

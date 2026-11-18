@@ -27,3 +27,12 @@ test('unsupported and denied speech preserve editable feedback without automatic
  assert.equal(s.input.value,'Meine Notiz');assert.equal(s.control.isActive(),false);
  }finally{s.dom.window.close();}
 });
+test('repeated stop while the browser is finishing resolves every waiting save',async()=>{
+ const s=setup();try{
+ s.button.click();s.instance.stop=()=>{};
+ const first=s.control.stop(),second=s.control.stop();
+ s.instance.dispatchEvent(new s.window.Event('end'));
+ const result=await Promise.race([Promise.all([first,second]).then(()=>true),new Promise(r=>setTimeout(()=>r(false),30))]);
+ assert.equal(result,true);
+ }finally{s.dom.window.close();}
+});

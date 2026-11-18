@@ -38,11 +38,13 @@ async function runCase(id){
   if(mode==='init'){save('initial',await call({action:'trainingCreate',calibration:true,family:'fields-arrows'}));}
   else if(mode==='recheck'){
     const state=await call({action:'trainingStatus',runId:RUN});
-    const requested=process.argv.slice(3);
-    for(const c of state.cases.filter(c=>requested.length?requested.includes(c.id):c.status==='rejected')){
+    const [id,reason]=process.argv.slice(3);
+    if(!id||!reason||reason.length<8)throw Error('Fall-ID und konkrete neue Prüferbegründung angeben.');
+    for(const c of state.cases.filter(c=>c.id===id)){
       const file=path.join(root,'recheck-'+c.id+'.json');
       const receipt=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):
-        {caseId:c.id,requestId:randomUUID(),reason:c.id==='inverse-11'?'Feste Gesamtseitenzahl statt fälschlich gleicher alter und neuer Rate als Voraussetzung, Quelle 23d59e2.':c.id==='contrast-08'||c.id==='contrast-10'?'Die im Labor sichtbare Eignungsprobe prüft die Formatauswahl statt einer vollständig erzeugten Fachaufgabe, Quelle 23d59e2.':'Korrigierte Beschreibung der tatsächlich sichtbaren freien Pfeilfelder und numerisches Prüferantwortformat, Quelle f20da23.'};
+        {caseId:c.id,requestId:randomUUID(),reason};
+      if(receipt.reason!==reason)throw Error('Die gespeicherte Neuprüfung hat eine andere Begründung.');
       save('recheck-'+c.id,receipt);
       const result=await call({action:'trainingRecheck',runId:RUN,...receipt});
       console.log(c.id+' recheck '+result.revision);

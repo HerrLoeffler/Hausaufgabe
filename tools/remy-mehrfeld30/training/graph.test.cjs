@@ -7,10 +7,10 @@ test('one field-and-arrow contract builds language and numerical chains with pri
     paths:[{title:'Verb',steps:[{type:'text',text:'go'},{type:'arrow',text:'Simple Past'},{type:'field',fieldId:'past'}]}],
     fields:[{id:'past',label:'Simple Past',mode:'text',options:[],accepted:['went'],calculation:{op:'none',left:'',right:''}}]};
   const q=buildGraph(p,{id:'english'});
-  assert.equal(q.type,'diagram');assert.equal(score(q,{past:'went'}),.5);assert.equal(score(q,{past:'goed'}),0);
+  assert.equal(q.type,'diagram');assert.equal(score(q,{f1:'went'}),.5);assert.equal(score(q,{f1:'goed'}),0);
   assert.doesNotMatch(JSON.stringify(present('training:graph','training',q)),/"accepted"|"solution"/);
-  assert.equal(visibleGraph(q).fields[0].id,'past');
-  assert.deepEqual(graphAnswer(q),{past:'went'});
+  assert.equal(visibleGraph(q).fields[0].id,'f1');
+  assert.deepEqual(graphAnswer(q),{f1:'went'});
   assert.throws(()=>buildGraph({...p,fields:[{...p.fields[0],mode:'number',accepted:['18'],calculation:{op:'multiply',left:'7',right:'2'}}]},{id:'bad'}),/Rechnung/);
 });
 test('mapping uses a private key, distinct roles and independent layout instead of ordered answer IDs',()=>{
@@ -37,4 +37,15 @@ test('blind checking rejects an invalid family, lost requirements and independen
   assert.equal(checkGraph(plan,j,null,q).ok,true);
   assert.equal(checkGraph(plan,{...j,answers:[{id:'f',value:'goed'}]},null,q).ok,false);
   assert.equal(checkGraph(plan,{...j,kind:'direct'},null,q).ok,false);
+});
+test('model field IDs cannot leak private answers to students or the blind checker and decimal commas remain scoreable',()=>{
+ const p={kind:'chain',title:'Preis',subject:'Mathematik',text:'Drei Stück kosten je 0,50 Euro. Ergänze den Preis.',reason:'Multiplizieren.',
+ paths:[{title:'Preisweg',steps:[{type:'text',text:'3 × 0,50 €'},{type:'arrow',text:'Gesamtpreis'},{type:'field',fieldId:'antwort1_5'}]}],
+ fields:[{id:'antwort1_5',label:'Preis (€)',mode:'number',accepted:['1,5'],calculation:{op:'multiply',left:'3',right:'0.5'}}]};
+ const q=buildGraph(p,{id:'decimal'}),view=visibleGraph(q);
+ assert.equal(score(q,graphAnswer(q)),.5);
+ assert.equal(q.fields[0].id,'f1');
+ assert.doesNotMatch(JSON.stringify(view),/antwort1_5/);
+ const j={kind:'chain',matchesWish:true,appropriate:true,unambiguous:true,leaksAnswer:false,answers:[{id:'f1',value:'1.50'}],links:[]};
+ assert.equal(checkGraph(p,j,null,q).ok,true);
 });

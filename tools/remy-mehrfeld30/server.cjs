@@ -99,6 +99,7 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
   let rating;
   try{rating=feedback(task,data);}catch(error){throw new HttpsError('invalid-argument',error.message);}
   const event=owner.collection('events').doc(data.eventId);
+  if(isTraining)return recordTrainingFeedback({db,uid,quizId:data.quizId,q,data,event,latest:latest.doc(task.version),rating});
   const result=await db.runTransaction(async tx=>{
     const current=await tx.get(event);
     if(current.exists){
@@ -110,6 +111,5 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
     tx.set(latest.doc(task.version),value);
     return {rating};
   });
-  if(isTraining)await recordTrainingFeedback({db,uid,quizId:data.quizId,q,data});
   return result;
 });

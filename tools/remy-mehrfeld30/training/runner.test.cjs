@@ -143,7 +143,7 @@ test('shared graph runner blind-checks English fields, keeps feedback versioned 
   const p={kind:'chain',title:'Verbformen',subject:'Englisch',text:'Ergänze die Simple-Past-Form von go.',reason:'Verb umformen.',
     paths:[{title:'Verb',steps:[{type:'text',text:'go'},{type:'arrow',text:'Simple Past'},{type:'field',fieldId:'past'}]}],
     fields:[{id:'past',label:'Simple Past',mode:'text',options:[],accepted:['went'],calculation:{op:'none',left:'',right:''}}]};
-  const j={kind:'chain',matchesWish:true,appropriate:true,unambiguous:true,leaksAnswer:false,answers:[{id:'past',value:'went'}],links:[]};
+  const j={kind:'chain',matchesWish:true,appropriate:true,unambiguous:true,leaksAnswer:false,answers:[{id:'f1',value:'went'}],links:[]};
   const run=await createRun({db,uid,data:{family:'fields-arrows',requestId:'00000000-0000-4000-8000-000000000021',wish:'Englisch: Simple Past von go selbst eintragen.'}});
   let calls=0;
   const client={responses:{create:async request=>{
@@ -165,4 +165,25 @@ test('shared graph runner blind-checks English fields, keeps feedback versioned 
   assert.equal(seen.teacherExamples[0].structure.fields[0].id,'past');
   await stepCase({db,uid,data:{runId:run2.runId,caseId:'wish'},client:next});
   const n=(await resolveTraining({db,uid,quizId:run2.quizId})).tasks[0];assert.equal(n.type,'notice');assert.equal(n.points,0);
+});
+test('a training verdict and its learning memory commit atomically and replay cannot overwrite a newer verdict',async()=>{
+ const db=new TestDatabase(),run=await createRun({db,uid,data:{calibration:true}}),q=require('./builder.cjs').buildCandidate(plan,{id:'direct-01'});
+ await db.doc('taskLearningRuns/'+run.runId+'/cases/direct-01').update({status:'ready',q,plan});
+ const event=id=>db.doc('pilotFeedback/'+uid+'/events/'+id),latest=db.doc('pilotFeedback/'+uid+'/latest/v');
+ const input={db,uid,quizId:run.quizId,q,latest};
+ const a={eventId:'00000000-0000-4000-8000-000000000031',version:'v',verdict:'good',comment:'Gut'},b={...a,eventId:'00000000-0000-4000-8000-000000000032',verdict:'bad',comment:'Korrigieren'};
+ await recordTrainingFeedback({...input,data:a,event:event(a.eventId),rating:a});
+ assert.equal((await latest.get()).data().verdict,'good');
+ await recordTrainingFeedback({...input,data:b,event:event(b.eventId),rating:b});
+ await recordTrainingFeedback({...input,data:a,event:event(a.eventId),rating:a});
+ assert.equal((await latest.get()).data().verdict,'bad');
+ assert.equal([...db.docs.values()].find(x=>x.reviewerId===uid&&x.humanVerdict)?.humanVerdict,'bad');
+});
+test('recent same-wish learning memory is preferred over older unrelated examples',async()=>{
+ const db=new TestDatabase();
+ for(let i=0;i<35;i++)await db.doc('taskLearningTeacherMemory/'+uid+'/examples/e'+i).set({ownerId:uid,reviewerId:uid,recipeVersion:'dreisatz-20261118-v1',humanVerdict:'bad',wish:i===34?plan.text:'Unrelated '+i,kind:'inverse',humanComment:'Hinweis '+i,reviewedAt:100+i});
+ const run=await createRun({db,uid,data:{requestId:'00000000-0000-4000-8000-000000000033',wish:plan.text}});let seen;
+ const client={responses:{create:async request=>{seen=JSON.parse(request.input[1].content).teacherExamples;return {status:'completed',output_text:JSON.stringify(plan),usage:{input_tokens:10,output_tokens:10}};}}};
+ await stepCase({db,uid,data:{runId:run.runId,caseId:'wish'},client});
+ assert.equal(seen[0].reason,'Hinweis 34');
 });
