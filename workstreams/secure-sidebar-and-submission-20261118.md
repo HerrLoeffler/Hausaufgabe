@@ -141,3 +141,13 @@ NächsterSchritt: vorhandenenRun44404250305bisMatrix/Archive/AAC/Uploadverfolgen
 ### Finale vier Servergates und zusätzliche Uhrmessung
 Run44404250305/attempt1: Native135155114107SUCCESS900;Phone135155114594SUCCESS540native/216Web/12Interaktionen/6komponierteAnsichten;Large135155114604SUCCESS360/12;Mini135155114611SUCCESS360/12. AllesQuelle1c061200,keineTestgatesabgeschwächt,keineWiederholungsstarts. Build-and-upload135167380282läuft. NochkeinUploadbeleg.
 Martins ausdrücklicheUhranforderung zusätzlichmitgleicheraktuellerSecureExamFrame/Header/WebKit-Kompositiongeprüft:1194×900,1024×900,320×667,390×844,844×390,390×300. Uhrposition beimSprungzuAufgabe70gleichundinBounds;Antwort-DOMundWertbleibenerhalten,100NummernnurZahl+Badge/Grünzustand,AuswahlundLöschengeprüft. EchterWKWebView.pageZoom1.5aufiPad1194→796undPhone390→260:NativeUhrunverändert. Testbestanden. NurtemporäresHarness,Belegoutputs/secure-phone-compact-20261118/clock-scope;Testdateiwiederentfernt,nichtimApprelease. KeinphysischerGerätenachweisundkeinweitererBuilddadurch.
+
+
+## Erfolgreicher Upload des kompakten Builds1321
+Run44404250305/attempt1 vollständig SUCCESS. Unveränderliche Releasequelle1c061200b5b8330689ab483c9d465830a7d9dacb. Build-and-upload135167380282: alle drei Simulator-Schemata, Tests und Smokeprüfung erfolgreich; GradeCrew Secure/SecureLive archiviert als1.0(1321), bundlede.gradecrew.secure, live-exam, Backendhausaufgabe-staging(heutigesSchul-Live). Signatur undAAC inApp UNDDistributionprofil bestätigt.
+Tatsächliches UPLOAD SUCCEEDED am18Nov22:19:59UTC(23:19:59CET),0Fehler,1Zukunftswarnung90725(abApril2027SDK27). DeliveryUUID3499124c-8a8b-41a9-afcc-327e5e1f834d. Das ist keinUploadderSecureTest-App. Kein App-Store-Reviewversand und keineÄnderungderAuswahl1293.
+Apple-Verarbeitung/Zuordnung/tatsächlicheSichtbarkeitvon1321nochunbestätigt; konkreteVerfügbarkeitsfrageanMartingestellt. Physische1321Abnahmeoffen. TestFlight-Hinweistextnurvorbereitet,nichtalsApple-gespeichertbestätigt. Nachweisoutputs/secure-phone-compact-20261118/UPLOAD-RECEIPT.json. NächsterSchritt: Verfügbarkeitvon1321bestätigenundnurDokumentationvonPR444mitneuemmaingegenprüfen/abschließen. KeinweitererBuild.
+
+
+### TestFlight1321 sichtbar – Nutzerbestätigung
+NachdervorherigenNur1313-AnzeigebestätigtMartinexplizit„1321jetztda“. TatsächlicheVerfügbarkeitvonSecure1.0(1321)damitbestätigt;entsprechendeFragebeantwortet. NeuerUploadnichtnötig. Physische1321FunktionsabnahmeistweiteroffenundnichtalleinausSichtbarkeitabgeleitet. NachderAktualisierungkompaktenKopf/Lesbarkeit/festeUhramHandyprobieren. Code/Prüfungen/Upload/Verfügbarkeitdamitabgeschlossen,AppStore-Einreichungunberührt.
