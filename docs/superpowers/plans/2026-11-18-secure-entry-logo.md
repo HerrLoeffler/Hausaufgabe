@@ -8,3 +8,5 @@ Bounded fix: make the generated Live GradeCrewLogo.imageset use exactly the appr
 - [x] Reuse selected bytes and verify real generated Live/Test assets, native preview and existing relevant tests.
 - [x] Review the narrow patch and integrate it into the existing gated Secure TestFlight pipeline once.
 - [ ] Verify signed upload and actual TestFlight availability separately; no AppStore review submission.
+
+Actual signed delivery:Secure1.0(1332), run44412446551/attempt2, source82dba253, upload18Nov23:28:34UTC. Apple availability separately pending; original isolated phone startup failure and single unchanged-source successful retry retained.
