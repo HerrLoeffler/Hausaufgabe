@@ -2413,7 +2413,45 @@
           "live_browser": "authenticated actual new sort/averages, existing5fictional completed submissions, no grading writes",
           "physical_phone_ipad": "not_tested; exact source tested in Chromium/WebKit responsive cases",
           "emmi_backend": "not included; scoped regenerateQuestion/getAiStatus separate gate",
-          "report": "docs/evidence/web-hosting-live-20261118/receipt.json"
+          "report": "docs/evidence/web-hosting-live-20261118/receipt.json",
+          "user_feedback": "Overview cards and sort dropdowns rejected; compact class table and two-way heading clicks explicitly requested.",
+          "superseded_by": "4c736c292a3e618e38715455adb3130b3e972da3"
+        },
+        "compact_overview_correction_20261118": {
+          "stage": "production",
+          "scope": "restore compact all-pupil table and clickable headings, including fastest/slowest duration",
+          "branch": "fix/wilma-compact-sort-20261118",
+          "pull_request": 432,
+          "commit": "4c736c292a3e618e38715455adb3130b3e972da3",
+          "tree": "2f1c4eb66de9124bbbe2a8d8449bf5890714440b",
+          "ci_run": 44332994161,
+          "ci_result": "exact_Node_and_targeted_browser_gates_passed",
+          "human_live_correction_authorized": true,
+          "local_tests": {
+            "root_ui": 793,
+            "real_table_browser_cases": 12,
+            "fictional_pupils": 30,
+            "targeted_mobile_tutorial_clicks": 52
+          },
+          "independent_review": "PASS no P0-P2, initial30+12 and selector delta review",
+          "previous_ci_failure": {
+            "run": 44326810501,
+            "artifact": 14437088816,
+            "cause": "name-cell max-width constrained colspan inline review; fixed by excluding detail rows"
+          },
+          "deployed": true,
+          "physical_devices": "not_tested",
+          "next_action": "Martin reloads gradecrew.de and checks the compact overview and heading clicks; physical device acceptance remains separate",
+          "hosting_version": "d230621155e12a02",
+          "verified_files_per_origin": 216,
+          "mismatches": 0,
+          "preserved_existing_assets": 213,
+          "removed_assets": 0,
+          "preceding_full_ci_run": 44328163926,
+          "preceding_full_ci_result": "success for eb41003 before final Name-only clarification",
+          "full_final_ci": "background full tutorial matrix not claimed complete at Name-only release",
+          "report": "docs/evidence/wilma-compact-overview-20261118/receipt.json",
+          "live_browser": "Actual signed-in final4c736c2: common Name header,8columns,no sort controls; Name asc click/descEnter and durationfast/slowclicks confirmed on5existingfictionalclosedsubmissions,0gradingwrites"
         }
       },
       "question_action_dialogs_20261110": {

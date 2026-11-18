@@ -1,0 +1,81 @@
+{
+  "source": "4c736c292a3e618e38715455adb3130b3e972da3",
+  "tree": "2f1c4eb66de9124bbbe2a8d8449bf5890714440b",
+  "hosting_version": "d230621155e12a02",
+  "previous_source": "eb41003f140bab3e03391c9eaad6e10cc8e4b9fb",
+  "previous_hosting": "3d9dc2a84259009b",
+  "production_project": "hausaufgabe-staging",
+  "approval": "Direct human correction: compact table, heading toggles both ways, fastest/slowest; final common Name label without initials wording; targeted regression requested",
+  "pull_request": 432,
+  "changed_runtime_files": [
+    "app.js",
+    "styles.css",
+    "teacher-grading-summary.mjs"
+  ],
+  "local_tests": {
+    "root_ui": 793,
+    "table_cases": 12,
+    "additional_click_tap_enter_cases": 16,
+    "fictional_pupils": 30,
+    "targeted_webkit_320_tutorial_clicks": 52,
+    "additional_viewport_widths": [
+      320,
+      390,
+      820,
+      1180
+    ]
+  },
+  "independent_reviews": [
+    "initial30tests+12browser PASS",
+    "detail-cell selector delta PASS",
+    "finalName-column delta20tests PASS"
+  ],
+  "preceding_full_ci": {
+    "source": "eb41003f140bab3e03391c9eaad6e10cc8e4b9fb",
+    "run": 44328163926,
+    "node": 134884975598,
+    "browser": 134884976262,
+    "result": "success"
+  },
+  "final_scoped_ci": {
+    "run": 44332994161,
+    "node": 134902063644,
+    "node_result": "success",
+    "browser": 134902064165,
+    "targeted_teacher_student_wilma_public_entry": "success",
+    "full_tutorial_matrix": "still running when final Name-only refinement authorized and published; not claimed green"
+  },
+  "failed_predecessor": {
+    "source": "e7b20b4ec99c11632cbe7f24b08454898ae882c4",
+    "run": 44326810501,
+    "artifact": 14437088816,
+    "cause": "name-column max-width affected colspan inline review; excluded detail rows; targeted320 tutorial and full next source green"
+  },
+  "browser_live": {
+    "origin": "https://gradecrew.de",
+    "dataset": "five existing closed fictional WILMALIVE261029 submissions",
+    "header": "Name, 8 columns; no separate sorting controls",
+    "name_ascending": "A/B/C/D/L via actual heading click",
+    "name_descending": "L/D/C/B/A via actual Enter on heading",
+    "duration_ascending": [
+      "10:46",
+      "13:12",
+      "50:13",
+      "70:20",
+      "70:25"
+    ],
+    "duration_descending": [
+      "70:25",
+      "70:20",
+      "50:13",
+      "13:12",
+      "10:46"
+    ],
+    "grading_writes": 0,
+    "full_names_preserved": true
+  },
+  "grading_writes": 0,
+  "provider_calls": 0,
+  "functions_rules_auth_native_changed": false,
+  "physical_devices": "not performed; responsive browser sizes/zoom/keyboard-height explicitly tested"
+}
