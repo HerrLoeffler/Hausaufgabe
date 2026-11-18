@@ -846,3 +846,8 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 - [ ] Lehrkraftsichtung der Tonhöhen und des weicheren Rhythmusklangs.
 - [x] Kreativlabor im isolierten Testkanal: 30 Referenzaufgaben aus 15 Fächern, Sprungliste, 17 Rezepte, Serverbewertung und Browser geprüft. [Nachweis](https://github.com/HerrLoeffler/Hausaufgabe/blob/dfaf6875b2f48386afdab6843f2e750df925befa/docs/evidence/remy-mehrfeld30-20261109/KREATIVLABOR.md).
 - [ ] Freie Wünsche über die Rezeptwahl prüfen: unbekannte Wünsche, erwartetes Rezept oder Verzicht und unabhängige fachliche Prüfung.
+
+### GC-EXTENDED-QUESTION-TYPES-01 · gezieltes Remy-Üben und Transfer, 18.11.2026
+
+- [x] Ausführlichen [Plan](https://github.com/HerrLoeffler/Hausaufgabe/blob/docs/mehrfeld-fundus-20261109/docs/superpowers/plans/2026-11-18-remy-dreisatz-training-lab.md) erstellt. Vorhandenes Kreativlabor erweitern, Dreisatz aus freien Wünschen, unabhängiger Rechenprüfer, kalibrierte KI-Prüfung, Budgetwächter und verborgener Abschlussbestand. 60er-Kalibrierung, 240 Verbesserungsfälle, anschließend optional 1.200er-Vergleich und Transfer in drei Armen. Zahlen und Budgets sind Planwerte, keine ausgeführten Serien.
+- [ ] Als ersten Umsetzungsschritt ein festes Dreisatz-Fallmanifest mit fachlichen Gegenfällen und unabhängiger Berechnung aufbauen. Danach freien Wunsch, wiederaufnehmbaren Serienlauf und menschliche Sichtung im isolierten Labor anbinden. Keine Provideraufrufe durch den Plan gestartet.
