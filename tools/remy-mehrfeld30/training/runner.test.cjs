@@ -93,3 +93,37 @@ test('shared readers cannot spend another owners budget or contaminate that owne
   const examples=[...db.docs.values()].filter(x=>x.humanVerdict==='good');
   assert.ok(examples.every(x=>x.ownerId==='teacher-b'&&x.reviewerId==='teacher-b'));
 });
+test('reviewed examples are retrieved even after many unreviewed system candidates',async()=>{
+  const db=new TestDatabase();
+  for(let i=0;i<40;i++)await db.doc('taskLearningExamples/unreviewed-'+i).set({ownerId:uid,recipeVersion:'dreisatz-20261118-v1',humanVerdict:''});
+  await db.doc('taskLearningExamples/teacher-example').set({ownerId:uid,reviewerId:uid,recipeVersion:'dreisatz-20261118-v1',
+    humanVerdict:'bad',wish:'Taxi mit Grundgebühr',kind:'other',humanComment:'Anderer Rechenweg'});
+  const run=await createRun({db,uid,data:{requestId:'00000000-0000-4000-8000-000000000013',wish:plan.text}});
+  let examples;
+  const client={responses:{create:async request=>{
+    examples=JSON.parse(request.input[1].content).teacherExamples;
+    return {status:'completed',output_text:JSON.stringify(plan),usage:{input_tokens:10,output_tokens:10}};
+  }}};
+  await stepCase({db,uid,data:{runId:run.runId,caseId:'wish'},client});
+  assert.equal(examples.length,1);
+  assert.equal(examples[0].wish,'Taxi mit Grundgebühr');
+});
+test('a corrected blind projection can recheck the same generated version once per explicit request without regenerating content',async()=>{
+  const {recheckCase}=require('./runner.cjs');
+  const db=new TestDatabase(),run=await createRun({db,uid,data:{requestId:'00000000-0000-4000-8000-000000000014',wish:plan.text}});
+  let generators=0,judges=0;
+  const client={responses:{create:async request=>{
+    const generation=request.model==='gpt-6-luna';
+    if(generation)generators++;else judges++;
+    return {status:'completed',output_text:JSON.stringify(generation?plan:{...judgment,appropriate:judges>1}),usage:{input_tokens:10,output_tokens:10}};
+  }}};
+  const input={db,uid,data:{runId:run.runId,caseId:'wish'},client};
+  await stepCase(input);await stepCase(input);
+  const data={...input.data,requestId:'00000000-0000-4000-8000-000000000015',reason:'Die Beschreibung freier Pfeile wurde korrigiert.'};
+  assert.equal((await recheckCase({db,uid,data})).revision,2);
+  assert.equal((await recheckCase({db,uid,data})).revision,2);
+  assert.equal((await stepCase(input)).status,'ready');
+  assert.equal(generators,1);assert.equal(judges,2);
+  assert.ok([...db.docs.keys()].some(p=>p.includes('/providerCalls/')&&p.endsWith('judge-r2')));
+  assert.ok([...db.docs.keys()].some(p=>p.includes('/rechecks/')));
+});

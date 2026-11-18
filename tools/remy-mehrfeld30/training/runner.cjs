@@ -98,14 +98,14 @@ async function stepCase({db,uid,data,secret,client}){
   const c=(await ref.get()).data();
   if(!c)throw new HttpsError('not-found','Prüffall fehlt.');
   if(['ready','rejected','uncertain'].includes(c.status))return {status:c.status,attempt:c.attempt};
-  const phase=c.status==='generated'?'judge':'generate',stepId=c.id+'-a'+c.attempt+'-'+phase;
+  const phase=c.status==='generated'?'judge':'generate',stepId=c.id+'-a'+c.attempt+'-'+phase+(phase==='judge'&&(c.checkRevision||1)>1?'-r'+c.checkRevision:'');
   const archive=db.doc(ref.path+'/attempts/a'+c.attempt);
   try{
     let update;
     if(phase==='generate'){
       const recipe=(await db.doc('taskLearningRecipes/'+run.recipeVersion).get()).data();
       // Only the signed-in teacher's explicit judgments and fixed test feedback are eligible.
-      const learned=await db.collection('taskLearningExamples').where('ownerId','==',uid).limit(30).get();
+      const learned=await db.collection('taskLearningExamples').where('ownerId','==',uid).where('reviewerId','==',uid).limit(30).get();
       const examples=learned.docs.map(s=>s.data()).filter(x=>x.recipeVersion===VERSION&&x.humanVerdict&&x.reviewerId===uid)
         .slice(-6).map(x=>({wish:x.wish,decision:x.kind,verdict:x.humanVerdict,reason:x.humanComment||''}));
       const response=await providerCall({db,runId:run.id,stepId,phase,secret,client,
@@ -125,9 +125,10 @@ async function stepCase({db,uid,data,secret,client}){
     }
     return await db.runTransaction(async tx=>{
       const current=(await tx.get(ref)).data();
-      if(current.attempt!==c.attempt||current.status!==c.status)return {status:current.status,attempt:current.attempt};
+      if(current.attempt!==c.attempt||current.status!==c.status||(current.checkRevision||1)!==(c.checkRevision||1))return {status:current.status,attempt:current.attempt};
       const example=db.doc('taskLearningExamples/'+digest([run.id,c.id,c.attempt]));
       const priorExample=update.status==='ready'?await tx.get(example):null;
+      tx.set(db.doc(ref.path+'/checks/'+stepId),{phase,attempt:c.attempt,revision:c.checkRevision||1,...update,at:now()});
       tx.set(archive,{attempt:c.attempt,...(c.plan?{plan:c.plan,q:c.q}:{}),...update},{merge:true});
       tx.update(ref,update);
       if(update.status==='ready'&&!priorExample.exists){
@@ -145,7 +146,7 @@ async function stepCase({db,uid,data,secret,client}){
     const status=call?.status==='uncertain'||call?.status==='dispatching'?'uncertain':'rejected';
     return db.runTransaction(async tx=>{
       const current=(await tx.get(ref)).data();
-      if(current.attempt!==c.attempt||current.status!==c.status)return {status:current.status,attempt:current.attempt};
+      if(current.attempt!==c.attempt||current.status!==c.status||(current.checkRevision||1)!==(c.checkRevision||1))return {status:current.status,attempt:current.attempt};
       const errors=[safeError(error)];
       tx.update(ref,{status,errors,checkedAt:now()});
       tx.set(archive,{attempt:c.attempt,status,errors,...(c.plan?{plan:c.plan,q:c.q}:{})},{merge:true});
@@ -166,6 +167,25 @@ async function repairCase({db,uid,data}){
     tx.update(ref,{status:'pending',attempt:c.attempt+1,repairRequestId:data.requestId,
       repairNotes:(c.errors||[]).join(' ').slice(0,1000),errors:[],q:null,plan:null});
     return {status:'pending',attempt:c.attempt+1};
+  });
+}
+async function recheckCase({db,uid,data}){
+  const run=await getRun(db,data.runId,uid);
+  if(run.ownerId!==uid)throw new HttpsError('permission-denied','Nur der Eigentümer kann eine neue Prüfung beauftragen.');
+  if(!ID.test(data.caseId||'')||!/^[a-f0-9-]{36}$/i.test(data.requestId||'')||typeof data.reason!=='string'||data.reason.length<8||data.reason.length>300)
+    throw new HttpsError('invalid-argument','Eine konkrete Prüferkorrektur mit stabiler Anfrage-ID angeben.');
+  const ref=db.doc(runRef(db,run.id).path+'/cases/'+data.caseId);
+  return db.runTransaction(async tx=>{
+    const c=(await tx.get(ref)).data();
+    if(!c)throw new HttpsError('not-found','Fall fehlt.');
+    if(c.recheckRequestId===data.requestId)return {status:c.status,revision:c.checkRevision};
+    if(!c.plan||!c.q||!['ready','rejected'].includes(c.status)||(c.checkRevision||1)>=3)
+      throw new HttpsError('failed-precondition','Keine weitere Prüfung dieser Fassung vorgesehen.');
+    const revision=(c.checkRevision||1)+1;
+    tx.set(db.doc(ref.path+'/rechecks/'+data.requestId),{reason:data.reason,previousStatus:c.status,
+      previousCheck:c.check||null,previousJudge:c.judge||null,revision,at:now()});
+    tx.update(ref,{status:'generated',checkRevision:revision,recheckRequestId:data.requestId,errors:[]});
+    return {status:'generated',revision};
   });
 }
 async function status({db,uid,data}){
@@ -218,9 +238,10 @@ async function handleTraining(input){
   if(data.action==='trainingCreate')return createRun(input);
   if(data.action==='trainingStep')return stepCase(input);
   if(data.action==='trainingRepair')return repairCase(input);
+  if(data.action==='trainingRecheck')return recheckCase(input);
   if(data.action==='trainingStatus')return status(input);
   if(data.action==='trainingDetails')return details(input);
   throw new HttpsError('invalid-argument','Unbekannte Erprobungsaktion.');
 }
 module.exports={PREFIX,createRun,stepCase,repairCase,status,resolveTraining,handleTraining,recordTrainingFeedback,
-  providerRequest,reservationCost,fullAnswer};
+  providerRequest,reservationCost,fullAnswer,recheckCase};

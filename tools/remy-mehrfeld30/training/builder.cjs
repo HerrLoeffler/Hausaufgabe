@@ -28,6 +28,16 @@ function buildCandidate(plan,{id,modes=['factor','factor','factor','factor']}){
 function visibleProblem(q){
   if(q.type==='single')return {title:q.heading,text:q.text,options:q.options.map(o=>o.text)};
   const task=JSON.parse(q.visualTask);
-  return {title:q.heading,text:q.text,columns:task.spec.columns,rows:task.spec.rows.map(r=>r.map(c=>c.input?'[offen]':c.text))};
+  const shown=cell=>cell.input?'[offen]':cell.text;
+  return {title:q.heading,text:q.text,columns:[task.spec.columns[2],task.spec.columns[3]],
+    rows:[0,2,4].map(r=>[shown(task.spec.rows[r][2]),shown(task.spec.rows[r][3])]),
+    arrows:[[1,0,1,'links',0,1],[1,4,5,'rechts',0,1],[3,0,1,'links',1,2],[3,4,5,'rechts',1,2]]
+      .map(([r,oc,fc,column,fromRow,toRow])=>{
+        const operator=task.spec.rows[r][oc],factor=task.spec.rows[r][fc];
+        if(factor.control==='operation')return {column,fromRow,toRow,input:'whole-operation',
+          explanation:'Ein einziges offenes Feld für Rechenzeichen und Faktor, mit gezeichnetem Pfeil zwischen den Zeilen.'};
+        return {column,fromRow,toRow,operator:operator.input?'[auswählen]':operator.text,
+          factor:shown(factor),explanation:'Gezeichneter Pfeil zwischen den Zeilen, Zeichen und Faktor in getrennten Feldern.'};
+      })};
 }
 module.exports={buildCandidate,visibleProblem};

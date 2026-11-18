@@ -331,7 +331,7 @@ async function runTraining(){
         await load(state.quizId);return;
       }
       if(['rejected','uncertain'].includes(c.status)){
-        save('training-job',null);
+        if(c.status==='rejected')save('training-job',null);
         output.textContent=c.status==='uncertain'?'Der KI-Aufruf ist noch unbestätigt. Die gespeicherte Anfrage wird nicht doppelt ausgelöst.':
           'Der Entwurf ist gesperrt. '+c.errors.join(' ');
         return;

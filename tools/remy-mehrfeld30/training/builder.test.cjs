@@ -36,3 +36,16 @@ test('a free arrow accepts equivalent multiplication with decimal comma and sele
   assert.equal(score(q,{...answer,[operator]:'×',[factor]:'9'}),q.points-.5);
   assert.equal(score(q,{...answer,[operator]:'+',[factor]:'4'}),q.points-.5);
 });
+test('the blind projection describes the same four arrows including complete-operation fields without leaking keys',()=>{
+  const q=buildCandidate({kind:'direct',relationship:'direct',constantRate:true,a:'2',b:'12',c:'5',
+    text:'Konstante Geschwindigkeit: in zwei Stunden zwölf Kilometer. Wie viele in fünf?',labels:['Zeit (h)','Strecke (km)']},
+    {id:'view',modes:['free','factor','select','given']});
+  const visible=require('./builder.cjs').visibleProblem(q);
+  assert.equal(visible.arrows.length,4);
+  assert.equal(visible.arrows[0].input,'whole-operation');
+  assert.equal(visible.arrows[1].operator,'÷');
+  assert.equal(visible.arrows[1].factor,'[offen]');
+  assert.equal(visible.arrows[2].operator,'[auswählen]');
+  assert.equal(visible.arrows[3].factor,'5');
+  assert.doesNotMatch(JSON.stringify(visible),/"solution"|"accepted"/);
+});
