@@ -32,7 +32,7 @@ export function teacherResultName(submission = {}) {
   return {
     firstName,
     lastName,
-    label: text(submission.studentName) || combinedName || 'Ohne Name / Kürzel'
+    label: text(submission.studentName) || combinedName || 'Ohne Name'
   };
 }
 

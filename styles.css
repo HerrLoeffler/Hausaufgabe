@@ -802,10 +802,10 @@ body.gcAiCompact .creationLegalFooter :is(.legalSiteFooter,.rightsFooter){flex:0
 /* Results stay a compact class table; sort by its headings in either direction. */
 #resultsView,#resultsTableWrap,#resultsView .reviewPanel{min-width:0;max-width:100%}
 #resultsTableWrap{position:relative;padding:0;container-type:inline-size;overflow:auto}
-#resultsTableWrap .resultTable{min-width:850px;table-layout:auto}
+#resultsTableWrap .resultTable{min-width:760px;table-layout:auto}
 #resultsTableWrap .resultTable th,#resultsTableWrap .resultTable td{padding:7px 10px;vertical-align:middle}
 #resultsTableWrap .resultTable td{white-space:nowrap}
-#resultsTableWrap .resultTable tbody>tr:not(.submissionReviewRow)>td:first-child,#resultsTableWrap .resultTable tbody>tr:not(.submissionReviewRow)>td:nth-child(2){white-space:normal;min-width:110px;max-width:200px;overflow-wrap:anywhere}
+#resultsTableWrap .resultTable tbody>tr:not(.submissionReviewRow)>td:first-child{white-space:normal;min-width:110px;max-width:200px;overflow-wrap:anywhere}
 #resultsTableWrap .reviewBtn{padding:6px 10px;min-height:36px;font-size:12px;white-space:nowrap}
 #resultsTableWrap .resultsSortButton{display:inline-flex;align-items:center;gap:6px;padding:8px 0;border:0;border-radius:0;background:transparent;box-shadow:none;color:inherit;font:inherit;font-weight:700;white-space:nowrap;cursor:pointer;min-height:36px}
 #resultsTableWrap .resultsSortButton span{color:var(--muted)}
@@ -814,6 +814,7 @@ body.gcAiCompact .creationLegalFooter :is(.legalSiteFooter,.rightsFooter){flex:0
 #resultsTableWrap tfoot th,#resultsTableWrap tfoot td{background:#f8fafc;font-weight:600;border-top:1px solid var(--line)}
 #resultsTableWrap tfoot small{font-weight:400;color:var(--muted)}
 #resultsView .reviewPanel{width:100%;box-sizing:border-box;overflow-wrap:anywhere}
+#resultsTableWrap .resultTable .submissionReviewCell{padding:0}
 #resultsTableWrap .submissionReviewCell>.reviewPanel{width:min(100%,100cqw);position:sticky;left:0;white-space:normal}
 #resultsView .reviewPanel .reviewHeader>*{min-width:0;max-width:100%}
 #resultsView .reviewPanel .manualPoints{font-size:16px;min-height:44px;scroll-margin-block:100px}

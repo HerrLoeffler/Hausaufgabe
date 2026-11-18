@@ -34,6 +34,6 @@ test('view subset and canonical pending override affect denominators without cha
 });
 test('legacy non-string names stay missing instead of breaking result sorting',()=>{
  const rows=[{id:'missing',studentName:123},{id:'valid',studentName:'AB'}];
- assert.equal(results.teacherResultName(rows[0]).label,'Ohne Name / Kürzel');
+ assert.equal(results.teacherResultName(rows[0]).label,'Ohne Name');
  assert.deepEqual(results.sortTeacherResults(rows,'lastName','desc').map(s=>s.id),['valid','missing']);
 });

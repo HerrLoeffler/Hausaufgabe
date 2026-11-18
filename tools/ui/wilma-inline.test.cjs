@@ -93,7 +93,7 @@ test('Übersicht bleibt Tabelle ohne Sortiermenüs und jeder Spaltenkopf schalte
  const w=setup(t);finalRows(w);
  assert.equal(w.document.querySelectorAll('#resultsSort,#resultsSortDirection,.resultsToolbar').length,0);
  for(const [key,asc,desc]of [
-  ['firstName',['a','b','z'],['z','b','a']],['lastName',['z','b','a'],['a','b','z']],
+  ['firstName',['a','b','z'],['z','b','a']],
   ['duration',['a','z','b'],['z','a','b']],['points',['a','b','z'],['z','b','a']],
   ['percent',['a','b','z'],['z','b','a']],['grade',['z','b','a'],['a','b','z']]
  ]){
@@ -105,6 +105,10 @@ test('Übersicht bleibt Tabelle ohne Sortiermenüs und jeder Spaltenkopf schalte
   assert.equal(w.document.querySelector('[data-results-sort="'+key+'"]').closest('th').getAttribute('aria-sort'),'descending');
  }
  assert.equal(w.document.querySelectorAll('.resultTable tbody tr').length,3);
+ assert.equal(w.document.querySelector('.resultTable thead button').textContent.replace(/[↑↓↕]/g,'').trim(),'Name');
+ assert.equal(w.document.querySelector('.reviewBtn[data-id=z]').closest('tr').cells[0].textContent,'Zoe Adler');
+ assert.equal(w.document.querySelector('.resultTable thead tr').cells.length,8);
+ assert.ok(!w.document.querySelector('.resultTable').textContent.includes('Kürzel'));
  assert.equal(w.document.querySelectorAll('.resultsAverages').length,0);
  assert.ok(w.document.querySelector('.resultTable tfoot'),'Durchschnitt bleibt eine kompakte Tabellenzeile');
 });
