@@ -1,3 +1,4 @@
+import {mountSchoolJoinCodeForm,mountSchoolJoinCodeManagement} from './school-join-code-panel.mjs';
 const dates = value => value ? new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',dateStyle:'medium'}).format(new Date(value)) : 'noch offen';
 const roles = {teacher:'Lehrkraft',school_admin:'Schulverwaltung',billing:'Rechnungsstelle ohne Lehrkraftplatz'};
 function node(doc,tag,text,classes){const el=doc.createElement(tag);if(text!==undefined)el.textContent=text;if(classes)el.className=classes;return el;}
@@ -16,7 +17,7 @@ export async function mountSchoolPanel(root,{client,uid,targetPersonId,onError=(
   try{
     const result=await client.request('listSchools');if(!current())return;
     const schools=Array.isArray(result.schools)?result.schools:[];
-    if(!schools.length)root.append(node(doc,'p','Diesem Konto ist noch keine Schule zugeordnet. Eine persönliche Einladung verbindet deinen bestehenden Zugang.'));
+    if(!schools.length)root.append(node(doc,'p','Diesem Konto ist noch keine Schule zugeordnet. Mit dem Schulcode verbindest du deinen bestehenden Zugang.'));
     if(result.hasMore)root.append(node(doc,'p','Es werden die ersten 50 Schulen angezeigt. Weitere Schulen sind in dieser Testansicht noch nicht auswählbar.','hint'));
     const details=node(doc,'div');
     for(const school of schools){const b=button(doc,root,school.name,()=>run(b,()=>openSchool(school.id)));b.dataset.school=school.id;}
@@ -39,14 +40,15 @@ export async function mountSchoolPanel(root,{client,uid,targetPersonId,onError=(
         if(uid&&roles[view.myRole]){const leave=button(doc,details,'Schule verlassen',()=>{if(!doc.defaultView.confirm('Die Zuordnung zu '+view.school.name+' wirklich beenden?'))return;void run(leave,async()=>{await client.request('removeSchoolMember',{schoolId,personId:uid,reason:'Selbstaustritt über Kontoeinstellungen'});await client.refresh();if(current())await mountSchoolPanel(root,{client,uid,onError});});});leave.dataset.action='leave-school';}
         return;
       }
+      const codeManagement=node(doc,"section");details.append(codeManagement);mountSchoolJoinCodeManagement(codeManagement,{client,schoolId,joinCode:view.joinCode,onError});
       for(const member of view.members||[]){
         const row=node(doc,'div',undefined,'billingGrantRow');row.append(node(doc,'span',`${member.email} · ${roles[member.role]||member.role}`));
         const remove=button(doc,row,'Zuordnung beenden',()=>{const reason=doc.defaultView.prompt('Grund für das Beenden der Schulzuordnung:');if(!reason?.trim())return;void run(remove,async()=>{await client.request('removeSchoolMember',{schoolId,personId:member.personId,reason});await client.refresh();await openSchool(schoolId);});});details.append(row);
       }
       for(const invitation of view.invitations||[]){const row=node(doc,'div',undefined,'billingGrantRow');row.append(node(doc,'span',`${invitation.email} · Einladung bis ${dates(invitation.expiresAtMs)}`));const revoke=button(doc,row,'Einladung widerrufen',()=>run(revoke,async()=>{await client.request('revokeSchoolInvitation',{schoolId,invitationId:invitation.id});await openSchool(schoolId);}));details.append(row);}
       const form=node(doc,'form',undefined,'billingGrantForm');form.append(node(doc,'h4','Persönliche Einladung'));
-      const email=field(doc,form,'E-Mail-Adresse der eingeladenen Person','email','email'),role=roleSelect(doc,form),send=node(doc,'button','Einladungslink erstellen','button primary');send.type='submit';form.append(send);details.append(form);
-      const invitationResult=node(doc,'div');details.append(invitationResult);
+      const email=field(doc,form,'E-Mail-Adresse der eingeladenen Person','email','email'),role=roleSelect(doc,form),send=node(doc,'button','Einladungslink erstellen','button primary');send.type='submit';form.append(send);const targeted=node(doc,"details");targeted.append(node(doc,"summary","Einzelne Person gezielt einladen"),form);details.append(targeted);
+      const invitationResult=node(doc,'div');targeted.append(invitationResult);
       form.onsubmit=event=>{event.preventDefault();if(!form.reportValidity())return;void run(send,async()=>{const invite=await client.request('inviteSchoolMember',{schoolId,email:email.value,role:role.value,requestId:crypto.randomUUID()});if(!current())return;
         invitationResult.replaceChildren();if(!invite.token){invitationResult.append(node(doc,'p','Der Link wurde schon erstellt. Bitte die Einladung widerrufen und neu ausstellen.'));return;}
         const url=new URL(doc.defaultView.location.href);url.search='';url.hash=new URLSearchParams({'school-invite':invite.token}).toString();
@@ -65,9 +67,10 @@ export async function mountSchoolPanel(root,{client,uid,targetPersonId,onError=(
       form.onsubmit=event=>{event.preventDefault();if(!form.reportValidity())return;void run(create,async()=>{const made=await client.request('createSchool',{name:name.value,seats:Number(seats.value),startDate:start.value,ownerId:targetPersonId||uid,requestId:crypto.randomUUID()});message.textContent='Schule vorbereitet. Rechnung und Zahlung sind noch offen.';await openSchool(made.schoolId);});};
     }
     if(!targetPersonId){
+      const schoolCode=node(doc,"section");root.append(schoolCode);mountSchoolJoinCodeForm(schoolCode,{client,onError,onJoined:async()=>{if(current()){await mountSchoolPanel(root,{client,uid,onError});const notice=node(doc,"p","Die Schulzuordnung ist gespeichert.","hint");root.append(notice);}}});
       const form=node(doc,'form',undefined,'billingGrantForm');form.append(node(doc,'h3','Einladung annehmen'));
       const input=field(doc,form,'Persönlichen Einladungslink einfügen','invitation');input.value=initialInvitation;input.autocomplete='off';
-      const review=node(doc,'button','Einladung prüfen','button secondary');review.type='submit';review.dataset.action='preview';form.append(review);root.append(form);const preview=node(doc,'div');root.append(preview);
+      const review=node(doc,'button','Einladung prüfen','button secondary');review.type='submit';review.dataset.action='preview';form.append(review);const targeted=node(doc,"details");targeted.open=Boolean(initialInvitation);targeted.append(node(doc,"summary","Persönlichen Einladungslink verwenden"),form);root.append(targeted);const preview=node(doc,'div');targeted.append(preview);
       input.oninput=()=>preview.replaceChildren();
       form.onsubmit=event=>{event.preventDefault();const token=invitationToken(input.value);if(!token){report(new Error('Bitte einen gültigen Einladungslink einfügen.'));return;}void run(review,async()=>{
         const invitation=await client.request('previewSchoolInvitation',{token});if(!current())return;preview.replaceChildren(node(doc,'p',`${invitation.schoolName} · ${roles[invitation.role]||invitation.role} · Laufzeitende ${dates(invitation.endsAtMs)}`));

@@ -1,7 +1,7 @@
 {
   "task": "GC-BILLING-PLAN-01",
   "project": "gradecrew-staging-2026",
-  "applied": false,
+  "applied": true,
   "account": "acct_1UYUaw1l0zkqOtXr",
   "paymentServiceAccount": "gradecrew-billing-sandbox@gradecrew-staging-2026.iam.gserviceaccount.com",
   "existingRole": "projects/gradecrew-staging-2026/roles/gradecrewBillingSandboxGrants",
@@ -71,5 +71,22 @@
     "proposedSourceChanges": 0,
     "proposedNewGuardModules": 0,
     "activationRequirement": "Recheck teacher role, prototype source generations and effective worker IAM before enrollment."
+  },
+  "approval": {
+    "scope": "Only three named permissions on the existing role in gradecrew-staging-2026",
+    "explicitUserApproval": true,
+    "verifiedApplied": true
+  },
+  "newEndpointInvocation": {
+    "publicInvocationApplied": true,
+    "explicitApprovalPending": false,
+    "endpoints": [
+      "billingPilot",
+      "billingPayments",
+      "billingStripeWebhook"
+    ],
+    "reason": "Website callables and Stripe signed webhook require network reachability; service authorization remains enforced.",
+    "explicitUserApproval": "Ja, nur diese drei gesch\u00fctzten Testadressen erreichbar machen",
+    "authenticationAndSignatureRejectionVerified": true
   }
 }

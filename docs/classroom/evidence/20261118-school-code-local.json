@@ -1,0 +1,54 @@
+{
+  "taskId": "GC-CLASSROOM-01",
+  "date": "2026-11-18",
+  "productCommits": [
+    "77af43e15c40ecf309a2fadae3cfc1c2b38404c6",
+    "a1241d61f03f50ce41f3221cac51174c53c63fd7"
+  ],
+  "baseCommit": "bc5ca823",
+  "scope": "reusable school codes against canonical billing seats; local integration candidate only",
+  "transactorTests": {
+    "new": 9,
+    "existing": 29,
+    "passed": 38
+  },
+  "rulesTestsPassed": 2,
+  "allBillingUiClientTestsPassed": 26,
+  "functionsJsTestsPassed": 437,
+  "review": {
+    "first": "no Important/Critical",
+    "finalUiDelta": "no Important/Critical",
+    "independentTestRerun": false
+  },
+  "browser": {
+    "type": "local synthetic component fixture using actual product modules and existing styles",
+    "sizes": [
+      [
+        375,
+        812
+      ],
+      [
+        768,
+        1024
+      ],
+      [
+        1280,
+        900
+      ]
+    ],
+    "createPreviewJoinErrorAndRevokeVerified": true,
+    "viewportReset": true,
+    "nativeConfirmRecoveredThroughRegularChromeUi": true
+  },
+  "artifact": {
+    "files": 222,
+    "newModuleHashVerified": true,
+    "deployed": false
+  },
+  "cloudOrIamChanged": false,
+  "realRosterImported": false,
+  "classroomClassRightsBridge": "not implemented in this package",
+  "schoolCodeCloudAcceptance": "pending owner integration and closed pilot authorization",
+  "fullFunctionsTestsPassed": 546,
+  "fullFunctionsCheck": "syntax and lint passed"
+}
