@@ -2,7 +2,6 @@
   "taskId": "GC-CLASSROOM-01",
   "date": "2026-11-19",
   "relatedWorkstream": "GC-BILLING-PLAN-01",
-  "sourceCommitVerifiedOnGithub": "6ad3367d7564658f3385827c376f27b280c65f56",
   "ownerReportedDeployment": {
     "functions": {
       "billingPilot": "00003-kog",
@@ -17,6 +16,7 @@
     "testAdministratorChoice": "pending human selection",
     "exampleDiscountsActivated": false
   },
-  "verificationBoundary": "Source commit read back; deployment details are owner receipts, not a new Classroom cloud audit.",
-  "classroomScope": "No Classroom deployment or school/ASV mutation in this update. Preserve separate Billing sources/channel during future CSV work."
+  "verificationBoundary": "Reported source SHA not yet found on GitHub (422 No commit found, two bounded reads); exact remote alias requested from owner. Deployment details are owner receipts, not a new Classroom cloud audit.",
+  "classroomScope": "No Classroom deployment or school/ASV mutation in this update. Preserve separate Billing sources/channel during future CSV work.",
+  "ownerReportedSourceCommit": "6ad3367d7564658f3385827c376f27b280c65f56"
 }
