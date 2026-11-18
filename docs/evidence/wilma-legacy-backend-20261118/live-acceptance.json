@@ -1,0 +1,18 @@
+{
+  "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+  "result": "pass",
+  "fixture": "existing synthetic LLD9SSR8 valid receipt",
+  "sameFingerprintAndOperation": true,
+  "attemptCount": 1,
+  "phase": "completed",
+  "newProviderCalls": 0,
+  "newUsageMicros": 0,
+  "reservedMicros": 0,
+  "gradeUnchanged": true,
+  "savedStateUnchanged": true,
+  "browserProposalPoints": 1.5,
+  "browserProposalMaxPoints": 1.5,
+  "confirmed": false,
+  "sourceRevision": "reviewwilmaanswers-00006-xub",
+  "browserEvidence": "gc-wilma-legacy-live-verified.jpg"
+}

@@ -1,0 +1,58 @@
+{
+  "reviewer": "shared_browser_diagnosis",
+  "result": "pass",
+  "p0_p2": 0,
+  "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+  "tree": "c877184464769428cc772d7dc4609993e49e13cc",
+  "artifact": "gc-wilma-legacy-f723e71.zip",
+  "artifactSHA256": "6f87bff5b8ff527babdc10653b907409b463c1ad517f37ff2bc12f4b39a4e840",
+  "artifactFilesVerifiedAgainstGitAndPriorReviewedArtifact": 146,
+  "exactCI": {
+    "run": 44375566304,
+    "result": "success"
+  },
+  "stage": {
+    "revision": "reviewwilmaanswers-00011-guf",
+    "state": "ACTIVE",
+    "sameFingerprintAndOperation": true,
+    "attemptCountBefore": 1,
+    "attemptCountAfter": 2,
+    "originalAttemptHistoryPreserved": true,
+    "newProviderCalls": 1,
+    "newUsageMicros": 970,
+    "reservedMicros": 0,
+    "gradeUnchanged": true,
+    "freeReloadStateUnchanged": true,
+    "preRetryStateUnchangedByDeploy": true,
+    "receiptBackupSHA256Verified": true,
+    "serviceConfigPreservedExceptRevision": true,
+    "otherFunctionsUnchanged": 97,
+    "hostingUnchanged": true
+  },
+  "promotionScope": "Only reviewWilmaAnswers buildConfig.source; existing Live Hosting and all service configuration must remain unchanged.",
+  "liveConditions": {
+    "maximumNewProviderCalls": 0,
+    "postDeployCheck": "Existing explicitly fictional valid receipt only, free-only; verify same source SHA, preserved serviceConfig and Hosting, and other-function inventory.",
+    "historicalRealAnswers": "No reset, retry, grading or provider call authorized by this review."
+  },
+  "checkedScripts": [
+    "gc-wilma-legacy-deploy-source-only.cjs",
+    "gc-wilma-legacy-verify-function.cjs"
+  ],
+  "limitations": [
+    "Bounded source/artifact/evidence consistency review; no new browser, provider, deployment or full test-suite execution.",
+    "No new Live backend deployment or post-deployment acceptance claimed by this decision.",
+    "Historical production 503 root cause remains unknown; no physical-device or native acceptance claimed."
+  ],
+  "archiveSHA256": "6f87bff5b8ff527babdc10653b907409b463c1ad517f37ff2bc12f4b39a4e840",
+  "stageGate": {
+    "actualLegacyMissingReceipt": true,
+    "sameFingerprintAndOperation": true,
+    "previousAttemptPreservedInHistory": true,
+    "newProviderCalls": 1,
+    "reloadNoNewProvider": true,
+    "gradeUnchanged": true,
+    "reservedMicros": 0,
+    "maxNewLiveProviderCalls": 0
+  }
+}
