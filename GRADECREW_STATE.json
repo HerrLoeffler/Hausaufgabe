@@ -4086,7 +4086,10 @@
         "staging_worker_hash": "c346a841aa46ff0d59a26be6c3fbb950269183f1",
         "staging_other_functions_unchanged": 95,
         "live_ci_run": 42612743908,
-        "local_functions_tests": { "live": 485, "staging": 363 },
+        "local_functions_tests": {
+          "live": 485,
+          "staging": 363
+        },
         "scope": "processAiTestJob only; 2048 MiB; one job per instance; queue cap two",
         "production_approved": true,
         "live_deployed_on": "2026-11-10",
@@ -4872,6 +4875,21 @@
           "Physical device acceptance and further targeted Live correction/Undo/reload checks beyond existing Stage acceptance and automated contracts."
         ]
       }
+    },
+    {
+      "id": "secure-appicon-20261118",
+      "task_id": "GC-IOS-02 / GC-RELEASE-06",
+      "branch": "feature/native-live-staging-20261018",
+      "implementation_branch": "fix/secure-appicon-20261118",
+      "observed_head": "536d7cced6354270e6074ce66b9061a409d2493e",
+      "stage": "integrated",
+      "pull_request": 428,
+      "handoff": "workstreams/secure-appicon-release-20261118.md",
+      "scope": "Selected Secure Store AppIcon only; submitted1192 runtime retained; teacher and web unchanged",
+      "ci_run": 44317497628,
+      "ci_status": "in_progress_or_queued",
+      "app_store_build": "not_yet_uploaded",
+      "next_action": "Follow existing full simulator/AAC/signing/upload run29; then verify processed Secure icon and prepare version/reply. DSA still In Review18Nov; no final AppReview submission authorized."
     }
   ],
   "deployments": [
