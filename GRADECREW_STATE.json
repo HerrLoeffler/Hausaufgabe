@@ -5293,7 +5293,7 @@
       "app_store_selected_build_unchanged": 1293,
       "secure_test_unchanged": 1241,
       "local_verification": "Final-source fixed-clock scrolling, task jumps, actual1.5 WebKit page zoom and narrow/keyboard viewports passed; original font and answer DOM preserved.",
-      "next_action": "Confirm actual1321availability after Apple processing; Martin then tests compact phone header, unchanged readable tasks and fixed visible clock. No new upload or Store review submission.",
+      "next_action": "Martin updates to1321 and checks compact phone header, readable questions and always-visible clock. No further build or Store review submission.",
       "ci_jobs": {
         "native": 135155114107,
         "phone": 135155114594,
@@ -5322,9 +5322,10 @@
         "mode": "live-exam",
         "project": "hausaufgabe-staging"
       },
-      "testflight_new_availability": "Martin reports only1313visible at22:22UTC;1321not yet visible. Apple processing/group status not independently readable.",
+      "testflight_new_availability": "explicitly confirmed by Martin:1321jetztda",
       "physical_1321_acceptance": "open",
-      "sdk_warning": "90725:futureApril2027SDK27requirement; delivery accepted"
+      "sdk_warning": "90725:futureApril2027SDK27requirement; delivery accepted",
+      "testflight_available": true
     }
   ],
   "deployments": [

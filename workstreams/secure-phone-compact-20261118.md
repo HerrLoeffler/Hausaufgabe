@@ -18,4 +18,6 @@ Die inzwischen auf main dokumentierte Wilma-Backendreparatur von PR445, Live-Rev
 
 Nächster Schritt: tatsächliche TestFlight-Verfügbarkeit von1.0(1321) bestätigen; entsprechende Frage ist bei Martin offen. Apple-Verarbeitung und physische Geräteabnahme getrennt halten. Kein weiterer Build nötig. Keine eigene native Lösungsfreigabeansicht behaupten; der Web-Abschlussfix ist davon unabhängig.
 
-Stand 18.11.2026,22:22UTC: Martin sieht in TestFlight noch1313.1321-Verfügbarkeit ist somit noch nicht bestätigt; keine neue Uploadwiederholung. Apple-Verarbeitung bzw. Testerzuordnung kann mit den momentan verfügbaren Werkzeugen nicht unabhängig ausgelesen werden. Keine erneute Loginfrage ohne Browserwerkzeug.
+## Bestätigte TestFlight-Verfügbarkeit
+
+Martin meldet nach der vorherigen1313-Anzeige ausdrücklich: „1321 jetzt da“. Secure1.0(1321) ist damit menschlich als in TestFlight verfügbar bestätigt. Noch offen ist ausschließlich die physische Funktionsabnahme des kompakten Layouts, der lesbaren Aufgaben und der sichtbaren Uhr. Kein weiterer Upload nötig.
