@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-18T18:17:30.012Z",
+  "project": "gradecrew-staging-2026",
+  "confirmedExistingTeacherAccount": true,
+  "explicitGrantStoredAndReadBack": true,
+  "rolesAndStatusUnchanged": true,
+  "tests": 64,
+  "syntheticAuthenticatedCards": 8,
+  "anonymousDenied": true,
+  "clientSelfGrantDenied": true,
+  "otherFunctionsUnchanged": 97,
+  "functionHash": "31d2ca77a33e42b2a2599977c0259240ddb8a1e4",
+  "sourceLocal": "7479027",
+  "sourceRemote": "11a530ba8c781e32fc7941506bb3cb3707770070",
+  "hostingChanged": false,
+  "productionChanged": false,
+  "actualUserRelogin": "pending"
+}
