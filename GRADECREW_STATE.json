@@ -5326,6 +5326,26 @@
       "physical_1321_acceptance": "open",
       "sdk_warning": "90725:futureApril2027SDK27requirement; delivery accepted",
       "testflight_available": true
+    },
+    {
+      "id": "secure-entry-logo-20261118",
+      "task_id": "GC-IOS-02 / GC-RELEASE-06",
+      "branch": "feature/secure-live-ready-20261026",
+      "implementation_branch": "fix/secure-entry-logo-20261118",
+      "observed_head": "82dba253bd64b907c1977f500835173f17929102",
+      "stage": "integrated",
+      "pull_request": 446,
+      "handoff": "workstreams/secure-entry-logo-20261118.md",
+      "scope": "Reuse the approved Secure AppIcon bytes for the Live in-app logo; distinct Test identity and all layout/exam/security behavior unchanged.",
+      "ci_run": 44412446551,
+      "ci_status": "in_progress",
+      "canonical_logo_sha256": "fa341d56873fdec36b57a316da5a78577fcdb9d163eeca5774b103b250cc172d",
+      "local_validation": "Actual generated asset mismatch RED before fix;31Python/29JS and40native preview cases plus lifecycle/submit/return pass; rendered entry visually inspected; independent narrow review noP0-P2.",
+      "new_upload_confirmed": false,
+      "testflight_prior_available": "1.0 (1321), still previous entry logo",
+      "app_store_selected_build_not_modified": 1293,
+      "secure_test_not_modified": 1241,
+      "next_action": "Follow existing gated run44412446551 to signed AAC upload and separately confirm new TestFlight availability; no second dispatch."
     }
   ],
   "deployments": [
