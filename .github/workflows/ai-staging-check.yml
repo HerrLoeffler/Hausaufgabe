@@ -344,7 +344,9 @@ jobs:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
       - run: node tools/browser-layout/wilma-first-answer.cjs
       - name: Open Wilma task picker and first-start action in Chromium and WebKit
-        run: node tools/browser-layout/wilma-picker.cjs
+        run: |
+          node tools/browser-layout/wilma-picker.cjs
+          node tools/browser-layout/wilma-picker-focus.cjs
         env:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence/wilma-picker
       - run: npm test --prefix tools/browser-layout

@@ -94,8 +94,7 @@ export function installWilmaAnswerReview({document,getContext,parseGaps,answerDi
     const failed=items.filter(r=>r.requiresReview&&!r.proposal&&getPreparation(r.question.id,r.submission.id)?.phase==='error').length;
     const unchecked=items.filter(r=>r.requiresReview&&r.semanticPending&&!r.proposal).length,target=own('summary');
     if(target)target.textContent=`${preparing?preparing+' KI-Prüfungen laufen · ':''}${failed?failed+' KI-Fehler · ':''}${!preparing&&unchecked?unchecked+' KI-ungeprüft · ':''}${items.some(r=>r.proposal?.source==='wilma-ai')?items.filter(r=>r.needsAttention).length+' auffällig · ':''}${pending?pending+' Antworten offen':'Keine prüfbedürftigen Antworten'} · ${rule} regelbewertet`;
-    const nav=own('navigation');if(nav){const focused=document.activeElement?.closest?.('[data-wilma="navigation"]')?{action:document.activeElement.dataset.wilma,question:document.activeElement.dataset.question}:null;const scroll=nav.querySelector('.wilmaTaskTabs')?.scrollTop||0;nav.innerHTML=navigationHtml();nav.querySelector('.wilmaTaskTabs').scrollTop=scroll;if(focused){const target=focused.question?nav.querySelector('[data-question="'+CSS.escape(focused.question)+'"]'):nav.querySelector('[data-wilma="'+focused.action+'"]');target?.focus({preventScroll:true});}}
-    positionPicker();
+    const nav=own('navigation');if(nav){const focused=document.activeElement?.closest?.('[data-wilma="navigation"]')?{action:document.activeElement.dataset.wilma,question:document.activeElement.dataset.question}:null;const scroll=nav.querySelector('.wilmaTaskTabs')?.scrollTop||0;nav.innerHTML=navigationHtml();nav.querySelector('.wilmaTaskTabs').scrollTop=scroll;positionPicker();if(focused){const target=focused.question?nav.querySelector('[data-question="'+CSS.escape(focused.question)+'"]'):nav.querySelector('[data-wilma="'+focused.action+'"]');target?.focus({preventScroll:true});}}
     const list=questionId?rows():[],open=own('answers-open'),all=own('answers-all');if(open){open.textContent='Offene';open.setAttribute('aria-label','Offene Antworten ('+list.filter(r=>r.requiresReview).length+')');open.setAttribute('aria-pressed',String(filter==='open'));}if(all){all.textContent='Alle';all.setAttribute('aria-label','Alle Antworten ('+list.length+')');all.setAttribute('aria-pressed',String(filter==='all'));}
 
   }
@@ -135,7 +134,7 @@ export function installWilmaAnswerReview({document,getContext,parseGaps,answerDi
     if(disclosure)disclosure.open=false;
     if(focus)own('task-toggle')?.focus({preventScroll:true});
   }
-  function positionPicker({reveal=false,focus=false}={}){
+  function positionPicker({reveal=true,focus=false}={}){
     const disclosure=own('task-overview'),popup=section.querySelector('.wilmaTaskPicker');
     if(!disclosure?.open||!popup)return;
     // The top layer escapes sticky/scroll/container clipping without moving the controls.
@@ -160,7 +159,7 @@ export function installWilmaAnswerReview({document,getContext,parseGaps,answerDi
     if(grid.scrollHeight>grid.clientHeight+1){scrollHint.hidden=false;fitGrid();}
     const popupHeight=rect(popup).height;
     popup.style.top=Math.max(top+margin,Math.min(below>=popupHeight||below>=above?anchor.bottom+4:anchor.top-4-popupHeight,top+height-margin-popupHeight))/scale+'px';
-    const active=grid.querySelector('[aria-current="step"]');
+    const active=!focus&&grid.contains(document.activeElement)?document.activeElement:grid.querySelector('[aria-current="step"]');
     if(reveal&&active){const r=rect(active),g=rect(grid);if(r.top<g.top)grid.scrollTop-=Math.ceil((g.top-r.top)/scale);else if(r.bottom>g.bottom)grid.scrollTop+=Math.ceil((r.bottom-g.bottom)/scale);}
     if(focus)active?.focus({preventScroll:true});
   }
