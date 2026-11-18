@@ -26,19 +26,29 @@ export function describeAccess(access) {
     validUntil: access?.validUntil ?? null, trialEndsAtMs: access?.trialEndsAtMs ?? null };
 }
 
-export function createBillingClient({call, getUid, onChange = () => {}}) {
+export function createBillingClient({call, getUid, onChange = () => {},setTimer=setTimeout,clearTimer=clearTimeout,now=Date.now}) {
   let generation = 0, value = null;
-  function reset() { generation++; value = null; onChange(null); }
+  let boundaryTimer=null;
+  function watchBoundary(access){
+    if(boundaryTimer!==null)clearTimer(boundaryTimer);boundaryTimer=null;
+    const end=access?.nextAccessChangeAtMs,uid=getUid();
+    if(!uid||!Number.isSafeInteger(end)||end<=now())return;
+    boundaryTimer=setTimer(()=>{boundaryTimer=null;if(getUid()===uid)void refresh().catch(()=>{});},Math.min(end-now()+250,2147483647));
+    boundaryTimer?.unref?.();
+  }
+  function reset() { generation++; value = null; watchBoundary(null);onChange(null); }
   function same(uid, ticket) { return getUid() === uid && ticket === generation; }
   async function refresh() {
     const uid = getUid(), ticket = ++generation;
     value = null;
+    watchBoundary(null);
     if (!uid) { onChange(null); return null; }
     onChange(null, {loading:true});
     try {
       const result = await call({action:'access'});
       if (!same(uid,ticket)) return null;
       value = result;
+      watchBoundary(result);
       onChange(result);
       return result;
     } catch (error) {
@@ -51,6 +61,16 @@ export function createBillingClient({call, getUid, onChange = () => {}}) {
     if (!uid) throw new Error('Bitte zuerst anmelden.');
     const result = await call({...data,action});
     if (getUid() !== uid) throw new Error('Das Konto wurde gewechselt. Bitte neu laden.');
+    return result;
+  }
+  async function refreshAfterPayment({wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),attempts=6}={}) {
+    const uid=getUid();let result=null;
+    for(let i=0;i<Math.min(Math.max(attempts,1),10);i++){
+      if(getUid()!==uid||!uid)return null;
+      result=await refresh();
+      if(!result||['personal_premium','school'].includes(result.tier))return result;
+      if(i+1<attempts)await wait(2000);
+    }
     return result;
   }
   async function assertFeature(feature) {
@@ -71,5 +91,5 @@ export function createBillingClient({call, getUid, onChange = () => {}}) {
     if (getUid() !== uid) throw new Error('Das Konto wurde gewechselt. Bitte neu laden.');
     return result;
   }
-  return {refresh,reset,request,assertFeature,createQuiz,snapshot:() => value ? structuredClone(value) : null};
+  return {refresh,refreshAfterPayment,watchBoundary,reset,request,assertFeature,createQuiz,snapshot:() => value ? structuredClone(value) : null};
 }

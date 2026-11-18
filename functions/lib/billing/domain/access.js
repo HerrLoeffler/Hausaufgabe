@@ -1,4 +1,5 @@
 "use strict";
+const { mergePaidPeriods } = require("./stripe-contracts");
 
 const DAY_MS = 86400000;
 const TRIAL_DAYS = 14;
@@ -49,7 +50,14 @@ function evaluateAccess({ person, scope, at, account, grants = [], memberships =
     return { ...base, tier: "school", featureCodes: FULL, sourceIds: [period.id], validUntil: period.endsAtMs, reasonCode: "allowed" };
   }
   if (person.emailVerified !== true) return { ...base, featureCodes: READ, reasonCode: "email_verification_required" };
-  const active = grants.filter(g => g.status === "active" && ["manual", "stripe"].includes(g.source)
+  const personalGrants = grants.map(g => {
+    if (g.source !== "stripe" || g.paidPeriods === undefined) return g;
+    try {
+      const current = mergePaidPeriods(g.paidPeriods).find(period => inPeriod(period, at));
+      return current ? { ...g, ...current } : { ...g, startsAtMs: null, endsAtMs: null };
+    } catch { return { ...g, startsAtMs: null, endsAtMs: null }; }
+  });
+  const active = personalGrants.filter(g => g.status === "active" && ["manual", "stripe"].includes(g.source)
     && g.scope?.kind === scope.kind && g.scope?.id === scope.id
     && inPeriod(g, at, g.source === "manual"));
   if (active.length) return {

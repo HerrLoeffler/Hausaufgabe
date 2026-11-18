@@ -1,0 +1,348 @@
+{
+  "task": "GC-BILLING-PLAN-01",
+  "date": "2026-11-18",
+  "project": "gradecrew-staging-2026",
+  "codeCommit": "671d2cbd",
+  "deployed": false,
+  "purchasingEnabled": false,
+  "sandboxAccount": "acct_1UYUaw1l0zkqOtXr",
+  "sandboxPrices": {
+    "personal-monthly": {
+      "id": "price_1UdEBH1l0zkqOtXr0u9Dy5t8",
+      "productId": "prod_gc_billing_personal_v1",
+      "amountMinor": 1500,
+      "currency": "eur",
+      "interval": "month",
+      "taxBehavior": "inclusive"
+    },
+    "personal-yearly": {
+      "id": "price_1UdEBH1l0zkqOtXrd77x2z9Z",
+      "productId": "prod_gc_billing_personal_v1",
+      "amountMinor": 12000,
+      "currency": "eur",
+      "interval": "year",
+      "taxBehavior": "inclusive"
+    },
+    "school-yearly": {
+      "id": "price_1UdEBI1l0zkqOtXr4cOkDYkB",
+      "productId": "prod_gc_billing_school_v1",
+      "amountMinor": 5000,
+      "currency": "eur",
+      "interval": null,
+      "taxBehavior": "inclusive"
+    }
+  },
+  "newCustomers": 0,
+  "newAccounts": 0,
+  "newApiKeys": 0,
+  "newSigningSecrets": 0,
+  "iamChanged": false,
+  "pendingApproval": "Three additional rights for the existing Stage payment service, described in tools/billing/stage-permissions-plan.json",
+  "verification": {
+    "functions": {
+      "passed": 545,
+      "failed": 0
+    },
+    "combinedLocalDatabaseAuthRulesAssessment": {
+      "passed": 58,
+      "failed": 0
+    },
+    "focusedSdkContractsHttp": {
+      "passed": 35,
+      "failed": 0
+    },
+    "sourceBuilder": {
+      "passed": 7,
+      "failed": 0
+    },
+    "clientUi": {
+      "passed": 21,
+      "failed": 0
+    },
+    "preservedWriterArtifacts": 18,
+    "uniqueArtifactJavaScriptSyntaxChecks": 249,
+    "sourceGroupTests": [
+      {
+        "representative": "getQuestionAudioDrafts",
+        "sameSourceServices": [
+          "getQuestionAudioDrafts",
+          "syncQuestionAudioDrafts",
+          "expireAiTestJobs",
+          "analyzeMaterial",
+          "generateQuestionAudio",
+          "generateQuestionSolutionAudio",
+          "generateQuestionMedia"
+        ],
+        "exitCode": 0,
+        "testCounts": [
+          "# tests 284",
+          "# pass 284",
+          "# fail 0"
+        ],
+        "verificationOnlyVmFixtureInjections": 2,
+        "deploymentTestFilesUnchanged": true
+      },
+      {
+        "representative": "startAiTestVariantJob",
+        "sameSourceServices": [
+          "startAiTestVariantJob"
+        ],
+        "exitCode": 0,
+        "testCounts": [
+          "# tests 360",
+          "# pass 360",
+          "# fail 0"
+        ],
+        "verificationOnlyVmFixtureInjections": 2,
+        "deploymentTestFilesUnchanged": true
+      },
+      {
+        "representative": "prepareQuickRemy",
+        "sameSourceServices": [
+          "prepareQuickRemy",
+          "reviseWholeTest",
+          "submitQuickRemy",
+          "crewAssistant",
+          "getQuickRemySubmission"
+        ],
+        "exitCode": 0,
+        "testCounts": [
+          "# tests 3",
+          "# pass 3",
+          "# fail 0"
+        ],
+        "verificationOnlyVmFixtureInjections": 0,
+        "deploymentTestFilesUnchanged": true
+      },
+      {
+        "representative": "generateTest",
+        "sameSourceServices": [
+          "generateTest",
+          "startAiTestJob"
+        ],
+        "exitCode": 0,
+        "testCounts": [
+          "# tests 419",
+          "# pass 419",
+          "# fail 0"
+        ],
+        "verificationOnlyVmFixtureInjections": 2,
+        "deploymentTestFilesUnchanged": true
+      },
+      {
+        "representative": "regenerateQuestion",
+        "sameSourceServices": [
+          "regenerateQuestion"
+        ],
+        "exitCode": 0,
+        "testCounts": [
+          "# tests 362",
+          "# pass 362",
+          "# fail 0"
+        ],
+        "verificationOnlyVmFixtureInjections": 2,
+        "deploymentTestFilesUnchanged": true
+      },
+      {
+        "representative": "processAiTestJob",
+        "sameSourceServices": [
+          "processAiTestJob"
+        ],
+        "exitCode": 0,
+        "testCounts": [
+          "# tests 363",
+          "# pass 363",
+          "# fail 0"
+        ],
+        "verificationOnlyVmFixtureInjections": 2,
+        "deploymentTestFilesUnchanged": true
+      },
+      {
+        "representative": "configurePracticeSolutionRelease",
+        "sameSourceServices": [
+          "configurePracticeSolutionRelease"
+        ],
+        "exitCode": 0,
+        "testCounts": [
+          "# tests 0",
+          "# pass 0",
+          "# fail 0"
+        ],
+        "verificationOnlyVmFixtureInjections": 0,
+        "deploymentTestFilesUnchanged": true
+      }
+    ]
+  },
+  "sourceBindings": [
+    {
+      "entryPoint": "getQuickRemySubmission",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "getQuickRemySubmission/function-source.zip",
+        "generation": "1793045671670802"
+      },
+      "sourceArchiveSha256": "c16486d4527160e9a2ffa4305c0a5c9a088ef4b72e4fe4bbd1947e2746acf506"
+    },
+    {
+      "entryPoint": "prepareQuickRemy",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "prepareQuickRemy/function-source.zip",
+        "generation": "1793045671721281"
+      },
+      "sourceArchiveSha256": "c16486d4527160e9a2ffa4305c0a5c9a088ef4b72e4fe4bbd1947e2746acf506"
+    },
+    {
+      "entryPoint": "generateQuestionMedia",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "generateQuestionMedia/function-source.zip",
+        "generation": "1792353661133345"
+      },
+      "sourceArchiveSha256": "51789bfa4630a065815940d16e162d7fbe3acd9229d40732b9a1de659e061b41"
+    },
+    {
+      "entryPoint": "getQuestionAudioDrafts",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "getQuestionAudioDrafts/function-source.zip",
+        "generation": "1792353646883197"
+      },
+      "sourceArchiveSha256": "51789bfa4630a065815940d16e162d7fbe3acd9229d40732b9a1de659e061b41"
+    },
+    {
+      "entryPoint": "generateQuestionAudio",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "generateQuestionAudio/function-source.zip",
+        "generation": "1792353661263860"
+      },
+      "sourceArchiveSha256": "51789bfa4630a065815940d16e162d7fbe3acd9229d40732b9a1de659e061b41"
+    },
+    {
+      "entryPoint": "regenerateQuestion",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "regenerateQuestion/function-source.zip",
+        "generation": "1793054060196543"
+      },
+      "sourceArchiveSha256": "de19e2d1652c6324a0d21ac785f72257ec3c2fbbc6a45a839f6330b2892d6597"
+    },
+    {
+      "entryPoint": "generateTest",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "generateTest/function-source.zip",
+        "generation": "1793209632646320"
+      },
+      "sourceArchiveSha256": "ce556c1b8c8557250b94951f2f6166260a17688a474ee6d32541d0473f8ca920"
+    },
+    {
+      "entryPoint": "reviseWholeTest",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "reviseWholeTest/function-source.zip",
+        "generation": "1793045739973805"
+      },
+      "sourceArchiveSha256": "c16486d4527160e9a2ffa4305c0a5c9a088ef4b72e4fe4bbd1947e2746acf506"
+    },
+    {
+      "entryPoint": "submitQuickRemy",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "submitQuickRemy/function-source.zip",
+        "generation": "1793045709416596"
+      },
+      "sourceArchiveSha256": "c16486d4527160e9a2ffa4305c0a5c9a088ef4b72e4fe4bbd1947e2746acf506"
+    },
+    {
+      "entryPoint": "crewAssistant",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "crewAssistant/function-source.zip",
+        "generation": "1793045709477319"
+      },
+      "sourceArchiveSha256": "c16486d4527160e9a2ffa4305c0a5c9a088ef4b72e4fe4bbd1947e2746acf506"
+    },
+    {
+      "entryPoint": "processAiTestJob",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "processAiTestJob/function-source.zip",
+        "generation": "1794225284728008"
+      },
+      "sourceArchiveSha256": "26212218b9f046e1464dc10a79bfd2dc60ee3cd4742666147be123dfed60771a"
+    },
+    {
+      "entryPoint": "generateQuestionSolutionAudio",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "generateQuestionSolutionAudio/function-source.zip",
+        "generation": "1792353661155901"
+      },
+      "sourceArchiveSha256": "51789bfa4630a065815940d16e162d7fbe3acd9229d40732b9a1de659e061b41"
+    },
+    {
+      "entryPoint": "syncQuestionAudioDrafts",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "syncQuestionAudioDrafts/function-source.zip",
+        "generation": "1792353646152262"
+      },
+      "sourceArchiveSha256": "51789bfa4630a065815940d16e162d7fbe3acd9229d40732b9a1de659e061b41"
+    },
+    {
+      "entryPoint": "startAiTestVariantJob",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "startAiTestVariantJob/function-source.zip",
+        "generation": "1793052941602235"
+      },
+      "sourceArchiveSha256": "ade2e4857c33f89f213afc8dd0b95308db77811fd575c909afca51b019535c41"
+    },
+    {
+      "entryPoint": "expireAiTestJobs",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "expireAiTestJobs/function-source.zip",
+        "generation": "1792353644906056"
+      },
+      "sourceArchiveSha256": "51789bfa4630a065815940d16e162d7fbe3acd9229d40732b9a1de659e061b41"
+    },
+    {
+      "entryPoint": "analyzeMaterial",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "analyzeMaterial/function-source.zip",
+        "generation": "1792353661137934"
+      },
+      "sourceArchiveSha256": "51789bfa4630a065815940d16e162d7fbe3acd9229d40732b9a1de659e061b41"
+    },
+    {
+      "entryPoint": "startAiTestJob",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "startAiTestJob/function-source.zip",
+        "generation": "1793209680626862"
+      },
+      "sourceArchiveSha256": "ce556c1b8c8557250b94951f2f6166260a17688a474ee6d32541d0473f8ca920"
+    },
+    {
+      "entryPoint": "configurePracticeSolutionRelease",
+      "source": {
+        "bucket": "gcf-v2-sources-840345136563-europe-west1",
+        "object": "configurePracticeSolutionRelease/function-source.zip",
+        "generation": "1793045925289730"
+      },
+      "sourceArchiveSha256": "4c222f9e947b4bdab9d4dcfb4d9d88623de4f1fca82cc9f93b4f638d917cee2f"
+    }
+  ],
+  "outstanding": [
+    "Stage service rights approval",
+    "Legacy/prototype writer coverage before enrollment",
+    "Target-preserving deployment and current generation recheck",
+    "Actual regular-user checkout and entitlement redemption",
+    "New50EURschoolinvoicepartial-transfers10+20+20",
+    "Real mail delivery and bookkeeping/tax setup"
+  ]
+}

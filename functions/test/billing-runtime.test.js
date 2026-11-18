@@ -1,7 +1,7 @@
 "use strict";
 const test = require("node:test"), assert = require("node:assert/strict");
 const { initializeApp, deleteApp } = require("firebase-admin/app");
-const { enabledFor, getRuntime } = require("../lib/billing/runtime");
+const { enabledFor, getRuntime, getPaymentRuntime } = require("../lib/billing/runtime");
 test("an unrelated legacy test project is unaffected by billing runtime deployment checks", async () => {
   const app = initializeApp({projectId:"demo-existing-account-tests"});
   const prior = process.env.GCLOUD_PROJECT;
@@ -9,6 +9,7 @@ test("an unrelated legacy test project is unaffected by billing runtime deployme
   try {
     assert.equal(await enabledFor("teacher"), false);
     assert.throws(() => getRuntime(), error => error.code === "failed-precondition");
+    assert.throws(() => getPaymentRuntime("sk_test_fixture"), error => error.code === "failed-precondition");
     process.env.GCLOUD_PROJECT = "gradecrew-staging-2026";
     await assert.rejects(enabledFor("teacher"), error => error.code === "failed-precondition");
   } finally {

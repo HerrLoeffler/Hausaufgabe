@@ -2,6 +2,17 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 const {JSDOM}=createRequire(new URL('./tools/ui/package.json',import.meta.url))('jsdom');
+test('school billing exposes its invoice only to authorized billing roles',async()=>{
+  const {mountSchoolPanel}=await import('./billing-school-panel.mjs');
+  const dom=new JSDOM('<main></main>',{url:'https://gradecrew-staging-2026--billing-product-test.web.app/'}),calls=[];
+  const client={request:async(action,data)=>{calls.push({action,data});if(action==='listSchools')return{schools:[{id:'school',name:'School'}]};if(action==='schoolInvoice')return{invoiceId:'in_school',url:'https://invoice.stripe.com/i/test'};return{school:{id:'school',name:'School',seats:1,usedSeats:1,reservedSeats:0},period:{paymentStatus:'open',amountMinor:5000,remainingMinor:2000},canBill:true,canManage:false,paymentsEnabled:true,myRole:'billing'};}};
+  await mountSchoolPanel(dom.window.document.querySelector('main'),{client,uid:'teacher'});
+  dom.window.document.querySelector('[data-school=school]').click();await new Promise(r=>setTimeout(r,0));
+  const button=dom.window.document.querySelector('[data-action=school-invoice]');assert.ok(button);
+  button.click();await new Promise(r=>setTimeout(r,0));
+  assert.equal(calls.filter(c=>c.action==='schoolInvoice').length,1);assert.match(dom.window.document.querySelector('[data-action=open-school-invoice]').href,/invoice.stripe.com/);
+  assert.match(dom.window.document.body.textContent,/20,00/);
+});
 test('school panel accepts only a reviewed invitation for the current account',async()=>{
   const {mountSchoolPanel}=await import('./billing-school-panel.mjs');
   const dom=new JSDOM('<main></main>',{url:'http://localhost:8176/'}),calls=[];

@@ -1,0 +1,38 @@
+{
+  "task": "GC-BILLING-PLAN-01",
+  "project": "gradecrew-staging-2026",
+  "applied": false,
+  "account": "acct_1UYUaw1l0zkqOtXr",
+  "paymentServiceAccount": "gradecrew-billing-sandbox@gradecrew-staging-2026.iam.gserviceaccount.com",
+  "existingRole": "projects/gradecrew-staging-2026/roles/gradecrewBillingSandboxGrants",
+  "existingPermissions": ["datastore.databases.get", "datastore.entities.create", "datastore.entities.get"],
+  "proposedAdditionalPermissions": ["datastore.entities.list", "datastore.entities.update", "firebaseauth.users.get"],
+  "purpose": {
+    "datastore.entities.list": "Find this server's school membership, entitlement and invoice records in transactions.",
+    "datastore.entities.update": "Record invoice reconciliation, paid intervals, entitlement projections and idempotent processing state.",
+    "firebaseauth.users.get": "Verify the authenticated test user's registration, verification and disabled state server-side."
+  },
+  "scopeLimitation": "Cloud IAM applies to this Stage project, not individual Firestore documents. Application authorization additionally limits the closed pilot to explicitly permitted UIDs and owned billing records.",
+  "secrets": {
+    "create": [],
+    "newAccessGrants": [],
+    "reuse": ["GRADECREW_BILLING_SANDBOX_STRIPE_API_KEY", "GRADECREW_BILLING_SANDBOX_STRIPE_WEBHOOK_SECRET"],
+    "mountOnly": ["billingPayments", "billingStripeWebhook"]
+  },
+  "webhook": {
+    "existingEndpoint": "we_1Ud9fP1l0zkqOtXrBghZ9wfE",
+    "proposedUrl": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/billingStripeWebhook",
+    "keepExistingSigningSecret": true,
+    "preserveLegacyInvoiceProcessingVia": "https://gradecrew-billing-sandbox-ybff4nqitq-ew.a.run.app/billing-test/api/webhook",
+    "events": ["checkout.session.completed", "invoice.paid", "invoice.payment_succeeded", "invoice.payment_failed", "invoice.updated", "invoice.finalized", "invoice.voided", "invoice.marked_uncollectible", "customer.subscription.updated", "customer.subscription.deleted", "charge.refunded", "charge.dispute.created", "charge.dispute.closed"]
+  },
+  "activationGates": [
+    "Independent payment/source-preservation review and important fixes verified",
+    "Explicit permission for the three additional Stage service rights",
+    "Source coverage for all preview writing and generation endpoints; older prototype routes must not silently bypass enrolled-user limits",
+    "Target-preserving artifacts, current generation hashes and rollback manifest verified before deployment",
+    "Own preview and protected runtime paths deployed before allowedUids/payments.ready activation"
+  ],
+  "productionChanges": [],
+  "newAccountsOrApiKeys": []
+}

@@ -14,4 +14,12 @@ function createPilotHandler(service) {
     return service[actions.get(action)](request);
   };
 }
-module.exports = { createPilotHandler };
+function createPaymentHandler(service) {
+  const actions = new Set(["checkout", "portal", "schoolInvoice"]);
+  return async request => {
+    if (!request?.auth?.uid) throw new BillingError("unauthenticated", "Bitte anmelden.");
+    if (!actions.has(request.data?.action)) throw new BillingError("invalid-argument", "Unbekannte Zahlungsaktion.");
+    return service[request.data.action](request);
+  };
+}
+module.exports = { createPilotHandler, createPaymentHandler };

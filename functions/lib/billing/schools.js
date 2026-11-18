@@ -2,6 +2,7 @@
 const {randomBytes,timingSafeEqual}=require("node:crypto");
 const {annualSchoolPeriod}=require("./domain/contracts");
 const {SCHOOL_ANNUAL_SEAT_MINOR}=require("./domain/catalog");
+const {isPaymentReady}=require("./payments");
 
 function createSchoolOperations({store,now,caller,context,admin,identity,fail,key,identifier,requestId}) {
   const schoolKey=id=>"billingV2Schools/"+identifier(id);
@@ -55,11 +56,13 @@ function createSchoolOperations({store,now,caller,context,admin,identity,fail,ke
     return store.transaction(async tx=>{
       const access=await schoolContext(tx,actor,id),school=access.school;
       const period=school.currentPeriodId?await tx.get("billingV2Periods/"+identifier(school.currentPeriodId)):null;
+      const order=access.canBill&&period?.orderId?await tx.get("billingV2Orders/"+identifier(period.orderId)):null;
+      const invoice=access.canBill&&period?.invoiceId?await tx.get("billingV2Invoices/"+identifier(period.invoiceId)):null;
       const members=access.canManage?await tx.find("billingV2Memberships",[["schoolId","==",id],["status","==","active"]],501):[];
       const invitations=access.canManage?await pending(tx,school):null;
       if(invitations){invitations.expire();tx.patch(schoolKey(id),{reservedSeats:invitations.reservedSeats});}
-      const publicPeriod=period?{startDate:period.startDate,endDateExclusive:period.endDateExclusive,startsAtMs:period.startsAtMs,endsAtMs:period.endsAtMs,paymentStatus:period.paymentStatus,...(access.canBill?{amountMinor:period.amountMinor,currency:period.currency,invoiceId:period.invoiceId}: {})}:null;
-      return{school:{id,name:school.name,seats:school.seats,usedSeats:school.usedSeats,reservedSeats:invitations?.reservedSeats??school.reservedSeats,renewalMode:school.renewalMode},period:publicPeriod,myRole:access.membership?.role||"platform_admin",canManage:access.canManage,canBill:access.canBill,
+      const publicPeriod=period?{startDate:period.startDate,endDateExclusive:period.endDateExclusive,startsAtMs:period.startsAtMs,endsAtMs:period.endsAtMs,paymentStatus:period.paymentStatus,...(access.canBill?{amountMinor:period.amountMinor,remainingMinor:invoice?.remaining??period.amountMinor,currency:period.currency,invoiceId:period.invoiceId,invoiceUrl:order?.kind==="school"&&order.schoolId===id?order.invoiceUrl||null:null}: {})}:null;
+      return{school:{id,name:school.name,seats:school.seats,usedSeats:school.usedSeats,reservedSeats:invitations?.reservedSeats??school.reservedSeats,renewalMode:school.renewalMode},period:publicPeriod,myRole:access.membership?.role||"platform_admin",canManage:access.canManage,canBill:access.canBill,paymentsEnabled:access.canBill&&isPaymentReady(access.ctx.config.payments),
         ...(access.canManage?{members:members.map(m=>({personId:m.personId,email:m.email,role:m.role,seatAssigned:m.seatAssigned})),invitations:invitations.valid.map(i=>({id:i.id,email:i.email,role:i.role,expiresAtMs:i.expiresAtMs}))}:{})};
     });
   }

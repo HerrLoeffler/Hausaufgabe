@@ -28,6 +28,13 @@ export async function mountSchoolPanel(root,{client,uid,targetPersonId,onError=(
       details.append(node(doc,'p',`${view.school.usedSeats} von ${view.school.seats} Plätzen belegt · ${view.school.reservedSeats} reserviert`),node(doc,'p',`${paid?'Bezahlt':'Zahlung offen'} · Laufzeitende ${dates(view.period?.endsAtMs)} · Verlängerung nur nach Bestätigung`));
       details.append(node(doc,'p','Der Schulplatz erweitert den persönlichen Zugang. Tests bleiben ausschließlich für ihre jeweilige Lehrkraft zugänglich.','hint'));
       if(view.canBill&&Number.isInteger(view.period?.amountMinor))details.append(node(doc,'p',new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(view.period.amountMinor/100)+' je Schuljahr, einschließlich Umsatzsteuer'));
+      if(view.canBill&&Number.isInteger(view.period?.remainingMinor)&&!paid)details.append(node(doc,'p',new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(view.period.remainingMinor/100)+' noch offen'));
+      if(view.canBill){
+        const result=node(doc,'div');details.append(result);
+        const showInvoice=url=>{const target=new URL(url);if(target.protocol!=='https:'||target.hostname!=='invoice.stripe.com')throw new Error('Ungültiger Rechnungslink.');const link=node(doc,'a','Schulrechnung öffnen','button secondary');link.href=target.href;link.target='_blank';link.rel='noopener noreferrer';link.dataset.action='open-school-invoice';result.replaceChildren(link);};
+        if(view.period?.invoiceUrl)showInvoice(view.period.invoiceUrl);
+        else if(view.paymentsEnabled&&!paid){const invoice=button(doc,details,'Testrechnung vorbereiten',()=>run(invoice,async()=>{const value=await client.request('schoolInvoice',{schoolId,requestId:crypto.randomUUID()});if(current()){showInvoice(value.url);message.textContent='Testrechnung vorbereitet. Es wurde keine E-Mail verschickt.';}}));invoice.dataset.action='school-invoice';}
+      }
       if(!view.canManage){
         if(uid&&roles[view.myRole]){const leave=button(doc,details,'Schule verlassen',()=>{if(!doc.defaultView.confirm('Die Zuordnung zu '+view.school.name+' wirklich beenden?'))return;void run(leave,async()=>{await client.request('removeSchoolMember',{schoolId,personId:uid,reason:'Selbstaustritt über Kontoeinstellungen'});await client.refresh();if(current())await mountSchoolPanel(root,{client,uid,onError});});});leave.dataset.action='leave-school';}
         return;

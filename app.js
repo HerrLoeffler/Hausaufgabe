@@ -93,6 +93,7 @@ const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 const BILLING_PREVIEW_ENABLED = firebaseConfig.projectId === "gradecrew-staging-2026" && firebaseModule.billingPreview === true;
 const billingCreations = BILLING_PREVIEW_ENABLED ? createBillingCreationTracker({getStorage:()=>sessionStorage}) : null;
+let billingPaymentReturn = BILLING_PREVIEW_ENABLED && new URLSearchParams(location.search).get("billing") === "return";
 const billingSchoolInvitation = BILLING_PREVIEW_ENABLED ? new URLSearchParams(location.hash.slice(1)).get("school-invite") || "" : "";
 if (billingSchoolInvitation) history.replaceState(null, "", location.pathname + location.search);
 if (BILLING_PREVIEW_ENABLED) document.getElementById("billingTrialNotice")?.removeAttribute("hidden");
@@ -107,7 +108,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const billingClient = createBillingClient({
   getUid: () => auth.currentUser?.uid || "",
-  call: async data => (await httpsCallable(getFunctions(app, "europe-west1"), "billingPilot", {timeout:60000})(data)).data,
+  call: async data => (await httpsCallable(getFunctions(app, "europe-west1"), ["checkout","portal","schoolInvoice"].includes(data.action) ? "billingPayments" : "billingPilot", {timeout:60000})(data)).data,
   onChange: (access, status = {}) => {
     const root = document.getElementById("billingAccountPanel");
     if (root) root.hidden = !BILLING_PREVIEW_ENABLED;
@@ -118,11 +119,15 @@ const billingClient = createBillingClient({
       onVerified: async () => { try { await auth.currentUser.reload(); await auth.currentUser.getIdToken(true); refresh(); } catch (_) { toast("Bitte erneut anmelden.", "error"); } },
       onChoose: async planCode => {
         try {
-          const result = await billingClient.request("checkout", {planCode});
+          const result = await billingClient.request("checkout", {planCode,requestId:crypto.randomUUID()});
           const url = new URL(result.url);
           if (url.protocol !== "https:" || url.hostname !== "checkout.stripe.com") throw new Error("Ungültiger Zahlungslink.");
           location.assign(url.href);
         } catch (error) { toast(error.message || "Der Zahlungstest ist noch nicht verfügbar.", "error"); }
+      },
+      onManage: async () => {
+        try { const result=await billingClient.request("portal");const url=new URL(result.url);if(url.protocol!=="https:"||url.hostname!=="billing.stripe.com")throw new Error("Ungültiger Verwaltungslink.");location.assign(url.href); }
+        catch(error){toast(error.message||"Die Aboverwaltung ist gerade nicht erreichbar.","error");}
       }
     });
     const schoolRoot = document.getElementById("billingSchoolPanel");
@@ -140,6 +145,7 @@ const questionFeedback = createQuestionFeedbackClient({project: firebaseConfig.p
   if (auth.currentUser?.uid !== scope.uid || guestTourRepo) throw new Error("Das Feedbackkonto wurde gewechselt.");
   return (await httpsCallable(getFunctions(app, "europe-west1"), "reviewMode", {timeout: 15000})({...data, actorUid: scope.uid})).data;
 }});
+window.addEventListener("focus", () => { if(BILLING_PREVIEW_ENABLED&&auth.currentUser)void billingClient.refresh().catch(()=>{}); });
 const aiApi = new Proxy(createAiClient(app, () => state.user?.uid || auth.currentUser?.uid || ""), {
   get(target, key) {
     const value = target[key];
@@ -1395,7 +1401,10 @@ onAuthStateChanged(auth, async (user) => {
     state.shownThisLogin = new Set();
   }
   if (generation !== authStateGeneration) return;
-  if (BILLING_PREVIEW_ENABLED && user) void billingClient.refresh().catch(() => {});
+  if (BILLING_PREVIEW_ENABLED && user) {
+    const paymentReturn=billingPaymentReturn;billingPaymentReturn=false;
+    void (paymentReturn?billingClient.refreshAfterPayment():billingClient.refresh()).catch(() => {});
+  }
   const nativeAuthState = user
     ? { state: "signedIn", accountLabel: String(state.profile?.displayName || user.displayName || user.email || "Angemeldet").trim().slice(0, 160), accountChanged }
     : { state: "signedOut" };

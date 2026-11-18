@@ -3,6 +3,13 @@ import assert from 'node:assert/strict';
 import { createBillingClient, describeAccess, describePlan } from './billing-client.mjs';
 
 const trial = { tier: 'trial', reasonCode: 'allowed', featureCodes: ['test.read','test.export','test.edit','test.create'], freeCreationsRemaining: 5, trialEndsAtMs: Date.UTC(2026,10,15), enforced: true };
+test('access-boundary refresh has one timer and clears it on logout',()=>{
+  const scheduled=new Map();let next=1;
+  const client=createBillingClient({getUid:()=> 'teacher',call:async()=>trial,setTimer:(fn,ms)=>{const id=next++;scheduled.set(id,{fn,ms});return id;},clearTimer:id=>scheduled.delete(id),now:()=>1000});
+  client.watchBoundary({nextAccessChangeAtMs:5000});assert.equal(scheduled.size,1);assert.equal([...scheduled.values()][0].ms,4250);
+  client.watchBoundary({nextAccessChangeAtMs:9000});assert.equal(scheduled.size,1);assert.equal([...scheduled.values()][0].ms,8250);
+  client.reset();assert.equal(scheduled.size,0);
+});
 test('yearly option describes an upfront annual payment, not ten monthly debits', () => {
   const year = describePlan({ code: 'personal-yearly', interval: 'year', amountMinor: 12000, currency: 'eur' });
   assert.equal(year.payNowMinor, 12000);

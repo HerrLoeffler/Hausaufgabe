@@ -457,6 +457,7 @@ module.exports = {
   ...existing,
   ...require("./admin-account-callables"),
   ...require("./lib/billing/callables"),
+  ...require("./lib/billing/payment-callables"),
   ...require("./review-mode-callables"),
   ...require("./feedback-image-lifecycle"),
   ...require("./wilma-review-callables"),

@@ -1,7 +1,9 @@
 "use strict";
 const test=require('node:test'),assert=require('node:assert/strict'),path=require('node:path');
 assert.match(process.env.FIRESTORE_EMULATOR_HOST||'',/^(127\.0\.0\.1|localhost):\d+$/);
-const req=require('node:module').createRequire(path.resolve(__dirname,'../../assessment-functions/package.json'));
+const assessmentRoot=process.env.GRADECREW_BILLING_ASSESSMENT_PACKAGE||path.resolve(__dirname,'../../assessment-functions');
+assert.ok(path.isAbsolute(assessmentRoot));
+const req=require('node:module').createRequire(path.join(assessmentRoot,'package.json'));
 const{initializeApp,deleteApp}=req('firebase-admin/app'),{getFirestore}=req('firebase-admin/firestore');
 const app=initializeApp({projectId:'demo-gradecrew-billing'}),db=getFirestore(app);
 const{configurePracticeSolutionRelease}=req('./lib/secure-lifecycle');

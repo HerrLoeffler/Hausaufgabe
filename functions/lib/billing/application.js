@@ -36,7 +36,7 @@ function cleanBundle(value){
   });
 }
 
-function createBillingService({ store, now = Date.now, getIdentity, projectId }) {
+function createBillingService({ store, now = Date.now, getIdentity, projectId, provider }) {
   if (!["gradecrew-staging-2026", "demo-gradecrew-billing"].includes(projectId)) fail("failed-precondition", "Zahlungsintegration nur für die getrennte Testumgebung.");
   if (!store?.transaction || typeof getIdentity !== "function") throw new TypeError("Store and identity adapter required");
 
@@ -111,8 +111,12 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
     return store.transaction(async tx => {
       const ctx = await context(tx, actor, request.data?.scope);
       const access = decision(ctx, at);
+      const paymentState = await payments.describeState(tx, ctx, actor);
+      const boundaries = [ctx.account.trialStartedAtMs, ctx.account.trialEndsAtMs,
+        ...ctx.grants.flatMap(g => g.source === "stripe" && Array.isArray(g.paidPeriods) ? g.paidPeriods.flatMap(p => [p.startsAtMs, p.endsAtMs]) : [g.startsAtMs, g.endsAtMs]),
+        ...ctx.periods.flatMap(p => p.paymentStatus === "paid" ? [p.startsAtMs, p.endsAtMs] : [])].filter(t => Number.isSafeInteger(t) && t > at);
       ctx.saveAccount();
-      return { ...access, enforced: true, policyVersion: "trial14-files5-v2", plans: PERSONAL_PLANS, purchasingEnabled: false };
+      return { ...access, enforced: true, policyVersion: "trial14-files5-v2", plans: PERSONAL_PLANS, nextAccessChangeAtMs: boundaries.length ? Math.min(...boundaries) : null, ...paymentState };
     });
   }
   async function requireFeature(uid, feature, scope) {
@@ -295,7 +299,8 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
     });
   }
   const schools = require("./schools").createSchoolOperations({ store, now, caller, context, admin, identity, fail, key, identifier, requestId });
-  return { ...schools, getAccess, inspectAccess, requireFeature, createQuiz, reserveGeneration, prepareGenerationReservation, prepareGenerationRelease, releaseGeneration, failGeneration, finalizeGeneration, grantPremium, revokePremium };
+  const payments = require("./payments").createPaymentOperations({ store, now, caller, context, projectWrites, provider, fail, key, identifier, requestId });
+  return { ...schools, ...payments, getAccess, inspectAccess, requireFeature, createQuiz, reserveGeneration, prepareGenerationReservation, prepareGenerationRelease, releaseGeneration, failGeneration, finalizeGeneration, grantPremium, revokePremium };
 }
 
 module.exports = { createBillingService, BillingError, key, identifier, requestId };

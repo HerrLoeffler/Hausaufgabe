@@ -5,7 +5,7 @@ const date = value => new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',
 function element(doc,tag,text,classes) {
   const el=doc.createElement(tag); if(text!==undefined)el.textContent=text; if(classes)el.className=classes;return el;
 }
-export function paintBillingPanel(root,access,{loading=false,error,onRefresh,onChoose,onVerify,onVerified,user}={}) {
+export function paintBillingPanel(root,access,{loading=false,error,onRefresh,onChoose,onManage,onVerify,onVerified,user}={}) {
   if(!root)return;
   const doc=root.ownerDocument;root.replaceChildren();root.className='card billingPanel';
   root.append(element(doc,'span','Testumgebung · keine echten Abbuchungen','eyebrow'),element(doc,'h2','Zugang und Abrechnung'));
@@ -21,8 +21,15 @@ export function paintBillingPanel(root,access,{loading=false,error,onRefresh,onC
     for(const [label,callback]of[['Bestätigungslink senden',onVerify],['Ich habe bestätigt',onVerified]]){const b=element(doc,'button',label,'button secondary');b.type='button';b.onclick=()=>callback?.();actions.append(b);}root.append(actions);
   }
   const refresh=element(doc,'button','Status aktualisieren','button ghost');refresh.type='button';refresh.onclick=()=>onRefresh?.();root.append(refresh);
+  if(access.payments?.portalAvailable){const manage=element(doc,'button','Abo und Rechnungen verwalten','button secondary');manage.type='button';manage.dataset.action='manage-subscription';manage.onclick=()=>onManage?.();root.append(manage);}
+  if(access.payments?.invoices?.length){
+    const invoices=element(doc,'section');invoices.append(element(doc,'h3','Deine persönlichen Rechnungen'));
+    for(const invoice of access.payments.invoices){const money=value=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(value/100);invoices.append(element(doc,'p',`${invoice.id} · ${money(invoice.total)} · ${invoice.status==='paid'?'Bezahlt':invoice.status==='void'?'Storniert':invoice.status==='uncollectible'?'Uneinbringlich':money(invoice.remaining)+' offen'}`));}
+    if(access.payments.hasMoreInvoices)invoices.append(element(doc,'p','Weitere Rechnungen findest du in der Aboverwaltung.','hint'));root.append(invoices);
+  }
+  if(access.payments?.hasSubscription)return;
   if(['complimentary','school'].includes(access.tier))return;
-  const fieldset=element(doc,'fieldset',undefined,'billingPlans');fieldset.append(element(doc,'legend','Persönliches Premium – Tarifvorschau'));
+  const fieldset=element(doc,'fieldset',undefined,'billingPlans');fieldset.append(element(doc,'legend',access.purchasingEnabled?'Persönliches Premium testen':'Persönliches Premium – Tarifvorschau'));
   const plans=Array.isArray(access.plans)?access.plans:[];
   for(const raw of plans){
     let plan;try{plan=describePlan(raw);}catch{continue;}

@@ -23,6 +23,7 @@ function supported() {
   return actual === "gradecrew-staging-2026" || (actual === "demo-gradecrew-billing" && !!process.env.FIRESTORE_EMULATOR_HOST);
 }
 let runtime;
+let paymentRuntime;
 function getRuntime() {
   if (!supported()) throw new BillingError("failed-precondition", "Zahlungstest nur in der getrennten Testumgebung.");
   if (!runtime) {
@@ -30,6 +31,15 @@ function getRuntime() {
     runtime = { store, service: createBillingService({ store, getIdentity: uid => getAuth().getUser(uid), projectId: projectId() }) };
   }
   return runtime;
+}
+function getPaymentRuntime(apiKey) {
+  if (!supported()) throw new BillingError("failed-precondition", "Zahlungstest nur in der getrennten Testumgebung.");
+  if (!paymentRuntime) {
+    const store = getRuntime().store;
+    const provider = require("./stripe-provider").createStripeProvider({ apiKey });
+    paymentRuntime = { store, service: createBillingService({ store, provider, getIdentity: uid => getAuth().getUser(uid), projectId: projectId() }) };
+  }
+  return paymentRuntime;
 }
 async function enabledFor(uid) {
   if (!supported()) return false;
@@ -58,4 +68,4 @@ function firebaseError(error) {
   if (error instanceof BillingError) return new HttpsError(error.code, error.message, error.details);
   return error;
 }
-module.exports = { getRuntime, enabledFor, prepareJobReservation, prepareJobRelease, reserveGeneration, releaseGeneration, requireFeature, firebaseError };
+module.exports = { getRuntime, getPaymentRuntime, projectId, enabledFor, prepareJobReservation, prepareJobRelease, reserveGeneration, releaseGeneration, requireFeature, firebaseError };

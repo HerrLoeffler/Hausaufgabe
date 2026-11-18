@@ -8,6 +8,12 @@ const person = { id: "teacher", role: "teacher", status: "active", emailVerified
 const trial = { trialStartedAtMs: start, trialEndsAtMs: start + 14 * day, createdCount: 0, reservedCount: 0 };
 const scope = { kind: "personal", id: "teacher" };
 const input = changes => ({ person, scope, at: start + day, account: trial, grants: [], memberships: [], periods: [], seats: [], ...changes });
+test("Stripe grants use paid interval unions without bridging a future gap", () => {
+  const grants = [{ id: "subscription", personId: "teacher", source: "stripe", scope, status: "active", paidPeriods: [{ startsAtMs: start, endsAtMs: start + 30 * day }, { startsAtMs: start + 40 * day, endsAtMs: start + 60 * day }] }];
+  assert.equal(evaluateAccess(input({ grants })).validUntil, start + 30 * day);
+  assert.equal(evaluateAccess(input({ grants, at: start + 30 * day })).tier, "free");
+  assert.equal(evaluateAccess(input({ grants, at: start + 40 * day })).validUntil, start + 60 * day);
+});
 test("registration grants a fourteen-day trial without a subscription", () => {
   assert.deepEqual(trialForRegistration(start), { ...trial, version: 2 });
 });
