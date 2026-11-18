@@ -1,0 +1,1058 @@
+[
+  {
+    "engine": "chromium",
+    "width": 390,
+    "zoomEquivalent": 1,
+    "columns": {
+      "headers": [
+        {
+          "text": "Name↕",
+          "x": 17,
+          "width": 157.546875
+        },
+        {
+          "text": "Punkte↕",
+          "x": 174.546875,
+          "width": 75
+        },
+        {
+          "text": "%↕",
+          "x": 249.546875,
+          "width": 54.140625
+        },
+        {
+          "text": "Note↕",
+          "x": 303.6875,
+          "width": 61.40625
+        },
+        {
+          "text": "Status↕",
+          "x": 365.09375,
+          "width": 90.359375
+        },
+        {
+          "text": "Dauer↕",
+          "x": 455.453125,
+          "width": 76.3125
+        },
+        {
+          "text": "Abgegeben↓",
+          "x": 531.765625,
+          "width": 145.015625
+        },
+        {
+          "text": "Aktionen",
+          "x": 676.78125,
+          "width": 100.21875
+        }
+      ],
+      "foot": [
+        {
+          "text": "Durchschnitt (5 bewertet)",
+          "x": 17,
+          "width": 157.546875
+        },
+        {
+          "text": "6",
+          "x": 174.546875,
+          "width": 75
+        },
+        {
+          "text": "60%",
+          "x": 249.546875,
+          "width": 54.140625
+        },
+        {
+          "text": "",
+          "x": 303.6875,
+          "width": 61.40625
+        },
+        {
+          "text": "",
+          "x": 365.09375,
+          "width": 90.359375
+        },
+        {
+          "text": "3:00 min",
+          "x": 455.453125,
+          "width": 76.3125
+        },
+        {
+          "text": "",
+          "x": 531.765625,
+          "width": 245.234375
+        }
+      ],
+      "hint": "Punkte und Prozent aus 5 fertig bewerteten Abgaben; 0 offen. Dauer aus 5 abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. 0 laufend. Alle 5 Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen."
+    },
+    "sortingClicks": 0
+  },
+  {
+    "engine": "chromium",
+    "width": 390,
+    "zoomEquivalent": 2,
+    "columns": {
+      "headers": [
+        {
+          "text": "Name↕",
+          "x": 17,
+          "width": 157.546875
+        },
+        {
+          "text": "Punkte↕",
+          "x": 174.546875,
+          "width": 75
+        },
+        {
+          "text": "%↕",
+          "x": 249.546875,
+          "width": 54.140625
+        },
+        {
+          "text": "Note↕",
+          "x": 303.6875,
+          "width": 61.40625
+        },
+        {
+          "text": "Status↕",
+          "x": 365.09375,
+          "width": 90.359375
+        },
+        {
+          "text": "Dauer↕",
+          "x": 455.453125,
+          "width": 76.3125
+        },
+        {
+          "text": "Abgegeben↓",
+          "x": 531.765625,
+          "width": 145.015625
+        },
+        {
+          "text": "Aktionen",
+          "x": 676.78125,
+          "width": 100.21875
+        }
+      ],
+      "foot": [
+        {
+          "text": "Durchschnitt (5 bewertet)",
+          "x": 17,
+          "width": 157.546875
+        },
+        {
+          "text": "6",
+          "x": 174.546875,
+          "width": 75
+        },
+        {
+          "text": "60%",
+          "x": 249.546875,
+          "width": 54.140625
+        },
+        {
+          "text": "",
+          "x": 303.6875,
+          "width": 61.40625
+        },
+        {
+          "text": "",
+          "x": 365.09375,
+          "width": 90.359375
+        },
+        {
+          "text": "3:00 min",
+          "x": 455.453125,
+          "width": 76.3125
+        },
+        {
+          "text": "",
+          "x": 531.765625,
+          "width": 245.234375
+        }
+      ],
+      "hint": "Punkte und Prozent aus 5 fertig bewerteten Abgaben; 0 offen. Dauer aus 5 abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. 0 laufend. Alle 5 Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen."
+    },
+    "sortingClicks": 0
+  },
+  {
+    "engine": "chromium",
+    "width": 820,
+    "zoomEquivalent": 1,
+    "columns": {
+      "headers": [
+        {
+          "text": "Name↕",
+          "x": 25,
+          "width": 161.375
+        },
+        {
+          "text": "Punkte↕",
+          "x": 186.375,
+          "width": 75.765625
+        },
+        {
+          "text": "%↕",
+          "x": 262.140625,
+          "width": 54.6875
+        },
+        {
+          "text": "Note↕",
+          "x": 316.828125,
+          "width": 62.03125
+        },
+        {
+          "text": "Status↕",
+          "x": 378.859375,
+          "width": 91.28125
+        },
+        {
+          "text": "Dauer↕",
+          "x": 470.140625,
+          "width": 77.078125
+        },
+        {
+          "text": "Abgegeben↓",
+          "x": 547.21875,
+          "width": 146.484375
+        },
+        {
+          "text": "Aktionen",
+          "x": 693.703125,
+          "width": 101.296875
+        }
+      ],
+      "foot": [
+        {
+          "text": "Durchschnitt (5 bewertet)",
+          "x": 25,
+          "width": 161.375
+        },
+        {
+          "text": "6",
+          "x": 186.375,
+          "width": 75.765625
+        },
+        {
+          "text": "60%",
+          "x": 262.140625,
+          "width": 54.6875
+        },
+        {
+          "text": "",
+          "x": 316.828125,
+          "width": 62.03125
+        },
+        {
+          "text": "",
+          "x": 378.859375,
+          "width": 91.28125
+        },
+        {
+          "text": "3:00 min",
+          "x": 470.140625,
+          "width": 77.078125
+        },
+        {
+          "text": "",
+          "x": 547.21875,
+          "width": 247.78125
+        }
+      ],
+      "hint": "Punkte und Prozent aus 5 fertig bewerteten Abgaben; 0 offen. Dauer aus 5 abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. 0 laufend. Alle 5 Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen."
+    },
+    "sortingClicks": 0
+  },
+  {
+    "engine": "chromium",
+    "width": 820,
+    "zoomEquivalent": 2,
+    "columns": {
+      "headers": [
+        {
+          "text": "Name↕",
+          "x": 17,
+          "width": 157.546875
+        },
+        {
+          "text": "Punkte↕",
+          "x": 174.546875,
+          "width": 75
+        },
+        {
+          "text": "%↕",
+          "x": 249.546875,
+          "width": 54.140625
+        },
+        {
+          "text": "Note↕",
+          "x": 303.6875,
+          "width": 61.40625
+        },
+        {
+          "text": "Status↕",
+          "x": 365.09375,
+          "width": 90.359375
+        },
+        {
+          "text": "Dauer↕",
+          "x": 455.453125,
+          "width": 76.3125
+        },
+        {
+          "text": "Abgegeben↓",
+          "x": 531.765625,
+          "width": 145.015625
+        },
+        {
+          "text": "Aktionen",
+          "x": 676.78125,
+          "width": 100.21875
+        }
+      ],
+      "foot": [
+        {
+          "text": "Durchschnitt (5 bewertet)",
+          "x": 17,
+          "width": 157.546875
+        },
+        {
+          "text": "6",
+          "x": 174.546875,
+          "width": 75
+        },
+        {
+          "text": "60%",
+          "x": 249.546875,
+          "width": 54.140625
+        },
+        {
+          "text": "",
+          "x": 303.6875,
+          "width": 61.40625
+        },
+        {
+          "text": "",
+          "x": 365.09375,
+          "width": 90.359375
+        },
+        {
+          "text": "3:00 min",
+          "x": 455.453125,
+          "width": 76.3125
+        },
+        {
+          "text": "",
+          "x": 531.765625,
+          "width": 245.234375
+        }
+      ],
+      "hint": "Punkte und Prozent aus 5 fertig bewerteten Abgaben; 0 offen. Dauer aus 5 abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. 0 laufend. Alle 5 Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen."
+    },
+    "sortingClicks": 0
+  },
+  {
+    "engine": "chromium",
+    "width": 1180,
+    "zoomEquivalent": 1,
+    "columns": {
+      "headers": [
+        {
+          "text": "Name↕",
+          "x": 25,
+          "width": 236.828125
+        },
+        {
+          "text": "Punkte↕",
+          "x": 261.828125,
+          "width": 111.1875
+        },
+        {
+          "text": "%↕",
+          "x": 373.015625,
+          "width": 80.265625
+        },
+        {
+          "text": "Note↕",
+          "x": 453.28125,
+          "width": 91.03125
+        },
+        {
+          "text": "Status↕",
+          "x": 544.3125,
+          "width": 133.953125
+        },
+        {
+          "text": "Dauer↕",
+          "x": 678.265625,
+          "width": 113.125
+        },
+        {
+          "text": "Abgegeben↓",
+          "x": 791.390625,
+          "width": 214.984375
+        },
+        {
+          "text": "Aktionen",
+          "x": 1006.375,
+          "width": 148.625
+        }
+      ],
+      "foot": [
+        {
+          "text": "Durchschnitt (5 bewertet)",
+          "x": 25,
+          "width": 236.828125
+        },
+        {
+          "text": "6",
+          "x": 261.828125,
+          "width": 111.1875
+        },
+        {
+          "text": "60%",
+          "x": 373.015625,
+          "width": 80.265625
+        },
+        {
+          "text": "",
+          "x": 453.28125,
+          "width": 91.03125
+        },
+        {
+          "text": "",
+          "x": 544.3125,
+          "width": 133.953125
+        },
+        {
+          "text": "3:00 min",
+          "x": 678.265625,
+          "width": 113.125
+        },
+        {
+          "text": "",
+          "x": 791.390625,
+          "width": 363.609375
+        }
+      ],
+      "hint": "Punkte und Prozent aus 5 fertig bewerteten Abgaben; 0 offen. Dauer aus 5 abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. 0 laufend. Alle 5 Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen."
+    },
+    "sortingClicks": 0
+  },
+  {
+    "engine": "chromium",
+    "width": 1180,
+    "zoomEquivalent": 2,
+    "columns": {
+      "headers": [
+        {
+          "text": "Name↕",
+          "x": 17,
+          "width": 157.546875
+        },
+        {
+          "text": "Punkte↕",
+          "x": 174.546875,
+          "width": 75
+        },
+        {
+          "text": "%↕",
+          "x": 249.546875,
+          "width": 54.140625
+        },
+        {
+          "text": "Note↕",
+          "x": 303.6875,
+          "width": 61.40625
+        },
+        {
+          "text": "Status↕",
+          "x": 365.09375,
+          "width": 90.359375
+        },
+        {
+          "text": "Dauer↕",
+          "x": 455.453125,
+          "width": 76.3125
+        },
+        {
+          "text": "Abgegeben↓",
+          "x": 531.765625,
+          "width": 145.015625
+        },
+        {
+          "text": "Aktionen",
+          "x": 676.78125,
+          "width": 100.21875
+        }
+      ],
+      "foot": [
+        {
+          "text": "Durchschnitt (5 bewertet)",
+          "x": 17,
+          "width": 157.546875
+        },
+        {
+          "text": "6",
+          "x": 174.546875,
+          "width": 75
+        },
+        {
+          "text": "60%",
+          "x": 249.546875,
+          "width": 54.140625
+        },
+        {
+          "text": "",
+          "x": 303.6875,
+          "width": 61.40625
+        },
+        {
+          "text": "",
+          "x": 365.09375,
+          "width": 90.359375
+        },
+        {
+          "text": "3:00 min",
+          "x": 455.453125,
+          "width": 76.3125
+        },
+        {
+          "text": "",
+          "x": 531.765625,
+          "width": 245.234375
+        }
+      ],
+      "hint": "Punkte und Prozent aus 5 fertig bewerteten Abgaben; 0 offen. Dauer aus 5 abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. 0 laufend. Alle 5 Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen."
+    },
+    "sortingClicks": 0
+  },
+  {
+    "engine": "webkit",
+    "width": 390,
+    "zoomEquivalent": 1,
+    "columns": {
+      "headers": [
+        {
+          "text": "Name↕",
+          "x": 17,
+          "width": 157.609375
+        },
+        {
+          "text": "Punkte↕",
+          "x": 174.609375,
+          "width": 74.984375
+        },
+        {
+          "text": "%↕",
+          "x": 249.59375,
+          "width": 54.140625
+        },
+        {
+          "text": "Note↕",
+          "x": 303.734375,
+          "width": 61.40625
+        },
+        {
+          "text": "Status↕",
+          "x": 365.140625,
+          "width": 90.34375
+        },
+        {
+          "text": "Dauer↕",
+          "x": 455.484375,
+          "width": 76.296875
+        },
+        {
+          "text": "Abgegeben↓",
+          "x": 531.78125,
+          "width": 145.015625
+        },
+        {
+          "text": "Aktionen",
+          "x": 676.796875,
+          "width": 100.21875
+        }
+      ],
+      "foot": [
+        {
+          "text": "Durchschnitt (5 bewertet)",
+          "x": 17,
+          "width": 157.609375
+        },
+        {
+          "text": "6",
+          "x": 174.609375,
+          "width": 74.984375
+        },
+        {
+          "text": "60%",
+          "x": 249.59375,
+          "width": 54.140625
+        },
+        {
+          "text": "",
+          "x": 303.734375,
+          "width": 61.40625
+        },
+        {
+          "text": "",
+          "x": 365.140625,
+          "width": 90.34375
+        },
+        {
+          "text": "3:00 min",
+          "x": 455.484375,
+          "width": 76.296875
+        },
+        {
+          "text": "",
+          "x": 531.78125,
+          "width": 245.234375
+        }
+      ],
+      "hint": "Punkte und Prozent aus 5 fertig bewerteten Abgaben; 0 offen. Dauer aus 5 abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. 0 laufend. Alle 5 Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen."
+    },
+    "sortingClicks": 0
+  },
+  {
+    "engine": "webkit",
+    "width": 390,
+    "zoomEquivalent": 2,
+    "columns": {
+      "headers": [
+        {
+          "text": "Name↕",
+          "x": 17,
+          "width": 157.609375
+        },
+        {
+          "text": "Punkte↕",
+          "x": 174.609375,
+          "width": 74.984375
+        },
+        {
+          "text": "%↕",
+          "x": 249.59375,
+          "width": 54.140625
+        },
+        {
+          "text": "Note↕",
+          "x": 303.734375,
+          "width": 61.40625
+        },
+        {
+          "text": "Status↕",
+          "x": 365.140625,
+          "width": 90.34375
+        },
+        {
+          "text": "Dauer↕",
+          "x": 455.484375,
+          "width": 76.296875
+        },
+        {
+          "text": "Abgegeben↓",
+          "x": 531.78125,
+          "width": 145.015625
+        },
+        {
+          "text": "Aktionen",
+          "x": 676.796875,
+          "width": 100.21875
+        }
+      ],
+      "foot": [
+        {
+          "text": "Durchschnitt (5 bewertet)",
+          "x": 17,
+          "width": 157.609375
+        },
+        {
+          "text": "6",
+          "x": 174.609375,
+          "width": 74.984375
+        },
+        {
+          "text": "60%",
+          "x": 249.59375,
+          "width": 54.140625
+        },
+        {
+          "text": "",
+          "x": 303.734375,
+          "width": 61.40625
+        },
+        {
+          "text": "",
+          "x": 365.140625,
+          "width": 90.34375
+        },
+        {
+          "text": "3:00 min",
+          "x": 455.484375,
+          "width": 76.296875
+        },
+        {
+          "text": "",
+          "x": 531.78125,
+          "width": 245.234375
+        }
+      ],
+      "hint": "Punkte und Prozent aus 5 fertig bewerteten Abgaben; 0 offen. Dauer aus 5 abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. 0 laufend. Alle 5 Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen."
+    },
+    "sortingClicks": 0
+  },
+  {
+    "engine": "webkit",
+    "width": 820,
+    "zoomEquivalent": 1,
+    "columns": {
+      "headers": [
+        {
+          "text": "Name↕",
+          "x": 25,
+          "width": 161.40625
+        },
+        {
+          "text": "Punkte↕",
+          "x": 186.40625,
+          "width": 75.765625
+        },
+        {
+          "text": "%↕",
+          "x": 262.171875,
+          "width": 54.703125
+        },
+        {
+          "text": "Note↕",
+          "x": 316.875,
+          "width": 62.046875
+        },
+        {
+          "text": "Status↕",
+          "x": 378.921875,
+          "width": 91.28125
+        },
+        {
+          "text": "Dauer↕",
+          "x": 470.203125,
+          "width": 77.09375
+        },
+        {
+          "text": "Abgegeben↓",
+          "x": 547.296875,
+          "width": 146.515625
+        },
+        {
+          "text": "Aktionen",
+          "x": 693.8125,
+          "width": 101.265625
+        }
+      ],
+      "foot": [
+        {
+          "text": "Durchschnitt (5 bewertet)",
+          "x": 25,
+          "width": 161.40625
+        },
+        {
+          "text": "6",
+          "x": 186.40625,
+          "width": 75.765625
+        },
+        {
+          "text": "60%",
+          "x": 262.171875,
+          "width": 54.703125
+        },
+        {
+          "text": "",
+          "x": 316.875,
+          "width": 62.046875
+        },
+        {
+          "text": "",
+          "x": 378.921875,
+          "width": 91.28125
+        },
+        {
+          "text": "3:00 min",
+          "x": 470.203125,
+          "width": 77.09375
+        },
+        {
+          "text": "",
+          "x": 547.296875,
+          "width": 247.78125
+        }
+      ],
+      "hint": "Punkte und Prozent aus 5 fertig bewerteten Abgaben; 0 offen. Dauer aus 5 abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. 0 laufend. Alle 5 Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen."
+    },
+    "sortingClicks": 0
+  },
+  {
+    "engine": "webkit",
+    "width": 820,
+    "zoomEquivalent": 2,
+    "columns": {
+      "headers": [
+        {
+          "text": "Name↕",
+          "x": 17,
+          "width": 157.609375
+        },
+        {
+          "text": "Punkte↕",
+          "x": 174.609375,
+          "width": 74.984375
+        },
+        {
+          "text": "%↕",
+          "x": 249.59375,
+          "width": 54.140625
+        },
+        {
+          "text": "Note↕",
+          "x": 303.734375,
+          "width": 61.40625
+        },
+        {
+          "text": "Status↕",
+          "x": 365.140625,
+          "width": 90.34375
+        },
+        {
+          "text": "Dauer↕",
+          "x": 455.484375,
+          "width": 76.296875
+        },
+        {
+          "text": "Abgegeben↓",
+          "x": 531.78125,
+          "width": 145.015625
+        },
+        {
+          "text": "Aktionen",
+          "x": 676.796875,
+          "width": 100.21875
+        }
+      ],
+      "foot": [
+        {
+          "text": "Durchschnitt (5 bewertet)",
+          "x": 17,
+          "width": 157.609375
+        },
+        {
+          "text": "6",
+          "x": 174.609375,
+          "width": 74.984375
+        },
+        {
+          "text": "60%",
+          "x": 249.59375,
+          "width": 54.140625
+        },
+        {
+          "text": "",
+          "x": 303.734375,
+          "width": 61.40625
+        },
+        {
+          "text": "",
+          "x": 365.140625,
+          "width": 90.34375
+        },
+        {
+          "text": "3:00 min",
+          "x": 455.484375,
+          "width": 76.296875
+        },
+        {
+          "text": "",
+          "x": 531.78125,
+          "width": 245.234375
+        }
+      ],
+      "hint": "Punkte und Prozent aus 5 fertig bewerteten Abgaben; 0 offen. Dauer aus 5 abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. 0 laufend. Alle 5 Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen."
+    },
+    "sortingClicks": 0
+  },
+  {
+    "engine": "webkit",
+    "width": 1180,
+    "zoomEquivalent": 1,
+    "columns": {
+      "headers": [
+        {
+          "text": "Name↕",
+          "x": 25,
+          "width": 236.859375
+        },
+        {
+          "text": "Punkte↕",
+          "x": 261.859375,
+          "width": 111.1875
+        },
+        {
+          "text": "%↕",
+          "x": 373.046875,
+          "width": 80.28125
+        },
+        {
+          "text": "Note↕",
+          "x": 453.328125,
+          "width": 91.046875
+        },
+        {
+          "text": "Status↕",
+          "x": 544.375,
+          "width": 133.953125
+        },
+        {
+          "text": "Dauer↕",
+          "x": 678.328125,
+          "width": 113.125
+        },
+        {
+          "text": "Abgegeben↓",
+          "x": 791.453125,
+          "width": 215.015625
+        },
+        {
+          "text": "Aktionen",
+          "x": 1006.46875,
+          "width": 148.59375
+        }
+      ],
+      "foot": [
+        {
+          "text": "Durchschnitt (5 bewertet)",
+          "x": 25,
+          "width": 236.859375
+        },
+        {
+          "text": "6",
+          "x": 261.859375,
+          "width": 111.1875
+        },
+        {
+          "text": "60%",
+          "x": 373.046875,
+          "width": 80.28125
+        },
+        {
+          "text": "",
+          "x": 453.328125,
+          "width": 91.046875
+        },
+        {
+          "text": "",
+          "x": 544.375,
+          "width": 133.953125
+        },
+        {
+          "text": "3:00 min",
+          "x": 678.328125,
+          "width": 113.125
+        },
+        {
+          "text": "",
+          "x": 791.453125,
+          "width": 363.609375
+        }
+      ],
+      "hint": "Punkte und Prozent aus 5 fertig bewerteten Abgaben; 0 offen. Dauer aus 5 abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. 0 laufend. Alle 5 Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen."
+    },
+    "sortingClicks": 0
+  },
+  {
+    "engine": "webkit",
+    "width": 1180,
+    "zoomEquivalent": 2,
+    "columns": {
+      "headers": [
+        {
+          "text": "Name↕",
+          "x": 17,
+          "width": 157.609375
+        },
+        {
+          "text": "Punkte↕",
+          "x": 174.609375,
+          "width": 74.984375
+        },
+        {
+          "text": "%↕",
+          "x": 249.59375,
+          "width": 54.140625
+        },
+        {
+          "text": "Note↕",
+          "x": 303.734375,
+          "width": 61.40625
+        },
+        {
+          "text": "Status↕",
+          "x": 365.140625,
+          "width": 90.34375
+        },
+        {
+          "text": "Dauer↕",
+          "x": 455.484375,
+          "width": 76.296875
+        },
+        {
+          "text": "Abgegeben↓",
+          "x": 531.78125,
+          "width": 145.015625
+        },
+        {
+          "text": "Aktionen",
+          "x": 676.796875,
+          "width": 100.21875
+        }
+      ],
+      "foot": [
+        {
+          "text": "Durchschnitt (5 bewertet)",
+          "x": 17,
+          "width": 157.609375
+        },
+        {
+          "text": "6",
+          "x": 174.609375,
+          "width": 74.984375
+        },
+        {
+          "text": "60%",
+          "x": 249.59375,
+          "width": 54.140625
+        },
+        {
+          "text": "",
+          "x": 303.734375,
+          "width": 61.40625
+        },
+        {
+          "text": "",
+          "x": 365.140625,
+          "width": 90.34375
+        },
+        {
+          "text": "3:00 min",
+          "x": 455.484375,
+          "width": 76.296875
+        },
+        {
+          "text": "",
+          "x": 531.78125,
+          "width": 245.234375
+        }
+      ],
+      "hint": "Punkte und Prozent aus 5 fertig bewerteten Abgaben; 0 offen. Dauer aus 5 abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. 0 laufend. Alle 5 Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen."
+    },
+    "sortingClicks": 0
+  }
+]

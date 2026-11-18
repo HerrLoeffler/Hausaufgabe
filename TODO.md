@@ -867,9 +867,9 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 ### GC-WEB-REPAIR-20261007 / GC-PEDAGOGY-KB-01 · Wilma und Schülerlayout ·18.11.2026
 
 - [x] Wilma-Diagnose ohne neueProvideraufrufe: erster503 imengenZeitfenster, vorhandenerJobunknown/costSettled;Novemberbudgetfrei. NachfolgenderfreierFundusverdecktErstfehler. ExakterursprünglicherProvider-/Receipt-/Speichergrundnichtprotokolliert,weiteroffen;keinOpenAI-Ausfallbehauptet.
-- [x] KonkreteWilma-Darstellung/FehlerzuordnungalsVorschaugesichert:PR434/8c6977f,799Root/UI,16Browserfälle,unabhängigeReviewsPASS. ProLückeAntwort/Referenz,KI-Punkte+Reason,zugänglichekompaktePunkteingabe,Umbruch. KeinLive-/Backendrelease.
+- [x] KonkreteWilma-Darstellung/FehlerzuordnungalsVorschaugesichert:PR434/12b3876,799Root/UI,16Browserfälle,unabhängigeReviewsPASS. ProLückeAntwort/Referenz,KI-Punkte+Reason,zugänglichekompaktePunkteingabe,Umbruch. KeinLive-/Backendrelease.
 - [ ] Ursprünglichen503mitengemServer-Diagnose-/Recoveryumfangbeheben:separaterPlanundFreigabe/FunctionsGates;keinbezahlterBlindretry/keineBudgetrücksetzung.
 - [x] BestätigtenseitlichenLayoutauftragalsisolierteVorschaugesichert:PR435/2c935ad,gemeinsamerBrowser-/Secure-/Nativevertrag,794Root/UI+37gezielteTests,32Browserfälle+8Progressreisen. KeineNative-/physischeGeräteabnahme.
 - [x] Unabhängiger Sidebar-Review: 16 gezielte Tests und 32 synthetische Browserfälle, keine P0–P2.
 - [ ] Sidebar-Vorschauabnahme und Abstimmung mit dem Native-Owner;danachbewusstHostingumfangzusammenstellen. Livebleibt4c736c2,diesePreviewaufträgesindnichtdeployed.
-- [x] PräzisierungDurchschnitte:vorhandenerTabellenfußenthältPunkte/%/DauerdirektunterihrenSpalten,LabelunterName,keineBerechnungs-/Sortierschleifegestartet.
+- [x] Martins letzte Präzisierung ausdrücklich belegt: Durchschnitt unmittelbar im Tabellenfuß unter Punkte, %, Dauer; Label in Name. Bereits im Live-Renderer4c736c2 enthalten. In PR434/12b3876 nutzbare fiktive Begleitvorschau unter http://127.0.0.1:8765/overview,12 reine Spaltenausrichtungsfälle und0Sortierklicks. Keine Berechnung geändert; unabhängiger Fixture-Nachreview PASS.

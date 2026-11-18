@@ -12,7 +12,7 @@ Aktiver Server `reviewwilmaanswers-00004-nuz`; tatsächlich heruntergeladenes Qu
 
 Die ursprüngliche interne Fehlermeldung wird im Catch verworfen. Ob Modellantwort unvollständig/verweigert/unzulässig war oder der anschließende Belegspeicher scheiterte, ist nachträglich nicht sicher unterscheidbar. Kein belegter OpenAI-Ausfall. Spätere400 aus derselben Mehrzweckfunktion sind ohne Aktionsbeleg nicht als Ursache dieses503 zuzuordnen. Es gab während der Untersuchung ausschließlich Lesezugriffe, keine echten Bewertungsänderungen und keinen neuen Providerstart.
 
-Web-VorschauPR434/8c6977f zeigt Antwort/Referenz und Vorschlag getrennt und erhält den Erstfehler beim freien Cachemiss. Sie behebt die historische Serverursache nicht.
+Web-VorschauPR434/12b3876 zeigt Antwort/Referenz und Vorschlag getrennt und erhält den Erstfehler beim freien Cachemiss. Sie behebt die historische Serverursache nicht.
 
 ## Invarianten
 
