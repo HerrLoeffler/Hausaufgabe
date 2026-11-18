@@ -20,6 +20,8 @@ let navigation = null;
 function native(type, data = {}) {
   window.webkit.messageHandlers.gradecrewSecure.postMessage({ type, ...data });
 }
+window.gcSetCanSubmit = value => { $('secureSidebarSubmit').disabled = frozen || value !== true; };
+$('secureSidebarSubmit').addEventListener('click',()=> { if (!frozen && !$('secureSidebarSubmit').disabled) native('requestSubmit'); });
 function saveDraft() {
   if (frozen) return;
   revision += 1;
@@ -39,6 +41,7 @@ const root = $('secureQuestions');
 root.replaceChildren(...currentPaper.map(renderQuestion));
 root.addEventListener('input', onAnswerChanged);
 root.addEventListener('change', onAnswerChanged);
+root.addEventListener('securelayoutchange',event=>native('layout',{sidebar:event.detail.sidebar}));
 navigation = createQuestionNavigation({paper:currentPaper,root,navRoot:$('secureNavigation'),reducedMotion:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || false});
 const originalRefreshProgress = refreshProgress;
 refreshProgress = function() { originalRefreshProgress();navigation?.refresh(collectAnswers(),touchedQuestionIds); };

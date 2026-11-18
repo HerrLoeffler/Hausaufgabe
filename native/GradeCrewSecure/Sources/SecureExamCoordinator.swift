@@ -7,6 +7,7 @@ final class SecureExamCoordinator: ObservableObject {
     @Published private(set) var phase: Phase = .code {
         didSet { if phase != .active { cancelSubmitConfirmation() } }
     }
+    @Published private(set) var sidebarLayout=false
     @Published private(set) var showingSubmitConfirmation=false
     @Published private(set) var resumeNotice:SecureResumeNotice?
     @Published private(set) var replacementReceipt:SecureReplacementReceipt?
@@ -111,14 +112,16 @@ final class SecureExamCoordinator: ObservableObject {
         guard let remaining else { return "Ohne Zeitlimit" }
         return String(format: "%02d:%02d", remaining / 60, remaining % 60)
     }
+    func updateSidebarLayout(_ sidebar:Bool) { if sidebarLayout != sidebar {sidebarLayout=sidebar} }
+    var submissionWord:String { ((paper?["quiz"] as? [String:Any])?["contentLocale"] as? String)?.lowercased().hasPrefix("en") == true ? "SUBMIT" : "ABGEBEN" }
     func requestSubmitConfirmation() {
         guard canSubmit else { return }
         confirmationAttemptID=attemptID;showingSubmitConfirmation=true
     }
-    func hideSubmitConfirmation() { showingSubmitConfirmation=false }
+    func hideSubmitConfirmation() { cancelSubmitConfirmation() }
     func cancelSubmitConfirmation() { showingSubmitConfirmation=false;confirmationAttemptID=nil }
-    func submitConfirmed() async {
-        guard confirmationAttemptID == attemptID,canSubmit else { return }
+    func submitConfirmed(word:String="") async {
+        guard showingSubmitConfirmation,confirmationAttemptID == attemptID,canSubmit,word.trimmingCharacters(in:.whitespacesAndNewlines).uppercased() == submissionWord else { return }
         cancelSubmitConfirmation();await submit(auto:false)
     }
 #if SECURE_LAYOUT_TESTS

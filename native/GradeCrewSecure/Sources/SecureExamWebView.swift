@@ -38,6 +38,7 @@ struct SecureExamWebView: UIViewRepresentable {
     }
     func updateUIView(_ uiView:WKWebView,context:Context) {
         let scale=Double(bodySize/17)
+        uiView.evaluateJavaScript("window.gcSetCanSubmit?.(\(coordinator.canSubmit ? "true" : "false"))",completionHandler:nil)
         guard scale != context.coordinator.presentationScale else { return }
         context.coordinator.presentationScale=scale
         uiView.evaluateJavaScript("window.gcSetPresentationScale?.(\(scale))",completionHandler:nil)
@@ -58,7 +59,10 @@ struct SecureExamWebView: UIViewRepresentable {
             guard message.name == "gradecrewSecure", message.frameInfo.isMainFrame,
                   message.frameInfo.request.url == document,
                   let data = message.body as? [String: Any] else { return }
+            if data["type"] as? String == "requestSubmit" { model?.requestSubmitConfirmation() }
+            if data["type"] as? String == "layout",let sidebar=data["sidebar"] as? Bool { model?.updateSidebarLayout(sidebar) }
             if data["type"] as? String == "ready" {
+                message.webView?.evaluateJavaScript("window.gcSetCanSubmit?.(\(model?.canSubmit == true ? "true" : "false"))",completionHandler:nil)
                 message.webView?.evaluateJavaScript("window.gcSetPresentationScale?.(\(presentationScale))",completionHandler:nil)
                 if model?.phase != .active { message.webView?.evaluateJavaScript("window.gcFreezeAnswers?.()",completionHandler:nil) }
             }

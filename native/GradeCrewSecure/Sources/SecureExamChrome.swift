@@ -58,6 +58,7 @@ struct SecureExamFooter:View {
     let warning:String?
     let canSubmit:Bool
     let onSubmit:()->Void
+    var showSubmit=true
     @Environment(\.secureCompactChrome) private var compact
     @State private var showStatus=false
     var body:some View {
@@ -65,7 +66,7 @@ struct SecureExamFooter:View {
             if let warning,!warning.isEmpty,!compact {
                 Label(warning,systemImage:"wifi.exclamationmark").font(.footnote).foregroundStyle(SecureTheme.warningText).fixedSize(horizontal:false,vertical:true)
             }
-            if compact {
+            if !showSubmit { statusText } else if compact {
                 HStack(spacing:16) { statusButton;Spacer(minLength:8);submit }
             } else {
                 ViewThatFits(in:.horizontal) {

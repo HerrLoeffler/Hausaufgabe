@@ -178,13 +178,21 @@ private final class SecureLifecycleMemoryStore:SecureAttemptPersistence {
         XCTAssertTrue(refrozen,"Actual Bridge.ready must freeze the replacement renderer while native submission is pending")
         await task.value;XCTAssertEqual(model.phase,.completed);XCTAssertEqual(SecureLifecycleHTTP.submissions,1)
     }
-    func testManualActionSurvivesSwiftUIDialogAutoDismissal() async throws {
+    func testCancelledManualConfirmationCannotSubmit() async throws {
         let (model,window,_)=try await setup(expired:false)
         defer { window.isHidden=true;window.rootViewController=nil }
         model.requestSubmitConfirmation()
         // SwiftUI writes false to its presentation binding as it invokes the chosen action.
         model.hideSubmitConfirmation()
-        await model.submitConfirmed()
+        await model.submitConfirmed(word:"ABGEBEN")
+        XCTAssertEqual(SecureLifecycleHTTP.submissions,0)
+        XCTAssertEqual(model.phase,.active)
+        model.requestSubmitConfirmation()
+        await model.submitConfirmed(word:"")
+        await model.submitConfirmed(word:"falsch")
+        XCTAssertEqual(SecureLifecycleHTTP.submissions,0)
+        XCTAssertTrue(model.showingSubmitConfirmation)
+        await model.submitConfirmed(word:" abgeben ")
         XCTAssertEqual(SecureLifecycleHTTP.submissions,1)
         XCTAssertEqual(model.phase,.completed)
     }

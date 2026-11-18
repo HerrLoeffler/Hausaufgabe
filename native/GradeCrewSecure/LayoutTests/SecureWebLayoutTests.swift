@@ -92,7 +92,14 @@ private struct SecureComposedWeb: UIViewRepresentable {
             try await Task.sleep(nanoseconds:40_000_000)
             let audit="""
             (()=> { const issues=[]; if(document.documentElement.scrollWidth>innerWidth+1)issues.push('Horizontal page overflow');
-            if(document.getElementById('secureNavigation').getBoundingClientRect().height>innerHeight*.65 && innerHeight>500)issues.push('Navigation consumes reading area');
+            const sidebar=document.documentElement.classList.contains('secureSidebar'),nav=document.getElementById('secureNavigation').getBoundingClientRect();
+            if(!sidebar && nav.height>innerHeight*.65 && innerHeight>500)issues.push('Navigation consumes reading area');
+            if(sidebar) {
+              const questions=document.getElementById('secureQuestions').getBoundingClientRect(),submit=document.getElementById('secureSidebarSubmit').getBoundingClientRect();
+              if(questions.right>nav.left-8)issues.push('Tasks must remain left of overview');
+              if(submit.height<44 || submit.bottom>innerHeight || submit.top<nav.top)issues.push('Sidebar submission clipped');
+              if(nav.height>innerHeight)issues.push('Sidebar exceeds viewport');
+            }
             const font=parseFloat(getComputedStyle(document.body).fontSize);if(font<19*\(scale)-.5)issues.push('Requested text size not applied');
             if(document.querySelectorAll('.secureQuestionNumber').length!==\(paper.count))issues.push('Missing question selectors');
             return {issues,innerWidth,scrollWidth:document.documentElement.scrollWidth,font}; })()
@@ -142,6 +149,7 @@ private struct SecureComposedWeb: UIViewRepresentable {
         case "clear":_ = try await web.evaluateJavaScript("const field=document.querySelector('textarea');field.value='Antwort';field.dispatchEvent(new Event('input',{bubbles:true}));field.value='';field.dispatchEvent(new Event('input',{bubbles:true}));")
         case "ordering":_ = try await web.evaluateJavaScript("[...document.querySelector('.secureQuestion[data-qid=ordering]').querySelectorAll('button')].find(b=>b.textContent==='Reihenfolge bestätigen').click()")
         case "keyboard-height":
+            _=try await web.evaluateJavaScript("window.__answerNode=document.querySelector('textarea');__answerNode.value='Antwort vor Tastatur';__answerNode.dispatchEvent(new Event('input',{bubbles:true}));window.__beforeAnswers=JSON.stringify(collectAnswers());__answerNode.focus();")
             web.frame.size.height=380
             _=try await web.evaluateJavaScript("document.querySelectorAll('.secureQuestionNumber')[14].click()")
         case "image-resize":
@@ -173,7 +181,7 @@ private struct SecureComposedWeb: UIViewRepresentable {
                 try await Task.sleep(nanoseconds:50_000_000)
             }
             if try await web.evaluateJavaScript("performance.timeOrigin!==\(before)") as? Bool != true { issues.append("Reload did not create a new document") }
-        case "manual-scroll":_ = try await web.evaluateJavaScript("window.scrollTo(0,document.querySelectorAll('.secureQuestion')[9].offsetTop-document.getElementById('secureNavigation').offsetHeight-4)")
+        case "manual-scroll":_ = try await web.evaluateJavaScript("window.scrollTo(0,document.querySelectorAll('.secureQuestion')[9].offsetTop-parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--secure-nav-height'))-4)")
         default:break
         }
         try await Task.sleep(nanoseconds:850_000_000)
@@ -190,9 +198,12 @@ private struct SecureComposedWeb: UIViewRepresentable {
         case "manual-scroll":predicate="document.querySelector('[aria-current=step]').dataset.qid==='q9'"
         default:predicate="true"
         }
+        if name == "keyboard-height" {
+            if try await web.evaluateJavaScript("document.querySelector('textarea')===__answerNode && __answerNode.value==='Antwort vor Tastatur' && !document.documentElement.classList.contains('secureSidebar')") as? Bool != true {issues.append("Keyboard resize recreated answer or kept wide sidebar")}
+        }
         if try await web.evaluateJavaScript(predicate) as? Bool != true { issues.append("Interaction failed: "+name) }
         if ["direct","reduced-motion","keyboard-height","image-resize"].contains(name) {
-            let visible=try await web.evaluateJavaScript("(()=>{const id=document.querySelector('[aria-current=step]').dataset.qid;const section=[...document.querySelectorAll('.secureQuestion')].find(s=>s.dataset.qid===id);const top=section.querySelector('h2').getBoundingClientRect().top;return top>=document.getElementById('secureNavigation').getBoundingClientRect().bottom && top<innerHeight-20;})()") as? Bool
+            let visible=try await web.evaluateJavaScript("(()=>{const id=document.querySelector('[aria-current=step]').dataset.qid;const section=[...document.querySelectorAll('.secureQuestion')].find(s=>s.dataset.qid===id);const top=section.querySelector('h2').getBoundingClientRect().top;const edge=document.documentElement.classList.contains('secureSidebar') ? 0 : document.getElementById('secureNavigation').getBoundingClientRect().bottom;return top>=edge && top<innerHeight-20;})()") as? Bool
             if visible != true { issues.append("Target question hidden after "+name)
                 let geometry=try? await web.evaluateJavaScript("JSON.stringify({height:innerHeight,scrollY,navBottom:document.getElementById('secureNavigation').getBoundingClientRect().bottom,targets:[...document.querySelectorAll('.secureQuestion')].filter(s=>s.dataset.qid===document.querySelector('[aria-current=step]').dataset.qid).map(s=>s.getBoundingClientRect().top)})")
                 issues.append("Geometry: "+String(describing:geometry)) }

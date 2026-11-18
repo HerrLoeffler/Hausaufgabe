@@ -11,6 +11,11 @@ struct SecureLifecycleUIHost:View {
     var body:some View {
         SecureStagingScreen(model:model,assessment:model.assessment)
             .task {
+                if ProcessInfo.processInfo.arguments.contains("--secure-submission-ui") {
+                    model.installLifecycleFixture(expired:false)
+                    model.requestSubmitConfirmation()
+                    return
+                }
                 await model.foreground()
                 if ProcessInfo.processInfo.arguments.contains("--late-recovery-task") { await model.startOrRecover() }
             }
