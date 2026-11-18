@@ -1,0 +1,46 @@
+{
+  "source": "805cba98fc357d2926048311b7672b4fe70f1335",
+  "previous_live_source": "338c0432645803a58f71531a0d016abb5a44cbf9",
+  "project": "hausaufgabe-staging",
+  "hosting_version": "b21f6f19cf822610",
+  "ci": {
+    "run": 44319134205,
+    "attempt": 2,
+    "node_job": 134855918099,
+    "browser_job": 134855830471,
+    "result": "success",
+    "first_attempt_browser_job": 134853102315,
+    "first_attempt_failure": "WebKit internal error while opening password-reset entry, before app assertion",
+    "failure_artifact": 14434191767
+  },
+  "local": {
+    "root_web_ui_tests": 825,
+    "student_browser_cases": 8,
+    "teacher_results_cases": 12,
+    "wilma_cases": 36,
+    "public_entry_viewports": 36,
+    "public_entry_task_layouts": 60
+  },
+  "browser_live": {
+    "origin": "https://gradecrew.de",
+    "authenticated": true,
+    "dataset": "existing closed fictional WILMALIVE261029",
+    "count": 5,
+    "observed": "new sort controls, first-name ascending A/B/C/D/L; averages 1.4 points and 70% from 5 final submissions; one rule-rated, no review pending",
+    "grading_writes": 0,
+    "physical_device": false
+  },
+  "scope": "ready Hosting only, explicit human approval; no new Emmi scopes or backend release",
+  "retained_existing": {
+    "unchanged_manifest_assets": 206,
+    "removed_assets": 0,
+    "prior_demo_named_hero_assets": "unchanged original assets; isolated simulation fixtures not included"
+  },
+  "verification_attempts": [
+    "Predeploy guard was too broad for existing demo-named hero assets; stopped before cloud call; tightened to exact10changed runtime paths",
+    "First route probe guessed student.html and got404; actual manifest route secure-student.html verified200",
+    "Transient connection reset in route probe; no redeploy; bounded read retries and persisted hash verification completed"
+  ],
+  "provider_calls_by_this_release": 0,
+  "functions_rules_auth_and_native_changed": false
+}
