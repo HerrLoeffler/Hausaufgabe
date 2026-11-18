@@ -1,0 +1,64 @@
+{
+  "requestId": "bc2fa93c-1602-45c8-94f9-24b88c297862",
+  "wish": "Lass meine Klasse eine ganze Tonfolge im Violinschlüssel eintragen. Fünf Töne in der Reihenfolge A4, G4, H4, C5, G4. Schwieriger, ohne Hinweis auf die unterste Linie.",
+  "status": "ready",
+  "quizId": "wish3:bc2fa93c-1602-45c8-94f9-24b88c297862",
+  "task": {
+    "quizId": "wish3:bc2fa93c-1602-45c8-94f9-24b88c297862",
+    "group": "eigener",
+    "id": "wish",
+    "type": "pitch",
+    "text": "Setze die Tonfolge von links nach rechts. Wähle für jeden Ton die richtige Linie oder den richtigen Zwischenraum im Violinschlüssel.",
+    "points": 2.5,
+    "heading": "Tonfolge im Violinschlüssel eintragen",
+    "subject": "Musik · Tonhöhen im Violinschlüssel",
+    "pitch": {
+      "notes": [
+        {
+          "id": "p0",
+          "label": "A"
+        },
+        {
+          "id": "p1",
+          "label": "G"
+        },
+        {
+          "id": "p2",
+          "label": "H"
+        },
+        {
+          "id": "p3",
+          "label": "C"
+        },
+        {
+          "id": "p4",
+          "label": "G"
+        }
+      ],
+      "guided": false
+    },
+    "options": [],
+    "version": "33b4f58d11a50fa1363fb4421122ef972267e1cf1cc0534a2937f99cec6d38da",
+    "review": null
+  },
+  "verified": {
+    "labels": [
+      "A",
+      "G",
+      "H",
+      "C",
+      "G"
+    ],
+    "positions": [
+      3,
+      2,
+      4,
+      5,
+      2
+    ],
+    "full": 2.5,
+    "wrongAdjacentPosition": 2,
+    "blank": 0,
+    "stableIdReplayed": true
+  }
+}

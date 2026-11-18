@@ -1,0 +1,12 @@
+{
+  "changedAspect": "wording",
+  "generationHint": "Formuliere den Arbeitsauftrag bei zweispaltigen Rechenwegen anhand der tatsächlich offenen Zahlen- und Pfeilfelder. Nenne nur Spalten mit offenen Feldern als auszufüllen und beziehe beide Spalten ein, wenn in beiden etwas fehlt.",
+  "reason": "Vier von 20 Aufgaben scheiterten im Erstversuch. Bei der Prozentaufgabe verlangte der Auftrag Einträge in einer bereits vollständig ausgefüllten Spalte; auch nach der Reparatur blieb der Spaltenbezug missverständlich. Im früheren Test trat derselbe Widerspruch zwischen Auftrag und offenen Feldern bei zwei weiteren Aufgaben auf. Die Änderung setzt gezielt dort an, ohne Hilfestufe oder Layout anzupassen. Ob sie die Ersttrefferquote verbessert, müssen dieselben Tests zeigen.",
+  "version": 2,
+  "recipeHash": "879ac40072e50d1571ecb8e76ac11f25af7e5dac6851a25bec3bd3f6249cc20c",
+  "unchanged": false,
+  "parentPhase": "dev0",
+  "developmentInputHash": "87db9e55088af286eabfc7cd07014f2432e0dbca1c62c0f42c9271127de53165",
+  "at": "2026-11-18T19:19:23.339Z",
+  "modelWeightsTrained": false
+}

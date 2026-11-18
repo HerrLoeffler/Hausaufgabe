@@ -1,0 +1,12 @@
+{
+  "at": "2026-11-09T21:56:53.348Z",
+  "firstRound": 30,
+  "secondRound": 12,
+  "oldSyntheticRatingPreserved": true,
+  "roundTwoRatingStored": true,
+  "repeatRequestIdAccepted": true,
+  "complete": 1.5,
+  "partial": 0.5,
+  "publicKeysAbsent": true,
+  "anonymousDenied": true
+}

@@ -1,0 +1,267 @@
+{
+  "at": "2026-11-18T16:42:56.482Z",
+  "tasks": [
+    {
+      "id": "direct-01",
+      "points": 1.5
+    },
+    {
+      "id": "direct-02",
+      "points": 2.5
+    },
+    {
+      "id": "direct-03",
+      "points": 3.5
+    },
+    {
+      "id": "direct-04",
+      "points": 3.5
+    },
+    {
+      "id": "direct-05",
+      "points": 3.5
+    },
+    {
+      "id": "direct-06",
+      "points": 1.5
+    },
+    {
+      "id": "direct-07",
+      "points": 2.5
+    },
+    {
+      "id": "direct-08",
+      "points": 3.5
+    },
+    {
+      "id": "direct-09",
+      "points": 3.5
+    },
+    {
+      "id": "direct-10",
+      "points": 3.5
+    },
+    {
+      "id": "direct-11",
+      "points": 1.5
+    },
+    {
+      "id": "direct-12",
+      "points": 2.5
+    },
+    {
+      "id": "direct-13",
+      "points": 3.5
+    },
+    {
+      "id": "direct-14",
+      "points": 3.5
+    },
+    {
+      "id": "direct-15",
+      "points": 3.5
+    },
+    {
+      "id": "direct-16",
+      "points": 1.5
+    },
+    {
+      "id": "direct-17",
+      "points": 2.5
+    },
+    {
+      "id": "direct-18",
+      "points": 3.5
+    },
+    {
+      "id": "direct-19",
+      "points": 3.5
+    },
+    {
+      "id": "direct-20",
+      "points": 3.5
+    },
+    {
+      "id": "inverse-01",
+      "points": 1.5
+    },
+    {
+      "id": "inverse-02",
+      "points": 2.5
+    },
+    {
+      "id": "inverse-03",
+      "points": 3.5
+    },
+    {
+      "id": "inverse-04",
+      "points": 3.5
+    },
+    {
+      "id": "inverse-05",
+      "points": 3.5
+    },
+    {
+      "id": "inverse-06",
+      "points": 1.5
+    },
+    {
+      "id": "inverse-07",
+      "points": 2.5
+    },
+    {
+      "id": "inverse-08",
+      "points": 3.5
+    },
+    {
+      "id": "inverse-09",
+      "points": 3.5
+    },
+    {
+      "id": "inverse-10",
+      "points": 3.5
+    },
+    {
+      "id": "inverse-11",
+      "points": 1.5
+    },
+    {
+      "id": "inverse-12",
+      "points": 2.5
+    },
+    {
+      "id": "inverse-13",
+      "points": 3.5
+    },
+    {
+      "id": "inverse-14",
+      "points": 3.5
+    },
+    {
+      "id": "inverse-15",
+      "points": 3.5
+    },
+    {
+      "id": "inverse-16",
+      "points": 1.5
+    },
+    {
+      "id": "inverse-17",
+      "points": 2.5
+    },
+    {
+      "id": "inverse-18",
+      "points": 3.5
+    },
+    {
+      "id": "inverse-19",
+      "points": 3.5
+    },
+    {
+      "id": "inverse-20",
+      "points": 3.5
+    },
+    {
+      "id": "percent-01",
+      "points": 1.5
+    },
+    {
+      "id": "percent-02",
+      "points": 2.5
+    },
+    {
+      "id": "percent-03",
+      "points": 3.5
+    },
+    {
+      "id": "percent-04",
+      "points": 3.5
+    },
+    {
+      "id": "percent-05",
+      "points": 3.5
+    },
+    {
+      "id": "percent-06",
+      "points": 1.5
+    },
+    {
+      "id": "percent-07",
+      "points": 2.5
+    },
+    {
+      "id": "percent-08",
+      "points": 3.5
+    },
+    {
+      "id": "percent-09",
+      "points": 3.5
+    },
+    {
+      "id": "percent-10",
+      "points": 3.5
+    },
+    {
+      "id": "contrast-01",
+      "points": 0.5
+    },
+    {
+      "id": "contrast-02",
+      "points": 0.5
+    },
+    {
+      "id": "contrast-03",
+      "points": 0.5
+    },
+    {
+      "id": "contrast-04",
+      "points": 0.5
+    },
+    {
+      "id": "contrast-05",
+      "points": 0.5
+    },
+    {
+      "id": "contrast-06",
+      "points": 0.5
+    },
+    {
+      "id": "contrast-07",
+      "points": 0.5
+    },
+    {
+      "id": "contrast-08",
+      "points": 0.5
+    },
+    {
+      "id": "contrast-09",
+      "points": 0.5
+    },
+    {
+      "id": "contrast-10",
+      "points": 0.5
+    }
+  ],
+  "layouts": [
+    {
+      "name": "desktop",
+      "width": 1280,
+      "documentWidth": 1280,
+      "reachableControls": 7
+    },
+    {
+      "name": "tablet",
+      "width": 820,
+      "documentWidth": 820,
+      "reachableControls": 7
+    },
+    {
+      "name": "phone",
+      "width": 360,
+      "documentWidth": 360,
+      "reachableControls": 7
+    }
+  ],
+  "reloadPositionPreserved": true,
+  "pageErrors": []
+}

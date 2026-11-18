@@ -1,0 +1,118 @@
+{
+  "group": "direkt",
+  "requestId": "gc-remy-mehrfeld30-20261109-direkt",
+  "input": {
+    "clientRequestId": "gc-remy-mehrfeld30-20261109-direkt",
+    "subject": "Mathematik",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Direkter Dreisatz und Prozentrechnung",
+    "learningGoals": [
+      "Prozentwert und proportionale Zuordnungen mit einem direkten Dreisatz über die Einheit berechnen."
+    ],
+    "notes": "Ausschließlich direkter Dreisatz mit Rechenpfeilen. Vier verschiedene Prozentaufgaben und vier verschiedene proportionale Alltagskontexte. Zwei Spalten, klare Einheiten, jeweils über 1 bzw. 1 %. Rechenzeichen und Faktoren teils vorgeben, teils offen lassen.",
+    "count": 8,
+    "points": 20,
+    "allowedTypes": [
+      "visual"
+    ],
+    "allowedVisualFormats": [
+      "table"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "materials": [],
+    "materialMode": "inspiration"
+  },
+  "status": "ready",
+  "startedAt": "2026-11-09T21:25:22.200Z",
+  "jobId": "0f3cc604a0721177ccaafa8df6ffe23f3af02845",
+  "stage": "ready",
+  "errorReference": null,
+  "errorDetails": null,
+  "usage": {
+    "input_tokens": 66500,
+    "providerRequests": [
+      {
+        "responseId": "resp_0effc0eb6606e389016af23a52205887d284cc0438c904aab1",
+        "requestId": "req_bb16517214da41b2b933ef41f60319f7",
+        "model": "gpt-5.6-luna",
+        "durationMs": 14164,
+        "phase": "testify_test_v2"
+      },
+      {
+        "responseId": "resp_02bfd670cac46254016af23a60186487d294b32b2d2c5f0e94",
+        "requestId": "req_c4a93c09145948d790c3d0c8640ab042",
+        "model": "gpt-5.6-luna",
+        "durationMs": 11392,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_0701859e505f4442016af23a613a3c87d29519454f98035c52",
+        "requestId": "req_78fff93d38524b2c9dd81d8a2dfe68e4",
+        "model": "gpt-5.6-luna",
+        "durationMs": 14472,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_0badeec77eb556cc016af23a6e83ac87d2a53355b4918c66c3",
+        "requestId": "req_5751480afb224b82b5884f49ae49612d",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6209,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_077848c0f37dbd78016af23a74d0dc87d284ef9d0b9642b774",
+        "requestId": "req_2d60519783564bf6a93072f46928280f",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9369,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0aecf8bfe03e7172016af23a7e279087d299aecf2b9e32d4d0",
+        "requestId": "req_5be8bdd2a65e4af3af9078899bf52eae",
+        "model": "gpt-5.6-luna",
+        "durationMs": 10294,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0ddc212629e7ad46016af23a88785087d2add6234249d529be",
+        "requestId": "req_f3c7c401ce824ad7881b1d16e9522ff4",
+        "model": "gpt-5.6-luna",
+        "durationMs": 11219,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0e4f9a84755a42f4016af23a93bcc087d2b891aa65d36a8d8e",
+        "requestId": "req_02ee8097f7404c33a0aa428f6bd9ed6e",
+        "model": "gpt-5.6-luna",
+        "durationMs": 9259,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_09c1fee95a0a4073016af23a93c1a487d28e30d8c3d0b7b819",
+        "requestId": "req_e1b1f6b6ab784ad7914b2ac760f0d52f",
+        "model": "gpt-5.6-luna",
+        "durationMs": 6367,
+        "phase": "testify_recipe_blind_solution_v1"
+      }
+    ],
+    "output_tokens": 9889,
+    "total_tokens": 76389
+  },
+  "completedAt": "2026-11-09T21:26:54.263Z",
+  "quizId": "68HFAB3R",
+  "count": 8,
+  "pointSum": 20,
+  "layouts": [
+    "dreisatz",
+    "dreisatz",
+    "dreisatz",
+    "dreisatz",
+    "dreisatz",
+    "dreisatz",
+    "dreisatz",
+    "dreisatz"
+  ]
+}

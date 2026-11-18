@@ -1,0 +1,27 @@
+{
+  "at": "2026-11-18T17:52:07.402Z",
+  "wish": "Englisch Klasse 6: Bitte drei einzelne Felder für die Simple-Past-Formen von eat, write und run. Jeweils das Ausgangsverb sichtbar mit seinem Eingabefeld verbinden. Die Lernenden tippen jeweils ein Wort.",
+  "requestId": "a2fd5c35-82b1-4e82-976a-982636df8049",
+  "family": "fields-arrows",
+  "status": "ready",
+  "quizId": "training:graph-3f193f13c3b586f572df4a82d90474e4",
+  "runId": "graph-3f193f13c3b586f572df4a82d90474e4",
+  "decision": "chain",
+  "solution": [
+    {
+      "label": "Simple Past von eat",
+      "value": "ate"
+    },
+    {
+      "label": "Simple Past von write",
+      "value": "wrote"
+    },
+    {
+      "label": "Simple Past von run",
+      "value": "ran"
+    }
+  ],
+  "spentMicros": 4339,
+  "actualPublicEntry": true,
+  "fullScoreInUI": true
+}

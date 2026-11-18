@@ -1,0 +1,66 @@
+{
+  "selectedPhase": "dev0",
+  "developmentComparisons": [
+    {
+      "baseline": {
+        "total": 20,
+        "ready": 20,
+        "firstPass": 16,
+        "rejected": 0,
+        "pending": 0
+      },
+      "candidate": {
+        "total": 20,
+        "ready": 19,
+        "firstPass": 13,
+        "rejected": 1,
+        "pending": 0
+      },
+      "regressions": [
+        "base"
+      ],
+      "effectiveRecipeChanged": true,
+      "improved": false
+    },
+    {
+      "baseline": {
+        "total": 20,
+        "ready": 20,
+        "firstPass": 16,
+        "rejected": 0,
+        "pending": 0
+      },
+      "candidate": {
+        "total": 20,
+        "ready": 19,
+        "firstPass": 11,
+        "rejected": 1,
+        "pending": 0
+      },
+      "regressions": [
+        "base"
+      ],
+      "effectiveRecipeChanged": true,
+      "improved": false
+    }
+  ],
+  "transfer": {
+    "controlOnly": true,
+    "baseline": {
+      "total": 20,
+      "ready": 19,
+      "firstPass": 13,
+      "rejected": 1,
+      "pending": 0
+    },
+    "candidate": null,
+    "regressions": []
+  },
+  "transferRetained": false,
+  "finalCount": 10,
+  "finalQuizId": "training:auto-recipes-20261118-v1-final",
+  "status": "completed",
+  "finishedAt": "2026-11-18T19:26:47.776Z",
+  "modelWeightsTrained": false,
+  "humanApproved": false
+}

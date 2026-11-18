@@ -1,0 +1,559 @@
+{
+  "at": "2026-11-18T16:39:42.116Z",
+  "runId": "dreisatz60-20261118-v1",
+  "anonymousDenied": true,
+  "directClientReadDenied": true,
+  "oldDeckSizes": [
+    30,
+    12,
+    3,
+    3,
+    2,
+    30
+  ],
+  "syntheticPriorRatingsPreserved": true,
+  "scoreRequests": 180,
+  "totalPoints": 150,
+  "cases": [
+    {
+      "id": "direct-01",
+      "family": "direct",
+      "kind": "direct",
+      "version": "da2a45dc0fe06012e52c80ee24702c16a606f662e1285f5d797548a8650434b6",
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1
+    },
+    {
+      "id": "direct-02",
+      "family": "direct",
+      "kind": "direct",
+      "version": "f7018268757be222718cb1bcce4c91b0eb4782ea948a77c1f250cb1092bc625c",
+      "full": 2.5,
+      "blank": 0,
+      "oneWrong": 2
+    },
+    {
+      "id": "direct-03",
+      "family": "direct",
+      "kind": "direct",
+      "version": "059730896a17210d38822ff7ed68d8218d82dd1f138c5fee131a1509f34b5828",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "direct-04",
+      "family": "direct",
+      "kind": "direct",
+      "version": "3bfb872f0ef29bc4035b7c324fbc8ad09001f61447970e1ce6b3543cdc39cea5",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "direct-05",
+      "family": "direct",
+      "kind": "direct",
+      "version": "0c9e7995b39840ae35081de2c2b762378814142a6c40f6974a8772dd8ecc734d",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "direct-06",
+      "family": "direct",
+      "kind": "direct",
+      "version": "11f4c40786d38654759da05ddcf2f60aff5bab3bc9e08afd1f5158a9afe732bc",
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1
+    },
+    {
+      "id": "direct-07",
+      "family": "direct",
+      "kind": "direct",
+      "version": "2ba2b7aed04e173278ff08807dd763d4a1af928cf965dd1b32db28883a48e8f0",
+      "full": 2.5,
+      "blank": 0,
+      "oneWrong": 2
+    },
+    {
+      "id": "direct-08",
+      "family": "direct",
+      "kind": "direct",
+      "version": "999d1bd460f832bc57522845e4a951fabe3f7caafa5ab5857c1c637477bcf47d",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "direct-09",
+      "family": "direct",
+      "kind": "direct",
+      "version": "bb5daf7d839b7f4ef76fe2bd3a1c0268014712fb4018dacca7c4d0eb1cb5d44d",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "direct-10",
+      "family": "direct",
+      "kind": "direct",
+      "version": "45475e9da9450fa4fc402d05588e64e67bcb111bb1ef8f4e60c7decf10d11491",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "direct-11",
+      "family": "direct",
+      "kind": "direct",
+      "version": "60803d3bf9fd5b943848a7f3165bbc2d4cfff2e9e350e049230b22627c2947e6",
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1
+    },
+    {
+      "id": "direct-12",
+      "family": "direct",
+      "kind": "direct",
+      "version": "fb3b795d421abe4e0a18534ee26484eecabe85b087759b2f0cfe2a6fe8908b11",
+      "full": 2.5,
+      "blank": 0,
+      "oneWrong": 2
+    },
+    {
+      "id": "direct-13",
+      "family": "direct",
+      "kind": "direct",
+      "version": "4d38a227d5faa506383b95a1b101caae6dc2e2a5ec051822a884e571e7647869",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "direct-14",
+      "family": "direct",
+      "kind": "direct",
+      "version": "c9d1cd66c95d7a12632a0fc8622b5332ad2b99d582b23c71df0ca2220ea1ec5a",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "direct-15",
+      "family": "direct",
+      "kind": "direct",
+      "version": "2f02b6ffadfebc396b34c31ef09bf544306522b4aba53108436e4ec0988c0e86",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "direct-16",
+      "family": "direct",
+      "kind": "direct",
+      "version": "889e0e467041ccdea22c06b0614e0422861d9695c7b44c3c5f1f4898da35de91",
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1
+    },
+    {
+      "id": "direct-17",
+      "family": "direct",
+      "kind": "direct",
+      "version": "2371d4f377ea0a53a108ae6826c782dd66141f8bda7bf1e870cbda1a359aa1ba",
+      "full": 2.5,
+      "blank": 0,
+      "oneWrong": 2
+    },
+    {
+      "id": "direct-18",
+      "family": "direct",
+      "kind": "direct",
+      "version": "9cac0f5260b1a4a852a5ee2224486467e3c19050f19a8877636ebedca4c040f0",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "direct-19",
+      "family": "direct",
+      "kind": "direct",
+      "version": "eb7968e717b0585003dbd31f924db8613ecad1d5233e8620cb3137b1f660a182",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "direct-20",
+      "family": "direct",
+      "kind": "direct",
+      "version": "2689bed7ddfd11e0dd34b08945c2b125fa6d77cfafeb4db841e6ea82430be325",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "inverse-01",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "58b17e0bec1cbbdba66337ae2e3bbcf99d68f424548b8e503ff669071b4b7ca3",
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1
+    },
+    {
+      "id": "inverse-02",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "4ec59e424630fec03f401fac62a4b6853869a556df5129ec7418ce178a750e55",
+      "full": 2.5,
+      "blank": 0,
+      "oneWrong": 2
+    },
+    {
+      "id": "inverse-03",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "14279e8addd86476ef11baa9236d2de2b75c5f0ee68759ae6e8aee6ffc3f1da3",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "inverse-04",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "0d12932ac01be2d885c6c07bf520a5cb9f6d423bb8a11425f2a1f06fd9003e2d",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "inverse-05",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "cc244e2249a1af352b1afb3fbf170a607f3056ba0efdab38e94b7c86b1194d00",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "inverse-06",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "5381e6499522adde515240bd5e7af05506e76e6947af492440418e7c3af04d38",
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1
+    },
+    {
+      "id": "inverse-07",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "aa518d1a127f0f1120461f1d0f00a44dbfa5171de65751d1059e92e8e88adcc0",
+      "full": 2.5,
+      "blank": 0,
+      "oneWrong": 2
+    },
+    {
+      "id": "inverse-08",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "48d48021e3cb15031a5cbdd2de1874349785c0458ea1782742da481ae419c357",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "inverse-09",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "6b4b2aee2546110d8c0da3a933a623b29a182b272b89f59379ac8187f8e8e474",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "inverse-10",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "8fd22a4e031107ae294bfb52b913619286e2b78bc422b3eeb4bb9f5cd03ab019",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "inverse-11",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "6a6c5c42c03ba1e4d06691327e8d80e20b2f7c546d4e7554d436394fbc024da2",
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1
+    },
+    {
+      "id": "inverse-12",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "55d7560c966eb7ad4499bfdbc4c9646ecea132d93248bb6f98f6b08f98d7d696",
+      "full": 2.5,
+      "blank": 0,
+      "oneWrong": 2
+    },
+    {
+      "id": "inverse-13",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "5f607af9c7df7de0be9c08d402263c81f958ec9c4b0775613e068632bae69a41",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "inverse-14",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "1ccce9db6855dba193fb22ff61b539112ebb08d89145abd28622cce86118c937",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "inverse-15",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "c3bb1378e07844e6723c97ac3ec2d17b62be14546baaeca4fac4f638ca8ab48b",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "inverse-16",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "7fdefa79b99e7c6a3426bdb48a12bd0a7013f74a42f37d8c98ab0ba1f602d967",
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1
+    },
+    {
+      "id": "inverse-17",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "5fc8182947bebb5bbe459677241cfb4e5c0403fb8a2d169ceb173234f07d119a",
+      "full": 2.5,
+      "blank": 0,
+      "oneWrong": 2
+    },
+    {
+      "id": "inverse-18",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "b6084c698d084eefe0c1e779ec660040e98c586536adfa542a9eb2fa42d6e589",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "inverse-19",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "f60ce8c3e83f593d0efcd8c782aed6170c61c4cc64b4d7deee56715a42b68f3e",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "inverse-20",
+      "family": "inverse",
+      "kind": "inverse",
+      "version": "1c1d6822a2b26892d61cff9a3db28d293b546afd98b885ab0c8e86a5000b6ff1",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "percent-01",
+      "family": "percent",
+      "kind": "direct",
+      "version": "a2f3a52c1824cbf6176abd0b92ef46df09bbce0a5eb731f802f90b71bf395640",
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1
+    },
+    {
+      "id": "percent-02",
+      "family": "percent",
+      "kind": "direct",
+      "version": "d8e37d3defb7ae2265fd21252e183ca247b589ba2228079e08c23af1bf516695",
+      "full": 2.5,
+      "blank": 0,
+      "oneWrong": 2
+    },
+    {
+      "id": "percent-03",
+      "family": "percent",
+      "kind": "direct",
+      "version": "9fb6c0ef9194eb8c19d96683861ed7cfaead5ae201d96beaca7feff10d9505d7",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "percent-04",
+      "family": "percent",
+      "kind": "direct",
+      "version": "ce5bd3ee48c8766ef384ba2c786f5aa8fc62d77d1b6995a765ae3238a0de9aa9",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "percent-05",
+      "family": "percent",
+      "kind": "direct",
+      "version": "ce9a421a9d7b45ee67b40123cce4321115bec05ad07bbbf58b4ef6abd446a6d4",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "percent-06",
+      "family": "percent",
+      "kind": "direct",
+      "version": "9833a9cb574633f5192da07e93844a1af4564e72dd115049f3a448e283b1946f",
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1
+    },
+    {
+      "id": "percent-07",
+      "family": "percent",
+      "kind": "direct",
+      "version": "6b24b21cb7300382fc98e7226941521984114735553ec68bf84be507642798a9",
+      "full": 2.5,
+      "blank": 0,
+      "oneWrong": 2
+    },
+    {
+      "id": "percent-08",
+      "family": "percent",
+      "kind": "direct",
+      "version": "83b310db49afe403334f860fb4395fae2ca0dfc31c08cff51c70f7feb74c11c4",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "percent-09",
+      "family": "percent",
+      "kind": "direct",
+      "version": "84fa6e27e92e2881768c46735a18f990d74505dad1501ae540297a32a7b064b6",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "percent-10",
+      "family": "percent",
+      "kind": "direct",
+      "version": "52c917f58aecffa042da30e0ed1af52636c3cc293cb456a7f89f72e22feebb4b",
+      "full": 3.5,
+      "blank": 0,
+      "oneWrong": 3
+    },
+    {
+      "id": "contrast-01",
+      "family": "contrast",
+      "kind": "other",
+      "version": "47d42f96a0089e5791b06b04fe0ff4717838c2a2a1bb1f5df3abf1fbc79758d5",
+      "full": 0.5,
+      "blank": 0,
+      "oneWrong": 0
+    },
+    {
+      "id": "contrast-02",
+      "family": "contrast",
+      "kind": "other",
+      "version": "d325546073e30bd9791b44902fe40b0beec52057b42be35ce2c4744d69ec4942",
+      "full": 0.5,
+      "blank": 0,
+      "oneWrong": 0
+    },
+    {
+      "id": "contrast-03",
+      "family": "contrast",
+      "kind": "clarify",
+      "version": "39b37c7a438840920bcf881c2fe250cc101ed463be0df223ec0ff1d60a8aa272",
+      "full": 0.5,
+      "blank": 0,
+      "oneWrong": 0
+    },
+    {
+      "id": "contrast-04",
+      "family": "contrast",
+      "kind": "clarify",
+      "version": "c3761dc894d145458ce6db0e04a89aa6105f5bd1c215fa7f9d74617649b39c69",
+      "full": 0.5,
+      "blank": 0,
+      "oneWrong": 0
+    },
+    {
+      "id": "contrast-05",
+      "family": "contrast",
+      "kind": "clarify",
+      "version": "fe83c2382e9c61af5e1d7f5540dfdab41fe1eb938ffbca4c94da16a2d79b5179",
+      "full": 0.5,
+      "blank": 0,
+      "oneWrong": 0
+    },
+    {
+      "id": "contrast-06",
+      "family": "contrast",
+      "kind": "other",
+      "version": "0418632c3deb635b18dfa3adfb1f645788bdc3cacdaf8d89a3124f668a074790",
+      "full": 0.5,
+      "blank": 0,
+      "oneWrong": 0
+    },
+    {
+      "id": "contrast-07",
+      "family": "contrast",
+      "kind": "other",
+      "version": "05d6ce7608833a7f1c9762299bab8c15e90b62fb7e35293b82dca490b1fd2c31",
+      "full": 0.5,
+      "blank": 0,
+      "oneWrong": 0
+    },
+    {
+      "id": "contrast-08",
+      "family": "contrast",
+      "kind": "other",
+      "version": "6f92a5c524346f44e8e133c5042e8bb1aeb5c4b90d42c6365dab5681ca6caf2b",
+      "full": 0.5,
+      "blank": 0,
+      "oneWrong": 0
+    },
+    {
+      "id": "contrast-09",
+      "family": "contrast",
+      "kind": "other",
+      "version": "a1f8fc757a0c0158118c387b3223a42ee861b003753697e36776488e8c75cd9e",
+      "full": 0.5,
+      "blank": 0,
+      "oneWrong": 0
+    },
+    {
+      "id": "contrast-10",
+      "family": "contrast",
+      "kind": "other",
+      "version": "0c0bf4f57d70b93caefd6c8ad824686a0f0080863fcb7409a4d23bcb7a2cf0f8",
+      "full": 0.5,
+      "blank": 0,
+      "oneWrong": 0
+    }
+  ]
+}

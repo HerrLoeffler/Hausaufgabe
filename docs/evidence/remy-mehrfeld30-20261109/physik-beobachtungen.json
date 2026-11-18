@@ -1,0 +1,93 @@
+{
+  "group": "physik-beobachtungen",
+  "requestId": "gc-remy-mehrfeld30-20261109-physik-beobachtungen",
+  "input": {
+    "clientRequestId": "gc-remy-mehrfeld30-20261109-physik-beobachtungen",
+    "subject": "Physik",
+    "grade": "7",
+    "schoolType": "Mittelschule",
+    "region": "Bayern",
+    "topic": "Vom Experiment zum Zustandsübergang",
+    "learningGoals": [
+      "Zustandsübergänge anhand unterschiedlicher Angaben in Mehrfeldtabellen anwenden."
+    ],
+    "notes": "Vier normale Mehrfeldtabellen, kein Dreisatz. Aufgaben mit vier verschiedenen Lernhandlungen: 1 Wärmezufuhr oder Wärmeabgabe anhand gegebener Übergangsrichtungen auswählen und eintragen, 2 zwei offene Zustandsangaben zum beschlagenen Spiegel ergänzen, 3 die Richtung des Übergangs aus Messbeobachtungen beim Kerzenwachs rekonstruieren, 4 fest, flüssig und gasförmig bei gegebenem Stoffzustand vor und nach Abkühlung von Dampf unterscheiden. Unterschiedliche Kombinationen an Lücken und Antworten. Zeilen mit Ausgang → Ziel. Je 2–5 Lücken.",
+    "count": 4,
+    "points": 10,
+    "allowedTypes": [
+      "visual"
+    ],
+    "allowedVisualFormats": [
+      "table"
+    ],
+    "imageMode": "none",
+    "audioMode": "none",
+    "materials": [],
+    "materialMode": "inspiration"
+  },
+  "status": "ready",
+  "startedAt": "2026-11-09T21:39:55.364Z",
+  "jobId": "3c9a71f32babbee43a25bd721f36469a06f31542",
+  "stage": "ready",
+  "errorReference": null,
+  "errorDetails": null,
+  "usage": {
+    "total_tokens": 25268,
+    "input_tokens": 18524,
+    "output_tokens": 6744,
+    "providerRequests": [
+      {
+        "responseId": "resp_01ee0520fb9f2ecb016af23dacd49c87d2af250335e7873da7",
+        "requestId": "req_2958f269a02e453494ce5c2f95e23710",
+        "model": "gpt-5.6-luna",
+        "durationMs": 28705,
+        "phase": "testify_test_v2"
+      },
+      {
+        "responseId": "resp_09b4a670abdec7ff016af23dc992e487d299818a0cb29f6a13",
+        "requestId": "req_cd8bed54148044efabc77033432f98d0",
+        "model": "gpt-5.6-luna",
+        "durationMs": 4355,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_03cbbe07350fb997016af23dc9954887d29e2b62d7c3ec6fa8",
+        "requestId": "req_45033d04f8e84d99a3329017d5095c2e",
+        "model": "gpt-5.6-luna",
+        "durationMs": 3068,
+        "phase": "testify_recipe_blind_solution_v1"
+      },
+      {
+        "responseId": "resp_0f3096e49c10ee8a016af23dcdf3cc87d2aa90aacaa1b7e723",
+        "requestId": "req_c8158252e41d43068487ceaafeb9cb77",
+        "model": "gpt-5.6-luna",
+        "durationMs": 18333,
+        "phase": "testify_test_question_replacement_v2"
+      },
+      {
+        "responseId": "resp_0f5b914b266dd5e6016af23de046d487d2b7c4f20dd8e5ca56",
+        "requestId": "req_13398c5f68e743e9a63eddb04709420f",
+        "model": "gpt-5.6-luna",
+        "durationMs": 3095,
+        "phase": "testify_quality_review_v3"
+      },
+      {
+        "responseId": "resp_0a24ddadfbe34bcb016af23de04d3c87d29c188335a8c2d2f0",
+        "requestId": "req_c2867969209248d3a4d1cd4d93d734f8",
+        "model": "gpt-5.6-luna",
+        "durationMs": 2130,
+        "phase": "testify_recipe_blind_solution_v1"
+      }
+    ]
+  },
+  "completedAt": "2026-11-09T21:40:52.432Z",
+  "quizId": "EBN2AMBS",
+  "count": 4,
+  "pointSum": 10,
+  "layouts": [
+    "table",
+    "table",
+    "table",
+    "table"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "at": "2026-11-18T17:51:34.764Z",
+  "project": "gradecrew-staging-2026",
+  "channel": "remy-mehrfeld30",
+  "expires": "2026-12-18",
+  "totalFunctions": 98,
+  "otherFunctionsUnchanged": 97,
+  "ownedFunction": "remyMehrfeld30Review",
+  "functionSourceHash": "b1d739bbe368d8c8e0bfd6645be1979d47d05d0a",
+  "verifiedAssets": [
+    {
+      "file": "index.html",
+      "sha256": "f3f1b62e797057b4e488c95a893d3f674a78bd1b8010b56a742f8969878a3089"
+    },
+    {
+      "file": "pilot.css",
+      "sha256": "d47ba43481acda51fdcacfbc2c5184cbf23a7cfb47f710827840846e061ed38b"
+    },
+    {
+      "file": "pilot.mjs",
+      "sha256": "af3b3fdf85165ca85da882424f3a4388683fc96cef25538b2887c68c512824dc"
+    },
+    {
+      "file": "dictation.mjs",
+      "sha256": "0ba4379284c10e2ded3d2ad703cc82c80472250fedf20efb564e61821df30bb4"
+    },
+    {
+      "file": "recipe-view.mjs",
+      "sha256": "79feaa91f1a88039570b03680a2bef2f61bc29e34b3a9546e8178d0ff69432d9"
+    },
+    {
+      "file": "rhythm-view.mjs",
+      "sha256": "87f7dfc8a92a9cfc1a67cc6ddb1ece25873d4dd92c7dcdee0105e886faa522c6"
+    },
+    {
+      "file": "pitch-view.mjs",
+      "sha256": "e25edba3ab661c79903c3368b892427d5a45933e2e5e7c7e853dc3bab26af092"
+    },
+    {
+      "file": "firebase-config.js",
+      "sha256": "be50a258fe5d6f0c9ddf6e3a9f1ddfd369c7c0623e3a434427189bdd89d80cf8"
+    },
+    {
+      "file": "visual/visual.css",
+      "sha256": "fba37d5355d43a1a0a24217b60f036414cd45ab5fe633e027d039fab1b5e0bf5"
+    },
+    {
+      "file": "visual/core.js",
+      "sha256": "cf4ea8cd0a3915bf0978312e4166238c0ab68703ba9160a1517fbaca91587548"
+    },
+    {
+      "file": "visual/legacy-core.js",
+      "sha256": "412d66b342e5c38d984000b6ea320afc54d286507052a040e9bd7543b5c91d86"
+    },
+    {
+      "file": "visual/renderers.js",
+      "sha256": "4b38dce54d62abc58c181f456154982c77dc9a91697d139a77e216288adf1822"
+    },
+    {
+      "file": "visual/sequence-illustrations.js",
+      "sha256": "1009287a33dc6794ff699f73b2badd379774b835bb82b03ccd41d30f53ed278f"
+    },
+    {
+      "file": "visual/assets/cosmos-botanical-v1.png",
+      "sha256": "933516049c325b931057a485a0ea1107f932abdf83d6772d3735cc4cb053c30e"
+    }
+  ],
+  "canonicalHostingChanged": false,
+  "productionChanged": false,
+  "rulesChanged": false
+}

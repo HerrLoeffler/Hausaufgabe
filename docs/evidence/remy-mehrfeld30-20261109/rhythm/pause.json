@@ -1,0 +1,58 @@
+{
+  "requestId": "bc2fa93c-1602-45c8-94f9-24b88c297851",
+  "wish": "Meine Klasse 6 soll einen 3/4-Takt hören. Leichte Hörstufe mit sichtbaren Noten und leisem Zählpuls. Genau eine Lücke, eine Viertelpause am Anfang des Takts.",
+  "status": "ready",
+  "quizId": "wish3:bc2fa93c-1602-45c8-94f9-24b88c297851",
+  "task": {
+    "quizId": "wish3:bc2fa93c-1602-45c8-94f9-24b88c297851",
+    "group": "eigener",
+    "id": "wish",
+    "type": "rhythm",
+    "text": "Höre zuerst den Einzähler, dann den Takt. Achte auf die markierten Stellen und setze eine Note oder Pause ein.",
+    "points": 0.5,
+    "heading": "3/4-Takt hören",
+    "subject": "Musik · Rhythmus hören",
+    "rhythm": {
+      "meter": 3,
+      "bpm": 72,
+      "level": "Mit Notenbild und Zählpuls",
+      "slots": [
+        {
+          "gap": "g0"
+        },
+        {
+          "symbol": "n1"
+        },
+        {
+          "symbol": "n1"
+        },
+        {
+          "symbol": "n2"
+        }
+      ],
+      "symbols": [
+        "n1",
+        "n2",
+        "n4",
+        "r1",
+        "r2",
+        "r4"
+      ]
+    },
+    "options": [],
+    "version": "98f0c534d6f3b14813c1d39f9d60b3a6824283d82c9750c8145b8b93169759c1",
+    "review": null
+  },
+  "verified": {
+    "audioDuration": 5,
+    "bytes": 40044,
+    "independentAudioAnalysis": true,
+    "heardSymbols": [
+      "r2"
+    ],
+    "full": 0.5,
+    "wrongKind": 0,
+    "blank": 0,
+    "stableIdReplayed": true
+  }
+}

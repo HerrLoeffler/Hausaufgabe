@@ -1,0 +1,65 @@
+{
+  "at": "2026-11-18T17:51:11.429Z",
+  "anonymousDenied": true,
+  "previous60Preserved": true,
+  "cases": [
+    {
+      "id": "graph-percent",
+      "kind": "direct",
+      "full": 3,
+      "blank": 0,
+      "oneWrong": 2.5,
+      "version": "a539106a438eba29186e8a97eade071ac8ec74446960ee65c0834eecabccd4ec"
+    },
+    {
+      "id": "graph-inverse",
+      "kind": "inverse",
+      "full": 2,
+      "blank": 0,
+      "oneWrong": 1.5,
+      "version": "45b26156ca0cf07bea7e850cd3f03da5a9f575e81b801829518bf831786ed22f"
+    },
+    {
+      "id": "graph-basefee",
+      "kind": "chain",
+      "full": 1,
+      "blank": 0,
+      "oneWrong": 0.5,
+      "version": "dfc890d6304173ebaff27fde8e1519d939c19262ad3fd897c6c07851fb4cf609"
+    },
+    {
+      "id": "graph-english",
+      "kind": "chain",
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1,
+      "version": "940e52e17cd434c253b3662534557188d2d6430e8158413233d71d66a23d7a61"
+    },
+    {
+      "id": "graph-biology",
+      "kind": "chain",
+      "full": 1,
+      "blank": 0,
+      "oneWrong": 0.5,
+      "version": "25f1a08b0d6eb4669fc1f6c232f5bcc57c2111de803c55dda8f28231fb60a6b3"
+    },
+    {
+      "id": "graph-arguments",
+      "kind": "mapping",
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1,
+      "version": "18ed2b953f7a97dc9957ca5394d868980a2711222b40e5781753ddc2862bf043"
+    },
+    {
+      "id": "graph-clarify",
+      "kind": "clarify",
+      "ungraded": true
+    },
+    {
+      "id": "graph-decline",
+      "kind": "decline",
+      "ungraded": true
+    }
+  ]
+}

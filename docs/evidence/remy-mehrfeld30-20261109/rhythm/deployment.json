@@ -1,0 +1,47 @@
+{
+  "scope": "isolated_preview_only",
+  "project": "gradecrew-staging-2026",
+  "source": "cb815e920b0e98d00229169b709beaeaf620903d",
+  "preview": "https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/",
+  "expiresAt": "2026-12-10T13:19:33.992195694Z",
+  "functions": {
+    "count": 97,
+    "otherUnchanged": 96,
+    "pilotHash": "b43b19189538474304e05e33a6250cc3eaf8de65"
+  },
+  "assetHashes": {
+    "index.html": "f1c765b5627a39af19910ba7d7fe39a916f744b7465658f32fa7456dd8cd937a",
+    "pilot.css": "66eda9856505349b0027e03f35ec73db7647da652117c6025eee41694d8ef1aa",
+    "pilot.mjs": "13fdb5605058c47dd2e7346e09c245cb18e0163c241b32687b9fd1da761d1f3c",
+    "recipe-view.mjs": "79feaa91f1a88039570b03680a2bef2f61bc29e34b3a9546e8178d0ff69432d9",
+    "rhythm-view.mjs": "87f7dfc8a92a9cfc1a67cc6ddb1ece25873d4dd92c7dcdee0105e886faa522c6",
+    "firebase-config.js": "be50a258fe5d6f0c9ddf6e3a9f1ddfd369c7c0623e3a434427189bdd89d80cf8",
+    "visual/visual.css": "fba37d5355d43a1a0a24217b60f036414cd45ab5fe633e027d039fab1b5e0bf5",
+    "visual/core.js": "cf4ea8cd0a3915bf0978312e4166238c0ab68703ba9160a1517fbaca91587548",
+    "visual/legacy-core.js": "412d66b342e5c38d984000b6ea320afc54d286507052a040e9bd7543b5c91d86",
+    "visual/renderers.js": "6a96bdd138bc71f91b64eeed454bb66adcbc297302d8915d04930881affd32d3"
+  },
+  "usage": {
+    "pause": {
+      "model": "gpt-5.6-luna",
+      "tokens": 1015,
+      "responseId": "resp_023364e0c379e52b016af31a0055f487d294e6cd564c199cbe",
+      "providerRequestId": "req_8e05604786c24d21a3bfc3e0491beb2e"
+    },
+    "diktat": {
+      "model": "gpt-5.6-luna",
+      "tokens": 1193,
+      "responseId": "resp_09ff85606c009a14016af31a01192c87d2acc36a386c57bec6",
+      "providerRequestId": "req_4bacdb857c2b4646ac318aecf63f8b7a"
+    }
+  },
+  "ui": {
+    "mediaDuration": 6.666625,
+    "playPositionAfterUserGesture": 2.317419,
+    "mediaError": null,
+    "insertedSymbol": "Viertelpause",
+    "score": 0.5,
+    "maxPoints": 0.5,
+    "hardReferenceVisible": true
+  }
+}

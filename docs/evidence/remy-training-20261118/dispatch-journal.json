@@ -1,0 +1,890 @@
+{
+  "scope": "Recovery journal for this synthetic pilot. Complete provider histories remain in Firestore.",
+  "entries": {
+    "next-contrast-01.json": {
+      "at": "2026-11-18T16:17:16.758Z",
+      "action": "step",
+      "caseId": "contrast-01",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-contrast-02.json": {
+      "at": "2026-11-18T16:17:19.128Z",
+      "action": "step",
+      "caseId": "contrast-02",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-contrast-03.json": {
+      "at": "2026-11-18T16:17:26.458Z",
+      "action": "step",
+      "caseId": "contrast-03",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-contrast-04.json": {
+      "at": "2026-11-18T16:17:24.968Z",
+      "action": "step",
+      "caseId": "contrast-04",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-contrast-05.json": {
+      "at": "2026-11-18T16:17:41.000Z",
+      "action": "step",
+      "caseId": "contrast-05",
+      "status": "generated",
+      "attempt": 2
+    },
+    "next-contrast-06.json": {
+      "at": "2026-11-18T16:17:38.500Z",
+      "action": "step",
+      "caseId": "contrast-06",
+      "status": "generated",
+      "attempt": 2
+    },
+    "next-contrast-07.json": {
+      "at": "2026-11-18T16:17:50.658Z",
+      "action": "step",
+      "caseId": "contrast-07",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-contrast-08.json": {
+      "at": "2026-11-18T16:25:12.690Z",
+      "action": "step",
+      "caseId": "contrast-08",
+      "status": "generated",
+      "attempt": 3
+    },
+    "next-contrast-09.json": {
+      "at": "2026-11-18T16:18:08.639Z",
+      "action": "step",
+      "caseId": "contrast-09",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-contrast-10.json": {
+      "at": "2026-11-18T16:27:33.772Z",
+      "action": "step",
+      "caseId": "contrast-10",
+      "status": "generated",
+      "attempt": 3
+    },
+    "next-direct-01.json": {
+      "at": "2026-11-18T16:07:42.744Z",
+      "action": "step",
+      "caseId": "direct-01",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-02.json": {
+      "at": "2026-11-18T16:07:42.832Z",
+      "action": "step",
+      "caseId": "direct-02",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-03.json": {
+      "at": "2026-11-18T16:08:17.351Z",
+      "action": "step",
+      "caseId": "direct-03",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-04.json": {
+      "at": "2026-11-18T16:14:36.975Z",
+      "action": "step",
+      "caseId": "direct-04",
+      "status": "generated",
+      "attempt": 3
+    },
+    "next-direct-05.json": {
+      "at": "2026-11-18T16:14:40.514Z",
+      "action": "step",
+      "caseId": "direct-05",
+      "status": "generated",
+      "attempt": 3
+    },
+    "next-direct-06.json": {
+      "at": "2026-11-18T16:08:42.643Z",
+      "action": "step",
+      "caseId": "direct-06",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-07.json": {
+      "at": "2026-11-18T16:09:06.371Z",
+      "action": "step",
+      "caseId": "direct-07",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-08.json": {
+      "at": "2026-11-18T16:09:05.845Z",
+      "action": "step",
+      "caseId": "direct-08",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-09.json": {
+      "at": "2026-11-18T16:14:44.425Z",
+      "action": "step",
+      "caseId": "direct-09",
+      "status": "generated",
+      "attempt": 3
+    },
+    "next-direct-10.json": {
+      "at": "2026-11-18T16:14:44.536Z",
+      "action": "step",
+      "caseId": "direct-10",
+      "status": "generated",
+      "attempt": 3
+    },
+    "next-direct-11.json": {
+      "at": "2026-11-18T16:09:40.191Z",
+      "action": "step",
+      "caseId": "direct-11",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-12.json": {
+      "at": "2026-11-18T16:09:39.564Z",
+      "action": "step",
+      "caseId": "direct-12",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-13.json": {
+      "at": "2026-11-18T16:09:47.563Z",
+      "action": "step",
+      "caseId": "direct-13",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-14.json": {
+      "at": "2026-11-18T16:14:49.024Z",
+      "action": "step",
+      "caseId": "direct-14",
+      "status": "generated",
+      "attempt": 3
+    },
+    "next-direct-15.json": {
+      "at": "2026-11-18T16:10:10.874Z",
+      "action": "step",
+      "caseId": "direct-15",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-16.json": {
+      "at": "2026-11-18T16:10:11.292Z",
+      "action": "step",
+      "caseId": "direct-16",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-17.json": {
+      "at": "2026-11-18T16:10:18.326Z",
+      "action": "step",
+      "caseId": "direct-17",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-18.json": {
+      "at": "2026-11-18T16:10:18.825Z",
+      "action": "step",
+      "caseId": "direct-18",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-19.json": {
+      "at": "2026-11-18T16:14:53.340Z",
+      "action": "step",
+      "caseId": "direct-19",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-direct-20.json": {
+      "at": "2026-11-18T16:14:53.360Z",
+      "action": "step",
+      "caseId": "direct-20",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-01.json": {
+      "at": "2026-11-18T16:15:02.526Z",
+      "action": "step",
+      "caseId": "inverse-01",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-02.json": {
+      "at": "2026-11-18T16:15:00.975Z",
+      "action": "step",
+      "caseId": "inverse-02",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-03.json": {
+      "at": "2026-11-18T16:15:09.470Z",
+      "action": "step",
+      "caseId": "inverse-03",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-04.json": {
+      "at": "2026-11-18T16:15:08.903Z",
+      "action": "step",
+      "caseId": "inverse-04",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-05.json": {
+      "at": "2026-11-18T16:15:18.224Z",
+      "action": "step",
+      "caseId": "inverse-05",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-06.json": {
+      "at": "2026-11-18T16:15:16.427Z",
+      "action": "step",
+      "caseId": "inverse-06",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-07.json": {
+      "at": "2026-11-18T16:15:25.546Z",
+      "action": "step",
+      "caseId": "inverse-07",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-08.json": {
+      "at": "2026-11-18T16:15:25.184Z",
+      "action": "step",
+      "caseId": "inverse-08",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-09.json": {
+      "at": "2026-11-18T16:15:35.172Z",
+      "action": "step",
+      "caseId": "inverse-09",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-10.json": {
+      "at": "2026-11-18T16:15:32.771Z",
+      "action": "step",
+      "caseId": "inverse-10",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-11.json": {
+      "at": "2026-11-18T16:25:12.657Z",
+      "action": "step",
+      "caseId": "inverse-11",
+      "status": "generated",
+      "attempt": 3
+    },
+    "next-inverse-12.json": {
+      "at": "2026-11-18T16:15:43.951Z",
+      "action": "step",
+      "caseId": "inverse-12",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-13.json": {
+      "at": "2026-11-18T16:16:04.929Z",
+      "action": "step",
+      "caseId": "inverse-13",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-14.json": {
+      "at": "2026-11-18T16:16:06.535Z",
+      "action": "step",
+      "caseId": "inverse-14",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-15.json": {
+      "at": "2026-11-18T16:16:15.456Z",
+      "action": "step",
+      "caseId": "inverse-15",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-16.json": {
+      "at": "2026-11-18T16:16:12.820Z",
+      "action": "step",
+      "caseId": "inverse-16",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-17.json": {
+      "at": "2026-11-18T16:16:22.381Z",
+      "action": "step",
+      "caseId": "inverse-17",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-18.json": {
+      "at": "2026-11-18T16:16:25.042Z",
+      "action": "step",
+      "caseId": "inverse-18",
+      "status": "generated",
+      "attempt": 2
+    },
+    "next-inverse-19.json": {
+      "at": "2026-11-18T16:16:33.267Z",
+      "action": "step",
+      "caseId": "inverse-19",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-inverse-20.json": {
+      "at": "2026-11-18T16:16:34.314Z",
+      "action": "step",
+      "caseId": "inverse-20",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-percent-01.json": {
+      "at": "2026-11-18T16:16:41.028Z",
+      "action": "step",
+      "caseId": "percent-01",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-percent-02.json": {
+      "at": "2026-11-18T16:16:40.220Z",
+      "action": "step",
+      "caseId": "percent-02",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-percent-03.json": {
+      "at": "2026-11-18T16:16:49.569Z",
+      "action": "step",
+      "caseId": "percent-03",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-percent-04.json": {
+      "at": "2026-11-18T16:16:47.339Z",
+      "action": "step",
+      "caseId": "percent-04",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-percent-05.json": {
+      "at": "2026-11-18T16:16:55.734Z",
+      "action": "step",
+      "caseId": "percent-05",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-percent-06.json": {
+      "at": "2026-11-18T16:16:55.755Z",
+      "action": "step",
+      "caseId": "percent-06",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-percent-07.json": {
+      "at": "2026-11-18T16:17:01.777Z",
+      "action": "step",
+      "caseId": "percent-07",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-percent-08.json": {
+      "at": "2026-11-18T16:17:02.834Z",
+      "action": "step",
+      "caseId": "percent-08",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-percent-09.json": {
+      "at": "2026-11-18T16:17:10.116Z",
+      "action": "step",
+      "caseId": "percent-09",
+      "status": "generated",
+      "attempt": 1
+    },
+    "next-percent-10.json": {
+      "at": "2026-11-18T16:17:08.505Z",
+      "action": "step",
+      "caseId": "percent-10",
+      "status": "generated",
+      "attempt": 1
+    },
+    "latest-contrast-01.json": {
+      "at": "2026-11-18T16:17:19.369Z",
+      "caseId": "contrast-01",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-contrast-02.json": {
+      "at": "2026-11-18T16:17:22.090Z",
+      "caseId": "contrast-02",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-contrast-03.json": {
+      "at": "2026-11-18T16:17:29.444Z",
+      "caseId": "contrast-03",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-contrast-04.json": {
+      "at": "2026-11-18T16:17:27.495Z",
+      "caseId": "contrast-04",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-contrast-05.json": {
+      "at": "2026-11-18T16:17:44.035Z",
+      "caseId": "contrast-05",
+      "status": "ready",
+      "attempt": 2,
+      "errors": []
+    },
+    "latest-contrast-06.json": {
+      "at": "2026-11-18T16:17:41.235Z",
+      "caseId": "contrast-06",
+      "status": "ready",
+      "attempt": 2,
+      "errors": []
+    },
+    "latest-contrast-07.json": {
+      "at": "2026-11-18T16:17:53.047Z",
+      "caseId": "contrast-07",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-contrast-08.json": {
+      "at": "2026-11-18T16:25:16.570Z",
+      "caseId": "contrast-08",
+      "status": "ready",
+      "attempt": 3,
+      "errors": []
+    },
+    "latest-contrast-09.json": {
+      "at": "2026-11-18T16:18:11.384Z",
+      "caseId": "contrast-09",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-contrast-10.json": {
+      "at": "2026-11-18T16:27:37.987Z",
+      "caseId": "contrast-10",
+      "status": "ready",
+      "attempt": 3,
+      "errors": []
+    },
+    "latest-direct-01.json": {
+      "at": "2026-11-18T16:07:47.419Z",
+      "caseId": "direct-01",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-02.json": {
+      "at": "2026-11-18T16:07:47.723Z",
+      "caseId": "direct-02",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-03.json": {
+      "at": "2026-11-18T16:08:20.755Z",
+      "caseId": "direct-03",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-04.json": {
+      "at": "2026-11-18T16:14:39.991Z",
+      "caseId": "direct-04",
+      "status": "ready",
+      "attempt": 3,
+      "errors": []
+    },
+    "latest-direct-05.json": {
+      "at": "2026-11-18T16:14:43.810Z",
+      "caseId": "direct-05",
+      "status": "ready",
+      "attempt": 3,
+      "errors": []
+    },
+    "latest-direct-06.json": {
+      "at": "2026-11-18T16:08:45.724Z",
+      "caseId": "direct-06",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-07.json": {
+      "at": "2026-11-18T16:09:09.589Z",
+      "caseId": "direct-07",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-08.json": {
+      "at": "2026-11-18T16:09:10.037Z",
+      "caseId": "direct-08",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-09.json": {
+      "at": "2026-11-18T16:14:47.786Z",
+      "caseId": "direct-09",
+      "status": "ready",
+      "attempt": 3,
+      "errors": []
+    },
+    "latest-direct-10.json": {
+      "at": "2026-11-18T16:14:48.258Z",
+      "caseId": "direct-10",
+      "status": "ready",
+      "attempt": 3,
+      "errors": []
+    },
+    "latest-direct-11.json": {
+      "at": "2026-11-18T16:09:43.512Z",
+      "caseId": "direct-11",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-12.json": {
+      "at": "2026-11-18T16:09:42.824Z",
+      "caseId": "direct-12",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-13.json": {
+      "at": "2026-11-18T16:09:51.020Z",
+      "caseId": "direct-13",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-14.json": {
+      "at": "2026-11-18T16:14:52.400Z",
+      "caseId": "direct-14",
+      "status": "ready",
+      "attempt": 3,
+      "errors": []
+    },
+    "latest-direct-15.json": {
+      "at": "2026-11-18T16:10:13.777Z",
+      "caseId": "direct-15",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-16.json": {
+      "at": "2026-11-18T16:10:15.110Z",
+      "caseId": "direct-16",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-17.json": {
+      "at": "2026-11-18T16:10:21.468Z",
+      "caseId": "direct-17",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-18.json": {
+      "at": "2026-11-18T16:10:22.389Z",
+      "caseId": "direct-18",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-19.json": {
+      "at": "2026-11-18T16:14:56.471Z",
+      "caseId": "direct-19",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-direct-20.json": {
+      "at": "2026-11-18T16:14:57.431Z",
+      "caseId": "direct-20",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-01.json": {
+      "at": "2026-11-18T16:15:05.643Z",
+      "caseId": "inverse-01",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-02.json": {
+      "at": "2026-11-18T16:15:04.493Z",
+      "caseId": "inverse-02",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-03.json": {
+      "at": "2026-11-18T16:15:12.891Z",
+      "caseId": "inverse-03",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-04.json": {
+      "at": "2026-11-18T16:15:12.893Z",
+      "caseId": "inverse-04",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-05.json": {
+      "at": "2026-11-18T16:15:21.380Z",
+      "caseId": "inverse-05",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-06.json": {
+      "at": "2026-11-18T16:15:19.306Z",
+      "caseId": "inverse-06",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-07.json": {
+      "at": "2026-11-18T16:15:28.441Z",
+      "caseId": "inverse-07",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-08.json": {
+      "at": "2026-11-18T16:15:28.155Z",
+      "caseId": "inverse-08",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-09.json": {
+      "at": "2026-11-18T16:15:38.689Z",
+      "caseId": "inverse-09",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-10.json": {
+      "at": "2026-11-18T16:15:36.167Z",
+      "caseId": "inverse-10",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-11.json": {
+      "at": "2026-11-18T16:25:17.173Z",
+      "caseId": "inverse-11",
+      "status": "ready",
+      "attempt": 3,
+      "errors": []
+    },
+    "latest-inverse-12.json": {
+      "at": "2026-11-18T16:15:46.844Z",
+      "caseId": "inverse-12",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-13.json": {
+      "at": "2026-11-18T16:16:07.897Z",
+      "caseId": "inverse-13",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-14.json": {
+      "at": "2026-11-18T16:16:09.639Z",
+      "caseId": "inverse-14",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-15.json": {
+      "at": "2026-11-18T16:16:18.428Z",
+      "caseId": "inverse-15",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-16.json": {
+      "at": "2026-11-18T16:16:16.203Z",
+      "caseId": "inverse-16",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-17.json": {
+      "at": "2026-11-18T16:16:25.371Z",
+      "caseId": "inverse-17",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-18.json": {
+      "at": "2026-11-18T16:16:29.280Z",
+      "caseId": "inverse-18",
+      "status": "ready",
+      "attempt": 2,
+      "errors": []
+    },
+    "latest-inverse-19.json": {
+      "at": "2026-11-18T16:16:36.238Z",
+      "caseId": "inverse-19",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-inverse-20.json": {
+      "at": "2026-11-18T16:16:37.261Z",
+      "caseId": "inverse-20",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-percent-01.json": {
+      "at": "2026-11-18T16:16:44.143Z",
+      "caseId": "percent-01",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-percent-02.json": {
+      "at": "2026-11-18T16:16:43.083Z",
+      "caseId": "percent-02",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-percent-03.json": {
+      "at": "2026-11-18T16:16:52.389Z",
+      "caseId": "percent-03",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-percent-04.json": {
+      "at": "2026-11-18T16:16:50.090Z",
+      "caseId": "percent-04",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-percent-05.json": {
+      "at": "2026-11-18T16:16:58.609Z",
+      "caseId": "percent-05",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-percent-06.json": {
+      "at": "2026-11-18T16:16:58.289Z",
+      "caseId": "percent-06",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-percent-07.json": {
+      "at": "2026-11-18T16:17:04.568Z",
+      "caseId": "percent-07",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-percent-08.json": {
+      "at": "2026-11-18T16:17:05.570Z",
+      "caseId": "percent-08",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-percent-09.json": {
+      "at": "2026-11-18T16:17:13.623Z",
+      "caseId": "percent-09",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "latest-percent-10.json": {
+      "at": "2026-11-18T16:17:11.419Z",
+      "caseId": "percent-10",
+      "status": "ready",
+      "attempt": 1,
+      "errors": []
+    },
+    "recheck-contrast-08.json": {
+      "caseId": "contrast-08",
+      "requestId": "c5a0bf55-edab-418f-a195-c36428727a66",
+      "reason": "Die im Labor sichtbare Eignungsprobe prüft die Formatauswahl statt einer vollständig erzeugten Fachaufgabe, Quelle 23d59e2."
+    },
+    "recheck-contrast-10.json": {
+      "caseId": "contrast-10",
+      "requestId": "6f5e9c9e-c8b5-44bf-86dd-3e4a737f4d9c",
+      "reason": "Die im Labor sichtbare Eignungsprobe prüft die Formatauswahl statt einer vollständig erzeugten Fachaufgabe, Quelle 23d59e2."
+    },
+    "recheck-direct-04.json": {
+      "caseId": "direct-04",
+      "requestId": "9bd6ac99-474e-4b42-afa3-e0ced5ce1ce0",
+      "reason": "Korrigierte Beschreibung der tatsächlich sichtbaren freien Pfeilfelder und numerisches Prüferantwortformat, Quelle f20da23."
+    },
+    "recheck-direct-05.json": {
+      "caseId": "direct-05",
+      "requestId": "090f423f-9381-42a1-96fe-e4c20395a48d",
+      "reason": "Korrigierte Beschreibung der tatsächlich sichtbaren freien Pfeilfelder und numerisches Prüferantwortformat, Quelle f20da23."
+    },
+    "recheck-direct-09.json": {
+      "caseId": "direct-09",
+      "requestId": "51ba71ee-18da-4dd3-9418-9904539f68d4",
+      "reason": "Korrigierte Beschreibung der tatsächlich sichtbaren freien Pfeilfelder und numerisches Prüferantwortformat, Quelle f20da23."
+    },
+    "recheck-direct-10.json": {
+      "caseId": "direct-10",
+      "requestId": "9fb589c5-92e4-442f-84e1-13cab2c878bd",
+      "reason": "Korrigierte Beschreibung der tatsächlich sichtbaren freien Pfeilfelder und numerisches Prüferantwortformat, Quelle f20da23."
+    },
+    "recheck-direct-14.json": {
+      "caseId": "direct-14",
+      "requestId": "d255f281-83d9-4200-af02-b82381c1c80c",
+      "reason": "Korrigierte Beschreibung der tatsächlich sichtbaren freien Pfeilfelder und numerisches Prüferantwortformat, Quelle f20da23."
+    },
+    "recheck-direct-19.json": {
+      "caseId": "direct-19",
+      "requestId": "730260d0-ed53-4559-ae0c-365a26c7cd31",
+      "reason": "Korrigierte Beschreibung der tatsächlich sichtbaren freien Pfeilfelder und numerisches Prüferantwortformat, Quelle f20da23."
+    },
+    "recheck-inverse-11.json": {
+      "caseId": "inverse-11",
+      "requestId": "72469a90-a88f-4948-aae4-accc169992b4",
+      "reason": "Feste Gesamtseitenzahl statt fälschlich gleicher alter und neuer Rate als Voraussetzung, Quelle 23d59e2."
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-10T13:30:24.524Z",
+  "earlierDeckSizes": [
+    30,
+    12,
+    3,
+    3,
+    2
+  ],
+  "syntheticRatingsPreserved": true,
+  "rhythmReference": {
+    "id": "rhythm-dictation",
+    "version": "c352afa413bcfcb932783bc507171438a10f1ae1b58648655a0c2ff33fda2160",
+    "frequencyApproxHz": 260,
+    "fullScore": 1,
+    "missingCueCount": 2
+  }
+}

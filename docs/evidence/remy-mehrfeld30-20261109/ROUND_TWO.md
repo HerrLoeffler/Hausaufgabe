@@ -1,0 +1,38 @@
+# Remy-Aufgabenlabor · zweite Runde
+
+Task GC-EXTENDED-QUESTION-TYPES-01. Martin meldete, dass der erste Stapel zu viele gleichartige Aufgaben enthält. Auf der isolierten Testseite waren für sein freigegebenes Konto 23 aktuelle Bewertungen gespeichert. Alle 16 bewerteten Dreisatzaufgaben erhielten „Gut“. Von sieben bewerteten Physikaufgaben erhielten zwei „Gut“ und fünf „Überarbeiten“. Qualitatives Signal: kurze, konkrete Aufträge und Dropdowns für feste Fachbegriffe. Diese Stichprobe ist keine Erfolgsquote für die automatische Erstellung.
+
+Runde 2 umfasst zwölf redaktionell entworfene Referenzen aus elf Fächern und für unterschiedliche Lernhandlungen:
+
+| Fach | Aufgabe | Interaktion |
+| --- | --- | --- |
+| Mathematik | Einzeltickets oder Rabattkarte | Rechenwege verzweigen, Preise eingeben, Entscheidung auswählen |
+| Physik | Spiegel beschlägt und trocknet | Entgegengesetzte Übergänge aus einer Liste auswählen |
+| Geschichte | Fahrplan und Preisliste auswerten | Quellen mit den unmittelbar belegten Aussagen verbinden |
+| Deutsch | Mias Satz in indirekte Rede setzen | Pronomen wählen und Verbform selbst eintragen |
+| Biologie | Reflexbogen nachvollziehen | Fehlende Stationen einer Signalkette auswählen |
+| Informatik | Labyrinthregel anwenden | Wenn-dann-Verzweigung mit zwei Aktionen ausfüllen |
+| Hauswirtschaft | Obstsalat verteilen | Zutatenmassen zusammenführen und Portion berechnen |
+| Geografie | Wasser kehrt ins Meer zurück | Vorgänge in einem geschlossenen Kreislauf ergänzen |
+| Biologie | Kleines Nahrungsnetz | Vier Pfeile in der richtigen Richtung zeichnen |
+| Musik | Takte ergänzen | Fehlende Schläge eintragen |
+| Englisch | Wege beschreiben | Eine Auswahl und eine freie, tolerant bewertete Übersetzung |
+| Technik | Rauchmelder | Verbindungen eines Signalwegs beschriften |
+
+Pfeile zeigen je nach Fach Rechenoperation, Richtung, Signalübertragung, Zuordnung oder Übergang. Dropdowns sind für feste Begriffssätze, Zahlenfelder für berechenbare Werte und Freitext für produktive Formulierungen vorgesehen. Je richtigem Eingabefeld gibt es 0,5 Punkte. Zwei Aufgaben verwenden den bestehenden Renderer zum Zeichnen von Verbindungen. Die übrigen zehn verwenden einen gemeinsamen Datenvertrag für beschriftete Pfeile und Mehrfeldpfade.
+
+Die neue Runde hat eigene Aufgaben-IDs, Positionsspeicher und Bewertungsfingerabdrücke. Der ursprüngliche KI-Stapel und der freie KI-Wunsch bleiben im selben Labor erreichbar. Kein zusätzlicher bezahlter KI-Auftrag. Die zwölf Referenzen sind Testentwürfe; sie wurden nicht automatisch als Lehrkraftfreigabe oder als neue produktive Remy-Rezepte übernommen. Die nächste Rezeptprüfung sollte pro Lernhandlung mit einem eigenen Gegenbeispiel arbeiten und die Treffer je Rezept getrennt zählen.
+
+## Bereitstellung und Nachweis
+
+[Remy-Aufgabenlabor](https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/), bestehender isolierter Kanal, Quelle 5a8a383. Acht Hostingdateien mit Hash abgeglichen. Nur die bereits getrennte Bewertungsfunktion und der Vorschaukanal wurden aktualisiert. Zwölf lokale Tests grün. Synthetische Serverprobe: beide Stapel mit 30 und 12 Fällen, Schlüssel bleiben serverseitig, Voll-/Teilantwort 1,5 bzw. 0,5 Punkte, neues und altes Urteil erhalten. Im bereits angemeldeten Browser erschienen das Fahrkartenbeispiel, seine zwei Zahlenfelder und das Dropdown. Beim Wechsel zurück zeigte Runde 1 weiterhin 23/30 Bewertungen und Aufgabe 24; anschließend wurde Runde 2 wieder geöffnet.
+
+[Deploybeleg](round-two-deployment.json) · [Serverprobe](round-two-server.json). Noch offen: Lehrkraftfeedback zur zweiten Runde und spätere Übernahme geeigneter Rezepte in Remys freie Erstellung.
+
+## 10.11.2026 · Auswertung im Browser repariert
+
+Martin bewertete alle zwölf Aufgaben. Bei den zehn Mehrfeldaufgaben verhinderte ein Antwortobjekt ohne Prototyp nach der ersten Eingabe den Firebase-Aufruf. Der Firebase-Encoder nutzt `hasOwnProperty` am Objekt. Die erste Serverprobe hatte den fehlerhaften Browserpfad umgangen. Das Auswerten liest jetzt die aktuellen Formularwerte und übergibt ein gewöhnliches Objekt. Bei Verbindungsfehlern erscheint ein Hinweis neben dem Button.
+
+Der neue DOM-Test reproduzierte die fehlende Anfrage auf dem alten Stand. Danach prüfte er alle zwölf Aufgaben über die tatsächliche Oberfläche und das Firebase SDK mit kontrollierter Netzantwort, einschließlich Dropdowns, freiem Text, Zahlen, Verbindungen und Fehleranzeige. 13 Tests bestanden. Im isolierten Vorschaukanal wurde ausschließlich die Browserdatei aktualisiert. Acht Hashes abgeglichen. Im angemeldeten Browser ergaben zwei ausgefüllte Dropdowns beim Rauchmelder 1 von 1 Punkten, und 12/12 Smileys blieben sichtbar. [Auslieferungsbeleg](round-two-score-fix.json).
+
+Die zwölf Urteile teilen sich in sieben „Gut“ und fünf „Überarbeiten“. Vor der fachlichen Nutzung die Urteile vom technischen Fehler trennen. Als eigenständige Gestaltungshinweise bleiben ein klarerer Quellenauftrag, ein Bild für das Labyrinth und echte auswählbare Noten für den Musiktakt festgehalten.

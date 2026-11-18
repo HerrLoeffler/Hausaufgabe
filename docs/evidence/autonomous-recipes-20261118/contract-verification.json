@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-18T20:06:02.108Z",
+  "sharedBudgetMicros": 5000000,
+  "spentMicros": 785037,
+  "studySpentMicros": 723030,
+  "studyProviderCalls": 319,
+  "providerCalls": 344,
+  "allProviderOutcomesConfirmed": true,
+  "noNewCallsAfterCompletionReplay": true,
+  "contractsUnchangedWithinTrial": {
+    "generate": "bf863a000a8e35a658c9da56a59284aa580be62287eace473dabee047f0ddfe7",
+    "judge": "49b3b2bb1b55d78257a806d66c918a5bd5287e0032749ed9e14e6884bc878d0a",
+    "adversary": "426753e64f196a0e493a786861a627f6a2f122a9f647f0d1dc1d748d0b487d58"
+  },
+  "contractHashMethod": "Recursive sorted object keys; preserve array order. Firestore map key order is not semantic.",
+  "privateTeacherExamplesExcluded": true,
+  "biologicalReviewWishContainsNoPrivateTargetWords": true,
+  "optimizerModels": [
+    {
+      "step": "optimizer-v1",
+      "model": "gpt-6-luna",
+      "effort": "low"
+    },
+    {
+      "step": "optimizer-v2",
+      "model": "gpt-6.2-sol",
+      "effort": "medium"
+    }
+  ],
+  "actualModelWeightsTrained": false,
+  "dailySchedulerEnabled": false
+}

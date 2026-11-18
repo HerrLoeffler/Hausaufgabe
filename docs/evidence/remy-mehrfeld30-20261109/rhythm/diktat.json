@@ -1,0 +1,55 @@
+{
+  "requestId": "bc2fa93c-1602-45c8-94f9-24b88c297852",
+  "wish": "Erstelle ein schweres Rhythmusdiktat zum Hören für Klasse 8 im 4/4-Takt. Alle vorgegebenen Notenwerte ausblenden, kein Zählpuls im Takt nach dem Einzähler. Zwei Lücken, eine Viertelnote und eine Achtelpause.",
+  "status": "ready",
+  "quizId": "wish3:bc2fa93c-1602-45c8-94f9-24b88c297852",
+  "task": {
+    "quizId": "wish3:bc2fa93c-1602-45c8-94f9-24b88c297852",
+    "group": "eigener",
+    "id": "wish",
+    "type": "rhythm",
+    "text": "Höre zuerst den Einzähler, dann den Takt. Achte auf die markierten Stellen und setze je eine Note oder Pause ein.",
+    "points": 1,
+    "heading": "Schweres Rhythmusdiktat – 4/4",
+    "subject": "Musik · Rhythmus hören",
+    "rhythm": {
+      "meter": 4,
+      "bpm": 84,
+      "level": "Zwei Lücken ohne Zählpuls im Takt",
+      "slots": [
+        {
+          "gap": "g0"
+        },
+        {
+          "gap": "g1"
+        },
+        {},
+        {}
+      ],
+      "symbols": [
+        "n1",
+        "n2",
+        "n4",
+        "r1",
+        "r2",
+        "r4"
+      ]
+    },
+    "options": [],
+    "version": "bdc15409a4b217601a967043c06763b869f13fb13f52dc47d1748547a5ee7b32",
+    "review": null
+  },
+  "verified": {
+    "audioDuration": 5.71425,
+    "bytes": 45758,
+    "independentAudioAnalysis": true,
+    "heardSymbols": [
+      "n2",
+      "r1"
+    ],
+    "full": 1,
+    "wrongKind": 0.5,
+    "blank": 0,
+    "stableIdReplayed": true
+  }
+}

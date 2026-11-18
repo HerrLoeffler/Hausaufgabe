@@ -1,0 +1,82 @@
+{
+  "at": "2026-11-18T17:06:34.900Z",
+  "localSource": "242d23d",
+  "summaries": [
+    "Mathematik · Dreisatz mit KI erproben",
+    "Weitere Erprobungen · Quellen, Labyrinth und Musik",
+    "Früherer Versuch · Tabellen und Pfeile"
+  ],
+  "layouts": [
+    {
+      "width": 1280,
+      "bodyWidth": 1280,
+      "labels": [
+        {
+          "text": "Dein mathematischer Dreisatz-Auftrag",
+          "left": 207,
+          "right": 1073
+        },
+        {
+          "text": "Dein Quellen-, Labyrinth- oder Musikwunsch",
+          "left": 207,
+          "right": 1073
+        },
+        {
+          "text": "Dein Tabellen- oder Pfeilauftrag",
+          "left": 207,
+          "right": 1073
+        }
+      ]
+    },
+    {
+      "width": 820,
+      "bodyWidth": 820,
+      "labels": [
+        {
+          "text": "Dein mathematischer Dreisatz-Auftrag",
+          "left": 43.59375,
+          "right": 776.40625
+        },
+        {
+          "text": "Dein Quellen-, Labyrinth- oder Musikwunsch",
+          "left": 43.59375,
+          "right": 776.40625
+        },
+        {
+          "text": "Dein Tabellen- oder Pfeilauftrag",
+          "left": 43.59375,
+          "right": 776.40625
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "bodyWidth": 360,
+      "labels": [
+        {
+          "text": "Dein mathematischer Dreisatz-Auftrag",
+          "left": 33,
+          "right": 327
+        },
+        {
+          "text": "Dein Quellen-, Labyrinth- oder Musikwunsch",
+          "left": 33,
+          "right": 327
+        },
+        {
+          "text": "Dein Tabellen- oder Pfeilauftrag",
+          "left": 33,
+          "right": 327
+        }
+      ]
+    }
+  ],
+  "scope": "HTML entry labels only, no provider dispatch.",
+  "changedHostingFiles": [
+    "index.html"
+  ],
+  "verifiedHostingFiles": 13,
+  "runtimeChange": false,
+  "providerCalls": 0,
+  "preview": "https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/"
+}

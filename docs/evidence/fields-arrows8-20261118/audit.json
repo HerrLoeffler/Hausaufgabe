@@ -1,0 +1,93 @@
+{
+  "at": "2026-11-18T17:50:36.201Z",
+  "runId": "fields-arrows8-20261118-v1",
+  "spentMicros": 60509,
+  "reservedMicros": 0,
+  "providerCalls": 35,
+  "completedCalls": 35,
+  "tokens": {
+    "input": 44869,
+    "output": 10448
+  },
+  "cases": [
+    {
+      "id": "graph-arguments",
+      "family": "german",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "mapping",
+      "expected": "mapping",
+      "errors": [],
+      "reason": "Alle sechs kurzen, für Klasse 8 geeigneten Texte sind sichtbar. Jede Begründung stützt genau eine Behauptung, und die Pfeilrichtung ist klar vorgegeben, ohne die Zuordnung zu verraten."
+    },
+    {
+      "id": "graph-basefee",
+      "family": "mathematics",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "chain",
+      "expected": "chain",
+      "errors": [],
+      "reason": "Beide Rechenpfeile sind beschriftet: Die Multiplikation ergibt 14 Euro, danach führt die Addition der Grundgebühr zu 18 Euro. Keines der Ergebnisse ist vorgegeben."
+    },
+    {
+      "id": "graph-biology",
+      "family": "biology",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "chain",
+      "expected": "chain",
+      "errors": [],
+      "reason": "Die lineare Darstellung passt zum vereinfachten Reflexbogen. Der Auftrag erklärt die Pfeilrichtung als Richtung der Erregungsleitung. Die Feldbeschreibungen machen beide Zuordnungen eindeutig, ohne die gesuchten Begriffe vorwegzunehmen."
+    },
+    {
+      "id": "graph-clarify",
+      "family": "selection",
+      "status": "ready",
+      "attempt": 4,
+      "decision": "clarify",
+      "expected": "clarify",
+      "errors": [],
+      "reason": "Die Rückfrage klärt zuerst, welche Größen oder Elemente einander zugeordnet werden sollen, ohne eine Aufgabe zu erfinden."
+    },
+    {
+      "id": "graph-decline",
+      "family": "selection",
+      "status": "ready",
+      "attempt": 4,
+      "decision": "decline",
+      "expected": "decline",
+      "errors": [],
+      "reason": "Ein exakter Lösungsschlüssel würde mehrere gut begründete persönliche Positionen ausschließen. Die offene Schreibaufgabe mit Kriterien für These, Begründungen und Beispiele prüft das Lernziel, ohne eine Position vorzugeben."
+    },
+    {
+      "id": "graph-english",
+      "family": "english",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "chain",
+      "errors": [],
+      "reason": "Drei getrennte Pfeilwege verbinden jedes Ausgangsverb eindeutig mit einem freien Feld für seine einwortige Simple-Past-Form. Keine Lösung ist vorgegeben."
+    },
+    {
+      "id": "graph-inverse",
+      "family": "mathematics",
+      "status": "ready",
+      "attempt": 4,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Die Arbeitsmenge bleibt konstant. Die gegenläufigen Rechenpfeile führen von 24 Minuten bei drei Druckern über 72 Minuten bei einem Drucker zu 9 Minuten bei acht Druckern. Der vorgegebene Weg über 1 passt zu Klasse 7 und verrät die gesuchte Zeit nicht."
+    },
+    {
+      "id": "graph-percent",
+      "family": "mathematics",
+      "status": "ready",
+      "attempt": 4,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Der vorgegebene Weg über 1 % passt zur direkten Proportionalität. Beide Spalten haben eigene offene Pfeilfaktoren: zuerst durch 100 teilen, dann mit 15 multiplizieren. Die offenen Geldbeträge sind 2,40 € und 36 €."
+    }
+  ]
+}

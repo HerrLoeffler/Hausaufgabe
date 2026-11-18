@@ -1,0 +1,614 @@
+{
+  "at": "2026-11-18T16:28:16.946Z",
+  "runId": "dreisatz60-20261118-v1",
+  "spentMicros": 284971,
+  "reservedMicros": 0,
+  "providerCalls": 165,
+  "completedCalls": 165,
+  "tokens": {
+    "input": 142181,
+    "output": 27757
+  },
+  "cases": [
+    {
+      "id": "contrast-01",
+      "family": "contrast",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "other",
+      "expected": "other",
+      "errors": [],
+      "reason": "Die Fahrt kostet 4 € + 7 · 2 € = 18 €. Wegen der Grundgebühr sind die Gesamtkosten nicht proportional zur Strecke; auch das Produkt aus Strecke und Kosten ist nicht konstant. Daher ist die zweite Option richtig. Der Auftrag übernimmt alle Angaben und verrät weder den Preis noch die passende Vorgehensweise."
+    },
+    {
+      "id": "contrast-02",
+      "family": "contrast",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "other",
+      "expected": "other",
+      "errors": [],
+      "reason": "Die ersten fünf Hefte kosten zusammen 10 Euro, die drei weiteren zusammen 3 Euro. Insgesamt sind es 13 Euro. Wegen des wechselnden Stückpreises passt die zweite Option: Ein einfacher Dreisatz genügt nicht."
+    },
+    {
+      "id": "contrast-03",
+      "family": "contrast",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "clarify",
+      "expected": "clarify",
+      "errors": [],
+      "reason": "Der konstante Stückpreis legt ein proportionales Verhältnis fest. Ohne Stückpreis oder Gesamtpreis für eine bekannte Anzahl lässt sich der Preis für zehn Hefte aber nicht berechnen. Die Formatwahlfrage macht diese Unterscheidung eindeutig, ohne die richtige Option vorwegzunehmen."
+    },
+    {
+      "id": "contrast-04",
+      "family": "contrast",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "clarify",
+      "expected": "clarify",
+      "errors": [],
+      "reason": "Die 30 Minuten bestimmen nur die gemeinsame Druckleistung. Ohne weitere Angaben zu den Einzelleistungen lässt sich für keinen der beiden Drucker die Einzelzeit bestimmen. Damit ist die dritte Option eindeutig richtig."
+    },
+    {
+      "id": "contrast-05",
+      "family": "contrast",
+      "status": "ready",
+      "attempt": 2,
+      "decision": "clarify",
+      "expected": "clarify",
+      "errors": [],
+      "reason": "Die Angaben ergeben Stückpreise von 2 Euro und 3 Euro und widersprechen damit dem geforderten einheitlichen Stückpreis. Der Preis für zehn Hefte ist nicht bestimmbar; die dritte Option ist eindeutig richtig."
+    },
+    {
+      "id": "contrast-06",
+      "family": "contrast",
+      "status": "ready",
+      "attempt": 2,
+      "decision": "other",
+      "expected": "other",
+      "errors": [],
+      "reason": "Der erste Rabatt senkt den Preis auf 180 Euro. Der zweite Rabatt wird auf diese 180 Euro berechnet, sodass der Endpreis 162 Euro beträgt. Wegen der wechselnden Bezugsgröße passt die zweite Auswahloption. Der Auftrag nimmt weder den Endpreis noch die Formatentscheidung vorweg."
+    },
+    {
+      "id": "contrast-07",
+      "family": "contrast",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "other",
+      "expected": "other",
+      "errors": [],
+      "reason": "Die Aufgabe verwendet die gewünschte Formel und ergibt 68 °F. Wegen des Summanden 32 liegt weder ein konstantes Verhältnis noch ein konstantes Produkt vor. Daher ist die zweite Option eindeutig richtig, ohne dass die Aufgabenstellung die Auswahl vorwegnimmt."
+    },
+    {
+      "id": "contrast-08",
+      "family": "contrast",
+      "status": "ready",
+      "attempt": 3,
+      "decision": "other",
+      "expected": "other",
+      "errors": [],
+      "reason": "Als Eignungsprobe greift die Frage das Lernziel für Klasse 7 auf: Subjekt und Prädikat werden bestimmt und durch Pfeile zugeordnet. Dafür passt die zweite Option, weil eine Zuordnungsdarstellung statt eines Dreisatzes nötig ist. Für diese Formatentscheidung ist kein Beispielsatz erforderlich."
+    },
+    {
+      "id": "contrast-09",
+      "family": "contrast",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "other",
+      "expected": "other",
+      "errors": [],
+      "reason": "Alle Angaben bleiben erhalten. Die Fläche wächst quadratisch mit der Seitenlänge: 6 cm × 6 cm = 36 cm². Weder das Verhältnis noch das Produkt von Seitenlänge und Fläche ist konstant. Daher ist die zweite Option eindeutig richtig; der Titel verrät weder die Fläche noch die Formatentscheidung."
+    },
+    {
+      "id": "contrast-10",
+      "family": "contrast",
+      "status": "ready",
+      "attempt": 3,
+      "decision": "other",
+      "expected": "other",
+      "errors": [],
+      "reason": "Die Eignungsprobe trifft das Lernziel für Klasse 7: Zwei Quellen werden den Aussagen zugeordnet, die sie belegen. Die zweite Option ist eindeutig richtig, weil eine Zuordnungsdarstellung passt und keine Rechnung nötig ist. Für diese Formatentscheidung müssen die Quellen selbst nicht vorliegen."
+    },
+    {
+      "id": "direct-01",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Bei konstantem Stückpreis ist die Zuordnung direkt proportional. Die Tabelle führt korrekt auf beiden Seiten über ÷ 4 und × 10 zum Preis von 15 €. Der vorgegebene Rechenweg verrät das Ergebnis nicht."
+    },
+    {
+      "id": "direct-02",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Bei konstantem Kilopreis kosten 1 kg Äpfel 2,50 € und 7 kg somit 17,50 €. Die Spalten und Rechenschritte sind eindeutig. Die vorgegebenen Faktoren 2 und 7 gehören zum ausdrücklich verlangten Zwischenweg über 1 und verraten den gesuchten Preis nicht."
+    },
+    {
+      "id": "direct-03",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Bei gleich großen Portionen ist die Zuordnung direkt proportional. Auf beiden Seiten führt Teilen durch 100 zum Zwischenpaar 3 g und 0,04 Portionen. Der vorgegebene Faktor 250 führt dann zu 750 g und 10 Portionen. Der Zwischenweg ist für Klasse 7 lösbar und verrät das Endergebnis nicht."
+    },
+    {
+      "id": "direct-04",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 3,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Bei konstanter Geschwindigkeit sind Zeit und Strecke proportional. Der Rechenweg über 1 Stunde ist eindeutig: In beiden Spalten wird zuerst durch 2 geteilt und dann mit 5 multipliziert. Die Pfeilfelder nehmen jeweils Rechenzeichen und Faktor auf; das Endergebnis wird nicht vorweggenommen."
+    },
+    {
+      "id": "direct-05",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 3,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Bei gleicher Flaschenzahl pro Kiste ist die Zuordnung direkt proportional. Über 1 Kiste mit 6 Flaschen ergeben sich 48 Flaschen für 8 Kisten. Pfeile und Eingabefelder passen zum Rechenweg; das gemeinsame Feld unten links nimmt die vollständige Operation auf. Der vorgegebene Zwischenweg verrät das Endergebnis nicht."
+    },
+    {
+      "id": "direct-06",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Alle Angaben bleiben erhalten. Der Rechenweg über 1 Paket passt für Klasse 7: 2500 ÷ 5 = 500 Blätter pro Paket, 500 × 12 = 6000 Blätter. Die Einheiten und Rechenschritte sind eindeutig; das Endergebnis wird nicht vorweggenommen."
+    },
+    {
+      "id": "direct-07",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Der konstante Meterpreis ergibt eine direkte Proportionalität. Die Tabelle führt eindeutig über 1 m zu 7,5 m, ohne das Endergebnis vorwegzunehmen. Alle Wunschdaten bleiben erhalten; es werden keine zusätzlichen Sachangaben erfunden."
+    },
+    {
+      "id": "direct-08",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Der einheitliche Kartenpreis macht die Zuordnung direkt proportional. In beiden Spalten wird zuerst durch 6 geteilt und dann mit 14 multipliziert. Eine Karte kostet 7,50 €, 14 Karten kosten 105 €. Der vorgegebene Rechenweg verrät das Endergebnis nicht."
+    },
+    {
+      "id": "direct-09",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 3,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Die Tabelle übernimmt alle Mischungsdaten ohne Zusatzannahmen. Der Weg über 1 l Wasser ist für Klasse 7 geeignet: In beiden Spalten wird zuerst durch 4 geteilt und dann mit 10 multipliziert. Die Pfeilfelder nehmen jeweils Rechenzeichen und Faktor auf; das Endergebnis bleibt offen."
+    },
+    {
+      "id": "direct-10",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 3,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Der Kartenmaßstab wird als einheitlich verstanden. Die Tabelle und die Pfeilfelder bilden den vorgegebenen Weg über 1 cm korrekt ab: In beiden Spalten wird zuerst durch 2 geteilt und dann mit 6 multipliziert. Das gemeinsame Feld für Zeichen und Faktor links unten genügt dafür. Die Angaben bleiben unverändert, und der Zielwert wird nicht vorweggenommen."
+    },
+    {
+      "id": "direct-11",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Die Angaben sind unverändert, und die Tabelle ist für Klasse 7 geeignet. Bei gleichmäßigem Wasserfluss sind Zeit und Wassermenge direkt proportional: 24 l ÷ 3 = 8 l für eine Minute, dann 8 l × 8 = 64 l. Der vorgegebene Zwischenweg verrät das Endergebnis nicht."
+    },
+    {
+      "id": "direct-12",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Die Tabelle bildet den direkten Dreisatz passend ab: Aus der Zuordnung 4 Gläser → 800 ml folgen 200 ml je Glas und damit 1800 ml für 9 Gläser. Die vorgegebenen Faktoren legen nur den Rechenweg offen, nicht das gesuchte Ergebnis."
+    },
+    {
+      "id": "direct-13",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Alle Vorgaben bleiben erhalten. Der Dreisatz passt: Auf beiden Seiten wird zuerst durch 8 geteilt und dann mit 24 multipliziert. Ein Stück wiegt 2,5 g, also wiegen 24 Stück 60 g. Der vorgegebene Zwischenweg verrät das Ergebnis nicht."
+    },
+    {
+      "id": "direct-14",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 3,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Alle Wunschdaten bleiben erhalten. Bei konstantem Stückpreis wird in beiden Spalten zuerst durch 3 geteilt und dann mit 11 multipliziert. Die Pfeile und Eingabefelder bilden diesen Weg eindeutig ab. Der vorgegebene Zwischenschritt über 1 verrät den Endpreis nicht."
+    },
+    {
+      "id": "direct-15",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Bei gleich großen Portionen ist die Zuordnung direkt proportional. Der vorgegebene Weg über 1 g ist eindeutig: Auf beiden Seiten wird zuerst durch 200 geteilt und dann mit 700 multipliziert. Die Tabelle bewahrt alle Sachangaben und verrät das Endergebnis nicht."
+    },
+    {
+      "id": "direct-16",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Bei konstanter Leistung ist die Energie direkt proportional zur Zeit. Über 1 Stunde mit 0,6 kWh ergeben sich für 5 Stunden 3 kWh. Die Tabelle stellt den Rechenweg eindeutig dar, ohne das Ergebnis vorwegzunehmen oder zusätzliche Sachangaben einzuführen."
+    },
+    {
+      "id": "direct-17",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Bei konstantem Stückpreis sind Anzahl und Preis direkt proportional. Die beschrifteten Spalten führen eindeutig über 1 Foto für 0,30 € zu 35 Fotos für 10,50 €. Der vorgegebene Zwischenweg verrät das Endergebnis nicht."
+    },
+    {
+      "id": "direct-18",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Bei gleicher Rundenlänge sind Rundenzahl und Strecke direkt proportional. Die Tabelle führt passend für Klasse 7 über eine Runde: 1200 m ÷ 3 = 400 m, dann 400 m × 8 = 3200 m. Die Vorgaben bleiben erhalten; der vorgegebene Rechenschritt verrät das Ergebnis nicht."
+    },
+    {
+      "id": "direct-19",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Alle Angaben bleiben erhalten. Die Zuordnung ist proportional: In beiden Spalten wird in Pfeilrichtung zuerst durch 4 geteilt und dann mit 7 multipliziert. Die Pfeilfelder nehmen jeweils die vollständige Rechenoperation auf. Der vorgegebene Zwischenschritt über 1 verrät das Endergebnis nicht."
+    },
+    {
+      "id": "direct-20",
+      "family": "direct",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Der Farbverbrauch pro Quadratmeter ist konstant. In beiden Spalten wird zuerst durch 2 geteilt und dann mit 5 multipliziert. Die Pfeilfelder erlauben alle nötigen Ergänzungen, auch „× 5“ im gemeinsamen Feld links. Der vorgegebene Weg über 1 verrät das Endergebnis nicht."
+    },
+    {
+      "id": "inverse-01",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Für denselben Auftrag bleibt bei gleich schnellen Druckern das Produkt aus Druckerzahl und Zeit konstant. Die Pfeile zeigen den korrekten Rechenweg: Ein Drucker braucht 72 Minuten, acht Drucker brauchen 9 Minuten. Der vorgegebene Zwischenweg verrät das Endergebnis nicht."
+    },
+    {
+      "id": "inverse-02",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Bei gleicher Förderleistung bleibt das Produkt aus Pumpenzahl und Zeit konstant. Eine Pumpe braucht 60 Minuten, fünf Pumpen brauchen 12 Minuten. Spalten, Einheiten, Pfeilrichtungen und Eingabefelder passen zum vorgegebenen Rechenweg über eine Pumpe. Alle Angaben bleiben erhalten, ohne Zusatzdaten oder Vorwegnahme des Ergebnisses."
+    },
+    {
+      "id": "inverse-03",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Bei gleicher Arbeitsmenge bleibt das Produkt aus Helferzahl und Zeit konstant. Beim Übergang von 4 auf 1 Helfer wird links durch 4 geteilt und rechts mit 4 multipliziert. Die vorgegebenen Pfeile von 1 auf 8 sind korrekt und verraten das Endergebnis nicht. Die Tabelle ist für Klasse 7 geeignet und enthält keine erfundenen Sachangaben."
+    },
+    {
+      "id": "inverse-04",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Bei gleicher Maschinenleistung und festem Auftrag bleibt das Produkt aus Maschinenzahl und Zeit konstant. Über 1 Maschine ergeben sich 60 Stunden, bei 4 Maschinen 15 Stunden. Die Pfeilfelder nehmen jeweils Rechenzeichen und Faktor auf. Der vorgegebene Zwischenweg verrät das Ergebnis nicht."
+    },
+    {
+      "id": "inverse-05",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Für dieselbe Strecke ohne Pausen bleibt das Produkt aus Geschwindigkeit und Fahrzeit konstant. Links führt der Weg über 1 mit ÷ 60 und × 90, rechts entsprechend mit × 60 und ÷ 90. Das gemeinsame Feld für Zeichen und Faktor links unten ist dafür geeignet. Der vorgegebene rechte Pfeil gibt das Endergebnis nicht vor."
+    },
+    {
+      "id": "inverse-06",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Alle Vorgaben bleiben erhalten. Spalten, Einheiten und Pfeiloperationen passen zum umgekehrten Dreisatz. Der vorgegebene Weg über einen Hahn ist eindeutig, ohne die gesuchte Füllzeit vorwegzunehmen."
+    },
+    {
+      "id": "inverse-07",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Die Kinderzahl bleibt konstant. Die Pfeile bilden den umgekehrten Dreisatz korrekt ab: Bei einer Gruppe sind es 48 Kinder je Gruppe, bei sechs Gruppen 8. Alle Angaben bleiben erhalten, und das Endergebnis wird nicht vorweggenommen."
+    },
+    {
+      "id": "inverse-08",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Die Gesamtmenge bleibt bei 3000 g. Auf dem vorgegebenen Weg über 1 g wird links durch 200 geteilt und rechts mit 200 multipliziert. Danach wird links mit 300 multipliziert und rechts durch 300 geteilt. So ergeben sich 10 Portionen. Die vorgegebenen Pfeile passen zum Rechenweg und verraten das Ergebnis nicht."
+    },
+    {
+      "id": "inverse-09",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Bei voller Belegung und gleichbleibender Personenzahl bleibt das Produkt aus Sitzplätzen je Bus und Busanzahl konstant. Der Weg über 1 ist in den drei Zeilen eindeutig darstellbar; jedes Pfeilfeld nimmt Rechenzeichen und Faktor gemeinsam auf. Der vorgegebene Zwischenweg verrät das Endergebnis nicht."
+    },
+    {
+      "id": "inverse-10",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Die feste Gesamtstückzahl beträgt 240. Auf dem Weg über 1 wird links durch 12 geteilt und rechts mit 12 multipliziert. Danach wird links mit 8 multipliziert und rechts durch 8 geteilt, sodass 30 Kartons benötigt werden. Alle offenen Eingaben sind eindeutig; das gemeinsame Feld links unten nimmt Zeichen und Faktor auf. Der vorgegebene Pfeil rechts unten verrät das Endergebnis nicht."
+    },
+    {
+      "id": "inverse-11",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 3,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Beim selben Dokument bleibt das Produkt aus Druckgeschwindigkeit und Druckzeit konstant. Die Pfeile führen fachlich korrekt über 1 Seite pro Minute zu 30 Seiten pro Minute. Die Darstellung passt zu Klasse 7, enthält keine Zusatzdaten und verrät die gesuchte Druckzeit nicht."
+    },
+    {
+      "id": "inverse-12",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Bei gleicher Wassermenge bleibt das Produkt aus Förderrate und Zeit konstant. Die Pfeile bilden den umgekehrten Dreisatz über 1 l/min korrekt ab. Die vorgegebenen rechten Rechenoperationen stützen den Rechenweg, ohne die gesuchte Zeit vorwegzunehmen."
+    },
+    {
+      "id": "inverse-13",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Beim selben Vorrat bleibt das Produkt aus Tagesmenge und Reichweite konstant. Im ersten Schritt wird links durch 3 geteilt und rechts mit 3 multipliziert. Die vorgegebenen Pfeile im zweiten Schritt sind korrekt und verraten das Endergebnis nicht. Angaben, Einheiten und Eingabefelder passen zur Aufgabe."
+    },
+    {
+      "id": "inverse-14",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Die Gesamtmenge bleibt bei 12 l. Über 1 l je Flasche führt der umgekehrte Dreisatz von 24 über 12 zu 16 Flaschen. Die Pfeilfelder nehmen jeweils Rechenzeichen und Faktor auf; alle Vorgaben bleiben erhalten, ohne das Ergebnis vorwegzunehmen."
+    },
+    {
+      "id": "inverse-15",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Die Gesamtzahl bleibt bei 180 Werkzeugen konstant. Im Zwischenschritt geht es links mit ÷ 10 auf 1 und rechts mit × 10 auf 180. Danach führt links × 15 auf 15 und rechts ÷ 15 auf 12 Kisten. Alle nötigen Eingaben sind möglich; der vorgegebene Zwischenweg verrät das Endergebnis nicht."
+    },
+    {
+      "id": "inverse-16",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Bei gleicher Energiemenge bleibt das Produkt aus Leistung und Zeit konstant. Die Leistung ist während des jeweiligen Laufs konstant. Spalten, Einheiten und Pfeiloperationen über 1 kW stimmen: Die Zeit steigt zunächst auf 12 h und sinkt dann auf 4 h. Der vorgegebene Zwischenweg nimmt das Endergebnis nicht vorweg."
+    },
+    {
+      "id": "inverse-17",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Alle Vorgaben bleiben erhalten. Bei fester Gesamtmenge ist das Produkt aus Stückzahl je Tüte und Tütenzahl konstant. Die Pfeile führen korrekt über 1 Stück je Tüte und 120 Tüten zu 15 Tüten. Der vorgegebene Zwischenweg verrät das Endergebnis nicht."
+    },
+    {
+      "id": "inverse-18",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 2,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Ohne Verschnitt bleibt das Produkt aus Streifenbreite und Streifenanzahl konstant. Die Tabelle und die Pfeilfelder bilden den umgekehrten Dreisatz über 1 cm korrekt ab: links durch 5 und rechts mal 5, danach links mal 3 und rechts durch 3. Die vorgegebenen Pfeile geben nur den Rechenweg vor, nicht das Ergebnis."
+    },
+    {
+      "id": "inverse-19",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Bei gleicher, vollständig parallelisierbarer Arbeit bleibt das Produkt aus Computeranzahl und Rechenzeit konstant. Über einen Computer mit 72 Minuten ergeben sich für sechs Computer 12 Minuten. Spalten, Einheiten und Pfeilfelder passen zum Rechenweg; die Vorgabe des Zwischenschritts verrät das Ergebnis nicht."
+    },
+    {
+      "id": "inverse-20",
+      "family": "inverse",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [],
+      "reason": "Die Gesamtmasse bleibt mit 1200 kg konstant. Über 1 kg je Fahrt ergeben sich 1200 Fahrten; geteilt durch 150 sind es 8 Fahrten. Die Pfeile und Eingabefelder bilden die gegenläufigen Rechenoperationen korrekt ab."
+    },
+    {
+      "id": "percent-01",
+      "family": "percent",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Der direkte Dreisatz über 1 % ist fachlich korrekt und für Klasse 7 geeignet. Die Pfeile führen auf beiden Seiten durch Teilen durch 100 und anschließendes Multiplizieren mit 25 zum Ergebnis. Alle Wunschdaten bleiben erhalten; der vorgegebene Zwischenweg nimmt das Endergebnis nicht vorweg."
+    },
+    {
+      "id": "percent-02",
+      "family": "percent",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Die Spalten und Pfeilrichtungen passen zum direkten Dreisatz. Über 1 % = 0,8 m ergeben sich eindeutig 12 m für 15 %. Der vorgegebene Zwischenweg verrät das Endergebnis nicht."
+    },
+    {
+      "id": "percent-03",
+      "family": "percent",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Die Aufgabe übernimmt alle vorgegebenen Werte und Einheiten ohne Zusatzdaten. Der Rechenweg ist eindeutig: In beiden Spalten zuerst durch 100 teilen und dann mit 12 multiplizieren. Der vorgegebene Zwischenschritt und die eingetragenen Pfeiloperationen verraten die gesuchte Masse nicht."
+    },
+    {
+      "id": "percent-04",
+      "family": "percent",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Der Dreisatz berechnet ausschließlich den Rabattbetrag: In beiden Spalten führt Teilen durch 100 zur Zwischenzeile und Multiplizieren mit 15 zur Zielzeile. Die Pfeilfelder nehmen jeweils Rechenzeichen und Faktor auf. Der vorgegebene Weg über 1 % verrät das Ergebnis nicht."
+    },
+    {
+      "id": "percent-05",
+      "family": "percent",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Die Aufgabe übernimmt alle Vorgaben ohne Zusatzdaten. Der Rechenweg ist eindeutig: In beiden Spalten wird zuerst durch 25 geteilt und dann mit 100 multipliziert. Die Felder passen zu den Pfeilrichtungen; das vorgegebene × 100 verrät den Grundwert nicht."
+    },
+    {
+      "id": "percent-06",
+      "family": "percent",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Die Aufgabe übernimmt alle Angaben ohne Zusatzdaten. Die Pfeile führen in beiden Spalten korrekt über 1 % zu 100 %. Der vorgegebene Rechenweg verrät die gesuchte Gesamtmasse nicht."
+    },
+    {
+      "id": "percent-07",
+      "family": "percent",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Die beschrifteten Spalten und die abwärts gerichteten Pfeile bilden den direkten Dreisatz korrekt ab: Auf beiden Seiten wird zuerst durch 40 geteilt und dann mit 100 multipliziert. Die offenen Felder sind eindeutig ausfüllbar; die Gesamtlänge wird nicht vorweggenommen."
+    },
+    {
+      "id": "percent-08",
+      "family": "percent",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Die Angaben bleiben unverändert. Der direkte Dreisatz über 3 € ist eindeutig: In beiden Spalten wird zuerst durch 40 geteilt und dann mit 10 multipliziert. Die Felder erlauben diese Eingaben, ohne das Endergebnis vorwegzunehmen."
+    },
+    {
+      "id": "percent-09",
+      "family": "percent",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Der direkte Dreisatz über 1 g ist für Klasse 7 geeignet. In beiden Spalten wird zuerst durch 250 geteilt und dann mit 50 multipliziert. Die Pfeile und Eingabefelder bilden diesen Weg eindeutig ab, ohne das Ergebnis vorwegzunehmen."
+    },
+    {
+      "id": "percent-10",
+      "family": "percent",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "direct",
+      "expected": "direct",
+      "errors": [],
+      "reason": "Einheiten und Spalten stimmen. In Pfeilrichtung wird auf beiden Seiten zuerst durch 80 geteilt und dann mit 12 multipliziert. Der linke untere Pfeil nimmt Zeichen und Faktor gemeinsam auf. Der vorgegebene Rechenweg verrät den gesuchten Prozentwert nicht."
+    }
+  ]
+}

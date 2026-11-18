@@ -1,0 +1,57 @@
+{
+  "requestId": "034aac69-526e-4595-a72c-b8891b09d143",
+  "wish": "Für Klasse 6 möchte ich drei verschiedene unvollständige 3/4-Takte. Die Kinder setzen je eine Achtel-, Viertel- oder halbe Note ein. Bitte nutze unterschiedliche fehlende Notenwerte.",
+  "status": "ready",
+  "quizId": "wish3:034aac69-526e-4595-a72c-b8891b09d143",
+  "task": {
+    "quizId": "wish3:034aac69-526e-4595-a72c-b8891b09d143",
+    "group": "eigener",
+    "id": "wish",
+    "type": "recipe",
+    "text": "Setze in jeden leeren Taktplatz genau eine Note ein. Wähle unter dem Takt die Note, die den 3/4-Takt vollständig macht.",
+    "points": 1.5,
+    "heading": "Drei unvollständige 3/4-Takte",
+    "subject": "Musik · Notentakt",
+    "recipe": {
+      "recipe": "music",
+      "meter": 3,
+      "bars": [
+        {
+          "id": "b0",
+          "notes": [
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "id": "b1",
+          "notes": [
+            2,
+            2
+          ]
+        },
+        {
+          "id": "b2",
+          "notes": [
+            2
+          ]
+        }
+      ],
+      "noteValues": [
+        1,
+        2,
+        4
+      ]
+    },
+    "options": [],
+    "version": "d3be62b8bc280b2a8f68e453a360186ec270b6f1595eac2e2268f1752c280bd3",
+    "review": null
+  },
+  "verified": {
+    "complete": 1.5,
+    "partial": 1,
+    "blank": 0,
+    "stableIdReplayed": true
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "runId": "auto-recipes-20261118-v1-probe",
+  "quizId": "training:auto-recipes-20261118-v1-probe",
+  "expected": 3,
+  "status": "running",
+  "spentMicros": 39829,
+  "reservedMicros": 0,
+  "limitMicros": 200000,
+  "cases": [
+    {
+      "id": "english-transfer",
+      "status": "ready",
+      "family": "post-transfer",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "given-left",
+      "status": "rejected",
+      "family": "post-scaffold",
+      "attempt": 3,
+      "errors": [
+        "Der öffentliche Auftrag verrät eine gesuchte Antwort.",
+        "Unabhängige Fachprüfung widerspricht der gewählten Beziehung oder den Ausgangszahlen.",
+        "Der unabhängige Lösungsversuch widerspricht dem exakten Rechenprüfer."
+      ]
+    },
+    {
+      "id": "whole-roles",
+      "status": "rejected",
+      "family": "post-labels",
+      "attempt": 3,
+      "errors": [
+        "Der Auftrag erfüllt den ursprünglichen Wunsch nicht."
+      ]
+    }
+  ]
+}

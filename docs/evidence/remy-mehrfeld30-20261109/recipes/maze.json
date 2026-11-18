@@ -1,0 +1,57 @@
+{
+  "requestId": "034aac69-526e-4595-a72c-b8891b09d142",
+  "wish": "Für Klasse 6: Zwei unterschiedliche Bilder eines Roboter-Labyrinths, jeweils mit einer eindeutigen Blickrichtung. Wenn vor ihm eine Wand ist, dreht er sich nach links, sonst geht er einen Schritt.",
+  "status": "ready",
+  "quizId": "wish3:034aac69-526e-4595-a72c-b8891b09d142",
+  "task": {
+    "quizId": "wish3:034aac69-526e-4595-a72c-b8891b09d142",
+    "group": "eigener",
+    "id": "wish",
+    "type": "recipe",
+    "text": "Der Pfeil zeigt die Blickrichtung. Steht direkt davor eine Wand, dreht sich der Roboter nach links. Sonst geht es ein Feld vorwärts. Wähle für jedes Bild den nächsten Schritt.",
+    "points": 1,
+    "heading": "Zwei Roboter-Labyrinthe",
+    "subject": "Informatik · Labyrinth",
+    "recipe": {
+      "recipe": "maze",
+      "actor": "Roboter",
+      "boards": [
+        {
+          "id": "m0",
+          "cells": [
+            "#####",
+            "#...#",
+            "#.#.#",
+            "#...#",
+            "#####"
+          ],
+          "x": 2,
+          "y": 1,
+          "arrow": "↓"
+        },
+        {
+          "id": "m1",
+          "cells": [
+            "#####",
+            "#...#",
+            "#...#",
+            "#.#.#",
+            "#####"
+          ],
+          "x": 1,
+          "y": 2,
+          "arrow": "→"
+        }
+      ]
+    },
+    "options": [],
+    "version": "059ccb073d7d4ffe92b12e13021f02393eb17dae6932efe50d75db0b2399dfa5",
+    "review": null
+  },
+  "verified": {
+    "complete": 1,
+    "partial": 0.5,
+    "blank": 0,
+    "stableIdReplayed": true
+  }
+}
