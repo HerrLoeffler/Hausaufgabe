@@ -52,7 +52,9 @@ def build(preview, output, project, channel):
     ]}]}}
     (output / 'firebase.json').write_text(json.dumps(config, indent=2) + '\n')
     with ZipFile(output / 'function.zip', 'x', ZIP_DEFLATED) as archive:
-        for source in (hosted/'main.py', hosted/'requirements.txt',
+        for source in (hosted/'main.py', hosted/'billing_service.py',
+                       hosted/'firestore_store.py', hosted/'stripe_gateway.py',
+                       hosted/'requirements.txt',
                        HERE/'billing_sandbox_access.py', HERE/'billing_sandbox_preview.py'):
             archive.write(source, source.name)
 

@@ -1,10 +1,13 @@
 import hashlib
 import hmac
 import json
+import os
 from pathlib import Path
+import subprocess
 import sys
 import time
 import unittest
+from unittest.mock import Mock
 
 from flask import Flask
 
@@ -117,6 +120,67 @@ class HostedAccessTests(unittest.TestCase):
         self.assertEqual(self.store.data, {})
         self.assertEqual(self.event('cus_premium', invoice='in_premium', reason='subscription_create').status_code, 204)
         self.assertEqual(self.store.data, {'premium': ('in_premium', 'evt_test')})
+
+    def test_web_layer_loads_without_any_google_modules(self):
+        source = """
+import importlib.abc
+import sys
+class BlockGoogle(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path, target=None):
+        if fullname == 'google' or fullname.startswith('google.'):
+            raise ImportError('Google must not be required by the web layer')
+sys.meta_path.insert(0, BlockGoogle())
+from billing_service import create_app
+assert callable(create_app)
+assert not any(n == 'google' or n.startswith('google.') for n in sys.modules)
+"""
+        result = subprocess.run(
+            [sys.executable, '-B', '-c', source], capture_output=True, text=True,
+            env={**os.environ, 'PYTHONPATH': os.pathsep.join(sys.path)}, timeout=15,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_same_web_api_supports_a_different_test_host_and_store_failure(self):
+        from billing_service import GrantStoreUnavailable
+        origin = 'https://billing.sandbox.example.org'
+        app = Flask('portable_test')
+        app.register_blueprint(create_app(
+            self.fixtures, b'a'*32, self.secret, self.store, self.read, origin=origin,
+        ))
+        client = app.test_client()
+        self.assertEqual(client.post(origin+PREFIX+'/login', json={
+            'account':'school', 'password':self.password2,
+        }, headers={'Origin':ORIGIN}).status_code, 403)
+        self.assertEqual(client.post(origin+PREFIX+'/login', json={
+            'account':'school', 'password':self.password2,
+        }, headers={'Origin':origin}).status_code, 204)
+        self.assertEqual(client.get(origin+PREFIX+'/access').json['state'], 'pending')
+        self.store.data['school'] = ('in_school', 'evt_paid')
+        self.assertEqual(client.get(origin+PREFIX+'/access').json['state'], 'active')
+        def unavailable(kind):
+            raise GrantStoreUnavailable('Store temporarily unreachable')
+        self.store.read = unavailable
+        self.assertEqual(client.get(origin+PREFIX+'/access').status_code, 503)
+
+    def test_firestore_adapter_preserves_duplicate_grants_and_reports_outages(self):
+        from google.api_core.exceptions import AlreadyExists, ServiceUnavailable
+        from billing_service import GrantStoreUnavailable
+        from firestore_store import FirestoreGrants
+        store = FirestoreGrants(Mock(), 'a'*32)
+        document = store.documents.document.return_value
+        document.create.side_effect = AlreadyExists('Duplicate')
+        document.get.return_value.to_dict.return_value = {'invoice':'in_school'}
+        store.grant('school', 'in_school', 'evt_retry')
+        with self.assertRaises(ValueError):
+            store.grant('school', 'in_different', 'evt_other')
+        document.get.side_effect = ServiceUnavailable('Offline')
+        with self.assertRaises(GrantStoreUnavailable):
+            store.read('school')
+        with self.assertRaises(GrantStoreUnavailable):
+            store.grant('school', 'in_school', 'evt_retry')
+        document.create.side_effect = ServiceUnavailable('Offline')
+        with self.assertRaises(GrantStoreUnavailable):
+            store.grant('school', 'in_school', 'evt_retry')
 
 
 if __name__ == '__main__':
