@@ -2,9 +2,11 @@
 
 Stand 18. November 2026. Bestehende Aufgabe GC-BILLING-PLAN-01, bestehender Draft-PR411. Arbeitsliste zum [ausführlichen Zahlungsplan](../superpowers/plans/2026-11-18-gradecrew-zahlungsbetrieb.md).
 
+**Aktualisierung während der Umsetzung:** Martin beauftragt die technische Umsetzung in der Testumgebung. Neu gelten14Tage und höchstens fünf Testdateien einschließlich manueller Anlage/Kopie/Import. Vorläufig persönlich15EUR monatlich oder120EUR jährlich im Voraus, Schule50EUR je Platz/Jahr. Persönliche Schuleinladungen und bewusste Jahresverlängerung bestätigt. [Aktuelle Regeln](business-rules.md) ersetzen ältere abweichende Angaben. Produktbranch feature/billing-product-20261118, erste lokalen Prüfungen bestanden. Offene Gesamtaufgaben bleiben bis zur tatsächlichen Integration offen.
+
 Diese Liste unterscheidet belegte Ergebnisse, technisch mögliche nächste Arbeiten, fachliche Entscheidungen, externe Einrichtung und die spätere Einführung. Ein offenes Kästchen ist eine ausstehende Aufgabe. Eine geschriebene Spezifikation oder ein lokaler Test gilt nicht als veröffentlichte Produktfunktion.
 
-Aktueller Umfang dieses Auftrags ist die Dokumentation. Die Liste startet keine Implementierung, Kontoanlage, Zahlung, Nachricht oder Veröffentlichung. Für spätere Umsetzung gelten die vorhandenen Freigaben ausschließlich in der abgegrenzten Testumgebung. Production bleibt ein gesonderter ausdrücklicher Auftrag.
+Der ursprüngliche Listenauftrag war reine Dokumentation. Der anschließende ausdrückliche Umsetzungsauftrag erlaubt nun die technische Arbeit innerhalb der vorhandenen abgegrenzten Testfreigabe. Neue Händlerkonten/API-Schlüssel bleiben ausgeschlossen. Production bleibt ein gesonderter ausdrücklicher Auftrag.
 
 ## 1. Bereits erledigt und belegt
 

@@ -2,6 +2,8 @@
 
 Stand 18. November 2026. Aufgabe GC-BILLING-PLAN-01. Planentwurf zur fachlichen Abstimmung, keine Freigabe für Echtzahlungen oder Production.
 
+**Übersteuernde Aktualisierung18Nov:** Martin hat die Testumsetzung gestartet. [Aktuelle Geschäftsregeln](../../billing/business-rules.md) ersetzen die früheren unbefristeten fünf KI-Tests durch14Tage und fünf neue Testdateien jeder Erstellungsart. Persönlich vorläufig15EUR monatlich oder120EUR jährlich im Voraus, Schule50EUR je Platz/Jahr. Schuleinladungen und bewusste Verlängerung bestätigt. Ältere abweichende Abschnitte dieses Ursprungsplans sind historisch und werden vor ihrer Umsetzung auf die aktuelle Regel bezogen. Keine Livefreigabe.
+
 **Aktuelle Arbeitsliste:** [Erledigtes, nächste Testarbeiten, Entscheidungen und Einführung](../../billing/2026-11-18-aufgabenliste-zahlungsbetrieb.md). Sie führt Verantwortlichkeiten, Abhängigkeiten und Abschlusskriterien zu diesem Plan.
 
 > Umsetzungshinweis für spätere Bearbeiter: Dieser Gesamtplan beschreibt Produktregeln und Arbeitspakete. Nach fachlicher Bestätigung wird er paketweise mit superpowers:executing-plans umgesetzt. Die unten stehenden Prüfschritte werden vor jeder Paketumsetzung auf den dann aktuellen Produktstand bezogen. Es besteht heute kein Umsetzungsauftrag.
