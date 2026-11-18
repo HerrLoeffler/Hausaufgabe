@@ -32,7 +32,7 @@ export function teacherResultName(submission = {}) {
   return {
     firstName,
     lastName,
-    label: text(submission.studentName) || combinedName || 'Ohne Name / Kürzel'
+    label: text(submission.studentName) || combinedName || 'Ohne Name'
   };
 }
 
@@ -64,7 +64,7 @@ export function teacherResultFinal(submission, isPending = () => false) {
     teacherGradingSummary(submission).complete && !isPending(submission);
 }
 
-export function sortTeacherResults(submissions, key = 'submittedAt', direction = 'desc', isPending = () => false) {
+export function sortTeacherResults(submissions, key = 'submittedAt', direction = 'desc', isPending = () => false, gradeForSubmission = submission => submission.grade) {
   const collator = new Intl.Collator('de', { numeric: true, sensitivity: 'base' });
   const sign = direction === 'asc' ? 1 : -1;
   const sortValue = submission => {
@@ -81,6 +81,12 @@ export function sortTeacherResults(submissions, key = 'submittedAt', direction =
       if (key === 'points') return teacherResultNumber(submission.totalPoints);
       return Number(submission.totalPoints) / Number(submission.maxPoints) * 100;
     }
+    if (key === 'grade') {
+      if (!teacherResultFinal(submission, isPending)) return null;
+      const grade = teacherResultNumber(gradeForSubmission(submission));
+      return grade !== null && grade >= 1 && grade <= 6 ? grade : null;
+    }
+    if (key === 'status') return teacherResultRunning(submission) ? 'Läuft' : teacherResultFinal(submission, isPending) ? 'Bewertet' : 'Prüfen';
     return teacherResultSubmittedAt(submission);
   };
 

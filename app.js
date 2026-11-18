@@ -8534,35 +8534,42 @@ function renderResultsTable() {
   wilmaAnswerReview?.refresh();
   void wilmaAutoReview?.run();
   const wrap = $("resultsTableWrap");
-  wrap.setAttribute("aria-label", "Testergebnisse und Durchschnittswerte");
+  wrap.setAttribute("aria-label", "Testergebnisse – Tabelle horizontal scrollbar, Spaltenüberschrift zum Sortieren anklicken");
   if (!state.submissions.length) {
     wrap.innerHTML = `<div class="empty"><h2>Noch keine Abgaben</h2><p>Sobald Schüler den Test abgeben, erscheinen die Ergebnisse hier.</p></div>`;
     return;
   }
-  // Same canonical open-answer check as the grade display; partial totals are never final statistics.
   const isPending = s => !teacherGradingSummary(s).complete || (state.resultQuestions || []).some(q => reviewItem(q,s,parseGaps).requiresReview);
   const key = wrap.resultsSort || "submittedAt", direction = wrap.resultsSortDirection || "desc";
-  const visible = sortTeacherResults(state.submissions,key,direction,isPending);
-  const sortOptions = [["firstName","Vorname"],["lastName","Nachname"],["duration","Bearbeitungsdauer"],["points","Punkte (fertig bewertet)"],["percent","Prozent (fertig bewertet)"],["submittedAt","Abgabezeit"]];
-  let html = `<div class="resultsToolbar"><label for="resultsSort">Sortieren nach<select id="resultsSort">${sortOptions.map(([value,label])=>`<option value="${value}"${key===value?" selected":""}>${label}</option>`).join("")}</select></label><label for="resultsSortDirection">Reihenfolge<select id="resultsSortDirection"><option value="asc"${direction==="asc"?" selected":""}>Aufsteigend</option><option value="desc"${direction==="desc"?" selected":""}>Absteigend</option></select></label><p class="hint">Ohne getrennt gespeicherten Vor- oder Nachnamen wird das vollständige Name/Kürzel-Feld verwendet. Fehlende Werte und offene Punkte stehen zuletzt.</p></div>`;
-  html += `<table class="resultTable"><thead><tr><th scope="col">Name / Kürzel</th><th scope="col">Punkte</th><th scope="col">%</th><th scope="col">Note</th><th scope="col">Status</th><th scope="col">Dauer</th><th scope="col">Abgegeben</th><th scope="col"><span class="visuallyHidden">Aktionen</span></th></tr></thead><tbody>`;
+  const visible = sortTeacherResults(state.submissions,key,direction,isPending,submissionGrade);
+  const columns = [["firstName","Name"],["points","Punkte"],["percent","%"],["grade","Note"],["status","Status"],["duration","Dauer"],["submittedAt","Abgegeben"]];
+  const header = ([column,label]) => {
+    const active = column === key, next = active && direction === "asc" ? "absteigend" : "aufsteigend";
+    return `<th scope="col" aria-sort="${active ? direction === "asc" ? "ascending" : "descending" : "none"}"><button type="button" class="resultsSortButton" data-results-sort="${column}" aria-label="${label}: ${next} sortieren" title="${label}: ${next} sortieren">${label}<span aria-hidden="true">${active ? direction === "asc" ? "↑" : "↓" : "↕"}</span></button></th>`;
+  };
+  let html = `<table class="resultTable"><thead><tr>${columns.map(header).join("")}<th scope="col"><span class="visuallyHidden">Aktionen</span></th></tr></thead><tbody>`;
   visible.forEach((s) => {
-    const name = teacherResultName(s).label, running = teacherResultRunning(s);
+    const name = teacherResultName(s), running = teacherResultRunning(s);
     const seconds = teacherResultNumber(s.elapsedSeconds), points = teacherResultNumber(s.totalPoints), maximum = teacherResultNumber(s.maxPoints);
     const scoringPending = isPending(s), provisional = scoringPending ? ' <small>vorläufig</small>' : '';
     const autoTag = s.autoSubmitted ? ` <span class="pill timedOut">Auto</span>` : "";
     const recoveryTag = s.recoveryReviewRequired ? ` <span class="pill review">${s.status === "review" ? "Nachübertragung · bitte prüfen" : "Nachübertragung geprüft"}</span>` : "";
-    html += `<tr><td data-label="Name / Kürzel"><strong>${escapeHtml(name)}</strong></td><td data-label="Punkte">${running || points===null || maximum===null ? "–" : `${escapeHtml(points)}/${escapeHtml(maximum)}${provisional}`}</td><td data-label="Prozent">${running || !maximum || points===null ? "–" : `${Math.round(points/maximum*100)}%${provisional}`}</td><td data-label="Note">${running ? "–" : submissionGrade(s)}</td><td data-label="Status"><span class="pill ${scoringPending || running ? "review" : "graded"}">${running ? "Läuft" : scoringPending ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td data-label="Dauer">${running || seconds===null ? "–" : escapeHtml(formatDuration(seconds))}</td><td data-label="Abgegeben">${teacherResultSubmittedAt(s)===null ? "–" : escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td data-label="Aktionen">${running ? "Noch nicht abgegeben" : `<button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(name)}">Bewerten</button>`}</td></tr>`;
+    html += `<tr><td data-label="Name" title="${escapeHtml(name.label)}"><strong>${escapeHtml(name.label)}</strong></td><td data-label="Punkte">${running || points===null || maximum===null ? "–" : `${escapeHtml(points)}/${escapeHtml(maximum)}${provisional}`}</td><td data-label="Prozent">${running || !maximum || points===null ? "–" : `${Math.round(points/maximum*100)}%${provisional}`}</td><td data-label="Note">${running ? "–" : submissionGrade(s)}</td><td data-label="Status"><span class="pill ${scoringPending || running ? "review" : "graded"}">${running ? "Läuft" : scoringPending ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td data-label="Dauer">${running || seconds===null ? "–" : escapeHtml(formatDuration(seconds))}</td><td data-label="Abgegeben">${teacherResultSubmittedAt(s)===null ? "–" : escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td data-label="Aktionen">${running ? "Noch nicht abgegeben" : `<button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(name.label)}">Bewerten</button>`}</td></tr>`;
   });
   const averages = teacherResultsAverages(visible,isPending);
   const averageNumber = value => value===null ? "–" : value.toLocaleString("de-DE",{maximumFractionDigits:1});
-  html += `</tbody></table><section class="resultsAverages" aria-labelledby="resultsAveragesHeading"><h2 id="resultsAveragesHeading">Durchschnitt der Übersicht</h2><p>${averages.finalCount} fertig bewertet · ${averages.pendingCount} offen · ${averages.runningCount} laufend in dieser Übersicht</p><dl><div><dt>Punkte</dt><dd>${averageNumber(averages.points.value)} <small>aus ${averages.points.count} Abgaben</small></dd></div><div><dt>Prozent</dt><dd>${averageNumber(averages.percent.value)}${averages.percent.count ? "%" : ""} <small>aus ${averages.percent.count} Abgaben</small></dd></div><div><dt>Dauer</dt><dd>${averages.duration.value===null ? "–" : escapeHtml(formatDuration(Math.round(averages.duration.value)))} <small>aus ${averages.duration.count} Abgaben</small></dd></div></dl><p class="hint">Punkte und Prozent: nur fertig bewertete Abgaben, ohne vorläufige Ergebnisse. Prozent ist der Mittelwert der einzelnen Punktanteile. Dauer: alle abgegebenen Arbeiten mit gültiger Zeit, auch offene Bewertungen; fehlende Zeiten zählen nicht. Laufende Arbeiten zählen nicht mit. Diese Werte beziehen sich auf alle ${visible.length} Abgaben der Übersicht, unabhängig von der Auswahl in der Wilma-Prüfliste. Noch nicht abgegebene Versuche werden hier nicht geladen.</p></section>`;
+  const averageHint = `Punkte und Prozent aus ${averages.finalCount} fertig bewerteten Abgaben; ${averages.pendingCount} offen. Dauer aus ${averages.duration.count} abgegebenen Arbeiten mit gültiger Zeit, auch offenen Bewertungen. ${averages.runningCount} laufend. Alle ${visible.length} Abgaben dieser Übersicht, unabhängig vom Wilma-Filter. Noch nicht abgegebene Versuche werden hier nicht geladen.`;
+  html += `</tbody><tfoot aria-describedby="resultsAveragesHint"><tr><th scope="row" title="${escapeHtml(averageHint)}">Durchschnitt <small>(${averages.finalCount} bewertet)</small></th><td title="${averages.points.count} fertig bewertete Abgaben">${averageNumber(averages.points.value)}</td><td title="${averages.percent.count} fertig bewertete Abgaben">${averageNumber(averages.percent.value)}${averages.percent.count ? "%" : ""}</td><td></td><td>${averages.pendingCount ? `${averages.pendingCount} offen` : ""}</td><td title="${averages.duration.count} Abgaben mit gültiger Zeit">${averages.duration.value===null ? "–" : escapeHtml(formatDuration(Math.round(averages.duration.value)))}</td><td colspan="2"></td></tr></tfoot></table><p id="resultsAveragesHint" class="visuallyHidden">${escapeHtml(averageHint)}</p>`;
   wrap.innerHTML = html;
   wrap.querySelectorAll(".reviewBtn").forEach((btn) => btn.addEventListener("click", () => openReview(btn.dataset.id)));
-  ["resultsSort","resultsSortDirection"].forEach(id => $(id).addEventListener("change", () => {
-    if (!confirmDiscardInlineReview()) {$("resultsSort").value=key;$("resultsSortDirection").value=direction;return;}
-    wrap.resultsSort=$("resultsSort").value;wrap.resultsSortDirection=$("resultsSortDirection").value;
-    renderResultsTable();$(id).focus({preventScroll:true});
+  wrap.querySelectorAll("[data-results-sort]").forEach(button => button.addEventListener("click", () => {
+    if (!confirmDiscardInlineReview()) return;
+    const scrollLeft = wrap.scrollLeft, nextKey = button.dataset.resultsSort;
+    wrap.resultsSort = nextKey;
+    wrap.resultsSortDirection = nextKey === key && direction === "asc" ? "desc" : "asc";
+    renderResultsTable();
+    wrap.scrollLeft = scrollLeft;
+    wrap.querySelector(`[data-results-sort="${nextKey}"]`)?.focus({preventScroll:true});
   }));
 }
 
