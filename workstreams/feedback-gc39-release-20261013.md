@@ -208,3 +208,22 @@ Tatsächlich final ausschließlich Hosting veröffentlicht: d230621155e12a02 auf
 Nächster konkreter Schritt: Martin lädt gradecrew.de neu und prüft die Kopfklicks am eigenen Gerät. Der freigegebene Hostingumfang ist ausgeliefert; neue Emmi-/Personenwechsel-/Handschriftarbeit bleibt separat.
 
 Tatsächlicher finaler Livebrowser nach Reload4c736c2: vorhandeneAnmeldung, gemeinsameÜberschrift „Name“ und achtSpalten, keineSortierleiste. An fünfbereitsfertigenFiktivabgaben NameA/B/C/D/L perKlick und L/D/C/B/A perEnter bestätigt; Dauer10:46→13:12→50:13→70:20→70:25 undumgekehrt perechtemKopfklick. KeineBewertunggespeichert.
+
+
+## 18.11.2026 · bestätigte seitliche Aufgabenübersicht · isolierte Vorschau
+
+GC-WEB-REPAIR-20261007, bestehender Web-Fachchat01a15f06-837c-73b3-93fa-0d07a8104d3a, Branch `fix/student-sidebar-preview-20261118` aufLive4c736c2. Mainc79f25d; Wilma-Darstellungsfortsetzung separatPR434/8c6977f, beideauf4c, keinapp.js-Parallelpatch. GemeinsamerBrowser-/Secure-/NativeAbstimmungsvertrag vorImplementierung im vorhandenen [Plan](../docs/superpowers/plans/2026-11-18-shared-browser-and-navigation.md) aktualisiert. iOSOwnerweiterüberzuständigeZentrale, keinNativecodeoderGerätebuildhiergeändert. RuntimeModell/Aufwandunknown.
+
+UmgesetztfürVorschau: ab1024CSSBreite/600CSSHöhe links208pxAufgaben/Status/Fortschritt undrechtsbestehenderInhalt; darunteroderbeikurzerHöhekompakteaufklappbareÜbersicht. QR/SecureWeb undbestehendeBrowser-/LehrervorschauverwendenidentischeBreakpoints/Informationsstruktur. EinDOM/Antwortsatz, normaleSeitenabfolge/Submit amEnde. SeitlicheListenhöheistkeinobererScrollabstand; BreitenwechselersetztkeineAntwortfelderundstiehltkeinenEingabefokus. Escape/Fokusrückgabe,44pxZiele,aria-current, offen/beantwortetzusätzlichzuFarbe; englischeStatuslabelsübersetzt. Auth/Attempt/Draft/Timer/Grading/Server/Rulesunverändert.
+
+Nachweise: neuerVerhaltenstestRED→GREEN,794Root/UI-Testsgrün;32Chromium/WebKitfällefürSecureEchtrenderer mitsynthetischemTransport plusLegacyDOMFixture mitrealemEnhancement.1/18/40/50Aufgaben,320/390/768/1024/1440/2560,Querformat1180×400,200%-äquivalenteCSSBreite/Pixeldichte;alle11SecureAufgabentypengerendert,Bild/Audio, leereZustände,Navigation/Escape, Fokus/AntwortknotenbeiBreitenwechselund390×400Keyboardhöhe,Audioknoten/PositionbeiResize,SecureReloadmitEntwurferhalt. AchtbestehendeProgressreisen bestätigenTeilantworten,Löschen,unberührteSortierungundReloadweiterhin. LegacyFixtureisteineLayout-/Navigatorprobe,keineechteLegacyAbgabeoderStorageabnahme. KeinexternerProvider/echteAbgabe/Productionschreibvorgang, keineNative-/physischeGeräte-/Pinchabnahme. Zielsprachtestsseparatgezieltausgeführt;ErgebnisinFolgecheckpoint.
+
+Stagebranch_only,keineCI-/Integration-/Staging-/Productionstufeerhöht.KeinDeploymentangefordert. Vorschau: `tools/browser-layout/student-sidebar-legacy.html` lokal; SecureüberbestehendeEinstiegsseite nurmitsynthetischemTransportaus `student-sidebar.cjs`. Screenshots/Matrixprivatlokalunter/tmp/gc-student-sidebar-preview. LokaleFenstertestsgebenkeine99%-/Gesamtregressionsgarantie.
+
+NächsterSchritt:unabhängigenPatchreview amgesichertenCommit durchführen,Branch/PRsichern; anschließendsynthetischeVorschauabnehmenundkonkretenHostingumfangmitWilmaPR434bewusstzusammenstellen. Personenwechselundechte503-Ursachebleibenseparatoffen. VorhandeneLive-Sortierung/Tabellenfußmittelnichterneutbearbeitet.
+
+FinalergezielterCheckpoint:37Navigation-/UI-/Sprachtestsgrün;32Browserfälle mit zusätzlichem390×400Keyboardwechsel undErhaltvonAudioknoten/0,25sPosition erneutgrün. LetzterSelektorrespektiert nav[hidden] auchimbreitenLayout. UnabhängigerPatchreviewnochanzufordern; keineexterne/physischeAbnahmebehauptet.
+
+Remote2c935ad/PR435draft entsprichtlokal8fca4498/Tree22fc8205. UnabhängigerReviewPASS:16gezielteTests plus32synthetischeBrowserfälle,keineP0–P2. KeineSourceedits/Provider/DeploydurchReview.
+
+Dokumentationsreview c79f25d→e3fd8a22: PASS. Die neun Koordinations-/Plan-/Belegdateien enthalten keine personenbezogenen Inhalte. Beide Vorschauen sind branch_only, nicht deployed; die historische503-Ursache bleibt offen. Veralteten nächsten Schritt zur unabhängigen Prüfung nach erfolgtem PASS auf Vorschauabnahme/Native-Abstimmung berichtigt.
