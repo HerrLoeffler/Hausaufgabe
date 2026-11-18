@@ -1,0 +1,15 @@
+# GC-IOS-02 / GC-RELEASE-06 — Secure icon release correction
+
+Owner GC · iPhone & iPad, Chat01a10c75-8912-7a12-98f0-c9e78064aa2c. Human18.11 explicitly selected attached through-C lock image (the open/hanging shackle version, not alternate closed-badge draft), asked to implement in AppConnect and PREPARE review reply. Upload/newBuild/version preparation authorized; message sending/final AppReview submission not requested.
+
+Branch fix/secure-appicon-20261118, isolated checkout/private/tmp/gc-secure-icon-20261118. Baseline exact1192source24c0f856384f037ebe156e20dc20a03ae10c4cf8. Deliberately excludes newer1272personal-access changes; no runtime/AAC/API/offline/navigation/teacher/SecureTest/Web/Rules/Functions modification. Preserve originaltask/attempt history.
+
+Selected user image normalized only to1024RGB/noAlpha, SHA256fa341d56873fdec36b57a316da5a78577fcdb9d163eeca5774b103b250cc172d, source native/GradeCrewSecure/Brand/SecureAppIcon.png. prepare_assets copies exactPNG into AppIcon; original sharedSVG renderedpng stillused byInAppGradeCrewLogo. Source absent/invalid dimensions/alpha fails ratherthan silentlyfallbacktoteacher. Regression REDobserved againstoriginalgenerator; afterpatch24PythonPASS. InAppLogo before/afterSHAcheckPASS, diffcheckPASS. No fullmatrix/signature/device/uploadclaimyet.
+
+Plan docs/superpowers/plans/2026-11-18-secure-appicon.md. Draftreply docs/secure/icon-20261118/APPLE-REPLY-DRAFT.md, UNSENT. Actualsource24c originalworkflowhasallnative/phone/ipad/WebKit/signingAACgates. Workflow_dispatch onfixbranch intended once afterreview; no autoLivepushtriggerforfixbranch. Existingworkflowglobalqueue noncancelrunning; check actualqueuebeforestart. Neverpatchgatesjusttopass.
+
+Model requested boundedimplementation/releaseclassSol/medium; actualruntimeunknown. Currentmainentry/AGENTS/STATE/TODO/registry andfreshbranchstatus alreadyread18Nov; liveDevAuditwithfreshrefsrecordedindesignhandoff, registryoldnativealiasesnotcurrentreleaseproof. FreshGitHubopenPRsearch includesCI-onlyPR408 butnoIconimplementation. NoRuntimefileoverlapinpatch; taskbranchisnotintegratednativeReleasebranch.
+
+Assurance scope: SEC15/16 sourceasset/provenance/packaging validatedlocally; finalsigneddelivery stillopen. SEC18fullsimulator/devicechecksopen. PRIV12–15 storepresentation/brand/legibility scope; nodataflowchange, no blanketprivacy/legalrelease. Exactlysameuserimage andteacherunchanged. Currentstagebranch_onlyuntilCIevidence.
+
+Next: independent finalreview ofboundedassetpatch, secureexactGitHubtree, dispatchoneexistingfullSecureworkflow forfixbranch; recordrunIDimmediatelyandtrackupload. ThenverifyprocessedAppleicon/attachnewBuildtopreparedversion1.0, updateunsentreplywithactualnumber. Do notsendorfinalsubmitwithoutcorrespondinguserinstruction.

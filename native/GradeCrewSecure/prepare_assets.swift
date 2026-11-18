@@ -26,7 +26,14 @@ guard let result = context.makeImage(), let png = NSBitmapImageRep(cgImage: resu
 let assets = root.appendingPathComponent("Resources/Assets.xcassets")
 let icon = assets.appendingPathComponent("AppIcon.appiconset")
 try FileManager.default.createDirectory(at: icon, withIntermediateDirectories: true)
-try png.write(to: icon.appendingPathComponent("AppIcon.png"))
+// App Review 4.3(a): Secure has its own Store icon. Keep the original `png`
+// for GradeCrewLogo below so this packaging change does not alter in-app UI.
+let appIconData = try Data(contentsOf: root.appendingPathComponent("Brand/SecureAppIcon.png"))
+guard let bitmap = NSBitmapImageRep(data: appIconData),
+      bitmap.pixelsWide == 1024, bitmap.pixelsHigh == 1024, !bitmap.hasAlpha else {
+    fatalError("Secure AppIcon must be an opaque 1024x1024 image")
+}
+try appIconData.write(to: icon.appendingPathComponent("AppIcon.png"))
 try "{\"info\":{\"author\":\"xcode\",\"version\":1}}\n".write(to: assets.appendingPathComponent("Contents.json"), atomically: true, encoding: .utf8)
 try "{\"images\":[{\"filename\":\"AppIcon.png\",\"idiom\":\"universal\",\"platform\":\"ios\",\"size\":\"1024x1024\"}],\"info\":{\"author\":\"xcode\",\"version\":1}}\n".write(to: icon.appendingPathComponent("Contents.json"), atomically: true, encoding: .utf8)
 print("Prepared opaque 1024×1024 GradeCrew Secure icon")
