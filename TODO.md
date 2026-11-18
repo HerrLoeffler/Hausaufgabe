@@ -890,3 +890,9 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 - [x] **Hosting Production:** 9de2011 / PR438, CI 44368770487 erfolgreich und unabhängiger Review PASS. Kompakter Wilma-Kopf mit Offene/Alle, sichtbarer Timer und Nummernraster. Aufgabenbreite 860 px und Schrift erhalten; rechte Übersicht erst ab 1180×600. Beide Adressen jeweils 216/216 Dateien geprüft, 206 unverändert; sämtliche Functions weiter d67b0b5. [Nachweis](docs/evidence/wilma-compact-controls-p1-20261118/REPORT.md).
 - [ ] **Backend weiterhin offen:** Reparatur fehlender oder beschädigter completed-Belege sowie failed/createdAt-Altzustände nur vorbereitet/ci_green, nicht deployed. Der tatsächliche synthetische Altfalltest mit gleichem Fingerprint fehlt, weil die Browserfähigkeit nach der Unterbrechung entfernt wurde. Ein frischer Erfolg ist kein Altfallnachweis. Höchstens ein neuer Stageversuch im vorhandenen Rahmen, keine neuen Liveversuche oder echten Schülernotenänderungen.
 - [ ] Native App/TestFlight und Martins physische Handy-/iPad-/Tastaturabnahme separat; neuester Größenvertrag an den vorhandenen Owner zugestellt.
+
+
+### GC-WEB-REPAIR-20261007 · Schülerabschluss · 18.11.2026
+
+- [x] **Hosting live:** f723e71 / PR438, exakte CI 44375566304 und unabhängiger Review PASS. „Neuen Test starten“ zur Codeeingabe mit erhaltener alter Abgabe und DE/EN; Freigabecheck mit sichtbarem Ergebnis, weiterhin servergeschützt. Beide Adressen216/216 Dateihashes, 212 Assets unverändert, keine Function oder echte Schülerdaten geändert. [Bericht](docs/evidence/student-result-actions-20261118/REPORT.md).
+- [ ] **Secure/App:** Native-Owner bestätigt Upload von 1.0 (1313) zu TestFlight mit dem angenommenen Layout; Apples Verarbeitung/Verfügbarkeit und Geräteabnahme noch offen. Rückkehr zu neuem Test bereits nativ getestet; eigene native Lösungsfreigabeansicht bisher nicht angeboten. Keine doppelte Implementierung. Historischer Wilma-Altfalltest bleibt unabhängig offen.

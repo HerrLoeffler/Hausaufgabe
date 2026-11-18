@@ -1,0 +1,118 @@
+{
+  "taskIds": [
+    "GC-WEB-REPAIR-20261007",
+    "GC-PEDAGOGY-KB-01"
+  ],
+  "stage": "production",
+  "scope": "Hosting only; student receipt navigation and visible solution release checks",
+  "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+  "tree": "c877184464769428cc772d7dc4609993e49e13cc",
+  "previousHostingSource": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
+  "pr": 438,
+  "verifiedAt": "2026-11-18T19:29:12.117126+00:00",
+  "ci": {
+    "id": 44375566304,
+    "head_sha": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/44375566304",
+    "run_attempt": 1,
+    "verifiedBy": "connected GitHub GET",
+    "verifiedAtMs": 1795029711649
+  },
+  "review": {
+    "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+    "localCommit": "90f02e449deef3e29f3e4b01c8492f4278795aed",
+    "tree": "c877184464769428cc772d7dc4609993e49e13cc",
+    "result": "pass",
+    "oldBackendCompatible": true,
+    "reviewer": "shared_browser_diagnosis",
+    "p0_p2": 0,
+    "targetedTests": 59,
+    "rootUiTests": 850,
+    "browserJourneys": 12,
+    "preserves": [
+      "old receipt credentials",
+      "server-authorized solution visibility",
+      "same-origin entry",
+      "explicit DE/EN",
+      "accepted task layout",
+      "timer/grid/typed/forced submission",
+      "all Functions"
+    ]
+  },
+  "localTests": 850,
+  "syntheticBrowserJourneys": 12,
+  "staging": {
+    "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+    "scope": "hosting_only",
+    "result": "pass",
+    "origins": [
+      "https://gradecrew-staging-2026.web.app/wilma"
+    ],
+    "verifiedFilesPerOrigin": 216,
+    "totalVerified": 216,
+    "mismatches": 0,
+    "hosting": "sites/gradecrew-staging-2026/versions/e218924764139f91",
+    "functionsUnchanged": 98,
+    "reviewRevision": "reviewwilmaanswers-00010-zud",
+    "realLegacyE2E": "pending authenticated browser access; no new provider calls",
+    "physicalDeviceAcceptance": "pending"
+  },
+  "production": {
+    "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+    "scope": "hosting_only",
+    "result": "pass",
+    "origins": [
+      "https://gradecrew.de",
+      "https://hausaufgabe-staging.web.app"
+    ],
+    "verifiedFilesPerOrigin": 216,
+    "totalVerified": 432,
+    "mismatches": 0,
+    "hosting": "sites/hausaufgabe-staging/versions/73a1e618cab1a0ba",
+    "functionsUnchanged": 62,
+    "reviewRevision": "reviewwilmaanswers-00005-lax",
+    "realLegacyE2E": "pending authenticated browser access; no new provider calls",
+    "physicalDeviceAcceptance": "pending",
+    "publicReadAttempts": 436,
+    "verificationReadNote": "initial verification had a read timeout; only read-only file verification repeated, no redeploy"
+  },
+  "changedRuntimeFiles": [
+    "secure-student.js",
+    "secure-solution-release.js",
+    "secure-student.css",
+    "shared/i18n/messages-en-GB.mjs"
+  ],
+  "unchangedAssets": 212,
+  "removedAssets": 0,
+  "providerCalls": 0,
+  "realStudentWrites": 0,
+  "parallelStageChange": {
+    "scope": "unrelated parallel Stage-only lab function changed before our Hosting deploy",
+    "function": "remyMehrfeld30Review",
+    "codebase": "remy-mehrfeld30",
+    "oldRevision": "remymehrfeld30review-00016-gih",
+    "newRevision": "remymehrfeld30review-00019-qit",
+    "newUpdateTime": "2026-11-18T19:17:56.443303983Z",
+    "state": "ACTIVE",
+    "ourDeploymentStarted": false,
+    "action": "preserved; fresh server baseline captured after explicit diff inspection",
+    "ourReviewFunctionChanged": false,
+    "liveFunctionsChanged": false,
+    "reviewedByThisTask": false
+  },
+  "backendSourceUnchanged": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+  "historicalWilmaBackendRepair": "still undeployed; real historical E2E pending, not part of this receipt UI fix",
+  "native": "accepted-layout contract delivered; owner confirms next-test return exists and is tested; native client has no solution-release checking view; app build/TestFlight/device evidence remains separate",
+  "physicalDeviceAcceptance": "not performed; local browser viewport simulations only",
+  "nativeUpload": {
+    "owner": "01a10c75-8912-7a12-98f0-c9e78064aa2c",
+    "version": "1.0",
+    "build": 1313,
+    "upload": "confirmed by native owner",
+    "appleProcessingAndAvailability": "pending user/device confirmation",
+    "physicalDeviceAcceptance": "pending",
+    "nativeSolutionReleaseView": false
+  }
+}
