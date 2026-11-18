@@ -1,0 +1,16 @@
+[
+  {
+    "questionPosition": 2,
+    "submissionStatus": "review",
+    "submittedBeforeLegacyCutoff": true,
+    "hasExplicitCriteria": false,
+    "hasExistingOperation": false,
+    "operationPhase": null,
+    "attemptCount": 0,
+    "costSettled": null,
+    "reviewState": null,
+    "needsReview": true,
+    "providerCalls": 0,
+    "writes": 0
+  }
+]

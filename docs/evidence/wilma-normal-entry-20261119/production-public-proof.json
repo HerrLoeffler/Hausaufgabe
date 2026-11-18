@@ -1,0 +1,18 @@
+{
+  "commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+  "scope": "public Hosting source/file verification only; semantic acceptance separate",
+  "result": "pass",
+  "origins": [
+    "https://gradecrew.de",
+    "https://hausaufgabe-staging.web.app"
+  ],
+  "verifiedFilesPerOrigin": 216,
+  "totalVerified": 432,
+  "mismatches": 0,
+  "hosting": "sites/hausaufgabe-staging/versions/7214fd4140dbc950",
+  "configPreserved": true,
+  "functionsUnchangedDuringHosting": 62,
+  "reviewRevision": "reviewwilmaanswers-00007-viz",
+  "physicalDeviceAcceptance": "pending",
+  "publicReadAttempts": 432
+}

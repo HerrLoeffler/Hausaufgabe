@@ -1,0 +1,57 @@
+{
+  "result": "pass",
+  "commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+  "localCommit": "d763cef51387cfbb49c358e10e015c89ed2f719c",
+  "tree": "ff4fe8b4a36d9e2b3d46481f72a4bf0683061bbf",
+  "reviewer": "shared_browser_diagnosis",
+  "p0_p2": 0,
+  "resolvedFindings": [
+    {
+      "priority": 2,
+      "previousCommit": "e69fd63fa231790b4c9b2f2751e79d8215c91a55",
+      "issue": "Busy summary refresh lost task-picker keyboard focus.",
+      "resolution": "Replacement popover now opens before focus restoration; reflow reveals the focused chip or active task. Independently confirmed in actual Chromium and WebKit."
+    }
+  ],
+  "tests": {
+    "originalCombinedTargetedTests": 48,
+    "focusedDeltaTargetedTests": 17,
+    "allTargetedPassed": true,
+    "independentFocusedBrowserScenarios": 6,
+    "focusedBrowserEngines": [
+      "Chromium",
+      "WebKit"
+    ],
+    "focusedBrowserEvidence": "/private/tmp/gc-wilma-reviewer-picker-focus-final/after.json",
+    "browserCases": [
+      "Pending first-review q13 focus retained and fully visible after summary refresh and native disclosure events",
+      "15 tasks/last active/320x360 remains fully visible after page scroll",
+      "Same scroll case with changed header font metrics"
+    ],
+    "diffCheck": "pass",
+    "semanticCacheDiffUnchangedSHA256": "7f200035d64a5f112cda5e9adfc726b302438bfc467bca7268e13c5f33a0c9ae"
+  },
+  "evidence": {
+    "viewed": [
+      "/private/tmp/gc-wilma-picker/open-chromium-320.png",
+      "/private/tmp/gc-wilma-picker/open-webkit-zoom2.png",
+      "/private/tmp/gc-wilma-picker-focus/after-webkit.png"
+    ],
+    "providedFullLocalSuites": {
+      "rootUi": 853,
+      "functions": 509
+    },
+    "providedOpenPickerMatrix": 72
+  },
+  "scope": "Combined semantic/provider context, established fingerprint/cache and budget protections, explicit single-answer normal first-start, top-layer picker and focused reflow fix. No P0-P2 remains in reviewed source.",
+  "releaseGates": {
+    "exactFinalLinuxCI": "pending; local review PASS is not CI or deployment approval proof",
+    "actualSemanticStageCases": "pending bounded provider acceptance; do not infer model quality from mocked transport tests"
+  },
+  "limitations": [
+    "No actual provider calls, external data mutations or deployment performed by reviewer.",
+    "No redundant full browser matrix or full root/functions suite rerun during delta review.",
+    "Old paid-history protection remains; no automatic real-class replay or real grade confirmation authorized by this review.",
+    "No physical-device, screenreader or native acceptance claimed."
+  ]
+}

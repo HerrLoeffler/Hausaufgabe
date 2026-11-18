@@ -1,0 +1,24 @@
+{
+  "commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+  "project": "hausaufgabe-staging",
+  "state": "ACTIVE",
+  "revision": "reviewwilmaanswers-00007-viz",
+  "previousRevision": "reviewwilmaanswers-00006-xub",
+  "source": {
+    "bucket": "gcf-v2-sources-950775032930-europe-west1",
+    "object": "reviewWilmaAnswers/function-source.zip",
+    "generation": "1795043449401885"
+  },
+  "archiveSHA256": "f400a6339c0fb043ebe8096281e0adf1a5fd99df066d314e205c4ff3b21737ef",
+  "allServiceConfigPreserved": true,
+  "resources": {
+    "memory": "512M",
+    "cpu": "1",
+    "maxInstances": 2,
+    "concurrency": 4,
+    "timeoutSeconds": 180
+  },
+  "otherFunctionsUnchanged": 61,
+  "parallelChanges": [],
+  "hostingUnchanged": "sites/hausaufgabe-staging/versions/73a1e618cab1a0ba"
+}

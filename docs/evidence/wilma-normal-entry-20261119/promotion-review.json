@@ -1,0 +1,71 @@
+{
+  "result": "pass",
+  "reviewer": "shared_browser_diagnosis",
+  "commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+  "tree": "ff4fe8b4a36d9e2b3d46481f72a4bf0683061bbf",
+  "archiveSHA256": "f400a6339c0fb043ebe8096281e0adf1a5fd99df066d314e205c4ff3b21737ef",
+  "p0_p2": 0,
+  "verified": {
+    "archiveFilesMatchGit": 147,
+    "exactCI": {
+      "run": 44412450416,
+      "result": "success"
+    },
+    "stageBackendRevision": "reviewwilmaanswers-00012-pez",
+    "stageServiceConfigPreserved": true,
+    "stageOtherFunctionsUnchanged": 100,
+    "stageHosting": "f5bbf2a1f554a9d4",
+    "stagePublicFilesVerified": 216,
+    "stageOutsidePrefixFilesPreserved": 447,
+    "stageFunctionsUnchangedByHosting": 101,
+    "stageProviderFirstAttempts": 5,
+    "stageUsageMicros": 6397,
+    "stageReservedMicros": 0,
+    "stageGradesAndAnswersUnchanged": true,
+    "stageFreeReloadStateExactlyUnchanged": true,
+    "semanticCases": [
+      "Giraffe alternative:1 clear",
+      "Stein wrong:0 clear",
+      "Jag… unclear:0 uncertain",
+      "20€ and empty:1/1.5",
+      "320€ and empty:0/1.5"
+    ],
+    "allJobsAttemptCountOneCompletedSettled": true,
+    "livePackageOtherAssetsPreserved": 212,
+    "hostingHeadersAndClassroomRewritePreserved": true,
+    "nativeMinimumIOSAndPopoverSupport": "17; no older Safari fallback claimed"
+  },
+  "reviewedHelpers": [
+    "gc-wilma-normal-deploy-source-only.cjs",
+    "gc-wilma-normal-verify-function.cjs",
+    "gc-wilma-normal-deploy-hosting.py",
+    "gc-wilma-normal-hosting-guard.cjs"
+  ],
+  "conditions": [
+    "Publish only reviewWilmaAnswers buildConfig.source plus the four approved Hosting runtime assets and release manifest; freshly reconcile baseline before each operation and preserve configuration, IAM, unrelated functions and assets.",
+    "Before the single real-answer check, use the existing visible refreshResultsBtn on the already visible SAME results quiz, without full-page reload/navigation. This existing openResults path must set allowAutomaticPaid=false; verify no new global starts or reservations after that free-only refresh.",
+    "Keep the same visible quiz and free-only automatic policy for subsequent navigation/onIdle; do not reopen or navigate to a real class in a way that enables automatic paid preparation.",
+    "Verify the exact reported answer, question snapshot and submission identity are unchanged and there is no conflicting in-flight request; only then explicitly resume that ONE never-started answer once.",
+    "Do not confirm a grade or replay other real answers. Verify at most one Live provider first start, settled usage/zero unresolved hold, unchanged grades and no unrelated starts; stop rather than repeat if uncertain.",
+    "Prove final deployed source SHA/serviceConfig and both-origin public hashes/config/asset preservation. Use separate fictional UI for new-interface acceptance."
+  ],
+  "limits": {
+    "additionalStageProviderCalls": 0,
+    "stageRoundProviderCallsTotal": 5,
+    "stageRoundMaximumUsageMicros": 20000,
+    "singleAuthorizedLiveTargetFirstStarts": 1,
+    "otherLiveProviderStarts": 0,
+    "automaticRealClassReplay": false,
+    "realGradeConfirmation": false,
+    "historyOrBudgetReset": false,
+    "noNewTestsOrProviderOrDeployByReviewer": true,
+    "physicalDeviceNativeAcceptance": "not claimed",
+    "historical503Cause": "still unknown",
+    "scopeOfModelEvidence": "five actual synthetic examples; no universal accuracy claim"
+  },
+  "notes": [
+    "Initial P2 keyboard-focus finding was independently fixed and rechecked on exact reviewed tree.",
+    "Artifact/evidence/schema/local-file consistency review only; no new model requests or external mutations."
+  ],
+  "subsequent_live_payload_gate": "Automatic review rejected the real-answer first start before submission. Direct human payload consent remains pending and supersedes tentative permission in this earlier artifact. No Live provider start or grade confirmation occurred."
+}

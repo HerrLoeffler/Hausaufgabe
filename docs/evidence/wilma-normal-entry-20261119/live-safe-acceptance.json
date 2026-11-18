@@ -1,0 +1,16 @@
+{
+  "commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+  "result": "pass",
+  "fixture": "existing fictional LLD9SSR8",
+  "proposalPoints": 1.5,
+  "maximumPoints": 1.5,
+  "persistedReceiptReused": true,
+  "newProviderCalls": 0,
+  "newUsageMicros": 0,
+  "reservedMicros": 0,
+  "gradesUnchanged": true,
+  "sameFingerprintOperationHistory": true,
+  "realReportedAnswer": "still not_started; automaticapproval blocked before transmission; direct payload approval pending",
+  "realPupilGradeWrites": 0,
+  "verifiedAt": "2026-11-18T23:25:22.127407+00:00"
+}

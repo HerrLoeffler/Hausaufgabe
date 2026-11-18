@@ -1,0 +1,65 @@
+{
+  "commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+  "fixture": "QAWILM18 synthetic only",
+  "receipts": [
+    {
+      "question": "animal",
+      "case": "qa_alternative",
+      "attemptCount": 1,
+      "requestIdPresent": true,
+      "points": 1,
+      "status": "clear",
+      "reason": "„Giraffe“ ist eine eindeutige Bezeichnung für ein reales Tier.",
+      "persisted": true,
+      "costSettled": true
+    },
+    {
+      "question": "animal",
+      "case": "qa_wrong",
+      "attemptCount": 1,
+      "requestIdPresent": true,
+      "points": 0,
+      "status": "clear",
+      "reason": "„Stein“ bezeichnet kein Tier und erfüllt die geforderte eindeutige reale Tierbezeichnung nicht.",
+      "persisted": true,
+      "costSettled": true
+    },
+    {
+      "question": "animal",
+      "case": "qa_unclear",
+      "attemptCount": 1,
+      "requestIdPresent": true,
+      "points": 0,
+      "status": "uncertain",
+      "reason": "„Jag…“ ist abgebrochen und mehrdeutig; keine eindeutige Tierbezeichnung.",
+      "persisted": true,
+      "costSettled": true
+    },
+    {
+      "question": "gap",
+      "case": "qa_alternative",
+      "attemptCount": 1,
+      "requestIdPresent": true,
+      "points": 1,
+      "status": "clear",
+      "reason": "Die Erhöhung „20€“ ist richtig und erhält 1 Punkt. Die zweite Lücke ist leer und erhält 0 Punkte.",
+      "persisted": true,
+      "costSettled": true
+    },
+    {
+      "question": "gap",
+      "case": "qa_wrong",
+      "attemptCount": 1,
+      "requestIdPresent": true,
+      "points": 0,
+      "status": "clear",
+      "reason": "Die Erhöhung ist mit 320 € falsch; die zweite Lücke ist leer. Beide geforderten Werte fehlen damit korrekt.",
+      "persisted": true,
+      "costSettled": true
+    }
+  ],
+  "newProviderCalls": 5,
+  "newUsageMicros": 6397,
+  "reservedMicros": 0,
+  "gradesUnchanged": true
+}

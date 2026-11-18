@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-11-18T21:53:08.288838+00:00",
+  "observed_at": "2026-11-18T23:34:26.215635+00:00",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -1145,10 +1145,10 @@
     "legacy_project_changed": false,
     "url": "https://gradecrew.de/",
     "version": "2.3.1-gc45-rc1",
-    "source_commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
-    "deployed_local_commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
-    "tree": "c877184464769428cc772d7dc4609993e49e13cc",
-    "user_acceptance": "Student receipt UI verified by exact CI/review/public hashes and synthetic browser journeys; native and physical-device acceptance separate. Historical Wilma backend E2E remains pending.",
+    "source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+    "deployed_local_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+    "tree": "ff4fe8b4a36d9e2b3d46481f72a4bf0683061bbf",
+    "user_acceptance": "Five real synthetic Stage provider results and free Live fictional receipt reuse verified; exact reported real-answer call blocked before transmission pending direct human payload approval; physical Secure/iPhone/iPad acceptance remains open.",
     "alternate_urls": [
       "https://hausaufgabe-staging.web.app/"
     ],
@@ -1554,12 +1554,12 @@
       "tree": "d93d6af7cb8716266b54927edbf0cba46b44840c",
       "user_acceptance": "Emmi answer-audio feedback and compact test cards deployed and hash-verified on gradecrew.de; actual signed-in audio quality and physical iPhone/iPad acceptance pending."
     },
-    "hosting_version": "73a1e618cab1a0ba",
-    "verified_at": "2026-11-18T19:29:12.117126+00:00",
+    "hosting_version": "7214fd4140dbc950",
+    "verified_at": "2026-11-18T23:34:26.215635+00:00",
     "baseline_actual_before_release": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
-    "latest_release_report": "docs/evidence/student-result-actions-20261118/receipt.json",
-    "wilma_review_revision": "reviewwilmaanswers-00006-xub",
-    "wilma_review_source_commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+    "latest_release_report": "docs/evidence/wilma-normal-entry-20261119/REPORT.md",
+    "wilma_review_revision": "reviewwilmaanswers-00007-viz",
+    "wilma_review_source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
     "wilma_legacy_backend_release_20261118": {
       "stage": "production",
       "scope": "reviewWilmaAnswers source-only; Hosting unchanged",
@@ -1591,6 +1591,34 @@
       "report": "docs/evidence/wilma-legacy-backend-20261118/receipt.json",
       "physical_devices": "pending",
       "verified_at": "2026-11-18T21:53:08.288838+00:00"
+    },
+    "wilma_normal_entry_release_20261119": {
+      "task_ids": [
+        "GC-WEB-REPAIR-20261007",
+        "GC-PEDAGOGY-KB-01"
+      ],
+      "source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+      "tree": "ff4fe8b4a36d9e2b3d46481f72a4bf0683061bbf",
+      "pull_request": 438,
+      "ci_run": 44412450416,
+      "ci_status": "success",
+      "recorded_at": "2026-11-18T23:34:26.215635+00:00",
+      "stage": "production",
+      "runtime_merge_into_main": false,
+      "hosting_version": "7214fd4140dbc950",
+      "live_review_revision": "reviewwilmaanswers-00007-viz",
+      "stage_hosting_version": "f5bbf2a1f554a9d4",
+      "stage_review_revision": "reviewwilmaanswers-00012-pez",
+      "functions_archive_sha256": "f400a6339c0fb043ebe8096281e0adf1a5fd99df066d314e205c4ff3b21737ef",
+      "live_provider_starts_by_this_acceptance": 0,
+      "live_grade_writes": 0,
+      "real_target_check": "blocked_by_automatic_review_before_submission; direct human consent pending",
+      "physical_device_acceptance": "open",
+      "stage_calls": 5,
+      "stage_usage_micros": 6397,
+      "stage_reserved_micros": 0,
+      "public_hashes_per_origin": 216,
+      "report": "docs/evidence/wilma-normal-entry-20261119/REPORT.md"
     }
   },
   "automation": {
@@ -2657,6 +2685,34 @@
           "report": "docs/evidence/wilma-legacy-backend-20261118/receipt.json",
           "physical_devices": "pending",
           "verified_at": "2026-11-18T21:53:08.288838+00:00"
+        },
+        "normal_entry_release_20261119": {
+          "task_ids": [
+            "GC-WEB-REPAIR-20261007",
+            "GC-PEDAGOGY-KB-01"
+          ],
+          "source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+          "tree": "ff4fe8b4a36d9e2b3d46481f72a4bf0683061bbf",
+          "pull_request": 438,
+          "ci_run": 44412450416,
+          "ci_status": "success",
+          "recorded_at": "2026-11-18T23:34:26.215635+00:00",
+          "stage": "production",
+          "runtime_merge_into_main": false,
+          "hosting_version": "7214fd4140dbc950",
+          "live_review_revision": "reviewwilmaanswers-00007-viz",
+          "stage_hosting_version": "f5bbf2a1f554a9d4",
+          "stage_review_revision": "reviewwilmaanswers-00012-pez",
+          "functions_archive_sha256": "f400a6339c0fb043ebe8096281e0adf1a5fd99df066d314e205c4ff3b21737ef",
+          "live_provider_starts_by_this_acceptance": 0,
+          "live_grade_writes": 0,
+          "real_target_check": "blocked_by_automatic_review_before_submission; direct human consent pending",
+          "physical_device_acceptance": "open",
+          "stage_calls": 5,
+          "stage_usage_micros": 6397,
+          "stage_reserved_micros": 0,
+          "public_hashes_per_origin": 216,
+          "report": "docs/evidence/wilma-normal-entry-20261119/REPORT.md"
         }
       },
       "question_action_dialogs_20261110": {
@@ -2693,7 +2749,7 @@
       "candidate_ci_job": 112587453495,
       "independent_review": "approved; two correction rounds preserved; final report analysis/web-acceptance-20261007/final-review.md",
       "no_scroll_story": true,
-      "next_action": "Physical Web acceptance and separately owned Secure phone follow-up; preserve accepted task size and no automatic real-answer replay.",
+      "next_action": "Normal Wilma entry and picker deployed; direct consent pending for one real-answer provider check. Secure1321 availability already confirmed, physical acceptance open. No more Stage paid probes.",
       "previous_release": {
         "id": "web-repair-20261007",
         "stage": "staging_deployed",
@@ -3452,7 +3508,7 @@
         "receipt": "workstreams/template-import-receipt-20261029.json",
         "next_action": "Ask human approval for exact aadf Hosting-only release on gradecrew.de; after approval freshly reconcile Live8188 or newer before one clone and both-origin hashes. Do not repeat completed tests unless source changes."
       },
-      "latest_release": "web_batch_20261118.legacy_backend_release_20261118"
+      "latest_release": "web_batch_20261118.normal_entry_release_20261119"
     },
     {
       "id": "gc-web-polish-20261007",
@@ -4849,7 +4905,7 @@
         "staging_cap_legacy_requests": 7,
         "staging_monthly_budget_eur": 20
       },
-      "next_action": "Martin verifies physical devices and deliberately resumes any real old answers; no automatic paid replay or grade confirmation.",
+      "next_action": "Await direct human consent for the one reported real-answer payload; do not repeat the denied action or replay other answers. Physical iPhone/iPad acceptance remains open. Existing Firebase storage retained; optional Supabase decision documented without implementation.",
       "semantic_preview": {
         "stage": "staging_deployed",
         "source": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
@@ -5191,7 +5247,7 @@
         "next_action": "Martin reloads gradecrew.de; physical device acceptance and separately owned Secure build; no further paid QA automatically",
         "verified_at": "2026-11-18T17:36:50.515413+00:00"
       },
-      "latest_release": "legacy_backend_release_20261118",
+      "latest_release": "normal_entry_release_20261119",
       "root_release_fields_note": "Latest Hosting is student_result_actions_20261118/f723; latest reviewWilmaAnswers is legacy_backend_release_20261118/f723. Earlier unreleased-backend statements are historical.",
       "compact_controls_p1_20261118": {
         "stage": "production",
@@ -5258,6 +5314,34 @@
         "report": "docs/evidence/wilma-legacy-backend-20261118/receipt.json",
         "physical_devices": "pending",
         "verified_at": "2026-11-18T21:53:08.288838+00:00"
+      },
+      "normal_entry_release_20261119": {
+        "task_ids": [
+          "GC-WEB-REPAIR-20261007",
+          "GC-PEDAGOGY-KB-01"
+        ],
+        "source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+        "tree": "ff4fe8b4a36d9e2b3d46481f72a4bf0683061bbf",
+        "pull_request": 438,
+        "ci_run": 44412450416,
+        "ci_status": "success",
+        "recorded_at": "2026-11-18T23:34:26.215635+00:00",
+        "stage": "production",
+        "runtime_merge_into_main": false,
+        "hosting_version": "7214fd4140dbc950",
+        "live_review_revision": "reviewwilmaanswers-00007-viz",
+        "stage_hosting_version": "f5bbf2a1f554a9d4",
+        "stage_review_revision": "reviewwilmaanswers-00012-pez",
+        "functions_archive_sha256": "f400a6339c0fb043ebe8096281e0adf1a5fd99df066d314e205c4ff3b21737ef",
+        "live_provider_starts_by_this_acceptance": 0,
+        "live_grade_writes": 0,
+        "real_target_check": "blocked_by_automatic_review_before_submission; direct human consent pending",
+        "physical_device_acceptance": "open",
+        "stage_calls": 5,
+        "stage_usage_micros": 6397,
+        "stage_reserved_micros": 0,
+        "public_hashes_per_origin": 216,
+        "report": "docs/evidence/wilma-normal-entry-20261119/REPORT.md"
       }
     },
     {
@@ -6178,6 +6262,37 @@
       "physical_devices": "pending",
       "verified_at": "2026-11-18T21:53:08.288838+00:00",
       "backend_revision": "reviewwilmaanswers-00011-guf"
+    },
+    "wilma_normal_entry_release_20261119": {
+      "task_ids": [
+        "GC-WEB-REPAIR-20261007",
+        "GC-PEDAGOGY-KB-01"
+      ],
+      "source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+      "tree": "ff4fe8b4a36d9e2b3d46481f72a4bf0683061bbf",
+      "pull_request": 438,
+      "ci_run": 44412450416,
+      "ci_status": "success",
+      "recorded_at": "2026-11-18T23:34:26.215635+00:00",
+      "stage": "staging_deployed",
+      "runtime_merge_into_main": false,
+      "hosting_version": "f5bbf2a1f554a9d4",
+      "live_review_revision": "reviewwilmaanswers-00007-viz",
+      "stage_hosting_version": "f5bbf2a1f554a9d4",
+      "stage_review_revision": "reviewwilmaanswers-00012-pez",
+      "functions_archive_sha256": "f400a6339c0fb043ebe8096281e0adf1a5fd99df066d314e205c4ff3b21737ef",
+      "live_provider_starts_by_this_acceptance": 0,
+      "live_grade_writes": 0,
+      "real_target_check": "blocked_by_automatic_review_before_submission; direct human consent pending",
+      "physical_device_acceptance": "open",
+      "stage_calls": 5,
+      "stage_usage_micros": 6397,
+      "stage_reserved_micros": 0,
+      "public_hashes_per_origin": 216,
+      "report": "docs/evidence/wilma-normal-entry-20261119/REPORT.md",
+      "url": "https://gradecrew-staging-2026.web.app/wilma/",
+      "review_revision": "reviewwilmaanswers-00012-pez",
+      "canonical_root_source_unchanged": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d"
     }
   },
   "school_release_20261018": {
