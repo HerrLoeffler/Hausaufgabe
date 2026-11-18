@@ -75,7 +75,7 @@ jobs:
         run: npm ci --prefix tools/ui --no-audit --no-fund
 
       - name: Wilma teacher review contracts
-        run: node --experimental-vm-modules --test teacher-grading-summary.test.mjs teacher-review-write.test.mjs wilma-*.test.mjs tools/ui/wilma-inline.test.cjs
+        run: node --experimental-vm-modules --test teacher-grading-summary.test.mjs teacher-results-summary.test.mjs teacher-review-write.test.mjs wilma-*.test.mjs tools/ui/wilma-inline.test.cjs
 
       - name: Practice solution publication tests
         run: node --test practice-solution-publication.test.mjs secure-offline-review-label.test.mjs
@@ -246,7 +246,7 @@ jobs:
           node --test audio-listening-v1.test.mjs audio-solution-v2.test.mjs audio-answer-renderer.test.mjs audio-answer-editor-controls.test.mjs markwords-title-polish.test.mjs
           node --test web-acceptance-regressions.test.mjs audio-task-conversion.test.mjs tools/ui/workspace-upgrade.test.mjs tools/ui/secure-audio-memos.test.cjs tools/ui/editor-context.test.cjs tools/ui/coco-guide.test.cjs tools/ui/student-preview-start.test.cjs tools/ui/hero-window-height.test.cjs
           node --test tools/ui/secure-student-navigation.test.cjs
-          node --test tools/ui/audio-editor-actions.test.cjs tools/ui/audio-instruction.test.cjs tools/ui/color-question-contract.test.cjs tools/ui/creation-flow.test.cjs tools/ui/creation-compact.test.cjs tools/ui/material-drop.test.cjs tools/ui/media-editor-live.test.cjs
+          node --test tools/ui/audio-editor-actions.test.cjs tools/ui/emmi-revision-scope.test.cjs tools/ui/audio-instruction.test.cjs tools/ui/color-question-contract.test.cjs tools/ui/creation-flow.test.cjs tools/ui/creation-compact.test.cjs tools/ui/material-drop.test.cjs tools/ui/media-editor-live.test.cjs
           test -f assets/gradecrew/brand-primary-v1.svg
           test -f assets/gradecrew/penguin-guide.svg
           test -f assets/gradecrew/elephant-create.svg
@@ -333,6 +333,18 @@ jobs:
       - run: node tools/browser-layout/media-creation.cjs
         env:
           GC_MEDIA_BROWSER_EVIDENCE: /tmp/gc-layout-evidence/media-creation
+      - run: node tools/browser-layout/web-batch-preview.cjs
+      - name: Scoped Emmi dialogs with fictional transport
+        run: |
+          node tools/ui/emmi-revision-scope-preview.mjs > /tmp/emmi-preview.log 2>&1 &
+          gc_emmi_pid=$!
+          trap 'kill "$gc_emmi_pid" 2>/dev/null || true' EXIT
+          for gc_attempt in $(seq 1 20); do
+            curl -fsS http://127.0.0.1:8789/ > /dev/null && break
+            sleep 0.2
+          done
+          node tools/browser-layout/emmi-revision-scope.cjs
+      - run: node tools/browser-layout/teacher-results.cjs
       - run: node tools/browser-layout/student-progress.cjs
       - run: node tools/browser-layout/wilma-review.cjs
         env:

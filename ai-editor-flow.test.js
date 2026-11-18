@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { questionReviewKey, editorQuestionIndex } from "./ai-review-state.js";
 
 const app = readFileSync(new URL("./app.js", import.meta.url), "utf8");
-const handlers = app.slice(app.indexOf("function renderVariantProgress("), app.indexOf("function moveQuestion("));
+const handlers = app.slice(app.indexOf("function inferQuestionRevisionScope("), app.indexOf("function openQuestionRevisionDialog(")) + app.slice(app.indexOf("function renderVariantProgress("), app.indexOf("function moveQuestion("));
 function deferred() { let resolve, reject; const promise = new Promise((yes, no) => { resolve = yes; reject = no; }); return { promise, resolve, reject }; }
 function setup() {
   let renders = 0, dirty = 0, id = 0;

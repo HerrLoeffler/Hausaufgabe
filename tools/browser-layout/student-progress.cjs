@@ -6,6 +6,7 @@ const path = require("node:path");
 const http = require("node:http");
 const root = process.cwd();
 const paper = [
+  { id: "order", type: "ordering", text: "Ordne die Schritte.", points: 1, items: [{id:"first",text:"Schritt eins"},{id:"second",text:"Schritt zwei"}] },
   { id: "text", type: "text", text: "Begründe deine Antwort.", points: 1 },
   { id: "choice", type: "single", text: "Wähle eine Möglichkeit.", points: 1,
     options: [{ id: "a", text: "Möglichkeit A" }, { id: "b", text: "Möglichkeit B" }] },
@@ -41,28 +42,34 @@ const server = http.createServer((req, res) => {
           }));
           await page.goto(origin + "/secure-student.html?test=DEMO1234&lang=de");
           await page.locator("#secureAssessment:not(.hidden)").waitFor();
+          assert.match(await page.locator("#secureProgressText").textContent(), /0 von 4/);
           const text = page.locator('[data-qid="text"] textarea');
           const overview = page.locator("#secureQuestionOverview");
           await page.locator("[data-secure-overview-toggle]").click();
-          assert.match(await overview.locator("button").nth(0).getAttribute("aria-label"), /offen/);
+          assert.match(await overview.locator("button").nth(1).getAttribute("aria-label"), /offen/);
           await text.fill("Absichtlich unbewertete Antwort");
-          await page.waitForFunction(() => document.querySelector("#secureQuestionOverview button").classList.contains("complete"));
-          assert.match(await page.locator("#secureProgressText").textContent(), /1 von 3/);
-          assert.equal(await overview.locator("button").nth(0).textContent(), "1 ✓");
-          assert.match(await overview.locator("button").nth(0).getAttribute("aria-label"), /beantwortet/);
+          await page.waitForFunction(() => document.querySelector("#secureQuestionOverview button:nth-child(2)").classList.contains("complete"));
+          assert.match(await page.locator("#secureProgressText").textContent(), /1 von 4/);
+          assert.equal(await overview.locator("button").nth(1).textContent(), "2 ✓");
+          assert.match(await overview.locator("button").nth(1).getAttribute("aria-label"), /beantwortet/);
           await text.fill("");
-          assert.match(await overview.locator("button").nth(0).getAttribute("aria-label"), /offen/);
+          assert.match(await overview.locator("button").nth(1).getAttribute("aria-label"), /offen/);
           await page.locator('[data-qid="choice"] input').last().check();
           await page.locator(".secureGap").nth(0).fill("Teil");
-          assert.match(await page.locator("#secureProgressText").textContent(), /1 von 3/);
+          assert.match(await page.locator("#secureProgressText").textContent(), /1 von 4/);
           await page.locator(".secureGap").nth(1).fill("vollständig");
-          assert.match(await page.locator("#secureProgressText").textContent(), /2 von 3/);
+          assert.match(await page.locator("#secureProgressText").textContent(), /2 von 4/);
           await page.locator(".secureGap").nth(1).fill("");
-          assert.match(await overview.locator("button").nth(2).getAttribute("aria-label"), /offen/);
+          assert.match(await overview.locator("button").nth(3).getAttribute("aria-label"), /offen/);
           await page.reload();
           await page.locator("#secureAssessment:not(.hidden)").waitFor();
           assert.equal(await page.locator('[data-qid="choice"] input').last().isChecked(), true);
-          assert.match(await page.locator("#secureProgressText").textContent(), /1 von 3/);
+          assert.match(await page.locator("#secureProgressText").textContent(), /1 von 4/);
+          await page.locator(".secureConfirmOrder").click();
+          assert.match(await page.locator("#secureProgressText").textContent(), /2 von 4/);
+          await page.reload();
+          await page.locator("#secureAssessment:not(.hidden)").waitFor();
+          assert.match(await page.locator("#secureProgressText").textContent(), /2 von 4/);
           assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
           assert.deepEqual(errors, []);
           console.log(name, width, height, "answer state, clearing, partial gaps, reload and page width passed");

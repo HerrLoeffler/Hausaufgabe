@@ -60,3 +60,21 @@ test('Ergebnisliste zeigt automatische Note trotz altem Reviewstatus sofort',t=>
 test('offene Freitextpunkte erzeugen keine Note aus der vorläufigen Null',t=>{const w=setup(t);const row=w.document.querySelector('.reviewBtn').closest('tr');assert.equal(row.cells[3].textContent,'–');assert.equal(row.cells[4].textContent,'Prüfen');w.state.submissions[0].grade=2;w.renderResultsTable();assert.equal(w.document.querySelector('.reviewBtn').closest('tr').cells[3].textContent,'2 (vorläufig)');});
 test('unbekannte nichtleere Lücke bleibt trotz alter automatischer Null prüfbedürftig',t=>{const w=setup(t);w.state.resultQuestions=[{id:'q1',type:'gapfill',text:'Ein [Verb].',points:3}];w.parseGaps=()=>[{answers:['Verb']}];const s=w.state.submissions[0];Object.assign(s,{answers:{q1:['Zeitwort']},grading:{q1:{awardedPoints:0,autoPoints:0,maxPoints:3,needsReview:false,correct:false}},totalPoints:0,maxPoints:3,percent:0});w.renderResultsTable();const row=w.document.querySelector('.reviewBtn').closest('tr');assert.equal(row.cells[3].textContent,'–');assert.equal(row.cells[4].textContent,'Prüfen');});
 test('Vollformular öffnet während laufender Klassenprüfung keine verlierbaren Eingaben',t=>{const w=setup(t);let notice='';w.toast=text=>notice=text;w.wilmaAnswerReview={isBusy:()=>true};w.openReview('s1');assert.ok(w.$('reviewPanel').classList.contains('hidden'));assert.match(notice,/abwarten/);});
+test('Sortieren ist im normalen Ergebnisweg gebunden und schützt ungespeicherte Punkte',t=>{
+ const w=setup(t);const before=JSON.stringify(w.state.submissions);w.confirmDiscardInlineReview=()=>true;
+ Object.assign(w.state.submissions[0],{studentFirstName:'Zoe'});Object.assign(w.state.submissions[1],{studentFirstName:'Anna'});w.renderResultsTable();
+ assert.ok(w.$('resultsSort'));w.$('resultsSort').value='firstName';w.$('resultsSort').dispatchEvent(new w.Event('change'));
+ w.$('resultsSortDirection').value='asc';w.$('resultsSortDirection').dispatchEvent(new w.Event('change'));
+ assert.equal(w.document.querySelector('.reviewBtn').dataset.id,'s2');
+ w.openReview('s2');w.document.querySelector('.manualPoints').value='2';w.confirmDiscardInlineReview=()=>false;
+ w.$('resultsSortDirection').value='desc';w.$('resultsSortDirection').dispatchEvent(new w.Event('change'));
+ assert.equal(w.$('resultsSortDirection').value,'asc');assert.equal(w.document.querySelector('.manualPoints').value,'2');
+ assert.equal(JSON.parse(before)[0].totalPoints,w.state.submissions[0].totalPoints);
+});
+test('Statistik erklärt vorläufige Punkte und getrennte Nenner im normalen Ergebnisweg',t=>{
+ const w=setup(t);const s=w.state.submissions[0];Object.assign(s,{totalPoints:3,percent:100,elapsedSeconds:60,grading:{q1:{awardedPoints:3,maxPoints:3,needsReview:false,correct:true}}});w.renderResultsTable();
+ assert.match(w.document.querySelector('.resultsAverages').textContent,/1 fertig bewertet/);
+ assert.match(w.document.querySelector('.resultsAverages').textContent,/1 offen/);
+ assert.match(w.document.querySelector('.resultsAverages').textContent,/Punkte.*3.*1 Abgaben/);
+ assert.match(w.document.querySelector('.resultsAverages').textContent,/Dauer.*1 Abgaben/);
+});
