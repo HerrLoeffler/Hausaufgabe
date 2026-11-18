@@ -1,4 +1,4 @@
-# UNSENT — replacement build must be uploaded and selected first
+# UNSENT — build 1.0 (1293) processed and selected; Ready for Review
 
 Hello App Review Team,
 
@@ -8,10 +8,10 @@ We checked this and found that the original icon was also used for our separate 
 
 We have revised the GradeCrew Secure icon to distinguish the two apps while retaining their shared GradeCrew branding, as intended. The revised icon includes a padlock attached to the C and the clearly visible label “Secure” below the GC logo. The teacher app retains its original icon.
 
-Please review the replacement build with the updated Secure icon. Thank you for your guidance.
+Please review replacement build 1.0 (1293), which includes the updated Secure icon. Thank you for your guidance.
 
 Kind regards,
 Martin Löffler
 
 ---
-Operator note: This draft has NOT been sent. Add the actual uploaded/processed replacement build number and confirm its AppIcon before using it. No claim that Apple has accepted the change or that no other publication requirements remain.
+Operator note: This draft has NOT been sent. Build 1.0 (1293) uploaded successfully on November 18, 2026. Apple processing, version selection and the new AppIcon were verified; the updated review item shows Ready for Review. Neither this reply nor the final resubmission has been sent. No claim that Apple has accepted the change or that no other publication requirements remain.
