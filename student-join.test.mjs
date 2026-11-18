@@ -36,7 +36,7 @@ test('code-free pupil entry stays public and never touches an existing teacher s
 test('blank and short codes stay in the form; formatted code opens only the secure route',async t=>{
  const r=runtime(t);await flush();const form=r.d.getElementById('secureJoinForm'),input=r.d.getElementById('secureJoinCode');
  assert.ok(form);r.d.getElementById('secureJoinName').value='SYN-01';for(const code of ['', 'A']){input.value=code;form.dispatchEvent(new r.w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(new URL(r.location.href).search,'');assert.ok(r.d.getElementById('secureJoinError').textContent);}
- input.value='ab12 cd34';form.dispatchEvent(new r.w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(r.location.href,'https://gradecrew.de/secure-student.html?test=AB12CD34');assert.deepEqual(r.calls,[]);
+ input.value='ab12 cd34';form.dispatchEvent(new r.w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(r.location.href,'https://gradecrew.de/secure-student.html?test=AB12CD34&lang=de');assert.deepEqual(r.calls,[]);
 });
 test('direct invalid URL does not call public info and offers code correction',async t=>{
  const r=runtime(t,'?test=A');await flush();assert.deepEqual(r.calls,[]);assert.equal(r.d.getElementById('secureError').classList.contains('hidden'),false);assert.ok(r.d.querySelector('#secureError a[href="./secure-student.html"]'));
@@ -79,7 +79,7 @@ test('entry requires an alias, passes it for one test, and never places it in th
  form.dispatchEvent(new r.w.Event('submit',{bubbles:true,cancelable:true}));assert.equal(new URL(r.location.href).search,'');
  assert.ok(r.d.getElementById('secureJoinError').textContent);r.d.getElementById('secureJoinName').value='  SYN-ALIAS  ';
  form.dispatchEvent(new r.w.Event('submit',{bubbles:true,cancelable:true}));
- assert.equal(r.location.href,'https://gradecrew.de/secure-student.html?test=AB12CD34');
+ assert.equal(r.location.href,'https://gradecrew.de/secure-student.html?test=AB12CD34&lang=de');
  assert.equal(JSON.parse(r.w.sessionStorage.getItem('gradecrew.studentEntry.v1')).studentName,'SYN-ALIAS');assert.deepEqual(r.calls,[]);
 });
 

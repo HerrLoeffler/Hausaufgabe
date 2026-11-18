@@ -9,6 +9,7 @@ const app = getApps().find(item => item.name === "gradecrew-secure-solutions")
   || initializeApp(firebaseConfig, "gradecrew-secure-solutions");
 const api = createSecureAssessmentClient(app);
 let busy = false;
+let manualRefreshRequested = false;
 let lastRenderedState = "";
 
 function removeLegacyNote() {
@@ -107,6 +108,7 @@ function renderWaiting(receipt) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "button secondary";
+    button.dataset.secureReleaseCheck = "1";
     button.textContent = "Lösungsfreigabe prüfen";
     button.addEventListener("click", () => refreshReceipt({ force: true }));
     panel.appendChild(button);
@@ -124,31 +126,67 @@ function renderReceiptSolutions(receipt) {
   else renderWaiting(receipt);
 }
 
+function showRefreshStatus(text, error = false) {
+  const panel = solutionPanel();
+  if (!panel) return;
+  let message = panel.querySelector("[data-secure-release-status]");
+  if (!message) {
+    message = document.createElement("p");
+    message.dataset.secureReleaseStatus = "1";
+    message.setAttribute("role", "status");
+    panel.appendChild(message);
+  }
+  message.className = error ? "secureSolutionRefreshError" : "secureSolutionRefreshStatus";
+  message.textContent = text;
+}
+
 async function refreshReceipt({ force = false } = {}) {
-  if (!quizId || !host || busy) return;
+  if (!quizId || !host) return;
   if (host.classList.contains("hidden") && !force) return;
   if (!host.querySelector("h1") && !force) return;
+  if (force) {
+    manualRefreshRequested = true;
+    showRefreshStatus("Die Lösungsfreigabe wird geprüft …");
+  }
+  if (busy) return;
   busy = true;
+  const button = host.querySelector("[data-secure-release-check]");
+  if (button) button.disabled = true;
   try {
     const response = await api.getReceipt(quizId);
     if (response?.receipt) renderReceiptSolutions(response.receipt);
+    if (manualRefreshRequested) {
+      const receipt = response?.receipt;
+      if (receipt?.solutionsReleased && Array.isArray(receipt.solutions)) {
+        renderSolutions(receipt);
+        const heading = solutionPanel()?.querySelector("h2");
+        if (heading) { heading.tabIndex = -1; heading.focus(); }
+      } else if (receipt) {
+        showRefreshStatus(receipt.solutionsConfigured
+          ? "Noch nicht freigegeben. Bitte warte auf deine Lehrkraft."
+          : "Für diesen Test ist keine Lösungsanzeige freigegeben.");
+      } else {
+        showRefreshStatus("Die Freigabe konnte gerade nicht geprüft werden. Bitte später erneut versuchen.", true);
+      }
+    }
   } catch (error) {
-    if (!force) return;
-    const panel = solutionPanel();
-    if (!panel) return;
-    const message = panel.querySelector(".secureSolutionRefreshError") || document.createElement("p");
-    message.className = "secureSolutionRefreshError";
-    message.textContent = error?.code === "unavailable"
+    if (!manualRefreshRequested) return;
+    showRefreshStatus(error?.code === "unavailable"
       ? "Die Freigabe konnte gerade nicht geprüft werden. Bitte später erneut versuchen."
-      : "Die Lösungsfreigabe ist noch nicht verfügbar.";
-    panel.appendChild(message);
+      : "Die Lösungsfreigabe ist noch nicht verfügbar.", true);
   } finally {
+    manualRefreshRequested = false;
     busy = false;
+    const currentButton = host.querySelector("[data-secure-release-check]");
+    if (currentButton) currentButton.disabled = false;
   }
 }
 
 if (host && quizId) {
-  const observer = new MutationObserver(() => void refreshReceipt());
+  const observer = new MutationObserver(records => {
+    if (records.some(record => record.target === host && (record.type === "attributes"
+      || [...record.addedNodes].some(node => node.nodeName === "H1")))) void refreshReceipt();
+  });
   observer.observe(host, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
   void refreshReceipt();
 }

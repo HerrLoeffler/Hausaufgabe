@@ -17,6 +17,9 @@ function syncStudentHomeLinks() {
   const home = new URL("./", location.href);
   if (/^en(?:-|$)/i.test(document.documentElement.lang)) home.searchParams.set("lang", "en");
   document.querySelectorAll(".secureBrand,.secureEntryBack").forEach(link => { link.href = home.href; });
+  const entry = new URL("./secure-student.html", location.href);
+  entry.searchParams.set("lang", /^en(?:-|$)/i.test(document.documentElement.lang) ? "en" : "de");
+  document.querySelectorAll("[data-secure-new-test]").forEach(link => { link.href = entry.href; });
 }
 syncStudentHomeLinks();
 addEventListener("gradecrew:ui-locale-changed", syncStudentHomeLinks);
@@ -726,6 +729,17 @@ function showReceipt(receipt) {
     }
     host.appendChild(meta);
   }
+  const actions = document.createElement("div");
+  actions.className = "secureResultActions";
+  const nextTest = document.createElement("a");
+  nextTest.className = "button primary";
+  nextTest.dataset.secureNewTest = "1";
+  nextTest.textContent = "Neuen Test starten";
+  const entry = new URL("./secure-student.html", location.href);
+  entry.searchParams.set("lang", /^en(?:-|$)/i.test(document.documentElement.lang) ? "en" : "de");
+  nextTest.href = entry.href;
+  actions.appendChild(nextTest);
+  host.appendChild(actions);
   const solutionNote = document.createElement("p");
   solutionNote.textContent = "Lösungen werden nicht automatisch mit der Abgabe freigegeben.";
   host.appendChild(solutionNote);
@@ -878,7 +892,7 @@ $("secureJoinForm")?.addEventListener("submit", event => {
   target.search = "";
   target.hash = "";
   target.searchParams.set("test", code);
-  if (/^en(?:-|$)/i.test(document.documentElement.lang)) target.searchParams.set("lang", "en");
+  target.searchParams.set("lang", /^en(?:-|$)/i.test(document.documentElement.lang) ? "en" : "de");
   location.href = target.href;
 });
 

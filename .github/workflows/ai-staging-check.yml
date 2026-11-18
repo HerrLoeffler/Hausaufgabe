@@ -149,7 +149,7 @@ jobs:
           node --test secure-result-policy.test.mjs
 
       - name: Test controlled solution release
-        run: node --test secure-solution-release.test.mjs
+        run: node --test secure-solution-release.test.mjs student-result-actions.test.mjs
 
       - name: Test teacher assessment locks
         run: node --test secure-assessment-teacher-polish.test.mjs secure-audio-publication.test.mjs
@@ -338,6 +338,7 @@ jobs:
       - run: node tools/browser-layout/student-sidebar.cjs
       - run: node tools/browser-layout/student-timer-grid.cjs
       - run: node tools/browser-layout/student-submit.cjs
+      - run: node tools/browser-layout/student-result-actions.cjs
       - run: node tools/browser-layout/wilma-review.cjs
         env:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
