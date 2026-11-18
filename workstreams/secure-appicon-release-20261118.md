@@ -26,3 +26,7 @@ FreshAppleUI18Nov: Secure1.0 stillRejected4.3only; exactlatestNov11messagematche
 
 ## 14:20UTC — one targeted same-source retry
 Attempt1 native900/900andallitslifecycle/UItestsPASS, bothmini+largeWebPASS360/360+12interactions each. Onlyphonefailed (WebKitInvalidTransitionfirstcoldfixture asabove), build/upload134866435667correctlySKIPPED. Alljobscompletedbefore retry. TargetedrerunONLYphonejob134847383694 initiated14:20UTC viaGitHubAPI success=true; sameRun44317497628/immutable536d7cce, successfuljobsretained, no sourcechange or gatechange. Candidate1292onlyifretry+signing/uploadsuccess. No1291uploaded. NextcollectnewphonejobID, fullphonePASSthenactualsigning/upload/Appleprocessing. No duplicateworkflowstart.
+
+
+## 14:37UTC — runner allocation failed, no test execution in attempt2
+Attempt2 phone134867240750 queued~16minutes then CANCELLED byGitHub, notbythischat. ActualGitHubannotations: Internal server error; hostedRunnernotacquiredevenaftermultipleattempts; explicitmacOSarm64capacityconstraints. NoSetupjob/teststeps, noAppcodeexecuted; dependentupload134876994298SKIPPED, no1292. Threeearlierpassedgatesretained. OnefurtherTARGETEDinfraretryofcancelled134867240750 acceptedsuccess=true; sameRun44317497628/source536d7cce, expectedattempt3/newcandidate1293ONLYifactualupload. No code/workflow/gatechange, no newfullworkflow, no manualcancellation. This is allocationretry, notasecondfailedcodeexecutionbeingignored. NextrecordnewphonejobIDandfollowexecution; preserveallfailhistory.
