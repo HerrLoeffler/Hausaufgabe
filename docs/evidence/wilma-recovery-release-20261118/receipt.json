@@ -1,0 +1,167 @@
+{
+  "tasks": [
+    "GC-PEDAGOGY-KB-01",
+    "GC-WEB-REPAIR-20261007"
+  ],
+  "stage": "production",
+  "commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+  "tree": "4ff814bac8dc3744ab75dcbae7f1b49f0ae909f5",
+  "pull_request": 438,
+  "ci": {
+    "run": 44353944925,
+    "result": "success",
+    "node_job": 134976836950,
+    "browser_job": 134976836082,
+    "full_tutorial_cases": 18,
+    "actual_clicks_per_tutorial": 52
+  },
+  "independent_review": "PASS final runtime/tree, no P0-P2; two initial findings fixed and rechecked",
+  "local_tests": {
+    "root_ui": 816,
+    "functions": 496,
+    "student_layout": 36,
+    "student_submission": 18,
+    "wilma_task_navigation": 72,
+    "independent_submission_journeys": 18
+  },
+  "staging": {
+    "commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+    "result": "pass",
+    "at": "2026-11-18T17:28:52.131780+00:00",
+    "project": "gradecrew-staging-2026",
+    "url": "https://gradecrew-staging-2026.web.app/wilma/workspace.html?intent=login",
+    "syntheticOnly": true,
+    "newProviderCalls": 1,
+    "providerUsage": {
+      "input_tokens": 466,
+      "output_tokens": 91
+    },
+    "newUsageMicros": 1012,
+    "remainingReservationsMicros": 0,
+    "checks": [
+      "server submission persisted and pending results hidden",
+      "typed ABGEBEN disabled until correct; cancel preserves answers",
+      "AI 1.5/1.5 proposal and reason rendered; no automatic confirmation",
+      "free status and refresh reuse original receipt",
+      "teacher confirmation persisted; task complete green",
+      "all tasks available; undo persisted to review/no grade",
+      "reload retains proposal without new computation"
+    ],
+    "deploymentProof": {
+      "commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+      "project": "gradecrew-staging-2026",
+      "function": {
+        "state": "ACTIVE",
+        "revision": "reviewwilmaanswers-00010-zud",
+        "source": {
+          "bucket": "gcf-v2-sources-840345136563-europe-west1",
+          "object": "reviewWilmaAnswers/function-source.zip",
+          "generation": "1795022500568907"
+        },
+        "archiveSHA256": "858322674c5d27457a1d35bb91e320d81dcd74719ccc5e36ea0a1d969035ac7e",
+        "otherFunctionsUnchanged": 97
+      },
+      "hosting": {
+        "version": "sites/gradecrew-staging-2026/versions/53f8755a3225464f",
+        "verifiedFiles": 664,
+        "totalFiles": 666
+      }
+    },
+    "physicalDevices": "not tested",
+    "nativeApp": "separate release owner; no new TestFlight proof yet"
+  },
+  "production": {
+    "commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+    "tree": "4ff814bac8dc3744ab75dcbae7f1b49f0ae909f5",
+    "result": "pass",
+    "at": "2026-11-18T17:36:50.515413+00:00",
+    "project": "hausaufgabe-staging",
+    "syntheticOnly": true,
+    "newProviderCalls": 1,
+    "newUsageMicros": 1288,
+    "remainingReservationsMicros": 0,
+    "realPupilWrites": 0,
+    "automaticGradingWrites": 0,
+    "checks": [
+      "existing teacher session works",
+      "old workspace student link routes to new Secure Web",
+      "server submission persisted; pending score hidden",
+      "typed ABGEBEN confirmation",
+      "860px question and answer area;16px unchanged font at1280x720",
+      "AI 1.5/1.5 proposal and reason visible",
+      "free status and results refresh reuse original receipt",
+      "existing Firebase-domain link reaches same synthetic test"
+    ],
+    "publicHashes": {
+      "commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+      "origins": [
+        "https://gradecrew.de",
+        "https://hausaufgabe-staging.web.app"
+      ],
+      "verifiedFilesPerOrigin": 216,
+      "totalVerified": 432,
+      "mismatches": 0,
+      "removedAssets": 0,
+      "unchangedAssets": 202
+    },
+    "deployment": {
+      "commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+      "project": "hausaufgabe-staging",
+      "function": {
+        "state": "ACTIVE",
+        "revision": "reviewwilmaanswers-00005-lax",
+        "source": {
+          "bucket": "gcf-v2-sources-950775032930-europe-west1",
+          "object": "reviewWilmaAnswers/function-source.zip",
+          "generation": "1795022959330558"
+        },
+        "archiveSHA256": "858322674c5d27457a1d35bb91e320d81dcd74719ccc5e36ea0a1d969035ac7e",
+        "otherFunctionsUnchanged": 61
+      },
+      "hosting": {
+        "version": "sites/hausaufgabe-staging/versions/899b570925aa4566",
+        "verifiedFiles": 217,
+        "totalFiles": 219
+      }
+    },
+    "physicalDevices": "not tested",
+    "nativeApp": "separate owner/build; no new TestFlight proof claimed"
+  },
+  "anonymous_boundary": [
+    {
+      "project": "gradecrew-staging-2026",
+      "status": 401,
+      "callableStatus": "UNAUTHENTICATED",
+      "providerStarted": false
+    },
+    {
+      "project": "hausaufgabe-staging",
+      "status": 401,
+      "callableStatus": "UNAUTHENTICATED",
+      "providerStarted": false
+    }
+  ],
+  "limits": {
+    "live_monthly_share_eur": 8.75,
+    "shared_stage_live_monthly_ceiling_eur": 20,
+    "new_provider_calls_stage": 1,
+    "new_provider_calls_live": 1,
+    "new_usage_accounting_micros_total": 2300,
+    "further_paid_probes": "none authorized automatically; this verification round is finished",
+    "history_and_holds_reset": false
+  },
+  "native": {
+    "owner_thread": "01a10c75-8912-7a12-98f0-c9e78064aa2c",
+    "status": "separate native release matrix failed; owner investigating; no new upload claimed",
+    "latest_size_instruction_sent": true,
+    "required_contract": "preserve task area/font; Web sidebar1180CSSpx/600h; native1024 prior contract must be reconciled",
+    "physical_devices": "not tested by Web chat"
+  },
+  "staging_preservation": {
+    "original_regular_files": 663,
+    "unchanged_files_outside_candidate_prefix": 447,
+    "candidate_prefix": "/wilma/",
+    "removed_files": 0,
+    "canonical_root_commit_unchanged": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d"
+  }
+}
