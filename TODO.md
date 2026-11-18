@@ -883,3 +883,10 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 - [x] Tatsächliche fiktive Stage-/Live-Abgaben, Vorschläge und kostenlose Wiederaufnahme; auf Staging zusätzlich Bestätigen und Rückgängig. Genau ein neuer Providerstart je Umgebung, zusammen 2300 MikroEUR Usagebuchung, keine Reservierung und keine echte Schülernotenänderung. Bestehende Anmeldung und alte Links funktionieren. Keine weitere bezahlte QA aus Wiederaufnahme.
 - [ ] **Native GC-IOS-02/GC-RELEASE-06:** Chat `01a10c75-8912-7a12-98f0-c9e78064aa2c` hat den Größenvertrag erhalten. Der bisherige native 1024-Vertrag muss die Aufgabenbreite und Schrift erhalten. Nativer Release-Gesamttest fehlgeschlagen, Upload bis zur Klärung gestoppt. Danach separater App-Build und Geräteabnahme; Web-Hosting ist kein TestFlight-Nachweis.
 - [ ] Martin prüft physisches Handy/iPad, OS-Tastatur/Diktat und Lesbarkeit. Den alten realen Wilma-Prüflauf nur bewusst wiederaufnehmen oder selbst bewerten; keine automatische Neubewertung.
+
+
+### GC-WEB-REPAIR-20261007 / GC-PEDAGOGY-KB-01 · P1 kompakte Bedienung, große Aufgaben · 18.11.2026
+
+- [x] **Hosting Production:** 9de2011 / PR438, CI 44368770487 erfolgreich und unabhängiger Review PASS. Kompakter Wilma-Kopf mit Offene/Alle, sichtbarer Timer und Nummernraster. Aufgabenbreite 860 px und Schrift erhalten; rechte Übersicht erst ab 1180×600. Beide Adressen jeweils 216/216 Dateien geprüft, 206 unverändert; sämtliche Functions weiter d67b0b5. [Nachweis](docs/evidence/wilma-compact-controls-p1-20261118/REPORT.md).
+- [ ] **Backend weiterhin offen:** Reparatur fehlender oder beschädigter completed-Belege sowie failed/createdAt-Altzustände nur vorbereitet/ci_green, nicht deployed. Der tatsächliche synthetische Altfalltest mit gleichem Fingerprint fehlt, weil die Browserfähigkeit nach der Unterbrechung entfernt wurde. Ein frischer Erfolg ist kein Altfallnachweis. Höchstens ein neuer Stageversuch im vorhandenen Rahmen, keine neuen Liveversuche oder echten Schülernotenänderungen.
+- [ ] Native App/TestFlight und Martins physische Handy-/iPad-/Tastaturabnahme separat; neuester Größenvertrag an den vorhandenen Owner zugestellt.
