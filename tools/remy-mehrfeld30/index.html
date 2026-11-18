@@ -19,11 +19,11 @@
 <div id="workspace" hidden>
   <div class="bar"><button id="mixed">Kreativmix · 30 Aufgaben</button><button id="roundFive" class="secondary">Runde 5 · Tonhöhen setzen</button><button id="roundFour" class="secondary">Runde 4 · Rhythmus hören</button><button id="roundThree" class="secondary">Runde 3 · Quellen, Labyrinth, Noten</button><button id="roundTwo" class="secondary">Runde 2 · 12 neue Ideen</button><button id="seed" class="secondary">Runde 1 · 30 KI-Aufgaben</button><button id="last" class="secondary" hidden>Eigener Stapel</button><button id="logout" class="secondary">Abmelden</button></div>
   <details id="trainingPanel" open>
-    <summary>Dreisatz üben &amp; passende Darstellungen finden</summary>
-    <p>Beschreibe dein Lernziel. Remy prüft, ob ein Dreisatz passt. Bei anderen Zusammenhängen oder fehlenden Angaben wird daraus eine Aufgabe zur passenden Vorgehensweise.</p>
+    <summary>Mathematik · Dreisatz mit KI erproben</summary>
+    <p>Hier erzeugt Remy mathematische Dreisatzaufgaben mit Rechenpfeilen. Die Eignungsprüfung erkennt Grundgebühren, andere Zusammenhänge und fehlende Angaben. Solche Wünsche erscheinen in diesem Pilot als Eignungsprobe.</p>
     <div class="bar"><button type="button" id="trainingDeck">60 KI-Erprobungen öffnen</button><button type="button" id="trainingLast" class="secondary" hidden>Meine letzte Erprobung</button></div>
     <form id="trainingWish">
-      <label>Was soll deine Klasse üben?<textarea name="wish" rows="3" minlength="8" maxlength="1000" required placeholder="Zum Beispiel: Drei gleich schnelle Drucker brauchen für denselben Auftrag 24 Minuten. Wie lange brauchen acht? Mit Rechenpfeilen."></textarea></label>
+      <label>Dein mathematischer Dreisatz-Auftrag<textarea name="wish" rows="3" minlength="8" maxlength="1000" required placeholder="Zum Beispiel: Drei gleich schnelle Drucker brauchen für denselben Auftrag 24 Minuten. Wie lange brauchen acht? Mit Rechenpfeilen."></textarea></label>
       <p>Aufgaben, Auswahlgründe und deine Rückmeldungen werden im Testfundus gespeichert. Eigene Wünsche sind zunächst nur für dein Testkonto verfügbar.</p>
       <button id="trainingGenerate">Mit KI erstellen und prüfen</button>
       <button type="button" id="trainingResume" class="secondary" hidden>Gespeicherten Auftrag prüfen</button>
@@ -31,9 +31,9 @@
     </form>
   </details>
   <details id="recipePanel">
-    <summary>Remy · neues Format aus freiem Wunsch</summary>
+    <summary>Weitere Erprobungen · Quellen, Labyrinth und Musik</summary>
     <form id="recipeWish">
-      <label>Was soll die Aufgabe üben?<textarea name="wish" rows="3" minlength="8" maxlength="1000" required placeholder="Zum Beispiel: Ein 3/4-Takt für Klasse 6, in den jeweils eine Note eingesetzt wird."></textarea></label>
+      <label>Dein Quellen-, Labyrinth- oder Musikwunsch<textarea name="wish" rows="3" minlength="8" maxlength="1000" required placeholder="Zum Beispiel: Ein 3/4-Takt für Klasse 6, in den jeweils eine Note eingesetzt wird."></textarea></label>
       <p>Im Pilot verfügbar: Quellen zuordnen, Labyrinth, Notenwerte, Tonhöhen im Violinschlüssel und Rhythmus hören. Schreib beim Rhythmus dazu, ob du Notenbild und Zählpuls möchtest.</p>
       <button id="generateRecipe">Mit KI erstellen</button>
       <button type="button" id="resumeRecipe" class="secondary" hidden>Auftrag prüfen</button>
@@ -42,12 +42,12 @@
     </form>
   </details>
   <details id="wishPanel">
-    <summary>Neue Aufgaben mit KI erstellen</summary>
+    <summary>Früherer Versuch · Tabellen und Pfeile</summary>
     <form id="wish">
       <div class="fields"><label>Fach<input name="subject" value="Mathematik" maxlength="60" required></label>
       <label>Klasse<select name="grade"><option>5</option><option>6</option><option selected>7</option><option>8</option><option>9</option><option>10</option></select></label>
       <label>Aufgaben<select name="count"><option>3</option><option>5</option></select></label></div>
-      <label>Was soll deine Klasse üben?<textarea name="wish" rows="3" maxlength="1000" required placeholder="Zum Beispiel: Umgekehrter Dreisatz mit Rechenpfeilen und unterschiedlichen Hilfen."></textarea></label>
+      <label>Dein Tabellen- oder Pfeilauftrag<textarea name="wish" rows="3" maxlength="1000" required placeholder="Zum Beispiel: Umgekehrter Dreisatz mit Rechenpfeilen und unterschiedlichen Hilfen."></textarea></label>
       <button id="generate">Mit KI erstellen</button>
       <button type="button" id="resume" class="secondary" hidden>Auftrag erneut prüfen</button>
     </form>
