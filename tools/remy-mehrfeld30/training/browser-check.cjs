@@ -12,9 +12,9 @@ const base='https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/rem
     const page=await browser.newPage({viewport:{width:1280,height:1000}});
     const errors=[];
     page.on('pageerror',e=>errors.push(e.message));
-    await page.goto(base);
+    await page.goto(base,{waitUntil:'domcontentloaded',timeout:60000});
     const credentials=JSON.parse(fs.readFileSync('/Users/martin/Documents/Codex/2026-10-21/setze-den-bestehenden-gradecrew-auftrag-aus/work/test-login.json','utf8'));
-    await page.locator('#login:not([hidden])').waitFor();
+    await page.locator('#login:not([hidden])').waitFor({timeout:60000});
     await page.getByLabel('E-Mail',{exact:true}).fill(credentials.email);
     await page.getByLabel('Passwort',{exact:true}).fill(credentials.password);
     await page.getByRole('button',{name:'Anmelden',exact:true}).click();

@@ -26,16 +26,23 @@ const wishes=[
     await page.locator('#workspace:not([hidden])').waitFor();
     for(const wish of wishes){
       const file=path.join(root,'free-'+wish.id+'.json');
+      let receipt;
       if(fs.existsSync(file)){
-        const previous=JSON.parse(fs.readFileSync(file,'utf8'));
-        if(previous.status==='ready'){console.log(wish.id+' already verified');continue;}
-        throw Error(wish.id+' has an earlier uncertain receipt; do not dispatch again.');
+        receipt=JSON.parse(fs.readFileSync(file,'utf8'));
+        if(receipt.status==='ready'){console.log(wish.id+' already verified');continue;}
+        if(receipt.wish!==wish.wish||!receipt.requestId)throw Error('Earlier wish receipt mismatch.');
+        await page.evaluate(job=>localStorage.setItem('remy-mehrfeld30:gc-visual255-e2e:training-job',JSON.stringify(job)),
+          {requestId:receipt.requestId,wish:receipt.wish});
+        await page.reload();
+        await page.locator('#workspace:not([hidden])').waitFor();
+        await page.getByRole('button',{name:'Gespeicherten Auftrag prüfen'}).click();
+      }else{
+        await page.locator('#trainingWish textarea').fill(wish.wish);
+        await page.getByRole('button',{name:'Mit KI erstellen und prüfen',exact:true}).click();
+        const pending=await page.evaluate(()=>JSON.parse(localStorage.getItem('remy-mehrfeld30:gc-visual255-e2e:training-job')));
+        receipt={at:new Date().toISOString(),...wish,status:'running',requestId:pending.requestId};
+        fs.writeFileSync(file,JSON.stringify(receipt,null,2)+'\n');
       }
-      await page.locator('#trainingWish textarea').fill(wish.wish);
-      await page.getByRole('button',{name:'Mit KI erstellen und prüfen',exact:true}).click();
-      const pending=await page.evaluate(()=>JSON.parse(localStorage.getItem('remy-mehrfeld30:gc-visual255-e2e:training-job')));
-      const receipt={at:new Date().toISOString(),...wish,status:'running',requestId:pending.requestId};
-      fs.writeFileSync(file,JSON.stringify(receipt,null,2)+'\n');
       await page.waitForFunction(()=>/Entwurf und unabhängige Prüfung sind gespeichert|gesperrt|unbestätigt/.test(document.querySelector('#trainingStatus').textContent),null,{timeout:170000});
       const message=await page.locator('#trainingStatus').textContent();
       assert.match(message,/Entwurf und unabhängige Prüfung sind gespeichert/);
@@ -48,15 +55,22 @@ const wishes=[
         assert.equal(report.solution.find(x=>x.label==='Zielwert · Zahl rechts').value,'10');
         assert.equal(await page.locator('#answer input[aria-label$="ganze Rechnung"]').count(),4);
         assert.equal(await page.locator('#answer select').count(),0);
+        const alternative={r3c3:'2',r3c4:'45',r5c4:'10',r2c2:'×0,4',r2c6:'×2,5',r4c2:'×4,5',r4c6:'÷4,5'};
+        for(const [id,value]of Object.entries(alternative))await page.locator('[data-table="'+id+'"]').fill(value);
+        await page.getByRole('button',{name:'Probe auswerten',exact:true}).click();
+        await page.waitForFunction(()=>document.querySelector('#score').textContent==='3,5 von 3,5 Punkten');
       }else{
         assert.equal(await page.locator('#answer input[type=radio]').count(),3);
         assert.match(await page.locator('#group').textContent(),/Eignungsprobe/);
+        await page.locator('#answer input[type=radio]').nth(1).check();
+        await page.getByRole('button',{name:'Probe auswerten',exact:true}).click();
+        await page.waitForFunction(()=>document.querySelector('#score').textContent==='0,5 von 0,5 Punkten');
       }
       await page.getByRole('button',{name:'Auswahlgrund und Lösung zeigen'}).click();
       await page.locator('#trainingReport li').first().waitFor();
       const verified={...receipt,status:'ready',quizId,runId,decision:report.decision,reason:report.reason,
         independentReason:report.independentCheck,spentMicros:state.spentMicros,reservedMicros:state.reservedMicros,
-        solution:report.solution,actualUI:true};
+        solution:report.solution,attempt:state.cases[0].attempt,actualUI:true,fullScoreInUI:true,...(wish.kind==='inverse'?{learnerChosenPivot:2}: {})};
       fs.writeFileSync(file,JSON.stringify(verified,null,2)+'\n');
       console.log(wish.id+' '+report.decision+' '+state.spentMicros/1e6+' USD');
     }

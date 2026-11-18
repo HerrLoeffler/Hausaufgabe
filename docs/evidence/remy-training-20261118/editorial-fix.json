@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-18T16:27:32.543Z",
+  "runId": "dreisatz60-20261118-v1",
+  "caseId": "contrast-10",
+  "requestId": "00000000-0000-4000-8000-000000006010",
+  "origin": "explicit-development-correction",
+  "removed": "Es gibt keine Mengenberechnung.",
+  "newText": "Zwei kurze Quellen sollen jeweils den Aussagen zugeordnet werden, die sie belegen. Welche Vorgehensweise passt zu diesem Auftrag?",
+  "reason": "Verräterische Meta-Anweisung gestrichen. Die unveränderte Eignungsentscheidung wird unabhängig erneut geprüft."
+}

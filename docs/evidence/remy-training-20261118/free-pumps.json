@@ -1,0 +1,49 @@
+{
+  "at": "2026-11-18T16:29:11.094Z",
+  "id": "pumps",
+  "kind": "inverse",
+  "wish": "Mathematik, Klasse 7: Fünf gleich starke Pumpen leeren dasselbe Becken in 18 Stunden. Sie fördern gleichmäßig und beeinflussen einander nicht. Wie lange brauchen neun? Ohne Hilfen, alle vier Rechenpfeile vollständig frei.",
+  "status": "ready",
+  "requestId": "c04a5dc1-5bb7-474b-acdb-44d22b7073bb",
+  "quizId": "training:wish-e333a512efbdd221426a178556ba9ee8",
+  "runId": "wish-e333a512efbdd221426a178556ba9ee8",
+  "decision": "inverse",
+  "reason": "Bei feststehender Beckenmenge und gleich starker, unabhängiger Förderung ist die benötigte Zeit umgekehrt proportional zur Pumpenzahl.",
+  "independentReason": "Das Produkt aus Pumpenzahl und Zeit bleibt bei 90 Pumpenstunden. Neun Pumpen brauchen daher eindeutig 10 Stunden. Der Zwischenwert ist frei wählbar, und alle vier Pfeilfelder sind für Rechenzeichen und Faktor vollständig offen.",
+  "spentMicros": 7729,
+  "reservedMicros": 0,
+  "solution": [
+    {
+      "label": "Zwischenwert · Zahl links",
+      "value": "1"
+    },
+    {
+      "label": "Zwischenwert · Zahl rechts",
+      "value": "90"
+    },
+    {
+      "label": "Zielwert · Zahl rechts",
+      "value": "10"
+    },
+    {
+      "label": "Erster Pfeil · Faktor links",
+      "value": "÷5"
+    },
+    {
+      "label": "Erster Pfeil · Faktor rechts",
+      "value": "×5"
+    },
+    {
+      "label": "Zweiter Pfeil · Faktor links",
+      "value": "×9"
+    },
+    {
+      "label": "Zweiter Pfeil · Faktor rechts",
+      "value": "÷9"
+    }
+  ],
+  "attempt": 2,
+  "actualUI": true,
+  "fullScoreInUI": true,
+  "learnerChosenPivot": 2
+}

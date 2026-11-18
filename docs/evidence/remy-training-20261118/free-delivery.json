@@ -1,0 +1,24 @@
+{
+  "at": "2026-11-18T16:39:44.081Z",
+  "id": "delivery",
+  "kind": "other",
+  "wish": "Mathematik, Klasse 7: Ein Lieferdienst verlangt 6 Euro Grundpreis und zusätzlich 3 Euro je Kilometer. Erstelle für eine Strecke von 11 Kilometern eine Aufgabe in einer passenden Darstellung.",
+  "status": "ready",
+  "requestId": "5e3eb494-24aa-445c-901f-a187674ea2b4",
+  "quizId": "training:wish-cf798151afa68f12d6e6ca428540c0fc",
+  "runId": "wish-cf798151afa68f12d6e6ca428540c0fc",
+  "decision": "other",
+  "reason": "Der Grundpreis kommt zusätzlich zu den kilometerabhängigen Kosten hinzu; dadurch besteht kein konstantes Verhältnis.",
+  "independentReason": "Die Eignungsprobe übernimmt Grundpreis, Kilometerpreis und Strecke korrekt. Wegen des festen Grundpreises sind die Gesamtkosten weder direkt noch umgekehrt proportional zur Strecke. Deshalb ist die zweite Option eindeutig richtig: Zuerst werden die streckenabhängigen Kosten berechnet, dann wird der Grundpreis addiert.",
+  "spentMicros": 3343,
+  "reservedMicros": 0,
+  "solution": [
+    {
+      "label": "Passende Vorgehensweise",
+      "value": "Eine andere Darstellung oder ein mehrstufiger Rechenweg ist erforderlich."
+    }
+  ],
+  "attempt": 1,
+  "actualUI": true,
+  "fullScoreInUI": true
+}

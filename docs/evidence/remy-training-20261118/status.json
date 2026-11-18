@@ -1,0 +1,431 @@
+{
+  "runId": "dreisatz60-20261118-v1",
+  "quizId": "training:dreisatz60-20261118-v1",
+  "expected": 60,
+  "status": "running",
+  "spentMicros": 284971,
+  "reservedMicros": 0,
+  "limitMicros": 5000000,
+  "cases": [
+    {
+      "id": "contrast-01",
+      "status": "ready",
+      "family": "contrast",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "contrast-02",
+      "status": "ready",
+      "family": "contrast",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "contrast-03",
+      "status": "ready",
+      "family": "contrast",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "contrast-04",
+      "status": "ready",
+      "family": "contrast",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "contrast-05",
+      "status": "ready",
+      "family": "contrast",
+      "attempt": 2,
+      "errors": []
+    },
+    {
+      "id": "contrast-06",
+      "status": "ready",
+      "family": "contrast",
+      "attempt": 2,
+      "errors": []
+    },
+    {
+      "id": "contrast-07",
+      "status": "ready",
+      "family": "contrast",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "contrast-08",
+      "status": "ready",
+      "family": "contrast",
+      "attempt": 3,
+      "errors": []
+    },
+    {
+      "id": "contrast-09",
+      "status": "ready",
+      "family": "contrast",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "contrast-10",
+      "status": "ready",
+      "family": "contrast",
+      "attempt": 3,
+      "errors": []
+    },
+    {
+      "id": "direct-01",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-02",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-03",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-04",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 3,
+      "errors": []
+    },
+    {
+      "id": "direct-05",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 3,
+      "errors": []
+    },
+    {
+      "id": "direct-06",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-07",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-08",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-09",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 3,
+      "errors": []
+    },
+    {
+      "id": "direct-10",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 3,
+      "errors": []
+    },
+    {
+      "id": "direct-11",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-12",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-13",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-14",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 3,
+      "errors": []
+    },
+    {
+      "id": "direct-15",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-16",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-17",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-18",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-19",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "direct-20",
+      "status": "ready",
+      "family": "direct",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-01",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-02",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-03",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-04",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-05",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-06",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-07",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-08",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-09",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-10",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-11",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 3,
+      "errors": []
+    },
+    {
+      "id": "inverse-12",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-13",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-14",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-15",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-16",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-17",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-18",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 2,
+      "errors": []
+    },
+    {
+      "id": "inverse-19",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "inverse-20",
+      "status": "ready",
+      "family": "inverse",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "percent-01",
+      "status": "ready",
+      "family": "percent",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "percent-02",
+      "status": "ready",
+      "family": "percent",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "percent-03",
+      "status": "ready",
+      "family": "percent",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "percent-04",
+      "status": "ready",
+      "family": "percent",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "percent-05",
+      "status": "ready",
+      "family": "percent",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "percent-06",
+      "status": "ready",
+      "family": "percent",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "percent-07",
+      "status": "ready",
+      "family": "percent",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "percent-08",
+      "status": "ready",
+      "family": "percent",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "percent-09",
+      "status": "ready",
+      "family": "percent",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "percent-10",
+      "status": "ready",
+      "family": "percent",
+      "attempt": 1,
+      "errors": []
+    }
+  ]
+}
