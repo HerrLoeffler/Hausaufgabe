@@ -4,6 +4,7 @@ const {readFileSync}=require('node:fs');
 const {JSDOM}=require('jsdom');
 const source=f=>readFileSync(__dirname+'/../../'+f,'utf8');
 const app=source('app.js');
+test('manual point labels stay accessible but consume no visible line',t=>{const w=setup(t);w.openReview('s1');const label=w.document.querySelector('label[for="review-points-0"]');assert.ok(label);assert.equal(label.getAttribute('class'),'visuallyHidden');assert.equal(label.control,w.document.querySelector('.manualPoints'));assert.match(label.textContent,/Punkte für Aufgabe 1/);});
 function fn(name){const start=app.indexOf('function '+name+'(');if(start<0)return '';return app.slice(app.slice(start-6,start)==='async '?start-6:start,app.indexOf('\n}',start)+2);}
 function setup(t){
  const dom=new JSDOM('<style>'+source('styles.css')+source('review-mode.css')+'</style><h1 id="resultsHeading">Test</h1><div id="resultsTableWrap"></div><div id="reviewPanel" class="card reviewPanel hidden"></div><aside data-review-panel class="reviewPanel">Seite überarbeiten</aside>',{url:'https://example.test',runScripts:'outside-only',pretendToBeVisual:true});t.after(()=>dom.window.close());const w=dom.window;

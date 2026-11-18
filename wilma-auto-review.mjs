@@ -1,6 +1,18 @@
 import {reviewItem} from './wilma-answer-review.mjs';
 import {questionSnapshot} from './wilma-review-source.mjs';
 
+// Only known service messages may add detail; never echo arbitrary provider output.
+function preparationFailure(error){
+ const code=String(error?.code||'').replace(/^functions\//,'');
+ const known=['Ungültige Testkennung.','Ungültige Anfrage.','Ungültige Bewertungsanfrage.','Bitte 1 bis 10 unterschiedliche Antworten wählen.','Diese Aufgabe wird in der Vorschau nicht unterstützt.','Punkterahmen nicht unterstützt.','Antwortabgleich fehlt.','Bewertungsraster ist zu lang.','Bitte das Raster zuerst in der Aufgabe speichern.','Antwortformat nicht unterstützt.','Eine Antwort ist zu lang für den Pilot.'];
+ if(code==='invalid-argument')return 'Anfrage abgelehnt · '+(known.includes(error.message)?error.message:'Aufgabe und Antwortformat prüfen.')+' Manuell bewerten.';
+ if(code==='unauthenticated')return 'Anmeldung abgelaufen. Bitte erneut anmelden; vorhandene Punkte bleiben erhalten.';
+ if(code==='permission-denied')return 'Zugriff auf die KI-Prüfung nicht erlaubt. Vorhandene Punkte bleiben erhalten.';
+ if(code==='failed-precondition')return 'Prüfstand nicht aktuell oder Prüflauf bereits gestartet. Ergebnisse aktualisieren; kein automatischer Neuversuch.';
+ if(code==='resource-exhausted'||/limit|kontingent|quota/i.test(error?.message||''))return 'Prüfung ausstehend · KI-Kontingent erreicht. Manuell bewerten.';
+ return 'KI-Prüfung unterbrochen. Ergebnis nicht sicher verfügbar; kein automatischer Neuversuch. Manuell bewerten.';
+}
+
 // Preparation only: the existing host owns auth, persistent cache and quota.
 // Two NEW identities per tab/auth session; exact cached identities can reload.
 export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enabled=()=>false,onState=()=>{},onIdle=()=>{},maxRequests=2,allowFreeLookups=false,serverBudgeted=false}) {
@@ -54,10 +66,14 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
       if(['teacher-fundus','accepted-rule'].includes(current.grading?.[q.id]?.reviewSuggestion?.origin))reserved.delete(key);
       emit('proposal',current.grading?.[q.id]?.reviewSuggestion?.origin==='teacher-fundus'?'Aus deinem Fundus · bitte bestätigen.':'KI-Vorschlag bereit · bitte prüfen.');
      }catch(error){
-      if(freeOnly){emit('pending','Keine bestätigte Bewertung im Fundus. Bitte selbst prüfen.');continue;}
+      if(freeOnly){
+       const cacheMiss=/^Keine bestätigte Bewertung im Fundus oder Prüfbelegcache\./.test(error?.message||'');
+       const first=failedByActor.get(ctx.actor);
+       emit(cacheMiss?'pending':'error',cacheMiss?(first?first+' ':'')+'Kein gespeicherter Vorschlag verfügbar. Bitte selbst prüfen.':preparationFailure(error));
+       continue;
+      }
       if(error?.code!=='wilma-context-changed'&&getContext().actor===ctx.actor){
-       const quota=/resource-exhausted/.test(error?.code||'')||/limit|kontingent|quota/i.test(error?.message||'');
-       const message=quota?'Prüfung ausstehend · Testkontingent erreicht. Manuell bewerten.':'Prüfung ausstehend · KI gerade nicht verfügbar. Manuell bewerten.';
+       const message=preparationFailure(error);
        failedByActor.set(ctx.actor,message);emit('error',message);
       }
       if(!allowFreeLookups)break;
