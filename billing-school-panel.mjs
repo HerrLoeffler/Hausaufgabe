@@ -1,5 +1,6 @@
 import {mountSchoolJoinCodeForm,mountSchoolJoinCodeManagement} from './school-join-code-panel.mjs';
 const dates = value => value ? new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',dateStyle:'medium'}).format(new Date(value)) : 'noch offen';
+const quoteDate=value=>new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',dateStyle:'medium',timeStyle:'short'}).format(new Date(value));
 const roles = {teacher:'Lehrkraft',school_admin:'Schulverwaltung',billing:'Rechnungsstelle ohne Lehrkraftplatz'};
 function node(doc,tag,text,classes){const el=doc.createElement(tag);if(text!==undefined)el.textContent=text;if(classes)el.className=classes;return el;}
 function field(doc,form,label,name,type='text'){const wrap=node(doc,'label',label),input=node(doc,'input');input.name=name;input.type=type;input.required=true;wrap.append(input);form.append(wrap);return input;}
@@ -19,11 +20,12 @@ export async function mountSchoolPanel(root,{client,uid,targetPersonId,onError=(
     const schools=Array.isArray(result.schools)?result.schools:[];
     if(!schools.length)root.append(node(doc,'p','Diesem Konto ist noch keine Schule zugeordnet. Mit dem Schulcode verbindest du deinen bestehenden Zugang.'));
     if(result.hasMore)root.append(node(doc,'p','Es werden die ersten 50 Schulen angezeigt. Weitere Schulen sind in dieser Testansicht noch nicht auswählbar.','hint'));
-    const details=node(doc,'div');
+    const details=node(doc,'div');let schoolViewTicket=0;
     for(const school of schools){const b=button(doc,root,school.name,()=>run(b,()=>openSchool(school.id)));b.dataset.school=school.id;}
     root.append(details);
     async function openSchool(schoolId){
-      const view=await client.request('getSchool',{schoolId});if(!current())return;
+      const viewTicket=++schoolViewTicket,panelCurrent=current,isSelected=()=>panelCurrent()&&viewTicket===schoolViewTicket;
+      const view=await client.request('getSchool',{schoolId});if(!isSelected())return;
       details.replaceChildren(node(doc,'h3',view.school.name));
       const paid=view.period?.paymentStatus==='paid';
       details.append(node(doc,'p',`${view.school.usedSeats} von ${view.school.seats} Plätzen belegt · ${view.school.reservedSeats} reserviert`),node(doc,'p',`${paid?'Bezahlt':'Zahlung offen'} · Laufzeitende ${dates(view.period?.endsAtMs)} · Verlängerung nur nach Bestätigung`));
@@ -34,7 +36,26 @@ export async function mountSchoolPanel(root,{client,uid,targetPersonId,onError=(
         const result=node(doc,'div');details.append(result);
         const showInvoice=url=>{const target=new URL(url);if(target.protocol!=='https:'||target.hostname!=='invoice.stripe.com')throw new Error('Ungültiger Rechnungslink.');const link=node(doc,'a','Schulrechnung öffnen','button secondary');link.href=target.href;link.target='_blank';link.rel='noopener noreferrer';link.dataset.action='open-school-invoice';result.replaceChildren(link);};
         if(view.period?.invoiceUrl)showInvoice(view.period.invoiceUrl);
-        else if(view.paymentsEnabled&&!paid){const invoice=button(doc,details,'Testrechnung vorbereiten',()=>run(invoice,async()=>{const value=await client.request('schoolInvoice',{schoolId,requestId:crypto.randomUUID()});if(current()){showInvoice(value.url);message.textContent='Testrechnung vorbereitet. Es wurde keine E-Mail verschickt.';}}));invoice.dataset.action='school-invoice';}
+        else if(view.paymentsEnabled&&!paid&&(view.period?.invoiceId||(Number.isSafeInteger(view.period?.remainingMinor)&&Number.isSafeInteger(view.period?.amountMinor)&&view.period.remainingMinor<view.period.amountMinor))){
+          details.append(node(doc,'p','Die bestehende Rechnung behält ihren vereinbarten Betrag. Neue Angebote ändern diese Rechnung nicht.','hint'));
+          const requestId=crypto.randomUUID(),existing=button(doc,details,'Bestehende Schulrechnung abrufen',()=>run(existing,async()=>{const value=await client.request('schoolInvoice',{schoolId,requestId});if(isSelected()){showInvoice(value.url);message.textContent='Bestehende Schulrechnung abgerufen.';}}));existing.dataset.action='school-invoice';
+        }
+        else if(view.paymentsEnabled&&!paid){
+          const quoteArea=node(doc,'section',undefined,'billingSchoolQuote');details.append(quoteArea);
+          const codeDetails=node(doc,'details'),label=node(doc,'label','Aktionscode für die Schulrechnung (optional)'),code=node(doc,'input');code.name='schoolOfferCode';code.maxLength=100;code.autocomplete='off';label.append(code);codeDetails.append(node(doc,'summary','Aktionscode verwenden'),label);quoteArea.append(codeDetails);
+          const preview=node(doc,'div');let quoteGeneration=0;
+          code.oninput=()=>{quoteGeneration++;preview.replaceChildren();};
+          const review=button(doc,quoteArea,'Preis für die Schulrechnung prüfen',()=>{const quoteTicket=++quoteGeneration;preview.replaceChildren();void run(review,async()=>{
+            const value=await client.request('offerQuote',{planCode:'school-yearly',schoolId,...(code.value.trim()?{code:code.value.trim()}:{})});if(!isSelected()||quoteTicket!==quoteGeneration)return;
+            const q=value.quote;if(value.eligible===false||value.conflict)throw new Error(typeof value.conflict==='string'?value.conflict:'Das Angebot ist für diese Schule nicht verfügbar.');
+            if(!q?.id||q.planCode!=='school-yearly'||!Number.isSafeInteger(q.totalMinor)||q.totalMinor<0||!Number.isSafeInteger(q.baseAmountMinor)||!Number.isSafeInteger(q.quantity)||q.quantity<1||!Number.isSafeInteger(q.expiresAtMs)||q.expiresAtMs<=Date.now())throw new Error('Die Preisvorschau ist abgelaufen oder ungültig. Bitte erneut prüfen.');
+            const money=minor=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(minor/100);
+            preview.append(node(doc,'p',`${q.quantity} Plätze · regulär ${money(q.baseAmountMinor)} · zu zahlen ${money(q.totalMinor)} für die Jahresrechnung.`));
+            if(q.offer){preview.append(node(doc,'p',q.offer.title),node(doc,'p',q.offer.fixedBasis==='seat'?'Fester Nachlass je Lehrkraftplatz.':'Nachlass auf die gesamte Jahresrechnung.','hint'),node(doc,'p',q.offer.duration==='forever'?'Der Nachlass gilt dauerhaft.':q.offer.duration==='months'?`Nachlass für ${q.offer.durationMonths} Monate ab Beginn, bezogen auf fällige Jahresrechnungen. Danach wieder ${money(q.baseAmountMinor)} je Jahr.`:`Nachlass für diese erste Jahresrechnung. Danach wieder ${money(q.baseAmountMinor)} je Jahr.`,'hint'));}
+            preview.append(node(doc,'p','Preisvorschau gültig bis '+quoteDate(q.expiresAtMs)+'. Bestehende und teilbezahlte Rechnungen behalten ihren vereinbarten Betrag.','hint'));
+            const requestId=crypto.randomUUID(),invoice=button(doc,preview,'Testrechnung vorbereiten',()=>{if(quoteTicket!==quoteGeneration||!isSelected())return;if(q.expiresAtMs<=Date.now()){preview.replaceChildren(node(doc,'p','Die Preisvorschau ist abgelaufen. Bitte erneut prüfen.'));return;}void run(invoice,async()=>{const value=await client.request('schoolInvoice',{schoolId,quoteId:q.id,requestId});if(isSelected()&&quoteTicket===quoteGeneration){showInvoice(value.url);preview.replaceChildren();message.textContent='Testrechnung vorbereitet. Es wurde keine E-Mail verschickt.';}});});invoice.dataset.action='school-invoice';
+          });});review.dataset.action='quote-school-invoice';quoteArea.append(preview);
+        }
       }
       if(!view.canManage){
         if(uid&&roles[view.myRole]){const leave=button(doc,details,'Schule verlassen',()=>{if(!doc.defaultView.confirm('Die Zuordnung zu '+view.school.name+' wirklich beenden?'))return;void run(leave,async()=>{await client.request('removeSchoolMember',{schoolId,personId:uid,reason:'Selbstaustritt über Kontoeinstellungen'});await client.refresh();if(current())await mountSchoolPanel(root,{client,uid,onError});});});leave.dataset.action='leave-school';}
@@ -67,14 +88,14 @@ export async function mountSchoolPanel(root,{client,uid,targetPersonId,onError=(
       form.onsubmit=event=>{event.preventDefault();if(!form.reportValidity())return;void run(create,async()=>{const made=await client.request('createSchool',{name:name.value,seats:Number(seats.value),startDate:start.value,ownerId:targetPersonId||uid,requestId:crypto.randomUUID()});message.textContent='Schule vorbereitet. Rechnung und Zahlung sind noch offen.';await openSchool(made.schoolId);});};
     }
     if(!targetPersonId){
-      const schoolCode=node(doc,"section");root.append(schoolCode);mountSchoolJoinCodeForm(schoolCode,{client,onError,onJoined:async()=>{if(current()){await mountSchoolPanel(root,{client,uid,onError});const notice=node(doc,"p","Die Schulzuordnung ist gespeichert.","hint");root.append(notice);}}});
+      const join=node(doc,"details");join.open=Boolean(initialInvitation);join.append(node(doc,"summary",schools.length?"Weiterer Schule beitreten":"Schule beitreten"));root.append(join);const codeChoice=node(doc,"details");codeChoice.append(node(doc,"summary","Schulcode verwenden"));join.append(codeChoice);const schoolCode=node(doc,"section");codeChoice.append(schoolCode);mountSchoolJoinCodeForm(schoolCode,{client,onError,onJoined:async()=>{if(current()){await mountSchoolPanel(root,{client,uid,onError});const notice=node(doc,"p","Die Schulzuordnung ist gespeichert.","hint");root.append(notice);}}});
       const form=node(doc,'form',undefined,'billingGrantForm');form.append(node(doc,'h3','Einladung annehmen'));
       const input=field(doc,form,'Persönlichen Einladungslink einfügen','invitation');input.value=initialInvitation;input.autocomplete='off';
-      const review=node(doc,'button','Einladung prüfen','button secondary');review.type='submit';review.dataset.action='preview';form.append(review);const targeted=node(doc,"details");targeted.open=Boolean(initialInvitation);targeted.append(node(doc,"summary","Persönlichen Einladungslink verwenden"),form);root.append(targeted);const preview=node(doc,'div');targeted.append(preview);
-      input.oninput=()=>preview.replaceChildren();
-      form.onsubmit=event=>{event.preventDefault();const token=invitationToken(input.value);if(!token){report(new Error('Bitte einen gültigen Einladungslink einfügen.'));return;}void run(review,async()=>{
-        const invitation=await client.request('previewSchoolInvitation',{token});if(!current())return;preview.replaceChildren(node(doc,'p',`${invitation.schoolName} · ${roles[invitation.role]||invitation.role} · Laufzeitende ${dates(invitation.endsAtMs)}`));
-        const accept=button(doc,preview,'Dieser Schule beitreten',()=>run(accept,async()=>{await client.request('acceptSchoolInvitation',{token});await client.refresh();if(current()){message.textContent='Einladung angenommen. Dein persönliches Konto bleibt bestehen.';preview.replaceChildren();input.value='';}}),true);accept.dataset.action='accept';
+      const review=node(doc,'button','Einladung prüfen','button secondary');review.type='submit';review.dataset.action='preview';form.append(review);const targeted=node(doc,"details");targeted.open=Boolean(initialInvitation);targeted.append(node(doc,"summary","Persönlichen Einladungslink verwenden"),form);join.append(targeted);const preview=node(doc,'div');targeted.append(preview);
+      let invitationGeneration=0;input.oninput=()=>{invitationGeneration++;preview.replaceChildren();};
+      form.onsubmit=event=>{event.preventDefault();const token=invitationToken(input.value);if(!token){report(new Error('Bitte einen gültigen Einladungslink einfügen.'));return;}const invitationTicket=++invitationGeneration;void run(review,async()=>{
+        const invitation=await client.request('previewSchoolInvitation',{token});if(!current()||invitationTicket!==invitationGeneration)return;preview.replaceChildren(node(doc,'p',`${invitation.schoolName} · ${roles[invitation.role]||invitation.role} · Laufzeitende ${dates(invitation.endsAtMs)}`));
+        const accept=button(doc,preview,'Dieser Schule beitreten',()=>run(accept,async()=>{if(invitationTicket!==invitationGeneration)return;await client.request('acceptSchoolInvitation',{token});await client.refresh();if(current()){message.textContent='Einladung angenommen. Dein persönliches Konto bleibt bestehen.';preview.replaceChildren();input.value='';}}),true);accept.dataset.action='accept';
       });};
     }
   }catch(error){report(error);}

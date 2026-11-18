@@ -6,8 +6,7 @@ console.info(`${BRAND.name} v${APP_VERSION}`);
 
 import { teacherGradingSummary, teacherResultName, teacherResultNumber, teacherResultSubmittedAt, teacherResultRunning, sortTeacherResults, teacherResultsAverages } from "./teacher-grading-summary.mjs?v=20261118";
 import { createBillingClient, describeAccess } from "./billing-client.mjs?v=billing-v2";
-import { paintBillingPanel, mountAdminBilling } from "./billing-panel.mjs?v=billing-v2";
-import { mountSchoolPanel } from "./billing-school-panel.mjs?v=billing-v2";
+import { paintBillingPanel, mountAdminBilling, billingSectionFromLocation } from "./billing-panel.mjs?v=billing-v2";
 import { createBillingCreationTracker } from "./billing-creation-tracker.mjs?v=billing-v2";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
@@ -94,6 +93,8 @@ const appEnvironment = firebaseModule.appEnvironment || "production";
 const BILLING_PREVIEW_ENABLED = firebaseConfig.projectId === "gradecrew-staging-2026" && firebaseModule.billingPreview === true;
 const billingCreations = BILLING_PREVIEW_ENABLED ? createBillingCreationTracker({getStorage:()=>sessionStorage}) : null;
 let billingPaymentReturn = BILLING_PREVIEW_ENABLED && new URLSearchParams(location.search).get("billing") === "return";
+const billingInitialSection = billingSectionFromLocation(location.href);
+let billingAccountEntryPending = BILLING_PREVIEW_ENABLED && (new URLSearchParams(location.search).has("billing") || new URLSearchParams(location.search).has("account") || new URLSearchParams(location.hash.slice(1)).has("school-invite"));
 const billingSchoolInvitation = BILLING_PREVIEW_ENABLED ? new URLSearchParams(location.hash.slice(1)).get("school-invite") || "" : "";
 if (billingSchoolInvitation) history.replaceState(null, "", location.pathname + location.search);
 if (BILLING_PREVIEW_ENABLED) document.getElementById("billingTrialNotice")?.removeAttribute("hidden");
@@ -106,37 +107,33 @@ const secureAudioPublicationMessage = "Dieser Test enthält Audioantworten oder 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+let billingCheckoutAttempt = null;
 const billingClient = createBillingClient({
   getUid: () => auth.currentUser?.uid || "",
-  call: async data => (await httpsCallable(getFunctions(app, "europe-west1"), ["checkout","portal","schoolInvoice"].includes(data.action) ? "billingPayments" : "billingPilot", {timeout:60000})(data)).data,
+  call: async data => (await httpsCallable(getFunctions(app, "europe-west1"), ["checkout","portal","schoolInvoice","publicOffers","offerQuote","listOffers","saveOffer","publishOffer","endOffer","previewExistingOffer","applyExistingOffer","offerTargets"].includes(data.action) ? "billingPayments" : "billingPilot", {timeout:60000})(data)).data,
   onChange: (access, status = {}) => {
     const root = document.getElementById("billingAccountPanel");
     if (root) root.hidden = !BILLING_PREVIEW_ENABLED;
     if (!BILLING_PREVIEW_ENABLED) return;
     const refresh = () => { void billingClient.refresh().catch(() => {}); };
-    paintBillingPanel(root, access, { ...status, user: auth.currentUser, onRefresh: refresh,
+    paintBillingPanel(root, access, { ...status, user: auth.currentUser, client: billingClient, uid: auth.currentUser?.uid, initialSection: billingInitialSection, initialInvitation: billingSchoolInvitation, onRefresh: refresh,
       onVerify: async () => { try { await firebaseSendEmailVerification(auth.currentUser); toast("Bestätigungslink wurde gesendet."); } catch (error) { toast(authMessage(error), "error"); } },
       onVerified: async () => { try { await auth.currentUser.reload(); await auth.currentUser.getIdToken(true); refresh(); } catch (_) { toast("Bitte erneut anmelden.", "error"); } },
-      onChoose: async planCode => {
+      onChoose: async (planCode, {quoteId} = {}) => {
         try {
-          const result = await billingClient.request("checkout", {planCode,requestId:crypto.randomUUID()});
+          const uid=auth.currentUser?.uid;
+          if (!billingCheckoutAttempt || billingCheckoutAttempt.uid!==uid || billingCheckoutAttempt.planCode!==planCode || billingCheckoutAttempt.quoteId!==quoteId) billingCheckoutAttempt={uid,planCode,quoteId,requestId:crypto.randomUUID()};
+          const result = await billingClient.request("checkout", {planCode,...(quoteId ? {quoteId} : {}),requestId:billingCheckoutAttempt.requestId});
           const url = new URL(result.url);
           if (url.protocol !== "https:" || url.hostname !== "checkout.stripe.com") throw new Error("Ungültiger Zahlungslink.");
           location.assign(url.href);
-        } catch (error) { toast(error.message || "Der Zahlungstest ist noch nicht verfügbar.", "error"); }
+        } catch (error) { toast(error.message || "Der Zahlungstest ist noch nicht verfügbar.", "error"); throw error; }
       },
       onManage: async () => {
         try { const result=await billingClient.request("portal");const url=new URL(result.url);if(url.protocol!=="https:"||url.hostname!=="billing.stripe.com")throw new Error("Ungültiger Verwaltungslink.");location.assign(url.href); }
         catch(error){toast(error.message||"Die Aboverwaltung ist gerade nicht erreichbar.","error");}
       }
     });
-    const schoolRoot = document.getElementById("billingSchoolPanel");
-    if (schoolRoot) {
-      schoolRoot.hidden = !access;
-      schoolRoot.schoolPanelTicket = null;
-      schoolRoot.replaceChildren();
-      if (access) void mountSchoolPanel(schoolRoot, {client:billingClient,uid:auth.currentUser.uid,initialInvitation:billingSchoolInvitation});
-    }
     const badge = document.getElementById("billingDashboardStatus");
     if (badge) { badge.classList.toggle("hidden", !access); badge.textContent = access ? describeAccess(access).title + (access.tier === "trial" ? ` · ${access.freeCreationsRemaining} neue Tests übrig` : "") : ""; }
   }
@@ -1344,7 +1341,7 @@ onAuthStateChanged(auth, async (user) => {
   if (guestTourRepo && !user) return;
   if (guestTourRepo && user) exitGuestTour();
   const accountChanged = state.user?.uid !== user?.uid;
-  if (BILLING_PREVIEW_ENABLED && accountChanged) billingClient.reset();
+  if (BILLING_PREVIEW_ENABLED && accountChanged) { billingCheckoutAttempt=null; billingClient.reset(); }
   if (accountChanged) {
     wilmaReviewOpenConsent.clear();wilmaSavedOperations.clear();wilmaReviewGeneration++;wilmaAutoReview?.clear({resetSession:true});wilmaPreparation.clear();resetInlineReview();wilmaAnswerReview?.clear();
     window.GradeCrewNative?.setAuthState?.({ state: "checking" })?.catch(() => {});
@@ -1448,8 +1445,12 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  if (user) await loadDashboard();
-  else if (location.pathname?.endsWith("/workspace.html") && !["login", "register", "reset"].includes(params.get("intent")) && !["firstGuide", "preview", "mode", "oobCode"].some(key => params.has(key))) {
+  if (user) {
+    await loadDashboard();
+    if (generation !== authStateGeneration) return;
+    if (billingAccountEntryPending) { billingAccountEntryPending = false; openSettings({refreshBilling:false}); }
+  }
+  else if (!billingAccountEntryPending && location.pathname?.endsWith("/workspace.html") && !["login", "register", "reset"].includes(params.get("intent")) && !["firstGuide", "preview", "mode", "oobCode"].some(key => params.has(key))) {
     const home = new URL("./", location.href);
     if (params.get("lang")?.startsWith("en") || String(document.documentElement.lang).startsWith("en")) home.searchParams.set("lang", "en");
     location.replace(home.href);
@@ -2757,7 +2758,7 @@ async function startSettingsTutorial() {
   crewTour?.start();
 }
 
-function openSettings() {
+function openSettings({refreshBilling=true}={}) {
   if (state.isDirty && !confirm("Es gibt ungespeicherte Änderungen im Test. Wirklich ohne Speichern zu den Einstellungen wechseln?")) return;
   state.isDirty = false;
   state.settingsDraft = deepClone(getSettings());
@@ -2769,7 +2770,7 @@ function openSettings() {
   $("defaultShowSolutions").checked = Boolean(state.settingsDraft.defaultShowSolutions);
   renderGradeScaleSettings();
   showView("settingsView");
-  if (BILLING_PREVIEW_ENABLED) void billingClient.refresh().catch(() => {});
+  if (BILLING_PREVIEW_ENABLED && refreshBilling) void billingClient.refresh().catch(() => {});
 }
 
 function renderGradeScaleSettings() {

@@ -50,6 +50,8 @@ test("Checkout uses the bound customer, a verified price and server order metada
   await provider.createCheckout(input);
   const data = calls.find(c => c.op === "checkout").data;
   assert.equal(data.mode, "subscription"); assert.equal(data.customer, "cus_test");
+  assert.equal(data.success_url, "https://gradecrew-staging-2026--billing-product-abc.web.app/workspace.html?billing=return");
+  assert.equal(data.cancel_url, "https://gradecrew-staging-2026--billing-product-abc.web.app/workspace.html?billing=cancel");
   assert.deepEqual(data.line_items, [{ price: "price_month", quantity: 1 }]);
   assert.deepEqual(data.subscription_data.metadata, { gc_order_id: "order_test" });
   assert.equal(data.subscription_data.trial_period_days, undefined);
@@ -99,6 +101,7 @@ test("portal return address is constrained to the GradeCrew test preview", async
   await assert.rejects(provider.createPortal({ ...input, returnUrl: "https://gradecrew.de" }));
   const session = await provider.createPortal(input);
   assert.match(session.url, /billing.stripe/); assert.equal(session.configuration, "bpc_test");
+  assert.equal(session.return_url, "https://gradecrew-staging-2026--billing-product-test.web.app/workspace.html?account=invoices");
   active = false; await assert.rejects(provider.createPortal(input));
   await assert.rejects(provider.createPortal({ ...input, configurationId: undefined }));
 });
@@ -124,4 +127,19 @@ test("the real pinned SDK transport canonicalizes exact invoice decimals before 
   const precise = await provider.retrieveInvoice("in_school");
   assert.equal(precise.lines.data[0].quantity_decimal, "1.00000000000000001");
   assert.throws(() => normalizeInvoice(precise, expected));
+});
+
+test("Checkout binds one authorized discount and the fixed reservation expiry without enabling arbitrary codes", async () => {
+  const { provider, calls } = fixture();
+  const input = { orderId: "order_offer", customerId: "cus_test", priceId: "price_month", unitAmount: 1500, interval: "month", returnUrl: "https://gradecrew-staging-2026--billing-product-abc.web.app/", checkoutExpiresAtMs: Date.now() + 35 * 60000 };
+  await provider.createCheckout({ ...input, promotionCodeId: "promo_bound" });
+  const data = calls.find(c => c.op === "checkout").data;
+  assert.deepEqual(data.discounts, [{ promotion_code: "promo_bound" }]);
+  assert.equal(data.expires_at, Math.floor(input.checkoutExpiresAtMs / 1000));
+  assert.equal(data.allow_promotion_codes, undefined);
+  await assert.rejects(provider.createCheckout({ ...input, couponId: "coupon_one", promotionCodeId: "promo_bound" }));
+  // A lost-response retry can have less than Stripe's initial 30 minutes left.
+  await provider.createCheckout({ ...input, checkoutExpiresAtMs: Date.now() + 60000 });
+  await assert.rejects(provider.createCheckout({ ...input, checkoutExpiresAtMs: Date.now() - 1 }));
+  await assert.rejects(provider.createCheckout({ ...input, checkoutExpiresAtMs: Date.now() + 25 * 3600000 }));
 });

@@ -9,14 +9,14 @@ function isPaymentReady(c) {
     if (c?.enabled !== true || c.ready !== true || c.accountId !== SANDBOX_ACCOUNT || typeof c.portalConfigurationId !== "string" || !/^bpc_[A-Za-z0-9]+$/.test(c.portalConfigurationId) || typeof c.personalTestClockId !== "string" || !/^clock_[A-Za-z0-9]+$/.test(c.personalTestClockId) || !["personal-monthly", "personal-yearly", "school-yearly"].every(code => typeof c.prices?.[code] === "string" && /^price_[A-Za-z0-9]+$/.test(c.prices[code]))) return false;
     try { const u = new URL(c.returnUrl); return u.protocol === "https:" && !u.username && !u.password && !u.port && /^gradecrew-staging-2026--billing-(product|plan-01)-[a-z0-9-]+\.web\.app$/.test(u.hostname); } catch { return false; }
   }
-function createPaymentOperations({ store, now, caller, context, projectWrites, provider, fail, key, identifier, requestId }) {
+function createPaymentOperations({ store, now, caller, context, projectWrites, provider, fail, key, identifier, requestId, offers, amendments }) {
   const orderPath = id => "billingV2Orders/" + identifier(id);
   const buyerPath = id => "billingV2Buyers/" + identifier(id);
   const lockPath = uid => "billingV2PurchaseLocks/" + identifier(uid);
   async function describeState(tx, ctx, actor) {
     const buyer = await tx.get(buyerPath(key("personal", actor.uid))), lock = await tx.get(lockPath(actor.uid)), order = lock ? await tx.get(orderPath(lock.orderId)) : null;
     const invoices = await tx.find("billingV2Invoices", [["kind", "==", "personal"], ["ownerId", "==", actor.uid]], 51);
-    return { purchasingEnabled: isPaymentReady(ctx.config.payments) && ctx.person.emailVerified === true,
+    return { ...(offers ? await offers.describeOffers(tx, ctx, actor) : {}), purchasingEnabled: isPaymentReady(ctx.config.payments) && ctx.person.emailVerified === true,
       payments: { portalAvailable: !!buyer?.customerId && isPaymentReady(ctx.config.payments), hasSubscription: !!order?.subscriptionId,
         invoices: invoices.slice(0, 50).map(i => ({ id: i.id, invoiceNumber: i.invoiceNumber || null, total: i.total, remaining: i.remaining, status: i.status })), hasMoreInvoices: invoices.length > 50 } };
   }
@@ -52,26 +52,51 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
     });
     return customer.id;
   }
+  async function validateReplayQuote(tx, actor, data, order, allowMissing = false) {
+    if (data.quoteId === order.quoteId || !data.quoteId && (allowMissing || !order.quoteId)) return;
+    const quote = data.quoteId ? await tx.get("billingV2OfferQuotes/" + identifier(data.quoteId)) : null;
+    if (!quote || quote.personId !== actor.uid || quote.ownerId !== order.ownerId ||
+      !(quote.state === "quoted" && quote.expiresAtMs > now() || quote.state === "bound" && quote.orderId === order.id) ||
+      ["kind", "planCode", "priceId", "quantity", "unitAmount"].some(field => quote[field] !== order[field]) ||
+      order.kind === "school" && quote.periodId !== order.periodId || quote.totalMinor !== (order.totalMinor ?? order.unitAmount * order.quantity) ||
+      (quote.offer?.id || null) !== (order.offer?.id || null) || (quote.offer?.fingerprint || null) !== (order.offer?.fingerprint || null))
+      fail("failed-precondition", "Ein Kauf mit anderen Konditionen ist noch offen. Bitte die bestehende Bestellung zuerst abschließen oder ablaufen lassen.");
+    if (quote.state === "quoted") tx.patch("billingV2OfferQuotes/" + quote.id, { state: "bound", orderId: order.id });
+  }
   async function checkout(request) {
     const actor = await caller(request), data = request.data || {}, rid = requestId(data.requestId);
     const plan = PERSONAL_PLANS.find(p => p.code === data.planCode);
     if (!plan) fail("invalid-argument", "Gültigen Tarif auswählen.");
+    const stale = await store.transaction(async tx => {
+      const ctx = await context(tx, actor); configuration(ctx);
+      const lock = await tx.get(lockPath(actor.uid));
+      const order = lock ? await tx.get(orderPath(lock.orderId)) : null;
+      return order && ["creating", "checkout_ready"].includes(order.state) && Number.isSafeInteger(order.checkoutExpiresAtMs) && order.checkoutExpiresAtMs <= now() ? order : null;
+    });
+    if (stale) {
+      const existing = stale.checkoutId ? await provider.retrieveCheckout(stale.checkoutId) : stale.customerId ? await provider.findCheckoutForOrder({ orderId: stale.id, customerId: stale.customerId, createdAtMs: stale.createdAtMs }) : null;
+      if (existing) { checkedObject(existing); await expireCheckout(stale.id, existing); }
+      else await expireCheckout(stale.id, null, stale);
+    }
     const prepared = await store.transaction(async tx => {
       const ctx = await context(tx, actor), config = configuration(ctx);
       const lock = await tx.get(lockPath(actor.uid));
       const previous = lock ? await tx.get(orderPath(lock.orderId)) : null;
       if (lock && !previous) fail("failed-precondition", "Kaufvorgang bitte prüfen.");
-      if (previous) {
+      if (previous && previous.state !== "expired") {
+        await validateReplayQuote(tx, actor, data, previous);
         if (previous.planCode !== plan.code || ["subscription_bound", "paid", "canceled"].includes(previous.state)) fail("failed-precondition", "Es besteht bereits ein Abo oder Kaufvorgang. Bitte die Aboverwaltung verwenden.");
         return previous;
       }
       const id = key(actor.uid, "personal-order", rid), buyerKey = key("personal", actor.uid), buyer = await tx.get(buyerPath(buyerKey));
       const priceId = identifier(config.prices?.[plan.code]);
+      const offerUse = offers ? await offers.prepareQuoteUse(tx, actor, ctx, data, { kind: "personal", ownerId: actor.uid, planCode: plan.code, priceId, quantity: 1, unitAmount: plan.amountMinor }) : null;
       const order = { id, kind: "personal", ownerId: actor.uid, buyerKey, personId: actor.uid, planCode: plan.code, priceId, unitAmount: plan.amountMinor, quantity: 1, interval: plan.interval,
-        returnUrl: config.returnUrl, createdAtMs: now(), state: "creating" };
+        returnUrl: config.returnUrl, createdAtMs: now(), state: "creating", ...(offerUse ? { offer: offerUse.offer, quoteId: offerUse.quoteId || null, totalMinor: offerUse.totalMinor, ...(offerUse.reservationId ? { offerReservationId: offerUse.reservationId } : {}) } : {}),
+        checkoutExpiresAtMs: Math.floor(now() / 1000) * 1000 + 35 * 60000 };
       ctx.saveAccount();
       if (!buyer) tx.create(buyerPath(buyerKey), { kind: "personal", ownerId: actor.uid, createdAtMs: now(), customerId: null, testClockId: config.personalTestClockId });
-      tx.create(orderPath(id), order); tx.create(lockPath(actor.uid), { orderId: id });
+      offerUse?.write(id); tx.create(orderPath(id), order); tx.put(lockPath(actor.uid), { orderId: id });
       return order;
     });
     if (prepared.checkoutUrl) {
@@ -85,7 +110,34 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
       if (order.customerId && order.customerId !== customerId) fail("failed-precondition", "Käuferbindung widersprüchlich.");
       tx.patch(orderPath(prepared.id), { customerId });
     });
-    const session = checkedObject(await provider.createCheckout({ ...prepared, orderId: prepared.id, customerId }));
+    let freshOrder = await store.transaction(tx => tx.get(orderPath(prepared.id)));
+    const discount = offers ? await offers.materializeOrderOffer(freshOrder) : {};
+    freshOrder = await store.transaction(tx => tx.get(orderPath(prepared.id)));
+    let recovered = null;
+    // A lost response may have created a real session. Look it up before ever
+    // releasing its reservation or attempting to create another session.
+    if (freshOrder.checkoutExpiresAtMs && (freshOrder.checkoutAttemptedAtMs || freshOrder.checkoutExpiresAtMs - now() < 31 * 60000)) {
+      if (!provider.findCheckoutForOrder) fail("failed-precondition", "Der offene Checkout muss abgeglichen werden.");
+      recovered = await provider.findCheckoutForOrder({ orderId: freshOrder.id, customerId, createdAtMs: freshOrder.createdAtMs });
+      if (recovered && (recovered.status === "expired" || recovered.expires_at * 1000 <= now())) {
+        checkedObject(recovered);
+        await expireCheckout(freshOrder.id, recovered);
+        fail("failed-precondition", "Der vorige Checkout ist abgelaufen. Bitte den aktuellen Preis erneut prüfen.");
+      }
+      if (!recovered) {
+        if (freshOrder.checkoutAttemptedAtMs && freshOrder.checkoutAttemptedAtMs + 5 * 60000 > now()) fail("failed-precondition", "Die Zahlung wird noch abgeglichen. Bitte in einigen Minuten erneut versuchen.");
+        if (freshOrder.checkoutExpiresAtMs - now() < 31 * 60000) {
+          await expireCheckout(freshOrder.id, null, freshOrder);
+          fail("failed-precondition", "Der Checkout wurde nicht erstellt. Bitte den aktuellen Preis erneut prüfen.");
+        }
+      }
+    }
+    if (!recovered && freshOrder.checkoutExpiresAtMs) await store.transaction(async tx => {
+      const order = await tx.get(orderPath(freshOrder.id));
+      if (order.state === "expired" || order.checkoutId || order.checkoutAttemptedAtMs && order.checkoutAttemptedAtMs + 5 * 60000 > now()) fail("failed-precondition", "Ein Checkout wird gerade abgeglichen.");
+      tx.patch(orderPath(order.id), { checkoutAttemptedAtMs: now() });
+    });
+    const session = checkedObject(recovered || await provider.createCheckout({ ...freshOrder, ...discount, orderId: prepared.id, customerId }));
     const url = checkedUrl(session.url, "checkout");
     await store.transaction(async tx => {
       const current = await tx.get(orderPath(prepared.id));
@@ -94,6 +146,18 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
         state: current.state === "creating" ? "checkout_ready" : current.state });
     });
     return { orderId: prepared.id, url, replayed: false };
+  }
+  async function expireCheckout(orderId, session, absentSnapshot) {
+    return store.transaction(async tx => {
+      const current = await tx.get(orderPath(orderId));
+      if (!current || current.kind !== "personal" || current.subscriptionId || ["paid", "subscription_bound", "canceled"].includes(current.state)) fail("failed-precondition", "Checkout muss geprüft werden.");
+      if (session) {
+        if (session.status !== "expired" || session.mode !== "subscription" || session.client_reference_id !== current.id || session.metadata?.gc_order_id !== current.id ||
+          current.checkoutId && session.id !== current.checkoutId || objectId(session.customer) !== current.customerId || session.expires_at * 1000 !== current.checkoutExpiresAtMs) fail("failed-precondition", "Abgelaufener Checkout nicht eindeutig zugeordnet.");
+      } else if (!absentSnapshot || key(current) !== key(absentSnapshot) || current.checkoutId || current.checkoutAttemptedAtMs && current.checkoutAttemptedAtMs + 5 * 60000 > now()) fail("failed-precondition", "Der Checkoutabgleich wurde inzwischen verändert.");
+      const release = offers ? await offers.prepareExpiry(tx, current) : () => {};
+      release(); tx.patch(orderPath(orderId), { state: "expired" }); return { expired: true };
+    });
   }
   async function portal(request) {
     const actor = await caller(request);
@@ -118,14 +182,18 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
       if (!period || period.schoolId !== schoolId || period.unitAmountMinor !== SCHOOL_ANNUAL_SEAT_MINOR || !Number.isInteger(period.quantity) || period.quantity < 1 || period.quantity > 500 || period.amountMinor !== period.quantity * SCHOOL_ANNUAL_SEAT_MINOR || period.currency !== "eur") fail("failed-precondition", "Schulzeitraum bitte prüfen.");
       const id = key("school-order", schoolId, periodId), previous = await tx.get(orderPath(id)), buyerKey = key("school", schoolId), buyer = await tx.get(buyerPath(buyerKey));
       if (previous) {
+        await validateReplayQuote(tx, actor, data, previous, true);
         if (previous.kind !== "school" || previous.schoolId !== schoolId || previous.periodId !== periodId || previous.quantity !== period.quantity || previous.unitAmount !== period.unitAmountMinor || previous.startsAtMs !== period.startsAtMs || previous.endsAtMs !== period.endsAtMs) fail("failed-precondition", "Schulbestellung widersprüchlich.");
         return previous;
       }
       if (period.paymentStatus !== "open") fail("failed-precondition", "Schulzeitraum bereits abgeschlossen.");
-      const order = { id, kind: "school", ownerId: schoolId, schoolId, periodId, buyerKey, priceId: identifier(config.prices?.["school-yearly"]), unitAmount: SCHOOL_ANNUAL_SEAT_MINOR,
-        quantity: period.quantity, startsAtMs: period.startsAtMs, endsAtMs: period.endsAtMs, createdAtMs: now(), state: "creating" };
+      const priceId = identifier(config.prices?.["school-yearly"]);
+      const offerUse = offers ? await offers.prepareQuoteUse(tx, actor, ctx, data, { kind: "school", ownerId: schoolId, planCode: "school-yearly", priceId, quantity: period.quantity, unitAmount: SCHOOL_ANNUAL_SEAT_MINOR, periodId }) : null;
+      const order = { id, kind: "school", ownerId: schoolId, schoolId, periodId, buyerKey, priceId, planCode: "school-yearly", unitAmount: SCHOOL_ANNUAL_SEAT_MINOR,
+        offerReservationEndsAtMs: Math.floor(now() / 1000) * 1000 + 35 * 60000, quantity: period.quantity, startsAtMs: period.startsAtMs, endsAtMs: period.endsAtMs, createdAtMs: now(), state: "creating",
+        ...(offerUse ? { offer: offerUse.offer, quoteId: offerUse.quoteId || null, totalMinor: offerUse.totalMinor, ...(offerUse.reservationId ? { offerReservationId: offerUse.reservationId } : {}) } : {}) };
       if (!buyer) tx.create(buyerPath(buyerKey), { kind: "school", ownerId: schoolId, createdAtMs: now(), customerId: null });
-      tx.create(orderPath(id), order); tx.patch("billingV2Periods/" + periodId, { orderId: id });
+      offerUse?.write(id); tx.create(orderPath(id), order); tx.patch("billingV2Periods/" + periodId, { orderId: id, ...(offerUse ? { agreedAmountMinor: offerUse.totalMinor } : {}) });
       return order;
     });
     if (prepared.invoiceId && prepared.invoiceUrl) return { orderId: prepared.id, invoiceId: prepared.invoiceId, url: prepared.invoiceUrl, replayed: true };
@@ -149,7 +217,9 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
     resumeWindow(prepared.createdAtMs);
     const customerId = await ensureCustomer(prepared);
     await store.transaction(async tx => { const current = await tx.get(orderPath(prepared.id)); if (current.customerId && current.customerId !== customerId) fail("failed-precondition", "Käuferbindung widersprüchlich."); tx.patch(orderPath(prepared.id), { customerId }); });
-    const invoice = checkedObject(await provider.createSchoolInvoice({ ...prepared, customerId, orderId: prepared.id,
+    const freshOrder = await store.transaction(tx => tx.get(orderPath(prepared.id)));
+    const discount = offers ? await offers.materializeOrderOffer(freshOrder) : {};
+    const invoice = checkedObject(await provider.createSchoolInvoice({ ...prepared, ...discount, customerId, orderId: prepared.id,
       onDraft: async invoiceId => {
         identifier(invoiceId);
         await store.transaction(async tx => {
@@ -177,17 +247,28 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
       return store.transaction(async tx => { const seen = await tx.get(eventPath); if (seen) return sameEvent(seen);
         tx.create(eventPath, { ...receipt, state: "review" }); tx.create("billingV2Reviews/" + event.id, { type: event.type, objectId: objectIdValue, state: "open", createdAtMs: now() }); return { review: true }; });
     }
+    if (event.type === "checkout.session.expired") {
+      const session = checkedObject(await provider.retrieveCheckout(objectIdValue));
+      if (!session.metadata?.gc_order_id) return { unmanaged: true };
+      const orderId = identifier(session.metadata.gc_order_id);
+      return store.transaction(async tx => {
+        const seen = await tx.get(eventPath), current = await tx.get(orderPath(orderId)); if (seen) return sameEvent(seen);
+        if (!current || (current.checkoutId && session.id !== current.checkoutId) || session.mode !== "subscription" || session.client_reference_id !== current.id || session.expires_at * 1000 !== current.checkoutExpiresAtMs || objectId(session.customer) !== current.customerId || session.status !== "expired" || current.subscriptionId || current.state === "paid") fail("failed-precondition", "Abgelaufener Checkout nicht eindeutig zugeordnet.");
+        const release = offers ? await offers.prepareExpiry(tx, current) : () => {};
+        release(); tx.patch(orderPath(orderId), { state: "expired" }); tx.create(eventPath, receipt); return { expired: true };
+      });
+    }
     if (event.type === "checkout.session.completed") {
       const session = checkedObject(await provider.retrieveCheckout(objectIdValue));
       if (!session.metadata?.gc_order_id) return { unmanaged: true };
       const orderId = identifier(session.metadata.gc_order_id);
       const order = await store.transaction(tx => tx.get(orderPath(orderId)));
-      if (!order || order.kind !== "personal" || session.id !== order.checkoutId || objectId(session.customer) !== order.customerId) fail("failed-precondition", "Checkout nicht zugeordnet.");
+      if (!order || order.kind !== "personal" || order.checkoutId && session.id !== order.checkoutId || !order.checkoutId && (session.mode !== "subscription" || session.client_reference_id !== order.id || session.expires_at * 1000 !== order.checkoutExpiresAtMs) || objectId(session.customer) !== order.customerId) fail("failed-precondition", "Checkout nicht zugeordnet.");
       const subscription = await provider.retrieveSubscription(identifier(objectId(session.subscription))); validateSubscription(subscription, order);
       return store.transaction(async tx => {
         const seen = await tx.get(eventPath), current = await tx.get(orderPath(orderId)); if (seen) return sameEvent(seen);
         if (current.subscriptionId && current.subscriptionId !== subscription.id) fail("failed-precondition", "Abonnementbindung widersprüchlich.");
-        tx.patch(orderPath(orderId), { subscriptionId: subscription.id, state: current.state === "paid" ? "paid" : "subscription_bound" }); tx.create(eventPath, receipt); return { bound: true };
+        tx.patch(orderPath(orderId), { checkoutId: session.id, subscriptionId: subscription.id, state: current.state === "paid" ? "paid" : "subscription_bound" }); tx.create(eventPath, receipt); return { bound: true };
       });
     }
     if (!/^invoice\.(paid|payment_succeeded|payment_failed|updated|finalized|voided|marked_uncollectible)$/.test(event.type)) {
@@ -197,11 +278,13 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
     const mappedOrderId = invoice.parent?.subscription_details?.metadata?.gc_order_id || invoice.metadata?.gc_order_id;
     if (!mappedOrderId) return { unmanaged: true };
     const orderId = identifier(mappedOrderId);
-    const order = await store.transaction(tx => tx.get(orderPath(orderId)));
+    let order = await store.transaction(tx => tx.get(orderPath(orderId)));
+    if (order?.kind === "personal" && amendments) order = await amendments.recoverOrderAmendment(order);
     if (!order?.customerId) fail("failed-precondition", "Rechnung nicht zugeordnet.");
     const subscriptionId = order.kind === "personal" ? identifier(objectId(invoice.parent?.subscription_details?.subscription)) : null;
-    if (subscriptionId) validateSubscription(await provider.retrieveSubscription(subscriptionId), order);
-    const normalized = normalizeInvoice(invoice, { ...order, orderId, subscriptionId });
+    const subscription = subscriptionId ? await provider.retrieveSubscription(subscriptionId) : null;
+    if (subscription) validateSubscription(subscription, order);
+    const normalized = normalizeInvoice(invoice, { ...order, orderId, subscriptionId, ...(subscription ? { subscriptionStartsAtMs: subscription.start_date * 1000 } : {}) });
     const schoolInvoiceUrl = order.kind === "school" && invoice.hosted_invoice_url ? checkedUrl(invoice.hosted_invoice_url, "invoice") : null;
     return store.transaction(async tx => {
       const seen = await tx.get(eventPath), current = await tx.get(orderPath(orderId)), previous = await tx.get("billingV2Invoices/" + invoice.id);
@@ -218,8 +301,9 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
       }
       if (current.kind === "school") {
         period = await tx.get("billingV2Periods/" + current.periodId);
-        if (!period || period.schoolId !== current.schoolId || period.orderId !== orderId || period.amountMinor !== normalized.total || period.startsAtMs !== current.startsAtMs || period.endsAtMs !== current.endsAtMs) fail("failed-precondition", "Schulzeitraum nicht zugeordnet.");
+        if (!period || period.schoolId !== current.schoolId || period.orderId !== orderId || (period.agreedAmountMinor ?? period.amountMinor) !== normalized.total || period.startsAtMs !== current.startsAtMs || period.endsAtMs !== current.endsAtMs) fail("failed-precondition", "Schulzeitraum nicht zugeordnet.");
       }
+      const settleOffer = offers ? await offers.prepareSettlement(tx, { ...current, ...(current.kind === "school" ? { offerAgreementStartMs: invoice.created * 1000 } : {}) }, normalized.paid) : () => {};
       const saved = previous?.paid || (previous && previous.paidAmount > normalized.paidAmount) ? previous : normalized;
       tx.put("billingV2Invoices/" + invoice.id, { ...saved, kind: current.kind, ownerId: current.ownerId, updatedAtMs: now() });
       if (subscriptionId || normalized.paid || current.kind === "school") tx.patch(orderPath(orderId), {
@@ -234,7 +318,7 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
         if (account) projectWrites(tx, current.personId, account, { ...profile, id: current.personId, role: profile?.role || "missing", emailVerified: account.emailVerified === true,
           ...(deletion ? { accountDeletionId: "deleted" } : {}) }, [...grants.filter(g => g.id !== grantId), { ...next, id: grantId }]);
       }
-      tx.create(eventPath, receipt); return { paid: normalized.paid, remaining: normalized.remaining };
+      settleOffer(); tx.create(eventPath, receipt); return { paid: normalized.paid, remaining: normalized.remaining };
     });
   }
   return { checkout, portal, schoolInvoice, processStripeEvent, describeState };

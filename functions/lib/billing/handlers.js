@@ -15,8 +15,9 @@ function createPilotHandler(service) {
   };
 }
 function createPaymentHandler(service) {
-  const actions = new Set(["checkout", "portal", "schoolInvoice"]);
+  const actions = new Set(["checkout", "portal", "schoolInvoice", "publicOffers", "offerQuote", "offerTargets", "listOffers", "saveOffer", "publishOffer", "endOffer", "previewExistingOffer", "applyExistingOffer"]);
   return async request => {
+    if (request?.data?.action === "publicOffers") return service.publicOffers(request);
     if (!request?.auth?.uid) throw new BillingError("unauthenticated", "Bitte anmelden.");
     if (!actions.has(request.data?.action)) throw new BillingError("invalid-argument", "Unbekannte Zahlungsaktion.");
     return service[request.data.action](request);

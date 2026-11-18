@@ -1,0 +1,18 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';
+const source=fs.readFileSync(new URL('./app.js',import.meta.url),'utf8');
+function wiring(){const calls=[],chosen=[],destinations=[];let options;let operation=0;const context=vm.createContext({billingCheckoutAttempt:null,auth:{currentUser:{uid:'teacher'}},app:{},BILLING_PREVIEW_ENABLED:true,billingInitialSection:'access',billingSchoolInvitation:'',location:{assign:url=>destinations.push(url)},crypto:{randomUUID:()=> ++operation===1?'checkout-operation':'different-operation-'+operation},URL,getFunctions:()=>({}),httpsCallable:(_,name)=>async data=>{calls.push({name,data});return{data:{url:'https://checkout.stripe.com/c/pay'}};},createBillingClient:config=>({request:async(action,data)=>{chosen.push({action,data});return{url:'https://checkout.stripe.com/c/pay'};},...config}),document:{getElementById:()=>null},paintBillingPanel:(_,__,value)=>{options=value;},describeAccess:()=>({title:'Trial'}),toast:()=>{}});vm.runInContext(source.slice(source.indexOf('const billingClient = createBillingClient('),source.indexOf('\nconst questionFeedback =',source.indexOf('const billingClient =')))+'\nglobalThis.client=billingClient;',context);return{calls,chosen,destinations,context,get options(){return options;}};}
+test('all new offer actions use the authenticated payments service rather than the account service',async()=>{
+ const f=wiring();for(const action of ['checkout','portal','schoolInvoice','publicOffers','offerQuote','listOffers','saveOffer','publishOffer','endOffer','previewExistingOffer','applyExistingOffer','offerTargets'])await f.context.client.call({action});assert.ok(f.calls.every(item=>item.name==='billingPayments'));await f.context.client.call({action:'access'});assert.equal(f.calls.at(-1).name,'billingPilot');
+});
+test('checkout callback forwards only the selected plan and server quote ID',async()=>{
+ const f=wiring();f.context.client.onChange({tier:'trial'});await f.options.onChoose('personal-yearly',{quoteId:'server-quote'});assert.equal(f.chosen[0].data.quoteId,'server-quote');assert.equal(f.chosen[0].data.planCode,'personal-yearly');assert.equal(f.chosen[0].data.requestId,'checkout-operation');assert.deepEqual(f.destinations,['https://checkout.stripe.com/c/pay']);
+});
+test('account return opens settings without restarting payment polling or losing the selected account area',async()=>{
+ let dashboard=0,settings=0;const start=source.indexOf('  if (user) {\n    await loadDashboard();',source.indexOf('const rawStudentCode'));
+ assert.ok(start>0,'authenticated billing return must route into account settings');const end=source.indexOf('\n  else if (',start);
+ const context=vm.createContext({user:{uid:'teacher'},generation:1,authStateGeneration:1,billingAccountEntryPending:true,loadDashboard:async()=>{dashboard++;},openSettings:options=>{settings++;assert.equal(options.refreshBilling,false);}});await vm.runInContext('(async()=>{'+source.slice(start,end)+'})()',context);assert.equal(dashboard,1);assert.equal(settings,1);assert.equal(context.billingAccountEntryPending,false);
+});
+
+test('checkout retries preserve the purchase operation for the same owner, plan and quote',async()=>{
+ const f=wiring();f.context.client.onChange({tier:'trial'});await f.options.onChoose('personal-yearly',{quoteId:'q1'});await f.options.onChoose('personal-yearly',{quoteId:'q1'});assert.equal(f.chosen[0].data.requestId,f.chosen[1].data.requestId);await f.options.onChoose('personal-yearly',{quoteId:'q2'});assert.notEqual(f.chosen[1].data.requestId,f.chosen[2].data.requestId);
+});

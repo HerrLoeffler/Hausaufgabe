@@ -1,0 +1,92 @@
+{
+  "task": "GC-BILLING-PLAN-01",
+  "date": "2026-11-19",
+  "project": "gradecrew-staging-2026",
+  "codeCommit": "6ad3367d7564658f3385827c376f27b280c65f56",
+  "preview": {
+    "project": "gradecrew-staging-2026",
+    "at": "2026-11-18T23:56:01.914780+00:00",
+    "codeCommit": "6ad3367d7564658f3385827c376f27b280c65f56",
+    "ownPreviewUrl": "https://gradecrew-staging-2026--billing-product-uiwqa85y.web.app",
+    "ownVersion": "sites/gradecrew-staging-2026/versions/b007208e3e47b0f1",
+    "canonicalVersionUnchanged": "sites/gradecrew-staging-2026/versions/4916e09a92376424",
+    "checkedAssets": [
+      "workspace.html",
+      "app.js",
+      "firebase-config.js",
+      "billing-panel.mjs",
+      "billing-panel.css",
+      "billing-school-panel.mjs",
+      "billing-client.mjs",
+      "billing-offer-picker.mjs",
+      "billing-offer-targets.mjs",
+      "billing-offers-admin.mjs"
+    ],
+    "releaseFileCount": 225,
+    "productionChanged": false
+  },
+  "services": [
+    {
+      "name": "billingPilot",
+      "revision": "billingpilot-00003-kog",
+      "sourceFilesVerified": 172,
+      "existingConfigurationAndInvocationPreserved": true
+    },
+    {
+      "name": "billingPayments",
+      "revision": "billingpayments-00002-rux",
+      "sourceFilesVerified": 172,
+      "existingConfigurationAndInvocationPreserved": true
+    },
+    {
+      "name": "billingStripeWebhook",
+      "revision": "billingstripewebhook-00002-tud",
+      "sourceFilesVerified": 172,
+      "existingConfigurationAndInvocationPreserved": true
+    }
+  ],
+  "runtime": {
+    "project": "gradecrew-staging-2026",
+    "commit": "6ad3367d7564658f3385827c376f27b280c65f56",
+    "at": "2026-11-18T23:55:00.642457+00:00",
+    "protectedEndpoints": [
+      {
+        "endpoint": "billingPilot",
+        "unauthenticatedStatus": 401
+      },
+      {
+        "endpoint": "billingPayments",
+        "unauthenticatedStatus": 401
+      },
+      {
+        "endpoint": "billingStripeWebhook",
+        "unauthenticatedStatus": 400
+      }
+    ],
+    "publicOffersEmpty": true,
+    "signedNonfinancialEventAcceptedAndDeduplicated": true,
+    "financialAccessProof": false,
+    "userRoleChanged": false
+  },
+  "webhook": {
+    "existingEndpoint": "we_1Ud9fP1l0zkqOtXrBghZ9wfE",
+    "enabledEvents": 14,
+    "onlyCheckoutExpiryAdded": true,
+    "signingSecretPreserved": true
+  },
+  "supportingSourceFunctionsVerified": 51,
+  "tests": {
+    "functions": 590,
+    "serialDatabaseAuthRulesAndExistingPaths": 115,
+    "ui": 60,
+    "lintAndSyntax": true
+  },
+  "newSampleOffersActivated": false,
+  "newAccounts": false,
+  "newApiKeys": false,
+  "productionChanged": false,
+  "actualAuthenticatedAdminAcceptance": false,
+  "actualProductPayPalRenewalAcceptance": false,
+  "actualProductSchoolTransferAcceptance": false,
+  "pending": "Explicit test administrator selection and authenticated financial acceptance"
+}

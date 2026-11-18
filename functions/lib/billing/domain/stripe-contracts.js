@@ -1,8 +1,9 @@
 "use strict";
+const { discountForInvoice } = require("./offers");
 
 // Pure provider boundary: deliberately narrower than Stripe's general invoice
-// model. Credits, discounts, prorations and changed prices require a separate
-// reviewed flow; none can silently turn into an entitlement in this pilot.
+// model. Discounts require an explicit immutable order authorization; credits,
+// prorations and changed prices cannot silently turn into an entitlement.
 const safe = value => Number.isSafeInteger(value) && value >= 0;
 const objectId = value => typeof value === "string" ? value : value?.id;
 function requireValue(condition) { if (!condition) throw new TypeError("Unstimmige Stripe-Rechnung."); }
@@ -28,7 +29,7 @@ function normalizeInvoice(invoice, expected) {
   requireValue(safe(e.unitAmount) && e.unitAmount > 0 && Number.isSafeInteger(e.quantity) && e.quantity > 0 && safe(e.unitAmount * e.quantity));
   requireValue(invoice?.object === "invoice" && /^in_[A-Za-z0-9]+$/.test(invoice.id) && invoice.livemode === false);
   requireValue(typeof e.customerId === "string" && objectId(invoice.customer) === e.customerId && invoice.currency === "eur");
-  requireValue(invoice.total === e.unitAmount * e.quantity);
+  requireValue(safe(invoice.total));
   for (const name of ["amount_due", "amount_paid", "amount_remaining"]) requireValue(safe(invoice[name]));
   requireValue(invoice.amount_paid + invoice.amount_remaining === invoice.amount_due && invoice.amount_due === invoice.total);
   requireValue(invoice.amount_paid_off_stripe == null || invoice.amount_paid_off_stripe === 0);
@@ -58,6 +59,8 @@ function normalizeInvoice(invoice, expected) {
     metadata = invoice.metadata;
   }
   requireValue(metadata?.gc_order_id === e.orderId);
+  const amount = discountForInvoice(e, invoice);
+  requireValue(invoice.total === amount.totalMinor);
   return { invoiceId: invoice.id, customerId: e.customerId, subscriptionId, orderId: e.orderId, currency: "eur", total: invoice.total,
     ...(typeof invoice.number === "string" && invoice.number.length > 0 && invoice.number.length <= 100 ? { invoiceNumber: invoice.number } : {}),
     paidAmount: invoice.amount_paid, remaining: invoice.amount_remaining, status: invoice.status,

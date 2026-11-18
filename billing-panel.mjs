@@ -1,43 +1,56 @@
-import {describeAccess,describePlan} from './billing-client.mjs';
+import {describeAccess} from './billing-client.mjs';
 import {mountSchoolPanel} from './billing-school-panel.mjs';
+import {mountOfferPicker} from './billing-offer-picker.mjs';
+import {mountOffersAdmin} from './billing-offers-admin.mjs';
 
 const date = value => new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',dateStyle:'medium'}).format(new Date(value));
 function element(doc,tag,text,classes) {
   const el=doc.createElement(tag); if(text!==undefined)el.textContent=text; if(classes)el.className=classes;return el;
 }
-export function paintBillingPanel(root,access,{loading=false,error,onRefresh,onChoose,onManage,onVerify,onVerified,user}={}) {
+export function billingSectionFromLocation(address) {
+  const url=new URL(address,'https://gradecrew.invalid');
+  if(new URLSearchParams(url.hash.slice(1)).has('school-invite'))return 'school';
+  return url.searchParams.get('account')==='invoices'?'invoices':'access';
+}
+export function paintBillingPanel(root,access,{loading=false,error,onRefresh,onChoose,onManage,onVerify,onVerified,user,client,uid,initialSection='access',initialInvitation=''}={}) {
   if(!root)return;
-  const doc=root.ownerDocument;root.replaceChildren();root.className='card billingPanel';
-  root.append(element(doc,'span','Testumgebung · keine echten Abbuchungen','eyebrow'),element(doc,'h2','Zugang und Abrechnung'));
-  const status=element(doc,'p',loading?'Dein Zugang wird geprüft …':error?'Der Zugang konnte nicht geladen werden. Bitte erneut versuchen.':describeAccess(access).title);
-  status.setAttribute('role','status');status.setAttribute('aria-live','polite');root.append(status);
-  if(error){const button=element(doc,'button','Erneut prüfen','button secondary');button.type='button';button.onclick=()=>onRefresh?.();root.append(button);return;}
-  if(!access||loading)return;
-  const view=describeAccess(access);if(view.description)root.append(element(doc,'p',view.description));
-  if(view.validUntil)root.append(element(doc,'p','Gültig bis '+date(view.validUntil),'hint'));
-  if(access.tier==='trial')root.append(element(doc,'p','Jede neue Testdatei zählt – auch manuell erstellte Tests, Kopien und Importe. Löschen gibt keinen Test zurück.','hint'));
-  if(user&&user.emailVerified===false){
-    const actions=element(doc,'div',undefined,'actions');
-    for(const [label,callback]of[['Bestätigungslink senden',onVerify],['Ich habe bestätigt',onVerified]]){const b=element(doc,'button',label,'button secondary');b.type='button';b.onclick=()=>callback?.();actions.append(b);}root.append(actions);
+  const doc=root.ownerDocument,ticket=Symbol();root.billingPaintTicket=ticket;root.replaceChildren();root.className='card billingPanel billingAccount';
+  root.append(element(doc,'span','Testumgebung · keine echten Abbuchungen','eyebrow'),element(doc,'h2','Mein Konto'));
+  if(!access){if(!loading)root.billingSection=null;const status=element(doc,'p',loading?'Dein Zugang wird geprüft …':error?'Der Zugang konnte nicht geladen werden. Bitte erneut versuchen.':'Bitte anmelden.');status.setAttribute('role','status');root.append(status);if(error){const retry=element(doc,'button','Erneut prüfen','button secondary');retry.type='button';retry.onclick=()=>onRefresh?.();root.append(retry);}return;}
+  const navigation=element(doc,'nav',undefined,'billingNavigation');navigation.setAttribute('aria-label','Konto und Abrechnung');
+  const content=element(doc,'section',undefined,'billingAccountContent');root.append(navigation,content);
+  const sections=[['access','Mein Zugang'],['invoices','Rechnungen'],['school','Meine Schule']];if(access.canManageOffers===true)sections.push(['offers','Angebote & Rabatte']);
+  const action=(parent,label,name,work,primary=false)=>{const b=element(doc,'button',label,primary?'button primary':'button secondary');b.type='button';b.dataset.action=name;b.onclick=work;parent.append(b);return b;};
+  function render(section){
+    if(!sections.some(([key])=>key===section))section='access';root.billingSection=section;content.replaceChildren();content.dataset.view=section;
+    for(const b of navigation.querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.section===section));
+    if(section==='school'){const host=element(doc,'div');content.append(host);if(client)void mountSchoolPanel(host,{client,uid:uid||user?.uid,initialInvitation});else host.append(element(doc,'p','Bitte den Kontostatus neu laden.'));return;}
+    if(section==='offers'){const host=element(doc,'div');content.append(host);if(client)void mountOffersAdmin(host,{client,canManageOffers:access.canManageOffers===true});return;}
+    if(section==='invoices'){
+      content.append(element(doc,'h3','Deine persönlichen Rechnungen'));
+      const invoices=access.payments?.invoices||[],money=value=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(value/100);
+      if(!invoices.length)content.append(element(doc,'p','Hier liegen noch keine persönlichen Rechnungen vor.','hint'));
+      for(const invoice of invoices)content.append(element(doc,'p',`${invoice.invoiceNumber||'Testrechnung'} · ${money(invoice.total)} · ${invoice.status==='paid'?'Bezahlt':invoice.status==='void'?'Storniert':invoice.status==='uncollectible'?'Uneinbringlich':money(invoice.remaining)+' offen'}`));
+      if(access.payments?.portalAvailable)action(content,'Rechnungen im Zahlungsportal öffnen','manage-invoices',()=>onManage?.());
+      if(access.payments?.hasMoreInvoices)content.append(element(doc,'p','Weitere Rechnungen findest du im Zahlungsportal.','hint'));
+      content.append(element(doc,'p','Schulrechnungen findest du bei deiner Schule, wenn du für die Rechnungen zuständig bist.','hint'));return;
+    }
+    const view=describeAccess(access),status=element(doc,'p',view.title,'billingAccessStatus');status.setAttribute('role','status');status.setAttribute('aria-live','polite');content.append(status);
+    if(access.tier==='trial'){
+      content.append(element(doc,'p',`${access.freeCreationsRemaining} von 5 neuen Tests übrig`));
+      const until=view.trialEndsAtMs||view.validUntil;if(until)content.append(element(doc,'p','Testphase bis '+date(until),'hint'));
+      const details=element(doc,'details');details.dataset.trialDetails='';details.append(element(doc,'summary','Details zur Testphase'),element(doc,'p','14 Tage und höchstens fünf neue Testdateien kostenlos. Jede Neuanlage zählt, auch Kopien und Importe. Bearbeiten verbraucht keinen weiteren Test. Löschen gibt keinen Test zurück. Kein automatisches kostenpflichtiges Abo.','hint'));content.append(details);
+    }else{if(view.description)content.append(element(doc,'p',view.description));if(view.validUntil)content.append(element(doc,'p','Gültig bis '+date(view.validUntil),'hint'));}
+    if(user?.emailVerified===false){const actions=element(doc,'div',undefined,'actions');action(actions,'Bestätigungslink senden','verify-email',()=>onVerify?.());action(actions,'Ich habe bestätigt','refresh-verification',()=>onVerified?.());content.append(actions);}
+    const actions=element(doc,'div',undefined,'actions');content.append(actions);
+    if(access.payments?.portalAvailable)action(actions,'Abo verwalten','manage-subscription',()=>onManage?.(),true);
+    if(!access.payments?.hasSubscription&&!['complimentary','school'].includes(access.tier)&&(access.plans||[]).length){
+      const show=action(actions,'Premium ansehen','show-plans',()=>{const existing=content.querySelector('[data-view=plans]');if(existing){existing.remove();show.setAttribute('aria-expanded','false');show.textContent='Premium ansehen';return;}show.setAttribute('aria-expanded','true');show.textContent='Tarifauswahl schließen';const host=element(doc,'section');content.append(host);mountOfferPicker(host,{access,client,onChoose});},true);show.setAttribute('aria-expanded','false');
+    }
+    action(actions,'Status aktualisieren','refresh-access',()=>onRefresh?.());
   }
-  const refresh=element(doc,'button','Status aktualisieren','button ghost');refresh.type='button';refresh.onclick=()=>onRefresh?.();root.append(refresh);
-  if(access.payments?.portalAvailable){const manage=element(doc,'button','Abo und Rechnungen verwalten','button secondary');manage.type='button';manage.dataset.action='manage-subscription';manage.onclick=()=>onManage?.();root.append(manage);}
-  if(access.payments?.invoices?.length){
-    const invoices=element(doc,'section');invoices.append(element(doc,'h3','Deine persönlichen Rechnungen'));
-    for(const invoice of access.payments.invoices){const money=value=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(value/100);invoices.append(element(doc,'p',`${invoice.invoiceNumber||'Testrechnung'} · ${money(invoice.total)} · ${invoice.status==='paid'?'Bezahlt':invoice.status==='void'?'Storniert':invoice.status==='uncollectible'?'Uneinbringlich':money(invoice.remaining)+' offen'}`));}
-    if(access.payments.hasMoreInvoices)invoices.append(element(doc,'p','Weitere Rechnungen findest du in der Aboverwaltung.','hint'));root.append(invoices);
-  }
-  if(access.payments?.hasSubscription)return;
-  if(['complimentary','school'].includes(access.tier))return;
-  const fieldset=element(doc,'fieldset',undefined,'billingPlans');fieldset.append(element(doc,'legend',access.purchasingEnabled?'Persönliches Premium testen':'Persönliches Premium – Tarifvorschau'));
-  const plans=Array.isArray(access.plans)?access.plans:[];
-  for(const raw of plans){
-    let plan;try{plan=describePlan(raw);}catch{continue;}
-    const card=element(doc,'div',undefined,'billingPlan');card.append(element(doc,'h3',plan.title),element(doc,'p',plan.summary));
-    const b=element(doc,'button',raw.interval==='year'?'Jahresabo wählen':'Monatsabo wählen','button primary');b.type='button';b.disabled=access.purchasingEnabled!==true;
-    b.onclick=()=>onChoose?.(plan.code);card.append(b);fieldset.append(card);
-  }
-  if(plans.length){root.append(fieldset);root.append(element(doc,'p',access.purchasingEnabled?'Ein kostenpflichtiges Abo beginnt erst nach deiner bewussten Bestätigung.':'Die Tarifauswahl ist vorbereitet. Der Zahlungstest ist hier noch nicht aktiviert.','hint'));}
+  for(const[key,label]of sections){const button=element(doc,'button',label,'button ghost');button.type='button';button.dataset.section=key;button.onclick=()=>{if(root.billingPaintTicket===ticket)render(key);};navigation.append(button);}
+  render(root.billingSection||initialSection);
 }
 
 export async function mountAdminBilling(root,{client,personId,onError=()=>{}}) {

@@ -299,8 +299,10 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId, p
     });
   }
   const schools = require("./schools").createSchoolOperations({ store, now, caller, context, admin, identity, fail, key, identifier, requestId });
-  const payments = require("./payments").createPaymentOperations({ store, now, caller, context, projectWrites, provider, fail, key, identifier, requestId });
-  return { ...schools, ...payments, getAccess, inspectAccess, requireFeature, createQuiz, reserveGeneration, prepareGenerationReservation, prepareGenerationRelease, releaseGeneration, failGeneration, finalizeGeneration, grantPremium, revokePremium };
+  const offers = require("./offers").createOfferOperations({ store, now, caller, context, admin, identity, provider, fail, key, identifier, requestId });
+  const amendments = require("./offer-amendments").createOfferAmendmentOperations({ store, now, caller, context, admin, provider, fail, key, identifier, requestId });
+  const payments = require("./payments").createPaymentOperations({ store, now, caller, context, projectWrites, provider, fail, key, identifier, requestId, offers, amendments });
+  return { ...schools, ...offers.actions, previewExistingOffer: amendments.previewExistingOffer, applyExistingOffer: amendments.applyExistingOffer, ...payments, getAccess, inspectAccess, requireFeature, createQuiz, reserveGeneration, prepareGenerationReservation, prepareGenerationRelease, releaseGeneration, failGeneration, finalizeGeneration, grantPremium, revokePremium };
 }
 
 module.exports = { createBillingService, BillingError, key, identifier, requestId };

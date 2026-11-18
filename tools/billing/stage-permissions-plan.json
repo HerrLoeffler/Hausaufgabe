@@ -51,7 +51,8 @@
       "customer.subscription.deleted",
       "charge.refunded",
       "charge.dispute.created",
-      "charge.dispute.closed"
+      "charge.dispute.closed",
+      "checkout.session.expired"
     ]
   },
   "activationGates": [
@@ -86,7 +87,15 @@
       "billingStripeWebhook"
     ],
     "reason": "Website callables and Stripe signed webhook require network reachability; service authorization remains enforced.",
-    "explicitUserApproval": "Ja, nur diese drei gesch\u00fctzten Testadressen erreichbar machen",
+    "explicitUserApproval": "Ja, nur diese drei geschützten Testadressen erreichbar machen",
     "authenticationAndSignatureRejectionVerified": true
+  },
+  "offers": {
+    "sourceCommit": "6ad3367d7564658f3385827c376f27b280c65f56",
+    "stageReady": true,
+    "sampleOffersActivated": false,
+    "testAdminSelectionPending": true,
+    "newIamGrants": [],
+    "newSecrets": []
   }
 }

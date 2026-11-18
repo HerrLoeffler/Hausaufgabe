@@ -55,3 +55,14 @@ test("paid intervals merge overlaps, adjacent renewals and duplicates without br
   assert.deepEqual(periods, saved);
   for (const p of [[{ startsAtMs: 3, endsAtMs: 3 }], [{ startsAtMs: -1, endsAtMs: 2 }], [{ startsAtMs: 2, endsAtMs: null }]]) assert.throws(() => mergePaidPeriods(p));
 });
+test('discounted and zero-euro invoices require an exact authorized coupon contract',()=>{
+ for(const percentOff of [20,100]){
+  const value=invoice(),start=value.lines.data[0].period.start*1000;
+  const offer={id:'offer_authorized',couponId:'coupon_authorized',discountType:'percent',percentOff,fixedBasis:'invoice',duration:'once',durationMonths:null,applicationStartMs:start};
+  const amount=Math.round(1500*percentOff/100);Object.assign(value,{total:1500-amount,amount_due:1500-amount,amount_paid:1500-amount});
+  value.discounts=[{id:'di_authorized',object:'discount',start:start/1000,end:null,source:{type:'coupon',coupon:{id:'coupon_authorized',object:'coupon',livemode:false,percent_off:percentOff,amount_off:null,duration:'once',metadata:{gc_offer_id:offer.id,gc_quantity:'1'}}}}];
+  value.total_discount_amounts=[{amount,discount:'di_authorized'}];
+  const result=normalizeInvoice(value,{...expected,offer});assert.equal(result.paid,true);assert.equal(result.total,1500-amount);
+  assert.throws(()=>normalizeInvoice(value,expected));
+ }
+});

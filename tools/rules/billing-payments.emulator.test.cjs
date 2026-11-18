@@ -22,7 +22,7 @@ async function seed() {
     createCustomer: async data => { calls.push(["customer", data]); return { id: "cus_" + data.buyerKey, livemode: false }; },
     createCheckout: async data => {
       calls.push(["checkout", data]);
-      const value = { id: "cs_" + data.orderId, customer: data.customerId, subscription: "sub_" + data.orderId, livemode: false, metadata: { gc_order_id: data.orderId }, status: "complete", url: "https://checkout.stripe.com/c/pay/cs_test", expires_at: Math.floor(time / 1000) + 86400 };
+      const value = { id: "cs_" + data.orderId, customer: data.customerId, subscription: "sub_" + data.orderId, livemode: false, metadata: { gc_order_id: data.orderId }, mode: "subscription", client_reference_id: data.orderId, status: "complete", url: "https://checkout.stripe.com/c/pay/cs_test", expires_at: Math.floor(data.checkoutExpiresAtMs / 1000) };
       sessions.set(value.id, value);
       subscriptions.set(value.subscription, { id: value.subscription, customer: data.customerId, livemode: false, metadata: { gc_order_id: data.orderId }, status: "active", items: { has_more: false, data: [{ price: { id: data.priceId }, quantity: 1 }] } });
       if (failCheckout) { failCheckout = false; throw new Error("Synthetic lost provider response"); }
@@ -39,7 +39,7 @@ async function seed() {
       return { id: "in_school", livemode: false, hosted_invoice_url: "https://invoice.stripe.com/i/test" };
     },
     createPortal: async data => { calls.push(["portal", data]); return { url: "https://billing.stripe.com/p/session/test" }; },
-    retrieveInvoice: async id => invoices.get(id), retrieveSubscription: async id => subscriptions.get(id), retrieveCheckout: async id => sessions.get(id)
+    retrieveInvoice: async id => invoices.get(id), retrieveSubscription: async id => subscriptions.get(id), retrieveCheckout: async id => sessions.get(id), findCheckoutForOrder: async ({orderId,customerId}) => [...sessions.values()].find(value => value.metadata.gc_order_id === orderId && value.customer === customerId) || null
   };
   service = createBillingService({ store: createFirestoreBillingStore(db), now: () => time, projectId: "demo-gradecrew-billing", provider,
     getIdentity: async uid => ({ uid, email: uid + "@example.invalid", emailVerified: true, disabled: false, metadata: { creationTime: new Date(start).toISOString() } }) });

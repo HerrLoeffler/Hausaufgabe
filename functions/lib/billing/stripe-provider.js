@@ -1,6 +1,7 @@
 "use strict";
 const { createHash } = require("node:crypto");
 const { URL } = require("node:url");
+const { createStripeOffersProvider } = require("./stripe-offers-provider");
 const STRIPE_API_VERSION = "2026-10-28.endive";
 const SANDBOX_ACCOUNT = "acct_1UYUaw1l0zkqOtXr";
 const INTEGRATION_IDENTIFIER = "gradecrew_billing_pilot_vnqmkzpt";
@@ -14,7 +15,7 @@ function returnAddress(value) {
   let url;
   try { url = new URL(value); } catch { throw new TypeError("Ungültige Rücksprungadresse."); }
   if (url.protocol !== "https:" || url.username || url.password || url.port || !/^gradecrew-staging-2026--billing-(product|plan-01)-[a-z0-9-]+\.web\.app$/.test(url.hostname)) throw new TypeError("Ungültige Rücksprungadresse.");
-  url.pathname = "/"; url.search = ""; url.hash = "";
+  url.pathname = "/workspace.html"; url.search = ""; url.hash = "";
   return url;
 }
 function createStripeProvider({ apiKey, Stripe = require("stripe") } = {}) {
@@ -50,9 +51,18 @@ function createStripeProvider({ apiKey, Stripe = require("stripe") } = {}) {
       return testObject(await client.customers.create({ metadata: { gc_buyer_key: buyerKey }, ...(testClockId ? { test_clock: testClockId } : {}) }, { idempotencyKey: idem("customer", buyerKey) }));
     });
   }
+  function discounts(input) {
+    if (input.couponId != null && input.promotionCodeId != null) throw new TypeError("Rabatte können nicht kombiniert werden.");
+    if (input.couponId != null) return { discounts: [{ coupon: id(input.couponId) }] };
+    if (input.promotionCodeId != null) return { discounts: [{ promotion_code: id(input.promotionCodeId) }] };
+    return {};
+  }
   async function createCheckout(input) {
     const { orderId, customerId, priceId } = input;
     id(orderId); id(customerId);
+    const discount = discounts(input);
+    const expiry = input.checkoutExpiresAtMs;
+    if (expiry != null && (!Number.isSafeInteger(expiry) || expiry <= Date.now() || expiry > Date.now() + 24 * 3600000)) throw new TypeError("Ungültige Checkoutfrist.");
     const success = returnAddress(input.returnUrl); success.searchParams.set("billing", "return");
     const cancel = returnAddress(input.returnUrl); cancel.searchParams.set("billing", "cancel");
     return guarded(async () => {
@@ -60,12 +70,13 @@ function createStripeProvider({ apiKey, Stripe = require("stripe") } = {}) {
       return testObject(await client.checkout.sessions.create({ mode: "subscription", customer: customerId,
         client_reference_id: orderId, metadata: { gc_order_id: orderId }, subscription_data: { metadata: { gc_order_id: orderId } },
         line_items: [{ price: priceId, quantity: 1 }], automatic_tax: { enabled: false },
+        ...discount, ...(expiry == null ? {} : { expires_at: Math.floor(expiry / 1000) }),
         integration_identifier: INTEGRATION_IDENTIFIER, success_url: success.href, cancel_url: cancel.href
       }, { idempotencyKey: idem("checkout", orderId) }));
     });
   }
   const retrieveInvoice = invoiceId => { id(invoiceId); return guarded(async () => {
-    const invoice = testObject(await client.invoices.retrieve(invoiceId), invoiceId);
+    const invoice = testObject(await client.invoices.retrieve(invoiceId, { expand: ["discounts.source.coupon", "discounts.promotion_code"] }), invoiceId);
     // Stripe23 materializes decimal-string fields as exact Decimal objects.
     // Keep that SDK type inside this adapter; no Number coercion or rounding.
     if (!invoice.lines?.data) return invoice;
@@ -80,8 +91,27 @@ function createStripeProvider({ apiKey, Stripe = require("stripe") } = {}) {
   }
   const retrieveSubscription = subscriptionId => { id(subscriptionId); return guarded(async () => testObject(await client.subscriptions.retrieve(subscriptionId), subscriptionId)); };
   const retrieveCheckout = checkoutId => { id(checkoutId); return guarded(async () => testObject(await client.checkout.sessions.retrieve(checkoutId), checkoutId)); };
+  async function findCheckoutForOrder({ orderId, customerId, createdAtMs }) {
+    id(orderId); id(customerId);
+    if (!Number.isSafeInteger(createdAtMs) || createdAtMs <= 0) throw new TypeError("Ungültiger Bestellzeitpunkt.");
+    return guarded(async () => {
+      const matches = []; let startingAfter;
+      for (let page = 0; page < 10; page++) {
+        const result = await client.checkout.sessions.list({ customer: customerId, created: { gte: Math.floor(createdAtMs / 1000) - 1 }, limit: 100, ...(startingAfter ? { starting_after: startingAfter } : {}) });
+        for (const value of result.data) if (value.metadata?.gc_order_id === orderId || value.client_reference_id === orderId) {
+          const session = testObject(value);
+          if (session.metadata?.gc_order_id !== orderId || session.client_reference_id !== orderId || session.customer !== customerId || session.mode !== "subscription") throw new TypeError("Widersprüchlicher Checkout.");
+          matches.push(session);
+        }
+        if (!result.has_more) { if (matches.length > 1) throw new TypeError("Mehrere Checkouts."); return matches[0] || null; }
+        startingAfter = result.data.at(-1)?.id; if (!startingAfter) throw new TypeError("Unvollständige Checkoutliste.");
+      }
+      throw new TypeError("Checkoutabgleich noch unvollständig.");
+    });
+  }
   async function createPortal({ customerId, returnUrl, configurationId }) {
     id(customerId); id(configurationId); const address = returnAddress(returnUrl);
+    address.searchParams.set("account", "invoices");
     if (!/^bpc_[A-Za-z0-9]+$/.test(configurationId)) throw new TypeError("Portal-Konfiguration fehlt.");
     return guarded(async () => {
       const config = testObject(await client.billingPortal.configurations.retrieve(configurationId), configurationId);
@@ -91,11 +121,12 @@ function createStripeProvider({ apiKey, Stripe = require("stripe") } = {}) {
   }
   async function createSchoolInvoice(input) {
     id(input.orderId); id(input.customerId);
+    const discount = discounts(input);
     if (!Number.isSafeInteger(input.startsAtMs) || !Number.isSafeInteger(input.endsAtMs) || input.startsAtMs < 0 || input.startsAtMs >= input.endsAtMs) throw new TypeError("Ungültiger Rechnungszeitraum.");
     return guarded(async () => {
       await checkPrice({ ...input, interval: null });
       const invoice = testObject(await client.invoices.create({ customer: input.customerId, collection_method: "send_invoice", days_until_due: 14,
-        auto_advance: false, pending_invoice_items_behavior: "exclude", automatic_tax: { enabled: false }, metadata: { gc_order_id: input.orderId },
+        auto_advance: false, pending_invoice_items_behavior: "exclude", ...discount, automatic_tax: { enabled: false }, metadata: { gc_order_id: input.orderId },
         // Required by Stripe's bank-transfer invoice API; Checkout continues
         // to use dynamic payment methods. Finalizing does not send an email.
         payment_settings: { payment_method_types: ["customer_balance"], payment_method_options: { customer_balance: {
@@ -109,7 +140,8 @@ function createStripeProvider({ apiKey, Stripe = require("stripe") } = {}) {
       return testObject(await client.invoices.finalizeInvoice(invoice.id, { auto_advance: false }, { idempotencyKey: idem("school-finalize", input.orderId) }), invoice.id);
     });
   }
-  return { createCustomer, createCheckout, retrieveInvoice, retrieveSubscription, retrieveCheckout, createPortal, createSchoolInvoice };
+  return { createCustomer, createCheckout, retrieveInvoice, retrieveSubscription, retrieveCheckout, findCheckoutForOrder, createPortal, createSchoolInvoice,
+    ...createStripeOffersProvider({ client, guarded, testObject, id, idem }) };
 }
 
 module.exports = { createStripeProvider, STRIPE_API_VERSION, SANDBOX_ACCOUNT };
