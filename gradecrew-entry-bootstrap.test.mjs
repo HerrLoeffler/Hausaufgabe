@@ -5,7 +5,8 @@ import {createWilmaReviewClient} from './wilma-review-client.mjs';
 import {installWilmaAnswerReview,reviewItem} from './wilma-answer-review.mjs';
 import {writeWholeTeacherReview} from './teacher-review-write.mjs';
 import {createWilmaAutoReview} from './wilma-auto-review.mjs';
-import {teacherGradingSummary} from './teacher-grading-summary.mjs';
+import { answerIsComplete, paintAnswerCompletion } from './shared/answer-completion.mjs';
+import * as teacherResults from './teacher-grading-summary.mjs';
 import { requestPublishReview } from './publish-review.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -123,7 +124,7 @@ test('app bootstrap binds its real auth controls after public entry installation
     const { installGradeCrewEntryFlow } = await import('./gradecrew-entry-flow.js?v=7');
     assert.equal(installGradeCrewEntryFlow(), true);
     const appSource = fs.readFileSync('app.js', 'utf8');
-    const source = appSource.slice(0, appSource.indexOf('import { initializeApp')).replace(/import \{ teacherGradingSummary \} from [^;]+;/, '') + appSource.slice(appSource.indexOf('const diagnostics ='));
+    const source = appSource.slice(0, appSource.indexOf('import { initializeApp')).replace(/import \{[^}]+\} from [^;]*teacher-grading-summary[^;]+;/, '') + appSource.slice(appSource.indexOf('const diagnostics ='));
     const noop = () => {};
     const loginCalls = [];
     let guestStarts = 0;
@@ -134,7 +135,7 @@ test('app bootstrap binds its real auth controls after public entry installation
     const announcementReads = [];
     const forbidden = () => { forbiddenCalls += 1; throw new Error('Guest tutorial reached a provider'); };
     const bindings = {
-      requestPublishReview, teacherGradingSummary,createWilmaDecisionClient,canonicalDecisionState,canonicalJson,decisionQuestionSnapshot,questionSnapshot,createWilmaReviewClient,installWilmaAnswerReview,reviewItem,writeWholeTeacherReview,createWilmaAutoReview,
+      requestPublishReview, answerIsComplete, paintAnswerCompletion, ...teacherResults,createWilmaDecisionClient,canonicalDecisionState,canonicalJson,decisionQuestionSnapshot,questionSnapshot,createWilmaReviewClient,installWilmaAnswerReview,reviewItem,writeWholeTeacherReview,createWilmaAutoReview,
       initializeApp: () => ({}), getAuth: () => ({}), getFirestore: () => ({}), createAiClient: () => new Proxy({}, { get: () => forbidden }), installReviewMode,
       firebaseSignIn: (...args) => { loginCalls.push(args); return Promise.resolve({ user: {} }); },
       createDiagnostics: () => ({ record: noop, setRelease: noop }), installDiagnostics: noop,
