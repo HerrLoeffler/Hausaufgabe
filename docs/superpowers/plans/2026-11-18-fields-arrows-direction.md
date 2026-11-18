@@ -1,6 +1,6 @@
 # Felder und Pfeile als gemeinsamer Aufgabenbaustein
 
-Task GC-EXTENDED-QUESTION-TYPES-01. Präzisierung nach Martins Rückmeldung am 18.11.2026. Status ist Zielvorschlag für den nächsten Ausbau. Die Beschriftung der bestehenden Testzugänge wird konkret korrigiert.
+Task GC-EXTENDED-QUESTION-TYPES-01. Präzisierung nach Martins Rückmeldung am 18.11.2026. Status: gemeinsamer Einstieg auf der isolierten Testseite implementiert und mit acht echten gemischten Wünschen geprüft. [Abschlussnachweis](../../evidence/fields-arrows8-20261118/REPORT.md). Die historische Zielbegründung bleibt nachfolgend erhalten.
 
 ## Ziel aus der Rückmeldung
 
@@ -68,4 +68,4 @@ Damit lässt sich zeigen, ob der gemeinsame Baukasten verschiedene Lernhandlunge
 
 ## Aktueller Arbeitsblock
 
-Die bestehenden Eingabefelder werden eindeutig benannt. Diese Korrektur startet keine neue KI-Serie. Die gemeinsame Erzeugung der acht Beispiele ist der vorgeschlagene nächste Funktionsausbau und noch nicht implementiert.
+Die spätere Freigabe zur Umsetzung ist abgearbeitet: ein gemeinsamer KI-Eingang, sechs geprüfte Fachaufgaben sowie gezielte Rückfrage und begründeter Verzicht, Grün/Rot mit optionalem Browserdiktat, dauerhafte versionsgebundene Rückmeldung und tatsächlicher Abruf im Folgeauftrag. Siehe docs/evidence/fields-arrows8-20261118/REPORT.md. Echte Mikrofon-/Lehrkraft-/Touchabnahme und normale Testintegration bleiben offen.
