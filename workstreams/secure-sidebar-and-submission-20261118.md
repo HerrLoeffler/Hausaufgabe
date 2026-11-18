@@ -33,3 +33,6 @@ Neuer tatsächlicher nativer iPad-UI-TestPASS: leeres/falsches Wort deaktiviert 
 Nächster Schritt: begrenzt in vorhandenen Live-Releasezweig integrieren; dessen unveränderte vollständige CI-Gates müssen danach vor signiertem Upload bestehen. Keine App-Store-Buildauswahl und keine Store-Einreichung ändern. Neue TestFlightversion bleibt von Apple-Prüfung1293 getrennt.
 
 17:51CET: neuer iPhone-Dialogtest ebenfallsPASS (9s): echte TastatureingabeFALSCH blockiert, ABGEBEN aktiviert, ToolbarAbbrechen schließt. Kein zusätzlicher Hardware-Escape-/Wischgesten-Test behauptet. Vollständige Freigabe für native Releaseintegration liegt im ursprünglichen Browser-/Secure-Auftrag; keine erneute Zustimmung erforderlich.
+
+## Tatsächliche Releaseintegration17:51CET
+PR437 gemergt in feature/secure-live-ready-20261026:0ec581c698d4f5130e98cf38fdb4c204473b7786. Genau dieser Quellstand hat tatsächlichen Workflow44352032992 gestartet, run30/attempt1, zunächstqueued. Daraus vorgesehene Buildnummer1301, noch kein bestandener CI-/Upload-/Processingbeleg. Workflow unverändert mit Native-/WebKit-mini-/WebKit-large-/iPhone-Gates vor signiertem Live-Upload. Kein zusätzlicher Run gestartet. App-Store1293 bleibt unverändert.
