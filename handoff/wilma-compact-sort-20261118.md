@@ -1,0 +1,13 @@
+# GC-WEB-REPAIR-20261007 / GC-PEDAGOGY-KB-01 · Wilma-Übersicht zurück zur Tabelle
+
+18.11.2026. Direkte Korrektur von Martin nach Hostingrelease805cba9: kompakte Übersicht über alle Schüler wiederherstellen; Sortierung direkt per Spaltenüberschrift, erster Klick aufsteigend, zweiter absteigend. Dauer ausdrücklich schnellste→langsamste und zurück. Keine zusätzlichen Sortiermenüs. Verantwortlich: ausführender GC-Web-Fachchat, Chat-Link unbekannt.
+
+Branch fix/wilma-compact-sort-20261118 auf tatsächlicher Livebasis805cba98fc357d2926048311b7672b4fe70f1335. Ursache: neuer Containerbreakpoint1100px wandelte die Tabelle auch bei normalen Desktopbreiten in große Einzelkarten um. Tabellenkopf wurde ausgeblendet; Dropdowns und großflächige Statistik verschlechterten den schnellen Klassenüberblick.
+
+Korrektur: echte kompakte Tabelle auf allen Breiten, auf kleinen Geräten lokal seitlich scrollbar; getrennte Name/Kürzel-/Nachnamenspalten ohne erfundene Namenszerlegung. Klicksortierung für Namen, Punkte, Prozent, Note, Status, Dauer und Abgabezeit; sichtbare Pfeile und aria-sort, neue Spalte beginnt aufsteigend. Fehlende/offene Werte bleiben unten. Durchschnittswerte als kompakte Fußzeile, Bezugsgruppen barrierefrei und per Titel erklärt. Inlinebewertung bleibt in derselben Schülerzeile, auch bei horizontal gescrollter Tabelle innerhalb des sichtbaren Rahmens. Ungespeicherte Punkte vor Sortierung weiterhin bestätigen.
+
+Belege: zwei neue Verhaltenstests zunächst rot am alten Dropdownpfad; Browser zunächst rot mit display:block statt table. Zieltests30 und alle793Root-/UI-Tests grün.12 echte lokale Chromium-/WebKitfälle mit30fiktivenSchülern,390/820/1180px,100/200%Zoom,beideNamens-/Dauerrichtungen,manuellerKorrekturundkleinerTastaturhöhe bestanden. Prüfungshelfer zuerst am lokalen Serverrecht blockiert, dann erlaubter lokaler Browserlauf; CSS-Überlauf eines absolut positionierten Hilfstextes durch positionierten Tabellenrahmen behoben. Formularbreite mit Containerbreite passend. Keine realen Schülerdaten oder Bewertungen geschrieben; keine Provideraufrufe.
+
+Runtimeänderung nur app.js,styles.css,teacher-grading-summary.mjs; zwei zugehörige Testdateien angepasst. Schülerantwortmarkierungen, Auth/alte Adressen, Serverbewertung, Functions, Rules, native Apps und Emmi-Scope bleiben unverändert. Physische Handy-/iPad-Abnahme separat. Aktuell lokal getestet; gepushter Commit/CI/Hostingbeleg werden nach tatsächlichem Ergebnis ergänzt. Keine Budget-/Versuchszähler zurückgesetzt.
+
+Nächster Schritt: exakten gepushten Kandidaten unabhängig prüfen, vorhandene CI abschließen, dann mit gültiger direkter Livekorrektur-Freigabe ausschließlich Hosting auf frischer805cba9-Baseline veröffentlichen und beide Origins sowie reale fiktive UI kontrollieren.
