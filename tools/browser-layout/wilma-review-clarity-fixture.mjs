@@ -1,0 +1,12 @@
+import {installWilmaAnswerReview,applyAnswerDecision} from '/wilma-answer-review.mjs';
+if(!['127.0.0.1','localhost'].includes(location.hostname))throw Error('Local fictional fixture only.');
+const q={id:'fiction-q',type:'gapfill',text:'Ein Heftpaket kostet 60 €. Es wird um 10 % teurer. Die Erhöhung beträgt [6 €|6 Euro]. Der neue Preis beträgt [66 €|66 Euro].',points:1.5};
+const parseGaps=text=>[...text.matchAll(/\[([^\]]+)\]/g)].map(m=>({answers:m[1].split('|')}));
+const ctx={actor:'fictional-owner',quiz:{id:'fictional-preview'},questions:[q],submissions:[['A',['6 €','66 €']],['B',['6','66']],['C',['','']],['D',['6 Euro','66 Euro']],['E',['6 €','66']]].map(([id,answer])=>({id,studentName:'Fiktiv '+id,status:'review',answers:{[q.id]:answer},grading:{[q.id]:{maxPoints:1.5,autoPoints:0,awardedPoints:0,needsReview:true}}}))};
+ctx.submissions[3].grading[q.id].reviewIssue='incomplete-transfer';
+Object.assign(ctx.submissions[0].grading[q.id],{autoPoints:1.5,awardedPoints:1.5,correct:true,needsReview:false});
+Object.assign(ctx.submissions[2].grading[q.id],{needsReview:false,correct:false});
+ctx.submissions[4].grading[q.id].reviewSuggestion={source:'wilma-ai',requestId:'fictional-example',points:1,status:'uncertain',reason:'Beide Zahlen passen. Die fehlende Einheit muss die Lehrkraft nach ihrem Raster beurteilen.'};
+let writes=0;
+const ui=installWilmaAnswerReview({document,getContext:()=>ctx,parseGaps,answerDisplay:(_,a)=>String(a),correctDisplay:()=> 'Erhöhung: 6 € · Neuer Preis: 66 €',isAutomaticPreview:()=>true,getPreparation:()=>({phase:'error',message:'Anfrage abgelehnt · Antwortformat nicht unterstützt. Manuell bewerten.'}),notify:()=>{},openSubmission:()=>{},saveDecision:async({submissionId,decision,restore})=>{writes++;const i=ctx.submissions.findIndex(s=>s.id===submissionId);ctx.submissions[i]=restore||{...ctx.submissions[i],...applyAnswerDecision({question:q,submission:ctx.submissions[i],questions:[q],parseGaps,decision,gradeFromPercent:()=>3,scale:{thresholds:[91,77,57,39,25,0]}})};}});
+ui.refresh();ui.openForQuestion(q.id);const filter=ui.element.querySelector('[data-wilma=filter]');filter.value='all';filter.dispatchEvent(new Event('change',{bubbles:true}));window.fixture={ctx,ui,get writes(){return writes;}};document.body.dataset.fixtureReady='true';

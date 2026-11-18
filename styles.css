@@ -822,7 +822,15 @@ body.gcAiCompact .creationLegalFooter :is(.legalSiteFooter,.rightsFooter){flex:0
 @media(pointer:coarse){#resultsTableWrap .resultsSortButton,#resultsTableWrap .reviewBtn{min-height:44px}}
 @container(max-width:700px){
  #resultsView .reviewPanel{padding:16px}
- #resultsView .reviewPoints label{flex-basis:100%}
+ #resultsView .reviewPoints label:not(.visuallyHidden){flex-basis:100%}
  #resultsView .reviewPanel .reviewHeader{align-items:flex-start;flex-direction:column}
  #resultsView .reviewPanel .reviewHeader .button{width:100%;white-space:normal}
 }
+
+/* Compact points belong to their question; the full label remains available to assistive technology. */
+#resultsView .reviewPoints .visuallyHidden{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+#resultsView .reviewQuestion{padding:10px 0}
+#resultsView .reviewQuestion>strong,#resultsView .reviewQuestion>.meta{display:block;white-space:normal;overflow-wrap:anywhere;max-width:100%;min-width:0}
+#resultsView .reviewPoints{margin-top:5px;position:relative}
+#resultsView .reviewPoints input{width:76px;padding:7px 9px}
+#resultsView>.pageHead h1{overflow-wrap:anywhere}

@@ -29,3 +29,33 @@
 @media(pointer:coarse){
  #wilmaAnswerReview select,#wilmaAnswerReview textarea{font-size:16px;min-height:44px}
 }
+
+/* Compare each part directly; a nonmatching spelling is still an open decision. */
+.wilmaGapComparisons{list-style:none;padding:0;margin:0;display:grid;gap:5px}
+.wilmaGapComparison{display:grid;grid-template-columns:22px minmax(0,1fr) minmax(0,1fr);gap:2px 9px;align-items:start;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.4;white-space:normal}
+.wilmaGapComparison>div{min-width:0;overflow-wrap:anywhere}
+.wilmaGapNumber{color:var(--muted);font-size:11px;padding-top:17px}
+.wilmaComparisonLabel{display:block;font-size:10px;font-weight:500;color:var(--muted);margin-bottom:1px}
+.wilmaGapComparison strong{font-size:13px;font-weight:650}
+.wilmaGapComparison>small{grid-column:2/-1;color:var(--muted);font-size:10px}
+.wilmaGapComparison.known>small{color:#257044}
+.wilmaReference{font-size:11px;color:var(--muted);margin:5px 0;white-space:normal;overflow-wrap:anywhere}
+.wilmaReference>span{font-weight:650}
+.wilmaRowReason>strong{font-size:11px;font-weight:650;color:var(--text)}
+.wilmaRowReason p{white-space:normal}
+.wilmaReviewHead p,.wilmaReviewHead h2{overflow-wrap:anywhere}
+#wilmaAnswerReview .wilmaAnswerTable th,#wilmaAnswerReview .wilmaAnswerTable td{white-space:normal;overflow-wrap:anywhere}
+@media(max-width:600px){.wilmaGapComparison{gap:2px 7px}.wilmaGapComparisons{margin-bottom:3px}}
+/* The available sheet width also shrinks under page zoom or a narrow parent. */
+.wilmaListWorkspace{container-type:inline-size}
+@container(max-width:600px){
+ .wilmaAnswerTable,.wilmaAnswerTable tbody,.wilmaAnswerTable tr,.wilmaAnswerTable th,.wilmaAnswerTable td{display:block;width:100%!important}
+ .wilmaAnswerTable thead{display:none}
+ .wilmaAnswerTable tbody tr{padding:10px;border-top:1px solid var(--line)}
+ .wilmaAnswerTable tbody th,.wilmaAnswerTable td{padding:4px 0;border:0}
+ .wilmaAnswerTable tbody th{display:flex;align-items:center;gap:10px}
+ .wilmaRowDecision{display:flex!important;gap:10px;align-items:center;flex-wrap:wrap}
+ .wilmaRowActions{margin-top:0;flex:1}
+ .wilmaListTools{flex-wrap:wrap;gap:6px}
+ .wilmaListTools>.hint{display:none}
+}

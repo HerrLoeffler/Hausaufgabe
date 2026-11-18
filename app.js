@@ -8589,7 +8589,7 @@ function openReview(id) {
     const g = s.grading?.[q.id] || { awardedPoints: 0, maxPoints: Number(q.points) || 0 };
     const div = document.createElement("div");
     div.className = "reviewQuestion";
-    div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div class="meta">Antwort: ${escapeHtml(answerDisplay(q, s.answers?.[q.id], state.currentResultsQuiz?.contentLocale))}</div><div class="meta">Lösung: ${escapeHtml(correctDisplay(q, state.currentResultsQuiz?.contentLocale))}</div><div class="reviewPoints"><label for="review-points-${i}">Punkte für Aufgabe ${i + 1}</label><input id="review-points-${i}" class="manualPoints" data-qid="${escapeHtml(q.id)}" type="number" min="0" max="${Number(q.points)}" step="0.5" value="${round1(Number(g.awardedPoints ?? g.autoPoints ?? 0))}"><span>/ ${Number(q.points)}</span></div>`;
+    div.innerHTML = `<strong>${i + 1}. ${escapeHtml(q.type === "gapfill" ? "Lückentext" : q.text)}</strong><div class="meta">Antwort: ${escapeHtml(answerDisplay(q, s.answers?.[q.id], state.currentResultsQuiz?.contentLocale))}</div><div class="meta">Lösung: ${escapeHtml(correctDisplay(q, state.currentResultsQuiz?.contentLocale))}</div><div class="reviewPoints"><label class="visuallyHidden" for="review-points-${i}">Punkte für Aufgabe ${i + 1}</label><input id="review-points-${i}" class="manualPoints" data-qid="${escapeHtml(q.id)}" type="number" min="0" max="${Number(q.points)}" step="0.5" value="${round1(Number(g.awardedPoints ?? g.autoPoints ?? 0))}"><span>/ ${Number(q.points)}</span></div>`;
     const imageSrc = getQuestionImageSrc(q);
     if (imageSrc) {
       const figure = document.createElement("figure");
