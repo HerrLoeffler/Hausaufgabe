@@ -92,8 +92,12 @@ function enhanceStudentProgress(progress) {
       button.classList.toggle("current", buttonIndex === index);
       if (buttonIndex === index) button.setAttribute("aria-current", "step");
       else button.removeAttribute("aria-current");
+      if (buttonIndex === index) compact.querySelector(".studentCompactCurrent small").textContent =
+        button.classList.contains("complete") ? "Beantwortet ✓" : "Noch offen";
     });
   };
+  const progressChanges = new MutationObserver(() => sync());
+  progressChanges.observe(nav, { subtree: true, attributes: true, attributeFilter: ["data-answer-state"] });
   const onScroll = () => {
     if (navigating) settleNavigation();
     if (ticking) return;
@@ -153,6 +157,7 @@ function enhanceStudentProgress(progress) {
   const stopProgressHeight = watchStickyHeight(progress, "--student-progress-height");
   const stopTimerHeight = watchStickyHeight(document.getElementById("studentTimerBar"), "--student-timer-height");
   studentCleanup = () => {
+    progressChanges.disconnect();
     releaseNavigation();
     for (const type of ["wheel", "touchstart", "pointerdown", "keydown"])
       window.removeEventListener(type, releaseOnManualInput, true);

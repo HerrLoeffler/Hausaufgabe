@@ -7,6 +7,7 @@ console.info(`${BRAND.name} v${APP_VERSION}`);
 import { teacherGradingSummary } from "./teacher-grading-summary.mjs?v=20261028";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { answerIsComplete, paintAnswerCompletion } from "./shared/answer-completion.mjs";
 import {
   getAuth,
   createUserWithEmailAndPassword as firebaseCreateUser,
@@ -7969,7 +7970,7 @@ async function startTimedStudentQuiz(quiz, questions) {
 function setupStudentProgress(questions) {
   const nav = $("studentQuestionNav");
   if (!nav) return;
-  nav.innerHTML = questions.map((q, i) => `<button class="questionNavDot" type="button" data-qid="${escapeHtml(q.id)}" title="Aufgabe ${i + 1}" aria-label="Zu Aufgabe ${i + 1}">${i + 1}</button>`).join("");
+  nav.innerHTML = questions.map((q, i) => `<button class="questionNavDot" type="button" data-qid="${escapeHtml(q.id)}" title="Aufgabe ${i + 1} · offen" aria-label="Aufgabe ${i + 1} · offen">${i + 1}</button>`).join("");
   nav.querySelectorAll(".questionNavDot").forEach((btn) => {
     btn.addEventListener("click", () => {
       const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(btn.dataset.qid)}"]`);
@@ -7990,22 +7991,8 @@ function setupStudentProgress(questions) {
 }
 
 function studentAnswerIsComplete(q, given) {
-  if (q.type === "text" || q.type === "number" || q.type === "dropdown" || q.type === "single" || q.type === "truefalse") return String(given ?? "").trim() !== "";
-  if (q.type === "multi") return Array.isArray(given) && given.length > 0;
-  if (q.type === "gapfill") return Array.isArray(given) && given.length > 0 && given.every((x) => String(x || "").trim() !== "");
-  if (q.type === "matching") return Object.keys(given || {}).length === (q.pairs || []).length && Object.values(given || {}).every((x) => String(x) !== "");
-  if (q.type === "grouping") {
-    const expected = (q.groups || []).reduce((sum, g) => sum + (g.items || []).length, 0);
-    return Object.keys(given || {}).length === expected;
-  }
-  if (q.type === "ordering") {
-    const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
-    return section?.dataset.touched === "1" && Array.isArray(given) && given.length === (q.items || []).length;
-  }
-  if (q.type === "markwords") return (q.markGroups || []).length
-    ? Boolean(given && typeof given === "object" && !Array.isArray(given) && Object.keys(given).length)
-    : Array.isArray(given) && given.length > 0;
-  return false;
+  const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
+  return answerIsComplete(q, given, { orderingTouched: section?.dataset.touched === "1" });
 }
 
 function getUnansweredQuestions(questions) {
@@ -8020,11 +8007,11 @@ function refreshStudentProgress(questions) {
   if ($("studentProgressText")) $("studentProgressText").textContent = `${done} von ${questions.length} bearbeitet`;
   if ($("studentOpenCount")) $("studentOpenCount").textContent = unanswered.length ? `${unanswered.length} offen` : "Alles bearbeitet ✓";
   if ($("studentProgressFill")) $("studentProgressFill").style.width = `${percent}%`;
-  questions.forEach((q) => {
+  questions.forEach((q, index) => {
     const btn = $("studentQuestionNav")?.querySelector(`[data-qid="${CSS.escape(q.id)}"]`);
     if (!btn) return;
     const complete = !unanswered.includes(q);
-    btn.classList.toggle("complete", complete);
+    paintAnswerCompletion(btn, index, complete);
   });
 }
 

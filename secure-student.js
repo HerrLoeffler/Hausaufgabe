@@ -1,3 +1,4 @@
+import { answerIsComplete } from "./shared/answer-completion.mjs";
 import {mountPublicEntryShell,setPublicEntryShellVisible} from "./shared/public-entry-shell.mjs";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { firebaseConfig } from "./firebase-config.js";
@@ -557,26 +558,20 @@ function collectAnswers() {
   ]));
 }
 
-function answerIsComplete(question, value) {
-  if (question.type === "ordering") return Array.isArray(value) && value.length === (question.items || []).length;
-  if (question.type === "markwords" && (question.markGroups || []).length) return Boolean(value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length);
-  if (["multi", "markwords"].includes(question.type)) return Array.isArray(value) && value.length > 0;
-  if (question.type === "gapfill") return Array.isArray(value) && value.length > 0 && value.every(item => String(item || "").trim());
-  if (["matching", "grouping"].includes(question.type)) {
-    const values = value && typeof value === "object" ? Object.values(value) : [];
-    const expected = question.type === "matching" ? (question.leftItems || []).length : (question.items || []).length;
-    return values.length === expected && values.every(Boolean);
-  }
-  return String(value ?? "").trim().length > 0;
-}
 
 function refreshProgress() {
   const answers = collectAnswers();
-  const done = currentPaper.filter(question => answerIsComplete(question, answers[question.id])).length;
+  const done = currentPaper.filter(question => {
+    const complete = answerIsComplete(question, answers[question.id]);
+    const section = document.querySelector(`.secureQuestion[data-qid="${CSS.escape(question.id)}"]`);
+    if (section) section.dataset.answerState = complete ? "answered" : "open";
+    return complete;
+  }).length;
   const total = currentPaper.length;
   $("secureProgressText").textContent = `${done} von ${total} bearbeitet`;
-  $("secureOpenText").textContent = `${Math.max(0, total - done)} offen`;
+  $("secureOpenText").textContent = done === total ? "Alles beantwortet ✓" : `${total - done} offen`;
   $("secureProgressFill").style.width = `${total ? Math.round(done / total * 100) : 0}%`;
+  document.dispatchEvent(new Event("gradecrew:student-progress"));
 }
 
 function onAnswerChanged() {

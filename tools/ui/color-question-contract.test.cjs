@@ -8,7 +8,7 @@ const app = fs.readFileSync(path.join(__dirname, '../../app.js'), 'utf8');
 const secure = fs.readFileSync(path.join(__dirname, '../../secure-student.js'), 'utf8');
 function sourceFunction(source, name) { const start = source.indexOf(`function ${name}(`); assert.ok(start >= 0, name); return source.slice(start, source.indexOf('\n}', start) + 2); }
 function fixture() { return {id:'colors',type:'markwords',text:'Ordne die Wortarten zu.',passage:'Der kleine Igel schläft.',points:3,targetWords:['kleine','Igel','schläft'],markGroups:[{name:'Adjektive',color:'orange',words:['kleine']},{name:'Nomen',color:'blue',words:['Igel']},{name:'Verben',color:'green',words:['schläft']}]}; }
-function harness(t) { const dom = new JSDOM('<section class="secureQuestion" data-qid="colors"></section>', {runScripts:'outside-only'}); t.after(()=>dom.window.close()); const w = dom.window; w.onAnswerChanged=()=>{};w.refreshProgress=()=>{};w.round1=require('../../assessment-functions/lib/assessment-core').round1;w.CSS={escape:value=>String(value)};w.currentPaper=[];w.eval('const currentPaper = window.currentPaper;');return w; }
+function harness(t) { const dom = new JSDOM('<section class="secureQuestion" data-qid="colors"></section>', {runScripts:'outside-only'}); t.after(()=>dom.window.close()); const w = dom.window; w.onAnswerChanged=()=>{};w.refreshProgress=()=>{};w.round1=require('../../assessment-functions/lib/assessment-core').round1;w.CSS={escape:value=>String(value)};w.currentPaper=[];w.eval(fs.readFileSync('shared/answer-completion.mjs','utf8').replaceAll('export function','function'));w.eval('const currentPaper = window.currentPaper;');return w; }
 
 test('teacher save preserves explicit marking groups and blank colors', t => {
   const w = harness(t);w.orderingVariantsForStorage=x=>x;
@@ -20,7 +20,7 @@ test('teacher save preserves explicit marking groups and blank colors', t => {
 
 test('secure student names the palette, selects word colors, reopens draft and grades server-side', t => {
   const w=harness(t);const q=fixture();const paper=buildPublicQuestion(q,'synthetic-secret');w.currentPaper.push(paper);
-  for(const name of ['tokenizeWords','renderMarkwords','collectQuestionAnswer','answerIsComplete','applyDraft'])w.eval(sourceFunction(secure,name));
+  for(const name of ['tokenizeWords','renderMarkwords','collectQuestionAnswer','applyDraft'])w.eval(sourceFunction(secure,name));
   const section=w.document.querySelector('section');w.renderMarkwords(section,paper);
   const choose=name=>[...section.querySelectorAll('.markColorChoice')].find(button=>button.textContent.includes(name)).click();
   const word=index=>section.querySelector(`[data-word-index="${index}"]`);
