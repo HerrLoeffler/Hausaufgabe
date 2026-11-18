@@ -125,6 +125,7 @@ final class SecureExamCoordinator: ObservableObject {
         cancelSubmitConfirmation();await submit(auto:false)
     }
 #if SECURE_LAYOUT_TESTS
+    var recoveryJoinedDevicePollForTest:(()->Void)?
     // Test-host-only fixture. No AAC active flag or shipping assessment bypass exists.
     func installLifecycleFixture(expired:Bool,classroom:SecureClassroomLaunch?=nil) {
         operations.invalidate();work=SecureSavedWork()
@@ -228,7 +229,12 @@ final class SecureExamCoordinator: ObservableObject {
     // Independent of the exam timer: recovery and interrupted screens need the
     // same authenticated escape route as an active paper.
     @discardableResult func pollDeviceControl() async -> SecureDeviceControlState {
-        if let pending=deviceControlTask {return await pending.value}
+        if let pending=deviceControlTask {
+            #if SECURE_LAYOUT_TESTS
+            if busy && receiptChecks==0 {recoveryJoinedDevicePollForTest?()}
+            #endif
+            return await pending.value
+        }
         let pending=Task {await performDeviceControlPoll()};deviceControlTask=pending
         let result=await pending.value;deviceControlTask=nil;return result
     }

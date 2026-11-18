@@ -72,7 +72,7 @@ test('numbered task jumps are immediate rather than animating through many pages
 test('sidebar follows visible viewport without recreating answers and uses no top navigation offset',()=>{
  const {dom,w,messages}=setup({t:'Unverändert'});
  const nav=w.document.querySelector('#secureNavigation'),input=w.document.querySelector('textarea');
- Object.defineProperty(w,'innerWidth',{value:1100,configurable:true});
+ Object.defineProperty(w,'innerWidth',{value:1280,configurable:true});
  Object.defineProperty(w,'innerHeight',{value:750,configurable:true});
  nav.getBoundingClientRect=()=>({height:400,bottom:400});
  w.dispatchEvent(new w.Event('resize'));
@@ -99,10 +99,19 @@ test('Escape closes compact overview and returns focus to its toggle',()=>{
 });
 test('right overview keeps the next current row visible with one hundred tasks',()=>{
  const {dom,w}=setup({},Array.from({length:100},(_,i)=>({id:'q'+i,type:'text',text:'Frage '+i})));
- Object.defineProperty(w,'innerWidth',{value:1100});Object.defineProperty(w,'innerHeight',{value:750});w.dispatchEvent(new w.Event('resize'));
+ Object.defineProperty(w,'innerWidth',{value:1280});Object.defineProperty(w,'innerHeight',{value:750});w.dispatchEvent(new w.Event('resize'));
  const grid=w.document.querySelector('#secureQuestionNumbers'),button=grid.children[20];
  Object.defineProperties(grid,{offsetTop:{value:120},clientHeight:{value:180}});
  Object.defineProperties(button,{offsetTop:{value:200},offsetHeight:{value:48}});
  let scroll;grid.scrollTo=value=>{scroll=value};button.click();
  assert.equal(scroll?.top,134);assert.equal(button.getAttribute('aria-current'),'step');dom.window.close();
+});
+
+test('the overview never narrows the original task area on 1024-point iPads',()=>{
+ const {dom,w}=setup();Object.defineProperty(w,'innerHeight',{value:800,configurable:true});
+ for(const [width,wide] of [[1024,false],[1179,false],[1180,true],[1366,true]]) {
+  Object.defineProperty(w,'innerWidth',{value:width,configurable:true});w.dispatchEvent(new w.Event('resize'));
+  assert.equal(w.document.documentElement.classList.contains('secureSidebar'),wide,'width '+width);
+ }
+ dom.window.close();
 });

@@ -29,7 +29,7 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
     const font=parseFloat(getComputedStyle(numbers).fontSize)||19;
     const width=window.visualViewport?.width || window.innerWidth;
     const height=window.visualViewport?.height || window.innerHeight;
-    const wide=width>=1024 && height>=600 && width/Math.max(1,font/19)>=1024;
+    const wide=width>=1180 && height>=600 && width/Math.max(1,font/19)>=1180;
     document.documentElement.classList.toggle('secureSidebar',wide);
     if(sidebar!==wide) { sidebar=wide;root.dispatchEvent(new CustomEvent('securelayoutchange',{detail:{sidebar:wide}})); }
     const compact=!wide && ((font>27 && (navRoot.clientWidth<600 || window.innerHeight<850)) || window.innerHeight<500 || (navRoot.clientWidth>0 && navRoot.clientWidth<400));

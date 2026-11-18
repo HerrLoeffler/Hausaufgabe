@@ -70,7 +70,7 @@ button { min-width:44px; max-width:100%; overflow-wrap:anywhere; }
 
 /* Single answer DOM: only placement changes when the usable viewport changes. */
 #secureSidebarSubmit { display:none; }
-.secureSidebar main { max-width:1200px;display:grid;grid-template-columns:minmax(0,1fr) 13rem;gap:20px;align-items:start; }
+.secureSidebar main { max-width:calc(820px + 13rem + 20px);display:grid;grid-template-columns:minmax(0,820px) 13rem;gap:20px;align-items:start; }
 .secureSidebar #secureQuestions { grid-column:1;grid-row:1;min-width:0; }
 .secureSidebar .secureNavigation { grid-column:2;grid-row:1;top:0;max-height:calc(100dvh - 32px);display:flex;flex-direction:column;gap:10px;margin:0; }
 .secureSidebar .secureNavigationMain { display:grid;grid-template-columns:44px minmax(0,1fr) 44px; }

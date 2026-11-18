@@ -97,6 +97,7 @@ private struct SecureComposedWeb: UIViewRepresentable {
             if(sidebar) {
               const questions=document.getElementById('secureQuestions').getBoundingClientRect(),submit=document.getElementById('secureSidebarSubmit').getBoundingClientRect();
               if(questions.right>nav.left-8)issues.push('Tasks must remain left of overview');
+              if(Math.abs(questions.width-820)>1)issues.push('Sidebar changed original task width');
               if(submit.height<44 || submit.bottom>innerHeight || submit.top<nav.top)issues.push('Sidebar submission clipped');
               if(nav.height>innerHeight)issues.push('Sidebar exceeds viewport');
             }

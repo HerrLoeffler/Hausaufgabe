@@ -15,8 +15,14 @@ private final class SecureLifecycleHTTP:URLProtocol {
     static var deviceAckFails=false
     static var deviceDelay:Double=0
     static var deviceRequests=0
+    static var holdDeviceStatus=false
+    static var deviceStatusStarted:(()->Void)?
+    private static var heldDeviceStatus:[()->Void]=[]
+    private static var statusRequests=0
+    static var deviceStatusCount:Int {lock.lock();defer{lock.unlock()};return statusRequests}
+    static func releaseDeviceStatus() {lock.lock();holdDeviceStatus=false;let responses=heldDeviceStatus;heldDeviceStatus=[];lock.unlock();responses.forEach{$0()}}
     static var submissions:Int { lock.lock();defer{lock.unlock()};return requests }
-    static func reset(){lock.lock();requests=0;readyBackend=false;failSubmission=false;receiptPending=false;sentAnswers=[];deviceAction=nil;deviceUnavailable=false;deviceAckFails=false;deviceDelay=0;deviceRequests=0;lock.unlock()}
+    static func reset(){lock.lock();requests=0;readyBackend=false;failSubmission=false;receiptPending=false;sentAnswers=[];deviceAction=nil;deviceUnavailable=false;deviceAckFails=false;deviceDelay=0;deviceRequests=0;statusRequests=0;holdDeviceStatus=false;heldDeviceStatus=[];deviceStatusStarted=nil;lock.unlock()}
     override class func canInit(with request:URLRequest)->Bool { true }
     override class func canonicalRequest(for request:URLRequest)->URLRequest { request }
     override func startLoading(){
@@ -36,9 +42,18 @@ private final class SecureLifecycleHTTP:URLProtocol {
             let fail=Self.deviceUnavailable
             let result:[String:Any]=["action":Self.deviceAction ?? NSNull(),"capability":"device_exit_v1"]
             let body=try! JSONSerialization.data(withJSONObject:fail ? ["error":["status":"UNAVAILABLE","message":"offline"]] : ["result":result])
-            DispatchQueue.global().asyncAfter(deadline:.now()+Self.deviceDelay){[self] in
+            let respond = {[self] in
                 client?.urlProtocol(self,didReceive:HTTPURLResponse(url:request.url!,statusCode:fail ? 503:200,httpVersion:nil,headerFields:nil)!,cacheStoragePolicy:.notAllowed);client?.urlProtocol(self,didLoad:body);client?.urlProtocolDidFinishLoading(self)
-            };return
+            }
+            if command == "deviceExitStatus" {
+                Self.lock.lock();Self.statusRequests+=1
+                let held=Self.holdDeviceStatus
+                if held {Self.heldDeviceStatus.append(respond)}
+                let started=Self.deviceStatusStarted;Self.lock.unlock()
+                started?()
+                if held {return}
+            }
+            DispatchQueue.global().asyncAfter(deadline:.now()+Self.deviceDelay,execute:respond);return
         }
         let submit=request.url?.lastPathComponent == "submitAssessmentAttempt"
         if submit { Self.lock.lock();Self.requests+=1;Self.lock.unlock() }
@@ -217,13 +232,26 @@ private final class SecureLifecycleMemoryStore:SecureAttemptPersistence {
         await model.startOrRecover();XCTAssertEqual(model.phase,.recovery);XCTAssertTrue(model.message.contains("Gerätestatus"),model.message);XCTAssertNotNil(store.savedIdentity)
     }
     func testRecoveryWaitsForTheSameInFlightDevicePoll() async throws {
-        SecureLifecycleHTTP.reset();SecureLifecycleHTTP.receiptPending=true;SecureLifecycleHTTP.deviceDelay=0.2
+        SecureLifecycleHTTP.reset();SecureLifecycleHTTP.receiptPending=true;SecureLifecycleHTTP.holdDeviceStatus=true
         let store=personalRecoveryStore(),config=URLSessionConfiguration.ephemeral;config.protocolClasses=[SecureLifecycleHTTP.self]
         SecureLifecycleHTTP.deviceAction=["kind":"classroom_device_exit_v1","quizId":"AB12CD","assignmentId":"assigned","studentId":"pupil","attemptId":store.savedIdentity!.attemptID!,"generation":0,"actionId":"exit1","state":"delivered"]
         let model=SecureExamCoordinator(api:SecureAssessmentAPI(session:URLSession(configuration:config)),store:store)
-        let poll=Task {await model.pollDeviceControl()};try await Task.sleep(nanoseconds:30_000_000)
-        let started=Date();await model.startOrRecover();XCTAssertGreaterThan(Date().timeIntervalSince(started),0.12)
-        _=await poll.value;XCTAssertTrue(model.deviceExitPending);XCTAssertFalse(model.assessment.active)
+        let sent=expectation(description:"Device status is held by the server fixture")
+        SecureLifecycleHTTP.deviceStatusStarted={sent.fulfill()}
+        defer {SecureLifecycleHTTP.releaseDeviceStatus()}
+        let poll=Task {await model.pollDeviceControl()}
+        await fulfillment(of:[sent],timeout:5)
+        let joined=expectation(description:"Recovery joined the existing poll after receipt processing")
+        model.recoveryJoinedDevicePollForTest={joined.fulfill()}
+        let recovery=Task {await model.startOrRecover();return model.deviceExitPending}
+        await fulfillment(of:[joined],timeout:5)
+        XCTAssertEqual(SecureLifecycleHTTP.deviceStatusCount,1)
+        XCTAssertFalse(model.assessment.active)
+        SecureLifecycleHTTP.releaseDeviceStatus()
+        let heldAtRecoveryReturn=await recovery.value
+        _=await poll.value
+        XCTAssertTrue(heldAtRecoveryReturn,"Recovery must return only after the shared held-device decision")
+        XCTAssertTrue(model.deviceExitPending);XCTAssertFalse(model.assessment.active)
     }
     func testFailedAppleConfirmationAndFailedACKNeverClaimReleasedDevice() async throws {
         SecureLifecycleHTTP.reset();SecureLifecycleHTTP.deviceAckFails=true
