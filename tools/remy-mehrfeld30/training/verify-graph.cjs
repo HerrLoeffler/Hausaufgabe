@@ -20,7 +20,7 @@ const root=path.resolve(__dirname,'../../../docs/evidence/fields-arrows8-2026111
   const answer=fullAnswer(c.q);let partial;
   if(task.diagram)partial={...answer,[Object.keys(answer)[0]]:'falsch'};
   else if(c.q.trainingPolicy)partial={...answer,[Object.keys(answer)[0]]:'falsch'};
-  else partial={...answer,edges:answer.edges.slice(1)};
+  else partial=answer.slice(1);
   const values=[];for(const a of [answer,null,partial])values.push(await call({action:'score',...scope,answer:a}));
   assert.equal(values[0].points,c.q.points,task.id);assert.equal(values[1].points,0,task.id);assert.equal(values[2].points,c.q.points-.5,task.id);
   results.push({id:task.id,kind:c.plan.kind,full:values[0].points,blank:0,oneWrong:values[2].points,version:task.version});

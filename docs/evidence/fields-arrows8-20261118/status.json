@@ -3,7 +3,7 @@
   "quizId": "training:fields-arrows8-20261118-v1",
   "expected": 8,
   "status": "running",
-  "spentMicros": 56665,
+  "spentMicros": 60509,
   "reservedMicros": 0,
   "limitMicros": 1000000,
   "cases": [
@@ -58,12 +58,10 @@
     },
     {
       "id": "graph-percent",
-      "status": "rejected",
+      "status": "ready",
       "family": "mathematics",
       "attempt": 4,
-      "errors": [
-        "Dreisatz vollständig angeben."
-      ]
+      "errors": []
     }
   ]
 }

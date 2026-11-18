@@ -1,13 +1,13 @@
 {
-  "at": "2026-11-18T17:46:06.094Z",
+  "at": "2026-11-18T17:50:36.201Z",
   "runId": "fields-arrows8-20261118-v1",
-  "spentMicros": 56665,
+  "spentMicros": 60509,
   "reservedMicros": 0,
-  "providerCalls": 34,
-  "completedCalls": 34,
+  "providerCalls": 35,
+  "completedCalls": 35,
   "tokens": {
-    "input": 43702,
-    "output": 10297
+    "input": 44869,
+    "output": 10448
   },
   "cases": [
     {
@@ -82,13 +82,12 @@
     {
       "id": "graph-percent",
       "family": "mathematics",
-      "status": "rejected",
+      "status": "ready",
       "attempt": 4,
+      "decision": "direct",
       "expected": "direct",
-      "errors": [
-        "Dreisatz vollständig angeben."
-      ],
-      "reason": ""
+      "errors": [],
+      "reason": "Der vorgegebene Weg über 1 % passt zur direkten Proportionalität. Beide Spalten haben eigene offene Pfeilfaktoren: zuerst durch 100 teilen, dann mit 15 multiplizieren. Die offenen Geldbeträge sind 2,40 € und 36 €."
     }
   ]
 }

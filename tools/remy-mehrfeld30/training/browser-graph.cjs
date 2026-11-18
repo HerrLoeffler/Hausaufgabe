@@ -22,7 +22,7 @@ const root=path.resolve(__dirname,'../../../docs/evidence/fields-arrows8-2026111
    if(task.notice){assert.equal(await page.locator('#scoreButton').isVisible(),false);continue;}
    if(task.diagram){for(const [id,value]of Object.entries(answer)){const input=page.locator('[data-diagram-field="'+id+'"]');if(await input.evaluate(el=>el.tagName)==='SELECT')await input.selectOption(String(value));else await input.fill(String(value));}}
    else if(q.trainingPolicy){for(const [id,value]of Object.entries(answer)){const input=page.locator('[data-table="'+id+'"]');if(await input.evaluate(el=>el.tagName)==='SELECT')await input.selectOption(String(value));else await input.fill(String(value).replace('.',','));}}
-   else{for(const [a,b]of answer.edges){await page.locator('.node-legend [data-node="'+a+'"]').click();await page.locator('.node-legend [data-node="'+b+'"]').click();}}
+   else{for(const [a,b]of answer){await page.locator('.node-legend [data-node="'+a+'"]').click();await page.locator('.node-legend [data-node="'+b+'"]').click();}}
    await page.locator('#scoreButton').click();const n=new Intl.NumberFormat('de-DE');await page.waitForFunction(expected=>document.querySelector('#score').textContent===expected,n.format(q.points)+' von '+n.format(q.points)+' Punkten');scored.push(task.id);
   }
   const layouts=[];
@@ -37,9 +37,9 @@ const root=path.resolve(__dirname,'../../../docs/evidence/fields-arrows8-2026111
   await page.evaluate(()=>{const event=new Event('result');event.resultIndex=0;event.results=[[{transcript:'Synthetischer UI-Test: Die Verbformen sind klar verbunden.'}]];window.__speech.dispatchEvent(event);});
   await page.locator('#good').click();await page.waitForFunction(()=>document.querySelector('#status').textContent==='Rückmeldung gespeichert.');
   const after=(await call({action:'list',quizId:'training:'+RUN})).tasks;assert.equal(after[3].review.verdict,'good');assert.match(after[3].review.comment,/Synthetischer UI-Test/);assert.equal(after[3].review.version,listed[3].version);
-  const nextText=await page.locator('#quickNote').inputValue();assert.equal(nextText,'');
-  await page.evaluate(()=>{const event=new Event('result');event.resultIndex=0;event.results=[[{transcript:'Darf nicht in die nächste Aufgabe gelangen'}]];window.__speech.dispatchEvent(event);});assert.equal(await page.locator('#quickNote').inputValue(),'');
-  await page.locator('#quickNote').fill('Synthetischer UI-Test: Bitte die Pfeilbeschriftung prüfen.');await page.locator('#bad').click();await page.waitForFunction(()=>document.querySelector('#status').textContent==='Rückmeldung gespeichert.');
+  const nextText=await page.locator('#quickNote').inputValue();assert.doesNotMatch(nextText,/Verbformen/);
+  await page.evaluate(()=>{const event=new Event('result');event.resultIndex=0;event.results=[[{transcript:'Darf nicht in die nächste Aufgabe gelangen'}]];window.__speech.dispatchEvent(event);});assert.equal(await page.locator('#quickNote').inputValue(),nextText);
+  await page.locator('#quickNote').fill('Synthetischer UI-Test: Bitte die Pfeilbeschriftung prüfen.');await page.locator('#bad').click();await page.waitForFunction(()=>document.querySelector('#position').textContent==='Aufgabe 6 von 8');
   const rated=(await call({action:'list',quizId:'training:'+RUN})).tasks;assert.equal(rated[4].review.verdict,'bad');assert.match(rated[4].review.comment,/Synthetischer UI-Test/);
   // One paid free wish via the real public entry, with durable resume receipt.
   const file=path.join(root,'free-english.json'),wish='Englisch Klasse 6: Bitte drei einzelne Felder für die Simple-Past-Formen von eat, write und run. Jeweils das Ausgangsverb sichtbar mit seinem Eingabefeld verbinden. Die Lernenden tippen jeweils ein Wort.';

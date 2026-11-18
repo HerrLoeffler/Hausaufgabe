@@ -1,0 +1,63 @@
+{
+  "at": "2026-11-18T17:52:17.022Z",
+  "scored": [
+    "graph-percent",
+    "graph-inverse",
+    "graph-basefee",
+    "graph-english",
+    "graph-biology",
+    "graph-arguments"
+  ],
+  "layouts": [
+    {
+      "width": 1280,
+      "body": 1280,
+      "controls": [
+        {
+          "left": 763.859375,
+          "right": 1041.1875
+        },
+        {
+          "left": 220,
+          "right": 455.46875
+        }
+      ]
+    },
+    {
+      "width": 820,
+      "body": 820,
+      "controls": [
+        {
+          "left": 56.59375,
+          "right": 333.921875
+        },
+        {
+          "left": 390.796875,
+          "right": 626.265625
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "body": 360,
+      "controls": [
+        {
+          "left": 46,
+          "right": 314
+        },
+        {
+          "left": 46,
+          "right": 281.46875
+        }
+      ]
+    }
+  ],
+  "oneVisibleAIEntry": true,
+  "archiveCollapsed": true,
+  "syntheticSpeechEvents": true,
+  "physicalMicrophoneTested": false,
+  "greenRedPersisted": true,
+  "lateSpeechIgnored": true,
+  "freeWish": "graph-3f193f13c3b586f572df4a82d90474e4",
+  "pageErrors": []
+}
