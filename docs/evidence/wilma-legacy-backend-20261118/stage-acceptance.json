@@ -1,0 +1,24 @@
+{
+  "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+  "result": "pass",
+  "actualLegacyMissingReceipt": true,
+  "sameFingerprintAndOperation": true,
+  "attemptCount": 2,
+  "previousAttemptPreservedInHistory": true,
+  "newProviderCalls": 1,
+  "newUsageMicros": 970,
+  "reservedMicros": 0,
+  "gradeUnchanged": true,
+  "reloadNoNewProvider": true,
+  "sourceArchiveSHA256": "6f87bff5b8ff527babdc10653b907409b463c1ad517f37ff2bc12f4b39a4e840",
+  "stageRevision": "reviewwilmaanswers-00011-guf",
+  "hostingPreserved": "sites/gradecrew-staging-2026/versions/e218924764139f91",
+  "maxNewLiveProviderCalls": 0,
+  "verifiedAt": "2026-11-18",
+  "browserEvidence": [
+    "gc-wilma-legacy-missing-before.jpg",
+    "gc-wilma-legacy-retry-available.jpg",
+    "gc-wilma-legacy-stage-repaired.jpg",
+    "gc-wilma-legacy-stage-reloaded.jpg"
+  ]
+}

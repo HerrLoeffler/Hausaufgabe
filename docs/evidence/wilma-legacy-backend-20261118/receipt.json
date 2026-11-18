@@ -1,0 +1,119 @@
+{
+  "taskIds": [
+    "GC-WEB-REPAIR-20261007",
+    "GC-PEDAGOGY-KB-01"
+  ],
+  "stage": "production",
+  "scope": "reviewWilmaAnswers buildConfig.source only; Hosting and all service configuration preserved",
+  "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+  "tree": "c877184464769428cc772d7dc4609993e49e13cc",
+  "pullRequest": 438,
+  "ci": {
+    "run": 44375566304,
+    "result": "success"
+  },
+  "stageAcceptance": {
+    "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+    "result": "pass",
+    "actualLegacyMissingReceipt": true,
+    "sameFingerprintAndOperation": true,
+    "attemptCount": 2,
+    "previousAttemptPreservedInHistory": true,
+    "newProviderCalls": 1,
+    "newUsageMicros": 970,
+    "reservedMicros": 0,
+    "gradeUnchanged": true,
+    "reloadNoNewProvider": true,
+    "sourceArchiveSHA256": "6f87bff5b8ff527babdc10653b907409b463c1ad517f37ff2bc12f4b39a4e840",
+    "stageRevision": "reviewwilmaanswers-00011-guf",
+    "hostingPreserved": "sites/gradecrew-staging-2026/versions/e218924764139f91",
+    "maxNewLiveProviderCalls": 0,
+    "verifiedAt": "2026-11-18",
+    "browserEvidence": [
+      "gc-wilma-legacy-missing-before.jpg",
+      "gc-wilma-legacy-retry-available.jpg",
+      "gc-wilma-legacy-stage-repaired.jpg",
+      "gc-wilma-legacy-stage-reloaded.jpg"
+    ]
+  },
+  "liveAcceptance": {
+    "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+    "result": "pass",
+    "fixture": "existing synthetic LLD9SSR8 valid receipt",
+    "sameFingerprintAndOperation": true,
+    "attemptCount": 1,
+    "phase": "completed",
+    "newProviderCalls": 0,
+    "newUsageMicros": 0,
+    "reservedMicros": 0,
+    "gradeUnchanged": true,
+    "savedStateUnchanged": true,
+    "browserProposalPoints": 1.5,
+    "browserProposalMaxPoints": 1.5,
+    "confirmed": false,
+    "sourceRevision": "reviewwilmaanswers-00006-xub",
+    "browserEvidence": "gc-wilma-legacy-live-verified.jpg"
+  },
+  "stageSource": {
+    "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+    "project": "gradecrew-staging-2026",
+    "state": "ACTIVE",
+    "revision": "reviewwilmaanswers-00011-guf",
+    "previousRevision": "reviewwilmaanswers-00010-zud",
+    "source": {
+      "bucket": "gcf-v2-sources-840345136563-europe-west1",
+      "object": "reviewWilmaAnswers/function-source.zip",
+      "generation": "1795037893702788"
+    },
+    "archiveSHA256": "6f87bff5b8ff527babdc10653b907409b463c1ad517f37ff2bc12f4b39a4e840",
+    "allServiceConfigPreserved": true,
+    "resources": {
+      "memory": "512M",
+      "cpu": "1",
+      "maxInstances": 1,
+      "concurrency": 1,
+      "timeoutSeconds": 180
+    },
+    "otherFunctionsUnchanged": 97,
+    "parallelChanges": [],
+    "hostingUnchanged": "sites/gradecrew-staging-2026/versions/e218924764139f91"
+  },
+  "liveSource": {
+    "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+    "project": "hausaufgabe-staging",
+    "state": "ACTIVE",
+    "revision": "reviewwilmaanswers-00006-xub",
+    "previousRevision": "reviewwilmaanswers-00005-lax",
+    "source": {
+      "bucket": "gcf-v2-sources-950775032930-europe-west1",
+      "object": "reviewWilmaAnswers/function-source.zip",
+      "generation": "1795038632516725"
+    },
+    "archiveSHA256": "6f87bff5b8ff527babdc10653b907409b463c1ad517f37ff2bc12f4b39a4e840",
+    "allServiceConfigPreserved": true,
+    "resources": {
+      "memory": "512M",
+      "cpu": "1",
+      "maxInstances": 2,
+      "concurrency": 4,
+      "timeoutSeconds": 180
+    },
+    "otherFunctionsUnchanged": 61,
+    "parallelChanges": [],
+    "hostingUnchanged": "sites/hausaufgabe-staging/versions/73a1e618cab1a0ba"
+  },
+  "independentReview": "PASS no P0-P2;146 artifact files byte-equal to Git and prior reviewed package",
+  "newProviderCalls": {
+    "staging": 1,
+    "live": 0
+  },
+  "newUsageAccountingMicros": {
+    "staging": 970,
+    "live": 0
+  },
+  "realPupilGradeWrites": 0,
+  "physicalDevices": "not tested by Web owner",
+  "historical503RootCause": "unknown, not reconstructed",
+  "runtimeIntegration": "PR438 remains open/stacked; deployment is not a target-branch merge",
+  "verifiedAt": "2026-11-18T21:53:08.288838+00:00"
+}
