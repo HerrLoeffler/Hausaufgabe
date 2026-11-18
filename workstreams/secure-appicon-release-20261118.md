@@ -30,3 +30,7 @@ Attempt1 native900/900andallitslifecycle/UItestsPASS, bothmini+largeWebPASS360/3
 
 ## 14:37UTC — runner allocation failed, no test execution in attempt2
 Attempt2 phone134867240750 queued~16minutes then CANCELLED byGitHub, notbythischat. ActualGitHubannotations: Internal server error; hostedRunnernotacquiredevenaftermultipleattempts; explicitmacOSarm64capacityconstraints. NoSetupjob/teststeps, noAppcodeexecuted; dependentupload134876994298SKIPPED, no1292. Threeearlierpassedgatesretained. OnefurtherTARGETEDinfraretryofcancelled134867240750 acceptedsuccess=true; sameRun44317497628/source536d7cce, expectedattempt3/newcandidate1293ONLYifactualupload. No code/workflow/gatechange, no newfullworkflow, no manualcancellation. This is allocationretry, notasecondfailedcodeexecutionbeingignored. NextrecordnewphonejobIDandfollowexecution; preserveallfailhistory.
+
+
+## 14:57 UTC — attempt 3 actually executing
+Phone job134878752077 acquired a hosted Mac at14:48UTC after ~10minute queue. Setup/checkout/real Secure resource preparation PASS; native+WebKit iPhone simulator matrix currently in_progress. The earlier three passed gates retained. No new upload/build number yet. Do not duplicate run or replace tests. An additional main-branch handoff pointer create was auto-review rejected as outside current icon/AppConnect authorization; no main-pointer commit made and no workaround attempted. Existing fix-branch evidence remains available; unrelated main state must be freshly read before any future explicitly authorized coordination mutation.
