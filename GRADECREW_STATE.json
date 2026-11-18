@@ -5338,14 +5338,14 @@
       "handoff": "workstreams/secure-entry-logo-20261118.md",
       "scope": "Reuse the approved Secure AppIcon bytes for the Live in-app logo; distinct Test identity and all layout/exam/security behavior unchanged.",
       "ci_run": 44412446551,
-      "ci_status": "all_matrix_gates_success_build_running",
+      "ci_status": "success",
       "canonical_logo_sha256": "fa341d56873fdec36b57a316da5a78577fcdb9d163eeca5774b103b250cc172d",
       "local_validation": "Actual generated asset mismatch RED before fix;31Python/29JS and40native preview cases plus lifecycle/submit/return pass; rendered entry visually inspected; independent narrow review noP0-P2.",
-      "new_upload_confirmed": false,
+      "new_upload_confirmed": true,
       "testflight_prior_available": "1.0 (1321), still previous entry logo",
       "app_store_selected_build_not_modified": 1293,
       "secure_test_not_modified": 1241,
-      "next_action": "Follow build-upload135203252701; all final-source matrix gates pass. Preserve original attempt1failure. No additional retry or new build.",
+      "next_action": "Confirm1332TestFlightavailability and actual same logo above entry. No further build/Store review submission. Original first-attempt renderer failure remains retained.",
       "ci_attempt": 2,
       "ci_first_attempt_failure": {
         "phone_job": 135183889137,
@@ -5358,7 +5358,54 @@
       "retry_count": 1,
       "source_changed_for_retry": false,
       "retry_phone_result": "540native216Web12interactions6composed pass on unchanged82dba253",
-      "build_upload_job": 135203252701
+      "build_upload_job": 135203252701,
+      "testflight_version": "1.0 (1332)",
+      "upload_receipt": {
+        "status": "uploaded_testflight_availability_unconfirmed",
+        "app": "GradeCrew Secure",
+        "version": "1.0",
+        "build": 1332,
+        "source": "82dba253bd64b907c1977f500835173f17929102",
+        "run": 44412446551,
+        "run_number": 33,
+        "run_attempt": 2,
+        "upload_job": 135203252701,
+        "upload_utc": "2026-11-18T23:28:34Z",
+        "delivery_uuid": "fb43fb9b-71f5-41ce-8375-326ee2d307df",
+        "bundle_id": "de.gradecrew.secure",
+        "mode": "live-exam",
+        "backend": "hausaufgabe-staging (school Live)",
+        "aac_signed_app": true,
+        "aac_distribution_profile": true,
+        "errors": 0,
+        "warnings": [
+          {
+            "code": 90725,
+            "meaning": "Future April2027SDK27 requirement; this upload accepted."
+          }
+        ],
+        "logo_sha256": "fa341d56873fdec36b57a316da5a78577fcdb9d163eeca5774b103b250cc172d",
+        "logo_source_shared_with_app_icon": true,
+        "all_matrix_gates": "success",
+        "phone_attempt1_failure_retained": {
+          "job": 135183889137,
+          "artifact": 14477958745,
+          "case": "web-phone-small-landscape-large-media-closed",
+          "issue": "Local renderer not ready"
+        },
+        "single_unchanged_source_retry": {
+          "job": 135195505743,
+          "result": "540native216Web12interactions6composed pass"
+        },
+        "asset_unit_tests": "31Python passed in signed-build validation",
+        "app_store_selection_not_modified": 1293,
+        "separate_secure_test_not_modified": 1241,
+        "testflight_availability_confirmed": false,
+        "user_availability_question_pending": true,
+        "physical_logo_acceptance_confirmed": false
+      },
+      "testflight_availability": "unconfirmed; question pending with Martin",
+      "physical_logo_acceptance": "open"
     }
   ],
   "deployments": [

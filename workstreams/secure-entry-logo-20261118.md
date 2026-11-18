@@ -21,3 +21,9 @@ Lokaler frischer gleicher Weblauf216/216+12Interaktionen+6Kompositionen grün. G
 ## Finaler Matrixstand
 
 Gezielte Phone-Wiederholung135195505743 erfolgreich:540native,216Web,12Interaktionen,6Kompositionen vollständig grün. Gleiche unveränderte Quelle82dba253; drei ursprüngliche iPad-Erfolge weiterhin gültig. Erster Fehlschlag bleibt erhalten, keine angebliche Produktreparatur dafür. Build/Upload135203252701läuft; noch kein neuer Upload bestätigt. Kein zusätzlicher Wiederholungsstart.
+
+## Signierter Upload erfolgreich
+
+Secure1.0(1332) tatsächlich hochgeladen am18Nov2026 um23:28:34UTC, DeliveryUUIDfb43fb9b-71f5-41ce-8375-326ee2d307df. Run44412446551/attempt2 vollständig erfolgreich, Quelle unverändert82dba253. Live-Konfiguration `live-exam`/`hausaufgabe-staging`, Bundlede.gradecrew.secure sowie AAC in signierter App und Distributionprofil geprüft.31Pythonprüfungen einschließlich tatsächlicher Assetgleichheit im Buildprotokoll bestanden. Null Fehler, nur bekannter Zukunftshinweis90725 fürApril2027SDK27.
+
+Apple-Verarbeitung/tatsächliche1332-Verfügbarkeit und physische Logoabnahme noch offen; konkrete Verfügbarkeitsfrage an Martin gestellt. Kein weiterer Upload und kein AppStore-Reviewversand. Store-Auswahl1293 und separateSecureTest1241 nicht geändert. Ursprünglicher Rendererfehler und genau ein unveränderter erfolgreicher Phone-Retry bleiben dokumentiert.
