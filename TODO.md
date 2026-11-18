@@ -905,6 +905,14 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 - [x] **1321 in TestFlight verfügbar:** Martin bestätigt nach der vorigen1313-Anzeige ausdrücklich „1321 jetzt da“.
 - [ ] Martin prüft den neuen kompakten Build am Gerät. Keine physische Abnahme allein aus Simulator- oder Serverprüfungen ableiten.
 
+
+### GC-WEB-REPAIR-20261007 / GC-PEDAGOGY-KB-01 · Wilma ·19.11.2026
+
+- [x] Normaler Einstieg, getrennte erste KI-Prüfung/Fehlerwiederholung und offene viewportgerechte Aufgabenwahl veröffentlicht: Quelle4fe3baf, CI44412450416 vollständig grün, unabhängige Reviews PASS. Live revision00007-viz / Hosting7214fd4140dbc950, beide Adressen216/216 Hashes; Stage nur `/wilma/`, kanonischer Root unverändert. [Bericht](docs/evidence/wilma-normal-entry-20261119/REPORT.md).
+- [x] Fünf tatsächliche fiktive Stage-KI-Fälle (Alternative/falsch/unklar/Teilpunkte/leer) quellegebunden bestätigt; genau5Aufrufe,6397MikroEUR Usagebuchung, Reserve0. Vollständiger Reload gratis, keine Notenänderung. Live vorhandener fiktiver Beleg gratis wiederverwendet,0neue Providerstarts; keine weiteren Stage-Proben.
+- [ ] Echter gemeldeter Einzelfall: automatische Prüfung hat den einzelnen KI-Start vor Übermittlung der echten Schülerantwort an OpenAI abgelehnt. Direkte Zustimmung bei Martin angefragt und offen; kein Job/Kosten-/Notenwechsel. Erst nach ausdrücklicher Freigabe exakt diesen einen nie gestarteten Fall prüfen, keine Klasse automatisch nachbewerten oder Schranke umgehen.
+- [ ] Physische Handy-/iPad-Abnahme offen. Secure1.0(1321) ist bereits durch Native-Owner veröffentlicht und von Martin als TestFlight-verfügbar bestätigt; kein zusätzlicher Build aus diesem Webauftrag erforderlich. Separater Logo-Build1332 wurde danach vom Native-Owner hochgeladen; Verfügbarkeit und Geräteabnahme bleiben getrennt.
+- [x] Kurzer [Firebase-/Supabase-Entscheid](docs/architecture/2026-11-19-feedback-fundus-storage.md) mit tatsächlichen Feedback-/Fundus-/Belegpfaden gesichert: bestehendes Firebase behalten; SQL/pgvector später nur bei messbarem Bedarf. Keine Projekt-/Branchanlage für Supabase, Migration, Datenkopie oder automatische Modelltrainierung; Kostenvorteil nicht belegt.
 ### GC-IOS-02 / GC-RELEASE-06 · einheitliches Secure-Logo in der App · 18.11.2026
 
 - [x] Unterschied nach Nutzerscreenshot reproduziert: AppIcon war bereits die freigegebene durch-C-Schlossgrafik, das In-App-Logo noch der alte runde Badge. PR446 integriert als `82dba253`; beide Live-Bilddateien nutzen jetzt exakt die freigegebene Quelle. Separate Test-Identität und Layout erhalten.

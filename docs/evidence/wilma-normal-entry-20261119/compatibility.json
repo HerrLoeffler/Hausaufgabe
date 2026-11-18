@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-11-18T23:06:44.606905+00:00",
+  "candidate": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+  "nativeMinimumIOS": "17.0",
+  "nativeMinimumSource": {
+    "repository": "HerrLoeffler/Hausaufgabe",
+    "ref": "feature/secure-live-ready-20261026",
+    "path": "native/GradeCrewSecure/generate_project.py",
+    "field": "IPHONEOS_DEPLOYMENT_TARGET",
+    "value": "17.0",
+    "readVia": "connected GitHub file lines28-40"
+  },
+  "popoverAPIAddedSafari": "17.0",
+  "popoverAPISource": "https://webkit.org/blog/14445/webkit-features-in-safari-17-0/",
+  "popoverOpenSelectorAddedSafari": "17",
+  "selectorSource": "https://raw.githubusercontent.com/mdn/browser-compat-data/main/css/selectors/popover-open.json",
+  "conclusion": "Current supported native iOS/iPadOS17 WebView floor includes Popover API and selector. No old-WebView fallback claimed; no source change or new AI attempt for this compatibility check.",
+  "limits": [
+    "Real physical iOS17 device not tested by this Web task.",
+    "No Safari16-or-older public-Web compatibility guarantee inferred from native minimum."
+  ]
+}

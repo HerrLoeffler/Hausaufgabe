@@ -1,0 +1,17 @@
+{
+  "commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+  "scope": "public Hosting source/file verification only; semantic acceptance separate",
+  "result": "pass",
+  "origins": [
+    "https://gradecrew-staging-2026.web.app/wilma"
+  ],
+  "verifiedFilesPerOrigin": 216,
+  "totalVerified": 216,
+  "mismatches": 0,
+  "hosting": "sites/gradecrew-staging-2026/versions/f5bbf2a1f554a9d4",
+  "configPreserved": true,
+  "functionsUnchangedDuringHosting": 101,
+  "reviewRevision": "reviewwilmaanswers-00012-pez",
+  "physicalDeviceAcceptance": "pending",
+  "publicReadAttempts": 216
+}

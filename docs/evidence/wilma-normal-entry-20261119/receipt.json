@@ -1,0 +1,28 @@
+{
+  "task_ids": [
+    "GC-WEB-REPAIR-20261007",
+    "GC-PEDAGOGY-KB-01"
+  ],
+  "source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+  "tree": "ff4fe8b4a36d9e2b3d46481f72a4bf0683061bbf",
+  "pull_request": 438,
+  "ci_run": 44412450416,
+  "ci_status": "success",
+  "recorded_at": "2026-11-18T23:34:26.215635+00:00",
+  "stage": "production",
+  "runtime_merge_into_main": false,
+  "hosting_version": "7214fd4140dbc950",
+  "live_review_revision": "reviewwilmaanswers-00007-viz",
+  "stage_hosting_version": "f5bbf2a1f554a9d4",
+  "stage_review_revision": "reviewwilmaanswers-00012-pez",
+  "functions_archive_sha256": "f400a6339c0fb043ebe8096281e0adf1a5fd99df066d314e205c4ff3b21737ef",
+  "live_provider_starts_by_this_acceptance": 0,
+  "live_grade_writes": 0,
+  "real_target_check": "blocked_by_automatic_review_before_submission; direct human consent pending",
+  "physical_device_acceptance": "open",
+  "stage_calls": 5,
+  "stage_usage_micros": 6397,
+  "stage_reserved_micros": 0,
+  "public_hashes_per_origin": 216,
+  "report": "docs/evidence/wilma-normal-entry-20261119/REPORT.md"
+}

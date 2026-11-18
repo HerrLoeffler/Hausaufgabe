@@ -1,0 +1,24 @@
+{
+  "commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+  "project": "gradecrew-staging-2026",
+  "state": "ACTIVE",
+  "revision": "reviewwilmaanswers-00012-pez",
+  "previousRevision": "reviewwilmaanswers-00011-guf",
+  "source": {
+    "bucket": "gcf-v2-sources-840345136563-europe-west1",
+    "object": "reviewWilmaAnswers/function-source.zip",
+    "generation": "1795042364478030"
+  },
+  "archiveSHA256": "f400a6339c0fb043ebe8096281e0adf1a5fd99df066d314e205c4ff3b21737ef",
+  "allServiceConfigPreserved": true,
+  "resources": {
+    "memory": "512M",
+    "cpu": "1",
+    "maxInstances": 1,
+    "concurrency": 1,
+    "timeoutSeconds": 180
+  },
+  "otherFunctionsUnchanged": 100,
+  "parallelChanges": [],
+  "hostingUnchanged": "sites/gradecrew-staging-2026/versions/335fff0a6316dcf7"
+}
