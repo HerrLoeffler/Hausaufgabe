@@ -1,5 +1,6 @@
 'use strict';
-const SESSION='auto-recipes-20261118-v1',PHASES=['dev0','dev1','dev2','test0','test1','final','probe'];
+const SESSION='auto-recipes-20261118-v1',PHASES=['dev0','dev1','dev2','test0','test1','final','probe','probe2'];
+const isProbe=phase=>['probe','probe2'].includes(phase);
 const {GRAPH_VERSION}=require('./graph-profile.cjs');
 const math=(id,family,kind,a,b,c,context,labels)=>({id,family,wish:`Klasse 7. ${context} Erzeuge eine sinnvolle Aufgabe mit zwei Zahlenspalten und unabhängigen Rechenpfeilen. Links ${labels[0]}, rechts ${labels[1]}. Ausgangszeile ${a} zu ${b}; gesuchte Zielzeile links ${c}. Gegebene Zahlen bleiben gegeben. Wähle eine geeignete Hilfestufe.`,expected:{kind,a:String(a),b:String(b),c:String(c)}});
 function manifest(holdout=false){
@@ -34,6 +35,6 @@ function probes(){return [
  {id:'whole-roles',family:'post-labels',wish:'Deutsch Klasse8. Drei neue Schulalltags-Behauptungen und drei eindeutige Begründungen zum gerichteten Zuordnen. Bezeichne die Gruppen und Punkt-Kurzlabels mit den vollständigen Wörtern Behauptung und Begründung; Nummern beziehungsweise Buchstaben ergänzen. Alle Texte sichtbar, keine vorgegebene Verbindung.',expected:{kind:'mapping'}},
  {id:'english-transfer',family:'post-transfer',wish:'Englisch Klasse6. Drei einzelne verbundene Felder für die Simple-Past-Formen von fly, feel und keep. Sichtbare Ausgangsverben mit je einem beschrifteten Umformungspfeil zum Feld. Keine Rechenanweisungen.',expected:{allowedKinds:['chain','branch'],answers:['flew','felt','kept']}}
 ];}
-function phasePlan(phase){if(!PHASES.includes(phase)||phase==='final')throw Error('Unzulässige automatische Phase.');return {runId:SESSION+'-'+phase,phase,holdout:phase.startsWith('test'),cases:phase==='probe'?probes():manifest(phase.startsWith('test')),recipeVersion:GRAPH_VERSION};}
+function phasePlan(phase){if(!PHASES.includes(phase)||phase==='final')throw Error('Unzulässige automatische Phase.');return {runId:SESSION+'-'+phase,phase,holdout:phase.startsWith('test'),cases:isProbe(phase)?probes().filter(c=>phase==='probe'||c.id!=='english-transfer'):manifest(phase.startsWith('test')),recipeVersion:GRAPH_VERSION};}
 const sharedId=id=>id===SESSION+'-final';
-module.exports={SESSION,PHASES,manifest,phasePlan,sharedId};
+module.exports={SESSION,PHASES,isProbe,manifest,phasePlan,sharedId};

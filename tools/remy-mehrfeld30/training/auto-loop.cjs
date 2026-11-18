@@ -2,7 +2,7 @@
 const {createHash}=require('node:crypto');
 const {HttpsError}=require('firebase-functions/v2/https');
 const {parseStructuredResponse}=require('../../../functions/lib/structured-response');
-const {SESSION,phasePlan}=require('./auto-manifest.cjs');
+const {SESSION,phasePlan,isProbe}=require('./auto-manifest.cjs');
 const {GRAPH_VERSION}=require('./graph-profile.cjs');
 const {visibleGraph}=require('./graph.cjs');
 const {present}=require('../review.cjs');
@@ -39,7 +39,7 @@ function selectFinalists(pool,limit=10){
  return chosen;
 }
 async function preparePhase(db,phase,suppliedHint){
- if(phase==='probe'){const parent=(await db.doc('taskLearningAutoRuns/'+SESSION).get()).data();if(parent?.status!=='completed'||!parent.finalQuizId||parent.reservedMicros!==0)throw Error('Erst abgeschlossene Studie ohne offene Aufrufe nachprüfen.');if(suppliedHint)throw Error('Keine neue Rezeptänderung in der Nachprüfung.');return {strategyHint:'',recipeHash:recipeHash('post-study-probes-v1')};}
+ if(isProbe(phase)){const parent=(await db.doc('taskLearningAutoRuns/'+SESSION).get()).data();if(parent?.status!=='completed'||!parent.finalQuizId||parent.reservedMicros!==0)throw Error('Erst abgeschlossene Studie ohne offene Aufrufe nachprüfen.');if(suppliedHint)throw Error('Keine neue Rezeptänderung in der Nachprüfung.');return {strategyHint:'',recipeHash:recipeHash('post-study-'+phase)};}
  if(phase==='dev0'){if(suppliedHint)throw Error('Basisrezept ist unveränderlich.');return {strategyHint:'',recipeHash:recipeHash('')};}
  let strategyHint='';
  if(['dev1','dev2'].includes(phase)){
@@ -92,7 +92,7 @@ async function handle(input){
     finalQuizId:session.finalQuizId||null,finalCount:session.finalCount||0,postStudyProbeStatus:session.probeStatus||null,postStudyProbeMetrics:session.probeMetrics||null,modelWeightsTrained:false};
  }
  if(uid!=='gc-visual255-e2e'||session?.ownerId!==uid)throw new HttpsError('permission-denied','Nur das bestehende synthetische Testkonto darf diesen Probelauf steuern.');
- const probing=data.phase==='probe'&&['trainingAutoSeal','trainingAutoAdversary'].includes(data.action);
+ const probing=isProbe(data.phase)&&['trainingAutoSeal','trainingAutoAdversary'].includes(data.action);
  if(session.status!=='running'&&data.action!=='trainingAutoFinalize'&&!probing)throw new HttpsError('failed-precondition','Der automatische Lauf ist nicht aktiv.');
  if(data.action==='trainingAutoSeal'){
   const p=phasePlan(data.phase),ref=db.doc('taskLearningRuns/'+p.runId);
@@ -100,7 +100,7 @@ async function handle(input){
    const run=(await tx.get(ref)).data();if(run?.ownerId!==uid)throw Error('Eigentümer fehlt.');
    const cases=await Promise.all(p.cases.map(c=>tx.get(db.doc(ref.path+'/cases/'+c.id))));
    const metrics=summary(cases.map(c=>c.data()));if(metrics.pending)throw Error('Fälle sind noch nicht endgültig abgeschlossen.');
-   if(run.status!=='evaluated'){tx.update(ref,{status:'evaluated',evaluatedAt:now(),metrics});if(data.phase==='probe')tx.update(sessionRef,{probeStatus:'completed',probeMetrics:metrics,probeFinishedAt:now()});}return metrics;
+   if(run.status!=='evaluated'){tx.update(ref,{status:'evaluated',evaluatedAt:now(),metrics});if(isProbe(data.phase))tx.update(sessionRef,{probeStatus:'completed',probeMetrics:metrics,probeFinishedAt:now()});}return metrics;
   });
  }
  if(data.action==='trainingAutoOptimize'){

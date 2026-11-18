@@ -1,0 +1,18 @@
+{
+  "id": "auto-recipes-20261118-v1",
+  "status": "completed",
+  "spentMicros": 762859,
+  "reservedMicros": 0,
+  "limitMicros": 5000000,
+  "finalQuizId": "training:auto-recipes-20261118-v1-final",
+  "finalCount": 10,
+  "postStudyProbeStatus": "completed",
+  "postStudyProbeMetrics": {
+    "total": 3,
+    "ready": 1,
+    "firstPass": 1,
+    "rejected": 2,
+    "pending": 0
+  },
+  "modelWeightsTrained": false
+}

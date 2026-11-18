@@ -75,3 +75,15 @@ test('post-study probes preserve the closed outcome and the original five-dollar
  const metrics=await handle({db,uid,data:{action:'trainingAutoSeal',phase:'probe'}});assert.equal(metrics.ready,3);assert.equal((await parent.get()).data().probeStatus,'completed');
  await createRun({db,uid,data:{autoPhase:'probe'}});assert.equal((await parent.get()).data().probeStatus,'completed');assert.deepEqual((await parent.get()).data().outcome,{kept:true});
 });
+
+test('second post-study regression cohort keeps the first failed probes immutable and the shared cap',async()=>{
+ const db=new TestDatabase();await seed(db,'dev0');const parent=db.doc('taskLearningAutoRuns/'+SESSION);
+ await parent.update({status:'completed',finalQuizId:'training:'+SESSION+'-final',spentMicros:762859,outcome:{kept:true},probeStatus:'completed'});
+ const first=db.doc('taskLearningRuns/'+SESSION+'-probe');await first.set({ownerId:uid,status:'evaluated',marker:'preserve'});
+ const r=await createRun({db,uid,data:{autoPhase:'probe2'}});assert.equal(r.runId,SESSION+'-probe2');
+ assert.deepEqual(phasePlan('probe2').cases.map(c=>c.id),['given-left','whole-roles']);
+ assert.equal(db.docs.get('taskLearningRuns/'+r.runId).autoPostStudyProbe,true);
+ assert.equal((await parent.get()).data().limitMicros,5000000);assert.equal((await parent.get()).data().spentMicros,762859);
+ assert.equal((await first.get()).data().marker,'preserve');assert.deepEqual((await parent.get()).data().outcome,{kept:true});
+ await assert.rejects(createRun({db,uid,data:{autoPhase:'probe-unlimited'}}),/Unzulässige/);
+});
