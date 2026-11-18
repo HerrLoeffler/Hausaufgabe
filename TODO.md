@@ -834,3 +834,7 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 
 - [x] **production, nur Hosting:** Aufgabendialoge und Diktat auf gradecrew.de und alter Webadresse. Chrome-Mikrofon auf Vorschau bestätigt. Finaler Diktat-Stopp und Handy-/iPad-Layout im Browser geprüft. [PR421](https://github.com/HerrLoeffler/Hausaufgabe/pull/421) und [Nachweise](workstreams/feedback-gc39-release-20261013.md).
 - [ ] Diktat auf echtem Handy und iPad in der Live-Webseite kurz prüfen.
+
+
+### 18.11.2026 · GC-IOS-02 / GC-RELEASE-06 · Secure-Icon nach Apple 4.3(a)
+**branch_only / Entwurf:** Tatsächlich eingereichte Teacher0.2.0(52) und Secure1.0(1192) inApple IncludedAssets visuell verglichen: beide zeigen GC ohneSchloss.1192-Quellgenerator24c0f856 bestätigt; neuererTestFlight-Schlossbadge ist nicht Bestandteil1192. Martins konkreteDesignvorgabe: GC/Doktorhut/Markenfarben bleiben dominant, Schlossbügel greift durchsC, darunterSecure; dunkleSchildvariantenverworfen. Heller1024RGB-Kandidat ohneAlpha, ungebundenerAssetCatalog und80/60/40pxVergleich vorbereitet. Lehrer-App, Runtime, Website undApple-Einreichung unverändert. [Entwurf und Wiederaufnahme](https://github.com/HerrLoeffler/Hausaufgabe/blob/design/secure-icon-20261118/workstreams/secure-icon-20261118.md). NächsterSchritt: finalen durch-C-Schlossentwurf bestätigen/präzisieren, dann nurIcon aufbewusstfestgelegterSecureReleasebasis übernehmen, bestehendenativeGates/signiertenneuenBuild/TestFlightprüfen; separateRevieweinreichungnichtbeauftragt.
