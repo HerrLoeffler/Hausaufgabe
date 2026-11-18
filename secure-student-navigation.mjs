@@ -1,3 +1,5 @@
+import { paintAnswerCompletion } from "./shared/answer-completion.mjs";
+
 /** Browser-only navigation; assessment answers, timers and submission stay in their existing runtime. */
 export function mountSecureQuestionNavigation(doc = document, win = window) {
   const header = doc.querySelector('.secureTopbar');
@@ -23,6 +25,7 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
     previous.disabled = index === 0;
     next.disabled = index === sections.length - 1;
     overview.querySelectorAll('button').forEach((button, i) => {
+      paintAnswerCompletion(button, i, sections[i]?.dataset.answerState === 'answered');
       if (i === index) button.setAttribute('aria-current', 'step');
       else button.removeAttribute('aria-current');
     });
@@ -86,6 +89,7 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
   next.addEventListener('click', onNext);
   toggle.addEventListener('click', onToggle);
   nav.addEventListener('keydown', onKey);
+  doc.addEventListener('gradecrew:student-progress', paint);
   win.addEventListener('scroll', schedule, { passive: true });
   win.addEventListener('resize', schedule, { passive: true });
   win.visualViewport?.addEventListener('resize', schedule, { passive: true });
@@ -103,6 +107,7 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
   return () => {
     if (frame != null) win.cancelAnimationFrame(frame);
     resize?.disconnect(); mutation.disconnect(); visibility.disconnect();
+    doc.removeEventListener('gradecrew:student-progress', paint);
     previous.removeEventListener('click', onPrevious); next.removeEventListener('click', onNext);
     toggle.removeEventListener('click', onToggle); nav.removeEventListener('keydown', onKey);
     win.removeEventListener('scroll', schedule); win.removeEventListener('resize', schedule);

@@ -349,3 +349,11 @@ dialog.shareDialog.questionActionDialog {
 
 /* Teacher preview notice. */
 .studentPreviewNotice{margin:14px 0 0;padding:12px 14px;display:flex;align-items:center;gap:10px;border:1px solid #cfe2ff;border-radius:12px;background:#f7fbff;color:var(--ink-subtle);font-size:13px;line-height:1.45}.studentPreviewNotice strong{color:var(--primary);white-space:nowrap}@media(max-width:620px){.studentPreviewNotice{align-items:flex-start;flex-direction:column;gap:3px}}
+
+/* A completed answer stays green while its question is selected. */
+.studentQuestionNav .questionNavDot.complete,
+.studentProgressCompact .questionNavDot.complete.current {
+  background: #eaf8ef;
+  border-color: #278747;
+  color: #145d31;
+}

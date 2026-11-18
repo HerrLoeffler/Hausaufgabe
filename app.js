@@ -4,9 +4,10 @@ const APP_VERSION = "2.3.1-gc45-rc1";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
-import { teacherGradingSummary } from "./teacher-grading-summary.mjs?v=20261028";
+import { teacherGradingSummary, teacherResultName, teacherResultNumber, teacherResultSubmittedAt, teacherResultRunning, sortTeacherResults, teacherResultsAverages } from "./teacher-grading-summary.mjs?v=20261118";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { answerIsComplete, paintAnswerCompletion } from "./shared/answer-completion.mjs";
 import {
   getAuth,
   createUserWithEmailAndPassword as firebaseCreateUser,
@@ -7969,7 +7970,7 @@ async function startTimedStudentQuiz(quiz, questions) {
 function setupStudentProgress(questions) {
   const nav = $("studentQuestionNav");
   if (!nav) return;
-  nav.innerHTML = questions.map((q, i) => `<button class="questionNavDot" type="button" data-qid="${escapeHtml(q.id)}" title="Aufgabe ${i + 1}" aria-label="Zu Aufgabe ${i + 1}">${i + 1}</button>`).join("");
+  nav.innerHTML = questions.map((q, i) => `<button class="questionNavDot" type="button" data-qid="${escapeHtml(q.id)}" title="Aufgabe ${i + 1} · offen" aria-label="Aufgabe ${i + 1} · offen">${i + 1}</button>`).join("");
   nav.querySelectorAll(".questionNavDot").forEach((btn) => {
     btn.addEventListener("click", () => {
       const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(btn.dataset.qid)}"]`);
@@ -7990,22 +7991,8 @@ function setupStudentProgress(questions) {
 }
 
 function studentAnswerIsComplete(q, given) {
-  if (q.type === "text" || q.type === "number" || q.type === "dropdown" || q.type === "single" || q.type === "truefalse") return String(given ?? "").trim() !== "";
-  if (q.type === "multi") return Array.isArray(given) && given.length > 0;
-  if (q.type === "gapfill") return Array.isArray(given) && given.length > 0 && given.every((x) => String(x || "").trim() !== "");
-  if (q.type === "matching") return Object.keys(given || {}).length === (q.pairs || []).length && Object.values(given || {}).every((x) => String(x) !== "");
-  if (q.type === "grouping") {
-    const expected = (q.groups || []).reduce((sum, g) => sum + (g.items || []).length, 0);
-    return Object.keys(given || {}).length === expected;
-  }
-  if (q.type === "ordering") {
-    const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
-    return section?.dataset.touched === "1" && Array.isArray(given) && given.length === (q.items || []).length;
-  }
-  if (q.type === "markwords") return (q.markGroups || []).length
-    ? Boolean(given && typeof given === "object" && !Array.isArray(given) && Object.keys(given).length)
-    : Array.isArray(given) && given.length > 0;
-  return false;
+  const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
+  return answerIsComplete(q, given, { orderingTouched: section?.dataset.touched === "1" });
 }
 
 function getUnansweredQuestions(questions) {
@@ -8020,11 +8007,11 @@ function refreshStudentProgress(questions) {
   if ($("studentProgressText")) $("studentProgressText").textContent = `${done} von ${questions.length} bearbeitet`;
   if ($("studentOpenCount")) $("studentOpenCount").textContent = unanswered.length ? `${unanswered.length} offen` : "Alles bearbeitet ✓";
   if ($("studentProgressFill")) $("studentProgressFill").style.width = `${percent}%`;
-  questions.forEach((q) => {
+  questions.forEach((q, index) => {
     const btn = $("studentQuestionNav")?.querySelector(`[data-qid="${CSS.escape(q.id)}"]`);
     if (!btn) return;
     const complete = !unanswered.includes(q);
-    btn.classList.toggle("complete", complete);
+    paintAnswerCompletion(btn, index, complete);
   });
 }
 
@@ -8547,21 +8534,36 @@ function renderResultsTable() {
   wilmaAnswerReview?.refresh();
   void wilmaAutoReview?.run();
   const wrap = $("resultsTableWrap");
+  wrap.setAttribute("aria-label", "Testergebnisse und Durchschnittswerte");
   if (!state.submissions.length) {
     wrap.innerHTML = `<div class="empty"><h2>Noch keine Abgaben</h2><p>Sobald Schüler den Test abgeben, erscheinen die Ergebnisse hier.</p></div>`;
     return;
   }
-  let html = `<table class="resultTable"><thead><tr><th scope="col">Kürzel</th><th scope="col">Punkte</th><th scope="col">%</th><th scope="col">Note</th><th scope="col">Status</th><th scope="col">Dauer</th><th scope="col">Abgegeben</th><th scope="col"><span class="visuallyHidden">Aktionen</span></th></tr></thead><tbody>`;
-  state.submissions.forEach((s) => {
-    const duration = formatDuration(s.elapsedSeconds);
-    const scoringPending = !teacherGradingSummary(s).complete || (state.resultQuestions||[]).some(q=>reviewItem(q,s,parseGaps).requiresReview);
+  // Same canonical open-answer check as the grade display; partial totals are never final statistics.
+  const isPending = s => !teacherGradingSummary(s).complete || (state.resultQuestions || []).some(q => reviewItem(q,s,parseGaps).requiresReview);
+  const key = wrap.resultsSort || "submittedAt", direction = wrap.resultsSortDirection || "desc";
+  const visible = sortTeacherResults(state.submissions,key,direction,isPending);
+  const sortOptions = [["firstName","Vorname"],["lastName","Nachname"],["duration","Bearbeitungsdauer"],["points","Punkte (fertig bewertet)"],["percent","Prozent (fertig bewertet)"],["submittedAt","Abgabezeit"]];
+  let html = `<div class="resultsToolbar"><label for="resultsSort">Sortieren nach<select id="resultsSort">${sortOptions.map(([value,label])=>`<option value="${value}"${key===value?" selected":""}>${label}</option>`).join("")}</select></label><label for="resultsSortDirection">Reihenfolge<select id="resultsSortDirection"><option value="asc"${direction==="asc"?" selected":""}>Aufsteigend</option><option value="desc"${direction==="desc"?" selected":""}>Absteigend</option></select></label><p class="hint">Ohne getrennt gespeicherten Vor- oder Nachnamen wird das vollständige Name/Kürzel-Feld verwendet. Fehlende Werte und offene Punkte stehen zuletzt.</p></div>`;
+  html += `<table class="resultTable"><thead><tr><th scope="col">Name / Kürzel</th><th scope="col">Punkte</th><th scope="col">%</th><th scope="col">Note</th><th scope="col">Status</th><th scope="col">Dauer</th><th scope="col">Abgegeben</th><th scope="col"><span class="visuallyHidden">Aktionen</span></th></tr></thead><tbody>`;
+  visible.forEach((s) => {
+    const name = teacherResultName(s).label, running = teacherResultRunning(s);
+    const seconds = teacherResultNumber(s.elapsedSeconds), points = teacherResultNumber(s.totalPoints), maximum = teacherResultNumber(s.maxPoints);
+    const scoringPending = isPending(s), provisional = scoringPending ? ' <small>vorläufig</small>' : '';
     const autoTag = s.autoSubmitted ? ` <span class="pill timedOut">Auto</span>` : "";
     const recoveryTag = s.recoveryReviewRequired ? ` <span class="pill review">${s.status === "review" ? "Nachübertragung · bitte prüfen" : "Nachübertragung geprüft"}</span>` : "";
-    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${scoringPending ? "review" : "graded"}">${scoringPending ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(s.studentName)}">Bewerten</button></td></tr>`;
+    html += `<tr><td data-label="Name / Kürzel"><strong>${escapeHtml(name)}</strong></td><td data-label="Punkte">${running || points===null || maximum===null ? "–" : `${escapeHtml(points)}/${escapeHtml(maximum)}${provisional}`}</td><td data-label="Prozent">${running || !maximum || points===null ? "–" : `${Math.round(points/maximum*100)}%${provisional}`}</td><td data-label="Note">${running ? "–" : submissionGrade(s)}</td><td data-label="Status"><span class="pill ${scoringPending || running ? "review" : "graded"}">${running ? "Läuft" : scoringPending ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td data-label="Dauer">${running || seconds===null ? "–" : escapeHtml(formatDuration(seconds))}</td><td data-label="Abgegeben">${teacherResultSubmittedAt(s)===null ? "–" : escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td data-label="Aktionen">${running ? "Noch nicht abgegeben" : `<button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(name)}">Bewerten</button>`}</td></tr>`;
   });
-  html += "</tbody></table>";
+  const averages = teacherResultsAverages(visible,isPending);
+  const averageNumber = value => value===null ? "–" : value.toLocaleString("de-DE",{maximumFractionDigits:1});
+  html += `</tbody></table><section class="resultsAverages" aria-labelledby="resultsAveragesHeading"><h2 id="resultsAveragesHeading">Durchschnitt der Übersicht</h2><p>${averages.finalCount} fertig bewertet · ${averages.pendingCount} offen · ${averages.runningCount} laufend in dieser Übersicht</p><dl><div><dt>Punkte</dt><dd>${averageNumber(averages.points.value)} <small>aus ${averages.points.count} Abgaben</small></dd></div><div><dt>Prozent</dt><dd>${averageNumber(averages.percent.value)}${averages.percent.count ? "%" : ""} <small>aus ${averages.percent.count} Abgaben</small></dd></div><div><dt>Dauer</dt><dd>${averages.duration.value===null ? "–" : escapeHtml(formatDuration(Math.round(averages.duration.value)))} <small>aus ${averages.duration.count} Abgaben</small></dd></div></dl><p class="hint">Punkte und Prozent: nur fertig bewertete Abgaben, ohne vorläufige Ergebnisse. Prozent ist der Mittelwert der einzelnen Punktanteile. Dauer: alle abgegebenen Arbeiten mit gültiger Zeit, auch offene Bewertungen; fehlende Zeiten zählen nicht. Laufende Arbeiten zählen nicht mit. Diese Werte beziehen sich auf alle ${visible.length} Abgaben der Übersicht, unabhängig von der Auswahl in der Wilma-Prüfliste. Noch nicht abgegebene Versuche werden hier nicht geladen.</p></section>`;
   wrap.innerHTML = html;
   wrap.querySelectorAll(".reviewBtn").forEach((btn) => btn.addEventListener("click", () => openReview(btn.dataset.id)));
+  ["resultsSort","resultsSortDirection"].forEach(id => $(id).addEventListener("change", () => {
+    if (!confirmDiscardInlineReview()) {$("resultsSort").value=key;$("resultsSortDirection").value=direction;return;}
+    wrap.resultsSort=$("resultsSort").value;wrap.resultsSortDirection=$("resultsSortDirection").value;
+    renderResultsTable();$(id).focus({preventScroll:true});
+  }));
 }
 
 function openReview(id) {
@@ -8574,7 +8576,7 @@ function openReview(id) {
   panel.wilmaReviewScope={uid:state.user?.uid,quizId:state.currentResultsQuiz?.id,submissionId:id,state:canonicalDecisionState(s),quizUpdatedAt:canonicalJson(state.currentResultsQuiz?.updatedAt??null),questions:state.resultQuestions.map(q=>({id:q.id,version:decisionQuestionSnapshot(q)}))};
   panel.classList.remove("hidden");
   panel.setAttribute("aria-labelledby", "reviewHeading");
-  panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2 id="reviewHeading" tabindex="-1">${escapeHtml(s.studentName)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div><div class="reviewHeader"><strong id="reviewTotal"></strong><button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
+  panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2 id="reviewHeading" tabindex="-1">${escapeHtml(teacherResultName(s).label)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div><div class="reviewHeader"><strong id="reviewTotal"></strong><button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
   const root = $("reviewQuestions");
   state.resultQuestions.forEach((q, i) => {
     const g = s.grading?.[q.id] || { awardedPoints: 0, maxPoints: Number(q.points) || 0 };
