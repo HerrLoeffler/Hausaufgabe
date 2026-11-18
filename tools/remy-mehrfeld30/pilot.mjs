@@ -9,11 +9,12 @@ import {mountPitch} from './pitch-view.mjs';
 
 if(firebaseConfig.projectId!=='gradecrew-staging-2026')throw Error('Dieses Labor läuft nur im Testprojekt.');
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),fn=getFunctions(app,'europe-west1');
-const api=async data=>(await httpsCallable(fn,'remyMehrfeld30Review',{timeout:40000})(data)).data;
+const api=async data=>(await httpsCallable(fn,'remyMehrfeld30Review',{timeout:85000})(data)).data;
 const start=async data=>(await httpsCallable(fn,'sequence28StartAiTestJob',{timeout:70000})(data)).data;
 const $=id=>document.getElementById(id);
 const message=text=>{$('status').textContent=text;};
 const ROUND_TWO='REMYRND2',ROUND_THREE='REMYRND3',ROUND_FOUR='REMYRND4',ROUND_FIVE='REMYRND5',MIXED='REMYMIX6';
+const TRAINING='training:dreisatz60-20261118-v1';
 const groupNames={direkt:'Direkter Dreisatz',umgekehrt:'Umgekehrter Dreisatz',physik:'Physik · Übergänge',gegenprobe:'Gegenprobe · Formatwahl',eigener:'Dein KI-Stapel'};
 let uid='',tasks=[],index=0,answer=null,renderer=null,stack='seed',expected=30,epoch=0,rating=false,watching=false;
 
@@ -78,6 +79,9 @@ function render(moveFocus=false){
   old.replaceWith(host);
   host.classList.remove('flow-preview');
   $('score').textContent='';
+  $('trainingExplain').hidden=!stack.startsWith('training:');
+  $('trainingReport').hidden=true;
+  $('trainingReport').replaceChildren();
   $('feedback').hidden=true;
   $('feedback').reset();
   const task=tasks[index];
@@ -122,8 +126,8 @@ async function load(quizId=null){
     if(epoch!==requestEpoch||uid!==owner)return;
     tasks=result.tasks;expected=result.expected;
     stack=quizId||'seed';
-    $('jumpLabel').hidden=stack!==MIXED;
-    if(stack===MIXED)$('jump').replaceChildren(...tasks.map((task,i)=>{
+    $('jumpLabel').hidden=stack!==MIXED&&!stack.startsWith('training:');
+    if(stack===MIXED||stack.startsWith('training:'))$('jump').replaceChildren(...tasks.map((task,i)=>{
       const option=document.createElement('option');
       option.value=String(i);option.textContent=(i+1)+' · '+(task.heading||task.subject);
       return option;
@@ -134,7 +138,7 @@ async function load(quizId=null){
     const firstOpen=tasks.findIndex(t=>!t.review);
     index=stored>=0?stored:Math.max(0,firstOpen);
     render();
-    message(quizId===MIXED?'Kreativmix · 30 redaktionell entworfene Aufgaben.':quizId===ROUND_FIVE?'Zwei Aufgaben zum Setzen von Tonhöhen.':quizId===ROUND_FOUR?'Drei Hörbeispiele mit verschiedenen Hilfen.':quizId===ROUND_THREE?'Runde 3 zeigt die überarbeiteten Beispiele.':quizId===ROUND_TWO?'Runde 2 zeigt redaktionell entworfene Aufgaben.':quizId?'Dein Stapel ist bereit.':tasks.length===expected?'Der erste Stapel ist bereit.':tasks.length+' von '+expected+' Aufgaben sind derzeit verfügbar.');
+    message(stack.startsWith('training:')?tasks.length+' von '+expected+' Erprobungen sind geprüft und bereit.':quizId===MIXED?'Kreativmix · 30 redaktionell entworfene Aufgaben.':quizId===ROUND_FIVE?'Zwei Aufgaben zum Setzen von Tonhöhen.':quizId===ROUND_FOUR?'Drei Hörbeispiele mit verschiedenen Hilfen.':quizId===ROUND_THREE?'Runde 3 zeigt die überarbeiteten Beispiele.':quizId===ROUND_TWO?'Runde 2 zeigt redaktionell entworfene Aufgaben.':quizId?'Dein Stapel ist bereit.':tasks.length===expected?'Der erste Stapel ist bereit.':tasks.length+' von '+expected+' Aufgaben sind derzeit verfügbar.');
   }catch(e){
     if(epoch===requestEpoch&&uid===owner)message(e.message||'Der Stapel konnte nicht geladen werden.');
   }
@@ -156,7 +160,7 @@ async function rate(verdict,reason='',comment=''){
     return;
   }
   rating=true;
-  for(const id of ['good','bad','seed','roundTwo','roundThree','roundFour','roundFive','mixed','jump','last'])$(id).disabled=true;
+  for(const id of ['good','bad','seed','roundTwo','roundThree','roundFour','roundFive','mixed','trainingDeck','trainingLast','jump','last'])$(id).disabled=true;
   try{
     save('pending-rating',payload);
     const result=await api(payload);
@@ -174,7 +178,7 @@ async function rate(verdict,reason='',comment=''){
       message(e.message||'Rückmeldung noch nicht bestätigt.');
     }
   }finally{
-    rating=false;for(const id of ['good','bad','seed','roundTwo','roundThree','roundFour','roundFive','mixed','jump','last'])$(id).disabled=false;
+    rating=false;for(const id of ['good','bad','seed','roundTwo','roundThree','roundFour','roundFive','mixed','trainingDeck','trainingLast','jump','last'])$(id).disabled=false;
   }
 }
 $('prev').onclick=()=>step(index-1);
@@ -304,6 +308,78 @@ $('recipeWish').onsubmit=e=>{
 };
 $('resumeRecipe').onclick=()=>runRecipe();
 $('lastRecipe').onclick=()=>load(saved('last-recipe'));
+let trainingBusy=false;
+async function runTraining(){
+  let job=saved('training-job');
+  const owner=uid,output=$('trainingStatus');
+  if(!job||trainingBusy||!owner)return;
+  trainingBusy=true;$('trainingGenerate').disabled=true;$('trainingResume').disabled=true;
+  output.textContent='Remy erstellt den Entwurf …';
+  try{
+    if(!job.runId){
+      const result=await api({action:'trainingCreate',requestId:job.requestId,wish:job.wish});
+      if(uid!==owner)return;
+      job={...job,runId:result.runId};save('training-job',job);
+    }
+    for(let stage=0;stage<3&&uid===owner;stage++){
+      const state=await api({action:'trainingStatus',runId:job.runId});
+      if(uid!==owner)return;
+      const c=state.cases[0];
+      if(c.status==='ready'){
+        save('training-job',null);save('last-training',state.quizId);$('trainingLast').hidden=false;
+        output.textContent='Entwurf und unabhängige Prüfung sind gespeichert. Jetzt kannst du ausprobieren und Rückmeldung geben.';
+        await load(state.quizId);return;
+      }
+      if(['rejected','uncertain'].includes(c.status)){
+        save('training-job',null);
+        output.textContent=c.status==='uncertain'?'Der KI-Aufruf ist noch unbestätigt. Die gespeicherte Anfrage wird nicht doppelt ausgelöst.':
+          'Der Entwurf ist gesperrt. '+c.errors.join(' ');
+        return;
+      }
+      output.textContent=c.status==='generated'?'Ein zweites Modell prüft den Auftrag und löst unabhängig …':'Remy wählt eine passende Darstellung und erstellt die Aufgabe …';
+      await api({action:'trainingStep',runId:job.runId,caseId:c.id});
+    }
+    output.textContent='Der Auftrag ist gespeichert. Du kannst seinen Stand erneut prüfen.';
+  }catch(error){
+    if(uid===owner)output.textContent=error.message||'Der gespeicherte Auftrag ist noch nicht bestätigt.';
+  }finally{
+    trainingBusy=false;
+    if(uid===owner){
+      const pending=!!saved('training-job');
+      $('trainingGenerate').disabled=pending;$('trainingResume').hidden=!pending;$('trainingResume').disabled=false;
+    }
+  }
+}
+$('trainingWish').onsubmit=e=>{
+  e.preventDefault();
+  if(!uid||saved('training-job'))return;
+  const wish=String(new FormData(e.target).get('wish')||'').trim();
+  if(wish.length<8)return;
+  save('training-job',{requestId:crypto.randomUUID(),wish});void runTraining();
+};
+$('trainingResume').onclick=()=>runTraining();
+$('trainingDeck').onclick=()=>load(TRAINING);
+$('trainingLast').onclick=()=>load(saved('last-training'));
+$('trainingDetails').onclick=async()=>{
+  const task=tasks[index],owner=uid;
+  if(!task||!stack.startsWith('training:'))return;
+  const report=$('trainingReport');
+  report.hidden=false;report.textContent='Prüfbericht wird geladen …';
+  try{
+    const result=await api({action:'trainingDetails',runId:stack.slice('training:'.length),caseId:task.id});
+    if(uid!==owner||tasks[index]!==task)return;
+    report.replaceChildren();
+    const labels={direct:'Direkter Dreisatz',inverse:'Umgekehrter Dreisatz',other:'Andere Darstellung',clarify:'Rückfrage erforderlich'};
+    for(const text of [labels[result.decision],result.reason,result.independentCheck]){
+      const p=document.createElement('p');p.textContent=text;report.append(p);
+    }
+    const list=document.createElement('ul');
+    for(const item of result.solution){
+      const li=document.createElement('li');li.textContent=item.label+' – '+item.value;list.append(li);
+    }
+    report.append(list);
+  }catch{if(uid===owner&&tasks[index]===task)report.textContent='Prüfbericht konnte gerade nicht geladen werden.';}
+};
 onAuthStateChanged(auth,async user=>{
   epoch++;uid=user?.uid||'';tasks=[];render();message('');
   $('login').hidden=!!uid;$('workspace').hidden=!uid;
@@ -311,6 +387,9 @@ onAuthStateChanged(auth,async user=>{
   const owner=uid;
   $('last').hidden=!saved('last');
   $('lastRecipe').hidden=!saved('last-recipe');
+  $('trainingLast').hidden=!saved('last-training');
+  $('trainingResume').hidden=!saved('training-job');
+  $('trainingGenerate').disabled=!!saved('training-job');
   $('resumeRecipe').hidden=!saved('recipe-job');
   $('generateRecipe').disabled=!!saved('recipe-job');
   $('recipeStatus').textContent='';

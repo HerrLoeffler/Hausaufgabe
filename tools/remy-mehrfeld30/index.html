@@ -18,6 +18,18 @@
 </form>
 <div id="workspace" hidden>
   <div class="bar"><button id="mixed">Kreativmix · 30 Aufgaben</button><button id="roundFive" class="secondary">Runde 5 · Tonhöhen setzen</button><button id="roundFour" class="secondary">Runde 4 · Rhythmus hören</button><button id="roundThree" class="secondary">Runde 3 · Quellen, Labyrinth, Noten</button><button id="roundTwo" class="secondary">Runde 2 · 12 neue Ideen</button><button id="seed" class="secondary">Runde 1 · 30 KI-Aufgaben</button><button id="last" class="secondary" hidden>Eigener Stapel</button><button id="logout" class="secondary">Abmelden</button></div>
+  <details id="trainingPanel" open>
+    <summary>Dreisatz üben &amp; passende Darstellungen finden</summary>
+    <p>Beschreibe dein Lernziel. Remy prüft, ob ein Dreisatz passt. Bei anderen Zusammenhängen oder fehlenden Angaben wird daraus eine Aufgabe zur passenden Vorgehensweise.</p>
+    <div class="bar"><button type="button" id="trainingDeck">60 KI-Erprobungen öffnen</button><button type="button" id="trainingLast" class="secondary" hidden>Meine letzte Erprobung</button></div>
+    <form id="trainingWish">
+      <label>Was soll deine Klasse üben?<textarea name="wish" rows="3" minlength="8" maxlength="1000" required placeholder="Zum Beispiel: Drei gleich schnelle Drucker brauchen für denselben Auftrag 24 Minuten. Wie lange brauchen acht? Mit Rechenpfeilen."></textarea></label>
+      <p>Aufgaben, Auswahlgründe und deine Rückmeldungen werden im Testfundus gespeichert. Eigene Wünsche sind zunächst nur für dein Testkonto verfügbar.</p>
+      <button id="trainingGenerate">Mit KI erstellen und prüfen</button>
+      <button type="button" id="trainingResume" class="secondary" hidden>Gespeicherten Auftrag prüfen</button>
+      <p id="trainingStatus" role="status"></p>
+    </form>
+  </details>
   <details id="recipePanel">
     <summary>Remy · neues Format aus freiem Wunsch</summary>
     <form id="recipeWish">
@@ -47,6 +59,7 @@
     <h3 id="taskTitle" hidden></h3>
     <p id="prompt" class="prompt"></p>
     <div id="answer" class="gc-visual renderer"></div>
+    <div id="trainingExplain" hidden><button type="button" class="secondary" id="trainingDetails">Auswahlgrund und Lösung zeigen</button><div id="trainingReport" class="training-report" hidden></div></div>
     <div class="bar"><button class="secondary" id="scoreButton">Probe auswerten</button><span id="score" role="status"></span></div>
     <div class="bar"><button class="good" id="good">🙂 Gut</button><button class="bad" id="bad">🙁 Überarbeiten</button><span id="verdict"></span></div>
     <form id="feedback" hidden>

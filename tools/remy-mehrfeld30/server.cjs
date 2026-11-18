@@ -11,6 +11,7 @@ const {generate,wishPrefix,requestIdPattern}=require('./generate-three.cjs');
 const {rhythmCode,rhythmExamples,buildRhythm,makeAudio}=require('./rhythm.cjs');
 const {pitchCode,pitchExamples,buildPitch}=require('./pitch.cjs');
 const {mixedDeck,mixedCode}=require('./mix.cjs');
+const {PREFIX:trainingPrefix,handleTraining,resolveTraining,recordTrainingFeedback}=require('./training/runner.cjs');
 const pitchDeck=pitchExamples.map(raw=>buildPitch(raw));
 const rhythmDeck=rhythmExamples.map(raw=>buildRhythm(raw));
 const secret=defineSecret('OPENAI_API_KEY');
@@ -46,9 +47,12 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
   const data=request.data||{};
   const owner=db.collection('remyMehrfeld30Reviewers').doc(uid);
   const latest=owner.collection('ratings');
+  if(typeof data.action==='string'&&data.action.startsWith('training'))return handleTraining({db,uid,data,secret});
   if(data.action==='generateRecipe')return generate({db,owner,uid,data,secret});
   const isWish=typeof data.quizId==='string'&&data.quizId.startsWith(wishPrefix);
-  const staticDeck=referenceDecks.get(data.quizId);
+  const isTraining=typeof data.quizId==='string'&&data.quizId.startsWith(trainingPrefix);
+  const training=isTraining?await resolveTraining({db,uid,quizId:data.quizId}):null;
+  const staticDeck=training||referenceDecks.get(data.quizId);
   let references=staticDeck?.tasks,referenceGroup=staticDeck?.group;
   if(isWish){
     const id=data.quizId.slice(wishPrefix.length);
@@ -62,7 +66,7 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
     if(references){
       const rows=references.map(q=>present(data.quizId,referenceGroup,q));
       const notes=await db.getAll(...rows.map(task=>latest.doc(task.version)));
-      return {tasks:rows.map((task,i)=>({...task,review:notes[i].data()||null})),expected:rows.length};
+      return {tasks:rows.map((task,i)=>({...task,review:notes[i].data()||null})),expected:training?.expected||rows.length};
     }
     const quizIds=data.quizId?[data.quizId]:(await db.getAll(...seed.map(row=>db.doc('aiJobs/'+row.jobId))))
       .flatMap((snap,i)=>{const job=snap.data();return ownsSeedJob(job,seed[i])?[job.quizId]:[];});
@@ -94,7 +98,7 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
   let rating;
   try{rating=feedback(task,data);}catch(error){throw new HttpsError('invalid-argument',error.message);}
   const event=owner.collection('events').doc(data.eventId);
-  return db.runTransaction(async tx=>{
+  const result=await db.runTransaction(async tx=>{
     const current=await tx.get(event);
     if(current.exists){
       if(current.data()?.version!==task.version)throw new HttpsError('failed-precondition','Rückmeldungs-ID bereits belegt.');
@@ -105,4 +109,6 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
     tx.set(latest.doc(task.version),value);
     return {rating};
   });
+  if(isTraining)await recordTrainingFeedback({db,uid,quizId:data.quizId,q,data});
+  return result;
 });

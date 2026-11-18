@@ -16,3 +16,10 @@ Requested Modellwahl für komplexe Implementierung Sol/medium nach Projektregeln
 Relevante Kontrollen. SEC Eigentumsprüfung, private Lösungsschlüssel und feste Kostenreservierung; PRIV fiktive Aufgaben und freiwillige Lehrkraftkommentare, kein Schülerimport. Nachweise folgen mit den tatsächlichen Tests.
 
 Nächster Schritt. Tests für Direkt-/Umkehrbeziehung, freie Auswahl und Gegenfälle vor Implementierung anlegen.
+
+Task 1 complete. 50 arithmetische Referenzen plus zehn Eignungsgegenfälle, unabhängiger rationaler Prüfer und vorhandener Dreisatz-Builder. Sechs erste Tests grün, Zwischenstand 8d8df11 lokal, 6b0cdd7 auf PR419.
+Task 2/3 implementiert. Allgemeine Collections taskLearningRecipes, taskLearningRuns mit Fällen, Versuchen, Providerbelegen und Lehrkrafturteilen, taskLearningExamples für wiederverwendbare Kandidaten. Standard-Firestore (default) in eur3 am 18.11.2026 per CLI bestätigt. Daten ausschließlich über den vorhandenen erlaubten Testlehrkraft-Callable. Keine neuen Client-Firestore-Rechte.
+16 neue Tests grün, einschließlich Budgetreservierung, unbekanntem Providerstatus, Wiederholung, Fremdzugriff und freiem Wunsch in der echten Oberflächenlogik. 30 bisherige Tests vor der letzten UI-Ergänzung grün, Gesamtlauf folgt.
+Ruling. Erstserie synchron in zwei dauerhaft gespeicherten Providerphasen je Fall statt neuer Queue-Infrastruktur. Der Aufrufer verarbeitet höchstens zwei unabhängige Fälle gleichzeitig; eine abgebrochene Verbindung erzeugt keinen neuen bezahlten Dispatch. Damit bleibt der Pilot klein. Umfangreiche Hintergrundserien bleiben eine spätere Etappe.
+Ruling. Der exakte Zwischenwert ist standardmäßig eins. Bei nicht endlicher Dezimalzahl sucht der Prüfer einen kleinen exakten Zwischenwert und macht ihn im Auftrag verbindlich. Fälle ohne unterstützten exakten Weg werden gesperrt, nicht still gerundet.
+Nächster Schritt. Unabhängiger Review, exakter Testdeploy und erste zwei echte Erprobungen, dann dieselbe reservierte 60er-Serie fortsetzen.
