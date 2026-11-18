@@ -42,8 +42,9 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
   if((app.options.projectId||process.env.GCLOUD_PROJECT)!=='gradecrew-staging-2026')throw new HttpsError('failed-precondition','Nur im GradeCrew-Testprojekt verfügbar.');
   const uid=request.auth?.uid;
   if(!uid)throw new HttpsError('unauthenticated','Bitte mit deinem Testkonto anmelden.');
-  const profile=(await db.doc('users/'+uid).get()).data()||{};
-  if(!canReview(uid,profile))throw new HttpsError('permission-denied','Dieses Labor benötigt ein freigegebenes Testkonto.');
+  const [userProfile,pilotAccess]=await db.getAll(db.doc('users/'+uid),db.doc('remyMehrfeld30Access/'+uid));
+  const profile=userProfile.data()||{},grant=pilotAccess.data()||{};
+  if(!canReview(uid,profile,grant))throw new HttpsError('permission-denied','Dieses Labor benötigt ein freigegebenes Testkonto.');
   const data=request.data||{};
   const owner=db.collection('remyMehrfeld30Reviewers').doc(uid);
   const latest=owner.collection('ratings');

@@ -41,3 +41,11 @@ test('seed jobs may be listed only after the exact synthetic job is ready',()=>{
   assert.equal(ownsSeedJob({...job,ownerId:'another-owner'},entry),false);
   assert.equal(ownsSeedJob({...job,requestId:'unexpected'},entry),false);
 });
+test('an explicitly granted active test teacher can enter without opening access to other accounts',()=>{
+ assert.equal(canReview('new-test-teacher',{role:'teacher',status:'active'},{enabled:true}),true);
+ assert.equal(canReview('new-test-teacher',{role:'teacher',status:'active'},{enabled:false}),false);
+ assert.equal(canReview('new-test-teacher',{role:'teacher',status:'active'},{enabled:'true'}),false);
+ assert.equal(canReview('new-test-teacher',{role:'teacher',status:'blocked'},{enabled:true}),false);
+ assert.equal(canReview('new-test-teacher',{role:'student',status:'active'},{enabled:true}),false);
+ assert.equal(canReview('new-test-teacher',{}, {enabled:true}),false);
+});

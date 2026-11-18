@@ -15,9 +15,9 @@ const reasons=new Set(['','format','fachlich','auftrag','loesung','bewertung','a
 const digest=data=>createHash('sha256').update(JSON.stringify(data)).digest('hex');
 const quizCode=/^[A-Z0-9]{8}$/;
 const seedOwner='gc-visual255-e2e';
-function canReview(uid,profile={}){
+function canReview(uid,profile={},grant={}){
   return !!uid && ['teacher','admin'].includes(profile.role) && (!profile.status||profile.status==='active') &&
-    (profile.role==='admin'||uid===seedOwner||uid==='8bStKRCHSOcxHp3xEDER0pUP0z53');
+    (profile.role==='admin'||grant.enabled===true||uid===seedOwner||uid==='8bStKRCHSOcxHp3xEDER0pUP0z53');
 }
 function ownsPilotJob(job,uid,quizId){
   return job?.ownerId===uid && job.status==='ready' && job.quizId===quizId && /^mehrfeld30-wish-[a-z0-9-]+$/.test(job.requestId||'');
