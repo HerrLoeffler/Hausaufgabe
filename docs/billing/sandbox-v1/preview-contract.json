@@ -2,16 +2,16 @@
   "schemaVersion": 1,
   "task": "GC-BILLING-PLAN-01",
   "pr": 411,
-  "status": "ui_preview_only",
-  "productCodePrepared": false,
+  "status": "authenticated_initial_payment_sandbox",
+  "productCodePrepared": true,
   "buildOutputExists": true,
   "previewExists": true,
-  "previewUrl": "https://gradecrew-staging-2026--billing-plan-01-o0aafic4.web.app",
+  "previewUrl": "https://gradecrew-staging-2026--billing-plan-01-t9ywkfow.web.app",
   "target": {
     "projectId": "gradecrew-staging-2026",
     "channelNameProposed": "billing-plan-01",
     "channelExistenceVerified": true,
-    "exactOrigin": "https://gradecrew-staging-2026--billing-plan-01-o0aafic4.web.app",
+    "exactOrigin": "https://gradecrew-staging-2026--billing-plan-01-t9ywkfow.web.app",
     "overwriteCanonicalHosting": false,
     "forbiddenProjects": [
       "hausaufgabe-staging",
@@ -21,7 +21,7 @@
       "https://gradecrew.de",
       "https://gradecrew-staging-2026.web.app"
     ],
-    "expireTime": "2026-11-15T23:02:04.146041Z"
+    "expireTime": "2026-11-25T14:14:49.534244010Z"
   },
   "baseline": {
     "sourceCommit": "80c845796fcb1efc324b1a266944a13bb06d7334",
@@ -32,24 +32,25 @@
   },
   "provider": {
     "requiredMode": "stripe_test",
-    "configurationVerified": false,
-    "checkoutEnabled": false,
-    "expectedAccountBindingVerified": false,
-    "secretReferencesVerified": false,
+    "configurationVerified": true,
+    "checkoutEnabled": true,
+    "expectedAccountBindingVerified": true,
+    "secretReferencesVerified": true,
     "liveObjectsAllowed": false,
     "fakePaidFallbackAllowed": false,
     "createAccountsKeysContractsAllowed": false,
-    "currentPreparationMayCreateProviderObjects": false,
-    "note": "Stage inventory verified: no existing Stripe/PayPal binding; external account existence unknown. UI preview has no provider/Auth/database connection.",
-    "stageSecretBindingPresent": false,
-    "externalStripeAccountExistence": "not_inspected",
-    "stageInventoryVerified": true
+    "currentPreparationMayCreateProviderObjects": true,
+    "note": "Dedicated Stripe sandbox and named secret references verified. Only synthetic customer fixtures for first-payment acceptance.",
+    "stageSecretBindingPresent": true,
+    "externalStripeAccountExistence": "verified_dedicated_sandbox",
+    "stageInventoryVerified": true,
+    "accountId": "acct_1UYUaw1l0zkqOtXr"
   },
   "proposedTestParameters": {
     "approvedCustomerPricing": false,
     "currency": "eur",
     "monthlyAmountMinor": 100,
-    "starterUnits": 3,
+    "starterUnits": 5,
     "periodUnits": 12,
     "graceHours": 72,
     "reservationTimeoutMinutes": 10,
@@ -61,19 +62,22 @@
     "namespace": "billingSandboxes/v1",
     "existingLiveAccountAllowed": false,
     "copyCustomerOrStudentDataAllowed": false,
-    "serverClaimAndAllowlistRequired": true,
+    "serverClaimAndAllowlistRequired": false,
     "directClientBillingWritesAllowed": false,
     "emailVerificationConfigured": null,
     "verifiedEmailRequiredWhenConfigured": true,
     "endToEndSignupProofRequiresRealVerificationIfEnabled": true,
-    "previewAuthenticationEnabled": false,
+    "previewAuthenticationEnabled": true,
     "previewDatabaseConnectionEnabled": false,
     "emailVerificationNote": "Firebase email/password and default email sender configured in Stage; delivery and verification not tested.",
-    "emailPasswordAndDefaultSenderConfigured": true
+    "emailPasswordAndDefaultSenderConfigured": true,
+    "testIdentityMode": "separate_synthetic_server_sessions",
+    "serverSideFixtureAllowlistRequired": true,
+    "identityScope": "Fixed synthetic test identities. Existing Firebase accounts and signup remain outside this acceptance."
   },
   "generation": {
     "maxSuccessfulUiFixtureCreations": 1,
-    "fixtureLabel": "Beispieltest — ohne KI erzeugt",
+    "fixtureLabel": "Beispieltest \u2014 ohne KI erzeugt",
     "paidAiCallsAllowed": false,
     "allExistingCostRoutesRequireServerDenialForSandboxActor": true,
     "failedCreationConsumesUnit": false,
@@ -82,15 +86,22 @@
   "completion": {
     "requiredCases": 24,
     "casesExecuted": 0,
-    "stripePaymentVerified": false,
-    "signedWebhookVerified": false,
-    "serverEntitlementVerified": false,
+    "stripePaymentVerified": true,
+    "signedWebhookVerified": true,
+    "serverEntitlementVerified": true,
     "canonicalHostingUnchangedVerifiedAfterDeploy": true,
     "stageAComplete": false,
     "stageBRealMoneyAuthorized": false,
-    "uiPreviewFilesVerified": 21,
-    "desktopAndMobileUiVerified": true
+    "uiPreviewFilesVerified": 22,
+    "desktopAndMobileUiVerified": true,
+    "cloudInitialPaymentAcceptance": {
+      "premium": true,
+      "school10Then20": true,
+      "newSessionsAfterPayment": true,
+      "signedEventPersisted": true,
+      "receipt": "receipts/2026-11-18-hosted-sandbox.json"
+    }
   },
-  "nextStep": "Securely connect an existing Stripe sandbox/account without creating accounts or keys; then implement isolated server guards and actual Auth/payment flow. Current preview stays data-free and disabled.",
+  "nextStep": "Collect user acceptance of isolated first-payment test. Full signup, application entitlements, renewal, cancellation and usage lifecycle remain separate Stage A work.",
   "previewUiCodePrepared": true
 }

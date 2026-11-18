@@ -58,10 +58,219 @@
     },
     {
       "step": "runtime_access_to_generated_secrets_ready"
+    },
+    {
+      "step": "initial_function_active",
+      "uri": "https://gradecrew-billing-sandbox-ybff4nqitq-ew.a.run.app",
+      "revision": "gradecrew-billing-sandbox-00001-jiy"
+    },
+    {
+      "step": "secret_bindings_update_started",
+      "operation": "projects/gradecrew-staging-2026/locations/europe-west1/operations/operation-1795011503018-6608daf015290-e16a170f-69d44952",
+      "versions": {
+        "GRADECREW_BILLING_SANDBOX_STRIPE_API_KEY": "1",
+        "GRADECREW_BILLING_SANDBOX_STRIPE_WEBHOOK_SECRET": "1",
+        "GRADECREW_BILLING_SANDBOX_TEST_ACCOUNTS": "1"
+      }
+    },
+    {
+      "step": "sandbox_webhook_invocation_ready",
+      "service": "projects/gradecrew-staging-2026/locations/europe-west1/services/gradecrew-billing-sandbox"
+    },
+    {
+      "step": "function_authentication_guard_verified",
+      "status": 401,
+      "revision": "gradecrew-billing-sandbox-00002-hix"
+    },
+    {
+      "step": "function_authentication_guard_verified",
+      "status": 401,
+      "revision": "gradecrew-billing-sandbox-00002-hix"
+    },
+    {
+      "step": "hosting_version_created",
+      "version": "sites/gradecrew-staging-2026/versions/6b6719e15ea9b6f4"
+    },
+    {
+      "step": "hosting_preview_released",
+      "version": "sites/gradecrew-staging-2026/versions/6b6719e15ea9b6f4",
+      "release": "sites/gradecrew-staging-2026/channels/billing-plan-01/releases/1795011635434000",
+      "origin": "https://gradecrew-staging-2026--billing-plan-01-t9ywkfow.web.app",
+      "files": 22
+    },
+    {
+      "step": "school_first_transfer_verified",
+      "amount10_transaction": "ccsbtxn_1Ud9m21l0zkqOtXr7Wsi8CGZ",
+      "invoice": "in_1Ud9eI1l0zkqOtXrqdzhB3DA",
+      "invoice_number": "N9WDQPG9-0006",
+      "after10": {
+        "stripe_status": "open",
+        "paid": 0,
+        "remaining": 3000,
+        "school_access": "pending"
+      }
+    },
+    {
+      "step": "school_second_transfer_created",
+      "transaction": "ccsbtxn_1Ud9nt1l0zkqOtXrcacZKdDV",
+      "amount": 2000
+    },
+    {
+      "step": "school_cloud_access_activated",
+      "amount10_transaction": "ccsbtxn_1Ud9m21l0zkqOtXr7Wsi8CGZ",
+      "invoice": "in_1Ud9eI1l0zkqOtXrqdzhB3DA",
+      "invoice_number": "N9WDQPG9-0006",
+      "after10": {
+        "stripe_status": "open",
+        "paid": 0,
+        "remaining": 3000,
+        "school_access": "pending"
+      },
+      "amount20_transaction": "ccsbtxn_1Ud9nt1l0zkqOtXrcacZKdDV",
+      "after20": {
+        "stripe_status": "paid",
+        "paid": 3000,
+        "remaining": 0,
+        "school_access": "active"
+      }
+    },
+    {
+      "step": "public_files_and_guards_verified",
+      "files": 22,
+      "checks": {
+        "anonymous_access": 401,
+        "unsigned_webhook": 400,
+        "invalid_signature_webhook": 400,
+        "wrong_origin_login": 403,
+        "invalid_password": 401,
+        "client_access_write": 405,
+        "public_firestore_grant": 403
+      },
+      "canonical_unchanged": false
+    },
+    {
+      "step": "premium_cloud_access_activated",
+      "checkout": "cs_test_a0WvgZLY3RPpA8tcozzYB84qpvllEX7ykk5EJ8znFZLH8Ay4QMzdSO9PJu",
+      "invoice": "in_1Ud9nl1l0zkqOtXrDJLE0oq7",
+      "number": "N9WDQPG9-0007",
+      "amount_paid": 100,
+      "remaining": 0,
+      "livemode": false,
+      "payment_type": "paypal",
+      "premium_access": "active",
+      "stored_event": "evt_1Ud9qU1l0zkqOtXrTgg1GbTY",
+      "created": "2026-11-18T14:28:23.723655Z"
+    },
+    {
+      "step": "signed_events_and_new_sessions_verified",
+      "proof": {
+        "premium": {
+          "invoice": "in_1Ud9nl1l0zkqOtXrDJLE0oq7",
+          "event": "evt_1Ud9qU1l0zkqOtXrTgg1GbTY",
+          "pending_webhooks": 0,
+          "stored": true,
+          "new_session_active": true
+        },
+        "school": {
+          "invoice": "in_1Ud9eI1l0zkqOtXrqdzhB3DA",
+          "event": "evt_1Ud9o61l0zkqOtXrCbBfawMK",
+          "pending_webhooks": 0,
+          "stored": true,
+          "new_session_active": true
+        }
+      }
     }
   ],
   "sourceCommit": "97c1e7fabde63e3c5733efa59729acfdfc36c9a1",
   "sourceTree": "bd924426e624362c89e981679184b6ccd107e8e0",
   "packageSha256": "ccc30609673781477c86b6405b042521766b810227c6cbd1b3ae573a36b10c6d",
-  "status": "build_in_progress"
+  "status": "sandbox_initial_payment_acceptance_passed",
+  "origin": "https://gradecrew-staging-2026--billing-plan-01-t9ywkfow.web.app",
+  "premium": {
+    "checkout": "cs_test_a0WvgZLY3RPpA8tcozzYB84qpvllEX7ykk5EJ8znFZLH8Ay4QMzdSO9PJu",
+    "invoice": "in_1Ud9nl1l0zkqOtXrDJLE0oq7",
+    "number": "N9WDQPG9-0007",
+    "amount_paid": 100,
+    "remaining": 0,
+    "livemode": false,
+    "payment_type": "paypal",
+    "premium_access": "active",
+    "stored_event": "evt_1Ud9qU1l0zkqOtXrTgg1GbTY",
+    "created": "2026-11-18T14:28:23.723655Z"
+  },
+  "school": {
+    "amount10_transaction": "ccsbtxn_1Ud9m21l0zkqOtXr7Wsi8CGZ",
+    "invoice": "in_1Ud9eI1l0zkqOtXrqdzhB3DA",
+    "invoice_number": "N9WDQPG9-0006",
+    "after10": {
+      "stripe_status": "open",
+      "paid": 0,
+      "remaining": 3000,
+      "school_access": "pending"
+    },
+    "amount20_transaction": "ccsbtxn_1Ud9nt1l0zkqOtXrcacZKdDV",
+    "after20": {
+      "stripe_status": "paid",
+      "paid": 3000,
+      "remaining": 0,
+      "school_access": "active"
+    }
+  },
+  "guards": {
+    "files_verified": 22,
+    "checks": {
+      "anonymous_access": 401,
+      "unsigned_webhook": 400,
+      "invalid_signature_webhook": 400,
+      "wrong_origin_login": 403,
+      "invalid_password": 401,
+      "client_access_write": 405,
+      "public_firestore_grant": 403
+    },
+    "canonical_before": {
+      "canonical_test_version": "sites/gradecrew-staging-2026/versions/8b6154420ead9ecb",
+      "production_manifest_sha256": "4e6c0a42f3578ab24e02dcc56512a9f1a1390ce8a7119e19383125826168aa40",
+      "canonical_stage_manifest_sha256": "4e6c0a42f3578ab24e02dcc56512a9f1a1390ce8a7119e19383125826168aa40"
+    },
+    "canonical_after": {
+      "canonical_test_version": "sites/gradecrew-staging-2026/versions/8b6154420ead9ecb",
+      "production_manifest_sha256": "b4496fa832ebc6ed0f9049c4181f7a513a23ceea92e25b2c9f0e4c8d2805188c",
+      "canonical_stage_manifest_sha256": "b4496fa832ebc6ed0f9049c4181f7a513a23ceea92e25b2c9f0e4c8d2805188c"
+    },
+    "canonical_manifest_and_hosting_unchanged": false
+  },
+  "events": {
+    "premium": {
+      "invoice": "in_1Ud9nl1l0zkqOtXrDJLE0oq7",
+      "event": "evt_1Ud9qU1l0zkqOtXrTgg1GbTY",
+      "pending_webhooks": 0,
+      "stored": true,
+      "new_session_active": true
+    },
+    "school": {
+      "invoice": "in_1Ud9eI1l0zkqOtXrqdzhB3DA",
+      "event": "evt_1Ud9o61l0zkqOtXrCbBfawMK",
+      "pending_webhooks": 0,
+      "stored": true,
+      "new_session_active": true
+    }
+  },
+  "browser": {
+    "premium_active_observed": true,
+    "school_active_observed": true,
+    "responsive_widths": [
+      390,
+      820,
+      1440
+    ],
+    "paypal_authorization_performed_by": "Martin",
+    "manual_reason": "Browser WebMCP auto-review denied twice including after explicit approval."
+  },
+  "scope": {
+    "initial_test_accounts_only": true,
+    "real_firebase_signup": false,
+    "stageA_complete": false,
+    "production_mutations_performed": false,
+    "canonical_test_hosting_changed": false
+  }
 }

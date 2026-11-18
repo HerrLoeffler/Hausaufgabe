@@ -4810,26 +4810,28 @@
       "task_id": "GC-BILLING-PLAN-01",
       "branch": "docs/billing-research-20261104",
       "stage": "staging_deployed",
-      "verification_scope": "inert_workspace_ui_preview_only; no_auth_payment_backend",
+      "verification_scope": "authenticated_synthetic_test_accounts; signed_Stripe_sandbox_initial_payments; server_persisted_grants",
       "integration": "not_merged; isolated_preview_only",
-      "source_commit": "ddf3045bc2d1b2e1cb46a5867f8ceecb00705c9e",
+      "source_commit": "97c1e7fabde63e3c5733efa59729acfdfc36c9a1",
       "owner": "Billing-Fachchat",
       "handoff": "workstreams/billing-research-20261104.md",
       "staging": {
         "project": "gradecrew-staging-2026",
         "channel": "billing-plan-01",
-        "url": "https://gradecrew-staging-2026--billing-plan-01-o0aafic4.web.app",
-        "version": "sites/gradecrew-staging-2026/versions/909ec58c7f756344",
-        "receipt": "docs/billing/sandbox-v1/preview-deploy-2026-11-08.json",
-        "verified_files": 21,
-        "functions_changed": false,
+        "url": "https://gradecrew-staging-2026--billing-plan-01-t9ywkfow.web.app",
+        "version": "sites/gradecrew-staging-2026/versions/6b6719e15ea9b6f4",
+        "receipt": "docs/billing/sandbox-v1/receipts/2026-11-18-hosted-sandbox.json",
+        "verified_files": 22,
+        "functions_changed": true,
         "rules_changed": false,
         "auth_changed": false,
-        "database_data_changed": false
+        "database_data_changed": true,
+        "function": "gradecrew-billing-sandbox",
+        "function_region": "europe-west1"
       },
-      "user_test": "automated desktop/mobile UI navigation only; no human payment test",
-      "production": "unchanged_by_this_task",
-      "next_action": "Existing Stripe sandbox binding through secure operator connection; real Auth/server/payment implementation remains open."
+      "user_test": "Automated browser and real sandbox events passed. Martin manually completed PayPal test authorization. Full product user acceptance remains open.",
+      "production": "No mutations by this task. Public main release manifests changed concurrently during the test window.",
+      "next_action": "User acceptance of isolated initial-payment test, then separately implement full GradeCrew signup and access lifecycle."
     }
   ],
   "deployments": [
