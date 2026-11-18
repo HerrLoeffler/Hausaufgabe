@@ -9,3 +9,5 @@ Echte Asset-Regressionsprüfung reproduziert die unterschiedlichen Bildhashes vo
 Quelle: bestehender Releasebranch feature/secure-live-ready-20261026@f5721de36c6c0f23e53e1d541f953b3443381efc. Neuer Implementierungsbranchfix/secure-entry-logo-20261118; nur prepare_assets.swift, Verhaltenstest, kurzerPlan und dieseÜbergabe. Neues App-Binary erforderlich;1321bleibt bis dahin beim bisherigen In-App-Logo. Storelogo selbst bleibt unverändert.
 
 Nächster Schritt: native Bildvorschau prüfen, dann genau einen neuen gated Secure-Live-TestFlight-Lauf über normale Integration starten. Keinen AppStoreReviewversand und keine separate Secure-Test-Auslieferung.
+
+Native Vorschau auf schmaler320pt-Ansicht und Tablet geprüft:40/40 Layoutfälle sowie bestehende Lifecycle-/Abgabe-/Rückkehrprüfungen erfolgreich. Gerendertes Einstiegsbild zeigt die gewählte durch-C-Identität. Geometrie und Labels unverändert. Als nächster Schritt normale Integration vonPR446 und genau ein vorhandener Releaseworkflow; Upload weiterhin noch nicht gestartet.
