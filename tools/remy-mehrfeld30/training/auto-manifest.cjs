@@ -25,8 +25,10 @@ function manifest(holdout=false){
  {id:'nonlinear',family:'nonlinear',wish:t?'Mathematik. Ein Quadrat mit Seitenlänge 3cm hat Fläche 9cm². Die neue Seitenlänge ist 5cm. Erstelle einen passenden Rechenweg mit genau einem offenen Zahlenfeld für die neue Fläche; prüfe, ob ein einfacher proportionaler Dreisatz passt.':'Mathematik. Ein Quadrat mit Seitenlänge 4cm hat Fläche 16cm². Die neue Seitenlänge ist 6cm. Erstelle einen passenden Rechenweg mit genau einem offenen Zahlenfeld für die neue Fläche; prüfe, ob ein einfacher proportionaler Dreisatz passt.',expected:{kind:'chain',answers:[t?'25':'36']}},
  {id:'negative',family:'signed-chain',wish:t?'Physik. Die Temperatur beträgt -4 Grad Celsius und steigt um 7 Grad. Erzeuge eine beschriftete Rechenkette mit einem offenen Zahlenfeld für die neue Temperatur.':'Physik. Die Temperatur beträgt 3 Grad Celsius und fällt um 8 Grad. Erzeuge eine beschriftete Rechenkette mit einem offenen Zahlenfeld für die neue Temperatur.',expected:{kind:'chain',answers:[t?'3':'-5']}},
  {id:'time',family:'additive-time',wish:t?'Ein Zug fährt um 09:10 ab und benötigt 35 Minuten. Erstelle einen Ablauf mit einem Auswahlfeld für die Ankunftszeit und drei klaren Uhrzeitoptionen im Format HH:MM.':'Ein Zug fährt um 08:20 ab und benötigt 45 Minuten. Erstelle einen Ablauf mit einem Auswahlfeld für die Ankunftszeit und drei klaren Uhrzeitoptionen im Format HH:MM.',expected:{kind:'chain',answers:[t?'09:45':'09:05']}}
- ];return rows;
+ ];
+ rows.find(c=>c.id==='biology').reviewWish=holdout?'Biologie Klasse7. Ergänze zwei fehlende Stationen im vereinfachten Blutkreislauf mit Auswahlfeldern. Prüfe die Flussrichtung und sinnvolle Ablenker; keine Aussagen über Sauerstoffgehalt.':'Biologie Klasse7. Ergänze zwei fehlende Stationen im vereinfachten Transportweg der Nahrung mit Auswahlfeldern. Prüfe Reihenfolge, Pfeilrichtung und sinnvolle Ablenker.';
+ return rows;
 }
 function phasePlan(phase){if(!PHASES.includes(phase)||phase==='final')throw Error('Unzulässige automatische Phase.');return {runId:SESSION+'-'+phase,phase,holdout:phase.startsWith('test'),cases:manifest(phase.startsWith('test')),recipeVersion:GRAPH_VERSION};}
-const sharedId=id=>PHASES.some(p=>id===SESSION+'-'+p);
+const sharedId=id=>id===SESSION+'-final';
 module.exports={SESSION,PHASES,manifest,phasePlan,sharedId};

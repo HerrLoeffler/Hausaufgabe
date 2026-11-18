@@ -42,3 +42,8 @@ test('all autonomous runs share one transactionally reserved session cap, includ
  assert.equal(db.docs.get('taskLearningAutoRuns/s').reservedMicros,0);assert.equal(db.docs.get('taskLearningAutoRuns/s').spentMicros,20);
  await reserve(db,'r2','two',80);await assert.rejects(reserve(db,'r1','three',1),/Budget/);
 });
+test('concurrent reservations across experiment runs cannot overbook the shared cap',async()=>{
+ const {TestDatabase}=require('./test-db.cjs'),db=new TestDatabase();await db.doc('taskLearningAutoRuns/concurrent').set({ownerId:'t',limitMicros:100,reservedMicros:0,spentMicros:0,status:'running'});
+ for(const r of ['x','y'])await db.doc('taskLearningRuns/'+r).set({ownerId:'t',autoSessionId:'concurrent',limitMicros:100,spentMicros:0,reservedMicros:0,status:'running'});
+ const results=await Promise.allSettled([reserve(db,'x','one',80),reserve(db,'y','two',80)]);assert.equal(results.filter(x=>x.status==='fulfilled').length,1);assert.equal(db.docs.get('taskLearningAutoRuns/concurrent').reservedMicros,80);
+});

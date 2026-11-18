@@ -1,0 +1,16 @@
+# Fresh independent review at974b56d · blocked before paid run
+
+Reviewer /root/autonomous_recipe_final_review, Astra6.2/high, fresh context, no edits/providercalls.70localtestspass; no autonomous deployment or paid call yet.
+
+P1. Server accepts arbitrary controller strategyHint, unbound to saved optimizer/parent. Tests permit allphaseswithoutoptimization.
+P1. Same effective recipe may win by stochastically better trial. Baseline winner causes two baseline holdout trials and cherry-picks second ifbetter.
+P2. Repaired candidate hides initialerrors/attemptcount from optimizer; onlylaststatepayload.
+P2. Tenfamilylabels canmeanidenticaltasks/learningactions; existingtestcopiesthesameEnglishq10times.
+P2. Biologicalteacherwish givesprivatekey tobothsolvers. Addanswer-free reviewWish, original intent still checked against frozen references.
+P2. Allintermediatephases shared, negative/unreviewedcanappear. Onlyfinalshared. Genericrecheckcanmutatecompletedfinalists.
+P2. Lateadversarywritecanoverwritea2witha1. Rejectedattempt1/2countscompleted. Completedparentguardbreakscontrollerresume, finalretryreturnsincompleteoutcome.
+Additionaltestgap: sharedbudgettestsequential, addactualconcurrentreservations.
+
+Fix pass agreed by implementationowner: freeze/sealphaseafterall20terminal; bindcreatephase tostoredstrategy andevaluatedparents, reject mismatchedoperatorhint. CompareeffectiveRecipeHash; neverpromotereplica. Onlyonebaselineholdoutifbaselinewins. Persistinitialandalllaterreasoningforoptimizerfromarchivedchecks+adversaryresponses. Selectunique publictasks, maximumtwo per actuallearning-action, round-robin diversity; fewerthan10islegitimate. Onlyfinalissharedandimmutable; allauto rereviewcontrolled bynewattempt, nogenericrecheck. AdversarywriteCAS onattempt+qversion andarchiveit. Statusresume checkscompletedbeforeanypaidstepandreturnssamefulloutcome. Tests RED→GREEN perimportantfinding, no second reviewerloop.
+
+Fixpass2026-11-18. Alle wichtigen Befunde mit neuen Regressionen vor Paidstart umgesetzt. Serverseitige Optimiererbindung+eingefroreneevaluatedPhasen; Rezept-Hash verhindertVerbesserungsbehauptungbeiidentischenFassungen;eineBaseline-HoldoutseriebeiBaselinegewinn;vollständigeEntwicklungs-VersuchshistorieanOptimierer;antwortfreieBio-Prüfwünsche;faktischeDuplikaterkennungundmax2proLernhandlungmitBreitenvorrang;privateZwischenstände,nurFinalshared;unveränderlicheFinalistenmitlesbarenBerichten;versionierteratomarerGegenspieler-CASundvollständigerAbschlussreplay;echterParallelbudgettest. AnfangsFehler/fehlendeRegressionsschnittstellenROT,jetzt73/73GesamtsuiteGRÜN. KeinezweiteReviewrunde. Auswahl darfunter10bleiben,wennkeine10verschiedenenbestandenenBeispielevorliegen. Erstversuchsquoten nurpro20erSerie,nichtausBestenlisteableiten.

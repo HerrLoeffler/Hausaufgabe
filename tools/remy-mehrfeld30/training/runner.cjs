@@ -39,7 +39,9 @@ async function createRun({db,uid,data}){
   let auto=null;
   if(data.autoPhase!==undefined){try{auto=autoManifest.phasePlan(data.autoPhase);}catch(e){throw new HttpsError('invalid-argument',e.message);}}
   const calibration=data.calibration===true||!!auto;
-  const strategyHint=auto?String(data.strategyHint||''):'';
+  if(auto&&uid!=='gc-visual255-e2e')throw new HttpsError('permission-denied','Nur das synthetische Testkonto darf automatische Phasen anlegen.');
+  const automatic=auto?await require('./auto-loop.cjs').preparePhase(db,auto.phase,data.strategyHint):null;
+  const strategyHint=automatic?.strategyHint||'';
   if(strategyHint.length>800||auto&&['dev0','test0'].includes(auto.phase)&&strategyHint)throw new HttpsError('invalid-argument','Unzulässiger Rezeptvergleich.');
   if(data.family!==undefined&&!['dreisatz','fields-arrows'].includes(data.family))throw new HttpsError('invalid-argument','Unbekannte Aufgabenfamilie.');
   const config=variant(auto||data.family==='fields-arrows'?graph.GRAPH_VERSION:VERSION);
@@ -62,7 +64,7 @@ async function createRun({db,uid,data}){
     if(session&&!priorSession.exists)tx.create(session,{id:autoManifest.SESSION,ownerId:uid,limitMicros:5000000,reservedMicros:0,spentMicros:0,status:'running',createdAt:now(),authorization:'Martin approved 5 USD total for first autonomous experiment'});
     if(!priorRecipe.exists)tx.create(recipe,{...config.profile,createdAt:now()});
     tx.create(run,{id,ownerId:uid,sharedPilot:calibration,recipeVersion:config.version,manifestHash:hash,expected:manifest.length,
-      ...(auto?{autoSessionId:autoManifest.SESSION,autoPhase:auto.phase,strategyHint}:{}),
+      ...(auto?{autoSessionId:autoManifest.SESSION,autoPhase:auto.phase,strategyHint,recipeHash:automatic.recipeHash}:{}),
       limitMicros:auto?5000000:calibration?(config.version===VERSION?5000000:1000000):200000,spentMicros:0,reservedMicros:0,status:'running',createdAt:now(),
       priceSnapshot:{at:'2026-11-18',currency:'USD',perMillionTokens:PRICES,source:'https://developers.openai.com/api/docs/pricing'}});
     if(!calibration)tx.set(quota,{ownerId:uid,count:count+1});
@@ -122,6 +124,7 @@ async function stepCase({db,uid,data,secret,client}){
   if(typeof data.caseId!=='string'||!ID.test(data.caseId))throw new HttpsError('invalid-argument','Ungültiger Fall.');
   const ref=db.doc(runRef(db,run.id).path+'/cases/'+data.caseId);
   const c=(await ref.get()).data();
+  if(run.autoSessionId&&run.status!=='running')throw new HttpsError('failed-precondition','Automatische Phase ist abgeschlossen und unveränderlich.');
   const config=variant(run.recipeVersion);
   if(!c)throw new HttpsError('not-found','Prüffall fehlt.');
   if(['ready','rejected','uncertain'].includes(c.status))return {status:c.status,attempt:c.attempt};
@@ -147,7 +150,7 @@ async function stepCase({db,uid,data,secret,client}){
       const q=config.build(plan,{id:c.id,modes:c.modes||plan.arrowModes});
       update={status:'generated',plan,q,generatedAt:now(),errors:[]};
     }else{
-      const response=await providerCall({db,runId:run.id,stepId,phase,secret,client,version:run.recipeVersion,input:{wish:c.wish,studentView:config.visible(c.q)}});
+      const response=await providerCall({db,runId:run.id,stepId,phase,secret,client,version:run.recipeVersion,input:{wish:c.reviewWish||c.wish,studentView:config.visible(c.q)}});
       const judge=parseStructuredResponse(response),check=config.check(c.plan,judge,c.expected,c.q);
       if(check.ok&&c.q.type!=='notice'){
         const full=score(c.q,fullAnswer(c.q)),blank=score(c.q,null);
@@ -189,6 +192,7 @@ async function stepCase({db,uid,data,secret,client}){
 async function repairCase({db,uid,data}){
   const run=await getRun(db,data.runId,uid);
   if(run.ownerId!==uid)throw new HttpsError('permission-denied','Nur der Eigentümer kann Reparaturen starten.');
+  if(run.autoSessionId&&run.status!=='running')throw new HttpsError('failed-precondition','Automatische Phase ist abgeschlossen und unveränderlich.');
   const ref=db.doc(runRef(db,run.id).path+'/cases/'+data.caseId);
   if(typeof data.caseId!=='string'||!ID.test(data.caseId)||!/^[a-f0-9-]{36}$/i.test(data.requestId||''))throw new HttpsError('invalid-argument','Ungültige Korrekturanfrage.');
   return db.runTransaction(async tx=>{
@@ -206,6 +210,7 @@ async function repairCase({db,uid,data}){
 async function recheckCase({db,uid,data}){
   const run=await getRun(db,data.runId,uid);
   if(run.ownerId!==uid)throw new HttpsError('permission-denied','Nur der Eigentümer kann eine neue Prüfung beauftragen.');
+  if(run.autoSessionId)throw new HttpsError('failed-precondition','Automatische Versuche und Finalisten sind unveränderlich; nur neue begrenzte Versuche sind zulässig.');
   if(!ID.test(data.caseId||'')||!/^[a-f0-9-]{36}$/i.test(data.requestId||'')||typeof data.reason!=='string'||data.reason.length<8||data.reason.length>300)
     throw new HttpsError('invalid-argument','Eine konkrete Prüferkorrektur mit stabiler Anfrage-ID angeben.');
   const ref=db.doc(runRef(db,run.id).path+'/cases/'+data.caseId);

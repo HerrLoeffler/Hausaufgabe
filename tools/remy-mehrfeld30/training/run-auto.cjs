@@ -15,6 +15,7 @@ async function runCase(phase,id){
   if(c.status==='uncertain')throw Error('Unbestätigter KI-Aufruf: '+phase+'/'+id);
   if(c.status==='ready'){
    const review=await call({action:'trainingAutoAdversary',phase,caseId:id});
+   if(review.stale)continue;
    if(review.passed){console.log(phase+'/'+id+' accepted · a'+c.attempt);return;}
    if(c.attempt>=3){console.log(phase+'/'+id+' adversary-blocked · a'+c.attempt);return;}
   }else if(c.status==='rejected'){
@@ -30,12 +31,14 @@ async function phase(name,strategyHint=''){
  await call({action:'trainingCreate',autoPhase:name,strategyHint});
  const cases=phasePlan(name).cases;
  for(let i=0;i<cases.length;i+=2){const results=await Promise.allSettled(cases.slice(i,i+2).map(c=>runCase(name,c.id)));save('status-'+name,await call({action:'trainingStatus',runId:phasePlan(name).runId}));const failure=results.find(r=>r.status==='rejected');if(failure)throw failure.reason;}
+ save('sealed-'+name,await call({action:'trainingAutoSeal',phase:name}));
 }
 (async()=>{
  if(process.argv[2]==='status'){const state=await call({action:'trainingAutoSummary'});save('session',state);console.log(JSON.stringify(state));return;}
+ try{const state=await call({action:'trainingAutoSummary'});if(state.status==='completed'){save('outcome',await call({action:'trainingAutoFinalize'}));save('session',state);console.log(JSON.stringify(state));return;}}catch(e){if(!e.message.startsWith('NOT_FOUND'))throw e;}
  await phase('dev0');
  for(let round=1;round<=2;round++){const strategy=await call({action:'trainingAutoOptimize',round});save('strategy-v'+round,strategy);await phase('dev'+round,strategy.generationHint);}
  const best=await call({action:'trainingAutoSelect'});save('development',best);
- await phase('test0');await phase('test1',best.strategyHint);
+ await phase('test0');if(best.phase!=='dev0')await phase('test1',best.strategyHint);
  const outcome=await call({action:'trainingAutoFinalize'});save('outcome',outcome);save('session',await call({action:'trainingAutoSummary'}));console.log(JSON.stringify(outcome));
 })().catch(e=>{save('controller-stop',{at:new Date().toISOString(),error:e.message,uncertainNotRetried:true});console.error(e.message);process.exitCode=1;});
