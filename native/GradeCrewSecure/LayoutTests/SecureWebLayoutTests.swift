@@ -41,7 +41,7 @@ private struct SecureComposedWeb: UIViewRepresentable {
             try await capture(view,size:size,scene:scene,overview:overview)
         } } } }
     }
-    private func capture(_ viewport:SecureViewport,size:String,scene:String,overview:Bool,interaction:String? = nil,composed:Bool = false) async throws {
+    private func capture(_ viewport:SecureViewport,size:String,scene:String,overview:Bool,interaction:String? = nil,composed:Bool = false,keepNavigation:Bool = false) async throws {
         let url=try XCTUnwrap(Bundle.main.url(forResource:"papers",withExtension:"json",subdirectory:"Fixtures"))
         let fixtures=try XCTUnwrap(try JSONSerialization.jsonObject(with:Data(contentsOf:url)) as? [String:[[String:Any]]])
         let paper=try XCTUnwrap(fixtures[scene])
@@ -110,10 +110,10 @@ private struct SecureComposedWeb: UIViewRepresentable {
         if let interaction,handler.ready {
             issues += try await exercise(interaction,web:web,viewport:viewport)
         }
-        let id=composed ? "composed-"+viewport.name : interaction.map { "interaction-"+$0 } ?? "web-\(viewport.name)-\(size)-\(scene)-\(overview ? "open" : "closed")"
+        let id=keepNavigation ? "probe-"+viewport.name : composed ? "composed-"+viewport.name : interaction.map { "interaction-"+$0 } ?? "web-\(viewport.name)-\(size)-\(scene)-\(overview ? "open" : "closed")"
         try SecureReports.save(id,viewport:SecureViewport(name:viewport.name,width:web.bounds.width,height:web.bounds.height),image:SecureReports.image(composed ? window.rootViewController!.view : web),issues:issues,metrics:metrics)
         XCTAssertTrue(issues.isEmpty,id+": "+issues.joined(separator:", "))
-        _=try? await web.evaluateJavaScript("document.getElementById('secureNavigation').__gcQuestionNavigation.destroy()")
+        if !keepNavigation { _=try? await web.evaluateJavaScript("document.getElementById('secureNavigation').__gcQuestionNavigation.destroy()") }
         if !handler.ready { throw NSError(domain:"SecureFixture",code:1,userInfo:[NSLocalizedDescriptionKey:issues.joined(separator:", ")]) }
     }
     func testNavigationInteractions() async throws {
@@ -132,6 +132,27 @@ private struct SecureComposedWeb: UIViewRepresentable {
         for viewport in SecureReports.policy.phoneViewports {
             closeFixture()
             try await capture(viewport,size:"large",scene:"thirty",overview:false,interaction:"direct",composed:true)
+        }
+    }
+    func testPhoneNavigationStartsCollapsed() async throws {
+        defer {closeFixture()}
+        for width in [320.0,375.0,390.0,430.0] {
+            try await capture(SecureViewport(name:"phone-compact-\(Int(width))",width:width,height:844),size:"large",scene:"hundred",overview:false,keepNavigation:true)
+            let web=try XCTUnwrap(fixtureWeb)
+            let metrics=try await web.evaluateJavaScript("""
+            (()=>{const nav=document.getElementById('secureNavigation'),grid=document.getElementById('secureQuestionNumbers');return {height:nav.getBoundingClientRect().height,display:getComputedStyle(grid).display,font:parseFloat(getComputedStyle(document.body).fontSize)};})()
+            """) as! [String:Any]
+            XCTAssertLessThanOrEqual(metrics["height"] as! Double,76,"Closed phone navigation must leave room for answers")
+            XCTAssertEqual(metrics["display"] as? String,"none","Number grid opens only on request")
+            XCTAssertEqual(metrics["font"] as! Double,19,accuracy:0.1,"Task text must keep its original size")
+            _=try await web.evaluateJavaScript("document.getElementById('secureOverviewToggle').click()")
+            let opened=try await web.evaluateJavaScript("getComputedStyle(document.getElementById('secureQuestionNumbers')).display") as? String
+            XCTAssertEqual(opened,"grid")
+            _=try await web.evaluateJavaScript("document.querySelectorAll('.secureQuestionNumber')[69].click()")
+            let selected=try await web.evaluateJavaScript("document.querySelector('[aria-current=step]').dataset.qid") as? String
+            XCTAssertEqual(selected,"q69")
+            let closed=try await web.evaluateJavaScript("getComputedStyle(document.getElementById('secureQuestionNumbers')).display") as? String
+            XCTAssertEqual(closed,"none")
         }
     }
     private func exercise(_ name:String,web:WKWebView,viewport:SecureViewport) async throws ->[String] {
