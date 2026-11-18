@@ -146,3 +146,13 @@
 #wilmaAnswerReview .wilmaTaskPicker .wilmaTaskTabs .button{height:44px}
 /* Page zoom must not animate control geometry through undersized intermediate states. */
 .wilmaReview .button{transition:background-color .15s,border-color .15s,box-shadow .15s,color .15s}
+
+/* Top-layer picker is measured against the visible viewport, including zoom. */
+.wilmaTaskPicker[popover]{position:fixed;inset:auto;margin:0;max-width:none;max-height:none;color:var(--text);overflow:visible;box-sizing:border-box}
+.wilmaTaskPicker[popover]:not(:popover-open){display:none}
+.wilmaTaskPicker[popover] .wilmaTaskTabs{max-height:150px}
+.wilmaFirstReview{display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px;margin-top:7px}
+#wilmaAnswerReview .wilmaFirstReview .button{min-height:44px;max-width:100%;padding:7px 10px;font-size:12px;white-space:normal}
+.wilmaFirstReview small{font-size:11px;line-height:1.4;color:var(--muted)}
+
+.wilmaTaskScrollHint:not([hidden]){display:inline-block;margin-left:8px;white-space:nowrap;font-size:11px;line-height:1.3;color:var(--muted)}

@@ -8470,7 +8470,7 @@ async function analyzeWilmaQuestion(questionId,criteria="",onlySubmissionId=null
     for(const proposal of receipt.answers){
       const current=state.submissions.find(s=>s.id===proposal.id);
       if(!current||JSON.stringify(current.answers?.[questionId]??"")!==JSON.stringify(expectedAnswers[proposal.id])||current.grading?.[questionId]?.reviewState==='confirmed')continue;
-      state.submissions=state.submissions.map(s=>s.id===proposal.id?{...s,grading:{...s.grading,[questionId]:{...s.grading?.[questionId],reviewSuggestion:{...proposal,source:'wilma-ai',requestId:receipt.requestId,...(receipt.persistence==='volatile'?{persistence:'volatile',warning:receipt.warning}:{})}}}}:s);
+      state.submissions=state.submissions.map(s=>s.id===proposal.id?{...s,grading:{...s.grading,[questionId]:{...s.grading?.[questionId],reviewSuggestion:{...proposal,source:'wilma-ai',requestId:receipt.requestId,cached:receipt.cached===true,...(receipt.persistence==='volatile'?{persistence:'volatile',warning:receipt.warning}:{})}}}}:s);
     }
   }
   renderResultsTable();toast("Wilma geprüft. Auffällige Antworten zuerst.");

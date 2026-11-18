@@ -32,7 +32,6 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
  const attempted=new Set(),reservedByActor=new Map(),failedByScope=new Map(),states=new Map(),retrySlotsByActor=new Map();
  const scope=ctx=>JSON.stringify([ctx.actor,ctx.quiz?.id]);
  const identity=(ctx,q,s)=>JSON.stringify([ctx.actor,ctx.quiz?.id,q.id,questionSnapshot(q),s.id,s.answers?.[q.id]??'']);
- const hasRubric=q=>q.type==='gapfill'||[q.reviewCriteria,q.acceptedAnswers].some(value=>typeof value==='string'?!!value.trim():Array.isArray(value)&&value.some(x=>String(x).trim()));
  const same=(epoch,ctx,q,s,key)=>{
   if(epoch!==generation)return false;
   const next=getContext(),question=next.questions?.find(x=>x.id===q.id),submission=next.submissions?.find(x=>x.id===s.id);
@@ -92,7 +91,6 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
      if(attempted.has(key))continue;
      const emit=(phase,message='',extra={})=>{if(same(epoch,ctx,q,s,key))publish(ctx,q,s,key,{phase,message,...extra});};
      attempted.add(key);
-     if(!hasRubric(q)){emit('blocked','Bewertungsraster fehlt. Bitte selbst prüfen.');continue;}
      const previous=states.get(key);
      const freeOnly=allowFreeLookups&&(!allowAutomaticPaid({context:ctx,question:q,submission:s})||previous?.resumeAllowed||['error','waiting'].includes(previous?.phase)||!serverBudgeted&&reserved.size+(retrySlotsByActor.get(ctx.actor)||0)>=maxRequests||failedByScope.has(scope(ctx)));
      if(!serverBudgeted&&!freeOnly&&!reserved.has(key)&&reserved.size+(retrySlotsByActor.get(ctx.actor)||0)>=maxRequests){emit('pending','Prüfung ausstehend · Testlimit erreicht.');continue;}
@@ -103,7 +101,7 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
       const current=getContext().submissions.find(x=>x.id===s.id);
       if(current.grading?.[q.id]?.reviewState==='confirmed')continue;
       if(!current.grading?.[q.id]?.reviewSuggestion)throw Error('Kein sicher zugeordneter KI-Vorschlag.');
-      if(['teacher-fundus','accepted-rule'].includes(current.grading?.[q.id]?.reviewSuggestion?.origin))reserved.delete(key);
+      if(current.grading?.[q.id]?.reviewSuggestion?.cached===true||['teacher-fundus','accepted-rule'].includes(current.grading?.[q.id]?.reviewSuggestion?.origin))reserved.delete(key);
       emit('proposal',current.grading?.[q.id]?.reviewSuggestion?.origin==='teacher-fundus'?'Aus deinem Fundus · bitte bestätigen.':'KI-Vorschlag bereit · bitte prüfen.');
      }catch(error){
       if(freeOnly){

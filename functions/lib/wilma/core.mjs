@@ -41,7 +41,6 @@ export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmiss
    source.push({id:sid,answer});
    if(sub.grading?.[questionId]?.reviewIssue==='incomplete-transfer'||requiresOriginalMedia(q)){direct.push({id:sid,points:null,status:'ungradable',reason:'Originalmaterial oder Übertragung prüfen.'});continue;}
    if(q.type==='text'&&!norm(answer)){direct.push({id:sid,points:0,status:'clear',reason:'Leer abgegeben.'});continue;}
-   if(q.type==='text'&&!rubric.length){direct.push({id:sid,points:null,status:'ungradable',reason:'Bewertungsraster fehlt. Bitte Kriterien ergänzen oder selbst bewerten.'});continue;}
    if(q.type==='gapfill'&&accepted.length){
     const values=Array.isArray(answer)?answer:[];
     const unknown=accepted.some((options,i)=>norm(values[i])&&!options.map(norm).includes(norm(values[i])));
@@ -68,13 +67,16 @@ export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmiss
    try{validateCached(cached);}catch{fail(409,'Gespeicherter Vorschlag ist nicht sicher zugeordnet. Bitte selbst prüfen.',reviewDetails('receipt_invalid'));}
    return freshDirect(cached);
   }
-  await reserve(fingerprint,task);
+  // Fingerprint uses the established task above; provider rubric contains criteria only.
+  const criteria=data.criteria?.trim()?data.criteria:q.reviewCriteria||[];
+  const providerTask={...task,rubric:criteria,criteria,referenceAnswers:q.acceptedAnswers||[],...(q.type==='gapfill'?{referenceGaps:accepted}:{}),answerPolicy:'Reference answers are examples unless task or criteria explicitly require one fixed answer. Assess meaning and all submitted parts; do not invent missing context.'};
+  await reserve(fingerprint,providerTask);
   let result,receipt,stage='provider';
   try{
-   result=await provider(task);stage='receipt';
+   result=await provider(providerTask);stage='receipt';
    const clean=validateWilmaReceipt({source:'wilma-ai',answers:result.answers},{answerIds:records.map(row=>row.id),maxPoints:maximum});
    const mapping=new Map(records.map(row=>[row.id,row.sourceId]));
-   const answers=clean.answers.map(row=>({...row,id:mapping.get(row.id),reason:row.reason.slice(0,180),status:!rubric?.length&&q.type!=='gapfill'&&row.status==='clear'?'uncertain':row.status}));
+   const answers=clean.answers.map(row=>({...row,id:mapping.get(row.id),reason:row.reason.slice(0,180),status:!(typeof providerTask.criteria==='string'?providerTask.criteria.trim():providerTask.criteria.length)&&q.type!=='gapfill'&&row.status==='clear'?'uncertain':row.status}));
    receipt={answers:[...answers,...direct],revision,questionSnapshot:snapshot,source:'wilma-ai',requestId:result.requestId,model:result.model,cached:false};
    stage='result_store';
    await finish(fingerprint,{phase:'completed',requestId:result.requestId||null,receipt});
