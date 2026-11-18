@@ -16,6 +16,7 @@ import {
 import { enGBMessages, enGBSourcePatterns, EN_GB_MESSAGES_VERSION } from "./messages-en-GB.mjs";
 
 registerCatalog("de-DE", { "system.loading": "GradeCrew wird geladen …", count: "{count} Aufgaben" });
+test('visible sidebar statuses translate without suggesting correctness',()=>{setActiveUiLocale('en-GB');assert.equal(translateSource('Aufgabe 12 · beantwortet'),'Question 12 · answered');assert.equal(translateSource('Aufgabe 3 · offen'),'Question 3 · unanswered');setActiveUiLocale('de-DE');});
 registerCatalog("en-GB", { ...enGBMessages, count: "{count} questions" });
 registerSourcePatterns("en-GB", enGBSourcePatterns);
 

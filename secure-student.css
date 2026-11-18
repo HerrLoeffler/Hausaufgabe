@@ -85,3 +85,25 @@ html{scroll-padding-top:calc(var(--secure-header-height,88px) + var(--secure-nav
 .secureQuestionOverview button.complete[aria-current="step"] {
   box-shadow: inset 0 0 0 1px #145d31;
 }
+
+/* One task list and one set of inputs across wide and compact layouts. */
+.secureTaskSidebar{display:contents}
+#secureAssessmentForm,#secureAssessment,.secureTaskSidebar{min-width:0}
+.secureQuestion h2,.secureAssessmentHead h1{overflow-wrap:anywhere}
+@media(min-width:1024px) and (min-height:600px){
+ .secureShell:has(#secureAssessment:not(.hidden)){max-width:1160px}
+ #secureAssessment:not(.hidden){display:grid;grid-template-columns:208px minmax(0,1fr);gap:18px 24px;align-items:start}
+ .secureAssessmentHead{grid-column:1/-1}
+ .secureTaskSidebar{display:flex;flex-direction:column;gap:12px;position:sticky;top:calc(var(--secure-header-height,88px) + 12px);max-height:calc(100dvh - var(--secure-header-height,88px) - 24px);min-height:0}
+ .secureTaskSidebar .secureProgress{margin:0;padding:12px;border-radius:14px;box-shadow:none;flex:none}
+ .secureProgress>div:first-child{flex-wrap:wrap;gap:3px;font-size:12px}
+ .secureTaskSidebar .secureQuestionNavigation:not([hidden]){position:static;margin:0;display:flex;flex-direction:column;min-height:0;box-shadow:none}
+ .secureNavigationRow{grid-template-columns:44px minmax(0,1fr) 44px;flex:none}
+ .secureNavigationRow strong{font-size:12px}
+ [data-secure-overview-toggle]{display:none}
+ .secureQuestionOverview{grid-template-columns:minmax(0,1fr);max-height:none;min-height:0;flex:1;overflow:auto}
+ .secureQuestionOverview button{width:100%;font-size:0;text-align:left;flex:none}
+ .secureQuestionOverview button::after{content:attr(aria-label);font-size:13px;line-height:1.4;white-space:normal;overflow-wrap:anywhere}
+ #secureAssessmentForm{grid-column:2;grid-row:2;max-width:860px}
+ .secureQuestionList{margin-top:0}
+}

@@ -12,13 +12,16 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
   const next = nav.querySelector('[data-secure-next]');
   const toggle = nav.querySelector('[data-secure-overview-toggle]');
   const overview = doc.getElementById('secureQuestionOverview');
+  const layout = win.matchMedia?.('(min-width:1024px) and (min-height:600px)');
+  const isSidebar = () => layout?.matches === true;
   let sections = [];
   let index = 0;
   let frame;
 
   const measure = () => {
     doc.documentElement.style.setProperty('--secure-header-height', `${Math.ceil(header.getBoundingClientRect().height)}px`);
-    doc.documentElement.style.setProperty('--secure-navigation-height', `${Math.ceil(nav.getBoundingClientRect().height)}px`);
+    nav.dataset.layout = isSidebar() ? 'sidebar' : 'compact';
+    doc.documentElement.style.setProperty('--secure-navigation-height', `${isSidebar() ? 0 : Math.ceil(nav.getBoundingClientRect().height)}px`);
   };
   const paint = () => {
     current.textContent = `Aufgabe ${index + 1} von ${sections.length}`;
@@ -31,8 +34,8 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
     });
   };
   const closeOverview = () => {
-    overview.hidden = true;
-    toggle.setAttribute('aria-expanded', 'false');
+    overview.hidden = !isSidebar();
+    toggle.setAttribute('aria-expanded', String(isSidebar()));
     measure();
   };
   const go = targetIndex => {
@@ -50,7 +53,7 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
     frame = null;
     measure();
     if (!sections.length || assessment.classList.contains('hidden')) return;
-    const boundary = Math.max(header.getBoundingClientRect().bottom, nav.getBoundingClientRect().bottom) + 16;
+    const boundary = Math.max(header.getBoundingClientRect().bottom, isSidebar() ? 0 : nav.getBoundingClientRect().bottom) + 16;
     index = 0;
     sections.forEach((section, i) => { if (section.getBoundingClientRect().top <= boundary) index = i; });
     // The final question cannot always reach the sticky edge: scrolling stops at the footer.
@@ -78,13 +81,22 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
   const onPrevious = () => go(index - 1);
   const onNext = () => go(index + 1);
   const onToggle = () => {
+    if (isSidebar()) return;
     overview.hidden = !overview.hidden;
     toggle.setAttribute('aria-expanded', String(!overview.hidden));
     measure();
   };
   const onKey = event => {
-    if (event.key === 'Escape' && !overview.hidden) { closeOverview(); toggle.focus(); }
+    if (event.key === 'Escape' && !isSidebar() && !overview.hidden) { closeOverview(); toggle.focus(); }
   };
+  const onLayout = () => {
+    const active = doc.activeElement;
+    const moveFocus = isSidebar() ? active === toggle : overview.contains(active);
+    closeOverview();
+    if (moveFocus) (isSidebar() ? overview.querySelector('[aria-current]') : toggle)?.focus({preventScroll:true});
+    schedule();
+  };
+  layout?.addEventListener?.('change', onLayout);
   previous.addEventListener('click', onPrevious);
   next.addEventListener('click', onNext);
   toggle.addEventListener('click', onToggle);
@@ -110,6 +122,7 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
     doc.removeEventListener('gradecrew:student-progress', paint);
     previous.removeEventListener('click', onPrevious); next.removeEventListener('click', onNext);
     toggle.removeEventListener('click', onToggle); nav.removeEventListener('keydown', onKey);
+    layout?.removeEventListener?.('change', onLayout);
     win.removeEventListener('scroll', schedule); win.removeEventListener('resize', schedule);
     win.visualViewport?.removeEventListener('resize', schedule);
     questions.removeEventListener('load', schedule, true);

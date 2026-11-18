@@ -357,3 +357,20 @@ dialog.shareDialog.questionActionDialog {
   border-color: #278747;
   color: #145d31;
 }
+
+/* The browser/teacher preview uses the same wide/compact contract as Secure Web. */
+@media(min-width:1024px) and (min-height:600px){
+ html:has(.studentProgressCompact:not(.hidden)){--student-progress-height:0px!important}
+ #studentQuizCard:has(.studentProgressCompact:not(.hidden)){max-width:1160px}
+ #studentForm:has(>.studentProgressCompact:not(.hidden)){display:grid;grid-template-columns:208px minmax(0,1fr);gap:16px 24px;align-items:start}
+ #studentForm>.studentIdentityCard,#studentStartGate,#studentTimerBar{grid-column:1/-1;min-width:0}
+ #studentProgressBar.studentProgressCompact{grid-column:1;grid-row:auto/span 2;margin:0;min-width:0;max-height:calc(100dvh - var(--topbar-offset) - var(--student-timer-height) - 24px);display:flex;flex-direction:column;padding:12px;box-shadow:none}
+ #studentQuestions,#studentSubmitArea{grid-column:2;min-width:0}
+ .studentProgressCompact .studentProgressTop{align-items:flex-start;font-size:12px}
+ .studentProgressCompact .studentCompactNav{grid-template-columns:44px minmax(0,1fr) 44px;gap:4px;flex:none}
+ .studentProgressCompact .studentCompactCurrent strong{font-size:12px}
+ .studentProgressCompact .studentCompactCurrent small,.studentProgressCompact .studentOverviewToggle{display:none}
+ .studentProgressCompact .studentQuestionNav{display:grid!important;grid-template-columns:minmax(0,1fr);min-height:0;max-height:none;margin:8px 0 0;overflow:auto;flex:1}
+ .studentProgressCompact .questionNavDot{width:100%;height:auto;min-height:44px;font-size:0;text-align:left;padding:7px 10px;flex:none}
+ .studentProgressCompact .questionNavDot::after{content:attr(aria-label);font-size:13px;line-height:1.4;white-space:normal;overflow-wrap:anywhere}
+}
