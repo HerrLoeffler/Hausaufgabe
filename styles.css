@@ -805,7 +805,7 @@ body.gcAiCompact .creationLegalFooter :is(.legalSiteFooter,.rightsFooter){flex:0
 #resultsTableWrap .resultTable{min-width:850px;table-layout:auto}
 #resultsTableWrap .resultTable th,#resultsTableWrap .resultTable td{padding:7px 10px;vertical-align:middle}
 #resultsTableWrap .resultTable td{white-space:nowrap}
-#resultsTableWrap .resultTable td:first-child,#resultsTableWrap .resultTable td:nth-child(2){white-space:normal;min-width:110px;max-width:200px;overflow-wrap:anywhere}
+#resultsTableWrap .resultTable tbody>tr:not(.submissionReviewRow)>td:first-child,#resultsTableWrap .resultTable tbody>tr:not(.submissionReviewRow)>td:nth-child(2){white-space:normal;min-width:110px;max-width:200px;overflow-wrap:anywhere}
 #resultsTableWrap .reviewBtn{padding:6px 10px;min-height:36px;font-size:12px;white-space:nowrap}
 #resultsTableWrap .resultsSortButton{display:inline-flex;align-items:center;gap:6px;padding:8px 0;border:0;border-radius:0;background:transparent;box-shadow:none;color:inherit;font:inherit;font-weight:700;white-space:nowrap;cursor:pointer;min-height:36px}
 #resultsTableWrap .resultsSortButton span{color:var(--muted)}

@@ -11,3 +11,6 @@ Belege: zwei neue Verhaltenstests zunächst rot am alten Dropdownpfad; Browser z
 Runtimeänderung nur app.js,styles.css,teacher-grading-summary.mjs; zwei zugehörige Testdateien angepasst. Schülerantwortmarkierungen, Auth/alte Adressen, Serverbewertung, Functions, Rules, native Apps und Emmi-Scope bleiben unverändert. Physische Handy-/iPad-Abnahme separat. Aktuell lokal getestet; gepushter Commit/CI/Hostingbeleg werden nach tatsächlichem Ergebnis ergänzt. Keine Budget-/Versuchszähler zurückgesetzt.
 
 Nächster Schritt: exakten gepushten Kandidaten unabhängig prüfen, vorhandene CI abschließen, dann mit gültiger direkter Livekorrektur-Freigabe ausschließlich Hosting auf frischer805cba9-Baseline veröffentlichen und beide Origins sowie reale fiktive UI kontrollieren.
+
+
+CI44326810501 auf e7b20b4: Node134880191238 success, Browser134880190273 scheiterte reproduzierbar im320px-Crewfinale; Artefakt14437088816 erhalten, keinBlindretry. Die Namenszellenregel max-width200 traf auch colspan-Detailzellen und verengte den Coach. Selektor auf gewöhnliche Schülerzeilen ohne submissionReviewRow begrenzt. Danach793Root/UI und12Tabellenbrowserfälle erneut bestanden; exakter tatsächlicher WebKit320x568-Tutorialdurchlauf mit52Klicks bestanden. Neuer Quellcommit benötigt frische CI; alter e7 niemals als grünerRelease ausgeben. KeinDeploy bisher.
