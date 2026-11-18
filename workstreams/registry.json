@@ -775,7 +775,7 @@
     },
     {
       "id": "billing-research-20261104",
-      "title": "GC-BILLING-PLAN-01: datenlose UI-Vorschau deployed; Stripe-Testbindung/Payment offen",
+      "title": "GC-BILLING-PLAN-01: Stripe-Sandbox geprüft; Produktintegration und Abrechnung geplant",
       "primaryBranch": "docs/billing-research-20261104",
       "integrationTarget": "main",
       "state": "active",

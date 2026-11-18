@@ -2,6 +2,8 @@
 
 Stand 18. November 2026. Aufgabe GC-BILLING-PLAN-01. Planentwurf zur fachlichen Abstimmung, keine Freigabe für Echtzahlungen oder Production.
 
+**Aktuelle Arbeitsliste:** [Erledigtes, nächste Testarbeiten, Entscheidungen und Einführung](../../billing/2026-11-18-aufgabenliste-zahlungsbetrieb.md). Sie führt Verantwortlichkeiten, Abhängigkeiten und Abschlusskriterien zu diesem Plan.
+
 > Umsetzungshinweis für spätere Bearbeiter: Dieser Gesamtplan beschreibt Produktregeln und Arbeitspakete. Nach fachlicher Bestätigung wird er paketweise mit superpowers:executing-plans umgesetzt. Die unten stehenden Prüfschritte werden vor jeder Paketumsetzung auf den dann aktuellen Produktstand bezogen. Es besteht heute kein Umsetzungsauftrag.
 
 **Ziel** ist ein zusammenhängender Zahlungs- und Lizenzbetrieb für persönliche Premium-Konten und Schulen auf gradecrew.de. Zahlungen, Nutzungsrechte, Schulplätze, Rechnungen und Mitteilungen sollen automatisch verarbeitet werden. Ausnahmen müssen sichtbar und bearbeitbar bleiben.
