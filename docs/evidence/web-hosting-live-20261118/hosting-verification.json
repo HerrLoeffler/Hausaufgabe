@@ -1,0 +1,45 @@
+{
+  "source": "805cba98fc357d2926048311b7672b4fe70f1335",
+  "project": "hausaufgabe-staging",
+  "environment": "production",
+  "origins": [
+    {
+      "url": "https://gradecrew.de",
+      "verified_files": 216,
+      "mismatches": [],
+      "routes": {
+        "/": 200,
+        "/workspace.html?intent=login": 200,
+        "/secure-student.html": 200,
+        "/datenschutz.html": 200,
+        "/support.html": 200
+      }
+    },
+    {
+      "url": "https://hausaufgabe-staging.web.app",
+      "verified_files": 216,
+      "mismatches": [],
+      "routes": {
+        "/": 200,
+        "/workspace.html?intent=login": 200,
+        "/secure-student.html": 200,
+        "/datenschutz.html": 200,
+        "/support.html": 200
+      }
+    }
+  ],
+  "changed_runtime_files": [
+    "app.js",
+    "secure-student-navigation.mjs",
+    "secure-student.css",
+    "secure-student.js",
+    "shared/answer-completion.mjs",
+    "styles.css",
+    "teacher-grading-summary.mjs",
+    "ui-enhancements.js",
+    "wilma-answer-review.css",
+    "workspace.css"
+  ],
+  "preserved_old_assets": 206,
+  "removed_assets": []
+}

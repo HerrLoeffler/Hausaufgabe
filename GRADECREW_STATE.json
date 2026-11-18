@@ -2388,7 +2388,33 @@
         "navigation_sidebar": "concept awaiting approval",
         "emmi_scoped_backend": "not deployed; free capability gate blocks unsupported calls",
         "production_approved": false,
-        "handoff": "workstreams/feedback-gc39-release-20261013.md"
+        "handoff": "workstreams/feedback-gc39-release-20261013.md",
+        "production_approval_scope": "Only ready Hosting source805cba9 student progress and Wilma UI approved; combined Emmi/preview scope not approved.",
+        "hosting_release_20261118": {
+          "stage": "production",
+          "scope": "student answered markers, teacher sorting/averages and Wilma mobile layout; standard production build only",
+          "branch": "fix/staging-feedback-hosting-live-20261118",
+          "pull_request": 430,
+          "commit": "805cba98fc357d2926048311b7672b4fe70f1335",
+          "tree": "8467b3095d65aa8a89abd4ef80ce0d810006e291",
+          "hosting_version": "b21f6f19cf822610",
+          "origins": [
+            "https://gradecrew.de",
+            "https://hausaufgabe-staging.web.app"
+          ],
+          "verified_files_per_origin": 216,
+          "mismatches": 0,
+          "preserved_existing_assets": 206,
+          "removed_assets": 0,
+          "ci_run": 44319134205,
+          "ci_attempt": 2,
+          "ci_result": "success",
+          "human_production_approved": true,
+          "live_browser": "authenticated actual new sort/averages, existing5fictional completed submissions, no grading writes",
+          "physical_phone_ipad": "not_tested; exact source tested in Chromium/WebKit responsive cases",
+          "emmi_backend": "not included; scoped regenerateQuestion/getAiStatus separate gate",
+          "report": "docs/evidence/web-hosting-live-20261118/receipt.json"
+        }
       },
       "question_action_dialogs_20261110": {
         "stage": "production",
