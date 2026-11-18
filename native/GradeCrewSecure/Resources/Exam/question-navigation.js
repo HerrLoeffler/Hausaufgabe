@@ -57,7 +57,7 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
     });
     const selected=buttons[index];
     if(selected && sidebar && typeof numbers.scrollTo==='function') {
-      const top=selected.offsetTop-numbers.offsetTop;
+      const top=selected.offsetTop;
       if(top<numbers.scrollTop || top+selected.offsetHeight>numbers.scrollTop+numbers.clientHeight) numbers.scrollTo({top:Math.max(0,top-numbers.clientHeight/2+selected.offsetHeight/2),behavior:'auto'});
     }
     if(selected && !sidebar && !navRoot.classList.contains('overviewOpen') && typeof numbers.scrollTo==='function') {

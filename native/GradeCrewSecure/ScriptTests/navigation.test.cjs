@@ -97,3 +97,12 @@ test('Escape closes compact overview and returns focus to its toggle',()=>{
  w.document.querySelector('.secureQuestionNumber').focus();w.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape'}));
  assert.equal(toggle.getAttribute('aria-expanded'),'false');assert.equal(w.document.activeElement,toggle);dom.window.close();
 });
+test('right overview keeps the next current row visible with one hundred tasks',()=>{
+ const {dom,w}=setup({},Array.from({length:100},(_,i)=>({id:'q'+i,type:'text',text:'Frage '+i})));
+ Object.defineProperty(w,'innerWidth',{value:1100});Object.defineProperty(w,'innerHeight',{value:750});w.dispatchEvent(new w.Event('resize'));
+ const grid=w.document.querySelector('#secureQuestionNumbers'),button=grid.children[20];
+ Object.defineProperties(grid,{offsetTop:{value:120},clientHeight:{value:180}});
+ Object.defineProperties(button,{offsetTop:{value:200},offsetHeight:{value:48}});
+ let scroll;grid.scrollTo=value=>{scroll=value};button.click();
+ assert.equal(scroll?.top,134);assert.equal(button.getAttribute('aria-current'),'step');dom.window.close();
+});

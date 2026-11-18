@@ -54,6 +54,23 @@ final class SecureReturnUITests:XCTestCase {
         XCTAssertEqual(guest.value as? String,"Code deiner Lehrkraft")
     }
     #endif
+    func testManualSubmissionRequiresWordAndCanBeCancelledWithKeyboardOpen() {
+        let app=XCUIApplication()
+        app.launchArguments=["--secure-lifecycle-ui","--secure-submission-ui"]
+        app.launch()
+        let field=app.textFields["Bestätigungswort: ABGEBEN"]
+        XCTAssertTrue(field.waitForExistence(timeout:10),app.debugDescription)
+        let submit=app.buttons["Verbindlich abgeben"]
+        XCTAssertFalse(submit.isEnabled)
+        field.tap();field.typeText("FALSCH")
+        XCTAssertFalse(submit.isEnabled)
+        field.typeText(String(repeating:XCUIKeyboardKey.delete.rawValue,count:6))
+        field.typeText("ABGEBEN")
+        XCTAssertTrue(submit.isEnabled,app.debugDescription)
+        app.buttons["Abbrechen"].tap()
+        expectation(for:NSPredicate(format:"exists == false"),evaluatedWith:field)
+        waitForExpectations(timeout:5)
+    }
     private func returnFlow() {
         let app=XCUIApplication()
         app.launchArguments=["--secure-lifecycle-ui","--late-recovery-task"]

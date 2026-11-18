@@ -17,3 +17,8 @@ DevelopmentStatus mit frischem main-Registry/State ausgeführt18Nov16:39UTC, lok
 
 ## Offen
 Reale native Lifecycle- und WebKit-/iPhone-/iPad-Layoutabnahme fertigstellen; unabhängiger Review; Patch auf echten Upstreamzweig sichern/PR; alle Releasegates; getrennter neuer TestFlight-Build und tatsächliches Apple-Processing/Verfügbarkeit. Keine neue Store-Einreichung und kein erneutes Apple-Mail.
+
+## Unabhängiger Review und gezielte Korrektur
+Review des ganzen Patches durch frischen Reviewer: keine P0/P1, ein P2. Bei100Aufgaben wurde vom bereits relativen offsetTop fälschlich der Gridversatz nochmals abgezogen; aktuelle Aufgabe konnte unter sichtbarem Listenende bleiben. Regression zunächst10PASS/1FAIL (kein Scroll statt134px), dann Berechnung korrigiert. Reale OS-Tastatur, Sheet-Wischgeste und Hardware-Escape durch aktuelle Fixture nicht vollständig abgedeckt; keine entsprechenden Gerätetestbehauptungen. Appleverteilung außerhalb des Codereviews. Kein weiterer konkreter Codebefund.
+
+Realer nativer Lifecyclelauf9PASS: Abbruch der Wortbestätigung blockiert alte Aktion, leer/falsch blockiert, korrekt bestätigt; Deadline schließt offenen Dialog und überträgt einmal; Offline-Abgabe nach Neustart und Rückkehr erfolgreich. WebKit-Smoke16Layoutfälle+12InteraktionenPASS. Vollmatrix iPad/iPhone läuft auf getrennten eigenen Simulatoren, Ergebnis noch offen.
