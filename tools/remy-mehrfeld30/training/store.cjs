@@ -15,7 +15,7 @@ async function reserve(db,runId,stepId,amount){
     const value=(await tx.get(run)).data();
     const parent=value.autoSessionId?db.doc('taskLearningAutoRuns/'+value.autoSessionId):null;
     const session=parent?(await tx.get(parent)).data():null;
-    if(parent&&(!session||session.ownerId!==value.ownerId||session.status!=='running'))throw Error('Automatischer Lauf ist nicht aktiv oder gehört einem anderen Konto.');
+    if(parent&&(!session||session.ownerId!==value.ownerId||!(session.status==='running'||session.status==='completed'&&session.probeStatus==='running'&&value.autoPostStudyProbe===true)))throw Error('Automatischer Lauf ist nicht aktiv oder gehört einem anderen Konto.');
     if(session&&session.spentMicros+session.reservedMicros+amount>session.limitMicros)throw Error('Das gemeinsame Budget ist ausgeschöpft.');
     if(value.status==='paused')throw Error('Die Serie ist pausiert.');
     if(value.spentMicros+value.reservedMicros+amount>value.limitMicros)throw Error('Das Budget ist ausgeschöpft.');

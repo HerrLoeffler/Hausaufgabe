@@ -34,6 +34,7 @@ async function phase(name,strategyHint=''){
  save('sealed-'+name,await call({action:'trainingAutoSeal',phase:name}));
 }
 (async()=>{
+ if(process.argv[2]==='probe'){await phase('probe');save('post-study-probe',await call({action:'trainingAutoSummary'}));console.log(JSON.stringify(await call({action:'trainingAutoSummary'})));return;}
  if(process.argv[2]==='status'){const state=await call({action:'trainingAutoSummary'});save('session',state);console.log(JSON.stringify(state));return;}
  try{const state=await call({action:'trainingAutoSummary'});if(state.status==='completed'){save('outcome',await call({action:'trainingAutoFinalize'}));save('session',state);console.log(JSON.stringify(state));return;}}catch(e){if(!e.message.startsWith('NOT_FOUND'))throw e;}
  await phase('dev0');

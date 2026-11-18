@@ -65,3 +65,13 @@ test('a failed earlier recipe proposal is explicitly remembered when the second 
  const engine={providerCall:async input=>{const body=JSON.parse(input.customRequest.input[1].content);assert.equal(body.previousTrials[0].generationHint,'Erster erfolgloser kosmetischer Hinweis.');assert.match(JSON.stringify(body.previousTrials),/PREVIOUS-REGRESSION/);assert.equal(body.previousHint,'');return {output_text:JSON.stringify({changedAspect:'help',generationHint:'Prüfe vor der Ausgabe die gegebenen Werte und die tatsächlich offenen Felder.',reason:'Fehlversuche senken.'})};}};
  const result=await handle({db,uid,engine,data:{action:'trainingAutoOptimize',round:2}});assert.equal(result.parentPhase,'dev0');
 });
+test('post-study probes preserve the closed outcome and the original five-dollar budget, then close idempotently',async()=>{
+ const {handle}=require('./auto-loop.cjs'),db=new TestDatabase();await seed(db,'dev0');
+ await assert.rejects(createRun({db,uid,data:{autoPhase:'probe'}}),/abgeschlossene/);
+ const parent=db.doc('taskLearningAutoRuns/'+SESSION);await parent.update({status:'completed',finalQuizId:'training:'+SESSION+'-final',spentMicros:123,outcome:{kept:true}});
+ const r=await createRun({db,uid,data:{autoPhase:'probe'}}),run=db.docs.get('taskLearningRuns/'+r.runId);assert.equal(run.autoPostStudyProbe,true);assert.equal(run.limitMicros,200000);
+ assert.equal((await parent.get()).data().status,'completed');assert.equal((await parent.get()).data().limitMicros,5000000);assert.equal((await parent.get()).data().studySpentMicros,123);
+ for(const c of phasePlan('probe').cases)await db.doc('taskLearningRuns/'+r.runId+'/cases/'+c.id).update({status:'ready',adversary:{passed:true}});
+ const metrics=await handle({db,uid,data:{action:'trainingAutoSeal',phase:'probe'}});assert.equal(metrics.ready,3);assert.equal((await parent.get()).data().probeStatus,'completed');
+ await createRun({db,uid,data:{autoPhase:'probe'}});assert.equal((await parent.get()).data().probeStatus,'completed');assert.deepEqual((await parent.get()).data().outcome,{kept:true});
+});

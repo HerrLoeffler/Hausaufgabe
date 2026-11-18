@@ -1,5 +1,5 @@
 'use strict';
-const SESSION='auto-recipes-20261118-v1',PHASES=['dev0','dev1','dev2','test0','test1','final'];
+const SESSION='auto-recipes-20261118-v1',PHASES=['dev0','dev1','dev2','test0','test1','final','probe'];
 const {GRAPH_VERSION}=require('./graph-profile.cjs');
 const math=(id,family,kind,a,b,c,context,labels)=>({id,family,wish:`Klasse 7. ${context} Erzeuge eine sinnvolle Aufgabe mit zwei Zahlenspalten und unabhängigen Rechenpfeilen. Links ${labels[0]}, rechts ${labels[1]}. Ausgangszeile ${a} zu ${b}; gesuchte Zielzeile links ${c}. Gegebene Zahlen bleiben gegeben. Wähle eine geeignete Hilfestufe.`,expected:{kind,a:String(a),b:String(b),c:String(c)}});
 function manifest(holdout=false){
@@ -29,6 +29,11 @@ function manifest(holdout=false){
  rows.find(c=>c.id==='biology').reviewWish=holdout?'Biologie Klasse7. Ergänze zwei fehlende Stationen im vereinfachten Blutkreislauf mit Auswahlfeldern. Prüfe die Flussrichtung und sinnvolle Ablenker; keine Aussagen über Sauerstoffgehalt.':'Biologie Klasse7. Ergänze zwei fehlende Stationen im vereinfachten Transportweg der Nahrung mit Auswahlfeldern. Prüfe Reihenfolge, Pfeilrichtung und sinnvolle Ablenker.';
  return rows;
 }
-function phasePlan(phase){if(!PHASES.includes(phase)||phase==='final')throw Error('Unzulässige automatische Phase.');return {runId:SESSION+'-'+phase,phase,holdout:phase.startsWith('test'),cases:manifest(phase.startsWith('test')),recipeVersion:GRAPH_VERSION};}
+function probes(){return [
+ {id:'given-left',family:'post-scaffold',wish:'Mathematik Klasse7. 20 Prozent eines Geldbetrags sind64Euro. Bestimme den Grundwert. LinkeSpalte Prozent,rechteSpalte Euro,Ausgangszeile20zu64,Zielzeilelinks100. Die gesamte linkeSpalte einschließlich ihrer Rechenpfeile soll gegeben sein. Rechts sind Zwischenbetrag,Endbetrag und der letzte Rechenpfeil offen. Die parallelen linken Pfeile sind ausdrücklich beabsichtigte Hilfen. Fordere nur die tatsächlich offenen Felder an.',modes:['given','given','given','free'],expected:{kind:'direct',a:'20',b:'64',c:'100'}},
+ {id:'whole-roles',family:'post-labels',wish:'Deutsch Klasse8. Drei neue Schulalltags-Behauptungen und drei eindeutige Begründungen zum gerichteten Zuordnen. Bezeichne die Gruppen und Punkt-Kurzlabels mit den vollständigen Wörtern Behauptung und Begründung; Nummern beziehungsweise Buchstaben ergänzen. Alle Texte sichtbar, keine vorgegebene Verbindung.',expected:{kind:'mapping'}},
+ {id:'english-transfer',family:'post-transfer',wish:'Englisch Klasse6. Drei einzelne verbundene Felder für die Simple-Past-Formen von fly, feel und keep. Sichtbare Ausgangsverben mit je einem beschrifteten Umformungspfeil zum Feld. Keine Rechenanweisungen.',expected:{allowedKinds:['chain','branch'],answers:['flew','felt','kept']}}
+];}
+function phasePlan(phase){if(!PHASES.includes(phase)||phase==='final')throw Error('Unzulässige automatische Phase.');return {runId:SESSION+'-'+phase,phase,holdout:phase.startsWith('test'),cases:phase==='probe'?probes():manifest(phase.startsWith('test')),recipeVersion:GRAPH_VERSION};}
 const sharedId=id=>id===SESSION+'-final';
 module.exports={SESSION,PHASES,manifest,phasePlan,sharedId};

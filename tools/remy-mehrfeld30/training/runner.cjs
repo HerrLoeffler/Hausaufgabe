@@ -62,10 +62,11 @@ async function createRun({db,uid,data}){
     const count=current.data()?.count||0;
     if(!calibration&&count>=6)throw new HttpsError('resource-exhausted','Heute sind die sechs neuen Erprobungswünsche aufgebraucht.');
     if(session&&!priorSession.exists)tx.create(session,{id:autoManifest.SESSION,ownerId:uid,limitMicros:5000000,reservedMicros:0,spentMicros:0,status:'running',createdAt:now(),authorization:'Martin approved 5 USD total for first autonomous experiment'});
+    if(auto?.phase==='probe'){const saved=priorSession.data();if(saved.status!=='completed'||saved.reservedMicros!==0)throw new HttpsError('failed-precondition','Studie erst abschließen.');tx.update(session,{probeStatus:'running',studySpentMicros:saved.studySpentMicros??saved.spentMicros,probeStartedAt:now()});}
     if(!priorRecipe.exists)tx.create(recipe,{...config.profile,createdAt:now()});
     tx.create(run,{id,ownerId:uid,sharedPilot:calibration,recipeVersion:config.version,manifestHash:hash,expected:manifest.length,
-      ...(auto?{autoSessionId:autoManifest.SESSION,autoPhase:auto.phase,strategyHint,recipeHash:automatic.recipeHash}:{}),
-      limitMicros:auto?5000000:calibration?(config.version===VERSION?5000000:1000000):200000,spentMicros:0,reservedMicros:0,status:'running',createdAt:now(),
+      ...(auto?{autoSessionId:autoManifest.SESSION,autoPhase:auto.phase,strategyHint,recipeHash:automatic.recipeHash,...(auto.phase==='probe'?{autoPostStudyProbe:true}:{})}:{}),
+      limitMicros:auto?.phase==='probe'?200000:auto?5000000:calibration?(config.version===VERSION?5000000:1000000):200000,spentMicros:0,reservedMicros:0,status:'running',createdAt:now(),
       priceSnapshot:{at:'2026-11-18',currency:'USD',perMillionTokens:PRICES,source:'https://developers.openai.com/api/docs/pricing'}});
     if(!calibration)tx.set(quota,{ownerId:uid,count:count+1});
     for(const [position,c] of manifest.entries())tx.create(db.doc(run.path+'/cases/'+c.id),{...c,position,attempt:1,status:'pending',createdAt:now()});

@@ -47,3 +47,11 @@ test('concurrent reservations across experiment runs cannot overbook the shared 
  for(const r of ['x','y'])await db.doc('taskLearningRuns/'+r).set({ownerId:'t',autoSessionId:'concurrent',limitMicros:100,spentMicros:0,reservedMicros:0,status:'running'});
  const results=await Promise.allSettled([reserve(db,'x','one',80),reserve(db,'y','two',80)]);assert.equal(results.filter(x=>x.status==='fulfilled').length,1);assert.equal(db.docs.get('taskLearningAutoRuns/concurrent').reservedMicros,80);
 });
+test('a fixed post-study probe uses the remaining shared budget without reopening frozen trial phases',async()=>{
+ const {TestDatabase}=require('./test-db.cjs'),db=new TestDatabase();await db.doc('taskLearningAutoRuns/s').set({ownerId:'t',status:'completed',probeStatus:'running',limitMicros:100,spentMicros:90,reservedMicros:0});
+ await db.doc('taskLearningRuns/probe').set({ownerId:'t',autoSessionId:'s',autoPostStudyProbe:true,status:'running',limitMicros:20,spentMicros:0,reservedMicros:0});
+ await db.doc('taskLearningRuns/old').set({ownerId:'t',autoSessionId:'s',status:'evaluated',limitMicros:100,spentMicros:0,reservedMicros:0});
+ await assert.rejects(reserve(db,'old','bad',1),/nicht aktiv/);await assert.rejects(reserve(db,'probe','too-much',11),/Budget/);
+ assert.equal((await reserve(db,'probe','one',8)).dispatch,true);await settle(db,'probe','one',{status:'completed',costMicros:5});assert.equal(db.docs.get('taskLearningAutoRuns/s').spentMicros,95);
+ await db.doc('taskLearningAutoRuns/s').update({probeStatus:'completed'});await assert.rejects(reserve(db,'probe','again',1),/nicht aktiv/);
+});
