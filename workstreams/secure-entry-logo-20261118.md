@@ -17,3 +17,7 @@ Nächster Schritt: denselben Lauf bis erfolgreichen Gates/Signatur/AAC/Upload be
 Versuch1 hat alle iPadgates und native iPhone540, Interaktionen12 und Komposition6 bestanden. Genau ein Webfall `web-phone-small-landscape-large-media-closed` wurde nicht rechtzeitig bereit. Upload daher korrekt übersprungen. Originalartefakt14477958745 enthält Protokoll, JSON und Bild; Simulator meldet fehlenden BERenderingVisibilitySink-Prozess. Kein Logo-/Produktfehler daraus behauptet. HTML/JS/Swift-Prüfungsquellen unverändert gegenüber1321.
 
 Lokaler frischer gleicher Weblauf216/216+12Interaktionen+6Kompositionen grün. Genau eine gezielte Wiederholung des Phonejobs angenommen: gleicher Run44412446551, Versuch2, echte neue Phonejob-ID135195505743, gleiche Quelle82dba253. Keine Code-/Timeout-/Assertionänderung und kein neuer Gesamt-Dispatch; iPadbelege bleiben erhalten. Bei erneutem Fehler erneut diagnostizieren statt blind weiterzustarten. Neuer Upload weiterhin offen.
+
+## Finaler Matrixstand
+
+Gezielte Phone-Wiederholung135195505743 erfolgreich:540native,216Web,12Interaktionen,6Kompositionen vollständig grün. Gleiche unveränderte Quelle82dba253; drei ursprüngliche iPad-Erfolge weiterhin gültig. Erster Fehlschlag bleibt erhalten, keine angebliche Produktreparatur dafür. Build/Upload135203252701läuft; noch kein neuer Upload bestätigt. Kein zusätzlicher Wiederholungsstart.
