@@ -18,11 +18,14 @@ function buildCandidate(plan,{id,modes=['factor','factor','factor','factor']}){
   if(!fit.eligible||plan.relationship!==plan.kind)throw Error('Die Voraussetzungen des Dreisatzes fehlen.');
   if(!Array.isArray(plan.labels)||plan.labels.length!==2||plan.labels.some(x=>typeof x!=='string'||x.length<1||x.length>60))throw Error('Zwei Größen mit Einheiten angeben.');
   const solved=solve(plan);
-  q.text+=' Ergänze den Rechenweg über '+solved.pivot.replace('.',',')+' in der linken Spalte. Verwende mal oder geteilt durch in Pfeilrichtung. Jedes offene Feld zählt 0,5 Punkte.';
+  const choice=plan.intermediateMode==='choice';
+  if(choice&&!modes.every(mode=>mode==='free'))throw Error('Ein freier Zwischenweg benötigt vier freie Rechenpfeile.');
+  q.text+=choice?' Wähle einen positiven Zwischenwert selbst und ergänze den gesamten Rechenweg. Verwende endliche Dezimalzahlen und mal oder geteilt durch in Pfeilrichtung. Jedes offene Feld zählt 0,5 Punkte.':
+    ' Ergänze den Rechenweg über '+solved.pivot.replace('.',',')+' in der linken Spalte. Verwende mal oder geteilt durch in Pfeilrichtung. Jedes offene Feld zählt 0,5 Punkte.';
   const base={...core.example('table'),id,subject:q.subject,title:q.heading,prompt:q.text,objective:q.text,
     rationale:'Die belegte Beziehung wird mit unabhängig berechneten Zwischenwerten dargestellt.'};
   const task=createDreisatz(base,{labels:plan.labels,values:solved.values,operations:solved.operations,modes});
-  q.type='visual';q.trainingPolicy='relation-v1';q.points=task.maxPoints;q.visualTask=JSON.stringify(task);
+  q.type='visual';q.trainingPolicy=choice?'relation-choice-v1':'relation-v1';q.trainingRelation=plan.kind;q.points=task.maxPoints;q.visualTask=JSON.stringify(task);
   return q;
 }
 function visibleProblem(q){

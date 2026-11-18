@@ -46,3 +46,33 @@ test('the actual free-wish UI dispatches creation and blind check, then opens a 
   assert.equal($('trainingGenerate').disabled,false);
   assert.ok(!window.localStorage.getItem('remy-mehrfeld30:synthetic:training-job'));
 });
+test('the free-wish UI resumes a bounded repair after an uncertain transport result without dispatching another repair',async t=>{
+  const dom=new JSDOM(read('index.html'),{url:'https://example.test/remy-labor/'});t.after(()=>dom.window.close());
+  const {window}=dom,{document}=window;
+  let init,stage='pending',attempt=1,repairs=0;
+  const q=present('training:repair-test','training',buildCandidate({kind:'other',text:'Ein Preis enthält einen Grundpreis.',title:'Preisweg'},{id:'wish'}));
+  const env={document,globalThis:window,localStorage:window.localStorage,crypto:require('node:crypto').webcrypto,FormData:window.FormData,
+    initializeApp:()=>({}),getAuth:()=>({}),getFirestore:()=>({}),getFunctions:()=>({}),
+    mountRecipe:()=>{},mountRhythm:()=>{},mountPitch:()=>{},
+    httpsCallable:()=>async data=>{
+      if(data.action==='trainingCreate')return {data:{runId:'repair-test'}};
+      if(data.action==='trainingStatus')return {data:{quizId:q.quizId,cases:[{id:'wish',status:stage,attempt,errors:['Auftrag präzisieren.']}]}};
+      if(data.action==='trainingStep'){stage=stage==='pending'?'generated':attempt===1?'rejected':'ready';return {data:{}};}
+      if(data.action==='trainingRepair'){
+        repairs++;assert.match(data.requestId,/^[a-f0-9-]{36}$/);attempt=2;stage='pending';
+        throw Error('Transport interrupted after server acceptance');
+      }
+      return {data:{tasks:data.quizId===q.quizId?[q]:[],expected:1}};
+    },
+    onAuthStateChanged:(_a,callback)=>{init=callback({uid:'synthetic'});},firebaseConfig:{projectId:'gradecrew-staging-2026'}};
+  new Function(...Object.keys(env),read('pilot.mjs').replace(/^import .*;$/gm,''))(...Object.values(env));
+  await init;
+  const $=id=>document.getElementById(id);
+  $('trainingWish').elements.wish.value='Aufgabe mit Grundpreis und variablem Anteil.';
+  $('trainingWish').dispatchEvent(new window.Event('submit',{bubbles:true,cancelable:true}));
+  for(let i=0;i<20&&$('trainingResume').hidden;i++)await new Promise(r=>setImmediate(r));
+  assert.equal(repairs,1);assert.equal($('trainingResume').hidden,false);
+  await $('trainingResume').onclick();
+  assert.equal(repairs,1);
+  assert.match($('trainingStatus').textContent,/Entwurf und unabhängige Prüfung sind gespeichert/);
+});

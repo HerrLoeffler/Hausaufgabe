@@ -55,6 +55,14 @@ function checkFit(facts){
     facts.relationship==='inverse'&&facts.constantWork===true);
   return {eligible,reason:eligible?'Die fachliche Beziehung ist belegt.':'Die Voraussetzungen eines einfachen Dreisatzes fehlen.'};
 }
+function valuesAtPivot({kind,a,b,c},pivot){
+  if(!['direct','inverse'].includes(kind))throw Error('Beziehung fehlt.');
+  const [x,y,target,p]=[a,b,c,pivot].map(parse);
+  if([x,y,target,p].some(v=>v.n<=0n))throw Error('Ein positiver Zwischenwert ist nötig.');
+  const unit=kind==='direct'?divide(multiply(y,p),x):divide(multiply(x,y),p);
+  const result=kind==='direct'?divide(multiply(y,target),x):divide(multiply(x,y),target);
+  return {pivot:decimal(p),unit:decimal(unit),result:decimal(result)};
+}
 function equivalentOperation(from,to,op,factor){
   if(!['×','÷'].includes(op))return false;
   try{
@@ -65,4 +73,4 @@ function equivalentOperation(from,to,op,factor){
     return result.n*b.d===b.n*result.d;
   }catch{return false;}
 }
-module.exports={solve,compareFacts,checkFit,equivalentOperation};
+module.exports={solve,compareFacts,checkFit,equivalentOperation,valuesAtPivot};

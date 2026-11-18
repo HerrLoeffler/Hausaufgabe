@@ -216,6 +216,7 @@ async function details({db,uid,data}){
   const c=(await db.doc(runRef(db,run.id).path+'/cases/'+data.caseId).get()).data();
   if(c?.status!=='ready')throw new HttpsError('failed-precondition','Dieser Fall ist noch nicht freigegeben.');
   return {wish:c.wish,decision:c.plan.kind,reason:c.plan.reason,independentCheck:c.judge.reason,attempt:c.attempt,
+    solutionNote:c.q.trainingPolicy==='relation-choice-v1'?'Ein möglicher Beispielweg. Andere exakt richtige Zwischenwerte und Rechenwege werden ebenfalls bewertet.':'',
     solution:c.q.type==='single'?[{label:'Passende Vorgehensweise',value:c.q.options.find(x=>x.correct).text}]:
       Object.entries(fullAnswer(c.q)).map(([id,value])=>{
         const match=id.match(/^r(\d)c(\d)$/),row=Number(match[1]),column=Number(match[2]);

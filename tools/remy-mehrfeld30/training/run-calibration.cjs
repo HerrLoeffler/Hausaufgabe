@@ -42,7 +42,7 @@ async function runCase(id){
     for(const c of state.cases.filter(c=>requested.length?requested.includes(c.id):c.status==='rejected')){
       const file=path.join(root,'recheck-'+c.id+'.json');
       const receipt=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):
-        {caseId:c.id,requestId:randomUUID(),reason:'Korrigierte Beschreibung der tatsächlich sichtbaren freien Pfeilfelder und numerisches Prüferantwortformat, Quelle f20da23.'};
+        {caseId:c.id,requestId:randomUUID(),reason:c.id==='inverse-11'?'Feste Gesamtseitenzahl statt fälschlich gleicher alter und neuer Rate als Voraussetzung, Quelle 23d59e2.':c.id==='contrast-08'||c.id==='contrast-10'?'Die im Labor sichtbare Eignungsprobe prüft die Formatauswahl statt einer vollständig erzeugten Fachaufgabe, Quelle 23d59e2.':'Korrigierte Beschreibung der tatsächlich sichtbaren freien Pfeilfelder und numerisches Prüferantwortformat, Quelle f20da23.'};
       save('recheck-'+c.id,receipt);
       const result=await call({action:'trainingRecheck',runId:RUN,...receipt});
       console.log(c.id+' recheck '+result.revision);

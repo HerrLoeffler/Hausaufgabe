@@ -321,7 +321,7 @@ async function runTraining(){
       if(uid!==owner)return;
       job={...job,runId:result.runId};save('training-job',job);
     }
-    for(let stage=0;stage<3&&uid===owner;stage++){
+    for(let stage=0;stage<9&&uid===owner;stage++){
       const state=await api({action:'trainingStatus',runId:job.runId});
       if(uid!==owner)return;
       const c=state.cases[0];
@@ -329,6 +329,13 @@ async function runTraining(){
         save('training-job',null);save('last-training',state.quizId);$('trainingLast').hidden=false;
         output.textContent='Entwurf und unabhängige Prüfung sind gespeichert. Jetzt kannst du ausprobieren und Rückmeldung geben.';
         await load(state.quizId);return;
+      }
+      if(c.status==='rejected'&&c.attempt<3&&!c.errors.some(text=>/Budget|quota|API key|resource.exhausted|Modell.*(fehlt|verfügbar)/i.test(text))){
+        const repair=job.repair?.attempt===c.attempt?job.repair:{attempt:c.attempt,requestId:crypto.randomUUID()};
+        job={...job,repair};save('training-job',job);
+        output.textContent='Der Entwurf wird anhand der konkreten Prüfbefunde nachgebessert …';
+        await api({action:'trainingRepair',runId:job.runId,caseId:c.id,requestId:repair.requestId});
+        continue;
       }
       if(['rejected','uncertain'].includes(c.status)){
         if(c.status==='rejected')save('training-job',null);
@@ -370,7 +377,7 @@ $('trainingDetails').onclick=async()=>{
     if(uid!==owner||tasks[index]!==task)return;
     report.replaceChildren();
     const labels={direct:'Direkter Dreisatz',inverse:'Umgekehrter Dreisatz',other:'Andere Darstellung',clarify:'Rückfrage erforderlich'};
-    for(const text of [labels[result.decision],result.reason,result.independentCheck]){
+    for(const text of [labels[result.decision],result.reason,result.independentCheck,result.solutionNote||'']){
       const p=document.createElement('p');p.textContent=text;report.append(p);
     }
     const list=document.createElement('ul');

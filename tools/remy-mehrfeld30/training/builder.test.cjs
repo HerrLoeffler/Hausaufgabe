@@ -49,3 +49,16 @@ test('the blind projection describes the same four arrows including complete-ope
   assert.equal(visible.arrows[3].factor,'5');
   assert.doesNotMatch(JSON.stringify(visible),/"solution"|"accepted"/);
 });
+test('a requested unassisted scaffold allows an independently checked learner-chosen intermediate row',()=>{
+  const q=buildCandidate({kind:'inverse',relationship:'inverse',constantWork:true,equalRate:true,a:'5',b:'18',c:'9',
+    text:'Fünf gleich starke Pumpen brauchen 18 Stunden für dasselbe Becken. Wie lange brauchen neun?',
+    labels:['Pumpen','Stunden'],intermediateMode:'choice'},
+    {id:'choice',modes:['free','free','free','free']});
+  assert.doesNotMatch(q.text,/über 1 in/);
+  assert.match(q.text,/Zwischenwert selbst/);
+  const t=parseVisualTask(q.visualTask,{points:q.points}),canonical=core.solutionResponse(t);
+  const alternative={...canonical,r3c3:'2',r3c4:'45',r2c2:'×0,4',r2c6:'×2,5',r4c2:'×4,5',r4c6:'÷4,5'};
+  assert.equal(score(q,alternative),q.points);
+  assert.equal(score(q,{...alternative,r3c4:'44'}),q.points-.5);
+  assert.equal(score(q,{...alternative,r3c3:'0'}),.5);
+});

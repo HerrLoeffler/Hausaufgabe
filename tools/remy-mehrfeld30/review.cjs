@@ -35,7 +35,7 @@ function present(quizId,group,q){
   const visual=q.type==='visual'?core.publicTask(parseVisualTask(q.visualTask,{points})):null;
   const options=q.type==='single'?q.options.map(o=>String(o.text)):[];
   return {quizId,group,id:q.id,type:q.type,text:String(q.text||''),points,visual,options,
-    ...(q.heading?{heading:q.heading,subject:q.subject,shape:q.shape}:{}),version:digest([quizId,q.id,q.type,q.text,points,q.visualTask??null,q.options??null,...(q.trainingPolicy?[q.trainingPolicy]:[])])};
+    ...(q.heading?{heading:q.heading,subject:q.subject,shape:q.shape}:{}),version:digest([quizId,q.id,q.type,q.text,points,q.visualTask??null,q.options??null,...(q.trainingPolicy?[q.trainingPolicy,...(q.trainingPolicy==='relation-choice-v1'?[q.trainingRelation]:[])]:[])])};
 }
 function feedback(task,data){
   if(data.version!==task.version)throw Error('Die Version der Aufgabe hat sich geändert. Bitte lade sie neu.');
@@ -51,7 +51,7 @@ function score(q,answer){
   if(q.type==='recipe')return scoreRecipe(q,answer);
   if(q.type==='diagram')return scoreDiagram(q,answer);
   if(q.type==='visual'){
-    if(q.trainingPolicy==='relation-v1')return scoreLearningTask(q,answer);
+    if(['relation-v1','relation-choice-v1'].includes(q.trainingPolicy))return scoreLearningTask(q,answer);
     const task=parseVisualTask(q.visualTask,{points:q.points});
     return core.grade(task,answer).points;
   }
