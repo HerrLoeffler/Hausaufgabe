@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-26T23:27:25Z",
+  "observed_at": "2026-11-18T21:53:08.288838+00:00",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -1558,8 +1558,40 @@
     "verified_at": "2026-11-18T19:29:12.117126+00:00",
     "baseline_actual_before_release": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
     "latest_release_report": "docs/evidence/student-result-actions-20261118/receipt.json",
-    "wilma_review_revision": "reviewwilmaanswers-00005-lax",
-    "wilma_review_source_commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2"
+    "wilma_review_revision": "reviewwilmaanswers-00006-xub",
+    "wilma_review_source_commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+    "wilma_legacy_backend_release_20261118": {
+      "stage": "production",
+      "scope": "reviewWilmaAnswers source-only; Hosting unchanged",
+      "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+      "tree": "c877184464769428cc772d7dc4609993e49e13cc",
+      "pr": 438,
+      "ci_run": 44375566304,
+      "review": "PASS exact146-fileartifact and actual legacy E2E;noP0-P2",
+      "stage_backend_revision": "reviewwilmaanswers-00011-guf",
+      "live_backend_revision": "reviewwilmaanswers-00006-xub",
+      "hosting_unchanged": {
+        "stage": "e218924764139f91",
+        "live": "73a1e618cab1a0ba"
+      },
+      "source_archive_sha256": "6f87bff5b8ff527babdc10653b907409b463c1ad517f37ff2bc12f4b39a4e840",
+      "actual_legacy_case": "same completed operation/fingerprint, missing receipt reproduced, explicit1->2retry with preserved history",
+      "new_provider_calls": {
+        "staging": 1,
+        "live": 0
+      },
+      "usage_accounting_micros": {
+        "staging": 970,
+        "live": 0
+      },
+      "reserved_micros": 0,
+      "real_pupil_grade_writes": 0,
+      "free_reload": true,
+      "service_configuration_preserved": true,
+      "report": "docs/evidence/wilma-legacy-backend-20261118/receipt.json",
+      "physical_devices": "pending",
+      "verified_at": "2026-11-18T21:53:08.288838+00:00"
+    }
   },
   "automation": {
     "preview_deployment": "verified_hosting_current_eb80_candidate",
@@ -2593,6 +2625,38 @@
           "synthetic_browser_journeys": 12,
           "functions_changed": 0,
           "native_release": "owner confirms TestFlight1.0(1313) upload; Apple availability/device acceptance pending; AppStore1293 unchanged"
+        },
+        "legacy_backend_release_20261118": {
+          "stage": "production",
+          "scope": "reviewWilmaAnswers source-only; Hosting unchanged",
+          "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+          "tree": "c877184464769428cc772d7dc4609993e49e13cc",
+          "pr": 438,
+          "ci_run": 44375566304,
+          "review": "PASS exact146-fileartifact and actual legacy E2E;noP0-P2",
+          "stage_backend_revision": "reviewwilmaanswers-00011-guf",
+          "live_backend_revision": "reviewwilmaanswers-00006-xub",
+          "hosting_unchanged": {
+            "stage": "e218924764139f91",
+            "live": "73a1e618cab1a0ba"
+          },
+          "source_archive_sha256": "6f87bff5b8ff527babdc10653b907409b463c1ad517f37ff2bc12f4b39a4e840",
+          "actual_legacy_case": "same completed operation/fingerprint, missing receipt reproduced, explicit1->2retry with preserved history",
+          "new_provider_calls": {
+            "staging": 1,
+            "live": 0
+          },
+          "usage_accounting_micros": {
+            "staging": 970,
+            "live": 0
+          },
+          "reserved_micros": 0,
+          "real_pupil_grade_writes": 0,
+          "free_reload": true,
+          "service_configuration_preserved": true,
+          "report": "docs/evidence/wilma-legacy-backend-20261118/receipt.json",
+          "physical_devices": "pending",
+          "verified_at": "2026-11-18T21:53:08.288838+00:00"
         }
       },
       "question_action_dialogs_20261110": {
@@ -2629,7 +2693,7 @@
       "candidate_ci_job": 112587453495,
       "independent_review": "approved; two correction rounds preserved; final report analysis/web-acceptance-20261007/final-review.md",
       "no_scroll_story": true,
-      "next_action": "Martin reloads gradecrew.de; physical device acceptance and separately owned Secure build; no further paid QA automatically",
+      "next_action": "Physical Web acceptance and separately owned Secure phone follow-up; preserve accepted task size and no automatic real-answer replay.",
       "previous_release": {
         "id": "web-repair-20261007",
         "stage": "staging_deployed",
@@ -3388,7 +3452,7 @@
         "receipt": "workstreams/template-import-receipt-20261029.json",
         "next_action": "Ask human approval for exact aadf Hosting-only release on gradecrew.de; after approval freshly reconcile Live8188 or newer before one clone and both-origin hashes. Do not repeat completed tests unless source changes."
       },
-      "latest_release": "web_batch_20261118.wilma_recovery_release_20261118"
+      "latest_release": "web_batch_20261118.legacy_backend_release_20261118"
     },
     {
       "id": "gc-web-polish-20261007",
@@ -4785,7 +4849,7 @@
         "staging_cap_legacy_requests": 7,
         "staging_monthly_budget_eur": 20
       },
-      "next_action": "Actual synthetic historical-receipt Stage E2E with preserved fingerprint/history; backend patch still undeployed. Physical-device/native acceptance separate.",
+      "next_action": "Martin verifies physical devices and deliberately resumes any real old answers; no automatic paid replay or grade confirmation.",
       "semantic_preview": {
         "stage": "staging_deployed",
         "source": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
@@ -5127,8 +5191,8 @@
         "next_action": "Martin reloads gradecrew.de; physical device acceptance and separately owned Secure build; no further paid QA automatically",
         "verified_at": "2026-11-18T17:36:50.515413+00:00"
       },
-      "latest_release": "compact_controls_p1_20261118",
-      "root_release_fields_note": "Latest Hosting follow-up is student_result_actions_20261118; reviewWilmaAnswers remains recovery_release_20261118/d67b0b5. Historical backend repair remains undeployed.",
+      "latest_release": "legacy_backend_release_20261118",
+      "root_release_fields_note": "Latest Hosting is student_result_actions_20261118/f723; latest reviewWilmaAnswers is legacy_backend_release_20261118/f723. Earlier unreleased-backend statements are historical.",
       "compact_controls_p1_20261118": {
         "stage": "production",
         "scope": "Hosting only; Functions unchanged at d67b0b5",
@@ -5162,6 +5226,38 @@
         "synthetic_browser_journeys": 12,
         "functions_changed": 0,
         "native_release": "owner confirms TestFlight1.0(1313) upload; Apple availability/device acceptance pending; AppStore1293 unchanged"
+      },
+      "legacy_backend_release_20261118": {
+        "stage": "production",
+        "scope": "reviewWilmaAnswers source-only; Hosting unchanged",
+        "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+        "tree": "c877184464769428cc772d7dc4609993e49e13cc",
+        "pr": 438,
+        "ci_run": 44375566304,
+        "review": "PASS exact146-fileartifact and actual legacy E2E;noP0-P2",
+        "stage_backend_revision": "reviewwilmaanswers-00011-guf",
+        "live_backend_revision": "reviewwilmaanswers-00006-xub",
+        "hosting_unchanged": {
+          "stage": "e218924764139f91",
+          "live": "73a1e618cab1a0ba"
+        },
+        "source_archive_sha256": "6f87bff5b8ff527babdc10653b907409b463c1ad517f37ff2bc12f4b39a4e840",
+        "actual_legacy_case": "same completed operation/fingerprint, missing receipt reproduced, explicit1->2retry with preserved history",
+        "new_provider_calls": {
+          "staging": 1,
+          "live": 0
+        },
+        "usage_accounting_micros": {
+          "staging": 970,
+          "live": 0
+        },
+        "reserved_micros": 0,
+        "real_pupil_grade_writes": 0,
+        "free_reload": true,
+        "service_configuration_preserved": true,
+        "report": "docs/evidence/wilma-legacy-backend-20261118/receipt.json",
+        "physical_devices": "pending",
+        "verified_at": "2026-11-18T21:53:08.288838+00:00"
       }
     },
     {
@@ -5917,6 +6013,39 @@
       "backend_source_commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
       "outside_candidate_files_preserved": 447,
       "report": "docs/evidence/student-result-actions-20261118/receipt.json"
+    },
+    "wilma_legacy_backend_release_20261118": {
+      "stage": "staging_deployed",
+      "scope": "reviewWilmaAnswers source-only; Hosting unchanged",
+      "commit": "f723e71b1f91c17e39bb96f9e3eae4c6d5c9a450",
+      "tree": "c877184464769428cc772d7dc4609993e49e13cc",
+      "pr": 438,
+      "ci_run": 44375566304,
+      "review": "PASS exact146-fileartifact and actual legacy E2E;noP0-P2",
+      "stage_backend_revision": "reviewwilmaanswers-00011-guf",
+      "live_backend_revision": "reviewwilmaanswers-00006-xub",
+      "hosting_unchanged": {
+        "stage": "e218924764139f91",
+        "live": "73a1e618cab1a0ba"
+      },
+      "source_archive_sha256": "6f87bff5b8ff527babdc10653b907409b463c1ad517f37ff2bc12f4b39a4e840",
+      "actual_legacy_case": "same completed operation/fingerprint, missing receipt reproduced, explicit1->2retry with preserved history",
+      "new_provider_calls": {
+        "staging": 1,
+        "live": 0
+      },
+      "usage_accounting_micros": {
+        "staging": 970,
+        "live": 0
+      },
+      "reserved_micros": 0,
+      "real_pupil_grade_writes": 0,
+      "free_reload": true,
+      "service_configuration_preserved": true,
+      "report": "docs/evidence/wilma-legacy-backend-20261118/receipt.json",
+      "physical_devices": "pending",
+      "verified_at": "2026-11-18T21:53:08.288838+00:00",
+      "backend_revision": "reviewwilmaanswers-00011-guf"
     }
   },
   "school_release_20261018": {
