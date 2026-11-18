@@ -52,7 +52,7 @@ function compareFacts(expected,actual){
 }
 function checkFit(facts){
   const eligible=facts.positive===true&&(facts.relationship==='direct'&&facts.constantRate===true||
-    facts.relationship==='inverse'&&facts.constantWork===true&&facts.equalRate===true);
+    facts.relationship==='inverse'&&facts.constantWork===true);
   return {eligible,reason:eligible?'Die fachliche Beziehung ist belegt.':'Die Voraussetzungen eines einfachen Dreisatzes fehlen.'};
 }
 function equivalentOperation(from,to,op,factor){

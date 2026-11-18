@@ -26,7 +26,7 @@ function buildCandidate(plan,{id,modes=['factor','factor','factor','factor']}){
   return q;
 }
 function visibleProblem(q){
-  if(q.type==='single')return {title:q.heading,text:q.text,options:q.options.map(o=>o.text)};
+  if(q.type==='single')return {purpose:'format-selection',title:q.heading,text:q.text,options:q.options.map(o=>o.text)};
   const task=JSON.parse(q.visualTask);
   const shown=cell=>cell.input?'[offen]':cell.text;
   return {title:q.heading,text:q.text,columns:[task.spec.columns[2],task.spec.columns[3]],

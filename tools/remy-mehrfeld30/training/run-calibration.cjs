@@ -36,6 +36,18 @@ async function runCase(id){
 (async()=>{
   const mode=process.argv[2]||'status';
   if(mode==='init'){save('initial',await call({action:'trainingCreate',calibration:true}));}
+  else if(mode==='recheck'){
+    const state=await call({action:'trainingStatus',runId:RUN});
+    const requested=process.argv.slice(3);
+    for(const c of state.cases.filter(c=>requested.length?requested.includes(c.id):c.status==='rejected')){
+      const file=path.join(root,'recheck-'+c.id+'.json');
+      const receipt=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):
+        {caseId:c.id,requestId:randomUUID(),reason:'Korrigierte Beschreibung der tatsächlich sichtbaren freien Pfeilfelder und numerisches Prüferantwortformat, Quelle f20da23.'};
+      save('recheck-'+c.id,receipt);
+      const result=await call({action:'trainingRecheck',runId:RUN,...receipt});
+      console.log(c.id+' recheck '+result.revision);
+    }
+  }
   else if(mode==='run'){
     const ids=process.argv.slice(3);
     const chosen=ids.length?ids:cases.map(c=>c.id);

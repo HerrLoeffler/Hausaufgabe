@@ -21,7 +21,7 @@ test('format eligibility rejects additive, variable, insufficient and nonnumeric
   }
   assert.equal(checkFit({relationship:'direct',constantRate:true,positive:true}).eligible,true);
   assert.equal(checkFit({relationship:'inverse',constantWork:true,equalRate:true,positive:true}).eligible,true);
-  assert.equal(checkFit({relationship:'inverse',constantWork:true,positive:true}).eligible,false);
+  assert.equal(checkFit({relationship:'inverse',positive:true}).eligible,false);
 });
 test('all fifty independent arithmetic references are exact and the ten no-fit wishes remain separate',()=>{
   const {cases}=require('./cases.cjs');
@@ -34,4 +34,9 @@ test('all fifty independent arithmetic references are exact and the ten no-fit w
     assert.equal(solved.operations.length,4,c.id);
     assert.ok(Number(solved.result)>0,c.id);
   }
+});
+test('varying a stated rate against time needs a fixed total, not equal old and new rates',()=>{
+  assert.equal(checkFit({relationship:'inverse',constantWork:true,equalRate:false,positive:true}).eligible,true);
+  assert.equal(checkFit({relationship:'inverse',equalRate:true,positive:true}).eligible,false);
+  assert.equal(solve({kind:'inverse',a:'20',b:'15',c:'30'}).result,'10');
 });

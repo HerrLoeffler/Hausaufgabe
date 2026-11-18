@@ -165,7 +165,7 @@ async function repairCase({db,uid,data}){
     if(c.repairRequestId===data.requestId)return {status:c.status,attempt:c.attempt};
     if(c.status!=='rejected'||c.attempt>=3)throw new HttpsError('failed-precondition','Hier ist keine weitere automatische Nachbesserung vorgesehen.');
     tx.update(ref,{status:'pending',attempt:c.attempt+1,repairRequestId:data.requestId,
-      repairNotes:(c.errors||[]).join(' ').slice(0,1000),errors:[],q:null,plan:null});
+      repairNotes:(c.errors||[]).join(' ').slice(0,1000),errors:[],q:null,plan:null,judge:null,check:null});
     return {status:'pending',attempt:c.attempt+1};
   });
 }
@@ -179,12 +179,19 @@ async function recheckCase({db,uid,data}){
     const c=(await tx.get(ref)).data();
     if(!c)throw new HttpsError('not-found','Fall fehlt.');
     if(c.recheckRequestId===data.requestId)return {status:c.status,revision:c.checkRevision};
-    if(!c.plan||!c.q||!['ready','rejected'].includes(c.status)||(c.checkRevision||1)>=3)
+    if(!['ready','rejected'].includes(c.status)||(c.checkRevision||1)>=3)
       throw new HttpsError('failed-precondition','Keine weitere Prüfung dieser Fassung vorgesehen.');
+    let plan=c.plan,q=c.q;
+    if(!plan||!q){
+      const generation=(await tx.get(db.doc(runRef(db,run.id).path+'/providerCalls/'+c.id+'-a'+c.attempt+'-generate'))).data();
+      if(!generation?.response)throw new HttpsError('failed-precondition','Kein gespeicherter vollständiger Entwurf für eine technische Neuprüfung.');
+      plan=parseStructuredResponse(generation.response);
+      q=buildCandidate(plan,{id:c.id,modes:c.modes||plan.arrowModes});
+    }
     const revision=(c.checkRevision||1)+1;
     tx.set(db.doc(ref.path+'/rechecks/'+data.requestId),{reason:data.reason,previousStatus:c.status,
       previousCheck:c.check||null,previousJudge:c.judge||null,revision,at:now()});
-    tx.update(ref,{status:'generated',checkRevision:revision,recheckRequestId:data.requestId,errors:[]});
+    tx.update(ref,{status:'generated',plan,q,checkRevision:revision,recheckRequestId:data.requestId,errors:[]});
     return {status:'generated',revision};
   });
 }
@@ -201,7 +208,7 @@ async function resolveTraining({db,uid,quizId}){
   const stored=snap.docs.map(s=>s.data()).filter(c=>c.status==='ready'&&c.q);
   const order=new Map(cases.map((c,i)=>[c.id,i]));
   stored.sort((a,b)=>(order.get(a.id)??0)-(order.get(b.id)??0));
-  return {tasks:stored.map(c=>c.q),group:'training',runId:id,expected:run.expected};
+  return {tasks:stored.map(c=>({...c.q,shape:c.q.type==='single'?'Eignungsprobe zur Darstellung':'Dreisatz'})),group:'training',runId:id,expected:run.expected};
 }
 async function details({db,uid,data}){
   const run=await getRun(db,data.runId,uid);
