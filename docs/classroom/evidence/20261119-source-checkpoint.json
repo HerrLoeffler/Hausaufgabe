@@ -1,0 +1,18 @@
+{
+  "taskId": "GC-CLASSROOM-01",
+  "date": "2026-11-19",
+  "remoteProductCheckpoint": "484f48f39387d824aeeac88cb6fd3dc18c2d89ac",
+  "remoteBranch": "feature/classroom-integrated-preview-20261016",
+  "remoteTree": "1f91f2b869d3ac9136b09fe84abbc2b88d0574a8",
+  "localCheckpoint": "b3d40a1e18025f43ce41d5386a7ade35f88ec03e",
+  "treesIdentical": true,
+  "deployedSource": "2f662ee70e2bff8924b8fa1f0f4d3b7ddc3402aa",
+  "hostingVersion": "4916e09a92376424",
+  "githubCommitReadbackVerified": true,
+  "githubCiForCheckpoint": "not asserted; local tests and cloud source/public-byte verification in deployment receipt",
+  "remaining": [
+    "online CSV preview and confirmed import",
+    "explicit actual school binding and real multi-teacher/Secure acceptance"
+  ],
+  "productionChanged": false
+}
