@@ -92,6 +92,7 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
     return makeAudio(q);
   }
   if(data.action==='score'){
+    if(q.type==='notice')throw new HttpsError('failed-precondition','Diese Rückfrage oder Empfehlung ist keine benotbare Schüleraufgabe.');
     if(JSON.stringify(data.answer??null).length>5000)throw new HttpsError('invalid-argument','Die Eingabe ist zu lang.');
     return {points:score(q,data.answer),maxPoints:task.points};
   }

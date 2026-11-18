@@ -1,8 +1,9 @@
 'use strict';
 const {RUN}=require('./cases.cjs');
+const {GRAPH_RUN}=require('./graph-profile.cjs');
 const runRef=(db,id)=>db.doc('taskLearningRuns/'+id);
 function authorizeRun(run,uid){
-  return !!run&&!!uid&&(run.ownerId===uid||run.sharedPilot===true&&run.id===RUN&&run.ownerId==='gc-visual255-e2e');
+  return !!run&&!!uid&&(run.ownerId===uid||run.sharedPilot===true&&[RUN,GRAPH_RUN].includes(run.id)&&run.ownerId==='gc-visual255-e2e');
 }
 async function reserve(db,runId,stepId,amount){
   if(!Number.isSafeInteger(amount)||amount<=0)throw Error('Ungültige Kostenreservierung.');

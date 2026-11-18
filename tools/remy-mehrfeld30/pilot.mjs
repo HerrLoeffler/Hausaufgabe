@@ -6,6 +6,7 @@ import {firebaseConfig} from './firebase-config.js';
 import {mountRecipe} from './recipe-view.mjs';
 import {mountRhythm} from './rhythm-view.mjs';
 import {mountPitch} from './pitch-view.mjs';
+import {attachDictation} from './dictation.mjs';
 
 if(firebaseConfig.projectId!=='gradecrew-staging-2026')throw Error('Dieses Labor läuft nur im Testprojekt.');
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),fn=getFunctions(app,'europe-west1');
@@ -14,7 +15,7 @@ const start=async data=>(await httpsCallable(fn,'sequence28StartAiTestJob',{time
 const $=id=>document.getElementById(id);
 const message=text=>{$('status').textContent=text;};
 const ROUND_TWO='REMYRND2',ROUND_THREE='REMYRND3',ROUND_FOUR='REMYRND4',ROUND_FIVE='REMYRND5',MIXED='REMYMIX6';
-const TRAINING='training:dreisatz60-20261118-v1';
+const TRAINING='training:dreisatz60-20261118-v1',GRAPH='training:fields-arrows8-20261118-v1';
 const groupNames={direkt:'Direkter Dreisatz',umgekehrt:'Umgekehrter Dreisatz',physik:'Physik · Übergänge',gegenprobe:'Gegenprobe · Formatwahl',eigener:'Dein KI-Stapel'};
 let uid='',tasks=[],index=0,answer=null,renderer=null,stack='seed',expected=30,epoch=0,rating=false,watching=false;
 
@@ -26,6 +27,9 @@ function save(name,data){
   if(data===null)localStorage.removeItem(key(name));
   else localStorage.setItem(key(name),JSON.stringify(data));
 }
+const noteVoice=attachDictation({window,button:$('noteMic'),input:$('quickNote'),status:$('noteVoiceStatus'),instruction:'Grün oder Rot speichert deine Notiz.'});
+const wishVoice=attachDictation({window,button:$('wishMic'),input:$('mainWish'),status:$('wishVoiceStatus'),instruction:'Danach auf Mit KI erstellen klicken.'});
+$('quickNote').addEventListener('input',()=>{const task=tasks[index];if(task)save('note:'+task.version,$('quickNote').value);});
 function fields(task){return {quizId:task.quizId,id:task.id,version:task.version};}
 function mountDiagram(host,diagram){
   host.classList.add('flow-preview');
@@ -69,10 +73,11 @@ function mountDiagram(host,diagram){
         line.append(node);
       }
     }
-    (diagram.branchRoot&&pathIndex<2?branches:host).append(heading,line);
+    (diagram.branchRoot?branches:host).append(heading,line);
   }
 }
 function render(moveFocus=false){
+  noteVoice.cancel();
   renderer?.destroy?.();
   renderer=null;
   const old=$('answer'),host=old.cloneNode(false);
@@ -87,6 +92,9 @@ function render(moveFocus=false){
   const task=tasks[index];
   $('review').hidden=!task;
   if(!task)return;
+  $('quickNote').value=saved('note:'+task.version)??task.review?.comment??'';
+  $('noteVoiceStatus').textContent='';
+  $('scoreButton').hidden=!!task.notice;
   answer=null;
   const rated=tasks.filter(t=>t.review).length;
   $('group').textContent=task.subject?[task.subject,task.shape].filter(Boolean).join(' · '):(groupNames[task.group]||task.group);
@@ -106,7 +114,7 @@ function render(moveFocus=false){
   else if(task.recipe)mountRecipe(host,task.recipe,value=>{answer=value;});
   else if(task.diagram)mountDiagram(host,task.diagram);
   else if(task.visual)renderer=globalThis.GCRenderer.mount(host,task.visual,null,{onAnswer:value=>{answer=value;}});
-  else task.options.forEach((text,i)=>{
+  else if(!task.notice)task.options.forEach((text,i)=>{
     const label=document.createElement('label'),radio=document.createElement('input');
     label.className='choice';
     radio.type='radio';radio.name='answer';
@@ -117,6 +125,7 @@ function render(moveFocus=false){
   if(moveFocus)$('position').focus();
 }
 async function load(quizId=null){
+  noteVoice.cancel();
   const requestEpoch=++epoch,owner=uid;
   renderer?.destroy?.();
   renderer=null;
@@ -168,6 +177,7 @@ async function rate(verdict,reason='',comment=''){
     save('pending-rating',null);
     if(epoch!==view)return;
     task.review=result.rating;
+    save('note:'+task.version,null);
     rating=false;
     if(index+1<tasks.length)step(index+1);
     else render();
@@ -183,8 +193,14 @@ async function rate(verdict,reason='',comment=''){
 }
 $('prev').onclick=()=>step(index-1);
 $('next').onclick=()=>step(index+1);
-$('good').onclick=()=>rate('good');
-$('bad').onclick=()=>{$('feedback').hidden=false;$('feedback').elements.reason.focus();};
+async function quickRate(verdict){
+  const task=tasks[index],owner=uid;
+  await noteVoice.stop();
+  if(uid!==owner||tasks[index]!==task)return;
+  return rate(verdict,'',$('quickNote').value.trim());
+}
+$('good').onclick=()=>quickRate('good');
+$('bad').onclick=()=>quickRate('bad');
 $('cancel').onclick=()=>{$('feedback').hidden=true;$('bad').focus();};
 $('feedback').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);void rate('bad',f.get('reason'),f.get('comment'));};
 $('scoreButton').onclick=async()=>{
@@ -317,7 +333,7 @@ async function runTraining(){
   output.textContent='Remy erstellt den Entwurf …';
   try{
     if(!job.runId){
-      const result=await api({action:'trainingCreate',requestId:job.requestId,wish:job.wish});
+      const result=await api({action:'trainingCreate',requestId:job.requestId,wish:job.wish,...(job.family?{family:job.family}:{})});
       if(uid!==owner)return;
       job={...job,runId:result.runId};save('training-job',job);
     }
@@ -357,15 +373,17 @@ async function runTraining(){
     }
   }
 }
-$('trainingWish').onsubmit=e=>{
+$('trainingWish').onsubmit=async e=>{
   e.preventDefault();
+  const owner=uid;await wishVoice.stop();if(uid!==owner)return;
   if(!uid||saved('training-job'))return;
   const wish=String(new FormData(e.target).get('wish')||'').trim();
   if(wish.length<8)return;
-  save('training-job',{requestId:crypto.randomUUID(),wish});void runTraining();
+  save('training-job',{requestId:crypto.randomUUID(),wish,family:'fields-arrows'});void runTraining();
 };
 $('trainingResume').onclick=()=>runTraining();
 $('trainingDeck').onclick=()=>load(TRAINING);
+$('graphDeck').onclick=()=>load(GRAPH);
 $('trainingLast').onclick=()=>load(saved('last-training'));
 $('trainingDetails').onclick=async()=>{
   const task=tasks[index],owner=uid;
@@ -376,7 +394,7 @@ $('trainingDetails').onclick=async()=>{
     const result=await api({action:'trainingDetails',runId:stack.slice('training:'.length),caseId:task.id});
     if(uid!==owner||tasks[index]!==task)return;
     report.replaceChildren();
-    const labels={direct:'Direkter Dreisatz',inverse:'Umgekehrter Dreisatz',other:'Andere Darstellung',clarify:'Rückfrage erforderlich'};
+    const labels={direct:'Direkter Dreisatz',inverse:'Umgekehrter Dreisatz',other:'Andere Darstellung',clarify:'Rückfrage erforderlich',chain:'Ablauf oder Umformung',branch:'Verzweigung',mapping:'Gerichtete Zuordnung',decline:'Andere Lernhandlung empfohlen'};
     for(const text of [labels[result.decision],result.reason,result.independentCheck,result.solutionNote||'']){
       const p=document.createElement('p');p.textContent=text;report.append(p);
     }
@@ -388,7 +406,7 @@ $('trainingDetails').onclick=async()=>{
   }catch{if(uid===owner&&tasks[index]===task)report.textContent='Prüfbericht konnte gerade nicht geladen werden.';}
 };
 onAuthStateChanged(auth,async user=>{
-  epoch++;uid=user?.uid||'';tasks=[];render();message('');
+  wishVoice.cancel();epoch++;uid=user?.uid||'';tasks=[];render();message('');
   $('login').hidden=!!uid;$('workspace').hidden=!uid;
   if(!uid)return;
   const owner=uid;
@@ -409,9 +427,9 @@ onAuthStateChanged(auth,async user=>{
   }
   if(uid!==owner)return;
   const previous=saved('stack');
-  const showNewRound=!saved('seen-round-two')&&(!previous||previous==='seed');
-  if(showNewRound)save('seen-round-two',true);
-  await load(showNewRound?ROUND_TWO:previous&&previous!=='seed'?previous:null);
+  const showGraph=!saved('seen-fields-arrows');
+  if(showGraph)save('seen-fields-arrows',true);
+  await load(showGraph?GRAPH:previous&&previous!=='seed'?previous:null);
   if(uid!==owner)return;
   if(saved('job')?.id)void watch();
 });

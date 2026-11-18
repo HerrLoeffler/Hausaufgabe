@@ -29,6 +29,7 @@ test('the actual free-wish UI dispatches creation and blind check, then opens a 
     onAuthStateChanged:(_a,callback)=>{init=callback({uid:'synthetic'});},firebaseConfig:{projectId:'gradecrew-staging-2026'},
     mountRecipe:view('recipe-view.mjs','mountRecipe'),mountRhythm:view('rhythm-view.mjs','mountRhythm',view('recipe-view.mjs','note')),
     mountPitch:view('pitch-view.mjs','mountPitch')};
+  env.window=window;env.attachDictation=new Function(read('dictation.mjs').replace('export function','function')+'\nreturn attachDictation;')();
   new Function(...Object.keys(env),read('pilot.mjs').replace(/^import .*;$/gm,''))(...Object.values(env));
   await init;
   const $=id=>document.getElementById(id);
@@ -65,6 +66,7 @@ test('the free-wish UI resumes a bounded repair after an uncertain transport res
       return {data:{tasks:data.quizId===q.quizId?[q]:[],expected:1}};
     },
     onAuthStateChanged:(_a,callback)=>{init=callback({uid:'synthetic'});},firebaseConfig:{projectId:'gradecrew-staging-2026'}};
+  env.window=window;env.attachDictation=new Function(read('dictation.mjs').replace('export function','function')+'\nreturn attachDictation;')();
   new Function(...Object.keys(env),read('pilot.mjs').replace(/^import .*;$/gm,''))(...Object.values(env));
   await init;
   const $=id=>document.getElementById(id);

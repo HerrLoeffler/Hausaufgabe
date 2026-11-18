@@ -127,3 +127,42 @@ test('a corrected blind projection can recheck the same generated version once p
   assert.ok([...db.docs.keys()].some(p=>p.includes('/providerCalls/')&&p.endsWith('judge-r2')));
   assert.ok([...db.docs.keys()].some(p=>p.includes('/rechecks/')));
 });
+test('the same stored runner creates the eight mixed wishes and their independent graph profile',async()=>{
+  const {GRAPH_RUN,GRAPH_VERSION}=require('./graph.cjs');
+  const db=new TestDatabase();
+  const run=await createRun({db,uid,data:{calibration:true,family:'fields-arrows'}});
+  assert.equal(run.runId,GRAPH_RUN);
+  const state=await status({db,uid,data:{runId:run.runId}});
+  assert.equal(state.expected,8);
+  assert.equal(db.docs.get('taskLearningRuns/'+run.runId).recipeVersion,GRAPH_VERSION);
+  assert.equal(db.docs.get('taskLearningRuns/'+run.runId).limitMicros,1000000);
+});
+
+test('shared graph runner blind-checks English fields, keeps feedback versioned and can ask rather than fabricate a scored task',async()=>{
+  const db=new TestDatabase();
+  const p={kind:'chain',title:'Verbformen',subject:'Englisch',text:'Ergänze die Simple-Past-Form von go.',reason:'Verb umformen.',
+    paths:[{title:'Verb',steps:[{type:'text',text:'go'},{type:'arrow',text:'Simple Past'},{type:'field',fieldId:'past'}]}],
+    fields:[{id:'past',label:'Simple Past',mode:'text',options:[],accepted:['went'],calculation:{op:'none',left:'',right:''}}]};
+  const j={kind:'chain',matchesWish:true,appropriate:true,unambiguous:true,leaksAnswer:false,answers:[{id:'past',value:'went'}],links:[]};
+  const run=await createRun({db,uid,data:{family:'fields-arrows',requestId:'00000000-0000-4000-8000-000000000021',wish:'Englisch: Simple Past von go selbst eintragen.'}});
+  let calls=0;
+  const client={responses:{create:async request=>{
+    calls++;const input=JSON.parse(request.input[1].content);
+    if(calls===2){assert.doesNotMatch(JSON.stringify(input),/"accepted"|"solution"/);assert.ok(input.studentView.fields);}
+    return {status:'completed',output_text:JSON.stringify(calls===1?p:j),usage:{input_tokens:10,output_tokens:10}};
+  }}};
+  for(let i=0;i<2;i++)await stepCase({db,uid,data:{runId:run.runId,caseId:'wish'},client});
+  const q=(await resolveTraining({db,uid,quizId:run.quizId})).tasks[0];assert.equal(q.type,'diagram');
+  const version=present(run.quizId,'training',q).version;
+  await recordTrainingFeedback({db,uid,quizId:run.quizId,q,data:{eventId:'00000000-0000-4000-8000-000000000022',version,verdict:'bad',comment:'Bitte mehr Platz für die Antwort.'}});
+  const example=[...db.docs.values()].find(x=>x.humanVerdict==='bad');
+  assert.equal(example.taskVersion,version);assert.equal(example.blueprint.fields[0].accepted[0],'went');
+  const run2=await createRun({db,uid,data:{family:'fields-arrows',requestId:'00000000-0000-4000-8000-000000000023',wish:'Welche Zuordnung soll es sein?'}});
+  let seen;
+  const notice={kind:'clarify',title:'Eine Rückfrage',subject:'Allgemein',text:'Welche Inhalte möchtest du zuordnen lassen?',reason:'Ziel fehlt.'};
+  const next={responses:{create:async request=>{seen=JSON.parse(request.input[1].content);return {status:'completed',output_text:JSON.stringify(request.model==='gpt-6-luna'?notice:{...j,kind:'clarify',answers:[]}),usage:{input_tokens:10,output_tokens:10}};}}};
+  await stepCase({db,uid,data:{runId:run2.runId,caseId:'wish'},client:next});
+  assert.equal(seen.teacherExamples[0].structure.fields[0].id,'past');
+  await stepCase({db,uid,data:{runId:run2.runId,caseId:'wish'},client:next});
+  const n=(await resolveTraining({db,uid,quizId:run2.quizId})).tasks[0];assert.equal(n.type,'notice');assert.equal(n.points,0);
+});

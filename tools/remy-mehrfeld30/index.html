@@ -17,19 +17,18 @@
   <button>Anmelden</button>
 </form>
 <div id="workspace" hidden>
-  <div class="bar"><button id="mixed">Kreativmix · 30 Aufgaben</button><button id="roundFive" class="secondary">Runde 5 · Tonhöhen setzen</button><button id="roundFour" class="secondary">Runde 4 · Rhythmus hören</button><button id="roundThree" class="secondary">Runde 3 · Quellen, Labyrinth, Noten</button><button id="roundTwo" class="secondary">Runde 2 · 12 neue Ideen</button><button id="seed" class="secondary">Runde 1 · 30 KI-Aufgaben</button><button id="last" class="secondary" hidden>Eigener Stapel</button><button id="logout" class="secondary">Abmelden</button></div>
-  <details id="trainingPanel" open>
-    <summary>Mathematik · Dreisatz mit KI erproben</summary>
-    <p>Hier erzeugt Remy mathematische Dreisatzaufgaben mit Rechenpfeilen. Die Eignungsprüfung erkennt Grundgebühren, andere Zusammenhänge und fehlende Angaben. Solche Wünsche erscheinen in diesem Pilot als Eignungsprobe.</p>
-    <div class="bar"><button type="button" id="trainingDeck">60 KI-Erprobungen öffnen</button><button type="button" id="trainingLast" class="secondary" hidden>Meine letzte Erprobung</button></div>
+  <section id="trainingPanel">
+    <h2>Felder und Pfeile</h2>
     <form id="trainingWish">
-      <label>Dein mathematischer Dreisatz-Auftrag<textarea name="wish" rows="3" minlength="8" maxlength="1000" required placeholder="Zum Beispiel: Drei gleich schnelle Drucker brauchen für denselben Auftrag 24 Minuten. Wie lange brauchen acht? Mit Rechenpfeilen."></textarea></label>
-      <p>Aufgaben, Auswahlgründe und deine Rückmeldungen werden im Testfundus gespeichert. Eigene Wünsche sind zunächst nur für dein Testkonto verfügbar.</p>
-      <button id="trainingGenerate">Mit KI erstellen und prüfen</button>
-      <button type="button" id="trainingResume" class="secondary" hidden>Gespeicherten Auftrag prüfen</button>
-      <p id="trainingStatus" role="status"></p>
+      <label>Was soll deine Klasse üben?<textarea name="wish" id="mainWish" rows="3" minlength="8" maxlength="1000" required placeholder="Zum Beispiel: Englisch, Klasse 6 – drei Verben ins Simple Past umformen. Oder einen Reflexbogen in Biologie ergänzen."></textarea></label>
+      <div class="bar"><button id="trainingGenerate">Mit KI erstellen</button><button type="button" id="wishMic" class="secondary">🎙 Wunsch sprechen</button><button type="button" id="trainingResume" class="secondary" hidden>Gespeicherten Auftrag prüfen</button></div>
+      <p id="wishVoiceStatus" role="status"></p><p id="trainingStatus" role="status"></p>
     </form>
-  </details>
+    <div class="bar"><button type="button" id="graphDeck" class="secondary">8 Beispiele ausprobieren</button><button type="button" id="trainingLast" class="secondary" hidden>Meine letzte Aufgabe</button><button id="logout" class="secondary">Abmelden</button></div>
+  </section>
+  <details id="archive"><summary>Frühere Versuche</summary>
+  <div class="bar"><button id="mixed">Kreativmix · 30 Aufgaben</button><button id="roundFive" class="secondary">Runde 5 · Tonhöhen setzen</button><button id="roundFour" class="secondary">Runde 4 · Rhythmus hören</button><button id="roundThree" class="secondary">Runde 3 · Quellen, Labyrinth, Noten</button><button id="roundTwo" class="secondary">Runde 2 · 12 neue Ideen</button><button id="seed" class="secondary">Runde 1 · 30 KI-Aufgaben</button><button id="last" class="secondary" hidden>Eigener Stapel</button></div>
+  <div class="bar"><button type="button" id="trainingDeck" class="secondary">60 Dreisatz-Erprobungen öffnen</button></div>
   <details id="recipePanel">
     <summary>Weitere Erprobungen · Quellen, Labyrinth und Musik</summary>
     <form id="recipeWish">
@@ -52,6 +51,7 @@
       <button type="button" id="resume" class="secondary" hidden>Auftrag erneut prüfen</button>
     </form>
   </details>
+  </details>
   <section id="review" hidden>
     <div class="bar split"><div><p class="eyebrow" id="group"></p><h2 id="position" tabindex="-1"></h2></div><span id="progress"></span></div>
     <progress id="meter" max="30" value="0" aria-label="Bereits gesichtete Aufgaben"></progress>
@@ -61,7 +61,10 @@
     <div id="answer" class="gc-visual renderer"></div>
     <div id="trainingExplain" hidden><button type="button" class="secondary" id="trainingDetails">Auswahlgrund und Lösung zeigen</button><div id="trainingReport" class="training-report" hidden></div></div>
     <div class="bar"><button class="secondary" id="scoreButton">Probe auswerten</button><span id="score" role="status"></span></div>
-    <div class="bar"><button class="good" id="good">🙂 Gut</button><button class="bad" id="bad">🙁 Überarbeiten</button><span id="verdict"></span></div>
+    <label>Deine Notiz (freiwillig)<textarea id="quickNote" rows="2" maxlength="500" placeholder="Was passt gut? Was sollen wir verbessern?"></textarea></label>
+    <button type="button" id="noteMic" class="secondary">🎙 Notiz sprechen</button><p id="noteVoiceStatus" role="status"></p>
+    <div class="bar"><button class="good" id="good">🟢 Gut</button><button class="bad" id="bad">🔴 Verbessern</button><span id="verdict"></span></div>
+    <p class="feedback-help">Grün oder Rot speichert deine Rückmeldung mit der Notiz und öffnet die nächste Aufgabe. Das Browserdiktat kann einen Sprachdienst deines Browsers nutzen. Im Lernfundus speichern wir nur den erkannten Text.</p>
     <form id="feedback" hidden>
       <label>Was passt nicht? <select name="reason">
         <option value="">Ohne Grund</option><option value="format">Falsches Format</option><option value="fachlich">Fachlicher Fehler</option>

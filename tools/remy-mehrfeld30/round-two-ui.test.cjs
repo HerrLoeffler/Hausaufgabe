@@ -39,6 +39,7 @@ test('all twelve round-two tasks reach the callable from the actual UI with full
     initializeApp:()=>app,getAuth:()=>({}),getFirestore:()=>({}),getFunctions,httpsCallable,
     onAuthStateChanged:(_auth,callback)=>{init=callback({uid:'synthetic'});},
     firebaseConfig:{projectId:'gradecrew-staging-2026'}};
+  env.window=window;env.attachDictation=new Function(read('dictation.mjs').replace('export function','function')+'\nreturn attachDictation;')();
   new Function(...Object.keys(env),read('pilot.mjs').replace(/^import .*;$/gm,''))(...Object.values(env));
   await init;
   const $=id=>document.getElementById(id);

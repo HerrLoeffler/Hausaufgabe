@@ -26,6 +26,7 @@ test('the Kreativlabor jumps directly to every mixed task with its real interact
     onAuthStateChanged:(_auth,callback)=>{init=callback({uid:'synthetic'});},
     mountRecipe:view('recipe-view.mjs','mountRecipe'),mountRhythm:view('rhythm-view.mjs','mountRhythm',view('recipe-view.mjs','note')),
     mountPitch:view('pitch-view.mjs','mountPitch'),firebaseConfig:{projectId:'gradecrew-staging-2026'}};
+  env.window=window;env.attachDictation=new Function(read('dictation.mjs').replace('export function','function')+'\nreturn attachDictation;')();
   new Function(...Object.keys(env),read('pilot.mjs').replace(/^import .*;$/gm,''))(...Object.values(env));
   await init;
   const $=id=>document.getElementById(id);

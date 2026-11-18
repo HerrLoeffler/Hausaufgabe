@@ -31,7 +31,7 @@ await fs.mkdir(path.join(backend,'tools/remy-mehrfeld30'),{recursive:true});
 await fs.mkdir(path.join(backend,'functions/lib/visual'),{recursive:true});
 await fs.mkdir(path.join(backend,'tools/remy-mehrfeld30/training'),{recursive:true});
 const copy=(source,target)=>fs.copyFile(path.join(root,source),target);
-for(const name of ['index.html','pilot.css','pilot.mjs','recipe-view.mjs','rhythm-view.mjs','pitch-view.mjs'])await copy('tools/remy-mehrfeld30/'+name,path.join(ui,name));
+for(const name of ['index.html','pilot.css','pilot.mjs','dictation.mjs','recipe-view.mjs','rhythm-view.mjs','pitch-view.mjs'])await copy('tools/remy-mehrfeld30/'+name,path.join(ui,name));
 for(const name of ['visual.css','core.js','legacy-core.js','renderers.js','sequence-illustrations.js'])await copy('visual/'+name,path.join(ui,'visual',name));
 const renderer=path.join(ui,'visual/renderers.js');
 await fs.writeFile(renderer,(await fs.readFile(renderer,'utf8')).replace('/visual/assets/cosmos-botanical-v1.png','./visual/assets/cosmos-botanical-v1.png'));
@@ -39,7 +39,7 @@ await fs.mkdir(path.join(ui,'visual/assets'));
 await copy('visual/assets/cosmos-botanical-v1.png',path.join(ui,'visual/assets/cosmos-botanical-v1.png'));
 await copy('firebase-config.staging.js',path.join(ui,'firebase-config.js'));
 for(const name of ['server.cjs','review.cjs','round-two.cjs','recipe-three.cjs','generate-three.cjs','rhythm.cjs','pitch.cjs','mix.cjs'])await copy('tools/remy-mehrfeld30/'+name,path.join(backend,'tools/remy-mehrfeld30',name));
-for(const name of ['oracle.cjs','cases.cjs','builder.cjs','checker.cjs','prompts.cjs','store.cjs','runner.cjs','scoring.cjs'])await copy('tools/remy-mehrfeld30/training/'+name,path.join(backend,'tools/remy-mehrfeld30/training',name));
+for(const name of ['oracle.cjs','cases.cjs','builder.cjs','checker.cjs','prompts.cjs','store.cjs','runner.cjs','scoring.cjs','graph.cjs','graph-profile.cjs'])await copy('tools/remy-mehrfeld30/training/'+name,path.join(backend,'tools/remy-mehrfeld30/training',name));
 for(const name of ['visual-task.js','structured-response.js','constants.js'])await copy('functions/lib/'+name,path.join(backend,'functions/lib',name));
 for(const name of ['core.js','legacy-core.js','dreisatz-builder.js'])await copy('functions/lib/visual/'+name,path.join(backend,'functions/lib/visual',name));
 const json=(file,value)=>fs.writeFile(file,JSON.stringify(value,null,2)+'\n');
@@ -52,6 +52,6 @@ await json(path.join(dest,'firebase.json'),{
     redirects:[{source:'/',destination:'/remy-labor/',type:302}]},
   functions:[{source:'functions',codebase:'remy-mehrfeld30',runtime:'nodejs22',ignore:['node_modules','.git']}]
 });
-const files=['index.html','pilot.css','pilot.mjs','recipe-view.mjs','rhythm-view.mjs','pitch-view.mjs','firebase-config.js','visual/visual.css','visual/core.js','visual/legacy-core.js','visual/renderers.js','visual/sequence-illustrations.js','visual/assets/cosmos-botanical-v1.png'];
+const files=['index.html','pilot.css','pilot.mjs','dictation.mjs','recipe-view.mjs','rhythm-view.mjs','pitch-view.mjs','firebase-config.js','visual/visual.css','visual/core.js','visual/legacy-core.js','visual/renderers.js','visual/sequence-illustrations.js','visual/assets/cosmos-botanical-v1.png'];
 await json(path.join(dest,'hosting-hashes.json'),Object.fromEntries(await Promise.all(files.map(async file=>[file,createHash('sha256').update(await fs.readFile(path.join(ui,file))).digest('hex')]))));
 console.log('Preview nur für gradecrew-staging-2026 · '+seed.length+' gebundene Gruppen');

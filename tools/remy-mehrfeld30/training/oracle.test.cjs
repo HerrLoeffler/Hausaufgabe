@@ -40,3 +40,10 @@ test('varying a stated rate against time needs a fixed total, not equal old and 
   assert.equal(checkFit({relationship:'inverse',equalRate:true,positive:true}).eligible,false);
   assert.equal(solve({kind:'inverse',a:'20',b:'15',c:'30'}).result,'10');
 });
+test('binary field calculations handle negative results and reject division by zero without floating point drift',()=>{
+ const {calculateBinary}=require('./oracle.cjs');
+ assert.equal(calculateBinary({op:'subtract',left:'2',right:'7'}),'-5');
+ assert.equal(calculateBinary({op:'multiply',left:'-0.2',right:'3'}),'-0.6');
+ assert.equal(calculateBinary({op:'divide',left:'1',right:'4'}),'0.25');
+ assert.throws(()=>calculateBinary({op:'divide',left:'1',right:'0'}));
+});

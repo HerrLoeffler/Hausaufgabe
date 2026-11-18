@@ -27,6 +27,7 @@ function ownsSeedJob(job,entry){
 }
 function present(quizId,group,q){
   const points=Number(q.points);
+  if(q.type==='notice')return {quizId,group,id:q.id,type:'notice',text:q.text,points:0,heading:q.heading,subject:q.subject,notice:q.notice,options:[],version:digest([quizId,q])};
   if(q.type==='pitch')return {quizId,group,id:q.id,type:q.type,text:q.text,points,heading:q.heading,subject:q.subject,pitch:publicPitch(q),options:[],version:digest([quizId,q])};
   if(q.type==='rhythm')return {quizId,group,id:q.id,type:q.type,text:q.text,points,heading:q.heading,subject:q.subject,rhythm:publicRhythm(q),options:[],version:digest([quizId,q])};
   if(q.type==='recipe')return {quizId,group,id:q.id,type:q.type,text:q.text,points,heading:q.heading,subject:q.subject,recipe:publicRecipe(q),options:[],version:digest([quizId,q])};
@@ -46,6 +47,7 @@ function feedback(task,data){
   return {version:task.version,verdict:data.verdict,reason:data.reason??'',comment:(data.comment??'').trim()};
 }
 function score(q,answer){
+  if(q.type==='notice')return 0;
   if(q.type==='pitch')return scorePitch(q,answer);
   if(q.type==='rhythm')return scoreRhythm(q,answer);
   if(q.type==='recipe')return scoreRecipe(q,answer);

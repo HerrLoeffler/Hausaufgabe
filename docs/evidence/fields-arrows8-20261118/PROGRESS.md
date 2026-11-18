@@ -1,0 +1,20 @@
+# GC-EXTENDED-QUESTION-TYPES-01 · gemeinsamer Felder-und-Pfeile-Einstieg
+
+Auftrag 18.11.2026. Bestehender Fachchat, Link unbekannt, bestehender isolierter Checkout feature/remy-mehrfeld30-20261109. Basis 1f87585 lokal, PR419 0b6d4a6, Dokumentations-PR418 f2c5ea3. Erfolgreicher Development Status 44346330053. START_HERE und verlinkte Regeln frisch gelesen.
+
+Ziel. Ein KI-Eingang erzeugt geeignete Dreisatz-, Ketten-, Verzweigungs- und Zuordnungsaufgaben. Acht echte gemischte Wünsche. Rückmeldung Grün/Rot mit optionaler Sprachnotiz, vorhandene Bereiche eingeklappt. Nur bestehender Testkanal und eine vorhandene Testfunction.
+
+Plan.
+1. Gemeinsamen Aufgabenvertrag mit vorhandenen Diagramm-/Dreisatz-/Verbindungsbausteinen und unabhängiger Prüfung implementieren.
+2. Versionierte Graph-Rezeptfamilie im vorhandenen taskLearning-Fundus, Budgets und gespeicherte Providerphasen wiederverwenden.
+3. Oberfläche auf einen Hauptauftrag und Grün/Rot/optionale Notiz reduzieren. Browserdiktat mit stop-/permission-/unsupported-Zuständen, ausschließlich Text speichern.
+4. Acht gemischte echte KI-Wünsche plus Server-/Browser-/Feedbacknachweis. Fehler vor Abschluss korrigieren, bisherige Aufträge und Historie erhalten.
+
+Ruling. Browserdiktat wie im bestehenden Emmi-Prinzip. Keine separate Audioablage und kein neuer Transkriptionsanbieter. Je nach Browser muss Mikrofonzugriff erlaubt sein; echte physische Spracherkennung wird getrennt von simulierten Ereignistests ausgewiesen.
+Ruling. Sechs Wünsche erzeugen Fachaufgaben; ein unbestimmter Wunsch bekommt eine konkrete Rückfrage, ein ungeeignetes offenes Lernziel einen begründeten Verzicht. Diese beiden Nachrichten werden nicht als erfolgreich erzeugte benotbare Aufgaben gezählt.
+Budget. Höchstens 1 USD Modellkosten für die feste Achterserie, maximal zwei Reparaturen pro Fall. Eigene neue Graph-Wünsche erhalten separate begrenzte Einzelbudgets und bleiben an den Eigentümer gebunden.
+Requested komplexe Umsetzung Sol/medium nach Projektregeln, actual Runtime-Modell/Aufwand unknown. Providerwahl im isolierten Pilot zunächst bestehende GPT-6-Luna-Erzeugung und getrennte GPT-6.2-Sol-Blindprüfung. Keine Productionfreigabe.
+
+Nächster Schritt. Tests des gemeinsamen Vertrags und der Auswahl vor Implementierung.
+
+Zwischenstand. Gemeinsamer Graph-Vertrag, versionierter Runner, unabhängige Zahlenrechnung, echter Blindcheck ohne privaten Schlüssel, unbenotete Rückfragen und Ablehnung implementiert. Oberfläche hat einen KI-Eingang; Altversuche eingeklappt. Grün/Rot speichert optionale Notiz an exakte Version; Browserdiktat stoppt vor Speichern und ignoriert späte Ereignisse nach Aufgabenwechsel. 56/56 lokale Tests grün, darunter alte Stapel, Reparatur-Idempotenz, englischer Runner und Feedbackabruf. Frische unabhängige Gesamtprüfung läuft. Noch keine neuen bezahlten Aufrufe; nächster Schritt eng begrenztes Testdeploy und Achterserie.

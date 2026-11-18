@@ -57,7 +57,8 @@ test('free wish button submits the teacher text and reuses its request after an 
         if(calls.length===1)throw Error('Verbindung unterbrochen');
         return {data:{status:'ready',quizId}};
       }};
-    new Function(...Object.keys(env),read('pilot.mjs').replace(/^import .*;$/gm,''))(...Object.values(env));
+    env.window=window;env.attachDictation=new Function(read('dictation.mjs').replace('export function','function')+'\nreturn attachDictation;')();
+  new Function(...Object.keys(env),read('pilot.mjs').replace(/^import .*;$/gm,''))(...Object.values(env));
     await init;
     const form=document.getElementById('recipeWish'),wish='Ein 3/4-Takt mit einer fehlenden Note';
     form.elements.wish.value=wish;

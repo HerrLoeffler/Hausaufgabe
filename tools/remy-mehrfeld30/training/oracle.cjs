@@ -22,8 +22,8 @@ function decimal(a){
   let digits=0n,unit=1n;
   while(unit%a.d!==0n&&digits<6n){unit*=10n;digits++;}
   if(unit%a.d!==0n)throw Error('Dieser Wert benötigt eine ausdrücklich festgelegte Rundung.');
-  const scaled=a.n*unit/a.d,raw=scaled.toString().padStart(Number(digits)+1,'0');
-  return digits?raw.slice(0,-Number(digits))+'.'+raw.slice(-Number(digits)).replace(/0+$/,'')||'0':raw;
+  const scaled=(a.n<0n?-a.n:a.n)*unit/a.d,raw=scaled.toString().padStart(Number(digits)+1,'0');
+  return (a.n<0n?'-':'')+(digits?raw.slice(0,-Number(digits))+'.'+raw.slice(-Number(digits)).replace(/0+$/,''):raw);
 }
 function solve({kind,a,b,c}){
   if(!['direct','inverse'].includes(kind))throw Error('Keine proportionale Beziehung.');
@@ -73,4 +73,17 @@ function equivalentOperation(from,to,op,factor){
     return result.n*b.d===b.n*result.d;
   }catch{return false;}
 }
-module.exports={solve,compareFacts,checkFit,equivalentOperation,valuesAtPivot};
+function calculateBinary({op,left,right}){
+  const number=value=>{
+    const text=String(value).trim().replace(',','.');
+    const negative=text.startsWith('-'),q=parse(negative?text.slice(1):text);
+    return negative?rational(-q.n,q.d):q;
+  };
+  const a=number(left),b=number(right);
+  if(op==='multiply')return decimal(multiply(a,b));
+  if(op==='divide')return decimal(divide(a,b));
+  if(op==='add')return decimal(rational(a.n*b.d+b.n*a.d,a.d*b.d));
+  if(op==='subtract')return decimal(rational(a.n*b.d-b.n*a.d,a.d*b.d));
+  throw Error('Rechenoperation fehlt.');
+}
+module.exports={calculateBinary,solve,compareFacts,checkFit,equivalentOperation,valuesAtPivot};
