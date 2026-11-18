@@ -15,19 +15,26 @@ import SwiftUI
         window.isHidden=true;window.rootViewController=nil
     }
     func testPhoneChromeLeavesRoomForTheExam() async throws {
-        for remaining in [300,Int?.none] {
+        for width in [320.0,375.0,430.0] { for textSize in [DynamicTypeSize.large,.accessibility3] { for remaining in [300,Int?.none] {
             var samples:[String:SecureLayoutSample]=[:]
             let content=SecureExamFrame(header:SecureExamHeader(title:String(repeating:"Langer Testtitel ",count:10),participant:"Testkürzel",remaining:remaining),footer:SecureExamFooter(storageStatus:"Auf diesem Gerät gesichert",warning:nil,canSubmit:true,onSubmit:{})) {
                 SecureTheme.canvas.secureMeasure("exam.content")
-            }.environment(\.dynamicTypeSize,.large).coordinateSpace(name:"secureLayout").onPreferenceChange(SecureLayoutSamples.self) { samples=$0 }
-            let host=UIHostingController(rootView:content),window=UIWindow(frame:CGRect(x:0,y:0,width:375,height:667))
+            }.environment(\.dynamicTypeSize,textSize).coordinateSpace(name:"secureLayout").onPreferenceChange(SecureLayoutSamples.self) { samples=$0 }
+            let host=UIHostingController(rootView:content),window=UIWindow(frame:CGRect(x:0,y:0,width:width,height:667))
             window.rootViewController=host;window.makeKeyAndVisible();host.view.frame=window.bounds;host.view.layoutIfNeeded()
             try await Task.sleep(nanoseconds:200_000_000)
             let header=try XCTUnwrap(samples["exam.header"]),exam=try XCTUnwrap(samples["exam.content"])
-            XCTAssertLessThanOrEqual(header.frame.height,64,"Phone title and clock must use a single compact row")
-            XCTAssertGreaterThanOrEqual(exam.frame.height,480,"Keep the available phone area for the exam")
+            if textSize == .large {
+                XCTAssertLessThanOrEqual(header.frame.height,64,"Phone title and clock must use a single compact row")
+                XCTAssertGreaterThanOrEqual(exam.frame.height,480,"Keep the available phone area for the exam")
+            }
+            for sample in samples.values {
+                XCTAssertGreaterThanOrEqual(sample.frame.minX,-1,sample.id)
+                XCTAssertLessThanOrEqual(sample.frame.maxX,width+1,sample.id)
+                if sample.role == "tap" { XCTAssertGreaterThanOrEqual(sample.frame.width,44,sample.id);XCTAssertGreaterThanOrEqual(sample.frame.height,44,sample.id) }
+            }
             window.isHidden=true;window.rootViewController=nil
-        }
+        } } }
     }
     func testEntryMatrix() async throws {
         try SecureReports.clear("native-")

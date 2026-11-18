@@ -56,7 +56,7 @@ struct SecureExamHeader:View {
     }
     private var logo:some View { Image("GradeCrewLogo").resizable().scaledToFit().frame(width:36,height:36).accessibilityHidden(true) }
     private var clock:some View {
-        Label(compact && remaining == nil ? "Ohne Limit" : time,systemImage:"clock")
+        Label(compact && remaining == nil ? "∞" : time,systemImage:"clock")
             .font(compact ? .callout.monospacedDigit().bold() : .title3.monospacedDigit().bold())
             .foregroundStyle((remaining ?? 61)<=60 ? SecureTheme.warningText : SecureTheme.brand)
             .padding(.horizontal,12).padding(.vertical,compact ? 4 : 8)
