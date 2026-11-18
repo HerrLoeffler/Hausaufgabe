@@ -1,0 +1,27 @@
+{
+  "runId": "auto-recipes-20261118-v1-probe2",
+  "quizId": "training:auto-recipes-20261118-v1-probe2",
+  "expected": 2,
+  "status": "running",
+  "spentMicros": 22178,
+  "reservedMicros": 0,
+  "limitMicros": 200000,
+  "cases": [
+    {
+      "id": "given-left",
+      "status": "ready",
+      "family": "post-scaffold",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "whole-roles",
+      "status": "rejected",
+      "family": "post-labels",
+      "attempt": 3,
+      "errors": [
+        "Eine eindeutige gerichtete 1:1-Zuordnung angeben."
+      ]
+    }
+  ]
+}

@@ -1,8 +1,10 @@
 {
-  "at": "2026-11-18T19:45:39.606Z",
+  "at": "2026-11-18T20:06:02.108Z",
   "sharedBudgetMicros": 5000000,
-  "spentMicros": 723030,
-  "providerCalls": 319,
+  "spentMicros": 785037,
+  "studySpentMicros": 723030,
+  "studyProviderCalls": 319,
+  "providerCalls": 344,
   "allProviderOutcomesConfirmed": true,
   "noNewCallsAfterCompletionReplay": true,
   "contractsUnchangedWithinTrial": {

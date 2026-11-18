@@ -1,0 +1,22 @@
+{
+  "at": "2026-11-18T20:07:12.821Z",
+  "results": [
+    {
+      "phase": "probe",
+      "id": "english-transfer",
+      "max": 1.5,
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1
+    },
+    {
+      "phase": "probe2",
+      "id": "given-left",
+      "max": 1.5,
+      "full": 1.5,
+      "blank": 0,
+      "oneWrong": 1
+    }
+  ],
+  "realServer": true
+}
