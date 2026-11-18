@@ -1,0 +1,103 @@
+{
+  "at": "2026-11-18T17:42:36.120Z",
+  "runId": "fields-arrows8-20261118-v1",
+  "spentMicros": 45395,
+  "reservedMicros": 0,
+  "providerCalls": 27,
+  "completedCalls": 27,
+  "tokens": {
+    "input": 34336,
+    "output": 8721
+  },
+  "cases": [
+    {
+      "id": "graph-arguments",
+      "family": "german",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "mapping",
+      "expected": "mapping",
+      "errors": [],
+      "reason": "Alle sechs kurzen, für Klasse 8 geeigneten Texte sind sichtbar. Jede Begründung stützt genau eine Behauptung, und die Pfeilrichtung ist klar vorgegeben, ohne die Zuordnung zu verraten."
+    },
+    {
+      "id": "graph-basefee",
+      "family": "mathematics",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "chain",
+      "expected": "chain",
+      "errors": [],
+      "reason": "Beide Rechenpfeile sind beschriftet: Die Multiplikation ergibt 14 Euro, danach führt die Addition der Grundgebühr zu 18 Euro. Keines der Ergebnisse ist vorgegeben."
+    },
+    {
+      "id": "graph-biology",
+      "family": "biology",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "chain",
+      "expected": "chain",
+      "errors": [],
+      "reason": "Die lineare Darstellung passt zum vereinfachten Reflexbogen. Der Auftrag erklärt die Pfeilrichtung als Richtung der Erregungsleitung. Die Feldbeschreibungen machen beide Zuordnungen eindeutig, ohne die gesuchten Begriffe vorwegzunehmen."
+    },
+    {
+      "id": "graph-clarify",
+      "family": "selection",
+      "status": "rejected",
+      "attempt": 3,
+      "decision": "clarify",
+      "expected": "clarify",
+      "errors": [
+        "Der Auftrag erfüllt den ursprünglichen Wunsch nicht."
+      ],
+      "reason": "Eine Rückfrage ist nötig und klar formuliert. Sie fragt aber nach zwei Dingen statt nur nach dem wichtigsten: Was soll einander zugeordnet werden?"
+    },
+    {
+      "id": "graph-decline",
+      "family": "selection",
+      "status": "rejected",
+      "attempt": 3,
+      "expected": "decline",
+      "errors": [
+        "Text fehlt oder ist zu lang."
+      ],
+      "reason": ""
+    },
+    {
+      "id": "graph-english",
+      "family": "english",
+      "status": "ready",
+      "attempt": 1,
+      "decision": "chain",
+      "errors": [],
+      "reason": "Drei getrennte Pfeilwege verbinden jedes Ausgangsverb eindeutig mit einem freien Feld für seine einwortige Simple-Past-Form. Keine Lösung ist vorgegeben."
+    },
+    {
+      "id": "graph-inverse",
+      "family": "mathematics",
+      "status": "rejected",
+      "attempt": 3,
+      "decision": "inverse",
+      "expected": "inverse",
+      "errors": [
+        "Der Auftrag verändert oder verliert Angaben des Wunsches.",
+        "Der öffentliche Auftrag verrät eine gesuchte Antwort."
+      ],
+      "reason": "Bei konstanten 72 Druckerminuten brauchen acht Drucker 9 Minuten. Die Rechenpfeile passen zur umgekehrten Proportionalität, aber der Zwischenweg wurde ohne entsprechenden Wunsch vorgegeben und der Auftrag verrät mit „über 1“ den Wert des offenen linken Zwischenfelds."
+    },
+    {
+      "id": "graph-percent",
+      "family": "mathematics",
+      "status": "rejected",
+      "attempt": 3,
+      "decision": "chain",
+      "expected": "direct",
+      "errors": [
+        "Die Form passt nicht zum festgelegten Prüfwunsch.",
+        "Der Auftrag erfüllt den ursprünglichen Wunsch nicht.",
+        "Die Darstellung ist fachlich ungeeignet."
+      ],
+      "reason": "Der Auftrag nennt 240 € eindeutig als Ausgangswert für beide Teilbeträge. Die Zeichnung zeigt jedoch eine Kette von f1 zu f2 statt zweier unabhängiger Pfeile von 240 € zu den Teilbeträgen."
+    }
+  ]
+}

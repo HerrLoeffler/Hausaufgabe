@@ -1,0 +1,78 @@
+{
+  "runId": "fields-arrows8-20261118-v1",
+  "quizId": "training:fields-arrows8-20261118-v1",
+  "expected": 8,
+  "status": "running",
+  "spentMicros": 45395,
+  "reservedMicros": 0,
+  "limitMicros": 1000000,
+  "cases": [
+    {
+      "id": "graph-arguments",
+      "status": "ready",
+      "family": "german",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "graph-basefee",
+      "status": "ready",
+      "family": "mathematics",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "graph-biology",
+      "status": "ready",
+      "family": "biology",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "graph-clarify",
+      "status": "rejected",
+      "family": "selection",
+      "attempt": 3,
+      "errors": [
+        "Der Auftrag erfüllt den ursprünglichen Wunsch nicht."
+      ]
+    },
+    {
+      "id": "graph-decline",
+      "status": "rejected",
+      "family": "selection",
+      "attempt": 3,
+      "errors": [
+        "Text fehlt oder ist zu lang."
+      ]
+    },
+    {
+      "id": "graph-english",
+      "status": "ready",
+      "family": "english",
+      "attempt": 1,
+      "errors": []
+    },
+    {
+      "id": "graph-inverse",
+      "status": "rejected",
+      "family": "mathematics",
+      "attempt": 3,
+      "errors": [
+        "Der Auftrag verändert oder verliert Angaben des Wunsches.",
+        "Der öffentliche Auftrag verrät eine gesuchte Antwort."
+      ]
+    },
+    {
+      "id": "graph-percent",
+      "status": "rejected",
+      "family": "mathematics",
+      "attempt": 3,
+      "errors": [
+        "Die Form passt nicht zum festgelegten Prüfwunsch.",
+        "Der Auftrag erfüllt den ursprünglichen Wunsch nicht.",
+        "Die Darstellung ist fachlich ungeeignet."
+      ]
+    }
+  ]
+}

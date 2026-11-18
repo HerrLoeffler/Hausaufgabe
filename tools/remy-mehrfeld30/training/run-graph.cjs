@@ -36,6 +36,14 @@ async function runCase(id){
 (async()=>{
   const mode=process.argv[2]||'status';
   if(mode==='init'){save('initial',await call({action:'trainingCreate',calibration:true,family:'fields-arrows'}));}
+  else if(mode==='recover'){
+    const [caseId,sourceCommit,technicalCorrection]=process.argv.slice(3);
+    if(!caseId||!sourceCommit||!technicalCorrection)throw Error('Fall, exakter Korrekturcommit und Begründung erforderlich.');
+    const file=path.join(root,'recovery-'+caseId+'.json');
+    const receipt=fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):{caseId,sourceCommit,technicalCorrection,requestId:randomUUID()};
+    if(receipt.sourceCommit!==sourceCommit||receipt.technicalCorrection!==technicalCorrection)throw Error('Gespeicherter Wiederherstellungsauftrag weicht ab.');
+    save('recovery-'+caseId,receipt);await call({action:'trainingRepair',runId:RUN,...receipt});
+  }
   else if(mode==='recheck'){
     const state=await call({action:'trainingStatus',runId:RUN});
     const [id,reason]=process.argv.slice(3);

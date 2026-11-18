@@ -14,8 +14,16 @@ function text(value,max=500){
   return value.trim();
 }
 function buildGraph(plan,{id,modes}={}){
-  if(['direct','inverse'].includes(plan.kind))return buildCandidate(plan,{id,modes:modes||plan.arrowModes});
-  const q={id,heading:text(plan.title,100),subject:text(plan.subject,60),text:text(plan.text,1800),points:0};
+  if(['direct','inverse'].includes(plan.kind)){
+    const q=buildCandidate(plan,{id,modes:modes||plan.arrowModes});
+    if(plan.intermediateMode!=='choice'){
+      const task=JSON.parse(q.visualTask),cell=task.spec.rows[2][2],answer=task.solution.cells.find(x=>x.id===cell.id);
+      cell.input=false;cell.text=answer.accepted[0];task.solution.cells=task.solution.cells.filter(x=>x.id!==cell.id);
+      q.points=task.maxPoints=task.solution.cells.length*.5;q.visualTask=JSON.stringify(task);
+    }
+    return q;
+  }
+  const q={id,heading:text(plan.title||(['clarify','decline'].includes(plan.kind)?'Nächster Schritt':''),100),subject:text(plan.subject||(['clarify','decline'].includes(plan.kind)?'Allgemein':''),60),text:text(plan.text,1800),points:0};
   if(['clarify','decline'].includes(plan.kind))return {...q,type:'notice',notice:{kind:plan.kind},reason:text(plan.reason)};
   if(plan.kind==='mapping'){
     const nodes=plan.nodes;

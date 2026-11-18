@@ -49,3 +49,9 @@ test('model field IDs cannot leak private answers to students or the blind check
  const j={kind:'chain',matchesWish:true,appropriate:true,unambiguous:true,leaksAnswer:false,answers:[{id:'f1',value:'1.50'}],links:[]};
  assert.equal(checkGraph(p,j,null,q).ok,true);
 });
+test('a stated intermediate unit is given and never scores a revealed answer',()=>{
+ const p={kind:'inverse',relationship:'inverse',a:'3',b:'24',c:'8',constantWork:true,equalRate:true,labels:['Drucker','Minuten'],title:'Druckauftrag',subject:'Mathematik',text:'Drei gleich schnelle Drucker benötigen 24 Minuten für denselben Auftrag. Wie lange benötigen acht?',intermediateMode:'fixed',arrowModes:['given','factor','given','factor']};
+ const q=buildGraph(p,{id:'unit'}),task=JSON.parse(q.visualTask);
+ assert.equal(task.spec.rows[2][2].input,false);assert.equal(task.spec.rows[2][2].text,'1');
+ assert.equal(task.solution.cells.some(x=>x.id==='r3c3'),false);assert.equal(score(q,graphAnswer(q)),q.points);
+});

@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-18T17:42:11.114Z",
+  "caseId": "graph-clarify",
+  "status": "rejected",
+  "attempt": 3,
+  "errors": [
+    "Der Auftrag erfüllt den ursprünglichen Wunsch nicht."
+  ]
+}

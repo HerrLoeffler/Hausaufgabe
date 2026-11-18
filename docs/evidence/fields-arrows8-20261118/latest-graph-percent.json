@@ -1,0 +1,11 @@
+{
+  "at": "2026-11-18T17:41:31.286Z",
+  "caseId": "graph-percent",
+  "status": "rejected",
+  "attempt": 3,
+  "errors": [
+    "Die Form passt nicht zum festgelegten Prüfwunsch.",
+    "Der Auftrag erfüllt den ursprünglichen Wunsch nicht.",
+    "Die Darstellung ist fachlich ungeeignet."
+  ]
+}

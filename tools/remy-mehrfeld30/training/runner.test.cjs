@@ -187,3 +187,14 @@ test('recent same-wish learning memory is preferred over older unrelated example
  await stepCase({db,uid,data:{runId:run.runId,caseId:'wish'},client});
  assert.equal(seen[0].reason,'Hinweis 34');
 });
+test('one explicit source-linked recovery is limited to the synthetic graph pilot and does not unlock unbounded repairs',async()=>{
+ const db=new TestDatabase(),{GRAPH_RUN}=require('./graph-profile.cjs');
+ await createRun({db,uid,data:{calibration:true,family:'fields-arrows'}});
+ const ref=db.doc('taskLearningRuns/'+GRAPH_RUN+'/cases/graph-percent');await ref.update({status:'rejected',attempt:3,errors:['Falsche Anordnung'],judge:{reason:'Beide Zahlenspalten brauchen eigene Pfeile.'}});
+ const data={runId:GRAPH_RUN,caseId:'graph-percent',requestId:'00000000-0000-4000-8000-000000000041'};
+ await assert.rejects(repairCase({db,uid,data}),/keine weitere/);
+ const request={...data,sourceCommit:'a'.repeat(40),technicalCorrection:'Geprüfte Korrektur der Auswahlregeln und Zwischenstufe.'};
+ assert.equal((await repairCase({db,uid,data:request})).attempt,4);
+ assert.match((await ref.get()).data().repairNotes,/Zahlenspalten/);
+ await ref.update({status:'rejected'});await assert.rejects(repairCase({db,uid,data:{...request,requestId:'00000000-0000-4000-8000-000000000042'}}),/keine weitere/);
+});
