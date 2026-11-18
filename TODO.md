@@ -881,7 +881,7 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 - [x] Antwortvergleich, sichere Fehlerdiagnose, kostenlose Recovery und höchstens ein bewusster zweiter Versuch einer abgerechneten unbekannten Operation mit erhaltener History. Keine automatischen bezahlten Wiederholungen. Die historische erste 503-Ursache bleibt unbekannt.
 - [x] Aufgabenfläche 860px/16px erhalten; rechte Übersicht erst ab 1180 CSS-Pixeln und 600 Pixeln Höhe, sonst volle Aufgabenbreite. ABGEBEN/SUBMIT, Entwurf, Offlinefehler, Abbruch und Zwangsabgabe geprüft. 36 Layoutfälle, 18 Abgabereisen, 72 Wilmafälle und 18 vollständige Tutorialreisen bestanden.
 - [x] Tatsächliche fiktive Stage-/Live-Abgaben, Vorschläge und kostenlose Wiederaufnahme; auf Staging zusätzlich Bestätigen und Rückgängig. Genau ein neuer Providerstart je Umgebung, zusammen 2300 MikroEUR Usagebuchung, keine Reservierung und keine echte Schülernotenänderung. Bestehende Anmeldung und alte Links funktionieren. Keine weitere bezahlte QA aus Wiederaufnahme.
-- [ ] **Native GC-IOS-02/GC-RELEASE-06:** Chat `01a10c75-8912-7a12-98f0-c9e78064aa2c` hat den Größenvertrag erhalten. Der bisherige native 1024-Vertrag muss die Aufgabenbreite und Schrift erhalten. Nativer Release-Gesamttest fehlgeschlagen, Upload bis zur Klärung gestoppt. Danach separater App-Build und Geräteabnahme; Web-Hosting ist kein TestFlight-Nachweis.
+- [ ] **Native GC-IOS-02/GC-RELEASE-06:** Secure1.0(1313) von Martin ausdrücklich als in TestFlight verfügbar bestätigt. Aufgabenfont19px und820px-Breite bleiben, rechte Übersicht ab1180×600. Kompakter iPhone-Kopf nach Nutzertest in PR443 integriert, Quelle1c061200; gated TestFlight44404250305 läuft. Neuer Upload und physische Abnahme separat. [Übergabe](workstreams/secure-phone-compact-20261118.md).
 - [ ] Martin prüft physisches Handy/iPad, OS-Tastatur/Diktat und Lesbarkeit. Den alten realen Wilma-Prüflauf nur bewusst wiederaufnehmen oder selbst bewerten; keine automatische Neubewertung.
 
 
@@ -895,4 +895,10 @@ Production: f048ed1a, Hosting-only. Logo, Headline und Original-Crew bleiben bei
 ### GC-WEB-REPAIR-20261007 · Schülerabschluss · 18.11.2026
 
 - [x] **Hosting live:** f723e71 / PR438, exakte CI 44375566304 und unabhängiger Review PASS. „Neuen Test starten“ zur Codeeingabe mit erhaltener alter Abgabe und DE/EN; Freigabecheck mit sichtbarem Ergebnis, weiterhin servergeschützt. Beide Adressen216/216 Dateihashes, 212 Assets unverändert, keine Function oder echte Schülerdaten geändert. [Bericht](docs/evidence/student-result-actions-20261118/REPORT.md).
-- [ ] **Secure/App:** Native-Owner bestätigt Upload von 1.0 (1313) zu TestFlight mit dem angenommenen Layout; Apples Verarbeitung/Verfügbarkeit und Geräteabnahme noch offen. Rückkehr zu neuem Test bereits nativ getestet; eigene native Lösungsfreigabeansicht bisher nicht angeboten. Keine doppelte Implementierung. Historischer Wilma-Altfalltest bleibt unabhängig offen.
+- [ ] **Secure/App:** Secure1.0(1313) ist laut Martins Bestätigung in TestFlight verfügbar; die vollständige Geräteabnahme bleibt offen. Native Rückkehr zu neuem Test getestet, eigene native Lösungsfreigabeansicht bisher nicht angeboten. Kompakter iPhone-Kopf: PR443 integriert, abschließender TestFlight-Lauf44404250305 läuft. Keine doppelte Implementierung. Historischer Wilma-Altfalltest bleibt unabhängig offen.
+
+### GC-IOS-02 / GC-RELEASE-06 · kompakte Secure-Handyansicht · 18.11.2026
+
+- [x] Code integriert: PR443 →1c061200. Kurze Titel-/Uhrzeile, vollständige Testinfos per Tippen; Aufgabenraster am Handy nur auf Anforderung, Aufgabenfont und iPadbreite erhalten. Echte Überlaufregression bei320pt/großer Schrift behoben und nachgeprüft; unabhängiger enger Review ohne Blocker.
+- [ ] Ein bestehender gated Release-Lauf44404250305 prüft den endgültigen Code und übernimmt danach Signatur/AAC/Upload. Neuer Build noch nicht hochgeladen. Ausgewählte AppStore1293 und SecureTest1241 unverändert.
+- [ ] Martin prüft den neuen kompakten Build physisch nach bestätigter TestFlight-Verfügbarkeit. [Nachweise und aktueller Schritt](workstreams/secure-phone-compact-20261118.md).

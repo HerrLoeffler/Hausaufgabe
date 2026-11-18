@@ -5178,6 +5178,26 @@
       "ci_status": "in_progress_or_queued",
       "app_store_build": "not_yet_uploaded",
       "next_action": "Follow existing full simulator/AAC/signing/upload run29; then verify processed Secure icon and prepare version/reply. DSA still In Review18Nov; no final AppReview submission authorized."
+    },
+    {
+      "id": "secure-phone-compact-20261118",
+      "task_id": "GC-IOS-02 / GC-RELEASE-06",
+      "branch": "feature/secure-live-ready-20261026",
+      "implementation_branch": "fix/secure-phone-chrome-20261118",
+      "observed_head": "1c061200b5b8330689ab483c9d465830a7d9dacb",
+      "stage": "integrated",
+      "pull_request": 443,
+      "handoff": "workstreams/secure-phone-compact-20261118.md",
+      "scope": "Native Secure phone title/clock/footer and on-demand number overview. Original question font and iPad width preserved; no backend/rules/data/AAC changes.",
+      "ci_run": 44404250305,
+      "ci_status": "in_progress",
+      "testflight_prior_version": "1.0 (1313)",
+      "testflight_prior_availability": "explicitly confirmed by Martin",
+      "new_upload_confirmed": false,
+      "app_store_selected_build_unchanged": 1293,
+      "secure_test_unchanged": 1241,
+      "local_verification": "Final native900 + WebKit360/12 and focused12 passed; full phone540/216/12/6 passed before final narrow no-limit label delta. Final phone rerun is a mandatory upload gate.",
+      "next_action": "Follow existing gated run44404250305 to signed AAC upload, then independently confirm Apple availability and physical acceptance. No duplicate build."
     }
   ],
   "deployments": [
