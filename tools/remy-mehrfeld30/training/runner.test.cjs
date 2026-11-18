@@ -34,7 +34,7 @@ test('two provider stages persist private attempts and replay without duplicate 
   await recordTrainingFeedback({db,uid,quizId:run.quizId,q,data:feedback});
   await recordTrainingFeedback({db,uid,quizId:run.quizId,q,data:feedback});
   assert.equal([...db.docs.keys()].filter(p=>p.includes('/teacherReviews/')).length,1);
-  assert.equal([...db.docs.entries()].find(([p])=>p.startsWith('taskLearningExamples/'))[1].humanVerdict,'bad');
+  assert.equal([...db.docs.entries()].find(([p,v])=>p.startsWith('taskLearningExamples/')&&v.reviewerId===uid)[1].humanVerdict,'bad');
 });
 test('a timed-out provider call stays uncertain, cannot be retried or repaired automatically and retains cost',async()=>{
   const db=new TestDatabase(),run=await createRun({db,uid,data:{calibration:true}});
@@ -70,9 +70,26 @@ test('concurrent duplicate generation reserves exactly one provider call',async(
   const input={db,uid,data:{runId:run.runId,caseId:'wish'},client};
   const first=stepCase(input);
   while(calls===0)await new Promise(resolve=>setImmediate(resolve));
-  await stepCase(input);release();await first;
+  await stepCase(input);
+  const intermediate=db.docs.get('taskLearningRuns/'+run.runId+'/cases/wish').status;
+  release();await first;
+  assert.equal(intermediate,'pending');
   assert.equal(calls,1);
 });
 test('cost reservation includes schema, prompt and maximum output, not an optimistic average',()=>{
   assert.ok(reservationCost(providerRequest('judge',{wish:plan.text}))>30000);
+});
+
+test('shared readers cannot spend another owners budget or contaminate that owners feedback examples',async()=>{
+  const db=new TestDatabase();
+  const run=await createRun({db,uid,data:{calibration:true}});
+  const input={db,uid:'teacher-b',data:{runId:run.runId,caseId:'direct-01'}};
+  await assert.rejects(stepCase(input),/Eigentümer/);
+  await assert.rejects(repairCase({...input,data:{...input.data,requestId:'00000000-0000-4000-8000-000000000011'}}),/Eigentümer/);
+  const ref=db.doc('taskLearningRuns/'+run.runId+'/cases/direct-01');
+  const q=require('./builder.cjs').buildCandidate(plan,{id:'direct-01'});
+  await ref.update({status:'ready',q,plan});
+  await recordTrainingFeedback({db,uid:'teacher-b',quizId:run.quizId,q,data:{eventId:'00000000-0000-4000-8000-000000000012',version:'v',verdict:'good',comment:'Eigene Präferenz'}});
+  const examples=[...db.docs.values()].filter(x=>x.humanVerdict==='good');
+  assert.ok(examples.every(x=>x.ownerId==='teacher-b'&&x.reviewerId==='teacher-b'));
 });

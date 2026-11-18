@@ -64,7 +64,9 @@ async function providerCall({db,runId,stepId,phase,input,secret,client}){
   const reservation=await reserve(db,runId,stepId,amount);
   if(!reservation.dispatch){
     if(reservation.call.status==='completed'&&reservation.call.response)return reservation.call.response;
-    throw new HttpsError('failed-precondition','Dieser Aufruf ist gespeichert, sein Ergebnis noch unbestätigt. Es wird kein zweiter gestartet.');
+    const error=new HttpsError('failed-precondition','Dieser Aufruf ist gespeichert, sein Ergebnis noch unbestätigt. Es wird kein zweiter gestartet.');
+    error.pendingProvider=true;
+    throw error;
   }
   await db.doc(runRef(db,runId).path+'/providerCalls/'+stepId).update({phase,recipeVersion:VERSION,requestHash:digest(request),request});
   let response;
@@ -89,6 +91,7 @@ function fullAnswer(q){
 }
 async function stepCase({db,uid,data,secret,client}){
   const run=await getRun(db,data.runId,uid);
+  if(run.ownerId!==uid)throw new HttpsError('permission-denied','Nur der Eigentümer kann kostenpflichtige Schritte auslösen.');
   if(run.status==='paused')throw new HttpsError('failed-precondition','Die Serie ist pausiert.');
   if(typeof data.caseId!=='string'||!ID.test(data.caseId))throw new HttpsError('invalid-argument','Ungültiger Fall.');
   const ref=db.doc(runRef(db,run.id).path+'/cases/'+data.caseId);
@@ -103,7 +106,7 @@ async function stepCase({db,uid,data,secret,client}){
       const recipe=(await db.doc('taskLearningRecipes/'+run.recipeVersion).get()).data();
       // Only the signed-in teacher's explicit judgments and fixed test feedback are eligible.
       const learned=await db.collection('taskLearningExamples').where('ownerId','==',uid).limit(30).get();
-      const examples=learned.docs.map(s=>s.data()).filter(x=>x.recipeVersion===VERSION&&x.humanVerdict)
+      const examples=learned.docs.map(s=>s.data()).filter(x=>x.recipeVersion===VERSION&&x.humanVerdict&&x.reviewerId===uid)
         .slice(-6).map(x=>({wish:x.wish,decision:x.kind,verdict:x.humanVerdict,reason:x.humanComment||''}));
       const response=await providerCall({db,runId:run.id,stepId,phase,secret,client,
         input:{wish:c.wish,recipe:{prerequisites:recipe.prerequisites,exclusions:recipe.exclusions,rules:recipe.generationRules},
@@ -120,26 +123,40 @@ async function stepCase({db,uid,data,secret,client}){
       }
       update={status:check.ok?'ready':'rejected',judge,check,errors:check.errors,checkedAt:now()};
     }
-    const batch=db.batch();
-    batch.set(archive,{attempt:c.attempt,...(c.plan?{plan:c.plan,q:c.q}:{}),...update},{merge:true});
-    batch.update(ref,update);
-    if(update.status==='ready'){
-      batch.set(db.doc('taskLearningExamples/'+digest([run.id,c.id,c.attempt])),{
-        ownerId:run.ownerId,runId:run.id,caseId:c.id,attempt:c.attempt,recipeVersion:VERSION,family:c.family,
-        kind:c.plan.kind,wish:c.wish,systemStatus:'checked',humanVerdict:'',createdAt:now()});
-    }
-    await batch.commit();
-    return {status:update.status,attempt:c.attempt,errors:update.errors};
+    return await db.runTransaction(async tx=>{
+      const current=(await tx.get(ref)).data();
+      if(current.attempt!==c.attempt||current.status!==c.status)return {status:current.status,attempt:current.attempt};
+      const example=db.doc('taskLearningExamples/'+digest([run.id,c.id,c.attempt]));
+      const priorExample=update.status==='ready'?await tx.get(example):null;
+      tx.set(archive,{attempt:c.attempt,...(c.plan?{plan:c.plan,q:c.q}:{}),...update},{merge:true});
+      tx.update(ref,update);
+      if(update.status==='ready'&&!priorExample.exists){
+        tx.create(example,{ownerId:run.ownerId,runId:run.id,caseId:c.id,attempt:c.attempt,recipeVersion:VERSION,family:c.family,
+          kind:c.plan.kind,wish:c.wish,systemStatus:'checked',humanVerdict:'',createdAt:now()});
+      }
+      return {status:update.status,attempt:c.attempt,errors:update.errors};
+    });
   }catch(error){
+    if(error.pendingProvider){
+      const current=(await ref.get()).data();
+      return {status:current.status,attempt:current.attempt};
+    }
     const call=(await db.doc(runRef(db,run.id).path+'/providerCalls/'+stepId).get()).data();
     const status=call?.status==='uncertain'||call?.status==='dispatching'?'uncertain':'rejected';
-    await ref.update({status,errors:[safeError(error)],checkedAt:now()});
-    await archive.set({attempt:c.attempt,status,errors:[safeError(error)],...(c.plan?{plan:c.plan,q:c.q}:{})},{merge:true});
-    return {status,attempt:c.attempt,errors:[safeError(error)]};
+    return db.runTransaction(async tx=>{
+      const current=(await tx.get(ref)).data();
+      if(current.attempt!==c.attempt||current.status!==c.status)return {status:current.status,attempt:current.attempt};
+      const errors=[safeError(error)];
+      tx.update(ref,{status,errors,checkedAt:now()});
+      tx.set(archive,{attempt:c.attempt,status,errors,...(c.plan?{plan:c.plan,q:c.q}:{})},{merge:true});
+      return {status,attempt:c.attempt,errors};
+    });
   }
 }
 async function repairCase({db,uid,data}){
-  const run=await getRun(db,data.runId,uid),ref=db.doc(runRef(db,run.id).path+'/cases/'+data.caseId);
+  const run=await getRun(db,data.runId,uid);
+  if(run.ownerId!==uid)throw new HttpsError('permission-denied','Nur der Eigentümer kann Reparaturen starten.');
+  const ref=db.doc(runRef(db,run.id).path+'/cases/'+data.caseId);
   if(typeof data.caseId!=='string'||!ID.test(data.caseId)||!/^[a-f0-9-]{36}$/i.test(data.requestId||''))throw new HttpsError('invalid-argument','Ungültige Korrekturanfrage.');
   return db.runTransaction(async tx=>{
     const c=(await tx.get(ref)).data();
@@ -184,15 +201,16 @@ async function recordTrainingFeedback({db,uid,quizId,q,data}){
   const id=quizId.slice(PREFIX.length),run=await getRun(db,id,uid);
   const ref=db.doc(runRef(db,id).path+'/cases/'+q.id),c=(await ref.get()).data();
   if(c?.status!=='ready')return;
-  const example=db.doc('taskLearningExamples/'+digest([id,q.id,c.attempt]));
+  const example=db.doc('taskLearningExamples/'+digest([id,q.id,c.attempt,uid]));
   const review=db.doc(ref.path+'/teacherReviews/'+data.eventId);
   const value={reviewerId:uid,version:data.version,verdict:data.verdict,reason:data.reason||'',comment:data.comment||'',createdAt:now()};
   await db.runTransaction(async tx=>{
     const prior=await tx.get(review);
     if(prior.exists)return;
-    const previous=(await tx.get(example)).data();
     tx.create(review,value);
-    if(previous)tx.update(example,{humanVerdict:data.verdict,humanComment:data.comment||'',humanReason:data.reason||'',reviewerId:uid,reviewedAt:now()});
+    tx.set(example,{ownerId:uid,reviewerId:uid,runId:id,caseId:q.id,attempt:c.attempt,recipeVersion:VERSION,family:c.family,
+      kind:c.plan.kind,wish:c.wish,systemStatus:'checked',humanVerdict:data.verdict,humanComment:data.comment||'',
+      humanReason:data.reason||'',reviewedAt:now()});
   });
 }
 async function handleTraining(input){

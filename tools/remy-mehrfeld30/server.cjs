@@ -65,7 +65,7 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
   if(data.action==='list'){
     if(references){
       const rows=references.map(q=>present(data.quizId,referenceGroup,q));
-      const notes=await db.getAll(...rows.map(task=>latest.doc(task.version)));
+      const notes=rows.length?await db.getAll(...rows.map(task=>latest.doc(task.version))):[];
       return {tasks:rows.map((task,i)=>({...task,review:notes[i].data()||null})),expected:training?.expected||rows.length};
     }
     const quizIds=data.quizId?[data.quizId]:(await db.getAll(...seed.map(row=>db.doc('aiJobs/'+row.jobId))))
@@ -76,7 +76,7 @@ exports.remyMehrfeld30Review=onCall({region:'europe-west1',maxInstances:2,timeou
       return questions.docs.map(s=>present(quizId,group,{...s.data(),id:s.id}));
     }))).flat();
     if(!rows.length)return {tasks:[],expected:30};
-    const notes=await db.getAll(...rows.map(task=>latest.doc(task.version)));
+    const notes=rows.length?await db.getAll(...rows.map(task=>latest.doc(task.version))):[];
     return {tasks:rows.map((task,i)=>({...task,review:notes[i].data()||null})),expected:data.quizId?rows.length:30};
   }
   if(!['rate','score','listenRhythm'].includes(data.action)||typeof data.id!=='string'||!(/^[A-Za-z0-9_-]{1,100}$/.test(data.id)))

@@ -24,3 +24,15 @@ test('the same field display cannot silently turn a base fee into a direct relat
   assert.equal(score(q,1),q.points);
   assert.equal(score(q,0),0);
 });
+
+test('a free arrow accepts equivalent multiplication with decimal comma and selection preserves independent points',()=>{
+  const q=buildCandidate({kind:'direct',relationship:'direct',constantRate:true,a:'4',b:'6',c:'10',text:'Vier Hefte kosten sechs Euro. Was kosten zehn?',labels:['Hefte','Euro']},
+    {id:'equal',modes:['free','select','factor','given']});
+  const task=parseVisualTask(q.visualTask,{points:q.points}),answer=core.solutionResponse(task);
+  const first=task.spec.rows[1][1].id;
+  assert.equal(score(q,{...answer,[first]:'×0,25'}),q.points);
+  const operator=task.spec.rows[1][4].id,factor=task.spec.rows[1][5].id;
+  assert.equal(score(q,{...answer,[operator]:'×',[factor]:'0,25'}),q.points);
+  assert.equal(score(q,{...answer,[operator]:'×',[factor]:'9'}),q.points-.5);
+  assert.equal(score(q,{...answer,[operator]:'+',[factor]:'4'}),q.points-.5);
+});

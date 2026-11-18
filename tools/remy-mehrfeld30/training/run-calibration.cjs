@@ -19,7 +19,7 @@ async function runCase(id){
     if(c.status==='ready'){console.log(id+' ready · attempt '+c.attempt);return;}
     if(c.status==='uncertain')throw Error(id+' unbestätigt · '+c.errors.join(' '));
     if(c.status==='rejected'){
-      if(c.attempt>=3)throw Error(id+' nach drei Versuchen gesperrt · '+c.errors.join(' '));
+      if(c.attempt>=3){console.log(id+' bleibt als fachlich gesperrter Fall erhalten · '+c.errors.join(' '));return;}
       if(c.errors.some(x=>/model.*(not|exist|found|access)|API key|quota|budget|rate.limit/i.test(x)))throw Error(c.errors.join(' '));
       const requestId=randomUUID();
       save('next-'+id,{at:new Date().toISOString(),action:'repair',requestId,caseId:id,previous:c});

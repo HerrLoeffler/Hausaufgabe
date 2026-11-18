@@ -55,4 +55,14 @@ function checkFit(facts){
     facts.relationship==='inverse'&&facts.constantWork===true&&facts.equalRate===true);
   return {eligible,reason:eligible?'Die fachliche Beziehung ist belegt.':'Die Voraussetzungen eines einfachen Dreisatzes fehlen.'};
 }
-module.exports={solve,compareFacts,checkFit};
+function equivalentOperation(from,to,op,factor){
+  if(!['×','÷'].includes(op))return false;
+  try{
+    const a=parse(from),b=parse(to),raw=String(factor??'').trim().replace(/^[.,]/,'0.');
+    const value=parse(raw);
+    if(value.n<=0n)return false;
+    const result=op==='×'?multiply(a,value):divide(a,value);
+    return result.n*b.d===b.n*result.d;
+  }catch{return false;}
+}
+module.exports={solve,compareFacts,checkFit,equivalentOperation};
