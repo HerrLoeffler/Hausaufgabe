@@ -2,7 +2,9 @@
 
 Stand 18. November 2026. Bestehende Aufgabe GC-BILLING-PLAN-01, bestehender Draft-PR411. Arbeitsliste zum [ausführlichen Zahlungsplan](../superpowers/plans/2026-11-18-gradecrew-zahlungsbetrieb.md).
 
-**Aktualisierung während der Umsetzung:** Martin beauftragt die technische Umsetzung in der Testumgebung. Neu gelten14Tage und höchstens fünf Testdateien einschließlich manueller Anlage/Kopie/Import. Vorläufig persönlich15EUR monatlich oder120EUR jährlich im Voraus, Schule50EUR je Platz/Jahr. Persönliche Schuleinladungen und bewusste Jahresverlängerung bestätigt. [Aktuelle Regeln](business-rules.md) ersetzen ältere abweichende Angaben. Produktbranch feature/billing-product-20261118, erste lokalen Prüfungen bestanden. Offene Gesamtaufgaben bleiben bis zur tatsächlichen Integration offen.
+**Aktualisierung während der Umsetzung:** Martin beauftragt die technische Umsetzung in der Testumgebung. Neu gelten14Tage und höchstens fünf Testdateien einschließlich manueller Anlage/Kopie/Import. Persönlich15EUR monatlich oder120EUR jährlich im Voraus, Schule50EUR je Platz/Jahr, als Endpreise einschließlich gegebenenfalls anfallender Umsatzsteuer bestätigt. Verkäuferdaten und Regelbesteuerung bestätigt. Persönliche Schuleinladungen und bewusste Jahresverlängerung bestätigt. [Aktuelle Regeln](business-rules.md) ersetzen ältere abweichende Angaben. Produktbranch feature/billing-product-20261118. Offene Gesamtaufgaben bleiben bis zur tatsächlichen Integration offen.
+
+**Lokal vorbereitet, noch nicht veröffentlicht:** J02–J11 besitzen einen ersten geprüften Produktblock mit echter Kontoanmeldung im Emulator, geschützter Fünferzählung/14-Tage-Frist, Adminfreigaben, Schulplätzen, persönlichen Einladungen und sofortiger Rechteprüfung nach Austritt.509Functions-Fälle,29lokale Transaktions-/Handlerfälle und12Rules-Fälle grün. J05/J08/J09 in den tatsächlichen lokalen Produktkomponenten und375/768/1440px-Layoutprobe geprüft. J18 hat drei private, visuell geprüfte PDF-Muster mit Logo für15/120/50EUR; Teilzahlungs-/Korrekturmuster bleiben offen. Neue Produktlogik noch branch_only; keine vollständige Aufgabe durch diese Teilbelege als erledigt markieren. Die laufenden Cloud-KI-Dienste enthalten andere neuere Funktionen als die Hostingbasis und müssen vor Veröffentlichung gezielt abgeglichen werden.
 
 Diese Liste unterscheidet belegte Ergebnisse, technisch mögliche nächste Arbeiten, fachliche Entscheidungen, externe Einrichtung und die spätere Einführung. Ein offenes Kästchen ist eine ausstehende Aufgabe. Eine geschriebene Spezifikation oder ein lokaler Test gilt nicht als veröffentlichte Produktfunktion.
 
@@ -15,7 +17,7 @@ Der ursprüngliche Listenauftrag war reine Dokumentation. Der anschließende aus
 - [x] **ER03 – Zwei Schul-Teilüberweisungen getestet.** Bei einer Rechnung über 30 € blieben nach 10 € noch 20 € offen. Nach weiteren 20 € ordnete Stripe die Beträge zu und meldete bezahlt.
 - [x] **ER04 – Erste automatische Freischaltung veröffentlicht getestet.** Der eigene Testserver aktiviert die zugeordnete synthetische persönliche beziehungsweise Schul-Testanmeldung nach geprüftem Zahlungsereignis. Ungültige und fremde Zugriffe wurden gezielt abgewiesen. Nachweis ist der [Cloud-Testbericht](sandbox-v1/receipts/2026-11-18-hosted-sandbox.json).
 - [x] **ER05 – Austauschbare Verantwortlichkeiten vorbereitet.** Der Testserver trennt Webzugriff, Zahlungsprüfung und Firestore-Speicherung. 15 lokale Tests sind dokumentiert. Ein vollständiger EU-Umzug wurde dadurch noch nicht erledigt.
-- [x] **ER06 – Bestätigte Produktregeln festgehalten.** Fünf einmalige kostenlose KI-Tests, vollständige Bearbeitung bestehender Tests, kein Guthaben durch Löschen, kostenlose Kollegiumsfreigaben und spätere Stripe-Rabattcodes sind dokumentiert. Diese Regeln sind noch nicht vollständig im Produkt umgesetzt.
+- [x] **ER06 – Bestätigte Produktregeln festgehalten.**14Tage kostenlos mit insgesamt fünf neuen Testdateien einschließlich manuell/Kopie/Import, Bearbeiten ohne weitere Einheit während der Testphase, kein Guthaben durch Löschen, kostenlose Kollegiumsfreigaben und spätere Stripe-Rabattcodes sind dokumentiert. Diese Regeln sind lokal vorbereitet, noch nicht vollständig veröffentlicht abgenommen.
 - [x] **ER07 – Gesamten Zahlungsbetrieb geplant.** Ausführlicher Einführungsplan mit sieben Paketen, technischen Schnittstellen und 85 geplanten Prüffällen gesichert. Schulverlängerung, Laufzeitbeginn, Kulanz und weitere Vorschläge sind als unbestätigt markiert.
 
 Weitere Belege und Versuchshistorie stehen in der [Aufgabenübergabe](../../workstreams/billing-research-20261104.md). Der veröffentlichte Vorschaukanal hat laut Nachweis ein Ablaufdatum am 25. November 2026. Vor einer weiteren Abnahme ist seine tatsächliche Verfügbarkeit zu prüfen. Ein historisch bestandener Test sagt nichts über die heutige Erreichbarkeit aus.
@@ -34,7 +36,7 @@ Die folgenden Aufgaben brauchen keine echte Firmenabrechnung und keinen Live-Sch
 
 - [ ] **J03 – Berechtigungen auf dem Server durchsetzen.** Persönliche Rechte, Schulplatz, Zeitraum, Sperren und kostenlose Freigaben bei jeder geschützten Aktion prüfen. **Fertig, wenn** eine manipulierte Browseranzeige oder direkte Anfrage keinen Zugang erzeugt. **Abhängigkeit:** J02. **Planbezug:** B, Fälle K11/P10/T09/T10/T11.
 
-- [ ] **J04 – Fünf kostenlose KI-Tests verbindlich zählen.** Einmalige Ausstattung, Verbrauch bei erfolgreicher neuer Speicherung, Wiederholschutz, parallele Anfragen, Fehler und Löschen berücksichtigen. Bearbeitung derselben fünf Tests bleibt auch bei Rest null möglich. **Fertig, wenn** K01–K13 für den bestätigten Umfang bestehen. **Abhängigkeit:** J02/J03. **Offene Erweiterung:** E03 für Kopie, Import und manuelle Anlage.
+- [ ] **J04 –14Tage und fünf kostenlose Testdateien verbindlich zählen.** Manuell/KI/Kopie/Import, Verbrauch bei erfolgreicher neuer Speicherung, Wiederholschutz, parallele Anfragen, Fehler und Löschen berücksichtigen. Bearbeitung derselben Tests bleibt während der aktiven Testphase auch bei Rest null möglich. Danach Lesen/Export gemäß offengelegter Annahme. **Fertig, wenn** angepasste K01–K13 in echten Produktpfaden abgenommen sind. **Abhängigkeit:** J02/J03. E03 ist bestätigt.
 
 - [ ] **J05 – Einheitliche Tarifanzeige ergänzen.** Konto, Dashboard und Administration zeigen Zugang, Quellen, Restguthaben und Ablauf. Die spätere App verwendet dieselbe serverseitige Sicht. **Fertig, wenn** neues Login und zweites Gerät denselben Zustand zeigen und noch offene Zahlungen verständlich bleiben. **Abhängigkeit:** J03/J04.
 
@@ -60,7 +62,7 @@ Die folgenden Aufgaben brauchen keine echte Firmenabrechnung und keinen Live-Sch
 
 - [ ] **J14 – Persönliche Verlängerung, Kündigung und Zahlungsausfall umsetzen.** Bezahlte Periode, vorgemerkte Kündigung, Wiederholungszahlung und konfigurierbare Kulanz abbilden. PayPal-Zustimmungswiderruf berücksichtigen. **Fertig, wenn** P05–P10/P15 mit Produktrechten geprüft sind. **Abhängigkeit:** J13. **Offene Vertragswerte:** E06, keine stillschweigende Übernahme der vorgeschlagenen sieben Tage.
 
-- [ ] **J15 – Schulrechnung mit echter Testschule verbinden.** Bestellung und Schulperiode einer Testrechnung zuordnen. Die 10-€-/20-€-Teilzahlung am richtigen Schulzugang prüfen. **Fertig, wenn** nach 10 € die betroffene Nutzung noch aussteht und nach vollständigen 30 € unter erfüllter Startbedingung freigegeben wird. **Abhängigkeit:** J07–J10/J13. **Planbezug:** D, Fälle S03/S04.
+- [ ] **J15 – Schulrechnung mit echter Testschule verbinden.** Bestellung und Schulperiode einer Testrechnung zuordnen. Historischer10+20EUR-Fall gehört ausschließlich zur30EUR-Testrechnung. Beim neuen50EUR-Schulplatz müssen die Teilbeträge zusammen50EUR ergeben, etwa10+40EUR. **Fertig, wenn** eine Teilzahlung nicht freischaltet und erst der vollständig zugeordnete Rechnungsbetrag unter erfüllter Startbedingung den Schulzugang aktiviert. **Abhängigkeit:** J07–J10/J13. **Planbezug:** D, Fälle S03/S04.
 
 - [ ] **J16 – Schulbeginn, gemeinsames Ende und Verlängerung technisch abbilden.** Beitritt während des Jahres, Vorabzahlung, Vertragsende, spätere Zahlung und nächste Periode testen. **Fertig, wenn** Rechnung und Zugang denselben Zeitraum verwenden und ein später Beitritt kein neues Jahr erzeugt. **Abhängigkeit:** J15. **Offene verbindliche Regeln:** E05/E06. Bis dahin nur gekennzeichnete Testszenarien.
 
@@ -88,16 +90,16 @@ Die Werte werden gemeinsam mit Martin festgelegt. Technische Vorbereitung darf m
 
 | Offen | Entscheidung | Zuständig | Betroffener Schritt |
 |---|---|---|---|
-| [ ] E01 | Tatsächlicher Verkäufer, Unternehmens-/Steuerstatus und Geschäftsanschrift | Martin, gegebenenfalls qualifizierte Beratung | Finale Rechnung und gesamtes Echtgeldangebot |
-| [ ] E02 | Persönlicher Preis, Schulpreis, angebotene Intervalle und Preisangaben | Martin | Tarifseite, Vertrag und endgültige Preiszuordnung |
-| [ ] E03 | Zählregel für manuelle Erstellung, Kopie und Import zusätzlich zu den bestätigten fünf KI-Tests | Martin mit Produktempfehlung | J04/J22 |
+| [x] E01 | Verkäufer/Anschrift bestätigt, Firma/Gewerbe steht, Regelbesteuerung mit Umsatzsteuer; Details privat hinterlegt | Martin | Steuerkennung und finale Belegprüfung bleiben X01/X04 |
+| [x] E02 |15EUR monatlich,120EUR jährlich im Voraus,50EUR je Schulplatz/Jahr; Endpreise einschließlich gegebenenfalls anfallender Umsatzsteuer | Martin | Noch keine Livepreisaktivierung |
+| [x] E03 |14Tage und höchstens fünf neue Testdateien; manuell/KI/Kopie/Import zählen, Löschen gibt nichts zurück | Martin | J04/J22 |
 | [ ] E04 | Premium-Leistungen, KI-Nutzungslimits, Schulplatzpakete, Mehrplätze und Finanzkontakt ohne Lehrerplatz | Martin | J03/J10 und Tarifdarstellung |
-| [ ] E05 | Schulbeginn, zwölfmonatiger Zeitraum, Einladungsmodell und ausdrückliche oder vereinbarte automatische Verlängerung | Martin, Vertragsprüfung soweit erforderlich | J09/J16 und Schulvertrag |
+| [x] E05 | Zwölf Monate ab vereinbartem Startdatum, persönliche Einladungen, ausdrücklich bestätigte Verlängerung | Martin | J09/J16 und Schulvertrag |
 | [ ] E06 | Zahlungsziel, Kulanz, Erinnerungen, verspätete Zahlung, Erstattung und Schutz laufender Prüfungen | Martin, fachliche Prüfung soweit erforderlich | J14/J16/J19/J22 |
 | [ ] E07 | Übergang für bestehende Lehrkräfte und bereits vorhandene Tests/Freigaben | Martin | J23 |
 | [ ] E08 | Rechnungsweg, Buchhaltungsumfang und zuständiger Dienstleister | Martin mit gewähltem Dienst | X04–X06 |
 
-**Bisherige Empfehlungen bleiben Vorschläge:** Schuljahr mit ausdrücklicher Verlängerungsbestätigung, persönliche Einladungen, sieben Tage persönliche Zahlungskulanz, 14 Tage Schul-Zahlungsziel und Erinnerungen 60/30/7 Tage vor Ablauf.
+**Noch Vorschläge:** sieben Tage persönliche Zahlungskulanz,14Tage Schul-Zahlungsziel und Erinnerungen60/30/7Tage vor Ablauf. Persönliche Einladungen und bewusste Schulverlängerung sind inzwischen bestätigt.
 
 ## 4. Was Angaben, externe Einrichtung oder tatsächliche Nachweise benötigt
 
