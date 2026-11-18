@@ -1,0 +1,40 @@
+{
+  "taskId": "GC-CLASSROOM-01",
+  "date": "2026-11-18",
+  "sourceCommit": "fe73ed43",
+  "project": "gradecrew-staging-2026",
+  "beforeVersion": "sites/gradecrew-staging-2026/versions/e218924764139f91",
+  "afterVersion": "sites/gradecrew-staging-2026/versions/335fff0a6316dcf7",
+  "filesPreserved": 666,
+  "wilmaFilesPreserved": 217,
+  "onlyChange": "prepend /api/classroom/** rewrite to classroomweb europe-west1; preserve complete payload and other serving configuration",
+  "regressionTests": {
+    "passed": 4,
+    "failed": 0
+  },
+  "browser": {
+    "existingTeacherLoginPreserved": true,
+    "syntheticExistingPupilLogin": true,
+    "assignedTestsVisible": true,
+    "reloadRetainedSession": true,
+    "logoutReturnedToCodeForm": true,
+    "teacherSessionStillActive": true,
+    "testStarted": false,
+    "testSubmitted": false
+  },
+  "cloudRosterObserved": {
+    "schools": 1,
+    "classes": 2,
+    "students": 25,
+    "type": "synthetic SYSTEMTEST"
+  },
+  "localImportedRosterObserved": {
+    "classes": 21,
+    "students": 315,
+    "teachers": 50,
+    "migrated": false
+  },
+  "productionChanged": false,
+  "pupilCodeOrCredentialIncluded": false,
+  "nativeDeviceAcceptance": "not performed; route repair only"
+}

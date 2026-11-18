@@ -1,0 +1,15 @@
+{
+  "previewUrl": "https://gradecrew-staging-2026--billing-product-uiwqa85y.web.app/workspace.html?intent=login",
+  "moduleSha256": "7697bd3e329c1f946102e63e6df8d7291ed069311ca20643ad08419b7c42ea4b",
+  "releaseSource": "98159c65fc6622c55f29fbea2ab0ed161bc9ed97",
+  "moduleMatchesManifest": true,
+  "billingPilot": {
+    "state": "ACTIVE",
+    "revision": "billingpilot-00002-yag"
+  },
+  "anonymousSchoolListStatus": 401,
+  "canonicalHostingVersion": "sites/gradecrew-staging-2026/versions/335fff0a6316dcf7",
+  "integratedRemoteCommit": "d83f78682e1c38479e595faf9d712e8aa0a96c09",
+  "classroomAdapterStatus": "not implemented",
+  "realAsvMigration": false
+}

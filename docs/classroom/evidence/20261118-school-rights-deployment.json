@@ -1,0 +1,75 @@
+{
+  "taskId": "GC-CLASSROOM-01",
+  "sourceCommit": "2f662ee70e2bff8924b8fa1f0f4d3b7ddc3402aa",
+  "functions": {
+    "classroomWeb": {
+      "state": "ACTIVE",
+      "revision": "classroomweb-00008-bip",
+      "all41SourceFilesVerified": true,
+      "other37SourceFilesPreserved": true,
+      "serviceParametersPreserved": true,
+      "iamPolicyPreserved": true
+    },
+    "classroomAccess": {
+      "state": "ACTIVE",
+      "revision": "classroomaccess-00005-goq",
+      "all41SourceFilesVerified": true,
+      "other37SourceFilesPreserved": true,
+      "serviceParametersPreserved": true,
+      "iamPolicyPreserved": true
+    }
+  },
+  "hosting": {
+    "version": "sites/gradecrew-staging-2026/versions/4916e09a92376424",
+    "sourceVersion": "sites/gradecrew-staging-2026/versions/f5bbf2a1f554a9d4",
+    "sourceCommit": "2f662ee70e2bff8924b8fa1f0f4d3b7ddc3402aa",
+    "allOriginalPathsRetained": true,
+    "unrelatedFilesPreserved": 662,
+    "files": 667,
+    "configUnchanged": true,
+    "changedOriginalPaths": [
+      "/classroom/online-client.mjs",
+      "/classroom/online-workspace.mjs",
+      "/classroom/online-workspace.css",
+      "/release.json"
+    ],
+    "addedPaths": [
+      "/classroom/school-connection-panel.mjs"
+    ]
+  },
+  "public": {
+    "classroom/online-client.mjs": "59bf82626c17b1f90b3cf7ddfec5c0e384807681620ba2d9ddad3fcc179c8fcf",
+    "classroom/online-workspace.mjs": "5670f23f18d6d282d299bded4e866aa2475a320fe3b191743f6dcb0a58028b62",
+    "classroom/online-workspace.css": "d369fa40e905e46de52453cd387b304c76b49a9a144fd088741f7eb4da8f4158",
+    "classroom/school-connection-panel.mjs": "59c1a425b256aaf233287d62bd58a46304bd903d18f3095a8b8ee6ef794b91cf",
+    "pupilAnonymousStatus": 401,
+    "teacherAnonymousStatus": 401,
+    "hostingVersion": "sites/gradecrew-staging-2026/versions/4916e09a92376424"
+  },
+  "checks": {
+    "assessmentTests": 144,
+    "classroomWebTests": 97,
+    "accessTestsIndependent": 15,
+    "realAuthFirestoreAndDeployedRulesCases": 3,
+    "reviewFinding": "P1 cross-school round overwrite reproduced and fixed9ad18d39; independent recheck resolved, no remainingImportant/Critical"
+  },
+  "browser": {
+    "layoutWidths": [
+      375,
+      768,
+      1280
+    ],
+    "syntheticClassChoiceAndExplicitBinding": true,
+    "normalTeacherSessionPreserved": true,
+    "existingTestsVisible": 19,
+    "existingClassesVisible": 2,
+    "existingPupilCounts": [
+      1,
+      24
+    ],
+    "noSchoolBindingPerformed": true,
+    "nativeDeviceAcceptance": false
+  },
+  "realAsvMigration": false,
+  "productionChanged": false
+}

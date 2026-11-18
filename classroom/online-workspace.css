@@ -44,3 +44,5 @@
 #resultsView #reviewPanel .button.primary{background:var(--primary,#285bd2);color:#fff;border-color:var(--primary,#285bd2)}
 #resultsView #reviewPanel h2{font:inherit;font-weight:750;font-size:1.5rem}
 @media(max-width:600px){#resultsView #reviewPanel.reviewPanel{padding:16px}#resultsView #reviewPanel .reviewHeader{align-items:flex-start;flex-direction:column}}
+
+.gcSchoolConnection{display:grid;gap:1rem;margin-bottom:1rem;min-width:0}.gcSchoolConnection[hidden]{display:none}.gcSchoolConnection .gcSchoolCheck{min-height:44px;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:.75rem}.gcSchoolConnection .gcSchoolCheck[hidden]{display:none}.gcSchoolConnection .gcSchoolCheck input{width:1.25rem;min-width:1.25rem;margin-top:.2rem}.gcSchoolConnection .gcSchoolCheck span,.gcSchoolConnection p{overflow-wrap:anywhere}.gcSchoolConnection .gcSchoolClassChoices{display:grid;gap:.75rem;max-height:20rem;overflow:auto;padding:.25rem}.gcSchoolConnection summary{cursor:pointer;min-height:44px;padding-block:.75rem}.gcSchoolConnection button{min-height:44px;white-space:normal}

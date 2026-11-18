@@ -3256,5 +3256,49 @@
       },
       "pricing_recheck": "0.00EUR_Germany_only1available174unavailable;paidAgreementNeu_unaccepted"
     }
+  },
+  "classroom_20261118_pupil_repair": {
+    "task_id": "GC-CLASSROOM-01",
+    "status": "staging_deployed",
+    "project": "gradecrew-staging-2026",
+    "source_commit": "fe73ed43",
+    "hosting_version": "335fff0a6316dcf7",
+    "all_666_file_hashes_preserved": true,
+    "browser_pupil_login_refresh_logout_verified": true,
+    "teacher_session_preserved": true,
+    "production_changed": false,
+    "school_code_status": "integrated_and_deployed_separate_closed_billing_pilot",
+    "evidence": "docs/classroom/evidence/20261118-pupil-route-repair.json",
+    "school_code_local_commit": "f59d6153b2d04c7abb00ee4af4e3ca7b1cf3b2cd",
+    "school_code_integrated_remote_commit": "d83f78682e1c38479e595faf9d712e8aa0a96c09",
+    "school_code_preview": "https://gradecrew-staging-2026--billing-product-uiwqa85y.web.app/workspace.html?intent=login",
+    "classroom_school_rights_adapter": "not_implemented",
+    "school_code_integration_evidence": "docs/classroom/evidence/20261118-school-code-integration.json"
+  },
+  "classroom_school_rights_20261119": {
+    "task_id": "GC-CLASSROOM-01",
+    "status": "staging_deployed",
+    "project": "gradecrew-staging-2026",
+    "source_commit": "2f662ee70e2bff8924b8fa1f0f4d3b7ddc3402aa",
+    "hosting_version": "4916e09a92376424",
+    "hosting_files": 667,
+    "unrelated_files_preserved": 662,
+    "configuration_and_invocation_policies_preserved": true,
+    "explicit_school_binding": "available; no real school binding performed",
+    "canonical_membership_and_selected_class_enforcement": true,
+    "tests": {
+      "backend": 144,
+      "classroom_web": 97,
+      "auth_firestore_rules_integration": 3
+    },
+    "existing_teacher_browser": {
+      "session_retained": true,
+      "tests_observed": 19,
+      "classes_observed": 2
+    },
+    "online_csv_import": "not_implemented",
+    "actual_two_teacher_cloud_acceptance": "pending; synthetic local flow verified",
+    "evidence": "docs/classroom/evidence/20261118-school-rights-deployment.json",
+    "production_changed": false
   }
 }

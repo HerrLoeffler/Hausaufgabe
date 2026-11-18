@@ -11,7 +11,7 @@ const hash=value=>crypto.createHash('sha256').update(String(value)).digest('hex'
 const text=(value,max=120)=>{if(typeof value!=='string'||!value.trim()||value.trim().length>max)fail('invalid-argument','Bitte die Angaben prüfen.');return value.trim();};
 const id=value=>{if(typeof value!=='string'||!/^[A-Za-z0-9_-]{1,128}$/.test(value))fail('invalid-argument','Ungültige Zuordnung.');return value;};
 const stamp=value=>typeof value?.toMillis==='function'?value.toMillis():Number(value)||0;
-function createClassroomService({store,now=Date.now}){
+function createClassroomCore({store,now=Date.now}){
  const schoolPath=s=>`classroomSchools/${id(s)}`,studentPath=(s,p)=>`${schoolPath(s)}/students/${id(p)}`,assignmentPath=(s,a)=>`${schoolPath(s)}/assignments/${id(a)}`;
  async function teacher(uid){if(!uid)fail('unauthenticated','Bitte als Lehrkraft anmelden.');id(uid);const [u,d,m]=await Promise.all([store.get(`users/${uid}`),store.get(`accountDeletions/${uid}`),store.get(`classroomMembers/${uid}`)]);if(!u||d||(u.status||'active')!=='active'||u.accountDeletionId||!['teacher','admin'].includes(u.role||'teacher'))fail('permission-denied','Dieser Lehrkraftzugang ist nicht aktiv.');return m||null;}
  async function key(){return store.transaction(async tx=>{let k=await tx.get('classroomPrivate/credentialKey');if(!k){k={key:crypto.randomBytes(32).toString('base64')};tx.set('classroomPrivate/credentialKey',k);}return Buffer.from(k.key,'base64');});}
@@ -99,4 +99,5 @@ function createClassroomService({store,now=Date.now}){
  }
  return {execute};
 }
+function createClassroomService({store,now=Date.now,getIdentity}){return require('./classroom-school-access').wrapClassroom({store,now,getIdentity,createCore:createClassroomCore,fail});}
 module.exports={createClassroomService,ClassroomError,hash};

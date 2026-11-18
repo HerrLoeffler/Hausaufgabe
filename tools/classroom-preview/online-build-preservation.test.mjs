@@ -15,3 +15,16 @@ test('classroom attaches to the teacher workspace after the homepage split and p
  assert.ok(output['workspace.html'].includes('startup.js?v=gc45'));
  assert.ok(output['workspace.html'].includes('classroom/online-workspace.mjs?v=restored'));
 });
+
+test('REST route repair preserves the entire serving configuration and takes precedence over catch-all rewrites', async () => {
+ const {repairOnlineServingConfig} = await import('./online-build-preservation.mjs');
+ const original = {headers:[{glob:'**',headers:{'Cache-Control':'no-cache'}}],redirects:[{glob:'/old',location:'/new',statusCode:302}],rewrites:[{glob:'/wilma/**',path:'/wilma/index.html'},{glob:'**',path:'/workspace.html'}],cleanUrls:true};
+ const before = structuredClone(original);
+ const repaired = repairOnlineServingConfig(original);
+ assert.deepEqual(original,before);
+ assert.deepEqual(repaired.rewrites[0],{glob:'/api/classroom/**',run:{serviceId:'classroomweb',region:'europe-west1'}});
+ assert.deepEqual(repaired.rewrites.slice(1),original.rewrites);
+ assert.deepEqual({...repaired,rewrites:[]},{...original,rewrites:[]});
+ assert.deepEqual(repairOnlineServingConfig(repaired),repaired);
+ assert.deepEqual(repairOnlineServingConfig({headers:original.headers}).headers,original.headers);
+});

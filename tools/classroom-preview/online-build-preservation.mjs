@@ -17,3 +17,22 @@ export function hostingRewrites(original=[]) {
  const other=original.filter(r=>(r.source||r.glob)!=='/api/classroom/**').map(({glob,...r})=>({...r,source:r.source||glob}));
  return [{source:'/api/classroom/**',function:{functionId:'classroomWeb',region:'europe-west1'}},...other];
 }
+
+// A REST Hosting version uses glob/run fields. Clone its files separately and
+// change only this owned route, retaining every other serving setting.
+export function repairOnlineServingConfig(config) {
+  const preserved = structuredClone(config);
+  const otherRewrites = (preserved.rewrites || []).filter(
+    rewrite => rewrite.glob !== '/api/classroom/**'
+  );
+  return {
+    ...preserved,
+    rewrites: [
+      {
+        glob: '/api/classroom/**',
+        run: {serviceId: 'classroomweb', region: 'europe-west1'}
+      },
+      ...otherRewrites
+    ]
+  };
+}
