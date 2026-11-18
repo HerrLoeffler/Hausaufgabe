@@ -24,3 +24,8 @@
 #wilmaAnswerReview:not([hidden])[data-expanded="true"] + #resultsTableWrap{display:none}
 #wilmaAnswerReview[data-expanded="false"] .wilmaReviewHead{padding:8px 12px}
 #wilmaAnswerReview[data-expanded="false"] .wilmaReviewHead>img{width:26px;height:30px;flex-basis:26px}
+
+/* Keep touch form controls readable without disabling the user's page zoom. */
+@media(pointer:coarse){
+ #wilmaAnswerReview select,#wilmaAnswerReview textarea{font-size:16px;min-height:44px}
+}

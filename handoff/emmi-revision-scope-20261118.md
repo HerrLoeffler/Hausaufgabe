@@ -1,0 +1,29 @@
+# Emmi Einzelaufgabe: gezielter Bereich · task4 · 18Nov2026
+
+Ausführender Unterauftrag des bestehenden18Nov-Auftrags; Parent verantwortet gemeinsame Task-/TODO-/STATE-Übergabe. Baseline Live338c0432645803a58f71531a0d016abb5a44cbf9, eigener Branch work/emmi-revision-scope-20261118, Checkout work/emmi-scope-20261118. Root prüfte Main398b7a45, DevelopmentStatus44259702343 und bestehendePR421 vor Delegation. Keine neue Provider-/Budgetreservierung, keine bezahlten Aufrufe, kein Push/Deploy/Merge aus diesem Unterauftrag. Requested Modell vom Parent geerbt, actual Runtime/Usage unbekannt.
+
+## Gesicherter Code
+
+- Dialog mit Ganze Aufgabe / Nur Frage / Nur Antworten. Freier Wunsch „Frage lassen, neue Antworten“ wird sichtbar als Nur Antworten erkannt. Widerspruch zwischen expliziter Auswahl und Wunsch stoppt vor Aufruf; kein stiller Wechsel zu ganzer Aufgabe.
+- Nur Frage ändert ausschließlich text; Optionen, Schlüssel, Rubrik, Reihenfolge/Farbgruppen, Medien und sonstige Quelldaten werden lokal exakt erhalten. Nur Antworten erzeugt ausschließlich Textoptionen + zusammen passenden correct-Schlüssel, während Frage und sämtliche anderen Felder erhalten bleiben.
+- Answer-only für single/multi/dropdown mit Textantworten; Freitext und übrige Typen sowie Bild-/Audioantworten erklären Einschränkung. Question-only für Lückentexte und listening-only nicht verfügbar (verbundene Frage-/Antwort-/Audiofelder).
+- Server erzwingt minimale Structured-Output-Schemata und lehnt Zusatzfelder ab. Effektive Aufgabe durch bestehende Validierung und Qualitätsprüfung, geschützte Quellfelder nur zusammengeführt, nicht neu generiert. Owner/Lifecycle-Prüfung und source-Receipt; Browser bindet Quiz/Konto/Frage/Vollversionsfingerprint, einschließlich Punkte/Audio/Rubrik/Farben/acceptedOrders. Umordnen während Auftrag bleibt anhand ID möglich. Schließen beendet laufenden Auftrag nicht; bestehende Fehlermeldungsübernahme und Undo erhalten.
+- Vor Teilüberarbeitung kostenlose status-Abfrage: supportedRevisionScopes fehlt => klarer Hinweis „auf dieser Testumgebung noch nicht freigeschaltet“, keine bezahlte Generierung. Fehlende/falsche Ergebnisquittung bleibt zweite Sperre. Whole-Edit bleibt bestehender Pfad.
+
+## Prüfungen und Grenzen
+
+Node24.22.3 auf lokalem Host (Node22-CI separat). Ausgeführt: 796 Root-/UI-Tests mit --experimental-vm-modules bestanden;382 Functions-Tests bestanden;20 fokussierte Fälle in Functions/UI/Editor enthalten. ESLint für index.js/neueServerpolicy/neuenTest und Syntaxprüfung bestanden; git diff --check sauber. Browserfixture:8 Dialoggrößen (390x844,768x1024,1440x900,844x390) über Chromium und WebKit, Bereichsinferenz/-übernahme, fehlendeReceipt/Fehlerübernahme/Freitextlimit bestanden. Screenshots und Receipt /private/tmp/emmi-scope-browser, mobile/landscape visuell geprüft; Landscape nutzt bestehenden Dialogscroll. Nach dem Checkpoint wurde eine sichtbare Einschränkungserklärung für deaktivierte Bereiche ergänzt und die kostenlose Capabilityantwort separat getestet;20 fokussierte Tests erneut bestanden. Keine physischen Geräte oder echte Providerantworten geprüft.
+
+Assurance-Scope: SEC06/07 Owner/Lifecycle/Quellbindung, SEC11/14 unveränderte Bewertung/Medien und Eingabevalidierung, PRIV13/14/19 explizite verständliche Auswahl und bestehender zugänglicher Dialog. Enge lokale Nachweise erfüllt; unabhängige Review/CI/Deployment/Nutzerabnahme offen. Bestehende Lernziel-/Rendererwege wiederverwendet, kein neuer Aufgabentyp; methodische Katalogerweiterung nicht relevant, reine Überarbeitungssteuerung.
+
+## Backend-Gate / Release
+
+Stufe branch_only, lokal geprüft. Kein Hosting-/Functions-/Rules-/Assessment-/Productiondeploy. Aktuell von Root gelesenes Stage regenerateQuestion26Oct unterstützt Scope noch nicht. Erforderlicher künftiger Backendumfang: Projekt gradecrew-staging-2026, codebase ai, Region europe-west1, Funktionen regenerateQuestion und getAiStatus. Beide in functions/index.js via functions/main.js exportiert. Zuerst regenerateQuestion bereitstellen, dann getAiStatus-Fähigkeit veröffentlichen; sonst könnte Status zu früh Unterstützung behaupten. Bestehender Mainworkflow .github/workflows/staging-functions.yml erfordert exakten IntegrationsSHA+CI; manuelle Recovery aktualisiert nur3Poolfunktionen und umfasst diese Endpunkte nicht. Bestehendes tools/automation/deploy-staging-ai-functions.sh ist breit functions:ai. Keine Umgehung dieser Gates; gezielten autorisierten Pfad vor realem Deploy schaffen und aktuelle Runtime/Secrets/Sourceprovenienz erhalten. Keine Rules/Indizes/Assessmentänderung erforderlich. Hosting allein ist kein Backend-E2E-Nachweis.
+
+## Ungefährliche Vorschau
+
+`node tools/ui/emmi-revision-scope-preview.mjs` startet loopback8789: echte Dialog-/Clientfunktionen + echte Serverpolicy, künstlicher Owner und feste Beispielantworten, kein Firebase/Provider. Lokale Sitzung53622 läuft, Parent kann sie nach Abnahme beenden.
+
+`node tools/ui/emmi-revision-scope-preview.mjs --export /absolute/output/directory` erstellt standalone index.html/client.mjs/styles.css/workspace.css, bereits /private/tmp/emmi-static-preview. Für separate Hostingpreview unter /emmi-demo/ geeignet. Ausschließlich feste synthetische Antworten im Browser, keine API/Firebase/Provider-/Credentialzugriffe, CSP connect-src none und Hostguard für isolierte Previewhosts/loopback. Klare Kennzeichnung „Fiktive Beispieldaten · keine echten Änderungen“. Diese Demo belegt Dialog und Schutzverhalten, keine veröffentlichte Serverfunktion. `node tools/browser-layout/emmi-revision-scope.cjs` prüft laufenden Loopbackserver.
+
+Nächster Schritt: Parent übernimmt Commit in BatchPR427, führt unabhängige enge Review/exakteCI aus und veröffentlicht nur autorisierte Hostingvorschau mit klar getrenntem Backendgate. Kein weiterer Deploy aus diesem Unterauftrag.

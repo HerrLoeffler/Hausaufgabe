@@ -4,9 +4,10 @@ const APP_VERSION = "2.3.1-gc45-rc1";
 const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digital." });
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
-import { teacherGradingSummary } from "./teacher-grading-summary.mjs?v=20261028";
+import { teacherGradingSummary, teacherResultName, teacherResultNumber, teacherResultSubmittedAt, teacherResultRunning, sortTeacherResults, teacherResultsAverages } from "./teacher-grading-summary.mjs?v=20261118";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { answerIsComplete, paintAnswerCompletion } from "./shared/answer-completion.mjs";
 import {
   getAuth,
   createUserWithEmailAndPassword as firebaseCreateUser,
@@ -4620,10 +4621,60 @@ async function createSimilarTest() {
   await startAiCreationJob(request, { similar: true, sourceQuiz: state.currentQuiz });
 }
 
+function inferQuestionRevisionScope(instruction) {
+  const text = String(instruction || "").normalize("NFKC").toLowerCase();
+  const answers = /(?:nur|neue|andere)\s+(?:die\s+)?antwort(?:en|optionen|möglichkeiten)|frage(?:stellung)?\s+(?:so\s+)?(?:lassen|beibehalten|unverändert)|(?:frage(?:stellung)?|fragetext)\s+nicht\s+(?:ändern|verändern)/u.test(text);
+  const question = /nur\s+(?:die\s+)?(?:frage(?:stellung)?|fragetext)|antwort(?:en|optionen|möglichkeiten)\s+(?:so\s+)?(?:lassen|beibehalten|unverändert)|antwort(?:en|optionen|möglichkeiten)\s+nicht\s+(?:ändern|verändern)/u.test(text);
+  if (answers && question) throw new Error("Dein Wunsch nennt widersprüchliche Bereiche. Bitte wähle einen Bereich und passe den Text an.");
+  return answers ? "answers" : question ? "question" : null;
+}
+
+function questionRevisionUnavailable(q, scope) {
+  if (scope === "question" && (q.type === "gapfill" || q.audioPresentation === "listening-only")) return "Bei Lückentexten und reinen Höraufgaben sind Frage und Lösung bzw. Höranweisung verbunden. Bitte die ganze Aufgabe oder manuell bearbeiten.";
+  if (scope === "answers" && (!["single", "multi", "dropdown"].includes(q.type) || q.imageChoicesOnly || q.audioAnswerMode === "audio-only" || q.options?.some(o => o.imageDataUrl || o.audioDataUrl))) return "Nur Antworten ist bei dieser Aufgabe nicht verfügbar. Unterstützt werden Auswahlaufgaben mit Textantworten; Freitextlösungen und Medien bitte über die ganze Aufgabe oder manuell bearbeiten.";
+  return "";
+}
+
+function resolveQuestionRevisionScope(q, instruction, selection = "whole", explicit = false) {
+  const inferred = inferQuestionRevisionScope(instruction);
+  if (explicit && inferred && inferred !== selection) throw new Error("Auswahl und Änderungswunsch widersprechen sich. Bitte den Bereich oder den Text anpassen.");
+  const scope = inferred || selection;
+  if (!["whole", "question", "answers"].includes(scope)) throw new Error("Bitte einen gültigen Bereich wählen.");
+  const unavailable = questionRevisionUnavailable(q, scope);
+  if (unavailable) throw new Error(unavailable);
+  return scope;
+}
+
+function questionRevisionKey(q) {
+  const copy = { ...q };
+  for (const key of ["_aiUndo", "_collapsed", "_typeChanging", "position"]) delete copy[key];
+  const json = JSON.stringify(copy);
+  let hash = 2166136261;
+  for (let i = 0; i < json.length; i++) hash = Math.imul(hash ^ json.charCodeAt(i), 16777619);
+  return (hash >>> 0).toString(16);
+}
+
+function mergeScopedQuestionRevision(original, source, response, scope, revisionSource) {
+  const receipt = response?.meta?.revision;
+  if (receipt?.scope !== scope || JSON.stringify(receipt.source) !== JSON.stringify(revisionSource)) throw new Error("Die gezielte Überarbeitung wurde nicht bestätigt. Die bisherige Aufgabe bleibt erhalten. Bitte später erneut versuchen.");
+  const result = response.question;
+  const field = scope === "question" ? "text" : "options";
+  const protectedSource = { ...source }, protectedResult = { ...result };
+  delete protectedSource[field]; delete protectedResult[field];
+  if (JSON.stringify(protectedSource) !== JSON.stringify(protectedResult)) throw new Error("Die Überarbeitung hat geschützte Teile verändert. Die bisherige Aufgabe bleibt erhalten.");
+  if (scope === "question" && (typeof result.text !== "string" || !result.text.trim())) throw new Error("Die neue Frage fehlt.");
+  if (scope === "answers" && (!Array.isArray(result.options) || result.options.length < 2 || result.options.length > 8 || result.options.some(o => typeof o.text !== "string" || !o.text.trim() || typeof o.correct !== "boolean" || Object.keys(o).some(k => !["text", "correct"].includes(k))) || new Set(result.options.map(o => o.text.trim().toLowerCase())).size !== result.options.length || (["single", "dropdown"].includes(original.type) ? result.options.filter(o => o.correct).length !== 1 : !result.options.some(o => o.correct)))) throw new Error("Die neuen Antworten oder Lösungen sind ungültig.");
+  return { ...deepClone(original), [field]: deepClone(result[field]) };
+}
+
 function openQuestionRevisionDialog(trigger, q, index) {
+  const sourceRevisionKey = questionRevisionKey(q);
   const actionDialog = createQuestionActionDialog(trigger, q, index, {
     title: "Aufgabe überarbeiten", kind: "questionAiPanel", actionSelector: ".aiEditQuestion",
-    fields: `${questionActionTextField({
+    fields: `<label>Bereich<select class="questionRevisionScope"><option value="whole">Ganze Aufgabe</option><option value="question" ${questionRevisionUnavailable(q, "question") ? "disabled" : ""}>Nur Frage</option><option value="answers" ${questionRevisionUnavailable(q, "answers") ? "disabled" : ""}>Nur Antworten</option></select></label>
+      <small class="questionRevisionHint" role="status"></small>
+      ${questionRevisionUnavailable(q, "answers") || questionRevisionUnavailable(q, "question") ? `<small class="questionRevisionAvailability">${questionRevisionUnavailable(q, "answers") || questionRevisionUnavailable(q, "question")}</small>` : ""}
+      ${questionActionTextField({
       id: "questionActionInstruction", label: "Was soll anders werden?",
       textarea: '<textarea id="questionActionInstruction" rows="2" autofocus placeholder="z. B. andere Zahlen oder kürzere Sätze"></textarea>',
       micLabel: "Änderungswunsch diktieren"
@@ -4635,8 +4686,22 @@ function openQuestionRevisionDialog(trigger, q, index) {
   const { dialog, form, run, show, showStatus } = actionDialog;
   const input = dialog.querySelector("textarea");
   const chips = dialog.querySelector(".questionAiChips");
+  const scopeInput = dialog.querySelector(".questionRevisionScope");
+  let scopeExplicit = false;
+  const updateScopeHint = () => {
+    let message;
+    try {
+      const scope = resolveQuestionRevisionScope(q, input.value, scopeInput.value, scopeExplicit);
+      if (!scopeExplicit) scopeInput.value = scope;
+      message = scope === "question" ? "Nur der Fragetext wird geändert. Antworten und Lösungen bleiben erhalten." : scope === "answers" ? "Der Fragetext bleibt erhalten. Antwortmöglichkeiten und die dazu passende richtige Lösung werden neu erstellt." : "Frage, Antworten und Lösungen können passend zu deinem Wunsch geändert werden.";
+    } catch (err) { message = err.message; }
+    dialog.querySelector(".questionRevisionHint").textContent = message;
+  };
+  scopeInput.addEventListener("change", () => { scopeExplicit = true; updateScopeHint(); });
+  input.addEventListener("input", () => { if (!scopeExplicit) scopeInput.value = "whole"; updateScopeHint(); });
+  updateScopeHint();
   for (const label of ["Einfacher", "Schwieriger", "Kürzer", "Anderes Beispiel", "Neue Zahlen", "Antwortoptionen verbessern"]) {
-    chips.append(makeMiniButton(label, () => { input.value = label; input.focus(); }));
+    chips.append(makeMiniButton(label, () => { input.value = label; input.dispatchEvent(new Event("input", { bubbles: true })); input.focus(); }));
   }
   if (q._aiUndo) chips.append(makeMiniButton("↶ Letzte KI-Änderung rückgängig", () => {
     void run("", ({ question, index: position }) => {
@@ -4652,8 +4717,13 @@ function openQuestionRevisionDialog(trigger, q, index) {
   form.addEventListener("submit", () => {
     const instruction = input.value.trim();
     if (!instruction) { showStatus("Bitte beschreibe kurz, was anders werden soll."); input.focus(); return; }
+    const current = state.questions.find(item => item.id === q.id);
+    if (!current || questionRevisionKey(current) !== sourceRevisionKey) { showStatus("Die Aufgabe wurde inzwischen geändert. Bitte öffne das Fenster erneut."); return; }
+    let revisionScope;
+    try { revisionScope = resolveQuestionRevisionScope(q, instruction, scopeInput.value, scopeExplicit); }
+    catch (err) { showStatus(err.message); return; }
     void run("Emmi überarbeitet die Aufgabe …", ({ question, index: position }) => regenerateQuestionWithAi(question, position, {
-      instruction, panel: dialog
+      instruction, revisionScope, revisionScopeExplicit: scopeExplicit, panel: dialog
     }), "Die Überarbeitung wurde nicht übernommen. Du kannst den Wunsch ändern oder es erneut versuchen.");
   });
   show();
@@ -4859,7 +4929,7 @@ async function changeQuestionType(q, index, targetType) {
   } finally { delete q._typeChanging; if (state.questions.some(item => item.id === q.id)) renderQuestions({ onlyQuestionId: q.id }); }
 }
 
-async function regenerateQuestionWithAi(q, index, { instruction = "", variant = false, panel = null, requireDifferent = false, targetType = null } = {}) {
+async function regenerateQuestionWithAi(q, index, { instruction = "", variant = false, panel = null, requireDifferent = false, targetType = null, revisionScope, revisionScopeExplicit = false } = {}) {
   if (state.currentQuiz?.published && !state.currentQuiz?.ended) return toast("Beende den veröffentlichten Test zuerst.", "error");
   if (!variant && !instruction) return toast("Bitte kurz beschreiben, was geändert werden soll.", "error");
   if (variant && state.questions.length >= 100) return toast("Ein Test kann höchstens 100 Aufgaben enthalten.", "error");
@@ -4867,27 +4937,41 @@ async function regenerateQuestionWithAi(q, index, { instruction = "", variant = 
   const target = { quizId: state.currentQuiz?.id, uid: tourUid(), questionId: q.id, reviewKey: questionReviewKey(q) };
   if (editorQuestionIndex(state, target) < 0) return;
   const old = deepClone(q); delete old._typeChanging;
+  const fullRevisionKey = questionRevisionKey(q);
+  const currentTargetIndex = () => {
+    const position = editorQuestionIndex(state, target);
+    return position >= 0 && questionRevisionKey(state.questions[position]) === fullRevisionKey ? position : -1;
+  };
   const card = panel?.matches("dialog") ? null : panel || document.querySelector(`.questionCard[data-id="${CSS.escape(q.id)}"]`);
   if (card?.classList.contains("questionAiBusy")) return;
   card?.classList.add("questionAiBusy");
   try {
-    const response = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(target.quizId)) ? crewTour.preparedResponse(q, {variant}) : await aiApi.regenerateQuestion({ question: questionForAi(q), instruction, variant, requireDifferent, targetType, testContext: questionContext(index), allowedTypes: targetType ? [targetType] : QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: false, materials: [] });
-    if (editorQuestionIndex(state, target) < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
-    const report = { warnings: [], repairs: [] }; const next = normalizeImportedQuestion(response.question, index, report);
+    if (revisionScope !== undefined) revisionScope = resolveQuestionRevisionScope(q, instruction, revisionScope, revisionScopeExplicit);
+    const scoped = revisionScope && revisionScope !== "whole";
+    if (scoped) {
+      const capability = await aiApi.status();
+      if (currentTargetIndex() < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
+      if (!Array.isArray(capability?.supportedRevisionScopes) || !capability.supportedRevisionScopes.includes(revisionScope)) throw new Error("Die gezielte Überarbeitung ist auf dieser Testumgebung noch nicht freigeschaltet. Die bisherige Aufgabe bleibt erhalten.");
+    }
+    const source = questionForAi(q);
+    const revisionSource = scoped ? { quizId: target.quizId, questionId: q.id, revision: fullRevisionKey } : undefined;
+    const response = (typeof crewTour !== "undefined" && crewTour?.ownsQuiz(target.quizId)) ? crewTour.preparedResponse(q, {variant}) : await aiApi.regenerateQuestion({ question: source, instruction, variant, requireDifferent, targetType, ...(revisionScope !== undefined ? { revisionScope, revisionScopeExplicit, revisionSource } : {}), testContext: questionContext(index), allowedTypes: targetType ? [targetType] : QUESTION_TYPES.map(([v]) => v), allowImages: true, allowImageChoices: false, materials: [] });
+    if (currentTargetIndex() < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
+    const report = { warnings: [], repairs: [] }; const next = scoped ? mergeScopedQuestionRevision(old, source, response, revisionScope, revisionSource) : normalizeImportedQuestion(response.question, index, report);
     if (targetType && next.type !== targetType) throw new Error("Die KI hat den gewünschten Aufgabentyp nicht erzeugt. Die bisherige Aufgabe bleibt erhalten.");
     next.aiOrigin = { kind: variant ? "variant" : "regenerated", model: String(response?.meta?.model || q.aiOrigin?.model || ""), promptVersion: String(response?.meta?.promptVersion || q.aiOrigin?.promptVersion || "") };
     next.id = variant ? guestTourRepo ? `tour-edit-variant-${Date.now()}` : doc(collection(db, "quizzes", target.quizId, "questions")).id : q.id;
     next.position = variant ? index + 2 : q.position;
     if (!variant) { next._aiUndo = old; if (q._typeVersions) next._typeVersions = q._typeVersions; }
-    if (response.question?.mediaIntent?.kind && response.question.mediaIntent.kind !== "none" && response.question.mediaIntent.kind !== "uploaded_crop") {
+    if (!scoped && response.question?.mediaIntent?.kind && response.question.mediaIntent.kind !== "none" && response.question.mediaIntent.kind !== "uploaded_crop") {
       await applyGeneratedMedia(response.question, next, target.quizId, next.id);
-    } else if (!variant && !targetType && (q.imageDataUrl || q.imageUrl)) { next.imageDataUrl = q.imageDataUrl || ""; next.imageUrl = q.imageUrl || ""; next.imagePath = q.imagePath || ""; next.imageAlt = q.imageAlt || ""; }
-    if (response.question?.audioIntent?.kind === "ai_generated") {
+    } else if (!scoped && !variant && !targetType && (q.imageDataUrl || q.imageUrl)) { next.imageDataUrl = q.imageDataUrl || ""; next.imageUrl = q.imageUrl || ""; next.imagePath = q.imagePath || ""; next.imageAlt = q.imageAlt || ""; }
+    if (!scoped && response.question?.audioIntent?.kind === "ai_generated") {
       await applyGeneratedAudio(response.question, next, target.quizId, next.id);
-    } else if (!variant && !targetType && (q.audioScript || getQuestionAudioSrc(q))) {
+    } else if (!scoped && !variant && !targetType && (q.audioScript || getQuestionAudioSrc(q))) {
       for (const key of ["audioScript", "audioInstruction", "audioPresentation", "audioDataUrl", "audioByteSize", "audioVoice", "audioModel", "audioAiGenerated", "audioNeedsRegeneration"]) next[key] = q[key];
     }
-    index = editorQuestionIndex(state, target);
+    index = currentTargetIndex();
     if (index < 0) return toast("Die Aufgabe wurde inzwischen geändert oder geschlossen. Deine Änderungen bleiben erhalten.");
     if (variant) state.questions.splice(index + 1, 0, next);
     else { state.questions[index] = next; resolveQualityIssues(q.id, { render: false }); }
@@ -7969,7 +8053,7 @@ async function startTimedStudentQuiz(quiz, questions) {
 function setupStudentProgress(questions) {
   const nav = $("studentQuestionNav");
   if (!nav) return;
-  nav.innerHTML = questions.map((q, i) => `<button class="questionNavDot" type="button" data-qid="${escapeHtml(q.id)}" title="Aufgabe ${i + 1}" aria-label="Zu Aufgabe ${i + 1}">${i + 1}</button>`).join("");
+  nav.innerHTML = questions.map((q, i) => `<button class="questionNavDot" type="button" data-qid="${escapeHtml(q.id)}" title="Aufgabe ${i + 1} · offen" aria-label="Aufgabe ${i + 1} · offen">${i + 1}</button>`).join("");
   nav.querySelectorAll(".questionNavDot").forEach((btn) => {
     btn.addEventListener("click", () => {
       const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(btn.dataset.qid)}"]`);
@@ -7990,22 +8074,8 @@ function setupStudentProgress(questions) {
 }
 
 function studentAnswerIsComplete(q, given) {
-  if (q.type === "text" || q.type === "number" || q.type === "dropdown" || q.type === "single" || q.type === "truefalse") return String(given ?? "").trim() !== "";
-  if (q.type === "multi") return Array.isArray(given) && given.length > 0;
-  if (q.type === "gapfill") return Array.isArray(given) && given.length > 0 && given.every((x) => String(x || "").trim() !== "");
-  if (q.type === "matching") return Object.keys(given || {}).length === (q.pairs || []).length && Object.values(given || {}).every((x) => String(x) !== "");
-  if (q.type === "grouping") {
-    const expected = (q.groups || []).reduce((sum, g) => sum + (g.items || []).length, 0);
-    return Object.keys(given || {}).length === expected;
-  }
-  if (q.type === "ordering") {
-    const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
-    return section?.dataset.touched === "1" && Array.isArray(given) && given.length === (q.items || []).length;
-  }
-  if (q.type === "markwords") return (q.markGroups || []).length
-    ? Boolean(given && typeof given === "object" && !Array.isArray(given) && Object.keys(given).length)
-    : Array.isArray(given) && given.length > 0;
-  return false;
+  const section = document.querySelector(`.studentQuestion[data-qid="${CSS.escape(q.id)}"]`);
+  return answerIsComplete(q, given, { orderingTouched: section?.dataset.touched === "1" });
 }
 
 function getUnansweredQuestions(questions) {
@@ -8020,11 +8090,11 @@ function refreshStudentProgress(questions) {
   if ($("studentProgressText")) $("studentProgressText").textContent = `${done} von ${questions.length} bearbeitet`;
   if ($("studentOpenCount")) $("studentOpenCount").textContent = unanswered.length ? `${unanswered.length} offen` : "Alles bearbeitet ✓";
   if ($("studentProgressFill")) $("studentProgressFill").style.width = `${percent}%`;
-  questions.forEach((q) => {
+  questions.forEach((q, index) => {
     const btn = $("studentQuestionNav")?.querySelector(`[data-qid="${CSS.escape(q.id)}"]`);
     if (!btn) return;
     const complete = !unanswered.includes(q);
-    btn.classList.toggle("complete", complete);
+    paintAnswerCompletion(btn, index, complete);
   });
 }
 
@@ -8547,21 +8617,36 @@ function renderResultsTable() {
   wilmaAnswerReview?.refresh();
   void wilmaAutoReview?.run();
   const wrap = $("resultsTableWrap");
+  wrap.setAttribute("aria-label", "Testergebnisse und Durchschnittswerte");
   if (!state.submissions.length) {
     wrap.innerHTML = `<div class="empty"><h2>Noch keine Abgaben</h2><p>Sobald Schüler den Test abgeben, erscheinen die Ergebnisse hier.</p></div>`;
     return;
   }
-  let html = `<table class="resultTable"><thead><tr><th scope="col">Kürzel</th><th scope="col">Punkte</th><th scope="col">%</th><th scope="col">Note</th><th scope="col">Status</th><th scope="col">Dauer</th><th scope="col">Abgegeben</th><th scope="col"><span class="visuallyHidden">Aktionen</span></th></tr></thead><tbody>`;
-  state.submissions.forEach((s) => {
-    const duration = formatDuration(s.elapsedSeconds);
-    const scoringPending = !teacherGradingSummary(s).complete || (state.resultQuestions||[]).some(q=>reviewItem(q,s,parseGaps).requiresReview);
+  // Same canonical open-answer check as the grade display; partial totals are never final statistics.
+  const isPending = s => !teacherGradingSummary(s).complete || (state.resultQuestions || []).some(q => reviewItem(q,s,parseGaps).requiresReview);
+  const key = wrap.resultsSort || "submittedAt", direction = wrap.resultsSortDirection || "desc";
+  const visible = sortTeacherResults(state.submissions,key,direction,isPending);
+  const sortOptions = [["firstName","Vorname"],["lastName","Nachname"],["duration","Bearbeitungsdauer"],["points","Punkte (fertig bewertet)"],["percent","Prozent (fertig bewertet)"],["submittedAt","Abgabezeit"]];
+  let html = `<div class="resultsToolbar"><label for="resultsSort">Sortieren nach<select id="resultsSort">${sortOptions.map(([value,label])=>`<option value="${value}"${key===value?" selected":""}>${label}</option>`).join("")}</select></label><label for="resultsSortDirection">Reihenfolge<select id="resultsSortDirection"><option value="asc"${direction==="asc"?" selected":""}>Aufsteigend</option><option value="desc"${direction==="desc"?" selected":""}>Absteigend</option></select></label><p class="hint">Ohne getrennt gespeicherten Vor- oder Nachnamen wird das vollständige Name/Kürzel-Feld verwendet. Fehlende Werte und offene Punkte stehen zuletzt.</p></div>`;
+  html += `<table class="resultTable"><thead><tr><th scope="col">Name / Kürzel</th><th scope="col">Punkte</th><th scope="col">%</th><th scope="col">Note</th><th scope="col">Status</th><th scope="col">Dauer</th><th scope="col">Abgegeben</th><th scope="col"><span class="visuallyHidden">Aktionen</span></th></tr></thead><tbody>`;
+  visible.forEach((s) => {
+    const name = teacherResultName(s).label, running = teacherResultRunning(s);
+    const seconds = teacherResultNumber(s.elapsedSeconds), points = teacherResultNumber(s.totalPoints), maximum = teacherResultNumber(s.maxPoints);
+    const scoringPending = isPending(s), provisional = scoringPending ? ' <small>vorläufig</small>' : '';
     const autoTag = s.autoSubmitted ? ` <span class="pill timedOut">Auto</span>` : "";
     const recoveryTag = s.recoveryReviewRequired ? ` <span class="pill review">${s.status === "review" ? "Nachübertragung · bitte prüfen" : "Nachübertragung geprüft"}</span>` : "";
-    html += `<tr><td><strong>${escapeHtml(s.studentName)}</strong></td><td>${escapeHtml(s.totalPoints)}/${escapeHtml(s.maxPoints)}</td><td>${escapeHtml(s.percent)}%</td><td>${submissionGrade(s)}</td><td><span class="pill ${scoringPending ? "review" : "graded"}">${scoringPending ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td>${escapeHtml(duration)}</td><td>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td><button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(s.studentName)}">Bewerten</button></td></tr>`;
+    html += `<tr><td data-label="Name / Kürzel"><strong>${escapeHtml(name)}</strong></td><td data-label="Punkte">${running || points===null || maximum===null ? "–" : `${escapeHtml(points)}/${escapeHtml(maximum)}${provisional}`}</td><td data-label="Prozent">${running || !maximum || points===null ? "–" : `${Math.round(points/maximum*100)}%${provisional}`}</td><td data-label="Note">${running ? "–" : submissionGrade(s)}</td><td data-label="Status"><span class="pill ${scoringPending || running ? "review" : "graded"}">${running ? "Läuft" : scoringPending ? "Prüfen" : "Bewertet"}</span>${autoTag}${recoveryTag}</td><td data-label="Dauer">${running || seconds===null ? "–" : escapeHtml(formatDuration(seconds))}</td><td data-label="Abgegeben">${teacherResultSubmittedAt(s)===null ? "–" : escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</td><td data-label="Aktionen">${running ? "Noch nicht abgegeben" : `<button class="button secondary reviewBtn" data-id="${escapeHtml(s.id)}" aria-label="Bewerten: ${escapeHtml(name)}">Bewerten</button>`}</td></tr>`;
   });
-  html += "</tbody></table>";
+  const averages = teacherResultsAverages(visible,isPending);
+  const averageNumber = value => value===null ? "–" : value.toLocaleString("de-DE",{maximumFractionDigits:1});
+  html += `</tbody></table><section class="resultsAverages" aria-labelledby="resultsAveragesHeading"><h2 id="resultsAveragesHeading">Durchschnitt der Übersicht</h2><p>${averages.finalCount} fertig bewertet · ${averages.pendingCount} offen · ${averages.runningCount} laufend in dieser Übersicht</p><dl><div><dt>Punkte</dt><dd>${averageNumber(averages.points.value)} <small>aus ${averages.points.count} Abgaben</small></dd></div><div><dt>Prozent</dt><dd>${averageNumber(averages.percent.value)}${averages.percent.count ? "%" : ""} <small>aus ${averages.percent.count} Abgaben</small></dd></div><div><dt>Dauer</dt><dd>${averages.duration.value===null ? "–" : escapeHtml(formatDuration(Math.round(averages.duration.value)))} <small>aus ${averages.duration.count} Abgaben</small></dd></div></dl><p class="hint">Punkte und Prozent: nur fertig bewertete Abgaben, ohne vorläufige Ergebnisse. Prozent ist der Mittelwert der einzelnen Punktanteile. Dauer: alle abgegebenen Arbeiten mit gültiger Zeit, auch offene Bewertungen; fehlende Zeiten zählen nicht. Laufende Arbeiten zählen nicht mit. Diese Werte beziehen sich auf alle ${visible.length} Abgaben der Übersicht, unabhängig von der Auswahl in der Wilma-Prüfliste. Noch nicht abgegebene Versuche werden hier nicht geladen.</p></section>`;
   wrap.innerHTML = html;
   wrap.querySelectorAll(".reviewBtn").forEach((btn) => btn.addEventListener("click", () => openReview(btn.dataset.id)));
+  ["resultsSort","resultsSortDirection"].forEach(id => $(id).addEventListener("change", () => {
+    if (!confirmDiscardInlineReview()) {$("resultsSort").value=key;$("resultsSortDirection").value=direction;return;}
+    wrap.resultsSort=$("resultsSort").value;wrap.resultsSortDirection=$("resultsSortDirection").value;
+    renderResultsTable();$(id).focus({preventScroll:true});
+  }));
 }
 
 function openReview(id) {
@@ -8574,7 +8659,7 @@ function openReview(id) {
   panel.wilmaReviewScope={uid:state.user?.uid,quizId:state.currentResultsQuiz?.id,submissionId:id,state:canonicalDecisionState(s),quizUpdatedAt:canonicalJson(state.currentResultsQuiz?.updatedAt??null),questions:state.resultQuestions.map(q=>({id:q.id,version:decisionQuestionSnapshot(q)}))};
   panel.classList.remove("hidden");
   panel.setAttribute("aria-labelledby", "reviewHeading");
-  panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2 id="reviewHeading" tabindex="-1">${escapeHtml(s.studentName)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div><div class="reviewHeader"><strong id="reviewTotal"></strong><button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
+  panel.innerHTML = `<div class="reviewHeader"><div><span class="eyebrow">Manuelle Bewertung</span><h2 id="reviewHeading" tabindex="-1">${escapeHtml(teacherResultName(s).label)}</h2><p>${escapeHtml(fmtDate(s.submittedAt || s.submittedAtLocal))}</p></div><button id="closeReview" class="button ghost">Schließen</button></div><div id="reviewQuestions"></div><div class="reviewHeader"><strong id="reviewTotal"></strong><button id="saveReview" class="button primary">Bewertung speichern</button></div>`;
   const root = $("reviewQuestions");
   state.resultQuestions.forEach((q, i) => {
     const g = s.grading?.[q.id] || { awardedPoints: 0, maxPoints: Number(q.points) || 0 };

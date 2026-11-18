@@ -1,3 +1,4 @@
+import { answerIsComplete } from "./shared/answer-completion.mjs";
 import {mountPublicEntryShell,setPublicEntryShellVisible} from "./shared/public-entry-shell.mjs";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { firebaseConfig } from "./firebase-config.js";
@@ -95,12 +96,19 @@ function readDraft() {
 
 function saveDraft() {
   if (!currentAttempt?.attemptId || !currentPaper.length) return;
-  try { sessionStorage.setItem(draftKey(), JSON.stringify(collectAnswers())); }
-  catch {}
+  try {
+    sessionStorage.setItem(draftKey(), JSON.stringify(collectAnswers()));
+    const confirmedOrders = currentPaper.filter(question => question.type === "ordering"
+      && document.querySelector(`.secureQuestion[data-qid="${CSS.escape(question.id)}"]`)?.dataset.orderingTouched === "1");
+    sessionStorage.setItem(draftKey() + ":ordering", JSON.stringify(confirmedOrders.map(question => question.id)));
+  } catch {}
 }
 
 function clearDraft() {
-  try { sessionStorage.removeItem(draftKey()); } catch {}
+  try {
+    sessionStorage.removeItem(draftKey());
+    sessionStorage.removeItem(draftKey() + ":ordering");
+  } catch {}
 }
 
 function formatMinutes(minutes) {
@@ -393,6 +401,7 @@ function moveOrderItem(button, direction) {
   if (!item || !list) return;
   if (direction < 0 && item.previousElementSibling) list.insertBefore(item, item.previousElementSibling);
   if (direction > 0 && item.nextElementSibling) list.insertBefore(item.nextElementSibling, item);
+  item.closest(".secureQuestion").dataset.orderingTouched = "1";
   onAnswerChanged();
 }
 
@@ -419,7 +428,15 @@ function renderOrdering(section, question) {
     row.append(question.audioAnswerMode === "audio-only" ? memoContent(item, index) : text, up, down);
     list.appendChild(row);
   });
-  section.appendChild(list);
+  const confirm = document.createElement("button");
+  confirm.type = "button";
+  confirm.className = "button secondary secureConfirmOrder";
+  confirm.textContent = "Reihenfolge bestätigen";
+  confirm.addEventListener("click", () => {
+    section.dataset.orderingTouched = "1";
+    onAnswerChanged();
+  });
+  section.append(list, confirm);
 }
 
 function renderGrouping(section, question) {
@@ -557,26 +574,25 @@ function collectAnswers() {
   ]));
 }
 
-function answerIsComplete(question, value) {
-  if (question.type === "ordering") return Array.isArray(value) && value.length === (question.items || []).length;
-  if (question.type === "markwords" && (question.markGroups || []).length) return Boolean(value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length);
-  if (["multi", "markwords"].includes(question.type)) return Array.isArray(value) && value.length > 0;
-  if (question.type === "gapfill") return Array.isArray(value) && value.length > 0 && value.every(item => String(item || "").trim());
-  if (["matching", "grouping"].includes(question.type)) {
-    const values = value && typeof value === "object" ? Object.values(value) : [];
-    const expected = question.type === "matching" ? (question.leftItems || []).length : (question.items || []).length;
-    return values.length === expected && values.every(Boolean);
-  }
-  return String(value ?? "").trim().length > 0;
+
+function secureAnswerIsComplete(question, value) {
+  const section = document.querySelector(`.secureQuestion[data-qid="${CSS.escape(question.id)}"]`);
+  return answerIsComplete(question, value, { orderingTouched: section?.dataset.orderingTouched === "1" });
 }
 
 function refreshProgress() {
   const answers = collectAnswers();
-  const done = currentPaper.filter(question => answerIsComplete(question, answers[question.id])).length;
+  const done = currentPaper.filter(question => {
+    const complete = secureAnswerIsComplete(question, answers[question.id]);
+    const section = document.querySelector(`.secureQuestion[data-qid="${CSS.escape(question.id)}"]`);
+    if (section) section.dataset.answerState = complete ? "answered" : "open";
+    return complete;
+  }).length;
   const total = currentPaper.length;
   $("secureProgressText").textContent = `${done} von ${total} bearbeitet`;
-  $("secureOpenText").textContent = `${Math.max(0, total - done)} offen`;
+  $("secureOpenText").textContent = done === total ? "Alles beantwortet ✓" : `${total - done} offen`;
   $("secureProgressFill").style.width = `${total ? Math.round(done / total * 100) : 0}%`;
+  document.dispatchEvent(new Event("gradecrew:student-progress"));
 }
 
 function onAnswerChanged() {
@@ -585,6 +601,12 @@ function onAnswerChanged() {
 }
 
 function applyDraft(draft) {
+  let confirmedOrders = [];
+  try {
+    const stored = JSON.parse(sessionStorage.getItem(draftKey() + ":ordering") || "[]");
+    if (Array.isArray(stored)) confirmedOrders = stored;
+  } catch {}
+
   for (const question of currentPaper) {
     const value = draft?.[question.id];
     if (value == null) continue;
@@ -606,6 +628,7 @@ function applyDraft(draft) {
     } else if (question.type === "grouping") {
       section.querySelectorAll("select[data-item-id]").forEach(select => { select.value = String(value?.[select.dataset.itemId] || ""); });
     } else if (question.type === "ordering" && Array.isArray(value)) {
+      if (confirmedOrders.includes(question.id)) section.dataset.orderingTouched = "1";
       const list = section.querySelector(".secureOrderList");
       const byId = new Map([...list.querySelectorAll(".secureOrderItem")].map(item => [item.dataset.itemId, item]));
       value.forEach(id => { const item = byId.get(String(id)); if (item) list.appendChild(item); });
@@ -797,7 +820,7 @@ $("secureStartForm")?.addEventListener("submit", async event => {
 $("secureAssessmentForm")?.addEventListener("submit", event => {
   event.preventDefault();
   const answers = collectAnswers();
-  const open = currentPaper.filter(question => !answerIsComplete(question, answers[question.id])).length;
+  const open = currentPaper.filter(question => !secureAnswerIsComplete(question, answers[question.id])).length;
   if (open && !confirm(`${open} ${open === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Trotzdem endgültig abgeben?`)) return;
   void submitAssessment(false);
 });

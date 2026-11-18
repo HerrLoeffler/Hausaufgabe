@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const { JSDOM } = require('jsdom');
 const html = fs.readFileSync('secure-student.html', 'utf8');
 const css = fs.readFileSync('secure-student.css', 'utf8');
-const source = fs.readFileSync('secure-student-navigation.mjs', 'utf8').replace('export function', 'function').replace("if (typeof document !== 'undefined') mountSecureQuestionNavigation();", '');
+const source = fs.readFileSync('secure-student-navigation.mjs', 'utf8').replace(/^import .*;\n/gm,'').replace('export function', 'function').replace("if (typeof document !== 'undefined') mountSecureQuestionNavigation();", '');
 function fixture() {
   const dom = new JSDOM(html.replace(/<script[^>]*>[\s\S]*?<\/script>/g, ''), { url: 'https://example.test/', runScripts: 'outside-only', pretendToBeVisual: true });
   const w = dom.window, d = w.document;
@@ -16,6 +16,7 @@ function fixture() {
   qs.innerHTML = [0, 1, 2].map(i => `<section class="secureQuestion" data-qid="q${i}"><input value="answer${i}"></section>`).join('');
   [...qs.children].forEach((s, i) => { s.getBoundingClientRect = () => ({ top: top[i] }); s.scrollIntoView = () => { top = top.map((v, j) => 150 + (j - i) * 500); }; });
   d.getElementById('secureAssessment').classList.remove('hidden');
+  w.eval(fs.readFileSync('shared/answer-completion.mjs','utf8').replaceAll('export function','function'));
   w.eval(source + '\nwindow.cleanup = mountSecureQuestionNavigation(document, window);');
   return { w, d, nav, resize(h) { headerHeight = h; w.dispatchEvent(new w.Event('resize')); }, scroll() { top = [-850, -350, 150]; w.dispatchEvent(new w.Event('scroll')); }, flush: () => new Promise(r => w.requestAnimationFrame(r)), close() { w.cleanup(); w.close(); } };
 }
