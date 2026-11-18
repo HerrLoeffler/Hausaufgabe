@@ -4,7 +4,7 @@ Task GC-EXTENDED-QUESTION-TYPES-01, 18.11.2026. Abgeschlossener technischer Pilo
 
 ## Was bedienbar ist
 
-[Kreativlabor öffnen](https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/). Im Bereich **Dreisatz üben & passende Darstellungen finden** lässt sich ein freier Wunsch eingeben. Zwei getrennte Modellaufrufe erzeugen und prüfen den Auftrag, ein unabhängiges Programm berechnet die Zahlen. **60 KI-Erprobungen öffnen** führt zur gespeicherten Referenzserie. Sprungliste, Probeauswertung und Smileys verwenden den vorhandenen Ablauf. **Auswahlgrund und Lösung zeigen** öffnet bewusst einen Lehrkraftbericht, ohne Roh-JSON.
+[Kreativlabor öffnen](https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/). Im Bereich **Mathematik · Dreisatz mit KI erproben** lässt sich ein freier Wunsch eingeben. Zwei getrennte Modellaufrufe erzeugen und prüfen den Auftrag, ein unabhängiges Programm berechnet die Zahlen. **60 KI-Erprobungen öffnen** führt zur gespeicherten Referenzserie. Sprungliste, Probeauswertung und Smileys verwenden den vorhandenen Ablauf. **Auswahlgrund und Lösung zeigen** öffnet bewusst einen Lehrkraftbericht, ohne Roh-JSON.
 
 Die Serie besteht aus 20 direkten, 20 umgekehrten und zehn Prozentfällen sowie zehn Formatgegenfällen. Bei Grundgebühr, Mengenrabatt, quadratischer Beziehung, zwei aufeinanderfolgenden Rabatten, Sprach-/Quellenaufträgen und fehlenden/widersprüchlichen Angaben soll der einfache Dreisatz nicht erzwungen werden. In diesen Gegenfällen entsteht eine Auswahlaufgabe zur passenden Vorgehensweise. Andere neue Renderer erzeugt dieser Einstieg noch nicht.
 
@@ -78,3 +78,10 @@ Alle 13 Hostingdateien stimmen bytegenau mit dem geprüften Paket überein. Func
 Das Öffnen des App-Browsers im Chat erreichte hier nur den Kopfbereich. Die vollständigen angemeldeten Bedien- und KI-Prüfungen erfolgten in einem separaten Chromium-Testbrowser gegen dieselbe tatsächliche Testseite.
 
 Nächster Schritt ist Martins Sichtung einer gemischten Auswahl mit Smileys und konkreten Gründen. Erst danach Prüfer gegen bestätigte Lehrkrafturteile kalibrieren und die nächste Serie beschließen. Unbekannte Wünsche und neue Fachfamilien benötigen weiter ihre eigenen Nachweise.
+
+
+## Präzisierung nach Martins Rückmeldung
+
+Die drei KI-Eingänge wurden nach ihrem tatsächlichen Umfang benannt. Der neue Mathematik-Einstieg prüft Dreisatz. Der weitere Pilot erzeugt Quellen-/Labyrinth-/Musikaufgaben. Der frühere Versuch startet Tabellen-/Pfeilaufgaben. Die Änderung betrifft ausschließlich die HTML-Beschriftungen. Alle 13 Hostingdateien verifiziert, nur index.html verändert, sichtbare Eingänge auf 1280/820/360 geprüft. Keine neuen Provideraufträge. [Nachweis](entry-clarity.json)
+
+Das nächste Entwicklungsziel ist ein gemeinsamer Baustein aus Feldern und Pfeilen mit variabler Anordnung und fachlich definierten Beziehungen. Dreisatz ist dessen mathematische Spezialanordnung. Der Zielvorschlag verwendet bestehende Ketten-, Verzweigungs- und Zuordnungsverträge und schlägt acht gemischte freie Wünsche als nächsten Nachweis vor. Diese gemeinsame KI-Erzeugung ist noch offen. [Zielstruktur](../../superpowers/plans/2026-11-18-fields-arrows-direction.md)
