@@ -5286,14 +5286,14 @@
       "handoff": "workstreams/secure-phone-compact-20261118.md",
       "scope": "Native Secure phone title/clock/footer and on-demand number overview. Original question font and iPad width preserved; no backend/rules/data/AAC changes.",
       "ci_run": 44404250305,
-      "ci_status": "four_matrices_success_build_and_upload_running",
+      "ci_status": "success",
       "testflight_prior_version": "1.0 (1313)",
       "testflight_prior_availability": "explicitly confirmed by Martin",
-      "new_upload_confirmed": false,
+      "new_upload_confirmed": true,
       "app_store_selected_build_unchanged": 1293,
       "secure_test_unchanged": 1241,
       "local_verification": "Final-source fixed-clock scrolling, task jumps, actual1.5 WebKit page zoom and narrow/keyboard viewports passed; original font and answer DOM preserved.",
-      "next_action": "Follow only existing build-and-upload135167380282 to signed AAC upload, then confirm Apple/TestFlight availability and physical acceptance separately.",
+      "next_action": "Confirm actual1321availability after Apple processing; Martin then tests compact phone header, unchanged readable tasks and fixed visible clock. No new upload or Store review submission.",
       "ci_jobs": {
         "native": 135155114107,
         "phone": 135155114594,
@@ -5310,7 +5310,21 @@
         "web_mini": 360,
         "web_large": 360,
         "each_tablet_interactions": 12
-      }
+      },
+      "testflight_version": "1.0 (1321)",
+      "upload_receipt": {
+        "job": 135167380282,
+        "time_utc": "2026-11-18T22:19:59Z",
+        "delivery_uuid": "3499124c-8a8b-41a9-afcc-327e5e1f834d",
+        "errors": 0,
+        "aac_signed_app": true,
+        "aac_profile": true,
+        "mode": "live-exam",
+        "project": "hausaufgabe-staging"
+      },
+      "testflight_new_availability": "Martin reports only1313visible at22:22UTC;1321not yet visible. Apple processing/group status not independently readable.",
+      "physical_1321_acceptance": "open",
+      "sdk_warning": "90725:futureApril2027SDK27requirement; delivery accepted"
     }
   ],
   "deployments": [
