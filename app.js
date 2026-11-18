@@ -5,6 +5,8 @@ const BRAND = Object.freeze({ name: "GradeCrew", tagline: "Tests. Einfach digita
 console.info(`${BRAND.name} v${APP_VERSION}`);
 
 import { teacherGradingSummary, teacherResultName, teacherResultNumber, teacherResultSubmittedAt, teacherResultRunning, sortTeacherResults, teacherResultsAverages } from "./teacher-grading-summary.mjs?v=20261118";
+import { createBillingClient, describeAccess } from "./billing-client.mjs?v=billing-v2";
+import { paintBillingPanel, mountAdminBilling } from "./billing-panel.mjs?v=billing-v2";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { answerIsComplete, paintAnswerCompletion } from "./shared/answer-completion.mjs";
@@ -13,6 +15,7 @@ import {
   createUserWithEmailAndPassword as firebaseCreateUser,
   signInWithEmailAndPassword as firebaseSignIn,
   sendPasswordResetEmail as firebaseSendPasswordReset,
+  sendEmailVerification as firebaseSendEmailVerification,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   updateProfile as firebaseUpdateProfile
@@ -86,6 +89,8 @@ let adminFeedbackCursor = null;
 let adminFeedbackHasMore = false;
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
+const BILLING_PREVIEW_ENABLED = firebaseConfig.projectId === "gradecrew-staging-2026" && firebaseModule.billingPreview === true;
+if (BILLING_PREVIEW_ENABLED) document.getElementById("billingTrialNotice")?.removeAttribute("hidden");
 // Staging rules verified to deny authored/private reads and forged writes on 2026-10-09.
 const SECURE_AUDIO_PUBLICATION_ENABLED = firebaseConfig.projectId === "hausaufgabe-staging";
 const secureAudioPublicationBlocked = (quiz, questions = []) =>
@@ -95,6 +100,30 @@ const secureAudioPublicationMessage = "Dieser Test enthält Audioantworten oder 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const billingClient = createBillingClient({
+  getUid: () => auth.currentUser?.uid || "",
+  call: async data => (await httpsCallable(getFunctions(app, "europe-west1"), "billingPilot", {timeout:60000})(data)).data,
+  onChange: (access, status = {}) => {
+    const root = document.getElementById("billingAccountPanel");
+    if (root) root.hidden = !BILLING_PREVIEW_ENABLED;
+    if (!BILLING_PREVIEW_ENABLED) return;
+    const refresh = () => { void billingClient.refresh().catch(() => {}); };
+    paintBillingPanel(root, access, { ...status, user: auth.currentUser, onRefresh: refresh,
+      onVerify: async () => { try { await firebaseSendEmailVerification(auth.currentUser); toast("Bestätigungslink wurde gesendet."); } catch (error) { toast(authMessage(error), "error"); } },
+      onVerified: async () => { try { await auth.currentUser.reload(); await auth.currentUser.getIdToken(true); refresh(); } catch (_) { toast("Bitte erneut anmelden.", "error"); } },
+      onChoose: async planCode => {
+        try {
+          const result = await billingClient.request("checkout", {planCode});
+          const url = new URL(result.url);
+          if (url.protocol !== "https:" || url.hostname !== "checkout.stripe.com") throw new Error("Ungültiger Zahlungslink.");
+          location.assign(url.href);
+        } catch (error) { toast(error.message || "Der Zahlungstest ist noch nicht verfügbar.", "error"); }
+      }
+    });
+    const badge = document.getElementById("billingDashboardStatus");
+    if (badge) { badge.classList.toggle("hidden", !access); badge.textContent = access ? describeAccess(access).title + (access.tier === "trial" ? ` · ${access.freeCreationsRemaining} neue Tests übrig` : "") : ""; }
+  }
+});
 const questionFeedback = createQuestionFeedbackClient({project: firebaseConfig.projectId, api: async (data, scope) => {
   if (auth.currentUser?.uid !== scope.uid || guestTourRepo) throw new Error("Das Feedbackkonto wurde gewechselt.");
   return (await httpsCallable(getFunctions(app, "europe-west1"), "reviewMode", {timeout: 15000})({...data, actorUid: scope.uid})).data;
@@ -105,6 +134,11 @@ const aiApi = new Proxy(createAiClient(app, () => state.user?.uid || auth.curren
     if (typeof value !== "function") return value;
     return (...args) => {
       if (guestTourRepo) throw new Error("Im lokalen Tutorial sind KI- und Billing-Aufrufe gesperrt.");
+      if (BILLING_PREVIEW_ENABLED) {
+        const creation = ["generateTest", "startAiTestJob", "startAiTestVariantJob"].includes(key);
+        const editing = ["regenerateQuestion", "reviseWholeTest", "analyzeMaterial", "generateQuestionMedia", "generateQuestionAudio", "generateQuestionSolutionAudio"].includes(key);
+        if (creation || editing) return billingClient.assertFeature(creation ? "test.create" : "test.edit").then(() => value.apply(target, args));
+      }
       return value.apply(target, args);
     };
   }
@@ -1190,6 +1224,7 @@ $("registerForm").addEventListener("submit", async (e) => {
       gradeScales: [deepClone(DEFAULT_SCALE)],
       createdAt: serverTimestamp()
     });
+    if (BILLING_PREVIEW_ENABLED) await firebaseSendEmailVerification(cred.user);
     toast("Account erstellt.");
     setAuthFormStatus(form, "");
   } catch (err) {
@@ -1291,6 +1326,7 @@ onAuthStateChanged(auth, async (user) => {
   if (guestTourRepo && !user) return;
   if (guestTourRepo && user) exitGuestTour();
   const accountChanged = state.user?.uid !== user?.uid;
+  if (BILLING_PREVIEW_ENABLED && accountChanged) billingClient.reset();
   if (accountChanged) {
     wilmaReviewOpenConsent.clear();wilmaSavedOperations.clear();wilmaReviewGeneration++;wilmaAutoReview?.clear({resetSession:true});wilmaPreparation.clear();resetInlineReview();wilmaAnswerReview?.clear();
     window.GradeCrewNative?.setAuthState?.({ state: "checking" })?.catch(() => {});
@@ -1347,6 +1383,7 @@ onAuthStateChanged(auth, async (user) => {
     state.shownThisLogin = new Set();
   }
   if (generation !== authStateGeneration) return;
+  if (BILLING_PREVIEW_ENABLED && user) void billingClient.refresh().catch(() => {});
   const nativeAuthState = user
     ? { state: "signedIn", accountLabel: String(state.profile?.displayName || user.displayName || user.email || "Angemeldet").trim().slice(0, 160), accountChanged }
     : { state: "signedOut" };
@@ -2092,8 +2129,15 @@ function quizDefaults() {
   };
 }
 
-async function createQuizDocument(base = {}) {
+async function createQuizDocument(base = {}, options = {}) {
   if (!state.user) throw new Error("Nicht angemeldet");
+  if (BILLING_PREVIEW_ENABLED) {
+    const quiz = { ...quizDefaults(), ...base };
+    for (const field of ["ownerId", "accessCode", "createdAt", "updatedAt", "billingScope", "billingLedgerId", "billingCreationState"]) delete quiz[field];
+    const requestId = options.requestId || (state.newManualQuiz && state.currentQuiz?.id ? `manual-${state.currentQuiz.id}` : crypto.randomUUID());
+    const result = await billingClient.createQuiz({requestId,kind:options.kind || "manual",quiz});
+    return {code:result.code,quiz:{...quiz,ownerId:state.user.uid,accessCode:result.code,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}};
+  }
   for (let attempt = 1; attempt <= 6; attempt += 1) {
     const code = randomCode();
     if (state.quizzes.some((q) => q.id === code)) continue;
@@ -2120,6 +2164,10 @@ async function createQuiz() {
   if (!state.user) {
     toast("Bitte zuerst anmelden.", "error");
     return;
+  }
+  if (BILLING_PREVIEW_ENABLED && !guestTourRepo) {
+    try { await billingClient.assertFeature("test.create"); }
+    catch (error) { toast(error.message, "error"); return; }
   }
   const code = randomCode();
   state.newManualQuiz = true;
@@ -2695,6 +2743,7 @@ function openSettings() {
   $("defaultShowSolutions").checked = Boolean(state.settingsDraft.defaultShowSolutions);
   renderGradeScaleSettings();
   showView("settingsView");
+  if (BILLING_PREVIEW_ENABLED) void billingClient.refresh().catch(() => {});
 }
 
 function renderGradeScaleSettings() {
@@ -9263,6 +9312,7 @@ function openAdminTeacher(uid) {
   detail.querySelector(".adminToggleUser")?.addEventListener("click",()=>toggleUserSuspension(u));
   detail.querySelectorAll(".adminOpenTestFromTeacher").forEach((btn)=>btn.addEventListener("click",()=>{ switchAdminTab("tests"); openAdminTest(btn.dataset.id); }));
   detail.scrollIntoView({behavior:"smooth",block:"start"});
+  if (BILLING_PREVIEW_ENABLED) void mountAdminBilling(detail,{client:billingClient,personId:u.id,onError:error=>toast(error.message || "Zugang konnte nicht geladen werden.","error")});
 }
 
 async function adminSendPasswordReset(user) {

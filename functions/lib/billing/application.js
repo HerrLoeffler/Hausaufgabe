@@ -2,6 +2,7 @@
 
 const { createHash, randomBytes } = require("node:crypto");
 const { evaluateAccess, trialForRegistration } = require("./domain/access");
+const { PERSONAL_PLANS } = require("./domain/catalog");
 
 class BillingError extends Error {
   constructor(code, message, details = {}) { super(message); this.code = code; this.details = details; }
@@ -28,13 +29,19 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
   if (!["gradecrew-staging-2026", "demo-gradecrew-billing"].includes(projectId)) fail("failed-precondition", "Zahlungsintegration nur für die getrennte Testumgebung.");
   if (!store?.transaction || typeof getIdentity !== "function") throw new TypeError("Store and identity adapter required");
 
-  async function identity(uid) {
+  function projectWrites(tx, uid, account, person, grants) {
+    const access = evaluateAccess({ person, account, grants, scope: { kind: "personal", id: uid }, at: now() });
+    tx.put("billingV2Accounts/" + uid, { ...account, emailVerified: person.emailVerified === true,
+      writesUntilMs: access.featureCodes.includes("test.edit") ? (access.validUntil ?? Date.UTC(9999, 11, 31)) : 0 });
+  }
+
+  async function identity(uid, { includeDisabled = false } = {}) {
     identifier(uid);
     const record = await getIdentity(uid);
-    if (!record || record.uid !== uid || record.disabled) fail("permission-denied", "Konto nicht aktiv.");
+    if (!record || record.uid !== uid || (record.disabled && !includeDisabled)) fail("permission-denied", "Konto nicht aktiv.");
     const registeredAtMs = Date.parse(record.metadata?.creationTime);
     if (!Number.isSafeInteger(registeredAtMs) || registeredAtMs < 0) fail("failed-precondition", "Registrierungszeit fehlt.");
-    return { uid, registeredAtMs, email: String(record.email || "").toLowerCase(), emailVerified: record.emailVerified === true };
+    return { uid, registeredAtMs, disabled: record.disabled === true, email: String(record.email || "").toLowerCase(), emailVerified: record.emailVerified === true };
   }
   async function caller(request) {
     if (!request?.auth?.uid) fail("unauthenticated", "Bitte anmelden.");
@@ -44,17 +51,21 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
     const authTime = request.auth?.token?.auth_time;
     if (ctx.person.role !== "admin" || !ctx.person.emailVerified || !Number.isFinite(authTime) || authTime * 1000 < at - 900000 || authTime * 1000 > at + 60000) fail("permission-denied", "Für diese Änderung bitte als Administrator erneut anmelden.");
   }
-  async function context(tx, actor, scope = { kind: "personal", id: actor.uid }) {
+  async function context(tx, actor, scope = { kind: "personal", id: actor.uid }, { includeInactive = false } = {}) {
+    if (!scope || typeof scope !== "object" || !["personal", "school"].includes(scope.kind)) fail("invalid-argument", "Ungültiger Arbeitsbereich.");
+    identifier(scope.id);
+    if (scope.kind === "personal" && scope.id !== actor.uid) fail("permission-denied", "Fremder Arbeitsbereich.");
     const config = await tx.get("appConfig/billingProduct");
     if (config?.enabled !== true || !Array.isArray(config.allowedUids) || !config.allowedUids.includes(actor.uid)) fail("failed-precondition", "Dieses Konto ist noch nicht für den abgegrenzten Zahlungstest freigegeben.");
     const profile = await tx.get("users/" + actor.uid);
     const deletion = await tx.get("accountDeletions/" + actor.uid);
-    if (!profile || deletion || profile.accountDeletionId || profile.isTestAccountArchived || (profile.status && profile.status !== "active") || !["teacher", "admin"].includes(profile.role)) fail("permission-denied", "Konto nicht aktiv.");
+    if (!profile || (!includeInactive && (deletion || profile.accountDeletionId || profile.isTestAccountArchived || (profile.status && profile.status !== "active") || !["teacher", "admin"].includes(profile.role)))) fail("permission-denied", "Konto nicht aktiv.");
     const account = await tx.get("billingV2Accounts/" + actor.uid) || trialForRegistration(actor.registeredAtMs);
     if (account.trialStartedAtMs !== actor.registeredAtMs) fail("failed-precondition", "Unstimmiger Testzeitraum.");
     const grants = await tx.find("billingV2Grants", [["personId", "==", actor.uid], ["status", "==", "active"]], 51);
     if (grants.length > 50) fail("failed-precondition", "Zu viele aktive Freigaben, bitte prüfen.");
-    const person = { ...profile, id: actor.uid, emailVerified: actor.emailVerified };
+    const person = { ...profile, id: actor.uid, emailVerified: actor.emailVerified,
+      ...(deletion ? { accountDeletionId: "deleted" } : {}), ...(actor.disabled ? { status: "disabled" } : {}) };
     const memberships = [], seats = [], periods = [];
     if (scope.kind === "school") {
       identifier(scope.id);
@@ -70,7 +81,7 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
       }
     }
     return { person, scope, account, grants, memberships, seats, periods, config,
-      saveAccount: changes => tx.put("billingV2Accounts/" + actor.uid, { ...account, ...changes }) };
+      saveAccount: changes => projectWrites(tx, actor.uid, { ...account, ...changes }, person, grants) };
   }
   const decision = (ctx, at) => evaluateAccess({ ...ctx, at });
   function requireDecision(ctx, at, feature) {
@@ -84,12 +95,25 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
       const ctx = await context(tx, actor, request.data?.scope);
       const access = decision(ctx, at);
       ctx.saveAccount();
-      return { ...access, enforced: true, policyVersion: "trial14-files5-v2" };
+      return { ...access, enforced: true, policyVersion: "trial14-files5-v2", plans: PERSONAL_PLANS, purchasingEnabled: false };
     });
   }
   async function requireFeature(uid, feature, scope) {
     const actor = await identity(uid), at = now();
     return store.transaction(async tx => { const ctx = await context(tx, actor, scope); const access = requireDecision(ctx, at, feature); ctx.saveAccount(); return access; });
+  }
+  async function inspectAccess(request) {
+    const actor = await caller(request);
+    const personId = identifier(request.data?.personId);
+    return store.transaction(async tx => {
+      const operator = await context(tx, actor);
+      if (operator.person.role !== "admin" || operator.person.emailVerified !== true) fail("permission-denied", "Nur für Administratoren.");
+      const target = await identity(personId, { includeDisabled: true });
+      const targetContext = await context(tx, target, undefined, { includeInactive: true });
+      const grants = targetContext.grants.filter(item => item.source === "manual")
+        .map(item => ({ id: item.id, reason: item.reason, startsAtMs: item.startsAtMs, endsAtMs: item.endsAtMs }));
+      return { access: decision(targetContext, now()), grants };
+    });
   }
   async function createQuiz(request) {
     const actor = await caller(request), at = now(), data = request.data || {};
@@ -186,7 +210,11 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
         if (previous.personId !== personId || previous.endsAtMs !== data.endsAtMs || previous.reason !== reason) fail("already-exists", "Anfrage-ID bereits anders verwendet.");
         return { grantId, replayed: true };
       }
-      tx.create("billingV2Grants/" + grantId, { personId, source: "manual", scope: { kind: "personal", id: personId }, status: "active", startsAtMs: at, endsAtMs: data.endsAtMs, reason, createdBy: actor.uid, createdAtMs: at });
+      const targetCtx = await context(tx, target);
+      const grant = { personId, source: "manual", scope: { kind: "personal", id: personId }, status: "active", startsAtMs: at, endsAtMs: data.endsAtMs, reason, createdBy: actor.uid, createdAtMs: at };
+      targetCtx.grants.push({ ...grant, id: grantId });
+      targetCtx.saveAccount();
+      tx.create("billingV2Grants/" + grantId, grant);
       tx.create("billingV2Audit/" + key("grant", grantId), { actorId: actor.uid, action: "complimentary_granted", personId, grantId, reason, atMs: at });
       return { grantId, replayed: false };
     });
@@ -200,12 +228,19 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
       const grant = await tx.get("billingV2Grants/" + id);
       if (!grant || grant.source !== "manual") fail("not-found", "Kostenlose Freigabe nicht gefunden.");
       if (grant.status === "revoked") return { revoked: false };
+      const personId = identifier(grant.personId);
+      const account = await tx.get("billingV2Accounts/" + personId);
+      const profile = await tx.get("users/" + personId);
+      const deleted = await tx.get("accountDeletions/" + personId);
+      const grants = await tx.find("billingV2Grants", [["personId", "==", personId], ["status", "==", "active"]], 51);
+      if (account) projectWrites(tx, personId, account, { ...profile, id: personId, status: profile?.status || "active", role: profile?.role || "missing", emailVerified: account.emailVerified === true,
+        accountDeletionId: deleted ? "deleted" : profile?.accountDeletionId }, grants.filter(g => g.id !== id));
       tx.patch("billingV2Grants/" + id, { status: "revoked", revokedAtMs: at, revokedBy: actor.uid });
       tx.create("billingV2Audit/" + key("revoke", id), { actorId: actor.uid, action: "complimentary_revoked", personId: grant.personId, grantId: id, reason, atMs: at });
       return { revoked: true };
     });
   }
-  return { getAccess, requireFeature, createQuiz, reserveGeneration, prepareGenerationReservation, releaseGeneration, finalizeGeneration, grantPremium, revokePremium };
+  return { getAccess, inspectAccess, requireFeature, createQuiz, reserveGeneration, prepareGenerationReservation, releaseGeneration, finalizeGeneration, grantPremium, revokePremium };
 }
 
 module.exports = { createBillingService, BillingError, key, identifier, requestId };

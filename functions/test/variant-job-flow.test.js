@@ -18,6 +18,7 @@ function startFixture(previous = null) {
   const context = vm.createContext({ ...require("../lib/creation-contract"), ...require("../lib/constants"), ...variants, HttpsError, createHash,
     getFirestore: () => db, randomUUID: () => "generated-request", Timestamp: { now: () => ({}) }, aiJobLock: () => ({}),
     sanitizeMaterials: () => [], requireAccountWrite: async () => {},
+    billingRuntime: { prepareJobReservation: async () => undefined },
     loadVariantInput: async (_db, uid, id) => { loaded.push([uid, id]); return blueprint(); },
     reserveJob: async (_db, options) => { await options.beforeReserve({ get: async ref => ref === sourceRef ? { exists: true, data: () => ({ ownerId: "teacher" }) } : { exists: !!previous, data: () => previous } }); jobs.push(options.jobData); return { resumed: !!previous }; },
     enqueueAiTestJob: async ref => { enqueued.push(ref.id); }
@@ -53,7 +54,7 @@ test("variant requests require an exact source and stable client ID before any p
 });
 
 const worker = source.slice(source.indexOf("exports.processAiTestJob ="), source.indexOf("\n// A killed worker"));
-async function workerFixture({ failImage = false, heldSource = false } = {}) {
+async function workerFixture({ failImage = false, heldSource = false, billingEnabled = false } = {}) {
   const old = { id: "q1", position: 1, type: "single", text: "Wie viel sind 10 Prozent von 100?", points: 2, options: [{ text: "10", correct: true }, { text: "20", correct: false }], imageDataUrl: "old-image", imageScene: "Ten apples", audioDataUrl: "old-audio", audioPresentation: "listening-only", audioAnswerMode: "audio-only" };
   const original = { title: "Mathe", subject: "Mathematik", grade: "7", ownerId: "teacher", published: true, rightsHold: heldSource, solutionAudioReleased: true };
   const input = variants.buildVariantInput(original, [old], new Map([["q1", { script: "Old heard question", solutionAudioDataUrl: "old-solution" }]]));
@@ -66,6 +67,11 @@ async function workerFixture({ failImage = false, heldSource = false } = {}) {
   const context = vm.createContext({ ...require("../lib/constants"), ...variants, ...require("../lib/ai-job"), ...require("../lib/solution-audio"), ...require("../lib/audio-answers"), HttpsError, require: name => require(name.startsWith("./lib/") ? `../${name.slice(2)}` : name),
     exports: {}, OPENAI_API_KEY: "mock-secret-reference", onTaskDispatched: (_options, fn) => fn, getFirestore: () => db, Timestamp: { now: () => ({ synthetic: true }) },
     requireAiUser: async () => ({ profile: {} }),
+    billingRuntime: {
+      reserveGeneration: async () => { if (billingEnabled) calls.push("credit-reserved"); return billingEnabled; },
+      releaseGeneration: async () => { if (billingEnabled) calls.push("credit-released"); },
+      getRuntime: () => ({ service: { finalizeGeneration: async (_uid, _job, _quiz, patch) => { quizUpdates.push({ ...patch, billingCreationState: "committed" }); calls.push("credit-committed"); } } })
+    },
     generateTestForUser: async () => ({ test: { title: "Neue Variante", questions: [generated] }, meta: {commonRules:{version:'common-quality-v1',generationId:'synthetic-rule-use'},commonRulesUsageStored:true} }),
     createAiQuiz: async (_db, _uid, _jobId, base) => { quizBases.push(base); return { code: "NEWCODE1", ref: quizRef }; },
     createVerifiedMedia: async (_input, options) => { calls.push("image"); assert.equal(await options.cacheLoad({}), null); assert.equal(await options.cacheSave({}), false); if (failImage) throw new Error("Synthetic unavailable image"); return { asset: { imageDataUrl: "new-image" } }; },
@@ -89,6 +95,27 @@ test("actual worker creates a separate private draft with fresh images, heard an
   assert.match(privateAudio.script, /New heard/); assert.equal(privateAudio.solutionAudioDataUrl, "data:audio/mpeg;base64,AAAA");
   assert.equal(f.calls.filter(c => typeof c === "object").length, 4); // question + 2 answers + protected solution
   assert.equal(f.calls.at(-1), "released");
+});
+test("billing worker reserves before generation and commits only a completely saved result", async () => {
+  const f = await workerFixture({ billingEnabled: true });
+  assert.equal(f.current.status, "ready");
+  assert.equal(f.quizBases[0].billingCreationState, "reserved");
+  assert.equal(f.quizUpdates.at(-1).billingCreationState, "committed");
+  assert.equal(f.calls[0], "credit-reserved");
+  assert.equal(f.calls.filter(c => c === "credit-committed").length, 1);
+  assert.equal(f.calls.includes("credit-released"), true);
+});
+test("billing worker never commits a failed result and releases the credit reservation", async () => {
+  const f = await workerFixture({ failImage: true, billingEnabled: true });
+  assert.equal(f.current.status, "failed");
+  assert.equal(f.calls.includes("credit-committed"), false);
+  assert.equal(f.calls.includes("credit-released"), true);
+});
+test("a hold applied after enqueue still releases the earlier billing reservation", async () => {
+  const f = await workerFixture({ heldSource: true, billingEnabled: true });
+  assert.equal(f.current.status, "failed");
+  assert.equal(f.calls.includes("credit-released"), true);
+  assert.equal(f.calls.includes("credit-committed"), false);
 });
 test('queued worker preserves common-rule evidence on both the resulting draft and job',async()=>{
  const f=await workerFixture();assert.equal(f.current.commonRules?.generationId,'synthetic-rule-use');

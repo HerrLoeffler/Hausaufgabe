@@ -14,6 +14,7 @@ const {ruleReceipt}=require("./lib/common-quality-rules");
 const { createAudioAsset } = require("./lib/audio-flow");
 const { requireAccountWrite } = require("./lib/account-state");
 const { requireAiUser } = require("./lib/access");
+const billingRuntime = require("./lib/billing/runtime");
 const { consumeQuota, recordUsage } = require("./lib/usage");
 const { getOpenAI } = require("./lib/openai-client");
 const { syncBugFeedback, bugOpsAttentionSummary } = require("./lib/bug-ops");
@@ -77,7 +78,7 @@ function cleanAudioDrafts(value, { includeStale = false } = {}) {
 }
 
 async function requireAudioQuizAccess(request, quizId, { write = false } = {}) {
-  const { uid, profile } = await requireAiUser(request);
+  const { uid, profile } = await requireAiUser(request, { billingFeature: null });
   const db = getFirestore();
   const quizRef = db.doc(`quizzes/${quizId}`);
   const snap = await quizRef.get();
@@ -85,6 +86,8 @@ async function requireAudioQuizAccess(request, quizId, { write = false } = {}) {
   const quiz = snap.data() || {};
   const admin = profile.role === "admin";
   if (!admin && quiz.ownerId !== uid) throw new HttpsError("permission-denied", "Kein Zugriff auf diesen Test.");
+  const trashCleanup = quiz.isDeleted === true && Array.isArray(request.data?.drafts) && request.data.drafts.length === 0 && Array.isArray(request.data?.solutionDrafts) && request.data.solutionDrafts.length === 0;
+  if (write && !trashCleanup) await billingRuntime.requireFeature(uid, "test.edit", quiz.billingScope);
   if (write && quiz.rightsHold === true) throw new HttpsError("failed-precondition", "Der Test ist wegen eines Rechtehinweises gesperrt.");
   if (write && quiz.published === true && quiz.ended !== true) {
     throw new HttpsError("failed-precondition", "Hörtexte können während eines laufenden veröffentlichten Tests nicht verändert werden.");
@@ -217,19 +220,19 @@ const aggregateBugFeedback = onDocumentWritten({
 });
 
 const getBugOpsSummary = onCall(telemetryOpts, async request => {
-  const { profile } = await requireAiUser(request);
+  const { profile } = await requireAiUser(request, { billingFeature: null });
   if (profile.role !== "admin") throw new HttpsError("permission-denied", "Nur für Administratoren.");
   return bugOpsAttentionSummary(getFirestore());
 });
 
 const recordCrewTelemetry = onCall(telemetryOpts, async request => {
-  const { uid } = await requireAiUser(request);
+  const { uid } = await requireAiUser(request, { billingFeature: null });
   await writeCrewMetric(uid, request.data || {}, { server: false });
   return { ok: true };
 });
 
 const getCrewTelemetrySummary = onCall(telemetryOpts, async request => {
-  const { profile } = await requireAiUser(request);
+  const { profile } = await requireAiUser(request, { billingFeature: null });
   if (profile.role !== "admin") throw new HttpsError("permission-denied", "Nur für Administratoren.");
   const days = Math.max(1, Math.min(90, Number(request.data?.days) || 30));
   return crewTelemetrySummary(days);
@@ -249,7 +252,7 @@ const cleanupCrewTelemetry = onSchedule({
 const { normalizeMemory, searchOwnedTests, memoryOperation, ownedQuizRecord, quizSupportContext, supportReportRows } = require("./lib/coco-support");
 const { enrichImages, indexMissingImages } = require("./lib/coco-image-index");
 const cocoSupport = onCall({region:REGION,secrets:[OPENAI_API_KEY],timeoutSeconds:180,memory:"512MiB"}, async request => {
-  const {uid}=await requireAiUser(request);
+  const {uid}=await requireAiUser(request,{billingFeature:null});
   const db=getFirestore(); const ref=db.collection("cocoMemory").doc(uid);
   const data=request.data||{}; const op=data.operation||"read";
   if(data.accountId!==uid)throw new HttpsError("permission-denied","Das Konto wurde gewechselt.");
@@ -453,6 +456,7 @@ const reviseWholeTest = onCall({ ...assistantOpts, timeoutSeconds: 300, memory: 
 module.exports = {
   ...existing,
   ...require("./admin-account-callables"),
+  ...require("./lib/billing/callables"),
   ...require("./review-mode-callables"),
   ...require("./feedback-image-lifecycle"),
   ...require("./wilma-review-callables"),

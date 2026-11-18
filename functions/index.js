@@ -36,6 +36,7 @@ const { solutionAudioScript, planSolutionAudioIndexes } = require("./lib/solutio
 const { answerAudioIndexes, generateAnswerAudios, setAnswerAudioAssets } = require("./lib/audio-answers");
 const { requireAccountWrite } = require("./lib/account-state");
 const { reserveJob, releaseJob, markQueueDispatchEnqueued, markQueueDispatchFailed, isAlreadyEnqueuedTaskError } = require("./lib/job-slots");
+const billingRuntime = require("./lib/billing/runtime");
 const { questionSnapshot, requestSnapshot } = require("./lib/diagnostics");
 const { createQuickRemyService } = require("./lib/quick-remy-flow");
 const { buildPrepareResult } = require("./lib/quick-remy-contract");
@@ -222,7 +223,7 @@ async function reviewDraft(test, memory, { input, materialContent = [] } = {}) {
 }
 
 exports.getAiStatus = onCall(callableOpts, async request => {
-  const { profile } = await requireAiUser(request);
+  const { profile } = await requireAiUser(request, { billingFeature: null });
   return { enabled: true, beta: true, role: profile.role, models: { text: TEXT_MODEL, audio: AUDIO_MODEL }, promptVersion: PROMPT_VERSION, schemaVersion: AI_SCHEMA_VERSION, qualityMemoryVersion: MEMORY_VERSION };
 });
 
@@ -448,6 +449,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
 
 exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async request => {
   const { uid } = await requireAiUser(request).catch(err => { throw reportAiError(err, "access"); });
+  await billingRuntime.requireFeature(uid, "test.create");
   if (request.data?.generationMode === "variant") throw new HttpsError("invalid-argument", "Neue Varianten bitte über die Warteschlange erstellen.");
   return generateTestForUser(uid, request.data || {});
 });
@@ -502,6 +504,7 @@ async function startAiTestJobForUser(uid, requestData = {}) {
       const source = await tx.get(db.doc(`quizzes/${sourceQuizId}`));
       if (!source.exists || source.data()?.ownerId !== uid || source.data()?.rightsHold || source.data()?.isDeleted) throw new HttpsError("permission-denied", "Ausgangstest nicht verfügbar.");
     }
+    return billingRuntime.prepareJobReservation(tx, uid, jobRef.id);
   }, jobData: {
       ownerId: uid, status: "queued", stage: "queued", dispatchState: "pending", progressMessage: "Erstellung wird gestartet …", percent: 0,
       completedCount: 0, requestedCount: input.count, imageCompleted: 0, imageTotal: 0, audioCompleted: 0, audioTotal: 0, answerAudioCompleted: 0, answerAudioTotal: input.audioAnswerQuestionCount || 0, solutionAudioCompleted: 0, solutionAudioTotal: input.solutionAudioQuestionCount || 0,
@@ -568,13 +571,15 @@ exports.processAiTestJob = onTaskDispatched({
   if (!job) return;
   const { ownerId: uid } = job;
   let quizRef = null;
+  let billingEnforced = false;
   let activeQuestion = null;
   let activePosition = null;
   let activeStage = "starting";
   try {
-    const { profile } = await requireAiUser({ auth: { uid } });
+    const { profile } = await requireAiUser({ auth: { uid } }, { billingFeature: null });
     const sourceSnap = job.sourceQuizId ? await db.collection("quizzes").doc(job.sourceQuizId).get() : null;
     if (sourceSnap && (!sourceSnap.exists || sourceSnap.data().ownerId !== uid || sourceSnap.data().rightsHold || sourceSnap.data().isDeleted)) throw new HttpsError("permission-denied", "Ausgangstest nicht verfügbar.");
+    billingEnforced = await billingRuntime.reserveGeneration(uid, jobId);
     const progress = async (stage, percent, message) => {
       activeStage = stage;
       return jobRef.update({ stage, percent, progressMessage: message, updatedAt: Timestamp.now() });
@@ -592,7 +597,10 @@ exports.processAiTestJob = onTaskDispatched({
     const totalAnswerAudios = Number(job.input?.audioAnswerQuestionCount || 0);
     const answerAudioPositions = new Set(isVariant ? job.input.variantSlots.flatMap((slot, index) => slot.answerAudio ? [index] : []) : answerAudioIndexes(questions, totalAnswerAudios, Number(job.input?.fullAudioQuestionCount || 0), (job.input?.creationContractVersion === 1 || job.input?.audioPresentationPolicy === "visible-plus-full")));
     await jobRef.update({ stage: "prepare_questions", percent: 65, progressMessage: "Aufgaben und Medien werden gespeichert …", imageTotal: totalImages, audioTotal: totalAudios, answerAudioTotal: totalAnswerAudios, solutionAudioTotal: totalSolutionAudios, updatedAt: Timestamp.now() });
-    const quiz = await createAiQuiz(db, uid, jobId, quizForGeneratedTest(response.test, job.input, profile, sourceSnap?.data()));
+    const quiz = await createAiQuiz(db, uid, jobId, {
+      ...quizForGeneratedTest(response.test, job.input, profile, sourceSnap?.data()),
+      ...(billingEnforced ? { billingCreationState: "reserved", billingScope: { kind: "personal", id: uid } } : {})
+    });
     quizRef = quiz.ref;
     await jobRef.update({ quizId: quiz.code, updatedAt: Timestamp.now() });
     let completedImages = 0;
@@ -675,14 +683,16 @@ exports.processAiTestJob = onTaskDispatched({
       await jobRef.update({ completedCount: index + 1, percent: 65 + Math.floor(30 * (index + 1) / questions.length), updatedAt: Timestamp.now() });
     }
     if (isVariant) requireVariantMediaReady(job.input, { images: completedImages, audios: completedAudios, answerAudios: completedAnswerAudios, solutionAudios: completedSolutionAudios });
-    await quizRef.update({ generationStatus: "ready", questionCount: questions.length, totalPoints,
+    const readyPatch = { generationStatus: "ready", questionCount: questions.length, totalPoints,
       audioQuestionCount: totalAudios, audioAnswerQuestionCount: totalAnswerAudios, audioReady,
       listeningOnlyQuestionCount: questions.filter(q => q.audioIntent?.kind === "ai_generated" && q.audioIntent?.presentation === "listening-only").length,
       requiresSecureAssessmentRules: totalAnswerAudios > 0 || questions.some(q => q.audioIntent?.kind === "ai_generated" && q.audioIntent?.presentation === "listening-only"),
       solutionAudioQuestionCount: totalSolutionAudios, solutionAudioReady,
       qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [],
       commonRules: response.meta.commonRules || null, commonRulesUsageStored: response.meta.commonRulesUsageStored === true,
-      pedagogicalPool: response.meta.pedagogicalPool, updatedAt: Timestamp.now() });
+      pedagogicalPool: response.meta.pedagogicalPool, updatedAt: Timestamp.now() };
+    if (billingEnforced) await billingRuntime.getRuntime().service.finalizeGeneration(uid, jobId, quiz.code, readyPatch);
+    else await quizRef.update(readyPatch);
     await jobRef.update({ status: "ready", stage: "ready", percent: 100,
       progressMessage: "Entwurf fertig. Bitte die Aufgaben prüfen.", completedAt: Timestamp.now(), updatedAt: Timestamp.now(),
       qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [],
@@ -707,7 +717,8 @@ exports.processAiTestJob = onTaskDispatched({
       errorDetails: reported.details || {}, updatedAt: Timestamp.now() });
     if (quizRef) await quizRef.update({ generationStatus: "failed", updatedAt: Timestamp.now() });
   } finally {
-    await releaseAiJob(uid, jobId);
+    try { await billingRuntime.releaseGeneration(uid, jobId); }
+    finally { await releaseAiJob(uid, jobId); }
   }
 });
 
@@ -729,6 +740,7 @@ exports.expireAiTestJobs = onSchedule({ schedule: "every 15 minutes", region: RE
       });
       if (!expired) continue;
       if (job.quizId) await db.collection("quizzes").doc(job.quizId).update({ generationStatus: "failed", updatedAt: Timestamp.now() });
+      await billingRuntime.releaseGeneration(job.ownerId, snap.id);
       await releaseAiJob(job.ownerId, snap.id);
     }
   }

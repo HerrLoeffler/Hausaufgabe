@@ -31,6 +31,22 @@ function firestore(initial = {}) {
   return { db, documents, ref };
 }
 
+test("billing reservation writes are deferred until job-slot reads finish and are not repeated for a resumed job", async () => {
+  const { db, documents, ref } = firestore();
+  const reserve = () => reserveJob(db, {
+    uid: "teacher", now: { toMillis: () => 100000 }, jobRef: ref("new"), lockRef: ref("current"),
+    jobData: { ownerId: "teacher", status: "queued", createdAt: { toMillis: () => 100000 } },
+    beforeReserve: async tx => {
+      await tx.get(ref("billingAccount"));
+      return () => tx.set(ref("billingAccount"), { reserved: (documents.get("billingAccount")?.reserved || 0) + 1 });
+    }
+  });
+  await reserve();
+  assert.equal(documents.get("billingAccount")?.reserved, 1);
+  await reserve();
+  assert.equal(documents.get("billingAccount")?.reserved, 1);
+});
+
 test("a legacy single-job lock migrates to two distinct jobs, resumes duplicate requests and releases independently", async () => {
   const now = { toMillis: () => 100000 };
   const active = { ownerId: "teacher", status: "running", createdAt: { toMillis: () => 90000 } };

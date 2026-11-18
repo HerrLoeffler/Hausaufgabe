@@ -86,6 +86,67 @@ service cloud.firestore {
         );
     }
 
+    // Billing v2 pilot model: protected server-owned accounts contain the
+    // projected personal write expiry. School scopes point to a protected
+    // membership and a paid period. Client quiz creation uses the server API.
+    // The explicit allowlist keeps existing unenrolled accounts unchanged.
+    function billingPilot(userId) {
+      return exists(/databases/$(database)/documents/appConfig/billingProduct)
+        && get(/databases/$(database)/documents/appConfig/billingProduct).data.get('enabled', false) == true
+        && userId in get(/databases/$(database)/documents/appConfig/billingProduct).data.get('allowedUids', []);
+    }
+
+    function billingPersonalWrite(userId) {
+      return exists(/databases/$(database)/documents/billingV2Accounts/$(userId))
+        && get(/databases/$(database)/documents/billingV2Accounts/$(userId)).data.get('emailVerified', false) == true
+        && get(/databases/$(database)/documents/billingV2Accounts/$(userId)).data.get('writesUntilMs', 0) > request.time.toMillis();
+    }
+
+    function billingSchoolPeriodValid(schoolId) {
+      let school = get(/databases/$(database)/documents/billingV2Schools/$(schoolId)).data;
+      let period = get(/databases/$(database)/documents/billingV2Periods/$(school.currentPeriodId)).data;
+      return school.get('status', '') == 'active'
+        && period.get('schoolId', '') == schoolId
+        && period.get('paymentStatus', '') == 'paid'
+        && period.get('startsAtMs', 0) <= request.time.toMillis()
+        && period.get('endsAtMs', 0) > request.time.toMillis();
+    }
+
+    function billingSchoolWrite(quiz) {
+      let scope = quiz.billingScope;
+      let member = get(/databases/$(database)/documents/billingV2Memberships/$(scope.membershipId)).data;
+      return member.get('personId', '') == quiz.ownerId
+        && member.get('schoolId', '') == scope.id
+        && member.get('status', '') == 'active'
+        && member.get('role', '') in ['teacher', 'school_admin']
+        && member.get('seatAssigned', false) == true
+        && billingSchoolPeriodValid(scope.id);
+    }
+
+    function billingQuizWrite(quiz) {
+      return !billingPilot(quiz.ownerId)
+        || (quiz.get('billingCreationState', '') == 'committed'
+          && (quiz.billingScope.kind == 'personal'
+            ? billingPersonalWrite(quiz.ownerId) : billingSchoolWrite(quiz)));
+    }
+
+    function billingSafeLifecycle() {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      return changed.hasOnly(['published', 'ended', 'endedAt', 'sessionState', 'sessionStartedAt',
+        'isDeleted', 'deletedAt', 'deletedBy', 'updatedAt', 'shareEnabled', 'sharedAt'])
+        && request.resource.data.get('shareEnabled', false) != true
+        && (request.resource.data.get('published', false) != true
+          || request.resource.data.get('ended', false) == true
+          || request.resource.data.get('isDeleted', false) == true);
+    }
+
+    function billingMetadataWrite() {
+      return !billingPilot(resource.data.ownerId)
+        || (!request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          'billingScope', 'billingLedgerId', 'billingCreationState', 'generationJobId', 'ownerId'])
+          && (billingQuizWrite(resource.data) || billingSafeLifecycle()));
+    }
+
     // Only an owner may normalize an absent effective teacher/active default.
     // Existing protected fields still cannot be changed or removed by clients.
     function safeOwnProfileDefaults(userId) {
@@ -154,10 +215,11 @@ service cloud.firestore {
                   || (accountActive() && resource.data.ownerId == request.auth.uid);
 
       allow create: if accountActive()
+                    && !billingPilot(request.auth.uid)
                     && request.resource.data.ownerId == request.auth.uid
                     && request.resource.data.get('rightsHold', false) == false;
 
-      allow update: if quizPublicationOwnerAvailable() && (isAdmin()
+      allow update: if quizPublicationOwnerAvailable() && billingMetadataWrite() && (isAdmin()
                     || (
                       accountActive()
                       && resource.data.ownerId == request.auth.uid
@@ -179,7 +241,11 @@ service cloud.firestore {
         allow read: if ownsQuiz(quizId) || quizShared(quizId) || isAdmin();
         // Ein veröffentlichter, noch nicht beendeter Test ist inhaltlich
         // unveränderlich. Das schützt alle laufenden Versuche vor Versionsdrift.
-        allow create, update, delete: if quizContentEditable(quizId) || isAdmin();
+        allow create, update: if (quizContentEditable(quizId) || isAdmin())
+          && billingQuizWrite(get(/databases/$(database)/documents/quizzes/$(quizId)).data);
+        allow delete: if (quizContentEditable(quizId) || isAdmin())
+          && (billingQuizWrite(get(/databases/$(database)/documents/quizzes/$(quizId)).data)
+            || get(/databases/$(database)/documents/quizzes/$(quizId)).data.get('isDeleted', false) == true);
       }
 
       // Hörtexte bleiben private Autorendaten. Der Schüler erhält Audio nur

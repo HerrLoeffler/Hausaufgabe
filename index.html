@@ -8,6 +8,7 @@
   <meta name="app-version" content="2.3.1-gc45-rc1" />
   <style id="publicEntryPaintGuard">#authView:not([data-entry-ready="true"]) > :not([role="status"]){visibility:hidden}#gcEntryStart[hidden]{display:none!important}body:has(#authView:not(.hidden):not([data-entry-ready="true"])) > :is(.topbar,.legalSiteFooter,.rightsFooter){visibility:hidden}</style>
   <link rel="stylesheet" href="styles.css?v=2.3.1-gc2" />
+  <link rel="stylesheet" href="billing-panel.css?v=billing-v2" />
   <link rel="stylesheet" href="design-system.css?v=2.3.1-gc2" />
   <link rel="stylesheet" href="gradecrew-brand.css?v=2.3.1-gc45-rc1" />
   <link rel="stylesheet" href="crew-clay.css?v=3" />
@@ -71,6 +72,7 @@
           </form>
           <form id="registerForm" class="stack authForm hidden" role="tabpanel" aria-labelledby="registerTab" tabindex="0">
             <h2>Lehrer-Account erstellen</h2>
+            <p id="billingTrialNotice" class="hint" hidden>14 Tage kostenlos testen, bis zu fünf neue Tests. Kein automatisches Abo. Jede neue Testdatei zählt, auch Kopien und Importe.</p>
             <label>Name<input id="registerName" type="text" autocomplete="name" required /></label>
             <label>E-Mail<input id="registerEmail" type="email" autocomplete="email" required /></label>
             <label>Passwort<input id="registerPassword" type="password" minlength="6" autocomplete="new-password" required /></label>
@@ -92,6 +94,7 @@
             <button class="dashboardMetric" type="button" data-filter="draft" aria-pressed="false"><strong id="draftQuizCount">–</strong><span>Entwürfe</span></button>
             <button class="dashboardMetric" type="button" data-filter="ended" aria-pressed="false"><strong id="endedQuizCount">–</strong><span>Beendet</span></button>
           </div>
+          <p id="billingDashboardStatus" class="hint hidden" role="status"></p>
         </div>
         <div class="actions dashboardActions">
           <div class="dashboardPrimaryActions">
@@ -292,6 +295,7 @@
         <div><button id="backFromSettings" class="linkButton left" type="button">← Zurück</button><span class="eyebrow">Lehrerbereich</span><h1>Einstellungen</h1><p>Standardwerte und Bewertung für neue Tests.</p></div>
         <button id="saveSettingsBtn" class="button primary" type="button">Einstellungen speichern</button>
       </div>
+      <article id="billingAccountPanel" class="card billingPanel" hidden></article>
       <article class="card settingsTutorialEntry"><div><h2>Tutorial</h2><p>Lerne mit Coco, Remy, Emmi und Wilma den Weg zu deinem ersten Test kennen.</p></div><button id="settingsTutorialStart" class="button secondary" type="button">Tutorial starten</button></article>
       <div class="settingsPageGrid">
         <article class="card">

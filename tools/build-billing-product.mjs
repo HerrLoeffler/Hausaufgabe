@@ -1,0 +1,21 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+
+const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+if(process.argv.length!==3||!path.isAbsolute(process.argv[2]))throw new Error('Exactly one absolute destination is required. This builder supports the isolated test project only.');
+const destination=process.argv[2];
+execFileSync(process.execPath,[path.join(root,'tools/build-staging.mjs'),destination,'staging'],{cwd:root,stdio:'inherit'});
+const output=path.join(destination,'public'),configPath=path.join(output,'firebase-config.js');
+const config=await fs.readFile(configPath,'utf8');
+if(!config.includes('projectId: "gradecrew-staging-2026"')||!config.includes('appEnvironment = "staging"')||/billingPreview\s*=/.test(config))throw new Error('Unexpected project configuration.');
+await fs.writeFile(configPath,config+'\nexport const billingPreview = true;\n');
+const releasePath=path.join(output,'release.json'),release=JSON.parse(await fs.readFile(releasePath,'utf8'));
+if(release.project!=='gradecrew-staging-2026'||release.environment!=='staging')throw new Error('Unexpected release target.');
+release.files['firebase-config.js']=createHash('sha256').update(await fs.readFile(configPath)).digest('hex');
+release.billingProduct={policy:'trial14-files5-v2',previewOnly:true};
+release.workingTreeDirty=!!execFileSync('git',['status','--porcelain'],{cwd:root,encoding:'utf8'}).trim();
+await fs.writeFile(releasePath,JSON.stringify(release,null,2)+'\n');
+console.log('Billing product preview built for gradecrew-staging-2026. No deployment performed.');

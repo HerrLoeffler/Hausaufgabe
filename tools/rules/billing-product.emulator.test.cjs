@@ -5,6 +5,7 @@ const requireFunctions = require("node:module").createRequire(require("node:path
 const { initializeApp, deleteApp } = requireFunctions("firebase-admin/app");
 const { getFirestore } = requireFunctions("firebase-admin/firestore");
 const { createBillingService } = requireFunctions("./lib/billing/application");
+const { createPilotHandler } = requireFunctions("./lib/billing/handlers");
 const { createFirestoreBillingStore } = requireFunctions("./lib/billing/firestore-store");
 assert.match(process.env.FIRESTORE_EMULATOR_HOST || "", /^(127\.0\.0\.1|localhost):\d+$/);
 const app = initializeApp({ projectId: "demo-gradecrew-billing" }, "billing-service");
@@ -102,4 +103,41 @@ test("new quiz strips privileged and supplied owner fields", async () => {
   const made = await service.createQuiz(request("teacher", { requestId: "safe-fields", kind: "manual", quiz: { title: "Safe", ownerId: "other", published: true, billingCreationState: "committed", accessCode: "GUESS" } }));
   const data = (await db.doc("quizzes/" + made.code).get()).data();
   assert.equal(data.ownerId, "teacher"); assert.equal(data.published, false); assert.equal(data.accessCode, made.code);
+});
+test("write permission projection expires and is immediately removed when a grant is revoked", async () => {
+  await seed();
+  await service.getAccess(request("teacher"));
+  assert.equal((await db.doc("billingV2Accounts/teacher").get()).data().writesUntilMs, start + 14 * 86400000);
+  const grant = await service.grantPremium(request("admin", { personId: "teacher", requestId: "projection-grant", reason: "Synthetic", endsAtMs: null }));
+  time = start + 40 * 86400000;
+  assert.ok((await db.doc("billingV2Accounts/teacher").get()).data().writesUntilMs > time);
+  await service.revokePremium(request("admin", { grantId: grant.grantId, reason: "Synthetic revoked" }));
+  assert.equal((await db.doc("billingV2Accounts/teacher").get()).data().writesUntilMs, 0);
+});
+test("malformed and foreign scopes are rejected without changing credit", async () => {
+  await seed();
+  for (const scope of [null, {}, {kind:"personal",id:"other"}, {kind:"school",id:"../escape"}]) {
+    await assert.rejects(service.getAccess(request("teacher", { scope })), error => ["invalid-argument","permission-denied"].includes(error.code));
+  }
+  assert.equal((await service.getAccess(request("teacher"))).freeCreationsRemaining, 5);
+});
+test("pilot actions use the authenticated identity and reject arbitrary method dispatch", async () => {
+  await seed();
+  const handle = createPilotHandler(service);
+  const made = await handle(request("teacher", { action: "createQuiz", personId: "other", ownerId: "other", requestId: "handler-new-test", kind: "manual", quiz: { title: "Own" } }));
+  assert.equal((await db.doc("quizzes/" + made.code).get()).data().ownerId, "teacher");
+  for (const action of ["constructor", "__proto__", "reserveGeneration", "setPaid"]) {
+    await assert.rejects(handle(request("teacher", { action })), { code: "invalid-argument" });
+  }
+  await assert.rejects(handle({ data: { action: "access" } }), { code: "unauthenticated" });
+});
+test("only administrators can inspect a teacher's trial and complimentary sources, even when suspended", async () => {
+  await seed();
+  await assert.rejects(service.inspectAccess(request("other", {personId:"teacher"})), {code:"permission-denied"});
+  const detail=await service.inspectAccess(request("admin", {personId:"teacher"}));
+  assert.equal(detail.access.tier,"trial");
+  await db.doc("users/teacher").update({status:"suspended"});
+  const suspended=await service.inspectAccess(request("admin", {personId:"teacher"}));
+  assert.equal(suspended.access.reasonCode,"account_suspended");
+  assert.deepEqual(suspended.access.featureCodes,[]);
 });

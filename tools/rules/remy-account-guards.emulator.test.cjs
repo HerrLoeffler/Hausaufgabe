@@ -11,6 +11,7 @@ const source=fs.readFileSync(path.resolve(__dirname,'../../functions/index.js'),
 const start=source.indexOf('async function startAiTestJobForUser('),end=source.indexOf('\nexports.startAiTestJob',start);assert.ok(start>=0&&end>start);
 let enqueued=0;
 const context=vm.createContext({getFirestore:()=>db,Timestamp,createHash,requireAccountWrite,
+ billingRuntime:rf("./lib/billing/runtime"),
  cleanInput:data=>({topic:data.topic||'Synthetic Remy topic',subject:'Mathematik',grade:'6',count:8,solutionAudioQuestionCount:0}),sanitizeMaterials:()=>[],
  enqueueAiTestJob:async()=>{enqueued++;},HttpsError:rf('firebase-functions/v2/https').HttpsError,
  reserveJob:(database,args)=>reserveJob(database,{...args,jobData:{...args.jobData,input:{...args.jobData.input}}})});
