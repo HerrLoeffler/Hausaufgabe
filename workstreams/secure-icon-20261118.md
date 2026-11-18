@@ -13,3 +13,7 @@ Scopebezogene Assurance: SEC15/16 Asset-/Buildlieferkette offen bis tatsächlich
 Persistente lokale Vorschau: outputs/secure-icon-20261118/secure-gc-lock-1024.png undvergleich.png imChatworkspace. OriginaleAIausgaben nichtgelöscht. VorhandeneTeacherassets/identities/unveränderteAppStorefelder erhalten.
 
 Nächster Schritt: Martin wählt/bestätigt die helle GC-Schloss-Secure-Vorschau; danach eng begrenzten Iconpatch auf bewusst festgelegter Secure-Releasebasis vorbereiten und durch vorhandene Gates führen. Kein Auftrag zumAbsenden vonReviewantwort/Submission. Sidebar-Anknüpfungen im Bericht; keine Webbearbeitung.
+
+
+## Direkte Präzisierung während der Vorschau
+Martin verlangt ausdrücklich sichtbare Zugehörigkeit: GC und vorhandenes Logo/Farben, keine große gestalterische Abweichung, Schloss am Logo und Secure darunter. Er findet speziell das Detail gut, dass der Bügel durch das C greift. Diese Befestigung erhalten; nicht zu einer beliebigen freistehenden Schlossplakette vereinfachen. Für das finale Asset muss der Bügel zugleich geschlossen wirken. Keine automatische Auswahl der dunklen Schildvarianten. Kandidat und kleiner Größenvergleich sind gesichert. Lokaler Commit434c4cc8 und per GitHubConnector gesicherter Commit573deac0 haben nach geprüftem Baumvergleich exakt denselben Gitbaum8a140a43; Shellpush scheiterte mangelsCLI-Anmeldung, keine Credentials ausgelesen. Folgende Dokumentationsaktualisierung enthält nur diese Präzisierung.
