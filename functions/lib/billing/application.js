@@ -24,14 +24,25 @@ function cleanQuiz(value) {
   if (typeof quiz.title !== "string" || !quiz.title.trim() || quiz.title.length > 200 || Buffer.byteLength(JSON.stringify(quiz)) > 150000) fail("invalid-argument", "Ungültige Testdaten.");
   return JSON.parse(JSON.stringify(quiz));
 }
+function cleanBundle(value){
+  if(value===undefined)return null;
+  if(!Array.isArray(value)||value.length>100||Buffer.byteLength(JSON.stringify(value))>4000000)fail("invalid-argument","Höchstens 100 Aufgaben und 4 MB pro Kopie oder Import sind im Testbetrieb möglich.");
+  return value.map((item,index)=>{
+    if(!item||typeof item!=="object"||Array.isArray(item))fail("invalid-argument","Ungültige Aufgabe.");
+    const id="q"+String(index+1).padStart(3,"0"),question=JSON.parse(JSON.stringify(item)),script=String(item.audioScript||"").trim(),solutionScript=String(item.solutionAudioScript||"").trim();
+    if(script.length>500||solutionScript.length>500||Buffer.byteLength(JSON.stringify(question))>850000)fail("invalid-argument","Aufgabe oder privater Hörtext ist zu lang.");
+    for(const field of["audioScript","solutionAudioScript","solutionScript","solutionAudioDataUrl","solutionAudioAiGenerated","solutionAudioModel","solutionAudioVoice","solutionAudioByteSize","ownerId","createdAt","updatedAt"])delete question[field];
+    return{id,question:{...question,id,position:index+1},audio:script||solutionScript?{...(script?{script}:{}),...(solutionScript?{solutionScript,solutionNeedsRegeneration:true}:{})}:null};
+  });
+}
 
 function createBillingService({ store, now = Date.now, getIdentity, projectId }) {
   if (!["gradecrew-staging-2026", "demo-gradecrew-billing"].includes(projectId)) fail("failed-precondition", "Zahlungsintegration nur für die getrennte Testumgebung.");
   if (!store?.transaction || typeof getIdentity !== "function") throw new TypeError("Store and identity adapter required");
 
-  function projectWrites(tx, uid, account, person, grants, primarySchoolMembershipId = null) {
+  function projectWrites(tx, uid, account, person, grants, primarySchoolMembershipId) {
     const access = evaluateAccess({ person, account, grants, scope: { kind: "personal", id: uid }, at: now() });
-    tx.put("billingV2Accounts/" + uid, { ...account, emailVerified: person.emailVerified === true, primarySchoolMembershipId,
+    tx.put("billingV2Accounts/" + uid, { ...account, emailVerified: person.emailVerified === true, primarySchoolMembershipId: primarySchoolMembershipId === undefined ? account.primarySchoolMembershipId || null : primarySchoolMembershipId,
       writesUntilMs: access.featureCodes.includes("test.edit") ? (access.validUntil ?? Date.UTC(9999, 11, 31)) : 0 });
   }
 
@@ -51,7 +62,7 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
     const authTime = request.auth?.token?.auth_time;
     if (ctx.person.role !== "admin" || !ctx.person.emailVerified || !Number.isFinite(authTime) || authTime * 1000 < at - 900000 || authTime * 1000 > at + 60000) fail("permission-denied", "Für diese Änderung bitte als Administrator erneut anmelden.");
   }
-  async function context(tx, actor, scope = { kind: "personal", id: actor.uid }, { includeInactive = false } = {}) {
+  async function context(tx, actor, scope = { kind: "personal", id: actor.uid }, { includeInactive = false, membershipChanges = [] } = {}) {
     if (!scope || typeof scope !== "object" || !["personal", "school"].includes(scope.kind)) fail("invalid-argument", "Ungültiger Arbeitsbereich.");
     identifier(scope.id);
     if (scope.kind === "personal" && scope.id !== actor.uid) fail("permission-denied", "Fremder Arbeitsbereich.");
@@ -67,10 +78,9 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
     const person = { ...profile, id: actor.uid, emailVerified: actor.emailVerified,
       ...(deletion ? { accountDeletionId: "deleted" } : {}), ...(actor.disabled ? { status: "disabled" } : {}) };
     const memberships = [], seats = [], periods = [];
-    const candidates = scope.kind === "school"
-      ? [await tx.get("billingV2Memberships/" + key(scope.id, actor.uid))].filter(Boolean)
-      : await tx.find("billingV2Memberships", [["personId", "==", actor.uid], ["status", "==", "active"]], 21);
-    if (candidates.length > 20) fail("failed-precondition", "Zu viele Schulzuordnungen, bitte prüfen.");
+    let candidates = await tx.find("billingV2Memberships", [["personId", "==", actor.uid], ["status", "==", "active"]], 21);
+    for (const change of membershipChanges) { candidates = candidates.filter(item => item.schoolId !== change.schoolId); if (change.status === "active") candidates.push(change); }
+    if (candidates.length > 20) fail("resource-exhausted", "Höchstens 20 aktive Schulzuordnungen sind im Testbetrieb möglich.");
     for (const membership of candidates) {
       const schoolId = identifier(membership.schoolId);
       const school = await tx.get("billingV2Schools/" + schoolId);
@@ -84,7 +94,8 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
         }
       }
     }
-    const schoolMember = memberships.find(member => evaluateAccess({ person, account, memberships, seats, periods, scope: { kind: "school", id: member.schoolId }, at: now() }).tier === "school");
+    const schoolMember = memberships.map(member => ({member,access:evaluateAccess({ person, account, memberships, seats, periods, scope: { kind: "school", id: member.schoolId }, at: now() })}))
+      .filter(item => item.access.tier === "school").sort((a,b) => b.access.validUntil - a.access.validUntil)[0]?.member;
     const canonicalScope = scope.kind === "school" ? { kind: "school", id: scope.id, membershipId: key(scope.id, actor.uid) } : { kind: "personal", id: actor.uid };
     return { person, scope: canonicalScope, account, grants, memberships, seats, periods, config,
       saveAccount: changes => projectWrites(tx, actor.uid, { ...account, ...changes }, person, grants, schoolMember?.id || null) };
@@ -106,7 +117,10 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
   }
   async function requireFeature(uid, feature, scope) {
     const actor = await identity(uid), at = now();
-    return store.transaction(async tx => { const ctx = await context(tx, actor, scope); const access = requireDecision(ctx, at, feature); ctx.saveAccount(); return access; });
+    // Ownership is authorized by the caller. Funding attribution on an existing
+    // file must not discard another valid personal or school entitlement.
+    const workingScope = ["test.edit", "test.publish", "test.read", "test.export"].includes(feature) ? undefined : scope;
+    return store.transaction(async tx => { const ctx = await context(tx, actor, workingScope); const access = requireDecision(ctx, at, feature); ctx.saveAccount(); return access; });
   }
   async function inspectAccess(request) {
     const actor = await caller(request);
@@ -126,7 +140,8 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
     const id = requestId(data.requestId);
     if (!["manual", "copy", "import", "ai"].includes(data.kind)) fail("invalid-argument", "Erstellungsart fehlt.");
     const quiz = cleanQuiz(data.quiz);
-    const fingerprint = key(data.kind, quiz, data.scope || { kind: "personal", id: actor.uid });
+    const bundle=cleanBundle(data.questions);
+    const fingerprint = key(data.kind, quiz, data.scope || { kind: "personal", id: actor.uid },bundle);
     const ledgerKey = "billingV2Ledger/" + key(actor.uid, "create", id);
     const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     const code = [...randomBytes(8)].map(n => alphabet[n % alphabet.length]).join("");
@@ -145,48 +160,80 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
         sessionState: "open", sessionRunId: null, sessionStartedAt: null, billingScope: ctx.scope,
         billingCreationState: "committed", billingLedgerId: ledgerKey.split("/")[1], createdAt: new Date(at), updatedAt: new Date(at) };
       ctx.saveAccount({ createdCount: ctx.account.createdCount + (funding === "trial" ? 1 : 0) });
+      if(bundle){record.questionCount=bundle.length;record.totalPoints=Math.round(bundle.reduce((sum,item)=>sum+(Number.isFinite(Number(item.question.points))?Math.max(0,Number(item.question.points)):0),0)*10)/10;}
       tx.create("quizzes/" + code, record);
+      if(bundle){
+        for(const item of bundle){tx.create("quizzes/"+code+"/questions/"+item.id,{...item.question,updatedAt:new Date(at)});if(item.audio)tx.create("quizzes/"+code+"/audioScripts/"+item.id,{...item.audio,updatedAt:new Date(at)});}
+      }
       tx.create(ledgerKey, { personId: actor.uid, requestId: id, fingerprint, kind: data.kind, funding, sourceIds: access.sourceIds, state: "committed", quizId: code, createdAtMs: at, committedAtMs: at });
       return { code, replayed: false };
     });
   }
-  async function prepareGenerationReservation(uid, jobId, tx) {
+  async function prepareGenerationReservation(uid, jobId, tx, { expiredJobIds = [] } = {}) {
     const actor = await identity(uid), at = now(); identifier(jobId);
     const ctx = await context(tx, actor);
     const ledgerKey = "billingV2Ledger/" + key(uid, "generation", jobId);
     const previous = await tx.get(ledgerKey);
+    const stale=[];
+    for(const expiredId of [...new Set(expiredJobIds)].filter(id=>id!==jobId)){
+      identifier(expiredId);const path="billingV2Ledger/"+key(uid,"generation",expiredId),ledger=await tx.get(path);
+      if(ledger?.state==="reserved"&&ledger.personId===uid)stale.push({path,ledger});
+    }
+    const refunded=stale.filter(item=>item.ledger.funding==="trial").length;
+    if(refunded>ctx.account.reservedCount)fail("failed-precondition","Reservierungen bitte prüfen.");
+    ctx.account={...ctx.account,reservedCount:ctx.account.reservedCount-refunded};
+    const releaseStale=()=>{for(const item of stale)tx.patch(item.path,{state:"released",releasedAtMs:at,releaseReason:"stale_job"});};
     if (previous) {
       if (!["reserved", "committed"].includes(previous.state)) fail("failed-precondition", "Dieser KI-Auftrag wurde bereits beendet.");
-      return () => {};
+      return () => {if(stale.length){ctx.saveAccount({reservedCount:ctx.account.reservedCount});releaseStale();}};
     }
     const access = requireDecision(ctx, at, "test.create");
     const funding = access.tier === "trial" ? "trial" : "entitled";
     return () => {
       ctx.saveAccount({ reservedCount: ctx.account.reservedCount + (funding === "trial" ? 1 : 0) });
+      releaseStale();
       tx.create(ledgerKey, { personId: uid, jobId, kind: "ai", state: "reserved", funding, createdAtMs: at, expiresAtMs: at + 7200000 });
     };
   }
   async function reserveGeneration(uid, jobId) {
     return store.transaction(async tx => { const apply = await prepareGenerationReservation(uid, jobId, tx); apply(); });
   }
-  async function releaseGeneration(uid, jobId) {
+  async function prepareGenerationRelease(uid, jobId, tx) {
     identifier(uid); identifier(jobId);
-    return store.transaction(async tx => {
       const ledgerKey = "billingV2Ledger/" + key(uid, "generation", jobId);
       const ledger = await tx.get(ledgerKey), account = await tx.get("billingV2Accounts/" + uid);
-      if (!ledger || ledger.state !== "reserved") return { released: false };
+      if (!ledger || ledger.state !== "reserved") return () => ({ released: false });
       if (!account || ledger.personId !== uid || (ledger.funding === "trial" && account.reservedCount < 1)) fail("failed-precondition", "Reservierung bitte prüfen.");
-      tx.put("billingV2Accounts/" + uid, { ...account, reservedCount: account.reservedCount - (ledger.funding === "trial" ? 1 : 0) });
-      tx.patch(ledgerKey, { state: "released", releasedAtMs: now() });
-      return { released: true };
+      return () => {tx.put("billingV2Accounts/" + uid, { ...account, reservedCount: account.reservedCount - (ledger.funding === "trial" ? 1 : 0) });
+        tx.patch(ledgerKey, { state: "released", releasedAtMs: now() });return { released: true };};
+  }
+  async function releaseGeneration(uid, jobId) {
+    return store.transaction(async tx => {const apply=await prepareGenerationRelease(uid,jobId,tx);return apply();});
+  }
+  async function failGeneration(uid,jobId,quizId,jobPatch) {
+    identifier(uid);identifier(jobId);if(quizId)identifier(quizId);
+    return store.transaction(async tx=>{
+      const job=await tx.get("aiJobs/"+jobId),actualQuizId=job?.quizId||quizId;
+      if(actualQuizId)identifier(actualQuizId);
+      const ledger=await tx.get("billingV2Ledger/"+key(uid,"generation",jobId)),quiz=actualQuizId?await tx.get("quizzes/"+actualQuizId):null;
+      if(!job||job.ownerId!==uid||(quiz&&quiz.ownerId!==uid))fail("permission-denied","KI-Auftrag nicht zugeordnet.");
+      if(ledger?.state==="committed"&&quiz?.billingCreationState==="committed"&&quiz.generationStatus==="ready"){
+        tx.patch("aiJobs/"+jobId,{status:"ready",stage:"ready",percent:100,quizId:actualQuizId,updatedAt:new Date(now())});return{completed:true};
+      }
+      const apply=await prepareGenerationRelease(uid,jobId,tx);
+      apply();tx.patch("aiJobs/"+jobId,{...jobPatch,status:"failed",stage:"failed",updatedAt:new Date(now())});
+      if(quiz)tx.patch("quizzes/"+actualQuizId,{generationStatus:"failed",updatedAt:new Date(now())});
+      return{completed:false};
     });
   }
-  async function finalizeGeneration(uid, jobId, quizId, patch) {
+  async function finalizeGeneration(uid, jobId, quizId, patch, jobPatch) {
     const actor = await identity(uid), at = now(); identifier(jobId); identifier(quizId);
     return store.transaction(async tx => {
       const ctx = await context(tx, actor);
       const ledgerKey = "billingV2Ledger/" + key(uid, "generation", jobId);
       const ledger = await tx.get(ledgerKey), quiz = await tx.get("quizzes/" + quizId);
+      const job=jobPatch?await tx.get("aiJobs/"+jobId):null;
+      if(jobPatch&&(!job||job.ownerId!==uid||!["queued","running","ready"].includes(job.status)))fail("failed-precondition","KI-Auftrag bereits beendet.");
       if (!ledger || ledger.personId !== uid || !quiz || quiz.ownerId !== uid || quiz.generationJobId !== jobId) fail("permission-denied", "KI-Auftrag nicht zugeordnet.");
       if (ledger.state === "committed") {
         if (ledger.quizId !== quizId) fail("already-exists", "KI-Auftrag bereits gespeichert.");
@@ -196,6 +243,7 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
       ctx.saveAccount({ reservedCount: ctx.account.reservedCount - (ledger.funding === "trial" ? 1 : 0), createdCount: ctx.account.createdCount + (ledger.funding === "trial" ? 1 : 0) });
       tx.patch("quizzes/" + quizId, { ...patch, billingScope: { kind: "personal", id: uid }, billingCreationState: "committed", billingLedgerId: ledgerKey.split("/")[1], updatedAt: new Date(at) });
       tx.patch(ledgerKey, { state: "committed", quizId, committedAtMs: at });
+      if(jobPatch)tx.patch("aiJobs/"+jobId,{...jobPatch,status:"ready",stage:"ready",quizId,updatedAt:new Date(at)});
       return { committed: true, code: quizId };
     });
   }
@@ -247,7 +295,7 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
     });
   }
   const schools = require("./schools").createSchoolOperations({ store, now, caller, context, admin, identity, fail, key, identifier, requestId });
-  return { ...schools, getAccess, inspectAccess, requireFeature, createQuiz, reserveGeneration, prepareGenerationReservation, releaseGeneration, finalizeGeneration, grantPremium, revokePremium };
+  return { ...schools, getAccess, inspectAccess, requireFeature, createQuiz, reserveGeneration, prepareGenerationReservation, prepareGenerationRelease, releaseGeneration, failGeneration, finalizeGeneration, grantPremium, revokePremium };
 }
 
 module.exports = { createBillingService, BillingError, key, identifier, requestId };

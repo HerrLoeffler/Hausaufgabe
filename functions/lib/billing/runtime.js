@@ -36,11 +36,12 @@ async function enabledFor(uid) {
   const config = (await getFirestore().doc("appConfig/billingProduct").get()).data();
   return config?.enabled === true && Array.isArray(config.allowedUids) && config.allowedUids.includes(uid);
 }
-async function prepareJobReservation(tx, uid, jobId) {
+async function prepareJobReservation(tx, uid, jobId, expiredJobIds = []) {
   if (!await enabledFor(uid)) return undefined;
   const { service, store } = getRuntime();
-  return service.prepareGenerationReservation(uid, jobId, store.unit(tx));
+  return service.prepareGenerationReservation(uid, jobId, store.unit(tx), {expiredJobIds});
 }
+async function prepareJobRelease(tx,uid,jobId){if(!supported())return()=>({released:false});const{service,store}=getRuntime();return service.prepareGenerationRelease(uid,jobId,store.unit(tx));}
 async function reserveGeneration(uid, jobId) {
   if (!await enabledFor(uid)) return false;
   await getRuntime().service.reserveGeneration(uid, jobId);
@@ -57,4 +58,4 @@ function firebaseError(error) {
   if (error instanceof BillingError) return new HttpsError(error.code, error.message, error.details);
   return error;
 }
-module.exports = { getRuntime, enabledFor, prepareJobReservation, reserveGeneration, releaseGeneration, requireFeature, firebaseError };
+module.exports = { getRuntime, enabledFor, prepareJobReservation, prepareJobRelease, reserveGeneration, releaseGeneration, requireFeature, firebaseError };

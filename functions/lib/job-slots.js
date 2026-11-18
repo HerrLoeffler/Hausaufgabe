@@ -12,11 +12,13 @@ function activeJobIds(lock = {}) {
 
 async function reserveJob(db, { uid, jobRef, lockRef, now, jobData, beforeReserve }) {
   return db.runTransaction(async tx => {
-    const commitReservation = beforeReserve ? await beforeReserve(tx) : null;
     const previous = await tx.get(jobRef);
     const previousData = previous.data() || {};
     const retryQueueFailure = previous.exists && previousData.ownerId === uid && previousData.status === "failed" && previousData.stage === "queue-failed";
-    if (previous.exists && previousData.ownerId === uid && !retryQueueFailure) return { jobId: jobRef.id, resumed: true };
+    if (previous.exists && previousData.ownerId === uid && !retryQueueFailure) {
+      if(beforeReserve)await beforeReserve(tx,{expiredJobIds:[],resumed:true});
+      return { jobId: jobRef.id, resumed: true };
+    }
     const lock = await tx.get(lockRef);
     const snapshots = [];
     // Complete every read before scheduling writes, including legacy single-job locks.
@@ -24,6 +26,8 @@ async function reserveJob(db, { uid, jobRef, lockRef, now, jobData, beforeReserv
     const running = snapshots.filter(snap => snap.exists && snap.data()?.ownerId === uid && ["queued", "running"].includes(snap.data()?.status));
     const active = running.filter(snap => now.toMillis() - (snap.data()?.createdAt?.toMillis() || 0) < 40 * 60 * 1000);
     if (active.length >= MAX_ACTIVE_JOBS) throw new HttpsError("resource-exhausted", "Es laufen bereits zwei Tests. Sobald einer fertig ist, kannst du den nächsten starten.", { reason: "active-job-limit", limit: MAX_ACTIVE_JOBS });
+    const stale=running.filter(snap=>!active.includes(snap));
+    const commitReservation=beforeReserve?await beforeReserve(tx,{expiredJobIds:stale.map(snap=>snap.id),resumed:false}):null;
     if (typeof commitReservation === "function") commitReservation();
     for (const snap of running.filter(snap => !active.includes(snap))) tx.update(snap.ref, {
       status: "failed", stage: "failed", progressMessage: "Die Erstellung hat zu lange gedauert.", updatedAt: now

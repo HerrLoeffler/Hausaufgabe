@@ -30,6 +30,71 @@ async function seed() {
   await db.doc("appConfig/billingProduct").set({ enabled: true, allowedUids: ["admin", "teacher", "other", "third"] });
 }
 test.after(async () => { await db.terminate(); await deleteApp(app); });
+test("school cleanup can release a deleted member without recreating an authentication account",async()=>{
+ await seed();const school=await service.createSchool(request('admin',schoolOrder()));await service.assignSchoolMember(request('admin',{schoolId:school.schoolId,personId:'other',role:'teacher',requestId:'removed-auth-seat',reason:'Synthetic'}));
+ identities.delete('other');await db.doc('accountDeletions/other').set({state:'deleted'});await db.doc('users/other').delete();
+ await service.removeSchoolMember(request('teacher',{schoolId:school.schoolId,personId:'other',reason:'Deleted colleague'}));
+ assert.equal((await service.getSchool(request('teacher',{schoolId:school.schoolId}))).school.usedSeats,1);assert.equal((await db.doc('users/other').get()).exists,false);
+});
+test("leaving one of two paid schools updates remaining write rights without a status refresh",async()=>{
+ await seed();const first=await service.createSchool(request('admin',schoolOrder()));const second=await service.createSchool(request('admin',{...schoolOrder(),ownerId:'third',requestId:'second-school-order',startDate:'2026-11-03'}));
+ for(const id of[first.periodId,second.periodId])await db.doc('billingV2Periods/'+id).update({paymentStatus:'paid'});
+ await service.assignSchoolMember(request('admin',{schoolId:second.schoolId,personId:'teacher',role:'teacher',requestId:'second-school-seat',reason:'Synthetic'}));
+ time=start+20*86400000;await service.getAccess(request('teacher'));
+ const key=requireFunctions('./lib/billing/application').key;
+ assert.equal((await db.doc('billingV2Accounts/teacher').get()).data().primarySchoolMembershipId,key(second.schoolId,'teacher'));
+ await service.removeSchoolMember(request('third',{schoolId:second.schoolId,personId:'teacher',reason:'Synthetic leave'}));
+ assert.equal((await db.doc('billingV2Accounts/teacher').get()).data().primarySchoolMembershipId,key(first.schoolId,'teacher'));
+ assert.equal((await db.doc('billingV2Accounts/teacher').get()).data().writesUntilMs,0);
+});
+test("a copied question bundle commits atomically with one credit and private audio drafts",async()=>{
+ await seed();const payload={requestId:'complete-copy-request',kind:'copy',quiz:{title:'Complete copy'},questions:[{text:'One',points:1,audioScript:'Private heard question',solutionAudioScript:'Private solution',solutionAudioDataUrl:'data:audio/mpeg;base64,AAAA'},{text:'Two',points:1}]};
+ const made=await service.createQuiz(request('teacher',payload));await service.createQuiz(request('teacher',payload));
+ const questions=await db.collection('quizzes/'+made.code+'/questions').get();assert.equal(questions.size,2);
+ assert.equal(JSON.stringify(questions.docs.map(d=>d.data())).includes('Private solution'),false);
+ assert.equal((await db.doc('quizzes/'+made.code+'/audioScripts/q001').get()).data().solutionScript,'Private solution');
+ assert.equal((await db.doc('billingV2Accounts/teacher').get()).data().createdCount,1);
+});
+test("a failed bundled write cannot leave a charged empty copied file",async()=>{
+ await seed();const adapter=createFirestoreBillingStore(db),failing={transaction:work=>adapter.transaction(tx=>work({...tx,create:(path,data)=>{if(path.includes('/questions/'))throw new Error('Synthetic failed question write');return tx.create(path,data);}}))};
+ const svc=createBillingService({store:failing,projectId:'demo-gradecrew-billing',now:()=>time,getIdentity:async uid=>identities.get(uid)});
+ await assert.rejects(svc.createQuiz(request('teacher',{requestId:'atomic-copy-failure',kind:'copy',quiz:{title:'No partial'},questions:[{text:'One',points:1}]})),/Synthetic failed/);
+ assert.equal((await db.collection('quizzes').get()).size,0);assert.equal((await db.doc('billingV2Accounts/teacher').get()).exists,false);
+});
+test("stale job replacement releases its credit in the same reservation transaction",async()=>{
+ await seed();for(let i=0;i<5;i++)await service.reserveGeneration('teacher','stale'+i);
+ await createFirestoreBillingStore(db).transaction(async tx=>{const apply=await service.prepareGenerationReservation('teacher','replacement',tx,{expiredJobIds:['stale0']});apply();});
+ assert.equal((await db.doc('billingV2Accounts/teacher').get()).data().reservedCount,5);
+ assert.equal((await db.doc('billingV2Ledger/'+requireFunctions('./lib/billing/application').key('teacher','generation','stale0')).get()).data().state,'released');
+});
+test("ready quiz, job and credit commit together and failure recovery never downgrades that result",async()=>{
+ await seed();await service.reserveGeneration('teacher','atomic-job');
+ await db.doc('aiJobs/atomic-job').set({ownerId:'teacher',status:'running'});await db.doc('quizzes/ATOMIC01').set({ownerId:'teacher',generationJobId:'atomic-job',generationStatus:'running'});
+ await service.finalizeGeneration('teacher','atomic-job','ATOMIC01',{generationStatus:'ready'},{status:'ready',stage:'ready'});
+ assert.equal((await db.doc('aiJobs/atomic-job').get()).data().status,'ready');
+ await service.failGeneration('teacher','atomic-job','ATOMIC01',{status:'failed',stage:'failed'});
+ assert.equal((await db.doc('quizzes/ATOMIC01').get()).data().generationStatus,'ready');
+ assert.equal((await db.doc('billingV2Accounts/teacher').get()).data().createdCount,1);
+});
+test("personal revocation preserves a paid school pointer, and explicit school files use other personal sources", async()=>{
+ await seed();const school=await service.createSchool(request('admin',schoolOrder()));await db.doc('billingV2Periods/'+school.periodId).update({paymentStatus:'paid'});
+ const scope={kind:'school',id:school.schoolId};await service.createQuiz(request('teacher',{scope,kind:'manual',requestId:'explicit-school-file',quiz:{title:'Own school file'}}));
+ const grant=await service.grantPremium(request('admin',{personId:'teacher',requestId:'overlapping-free',reason:'Synthetic',endsAtMs:null}));
+ await service.revokePremium(request('admin',{grantId:grant.grantId,reason:'Keep school'}));
+ assert.ok((await db.doc('billingV2Accounts/teacher').get()).data().primarySchoolMembershipId);
+ await service.grantPremium(request('admin',{personId:'teacher',requestId:'other-source-free',reason:'Synthetic',endsAtMs:null}));
+ time=start+20*86400000;await db.doc('billingV2Schools/'+school.schoolId).update({status:'suspended'});
+ assert.ok((await service.requireFeature('teacher','test.edit',scope)).featureCodes.includes('test.edit'));
+});
+test("the twenty-school reader bound cannot be exceeded by school creation",async()=>{
+ await seed();const batch=db.batch();for(let i=0;i<20;i++)batch.set(db.doc('billingV2Memberships/cap'+i),{personId:'teacher',schoolId:'absent'+i,status:'active',role:'teacher',seatAssigned:true});await batch.commit();
+ await assert.rejects(service.createSchool(request('admin',schoolOrder())),{code:'resource-exhausted'});
+});
+test("an invitation cannot create the 501st pending row and lock out cleanup",async()=>{
+ await seed();const school=await service.createSchool(request('admin',schoolOrder())),batch=db.batch();
+ for(let i=0;i<500;i++)batch.set(db.doc('billingV2Invitations/cap'+i),{schoolId:school.schoolId,email:'billing'+i+'@example.invalid',role:'billing',status:'pending',reservesSeat:false,expiresAtMs:time+86400000});await batch.commit();
+ await assert.rejects(service.inviteSchoolMember(request('teacher',{schoolId:school.schoolId,email:'overflow@example.invalid',role:'billing',requestId:'overflow-request'})),{code:'resource-exhausted'});
+});
 test("only a platform administrator can directly assign an existing teacher without exceeding reserved seats", async () => {
   await seed();
   const made = await service.createSchool(request("admin", schoolOrder()));

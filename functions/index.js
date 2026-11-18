@@ -450,6 +450,7 @@ async function generateTestForUser(uid, data, onProgress = async () => {}) {
 exports.generateTest = onCall({ ...callableOpts, timeoutSeconds: 540 }, async request => {
   const { uid } = await requireAiUser(request).catch(err => { throw reportAiError(err, "access"); });
   await billingRuntime.requireFeature(uid, "test.create");
+  if(await billingRuntime.enabledFor(uid))throw new HttpsError("failed-precondition","Neue Tests bitte über die gezählte Warteschlange erstellen.");
   if (request.data?.generationMode === "variant") throw new HttpsError("invalid-argument", "Neue Varianten bitte über die Warteschlange erstellen.");
   return generateTestForUser(uid, request.data || {});
 });
@@ -496,7 +497,7 @@ async function startAiTestJobForUser(uid, requestData = {}) {
   const jobRef = db.collection("aiJobs").doc(createHash("sha256").update(`${uid}:${requestId}`).digest("hex").slice(0, 40));
   const lockRef = aiJobLock(uid);
   const now = Timestamp.now();
-  const reservation = await reserveJob(db, { uid, jobRef, lockRef, now, beforeReserve: async tx => {
+  const reservation = await reserveJob(db, { uid, jobRef, lockRef, now, beforeReserve: async (tx, slot = {}) => {
     await requireAccountWrite(tx, db, uid);
     const previous = await tx.get(jobRef);
     if (previous.exists && ((previous.data()?.generationMode || "generated") !== (variant ? "variant" : "generated") || (previous.data()?.sourceQuizId || "") !== sourceQuizId)) throw new HttpsError("failed-precondition", "Diese Anfrage-ID gehört bereits zu einem anderen Auftrag.");
@@ -504,7 +505,7 @@ async function startAiTestJobForUser(uid, requestData = {}) {
       const source = await tx.get(db.doc(`quizzes/${sourceQuizId}`));
       if (!source.exists || source.data()?.ownerId !== uid || source.data()?.rightsHold || source.data()?.isDeleted) throw new HttpsError("permission-denied", "Ausgangstest nicht verfügbar.");
     }
-    return billingRuntime.prepareJobReservation(tx, uid, jobRef.id);
+    return billingRuntime.prepareJobReservation(tx, uid, jobRef.id, slot.expiredJobIds || []);
   }, jobData: {
       ownerId: uid, status: "queued", stage: "queued", dispatchState: "pending", progressMessage: "Erstellung wird gestartet …", percent: 0,
       completedCount: 0, requestedCount: input.count, imageCompleted: 0, imageTotal: 0, audioCompleted: 0, audioTotal: 0, answerAudioCompleted: 0, answerAudioTotal: input.audioAnswerQuestionCount || 0, solutionAudioCompleted: 0, solutionAudioTotal: input.solutionAudioQuestionCount || 0,
@@ -576,6 +577,7 @@ exports.processAiTestJob = onTaskDispatched({
   let activePosition = null;
   let activeStage = "starting";
   try {
+    billingEnforced = await billingRuntime.enabledFor(uid);
     const { profile } = await requireAiUser({ auth: { uid } }, { billingFeature: null });
     const sourceSnap = job.sourceQuizId ? await db.collection("quizzes").doc(job.sourceQuizId).get() : null;
     if (sourceSnap && (!sourceSnap.exists || sourceSnap.data().ownerId !== uid || sourceSnap.data().rightsHold || sourceSnap.data().isDeleted)) throw new HttpsError("permission-denied", "Ausgangstest nicht verfügbar.");
@@ -691,13 +693,13 @@ exports.processAiTestJob = onTaskDispatched({
       qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [],
       commonRules: response.meta.commonRules || null, commonRulesUsageStored: response.meta.commonRulesUsageStored === true,
       pedagogicalPool: response.meta.pedagogicalPool, updatedAt: Timestamp.now() };
-    if (billingEnforced) await billingRuntime.getRuntime().service.finalizeGeneration(uid, jobId, quiz.code, readyPatch);
-    else await quizRef.update(readyPatch);
-    await jobRef.update({ status: "ready", stage: "ready", percent: 100,
+    const readyJobPatch={ status: "ready", stage: "ready", percent: 100,
       progressMessage: "Entwurf fertig. Bitte die Aufgaben prüfen.", completedAt: Timestamp.now(), updatedAt: Timestamp.now(),
       qualityWarnings: response.meta.qualityWarnings || [], qualityIssues: response.meta.qualityIssues || [],
       commonRules: response.meta.commonRules || null, commonRulesUsageStored: response.meta.commonRulesUsageStored === true,
-      pedagogicalPool: response.meta.pedagogicalPool });
+      pedagogicalPool: response.meta.pedagogicalPool };
+    if (billingEnforced) await billingRuntime.getRuntime().service.finalizeGeneration(uid, jobId, quiz.code, readyPatch, readyJobPatch);
+    else {await quizRef.update(readyPatch);await jobRef.update(readyJobPatch);}
     console.info("KI-Hintergrundauftrag fertig:", { jobId, quizId: quiz.code, questionCount: questions.length });
   } catch (err) {
     err.diagnostic = { ...err.diagnostic, schemaVersion: 1, jobId, stage: activeStage,
@@ -712,10 +714,11 @@ exports.processAiTestJob = onTaskDispatched({
     const message = reported.code === "failed-precondition" && Array.isArray(reported.details?.errors)
       ? `Die KI konnte noch kein gültiges Ergebnis erstellen: ${reported.details.errors.slice(0, 2).join(" ")}`.slice(0, 350)
       : reported.message;
-    await jobRef.update({ status: "failed", stage: "failed", progressMessage: message,
+    const failedJobPatch={ status: "failed", stage: "failed", progressMessage: message,
       errorCode: reported.code, errorReference: reported.details?.reference || "",
-      errorDetails: reported.details || {}, updatedAt: Timestamp.now() });
-    if (quizRef) await quizRef.update({ generationStatus: "failed", updatedAt: Timestamp.now() });
+      errorDetails: reported.details || {}, updatedAt: Timestamp.now() };
+    if(billingEnforced)await billingRuntime.getRuntime().service.failGeneration(uid,jobId,quizRef?.id||job.quizId||null,failedJobPatch);
+    else {await jobRef.update(failedJobPatch);if(quizRef)await quizRef.update({generationStatus:"failed",updatedAt:Timestamp.now()});}
   } finally {
     try { await billingRuntime.releaseGeneration(uid, jobId); }
     finally { await releaseAiJob(uid, jobId); }
@@ -732,6 +735,10 @@ exports.expireAiTestJobs = onSchedule({ schedule: "every 15 minutes", region: RE
     for (const snap of jobs.docs) {
       const job = snap.data();
       if ((job.createdAt?.toMillis() || Date.now()) >= cutoff) continue;
+      if(await billingRuntime.enabledFor(job.ownerId)){
+        await billingRuntime.getRuntime().service.failGeneration(job.ownerId,snap.id,job.quizId||null,{progressMessage:"Die Erstellung hat zu lange gedauert. Bitte erneut versuchen."});
+        await releaseAiJob(job.ownerId,snap.id);continue;
+      }
       const expired = await db.runTransaction(async tx => {
         const current = await tx.get(snap.ref);
         if (current.data()?.status !== status || (current.data()?.createdAt?.toMillis() || Date.now()) >= cutoff) return false;

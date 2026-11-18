@@ -2,6 +2,8 @@
 
 Stand 18. November 2026. Aufgabe GC-BILLING-PLAN-01. Planentwurf zur fachlichen Abstimmung, keine Freigabe für Echtzahlungen oder Production.
 
+**Aktueller Vorrang:** [Bestätigte Regeln und tatsächlicher Produktstand](../../billing/2026-11-18-product-integration.md) ersetzen ältere Angaben: Umsetzung ist beauftragt,14Tage/maximal5Dateien einschließlich manuell/Kopie/Import,15EUR monatlich oder120EUR jährlich,50EUR je Schulplatz/Jahr als Bruttopreise; Regelbesteuerung bestätigt. Historische plan_only- und unbefristete Gratisstellen unten sind keine aktuelle Anweisung. Der Gesamtplan ist noch nicht vollständig umgesetzt.
+
 **Aktuelle Arbeitsliste:** [Erledigtes, nächste Testarbeiten, Entscheidungen und Einführung](../../billing/2026-11-18-aufgabenliste-zahlungsbetrieb.md). Sie führt Verantwortlichkeiten, Abhängigkeiten und Abschlusskriterien zu diesem Plan.
 
 > Umsetzungshinweis für spätere Bearbeiter: Dieser Gesamtplan beschreibt Produktregeln und Arbeitspakete. Nach fachlicher Bestätigung wird er paketweise mit superpowers:executing-plans umgesetzt. Die unten stehenden Prüfschritte werden vor jeder Paketumsetzung auf den dann aktuellen Produktstand bezogen. Es besteht heute kein Umsetzungsauftrag.

@@ -8,6 +8,7 @@ function createSchoolOperations({store,now,caller,context,admin,identity,fail,ke
   const memberKey=(schoolId,personId)=>"billingV2Memberships/"+key(schoolId,personId);
   const audit=(tx,action,schoolId,actorId,reference,extra={})=>tx.create("billingV2Audit/"+key(action,schoolId,reference),{action,schoolId,actorId,atMs:now(),...extra});
   const validRole=role=>["teacher","school_admin","billing"].includes(role);
+  async function capacity(tx,personId,alreadyMember=false){const rows=await tx.find("billingV2Memberships",[["personId","==",personId],["status","==","active"]],21);if(!alreadyMember&&rows.length>=20)fail("resource-exhausted","Höchstens 20 aktive Schulzuordnungen sind im Testbetrieb möglich.");}
   function email(value) {
     if(typeof value!=="string"||value.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))fail("invalid-argument","Gültige E-Mail-Adresse erforderlich.");
     return value.trim().toLowerCase();
@@ -40,6 +41,7 @@ function createSchoolOperations({store,now,caller,context,admin,identity,fail,ke
       if(!owner.emailVerified)fail("failed-precondition","Schulverwaltung muss die E-Mail-Adresse bestätigt haben.");
       const previous=await tx.get(schoolKey(id));
       if(previous){if(previous.fingerprint!==fingerprint)fail("already-exists","Anfrage-ID bereits anders verwendet.");return{schoolId:id,periodId,replayed:true};}
+      await capacity(tx,owner.uid);
       const school={id,name,status:"active",ownerId:owner.uid,seats:data.seats,usedSeats:1,reservedSeats:0,adminCount:1,currentPeriodId:periodId,periodIds:[periodId],renewalMode:"manual_confirmation",createdAtMs:now(),fingerprint};
       tx.create(schoolKey(id),school);
       tx.create("billingV2Periods/"+periodId,{...calendar,schoolId:id,paymentStatus:"open",amountMinor:data.seats*SCHOOL_ANNUAL_SEAT_MINOR,unitAmountMinor:SCHOOL_ANNUAL_SEAT_MINOR,quantity:data.seats,currency:"eur",taxBehavior:"inclusive",invoiceId:null,createdAtMs:now()});
@@ -83,6 +85,7 @@ function createSchoolOperations({store,now,caller,context,admin,identity,fail,ke
       const previous=await tx.get("billingV2Invitations/"+invitationId),invitations=await pending(tx,school);
       const members=await tx.find("billingV2Memberships",[["schoolId","==",id],["status","==","active"]],501);
       if(previous){if(previous.email!==recipient||previous.role!==role)fail("already-exists","Anfrage-ID bereits anders verwendet.");return{schoolId:id,invitationId,expiresAtMs:previous.expiresAtMs,replayed:true,requiresReissue:true};}
+      if(invitations.valid.length>=500)fail("resource-exhausted","Zuerst offene Einladungen abschließen oder widerrufen.");
       if(members.some(m=>m.email===recipient)||invitations.valid.some(i=>i.email===recipient))fail("already-exists","Für diese Adresse besteht bereits eine Mitgliedschaft oder Einladung.");
       const reservesSeat=role!=="billing";
       if(reservesSeat&&school.usedSeats+invitations.reservedSeats>=school.seats)fail("resource-exhausted","Alle Schulplätze sind vergeben oder reserviert.");
@@ -123,10 +126,14 @@ function createSchoolOperations({store,now,caller,context,admin,identity,fail,ke
       if(invitation.status!=="pending"||invitation.expiresAtMs<=now()||!school||school.status!=="active")fail("failed-precondition","Einladung abgelaufen oder nicht verfügbar.");
       const invitations=await pending(tx,school),needsSeat=invitation.reservesSeat===true;
       const alreadyMember=membership?.status==="active";
+      await capacity(tx,actor.uid,alreadyMember);
+      const nextMember={schoolId:id,personId:actor.uid,email:actor.email,role:invitation.role,status:"active",seatAssigned:needsSeat,joinedAtMs:now()};
+      const targetContext=await context(tx,actor,undefined,{membershipChanges:alreadyMember?[]:[nextMember]});
       if(needsSeat&&!alreadyMember&&school.usedSeats>=school.seats)fail("resource-exhausted","Kein freier Schulplatz.");
       invitations.expire();
+      targetContext.saveAccount();
       tx.patch(schoolKey(id),{reservedSeats:Math.max(0,invitations.reservedSeats-(needsSeat?1:0)),usedSeats:school.usedSeats+(!alreadyMember&&needsSeat?1:0),adminCount:school.adminCount+(!alreadyMember&&invitation.role==="school_admin"?1:0)});
-      if(!alreadyMember)tx.put(memberKey(id,actor.uid),{schoolId:id,personId:actor.uid,email:actor.email,role:invitation.role,status:"active",seatAssigned:needsSeat,joinedAtMs:now()});
+      if(!alreadyMember)tx.put(memberKey(id,actor.uid),nextMember);
       tx.patch("billingV2Invitations/"+parsed.id,{status:"accepted",acceptedBy:actor.uid,acceptedAtMs:now()});
       audit(tx,"school_joined",id,actor.uid,parsed.id);
       return{schoolId:id,replayed:false,alreadyMember};
@@ -154,6 +161,13 @@ function createSchoolOperations({store,now,caller,context,admin,identity,fail,ke
       const member=await tx.get(memberKey(id,personId));
       if(!member||member.status!=="active")return{removed:false};
       if(member.role==="school_admin"&&school.adminCount<=1)fail("failed-precondition","Zuerst eine weitere Schulverwaltung einsetzen.");
+      const account=await tx.get("billingV2Accounts/"+personId),profile=await tx.get("users/"+personId),deletion=await tx.get("accountDeletions/"+personId);
+      // Cleanup must not need a still-existing Auth account. Recompute only from
+      // the protected existing projection and profile; never recreate a person.
+      const targetContext=account&&profile&&!deletion&&access.ctx.config.allowedUids.includes(personId)
+        ?await context(tx,{uid:personId,registeredAtMs:account.trialStartedAtMs,email:member.email,emailVerified:account.emailVerified===true},undefined,{includeInactive:true,membershipChanges:[{...member,status:"left",seatAssigned:false}]}) : null;
+      if(targetContext)targetContext.saveAccount();
+      else if(account)tx.patch("billingV2Accounts/"+personId,{writesUntilMs:0,primarySchoolMembershipId:null,emailVerified:false});
       tx.patch(memberKey(id,personId),{status:"left",seatAssigned:false,leftAtMs:now()});
       tx.patch(schoolKey(id),{usedSeats:school.usedSeats-(member.seatAssigned?1:0),adminCount:school.adminCount-(member.role==="school_admin"?1:0)});
       audit(tx,"school_member_removed",id,actor.uid,key(personId,member.joinedAtMs),{personId,reason});
@@ -172,11 +186,14 @@ function createSchoolOperations({store,now,caller,context,admin,identity,fail,ke
       if(previous){if(previous.fingerprint!==fingerprint)fail("already-exists","Anfrage-ID bereits anders verwendet.");return{assigned:true,replayed:true};}
       if(invitations.valid.some(item=>item.email===target.email))fail("already-exists","Zuerst die bestehende Einladung widerrufen.");
       const active=member?.status==="active",wasSeat=active&&member.seatAssigned,needsSeat=role!=="billing";
+      await capacity(tx,personId,active);
+      const nextMember={schoolId:id,personId,email:target.email,role,status:"active",seatAssigned:needsSeat,joinedAtMs:active?member.joinedAtMs:now(),assignedBy:actor.uid};
+      const targetContext=await context(tx,target,undefined,{membershipChanges:[nextMember]});
       const usedSeats=school.usedSeats-(wasSeat?1:0)+(needsSeat?1:0),adminCount=school.adminCount-(active&&member.role==="school_admin"?1:0)+(role==="school_admin"?1:0);
       if(adminCount<1)fail("failed-precondition","Zuerst eine weitere Schulverwaltung einsetzen.");
       if(usedSeats+invitations.reservedSeats>school.seats)fail("resource-exhausted","Alle Schulplätze sind vergeben oder reserviert.");
-      invitations.expire();tx.patch(schoolKey(id),{usedSeats,adminCount,reservedSeats:invitations.reservedSeats});
-      tx.put(memberKey(id,personId),{schoolId:id,personId,email:target.email,role,status:"active",seatAssigned:needsSeat,joinedAtMs:active?member.joinedAtMs:now(),assignedBy:actor.uid});
+      invitations.expire();targetContext.saveAccount();tx.patch(schoolKey(id),{usedSeats,adminCount,reservedSeats:invitations.reservedSeats});
+      tx.put(memberKey(id,personId),nextMember);
       tx.create("billingV2Audit/"+auditId,{action:"school_member_assigned",schoolId:id,actorId:actor.uid,personId,role,reason,fingerprint,atMs:now()});
       return{assigned:true,replayed:false};
     });

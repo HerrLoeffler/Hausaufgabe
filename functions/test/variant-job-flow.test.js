@@ -68,9 +68,10 @@ async function workerFixture({ failImage = false, heldSource = false, billingEna
     exports: {}, OPENAI_API_KEY: "mock-secret-reference", onTaskDispatched: (_options, fn) => fn, getFirestore: () => db, Timestamp: { now: () => ({ synthetic: true }) },
     requireAiUser: async () => ({ profile: {} }),
     billingRuntime: {
+      enabledFor: async () => billingEnabled,
       reserveGeneration: async () => { if (billingEnabled) calls.push("credit-reserved"); return billingEnabled; },
       releaseGeneration: async () => { if (billingEnabled) calls.push("credit-released"); },
-      getRuntime: () => ({ service: { finalizeGeneration: async (_uid, _job, _quiz, patch) => { quizUpdates.push({ ...patch, billingCreationState: "committed" }); calls.push("credit-committed"); } } })
+      getRuntime: () => ({ service: { finalizeGeneration: async (_uid, _job, _quiz, patch, jobPatch) => { current={...current,...jobPatch}; quizUpdates.push({ ...patch, billingCreationState: "committed" }); calls.push("credit-committed"); }, failGeneration: async (_uid,_job,_quiz,jobPatch)=>{calls.push("atomic-failure");current={...current,...jobPatch};quizUpdates.push({generationStatus:"failed"});} } })
     },
     generateTestForUser: async () => ({ test: { title: "Neue Variante", questions: [generated] }, meta: {commonRules:{version:'common-quality-v1',generationId:'synthetic-rule-use'},commonRulesUsageStored:true} }),
     createAiQuiz: async (_db, _uid, _jobId, base) => { quizBases.push(base); return { code: "NEWCODE1", ref: quizRef }; },
@@ -131,4 +132,7 @@ test("a rights hold applied after enqueue prevents generation and private draft 
   const f = await workerFixture({ heldSource: true });
   assert.equal(f.current.status, "failed"); assert.equal(f.current.errorCode, "permission-denied");
   assert.equal(f.quizBases.length, 0); assert.equal(f.questions.size, 0); assert.deepEqual(f.calls, ["released"]);
+});
+test("pre-generation access failure closes an already reserved pilot job atomically",async()=>{
+ const f=await workerFixture({heldSource:true,billingEnabled:true});assert.equal(f.current.status,'failed');assert.equal(f.calls.includes('atomic-failure'),true);
 });

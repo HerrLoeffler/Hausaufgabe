@@ -86,7 +86,7 @@ async function requireAudioQuizAccess(request, quizId, { write = false } = {}) {
   const quiz = snap.data() || {};
   const admin = profile.role === "admin";
   if (!admin && quiz.ownerId !== uid) throw new HttpsError("permission-denied", "Kein Zugriff auf diesen Test.");
-  const trashCleanup = quiz.isDeleted === true && Array.isArray(request.data?.drafts) && request.data.drafts.length === 0 && Array.isArray(request.data?.solutionDrafts) && request.data.solutionDrafts.length === 0;
+  const trashCleanup = quiz.isDeleted === true && Array.isArray(request.data?.drafts) && request.data.drafts.length === 0 && (request.data?.solutionDrafts === undefined || Array.isArray(request.data.solutionDrafts) && request.data.solutionDrafts.length === 0);
   if (write && !trashCleanup) await billingRuntime.requireFeature(uid, "test.edit", quiz.billingScope);
   if (write && quiz.rightsHold === true) throw new HttpsError("failed-precondition", "Der Test ist wegen eines Rechtehinweises gesperrt.");
   if (write && quiz.published === true && quiz.ended !== true) {

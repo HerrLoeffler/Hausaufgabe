@@ -23,4 +23,5 @@ test('ordinary school members see status without invitations, member list or fin
   assert.match(dom.window.document.body.textContent,/Zahlung offen/);
   assert.equal(dom.window.document.querySelector('[name=email]'),null);
   assert.equal(dom.window.document.querySelector('[data-action=create-school]'),null);
+  assert.ok(dom.window.document.querySelector('[data-action=leave-school]'));
 });

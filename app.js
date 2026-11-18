@@ -8,6 +8,7 @@ import { teacherGradingSummary, teacherResultName, teacherResultNumber, teacherR
 import { createBillingClient, describeAccess } from "./billing-client.mjs?v=billing-v2";
 import { paintBillingPanel, mountAdminBilling } from "./billing-panel.mjs?v=billing-v2";
 import { mountSchoolPanel } from "./billing-school-panel.mjs?v=billing-v2";
+import { createBillingCreationTracker } from "./billing-creation-tracker.mjs?v=billing-v2";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { answerIsComplete, paintAnswerCompletion } from "./shared/answer-completion.mjs";
@@ -91,6 +92,7 @@ let adminFeedbackHasMore = false;
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 const BILLING_PREVIEW_ENABLED = firebaseConfig.projectId === "gradecrew-staging-2026" && firebaseModule.billingPreview === true;
+const billingCreations = BILLING_PREVIEW_ENABLED ? createBillingCreationTracker({getStorage:()=>sessionStorage}) : null;
 const billingSchoolInvitation = BILLING_PREVIEW_ENABLED ? new URLSearchParams(location.hash.slice(1)).get("school-invite") || "" : "";
 if (billingSchoolInvitation) history.replaceState(null, "", location.pathname + location.search);
 if (BILLING_PREVIEW_ENABLED) document.getElementById("billingTrialNotice")?.removeAttribute("hidden");
@@ -2144,8 +2146,11 @@ async function createQuizDocument(base = {}, options = {}) {
   if (BILLING_PREVIEW_ENABLED) {
     const quiz = { ...quizDefaults(), ...base };
     for (const field of ["ownerId", "accessCode", "createdAt", "updatedAt", "billingScope", "billingLedgerId", "billingCreationState"]) delete quiz[field];
-    const requestId = options.requestId || (state.newManualQuiz && state.currentQuiz?.id ? `manual-${state.currentQuiz.id}` : crypto.randomUUID());
-    const result = await billingClient.createQuiz({requestId,kind:options.kind || "manual",quiz});
+    const uid=state.user.uid,questions=options.questions?.map(question=>{const clean=sanitizeQuestionForSave(question);delete clean.updatedAt;delete clean.createdAt;return{...clean,...(question.audioScript?{audioScript:question.audioScript}:{}),...(question.solutionAudioScript?{solutionAudioScript:question.solutionAudioScript}:{})};});
+    const kind=options.kind||"manual",payload={kind,quiz,...(questions?{questions}:{})};
+    const requestId = options.requestId || (options.operationKey ? await billingCreations.begin(uid,options.operationKey,payload) : state.newManualQuiz && state.currentQuiz?.id ? `manual-${state.currentQuiz.id}` : crypto.randomUUID());
+    const result = await billingClient.createQuiz({requestId,...payload});
+    if(options.operationKey)billingCreations.complete(uid,options.operationKey,requestId);
     return {code:result.code,quiz:{...quiz,ownerId:state.user.uid,accessCode:result.code,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}};
   }
   for (let attempt = 1; attempt <= 6; attempt += 1) {
@@ -2323,6 +2328,7 @@ async function duplicateQuiz(code, mode = "exact", closeDialog = null) {
       solutionAudioQuestionCount: questions.filter(q => Boolean(q.solutionAudioScript)).length,
       solutionAudioReady: !questions.some(q => Boolean(q.solutionAudioScript))
     };
+    if(BILLING_PREVIEW_ENABLED){const{code:newCode}=await createQuizDocument(base,{kind:"copy",operationKey:"copy:"+code,questions});draftCreated=true;toast("Test dupliziert.");await openEditor(newCode);return true;}
     const { code: newCode } = await createQuizDocument(base);
     draftCreated = true;
     const copiedAudioDrafts = [];
@@ -2481,13 +2487,13 @@ async function permanentlyDeleteQuiz(code, { admin = false } = {}) {
   const approved = await confirmPermanentDelete(q?.title || code);
   if (!approved) return;
   try {
+    await aiApi.syncQuestionAudioDrafts({ quizId: code, drafts: [], solutionDrafts: [] });
     const qSnap = await getDocs(collection(db, "quizzes", code, "questions"));
     for (const d of qSnap.docs) await deleteDoc(d.ref);
     const sSnap = await getDocs(collection(db, "quizzes", code, "submissions"));
     for (const d of sSnap.docs) await deleteDoc(d.ref);
     const aSnap = await getDocs(collection(db, "quizzes", code, "attempts"));
     for (const d of aSnap.docs) await deleteDoc(d.ref);
-    await aiApi.syncQuestionAudioDrafts({ quizId: code, drafts: [] });
     await deleteDoc(doc(db, "quizzes", code));
     if (admin) await writeAdminAudit("quiz_deleted_permanently", { quizId: code, title: q?.title || "" });
     state.quizzes = state.quizzes.filter((x) => x.id !== code);
@@ -2696,6 +2702,7 @@ async function importSharedTemplate() {
       requiresSecureAssessmentRules: source.questions.some(q => q.audioAnswerMode === "audio-only" || q.audioPresentation === "listening-only"),
       audioReady: source.questions.every(q => !Boolean(q.audioDataUrl) && questionAudioReady(q) && questionAnswerAudioReady(q))
     };
+    if(BILLING_PREVIEW_ENABLED){const{code:newCode}=await createQuizDocument(base,{kind:"copy",operationKey:"shared-template",questions:source.questions});const url=new URL(location.href);url.searchParams.delete("template");history.replaceState({},"",url.pathname+url.search);state.currentSharedTemplate=null;clearPendingTemplate();toast("Vorlage als eigene Kopie hinzugefügt.");await openEditor(newCode);return;}
     const { code: newCode } = await createQuizDocument(base);
     for (let i = 0; i < source.questions.length; i += 1) {
       const original = source.questions[i];
@@ -3949,6 +3956,7 @@ async function importAiJson() {
       questionCount: questions.length,
       totalPoints: round1(questions.reduce((sum, q) => sum + Number(q.points || 0), 0))
     };
+    if(BILLING_PREVIEW_ENABLED){const{code}=await createQuizDocument(base,{kind:"import",operationKey:"import-json",questions:questions.map(q=>({...q,aiOrigin:{kind:"imported",model:"extern",promptVersion:""}}))});state.pendingImportReport={...report,quizId:code};toast("Test vollständig importiert.");await openEditor(code);return;}
     const { code } = await createQuizDocument(base);
     for (let i = 0; i < questions.length; i += 1) {
       const q = questions[i];

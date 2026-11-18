@@ -28,7 +28,10 @@ export async function mountSchoolPanel(root,{client,uid,targetPersonId,onError=(
       details.append(node(doc,'p',`${view.school.usedSeats} von ${view.school.seats} Plätzen belegt · ${view.school.reservedSeats} reserviert`),node(doc,'p',`${paid?'Bezahlt':'Zahlung offen'} · Laufzeitende ${dates(view.period?.endsAtMs)} · Verlängerung nur nach Bestätigung`));
       details.append(node(doc,'p','Der Schulplatz erweitert den persönlichen Zugang. Tests bleiben ausschließlich für ihre jeweilige Lehrkraft zugänglich.','hint'));
       if(view.canBill&&Number.isInteger(view.period?.amountMinor))details.append(node(doc,'p',new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(view.period.amountMinor/100)+' je Schuljahr, einschließlich Umsatzsteuer'));
-      if(!view.canManage)return;
+      if(!view.canManage){
+        if(uid&&roles[view.myRole]){const leave=button(doc,details,'Schule verlassen',()=>{if(!doc.defaultView.confirm('Die Zuordnung zu '+view.school.name+' wirklich beenden?'))return;void run(leave,async()=>{await client.request('removeSchoolMember',{schoolId,personId:uid,reason:'Selbstaustritt über Kontoeinstellungen'});await client.refresh();if(current())await mountSchoolPanel(root,{client,uid,onError});});});leave.dataset.action='leave-school';}
+        return;
+      }
       for(const member of view.members||[]){
         const row=node(doc,'div',undefined,'billingGrantRow');row.append(node(doc,'span',`${member.email} · ${roles[member.role]||member.role}`));
         const remove=button(doc,row,'Zuordnung beenden',()=>{const reason=doc.defaultView.prompt('Grund für das Beenden der Schulzuordnung:');if(!reason?.trim())return;void run(remove,async()=>{await client.request('removeSchoolMember',{schoolId,personId:member.personId,reason});await client.refresh();await openSchool(schoolId);});});details.append(row);

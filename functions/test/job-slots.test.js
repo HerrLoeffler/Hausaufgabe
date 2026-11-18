@@ -73,6 +73,13 @@ test("expired jobs free a slot and are recorded as failed", async () => {
   assert.equal(documents.get("old").status, "failed");
   assert.deepEqual(documents.get("current").activeJobIds, ["fresh"]);
 });
+test("billing sees timed-out jobs before charging the replacement, with all writes deferred", async()=>{
+ const now={toMillis:()=>50*60*1000},f=firestore({old:{ownerId:'teacher',status:'running',createdAt:{toMillis:()=>0}},current:{activeJobIds:['old']},credits:{remaining:0}});
+ await reserveJob(f.db,{uid:'teacher',now,jobRef:f.ref('replacement'),lockRef:f.ref('current'),jobData:{ownerId:'teacher',status:'queued'},beforeReserve:async(tx,slot)=>{
+  assert.deepEqual(slot.expiredJobIds,['old']);await tx.get(f.ref('credits'));return()=>tx.set(f.ref('credits'),{remaining:0,replaced:true});
+ }});
+ assert.equal(f.documents.get('credits').replaced,true);assert.equal(f.documents.get('old').status,'failed');
+});
 
 test("a failed queue dispatch can reacquire its slot and reuse the same job ID", async () => {
   const now = { toMillis: () => 100000 };

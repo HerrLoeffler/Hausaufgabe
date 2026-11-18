@@ -163,6 +163,7 @@ exports.configurePracticeSolutionRelease = onCall(callableOpts, observed("config
     if (action === "prepare") return { revision, needsConfirmation };
     if (request.data?.expectedRevision !== revision) throw new HttpsError("aborted", "Inhalt oder Einstellungen wurden geändert. Bitte erneut veröffentlichen.");
     if (needsConfirmation && request.data?.confirmAfterSubmit !== true) throw new HttpsError("failed-precondition", "Bitte die Sichtbarkeit nach Abgabe bestätigen.");
+    await require("./billing-access").requireBillingPublish(tx,db,request,quiz.ownerId);
     const now = Timestamp.now();
     const runId = sessionMode(quiz) === "teacher" ? `run_${randomBytes(16).toString("hex")}` : null;
     const publishedQuiz = { ...quiz, publishedAt: now, reopenedAt: now, sessionRunId: runId };

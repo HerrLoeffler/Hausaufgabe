@@ -62,9 +62,9 @@ export function createBillingClient({call, getUid, onChange = () => {}}) {
     }
     return result;
   }
-  async function createQuiz({requestId,kind,quiz,scope}) {
+  async function createQuiz({requestId,kind,quiz,scope,questions}) {
     const uid = getUid();
-    const result = await request('createQuiz',{requestId,kind,quiz,...(scope ? {scope} : {})});
+    const result = await request('createQuiz',{requestId,kind,quiz,...(scope ? {scope} : {}),...(questions ? {questions} : {})});
     // The creation is already persisted. An unavailable status read must not
     // encourage a second purchase/creation, but account changes still abort.
     await refresh().catch(() => null);

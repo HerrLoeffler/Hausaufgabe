@@ -1,0 +1,25 @@
+"use strict";
+const test=require('node:test'),assert=require('node:assert/strict'),path=require('node:path');
+assert.match(process.env.FIRESTORE_EMULATOR_HOST||'',/^(127\.0\.0\.1|localhost):\d+$/);
+const req=require('node:module').createRequire(path.resolve(__dirname,'../../assessment-functions/package.json'));
+const{initializeApp,deleteApp}=req('firebase-admin/app'),{getFirestore}=req('firebase-admin/firestore');
+const app=initializeApp({projectId:'demo-gradecrew-billing'}),db=getFirestore(app);
+const{configurePracticeSolutionRelease}=req('./lib/secure-lifecycle');
+test.after(async()=>{await db.terminate();await deleteApp(app);});
+test('actual practice publish requires paid/trial rights, while release of a running round remains possible after expiry',async()=>{
+ await db.doc('users/teacher').set({role:'teacher',status:'active'});await db.doc('accountDeletions/teacher').delete();
+ await db.doc('appConfig/billingProduct').set({enabled:true,allowedUids:['teacher']});
+ await db.doc('billingV2Accounts/teacher').set({emailVerified:true,writesUntilMs:0});
+ const quiz=db.doc('quizzes/PRACTICE');await db.recursiveDelete(quiz);
+ await quiz.set({ownerId:'teacher',title:'Synthetic practice',published:false,ended:false,showSolutions:true,solutionReleaseMode:'practice_after_submit',startMode:'student',resultMode:'points'});
+ await quiz.collection('questions').doc('q1').set({id:'q1',position:1,type:'single',text:'Synthetic',points:1,options:[{text:'A',correct:true},{text:'B',correct:false}]});
+ const call=data=>configurePracticeSolutionRelease.run({auth:{uid:'teacher',token:{email_verified:true}},data:{quizId:'PRACTICE',...data}});
+ const draft=await call({action:'prepare'});
+ await assert.rejects(call({action:'publish',expectedRevision:draft.revision,confirmAfterSubmit:true}),{code:'permission-denied'});
+ assert.equal((await quiz.get()).data().published,false);
+ await db.doc('billingV2Accounts/teacher').update({writesUntilMs:Date.now()+86400000});
+ const current=await call({action:'prepare'});await call({action:'publish',expectedRevision:current.revision,confirmAfterSubmit:true});
+ await db.doc('billingV2Accounts/teacher').update({writesUntilMs:0});
+ await call({action:'release',expectedRevision:current.revision,confirmAfterSubmit:true});
+ assert.equal((await quiz.get()).data().practiceSolutionsReleased,true);
+});

@@ -84,6 +84,7 @@ function fixture() {
       if (name === 'firebase-admin/app') return { getApps: () => [{}] };
       if (name === 'firebase-admin/firestore') return { getFirestore: () => db, Timestamp: { now: () => now, fromMillis: n => n }, FieldValue: { delete: () => deleted } };
       if (name === 'firebase-functions/v2/https') return { onCall: (_, handler) => handler, HttpsError };
+      if (name === './billing-access') return require('../lib/billing-access');
       if (name === './assessment-core') return core;
       if (name === './teacher-answer-decoder') return decoder;
       throw Error(name);
