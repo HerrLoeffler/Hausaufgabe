@@ -520,6 +520,7 @@
       "state": "integrated",
       "handoff": "workstreams/feedback-gc39-release-20261013.md",
       "relatedBranches": [
+        "fix/wilma-compact-sort-20261118",
         "fix/staging-feedback-hosting-live-20261118",
         "fix/staging-feedback-web-batch-20261118",
         "feature/gc-web-polish-20261007",

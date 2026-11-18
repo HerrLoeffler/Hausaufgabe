@@ -1,0 +1,17 @@
+{
+  "source": "4c736c292a3e618e38715455adb3130b3e972da3",
+  "run": 44332994161,
+  "run_status": "in_progress",
+  "run_conclusion": null,
+  "node_job": 134902063644,
+  "node_result": "success",
+  "browser_job": 134902064165,
+  "targeted_browser_steps": [
+    "Run node tools/browser-layout/student-progress.cjs",
+    "Run node tools/browser-layout/teacher-results.cjs",
+    "Run node tools/browser-layout/wilma-review.cjs",
+    "Run npm test --prefix tools/browser-layout"
+  ],
+  "targeted_browser_result": "success",
+  "full_matrix": "automatic background check; not claimed complete; direct user requested targeted regression for final name-only refinement"
+}

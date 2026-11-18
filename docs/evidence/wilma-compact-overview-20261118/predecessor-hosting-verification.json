@@ -1,0 +1,38 @@
+{
+  "source": "eb41003f140bab3e03391c9eaad6e10cc8e4b9fb",
+  "project": "hausaufgabe-staging",
+  "environment": "production",
+  "origins": [
+    {
+      "url": "https://gradecrew.de",
+      "verified_files": 216,
+      "mismatches": [],
+      "routes": {
+        "/": 200,
+        "/workspace.html?intent=login": 200,
+        "/secure-student.html": 200,
+        "/datenschutz.html": 200,
+        "/support.html": 200
+      }
+    },
+    {
+      "url": "https://hausaufgabe-staging.web.app",
+      "verified_files": 216,
+      "mismatches": [],
+      "routes": {
+        "/": 200,
+        "/workspace.html?intent=login": 200,
+        "/secure-student.html": 200,
+        "/datenschutz.html": 200,
+        "/support.html": 200
+      }
+    }
+  ],
+  "changed_runtime_files": [
+    "app.js",
+    "styles.css",
+    "teacher-grading-summary.mjs"
+  ],
+  "preserved_old_assets": 213,
+  "removed_assets": []
+}
