@@ -29,9 +29,9 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
   if (!["gradecrew-staging-2026", "demo-gradecrew-billing"].includes(projectId)) fail("failed-precondition", "Zahlungsintegration nur für die getrennte Testumgebung.");
   if (!store?.transaction || typeof getIdentity !== "function") throw new TypeError("Store and identity adapter required");
 
-  function projectWrites(tx, uid, account, person, grants) {
+  function projectWrites(tx, uid, account, person, grants, primarySchoolMembershipId = null) {
     const access = evaluateAccess({ person, account, grants, scope: { kind: "personal", id: uid }, at: now() });
-    tx.put("billingV2Accounts/" + uid, { ...account, emailVerified: person.emailVerified === true,
+    tx.put("billingV2Accounts/" + uid, { ...account, emailVerified: person.emailVerified === true, primarySchoolMembershipId,
       writesUntilMs: access.featureCodes.includes("test.edit") ? (access.validUntil ?? Date.UTC(9999, 11, 31)) : 0 });
   }
 
@@ -67,21 +67,27 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
     const person = { ...profile, id: actor.uid, emailVerified: actor.emailVerified,
       ...(deletion ? { accountDeletionId: "deleted" } : {}), ...(actor.disabled ? { status: "disabled" } : {}) };
     const memberships = [], seats = [], periods = [];
-    if (scope.kind === "school") {
-      identifier(scope.id);
-      const membership = await tx.get("billingV2Memberships/" + key(scope.id, actor.uid));
-      const school = await tx.get("billingV2Schools/" + scope.id);
-      if (membership) memberships.push(membership);
-      if (school?.currentPeriodId) {
+    const candidates = scope.kind === "school"
+      ? [await tx.get("billingV2Memberships/" + key(scope.id, actor.uid))].filter(Boolean)
+      : await tx.find("billingV2Memberships", [["personId", "==", actor.uid], ["status", "==", "active"]], 21);
+    if (candidates.length > 20) fail("failed-precondition", "Zu viele Schulzuordnungen, bitte prüfen.");
+    for (const membership of candidates) {
+      const schoolId = identifier(membership.schoolId);
+      const school = await tx.get("billingV2Schools/" + schoolId);
+      if (school?.status !== "active") continue;
+      memberships.push({ ...membership, id: key(schoolId, actor.uid) });
+      if (school.currentPeriodId) {
         const period = await tx.get("billingV2Periods/" + identifier(school.currentPeriodId));
         if (period) {
           periods.push({ ...period, id: school.currentPeriodId });
-          if (membership?.seatAssigned === true) seats.push({ personId: actor.uid, schoolId: scope.id, periodId: school.currentPeriodId, status: "active" });
+          if (membership.seatAssigned === true) seats.push({ personId: actor.uid, schoolId, periodId: school.currentPeriodId, status: "active" });
         }
       }
     }
-    return { person, scope, account, grants, memberships, seats, periods, config,
-      saveAccount: changes => projectWrites(tx, actor.uid, { ...account, ...changes }, person, grants) };
+    const schoolMember = memberships.find(member => evaluateAccess({ person, account, memberships, seats, periods, scope: { kind: "school", id: member.schoolId }, at: now() }).tier === "school");
+    const canonicalScope = scope.kind === "school" ? { kind: "school", id: scope.id, membershipId: key(scope.id, actor.uid) } : { kind: "personal", id: actor.uid };
+    return { person, scope: canonicalScope, account, grants, memberships, seats, periods, config,
+      saveAccount: changes => projectWrites(tx, actor.uid, { ...account, ...changes }, person, grants, schoolMember?.id || null) };
   }
   const decision = (ctx, at) => evaluateAccess({ ...ctx, at });
   function requireDecision(ctx, at, feature) {
@@ -140,7 +146,7 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
         billingCreationState: "committed", billingLedgerId: ledgerKey.split("/")[1], createdAt: new Date(at), updatedAt: new Date(at) };
       ctx.saveAccount({ createdCount: ctx.account.createdCount + (funding === "trial" ? 1 : 0) });
       tx.create("quizzes/" + code, record);
-      tx.create(ledgerKey, { personId: actor.uid, requestId: id, fingerprint, kind: data.kind, funding, state: "committed", quizId: code, createdAtMs: at, committedAtMs: at });
+      tx.create(ledgerKey, { personId: actor.uid, requestId: id, fingerprint, kind: data.kind, funding, sourceIds: access.sourceIds, state: "committed", quizId: code, createdAtMs: at, committedAtMs: at });
       return { code, replayed: false };
     });
   }
@@ -240,7 +246,8 @@ function createBillingService({ store, now = Date.now, getIdentity, projectId })
       return { revoked: true };
     });
   }
-  return { getAccess, inspectAccess, requireFeature, createQuiz, reserveGeneration, prepareGenerationReservation, releaseGeneration, finalizeGeneration, grantPremium, revokePremium };
+  const schools = require("./schools").createSchoolOperations({ store, now, caller, context, admin, identity, fail, key, identifier, requestId });
+  return { ...schools, getAccess, inspectAccess, requireFeature, createQuiz, reserveGeneration, prepareGenerationReservation, releaseGeneration, finalizeGeneration, grantPremium, revokePremium };
 }
 
 module.exports = { createBillingService, BillingError, key, identifier, requestId };

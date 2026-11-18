@@ -1,4 +1,5 @@
 import {describeAccess,describePlan} from './billing-client.mjs';
+import {mountSchoolPanel} from './billing-school-panel.mjs';
 
 const date = value => new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',dateStyle:'medium'}).format(new Date(value));
 function element(doc,tag,text,classes) {
@@ -62,4 +63,5 @@ export async function mountAdminBilling(root,{client,personId,onError=()=>{}}) {
     }catch(error){host.append(element(doc,'p','Für dieses Konto ist die Zugangsverwaltung noch nicht verfügbar.','hint'));onError(error);}
   }
   await load();
+  if(host.isConnected){const schoolRoot=element(doc,'section');host.append(schoolRoot);await mountSchoolPanel(schoolRoot,{client,targetPersonId:personId,onError});}
 }

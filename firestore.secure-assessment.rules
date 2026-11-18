@@ -99,7 +99,13 @@ service cloud.firestore {
     function billingPersonalWrite(userId) {
       return exists(/databases/$(database)/documents/billingV2Accounts/$(userId))
         && get(/databases/$(database)/documents/billingV2Accounts/$(userId)).data.get('emailVerified', false) == true
-        && get(/databases/$(database)/documents/billingV2Accounts/$(userId)).data.get('writesUntilMs', 0) > request.time.toMillis();
+        && (get(/databases/$(database)/documents/billingV2Accounts/$(userId)).data.get('writesUntilMs', 0) > request.time.toMillis()
+          || billingAccountSchoolWrite(userId));
+    }
+
+    function billingAccountSchoolWrite(userId) {
+      let membershipId = get(/databases/$(database)/documents/billingV2Accounts/$(userId)).data.get('primarySchoolMembershipId', null);
+      return membershipId is string && billingMembershipWrite(membershipId, userId, null);
     }
 
     function billingSchoolPeriodValid(schoolId) {
@@ -114,13 +120,17 @@ service cloud.firestore {
 
     function billingSchoolWrite(quiz) {
       let scope = quiz.billingScope;
-      let member = get(/databases/$(database)/documents/billingV2Memberships/$(scope.membershipId)).data;
-      return member.get('personId', '') == quiz.ownerId
-        && member.get('schoolId', '') == scope.id
+      return billingMembershipWrite(scope.membershipId, quiz.ownerId, scope.id);
+    }
+
+    function billingMembershipWrite(membershipId, userId, schoolId) {
+      let member = get(/databases/$(database)/documents/billingV2Memberships/$(membershipId)).data;
+      return member.get('personId', '') == userId
+        && (schoolId == null || member.get('schoolId', '') == schoolId)
         && member.get('status', '') == 'active'
         && member.get('role', '') in ['teacher', 'school_admin']
         && member.get('seatAssigned', false) == true
-        && billingSchoolPeriodValid(scope.id);
+        && billingSchoolPeriodValid(member.schoolId);
     }
 
     function billingQuizWrite(quiz) {

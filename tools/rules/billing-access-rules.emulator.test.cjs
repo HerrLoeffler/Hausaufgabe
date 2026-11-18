@@ -51,3 +51,18 @@ test("unenrolled accounts retain their previous creation path during controlled 
   const db = env.authenticatedContext("legacy").firestore();
   await assertSucceeds(setDoc(doc(db, "quizzes/LEGACY01"), { ownerId: "legacy", title: "Legacy", published: false, rightsHold: false }));
 });
+test("school membership grants editing of own existing files and removal takes effect without refresh", async () => {
+  await seed(Date.now() - 1000);
+  await env.withSecurityRulesDisabled(async ctx => {
+    const db = ctx.firestore();
+    await updateDoc(doc(db, "billingV2Accounts/teacher"), { primarySchoolMembershipId: "member-one" });
+    await setDoc(doc(db, "billingV2Memberships/member-one"), { personId: "teacher", schoolId: "school-one", status: "active", role: "teacher", seatAssigned: true });
+    await setDoc(doc(db, "billingV2Schools/school-one"), { status: "active", currentPeriodId: "period-one" });
+    await setDoc(doc(db, "billingV2Periods/period-one"), { schoolId: "school-one", paymentStatus: "paid", startsAtMs: Date.now() - 10000, endsAtMs: Date.now() + 86400000 });
+  });
+  const db = env.authenticatedContext("teacher").firestore();
+  await assertSucceeds(updateDoc(doc(db, "quizzes/PAIDCODE"), { title: "School supplies Premium" }));
+  await env.withSecurityRulesDisabled(ctx => updateDoc(doc(ctx.firestore(), "billingV2Memberships/member-one"), { status: "left", seatAssigned: false }));
+  await assertFails(updateDoc(doc(db, "quizzes/PAIDCODE"), { title: "Stale seat" }));
+  await assertSucceeds(getDoc(doc(db, "quizzes/PAIDCODE")));
+});

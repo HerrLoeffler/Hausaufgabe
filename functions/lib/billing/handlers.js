@@ -4,7 +4,8 @@ const { BillingError } = require("./application");
 function createPilotHandler(service) {
   const actions = new Map([
     ["access", "getAccess"], ["inspectAccess", "inspectAccess"], ["createQuiz", "createQuiz"],
-    ["grantPremium", "grantPremium"], ["revokePremium", "revokePremium"]
+    ["grantPremium", "grantPremium"], ["revokePremium", "revokePremium"],
+    ...["createSchool", "getSchool", "listSchools", "inviteSchoolMember", "previewSchoolInvitation", "acceptSchoolInvitation", "revokeSchoolInvitation", "removeSchoolMember", "assignSchoolMember"].map(name => [name, name])
   ]);
   return async request => {
     if (!request?.auth?.uid) throw new BillingError("unauthenticated", "Bitte anmelden.");

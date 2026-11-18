@@ -57,6 +57,11 @@ function evaluateAccess({ person, scope, at, account, grants = [], memberships =
     featureCodes: FULL, sourceIds: active.map(g => g.id),
     validUntil: active.some(g => g.endsAtMs === null) ? null : Math.max(...active.map(g => g.endsAtMs)), reasonCode: "allowed"
   };
+  const schoolAccess = memberships.filter(m => m.personId === person.id && m.status === "active")
+    .map(m => evaluateAccess({ person, account, scope: { kind: "school", id: m.schoolId }, at, memberships, periods, seats }))
+    .filter(access => access.tier === "school")
+    .sort((a, b) => b.validUntil - a.validUntil)[0];
+  if (schoolAccess) return { ...schoolAccess, freeCreationsRemaining: base.freeCreationsRemaining, trialCreationsUsed: base.trialCreationsUsed };
   if (!trialValid) return { ...base, featureCodes: READ, reasonCode: "account_setup_required" };
   if (at < account.trialStartedAtMs) return { ...base, featureCodes: READ, reasonCode: "trial_not_started" };
   if (at >= account.trialEndsAtMs) return { ...base, featureCodes: READ, reasonCode: "trial_ended" };

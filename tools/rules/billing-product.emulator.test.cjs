@@ -30,6 +30,42 @@ async function seed() {
   await db.doc("appConfig/billingProduct").set({ enabled: true, allowedUids: ["admin", "teacher", "other", "third"] });
 }
 test.after(async () => { await db.terminate(); await deleteApp(app); });
+test("only a platform administrator can directly assign an existing teacher without exceeding reserved seats", async () => {
+  await seed();
+  const made = await service.createSchool(request("admin", schoolOrder()));
+  const assignment = { schoolId: made.schoolId, personId: "other", role: "teacher", requestId: "direct-assignment", reason: "Synthetic assignment" };
+  await assert.rejects(service.assignSchoolMember(request("teacher", assignment)), { code: "permission-denied" });
+  await service.assignSchoolMember(request("admin", assignment));
+  assert.equal((await service.getSchool(request("teacher", { schoolId: made.schoolId }))).school.usedSeats, 2);
+  await assert.rejects(service.assignSchoolMember(request("admin", { ...assignment, personId: "third", requestId: "too-many-seats" })), { code: "resource-exhausted" });
+  assert.equal((await service.getSchool(request("other", { schoolId: made.schoolId }))).myRole, "teacher");
+});
+test("a paid school seat supplies the existing personal account without consuming trial files", async () => {
+  await seed();
+  const made = await service.createSchool(request("admin", schoolOrder()));
+  await db.doc("billingV2Periods/" + made.periodId).update({ paymentStatus: "paid" });
+  time = start + 20 * 86400000;
+  assert.equal((await service.getAccess(request("teacher"))).tier, "school");
+  const quiz = await service.createQuiz(request("teacher", { requestId: "school-funded", kind: "manual", quiz: { title: "Own file" } }));
+  const record = (await db.doc("quizzes/" + quiz.code).get()).data();
+  assert.equal(record.ownerId, "teacher");
+  assert.equal((await service.getAccess(request("teacher"))).trialCreationsUsed, 0);
+  await db.doc("billingV2Schools/" + made.schoolId).update({ status: "suspended" });
+  assert.equal((await service.getAccess(request("teacher"))).tier, "free");
+  assert.equal((await service.getAccess(request("teacher", { scope: { kind: "school", id: made.schoolId } }))).featureCodes.includes("test.create"), false);
+});
+test("leaving a school invalidates that source while a personal grant remains", async () => {
+  await seed();
+  const made = await service.createSchool(request("admin", schoolOrder()));
+  await db.doc("billingV2Periods/" + made.periodId).update({ paymentStatus: "paid" });
+  const invite = await service.inviteSchoolMember(request("teacher", { schoolId: made.schoolId, email: "other@example.invalid", role: "teacher", requestId: "other-invitation" }));
+  await service.acceptSchoolInvitation(request("other", { token: invite.token }));
+  time = start + 20 * 86400000;
+  assert.equal((await service.getAccess(request("other"))).tier, "school");
+  await service.grantPremium(request("admin", { personId: "other", requestId: "keep-personal", reason: "Synthetic", endsAtMs: null }));
+  await service.removeSchoolMember(request("teacher", { schoolId: made.schoolId, personId: "other", reason: "Synthetic departure" }));
+  assert.equal((await service.getAccess(request("other"))).tier, "complimentary");
+});
 test("normal account gets an anchored fourteen-day trial, which cannot reset on login", async () => {
   await seed();
   assert.equal((await service.getAccess(request("teacher"))).freeCreationsRemaining, 5);
@@ -140,4 +176,51 @@ test("only administrators can inspect a teacher's trial and complimentary source
   const suspended=await service.inspectAccess(request("admin", {personId:"teacher"}));
   assert.equal(suspended.access.reasonCode,"account_suspended");
   assert.deepEqual(suspended.access.featureCodes,[]);
+});
+const schoolOrder = () => ({requestId:"school-contract-one",name:"Synthetic School",ownerId:"teacher",seats:2,startDate:"2026-11-02"});
+test("school creation separates membership from an unpaid annual period",async()=>{
+  await seed();await assert.rejects(service.createSchool(request("other",schoolOrder())),{code:"permission-denied"});
+  const school=await service.createSchool(request("admin",schoolOrder()));
+  const replay=await service.createSchool(request("admin",schoolOrder()));assert.equal(replay.schoolId,school.schoolId);
+  const details=await service.getSchool(request("teacher",{schoolId:school.schoolId}));
+  assert.equal(details.school.usedSeats,1);assert.equal(details.school.seats,2);assert.equal(details.period.amountMinor,10000);assert.equal(details.period.paymentStatus,"open");
+  assert.equal(details.period.endDateExclusive,"2027-11-02");
+  const access=await service.getAccess(request("teacher",{scope:{kind:"school",id:school.schoolId}}));
+  assert.equal(access.featureCodes.includes("test.create"),false);
+});
+test("concurrent invitations cannot reserve the same last seat twice",async()=>{
+  await seed();const school=await service.createSchool(request("admin",schoolOrder()));
+  const results=await Promise.allSettled(["other","third"].map(person=>service.inviteSchoolMember(request("teacher",{schoolId:school.schoolId,email:person+"@example.invalid",role:"teacher",requestId:"invite-person-"+person}))));
+  assert.equal(results.filter(r=>r.status==="fulfilled").length,1);
+  const winner=results[0].status==="fulfilled"?"other":"third",loser=winner==="other"?"third":"other";
+  const invitation=results.find(r=>r.status==="fulfilled").value;
+  await assert.rejects(service.acceptSchoolInvitation(request(loser,{token:invitation.token})),{code:"permission-denied"});
+  await service.acceptSchoolInvitation(request(winner,{token:invitation.token}));
+  await service.acceptSchoolInvitation(request(winner,{token:invitation.token}));
+  const detail=await service.getSchool(request("teacher",{schoolId:school.schoolId}));assert.equal(detail.school.usedSeats,2);assert.equal(detail.school.reservedSeats,0);
+  const stored=(await db.doc("billingV2Invitations/"+invitation.invitationId).get()).data();assert.equal(JSON.stringify(stored).includes(invitation.token),false);
+});
+test("school access starts only with payment and ends at the common anniversary",async()=>{
+  await seed();const school=await service.createSchool(request("admin",schoolOrder()));
+  await db.doc("billingV2Periods/"+school.periodId).update({paymentStatus:"paid"});
+  const scope={kind:"school",id:school.schoolId};
+  assert.equal((await service.getAccess(request("teacher",{scope}))).tier,"school");
+  time=Date.parse("2027-11-01T23:00:00Z");
+  assert.equal((await service.getAccess(request("teacher",{scope}))).featureCodes.includes("test.create"),false);
+});
+test("a last school administrator cannot be removed, and members see no other finances",async()=>{
+  await seed();const school=await service.createSchool(request("admin",schoolOrder()));
+  await assert.rejects(service.removeSchoolMember(request("teacher",{schoolId:school.schoolId,personId:"teacher",reason:"Synthetic departure"})),{code:"failed-precondition"});
+  const invitation=await service.inviteSchoolMember(request("teacher",{schoolId:school.schoolId,email:"other@example.invalid",role:"teacher",requestId:"member-finance-test"}));
+  await service.acceptSchoolInvitation(request("other",{token:invitation.token}));
+  const memberView=await service.getSchool(request("other",{schoolId:school.schoolId}));assert.equal(memberView.period.amountMinor,undefined);assert.equal(memberView.invitations,undefined);
+  await assert.rejects(service.getSchool(request("third",{schoolId:school.schoolId})),{code:"permission-denied"});
+});
+test("expired invitations return reserved capacity and cannot be redeemed",async()=>{
+  await seed();const school=await service.createSchool(request("admin",schoolOrder()));
+  const first=await service.inviteSchoolMember(request("teacher",{schoolId:school.schoolId,email:"other@example.invalid",role:"teacher",requestId:"expiring-invitation"}));
+  time+=8*86400000;
+  await assert.rejects(service.acceptSchoolInvitation(request("other",{token:first.token})),{code:"failed-precondition"});
+  const second=await service.inviteSchoolMember(request("teacher",{schoolId:school.schoolId,email:"third@example.invalid",role:"teacher",requestId:"replacement-invite"}));
+  assert.ok(second.token);
 });

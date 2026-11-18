@@ -7,6 +7,7 @@ console.info(`${BRAND.name} v${APP_VERSION}`);
 import { teacherGradingSummary, teacherResultName, teacherResultNumber, teacherResultSubmittedAt, teacherResultRunning, sortTeacherResults, teacherResultsAverages } from "./teacher-grading-summary.mjs?v=20261118";
 import { createBillingClient, describeAccess } from "./billing-client.mjs?v=billing-v2";
 import { paintBillingPanel, mountAdminBilling } from "./billing-panel.mjs?v=billing-v2";
+import { mountSchoolPanel } from "./billing-school-panel.mjs?v=billing-v2";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { answerIsComplete, paintAnswerCompletion } from "./shared/answer-completion.mjs";
@@ -90,6 +91,8 @@ let adminFeedbackHasMore = false;
 const firebaseConfig = firebaseModule.firebaseConfig;
 const appEnvironment = firebaseModule.appEnvironment || "production";
 const BILLING_PREVIEW_ENABLED = firebaseConfig.projectId === "gradecrew-staging-2026" && firebaseModule.billingPreview === true;
+const billingSchoolInvitation = BILLING_PREVIEW_ENABLED ? new URLSearchParams(location.hash.slice(1)).get("school-invite") || "" : "";
+if (billingSchoolInvitation) history.replaceState(null, "", location.pathname + location.search);
 if (BILLING_PREVIEW_ENABLED) document.getElementById("billingTrialNotice")?.removeAttribute("hidden");
 // Staging rules verified to deny authored/private reads and forged writes on 2026-10-09.
 const SECURE_AUDIO_PUBLICATION_ENABLED = firebaseConfig.projectId === "hausaufgabe-staging";
@@ -120,6 +123,13 @@ const billingClient = createBillingClient({
         } catch (error) { toast(error.message || "Der Zahlungstest ist noch nicht verfügbar.", "error"); }
       }
     });
+    const schoolRoot = document.getElementById("billingSchoolPanel");
+    if (schoolRoot) {
+      schoolRoot.hidden = !access;
+      schoolRoot.schoolPanelTicket = null;
+      schoolRoot.replaceChildren();
+      if (access) void mountSchoolPanel(schoolRoot, {client:billingClient,uid:auth.currentUser.uid,initialInvitation:billingSchoolInvitation});
+    }
     const badge = document.getElementById("billingDashboardStatus");
     if (badge) { badge.classList.toggle("hidden", !access); badge.textContent = access ? describeAccess(access).title + (access.tier === "trial" ? ` · ${access.freeCreationsRemaining} neue Tests übrig` : "") : ""; }
   }
