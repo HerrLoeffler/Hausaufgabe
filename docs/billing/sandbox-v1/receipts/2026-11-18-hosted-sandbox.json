@@ -1,0 +1,67 @@
+{
+  "task": "GC-BILLING-PLAN-01",
+  "project": "gradecrew-staging-2026",
+  "steps": [
+    {
+      "step": "preview_channel_created",
+      "origin": "https://gradecrew-staging-2026--billing-plan-01-t9ywkfow.web.app",
+      "expireTime": "2026-11-25T14:14:49.534244010Z"
+    },
+    {
+      "step": "runtime_identity_ready",
+      "email": "gradecrew-billing-sandbox@gradecrew-staging-2026.iam.gserviceaccount.com"
+    },
+    {
+      "step": "stripe_test_fixtures_created",
+      "customers": {
+        "premium": "cus_VeSZTE3vHqrNog",
+        "school": "cus_VeSZnlUINFV2G7"
+      },
+      "checkout": "cs_test_a0WvgZLY3RPpA8tcozzYB84qpvllEX7ykk5EJ8znFZLH8Ay4QMzdSO9PJu",
+      "invoice": "in_1Ud9eI1l0zkqOtXrqdzhB3DA",
+      "invoice_number": "N9WDQPG9-0006"
+    },
+    {
+      "step": "runtime_grant_store_role_ready",
+      "role": "projects/gradecrew-staging-2026/roles/gradecrewBillingSandboxGrants",
+      "permissions": [
+        "datastore.databases.get",
+        "datastore.entities.get",
+        "datastore.entities.create"
+      ]
+    },
+    {
+      "step": "runtime_api_secret_access_ready",
+      "secret": "GRADECREW_BILLING_SANDBOX_STRIPE_API_KEY"
+    },
+    {
+      "step": "function_source_uploaded"
+    },
+    {
+      "step": "function_deploy_started",
+      "operation": "projects/gradecrew-staging-2026/locations/europe-west1/operations/operation-1795011380144-6608da7ae68ed-3c540898-2da049ef"
+    },
+    {
+      "step": "stripe_webhook_created",
+      "id": "we_1Ud9fP1l0zkqOtXrBghZ9wfE",
+      "url": "https://gradecrew-staging-2026--billing-plan-01-t9ywkfow.web.app/billing-test/api/webhook"
+    },
+    {
+      "step": "secret_version_created",
+      "name": "GRADECREW_BILLING_SANDBOX_STRIPE_WEBHOOK_SECRET",
+      "version": "1"
+    },
+    {
+      "step": "secret_version_created",
+      "name": "GRADECREW_BILLING_SANDBOX_TEST_ACCOUNTS",
+      "version": "1"
+    },
+    {
+      "step": "runtime_access_to_generated_secrets_ready"
+    }
+  ],
+  "sourceCommit": "97c1e7fabde63e3c5733efa59729acfdfc36c9a1",
+  "sourceTree": "bd924426e624362c89e981679184b6ccd107e8e0",
+  "packageSha256": "ccc30609673781477c86b6405b042521766b810227c6cbd1b3ae573a36b10c6d",
+  "status": "build_in_progress"
+}
