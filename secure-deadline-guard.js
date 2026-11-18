@@ -45,13 +45,17 @@ function cloneSnapshot(value) {
 
 function lockAssessmentAtDeadline() {
   if (frozenAnswers || !form || form.closest(".hidden")) return false;
+  document.dispatchEvent(new Event("gradecrew:assessment-deadline"));
   frozenAnswers = cloneSnapshot(captureAnswers());
   form.dataset.deadlineLocked = "1";
   form.inert = true;
   form.querySelectorAll("input, textarea, select, button").forEach(control => {
     control.disabled = true;
   });
-  if (submitButton) submitButton.textContent = "Zeit abgelaufen – Abgabe wird gesichert …";
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = "Zeit abgelaufen – Abgabe wird gesichert …";
+  }
   return true;
 }
 
@@ -61,7 +65,7 @@ function clearRetry() {
 }
 
 function showDeadlineMessage(text, kind = "pending") {
-  const host = form?.querySelector(".secureSubmit");
+  const host = submitButton?.closest(".secureSubmit");
   if (!host) return;
   let message = host.querySelector(".secureDeadlineGuardMessage");
   if (!message) {

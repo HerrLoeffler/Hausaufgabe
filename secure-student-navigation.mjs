@@ -12,7 +12,7 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
   const next = nav.querySelector('[data-secure-next]');
   const toggle = nav.querySelector('[data-secure-overview-toggle]');
   const overview = doc.getElementById('secureQuestionOverview');
-  const layout = win.matchMedia?.('(min-width:1024px) and (min-height:600px)');
+  const layout = win.matchMedia?.('(min-width:1180px) and (min-height:600px)');
   const isSidebar = () => layout?.matches === true;
   let sections = [];
   let index = 0;
@@ -21,6 +21,11 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
   const measure = () => {
     doc.documentElement.style.setProperty('--secure-header-height', `${Math.ceil(header.getBoundingClientRect().height)}px`);
     nav.dataset.layout = isSidebar() ? 'sidebar' : 'compact';
+    const sidebar = nav.closest('.secureTaskSidebar');
+    if (sidebar && isSidebar()) {
+      const top = Math.max(sidebar.getBoundingClientRect().top, header.getBoundingClientRect().bottom + 12);
+      sidebar.style.maxHeight = `${Math.max(180, win.innerHeight - top - 12)}px`;
+    } else if (sidebar) sidebar.style.removeProperty('max-height');
     doc.documentElement.style.setProperty('--secure-navigation-height', `${isSidebar() ? 0 : Math.ceil(nav.getBoundingClientRect().height)}px`);
   };
   const paint = () => {

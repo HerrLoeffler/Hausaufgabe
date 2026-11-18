@@ -88,13 +88,16 @@ html{scroll-padding-top:calc(var(--secure-header-height,88px) + var(--secure-nav
 
 /* One task list and one set of inputs across wide and compact layouts. */
 .secureTaskSidebar{display:contents}
+#secureAssessment:not(.hidden){display:flex;flex-direction:column}
+#secureAssessment>*,.secureTaskSidebar>*{width:100%;min-width:0}
+.secureAssessmentHead{order:0}.secureTaskSidebar .secureProgress{order:1}.secureTaskSidebar .secureQuestionNavigation{order:2}#secureAssessmentForm{order:3}.secureTaskSidebar .secureSubmit{order:4}
 #secureAssessmentForm,#secureAssessment,.secureTaskSidebar{min-width:0}
 .secureQuestion h2,.secureAssessmentHead h1{overflow-wrap:anywhere}
-@media(min-width:1024px) and (min-height:600px){
- .secureShell:has(#secureAssessment:not(.hidden)){max-width:1160px}
- #secureAssessment:not(.hidden){display:grid;grid-template-columns:208px minmax(0,1fr);gap:18px 24px;align-items:start}
+@media(min-width:1180px) and (min-height:600px){
+ .secureShell:has(#secureAssessment:not(.hidden)){max-width:1124px}
+ #secureAssessment:not(.hidden){display:grid;grid-template-columns:minmax(0,860px) 208px;gap:18px 24px;align-items:start}
  .secureAssessmentHead{grid-column:1/-1}
- .secureTaskSidebar{display:flex;flex-direction:column;gap:12px;position:sticky;top:calc(var(--secure-header-height,88px) + 12px);max-height:calc(100dvh - var(--secure-header-height,88px) - 24px);min-height:0}
+ .secureTaskSidebar{grid-column:2;grid-row:2;display:flex;flex-direction:column;gap:12px;position:sticky;top:calc(var(--secure-header-height,88px) + 12px);max-height:calc(100dvh - var(--secure-header-height,88px) - 24px);min-height:0}
  .secureTaskSidebar .secureProgress{margin:0;padding:12px;border-radius:14px;box-shadow:none;flex:none}
  .secureProgress>div:first-child{flex-wrap:wrap;gap:3px;font-size:12px}
  .secureTaskSidebar .secureQuestionNavigation:not([hidden]){position:static;margin:0;display:flex;flex-direction:column;min-height:0;box-shadow:none}
@@ -104,6 +107,12 @@ html{scroll-padding-top:calc(var(--secure-header-height,88px) + var(--secure-nav
  .secureQuestionOverview{grid-template-columns:minmax(0,1fr);max-height:none;min-height:0;flex:1;overflow:auto}
  .secureQuestionOverview button{width:100%;font-size:0;text-align:left;flex:none}
  .secureQuestionOverview button::after{content:attr(aria-label);font-size:13px;line-height:1.4;white-space:normal;overflow-wrap:anywhere}
- #secureAssessmentForm{grid-column:2;grid-row:2;max-width:860px}
+ #secureAssessmentForm{grid-column:1;grid-row:2;max-width:860px}
  .secureQuestionList{margin-top:0}
+ .secureTaskSidebar .secureSubmit{flex:none;flex-direction:column;align-items:stretch;gap:10px;margin:0;padding:12px;border-radius:14px;box-shadow:none}
+ .secureSubmit .button{width:100%;min-height:52px;font-size:16px}
+ .secureTaskSidebar .secureSubmit strong{font-size:14px}
+ .secureTaskSidebar .secureSubmit small{font-size:12px;line-height:1.4}
 }
+
+.studentSubmitConfirm{position:fixed;inset:0;margin:auto;width:min(520px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow:auto;padding:24px}.studentSubmitConfirm label{display:block;margin-top:18px;font-weight:700}.studentSubmitConfirm input{display:block;width:100%;margin:8px 0 20px}.studentSubmitConfirm [data-submit-warning]{color:#92400e;line-height:1.5}.studentSubmitConfirm .button:disabled{opacity:.5;cursor:not-allowed}

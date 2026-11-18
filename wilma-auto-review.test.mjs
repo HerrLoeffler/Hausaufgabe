@@ -30,3 +30,28 @@ test('closing the explicitly opened review stops further unsent preparations',as
 test('25 confirmed-fundus hits do not consume the two new AI identity slots',async()=>{let calls=0;const ctx={actor:'teacher',quiz:{id:'test'},questions:[question],submissions:Array.from({length:25},(_,i)=>sub('fundus'+i,'front'))};const scheduler=create({getContext:()=>ctx,parseGaps:()=>[],enabled:()=>true,analyzeAnswer:async({submissionId})=>{calls++;ctx.submissions.find(s=>s.id===submissionId).grading.q.reviewSuggestion={source:'wilma-ai',origin:'teacher-fundus',points:.5,status:'clear',reason:'Confirmed'};}});await scheduler.run();assert.equal(calls,25);assert.ok(ctx.submissions.every(s=>s.grading.q.reviewSuggestion?.origin==='teacher-fundus'));});
 
 test('25 accepted-rule proposals do not consume the two new AI identity slots',async()=>{let calls=0;const ctx={actor:'teacher',quiz:{id:'test'},questions:[question],submissions:Array.from({length:25},(_,i)=>sub('fundus'+i,'front'))};const scheduler=create({getContext:()=>ctx,parseGaps:()=>[],enabled:()=>true,analyzeAnswer:async({submissionId})=>{calls++;ctx.submissions.find(s=>s.id===submissionId).grading.q.reviewSuggestion={source:'wilma-ai',origin:'accepted-rule',points:.5,status:'clear',reason:'Confirmed'};}});await scheduler.run();assert.equal(calls,25);assert.ok(ctx.submissions.every(s=>s.grading.q.reviewSuggestion?.origin==='accepted-rule'));});
+
+test('free recovery and deliberate retry preserve the original diagnosis without automatic paid loops',async()=>{
+ const ctx={actor:'teacher',quiz:{id:'test'},questions:[question],submissions:[sub('a','front')]},calls=[],states=[];let recovered=false;
+ const scheduler=create({getContext:()=>ctx,parseGaps:()=>[],enabled:()=>true,allowFreeLookups:true,onState:s=>states.push(s),analyzeAnswer:async payload=>{
+  calls.push(payload);if(!recovered&&!payload.retry)throw Object.assign(Error('safe'),{details:{reasonCode:'provider_format',reviewState:'failed',retryAllowed:true,failedAt:1000}});
+  ctx.submissions[0].grading.q.reviewSuggestion={source:'wilma-ai',points:.5,status:'uncertain'};
+ }});
+ await scheduler.run();assert.equal(states.at(-1).reasonCode,'provider_format');assert.equal(states.at(-1).retryAllowed,true);
+ await scheduler.run();assert.equal(calls.length,1);
+ await scheduler.recover({questionId:'q'});assert.equal(calls.at(-1).allowPaid,false);assert.equal(states.at(-1).reasonCode,'provider_format');
+ await scheduler.retry({questionId:'q',submissionId:'a',expectedFailureAt:999});assert.equal(calls.length,2);
+ await scheduler.retry({questionId:'q',submissionId:'a',expectedFailureAt:1000});assert.equal(calls.length,3);assert.equal(calls.at(-1).retry,true);assert.equal(calls.at(-1).expectedFailureAt,1000);assert.equal(states.at(-1).phase,'proposal');assert.equal(ctx.submissions[0].grading.q.awardedPoints,0);
+ await scheduler.retry({questionId:'q',submissionId:'a',expectedFailureAt:1000});assert.equal(calls.length,3);
+});
+test('running and failed preparation states are distinct and expose no arbitrary provider text',async()=>{
+ const f=setup({analyzeAnswer:async()=>{throw Object.assign(Error('private output'),{details:{reasonCode:'review_in_progress',reviewState:'running'}});}});
+ await f.scheduler.run();assert.equal(f.states.at(-1).phase,'waiting');assert.equal(f.states.at(-1).message.includes('private'),false);
+});
+test('late free lookup failure cannot publish into a new actor or quiz',async()=>{
+ for(const change of ['actor','quiz']){
+  let release,entered;const gate=new Promise(r=>release=r),begun=new Promise(r=>entered=r),ctx={actor:'a',quiz:{id:'first'},questions:[question],submissions:[sub('a','front'),sub('b','front')]},states=[];
+  const scheduler=create({getContext:()=>ctx,parseGaps:()=>[],enabled:()=>true,allowFreeLookups:true,onState:s=>states.push(s),analyzeAnswer:async payload=>{if(payload.allowPaid)throw Error('first failure');entered();await gate;throw Object.assign(Error('cache miss'),{details:{reasonCode:'cache_miss'}});}});
+  const run=scheduler.run();await begun;const count=states.length;scheduler.clear({resetSession:change==='actor'});if(change==='actor')ctx.actor='b';else ctx.quiz={id:'second'};release();await run;assert.equal(states.length,count);
+ }
+});

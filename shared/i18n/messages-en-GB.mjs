@@ -5,6 +5,7 @@ const source = entries => Object.fromEntries(
 );
 
 export const enGBMessages = Object.freeze({
+  "source:Test abgeben": "Submit test",
   "system.loading": "GradeCrew is loading …",
   "system.load_failed": "GradeCrew could not be loaded completely. Please check your connection and reload the page.",
   "system.secure_assessment_notice_failed": "Secure assessment notices could not be loaded.",

@@ -1,3 +1,4 @@
+import { requestStudentSubmitConfirmation } from "./student-submit-confirm.mjs";
 import { answerIsComplete } from "./shared/answer-completion.mjs";
 import {mountPublicEntryShell,setPublicEntryShellVisible} from "./shared/public-entry-shell.mjs";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
@@ -27,6 +28,7 @@ let currentPaper = [];
 let waitingPoll = null;
 let timerInterval = null;
 let submitting = false;
+let confirmationPending = null;
 let runningPoll = null;
 let frozenAnswers = null;
 
@@ -55,6 +57,7 @@ function clearTimers() {
 }
 
 function freezeAnswers() {
+  confirmationPending?.abort();
   if (!frozenAnswers) frozenAnswers = JSON.parse(JSON.stringify(collectAnswers()));
   const form = $("secureAssessmentForm");
   if (form) {
@@ -688,6 +691,7 @@ function enterAssessment(response) {
 }
 
 function showReceipt(receipt) {
+  confirmationPending?.abort();
   clearTimers();
   clearDraft();
   const host = $("secureResult");
@@ -729,8 +733,8 @@ function showReceipt(receipt) {
 }
 
 async function submitAssessment(autoSubmitted = false) {
-  if (submitting) return;
   if (autoSubmitted) freezeAnswers();
+  if (submitting) return;
   submitting = true;
   saveDraft();
   const button = $("secureSubmitBtn");
@@ -817,13 +821,28 @@ $("secureStartForm")?.addEventListener("submit", async event => {
   }
 });
 
-$("secureAssessmentForm")?.addEventListener("submit", event => {
+$("secureAssessmentForm")?.addEventListener("submit", async event => {
   event.preventDefault();
+  const form = $("secureAssessmentForm");
+  if (submitting || confirmationPending || frozenAnswers || form.inert) return;
+  saveDraft();
   const answers = collectAnswers();
   const open = currentPaper.filter(question => !secureAnswerIsComplete(question, answers[question.id])).length;
-  if (open && !confirm(`${open} ${open === 1 ? "Aufgabe ist" : "Aufgaben sind"} noch offen. Trotzdem endgültig abgeben?`)) return;
+  const confirmation = new AbortController();
+  confirmationPending = confirmation;
+  let approved;
+  try {
+    approved = await requestStudentSubmitConfirmation("", {
+      signal: confirmation.signal, answered: currentPaper.length - open, open
+    });
+  } finally {
+    if (confirmationPending === confirmation) confirmationPending = null;
+  }
+  if (!approved || frozenAnswers || form.inert || submitting || $("secureAssessment").classList.contains("hidden")) return;
   void submitAssessment(false);
 });
+
+document.addEventListener("gradecrew:assessment-deadline", () => confirmationPending?.abort());
 
 addEventListener("online", () => setConnection(true, "Verbunden"));
 addEventListener("offline", () => setConnection(false, "Offline"));

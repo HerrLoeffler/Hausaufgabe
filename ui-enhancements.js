@@ -66,7 +66,7 @@ function enhanceStudentProgress(progress) {
   const previous = compact.querySelector(".studentPrevQuestion");
   const next = compact.querySelector(".studentNextQuestion");
   const toggle = compact.querySelector(".studentOverviewToggle");
-  const sidebarMedia = window.matchMedia?.('(min-width:1024px) and (min-height:600px)');
+  const sidebarMedia = window.matchMedia?.('(min-width:1180px) and (min-height:600px)');
   const isSidebar = () => sidebarMedia?.matches === true;
   let index = 0;
   let ticking = false;
@@ -80,6 +80,13 @@ function enhanceStudentProgress(progress) {
 
   const sections = () => Array.from(document.querySelectorAll(".studentQuestion[data-qid]"));
   const sync = () => {
+    const sidebar = progress.closest('.studentTaskSidebar');
+    if (sidebar && isSidebar()) {
+      const top = Math.max(sidebar.getBoundingClientRect().top,
+        document.querySelector('.topbar')?.getBoundingClientRect().bottom || 0,
+        document.getElementById('studentTimerBar')?.getBoundingClientRect().bottom || 0);
+      sidebar.style.maxHeight = `${Math.max(180, window.innerHeight - top - 12)}px`;
+    } else if (sidebar) sidebar.style.removeProperty('max-height');
     const items = sections();
     if (!items.length) return;
     const stickyBottom = Math.max(0, isSidebar() ? 0 : progress.getBoundingClientRect().bottom,

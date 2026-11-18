@@ -5,4 +5,4 @@ export const safeRequestId=value=>typeof value==='string'&&/^[A-Za-z0-9_-]{1,180
 export function reviewDetails(reasonCode,reviewState='failed'){
  return {reasonCode:reasons.has(reasonCode)?reasonCode:'result_unknown',reviewState:states.has(reviewState)?reviewState:'failed',recovery:'cached_only'};
 }
-export function safeReviewDetails(value){return value&&reasons.has(value.reasonCode)?reviewDetails(value.reasonCode,value.reviewState):undefined;}
+export function safeReviewDetails(value){return value&&reasons.has(value.reasonCode)?{...reviewDetails(value.reasonCode,value.reviewState),...(typeof value.retryAllowed==='boolean'?{retryAllowed:value.retryAllowed}:{}),...(Number.isSafeInteger(value.failedAt)&&value.failedAt>0?{failedAt:value.failedAt}:{})}:undefined;}

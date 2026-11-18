@@ -7,7 +7,7 @@ const norm=value=>String(value??'').normalize('NFKC').trim().toLocaleLowerCase('
 export class ReviewError extends Error{constructor(code,message,details){super(message);this.httpStatus=code;if(details)this.details=details;}}
 function fail(code,message,details){throw new ReviewError(code,message,details);}
 function id(value){if(typeof value!=='string'||! /^[A-Za-z0-9_-]{1,100}$/.test(value))fail(400,'Ungültige Testkennung.');return value;}
-export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmission,reserve,finish,provider,readCache=async()=>null,readFundus=async()=>null,allowCustomCriteria=true}){
+export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmission,reserve,finish,provider,readCache=async()=>null,readFundus=async()=>null,assertResultAccess=async()=>{},allowCustomCriteria=true}){
  if(!['gradecrew-staging-2026','hausaufgabe-staging'].includes(projectId))throw new Error('Wilma ist für dieses Cloudprojekt nicht zugelassen.');
  const memory=new Map();
  return async({uid,data})=>{
@@ -82,7 +82,8 @@ export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmiss
    await finish(fingerprint,{phase:'unknown',requestId:safeRequestId(result?.requestId||error?.requestId),diagnostic}).catch(()=>{});
    // A validated proposal remains usable in this tab even if persistence fails.
    // No grade is changed; reload must use the existing cache or remain manual.
-   if(receipt){const volatile={...receipt,persistence:'volatile',warning:diagnostic.reasonCode};memory.set(fingerprint,volatile);return volatile;}
+   if(receipt&&error?.wilmaResultStoreFailure===true){await assertResultAccess();const volatile={...receipt,persistence:'volatile',warning:diagnostic.reasonCode};memory.set(fingerprint,volatile);return volatile;}
+   if(receipt)throw error;
    fail(503,'Wilma konnte nicht sicher prüfen. Kein automatischer Neuversuch; vorhandene Punkte bleiben erhalten.',diagnostic);
   }
  };

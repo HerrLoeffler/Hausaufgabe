@@ -21,12 +21,17 @@ function fixture(wide = false) {
   w.eval(source + '\nwindow.cleanup = mountSecureQuestionNavigation(document, window);');
   return { w, d, nav, setWide(value){media.matches=value;for(const fn of listeners)fn();}, resize(h) { headerHeight = h; w.dispatchEvent(new w.Event('resize')); }, scroll() { top = [-850, -350, 150]; w.dispatchEvent(new w.Event('scroll')); }, flush: () => new Promise(r => w.requestAnimationFrame(r)), close() { w.cleanup(); w.close(); } };
 }
-test('submission is ordinary flow after every question, never sticky/fixed', () => {
-  assert.match(css, /\.secureSubmit\{[^}]*position:static/);
-  assert.doesNotMatch(css, /\.secureSubmit\{[^}]*(?:position:(?:sticky|fixed)|bottom:)/);
-  assert.ok(html.indexOf('id="secureQuestions"') < html.indexOf('class="secureSubmit secureCard"'));
-  assert.match(html, /id="secureSubmitBtn"[^>]*type="submit"/);
-  assert.doesNotMatch(html, /secureSubmitBtn[^>]*disabled/);
+test('right sidebar keeps a form-associated submit button below overview, with full-size questions', () => {
+  const doc = new JSDOM(html).window.document;
+  const sidebar = doc.querySelector('.secureTaskSidebar');
+  const submit = doc.getElementById('secureSubmitBtn');
+  assert.equal(submit.closest('.secureTaskSidebar'), sidebar);
+  assert.equal(submit.form, doc.getElementById('secureAssessmentForm'));
+  assert.equal(submit.textContent, 'Test abgeben');
+  assert.match(css, /@media\(min-width:1180px\) and \(min-height:600px\)/);
+  assert.match(css, /grid-template-columns:minmax\(0,860px\) 208px/);
+  assert.match(source, /min-width:1180px/);
+  assert.doesNotMatch(css + source, /min-width:1024px/);
 });
 test('real local GC logo is shared by loading/join/running/receipt states and included in build', () => {
   const manifest = JSON.parse(fs.readFileSync('shared/gradecrew-design/assets.json', 'utf8'));

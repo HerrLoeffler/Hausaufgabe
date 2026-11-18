@@ -47,7 +47,7 @@ test("teacher-end watcher freezes answers and retries the same snapshot", async 
   let answers = { q: 'first' };
   const submissions = [];
   const context = {
-    frozenAnswers: null, runningPoll: null, submitting: false, quizId: 'AUDIT1',
+    confirmationPending: null, frozenAnswers: null, runningPoll: null, submitting: false, quizId: 'AUDIT1',
     $: () => form, collectAnswers: () => answers,
     setInterval: fn => { callback = fn; return 1; },
     api: { resume: async (id, options) => { assert.equal(options.stateOnly, true); return { quiz: { ended } }; } },
