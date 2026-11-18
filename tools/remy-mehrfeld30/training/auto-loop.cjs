@@ -116,7 +116,14 @@ async function handle(input){
    return {family:c.family,wish:c.wish,status:c.status,attempt:c.attempt,errors:c.errors||[],blindReason:c.judge?.reason||'',adversary:c.adversary||null,
     history:attempts.map(a=>({attempt:a.attempt,status:a.status,errors:a.errors||[],blindReason:a.judge?.reason||'',adversary:adversaries.find(v=>v.attempt===a.attempt)||null}))};
   }));
-  const payload={previousHint:parent.strategyHint||'',results};
+  const previousTrials=[];
+  for(let version=1;version<data.round;version++){
+   const strategy=(await db.doc(sessionRef.path+'/strategies/v'+version).get()).data();
+   const candidates=await rows(db,'dev'+version);
+   previousTrials.push({version,generationHint:strategy?.generationHint||'',changedAspect:strategy?.changedAspect||'',metrics:summary(candidates),
+    findings:candidates.filter(c=>!passed(c)||c.attempt>1).map(c=>({family:c.family,wish:c.wish,attempt:c.attempt,errors:c.errors||[],blindReason:c.judge?.reason||'',adversary:c.adversary||null}))});
+  }
+  const payload={previousHint:parent.strategyHint||'',results,previousTrials,comparisons:best.comparisons||[]};
   const response=await engine.providerCall({db,runId:phasePlan('dev0').runId,stepId:'optimizer-v'+data.round,phase:'optimize',secret,
     version:GRAPH_VERSION,customRequest:request('optimize',payload),...(input.client?{client:input.client}:{})});
   const result=parseStructuredResponse(response);

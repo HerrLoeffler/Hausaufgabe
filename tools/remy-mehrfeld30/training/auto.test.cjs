@@ -58,3 +58,10 @@ test('a delayed adversarial verdict cannot overwrite a later attempt',async()=>{
 test('aggregate recipe optimization prioritizes failed first attempts using the stronger model while generation and judges remain unchanged',()=>{
  const {request}=require('./auto-loop.cjs'),r=request('optimize',{});assert.equal(r.model,'gpt-6.2-sol');assert.equal(r.reasoning.effort,'medium');assert.match(r.input[0].content,/Erstversuch|Fehlversuch/);assert.match(r.input[0].content,/Kosmetik/);
 });
+test('a failed earlier recipe proposal is explicitly remembered when the second optimization starts from the retained baseline',async()=>{
+ const {handle}=require('./auto-loop.cjs'),db=new TestDatabase();await seed(db,'dev0');await seed(db,'dev1','Erster erfolgloser kosmetischer Hinweis.');
+ await db.doc('taskLearningRuns/'+phasePlan('dev1').runId+'/cases/base').update({status:'rejected',attempt:3,adversary:null,errors:['PREVIOUS-REGRESSION']});
+ await db.doc('taskLearningAutoRuns/'+SESSION+'/strategies/v1').set({generationHint:'Erster erfolgloser kosmetischer Hinweis.',changedAspect:'labels'});
+ const engine={providerCall:async input=>{const body=JSON.parse(input.customRequest.input[1].content);assert.equal(body.previousTrials[0].generationHint,'Erster erfolgloser kosmetischer Hinweis.');assert.match(JSON.stringify(body.previousTrials),/PREVIOUS-REGRESSION/);assert.equal(body.previousHint,'');return {output_text:JSON.stringify({changedAspect:'help',generationHint:'Prüfe vor der Ausgabe die gegebenen Werte und die tatsächlich offenen Felder.',reason:'Fehlversuche senken.'})};}};
+ const result=await handle({db,uid,engine,data:{action:'trainingAutoOptimize',round:2}});assert.equal(result.parentPhase,'dev0');
+});
