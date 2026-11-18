@@ -835,6 +835,8 @@ export const enGBSourcePatterns = Object.freeze([
   { pattern: /^(.*) · Klasse (.*)$/, replacement: "$1 · Class $2" },
   { pattern: /^Aufgabe (\d+)$/, replacement: "Question $1" },
   { pattern: /^Aufgabe (\d+) von (\d+)$/, replacement: "Question $1 of $2" },
+  { pattern: /^Aufgabe (\d+) · beantwortet$/, replacement: "Question $1 · answered" },
+  { pattern: /^Aufgabe (\d+) · offen$/, replacement: "Question $1 · unanswered" },
   { pattern: /^Antwort (\d+)$/, replacement: "Answer $1" },
   { pattern: /^Antwort (\d+) anhören$/, replacement: "Listen to answer $1" },
   { pattern: /^Schritt (\d+)$/, replacement: "Step $1" },

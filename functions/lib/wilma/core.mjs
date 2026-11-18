@@ -1,10 +1,11 @@
 import {createHash} from 'node:crypto';
 import {validateWilmaReceipt} from './receipt.mjs';
 import {questionSnapshot,requiresOriginalMedia} from './source.mjs';
+import {reviewDetails,safeRequestId} from './failure.mjs';
 const digest=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const norm=value=>String(value??'').normalize('NFKC').trim().toLocaleLowerCase('de-DE').replace(/\s+/g,' ');
-export class ReviewError extends Error{constructor(code,message){super(message);this.httpStatus=code;}}
-function fail(code,message){throw new ReviewError(code,message);}
+export class ReviewError extends Error{constructor(code,message,details){super(message);this.httpStatus=code;if(details)this.details=details;}}
+function fail(code,message,details){throw new ReviewError(code,message,details);}
 function id(value){if(typeof value!=='string'||! /^[A-Za-z0-9_-]{1,100}$/.test(value))fail(400,'Ungültige Testkennung.');return value;}
 export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmission,reserve,finish,provider,readCache=async()=>null,readFundus=async()=>null,allowCustomCriteria=true}){
  if(!['gradecrew-staging-2026','hausaufgabe-staging'].includes(projectId))throw new Error('Wilma ist für dieses Cloudprojekt nicht zugelassen.');
@@ -60,20 +61,29 @@ export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmiss
   if(memory.has(fingerprint))return freshDirect(memory.get(fingerprint));
   const cached=await readCache(fingerprint);
   if(cached){
-   validateWilmaReceipt(cached,{answerIds:ids,maxPoints:maximum});
+   try{validateWilmaReceipt(cached,{answerIds:ids,maxPoints:maximum});}catch{fail(409,'Gespeicherter Vorschlag ist nicht sicher zugeordnet. Bitte selbst prüfen.',reviewDetails('receipt_invalid'));}
    if(cached.questionSnapshot!==snapshot)fail(409,'Gespeicherter Vorschlag gehört zu einer anderen Aufgabenfassung.');
    return freshDirect(cached);
   }
   await reserve(fingerprint,task);
+  let result,receipt,stage='provider';
   try{
-   const result=await provider(task);
+   result=await provider(task);stage='receipt';
    const clean=validateWilmaReceipt({source:'wilma-ai',answers:result.answers},{answerIds:records.map(row=>row.id),maxPoints:maximum});
    const mapping=new Map(records.map(row=>[row.id,row.sourceId]));
    const answers=clean.answers.map(row=>({...row,id:mapping.get(row.id),reason:row.reason.slice(0,180),status:!rubric?.length&&q.type!=='gapfill'&&row.status==='clear'?'uncertain':row.status}));
-   const receipt={answers:[...answers,...direct],revision,questionSnapshot:snapshot,source:'wilma-ai',requestId:result.requestId,model:result.model,cached:false};
+   receipt={answers:[...answers,...direct],revision,questionSnapshot:snapshot,source:'wilma-ai',requestId:result.requestId,model:result.model,cached:false};
+   stage='result_store';
    await finish(fingerprint,{phase:'completed',requestId:result.requestId||null,receipt});
    memory.set(fingerprint,receipt);
    return receipt;
-  }catch(error){await finish(fingerprint,{phase:'unknown'}).catch(()=>{});fail(503,'Wilma konnte nicht sicher prüfen. Kein automatischer Neuversuch; vorhandene Punkte bleiben erhalten.');}
+  }catch(error){
+   const diagnostic=reviewDetails(stage==='receipt'?'receipt_invalid':stage==='result_store'?'result_store_failed':error?.reasonCode||'provider_unavailable');
+   await finish(fingerprint,{phase:'unknown',requestId:safeRequestId(result?.requestId||error?.requestId),diagnostic}).catch(()=>{});
+   // A validated proposal remains usable in this tab even if persistence fails.
+   // No grade is changed; reload must use the existing cache or remain manual.
+   if(receipt){const volatile={...receipt,persistence:'volatile',warning:diagnostic.reasonCode};memory.set(fingerprint,volatile);return volatile;}
+   fail(503,'Wilma konnte nicht sicher prüfen. Kein automatischer Neuversuch; vorhandene Punkte bleiben erhalten.',diagnostic);
+  }
  };
 }

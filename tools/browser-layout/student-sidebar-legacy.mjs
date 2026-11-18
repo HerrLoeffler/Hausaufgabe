@@ -1,0 +1,13 @@
+import {paintAnswerCompletion} from '/shared/answer-completion.mjs';
+if(!['localhost','127.0.0.1'].includes(location.hostname))throw Error('Local fictional preview only.');
+const count=Number(new URL(location.href).searchParams.get('count'))||18;
+const root=document.getElementById('studentQuizCard');
+root.innerHTML=`<div class="studentHead"><h1>Fiktiver Übungstest</h1><p>Lokale Layoutvorschau · keine Abgabe oder KI-Aufrufe.</p></div><form id="studentForm"><div class="studentIdentityCard">Fiktive Person</div><div id="studentTimerBar" class="studentTimerBar hidden"></div><div id="studentProgressBar" class="studentProgressWrap"><div class="studentProgressTop"><strong id="studentProgressText">0 von ${count} bearbeitet</strong><span id="studentOpenCount">${count} offen</span></div><div class="studentProgressTrack"><span id="studentProgressFill"></span></div><div id="studentQuestionNav" class="studentQuestionNav" aria-label="Aufgabennavigation"></div></div><div id="studentQuestions"></div><div id="studentSubmitArea" class="studentSubmitArea"><strong>Fertig?</strong><button class="button primary" type="submit">Antworten abgeben</button></div></form>`;
+const questions=document.getElementById('studentQuestions'),nav=document.getElementById('studentQuestionNav');
+for(let i=0;i<count;i++){
+ const section=document.createElement('section');section.className='studentQuestion';section.dataset.qid='q'+i;section.dataset.type='text';section.dataset.answerState='open';section.innerHTML=`<h3>Aufgabe ${i+1}: Begründe deine Antwort mit einem passenden Beispiel.</h3><textarea aria-label="Antwort zu Aufgabe ${i+1}" rows="4"></textarea>`;questions.appendChild(section);
+ const button=document.createElement('button');button.type='button';button.className='questionNavDot';button.dataset.qid=section.dataset.qid;paintAnswerCompletion(button,i,false);button.addEventListener('click',()=>{section.tabIndex=-1;section.focus({preventScroll:true});section.scrollIntoView({block:'start',behavior:'instant'});});nav.appendChild(button);
+ section.querySelector('textarea').addEventListener('input',event=>{const complete=!!event.target.value.trim();section.dataset.answerState=complete?'answered':'open';paintAnswerCompletion(button,i,complete);const done=nav.querySelectorAll('.complete').length;document.getElementById('studentProgressText').textContent=`${done} von ${count} bearbeitet`;document.getElementById('studentOpenCount').textContent=`${count-done} offen`;});
+}
+root.querySelector('form').addEventListener('submit',event=>event.preventDefault());
+await import('/ui-enhancements.js');document.body.dataset.fixtureReady='true';

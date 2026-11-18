@@ -4,7 +4,8 @@ import {quoteReview,reserveBalance,settleBalance,normalizeLegacyAllowance,normal
 import {questionSnapshot} from './source.mjs';
 import {fundusKey,fundusEvidence,readEvidence,mergeEvidence} from './fundus.mjs';
 import {createDecisionService} from './decision.mjs';
-const fail=(status,message)=>{throw new ReviewError(status,message);};
+import {reviewDetails,safeReviewDetails,safeRequestId} from './failure.mjs';
+const fail=(status,message,details)=>{throw new ReviewError(status,message,details);};
 const digest=value=>createHash('sha256').update(value).digest('hex');
 export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAccountWrite,consumeQuota,provider,resultStore,now=Date.now,aiRequestCap=7,monthlyBudget=false,model=MODEL}) {
  if(!['gradecrew-staging-2026','hausaufgabe-staging'].includes(projectId))throw Error('Wilma: Projekt nicht zugelassen.');
@@ -74,14 +75,18 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
    },
    readCache:async fingerprint=>{
     const job=await load(privateDoc('wilma-reviews',fingerprint).path);
-    if(!job||job.phase!=='completed')return null;
-    if(job.uid!==uid||job.cachePath!==cachePath(fingerprint))fail(409,'Gespeicherter KI-Beleg konnte nicht sicher zugeordnet werden.');
-    const cached=await resultStore.read(job.cachePath);
-    if(!cached)fail(409,'Der gespeicherte Vorschlag ist abgelaufen. Es wird keine zweite Berechnung gestartet.');
-    return cached;
+    if(!job)return null;
+    const path=cachePath(fingerprint);
+    if(job.uid!==uid||job.cachePath&&job.cachePath!==path)fail(409,'Gespeicherter KI-Beleg konnte nicht sicher zugeordnet werden.',reviewDetails('receipt_invalid'));
+    let cached;try{cached=await resultStore.read(path);}catch{fail(503,'Gespeicherter Vorschlag ist gerade nicht erreichbar. Keine neue Berechnung gestartet.',reviewDetails('result_store_unavailable'));}
+    // A valid blob can outlive a failed metadata write; the core still verifies every row and snapshot.
+    if(cached)return cached;
+    if(job.phase==='completed')fail(409,'Der gespeicherte Vorschlag ist abgelaufen. Es wird keine zweite Berechnung gestartet.',reviewDetails('receipt_expired'));
+    if(job.phase==='started'&&Number.isFinite(job.createdAt)&&now()-job.createdAt<200000)fail(409,'Die KI-Prüfung läuft noch. Status aktualisieren; keine zweite Berechnung.',reviewDetails('review_in_progress','running'));
+    fail(503,'Prüflauf bereits gestartet; Ergebnis nicht sicher verfügbar. Kein automatischer Neuversuch; bitte selbst prüfen.',safeReviewDetails(job.diagnostic)||reviewDetails('result_unknown'));
    },
    reserve:async(fingerprint,task)=>{
-    if(data.allowPaid===false)fail(429,'Keine bestätigte Bewertung im Fundus oder Prüfbelegcache. Keine API gestartet.');
+    if(data.allowPaid===false)fail(429,'Keine bestätigte Bewertung im Fundus oder Prüfbelegcache. Keine API gestartet.',reviewDetails('cache_miss','not_started'));
     const quote=monthlyBudget?quoteReview(task,model,now()):null;
     await consumeQuota(uid,'assistant');
     await db.runTransaction(async tx=>{
@@ -99,13 +104,13 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
    },
    finish:async(fingerprint,info)=>{
     const ref=privateDoc('wilma-reviews',fingerprint),path=cachePath(fingerprint);
-    const check=async tx=>{await checkedProfile(tx);const job=await tx.get(ref);if(!job.exists||job.data().uid!==uid)fail(409,'Prüfbeleg fehlt.');};
+    const check=async tx=>{await checkedProfile(tx);const job=await tx.get(ref);if(!job.exists||job.data().uid!==uid)fail(409,'Prüfbeleg fehlt.');return job.data();};
     if(info.phase==='completed'){
      await db.runTransaction(check);
      await resultStore.write(path,info.receipt);
     }
-    try{await db.runTransaction(async tx=>{await check(tx);tx.update(ref,{phase:info.phase,requestId:info.requestId||null,updatedAt:now(),...(info.phase==='completed'?{cachePath:path}:{})});});}
-    catch(error){if(info.phase==='completed')await resultStore.remove?.(path).catch(()=>{});throw error;}
+    await db.runTransaction(async tx=>{const old=await check(tx);if(old.phase==='completed'&&info.phase!=='completed')return;tx.update(ref,{phase:info.phase,requestId:safeRequestId(info.requestId)||old.requestId||null,updatedAt:now(),...(info.phase==='completed'?{cachePath:path}:safeReviewDetails(info.diagnostic)?{diagnostic:safeReviewDetails(info.diagnostic)}:{})});});
+    // Keep any valid private blob after metadata failure; existing cache retention still applies.
    },
    provider:async task=>{
     try{const result=await provider(task,{uid});if(monthlyBudget&&activeReservation)await settle(activeReservation.fingerprint,result.usage).catch(()=>{});return result;}

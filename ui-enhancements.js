@@ -66,6 +66,8 @@ function enhanceStudentProgress(progress) {
   const previous = compact.querySelector(".studentPrevQuestion");
   const next = compact.querySelector(".studentNextQuestion");
   const toggle = compact.querySelector(".studentOverviewToggle");
+  const sidebarMedia = window.matchMedia?.('(min-width:1024px) and (min-height:600px)');
+  const isSidebar = () => sidebarMedia?.matches === true;
   let index = 0;
   let ticking = false;
   let navigating = false;
@@ -80,7 +82,7 @@ function enhanceStudentProgress(progress) {
   const sync = () => {
     const items = sections();
     if (!items.length) return;
-    const stickyBottom = Math.max(0, progress.getBoundingClientRect().bottom,
+    const stickyBottom = Math.max(0, isSidebar() ? 0 : progress.getBoundingClientRect().bottom,
       document.querySelector(".topbar")?.getBoundingClientRect().bottom || 0,
       document.getElementById("studentTimerBar")?.getBoundingClientRect().bottom || 0) + 18;
     if (!navigating) index = closestQuestionIndex(items, stickyBottom);
@@ -118,9 +120,28 @@ function enhanceStudentProgress(progress) {
     }
   };
 
+  const onLayout = () => {
+    const active = document.activeElement;
+    progress.dataset.layout = isSidebar() ? 'sidebar' : 'compact';
+    progress.classList.remove('overviewOpen');
+    toggle.setAttribute('aria-expanded', String(isSidebar()));
+    if (isSidebar() && active === toggle) nav.querySelector('[aria-current]')?.focus({preventScroll:true});
+    if (!isSidebar() && nav.contains(active)) toggle.focus({preventScroll:true});
+    onScroll();
+  };
+  const onOverviewKey = event => {
+    if (event.key === 'Escape' && !isSidebar() && progress.classList.contains('overviewOpen')) {
+      progress.classList.remove('overviewOpen');toggle.setAttribute('aria-expanded','false');toggle.focus();
+    }
+  };
+  sidebarMedia?.addEventListener?.('change', onLayout);
+  progress.addEventListener('keydown',onOverviewKey);
+  onLayout();
+
   previous.addEventListener("click", () => go(-1));
   next.addEventListener("click", () => go(1));
   toggle.addEventListener("click", () => {
+    if (isSidebar()) return;
     const open = progress.classList.toggle("overviewOpen");
     toggle.setAttribute("aria-expanded", String(open));
     toggle.querySelector("span").textContent = open ? "⌃" : "⌄";
@@ -136,7 +157,7 @@ function enhanceStudentProgress(progress) {
       sync();
     }
     progress.classList.remove("overviewOpen");
-    toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-expanded", String(isSidebar()));
     toggle.querySelector("span").textContent = "⌄";
     // Apply the collapsed height before the core click handler scrolls a question.
     document.documentElement.style.setProperty("--student-progress-height", `${Math.ceil(progress.getBoundingClientRect().height)}px`);
@@ -157,6 +178,8 @@ function enhanceStudentProgress(progress) {
   const stopProgressHeight = watchStickyHeight(progress, "--student-progress-height");
   const stopTimerHeight = watchStickyHeight(document.getElementById("studentTimerBar"), "--student-timer-height");
   studentCleanup = () => {
+    sidebarMedia?.removeEventListener?.('change',onLayout);
+    progress.removeEventListener('keydown',onOverviewKey);
     progressChanges.disconnect();
     releaseNavigation();
     for (const type of ["wheel", "touchstart", "pointerdown", "keydown"])

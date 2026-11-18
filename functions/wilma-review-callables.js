@@ -22,11 +22,12 @@ async function handler(request){
   if(identity.uid!==request.auth.uid)throw new HttpsError("unauthenticated","Konto stimmt nicht überein.");
   const {createTeacherWilmaRuntime}=await import("./lib/wilma/runtime.mjs");
   const {createWilmaProvider}=await import("./lib/wilma/provider.mjs");
+  const {safeReviewDetails}=await import("./lib/wilma/failure.mjs");
   const runtime=createTeacherWilmaRuntime({projectId,monthlyBudget:true,model:TEXT_MODEL,db:getFirestore(),requireTeacher:requireAiUser,requireAccountWrite,consumeQuota,resultStore:privateResultStore(),provider:async(task,actor)=>createWilmaProvider({client:getOpenAI(),model:TEXT_MODEL,recordUsage})(task,actor)});
   try{return await runtime(request);}catch(error){
     if(error instanceof HttpsError)throw error;
     const code=statusCodes[error.httpStatus]||"unavailable";
-    throw new HttpsError(code,error.httpStatus?error.message:"Wilma ist gerade nicht verfügbar. Vorhandene Punkte bleiben erhalten.");
+    throw new HttpsError(code,error.httpStatus?error.message:"Wilma ist gerade nicht verfügbar. Vorhandene Punkte bleiben erhalten.",safeReviewDetails(error.details));
   }
 }
 module.exports={reviewWilmaAnswers:onCall({region:REGION,secrets:[OPENAI_API_KEY],timeoutSeconds:180,memory:"512MiB",maxInstances:2,enforceAppCheck:false,cors:["https://gradecrew.de","https://www.gradecrew.de","https://hausaufgabe-staging.web.app","https://gradecrew-staging-2026.web.app"]},handler)};
