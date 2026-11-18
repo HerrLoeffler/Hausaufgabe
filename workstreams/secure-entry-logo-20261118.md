@@ -11,3 +11,9 @@ Genau ein automatischer Release läuft:44412446551,run33,attempt1, Quelle82dba25
 Ausführliche Übergabe im Native-Releasebranch: [Quellübergabe](https://github.com/HerrLoeffler/Hausaufgabe/blob/feature/secure-live-ready-20261026/workstreams/secure-entry-logo-20261118.md). Lokale Bildbelege unter outputs/secure-entry-logo-20261118. Kein physischer Gerätetest aus Simulatorbildern ableiten.
 
 Nächster Schritt: denselben Lauf bis erfolgreichen Gates/Signatur/AAC/Upload begleiten und tatsächliche TestFlight-Verfügbarkeit separat bestätigen. Kein weiterer Build nur durch Dokumentation.
+
+## Gesicherte Diagnose und begrenzte Wiederholung
+
+Versuch1 hat alle iPadgates und native iPhone540, Interaktionen12 und Komposition6 bestanden. Genau ein Webfall `web-phone-small-landscape-large-media-closed` wurde nicht rechtzeitig bereit. Upload daher korrekt übersprungen. Originalartefakt14477958745 enthält Protokoll, JSON und Bild; Simulator meldet fehlenden BERenderingVisibilitySink-Prozess. Kein Logo-/Produktfehler daraus behauptet. HTML/JS/Swift-Prüfungsquellen unverändert gegenüber1321.
+
+Lokaler frischer gleicher Weblauf216/216+12Interaktionen+6Kompositionen grün. Genau eine gezielte Wiederholung des Phonejobs angenommen: gleicher Run44412446551, Versuch2, echte neue Phonejob-ID135195505743, gleiche Quelle82dba253. Keine Code-/Timeout-/Assertionänderung und kein neuer Gesamt-Dispatch; iPadbelege bleiben erhalten. Bei erneutem Fehler erneut diagnostizieren statt blind weiterzustarten. Neuer Upload weiterhin offen.
