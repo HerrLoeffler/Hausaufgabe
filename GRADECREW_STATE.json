@@ -4238,6 +4238,48 @@
         "next": "Confirm the bounded sequence design and prepare implementation plan; preserve current Staging and prior attempt history."
       },
       "mehrfeld30_pilot_20261109": {
+        "fields_arrows_20261118": {
+          "task_id": "GC-EXTENDED-QUESTION-TYPES-01",
+          "stage": "staging_deployed",
+          "scope": "isolated remy-mehrfeld30 preview only",
+          "runtime_pr": 419,
+          "evidence_commit": "b3d1cd078bfde382c1ac65c68df89b09a6248013",
+          "backend_source": "b586c4d1193598d6013019ebd5174a6347f0e64c",
+          "function_hash": "b1d739bbe368d8c8e0bfd6645be1979d47d05d0a",
+          "url": "https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/",
+          "expires": "2026-12-18",
+          "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/b3d1cd078bfde382c1ac65c68df89b09a6248013/docs/evidence/fields-arrows8-20261118/REPORT.md",
+          "real_ai_reference_wishes": 8,
+          "ready_tasks": 6,
+          "ungraded_clarification_or_alternative": 2,
+          "first_pass_success": 4,
+          "free_ui_wishes_verified": 1,
+          "local_tests_passed": 63,
+          "browser_viewports": [
+            1280,
+            820,
+            360
+          ],
+          "feedback": "green/red plus optional dictated text; exact version; atomic storage; own reviewed blueprint observed in subsequent real generation",
+          "physical_microphone_tested": false,
+          "physical_touch_tested": false,
+          "provider_calls": 37,
+          "calculated_model_usd": 0.064848,
+          "reserved_usd": 0,
+          "hosting_hashes_verified": 14,
+          "other_functions_unchanged": 97,
+          "storage": [
+            "taskLearningRecipes",
+            "taskLearningRuns",
+            "taskLearningExamples",
+            "taskLearningTeacherMemory/{uid}/examples",
+            "taskLearningQuotas"
+          ],
+          "teacher_acceptance": "pending; synthetic feedback is not human approval",
+          "canonical_integration": false,
+          "production": false,
+          "next": "Martin reviews mixed own wishes with green/red and short notes; calibrate content and fit checks against human judgments."
+        },
         "dreisatz_training_20261118": {
           "task_id": "GC-EXTENDED-QUESTION-TYPES-01",
           "stage": "staging_deployed",

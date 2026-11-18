@@ -40,3 +40,12 @@ Die Rückmeldungen verbessern die Rezeptregeln und Beispiele nach fachlicher Pr�
 Offline mit dem vorhandenen Dreisatz-Baustein aus dem lokalen Pilot-Checkpoint 4fb49a9 geprüft. M01–M05 ergaben jeweils sechs erwartete Werte, vier erwartete Rechnungen und fünf einzeln bewertete Felder. Volllösung, ein leeres Feld und leere Abgabe ergaben jeweils 2,5 / 2 / 0 Punkte. In der öffentlichen Projektion fehlte der Lösungsschlüssel. Q01 wurde anhand der sichtbaren Vorgaben nachgezählt. Zwei offene Pfeile mit je zwei Feldern und ein offener Ergebniswert ergeben 2,5 Punkte. Der Auftrag ist trotzdem widersprüchlich.
 
 Die Auswahl- und Gegenfälle sind Sollwerte für den nächsten Generatorlauf. Fachübergreifende Umsetzung, Lehrkrafturteile und ein echter KI-Lauf stehen für diesen Fundus noch aus. Dieser Datenstand ist für die Vorbereitung eines getrennten Testpiloten vorgesehen.
+
+
+## Gemeinsame Erzeugung und Feedbackkreislauf · 18.11.2026
+
+Der [gemeinsame Felder-und-Pfeile-Pilot](https://github.com/HerrLoeffler/Hausaufgabe/blob/b3d1cd078bfde382c1ac65c68df89b09a6248013/docs/evidence/fields-arrows8-20261118/REPORT.md) ist auf der getrennten Testseite implementiert. Ein KI-Eingang erzeugt fachlich passende Dreisätze, Rechen-/Ablaufketten, Umformungswege, Verzweigung und eindeutige Zuordnung. Optische Ähnlichkeit reicht nicht: Beziehung und Lernhandlung prüfen. Dreisatz bleibt auf konstantes Verhältnis/Produkt begrenzt. Unbestimmte Wünsche fragen nach; freie persönliche Texte bekommen keinen starren Feldschlüssel.
+
+Das Programm übernimmt Darstellung und Punkte, ein unabhängiger Rechner Zahlen, ein öffentlicher Blindversuch Fach-/Lösungsprüfung. Grün/Rot mit optional diktierter Notiz speichert exakte Fassung, Wunsch, Urteil, vollständige Struktur und Fehlerhinweis. Eigene aktuelle ähnliche Rückmeldungen werden beim nächsten Wunsch berücksichtigt; keine automatische Verallgemeinerung auf andere Fächer. Speicher: taskLearningRecipes/taskLearningRuns/taskLearningExamples und taskLearningTeacherMemory/{uid}/examples für begrenzten eigenen Abruf. Fehlversuche bleiben erhalten. Wiederverwendung geprüfter Beispiele ist kein Training eines eigenen Grundmodells.
+
+Nachgewiesen: acht echte gemischte Wünsche (sechs Aufgaben+zwei unbenotete Reaktionen), zusätzlicher freier Englischwunsch und Abruf vorheriger synthetischer Rückmeldung im echten Folgeauftrag. ErsteSerie4/8Erstversuche,kein99-%-Nachweis. Synthetische Sprach-/Feedbackereignisse zählen nicht als menschlicheFreigabe. EchteGeräte-,Sprachdienst-undLehrkraftabnahmeoffen.
