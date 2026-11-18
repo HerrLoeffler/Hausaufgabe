@@ -4238,6 +4238,41 @@
         "next": "Confirm the bounded sequence design and prepare implementation plan; preserve current Staging and prior attempt history."
       },
       "mehrfeld30_pilot_20261109": {
+        "dreisatz_training_20261118": {
+          "task_id": "GC-EXTENDED-QUESTION-TYPES-01",
+          "stage": "staging_deployed",
+          "scope": "isolated_preview_only",
+          "observed_at": "2026-11-18",
+          "project": "gradecrew-staging-2026",
+          "channel": "remy-mehrfeld30",
+          "local_source": "667047e50b422155e72e5a1532b0a199c004b3ed",
+          "remote_source": "43b2f51092f914b9bc9ae2cec62e3f8355cde157",
+          "runtime_pr": 419,
+          "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/eda51bda5641650731d81e526aace00ddf962950/docs/evidence/remy-training-20261118/REPORT.md",
+          "reference_cases": 60,
+          "interactive_dreisatz": 50,
+          "format_fit_probes": 10,
+          "local_tests_passed": 54,
+          "server_score_checks": 180,
+          "browser_cards_scored": 60,
+          "free_ui_wishes_verified": 2,
+          "provider_calls": 171,
+          "calculated_model_usd": 0.296043,
+          "reserved_usd": 0,
+          "db": "gradecrew-staging-2026/(default)/taskLearningRuns/dreisatz60-20261118-v1",
+          "data_model": [
+            "taskLearningRecipes",
+            "taskLearningRuns",
+            "taskLearningExamples",
+            "taskLearningQuotas"
+          ],
+          "hosting_files_verified": 13,
+          "other_function_entries_unchanged": 97,
+          "teacher_review": "pending",
+          "physical_touch_test": "pending",
+          "canonical_integration": false,
+          "next": "Martin prüft eine gemischte Auswahl mit Smileys und Gründen; danach Prüfer gegen bestätigte Urteile kalibrieren."
+        },
         "kreativlabor_mix_20261110": {
           "stage": "isolated_test_preview",
           "date": "2026-11-10",
