@@ -8,7 +8,9 @@ We checked this and found that the original icon was also used for our separate 
 
 We have revised the GradeCrew Secure icon to distinguish the two apps while retaining their shared GradeCrew branding, as intended. The revised icon includes a padlock attached to the C and the clearly visible label “Secure” below the GC logo. The teacher app retains its original icon.
 
-Please review replacement build 1.0 (1293), which includes the updated Secure icon. Thank you for your guidance.
+Please review replacement build 1.0 (1293), which includes the updated Secure icon.
+
+Thank you for your time and helpful feedback. If you have any further questions, encounter any issues, or need additional information, please let us know. We will be happy to help.
 
 Kind regards,
 Martin Löffler
