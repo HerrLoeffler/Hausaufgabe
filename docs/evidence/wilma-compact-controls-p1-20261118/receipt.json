@@ -1,0 +1,118 @@
+{
+  "taskIds": [
+    "GC-WEB-REPAIR-20261007",
+    "GC-PEDAGOGY-KB-01"
+  ],
+  "candidate": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
+  "tree": "3f60ebed7f06569877b5e6e6cf57472254b0d9a2",
+  "pr": 438,
+  "ciRun": 44368770487,
+  "scope": "Hosting only; backend follow-up remains ci_green and undeployed",
+  "review": {
+    "commit": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
+    "localCommit": "fe2e764d102fef5c50c3fd355ac92114f5e89848",
+    "tree": "3f60ebed7f06569877b5e6e6cf57472254b0d9a2",
+    "result": "pass",
+    "reviewer": "shared_browser_diagnosis",
+    "p0_p2": 0,
+    "oldBackendCompatible": true,
+    "targetedTests": 58,
+    "browserCases": 12,
+    "localSuites": {
+      "rootUi": 828,
+      "functions": 503
+    },
+    "preserved": [
+      "860px task width",
+      "question typography",
+      "1180x600 sidebar threshold",
+      "input/audio DOM identity",
+      "typed and forced submission"
+    ],
+    "backendReleaseGate": "actual historical Stage E2E pending; no backend deployment in Hosting-only release",
+    "limits": [
+      "local synthetic CSS viewports are not physical-device acceptance",
+      "completed/corrupt receipt repair remains undeployed with d67 backend"
+    ]
+  },
+  "layout": {
+    "wideQuestionWidth": 860,
+    "sidebarMinimumCssWidth": 1180,
+    "sidebarMinimumCssHeight": 600,
+    "questionTypography": "unchanged; Secure heading17px/legacy18px; original answer font retained",
+    "narrow": "full task width; compact controls, no task shrink"
+  },
+  "compatibility": {
+    "hostingPaths": 216,
+    "unchangedAssets": 206,
+    "changedAssets": 10,
+    "authConfigUnchanged": true,
+    "removedPaths": 0
+  },
+  "providerCalls": 0,
+  "realPupilWrites": 0,
+  "backendPatch": {
+    "status": "prepared not deployed",
+    "archiveSHA256": "6f87bff5b8ff527babdc10653b907409b463c1ad517f37ff2bc12f4b39a4e840",
+    "sourceFiles": 146,
+    "gate": "actual historical receipt Stage E2E pending authenticated browser capability; existing backend d67 retained",
+    "freshSuccessIsNotLegacyProof": true
+  },
+  "native": "size/timer/grid contract sent to existing owner; no new native release claimed",
+  "physicalDeviceAcceptance": "pending; browser CSS viewport simulations do not replace physical iPhone/iPad keyboard/zoom tests",
+  "exactBrowserGate": {
+    "studentSidebar": 36,
+    "studentTimerGrid": 24,
+    "studentSubmission": 18,
+    "wilmaReview": 72,
+    "firstAnswer": 8,
+    "fullTutorialJourneys": 18,
+    "actualClicksPerTutorial": 52,
+    "status": "success",
+    "job": 135029556932
+  },
+  "stage": "production",
+  "verifiedAt": "2026-11-18T18:43:33.894647+00:00",
+  "ci": {
+    "id": 44368770487,
+    "head_sha": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/44368770487",
+    "run_attempt": 1
+  },
+  "staging": {
+    "commit": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
+    "scope": "hosting_only",
+    "result": "pass",
+    "origins": [
+      "https://gradecrew-staging-2026.web.app/wilma"
+    ],
+    "verifiedFilesPerOrigin": 216,
+    "totalVerified": 216,
+    "mismatches": 0,
+    "hosting": "sites/gradecrew-staging-2026/versions/ba74f0b6666fd0e3",
+    "functionsUnchanged": 98,
+    "reviewRevision": "reviewwilmaanswers-00010-zud",
+    "realLegacyE2E": "pending authenticated browser access; no new provider calls",
+    "physicalDeviceAcceptance": "pending"
+  },
+  "production": {
+    "commit": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
+    "scope": "hosting_only",
+    "result": "pass",
+    "origins": [
+      "https://gradecrew.de",
+      "https://hausaufgabe-staging.web.app"
+    ],
+    "verifiedFilesPerOrigin": 216,
+    "totalVerified": 432,
+    "mismatches": 0,
+    "hosting": "sites/hausaufgabe-staging/versions/737c9ee7b5546025",
+    "functionsUnchanged": 62,
+    "reviewRevision": "reviewwilmaanswers-00005-lax",
+    "realLegacyE2E": "pending authenticated browser access; no new provider calls",
+    "physicalDeviceAcceptance": "pending"
+  },
+  "backendSourceStillLive": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2"
+}

@@ -1145,10 +1145,10 @@
     "legacy_project_changed": false,
     "url": "https://gradecrew.de/",
     "version": "2.3.1-gc45-rc1",
-    "source_commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
-    "deployed_local_commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
-    "tree": "4ff814bac8dc3744ab75dcbae7f1b49f0ae909f5",
-    "user_acceptance": "Technical synthetic Stage and Live acceptance passed; human physical-device and separately owned native Secure acceptance remain pending.",
+    "source_commit": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
+    "deployed_local_commit": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
+    "tree": "3f60ebed7f06569877b5e6e6cf57472254b0d9a2",
+    "user_acceptance": "Hosting compact controls verified by exact CI/review/public hashes; physical-device and native acceptance pending; historical backend E2E still pending.",
     "alternate_urls": [
       "https://hausaufgabe-staging.web.app/"
     ],
@@ -1554,11 +1554,12 @@
       "tree": "d93d6af7cb8716266b54927edbf0cba46b44840c",
       "user_acceptance": "Emmi answer-audio feedback and compact test cards deployed and hash-verified on gradecrew.de; actual signed-in audio quality and physical iPhone/iPad acceptance pending."
     },
-    "hosting_version": "899b570925aa4566",
-    "verified_at": "2026-11-18T17:36:50.515413+00:00",
-    "baseline_actual_before_release": "4c736c292a3e618e38715455adb3130b3e972da3",
-    "latest_release_report": "docs/evidence/wilma-recovery-release-20261118/receipt.json",
-    "wilma_review_revision": "reviewwilmaanswers-00005-lax"
+    "hosting_version": "737c9ee7b5546025",
+    "verified_at": "2026-11-18T18:43:33.894647+00:00",
+    "baseline_actual_before_release": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+    "latest_release_report": "docs/evidence/wilma-compact-controls-p1-20261118/receipt.json",
+    "wilma_review_revision": "reviewwilmaanswers-00005-lax",
+    "wilma_review_source_commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2"
   },
   "automation": {
     "preview_deployment": "verified_hosting_current_eb80_candidate",
@@ -2396,7 +2397,7 @@
         "local_functions_tests": 492,
         "ci_run": 44316275229,
         "shared_computer": "diagnosed; plan awaiting approval",
-        "navigation_sidebar": "production in Web d67b0b5: questions left/right overview only>=1180x600; native release separate",
+        "navigation_sidebar": "Web Hosting9de2011: 860px task width, unchanged typography; right grid only>=1180x600, compact visible timer; native separate",
         "emmi_scoped_backend": "not deployed; free capability gate blocks unsupported calls",
         "production_approved": false,
         "handoff": "workstreams/feedback-gc39-release-20261013.md",
@@ -2558,6 +2559,25 @@
           "report": "docs/evidence/wilma-recovery-release-20261118/receipt.json",
           "next_action": "Martin reloads gradecrew.de; physical device acceptance and separately owned Secure build; no further paid QA automatically",
           "verified_at": "2026-11-18T17:36:50.515413+00:00"
+        },
+        "compact_controls_p1_20261118": {
+          "stage": "production",
+          "scope": "Hosting only; Functions unchanged at d67b0b5",
+          "commit": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
+          "tree": "3f60ebed7f06569877b5e6e6cf57472254b0d9a2",
+          "pr": 438,
+          "ci_run": 44368770487,
+          "review": "PASS exact tree; no P0–P2",
+          "hosting_version": "737c9ee7b5546025",
+          "report": "docs/evidence/wilma-compact-controls-p1-20261118/receipt.json",
+          "backend_followup": {
+            "stage": "ci_green",
+            "deployed": false,
+            "reason": "actual synthetic legacy E2E pending authenticated browser capability",
+            "provider_calls": 0
+          },
+          "physical_device_acceptance": "pending",
+          "native_release": "separate owner/build; not claimed"
         }
       },
       "question_action_dialogs_20261110": {
@@ -4750,7 +4770,7 @@
         "staging_cap_legacy_requests": 7,
         "staging_monthly_budget_eur": 20
       },
-      "next_action": "Martin reloads gradecrew.de; physical device acceptance and separately owned Secure build; no further paid QA automatically",
+      "next_action": "Actual synthetic historical-receipt Stage E2E with preserved fingerprint/history; backend patch still undeployed. Physical-device/native acceptance separate.",
       "semantic_preview": {
         "stage": "staging_deployed",
         "source": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
@@ -5092,8 +5112,27 @@
         "next_action": "Martin reloads gradecrew.de; physical device acceptance and separately owned Secure build; no further paid QA automatically",
         "verified_at": "2026-11-18T17:36:50.515413+00:00"
       },
-      "latest_release": "recovery_release_20261118",
-      "root_release_fields_note": "Earlier source/hosting/backend fields retain historical release evidence; latest actual release is recovery_release_20261118."
+      "latest_release": "compact_controls_p1_20261118",
+      "root_release_fields_note": "Latest Hosting is compact_controls_p1_20261118; reviewWilmaAnswers remains from recovery_release_20261118/d67b0b5. Historical backend repair is still undeployed.",
+      "compact_controls_p1_20261118": {
+        "stage": "production",
+        "scope": "Hosting only; Functions unchanged at d67b0b5",
+        "commit": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
+        "tree": "3f60ebed7f06569877b5e6e6cf57472254b0d9a2",
+        "pr": 438,
+        "ci_run": 44368770487,
+        "review": "PASS exact tree; no P0–P2",
+        "hosting_version": "737c9ee7b5546025",
+        "report": "docs/evidence/wilma-compact-controls-p1-20261118/receipt.json",
+        "backend_followup": {
+          "stage": "ci_green",
+          "deployed": false,
+          "reason": "actual synthetic legacy E2E pending authenticated browser capability",
+          "provider_calls": 0
+        },
+        "physical_device_acceptance": "pending",
+        "native_release": "separate owner/build; not claimed"
+      }
     },
     {
       "id": "secure-appicon-20261118",
@@ -5831,6 +5870,15 @@
       "backend_revision": "reviewwilmaanswers-00010-zud",
       "canonical_root_unchanged": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d",
       "report": "docs/evidence/wilma-recovery-release-20261118/receipt.json"
+    },
+    "wilma_compact_controls_p1_20261118": {
+      "commit": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
+      "scope": "Hosting /wilma/ only",
+      "hosting_version": "ba74f0b6666fd0e3",
+      "backend_source_commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+      "backend_revision": "reviewwilmaanswers-00010-zud",
+      "outside_candidate_files_preserved": 447,
+      "report": "docs/evidence/wilma-compact-controls-p1-20261118/receipt.json"
     }
   },
   "school_release_20261018": {
