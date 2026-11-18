@@ -32,7 +32,9 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
     const wide=width>=1180 && height>=600 && width/Math.max(1,font/19)>=1180;
     document.documentElement.classList.toggle('secureSidebar',wide);
     if(sidebar!==wide) { sidebar=wide;root.dispatchEvent(new CustomEvent('securelayoutchange',{detail:{sidebar:wide}})); }
-    const compact=!wide && ((font>27 && (navRoot.clientWidth<600 || window.innerHeight<850)) || window.innerHeight<500 || (navRoot.clientWidth>0 && navRoot.clientWidth<400));
+    const phone=!wide && (width<=500 || height<500);
+    navRoot.classList.toggle('phoneNavigation',phone);
+    const compact=!wide && (phone || (font>27 && (navRoot.clientWidth<600 || window.innerHeight<850)) || window.innerHeight<500 || (navRoot.clientWidth>0 && navRoot.clientWidth<400));
     navRoot.classList.toggle('compactNavigation',compact);
     current.textContent=compact ? `${index+1} / ${paper.length}` : `Aufgabe ${index+1} von ${paper.length}`;
     current.setAttribute('aria-label',`Aufgabe ${index+1} von ${paper.length}`);

@@ -100,3 +100,20 @@ Native.completedbereinigt nachverifizierterServerquittung den lokalenVersuch und
 Run44362879769/attempt3/Quelle4dd40ab: Phone135042000121SUCCESSmit540/540Native,216/216WebKit,12/12Interaktionen,6/6Composed (Artifact14460852805). Mini,large,nativemitbestehendenErgebnissenSUCCESS. Damit alle4FreigabenbestandenenSourceidentisch; vorherigeColdstart-/ScrollfehlversuchebleibenimNachweis.
 
 Build-and-upload135054646634läuft aufderselbenQuelle, derzeit„Test Secure and build all simulator schemes“. Vorgesehen1.0(1313); nochkeinArchiv-/AAC-Signatur-/Upload-/Appleverarbeitungsbeleg behauptet. AppStoreConnect-Browsersteuerung steht indiesemTurnnichtzurVerfügung; tatsächlicheTestFlightverfügbarkeitmusssomitnachUploadseparatbelegtwerden. KeineQuellenänderungoderzweiterBuildzurAbschluss-/Layoutabstimmung.
+
+## Erfolgreicher tatsächlicher Upload18Nov20:20CET
+VollständigerRun44362879769/attempt3SUCCESS einschließlichBuild-and-upload135054646634. Quelle4dd40abe1d3a9df24636b395c751e2f41d54e563, tatsächlicheVersion1.0(1313), SchemeGradeCrewSecure/ConfigurationSecureLive, bundlede.gradecrew.secure, Mode.live-exam, APIprojekt.hausaufgabe-staging (bestehendeLive-Schulversion, nichtseparate2026Testapp). AlleSimulator-SchemesundabschließendePrüfungenPASS, danachArchivSUCCESS, AppleDistributionExportSUCCESS, signierteApp+ProfilAACtrue bestätigt.
+
+AppleContentDelivery19:20:02UTC: „UPLOAD SUCCEEDED with no errors, 1 warning“, DeliveryUUID00668e93-c721-443c-be70-b6d876854300,4018592Bytes. EinzigeUploadwarnung90725: SDK26.5, abApril2027SDK27erforderlich; aktuellerUploadangenommen. KeineAbschwächungvonGates, keineweitereReleasequelle undkeineApp-Store-Buildauswahl/Resubmission vorgenommen. App-Store1293bleibtvondiesemTestFlightuploadgetrennt.
+
+WICHTIG: Erfolgreichhochgeladen ist bestätigt; AppleProcessing/Testergruppenzugang/tatsächlicheTestFlightverfügbarkeitundphysischer1313-Gerätetest noch NICHTbestätigt. DieAppStoreConnect-Browsersteuerungistaktuellnichtverfügbar. Nutzerwurdegezielt gefragt, obTestFlight1313alsUpdateanbietet; Antwortstehtnoch aus. KeineDateien/Codes/Passwörterangefordert. Beta-Prüfhinweis vorbereitet unteroutputs/secure-sidebar-20261118/TESTFLIGHT-WHAT-TO-TEST.txt, nichtalsbeApplebereitsgespeichertbehauptet. NativeLösungsfreigabeansichtbleibtaußerhalbdesvorhandenenClients; funktionierendeRückkehrzurCodeeingabeundPending-Schutzbelegt.
+
+
+## Nutzerabnahme1313 und iPhone-Kompaktfolgeauftrag18Nov
+Martin bestätigt ausdrücklich, dass TestFlight1.0(1313) verfügbar ist. Upload, Verarbeitung und menschlich bestätigte Verfügbarkeit damit getrennt belegt; vollständige physische1313-Funktionsabnahme nicht behauptet. Danach meldet Martin zu viel Kopf-/Übersichtsfläche auf dem Handy; kein Screenshot wegen Prüfungsmodus. Konkreter kleiner Folgeauftrag: kompaktere Bedienflächen, Aufgabenfont und iPadbreite beibehalten. Zentrale bestätigt denselben Auftrag, kein zweiter paralleler Bau.
+
+Baseline echte Simulatorprüfungen: lange native Kopfzeile136.7pt, Prüfungsfläche399.3pt bei375×667; geschlossene Webnavigation130–180px. Neue Höhen-/Collapse-Tests scheitern nachvollziehbar daran. Nach kleiner Anpassung beideFokustests grün;29Renderer-/Telemetrietests grün. Header zeigt kurzeTitelzeile+Uhr, vollständiger Titel/Kürzel per44ptDetailsaktion; vorhandener kompakterSpeicherstatus/Abgeben-Footer wird auch beiPhoneportrait verwendet. Nummernraster aufPhones/kurzenFenstern nur aufAnforderung, aktuelleNummer/VorZurück bleiben. iPad normalerHeader,820pxAufgaben/1180Schwelle und19pxAufgabenfont unverändert. WeitereMatrix undunabhängigeReview noch offen.
+
+Apple90725Mailzu1313 ist Zukunftshinweis:abApril2027SDK27; bestätigteDeliverykeineAblehnung. Kein SDK-/Signingwechsel in dieser UI-Korrektur. Storebuild1293undSecureTest1241unverändert. Runtime-Modell/Usage unbekannt;keinModellwechsel.
+
+Nächster Schritt: vollständigeTelefonmatrix, Tabletsicht undengerFinalreview, dann ein gatedRelease über bestehendenLive-Securebranch. Neue Version noch nicht hochgeladen.

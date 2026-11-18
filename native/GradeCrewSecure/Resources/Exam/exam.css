@@ -82,3 +82,10 @@ button { min-width:44px; max-width:100%; overflow-wrap:anywhere; }
 .secureSidebar #secureSidebarSubmit { display:block;width:100%;min-height:56px;flex-shrink:0;font-weight:700;color:white;background:#2b59ce;border-color:#2b59ce; }
 .secureSidebar #secureSidebarSubmit:disabled { color:#4b5e75;background:#e0e7f2;border-color:#6b7d96;cursor:default; }
 .secureSidebar .secureQuestion { scroll-margin-top:8px; }
+
+/* Phone chrome leaves the original question typography untouched. */
+.phoneNavigation { padding:8px;margin-bottom:12px; }
+.phoneNavigation:not(.overviewOpen) .secureQuestionNumbers { display:none; }
+.phoneNavigation .secureNavigationMain strong { min-width:40px;font-size:.85rem; }
+.phoneNavigation .secureNavigationMain button { font-size:.85rem;padding:8px 10px; }
+.phoneNavigation.overviewOpen .secureQuestionNumbers { max-height:min(160px,24vh); }

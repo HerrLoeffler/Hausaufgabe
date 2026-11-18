@@ -13,7 +13,7 @@ struct SecureExamFrame<Content:View>:View {
                 header
                 content().frame(maxWidth:.infinity,maxHeight:.infinity)
                 if let footer { footer }
-            }.environment(\.secureCompactChrome,geometry.size.height<500)
+            }.environment(\.secureCompactChrome,geometry.size.width<600 || geometry.size.height<500)
         }.background(SecureTheme.canvas.ignoresSafeArea()).foregroundStyle(SecureTheme.text).tint(SecureTheme.brand).preferredColorScheme(.light)
     }
 }
@@ -22,21 +22,31 @@ struct SecureExamHeader:View {
     let participant:String
     let remaining:Int?
     @Environment(\.secureCompactChrome) private var compact
+    @State private var showDetails=false
     private var time:String { remaining.map { String(format:"%02d:%02d",max(0,$0)/60,max(0,$0)%60) } ?? "Ohne Zeitlimit" }
     var body:some View {
         Group {
             if compact {
-                HStack(spacing:12) { logo;Spacer(minLength:0);clock }
-                    .accessibilityElement(children:.combine).accessibilityLabel(title+", "+participant+", "+time)
+                HStack(spacing:8) {
+                    Button { showDetails=true } label: {
+                        HStack(spacing:8) {
+                            Image("GradeCrewLogo").resizable().scaledToFit().frame(width:24,height:24).accessibilityHidden(true)
+                            Text(title).font(.subheadline.weight(.semibold)).lineLimit(1)
+                        }.frame(maxWidth:.infinity,minHeight:44,alignment:.leading).contentShape(Rectangle())
+                    }.buttonStyle(.plain).accessibilityLabel("Testinformationen: "+title+", "+participant)
+                        .secureMeasure("exam.details",role:"tap")
+                    clock.fixedSize()
+                }
             } else {
                 ViewThatFits(in:.horizontal) {
                     HStack(alignment:.center,spacing:16) { identity;Spacer(minLength:0);clock.fixedSize() }
                     VStack(alignment:.leading,spacing:12) { identity;clock }
                 }
             }
-        }.padding(.horizontal,16).padding(.vertical,compact ? 4 : 12).frame(maxWidth:SecureTheme.examWidth)
+        }.padding(.horizontal,compact ? 12 : 16).padding(.vertical,compact ? 2 : 12).frame(maxWidth:SecureTheme.examWidth)
             .frame(maxWidth:.infinity).background(SecureTheme.surface).overlay(alignment:.bottom) { Rectangle().fill(SecureTheme.border).frame(height:1) }
             .secureMeasure("exam.header")
+            .alert("Testinformationen",isPresented:$showDetails) { Button("Schließen",role:.cancel) {} } message: { Text(title+"\n"+participant) }
     }
     private var identity:some View {
         HStack(spacing:12) { logo;VStack(alignment:.leading,spacing:4) {
@@ -46,7 +56,8 @@ struct SecureExamHeader:View {
     }
     private var logo:some View { Image("GradeCrewLogo").resizable().scaledToFit().frame(width:36,height:36).accessibilityHidden(true) }
     private var clock:some View {
-        Label(time,systemImage:"clock").font(.title3.monospacedDigit().bold())
+        Label(compact && remaining == nil ? "Ohne Limit" : time,systemImage:"clock")
+            .font(compact ? .callout.monospacedDigit().bold() : .title3.monospacedDigit().bold())
             .foregroundStyle((remaining ?? 61)<=60 ? SecureTheme.warningText : SecureTheme.brand)
             .padding(.horizontal,12).padding(.vertical,compact ? 4 : 8)
             .background((remaining ?? 61)<=60 ? SecureTheme.warningFill : SecureTheme.field,in:RoundedRectangle(cornerRadius:12))
