@@ -83,3 +83,66 @@
  .wilmaListTools{flex-wrap:wrap;gap:6px}
  .wilmaListTools>.hint{display:none}
 }
+
+/* Answer-first workspace: task selection occupies one control row. */
+#wilmaAnswerReview[data-expanded="true"] .wilmaReviewHead{flex-wrap:nowrap;padding:4px 8px;gap:6px;min-height:52px}
+#wilmaAnswerReview[data-expanded="true"] .wilmaReviewHead h2{white-space:nowrap;margin:0;font-size:14px}
+#wilmaAnswerReview[data-expanded="true"] .wilmaReviewHead .button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:44px;min-height:44px;max-width:none;padding:6px 9px;font-size:13px;white-space:nowrap;flex-shrink:0}
+.wilmaTaskContext{padding:6px 8px}
+.wilmaTaskNavigation{display:flex;align-items:start;gap:6px;margin:0;position:relative}
+.wilmaTaskOverview{flex:1;min-width:0;position:relative}
+.wilmaTaskOverview>summary{display:flex;align-items:center;gap:6px;list-style:none;min-height:44px;padding:4px 8px;border:1px solid #b7c7d9;border-radius:8px;background:var(--card)}
+.wilmaTaskOverview>summary::-webkit-details-marker{display:none}
+.wilmaTaskOverview>summary::after{content:'⌄';margin-left:auto;font-size:16px}
+.wilmaActiveTask{display:flex;align-items:center;gap:8px;min-height:0;line-height:1.3;flex-wrap:wrap;font-size:13px}
+.wilmaActiveTask>span{font-size:12px;white-space:nowrap}
+.wilmaTaskPicker{position:absolute;left:0;top:calc(100% + 4px);z-index:12;width:min(380px,calc(100vw - 52px));padding:8px;border:1px solid #b7c7d9;border-radius:8px;background:var(--card);box-shadow:0 4px 16px #213e6226}
+.wilmaTaskPicker>p{font-size:12px;line-height:1.4;margin:0 0 6px}
+.wilmaTaskTabs{grid-template-columns:repeat(auto-fill,minmax(76px,1fr));max-height:150px;gap:4px;padding:3px}
+#wilmaAnswerReview .wilmaTaskTabs .button{min-height:44px;padding:5px 6px;gap:5px;font-size:12px}
+#wilmaAnswerReview .wilmaTaskTabs small{font-size:11px}
+#wilmaAnswerReview .wilmaNextOpen{min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;gap:6px;margin:0;padding:6px 9px;font-size:16px;flex-shrink:0}
+.wilmaNextOpen>span{font-size:12px}
+.wilmaQuestionDetails{font-size:12px;line-height:1.4}
+.wilmaQuestionDetails>summary{cursor:pointer;min-height:44px;align-content:center;font-weight:550;touch-action:manipulation}
+.wilmaQuestionDetails .wilmaOneQuestion{margin:4px 0 8px}
+.wilmaListTools{display:flex;align-items:center;justify-content:space-between;gap:4px;margin:0;flex-wrap:nowrap}
+.wilmaAnswerFilters{display:flex;gap:4px;min-width:0}
+#wilmaAnswerReview .wilmaListTools .button{min-height:44px;padding:6px 8px;font-size:12px;white-space:nowrap}
+#wilmaAnswerReview .wilmaAnswerFilters [aria-pressed="true"]{background:var(--soft);border-color:#405b7a;font-weight:700;box-shadow:inset 0 -2px #405b7a}
+#wilmaAnswerReview .wilmaUndo{min-width:44px;font-size:18px!important;padding:6px!important}
+.wilmaProblem{font-size:12px;line-height:1.4;color:#795009;margin:5px 0 0;overflow-wrap:anywhere}
+.wilmaProblem[data-phase="error"]{color:#952b2b}
+.wilmaProblem[data-phase="running"],.wilmaProblem[data-phase="waiting"],.wilmaProblem[data-phase="queued"]{color:#27517b}
+.wilmaGapComparisons{list-style:none!important;margin:0;padding:0}
+.wilmaGapComparison{grid-template-columns:18px minmax(0,1fr) minmax(0,1fr);gap:2px 6px;padding:3px 0;list-style:none!important}
+.wilmaGapComparison::marker{content:''}
+.wilmaGapNumber{padding-top:15px;font-size:11px}
+.wilmaComparisonLabel{font-size:10px;margin-bottom:0}
+.wilmaGapComparison strong{font-size:13px}
+@media(max-width:600px){.wilmaNextOpen>span{display:none}.wilmaTaskPicker{width:min(360px,calc(100vw - 52px))}}
+@media(max-width:400px){
+ #wilmaAnswerReview[data-expanded="true"] .wilmaReviewHead .button>span{display:none}
+ #wilmaAnswerReview[data-expanded="true"] .wilmaReviewHead .button{font-size:20px;padding:4px;width:44px}
+ .wilmaActiveTask{gap:3px;font-size:12px}
+ .wilmaActiveTask>span{font-size:11px}
+ #wilmaAnswerReview .wilmaListTools .button{font-size:11px;padding:5px 6px}
+}
+.wilmaTaskOverview{position:relative;flex:1;min-width:0}
+.wilmaTaskOverview>summary{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:44px;padding:4px 8px;border:1px solid #a3bdd6;border-radius:8px;list-style:none}
+.wilmaTaskOverview>summary::-webkit-details-marker{display:none}
+.wilmaTaskOverview>summary::after{content:'⌄';font-size:16px}
+.wilmaTaskOverview .wilmaActiveTask{display:flex;flex-direction:column;align-items:start;flex-wrap:nowrap;gap:0;min-height:0;line-height:1.3}
+.wilmaActiveTask>strong{white-space:nowrap}
+.wilmaTaskPicker{position:absolute;z-index:14;left:0;top:calc(100% + 4px);width:min(380px,calc(100vw - 52px));background:var(--card);border:1px solid var(--line);border-radius:9px;padding:8px;box-shadow:0 6px 18px #213e6226}
+.wilmaTaskPicker>p{font-size:12px;line-height:1.3;margin:0 0 5px}
+.wilmaTaskPicker .wilmaTaskTabs{grid-template-columns:repeat(auto-fill,minmax(72px,1fr));max-height:112px}
+#wilmaAnswerReview .wilmaTaskPicker .wilmaTaskTabs .button{min-height:44px;padding:5px;gap:5px}
+.wilmaAnswerFilters{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-width:220px}
+#wilmaAnswerReview .wilmaAnswerFilters .button{min-width:0}
+@media(max-width:600px){#wilmaAnswerReview{scroll-margin-top:64px}.wilmaTaskNavigation{margin-bottom:0}}
+@media(min-width:601px){.wilmaTaskOverview{flex:0 1 280px}}
+/* Keep compact numbered chips at 44 CSS pixels. */
+#wilmaAnswerReview .wilmaTaskPicker .wilmaTaskTabs .button{height:44px}
+/* Page zoom must not animate control geometry through undersized intermediate states. */
+.wilmaReview .button{transition:background-color .15s,border-color .15s,box-shadow .15s,color .15s}

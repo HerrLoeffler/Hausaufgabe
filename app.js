@@ -76,7 +76,7 @@ import {questionSnapshot} from './wilma-review-source.mjs';
 import {createWilmaReviewClient} from './wilma-review-client.mjs';
 import {installWilmaAnswerReview,reviewItem} from './wilma-answer-review.mjs';
 import {writeWholeTeacherReview} from './teacher-review-write.mjs';
-import {createWilmaAutoReview} from './wilma-auto-review.mjs';
+import {createWilmaAutoReview,wilmaAutomaticPaidPolicy} from './wilma-auto-review.mjs';
 
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
@@ -7683,10 +7683,10 @@ function renderStudentQuiz(quiz, questions, { ownerPreview = false } = {}) {
     <form id="studentForm">
       <div class="studentIdentityCard"><label class="studentNameLabel">Wie dürfen wir dich nennen?<input id="studentName" type="text" required maxlength="120" autocomplete="off" placeholder="Name oder vereinbartes Kürzel" value="${escapeHtml(storedForRun?.name || "")}"></label><small>Du kannst aus Datenschutzgründen ein von deiner Lehrkraft vergebenes Kürzel statt deines Namens verwenden.</small></div>
       ${gateHtml}
-      <div id="studentTimerBar" class="studentTimerBar hidden"><span>Verbleibende Zeit</span><strong id="studentTimerText">${minutes ? `${String(minutes).padStart(2,"0")}:00` : ""}</strong></div>
       <div class="studentTaskLayout">
       <div id="studentQuestions" class="${gateRequired ? "hidden" : ""}"></div>
       <aside class="studentTaskSidebar" aria-label="Aufgabennavigation">
+      <div id="studentTimerBar" class="studentTimerBar hidden"><span>Verbleibende Zeit</span><strong id="studentTimerText">${minutes ? `${String(minutes).padStart(2,"0")}:00` : ""}</strong></div>
       <div id="studentProgressBar" class="studentProgressWrap ${gateRequired ? "hidden" : ""}">
         <div class="studentProgressTop"><strong id="studentProgressText">0 von ${questions.length} bearbeitet</strong><span id="studentOpenCount">${questions.length} offen</span></div>
         <div class="studentProgressTrack"><span id="studentProgressFill"></span></div>
@@ -8382,6 +8382,7 @@ $("refreshResultsBtn").addEventListener("click", () => state.currentResultsQuiz 
 $("exportResultsBtn").addEventListener("click", exportResultsCsv);
 
 async function openResults(code) {
+  wilmaAutomaticPaidAllowed=state.currentResultsQuiz?.id!==code||$("resultsView").classList.contains("hidden");
   wilmaReviewGeneration++;wilmaAutoReview?.clear();wilmaPreparation.clear();
   if (guestTourRepo) {
     const quiz = guestTourRepo.getQuiz(code);
@@ -8432,7 +8433,7 @@ function submissionGrade(s) {
   return gradeFromPercent(scoring.percent, scale);
 }
 
-let wilmaAnswerReview=null,wilmaAutoReview=null,wilmaReviewGeneration=0;
+let wilmaAnswerReview=null,wilmaAutoReview=null,wilmaReviewGeneration=0,wilmaAutomaticPaidAllowed=false;
 const wilmaReviewOpenConsent=new Set();
 const wilmaPreparation=new Map();
 const wilmaSavedOperations=new Map();
@@ -8476,13 +8477,13 @@ async function analyzeWilmaQuestion(questionId,criteria="",onlySubmissionId=null
 }
 function wilmaReviewContext(){
   const allowed=!guestTourRepo&&state.user?.uid&&state.currentResultsQuiz?.ownerId===state.user.uid;
-  return {actor:allowed?state.user.uid+':'+authStateGeneration:'',quiz:allowed?state.currentResultsQuiz:null,questions:allowed?state.resultQuestions:[],submissions:allowed?state.submissions:[]};
+  return {actor:allowed?state.user.uid+':'+authStateGeneration:'',quiz:allowed?state.currentResultsQuiz:null,questions:allowed?state.resultQuestions:[],submissions:allowed?state.submissions:[],allowAutomaticPaid:wilmaAutomaticPaidAllowed};
 }
 function wilmaAutomaticPreview(ctx=wilmaReviewContext()){
   if(firebaseConfig.projectId==='hausaufgabe-staging'){const results=document.getElementById('resultsView');return !!ctx.actor&&!!ctx.quiz?.id&&!!results&&!results.classList.contains('hidden');}
   return (firebaseConfig.projectId==='gradecrew-staging-2026'&&['/wilma/','/wilma-review-preview/'].some(path=>location.pathname.startsWith(path)))&&!!ctx.actor&&!!ctx.quiz?.id&&!!wilmaAnswerReview?.isExpanded?.()&&wilmaReviewOpenConsent.has(ctx.actor+':'+ctx.quiz.id);
 }
-wilmaAutoReview=createWilmaAutoReview({getContext:wilmaReviewContext,parseGaps,enabled:wilmaAutomaticPreview,maxRequests:2,allowFreeLookups:firebaseConfig.projectId==='hausaufgabe-staging',serverBudgeted:firebaseConfig.projectId==='hausaufgabe-staging',
+wilmaAutoReview=createWilmaAutoReview({getContext:wilmaReviewContext,parseGaps,enabled:wilmaAutomaticPreview,maxRequests:2,allowFreeLookups:true,serverBudgeted:firebaseConfig.projectId==='hausaufgabe-staging',allowAutomaticPaid:wilmaAutomaticPaidPolicy,
   analyzeAnswer:({questionId,submissionId,allowPaid=true,...options})=>analyzeWilmaQuestion(questionId,'',submissionId,allowPaid,true,options),
   onState:state=>{wilmaPreparation.set(state.questionId+':'+state.submissionId,state);wilmaAnswerReview?.refresh();},
   onIdle:()=>{wilmaAnswerReview?.refresh({resort:true});void wilmaAutoReview?.run();}
@@ -8491,7 +8492,7 @@ wilmaAnswerReview=installWilmaAnswerReview({document,
   getContext:wilmaReviewContext,
   onOpen:()=>{const ctx=wilmaReviewContext();if(!['hausaufgabe-staging','gradecrew-staging-2026'].includes(firebaseConfig.projectId)||!ctx.actor||!ctx.quiz)return;wilmaReviewOpenConsent.add(ctx.actor+':'+ctx.quiz.id);wilmaAnswerReview.refresh();void wilmaAutoReview.run();},
   getPreparation:(qid,sid)=>wilmaPreparation.get(qid+':'+sid),isPreparing:()=>wilmaAutoReview.isRunning(),isAutomaticPreview:()=>wilmaAutomaticPreview(),
-  recoverQuestion:payload=>wilmaAutoReview.recover(payload),retryAnswer:payload=>wilmaAutoReview.retry(payload),
+  recoverQuestion:payload=>wilmaAutoReview.recover(payload),retryAnswer:payload=>wilmaAutoReview.retry(payload),resumeAnswer:payload=>wilmaAutoReview.resume(payload),
   parseGaps,answerDisplay,correctDisplay,saveDecision:saveWilmaDecision,
   openSubmission:id=>{wilmaAnswerReview.collapse();openReview(id);},beforeOpen:confirmDiscardInlineReview,notify:toast,analyzeQuestion:analyzeWilmaQuestion
 });

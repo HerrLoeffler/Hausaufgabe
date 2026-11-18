@@ -59,10 +59,13 @@ export function createReviewService({projectId,loadQuiz,loadQuestion,loadSubmiss
   if(!records.length)return {answers:direct,revision,questionSnapshot:snapshot,source:'wilma-ai',requestId:null};
   const freshDirect=receipt=>({...receipt,answers:[...receipt.answers.filter(row=>!direct.some(current=>current.id===row.id)),...direct],cached:true});
   if(memory.has(fingerprint))return freshDirect(memory.get(fingerprint));
-  const cached=await readCache(fingerprint);
+  const validateCached=cached=>{
+   validateWilmaReceipt(cached,{answerIds:ids,maxPoints:maximum});
+   if(cached.questionSnapshot!==snapshot)throw Error('Mismatched cached question');
+  };
+  const cached=await readCache(fingerprint,{validate:validateCached});
   if(cached){
-   try{validateWilmaReceipt(cached,{answerIds:ids,maxPoints:maximum});}catch{fail(409,'Gespeicherter Vorschlag ist nicht sicher zugeordnet. Bitte selbst prüfen.',reviewDetails('receipt_invalid'));}
-   if(cached.questionSnapshot!==snapshot)fail(409,'Gespeicherter Vorschlag gehört zu einer anderen Aufgabenfassung.');
+   try{validateCached(cached);}catch{fail(409,'Gespeicherter Vorschlag ist nicht sicher zugeordnet. Bitte selbst prüfen.',reviewDetails('receipt_invalid'));}
    return freshDirect(cached);
   }
   await reserve(fingerprint,task);

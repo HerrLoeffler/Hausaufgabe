@@ -317,7 +317,7 @@ jobs:
     name: Public entry layout (WebKit and Chromium)
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.56.1-noble
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
       - name: Trust the exact checked-out workspace in this isolated container
@@ -336,10 +336,12 @@ jobs:
       - run: node tools/browser-layout/teacher-results.cjs
       - run: node tools/browser-layout/student-progress.cjs
       - run: node tools/browser-layout/student-sidebar.cjs
+      - run: node tools/browser-layout/student-timer-grid.cjs
       - run: node tools/browser-layout/student-submit.cjs
       - run: node tools/browser-layout/wilma-review.cjs
         env:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
+      - run: node tools/browser-layout/wilma-first-answer.cjs
       - run: npm test --prefix tools/browser-layout
         env:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence

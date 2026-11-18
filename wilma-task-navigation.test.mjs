@@ -12,28 +12,25 @@ function fixture(t,options={}){
  const ui=installWilmaAnswerReview({document:dom.window.document,getContext:()=>ctx,parseGaps:()=>[],answerDisplay:(_,a)=>a,correctDisplay:()=>'',openSubmission:()=>{},notify:()=>{},getPreparation:(qid,sid)=>preparations.get(qid+':'+sid),recoverQuestion:async payload=>calls.push(['recover',payload]),retryAnswer:async payload=>calls.push(['retry',payload]),saveDecision:async({questionId,submissionId,decision})=>{writes++;const index=ctx.submissions.findIndex(s=>s.id===submissionId);ctx.submissions[index]={...ctx.submissions[index],...applyAnswerDecision({question:ctx.questions.find(q=>q.id===questionId),questions:ctx.questions,submission:ctx.submissions[index],parseGaps:()=>[],decision,gradeFromPercent:()=>3,scale:{}})};},...options});
  ui.refresh();ui.openForQuestion('q2');return {ui,ctx,dom,calls,preparations,get writes(){return writes;},tick:()=>new Promise(r=>setTimeout(r,0))};
 }
-test('task overview defaults to open tasks, keeps active selection and exposes all completed tasks',t=>{
+test('compact task chooser keeps active selection and every completed task accessible',t=>{
  const f=fixture(t),el=f.ui.element;
- assert.equal(el.querySelectorAll('[data-question]').length,1);
- assert.equal(el.querySelector('[data-question=q2]').getAttribute('aria-current'),'step');
- assert.match(el.querySelector('[data-wilma=active-task]').textContent,/Aufgabe 2.*2 offen/);
- el.querySelector('[data-wilma=tasks-all]').click();assert.equal(el.querySelectorAll('[data-question]').length,100);
- el.querySelector('[data-question=q100]').click();assert.equal(el.querySelector('[data-wilma=filter]').value,'all');assert.equal(el.querySelectorAll('tr[data-submission]').length,2);
- assert.equal(el.querySelector('[data-question=q100]').dataset.state,'complete');assert.match(el.querySelector('[data-question=q100]').textContent,/✓.*Fertig/);
- el.querySelector('[data-wilma=tasks-open]').click();assert.equal(el.querySelector('[data-question=q100]').getAttribute('aria-current'),'step');assert.equal(el.querySelectorAll('[data-question]').length,2);
+ assert.equal(el.querySelectorAll('[data-question]').length,100);assert.equal(el.querySelector('[data-wilma=task-overview]').open,false);
+ assert.equal(el.querySelector('[data-question=q2]').getAttribute('aria-current'),'step');assert.match(el.querySelector('[data-wilma=active-task]').textContent,/Aufgabe 2.*2 offen/);
+ el.querySelector('[data-wilma=task-overview]').open=true;el.querySelector('[data-question=q100]').click();assert.equal(el.querySelector('[data-wilma=answers-all]').getAttribute('aria-pressed'),'true');assert.equal(el.querySelectorAll('tr[data-submission]').length,2);
+ assert.equal(el.querySelector('[data-question=q100]').dataset.state,'complete');assert.match(el.querySelector('[data-question=q100]').getAttribute('aria-label'),/✓.*Fertig/);assert.equal(el.querySelector('[data-wilma=task-overview]').open,false);
 });
 test('teacher completion follows every answer, proposals and deferred responses remain amber with exact counts',async t=>{
  const f=fixture(t),el=f.ui.element;
  f.ctx.submissions[0].grading.q2.reviewSuggestion={points:1,status:'clear',source:'wilma-ai',reason:'Vorschlag'};f.ctx.submissions[1].grading.q2.reviewState='deferred';f.ui.refresh();
  assert.equal(el.querySelector('[data-question=q2]').dataset.state,'open');assert.match(el.querySelector('[data-question=q2]').textContent,/2 offen/);
  for(const s of f.ctx.submissions)s.grading.q2.reviewState='confirmed';f.ui.refresh();
- assert.equal(el.querySelector('[data-question=q2]').dataset.state,'complete');assert.match(el.querySelector('[data-question=q2]').textContent,/✓.*Fertig/);
+ assert.equal(el.querySelector('[data-question=q2]').dataset.state,'complete');assert.match(el.querySelector('[data-question=q2]').getAttribute('aria-label'),/✓.*Fertig/);
 });
 test('preparation failures and running requests are distinct from missing analysis and never green',t=>{
  const f=fixture(t),el=f.ui.element;
  for(const [phase,label] of [['queued','Warteschlange'],['running','läuft'],['waiting','Warte'],['error','fehlgeschlagen'],['blocked','pausiert']]){
   f.preparations.set('q2:A',{phase,message:'Fiktiver Detailhinweis',reasonCode:'internal',retryAllowed:false});f.ui.refresh();
-  assert.match(el.querySelector('tr[data-submission=A] .wilmaRowStatus').textContent,new RegExp(label,'i'));assert.match(el.querySelector('tr[data-submission=A]').textContent,/Fiktiver Detailhinweis/);
+  assert.match(el.querySelector('tr[data-submission=A]').textContent,new RegExp(label,'i'));assert.doesNotMatch(el.querySelector('tr[data-submission=A]').textContent,/Fiktiver Detailhinweis/);if(['error','blocked'].includes(phase))assert.equal(el.querySelector('tr[data-submission=A] .wilmaProblem').dataset.phase,phase);
   assert.notEqual(el.querySelector('[data-question=q2]').dataset.state,'complete');
  }
 });
@@ -53,7 +50,7 @@ test('volatile validated proposals stay visible, unconfirmed and warn about tab-
 });
 test('background refresh preserves typed points, focus and the answer filter',t=>{
  const f=fixture(t),el=f.ui.element,input=el.querySelector('tr[data-submission=A] [data-wilma=points]');input.focus();input.value='.5';f.ui.refresh();
- assert.equal(el.querySelector('tr[data-submission=A] [data-wilma=points]').value,'.5');assert.equal(f.dom.window.document.activeElement.dataset.wilma,'points');assert.equal(el.querySelector('[data-wilma=filter]').value,'open');assert.equal(f.writes,0);
+ assert.equal(el.querySelector('tr[data-submission=A] [data-wilma=points]').value,'.5');assert.equal(f.dom.window.document.activeElement.dataset.wilma,'points');assert.equal(el.querySelector('[data-wilma=answers-open]').getAttribute('aria-pressed'),'true');assert.equal(f.writes,0);
 });
 test('retry rechecks current failure permission at click time and protects confirmed and stale answers',async t=>{
  const f=fixture(t),el=f.ui.element;
@@ -73,6 +70,28 @@ test('native overview disclosure keeps keyboard focus through a background updat
 });
 test('deferred answers still name a failed KI request rather than hiding its category',t=>{
  const f=fixture(t);f.ctx.submissions[0].grading.q2.reviewState='deferred';f.preparations.set('q2:A',{phase:'error',message:'Fiktiver Fehler',retryAllowed:false});f.ui.refresh();
- assert.match(f.ui.element.querySelector('tr[data-submission=A] .wilmaRowStatus').textContent,/fehlgeschlagen/);
+ assert.match(f.ui.element.querySelector('tr[data-submission=A] .wilmaProblem').textContent,/fehlgeschlagen/);
  assert.match(f.ui.element.querySelector('tr[data-submission=A]').textContent,/Zurückgestellt/);
+});
+test('teacher rows show one short problem without duplicated provider/cache diagnostics',t=>{
+ const f=fixture(t),el=f.ui.element;f.preparations.set('q2:A',{phase:'error',reasonCode:'unknown',message:'Erste KI-Prüfung fehlgeschlagen (unknown). Kein passender Fundus verfügbar; deshalb bleibt die Antwort offen.',retryAllowed:false});f.ui.refresh();
+ const row=el.querySelector('tr[data-submission=A]');assert.equal(row.querySelectorAll('.wilmaProblem').length,1);assert.doesNotMatch(row.textContent,/unknown|Fundus verfügbar|Erste KI-Prüfung/);assert.match(row.textContent,/manuell bewerten/i);assert.equal(row.querySelectorAll('.wilmaPreparation,.wilmaCritical').length,0);assert.equal(f.writes,0);
+});
+test('answer filter is a labelled open/all choice and retains completed answers without a dropdown',t=>{
+ const f=fixture(t),el=f.ui.element;assert.equal(el.querySelector('select[data-wilma=filter]'),null);assert.equal(el.querySelector('[data-wilma=answers-open]').getAttribute('aria-pressed'),'true');
+ el.querySelector('[data-wilma=answers-all]').click();assert.equal(el.querySelector('[data-wilma=answers-all]').getAttribute('aria-pressed'),'true');assert.equal(el.querySelectorAll('tr[data-submission]').length,2);
+});
+test('a permitted unstarted answer resumes once per explicit click and never writes teacher points',async t=>{
+ let finish;const f=fixture(t,{resumeAnswer:payload=>{f.calls.push(['resume',payload]);return new Promise(r=>finish=r);}}),el=f.ui.element;
+ f.preparations.set('q2:A',{phase:'blocked',reasonCode:'suppressed',resumeAllowed:true});f.ui.refresh();
+ el.querySelector('tr[data-submission=A] [data-wilma=resume]').click();assert.equal(f.ui.isBusy(),true);el.querySelector('tr[data-submission=A] [data-wilma=resume]').click();assert.deepEqual(f.calls,[['resume',{questionId:'q2',submissionId:'A'}]]);assert.equal(f.writes,0);finish();await f.tick();
+ f.preparations.set('q2:A',{phase:'waiting',resumeAllowed:true});f.ui.refresh();assert.equal(el.querySelector('tr[data-submission=A] [data-wilma=resume]'),null);
+});
+test('validated proposals supersede a stale preparation error and expose no retry/resume action',t=>{
+ const f=fixture(t,{resumeAnswer:async()=>{}}),el=f.ui.element;f.ctx.submissions[0].grading.q2.reviewSuggestion={points:.5,status:'clear',source:'wilma-ai',requestId:'fiction',reason:'Fiktiv geprüft'};f.preparations.set('q2:A',{phase:'error',message:'Staler Fehler',retryAllowed:true,failedAt:123,resumeAllowed:true});f.ui.refresh();
+ const row=el.querySelector('tr[data-submission=A]');assert.doesNotMatch(row.textContent,/fehlgeschlagen|Staler Fehler/);assert.equal(row.querySelectorAll('[data-wilma=resume],[data-wilma=retry]').length,0);assert.match(row.textContent,/KI-Vorschlag/);assert.equal(el.querySelector('[data-question=q2]').dataset.state,'open');f.ui.collapse();assert.doesNotMatch(el.querySelector('[data-wilma=summary]').textContent,/KI-Fehler/);
+});
+test('technical transfer and source changes keep their guard ahead of an old proposal',t=>{
+ const f=fixture(t,{resumeAnswer:async()=>{}}),el=f.ui.element,s=f.ctx.submissions[0];s.grading.q2.reviewSuggestion={points:.5,status:'clear',source:'wilma-ai',requestId:'old-fiction',reason:'Alter Vorschlag'};
+ for(const issue of ['incomplete-transfer','stale']){delete s.grading.q2.reviewIssue;delete s.grading.q2.reviewState;if(issue==='stale')s.grading.q2.reviewState='stale';else s.grading.q2.reviewIssue=issue;f.ui.refresh();const row=el.querySelector('tr[data-submission=A]');assert.equal(row.querySelector('.wilmaRowReason'),null);assert.match(row.querySelector('.wilmaProblem').textContent,issue==='stale'?/Fassung geändert/:/Übertragung klären/);assert.equal(row.querySelectorAll('[data-wilma=resume],[data-wilma=retry]').length,0);}
 });

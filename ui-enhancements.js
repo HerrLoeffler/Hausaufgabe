@@ -69,6 +69,7 @@ function enhanceStudentProgress(progress) {
   const sidebarMedia = window.matchMedia?.('(min-width:1180px) and (min-height:600px)');
   const isSidebar = () => sidebarMedia?.matches === true;
   let index = 0;
+  let revealedIndex = -1;
   let ticking = false;
   let navigating = false;
   let navigationTimer;
@@ -83,15 +84,14 @@ function enhanceStudentProgress(progress) {
     const sidebar = progress.closest('.studentTaskSidebar');
     if (sidebar && isSidebar()) {
       const top = Math.max(sidebar.getBoundingClientRect().top,
-        document.querySelector('.topbar')?.getBoundingClientRect().bottom || 0,
-        document.getElementById('studentTimerBar')?.getBoundingClientRect().bottom || 0);
+        document.querySelector('.topbar')?.getBoundingClientRect().bottom || 0);
       sidebar.style.maxHeight = `${Math.max(180, window.innerHeight - top - 12)}px`;
     } else if (sidebar) sidebar.style.removeProperty('max-height');
     const items = sections();
     if (!items.length) return;
     const stickyBottom = Math.max(0, isSidebar() ? 0 : progress.getBoundingClientRect().bottom,
       document.querySelector(".topbar")?.getBoundingClientRect().bottom || 0,
-      document.getElementById("studentTimerBar")?.getBoundingClientRect().bottom || 0) + 18;
+      isSidebar() ? 0 : document.getElementById("studentTimerBar")?.getBoundingClientRect().bottom || 0) + 18;
     if (!navigating) index = closestQuestionIndex(items, stickyBottom);
     if (current.textContent !== String(index + 1)) current.textContent = String(index + 1);
     if (total.textContent !== String(items.length)) total.textContent = String(items.length);
@@ -104,6 +104,13 @@ function enhanceStudentProgress(progress) {
       if (buttonIndex === index) compact.querySelector(".studentCompactCurrent small").textContent =
         button.classList.contains("complete") ? "Beantwortet ✓" : "Noch offen";
     });
+    const active = nav.querySelector('[aria-current]');
+    if (active && nav.getClientRects().length && revealedIndex !== index) {
+      revealedIndex = index;
+      const item = active.getBoundingClientRect(), box = nav.getBoundingClientRect();
+      if (item.top < box.top) nav.scrollTop += item.top - box.top;
+      else if (item.bottom > box.bottom) nav.scrollTop += item.bottom - box.bottom;
+    }
   };
   const progressChanges = new MutationObserver(() => sync());
   progressChanges.observe(nav, { subtree: true, attributes: true, attributeFilter: ["data-answer-state"] });
@@ -128,6 +135,7 @@ function enhanceStudentProgress(progress) {
   };
 
   const onLayout = () => {
+    revealedIndex = -1;
     const active = document.activeElement;
     progress.dataset.layout = isSidebar() ? 'sidebar' : 'compact';
     progress.classList.remove('overviewOpen');

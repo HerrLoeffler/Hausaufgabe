@@ -31,7 +31,8 @@ export function answerIsComplete(question, value, { orderingTouched = true } = {
 export function paintAnswerCompletion(button, index, complete) {
   button.classList.toggle("complete", complete);
   button.dataset.answerState = complete ? "answered" : "open";
-  button.textContent = complete ? `${index + 1} ✓` : String(index + 1);
+  const text = complete ? `${index + 1} ✓` : String(index + 1);
+  if (button.textContent !== text) button.textContent = text;
   const label = `Aufgabe ${index + 1} · ${complete ? "beantwortet" : "offen"}`;
   button.setAttribute("aria-label", label);
   button.title = label;

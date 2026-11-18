@@ -56,8 +56,10 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
   const cachePath=fingerprint=>`aiGeneratedCache/${digest(uid).slice(0,24)}/wilma-${fingerprint}.json`;
   const budget=db.doc('_wilmaPilotPrivate/'+(projectId==='hausaufgabe-staging'?'live-v1':'budget-v1'));
   let activeReservation=null;
-  const retryable=job=>job?.phase==='unknown'&&job.costSettled===true&&(job.attemptCount||1)<2&&Number.isSafeInteger(job.updatedAt)&&job.updatedAt>0;
-  const matchesRetry=job=>data.retry===true&&retryable(job)&&data.expectedFailureAt===job.updatedAt;
+  const failureStamp=job=>[job?.updatedAt,job?.createdAt].find(value=>Number.isSafeInteger(value)&&value>0);
+  // Completed operations reach reservation only after their missing/invalid receipt was checked.
+  const retryable=job=>['unknown','failed','completed'].includes(job?.phase)&&job.costSettled===true&&(job.attemptCount||1)<2&&!!failureStamp(job);
+  const matchesRetry=job=>data.retry===true&&retryable(job)&&data.expectedFailureAt===failureStamp(job);
   const settle=async(fingerprint,usage)=>{
    if(!monthlyBudget||!activeReservation||!usage)return;
    await db.runTransaction(async tx=>{
@@ -84,18 +86,20 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
     const submission=await load('quizzes/'+args.quizId+'/submissions/'+evidence.submissionId);
     return readEvidence(evidence,{...args,submission,now:now()});
    },
-   readCache:async fingerprint=>{
+   readCache:async(fingerprint,{validate})=>{
     const job=await load(privateDoc('wilma-reviews',fingerprint).path);
     if(!job){if(data.retry===true)fail(409,'Der frühere Prüflauf fehlt. Bitte Status aktualisieren.');return null;}
     const path=cachePath(fingerprint);
     if(job.uid!==uid||job.cachePath&&job.cachePath!==path)fail(409,'Gespeicherter KI-Beleg konnte nicht sicher zugeordnet werden.',reviewDetails('receipt_invalid'));
-    let cached;try{cached=await resultStore.read(path);}catch{fail(503,'Gespeicherter Vorschlag ist gerade nicht erreichbar. Keine neue Berechnung gestartet.',reviewDetails('result_store_unavailable'));}
+    let cached,invalid=false;
+    try{cached=await resultStore.read(path);}catch(error){if(error instanceof SyntaxError)invalid=true;else fail(503,'Gespeicherter Vorschlag ist gerade nicht erreichbar. Keine neue Berechnung gestartet.',reviewDetails('result_store_unavailable'));}
+    if(cached){try{validate(cached);}catch{invalid=true;cached=null;}}
     // A valid blob can outlive a failed metadata write; the core still verifies every row and snapshot.
     if(cached)return cached;
-    if(job.phase==='completed')fail(409,'Der gespeicherte Vorschlag ist abgelaufen. Es wird keine zweite Berechnung gestartet.',reviewDetails('receipt_expired'));
     if(job.phase==='started'&&Number.isFinite(job.createdAt)&&now()-job.createdAt<200000)fail(409,'Die KI-Prüfung läuft noch. Status aktualisieren; keine zweite Berechnung.',reviewDetails('review_in_progress','running'));
     if(matchesRetry(job))return null;
-    const details={...(safeReviewDetails(job.diagnostic)||reviewDetails('result_unknown')),retryAllowed:retryable(job),...(Number.isSafeInteger(job.updatedAt)&&job.updatedAt>0?{failedAt:job.updatedAt}:{})};
+    const details={...(invalid?reviewDetails('receipt_invalid'):job.phase==='completed'?reviewDetails('receipt_expired'):safeReviewDetails(job.diagnostic)||reviewDetails('result_unknown')),retryAllowed:retryable(job),...(failureStamp(job)?{failedAt:failureStamp(job)}:{})};
+    if(job.phase==='completed'&&data.retry!==true)fail(409,'Der gespeicherte Vorschlag fehlt oder ist nicht verwendbar.',details);
     fail(data.retry===true?409:503,'Prüflauf bereits gestartet; Ergebnis nicht sicher verfügbar. Kein automatischer Neuversuch; bitte selbst prüfen.',details);
    },
    reserve:async(fingerprint,task)=>{

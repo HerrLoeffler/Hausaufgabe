@@ -17,9 +17,12 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
   let sections = [];
   let index = 0;
   let frame;
+  let revealedIndex = -1;
 
   const measure = () => {
     doc.documentElement.style.setProperty('--secure-header-height', `${Math.ceil(header.getBoundingClientRect().height)}px`);
+    const timer = doc.getElementById('secureTimer');
+    doc.documentElement.style.setProperty('--secure-timer-height', `${isSidebar() || !timer ? 0 : Math.ceil(timer.getBoundingClientRect().height)}px`);
     nav.dataset.layout = isSidebar() ? 'sidebar' : 'compact';
     const sidebar = nav.closest('.secureTaskSidebar');
     if (sidebar && isSidebar()) {
@@ -37,6 +40,13 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
       if (i === index) button.setAttribute('aria-current', 'step');
       else button.removeAttribute('aria-current');
     });
+    const active = overview.querySelector('[aria-current]');
+    if (!overview.hidden && active && revealedIndex !== index) {
+      revealedIndex = index;
+      const item = active.getBoundingClientRect(), box = overview.getBoundingClientRect();
+      if (item.top < box.top) overview.scrollTop += item.top - box.top;
+      else if (item.bottom > box.bottom) overview.scrollTop += item.bottom - box.bottom;
+    }
   };
   const closeOverview = () => {
     overview.hidden = !isSidebar();
@@ -90,11 +100,13 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
     overview.hidden = !overview.hidden;
     toggle.setAttribute('aria-expanded', String(!overview.hidden));
     measure();
+    paint();
   };
   const onKey = event => {
     if (event.key === 'Escape' && !isSidebar() && !overview.hidden) { closeOverview(); toggle.focus(); }
   };
   const onLayout = () => {
+    revealedIndex = -1;
     const active = doc.activeElement;
     const moveFocus = isSidebar() ? active === toggle : overview.contains(active);
     closeOverview();
@@ -113,6 +125,8 @@ export function mountSecureQuestionNavigation(doc = document, win = window) {
   const resize = win.ResizeObserver ? new win.ResizeObserver(schedule) : null;
   resize?.observe(header);
   resize?.observe(nav);
+  const timer = doc.getElementById('secureTimer');
+  if (timer) resize?.observe(timer);
   // i18n/header updates and late image/audio layout changes can change the sticky offset.
   const mutation = new win.MutationObserver(rebuild);
   mutation.observe(questions, { childList: true });

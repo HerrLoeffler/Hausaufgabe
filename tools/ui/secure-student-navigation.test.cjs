@@ -92,10 +92,36 @@ test('sticky offset follows responsive header size; nav is outside frozen form a
     assert.equal(f.nav.closest('form'), null);
     f.d.getElementById('secureAssessment').classList.add('hidden');
     assert.ok(f.nav.closest('.hidden'));
-    assert.match(css, /\.secureQuestionNavigation\{position:sticky;top:var\(--secure-header-height/);
+    assert.match(css, /\.secureQuestionNavigation\{position:sticky;top:calc\(var\(--secure-header-height/);
     assert.match(css, /html\{scroll-padding-top:calc\(var\(--secure-header-height/);
     assert.match(css, /scroll-margin-top:12px/);
   } finally { f.close(); }
 });
 
 test('wide sidebar stays open on navigation and resizing never replaces an active answer',async()=>{const f=fixture(true);try{await f.flush();const overview=f.d.getElementById('secureQuestionOverview');assert.equal(f.nav.dataset.layout,'sidebar');assert.equal(overview.hidden,false);assert.equal(f.d.documentElement.style.getPropertyValue('--secure-navigation-height'),'0px');f.nav.querySelector('[data-secure-next]').click();assert.equal(overview.hidden,false);const input=f.d.querySelector('[data-qid="q1"] input');input.focus();input.value='keep this draft';f.setWide(false);await f.flush();assert.equal(f.nav.dataset.layout,'compact');assert.equal(overview.hidden,true);assert.equal(f.d.activeElement,input);assert.equal(input.value,'keep this draft');f.setWide(true);await f.flush();assert.equal(overview.hidden,false);assert.equal(f.d.activeElement,input);assert.equal(f.d.querySelector('[data-qid="q1"] input'),input);}finally{f.close();}});
+
+test('timer shares the right sidebar outside the scrolling number grid', () => {
+  const doc = new JSDOM(html).window.document;
+  const timer = doc.getElementById('secureTimer');
+  assert.ok(timer.closest('.secureTaskSidebar'));
+  assert.equal(timer.closest('.secureQuestionOverview'), null);
+  assert.equal(timer.closest('.secureAssessmentHead'), null);
+  assert.match(css, /--secure-timer-height/);
+  assert.doesNotMatch(css, /\.secureQuestionOverview button::after/);
+  assert.match(css, /grid-template-columns:repeat\(3,minmax\(44px,1fr\)\)/);
+});
+
+test('active grid item is revealed on question changes without resetting a manually scrolled grid', async () => {
+  const f = fixture(true);
+  try {
+    await f.flush();
+    const grid = f.d.getElementById('secureQuestionOverview');
+    grid.getBoundingClientRect = () => ({top:100,bottom:180});
+    grid.querySelectorAll('button')[1].getBoundingClientRect = () => ({top:300,bottom:344});
+    f.nav.querySelector('[data-secure-next]').click();
+    assert.equal(grid.scrollTop,164);
+    grid.scrollTop=20;
+    f.d.dispatchEvent(new f.w.Event('gradecrew:student-progress'));
+    assert.equal(grid.scrollTop,20,'answer updates must not fight manual grid scrolling');
+  } finally { f.close(); }
+});

@@ -17,7 +17,7 @@ test('each gap pairs response with expected alternatives without inventing wrong
  const f=fixture(t),parts=f.ui.element.querySelectorAll('.wilmaGapComparison');assert.equal(parts.length,2);
  assert.match(parts[0].textContent,/Antwort[\s\S]*20 €[\s\S]*Erwartet[\s\S]*20 € oder 20 Euro/);
  assert.match(parts[0].textContent,/Stimmt überein/);assert.match(parts[1].textContent,/Abgleich offen/);assert.doesNotMatch(parts[1].textContent,/falsch/i);
- assert.match(f.ui.element.textContent,/Antwortformat nicht unterstützt/);assert.equal(f.saved,0);assert.equal(f.s.grading.q.awardedPoints,0);assert.equal(f.ui.element.querySelector('[data-wilma="confirm"]').disabled,true);
+ assert.match(f.ui.element.querySelector('.wilmaProblem').textContent,/fehlgeschlagen.*manuell bewerten/);assert.doesNotMatch(f.ui.element.textContent,/Antwortformat nicht unterstützt/);assert.equal(f.saved,0);assert.equal(f.s.grading.q.awardedPoints,0);assert.equal(f.ui.element.querySelector('[data-wilma="confirm"]').disabled,true);
 });
 test('proposal points and reason are visible separately and remain unconfirmed',t=>{
  const f=fixture(t);f.s.grading.q.reviewSuggestion={source:'wilma-ai',points:1,status:'uncertain',reason:'Einheit der zweiten Lücke prüfen.',requestId:'fictional'};f.ui.refresh();
@@ -27,11 +27,11 @@ test('empty and incomplete transfers differ from an unrecognised nonempty answer
  const f=fixture(t);f.s.answers.q=['','100'];f.ui.refresh();assert.match(f.ui.element.querySelector('.wilmaGapComparison').textContent,/Leer[\s\S]*0 P\./);
  f.s.grading.q.reviewIssue='incomplete-transfer';f.ui.refresh();assert.match(f.ui.element.querySelector('.wilmaGapComparison').textContent,/Übertragung klären/);assert.equal(f.ui.element.querySelector('[data-wilma="confirm"]').disabled,true);
 });
-test('first validation failure survives free cache miss; refresh never enables another paid attempt',async()=>{
+test('own validation failure survives refresh without contaminating another cache-miss row or permitting paid retry',async()=>{
  const q={id:'q',type:'text',text:'Begründe',points:2,reviewCriteria:['Begründung']};const ctx={actor:'fictional',quiz:{id:'fiction'},questions:[q],submissions:['a','b'].map(id=>({id,status:'review',answers:{q:id},grading:{q:{maxPoints:2,needsReview:true}}}))};const states=[],calls=[];
  const scheduler=createWilmaAutoReview({getContext:()=>ctx,parseGaps,enabled:()=>true,allowFreeLookups:true,serverBudgeted:true,onState:s=>states.push(s),analyzeAnswer:async p=>{calls.push(p);throw Object.assign(Error(p.allowPaid?'Antwortformat nicht unterstützt.':'Keine bestätigte Bewertung im Fundus oder Prüfbelegcache. Keine API gestartet.'),{code:p.allowPaid?'functions/invalid-argument':'functions/resource-exhausted'});}});
- await scheduler.run();assert.match(states.find(s=>s.submissionId==='a'&&s.phase==='error').message,/Antwortformat nicht unterstützt/);assert.match(states.at(-1).message,/Anfrage abgelehnt/);assert.match(states.at(-1).message,/Kein gespeicherter Vorschlag/);assert.doesNotMatch(states.at(-1).message,/Monatslimit|Kontingent erreicht/);
- scheduler.clear();await scheduler.run();assert.equal(calls.filter(p=>p.allowPaid).length,1);
+ await scheduler.run();assert.match(states.find(s=>s.submissionId==='a'&&s.phase==='error').message,/Antwortformat nicht unterstützt/);assert.equal(states.at(-1).reasonCode,'cache_miss');assert.equal(states.at(-1).resumeAllowed,true);assert.doesNotMatch(states.at(-1).message,/Anfrage abgelehnt|Monatslimit|Kontingent erreicht/);
+ scheduler.clear();await scheduler.run();assert.equal(calls.filter(p=>p.allowPaid).length,1);assert.match(states.filter(s=>s.submissionId==='a').at(-1).message,/Antwortformat nicht unterstützt/);assert.equal(states.filter(s=>s.submissionId==='a').at(-1).resumeAllowed,false);
 });
 test('free lookup auth errors retain their own cause',async()=>{
  const q={id:'q',type:'text',text:'Begründe',points:2,reviewCriteria:['Begründung']};const ctx={actor:'fictional',quiz:{id:'fiction'},questions:[q],submissions:['a','b'].map(id=>({id,status:'review',answers:{q:id},grading:{q:{maxPoints:2,needsReview:true}}}))};const states=[];
