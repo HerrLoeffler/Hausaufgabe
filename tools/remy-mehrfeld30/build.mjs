@@ -39,7 +39,7 @@ await fs.mkdir(path.join(ui,'visual/assets'));
 await copy('visual/assets/cosmos-botanical-v1.png',path.join(ui,'visual/assets/cosmos-botanical-v1.png'));
 await copy('firebase-config.staging.js',path.join(ui,'firebase-config.js'));
 for(const name of ['server.cjs','review.cjs','round-two.cjs','recipe-three.cjs','generate-three.cjs','rhythm.cjs','pitch.cjs','mix.cjs'])await copy('tools/remy-mehrfeld30/'+name,path.join(backend,'tools/remy-mehrfeld30',name));
-for(const name of ['oracle.cjs','cases.cjs','builder.cjs','checker.cjs','prompts.cjs','store.cjs','runner.cjs','scoring.cjs','graph.cjs','graph-profile.cjs'])await copy('tools/remy-mehrfeld30/training/'+name,path.join(backend,'tools/remy-mehrfeld30/training',name));
+for(const name of ['oracle.cjs','cases.cjs','builder.cjs','checker.cjs','prompts.cjs','store.cjs','runner.cjs','scoring.cjs','graph.cjs','graph-profile.cjs','auto-manifest.cjs','auto-loop.cjs'])await copy('tools/remy-mehrfeld30/training/'+name,path.join(backend,'tools/remy-mehrfeld30/training',name));
 for(const name of ['visual-task.js','structured-response.js','constants.js'])await copy('functions/lib/'+name,path.join(backend,'functions/lib',name));
 for(const name of ['core.js','legacy-core.js','dreisatz-builder.js'])await copy('functions/lib/visual/'+name,path.join(backend,'functions/lib/visual',name));
 const json=(file,value)=>fs.writeFile(file,JSON.stringify(value,null,2)+'\n');

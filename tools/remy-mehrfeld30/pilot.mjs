@@ -429,7 +429,9 @@ onAuthStateChanged(auth,async user=>{
   const previous=saved('stack');
   const showGraph=!saved('seen-fields-arrows');
   if(showGraph)save('seen-fields-arrows',true);
-  await load(showGraph?GRAPH:previous&&previous!=='seed'?previous:null);
+  const requested=new URL(window.location.href).searchParams.get('deck');
+  const finalDeck=requested==='training:auto-recipes-20261118-v1-final'?requested:null;
+  await load(finalDeck||(showGraph?GRAPH:previous&&previous!=='seed'?previous:null));
   if(uid!==owner)return;
   if(saved('job')?.id)void watch();
 });

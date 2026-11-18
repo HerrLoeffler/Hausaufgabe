@@ -30,3 +30,15 @@ test('only the owner and allowlisted teachers of the fixed shared calibration ca
   assert.equal(authorizeRun({ownerId:'gc-visual255-e2e',sharedPilot:true,id:'dreisatz60-20261118-v1'},'b'),true);
 });
 module.exports={memory};
+test('all autonomous runs share one transactionally reserved session cap, including uncertain calls',async()=>{
+ const {TestDatabase}=require('./test-db.cjs'),db=new TestDatabase();
+ await db.doc('taskLearningAutoRuns/s').set({ownerId:'teacher',limitMicros:100,spentMicros:0,reservedMicros:0,status:'running'});
+ for(const id of ['r1','r2'])await db.doc('taskLearningRuns/'+id).set({ownerId:'teacher',autoSessionId:'s',limitMicros:100,spentMicros:0,reservedMicros:0,status:'running'});
+ await reserve(db,'r1','one',80);
+ await assert.rejects(reserve(db,'r2','two',30),/Budget/);
+ await settle(db,'r1','one',{status:'uncertain'});
+ assert.equal(db.docs.get('taskLearningAutoRuns/s').reservedMicros,80);
+ await settle(db,'r1','one',{status:'completed',costMicros:20});await settle(db,'r1','one',{status:'completed',costMicros:20});
+ assert.equal(db.docs.get('taskLearningAutoRuns/s').reservedMicros,0);assert.equal(db.docs.get('taskLearningAutoRuns/s').spentMicros,20);
+ await reserve(db,'r2','two',80);await assert.rejects(reserve(db,'r1','three',1),/Budget/);
+});

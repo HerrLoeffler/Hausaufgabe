@@ -11,6 +11,7 @@ const {reserve,settle,authorizeRun,runRef}=require('./store.cjs');
 const {score}=require('../review.cjs');
 const {core,parseVisualTask}=require('../../../functions/lib/visual-task');
 const graph=require('./graph.cjs');
+const autoManifest=require('./auto-manifest.cjs');
 const variants={
   [VERSION]:{version:VERSION,run:RUN,cases,profile,planSchema,judgeSchema,generatorInstruction,judgeInstruction,build:buildCandidate,visible:visibleProblem,check:checkCandidate},
   [graph.GRAPH_VERSION]:{version:graph.GRAPH_VERSION,run:graph.GRAPH_RUN,cases:graph.GRAPH_CASES,profile:graph.graphProfile,
@@ -35,29 +36,37 @@ async function getRun(db,id,uid){
   return run;
 }
 async function createRun({db,uid,data}){
-  const calibration=data.calibration===true;
+  let auto=null;
+  if(data.autoPhase!==undefined){try{auto=autoManifest.phasePlan(data.autoPhase);}catch(e){throw new HttpsError('invalid-argument',e.message);}}
+  const calibration=data.calibration===true||!!auto;
+  const strategyHint=auto?String(data.strategyHint||''):'';
+  if(strategyHint.length>800||auto&&['dev0','test0'].includes(auto.phase)&&strategyHint)throw new HttpsError('invalid-argument','Unzulässiger Rezeptvergleich.');
   if(data.family!==undefined&&!['dreisatz','fields-arrows'].includes(data.family))throw new HttpsError('invalid-argument','Unbekannte Aufgabenfamilie.');
-  const config=variant(data.family==='fields-arrows'?graph.GRAPH_VERSION:VERSION);
+  const config=variant(auto||data.family==='fields-arrows'?graph.GRAPH_VERSION:VERSION);
   if(calibration&&uid!=='gc-visual255-e2e')throw new HttpsError('permission-denied','Die Referenzserie wird nur einmal durch das Testkonto angelegt.');
   const wish=typeof data.wish==='string'?data.wish.trim():'';
   if(!calibration&&(!/^[a-f0-9-]{36}$/i.test(data.requestId||'')||wish.length<8||wish.length>1000))throw new HttpsError('invalid-argument','Wunsch in 8 bis 1000 Zeichen angeben.');
-  const id=calibration?config.run:(config.version===VERSION?'wish-'+digest([uid,data.requestId]).slice(0,32):'graph-'+digest([uid,data.requestId,config.version]).slice(0,32));
-  const manifest=calibration?config.cases:[{id:'wish',family:'free-wish',wish}];
-  const hash=digest([config.version,manifest]);
+  const id=auto?auto.runId:calibration?config.run:(config.version===VERSION?'wish-'+digest([uid,data.requestId]).slice(0,32):'graph-'+digest([uid,data.requestId,config.version]).slice(0,32));
+  const manifest=auto?auto.cases:calibration?config.cases:[{id:'wish',family:'free-wish',wish}];
+  const hash=digest([config.version,manifest,...(auto?[strategyHint]:[])]);
   const run=runRef(db,id),recipe=db.doc('taskLearningRecipes/'+config.version);
   const quota=db.doc('taskLearningQuotas/'+digest([uid,new Date().toISOString().slice(0,10)]));
   await db.runTransaction(async tx=>{
     const old=await tx.get(run);
     if(old.exists){if(old.data().manifestHash!==hash)throw new HttpsError('failed-precondition','Die Anfrage-ID gehört zu einem anderen Wunsch.');return;}
     const priorRecipe=await tx.get(recipe),current=await tx.get(quota);
+    const session=auto?db.doc('taskLearningAutoRuns/'+autoManifest.SESSION):null;
+    const priorSession=session?await tx.get(session):null;
     const count=current.data()?.count||0;
     if(!calibration&&count>=6)throw new HttpsError('resource-exhausted','Heute sind die sechs neuen Erprobungswünsche aufgebraucht.');
+    if(session&&!priorSession.exists)tx.create(session,{id:autoManifest.SESSION,ownerId:uid,limitMicros:5000000,reservedMicros:0,spentMicros:0,status:'running',createdAt:now(),authorization:'Martin approved 5 USD total for first autonomous experiment'});
     if(!priorRecipe.exists)tx.create(recipe,{...config.profile,createdAt:now()});
     tx.create(run,{id,ownerId:uid,sharedPilot:calibration,recipeVersion:config.version,manifestHash:hash,expected:manifest.length,
-      limitMicros:calibration?(config.version===VERSION?5000000:1000000):200000,spentMicros:0,reservedMicros:0,status:'running',createdAt:now(),
+      ...(auto?{autoSessionId:autoManifest.SESSION,autoPhase:auto.phase,strategyHint}:{}),
+      limitMicros:auto?5000000:calibration?(config.version===VERSION?5000000:1000000):200000,spentMicros:0,reservedMicros:0,status:'running',createdAt:now(),
       priceSnapshot:{at:'2026-11-18',currency:'USD',perMillionTokens:PRICES,source:'https://developers.openai.com/api/docs/pricing'}});
     if(!calibration)tx.set(quota,{ownerId:uid,count:count+1});
-    for(const c of manifest)tx.create(db.doc(run.path+'/cases/'+c.id),{...c,attempt:1,status:'pending',createdAt:now()});
+    for(const [position,c] of manifest.entries())tx.create(db.doc(run.path+'/cases/'+c.id),{...c,position,attempt:1,status:'pending',createdAt:now()});
   });
   return {runId:id,quizId:PREFIX+id};
 }
@@ -73,8 +82,10 @@ function reservationCost(request){
   const inputBound=Buffer.byteLength(JSON.stringify(request),'utf8')+2048;
   return Math.ceil(inputBound*PRICES[request.model].input+request.max_output_tokens*PRICES[request.model].output);
 }
-async function providerCall({db,runId,stepId,phase,input,secret,client,version=VERSION}){
-  const request=providerRequest(phase,input,version),amount=reservationCost(request);
+async function providerCall({db,runId,stepId,phase,input,secret,client,version=VERSION,customRequest}){
+  const request=customRequest||providerRequest(phase,input,version);
+  if(!PRICES[request.model]||request.max_output_tokens>3000)throw Error('Nicht zugelassener Providerauftrag.');
+  const amount=reservationCost(request);
   const reservation=await reserve(db,runId,stepId,amount);
   if(!reservation.dispatch){
     if(reservation.call.status==='completed'&&reservation.call.response)return reservation.call.response;
@@ -121,8 +132,8 @@ async function stepCase({db,uid,data,secret,client}){
     if(phase==='generate'){
       const recipe=(await db.doc('taskLearningRecipes/'+run.recipeVersion).get()).data();
       // Only the signed-in teacher's explicit judgments and fixed test feedback are eligible.
-      const learned=await db.collection('taskLearningExamples').where('ownerId','==',uid).where('reviewerId','==',uid).where('recipeVersion','==',run.recipeVersion).limit(30).get();
-      const memory=await db.collection('taskLearningTeacherMemory/'+uid+'/examples').orderBy('reviewedAt','desc').limit(100).get();
+      const learned=run.autoSessionId?{docs:[]}:await db.collection('taskLearningExamples').where('ownerId','==',uid).where('reviewerId','==',uid).where('recipeVersion','==',run.recipeVersion).limit(30).get();
+      const memory=run.autoSessionId?{docs:[]}:await db.collection('taskLearningTeacherMemory/'+uid+'/examples').orderBy('reviewedAt','desc').limit(100).get();
       const words=text=>new Set(String(text).toLowerCase().match(/[\p{L}\p{N}]+/gu)||[]),wanted=words(c.wish);
       const relevance=x=>{const terms=words(x.wish);return [...wanted].filter(w=>terms.has(w)).length/Math.max(1,wanted.size);};
       const byId=new Map([...learned.docs,...memory.docs].map(d=>[d.id,d.data()]));
@@ -131,7 +142,7 @@ async function stepCase({db,uid,data,secret,client}){
         .map(x=>({wish:x.wish,decision:x.kind,verdict:x.humanVerdict,reason:x.humanComment||'',structure:x.blueprint||null}));
       const response=await providerCall({db,runId:run.id,stepId,phase,secret,client,
         version:run.recipeVersion,input:{wish:c.wish,recipe:{prerequisites:recipe.prerequisites,exclusions:recipe.exclusions,rules:recipe.generationRules},
-          requiredModes:c.modes||null,teacherExamples:examples,repair:c.repairNotes||''}});
+          requiredModes:c.modes||null,teacherExamples:examples,recipeImprovement:run.strategyHint||'',repair:c.repairNotes||''}});
       const plan=parseStructuredResponse(response);
       const q=config.build(plan,{id:c.id,modes:c.modes||plan.arrowModes});
       update={status:'generated',plan,q,generatedAt:now(),errors:[]};
@@ -185,10 +196,10 @@ async function repairCase({db,uid,data}){
     if(!c)throw new HttpsError('not-found','Fall fehlt.');
     if(c.repairRequestId===data.requestId)return {status:c.status,attempt:c.attempt};
     const recovery=run.id===graph.GRAPH_RUN&&uid==='gc-visual255-e2e'&&c.attempt===3&&typeof data.technicalCorrection==='string'&&data.technicalCorrection.length>=12&&data.technicalCorrection.length<=500&&/^[a-f0-9]{40}$/.test(data.sourceCommit||'');
-    if(c.status!=='rejected'||(c.attempt>=3&&!recovery))throw new HttpsError('failed-precondition','Hier ist keine weitere automatische Nachbesserung vorgesehen.');
+    if((c.status!=='rejected'&&!(run.autoSessionId&&c.status==='ready'&&c.adversary?.passed===false))||(c.attempt>=3&&!recovery))throw new HttpsError('failed-precondition','Hier ist keine weitere automatische Nachbesserung vorgesehen.');
     if(recovery)tx.set(db.doc(ref.path+'/technicalRecoveries/'+data.requestId),{reason:data.technicalCorrection,sourceCommit:data.sourceCommit,previousAttempt:c.attempt,at:now()});
     tx.update(ref,{status:'pending',attempt:c.attempt+1,repairRequestId:data.requestId,
-      repairNotes:[...(c.errors||[]),c.judge?.reason||''].join(' ').slice(0,1600),errors:[],q:null,plan:null,judge:null,check:null});
+      repairNotes:[...(c.errors||[]),c.judge?.reason||'',c.adversary?.concreteIssue||''].join(' ').slice(0,1600),errors:[],q:null,plan:null,judge:null,check:null,...(run.autoSessionId?{adversary:null}:{})});
     return {status:'pending',attempt:c.attempt+1};
   });
 }
@@ -230,7 +241,7 @@ async function resolveTraining({db,uid,quizId}){
   const run=await getRun(db,id,uid),snap=await db.collection(runRef(db,id).path+'/cases').get();
   const stored=snap.docs.map(s=>s.data()).filter(c=>c.status==='ready'&&c.q);
   const order=new Map(variant(run.recipeVersion).cases.map((c,i)=>[c.id,i]));
-  stored.sort((a,b)=>(order.get(a.id)??0)-(order.get(b.id)??0));
+  stored.sort((a,b)=>(a.position??order.get(a.id)??0)-(b.position??order.get(b.id)??0));
   return {tasks:stored.map(c=>({...c.q,shape:c.q.type==='notice'?'Nächster Schritt':c.q.shape||(c.q.type==='single'?'Eignungsprobe zur Darstellung':'Dreisatz')})),group:'training',runId:id,expected:run.expected};
 }
 async function details({db,uid,data}){
@@ -286,6 +297,7 @@ async function recordTrainingFeedback({db,uid,quizId,q,data,event,latest,rating}
 }
 async function handleTraining(input){
   const {data}=input;
+  if(data.action.startsWith('trainingAuto'))return require('./auto-loop.cjs').handle({...input,engine:{providerCall,getRun}});
   if(data.action==='trainingCreate')return createRun(input);
   if(data.action==='trainingStep')return stepCase(input);
   if(data.action==='trainingRepair')return repairCase(input);
