@@ -36,3 +36,8 @@ Nächster Schritt: begrenzt in vorhandenen Live-Releasezweig integrieren; dessen
 
 ## Tatsächliche Releaseintegration17:51CET
 PR437 gemergt in feature/secure-live-ready-20261026:0ec581c698d4f5130e98cf38fdb4c204473b7786. Genau dieser Quellstand hat tatsächlichen Workflow44352032992 gestartet, run30/attempt1, zunächstqueued. Daraus vorgesehene Buildnummer1301, noch kein bestandener CI-/Upload-/Processingbeleg. Workflow unverändert mit Native-/WebKit-mini-/WebKit-large-/iPhone-Gates vor signiertem Live-Upload. Kein zusätzlicher Run gestartet. App-Store1293 bleibt unverändert.
+
+## Externer Release-Engpass18:12CET
+Tatsächlicher Job134969989340 layout-web(large) abgeschlossenSUCCESS:360/360WebKit+12/12Interaktionen, Berichtartifact14450171726. iPhonejob134969988747 läuft. Jobs134969989303(mini) und134969989334(native) wurden vor Ausführung CANCELLED: GitHub-Annotation „The job was not acquired by Runner of type hosted even after multiple attempts“, zusätzlich Hinweis auf macOS-arm64-Kapazitätsmangel. Beide ohneRunnername/ohneCodeausführung.
+
+Gezielter Retry des nativen Jobs wird von GitHub momentan abgelehnt: „The workflow run containing this job is already running“. Erst nach iPhoneabschluss die ausgefallenen Jobs erneut ausführen; bestandenen large-Job erhalten. Kein neuer Quellstand, keine Gate-Abschwächung und kein zusätzlicher voller Release gestartet. Noch KEIN signierter Upload;1301 ist nur die vorgesehene Erstversuchsnummer, ein Retry kann die tatsächliche Nummer erhöhen. Apple-Sitzung verfügbar, unveränderte1272/1293 noch sichtbar, neuer Build noch nicht vorhanden.
