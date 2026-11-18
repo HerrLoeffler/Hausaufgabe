@@ -4239,6 +4239,73 @@
       },
       "mehrfeld30_pilot_20261109": {
         "fields_arrows_20261118": {
+          "autonomous_recipes_20261118": {
+            "task_id": "GC-EXTENDED-QUESTION-TYPES-01",
+            "stage": "staging_deployed",
+            "scope": "isolated remy-mehrfeld30 test preview only",
+            "runtime_pr": 419,
+            "documentation_pr": 418,
+            "source": "677fdefa99b6091ee36285a0784391ce32abe771",
+            "evidence_commit": "fb5e57ba9d5e699d42719b13b3660c3046e84f93",
+            "report": "https://github.com/HerrLoeffler/Hausaufgabe/blob/fb5e57ba9d5e699d42719b13b3660c3046e84f93/docs/evidence/autonomous-recipes-20261118/REPORT.md",
+            "url": "https://gradecrew-staging-2026--remy-mehrfeld30-1nsipawh.web.app/remy-labor/?deck=training%3Aauto-recipes-20261118-v1-final",
+            "session": "auto-recipes-20261118-v1",
+            "status": "completed_bounded_experiment",
+            "model_weights_trained": false,
+            "daily_scheduler_enabled": false,
+            "human_approved": false,
+            "budget_usd": 5,
+            "total_provider_calls": 344,
+            "calculated_model_usd": 0.785037,
+            "reserved_usd": 0,
+            "study_provider_calls": 319,
+            "study_model_usd": 0.72303,
+            "study_executions": 80,
+            "development_first_pass": [
+              16,
+              13,
+              11
+            ],
+            "development_final_pass": [
+              20,
+              19,
+              19
+            ],
+            "heldout_baseline_pass": 19,
+            "heldout_cases": 20,
+            "accepted_strategy": "baseline; both optimizer proposals rejected",
+            "final_examples": 10,
+            "post_study_probes": {
+              "probe": {
+                "passed": 1,
+                "total": 3
+              },
+              "probe2": {
+                "passed": 1,
+                "total": 2
+              },
+              "fixed_case": "given-left accepted first attempt after independent review protocol calibration",
+              "remaining_blocker": "mapping requested separate group headings missing; failed attempts remain blocked"
+            },
+            "tests_passed": 80,
+            "browser_cards": 10,
+            "browser_widths": [
+              1280,
+              820,
+              360
+            ],
+            "physical_touch_tested": false,
+            "hosting_hashes": 14,
+            "other_functions_unchanged": 97,
+            "function_hash": "792da225d17976d62d0e6f3f6422d07f7a7f17c0",
+            "production_changed": false,
+            "canonical_hosting_changed": false,
+            "next_action": "implement common mapping group heading contract, then fresh frozen wishes and calibrate independent reviews against small human final selection",
+            "storage": [
+              "taskLearningAutoRuns/auto-recipes-20261118-v1",
+              "taskLearningRuns/auto-recipes-20261118-v1-{dev0,dev1,dev2,test0,final,probe,probe2}"
+            ]
+          },
           "access_followup_20261118": {
             "stage": "staging_deployed",
             "scope": "isolated lab only",
@@ -4249,7 +4316,7 @@
             "tests": 64,
             "other_functions_unchanged": 97,
             "client_self_grant_denied": true,
-            "user_relogin": "pending",
+            "user_relogin": "confirmed by Martin: bin drin; no academic task acceptance implied",
             "evidence_commit": "752d4652ea5318f70ea61d07143c423eb70dfb31"
           },
           "task_id": "GC-EXTENDED-QUESTION-TYPES-01",
