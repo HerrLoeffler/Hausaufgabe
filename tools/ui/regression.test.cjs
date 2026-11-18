@@ -418,7 +418,7 @@ test('all static form controls, tabs and dialogs have explicit accessible names'
 
 test('student navigation tracks a long current question and the final question', async t => {
   const w = fixture(t);
-  w.matchMedia = () => ({ matches: true });
+  w.matchMedia = query => ({ matches: query.includes('prefers-reduced-motion') });
   w.$('studentView').classList.remove('hidden');
   w.$('studentQuizCard').innerHTML = '<div id="studentTimerBar"></div><div id="studentProgressBar"><div id="studentQuestionNav"><button class="questionNavDot">1</button><button class="questionNavDot">2</button></div></div><section class="studentQuestion" data-qid="a"></section><section class="studentQuestion" data-qid="b"></section>';
   const sections = [...w.document.querySelectorAll('.studentQuestion')];
