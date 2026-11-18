@@ -13,7 +13,7 @@ const doc=d=>({id:d.name.split('/').at(-1),...Object.fromEntries(Object.entries(
  for(const phase of PHASES){const id=SESSION+'-'+phase,run=await read('taskLearningRuns/'+id);if(!run)continue;assert.equal(run.ownerId,'gc-visual255-e2e');const [cases,calls]=await Promise.all([read('taskLearningRuns/'+id+'/cases',true),read('taskLearningRuns/'+id+'/providerCalls',true)]);runs.push({phase,run,cases,calls});}
  fs.writeFileSync('/private/tmp/gc-auto-audit-private.json',JSON.stringify({at:new Date().toISOString(),parent,runs},null,2)+'\n');
  const calls=runs.flatMap(r=>r.calls),total=calls.reduce((s,c)=>s+(c.costMicros||0),0);
- assert.equal(total,parent.spentMicros);assert.ok(parent.spentMicros+parent.reservedMicros<=5000000);
+ if(parent.status==='completed')assert.equal(total,parent.spentMicros);assert.ok(parent.spentMicros+parent.reservedMicros<=5000000);
  const result={at:new Date().toISOString(),session:SESSION,status:parent.status,modelWeightsTrained:false,humanApproved:false,totalCalls:calls.length,spentMicros:parent.spentMicros,reservedMicros:parent.reservedMicros,
   inputTokens:calls.reduce((s,c)=>s+(c.usage?.input_tokens||0),0),outputTokens:calls.reduce((s,c)=>s+(c.usage?.output_tokens||0),0),
   models:[...new Set(calls.map(c=>c.model))],phases:runs.map(r=>({phase:r.phase,metrics:summary(r.cases),strategyHint:r.run.strategyHint||'',

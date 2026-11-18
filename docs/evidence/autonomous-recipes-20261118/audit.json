@@ -1,0 +1,297 @@
+{
+  "at": "2026-11-18T19:08:40.586Z",
+  "session": "auto-recipes-20261118-v1",
+  "status": "running",
+  "modelWeightsTrained": false,
+  "humanApproved": false,
+  "totalCalls": 42,
+  "spentMicros": 91894,
+  "reservedMicros": 46058,
+  "inputTokens": 49842,
+  "outputTokens": 10972,
+  "models": [
+    "gpt-6.2-sol",
+    "gpt-6-luna",
+    null
+  ],
+  "phases": [
+    {
+      "phase": "dev0",
+      "metrics": {
+        "total": 20,
+        "ready": 10,
+        "firstPass": 8,
+        "rejected": 10,
+        "pending": 10
+      },
+      "strategyHint": "",
+      "cases": [
+        {
+          "id": "arguments",
+          "family": "arguments",
+          "status": "pending",
+          "attempt": 1,
+          "adversary": null,
+          "errors": []
+        },
+        {
+          "id": "base",
+          "family": "percent-base",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "leaksAnswer": false,
+            "solvable": true,
+            "qVersion": "37ea6e6e4aace07956df0574efba6acd98e2c971486fda77c0fa1c578323950f",
+            "passed": true,
+            "appropriate": true,
+            "concreteIssue": "Kein belegbarer Fehler: 64 ÷ 20 ergibt 3,20 €, und von 1 % zu 100 % wird in beiden Spalten mit 100 multipliziert. Der Gesamtbetrag von 320 € bleibt offen. Die vorgegebenen ersten Pfeile bieten eine passende Einstiegshilfe, und die beiden Zielpfeile werden getrennt ergänzt.",
+            "clarityScore": 5,
+            "at": "2026-11-18T19:07:00.826Z"
+          },
+          "errors": []
+        },
+        {
+          "id": "biology",
+          "family": "biology",
+          "status": "pending",
+          "attempt": 1,
+          "adversary": null,
+          "errors": []
+        },
+        {
+          "id": "branch",
+          "family": "branch",
+          "status": "pending",
+          "attempt": 1,
+          "adversary": null,
+          "errors": []
+        },
+        {
+          "id": "english",
+          "family": "english",
+          "status": "generated",
+          "attempt": 1,
+          "kind": "chain",
+          "adversary": null,
+          "errors": []
+        },
+        {
+          "id": "essay",
+          "family": "open-writing",
+          "status": "pending",
+          "attempt": 1,
+          "adversary": null,
+          "errors": []
+        },
+        {
+          "id": "fee",
+          "family": "base-fee",
+          "status": "pending",
+          "attempt": 2,
+          "adversary": null,
+          "errors": []
+        },
+        {
+          "id": "map",
+          "family": "scale",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "appropriate": true,
+            "at": "2026-11-18T19:07:59.885Z",
+            "concreteIssue": "Kein belegbarer Fehler: 7 ÷ 2 ergibt 3,5 km für 1 cm; mit dem offenen Faktor 6 ergeben sich 21 km. Die vorgegebenen Zahlen bleiben erhalten. Der linke Pfeil gibt eine passende Hilfe: Sein Faktor lässt sich wegen des festen Maßstabs auf den separat auszufüllenden rechten Pfeil übertragen.",
+            "solvable": true,
+            "leaksAnswer": false,
+            "clarityScore": 5,
+            "qVersion": "3bd06d1dced5770041ffac6fb5f28c3d95218f3fee4ce539934efbb88e0ba3b1",
+            "passed": true
+          },
+          "errors": []
+        },
+        {
+          "id": "missing",
+          "family": "missing-data",
+          "status": "pending",
+          "attempt": 1,
+          "adversary": null,
+          "errors": []
+        },
+        {
+          "id": "mix",
+          "family": "mixture",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "qVersion": "5e29f491279c0530998f1e140af0c6d867430afbfcddc2d2cae90170cd29a1b4",
+            "clarityScore": 5,
+            "appropriate": true,
+            "at": "2026-11-18T19:08:14.501Z",
+            "concreteIssue": "Kein belegbarer Fehler: Der vorgegebene Schritt ÷ 4 führt zu 0,25 l Sirup für 1 l Wasser. Danach ergibt × 14 in beiden Spalten die Zielzeile mit 3,5 l Sirup. Die Pfeile sind je Spalte separat ausfüllbar; der vorgegebene erste Schritt ist eine passende Hilfe und verrät kein gesuchtes Feld.",
+            "solvable": true,
+            "leaksAnswer": false,
+            "passed": true
+          },
+          "errors": []
+        },
+        {
+          "id": "motion",
+          "family": "physics",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "leaksAnswer": false,
+            "passed": true,
+            "solvable": true,
+            "appropriate": true,
+            "at": "2026-11-18T19:08:00.828Z",
+            "concreteIssue": "Kein belegbarer Fehler: Rechts ergeben sich 26 ÷ 2 = 13 km und 13 × 7 = 91 km. Der linke Pfeil mit × 7 gibt einen passenden Hinweis auf den offenen rechten Faktor, ohne die gesuchte Strecke vorwegzunehmen. Die gegebenen Zahlen bleiben erhalten, und beide Spalten haben eigene Pfeile.",
+            "qVersion": "6645ee35f0025d405077b2a222d4d60462edd51892e3c57108cc41405132d0bb",
+            "clarityScore": 5
+          },
+          "errors": []
+        },
+        {
+          "id": "negative",
+          "family": "signed-chain",
+          "status": "pending",
+          "attempt": 1,
+          "adversary": null,
+          "errors": []
+        },
+        {
+          "id": "nonlinear",
+          "family": "nonlinear",
+          "status": "pending",
+          "attempt": 1,
+          "adversary": null,
+          "errors": []
+        },
+        {
+          "id": "percent",
+          "family": "percent",
+          "status": "ready",
+          "attempt": 2,
+          "kind": "direct",
+          "adversary": {
+            "solvable": true,
+            "at": "2026-11-18T19:07:18.119Z",
+            "qVersion": "8046784f2a3c5066d36b0f2b0b4fd8380d7dbcb4aa9199a33a72705a7c7b2faf",
+            "leaksAnswer": false,
+            "concreteIssue": "Die Aufgabe ist lösbar: Rechts ergeben sich 3 € und 36 €, die beiden offenen Pfeilfaktoren sind jeweils 12. Die Hilfestufe ist passend, da der Rechenweg über 1 % vorgegeben ist, ohne offene Felder vorwegzunehmen. Die Anweisung „Ergänze den Rechenweg über 1 in der linken Spalte“ ist etwas missverständlich, weil auch rechts ein Pfeilfaktor fehlt. Klarer wäre: „Ergänze alle offenen Felder in beiden Spalten.“",
+            "passed": true,
+            "clarityScore": 4,
+            "appropriate": true
+          },
+          "errors": []
+        },
+        {
+          "id": "price",
+          "family": "unit-price",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "direct",
+          "adversary": {
+            "clarityScore": 5,
+            "leaksAnswer": false,
+            "at": "2026-11-18T19:07:31.046Z",
+            "solvable": true,
+            "passed": true,
+            "appropriate": true,
+            "concreteIssue": "Kein belegbarer Fehler: 14 € ÷ 4 ergibt 3,50 € pro Heft, und beide unteren Pfeile benötigen den Faktor 9. Damit kosten 9 Hefte 31,50 €. Die getrennten Pfeile und die vorgegebenen Divisionen bieten eine passende Hilfe, ohne die gesuchten Preise vorwegzunehmen.",
+            "qVersion": "e62a556f4ef5ce85798a50be56e3401391b9c19a032b7a132317c1e8441622dd"
+          },
+          "errors": []
+        },
+        {
+          "id": "rate",
+          "family": "inverse-rate",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "inverse",
+          "adversary": {
+            "clarityScore": 5,
+            "appropriate": true,
+            "at": "2026-11-18T19:08:28.827Z",
+            "solvable": true,
+            "leaksAnswer": false,
+            "concreteIssue": "Kein belegbarer Fehler. Rechts ergibt sich zunächst 9 × 40 = 360 h. Der offene Pfeil ist ÷ 60, sodass die gesuchte Fahrzeit 6 h beträgt. Die vorgegebenen Pfeile stützen den Rechenweg, ohne eines der offenen Felder vorwegzunehmen.",
+            "passed": true,
+            "qVersion": "259020814ad73d57d13459be3e32920179343e330098c764137353501825d1b5"
+          },
+          "errors": []
+        },
+        {
+          "id": "recipe",
+          "family": "recipe",
+          "status": "ready",
+          "attempt": 3,
+          "kind": "direct",
+          "adversary": {
+            "solvable": true,
+            "qVersion": "8eac7c7d0228ad311a3d3a2fc1b1b9a266dacee0ea2e5b3b19a59fe184408c47",
+            "leaksAnswer": false,
+            "clarityScore": 5,
+            "concreteIssue": "Kein belegbarer Fehler: 450 ÷ 6 = 75 g, danach 75 × 8 = 600 g. Die getrennten Spaltenpfeile und die vorgegebenen Rechenschritte bieten eine passende Hilfe; der letzte rechte Pfeil und beide gesuchten Mehlmengen bleiben offen.",
+            "at": "2026-11-18T19:07:47.247Z",
+            "appropriate": true,
+            "passed": true
+          },
+          "errors": []
+        },
+        {
+          "id": "supply",
+          "family": "inverse-supply",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "inverse",
+          "adversary": {
+            "clarityScore": 5,
+            "concreteIssue": "Kein belegbarer Fehler. Die vorgegebenen Pfeile führen korrekt zur Zwischenzeile: links 3 ÷ 3 = 1, rechts 30 × 3 = 90. Im zweiten Schritt müssen die Lernenden selbst links × 5 und rechts ÷ 5 wählen und die Reichweite von 18 Tagen berechnen. Die Hilfe zeigt den ersten Schritt, ohne ein gesuchtes Feld vorwegzunehmen.",
+            "appropriate": true,
+            "passed": true,
+            "qVersion": "1de03c2be7d86bf0c390f1ab49f5965c908e3f8305e9f9c15651fd9cfe8f8563",
+            "at": "2026-11-18T19:08:31.177Z",
+            "leaksAnswer": false,
+            "solvable": true
+          },
+          "errors": []
+        },
+        {
+          "id": "time",
+          "family": "additive-time",
+          "status": "pending",
+          "attempt": 1,
+          "adversary": null,
+          "errors": []
+        },
+        {
+          "id": "work",
+          "family": "inverse-work",
+          "status": "ready",
+          "attempt": 1,
+          "kind": "inverse",
+          "adversary": {
+            "qVersion": "36c7204650fdcb0cb7f545a5ad811b47767a3d321974f5e420cbfa22e58417ad",
+            "passed": true,
+            "at": "2026-11-18T19:08:13.409Z",
+            "leaksAnswer": false,
+            "solvable": true,
+            "clarityScore": 5,
+            "appropriate": true,
+            "concreteIssue": "Kein belegbarer Fehler. Die vorgegebenen Pfeile führen zur Zwischenzeit 28 × 3 = 84 Minuten und lassen den letzten rechten Pfeil (÷ 7) sowie die Zielzeit (12 Minuten) offen. Die erste Pfeilstufe zeigt die gegenläufigen Rechenoperationen als passende Hilfe für Klasse 7."
+          },
+          "errors": []
+        }
+      ]
+    }
+  ],
+  "comparisons": [],
+  "transfer": null,
+  "selectedPhase": null,
+  "finalCount": 0
+}

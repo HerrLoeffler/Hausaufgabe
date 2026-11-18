@@ -1,0 +1,12 @@
+{
+  "changedAspect": "labels",
+  "generationHint": "Verwende für Kurzlabels vollständige, ungekürzte Wörter; kürze sie nicht mitten im Wort ab.",
+  "reason": "Die Aufgaben sind insgesamt klar und bestanden. Als einzige wiederkehrende konkrete Unsauberkeit fiel bei den Zuordnungslabels eine mitten im Wort abgeschnittene Beschriftung auf.",
+  "version": 1,
+  "recipeHash": "4df71c1a6e8306491580a6f9eecf03d3bb8e60792418df972a306550b30a0b17",
+  "unchanged": false,
+  "parentPhase": "dev0",
+  "developmentInputHash": "87db9e55088af286eabfc7cd07014f2432e0dbca1c62c0f42c9271127de53165",
+  "at": "2026-11-18T19:09:46.632Z",
+  "modelWeightsTrained": false
+}

@@ -55,3 +55,6 @@ test('a delayed adversarial verdict cannot overwrite a later attempt',async()=>{
  let release,started=false;const wait=new Promise(r=>{release=r;}),engine={getRun:async()=>db.docs.get(run),providerCall:async()=>{started=true;await wait;return {output_text:JSON.stringify({solvable:true,appropriate:true,leaksAnswer:false,clarityScore:4,concreteIssue:'OLD'})};}};
  const pending=handle({db,uid,engine,data:{action:'trainingAutoAdversary',phase:'dev0',caseId:'english'}});while(!started)await new Promise(r=>setImmediate(r));await ref.update({attempt:2,adversary:{passed:true,marker:'NEW'}});release();const result=await pending;assert.equal(result.stale,true);assert.equal((await ref.get()).data().adversary.marker,'NEW');
 });
+test('aggregate recipe optimization prioritizes failed first attempts using the stronger model while generation and judges remain unchanged',()=>{
+ const {request}=require('./auto-loop.cjs'),r=request('optimize',{});assert.equal(r.model,'gpt-6.2-sol');assert.equal(r.reasoning.effort,'medium');assert.match(r.input[0].content,/Erstversuch|Fehlversuch/);assert.match(r.input[0].content,/Kosmetik/);
+});
