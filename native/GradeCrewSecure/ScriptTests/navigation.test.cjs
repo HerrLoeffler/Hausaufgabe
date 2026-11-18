@@ -68,3 +68,32 @@ test('numbered task jumps are immediate rather than animating through many pages
  w.document.querySelectorAll('.secureQuestionNumber')[29].click();
  assert.equal(target.behavior,'auto');dom.window.close();
 });
+
+test('sidebar follows visible viewport without recreating answers and uses no top navigation offset',()=>{
+ const {dom,w,messages}=setup({t:'Unverändert'});
+ const nav=w.document.querySelector('#secureNavigation'),input=w.document.querySelector('textarea');
+ Object.defineProperty(w,'innerWidth',{value:1100,configurable:true});
+ Object.defineProperty(w,'innerHeight',{value:750,configurable:true});
+ nav.getBoundingClientRect=()=>({height:400,bottom:400});
+ w.dispatchEvent(new w.Event('resize'));
+ assert.equal(w.document.documentElement.classList.contains('secureSidebar'),true);
+ assert.equal(w.document.documentElement.style.getPropertyValue('--secure-nav-height'),'0px');
+ assert.equal(messages.filter(m=>m.type==='layout').at(-1).sidebar,true);
+ input.focus();Object.defineProperty(w,'innerHeight',{value:350,configurable:true});w.dispatchEvent(new w.Event('resize'));
+ assert.equal(w.document.documentElement.classList.contains('secureSidebar'),false);
+ assert.equal(w.document.querySelector('textarea'),input);assert.equal(input.value,'Unverändert');assert.equal(w.document.activeElement,input);
+ dom.window.close();
+});
+test('sidebar submission requests native confirmation only and freeze disables it',()=>{
+ const {dom,w,messages}=setup();const submit=w.document.querySelector('#secureSidebarSubmit');
+ assert.ok(submit);assert.equal(submit.disabled,true);
+ w.gcSetCanSubmit(true);submit.click();assert.equal(messages.at(-1).type,'requestSubmit');
+ assert.equal(messages.some(m=>m.type==='submit'),false);
+ w.gcFreezeAnswers();w.gcSetCanSubmit(true);assert.equal(submit.disabled,true);
+ dom.window.close();
+});
+test('Escape closes compact overview and returns focus to its toggle',()=>{
+ const {dom,w}=setup();Object.defineProperty(w,'innerWidth',{value:390});w.dispatchEvent(new w.Event('resize'));const toggle=w.document.querySelector('#secureOverviewToggle');toggle.click();
+ w.document.querySelector('.secureQuestionNumber').focus();w.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape'}));
+ assert.equal(toggle.getAttribute('aria-expanded'),'false');assert.equal(w.document.activeElement,toggle);dom.window.close();
+});

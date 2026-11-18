@@ -17,7 +17,7 @@ struct SecureStagingScreen: View {
         VStack(spacing:0) {
             if let payload = model.paper, assessment.active {
                 SecureExamFrame(header:SecureExamHeader(title:model.title,participant:model.name,remaining:model.remaining),
-                                footer:model.phase == .active ? SecureExamFooter(storageStatus:model.storageStatus,warning:model.message.isEmpty ? nil : model.message,canSubmit:model.canSubmit,onSubmit:{ model.requestSubmitConfirmation() }) : nil) {
+                                footer:model.phase == .active ? SecureExamFooter(storageStatus:model.storageStatus,warning:model.message.isEmpty ? nil : model.message,canSubmit:model.canSubmit,onSubmit:{ model.requestSubmitConfirmation() },showSubmit:!model.sidebarLayout) : nil) {
                     ZStack {
                         SecureExamWebView(payload:payload,answers:model.restoredAnswers,revision:model.savedRevision,coordinator:model).id(model.attemptID)
                         if model.phase != .active {
@@ -68,11 +68,8 @@ struct SecureStagingScreen: View {
             Button("Prüfungsmodus starten") { Task { await model.startOrRecover() } }
             Button("Abbrechen",role:.cancel) {}
         }
-        .confirmationDialog(SecureSubmissionSummary.title(total:(model.paper?["paper"] as? [[String:Any]])?.count ?? 0,completed:model.answeredCount), isPresented:Binding(get:{model.showingSubmitConfirmation},set:{if !$0 {model.hideSubmitConfirmation()}}), titleVisibility:.visible) {
-            Button("Jetzt abgeben") {
-                Task { await model.submitConfirmed() }
-            }
-            Button("Weiterarbeiten",role:.cancel) { model.cancelSubmitConfirmation() }
+        .sheet(isPresented:Binding(get:{model.showingSubmitConfirmation},set:{if !$0 {model.cancelSubmitConfirmation()}})) {
+            SecureSubmitConfirmation(model:model)
         }
     }
     private var welcomeWidth:CGFloat {
@@ -122,5 +119,27 @@ struct SecureStagingScreen: View {
         #endif
         }
         }
+    }
+}
+
+private struct SecureSubmitConfirmation:View {
+    @ObservedObject var model:SecureExamCoordinator
+    @State private var word=""
+    var body:some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment:.leading,spacing:20) {
+                    Text(SecureSubmissionSummary.title(total:(model.paper?["paper"] as? [[String:Any]])?.count ?? 0,completed:model.answeredCount)).font(.title2.bold()).fixedSize(horizontal:false,vertical:true)
+                    Text("Nach der Abgabe kannst du deine Antworten nicht mehr ändern.")
+                    Text("Gib zur Bestätigung \(model.submissionWord) ein.").font(.headline)
+                    TextField(model.submissionWord,text:$word).textFieldStyle(.roundedBorder).textInputAutocapitalization(.characters).autocorrectionDisabled().accessibilityLabel("Bestätigungswort: "+model.submissionWord)
+                    Button("Verbindlich abgeben") { Task {await model.submitConfirmed(word:word)} }
+                        .buttonStyle(.borderedProminent).controlSize(.large)
+                        .disabled(!model.canSubmit || word.trimmingCharacters(in:.whitespacesAndNewlines).uppercased() != model.submissionWord)
+                    Button("Weiterarbeiten",role:.cancel) {model.cancelSubmitConfirmation()}.controlSize(.large)
+                }.padding(24).frame(maxWidth:560).frame(maxWidth:.infinity)
+            }.navigationTitle("Test abgeben").navigationBarTitleDisplayMode(.inline)
+                .toolbar {ToolbarItem(placement:.cancellationAction) {Button("Abbrechen") {model.cancelSubmitConfirmation()}}}
+        }.onDisappear {word=""}
     }
 }

@@ -8,7 +8,7 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
   const toggle = navRoot.querySelector('#secureOverviewToggle');
   const sections = new Map([...root.querySelectorAll('.secureQuestion')].map(node => [node.dataset.qid, node]));
   const bindings = [], states = new Map();
-  let index = 0, locked = false, destroyed = false, navigating = false, timer = null, frame = null, anchor = null;
+  let index = 0, locked = false, destroyed = false, navigating = false, timer = null, frame = null, anchor = null, sidebar = null;
   const bind = (node, name, callback, options) => { node.addEventListener(name,callback,options);bindings.push(()=>node.removeEventListener(name,callback,options)); };
   const buttons = paper.map((question, i) => {
     const button = document.createElement('button');
@@ -27,15 +27,20 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
   }
   function measure() {
     const font=parseFloat(getComputedStyle(numbers).fontSize)||19;
-    const compact=(font>27 && (navRoot.clientWidth<600 || window.innerHeight<850)) || window.innerHeight<500 || (navRoot.clientWidth>0 && navRoot.clientWidth<400);
+    const width=window.visualViewport?.width || window.innerWidth;
+    const height=window.visualViewport?.height || window.innerHeight;
+    const wide=width>=1024 && height>=600 && width/Math.max(1,font/19)>=1024;
+    document.documentElement.classList.toggle('secureSidebar',wide);
+    if(sidebar!==wide) { sidebar=wide;root.dispatchEvent(new CustomEvent('securelayoutchange',{detail:{sidebar:wide}})); }
+    const compact=!wide && ((font>27 && (navRoot.clientWidth<600 || window.innerHeight<850)) || window.innerHeight<500 || (navRoot.clientWidth>0 && navRoot.clientWidth<400));
     navRoot.classList.toggle('compactNavigation',compact);
     current.textContent=compact ? `${index+1} / ${paper.length}` : `Aufgabe ${index+1} von ${paper.length}`;
     current.setAttribute('aria-label',`Aufgabe ${index+1} von ${paper.length}`);
     toggle.textContent=navRoot.classList.contains('overviewOpen') ? (compact?'Schließen':'Übersicht schließen') : 'Übersicht';
     const columns=Math.max(1,Math.min(12,Math.floor((numbers.clientWidth+8)/(Math.max(48,font*3.2)+8))));
     numbers.style.setProperty('--secure-nav-columns',String(columns));
-    const height=navRoot.getBoundingClientRect().height;
-    document.documentElement.style.setProperty('--secure-nav-height',height+'px');
+    const offset=sidebar ? 0 : navRoot.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--secure-nav-height',offset+'px');
   }
   function sync() {
     if(destroyed) return;
@@ -51,7 +56,11 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
       button.setAttribute('aria-label',`Aufgabe ${i+1} von ${paper.length}, ${state==='complete'?'bearbeitet':state==='started'?'begonnen':'offen'}${selected?', aktuell':''}`);
     });
     const selected=buttons[index];
-    if(selected && !navRoot.classList.contains('overviewOpen') && typeof numbers.scrollTo==='function') {
+    if(selected && sidebar && typeof numbers.scrollTo==='function') {
+      const top=selected.offsetTop-numbers.offsetTop;
+      if(top<numbers.scrollTop || top+selected.offsetHeight>numbers.scrollTop+numbers.clientHeight) numbers.scrollTo({top:Math.max(0,top-numbers.clientHeight/2+selected.offsetHeight/2),behavior:'auto'});
+    }
+    if(selected && !sidebar && !navRoot.classList.contains('overviewOpen') && typeof numbers.scrollTo==='function') {
       numbers.scrollTo({left:Math.max(0,selected.offsetLeft-numbers.offsetLeft-numbers.clientWidth/2+selected.offsetWidth/2),behavior:'auto'});
     }
   }
@@ -61,7 +70,7 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
     index=target;anchor=id;navigating=true;clearTimeout(timer);sync();measure();
     root.querySelectorAll('audio').forEach(audio=> { if(!section.contains(audio) && !audio.paused) audio.pause(); });
     if(focus) { section.tabIndex=-1;section.focus({preventScroll:true}); }
-    const top=(window.innerHeight<250 ? (section.querySelector('h2') || section) : section).getBoundingClientRect().top+window.scrollY-navRoot.getBoundingClientRect().height-8;
+    const top=(window.innerHeight<250 ? (section.querySelector('h2') || section) : section).getBoundingClientRect().top+window.scrollY-(sidebar ? 0 : navRoot.getBoundingClientRect().height)-8;
     window.scrollTo({top:Math.max(0,top),behavior:'auto'});
     timer=setTimeout(()=>{navigating=false;realign();},700);
     root.dispatchEvent(new CustomEvent('securequestionchange',{detail:{questionId:id,index}}));
@@ -72,7 +81,7 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
     frame=requestAnimationFrame(()=> {
       frame=null;if(navigating) return;
       if(anchor){realign();return;}
-      const edge=navRoot.getBoundingClientRect().bottom+9;
+      const edge=(sidebar ? 0 : navRoot.getBoundingClientRect().bottom)+9;
       let best=0;
       paper.forEach((q,i)=> { if(sections.get(q.id)?.getBoundingClientRect().top<=edge) best=i; });
       if(index!==best) { index=best;sync();root.dispatchEvent(new CustomEvent('securequestionchange',{detail:{questionId:paper[index]?.id,index}})); }
@@ -85,13 +94,14 @@ function createQuestionNavigation({paper, root, navRoot, reducedMotion = false})
   bind(window,'resize',()=>{measure();realign();scrollSync();});
   const cancelNavigation=()=>{anchor=null;navigating=false;clearTimeout(timer);};
   bind(window,'wheel',cancelNavigation,{passive:true});bind(window,'touchstart',cancelNavigation,{passive:true});
-  bind(window,'keydown',event=>{if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' ','Tab'].includes(event.key))cancelNavigation();});
+  bind(window,'keydown',event=>{if(event.key==='Escape' && !sidebar && navRoot.classList.contains('overviewOpen')) {setOverview(false);toggle.focus({preventScroll:true});}
+    if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' ','Tab'].includes(event.key))cancelNavigation();});
   bind(root,'pointerdown',cancelNavigation,{passive:true});
   function realign() {
     if(!anchor || destroyed || locked) return;
     const section=sections.get(anchor);if(!section)return;
     const target=window.innerHeight<250 ? (section.querySelector('h2') || section) : section;
-    const delta=target.getBoundingClientRect().top-navRoot.getBoundingClientRect().height-8;
+    const delta=target.getBoundingClientRect().top-(sidebar ? 0 : navRoot.getBoundingClientRect().height)-8;
     if(Math.abs(delta)>1)window.scrollTo({top:Math.max(0,window.scrollY+delta),behavior:'auto'});
   }
   if(window.visualViewport) bind(window.visualViewport,'resize',()=>{measure();realign();scrollSync();});

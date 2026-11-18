@@ -50,7 +50,10 @@ for test in [false,true] {
     let png=try variantPNG(test:test)
     let icon=assets.appendingPathComponent(test ? "TestAppIcon.appiconset" : "AppIcon.appiconset")
     try FileManager.default.createDirectory(at:icon,withIntermediateDirectories:true)
-    try png.write(to:icon.appendingPathComponent("AppIcon.png"))
+    // Preserve the chosen Secure Store identity while retaining the distinct Test icon.
+    let storeIcon=test ? png : try Data(contentsOf:root.appendingPathComponent("Brand/SecureAppIcon.png"))
+    guard let bitmap=NSBitmapImageRep(data:storeIcon),bitmap.pixelsWide==1024,bitmap.pixelsHigh==1024,!bitmap.hasAlpha else {fatalError("Secure icon must be opaque 1024x1024")}
+    try storeIcon.write(to:icon.appendingPathComponent("AppIcon.png"))
     try "{\"images\":[{\"filename\":\"AppIcon.png\",\"idiom\":\"universal\",\"platform\":\"ios\",\"size\":\"1024x1024\"}],\"info\":{\"author\":\"xcode\",\"version\":1}}".write(to:icon.appendingPathComponent("Contents.json"),atomically:true,encoding:.utf8)
     let logo=assets.appendingPathComponent(test ? "GradeCrewTestLogo.imageset" : "GradeCrewLogo.imageset")
     try FileManager.default.createDirectory(at:logo,withIntermediateDirectories:true)

@@ -67,3 +67,18 @@ button { min-width:44px; max-width:100%; overflow-wrap:anywhere; }
   .secureNavigation.overviewOpen .secureQuestionNumbers { max-height:min(160px,24vh); }
   .compactNavigation .secureNavigationMain strong { min-width:60px; }
 }
+
+/* Single answer DOM: only placement changes when the usable viewport changes. */
+#secureSidebarSubmit { display:none; }
+.secureSidebar main { max-width:1200px;display:grid;grid-template-columns:minmax(0,1fr) 13rem;gap:20px;align-items:start; }
+.secureSidebar #secureQuestions { grid-column:1;grid-row:1;min-width:0; }
+.secureSidebar .secureNavigation { grid-column:2;grid-row:1;top:0;max-height:calc(100dvh - 32px);display:flex;flex-direction:column;gap:10px;margin:0; }
+.secureSidebar .secureNavigationMain { display:grid;grid-template-columns:44px minmax(0,1fr) 44px; }
+.secureSidebar .secureNavigationMain strong { min-width:0;text-align:center;font-size:.85rem; }
+.secureSidebar #secureOverviewToggle { display:none; }
+.secureSidebar .secureNavigation .secureQuestionNumbers { display:grid;grid-template-columns:repeat(var(--secure-nav-columns,3),minmax(0,1fr));min-height:60px;max-height:none;overflow:auto;padding:6px; }
+.secureSidebar .secureQuestionNumber { min-width:0;padding:8px 4px; }
+.secureSidebar .secureNavigationLegend { display:block;font-size:.72rem; }
+.secureSidebar #secureSidebarSubmit { display:block;width:100%;min-height:56px;flex-shrink:0;font-weight:700;color:white;background:#2b59ce;border-color:#2b59ce; }
+.secureSidebar #secureSidebarSubmit:disabled { color:#4b5e75;background:#e0e7f2;border-color:#6b7d96;cursor:default; }
+.secureSidebar .secureQuestion { scroll-margin-top:8px; }
