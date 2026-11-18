@@ -3,7 +3,7 @@
   "quizId": "training:fields-arrows8-20261118-v1",
   "expected": 8,
   "status": "running",
-  "spentMicros": 45395,
+  "spentMicros": 56665,
   "reservedMicros": 0,
   "limitMicros": 1000000,
   "cases": [
@@ -30,21 +30,17 @@
     },
     {
       "id": "graph-clarify",
-      "status": "rejected",
+      "status": "ready",
       "family": "selection",
-      "attempt": 3,
-      "errors": [
-        "Der Auftrag erfüllt den ursprünglichen Wunsch nicht."
-      ]
+      "attempt": 4,
+      "errors": []
     },
     {
       "id": "graph-decline",
-      "status": "rejected",
+      "status": "ready",
       "family": "selection",
-      "attempt": 3,
-      "errors": [
-        "Text fehlt oder ist zu lang."
-      ]
+      "attempt": 4,
+      "errors": []
     },
     {
       "id": "graph-english",
@@ -55,23 +51,18 @@
     },
     {
       "id": "graph-inverse",
-      "status": "rejected",
+      "status": "ready",
       "family": "mathematics",
-      "attempt": 3,
-      "errors": [
-        "Der Auftrag verändert oder verliert Angaben des Wunsches.",
-        "Der öffentliche Auftrag verrät eine gesuchte Antwort."
-      ]
+      "attempt": 4,
+      "errors": []
     },
     {
       "id": "graph-percent",
       "status": "rejected",
       "family": "mathematics",
-      "attempt": 3,
+      "attempt": 4,
       "errors": [
-        "Die Form passt nicht zum festgelegten Prüfwunsch.",
-        "Der Auftrag erfüllt den ursprünglichen Wunsch nicht.",
-        "Die Darstellung ist fachlich ungeeignet."
+        "Dreisatz vollständig angeben."
       ]
     }
   ]

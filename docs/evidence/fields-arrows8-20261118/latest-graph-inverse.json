@@ -1,10 +1,7 @@
 {
-  "at": "2026-11-18T17:41:21.834Z",
+  "at": "2026-11-18T17:45:53.587Z",
   "caseId": "graph-inverse",
-  "status": "rejected",
-  "attempt": 3,
-  "errors": [
-    "Der Auftrag verändert oder verliert Angaben des Wunsches.",
-    "Der öffentliche Auftrag verrät eine gesuchte Antwort."
-  ]
+  "status": "ready",
+  "attempt": 4,
+  "errors": []
 }

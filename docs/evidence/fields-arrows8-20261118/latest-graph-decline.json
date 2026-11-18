@@ -1,9 +1,7 @@
 {
-  "at": "2026-11-18T17:42:02.975Z",
+  "at": "2026-11-18T17:46:03.090Z",
   "caseId": "graph-decline",
-  "status": "rejected",
-  "attempt": 3,
-  "errors": [
-    "Text fehlt oder ist zu lang."
-  ]
+  "status": "ready",
+  "attempt": 4,
+  "errors": []
 }

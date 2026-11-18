@@ -55,3 +55,7 @@ test('a stated intermediate unit is given and never scores a revealed answer',()
  assert.equal(task.spec.rows[2][2].input,false);assert.equal(task.spec.rows[2][2].text,'1');
  assert.equal(task.solution.cells.some(x=>x.id==='r3c3'),false);assert.equal(score(q,graphAnswer(q)),q.points);
 });
+test('a compact two-column arithmetic draft expands deterministically to four actual arrows without false drawing instructions',()=>{
+ const p={kind:'direct',relationship:'direct',a:'100',b:'240',c:'15',constantRate:true,labels:['Prozent (%)','Betrag (€)'],title:'Prozentwert',subject:'Mathematik',text:'Zeichne zwei Pfeile und fülle die zweite Zeile.',intermediateMode:'fixed',arrowModes:['factor','factor']};
+ const q=buildGraph(p,{id:'compact'});assert.equal(score(q,graphAnswer(q)),q.points);assert.doesNotMatch(q.text,/Zeichne zwei|zweite Zeile/);assert.match(q.text,/240/);
+});

@@ -15,7 +15,13 @@ function text(value,max=500){
 }
 function buildGraph(plan,{id,modes}={}){
   if(['direct','inverse'].includes(plan.kind)){
-    const q=buildCandidate(plan,{id,modes:modes||plan.arrowModes});
+    let arrows=modes||plan.arrowModes,content=plan;
+    if(plan.kind==='direct'&&arrows?.length===2){
+      arrows=[arrows[0],arrows[1],arrows[0],arrows[1]];
+      if(!Array.isArray(plan.labels)||plan.labels.length!==2)throw Error('Zwei Größen mit Einheiten angeben.');
+      content={...plan,text:`${plan.a} ${plan.labels[0]} entsprechen ${plan.b} ${plan.labels[1]}. Berechne den Wert in ${plan.labels[1]} für ${plan.c} ${plan.labels[0]}.`};
+    }
+    const q=buildCandidate(content,{id,modes:arrows});
     if(plan.intermediateMode!=='choice'){
       const task=JSON.parse(q.visualTask),cell=task.spec.rows[2][2],answer=task.solution.cells.find(x=>x.id===cell.id);
       cell.input=false;cell.text=answer.accepted[0];task.solution.cells=task.solution.cells.filter(x=>x.id!==cell.id);

@@ -1,11 +1,9 @@
 {
-  "at": "2026-11-18T17:41:31.286Z",
+  "at": "2026-11-18T17:45:54.207Z",
   "caseId": "graph-percent",
   "status": "rejected",
-  "attempt": 3,
+  "attempt": 4,
   "errors": [
-    "Die Form passt nicht zum festgelegten Prüfwunsch.",
-    "Der Auftrag erfüllt den ursprünglichen Wunsch nicht.",
-    "Die Darstellung ist fachlich ungeeignet."
+    "Dreisatz vollständig angeben."
   ]
 }

@@ -1,0 +1,6 @@
+{
+  "caseId": "graph-clarify",
+  "sourceCommit": "0a2565ef3364ba416b20e4abb97d1630dd049898",
+  "technicalCorrection": "Belegte Korrektur der Auswahlregeln, gegebenen Zwischenstufe, gezielten Einzelrückfrage und fehlertoleranten Überschrift; vollständige alte Versuche bleiben erhalten.",
+  "requestId": "bca32ff5-f04e-446f-a292-39a48f336105"
+}

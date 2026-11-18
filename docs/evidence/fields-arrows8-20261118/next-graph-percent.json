@@ -1,7 +1,7 @@
 {
-  "at": "2026-11-18T17:41:28.146Z",
+  "at": "2026-11-18T17:45:46.096Z",
   "action": "step",
   "caseId": "graph-percent",
-  "status": "generated",
-  "attempt": 3
+  "status": "pending",
+  "attempt": 4
 }
