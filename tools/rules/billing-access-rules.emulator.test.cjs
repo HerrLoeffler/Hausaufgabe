@@ -4,7 +4,7 @@ const { initializeTestEnvironment, assertFails, assertSucceeds } = require("@fir
 const { doc, setDoc, updateDoc, getDoc, deleteDoc } = require("firebase/firestore");
 assert.match(process.env.FIRESTORE_EMULATOR_HOST || "", /^(127\.0\.0\.1|localhost):\d+$/);
 let env;
-test.before(async () => { env = await initializeTestEnvironment({ projectId: "demo-gradecrew-billing", firestore: { rules: fs.readFileSync("firestore.secure-assessment.rules", "utf8") } }); });
+test.before(async () => { env = await initializeTestEnvironment({ projectId: "demo-gradecrew-billing", firestore: { rules: fs.readFileSync(process.env.GRADECREW_BILLING_RULES_FILE || "firestore.secure-assessment.rules", "utf8") } }); });
 test.after(async () => { await env.cleanup(); });
 const personal = { kind: "personal", id: "teacher" };
 async function seed(until = Date.now() + 86400000) {

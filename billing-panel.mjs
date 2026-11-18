@@ -24,7 +24,7 @@ export function paintBillingPanel(root,access,{loading=false,error,onRefresh,onC
   if(access.payments?.portalAvailable){const manage=element(doc,'button','Abo und Rechnungen verwalten','button secondary');manage.type='button';manage.dataset.action='manage-subscription';manage.onclick=()=>onManage?.();root.append(manage);}
   if(access.payments?.invoices?.length){
     const invoices=element(doc,'section');invoices.append(element(doc,'h3','Deine persönlichen Rechnungen'));
-    for(const invoice of access.payments.invoices){const money=value=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(value/100);invoices.append(element(doc,'p',`${invoice.id} · ${money(invoice.total)} · ${invoice.status==='paid'?'Bezahlt':invoice.status==='void'?'Storniert':invoice.status==='uncollectible'?'Uneinbringlich':money(invoice.remaining)+' offen'}`));}
+    for(const invoice of access.payments.invoices){const money=value=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(value/100);invoices.append(element(doc,'p',`${invoice.invoiceNumber||'Testrechnung'} · ${money(invoice.total)} · ${invoice.status==='paid'?'Bezahlt':invoice.status==='void'?'Storniert':invoice.status==='uncollectible'?'Uneinbringlich':money(invoice.remaining)+' offen'}`));}
     if(access.payments.hasMoreInvoices)invoices.append(element(doc,'p','Weitere Rechnungen findest du in der Aboverwaltung.','hint'));root.append(invoices);
   }
   if(access.payments?.hasSubscription)return;

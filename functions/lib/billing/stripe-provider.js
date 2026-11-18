@@ -39,9 +39,16 @@ function createStripeProvider({ apiKey, Stripe = require("stripe") } = {}) {
       (interval === null ? price.recurring != null : price.recurring?.interval !== interval || price.recurring?.interval_count !== 1)) throw new TypeError("Ungültiger Tarif.");
     return price;
   }
-  async function createCustomer({ buyerKey }) {
+  async function createCustomer({ buyerKey, testClockId = null }) {
     id(buyerKey);
-    return guarded(async () => testObject(await client.customers.create({ metadata: { gc_buyer_key: buyerKey } }, { idempotencyKey: idem("customer", buyerKey) })));
+    if (testClockId !== null && (typeof testClockId !== "string" || !/^clock_[A-Za-z0-9]+$/.test(testClockId))) throw new TypeError("Ungültige Testuhr.");
+    return guarded(async () => {
+      if (testClockId) {
+        const clock = testObject(await client.testHelpers.testClocks.retrieve(testClockId), testClockId);
+        if (clock.status !== "ready") throw new TypeError("Testuhr noch nicht bereit.");
+      }
+      return testObject(await client.customers.create({ metadata: { gc_buyer_key: buyerKey }, ...(testClockId ? { test_clock: testClockId } : {}) }, { idempotencyKey: idem("customer", buyerKey) }));
+    });
   }
   async function createCheckout(input) {
     const { orderId, customerId, priceId } = input;
@@ -73,9 +80,14 @@ function createStripeProvider({ apiKey, Stripe = require("stripe") } = {}) {
   }
   const retrieveSubscription = subscriptionId => { id(subscriptionId); return guarded(async () => testObject(await client.subscriptions.retrieve(subscriptionId), subscriptionId)); };
   const retrieveCheckout = checkoutId => { id(checkoutId); return guarded(async () => testObject(await client.checkout.sessions.retrieve(checkoutId), checkoutId)); };
-  async function createPortal({ customerId, returnUrl }) {
-    id(customerId); const address = returnAddress(returnUrl);
-    return guarded(() => client.billingPortal.sessions.create({ customer: customerId, return_url: address.href }));
+  async function createPortal({ customerId, returnUrl, configurationId }) {
+    id(customerId); id(configurationId); const address = returnAddress(returnUrl);
+    if (!/^bpc_[A-Za-z0-9]+$/.test(configurationId)) throw new TypeError("Portal-Konfiguration fehlt.");
+    return guarded(async () => {
+      const config = testObject(await client.billingPortal.configurations.retrieve(configurationId), configurationId);
+      if (!config.active || !config.features?.invoice_history?.enabled || !config.features?.subscription_cancel?.enabled || config.features.subscription_cancel.mode !== "at_period_end" || config.features.subscription_update?.enabled !== false) throw new TypeError("Unstimmige Portal-Konfiguration.");
+      return client.billingPortal.sessions.create({ customer: customerId, configuration: configurationId, return_url: address.href });
+    });
   }
   async function createSchoolInvoice(input) {
     id(input.orderId); id(input.customerId);

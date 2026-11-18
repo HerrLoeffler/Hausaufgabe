@@ -17,7 +17,7 @@ async function seed() {
   time = start + 20 * day; calls = []; invoices = new Map(); subscriptions = new Map(); sessions = new Map(); failCheckout = false; schoolPaymentBeforeReply = false;
   for (const c of ["users", "accountDeletions", "appConfig", "billingV2Accounts", "billingV2Grants", "billingV2Orders", "billingV2Buyers", "billingV2PurchaseLocks", "billingV2StripeEvents", "billingV2Invoices", "billingV2Reviews", "billingV2Schools", "billingV2Periods", "billingV2Memberships", "billingV2Audit", "billingV2Ledger", "quizzes"]) await db.recursiveDelete(db.collection(c));
   for (const uid of ["teacher", "other", "admin"]) await db.doc("users/" + uid).set({ role: uid === "admin" ? "admin" : "teacher", status: "active" });
-  await db.doc("appConfig/billingProduct").set({ enabled: true, allowedUids: ["teacher", "other", "admin"], payments: { enabled: true, ready: true, accountId: "acct_1UYUaw1l0zkqOtXr", returnUrl: "https://gradecrew-staging-2026--billing-product-test.web.app/", prices: { "personal-monthly": "price_month", "personal-yearly": "price_year", "school-yearly": "price_school" } } });
+  await db.doc("appConfig/billingProduct").set({ enabled: true, allowedUids: ["teacher", "other", "admin"], payments: { enabled: true, ready: true, accountId: "acct_1UYUaw1l0zkqOtXr", portalConfigurationId: "bpc_test", personalTestClockId: "clock_test", returnUrl: "https://gradecrew-staging-2026--billing-product-test.web.app/", prices: { "personal-monthly": "price_month", "personal-yearly": "price_year", "school-yearly": "price_school" } } });
   const provider = {
     createCustomer: async data => { calls.push(["customer", data]); return { id: "cus_" + data.buyerKey, livemode: false }; },
     createCheckout: async data => {
@@ -94,6 +94,13 @@ test("clients cannot supply prices, buyers, foreign return URLs or disable the c
   await db.doc("appConfig/billingProduct").update({ "payments.enabled": false });
   await assert.rejects(service.checkout(request("other", purchase().data)), { code: "failed-precondition" });
 });
+test("personal test-clock binding is persisted with the buyer and does not attach the school buyer", async () => {
+  await seed(); await ordered();
+  assert.equal(calls.find(c => c[0] === "customer")[1].testClockId, "clock_test");
+  const made = await service.createSchool(request("admin", { ownerId: "teacher", name: "Clock independent school", seats: 1, startDate: "2026-11-21", requestId: "school-clock-test" }));
+  await service.schoolInvoice(request("teacher", { schoolId: made.schoolId, requestId: "school-clock-invoice" }));
+  assert.equal(calls.filter(c => c[0] === "customer")[1][1].testClockId, null);
+});
 test("checkout completion binds the subscription but never activates Premium", async () => {
   await seed(); const order = await ordered();
   await service.processStripeEvent(event("evt_complete", "checkout.session.completed", { id: "cs_" + order.id }));
@@ -164,6 +171,7 @@ test("portal always uses the caller's personal buyer and refund events become re
   await seed(); await ordered();
   await service.portal(request("teacher", { customerId: "cus_foreign" }));
   assert.equal(calls.find(c => c[0] === "portal")[1].customerId, calls.find(c => c[0] === "checkout")[1].customerId);
+  assert.equal(calls.find(c => c[0] === "portal")[1].configurationId, "bpc_test");
   await assert.rejects(service.portal(request("other", { customerId: "cus_foreign" })), { code: "not-found" });
   await service.processStripeEvent(event("evt_refund", "charge.refunded", { id: "ch_test", customer: "cus_x" }));
   assert.equal((await db.collection("billingV2Reviews").get()).size, 1);
@@ -177,6 +185,20 @@ test("a school payment before a lost finalize reply preserves the same invoice a
   assert.equal((await db.doc("billingV2Periods/" + made.periodId).get()).data().paymentStatus, "paid");
   const result = await service.schoolInvoice(request("teacher", { schoolId: made.schoolId, requestId: "school-retry-reply" }));
   assert.equal(result.invoiceId, "in_school"); assert.match(result.url, /invoice.stripe.com/); assert.equal(calls.filter(c => c[0] === "school").length, 1);
+});
+test("school payment unlocks the separate assessment guard without a subsequent account refresh", async () => {
+  await seed(); const made = await service.createSchool(request("admin", { ownerId: "teacher", name: "Immediate school activation", seats: 1, startDate: "2026-11-01", requestId: "school-auto-activate" }));
+  const assessment = require("node:module").createRequire(require("node:path").resolve(__dirname, "../../assessment-functions/package.json"));
+  const { requireBillingPublish } = assessment("./lib/billing-access");
+  const publish = () => db.runTransaction(tx => requireBillingPublish(tx, db, { auth: { token: { email_verified: true } } }, "teacher"));
+  const account = (await db.doc("billingV2Accounts/teacher").get()).data();
+  assert.equal(account?.emailVerified, true);
+  await assert.rejects(publish(), { code: "permission-denied" });
+  const result = await service.schoolInvoice(request("teacher", { schoolId: made.schoolId, requestId: "school-auto-invoice" }));
+  const order = (await db.doc("billingV2Orders/" + result.orderId).get()).data();
+  const value = paidInvoice(order, "in_school"); value.parent = null; value.metadata = { gc_order_id: order.id }; value.lines.data[0].parent = { type: "invoice_item_details", invoice_item_details: { proration: false } };
+  invoices.set(value.id, value); await service.processStripeEvent(event("evt_auto_school", "invoice.paid", { id: value.id }));
+  await publish();
 });
 test("the actual event-to-HTTP path forwards only historical unowned paid invoices", async () => {
   await seed(); let forwarded = 0;

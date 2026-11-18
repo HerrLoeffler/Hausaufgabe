@@ -35,6 +35,15 @@ test("repeated customer requests use a stable idempotency key and opaque metadat
   assert.deepEqual(customers[0].data, customers[1].data);
   assert.equal(customers[0].data.email, undefined);
 });
+test("a personal sandbox customer is attached to the verified ready test clock before Checkout", async () => {
+  const { SDK, calls } = fixture(); let mode = "ready";
+  class ClockSDK extends SDK { testHelpers = { testClocks: { retrieve: async id => ({ id, livemode: false, status: mode }) } }; }
+  const provider = createStripeProvider({ apiKey: "sk_test_fixture", Stripe: ClockSDK });
+  await provider.createCustomer({ buyerKey: "personal_teacher", testClockId: "clock_test" });
+  assert.equal(calls.find(c => c.op === "customer").data.test_clock, "clock_test");
+  mode = "advancing"; await assert.rejects(provider.createCustomer({ buyerKey: "other_teacher", testClockId: "clock_test" }));
+  assert.equal(calls.filter(c => c.op === "customer").length, 1);
+});
 test("Checkout uses the bound customer, a verified price and server order metadata without a second trial", async () => {
   const { provider, calls } = fixture();
   const input = { orderId: "order_test", customerId: "cus_test", priceId: "price_month", unitAmount: 1500, interval: "month", returnUrl: "https://gradecrew-staging-2026--billing-product-abc.web.app/" };
@@ -83,10 +92,15 @@ test("school invoice creation isolates its line items, supports EU bank transfer
 });
 test("portal return address is constrained to the GradeCrew test preview", async () => {
   const { SDK } = fixture();
-  class PortalSDK extends SDK { billingPortal = { sessions: { create: async data => ({ url: "https://billing.stripe.com/test", ...data }) } }; }
+  let active = true;
+  class PortalSDK extends SDK { billingPortal = { configurations: { retrieve: async id => ({ id, active, livemode: false, features: { invoice_history: { enabled: true }, subscription_cancel: { enabled: true, mode: "at_period_end" }, subscription_update: { enabled: false } } }) }, sessions: { create: async data => ({ url: "https://billing.stripe.com/test", ...data }) } }; }
   const provider = createStripeProvider({ apiKey: "sk_test_fixture", Stripe: PortalSDK });
-  await assert.rejects(provider.createPortal({ customerId: "cus_test", returnUrl: "https://gradecrew.de" }));
-  assert.match((await provider.createPortal({ customerId: "cus_test", returnUrl: "https://gradecrew-staging-2026--billing-product-test.web.app/" })).url, /billing.stripe/);
+  const input = { customerId: "cus_test", configurationId: "bpc_test", returnUrl: "https://gradecrew-staging-2026--billing-product-test.web.app/" };
+  await assert.rejects(provider.createPortal({ ...input, returnUrl: "https://gradecrew.de" }));
+  const session = await provider.createPortal(input);
+  assert.match(session.url, /billing.stripe/); assert.equal(session.configuration, "bpc_test");
+  active = false; await assert.rejects(provider.createPortal(input));
+  await assert.rejects(provider.createPortal({ ...input, configurationId: undefined }));
 });
 test("the real pinned SDK transport canonicalizes exact invoice decimals before domain validation", async () => {
   const ActualStripe = require("stripe");

@@ -23,7 +23,7 @@ test('account changes terminate payment-return polling',async()=>{
 });
 test('personal Premium shows its own invoice status and a management button instead of a second subscription',()=>{
   const dom=new JSDOM('<main></main>'),root=dom.window.document.querySelector('main');let opened=0;
-  paintBillingPanel(root,{tier:'personal_premium',featureCodes:[],purchasingEnabled:true,plans:[{code:'personal-monthly',interval:'month',currency:'eur',amountMinor:1500}],payments:{portalAvailable:true,hasSubscription:true,invoices:[{id:'in_paid',total:1500,remaining:0,status:'paid'}]}},{onManage:()=>{opened++;}});
+  paintBillingPanel(root,{tier:'personal_premium',featureCodes:[],purchasingEnabled:true,plans:[{code:'personal-monthly',interval:'month',currency:'eur',amountMinor:1500}],payments:{portalAvailable:true,hasSubscription:true,invoices:[{id:'in_paid',invoiceNumber:'GC-0001',total:1500,remaining:0,status:'paid'}]}},{onManage:()=>{opened++;}});
   const button=root.querySelector('[data-action=manage-subscription]');assert.ok(button);button.click();assert.equal(opened,1);
-  assert.equal(root.textContent.includes('Monatsabo wählen'),false);assert.match(root.textContent,/in_paid/);assert.match(root.textContent,/Bezahlt/);
+  assert.equal(root.textContent.includes('Monatsabo wählen'),false);assert.match(root.textContent,/GC-0001/);assert.equal(root.textContent.includes('in_paid'),false);assert.match(root.textContent,/Bezahlt/);
 });

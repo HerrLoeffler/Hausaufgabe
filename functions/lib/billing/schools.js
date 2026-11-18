@@ -38,11 +38,12 @@ function createSchoolOperations({store,now,caller,context,admin,identity,fail,ke
     const id=key(actor.uid,"school",rid),periodId=key(id,"first-period"),fingerprint=key(name,owner.uid,data.seats,data.startDate);
     return store.transaction(async tx=>{
       const operator=await context(tx,actor);admin(operator,request,now());
-      await context(tx,owner);
+      const ownerContext=await context(tx,owner);
       if(!owner.emailVerified)fail("failed-precondition","Schulverwaltung muss die E-Mail-Adresse bestätigt haben.");
       const previous=await tx.get(schoolKey(id));
-      if(previous){if(previous.fingerprint!==fingerprint)fail("already-exists","Anfrage-ID bereits anders verwendet.");return{schoolId:id,periodId,replayed:true};}
+      if(previous){if(previous.fingerprint!==fingerprint)fail("already-exists","Anfrage-ID bereits anders verwendet.");ownerContext.saveAccount();return{schoolId:id,periodId,replayed:true};}
       await capacity(tx,owner.uid);
+      ownerContext.saveAccount();
       const school={id,name,status:"active",ownerId:owner.uid,seats:data.seats,usedSeats:1,reservedSeats:0,adminCount:1,currentPeriodId:periodId,periodIds:[periodId],renewalMode:"manual_confirmation",createdAtMs:now(),fingerprint};
       tx.create(schoolKey(id),school);
       tx.create("billingV2Periods/"+periodId,{...calendar,schoolId:id,paymentStatus:"open",amountMinor:data.seats*SCHOOL_ANNUAL_SEAT_MINOR,unitAmountMinor:SCHOOL_ANNUAL_SEAT_MINOR,quantity:data.seats,currency:"eur",taxBehavior:"inclusive",invoiceId:null,createdAtMs:now()});

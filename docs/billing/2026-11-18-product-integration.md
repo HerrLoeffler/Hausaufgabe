@@ -82,3 +82,40 @@ Konkreter noch nicht angewandter Berechtigungsentwurf: tools/billing/stage-permi
 Unabhängiges Review des neuen Zahlungsschnitts abgeschlossen;3kritische und4wichtige Befunde in genau einer Korrekturrunde mit reproduzierenden RED→GREEN-Prüfungen behoben: tatsächlicher Stripe23Decimal-Datentyp, kein positiver Zahlungsbeweis aus Voll-/Teilguthaben oder manueller OffStripe-Buchung, Basis-kontextgebundene Quellpatches statt zufällig verbleibender Doppelzeile, explizite bestehende Zahlungsdienst-Identität in beiden echten Endpointexporten, wiederaufnehmbare bereits bezahlte Schulrechnung samt vor Finalisierung gebundener Rechnungskennung und tatsächlicher Leistungsperiodenprüfung, Legacyweiterleitung ausschließlichhistorischesinvoice.paid, einmal aufgelöste unveränderliche CommitSHA und exakt gebundener Cloudobjektpfad.545/545Functions,58/58kombinierte lokale DB/Auth/Rules/Assessmentfälle,35/35gezielte SDK-/HTTP-/Vertragsfälle und7/7Builderfälle grün; Lint grün. Review hat Cloud/IAM/Echtkauf und sämtliche98Dienste nicht als geprüft ausgegeben.
 
 Kleinere Reviewreste ausdrücklich offen: einheitliche Vorschau-Suffixregel in Bereitschaft/CORS; erster paidAt-Zeitpunkt statt Empfangszeit des letzten unterschiedlichen bezahlten Schulevents. Aktueller Firebase-Vorschausuffix ist alphanumerisch; Rechnung/Ereignisse und Zugang werden dadurch nicht doppelt gewährt. Beide Punkte vor breitem Konfigurations-/Buchhaltungsbetrieb ergänzen. Manuelle Wiederherstellung abgelaufener Checkoutvorgänge und erneuter Kauf nach vollständig beendetem Abo weiterhin dokumentierte Pilotgrenzen. Guthabenverrechnung/Rabatt- und Erstattungsregeln bleiben getrennt; aktuell dürfen reduzierte oder manuell quittierte Beträge keine automatische neue Freigabe erzeugen.
+
+Schreibrouten-Abdeckung:18kanonische Dienste sind mit strenger Basis-/Quellkontextbindung als erhaltende Artefakte vorbereitet. Sechs unterschiedliche ursprüngliche Quellenstände wurden in getrennten Testspiegeln mit284/284,360/360,3/3,419/419,362/362und363/363Fällen geprüft. Historische VM-Mocks erhalten ausschließlich im temporären Testspiegel die neue Abhängigkeit mit deaktiviertem Billing; deploybare Originaltestdateien bleiben byteidentisch. Diese ursprünglichen Belege ersetzen keinen erneuten Artefaktbau für den abschließenden Commit.
+
+Der zusätzliche HTTP-Adapter für alte Prototypen wurde nach seinem separaten Review vollständig zurückgezogen, bevor er veröffentlicht wurde. Die tatsächlichen30ursprünglichen Lehrkraft-Handler wurden mit einer normalen teacher-Identität im lokalen Emulator ausgeführt:30/30weisen das neue Zahlungstestkonto bereits mit permission-denied zurück, externe Providerverbindungen waren gesperrt. Die3alten Taskworker sind durch ihre bestehenden Aufrufrechte geschützt: IAM-Prüfung aktiv, keine öffentlichen Dienst-/Projektbindungen und kein übergeordnetes Projekt. Keine33Prototypenänderungen nötig. Rolle, Quellgenerationen und effektive Aufrufrechte vor Aktivierung erneut prüfen; spätere Ausweitung auf andere Identitäten braucht einen neuen Nachweis.
+
+## Aktueller Arbeitsstand und nächste Schritte – 18. November 2026
+
+Die separate Testanmeldung ist bestätigt und angemeldet. Kennwort und Unterrichtsdaten wurden nicht kopiert. Es ist keine weitere Bestätigung dieses Einrichtungsschritts offen.
+
+Bereits umgesetzt bzw. vorbereitet:
+
+- Bestätigte Produktregeln:14Tage und höchstens5neue Dateien insgesamt, auch manuell/kopiert/importiert; Bearbeitung zählt nicht zusätzlich, Löschen erstattet keinen Platz. Kein automatischer kostenpflichtiger Übergang.
+- Persönliche Tarife15EUR/Monat und120EUR/Jahr; Schule50EUR/Platz/Jahr, jeweils brutto. Schule mit persönlichen Einladungen, zugeordneten Plätzen und bewusst bestätigter Jahresverlängerung. Kostenlose Kollegenfreigabe als unabhängige Berechtigung.
+- Stripe-Testprodukte und passende Preise angelegt; Rechnungsportal mit Rechnungshistorie und Kündigung zum Periodenende vorbereitet. Separat gebundene Testuhr für das persönliche Verlängerungsszenario angelegt, noch nicht vorgestellt. Keine neuen Kunden, Abos oder Rechnungen dieses Produktpiloten erzeugt.
+- Die private Pilotkonfiguration bleibt deaktiviert. Eigener Vorschaukanal reserviert, noch ohne veröffentlichte Website. Kein anderer Vorschaukanal ersetzt.
+- Schulzugang wird im eigenständig laufenden Veröffentlichungsdienst direkt gegen aktive Mitgliedschaft und bezahlte Jahresperiode geprüft. Keine vorherige manuelle Kontostatus-Aktualisierung nötig. Serverseitiger bestätigter Kontoanker wird auch bei Schulzuordnung gespeichert.
+- Rechnungsansicht zeigt die lesbare Rechnungsnummer, sobald vorhanden. Rechnungsentwürfe mit vorhandenem Logo liegen privat vor; keine rechtsgültige Rechnung ausgestellt und keine E-Mail verschickt.
+- Bestehende Stage-Datenbankregeln wurden aus der aktuell veröffentlichten Quelle gezielt ergänzt. Bestehende Chapter-/Bewertungs-/Asset-Schutzregeln und andere aktuelle Regeln bleiben erhalten.12/12gezielte Prüfungen dieses vorbereiteten Regelstands grün; keine Regelveröffentlichung.
+- Letzte lokale Prüfung:546/546Functions,94/94Assessment,60/60kombinierte Billing-/Auth-/Rules-/Veröffentlichungsfälle,12/12ausgewählte Clientfälle und7/7Quellerhalt-Builderfälle grün; Syntax/Lint grün. Die tatsächlichen alten Handler30/30wurden zusätzlich separat geprüft. Diese Zahlen sind lokale Nachweise, kein veröffentlichter vollständiger Zahlungstest.
+
+Vor Veröffentlichung offen:
+
+1. Martins ausstehende Freigabe für genau drei zusätzliche Rechte des bestehenden Zahlungsdienstes im getrennten Testprojekt: Benutzerstatus lesen, Datensätze suchen, Zahlungs-/Zugangsdaten aktualisieren. Manifest:tools/billing/stage-permissions-plan.json. Die Cloudrechte gelten technisch projektweit; die engere Konto-/Eigentümerprüfung erfolgt zusätzlich im Anwendungscode. Keine stillschweigende Zustimmung aus Wartezeit.
+2. Abschließenden unveränderlichen Commit und neu gebaute18Quellpakete prüfen, aktuelle Cloudquellen/Rollen/Aufrufrechte erneut vergleichen und Rückfallstände sichern.
+3. Ausschließlich neue Testdienste, gezielt ergänzte bestehende Testdienste, vorbereitete Stage-Regeln und eigene Testvorschau veröffentlichen. Vorhandenen Stripe-Sandbox-Webhook unter Erhalt seines Signaturgeheimnisses anbinden; historische Rechnungen weiter zum bisherigen Dienst führen.
+4. Erst nach diesen Nachweisen die erlaubte Testidentität aufnehmen und Kaufbereitschaft aktivieren.
+
+Danach tatsächlich testen:
+
+1. Angemeldetes Testkonto: fünf neue manuelle Dateien zählen; sechste Anlage vor Zahlung abweisen. PayPal-Erstzahlung vom Nutzer auf der Stripe-Testseite bestätigen lassen; signiertes Rechnungsereignis, Premiumanzeige und tatsächlich erlaubte sechste Datei nachweisen.
+2. Persönliche Verlängerung mit separater Stripe-Testuhr: neue vollständig bezahlte Periode und verlängertes Zugangsende prüfen. Ein bloßer simulierter Webhook ist kein vollständiger Verlängerungsbeweis.
+3. Neue50EUR-Schulrechnung:10EURund20EURautomatisch zuordnen,20EURRestbetrag und noch gesperrten Schulzugang nachweisen; erst mit weiteren20EURvoll bezahlt und Schulzugang aktiv. Der historische30EUR-Fall mit10+20bleibt ein eigener alter Nachweis.
+4. Eigene Abrechnungen, fremde Zugriffsversuche, Kündigung/Zahlungsausfall und Wiederaufnahme prüfen. Falls Bankteilzahlungen nicht automatisch abgeglichen werden, die dafür nötige Sandbox-Einstellung konkret benennen; keinen manuellen Ausgleich als automatischen Nachweis ausgeben.
+
+Für einen späteren echten Verkauf gesondert offen: rechtliche Rechnungsangaben und Steuerkennungen sicher hinterlegen, tatsächlichen Rechnungs-/Mahnungs-E-Mailversand prüfen, Anbieter für Buchhaltung/Archivierung und optional DATEV festlegen, Steuer-/Erstattungs-/Streitfallregeln abschließen sowie das bestehende Stripe-Geschäftsprofil und Auszahlungskonto vervollständigen. Rabattcodes bleiben eine spätere Stripe-Funktion. Keine Aussage „automatisch finanzamtfertig“.
+
+Live bleibt unverändert. Die GesamtaufgabeGC-BILLING-PLAN-01 ist weiterhin offen.

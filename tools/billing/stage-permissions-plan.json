@@ -5,8 +5,16 @@
   "account": "acct_1UYUaw1l0zkqOtXr",
   "paymentServiceAccount": "gradecrew-billing-sandbox@gradecrew-staging-2026.iam.gserviceaccount.com",
   "existingRole": "projects/gradecrew-staging-2026/roles/gradecrewBillingSandboxGrants",
-  "existingPermissions": ["datastore.databases.get", "datastore.entities.create", "datastore.entities.get"],
-  "proposedAdditionalPermissions": ["datastore.entities.list", "datastore.entities.update", "firebaseauth.users.get"],
+  "existingPermissions": [
+    "datastore.databases.get",
+    "datastore.entities.create",
+    "datastore.entities.get"
+  ],
+  "proposedAdditionalPermissions": [
+    "datastore.entities.list",
+    "datastore.entities.update",
+    "firebaseauth.users.get"
+  ],
   "purpose": {
     "datastore.entities.list": "Find this server's school membership, entitlement and invoice records in transactions.",
     "datastore.entities.update": "Record invoice reconciliation, paid intervals, entitlement projections and idempotent processing state.",
@@ -16,15 +24,35 @@
   "secrets": {
     "create": [],
     "newAccessGrants": [],
-    "reuse": ["GRADECREW_BILLING_SANDBOX_STRIPE_API_KEY", "GRADECREW_BILLING_SANDBOX_STRIPE_WEBHOOK_SECRET"],
-    "mountOnly": ["billingPayments", "billingStripeWebhook"]
+    "reuse": [
+      "GRADECREW_BILLING_SANDBOX_STRIPE_API_KEY",
+      "GRADECREW_BILLING_SANDBOX_STRIPE_WEBHOOK_SECRET"
+    ],
+    "mountOnly": [
+      "billingPayments",
+      "billingStripeWebhook"
+    ]
   },
   "webhook": {
     "existingEndpoint": "we_1Ud9fP1l0zkqOtXrBghZ9wfE",
     "proposedUrl": "https://europe-west1-gradecrew-staging-2026.cloudfunctions.net/billingStripeWebhook",
     "keepExistingSigningSecret": true,
     "preserveLegacyInvoiceProcessingVia": "https://gradecrew-billing-sandbox-ybff4nqitq-ew.a.run.app/billing-test/api/webhook",
-    "events": ["checkout.session.completed", "invoice.paid", "invoice.payment_succeeded", "invoice.payment_failed", "invoice.updated", "invoice.finalized", "invoice.voided", "invoice.marked_uncollectible", "customer.subscription.updated", "customer.subscription.deleted", "charge.refunded", "charge.dispute.created", "charge.dispute.closed"]
+    "events": [
+      "checkout.session.completed",
+      "invoice.paid",
+      "invoice.payment_succeeded",
+      "invoice.payment_failed",
+      "invoice.updated",
+      "invoice.finalized",
+      "invoice.voided",
+      "invoice.marked_uncollectible",
+      "customer.subscription.updated",
+      "customer.subscription.deleted",
+      "charge.refunded",
+      "charge.dispute.created",
+      "charge.dispute.closed"
+    ]
   },
   "activationGates": [
     "Independent payment/source-preservation review and important fixes verified",
@@ -34,5 +62,14 @@
     "Own preview and protected runtime paths deployed before allowedUids/payments.ready activation"
   ],
   "productionChanges": [],
-  "newAccountsOrApiKeys": []
+  "newAccountsOrApiKeys": [],
+  "legacyCompatibility": {
+    "existingTeacherAliasCount": 30,
+    "existingEligibility": "Original source permits only its established prototype identities and global admins; the isolated payment-test identity remains an ordinary teacher and is denied.",
+    "existingWorkers": 3,
+    "workerIam": "Invocation check enabled, no public service or project bindings, no ancestor project parent. Read-only evidence in deployment receipt.",
+    "proposedSourceChanges": 0,
+    "proposedNewGuardModules": 0,
+    "activationRequirement": "Recheck teacher role, prototype source generations and effective worker IAM before enrollment."
+  }
 }

@@ -67,6 +67,7 @@
 
 **Files:** source-preservation builder/receipt unter tools/billing, Nachweise docs/billing und private Testkonfiguration außerhalbGit.
 
+- [ ] Die18kanonischen Schreibdienste und33älteren Lehrkraft-Prototyp-Endpunkte getrennt behandeln. Kanonische Quellen erhalten gezielte Billinghunks. Vorhandene Kontofreigaben der30alten Lehrkraft-Handler mit der neuen normalen teacher-Identität prüfen; die3Taskworker über effektive IAM-Prüfung, öffentliche Bindungen und Elternprojektkontext verifizieren. Ursprüngliche Prototypen bleiben unverändert. Der vorbereitete zusätzliche HTTP-Adapter wird entfernt, weil die tatsächlichen Altquellen die neue Identität bereits ausschließen. Quellen-/IAM-/Rollenprüfung unmittelbar vor Aktivierung wiederholen.
 - [ ] Aktuelle Cloudquellen pro betroffenen Dienstgruppe lesen und Fingerabdrücke festhalten. Nur benötigte Billinghunks in diese Quellen übernehmen. VisualTask/Recipe, aktuelle Audio-/Assessment-Sicherheitsregeln und Providerkonfiguration erhalten.
 - [ ] Prüfpaket aus genauer Quelle bauen, testen und einmal unabhängig prüfen lassen. Berechtigte wichtige Befunde RED→GREEN korrigieren. Konkrete noch notwendige Sicherheitsfreigaben erst mit reviewbarem Manifest erfragen.
 - [ ] Vorhandene Test-Schlüssel lesend an richtige Sandbox binden, Testprodukte/-preise idempotent vorbereiten. Keine Live-Account-/Branding-/Taxregistrierung verändern. Sandbox-Standardsteuerberechnung nur ausdrücklich gekennzeichnete Inlands-Testannahme, automatic_tax ohne geprüfte Registrierung ausgeschaltet lassen.

@@ -59,6 +59,7 @@ function normalizeInvoice(invoice, expected) {
   }
   requireValue(metadata?.gc_order_id === e.orderId);
   return { invoiceId: invoice.id, customerId: e.customerId, subscriptionId, orderId: e.orderId, currency: "eur", total: invoice.total,
+    ...(typeof invoice.number === "string" && invoice.number.length > 0 && invoice.number.length <= 100 ? { invoiceNumber: invoice.number } : {}),
     paidAmount: invoice.amount_paid, remaining: invoice.amount_remaining, status: invoice.status,
     paid: invoice.status === "paid" && invoice.amount_remaining === 0, period };
 }

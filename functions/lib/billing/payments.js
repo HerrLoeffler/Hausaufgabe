@@ -6,7 +6,7 @@ const { URL } = require("node:url");
 const objectId = value => typeof value === "string" ? value : value?.id;
 const MAX_UNCERTAIN_AGE_MS = 20 * 3600000;
 function isPaymentReady(c) {
-    if (c?.enabled !== true || c.ready !== true || c.accountId !== SANDBOX_ACCOUNT || !["personal-monthly", "personal-yearly", "school-yearly"].every(code => typeof c.prices?.[code] === "string" && /^price_[A-Za-z0-9]+$/.test(c.prices[code]))) return false;
+    if (c?.enabled !== true || c.ready !== true || c.accountId !== SANDBOX_ACCOUNT || typeof c.portalConfigurationId !== "string" || !/^bpc_[A-Za-z0-9]+$/.test(c.portalConfigurationId) || typeof c.personalTestClockId !== "string" || !/^clock_[A-Za-z0-9]+$/.test(c.personalTestClockId) || !["personal-monthly", "personal-yearly", "school-yearly"].every(code => typeof c.prices?.[code] === "string" && /^price_[A-Za-z0-9]+$/.test(c.prices[code]))) return false;
     try { const u = new URL(c.returnUrl); return u.protocol === "https:" && !u.username && !u.password && !u.port && /^gradecrew-staging-2026--billing-(product|plan-01)-[a-z0-9-]+\.web\.app$/.test(u.hostname); } catch { return false; }
   }
 function createPaymentOperations({ store, now, caller, context, projectWrites, provider, fail, key, identifier, requestId }) {
@@ -18,7 +18,7 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
     const invoices = await tx.find("billingV2Invoices", [["kind", "==", "personal"], ["ownerId", "==", actor.uid]], 51);
     return { purchasingEnabled: isPaymentReady(ctx.config.payments) && ctx.person.emailVerified === true,
       payments: { portalAvailable: !!buyer?.customerId && isPaymentReady(ctx.config.payments), hasSubscription: !!order?.subscriptionId,
-        invoices: invoices.slice(0, 50).map(i => ({ id: i.id, total: i.total, remaining: i.remaining, status: i.status })), hasMoreInvoices: invoices.length > 50 } };
+        invoices: invoices.slice(0, 50).map(i => ({ id: i.id, invoiceNumber: i.invoiceNumber || null, total: i.total, remaining: i.remaining, status: i.status })), hasMoreInvoices: invoices.length > 50 } };
   }
   function configuration(ctx) {
     const c = ctx.config.payments;
@@ -44,7 +44,7 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
     if (!buyer || buyer.kind !== order.kind || buyer.ownerId !== order.ownerId) fail("failed-precondition", "Käuferbindung fehlt.");
     if (buyer.customerId) return buyer.customerId;
     resumeWindow(buyer.createdAtMs);
-    const customer = checkedObject(await provider.createCustomer({ buyerKey: order.buyerKey }));
+    const customer = checkedObject(await provider.createCustomer({ buyerKey: order.buyerKey, testClockId: buyer.testClockId || null }));
     await store.transaction(async tx => {
       const current = await tx.get(buyerPath(order.buyerKey));
       if (!current || (current.customerId && current.customerId !== customer.id)) fail("failed-precondition", "Käuferbindung widersprüchlich.");
@@ -70,7 +70,7 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
       const order = { id, kind: "personal", ownerId: actor.uid, buyerKey, personId: actor.uid, planCode: plan.code, priceId, unitAmount: plan.amountMinor, quantity: 1, interval: plan.interval,
         returnUrl: config.returnUrl, createdAtMs: now(), state: "creating" };
       ctx.saveAccount();
-      if (!buyer) tx.create(buyerPath(buyerKey), { kind: "personal", ownerId: actor.uid, createdAtMs: now(), customerId: null });
+      if (!buyer) tx.create(buyerPath(buyerKey), { kind: "personal", ownerId: actor.uid, createdAtMs: now(), customerId: null, testClockId: config.personalTestClockId });
       tx.create(orderPath(id), order); tx.create(lockPath(actor.uid), { orderId: id });
       return order;
     });
@@ -101,7 +101,7 @@ function createPaymentOperations({ store, now, caller, context, projectWrites, p
       const ctx = await context(tx, actor), config = configuration(ctx);
       const buyer = await tx.get(buyerPath(key("personal", actor.uid)));
       if (!buyer?.customerId || buyer.kind !== "personal" || buyer.ownerId !== actor.uid) fail("not-found", "Noch kein persönliches Zahlungskonto vorhanden.");
-      return { customerId: buyer.customerId, returnUrl: config.returnUrl };
+      return { customerId: buyer.customerId, returnUrl: config.returnUrl, configurationId: config.portalConfigurationId };
     });
     const result = await provider.createPortal(data);
     return { url: checkedUrl(result.url, "portal") };
