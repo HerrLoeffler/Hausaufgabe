@@ -1145,10 +1145,10 @@
     "legacy_project_changed": false,
     "url": "https://gradecrew.de/",
     "version": "2.3.1-gc45-rc1",
-    "source_commit": "1269509e850d2a0f546c0bd0be366546d0c513d3",
-    "deployed_local_commit": "1269509e850d2a0f546c0bd0be366546d0c513d3",
-    "tree": "d93d6af7cb8716266b54927edbf0cba46b44840c",
-    "user_acceptance": "Emmi answer-audio feedback and compact test cards deployed and hash-verified on gradecrew.de; actual signed-in audio quality and physical iPhone/iPad acceptance pending.",
+    "source_commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+    "deployed_local_commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+    "tree": "4ff814bac8dc3744ab75dcbae7f1b49f0ae909f5",
+    "user_acceptance": "Technical synthetic Stage and Live acceptance passed; human physical-device and separately owned native Secure acceptance remain pending.",
     "alternate_urls": [
       "https://hausaufgabe-staging.web.app/"
     ],
@@ -1547,7 +1547,18 @@
         "humanApproval": "Direct human reply in this chat: Ja, diesen Fix jetzt live veröffentlichen",
         "statusLookup": "First read-only channel-list lookup failed; second succeeded. No redeploy."
       }
-    }
+    },
+    "previous_recorded_root_source_20261118": {
+      "source_commit": "1269509e850d2a0f546c0bd0be366546d0c513d3",
+      "deployed_local_commit": "1269509e850d2a0f546c0bd0be366546d0c513d3",
+      "tree": "d93d6af7cb8716266b54927edbf0cba46b44840c",
+      "user_acceptance": "Emmi answer-audio feedback and compact test cards deployed and hash-verified on gradecrew.de; actual signed-in audio quality and physical iPhone/iPad acceptance pending."
+    },
+    "hosting_version": "899b570925aa4566",
+    "verified_at": "2026-11-18T17:36:50.515413+00:00",
+    "baseline_actual_before_release": "4c736c292a3e618e38715455adb3130b3e972da3",
+    "latest_release_report": "docs/evidence/wilma-recovery-release-20261118/receipt.json",
+    "wilma_review_revision": "reviewwilmaanswers-00005-lax"
   },
   "automation": {
     "preview_deployment": "verified_hosting_current_eb80_candidate",
@@ -2385,11 +2396,11 @@
         "local_functions_tests": 492,
         "ci_run": 44316275229,
         "shared_computer": "diagnosed; plan awaiting approval",
-        "navigation_sidebar": "implemented_in_separate_preview_only_PR435; native/physical acceptance and deployment still pending",
+        "navigation_sidebar": "production in Web d67b0b5: questions left/right overview only>=1180x600; native release separate",
         "emmi_scoped_backend": "not deployed; free capability gate blocks unsupported calls",
         "production_approved": false,
         "handoff": "workstreams/feedback-gc39-release-20261013.md",
-        "production_approval_scope": "Only ready Hosting source805cba9 student progress and Wilma UI approved; combined Emmi/preview scope not approved.",
+        "production_approval_scope": "Earlier isolated Emmi/preview limits retained. New direct human approval covers d67b0b5 reviewWilmaAnswers + Hosting only; released with exact evidence.",
         "hosting_release_20261118": {
           "stage": "production",
           "scope": "student answered markers, teacher sorting/averages and Wilma mobile layout; standard production build only",
@@ -2467,7 +2478,7 @@
           "root_cause": "first503+unknown operation/costSettled true; budget available; provider/receipt/store reason lost by existing catch; not repaired",
           "paid_retries": 0,
           "evidence": "docs/evidence/wilma-sidebar-previews-20261118/wilma-browser.json",
-          "next_action": "Review fictional preview; narrow backend diagnostics/recovery plan requires separate Functions scope and approval",
+          "next_action": "Historical preview retained; final authorized Web release is wilma_recovery_release_20261118; native/device acceptance remains separate.",
           "server_recovery_plan": "docs/superpowers/plans/2026-11-18-wilma-review-recovery.md",
           "footer_alignment_cases": 12,
           "footer_preview": {
@@ -2480,7 +2491,8 @@
             "sorting_clicks": 0,
             "external_requests": 0,
             "review": "PASS: fixture-only repaint action guard fixed and checked"
-          }
+          },
+          "superseded_by_release": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2"
         },
         "navigation_sidebar_preview_20261118": {
           "stage": "branch_only",
@@ -2498,7 +2510,54 @@
           "native_changed": false,
           "contract": "docs/superpowers/plans/2026-11-18-shared-browser-and-navigation.md",
           "evidence": "docs/evidence/wilma-sidebar-previews-20261118/student-browser.json",
-          "next_action": "Preview acceptance and iOS owner alignment through Zentrale; no new live deployment"
+          "next_action": "Historical preview retained; final authorized Web release is wilma_recovery_release_20261118; native/device acceptance remains separate.",
+          "superseded_by_release": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2"
+        },
+        "wilma_recovery_release_20261118": {
+          "stage": "production",
+          "scope": "approved Wilma recovery/callable plus teacher task overview and full-size student Web layout/typed submission",
+          "branch": "fix/wilma-live-recovery-20261118",
+          "commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+          "tree": "4ff814bac8dc3744ab75dcbae7f1b49f0ae909f5",
+          "pull_request": 438,
+          "integration_status": "release candidate composed; PR438 review-ready for target branch integration; no merge claimed",
+          "production_approved": true,
+          "deployed": true,
+          "ci_run": 44353944925,
+          "ci_result": "success",
+          "independent_review": "PASS no P0-P2",
+          "hosting_version": "899b570925aa4566",
+          "backend_revision": "reviewwilmaanswers-00005-lax",
+          "staging_hosting_version": "53f8755a3225464f",
+          "staging_backend_revision": "reviewwilmaanswers-00010-zud",
+          "verified_files_per_origin": 216,
+          "mismatches": 0,
+          "removed_assets": 0,
+          "other_live_functions_unchanged": 61,
+          "other_staging_functions_unchanged": 97,
+          "new_provider_calls": {
+            "staging": 1,
+            "live": 1
+          },
+          "usage_accounting_micros": {
+            "staging": 1012,
+            "live": 1288
+          },
+          "reserved_micros": 0,
+          "real_pupil_grading_writes": 0,
+          "task_size": {
+            "wide_answer_area_css_px": 860,
+            "font_css_px": 16,
+            "sidebar_min_width_css_px": 1180,
+            "sidebar_min_height_css_px": 600,
+            "narrow_layout": "full-width questions; collapsible overview above"
+          },
+          "native": "separate owner; latest size handoff delivered; native release matrix failed, no upload claimed",
+          "physical_devices": "not_tested",
+          "historical_503_reason": "not retrospectively reconstructable; no cause fabricated",
+          "report": "docs/evidence/wilma-recovery-release-20261118/receipt.json",
+          "next_action": "Martin reloads gradecrew.de; physical device acceptance and separately owned Secure build; no further paid QA automatically",
+          "verified_at": "2026-11-18T17:36:50.515413+00:00"
         }
       },
       "question_action_dialogs_20261110": {
@@ -2535,7 +2594,7 @@
       "candidate_ci_job": 112587453495,
       "independent_review": "approved; two correction rounds preserved; final report analysis/web-acceptance-20261007/final-review.md",
       "no_scroll_story": true,
-      "next_action": "Martin tests canonical gc39 startup/login and explicitly published practice solutions after own submission; broader physical-device acceptance remains pending. Production not requested.",
+      "next_action": "Martin reloads gradecrew.de; physical device acceptance and separately owned Secure build; no further paid QA automatically",
       "previous_release": {
         "id": "web-repair-20261007",
         "stage": "staging_deployed",
@@ -3293,7 +3352,8 @@
         "handoff": "workstreams/template-import-20261029.md",
         "receipt": "workstreams/template-import-receipt-20261029.json",
         "next_action": "Ask human approval for exact aadf Hosting-only release on gradecrew.de; after approval freshly reconcile Live8188 or newer before one clone and both-origin hashes. Do not repeat completed tests unless source changes."
-      }
+      },
+      "latest_release": "web_batch_20261118.wilma_recovery_release_20261118"
     },
     {
       "id": "gc-web-polish-20261007",
@@ -4690,7 +4750,7 @@
         "staging_cap_legacy_requests": 7,
         "staging_monthly_budget_eur": 20
       },
-      "next_action": "Martin tests own Stage cases; Production remains explicitly excluded.",
+      "next_action": "Martin reloads gradecrew.de; physical device acceptance and separately owned Secure build; no further paid QA automatically",
       "semantic_preview": {
         "stage": "staging_deployed",
         "source": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
@@ -4985,7 +5045,55 @@
           "Broader teacher quality corpus; no measured99% claim.",
           "Physical device acceptance and further targeted Live correction/Undo/reload checks beyond existing Stage acceptance and automated contracts."
         ]
-      }
+      },
+      "recovery_release_20261118": {
+        "stage": "production",
+        "scope": "approved Wilma recovery/callable plus teacher task overview and full-size student Web layout/typed submission",
+        "branch": "fix/wilma-live-recovery-20261118",
+        "commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+        "tree": "4ff814bac8dc3744ab75dcbae7f1b49f0ae909f5",
+        "pull_request": 438,
+        "integration_status": "release candidate composed; PR438 review-ready for target branch integration; no merge claimed",
+        "production_approved": true,
+        "deployed": true,
+        "ci_run": 44353944925,
+        "ci_result": "success",
+        "independent_review": "PASS no P0-P2",
+        "hosting_version": "899b570925aa4566",
+        "backend_revision": "reviewwilmaanswers-00005-lax",
+        "staging_hosting_version": "53f8755a3225464f",
+        "staging_backend_revision": "reviewwilmaanswers-00010-zud",
+        "verified_files_per_origin": 216,
+        "mismatches": 0,
+        "removed_assets": 0,
+        "other_live_functions_unchanged": 61,
+        "other_staging_functions_unchanged": 97,
+        "new_provider_calls": {
+          "staging": 1,
+          "live": 1
+        },
+        "usage_accounting_micros": {
+          "staging": 1012,
+          "live": 1288
+        },
+        "reserved_micros": 0,
+        "real_pupil_grading_writes": 0,
+        "task_size": {
+          "wide_answer_area_css_px": 860,
+          "font_css_px": 16,
+          "sidebar_min_width_css_px": 1180,
+          "sidebar_min_height_css_px": 600,
+          "narrow_layout": "full-width questions; collapsible overview above"
+        },
+        "native": "separate owner; latest size handoff delivered; native release matrix failed, no upload claimed",
+        "physical_devices": "not_tested",
+        "historical_503_reason": "not retrospectively reconstructable; no cause fabricated",
+        "report": "docs/evidence/wilma-recovery-release-20261118/receipt.json",
+        "next_action": "Martin reloads gradecrew.de; physical device acceptance and separately owned Secure build; no further paid QA automatically",
+        "verified_at": "2026-11-18T17:36:50.515413+00:00"
+      },
+      "latest_release": "recovery_release_20261118",
+      "root_release_fields_note": "Earlier source/hosting/backend fields retain historical release evidence; latest actual release is recovery_release_20261118."
     },
     {
       "id": "secure-appicon-20261118",
@@ -5715,7 +5823,15 @@
     "integration_commit": "22fa3ec8cff23003e409c23c47a78323e3fa16f7",
     "remy_interactive": "normal creation verified:6tasks/12points, YN6HWE5T; not preview-prefix routing",
     "remy_runtime_source": "1cca66feba85bb94c931d1a41064cce16cbadd16",
-    "hosting_files_verified": 212
+    "hosting_files_verified": 212,
+    "wilma_recovery_preview_20261118": {
+      "commit": "d67b0b5b1d4b15ad85ae88f86cfffe761da2f7f2",
+      "prefix": "/wilma/",
+      "hosting_version": "53f8755a3225464f",
+      "backend_revision": "reviewwilmaanswers-00010-zud",
+      "canonical_root_unchanged": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d",
+      "report": "docs/evidence/wilma-recovery-release-20261118/receipt.json"
+    }
   },
   "school_release_20261018": {
     "handoff": "workstreams/live-staging-isolation-20261016.md",
