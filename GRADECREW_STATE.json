@@ -5274,6 +5274,58 @@
       "ci_status": "in_progress_or_queued",
       "app_store_build": "not_yet_uploaded",
       "next_action": "Follow existing full simulator/AAC/signing/upload run29; then verify processed Secure icon and prepare version/reply. DSA still In Review18Nov; no final AppReview submission authorized."
+    },
+    {
+      "id": "secure-phone-compact-20261118",
+      "task_id": "GC-IOS-02 / GC-RELEASE-06",
+      "branch": "feature/secure-live-ready-20261026",
+      "implementation_branch": "fix/secure-phone-chrome-20261118",
+      "observed_head": "1c061200b5b8330689ab483c9d465830a7d9dacb",
+      "stage": "integrated",
+      "pull_request": 443,
+      "handoff": "workstreams/secure-phone-compact-20261118.md",
+      "scope": "Native Secure phone title/clock/footer and on-demand number overview. Original question font and iPad width preserved; no backend/rules/data/AAC changes.",
+      "ci_run": 44404250305,
+      "ci_status": "success",
+      "testflight_prior_version": "1.0 (1313)",
+      "testflight_prior_availability": "explicitly confirmed by Martin",
+      "new_upload_confirmed": true,
+      "app_store_selected_build_unchanged": 1293,
+      "secure_test_unchanged": 1241,
+      "local_verification": "Final-source fixed-clock scrolling, task jumps, actual1.5 WebKit page zoom and narrow/keyboard viewports passed; original font and answer DOM preserved.",
+      "next_action": "Martin updates to1321 and checks compact phone header, readable questions and always-visible clock. No further build or Store review submission.",
+      "ci_jobs": {
+        "native": 135155114107,
+        "phone": 135155114594,
+        "large": 135155114604,
+        "mini": 135155114611,
+        "build_and_upload": 135167380282
+      },
+      "final_source_verification": {
+        "native_ipad": 900,
+        "native_phone": 540,
+        "web_phone": 216,
+        "phone_interactions": 12,
+        "phone_composed": 6,
+        "web_mini": 360,
+        "web_large": 360,
+        "each_tablet_interactions": 12
+      },
+      "testflight_version": "1.0 (1321)",
+      "upload_receipt": {
+        "job": 135167380282,
+        "time_utc": "2026-11-18T22:19:59Z",
+        "delivery_uuid": "3499124c-8a8b-41a9-afcc-327e5e1f834d",
+        "errors": 0,
+        "aac_signed_app": true,
+        "aac_profile": true,
+        "mode": "live-exam",
+        "project": "hausaufgabe-staging"
+      },
+      "testflight_new_availability": "explicitly confirmed by Martin:1321jetztda",
+      "physical_1321_acceptance": "open",
+      "sdk_warning": "90725:futureApril2027SDK27requirement; delivery accepted",
+      "testflight_available": true
     }
   ],
   "deployments": [
