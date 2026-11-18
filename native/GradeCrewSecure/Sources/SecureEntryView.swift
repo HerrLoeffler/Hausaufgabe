@@ -21,7 +21,6 @@ private struct SecureEntryFocusKey:PreferenceKey {
     static func reduce(value:inout String?,nextValue:()->String?) { value=nextValue() ?? value }
 }
 struct SecureWelcomeFrame<Content:View>: View {
-    @Environment(\.horizontalSizeClass) private var widthClass
     @State private var focusedField:String?
 
     var entry:Bool = false
@@ -39,10 +38,10 @@ struct SecureWelcomeFrame<Content:View>: View {
         }.scrollDismissesKeyboard(.interactively)
             .onPreferenceChange(SecureEntryFocusKey.self) { field in
                 focusedField=field
-                if widthClass == .compact,let field { withAnimation { proxy.scrollTo(field,anchor:.top) } }
+                if let field { withAnimation { proxy.scrollTo(field,anchor:.top) } }
             }
             .onReceive(NotificationCenter.default.publisher(for:UIResponder.keyboardDidShowNotification)) { _ in
-                if widthClass == .compact,let focusedField { withAnimation { proxy.scrollTo(focusedField,anchor:.top) } }
+                if let focusedField { withAnimation { proxy.scrollTo(focusedField,anchor:.top) } }
             }
         }.background(SecureTheme.canvas).foregroundStyle(SecureTheme.text).tint(SecureTheme.brand).preferredColorScheme(.light)
     }
