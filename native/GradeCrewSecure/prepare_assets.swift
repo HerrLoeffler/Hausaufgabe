@@ -57,7 +57,8 @@ for test in [false,true] {
     try "{\"images\":[{\"filename\":\"AppIcon.png\",\"idiom\":\"universal\",\"platform\":\"ios\",\"size\":\"1024x1024\"}],\"info\":{\"author\":\"xcode\",\"version\":1}}".write(to:icon.appendingPathComponent("Contents.json"),atomically:true,encoding:.utf8)
     let logo=assets.appendingPathComponent(test ? "GradeCrewTestLogo.imageset" : "GradeCrewLogo.imageset")
     try FileManager.default.createDirectory(at:logo,withIntermediateDirectories:true)
-    try png.write(to:logo.appendingPathComponent("logo.png"))
+    // Live entry and app icon share the approved through-C Secure artwork.
+    try (test ? png : storeIcon).write(to:logo.appendingPathComponent("logo.png"))
     try "{\"images\":[{\"filename\":\"logo.png\",\"idiom\":\"universal\"}],\"info\":{\"author\":\"xcode\",\"version\":1}}".write(to:logo.appendingPathComponent("Contents.json"),atomically:true,encoding:.utf8)
 }
 print("Prepared separate opaque 1024×1024 Secure/TEST lock icons")
