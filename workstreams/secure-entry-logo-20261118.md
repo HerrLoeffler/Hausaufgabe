@@ -14,3 +14,8 @@ Native Vorschau auf schmaler320pt-Ansicht und Tablet geprüft:40/40 Layoutfälle
 
 ## Integriert; neuer einzelner Release läuft
 PR446normalintegriertals82dba253bd64b907c1977f500835173f17929102. Tatsächlicher automatischer TestFlight-Lauf44412446551/run33/attempt1 gestartet, Quelleexakt82dba253. VierbestehendeMatrixgatesunverändertvorSigning/Upload;keinweitererDispatch. NochkeinneuerUpload oderVerfügbarkeitsbeleg.1321istweiterdervomNutzerbestätigtevorigeBuild. NächsterSchritt: vorhandenenRunbisGates/signiertemUploadverfolgen,keinenDoppelbuild.
+
+## Diagnose des ersten iPhone-Gates; begrenzter unveränderter Wiederholungsversuch
+Run44412446551/attempt1: alle drei iPadgates SUCCESS, Phone135183889137FAIL, Upload korrekt SKIPPED. Phone native540/540,Interaktionen12/12,Komposition6/6bestanden;einzelnerWebfall web-phone-small-landscape-large-media-closed meldet Localrenderer notready. Artefakt14477958745 mit OriginalJSON/Bild/Protokoll gesichert. Log enthält RBS/BERenderingVisibilitySink processdoesnotexist; fehlgeschlagenesBild zeigt vorherige offene Übersicht, keine belastbare neue Dokumentgeometrie. Kein belegter Logo-/Produktfehler.
+HTML/JS/Swift-Prüfungsquellen sind gegenüber erfolgreichem1321 unverändert; ProduktdiffnurAssetquelle. Lokaler frischer gleicher Webdurchlauf mitunverändertemCode:216/216+12Interaktionen+6KompositionenSUCCESS. KeinProduktcode-/Timeout-/Assertionwechsel als angeblicheReparatur.
+Geplant ist genau ein gezielter Wiederholungsstart des gescheitertenPhonejobs,gleicheQuelle82dba253. Bestehende iPadbelege wiederverwenden;kein zusätzlicherGesamtbuilddispatch. Fehlschlaghistoriebleibterhalten. BeiWiederholungdesFehlerserneutdiagnostizieren,keineblindegrüneSchleife. NochkeinUpload.
