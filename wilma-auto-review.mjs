@@ -53,7 +53,7 @@ function preparationFailure(error){
 // Two NEW identities per tab/auth session; exact cached identities can reload.
 export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enabled=()=>false,onState=()=>{},onIdle=()=>{},maxRequests=2,allowFreeLookups=false,serverBudgeted=false,allowAutomaticPaid=()=>true}) {
  if(!Number.isInteger(maxRequests)||maxRequests<1||maxRequests>2)throw Error('Automatische Testvorschau: höchstens zwei neue Prüfläufe pro Sitzung.');
- let generation=0,running=null;
+ let generation=0,running=null,runningGeneration=null,rerunGeneration=null;
  const attempted=new Set(),reservedByActor=new Map(),failedByScope=new Map(),states=new Map(),retrySlotsByActor=new Map(),pendingResumes=new Map();
  const scope=ctx=>JSON.stringify([ctx.actor,ctx.quiz?.id]);
  const identity=(ctx,q,s)=>JSON.stringify([ctx.actor,ctx.quiz?.id,q.id,questionSnapshot(q),s.id,s.answers?.[q.id]??'']);
@@ -64,6 +64,12 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
  };
  const failureState=error=>({phase:error?.details?.reviewState==='running'?'waiting':error?.details?.reasonCode==='cache_miss'?'blocked':'error',message:error?.details?.reasonCode==='cache_miss'?'Noch nicht geprüft.':preparationFailure(error),reasonCode:typeof error?.details?.reasonCode==='string'?error.details.reasonCode:undefined,resumeAllowed:error?.details?.reasonCode==='cache_miss',retryAllowed:error?.details?.retryAllowed===true&&Number.isSafeInteger(error?.details?.failedAt),failedAt:Number.isSafeInteger(error?.details?.failedAt)?error.details.failedAt:undefined});
  const publish=(ctx,q,s,key,value)=>{states.set(key,value);onState({questionId:q.id,submissionId:s.id,...value});};
+ const finish=(operation,ctx,savedOnly=false)=>{
+  if(running!==operation)return;
+  running=null;runningGeneration=null;
+  const resumeAutomatic=rerunGeneration===generation;rerunGeneration=null;
+  if(getContext().actor===ctx.actor)onIdle({savedOnly,resumeAutomatic});
+ };
  const manual=({questionId,submissionId,expectedFailureAt}={},mode='recover',isEligible=()=>true)=>{
   const retry=mode==='retry',resume=mode==='resume',savedOnly=mode==='saved',paid=retry||resume;
   if(running)return running;
@@ -88,7 +94,7 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
     if(!savedOnly&&current.grading[q.id].reviewSuggestion.cached!==true&&!['teacher-fundus','accepted-rule'].includes(current.grading[q.id].reviewSuggestion.origin))failedByScope.delete(scope(ctx));
     publishManual({phase:'proposal',message:'Vorschlag bereit · bitte prüfen.',retryAllowed:false,resumeAllowed:false});
    }catch(error){if(same(epoch,ctx,q,s,key)){const next=failureState(error);publishManual(!paid&&next.reasonCode==='cache_miss'&&(['error','waiting'].includes(prior?.phase)||prior?.reasonCode&&prior.reasonCode!=='cache_miss')?prior:next);}}
-  }}).finally(()=>{if(running===operation){running=null;if(getContext().actor===ctx.actor)onIdle({savedOnly});}});running=operation;return operation;
+  }}).finally(()=>finish(operation,ctx,savedOnly));running=operation;runningGeneration=epoch;return operation;
  };
  return {
   recover:payload=>manual(payload),retry:payload=>manual(payload,'retry'),
@@ -98,7 +104,8 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
    const key=identity(ctx,q,s),prior=states.get(key),previous=running;
    if(pendingResumes.has(key))return pendingResumes.get(key);
    const operation=Promise.resolve(previous).then(async()=>{
-    while(running)await running.catch(()=>{});
+    if(!same(epoch,ctx,q,s,key)||!enabled(getContext()))return;
+    while(running){await running.catch(()=>{});if(!same(epoch,ctx,q,s,key)||!enabled(getContext()))return;}
     if(!same(epoch,ctx,q,s,key)||!enabled(getContext()))return;
     // A first-start click always checks saved evidence before authorizing a bill.
     await manual(payload,'saved');
@@ -121,14 +128,14 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
    return manual(payload,'saved',isEligible);
   },
   clear({resetSession=false}={}){
-   generation++;attempted.clear();
+   generation++;attempted.clear();pendingResumes.clear();
    // A results refresh must preserve the budget, failure guard and in-flight
    // busy protection. A real auth change clears private memory for the new actor.
-   if(resetSession){running=null;reservedByActor.clear();failedByScope.clear();states.clear();retrySlotsByActor.clear();pendingResumes.clear();}
+   if(resetSession){running=null;runningGeneration=null;rerunGeneration=null;reservedByActor.clear();failedByScope.clear();states.clear();retrySlotsByActor.clear();}
   },
   isRunning:()=>!!running,
   run(){
-   if(running)return running;
+   if(running){if(runningGeneration!==generation)rerunGeneration=generation;return running;}
    if(pendingResumes.size)return Promise.resolve();
    const ctx=getContext(),epoch=generation;
    if(!ctx.actor||!ctx.quiz||!enabled(ctx))return Promise.resolve();
@@ -174,8 +181,8 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
       if(!allowFreeLookups)break;
      }
     }
-   }).finally(()=>{if(running===operation){running=null;if(getContext().actor===ctx.actor)onIdle();}});
-   running=operation;return operation;
+   }).finally(()=>finish(operation,ctx));
+   running=operation;runningGeneration=epoch;return operation;
   }
  };
 }

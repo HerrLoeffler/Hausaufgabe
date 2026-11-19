@@ -8487,7 +8487,7 @@ function wilmaAutomaticPreview(ctx=wilmaReviewContext()){
 wilmaAutoReview=createWilmaAutoReview({getContext:wilmaReviewContext,parseGaps,enabled:wilmaAutomaticPreview,maxRequests:2,allowFreeLookups:true,serverBudgeted:firebaseConfig.projectId==='hausaufgabe-staging',allowAutomaticPaid:wilmaAutomaticPaidPolicy,
   analyzeAnswer:({questionId,submissionId,allowPaid=true,...options})=>analyzeWilmaQuestion(questionId,'',submissionId,allowPaid,true,options),
   onState:state=>{wilmaPreparation.set(state.questionId+':'+state.submissionId,state);if(!state.savedOnly||!wilmaHasActiveInput(document))wilmaAnswerReview?.refresh();},
-  onIdle:({savedOnly=false}={})=>{if(!savedOnly||!wilmaHasActiveInput(document))wilmaAnswerReview?.refresh({resort:true});if(!savedOnly)void wilmaAutoReview?.run();}
+  onIdle:({savedOnly=false,resumeAutomatic=false}={})=>{if(!savedOnly||!wilmaHasActiveInput(document))wilmaAnswerReview?.refresh({resort:true});if(!savedOnly||resumeAutomatic)void wilmaAutoReview?.run();}
 });
 wilmaAnswerReview=installWilmaAnswerReview({document,
   getContext:wilmaReviewContext,

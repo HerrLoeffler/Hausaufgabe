@@ -34,3 +34,19 @@ test('exhausted Stage session can still retrieve saved results and gives a visib
  await scheduler.run();ready=true;await scheduler.resume({questionId:'q',submissionId:'cachedLater'});assert.ok(ctx.submissions[2].grading.q.reviewSuggestion);assert.equal(calls.filter(p=>p.allowPaid).length,2);
  await scheduler.resume({questionId:'q',submissionId:'unseen'});assert.equal(calls.filter(p=>p.allowPaid).length,2);assert.equal(states.at(-1).reasonCode,'session_limit');assert.equal(states.at(-1).resumeAllowed,false);
 });
+
+test('canceling queued intents on refresh or quiz change cannot stall the new automatic queue',async()=>{
+ for(const change of ['quiz','same-quiz-refresh']){
+  const q={id:'q',type:'text',text:'Nenne ein Tier.',points:1},sub=id=>({id,status:'review',answers:{q:'Giraffe '+id},grading:{q:{autoPoints:0,maxPoints:1,needsReview:true}}}),ctx={actor:'teacher',quiz:{id:'old'},questions:[q],submissions:[sub('missing'),sub('busy')]},calls=[];let release,entered,blocked=true;const begun=new Promise(r=>entered=r);
+  const scheduler=createWilmaAutoReview({getContext:()=>ctx,enabled:()=>true,parseGaps:()=>[],serverBudgeted:true,allowFreeLookups:true,allowAutomaticPaid:()=>false,onIdle:({savedOnly=false}={})=>{if(!savedOnly)void scheduler.run();},analyzeAnswer:async p=>{calls.push({...p,quiz:ctx.quiz.id});if(p.submissionId==='busy'&&blocked){entered();await new Promise(r=>release=r);blocked=false;}throw Object.assign(Error('No saved result'),{details:{reasonCode:'cache_miss',reviewState:'not_started'}});}});
+  const active=scheduler.run();await begun;const queued=scheduler.resume({questionId:'q',submissionId:'missing'});
+  if(change==='quiz')ctx.quiz={id:'new'};ctx.submissions=[sub('new-answer')];scheduler.clear();const next=scheduler.run();release();await Promise.all([active,queued,next]);await new Promise(r=>setImmediate(r));
+  assert.ok(calls.some(p=>p.submissionId==='new-answer'),change+' starts its own queued work after the prior request settles');assert.ok(calls.every(p=>p.allowPaid===false));
+ }
+});
+
+test('a new results context requested during a saved-only first-start lookup resumes after it settles',async()=>{
+ const q={id:'q',type:'text',text:'Begründe.',points:1},sub=id=>({id,status:'review',answers:{q:'Fiktiv '+id},grading:{q:{autoPoints:0,maxPoints:1,needsReview:true}}}),ctx={actor:'teacher',quiz:{id:'old'},questions:[q],submissions:[sub('old')]},calls=[];let release,entered;const begun=new Promise(r=>entered=r);
+ const scheduler=createWilmaAutoReview({getContext:()=>ctx,enabled:()=>true,parseGaps:()=>[],serverBudgeted:true,allowFreeLookups:true,allowAutomaticPaid:()=>false,onIdle:({savedOnly=false,resumeAutomatic=false}={})=>{if(!savedOnly||resumeAutomatic)void scheduler.run();},analyzeAnswer:async p=>{calls.push({...p,quiz:ctx.quiz.id});if(p.savedOnly){entered();await new Promise(r=>release=r);}throw Object.assign(Error('No saved result'),{details:{reasonCode:'cache_miss',reviewState:'not_started'}});}});
+ await scheduler.run();const intent=scheduler.resume({questionId:'q',submissionId:'old'});await begun;ctx.quiz={id:'new'};ctx.submissions=[sub('new')];scheduler.clear();const next=scheduler.run();release();await Promise.all([intent,next]);await new Promise(r=>setImmediate(r));assert.ok(calls.some(p=>p.submissionId==='new'));assert.ok(calls.every(p=>p.allowPaid===false));
+});
