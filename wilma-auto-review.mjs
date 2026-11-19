@@ -10,6 +10,28 @@ export function wilmaAutomaticPaidPolicy({context,submission}){
  return context.allowAutomaticPaid!==false&&Number.isFinite(submitted)&&submitted>=legacyCutoff;
 }
 
+// Returning to an already open page must refresh saved evidence, not restart AI.
+// Focus and visibility events often arrive together; coalesce and bound the reads.
+export function wilmaHasActiveInput(document){
+ return !!document.activeElement?.closest?.('input,textarea,select,[contenteditable="true"]');
+}
+export function installWilmaReceiptRefresh({window,document,getContext,getQuestionId,isVisible,refreshSaved,now=Date.now}){
+ let pending=null,lastAt=-Infinity;
+ const refresh=()=>{
+  if(pending||document.visibilityState!=='visible'||!isVisible()||wilmaHasActiveInput(document))return;
+  const ctx=getContext(),questionId=getQuestionId();
+  if(!ctx.actor||!ctx.quiz?.id||!questionId||now()-lastAt<30000)return;
+  lastAt=now();
+  pending=Promise.resolve().then(()=>{
+   const current=getContext();
+   if(current.actor!==ctx.actor||current.quiz?.id!==ctx.quiz.id||getQuestionId()!==questionId||document.visibilityState!=='visible'||!isVisible()||wilmaHasActiveInput(document))return;
+   return refreshSaved({questionId});
+  }).catch(()=>{}).finally(()=>{pending=null;});
+ };
+ window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',refresh);
+ return ()=>{window.removeEventListener('focus',refresh);document.removeEventListener('visibilitychange',refresh);};
+}
+
 // Only known service messages may add detail; never echo arbitrary provider output.
 function preparationFailure(error){
  const reasons={provider_incomplete:'KI-Antwort unvollständig.',provider_refusal:'Die KI hat keinen Vorschlag geliefert.',provider_format:'KI-Antwortformat nicht verwendbar.',provider_timeout:'Zeitüberschreitung beim KI-Dienst.',provider_access:'KI-Dienstzugang nicht verfügbar.',provider_capacity:'KI-Dienst momentan ausgelastet.',provider_unavailable:'KI-Dienst nicht erreichbar.',receipt_invalid:'KI-Vorschlag konnte nicht sicher zugeordnet werden.',result_store_failed:'Vorschlag konnte nicht dauerhaft gespeichert werden.',result_store_unavailable:'Gespeicherter Vorschlag gerade nicht erreichbar.',review_in_progress:'KI-Prüfung läuft bereits. Status später kostenlos aktualisieren.',result_unknown:'Ergebnis des früheren Prüflaufs nicht sicher verfügbar.',receipt_expired:'Gespeicherter Vorschlag abgelaufen.',cache_miss:'Kein gespeicherter Vorschlag verfügbar. Bitte selbst prüfen.'};
@@ -40,10 +62,10 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
  const failureState=error=>({phase:error?.details?.reviewState==='running'?'waiting':error?.details?.reasonCode==='cache_miss'?'blocked':'error',message:error?.details?.reasonCode==='cache_miss'?'Noch nicht geprüft.':preparationFailure(error),reasonCode:typeof error?.details?.reasonCode==='string'?error.details.reasonCode:undefined,resumeAllowed:error?.details?.reasonCode==='cache_miss',retryAllowed:error?.details?.retryAllowed===true&&Number.isSafeInteger(error?.details?.failedAt),failedAt:Number.isSafeInteger(error?.details?.failedAt)?error.details.failedAt:undefined});
  const publish=(ctx,q,s,key,value)=>{states.set(key,value);onState({questionId:q.id,submissionId:s.id,...value});};
  const manual=({questionId,submissionId,expectedFailureAt}={},mode='recover')=>{
-  const retry=mode==='retry',resume=mode==='resume',paid=retry||resume;
+  const retry=mode==='retry',resume=mode==='resume',savedOnly=mode==='saved',paid=retry||resume;
   if(running)return running;
   const ctx=getContext(),epoch=generation;if(!ctx.actor||!ctx.quiz||!enabled(ctx))return Promise.resolve();
-  const jobs=ctx.questions.filter(q=>q.id===questionId&&['text','gapfill'].includes(q.type)).flatMap(q=>ctx.submissions.filter(s=>!submissionId||s.id===submissionId).filter(s=>reviewItem(q,s,parseGaps).requiresReview).map(s=>({q,s,key:identity(ctx,q,s)})));
+  const jobs=ctx.questions.filter(q=>q.id===questionId&&['text','gapfill'].includes(q.type)).flatMap(q=>ctx.submissions.filter(s=>!submissionId||s.id===submissionId).filter(s=>{const row=reviewItem(q,s,parseGaps);return row.requiresReview&&(!savedOnly||!row.proposal);}).map(s=>({q,s,key:identity(ctx,q,s)})));
   const operation=Promise.resolve().then(async()=>{for(const {q,s,key} of jobs){
    if(!enabled(getContext())||!same(epoch,ctx,q,s,key))break;
    const prior=states.get(key),reserved=reservedByActor.get(ctx.actor)||new Set();
@@ -51,20 +73,28 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
    if(retry&&(!submissionId||prior?.retryAllowed!==true||prior.failedAt!==expectedFailureAt||!serverBudgeted&&reserved.size+(retrySlotsByActor.get(ctx.actor)||0)>=maxRequests))continue;
    if(retry){states.set(key,{...prior,retryAllowed:false});retrySlotsByActor.set(ctx.actor,(retrySlotsByActor.get(ctx.actor)||0)+1);}
    if(resume){reserved.add(key);reservedByActor.set(ctx.actor,reserved);}
-   publish(ctx,q,s,key,{phase:'running',message:paid?'KI-Prüfung läuft …':'Gespeicherten Status prüfen …'});
+   const publishManual=value=>publish(ctx,q,s,key,{...value,...(savedOnly?{savedOnly:true}:{})});
+   publishManual({phase:'running',message:paid?'KI-Prüfung läuft …':'Gespeicherten Status prüfen …'});
    try{
-    await analyzeAnswer({questionId:q.id,submissionId:s.id,allowPaid:paid,...(retry?{retry:true,expectedFailureAt}:{})});
+    await analyzeAnswer({questionId:q.id,submissionId:s.id,allowPaid:paid,...(savedOnly?{savedOnly:true}:{}),...(retry?{retry:true,expectedFailureAt}:{})});
     if(!same(epoch,ctx,q,s,key))break;
     const current=getContext().submissions.find(x=>x.id===s.id);
     if(current.grading?.[q.id]?.reviewState==='confirmed')continue;
     if(!current.grading?.[q.id]?.reviewSuggestion)throw Error('Kein sicher zugeordneter KI-Vorschlag.');
-    failedByScope.delete(scope(ctx));
-    publish(ctx,q,s,key,{phase:'proposal',message:'Vorschlag bereit · bitte prüfen.',retryAllowed:false,resumeAllowed:false});
-   }catch(error){if(same(epoch,ctx,q,s,key)){const next=failureState(error);publish(ctx,q,s,key,!paid&&next.reasonCode==='cache_miss'&&(['error','waiting'].includes(prior?.phase)||prior?.reasonCode&&prior.reasonCode!=='cache_miss')?prior:next);}}
-  }}).finally(()=>{if(running===operation){running=null;if(getContext().actor===ctx.actor)onIdle();}});running=operation;return operation;
+    if(!savedOnly)failedByScope.delete(scope(ctx));
+    publishManual({phase:'proposal',message:'Vorschlag bereit · bitte prüfen.',retryAllowed:false,resumeAllowed:false});
+   }catch(error){if(same(epoch,ctx,q,s,key)){const next=failureState(error);publishManual(!paid&&next.reasonCode==='cache_miss'&&(['error','waiting'].includes(prior?.phase)||prior?.reasonCode&&prior.reasonCode!=='cache_miss')?prior:next);}}
+  }}).finally(()=>{if(running===operation){running=null;if(getContext().actor===ctx.actor)onIdle({savedOnly});}});running=operation;return operation;
  };
  return {
   recover:payload=>manual(payload),retry:payload=>manual(payload,'retry'),resume:payload=>manual(payload,'resume'),
+  async refreshSaved(payload){
+   const ctx=getContext(),epoch=generation,previous=running;
+   if(previous)await previous.catch(()=>{});
+   const current=getContext();
+   if(epoch!==generation||current.actor!==ctx.actor||current.quiz?.id!==ctx.quiz?.id)return;
+   return manual(payload,'saved');
+  },
   clear({resetSession=false}={}){
    generation++;attempted.clear();
    // A results refresh must preserve the budget, failure guard and in-flight

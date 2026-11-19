@@ -76,7 +76,7 @@ import {questionSnapshot} from './wilma-review-source.mjs';
 import {createWilmaReviewClient} from './wilma-review-client.mjs';
 import {installWilmaAnswerReview,reviewItem} from './wilma-answer-review.mjs';
 import {writeWholeTeacherReview} from './teacher-review-write.mjs';
-import {createWilmaAutoReview,wilmaAutomaticPaidPolicy} from './wilma-auto-review.mjs';
+import {createWilmaAutoReview,wilmaAutomaticPaidPolicy,installWilmaReceiptRefresh,wilmaHasActiveInput} from './wilma-auto-review.mjs';
 
 const diagnostics = createDiagnostics();
 installDiagnostics(diagnostics);
@@ -8473,7 +8473,8 @@ async function analyzeWilmaQuestion(questionId,criteria="",onlySubmissionId=null
       state.submissions=state.submissions.map(s=>s.id===proposal.id?{...s,grading:{...s.grading,[questionId]:{...s.grading?.[questionId],reviewSuggestion:{...proposal,source:'wilma-ai',requestId:receipt.requestId,cached:receipt.cached===true,...(receipt.persistence==='volatile'?{persistence:'volatile',warning:receipt.warning}:{})}}}}:s);
     }
   }
-  renderResultsTable();toast("Wilma geprüft. Auffällige Antworten zuerst.");
+  if(!recoveryOptions.savedOnly||!wilmaHasActiveInput(document))renderResultsTable();
+  if(!recoveryOptions.savedOnly)toast("Wilma geprüft. Auffällige Antworten zuerst.");
 }
 function wilmaReviewContext(){
   const allowed=!guestTourRepo&&state.user?.uid&&state.currentResultsQuiz?.ownerId===state.user.uid;
@@ -8485,8 +8486,8 @@ function wilmaAutomaticPreview(ctx=wilmaReviewContext()){
 }
 wilmaAutoReview=createWilmaAutoReview({getContext:wilmaReviewContext,parseGaps,enabled:wilmaAutomaticPreview,maxRequests:2,allowFreeLookups:true,serverBudgeted:firebaseConfig.projectId==='hausaufgabe-staging',allowAutomaticPaid:wilmaAutomaticPaidPolicy,
   analyzeAnswer:({questionId,submissionId,allowPaid=true,...options})=>analyzeWilmaQuestion(questionId,'',submissionId,allowPaid,true,options),
-  onState:state=>{wilmaPreparation.set(state.questionId+':'+state.submissionId,state);wilmaAnswerReview?.refresh();},
-  onIdle:()=>{wilmaAnswerReview?.refresh({resort:true});void wilmaAutoReview?.run();}
+  onState:state=>{wilmaPreparation.set(state.questionId+':'+state.submissionId,state);if(!state.savedOnly||!wilmaHasActiveInput(document))wilmaAnswerReview?.refresh();},
+  onIdle:({savedOnly=false}={})=>{if(!savedOnly||!wilmaHasActiveInput(document))wilmaAnswerReview?.refresh({resort:true});if(!savedOnly)void wilmaAutoReview?.run();}
 });
 wilmaAnswerReview=installWilmaAnswerReview({document,
   getContext:wilmaReviewContext,
@@ -8495,6 +8496,11 @@ wilmaAnswerReview=installWilmaAnswerReview({document,
   recoverQuestion:payload=>wilmaAutoReview.recover(payload),retryAnswer:payload=>wilmaAutoReview.retry(payload),resumeAnswer:payload=>wilmaAutoReview.resume(payload),
   parseGaps,answerDisplay,correctDisplay,saveDecision:saveWilmaDecision,
   openSubmission:id=>{wilmaAnswerReview.collapse();openReview(id);},beforeOpen:confirmDiscardInlineReview,notify:toast,analyzeQuestion:analyzeWilmaQuestion
+});
+installWilmaReceiptRefresh({window,document,getContext:wilmaReviewContext,
+  getQuestionId:()=>wilmaAnswerReview?.element.dataset.activeQuestion,
+  isVisible:()=>wilmaAutomaticPreview()&&wilmaAnswerReview?.isExpanded?.(),
+  refreshSaved:payload=>wilmaAutoReview.refreshSaved(payload)
 });
 
 function confirmDiscardInlineReview(){

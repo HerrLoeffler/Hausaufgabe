@@ -347,6 +347,7 @@ jobs:
         run: |
           node tools/browser-layout/wilma-picker.cjs
           node tools/browser-layout/wilma-picker-focus.cjs
+          node tools/browser-layout/wilma-saved-refresh.cjs
         env:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence/wilma-picker
       - run: npm test --prefix tools/browser-layout

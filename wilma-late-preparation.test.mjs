@@ -27,3 +27,11 @@ test('automatic results preparation cannot repaint a view after the teacher leav
  const ctx={state:{user:{uid:'owner'},currentResultsQuiz:{id:'own',ownerId:'owner'},resultQuestions:[q],submissions:[s]},authStateGeneration:1,wilmaReviewGeneration:1,guestTourRepo:null,questionSnapshot,reviewItem,parseGaps:()=>[],reviewWithWilma:async()=>{started();return wait;},wilmaAutomaticPreview:()=>visible,renderResultsTable:()=>renders++,toast:()=>{}};
  vm.runInNewContext(code+';this.run=analyzeWilmaQuestion;',ctx);const pending=ctx.run('q','',s.id,true,true);await begun;visible=false;finish({answers:[{id:'s',points:2,status:'clear',reason:'Passend'}],requestId:'fictitious'});await assert.rejects(pending,/gewechselt|geändert/);assert.equal(renders,0);assert.equal(s.grading.q.reviewSuggestion,undefined);
 });
+
+test('saved-only result arriving during a teacher input does not repaint or confirm the edit',async()=>{
+ const q={id:'q',type:'text',text:'Nenne ein Tier.',points:1,acceptedAnswers:['Hund']},s={id:'s',status:'review',answers:{q:'Giraffe'},grading:{q:{autoPoints:0,maxPoints:1,needsReview:true}}};
+ let renders=0,notices=0;
+ const ctx={state:{user:{uid:'owner'},currentResultsQuiz:{id:'fiction',ownerId:'owner'},resultQuestions:[q],submissions:[s]},authStateGeneration:1,wilmaReviewGeneration:1,guestTourRepo:null,questionSnapshot,reviewItem,parseGaps:()=>[],reviewWithWilma:async p=>{assert.equal(p.allowPaid,false);return {answers:[{id:'s',points:1,status:'uncertain',reason:'Gespeichert.'}],requestId:'synthetic-saved',cached:true};},wilmaAutomaticPreview:()=>true,wilmaHasActiveInput:()=>true,document:{},renderResultsTable:()=>renders++,toast:()=>notices++};
+ vm.runInNewContext(code+';this.run=analyzeWilmaQuestion;',ctx);await ctx.run('q','',s.id,false,true,{savedOnly:true});
+ assert.equal(renders,0);assert.equal(notices,0);assert.equal(ctx.state.submissions[0].grading.q.reviewSuggestion.points,1);assert.equal(ctx.state.submissions[0].grading.q.reviewState,undefined);assert.equal(ctx.state.submissions[0].grading.q.awardedPoints,undefined);
+});
