@@ -349,6 +349,12 @@ for (const finishAction of ['create', 'settings', 'guest', 'publish-abort']) tes
     assert.equal(w.trustedInputBlocked('keydown', button, 'Escape'), false, 'Escape cancels dialog, not tour');
     assert.equal(tour.active, true);
     assert.equal(w.trustedInputBlocked('click', w.document.body), true, 'outside controls stay blocked');
+    if (action === 'confirm') {
+      const input = dialog.querySelector('input');
+      assert.equal(w.trustedInputBlocked('keydown', input, 'a'), false);
+      input.value = 'ABGEBEN';
+      input.dispatchEvent(new w.Event('input'));
+    }
     button.click();
     assert.equal(await confirmation, action === 'confirm');
   }

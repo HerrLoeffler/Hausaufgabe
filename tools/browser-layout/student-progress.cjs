@@ -45,7 +45,7 @@ const server = http.createServer((req, res) => {
           assert.match(await page.locator("#secureProgressText").textContent(), /0 von 4/);
           const text = page.locator('[data-qid="text"] textarea');
           const overview = page.locator("#secureQuestionOverview");
-          await page.locator("[data-secure-overview-toggle]").click();
+          if(await page.locator("[data-secure-overview-toggle]").isVisible())await page.locator("[data-secure-overview-toggle]").click();
           assert.match(await overview.locator("button").nth(1).getAttribute("aria-label"), /offen/);
           await text.fill("Absichtlich unbewertete Antwort");
           await page.waitForFunction(() => document.querySelector("#secureQuestionOverview button:nth-child(2)").classList.contains("complete"));

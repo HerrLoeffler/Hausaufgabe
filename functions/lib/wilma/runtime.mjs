@@ -4,7 +4,8 @@ import {quoteReview,reserveBalance,settleBalance,normalizeLegacyAllowance,normal
 import {questionSnapshot} from './source.mjs';
 import {fundusKey,fundusEvidence,readEvidence,mergeEvidence} from './fundus.mjs';
 import {createDecisionService} from './decision.mjs';
-const fail=(status,message)=>{throw new ReviewError(status,message);};
+import {reviewDetails,safeReviewDetails,safeRequestId} from './failure.mjs';
+const fail=(status,message,details)=>{throw new ReviewError(status,message,details);};
 const digest=value=>createHash('sha256').update(value).digest('hex');
 export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAccountWrite,consumeQuota,provider,resultStore,now=Date.now,aiRequestCap=7,monthlyBudget=false,model=MODEL}) {
  if(!['gradecrew-staging-2026','hausaufgabe-staging'].includes(projectId))throw Error('Wilma: Projekt nicht zugelassen.');
@@ -14,6 +15,7 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
   const {uid}=await requireTeacher(request);
   const data=request.data;
   if(!data||!['review','decision','learn'].includes(data.action)||Buffer.byteLength(JSON.stringify(data))>60000)fail(400,'Ungültige Bewertungsanfrage.');
+  if(data.retry!==undefined&&(data.action!=='review'||data.retry!==true||data.allowPaid===false||!Number.isSafeInteger(data.expectedFailureAt)||data.expectedFailureAt<=0))fail(400,'Ungültige Bewertungsanfrage.');
   const privateDoc=(section,id)=>db.doc(`users/${uid}/aiRuntime/${section}/operations/${id}`);
   const checkedProfile=async tx=>{await requireAccountWrite(tx,db,uid);const snap=await tx.get(db.doc('users/'+uid));return snap.exists?snap.data():null;};
   if(data.action==='learn'){
@@ -54,6 +56,10 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
   const cachePath=fingerprint=>`aiGeneratedCache/${digest(uid).slice(0,24)}/wilma-${fingerprint}.json`;
   const budget=db.doc('_wilmaPilotPrivate/'+(projectId==='hausaufgabe-staging'?'live-v1':'budget-v1'));
   let activeReservation=null;
+  const failureStamp=job=>[job?.updatedAt,job?.createdAt].find(value=>Number.isSafeInteger(value)&&value>0);
+  // Completed operations reach reservation only after their missing/invalid receipt was checked.
+  const retryable=job=>['unknown','failed','completed'].includes(job?.phase)&&job.costSettled===true&&(job.attemptCount||1)<2&&!!failureStamp(job);
+  const matchesRetry=job=>data.retry===true&&retryable(job)&&data.expectedFailureAt===failureStamp(job);
   const settle=async(fingerprint,usage)=>{
    if(!monthlyBudget||!activeReservation||!usage)return;
    await db.runTransaction(async tx=>{
@@ -64,6 +70,14 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
    });
   };
   const review=createReviewService({projectId,allowCustomCriteria:!monthlyBudget,
+   assertResultAccess:()=>db.runTransaction(async tx=>{
+    await checkedProfile(tx);
+    const quiz=(await tx.get(db.doc('quizzes/'+data.quizId))).data();
+    if(!quiz||quiz.ownerId!==uid||quiz.isDeleted||quiz.rightsHold)fail(403,'Dieser Test ist nicht verfügbar.');
+    const question=(await tx.get(db.doc(`quizzes/${data.quizId}/questions/${data.questionId}`))).data();
+    if(!question||questionSnapshot(question)!==data.expectedQuestion)fail(409,'Die Aufgabenfassung wurde geändert. Bitte Ergebnisse aktualisieren.');
+    for(const sid of data.answerIds){const submission=(await tx.get(db.doc(`quizzes/${data.quizId}/submissions/${sid}`))).data();if(!submission||JSON.stringify(submission.answers?.[data.questionId]??'')!==JSON.stringify(data.expectedAnswers[sid]??''))fail(409,'Antwort wurde geändert. Bitte Ergebnisse aktualisieren.');}
+   }),
    loadQuiz:quiz=>load('quizzes/'+quiz),loadQuestion:(quiz,q)=>load(`quizzes/${quiz}/questions/${q}`),loadSubmission:(quiz,sid)=>load(`quizzes/${quiz}/submissions/${sid}`),
    readFundus:async args=>{
     if(!monthlyBudget||typeof args.criteria==='string'&&args.criteria.trim())return null;
@@ -72,26 +86,37 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
     const submission=await load('quizzes/'+args.quizId+'/submissions/'+evidence.submissionId);
     return readEvidence(evidence,{...args,submission,now:now()});
    },
-   readCache:async fingerprint=>{
+   readCache:async(fingerprint,{validate})=>{
     const job=await load(privateDoc('wilma-reviews',fingerprint).path);
-    if(!job||job.phase!=='completed')return null;
-    if(job.uid!==uid||job.cachePath!==cachePath(fingerprint))fail(409,'Gespeicherter KI-Beleg konnte nicht sicher zugeordnet werden.');
-    const cached=await resultStore.read(job.cachePath);
-    if(!cached)fail(409,'Der gespeicherte Vorschlag ist abgelaufen. Es wird keine zweite Berechnung gestartet.');
-    return cached;
+    if(!job){if(data.retry===true)fail(409,'Der frühere Prüflauf fehlt. Bitte Status aktualisieren.');return null;}
+    const path=cachePath(fingerprint);
+    if(job.uid!==uid||job.cachePath&&job.cachePath!==path)fail(409,'Gespeicherter KI-Beleg konnte nicht sicher zugeordnet werden.',reviewDetails('receipt_invalid'));
+    let cached,invalid=false;
+    try{cached=await resultStore.read(path);}catch(error){if(error instanceof SyntaxError)invalid=true;else fail(503,'Gespeicherter Vorschlag ist gerade nicht erreichbar. Keine neue Berechnung gestartet.',reviewDetails('result_store_unavailable'));}
+    if(cached){try{validate(cached);}catch{invalid=true;cached=null;}}
+    // A valid blob can outlive a failed metadata write; the core still verifies every row and snapshot.
+    if(cached)return cached;
+    if(job.phase==='started'&&Number.isFinite(job.createdAt)&&now()-job.createdAt<200000)fail(409,'Die KI-Prüfung läuft noch. Status aktualisieren; keine zweite Berechnung.',reviewDetails('review_in_progress','running'));
+    if(matchesRetry(job))return null;
+    const details={...(invalid?reviewDetails('receipt_invalid'):job.phase==='completed'?reviewDetails('receipt_expired'):safeReviewDetails(job.diagnostic)||reviewDetails('result_unknown')),retryAllowed:retryable(job),...(failureStamp(job)?{failedAt:failureStamp(job)}:{})};
+    if(job.phase==='completed'&&data.retry!==true)fail(409,'Der gespeicherte Vorschlag fehlt oder ist nicht verwendbar.',details);
+    fail(data.retry===true?409:503,'Prüflauf bereits gestartet; Ergebnis nicht sicher verfügbar. Kein automatischer Neuversuch; bitte selbst prüfen.',details);
    },
    reserve:async(fingerprint,task)=>{
-    if(data.allowPaid===false)fail(429,'Keine bestätigte Bewertung im Fundus oder Prüfbelegcache. Keine API gestartet.');
+    if(data.allowPaid===false)fail(429,'Keine bestätigte Bewertung im Fundus oder Prüfbelegcache. Keine API gestartet.',reviewDetails('cache_miss','not_started'));
     const quote=monthlyBudget?quoteReview(task,model,now()):null;
     await consumeQuota(uid,'assistant');
     await db.runTransaction(async tx=>{
      await checkedProfile(tx);
      const ref=privateDoc('wilma-reviews',fingerprint),job=await tx.get(ref),counter=await tx.get(budget);
-     if(job.exists)fail(409,'Dieser Prüflauf wurde bereits gestartet. Bitte Ergebnis aktualisieren; kein automatischer Neuversuch.');
+     if(job.exists&&!matchesRetry(job.data())||!job.exists&&data.retry===true)fail(409,'Dieser Prüflauf wurde bereits gestartet. Bitte Ergebnis aktualisieren; kein automatischer Neuversuch.');
      let monthly,next;
      if(quote){monthly=db.doc('_wilmaPilotPrivate/month-'+quote.month);const old=(await tx.get(monthly)).data();const ledger=live?normalizeLiveAllowance(old,quote.month,counter.data()):normalizeLegacyAllowance(old,quote.month);next=reserveBalance(ledger,quote,limitMicros);if(live)next.accountedRequests=(counter.data()?.started||0)+1;}
      if(!monthlyBudget&&(counter.data()?.started||0)>=aiRequestCap)fail(429,'Das begrenzte Wilma-Testkontingent ist aufgebraucht. Manuelles Bewerten bleibt möglich.');
-     tx.create(ref,{uid,phase:'started',createdAt:now(),fingerprint,...(quote?{costReservation:quote,costSettled:false}:{})});
+     const previous=job.exists?job.data():null;
+     const history=previous?[...(previous.history||[]),Object.fromEntries(['phase','createdAt','updatedAt','requestId','diagnostic','costReservation','costSettled','usage'].filter(key=>previous[key]!==undefined).map(key=>[key,previous[key]]))]:[];
+     const operation={uid,phase:'started',createdAt:now(),updatedAt:now(),fingerprint,attemptCount:previous?(previous.attemptCount||1)+1:1,history,requestId:null,...(quote?{costReservation:quote,costSettled:false}:{})};
+     if(previous)tx.set(ref,operation);else tx.create(ref,operation);
      if(quote)tx.set(monthly,{...next,currency:'EUR',limitMicros,pricingVersion:quote.version,updatedAt:now()});
      tx.set(budget,{...counter.data(),started:(counter.data()?.started||0)+1,updatedAt:now()});
     });
@@ -99,13 +124,14 @@ export function createTeacherWilmaRuntime({projectId,db,requireTeacher,requireAc
    },
    finish:async(fingerprint,info)=>{
     const ref=privateDoc('wilma-reviews',fingerprint),path=cachePath(fingerprint);
-    const check=async tx=>{await checkedProfile(tx);const job=await tx.get(ref);if(!job.exists||job.data().uid!==uid)fail(409,'Prüfbeleg fehlt.');};
+    const check=async tx=>{await checkedProfile(tx);const job=await tx.get(ref);if(!job.exists||job.data().uid!==uid)fail(409,'Prüfbeleg fehlt.');return job.data();};
     if(info.phase==='completed'){
      await db.runTransaction(check);
-     await resultStore.write(path,info.receipt);
+     try{await resultStore.write(path,info.receipt);}catch(error){error.wilmaResultStoreFailure=true;throw error;}
     }
-    try{await db.runTransaction(async tx=>{await check(tx);tx.update(ref,{phase:info.phase,requestId:info.requestId||null,updatedAt:now(),...(info.phase==='completed'?{cachePath:path}:{})});});}
-    catch(error){if(info.phase==='completed')await resultStore.remove?.(path).catch(()=>{});throw error;}
+    try{await db.runTransaction(async tx=>{const old=await check(tx);if(old.phase==='completed'&&info.phase!=='completed')return;tx.update(ref,{phase:info.phase,requestId:safeRequestId(info.requestId)||old.requestId||null,updatedAt:now(),...(info.phase==='completed'?{cachePath:path}:safeReviewDetails(info.diagnostic)?{diagnostic:safeReviewDetails(info.diagnostic)}:{})});});}
+    catch(error){if([4,10,13,14,'deadline-exceeded','aborted','internal','unavailable'].includes(error?.code))error.wilmaResultStoreFailure=true;throw error;}
+    // Keep any valid private blob after metadata failure; existing cache retention still applies.
    },
    provider:async task=>{
     try{const result=await provider(task,{uid});if(monthlyBudget&&activeReservation)await settle(activeReservation.fingerprint,result.usage).catch(()=>{});return result;}

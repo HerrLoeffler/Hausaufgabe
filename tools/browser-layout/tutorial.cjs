@@ -35,7 +35,21 @@ try{for(const [name,engine,size,touch] of [['webkit',webkit],['chromium',chromiu
   await page.waitForTimeout(100);
   const state=await page.evaluate(()=>{const c=document.querySelector('.gcRealCoach'),t=document.querySelector('.gcTourTarget');return {stage:c?.dataset.tourStage||'',title:c?.querySelector('h2')?.textContent||'',target:t?.id||t?.className||'',answering:document.body.classList.contains('gcTourAnswering'),active:document.body.classList.contains('gcRealTourActive')};});
   if(!state.active){finished=true;break;}
-  if(state.answering){const answer=page.locator('#studentQuestions input[type=text]').first();if(await answer.count())await answer.fill('blue');await clickChecked(page.locator('#studentSubmitBtn'),'student submit');const confirm=page.locator('dialog.studentSubmitConfirm[open] [data-action=confirm]');if(await confirm.isVisible())await clickChecked(confirm,'confirm submission');last='';continue;}
+  if(state.answering){
+    const answer=page.locator('#studentQuestions input[type=text]').first();if(await answer.count())await answer.fill('blue');
+    await clickChecked(page.locator('#studentSubmitBtn'),'student submit');
+    const confirmation=page.locator('dialog.studentSubmitConfirm[open]'),confirm=confirmation.locator('[data-action=confirm]');
+    if(await confirm.isVisible()){
+      assert.equal(await confirm.isEnabled(),false,'final submission stays disabled before the confirmation word');
+      const word=confirmation.locator('input[type=text]');
+      await assertClear(word,'submission confirmation word');await word.focus();
+      assert.ok(await word.evaluate(e=>document.activeElement===e),'submission confirmation word focus');
+      await word.fill('ABGEBEN');
+      assert.equal(await confirm.isEnabled(),true,'ABGEBEN enables final submission');
+      await clickChecked(confirm,'confirm submission');
+    }
+    last='';continue;
+  }
   const publication=page.locator('dialog.publishReview[open]');
   if(await publication.count()){
     if(!publicationTabChecked){

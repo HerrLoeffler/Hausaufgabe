@@ -5,6 +5,7 @@ const source = entries => Object.fromEntries(
 );
 
 export const enGBMessages = Object.freeze({
+  "source:Test abgeben": "Submit test",
   "system.loading": "GradeCrew is loading …",
   "system.load_failed": "GradeCrew could not be loaded completely. Please check your connection and reload the page.",
   "system.secure_assessment_notice_failed": "Secure assessment notices could not be loaded.",
@@ -113,7 +114,15 @@ export const enGBMessages = Object.freeze({
     "Lösungen freigeben": "Release solutions",
     "Übungslösungen jetzt freigeben": "Release practice solutions now",
     "Lösungen für diese Übungsrunde freigegeben.": "Solutions released for this practice run.",
+    "Lösungen": "Solutions",
     "Lösungen anzeigen": "View solutions",
+    "Neuen Test starten": "Start a new test",
+    "Lösungsfreigabe prüfen": "Check solution release",
+    "Die Lösungsfreigabe wird geprüft …": "Checking solution release …",
+    "Noch nicht freigegeben. Bitte warte auf deine Lehrkraft.": "Not released yet. Please wait for your teacher.",
+    "Die Freigabe konnte gerade nicht geprüft werden. Bitte später erneut versuchen.": "The release could not be checked. Please try again later.",
+    "Die Lösungsfreigabe ist noch nicht verfügbar.": "Solution release is not available yet.",
+    "Für diesen Test ist keine Lösungsanzeige freigegeben.": "Solution viewing is not enabled for this test.",
     "Warten auf Freigabe": "Waiting for release",
     "Deine Lehrkraft hat die Lösungen nach deiner Abgabe freigegeben.": "Your teacher has released solutions after your submission.",
     "Deine Lehrkraft hat die Lösungen für diese Übung noch nicht freigegeben.": "Your teacher has not yet released solutions for this practice.",
@@ -835,6 +844,8 @@ export const enGBSourcePatterns = Object.freeze([
   { pattern: /^(.*) · Klasse (.*)$/, replacement: "$1 · Class $2" },
   { pattern: /^Aufgabe (\d+)$/, replacement: "Question $1" },
   { pattern: /^Aufgabe (\d+) von (\d+)$/, replacement: "Question $1 of $2" },
+  { pattern: /^Aufgabe (\d+) · beantwortet$/, replacement: "Question $1 · answered" },
+  { pattern: /^Aufgabe (\d+) · offen$/, replacement: "Question $1 · unanswered" },
   { pattern: /^Antwort (\d+)$/, replacement: "Answer $1" },
   { pattern: /^Antwort (\d+) anhören$/, replacement: "Listen to answer $1" },
   { pattern: /^Schritt (\d+)$/, replacement: "Step $1" },

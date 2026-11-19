@@ -66,8 +66,9 @@
           <div class="secureEyebrow" id="secureRunningMeta"></div>
           <h1 id="secureRunningTitle">Test</h1>
         </div>
-        <div id="secureTimer" class="secureTimer hidden"><small>Verbleibend</small><strong id="secureTimerText">--:--</strong></div>
       </div>
+      <aside class="secureTaskSidebar" aria-label="Aufgabennavigation">
+        <div id="secureTimer" class="secureTimer hidden"><small>Verbleibend</small><strong id="secureTimerText">--:--</strong></div>
       <div class="secureProgress secureCard">
         <div><strong id="secureProgressText">0 Aufgaben bearbeitet</strong><span id="secureOpenText"></span></div>
         <div class="secureProgressTrack"><span id="secureProgressFill"></span></div>
@@ -81,12 +82,13 @@
         </div>
         <div id="secureQuestionOverview" class="secureQuestionOverview" hidden></div>
       </nav>
-      <form id="secureAssessmentForm">
-        <div id="secureQuestions" class="secureQuestionList"></div>
         <div class="secureSubmit secureCard">
           <div><strong>Fertig?</strong><small>Prüfe deine Antworten noch einmal. Die Abgabe ist endgültig.</small></div>
-          <button id="secureSubmitBtn" class="button primary" type="submit">Antworten abgeben</button>
+          <button id="secureSubmitBtn" class="button primary" type="submit" form="secureAssessmentForm">Test abgeben</button>
         </div>
+      </aside>
+      <form id="secureAssessmentForm">
+        <div id="secureQuestions" class="secureQuestionList"></div>
       </form>
     </section>
 

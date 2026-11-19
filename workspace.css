@@ -144,7 +144,7 @@ body:not(.gcPublicEntryMode) .topbar.gradecrewLanguageReady > #gradecrewLanguage
 .qualityJump, .qualityIssueMarker { min-height: 36px; }
 
 /* Student view: timer, progress and questions use measured, independent offsets. */
-.studentTimerBar { top: var(--topbar-offset); margin-block: 12px; z-index: 9; background: var(--card); }
+.studentTimerBar { top:max(var(--topbar-offset),env(safe-area-inset-top)); margin-block:12px;z-index:9;background:var(--card);min-height:44px; }
 .studentProgressCompact {
   position: sticky; top: calc(var(--topbar-offset) + var(--student-timer-height) + 8px); z-index: 8;
   margin: 0 0 16px; padding: 12px 16px; border: 1px solid var(--line);
@@ -160,8 +160,9 @@ body:not(.gcPublicEntryMode) .topbar.gradecrewLanguageReady > #gradecrewLanguage
 .studentCompactCurrent small { font-size: 12px; color: var(--muted); line-height: 1.4; }
 .studentOverviewToggle { min-height: 44px; border: 1px solid #c7d0db; border-radius: 9px; background: var(--card); color: var(--primary2); padding: 8px 10px; font-size: 13px; font-weight: 650; cursor: pointer; }
 .studentProgressCompact .studentQuestionNav { display: none; padding: 8px 4px 4px; margin: 12px -4px 0; border-top: 1px solid var(--line); max-height: 180px; overflow: auto; }
-.studentProgressCompact.overviewOpen .studentQuestionNav { display: flex; }
-.studentProgressCompact .questionNavDot.current { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); color: var(--primary2); background: var(--soft); }
+.studentProgressCompact .questionNavDot{min-width:44px;min-height:44px;width:100%;height:auto;font-size:14px;padding:6px 2px}
+.studentProgressCompact.overviewOpen .studentQuestionNav { display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px; }
+.studentProgressCompact .questionNavDot.current { outline:2px solid var(--primary);outline-offset:1px;font-weight:800; }
 .studentQuestion { scroll-margin-top: calc(var(--topbar-offset) + var(--student-timer-height) + var(--student-offset) + 28px); }
 .studentQuestion :is(.choice, .matchingRow, .groupingItem, .orderingItem) { font-size: 16px; line-height: 1.5; }
 .studentQuestionImage img, .reviewQuestion img { max-width: 100%; height: auto; object-fit: contain; }
@@ -357,3 +358,30 @@ dialog.shareDialog.questionActionDialog {
   border-color: #278747;
   color: #145d31;
 }
+
+.studentTaskLayout{display:flex;flex-direction:column;min-width:0}.studentTaskSidebar{display:contents}.studentTaskSidebar #studentTimerBar{order:0}.studentTaskSidebar #studentProgressBar{order:1}#studentQuestions{order:2}.studentTaskSidebar #studentSubmitArea{order:3}
+
+/* The browser/teacher preview uses the same wide/compact contract as Secure Web. */
+@media(min-width:1180px) and (min-height:600px){
+ html:has(.studentProgressCompact:not(.hidden)){--student-progress-height:0px!important;--student-timer-height:0px!important}
+ #studentQuizCard:has(.studentProgressCompact:not(.hidden)){max-width:1124px}
+ #studentView:has(.studentProgressCompact:not(.hidden)){max-width:1124px}
+ .studentTaskLayout:has(.studentProgressCompact:not(.hidden)){display:grid;grid-template-columns:minmax(0,860px) 208px;gap:24px;align-items:start}
+ .studentTaskSidebar{grid-column:2;grid-row:1;display:flex;flex-direction:column;gap:12px;position:sticky;top:calc(var(--topbar-offset) + 8px);max-height:calc(100dvh - var(--topbar-offset) - 24px);min-height:0}
+ #studentForm>.studentIdentityCard,#studentStartGate{grid-column:1/-1;min-width:0}
+ .studentTaskSidebar #studentTimerBar{position:static;margin:0;flex:none;padding:8px 12px;min-width:0;gap:6px;box-shadow:none}
+ .studentTaskSidebar #studentTimerBar strong{font-size:20px;font-variant-numeric:tabular-nums}
+ #studentProgressBar.studentProgressCompact{position:static;margin:0;min-width:0;max-height:calc(100dvh - var(--topbar-offset) - var(--student-timer-height) - 24px);display:flex;flex-direction:column;padding:12px;box-shadow:none;min-height:0;flex:1}
+ #studentQuestions{grid-column:1;grid-row:1;min-width:0}
+ #studentSubmitArea{margin:0;padding:12px;flex:none;flex-direction:column;align-items:stretch;gap:10px;min-width:0}
+ #studentSubmitArea .studentSubmit{width:100%;min-width:0;min-height:52px;font-size:16px;margin:0}
+ #studentSubmitArea small{font-size:12px;line-height:1.4}
+ .studentProgressCompact .studentProgressTop{align-items:flex-start;font-size:12px}
+ .studentProgressCompact .studentCompactNav{grid-template-columns:44px minmax(0,1fr) 44px;gap:4px;flex:none}
+ .studentProgressCompact .studentCompactCurrent strong{font-size:12px}
+ .studentProgressCompact .studentCompactCurrent small,.studentProgressCompact .studentOverviewToggle{display:none}
+ .studentProgressCompact .studentQuestionNav{display:grid!important;grid-template-columns:repeat(3,minmax(44px,1fr));gap:6px;min-height:0;max-height:none;margin:8px 0 0;overflow:auto;flex:1;align-content:start}
+ .studentProgressCompact .questionNavDot{width:100%;height:auto;min-height:44px;font-size:14px;text-align:center;padding:6px 2px;flex:none}
+}
+
+.studentSubmitConfirm{width:min(520px,calc(100vw - 28px));padding:24px}.studentSubmitConfirm label{display:block;margin-top:18px;font-weight:700}.studentSubmitConfirm input{display:block;width:100%;margin:8px 0 20px}.studentSubmitConfirm [data-submit-warning]{color:#92400e;line-height:1.5}.studentSubmitConfirm .button:disabled{opacity:.5;cursor:not-allowed}

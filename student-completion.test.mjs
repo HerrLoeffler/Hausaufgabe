@@ -77,3 +77,15 @@ test("Secure overview follows actual progress updates and forgets completed stat
   cleanup();
   dom.window.close();
 });
+
+test('unchanged progress preserves the number text node during a pointer click', () => {
+  const dom = new JSDOM('<button></button>');
+  const button=dom.window.document.querySelector('button');
+  paintAnswerCompletion(button,29,false);
+  const text=button.firstChild;
+  paintAnswerCompletion(button,29,false);
+  assert.equal(button.firstChild,text,'a blur-triggered progress refresh must not replace the pointer target');
+  paintAnswerCompletion(button,29,true);
+  assert.equal(button.textContent,'30 ✓');
+  dom.window.close();
+});

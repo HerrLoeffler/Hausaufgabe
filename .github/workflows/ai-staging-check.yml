@@ -149,7 +149,7 @@ jobs:
           node --test secure-result-policy.test.mjs
 
       - name: Test controlled solution release
-        run: node --test secure-solution-release.test.mjs
+        run: node --test secure-solution-release.test.mjs student-result-actions.test.mjs
 
       - name: Test teacher assessment locks
         run: node --test secure-assessment-teacher-polish.test.mjs secure-audio-publication.test.mjs
@@ -245,7 +245,7 @@ jobs:
           node --test remy-ai-help.test.mjs
           node --test audio-listening-v1.test.mjs audio-solution-v2.test.mjs audio-answer-renderer.test.mjs audio-answer-editor-controls.test.mjs markwords-title-polish.test.mjs
           node --test web-acceptance-regressions.test.mjs audio-task-conversion.test.mjs tools/ui/workspace-upgrade.test.mjs tools/ui/secure-audio-memos.test.cjs tools/ui/editor-context.test.cjs tools/ui/coco-guide.test.cjs tools/ui/student-preview-start.test.cjs tools/ui/hero-window-height.test.cjs
-          node --test tools/ui/secure-student-navigation.test.cjs
+          node --test tools/ui/secure-student-navigation.test.cjs tools/ui/secure-student-submit.test.cjs
           node --test tools/ui/audio-editor-actions.test.cjs tools/ui/audio-instruction.test.cjs tools/ui/color-question-contract.test.cjs tools/ui/creation-flow.test.cjs tools/ui/creation-compact.test.cjs tools/ui/material-drop.test.cjs tools/ui/media-editor-live.test.cjs
           test -f assets/gradecrew/brand-primary-v1.svg
           test -f assets/gradecrew/penguin-guide.svg
@@ -317,7 +317,7 @@ jobs:
     name: Public entry layout (WebKit and Chromium)
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.56.1-noble
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
       - name: Trust the exact checked-out workspace in this isolated container
@@ -335,9 +335,21 @@ jobs:
           GC_MEDIA_BROWSER_EVIDENCE: /tmp/gc-layout-evidence/media-creation
       - run: node tools/browser-layout/teacher-results.cjs
       - run: node tools/browser-layout/student-progress.cjs
+      - run: node tools/browser-layout/student-sidebar.cjs
+      - run: node tools/browser-layout/student-timer-grid.cjs
+      - run: node tools/browser-layout/student-submit.cjs
+      - run: node tools/browser-layout/student-result-actions.cjs
       - run: node tools/browser-layout/wilma-review.cjs
         env:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
+      - run: node tools/browser-layout/wilma-first-answer.cjs
+      - name: Open Wilma task picker and first-start action in Chromium and WebKit
+        run: |
+          node tools/browser-layout/wilma-picker.cjs
+          node tools/browser-layout/wilma-picker-focus.cjs
+          node tools/browser-layout/wilma-saved-refresh.cjs
+        env:
+          GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence/wilma-picker
       - run: npm test --prefix tools/browser-layout
         env:
           GC_LAYOUT_EVIDENCE: /tmp/gc-layout-evidence
