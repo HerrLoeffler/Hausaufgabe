@@ -1,0 +1,148 @@
+[
+  {
+    "engine": "chromium",
+    "width": 390,
+    "height": 844,
+    "reads": 3,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "storedResultVisible": true
+  },
+  {
+    "engine": "chromium",
+    "width": 390,
+    "height": 844,
+    "buttonSavedReceipt": true,
+    "reads": 3,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "visibleProgress": true
+  },
+  {
+    "engine": "chromium",
+    "width": 820,
+    "height": 600,
+    "reads": 3,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "storedResultVisible": true
+  },
+  {
+    "engine": "chromium",
+    "width": 820,
+    "height": 600,
+    "buttonSavedReceipt": true,
+    "reads": 3,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "visibleProgress": true
+  },
+  {
+    "engine": "chromium",
+    "width": 1280,
+    "height": 720,
+    "reads": 3,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "storedResultVisible": true
+  },
+  {
+    "engine": "chromium",
+    "width": 1280,
+    "height": 720,
+    "buttonSavedReceipt": true,
+    "reads": 3,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "visibleProgress": true
+  },
+  {
+    "engine": "chromium",
+    "busyButtonIntent": true,
+    "reads": 4,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "visibleQueue": true
+  },
+  {
+    "engine": "chromium",
+    "editingGuard": true,
+    "reads": 2,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "dirtyDraftPreserved": true
+  },
+  {
+    "engine": "webkit",
+    "width": 390,
+    "height": 844,
+    "reads": 3,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "storedResultVisible": true
+  },
+  {
+    "engine": "webkit",
+    "width": 390,
+    "height": 844,
+    "buttonSavedReceipt": true,
+    "reads": 3,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "visibleProgress": true
+  },
+  {
+    "engine": "webkit",
+    "width": 820,
+    "height": 600,
+    "reads": 3,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "storedResultVisible": true
+  },
+  {
+    "engine": "webkit",
+    "width": 820,
+    "height": 600,
+    "buttonSavedReceipt": true,
+    "reads": 3,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "visibleProgress": true
+  },
+  {
+    "engine": "webkit",
+    "width": 1280,
+    "height": 720,
+    "reads": 3,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "storedResultVisible": true
+  },
+  {
+    "engine": "webkit",
+    "width": 1280,
+    "height": 720,
+    "buttonSavedReceipt": true,
+    "reads": 3,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "visibleProgress": true
+  },
+  {
+    "engine": "webkit",
+    "busyButtonIntent": true,
+    "reads": 4,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "visibleQueue": true
+  },
+  {
+    "engine": "webkit",
+    "editingGuard": true,
+    "reads": 2,
+    "providerStarts": 0,
+    "gradeWrites": 0,
+    "dirtyDraftPreserved": true
+  }
+]

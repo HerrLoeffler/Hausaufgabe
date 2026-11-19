@@ -1,0 +1,62 @@
+{
+  "result": "pass",
+  "reviewer": "shared_browser_diagnosis",
+  "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+  "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+  "p0_p2": 0,
+  "resolvedFindings": [
+    {
+      "priority": 2,
+      "previousCommit": "303475e840e8a4d899c359ab844d94c68fdfb2c8",
+      "previousTree": "3bfacfed5fa720de1bd96bc2d3bbb27e6d01125f",
+      "issue": "Foreground eligibility is checked before waiting for a running request but not when the saved-only read actually begins, nor before the following reads. A teacher who starts typing or changes the visible question during the wait can still trigger hidden/background reads.",
+      "resolution": "Installer supplies a short-lived isEligible callback through host wiring. Eligibility is checked after waiting and immediately before every new saved-only read. Active input, visible task, document visibility, actor and quiz changes stop the reads."
+    },
+    {
+      "priority": 2,
+      "previousCommit": "db744efb0a93a885d3e0e8b60dcd83b76aa8c88e",
+      "previousTree": "f7f1645b0da1d913e93ecb50c63c803fe64c3f6a",
+      "issue": "Invalidated pendingResumes block the new context queue, then are removed without onIdle because old generation/quiz no longer matches. The new quiz or same-quiz refresh remains idle with no saved-result reads until another user trigger.",
+      "resolution": "clear discards generation-invalid pending intents while preserving current request and budget. runningGeneration/rerunGeneration only resume an explicitly requested new generation after finish, including savedOnly finish. Ordinary same-generation saved reads do not enable a paid follow-on."
+    }
+  ],
+  "verification": {
+    "independentTargetedTests": 44,
+    "pass": 44,
+    "independentAdditionalSyntheticReproductions": [
+      "Queued read canceled when editing starts during prior request",
+      "Queued read canceled after visible question changes",
+      "Queued read canceled when document becomes hidden"
+    ],
+    "betweenRowsEditingStop": "covered by passing regression",
+    "diffCheck": "pass",
+    "functionsAndLayoutCssUnchanged": true,
+    "paidAuthorization": "savedOnly always allowPaid:false; saved-only completion neither starts paid queue nor clears failure/budget guard",
+    "providedLocalBrowserCases": 8,
+    "newProviderCallsByReviewer": 0,
+    "queueLivenessReproduction": "Original failing case now passes",
+    "cacheBeforePaid": "cache-first first-start, server failure/retry distinction and session cap retained",
+    "capAndBudgetStop": "reviewed; cached receipt available at full Stage cap; cache hit preserves failure stop",
+    "independentFinalSyntheticChecks": [
+      "Quiz switch cancels old queued intent and reads new answer exactly once, free-only",
+      "Same-quiz clear resumes explicitly requested new generation exactly once, free-only",
+      "New context requested during saved-only read resumes exactly once, free-only",
+      "Same-generation saved-only read plus busy run request never enables paid follow-on"
+    ]
+  },
+  "scope": "Focused delta against 303475e, retaining prior review of full reliability change against 4fe3baf. No open P0-P2 after eligibility fix.",
+  "limits": [
+    "Exact remote alias and CI are pending; local exact-tree review PASS is not deployment or final CI proof.",
+    "No redundant full suite/browser matrix or provider/cloud/real-grade/deployment actions by reviewer.",
+    "Prior editing/visible-question P2 and queue-liveness P2 retained above as fixed."
+  ],
+  "localReviewedCommit": "da28ea16a40834f55b75d4d57cfa029b7a0370c4",
+  "remoteBinding": "GitHub-created tree exactly matches independently reviewed local tree",
+  "priorReviewedRuntimeCommit": "6263545d3233de0be0a7ffefdb30a321049d312a",
+  "priorRuntimeTree": "b30591fa74c3b0774e55b96b6d2811e4b32e05bf",
+  "testFixtureDelta": "Independent review confirmed actual imports plus unchanged media assertions reordered after style readiness; runtime files byte-identical to prior reviewed source.",
+  "localMediaAcceptance": {
+    "checks": 48,
+    "failures": 0
+  }
+}

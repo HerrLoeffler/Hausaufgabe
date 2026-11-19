@@ -1,0 +1,31 @@
+{
+  "taskIds": [
+    "GC-PEDAGOGY-KB-01",
+    "GC-WEB-REPAIR-20261007"
+  ],
+  "sourceCommit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+  "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+  "pullRequest": 438,
+  "layoutAcceptance": "Martin explicitly accepts existing layout19Nov; no redesign",
+  "stage": "branch_only",
+  "ci": {
+    "head_sha": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+    "id": 44519867699,
+    "status": "in_progress",
+    "conclusion": null
+  },
+  "localVerification": {
+    "focused": 52,
+    "rootUi": 867,
+    "savedProposalBrowserCases": 16,
+    "mediaBrowserChecks": 48
+  },
+  "newProviderStartsByThisRepair": 0,
+  "realGradeWrites": 0,
+  "functionsChanged": false,
+  "cssChanged": false,
+  "hosting": {},
+  "physicalDeviceAcceptance": "not added by this repair",
+  "remaining": "Human verifies exact button in everyday use; other error classes require their actual reason/source evidence; no automatic real-class replay",
+  "recordedAt": "2026-11-19T12:04:04.581821+00:00"
+}

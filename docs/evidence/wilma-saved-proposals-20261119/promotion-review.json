@@ -1,0 +1,62 @@
+{
+  "result": "pass",
+  "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+  "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+  "reviewer": "shared_browser_diagnosis",
+  "p0_p2": 0,
+  "scope": "Read-only Hosting clone/populate/release helper review; no cloud operation executed.",
+  "verified": {
+    "sourceAliasMatchesReviewedTree": true,
+    "stageSnapshotTotalPaths": 667,
+    "stageUnrelatedBlobHashesPreserved": 663,
+    "productionSnapshotTotalPaths": 219,
+    "productionUnrelatedBlobHashesPreserved": 215,
+    "onlyChangedPaths": [
+      "app.js",
+      "wilma-auto-review.mjs",
+      "wilma-answer-review.mjs",
+      "release manifest"
+    ],
+    "runtimeRawAndManifestHashesMatchGit": true,
+    "preparedInventoryRetainsAllOriginalPaths": true,
+    "cloneCreatedBeforeRelease": true,
+    "configAndBaselineRecheckedBeforeFinalizeAndRelease": true,
+    "ambiguousCloneOrReleasePostCannotBeBlindlyRepeated": true,
+    "helperSHA256": "118cdda9fd1b080c5971a80faeaae22d13e42126b39326112173d0a89b491203"
+  },
+  "conditions": [
+    "Exact fresh CI, source review PASS and actual free-only Stage acceptance remain required before publication.",
+    "Hosting only: functions/config/backend/source must match guards; no Rules/DB mutation.",
+    "Do not interpret helper providerStarts/gradeWrites zero as independent measurements of global concurrent activity.",
+    "626 CI failure is retained historically. The final test-only source needs a fresh exact complete successful CI; no gate exception."
+  ],
+  "limits": [
+    "No helper execution, cloud/provider/browser starts, deploy or source edits performed by reviewer.",
+    "Helper not executed. Pure timestamp predicate checks and nine existing bootstrap unit tests only; no cloud/provider/browser starts."
+  ],
+  "resolvedFindings": [
+    {
+      "priority": 2,
+      "file": "/private/tmp/gc-wilma-reliability-hosting.cjs",
+      "function": "gate",
+      "issue": "CI freshness fails open for missing/nonfinite verifiedAtMs because NaN>300000 is false; future timestamps also pass. A temporally unbound CI object can therefore pass prepare/release.",
+      "requiredFix": "Require finite numeric verifiedAtMs and an explicit recent bounded time interval; bind provenance to the connected GitHub check.",
+      "resolution": "Gate requires verifiedBy=connected GitHub GET, finite numeric verifiedAtMs, age<=300000ms and future offset<=5000ms. Missing/nonfinite/stale/excess-future timestamp cases independently checked."
+    }
+  ],
+  "testOnlyDeltaReview": {
+    "bootstrap": "real installWilmaReceiptRefresh and wilmaHasActiveInput imports passed into VM; no stubbing or removed assertions",
+    "bootstrapTargetedTests": 9,
+    "bootstrapTargetedPassed": 9,
+    "mediaResize": "Moves same screenshot and unchanged pixel assertions after existing viewport/CSS readiness wait; no product CSS or assertion weakening",
+    "immutableFinalTestOnlyCommit": "pending; rebind source/review/metadata after commit",
+    "mediaBrowserResult": "pending independent parent run"
+  },
+  "priorReviewedRuntimeCommit": "6263545d3233de0be0a7ffefdb30a321049d312a",
+  "priorRuntimeTree": "b30591fa74c3b0774e55b96b6d2811e4b32e05bf",
+  "testFixtureDelta": "Independent review confirmed actual imports plus unchanged media assertions reordered after style readiness; runtime files byte-identical to prior reviewed source.",
+  "localMediaAcceptance": {
+    "checks": 48,
+    "failures": 0
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "result": "pass",
+  "scope": "Known reported question and existing already-open results only",
+  "questionPosition": 2,
+  "working": {
+    "visibleBefore": true,
+    "storedOperation": "completed",
+    "attemptCount": 1,
+    "costSettled": true,
+    "pointsVisible": 1.5,
+    "maximum": 1.5
+  },
+  "missing": {
+    "storedOperation": "completed",
+    "attemptCount": 1,
+    "costSettled": true,
+    "visibleBefore": false,
+    "visibleAfterFreeStatus": true,
+    "pointsVisible": 0,
+    "maximum": 1.5
+  },
+  "sameSourceAndAnswerVerified": true,
+  "privateBeforeAfterExactlyUnchanged": true,
+  "providerStartsByThisComparison": 0,
+  "gradeWrites": 0,
+  "budget": {
+    "startedBeforeAndAfter": 115,
+    "spentMicrosBeforeAndAfter": 129482,
+    "reservedMicros": 0
+  },
+  "notTwoIdentityLiveLimit": "Live passes serverBudgeted:true; the two-new-identity test ceiling applies to Stage, not Live",
+  "observedAt": "2026-11-19T11:22:50Z",
+  "priorDeniedAction": "Never repeated; later completed receipt was found and reused without requesting new provider work",
+  "limits": [
+    "One observed failure path, not every possible missing-proposal cause",
+    "No physical device acceptance or universal model-accuracy claim"
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-11-18T23:34:26.215635+00:00",
+  "observed_at": "2026-11-19T12:06:09.285947+00:00",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -1148,7 +1148,7 @@
     "source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
     "deployed_local_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
     "tree": "ff4fe8b4a36d9e2b3d46481f72a4bf0683061bbf",
-    "user_acceptance": "Five real synthetic Stage provider results and free Live fictional receipt reuse verified; exact reported real-answer call blocked before transmission pending direct human payload approval; physical Secure/iPhone/iPad acceptance remains open.",
+    "user_acceptance": "Current layout explicitly accepted by Martin19Nov; some AI proposals still reported missing. Concrete stale existing receipt recovered free without grade/cost changes; source0ad candidate under exact CI44519867699, not yet published. Previous4fe remains deployed.",
     "alternate_urls": [
       "https://hausaufgabe-staging.web.app/"
     ],
@@ -2749,7 +2749,7 @@
       "candidate_ci_job": 112587453495,
       "independent_review": "approved; two correction rounds preserved; final report analysis/web-acceptance-20261007/final-review.md",
       "no_scroll_story": true,
-      "next_action": "Normal Wilma entry and picker deployed; direct consent pending for one real-answer provider check. Secure1321 availability already confirmed, physical acceptance open. No more Stage paid probes.",
+      "next_action": "Wait exact full CI44519867699; only then prepare/release Stage /wilma/, prove existing fictional cached result with zero new provider/grade work, and narrowly publish approved Live Hosting patch. Layout is explicitly accepted; no redesign. Earlier real-answer transmission denial is not bypassed.",
       "previous_release": {
         "id": "web-repair-20261007",
         "stage": "staging_deployed",
@@ -3508,7 +3508,39 @@
         "receipt": "workstreams/template-import-receipt-20261029.json",
         "next_action": "Ask human approval for exact aadf Hosting-only release on gradecrew.de; after approval freshly reconcile Live8188 or newer before one clone and both-origin hashes. Do not repeat completed tests unless source changes."
       },
-      "latest_release": "web_batch_20261118.normal_entry_release_20261119"
+      "latest_release": "web_batch_20261118.normal_entry_release_20261119",
+      "saved_proposals_followup_20261119": {
+        "task_ids": [
+          "GC-PEDAGOGY-KB-01",
+          "GC-WEB-REPAIR-20261007"
+        ],
+        "stage": "branch_only",
+        "source_commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+        "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+        "pull_request": 438,
+        "ci_run": 44519867699,
+        "ci_status": "Node22 success; Browser in progress; no release yet",
+        "layout_human_acceptance": "Martin explicitly accepts current layout19Nov; no redesign",
+        "scope": "Cache-first visible first-start intent; priority after current request; free foreground reconciliation; protected active inputs and new-context continuation. CSS/Functions unchanged.",
+        "verified_real_comparison": {
+          "existing_completed_receipt_reused": true,
+          "before_ui_missing": true,
+          "after_free_status_points": 0,
+          "max_points": 1.5,
+          "new_provider_starts": 0,
+          "grade_writes": 0,
+          "budget_unchanged": true
+        },
+        "local_tests": {
+          "focused": 52,
+          "root_ui": 867,
+          "saved_browser_cases": 16,
+          "media_browser_checks": 48
+        },
+        "report": "docs/evidence/wilma-saved-proposals-20261119/REPORT.md",
+        "receipt": "docs/evidence/wilma-saved-proposals-20261119/receipt.json",
+        "next_action": "Wait exact full CI44519867699; only then prepare/release Stage /wilma/, prove existing fictional cached result with zero new provider/grade work, and narrowly publish approved Live Hosting patch."
+      }
     },
     {
       "id": "gc-web-polish-20261007",
@@ -4905,7 +4937,7 @@
         "staging_cap_legacy_requests": 7,
         "staging_monthly_budget_eur": 20
       },
-      "next_action": "Await direct human consent for the one reported real-answer payload; do not repeat the denied action or replay other answers. Physical iPhone/iPad acceptance remains open. Existing Firebase storage retained; optional Supabase decision documented without implementation.",
+      "next_action": "Wait exact full CI44519867699; only then prepare/release Stage /wilma/, prove existing fictional cached result with zero new provider/grade work, and narrowly publish approved Live Hosting patch. Layout is explicitly accepted; no redesign. Earlier real-answer transmission denial is not bypassed.",
       "semantic_preview": {
         "stage": "staging_deployed",
         "source": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
@@ -5342,6 +5374,38 @@
         "stage_reserved_micros": 0,
         "public_hashes_per_origin": 216,
         "report": "docs/evidence/wilma-normal-entry-20261119/REPORT.md"
+      },
+      "saved_proposals_followup_20261119": {
+        "task_ids": [
+          "GC-PEDAGOGY-KB-01",
+          "GC-WEB-REPAIR-20261007"
+        ],
+        "stage": "branch_only",
+        "source_commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+        "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+        "pull_request": 438,
+        "ci_run": 44519867699,
+        "ci_status": "Node22 success; Browser in progress; no release yet",
+        "layout_human_acceptance": "Martin explicitly accepts current layout19Nov; no redesign",
+        "scope": "Cache-first visible first-start intent; priority after current request; free foreground reconciliation; protected active inputs and new-context continuation. CSS/Functions unchanged.",
+        "verified_real_comparison": {
+          "existing_completed_receipt_reused": true,
+          "before_ui_missing": true,
+          "after_free_status_points": 0,
+          "max_points": 1.5,
+          "new_provider_starts": 0,
+          "grade_writes": 0,
+          "budget_unchanged": true
+        },
+        "local_tests": {
+          "focused": 52,
+          "root_ui": 867,
+          "saved_browser_cases": 16,
+          "media_browser_checks": 48
+        },
+        "report": "docs/evidence/wilma-saved-proposals-20261119/REPORT.md",
+        "receipt": "docs/evidence/wilma-saved-proposals-20261119/receipt.json",
+        "next_action": "Wait exact full CI44519867699; only then prepare/release Stage /wilma/, prove existing fictional cached result with zero new provider/grade work, and narrowly publish approved Live Hosting patch."
       }
     },
     {
