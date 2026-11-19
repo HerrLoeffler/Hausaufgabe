@@ -20,6 +20,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+          cache-dependency-path: tools/ui/package-lock.json
       - name: Install pinned fixture test dependency
         run: npm ci --prefix tools/ui
         env:
