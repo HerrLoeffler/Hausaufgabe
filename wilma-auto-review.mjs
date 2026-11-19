@@ -22,10 +22,13 @@ export function installWilmaReceiptRefresh({window,document,getContext,getQuesti
   const ctx=getContext(),questionId=getQuestionId();
   if(!ctx.actor||!ctx.quiz?.id||!questionId||now()-lastAt<30000)return;
   lastAt=now();
-  pending=Promise.resolve().then(()=>{
+  const isEligible=()=>{
    const current=getContext();
-   if(current.actor!==ctx.actor||current.quiz?.id!==ctx.quiz.id||getQuestionId()!==questionId||document.visibilityState!=='visible'||!isVisible()||wilmaHasActiveInput(document))return;
-   return refreshSaved({questionId});
+   return current.actor===ctx.actor&&current.quiz?.id===ctx.quiz.id&&getQuestionId()===questionId&&document.visibilityState==='visible'&&isVisible()&&!wilmaHasActiveInput(document);
+  };
+  pending=Promise.resolve().then(()=>{
+   if(!isEligible())return;
+   return refreshSaved({questionId},{isEligible});
   }).catch(()=>{}).finally(()=>{pending=null;});
  };
  window.addEventListener('focus',refresh);document.addEventListener('visibilitychange',refresh);
@@ -61,13 +64,13 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
  };
  const failureState=error=>({phase:error?.details?.reviewState==='running'?'waiting':error?.details?.reasonCode==='cache_miss'?'blocked':'error',message:error?.details?.reasonCode==='cache_miss'?'Noch nicht geprüft.':preparationFailure(error),reasonCode:typeof error?.details?.reasonCode==='string'?error.details.reasonCode:undefined,resumeAllowed:error?.details?.reasonCode==='cache_miss',retryAllowed:error?.details?.retryAllowed===true&&Number.isSafeInteger(error?.details?.failedAt),failedAt:Number.isSafeInteger(error?.details?.failedAt)?error.details.failedAt:undefined});
  const publish=(ctx,q,s,key,value)=>{states.set(key,value);onState({questionId:q.id,submissionId:s.id,...value});};
- const manual=({questionId,submissionId,expectedFailureAt}={},mode='recover')=>{
+ const manual=({questionId,submissionId,expectedFailureAt}={},mode='recover',isEligible=()=>true)=>{
   const retry=mode==='retry',resume=mode==='resume',savedOnly=mode==='saved',paid=retry||resume;
   if(running)return running;
   const ctx=getContext(),epoch=generation;if(!ctx.actor||!ctx.quiz||!enabled(ctx))return Promise.resolve();
   const jobs=ctx.questions.filter(q=>q.id===questionId&&['text','gapfill'].includes(q.type)).flatMap(q=>ctx.submissions.filter(s=>!submissionId||s.id===submissionId).filter(s=>{const row=reviewItem(q,s,parseGaps);return row.requiresReview&&(!savedOnly||!row.proposal);}).map(s=>({q,s,key:identity(ctx,q,s)})));
   const operation=Promise.resolve().then(async()=>{for(const {q,s,key} of jobs){
-   if(!enabled(getContext())||!same(epoch,ctx,q,s,key))break;
+   if(!enabled(getContext())||!same(epoch,ctx,q,s,key)||savedOnly&&!isEligible())break;
    const prior=states.get(key),reserved=reservedByActor.get(ctx.actor)||new Set();
    if(resume&&(!submissionId||prior?.resumeAllowed!==true||s.grading?.[q.id]?.reviewSuggestion||!serverBudgeted&&!reserved.has(key)&&reserved.size+(retrySlotsByActor.get(ctx.actor)||0)>=maxRequests))continue;
    if(retry&&(!submissionId||prior?.retryAllowed!==true||prior.failedAt!==expectedFailureAt||!serverBudgeted&&reserved.size+(retrySlotsByActor.get(ctx.actor)||0)>=maxRequests))continue;
@@ -88,12 +91,12 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
  };
  return {
   recover:payload=>manual(payload),retry:payload=>manual(payload,'retry'),resume:payload=>manual(payload,'resume'),
-  async refreshSaved(payload){
+  async refreshSaved(payload,{isEligible=()=>true}={}){
    const ctx=getContext(),epoch=generation,previous=running;
    if(previous)await previous.catch(()=>{});
    const current=getContext();
-   if(epoch!==generation||current.actor!==ctx.actor||current.quiz?.id!==ctx.quiz?.id)return;
-   return manual(payload,'saved');
+   if(epoch!==generation||current.actor!==ctx.actor||current.quiz?.id!==ctx.quiz?.id||!isEligible())return;
+   return manual(payload,'saved',isEligible);
   },
   clear({resetSession=false}={}){
    generation++;attempted.clear();

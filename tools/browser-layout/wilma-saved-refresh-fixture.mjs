@@ -13,6 +13,6 @@ const scheduler=createWilmaAutoReview({getContext:()=>ctx,enabled:()=>true,parse
   ctx.submissions.find(s=>s.id===p.submissionId).grading.q.reviewSuggestion=result;
  }});
 ui=installWilmaAnswerReview({document,getContext:()=>ctx,parseGaps:()=>[],answerDisplay:(_,a)=>a,correctDisplay:()=> 'Hund (Beispiel)',saveDecision:async()=>writes++,openSubmission:()=>{},notify:()=>{},getPreparation:(_,sid)=>preparation.get(sid),isPreparing:()=>scheduler.isRunning(),isAutomaticPreview:()=>true,resumeAnswer:p=>scheduler.resume(p)});
-installWilmaReceiptRefresh({window,document,getContext:()=>ctx,getQuestionId:()=>ui.element.dataset.activeQuestion,isVisible:()=>ui.isExpanded(),refreshSaved:p=>scheduler.refreshSaved(p)});
+installWilmaReceiptRefresh({window,document,getContext:()=>ctx,getQuestionId:()=>ui.element.dataset.activeQuestion,isVisible:()=>ui.isExpanded(),refreshSaved:(p,options)=>scheduler.refreshSaved(p,options)});
 ui.refresh();ui.openForQuestion('q');await scheduler.run();
 window.fixture={ui,ctx,scheduler,get writes(){return writes;}};document.body.dataset.fixtureReady='true';

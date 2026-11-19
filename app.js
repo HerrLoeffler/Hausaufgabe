@@ -8500,7 +8500,7 @@ wilmaAnswerReview=installWilmaAnswerReview({document,
 installWilmaReceiptRefresh({window,document,getContext:wilmaReviewContext,
   getQuestionId:()=>wilmaAnswerReview?.element.dataset.activeQuestion,
   isVisible:()=>wilmaAutomaticPreview()&&wilmaAnswerReview?.isExpanded?.(),
-  refreshSaved:payload=>wilmaAutoReview.refreshSaved(payload)
+  refreshSaved:(payload,options)=>wilmaAutoReview.refreshSaved(payload,options)
 });
 
 function confirmDiscardInlineReview(){

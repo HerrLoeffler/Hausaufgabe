@@ -69,3 +69,18 @@ test('foreground events coalesce into a throttled saved-only refresh for the vis
  clock=62000;visible=false;window.dispatchEvent(new Event('focus'));await Promise.resolve();assert.equal(calls.length,2);
  visible=true;question=null;window.dispatchEvent(new Event('focus'));await Promise.resolve();assert.equal(calls.length,2);remove();
 });
+
+test('saved refresh rechecks visibility, selected question and editing after waiting',async()=>{
+ const f=fixture({holdFirst:true});const first=f.scheduler.run();await f.begun;let eligible=true;
+ const refreshed=f.scheduler.refreshSaved({questionId:'q'},{isEligible:()=>eligible});eligible=false;f.release();await Promise.all([first,refreshed]);
+ assert.equal(f.calls.length,2,'The original queue finishes but the now-ineligible saved refresh starts no extra read');
+});
+
+test('saved refresh stops between rows if the teacher starts editing',async()=>{
+ const f=fixture();await f.scheduler.run();delete f.ctx.submissions[1].grading.q.reviewSuggestion;
+ let eligible=true,release;const wait=new Promise(r=>release=r);let currentReads=0;
+ // Hold the first saved lookup via the same real scheduler transport.
+ const ctx=f.ctx,calls=[];const scheduler=auto.createWilmaAutoReview({getContext:()=>ctx,enabled:()=>true,parseGaps:()=>[],serverBudgeted:true,allowFreeLookups:true,analyzeAnswer:async p=>{calls.push(p);currentReads++;assert.equal(p.allowPaid,false);await wait;ctx.submissions.find(s=>s.id===p.submissionId).grading.q.reviewSuggestion={source:'wilma-ai',points:1,status:'uncertain',reason:'Gespeichert.'};}});
+ const run=scheduler.refreshSaved({questionId:'q'},{isEligible:()=>eligible});await Promise.resolve();eligible=false;release();await run;
+ assert.equal(currentReads,1);assert.equal(calls.length,1,'No next lookup after editing starts');
+});
