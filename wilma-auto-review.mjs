@@ -54,7 +54,7 @@ function preparationFailure(error){
 export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enabled=()=>false,onState=()=>{},onIdle=()=>{},maxRequests=2,allowFreeLookups=false,serverBudgeted=false,allowAutomaticPaid=()=>true}) {
  if(!Number.isInteger(maxRequests)||maxRequests<1||maxRequests>2)throw Error('Automatische Testvorschau: höchstens zwei neue Prüfläufe pro Sitzung.');
  let generation=0,running=null;
- const attempted=new Set(),reservedByActor=new Map(),failedByScope=new Map(),states=new Map(),retrySlotsByActor=new Map();
+ const attempted=new Set(),reservedByActor=new Map(),failedByScope=new Map(),states=new Map(),retrySlotsByActor=new Map(),pendingResumes=new Map();
  const scope=ctx=>JSON.stringify([ctx.actor,ctx.quiz?.id]);
  const identity=(ctx,q,s)=>JSON.stringify([ctx.actor,ctx.quiz?.id,q.id,questionSnapshot(q),s.id,s.answers?.[q.id]??'']);
  const same=(epoch,ctx,q,s,key)=>{
@@ -72,7 +72,8 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
   const operation=Promise.resolve().then(async()=>{for(const {q,s,key} of jobs){
    if(!enabled(getContext())||!same(epoch,ctx,q,s,key)||savedOnly&&!isEligible())break;
    const prior=states.get(key),reserved=reservedByActor.get(ctx.actor)||new Set();
-   if(resume&&(!submissionId||prior?.resumeAllowed!==true||s.grading?.[q.id]?.reviewSuggestion||!serverBudgeted&&!reserved.has(key)&&reserved.size+(retrySlotsByActor.get(ctx.actor)||0)>=maxRequests))continue;
+   if(resume&&(!submissionId||prior?.resumeAllowed!==true||s.grading?.[q.id]?.reviewSuggestion))continue;
+   if(resume&&!serverBudgeted&&!reserved.has(key)&&reserved.size+(retrySlotsByActor.get(ctx.actor)||0)>=maxRequests){publish(ctx,q,s,key,{phase:'blocked',reasonCode:'session_limit',message:'Testkontingent dieser Sitzung erreicht.',resumeAllowed:false});continue;}
    if(retry&&(!submissionId||prior?.retryAllowed!==true||prior.failedAt!==expectedFailureAt||!serverBudgeted&&reserved.size+(retrySlotsByActor.get(ctx.actor)||0)>=maxRequests))continue;
    if(retry){states.set(key,{...prior,retryAllowed:false});retrySlotsByActor.set(ctx.actor,(retrySlotsByActor.get(ctx.actor)||0)+1);}
    if(resume){reserved.add(key);reservedByActor.set(ctx.actor,reserved);}
@@ -84,13 +85,34 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
     const current=getContext().submissions.find(x=>x.id===s.id);
     if(current.grading?.[q.id]?.reviewState==='confirmed')continue;
     if(!current.grading?.[q.id]?.reviewSuggestion)throw Error('Kein sicher zugeordneter KI-Vorschlag.');
-    if(!savedOnly)failedByScope.delete(scope(ctx));
+    if(!savedOnly&&current.grading[q.id].reviewSuggestion.cached!==true&&!['teacher-fundus','accepted-rule'].includes(current.grading[q.id].reviewSuggestion.origin))failedByScope.delete(scope(ctx));
     publishManual({phase:'proposal',message:'Vorschlag bereit · bitte prüfen.',retryAllowed:false,resumeAllowed:false});
    }catch(error){if(same(epoch,ctx,q,s,key)){const next=failureState(error);publishManual(!paid&&next.reasonCode==='cache_miss'&&(['error','waiting'].includes(prior?.phase)||prior?.reasonCode&&prior.reasonCode!=='cache_miss')?prior:next);}}
   }}).finally(()=>{if(running===operation){running=null;if(getContext().actor===ctx.actor)onIdle({savedOnly});}});running=operation;return operation;
  };
  return {
-  recover:payload=>manual(payload),retry:payload=>manual(payload,'retry'),resume:payload=>manual(payload,'resume'),
+  recover:payload=>manual(payload),retry:payload=>manual(payload,'retry'),
+  resume(payload){
+   const ctx=getContext(),epoch=generation,q=ctx.questions?.find(q=>q.id===payload.questionId),s=ctx.submissions?.find(s=>s.id===payload.submissionId);
+   if(!q||!s||!enabled(ctx))return Promise.resolve();
+   const key=identity(ctx,q,s),prior=states.get(key),previous=running;
+   if(pendingResumes.has(key))return pendingResumes.get(key);
+   const operation=Promise.resolve(previous).then(async()=>{
+    while(running)await running.catch(()=>{});
+    if(!same(epoch,ctx,q,s,key)||!enabled(getContext()))return;
+    // A first-start click always checks saved evidence before authorizing a bill.
+    await manual(payload,'saved');
+    if(!same(epoch,ctx,q,s,key)||!enabled(getContext()))return;
+    return manual(payload,'resume');
+   }).finally(()=>{
+    if(pendingResumes.get(key)!==operation)return;
+    pendingResumes.delete(key);
+    if(same(epoch,ctx,q,s,key))onIdle();
+   });
+   pendingResumes.set(key,operation);
+   publish(ctx,q,s,key,{...prior,phase:previous?'queued':'running',message:previous?'KI-Vorschlag wird nach der laufenden Prüfung geladen …':'Gespeicherten Vorschlag laden …'});
+   return operation;
+  },
   async refreshSaved(payload,{isEligible=()=>true}={}){
    const ctx=getContext(),epoch=generation,previous=running;
    if(previous)await previous.catch(()=>{});
@@ -102,11 +124,12 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
    generation++;attempted.clear();
    // A results refresh must preserve the budget, failure guard and in-flight
    // busy protection. A real auth change clears private memory for the new actor.
-   if(resetSession){running=null;reservedByActor.clear();failedByScope.clear();states.clear();retrySlotsByActor.clear();}
+   if(resetSession){running=null;reservedByActor.clear();failedByScope.clear();states.clear();retrySlotsByActor.clear();pendingResumes.clear();}
   },
   isRunning:()=>!!running,
   run(){
    if(running)return running;
+   if(pendingResumes.size)return Promise.resolve();
    const ctx=getContext(),epoch=generation;
    if(!ctx.actor||!ctx.quiz||!enabled(ctx))return Promise.resolve();
    const jobs=ctx.questions.flatMap(q=>['text','gapfill'].includes(q.type)?ctx.submissions.filter(s=>{
@@ -120,7 +143,7 @@ export function createWilmaAutoReview({getContext,parseGaps,analyzeAnswer,enable
    const reserved=reservedByActor.get(ctx.actor);
    const operation=Promise.resolve().then(async()=>{
     for(const {q,s,key} of jobs){
-     if(!enabled(getContext())||!same(epoch,ctx,q,s,key)||failedByScope.has(scope(ctx))&&!allowFreeLookups)break;
+     if(pendingResumes.size||!enabled(getContext())||!same(epoch,ctx,q,s,key)||failedByScope.has(scope(ctx))&&!allowFreeLookups)break;
      if(attempted.has(key))continue;
      const emit=(phase,message='',extra={})=>{if(same(epoch,ctx,q,s,key))publish(ctx,q,s,key,{phase,message,...extra});};
      attempted.add(key);

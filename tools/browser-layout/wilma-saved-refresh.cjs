@@ -1,12 +1,14 @@
 const {chromium,webkit}=require('playwright');
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const root=process.cwd(),out=path.join(process.env.GC_LAYOUT_EVIDENCE||'/tmp/gc-wilma-saved-refresh','saved-refresh');fs.mkdirSync(out,{recursive:true});
-let ready=false,reads=[];const evidence=[];
+let ready=false,reads=[],holdMissing=false,holdBusy=false,heldMissing=null,heldBusy=null;const evidence=[];
 const server=http.createServer((req,res)=>{
  const url=new URL(req.url,'http://localhost');
  if(url.pathname==='/fixture/receipt'){
-  const sid=url.searchParams.get('sid');assert.ok(['missing','available'].includes(sid));reads.push(sid);res.setHeader('Content-Type','application/json');
+  const sid=url.searchParams.get('sid');assert.ok(['missing','available','busy'].includes(sid));reads.push(sid);res.setHeader('Content-Type','application/json');
   if(sid==='missing'&&!ready){res.writeHead(409);res.end(JSON.stringify({reasonCode:'cache_miss',reviewState:'not_started'}));return;}
+  if(sid==='busy'&&holdBusy){heldBusy=res;return;}
+  if(sid==='missing'&&ready&&holdMissing){heldMissing=res;return;}
   res.end(JSON.stringify({source:'wilma-ai',cached:true,points:1,status:'uncertain',requestId:'synthetic-saved-only',reason:'Gespeicherter fiktiver Beleg; Lehrkraft entscheidet.'}));return;
  }
  const file=path.resolve(root,'.'+decodeURIComponent(url.pathname));if(!file.startsWith(root+path.sep)||!fs.existsSync(file)){res.writeHead(404).end();return;}
@@ -25,8 +27,19 @@ try{for(const [name,engine]of [['chromium',chromium],['webkit',webkit]]){const b
  assert.deepEqual(reads,['missing','available','missing']);assert.equal(await page.evaluate(()=>fixture.writes),0);assert.equal(await page.evaluate(()=>fixture.ctx.submissions.every(s=>s.grading.q.awardedPoints===0&&!s.grading.q.reviewState)),true);
  await page.evaluate(()=>window.dispatchEvent(new Event('focus')));assert.equal(reads.length,3,'Repeated focus does not create another lookup');assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
  await page.screenshot({path:path.join(out,name+'-'+width+'.png'),fullPage:true});evidence.push({engine:name,width,height,reads:3,providerStarts:0,gradeWrites:0,storedResultVisible:true});await context.close();
+ // The user's actual button must visibly run through handler -> scheduler -> saved response.
+ ready=false;reads=[];const clickContext=await browser.newContext({viewport:{width,height}}),clickPage=await clickContext.newPage();await clickPage.goto(origin+'/tools/browser-layout/wilma-saved-refresh.html');await clickPage.locator('body[data-fixture-ready=true]').waitFor();ready=true;holdMissing=true;
+ const clickRow=clickPage.locator('tr[data-submission=missing]');await clickRow.locator('[data-wilma=resume]').click();await clickPage.waitForFunction(()=>/geladen|läuft|Warteschlange/.test(document.querySelector('tr[data-submission=missing] .wilmaRowStatus').textContent));assert.ok(heldMissing);heldMissing.end(JSON.stringify({source:'wilma-ai',cached:true,requestId:'synthetic-saved-only',points:1,status:'uncertain',reason:'Vorhandener fiktiver Beleg.'}));heldMissing=null;holdMissing=false;
+ await clickRow.locator('.wilmaRowReason').waitFor();assert.equal(await clickRow.locator('[data-wilma=resume]').count(),0);assert.equal(await clickPage.evaluate(()=>fixture.writes),0);assert.deepEqual(reads,['missing','available','missing']);assert.equal(await clickPage.evaluate(()=>fixture.ctx.submissions[0].grading.q.awardedPoints),0);
+ await clickPage.screenshot({path:path.join(out,'button-'+name+'-'+width+'.png'),fullPage:true});evidence.push({engine:name,width,height,buttonSavedReceipt:true,reads:3,providerStarts:0,gradeWrites:0,visibleProgress:true});await clickContext.close();
+
 
  }
+
+ // A different in-flight answer must not silently disable this first-start intent.
+ ready=false;reads=[];holdBusy=true;const busyContext=await browser.newContext({viewport:{width:820,height:600}}),busyPage=await busyContext.newPage();await busyPage.goto(origin+'/tools/browser-layout/wilma-saved-refresh.html');await busyPage.locator('body[data-fixture-ready=true]').waitFor();await busyPage.evaluate(()=>{void fixture.addBusy();});await busyPage.waitForFunction(()=>fixture.scheduler.isRunning());ready=true;
+ const queuedRow=busyPage.locator('tr[data-submission=missing]');assert.equal(await queuedRow.locator('[data-wilma=resume]').isEnabled(),true);await queuedRow.locator('[data-wilma=resume]').click();assert.match(await queuedRow.locator('.wilmaRowStatus').textContent(),/Warteschlange|geladen/);assert.ok(heldBusy);heldBusy.end(JSON.stringify({source:'wilma-ai',cached:true,requestId:'synthetic-busy-saved',points:1,status:'uncertain',reason:'Fiktiv gespeichert.'}));heldBusy=null;holdBusy=false;
+ await queuedRow.locator('.wilmaRowReason').waitFor();assert.equal(await busyPage.evaluate(()=>fixture.writes),0);assert.deepEqual(reads,['missing','available','busy','missing']);evidence.push({engine:name,busyButtonIntent:true,reads:4,providerStarts:0,gradeWrites:0,visibleQueue:true});await busyContext.close();
  // A pending teacher edit must not be blurred or committed by a foreground read.
  ready=false;reads=[];const editContext=await browser.newContext({viewport:{width:820,height:600}}),editPage=await editContext.newPage();await editPage.goto(origin+'/tools/browser-layout/wilma-saved-refresh.html');await editPage.locator('body[data-fixture-ready=true]').waitFor();ready=true;
  const draft=editPage.locator('tr[data-submission=available] [data-wilma=points]');await draft.fill('0.5');await editPage.evaluate(()=>window.dispatchEvent(new Event('focus')));await editPage.waitForTimeout(50);
