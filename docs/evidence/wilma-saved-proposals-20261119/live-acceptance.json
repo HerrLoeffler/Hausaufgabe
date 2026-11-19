@@ -1,0 +1,15 @@
+{
+  "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+  "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+  "result": "pass",
+  "scope": "Existing fictional Live LLD9SSR8 normal teacher interface; no new provider or grade operation",
+  "proposalPoints": 1.5,
+  "maxPoints": 1.5,
+  "missingMessageAbsent": true,
+  "providerStarts": 0,
+  "usageDelta": 0,
+  "gradeWrites": 0,
+  "privateStateUnchanged": true,
+  "screenshot": "/private/tmp/gc-wilma-reliability-live-visible.png",
+  "physicalDeviceAcceptance": false
+}

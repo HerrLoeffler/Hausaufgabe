@@ -7,12 +7,14 @@
   "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
   "pullRequest": 438,
   "layoutAcceptance": "Martin explicitly accepts existing layout19Nov; no redesign",
-  "stage": "branch_only",
+  "stage": "production",
   "ci": {
-    "head_sha": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
     "id": 44519867699,
-    "status": "in_progress",
-    "conclusion": null
+    "head_sha": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+    "status": "completed",
+    "conclusion": "success",
+    "verifiedBy": "connected GitHub GET",
+    "verifiedAtMs": 1795091550440
   },
   "localVerification": {
     "focused": 52,
@@ -24,8 +26,57 @@
   "realGradeWrites": 0,
   "functionsChanged": false,
   "cssChanged": false,
-  "hosting": {},
+  "hosting": {
+    "stage": {
+      "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+      "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+      "project": "gradecrew-staging-2026",
+      "version": "sites/gradecrew-staging-2026/versions/af43a68480f2363f",
+      "baseline": "sites/gradecrew-staging-2026/versions/4916e09a92376424",
+      "result": "pass",
+      "allOriginalPathsRetained": true,
+      "changedPaths": [
+        "/wilma/app.js",
+        "/wilma/wilma-auto-review.mjs",
+        "/wilma/wilma-answer-review.mjs",
+        "/wilma/wilma-release.json"
+      ],
+      "unchangedBlobHashes": 663,
+      "totalPaths": 667,
+      "configPreserved": true,
+      "functionsUnchanged": 101,
+      "backendRevision": "reviewwilmaanswers-00012-pez",
+      "backendSourceUnchanged": true,
+      "providerStarts": 0,
+      "gradeWrites": 0,
+      "verifiedAt": "2026-11-19T12:24:19.204Z"
+    },
+    "production": {
+      "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+      "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+      "project": "hausaufgabe-staging",
+      "version": "sites/hausaufgabe-staging/versions/3b894c3e2bcba8b4",
+      "baseline": "sites/hausaufgabe-staging/versions/7214fd4140dbc950",
+      "result": "pass",
+      "allOriginalPathsRetained": true,
+      "changedPaths": [
+        "/app.js",
+        "/wilma-auto-review.mjs",
+        "/wilma-answer-review.mjs",
+        "/release.json"
+      ],
+      "unchangedBlobHashes": 215,
+      "totalPaths": 219,
+      "configPreserved": true,
+      "functionsUnchanged": 62,
+      "backendRevision": "reviewwilmaanswers-00007-viz",
+      "backendSourceUnchanged": true,
+      "providerStarts": 0,
+      "gradeWrites": 0,
+      "verifiedAt": "2026-11-19T12:33:04.323Z"
+    }
+  },
   "physicalDeviceAcceptance": "not added by this repair",
   "remaining": "Human verifies exact button in everyday use; other error classes require their actual reason/source evidence; no automatic real-class replay",
-  "recordedAt": "2026-11-19T12:04:04.581821+00:00"
+  "recordedAt": "2026-11-19T12:35:00.796011+00:00"
 }

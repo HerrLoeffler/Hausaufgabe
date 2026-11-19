@@ -1,6 +1,8 @@
 {
-  "head_sha": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
   "id": 44519867699,
-  "status": "in_progress",
-  "conclusion": null
+  "head_sha": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+  "status": "completed",
+  "conclusion": "success",
+  "verifiedBy": "connected GitHub GET",
+  "verifiedAtMs": 1795091550440
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-11-19T12:06:09.285947+00:00",
+  "observed_at": "2026-11-19T12:35:00.822936+00:00",
   "repository": "HerrLoeffler/Hausaufgabe",
   "registry_branch": "main",
   "description": "Zentrale, datierte Release- und Workstream-Sicht. Vor Änderungen Remote-Branches, CI und Deployments erneut prüfen.",
@@ -1145,10 +1145,10 @@
     "legacy_project_changed": false,
     "url": "https://gradecrew.de/",
     "version": "2.3.1-gc45-rc1",
-    "source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
-    "deployed_local_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
-    "tree": "ff4fe8b4a36d9e2b3d46481f72a4bf0683061bbf",
-    "user_acceptance": "Current layout explicitly accepted by Martin19Nov; some AI proposals still reported missing. Concrete stale existing receipt recovered free without grade/cost changes; source0ad candidate under exact CI44519867699, not yet published. Previous4fe remains deployed.",
+    "source_commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+    "deployed_local_commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+    "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+    "user_acceptance": "Layout explicitly accepted by Martin19Nov. Actual stale existing Live receipt recovered free; cache-first button and queue tested through stored synthetic results on candidate and publication hash-verified. No new provider work or real grade changes; broader everyday/physical acceptance remains open.",
     "alternate_urls": [
       "https://hausaufgabe-staging.web.app/"
     ],
@@ -1554,10 +1554,10 @@
       "tree": "d93d6af7cb8716266b54927edbf0cba46b44840c",
       "user_acceptance": "Emmi answer-audio feedback and compact test cards deployed and hash-verified on gradecrew.de; actual signed-in audio quality and physical iPhone/iPad acceptance pending."
     },
-    "hosting_version": "7214fd4140dbc950",
-    "verified_at": "2026-11-18T23:34:26.215635+00:00",
+    "hosting_version": "3b894c3e2bcba8b4",
+    "verified_at": "2026-11-19T12:35:00.822936+00:00",
     "baseline_actual_before_release": "9de201190cf5cac2c0c22d87a1824914d0b3f064",
-    "latest_release_report": "docs/evidence/wilma-normal-entry-20261119/REPORT.md",
+    "latest_release_report": "docs/evidence/wilma-saved-proposals-20261119/REPORT.md",
     "wilma_review_revision": "reviewwilmaanswers-00007-viz",
     "wilma_review_source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
     "wilma_legacy_backend_release_20261118": {
@@ -1619,6 +1619,143 @@
       "stage_reserved_micros": 0,
       "public_hashes_per_origin": 216,
       "report": "docs/evidence/wilma-normal-entry-20261119/REPORT.md"
+    },
+    "wilma_saved_proposals_release_20261119": {
+      "task_ids": [
+        "GC-PEDAGOGY-KB-01",
+        "GC-WEB-REPAIR-20261007"
+      ],
+      "branch": "fix/wilma-live-recovery-20261118",
+      "source_commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+      "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+      "pull_request": 438,
+      "stage": "production",
+      "ci_run": 44519867699,
+      "ci_status": "success",
+      "layout_human_acceptance": "Martin explicitly accepted current layout19Nov; no redesign",
+      "scope": "Visible/cache-first first-start and queued single-answer intent, free foreground receipt reconciliation, protected edits and resumed new contexts; Hosting-only.",
+      "hosting": {
+        "stage": {
+          "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+          "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+          "project": "gradecrew-staging-2026",
+          "version": "sites/gradecrew-staging-2026/versions/af43a68480f2363f",
+          "baseline": "sites/gradecrew-staging-2026/versions/4916e09a92376424",
+          "result": "pass",
+          "allOriginalPathsRetained": true,
+          "changedPaths": [
+            "/wilma/app.js",
+            "/wilma/wilma-auto-review.mjs",
+            "/wilma/wilma-answer-review.mjs",
+            "/wilma/wilma-release.json"
+          ],
+          "unchangedBlobHashes": 663,
+          "totalPaths": 667,
+          "configPreserved": true,
+          "functionsUnchanged": 101,
+          "backendRevision": "reviewwilmaanswers-00012-pez",
+          "backendSourceUnchanged": true,
+          "providerStarts": 0,
+          "gradeWrites": 0,
+          "verifiedAt": "2026-11-19T12:24:19.204Z"
+        },
+        "production": {
+          "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+          "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+          "project": "hausaufgabe-staging",
+          "version": "sites/hausaufgabe-staging/versions/3b894c3e2bcba8b4",
+          "baseline": "sites/hausaufgabe-staging/versions/7214fd4140dbc950",
+          "result": "pass",
+          "allOriginalPathsRetained": true,
+          "changedPaths": [
+            "/app.js",
+            "/wilma-auto-review.mjs",
+            "/wilma-answer-review.mjs",
+            "/release.json"
+          ],
+          "unchangedBlobHashes": 215,
+          "totalPaths": 219,
+          "configPreserved": true,
+          "functionsUnchanged": 62,
+          "backendRevision": "reviewwilmaanswers-00007-viz",
+          "backendSourceUnchanged": true,
+          "providerStarts": 0,
+          "gradeWrites": 0,
+          "verifiedAt": "2026-11-19T12:33:04.323Z"
+        }
+      },
+      "acceptance": {
+        "stage": {
+          "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+          "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+          "result": "pass",
+          "fixture": "existing synthetic QAWILM18 only",
+          "actualBrowser": "Chrome, existing authenticated Stage account",
+          "existingReceiptCount": 5,
+          "visibleAnimalPoints": [
+            1,
+            0,
+            0
+          ],
+          "visibleAnimalMaximum": 1,
+          "visibleGapPoints": [
+            1,
+            0
+          ],
+          "visibleGapMaximum": 1.5,
+          "allMissingMessagesCleared": true,
+          "firstStartButtonsAbsentAfterExistingResults": true,
+          "sameVisibleQuizRefreshedFreeBeforeOpening": true,
+          "providerStarts": 0,
+          "gradeWrites": 0,
+          "usageDeltaMicros": 0,
+          "privateStateExactlyUnchanged": true,
+          "reservedMicros": 0,
+          "screenshot": "/private/tmp/gc-wilma-reliability-stage-visible.png",
+          "limits": [
+            "Saved-result recovery acceptance; no new semantic model probe",
+            "Actual button/queued-click failure is covered by16 Chromium/WebKit synthetic integration cases, not an invented additional paid Stage call"
+          ],
+          "verifiedAt": "2026-11-19T12:28:05.214749+00:00"
+        },
+        "live": {
+          "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+          "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+          "result": "pass",
+          "scope": "Existing fictional Live LLD9SSR8 normal teacher interface; no new provider or grade operation",
+          "proposalPoints": 1.5,
+          "maxPoints": 1.5,
+          "missingMessageAbsent": true,
+          "providerStarts": 0,
+          "usageDelta": 0,
+          "gradeWrites": 0,
+          "privateStateUnchanged": true,
+          "screenshot": "/private/tmp/gc-wilma-reliability-live-visible.png",
+          "physicalDeviceAcceptance": false
+        }
+      },
+      "public_hashes": {
+        "stage": {
+          "filesPerOrigin": 216,
+          "totalVerified": 216,
+          "mismatches": 0
+        },
+        "production": {
+          "filesPerOrigin": 216,
+          "totalVerified": 432,
+          "mismatches": 0
+        }
+      },
+      "functions_changed": false,
+      "backend_source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+      "css_changed": false,
+      "provider_starts_by_this_repair": 0,
+      "real_grade_writes": 0,
+      "runtime_merged_into_main": false,
+      "report": "docs/evidence/wilma-saved-proposals-20261119/REPORT.md",
+      "receipt": "docs/evidence/wilma-saved-proposals-20261119/receipt.json",
+      "verified_at": "2026-11-19T12:35:00.822936+00:00",
+      "next_action": "Martin verifies the first-start button in everyday use; inspect actual reasons for any other missing proposals without replaying old classes or sending new real answers. Physical acceptance remains separate."
     }
   },
   "automation": {
@@ -2749,7 +2886,7 @@
       "candidate_ci_job": 112587453495,
       "independent_review": "approved; two correction rounds preserved; final report analysis/web-acceptance-20261007/final-review.md",
       "no_scroll_story": true,
-      "next_action": "Wait exact full CI44519867699; only then prepare/release Stage /wilma/, prove existing fictional cached result with zero new provider/grade work, and narrowly publish approved Live Hosting patch. Layout is explicitly accepted; no redesign. Earlier real-answer transmission denial is not bypassed.",
+      "next_action": "Martin verifies the first-start button in everyday use; inspect actual reasons for any other missing proposals without replaying old classes or sending new real answers. Physical acceptance remains separate.",
       "previous_release": {
         "id": "web-repair-20261007",
         "stage": "staging_deployed",
@@ -3508,38 +3645,143 @@
         "receipt": "workstreams/template-import-receipt-20261029.json",
         "next_action": "Ask human approval for exact aadf Hosting-only release on gradecrew.de; after approval freshly reconcile Live8188 or newer before one clone and both-origin hashes. Do not repeat completed tests unless source changes."
       },
-      "latest_release": "web_batch_20261118.normal_entry_release_20261119",
+      "latest_release": "saved_proposals_followup_20261119",
       "saved_proposals_followup_20261119": {
         "task_ids": [
           "GC-PEDAGOGY-KB-01",
           "GC-WEB-REPAIR-20261007"
         ],
-        "stage": "branch_only",
+        "branch": "fix/wilma-live-recovery-20261118",
         "source_commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
         "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
         "pull_request": 438,
+        "stage": "production",
         "ci_run": 44519867699,
-        "ci_status": "Node22 success; Browser in progress; no release yet",
-        "layout_human_acceptance": "Martin explicitly accepts current layout19Nov; no redesign",
-        "scope": "Cache-first visible first-start intent; priority after current request; free foreground reconciliation; protected active inputs and new-context continuation. CSS/Functions unchanged.",
-        "verified_real_comparison": {
-          "existing_completed_receipt_reused": true,
-          "before_ui_missing": true,
-          "after_free_status_points": 0,
-          "max_points": 1.5,
-          "new_provider_starts": 0,
-          "grade_writes": 0,
-          "budget_unchanged": true
+        "ci_status": "success",
+        "layout_human_acceptance": "Martin explicitly accepted current layout19Nov; no redesign",
+        "scope": "Visible/cache-first first-start and queued single-answer intent, free foreground receipt reconciliation, protected edits and resumed new contexts; Hosting-only.",
+        "hosting": {
+          "stage": {
+            "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+            "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+            "project": "gradecrew-staging-2026",
+            "version": "sites/gradecrew-staging-2026/versions/af43a68480f2363f",
+            "baseline": "sites/gradecrew-staging-2026/versions/4916e09a92376424",
+            "result": "pass",
+            "allOriginalPathsRetained": true,
+            "changedPaths": [
+              "/wilma/app.js",
+              "/wilma/wilma-auto-review.mjs",
+              "/wilma/wilma-answer-review.mjs",
+              "/wilma/wilma-release.json"
+            ],
+            "unchangedBlobHashes": 663,
+            "totalPaths": 667,
+            "configPreserved": true,
+            "functionsUnchanged": 101,
+            "backendRevision": "reviewwilmaanswers-00012-pez",
+            "backendSourceUnchanged": true,
+            "providerStarts": 0,
+            "gradeWrites": 0,
+            "verifiedAt": "2026-11-19T12:24:19.204Z"
+          },
+          "production": {
+            "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+            "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+            "project": "hausaufgabe-staging",
+            "version": "sites/hausaufgabe-staging/versions/3b894c3e2bcba8b4",
+            "baseline": "sites/hausaufgabe-staging/versions/7214fd4140dbc950",
+            "result": "pass",
+            "allOriginalPathsRetained": true,
+            "changedPaths": [
+              "/app.js",
+              "/wilma-auto-review.mjs",
+              "/wilma-answer-review.mjs",
+              "/release.json"
+            ],
+            "unchangedBlobHashes": 215,
+            "totalPaths": 219,
+            "configPreserved": true,
+            "functionsUnchanged": 62,
+            "backendRevision": "reviewwilmaanswers-00007-viz",
+            "backendSourceUnchanged": true,
+            "providerStarts": 0,
+            "gradeWrites": 0,
+            "verifiedAt": "2026-11-19T12:33:04.323Z"
+          }
         },
-        "local_tests": {
-          "focused": 52,
-          "root_ui": 867,
-          "saved_browser_cases": 16,
-          "media_browser_checks": 48
+        "acceptance": {
+          "stage": {
+            "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+            "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+            "result": "pass",
+            "fixture": "existing synthetic QAWILM18 only",
+            "actualBrowser": "Chrome, existing authenticated Stage account",
+            "existingReceiptCount": 5,
+            "visibleAnimalPoints": [
+              1,
+              0,
+              0
+            ],
+            "visibleAnimalMaximum": 1,
+            "visibleGapPoints": [
+              1,
+              0
+            ],
+            "visibleGapMaximum": 1.5,
+            "allMissingMessagesCleared": true,
+            "firstStartButtonsAbsentAfterExistingResults": true,
+            "sameVisibleQuizRefreshedFreeBeforeOpening": true,
+            "providerStarts": 0,
+            "gradeWrites": 0,
+            "usageDeltaMicros": 0,
+            "privateStateExactlyUnchanged": true,
+            "reservedMicros": 0,
+            "screenshot": "/private/tmp/gc-wilma-reliability-stage-visible.png",
+            "limits": [
+              "Saved-result recovery acceptance; no new semantic model probe",
+              "Actual button/queued-click failure is covered by16 Chromium/WebKit synthetic integration cases, not an invented additional paid Stage call"
+            ],
+            "verifiedAt": "2026-11-19T12:28:05.214749+00:00"
+          },
+          "live": {
+            "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+            "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+            "result": "pass",
+            "scope": "Existing fictional Live LLD9SSR8 normal teacher interface; no new provider or grade operation",
+            "proposalPoints": 1.5,
+            "maxPoints": 1.5,
+            "missingMessageAbsent": true,
+            "providerStarts": 0,
+            "usageDelta": 0,
+            "gradeWrites": 0,
+            "privateStateUnchanged": true,
+            "screenshot": "/private/tmp/gc-wilma-reliability-live-visible.png",
+            "physicalDeviceAcceptance": false
+          }
         },
+        "public_hashes": {
+          "stage": {
+            "filesPerOrigin": 216,
+            "totalVerified": 216,
+            "mismatches": 0
+          },
+          "production": {
+            "filesPerOrigin": 216,
+            "totalVerified": 432,
+            "mismatches": 0
+          }
+        },
+        "functions_changed": false,
+        "backend_source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+        "css_changed": false,
+        "provider_starts_by_this_repair": 0,
+        "real_grade_writes": 0,
+        "runtime_merged_into_main": false,
         "report": "docs/evidence/wilma-saved-proposals-20261119/REPORT.md",
         "receipt": "docs/evidence/wilma-saved-proposals-20261119/receipt.json",
-        "next_action": "Wait exact full CI44519867699; only then prepare/release Stage /wilma/, prove existing fictional cached result with zero new provider/grade work, and narrowly publish approved Live Hosting patch."
+        "verified_at": "2026-11-19T12:35:00.822936+00:00",
+        "next_action": "Martin verifies the first-start button in everyday use; inspect actual reasons for any other missing proposals without replaying old classes or sending new real answers. Physical acceptance remains separate."
       }
     },
     {
@@ -4937,7 +5179,7 @@
         "staging_cap_legacy_requests": 7,
         "staging_monthly_budget_eur": 20
       },
-      "next_action": "Wait exact full CI44519867699; only then prepare/release Stage /wilma/, prove existing fictional cached result with zero new provider/grade work, and narrowly publish approved Live Hosting patch. Layout is explicitly accepted; no redesign. Earlier real-answer transmission denial is not bypassed.",
+      "next_action": "Martin verifies the first-start button in everyday use; inspect actual reasons for any other missing proposals without replaying old classes or sending new real answers. Physical acceptance remains separate.",
       "semantic_preview": {
         "stage": "staging_deployed",
         "source": "61a5e296adc4ac8421f0cea391e9dc6e6c0d46ec",
@@ -5279,7 +5521,7 @@
         "next_action": "Martin reloads gradecrew.de; physical device acceptance and separately owned Secure build; no further paid QA automatically",
         "verified_at": "2026-11-18T17:36:50.515413+00:00"
       },
-      "latest_release": "normal_entry_release_20261119",
+      "latest_release": "saved_proposals_followup_20261119",
       "root_release_fields_note": "Latest Hosting is student_result_actions_20261118/f723; latest reviewWilmaAnswers is legacy_backend_release_20261118/f723. Earlier unreleased-backend statements are historical.",
       "compact_controls_p1_20261118": {
         "stage": "production",
@@ -5380,32 +5622,137 @@
           "GC-PEDAGOGY-KB-01",
           "GC-WEB-REPAIR-20261007"
         ],
-        "stage": "branch_only",
+        "branch": "fix/wilma-live-recovery-20261118",
         "source_commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
         "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
         "pull_request": 438,
+        "stage": "production",
         "ci_run": 44519867699,
-        "ci_status": "Node22 success; Browser in progress; no release yet",
-        "layout_human_acceptance": "Martin explicitly accepts current layout19Nov; no redesign",
-        "scope": "Cache-first visible first-start intent; priority after current request; free foreground reconciliation; protected active inputs and new-context continuation. CSS/Functions unchanged.",
-        "verified_real_comparison": {
-          "existing_completed_receipt_reused": true,
-          "before_ui_missing": true,
-          "after_free_status_points": 0,
-          "max_points": 1.5,
-          "new_provider_starts": 0,
-          "grade_writes": 0,
-          "budget_unchanged": true
+        "ci_status": "success",
+        "layout_human_acceptance": "Martin explicitly accepted current layout19Nov; no redesign",
+        "scope": "Visible/cache-first first-start and queued single-answer intent, free foreground receipt reconciliation, protected edits and resumed new contexts; Hosting-only.",
+        "hosting": {
+          "stage": {
+            "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+            "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+            "project": "gradecrew-staging-2026",
+            "version": "sites/gradecrew-staging-2026/versions/af43a68480f2363f",
+            "baseline": "sites/gradecrew-staging-2026/versions/4916e09a92376424",
+            "result": "pass",
+            "allOriginalPathsRetained": true,
+            "changedPaths": [
+              "/wilma/app.js",
+              "/wilma/wilma-auto-review.mjs",
+              "/wilma/wilma-answer-review.mjs",
+              "/wilma/wilma-release.json"
+            ],
+            "unchangedBlobHashes": 663,
+            "totalPaths": 667,
+            "configPreserved": true,
+            "functionsUnchanged": 101,
+            "backendRevision": "reviewwilmaanswers-00012-pez",
+            "backendSourceUnchanged": true,
+            "providerStarts": 0,
+            "gradeWrites": 0,
+            "verifiedAt": "2026-11-19T12:24:19.204Z"
+          },
+          "production": {
+            "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+            "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+            "project": "hausaufgabe-staging",
+            "version": "sites/hausaufgabe-staging/versions/3b894c3e2bcba8b4",
+            "baseline": "sites/hausaufgabe-staging/versions/7214fd4140dbc950",
+            "result": "pass",
+            "allOriginalPathsRetained": true,
+            "changedPaths": [
+              "/app.js",
+              "/wilma-auto-review.mjs",
+              "/wilma-answer-review.mjs",
+              "/release.json"
+            ],
+            "unchangedBlobHashes": 215,
+            "totalPaths": 219,
+            "configPreserved": true,
+            "functionsUnchanged": 62,
+            "backendRevision": "reviewwilmaanswers-00007-viz",
+            "backendSourceUnchanged": true,
+            "providerStarts": 0,
+            "gradeWrites": 0,
+            "verifiedAt": "2026-11-19T12:33:04.323Z"
+          }
         },
-        "local_tests": {
-          "focused": 52,
-          "root_ui": 867,
-          "saved_browser_cases": 16,
-          "media_browser_checks": 48
+        "acceptance": {
+          "stage": {
+            "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+            "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+            "result": "pass",
+            "fixture": "existing synthetic QAWILM18 only",
+            "actualBrowser": "Chrome, existing authenticated Stage account",
+            "existingReceiptCount": 5,
+            "visibleAnimalPoints": [
+              1,
+              0,
+              0
+            ],
+            "visibleAnimalMaximum": 1,
+            "visibleGapPoints": [
+              1,
+              0
+            ],
+            "visibleGapMaximum": 1.5,
+            "allMissingMessagesCleared": true,
+            "firstStartButtonsAbsentAfterExistingResults": true,
+            "sameVisibleQuizRefreshedFreeBeforeOpening": true,
+            "providerStarts": 0,
+            "gradeWrites": 0,
+            "usageDeltaMicros": 0,
+            "privateStateExactlyUnchanged": true,
+            "reservedMicros": 0,
+            "screenshot": "/private/tmp/gc-wilma-reliability-stage-visible.png",
+            "limits": [
+              "Saved-result recovery acceptance; no new semantic model probe",
+              "Actual button/queued-click failure is covered by16 Chromium/WebKit synthetic integration cases, not an invented additional paid Stage call"
+            ],
+            "verifiedAt": "2026-11-19T12:28:05.214749+00:00"
+          },
+          "live": {
+            "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+            "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+            "result": "pass",
+            "scope": "Existing fictional Live LLD9SSR8 normal teacher interface; no new provider or grade operation",
+            "proposalPoints": 1.5,
+            "maxPoints": 1.5,
+            "missingMessageAbsent": true,
+            "providerStarts": 0,
+            "usageDelta": 0,
+            "gradeWrites": 0,
+            "privateStateUnchanged": true,
+            "screenshot": "/private/tmp/gc-wilma-reliability-live-visible.png",
+            "physicalDeviceAcceptance": false
+          }
         },
+        "public_hashes": {
+          "stage": {
+            "filesPerOrigin": 216,
+            "totalVerified": 216,
+            "mismatches": 0
+          },
+          "production": {
+            "filesPerOrigin": 216,
+            "totalVerified": 432,
+            "mismatches": 0
+          }
+        },
+        "functions_changed": false,
+        "backend_source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+        "css_changed": false,
+        "provider_starts_by_this_repair": 0,
+        "real_grade_writes": 0,
+        "runtime_merged_into_main": false,
         "report": "docs/evidence/wilma-saved-proposals-20261119/REPORT.md",
         "receipt": "docs/evidence/wilma-saved-proposals-20261119/receipt.json",
-        "next_action": "Wait exact full CI44519867699; only then prepare/release Stage /wilma/, prove existing fictional cached result with zero new provider/grade work, and narrowly publish approved Live Hosting patch."
+        "verified_at": "2026-11-19T12:35:00.822936+00:00",
+        "next_action": "Martin verifies the first-start button in everyday use; inspect actual reasons for any other missing proposals without replaying old classes or sending new real answers. Physical acceptance remains separate."
       }
     },
     {
@@ -6357,6 +6704,146 @@
       "url": "https://gradecrew-staging-2026.web.app/wilma/",
       "review_revision": "reviewwilmaanswers-00012-pez",
       "canonical_root_source_unchanged": "5be513d6f8cc90520efb63ee3c0d4e878e84df2d"
+    },
+    "wilma_saved_proposals_release_20261119": {
+      "task_ids": [
+        "GC-PEDAGOGY-KB-01",
+        "GC-WEB-REPAIR-20261007"
+      ],
+      "branch": "fix/wilma-live-recovery-20261118",
+      "source_commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+      "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+      "pull_request": 438,
+      "stage": "staging_deployed",
+      "ci_run": 44519867699,
+      "ci_status": "success",
+      "layout_human_acceptance": "Martin explicitly accepted current layout19Nov; no redesign",
+      "scope": "Visible/cache-first first-start and queued single-answer intent, free foreground receipt reconciliation, protected edits and resumed new contexts; Hosting-only.",
+      "hosting": {
+        "stage": {
+          "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+          "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+          "project": "gradecrew-staging-2026",
+          "version": "sites/gradecrew-staging-2026/versions/af43a68480f2363f",
+          "baseline": "sites/gradecrew-staging-2026/versions/4916e09a92376424",
+          "result": "pass",
+          "allOriginalPathsRetained": true,
+          "changedPaths": [
+            "/wilma/app.js",
+            "/wilma/wilma-auto-review.mjs",
+            "/wilma/wilma-answer-review.mjs",
+            "/wilma/wilma-release.json"
+          ],
+          "unchangedBlobHashes": 663,
+          "totalPaths": 667,
+          "configPreserved": true,
+          "functionsUnchanged": 101,
+          "backendRevision": "reviewwilmaanswers-00012-pez",
+          "backendSourceUnchanged": true,
+          "providerStarts": 0,
+          "gradeWrites": 0,
+          "verifiedAt": "2026-11-19T12:24:19.204Z"
+        },
+        "production": {
+          "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+          "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+          "project": "hausaufgabe-staging",
+          "version": "sites/hausaufgabe-staging/versions/3b894c3e2bcba8b4",
+          "baseline": "sites/hausaufgabe-staging/versions/7214fd4140dbc950",
+          "result": "pass",
+          "allOriginalPathsRetained": true,
+          "changedPaths": [
+            "/app.js",
+            "/wilma-auto-review.mjs",
+            "/wilma-answer-review.mjs",
+            "/release.json"
+          ],
+          "unchangedBlobHashes": 215,
+          "totalPaths": 219,
+          "configPreserved": true,
+          "functionsUnchanged": 62,
+          "backendRevision": "reviewwilmaanswers-00007-viz",
+          "backendSourceUnchanged": true,
+          "providerStarts": 0,
+          "gradeWrites": 0,
+          "verifiedAt": "2026-11-19T12:33:04.323Z"
+        }
+      },
+      "acceptance": {
+        "stage": {
+          "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+          "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+          "result": "pass",
+          "fixture": "existing synthetic QAWILM18 only",
+          "actualBrowser": "Chrome, existing authenticated Stage account",
+          "existingReceiptCount": 5,
+          "visibleAnimalPoints": [
+            1,
+            0,
+            0
+          ],
+          "visibleAnimalMaximum": 1,
+          "visibleGapPoints": [
+            1,
+            0
+          ],
+          "visibleGapMaximum": 1.5,
+          "allMissingMessagesCleared": true,
+          "firstStartButtonsAbsentAfterExistingResults": true,
+          "sameVisibleQuizRefreshedFreeBeforeOpening": true,
+          "providerStarts": 0,
+          "gradeWrites": 0,
+          "usageDeltaMicros": 0,
+          "privateStateExactlyUnchanged": true,
+          "reservedMicros": 0,
+          "screenshot": "/private/tmp/gc-wilma-reliability-stage-visible.png",
+          "limits": [
+            "Saved-result recovery acceptance; no new semantic model probe",
+            "Actual button/queued-click failure is covered by16 Chromium/WebKit synthetic integration cases, not an invented additional paid Stage call"
+          ],
+          "verifiedAt": "2026-11-19T12:28:05.214749+00:00"
+        },
+        "live": {
+          "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+          "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+          "result": "pass",
+          "scope": "Existing fictional Live LLD9SSR8 normal teacher interface; no new provider or grade operation",
+          "proposalPoints": 1.5,
+          "maxPoints": 1.5,
+          "missingMessageAbsent": true,
+          "providerStarts": 0,
+          "usageDelta": 0,
+          "gradeWrites": 0,
+          "privateStateUnchanged": true,
+          "screenshot": "/private/tmp/gc-wilma-reliability-live-visible.png",
+          "physicalDeviceAcceptance": false
+        }
+      },
+      "public_hashes": {
+        "stage": {
+          "filesPerOrigin": 216,
+          "totalVerified": 216,
+          "mismatches": 0
+        },
+        "production": {
+          "filesPerOrigin": 216,
+          "totalVerified": 432,
+          "mismatches": 0
+        }
+      },
+      "functions_changed": false,
+      "backend_source_commit": "4fe3baf733c8a57bcbbd3359ea45341b8f4d7882",
+      "css_changed": false,
+      "provider_starts_by_this_repair": 0,
+      "real_grade_writes": 0,
+      "runtime_merged_into_main": false,
+      "report": "docs/evidence/wilma-saved-proposals-20261119/REPORT.md",
+      "receipt": "docs/evidence/wilma-saved-proposals-20261119/receipt.json",
+      "verified_at": "2026-11-19T12:35:00.822936+00:00",
+      "next_action": "Martin verifies the first-start button in everyday use; inspect actual reasons for any other missing proposals without replaying old classes or sending new real answers. Physical acceptance remains separate.",
+      "hosting_version": "sites/gradecrew-staging-2026/versions/af43a68480f2363f",
+      "url": "https://gradecrew-staging-2026.web.app/wilma/",
+      "canonical_root_and_outside_prefix": "Existing blobs retained exactly; parallel Classroom work preserved"
     }
   },
   "school_release_20261018": {

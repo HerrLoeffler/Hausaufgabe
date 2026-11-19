@@ -22,17 +22,34 @@
     "cloneCreatedBeforeRelease": true,
     "configAndBaselineRecheckedBeforeFinalizeAndRelease": true,
     "ambiguousCloneOrReleasePostCannotBeBlindlyRepeated": true,
-    "helperSHA256": "118cdda9fd1b080c5971a80faeaae22d13e42126b39326112173d0a89b491203"
+    "helperSHA256": "e5df2fccaae76264c07049b08fc6a17a24232578e37124bd8cdf2bc1d6307353",
+    "mutationAutomaticNetworkRetries": 0,
+    "mutationRetryControlVerifiedAgainstInstalledFirebaseClient": true,
+    "explicitPopulateResume": "Same known CREATED clone and exactly same four hashes; server uploadRequiredHashes determines remaining content-addressed uploads; clone/release intent and LRO barriers retained.",
+    "uploadResponseType": "xml: installed Firebase apiv2 implementation reads res.text(), supporting empty/plain-text response; no XML parsing",
+    "oneTokenDeltaVerifiedAgainstPreviousHelperSHA": true,
+    "exactCI": {
+      "run": 44519867699,
+      "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "knownStageClone": "af43a68480f2363f",
+    "firstPrepareFailure": "SDK response interpretation only; original populate/prepare attempts preserved, no release intent"
   },
   "conditions": [
     "Exact fresh CI, source review PASS and actual free-only Stage acceptance remain required before publication.",
     "Hosting only: functions/config/backend/source must match guards; no Rules/DB mutation.",
     "Do not interpret helper providerStarts/gradeWrites zero as independent measurements of global concurrent activity.",
-    "626 CI failure is retained historically. The final test-only source needs a fresh exact complete successful CI; no gate exception."
+    "626 CI failure is retained historically. The final test-only source needs a fresh exact complete successful CI; no gate exception.",
+    "All clone/populate/upload/finalize/release mutations use retries:0. An ambiguous clone/release response requires inspecting the existing intent/LRO/release before any repeat; only identical content-addressed populate/upload in the known CREATED clone may resume.",
+    "Resume only existing clone af43a68480f2363f/LRO with identical four populate hashes; use fresh uploadRequiredHashes and do not blindly restart clone or release."
   ],
   "limits": [
     "No helper execution, cloud/provider/browser starts, deploy or source edits performed by reviewer.",
-    "Helper not executed. Pure timestamp predicate checks and nine existing bootstrap unit tests only; no cloud/provider/browser starts."
+    "Helper not executed. Pure timestamp predicate checks and nine existing bootstrap unit tests only; no cloud/provider/browser starts.",
+    "Final helper delta reviewed without execution; installed Firebase apiv2 source confirms options.retries:0 overrides its default automatic network retries. Exact CI44519867699 remains pending at review.",
+    "Upload-response correction reviewed read-only; helper not executed; actual Stage free-only acceptance remains pending."
   ],
   "resolvedFindings": [
     {
@@ -49,8 +66,9 @@
     "bootstrapTargetedTests": 9,
     "bootstrapTargetedPassed": 9,
     "mediaResize": "Moves same screenshot and unchanged pixel assertions after existing viewport/CSS readiness wait; no product CSS or assertion weakening",
-    "immutableFinalTestOnlyCommit": "pending; rebind source/review/metadata after commit",
-    "mediaBrowserResult": "pending independent parent run"
+    "immutableFinalTestOnlyCommit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+    "mediaBrowserResult": "parent reports 48 local checks PASS; exact new CI still running",
+    "productRuntimeUnchangedVs626": true
   },
   "priorReviewedRuntimeCommit": "6263545d3233de0be0a7ffefdb30a321049d312a",
   "priorRuntimeTree": "b30591fa74c3b0774e55b96b6d2811e4b32e05bf",
