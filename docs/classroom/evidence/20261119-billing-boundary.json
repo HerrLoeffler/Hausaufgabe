@@ -16,7 +16,14 @@
     "testAdministratorChoice": "pending human selection",
     "exampleDiscountsActivated": false
   },
-  "verificationBoundary": "Reported source SHA not yet found on GitHub (422 No commit found, two bounded reads); exact remote alias requested from owner. Deployment details are owner receipts, not a new Classroom cloud audit.",
+  "verificationBoundary": "Remote alias and committed publication evidence read back on GitHub. Local deployed SHA remains a local identifier; Functions tree equality and all172 Cloud archive file checks are owner receipts, not rerun by Classroom.",
   "classroomScope": "No Classroom deployment or school/ASV mutation in this update. Preserve separate Billing sources/channel during future CSV work.",
-  "ownerReportedSourceCommit": "6ad3367d7564658f3385827c376f27b280c65f56"
+  "ownerReportedSourceCommit": "6ad3367d7564658f3385827c376f27b280c65f56",
+  "remoteSourceAliasVerified": "7a4e9ba4f5cb7342dee5c5dd586285d873bffdf6",
+  "ownerReportedFunctionsTreeIdentity": {
+    "localDeployedSource": "6ad3367d7564658f3385827c376f27b280c65f56",
+    "remoteAlias": "7a4e9ba4f5cb7342dee5c5dd586285d873bffdf6",
+    "all172CloudArchiveFilesCheckedByOwner": true
+  },
+  "sourceEvidence": "docs/billing/evidence/2026-11-19-offers-checkpoint.json@7a4e9ba4f5cb7342dee5c5dd586285d873bffdf6"
 }
