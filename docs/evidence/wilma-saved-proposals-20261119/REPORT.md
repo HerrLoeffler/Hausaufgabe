@@ -39,3 +39,12 @@ Exakte erfolgreiche CI und unabhängige Freigabe sind vor Finalize/Release zwing
 Kein allgemeiner Beweis für jede ausbleibende KI-Antwort und keine universelle Bewertungsquote. Weitere konkrete Provider-/Kontext-/Budgetfehler anhand ihres tatsächlichen Grunds prüfen. Martins Layoutabnahme gilt für die aktuelle Oberfläche; eine neue vollständige physische Handy-/iPad-/Secure-Abnahme ist hier nicht behauptet. Der frühere automatische Übermittlungsblock bleibt für neue echte Antworten bindend; diese Reparatur übermittelt keine neue Antwort an OpenAI.
 
 Nächster Schritt nach belegter Veröffentlichung: Martin prüft den konkreten ersten Knopf im Alltag. Bei weiterhin fehlendem Ergebnis den tatsächlichen angezeigten Status und vorhandenen Job vergleichen, keine Klasse pauschal neu starten.
+
+
+## Veröffentlichung der gespeicherten Vorschläge ·19.11.2026
+
+Quelle `0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1`, Tree `6612b704e6989b9f844c0867036a2ac9edb22499`, bestehendePR438. [ExakteCI44519867699](https://github.com/HerrLoeffler/Hausaufgabe/actions/runs/44519867699) vollständig erfolgreich einschließlich Browser-/Tutorialreisen. Enger Source-/HelperreviewPASS, ursprünglicheP2 und rote626-CI nicht umgedeutet. Die bereits angenommene Gestaltung/CSS undalleFunctions bleiben erhalten.
+
+Stage `/wilma/`: `sites/gradecrew-staging-2026/versions/af43a68480f2363f`; Live: `sites/hausaufgabe-staging/versions/3b894c3e2bcba8b4`. Vorherige parallele Classroom-Dateien, alle anderen Blobhashes und Header/Rewriteconfig exakt erhalten. Alle101Stage-/62LiveFunctions vor/nach unverändert (tatsächliche Counts im jeweiligenProof maßgeblich), reviewWilmaAnswers bleibt00012-pez/00007-viz.216/216öffentliche Dateihashes auf jeder geprüftenAdresse, keineAbweichung. Bestehende fiktive Belege in der tatsächlichen Oberfläche kostenlos nachgeladen;0zusätzlicheProviderstarts/0Notenwrites. DreiRuntime-Dateien plusManifest, keine neueKI-Qualitätsprobe und kein weiterer nativerBuild. Main enthält Nachweise, keine behauptete Runtime-main-Integration.
+
+[Abschlussbericht](REPORT.md) / [Receipt](receipt.json). Martins ausdrückliche Layoutabnahme ist gesichert. NächsterSchritt: konkretenKnopf imAlltag verifizieren; weitereFehler mit tatsächlichemGrund prüfen, keinealteKlasse pauschalneu starten. NeueechteSchülerübermittlungweiterohneUmgehung derfrüherenAblehnung. PhysischeGeräteabnahmegetrennt. AlleDeploymentaktionenabgeschlossen; keineoffeneProviderreservierungdiesesTests.

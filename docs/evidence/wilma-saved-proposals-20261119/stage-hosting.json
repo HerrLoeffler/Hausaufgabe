@@ -1,0 +1,24 @@
+{
+  "commit": "0ad0e2f350ceb98c97c5d4f4362bf5b77db69de1",
+  "tree": "6612b704e6989b9f844c0867036a2ac9edb22499",
+  "project": "gradecrew-staging-2026",
+  "version": "sites/gradecrew-staging-2026/versions/af43a68480f2363f",
+  "baseline": "sites/gradecrew-staging-2026/versions/4916e09a92376424",
+  "result": "pass",
+  "allOriginalPathsRetained": true,
+  "changedPaths": [
+    "/wilma/app.js",
+    "/wilma/wilma-auto-review.mjs",
+    "/wilma/wilma-answer-review.mjs",
+    "/wilma/wilma-release.json"
+  ],
+  "unchangedBlobHashes": 663,
+  "totalPaths": 667,
+  "configPreserved": true,
+  "functionsUnchanged": 101,
+  "backendRevision": "reviewwilmaanswers-00012-pez",
+  "backendSourceUnchanged": true,
+  "providerStarts": 0,
+  "gradeWrites": 0,
+  "verifiedAt": "2026-11-19T12:24:19.204Z"
+}
