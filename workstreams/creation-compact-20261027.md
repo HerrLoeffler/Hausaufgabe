@@ -70,3 +70,7 @@ SixthCI1f0b761 run40566522830/browser122409139261 FAILED; extendeddiagnosticshow
 }
 
 Existing5er/operatorlimits, accounts, savedtests, sourcecontracts, gradedattempts and backend retained. No40294/canonical2026/Wilma changes. Narrowshort-heightfallback may scroll while stickyCreate and usablefields remain; no promise of fitting every enlargedtext/keyboard combination. Nonblocking deferred issue: footer validation explains error but does not auto-switch hidden narrowpanels. Physicallaptop/iPad/phone and actualteacheracceptance pending; no paidprovider probe.
+
+## Folgeidee 29.10.2026: Remy-Material und Lernziele
+
+Task-ID bleibt GC-WEB-REPAIR-20261007. Martins neuer reiner Planungsauftrag betrifft zwei kurze Hilfetexte im vorhandenen Formular, damit Lehrkräfte Material und konkrete Lernziele als zusammengehörige Hilfen verstehen. [Konkreter Vergleich, empfohlener Wortlaut, Fälle und Umsetzungs-/Abnahmeplan](remy-test-creation-guidance-20261029.md). **Idee/Plan; keine UI-Implementierung, keine KI-Probe und kein Deploy.** Zuständig bleibt der Remy-Testerstellungs-/Präzise-Vorgaben-Fachchat; die vorhandene Editorarbeit und aktuellen Live-Änderungen sind vor späterer Umsetzung frisch abzugleichen. Nächster Schritt: Martin prüft den vorgeschlagenen Wortlaut und die Inline-Variante.
